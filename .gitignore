@@ -1,0 +1,24 @@
+unity/**/Library/
+unity/**/Temp/
+unity/**/Obj/
+unity/**/Logs/
+unity/**/UserSettings/
+builds/
+artifacts/
+__pycache__/
+# Locally acquired map data and derived geometry are managed separately.
+data/raw/
+data/inspection/
+unity/**/Assets/Resources/drive-map.json
+unity/**/Assets/Resources/drive-map.json.meta
+# Local installers and editor-generated files.
+/INNORIX-Agent.exe
+/*.pdf
+.vs/
+*.csproj
+*.sln
+*.user
+*.log
+*.tmp
+.env
+.env.*
