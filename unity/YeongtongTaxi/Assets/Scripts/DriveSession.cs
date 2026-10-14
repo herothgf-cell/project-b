@@ -26,6 +26,7 @@ public class DriveSession : MonoBehaviour {
         assist=new GameObject("Automatic camera monitor").AddComponent<AssistCamera>();assist.session=this;
         mirrors=new GameObject("상시 운전석 거울").AddComponent<CockpitMirrors>();mirrors.session=this;
         if(RoadRulesTrial.Enabled)gameObject.AddComponent<RoadRulesTrial>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-presentationTest")>=0)gameObject.AddComponent<RoadPresentationProbe>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadRulesTest")>=0)gameObject.AddComponent<RoadRulesSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-economyTest")>=0) gameObject.AddComponent<EconomySmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-assistedTest")>=0) gameObject.AddComponent<AssistedDriveSmokeTest>().session=this;

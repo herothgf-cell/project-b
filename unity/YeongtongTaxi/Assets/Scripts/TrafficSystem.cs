@@ -56,6 +56,9 @@ public class TrafficSystem : MonoBehaviour {
             float speed=car?car.speed:hit.attachedRigidbody?hit.attachedRigidbody.velocity.magnitude:0;
             if(side>j.halfWidth[axis]+1||along< -j.StopDistance(axis))continue;
             bool inside=along<j.StopDistance(axis)+2;
+            // Opposing permissive left must yield to this right turn. Once it has entered,
+            // however, let it clear; protected left retains its signal priority.
+            if(turn>0&&facing<-.7f&&car&&car.route.turn<0&&j.leftTurnMode==LeftTurnMode.Permissive&&!inside)continue;
             if((inside||Signal(j,axis,Sign(heading,axis))==SignalColor.Green)&&along<Mathf.Max(12,speed*6+5)){
                 if(turn>0&&car&&!RightTurnConflict(j,incoming,car))continue;
                 // A manually driven opposing car travelling straight occupies the other half of the road.
@@ -169,11 +172,13 @@ public class TrafficSystem : MonoBehaviour {
         car.Initialize(this,route,distance,index); cars.Add(car);
     }
     void PaintRoads(MapData map) {
+        var openings=RoadJunctionGeometry.Build(map);
         foreach(var road in map.roads) for(int i=1;i<road.points.Length;i++) {
             var a=road.points[i-1].V(); var b=road.points[i].V(); var dir=(b-a).normalized; float length=Vector3.Distance(a,b);
             for(float s=.3f;s<length;s+=1f) {
                 var p=a+dir*s; bool junctionArea=false;
                 foreach(var j in junctions) if(Vector3.Distance(p,j.center)<18) junctionArea=true;
+                foreach(var opening in openings)if(Vector3.Distance(p,opening.center)<opening.radius)junctionArea=true;
                 if(junctionArea) continue;
                 float piece=Mathf.Min(.95f,length-s);
                 Mark("Centre line",p,dir,.14f,piece,yellow);
@@ -208,7 +213,7 @@ public class TrafficSystem : MonoBehaviour {
         if(permissive){
             WorldBuilder.Box("비보호 표지",new Vector3(-reach,3.6f,0),new Vector3(1.5f,1.05f,.1f),WorldBuilder.Mat("Sign blue",new Color(.02f,.15f,.6f)),root.transform,false);
             var label=new GameObject("비보호좌회전 안내");label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(-reach,3.6f,-.07f);
-            var text=label.AddComponent<TextMesh>();text.text="↰\n비보호";text.fontSize=48;text.characterSize=.12f;text.anchor=TextAnchor.MiddleCenter;text.alignment=TextAlignment.Center;KoreanText.Apply(text);
+            var text=label.AddComponent<TextMesh>();text.text="↰\n비보호";text.fontSize=48;text.characterSize=.06f;text.anchor=TextAnchor.MiddleCenter;text.alignment=TextAlignment.Center;KoreanText.Apply(text);label.AddComponent<RoadSignLabel>();
             j.leftLamps.Add(new Renderer[0]);return;
         }
         var arrow=new List<Renderer>();var origin=new Vector3(-reach+.3f,4.55f,-.24f);

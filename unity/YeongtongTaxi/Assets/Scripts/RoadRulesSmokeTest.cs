@@ -16,6 +16,15 @@ public class RoadRulesSmokeTest : MonoBehaviour {
         foreach(var car in traffic.cars)if(car.route.turn<0&&car.route.stops[0].junction==j){car.Place(0);car.speed=9;Check(traffic.YieldClear(j,-traffic.mainDirection,1,taxi.gameObject)==(j.laneCount[0]>1),"right yields to protected left when receiving paths overlap");car.Recycle();break;}
         j.leftTurnMode=originalMode;
         if(j.leftTurnMode==LeftTurnMode.Permissive){
+            foreach(var car in traffic.cars)if(car.route.turn<0&&car.route.stops[0].junction==j){
+                traffic.manualTime=1;car.Place(car.route.stops[0].distance);car.speed=0;
+                Check(traffic.YieldClear(j,-traffic.mainDirection,1,taxi.gameObject),"green right has priority over waiting opposing permissive left");
+                car.Place(car.route.stops[0].distance+5);car.speed=3;
+                Check(!traffic.YieldClear(j,-traffic.mainDirection,1,taxi.gameObject),"right still yields to permissive left already inside junction");
+                car.Recycle();break;
+            }
+        }
+        if(j.leftTurnMode==LeftTurnMode.Permissive){
             traffic.manualTime=1;
             foreach(var car in traffic.cars)if(car.route.axis==0&&car.route.turn==0&&Vector3.Dot(car.route.direction,Vector3.forward)<-.9f){
                 car.Place(Vector3.Dot(j.center+Vector3.forward*30-car.route.start,car.route.direction));car.speed=9;

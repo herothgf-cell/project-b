@@ -11,6 +11,9 @@ public static class KoreanRoadTests {
         Check(lane!=null,"7m two-way road must support assisted driving");
         Check(net.Adjacent(lane,1)==null&&net.Adjacent(lane,-1)==null,"one lane each way cannot change lanes");
         Check(net.Connection(lane,-1)!=null&&net.Connection(lane,1)!=null,"shared lane supports both turns");
+        var openings=RoadJunctionGeometry.Build(new MapData{roads=roads});
+        Check(openings.Count==1&&openings[0].radius>3.5f,"intersection paint opens across both carriageways");
+        Check(RoadJunctionGeometry.Build(new MapData{roads=new[]{roads[0],roads[1]}}).Count==0,"straight geometry point does not interrupt road paint");
         Debug.Log("KOREAN_ROAD_TEST_OK");
     }
 }
