@@ -31,8 +31,8 @@ public class AssistedTrialSmokeTest : MonoBehaviour {
                 }
                 float gap=100;var p=taxi.transform.position;var forward=taxi.transform.forward;
                 foreach(var j in session.traffic.junctions){int axis=Mathf.Abs(Vector3.Dot(forward,session.traffic.mainDirection))>.7f?0:1;var incoming=(axis==0?session.traffic.mainDirection:TrafficSystem.Right(session.traffic.mainDirection))*Mathf.Sign(Vector3.Dot(forward,axis==0?session.traffic.mainDirection:TrafficSystem.Right(session.traffic.mainDirection)));
-                    var stop=j.center-incoming*(axis==0?14:9);float along=Vector3.Dot(stop-p,incoming)-2.3f,lateral=Mathf.Abs(Vector3.Dot(j.center-p,TrafficSystem.Right(incoming)));
-                    if(!assist.Turning&&along>-.5f&&along<35&&lateral<(axis==0?5:10)&&session.traffic.MovementSignal(j,axis,assist.PendingTurn)!=SignalColor.Green)gap=Mathf.Min(gap,Mathf.Max(0,along));
+                    var stop=j.center-incoming*j.StopDistance(axis);float along=Vector3.Dot(stop-p,incoming)-2.3f,lateral=Mathf.Abs(Vector3.Dot(j.center-p,TrafficSystem.Right(incoming)));
+                    if(!assist.Turning&&along>-.5f&&along<35&&lateral<j.halfWidth[axis]&&session.traffic.MovementSignal(j,axis,assist.PendingTurn,session.traffic.Sign(incoming,axis))!=SignalColor.Green)gap=Mathf.Min(gap,Mathf.Max(0,along));
                 }
                 for(float d=3;d<20;d+=1){bool blocked=false;foreach(var h in Physics.OverlapBox(p+forward*d+Vector3.up*.2f,new Vector3(.85f,.45f,.7f),taxi.transform.rotation,1<<9))if(h.attachedRigidbody!=taxi.body)blocked=true;if(blocked){gap=Mathf.Min(gap,Mathf.Max(0,d-3));break;}}
                 var goalDelta=trial.goal-p;goalDelta.y=0;if(index==route.Count-1&&Vector3.Dot(goalDelta,forward)>-1)gap=Mathf.Min(gap,Mathf.Max(0,goalDelta.magnitude-1));

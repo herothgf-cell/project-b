@@ -15,7 +15,7 @@ public class BusinessProgress : MonoBehaviour {
  public void Initialize(DriveSession owner){
   session=owner;var args=Environment.GetCommandLineArgs();
   foreach(var arg in args)if(arg.EndsWith("Test")){testMode=true;if(arg!="-economyTest")enabledCampaign=false;}
-  if(Array.IndexOf(args,"-assistedTrial")>=0){testMode=true;enabledCampaign=false;}
+  if(Array.IndexOf(args,"-assistedTrial")>=0||RoadRulesTrial.Enabled){testMode=true;enabledCampaign=false;}
   SavePath=testMode?Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts","economy-player-checkpoint.json")):Path.Combine(Application.persistentDataPath,"campaign-v1.json");
   ledger=new EconomyLedger(new EconomySettings());
   if(!testMode){

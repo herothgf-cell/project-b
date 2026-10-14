@@ -10,8 +10,8 @@ public class DriveSession : MonoBehaviour {
         Application.targetFrameRate=60; QualitySettings.vSyncCount=0;
         world=new GameObject("NGII tile").AddComponent<WorldBuilder>(); world.Build();
         roadEnvironment=new GameObject("인도와 도로 경계").AddComponent<RoadEnvironment>();roadEnvironment.Build(world.map);
-        var dir=new Vector3(.62f,0,.78f).normalized; var right=new Vector3(dir.z,0,-dir.x);
-        taxi=new GameObject("Temporary Taxi").AddComponent<TaxiController>(); taxi.Create(world.map.targets[0].V(.65f)-dir*23+right*2.5f,Quaternion.LookRotation(dir));
+        var dir=(world.map.targets[1].V()-world.map.targets[0].V()).normalized; var right=new Vector3(dir.z,0,-dir.x);
+        taxi=new GameObject("Temporary Taxi").AddComponent<TaxiController>(); taxi.Create(world.map.targets[0].V(.65f)-dir*(RoadRulesTrial.Enabled?90:23)+right*(RoadRulesTrial.Enabled?1.75f:2.5f),Quaternion.LookRotation(dir));
         signals=taxi.gameObject.AddComponent<TaxiSignals>();
         assisted=taxi.gameObject.AddComponent<AssistedDriveController>();assisted.Initialize(taxi,world.map);taxi.assistance=assisted;
         bool driveTest=System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-smokeTest")>=0;
@@ -25,6 +25,8 @@ public class DriveSession : MonoBehaviour {
         business=gameObject.AddComponent<BusinessProgress>();business.Initialize(this);gameObject.AddComponent<BusinessHUD>().session=this;
         assist=new GameObject("Automatic camera monitor").AddComponent<AssistCamera>();assist.session=this;
         mirrors=new GameObject("상시 운전석 거울").AddComponent<CockpitMirrors>();mirrors.session=this;
+        if(RoadRulesTrial.Enabled)gameObject.AddComponent<RoadRulesTrial>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadRulesTest")>=0)gameObject.AddComponent<RoadRulesSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-economyTest")>=0) gameObject.AddComponent<EconomySmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-assistedTest")>=0) gameObject.AddComponent<AssistedDriveSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-assistedTrial")>=0) gameObject.AddComponent<AssistedRouteTrial>().session=this;

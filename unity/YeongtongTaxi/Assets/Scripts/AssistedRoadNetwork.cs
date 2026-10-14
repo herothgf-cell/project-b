@@ -32,7 +32,7 @@ public sealed class AssistedRoadNetwork {
     public void Build(MapData map){
         lanes.Clear();nodes.Clear();segments.Clear();keys.Clear();outgoing.Clear();joins.Clear();
         var seen=new HashSet<string>();
-        foreach(var road in map.roads){if(road.width<9)continue;for(int i=1;i<road.points.Length;i++){
+        foreach(var road in map.roads){if(road.width<6)continue;for(int i=1;i<road.points.Length;i++){
             int a=NodeAt(road.points[i-1].V()),b=NodeAt(road.points[i].V());if(a==b)continue;
             string key=Mathf.Min(a,b)+":"+Mathf.Max(a,b);if(!seen.Add(key))continue;
             int id=segments.Count;segments.Add(new Segment{a=a,b=b,width=road.width,count=road.DisplayLanes/2,id=road.id});

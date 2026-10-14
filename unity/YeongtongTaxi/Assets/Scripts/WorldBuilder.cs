@@ -10,7 +10,7 @@ public class WorldBuilder : MonoBehaviour {
         g.GetComponent<Renderer>().sharedMaterial=mat; if(!solid) Destroy(g.GetComponent<Collider>()); return g;
     }
     public void Build() {
-        map=JsonUtility.FromJson<MapData>(Resources.Load<TextAsset>("drive-map").text);
+        map=RoadRulesTrial.Enabled?RoadRulesTrial.CreateMap():JsonUtility.FromJson<MapData>(Resources.Load<TextAsset>("drive-map").text);
         var ground=Mat("Ground",new Color(.33f,.40f,.32f)); var asphalt=Mat("Road",new Color(.16f,.18f,.20f));
         var stripe=Mat("Paint",new Color(.88f,.79f,.39f)); var building=Mat("Buildings",new Color(.70f,.67f,.60f));
         Box("Terrain",new Vector3(map.width/2,-.5f,map.depth/2),new Vector3(map.width+80,1,map.depth+80),ground,transform);

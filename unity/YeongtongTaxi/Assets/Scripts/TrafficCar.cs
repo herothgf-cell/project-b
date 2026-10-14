@@ -1,5 +1,6 @@
 using UnityEngine;
 public class TrafficCar : MonoBehaviour {
+    public TrafficJunction stoppedAt;
     public TrafficRoute route; public TrafficSystem system;
     public float distance, speed,totalTravel;public int completedRoutes; public bool waitingForSignal, waitingForObstacle, waitingForJunction,entryBlocked;
     public string blockedName="";public int redStops, departures; bool previouslyStopped, recycling;
@@ -23,7 +24,7 @@ public class TrafficCar : MonoBehaviour {
         renderers=GetComponentsInChildren<Renderer>(); Place(initial);
     }
     public void Place(float position) {
-        system.Release(this);distance=position;speed=0;recycling=false;SetVisible(true);
+        system.Release(this);stoppedAt=null;distance=position;speed=0;recycling=false;SetVisible(true);
         body.position=route.Position(distance);body.rotation=Quaternion.LookRotation(route.Tangent(distance));transform.SetPositionAndRotation(body.position,body.rotation);Physics.SyncTransforms();
     }
     void SetVisible(bool value){hit.enabled=value;foreach(var r in renderers)r.enabled=value;}
@@ -36,10 +37,11 @@ public class TrafficCar : MonoBehaviour {
         float gap=1000;blockedName=""; waitingForSignal=false;waitingForObstacle=false;waitingForJunction=false;
         foreach(var stop in route.stops) {
             float remaining=stop.distance-distance;
+            if(remaining>=-.05f&&remaining<.4f&&speed<.05f)stoppedAt=stop.junction;
             if(distance>stop.exitDistance&&stop.junction.owner==this){stop.junction.owner=null;stop.junction.requests.Remove(this);}
             if(remaining>=-.05f&&remaining<=1.5f)system.Request(this,stop);
             // Once beyond the stop line, clear the intersection even when its signal changes.
-            if(remaining>=-.05f && system.MovementSignal(stop.junction,stop.axis,route.turn)!=SignalColor.Green) {
+            if(remaining>=-.05f && !system.CanEnter(this,stop)) {
                 if(stop.junction.owner==this)stop.junction.owner=null;
                 if(remaining<gap){gap=Mathf.Max(0,remaining);waitingForSignal=true;}
             }
@@ -49,7 +51,7 @@ public class TrafficCar : MonoBehaviour {
             foreach(var h in Physics.OverlapBox(route.Position(at)+Vector3.up*.85f,new Vector3(.95f,.55f,2.25f),Quaternion.LookRotation(facing),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore))if(h.attachedRigidbody!=body){blockedName=h.name;blocked=true;break;}
             if(blocked){float obstacleGap=Mathf.Max(0,ahead-1.5f);if(obstacleGap<gap){gap=obstacleGap;waitingForObstacle=true;waitingForSignal=false;}break;}
         }
-        entryBlocked=false;foreach(var stop in route.stops){float remaining=stop.distance-distance;if(remaining>=-.05f&&remaining<8&&system.MovementSignal(stop.junction,stop.axis,route.turn)==SignalColor.Green){
+        entryBlocked=false;foreach(var stop in route.stops){float remaining=stop.distance-distance;if(remaining>=-.05f&&remaining<8&&system.CanEnter(this,stop)){
             // Only the head of a queue can reserve; a follower must never own its leader's junction.
             bool blocked=waitingForObstacle&&gap<remaining+2;entryBlocked|=blocked;
             if(blocked&&stop.junction.owner==this)stop.junction.owner=null;
