@@ -15,8 +15,9 @@ public class TaxiSignals : MonoBehaviour {
     public void Clear(){direction=0;}
     void Update() {
         if(Time.timeScale>0) {
-            if(Input.GetKeyDown(KeyCode.Q)||Input.GetKeyDown(KeyCode.JoystickButton4))Toggle(-1);
-            if(Input.GetKeyDown(KeyCode.E)||Input.GetKeyDown(KeyCode.JoystickButton5))Toggle(1);
+            var assistance=GetComponent<AssistedDriveController>();
+            if(Input.GetKeyDown(KeyCode.Q)||Input.GetKeyDown(KeyCode.JoystickButton4)){if(assistance&&assistance.Active)assistance.RequestTurn(-1);else Toggle(-1);}
+            if(Input.GetKeyDown(KeyCode.E)||Input.GetKeyDown(KeyCode.JoystickButton5)){if(assistance&&assistance.Active)assistance.RequestTurn(1);else Toggle(1);}
         }
         foreach(var lamp in left)if(lamp)lamp.sharedMaterial=direction<0&&Lit?on:off;
         foreach(var lamp in right)if(lamp)lamp.sharedMaterial=direction>0&&Lit?on:off;

@@ -3,6 +3,7 @@ public class DriveSession : MonoBehaviour {
     public TaxiController taxi; public WorldBuilder world; public TrafficSystem traffic; public DrivingCamera drivingCamera; public TaxiSignals signals;
     public CockpitMirrors mirrors;public PassengerJobs jobs;public AssistCamera assist;public RoadEnvironment roadEnvironment;public DrivingManners manners;
     public BusinessProgress business;
+    public AssistedDriveController assisted;
     public bool paused; public int visits; bool inside;
     void Awake() {
         foreach(var arg in System.Environment.GetCommandLineArgs())if(arg.EndsWith("Test"))Application.runInBackground=true;
@@ -12,6 +13,7 @@ public class DriveSession : MonoBehaviour {
         var dir=new Vector3(.62f,0,.78f).normalized; var right=new Vector3(dir.z,0,-dir.x);
         taxi=new GameObject("Temporary Taxi").AddComponent<TaxiController>(); taxi.Create(world.map.targets[0].V(.65f)-dir*23+right*2.5f,Quaternion.LookRotation(dir));
         signals=taxi.gameObject.AddComponent<TaxiSignals>();
+        assisted=taxi.gameObject.AddComponent<AssistedDriveController>();assisted.Initialize(taxi,world.map);taxi.assistance=assisted;
         bool driveTest=System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-smokeTest")>=0;
         traffic=new GameObject("Traffic simulation").AddComponent<TrafficSystem>();traffic.Build(world.map,!driveTest);
         var cam=new GameObject("Driving Camera"); cam.tag="MainCamera"; var c=cam.AddComponent<Camera>(); c.fieldOfView=62; c.nearClipPlane=.08f; c.farClipPlane=700; c.backgroundColor=new Color(.57f,.74f,.84f); c.clearFlags=CameraClearFlags.Skybox; cam.AddComponent<AudioListener>(); drivingCamera=cam.AddComponent<DrivingCamera>();drivingCamera.target=taxi.transform;
@@ -24,6 +26,9 @@ public class DriveSession : MonoBehaviour {
         assist=new GameObject("Automatic camera monitor").AddComponent<AssistCamera>();assist.session=this;
         mirrors=new GameObject("상시 운전석 거울").AddComponent<CockpitMirrors>();mirrors.session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-economyTest")>=0) gameObject.AddComponent<EconomySmokeTest>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-assistedTest")>=0) gameObject.AddComponent<AssistedDriveSmokeTest>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-assistedTrial")>=0) gameObject.AddComponent<AssistedRouteTrial>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-trialTest")>=0) gameObject.AddComponent<AssistedTrialSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-turnTest")>=0) gameObject.AddComponent<TurnDriveTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-junctionTurnTest")>=0) gameObject.AddComponent<JunctionTurnTest>().session=this;
         if(driveTest) gameObject.AddComponent<DriveSmokeTest>().session=this;

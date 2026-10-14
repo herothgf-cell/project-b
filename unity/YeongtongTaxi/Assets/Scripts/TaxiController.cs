@@ -2,6 +2,7 @@ using UnityEngine;
 public class TaxiController : MonoBehaviour {
     public Rigidbody body; public WheelCollider[] wheels=new WheelCollider[4]; Transform[] visuals=new Transform[4];
     public bool automated; public float autoThrottle,autoSteer; public bool autoBrake;
+    public AssistedDriveController assistance;
     float throttle,steer; bool brake; Vector3 spawn; Quaternion spawnRotation;
     public float SteeringInput {get{return steer;}}
     public bool CornerAssisting {get;private set;}
@@ -31,7 +32,9 @@ public class TaxiController : MonoBehaviour {
         if(automated) {throttle=autoThrottle; steer=autoSteer; brake=autoBrake;} else {
             throttle=(Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow)||Input.GetKey(KeyCode.JoystickButton0)?1:0)-(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)||Input.GetKey(KeyCode.JoystickButton1)?1:0);
             float keyboard=(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0);
-            float pad=Input.GetAxisRaw("TaxiSteer"); steer=Mathf.MoveTowards(steer,Mathf.Abs(pad)>.15f?pad:keyboard,Time.deltaTime*3);
+            float pad=Input.GetAxisRaw("TaxiSteer");float lateral=Mathf.Abs(pad)>.15f?pad:keyboard;
+            if(assistance)assistance.ReadInput(lateral);
+            if(!assistance||!assistance.Active)steer=Mathf.MoveTowards(steer,lateral,Time.deltaTime*3);
             brake=Input.GetKey(KeyCode.Space)||Input.GetKey(KeyCode.JoystickButton2);
             if(Input.GetKeyDown(KeyCode.R)||Input.GetKeyDown(KeyCode.JoystickButton3)) ResetTaxi();
         }
@@ -40,6 +43,7 @@ public class TaxiController : MonoBehaviour {
     }
     void FixedUpdate() {
         var manual=DriveMath.Resolve(throttle,Speed,brake);
+        if(assistance)assistance.Apply(ref steer,ref manual);
         var demand=DriveMath.CornerAssist(manual,Speed,steer);
         CornerAssisting=demand.motor<manual.motor||demand.brake>manual.brake;
         for(int i=0;i<4;i++) { wheels[i].steerAngle=i<2?steer*DriveMath.SteerAngle(Speed*3.6f):0; wheels[i].motorTorque=i>=2?demand.motor*1100:0; wheels[i].brakeTorque=demand.brake*3500; }
@@ -52,6 +56,7 @@ public class TaxiController : MonoBehaviour {
         }
     }
     public void ResetTaxi() {
+        if(assistance)assistance.SetActive(false);
         // A reset must not teleport the player inside an occupied traffic lane.
         foreach(var obstacle in Physics.OverlapBox(spawn+Vector3.up*.4f,new Vector3(1.2f,1,2.5f),spawnRotation,1<<9)) {
             var car=obstacle.GetComponentInParent<TrafficCar>();if(car)car.Recycle();

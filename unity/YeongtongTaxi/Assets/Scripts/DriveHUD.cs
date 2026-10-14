@@ -22,6 +22,9 @@ public class DriveHUD : MonoBehaviour {
   if(jobs.nav.active)Dot(Mini(jobs.nav.destination,rect),new Color(1,.4f,.1f),9);Dot(Mini(session.taxi.transform.position,rect),Color.yellow,8);
   GUI.Label(new Rect(Screen.width-248,289,232,25),"노랑: 내 택시 / 하늘색: 손님",small);
   if(session.assist.Visible)GUI.Label(new Rect(Screen.width*.745f,Screen.height*.69f-26,Screen.width*.24f,25),(session.assist.Mode=="REAR CAMERA"?"후방 카메라":session.assist.Mode=="LEFT CAMERA"?"좌측 카메라":"우측 카메라"),body);
+  float assistY=session.business.enabledCampaign?330:198;
+  GUI.Box(new Rect(16,assistY,380,62),GUIContent.none);GUI.Label(new Rect(28,assistY+3,365,26),session.assisted.Status,small);
+  GUI.Label(new Rect(28,assistY+29,365,24),session.assisted.Active?"A/D 차로 · Q/E 회전 · 가능 "+session.assisted.AvailableTurns+" · H 수동":"H 보조 운전 · 차로에 맞춰 켜세요",small);
   float y=Screen.height-211;
   if(jobs.trip.State==TripState.Idle){GUI.Box(new Rect(16,y,790,145),GUIContent.none);GUI.Label(new Rect(28,y+5,760,25),"호출 선택 1·2·3 / 길가 손님 옆 정차 후 F로 탑승",body);
    GUI.enabled=session.business.CanAccept&&!session.paused;for(int i=0;i<3;i++){var o=jobs.offers[i];string text=(i+1)+"  "+KoreanText.Stop(jobs.stops[o.pickup].name)+" > "+KoreanText.Stop(jobs.stops[o.drop].name)+"    "+o.distance.ToString("0")+" m    "+o.fare.ToString("N0")+"원    "+o.seconds.ToString("0")+"초    요구 "+o.requiredScore+"점";if(GUI.Button(new Rect(28,y+35+i*33,762,29),text))jobs.Accept(i);}GUI.enabled=true;

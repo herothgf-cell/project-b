@@ -1,6 +1,6 @@
 # 경로 판단 중심 보조 운전 설계
 
-상태: 구현 전 검토안. 브랜치: `feature/assisted-route-driving`.
+상태: 사용자 승인 후 1차 비교 시제품 구현·자동 검증 완료. 브랜치: `feature/assisted-route-driving`. 결과와 한계: [검증 기록](../../assisted-driving-validation.md).
 
 ## 목적과 성공 기준
 
