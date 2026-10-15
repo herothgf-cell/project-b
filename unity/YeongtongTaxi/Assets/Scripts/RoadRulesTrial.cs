@@ -20,7 +20,7 @@ public class RoadRulesTrial : MonoBehaviour {
             targets=new[]{new MapTarget{name="T1",x=300,z=200,leftTurnMode=mode},new MapTarget{name="T2",x=300,z=400,leftTurnMode=mode}}};
     }
     static MapRoad Road(string id,float width,int lanes,float[] coords){var points=new MapPoint[coords.Length/2];for(int i=0;i<points.Length;i++)points[i]=new MapPoint{x=coords[i*2],z=coords[i*2+1]};return new MapRoad{id=id,width=width,sourceLanes=lanes,points=points};}
-    IEnumerator Start(){session.jobs.enabled=false;foreach(var person in session.jobs.people)person.SetActive(false);yield return new WaitForSeconds(.5f);session.assisted.SetActive(true);}
+    void Start(){session.jobs.enabled=false;foreach(var person in session.jobs.people)person.SetActive(false);}
     void Update(){if(Time.timeScale==0)return;int next=Input.GetKeyDown(KeyCode.F6)?0:Input.GetKeyDown(KeyCode.F7)?1:Input.GetKeyDown(KeyCode.F8)?2:-1;if(next>=0){selection=next;SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);}}
     void OnGUI(){GUI.skin.font=KoreanText.Font;GUI.Box(new Rect(16,Screen.height-162,740,124),GUIContent.none);var style=new GUIStyle(GUI.skin.label){fontSize=16};style.normal.textColor=Color.white;
         GUI.Label(new Rect(28,Screen.height-156,710,27),"한국 도로 규칙 시험장 · "+Description,style);

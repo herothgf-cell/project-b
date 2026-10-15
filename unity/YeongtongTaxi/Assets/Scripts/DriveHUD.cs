@@ -8,7 +8,7 @@ public class DriveHUD : MonoBehaviour {
  void OnGUI(){if(session.jobs==null||session.business.ShowingSummary)return;if(title==null){GUI.skin.font=KoreanText.Font;title=new GUIStyle(GUI.skin.label){fontSize=23,fontStyle=FontStyle.Bold};body=new GUIStyle(GUI.skin.label){fontSize=16};small=new GUIStyle(GUI.skin.label){fontSize=13};title.normal.textColor=body.normal.textColor=small.normal.textColor=Color.white;}
   var jobs=session.jobs;GUI.Box(new Rect(16,16,380,176),GUIContent.none);GUI.Label(new Rect(28,22,360,35),RoadRulesTrial.Enabled?"가상 도로 규칙 시험장":"영통 도로 시제품",title);
   GUI.Label(new Rect(28,61,355,27),Mathf.Abs(session.taxi.Speed*3.6f).ToString("00")+" km/h   "+(session.taxi.Speed<-.2f?"R":"D")+"   수입 "+(session.business.enabledCampaign?session.business.ledger.Income:jobs.balance).ToString("N0")+"원",body);
-  GUI.Label(new Rect(28,89,355,24),(session.drivingCamera.FirstPerson?"1인칭":"3인칭")+"   방향지시등: "+(session.signals.direction<0?"좌측":session.signals.direction>0?"우측":"꺼짐"),body);
+  GUI.Label(new Rect(28,89,355,24),(session.drivingCamera.FirstPerson?"1인칭":"3인칭")+" · "+(session.assisted.Active?"보조":"수동")+"   방향지시등: "+(session.signals.direction<0?"좌측":session.signals.direction>0?"우측":"꺼짐"),body);
   GUI.Label(new Rect(28,119,355,24),"매너 "+session.manners.ledger.Score+"점"+(jobs.trip.State!=TripState.Idle?" / 승객 요구 "+jobs.current.requiredScore+"점":" · 승객 탑승 시 100점"),small);
   GUI.Label(new Rect(28,148,355,26),Time.time<session.manners.eventUntil?session.manners.lastEvent:session.taxi.CornerAssisting?"코너 감속 보조 · 급회전 전 미리 감속하세요":RoadRulesTrial.Enabled?"가상 지도 · 실제 장소를 재현한 도로가 아닙니다":"지도 형상 기반 · 실제 통행 규제 미검증",small);
   float navY=session.drivingCamera.FirstPerson?110:16;

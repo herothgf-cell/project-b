@@ -12,6 +12,16 @@ public class AssistedDriveSmokeTest : MonoBehaviour {
         yield return new WaitForSeconds(1);var taxi=session.taxi;taxi.automated=true;session.assisted.allowAutomated=true;
         foreach(var car in session.traffic.cars){car.Recycle();car.enabled=false;}
         var assist=session.assisted;AssistedRoadNetwork.Lane selected=null;
+        Check(!session.drivingCamera.FirstPerson&&assist.Active,"third person starts with assisted driving status="+assist.Status);
+        session.drivingCamera.SetFirstPerson(true);
+        Check(!assist.Active,"first person defaults to manual driving");
+        session.drivingCamera.SetFirstPerson(false);
+        Check(assist.Active,"third person restores assisted driving");
+        assist.SetActive(false);session.drivingCamera.SetFirstPerson(false);
+        Check(!assist.Active,"same view preserves manual override");
+        session.drivingCamera.SetFirstPerson(true);session.drivingCamera.SetFirstPerson(false);
+        Check(assist.Active,"view change reapplies default after override");
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-viewDefaultsOnly")>=0){Debug.Log(report.ToString());Application.Quit(ok?0:1);yield break;}
         foreach(var lane in assist.network.lanes)if(lane.count==2&&lane.index==0&&lane.path.length>90){selected=lane;break;}
         Check(selected!=null,"two-lane road fixture exists");
         if(selected!=null){

@@ -4,8 +4,8 @@ public class DrivingCamera : MonoBehaviour {
     public bool FirstPerson { get; private set; }
     public bool RearView { get; private set; }
     public bool testRearView;public float testLook;public float LookYaw {get;private set;}public bool cornerLook=true;TaxiController taxi;
-    Camera view; GameObject cockpit; bool snap=true;
-    void Start() {
+    Camera view; GameObject cockpit; bool snap=true,initialDrivingDefault=true;
+    System.Collections.IEnumerator Start() {
         view=GetComponent<Camera>();taxi=target.GetComponent<TaxiController>();cockpit=new GameObject("Temporary cockpit");cockpit.transform.SetParent(target,false);cockpit.transform.localPosition=new Vector3(-.43f,1.07f,.6f);
         var trim=WorldBuilder.Mat("Dashboard",new Color(.055f,.065f,.075f));
         WorldBuilder.Box("Dashboard",new Vector3(.25f,-.6f,.65f),new Vector3(1.9f,.28f,.65f),trim,cockpit.transform,false);
@@ -15,10 +15,16 @@ public class DrivingCamera : MonoBehaviour {
         WorldBuilder.Box("Wheel hub",Vector3.zero,new Vector3(.25f,.035f,.04f),trim,ring.transform,false);
         foreach(var child in cockpit.GetComponentsInChildren<Transform>())child.gameObject.layer=10;
         ApplyMode();
+        // Let the wheel suspension settle before enabling reverse-sensitive lane assistance.
+        yield return new WaitForSeconds(.5f);
+        if(initialDrivingDefault)ApplyDrivingDefault();
+        initialDrivingDefault=false;
     }
-    public void SetFirstPerson(bool value){FirstPerson=value;snap=true;if(view)ApplyMode();}
+    public void SetFirstPerson(bool value){bool changed=FirstPerson!=value;FirstPerson=value;snap=true;if(view)ApplyMode();if(changed){initialDrivingDefault=false;ApplyDrivingDefault();}}
+    void ApplyDrivingDefault(){if(!target)return;var assistance=target.GetComponent<AssistedDriveController>();if(assistance)assistance.SetActive(!FirstPerson);}
     void ApplyMode(){view.cullingMask=FirstPerson?~(1<<8):~0;view.fieldOfView=FirstPerson?82:62;cockpit.SetActive(FirstPerson&&!RearView);}
     void Update() {
+        if(Input.GetKeyDown(KeyCode.H))initialDrivingDefault=false;
         if(Input.GetKeyDown(KeyCode.C)||Input.GetKeyDown(KeyCode.JoystickButton6))SetFirstPerson(!FirstPerson);
         if(Input.GetKeyDown(KeyCode.V))cornerLook=!cornerLook;
         bool rear=testRearView||Input.GetKey(KeyCode.B)||Input.GetKey(KeyCode.JoystickButton9);
