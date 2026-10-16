@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BusinessHUD : MonoBehaviour {
  public DriveSession session;
- GUIStyle text,small,heading,number,button;int practiceVariant=1;
+ GUIStyle text,small,heading,number,button;
  string Won(int amount){return amount.ToString("N0")+"원";}
  void Styles(){if(text!=null)return;
   text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=17};
@@ -13,22 +13,22 @@ public class BusinessHUD : MonoBehaviour {
  }
  void Fill(Rect r,Color color){GUI.color=color;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
  void Progress(Rect r,EconomyLedger e){Fill(r,new Color(.16f,.23f,.28f));Fill(new Rect(r.x,r.y,r.width*Mathf.Clamp01((float)e.TotalNet/e.Settings.target),r.height),new Color(.25f,.85f,.67f));}
- void OnGUI(){if(!session||!session.business||!session.business.enabledCampaign||session.services.open||session.law.HistoryOpen)return;Styles();
+ void OnGUI(){if(!session||!session.business||!session.business.enabledCampaign||session.PracticeMenuOpen||session.services.open||session.law.HistoryOpen)return;Styles();
   var b=session.business;var e=b.ledger;GUI.depth=-30;
   if(b.restartPrompt){float rx=(Screen.width-620)/2f,ry=(Screen.height-300)/2f;GUI.depth=-150;Fill(new Rect(rx,ry,620,300),new Color(.04f,.09f,.12f,1));GUI.Label(new Rect(rx+25,ry+25,570,130),"1일차부터 다시 시작할까요?\n현재 캠페인의 저장과 운송·법규·연습 기록을 초기화합니다.\n현금 10,000원 · 연료 35% · 1일차 영업 준비로 돌아갑니다.\n취소하면 현재 진행을 그대로 유지합니다.",text);GUI.Label(new Rect(rx+25,ry+165,570,45),b.saveStatus,small);if(GUI.Button(new Rect(rx+25,ry+230,275,45),"초기화하고 1일차 시작",button))b.ConfirmRestart(true);if(GUI.Button(new Rect(rx+320,ry+230,275,45),"취소",button))b.ConfirmRestart(false);return;}
   if(b.pendingPayment>=0){float cx=(Screen.width-620)/2f,cy=(Screen.height-250)/2f;Fill(new Rect(cx,cy,620,250),new Color(.04f,.09f,.12f,1));GUI.Label(new Rect(cx+25,cy+25,570,110),b.pendingPayment==0?"보험 갱신 · 6,000원\n기존 계약: 2일차 만료 / 갱신 계약: 3일차 적용\n확정하면 현금에서 한 번 결제합니다.":"세금 직접 납부 · 1,500원\n기한: 3일차 / 미납 결제는 비용을 중복 차감하지 않습니다.",text);if(GUI.Button(new Rect(cx+25,cy+170,275,45),"결제 확정",button))b.ConfirmPayment(true);if(GUI.Button(new Rect(cx+320,cy+170,275,45),"취소",button))b.ConfirmPayment(false);return;}
   if(b.preparing){
-   float px=(Screen.width-620)/2f,py=(Screen.height-440)/2f;Fill(new Rect(px,py,620,440),new Color(.04f,.09f,.12f,.98f));var account=e.Account;
+   float px=(Screen.width-620)/2f,py=(Screen.height-600)/2f;Fill(new Rect(px,py,620,600),new Color(.04f,.09f,.12f,.98f));var account=e.Account;
    GUI.Label(new Rect(px+20,py+20,580,45),e.Day+"일차 영업 준비 · 3일 × 8분 / 순수익 30,000원",new GUIStyle(text){fontSize=20});
    GUI.Label(new Rect(px+20,py+80,580,65),"현금 "+Won(account.Cash)+" · 미납 "+Won(account.Debt)+" · 연료 "+account.Fuel.ToString("0")+"%\n보험 2일차 만료 / 세금 3일차 기한 · 갱신·납부가 성공 조건입니다.",text);
    if(GUI.Button(new Rect(px+20,py+155,280,40),account.Renewed?"보험 갱신 완료":"보험 갱신 · 6,000원",button))b.RequestPayment(0);
    if(GUI.Button(new Rect(px+320,py+155,280,40),account.TaxPaid?"세금 납부 완료":"세금 납부 · 1,500원",button))b.RequestPayment(1);
    GUI.Label(new Rect(px+20,py+205,580,45),"WASD 운전 · Space 제동 · F 승하차 · H 조향 보조 (가감속 직접)\nF7 거점 · F8 기록 · C 시점 · Q/E 깜빡이 · F10 안내 표시",small);
-   if(GUI.Button(new Rect(px+20,py+265,180,40),"연습 조건 R"+(practiceVariant>=5?5:practiceVariant)+(practiceVariant==6?" 횡단 중":""),button))practiceVariant=practiceVariant%6+1;
    var practice=session.GetComponent<PracticeSession>();GUI.enabled=!practice.Busy;
-   if(GUI.Button(new Rect(px+210,py+265,390,40),"영업과 별도로 우회전 연습",button))practice.Begin(new LawEvent{id=session.law.ids.Next("practice"),day=e.Day,scenario="R"+practiceVariant},true);
-   GUI.Label(new Rect(px+20,py+315,580,45),practice.notice+" "+b.notice,small);
-   if(GUI.Button(new Rect(px+20,py+370,280,45),"영업 시작",button))b.Depart();if(GUI.Button(new Rect(px+320,py+370,280,45),"1일차부터 다시 시작",button))b.RequestRestart();GUI.enabled=true;return;
+   if(GUI.Button(new Rect(px+20,py+265,580,40),"우회전 연습 선택 · 상황과 운전 요령",button))practice.OpenPicker();
+   GUI.Label(new Rect(px+20,py+315,580,115),RightPracticeState.Title(practice.SelectedVariant)+"\n"+RightPracticeState.Conditions(practice.SelectedVariant)+"\n"+RightPracticeState.Guidance(practice.SelectedVariant),new GUIStyle(small){wordWrap=true,fontSize=15});
+   GUI.Label(new Rect(px+20,py+445,580,65),practice.notice+" "+b.notice,new GUIStyle(small){wordWrap=true});
+   if(GUI.Button(new Rect(px+20,py+535,280,45),"영업 시작",button))b.Depart();if(GUI.Button(new Rect(px+320,py+535,280,45),"1일차부터 다시 시작",button))b.RequestRestart();GUI.enabled=true;return;
   }
   if(b.taxPrompt&&e.State==BusinessState.Closing&&Time.timeScale==0){
    float tx=(Screen.width-600)/2f,ty=(Screen.height-220)/2f;Fill(new Rect(tx,ty,600,220),new Color(.04f,.09f,.12f,.98f));

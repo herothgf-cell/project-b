@@ -15,11 +15,11 @@ public class BusinessProgress : MonoBehaviour {
  bool testMode;float noticeUntil; CampaignCheckpoint loaded; public bool useV2; public bool taxPrompt,preparing; public PrototypeSettings settings=new PrototypeSettings();
  public bool SaveFailed {get;private set;}
  public int pendingPayment=-1; public bool restartPrompt;
- bool CanRestartNow {get{return enabledCampaign&&useV2&&!PracticeSession.Enabled&&!session.GetComponent<PracticeSession>().Busy&&pendingPayment<0&&!session.services.open&&!session.law.HistoryOpen&&!taxPrompt&&(preparing||ShowingSummary||session.paused);}}
+ bool CanRestartNow {get{return enabledCampaign&&useV2&&!session.PracticeMenuOpen&&!PracticeSession.Enabled&&!session.GetComponent<PracticeSession>().Busy&&pendingPayment<0&&!session.services.open&&!session.law.HistoryOpen&&!taxPrompt&&(preparing||ShowingSummary||session.paused);}}
  public bool RequestRestart(){if(restartPrompt||!CanRestartNow)return false;restartPrompt=true;return true;}
  public bool ConfirmRestart(bool accept){if(!restartPrompt)return false;if(!accept){restartPrompt=false;return false;}if(!CanRestartNow){restartPrompt=false;return false;}return ResetCampaign(true);}
- public void RequestPayment(int kind){if(!restartPrompt&&(preparing||ShowingSummary)&&kind>=0&&kind<=1&&!session.GetComponent<PracticeSession>().Busy)pendingPayment=kind;}
- public bool ConfirmPayment(bool accept){int kind=pendingPayment;pendingPayment=-1;if(!accept||kind<0||!(preparing||ShowingSummary))return false;bool ok=kind==0?ledger.Account.Renew(session.law.ids.Next("insurance"),ledger.Day):ledger.Account.PayTax(session.law.ids.Next("tax"),ledger.Day);notice=ok?"결제 완료":"이미 결제했거나 현금 부족";if(ok&&ShowingSummary)SaveCheckpoint();return ok;}
+ public void RequestPayment(int kind){if(!session.PracticeMenuOpen&&!restartPrompt&&(preparing||ShowingSummary)&&kind>=0&&kind<=1&&!session.GetComponent<PracticeSession>().Busy)pendingPayment=kind;}
+ public bool ConfirmPayment(bool accept){int kind=pendingPayment;pendingPayment=-1;if(!accept||kind<0||!(preparing||ShowingSummary))return false;bool ok=kind==0?ledger.Account.Renew(session.law.ids.Next("insurance"),ledger.Day):ledger.Account.PayTax(session.law.ids.Next("tax"),ledger.Day);notice=ok?"결제 완료":"이미 결제했거나 현금 부족";noticeUntil=Time.unscaledTime+4;if(ok&&ShowingSummary)SaveCheckpoint();return ok;}
 
  public bool ShowingSummary {get{return enabledCampaign&&ledger!=null&&ledger.ShowingSummary;}}
  public bool CanAccept {get{return !PracticeSession.Enabled&&!preparing&&(!enabledCampaign||ledger.CanAccept);}}
@@ -52,7 +52,7 @@ public class BusinessProgress : MonoBehaviour {
   ledger.Advance(Time.fixedDeltaTime,metres);
   if(ledger.Account!=null&&ledger.Account.Fuel<=0)RecoverFuel();
  }
- void Update(){if(ledger.Account!=null&&ledger.CanAccept){if(ledger.Account.Fuel<=15)notice="연료 부족 · F7에서 주유소 길 안내를 선택하세요";else if(notice.StartsWith("연료 부족"))notice="";}if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil&&ledger.State!=BusinessState.Closing){notice="";noticeUntil=0;}}
+ void Update(){if(ledger.Account!=null&&ledger.CanAccept){if(ledger.Account.Fuel<=15)notice="연료 부족 · F7에서 주유소 길 안내를 선택하세요";else if(notice.StartsWith("연료 부족"))notice="";}if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil){notice="";noticeUntil=0;}}
  void LateUpdate(){
   if(!enabledCampaign||ledger.State!=BusinessState.Closing)return;
   if(session.jobs.trip.State==TripState.OnTrip){notice="영업 종료 대기 · 현재 승객 운송 후 정산합니다";return;}

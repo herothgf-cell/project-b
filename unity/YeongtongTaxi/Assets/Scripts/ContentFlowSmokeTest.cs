@@ -18,7 +18,7 @@ public class ContentFlowSmokeTest : MonoBehaviour {
   foreach(var c in session.traffic.cars){c.Recycle();c.enabled=false;}
   var right=GetComponent<RightTurnSituation>();var j=right.junction;var dir=session.traffic.AxisDirection(j,0);var side=TrafficSystem.Right(dir);
   Pose(j.center-dir*150+side*2,dir);Check(right.Select(5),"R5 can be prepared outside approach");yield return new WaitForSeconds(13);
-  Check(j.rightTurnObservation.pedestrian==PedestrianState.Intending,"R5 pedestrian waits for driver approach instead of expiring remotely");Pose(j.center-dir*80+side*2,dir);yield return new WaitForSeconds(13);Check(j.rightTurnObservation.pedestrian==PedestrianState.None,"R5 releases after driver enters approach");right.Stop();right.enabled=false;
+  Check(j.rightTurnObservation.pedestrian==PedestrianState.Intending,"R5 pedestrian waits for driver approach instead of expiring remotely");Pose(j.center-dir*80+side*2,dir);yield return new WaitForSeconds(13);Check(j.rightTurnObservation.pedestrian==PedestrianState.Intending,"R5 stays present during slow approach at 80m");Pose(j.center-dir*(j.StopDistance(0)+1)+side*2,dir);yield return new WaitForSeconds(7);Check(j.rightTurnObservation.pedestrian==PedestrianState.None,"R5 crosses only after decision-point stop");right.Stop();right.enabled=false;
   for(int test=0;test<8;test++){
    session.law.ledger=new LawLedger();session.law.ResetObservation();
    var o=new RoadObservation{known=true,trafficClear=true,forward=test<2?SignalColor.Red:SignalColor.Green,dedicated=test==2||test==3,right=test==2?SignalColor.Red:SignalColor.Green,pedestrian=test==7?PedestrianState.Intending:test==4||test==5?PedestrianState.Crossing:PedestrianState.None};

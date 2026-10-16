@@ -3,34 +3,35 @@ using UnityEngine;
 // Reuse validated right-side stopping locations and the shared navigation graph.
 public class ServiceStops : MonoBehaviour {
  public DriveSession session; public bool open; public string notice=""; public int pending=-1;public string destination="";
+ float noticeUntil;
  public readonly int[] indices={3,6,9};
  readonly string[] names={"임시 주유소","임시 식당","임시 주차장"};
  public string Quote(int kind){var a=session.business.ledger.Account;return kind==0?"주유 "+Mathf.Min(50,100-a.Fuel).ToString("0.0")+"% · "+Mathf.CeilToInt(Mathf.Min(50,100-a.Fuel)*session.business.settings.fuelUnitPrice).ToString("N0")+"원 / 10초":kind==1?"식사 3,000원 / 10초 (하루 1회)":kind==2?"주차·영업 마감 · 하루 주차비 500원\n미식사 비용 등 하루 비용도 정산합니다":kind==3?"보험 갱신 6,000원 · 2일차 만료 / 새 계약 3일차 적용":"세금 납부 1,500원 · 3일차 기한 / 미납 결제는 비용 중복 없음";}
  void Start(){if(session.business.ledger.Account==null){enabled=false;return;}
   for(int i=0;i<indices.Length;i++){indices[i]%=session.jobs.stops.Length;var label=new GameObject(names[i]);label.transform.position=session.jobs.stops[indices[i]].Passenger+Vector3.up*3.2f;var t=label.AddComponent<TextMesh>();t.text=names[i]+" · F7";t.fontSize=40;t.characterSize=.09f;t.anchor=TextAnchor.MiddleCenter;t.color=Color.yellow;KoreanText.Apply(t);label.AddComponent<FaceCamera>();}
  }
- void Update(){if(Input.GetKeyDown(KeyCode.F7))Toggle();}
+ void Update(){if(noticeUntil>0&&Time.unscaledTime>=noticeUntil){notice="";noticeUntil=0;}if(Input.GetKeyDown(KeyCode.F7))Toggle();}
  public void Toggle(){
   if(open){Close();return;}
-  if(session.business.restartPrompt||PracticeSession.Enabled||session.business.preparing||session.law.HistoryOpen||session.business.ShowingSummary||session.business.taxPrompt||session.jobs.Active||session.taxi.body.velocity.magnitude>=.56f){notice="빈차로 안전하게 정차한 뒤 F7";return;}
+  if(session.PracticeMenuOpen||session.PracticeBusy||session.business.restartPrompt||PracticeSession.Enabled||session.business.preparing||session.law.HistoryOpen||session.business.ShowingSummary||session.business.taxPrompt||session.jobs.Active||session.taxi.body.velocity.magnitude>=.56f){notice="빈차로 안전하게 정차한 뒤 F7";return;}
   pending=-1;open=true;session.paused=true;Time.timeScale=0;
  }
  void Close(){pending=-1;open=false;session.paused=false;Time.timeScale=1;}
  public bool Guide(int kind){if(!open||kind<0||kind>2||session.jobs.Active)return false;session.jobs.nav.SetDestination(session.jobs.stops[indices[kind]]);destination=names[kind]+" · 오른쪽 정차 화살표에서 F7";Close();return true;}
  public bool RequestAction(int kind){if(!open||kind<0||kind>4||session.jobs.Active||kind<3&&!session.jobs.At(indices[kind]))return false;pending=kind;return true;}
- public bool ConfirmAction(bool accept){if(!open||pending<0)return false;int kind=pending;pending=-1;if(!accept){notice="취소했습니다 · 결제/시간 차감 없음";return false;}
+ public bool ConfirmAction(bool accept){if(!open||pending<0)return false;int kind=pending;pending=-1;if(!accept){notice="취소했습니다 · 결제/시간 차감 없음";noticeUntil=Time.unscaledTime+4;return false;}
   if(session.jobs.Active||session.taxi.body.velocity.magnitude>=.56f||kind<3&&!session.jobs.At(indices[kind]))return false;
   if(kind<2)return Buy(kind);
   if(kind==2){Close();return session.business.RequestEndDay();}
   var a=session.business.ledger.Account;int day=session.business.ledger.Day;
   bool ok=kind==3?a.Renew(session.law.ids.Next("insurance"),day):a.PayTax(session.law.ids.Next("tax"),day);
-  notice=ok?"결제 완료":"이미 결제했거나 현금 부족";return ok;
+  notice=ok?"결제 완료":"이미 결제했거나 현금 부족";noticeUntil=Time.unscaledTime+4;return ok;
  }
  public bool Buy(int kind){
   if(kind<0||kind>1)return false;var b=session.business;var a=b.ledger.Account;int day=b.ledger.Day;
   if(!open||session.jobs.Active||!session.jobs.At(indices[kind]))return false;
   bool ok=kind==0?a.Refuel(session.law.ids.Next("fuel"),50,day):a.Meal(session.law.ids.Next("meal"),day);
-  if(ok){b.ledger.Advance(10,0);notice="이용 완료 · 영업시간 10초 경과";destination="";Close();}else notice="현금·연료 잔량 또는 오늘 이용 여부를 확인하세요";return ok;
+  if(ok){b.ledger.Advance(10,0);notice="이용 완료 · 영업시간 10초 경과";noticeUntil=Time.unscaledTime+4;destination="";Close();}else notice="현금·연료 잔량 또는 오늘 이용 여부를 확인하세요";return ok;
  }
  void OnGUI(){if(session.business.ledger.Account==null||PracticeSession.Enabled)return;
   var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true};var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=14,wordWrap=true};
