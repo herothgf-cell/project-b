@@ -20,46 +20,54 @@ public sealed class AssistedRoadNetwork {
     }
     public sealed class Join {public Lane target;public Path path;public int turn;}
     sealed class Node {public Vector3 p;public float width;public readonly List<int> edges=new List<int>();}
-    sealed class Segment {public int a,b;public float width;public int count;public string id;}
+    sealed class Segment {public int a,b;public float width;public int count,oneWay;public bool centered;public string id;}
     public readonly List<Lane> lanes=new List<Lane>();
     readonly List<Node> nodes=new List<Node>();
     readonly List<Segment> segments=new List<Segment>();
     readonly Dictionary<string,int> keys=new Dictionary<string,int>();
     readonly Dictionary<int,List<Lane>> outgoing=new Dictionary<int,List<Lane>>();
     readonly Dictionary<string,Join> joins=new Dictionary<string,Join>();
+    public Vector3 NodePosition(int id){return nodes[id].p;}
     int NodeAt(Vector3 p){string key=Mathf.RoundToInt(p.x*10)+":"+Mathf.RoundToInt(p.z*10);int id;if(keys.TryGetValue(key,out id))return id;id=nodes.Count;keys[key]=id;nodes.Add(new Node{p=p});return id;}
     int Other(Segment edge,int node){return edge.a==node?edge.b:edge.a;}
+    bool Allows(Segment edge,int from){return edge.oneWay==0||(from==edge.a?edge.oneWay>0:edge.oneWay<0);}
+    bool Through(int node){
+        if(nodes[node].edges.Count!=2)return false;
+        var a=segments[nodes[node].edges[0]];var b=segments[nodes[node].edges[1]];
+        // Preserve directional boundaries, including two arrows meeting head-on.
+        return Other(a,node)!=Other(b,node)&&a.centered==b.centered&&Allows(a,node)==Allows(b,Other(b,node))&&Allows(b,node)==Allows(a,Other(a,node));
+    }
     public void Build(MapData map){
         lanes.Clear();nodes.Clear();segments.Clear();keys.Clear();outgoing.Clear();joins.Clear();
         var seen=new HashSet<string>();
         foreach(var road in map.roads){if(road.width<6)continue;for(int i=1;i<road.points.Length;i++){
             int a=NodeAt(road.points[i-1].V()),b=NodeAt(road.points[i].V());if(a==b)continue;
-            string key=Mathf.Min(a,b)+":"+Mathf.Max(a,b);if(!seen.Add(key))continue;
-            int id=segments.Count;segments.Add(new Segment{a=a,b=b,width=road.width,count=road.DisplayLanes/2,id=road.id});
+            string key=road.oneWay==0?"both:"+Mathf.Min(a,b)+":"+Mathf.Max(a,b):"directed:"+(road.oneWay>0?a:b)+":"+(road.oneWay>0?b:a);if(!seen.Add(key))continue;
+            int id=segments.Count;segments.Add(new Segment{a=a,b=b,width=road.width,count=Mathf.Max(1,road.DisplayLanes/2),oneWay=road.oneWay,centered=road.DisplayLanes==1,id=road.id});
             nodes[a].edges.Add(id);nodes[b].edges.Add(id);nodes[a].width=Mathf.Max(nodes[a].width,road.width);nodes[b].width=Mathf.Max(nodes[b].width,road.width);
         }}
         var visited=new HashSet<int>();int corridor=0;
         for(int start=0;start<nodes.Count;start++){
-            if(nodes[start].edges.Count==2)continue;
+            if(Through(start))continue;
             foreach(int first in nodes[start].edges){if(visited.Contains(first))continue;
-                var points=new List<Vector3>{nodes[start].p};var source=new HashSet<string>();int current=start,edgeId=first,end=start,count=2;float width=float.MaxValue;
-                while(true){visited.Add(edgeId);var edge=segments[edgeId];source.Add(edge.id);width=Mathf.Min(width,edge.width);count=Mathf.Min(count,edge.count);end=Other(edge,current);points.Add(nodes[end].p);
-                    if(nodes[end].edges.Count!=2)break;int next=nodes[end].edges[0]==edgeId?nodes[end].edges[1]:nodes[end].edges[0];if(visited.Contains(next))break;current=end;edgeId=next;
+                var points=new List<Vector3>{nodes[start].p};var source=new HashSet<string>();int current=start,edgeId=first,end=start,count=int.MaxValue;float width=float.MaxValue;bool forward=true,backward=true,centered=segments[first].centered;
+                while(true){visited.Add(edgeId);var edge=segments[edgeId];source.Add(edge.id);width=Mathf.Min(width,edge.width);count=Mathf.Min(count,edge.count);end=Other(edge,current);forward&=Allows(edge,current);backward&=Allows(edge,end);points.Add(nodes[end].p);
+                    if(!Through(end))break;int next=nodes[end].edges[0]==edgeId?nodes[end].edges[1]:nodes[end].edges[0];if(visited.Contains(next))break;current=end;edgeId=next;
                 }
                 var center=new Path(points.ToArray());float trimA=nodes[start].edges.Count>1?nodes[start].width*.5f+3:2,trimB=nodes[end].edges.Count>1?nodes[end].width*.5f+3:2;
                 if(center.length<trimA+trimB+8)continue;
-                AddLanes(points,start,end,corridor,count,width,trimA,trimB,string.Join(",",new List<string>(source).ToArray()));
-                points.Reverse();AddLanes(points,end,start,corridor,count,width,trimB,trimA,string.Join(",",new List<string>(source).ToArray()));corridor++;
+                if(forward)AddLanes(points,start,end,corridor,count,width,trimA,trimB,string.Join(",",new List<string>(source).ToArray()),centered);
+                points.Reverse();if(backward)AddLanes(points,end,start,corridor,count,width,trimB,trimA,string.Join(",",new List<string>(source).ToArray()),centered);corridor++;
             }
         }
     }
-    void AddLanes(List<Vector3> centerPoints,int from,int to,int corridor,int count,float width,float trimA,float trimB,string source){
+    void AddLanes(List<Vector3> centerPoints,int from,int to,int corridor,int count,float width,float trimA,float trimB,string source,bool centered){
         var center=new Path(centerPoints.ToArray());
         for(int index=0;index<count;index++){
-            float offset=(index+.5f)*width/(2*count);var points=new List<Vector3>();
+            float offset=centered?0:(index+.5f)*width/(2*count);var points=new List<Vector3>();
             int samples=Mathf.CeilToInt((center.length-trimA-trimB)/2);
             for(int i=0;i<=samples;i++){float d=Mathf.Lerp(trimA,center.length-trimB,(float)i/samples);var direction=(center.Position(Mathf.Min(center.length,d+2))-center.Position(Mathf.Max(0,d-2))).normalized;points.Add(center.Position(d)+TrafficSystem.Right(direction)*offset);}
-            var lane=new Lane{id=lanes.Count,from=from,to=to,corridor=corridor,index=index,count=count,width=width/(count*2),path=new Path(points.ToArray()),sourceIds=source};lanes.Add(lane);
+            var lane=new Lane{id=lanes.Count,from=from,to=to,corridor=corridor,index=index,count=count,width=centered?width:width/(count*2),path=new Path(points.ToArray()),sourceIds=source};lanes.Add(lane);
             if(!outgoing.ContainsKey(from))outgoing[from]=new List<Lane>();outgoing[from].Add(lane);
         }
     }

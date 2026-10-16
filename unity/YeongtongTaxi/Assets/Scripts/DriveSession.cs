@@ -4,6 +4,7 @@ public class DriveSession : MonoBehaviour {
     public CockpitMirrors mirrors;public PassengerJobs jobs;public AssistCamera assist;public RoadEnvironment roadEnvironment;public DrivingManners manners;
     public BusinessProgress business;
     public AssistedDriveController assisted;
+    public RoadConditions roadConditions;
     public bool paused; public int visits; bool inside;
     void Awake() {
         foreach(var arg in System.Environment.GetCommandLineArgs())if(arg.EndsWith("Test"))Application.runInBackground=true;
@@ -22,11 +23,17 @@ public class DriveSession : MonoBehaviour {
         gameObject.AddComponent<DriveHUD>().session=this;
         manners=taxi.gameObject.AddComponent<DrivingManners>();manners.session=this;
         jobs=gameObject.AddComponent<PassengerJobs>();jobs.Initialize(this);
+        if(world.map.HasHd){jobs.enabled=world.map.hybrid;assisted.hd.nav=jobs.nav;}
         business=gameObject.AddComponent<BusinessProgress>();business.Initialize(this);gameObject.AddComponent<BusinessHUD>().session=this;
+        roadConditions=gameObject.AddComponent<RoadConditions>();roadConditions.Initialize(this);jobs.nav.conditions=roadConditions;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-districtTrafficTest")>=0)gameObject.AddComponent<DistrictTrafficSmokeTest>().session=this;
         assist=new GameObject("Automatic camera monitor").AddComponent<AssistCamera>();assist.session=this;
         mirrors=new GameObject("상시 운전석 거울").AddComponent<CockpitMirrors>();mirrors.session=this;
+        if(world.map.HasHd&&!world.map.hybrid){gameObject.AddComponent<HdRouteTrial>().session=this;if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-hdTest")>=0)gameObject.AddComponent<HdDriveSmokeTest>().session=this;}
+        if(world.map.hybrid){gameObject.AddComponent<HybridMapStatus>().session=this;if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-hybridTest")>=0)gameObject.AddComponent<HybridDriveSmokeTest>().session=this;}
         if(RoadRulesTrial.Enabled)gameObject.AddComponent<RoadRulesTrial>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-presentationTest")>=0)gameObject.AddComponent<RoadPresentationProbe>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-visibilityTest")>=0)gameObject.AddComponent<VisibilityProbe>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadRulesTest")>=0)gameObject.AddComponent<RoadRulesSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-economyTest")>=0) gameObject.AddComponent<EconomySmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-assistedTest")>=0) gameObject.AddComponent<AssistedDriveSmokeTest>().session=this;
@@ -34,6 +41,11 @@ public class DriveSession : MonoBehaviour {
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-trialTest")>=0) gameObject.AddComponent<AssistedTrialSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-turnTest")>=0) gameObject.AddComponent<TurnDriveTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-junctionTurnTest")>=0) gameObject.AddComponent<JunctionTurnTest>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-greenFlowTest")>=0)gameObject.AddComponent<GreenFlowSmokeTest>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-navigationChoiceTest")>=0)gameObject.AddComponent<NavigationChoiceSmokeTest>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadConditionsTest")>=0)gameObject.AddComponent<RoadConditionsSmokeTest>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-eungyeTest")>=0)gameObject.AddComponent<EungyeSmokeTest>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadIndexTest")>=0)gameObject.AddComponent<RoadEnvironmentIndexSmokeTest>();
         if(driveTest) gameObject.AddComponent<DriveSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-trafficTest")>=0) gameObject.AddComponent<TrafficSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-jobsTest")>=0) gameObject.AddComponent<JobsSmokeTest>().session=this;
@@ -42,7 +54,9 @@ public class DriveSession : MonoBehaviour {
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-stabilityTest")>=0) gameObject.AddComponent<StabilitySmokeTest>().session=this;
     }
     void Update() {
+        if(Input.GetKeyDown(KeyCode.F11)){if(Screen.fullScreen)Screen.SetResolution(Mathf.Min(1600,Screen.currentResolution.width-80),Mathf.Min(900,Screen.currentResolution.height-100),FullScreenMode.Windowed);else Screen.SetResolution(Screen.currentResolution.width,Screen.currentResolution.height,FullScreenMode.FullScreenWindow);}
         if(!business.ShowingSummary&&(Input.GetKeyDown(KeyCode.Escape)||Input.GetKeyDown(KeyCode.JoystickButton7))) {paused=!paused;Time.timeScale=paused?0:1;}
+        if(!paused&&!business.ShowingSummary&&Input.GetKeyDown(KeyCode.Tab))jobs.nav.TogglePreference();
         bool now=Vector3.Distance(taxi.transform.position,world.map.targets[1].V(taxi.transform.position.y))<12;
         if(now&&!inside) visits++; inside=now;
     }

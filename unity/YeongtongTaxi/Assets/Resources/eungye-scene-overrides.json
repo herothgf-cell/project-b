@@ -1,0 +1,28 @@
+{
+  "status": "provisional",
+  "reason": "Hidden in prototype because generated drivable lane corridor overlaps building collider. Requires source/field review; original geometry retained. Two additional roadside building footprints (4485,4486) overlap the generated 40m road at J7801_9629, matched to user screenshot.",
+  "hiddenBuildings": [
+    "37612022:B0010000:133",
+    "37612022:B0010000:155",
+    "37612022:B0010000:118",
+    "37612022:B0010000:114",
+    "37612023:B0010000:4535",
+    "37612023:B0010000:4491",
+    "37612023:B0010000:4490",
+    "37612023:B0010000:4499",
+    "37612023:B0010000:4498",
+    "37612023:B0010000:4517",
+    "37612023:B0010000:4519",
+    "37612023:B0010000:4488",
+    "37612023:B0010000:4487",
+    "37612022:B0010000:160",
+    "37612023:B0010000:4538",
+    "37612022:B0010000:161",
+    "37612023:B0010000:4484",
+    "37612023:B0010000:4508",
+    "37612023:B0010000:4509",
+    "37612023:B0010000:4494",
+    "37612023:B0010000:4485",
+    "37612023:B0010000:4486"
+  ]
+}

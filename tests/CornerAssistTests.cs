@@ -16,6 +16,13 @@ class CornerAssistTests {
   Check(reverse.motor==-1&&reverse.brake==0,"reverse controls unchanged");
   Check(DriveMath.CornerAssist(full,25,1).brake<=.085f,"gentle assistance has bounded brake torque");
   Check(DriveMath.CornerSpeed(1)<DriveMath.CornerSpeed(.5f),"tighter turn requests lower speed");
+  float speed=50/3.6f,smallWheelInput=2/DriveMath.SteerAngle(50);
+  var correction=DriveMath.CornerAssist(full,speed,smallWheelInput,true);
+  Check(correction.motor==1&&correction.brake==0,"assisted two-degree correction at 50kph keeps acceleration");
+  var otherSide=DriveMath.CornerAssist(full,speed,-smallWheelInput,true);
+  Check(otherSide.motor==correction.motor&&otherSide.brake==correction.brake,"assisted corrections symmetric");
+  Check(DriveMath.CornerAssist(new DriveMath.Demand{brake=1},speed,smallWheelInput,true).brake==1,"assisted correction preserves manual brake");
+  Check(DriveMath.CornerAssist(full,25/3.6f,1,true).motor==0,"assisted tight low-speed turn still slows");
   Console.WriteLine("PASS: "+count+" corner-assistance checks");
  }
 }

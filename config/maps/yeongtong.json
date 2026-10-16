@@ -1,0 +1,38 @@
+{
+  "id": "yeongtong",
+  "rawDirectory": "data/raw/ngii",
+  "output": "unity/YeongtongTaxi/Assets/Resources/drive-map.json",
+  "requiredTiles": [
+    {
+      "tile": "377092296",
+      "crs": {
+        "status": "provisional",
+        "definition": "",
+        "units": "metre",
+        "evidence": "docs/ngii-sample-review.md: XML only declares GRS80; projection unconfirmed. Single-sheet planar translation and metre interpretation are provisional; no georeferencing or multi-sheet merge."
+      }
+    }
+  ],
+  "reviewedOverrides": [],
+  "landmarks": [
+    {
+      "name": "호텔심포니 (2008 자료)",
+      "kind": "historic-source-building",
+      "feature": "377092296:B0010000:2535",
+      "status": "verified",
+      "evidence": "Supplied 2008 NGII NDA B0010000 record 2535 주기=호텔심포니; checked 2026-10-15. Name and label anchor reflect the historical source, not a current business or entrance survey."
+    },
+    {
+      "name": "삼성여성병원 (2008 자료)",
+      "kind": "historic-source-building",
+      "feature": "377092296:B0010000:2545",
+      "status": "verified",
+      "evidence": "Supplied 2008 NGII NDA B0010000 record 2545 주기=삼성여성병원; checked 2026-10-15. Name and label anchor reflect the historical source, not current operation."
+    }
+  ],
+  "targets": [
+    {"name": "T1", "sourceX": 206742.49, "sourceY": 516844.52, "leftTurnMode": 0, "status": "gameplay-provisional", "evidence": "docs/ngii-sample-review.md: source junction at records 3609,3610,3720,3721; training target, not verified traffic control."},
+    {"name": "T2", "sourceX": 206884.87, "sourceY": 517031.16, "leftTurnMode": 0, "status": "gameplay-provisional", "evidence": "docs/ngii-sample-review.md: source junction at records 3579,3580,3618,3747; training target, not verified traffic control."},
+    {"name": "T3", "sourceX": 206756.21, "sourceY": 517129.69, "leftTurnMode": 0, "status": "gameplay-provisional", "evidence": "docs/ngii-sample-review.md: source junction at records 3585,3624,3625,3732; training target, not verified traffic control."}
+  ]
+}

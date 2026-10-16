@@ -1,0 +1,771 @@
+{
+  "junctions": [
+    {
+      "x": 188.2480010986328,
+      "z": 1179.10595703125,
+      "id": "J1882_11791",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": -0.85687572263726,
+      "dz": -0.5155230314494917,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": -0.856876,
+          "dz": -0.515523,
+          "width": 27.0
+        },
+        {
+          "dx": 0.856833,
+          "dz": 0.515595,
+          "width": 27.0
+        },
+        {
+          "dx": -0.572711,
+          "dz": 0.819758,
+          "width": 13.0
+        },
+        {
+          "dx": 0.572756,
+          "dz": -0.819726,
+          "width": 11.0
+        }
+      ]
+    },
+    {
+      "x": 192.718994140625,
+      "z": 518.0750122070312,
+      "id": "J1927_5181",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": -0.3418794767103636,
+      "dz": -0.9397438073242346,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": -0.341879,
+          "dz": -0.939744,
+          "width": 10.0
+        },
+        {
+          "dx": 0.995147,
+          "dz": -0.098399,
+          "width": 30.0
+        },
+        {
+          "dx": -0.973723,
+          "dz": 0.227735,
+          "width": 42.6
+        },
+        {
+          "dx": 0.004331,
+          "dz": 0.999991,
+          "width": 9.5
+        }
+      ]
+    },
+    {
+      "x": 214.53900146484375,
+      "z": 1596.989990234375,
+      "id": "J2145_15970",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": 0.6032735557714993,
+      "dz": -0.7975343358795354,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": 0.603274,
+          "dz": -0.797534,
+          "width": 37.5
+        },
+        {
+          "dx": 0.77422,
+          "dz": 0.632917,
+          "width": 15.0
+        },
+        {
+          "dx": -0.603286,
+          "dz": 0.797525,
+          "width": 37.5
+        },
+        {
+          "dx": -0.774194,
+          "dz": -0.632948,
+          "width": 23.5
+        }
+      ]
+    },
+    {
+      "x": 256.3919982910156,
+      "z": 1223.6910400390625,
+      "id": "J2564_12237",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": -0.8370556107449679,
+      "dz": -0.5471178159412914,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": -0.837056,
+          "dz": -0.547118,
+          "width": 27.0
+        },
+        {
+          "dx": -0.462028,
+          "dz": 0.886866,
+          "width": 12.0
+        },
+        {
+          "dx": 0.784482,
+          "dz": 0.620151,
+          "width": 27.0
+        },
+        {
+          "dx": 0.619807,
+          "dz": -0.784755,
+          "width": 12.0
+        }
+      ]
+    },
+    {
+      "x": 351.5840148925781,
+      "z": 1288.1300048828125,
+      "id": "J3516_12881",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": 0.590028614792605,
+      "dz": -0.8073823342914557,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": 0.590029,
+          "dz": -0.807382,
+          "width": 11.0
+        },
+        {
+          "dx": 0.823588,
+          "dz": 0.567189,
+          "width": 27.0
+        },
+        {
+          "dx": -0.829261,
+          "dz": -0.558861,
+          "width": 24.0
+        },
+        {
+          "dx": -0.501183,
+          "dz": 0.865341,
+          "width": 10.0
+        }
+      ]
+    },
+    {
+      "x": 439.593994140625,
+      "z": 1345.81103515625,
+      "id": "J4396_13458",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": 0.7749163508415222,
+      "dz": -0.6320637464523315,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": 0.836947,
+          "dz": 0.547284,
+          "width": 24.0
+        },
+        {
+          "dx": -0.851988,
+          "dz": -0.523561,
+          "width": 36.5
+        },
+        {
+          "dx": -0.748024,
+          "dz": 0.663672,
+          "width": 40.0
+        },
+        {
+          "dx": 0.699066,
+          "dz": -0.715057,
+          "width": 37.5
+        }
+      ]
+    },
+    {
+      "x": 505.7019958496094,
+      "z": 444.8739929199219,
+      "id": "J5057_4449",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": -0.08505030212135206,
+      "dz": 0.9963766587536396,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": -0.08505,
+          "dz": 0.996377,
+          "width": 17.6
+        },
+        {
+          "dx": 0.973719,
+          "dz": -0.227752,
+          "width": 42.6
+        },
+        {
+          "dx": -0.012438,
+          "dz": -0.999923,
+          "width": 26.3
+        },
+        {
+          "dx": -0.972014,
+          "dz": 0.234922,
+          "width": 42.6
+        }
+      ]
+    },
+    {
+      "x": 507.4070129394531,
+      "z": 87.66999816894531,
+      "id": "J5074_877",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": 0.999984152068832,
+      "dz": -0.0056298855387289055,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": 0.999984,
+          "dz": -0.00563,
+          "width": 20.1
+        },
+        {
+          "dx": -0.005727,
+          "dz": -0.999984,
+          "width": 17.6
+        },
+        {
+          "dx": 0.002938,
+          "dz": 0.999996,
+          "width": 20.1
+        },
+        {
+          "dx": -0.999994,
+          "dz": 0.003414,
+          "width": 20.1
+        }
+      ]
+    },
+    {
+      "x": 507.6189880371094,
+      "z": 257.9530029296875,
+      "id": "J5076_2580",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": -0.9999873658318013,
+      "dz": 0.005026746141916115,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": -0.999987,
+          "dz": 0.005027,
+          "width": 17.6
+        },
+        {
+          "dx": -0.008915,
+          "dz": 0.99996,
+          "width": 17.6
+        },
+        {
+          "dx": -0.00891,
+          "dz": -0.99996,
+          "width": 17.6
+        }
+      ]
+    },
+    {
+      "x": 575.0180053710938,
+      "z": 257.61199951171875,
+      "id": "J5750_2576",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": -0.9999873263155801,
+      "dz": 0.005034601098158297,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": -0.999987,
+          "dz": 0.005035,
+          "width": 17.6
+        },
+        {
+          "dx": 0.999987,
+          "dz": -0.005091,
+          "width": 17.6
+        },
+        {
+          "dx": -0.001055,
+          "dz": -0.999999,
+          "width": 15.0
+        }
+      ]
+    },
+    {
+      "x": 619.9400024414062,
+      "z": 1198.7110595703125,
+      "id": "J6199_11987",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": 0.7749163508415222,
+      "dz": -0.6320637464523315,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": 0.794309,
+          "dz": -0.607513,
+          "width": 40.0
+        },
+        {
+          "dx": 0.721393,
+          "dz": 0.692526,
+          "width": 16.0
+        },
+        {
+          "dx": -0.794316,
+          "dz": 0.607505,
+          "width": 40.0
+        },
+        {
+          "dx": -0.721429,
+          "dz": -0.692489,
+          "width": 17.0
+        }
+      ]
+    },
+    {
+      "x": 685.7839965820312,
+      "z": 1261.8299560546875,
+      "id": "J6858_12618",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": 0.7381154795677796,
+      "dz": 0.6746743946693299,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": 0.738115,
+          "dz": 0.674674,
+          "width": 17.0
+        },
+        {
+          "dx": 0.479053,
+          "dz": -0.877786,
+          "width": 12.8
+        },
+        {
+          "dx": -0.913694,
+          "dz": -0.406403,
+          "width": 17.0
+        },
+        {
+          "dx": -0.362708,
+          "dz": 0.931903,
+          "width": 12.8
+        }
+      ]
+    },
+    {
+      "x": 720.4180297851562,
+      "z": 256.8760070800781,
+      "id": "J7204_2569",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": -0.9999871913268347,
+      "dz": 0.005061341943446867,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": -0.999987,
+          "dz": 0.005061,
+          "width": 17.6
+        },
+        {
+          "dx": 0.009054,
+          "dz": -0.999959,
+          "width": 15.0
+        },
+        {
+          "dx": 0.999987,
+          "dz": -0.005044,
+          "width": 17.6
+        }
+      ]
+    },
+    {
+      "x": 725.3499755859375,
+      "z": 1478.0179443359375,
+      "id": "J7254_14780",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": 0.11083136607048315,
+      "dz": -0.993839226582927,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": 0.110831,
+          "dz": -0.993839,
+          "width": 24.0
+        },
+        {
+          "dx": -0.932629,
+          "dz": -0.360838,
+          "width": 22.4
+        },
+        {
+          "dx": 0.944061,
+          "dz": 0.329772,
+          "width": 36.5
+        },
+        {
+          "dx": -0.038612,
+          "dz": 0.999254,
+          "width": 19.4
+        }
+      ]
+    },
+    {
+      "x": 780.0560302734375,
+      "z": 962.85498046875,
+      "id": "J7801_9629",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": -0.9330074205981477,
+      "dz": -0.3598571287452717,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": -0.933007,
+          "dz": -0.359857,
+          "width": 15.6
+        },
+        {
+          "dx": 0.923541,
+          "dz": 0.383499,
+          "width": 20.0
+        },
+        {
+          "dx": 0.351583,
+          "dz": -0.936157,
+          "width": 40.0
+        },
+        {
+          "dx": -0.399479,
+          "dz": 0.916742,
+          "width": 34.2
+        }
+      ]
+    },
+    {
+      "x": 784.1329956054688,
+      "z": 86.70500183105469,
+      "id": "J7841_867",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": 0.9999939617737126,
+      "dz": -0.003475113827613413,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": 0.999994,
+          "dz": -0.003475,
+          "width": 20.1
+        },
+        {
+          "dx": -0.999826,
+          "dz": 0.018649,
+          "width": 11.3
+        },
+        {
+          "dx": -0.044374,
+          "dz": -0.999015,
+          "width": 30.4
+        },
+        {
+          "dx": 0.029585,
+          "dz": 0.999562,
+          "width": 30.4
+        }
+      ]
+    },
+    {
+      "x": 791.6690063476562,
+      "z": 256.5150146484375,
+      "id": "J7917_2565",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": -0.04797081051510001,
+      "dz": -0.998848737967128,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": -0.047971,
+          "dz": -0.998849,
+          "width": 30.4
+        },
+        {
+          "dx": 0.999987,
+          "dz": -0.005052,
+          "width": 17.6
+        },
+        {
+          "dx": 0.044324,
+          "dz": 0.999017,
+          "width": 30.4
+        },
+        {
+          "dx": -0.999971,
+          "dz": -0.007574,
+          "width": 11.8
+        }
+      ]
+    },
+    {
+      "x": 797.3309936523438,
+      "z": 374.39599609375,
+      "id": "J7973_3744",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": 0.972014422111712,
+      "dz": -0.23492118509584173,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": 0.972014,
+          "dz": -0.234921,
+          "width": 42.6
+        },
+        {
+          "dx": -0.064203,
+          "dz": -0.997937,
+          "width": 34.2
+        },
+        {
+          "dx": 0.04796,
+          "dz": 0.998849,
+          "width": 30.4
+        },
+        {
+          "dx": -0.965509,
+          "dz": 0.26037,
+          "width": 33.4
+        }
+      ]
+    },
+    {
+      "x": 806.64501953125,
+      "z": 636.3770141601562,
+      "id": "J8066_6364",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": -0.998622177481996,
+      "dz": 0.052476153070867025,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": -0.998622,
+          "dz": 0.052476,
+          "width": 19.4
+        },
+        {
+          "dx": 0.999108,
+          "dz": -0.042234,
+          "width": 26.3
+        },
+        {
+          "dx": 0.029805,
+          "dz": 0.999556,
+          "width": 34.2
+        },
+        {
+          "dx": -0.054692,
+          "dz": -0.998503,
+          "width": 34.2
+        }
+      ]
+    },
+    {
+      "x": 86.61000061035156,
+      "z": 528.489990234375,
+      "id": "J866_5285",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": 0.9986639596045223,
+      "dz": -0.05167490480898087,
+      "crosswalk": true,
+      "stopLine": true,
+      "facilityStatus": "provisional",
+      "facilityEvidence": "Prototype placement from road connections; not field verified.",
+      "facilityCheckedAt": "",
+      "approaches": [
+        {
+          "dx": 0.998664,
+          "dz": -0.051675,
+          "width": 35.0
+        },
+        {
+          "dx": -0.99526,
+          "dz": 0.097251,
+          "width": 35.0
+        },
+        {
+          "dx": 0.313743,
+          "dz": 0.949508,
+          "width": 13.5
+        },
+        {
+          "dx": -0.353781,
+          "dz": -0.935328,
+          "width": 25.0
+        }
+      ]
+    }
+  ],
+  "roads": [],
+  "disabledPortals": []
+}

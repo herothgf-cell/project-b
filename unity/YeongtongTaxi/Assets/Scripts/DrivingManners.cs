@@ -33,7 +33,8 @@ public class DrivingManners : MonoBehaviour {
    if(left||right||through){if(!crossing.penalized&&!(left?crossing.left:right?crossing.right:crossing.through))Deduct("redmovement"+crossing.junction.name,12,left?"좌회전 신호 위반":right?"우회전 전 일시정지 위반":"진행 방향 신호 위반",5);crossing=null;}
   }
   foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)foreach(int sign in new[]{-1,1}){
-   var dir=(axis==0?session.traffic.mainDirection:TrafficSystem.Right(session.traffic.mainDirection))*sign;var stop=j.center-dir*j.StopDistance(axis);float a=Vector3.Dot(before-stop,dir),b=Vector3.Dot(after-stop,dir);float lane=Vector3.Dot(after-j.center,TrafficSystem.Right(dir));string key=j.name+axis+sign;
+   if(!j.signalized)continue;
+   var dir=session.traffic.AxisDirection(j,axis)*sign;var stop=j.center-dir*j.StopDistance(axis);float a=Vector3.Dot(before-stop,dir),b=Vector3.Dot(after-stop,dir);float lane=Vector3.Dot(after-j.center,TrafficSystem.Right(dir));string key=j.name+axis+sign;
    if(b>=-3&&b<=0&&lane>.15f&&lane<j.halfWidth[axis]&&session.taxi.body.velocity.magnitude<.05f)stops[key]=Time.time;
    if(a<0&&b>=0&&lane>.15f&&lane<j.halfWidth[axis]){
     float last;bool stopped=stops.TryGetValue(key,out last)&&Time.time-last<8;stops.Remove(key);

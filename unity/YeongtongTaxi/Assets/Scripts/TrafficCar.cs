@@ -1,7 +1,14 @@
 using UnityEngine;
 public class TrafficCar : MonoBehaviour {
+    public DistrictTraffic district;
+    readonly System.Collections.Generic.HashSet<TrafficStop> released=new System.Collections.Generic.HashSet<TrafficStop>();
+    public bool Visible {get{return !recycling;}}
+    public int CurrentTurn {get{if(route.graphPath==null)return route.turn;foreach(var stop in route.stops)if(distance<=stop.exitDistance&&stop.distance-distance<30)return stop.Movement(route);return 0;}}
+    public void Continue(TrafficRoute next){system.Release(this);released.Clear();stoppedAt=null;route=next;distance=0;completedRoutes++;}
+
     public TrafficJunction stoppedAt;
     public TrafficRoute route; public TrafficSystem system;
+    public TrafficCar obstacleCar { get; private set; }
     public float distance, speed,totalTravel;public int completedRoutes; public bool waitingForSignal, waitingForObstacle, waitingForJunction,entryBlocked;
     public string blockedName="";public int redStops, departures; bool previouslyStopped, recycling;
     Rigidbody body; BoxCollider hit; Renderer[] renderers; Renderer[] brakeLights;
@@ -24,7 +31,7 @@ public class TrafficCar : MonoBehaviour {
         renderers=GetComponentsInChildren<Renderer>(); Place(initial);
     }
     public void Place(float position) {
-        system.Release(this);stoppedAt=null;distance=position;speed=0;recycling=false;SetVisible(true);
+        system.Release(this);released.Clear();stoppedAt=null;distance=position;speed=0;recycling=false;SetVisible(true);
         body.position=route.Position(distance);body.rotation=Quaternion.LookRotation(route.Tangent(distance));transform.SetPositionAndRotation(body.position,body.rotation);Physics.SyncTransforms();
     }
     void SetVisible(bool value){hit.enabled=value;foreach(var r in renderers)r.enabled=value;}
@@ -34,30 +41,32 @@ public class TrafficCar : MonoBehaviour {
             if(Physics.OverlapBox(route.start+Vector3.up*.8f,new Vector3(1.1f,.7f,4),Quaternion.LookRotation(route.direction),(1<<8)|(1<<9)).Length==0) Place(0);
             return;
         }
+        if(district!=null&&distance>=route.length-.01f){if(!district.Continue(this))speed=0;return;}
         float gap=1000;blockedName=""; waitingForSignal=false;waitingForObstacle=false;waitingForJunction=false;
         foreach(var stop in route.stops) {
             float remaining=stop.distance-distance;
             if(remaining>=-.05f&&remaining<.4f&&speed<.05f)stoppedAt=stop.junction;
-            if(distance>stop.exitDistance&&stop.junction.owner==this){stop.junction.owner=null;stop.junction.requests.Remove(this);}
-            if(remaining>=-.05f&&remaining<=1.5f)system.Request(this,stop);
+            if(distance>stop.exitDistance&&released.Add(stop)){system.Release(this,stop.junction);if(stoppedAt==stop.junction)stoppedAt=null;}
+            if(remaining>=-.05f&&remaining<=system.ReservationDistance(this))system.Request(this,stop);
             // Once beyond the stop line, clear the intersection even when its signal changes.
             if(remaining>=-.05f && !system.CanEnter(this,stop)) {
-                if(stop.junction.owner==this)stop.junction.owner=null;
+                system.CancelApproach(this,stop);
                 if(remaining<gap){gap=Mathf.Max(0,remaining);waitingForSignal=true;}
             }
         }
-        float detection=Mathf.Max(8,speed*speed/6+6);
+        obstacleCar=null;float detection=Mathf.Max(8,speed*speed/6+6);
         for(float ahead=.5f;ahead<detection+3;ahead+=.5f){float at=Mathf.Min(route.length,distance+ahead);var facing=route.Tangent(at);bool blocked=false;
-            foreach(var h in Physics.OverlapBox(route.Position(at)+Vector3.up*.85f,new Vector3(.95f,.55f,2.25f),Quaternion.LookRotation(facing),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore))if(h.attachedRigidbody!=body){blockedName=h.name;blocked=true;break;}
+            foreach(var h in Physics.OverlapBox(route.Position(at)+Vector3.up*.85f,new Vector3(.95f,.55f,2.25f),Quaternion.LookRotation(facing),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore))if(h.attachedRigidbody!=body){blockedName=h.name;obstacleCar=h.GetComponentInParent<TrafficCar>();blocked=true;break;}
             if(blocked){float obstacleGap=Mathf.Max(0,ahead-1.5f);if(obstacleGap<gap){gap=obstacleGap;waitingForObstacle=true;waitingForSignal=false;}break;}
         }
-        entryBlocked=false;foreach(var stop in route.stops){float remaining=stop.distance-distance;if(remaining>=-.05f&&remaining<8&&system.CanEnter(this,stop)){
-            // Only the head of a queue can reserve; a follower must never own its leader's junction.
-            bool blocked=waitingForObstacle&&gap<remaining+2;entryBlocked|=blocked;
-            if(blocked&&stop.junction.owner==this)stop.junction.owner=null;
-            if(remaining>1.5f||blocked||!system.MayEnter(this,stop)){gap=Mathf.Min(gap,Mathf.Max(0,remaining));waitingForJunction=true;}
+        entryBlocked=false;foreach(var stop in route.stops){float remaining=stop.distance-distance;if(remaining>=-.05f&&remaining<=system.ReservationDistance(this)&&system.CanEnter(this,stop)){
+            // Do not reserve a junction when a queue blocks the path to its stop line.
+            bool blocked=waitingForObstacle&&gap<remaining+2&&!system.MovingLeader(this,obstacleCar);entryBlocked|=blocked;
+            if(blocked||!system.MayEnter(this,stop)){system.CancelApproach(this,stop);gap=Mathf.Min(gap,Mathf.Max(0,remaining));waitingForJunction=true;}
         }}
-        float target=TrafficRules.SafeSpeed(gap,route.turn!=0?4.5f:route.axis==0?9:7);
+        float cruise=route.turn!=0?4.5f:route.axis==0?9:7;
+        if(district!=null){float bend=Vector3.Angle(route.Tangent(distance),route.Tangent(Mathf.Min(route.length,distance+14)));cruise=bend>12||CurrentTurn!=0?4.5f:9;}
+        float target=TrafficRules.SafeSpeed(gap,cruise);
         float previous=speed; speed=Mathf.MoveTowards(speed,target,(target<speed?5:2.2f)*Time.fixedDeltaTime);
         float step=Mathf.Min(speed*Time.fixedDeltaTime,Mathf.Max(0,gap)); distance+=step;totalTravel+=step;
         if(step<.0001f)speed=0;
@@ -67,8 +76,8 @@ public class TrafficCar : MonoBehaviour {
         if(stopped)previouslyStopped=true;
         body.MovePosition(route.Position(distance));body.MoveRotation(Quaternion.LookRotation(route.Tangent(distance)));
         foreach(var lamp in brakeLights)lamp.sharedMaterial=speed<.2f||speed<previous?brakeOn:brakeOff;
-        bool blinking=route.turn!=0&&distance<route.stops[0].exitDistance&&Time.time%.8f<.4f;
-        for(int i=0;i<indicators.Length;i++)indicators[i].sharedMaterial=blinking&&(i%2==0?route.turn<0:route.turn>0)?indicatorOn:indicatorOff;
-        if(distance>=route.length)Recycle();
+        int currentTurn=CurrentTurn;bool blinking=currentTurn!=0&&Time.time%.8f<.4f;
+        for(int i=0;i<indicators.Length;i++)indicators[i].sharedMaterial=blinking&&(i%2==0?currentTurn<0:currentTurn>0)?indicatorOn:indicatorOff;
+        if(distance>=route.length){distance=route.length;if(district!=null){if(!district.Continue(this))speed=0;}else Recycle();}
     }
 }

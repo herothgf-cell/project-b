@@ -43,8 +43,9 @@ public class TaxiController : MonoBehaviour {
     }
     void FixedUpdate() {
         var manual=DriveMath.Resolve(throttle,Speed,brake);
+        bool assistedSteering=assistance&&assistance.Active&&(!automated||assistance.allowAutomated);
         if(assistance)assistance.Apply(ref steer,ref manual);
-        var demand=DriveMath.CornerAssist(manual,Speed,steer);
+        var demand=assistedSteering?manual:DriveMath.CornerAssist(manual,Speed,steer);
         CornerAssisting=demand.motor<manual.motor||demand.brake>manual.brake;
         for(int i=0;i<4;i++) { wheels[i].steerAngle=i<2?steer*DriveMath.SteerAngle(Speed*3.6f):0; wheels[i].motorTorque=i>=2?demand.motor*1100:0; wheels[i].brakeTorque=demand.brake*3500; }
         body.AddForce(Vector3.down*body.velocity.sqrMagnitude*6);
@@ -55,6 +56,7 @@ public class TaxiController : MonoBehaviour {
             body.AddTorque(tilt*35-rollPitch*8,ForceMode.Acceleration);
         }
     }
+    public void SetSpawn(Vector3 position,Quaternion rotation){spawn=position;spawnRotation=rotation;}
     public void ResetTaxi() {
         if(assistance)assistance.SetActive(false);
         // A reset must not teleport the player inside an occupied traffic lane.

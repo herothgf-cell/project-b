@@ -1,0 +1,117 @@
+{
+  "id": "eungye",
+  "rawDirectory": "data/raw/ngii/eungye",
+  "output": "unity/YeongtongTaxi/Assets/Resources/eungye-map.json",
+  "acquisitionStatus": "Two actual 2025 1:5000 SHP packages supplied; local planar crop, no road elevation/grade separation reconstruction.",
+  "bounds": [
+    181900,
+    537200,
+    184000,
+    538950
+  ],
+  "requiredTiles": [
+    {
+      "tile": "37612022",
+      "crs": {
+        "status": "verified",
+        "definition": "EPSG:5186",
+        "wkt": "PROJCS[\"Korea_2000_Central_Belt_2010\",GEOGCS[\"GCS_Korea 2000\",DATUM[\"D_Korea_2000\",SPHEROID[\"GRS_1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",38],PARAMETER[\"central_meridian\",127],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",200000],PARAMETER[\"false_northing\",600000],UNIT[\"Meter\",1]]",
+        "units": "metre",
+        "evidence": "2025 user-supplied NGII SHP package: every PRJ has identical Korea_2000_Central_Belt_2010 WKT; XML gmd:code explicitly EPSG:5186. TM origin38N127E, FE200000,FN600000,k1,GRS80,metre; checked 2026-10-15."
+      },
+      "metadataReview": {
+        "status": "verified",
+        "evidence": "Original ISO XML has mismatched tag line181. Kept original intact; narrowly recovered tile ID, production2025, denominator5000 and EPSG5186. Tile independently checked against H0010000 DBF; projection against every archive PRJ. Project title 1:1000 is not sheet scale."
+      }
+    },
+    {
+      "tile": "37612023",
+      "crs": {
+        "status": "verified",
+        "definition": "EPSG:5186",
+        "wkt": "PROJCS[\"Korea_2000_Central_Belt_2010\",GEOGCS[\"GCS_Korea 2000\",DATUM[\"D_Korea_2000\",SPHEROID[\"GRS_1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",38],PARAMETER[\"central_meridian\",127],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",200000],PARAMETER[\"false_northing\",600000],UNIT[\"Meter\",1]]",
+        "units": "metre",
+        "evidence": "2025 user-supplied NGII SHP package: every PRJ has identical Korea_2000_Central_Belt_2010 WKT; XML gmd:code explicitly EPSG:5186. TM origin38N127E, FE200000,FN600000,k1,GRS80,metre; checked 2026-10-15."
+      },
+      "metadataReview": {
+        "status": "verified",
+        "evidence": "Original ISO XML has mismatched tag line181. Kept original intact; narrowly recovered tile ID, production2025, denominator5000 and EPSG5186. Tile independently checked against H0010000 DBF; projection against every archive PRJ. Project title 1:1000 is not sheet scale."
+      }
+    }
+  ],
+  "roadPolicy": {
+    "status": "gameplay-provisional",
+    "minimumWidth": 6,
+    "unresolvedDirections": "exclude",
+    "excludeRoadClasses": [
+      "고속국도"
+    ],
+    "evidence": "Playable local-road selection, not legal-access adjudication: omit roads under6m, one-way source records whose vertex-order orientation is unverified, and source-class motorways requiring grade-separated modelling. Source records and omission reasons retained; no invented directions."
+  },
+  "reviewedOverrides": [],
+  "landmarks": [
+    {
+      "name": "은계호수타운3",
+      "kind": "source-building",
+      "feature": "37612023:B0010000:1146",
+      "status": "verified",
+      "evidence": "NGII2025 SHP B0010000 record1146, source 명칭/주기; feature-centre label anchor, not an entrance survey."
+    },
+    {
+      "name": "은계호수타운1",
+      "kind": "source-building",
+      "feature": "37612023:B0010000:1252",
+      "status": "verified",
+      "evidence": "NGII2025 SHP B0010000 record1252, source 명칭/주기; feature-centre label anchor, not an entrance survey."
+    },
+    {
+      "name": "은행동행정복지센터",
+      "kind": "source-building",
+      "feature": "37612022:B0010000:900",
+      "status": "verified",
+      "evidence": "NGII2025 SHP B0010000 record900, source 명칭/주기; feature-centre label anchor, not an entrance survey."
+    },
+    {
+      "name": "소래저수지 · 은계호수공원",
+      "kind": "source-water",
+      "feature": "37612023:E0052114:5",
+      "status": "verified",
+      "evidence": "NGII2025 37612023 N3A_E0052114 DBF record5 명칭=소래저수지, 면적72192.29m²; single-ring SHP polygon. Korea Tourism identifies Eungye Lake Park at 은행동601-150: https://korean.visitkorea.or.kr/detail/ms_detail.do?cotid=5e9e675d-e381-4df0-8f91-88aa81830cd2"
+    }
+  ],
+  "targets": [
+    {
+      "name": "T1",
+      "sourceX": 182339.594,
+      "sourceY": 538545.811,
+      "leftTurnMode": 0,
+      "status": "gameplay-provisional",
+      "evidence": "2025 NGII37612023 A0020000 four-way endpoint shared by records441,1526,1571,1668. Actual source junction west/southwest of 소래저수지; training signal/turn rules are not surveyed real traffic controls."
+    },
+    {
+      "name": "T2",
+      "sourceX": 182519.94,
+      "sourceY": 538398.711,
+      "leftTurnMode": 0,
+      "status": "gameplay-provisional",
+      "evidence": "2025 NGII37612023 A0020000 four-way endpoint shared by records607,1308,1464,1568. Actual source junction west/southwest of 소래저수지; training signal/turn rules are not surveyed real traffic controls."
+    },
+    {
+      "name": "T3",
+      "sourceX": 182585.784,
+      "sourceY": 538461.83,
+      "leftTurnMode": 0,
+      "status": "gameplay-provisional",
+      "evidence": "2025 NGII37612023 A0020000 four-way endpoint shared by records610,737,860,1233. Actual source junction west/southwest of 소래저수지; training signal/turn rules are not surveyed real traffic controls."
+    }
+  ],
+  "areas": [
+    {
+      "name": "소래저수지",
+      "kind": "water",
+      "feature": "37612023:E0052114:5",
+      "status": "verified",
+      "evidence": "NGII2025 37612023 N3A_E0052114 DBF record5 명칭=소래저수지, 면적72192.29m²; single-ring SHP polygon. Korea Tourism identifies Eungye Lake Park at 은행동601-150: https://korean.visitkorea.or.kr/detail/ms_detail.do?cotid=5e9e675d-e381-4df0-8f91-88aa81830cd2"
+    }
+  ]
+}

@@ -14,8 +14,8 @@ public class BusinessProgress : MonoBehaviour {
  public bool CanAccept {get{return !enabledCampaign||ledger.CanAccept;}}
  public void Initialize(DriveSession owner){
   session=owner;var args=Environment.GetCommandLineArgs();
-  foreach(var arg in args)if(arg.EndsWith("Test")){testMode=true;if(arg!="-economyTest")enabledCampaign=false;}
-  if(Array.IndexOf(args,"-assistedTrial")>=0||RoadRulesTrial.Enabled){testMode=true;enabledCampaign=false;}
+  foreach(var arg in args)if(arg.EndsWith("Test")){testMode=true;if(arg!="-economyTest"&&arg!="-hybridTest"&&arg!="-hybridQuickTest")enabledCampaign=false;}
+  if(Array.IndexOf(args,"-assistedTrial")>=0||RoadRulesTrial.Enabled||HdRouteTrial.Enabled){testMode=true;enabledCampaign=false;}
   SavePath=testMode?Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts","economy-player-checkpoint.json")):Path.Combine(Application.persistentDataPath,"campaign-v1.json");
   ledger=new EconomyLedger(new EconomySettings());
   if(!testMode){
@@ -56,7 +56,7 @@ public class BusinessProgress : MonoBehaviour {
   if(ledger.State!=BusinessState.Won&&ledger.State!=BusinessState.Lost)return;
   var next=new EconomyLedger(new EconomySettings());if(!WriteCheckpoint(next))return;ledger=next;PrepareDay();
  }
- void PrepareDay(){session.jobs.ClearForDay();session.taxi.ResetTaxi();session.manners.BeginRide();session.paused=false;notice="";Time.timeScale=1;}
+ void PrepareDay(){session.jobs.ClearForDay();if(session.roadConditions)session.roadConditions.ResetForDay();session.taxi.ResetTaxi();session.manners.BeginRide();session.paused=false;notice="";Time.timeScale=1;}
  public bool SaveCheckpoint(){return WriteCheckpoint(ledger);}
  bool WriteCheckpoint(EconomyLedger value){
   try{

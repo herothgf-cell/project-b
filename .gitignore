@@ -11,6 +11,12 @@ data/raw/
 data/inspection/
 unity/**/Assets/Resources/drive-map.json
 unity/**/Assets/Resources/drive-map.json.meta
+unity/**/Assets/Resources/eungye-map.json
+unity/**/Assets/Resources/eungye-map.json.meta
+unity/**/Assets/Resources/route42-map.json
+unity/**/Assets/Resources/route42-map.json.meta
+unity/**/Assets/Resources/eungye-hybrid-map.json
+unity/**/Assets/Resources/eungye-hybrid-map.json.meta
 # Local installers and editor-generated files.
 /INNORIX-Agent.exe
 /*.pdf

@@ -15,8 +15,4 @@ public sealed class AssistedDrivingPolicy {
     public static bool RearRisk(float gap,float rearSpeed,float ownSpeed) {
         return gap>0&&rearSpeed>ownSpeed&&gap/(rearSpeed-ownSpeed)<3;
     }
-    public static float CruiseLimit(bool changing,int activeTurn,int upcomingTurn,float remaining) {
-        if(activeTurn!=0||upcomingTurn!=0&&remaining<24)return 4.5f;
-        return changing?7:11.1f;
-    }
 }

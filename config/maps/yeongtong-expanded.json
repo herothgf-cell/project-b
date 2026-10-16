@@ -1,0 +1,16 @@
+{
+  "id": "yeongtong-expanded",
+  "rawDirectory": "data/raw/ngii",
+  "output": "unity/YeongtongTaxi/Assets/Resources/drive-map.json",
+  "acquisitionStatus": "blocked: adjacent packages and full CRS definitions required; candidate coverage must be reviewed against actual sheet boundaries",
+  "candidateEvidence": "docs/map-acquisition-check.md: NGII listing confirmed these surrounding sheets; listing alone does not prove the intended southern area is covered.",
+  "requiredTiles": [
+    {"tile": "377092296", "crs": {"status": "unverified", "definition": "", "units": "metre", "evidence": "GRS80 only; full projection unconfirmed"}},
+    {"tile": "377092297", "crs": {"status": "unverified", "definition": "", "units": "metre", "evidence": "Package not supplied"}},
+    {"tile": "377130206", "crs": {"status": "unverified", "definition": "", "units": "metre", "evidence": "Package not supplied"}},
+    {"tile": "377130207", "crs": {"status": "unverified", "definition": "", "units": "metre", "evidence": "Package not supplied"}}
+  ],
+  "reviewedOverrides": [],
+  "landmarks": [],
+  "targets": []
+}

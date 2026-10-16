@@ -10,7 +10,10 @@ public static class DriveMath {
         double angle=Math.Min(1,Math.Abs(steering))*32*Math.PI/180;
         return (float)Math.Sqrt(5*2.6/Math.Max(.001,Math.Tan(angle)));
     }
-    public static Demand CornerAssist(Demand demand,float speedMs,float steering) {
+    public static Demand CornerAssist(Demand demand,float speedMs,float steering,bool physicalSteering=false) {
+        // Assisted steering is normalized against the speed-dependent wheel limit.
+        // Convert it back to the actual wheel angle before applying the corner cap.
+        if(physicalSteering)steering*=SteerAngle(speedMs*3.6f)/32f;
         // Keep the existing lateral-grip limit, but stop accelerating away from a tight turn.
         if(speedMs<=.5f||Math.Abs(steering)<.2f)return demand;
         float target=CornerSpeed(steering);
