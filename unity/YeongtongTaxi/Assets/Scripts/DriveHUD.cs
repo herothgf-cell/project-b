@@ -65,7 +65,7 @@ public class DriveHUD : MonoBehaviour {
     if(GUI.Button(new Rect(x+20,y+70+i*42,440,35),MapCatalog.Name(id)+(available?(MapCatalog.NextRegion==id?" · 다음 실행 지역":" · 다음 실행 시 선택"):" · 지도 자료·현장 검토 대기")))MapCatalog.SelectNext(id);
    }
    GUI.enabled=true;
-   GUI.Label(new Rect(x+20,y+164,440,55),"지역 변경은 게임을 다시 실행할 때 적용됩니다.\n영업 마감(N) 후 종료하면 정산 결과가 저장됩니다.",small);
+   GUI.Label(new Rect(x+20,y+164,440,55),string.IsNullOrEmpty(MapCatalog.LockedRegion)?"지역 변경은 게임을 다시 실행할 때 적용됩니다.\n영업 마감(N) 후 종료하면 정산 결과가 저장됩니다.":"은계 전용 빌드 · 현재 지역으로 시작합니다.\n영업 마감(N) 후 종료하면 정산 결과가 저장됩니다.",small);
    if(GUI.Button(new Rect(x+20,y+230,440,40),"계속 운전")){session.paused=false;Time.timeScale=1;}
    if(GUI.Button(new Rect(x+20,y+282,440,40),"게임 종료 (완료한 정산까지 저장)"))Application.Quit();
   }

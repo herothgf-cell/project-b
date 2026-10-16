@@ -151,6 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7907702dfe379146b92aa5cd2c5991d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startupRegion: eungye
   taxi: {fileID: 0}
   world: {fileID: 0}
   traffic: {fileID: 0}

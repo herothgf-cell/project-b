@@ -1,5 +1,6 @@
 using UnityEngine;
 public class DriveSession : MonoBehaviour {
+    public string startupRegion="";
     public TaxiController taxi; public WorldBuilder world; public TrafficSystem traffic; public DrivingCamera drivingCamera; public TaxiSignals signals;
     public CockpitMirrors mirrors;public PassengerJobs jobs;public AssistCamera assist;public RoadEnvironment roadEnvironment;public DrivingManners manners;
     public BusinessProgress business; public DrivingLaw law; public ServiceStops services; public PassengerRequestUI requests;
@@ -7,6 +8,7 @@ public class DriveSession : MonoBehaviour {
     public RoadConditions roadConditions;
     public bool paused; public int visits; bool inside;
     void Awake() {
+        MapCatalog.LockedRegion=startupRegion;
         foreach(var arg in System.Environment.GetCommandLineArgs())if(arg.EndsWith("Test"))Application.runInBackground=true;
         Application.targetFrameRate=60; QualitySettings.vSyncCount=0;
         world=new GameObject("NGII tile").AddComponent<WorldBuilder>(); world.Build();
