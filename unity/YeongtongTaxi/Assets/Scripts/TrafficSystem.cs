@@ -158,8 +158,20 @@ public class TrafficSystem : MonoBehaviour {
     }
     // Ask before comfortable braking would begin, so an available green does not become a stop target.
     public float ReservationDistance(TrafficCar car){return Mathf.Max(8,car.speed*car.speed/6+3);}
-    bool SameStraightStream(TrafficCar a,TrafficCar b){
-        if(!a||!b||a.CurrentTurn!=0||b.CurrentTurn!=0)return false;if(a.route==b.route)return true;
+    bool SameTrafficStream(TrafficCar a,TrafficCar b){
+        if(!a||!b)return false;
+        // A shared left-turn connector is one following stream, even while the
+        // leader has rotated away from the follower's approach heading.
+        if(a.CurrentTurn<0&&a.route.graphPath!=null&&b.route.graphPath!=null){
+            foreach(var entry in a.route.stops){if(entry.Movement(a.route)>=0||a.distance>entry.exitDistance||entry.distance-a.distance>30)continue;
+                bool shared=false;
+                foreach(int edge in a.route.graphPath.edges)if(roadMap.hdEdges[edge].ruleId==entry.junction.name&&roadMap.hdEdges[edge].turn<0&&b.route.graphPath.edges.Contains(edge)){shared=true;break;}
+                if(!shared)continue;
+                float deviation;float leaderAt=a.route.graphPath.path.Project(b.transform.position,out deviation);
+                if(Mathf.Abs(leaderAt-a.distance)<60&&deviation<.8f&&Vector3.Dot(a.route.Tangent(leaderAt),b.transform.forward)>.95f)return true;
+            }
+        }
+        if(a.CurrentTurn!=0||b.CurrentTurn!=0)return false;if(a.route==b.route)return true;
         if(a.route.graphPath==null||b.route.graphPath==null||Vector3.Dot(a.transform.forward,b.transform.forward)<.95f)return false;
         float error;float at=a.route.graphPath.path.Project(b.transform.position,out error);return error<.8f&&Mathf.Abs(at-a.distance)<60;
     }
@@ -168,7 +180,7 @@ public class TrafficSystem : MonoBehaviour {
         // Detection alone does not mean a stopped queue: a whole convoy can see the
         // car ahead while maintaining its cruise speed. Strictly increasing route
         // distance makes this chain acyclic and rejects static/stopped obstructions.
-        while(SameStraightStream(car,other)&&other.enabled&&Ahead(car,other)&&other.speed>1){
+        while(SameTrafficStream(car,other)&&other.enabled&&Ahead(car,other)&&other.speed>1){
             if(!other.waitingForObstacle)return true;
             car=other;other=other.obstacleCar;
         }
@@ -178,11 +190,11 @@ public class TrafficSystem : MonoBehaviour {
         var j=stop.junction;
         Request(car,stop);float mine=j.requests[car];
         if(!CanEnter(car,stop))return false;
-        foreach(var reserved in j.reservations)if(reserved!=car&&!SameStraightStream(car,reserved))return false;
-        if(!j.reservations.Contains(car))foreach(var pair in j.requests){var other=pair.Key;if(other==car||!other||!other.enabled||other.entryBlocked||SameStraightStream(car,other))continue;foreach(var approach in other.route.stops)if(approach.junction==j&&approach.distance-other.distance>=-.05f&&approach.distance-other.distance<=ReservationDistance(other)&&CanEnter(other,approach)&&ExitClear(other,approach)){if(pair.Value<mine||(pair.Value==mine&&other.GetInstanceID()<car.GetInstanceID()))return false;}}
+        foreach(var reserved in j.reservations)if(reserved!=car&&!SameTrafficStream(car,reserved))return false;
+        if(!j.reservations.Contains(car))foreach(var pair in j.requests){var other=pair.Key;if(other==car||!other||!other.enabled||other.entryBlocked||SameTrafficStream(car,other))continue;foreach(var approach in other.route.stops)if(approach.junction==j&&approach.distance-other.distance>=-.05f&&approach.distance-other.distance<=ReservationDistance(other)&&CanEnter(other,approach)&&ExitClear(other,approach)){if(pair.Value<mine||(pair.Value==mine&&other.GetInstanceID()<car.GetInstanceID()))return false;}}
 
         // A moving same-lane leader is protected by the car-following gap check. All other
-        // occupied movements stay exclusive, including stopped leaders and every turn.
+        // occupied movements stay exclusive, including stopped leaders and conflicting turns.
         foreach(var hit in Physics.OverlapBox(j.center+Vector3.up*.85f,new Vector3(j.halfWidth[0]+.4f,.55f,j.halfWidth[1]+.4f),Quaternion.LookRotation(AxisDirection(j,0)),(1<<8)|(1<<9))){var other=hit.GetComponentInParent<TrafficCar>();if(other!=car&&!MovingLeader(car,other))return false;}
         if(!ExitClear(car,stop))return false;
         j.reservations.Add(car);if(!j.owner)j.owner=car;return true;
