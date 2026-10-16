@@ -44,5 +44,5 @@ public class RightTurnSituation : MonoBehaviour {
   sign.text="가상 우회전 R"+(variant>=5?5:variant)+" · "+junction.name+"\n전방 "+ColorName(o.forward)+" / 전용 "+(o.dedicated?ColorName(o.right):"없음")+"\n보행 신호 "+(o.pedestrianGreen?"녹색":"적색")+" · "+(o.pedestrian==PedestrianState.None?"사람 없음":o.pedestrian==PedestrianState.Intending?"횡단 의도":"횡단 중");
  }
  static string ColorName(SignalColor color){return color==SignalColor.Green?"녹색":color==SignalColor.Red?"적색":"황색";}
- void OnGUI(){if(!enabled||!session.ShowHints||session.business.ShowingSummary||session.business.preparing||session.law.HistoryOpen||session.services.open)return;var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14};GUI.Label(new Rect(420,16,660,28),"F6 가상 우회전 조건 선택 (빈차·정차·구간 80m 밖) · "+(Active?"R"+(variant>=5?5:variant):"꺼짐"),style);}
+ void OnGUI(){if(PracticeSession.Enabled||!enabled||!session.ShowHints||session.business.ShowingSummary||session.business.preparing||session.law.HistoryOpen||session.services.open)return;var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14};GUI.Label(new Rect(420,16,660,28),"F6 가상 우회전 조건 선택 (빈차·정차·구간 80m 밖) · "+(Active?"R"+(variant>=5?5:variant):"꺼짐"),style);}
 }

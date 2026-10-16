@@ -52,7 +52,7 @@ public enum PedestrianState { None, Intending, Crossing, Unknown }
  public string junction;public int axis;public float stop,exit;public float[] points;
  public PracticeRoute Copy(){var c=(PracticeRoute)MemberwiseClone();c.points=points==null?null:(float[])points.Clone();return c;}
 }
-[Serializable] public class PracticeResult {public string sourceId,action;public int events,score,validFindings;public string EvaluationText(){return validFindings==0?"유효 평가 없음":score+"점 / 유효 "+validFindings+"건";}}
+[Serializable] public class PracticeResult {public string sourceId,action,latestOutcome,feedback;public int events,score,validFindings;public string EvaluationText(){if(!string.IsNullOrEmpty(latestOutcome))return latestOutcome;return validFindings==0?"유효 평가 없음":score+"점 / 유효 "+validFindings+"건";}}
 [Serializable] public class PassengerResult {
  public string tripId,pickup,destination,outcome,request,mannerReason;
  public int day,quoted,paid,score,required;public float elapsed;

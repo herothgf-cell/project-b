@@ -6,7 +6,7 @@ public class DriveSession : MonoBehaviour {
     public BusinessProgress business; public DrivingLaw law; public ServiceStops services; public PassengerRequestUI requests;
     public AssistedDriveController assisted;
     public RoadConditions roadConditions;
-    public bool PracticeMenuOpen {get{var p=GetComponent<PracticeSession>();return p&&p.PickerOpen;}}
+    public bool PracticeMenuOpen {get{var p=GetComponent<PracticeSession>();var c=GetComponent<PracticeCoach>();return p&&p.PickerOpen||c&&c.ResultOpen;}}
     public bool PracticeBusy {get{var p=GetComponent<PracticeSession>();return p&&p.Busy;}}
     public bool paused;public bool ShowHints; public int visits; bool inside;
     void Awake() {
@@ -29,7 +29,7 @@ public class DriveSession : MonoBehaviour {
         jobs=gameObject.AddComponent<PassengerJobs>();jobs.Initialize(this);
         if(world.map.HasHd){jobs.enabled=world.map.hybrid;assisted.hd.nav=jobs.nav;}
         business=gameObject.AddComponent<BusinessProgress>();business.Initialize(this);gameObject.AddComponent<BusinessHUD>().session=this;
-        law=taxi.gameObject.AddComponent<DrivingLaw>();law.session=this;services=gameObject.AddComponent<ServiceStops>();services.session=this;requests=gameObject.AddComponent<PassengerRequestUI>();requests.session=this;gameObject.AddComponent<RightTurnSituation>().session=this;gameObject.AddComponent<ExitQueueObserver>().session=this;gameObject.AddComponent<ExitQueueSituation>().session=this;gameObject.AddComponent<PracticeSession>().session=this;
+        law=taxi.gameObject.AddComponent<DrivingLaw>();law.session=this;services=gameObject.AddComponent<ServiceStops>();services.session=this;requests=gameObject.AddComponent<PassengerRequestUI>();requests.session=this;gameObject.AddComponent<RightTurnSituation>().session=this;gameObject.AddComponent<ExitQueueObserver>().session=this;gameObject.AddComponent<ExitQueueSituation>().session=this;gameObject.AddComponent<PracticeSession>().session=this;gameObject.AddComponent<PracticeCoach>().session=this;
         roadConditions=gameObject.AddComponent<RoadConditions>();roadConditions.Initialize(this);jobs.nav.conditions=roadConditions;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-districtTrafficTest")>=0)gameObject.AddComponent<DistrictTrafficSmokeTest>().session=this;
         assist=new GameObject("Automatic camera monitor").AddComponent<AssistCamera>();assist.session=this;
@@ -51,6 +51,7 @@ public class DriveSession : MonoBehaviour {
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadConditionsTest")>=0)gameObject.AddComponent<RoadConditionsSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-eungyeTest")>=0)gameObject.AddComponent<EungyeSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadIndexTest")>=0)gameObject.AddComponent<RoadEnvironmentIndexSmokeTest>();
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-practiceFeedbackTest")>=0)gameObject.AddComponent<PracticeFeedbackSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-practiceUXTest")>=0)gameObject.AddComponent<PracticeUXSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-completionTest")>=0)gameObject.AddComponent<CompletionSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-campaignTest")>=0)gameObject.AddComponent<CampaignSmokeTest>().session=this;

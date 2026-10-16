@@ -57,3 +57,12 @@
 - `practice-picker-crossing.png`, `practice-picker-red.png`, `practice-preparation-details.png`: 1280×720 캡처 확인. UI 메서드 기반 자동 검사이며 실물 패드/수동 완주 검증은 아니다.
 - 결제/이용 완료 안내만 4초 후 제거한다. 갱신·납부의 영구 상태 표시와 저장 실패 메시지는 유지한다.
 - 최종 `PrototypeBuild.BuildHybrid` 종료 0, 부모/연습 창 UX 검사·`-contentFlowTest`·`-completionTest` 모두 Player 종료 0. 독립 코드 검토 후 초기화 직후 선택 덮어쓰기 경계를 차단하고 다시 검증했다.
+
+## 이번 시도 연습 피드백 (2026-10-16)
+
+- 실제 법규 관찰기를 사용해 정지선/횡단보도 안내, 정지 인식, 이번 시도 결과와 교정 행동을 표시한다. 판정 지점에서 즉시 멈추지 않고 회전 후 횡단 구간을 벗어난 뒤 결과 창을 연다.
+- PracticeFeedbackTests: 구현 전 피드백 모델 누락 실패를 확인하고, 미완료·관찰 불명·정지 누락·전용 신호·보행자·다른 방향 결과 검사 통과. 전체 C# 모델 8종 통과.
+- 최종 PrototypeBuild.BuildHybrid 종료 0. practice-feedback-test.txt success=True, Player 종료 0. 실제 observer에 위치를 단계적으로 입력한 8개 사례: 적색 정지 성공/누락, 전용 적색/녹색, 횡단 중 통과/대기 후 통과, 일반 녹색, 잘못된 직진. 각 시도 단일 사건·과거 기록 보존·결과 반복 표시 방지 검사.
+- 독립 코드 검토에서 R/패드 복귀 시 이전 판정이 남는 문제를 발견해 RequestReset을 같은 조건 재시도에 연결했다. 8개 사례 모두 복귀 후 현재 판정·정지 인식 초기화 및 이력 보존을 재검사했다. 정지 인식 표시도 실제 observer의 취소 상태를 즉시 따르도록 수정했다.
+- 최종 -practiceUXTest와 -completionTest Player 모두 종료 0. 선택창·연습 분리·결제 및 기존 통합 동작 회귀 검사 통과. 사용자 영업 저장과 실행 중인 게임을 종료하거나 초기화하지 않았다.
+- practice-feedback-progress/missed-stop/success.png의 1280×720 안내·결과 가독성을 확인했다. kinematic 위치 입력 자동 시험이며 수동 조향 완주나 실물 패드 시험이 아니다. 결과 문구는 관찰한 신호·정지·보행 조건에 한정하고 실제 도로 전체 법규나 시선 확인을 평가하지 않는다.

@@ -22,13 +22,14 @@ public class PracticeSession : MonoBehaviour {
   bool ok=Begin(new LawEvent{id=session.law.ids.Next("practice"),day=session.business.ledger.Day,scenario="R"+SelectedVariant},session.business.preparing);
   if(ok)CancelPicker();return ok;
  }
+ public bool RetryRight(){if(!Enabled||!ready||Busy)return false;SelectedVariant=GetComponent<RightTurnSituation>().variant;if(!StartRight(SelectedVariant))return false;changedConditions=true;PickerOpen=false;session.paused=false;Time.timeScale=1;return true;}
  bool StartRight(int variant){
   var situation=GetComponent<RightTurnSituation>();var j=situation.junction;if(j==null)return false;
   GetComponent<ExitQueueSituation>().Stop();situation.Stop();
   var dir=session.traffic.AxisDirection(j,0);var right=TrafficSystem.Right(dir);var taxi=session.taxi;
   taxi.SetSpawn(j.center-dir*110+right*(j.halfWidth[0]-1.75f)+Vector3.up*.65f,Quaternion.LookRotation(dir));taxi.ResetTaxi();
   session.jobs.nav.Clear();if(!situation.Select(variant))return false;session.law.ResetObservation();session.manners.Suppress(1);
-  var goal=j.center+right*70-dir*1.75f;float at;int edge=session.jobs.nav.hd.Nearest(goal,right,out at);session.jobs.nav.SetHdDestination(edge,at);return true;
+  var goal=j.center+right*70-dir*1.75f;float at;int edge=session.jobs.nav.hd.Nearest(goal,right,out at);session.jobs.nav.SetHdDestination(edge,at);GetComponent<PracticeCoach>().BeginAttempt(situation);return true;
  }
  public bool Begin(LawEvent record,bool preparation=false){
   if(session.business.restartPrompt||Enabled||Busy||!(session.business.ShowingSummary||preparation&&session.business.preparing||session.paused&&!session.services.open&&!session.law.HistoryOpen&&!session.business.taxPrompt&&session.business.pendingPayment<0)||record==null||Application.isEditor)return false;
@@ -50,6 +51,7 @@ public class PracticeSession : MonoBehaviour {
  void OnApplicationQuit(){if(Enabled)WriteResult();}
  void WriteResult(){var args=Environment.GetCommandLineArgs();int output=Array.IndexOf(args,"-practiceResult"),source=Array.IndexOf(args,"-practiceSource");if(output<0||output+1>=args.Length||source<0||source+1>=args.Length||session==null||session.law==null)return;
   var events=session.law.ledger.Events;var result=new PracticeResult{sourceId=args[source+1],events=events.Length,validFindings=session.law.ledger.ValidForDay(session.law.Day),score=session.law.ledger.Score(session.law.Day),action=(changedConditions?"조건 변경 포함 · ":"")+(events.Length==0?"종료 · 평가 장면 미완료":events[events.Length-1].action)};
+  var coach=GetComponent<PracticeCoach>();if(coach&&coach.Active){var feedback=coach.SnapshotFeedback();result.latestOutcome=feedback.outcome;result.feedback=feedback.Details();}
   try{System.IO.File.WriteAllText(args[output+1],JsonUtility.ToJson(result));}catch(Exception e){Debug.LogWarning(e.Message);}
  }
  IEnumerator AutoFinish(){yield return new WaitForSecondsRealtime(3);FinishPractice();}
@@ -82,6 +84,7 @@ public class PracticeSession : MonoBehaviour {
    if(GUI.Button(new Rect(x+32+col,y+505,col,43),"취소 · 돌아가기",style))CancelPicker();return;
   }
   if(!Enabled)return;
+  if(GetComponent<PracticeCoach>().ResultOpen)return;
   if(!ready){GUI.Label(new Rect(Screen.width/2-220,80,440,40),"연습 구역 준비 중…",style);return;}
   if(GUI.Button(new Rect(Screen.width/2-300,80,295,40),"F6 조건 변경 · 다시 연습",style))OpenPicker();
   if(GUI.Button(new Rect(Screen.width/2+5,80,295,40),"연습 종료 · 원래 영업으로 복귀",style))FinishPractice();

@@ -36,10 +36,10 @@ public class TaxiController : MonoBehaviour {
             if(assistance)assistance.ReadInput(lateral);
             if(!assistance||!assistance.Active)steer=Mathf.MoveTowards(steer,lateral,Time.deltaTime*3);
             brake=Input.GetKey(KeyCode.Space)||Input.GetKey(KeyCode.JoystickButton2);
-            if(Input.GetKeyDown(KeyCode.R)||Input.GetKeyDown(KeyCode.JoystickButton3)) ResetTaxi();
+            if(Input.GetKeyDown(KeyCode.R)||Input.GetKeyDown(KeyCode.JoystickButton3)) RequestReset();
         }
         for(int i=0;i<4;i++) {Vector3 p; Quaternion q; wheels[i].GetWorldPose(out p,out q); visuals[i].SetPositionAndRotation(p,q*Quaternion.Euler(0,0,90));}
-        if(transform.position.y < -5 || transform.position.y > 50) ResetTaxi();
+        if(transform.position.y < -5 || transform.position.y > 50) RequestReset();
     }
     void FixedUpdate() {
         var manual=DriveMath.Resolve(throttle,Speed,brake);
@@ -57,6 +57,11 @@ public class TaxiController : MonoBehaviour {
         }
     }
     public void SetSpawn(Vector3 position,Quaternion rotation){spawn=position;spawnRotation=rotation;}
+    public void RequestReset() {
+        var coach=PracticeSession.Enabled?FindObjectOfType<PracticeCoach>():null;
+        if(coach&&coach.Active&&coach.GetComponent<PracticeSession>().RetryRight())return;
+        ResetTaxi();
+    }
     public void ResetTaxi() {
         if(assistance)assistance.SetActive(false);
         // A reset must not teleport the player inside an occupied traffic lane.

@@ -14,6 +14,7 @@ public class DrivingLaw : MonoBehaviour {
  class Entry {public TrafficJunction junction;public Vector3 direction;public int axis,sign;public bool stopped,pedestrianYield;public RoadObservation observed;public string id;}
  Entry entry;
  public int Day {get{return session.business.ledger.Day;}}
+ public bool StopRecorded(TrafficJunction junction){return entry!=null&&entry.junction==junction&&entry.stopped||stops.ContainsKey(junction.name+":0:1");}
  public void ResetObservation(){initialized=false;entry=null;stops.Clear();}
  void FixedUpdate(){
   if(!session||session.paused||session.business.ShowingSummary)return;
