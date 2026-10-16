@@ -24,6 +24,7 @@
 |---|---|
 | [게임 기획 개요](../game-design.md) | 세계관·핵심 재미·코어 루프 |
 | [프로토타입 통합 기획](../prototype-scope.md) | 개발할 것·개발하지 않을 것·최소 화면·완료 기준 |
+| [우선순위별 개발 체크리스트](../prototype-development-checklist.md) | 기존 구현·보완·신규 작업과 선행 조건·완료 체크 |
 | [은계 자료 검토](../eungye-source-review.md) | 실제 지역 자료와 공간 구성 근거 |
 | [기존 경제 구현 기록](../economy-progression-validation.md) | 현재 7일·10분·10만원 설정과 자동 비용·저장 기반 |
 | [기존 조향 보조 검증](../assisted-driving-validation.md) | 기존 주행 보조 구현과 검증 기록 |
