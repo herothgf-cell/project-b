@@ -25,14 +25,16 @@ public class HybridDriveSmokeTest : MonoBehaviour {
   }
   Check(from>=0,"mixed source trip fixture");
   bool quick=System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-hybridQuickTest")>=0;
-  if(from>=0&&!quick)for(int direction=0;direction<2;direction++){
+  bool v2=System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-hybridV2")>=0;
+  if(v2)Check(session.business.ledger.Account!=null,"v2 physical transport accounting enabled");
+  if(from>=0&&!quick)for(int direction=0;direction<(v2?1:2);direction++){
    int a=direction==0?from:to,b=direction==0?to:from;var start=map.stops[a];var end=map.stops[b];
    jobs.ClearForDay();Place(start);yield return new WaitForSeconds(.6f);
    float distance=nav.Distance(start,end);jobs.offers[0]=new JobOffer{pickup=a,drop=b,distance=distance,fare=5000,seconds=Mathf.Ceil(distance/5+90),requiredScore=60};
    Check(jobs.Accept(0)&&jobs.trip.State==TripState.ToPickup,"accept call "+direction);
    Check(jobs.Interact()&&jobs.trip.State==TripState.OnTrip,"pickup on right-side stop "+direction);
    Check(nav.hdRoute!=null&&assist.SetActive(true),"route and assistance after boarding "+direction);
-   var route=nav.hdRoute;float maxError=0,maxTilt=0;bool arrived=false,sawPortal=false,sawHd=false,sawLocal=false;int contacts=0;int paidBefore=jobs.balance;
+   var route=nav.hdRoute;float maxError=0,maxTilt=0;bool arrived=false,sawPortal=false,sawHd=false,sawLocal=false;int contacts=0;int paidBefore=jobs.balance;int cashBefore=v2?session.business.ledger.Account.Cash:0;
    for(float elapsed=0;elapsed<400;elapsed+=.1f){
     if(route==null)break;float error;float at=route.path.Project(taxi.transform.position,out error);maxError=Mathf.Max(maxError,error);maxTilt=Mathf.Max(maxTilt,Vector3.Angle(taxi.transform.up,Vector3.up));
     var edge=nav.hd.edges[route.EdgeAt(at)];sawPortal|=edge.status=="provisional-portal";sawHd|=edge.status=="ngii";sawLocal|=edge.status=="provisional";
@@ -47,7 +49,7 @@ public class HybridDriveSmokeTest : MonoBehaviour {
    Check(arrived,"physical mixed arrival "+direction+" status="+assist.Status);
    Check(sawPortal&&sawHd&&sawLocal,"crossed local/portal/HD "+direction);
    Check(maxError<1.6f&&maxTilt<12&&contacts==0,"stable "+direction+" error="+maxError+" tilt="+maxTilt+" contacts="+contacts);
-   Check(jobs.Interact()&&jobs.balance>paidBefore&&jobs.trip.State==TripState.Complete,"dropoff and fare "+direction);
+   Check(jobs.Interact()&&jobs.balance>paidBefore&&jobs.trip.State==TripState.Complete,"dropoff and fare "+direction);if(v2)Check(session.business.ledger.Account.Cash>cashBefore,"physical trip credits v2 cash");
   }
   // Roadside pickup also creates a route on the combined graph.
   jobs.ClearForDay();Place(map.stops[2]);yield return new WaitForSeconds(.4f);
@@ -59,6 +61,6 @@ public class HybridDriveSmokeTest : MonoBehaviour {
   Check(jobs.Interact()&&jobs.trip.State==TripState.OnTrip,"roadside passenger pickup");
   Check(nav.hdRoute!=null&&!nav.freeGuidance,"roadside pickup creates whole-map route");
   Time.timeScale=1;taxi.autoThrottle=0;taxi.autoBrake=true;
-  string folder=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts"));Directory.CreateDirectory(folder);File.WriteAllText(Path.Combine(folder,quick?"hybrid-quick-test.txt":"hybrid-drive-test.txt"),"success="+ok+"\n"+report);Debug.Log("HYBRID_DRIVE_TEST_DONE success="+ok+" quick="+quick);Application.Quit(ok?0:1);
+  string folder=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts"));Directory.CreateDirectory(folder);File.WriteAllText(Path.Combine(folder,v2?"hybrid-v2-drive-test.txt":quick?"hybrid-quick-test.txt":"hybrid-drive-test.txt"),"success="+ok+"\n"+report);Debug.Log("HYBRID_DRIVE_TEST_DONE success="+ok+" quick="+quick);Application.Quit(ok?0:1);
  }
 }

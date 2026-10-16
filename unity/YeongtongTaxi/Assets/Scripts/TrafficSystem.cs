@@ -2,11 +2,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TrafficJunction {
-    public bool signalized=true; public HybridJunctionRule facility; public int crosswalkApproaches,stopLineApproaches;
+    public bool scenarioSignal; public SignalColor scenarioForward; public bool signalized=true; public RoadObservation rightTurnObservation; public int observationAxis,observationSign; public HybridJunctionRule facility; public int crosswalkApproaches,stopLineApproaches;
     public readonly List<int> lampAxes=new List<int>(),lampSigns=new List<int>();
     public Vector3 direction;
     public LeftTurnMode leftTurnMode;
     public float[] halfWidth={5,10};public int[] laneCount={1,2};public bool[] centeredLane={false,false};
+    // Sampling tolerance beyond the painted line; shared by independent law and passenger manners.
+    public const float StopLineEntryTolerance=.25f;
+    public const float CrosswalkCentreOffset=1.8f, CrosswalkDepth=2.4f;
+    public float CrossingNearEdge(int incomingAxis){return halfWidth[incomingAxis]+CrosswalkCentreOffset-CrosswalkDepth*.5f;}
     public float StopDistance(int axis){return halfWidth[1-axis]+4;}
     public Vector3 center;public TrafficCar owner;
     public readonly HashSet<TrafficCar> reservations=new HashSet<TrafficCar>();
@@ -43,14 +47,20 @@ public class TrafficSystem : MonoBehaviour {
 
     public Vector3 AxisDirection(TrafficJunction j,int axis){var d=j.direction.sqrMagnitude>.1f?j.direction:mainDirection;return axis==0?d:Right(d);}
     public int Sign(Vector3 direction,int axis,TrafficJunction j=null){return Vector3.Dot(direction,j!=null?AxisDirection(j,axis):axis==0?mainDirection:Right(mainDirection))>=0?1:-1;}
-    public SignalColor Signal(TrafficJunction junction, int axis,int sign=1) { return junction.signalized?KoreanSignalRules.Signal(Clock+junction.offset,junction.leftTurnMode,axis,sign):SignalColor.Green; }
+    public SignalColor Signal(TrafficJunction junction, int axis,int sign=1) { return junction.scenarioSignal?(axis==junction.observationAxis&&sign==junction.observationSign?junction.scenarioForward:SignalColor.Red):junction.signalized?KoreanSignalRules.Signal(Clock+junction.offset,junction.leftTurnMode,axis,sign):SignalColor.Green; }
     public SignalColor LeftSignal(TrafficJunction junction,int axis,int sign=1){return Signal(junction,axis,sign);}
     public SignalColor MovementSignal(TrafficJunction junction,int axis,int turn,int sign=1){return Signal(junction,axis,sign);}
+    public RoadObservation Observe(TrafficJunction j,int axis,int sign,Vector3 direction,GameObject self){
+        var o=j.rightTurnObservation!=null&&j.observationAxis==axis&&j.observationSign==sign?j.rightTurnObservation.Copy():new RoadObservation{known=true,pedestrian=PedestrianState.None};
+        o.forward=Signal(j,axis,sign);o.trafficClear=YieldClear(j,direction,1,self);return o;
+    }
     public bool CanEnter(TrafficCar car,TrafficStop stop){
-        if(!stop.junction.signalized)return true;
+        if(!stop.junction.signalized&&!stop.junction.scenarioSignal)return true;
         var direction=car.route.graphPath==null?car.route.direction:car.route.Tangent(Mathf.Max(0,stop.distance));int turn=stop.Movement(car.route);
+        var observed=Observe(stop.junction,stop.axis,Sign(direction,stop.axis,stop.junction),direction,car.gameObject);
+        if(turn>0)return observed.MayTurnRight(car.stoppedAt==stop.junction);
         return KoreanSignalRules.MayEnter(Clock+stop.junction.offset,stop.junction.leftTurnMode,stop.axis,Sign(direction,stop.axis,stop.junction),turn,car.stoppedAt==stop.junction,
-            YieldClear(stop.junction,direction,turn,car.gameObject),true);
+            YieldClear(stop.junction,direction,turn,car.gameObject),observed.PedestrianClear);
     }
     public bool YieldClear(TrafficJunction j,Vector3 incoming,int turn,GameObject self){
         if(turn==0||turn<0&&j.leftTurnMode!=LeftTurnMode.Permissive)return true;
@@ -306,7 +316,7 @@ public class TrafficSystem : MonoBehaviour {
     void AddApproach(TrafficJunction j,Vector3 direction,float halfWidth,float conflictHalfWidth) {
         var right=Right(direction);
         float stop=conflictHalfWidth+4;
-        if(j.facility==null||j.facility.crosswalk){j.crosswalkApproaches++;for(float x=-halfWidth+.65f;x<halfWidth-.3f;x+=.95f) Mark("Crosswalk "+j.name,j.center-direction*(conflictHalfWidth+1.8f)+right*x,direction,.5f,2.4f,white);}
+        if(j.facility==null||j.facility.crosswalk){j.crosswalkApproaches++;for(float x=-halfWidth+.65f;x<halfWidth-.3f;x+=.95f) Mark("Crosswalk "+j.name,j.center-direction*(conflictHalfWidth+TrafficJunction.CrosswalkCentreOffset)+right*x,direction,.5f,TrafficJunction.CrosswalkDepth,white);}
         if(j.facility==null||j.facility.stopLine){j.stopLineApproaches++;Mark("Stop line "+j.name,j.center-direction*stop+right*halfWidth*.5f,direction,halfWidth-.3f,.4f,white);}
         if(!j.signalized)return;
         // Far-side placement keeps the signal visible from a stopped driver's eye position.
