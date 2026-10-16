@@ -13,6 +13,13 @@ class PracticeFeedbackTests {
   o.right=SignalColor.Green;o.pedestrian=PedestrianState.Crossing;var ped=Build(LawEvaluator.RightTurn("e",1,o,true));Check(Field(ped,"issues").Contains("횡단보도")&&Field(ped,"issues").Contains("횡단 중"),"pedestrian passage location and state");
   o.known=false;Check(Field(Build(LawEvaluator.RightTurn("f",1,o,true)),"outcome").Contains("보류"),"unknown observation not success");
   Check(Field(Build(new LawEvent{family="signal",action="직진"}),"outcome").Contains("경로"),"wrong turn distinct from successful right turn");
+  var method=typeof(PracticeFeedback).GetMethod("BuildExit");Check(method!=null,"missing exit feedback");
+  Func<LawEvent,PracticeFeedback> exit=e=>(PracticeFeedback)method.Invoke(null,new object[]{e});
+  Check(exit(null).outcome.Contains("미완료"),"exit no passage incomplete");
+  var cut=exit(LawEvaluator.Exit("cut",1,true,true,true,true));Check(cut.issues.Contains("앞부분")&&cut.issues.Contains("진행")&&cut.next.Contains("맨 뒤"),"cutting location and correction");
+  var merge=exit(LawEvaluator.Exit("merge",1,true,true,false,false));Check(merge.good.Contains("뒤")&&merge.outcome.Contains("완료"),"safe queue merge");
+  var detour=exit(LawEvaluator.Exit("detour",1,true,false,false,false));Check(detour.good.Contains("우회")&&!detour.outcome.Contains("100"),"detour without invented compliance");
+  Check(exit(LawEvaluator.Exit("unknown",1,false,true,false,false)).outcome.Contains("보류"),"unknown queue deferred");
   Console.WriteLine("PASS practice feedback evidence, explanations and unknown boundaries");
  }catch(Exception e){Console.WriteLine(e.Message);Environment.Exit(1);}}
 }

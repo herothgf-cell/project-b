@@ -7,6 +7,7 @@ public class ExitQueueObserver : MonoBehaviour {
  TrafficJunction junction;Vector3 direction,lanePoint;float tailAlong;bool outside,changed,inserted,blocked,waited,knownAtChange; Vector3 previous;
  string id;readonly List<TrafficCar> queue=new List<TrafficCar>();
  PracticeRoute practice,completedTemplate;float changedAt;Vector3 mergePosition;
+ public void ResetAttempt(){junction=null;completedTemplate=null;queue.Clear();previous=session.taxi.transform.position;}
  void FixedUpdate(){
   if(!session.business.useV2||session.paused||session.business.ShowingSummary)return;
   var taxi=session.taxi; if(Vector3.Distance(previous,taxi.transform.position)>15){junction=null;queue.Clear();} previous=taxi.transform.position;
@@ -24,7 +25,7 @@ public class ExitQueueObserver : MonoBehaviour {
    return;
   }
   var delta=taxi.transform.position-lanePoint;float along=Vector3.Dot(delta,direction),lateral=Mathf.Abs(Vector3.Dot(delta,TrafficSystem.Right(direction)));
-  if(lateral<1.2f&&taxi.body.velocity.magnitude<.5f)waited=true;
+  if(lateral<1.2f&&along<=tailAlong-4&&along>=tailAlong-20&&taxi.body.velocity.magnitude<.5f)waited=true;
   if(outside&&lateral<1.2f&&!changed){knownAtChange=queue.Exists(c=>c&&c.waitingForSignal);changed=true;changedAt=Time.time;mergePosition=taxi.transform.position;if(along>tailAlong+4)inserted=true;}
   if(lateral>2)outside=true;
   if(changed&&(Time.time-changedAt<=2||inserted&&Vector3.Distance(taxi.transform.position,mergePosition)<8))foreach(var c in queue)if(c&&c.Visible&&c.waitingForObstacle&&c.blockedName.Contains("Taxi")&&Vector3.Dot(taxi.transform.position-c.transform.position,direction)>0)blocked=true;

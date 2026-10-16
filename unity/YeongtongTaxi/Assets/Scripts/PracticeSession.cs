@@ -22,6 +22,18 @@ public class PracticeSession : MonoBehaviour {
   bool ok=Begin(new LawEvent{id=session.law.ids.Next("practice"),day=session.business.ledger.Day,scenario="R"+SelectedVariant},session.business.preparing);
   if(ok)CancelPicker();return ok;
  }
+ public bool RetryCurrent(){
+  var coach=GetComponent<PracticeCoach>();if(!coach.ExitMode)return RetryRight();
+  if(!Enabled||!ready||Busy)return false;
+  var situation=GetComponent<ExitQueueSituation>();var source=situation.Template==null?null:situation.Template.Copy();
+  if(!StartExit(source))return false;PickerOpen=false;session.paused=false;Time.timeScale=1;return true;
+ }
+ public bool StartExit(PracticeRoute source){
+  if(!Enabled||source==null)return false;
+  GetComponent<RightTurnSituation>().Stop();var situation=GetComponent<ExitQueueSituation>();situation.Stop();
+  if(!situation.Replay(source))return false;
+  GetComponent<ExitQueueObserver>().ResetAttempt();GetComponent<PracticeCoach>().BeginExit(situation);ready=true;return true;
+ }
  public bool RetryRight(){if(!Enabled||!ready||Busy)return false;SelectedVariant=GetComponent<RightTurnSituation>().variant;if(!StartRight(SelectedVariant))return false;changedConditions=true;PickerOpen=false;session.paused=false;Time.timeScale=1;return true;}
  bool StartRight(int variant){
   var situation=GetComponent<RightTurnSituation>();var j=situation.junction;if(j==null)return false;
@@ -64,7 +76,7 @@ public class PracticeSession : MonoBehaviour {
   foreach(var p in session.jobs.people)p.SetActive(false);
   foreach(var c in session.traffic.cars){c.Recycle();c.enabled=false;}
   var args=Environment.GetCommandLineArgs();int input=Array.IndexOf(args,"-practiceInput");
-  if(input>=0&&input+1<args.Length){PracticeRoute source=null;try{source=JsonUtility.FromJson<PracticeRoute>(System.IO.File.ReadAllText(args[input+1]));}catch(Exception e){Debug.LogWarning("Practice input unavailable: "+e.Message);}if(source!=null)GetComponent<ExitQueueSituation>().Replay(source);ready=true;yield break;}
+  if(input>=0&&input+1<args.Length){PracticeRoute source=null;try{source=JsonUtility.FromJson<PracticeRoute>(System.IO.File.ReadAllText(args[input+1]));}catch(Exception e){Debug.LogWarning("Practice input unavailable: "+e.Message);}if(source!=null)ready=StartExit(source);yield break;}
   int variant=1;foreach(var arg in Environment.GetCommandLineArgs())if(arg.StartsWith("-practiceRight"))int.TryParse(arg.Substring(14),out variant);
   SelectedVariant=Mathf.Clamp(variant,1,6);ready=StartRight(SelectedVariant);
  }

@@ -4,7 +4,7 @@ using UnityEngine;
 public class ExitQueueSituation : MonoBehaviour {
  public DriveSession session;public TrafficJunction junction;public Vector3 approach;public int axis,sign;
  public bool Active {get{return junction!=null;}}
- float started;GameObject label;TextMesh text;
+ float started;bool practiceArrived;RoadIncident incident;GameObject label;TextMesh text;
  public PracticeRoute Template {get;private set;}
  public bool Begin(){
   var right=GetComponent<RightTurnSituation>();if(right&&right.Active)return false;
@@ -31,21 +31,26 @@ public class ExitQueueSituation : MonoBehaviour {
   junction=session.traffic.junctions.Find(j=>j.name==source.junction);if(junction==null)return false;
   var path=new Vector3[source.points.Length/2];for(int i=0;i<path.Length;i++)path[i]=new Vector3(source.points[i*2],0,source.points[i*2+1]);
   var route=new TrafficRoute{axis=source.axis,turn=1};route.SetPoints(path);route.stops.Add(new TrafficStop{junction=junction,axis=source.axis,distance=source.stop,exitDistance=source.exit,turn=1});
-  Template=source.Copy();axis=source.axis;approach=route.Tangent(source.stop);sign=session.traffic.Sign(approach,axis,junction);started=Time.time;
+  practiceArrived=false;Template=source.Copy();axis=source.axis;approach=route.Tangent(source.stop);sign=session.traffic.Sign(approach,axis,junction);started=Time.time;
   junction.scenarioSignal=true;junction.scenarioForward=SignalColor.Green;junction.observationAxis=axis;junction.observationSign=sign;junction.rightTurnObservation=new RoadObservation{known=true,dedicated=true,right=SignalColor.Red,pedestrian=PedestrianState.None};
   for(int i=0;i<8;i++){var c=session.traffic.cars[i];c.district=null;c.Continue(route);c.Place(source.stop-.25f-i*7);c.enabled=true;}
   var taxi=session.taxi;taxi.body.velocity=taxi.body.angularVelocity=Vector3.zero;taxi.body.position=path[0]-approach*25+Vector3.up*.65f;taxi.body.rotation=Quaternion.LookRotation(approach);taxi.transform.SetPositionAndRotation(taxi.body.position,taxi.body.rotation);Physics.SyncTransforms();session.law.ResetObservation();
-  session.jobs.nav.SetDestination(path[path.Length-1]);session.roadConditions.AddIncident(route.Position(source.stop),approach,3.2f,30,true,false);
+  taxi.SetSpawn(taxi.transform.position,taxi.transform.rotation);if(PracticeSession.Enabled)taxi.ResetTaxi();
+  session.jobs.nav.SetDestination(path[path.Length-1]);incident=session.roadConditions.AddIncident(route.Position(source.stop),approach,3.2f,30,true,false);
   label=new GameObject("출구 상황 복습 안내");label.transform.position=path[0]+TrafficSystem.Right(approach)*5+Vector3.up*4;text=label.AddComponent<TextMesh>();text.fontSize=40;text.characterSize=.1f;text.anchor=TextAnchor.MiddleCenter;text.color=Color.yellow;KoreanText.Apply(text);label.AddComponent<FaceCamera>();return true;
  }
  void Update(){
   if(!session.business.useV2)return;
-  if(Input.GetKeyDown(KeyCode.F5)&&!session.paused){if(Active)Stop();else Begin();}
+  if(!PracticeSession.Enabled&&Input.GetKeyDown(KeyCode.F5)&&!session.paused){if(Active)Stop();else Begin();}
   if(!Active)return;
-  float elapsed=Time.time-started;junction.rightTurnObservation.right=elapsed<30?SignalColor.Red:SignalColor.Green;
+  if(PracticeSession.Enabled&&!practiceArrived){
+   started=Time.time;var tail=session.traffic.cars[7].transform.position;
+   if(Vector3.Distance(session.taxi.transform.position,tail)<22)practiceArrived=true;
+  }
+  float elapsed=Time.time-started;if(PracticeSession.Enabled&&incident!=null)incident.expiresAt=Time.time+Mathf.Max(0,30-elapsed);junction.rightTurnObservation.right=elapsed<30?SignalColor.Red:SignalColor.Green;
   text.text="가상 출구 신호 대기열 · "+junction.name+"\n뒤에서 대기 / 직진 후 내비 재탐색\n우회전전용신호 "+(elapsed<30?"적색":"녹색 화살표");
-  if(elapsed>=65)Stop();
+  if(elapsed>=65&&!PracticeSession.Enabled)Stop();
  }
- public void Stop(){if(junction!=null){junction.scenarioSignal=false;junction.rightTurnObservation=null;junction=null;}if(label)Destroy(label);}
- void OnGUI(){if(!session.business.useV2||!session.ShowHints||session.business.ShowingSummary||session.business.preparing||session.law.HistoryOpen||session.services.open)return;GUI.Label(new Rect(420,44,700,25),"F5 출구 정체 상황 (빈차·정차·충분히 떨어진 구간) · "+(Active?junction.name:"준비"),new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14});}
+ public void Stop(){if(PracticeSession.Enabled&&Active)foreach(var c in session.traffic.cars){c.Recycle();c.enabled=false;}if(incident!=null){session.roadConditions.incidents.Remove(incident);incident=null;}if(junction!=null){junction.scenarioSignal=false;junction.rightTurnObservation=null;junction=null;}if(label)Destroy(label);}
+ void OnGUI(){if(PracticeSession.Enabled)return;if(!session.business.useV2||!session.ShowHints||session.business.ShowingSummary||session.business.preparing||session.law.HistoryOpen||session.services.open)return;GUI.Label(new Rect(420,44,700,25),"F5 출구 정체 상황 (빈차·정차·충분히 떨어진 구간) · "+(Active?junction.name:"준비"),new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14});}
 }

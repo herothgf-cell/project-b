@@ -18,5 +18,5 @@ public class HybridMapStatus : MonoBehaviour {
   if(nearby!=null)current+="\n시설: "+(nearby.facilityStatus=="verified"?"현장 확인 "+nearby.facilityCheckedAt:"임시 설정 · 현장 미확인")+"\n"+nearby.id;
  }
  bool mapSupplementAvailable(){return session.world.map.supplementApplied;}
- void OnGUI(){if(session.business.ShowingSummary||session.business.preparing||session.services.open||session.law.HistoryOpen)return;if(style==null)style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=12,wordWrap=true};GUI.Label(new Rect(Screen.width-254,455,245,36),"© OpenStreetMap contributors / ODbL\nopenstreetmap.org/copyright",style);GUI.Box(new Rect(Screen.width-254,340,238,112),GUIContent.none);GUI.Label(new Rect(Screen.width-245,345,220,103),current,style);}
+ void OnGUI(){if(GetComponent<DrivingReadability>())return;if(session.business.ShowingSummary||session.business.preparing||session.services.open||session.law.HistoryOpen)return;if(style==null)style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=12,wordWrap=true};GUI.Label(new Rect(Screen.width-254,455,245,36),"© OpenStreetMap contributors / ODbL\nopenstreetmap.org/copyright",style);GUI.Box(new Rect(Screen.width-254,340,238,112),GUIContent.none);GUI.Label(new Rect(Screen.width-245,345,220,103),current,style);}
 }

@@ -7,18 +7,33 @@ public class PracticeCoach : MonoBehaviour {
  public bool ResultOpen {get;private set;}
  public PracticeFeedback Report {get;private set;}
  public LawEvent AttemptEvent {get;private set;}
+ public bool ExitMode {get;private set;}
+ public string AttemptTitle {get{return ExitMode?"출구 정체 · 대기 / 우회 / 앞부분 진입":RightPracticeState.Title(Variant);}}
  public int Variant {get;private set;}
  public bool Finished {get;private set;}
  public string ProgressText {get;private set;}
  TrafficJunction junction;Vector3 direction,right;int seen;bool stopSeen,priorPaused,automaticShown;float priorTime;
  GameObject markers;Vector2 scroll;
  public void BeginAttempt(RightTurnSituation situation){
-  Active=PracticeSession.Enabled;ResultOpen=false;Report=null;AttemptEvent=null;stopSeen=false;Finished=false;automaticShown=false;scroll=Vector2.zero;ProgressText=null;
+  ExitMode=false;Active=PracticeSession.Enabled;ResultOpen=false;Report=null;AttemptEvent=null;stopSeen=false;Finished=false;automaticShown=false;scroll=Vector2.zero;ProgressText=null;
   if(!Active)return;
   junction=situation.junction;Variant=situation.variant;direction=session.traffic.AxisDirection(junction,0);right=TrafficSystem.Right(direction);seen=session.law.ledger.Events.Length;
   if(markers)Destroy(markers);markers=new GameObject("연습 판단 위치");
   Mark("① 정지선",junction.center-direction*junction.StopDistance(0)+right*(junction.halfWidth[0]*.5f),right,junction.halfWidth[0]-.5f,new Color(1,.75f,.15f));
   Mark("② 보행 확인",junction.center+right*junction.CrossingNearEdge(0),direction,junction.halfWidth[1]*2,new Color(.15f,.85f,1));
+ }
+ public void BeginExit(ExitQueueSituation situation){
+  Active=PracticeSession.Enabled;ExitMode=true;ResultOpen=false;Report=null;AttemptEvent=null;Finished=false;automaticShown=false;stopSeen=false;scroll=Vector2.zero;ProgressText=null;
+  junction=situation.junction;direction=situation.approach;right=TrafficSystem.Right(direction);seen=session.law.ledger.Events.Length;
+  if(markers)Destroy(markers);markers=new GameObject("출구 연습 판단 위치");
+  var route=session.traffic.cars[0].route;
+  Mark("① 대기열 뒤 합류",route.Position(situation.Template.stop-59),right,3.2f,new Color(1,.75f,.15f));
+  Mark("② 앞부분 진입 주의",route.Position(situation.Template.stop-8),right,3.2f,new Color(1,.4f,.3f));
+ }
+ void UpdateExit(){
+  var events=session.law.ledger.Events;for(int i=seen;i<events.Length;i++)if(AttemptEvent==null&&events[i].family=="exit"&&events[i].junction==junction.name)AttemptEvent=events[i];seen=events.Length;
+  ProgressText="① 맨 뒤 합류·대기 또는 직진 후 우회\n② 앞부분 끼어들기·상대 진행 방해 주의";
+  if(AttemptEvent!=null&&!automaticShown){Finished=true;automaticShown=true;ShowResult();}
  }
  void Mark(string name,Vector3 center,Vector3 axis,float length,Color color){
   var obj=new GameObject(name);obj.transform.SetParent(markers.transform);var line=obj.AddComponent<LineRenderer>();line.material=WorldBuilder.Mat(name,color);line.startColor=line.endColor=color;line.startWidth=line.endWidth=.18f;line.positionCount=2;line.SetPosition(0,center-axis*length*.5f+Vector3.up*.15f);line.SetPosition(1,center+axis*length*.5f+Vector3.up*.15f);
@@ -26,6 +41,7 @@ public class PracticeCoach : MonoBehaviour {
  }
  void Update(){
   if(!Active||junction==null||ResultOpen||session.PracticeMenuOpen||session.law.HistoryOpen)return;
+  if(ExitMode){UpdateExit();return;}
   var front=session.taxi.transform.position+session.taxi.transform.forward*2;float along=Vector3.Dot(front-junction.center,direction),side=Vector3.Dot(front-junction.center,right),toLine=-along-junction.StopDistance(0);
   stopSeen=session.law.StopRecorded(junction);
   var events=session.law.ledger.Events;for(int i=seen;i<events.Length;i++)if(AttemptEvent==null&&events[i].junction==junction.name&&(events[i].family=="right"||events[i].family=="signal"))AttemptEvent=events[i];seen=events.Length;
@@ -40,7 +56,7 @@ public class PracticeCoach : MonoBehaviour {
   bool cleared=AttemptEvent!=null&&(AttemptEvent.family=="right"?side>junction.CrossingNearEdge(0)+12&&Vector3.Dot(session.taxi.transform.forward,right)>.6f:along>junction.StopDistance(0)+12||side< -junction.CrossingNearEdge(0)-12);
   if(cleared&&!automaticShown){Finished=true;automaticShown=true;ShowResult();}
  }
- public PracticeFeedback SnapshotFeedback(){var result=PracticeFeedback.Build(AttemptEvent);if(AttemptEvent!=null&&!Finished){result.outcome="회전 미완료 · "+(AttemptEvent.Deduction>0?"위반 기록 있음":"통과 조건 기록됨");result.next="오른쪽 도로까지 회전을 마무리한 뒤 최종 결과를 확인하세요.\n"+result.next;}return result;}
+ public PracticeFeedback SnapshotFeedback(){var result=ExitMode?PracticeFeedback.BuildExit(AttemptEvent):PracticeFeedback.Build(AttemptEvent);if(AttemptEvent!=null&&!Finished){result.outcome="회전 미완료 · "+(AttemptEvent.Deduction>0?"위반 기록 있음":"통과 조건 기록됨");result.next="오른쪽 도로까지 회전을 마무리한 뒤 최종 결과를 확인하세요.\n"+result.next;}return result;}
  public bool ShowResult(){if(!Active||ResultOpen||session.GetComponent<PracticeSession>().PickerOpen||session.law.HistoryOpen)return false;Report=SnapshotFeedback();ResultOpen=true;priorPaused=session.paused;priorTime=Time.timeScale;session.paused=true;Time.timeScale=0;return true;}
  public void CloseResult(){if(!ResultOpen)return;ResultOpen=false;session.paused=priorPaused;Time.timeScale=priorTime;}
  void OnGUI(){
@@ -48,15 +64,15 @@ public class PracticeCoach : MonoBehaviour {
   var text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true};var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=15,wordWrap=true};GUI.depth=-170;
   if(!ResultOpen){
    if(session.paused)return;
-   float y=Screen.height-185;Box(new Rect(16,y,430,165));GUI.Label(new Rect(30,y+10,402,30),RightPracticeState.Title(Variant)+" · "+(Mathf.Abs(session.taxi.Speed)*3.6f).ToString("0")+"km/h",text);GUI.Label(new Rect(30,y+48,402,60),ProgressText??"① 정지선으로 접근하세요",text);
+   float y=Screen.height-185;Box(new Rect(16,y,430,165));GUI.Label(new Rect(30,y+10,402,30),AttemptTitle+" · "+(Mathf.Abs(session.taxi.Speed)*3.6f).ToString("0")+"km/h",text);GUI.Label(new Rect(30,y+48,402,60),ProgressText??"① 정지선으로 접근하세요",text);
    if(GUI.Button(new Rect(30,y+115,402,35),"현재 판정 보기 · 미통과는 미완료",button))ShowResult();return;
   }
   float w=Mathf.Min(780,Screen.width-32),h=Mathf.Min(560,Screen.height-32),x=(Screen.width-w)/2,y0=(Screen.height-h)/2;Box(new Rect(x,y0,w,h));
-  GUI.Label(new Rect(x+22,y0+16,w-44,28),RightPracticeState.Title(Variant)+" · 이번 시도 결과",text);
+  GUI.Label(new Rect(x+22,y0+16,w-44,28),AttemptTitle+" · 이번 시도 결과",text);
   GUI.Label(new Rect(x+22,y0+52,w-44,55),Report.outcome,new GUIStyle(text){fontSize=21,fontStyle=FontStyle.Bold});
   var details=Report.Details();float contentHeight=Mathf.Max(290,text.CalcHeight(new GUIContent(details),w-75));scroll=GUI.BeginScrollView(new Rect(x+22,y0+115,w-44,h-225),scroll,new Rect(0,0,w-65,contentHeight));GUI.Label(new Rect(0,0,w-75,contentHeight),details,text);GUI.EndScrollView();
-  GUI.Label(new Rect(x+22,y0+h-103,w-44,37),"이번 시도의 신호·정지·보행 통과 조건 평가입니다. 시선 확인·전체 운전 능력은 평가하지 않습니다.",new GUIStyle(text){fontSize=13});
-  float bw=(w-64)/3;if(GUI.Button(new Rect(x+22,y0+h-55,bw,38),"같은 조건 다시 연습",button))session.GetComponent<PracticeSession>().RetryRight();
+  GUI.Label(new Rect(x+22,y0+h-103,w-44,37),ExitMode?"대기열 진입·진행 방해 관찰 결과입니다. 교차로 신호 등 다른 법규는 F8에서 별도로 확인하세요.":"이번 시도의 신호·정지·보행 통과 조건 평가입니다. 시선 확인·전체 운전 능력은 평가하지 않습니다.",new GUIStyle(text){fontSize=13});
+  float bw=(w-64)/3;if(GUI.Button(new Rect(x+22,y0+h-55,bw,38),"같은 조건 다시 연습",button))session.GetComponent<PracticeSession>().RetryCurrent();
   if(GUI.Button(new Rect(x+32+bw,y0+h-55,bw,38),"다른 조건 선택",button))session.GetComponent<PracticeSession>().OpenPicker();
   if(GUI.Button(new Rect(x+42+bw*2,y0+h-55,bw,38),"닫고 계속 / F8 상세",button))CloseResult();
  }

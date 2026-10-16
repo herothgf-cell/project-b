@@ -1,6 +1,6 @@
 using UnityEngine;
 public class DriveHUD : MonoBehaviour {
- public DriveSession session;Texture2D tile;GUIStyle title,body,small;const int W=240,H=280;
+ public DriveSession session;public Texture2D tile;GUIStyle title,body,small;const int W=1024,H=1024;
  void Start(){tile=new Texture2D(W,H);var pixels=new Color[W*H];for(int i=0;i<pixels.Length;i++)pixels[i]=new Color(.10f,.15f,.17f);tile.SetPixels(pixels);
   if(session.world.map.areas!=null)foreach(var area in session.world.map.areas){
    if(area.kind!="water"||area.points==null||area.points.Length<3)continue;
@@ -32,20 +32,6 @@ public class DriveHUD : MonoBehaviour {
    GUI.enabled=true;
    GUI.Label(new Rect(navX+12,navY+84,navWidth-24,25),string.IsNullOrEmpty(jobs.nav.rerouteNotice)?"정체·정차 차량을 반영한 예상 시간":jobs.nav.rerouteNotice,small);
   }else if(!RoadRulesTrial.Enabled&&!HdRouteTrial.Enabled){GUI.Box(new Rect(navX,navY,navWidth,58),GUIContent.none);GUI.Label(new Rect(navX+12,navY+5,navWidth-24,48),session.roadConditions.Notice,new GUIStyle(small){wordWrap=true});}
-  TrafficJunction nearby=null;float nearest=45;foreach(var j in session.traffic.junctions){if(!j.signalized)continue;float d=Vector3.Distance(session.taxi.transform.position,j.center);if(d<nearest){nearest=d;nearby=j;}}
-  if(nearby!=null&&!session.assist.Visible){int axis=Mathf.Abs(Vector3.Dot(session.taxi.transform.forward,session.traffic.AxisDirection(nearby,0)))>.7f?0:1;int sign=session.traffic.Sign(session.taxi.transform.forward,axis,nearby);var straight=session.traffic.Signal(nearby,axis,sign);var left=session.traffic.LeftSignal(nearby,axis,sign);bool clear=session.traffic.YieldClear(nearby,session.taxi.transform.forward,-1,session.taxi.gameObject);float row=jobs.nav.active?navY+116:navY+64;GUI.Box(new Rect(navX,row,navWidth,30),GUIContent.none);GUI.Label(new Rect(navX+10,row+2,navWidth-20,26),nearby.name+"  직진 "+(straight==SignalColor.Green?"진행":straight==SignalColor.Yellow?"황색":"정지")+(nearby.leftTurnMode==LeftTurnMode.Permissive?" / 비보호 ← "+(left!=SignalColor.Green?"대기":clear?"맞은편 확인":"맞은편 차량 양보"):" / 보호 ← "+(left==SignalColor.Green?"진행":"대기")),small);}
-  var rect=new Rect(Screen.width-248,16,232,271);GUI.DrawTexture(rect,tile);
-  if(session.world.map.hybrid)foreach(var r in session.world.map.junctionRules){if(r.signalMode==0&&!r.crosswalk&&!r.stopLine)continue;var p=Mini(r.V(),rect);if(!rect.Contains(p))continue;Dot(p,r.facilityStatus=="verified"?Color.green:new Color(1,.65f,.15f),7);Dot(p,new Color(.1f,.15f,.16f),3);}
-  for(int i=1;i<jobs.nav.alternativePath.Count;i++)Line(Mini(jobs.nav.alternativePath[i-1],rect),Mini(jobs.nav.alternativePath[i],rect),new Color(1,.55f,.1f),4);
-  for(int i=1;i<jobs.nav.path.Count;i++)Line(Mini(jobs.nav.path[i-1],rect),Mini(jobs.nav.path[i],rect),Color.cyan,3);
-  for(int i=0;i<jobs.stops.Length;i++){if(!jobs.people[i].activeSelf)continue;Dot(Mini(jobs.stops[i].V(),rect),Color.cyan,5);}
-  if(session.business.useV2)foreach(int index in session.services.indices)Dot(Mini(jobs.stops[index].V(),rect),new Color(1,.35f,1),8);
-  foreach(var incident in session.roadConditions.incidents)Dot(Mini(incident.position,rect),Color.red,8);
-  if(session.world.map.landmarks!=null)foreach(var landmark in session.world.map.landmarks){var p=Mini(landmark.V(),rect);if(rect.Contains(p))Dot(p,new Color(.3f,1,.45f),5);}
-  foreach(var car in session.traffic.cars){var p=Mini(car.transform.position,rect);if(rect.Contains(p))Dot(p,Color.white,4);}
-  if(jobs.nav.active)Dot(Mini(jobs.nav.destination,rect),new Color(1,.4f,.1f),9);Dot(Mini(session.taxi.transform.position,rect),Color.yellow,8);
-  GUI.Label(new Rect(Screen.width-248,289,232,25),"노랑: 택시 / 자홍: 거점 / 빨강: 정체",small);
-  if(session.world.map.hybrid)GUI.Label(new Rect(Screen.width-248,307,240,22),"시설 □ 주황: 임시 / 초록: 현장 확인",small);
   if(session.assist.Visible)GUI.Label(new Rect(Screen.width*.745f,Screen.height*.69f-26,Screen.width*.24f,25),(session.assist.Mode=="REAR CAMERA"?"후방 카메라":session.assist.Mode=="LEFT CAMERA"?"좌측 카메라":"우측 카메라"),body);
   float assistY=session.business.enabledCampaign?330:198;
   GUI.Box(new Rect(16,assistY,380,62),GUIContent.none);GUI.Label(new Rect(28,assistY+3,365,26),session.assisted.Status,small);

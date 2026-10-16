@@ -3,6 +3,25 @@ using System;
 [Serializable] public class PracticeFeedback {
  public string outcome,good,issues,next;
  public string Details(){return "잘한 점\n"+good+"\n\n보완할 점\n"+issues+"\n\n다음 시도\n"+next;}
+ public static PracticeFeedback BuildExit(LawEvent e){
+  var result=new PracticeFeedback{outcome="출구 연습 미완료 · 아직 판정 없음",good="아직 완료한 선택이 없습니다.",issues="대기열 뒤 합류 또는 직진·우회 후 구간을 벗어나야 판정합니다.",next="① 대기열 맨 뒤에 여유를 두고 합류하거나, 무리한 진입 없이 직진 후 내비를 다시 확인하세요."};
+  if(e==null)return result;
+  if(e.family!="exit"||e.rules.Exists(r=>r.verdict==LawVerdict.Deferred)){result.outcome="판정 보류 · 대기열 관찰 정보 부족";result.issues="신호 대기열인지 확정하지 못했습니다.";return result;}
+  var insertion=e.rules.Find(r=>r.rule=="L06");var obstruction=e.rules.Find(r=>r.rule=="L07");
+  if(insertion==null||obstruction==null){result.outcome="판정 보류 · 관찰 정보 부족";return result;}
+  string bad="",good="",next="";
+  if(insertion.verdict==LawVerdict.Violation){bad+="② 대기열 앞부분으로 진입했습니다. 기다리는 차량보다 앞에서 합류한 위치입니다.\n";next+="① 대기열 맨 뒤에서 차간 거리를 확보해 합류하세요. 놓쳤다면 직진 후 우회하세요.\n";}
+  else if(e.action=="뒤에서 대기")good+="① 대기열 뒤에서 정지해 기다렸습니다.\n";
+  else if(insertion.verdict==LawVerdict.Compliant)good+="① 대기열 뒤로 합류했습니다.\n";
+  else good+="대기열에 끼어들지 않고 직진·우회를 선택했습니다. 끼어들기 평가 기회는 없었습니다.\n";
+  if(obstruction.verdict==LawVerdict.Violation){bad+="② 합류 지점에서 뒤 차량의 진행을 방해한 것이 관찰됐습니다.\n";next+="옆 차로 차량의 진행 공간을 막지 말고 충분한 간격이 생길 때까지 기다리세요.\n";}
+  else if(obstruction.verdict==LawVerdict.Compliant)good+="합류 과정에서 다른 차량의 진행 방해는 관찰되지 않았습니다.\n";
+  result.outcome=bad!=""?"보완 필요 · 출구 진입 행동을 확인하세요":"출구 연습 완료 · 선택한 행동 확인";
+  result.good=good==""?"이번 기록에서 확인한 준수 항목이 없습니다.":good.TrimEnd();
+  result.issues=bad==""?"이번 대기열 진입 관찰에서 위반은 발견되지 않았습니다.":bad.TrimEnd();
+  result.next=next==""?"대기 또는 우회 선택을 유지하고, 다음 교차로 신호와 보행자를 별도로 확인하세요.":next.TrimEnd();
+  return result;
+ }
  public static PracticeFeedback Build(LawEvent e){
   var result=new PracticeFeedback{outcome="연습 미완료 · 아직 통과 판정 없음",good="아직 확인한 통과 기록이 없습니다.",issues="판정 전입니다. 정지선과 우회전 횡단보도를 지나야 결과를 확인할 수 있습니다.",next="안내 경로로 우회전한 뒤 오른쪽 도로까지 회전을 마무리하세요."};
   if(e==null)return result;

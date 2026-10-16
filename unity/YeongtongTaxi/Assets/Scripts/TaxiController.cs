@@ -59,7 +59,7 @@ public class TaxiController : MonoBehaviour {
     public void SetSpawn(Vector3 position,Quaternion rotation){spawn=position;spawnRotation=rotation;}
     public void RequestReset() {
         var coach=PracticeSession.Enabled?FindObjectOfType<PracticeCoach>():null;
-        if(coach&&coach.Active&&coach.GetComponent<PracticeSession>().RetryRight())return;
+        if(coach&&coach.Active&&coach.GetComponent<PracticeSession>().RetryCurrent())return;
         ResetTaxi();
     }
     public void ResetTaxi() {
