@@ -12,7 +12,7 @@ public class ServiceStops : MonoBehaviour {
  void Update(){if(Input.GetKeyDown(KeyCode.F7))Toggle();}
  public void Toggle(){
   if(open){Close();return;}
-  if(PracticeSession.Enabled||session.business.preparing||session.law.HistoryOpen||session.business.ShowingSummary||session.business.taxPrompt||session.jobs.Active||session.taxi.body.velocity.magnitude>=.56f){notice="빈차로 안전하게 정차한 뒤 F7";return;}
+  if(session.business.restartPrompt||PracticeSession.Enabled||session.business.preparing||session.law.HistoryOpen||session.business.ShowingSummary||session.business.taxPrompt||session.jobs.Active||session.taxi.body.velocity.magnitude>=.56f){notice="빈차로 안전하게 정차한 뒤 F7";return;}
   pending=-1;open=true;session.paused=true;Time.timeScale=0;
  }
  void Close(){pending=-1;open=false;session.paused=false;Time.timeScale=1;}

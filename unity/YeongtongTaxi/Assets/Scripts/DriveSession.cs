@@ -66,7 +66,7 @@ public class DriveSession : MonoBehaviour {
     void Update() {
         if(Input.GetKeyDown(KeyCode.F10))ShowHints=!ShowHints;
         if(Input.GetKeyDown(KeyCode.F11)){if(Screen.fullScreen)Screen.SetResolution(Mathf.Min(1600,Screen.currentResolution.width-80),Mathf.Min(900,Screen.currentResolution.height-100),FullScreenMode.Windowed);else Screen.SetResolution(Screen.currentResolution.width,Screen.currentResolution.height,FullScreenMode.FullScreenWindow);}
-        if(!business.ShowingSummary&&!services.open&&!business.preparing&&!business.taxPrompt&&!law.HistoryOpen&&(Input.GetKeyDown(KeyCode.Escape)||Input.GetKeyDown(KeyCode.JoystickButton7))) {paused=!paused;Time.timeScale=paused?0:1;}
+        if(!business.restartPrompt&&!business.ShowingSummary&&!services.open&&!business.preparing&&!business.taxPrompt&&!law.HistoryOpen&&(Input.GetKeyDown(KeyCode.Escape)||Input.GetKeyDown(KeyCode.JoystickButton7))) {paused=!paused;Time.timeScale=paused?0:1;}
         if(!paused&&!business.ShowingSummary&&Input.GetKeyDown(KeyCode.Tab))jobs.nav.TogglePreference();
         bool now=Vector3.Distance(taxi.transform.position,world.map.targets[1].V(taxi.transform.position.y))<12;
         if(now&&!inside) visits++; inside=now;

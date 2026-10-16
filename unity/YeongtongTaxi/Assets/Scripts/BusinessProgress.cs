@@ -14,8 +14,11 @@ public class BusinessProgress : MonoBehaviour {
  public string SavePath {get;private set;}
  bool testMode;float noticeUntil; CampaignCheckpoint loaded; public bool useV2; public bool taxPrompt,preparing; public PrototypeSettings settings=new PrototypeSettings();
  public bool SaveFailed {get;private set;}
- public int pendingPayment=-1;
- public void RequestPayment(int kind){if((preparing||ShowingSummary)&&kind>=0&&kind<=1&&!session.GetComponent<PracticeSession>().Busy)pendingPayment=kind;}
+ public int pendingPayment=-1; public bool restartPrompt;
+ bool CanRestartNow {get{return enabledCampaign&&useV2&&!PracticeSession.Enabled&&!session.GetComponent<PracticeSession>().Busy&&pendingPayment<0&&!session.services.open&&!session.law.HistoryOpen&&!taxPrompt&&(preparing||ShowingSummary||session.paused);}}
+ public bool RequestRestart(){if(restartPrompt||!CanRestartNow)return false;restartPrompt=true;return true;}
+ public bool ConfirmRestart(bool accept){if(!restartPrompt)return false;if(!accept){restartPrompt=false;return false;}if(!CanRestartNow){restartPrompt=false;return false;}return ResetCampaign(true);}
+ public void RequestPayment(int kind){if(!restartPrompt&&(preparing||ShowingSummary)&&kind>=0&&kind<=1&&!session.GetComponent<PracticeSession>().Busy)pendingPayment=kind;}
  public bool ConfirmPayment(bool accept){int kind=pendingPayment;pendingPayment=-1;if(!accept||kind<0||!(preparing||ShowingSummary))return false;bool ok=kind==0?ledger.Account.Renew(session.law.ids.Next("insurance"),ledger.Day):ledger.Account.PayTax(session.law.ids.Next("tax"),ledger.Day);notice=ok?"결제 완료":"이미 결제했거나 현금 부족";if(ok&&ShowingSummary)SaveCheckpoint();return ok;}
 
  public bool ShowingSummary {get{return enabledCampaign&&ledger!=null&&ledger.ShowingSummary;}}
@@ -73,7 +76,7 @@ public class BusinessProgress : MonoBehaviour {
  public void RecordFare(int amount){if(!enabledCampaign)return;if(ledger.Account!=null)ledger.RecordFare(session.law.tripId,amount);else ledger.RecordFare(amount);}
  public void RecordFailure(){if(enabledCampaign)ledger.RecordFailure();}
  public bool NextDay(){
-  if(pendingPayment>=0||!enabledCampaign||ledger.State!=BusinessState.Summary||session.GetComponent<PracticeSession>().Busy)return false;
+  if(restartPrompt||pendingPayment>=0||!enabledCampaign||ledger.State!=BusinessState.Summary||session.GetComponent<PracticeSession>().Busy)return false;
   if(!ledger.DepartureAllowed){notice="보험 만료 · 갱신 후 3일차 출발 가능 (6,000원)";return false;}
   if(!SaveCheckpoint())return false;
   ledger.NextDay();PrepareDay();return true;
@@ -81,10 +84,21 @@ public class BusinessProgress : MonoBehaviour {
  public void RestartCampaign(){
   if(session.GetComponent<PracticeSession>().Busy)return;
   if(ledger.State!=BusinessState.Won&&ledger.State!=BusinessState.Lost&&!(ledger.State==BusinessState.Summary&&!ledger.DepartureAllowed))return;
-  var next=useV2?new EconomyLedger(settings):new EconomyLedger(new EconomySettings());if(!WriteCheckpoint(next))return;ledger=next;passengers.Clear();practices.Clear();if(session.law){session.law.ledger=new LawLedger();session.law.ids=new PrototypeIds(Guid.NewGuid().ToString("N"));}PrepareDay();
+  ResetCampaign(false);
+ }
+ bool ResetCampaign(bool showPreparation){
+  var next=useV2?new EconomyLedger(settings):new EconomyLedger(new EconomySettings());
+  var nextIds=new PrototypeIds(Guid.NewGuid().ToString("N"));
+  if(!WriteCheckpoint(next,nextIds))return false;
+  ledger=next;loaded=null;passengers.Clear();practices.Clear();pendingPayment=-1;restartPrompt=false;noticeUntil=0;
+  if(session.law){session.law.ledger=new LawLedger();session.law.ids=nextIds;}
+  session.jobs.balance=session.jobs.completed=session.jobs.failed=0;session.services.notice=session.services.destination="";session.services.pending=-1;
+  session.GetComponent<PracticeSession>().notice="";session.visits=0;PrepareDay();
+  if(showPreparation&&!preparing){preparing=true;Time.timeScale=0;StartCoroutine(PlaceAtParking());}
+  return true;
  }
  void PrepareDay(){session.GetComponent<ExitQueueSituation>().Stop();session.GetComponent<RightTurnSituation>().Stop();taxPrompt=false;if(session.law)session.law.ResetObservation();session.jobs.ClearForDay();if(session.roadConditions)session.roadConditions.ResetForDay();session.taxi.ResetTaxi();session.manners.BeginRide();session.paused=false;notice="";preparing=useV2&&!testMode;Time.timeScale=preparing?0:1;if(preparing)StartCoroutine(PlaceAtParking());}
- public void Depart(){if(pendingPayment>=0||session.GetComponent<PracticeSession>().Busy)return;if(ledger.Account!=null&&!ledger.Account.InsuranceValid(ledger.Day)){notice="출발 전 보험 갱신이 필요합니다";return;}preparing=false;Time.timeScale=1;}
+ public void Depart(){if(restartPrompt||pendingPayment>=0||session.GetComponent<PracticeSession>().Busy)return;if(ledger.Account!=null&&!ledger.Account.InsuranceValid(ledger.Day)){notice="출발 전 보험 갱신이 필요합니다";return;}preparing=false;Time.timeScale=1;}
  public void ConfirmTaxClose(bool pay){if(pay&&!ledger.Account.PayTax(session.law.ids.Next("tax"),ledger.Day)){notice="현금 부족 · 세금은 직접 납부해야 합니다";return;}Time.timeScale=1;}
  void RecoverFuel(){
   string id=session.law.ids.Next("fuel-recovery");if(!ledger.Account.RecoverFuel(id,ledger.Day))return;
@@ -92,10 +106,10 @@ public class BusinessProgress : MonoBehaviour {
   session.jobs.ClearForDay();session.taxi.ResetTaxi();session.law.ResetObservation();ledger.Advance(30,0);notice="연료 고갈 · 20% 공급 + 지원비 1,800원 / 영업시간 30초 경과";noticeUntil=Time.unscaledTime+8;
  }
  public bool SaveCheckpoint(){ledger.RefreshSummary();return WriteCheckpoint(ledger);}
- bool WriteCheckpoint(EconomyLedger value){
+ bool WriteCheckpoint(EconomyLedger value,PrototypeIds resetIds=null){
   try{
    Directory.CreateDirectory(Path.GetDirectoryName(SavePath));
-   var data=value.Account==null?JsonUtility.ToJson(value.Snapshot(),true):JsonUtility.ToJson(new CampaignCheckpoint{days=value.Snapshot(),account=value.Account.Snapshot(),passengers=value==ledger?passengers.ToArray():new PassengerResult[0],practices=value==ledger?practices.ToArray():new PracticeResult[0],law=value==ledger&&session.law?session.law.ledger.Events:new LawEvent[0],ids=value==ledger&&session.law?session.law.ids:new PrototypeIds(Guid.NewGuid().ToString("N"))},true);
+   var data=value.Account==null?JsonUtility.ToJson(value.Snapshot(),true):JsonUtility.ToJson(new CampaignCheckpoint{days=value.Snapshot(),account=value.Account.Snapshot(),passengers=value==ledger?passengers.ToArray():new PassengerResult[0],practices=value==ledger?practices.ToArray():new PracticeResult[0],law=value==ledger&&session.law?session.law.ledger.Events:new LawEvent[0],ids=value==ledger&&session.law?session.law.ids:resetIds??new PrototypeIds(Guid.NewGuid().ToString("N"))},true);
    File.WriteAllText(SavePath+".tmp",data);
    if(File.Exists(SavePath))File.Replace(SavePath+".tmp",SavePath,SavePath+".bak");else File.Move(SavePath+".tmp",SavePath);
    SaveFailed=false;saveStatus="정산 저장 완료 · 종료 후에도 이어할 수 있습니다";return true;

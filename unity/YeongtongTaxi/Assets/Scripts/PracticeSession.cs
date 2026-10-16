@@ -8,7 +8,7 @@ public class PracticeSession : MonoBehaviour {
  System.Diagnostics.Process child;string resultPath="",inputPath="",eventId="";public string notice="";
  public bool Busy {get{return child!=null;}}
  public bool Begin(LawEvent record,bool preparation=false){
-  if(Enabled||Busy||!(session.business.ShowingSummary||preparation&&session.business.preparing)||record==null||Application.isEditor)return false;
+  if(session.business.restartPrompt||Enabled||Busy||!(session.business.ShowingSummary||preparation&&session.business.preparing)||record==null||Application.isEditor)return false;
   int variant=0;if(record.practice==null&&!(record.scenario!=null&&record.scenario.StartsWith("R")&&int.TryParse(record.scenario.Substring(1),out variant)&&variant>=1&&variant<=6))return false;
   try{
    string token=Guid.NewGuid().ToString("N");resultPath=System.IO.Path.Combine(Application.temporaryCachePath,"taxi-practice-result-"+token+".json");eventId=record.id;
