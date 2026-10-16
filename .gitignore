@@ -28,3 +28,6 @@ unity/**/Assets/Resources/eungye-hybrid-map.json.meta
 *.tmp
 .env
 .env.*
+
+unity/**/Assets/Resources/eungye-osm-supplement.json
+unity/**/Assets/Resources/eungye-osm-supplement.json.meta

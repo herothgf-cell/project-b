@@ -26,13 +26,13 @@ public sealed class HdRoadGraph {
  public int Nearest(Vector3 position,Vector3 heading,out float at){
   int best=-1;float score=4;at=0;heading.y=0;
   for(int i=0;i<edges.Length;i++){
-   if(edges[i].change!=0)continue;float error;float d=paths[i].Project(position,out error);
+   if(edges[i].disabled||edges[i].change!=0)continue;float error;float d=paths[i].Project(position,out error);
    if(error>=score||heading.sqrMagnitude>.1f&&Vector3.Dot(heading.normalized,paths[i].Tangent(d))<.6f)continue;
    best=i;score=error;at=d;
   }return best;
  }
  public RoutePath Route(int start,float startAt,int goal,float goalAt,float[] weights=null){
-  if(start<0||goal<0||start>=edges.Length||goal>=edges.Length)return null;
+  if(start<0||goal<0||start>=edges.Length||goal>=edges.Length||edges[start].disabled||edges[goal].disabled)return null;
   if(start==goal&&startAt>goalAt+.1f){RoutePath best=null;float score=float.MaxValue;foreach(int next in edges[start].next){if(next==start)continue;var rest=Route(next,0,goal,goalAt,weights);if(rest==null)continue;var chain=new List<int>{start};chain.AddRange(rest.edges);var candidate=Compose(chain,startAt,goalAt);float loopCost=0;foreach(int e in rest.edges)loopCost+=weights==null?paths[e].length:weights[e];if(candidate!=null&&loopCost<score){score=loopCost;best=candidate;}}return best;}
   var cost=new float[edges.Length];var prev=new int[edges.Length];var used=new bool[edges.Length];
   for(int i=0;i<cost.Length;i++){cost[i]=float.PositiveInfinity;prev[i]=-1;}
@@ -49,7 +49,7 @@ public sealed class HdRoadGraph {
  public RoutePath Compose(List<int> chain,float startAt,float goalAt){
   var result=new RoutePath();var points=new List<Vector3>();float total=0;
   for(int k=0;k<chain.Count;k++){
-   int id=chain[k];var p=paths[id];float a=k==0?startAt:0,b=k==chain.Count-1?goalAt:p.length;
+   int id=chain[k];if(edges[id].disabled)return null;var p=paths[id];float a=k==0?startAt:0,b=k==chain.Count-1?goalAt:p.length;
    if(b<a)return null;
    Append(points,p.Position(a),ref total);
    float d=0;for(int j=1;j<p.points.Length;j++){d+=Vector3.Distance(p.points[j-1],p.points[j]);if(d>a+.001f&&d<b-.001f)Append(points,p.points[j],ref total);}
@@ -65,7 +65,7 @@ public sealed class HdRoadGraph {
   var chain=new List<int>(first.edges);for(int i=1;i<rest.edges.Count;i++)chain.Add(rest.edges[i]);return Compose(chain,at,goalAt);
  }
  public RoutePath Forward(int start,float at){
-  if(start<0)return null;var chain=new List<int>{start};int cur=start;float length=paths[cur].length-at;
+  if(start<0||edges[start].disabled)return null;var chain=new List<int>{start};int cur=start;float length=paths[cur].length-at;
   while(length<250&&chain.Count<40){int best=-1;float score=float.MaxValue;
    foreach(int next in edges[cur].next){if(chain.Contains(next)||edges[next].change!=0)continue;float angle=Vector3.Angle(paths[cur].Tangent(paths[cur].length),paths[next].Tangent(paths[next].length));if(angle<score){score=angle;best=next;}}
    if(best<0)break;cur=best;chain.Add(cur);length+=paths[cur].length;
@@ -79,6 +79,6 @@ public sealed class HdRoadGraph {
    if(edge.change!=0)return (edge.change<0?"왼쪽":"오른쪽")+" 차로 변경 · "+Mathf.Max(0,begin-at).ToString("0")+"m · 점선 구간";
    if(edge.turn!=0){int number=edges[route.edges[Mathf.Max(0,i-1)]].number;return (edge.turn<0?"좌회전":"우회전")+" · "+Mathf.Max(0,begin-at).ToString("0")+"m · "+(number>0&&number<10?number+"차로":"연결 차로")+" 준비";}
    begin=route.ends[i];
-  }return "안내 차로를 따라 직진";
+  }var current=edges[route.EdgeAt(at)];return string.IsNullOrEmpty(current.roadName)?"안내 차로를 따라 직진":current.roadName+" 따라 직진 · OSM 명칭";
  }
 }

@@ -20,6 +20,7 @@ public class WorldBuilder : MonoBehaviour {
     void RenderBatches(Dictionary<Vector2Int,GeometryBatch> batches,string name,Material material){foreach(var item in batches){var mesh=new Mesh();mesh.indexFormat=UnityEngine.Rendering.IndexFormat.UInt32;mesh.SetVertices(item.Value.vertices);mesh.SetTriangles(item.Value.indices,0);mesh.RecalculateNormals();mesh.RecalculateBounds();var obj=new GameObject(name+" "+item.Key);obj.transform.SetParent(transform);obj.AddComponent<MeshFilter>().sharedMesh=mesh;obj.AddComponent<MeshRenderer>().sharedMaterial=material;}}
     public void Build() {
         map=RoadRulesTrial.Enabled?RoadRulesTrial.CreateMap():MapCatalog.Load();
+        MapSupplements.DrawCrossings(map,transform);
         var ground=Mat("Ground",new Color(.33f,.40f,.32f)); var asphalt=Mat("Road",new Color(.16f,.18f,.20f));
         var stripe=Mat("Paint",new Color(.88f,.79f,.39f)); var building=Mat("Buildings",new Color(.70f,.67f,.60f));
         Box("Terrain",new Vector3(map.width/2,-.5f,map.depth/2),new Vector3(map.width+80,1,map.depth+80),ground,transform);

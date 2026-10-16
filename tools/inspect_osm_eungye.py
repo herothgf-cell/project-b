@@ -53,13 +53,13 @@ def main():
             if len(ll)<2 or max(p[0] for p in ll)<minlon or min(p[0] for p in ll)>maxlon or max(p[1] for p in ll)<minlat or min(p[1] for p in ll)>maxlat:return
             xy=[to_xy.transform(*p) for p in ll]
             if not any(intersects(a,b,bounds) for a,b in zip(xy,xy[1:])):return
-            self.ways.append(dict(id=w.id,tags=tags,points=[[x-bounds[0],y-bounds[1]] for x,y in xy],version=w.version,timestamp=str(w.timestamp)))
+            self.ways.append(dict(id=w.id,tags=tags,points=[[x-bounds[0],y-bounds[1]] for x,y in xy],nodeIds=[n.ref for n in w.nodes],version=w.version,timestamp=str(w.timestamp)))
             self.ids.add(w.id)
         def relation(self,r):
             tags=dict(r.tags)
             if tags.get('type')!='restriction':return
             if any(m.type=='w' and m.ref in self.ids or m.type=='n' and m.ref in self.nodeids for m in r.members):
-                self.relations.append(dict(id=r.id,tags=tags,members=[dict(type=m.type,ref=m.ref,role=m.role) for m in r.members],viaInsideCrop=any(m.role=='via' and m.type=='n' and m.ref in self.local_node_xy for m in r.members)))
+                self.relations.append(dict(id=r.id,tags=tags,members=[dict(type=m.type,ref=m.ref,role=m.role) for m in r.members],viaPoints=[[self.local_node_xy[m.ref][0]-bounds[0],self.local_node_xy[m.ref][1]-bounds[1]] for m in r.members if m.role=='via' and m.type=='n' and m.ref in self.local_node_xy],viaInsideCrop=any(m.role=='via' and m.type=='n' and m.ref in self.local_node_xy for m in r.members)))
     h=Handler();h.apply_file(str(args.pbf),locations=True,idx='flex_mem')
     roads=[w for w in h.ways if 'highway' in w['tags']]
     vehicle=[w for w in roads if w['tags']['highway'] not in ['footway','path','cycleway','steps','pedestrian','bridleway','construction','proposed']]

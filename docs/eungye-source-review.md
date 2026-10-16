@@ -103,7 +103,7 @@ python -m unittest discover -s tests
 
 입력: `data/raw/south-korea-261015.osm.pbf` (289,358,122 bytes). PBF 헤더 replication timestamp는 `2026-10-15T20:21:00Z`다. 파일 이름/추출 일자가 각 도로의 현장 조사 일자를 뜻하지 않는다. SHA-256: `406711cb7c515458b027cb444b43459b5c3fe4ff108b39f9ebbc12e46fe745a4`.
 
-현재 은계 범위와 동일한 EPSG:5186 `[181900,537200,184000,538950]` (2.1×1.75km)에 WGS84 OSM 좌표를 변환해 교차하는 선형 객체와 내부 지점을 추출했다. 원본과 게임 지도는 변경하지 않았다. 로컬 결과는 `data/inspection/osm-eungye.json`, 재현 도구는 `tools/inspect_osm_eungye.py`다. 집계 단위는 OSM way/node/relation이며 실제 도로 개수나 교차로 개수와 다르다. 경계에 걸친 way는 원형을 보존했다.
+현재 은계 범위와 동일한 EPSG:5186 `[181900,537200,184000,538950]` (2.1×1.75km)에 WGS84 OSM 좌표를 변환해 교차하는 선형 객체와 내부 지점을 추출했다. 초기 검토 단계에서는 원본과 게임 지도를 변경하지 않았다. 이후 적용 결과는 아래 후속 절을 참조한다. 로컬 결과는 `data/inspection/osm-eungye.json`, 재현 도구는 `tools/inspect_osm_eungye.py`다. 집계 단위는 OSM way/node/relation이며 실제 도로 개수나 교차로 개수와 다르다. 경계에 걸친 way는 원형을 보존했다.
 
 ### 확인된 보완 자료
 
@@ -139,7 +139,7 @@ python -m unittest discover -s tests
 3. 95개 횡단보도와 입체교차 정보를 이용해 임시 시설·평면 접속의 대조 목록을 만든다.
 4. 차로 수가 명시된 14개 구간만 현행 차로와 비교한다. 국도42 정밀 차로는 우선 보존하고 충돌은 별도 검토한다.
 
-OSM 후보는 `osm-supplemental / field-unverified`로 따로 관리하고 원본 way/relation ID, 버전, timestamp, 적용 근거를 유지하는 것이 적합하다. 현재 `verified` 시설로 승격하거나 게임의 회전 제한을 변경하지 않았다. 내비와 AI에 적용할 때는 같은 공유 그래프에 반영하고 승하차 접근 가능성까지 재검증해야 한다.
+OSM 후보는 `osm-supplemental / field-unverified`로 따로 관리하고 원본 way/relation ID, 버전, timestamp, 적용 근거를 유지하는 것이 적합하다. 초기 검토에서는 `verified` 시설 승격이나 게임의 회전 제한 변경을 하지 않았다. 내비와 AI에 적용할 때는 같은 공유 그래프에 반영하고 승하차 접근 가능성까지 재검증해야 한다.
 
 OSM의 차로 방향 의미는 [turn 문서](https://wiki.openstreetmap.org/wiki/Key:turn), 회전 제한 연결 구조는 [restriction 문서](https://wiki.openstreetmap.org/wiki/Relation:restriction)를 참고했다. 실제 배포에 사용하는 경우 © OpenStreetMap contributors 표기와 ODbL 안내가 필요하다. [공식 저작권·라이선스 안내](https://www.openstreetmap.org/copyright). NGII 원본과 OSM 보완 자료의 출처를 구분해 유지한다.
 
@@ -150,3 +150,55 @@ python tools/inspect_osm_eungye.py --pbf data/raw/south-korea-261015.osm.pbf
 ```
 
 국가 전체 파일과 추출 geometry는 Git에 포함하지 않는다. 이 검토는 자료 유무·태그 포함률과 공간 대조이며 현장 검증이 아니다.
+
+
+## 2026-10-16 OSM 보완 적용 및 추가 정밀지도 대조
+
+### 추가 NGII 자료의 범위
+
+`data/raw/ngii/eungye/detail`의 두 ZIP을 압축 해제·이동 없이 조사했다.
+
+- `(B110)정밀도로지도_고속국도_153호선(평택시흥선).zip`: 군자JC–송산마도IC–서평택JC 구간 자료.
+- `(B110)정밀도로지도_자율주행시범운행지구_시흥.zip`: 오이도역–배곧·시화병원 등 시흥 남부 자료.
+
+A2_LINK 33개 레이어(11개 구간의 좌표/높이 변형)를 읽어 EPSG:5179/32652에서 EPSG:5186으로 변환했다. 경계 상자의 각 변을 100분할해 변환한 범위 중 현재 은계 2.1×1.75km와 겹치는 것은 **0개**이며, 가장 가까운 경계 상자도 약 **6.60km** 떨어져 있다. 파일에 ‘시흥’이 있다고 은계 자료인 것은 아니다. 은계 지형으로 이동하거나 기존 국도42 차로를 덮어쓰지 않았다. 범위 기록: `config/maps/eungye-detail-coverage.json`, 재현: `python tools/inspect_ngii_detail.py` (pyshp/pyproj 필요).
+
+### 적용 결과와 보류 기록
+
+공유 설정은 `config/maps/eungye-osm-supplement.json`, 검토 결정은 `config/maps/eungye-supplement-review.json`이다. NGII 원본 형상은 유지하고 시작 시 동일한 MapData에 보완 설정을 적용한다.
+
+| 항목 | 적용 | 보류·제약 |
+|---|---|---|
+| 도로명 | 기존 NGII 도로 조각 412개에 OSM 명칭 | 실제 도로 412개라는 뜻이 아님. 기존 이름과 다른 7개 조각은 충돌로 보류 |
+| 일방통행 | OSM way 978035334: 역방향 로컬 차로 조각 6개 차단 | 모호한 대응은 일괄 변환하지 않음. NGII 정밀 차로는 보존 |
+| 회전 제한 | OSM relation 18200455: 좌회전 연결 1개 차단 | 나머지는 대응 도로/교차로/출구 불명확 또는 해당 연결이 이미 없음. 23개를 모두 적용한 것이 아님 |
+| 횡단 지점 | 39개 지점 대응, 그중 표시 가능한 25곳에 노면 표시 추가 | 기존 시설 인접·unmarked·유형 미기재는 새로 그리지 않음. 나머지 56개는 도로 대응 또는 폭 검토 필요 |
+| 정밀지도 2종 | 은계 적용 0개 | 현재 범위 밖. 자료 범위 기록만 보존 |
+
+도로 중심선 20/50/80% 표본의 거리 4m 이내·방향 유사도·차선 후보 간 모호성을 검사한다. 차로 오프셋은 해당 NGII 원본 ID에 대응된 OSM 후보 안에서만 비교한다. 교량/터널/다른 높이의 도로는 평면 도로 보완에서 제외한다. 회전 제한은 from/via/to와 인접 차로 연결을 함께 확인하며 조건부 규제·예외 규제는 보류한다. `only_*`에서 출구 하나라도 대응되지 않으면 규제를 보류한다.
+
+현장 확인을 대신하는 자료가 아니므로 모든 보완은 `osm-unverified`다. 기존 `verified` 시설 상태로 승격하지 않았으며 횡단보도의 신호 태그로 신호 주기·현시·정지선을 만들어내지 않았다. HUD에 OSM 보완·현장 미확인과 저작권 안내를 표시한다. 내비 도로명에도 OSM 명칭임을 표시한다.
+
+통행 불가 차로는 공유 그래프의 진입·후속 연결·경로 합성에서 모두 제외된다. 내비, 보조 조향, 일반 차량이 이 그래프를 함께 사용한다. 12개 승하차 지점의 132개 방향별 연결을 끊는 보완은 적용하지 않고 충돌로 기록한다. 이 자동 검사는 현장 통행 가능성 검증과 구분한다.
+
+### 재생성
+
+1. 기존 NGII 가져오기 및 `EungyeHybridBuilder.Generate`로 은계 혼합 지도를 생성한다.
+2. `python tools/inspect_osm_eungye.py --pbf data/raw/south-korea-261015.osm.pbf` (osmium/pyproj 필요).
+3. `python tools/build_eungye_supplement.py` (표준 라이브러리만 사용).
+4. Unity `PrototypeBuild.BuildHybrid`로 검사 후 빌드한다.
+
+설정은 기반 `eungye-hybrid-map.json`의 SHA-256을 고정한다. 원본·컴파일러 스키마·그래프가 바뀌면 오래된 보완을 조용히 적용하지 않고 빌드/로딩을 차단한다. 이때 1–3단계를 다시 수행하고 변경된 결정 목록을 검토한다. 국가 전체 PBF·ZIP과 전체 추출 geometry는 Git에 넣지 않는다. OSM 설정과 원본 ID가 포함된 검토 기록은 저장소에 유지한다.
+
+
+### 검증 근거
+
+- Python 41개 테스트 통과: 평행 도로 모호성, 방향 반전, unknown 출구 금지 방지, unmarked/미기재 횡단 지점 표시 제외 및 기존 가져오기 회귀.
+- `tools/test_prototype.ps1`: 상태·회계·캠페인·승객 요청·경제 5개 실행 검사 통과.
+- Unity `EungyeSupplementTests`: 금지 차로 7개, 원본 NGII 차로 무변경, 금지 차로로 들어가는 후속 연결 없음, 모든 132개 승하차 경로 연결 확인.
+- Player `artifacts/supplement-test.txt`: 내비와 NPC 그래프 동일 참조, 일반 차량 24대 경로와 132개 운송 경로에 금지 차로 없음. 실행 시 `-eungye` 인자 없이 은계로 로드.
+- Player `artifacts/district-traffic-test.txt`: 180초 시뮬레이션에서 24대 모두 이동, 총 21,411.52m, 양방향 회전·NGII/임시 구역 주행. 경로 이탈 0/차량 겹침 0/마지막 60초 장기 정체 0. 추가 3대 신호 대기열의 적색 정지·녹색 통과 확인. 택시는 장면 밖으로 제외한 NPC 검사다.
+- Player `artifacts/hybrid-v2-drive-test.txt`: 132개 경로, 혼합 지도 물리 운송·하차·v2 현금 입금, 길가 손님 탑승, 수동 이탈 후 자유 안내 재탐색. 최대 경로 오차 0.89m 미만·기울기 1도 미만·접촉 0. 일반 차량을 끈 자동 물리 운송 검사이며 수동 실주행을 뜻하지 않는다.
+- `artifacts/osm-crossing.png`: 새 노면 표시와 OSM 출처/HUD 확인. 도로와 겹치는 표시 높이를 수정했다.
+
+자동 검사 통과는 최신 현장 규제·시설의 정확성을 뜻하지 않는다. 데이터 없는 차로별 회전 연결과 보류된 규제는 기존 임시 설정을 유지한다.

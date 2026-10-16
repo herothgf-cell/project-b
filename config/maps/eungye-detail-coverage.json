@@ -1,0 +1,464 @@
+[
+  {
+    "archive": "(B110)정밀도로지도_고속국도_153호선(평택시흥선).zip",
+    "member": "SEC01-001_군자JC_송산마도IC/HDMap_UTM52N_타원체고/A2_LINK.shp",
+    "sourceEPSG": 32652,
+    "bboxEPSG5186": [
+      177304.44642501097,
+      511974.3265189851,
+      179226.4664992069,
+      525999.6851115378
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 11514.983064710554,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_고속국도_153호선(평택시흥선).zip",
+    "member": "SEC01-001_군자JC_송산마도IC/HDMap_UTMK_정표고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      177518.4408106204,
+      511992.88381691644,
+      179010.5598697377,
+      525985.0422229804
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 11581.197788083162,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_고속국도_153호선(평택시흥선).zip",
+    "member": "SEC01-001_군자JC_송산마도IC/HDMap_UTMK_타원체고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      177518.4408106204,
+      511992.88381691644,
+      179010.5598697377,
+      525985.0422229804
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 11581.197788083162,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_고속국도_153호선(평택시흥선).zip",
+    "member": "SEC01_군자JC_송산마도IC/HDMap_UTM52N_타원체고/A2_LINK.shp",
+    "sourceEPSG": 32652,
+    "bboxEPSG5186": [
+      177178.89813900215,
+      512197.62733398244,
+      179991.39097701758,
+      530883.7468141732
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 6598.321203918263,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_고속국도_153호선(평택시흥선).zip",
+    "member": "SEC01_군자JC_송산마도IC/HDMap_UTMK_정표고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      177358.39626068802,
+      512214.82014876034,
+      179722.53906189164,
+      530880.3594654293
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 6684.249593123856,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_고속국도_153호선(평택시흥선).zip",
+    "member": "SEC01_군자JC_송산마도IC/HDMap_UTMK_타원체고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      177358.39626068802,
+      512214.82014876034,
+      179722.53906189164,
+      530880.3594654293
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 6684.249593123856,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_고속국도_153호선(평택시흥선).zip",
+    "member": "SEC02-001_송산마도IC_서평택JC/HDMap_UTM52N_타원체고/A2_LINK.shp",
+    "sourceEPSG": 32652,
+    "bboxEPSG5186": [
+      183626.75342567067,
+      502049.0807476638,
+      185116.9190842308,
+      502982.16452948004
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 34217.83547051996,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_고속국도_153호선(평택시흥선).zip",
+    "member": "SEC02-001_송산마도IC_서평택JC/HDMap_UTMK_정표고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      183635.41670699054,
+      502055.23653963936,
+      185105.66889773525,
+      502978.89666598465
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 34221.10333401535,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_고속국도_153호선(평택시흥선).zip",
+    "member": "SEC02-001_송산마도IC_서평택JC/HDMap_UTMK_타원체고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      183635.41670699054,
+      502055.23653963936,
+      185105.66889773525,
+      502978.89666598465
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 34221.10333401535,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_고속국도_153호선(평택시흥선).zip",
+    "member": "SEC02_송산마도IC_서평택JC/HDMap_UTM52N_타원체고/A2_LINK.shp",
+    "sourceEPSG": 32652,
+    "bboxEPSG5186": [
+      178656.268980491,
+      494974.7567692376,
+      189555.03246062403,
+      512672.97740868304
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 24527.022591316956,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_고속국도_153호선(평택시흥선).zip",
+    "member": "SEC02_송산마도IC_서평택JC/HDMap_UTMK_정표고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      178656.268980491,
+      495139.2271066464,
+      189554.64610846952,
+      512507.6082162659
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 24692.391783734085,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_고속국도_153호선(평택시흥선).zip",
+    "member": "SEC02_송산마도IC_서평택JC/HDMap_UTMK_타원체고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      178656.268980491,
+      495139.2271066464,
+      189554.64610846952,
+      512507.6082162659
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 24692.391783734085,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC001_오이도역(세종그랑시아119동)_배곧C2호반써밋202동/HDMap_UTM52N_타원체고/A2_LINK.shp",
+    "sourceEPSG": 32652,
+    "bboxEPSG5186": [
+      175521.61045415277,
+      528992.4490902823,
+      176771.70989259685,
+      529886.5137637957
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 8932.325584798085,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC001_오이도역(세종그랑시아119동)_배곧C2호반써밋202동/HDMap_UTMK_정표고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      175521.72708914612,
+      529008.8009059837,
+      176766.02748440264,
+      529867.0660565463
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 8951.51350386987,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC001_오이도역(세종그랑시아119동)_배곧C2호반써밋202동/HDMap_UTMK_타원체고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      175521.72708914612,
+      529008.8009059837,
+      176766.02748440264,
+      529867.0660565463
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 8951.51350386987,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC002_보성아파트삼거리_시화병원사거리/HDMap_UTM52N_타원체고/A2_LINK.shp",
+    "sourceEPSG": 32652,
+    "bboxEPSG5186": [
+      175656.01714413456,
+      528140.1482321571,
+      176460.62859956687,
+      529119.2623804903
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 9740.897376895464,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC002_보성아파트삼거리_시화병원사거리/HDMap_UTMK_정표고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      175670.99298474,
+      528140.4825186965,
+      176445.63630071058,
+      529119.0518221459
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 9749.451616234068,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC002_보성아파트삼거리_시화병원사거리/HDMap_UTMK_타원체고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      175670.99298474,
+      528140.4825186965,
+      176445.63630071058,
+      529119.0518221459
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 9749.451616234068,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC003_시화병원사거리_이지더원2차사거리/HDMap_UTM52N_타원체고/A2_LINK.shp",
+    "sourceEPSG": 32652,
+    "bboxEPSG5186": [
+      174633.52982763253,
+      528221.2385100418,
+      175740.4637007425,
+      529116.0247366094
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 10163.195534918217,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC003_시화병원사거리_이지더원2차사거리/HDMap_UTMK_정표고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      174634.76594817493,
+      528238.2080006767,
+      175740.14537160826,
+      529099.0544930034
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 10176.891821683445,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC003_시화병원사거리_이지더원2차사거리/HDMap_UTMK_타원체고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      174634.76594817493,
+      528238.2080006767,
+      175740.14537160826,
+      529099.0544930034
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 10176.891821683445,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC004_월드아파트사거리_서울대학교교육협력동사거리/HDMap_UTM52N_타원체고/A2_LINK.shp",
+    "sourceEPSG": 32652,
+    "bboxEPSG5186": [
+      175074.41145501385,
+      528576.7202194902,
+      176010.2080792901,
+      529331.3199356721
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 9828.823674479607,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC004_월드아파트사거리_서울대학교교육협력동사거리/HDMap_UTMK_정표고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      175074.53835690988,
+      528591.022110733,
+      176010.02457569272,
+      529316.9888946379
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 9840.41028546096,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC004_월드아파트사거리_서울대학교교육협력동사거리/HDMap_UTMK_타원체고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      175074.53835690988,
+      528591.022110733,
+      176010.02457569272,
+      529316.9888946379
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 9840.41028546096,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC005_이지더원2차사거리_배곧호반2차사거리/HDMap_UTM52N_타원체고/A2_LINK.shp",
+    "sourceEPSG": 32652,
+    "bboxEPSG5186": [
+      174685.78867334547,
+      529069.6225261949,
+      175923.64812578505,
+      530435.4236522885
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 9026.420934592532,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC005_이지더원2차사거리_배곧호반2차사거리/HDMap_UTMK_정표고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      174706.8233100889,
+      529070.0592034489,
+      175902.6358110853,
+      530435.2125337716
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 9040.50478002843,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC005_이지더원2차사거리_배곧호반2차사거리/HDMap_UTMK_타원체고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      174706.8233100889,
+      529070.0592034489,
+      175902.6358110853,
+      530435.2125337716
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 9040.50478002843,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC006_배곧호반2차사거리_해송십리로회전교차로/HDMap_UTM52N_타원체고/A2_LINK.shp",
+    "sourceEPSG": 32652,
+    "bboxEPSG5186": [
+      175336.0112528058,
+      530365.5444710985,
+      175804.32340320302,
+      530757.6714590467
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 8869.09635770863,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC006_배곧호반2차사거리_해송십리로회전교차로/HDMap_UTMK_정표고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      175337.1755722493,
+      530372.6325668668,
+      175804.05910762958,
+      530751.2394070788
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 8873.951123827923,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC006_배곧호반2차사거리_해송십리로회전교차로/HDMap_UTMK_타원체고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      175337.1755722493,
+      530372.6325668668,
+      175804.05910762958,
+      530751.2394070788
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 8873.951123827923,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC007_해송십리로회전교차로_야외주차장출구삼거리/HDMap_UTM52N_타원체고/A2_LINK.shp",
+    "sourceEPSG": 32652,
+    "bboxEPSG5186": [
+      175371.61410579307,
+      530727.8021751188,
+      176759.9237421268,
+      531636.6631685429
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 7574.371303085093,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC007_해송십리로회전교차로_야외주차장출구삼거리/HDMap_UTMK_정표고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      175385.15383586558,
+      530728.1814970555,
+      176746.21878414598,
+      531636.584493735
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 7583.736079020661,
+    "status": "out-of-current-map"
+  },
+  {
+    "archive": "(B110)정밀도로지도_자율주행시범운행지구_시흥.zip",
+    "member": "SEC007_해송십리로회전교차로_야외주차장출구삼거리/HDMap_UTMK_타원체고/A2_LINK.shp",
+    "sourceEPSG": 5179,
+    "bboxEPSG5186": [
+      175385.15383586558,
+      530728.1814970555,
+      176746.21878414598,
+      531636.584493735
+    ],
+    "overlaps": false,
+    "bboxGapMetres": 7583.736079020661,
+    "status": "out-of-current-map"
+  }
+]

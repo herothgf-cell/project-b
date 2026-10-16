@@ -1,0 +1,709 @@
+{
+  "summary": {
+    "matchedRoads": 538,
+    "namedRoads": 412,
+    "rules": 2,
+    "disabledEdges": 7,
+    "crossings": 39,
+    "newCrossingGeometry": 25,
+    "decisions": {
+      "conflict-existing-name": 7,
+      "unresolved-or-already-absent": 55,
+      "applied": 2,
+      "unmatched-from-to": 6,
+      "ambiguous-via": 5,
+      "unmatched-allowed-exit": 2,
+      "unmatched-or-wide-road-review": 56
+    }
+  },
+  "decisions": [
+    {
+      "source": "OSM way 913875400",
+      "kind": "name",
+      "roadId": "37612022:A0020000:4300:0",
+      "status": "conflict-existing-name",
+      "existing": "인천-동해선",
+      "candidate": "수인로"
+    },
+    {
+      "source": "OSM way 913875400",
+      "kind": "name",
+      "roadId": "37612022:A0020000:4413:0",
+      "status": "conflict-existing-name",
+      "existing": "인천-동해선",
+      "candidate": "수인로"
+    },
+    {
+      "source": "OSM way 978035340",
+      "kind": "name",
+      "roadId": "37612023:A0020000:168:0",
+      "status": "conflict-existing-name",
+      "existing": "인천-동해선",
+      "candidate": "수인로"
+    },
+    {
+      "source": "OSM way 978035334",
+      "kind": "name",
+      "roadId": "37612023:A0020000:236:0",
+      "status": "conflict-existing-name",
+      "existing": "인천-동해선",
+      "candidate": "수인로"
+    },
+    {
+      "source": "OSM way 978035334",
+      "kind": "name",
+      "roadId": "37612023:A0020000:245:0",
+      "status": "conflict-existing-name",
+      "existing": "인천-동해선",
+      "candidate": "수인로"
+    },
+    {
+      "source": "OSM way 978035334",
+      "kind": "name",
+      "roadId": "37612023:A0020000:251:0",
+      "status": "conflict-existing-name",
+      "existing": "인천-동해선",
+      "candidate": "수인로"
+    },
+    {
+      "source": "OSM way 978035334",
+      "kind": "name",
+      "roadId": "37612023:A0020000:325:0",
+      "status": "conflict-existing-name",
+      "existing": "인천-동해선",
+      "candidate": "수인로"
+    },
+    {
+      "source": "OSM way 71502990",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 71503046",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 71503051",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 237391481",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 237391486",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 237487666",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 237487668",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 470227674",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 554224498",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 554224499",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 554224504",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 554224505",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 554224509",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 554224512",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 554224514",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 554224518",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 607110489",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 607110492",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 607110494",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 607110496",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 614402328",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 614402330",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 913875400",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 978035333",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 978035334",
+      "kind": "oneway",
+      "status": "applied",
+      "count": 6
+    },
+    {
+      "source": "OSM way 978035336",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 978035338",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 978035340",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1074719238",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1272844047",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1272844048",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1272844049",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1327357033",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1327357034",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1327357035",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1327357036",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1327357053",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1327473777",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1327473778",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1327473789",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1327473790",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1327473791",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1327473795",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1327473796",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1454894417",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1454894426",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM way 1552619306",
+      "kind": "oneway",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM relation 18200445",
+      "kind": "no_left_turn",
+      "status": "unmatched-from-to"
+    },
+    {
+      "source": "OSM relation 18200446",
+      "kind": "no_left_turn",
+      "status": "unmatched-from-to"
+    },
+    {
+      "source": "OSM relation 18200447",
+      "kind": "no_left_turn",
+      "status": "unmatched-from-to"
+    },
+    {
+      "source": "OSM relation 18200448",
+      "kind": "no_u_turn",
+      "status": "ambiguous-via"
+    },
+    {
+      "source": "OSM relation 18200449",
+      "kind": "no_u_turn",
+      "status": "ambiguous-via"
+    },
+    {
+      "source": "OSM relation 18200450",
+      "kind": "no_u_turn",
+      "status": "unmatched-from-to"
+    },
+    {
+      "source": "OSM relation 18200451",
+      "kind": "no_left_turn",
+      "status": "unmatched-from-to"
+    },
+    {
+      "source": "OSM relation 18200452",
+      "kind": "only_right_turn",
+      "status": "unmatched-allowed-exit"
+    },
+    {
+      "source": "OSM relation 18200453",
+      "kind": "only_right_turn",
+      "status": "unmatched-allowed-exit"
+    },
+    {
+      "source": "OSM relation 18200454",
+      "kind": "no_u_turn",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM relation 18200455",
+      "kind": "no_left_turn",
+      "status": "applied",
+      "count": 1
+    },
+    {
+      "source": "OSM relation 18200456",
+      "kind": "no_left_turn",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM relation 18200457",
+      "kind": "no_u_turn",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM relation 18200797",
+      "kind": "only_right_turn",
+      "status": "unmatched-from-to"
+    },
+    {
+      "source": "OSM relation 18200798",
+      "kind": "no_u_turn",
+      "status": "ambiguous-via"
+    },
+    {
+      "source": "OSM relation 18200799",
+      "kind": "only_straight_on",
+      "status": "ambiguous-via"
+    },
+    {
+      "source": "OSM relation 18200800",
+      "kind": "no_right_turn",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM relation 18200801",
+      "kind": "no_u_turn",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM relation 18200802",
+      "kind": "no_right_turn",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM relation 18200803",
+      "kind": "no_u_turn",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM relation 18200804",
+      "kind": "no_u_turn",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM relation 18200805",
+      "kind": "no_u_turn",
+      "status": "unresolved-or-already-absent"
+    },
+    {
+      "source": "OSM relation 18200806",
+      "kind": "only_straight_on",
+      "status": "ambiguous-via"
+    },
+    {
+      "source": "OSM node 850576126",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 2452988212",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 5334550652",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 6991678057",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 6991678058",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 8329271588",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 9832056804",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 9832056805",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 11504852858",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279717619",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279717621",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279717624",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279717626",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279717633",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279717642",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279717648",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279717654",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279718004",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279718027",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279718029",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279718030",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279718035",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279718067",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279718069",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279718072",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279718073",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279718074",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279718075",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12279718076",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12280788790",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12280788792",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12280788797",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12280788798",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12280788801",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12280966278",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12280966290",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12281154723",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12281154729",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12281405187",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12281405317",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12281405318",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12281405332",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12281883202",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12282066956",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12282067133",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12282067166",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12282183559",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12282183564",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12282183598",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12282183605",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12282183619",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12282183620",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12282183624",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12282183633",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 12282183688",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    },
+    {
+      "source": "OSM node 13120188551",
+      "kind": "crossing",
+      "status": "unmatched-or-wide-road-review"
+    }
+  ]
+}

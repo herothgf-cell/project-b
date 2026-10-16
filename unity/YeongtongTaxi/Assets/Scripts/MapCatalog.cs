@@ -20,6 +20,6 @@ public static class MapCatalog {
   if(!Available(region)&&!string.IsNullOrEmpty(LockedRegion))throw new System.InvalidOperationException("빌드에 필요한 지도 자료가 없습니다: "+region);
   if(!Available(region)){Debug.LogWarning(Name(region)+" 지도 자료/검토 지점 미준비 · 영통으로 시작합니다");region="yeongtong";}
   var asset=Resources.Load<TextAsset>(Resource(region));if(!asset)throw new System.InvalidOperationException("지도 JSON이 없습니다. tools/import_ngii_map.py build --config config/maps/yeongtong.json 을 실행하세요.");
-  var result=JsonUtility.FromJson<MapData>(asset.text);result.mapId=region;return result;
+  var result=JsonUtility.FromJson<MapData>(asset.text);result.mapId=region;MapSupplements.Apply(result,asset.bytes);return result;
  }
 }

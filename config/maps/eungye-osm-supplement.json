@@ -1,0 +1,3011 @@
+{
+  "baseSha256": "0a9d6165cc2432bf918e6c3f8e842d2aef34371eeab9c6ec54f49cbb50193766",
+  "sourceTimestamp": "2026-10-15T20:21:00Z",
+  "attribution": "© OpenStreetMap contributors / ODbL",
+  "names": [
+    {
+      "roadId": "37612022:A0020000:2:0",
+      "name": "은계북길",
+      "source": "OSM way 665784378",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:10:0",
+      "name": "은계로",
+      "source": "OSM way 1327556121",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:19:0",
+      "name": "은계로338번길",
+      "source": "OSM way 667858045",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:20:0",
+      "name": "은계로",
+      "source": "OSM way 1327530325",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:34:0",
+      "name": "은계로",
+      "source": "OSM way 1327556121",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:181:0",
+      "name": "은계로",
+      "source": "OSM way 665784379",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:221:0",
+      "name": "은계로",
+      "source": "OSM way 1327530317",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:320:0",
+      "name": "은행로",
+      "source": "OSM way 237391478",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:632:0",
+      "name": "은계북길",
+      "source": "OSM way 665784378",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:699:0",
+      "name": "은계로",
+      "source": "OSM way 1009242472",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1079:0",
+      "name": "은행로",
+      "source": "OSM way 237391478",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1082:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1083:0",
+      "name": "은행로173번길",
+      "source": "OSM way 237487660",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1086:0",
+      "name": "대은로",
+      "source": "OSM way 915424397",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1089:0",
+      "name": "은행로173번길",
+      "source": "OSM way 237487660",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1091:0",
+      "name": "은행로",
+      "source": "OSM way 237391478",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1094:0",
+      "name": "대은로",
+      "source": "OSM way 915424397",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1095:0",
+      "name": "은행로149번길",
+      "source": "OSM way 237487664",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1096:0",
+      "name": "대은로",
+      "source": "OSM way 915424397",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1102:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1103:0",
+      "name": "은행로173번길",
+      "source": "OSM way 237487660",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1108:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1110:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1123:0",
+      "name": "은행로149번길",
+      "source": "OSM way 237487664",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1124:0",
+      "name": "은행로173번길",
+      "source": "OSM way 237487660",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1128:0",
+      "name": "은행로",
+      "source": "OSM way 237391478",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1131:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1134:0",
+      "name": "은행로173번길",
+      "source": "OSM way 237487660",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1136:0",
+      "name": "대은로103번길",
+      "source": "OSM way 895402162",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1137:0",
+      "name": "은행로149번길",
+      "source": "OSM way 237487664",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1139:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1140:0",
+      "name": "은행로149번길",
+      "source": "OSM way 237487664",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1146:0",
+      "name": "은행로149번길",
+      "source": "OSM way 237487664",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1149:0",
+      "name": "은행로173번길",
+      "source": "OSM way 237487660",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1169:0",
+      "name": "대은로",
+      "source": "OSM way 915424397",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1198:0",
+      "name": "은행로",
+      "source": "OSM way 237391478",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1200:0",
+      "name": "대은로103번길",
+      "source": "OSM way 895402162",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1221:0",
+      "name": "은행로173번길",
+      "source": "OSM way 237487660",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1307:0",
+      "name": "은행로65번길",
+      "source": "OSM way 471503506",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1331:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1360:0",
+      "name": "은행로",
+      "source": "OSM way 237487679",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1382:0",
+      "name": "검바위1로",
+      "source": "OSM way 469295768",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1406:0",
+      "name": "검바위1로",
+      "source": "OSM way 471510235",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1443:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1453:0",
+      "name": "검바위1로",
+      "source": "OSM way 237487680",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1482:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1502:0",
+      "name": "검바위1로",
+      "source": "OSM way 237487680",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1518:0",
+      "name": "은행로173번길",
+      "source": "OSM way 237487660",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1536:0",
+      "name": "은행로149번길",
+      "source": "OSM way 237487664",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1540:0",
+      "name": "검바위1로",
+      "source": "OSM way 237487680",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1576:0",
+      "name": "대은로103번길",
+      "source": "OSM way 895402162",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1653:0",
+      "name": "은행로173번길",
+      "source": "OSM way 237487660",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1671:0",
+      "name": "대은로103번길",
+      "source": "OSM way 895402162",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1688:0",
+      "name": "검바위1로",
+      "source": "OSM way 471510235",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1702:0",
+      "name": "은계남로",
+      "source": "OSM way 738096965",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1715:0",
+      "name": "은행로149번길",
+      "source": "OSM way 237487664",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1764:0",
+      "name": "은행로",
+      "source": "OSM way 237391478",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1790:0",
+      "name": "은행로149번길",
+      "source": "OSM way 237487664",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1830:0",
+      "name": "검바위1로",
+      "source": "OSM way 237487680",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1888:0",
+      "name": "은행로",
+      "source": "OSM way 237391478",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1968:0",
+      "name": "은행로173번길",
+      "source": "OSM way 237487660",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:1973:0",
+      "name": "검바위1로",
+      "source": "OSM way 237487680",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2010:0",
+      "name": "검바위1로",
+      "source": "OSM way 471510239",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2077:0",
+      "name": "은행로149번길",
+      "source": "OSM way 237487664",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2081:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2082:0",
+      "name": "검바위1로",
+      "source": "OSM way 469295768",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2089:0",
+      "name": "검바위1로",
+      "source": "OSM way 469295768",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2122:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2177:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2190:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2213:0",
+      "name": "은행로173번길",
+      "source": "OSM way 237487660",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2230:0",
+      "name": "검바위1로",
+      "source": "OSM way 471510235",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2301:0",
+      "name": "검바위1로",
+      "source": "OSM way 471510235",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2323:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2327:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2331:0",
+      "name": "대은로",
+      "source": "OSM way 237391489",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2354:0",
+      "name": "대은로104번길",
+      "source": "OSM way 237487667",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2391:0",
+      "name": "대은로103번길",
+      "source": "OSM way 895402162",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2428:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2430:0",
+      "name": "은행로",
+      "source": "OSM way 237487679",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2446:0",
+      "name": "대은로",
+      "source": "OSM way 1009242470",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2451:0",
+      "name": "검바위2로",
+      "source": "OSM way 469299165",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2517:0",
+      "name": "대은로103번길",
+      "source": "OSM way 895402162",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2538:0",
+      "name": "대은로",
+      "source": "OSM way 915424397",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2543:0",
+      "name": "대은로",
+      "source": "OSM way 915424397",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2545:0",
+      "name": "은행로",
+      "source": "OSM way 237487679",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2548:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2564:0",
+      "name": "대은로",
+      "source": "OSM way 1009242470",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2576:0",
+      "name": "은행로",
+      "source": "OSM way 237391478",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2600:0",
+      "name": "검바위2로",
+      "source": "OSM way 469299165",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2652:0",
+      "name": "은행로149번길",
+      "source": "OSM way 237487664",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2671:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2681:0",
+      "name": "은행로173번길",
+      "source": "OSM way 237487660",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2766:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2774:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2785:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2818:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2825:0",
+      "name": "대은로",
+      "source": "OSM way 915424397",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2828:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2925:0",
+      "name": "은행로",
+      "source": "OSM way 237487679",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2929:0",
+      "name": "은행로",
+      "source": "OSM way 237391478",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2931:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2943:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:2968:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3014:0",
+      "name": "대은로",
+      "source": "OSM way 915424397",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3078:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3159:0",
+      "name": "은행로",
+      "source": "OSM way 237487679",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3177:0",
+      "name": "대은로",
+      "source": "OSM way 915424397",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3211:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3224:0",
+      "name": "검바위1로",
+      "source": "OSM way 237487680",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3346:0",
+      "name": "은행로144번길",
+      "source": "OSM way 237487669",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3362:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3385:0",
+      "name": "검바위1로",
+      "source": "OSM way 237487680",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3404:0",
+      "name": "검바위1로",
+      "source": "OSM way 471510239",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3421:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3443:0",
+      "name": "대은로",
+      "source": "OSM way 1009242470",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3455:0",
+      "name": "대은로",
+      "source": "OSM way 915424397",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3466:0",
+      "name": "은행로",
+      "source": "OSM way 237487679",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3474:0",
+      "name": "검바위1로",
+      "source": "OSM way 237487680",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3495:0",
+      "name": "은행로",
+      "source": "OSM way 237391478",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3574:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3613:0",
+      "name": "대은로",
+      "source": "OSM way 1009242470",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3627:0",
+      "name": "은행로149번길",
+      "source": "OSM way 237487664",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3641:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3683:0",
+      "name": "은행로65번길",
+      "source": "OSM way 471503506",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3699:0",
+      "name": "은행로173번길",
+      "source": "OSM way 237487660",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3706:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3892:0",
+      "name": "대은로103번길",
+      "source": "OSM way 895402162",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3906:0",
+      "name": "대은로",
+      "source": "OSM way 915424397",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3925:0",
+      "name": "은행로173번길",
+      "source": "OSM way 237487660",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3933:0",
+      "name": "대은로104번길",
+      "source": "OSM way 237487667",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3960:0",
+      "name": "은행로",
+      "source": "OSM way 237487679",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:3985:0",
+      "name": "은계로",
+      "source": "OSM way 1009242472",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4026:0",
+      "name": "검바위1로",
+      "source": "OSM way 237487680",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4034:0",
+      "name": "은행로",
+      "source": "OSM way 237487679",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4036:0",
+      "name": "검바위2로",
+      "source": "OSM way 469299165",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4139:0",
+      "name": "검바위1로",
+      "source": "OSM way 237487680",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4235:0",
+      "name": "검바위1로",
+      "source": "OSM way 237487680",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4293:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4502:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4521:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4552:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4594:0",
+      "name": "은계북길",
+      "source": "OSM way 665784378",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4596:0",
+      "name": "은계로",
+      "source": "OSM way 1327530325",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4627:0",
+      "name": "대은로",
+      "source": "OSM way 1009242470",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4628:0",
+      "name": "대은로104번길",
+      "source": "OSM way 237487667",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4629:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4630:0",
+      "name": "은행로144번길",
+      "source": "OSM way 237487669",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4632:0",
+      "name": "은계로",
+      "source": "OSM way 1009242472",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4634:0",
+      "name": "은계남로",
+      "source": "OSM way 738096965",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4657:0",
+      "name": "은계북길",
+      "source": "OSM way 665784378",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4658:0",
+      "name": "은행로",
+      "source": "OSM way 237391478",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4663:0",
+      "name": "은행로",
+      "source": "OSM way 237391478",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4665:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4668:0",
+      "name": "은행로",
+      "source": "OSM way 237391478",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612022:A0020000:4671:0",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:28:0",
+      "name": "은계남로",
+      "source": "OSM way 738096965",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:31:0",
+      "name": "은계로",
+      "source": "OSM way 1009242472",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:33:0",
+      "name": "은행로144번길",
+      "source": "OSM way 237487669",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:35:0",
+      "name": "대은로104번길",
+      "source": "OSM way 237487667",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:36:0",
+      "name": "대은로",
+      "source": "OSM way 1009242470",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:54:0",
+      "name": "범안로",
+      "source": "OSM way 590222848",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:260:0",
+      "name": "은계중앙로",
+      "source": "OSM way 667858021",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:294:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:298:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:367:0",
+      "name": "마유로",
+      "source": "OSM way 554224507",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:394:0",
+      "name": "은계번영길",
+      "source": "OSM way 667858026",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:411:0",
+      "name": "은계번영길",
+      "source": "OSM way 1074126006",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:413:0",
+      "name": "은계번영길",
+      "source": "OSM way 667858026",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:419:0",
+      "name": "마유로",
+      "source": "OSM way 554224507",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:430:0",
+      "name": "은계중앙로",
+      "source": "OSM way 614402335",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:441:0",
+      "name": "대은로",
+      "source": "OSM way 1009242470",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:488:0",
+      "name": "은계남로",
+      "source": "OSM way 667858022",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:492:0",
+      "name": "대은로104번길",
+      "source": "OSM way 237487667",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:507:0",
+      "name": "마유로",
+      "source": "OSM way 554224510",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:513:0",
+      "name": "대은로104번길",
+      "source": "OSM way 237487667",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:519:0",
+      "name": "대은로104번길",
+      "source": "OSM way 237487667",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:527:0",
+      "name": "은행고길",
+      "source": "OSM way 1327473799",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:540:0",
+      "name": "은계호수로",
+      "source": "OSM way 667858038",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:560:0",
+      "name": "은행로144번길",
+      "source": "OSM way 237487669",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:564:0",
+      "name": "은계중앙로",
+      "source": "OSM way 665837675",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:578:0",
+      "name": "은계중앙로",
+      "source": "OSM way 1338305054",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:585:0",
+      "name": "은계번영길",
+      "source": "OSM way 1074126006",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:586:0",
+      "name": "은계번영길",
+      "source": "OSM way 667858026",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:606:0",
+      "name": "은계번영길",
+      "source": "OSM way 667858030",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:607:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:623:0",
+      "name": "은계번영길",
+      "source": "OSM way 667858026",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:624:0",
+      "name": "은계중앙로",
+      "source": "OSM way 738096964",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:631:0",
+      "name": "은행로144번길",
+      "source": "OSM way 237487669",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:641:0",
+      "name": "은계중앙로",
+      "source": "OSM way 614402335",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:646:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:649:0",
+      "name": "은계호수로",
+      "source": "OSM way 667858038",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:667:0",
+      "name": "은행고길",
+      "source": "OSM way 1327473799",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:671:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:674:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:675:0",
+      "name": "은계번영길",
+      "source": "OSM way 667858030",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:681:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:688:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:700:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:737:0",
+      "name": "은계호수로",
+      "source": "OSM way 667858039",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:750:0",
+      "name": "은계중앙로",
+      "source": "OSM way 614402335",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:774:0",
+      "name": "계수로",
+      "source": "OSM way 71503073",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:787:0",
+      "name": "마유로",
+      "source": "OSM way 554224501",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:790:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:815:0",
+      "name": "은계번영길",
+      "source": "OSM way 667858030",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:821:0",
+      "name": "은계중앙로",
+      "source": "OSM way 738096964",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:878:0",
+      "name": "은계호수로",
+      "source": "OSM way 667858039",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:895:0",
+      "name": "은계중앙로",
+      "source": "OSM way 614402335",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:902:0",
+      "name": "은계번영길",
+      "source": "OSM way 667858030",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:935:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:943:0",
+      "name": "은행고길",
+      "source": "OSM way 1327473799",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:965:0",
+      "name": "은계번영길",
+      "source": "OSM way 667858029",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:971:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:977:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:998:0",
+      "name": "은계번영길",
+      "source": "OSM way 667858030",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1030:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1031:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1036:0",
+      "name": "은계번영길",
+      "source": "OSM way 667858030",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1062:0",
+      "name": "마유로",
+      "source": "OSM way 554224507",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1092:0",
+      "name": "은계번영길",
+      "source": "OSM way 667858029",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1112:0",
+      "name": "은계번영길",
+      "source": "OSM way 667858026",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1116:0",
+      "name": "은계중앙로",
+      "source": "OSM way 614402335",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1120:0",
+      "name": "은계중앙로",
+      "source": "OSM way 614402335",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1123:0",
+      "name": "은계번영길",
+      "source": "OSM way 1074126006",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1158:0",
+      "name": "계수로",
+      "source": "OSM way 1338305055",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1159:0",
+      "name": "마유로",
+      "source": "OSM way 554224510",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1178:0",
+      "name": "은행고길",
+      "source": "OSM way 1327473799",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1193:0",
+      "name": "은계중앙로",
+      "source": "OSM way 614402335",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1205:0",
+      "name": "마유로",
+      "source": "OSM way 554224501",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1232:0",
+      "name": "은행고길",
+      "source": "OSM way 1327473799",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1233:0",
+      "name": "은계호수로",
+      "source": "OSM way 667858039",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1235:0",
+      "name": "대은로104번길",
+      "source": "OSM way 237487667",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1244:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1271:0",
+      "name": "계수로",
+      "source": "OSM way 1338305055",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1278:0",
+      "name": "은계남로",
+      "source": "OSM way 667858022",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1293:0",
+      "name": "은계번영길",
+      "source": "OSM way 667858026",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1308:0",
+      "name": "은행로144번길",
+      "source": "OSM way 237487670",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1323:0",
+      "name": "계수로",
+      "source": "OSM way 1338305055",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1335:0",
+      "name": "계수로",
+      "source": "OSM way 1338305055",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1350:0",
+      "name": "은계호수로",
+      "source": "OSM way 667858038",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1380:0",
+      "name": "은계중앙로",
+      "source": "OSM way 614402335",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1403:0",
+      "name": "은행로144번길",
+      "source": "OSM way 237487669",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1464:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1496:0",
+      "name": "은행로144번길",
+      "source": "OSM way 237487670",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1498:0",
+      "name": "은계중앙로",
+      "source": "OSM way 614402335",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1512:0",
+      "name": "계수로",
+      "source": "OSM way 71503073",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1526:0",
+      "name": "계수로",
+      "source": "OSM way 1338305055",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1543:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1546:0",
+      "name": "은행로144번길",
+      "source": "OSM way 237487669",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1547:0",
+      "name": "은계중앙로",
+      "source": "OSM way 614402335",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1561:0",
+      "name": "은계중앙로",
+      "source": "OSM way 738096964",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1571:0",
+      "name": "은계로",
+      "source": "OSM way 665837673",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1574:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1590:0",
+      "name": "계수로",
+      "source": "OSM way 1338305055",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1607:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1641:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1659:0",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1668:0",
+      "name": "은계로",
+      "source": "OSM way 1009242472",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1687:0",
+      "name": "대은로104번길",
+      "source": "OSM way 237487667",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1723:0",
+      "name": "대은로104번길",
+      "source": "OSM way 237487667",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1748:0",
+      "name": "은계호수로",
+      "source": "OSM way 667858039",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1751:0",
+      "name": "은행로144번길",
+      "source": "OSM way 237487669",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:1753:0",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:2026:0",
+      "name": "대은로104번길",
+      "source": "OSM way 237487667",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:2059:0",
+      "name": "은계중앙로",
+      "source": "OSM way 614402335",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:2080:0",
+      "name": "은계중앙로",
+      "source": "OSM way 614402335",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:2114:0",
+      "name": "마유로",
+      "source": "OSM way 554224510",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:2125:0",
+      "name": "마유로",
+      "source": "OSM way 554224510",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:2136:0",
+      "name": "계수로",
+      "source": "OSM way 71503073",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:2147:0",
+      "name": "마유로",
+      "source": "OSM way 554224510",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:2175:0",
+      "name": "마유로",
+      "source": "OSM way 554224510",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:2226:0",
+      "name": "은계중앙로",
+      "source": "OSM way 1338305054",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:2227:0",
+      "name": "은계중앙1길",
+      "source": "OSM way 736380730",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:2228:0",
+      "name": "은계중앙로",
+      "source": "OSM way 1338305054",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:2231:0",
+      "name": "은계중앙1길",
+      "source": "OSM way 736380730",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:2232:0",
+      "name": "은계중앙1길",
+      "source": "OSM way 736380730",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:2233:0",
+      "name": "은계중앙1길",
+      "source": "OSM way 736380730",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:2235:0",
+      "name": "은계중앙로",
+      "source": "OSM way 1338305054",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:2236:0",
+      "name": "은계중앙로",
+      "source": "OSM way 1338305054",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "37612023:A0020000:2238:0",
+      "name": "은계중앙1길",
+      "source": "OSM way 736380730",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611312",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611453",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611399",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611433",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611381",
+      "name": "수인로",
+      "source": "OSM way 978035336",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611379",
+      "name": "수인로",
+      "source": "OSM way 978035336",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611376",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611880",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611881",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611878",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611877",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004215",
+      "name": "수인로",
+      "source": "OSM way 978035334",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004224",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004188",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004185",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004186",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611310",
+      "name": "은행고길",
+      "source": "OSM way 237391480",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004223",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611430",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611327",
+      "name": "은계중앙로",
+      "source": "OSM way 667858021",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611313",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611337",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611332",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611888",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611442",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611344",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611457",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611446",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611444",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611458",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611412",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611411",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611410",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611409",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611417",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611408",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611441",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611415",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611423",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611425",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611346",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611345",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611343",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611328",
+      "name": "은계중앙로",
+      "source": "OSM way 667858021",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611407",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611330",
+      "name": "은계중앙로",
+      "source": "OSM way 667858021",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611342",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004010",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611404",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611403",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611402",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611341",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611339",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611282",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611318",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611317",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611773",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611311",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611284",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611781",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611374",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G610050",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611443",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611445",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611440",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611530",
+      "name": "수인로",
+      "source": "OSM way 978035334",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611529",
+      "name": "수인로",
+      "source": "OSM way 978035334",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611885",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611437",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611884",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611882",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611883",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004198",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004179",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004180",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004205",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004213",
+      "name": "수인로",
+      "source": "OSM way 978035334",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004187",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004206",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004207",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004202",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004203",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004204",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004197",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004194",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004195",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004196",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004216",
+      "name": "수인로",
+      "source": "OSM way 978035334",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004217",
+      "name": "수인로",
+      "source": "OSM way 978035334",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004218",
+      "name": "수인로",
+      "source": "OSM way 978035334",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004225",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611744",
+      "name": "수인로",
+      "source": "OSM way 978035333",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611356",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611373",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611909",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611474",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004173",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611383",
+      "name": "수인로",
+      "source": "OSM way 978035336",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A222BC004176",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611366",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611357",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611365",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611375",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611519",
+      "name": "수인로",
+      "source": "OSM way 978035340",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611528",
+      "name": "수인로",
+      "source": "OSM way 978035333",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611459",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611470",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611523",
+      "name": "수인로",
+      "source": "OSM way 978035338",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611522",
+      "name": "수인로",
+      "source": "OSM way 978035340",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611521",
+      "name": "수인로",
+      "source": "OSM way 978035340",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611520",
+      "name": "수인로",
+      "source": "OSM way 978035340",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611398",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611492",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611396",
+      "name": "은행로",
+      "source": "OSM way 471456739",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611481",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611500",
+      "name": "수인로",
+      "source": "OSM way 978035338",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611482",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611473",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611486",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611483",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611489",
+      "name": "수인로",
+      "source": "OSM way 607110492",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611487",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611428",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611427",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611422",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611388",
+      "name": "수인로",
+      "source": "OSM way 607110489",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611386",
+      "name": "수인로",
+      "source": "OSM way 607110489",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611421",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611333",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611889",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G611334",
+      "name": "수인로",
+      "source": "OSM way 913875400",
+      "status": "osm-unverified"
+    },
+    {
+      "roadId": "A2218G610049",
+      "name": "은계로",
+      "source": "OSM way 1327556119",
+      "status": "osm-unverified"
+    }
+  ],
+  "rules": [
+    {
+      "source": "OSM way 978035334",
+      "kind": "oneway",
+      "edgeIds": [
+        "local:10637:1304:11570:3",
+        "local:10602:1277:11535:-24",
+        "local:10637:1304:11570:3:part:1",
+        "local:10637:1304:11570:3:part:2",
+        "local:10602:1277:11535:-24:part:1",
+        "local:10602:1277:11535:-24:part:2"
+      ],
+      "status": "osm-unverified"
+    },
+    {
+      "source": "OSM relation 18200455",
+      "kind": "no_left_turn",
+      "edgeIds": [
+        "join:local:2039:16162:1005:17200:-1"
+      ],
+      "status": "osm-unverified"
+    }
+  ],
+  "crossings": [
+    {
+      "x": 91.8702852553397,
+      "z": 548.2285323434044,
+      "dx": -0.06172612869181636,
+      "dz": -0.9980931244311431,
+      "width": 3.799999952316284,
+      "roadId": "A2218G611277",
+      "source": "OSM node 850575902",
+      "status": "osm-unverified",
+      "crossingType": "marked",
+      "signalTagged": false,
+      "render": false
+    },
+    {
+      "x": 113.34035624400713,
+      "z": 1426.4973520943895,
+      "dx": 0.4662223816839992,
+      "dz": 0.8846675594916427,
+      "width": 15.0,
+      "roadId": "37612022:A0020000:1198:0",
+      "source": "OSM node 2452987941",
+      "status": "osm-unverified",
+      "crossingType": "traffic_signals",
+      "signalTagged": true,
+      "render": true
+    },
+    {
+      "x": 68.25017479169765,
+      "z": 1334.0539999031462,
+      "dx": 0.4470300322628365,
+      "dz": 0.8945189490754722,
+      "width": 15.0,
+      "roadId": "37612022:A0020000:4668:0",
+      "source": "OSM node 2452987984",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": true
+    },
+    {
+      "x": 197.55434246835648,
+      "z": 531.6527026856784,
+      "dx": -0.3418793636040831,
+      "dz": -0.9397438484723735,
+      "width": 10.0,
+      "roadId": "37612022:A0020000:4293:0",
+      "source": "OSM node 2452988024",
+      "status": "osm-unverified",
+      "crossingType": "marked",
+      "signalTagged": false,
+      "render": false
+    },
+    {
+      "x": 263.19887935728184,
+      "z": 1113.5148137017386,
+      "dx": 0.9460048257584033,
+      "dz": 0.32415254069930244,
+      "width": 12.0,
+      "roadId": "37612022:A0020000:1300:0",
+      "source": "OSM node 2452988209",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": true
+    },
+    {
+      "x": 159.80272246248205,
+      "z": 1215.333822507644,
+      "dx": -0.659112220790252,
+      "dz": 0.7520446000104929,
+      "width": 11.0,
+      "roadId": "37612022:A0020000:1750:0",
+      "source": "OSM node 2453806979",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": true
+    },
+    {
+      "x": 210.46689851005794,
+      "z": 1138.433290961897,
+      "dx": -0.43090242667248874,
+      "dz": 0.9023985254241944,
+      "width": 13.0,
+      "roadId": "37612022:A0020000:2486:0",
+      "source": "OSM node 2453806981",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": true
+    },
+    {
+      "x": 107.07449212289066,
+      "z": 1413.7917904898059,
+      "dx": 0.46639254054118046,
+      "dz": 0.8845778643666952,
+      "width": 15.0,
+      "roadId": "37612022:A0020000:1764:0",
+      "source": "OSM node 4644352576",
+      "status": "osm-unverified",
+      "crossingType": "traffic_signals",
+      "signalTagged": true,
+      "render": true
+    },
+    {
+      "x": 194.34339357318822,
+      "z": 544.73381420644,
+      "dx": 0.973659158341897,
+      "dz": -0.22800842830244017,
+      "width": 7.0,
+      "roadId": "37612022:A0020000:1135:0",
+      "source": "OSM node 4656577935",
+      "status": "osm-unverified",
+      "crossingType": "marked",
+      "signalTagged": false,
+      "render": true
+    },
+    {
+      "x": 1034.9899178210762,
+      "z": 149.0249954003375,
+      "dx": 0.04308210887872096,
+      "dz": -0.999071534923582,
+      "width": 3.799999952316284,
+      "roadId": "A2218G611524",
+      "source": "OSM node 9835547091",
+      "status": "osm-unverified",
+      "crossingType": "unspecified",
+      "signalTagged": false,
+      "render": false
+    },
+    {
+      "x": 1041.2452917532646,
+      "z": 161.16521746339276,
+      "dx": 0.55945684790946,
+      "dz": -0.8288594786374898,
+      "width": 3.799999952316284,
+      "roadId": "A2218G611743",
+      "source": "OSM node 9835547092",
+      "status": "osm-unverified",
+      "crossingType": "unspecified",
+      "signalTagged": false,
+      "render": false
+    },
+    {
+      "x": 1042.9111879800912,
+      "z": 170.8287309394218,
+      "dx": -0.4908463907865785,
+      "dz": 0.8712461309250041,
+      "width": 3.799999952316284,
+      "roadId": "A2218G611102",
+      "source": "OSM node 9835547093",
+      "status": "osm-unverified",
+      "crossingType": "unspecified",
+      "signalTagged": false,
+      "render": false
+    },
+    {
+      "x": 1042.0187589301204,
+      "z": 197.5006010562647,
+      "dx": -0.969225138141789,
+      "dz": 0.24617601750379717,
+      "width": 3.799999952316284,
+      "roadId": "A2218G611517",
+      "source": "OSM node 9835547094",
+      "status": "osm-unverified",
+      "crossingType": "unspecified",
+      "signalTagged": false,
+      "render": false
+    },
+    {
+      "x": 220.9357423086185,
+      "z": 1200.4745934443781,
+      "dx": 0.545161040484323,
+      "dz": -0.838331342571689,
+      "width": 6.0,
+      "roadId": "37612022:A0020000:1158:0",
+      "source": "OSM node 12279718021",
+      "status": "osm-unverified",
+      "crossingType": "traffic_signals",
+      "signalTagged": true,
+      "render": true
+    },
+    {
+      "x": 283.1902620838955,
+      "z": 1171.9953521193238,
+      "dx": 0.3919641111851317,
+      "dz": -0.919980508240718,
+      "width": 12.0,
+      "roadId": "37612022:A0020000:1119:0",
+      "source": "OSM node 12279718025",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": true
+    },
+    {
+      "x": 356.8329564339947,
+      "z": 1276.0770301318262,
+      "dx": -0.5011831620234897,
+      "dz": 0.8653412263980819,
+      "width": 10.0,
+      "roadId": "37612022:A0020000:3933:0",
+      "source": "OSM node 12279718036",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": false
+    },
+    {
+      "x": 140.9221230179246,
+      "z": 1479.8447203624528,
+      "dx": 0.39378511573459585,
+      "dz": 0.9192025253587431,
+      "width": 15.0,
+      "roadId": "37612022:A0020000:1128:0",
+      "source": "OSM node 12279718046",
+      "status": "osm-unverified",
+      "crossingType": "traffic_signals",
+      "signalTagged": true,
+      "render": true
+    },
+    {
+      "x": 48.268763175350614,
+      "z": 1292.9655528047588,
+      "dx": 0.41189947842432584,
+      "dz": 0.9112292903949962,
+      "width": 15.0,
+      "roadId": "37612022:A0020000:2929:0",
+      "source": "OSM node 12279718060",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": true
+    },
+    {
+      "x": 30.08001847451669,
+      "z": 1254.3482739273459,
+      "dx": 0.45008313093999025,
+      "dz": 0.8929866601709432,
+      "width": 15.0,
+      "roadId": "37612022:A0020000:2929:0",
+      "source": "OSM node 12279718061",
+      "status": "osm-unverified",
+      "crossingType": "traffic_signals",
+      "signalTagged": true,
+      "render": true
+    },
+    {
+      "x": 247.94044875897816,
+      "z": 1232.2588200207101,
+      "dx": 0.6198085103892301,
+      "dz": -0.7847530888432894,
+      "width": 12.0,
+      "roadId": "37612022:A0020000:3898:0",
+      "source": "OSM node 12279718062",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": false
+    },
+    {
+      "x": 339.6002679358935,
+      "z": 1199.5772958354792,
+      "dx": 0.8984973536519806,
+      "dz": 0.43897893512147895,
+      "width": 7.5,
+      "roadId": "37612022:A0020000:1114:0",
+      "source": "OSM node 12279718063",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": true
+    },
+    {
+      "x": 343.01995711703785,
+      "z": 1297.0052272306057,
+      "dx": -0.5900301678883928,
+      "dz": 0.807381199299064,
+      "width": 11.0,
+      "roadId": "37612022:A0020000:1576:0",
+      "source": "OSM node 12279718064",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": false
+    },
+    {
+      "x": 256.6486333901703,
+      "z": 1381.461807133397,
+      "dx": -0.6524313384739462,
+      "dz": -0.757847839989727,
+      "width": 9.0,
+      "roadId": "37612022:A0020000:1221:0",
+      "source": "OSM node 12279718065",
+      "status": "osm-unverified",
+      "crossingType": "unmarked",
+      "signalTagged": false,
+      "render": false
+    },
+    {
+      "x": 256.46350163628813,
+      "z": 1394.192379952292,
+      "dx": -0.6635425855739661,
+      "dz": 0.7481385146681168,
+      "width": 11.0,
+      "roadId": "37612022:A0020000:1671:0",
+      "source": "OSM node 12279718066",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": true
+    },
+    {
+      "x": 203.97052678020555,
+      "z": 1434.8039314934285,
+      "dx": -0.5601968421432362,
+      "dz": -0.8283595222201203,
+      "width": 6.0,
+      "roadId": "37612022:A0020000:2088:0",
+      "source": "OSM node 12279718068",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": true
+    },
+    {
+      "x": 159.0629314534599,
+      "z": 1274.557918376173,
+      "dx": 0.7206650710483238,
+      "dz": -0.6932833874909411,
+      "width": 6.0,
+      "roadId": "37612022:A0020000:3397:0",
+      "source": "OSM node 12280761355",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": true
+    },
+    {
+      "x": 220.30270942664356,
+      "z": 1268.4220057881903,
+      "dx": 0.6263605349176752,
+      "dz": -0.7795335017160223,
+      "width": 12.0,
+      "roadId": "37612022:A0020000:2330:0",
+      "source": "OSM node 12280761356",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": true
+    },
+    {
+      "x": 95.26953463786049,
+      "z": 1204.5185190355405,
+      "dx": 0.6899442677391717,
+      "dz": 0.7238624920617577,
+      "width": 12.0,
+      "roadId": "37612022:A0020000:2681:0",
+      "source": "OSM node 12280761357",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": true
+    },
+    {
+      "x": 120.5379346642294,
+      "z": 1440.4106649506139,
+      "dx": 0.45013640826856915,
+      "dz": 0.8929598053390041,
+      "width": 15.0,
+      "roadId": "37612022:A0020000:2576:0",
+      "source": "OSM node 12280788787",
+      "status": "osm-unverified",
+      "crossingType": "traffic_signals",
+      "signalTagged": true,
+      "render": true
+    },
+    {
+      "x": 220.51479209106765,
+      "z": 1342.571770473849,
+      "dx": 0.6722977731044509,
+      "dz": 0.74028082798273,
+      "width": 13.600000381469727,
+      "roadId": "37612022:A0020000:3925:0",
+      "source": "OSM node 12280966279",
+      "status": "osm-unverified",
+      "crossingType": "traffic_signals",
+      "signalTagged": true,
+      "render": true
+    },
+    {
+      "x": 190.73497701241286,
+      "z": 1299.9279895967338,
+      "dx": 0.7026225422184518,
+      "dz": -0.7115627612280452,
+      "width": 12.0,
+      "roadId": "37612022:A0020000:3406:0",
+      "source": "OSM node 12280966280",
+      "status": "osm-unverified",
+      "crossingType": "unmarked",
+      "signalTagged": false,
+      "render": false
+    },
+    {
+      "x": 180.8419174637529,
+      "z": 1188.796062462614,
+      "dx": -0.5727555271899838,
+      "dz": 0.819726238492659,
+      "width": 11.0,
+      "roadId": "37612022:A0020000:3952:0",
+      "source": "OSM node 12281154740",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": false
+    },
+    {
+      "x": 265.7886689527659,
+      "z": 1310.7104227188975,
+      "dx": -0.739319291322224,
+      "dz": -0.6733550218709329,
+      "width": 8.0,
+      "roadId": "37612022:A0020000:1703:0",
+      "source": "OSM node 12281154864",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": true
+    },
+    {
+      "x": 233.32443545176648,
+      "z": 1357.3943366307067,
+      "dx": -0.6475715478900265,
+      "dz": -0.7620046524551639,
+      "width": 9.0,
+      "roadId": "37612022:A0020000:1083:0",
+      "source": "OSM node 12281154865",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": true
+    },
+    {
+      "x": 69.60791565466207,
+      "z": 1716.4004408038454,
+      "dx": 0.6833267527527446,
+      "dz": 0.7301126960767012,
+      "width": 10.300000190734863,
+      "roadId": "37612022:A0020000:12:0",
+      "source": "OSM node 12281399072",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": true
+    },
+    {
+      "x": 195.33666877576616,
+      "z": 1168.1436017995002,
+      "dx": -0.5727113065147552,
+      "dz": 0.8197571343941827,
+      "width": 13.0,
+      "roadId": "37612022:A0020000:1113:0",
+      "source": "OSM node 12281883193",
+      "status": "osm-unverified",
+      "crossingType": "unmarked",
+      "signalTagged": false,
+      "render": false
+    },
+    {
+      "x": 198.8537554994109,
+      "z": 1586.311820599367,
+      "dx": 0.774222736466681,
+      "dz": 0.6329132281269244,
+      "width": 15.0,
+      "roadId": "37612022:A0020000:182:0",
+      "source": "OSM node 12282183687",
+      "status": "osm-unverified",
+      "crossingType": "traffic_signals",
+      "signalTagged": true,
+      "render": false
+    },
+    {
+      "x": 384.2857815590105,
+      "z": 1227.584072065656,
+      "dx": -0.4634813847665637,
+      "dz": 0.8861066560944391,
+      "width": 10.0,
+      "roadId": "37612022:A0020000:2354:0",
+      "source": "OSM node 12287554418",
+      "status": "osm-unverified",
+      "crossingType": "uncontrolled",
+      "signalTagged": false,
+      "render": true
+    },
+    {
+      "x": 309.6978952352656,
+      "z": 726.0721295616822,
+      "dx": -0.26714560539648663,
+      "dz": -0.9636561759867182,
+      "width": 10.0,
+      "roadId": "37612022:A0020000:2327:0",
+      "source": "OSM node 13120233902",
+      "status": "osm-unverified",
+      "crossingType": "marked",
+      "signalTagged": false,
+      "render": true
+    }
+  ]
+}

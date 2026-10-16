@@ -14,7 +14,9 @@ public class HybridMapStatus : MonoBehaviour {
   if(id<0){current="차로 밖 · 현장 통행 규제 미검증";return;}var e=session.jobs.nav.hd.edges[id];
   current=(e.status=="ngii"?"국도42 원본 차로 · 규제 현황 미검증":e.status=="provisional-portal"?"임시 접속 구간":"임시 차로·교차로 설정")+"\n"+e.ruleId;
   HybridJunctionRule nearby=null;float distance=65;foreach(var r in session.world.map.junctionRules){if(r.signalMode==0&&!r.crosswalk&&!r.stopLine)continue;float d=Vector3.Distance(r.V(),session.taxi.transform.position);if(d<distance){distance=d;nearby=r;}}
+  if(mapSupplementAvailable())current+="\nOSM 보완 적용 · 현장 미확인";
   if(nearby!=null)current+="\n시설: "+(nearby.facilityStatus=="verified"?"현장 확인 "+nearby.facilityCheckedAt:"임시 설정 · 현장 미확인")+"\n"+nearby.id;
  }
- void OnGUI(){if(session.business.ShowingSummary)return;if(style==null)style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=12,wordWrap=true};GUI.Box(new Rect(Screen.width-254,340,238,112),GUIContent.none);GUI.Label(new Rect(Screen.width-245,345,220,103),current,style);}
+ bool mapSupplementAvailable(){return session.world.map.supplementApplied;}
+ void OnGUI(){if(session.business.ShowingSummary)return;if(style==null)style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=12,wordWrap=true};GUI.Label(new Rect(Screen.width-254,455,245,36),"© OpenStreetMap contributors / ODbL\nopenstreetmap.org/copyright",style);GUI.Box(new Rect(Screen.width-254,340,238,112),GUIContent.none);GUI.Label(new Rect(Screen.width-245,345,220,103),current,style);}
 }
