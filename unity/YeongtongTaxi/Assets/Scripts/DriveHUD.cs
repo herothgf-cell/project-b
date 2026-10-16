@@ -39,11 +39,12 @@ public class DriveHUD : MonoBehaviour {
   for(int i=1;i<jobs.nav.alternativePath.Count;i++)Line(Mini(jobs.nav.alternativePath[i-1],rect),Mini(jobs.nav.alternativePath[i],rect),new Color(1,.55f,.1f),4);
   for(int i=1;i<jobs.nav.path.Count;i++)Line(Mini(jobs.nav.path[i-1],rect),Mini(jobs.nav.path[i],rect),Color.cyan,3);
   for(int i=0;i<jobs.stops.Length;i++){if(!jobs.people[i].activeSelf)continue;Dot(Mini(jobs.stops[i].V(),rect),Color.cyan,5);}
+  if(session.business.useV2)foreach(int index in session.services.indices)Dot(Mini(jobs.stops[index].V(),rect),new Color(1,.35f,1),8);
   foreach(var incident in session.roadConditions.incidents)Dot(Mini(incident.position,rect),Color.red,8);
   if(session.world.map.landmarks!=null)foreach(var landmark in session.world.map.landmarks){var p=Mini(landmark.V(),rect);if(rect.Contains(p))Dot(p,new Color(.3f,1,.45f),5);}
   foreach(var car in session.traffic.cars){var p=Mini(car.transform.position,rect);if(rect.Contains(p))Dot(p,Color.white,4);}
   if(jobs.nav.active)Dot(Mini(jobs.nav.destination,rect),new Color(1,.4f,.1f),9);Dot(Mini(session.taxi.transform.position,rect),Color.yellow,8);
-  GUI.Label(new Rect(Screen.width-248,289,232,25),"노랑: 택시 / 빨강: 정체·정차",small);
+  GUI.Label(new Rect(Screen.width-248,289,232,25),"노랑: 택시 / 자홍: 거점 / 빨강: 정체",small);
   if(session.world.map.hybrid)GUI.Label(new Rect(Screen.width-248,307,240,22),"시설 □ 주황: 임시 / 초록: 현장 확인",small);
   if(session.assist.Visible)GUI.Label(new Rect(Screen.width*.745f,Screen.height*.69f-26,Screen.width*.24f,25),(session.assist.Mode=="REAR CAMERA"?"후방 카메라":session.assist.Mode=="LEFT CAMERA"?"좌측 카메라":"우측 카메라"),body);
   float assistY=session.business.enabledCampaign?330:198;
@@ -55,7 +56,7 @@ public class DriveHUD : MonoBehaviour {
    GUI.enabled=session.business.CanAccept&&!session.paused;for(int i=0;i<3;i++){var o=jobs.offers[i];string text=(i+1)+"  "+KoreanText.Stop(jobs.stops[o.pickup].name)+" > "+KoreanText.Stop(jobs.stops[o.drop].name)+"    "+o.distance.ToString("0")+" m    "+o.fare.ToString("N0")+"원    "+o.seconds.ToString("0")+"초    요구 "+o.requiredScore+"점";if(GUI.Button(new Rect(28,y+35+i*33,762,29),text))jobs.Accept(i);}GUI.enabled=true;
   }else{GUI.Box(new Rect(16,y+28,790,115),GUIContent.none);string state=jobs.trip.State==TripState.ToPickup?"승객에게 이동 중":jobs.trip.State==TripState.OnTrip?"승객 운송 중":(jobs.trip.State==TripState.Complete?"운송 완료":"운송 실패");GUI.Label(new Rect(28,y+34,760,36),state+"    요금: "+jobs.current.fare.ToString("N0")+"원"+(jobs.trip.State==TripState.OnTrip?"    남은 시간: "+Mathf.CeilToInt(jobs.trip.Remaining)+"초":""),title);GUI.Label(new Rect(28,y+72,760,26),jobs.message,body);GUI.Label(new Rect(28,y+101,760,24),"오른쪽 연석 · 화살표와 같은 방향 · 시속 2km 미만 · F 승하차",small);}
   }
-  GUI.Box(new Rect(16,Screen.height-59,790,48),GUIContent.none);GUI.Label(new Rect(28,Screen.height-56,760,22),"WASD 운전 · Space 제동 · F 승하차 · Q/E 깜빡이 · C 시점 · R 복귀 · Esc 정지 · F11 전체화면",small);GUI.Label(new Rect(28,Screen.height-34,760,22),session.drivingCamera.FirstPerson?"Z/X 또는 오른쪽 스틱: 좌우 보기 · V: 코너 시선 보정 · B: 뒤보기":"후진·깜빡이: 자동 보조 카메라 / B를 누르는 동안 뒤보기",small);
+  GUI.Box(new Rect(16,Screen.height-59,790,48),GUIContent.none);GUI.Label(new Rect(28,Screen.height-56,760,22),"WASD 운전 · Space 제동 · F 승하차 · Q/E 깜빡이 · C 시점 · R 복귀 · Esc 정지 · F11 전체화면",small);GUI.Label(new Rect(28,Screen.height-34,760,22),session.drivingCamera.FirstPerson?"Z/X 또는 오른쪽 스틱: 좌우 보기 · V: 코너 시선 보정 · B: 뒤보기":"F7 거점 · F8 기록 · F10 안내 · B 뒤보기 / 후진·깜빡이: 보조 카메라",small);
   if(session.paused){
    float x=Screen.width/2f-240,y=Screen.height/2f-180;
    GUI.Box(new Rect(x,y,480,360),"일시정지 · 운행 지역");

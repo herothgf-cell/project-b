@@ -4,11 +4,13 @@ public class DrivingManners : MonoBehaviour {
  class Crossing {public TrafficJunction junction;public Vector3 direction;public int axis;public bool through,left,right,penalized,yieldPenalized;}
  readonly System.Collections.Generic.Dictionary<string,float> stops=new System.Collections.Generic.Dictionary<string,float>();
  Crossing crossing;
+ readonly System.Collections.Generic.List<string> rideReasons=new System.Collections.Generic.List<string>();
+ public string RideReasons {get{return rideReasons.Count==0?"감점 없음":string.Join(" / ",rideReasons.ToArray());}}
  Vector3 previousVelocity,previousFront;float suppressed,filtered,harshTime,offroadTime;bool harshLatched,offroadLatched;int sample;
- public void BeginRide(){ledger.Reset();lastEvent="승객 탑승 · 매너 100점으로 시작";eventUntil=Time.time+4;Suppress(.8f);}
+ public void BeginRide(){ledger.Reset();rideReasons.Clear();lastEvent="승객 탑승 · 매너 100점으로 시작";eventUntil=Time.time+4;Suppress(.8f);}
  public void Suppress(float seconds){crossing=null;stops.Clear();suppressed=Time.time+seconds;previousVelocity=GetComponent<Rigidbody>().velocity;previousFront=transform.position+transform.forward*2;filtered=0;harshTime=0;harshLatched=false;offroadTime=0;offroadLatched=false;}
  void Start(){Suppress(1);}
- public bool Deduct(string key,int amount,string reason,float cooldown=3){if(!ledger.Penalize(key,amount,Time.time,cooldown))return false;events++;if(key.StartsWith("red"))redEvents++;if(key=="collision")collisionEvents++;if(key=="accel")accelEvents++;if(key=="brake")brakeEvents++;if(key=="sidewalk")boundaryEvents++;lastEvent=reason+" -"+amount+"점";eventUntil=Time.time+4;return true;}
+ public bool Deduct(string key,int amount,string reason,float cooldown=3){if(!ledger.Penalize(key,amount,Time.time,cooldown))return false;events++;if(key.StartsWith("red"))redEvents++;if(key=="collision")collisionEvents++;if(key=="accel")accelEvents++;if(key=="brake")brakeEvents++;if(key=="sidewalk")boundaryEvents++;lastEvent=reason+" -"+amount+"점";rideReasons.Add(lastEvent);eventUntil=Time.time+4;return true;}
  void FixedUpdate(){if(!session)return;var body=session.taxi.body;var velocity=body.velocity;var front=transform.position+transform.forward*2;
   if(Time.time>=suppressed){
    CheckSignal(previousFront,front);

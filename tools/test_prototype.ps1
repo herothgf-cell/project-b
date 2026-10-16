@@ -5,7 +5,7 @@ $taskSources = @('TrafficRules', 'PrototypeState', 'CampaignAccount', 'EconomyLe
 $taskOutput = Join-Path $taskRoot 'artifacts'
 New-Item -ItemType Directory -Force -Path $taskOutput | Out-Null
 $taskResults = @()
-foreach ($taskName in @('PrototypeStateTests', 'CampaignAccountTests', 'CampaignLifecycleTests', 'PassengerRequestTests', 'EconomyTests')) {
+foreach ($taskName in @('PrototypeStateTests', 'PrototypeCompletionTests', 'CampaignAccountTests', 'CampaignLifecycleTests', 'PassengerRequestTests', 'EconomyTests')) {
     $taskExe = Join-Path $taskOutput "$taskName.exe"
     & $taskCompiler /nologo "/out:$taskExe" (Join-Path $taskRoot "tests/$taskName.cs") @taskSources
     if ($LASTEXITCODE -ne 0) { throw "$taskName compilation failed" }

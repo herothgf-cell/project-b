@@ -47,5 +47,5 @@ public class ExitQueueSituation : MonoBehaviour {
   if(elapsed>=65)Stop();
  }
  public void Stop(){if(junction!=null){junction.scenarioSignal=false;junction.rightTurnObservation=null;junction=null;}if(label)Destroy(label);}
- void OnGUI(){if(!session.business.useV2)return;GUI.Label(new Rect(420,44,700,25),"F5 출구 정체 상황 (빈차·정차·충분히 떨어진 구간) · "+(Active?junction.name:"준비"),new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14});}
+ void OnGUI(){if(!session.business.useV2||!session.ShowHints||session.business.ShowingSummary||session.business.preparing||session.law.HistoryOpen||session.services.open)return;GUI.Label(new Rect(420,44,700,25),"F5 출구 정체 상황 (빈차·정차·충분히 떨어진 구간) · "+(Active?junction.name:"준비"),new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14});}
 }

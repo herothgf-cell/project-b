@@ -1,4 +1,4 @@
-# 영통 택시 시뮬레이터
+# 은계 택시 시뮬레이터
 
 Unity 2022.3.62f2 / Windows 64비트용 3D 택시 운전 시제품입니다. 키보드·패드 운전, 1·3인칭 시점, 실제 지도 기반 도로, 일반 차량과 신호, 호출·길가 승객, 내비게이션, 매너 점수, 기간 수익 목표와 하루 정산을 구현합니다.
 
@@ -6,10 +6,10 @@ Unity 2022.3.62f2 / Windows 64비트용 3D 택시 운전 시제품입니다. 키
 
 1. Unity Hub에서 **Unity 2022.3.62f2**와 Windows Build Support를 설치합니다.
 2. 아래 지도 데이터 준비 절차를 완료합니다. 지도 데이터는 이 저장소에 포함하지 않습니다.
-3. Unity Hub에서 `unity/YeongtongTaxi`를 열고 `Assets/Scenes/FirstDrive.unity`를 Play합니다.
-4. `Taxi > Build Windows Prototype` 메뉴로 빌드하면 `builds/YeongtongTaxi/YeongtongTaxi.exe`가 생성됩니다.
+3. Unity Hub에서 `unity/YeongtongTaxi`를 엽니다. 첫 실행은 아래 은계 빌드를 먼저 수행해 생성 지도와 보완 설정을 준비합니다.
+4. `Taxi > Build Eungye Hybrid` 메뉴로 빌드하면 `builds/EungyeTaxi/EungyeTaxi.exe`가 생성됩니다. 현재 은계 실행은 `Play-Eungye.cmd`를 사용합니다.
 
-조작법과 게임 규칙은 [Unity 프로젝트 안내](unity/YeongtongTaxi/README.md)를 참고하세요. 경제 목표는 기본 7일·하루 10분·누적 순수익 100,000원이며 게임용 초기 균형값입니다.
+조작법과 게임 규칙은 [Unity 프로젝트 안내](unity/YeongtongTaxi/README.md)를 참고하세요. 현재 캠페인은 **3일·하루 8분·순수익 30,000원**이며 보험 갱신·세금 납부까지 완료해야 성공합니다. 비용은 게임용 초기 균형값입니다. 최신 화면·저장·검증은 [통합 마무리 기록](docs/prototype-completion-validation.md)을 참고하세요.
 
 보조 운전 시제품은 `builds/AssistedTaxi/AssistedTaxi.exe`, 가상 도로 시험장은 `Play-RoadRulesTrial.cmd`로 실행합니다. 시작 시 3인칭 보조 운전이며, C로 시점을 바꾸면 1인칭은 수동·3인칭은 보조 운전을 기본 적용합니다. H로 현재 운전 모드를 변경할 수 있습니다. 보조 모드에서도 가감속·신호 판단은 직접 하며, A/D는 차선 변경, Q/E는 좌우회전 예약입니다. 차로 밖·후진 등 보조 시작이 불가능한 상태에서는 수동을 유지하고 이유를 표시합니다.
 

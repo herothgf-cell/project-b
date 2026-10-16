@@ -52,6 +52,11 @@ public enum PedestrianState { None, Intending, Crossing, Unknown }
  public string junction;public int axis;public float stop,exit;public float[] points;
  public PracticeRoute Copy(){var c=(PracticeRoute)MemberwiseClone();c.points=points==null?null:(float[])points.Clone();return c;}
 }
+[Serializable] public class PracticeResult {public string sourceId,action;public int events,score,validFindings;public string EvaluationText(){return validFindings==0?"유효 평가 없음":score+"점 / 유효 "+validFindings+"건";}}
+[Serializable] public class PassengerResult {
+ public string tripId,pickup,destination,outcome,request,mannerReason;
+ public int day,quoted,paid,score,required;public float elapsed;
+}
 // No dependency on passenger manners, fares, Unity time, or physics.
 public class LawLedger {
  readonly List<LawEvent> events=new List<LawEvent>();
@@ -62,13 +67,18 @@ public class LawLedger {
   events.Add(e.Copy());return true;
  }
  public int Score(int day){int score=100;foreach(var e in events)if(e.day==day)score-=e.Deduction;return Math.Max(0,score);}
+ public string DaySummary(int day){int count=0,good=0,bad=0,deferred=0,none=0;foreach(var e in events){if(e.day!=day)continue;count++;foreach(var r in e.rules){if(r.verdict==LawVerdict.Compliant)good++;else if(r.verdict==LawVerdict.Violation)bad++;else if(r.verdict==LawVerdict.Deferred)deferred++;else none++;}}
+  if(count==0)return "평가 기록 없음";
+  return (good+bad==0?"유효 평가 없음":Score(day)+"점")+" · 사건 "+count+" / 유효 "+(good+bad)+"\n규칙별 준수 "+good+" · 위반 "+bad+" · 보류 "+deferred+" · 기회 없음 "+none;
+ }
+ public int ValidForDay(int day){int count=0;foreach(var e in events)if(e.day==day)foreach(var r in e.rules)if(r.verdict==LawVerdict.Compliant||r.verdict==LawVerdict.Violation)count++;return count;}
  public int ValidCount(string family,string rule){return Recent(family,rule,int.MaxValue).Count;}
  List<LawFinding> Recent(string family,string rule,int limit){var result=new List<LawFinding>();for(int i=events.Count-1;i>=0&&result.Count<limit;i--)if(events[i].family==family)foreach(var r in events[i].rules)if(r.rule==rule&&(r.verdict==LawVerdict.Compliant||r.verdict==LawVerdict.Violation))result.Add(r);return result;}
  public string Summary(string family,string rule){var recent=Recent(family,rule,5);if(recent.Count<5)return "기록 부족 · 유효 관찰 "+recent.Count+"/5건";int violations=recent.FindAll(r=>r.verdict==LawVerdict.Violation).Count;return "최근 유효 관찰 5건 · 준수 "+(5-violations)+" / 위반 "+violations+"건";}
 }
 public static class LawEvaluator {
  public static LawEvent Exit(string id,int day,bool knownSignalQueue,bool changedLane,bool insertedAhead,bool obstructed,PrototypeSettings settings=null){
-  var s=settings??new PrototypeSettings();var e=new LawEvent{id=id,day=day,family="exit",action=insertedAhead?"앞부분 진입":changedLane?"뒤 합류":"직진·우회",reason="신호 대기열·차로 진입·통행 방해 관찰"};
+  var s=settings??new PrototypeSettings();var e=new LawEvent{id=id,day=day,family="exit",action=insertedAhead?"앞부분 진입":changedLane?"뒤 합류":"직진·우회",reason="신호 대기열 "+(knownSignalQueue?"확인":"불명확")+" · 차로 진입 "+(changedLane?"있음":"없음")+" · 앞부분 진입 "+(insertedAhead?"있음":"없음")+" · 상대 진행 방해 "+(obstructed?"관찰":"미관찰")};
   e.Add("L06",!knownSignalQueue?LawVerdict.Deferred:!changedLane?LawVerdict.NoOpportunity:insertedAhead?LawVerdict.Violation:LawVerdict.Compliant,s.insertionPenalty);
   e.Add("L07",!knownSignalQueue?LawVerdict.Deferred:!changedLane?LawVerdict.NoOpportunity:obstructed?LawVerdict.Violation:LawVerdict.Compliant,s.interferencePenalty);return e;
  }

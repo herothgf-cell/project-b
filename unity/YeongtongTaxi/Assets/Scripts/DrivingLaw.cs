@@ -44,18 +44,37 @@ public class DrivingLaw : MonoBehaviour {
   }
   previous=front;
  }
- void Update(){if(!session.business.preparing&&!session.services.open&&!session.business.taxPrompt&&Input.GetKeyDown(KeyCode.F8)){showHistory=!showHistory;if(!session.business.ShowingSummary){session.paused=showHistory;Time.timeScale=showHistory?0:1;}}}
+ bool passengerTab;
+ public void OpenHistory(bool passengers=false){passengerTab=passengers;if(session.services.open||session.business.pendingPayment>=0||session.business.preparing||session.business.taxPrompt)return;showHistory=true;session.paused=true;Time.timeScale=0;}
+ public void CloseHistory(){showHistory=false;session.paused=false;Time.timeScale=session.business.ShowingSummary?0:1;}
+ void Update(){if(session.business.pendingPayment<0&&!session.business.preparing&&!session.services.open&&!session.business.taxPrompt&&Input.GetKeyDown(KeyCode.F8)){if(showHistory)CloseHistory();else OpenHistory();}}
  void OnGUI(){
-  var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=15,wordWrap=true};var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=15};
-  if(!showHistory){GUI.Label(new Rect(420,70,700,24),"F8 법규 기록 · 오늘 "+ledger.Score(Day)+"점 (승객 매너와 별도)",style);return;}
-  GUI.depth=-100;var box=new Rect(40,40,Mathf.Min(820,Screen.width-80),Screen.height-80);GUI.Box(box,"");
-  GUI.Label(new Rect(60,55,box.width-40,35),"독립 법규 기록 · "+Day+"일차 "+ledger.Score(Day)+"점 · F8 닫기",style);
-  if(GUI.Button(new Rect(box.xMax-100,52,80,28),"닫기",button)){showHistory=false;if(!session.business.ShowingSummary){session.paused=false;Time.timeScale=1;}}
-  GUI.Label(new Rect(60,90,box.width-40,50),"출구 진입: "+ledger.Summary("exit","L06")+"\n우회전 정지: "+ledger.Summary("right","L02"),style);
-  var all=ledger.Events;scroll=GUI.BeginScrollView(new Rect(60,150,box.width-40,box.height-135),scroll,new Rect(0,0,box.width-65,Mathf.Max(80,all.Length*110)));
-  if(all.Length==0)GUI.Label(new Rect(0,0,650,50),"아직 관찰 기록이 없습니다. 빈차·승객 탑승 모두 기록합니다.",style);
-  for(int i=0;i<all.Length;i++){var e=all[all.Length-1-i];string rules="";foreach(var r in e.rules)rules+=r.rule+" "+Label(r.verdict)+"  ";GUI.Label(new Rect(0,i*110,box.width-70,105),e.day+"일 · "+e.junction+" · "+e.action+" · 감점 "+e.Deduction+"\n"+rules+"\n"+e.reason,style);if((e.practice!=null||!string.IsNullOrEmpty(e.scenario)&&e.scenario.StartsWith("R"))&&GUI.Button(new Rect(box.width-255,i*110+75,170,27),"같은 조건 연습 창",button)){PracticeSession.Launch(e);}}
+  var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14,wordWrap=true};var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=14};
+  if(!showHistory){if(session.ShowHints&&!session.business.ShowingSummary&&!session.business.preparing&&!session.services.open)GUI.Label(new Rect(420,70,650,24),"F8 법규·운송 기록 · "+ledger.DaySummary(Day).Split('\n')[0],style);return;}
+  GUI.depth=-120;var box=new Rect(40,35,Mathf.Min(900,Screen.width-80),Screen.height-70);GUI.color=new Color(.025f,.045f,.06f,1);GUI.DrawTexture(box,Texture2D.whiteTexture);GUI.color=Color.white;
+  GUI.Label(new Rect(60,45,box.width-150,55),"독립 법규 · "+Day+"일차 · "+ledger.DaySummary(Day),style);
+  if(GUI.Button(new Rect(box.xMax-100,45,80,28),"닫기",button))CloseHistory();
+  if(GUI.Button(new Rect(60,107,180,30),"법규 사건",button)){passengerTab=false;scroll=Vector2.zero;}
+  if(GUI.Button(new Rect(250,107,180,30),"승객 운송 결과",button)){passengerTab=true;scroll=Vector2.zero;}
+  GUI.Label(new Rect(60,143,box.width-40,55),passengerTab?"매너·지급액은 법규 점수와 별도입니다. 마지막 정산까지 함께 저장됩니다.":"출구: "+ledger.Summary("exit","L06")+" / 우회전 정지: "+ledger.Summary("right","L02"),style);
+  var all=ledger.Events;var rides=session.business.passengers;int count=passengerTab?rides.Count:all.Length;float height=passengerTab?155:235;
+  scroll=GUI.BeginScrollView(new Rect(60,202,box.width-40,box.height-192),scroll,new Rect(0,0,box.width-65,Mathf.Max(80,count*height)));
+  if(count==0)GUI.Label(new Rect(0,0,box.width-80,50),"아직 기록이 없습니다. 관찰되지 않은 상황은 준수로 간주하지 않습니다.",style);
+  for(int i=0;i<count;i++){
+   float y=i*height;
+   if(passengerTab){var r=rides[count-1-i];GUI.Label(new Rect(0,y,box.width-80,height-8),r.day+"일 · "+r.pickup+" → "+r.destination+"\n"+r.outcome+" · 지급 "+r.paid.ToString("N0")+" / 약정 "+r.quoted.ToString("N0")+"원 · 운송 "+r.elapsed.ToString("0")+"초\n매너 "+r.score+" / 요구 "+r.required+" · "+r.request+"\n"+r.mannerReason,style);continue;}
+   var e=all[all.Length-1-i];string rules="";foreach(var r in e.rules)rules+=r.rule+" "+Label(r.verdict)+"  ";
+   string condition=e.observation==null?"신호 대기열·진입·상대 방해 관찰":("전방 "+SignalLabel(e.observation.forward)+" / 우회전 전용 "+(e.observation.dedicated?SignalLabel(e.observation.right):"없음")+" / 보행 "+PedestrianLabel(e.observation.pedestrian));
+   string practice="";foreach(var r in session.business.practices)if(r.sourceId==e.id)practice="연습: "+r.action+" · "+r.EvaluationText();
+   GUI.Label(new Rect(0,y,box.width-80,180),e.day+"일 · "+e.junction+" · "+e.action+" · 사건 감점 "+e.Deduction+"\n"+rules+"\n조건: "+condition+"\n"+e.reason+"\n"+(e.occupied?"승객 탑승":"빈차")+" · "+(e.assisted?"조향 보조 사용":"수동 조향")+" · 영업 "+e.seconds.ToString("0")+"초\n"+practice,style);
+   bool replay=e.practice!=null||!string.IsNullOrEmpty(e.scenario)&&e.scenario.StartsWith("R");var runner=session.GetComponent<PracticeSession>();
+   GUI.enabled=replay&&session.business.ShowingSummary&&!runner.Busy;
+   if(GUI.Button(new Rect(0,y+184,245,30),session.business.ShowingSummary?"같은 조건 연습 (별도 창)":"복습은 하루 결산에서 가능",button))runner.Begin(e);GUI.enabled=true;
+   GUI.Label(new Rect(255,y+184,box.width-335,40),runner.notice,style);
+  }
   GUI.EndScrollView();
  }
+ static string SignalLabel(SignalColor c){return c==SignalColor.Red?"적색":c==SignalColor.Green?"녹색":"황색";}
+ static string PedestrianLabel(PedestrianState p){return p==PedestrianState.None?"없음":p==PedestrianState.Intending?"횡단 의도":p==PedestrianState.Crossing?"횡단 중":"미확인";}
  static string Label(LawVerdict v){return v==LawVerdict.Compliant?"준수":v==LawVerdict.Violation?"위반":v==LawVerdict.Deferred?"보류":"평가 기회 없음";}
 }

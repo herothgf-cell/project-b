@@ -7,13 +7,14 @@ using UnityEngine;
 public class ExitTransportSmokeTest : MonoBehaviour {
  public DriveSession session;bool ok=true;readonly StringBuilder report=new StringBuilder();
  void Check(bool value,string message){ok&=value;report.AppendLine((value?"PASS ":"FAIL ")+message);Debug.Log(message+" = "+value);Flush();}
- void Flush(){File.WriteAllText(Path.GetFullPath("artifacts/exit-transport-test.txt"),"success="+ok+"\n"+report);}
+ void Flush(){File.WriteAllText(Path.GetFullPath(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-exitAbortTest")>=0?"artifacts/exit-abort-transport-test.txt":"artifacts/exit-transport-test.txt"),"success="+ok+"\n"+report);}
  void Pose(Vector3 p,Vector3 dir){var t=session.taxi;t.transform.SetPositionAndRotation(p+Vector3.up*.65f,Quaternion.LookRotation(dir));t.body.position=t.transform.position;t.body.rotation=t.transform.rotation;Physics.SyncTransforms();}
  IEnumerator Move(Vector3 a,Vector3 b,Vector3 dir){int count=Mathf.CeilToInt(Vector3.Distance(a,b)/.4f);for(int i=1;i<=count;i++){Pose(Vector3.Lerp(a,b,i/(float)count),dir);yield return new WaitForFixedUpdate();}}
  IEnumerator Start(){
   yield return new WaitForSeconds(1);Time.timeScale=6;session.taxi.automated=true;session.assisted.allowAutomated=true;session.roadConditions.enabled=false;session.business.enabledCampaign=false;
   var fixture=GetComponent<ExitQueueSituation>();Pose(new Vector3(-200,0,-200),Vector3.forward);Check(fixture.Begin(),"prepared exit on shared graph");if(!fixture.Active){Application.Quit(1);yield break;}var template=fixture.Template.Copy();fixture.Stop();
-  for(int choice=0;choice<3;choice++){
+  bool abortOnly=System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-exitAbortTest")>=0;
+  for(int choice=abortOnly?3:0;choice<(abortOnly?5:3);choice++){
    var jobs=session.jobs;var taxi=session.taxi;jobs.ClearForDay();taxi.body.isKinematic=true;taxi.enabled=false;session.law.ledger=new LawLedger();
    Pose(jobs.stops[0].Kerb,jobs.stops[0].Direction);yield return new WaitForFixedUpdate();Check(jobs.Interact(),"board before scenario "+choice);
    Check(fixture.Replay(template),"same queue replay "+choice);jobs.nav.SetDestination(jobs.stops[jobs.current.drop]);
@@ -25,9 +26,10 @@ public class ExitTransportSmokeTest : MonoBehaviour {
    if(choice==0){var merge=head-dir*63;yield return Move(start,merge,dir);yield return new WaitForSeconds(31);for(float at=2;at<=route.length;at+=.4f){Pose(route.Position(at),route.Tangent(at));yield return new WaitForFixedUpdate();}}
    if(choice==1){yield return Move(start,head+dir*(30-Vector3.Dot(head-fixture.junction.center,dir))-side*3.5f,dir);}
    if(choice==2){var beside=head+dir*5-side*3.5f;yield return Move(start,beside,dir);yield return Move(beside,head+dir*5,dir);yield return new WaitForSeconds(1);yield return new WaitForSeconds(30);for(float at=template.stop+5;at<=route.length;at+=.4f){Pose(route.Position(at),route.Tangent(at));yield return new WaitForFixedUpdate();}}
+   if(choice>=3){var beside=head+dir*5-side*3.5f;yield return Move(start,beside,dir);if(choice==4){yield return Move(beside,head+dir*5,dir);yield return new WaitForSeconds(1);yield return Move(head+dir*5,beside,dir);}yield return Move(beside,head+dir*(30-Vector3.Dot(head-fixture.junction.center,dir))-side*3.5f,dir);}
    yield return new WaitForFixedUpdate();LawEvent result=null;int count=0;foreach(var e in session.law.ledger.Events)if(e.family=="exit"){result=e;count++;}
    Check(count==1,"one exit event choice="+choice+" actual="+count);
-   if(result!=null){Check(result.rules.Exists(r=>r.rule=="L06"&&r.verdict==(choice==0?LawVerdict.Compliant:choice==1?LawVerdict.NoOpportunity:LawVerdict.Violation)),"choice L06 "+choice);Check(result.Deduction==(choice==2?15:0),"event max deduction "+choice);Check(result.rules.Exists(r=>r.rule=="L07"&&r.verdict==(choice==2?LawVerdict.Violation:choice==1?LawVerdict.NoOpportunity:LawVerdict.Compliant)),"observed obstruction verdict "+choice);report.AppendLine("choice="+choice+" action="+result.action+" L07="+result.rules.Find(r=>r.rule=="L07").verdict);}
+   if(result!=null){Check(result.rules.Exists(r=>r.rule=="L06"&&r.verdict==(choice==0?LawVerdict.Compliant:(choice==1||choice==3)?LawVerdict.NoOpportunity:LawVerdict.Violation)),"choice L06 "+choice);Check(result.Deduction==((choice==2||choice==4)?15:0),"event max deduction "+choice);Check(result.rules.Exists(r=>r.rule=="L07"&&r.verdict==(choice==2?LawVerdict.Violation:(choice==1||choice==3)?LawVerdict.NoOpportunity:LawVerdict.Compliant)),"observed obstruction verdict "+choice);report.AppendLine("choice="+choice+" action="+result.action+" L07="+result.rules.Find(r=>r.rule=="L07").verdict);}
    fixture.Stop();foreach(var c in session.traffic.cars){c.Recycle();c.enabled=false;}
    jobs.nav.Refresh();Check(jobs.nav.hdRoute!=null,"onward navigation after choice "+choice);if(jobs.nav.hdRoute==null)continue;
    // Keep the actual passenger and deadline; never credit test fares directly.

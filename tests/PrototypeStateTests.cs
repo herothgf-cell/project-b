@@ -30,6 +30,8 @@ class PrototypeStateTests {
   var exit=LawEvaluator.Exit("cut",1,true,true,true,true);Check(exit.Deduction==15&&exit.rules.Count==2,"insertion and interference one event");
   exit=LawEvaluator.Exit("bypass",1,true,false,false,false);Check(exit.rules[0].verdict==LawVerdict.NoOpportunity,"bypass not scored as compliant lane change");
   o.pedestrian=PedestrianState.None;r=LawEvaluator.RightTurn("yield",1,o,true,null,true);Check(r.rules.Find(x=>x.rule=="L04").verdict==LawVerdict.Compliant,"observed pedestrian yield retains evaluation opportunity");
+  var abandoned=LawEvaluator.Exit("abort-before",1,true,false,false,false);Check(abandoned.Deduction==0&&abandoned.rules.TrueForAll(f=>f.verdict==LawVerdict.NoOpportunity),"indicator or approach without lane entry is no violation");
+  var returned=LawEvaluator.Exit("return-after",1,true,true,true,true);Check(returned.Deduction==15,"returning after completed insertion does not erase violation");
   Console.WriteLine("PASS prototype identities, independent law ledger and R1-R5 observations");
  }
 }

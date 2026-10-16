@@ -6,7 +6,7 @@ public class DriveSession : MonoBehaviour {
     public BusinessProgress business; public DrivingLaw law; public ServiceStops services; public PassengerRequestUI requests;
     public AssistedDriveController assisted;
     public RoadConditions roadConditions;
-    public bool paused; public int visits; bool inside;
+    public bool paused;public bool ShowHints; public int visits; bool inside;
     void Awake() {
         MapCatalog.LockedRegion=startupRegion;
         foreach(var arg in System.Environment.GetCommandLineArgs())if(arg.EndsWith("Test"))Application.runInBackground=true;
@@ -49,6 +49,7 @@ public class DriveSession : MonoBehaviour {
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadConditionsTest")>=0)gameObject.AddComponent<RoadConditionsSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-eungyeTest")>=0)gameObject.AddComponent<EungyeSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadIndexTest")>=0)gameObject.AddComponent<RoadEnvironmentIndexSmokeTest>();
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-completionTest")>=0)gameObject.AddComponent<CompletionSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-campaignTest")>=0)gameObject.AddComponent<CampaignSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-scenarioTest")>=0)gameObject.AddComponent<ScenarioSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-practiceCheckTest")>=0)gameObject.AddComponent<PracticeSmokeTest>().session=this;
@@ -63,6 +64,7 @@ public class DriveSession : MonoBehaviour {
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-stabilityTest")>=0) gameObject.AddComponent<StabilitySmokeTest>().session=this;
     }
     void Update() {
+        if(Input.GetKeyDown(KeyCode.F10))ShowHints=!ShowHints;
         if(Input.GetKeyDown(KeyCode.F11)){if(Screen.fullScreen)Screen.SetResolution(Mathf.Min(1600,Screen.currentResolution.width-80),Mathf.Min(900,Screen.currentResolution.height-100),FullScreenMode.Windowed);else Screen.SetResolution(Screen.currentResolution.width,Screen.currentResolution.height,FullScreenMode.FullScreenWindow);}
         if(!business.ShowingSummary&&!services.open&&!business.preparing&&!business.taxPrompt&&!law.HistoryOpen&&(Input.GetKeyDown(KeyCode.Escape)||Input.GetKeyDown(KeyCode.JoystickButton7))) {paused=!paused;Time.timeScale=paused?0:1;}
         if(!paused&&!business.ShowingSummary&&Input.GetKeyDown(KeyCode.Tab))jobs.nav.TogglePreference();
