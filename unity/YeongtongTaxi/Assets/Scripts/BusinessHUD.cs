@@ -25,8 +25,8 @@ public class BusinessHUD : MonoBehaviour {
    if(GUI.Button(new Rect(px+320,py+155,280,40),account.TaxPaid?"세금 납부 완료":"세금 납부 · 1,500원",button))b.RequestPayment(1);
    GUI.Label(new Rect(px+20,py+205,580,45),"WASD 운전 · Space 제동 · F 승하차 · H 조향 보조 (가감속 직접)\nF7 거점 · F8 기록 · C 시점 · Q/E 깜빡이 · F10 안내 표시",small);
    var practice=session.GetComponent<PracticeSession>();GUI.enabled=!practice.Busy;
-   if(GUI.Button(new Rect(px+20,py+265,580,40),"우회전 연습 선택 · 상황과 운전 요령",button))practice.OpenPicker();
-   GUI.Label(new Rect(px+20,py+315,580,115),RightPracticeState.Title(practice.SelectedVariant)+"\n"+RightPracticeState.Conditions(practice.SelectedVariant)+"\n"+RightPracticeState.Guidance(practice.SelectedVariant),new GUIStyle(small){wordWrap=true,fontSize=15});
+   if(GUI.Button(new Rect(px+20,py+265,580,40),"운전 연습 선택 · 출구 정체 / 우회전",button))practice.OpenPicker();
+   GUI.Label(new Rect(px+20,py+315,580,115),practice.SelectedTitle+"\n"+practice.SelectedConditions+"\n"+practice.SelectedGuidance,new GUIStyle(small){wordWrap=true,fontSize=15});
    GUI.Label(new Rect(px+20,py+445,580,65),practice.notice+" "+b.notice,new GUIStyle(small){wordWrap=true});
    if(GUI.Button(new Rect(px+20,py+535,280,45),"영업 시작",button))b.Depart();if(GUI.Button(new Rect(px+320,py+535,280,45),"1일차부터 다시 시작",button))b.RequestRestart();GUI.enabled=true;return;
   }

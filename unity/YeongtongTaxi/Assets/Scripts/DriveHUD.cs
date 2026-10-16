@@ -56,7 +56,7 @@ public class DriveHUD : MonoBehaviour {
    GUI.enabled=!session.PracticeBusy;
    if(GUI.Button(new Rect(x+20,y+230,440,40),"계속 운전")){session.paused=false;Time.timeScale=1;}
    if(session.business.useV2&&GUI.Button(new Rect(x+20,y+282,440,40),"1일차부터 다시 시작"))session.business.RequestRestart();
-   if(GUI.Button(new Rect(x+20,y+334,440,40),"우회전 연습 선택 · 상황과 운전 요령"))session.GetComponent<PracticeSession>().OpenPicker();
+   if(GUI.Button(new Rect(x+20,y+334,440,40),"운전 연습 선택 · 출구 정체 / 우회전"))session.GetComponent<PracticeSession>().OpenPicker();
    GUI.enabled=true;
    if(GUI.Button(new Rect(x+20,y+386,440,40),"게임 종료 (완료한 정산까지 저장)"))Application.Quit();
   }

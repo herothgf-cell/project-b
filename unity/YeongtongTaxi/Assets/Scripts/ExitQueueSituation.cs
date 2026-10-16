@@ -6,6 +6,19 @@ public class ExitQueueSituation : MonoBehaviour {
  public bool Active {get{return junction!=null;}}
  float started;bool practiceArrived;RoadIncident incident;GameObject label;TextMesh text;
  public PracticeRoute Template {get;private set;}
+ public PracticeRoute PreparedTemplate(){
+  if(session.traffic.cars.Count<8)return null;
+  foreach(var car in session.traffic.cars){if(car.route==null)continue;foreach(var stop in car.route.stops){
+   if(stop.Movement(car.route)<=0||stop.distance<65||stop.junction.halfWidth[stop.axis]<6)continue;
+   if(Vector3.Angle(car.route.Tangent(stop.distance),car.route.Tangent(stop.distance-56))>5)continue;
+   return CaptureTemplate(car.route,stop);
+  }}return null;
+ }
+ static PracticeRoute CaptureTemplate(TrafficRoute route,TrafficStop stop){
+  float begin=stop.distance-65,end=Mathf.Min(route.length,stop.exitDistance+35);var points=new System.Collections.Generic.List<float>();
+  for(float at=begin;at<end;at+=2){var p=route.Position(at);points.Add(p.x);points.Add(p.z);}var last=route.Position(end);points.Add(last.x);points.Add(last.z);
+  return new PracticeRoute{junction=stop.junction.name,axis=stop.axis,stop=65,exit=stop.exitDistance-begin,points=points.ToArray()};
+ }
  public bool Begin(){
   var right=GetComponent<RightTurnSituation>();if(right&&right.Active)return false;
   if(Active||session.jobs.Active||session.taxi.body.velocity.magnitude>=.56f)return false;
@@ -18,9 +31,7 @@ public class ExitQueueSituation : MonoBehaviour {
   junction=selectedStop.junction;axis=selectedStop.axis;approach=selected.Tangent(selectedStop.distance);sign=session.traffic.Sign(approach,axis,junction);started=Time.time;
   junction.scenarioSignal=true;junction.scenarioForward=SignalColor.Green;junction.observationAxis=axis;junction.observationSign=sign;
   junction.rightTurnObservation=new RoadObservation{known=true,dedicated=true,right=SignalColor.Red,pedestrian=PedestrianState.None};
-  float begin=selectedStop.distance-65,end=Mathf.Min(selected.length,selectedStop.exitDistance+35);var points=new System.Collections.Generic.List<float>();
-  for(float at=begin;at<end;at+=2){var p=selected.Position(at);points.Add(p.x);points.Add(p.z);}var last=selected.Position(end);points.Add(last.x);points.Add(last.z);
-  Template=new PracticeRoute{junction=junction.name,axis=axis,stop=65,exit=selectedStop.exitDistance-begin,points=points.ToArray()};
+  Template=CaptureTemplate(selected,selectedStop);
   for(int i=0;i<8;i++){var c=session.traffic.cars[i];c.Continue(selected);c.Place(selectedStop.distance-.25f-i*7);}
   var position=selected.Position(Mathf.Max(0,selectedStop.distance-65));session.jobs.nav.SetDestination(position);
   label=new GameObject("가상 출구 정체 안내");label.transform.position=position+TrafficSystem.Right(approach)*5+Vector3.up*4;text=label.AddComponent<TextMesh>();text.fontSize=40;text.characterSize=.1f;text.anchor=TextAnchor.MiddleCenter;text.color=Color.yellow;KoreanText.Apply(text);label.AddComponent<FaceCamera>();
