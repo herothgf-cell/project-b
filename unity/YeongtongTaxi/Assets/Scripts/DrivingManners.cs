@@ -28,7 +28,16 @@ public class DrivingManners : MonoBehaviour {
   float distance=Mathf.Max(5,session.taxi.body.velocity.magnitude*2+4);
   foreach(var hit in Physics.SphereCastAll(transform.position+Vector3.up*.65f,.8f,transform.forward,distance,(1<<8)|(1<<9),QueryTriggerInteraction.Ignore))if(hit.rigidbody!=session.taxi.body)return true;
   foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)foreach(int sign in new[]{-1,1}){
-   var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(dir,transform.forward)<.85f)continue;
+   var dir=session.traffic.AxisDirection(j,axis)*sign;
+   // The right-side pedestrian crossing is beyond the entry stop line. Keep
+   // recognizing required braking there after the vehicle turns into the exit.
+   var outgoing=TrafficSystem.Right(dir);var front=transform.position+transform.forward*2;var offset=front-j.center;
+   float toCrossing=j.CrossingNearEdge(axis)-Vector3.Dot(offset,outgoing);
+   if(Vector3.Dot(transform.forward,outgoing)>.7f&&toCrossing>=-1&&toCrossing<=distance&&Mathf.Abs(Vector3.Dot(offset,dir))<=j.halfWidth[1-axis]+2){
+    var crossingObservation=session.traffic.Observe(j,axis,sign,dir,gameObject);
+    if(crossingObservation.pedestrian==PedestrianState.Intending||crossingObservation.pedestrian==PedestrianState.Crossing)return true;
+   }
+   if(Vector3.Dot(dir,transform.forward)<.85f)continue;
    var delta=j.center-dir*j.StopDistance(axis)-(transform.position+transform.forward*2);float ahead=Vector3.Dot(delta,dir),side=Mathf.Abs(Vector3.Dot(delta,TrafficSystem.Right(dir)));
    if(ahead< -2||ahead>distance||side>j.halfWidth[axis])continue;
    var o=session.traffic.Observe(j,axis,sign,dir,gameObject);if(o.forward!=SignalColor.Green||!o.PedestrianClear||o.dedicated&&o.right!=SignalColor.Green)return true;
@@ -48,7 +57,7 @@ public class DrivingManners : MonoBehaviour {
   }
   foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)foreach(int sign in new[]{-1,1}){
    if(!j.signalized&&!j.scenarioSignal)continue;
-   var dir=session.traffic.AxisDirection(j,axis)*sign;var stop=j.center-dir*j.StopDistance(axis);float a=Vector3.Dot(before-stop,dir),b=Vector3.Dot(after-stop,dir);float lane=Vector3.Dot(after-j.center,TrafficSystem.Right(dir));string key=j.name+axis+sign;
+   var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(transform.forward,dir)<.7f)continue;var stop=j.center-dir*j.StopDistance(axis);float a=Vector3.Dot(before-stop,dir),b=Vector3.Dot(after-stop,dir);float lane=Vector3.Dot(after-j.center,TrafficSystem.Right(dir));string key=j.name+axis+sign;
    if(b>=-3&&b<=TrafficJunction.StopLineEntryTolerance&&lane>.15f&&lane<j.halfWidth[axis]&&session.taxi.body.velocity.magnitude<.05f)stops[key]=Time.time;
    if(a<TrafficJunction.StopLineEntryTolerance&&b>=TrafficJunction.StopLineEntryTolerance&&lane>.15f&&lane<j.halfWidth[axis]){
     float last;bool stopped=stops.TryGetValue(key,out last)&&Time.time-last<8;stops.Remove(key);

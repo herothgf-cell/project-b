@@ -59,6 +59,7 @@ public class TrafficSystem : MonoBehaviour {
         var direction=car.route.graphPath==null?car.route.direction:car.route.Tangent(Mathf.Max(0,stop.distance));int turn=stop.Movement(car.route);
         var observed=Observe(stop.junction,stop.axis,Sign(direction,stop.axis,stop.junction),direction,car.gameObject);
         if(turn>0)return observed.MayTurnRight(car.stoppedAt==stop.junction);
+        if(stop.junction.scenarioSignal)return observed.forward==SignalColor.Green&&(turn==0||observed.PedestrianClear)&&YieldClear(stop.junction,direction,turn,car.gameObject);
         return KoreanSignalRules.MayEnter(Clock+stop.junction.offset,stop.junction.leftTurnMode,stop.axis,Sign(direction,stop.axis,stop.junction),turn,car.stoppedAt==stop.junction,
             YieldClear(stop.junction,direction,turn,car.gameObject),observed.PedestrianClear);
     }

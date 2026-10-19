@@ -51,6 +51,9 @@ public class DriveSession : MonoBehaviour {
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadConditionsTest")>=0)gameObject.AddComponent<RoadConditionsSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-eungyeTest")>=0)gameObject.AddComponent<EungyeSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadIndexTest")>=0)gameObject.AddComponent<RoadEnvironmentIndexSmokeTest>();
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-liveExitChoicesTest")>=0)gameObject.AddComponent<LiveExitChoicesTest>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-liveTrafficTest")>=0)gameObject.AddComponent<LiveTrafficValidationTest>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-drivingJudgmentTest")>=0)gameObject.AddComponent<DrivingJudgmentSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-exitSelectionTest")>=0)gameObject.AddComponent<ExitSelectionSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-exitFeedbackTest")>=0)gameObject.AddComponent<ExitFeedbackSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-practiceFeedbackTest")>=0)gameObject.AddComponent<PracticeFeedbackSmokeTest>().session=this;
