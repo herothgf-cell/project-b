@@ -1,0 +1,21 @@
+{
+  "unity": "2022.3.62f2",
+  "baseline": "a971d9e",
+  "inputs": [
+    {
+      "path": "unity/YeongtongTaxi/Assets/Resources/drive-map.json",
+      "bytes": 469588,
+      "sha256": "b349366fe01fb1a579cd5697322b01db7a89503caa6db5a4b4a5d1ca53c16581"
+    },
+    {
+      "path": "unity/YeongtongTaxi/Assets/Resources/eungye-map.json",
+      "bytes": 4515858,
+      "sha256": "062d65a34eb905ef2ab0dbfe31f8075c650aa9a8d8f98c5be38bed3a7629dbe5"
+    },
+    {
+      "path": "unity/YeongtongTaxi/Assets/Resources/route42-map.json",
+      "bytes": 2935176,
+      "sha256": "82b30e1df6fdcb50fcf0d672f87a2f3ba6f7157350fa29a1f1567d394c4c68d1"
+    }
+  ]
+}

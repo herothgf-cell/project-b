@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 // Presentation only: shares navigation and signal state with the simulation.
 public class DrivingReadability : MonoBehaviour {
+ public sealed class ZoneLabel {public ServiceLawZone zone;public Vector2 anchor;public Rect rect;public string text;public bool selected;}
+ public readonly List<ZoneLabel> ZoneLabels=new List<ZoneLabel>();
  public DriveSession session;public bool Overview,Facilities;
  public TrafficJunction SignalTarget {get;private set;}
  public int SignalAxis {get;private set;}public int SignalSign {get;private set;}
@@ -29,14 +32,13 @@ public class DrivingReadability : MonoBehaviour {
   if(label==null){label=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14,wordWrap=true};label.normal.textColor=Color.white;}
   float x=Screen.width-Size-16;SetBounds();var jobs=session.jobs;var map=session.world.map;
   Panel(new Rect(x-5,10,Size+10,374));
-  GUI.Label(new Rect(x+5,14,145,24),Overview?"은계 전체 · 북쪽 ↑":"내 주변 650m · 북쪽 ↑",label);
-  if(GUI.Button(new Rect(x+155,14,125,24),Overview?"M 주변 확대":"M 전체 지도"))Overview=!Overview;
+  GUI.Label(new Rect(x+5,14,145,24),Overview?"은계 전체 · 북 ↑":"주변 650m · 북 ↑",label);
+  if(GUI.Button(new Rect(x+155,14,125,24),Overview?"M 주변 확대":"M 법규 전체"))Overview=!Overview;
   GUI.BeginGroup(new Rect(x,42,Size,Size));
   var tile=GetComponent<DriveHUD>().tile;
   if(tile)GUI.DrawTextureWithTexCoords(new Rect(-bounds.x/bounds.width*Size,(1-(map.depth-bounds.y)/bounds.height)*Size,map.width/bounds.width*Size,map.depth/bounds.height*Size),tile,new Rect(0,0,1,1));
   if(Facilities&&map.hybrid)foreach(var j in map.junctionRules)Dot(Project(j.V()),j.facilityStatus=="verified"?Color.green:new Color(1,.6f,.1f),6);
   foreach(var car in session.traffic.cars)if(car.Visible)Dot(Project(car.transform.position),new Color(.55f,.6f,.65f),3);
-  var zones=GetComponent<ServiceLawZones>();if(zones&&zones.Ready)foreach(var zone in zones.zones)Dot(Project(zone.junction.center),zone==zones.Assigned?Color.magenta:new Color(1,.7f,.2f),zone==zones.Assigned?10:5);
   foreach(var incident in session.roadConditions.incidents)Dot(Project(incident.position),Color.red,8);
   for(int pass=0;pass<2;pass++)for(int i=1;i<jobs.nav.path.Count;i++){var a=Project(jobs.nav.path[i-1]);var b=Project(jobs.nav.path[i]);Line(a,b,pass==0?Color.black:Color.cyan,pass==0?8:4);}
   for(int i=0;i<jobs.stops.Length;i++)if(jobs.people[i].activeSelf)Marker(jobs.stops[i].V(),"승",new Color(.3f,1,.55f),false);
@@ -46,21 +48,46 @@ public class DrivingReadability : MonoBehaviour {
    Marker(jobs.stops[jobs.current.drop].V(),"도착",new Color(1,.5f,.8f),true);
   }
   if(jobs.nav.active)Marker(jobs.nav.destination,jobs.trip.State==TripState.ToPickup?"승차":jobs.trip.State==TripState.OnTrip?"도착":"목표",jobs.trip.State==TripState.ToPickup?new Color(.3f,1,.55f):new Color(1,.5f,.8f),true);
+  DrawLawZones();
   var player=Project(session.taxi.transform.position);var forward=new Vector2(session.taxi.transform.forward.x,-session.taxi.transform.forward.z).normalized;var side=new Vector2(-forward.y,forward.x);
   Dot(player,Color.black,24);Line(player-forward*6-side*7,player+forward*11,Color.yellow,5);Line(player+forward*11,player-forward*6+side*7,Color.yellow,5);Line(player-forward*6+side*7,player-forward*6-side*7,Color.yellow,5);
   GUI.EndGroup();
-  GUI.Label(new Rect(x,324,Size,23),"▲ 나  ━ 경로  승: 승객  도착: 목적지",label);
+  GUI.Label(new Rect(x,324,Size,23),"▲ 나  ━ 경로  ● 법규 (분홍: 이번 경유)",new GUIStyle(label){fontSize=12});
   if(GUI.Button(new Rect(x,349,110,26),Facilities?"시설 표시 끄기":"시설 정보 보기"))Facilities=!Facilities;
   GUI.Label(new Rect(x+114,349,166,40),"© OSM / ODbL\n현장 규제 미검증",new GUIStyle(label){fontSize=11});
   if(Facilities){var status=GetComponent<HybridMapStatus>();Panel(new Rect(x-310,42,300,145));GUI.Label(new Rect(x-300,50,280,130),"시설 □ 주황: 임시 / 초록: 확인\n"+(status?status.current:"시설 정보 없음"),label);}
   DrawSignal(x);
  }
+ static Vector2 ClampedZone(Vector2 p){var d=p-Vector2.one*(Size/2);float k=(Size/2-14)/Mathf.Max(Mathf.Abs(d.x),Mathf.Abs(d.y));return Vector2.one*(Size/2)+d*Mathf.Min(1,k);}
+ public void LayoutLawZones(){
+  ZoneLabels.Clear();var zones=GetComponent<ServiceLawZones>();if(!zones||!zones.Ready)return;
+  SetBounds();var occupied=new List<Rect>();var player=Project(session.taxi.transform.position);occupied.Add(new Rect(player.x-18,player.y-18,36,36));
+  if(session.jobs.nav.active)ReserveMarker(session.jobs.nav.destination,occupied);
+  if(session.jobs.Active){ReserveMarker(session.jobs.stops[session.jobs.current.drop].V(),occupied);if(session.jobs.trip.State==TripState.ToPickup)ReserveMarker(session.jobs.stops[session.jobs.current.pickup].V(),occupied);}
+  var selected=session.jobs.Active?zones.ZoneFor(session.jobs.current):null;var ordered=new List<ServiceLawZone>();if(selected!=null)ordered.Add(selected);foreach(var z in zones.zones)if(z!=selected)ordered.Add(z);
+  foreach(var zone in ordered){var anchor=Project(zone.junction.center);bool outside=anchor.x<4||anchor.y<4||anchor.x>Size-4||anchor.y>Size-4;bool chosen=zone==selected;if(outside&&!chosen)continue;if(outside)anchor=ClampedZone(anchor);
+   ZoneLabels.Add(new ZoneLabel{zone=zone,anchor=anchor,selected=chosen,text=zone.MapTitle+(chosen?"\n"+(outside?"경유 · 지도 밖":"이번 경유"):"")});occupied.Add(new Rect(anchor.x-5,anchor.y-5,10,10));
+  }
+  foreach(var item in ZoneLabels){var size=new Vector2(92,item.selected?48:34);item.rect=LawZoneMapLayout.Place(item.anchor,size,new Rect(4,4,Size-8,Size-8),occupied);occupied.Add(item.rect);}
+ }
+ void DrawLawZones(){
+  LayoutLawZones();var style=new GUIStyle(label){fontSize=11,alignment=TextAnchor.MiddleCenter,wordWrap=false,padding=new RectOffset(2,2,1,1)};
+  foreach(var item in ZoneLabels){var r=item.rect;Line(item.anchor,new Vector2(Mathf.Clamp(item.anchor.x,r.xMin,r.xMax),Mathf.Clamp(item.anchor.y,r.yMin,r.yMax)),item.selected?Color.magenta:new Color(1,.7f,.2f),1.5f);}
+  foreach(var item in ZoneLabels){Panel(item.rect);style.normal.textColor=item.selected?new Color(1,.65f,.95f):new Color(1,.84f,.5f);GUI.Label(item.rect,item.text,style);}
+  foreach(var item in ZoneLabels){Dot(item.anchor,Color.black,item.selected?12:9);Dot(item.anchor,item.selected?Color.magenta:new Color(1,.7f,.2f),item.selected?8:5);}
+ }
+ Vector2 MarkerPoint(Vector3 world,bool clamp,out bool outside){
+  var p=Project(world);outside=p.x<14||p.y<14||p.x>Size-14||p.y>Size-14;
+  if(outside&&clamp){var d=p-Vector2.one*(Size/2);float k=(Size/2-23)/Mathf.Max(Mathf.Abs(d.x),Mathf.Abs(d.y));p=Vector2.one*(Size/2)+d*k;}return p;
+ }
+ static Rect MarkerTextRect(Vector2 p){return new Rect(Mathf.Clamp(p.x-24,0,Size-65),p.y>Size-48?p.y-23:p.y+10,65,22);}
+ public Rect MarkerTextBounds(Vector3 world){bool outside;return MarkerTextRect(MarkerPoint(world,true,out outside));}
+ void ReserveMarker(Vector3 world,List<Rect> occupied){bool outside;var p=MarkerPoint(world,true,out outside);occupied.Add(new Rect(p.x-12,p.y-12,24,24));occupied.Add(MarkerTextRect(p));}
  void Marker(Vector3 world,string text,Color color,bool clamp){
-  var p=Project(world);bool outside=p.x<14||p.y<14||p.x>Size-14||p.y>Size-14;
-  if(outside&&!clamp)return;
-  if(outside){var d=p-Vector2.one*(Size/2);float k=(Size/2-23)/Mathf.Max(Mathf.Abs(d.x),Mathf.Abs(d.y));p=Vector2.one*(Size/2)+d*k;text+=Mathf.Abs(d.x)>Mathf.Abs(d.y)?(d.x>0?" →":" ←"):(d.y>0?" ↓":" ↑");}
+  bool outside;var p=MarkerPoint(world,clamp,out outside);if(outside&&!clamp)return;
+  if(outside){var d=Project(world)-Vector2.one*(Size/2);text+=Mathf.Abs(d.x)>Mathf.Abs(d.y)?(d.x>0?" →":" ←"):(d.y>0?" ↓":" ↑");}
   Dot(p,Color.black,clamp?23:15);Dot(p,color,clamp?17:10);
-  if(clamp){float xx=Mathf.Clamp(p.x-24,0,Size-65),yy=p.y>Size-48?p.y-23:p.y+10;GUI.color=Color.black;GUI.DrawTexture(new Rect(xx,yy,65,22),Texture2D.whiteTexture);GUI.color=Color.white;GUI.Label(new Rect(xx+2,yy,63,22),text,label);}
+  if(clamp){var r=MarkerTextRect(p);GUI.color=Color.black;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;GUI.Label(new Rect(r.x+2,r.y,r.width-2,r.height),text,label);}
  }
  void DrawSignal(float x){
   Panel(new Rect(x-5,391,Size+10,110));

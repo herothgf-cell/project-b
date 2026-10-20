@@ -53,6 +53,7 @@ public class DriveSession : MonoBehaviour {
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadIndexTest")>=0)gameObject.AddComponent<RoadEnvironmentIndexSmokeTest>();
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-liveExitChoicesTest")>=0)gameObject.AddComponent<LiveExitChoicesTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-liveTrafficTest")>=0)gameObject.AddComponent<LiveTrafficValidationTest>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-lawZoneLabelsTest")>=0)gameObject.AddComponent<LawZoneLabelsSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-serviceLawZonesTest")>=0)gameObject.AddComponent<ServiceLawZonesSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-confusionDriveTest")>=0)gameObject.AddComponent<ConfusionDriveSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-confusionPracticeTest")>=0)gameObject.AddComponent<ConfusionPracticeSmokeTest>().session=this;

@@ -5,6 +5,7 @@ using UnityEngine;
 public sealed class ServiceLawZone {
  public string id;public int variant,incoming,connector,outgoing;public TrafficJunction junction;
  public string Title {get{return ConfusionPracticeState.Title(variant);}}
+ public string MapTitle {get{switch(variant){case 8:return "적색 점멸\n정지 후 진행";case 9:return "황색 점멸\n주변 확인";case 10:return "녹색\n출구 정체";case 11:return "녹색\n출구 여유";case 12:return "비보호 좌회전\n적색 대기";case 13:return "비보호 좌회전\n대향차 양보";default:return "비보호 좌회전\n대향차 없음";}}}
 }
 // Persistent places in the normal Eungye world. Trips route through a connector, never a new scene/process.
 public sealed class ServiceLawZones : MonoBehaviour {
@@ -60,6 +61,7 @@ public sealed class ServiceLawZones : MonoBehaviour {
   var t=obj.AddComponent<TextMesh>();t.fontSize=38;t.characterSize=.09f;t.anchor=TextAnchor.MiddleCenter;t.color=new Color(1,.75f,.25f);t.text="운행 상황 구역 · 창작\n"+zone.Title;KoreanText.Apply(t);obj.AddComponent<FaceCamera>();
  }
  public ServiceLawZone ZoneFor(JobOffer offer){return offer!=null&&offer.zoneIndex>=0&&offer.zoneIndex<zones.Count?zones[offer.zoneIndex]:null;}
+ public string OfferSituation(JobOffer offer){var zone=ZoneFor(offer);return zone==null?"일반 운송 · 지정 상황 구역 없음":"경유 상황: "+zone.Title;}
  public void ConfigureOffer(JobOffer offer){
   if(!Ready||!session.jobs.stops[offer.pickup].graphStop||!session.jobs.stops[offer.drop].graphStop)return;
   var from=session.jobs.stops[offer.pickup];var to=session.jobs.stops[offer.drop];var hd=session.jobs.nav.hd;
