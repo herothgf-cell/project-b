@@ -297,3 +297,8 @@ P1-01·03 완료 근거는 위 공통 관찰·AI·횡단보도 위치 검사다.
 - [x] 1280×720·1600×900 Player 검사와 캡처 확인. 구역 이름 비중첩/지도 내부 배치, 승차·도착 텍스트 비가림, 모든 실제7종 호출 경유명 검사 통과. `artifacts/law-zone-labels-test.txt`, `artifacts/law-zone-labels-build.log`.
 - [x] [최신 작업 인계](work-history/LATEST.md), 날짜별 이력, 루트 AGENTS 갱신 규칙과 PC 이동 안내. `tools/check_workspace.ps1 -Strict`로 입력 지도3개 해시/크기·Unity 프로젝트 버전 확인. 현재/일치 입력 통과, 누락/불일치 종료1 확인.
 - 다른 PC에서 실제 빌드·실행한 검사는 이번 결과에 포함하지 않는다. [검증과 인계 상세](work-history/2026-10-20-law-zone-labels-and-handoff.md).
+
+## 지도 입력 PC 이동 묶음 (2026-10-20)
+
+- [x] 필수 생성 지도3개를 상대 폴더 구조 그대로 ZIP으로 묶고 안내·manifest 사본 동봉. 원본/ZIP 내용/실제 압축 해제 해시 일치와 strict 입력 검사 종료0 확인. [설치·실행 안내](work-history/map-transfer-guide.md), [검증 이력](work-history/2026-10-20-map-transfer-bundle.md).
+- ZIP은 Git 제외 로컬 전달물이며 별도 전송이 필요하다. 새 PC 실제 구동 검증은 포함하지 않는다.

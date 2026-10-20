@@ -4,6 +4,8 @@
 
 ## 다른 PC에서 시작하기
 
+현재 입력3개는 `artifacts/handoff/Eungye-map-inputs-2026-10-20.zip`에 묶었다(로컬 전달 파일, Git 제외). [ZIP 설치·빌드·실행 안내](map-transfer-guide.md)를 따른다. 압축 내부의 `unity/`가 저장소의 `unity/`와 합쳐지도록 **저장소 루트에** 푼다. ZIP 안에도 안내와 입력 manifest 사본이 있다. ZIP과 `.zip.sha256` 파일은 USB·개인 전송 등으로 따로 옮긴다.
+
 1. 이 GitHub 저장소를 복제하거나, 현재 PC의 변경을 먼저 확인한 뒤 `git pull --ff-only`로 동기화한다. 진행 중인 변경이 있으면 먼저 기록하고 커밋해 PC 간 작업이 엇갈리지 않게 한다.
 2. Unity Hub에서 **Unity 2022.3.62f2 + Windows Build Support**를 설치한다. 프로젝트 위치는 `unity/YeongtongTaxi`다. D: 드라이브가 아닌 폴더에서도 상대 경로로 사용할 수 있다.
 3. 기존 PC에서 아래 **동일한 3개 생성 입력 파일**을 같은 상대 경로로 복사한다. 파일 내용은 Git에 업로드하지 않으며, `config/maps/local-input-manifest.json`에 크기와 SHA256만 관리한다.

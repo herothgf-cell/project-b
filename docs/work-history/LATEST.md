@@ -4,9 +4,10 @@
 
 ## 먼저 읽을 것
 
-1. [이번 작업: 구역 이름과 PC 인계](2026-10-20-law-zone-labels-and-handoff.md)
-2. [직전 완료: 일반 운송 법규 통합 a971d9e](2026-10-20-in-service-law-zones.md)
-3. [PC 이동 절차](README.md), [개발 체크리스트](../prototype-development-checklist.md), [프로토 범위](../prototype-scope.md)
+1. [이번 작업: 지도3개 전달 ZIP](2026-10-20-map-transfer-bundle.md), [새 PC 설치 안내](map-transfer-guide.md)
+2. [구역 이름과 PC 인계](2026-10-20-law-zone-labels-and-handoff.md)
+3. [직전 완료: 일반 운송 법규 통합 a971d9e](2026-10-20-in-service-law-zones.md)
+4. [PC 이동 절차](README.md), [개발 체크리스트](../prototype-development-checklist.md), [프로토 범위](../prototype-scope.md)
 
 ## 현재 상태
 
@@ -18,7 +19,7 @@
 ## PC 전환 시
 
 - Git 동기화 후 PowerShell7에서 `pwsh -File tools/check_workspace.ps1 -Strict`를 실행한다.
-- Git 제외 지도 입력3개는 기존 PC에서 별도 복사한다. 원본부터 재수입할 때는 raw자료도 필요하다. 체크 도구는 실제 Editor 설치/다른 PC 구동을 보장하지 않는다.
+- Git 제외 지도 입력3개는 `artifacts/handoff/Eungye-map-inputs-2026-10-20.zip`과 `.zip.sha256`을 별도 전송해 저장소 루트에 푼다. 묶음857,580바이트, 원본/ZIP/압축 해제3개 해시 일치 확인. 설치·실행법은 위 안내를 따른다. 원본부터 재수입할 때는 raw자료도 필요하다. 체크 도구는 실제 Editor 설치/다른 PC 구동을 보장하지 않는다.
 - 이미 생성된 실행파일을 옮긴다면 `builds/EungyeTaxi` 폴더 전체를 옮긴다. 게임 진행 저장은 코드 동기화에 포함되지 않는다.
 - 기존 사용자 미커밋 상태: `README.md` 수정, 라이선스 관련3개 문서와 `licenses/` 미추적. 이번 작업과 분리해 보존한다.
 
