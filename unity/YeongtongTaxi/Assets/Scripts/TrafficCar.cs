@@ -1,5 +1,6 @@
 using UnityEngine;
 public class TrafficCar : MonoBehaviour {
+    public bool respawn=true;
     public DistrictTraffic district;
     readonly System.Collections.Generic.HashSet<TrafficStop> released=new System.Collections.Generic.HashSet<TrafficStop>();
     public bool Visible {get{return !recycling;}}
@@ -38,6 +39,7 @@ public class TrafficCar : MonoBehaviour {
     public void Recycle(){if(distance>=route.length-.01f)completedRoutes++;system.Release(this);recycling=true;speed=0;SetVisible(false);body.position=new Vector3(-100,-100,-100);}
     void FixedUpdate() {
         if(recycling) {
+            if(!respawn)return;
             if(Physics.OverlapBox(route.start+Vector3.up*.8f,new Vector3(1.1f,.7f,4),Quaternion.LookRotation(route.direction),(1<<8)|(1<<9)).Length==0) Place(0);
             return;
         }

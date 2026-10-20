@@ -10,6 +10,7 @@ public sealed class AssistedRoadNetwork {
         public Path(Vector3[] values){points=values;distances=new float[values.Length];for(int i=1;i<values.Length;i++)distances[i]=distances[i-1]+Vector3.Distance(values[i-1],values[i]);}
         public Vector3 Position(float distance){for(int i=1;i<points.Length;i++)if(distance<=distances[i])return Vector3.Lerp(points[i-1],points[i],Mathf.InverseLerp(distances[i-1],distances[i],distance));return points[points.Length-1];}
         public Vector3 Tangent(float distance){return (Position(Mathf.Min(length,distance+.25f))-Position(Mathf.Max(0,distance-.25f))).normalized;}
+        public float ProjectRange(Vector3 position,float from,float to,out float error){position.y=0;float best=float.MaxValue,at=from;for(int i=1;i<points.Length;i++){if(distances[i]<from||distances[i-1]>to)continue;var delta=points[i]-points[i-1];float lo=Mathf.InverseLerp(distances[i-1],distances[i],Mathf.Max(from,distances[i-1])),hi=Mathf.InverseLerp(distances[i-1],distances[i],Mathf.Min(to,distances[i]));float t=Mathf.Clamp(Vector3.Dot(position-points[i-1],delta)/Mathf.Max(.001f,delta.sqrMagnitude),lo,hi);float sq=(position-(points[i-1]+delta*t)).sqrMagnitude;if(sq<best){best=sq;at=Mathf.Lerp(distances[i-1],distances[i],t);}}error=Mathf.Sqrt(best);return at;}
         public float Project(Vector3 position,out float error){position.y=0;float best=float.MaxValue,at=0;for(int i=1;i<points.Length;i++){var delta=points[i]-points[i-1];float t=Mathf.Clamp01(Vector3.Dot(position-points[i-1],delta)/Mathf.Max(.001f,delta.sqrMagnitude));float sq=(position-(points[i-1]+delta*t)).sqrMagnitude;if(sq<best){best=sq;at=Mathf.Lerp(distances[i-1],distances[i],t);}}error=Mathf.Sqrt(best);return at;}
     }
     public sealed class Lane {
@@ -67,9 +68,14 @@ public sealed class AssistedRoadNetwork {
             float offset=centered?0:(index+.5f)*width/(2*count);var points=new List<Vector3>();
             int samples=Mathf.CeilToInt((center.length-trimA-trimB)/2);
             for(int i=0;i<=samples;i++){float d=Mathf.Lerp(trimA,center.length-trimB,(float)i/samples);var direction=(center.Position(Mathf.Min(center.length,d+2))-center.Position(Mathf.Max(0,d-2))).normalized;points.Add(center.Position(d)+TrafficSystem.Right(direction)*offset);}
+            RemoveOffsetFolds(points);
             var lane=new Lane{id=lanes.Count,from=from,to=to,corridor=corridor,index=index,count=count,width=centered?width:width/(count*2),path=new Path(points.ToArray()),sourceIds=source};lanes.Add(lane);
             if(!outgoing.ContainsKey(from))outgoing[from]=new List<Lane>();outgoing[from].Add(lane);
         }
+    }
+    // Offsetting a sharp centreline bend can create a tiny reversed ear. Keep source endpoints and remove that offset artefact only.
+    public static void RemoveOffsetFolds(List<Vector3> points){
+        bool changed=true;int pass=0;while(changed&&pass++<12){changed=false;for(int i=1;i+1<points.Count;i++){var a=points[i]-points[i-1];var b=points[i+1]-points[i];if(a.magnitude<.1f||b.magnitude<.1f||(Mathf.Min(a.magnitude,b.magnitude)<4&&Vector3.Dot(a.normalized,b.normalized)<-.2f)){points.RemoveAt(i);changed=true;i=Mathf.Max(0,i-2);}}}
     }
     public Lane Adjacent(Lane lane,int side){foreach(var other in lanes)if(other.corridor==lane.corridor&&other.from==lane.from&&other.index==lane.index+side)return other;return null;}
     public Lane FindLane(Vector3 position,Vector3 heading,out float progress){

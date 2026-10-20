@@ -31,6 +31,9 @@ public class DrivingJudgmentSmokeTest : MonoBehaviour {
   Check(session.law.ledger.Events.Length==0,"perpendicular drift does not create another approach law event");
   yield return Cross(j,Vector3.forward);Check(session.law.ledger.Events.Length==1&&session.law.ledger.Events[0].Deduction>0,"real forward red entry still recorded");
   j.scenarioForward=SignalColor.Green;yield return Cross(j,Vector3.forward);Check(session.law.ledger.Events.Length==1&&session.law.ledger.Events[0].Deduction==0,"forward green remains compliant");
+  int yellowRed=session.manners.redEvents;j.scenarioForward=SignalColor.Yellow;yield return Cross(j,Vector3.forward);
+  Check(session.manners.redEvents==yellowRed,"yellow entry is not mislabeled as red passenger penalty");
+  Check(session.law.ledger.Events.Length==1&&session.law.ledger.Events[0].rules[0].verdict==LawVerdict.Deferred,"yellow timing judgment remains deferred, not compliant");j.scenarioForward=SignalColor.Green;
   var ai=traffic.cars[0];var route=new TrafficRoute{axis=0,turn=0};route.SetPoints(new[]{j.center-Vector3.forward*60+Vector3.right*2,j.center+Vector3.forward*60+Vector3.right*2});ai.Continue(route);
   var stop=new TrafficStop{junction=j,axis=0,turn=0,distance=45,exitDistance=80};route.stops.Add(stop);traffic.manualClock=true;
   for(int t=0;t<150;t++)if(KoreanSignalRules.Signal(t,j.leftTurnMode,0,1)==SignalColor.Red){traffic.manualTime=t;break;}

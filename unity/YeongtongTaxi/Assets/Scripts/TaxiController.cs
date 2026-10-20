@@ -1,7 +1,7 @@
 using UnityEngine;
 public class TaxiController : MonoBehaviour {
     public Rigidbody body; public WheelCollider[] wheels=new WheelCollider[4]; Transform[] visuals=new Transform[4];
-    public bool automated; public float autoThrottle,autoSteer; public bool autoBrake;
+    public bool automated; public float autoThrottle,autoSteer,autoServiceBrake; public bool autoBrake;
     public AssistedDriveController assistance;
     float throttle,steer; bool brake; Vector3 spawn; Quaternion spawnRotation;
     public float SteeringInput {get{return steer;}}
@@ -42,7 +42,10 @@ public class TaxiController : MonoBehaviour {
         if(transform.position.y < -5 || transform.position.y > 50) RequestReset();
     }
     void FixedUpdate() {
+        // Automated validation commands are produced per physics tick, including accelerated runs.
+        if(automated){throttle=autoThrottle;steer=autoSteer;brake=autoBrake;}
         var manual=DriveMath.Resolve(throttle,Speed,brake);
+        if(automated&&autoServiceBrake>0){manual.motor=0;manual.brake=Mathf.Max(manual.brake,Mathf.Clamp01(autoServiceBrake));}
         bool assistedSteering=assistance&&assistance.Active&&(!automated||assistance.allowAutomated);
         if(assistance)assistance.Apply(ref steer,ref manual);
         var demand=assistedSteering?manual:DriveMath.CornerAssist(manual,Speed,steer);

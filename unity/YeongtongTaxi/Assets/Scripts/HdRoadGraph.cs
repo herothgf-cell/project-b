@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -58,9 +58,9 @@ public sealed class HdRoadGraph {
   if(points.Count<2)return null;result.path=new AssistedRoadNetwork.Path(points.ToArray());return result;
  }
  static void Append(List<Vector3> points,Vector3 p,ref float total){if(points.Count>0){float d=Vector3.Distance(points[points.Count-1],p);if(d<.0001f)return;total+=d;}points.Add(p);}
- public RoutePath Via(int start,float at,int via,int goal,float goalAt){
-  if(via==goal)return Route(start,at,goal,goalAt);
-  var first=Route(start,at,via,paths[via].length);var rest=Route(via,paths[via].length,goal,goalAt);
+ public RoutePath Via(int start,float at,int via,int goal,float goalAt,float[] weights=null){
+  if(via==goal)return Route(start,at,goal,goalAt,weights);
+  var first=Route(start,at,via,paths[via].length,weights);var rest=Route(via,paths[via].length,goal,goalAt,weights);
   if(first==null||rest==null)return null;
   var chain=new List<int>(first.edges);for(int i=1;i<rest.edges.Count;i++)chain.Add(rest.edges[i]);return Compose(chain,at,goalAt);
  }

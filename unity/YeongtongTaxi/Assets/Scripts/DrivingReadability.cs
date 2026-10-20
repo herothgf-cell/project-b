@@ -36,6 +36,7 @@ public class DrivingReadability : MonoBehaviour {
   if(tile)GUI.DrawTextureWithTexCoords(new Rect(-bounds.x/bounds.width*Size,(1-(map.depth-bounds.y)/bounds.height)*Size,map.width/bounds.width*Size,map.depth/bounds.height*Size),tile,new Rect(0,0,1,1));
   if(Facilities&&map.hybrid)foreach(var j in map.junctionRules)Dot(Project(j.V()),j.facilityStatus=="verified"?Color.green:new Color(1,.6f,.1f),6);
   foreach(var car in session.traffic.cars)if(car.Visible)Dot(Project(car.transform.position),new Color(.55f,.6f,.65f),3);
+  var zones=GetComponent<ServiceLawZones>();if(zones&&zones.Ready)foreach(var zone in zones.zones)Dot(Project(zone.junction.center),zone==zones.Assigned?Color.magenta:new Color(1,.7f,.2f),zone==zones.Assigned?10:5);
   foreach(var incident in session.roadConditions.incidents)Dot(Project(incident.position),Color.red,8);
   for(int pass=0;pass<2;pass++)for(int i=1;i<jobs.nav.path.Count;i++){var a=Project(jobs.nav.path[i-1]);var b=Project(jobs.nav.path[i]);Line(a,b,pass==0?Color.black:Color.cyan,pass==0?8:4);}
   for(int i=0;i<jobs.stops.Length;i++)if(jobs.people[i].activeSelf)Marker(jobs.stops[i].V(),"승",new Color(.3f,1,.55f),false);
@@ -66,7 +67,7 @@ public class DrivingReadability : MonoBehaviour {
   if(SignalTarget==null){GUI.Label(new Rect(x+8,400,Size-16,80),"전방 신호 안내\n접근 방향의 신호를 찾는 중\n현장 신호·주변 차량을 확인하세요",label);return;}
   var j=SignalTarget;var dir=session.traffic.AxisDirection(j,SignalAxis)*SignalSign;var o=session.traffic.Observe(j,SignalAxis,SignalSign,dir,session.taxi.gameObject);
   GUI.Label(new Rect(x+8,395,Size-16,24),"전방 "+Vector3.Distance(session.taxi.transform.position,j.center).ToString("0")+"m · "+(j.facility!=null&&j.facility.facilityStatus=="verified"?"확인 시설":"임시 신호"),label);
-  var training=GetComponent<ConfusionPractice>();
+  var training=GetComponent<ConfusionPractice>();var zones=GetComponent<ServiceLawZones>();if(zones&&zones.Owns(j))training=zones.Live;
   if(training&&training.Owns(j)){
    string signal=training.State.Flashing?(training.State.Variant==8?"적색":"황색")+" 점멸":State(o.forward);
    GUI.Label(new Rect(x+8,424,Size-16,38),"가상 교육 · "+signal+"\n"+(training.State.Left?"← 비보호 · 녹색에서 대향차 양보":"↑ 직진 · 주변·출구 확인"),label);

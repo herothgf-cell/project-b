@@ -35,7 +35,7 @@ public class DrivingLaw : MonoBehaviour {
    }
   }
   if(entry==null)foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)foreach(int sign in new[]{-1,1}){
-   var training=session.GetComponent<ConfusionPractice>();if(training&&training.Owns(j))continue;
+   var training=session.GetComponent<ConfusionPractice>();var zones=session.GetComponent<ServiceLawZones>();if(training&&training.Owns(j)||zones&&zones.Owns(j))continue;
    if(!j.signalized&&!j.scenarioSignal)continue;
    var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(taxi.transform.forward,dir)<.7f)continue;var stop=j.center-dir*j.StopDistance(axis);
    float before=Vector3.Dot(previous-stop,dir),after=Vector3.Dot(front-stop,dir),lane=Vector3.Dot(front-j.center,TrafficSystem.Right(dir));string key=j.name+":"+axis+":"+sign;

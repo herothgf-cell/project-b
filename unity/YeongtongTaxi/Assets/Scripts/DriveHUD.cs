@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 public class DriveHUD : MonoBehaviour {
  public DriveSession session;public Texture2D tile;GUIStyle title,body,small;const int W=1024,H=1024;
  void Start(){tile=new Texture2D(W,H);var pixels=new Color[W*H];for(int i=0;i<pixels.Length;i++)pixels[i]=new Color(.10f,.15f,.17f);tile.SetPixels(pixels);
@@ -39,7 +39,7 @@ public class DriveHUD : MonoBehaviour {
   if(!RoadRulesTrial.Enabled&&!HdRouteTrial.Enabled){
   float y=Screen.height-211;
   if(jobs.trip.State==TripState.Idle){GUI.Box(new Rect(16,y,790,145),GUIContent.none);GUI.Label(new Rect(28,y+5,760,25),"호출 선택 1·2·3 / 길가 손님 옆 정차 후 F로 탑승",body);
-   GUI.enabled=session.business.CanAccept&&!session.paused;for(int i=0;i<3;i++){var o=jobs.offers[i];string text=(i+1)+"  "+KoreanText.Stop(jobs.stops[o.pickup].name)+" > "+KoreanText.Stop(jobs.stops[o.drop].name)+"    "+o.distance.ToString("0")+" m    "+o.fare.ToString("N0")+"원    "+o.seconds.ToString("0")+"초    요구 "+o.requiredScore+"점";if(GUI.Button(new Rect(28,y+35+i*33,762,29),text))jobs.Accept(i);}GUI.enabled=true;
+   GUI.enabled=session.business.CanAccept&&!session.paused;for(int i=0;i<3;i++){var o=jobs.offers[i];string text=(i+1)+"  "+KoreanText.Stop(jobs.stops[o.pickup].name)+" > "+KoreanText.Stop(jobs.stops[o.drop].name)+"    "+o.distance.ToString("0")+" m    "+o.fare.ToString("N0")+"원    "+o.seconds.ToString("0")+"초    요구 "+o.requiredScore+"점";if(GUI.Button(new Rect(28,y+35+i*33,762,29),text+(o.zoneIndex>=0?" · 상황 구역 경유":"")))jobs.Accept(i);}GUI.enabled=true;
   }else{GUI.Box(new Rect(16,y+28,790,115),GUIContent.none);string state=jobs.trip.State==TripState.ToPickup?"승객에게 이동 중":jobs.trip.State==TripState.OnTrip?"승객 운송 중":(jobs.trip.State==TripState.Complete?"운송 완료":"운송 실패");GUI.Label(new Rect(28,y+34,760,36),state+"    요금: "+jobs.current.fare.ToString("N0")+"원"+(jobs.trip.State==TripState.OnTrip?"    남은 시간: "+Mathf.CeilToInt(jobs.trip.Remaining)+"초":""),title);GUI.Label(new Rect(28,y+72,760,26),jobs.message,body);GUI.Label(new Rect(28,y+101,760,24),"오른쪽 연석 · 화살표와 같은 방향 · 시속 2km 미만 · F 승하차",small);}
   }
   GUI.Box(new Rect(16,Screen.height-59,790,48),GUIContent.none);GUI.Label(new Rect(28,Screen.height-56,760,22),"WASD 운전 · Space 제동 · F 승하차 · Q/E 깜빡이 · C 시점 · R 복귀 · Esc 정지 · F11 전체화면",small);GUI.Label(new Rect(28,Screen.height-34,760,22),session.drivingCamera.FirstPerson?"Z/X 또는 오른쪽 스틱: 좌우 보기 · V: 코너 시선 보정 · B: 뒤보기":"F7 거점 · F8 기록 · F10 안내 · B 뒤보기 / 후진·깜빡이: 보조 카메라",small);

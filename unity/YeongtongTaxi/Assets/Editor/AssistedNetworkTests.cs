@@ -5,6 +5,10 @@ public static class AssistedNetworkTests {
     static void Check(bool value,string message){if(!value)throw new Exception(message);}
     static MapRoad Road(string id,float ax,float az,float bx,float bz){return new MapRoad{id=id,width=12,sourceLanes=4,points=new[]{new MapPoint{x=ax,z=az},new MapPoint{x=bx,z=bz}}};}
     public static void Run(){
+        var fold=new System.Collections.Generic.List<Vector3>{new Vector3(579,0,340),new Vector3(579,0,344),new Vector3(579,0,346),new Vector3(577.8f,0,345.4f),new Vector3(577.3f,0,344.5f),new Vector3(579.3f,0,344.4f),new Vector3(583,0,344)};
+        var a=fold[0];var b=fold[fold.Count-1];AssistedRoadNetwork.RemoveOffsetFolds(fold);
+        Check(fold[0]==a&&fold[fold.Count-1]==b,"offset fold repair preserves source endpoints");
+        for(int i=1;i+1<fold.Count;i++)Check(Vector3.Dot((fold[i]-fold[i-1]).normalized,(fold[i+1]-fold[i]).normalized)>=-.2f,"provisional offset bend has no reversed ear");
         var map=new MapData{roads=new[]{Road("s",0,-80,0,0),Road("n",0,0,0,80),Road("w",-80,0,0,0),Road("e",0,0,80,0)}};
         var net=new AssistedRoadNetwork();net.Build(map);
         float progress;var lane=net.FindLane(new Vector3(1.5f,0,-40),Vector3.forward,out progress);

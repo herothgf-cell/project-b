@@ -10,7 +10,7 @@ public sealed class HdSteering {
   changing=turning=false;turn=indicator=0;
   if(nav!=null&&(!nav.active||nav.freeGuidance))nav.StartFreeGuidance();
   if(nav==null||!nav.active||nav.hdRoute==null||taxi.Speed<-.1f||Time.timeScale==0){status="목적지와 진행 차로를 먼저 확인하세요";return false;}
-  float error;float at=nav.hdRoute.path.Project(taxi.transform.position,out error);
+  float error;float at=nav.ProjectVehicle(out error);
   if(error>2.5f||Vector3.Dot(taxi.transform.forward,nav.hdRoute.path.Tangent(at))<.6f){status="안내 차로에 맞춰 진입한 뒤 H";return false;}
   status="경로 보조 · 속도와 제동은 직접 조작";return true;
  }
@@ -21,7 +21,7 @@ public sealed class HdSteering {
  public bool Apply(TaxiController taxi,ref float steering){
   if(nav==null||nav.hdRoute==null){status="연결 경로 없음 · 수동 운전";return false;}
   if(taxi.Speed<-.15f||taxi.ReverseRequested&&taxi.Speed<.2f){status="후진 · 수동 운전";return false;}
-  var p=nav.hdRoute.path;float error;float at=p.Project(taxi.transform.position,out error);
+  var p=nav.hdRoute.path;float error;float at=nav.ProjectVehicle(out error);
   if(error>4||Vector3.Dot(taxi.transform.forward,p.Tangent(at))<.25f){status="안내 차로 이탈 · 수동 복귀";return false;}
   float remain=p.length-at;
   if(remain<.8f){status="안내 도착 · 직접 제동 · 수동 전환";return false;}

@@ -6,7 +6,7 @@ using UnityEngine;
 
 // Physical taxi inputs, original ambient traffic. Only test starts are positioned.
 public class LiveTrafficValidationTest : MonoBehaviour {
- public DriveSession session;bool ok=true,arrived;readonly StringBuilder report=new StringBuilder();
+ public float cruise=6;public DriveSession session;bool ok=true,arrived;readonly StringBuilder report=new StringBuilder();
  readonly HashSet<TrafficJunction> stopped=new HashSet<TrafficJunction>();
  void Check(bool value,string name){ok&=value;report.AppendLine((value?"PASS ":"FAIL ")+name);Flush();}
  void Flush(){File.WriteAllText("artifacts/live-traffic-validation.txt","success="+ok+"\n"+report);}
@@ -23,26 +23,30 @@ public class LiveTrafficValidationTest : MonoBehaviour {
    var o=session.traffic.Observe(j,axis,sign,dir,taxi.gameObject);bool right=false;var nav=session.jobs.nav;
    if(nav.hdRoute!=null){float begin=0;for(int k=0;k<nav.hdRoute.edges.Count;k++){var edge=nav.hd.edges[nav.hdRoute.edges[k]];if(edge.ruleId==j.name&&edge.turn>0&&begin-at<55&&nav.hdRoute.ends[k]>at)right=true;begin=nav.hdRoute.ends[k];}}
    bool permitted=right?o.MayTurnRight(stopped.Contains(j)):o.forward==SignalColor.Green;
+   var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.Owns(j)){var state=zones.Live.State;permitted=state.Flashing?(state.Variant==9||stopped.Contains(j)):state.Signal==SignalColor.Green;permitted&=!state.Blocked&&!state.Oncoming;}
    if(!permitted)limit=Mathf.Min(limit,Mathf.Sqrt(3*Mathf.Max(0,gap-1)));
   }}return limit;
  }
- IEnumerator Drive(string name,float distanceLimit=0){
+ public bool Arrived {get{return arrived;}}
+ public bool Passed {get{return ok;}}
+ public IEnumerator Drive(string name,float distanceLimit=0){
   var taxi=session.taxi;var nav=session.jobs.nav;arrived=false;float start=Time.time,initial=0,maxError=0,minProgress=0,lastProgressTime=Time.time,maxStopped=0;int collisions=session.manners.collisionEvents,reds=session.manners.redEvents,brakes=session.manners.brakeEvents,lawStart=session.law.ledger.Events.Length;
   Check(nav.hdRoute!=null,name+" connected navigation");if(nav.hdRoute==null)yield break;
-  float initialError;initial=nav.hdRoute.path.Project(taxi.transform.position,out initialError);minProgress=initial;
+  HdRoadGraph.RoutePath traced=null;float probe=0;
+  float initialError;initial=nav.ProjectVehicle(out initialError);minProgress=initial;
   Check(session.assisted.SetActive(true),name+" steering armed");
   while(Time.time-start<420){
-   var route=nav.hdRoute;if(route==null)break;float error;float at=route.path.Project(taxi.transform.position,out error);maxError=Mathf.Max(maxError,error);
+   var route=nav.hdRoute;if(route==null)break;if(route!=traced){float err;float pp=route.path.Project(taxi.transform.position,out err);report.AppendLine("ROUTE t="+(Time.time-start)+" pos="+taxi.transform.position+" tangent="+route.path.Tangent(pp)+" forward="+taxi.transform.forward+" length="+route.path.length+" edge="+route.EdgeAt(pp)+" via="+nav.RequiredVia);traced=route;minProgress=pp;lastProgressTime=Time.time;Flush();}float error;float at=nav.ProjectVehicle(out error);maxError=Mathf.Max(maxError,error);if(Time.time>=probe){probe=Time.time+1;report.AppendLine("TRACE t="+(Time.time-start).ToString("F1")+" pos="+taxi.transform.position+" at="+at.ToString("F1")+" error="+error.ToString("F2")+" tangent="+route.path.Tangent(at)+" forward="+taxi.transform.forward+" target="+route.path.Position(at+5));Flush();}
    float remain=route.path.length-at;if(distanceLimit>0)remain=Mathf.Min(remain,distanceLimit-(at-initial));
-   float bend=Vector3.Angle(route.path.Tangent(at),route.path.Tangent(Mathf.Min(route.path.length,at+12)));float speed=remain<12?Mathf.Sqrt(2*Mathf.Max(0,remain-1)):bend>12?3.2f:6;
-   speed=Limit(route.path,at,Mathf.Min(6,speed));taxi.autoThrottle=taxi.Speed<speed-.1f?.23f:0;taxi.autoBrake=taxi.Speed>speed+.15f||speed<.15f;
+   float bend=Vector3.Angle(route.path.Tangent(at),route.path.Tangent(Mathf.Min(route.path.length,at+12)));float speed=remain<12?Mathf.Sqrt(2*Mathf.Max(0,remain-1)):bend>12?3.2f:cruise;
+   speed=Limit(route.path,at,Mathf.Min(cruise,speed));taxi.autoThrottle=taxi.Speed<speed-.1f?.23f:0;taxi.autoBrake=speed<.15f&&taxi.Speed<.3f;taxi.autoServiceBrake=Mathf.Clamp((taxi.Speed-speed)*.06f,0,.12f);
    if(at>minProgress+.6f){minProgress=at;lastProgressTime=Time.time;}maxStopped=Mathf.Max(maxStopped,Time.time-lastProgressTime);
    if(remain<1.9f&&taxi.body.velocity.magnitude<.5f){arrived=true;break;}
-   if(!session.assisted.Active&&remain>2.5f)break;
+   if(!session.assisted.Active&&remain>2.5f){report.AppendLine("DISARM pos="+taxi.transform.position+" speed="+taxi.Speed+" remain="+remain+" status="+session.assisted.Status+" trip="+session.jobs.trip.State+" nav="+nav.instruction);break;}
    if(Time.time-lastProgressTime>100){report.AppendLine("BLOCK "+name+" pos="+taxi.transform.position+" remaining="+remain+" target="+speed);foreach(var c in session.traffic.cars)if(Vector3.Distance(c.transform.position,taxi.transform.position)<35)report.AppendLine("CAR "+c.name+" v="+c.speed+" signal="+c.waitingForSignal+" junction="+c.waitingForJunction+" obstacle="+c.blockedName);break;}
    yield return new WaitForFixedUpdate();
   }
-  taxi.autoThrottle=0;taxi.autoBrake=true;session.assisted.SetActive(false);
+  taxi.autoThrottle=0;taxi.autoServiceBrake=0;taxi.autoBrake=true;session.assisted.SetActive(false);
   Check(arrived&&maxError<2.5f,name+" physical arrival seconds="+(Time.time-start).ToString("F1")+" maxError="+maxError.ToString("F2")+" maxStopped="+maxStopped.ToString("F1"));
   Check(session.manners.collisionEvents==collisions,name+" no taxi collision");
   Check(session.manners.redEvents==reds,name+" no signal penalty");Check(session.manners.brakeEvents==brakes,name+" no harsh braking penalty");

@@ -1,7 +1,7 @@
-using UnityEngine;
+﻿using UnityEngine;
 public class DrivingManners : MonoBehaviour {
  public DriveSession session;public readonly MannerLedger ledger=new MannerLedger();public string lastEvent="안전하게 운전해 주세요";public float eventUntil;public string collisionDiagnostic="none";public int events,redEvents,collisionEvents,accelEvents,brakeEvents,boundaryEvents;
- class Crossing {public TrafficJunction junction;public Vector3 direction;public int axis;public bool through,left,right,penalized,yieldPenalized;}
+ class Crossing {public TrafficJunction junction;public Vector3 direction;public int axis;public bool through,left,right,penalized,yieldPenalized,uncertain;}
  readonly System.Collections.Generic.Dictionary<string,float> stops=new System.Collections.Generic.Dictionary<string,float>();
  Crossing crossing;
  readonly System.Collections.Generic.List<string> rideReasons=new System.Collections.Generic.List<string>();
@@ -24,6 +24,7 @@ public class DrivingManners : MonoBehaviour {
   previousVelocity=velocity;previousFront=front;
  }
  public bool NecessaryBraking(){
+  var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.RequiredBraking())return true;
   // Observation only: assistance never takes over accelerator/brake input.
   float distance=Mathf.Max(5,session.taxi.body.velocity.magnitude*2+4);
   foreach(var hit in Physics.SphereCastAll(transform.position+Vector3.up*.65f,.8f,transform.forward,distance,(1<<8)|(1<<9),QueryTriggerInteraction.Ignore))if(hit.rigidbody!=session.taxi.body)return true;
@@ -53,18 +54,19 @@ public class DrivingManners : MonoBehaviour {
     Deduct("yield"+crossing.junction.name,8,turning<0?"비보호 좌회전 양보 위반":"우회전 양보 위반",5);crossing.yieldPenalized=true;
    }
    var q=after-crossing.junction.center;float along=Vector3.Dot(q,crossing.direction),side=Vector3.Dot(q,TrafficSystem.Right(crossing.direction));float edge=crossing.junction.halfWidth[crossing.axis]+4;bool left=side< -edge,right=side>edge,through=along>crossing.junction.StopDistance(crossing.axis)+3;
-   if(left||right||through){if(!crossing.penalized&&!(left?crossing.left:right?crossing.right:crossing.through))Deduct("redmovement"+crossing.junction.name,12,left?"좌회전 신호 위반":right?"우회전 전 일시정지 위반":"진행 방향 신호 위반",5);crossing=null;}
+   if(left||right||through){if(!crossing.uncertain&&!crossing.penalized&&!(left?crossing.left:right?crossing.right:crossing.through))Deduct("redmovement"+crossing.junction.name,12,left?"좌회전 신호 위반":right?"우회전 전 일시정지 위반":"진행 방향 신호 위반",5);crossing=null;}
   }
   foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)foreach(int sign in new[]{-1,1}){
+   var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.Owns(j))continue;
    if(!j.signalized&&!j.scenarioSignal)continue;
    var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(transform.forward,dir)<.7f)continue;var stop=j.center-dir*j.StopDistance(axis);float a=Vector3.Dot(before-stop,dir),b=Vector3.Dot(after-stop,dir);float lane=Vector3.Dot(after-j.center,TrafficSystem.Right(dir));string key=j.name+axis+sign;
    if(b>=-3&&b<=TrafficJunction.StopLineEntryTolerance&&lane>.15f&&lane<j.halfWidth[axis]&&session.taxi.body.velocity.magnitude<.05f)stops[key]=Time.time;
    if(a<TrafficJunction.StopLineEntryTolerance&&b>=TrafficJunction.StopLineEntryTolerance&&lane>.15f&&lane<j.halfWidth[axis]){
     float last;bool stopped=stops.TryGetValue(key,out last)&&Time.time-last<8;stops.Remove(key);
-    bool through=session.traffic.Signal(j,axis,sign)==SignalColor.Green,allowedLeft=session.traffic.LeftSignal(j,axis,sign)==SignalColor.Green;
-    bool right=session.traffic.Observe(j,axis,sign,dir,gameObject).RightSignalPermits(stopped);bool red=!through&&!allowedLeft&&!right;
+    var forward=session.traffic.Signal(j,axis,sign);var leftSignal=session.traffic.LeftSignal(j,axis,sign);bool uncertain=forward==SignalColor.Yellow||leftSignal==SignalColor.Yellow;bool through=forward==SignalColor.Green,allowedLeft=leftSignal==SignalColor.Green;
+    bool right=session.traffic.Observe(j,axis,sign,dir,gameObject).RightSignalPermits(stopped);bool red=!uncertain&&!through&&!allowedLeft&&!right;
     if(red)Deduct("red"+j.name+axis+sign,12,"적색 신호 통과",5);
-    crossing=new Crossing{junction=j,direction=dir,axis=axis,through=through,left=allowedLeft,right=right,penalized=red};
+    crossing=new Crossing{junction=j,direction=dir,axis=axis,through=through,left=allowedLeft,right=right,penalized=red,uncertain=uncertain};
    }
   }
  }
