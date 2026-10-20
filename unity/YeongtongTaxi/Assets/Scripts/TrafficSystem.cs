@@ -1,8 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class TrafficJunction {
-    public bool scenarioSignal; public SignalColor scenarioForward; public bool signalized=true; public RoadObservation rightTurnObservation; public int observationAxis,observationSign; public HybridJunctionRule facility; public int crosswalkApproaches,stopLineApproaches;
+    public bool scenarioOpposingGreen,scenarioFlashing,scenarioLampOn=true;public bool scenarioSignal; public SignalColor scenarioForward; public bool signalized=true; public RoadObservation rightTurnObservation; public int observationAxis,observationSign; public HybridJunctionRule facility; public int crosswalkApproaches,stopLineApproaches;
     public readonly List<int> lampAxes=new List<int>(),lampSigns=new List<int>();
     public Vector3 direction;
     public LeftTurnMode leftTurnMode;
@@ -47,8 +47,8 @@ public class TrafficSystem : MonoBehaviour {
 
     public Vector3 AxisDirection(TrafficJunction j,int axis){var d=j.direction.sqrMagnitude>.1f?j.direction:mainDirection;return axis==0?d:Right(d);}
     public int Sign(Vector3 direction,int axis,TrafficJunction j=null){return Vector3.Dot(direction,j!=null?AxisDirection(j,axis):axis==0?mainDirection:Right(mainDirection))>=0?1:-1;}
-    public SignalColor Signal(TrafficJunction junction, int axis,int sign=1) { return junction.scenarioSignal?(axis==junction.observationAxis&&sign==junction.observationSign?junction.scenarioForward:SignalColor.Red):junction.signalized?KoreanSignalRules.Signal(Clock+junction.offset,junction.leftTurnMode,axis,sign):SignalColor.Green; }
-    public SignalColor LeftSignal(TrafficJunction junction,int axis,int sign=1){return Signal(junction,axis,sign);}
+    public SignalColor Signal(TrafficJunction junction, int axis,int sign=1) { return junction.scenarioSignal?(axis==junction.observationAxis&&(sign==junction.observationSign||junction.scenarioOpposingGreen)?junction.scenarioForward:SignalColor.Red):junction.signalized?KoreanSignalRules.Signal(Clock+junction.offset,junction.leftTurnMode,axis,sign):SignalColor.Green; }
+    public SignalColor LeftSignal(TrafficJunction junction,int axis,int sign=1){if(junction.scenarioSignal&&junction.leftTurnMode==LeftTurnMode.Permissive)return SignalColor.Red;return Signal(junction,axis,sign);}
     public SignalColor MovementSignal(TrafficJunction junction,int axis,int turn,int sign=1){return Signal(junction,axis,sign);}
     public RoadObservation Observe(TrafficJunction j,int axis,int sign,Vector3 direction,GameObject self){
         var o=j.rightTurnObservation!=null&&j.observationAxis==axis&&j.observationSign==sign?j.rightTurnObservation.Copy():new RoadObservation{known=true,pedestrian=PedestrianState.None};
@@ -362,7 +362,7 @@ public class TrafficSystem : MonoBehaviour {
         foreach(var j in junctions) for(int approach=0;approach<j.lamps.Count;approach++) {
             var left=LeftSignal(j,j.lampAxes[approach],j.lampSigns[approach]);int color=(int)Signal(j,j.lampAxes[approach],j.lampSigns[approach]);
             foreach(var arrow in j.leftLamps[approach])arrow.sharedMaterial=left==SignalColor.Green?lit[2]:unlit[2];
-            for(int i=0;i<3;i++) j.lamps[approach][i].sharedMaterial=i==color?lit[i]:unlit[i];
+            for(int i=0;i<3;i++) j.lamps[approach][i].sharedMaterial=i==color&&(!j.scenarioFlashing||j.scenarioLampOn)?lit[i]:unlit[i];
         }
     }
 }

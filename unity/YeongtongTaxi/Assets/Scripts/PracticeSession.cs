@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using UnityEngine;
 
@@ -8,10 +8,11 @@ public class PracticeSession : MonoBehaviour {
  System.Diagnostics.Process child;string resultPath="",inputPath="",eventId="";public string notice="";
  public bool Busy {get{return child!=null;}}
  public bool PickerOpen {get;private set;}
+ Vector2 pickerScroll;
  public int SelectedVariant=1;PracticeRoute directExitTemplate;
- public string SelectedTitle {get{return SelectedVariant==7?"출구 정체 · 대기 / 우회 / 진입 결과 비교":RightPracticeState.Title(SelectedVariant);}}
- public string SelectedConditions {get{return SelectedVariant==7?"신호를 기다리는 차량 8대가 출구 차로에 줄 서 있습니다. 영업 기록 없이 준비된 은계 구간으로 이동합니다.":RightPracticeState.Conditions(SelectedVariant);}}
- public string SelectedGuidance {get{return SelectedVariant==7?"줄 맨 뒤에서 간격을 확보해 합류하거나 직진 후 우회하세요. 앞부분 진입과 상대 진행 방해는 결과에서 구분합니다. 완료 후 같은 조건으로 재시도할 수 있습니다.":RightPracticeState.Guidance(SelectedVariant);}}
+ public string SelectedTitle {get{return ConfusionPracticeState.Contains(SelectedVariant)?ConfusionPracticeState.Title(SelectedVariant):SelectedVariant==7?"출구 정체 · 대기 / 우회 / 진입 결과 비교":RightPracticeState.Title(SelectedVariant);}}
+ public string SelectedConditions {get{return ConfusionPracticeState.Contains(SelectedVariant)?ConfusionPracticeState.Conditions(SelectedVariant):SelectedVariant==7?"신호를 기다리는 차량 8대가 출구 차로에 줄 서 있습니다. 영업 기록 없이 준비된 은계 구간으로 이동합니다.":RightPracticeState.Conditions(SelectedVariant);}}
+ public string SelectedGuidance {get{return ConfusionPracticeState.Contains(SelectedVariant)?ConfusionPracticeState.Guidance(SelectedVariant):SelectedVariant==7?"줄 맨 뒤에서 간격을 확보해 합류하거나 직진 후 우회하세요. 앞부분 진입과 상대 진행 방해는 결과에서 구분합니다. 완료 후 같은 조건으로 재시도할 수 있습니다.":RightPracticeState.Guidance(SelectedVariant);}}
  bool pickerPaused,changedConditions,ready;float pickerTime;
  public bool OpenPicker(){
   if(Enabled&&!ready||Busy||PickerOpen||session.business.restartPrompt||session.business.pendingPayment>=0||session.business.taxPrompt||session.services.open||session.law.HistoryOpen)return false;
@@ -21,8 +22,8 @@ public class PracticeSession : MonoBehaviour {
  public void CancelPicker(){if(!PickerOpen)return;PickerOpen=false;session.paused=pickerPaused;Time.timeScale=pickerTime;}
  public bool StartSelected(){
   if(!PickerOpen||Busy)return false;
-  if(Enabled){if(!(SelectedVariant==7?StartDirectExit():StartRight(SelectedVariant)))return false;changedConditions=true;notice="";PickerOpen=false;session.paused=false;Time.timeScale=1;return true;}
-  bool ok=Begin(new LawEvent{id=session.law.ids.Next("practice"),day=session.business.ledger.Day,scenario=SelectedVariant==7?"exit":"R"+SelectedVariant},session.business.preparing);
+  if(Enabled){if(!(ConfusionPracticeState.Contains(SelectedVariant)?GetComponent<ConfusionPractice>().StartAttempt(SelectedVariant):SelectedVariant==7?StartDirectExit():StartRight(SelectedVariant)))return false;changedConditions=true;notice="";PickerOpen=false;session.paused=false;Time.timeScale=1;return true;}
+  bool ok=Begin(new LawEvent{id=session.law.ids.Next("practice"),day=session.business.ledger.Day,scenario=ConfusionPracticeState.Contains(SelectedVariant)?"C"+SelectedVariant:SelectedVariant==7?"exit":"R"+SelectedVariant},session.business.preparing);
   if(ok)CancelPicker();return ok;
  }
  public bool StartDirectExit(){
@@ -31,20 +32,20 @@ public class PracticeSession : MonoBehaviour {
   bool ok=StartExit(directExitTemplate.Copy());if(ok){SelectedVariant=7;notice="";}return ok;
  }
  public bool RetryCurrent(){
-  var coach=GetComponent<PracticeCoach>();if(!coach.ExitMode)return RetryRight();
+  var coach=GetComponent<PracticeCoach>();if(coach.ConfusionMode){if(!Enabled||!ready||Busy)return false;SelectedVariant=GetComponent<ConfusionPractice>().State.Variant;bool ok=GetComponent<ConfusionPractice>().StartAttempt(SelectedVariant);if(ok){PickerOpen=false;session.paused=false;Time.timeScale=1;}return ok;}if(!coach.ExitMode)return RetryRight();
   if(!Enabled||!ready||Busy)return false;
   var situation=GetComponent<ExitQueueSituation>();var source=situation.Template==null?null:situation.Template.Copy();
   if(!StartExit(source))return false;PickerOpen=false;session.paused=false;Time.timeScale=1;return true;
  }
  public bool StartExit(PracticeRoute source){
   if(!Enabled||source==null)return false;
-  GetComponent<RightTurnSituation>().Stop();var situation=GetComponent<ExitQueueSituation>();situation.Stop();
+  GetComponent<ConfusionPractice>().Stop();session.manners.enabled=true;GetComponent<RightTurnSituation>().Stop();var situation=GetComponent<ExitQueueSituation>();situation.Stop();
   if(!situation.Replay(source))return false;
   GetComponent<ExitQueueObserver>().ResetAttempt();GetComponent<PracticeCoach>().BeginExit(situation);ready=true;return true;
  }
  public bool RetryRight(){if(!Enabled||!ready||Busy)return false;SelectedVariant=GetComponent<RightTurnSituation>().variant;if(!StartRight(SelectedVariant))return false;changedConditions=true;notice="";PickerOpen=false;session.paused=false;Time.timeScale=1;return true;}
  bool StartRight(int variant){
-  var situation=GetComponent<RightTurnSituation>();var j=situation.junction;if(j==null)return false;
+  GetComponent<ConfusionPractice>().Stop();session.manners.enabled=true;GetComponent<PracticeCoach>().CloseResult();var situation=GetComponent<RightTurnSituation>();var j=situation.junction;if(j==null)return false;
   GetComponent<ExitQueueSituation>().Stop();situation.Stop();
   var dir=session.traffic.AxisDirection(j,0);var right=TrafficSystem.Right(dir);var taxi=session.taxi;
   taxi.SetSpawn(j.center-dir*110+right*(j.halfWidth[0]-1.75f)+Vector3.up*.65f,Quaternion.LookRotation(dir));taxi.ResetTaxi();
@@ -53,11 +54,11 @@ public class PracticeSession : MonoBehaviour {
  }
  public bool Begin(LawEvent record,bool preparation=false){
   if(session.business.restartPrompt||Enabled||Busy||!(session.business.ShowingSummary||preparation&&session.business.preparing||session.paused&&!session.services.open&&!session.law.HistoryOpen&&!session.business.taxPrompt&&session.business.pendingPayment<0)||record==null||Application.isEditor)return false;
-  int variant=0;if(record.practice==null&&record.scenario!="exit"&&!(record.scenario!=null&&record.scenario.StartsWith("R")&&int.TryParse(record.scenario.Substring(1),out variant)&&variant>=1&&variant<=6))return false;
+  int variant=0;bool confusion=record.scenario!=null&&record.scenario.StartsWith("C")&&int.TryParse(record.scenario.Substring(1),out variant)&&ConfusionPracticeState.Contains(variant);if(!confusion&&record.practice==null&&record.scenario!="exit"&&!(record.scenario!=null&&record.scenario.StartsWith("R")&&int.TryParse(record.scenario.Substring(1),out variant)&&variant>=1&&variant<=6))return false;
   try{
    string token=Guid.NewGuid().ToString("N");resultPath=System.IO.Path.Combine(Application.temporaryCachePath,"taxi-practice-result-"+token+".json");eventId=record.id;
    string arguments="-eungye -practice -practiceResult \""+resultPath+"\" -practiceSource \""+record.id+"\" -screen-width 1600 -screen-height 900 -screen-fullscreen 0";
-   if(record.practice!=null){inputPath=System.IO.Path.Combine(Application.temporaryCachePath,"taxi-practice-"+token+".json");System.IO.File.WriteAllText(inputPath,JsonUtility.ToJson(record.practice));arguments+=" -practiceInput \""+inputPath+"\"";}else arguments+=record.scenario=="exit"?" -practiceExit":" -practiceRight"+variant;
+   if(record.practice!=null){inputPath=System.IO.Path.Combine(Application.temporaryCachePath,"taxi-practice-"+token+".json");System.IO.File.WriteAllText(inputPath,JsonUtility.ToJson(record.practice));arguments+=" -practiceInput \""+inputPath+"\"";}else if(confusion)arguments+=" -practiceConfusion"+variant;else arguments+=record.scenario=="exit"?" -practiceExit":" -practiceRight"+variant;
    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-completionTest")>=0)arguments+=" -practiceAutoFinish";
    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-exitSelectionTest")>=0)arguments+=" -exitSelectionTest";
    child=System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo{FileName=System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName,Arguments=arguments,UseShellExecute=false});notice="연습 창 진행 중 · 원래 정산은 정지 상태입니다";return true;
@@ -88,24 +89,26 @@ public class PracticeSession : MonoBehaviour {
   var args=Environment.GetCommandLineArgs();int input=Array.IndexOf(args,"-practiceInput");
   if(input>=0&&input+1<args.Length){PracticeRoute source=null;try{source=JsonUtility.FromJson<PracticeRoute>(System.IO.File.ReadAllText(args[input+1]));}catch(Exception e){Debug.LogWarning("Practice input unavailable: "+e.Message);}if(source!=null)ready=StartExit(source);yield break;}
   if(Array.IndexOf(args,"-practiceExit")>=0){StartDirectExit();ready=true;yield break;}
+  foreach(var arg in args)if(arg.StartsWith("-practiceConfusion")){int choice;if(int.TryParse(arg.Substring(18),out choice)&&ConfusionPracticeState.Contains(choice)){SelectedVariant=choice;ready=GetComponent<ConfusionPractice>().StartAttempt(choice);yield break;}}
   int variant=1;foreach(var arg in Environment.GetCommandLineArgs())if(arg.StartsWith("-practiceRight"))int.TryParse(arg.Substring(14),out variant);
   SelectedVariant=Mathf.Clamp(variant,1,6);ready=StartRight(SelectedVariant);
  }
  void OnGUI(){
   var style=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=15,wordWrap=true};GUI.depth=-160;
   if(PickerOpen){
-   float width=Mathf.Min(780,Screen.width-32),height=640,x=(Screen.width-width)/2,y=(Screen.height-height)/2;
+   float width=Mathf.Min(900,Screen.width-32),height=Mathf.Min(800,Screen.height-32),x=(Screen.width-width)/2,y=(Screen.height-height)/2;
    GUI.color=new Color(.035f,.075f,.10f,1);GUI.DrawTexture(new Rect(x,y,width,height),Texture2D.whiteTexture);GUI.color=Color.white;
-   var text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=17,wordWrap=true};
-   GUI.Label(new Rect(x+22,y+18,width-44,35),"운전 연습 선택 · 영업 기록 없이 시작",text);
-   float col=(width-54)/2;
-   for(int i=1;i<=6;i++){if(GUI.Button(new Rect(x+22+(i-1)%2*(col+10),y+65+(i-1)/2*51,col,43),(SelectedVariant==i?"● ":"")+RightPracticeState.Title(i),style))SelectedVariant=i;}
-   if(GUI.Button(new Rect(x+22,y+218,width-44,43),(SelectedVariant==7?"● ":"")+"출구 정체 · 뒤에서 대기 / 직진 우회",style))SelectedVariant=7;
-   GUI.Label(new Rect(x+22,y+277,width-44,55),SelectedConditions,text);
-   GUI.Label(new Rect(x+22,y+339,width-44,85),"운전 요령\n"+SelectedGuidance,text);
-   GUI.Label(new Rect(x+22,y+435,width-44,115),(SelectedVariant==7?"줄 끝에 접근하면 대기 신호가 진행됩니다. 결과는 이번 시도만 평가합니다.\n":"접근 중 시작 조건 유지 · 정지선 앞 정차 후 신호·보행 상태가 진행됩니다.\n")+(Enabled?"선택하면 출발점으로 돌아갑니다. 이전 연습 판정은 유지합니다.":"별도 연습 창을 엽니다. 영업의 돈·시간·진행은 유지합니다.")+"\n"+notice,new GUIStyle(text){fontSize=14});
-   if(GUI.Button(new Rect(x+22,y+575,col,43),Enabled?"선택한 상황 다시 시작":"선택한 상황 연습 시작",style))StartSelected();
-   if(GUI.Button(new Rect(x+32+col,y+575,col,43),"취소 · 돌아가기",style))CancelPicker();return;
+   var text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true};
+   GUI.Label(new Rect(x+22,y+14,width-44,40),"운전 연습 선택 · 영업 기록 없이 시작 / 목록 스크롤",text);
+   float col=(width-70)/2,listHeight=Mathf.Max(120,height-440);
+   pickerScroll=GUI.BeginScrollView(new Rect(x+22,y+60,width-44,listHeight),pickerScroll,new Rect(0,0,width-65,7*48));
+   for(int i=1;i<=14;i++){string title=ConfusionPracticeState.Contains(i)?ConfusionPracticeState.Title(i):i==7?"출구 정체 · 대기 / 우회":RightPracticeState.Title(i);if(GUI.Button(new Rect((i-1)%2*(col+10),(i-1)/2*48,col,42),(SelectedVariant==i?"● ":"")+title,style))SelectedVariant=i;}
+   GUI.EndScrollView();float body=y+68+listHeight;
+   GUI.Label(new Rect(x+22,body,width-44,77),SelectedConditions,text);
+   GUI.Label(new Rect(x+22,body+83,width-44,105),"운전 요령\n"+SelectedGuidance,text);
+   GUI.Label(new Rect(x+22,body+193,width-44,95),(ConfusionPracticeState.Contains(SelectedVariant)?"가상 교육 시설·차량 배치입니다. 실제 현장 규제로 사용하지 않습니다.\n":"접근 중 시작 조건 유지 · 판단 위치에서 상황 진행.\n")+(Enabled?"선택하면 출발점으로 돌아갑니다. 이전 연습 판정은 유지합니다.":"별도 연습 창을 엽니다. 영업의 돈·시간·진행은 유지합니다.")+"\n"+notice,new GUIStyle(text){fontSize=14});
+   if(GUI.Button(new Rect(x+22,y+height-60,col,43),Enabled?"선택한 상황 다시 시작":"선택한 상황 연습 시작",style))StartSelected();
+   if(GUI.Button(new Rect(x+32+col,y+height-60,col,43),"취소 · 돌아가기",style))CancelPicker();return;
   }
   if(!Enabled)return;
   if(GetComponent<PracticeCoach>().ResultOpen)return;

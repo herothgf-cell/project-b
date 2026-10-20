@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 // Presentation only: shares navigation and signal state with the simulation.
 public class DrivingReadability : MonoBehaviour {
@@ -66,6 +66,12 @@ public class DrivingReadability : MonoBehaviour {
   if(SignalTarget==null){GUI.Label(new Rect(x+8,400,Size-16,80),"전방 신호 안내\n접근 방향의 신호를 찾는 중\n현장 신호·주변 차량을 확인하세요",label);return;}
   var j=SignalTarget;var dir=session.traffic.AxisDirection(j,SignalAxis)*SignalSign;var o=session.traffic.Observe(j,SignalAxis,SignalSign,dir,session.taxi.gameObject);
   GUI.Label(new Rect(x+8,395,Size-16,24),"전방 "+Vector3.Distance(session.taxi.transform.position,j.center).ToString("0")+"m · "+(j.facility!=null&&j.facility.facilityStatus=="verified"?"확인 시설":"임시 신호"),label);
+  var training=GetComponent<ConfusionPractice>();
+  if(training&&training.Owns(j)){
+   string signal=training.State.Flashing?(training.State.Variant==8?"적색":"황색")+" 점멸":State(o.forward);
+   GUI.Label(new Rect(x+8,424,Size-16,38),"가상 교육 · "+signal+"\n"+(training.State.Left?"← 비보호 · 녹색에서 대향차 양보":"↑ 직진 · 주변·출구 확인"),label);
+   GUI.Label(new Rect(x+8,465,Size-16,32),"실제 현장 규제가 아닙니다",label);return;
+  }
   Lamp(new Rect(x+8,424,126,38),"↑ 직진",o.forward);
   Lamp(new Rect(x+142,424,130,38),j.leftTurnMode==LeftTurnMode.Permissive?"← 비보호":"← 좌회전",session.traffic.LeftSignal(j,SignalAxis,SignalSign));
   GUI.Label(new Rect(x+8,462,Size-16,36),o.dedicated?"→ 전용 우회전: "+State(o.right):"→ 우회전: 정지·보행자 조건 확인",label);

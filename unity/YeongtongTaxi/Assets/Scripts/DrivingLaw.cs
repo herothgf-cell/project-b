@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 // Independent observer: never calls DrivingManners or changes a fare.
@@ -35,6 +35,7 @@ public class DrivingLaw : MonoBehaviour {
    }
   }
   if(entry==null)foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)foreach(int sign in new[]{-1,1}){
+   var training=session.GetComponent<ConfusionPractice>();if(training&&training.Owns(j))continue;
    if(!j.signalized&&!j.scenarioSignal)continue;
    var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(taxi.transform.forward,dir)<.7f)continue;var stop=j.center-dir*j.StopDistance(axis);
    float before=Vector3.Dot(previous-stop,dir),after=Vector3.Dot(front-stop,dir),lane=Vector3.Dot(front-j.center,TrafficSystem.Right(dir));string key=j.name+":"+axis+":"+sign;
@@ -68,7 +69,7 @@ public class DrivingLaw : MonoBehaviour {
    string condition=e.observation==null?"신호 대기열·진입·상대 방해 관찰":("전방 "+SignalLabel(e.observation.forward)+" / 우회전 전용 "+(e.observation.dedicated?SignalLabel(e.observation.right):"없음")+" / 보행 "+PedestrianLabel(e.observation.pedestrian));
    string practice="";foreach(var r in session.business.practices)if(r.sourceId==e.id)practice="연습: "+r.action+" · "+r.EvaluationText();
    GUI.Label(new Rect(0,y,box.width-80,180),e.day+"일 · "+e.junction+" · "+e.action+" · 사건 감점 "+e.Deduction+"\n"+rules+"\n조건: "+condition+"\n"+e.reason+"\n"+(e.occupied?"승객 탑승":"빈차")+" · "+(e.assisted?"조향 보조 사용":"수동 조향")+" · 영업 "+e.seconds.ToString("0")+"초\n"+practice,style);
-   bool replay=e.practice!=null||!string.IsNullOrEmpty(e.scenario)&&e.scenario.StartsWith("R");var runner=session.GetComponent<PracticeSession>();
+   bool replay=e.practice!=null||!string.IsNullOrEmpty(e.scenario)&&(e.scenario.StartsWith("R")||e.scenario.StartsWith("C"));var runner=session.GetComponent<PracticeSession>();
    GUI.enabled=replay&&session.business.ShowingSummary&&!runner.Busy;
    if(GUI.Button(new Rect(0,y+184,245,30),session.business.ShowingSummary?"같은 조건 연습 (별도 창)":"복습은 하루 결산에서 가능",button))runner.Begin(e);GUI.enabled=true;
    GUI.Label(new Rect(255,y+184,box.width-335,40),runner.notice,style);

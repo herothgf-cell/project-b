@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 public class DriveSession : MonoBehaviour {
     public string startupRegion="";
     public TaxiController taxi; public WorldBuilder world; public TrafficSystem traffic; public DrivingCamera drivingCamera; public TaxiSignals signals;
@@ -29,7 +29,7 @@ public class DriveSession : MonoBehaviour {
         jobs=gameObject.AddComponent<PassengerJobs>();jobs.Initialize(this);
         if(world.map.HasHd){jobs.enabled=world.map.hybrid;assisted.hd.nav=jobs.nav;}
         business=gameObject.AddComponent<BusinessProgress>();business.Initialize(this);gameObject.AddComponent<BusinessHUD>().session=this;
-        law=taxi.gameObject.AddComponent<DrivingLaw>();law.session=this;services=gameObject.AddComponent<ServiceStops>();services.session=this;requests=gameObject.AddComponent<PassengerRequestUI>();requests.session=this;gameObject.AddComponent<RightTurnSituation>().session=this;gameObject.AddComponent<ExitQueueObserver>().session=this;gameObject.AddComponent<ExitQueueSituation>().session=this;gameObject.AddComponent<PracticeSession>().session=this;gameObject.AddComponent<PracticeCoach>().session=this;
+        law=taxi.gameObject.AddComponent<DrivingLaw>();law.session=this;services=gameObject.AddComponent<ServiceStops>();services.session=this;requests=gameObject.AddComponent<PassengerRequestUI>();requests.session=this;gameObject.AddComponent<RightTurnSituation>().session=this;gameObject.AddComponent<ExitQueueObserver>().session=this;gameObject.AddComponent<ExitQueueSituation>().session=this;gameObject.AddComponent<PracticeSession>().session=this;gameObject.AddComponent<PracticeCoach>().session=this;gameObject.AddComponent<ConfusionPractice>().session=this;
         roadConditions=gameObject.AddComponent<RoadConditions>();roadConditions.Initialize(this);jobs.nav.conditions=roadConditions;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-districtTrafficTest")>=0)gameObject.AddComponent<DistrictTrafficSmokeTest>().session=this;
         assist=new GameObject("Automatic camera monitor").AddComponent<AssistCamera>();assist.session=this;
@@ -53,6 +53,8 @@ public class DriveSession : MonoBehaviour {
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadIndexTest")>=0)gameObject.AddComponent<RoadEnvironmentIndexSmokeTest>();
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-liveExitChoicesTest")>=0)gameObject.AddComponent<LiveExitChoicesTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-liveTrafficTest")>=0)gameObject.AddComponent<LiveTrafficValidationTest>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-confusionDriveTest")>=0)gameObject.AddComponent<ConfusionDriveSmokeTest>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-confusionPracticeTest")>=0)gameObject.AddComponent<ConfusionPracticeSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-drivingJudgmentTest")>=0)gameObject.AddComponent<DrivingJudgmentSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-exitSelectionTest")>=0)gameObject.AddComponent<ExitSelectionSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-exitFeedbackTest")>=0)gameObject.AddComponent<ExitFeedbackSmokeTest>().session=this;
