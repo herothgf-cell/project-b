@@ -29,3 +29,5 @@ MIT 교통 작업(dfcd821/2102592)이 완료된 뒤 기본 은계에 통합 재�
 PlayabilityUITest 종료0, 3해상도 검사 및 1280 연료 예측 호출 카드·말풍선 캡처 확인. DriveFeedbackTest 종료0(누적점수/저널/신규캠페인/알림). 모델20묶음 종료0. 앞선 prototypeScenarioTest와 campaignTest도 새 하차 정책으로 종료0이며, 최종 빌드에서는 UI/표지 범위와 검사 기대값만 추가 변경했다. git diff --check 통과. 수동3일 완주·실제 시설 대조는 완료로 주장하지 않는다.
 
 최종 MIT 전환 회귀: -mitTrafficTest -hybridV2 종료0. ON/OFF 즉시 전환·안전 상한·완전정지 후 재출발 검사 통과. ThirdPartyNotices 배포 파일 유지.
+
+최종 배포 소스: 3c0a9c81a6189551d8c5e0b0bc6665d6c5129a21. 실행 폴더 127개 파일 크기/SHA256 전수 검증. 앞선 MIT 중간 빌드의 integratedWorkingTree 주의 상태는 이번 전체 소스 커밋·통합 빌드로 해소했다. 지도 입력/ZIP 변경 없음.

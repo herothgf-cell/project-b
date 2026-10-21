@@ -1,10 +1,10 @@
 {
-  "sourceCommit": "dfcd821cb8eb50190fad89489e020ea658d5543e",
+  "sourceCommit": "3c0a9c81a6189551d8c5e0b0bc6665d6c5129a21",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-10-21",
-  "totalBytes": 84314261,
+  "totalBytes": null,
   "files": [
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/app.info",
@@ -14,7 +14,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "2ba2dc62f0d441fae4f1b42358472852bc6e3ba54d3f3655d6fd27140e9b8964"
+      "sha256": "6e29c7d5ef9ded1cc43d756cb330151fa5507068aba76d5919ccec4e52d667bb"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -39,7 +39,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
       "bytes": 642560,
-      "sha256": "03136c2effe4301119457624bb05d0409a420974b778740bb6ac0f9c2e032a0a"
+      "sha256": "9b9e8c61141db0554e172d2caa9aca4a5b4f34db3070851f7dac0bf3e229aa4f"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -641,7 +641,5 @@
       "bytes": 31100840,
       "sha256": "a8dcc8f6f4cbee3da56552a4adbe56724228a0efcc2fcd737b516933f0418081"
     }
-  ],
-  "integratedWorkingTree": true,
-  "sourceNote": "MIT source reference only: build includes concurrent uncommitted passenger/signage changes. Later RoadSignage/PlayabilityUISmokeTest edits are not in this binary. See docs/work-history/2026-10-21-mit-traffic-following.md. Rebuild and revalidate after integration."
+  ]
 }
