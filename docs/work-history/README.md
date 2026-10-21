@@ -4,11 +4,11 @@
 
 ## 다른 PC에서 시작하기
 
-현재 입력3개는 `artifacts/handoff/Eungye-map-inputs-2026-10-20.zip`에 묶었다(로컬 전달 파일, Git 제외). [ZIP 설치·빌드·실행 안내](map-transfer-guide.md)를 따른다. 압축 내부의 `unity/`가 저장소의 `unity/`와 합쳐지도록 **저장소 루트에** 푼다. ZIP 안에도 안내와 입력 manifest 사본이 있다. ZIP과 `.zip.sha256` 파일은 USB·개인 전송 등으로 따로 옮긴다.
+2026-10-21부터 **실행 폴더와 지도 ZIP을 Git main으로 받는다.** 테스트만 할 때는 `builds/EungyeTaxi/EungyeTaxi.exe`를 바로 실행한다. 개발할 때는 `distribution/maps/Eungye-map-inputs-2026-10-20.zip`을 **저장소 루트에** 푼다. ZIP 안에도 안내와 입력 manifest 사본이 있다. [빌드 없는 실행 안내](../../distribution/README.md), [ZIP 설치·개발 안내](map-transfer-guide.md)를 따른다.
 
 1. 이 GitHub 저장소를 복제하거나, 현재 PC의 변경을 먼저 확인한 뒤 `git pull --ff-only`로 동기화한다. 진행 중인 변경이 있으면 먼저 기록하고 커밋해 PC 간 작업이 엇갈리지 않게 한다.
 2. Unity Hub에서 **Unity 2022.3.62f2 + Windows Build Support**를 설치한다. 프로젝트 위치는 `unity/YeongtongTaxi`다. D: 드라이브가 아닌 폴더에서도 상대 경로로 사용할 수 있다.
-3. 기존 PC에서 아래 **동일한 3개 생성 입력 파일**을 같은 상대 경로로 복사한다. 파일 내용은 Git에 업로드하지 않으며, `config/maps/local-input-manifest.json`에 크기와 SHA256만 관리한다.
+3. Git의 지도 ZIP을 풀어 아래 **동일한 3개 생성 입력 파일**을 같은 상대 경로에 준비한다. JSON 단독 파일은 Git에서 제외하지만 ZIP은 Git에 포함한다. `config/maps/local-input-manifest.json`에 크기와 SHA256을 관리한다.
    - `unity/YeongtongTaxi/Assets/Resources/drive-map.json`
    - `unity/YeongtongTaxi/Assets/Resources/eungye-map.json`
    - `unity/YeongtongTaxi/Assets/Resources/route42-map.json`
@@ -23,8 +23,9 @@
 | 대상 | 이동 방법 |
 |---|---|
 | 코드·기획·config·작업 이력 | Git 커밋/푸시·다른 PC에서 pull |
-| 생성 입력 지도·원본 자료 | 별도 복사 후 manifest 검증 |
-| 실행파일 | 각 PC에서 빌드, 또는 `builds/EungyeTaxi` 폴더 전체 별도 복사 |
+| 생성 입력 지도 | Git의 `distribution/maps/` ZIP 압축 해제 후 manifest 검증 |
+| 원본 NGII/OSM 자료 | 필요할 때 별도 복사 |
+| 실행파일 | Git의 `builds/EungyeTaxi` 폴더 전체로 바로 실행. 코드 수정 후에는 새 빌드 필요 |
 | 테스트 로그·화면 캡처 | `artifacts/` 별도 보관. 검증 요약은 이력 문서에 커밋 |
 | 개인 영업 저장 | Git에 포함되지 않음. 작업 코드 동기화와 게임 진행 저장 동기화는 별개 |
 

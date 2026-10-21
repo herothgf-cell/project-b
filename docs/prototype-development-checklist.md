@@ -302,3 +302,8 @@ P1-01·03 완료 근거는 위 공통 관찰·AI·횡단보도 위치 검사다.
 
 - [x] 필수 생성 지도3개를 상대 폴더 구조 그대로 ZIP으로 묶고 안내·manifest 사본 동봉. 원본/ZIP 내용/실제 압축 해제 해시 일치와 strict 입력 검사 종료0 확인. [설치·실행 안내](work-history/map-transfer-guide.md), [검증 이력](work-history/2026-10-20-map-transfer-bundle.md).
 - ZIP은 Git 제외 로컬 전달물이며 별도 전송이 필요하다. 새 PC 실제 구동 검증은 포함하지 않는다.
+
+## 빌드 없는 Git 배포 (2026-10-21)
+
+- [x] 사용자 요청으로 은계 실행 폴더125파일과 `distribution/maps/` 지도 ZIP·해시를 Git 배포로 전환. 앞선 별도 전송 안내를 대체한다. 바로 실행에는 지도 해제·Unity 설치 불필요, 개발용 지도는 루트에 해제. [바로 실행 안내](../distribution/README.md).
+- [x] 실행 폴더 사본의 독립 실행 종료0·success=True(은계7개 구역/호출/미니맵), 배포 파일 바이트 동일성과 지도 ZIP 해시·내부3개 입력 일치 확인. [작업 이력](work-history/2026-10-21-git-playable-distribution.md). 새 PC 하드웨어 검증은 포함하지 않는다.

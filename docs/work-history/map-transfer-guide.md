@@ -1,5 +1,7 @@
 # 은계 지도 입력 묶음 — 새 PC 사용법
 
+**2026-10-21 배포 변경:** 실행 폴더와 지도 ZIP을 Git main에 포함했다. **테스트만 할 때는 pull 후 `builds/EungyeTaxi/EungyeTaxi.exe`를 바로 실행**한다. Unity 설치·지도 압축 해제는 필요 없다. 개발할 때만 `distribution/maps/Eungye-map-inputs-2026-10-20.zip`을 저장소 루트에 푼다. [빌드 없는 실행 안내](../../distribution/README.md)를 따른다. 아래는 개발 환경 준비 절차다.
+
 이 ZIP은 개발에 필요한 생성 지도 3개와 안내·검증용 목록을 담는다. 코드, Unity Editor, 원본 NGII/OSM, 실행파일은 포함하지 않는다. `unity/YeongtongTaxi`는 기존 프로젝트 폴더 이름이며 기본 빌드 지역은 은계다.
 
 ## 1. 코드와 개발 도구 준비
@@ -47,7 +49,7 @@ Get-FileHash -LiteralPath "$env:USERPROFILE\Downloads\Eungye-map-inputs-2026-10-
 3. 빌드가 성공하면 **`C:\git\project-b\builds\EungyeTaxi\EungyeTaxi.exe`**를 실행한다. 화면 지역명이 **시흥 은계지구**인지 확인한다. 일반 Windows Prototype 빌드 메뉴는 사용하지 않는다.
 4. WASD 운전, Space 제동, 1/2/3 호출 선택, F 승하차, Q/E 깜빡이, C 시점, H 조향 보조, M 지도 전체/주변, Esc 일시정지. H를 켜도 가감속·신호 판단은 직접 한다.
 
-지도 ZIP만으로 exe가 생기지는 않는다. 빌드 없이 바로 플레이하려면 기존 PC의 **`builds/EungyeTaxi` 폴더 전체**를 별도로 옮긴다. exe만 복사하면 실행되지 않는다. 게임 진행 저장은 이 묶음에 포함하지 않는다.
+지도 ZIP만으로 exe가 생기지는 않는다. 현재 Git에는 **`builds/EungyeTaxi` 폴더 전체**가 포함돼 있어 pull 후 바로 플레이할 수 있다. exe만 복사하면 실행되지 않는다. 게임 진행 저장은 이 묶음에 포함하지 않는다.
 
 ## 4. 개발을 이어가기
 

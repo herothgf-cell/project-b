@@ -17,5 +17,5 @@
 ## 지도·빌드와 PC 이동
 
 - 기본 실행 대상은 은계 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드는 `PrototypeBuild.BuildHybrid`다. 별도 연습과 기본 은계 영업을 혼동하지 않는다.
-- `data/raw/`, 생성 지도 JSON, `builds/`, `artifacts/`, Unity `Library/`는 Git에서 제외된다. 다른 PC에서 Git만 받아서는 같은 데이터·실행파일이 생기지 않는다. 준비 방법은 `docs/work-history/README.md`를 따른다.
+- `data/raw/`, 생성 지도 JSON, `artifacts/`, Unity `Library/`와 다른 빌드는 Git에서 제외된다. 사용자 요청으로 `builds/EungyeTaxi/` 실행 폴더 전체와 `distribution/maps/` 지도 ZIP은 Git으로 배포한다. 다른 PC는 pull 후 바로 exe를 실행할 수 있고, 개발할 때는 지도 ZIP을 저장소 루트에 푼다. 배포 실행 폴더가 바뀌면 `distribution/EungyeTaxi-build-manifest.json`의 파일 크기·SHA256도 다시 생성/검증한다. 준비 방법은 `docs/work-history/README.md`를 따른다.
 - 필수 생성 입력 지도를 변경한 작업에서는 `config/maps/local-input-manifest.json`의 파일 크기·SHA256과 관련 OSM 대조 설정도 실제 자료로 다시 갱신/검증한다. 해시 오류를 우회하지 않는다.

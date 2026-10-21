@@ -1,13 +1,14 @@
 # 최신 작업 인계
 
-기준일: 2026-10-20. **기본 실행 맵은 은계**이며 별도 연습 모드로 대체하지 않는다.
+기준일: 2026-10-21. **기본 실행 맵은 은계**이며 별도 연습 모드로 대체하지 않는다.
 
 ## 먼저 읽을 것
 
-1. [이번 작업: 지도3개 전달 ZIP](2026-10-20-map-transfer-bundle.md), [새 PC 설치 안내](map-transfer-guide.md)
-2. [구역 이름과 PC 인계](2026-10-20-law-zone-labels-and-handoff.md)
-3. [직전 완료: 일반 운송 법규 통합 a971d9e](2026-10-20-in-service-law-zones.md)
-4. [PC 이동 절차](README.md), [개발 체크리스트](../prototype-development-checklist.md), [프로토 범위](../prototype-scope.md)
+1. [이번 작업: 실행 폴더·지도 ZIP Git 배포](2026-10-21-git-playable-distribution.md), [바로 실행 안내](../../distribution/README.md)
+2. [지도3개 전달 ZIP](2026-10-20-map-transfer-bundle.md), [새 PC 개발 안내](map-transfer-guide.md)
+3. [구역 이름과 PC 인계](2026-10-20-law-zone-labels-and-handoff.md)
+4. [직전 완료: 일반 운송 법규 통합 a971d9e](2026-10-20-in-service-law-zones.md)
+5. [PC 이동 절차](README.md), [개발 체크리스트](../prototype-development-checklist.md), [프로토 범위](../prototype-scope.md)
 
 ## 현재 상태
 
@@ -19,8 +20,9 @@
 ## PC 전환 시
 
 - Git 동기화 후 PowerShell7에서 `pwsh -File tools/check_workspace.ps1 -Strict`를 실행한다.
-- Git 제외 지도 입력3개는 `artifacts/handoff/Eungye-map-inputs-2026-10-20.zip`과 `.zip.sha256`을 별도 전송해 저장소 루트에 푼다. 묶음857,580바이트, 원본/ZIP/압축 해제3개 해시 일치 확인. 설치·실행법은 위 안내를 따른다. 원본부터 재수입할 때는 raw자료도 필요하다. 체크 도구는 실제 Editor 설치/다른 PC 구동을 보장하지 않는다.
-- 이미 생성된 실행파일을 옮긴다면 `builds/EungyeTaxi` 폴더 전체를 옮긴다. 게임 진행 저장은 코드 동기화에 포함되지 않는다.
+- 테스트만 할 때는 Git main을 받은 뒤 `builds/EungyeTaxi/EungyeTaxi.exe`를 바로 실행한다. Unity와 지도 압축 해제는 필요 없다. 125개 실행 파일·84,175,840바이트를 Git 배포하며 기본 은계7개 구역 자동 검사 통과. 새 PC 하드웨어 검사는 미수행이다.
+- 개발할 때는 Git의 `distribution/maps/Eungye-map-inputs-2026-10-20.zip`을 저장소 루트에 푼다. 묶음857,580바이트, 지도3개 해시 검증. 원본 재수입용 raw자료는 별도다. 체크 도구는 실제 Editor 설치를 보장하지 않는다.
+- 게임 진행 저장은 코드 동기화에 포함되지 않는다. 소스 수정 뒤에는 실행파일도 새로 빌드하고 배포 manifest를 갱신해야 한다.
 - 기존 사용자 미커밋 상태: `README.md` 수정, 라이선스 관련3개 문서와 `licenses/` 미추적. 이번 작업과 분리해 보존한다.
 
 ## 이어갈 때
