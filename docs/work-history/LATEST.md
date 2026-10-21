@@ -13,7 +13,7 @@
 
 ## 현재 상태
 
-- Unity2022.3.62f2, `unity/YeongtongTaxi`, 기본 실행 `builds/EungyeTaxi/EungyeTaxi.exe`. 빌드는 `PrototypeBuild.BuildHybrid`.
+- Unity2022.3.62f2, `unity/YeongtongTaxi`, 게임 소스 `f284213`, 기본 실행 `builds/EungyeTaxi/EungyeTaxi.exe`. 빌드는 `PrototypeBuild.BuildHybrid`.
 - 은계 전체 도로망+국도42 실제 차로+OSM 보완. 실제/임시/창작 상태를 구분한다. 승객 운송 중7개 법규 상황 구역을 내비/H가 경유한다. 법규·승객 매너·운임은 별도다.
 - 캠페인3일×8분·순수익30,000원. 연료·식사·주차 유지. 보험료·보험 갱신·세금은 프로토 제외(2026-10-21), 비용/출발 제한/완납 목표 조건 제거·기존 저장 이관. 개인 예약·단골·사고·수리·보험 청구와 그래픽/HUD 시안·새 PC/실물 패드 검증은 프로토 제외다.
 - 이번 변경: 완만한 가속·저속42도/앞바퀴 안팎 조향, S 일반 제동과 완화된 매너 기준. 은계 임시 시작 주차장은 넓은 국도42 외측 지점으로 이동.

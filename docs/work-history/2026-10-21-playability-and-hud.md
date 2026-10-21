@@ -31,7 +31,7 @@
 - `artifacts/green-flow-smoke.txt`: success=True·종료0. 녹색 단독/2대/3대 진행과 적색/황색/출구 차단/교차로 점유 대기. 최종 제동 감점 보정 전 동일 NPC 코드 빌드의 검사로, NPC 코드는 이 작업에서 변경하지 않았다.
 - `artifacts/law-zone-labels-test.txt`: success=True·종료0. 기존7개 구역 이름/호출 경유/승하차 텍스트 회귀.
 - `-confusionDriveTest -practice -practiceConfusion8 -hybridV2`: 5조건 실제 WheelCollider·H 주행 success=True·종료0, 최대 경로 오차0.55m, 올바른 출구·법규 무감점. 최초에는 연습 플래그를 빠뜨려 fixture가 초기화되지 않았으며 그 실행을 성공으로 집계하지 않았다.
-- 모델18묶음·현재 입력3개 strict 검사·Git whitespace 검사 통과. 배포 manifest는 소스 커밋 뒤 실제 바이너리 해시로 갱신한다.
+- 모델18묶음·현재 입력3개 strict 검사·Git whitespace 검사 통과. 배포 manifest는 소스 커밋 `f284213` 기준 실제125개 바이너리 파일 크기·SHA256으로 갱신/검증했다.
 
 ## 최종 실행과 다음 작업
 

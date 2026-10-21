@@ -1,9 +1,10 @@
 {
-  "sourceCommit": "2dde7eae12804ab45f37c4c850befc0f8fba4099",
+  "sourceCommit": "f284213a2b66aa74089c7840e00a739a0920d3df",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
-  "totalBytes": 84175840,
+  "validatedOn": "2026-10-21",
+  "totalBytes": 84198872,
   "files": [
     {
       "path": "builds/EungyeTaxi/EungyeTaxi.exe",
@@ -18,17 +19,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "5f3e7eef68feda30a4bc9931b8a3d312994c339f061345bf3581d2ae9ece5262"
+      "sha256": "2486b0ee1fa870ba80a5ee118e180288e351a54f4c79d4d213c843ac360f05da"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 25668,
-      "sha256": "3598007313b385478c683f71945caef5d0c00ddfb54a8ed5fb3633836f65d446"
+      "bytes": 25796,
+      "sha256": "c0e44bec89546329571aa1ba303c0bca42e25d32a52b778f387146e824454ec1"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 13488,
-      "sha256": "505f219f911d8b986659dc92efc039a27b26e0e8009bf44e2b4b74c50050d40c"
+      "bytes": 13864,
+      "sha256": "300416aa24defd441399b05c6410bad47fe57bf0fa270f155a21540457e04494"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -38,12 +39,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
       "bytes": 1344,
-      "sha256": "c411fe8d491c286786e68ed241f9b10f9abaa2cb68d8eddc92d8c3f4b68ce699"
+      "sha256": "0eb6dd1f520f6d17cb7c56f2fdd72b75b4e26bf170cb1376655a4f6f92e5ae93"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 509952,
-      "sha256": "ab6fb52b003b8c6456e3d2b28bd08bbdda818d884cf0c40116b584e308d248d8"
+      "bytes": 532480,
+      "sha256": "c3bfe24d5d78c2558e90781176057ac9b8cbdcc1d559d3febafe065bfd1f015b"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -518,7 +519,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/sharedassets0.assets",
       "bytes": 7624,
-      "sha256": "d5c1cbdcaf67bc5fa5e082d8b79ac01610521e8f303868ce0a417a20a88cac66"
+      "sha256": "3d5d84810dfa1a9ea2b11cb79a95e5a00255430a9f5a4e937b2dd9fefce10c94"
     },
     {
       "path": "builds/EungyeTaxi/MonoBleedingEdge/EmbedRuntime/mono-2.0-bdwgc.dll",
