@@ -57,3 +57,7 @@
 실행: 새 exe 실행 → 하루 준비 → 영업 → F7 식당/주차장 → 탑승 승객은 목적지 하차 → 결과 → 새 하루 확인. 진행 중 앱 종료는 현재 운송/회계를 중간 저장하지 않으며 시작 경계로 복원한다. 운행 사건 저널은 그대로 남는다.
 
 기존 README 및 라이선스 문서/증거 파일은 본 커밋에서 제외한다. 소스 커밋은 실제 커밋 후 배포 manifest에 기록하며, 본 이력의 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-21-one-day-campaign.md`로 확인한다.
+
+## 배포 확인
+
+실제 구현 커밋 `3ea2bd6` 확인. `one-day-publish-build.log`의 최종 빌드 종료0 및 `one-day-publish-reload.log`의 복원 검사 종료0. 현재 추종ON으로 재실행해도 저장된 OFF 완료 설정을 보존하는 검사 통과. 실행 폴더 전체128개 파일의 크기·SHA256을 다시 계산하고 대조했으며 `distribution/EungyeTaxi-build-manifest.json`에 실제 소스 커밋을 기록했다. 빌드 뒤 메타파일의 빈 값 끝 공백만 정리했고 실행 로직은 바꾸지 않았다.

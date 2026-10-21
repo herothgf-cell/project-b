@@ -8,7 +8,7 @@
 - [x] 컨디션·거점: 엔진 독립 `DriverCondition.cs`의 구간 적분, `EconomyLedger` 식사/수면 원자 처리, `ServiceStops` 확인 UI, `BusinessProgress` 수락/픽업 제한. 경계25/70/100, 50/100초, 중복 ID·부족 시간·미납·엔진 정지를 검사.
 - [x] 결과·저장: `BusinessProgress` 새 파일/완료 요약/원자 재시작과 `BusinessHUD` 하루 결과. 구 파일·운행 저널 유지, 저장 실패·취소·재실행 검증.
 - [x] 승객·통합: 기존9코스 후보의 단계별 우선순위만 변경(경로/17요청 유지), UI 경고. 새 Unity 통합 검사와 기존 회귀/물리 검사를 실행하고 기본 은계 빌드.
-- [ ] 실제 결과에 한해 P7 표시, 개별 기획·LATEST·이력 갱신, 빌드 manifest 재생성.
+- [x] 실제 결과에 한해 P7 표시, 개별 기획·LATEST·이력 갱신, 빌드 manifest 재생성.
 
 ## 중점 검증
 
