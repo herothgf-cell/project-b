@@ -13,3 +13,5 @@
 검증 결과는 아래에 기록한다. 실제 키보드 수동 3일 밸런스는 미검증이며 별도 플레이 목록을 따른다. 기존 README/라이선스 변경은 보존한다.
 
 검증: PrototypeBuild.BuildHybrid 종료0(artifacts/map-zoom-build.log). -playabilityUITest 종료0/success=True:1280·1600·1920 확대/축소 상하한·일시정지복구·필터 검사와 실제 확대 화면 캡처 확인. -districtTrafficTest 종료0:48대 모두 이동,45,279m 합계,차로이탈0/겹침0/장시간정체0/연속운행6회. 적색3대대기→녹색3대통과. 자동 교통 흐름 검사이며 수동48대 캠페인 완료 아님. git diff --check 통과.
+
+배포 소스: 12def92bcff11a13a25e44d44c42c099b68cfe97. 실행 폴더 125개 파일 크기/SHA256 전수 검증. 지도 입력3개·지도ZIP 변경 없음.

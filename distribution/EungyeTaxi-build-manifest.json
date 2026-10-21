@@ -1,5 +1,5 @@
 {
-  "sourceCommit": "5c48557b15e3ff39ef2196b2a97ceae6391962b2",
+  "sourceCommit": "12def92bcff11a13a25e44d44c42c099b68cfe97",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
@@ -14,7 +14,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "b700f29787615f4e767f73e95b4b29a6736c4395b60881c7f9538b91a0dc378b"
+      "sha256": "3d8472373b016345b2f47e388734ea37da22cdc950e938ef366f954a12fa9546"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -38,8 +38,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 628736,
-      "sha256": "df38a19a6ae42eb5e3352cdf50f97d4c9189e16cd99844c9b29d837ca8ad7a73"
+      "bytes": 630784,
+      "sha256": "9dbfc914adba7e0c6dd8e515d39c61ab309e8a7c7e152d8f80698a999b430519"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
