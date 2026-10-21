@@ -2,11 +2,13 @@
 
 기준일: 2026-10-21. 기본 실행 맵은 은계, 별도 연습으로 대체하지 않는다.
 
-지도 검토 추가: [네이버 거리뷰 대조 방식](2026-10-21-roadview-map-review.md). `docs/map-polish-plan.md`에 담당자의 직접 거리뷰 확인 단계를 명시하고 T1 근처 계수로의 2026년 5월 장면을 예비 확인했다. T1 각 방향과 T2·T3, 시험 동선 전체는 아직 미검증이며, 지도 설정·빌드는 바뀌지 않았다.
+이전 지도 검토: [네이버 거리뷰 대조 방식](2026-10-21-roadview-map-review.md). `docs/map-polish-plan.md`에 담당자의 직접 거리뷰 확인 단계를 명시하고 T1 근처 계수로의 2026년 5월 장면을 예비 확인했다. T1 각 방향과 T2·T3, 시험 동선 전체는 아직 미검증이며, 지도 설정·빌드는 바뀌지 않았다.
+
+최신 구현: [시작–주유소1–주요 승하차 정비](2026-10-21-corridor-polish.md). 67개 노면 폭·574개 공유 차로 노면·인도/건물 여유 보정. 네이버 거리뷰 관찰과 미확인 구간은 [계획 변경표](../map-polish-plan.md)에 구분. 기본 은계 BuildHybrid 실행파일에 포함한다.
 
 ## 먼저 읽을 것
 
-최신 표시 정정: [미니맵 아이콘·호출 요청 숨김·승객 대화](2026-10-21-compact-minimap-dialogue.md). 맵 정비 계획은 사용자 검토 중이며 미적용.
+최신 표시 정정: [미니맵 아이콘·호출 요청 숨김·승객 대화](2026-10-21-compact-minimap-dialogue.md). 당시 맵 정비는 미적용이었으며, 현재는 아래 우선 동선 1차 정비를 적용했다.
 
 최신 작업: [자유 하차·남은 세부 기능·승객 말풍선](2026-10-21-free-dropoff-and-remaining.md), [도로·맵 정비 순서](../map-polish-plan.md).
 
@@ -40,7 +42,7 @@
 - main을 받은 뒤 builds/EungyeTaxi/EungyeTaxi.exe 바로 실행. 개발 시 distribution/maps/Eungye-map-inputs-2026-10-20.zip을 저장소 루트에 해제하고 pwsh -File tools/check_workspace.ps1 -Strict 실행.
 - 입력 지도3개와 ZIP은 변경하지 않았고 Strict 검사 Input issues: 0. 원본 raw 자료는 별도이며 진행 저장은 Git에 포함하지 않는다.
 - 기존 사용자 README.md·라이선스 문서3개·licenses/ 변경은 이번 작업에 포함하지 않는다. git status --short로 확인한다.
-- 최신 이력의 실제 커밋은 git log -1 --oneline -- docs/work-history/2026-10-21-passenger-scenarios-and-feedback.md로 확인한다.
+- 최신 이력의 실제 커밋은 git log -1 --oneline -- docs/work-history/2026-10-21-corridor-polish.md로 확인한다.
 
 ## MIT 교통 선택 기능 인계 (2026-10-21)
 

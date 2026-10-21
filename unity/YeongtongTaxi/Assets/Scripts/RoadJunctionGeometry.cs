@@ -10,12 +10,12 @@ public static class RoadJunctionGeometry {
     public static List<Opening> Build(MapData map){
         var nodes=new Dictionary<string,Node>();
         var segments=new List<Segment>();
-        foreach(var road in map.roads)for(int i=1;i<road.points.Length;i++){
+        foreach(var road in map.roads){if((road.id??"").StartsWith("polish:"))continue;for(int i=1;i<road.points.Length;i++){
             var a=road.points[i-1].V();var b=road.points[i].V();if(Key(a)==Key(b))continue;
             foreach(var p in new[]{a,b}){string key=Key(p);Node node;if(!nodes.TryGetValue(key,out node)){node=new Node{center=p};nodes.Add(key,node);}node.halfWidth=Mathf.Max(node.halfWidth,road.width*.5f);node.neighbours.Add(Key(p==a?b:a));}
             if(!road.suppressPaint&&!(road.id??"").StartsWith("fuel:"))segments.Add(new Segment{a=a,b=b,halfWidth=road.width*.5f,road=road.id});
         }
-        var result=new List<Opening>();foreach(var node in nodes.Values)if(node.neighbours.Count>=3)result.Add(new Opening{center=node.center,radius=node.halfWidth+1});
+        }var result=new List<Opening>();foreach(var node in nodes.Values)if(node.neighbours.Count>=3)result.Add(new Opening{center=node.center,radius=node.halfWidth+1});
         // Some source centre lines cross inside segments instead of sharing a
         // vertex. Open paint there too; this does not add a graph connection.
         var seen=new HashSet<string>();

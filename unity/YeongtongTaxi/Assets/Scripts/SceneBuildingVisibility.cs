@@ -31,10 +31,11 @@ public static class SceneBuildingVisibility {
   var detected=new HashSet<string>();var checkedFootprints=new HashSet<Footprint>();
   foreach(var edge in map.hdEdges){if(edge.disabled||edge.points==null)continue;for(int i=1;i<edge.points.Length;i++){
    var a=edge.points[i-1].V();var b=edge.points[i].V();checkedFootprints.Clear();
-   for(int x=Mathf.FloorToInt((Mathf.Min(a.x,b.x)-TaxiHalfWidth)/32);x<=Mathf.FloorToInt((Mathf.Max(a.x,b.x)+TaxiHalfWidth)/32);x++)for(int z=Mathf.FloorToInt((Mathf.Min(a.z,b.z)-TaxiHalfWidth)/32);z<=Mathf.FloorToInt((Mathf.Max(a.z,b.z)+TaxiHalfWidth)/32);z++){
+   float clearance=CorridorPolish.Includes(map,edge.id)?(edge.turn!=0?2.1f:CorridorPolish.HalfLane)+1.9f:TaxiHalfWidth;
+   for(int x=Mathf.FloorToInt((Mathf.Min(a.x,b.x)-clearance)/32);x<=Mathf.FloorToInt((Mathf.Max(a.x,b.x)+clearance)/32);x++)for(int z=Mathf.FloorToInt((Mathf.Min(a.z,b.z)-clearance)/32);z<=Mathf.FloorToInt((Mathf.Max(a.z,b.z)+clearance)/32);z++){
     List<Footprint> list;if(!cells.TryGetValue(new Vector2Int(x,z),out list))continue;
     foreach(var footprint in list){if(detected.Contains(footprint.building.id)||!checkedFootprints.Add(footprint))continue;
-     if(!RoadGeometry.SweptLaneIntersects(P(a),P(b),footprint.ring,TaxiHalfWidth))continue;
+     if(!RoadGeometry.SweptLaneIntersects(P(a),P(b),footprint.ring,clearance))continue;
      detected.Add(footprint.building.id);state.hidden.Add(footprint.building.id);var center=Vector3.zero;foreach(var p in footprint.building.points)center+=p.V();center/=footprint.ring.Length;
      state.conflicts.Add(new Conflict{buildingId=footprint.building.id,edgeId=edge.id,position=center,height=footprint.building.height});
     }

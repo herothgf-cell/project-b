@@ -8,11 +8,13 @@ public sealed class RoadPaintGeometry {
  readonly Dictionary<string,List<LanePath>> roads=new Dictionary<string,List<LanePath>>();
  readonly Dictionary<string,List<LanePath>> corridors=new Dictionary<string,List<LanePath>>();
  readonly Dictionary<string,float> widths=new Dictionary<string,float>();
+ readonly HashSet<string> polished=new HashSet<string>();
  public RoadPaintGeometry(MapData map){
   if(!map.hybrid||!map.HasHd)return;
   foreach(var edge in map.hdEdges){
    if(edge.disabled||edge.status!="provisional"||edge.turn!=0||edge.change!=0||edge.id.StartsWith("join:")||edge.id.StartsWith("fuel:")||edge.sourceId.StartsWith("fuel:"))continue;
    var points=new Vector3[edge.points.Length];for(int i=0;i<points.Length;i++)points[i]=edge.points[i].V();var lane=new LanePath{path=new AssistedRoadNetwork.Path(points),id=edge.id,number=edge.number};
+   if(CorridorPolish.Includes(map,edge.id))polished.Add(edge.sourceId);
    List<LanePath> group;if(!corridors.TryGetValue(edge.sourceId,out group)){group=new List<LanePath>();corridors.Add(edge.sourceId,group);}group.Add(lane);
    foreach(var source in edge.sourceId.Split(',')){List<LanePath> list;if(!roads.TryGetValue(source,out list)){list=new List<LanePath>();roads.Add(source,list);}list.Add(lane);}
   }
@@ -82,7 +84,8 @@ public sealed class RoadPaintGeometry {
      }
      float laneWidth=lanes.Count>1?float.MaxValue:width;
      for(int i=1;i<lanes.Count;i++)laneWidth=Mathf.Min(laneWidth,lanes[i].offset-lanes[i-1].offset);
-     foreach(float edge in new[]{lanes[0].offset-laneWidth*.5f+.15f,lanes[lanes.Count-1].offset+laneWidth*.5f-.15f}){
+     float outerHalf=polished.Contains(corridor.Key)?Mathf.Min(laneWidth*.5f,CorridorPolish.HalfLane):laneWidth*.5f;
+     foreach(float edge in new[]{lanes[0].offset-outerHalf+.15f,lanes[lanes.Count-1].offset+outerHalf-.15f}){
       var q=p+TrafficSystem.Right(dir)*edge;if(!InOpening(q,junctions,openings,piece*.5f))mark("Road edge",q,dir,.12f,piece,false);
      }
     }phase+=path.length;
