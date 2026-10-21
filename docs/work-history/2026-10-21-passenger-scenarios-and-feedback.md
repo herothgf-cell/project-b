@@ -37,3 +37,5 @@
 개별 기획02/03/04/05/06/07/09,통합범위·체크리스트를 함께 수정한다. 지도 입력3개/지도ZIP은 변경하지 않는다. 기존 README.md와 라이선스 문서3개/licenses는 작업에서 제외한다. 소스 커밋에 맞춰 배포 manifest를 갱신한다.
 
 추가 검증: -campaignTest -hybridV2 Player 종료0, artifacts/campaign-v2-test.txt 성공. 3일 정산·탑승 마감 제한·연료 회복·늦은 하차·목표 및 중복 방지 확인. 최종 BuildHybrid/UI 재검사 모두 종료0,1280 화면에서 신호/내비 패널 겹침 해소 확인. Strict 입력 검사 종료0/Input issues: 0.
+
+배포: 검증 소스 5c48557b15e3ff39ef2196b2a97ceae6391962b2. 은계 실행 폴더 125개 파일의 크기와 SHA256을 새 manifest로 생성하고 전수 재검증했다. 지도 ZIP/입력은 변경 없음.
