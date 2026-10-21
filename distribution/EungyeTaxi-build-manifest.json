@@ -1,10 +1,10 @@
 {
-  "sourceCommit": "12def92bcff11a13a25e44d44c42c099b68cfe97",
+  "sourceCommit": "dfcd821cb8eb50190fad89489e020ea658d5543e",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-10-21",
-  "totalBytes": null,
+  "totalBytes": 84314261,
   "files": [
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/app.info",
@@ -14,17 +14,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "3d8472373b016345b2f47e388734ea37da22cdc950e938ef366f954a12fa9546"
+      "sha256": "2ba2dc62f0d441fae4f1b42358472852bc6e3ba54d3f3655d6fd27140e9b8964"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 26404,
-      "sha256": "8c431b4588b9afe5f89d50780dd4cfa7167568f3f6225c396390e1c3c14f12a1"
+      "bytes": 26580,
+      "sha256": "63c3e1973104d5f6599dd3f4c41c44cd36da5a005df990f06951441412058fdc"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 15544,
-      "sha256": "e4391d30ba5d8d71103708e2e104ce07ffdbf77a6340033507a2df6e23980136"
+      "bytes": 16032,
+      "sha256": "95bd277459f67cc722841f26cc788e9e8e2f44d56da1ce21627da60188b8dd22"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -34,12 +34,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
       "bytes": 1344,
-      "sha256": "39c9ed436fe85b672500c98f2c10d39fd03805712f8e750b7025f51a4b796f22"
+      "sha256": "2c91bf601774cfff9e6e4eedfb26ab61652f50709fa5193a2b51d5a17c76fb30"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 630784,
-      "sha256": "9dbfc914adba7e0c6dd8e515d39c61ab309e8a7c7e152d8f80698a999b430519"
+      "bytes": 642560,
+      "sha256": "03136c2effe4301119457624bb05d0409a420974b778740bb6ac0f9c2e032a0a"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -503,8 +503,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/RuntimeInitializeOnLoads.json",
-      "bytes": 1001,
-      "sha256": "856a4346fa9b88db67471ff6677d75f199805b8d3bdb6e86e63e7f3e5300979e"
+      "bytes": 1146,
+      "sha256": "0c294b2dfd389e99c5ebb0230239723cef6511bd2332e81e573db2b6c3919ef4"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/ScriptingAssemblies.json",
@@ -514,7 +514,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/sharedassets0.assets",
       "bytes": 7624,
-      "sha256": "d2fce55257cd4787913eb281e6255225a6bae81bf2ddd0c38e54d3da1107cfb7"
+      "sha256": "f4a7d62519260595ee48103eb693a6334af870c6aa47e31a2f8372995f29e1a9"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi.exe",
@@ -622,6 +622,16 @@
       "sha256": "0c56e34c69124510fa8c19e7b4c2ca6c1c4ff460ae19f798dd0ca035809e396d"
     },
     {
+      "path": "builds/EungyeTaxi/ThirdPartyNotices/mchrbn-unity-traffic-simulation-MIT.txt",
+      "bytes": 1084,
+      "sha256": "ba2940605e2f28e60f9c9683b016601d8115982cecdbcc9aa68f5806e7fbb6f7"
+    },
+    {
+      "path": "builds/EungyeTaxi/ThirdPartyNotices/mchrbn-unity-traffic-simulation-NOTICE.txt",
+      "bytes": 708,
+      "sha256": "6b947e00221722137af25196824b6ec335c45c7d6a2c09f8e6ae2e7a30443abe"
+    },
+    {
       "path": "builds/EungyeTaxi/UnityCrashHandler64.exe",
       "bytes": 1185192,
       "sha256": "93e0b4b929621c9aaa728e3a6d68ec6d47e6182e7eb9915a4cd5351678eb67e4"
@@ -631,5 +641,7 @@
       "bytes": 31100840,
       "sha256": "a8dcc8f6f4cbee3da56552a4adbe56724228a0efcc2fcd737b516933f0418081"
     }
-  ]
+  ],
+  "integratedWorkingTree": true,
+  "sourceNote": "MIT source reference only: build includes concurrent uncommitted passenger/signage changes. Later RoadSignage/PlayabilityUISmokeTest edits are not in this binary. See docs/work-history/2026-10-21-mit-traffic-following.md. Rebuild and revalidate after integration."
 }

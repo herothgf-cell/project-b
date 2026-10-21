@@ -1,1 +1,2 @@
+*.txt -text whitespace=cr-at-eol
 upstream-* -text -whitespace

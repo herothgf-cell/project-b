@@ -1,0 +1,10 @@
+This product includes a modified same-direction leader speed-matching policy
+from Unity Traffic Simulation by Matthieu Cherubini (MIT).
+Source: https://github.com/mchrbn/unity-traffic-simulation
+Commit: 4f03f4c276e2b82f033a5f037f43036ba9ab6be3
+Original: Assets/TrafficSimulation/Scripts/VehicleAI.cs, MoveVehicle (lines 143-148).
+Used in: Assets/Scripts/MitTrafficFollowing.cs, called by TrafficCar.FixedUpdate.
+Modified 2026-10-21: measured leader speed in m/s, distance-based release,
+baseline safety cap and optional ON/OFF integration. No sample assets included.
+See mchrbn-unity-traffic-simulation-MIT.txt for the full license in distributions.
+In this source directory the full license is LICENSE.txt.
