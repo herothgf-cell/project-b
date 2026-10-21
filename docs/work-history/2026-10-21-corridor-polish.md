@@ -38,3 +38,5 @@
 빌드 명령은 `PrototypeBuild.BuildHybrid`, 로컬 Unity는 `D:/Program Files/Unity Hub/Editor/2022.3.62f2/Editor/Unity.exe`. 설정이 바뀌면 다시 빌드하고 해당 검사를 실행한다. 배포 파일별 해시는 `distribution/EungyeTaxi-build-manifest.json`에 재생성한다. 사용자 README 및 라이선스 감사 초안/증빙 변경은 포함하지 않는다.
 
 추가 최종 검증: -manualHandlingTest -hybridV2 종료0(success=True). 저속 좌/우 회전·가감속 검사와 시작 주차 지점45m 물리 출발(18.98초,경로 오차0.0091m,측면 접촉0) 통과. H는 꺼진 상태의 자동 페달/조향 입력 시험이며 사람의 수동 플레이를 뜻하지 않는다. 최종 -corridorPolishTest 재실행 종료0,동일6,268표본 건물 침범0 확인.
+
+배포 검증: 소스 커밋 0e388e0은 git log -1 --oneline -- 해당 이력 경로로 확인했다. 실행 폴더127개 파일의 크기·SHA256 manifest를 재생성했고 불일치0. 배포는 이 소스 기준이며 후속 배포 커밋 자체 해시는 여기에 추측해 적지 않는다.
