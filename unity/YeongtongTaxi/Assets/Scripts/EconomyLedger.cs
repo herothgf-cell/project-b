@@ -66,7 +66,10 @@ public class EconomyLedger {
  public static EconomyLedger RestoreCampaign(EconomySnapshot days,AccountSnapshot account){
   var a=CampaignAccount.Restore(account);var result=new EconomyLedger(account.settings);result.Account=a;
   if(days==null||days.records==null||days.records.Length>result.Settings.days)throw new ArgumentException("Invalid campaign days");
-  foreach(var r in days.records){if(r==null||r.day!=result.records.Count+1)throw new ArgumentException("Invalid campaign sequence");result.records.Add(r.Copy());}
+  foreach(var r in days.records){
+   if(r==null||r.day!=result.records.Count+1||r.income<0||r.rides<0||r.failedTrips<0||r.metres<0||float.IsNaN(r.metres)||float.IsInfinity(r.metres))throw new ArgumentException("Invalid campaign sequence");
+   var normalized=r.Copy();normalized.insurance=0;normalized.food=a.Expense(r.day,"meal");normalized.fuel=a.Expense(r.day,"fuel")+a.Expense(r.day,"fuel-recovery");normalized.net=r.income-a.Expense(r.day,null);result.records.Add(normalized);
+  }
   if(result.Last!=null){var r=result.Last;result.Day=r.day;result.Income=r.income;result.Rides=r.rides;result.FailedTrips=r.failedTrips;result.Metres=r.metres;result.State=result.Outcome();}return result;
  }
  public static EconomyLedger Restore(EconomySnapshot snapshot){

@@ -15,11 +15,12 @@ public class BusinessProgress : MonoBehaviour {
  bool testMode;float noticeUntil; CampaignCheckpoint loaded; public bool useV2; public bool taxPrompt,preparing; public PrototypeSettings settings=new PrototypeSettings();
  public bool SaveFailed {get;private set;}
  public int pendingPayment=-1; public bool restartPrompt;
- bool CanRestartNow {get{return enabledCampaign&&useV2&&!session.PracticeMenuOpen&&!PracticeSession.Enabled&&!session.GetComponent<PracticeSession>().Busy&&pendingPayment<0&&!session.services.open&&!session.law.HistoryOpen&&!taxPrompt&&(preparing||ShowingSummary||session.paused);}}
+ bool CanRestartNow {get{return enabledCampaign&&useV2&&!session.FullMapOpen&&!session.PracticeMenuOpen&&!PracticeSession.Enabled&&!session.GetComponent<PracticeSession>().Busy&&pendingPayment<0&&!session.services.open&&!session.law.HistoryOpen&&!taxPrompt&&(preparing||ShowingSummary||session.paused);}}
  public bool RequestRestart(){if(restartPrompt||!CanRestartNow)return false;restartPrompt=true;return true;}
  public bool ConfirmRestart(bool accept){if(!restartPrompt)return false;if(!accept){restartPrompt=false;return false;}if(!CanRestartNow){restartPrompt=false;return false;}return ResetCampaign(true);}
- public void RequestPayment(int kind){if(!session.PracticeMenuOpen&&!restartPrompt&&(preparing||ShowingSummary)&&kind>=0&&kind<=1&&!session.GetComponent<PracticeSession>().Busy)pendingPayment=kind;}
- public bool ConfirmPayment(bool accept){int kind=pendingPayment;pendingPayment=-1;if(!accept||kind<0||!(preparing||ShowingSummary))return false;bool ok=kind==0?ledger.Account.Renew(session.law.ids.Next("insurance"),ledger.Day):ledger.Account.PayTax(session.law.ids.Next("tax"),ledger.Day);notice=ok?"결제 완료":"이미 결제했거나 현금 부족";noticeUntil=Time.unscaledTime+4;if(ok&&ShowingSummary)SaveCheckpoint();return ok;}
+ // Retained for older callers; excluded features never open a payment modal.
+ public void RequestPayment(int kind){pendingPayment=-1;}
+ public bool ConfirmPayment(bool accept){pendingPayment=-1;return false;}
 
  public bool ShowingSummary {get{return enabledCampaign&&ledger!=null&&ledger.ShowingSummary;}}
  public bool CanAccept {get{return !PracticeSession.Enabled&&!preparing&&(!enabledCampaign||ledger.CanAccept);}}
@@ -54,16 +55,14 @@ public class BusinessProgress : MonoBehaviour {
  }
  void Update(){if(ledger.Account!=null&&ledger.CanAccept){if(ledger.Account.Fuel<=15)notice="연료 부족 · F7에서 주유소 길 안내를 선택하세요";else if(notice.StartsWith("연료 부족"))notice="";}if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil){notice="";noticeUntil=0;}}
  void LateUpdate(){
-  if(!enabledCampaign||ledger.State!=BusinessState.Closing)return;
+  if(session.FullMapOpen||!enabledCampaign||ledger.State!=BusinessState.Closing)return;
   if(session.jobs.trip.State==TripState.OnTrip){notice="영업 종료 대기 · 현재 승객 운송 후 정산합니다";return;}
   session.jobs.RecordExpiredTrip();
-  if(ledger.Account!=null&&ledger.Day==settings.taxDueDay&&!ledger.Account.TaxPaid&&!taxPrompt){taxPrompt=true;notice="세금 납부 기한입니다. 정산 전 납부하거나 미납으로 마감하세요";Freeze();return;}
-  if(taxPrompt&&Time.timeScale==0)return;
   if(ledger.Settle()){taxPrompt=false;session.jobs.ClearForDay();Freeze();SaveCheckpoint();}
  }
  void Freeze(){session.paused=false;Time.timeScale=0;}
  public bool RequestEndDay(){
-  if(!enabledCampaign||!ledger.CanAccept||session.paused||Time.timeScale==0)return false;
+  if(session.FullMapOpen||!enabledCampaign||!ledger.CanAccept||session.paused||Time.timeScale==0)return false;
   if(session.taxi.body.velocity.magnitude>=.56f){notice="안전한 곳에 정차한 뒤 N으로 영업을 마치세요";noticeUntil=Time.unscaledTime+4;return false;}
   ledger.RequestClose();return true;
  }
@@ -77,13 +76,12 @@ public class BusinessProgress : MonoBehaviour {
  public void RecordFailure(){if(enabledCampaign)ledger.RecordFailure();}
  public bool NextDay(){
   if(restartPrompt||pendingPayment>=0||!enabledCampaign||ledger.State!=BusinessState.Summary||session.GetComponent<PracticeSession>().Busy)return false;
-  if(!ledger.DepartureAllowed){notice="보험 만료 · 갱신 후 3일차 출발 가능 (6,000원)";return false;}
   if(!SaveCheckpoint())return false;
   ledger.NextDay();PrepareDay();return true;
  }
  public void RestartCampaign(){
   if(session.GetComponent<PracticeSession>().Busy)return;
-  if(ledger.State!=BusinessState.Won&&ledger.State!=BusinessState.Lost&&!(ledger.State==BusinessState.Summary&&!ledger.DepartureAllowed))return;
+  if(ledger.State!=BusinessState.Won&&ledger.State!=BusinessState.Lost)return;
   ResetCampaign(false);
  }
  bool ResetCampaign(bool showPreparation){
@@ -98,8 +96,8 @@ public class BusinessProgress : MonoBehaviour {
   return true;
  }
  void PrepareDay(){session.GetComponent<ExitQueueSituation>().Stop();session.GetComponent<RightTurnSituation>().Stop();taxPrompt=false;if(session.law)session.law.ResetObservation();session.jobs.ClearForDay();if(session.roadConditions)session.roadConditions.ResetForDay();session.taxi.ResetTaxi();session.manners.BeginRide();session.paused=false;notice="";preparing=useV2&&!testMode;Time.timeScale=preparing?0:1;if(preparing)StartCoroutine(PlaceAtParking());}
- public void Depart(){if(restartPrompt||pendingPayment>=0||session.GetComponent<PracticeSession>().Busy)return;if(ledger.Account!=null&&!ledger.Account.InsuranceValid(ledger.Day)){notice="출발 전 보험 갱신이 필요합니다";return;}preparing=false;Time.timeScale=1;}
- public void ConfirmTaxClose(bool pay){if(pay&&!ledger.Account.PayTax(session.law.ids.Next("tax"),ledger.Day)){notice="현금 부족 · 세금은 직접 납부해야 합니다";return;}Time.timeScale=1;}
+ public void Depart(){if(session.FullMapOpen||restartPrompt||pendingPayment>=0||session.GetComponent<PracticeSession>().Busy)return;preparing=false;Time.timeScale=1;}
+ public void ConfirmTaxClose(bool pay){taxPrompt=false;}
  void RecoverFuel(){
   string id=session.law.ids.Next("fuel-recovery");if(!ledger.Account.RecoverFuel(id,ledger.Day))return;
   if(session.jobs.trip.State==TripState.OnTrip){RecordPassenger(0,"연료 고갈");ledger.RecordFailure();session.jobs.message="연료 고갈 · 운송 실패 / 요금 0원";}

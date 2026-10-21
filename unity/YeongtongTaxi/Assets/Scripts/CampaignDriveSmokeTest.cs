@@ -44,19 +44,19 @@ public class CampaignDriveSmokeTest : MonoBehaviour {
     if(ride==0&&b.ledger.CanAccept){for(int fill=0;fill<2&&b.ledger.Account.Fuel<99;fill++){session.services.Toggle();bool bought=session.services.Buy(0);Check(bought,"visit fuel station day="+day+" purchase="+fill);if(!bought)break;Time.timeScale=8;}}
     if(!b.ledger.CanAccept)break;
    }
-   if(day==2)Check(b.ledger.Account.Renew(session.law.ids.Next("insurance"),day),"manual insurance renewal before third day");
-   if(day==3)Check(b.ledger.Account.PayTax(session.law.ids.Next("tax"),day),"manual tax payment on due day");
    if(session.services.open)session.services.Toggle();
    // Let the actual game clock reach closing; no Advance() or injected fare.
    float timeout=Time.realtimeSinceStartup+120;
-   while(!b.ShowingSummary&&Time.realtimeSinceStartup<timeout){if(b.taxPrompt)b.ConfirmTaxClose(false);yield return new WaitForSecondsRealtime(.1f);}
+   while(!b.ShowingSummary&&Time.realtimeSinceStartup<timeout)yield return new WaitForSecondsRealtime(.1f);
    Check(b.ShowingSummary&&b.ledger.Elapsed>=480,"automatic 480-second settlement day="+day);
    Check(b.SaveCheckpoint(),"checkpoint day="+day);
    report.AppendLine("DAY "+day+" income="+b.ledger.Income+" net="+b.ledger.TotalNet+" fuel="+b.ledger.Account.Fuel+" rides="+b.ledger.Rides+" failures="+b.ledger.FailedTrips+" law="+session.law.ledger.Score(day));Flush();
+   Check(!b.taxPrompt,"settlement without tax prompt day="+day);
+   if(b.ledger.State==BusinessState.Won)break;
    if(day<3){if(!b.NextDay()){Check(false,"next day "+day);break;}Time.timeScale=8;}
   }
-  Check(b.ledger.Day==3&&b.ledger.ShowingSummary,"three-day campaign reached final result");
-  Check(b.ledger.State==(b.ledger.Account.GoalMet?BusinessState.Won:BusinessState.Lost),"final result matches actual net and payment conditions");
+  Check(b.ledger.Day<=3&&b.ledger.ShowingSummary&&(b.ledger.State==BusinessState.Won||b.ledger.Day==3),"campaign reaches target or final day result");
+  Check(b.ledger.State==(b.ledger.Account.GoalMet?BusinessState.Won:BusinessState.Lost),"final result matches actual net target");
   if(lawful)Check(b.ledger.State==BusinessState.Won,"signal-aware campaign reaches goal");
   report.AppendLine(lawful?"DONE: automated physics with signal braking, no ambient traffic. Inspect law/manner records before interpreting compliance; not manual play.":"DONE: automated physics, no ambient traffic, no signal-aware braking. Not a lawful/manual campaign claim.");Flush();Application.Quit(ok?0:1);
  }

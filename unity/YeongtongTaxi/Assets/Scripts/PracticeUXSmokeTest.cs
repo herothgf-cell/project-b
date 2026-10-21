@@ -23,9 +23,9 @@ public class PracticeUXSmokeTest : MonoBehaviour {
    for(int v=1;v<=6;v++){Check(p.OpenPicker(),"reopen choice "+v);p.SelectedVariant=v;Check(p.StartSelected()&&right.variant==v,"start selected condition "+v);}
    Check(b.ledger.Account.Fuel==fuel&&b.ledger.Account.Cash==cash&&b.ledger.Elapsed==clock,"switch does not alter campaign economy");
   }else{
-   b.preparing=true;Time.timeScale=0;b.RequestPayment(0);Check(b.ConfirmPayment(true)&&b.notice=="결제 완료","preparation payment feedback");yield return new WaitForSecondsRealtime(4.3f);Check(b.notice=="","preparation notice expires while paused");
+   b.preparing=true;Time.timeScale=0;int cash=b.ledger.Account.Cash;b.RequestPayment(0);Check(b.pendingPayment<0&&!b.ConfirmPayment(true)&&b.ledger.Account.Cash==cash,"excluded preparation payment unavailable");
    yield return Capture("practice-preparation-details");
-   b.preparing=false;session.paused=true;var services=session.services;services.open=true;Check(services.RequestAction(4)&&services.ConfirmAction(true)&&services.notice=="결제 완료","service payment feedback");yield return new WaitForSecondsRealtime(4.3f);Check(services.notice=="","service notice expires while paused");services.open=false;
+   b.preparing=false;session.paused=true;var services=session.services;services.open=true;Check(!services.RequestAction(3)&&!services.RequestAction(4)&&services.pending<0,"excluded service payments unavailable");services.pending=0;Check(!services.ConfirmAction(false)&&services.notice.Contains("취소"),"service cancellation feedback");yield return new WaitForSecondsRealtime(4.3f);Check(services.notice=="","service notice expires while paused");services.open=false;
    var account=JsonUtility.ToJson(b.ledger.Account.Snapshot());double time=b.ledger.Elapsed;
    Check(p.OpenPicker(),"mid-business pause opens choice");yield return Capture("practice-picker-red");p.CancelPicker();Check(session.paused&&Time.timeScale==0,"cancel restores previous pause");
    Check(p.OpenPicker()&&p.StartSelected()&&p.Busy,"mid-business isolated practice launches");Check(!p.OpenPicker(),"cannot launch duplicate practice");

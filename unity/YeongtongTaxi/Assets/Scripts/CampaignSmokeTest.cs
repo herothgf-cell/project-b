@@ -17,7 +17,11 @@ public class CampaignSmokeTest : MonoBehaviour {
    if(i<2)Check(session.services.Buy(i),"station purchase "+i);else session.services.Toggle();}
   Place(0);yield return new WaitForSeconds(.4f);Check(jobs.Interact(),"roadside pickup v2");
   Check(!string.IsNullOrEmpty(session.law.tripId),"trip identity assigned");session.requests.request.DeferSafety();
-  Place(jobs.current.drop);yield return new WaitForSeconds(.4f);int before=a.Cash;Check(jobs.Interact()&&a.Cash>before,"fare credited to cash");
+  Place(jobs.current.drop);yield return new WaitForSeconds(.4f);int before=a.Cash;
+  // This accounting fixture teleports between services/stops; it does not complete a law route.
+  // Check the real anti-skip gate first, then detach that encounter for the isolated fare check.
+  var zones=GetComponent<ServiceLawZones>();if(zones&&zones.Assigned!=null){Check(!jobs.Interact()&&a.Cash==before,"unvisited law zone blocks payment");zones.EndTrip();jobs.nav.RequireVia(-1);}
+  Check(jobs.Interact()&&a.Cash>before,"fare credited to cash in isolated accounting fixture");
   int after=a.Cash;Check(!jobs.Interact()&&a.Cash==after,"duplicate completion does not pay");
   var e=new LawEvent{id="integration-event",day=1,family="exit"};e.Add("L06",LawVerdict.Violation,15);e.Add("L07",LawVerdict.Violation,15);session.law.ledger.Record(e);
   int cash=a.Cash,manners=session.manners.ledger.Score;Check(session.law.ledger.Score(1)==85&&cash==a.Cash&&manners==session.manners.ledger.Score,"independent law record");
@@ -31,13 +35,15 @@ public class CampaignSmokeTest : MonoBehaviour {
   Check(b.SaveCheckpoint()&&!b.SaveFailed,"save retry works");
   Check(b.NextDay()&&session.law.ledger.Score(2)==100&&session.law.ledger.Events.Length>=1,"new day resets score retains history");
   b.ledger=new EconomyLedger(new PrototypeSettings());b.ledger.RequestClose();b.ledger.Settle();b.ledger.NextDay();b.ledger.RequestClose();b.ledger.Settle();
-  Check(!b.NextDay()&&!b.ledger.DepartureAllowed&&b.ledger.Account.Cash==3000,"insurance shortage blocks departure");b.RestartCampaign();Check(b.ledger.Day==1&&b.ledger.TotalNet==0,"insurance shortage can restart");
+  Check(b.NextDay()&&b.ledger.DepartureAllowed&&b.ledger.Account.Cash==3000,"third day departure needs no insurance payment");
+  b.ledger=new EconomyLedger(new PrototypeSettings());
   Place(0);yield return new WaitForSeconds(.4f);Check(jobs.Interact(),"occupied fuel recovery setup");a=b.ledger.Account;int recoveryCash=a.Cash;a.Consume(0,1000000);yield return new WaitForSeconds(.2f);
   Check(jobs.trip.State==TripState.Idle&&b.ledger.FailedTrips==1&&b.ledger.Income==0,"fuel depletion ends occupied ride for zero fare");Check(a.Cash==recoveryCash-1800&&a.Fuel>19&&a.Fuel<=20&&b.ledger.Elapsed>=30,"recovery fee supply and time once");
-  b.ledger.RecordFare("tax-flow-fixture",50000);a.Renew("tax-flow-insurance",1);
-  for(int day=1;day<=2;day++){Place(0);yield return new WaitForSeconds(.3f);Check(b.RequestEndDay(),"close day for tax flow "+day);yield return new WaitForSecondsRealtime(.2f);Check(b.NextDay(),"next day for tax flow "+day);}
-  Place(0);yield return new WaitForSeconds(.3f);b.RequestEndDay();yield return new WaitForSecondsRealtime(.2f);Check(b.taxPrompt&&Time.timeScale==0,"final day asks before unpaid settlement");
-  int taxCash=a.Cash;b.ConfirmTaxClose(false);yield return new WaitForSecondsRealtime(.2f);Check(b.ledger.State==BusinessState.Lost&&a.Net>=30000&&!a.TaxPaid,"money goal alone cannot win unpaid tax");Check(a.Debt==1500&&a.Cash==taxCash-3500,"unpaid tax increases debt without automatic tax debit");Check(!b.taxPrompt&&b.ShowingSummary,"final summary releases tax modal for history");
+  b.ledger.RecordFare("final-flow-fixture",35000);
+  for(int day=1;day<=2;day++){Place(0);yield return new WaitForSeconds(.3f);Check(b.RequestEndDay(),"close day without excluded costs "+day);yield return new WaitForSecondsRealtime(.2f);Check(b.NextDay(),"next day without payment gate "+day);}
+  b.ledger.RecordFare("final-day-fixture",7300);int finalCash=a.Cash;
+  Place(0);yield return new WaitForSeconds(.3f);b.RequestEndDay();yield return new WaitForSecondsRealtime(.2f);
+  Check(b.ledger.State==BusinessState.Won&&a.Net==30000,"final target needs no payment prerequisites");Check(a.Debt==0&&a.Cash==finalCash-3500,"final settlement charges only meal and parking");Check(!b.taxPrompt&&b.ShowingSummary&&Time.timeScale==0,"final summary needs no tax modal");
   string path=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts","campaign-v2-test.txt"));File.WriteAllText(path,"success="+ok+"\n"+report);Application.Quit(ok?0:1);
  }
 }

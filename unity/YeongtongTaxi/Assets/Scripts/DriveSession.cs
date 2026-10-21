@@ -9,6 +9,7 @@ public class DriveSession : MonoBehaviour {
     public bool PracticeMenuOpen {get{var p=GetComponent<PracticeSession>();var c=GetComponent<PracticeCoach>();return p&&p.PickerOpen||c&&c.ResultOpen;}}
     public bool PracticeBusy {get{var p=GetComponent<PracticeSession>();return p&&p.Busy;}}
     public bool paused;public bool ShowHints; public int visits; bool inside;
+    public bool FullMapOpen {get{var map=GetComponent<FullMapOverlay>();return map&&map.IsOpen;}}
     void Awake() {
         MapCatalog.LockedRegion=startupRegion;
         foreach(var arg in System.Environment.GetCommandLineArgs())if(arg.EndsWith("Test"))Application.runInBackground=true;
@@ -24,7 +25,7 @@ public class DriveSession : MonoBehaviour {
         var cam=new GameObject("Driving Camera"); cam.tag="MainCamera"; var c=cam.AddComponent<Camera>(); c.fieldOfView=62; c.nearClipPlane=.08f; c.farClipPlane=700; c.backgroundColor=new Color(.57f,.74f,.84f); c.clearFlags=CameraClearFlags.Skybox; cam.AddComponent<AudioListener>(); drivingCamera=cam.AddComponent<DrivingCamera>();drivingCamera.target=taxi.transform;
         RenderSettings.ambientLight=new Color(.65f,.69f,.75f); RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Flat;
         var sun=new GameObject("Sun").AddComponent<Light>(); sun.type=LightType.Directional; sun.intensity=1.15f; sun.transform.rotation=Quaternion.Euler(45,-35,0); sun.shadows=LightShadows.Soft;
-        gameObject.AddComponent<DriveHUD>().session=this;gameObject.AddComponent<DrivingReadability>().session=this;
+        gameObject.AddComponent<DriveHUD>().session=this;gameObject.AddComponent<DrivingReadability>().session=this;gameObject.AddComponent<FullMapOverlay>().session=this;
         manners=taxi.gameObject.AddComponent<DrivingManners>();manners.session=this;
         jobs=gameObject.AddComponent<PassengerJobs>();jobs.Initialize(this);
         if(world.map.HasHd){jobs.enabled=world.map.hybrid;assisted.hd.nav=jobs.nav;}
@@ -54,6 +55,8 @@ public class DriveSession : MonoBehaviour {
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-liveExitChoicesTest")>=0)gameObject.AddComponent<LiveExitChoicesTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-liveTrafficTest")>=0)gameObject.AddComponent<LiveTrafficValidationTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-lawZoneLabelsTest")>=0)gameObject.AddComponent<LawZoneLabelsSmokeTest>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-playabilityUITest")>=0)gameObject.AddComponent<PlayabilityUISmokeTest>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-manualHandlingTest")>=0)gameObject.AddComponent<ManualHandlingSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-serviceLawZonesTest")>=0)gameObject.AddComponent<ServiceLawZonesSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-confusionDriveTest")>=0)gameObject.AddComponent<ConfusionDriveSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-confusionPracticeTest")>=0)gameObject.AddComponent<ConfusionPracticeSmokeTest>().session=this;
@@ -77,6 +80,7 @@ public class DriveSession : MonoBehaviour {
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-stabilityTest")>=0) gameObject.AddComponent<StabilitySmokeTest>().session=this;
     }
     void Update() {
+        if(FullMapOpen||GetComponent<FullMapOverlay>().ClosedThisFrame)return;
         if(Input.GetKeyDown(KeyCode.F10))ShowHints=!ShowHints;
         if(Input.GetKeyDown(KeyCode.F11)){if(Screen.fullScreen)Screen.SetResolution(Mathf.Min(1600,Screen.currentResolution.width-80),Mathf.Min(900,Screen.currentResolution.height-100),FullScreenMode.Windowed);else Screen.SetResolution(Screen.currentResolution.width,Screen.currentResolution.height,FullScreenMode.FullScreenWindow);}
         if(!PracticeMenuOpen&&!PracticeBusy&&!business.restartPrompt&&!business.ShowingSummary&&!services.open&&!business.preparing&&!business.taxPrompt&&!law.HistoryOpen&&(Input.GetKeyDown(KeyCode.Escape)||Input.GetKeyDown(KeyCode.JoystickButton7))) {paused=!paused;Time.timeScale=paused?0:1;}

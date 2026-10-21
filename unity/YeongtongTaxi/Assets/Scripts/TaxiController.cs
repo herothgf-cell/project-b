@@ -3,7 +3,7 @@ public class TaxiController : MonoBehaviour {
     public Rigidbody body; public WheelCollider[] wheels=new WheelCollider[4]; Transform[] visuals=new Transform[4];
     public bool automated; public float autoThrottle,autoSteer,autoServiceBrake; public bool autoBrake;
     public AssistedDriveController assistance;
-    float throttle,steer; bool brake; Vector3 spawn; Quaternion spawnRotation;
+    float throttle,steer,motorDemand; bool brake; Vector3 spawn; Quaternion spawnRotation;
     public float SteeringInput {get{return steer;}}
     public bool CornerAssisting {get;private set;}
     public float Speed {get{return Vector3.Dot(body.velocity,transform.forward);}}
@@ -34,7 +34,7 @@ public class TaxiController : MonoBehaviour {
             float keyboard=(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0);
             float pad=Input.GetAxisRaw("TaxiSteer");float lateral=Mathf.Abs(pad)>.15f?pad:keyboard;
             if(assistance)assistance.ReadInput(lateral);
-            if(!assistance||!assistance.Active)steer=Mathf.MoveTowards(steer,lateral,Time.deltaTime*3);
+            if(!assistance||!assistance.Active)steer=Mathf.MoveTowards(steer,lateral,Time.deltaTime*Mathf.Lerp(4.5f,2.2f,Mathf.Clamp01(Mathf.Abs(Speed)/14)));
             brake=Input.GetKey(KeyCode.Space)||Input.GetKey(KeyCode.JoystickButton2);
             if(Input.GetKeyDown(KeyCode.R)||Input.GetKeyDown(KeyCode.JoystickButton3)) RequestReset();
         }
@@ -45,12 +45,18 @@ public class TaxiController : MonoBehaviour {
         // Automated validation commands are produced per physics tick, including accelerated runs.
         if(automated){throttle=autoThrottle;steer=autoSteer;brake=autoBrake;}
         var manual=DriveMath.Resolve(throttle,Speed,brake);
-        if(automated&&autoServiceBrake>0){manual.motor=0;manual.brake=Mathf.Max(manual.brake,Mathf.Clamp01(autoServiceBrake));}
+        // Physics-time pedal ramp is identical for keyboard/pad and automated validation.
+        // Braking and releasing the accelerator remain prompt, including a direction change.
+        if(manual.brake>0||manual.motor*motorDemand<0)motorDemand=0;
+        motorDemand=Mathf.MoveTowards(motorDemand,manual.motor,Time.fixedDeltaTime*(Mathf.Abs(manual.motor)>Mathf.Abs(motorDemand)?.9f:6f));
+        manual.motor=motorDemand;
+        if(automated&&autoServiceBrake>0){manual.motor=0;motorDemand=0;manual.brake=Mathf.Max(manual.brake,Mathf.Clamp01(autoServiceBrake));}
         bool assistedSteering=assistance&&assistance.Active&&(!automated||assistance.allowAutomated);
         if(assistance)assistance.Apply(ref steer,ref manual);
         var demand=assistedSteering?manual:DriveMath.CornerAssist(manual,Speed,steer);
         CornerAssisting=demand.motor<manual.motor||demand.brake>manual.brake;
-        for(int i=0;i<4;i++) { wheels[i].steerAngle=i<2?steer*DriveMath.SteerAngle(Speed*3.6f):0; wheels[i].motorTorque=i>=2?demand.motor*1100:0; wheels[i].brakeTorque=demand.brake*3500; }
+        float centerAngle=steer*DriveMath.SteerAngle(Speed*3.6f);
+        for(int i=0;i<4;i++) { wheels[i].steerAngle=i<2?DriveMath.WheelSteerAngle(centerAngle,i==0):0; wheels[i].motorTorque=i>=2?demand.motor*1100:0; wheels[i].brakeTorque=demand.brake*3500; }
         body.AddForce(Vector3.down*body.velocity.sqrMagnitude*6);
         int grounded=0;foreach(var wheel in wheels)if(wheel.isGrounded)grounded++;
         if(grounded>0) {
@@ -75,7 +81,7 @@ public class TaxiController : MonoBehaviour {
         body.position=spawn; body.rotation=spawnRotation;
         transform.SetPositionAndRotation(spawn,spawnRotation); Physics.SyncTransforms();
         foreach(var w in wheels){w.motorTorque=0;w.brakeTorque=0;w.steerAngle=0;}
-        steer=0; throttle=0; brake=false;
+        steer=0; throttle=0; motorDemand=0; brake=false;
         var indicators=GetComponent<TaxiSignals>();if(indicators)indicators.Clear();
         var manners=GetComponent<DrivingManners>();if(manners)manners.Suppress(.8f);
     }

@@ -2,7 +2,7 @@ using System;
 class DriveMathTests {
  static void Check(bool ok,string message){if(!ok)throw new Exception(message);}
  static void Main(){
-  Check(DriveMath.SteerAngle(0)==32,"low speed steering");
+  Check(2.6/Math.Tan(DriveMath.SteerAngle(0)*Math.PI/180)<=3.1,"parking center turning radius fits a narrow corner");
   Check(DriveMath.SteerAngle(100)<DriveMath.SteerAngle(20),"high speed steering must be reduced");
   Check(DriveMath.SteerAngle(-40)==DriveMath.SteerAngle(40),"reverse steering stability");
   var b=DriveMath.Resolve(-1,10,false);
