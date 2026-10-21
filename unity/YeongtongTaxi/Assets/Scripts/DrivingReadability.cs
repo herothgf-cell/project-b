@@ -5,7 +5,11 @@ using System.Collections.Generic;
 public class DrivingReadability : MonoBehaviour {
  public sealed class ZoneLabel {public ServiceLawZone zone;public Vector2 anchor;public Rect rect;public string text;public bool selected;}
  public readonly List<ZoneLabel> ZoneLabels=new List<ZoneLabel>();
- public DriveSession session;public bool Overview,Facilities;
+ public DriveSession session;public bool Facilities;
+ static readonly float[] ZoomSpans={300,450,650,1000,1500,2300};int zoomIndex=2;
+ public float ZoomSpan {get{return ZoomSpans[zoomIndex];}}
+ public bool Overview {get{return zoomIndex==ZoomSpans.Length-1;}set{zoomIndex=value?ZoomSpans.Length-1:2;}}
+ public void Zoom(int direction){zoomIndex=Mathf.Clamp(zoomIndex-direction,0,ZoomSpans.Length-1);}
  public TrafficJunction SignalTarget {get;private set;}
  public int SignalAxis {get;private set;}public int SignalSign {get;private set;}
  Rect bounds;GUIStyle label;const float Size=280;
@@ -21,11 +25,11 @@ public class DrivingReadability : MonoBehaviour {
    best=along;SignalTarget=j;SignalAxis=axis;SignalSign=sign;
   }
  }
- void Update(){if(!session.paused&&Input.GetKeyDown(KeyCode.M))Overview=!Overview;SelectSignal();}
+ void Update(){if(!session.paused){if(Input.GetKeyDown(KeyCode.Equals)||Input.GetKeyDown(KeyCode.Plus)||Input.GetKeyDown(KeyCode.KeypadPlus))Zoom(1);if(Input.GetKeyDown(KeyCode.Minus)||Input.GetKeyDown(KeyCode.KeypadMinus))Zoom(-1);}SelectSignal();}
  public Vector2 Project(Vector3 p){return new Vector2((p.x-bounds.x)/bounds.width*Size,(1-(p.z-bounds.y)/bounds.height)*Size);}
  public void SetBounds(){
   var map=session.world.map;var p=session.taxi.transform.position;
-  float span=Overview?Mathf.Max(map.width,map.depth):650;
+  float span=ZoomSpan;
   bounds=new Rect(Overview?(map.width-span)/2:p.x-span/2,Overview?(map.depth-span)/2:p.z-span/2,span,span);
  }
  void OnGUI(){
@@ -33,8 +37,9 @@ public class DrivingReadability : MonoBehaviour {
   if(label==null){label=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14,wordWrap=true};label.normal.textColor=Color.white;}
   float x=Screen.width-Size-16;SetBounds();PrepareMarkers();var jobs=session.jobs;var map=session.world.map;
   Panel(new Rect(x-5,10,Size+10,397));
-  GUI.Label(new Rect(x+5,14,145,24),Overview?"은계 전체 · 북 ↑":"주변 650m · 북 ↑",label);
-  if(GUI.Button(new Rect(x+155,14,125,24),Overview?"M 주변 확대":"M 범위 전환",KoreanText.Button(13)))Overview=!Overview;
+  GUI.Label(new Rect(x+5,14,145,24),"주변 "+ZoomSpan.ToString("0")+"m · 북 ↑",label);
+  GUI.enabled=zoomIndex>0;if(GUI.Button(new Rect(x+166,14,53,24),"+ 확대",KoreanText.Button(12)))Zoom(1);
+  GUI.enabled=zoomIndex<ZoomSpans.Length-1;if(GUI.Button(new Rect(x+224,14,56,24),"− 축소",KoreanText.Button(12)))Zoom(-1);GUI.enabled=true;
   GUI.BeginGroup(new Rect(x,42,Size,Size));
   var tile=GetComponent<DriveHUD>().tile;
   if(tile)GUI.DrawTextureWithTexCoords(new Rect(-bounds.x/bounds.width*Size,(1-(map.depth-bounds.y)/bounds.height)*Size,map.width/bounds.width*Size,map.depth/bounds.height*Size),tile,new Rect(0,0,1,1));
@@ -56,7 +61,7 @@ public class DrivingReadability : MonoBehaviour {
   GUI.EndGroup();
   GUI.Label(new Rect(x,324,Size,23),"▲ 나  ━ 경로  ● 상황  노랑1·2·3 주유소",new GUIStyle(label){fontSize=12});
   if(GUI.Button(new Rect(x,349,140,26),Facilities?"시설 표시 끄기":"시설 정보 보기",KoreanText.Button(13)))Facilities=!Facilities;
-  if(GUI.Button(new Rect(x+146,349,134,26),"G 전체 지도",KoreanText.Button(13)))GetComponent<FullMapOverlay>().Open();
+  if(GUI.Button(new Rect(x+146,349,134,26),"M 전체 지도",KoreanText.Button(13)))GetComponent<FullMapOverlay>().Open();
   GUI.Label(new Rect(x+4,379,276,22),"© OSM / ODbL · 현장 규제 미검증",new GUIStyle(label){fontSize=11});
   if(Facilities){var status=GetComponent<HybridMapStatus>();Panel(new Rect(x-310,42,300,145));GUI.Label(new Rect(x-300,50,280,130),"시설 □ 주황: 임시 / 초록: 확인\n"+(status?status.current:"시설 정보 없음"),label);}
   DrawSignal(x);
@@ -103,10 +108,12 @@ public class DrivingReadability : MonoBehaviour {
   if(clamp){var r=MarkerTextBounds(world);GUI.color=Color.black;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;GUI.Label(new Rect(r.x+2,r.y,r.width-2,r.height),text,label);}
  }
  void DrawSignal(float x){
-  Panel(new Rect(x-5,411,Size+10,110));
+  Panel(new Rect(x-5,411,Size+10,138));
   if(SignalTarget==null){GUI.Label(new Rect(x+8,420,Size-16,80),"전방 신호 안내\n접근 방향의 신호를 찾는 중\n현장 신호·주변 차량을 확인하세요",label);return;}
   var j=SignalTarget;var dir=session.traffic.AxisDirection(j,SignalAxis)*SignalSign;var o=session.traffic.Observe(j,SignalAxis,SignalSign,dir,session.taxi.gameObject);
   GUI.Label(new Rect(x+8,415,Size-16,24),"전방 "+Vector3.Distance(session.taxi.transform.position,j.center).ToString("0")+"m · "+(j.facility!=null&&j.facility.facilityStatus=="verified"?"확인 시설":"임시 신호"),label);
+  float next=session.traffic.SecondsToSignalChange(j,SignalAxis,SignalSign);
+  GUI.Label(new Rect(x+8,519,Size-16,25),next>=0?"다음 신호 변경까지 "+Mathf.CeilToInt(next)+"초":"상황 조건 진행 · 고정 시간 없음",new GUIStyle(label){fontSize=12});
   var training=GetComponent<ConfusionPractice>();var zones=GetComponent<ServiceLawZones>();if(zones&&zones.Owns(j))training=zones.Live;
   if(training&&training.Owns(j)){
    string signal=training.State.Flashing?(training.State.Variant==8?"적색":"황색")+" 점멸":State(o.forward);

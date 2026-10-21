@@ -1,38 +1,34 @@
 # 최신 작업 인계
 
-기준일: 2026-10-21. **기본 실행 맵은 은계**이며 별도 연습 모드로 대체하지 않는다.
+기준일: 2026-10-21. 기본 실행 맵은 은계, 별도 연습으로 대체하지 않는다.
 
 ## 먼저 읽을 것
 
-1. [이번 구현·검증: 도로 표시·주유 시설·운송 마감](2026-10-21-road-facilities-and-operation.md). 같은 날 별도 [프로토 시나리오 기획](2026-10-21-prototype-scenarios.md), [기획 본문](../content-design/09-prototype-scenarios.md)은 미구현 초안으로 보존한다.
-2. [실행 폴더·지도 ZIP Git 배포](2026-10-21-git-playable-distribution.md), [바로 실행 안내](../../distribution/README.md)
-3. [지도3개 전달 ZIP](2026-10-20-map-transfer-bundle.md), [새 PC 개발 안내](map-transfer-guide.md)
-4. [구역 이름과 PC 인계](2026-10-20-law-zone-labels-and-handoff.md)
-5. [직전 완료: 일반 운송 법규 통합 a971d9e](2026-10-20-in-service-law-zones.md)
-6. [PC 이동 절차](README.md), [개발 체크리스트](../prototype-development-checklist.md), [프로토 범위](../prototype-scope.md)
+1. [승객 코스·요청·운행 피드백 구현/검증](2026-10-21-passenger-scenarios-and-feedback.md)
+2. [도로·주유 시설·운송 마감](2026-10-21-road-facilities-and-operation.md)
+3. [개발 체크리스트](../prototype-development-checklist.md), [범위](../prototype-scope.md), [9코스 기획](../content-design/09-prototype-scenarios.md)
+4. [실행 안내](../../distribution/README.md), [PC 이동](README.md), [지도 전달](map-transfer-guide.md)
 
-## 현재 상태
+## 현재 구현과 빌드
 
-- 별도 문서 기획(7bc0e3b): 기존 승객 요청을 유지한 9개 승객 코스 초안(법규 7·선택 2). 12개 생성 승하차 후보와 7개 경유 조합의 그래프 연결 확인. 고정 배정·승차 전 활성화·P4 선택 코스는 미구현이며 새9코스의 빌드/플레이 검사는 없음.
-- 아래 배포 빌드는 이번12분 영업·연료·도로/주유소 변경을 포함한다. 별도9개 시나리오 코스는 미구현이며 시간 밸런스는 해당 구현 후 재검증한다.
+- Unity 2022.3.62f2, unity/YeongtongTaxi, PrototypeBuild.BuildHybrid. 기본 실행 builds/EungyeTaxi/EungyeTaxi.exe. 소스 커밋과 파일별 해시는 distribution/EungyeTaxi-build-manifest.json 참조.
+- 은계 전체 도로망+국도42 실제 차로+OSM. 원본/임시/게임 창작 상태를 구분한다.
+- 일반 영업 PS01~09 코스, PS01/02 승차 전 상황, PS08 정상/우회 선택, PS09 실제 정지·보행 대기. 승객 요청17종과 픽업 대기 기한. 호출 카드의 경유 상황 설명 제거.
+- 운행 점수는 승객 매너와 별도 누적. 날짜/재실행 유지, 새 캠페인 100점 초기화. 준수 사건당1점, 위반 사건은 최대 감점. 회계는 하루 정산 저장, 운행 사건은 별도 저널 즉시 저장이다.
+- 상단 연료15%/5% 경고, 매너/운행 변화 알림. M 전체지도, +/- 미니맵, 시설/교통/법규 필터. R/패드 복귀 단축키 제거. 창 제목 택시 시뮬레이터.
+- 일반 차량36대, 신호 남은 시간, 간략 게임 표지. 실제 시설로 확정한 표지가 아니다.
+- 캠페인3일×12분·순수익30,000원. 연료4%포인트/km+0.1%포인트/분·초기60%, 주유소3곳. 탑승 중 마감 금지·목적지 하차 후 정산.
+- 보험/세금·개인 예약·단골·사고·수리·보험 청구·그래픽 시안·새 PC/실물 패드 검사는 프로토 제외.
 
-- Unity2022.3.62f2, `unity/YeongtongTaxi`, 게임 소스는 배포 manifest의 `sourceCommit` 참조, 기본 실행 `builds/EungyeTaxi/EungyeTaxi.exe`. 빌드는 `PrototypeBuild.BuildHybrid`.
-- 은계 전체 도로망+국도42 실제 차로+OSM 보완. 실제/임시/창작 상태를 구분한다. 승객 운송 중7개 법규 상황 구역을 내비/H가 경유한다. 법규·승객 매너·운임은 별도다.
-- 캠페인3일×12분·순수익30,000원. 연료·식사·주차 유지. 보험료·보험 갱신·세금은 프로토 제외(2026-10-21), 비용/출발 제한/완납 목표 조건 제거·기존 저장 이관. 개인 예약·단골·사고·수리·보험 청구와 그래픽/HUD 시안·새 PC/실물 패드 검증은 프로토 제외다.
-- 이번 변경: 완만한 가속·저속42도/앞바퀴 안팎 조향, S 일반 제동과 완화된 매너 기준. 은계 임시 시작 주차장은 넓은 국도42 외측 지점으로 이동.
-- G 전체지도(영업시간 정지·G/Esc닫기), M 미니맵 범위 전환, 실제 매너/요구선·오늘 운전 점수/유효 건수의 독립 게이지, 한글 버튼·목표 이름표 잘림 보완. 최종 검증 수치와 빌드는 위 최신 기록을 따른다.
+## 검증과 남은 작업
 
-- 이번 추가: 공통 차로 기반 황색/백색 표시·교차로 중첩 제거,추가 도로 겹침 건물3개 보류. 주유소 게임시설3곳(입구/주유/출구),F7/지도 번호1·2·3. 내비/H는 입구 앞까지,부지 내부는 수동. 하루12분·연료4/km+0.1/분·새 시작60%. 탑승 중 마감 금지·늦어도 목적지 하차 후 정산. 표시명은 운전 점수,승객 매너 별도.
+모델19묶음, Unity 빌드, 요청17종133항목, 일반 차량36대/신호대기, 9코스+우회 운송, 점수 저장/초기화, 3해상도 UI 및 3일 캠페인 회계 자동 검사 통과. 자세한 실행 조건과 결과는 최신 기록 참조. 위치 제어 운송 검사는 수동 플레이가 아니다.
 
-## PC 전환 시
+다음: 일반 교통 포함 수동 3일 밸런스, 표지/차로/신호 현장 대조. 기존9코스와17요청을 미구현으로 다시 개발하지 않는다. 새 작업은 개별 기획서·체크리스트·작업 이력을 함께 갱신한다.
 
-- Git 동기화 후 PowerShell7에서 `pwsh -File tools/check_workspace.ps1 -Strict`를 실행한다.
-- 테스트만 할 때는 Git main을 받은 뒤 `builds/EungyeTaxi/EungyeTaxi.exe`를 바로 실행한다. Unity와 지도 압축 해제는 필요 없다. 실행 폴더 전체와 배포 manifest를 Git으로 받는다. 새 PC 하드웨어 검사는 미수행이다.
-- 개발할 때는 Git의 `distribution/maps/Eungye-map-inputs-2026-10-20.zip`을 저장소 루트에 푼다. 묶음857,580바이트, 지도3개 해시 검증. 원본 재수입용 raw자료는 별도다. 체크 도구는 실제 Editor 설치를 보장하지 않는다.
-- 게임 진행 저장은 코드 동기화에 포함되지 않는다. 소스 수정 뒤에는 실행파일도 새로 빌드하고 배포 manifest를 갱신해야 한다.
-- 기존 사용자 미커밋 `README.md`,라이선스 문서3개와 `licenses/`는 별도 보존한다. 실제 상태는 `git status --short`로 확인한다.
-- 필수 입력3개·지도 ZIP은 변경하지 않고 strict 해시 검사를 통과했다. 실행 폴더·배포 manifest는 이번 빌드로 갱신한다. 별도 시나리오 문서의 지도 스냅샷 대조와 이번 실행 검증을 구분한다.
+## PC 전환
 
-## 이어갈 때
-
-현재 코드·기획·체크리스트를 먼저 대조한다. 프로토 시나리오 초안 검토 후 PS-A 위치 확정 → PS-B 고정 배정 → PS-C 승차 전 접근 → PS-D/P4 선택 코스 → PS-E 운송·캠페인 확인 순서를 제안한다. 기존 승객 요청을 유지하고 별도 연습으로만 구현하지 않는다. 이번 도로/영업 변경의 실행파일과 지도 버전을 먼저 맞춘다. 새 작업 종료 시 날짜별 기록을 추가하고 이 LATEST를 갱신한다. 이번 구현 이력 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-21-road-facilities-and-operation.md`로 확인한다.
+- main을 받은 뒤 builds/EungyeTaxi/EungyeTaxi.exe 바로 실행. 개발 시 distribution/maps/Eungye-map-inputs-2026-10-20.zip을 저장소 루트에 해제하고 pwsh -File tools/check_workspace.ps1 -Strict 실행.
+- 입력 지도3개와 ZIP은 변경하지 않았고 Strict 검사 Input issues: 0. 원본 raw 자료는 별도이며 진행 저장은 Git에 포함하지 않는다.
+- 기존 사용자 README.md·라이선스 문서3개·licenses/ 변경은 이번 작업에 포함하지 않는다. git status --short로 확인한다.
+- 최신 이력의 실제 커밋은 git log -1 --oneline -- docs/work-history/2026-10-21-passenger-scenarios-and-feedback.md로 확인한다.

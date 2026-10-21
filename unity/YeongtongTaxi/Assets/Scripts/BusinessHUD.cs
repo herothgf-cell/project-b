@@ -13,9 +13,9 @@ public class BusinessHUD : MonoBehaviour {
  }
  void Fill(Rect r,Color color){GUI.color=color;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
  void Progress(Rect r,EconomyLedger e){Fill(r,new Color(.16f,.23f,.28f));Fill(new Rect(r.x,r.y,r.width*Mathf.Clamp01((float)e.TotalNet/e.Settings.target),r.height),new Color(.25f,.85f,.67f));}
- void OnGUI(){if(!session||!session.business||!session.business.enabledCampaign||session.PracticeMenuOpen||session.services.open||session.law.HistoryOpen)return;Styles();
+ void OnGUI(){if(!session||!session.business||!session.business.enabledCampaign||session.ChoiceOpen||session.PracticeMenuOpen||session.services.open||session.law.HistoryOpen)return;Styles();
   var b=session.business;var e=b.ledger;GUI.depth=-30;
-  if(b.restartPrompt){float rx=(Screen.width-620)/2f,ry=(Screen.height-300)/2f;GUI.depth=-150;Fill(new Rect(rx,ry,620,300),new Color(.04f,.09f,.12f,1));GUI.Label(new Rect(rx+25,ry+25,570,130),"1일차부터 다시 시작할까요?\n현재 캠페인의 저장과 운송·법규·연습 기록을 초기화합니다.\n현금 10,000원 · 연료 60% · 1일차 영업 준비로 돌아갑니다.\n취소하면 현재 진행을 그대로 유지합니다.",text);GUI.Label(new Rect(rx+25,ry+165,570,45),b.saveStatus,small);if(GUI.Button(new Rect(rx+25,ry+230,275,45),"초기화하고 1일차 시작",button))b.ConfirmRestart(true);if(GUI.Button(new Rect(rx+320,ry+230,275,45),"취소",button))b.ConfirmRestart(false);return;}
+  if(b.restartPrompt){float rx=(Screen.width-620)/2f,ry=(Screen.height-300)/2f;GUI.depth=-150;Fill(new Rect(rx,ry,620,300),new Color(.04f,.09f,.12f,1));GUI.Label(new Rect(rx+25,ry+25,570,130),"1일차부터 다시 시작할까요?\n운행 점수 100점 · 현재 캠페인의 저장과 운송·법규·연습 기록을 초기화합니다.\n현금 10,000원 · 연료 60% · 1일차 영업 준비로 돌아갑니다.\n취소하면 현재 진행을 그대로 유지합니다.",text);GUI.Label(new Rect(rx+25,ry+165,570,45),b.saveStatus,small);if(GUI.Button(new Rect(rx+25,ry+230,275,45),"초기화하고 1일차 시작",button))b.ConfirmRestart(true);if(GUI.Button(new Rect(rx+320,ry+230,275,45),"취소",button))b.ConfirmRestart(false);return;}
   if(b.preparing){
    float px=(Screen.width-620)/2f,py=(Screen.height-600)/2f;Fill(new Rect(px,py,620,600),new Color(.04f,.09f,.12f,.98f));var account=e.Account;
    GUI.Label(new Rect(px+20,py+20,580,45),e.Day+"일차 영업 준비 · 3일 × 12분 / 순수익 30,000원",new GUIStyle(text){fontSize=20});
@@ -70,7 +70,7 @@ public class BusinessHUD : MonoBehaviour {
   else if(GUI.Button(new Rect(x+28,y+505,365,48),"새 "+e.Settings.days+"일 도전 시작 (기록 초기화)",button)){if(b.useV2)b.RequestRestart();else b.RestartCampaign();}
   GUI.enabled=true;
   if(GUI.Button(new Rect(x+409,y+505,203,48),"법규·운송 기록 / 복습",button))session.law.OpenHistory();
-  GUI.Label(new Rect(x+28,y+560,584,24),session.law.ledger.DaySummary(e.Day).Split('\n')[0]+" · 종료는 창 닫기 / 기록은 정산 저장",small);
+  GUI.Label(new Rect(x+28,y+560,584,24),"누적 운행 "+session.law.ledger.TotalScore+"점 · "+session.law.ledger.DaySummary(e.Day).Split('\n')[0]+" · 종료는 창 닫기 / 기록은 정산 저장",small);
  }
  void Row(float x,float y,string label,string value){GUI.Label(new Rect(x+28,y,340,29),label,text);GUI.Label(new Rect(x+375,y,237,29),value,new GUIStyle(text){alignment=TextAnchor.MiddleRight});}
 }

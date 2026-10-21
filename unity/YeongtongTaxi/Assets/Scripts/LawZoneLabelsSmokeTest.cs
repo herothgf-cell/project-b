@@ -13,8 +13,8 @@ public class LawZoneLabelsSmokeTest : MonoBehaviour {
   yield return new WaitForSecondsRealtime(2);session.business.enabledCampaign=true;session.business.Depart();session.taxi.automated=true;session.taxi.autoBrake=true;
   var map=GetComponent<DrivingReadability>();var zones=GetComponent<ServiceLawZones>();var hud=GetComponent<DriveHUD>();var jobs=session.jobs;
   Check(session.world.map.mapId=="eungye"&&zones.zones.Count==7&&!PracticeSession.Enabled,"normal Eungye with seven zones");
-  var found=new HashSet<int>();for(int round=0;round<84;round++){jobs.Generate();for(int i=0;i<3;i++){var z=zones.ZoneFor(jobs.offers[i]);if(z==null)continue;found.Add(z.variant);Check(hud.OfferText(i).Contains(z.Title),"offer shows exact route situation "+z.variant);}}
-  Check(found.Count==7,"all seven actual routed situations shown in offers");
+  var found=new HashSet<int>();for(int round=0;round<84;round++){jobs.Generate();for(int i=0;i<3;i++){var z=zones.ZoneFor(jobs.offers[i]);if(z==null)continue;found.Add(z.variant);Check(!hud.OfferText(i).Contains(z.Title),"call card hides route situation explanation "+z.variant);}}
+  Check(found.Count==7,"all seven actual routed situations retained behind call cards");
   foreach(var size in new[]{new Vector2Int(1280,720),new Vector2Int(1600,900)}){
    Screen.SetResolution(size.x,size.y,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.6f);map.Overview=true;map.LayoutLawZones();
    Check(map.ZoneLabels.Count==7,"all seven names on overview "+size.x);

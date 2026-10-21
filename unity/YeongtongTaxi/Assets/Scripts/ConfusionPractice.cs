@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 // Fictional operation on an existing Eungye lane connector. Never edits surveyed map/source records.
@@ -82,7 +82,7 @@ public sealed class ConfusionPractice : MonoBehaviour {
  void Update(){if(!Active)return;ApplySignal();}
  public PracticeFeedback Feedback(){var f=State.Feedback();if(LiveMode){f.outcome=f.outcome.Replace("연습","운행");f.next=f.next.Replace("이 연습","이 구역");}return f;}
  public void RecordObservation(){
-  if(!Active||AttemptEvent!=null)return;AttemptEvent=State.Event(session.law.ids.Next("confusion"),session.law.Day);AttemptEvent.junction=Junction.name;AttemptEvent.speed=session.taxi.body.velocity.magnitude;AttemptEvent.assisted=session.assisted.Active;AttemptEvent.tripId=session.law.tripId;AttemptEvent.occupied=LiveMode||session.jobs.trip.State==TripState.OnTrip;AttemptEvent.seconds=(float)session.business.ledger.Elapsed;if(LiveMode)AttemptEvent.reason+="\n"+Feedback().Details();session.law.ledger.Record(AttemptEvent);
+  if(!Active||AttemptEvent!=null)return;AttemptEvent=State.Event(session.law.ids.Next("confusion"),session.law.Day);AttemptEvent.junction=Junction.name;AttemptEvent.speed=session.taxi.body.velocity.magnitude;AttemptEvent.assisted=session.assisted.Active;AttemptEvent.tripId=session.law.tripId;AttemptEvent.occupied=session.jobs.trip.State==TripState.OnTrip;AttemptEvent.seconds=(float)session.business.ledger.Elapsed;if(LiveMode)AttemptEvent.reason+="\n"+Feedback().Details();session.law.ledger.Record(AttemptEvent);
  }
  void FixedUpdate(){
   if(!Active||session.paused||session.PracticeMenuOpen||State.Finished)return;

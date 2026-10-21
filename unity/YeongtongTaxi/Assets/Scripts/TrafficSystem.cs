@@ -48,6 +48,7 @@ public class TrafficSystem : MonoBehaviour {
     public Vector3 AxisDirection(TrafficJunction j,int axis){var d=j.direction.sqrMagnitude>.1f?j.direction:mainDirection;return axis==0?d:Right(d);}
     public int Sign(Vector3 direction,int axis,TrafficJunction j=null){return Vector3.Dot(direction,j!=null?AxisDirection(j,axis):axis==0?mainDirection:Right(mainDirection))>=0?1:-1;}
     public SignalColor Signal(TrafficJunction junction, int axis,int sign=1) { return junction.scenarioSignal?(axis==junction.observationAxis&&(sign==junction.observationSign||junction.scenarioOpposingGreen)?junction.scenarioForward:SignalColor.Red):junction.signalized?KoreanSignalRules.Signal(Clock+junction.offset,junction.leftTurnMode,axis,sign):SignalColor.Green; }
+    public float SecondsToSignalChange(TrafficJunction junction,int axis,int sign=1){return junction==null||!junction.signalized||junction.scenarioSignal?-1:KoreanSignalRules.SecondsToChange(Clock+junction.offset,junction.leftTurnMode,axis,sign);}
     public SignalColor LeftSignal(TrafficJunction junction,int axis,int sign=1){if(junction.scenarioSignal&&junction.leftTurnMode==LeftTurnMode.Permissive)return SignalColor.Red;return Signal(junction,axis,sign);}
     public SignalColor MovementSignal(TrafficJunction junction,int axis,int turn,int sign=1){return Signal(junction,axis,sign);}
     public RoadObservation Observe(TrafficJunction j,int axis,int sign,Vector3 direction,GameObject self){

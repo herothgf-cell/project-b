@@ -15,7 +15,7 @@ public class BusinessProgress : MonoBehaviour {
  bool testMode;float noticeUntil; CampaignCheckpoint loaded; public bool useV2; public bool taxPrompt,preparing; public PrototypeSettings settings=new PrototypeSettings();
  public bool SaveFailed {get;private set;}
  public int pendingPayment=-1; public bool restartPrompt;
- bool CanRestartNow {get{return enabledCampaign&&useV2&&!session.FullMapOpen&&!session.PracticeMenuOpen&&!PracticeSession.Enabled&&!session.GetComponent<PracticeSession>().Busy&&pendingPayment<0&&!session.services.open&&!session.law.HistoryOpen&&!taxPrompt&&(preparing||ShowingSummary||session.paused);}}
+ bool CanRestartNow {get{return enabledCampaign&&useV2&&!session.ChoiceOpen&&!session.FullMapOpen&&!session.PracticeMenuOpen&&!PracticeSession.Enabled&&!session.GetComponent<PracticeSession>().Busy&&pendingPayment<0&&!session.services.open&&!session.law.HistoryOpen&&!taxPrompt&&(preparing||ShowingSummary||session.paused);}}
  public bool RequestRestart(){if(restartPrompt||!CanRestartNow)return false;restartPrompt=true;return true;}
  public bool ConfirmRestart(bool accept){if(!restartPrompt)return false;if(!accept){restartPrompt=false;return false;}if(!CanRestartNow){restartPrompt=false;return false;}return ResetCampaign(true);}
  // Retained for older callers; excluded features never open a payment modal.
@@ -31,7 +31,7 @@ public class BusinessProgress : MonoBehaviour {
   if(PracticeSession.Enabled){testMode=true;enabledCampaign=false;}
   useV2=Array.IndexOf(args,"-serviceLawZonesTest")>=0||PracticeSession.Enabled||!testMode||(Array.IndexOf(args,"-campaignTest")>=0||Array.IndexOf(args,"-completionTest")>=0||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-campaignDriveTest")>=0)||Array.IndexOf(args,"-scenarioTest")>=0||Array.IndexOf(args,"-contentFlowTest")>=0||Array.IndexOf(args,"-exitTransportTest")>=0||Array.IndexOf(args,"-hybridV2")>=0;
   if((Array.IndexOf(args,"-serviceLawZonesTest")>=0||Array.IndexOf(args,"-campaignTest")>=0||Array.IndexOf(args,"-completionTest")>=0||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-campaignDriveTest")>=0))enabledCampaign=true;
-  SavePath=testMode?Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts",useV2?"campaign-v2-test.json":"economy-player-checkpoint.json")):Path.Combine(Application.persistentDataPath,PrototypeSettings.SaveFile);
+  SavePath=testMode?Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts",useV2?"campaign-v2-test.json":"economy-player-checkpoint.json")):Path.Combine(Path.GetDirectoryName(Application.persistentDataPath),"영통 택시 시뮬레이터",PrototypeSettings.SaveFile);
   ledger=useV2?new EconomyLedger(settings):new EconomyLedger(new EconomySettings());
   if(!testMode||Array.IndexOf(args,"-completionReloadTest")>=0){
    foreach(var path in new[]{SavePath,SavePath+".bak"}){
@@ -53,7 +53,7 @@ public class BusinessProgress : MonoBehaviour {
   ledger.Advance(Time.fixedDeltaTime,metres);
   if(ledger.Account!=null&&ledger.Account.Fuel<=0)RecoverFuel();
  }
- void Update(){if(ledger.Account!=null&&ledger.CanAccept){if(ledger.Account.Fuel<=15)notice="연료 부족 · F7에서 주유소 길 안내를 선택하세요";else if(notice.StartsWith("연료 부족"))notice="";}if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil){notice="";noticeUntil=0;}}
+ void Update(){if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil){notice="";noticeUntil=0;}}
  void LateUpdate(){
   if(session.FullMapOpen||!enabledCampaign||ledger.State!=BusinessState.Closing)return;
   if(session.jobs.trip.State==TripState.OnTrip){notice="영업 종료 대기 · 현재 승객 운송 후 정산합니다";return;}
@@ -71,7 +71,7 @@ public class BusinessProgress : MonoBehaviour {
   if(!useV2||PracticeSession.Enabled||session.jobs.current==null||string.IsNullOrEmpty(session.law.tripId))return;
   foreach(var old in passengers)if(old.tripId==session.law.tripId)return;
   var jobs=session.jobs;var offer=jobs.current;
-  passengers.Add(new PassengerResult{tripId=session.law.tripId,day=ledger.Day,pickup=jobs.stops[offer.pickup].name,destination=jobs.stops[offer.drop].name,outcome=outcome,quoted=offer.fare,paid=paid,score=session.manners.ledger.Score,required=offer.requiredScore,elapsed=Mathf.Max(0,offer.seconds-jobs.trip.Remaining),request=session.requests.request.Resolved?session.requests.request.ResponseText():"미응답 · 운송 종료",mannerReason=session.manners.RideReasons});
+  passengers.Add(new PassengerResult{tripId=session.law.tripId,offerId=jobs.OfferId,day=ledger.Day,pickup=jobs.stops[offer.pickup].name,destination=jobs.stops[offer.drop].name,outcome=outcome,quoted=offer.fare,paid=paid,score=session.manners.ledger.Score,required=offer.requiredScore,elapsed=Mathf.Max(0,offer.seconds-jobs.trip.Remaining),request=session.requests.request.Resolved?session.requests.request.ResponseText():"미응답 · 운송 종료",mannerReason=session.manners.RideReasons});
  }
  public void RecordFare(int amount){if(!enabledCampaign)return;if(ledger.Account!=null)ledger.RecordFare(session.law.tripId,amount);else ledger.RecordFare(amount);}
  public void RecordFailure(){if(enabledCampaign)ledger.RecordFailure();}

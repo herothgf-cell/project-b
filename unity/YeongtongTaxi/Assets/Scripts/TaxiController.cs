@@ -36,7 +36,6 @@ public class TaxiController : MonoBehaviour {
             if(assistance)assistance.ReadInput(lateral);
             if(!assistance||!assistance.Active)steer=Mathf.MoveTowards(steer,lateral,Time.deltaTime*Mathf.Lerp(4.5f,2.2f,Mathf.Clamp01(Mathf.Abs(Speed)/14)));
             brake=Input.GetKey(KeyCode.Space)||Input.GetKey(KeyCode.JoystickButton2);
-            if(Input.GetKeyDown(KeyCode.R)||Input.GetKeyDown(KeyCode.JoystickButton3)) RequestReset();
         }
         for(int i=0;i<4;i++) {Vector3 p; Quaternion q; wheels[i].GetWorldPose(out p,out q); visuals[i].SetPositionAndRotation(p,q*Quaternion.Euler(0,0,90));}
         if(transform.position.y < -5 || transform.position.y > 50) RequestReset();

@@ -55,12 +55,15 @@ public enum PedestrianState { None, Intending, Crossing, Unknown }
 }
 [Serializable] public class PracticeResult {public string sourceId,action,latestOutcome,feedback;public int events,score,validFindings;public string EvaluationText(){if(!string.IsNullOrEmpty(latestOutcome))return latestOutcome;return validFindings==0?"유효 평가 없음":score+"점 / 유효 "+validFindings+"건";}}
 [Serializable] public class PassengerResult {
- public string tripId,pickup,destination,outcome,request,mannerReason;
+ public string tripId,offerId,pickup,destination,outcome,request,mannerReason;
  public int day,quoted,paid,score,required;public float elapsed;
 }
 // No dependency on passenger manners, fares, Unity time, or physics.
 public class LawLedger {
  readonly List<LawEvent> events=new List<LawEvent>();
+ public int Count {get{return events.Count;}}
+ // Campaign score follows event order; only observed compliance recovers one point.
+ public int TotalScore {get{int score=100;foreach(var e in events){bool good=false,bad=false;foreach(var r in e.rules){good|=r.verdict==LawVerdict.Compliant;bad|=r.verdict==LawVerdict.Violation;}score=Math.Max(0,Math.Min(100,score-e.Deduction+(good&&!bad?1:0)));}return score;}}
  public LawEvent[] Events {get{return events.ConvertAll(e=>e.Copy()).ToArray();}}
  public bool Record(LawEvent e){
   if(e==null||string.IsNullOrEmpty(e.id)||e.day<1)throw new ArgumentException("Invalid law event");
@@ -70,7 +73,7 @@ public class LawLedger {
  public int Score(int day){int score=100;foreach(var e in events)if(e.day==day)score-=e.Deduction;return Math.Max(0,score);}
  public string DaySummary(int day){int count=0,good=0,bad=0,deferred=0,none=0;foreach(var e in events){if(e.day!=day)continue;count++;foreach(var r in e.rules){if(r.verdict==LawVerdict.Compliant)good++;else if(r.verdict==LawVerdict.Violation)bad++;else if(r.verdict==LawVerdict.Deferred)deferred++;else none++;}}
   if(count==0)return "평가 기록 없음";
-  return (good+bad==0?"유효 평가 없음":Score(day)+"점")+" · 사건 "+count+" / 유효 "+(good+bad)+"\n규칙별 준수 "+good+" · 위반 "+bad+" · 보류 "+deferred+" · 기회 없음 "+none;
+  return (good+bad==0?"유효 평가 없음":"당일 감점 "+(100-Score(day))+"점")+" · 사건 "+count+" / 유효 "+(good+bad)+"\n규칙별 준수 "+good+" · 위반 "+bad+" · 보류 "+deferred+" · 기회 없음 "+none;
  }
  public int ValidForDay(int day){int count=0;foreach(var e in events)if(e.day==day)foreach(var r in e.rules)if(r.verdict==LawVerdict.Compliant||r.verdict==LawVerdict.Violation)count++;return count;}
  public int ValidCount(string family,string rule){return Recent(family,rule,int.MaxValue).Count;}

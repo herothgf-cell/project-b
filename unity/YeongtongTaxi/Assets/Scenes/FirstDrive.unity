@@ -122,7 +122,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &1615179018
+--- !u!1 &729093797
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -130,8 +130,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1615179020}
-  - component: {fileID: 1615179019}
+  - component: {fileID: 729093799}
+  - component: {fileID: 729093798}
   m_Layer: 0
   m_Name: Drive Session
   m_TagString: Untagged
@@ -139,13 +139,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1615179019
+--- !u!114 &729093798
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1615179018}
+  m_GameObject: {fileID: 729093797}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c7907702dfe379146b92aa5cd2c5991d, type: 3}
@@ -163,17 +163,21 @@ MonoBehaviour:
   roadEnvironment: {fileID: 0}
   manners: {fileID: 0}
   business: {fileID: 0}
+  law: {fileID: 0}
+  services: {fileID: 0}
+  requests: {fileID: 0}
   assisted: {fileID: 0}
   roadConditions: {fileID: 0}
   paused: 0
+  ShowHints: 0
   visits: 0
---- !u!4 &1615179020
+--- !u!4 &729093799
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1615179018}
+  m_GameObject: {fileID: 729093797}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -186,4 +190,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1615179020}
+  - {fileID: 729093799}

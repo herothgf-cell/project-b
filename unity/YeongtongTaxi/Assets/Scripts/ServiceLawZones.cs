@@ -11,6 +11,8 @@ public sealed class ServiceLawZone {
 public sealed class ServiceLawZones : MonoBehaviour {
  public DriveSession session;
  public readonly List<ServiceLawZone> zones=new List<ServiceLawZone>();
+ public readonly List<PrototypeScenario> scenarios=new List<PrototypeScenario>();
+ public PrototypeScenario CurrentScenario {get;private set;}public bool PickupPhase {get;private set;}
  public ServiceLawZone Assigned {get;private set;}
  public ConfusionPractice Live {get;private set;}
  public PracticeFeedback LastFeedback {get;private set;}
@@ -24,7 +26,7 @@ public sealed class ServiceLawZones : MonoBehaviour {
  }
  void Start(){
   if(PracticeSession.Enabled||!session.world.map.hybrid||session.world.map.mapId!="eungye")return;
-  Register();Ready=zones.Count>0;session.jobs.Generate();
+  Register();scenarios.AddRange(PrototypeScenario.Build(session.jobs.nav.hd,session.jobs.stops));Ready=zones.Count>0;session.jobs.Generate();
  }
  public void Register(){
   if(zones.Count>0)return;
@@ -74,19 +76,38 @@ public sealed class ServiceLawZones : MonoBehaviour {
    sequence=(index+1)%zones.Count;return;
   }
  }
+ public bool ConfigureScenario(JobOffer offer,PrototypeScenario scenario){
+  if(!Ready||scenario==null)return false;var hd=session.jobs.nav.hd;var stops=session.jobs.stops;
+  var p=stops[scenario.pickup];var d=stops[scenario.drop];float at;int start=hd.Nearest(session.taxi.transform.position,session.taxi.transform.forward,out at);
+  var pickupRoute=scenario.beforePickup?hd.Via(start,at,scenario.connector,p.laneEdge,p.laneAt):hd.Route(start,at,p.laneEdge,p.laneAt);
+  bool alreadyAtPickup=!scenario.beforePickup&&start==p.laneEdge&&Mathf.Abs(at-p.laneAt)<.25f;
+  if(pickupRoute==null&&!alreadyAtPickup||(scenario.beforePickup&&!PrototypeScenario.Valid(pickupRoute,scenario.connector)))return false;
+  var delivery=scenario.beforePickup?hd.Route(p.laneEdge,p.laneAt,d.laneEdge,d.laneAt):scenario.route;if(delivery==null)return false;
+  int zone=zones.FindIndex(z=>z.connector==scenario.connector);if(scenario.variant>0&&zone<0)return false;
+  offer.pickup=scenario.pickup;offer.drop=scenario.drop;offer.scenarioId=scenario.id;offer.zoneIndex=zone;
+  offer.distance=Mathf.Max(delivery.path.length,scenario.alternative==null?0:scenario.alternative.path.length);offer.waitSeconds=50;
+  offer.pickupSeconds=Mathf.Max(180,(alreadyAtPickup?0:pickupRoute.path.length)/4+120+(scenario.beforePickup?35:0));return true;
+ }
+ public void BeginPickup(JobOffer offer){
+  EndTrip();CurrentScenario=scenarios.Find(s=>s.id==offer.scenarioId);PickupPhase=CurrentScenario!=null&&CurrentScenario.beforePickup;
+  if(PickupPhase){Assigned=ZoneFor(offer);Completed=false;LastFeedback=null;LastTitle="";session.jobs.nav.RequireVia(CurrentScenario.connector);}
+ }
  public void BeginTrip(JobOffer offer){
-  EndTrip();Assigned=ZoneFor(offer);Completed=false;LastFeedback=null;LastTitle="";
+  bool pre=CurrentScenario!=null&&CurrentScenario.beforePickup;EndTrip();CurrentScenario=scenarios.Find(s=>s.id==offer.scenarioId);PickupPhase=false;Assigned=pre?null:ZoneFor(offer);Completed=pre;LastFeedback=null;LastTitle="";
   if(Assigned!=null)session.jobs.nav.RequireVia(Assigned.connector);
+  if(CurrentScenario!=null&&(CurrentScenario.id=="PS08"||CurrentScenario.id=="PS09")){
+   var course=GetComponent<ScenarioChoiceSituation>();if(!course)course=gameObject.AddComponent<ScenarioChoiceSituation>();course.session=session;course.Begin(CurrentScenario);session.jobs.nav.RequireVia(CurrentScenario.connector);
+  }
  }
  public void EndTrip(){
-  if(Live&&Live.Active){if(Live.State.Entered&&!Live.State.Finished){Live.RecordObservation();LastFeedback=Live.Feedback();LastTitle=Assigned==null?"상황 미완료":Assigned.Title;}Live.Stop();}Assigned=null;details=false;
+  if(Live&&Live.Active){if(Live.State.Entered&&!Live.State.Finished){Live.RecordObservation();LastFeedback=Live.Feedback();LastTitle=Assigned==null?"상황 미완료":Assigned.Title;}Live.Stop();}Assigned=null;details=false;PickupPhase=false;CurrentScenario=null;var course=GetComponent<ScenarioChoiceSituation>();if(course)course.Stop();
  }
  void Update(){
   if(!Ready)return;
-  if(session.jobs.trip.State!=TripState.OnTrip){if(Assigned!=null)EndTrip();return;}
+  if(session.jobs.trip.State!=TripState.OnTrip&&!(PickupPhase&&session.jobs.trip.State==TripState.ToPickup)){if(Assigned!=null)EndTrip();return;}
   if(Assigned==null||Completed||session.paused||session.PracticeMenuOpen||session.business.ShowingSummary)return;
   if(!Live.Active&&session.jobs.nav.PassedRequiredVia==Assigned.connector){Completed=true;LastTitle=Assigned.Title;LastFeedback=new PracticeFeedback{outcome="구역 통과 · 상황 관찰 보류",good="안내한 상황 구역을 통과했습니다.",issues="주변 교통 때문에 안전한 상황 배치를 보류했습니다. 법규 준수로 자동 채점하지 않습니다.",next="F8에서 운송 기록과 법규 관찰을 구분해 확인하세요."};toastUntil=Time.time+12;
-   var e=new ConfusionPracticeState(Assigned.variant){Known=false}.Event(session.law.ids.Next("confusion"),session.law.Day);e.junction=Assigned.junction.name;e.tripId=session.law.tripId;e.occupied=true;e.seconds=(float)session.business.ledger.Elapsed;e.reason=LastFeedback.Details();session.law.ledger.Record(e);return;}
+   var e=new ConfusionPracticeState(Assigned.variant){Known=false}.Event(session.law.ids.Next("confusion"),session.law.Day);e.junction=Assigned.junction.name;e.tripId=session.law.tripId;e.occupied=session.jobs.trip.State==TripState.OnTrip;e.seconds=(float)session.business.ledger.Elapsed;e.reason=LastFeedback.Details();session.law.ledger.Record(e);return;}
   if(!Live.Active){
    float error;var path=session.jobs.nav.hd.paths[Assigned.incoming];float at=path.Project(session.taxi.transform.position,out error);float gap=Vector3.Distance(session.taxi.transform.position,Assigned.junction.center);
    bool direction=Vector3.Dot(session.taxi.transform.forward,path.Tangent(at))>.7f;
@@ -101,6 +122,8 @@ public sealed class ServiceLawZones : MonoBehaviour {
   }
  }
  public void ToggleDetails(){if(LastFeedback!=null)details=!details;}
+ public void BeginAlternative(){if(Live&&Live.Active)Live.Stop();Assigned=null;Completed=false;}
+ public void CompleteAlternative(){Completed=true;LastTitle="출구 우회";LastFeedback=new PracticeFeedback{outcome="우회 경로 통과",good="선택한 대체 연결도로를 실제로 통과했습니다.",issues="원래 대기열 합류는 평가 기회 없음입니다.",next="목적지까지 안내 차로를 따라 진행하세요."};toastUntil=Time.time+12;}
  void OnGUI(){
   if(!Ready||session.PracticeMenuOpen||session.business.preparing||session.business.restartPrompt||session.law.HistoryOpen||session.services.open)return;
   var text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=15,wordWrap=true};var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=14};

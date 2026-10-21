@@ -4,24 +4,35 @@ using UnityEngine;
 // One modal shares the real navigation path and situation definitions with the minimap.
 public class FullMapOverlay : MonoBehaviour {
  public DriveSession session;public bool IsOpen {get;private set;}
- bool previousPause;float previousScale;int closedFrame=-1;GUIStyle text,heading,button;
+ public bool ShowFacilities=true,ShowTraffic=true,ShowLaw=true;
+ public sealed class MapMarker {public Vector3 position;public string label;public Color color;public bool named;}
+ public List<MapMarker> VisibleMarkers(){
+  var markers=new List<MapMarker>();
+  if(ShowFacilities){int i=0;foreach(var station in FuelStationLayout.For(session.world.map))markers.Add(new MapMarker{position=station.pump,label="주유 "+(++i),color=new Color(1,.75f,.15f),named=true});
+   if(session.business.useV2)for(int k=1;k<session.services.indices.Length;k++)markers.Add(new MapMarker{position=session.jobs.stops[session.services.indices[k]].V(),label=k==1?"식당":"주차장",color=new Color(.9f,.6f,1),named=true});}
+  if(ShowTraffic){foreach(var car in session.traffic.cars)if(car.Visible)markers.Add(new MapMarker{position=car.transform.position,label=car.speed<.2f?"대기 차량":"이동 차량",color=car.speed<.2f?new Color(1,.65f,.2f):new Color(.65f,.8f,.9f)});
+   foreach(var incident in session.roadConditions.incidents)markers.Add(new MapMarker{position=incident.position,label="정체·정차",color=Color.red,named=true});}
+  return markers;
+ }
+ public List<ServiceLawZone> VisibleLawZones(){var result=new List<ServiceLawZone>();var zones=GetComponent<ServiceLawZones>();if(ShowLaw&&zones&&zones.Ready)result.AddRange(zones.zones);return result;}
+ Vector2 filterScroll;bool previousPause;float previousScale;int closedFrame=-1;GUIStyle text,heading,button;
  public bool ClosedThisFrame {get{return closedFrame==Time.frameCount;}}
  public Rect MapRect {get{return new Rect(28,86,Mathf.Min(Screen.height-158,Screen.width-350),Mathf.Min(Screen.height-158,Screen.width-350));}}
  public bool Open(){
   if(IsOpen)return false;
   var b=session.business;
-  if(session.PracticeMenuOpen||session.PracticeBusy||b.preparing||b.ShowingSummary||b.restartPrompt||b.pendingPayment>=0||b.taxPrompt||session.services.open||session.law.HistoryOpen)return false;
+  if(session.ChoiceOpen||session.PracticeMenuOpen||session.PracticeBusy||b.preparing||b.ShowingSummary||b.restartPrompt||b.pendingPayment>=0||b.taxPrompt||session.services.open||session.law.HistoryOpen)return false;
   previousPause=session.paused;previousScale=Time.timeScale;session.paused=true;Time.timeScale=0;IsOpen=true;return true;
  }
  public void Close(){if(!IsOpen)return;IsOpen=false;closedFrame=Time.frameCount;session.paused=previousPause;Time.timeScale=previousScale;}
- void Update(){if(IsOpen){if(Input.GetKeyDown(KeyCode.G)||Input.GetKeyDown(KeyCode.Escape))Close();}else if(Input.GetKeyDown(KeyCode.G))Open();}
+ void Update(){if(IsOpen){if(Input.GetKeyDown(KeyCode.M)||Input.GetKeyDown(KeyCode.Escape))Close();}else if(Input.GetKeyDown(KeyCode.M))Open();}
  void OnDisable(){if(IsOpen)Close();}
  Vector2 Project(Vector3 p,Rect map){float span=Mathf.Max(session.world.map.width,session.world.map.depth);return new Vector2(map.x+(p.x-(session.world.map.width-span)/2)/span*map.width,map.y+(1-(p.z-(session.world.map.depth-span)/2)/span)*map.height);}
  void OnGUI(){if(!IsOpen)return;if(text==null){text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=15,wordWrap=true};heading=new GUIStyle(text){fontSize=22,fontStyle=FontStyle.Bold};button=KoreanText.Button(14);text.normal.textColor=heading.normal.textColor=Color.white;}GUI.depth=-220;GUI.ModalWindow(94721,new Rect(0,0,Screen.width,Screen.height),Draw,GUIContent.none,GUIStyle.none);}
  void Draw(int id){
   Fill(new Rect(0,0,Screen.width,Screen.height),new Color(.025f,.045f,.055f,.99f));
   GUI.Label(new Rect(28,18,Screen.width-240,35),"은계 전체 지도 · 북쪽 ↑",heading);
-  if(GUI.Button(new Rect(Screen.width-190,20,160,36),"G / Esc 닫기",button)){Close();return;}
+  if(GUI.Button(new Rect(Screen.width-190,20,160,36),"M / Esc 닫기",button)){Close();return;}
   GUI.Label(new Rect(28,55,Screen.width-56,26),"지도를 보는 동안 영업시간과 주행이 멈춥니다.  ▲ 내 위치   청록선: 실제 내비 경로   초록: 승차   분홍: 도착·이번 상황",text);
   var map=MapRect;Fill(map,new Color(.10f,.15f,.17f));var data=session.world.map;var tile=GetComponent<DriveHUD>().tile;
   if(tile){var a=Project(new Vector3(0,0,data.depth),map);float span=Mathf.Max(data.width,data.depth);GUI.DrawTexture(new Rect(a.x,a.y,data.width/span*map.width,data.depth/span*map.height),tile);}
@@ -32,22 +43,30 @@ public class FullMapOverlay : MonoBehaviour {
   else if(jobs.nav.active)Target(jobs.nav.destination,"목표",Color.cyan,map,occupied);
   var zones=GetComponent<ServiceLawZones>();var selected=jobs.Active?zones.ZoneFor(jobs.current):null;
   var nameStyle=new GUIStyle(text){fontSize=13,alignment=TextAnchor.MiddleCenter};
-  if(zones.Ready)foreach(var zone in zones.zones){
+  foreach(var zone in VisibleLawZones()){
    var anchor=Project(zone.junction.center,map);var box=LawZoneMapLayout.Place(anchor,new Vector2(146,42),new Rect(map.x+3,map.y+3,map.width-6,map.height-6),occupied);occupied.Add(box);
    var color=zone==selected?new Color(1,.55f,.9f):new Color(1,.8f,.3f);Line(anchor,new Vector2(Mathf.Clamp(anchor.x,box.xMin,box.xMax),Mathf.Clamp(anchor.y,box.yMin,box.yMax)),color,2);Fill(box,new Color(.035f,.05f,.065f,.95f));nameStyle.normal.textColor=color;GUI.Label(box,zone.MapTitle,nameStyle);Dot(anchor,color,7);
   }
+
+  foreach(var marker in VisibleMarkers()){
+   var anchor=Project(marker.position,map);Dot(anchor,Color.black,marker.named?13:7);Dot(anchor,marker.color,marker.named?9:4);
+   if(marker.named){var box=LawZoneMapLayout.Place(anchor,new Vector2(82,26),map,occupied);occupied.Add(box);Line(anchor,new Vector2(Mathf.Clamp(anchor.x,box.xMin,box.xMax),Mathf.Clamp(anchor.y,box.yMin,box.yMax)),marker.color,1);Fill(box,Color.black);GUI.Label(box,marker.label,text);}
+  }
   var forward=new Vector2(session.taxi.transform.forward.x,-session.taxi.transform.forward.z).normalized;var side=new Vector2(-forward.y,forward.x);Dot(player,Color.black,26);Line(player-forward*7-side*8,player+forward*12,Color.yellow,5);Line(player+forward*12,player-forward*7+side*8,Color.yellow,5);Line(player-forward*7+side*8,player-forward*7-side*8,Color.yellow,5);
   float x=map.xMax+24,w=Screen.width-x-28,y=86;
-  GUI.Label(new Rect(x,y,w,33),"법규 상황 구역",heading);y+=39;
-  if(zones.Ready)foreach(var z in zones.zones){bool chosen=z==selected;Fill(new Rect(x,y,w,53),chosen?new Color(.27f,.08f,.23f):new Color(.07f,.10f,.12f));var s=new GUIStyle(text){fontSize=14};s.normal.textColor=chosen?new Color(1,.65f,.93f):Color.white;GUI.Label(new Rect(x+9,y+5,w-18,45),(chosen?"이번 경유 · ":"")+z.Title+"\n창작 교육 상황",s);y+=59;}
-  var stations=FuelStationLayout.For(data);if(stations.Count>0){
-   GUI.Label(new Rect(x,y+4,w,24),"주유소 · 게임시설 / 입구까지 내비 안내",text);
-   for(int i=0;i<stations.Count;i++){
-    var station=stations[i];var anchor=Project(station.pump,map);var box=LawZoneMapLayout.Place(anchor,new Vector2(82,26),map,occupied);occupied.Add(box);Line(anchor,new Vector2(Mathf.Clamp(anchor.x,box.xMin,box.xMax),Mathf.Clamp(anchor.y,box.yMin,box.yMax)),new Color(1,.75f,.15f),2);Dot(anchor,new Color(1,.75f,.15f),9);Fill(box,Color.black);GUI.Label(box,"주유 "+(i+1),text);GUI.Label(new Rect(x,y+31+i*25,w,25),(i+1)+" · "+station.name.Replace(" (게임시설)",""),text);
-   }
-  }else GUI.Label(new Rect(x,Mathf.Max(y+10,map.yMax-48),w,60),jobs.nav.active?"현재 경로: "+jobs.nav.remaining.ToString("0")+"m · "+jobs.nav.PreferenceLabel:"호출을 선택하면 승차·도착과 경유 경로가 표시됩니다.",text);
+  filterScroll=GUI.BeginScrollView(new Rect(x,y,w,map.height),filterScroll,new Rect(0,0,w-20,700));x=0;y=0;w-=20;
+  GUI.Label(new Rect(x,y,w,32),"지도 표시 필터",heading);y+=39;
+  ShowFacilities=Filter(new Rect(x,y,w,32),ShowFacilities,"주요 시설 · 주유소 / 식당 / 주차장");y+=38;
+  ShowTraffic=Filter(new Rect(x,y,w,32),ShowTraffic,"교통 상황 · 차량 / 대기 / 정체");y+=38;
+  ShowLaw=Filter(new Rect(x,y,w,32),ShowLaw,"교통 법규 · 전체 상황 구역");y+=43;
+  GUI.Label(new Rect(x,y,w,40),"승차·도착·내 위치·내비 경로는 항상 표시",text);y+=43;
+  if(ShowTraffic){GUI.Label(new Rect(x,y,w,38),"하늘색: 이동 차량 · 주황: 대기 차량\n빨강: 정체·정차 상황",text);y+=44;}
+  if(ShowLaw){GUI.Label(new Rect(x,y,w,26),"법규 상황 · 창작 교육 구역",text);y+=30;foreach(var z in VisibleLawZones()){var row=new Rect(x,y,w,28);Fill(row,z==selected?new Color(.27f,.08f,.23f):new Color(.07f,.10f,.12f));GUI.Label(new Rect(x+6,y,w-12,28),(z==selected?"이번 경유 · ":"")+z.Title,new GUIStyle(text){fontSize=13});y+=30;}}
+  if(ShowFacilities){GUI.Label(new Rect(x,y+6,w,45),"주유소 1·2·3: 게임시설\nF7에서 입구까지 길 안내 선택",new GUIStyle(text){fontSize=13});}
+  GUI.EndScrollView();
   GUI.Label(new Rect(28,Screen.height-54,Screen.width-56,45),"법규 구역은 은계 지도에 배치한 창작 상황입니다. 시설·현장 규제 확인과 구분합니다.  © OpenStreetMap contributors / ODbL",text);
  }
+ bool Filter(Rect rect,bool active,string caption){if(GUI.Button(rect,(active?"[켜짐] ":"[꺼짐] ")+caption,button))return !active;return active;}
  void Target(Vector3 world,string title,Color color,Rect map,List<Rect> occupied){var p=Project(world,map);Dot(p,Color.black,17);Dot(p,color,11);var box=LawZoneMapLayout.Place(p,new Vector2(66,26),map,occupied);Fill(box,Color.black);GUI.Label(box,title,text);occupied.Add(new Rect(p.x-10,p.y-10,20,20));occupied.Add(box);}
  static void Fill(Rect r,Color c){GUI.color=c;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
  static void Dot(Vector2 p,Color c,float size){Fill(new Rect(p.x-size/2,p.y-size/2,size,size),c);}

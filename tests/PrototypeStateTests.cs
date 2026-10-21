@@ -13,6 +13,11 @@ class PrototypeStateTests {
   e.practice.points[0]=99;Check(ledger.Events[0].practice.points[0]==1,"replay template is immutable history");
   Check(!ledger.Record(e)&&ledger.Events.Length==1,"duplicate event ignored");
   Check(ledger.Score(2)==100&&ledger.Events.Length==1,"daily reset retains history");
+  Check(ledger.TotalScore==85,"campaign score does not reset on day change");
+  var compliant=new LawEvent{id="good-day2",day=2};compliant.Add("L02",LawVerdict.Compliant,0);ledger.Record(compliant);
+  Check(ledger.TotalScore==86&&!ledger.Record(compliant)&&ledger.TotalScore==86,"one recovery per observed event");
+  var restored=new LawLedger();foreach(var saved in ledger.Events)restored.Record(saved);
+  Check(restored.TotalScore==86&&new LawLedger().TotalScore==100,"restore cumulative score and new campaign reset");
   var bypass=new LawEvent{id="exit-2",day=1,family="exit"};bypass.Add("L06",LawVerdict.NoOpportunity,15);ledger.Record(bypass);
   Check(ledger.ValidCount("exit","L06")==1,"no opportunity excluded");
   Check(ledger.Summary("exit","L06").Contains("기록 부족"),"do not infer from few observations");

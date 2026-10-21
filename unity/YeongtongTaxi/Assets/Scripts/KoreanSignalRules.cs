@@ -1,6 +1,12 @@
 // Operation is an explicit junction setting, never inferred from lane count.
 public enum LeftTurnMode { ProtectedShared, Permissive }
 public static class KoreanSignalRules {
+    public static float SecondsToChange(float time,LeftTurnMode mode,int axis,int sign){
+        float cycle=17*(mode==LeftTurnMode.Permissive?2:4);
+        int approach=mode==LeftTurnMode.Permissive?axis:axis*2+(sign>0?0:1);
+        float local=((time-approach*17)%cycle+cycle)%cycle;
+        return local<12?12-local:local<15?15-local:cycle-local;
+    }
     // Prototype timings, not statutory timing requirements. Each clearance is two seconds.
     public static SignalColor Signal(float time,LeftTurnMode mode,int axis,int sign){
         int phases=mode==LeftTurnMode.Permissive?2:4;
