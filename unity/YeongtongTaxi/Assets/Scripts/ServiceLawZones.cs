@@ -99,6 +99,9 @@ public sealed class ServiceLawZones : MonoBehaviour {
    var course=GetComponent<ScenarioChoiceSituation>();if(!course)course=gameObject.AddComponent<ScenarioChoiceSituation>();course.session=session;course.Begin(CurrentScenario);session.jobs.nav.RequireVia(CurrentScenario.connector);
   }
  }
+ public void RecordSkippedDelivery(){var choice=GetComponent<ScenarioChoiceSituation>();if((Assigned==null||Completed)&&(choice==null||choice.Course==null||choice.Completed))return;
+  var e=new LawEvent{id=session.law.ids.Next("unvisited"),day=session.law.Day,tripId=session.law.tripId,occupied=true,family="상황 미체험",scenario=CurrentScenario==null?"":CurrentScenario.id,reason="목적지 정상 하차 · 추천 상황 미체험 / 실제 관찰한 운행 기록은 유지"};e.Add("상황 미체험",LawVerdict.NoOpportunity,0);session.law.ledger.Record(e);
+ }
  public void EndTrip(){
   if(Live&&Live.Active){if(Live.State.Entered&&!Live.State.Finished){Live.RecordObservation();LastFeedback=Live.Feedback();LastTitle=Assigned==null?"상황 미완료":Assigned.Title;}Live.Stop();}Assigned=null;details=false;PickupPhase=false;CurrentScenario=null;var course=GetComponent<ScenarioChoiceSituation>();if(course)course.Stop();
  }

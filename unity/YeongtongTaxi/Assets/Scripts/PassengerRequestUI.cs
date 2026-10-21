@@ -72,11 +72,14 @@ public class PassengerRequestUI : MonoBehaviour {
   Vector3 p=session.taxi.transform.position;if(request.Accepted&&sample){float d=Vector3.Distance(previous,p);if(d<Mathf.Max(2,session.taxi.body.velocity.magnitude*Time.deltaTime+1)){travelled+=d;if(session.jobs.nav.CurrentRoadWidth()>=12)broadTravel+=d;}}previous=p;sample=true;
   if(Input.GetKeyDown(KeyCode.I))RespondAlternative();if(Input.GetKeyDown(KeyCode.U))Respond(false);if(Input.GetKeyDown(KeyCode.Y))Respond(true);
  }
- void OnGUI(){if(!session.business.useV2||session.jobs.trip.State!=TripState.OnTrip||session.paused||!SafeToRespond())return;if(request.Resolved&&Time.time>resultUntil)return;
-  string text=request.Resolved?request.ResponseText():"승객 요청: "+lines[(int)request.Kind];
+ void OnGUI(){if(!session.business.useV2||session.jobs.trip.State!=TripState.OnTrip||session.paused)return;if(request.Resolved&&Time.time>resultUntil)return;
+  string text=request.Resolved?"응답 결과\n"+request.ResponseText():"손님\n“"+lines[(int)request.Kind]+"”";
   if(!request.Resolved){if(ChangesRoute){if(!PrepareProposal())text+="\n안전한 변경 경로 준비 중 · 원래 운행 유지";else text+="\n"+KoreanText.Stop(session.jobs.stops[proposal].name)+" · 추가 "+addedDistance.ToString("0")+"m\n새 약정 "+newFare.ToString("N0")+"원 · 남은 기한 "+Mathf.CeilToInt(newRemaining)+"초";}
    if(AlternativeLabel.Length>0)text+="\nI "+AlternativeLabel;
    text+="\nY "+(ChangesRoute?"표시 조건으로 변경 확정":"응답·요청 수락")+" / U 안전상 보류 (감점 없음)";}
-  var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14,wordWrap=true};float width=Mathf.Min(440,Screen.width*.37f);float height=style.CalcHeight(new GUIContent(text),width-20)+20;GUI.Box(new Rect(16,390,width,height),"");GUI.Label(new Rect(26,400,width-20,height-20),text,style);
+  if(!SafeToRespond()&&!request.Resolved)text="손님\n“"+lines[(int)request.Kind]+"”\n안전하게 정차하면 답변할 수 있어요. 지금은 보류 · 감점 없음";
+  if(!ChangesRoute)text+="\n운임·목적지 유지 · 운행 점수와 별도";
+  var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14,wordWrap=true};style.normal.textColor=new Color(.1f,.16f,.2f);float width=Mathf.Min(440,Screen.width*.37f);float height=style.CalcHeight(new GUIContent(text),width-32)+24;float y=Mathf.Min(390,Screen.height-190-height);
+  GUI.color=new Color(.94f,.97f,.91f,.97f);GUI.DrawTexture(new Rect(16,y,width,height),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(30,y+height-1,12,10),Texture2D.whiteTexture);GUI.color=Color.white;GUI.Label(new Rect(32,y+12,width-32,height-24),text,style);
  }
 }

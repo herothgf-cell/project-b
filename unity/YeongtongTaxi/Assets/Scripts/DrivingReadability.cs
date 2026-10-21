@@ -112,6 +112,7 @@ public class DrivingReadability : MonoBehaviour {
   if(SignalTarget==null){GUI.Label(new Rect(x+8,420,Size-16,80),"전방 신호 안내\n접근 방향의 신호를 찾는 중\n현장 신호·주변 차량을 확인하세요",label);return;}
   var j=SignalTarget;var dir=session.traffic.AxisDirection(j,SignalAxis)*SignalSign;var o=session.traffic.Observe(j,SignalAxis,SignalSign,dir,session.taxi.gameObject);
   GUI.Label(new Rect(x+8,415,Size-16,24),"전방 "+Vector3.Distance(session.taxi.transform.position,j.center).ToString("0")+"m · "+(j.facility!=null&&j.facility.facilityStatus=="verified"?"확인 시설":"임시 신호"),label);
+  if(j.leftTurnMode==LeftTurnMode.Permissive){GUI.color=new Color(1,.75f,.12f);GUI.DrawTexture(new Rect(x-5,411,Size+10,4),Texture2D.whiteTexture);GUI.color=Color.white;}
   float next=session.traffic.SecondsToSignalChange(j,SignalAxis,SignalSign);
   GUI.Label(new Rect(x+8,519,Size-16,25),next>=0?"다음 신호 변경까지 "+Mathf.CeilToInt(next)+"초":"상황 조건 진행 · 고정 시간 없음",new GUIStyle(label){fontSize=12});
   var training=GetComponent<ConfusionPractice>();var zones=GetComponent<ServiceLawZones>();if(zones&&zones.Owns(j))training=zones.Live;
@@ -122,7 +123,7 @@ public class DrivingReadability : MonoBehaviour {
   }
   Lamp(new Rect(x+8,444,126,38),"↑ 직진",o.forward);
   Lamp(new Rect(x+142,444,130,38),j.leftTurnMode==LeftTurnMode.Permissive?"← 비보호":"← 좌회전",session.traffic.LeftSignal(j,SignalAxis,SignalSign));
-  GUI.Label(new Rect(x+8,482,Size-16,36),o.dedicated?"→ 전용 우회전: "+State(o.right):"→ 우회전: 정지·보행자 조건 확인",label);
+  GUI.Label(new Rect(x+8,482,Size-16,36),j.leftTurnMode==LeftTurnMode.Permissive?"← 비보호 좌회전 · 녹색에서 대향차 양보":o.dedicated?"→ 전용 우회전: "+State(o.right):"→ 우회전: 정지·보행자 조건 확인",label);
  }
  void Lamp(Rect r,string text,SignalColor signal){Dot(new Vector2(r.x+11,r.y+14),signal==SignalColor.Green?Color.green:signal==SignalColor.Red?Color.red:Color.yellow,18);GUI.Label(new Rect(r.x+25,r.y,r.width-25,r.height),text+"\n"+State(signal),new GUIStyle(label){fontSize=13});}
  static string State(SignalColor signal){return signal==SignalColor.Green?"녹색":signal==SignalColor.Red?"적색 · 정지":"황색";}

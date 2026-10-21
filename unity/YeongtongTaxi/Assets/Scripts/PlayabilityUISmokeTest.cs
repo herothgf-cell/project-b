@@ -28,6 +28,8 @@ public class PlayabilityUISmokeTest : MonoBehaviour {
   Check(session.services.indices[2]==0,"startup temporary parking moved to broad national road");
   var hud=session.GetComponent<DriveHUD>();var caption=typeof(DriveHUD).GetProperty("MannerCaption");var lawCaption=typeof(DriveHUD).GetProperty("LawCaption");
   Check(caption!=null&&lawCaption!=null,"two independent score gauges exposed");
+  Screen.SetResolution(1280,720,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);
+  yield return Capture("playability-fuel-offers-1280");
   session.jobs.offers[0]=new JobOffer{pickup=0,drop=1,fare=5000,seconds=600,requiredScore=70,distance=500,pickupSeconds=600};session.jobs.Accept(0);int before=session.manners.ledger.Score;
   var e=new LawEvent{id="ui-score-probe",day=session.business.ledger.Day,family="signal"};e.Add("L01",LawVerdict.Violation,20);session.law.ledger.Record(e);
   Check(session.manners.ledger.Score==before&&session.law.ledger.Score(e.day)==80,"law deduction does not change passenger manners");

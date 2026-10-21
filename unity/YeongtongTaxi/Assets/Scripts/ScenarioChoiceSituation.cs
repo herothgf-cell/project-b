@@ -11,6 +11,8 @@ public sealed class ScenarioChoiceSituation : MonoBehaviour {
  public void Stop(){Close();if(observing&&junction!=null){junction.scenarioSignal=false;junction.rightTurnObservation=null;}if(person)Destroy(person);observing=false;Course=null;}
  public string DetourDiagnostic {get;private set;}="";
  public bool CanDetour(){if(Course==null||Course.id!="PS08")return false;float at;var hd=session.jobs.nav.hd;int start=hd.Nearest(session.taxi.transform.position,session.taxi.transform.forward,out at);var to=session.jobs.stops[session.jobs.current.drop];var route=hd.Via(start,at,Course.alternate,to.laneEdge,to.laneAt,PrototypeScenario.AvoidWeights(hd,Course.connector));DetourDiagnostic="position="+session.taxi.transform.position+" body="+session.taxi.body.position+" heading="+session.taxi.transform.forward+" start="+start+" at="+at+" via="+Course.alternate+" goal="+to.laneEdge+" at="+to.laneAt+" route="+(route==null?"null":string.Join(",",route.edges));return route!=null&&!route.edges.Contains(Course.connector);}
+ public bool CanOfferSaved(){int count=0;foreach(var e in session.law.ledger.Events)if(e.family=="선택 안내 노출"){if(Course!=null&&e.scenario==Course.id)return false;if(e.day==session.law.Day)count++;}return count<2;}
+ void RecordExposure(){var e=new LawEvent{id=session.law.ids.Next("choice-seen"),day=session.law.Day,scenario=Course.id,tripId=session.law.tripId,family="선택 안내 노출",occupied=true,reason="캠페인 최초 안내 · 선택 자체는 점수 없음"};e.Add("안내 노출",LawVerdict.NoOpportunity,0);session.law.ledger.Record(e);}
  public bool Select(int choice){if(!Open)return false;
   if(Course.id=="PS08"&&choice==1){if(!CanDetour())return false;alternate=true;GetComponent<ServiceLawZones>().BeginAlternative();session.jobs.nav.AvoidEdge=Course.connector;session.jobs.nav.RequireVia(Course.alternate);Plan="다음 연결도로 우회";}
   else Plan=Course.id=="PS09"?(choice==0?"신호·보행자 확인 후 판단":"직접 운전"):(choice==0?"줄 뒤에서 대기":choice==2?"앞부분 진입 가능 여부 검토":"직접 운전");
@@ -26,7 +28,7 @@ public sealed class ScenarioChoiceSituation : MonoBehaviour {
   if(session.paused||Time.timeScale<=0||session.FullMapOpen||session.services.open||session.law.HistoryOpen||session.PracticeMenuOpen)return;
   if(observing)ObserveRightTurn();
   var route=nav.hdRoute;if(route==null)return;int k=route.edges.IndexOf(required);if(k<1)return;float error,progress=nav.ProjectVehicle(out error);float ahead=route.ends[k-1]-progress;
-  if(!offered&&(ahead<250||Course.id=="PS08")){offered=true;if(ahead>Mathf.Max(90,session.taxi.body.velocity.magnitude*5)&&panelsToday<2){previousPause=session.paused;previousScale=Time.timeScale;session.paused=true;Time.timeScale=0;Open=true;panelsToday++;return;}}
+  if(!offered&&(ahead<250||Course.id=="PS08")){offered=true;if(ahead>Mathf.Max(90,session.taxi.body.velocity.magnitude*5)&&CanOfferSaved()){previousPause=session.paused;previousScale=Time.timeScale;session.paused=true;Time.timeScale=0;Open=true;panelsToday++;RecordExposure();return;}}
   if(Course.id=="PS09"&&ahead<110&&ahead>20&&!observing)PrepareRightTurn(route,k);
  }
  void PrepareRightTurn(HdRoadGraph.RoutePath route,int k){

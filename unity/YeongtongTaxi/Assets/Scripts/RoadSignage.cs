@@ -11,13 +11,13 @@ public class RoadSignage : MonoBehaviour {
   foreach(var j in session.traffic.junctions)for(int i=0;i<j.lampAxes.Count;i++){
    int axis=j.lampAxes[i],sign=j.lampSigns[i];var forward=session.traffic.AxisDirection(j,axis)*sign;var right=TrafficSystem.Right(forward);
    var position=j.center-forward*(j.StopDistance(axis)+12)+right*(j.halfWidth[axis]+2.5f);bool clear=false;
-   for(int n=0;n<8;n++){if(position.x>2&&position.z>2&&position.x<session.world.map.width-2&&position.z<session.world.map.depth-2&&!session.roadEnvironment.OnRoad(position,1.8f)&&!Physics.CheckBox(position+Vector3.up*3.5f,new Vector3(1.6f,1.2f,.2f),Quaternion.LookRotation(forward),1,QueryTriggerInteraction.Ignore)){clear=true;break;}position+=right*1.5f;}
+   for(int n=0;n<8;n++){if(position.x>2&&position.z>2&&position.x<session.world.map.width-2&&position.z<session.world.map.depth-2&&!session.roadEnvironment.OnRoad(position,1.8f)&&!Physics.CheckBox(position+Vector3.up*4,new Vector3(2.2f,1.7f,.2f),Quaternion.LookRotation(forward),1,QueryTriggerInteraction.Ignore)){clear=true;break;}position+=right*1.5f;}
    if(!clear)continue;
    var root=new GameObject("게임 표지 · "+j.name);root.transform.SetParent(transform);root.transform.SetPositionAndRotation(position,Quaternion.LookRotation(forward));
    Part(root.transform,"표지 기둥",new Vector3(0,1.75f,0),new Vector3(.1f,3.5f,.1f),Color.gray);
    Label(root.transform,"횡단보도\n게임 설정",new Vector3(0,3.2f,-.09f),new Color(.07f,.25f,.65f));
    var left=Label(root.transform,"비보호 좌회전\n대향차 양보 · 게임",new Vector3(0,4.2f,-.09f),new Color(.07f,.25f,.65f));
-   signs.Add(new Sign{junction=j,left=left});
+   left.transform.localPosition+=Vector3.up*.3f;left.transform.localScale=Vector3.one*1.35f;signs.Add(new Sign{junction=j,left=left});
   }
  }
  void LateUpdate(){foreach(var sign in signs)sign.left.SetActive(sign.junction.leftTurnMode==LeftTurnMode.Permissive);}

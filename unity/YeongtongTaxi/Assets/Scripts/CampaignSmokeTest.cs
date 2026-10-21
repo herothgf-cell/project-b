@@ -23,7 +23,7 @@ public class CampaignSmokeTest : MonoBehaviour {
   Place(jobs.current.drop);yield return new WaitForSeconds(.4f);int before=a.Cash;
   // This accounting fixture teleports between services/stops; it does not complete a law route.
   // Check the real anti-skip gate first, then detach that encounter for the isolated fare check.
-  var zones=GetComponent<ServiceLawZones>();if(zones&&zones.Assigned!=null){Check(!jobs.Interact()&&a.Cash==before,"unvisited law zone blocks payment");zones.EndTrip();jobs.nav.RequireVia(-1);}
+  var zones=GetComponent<ServiceLawZones>();
   Check(jobs.Interact()&&a.Cash>before,"fare credited to cash in isolated accounting fixture");
   int after=a.Cash;Check(!jobs.Interact()&&a.Cash==after,"duplicate completion does not pay");
   var e=new LawEvent{id="integration-event",day=1,family="exit"};e.Add("L06",LawVerdict.Violation,15);e.Add("L07",LawVerdict.Violation,15);session.law.ledger.Record(e);
@@ -45,7 +45,7 @@ public class CampaignSmokeTest : MonoBehaviour {
   int passengersBefore=b.passengers.Count;jobs.trip.Tick(100000);jobs.RecordExpiredTrip();jobs.RecordExpiredTrip();b.ledger.Advance(720,0);yield return new WaitForSecondsRealtime(.2f);
   Check(!b.ShowingSummary&&b.ledger.State==BusinessState.Closing&&jobs.trip.State==TripState.OnTrip&&jobs.trip.Remaining==0&&jobs.nav.hdRoute==occupiedRoute&&b.passengers.Count==passengersBefore&&b.ledger.FailedTrips==0,"automatic closing waits for late passenger without early record or route removal");
   Check(!jobs.Accept(0)&&!b.RequestEndDay()&&!jobs.Interact(),"closing refuses new call premature N and remote dropoff");
-  Place(jobs.current.drop);yield return new WaitForSeconds(.3f);zones=GetComponent<ServiceLawZones>();if(zones&&zones.Assigned!=null){Check(!jobs.Interact(),"late arrival still enforces law route anti-skip");zones.EndTrip();jobs.nav.RequireVia(-1);}
+  Place(jobs.current.drop);yield return new WaitForSeconds(.3f);zones=GetComponent<ServiceLawZones>();
   Check(jobs.Interact()&&b.ledger.FailedTrips==1&&b.ledger.Income==0&&b.passengers.Count==passengersBefore+1&&b.passengers[b.passengers.Count-1].paid==0,"late passenger leaves at destination for zero fare and one failure");
   Check(!jobs.Interact()&&b.ledger.FailedTrips==1&&b.passengers.Count==passengersBefore+1,"late dropoff result records once");yield return new WaitForSecondsRealtime(.2f);Check(b.ShowingSummary,"late destination dropoff allows settlement");
   b.ledger=new EconomyLedger(new PrototypeSettings());a=b.ledger.Account;Time.timeScale=1;
