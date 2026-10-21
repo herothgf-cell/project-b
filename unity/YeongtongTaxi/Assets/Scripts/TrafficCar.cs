@@ -1,6 +1,7 @@
 using UnityEngine;
 public class TrafficCar : MonoBehaviour {
     public bool respawn=true;
+    public int mitFollowingTicks;public float baselineTarget,followingTarget;
     public DistrictTraffic district;
     readonly System.Collections.Generic.HashSet<TrafficStop> released=new System.Collections.Generic.HashSet<TrafficStop>();
     public bool Visible {get{return !recycling;}}
@@ -68,7 +69,11 @@ public class TrafficCar : MonoBehaviour {
         }}
         float cruise=route.turn!=0?4.5f:route.axis==0?9:7;
         if(district!=null){float bend=Vector3.Angle(route.Tangent(distance),route.Tangent(Mathf.Min(route.length,distance+14)));cruise=bend>12||CurrentTurn!=0?4.5f:9;}
-        float target=TrafficRules.SafeSpeed(gap,cruise);
+        float target=TrafficRules.SafeSpeed(gap,cruise);baselineTarget=target;
+        target=MitTrafficFollowing.Limit(system.mitOptions.Enabled,target,gap,
+            obstacleCar?obstacleCar.speed:0,obstacleCar?Vector3.Dot(transform.forward,obstacleCar.transform.forward):0,
+            waitingForObstacle&&obstacleCar!=null&&obstacleCar.Visible);
+        followingTarget=target;if(target<baselineTarget-.001f)mitFollowingTicks++;
         float previous=speed; speed=Mathf.MoveTowards(speed,target,(target<speed?5:2.2f)*Time.fixedDeltaTime);
         float step=Mathf.Min(speed*Time.fixedDeltaTime,Mathf.Max(0,gap)); distance+=step;totalTravel+=step;
         if(step<.0001f)speed=0;

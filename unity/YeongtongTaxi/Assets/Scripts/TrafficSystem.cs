@@ -34,6 +34,8 @@ public class TrafficRoute {
 public class TrafficStop { public TrafficJunction junction; public float distance,exitDistance;public int axis;public int turn=99;public int Movement(TrafficRoute route){return turn==99?route.turn:turn;} }
 
 public class TrafficSystem : MonoBehaviour {
+    public MitTrafficOptions mitOptions {get;private set;}
+    void Awake(){mitOptions=new MitTrafficOptions();}
     public readonly List<TrafficJunction> junctions = new List<TrafficJunction>();
     public readonly List<TrafficCar> cars = new List<TrafficCar>();
     public bool manualClock;

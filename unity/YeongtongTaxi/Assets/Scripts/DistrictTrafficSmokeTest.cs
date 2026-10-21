@@ -25,6 +25,8 @@ public class DistrictTrafficSmokeTest : MonoBehaviour {
     yield return new WaitForSeconds(1);
    }
    float total=0;int moved=0,stalled=0;foreach(var car in traffic.cars){total+=car.totalTravel;if(car.totalTravel>50)moved++;if(late.ContainsKey(car)&&car.totalTravel-late[car]<5){stalled++;report.AppendLine("STALLED "+car.name+" at="+car.distance+" blocked="+car.blockedName+" signal="+car.waitingForSignal+" junction="+car.waitingForJunction);}}
+   int adapted=0;foreach(var car in traffic.cars)adapted+=car.mitFollowingTicks;
+   Check(traffic.mitOptions.Enabled?adapted>0:adapted==0,"MIT mode="+traffic.mitOptions.Enabled+" applied ticks="+adapted);
    Check(moved==48&&total>5000,"district movement moved="+moved+" metres="+total);
    Check(left>0&&right>0&&hd&&local,"both turns and both source areas");Check(offpath==0&&overlaps==0,"geometry offpath="+offpath+" overlaps="+overlaps);
    Check(stalled==0,"no prolonged stalled cars count="+stalled);Check(district.continued>0,"continuous journeys="+district.continued);

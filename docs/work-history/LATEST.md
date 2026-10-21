@@ -35,3 +35,9 @@
 - 입력 지도3개와 ZIP은 변경하지 않았고 Strict 검사 Input issues: 0. 원본 raw 자료는 별도이며 진행 저장은 Git에 포함하지 않는다.
 - 기존 사용자 README.md·라이선스 문서3개·licenses/ 변경은 이번 작업에 포함하지 않는다. git status --short로 확인한다.
 - 최신 이력의 실제 커밋은 git log -1 --oneline -- docs/work-history/2026-10-21-passenger-scenarios-and-feedback.md로 확인한다.
+
+## MIT 교통 선택 기능 인계 (2026-10-21)
+
+최신 기능 기록: [MIT 앞차 추종 ON/OFF](2026-10-21-mit-traffic-following.md). 기본 은계 빌드의 Esc 메뉴에서 전환하며 최초 ON·선택 저장, OFF는 기존 AI다. 모델20묶음과 실제 차량 전환/정지/출발, 3해상도 검사 완료. 48대 비교 및 배포 해시는 전용 기록과 manifest 참조. 입력 지도 변경 없음, Strict Input issues: 0. 다음은 수동 ON/OFF 주행 체감·3일 밸런스 검사다.
+
+동시 작업의 승객/표지 변경이 포함된 기본 빌드에서 검사했다. 이후 동시 작업이 다시 빌드하면 MIT ON/OFF 회귀와 배포 manifest를 다시 검증한다. 기존 미도입 감사 문구보다 신규 CODE-001 사용 대장·MIT 전문/NOTICE가 우선한다. 이번 이력의 실제 커밋: `git log -1 --oneline -- docs/work-history/2026-10-21-mit-traffic-following.md`.

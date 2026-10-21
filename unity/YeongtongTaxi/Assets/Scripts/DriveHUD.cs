@@ -65,6 +65,7 @@ public class DriveHUD : MonoBehaviour {
    if(GUI.Button(new Rect(x+20,y+334,440,40),"운전 연습 선택 · 출구 정체 / 우회전"))session.GetComponent<PracticeSession>().OpenPicker();
    GUI.enabled=true;
    if(GUI.Button(new Rect(x+20,y+386,440,40),"게임 종료 (완료한 정산까지 저장)"))Application.Quit();
+   if(GUI.Button(new Rect(x+20,y+434,440,28),session.traffic.mitOptions.Label+" · 클릭하여 변경",KoreanText.Button(14)))session.traffic.mitOptions.SetEnabled(!session.traffic.mitOptions.Enabled);
   }
  }
  Vector2 Mini(Vector3 p,Rect r){return new Vector2(r.x+p.x/session.world.map.width*r.width,r.y+(1-p.z/session.world.map.depth)*r.height);}

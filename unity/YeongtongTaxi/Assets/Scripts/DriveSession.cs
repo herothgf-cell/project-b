@@ -35,6 +35,7 @@ public class DriveSession : MonoBehaviour {
         gameObject.AddComponent<RoadSignage>().session=this;gameObject.AddComponent<DriveNotifications>().session=this;gameObject.AddComponent<DrivingScoreJournal>().session=this;
         roadConditions=gameObject.AddComponent<RoadConditions>();roadConditions.Initialize(this);jobs.nav.conditions=roadConditions;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-districtTrafficTest")>=0)gameObject.AddComponent<DistrictTrafficSmokeTest>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-mitTrafficTest")>=0)gameObject.AddComponent<MitTrafficSmokeTest>().session=this;
         assist=new GameObject("Automatic camera monitor").AddComponent<AssistCamera>();assist.session=this;
         mirrors=new GameObject("상시 운전석 거울").AddComponent<CockpitMirrors>();mirrors.session=this;
         if(world.map.HasHd&&!world.map.hybrid){gameObject.AddComponent<HdRouteTrial>().session=this;if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-hdTest")>=0)gameObject.AddComponent<HdDriveSmokeTest>().session=this;}

@@ -1,0 +1,33 @@
+{
+  "upstream": "https://github.com/mchrbn/unity-traffic-simulation",
+  "commit": "4f03f4c276e2b82f033a5f037f43036ba9ab6be3",
+  "retrieved": "2026-10-21",
+  "license": "MIT",
+  "files": [
+    {
+      "file": "COMMIT.txt",
+      "bytes": 42,
+      "sha256": "7ad91909ff3c6d2e6428b71ae20adfdce3edc82fb0108a5146b4917015986cf4"
+    },
+    {
+      "file": "LICENSE.txt",
+      "bytes": 1084,
+      "sha256": "ba2940605e2f28e60f9c9683b016601d8115982cecdbcc9aa68f5806e7fbb6f7"
+    },
+    {
+      "file": "NOTICE.txt",
+      "bytes": 708,
+      "sha256": "6b947e00221722137af25196824b6ec335c45c7d6a2c09f8e6ae2e7a30443abe"
+    },
+    {
+      "file": "upstream-README.md",
+      "bytes": 4826,
+      "sha256": "01cbe1583ab61eed5f207eddb8de9b96c1d350d079ca84d7255ce115965f42b4"
+    },
+    {
+      "file": "upstream-VehicleAI.cs.txt",
+      "bytes": 13516,
+      "sha256": "8afe0645cd6e0f5f10b4674e8fda925d8461f59a367a4a998e97e66b8418b6b4"
+    }
+  ]
+}

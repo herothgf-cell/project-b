@@ -22,6 +22,10 @@ public static class PrototypeBuild {
         EditorBuildSettings.scenes=new[]{new EditorBuildSettingsScene("Assets/Scenes/FirstDrive.unity",true)};AssetDatabase.SaveAssets();
         string output=System.IO.Path.GetFullPath(destination);System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(output));
         var report=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=new[]{"Assets/Scenes/FirstDrive.unity"},locationPathName=output,target=BuildTarget.StandaloneWindows64,options=BuildOptions.None});
-        if(report.summary.result!=BuildResult.Succeeded)throw new System.Exception("Build failed: "+report.summary.result);Debug.Log("PROTOTYPE_BUILD_OK "+output);
+        if(report.summary.result!=BuildResult.Succeeded)throw new System.Exception("Build failed: "+report.summary.result);
+        var notices=System.IO.Path.Combine(System.IO.Path.GetDirectoryName(output),"ThirdPartyNotices");System.IO.Directory.CreateDirectory(notices);
+        System.IO.File.Copy("../../licenses/mchrbn-unity-traffic-simulation/LICENSE.txt",System.IO.Path.Combine(notices,"mchrbn-unity-traffic-simulation-MIT.txt"),true);
+        System.IO.File.Copy("../../licenses/mchrbn-unity-traffic-simulation/NOTICE.txt",System.IO.Path.Combine(notices,"mchrbn-unity-traffic-simulation-NOTICE.txt"),true);
+        Debug.Log("PROTOTYPE_BUILD_OK "+output);
     }
 }
