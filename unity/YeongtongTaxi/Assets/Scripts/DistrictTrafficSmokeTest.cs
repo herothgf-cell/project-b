@@ -10,7 +10,7 @@ public class DistrictTrafficSmokeTest : MonoBehaviour {
   yield return new WaitForSeconds(1);Time.timeScale=4;var traffic=session.traffic;var district=traffic.GetComponent<DistrictTraffic>();
   session.taxi.body.isKinematic=true;session.taxi.body.position=new Vector3(-200,1,-200);session.taxi.transform.position=session.taxi.body.position;session.taxi.automated=true;session.taxi.autoBrake=true;session.taxi.gameObject.SetActive(false);Physics.SyncTransforms();session.roadConditions.enabled=false;
   Check(!session.taxi.gameObject.activeInHierarchy,"player taxi excluded from NPC soak");
-  Check(district!=null&&traffic.cars.Count==36,"district population 36");
+  Check(district!=null&&traffic.cars.Count==48,"district population 48");
   var starts=new HashSet<int>();int left=0,right=0,overlaps=0,offpath=0;bool hd=false,local=false;var late=new Dictionary<TrafficCar,float>();
   if(district!=null){
    foreach(var car in traffic.cars){Check(car.route.graphPath!=null,"NPC shares graph");starts.Add(car.route.graphPath.edges[0]);}
@@ -25,7 +25,7 @@ public class DistrictTrafficSmokeTest : MonoBehaviour {
     yield return new WaitForSeconds(1);
    }
    float total=0;int moved=0,stalled=0;foreach(var car in traffic.cars){total+=car.totalTravel;if(car.totalTravel>50)moved++;if(late.ContainsKey(car)&&car.totalTravel-late[car]<5){stalled++;report.AppendLine("STALLED "+car.name+" at="+car.distance+" blocked="+car.blockedName+" signal="+car.waitingForSignal+" junction="+car.waitingForJunction);}}
-   Check(moved==36&&total>5000,"district movement moved="+moved+" metres="+total);
+   Check(moved==48&&total>5000,"district movement moved="+moved+" metres="+total);
    Check(left>0&&right>0&&hd&&local,"both turns and both source areas");Check(offpath==0&&overlaps==0,"geometry offpath="+offpath+" overlaps="+overlaps);
    Check(stalled==0,"no prolonged stalled cars count="+stalled);Check(district.continued>0,"continuous journeys="+district.continued);
    // Exercise a real mapped signal with a three-car queue, separately from the soak.

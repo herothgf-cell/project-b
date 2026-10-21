@@ -39,6 +39,8 @@ public class PlayabilityUISmokeTest : MonoBehaviour {
    double elapsed=session.business.ledger.Elapsed;yield return new WaitForSecondsRealtime(.3f);Check(session.business.ledger.Elapsed==elapsed,"map does not consume business time "+size.x);
    var rect=(Rect)type.GetProperty("MapRect").GetValue(overlay,null);Check(rect.width>=500&&rect.height>=500&&rect.xMin>=0&&rect.yMin>=0&&rect.xMax<=Screen.width&&rect.yMax<=Screen.height,"large map fits "+size.x);
    Check(!(bool)session.GetComponent<PracticeSession>().OpenPicker(),"map blocks overlapping practice modal");
+   whole.ResetView();whole.Zoom(1);Check(whole.ZoomLevel>1,"whole-map zoom in "+size.x);whole.FocusPlayer();whole.Pan(new Vector2(70,-35));
+   yield return Capture("playability-full-map-zoom-"+size.x);for(int n=0;n<20;n++)whole.Zoom(1);Check(whole.ZoomLevel==8,"whole-map maximum bound");for(int n=0;n<20;n++)whole.Zoom(-1);Check(whole.ZoomLevel==1,"whole-map overview bound");whole.ResetView();
    yield return Capture("playability-full-map-"+size.x);close.Invoke(overlay,null);Check(!session.paused&&Time.timeScale==1,"closing map resumes previous drive "+size.x);Check((bool)type.GetProperty("ClosedThisFrame").GetValue(overlay,null),"close frame suppresses duplicate Escape "+size.x);
    yield return Capture("playability-hud-"+size.x);
   }

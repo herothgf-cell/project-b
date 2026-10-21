@@ -8,7 +8,7 @@ public class DriveFeedbackSmokeTest : MonoBehaviour {
  IEnumerator Start(){
   yield return new WaitForSecondsRealtime(2);session.business.enabledCampaign=true;session.business.Depart();session.taxi.automated=true;session.taxi.autoBrake=true;
   var notices=session.GetComponent<DriveNotifications>();Check(Application.productName=="택시 시뮬레이터","player title");
-  Check(session.traffic.cars.Count==36,"36 general cars");Check(session.GetComponent<RoadSignage>().Count>0,"game road signs created");
+  Check(session.traffic.cars.Count==48,"48 general cars");Check(session.GetComponent<RoadSignage>().Count>0,"game road signs created");
   session.business.ledger.Account.Consume(0,11500);yield return null;Check(notices.FuelLow,"top low fuel warning at 14 percent");
   var e=new LawEvent{id="feedback-bad",day=1,action="신호 위반"};e.Add("L01",LawVerdict.Violation,20);session.law.ledger.Record(e);yield return null;yield return null;
   Check(session.law.ledger.TotalScore==80&&notices.VisibleText.Contains("-20"),"law deduction toast uses actual score delta");

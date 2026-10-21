@@ -24,3 +24,5 @@ pwsh -File tools/check_workspace.ps1 -Strict
 기존 지도를 수정한 경우 먼저 백업한다. 검사에서 `Input issues: 0`을 확인한 뒤 [Unity 준비·개발 안내](../docs/work-history/map-transfer-guide.md)를 따른다. ZIP 안의 안내는 최초 묶음 생성 당시 문서 사본이며, 최신 배포 방식은 이 문서를 우선한다. 원본 NGII/OSM 자료는 Git에 포함하지 않는다.
 
 승차하러 가는 동안에는 별도 대기 시간이 흐른다. 연료15% 이하 경고와 점수 변화는 화면 상단에 표시한다. R/패드 복귀 단축키는 제거했으며 새 캠페인은 메뉴의 확인 버튼을 사용한다. 창 제목은 ‘택시 시뮬레이터’다.
+
+전체지도: M으로 열고 +/- 버튼·키·마우스 휠로 확대/축소, 드래그로 이동. 내 위치/전체 보기 버튼 지원. 일반 차량48대. 직접 플레이 확인 목록: docs/prototype-playtest-guide.md.

@@ -26,7 +26,7 @@ public sealed class DistrictTraffic : MonoBehaviour {
   // into such endpoints. Every admitted goal can continue indefinitely.
   for(int i=0;i<map.stops.Length;i++)service.Add(i);bool changed;
   do{changed=false;foreach(int a in new List<int>(service)){bool onward=false;var start=map.stops[a];foreach(int b in service){if(a==b)continue;var end=map.stops[b];var r=CreateRoute(start.laneEdge,start.laneAt,end.laneEdge,end.laneAt);if(r!=null&&Clear(r)){onward=true;break;}}if(!onward){service.Remove(a);changed=true;}}}while(changed);
-  for(int n=0;n<108&&system.cars.Count<36;n++){if(!service.Contains(n%map.stops.Length))continue;var start=map.stops[n%map.stops.Length];var route=Next(start.laneEdge,start.laneAt);if(route==null)continue;var car=system.Spawn(route,0,n);if(!car)continue;car.district=this;
+  for(int n=0;n<144&&system.cars.Count<48;n++){if(!service.Contains(n%map.stops.Length))continue;var start=map.stops[n%map.stops.Length];var route=Next(start.laneEdge,start.laneAt);if(route==null)continue;var car=system.Spawn(route,0,n);if(!car)continue;car.district=this;
    if(Occupied(route.start,route.direction,car))car.Recycle();
   }
   Debug.Log("DISTRICT_TRAFFIC_READY cars="+system.cars.Count+" junctions="+system.junctions.Count+" service="+service.Count);
