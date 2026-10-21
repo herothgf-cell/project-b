@@ -14,7 +14,7 @@ public class BusinessHUD : MonoBehaviour {
  void Fill(Rect r,Color color){GUI.color=color;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
  void Progress(Rect r,EconomyLedger e){Fill(r,new Color(.16f,.23f,.28f));Fill(new Rect(r.x,r.y,r.width*Mathf.Clamp01((float)e.TotalNet/e.Settings.target),r.height),new Color(.25f,.85f,.67f));}
  void OnGUI(){if(!session||!session.business||!session.business.enabledCampaign||session.ChoiceOpen||session.PracticeMenuOpen||session.services.open||session.law.HistoryOpen)return;Styles();
-  var b=session.business;var e=b.ledger;GUI.depth=-30;
+  var b=session.business;var e=b.ledger;if(e.OneDay){OneDayHUD.Draw(session);return;}GUI.depth=-30;
   if(b.restartPrompt){float rx=(Screen.width-620)/2f,ry=(Screen.height-300)/2f;GUI.depth=-150;Fill(new Rect(rx,ry,620,300),new Color(.04f,.09f,.12f,1));GUI.Label(new Rect(rx+25,ry+25,570,130),"1일차부터 다시 시작할까요?\n운행 점수 100점 · 현재 캠페인의 저장과 운송·법규·연습 기록을 초기화합니다.\n현금 10,000원 · 연료 60% · 1일차 영업 준비로 돌아갑니다.\n취소하면 현재 진행을 그대로 유지합니다.",text);GUI.Label(new Rect(rx+25,ry+165,570,45),b.saveStatus,small);if(GUI.Button(new Rect(rx+25,ry+230,275,45),"초기화하고 1일차 시작",button))b.ConfirmRestart(true);if(GUI.Button(new Rect(rx+320,ry+230,275,45),"취소",button))b.ConfirmRestart(false);return;}
   if(b.preparing){
    float px=(Screen.width-620)/2f,py=(Screen.height-600)/2f;Fill(new Rect(px,py,620,600),new Color(.04f,.09f,.12f,.98f));var account=e.Account;

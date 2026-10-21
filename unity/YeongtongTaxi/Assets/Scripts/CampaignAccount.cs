@@ -20,7 +20,7 @@ public class CampaignAccount {
  public bool Renewed {get{return HasKind("insurance");}}
  public bool TaxPaid {get{return HasKind("tax-payment");}}
  public bool GoalMet {get{return Net>=settings.target;}}
- public int PendingDayCost(int day){return (Ate(day)?0:settings.meal)+(!Has("parking:"+day)?settings.parking:0);}
+ public int PendingDayCost(int day){return (settings.oneDay||Ate(day)?0:settings.meal)+(!Has("parking:"+day)?settings.parking:0);}
  public CampaignAccount(PrototypeSettings s){settings=s;Cash=s.startCash;Fuel=s.initialFuel;}
  bool Has(string id){return entries.Exists(e=>e.id==id);}
  bool HasKind(string kind){return entries.Exists(e=>e.kind==kind);}
@@ -40,7 +40,7 @@ public class CampaignAccount {
   if(double.IsNaN(seconds)||double.IsInfinity(seconds)||double.IsNaN(metres)||double.IsInfinity(metres)||seconds<0||metres<0)return;
   Fuel=Math.Max(0,Fuel-(float)(metres/1000*settings.fuelPerKm+seconds/60*settings.idlePerMinute));
  }
- public bool Meal(string id,int day){return !Ate(day)&&Post(id,"meal",day,-settings.meal,0);}
+ public bool Meal(string id,int day){if(settings.oneDay){if(string.IsNullOrEmpty(id)||Has(id))return false;Mandatory(id,"meal",day,settings.meal);return true;}return !Ate(day)&&Post(id,"meal",day,-settings.meal,0);}
  // Compatibility entry points cannot reactivate excluded prototype features.
  public bool Renew(string id,int day=1){return false;}
  public bool PayTax(string id,int day=1){return false;}
@@ -51,7 +51,7 @@ public class CampaignAccount {
  public bool RecoverFuel(string id,int day){if(Fuel>0||Has(id))return false;Mandatory(id,"fuel-recovery",day,1800);Fuel=20;return true;}
  public bool CloseDay(int day){
   string id="settlement:"+day;if(Has(id))return false;
-  if(!Ate(day))Mandatory("meal-fallback:"+day,"meal",day,settings.meal);
+  if(!settings.oneDay&&!Ate(day))Mandatory("meal-fallback:"+day,"meal",day,settings.meal);
   Mandatory("parking:"+day,"parking",day,settings.parking);
   return Post(id,"settlement",day,0,0);
  }

@@ -15,7 +15,7 @@ public class DriveHUD : MonoBehaviour {
   foreach(var road in session.world.map.roads)for(int i=1;i<road.points.Length;i++){var a=road.points[i-1].V();var b=road.points[i].V();float len=Vector3.Distance(a,b);for(float d=0;d<=len;d+=1){var p=Vector3.Lerp(a,b,len>0?d/len:0);int x=Mathf.RoundToInt(p.x/session.world.map.width*(W-1)),y=Mathf.RoundToInt(p.z/session.world.map.depth*(H-1));for(int dx=-1;dx<=1;dx++)for(int dy=-1;dy<=1;dy++)if(x+dx>=0&&x+dx<W&&y+dy>=0&&y+dy<H)tile.SetPixel(x+dx,y+dy,new Color(.43f,.49f,.50f));}}
   tile.Apply();
  }
- public string OfferText(int index){var jobs=session.jobs;var o=jobs.offers[index];return (index+1)+"  "+KoreanText.Stop(jobs.stops[o.pickup].name)+" → "+KoreanText.Stop(jobs.stops[o.drop].name)+"    "+o.distance.ToString("0")+"m · "+o.fare.ToString("N0")+"원 · "+o.seconds.ToString("0")+"초 · 요구 "+o.requiredScore+"점\n"+jobs.FuelHint(o);}
+ public string OfferText(int index){var jobs=session.jobs;var o=jobs.offers[index];if(o==null)return "현재 접근 가능한 호출 없음";return (index+1)+"  "+KoreanText.Stop(jobs.stops[o.pickup].name)+" → "+KoreanText.Stop(jobs.stops[o.drop].name)+"    "+o.distance.ToString("0")+"m · "+o.fare.ToString("N0")+"원 · "+o.seconds.ToString("0")+"초 · 요구 "+o.requiredScore+"점\n"+jobs.FuelHint(o);}
  public string MannerCaption {get{return session.jobs.trip.State==TripState.OnTrip?"승객 매너 "+session.manners.ledger.Score+"점 / 요구 "+session.jobs.current.requiredScore+"점":session.jobs.trip.State==TripState.ToPickup?"승객 매너 · 탑승 전 / 요구 "+session.jobs.current.requiredScore+"점":"승객 매너 · 탑승 시 100점으로 시작";}}
  public string LawCaption {get{int valid=0;foreach(var e in session.law.ledger.Events)foreach(var r in e.rules)if(r.verdict==LawVerdict.Compliant||r.verdict==LawVerdict.Violation)valid++;return "운행 점수 "+session.law.ledger.TotalScore+"점 · "+(valid==0?"아직 유효 평가 없음":"유효 "+valid+"건")+" · F8";}}
  void Gauge(Rect r,float value,Color color,int requirement=-1){GUI.color=new Color(.13f,.18f,.21f);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=color;GUI.DrawTexture(new Rect(r.x,r.y,r.width*Mathf.Clamp01(value/100),r.height),Texture2D.whiteTexture);if(requirement>=0){GUI.color=Color.white;GUI.DrawTexture(new Rect(r.x+r.width*Mathf.Clamp01(requirement/100f)-1,r.y-2,2,r.height+4),Texture2D.whiteTexture);}GUI.color=Color.white;}
@@ -61,7 +61,7 @@ public class DriveHUD : MonoBehaviour {
    GUI.Label(new Rect(x+20,y+164,440,55),string.IsNullOrEmpty(MapCatalog.LockedRegion)?"지역 변경은 게임을 다시 실행할 때 적용됩니다.\n영업 마감(N) 후 종료하면 정산 결과가 저장됩니다.":"은계 전용 빌드 · 현재 지역으로 시작합니다.\n영업 마감(N) 후 종료하면 정산 결과가 저장됩니다.",small);
    GUI.enabled=!session.PracticeBusy;
    if(GUI.Button(new Rect(x+20,y+230,440,40),"계속 운전")){session.paused=false;Time.timeScale=1;}
-   if(session.business.useV2&&GUI.Button(new Rect(x+20,y+282,440,40),"1일차부터 다시 시작"))session.business.RequestRestart();
+   if(session.business.useV2&&GUI.Button(new Rect(x+20,y+282,440,40),session.business.ledger.OneDay?"새 하루 시작":"1일차부터 다시 시작"))session.business.RequestRestart();
    if(GUI.Button(new Rect(x+20,y+334,440,40),"운전 연습 선택 · 출구 정체 / 우회전"))session.GetComponent<PracticeSession>().OpenPicker();
    GUI.enabled=true;
    if(GUI.Button(new Rect(x+20,y+386,440,40),"게임 종료 (완료한 정산까지 저장)"))Application.Quit();

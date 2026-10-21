@@ -15,7 +15,7 @@ public class FuelStationProbe : MonoBehaviour {
   yield return new WaitForSecondsRealtime(2);session=FindObjectOfType<DriveSession>();
   if(!session){Debug.LogError("FUEL_TEST no session");Application.Quit(1);yield break;}
   session.business.StopAllCoroutines();session.business.preparing=false;session.business.enabledCampaign=false;session.business.taxPrompt=false;session.business.useV2=true;
-  session.business.settings=new PrototypeSettings();session.business.ledger=new EconomyLedger(session.business.settings);session.services.enabled=true;session.jobs.ClearForDay();session.paused=false;Time.timeScale=8;
+  session.business.settings=Array.IndexOf(Environment.GetCommandLineArgs(),"-oneDayMode")>=0?PrototypeSettings.ForOneDay():new PrototypeSettings();session.business.ledger=new EconomyLedger(session.business.settings);session.services.enabled=true;session.jobs.ClearForDay();session.paused=false;Time.timeScale=8;
   var taxi=session.taxi;taxi.assistance.SetActive(false);taxi.automated=true;taxi.autoBrake=true;
   var contacts=taxi.gameObject.AddComponent<FuelStationContactRecorder>();contacts.owner=this;
   var stations=FuelStationLayout.For(session.world.map);Check(stations.Count==3,"three facilities on Eungye");var graph=session.jobs.nav.hd;

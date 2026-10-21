@@ -3,9 +3,12 @@ using System.Collections.Generic;
 
 // Gameplay proposal values, not statutory fines or real-world prices.
 [Serializable] public class PrototypeSettings {
+ public bool oneDay;
+ public const string OneDayVersion="eungye-day20-v1-courses1";
+ public static PrototypeSettings ForOneDay(){return new PrototypeSettings{oneDay=true,days=1,daySeconds=1200};}
  public int days=3,target=30000,startCash=10000,meal=3000,parking=500,insurance=6000,tax=1500;
  public float daySeconds=720,initialFuel=60,fuelPerKm=4,idlePerMinute=.1f,fuelUnitPrice=40;
- public PrototypeSettings WithCurrentOperationBalance(){var copy=(PrototypeSettings)MemberwiseClone();var current=new PrototypeSettings();copy.daySeconds=current.daySeconds;copy.initialFuel=current.initialFuel;copy.fuelPerKm=current.fuelPerKm;copy.idlePerMinute=current.idlePerMinute;return copy;}
+ public PrototypeSettings WithCurrentOperationBalance(){var copy=(PrototypeSettings)MemberwiseClone();var current=new PrototypeSettings();copy.daySeconds=oneDay?1200:current.daySeconds;copy.initialFuel=current.initialFuel;copy.fuelPerKm=current.fuelPerKm;copy.idlePerMinute=current.idlePerMinute;return copy;}
  public int insuranceExpiryDay=2,taxDueDay=3;
  public int redStraightPenalty=20,redRightPenalty=15,dedicatedRedPenalty=20,pedestrianPenalty=25,insertionPenalty=15,interferencePenalty=15;
  public const int SaveVersion=2;
