@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,7 +13,9 @@ public sealed class HdRoadGraph {
  }
  public readonly HdEdge[] edges;
  public readonly AssistedRoadNetwork.Path[] paths;
+ public readonly HashSet<string> signalizedRules=new HashSet<string>();
  public HdRoadGraph(MapData map){
+  if(map.junctionRules!=null)foreach(var rule in map.junctionRules)if(rule.signalMode>0)signalizedRules.Add(rule.id);
   edges=map.hdEdges;paths=new AssistedRoadNetwork.Path[edges.Length];
   for(int i=0;i<edges.Length;i++){
    if(edges[i].points==null||edges[i].points.Length<2)throw new ArgumentException("Invalid HD path");

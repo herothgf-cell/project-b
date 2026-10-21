@@ -7,7 +7,7 @@ public sealed class ServiceLawZone {
  public string Title {get{return ConfusionPracticeState.Title(variant);}}
  public string MapTitle {get{switch(variant){case 8:return "적색 점멸\n정지 후 진행";case 9:return "황색 점멸\n주변 확인";case 10:return "녹색\n출구 정체";case 11:return "녹색\n출구 여유";case 12:return "비보호 좌회전\n적색 대기";case 13:return "비보호 좌회전\n대향차 양보";default:return "비보호 좌회전\n대향차 없음";}}}
 }
-// Persistent places in the normal Eungye world. Trips route through a connector, never a new scene/process.
+// Persistent places in the normal Eungye world. Situations observe ordinary trips; they never add routing waypoints.
 public sealed class ServiceLawZones : MonoBehaviour {
  public DriveSession session;
  public readonly List<ServiceLawZone> zones=new List<ServiceLawZone>();
@@ -26,36 +26,16 @@ public sealed class ServiceLawZones : MonoBehaviour {
  }
  void Start(){
   if(PracticeSession.Enabled||!session.world.map.hybrid||session.world.map.mapId!="eungye")return;
-  Register();scenarios.AddRange(PrototypeScenario.Build(session.jobs.nav.hd,session.jobs.stops));Ready=zones.Count>0;session.jobs.Generate();
+  Register();Ready=zones.Count>0;session.jobs.Generate();
  }
  public void Register(){
   if(zones.Count>0)return;
-  var hd=session.jobs.nav.hd;var occupied=new HashSet<string>();
-  for(int variant=8;variant<=14;variant++){
-   ServiceLawZone best=null;float score=float.MaxValue;
-   foreach(var j in session.traffic.junctions){if(!j.signalized||occupied.Contains(j.name))continue;
-    for(int c=0;c<hd.edges.Length;c++){
-     var e=hd.edges[c];if(e.disabled||e.change!=0||e.ruleId!=j.name||e.turn!=(variant>=12?-1:0))continue;
-     int outgoing=-1;foreach(int n in e.next)if(!hd.edges[n].disabled&&hd.edges[n].change==0&&hd.paths[n].length>32){outgoing=n;break;}if(outgoing<0)continue;
-     for(int b=0;b<hd.edges.Length;b++){
-      if(hd.edges[b].disabled||hd.edges[b].change!=0||hd.edges[b].number!=1||hd.paths[b].length<65||Array.IndexOf(hd.edges[b].next,c)<0)continue;
-      float d=Vector3.Distance(j.center,new Vector3(575,0,257));if(d>=score)continue;
-      var r=hd.Route(b,Mathf.Max(0,hd.paths[b].length-75),outgoing,25);if(r==null||r.edges.Count!=3||r.edges[1]!=c)continue;
-      if(!ReachableOffer(hd,c))continue;
-      best=new ServiceLawZone{id="eungye-law-"+variant,variant=variant,junction=j,incoming=b,connector=c,outgoing=outgoing};score=d;
-     }
-    }
-   }
-   if(best==null)continue;zones.Add(best);occupied.Add(best.junction.name);CreateSign(best);
+  var hd=session.jobs.nav.hd;scenarios.AddRange(PrototypeScenario.Build(hd,session.jobs.stops));
+  foreach(var course in scenarios){if(course.variant==0||zones.Exists(z=>z.connector==course.connector))continue;
+   int k=course.route.edges.IndexOf(course.connector);var j=session.traffic.junctions.Find(x=>x.name==hd.edges[course.connector].ruleId);if(j==null||!j.signalized)continue;
+   var zone=new ServiceLawZone{id="eungye-law-"+course.variant+"-"+course.connector,variant=course.variant,junction=j,incoming=course.route.edges[k-1],connector=course.connector,outgoing=course.route.edges[k+1]};zones.Add(zone);CreateSign(zone);
   }
   var obj=new GameObject("은계 영업 도로 상황 운용");obj.transform.SetParent(transform);Live=obj.AddComponent<ConfusionPractice>();Live.session=session;
- }
- bool ReachableOffer(HdRoadGraph hd,int connector){
-  var stops=session.jobs.stops;
-  for(int p=0;p<stops.Length;p++){
-   if(!stops[p].graphStop)continue;var first=hd.Route(stops[p].laneEdge,stops[p].laneAt,connector,0);if(first==null||first.path.length<85)continue;
-   for(int offset=3;offset<=5;offset++){var to=stops[(p+offset)%stops.Length];if(to.graphStop&&hd.Route(connector,hd.paths[connector].length,to.laneEdge,to.laneAt)!=null)return true;}
-  }return false;
  }
  void CreateSign(ServiceLawZone zone){
   var hd=session.jobs.nav.hd;var path=hd.paths[zone.incoming];var point=path.Position(Mathf.Max(0,path.length-40));var dir=path.Tangent(Mathf.Max(0,path.length-40));
@@ -68,9 +48,8 @@ public sealed class ServiceLawZones : MonoBehaviour {
   if(!Ready||!session.jobs.stops[offer.pickup].graphStop||!session.jobs.stops[offer.drop].graphStop)return;
   var from=session.jobs.stops[offer.pickup];var to=session.jobs.stops[offer.drop];var hd=session.jobs.nav.hd;
   for(int k=0;k<zones.Count;k++){
-   int index=(sequence+k)%zones.Count;var zone=zones[index];var approach=hd.Route(from.laneEdge,from.laneAt,zone.connector,0);
-   if(approach==null||approach.path.length<85)continue;
-   var route=hd.Via(from.laneEdge,from.laneAt,zone.connector,to.laneEdge,to.laneAt);if(route==null)continue;
+   int index=(sequence+k)%zones.Count;var zone=zones[index];var route=hd.Route(from.laneEdge,from.laneAt,to.laneEdge,to.laneAt);
+   if(!PrototypeScenario.Valid(route,zone.connector))continue;
    offer.zoneIndex=index;offer.distance=route.path.length;offer.waitSeconds=35;
    foreach(int e in route.edges)if(hd.edges[e].id.StartsWith("join:"))foreach(var j in session.traffic.junctions)if(j.signalized&&j.name==hd.edges[e].ruleId){offer.waitSeconds+=15;break;}
    sequence=(index+1)%zones.Count;return;
@@ -85,7 +64,7 @@ public sealed class ServiceLawZones : MonoBehaviour {
   var delivery=scenario.route;if(delivery==null)return false;
   int zone=zones.FindIndex(z=>z.connector==scenario.connector);if(scenario.variant>0&&zone<0)return false;
   offer.pickup=scenario.pickup;offer.drop=scenario.drop;offer.scenarioId=scenario.id;offer.zoneIndex=zone;
-  offer.distance=Mathf.Max(delivery.path.length,scenario.alternative==null?0:scenario.alternative.path.length);offer.waitSeconds=50;
+  offer.distance=delivery.path.length;offer.waitSeconds=50;
   offer.pickupSeconds=Mathf.Max(180,(alreadyAtPickup?0:pickupRoute.path.length)/4+120);return true;
  }
  public void BeginPickup(JobOffer offer){
@@ -93,22 +72,22 @@ public sealed class ServiceLawZones : MonoBehaviour {
  }
  public void BeginTrip(JobOffer offer){
   EndTrip();CurrentScenario=scenarios.Find(s=>s.id==offer.scenarioId);PickupPhase=false;Assigned=ZoneFor(offer);Completed=false;LastFeedback=null;LastTitle="";
-  if(Assigned!=null)session.jobs.nav.RequireVia(Assigned.connector);
+  session.jobs.nav.ObserveEdge(Assigned==null?-1:Assigned.connector);
   if(CurrentScenario!=null&&(CurrentScenario.id=="PS08"||CurrentScenario.id=="PS09")){
-   var course=GetComponent<ScenarioChoiceSituation>();if(!course)course=gameObject.AddComponent<ScenarioChoiceSituation>();course.session=session;course.Begin(CurrentScenario);session.jobs.nav.RequireVia(CurrentScenario.connector);
+   var course=GetComponent<ScenarioChoiceSituation>();if(!course)course=gameObject.AddComponent<ScenarioChoiceSituation>();course.session=session;course.Begin(CurrentScenario);session.jobs.nav.ObserveEdge(CurrentScenario.connector);
   }
  }
  public void RecordSkippedDelivery(){var choice=GetComponent<ScenarioChoiceSituation>();if((Assigned==null||Completed)&&(choice==null||choice.Course==null||choice.Completed))return;
   var e=new LawEvent{id=session.law.ids.Next("unvisited"),day=session.law.Day,tripId=session.law.tripId,occupied=true,family="상황 미체험",scenario=CurrentScenario==null?"":CurrentScenario.id,reason="목적지 정상 하차 · 추천 상황 미체험 / 실제 관찰한 운행 기록은 유지"};e.Add("상황 미체험",LawVerdict.NoOpportunity,0);session.law.ledger.Record(e);
  }
  public void EndTrip(){
-  if(Live&&Live.Active){if(Live.State.Entered&&!Live.State.Finished){Live.RecordObservation();LastFeedback=Live.Feedback();LastTitle=Assigned==null?"상황 미완료":Assigned.Title;}Live.Stop();}Assigned=null;details=false;PickupPhase=false;CurrentScenario=null;var course=GetComponent<ScenarioChoiceSituation>();if(course)course.Stop();
+  if(Live&&Live.Active){if(Live.State.Entered&&!Live.State.Finished){Live.RecordObservation();LastFeedback=Live.Feedback();LastTitle=Assigned==null?"상황 미완료":Assigned.Title;}Live.Stop();}session.jobs.nav.ObserveEdge(-1);Assigned=null;details=false;PickupPhase=false;CurrentScenario=null;var course=GetComponent<ScenarioChoiceSituation>();if(course)course.Stop();
  }
  void Update(){
   if(!Ready)return;
   if(session.jobs.trip.State!=TripState.OnTrip&&!(PickupPhase&&session.jobs.trip.State==TripState.ToPickup)){if(Assigned!=null)EndTrip();return;}
   if(Assigned==null||Completed||session.paused||session.PracticeMenuOpen||session.business.ShowingSummary)return;
-  if(!Live.Active&&session.jobs.nav.PassedRequiredVia==Assigned.connector){Completed=true;LastTitle=Assigned.Title;LastFeedback=new PracticeFeedback{outcome="구역 통과 · 상황 관찰 보류",good="안내한 상황 구역을 통과했습니다.",issues="주변 교통 때문에 안전한 상황 배치를 보류했습니다. 법규 준수로 자동 채점하지 않습니다.",next="F8에서 운송 기록과 법규 관찰을 구분해 확인하세요."};toastUntil=Time.time+12;
+  if(!Live.Active&&session.jobs.nav.PassedObservedEdge==Assigned.connector){Completed=true;LastTitle=Assigned.Title;LastFeedback=new PracticeFeedback{outcome="구역 통과 · 상황 관찰 보류",good="안내한 상황 구역을 통과했습니다.",issues="주변 교통 때문에 안전한 상황 배치를 보류했습니다. 법규 준수로 자동 채점하지 않습니다.",next="F8에서 운송 기록과 법규 관찰을 구분해 확인하세요."};toastUntil=Time.time+12;
    var e=new ConfusionPracticeState(Assigned.variant){Known=false}.Event(session.law.ids.Next("confusion"),session.law.Day);e.junction=Assigned.junction.name;e.tripId=session.law.tripId;e.occupied=session.jobs.trip.State==TripState.OnTrip;e.seconds=(float)session.business.ledger.Elapsed;e.reason=LastFeedback.Details();session.law.ledger.Record(e);return;}
   if(!Live.Active){
    float error;var path=session.jobs.nav.hd.paths[Assigned.incoming];float at=path.Project(session.taxi.transform.position,out error);float gap=Vector3.Distance(session.taxi.transform.position,Assigned.junction.center);

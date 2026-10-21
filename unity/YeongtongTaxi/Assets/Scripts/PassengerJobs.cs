@@ -35,7 +35,7 @@ public class PassengerJobs : MonoBehaviour {
  public bool PreviewPassengerChange(int stop,bool via,out float extraDistance,out int newFare,out float newRemaining){
   extraDistance=0;newFare=trip.Fare;newRemaining=trip.Remaining;
   if(trip.State!=TripState.OnTrip||current==null||passengerChangeApplied||PassengerViaPending||trip.Remaining<=0||stop<0||stop>=stops.Length||stop==current.drop||nav.hd==null||session.taxi.body.velocity.magnitude>=.56f)return false;
-  var zones=GetComponent<ServiceLawZones>();var course=GetComponent<ScenarioChoiceSituation>();if(zones&&zones.Assigned!=null&&!zones.Completed||course&&course.Course!=null&&!course.Completed)return false;
+  var zones=GetComponent<ServiceLawZones>();var course=GetComponent<ScenarioChoiceSituation>();if(zones&&zones.Live&&zones.Live.Active||course&&(course.Open||course.ActiveObservation))return false;
   float at;int start=nav.hd.Nearest(session.taxi.transform.position,session.taxi.transform.forward,out at);var goal=stops[current.drop];var target=stops[stop];
   var old=nav.hd.Route(start,at,goal.laneEdge,goal.laneAt);var changed=nav.hd.Route(start,at,target.laneEdge,target.laneAt);if(old==null||changed==null)return false;
   float distance=changed.path.length;if(via){var onward=nav.hd.Route(target.laneEdge,target.laneAt,goal.laneEdge,goal.laneAt);if(onward==null)return false;distance+=onward.path.length;}

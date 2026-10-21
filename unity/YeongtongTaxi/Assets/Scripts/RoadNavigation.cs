@@ -15,6 +15,10 @@ public class RoadNavigation : MonoBehaviour {
   if(error>4)at=hdRoute.path.Project(p,out error);
   projectedRoute=hdRoute;projectedPosition=p;projectedAt=at;return at;
  }
+ // Observation never changes the destination, route costs, or required waypoints.
+ public int ObservedEdge {get;private set;}=-1;
+ public int PassedObservedEdge {get;private set;}=-1;
+ public void ObserveEdge(int edge){ObservedEdge=edge;PassedObservedEdge=-1;viaSampled=false;}
  public int PassedRequiredVia {get;private set;}=-1;
  public int RequiredVia {get;private set;}=-1;
  public void RequireVia(int edge){viaSampled=false;PassedRequiredVia=-1;RequiredVia=edge;hdRoute=null;if(active)Refresh();}
@@ -184,13 +188,14 @@ public class RoadNavigation : MonoBehaviour {
  void FixedUpdate(){
   if(!active||hdRoute==null||vehicle==null){viaSampled=false;return;}
   float error;float progress=ProjectVehicle(out error);
-  if(RequiredVia<0){viaSampled=false;return;}
+  int target=RequiredVia>=0?RequiredVia:ObservedEdge;
+  if(target<0){viaSampled=false;return;}
   if(viaObservedRoute!=hdRoute){viaSampled=false;viaObservedRoute=hdRoute;}
-  int k=hdRoute.edges.IndexOf(RequiredVia);if(k<0){viaSampled=false;return;}
+  int k=hdRoute.edges.IndexOf(target);if(k<0){viaSampled=false;return;}
   float remainingVia=hdRoute.ends[k]-progress;
   var body=vehicle.GetComponent<Rigidbody>();float speed=body?body.velocity.magnitude:0;
   float allowed=Mathf.Max(1,speed*Mathf.Min(.1f,Time.time-viaSampleTime)+.5f);
-  if(error<3&&viaSampled&&Vector3.Distance(vehicle.position,viaPreviousPosition)<=allowed&&viaPreviousRemaining>=-.25f&&remainingVia<-.25f&&Vector3.Dot(vehicle.forward,hdRoute.path.Tangent(progress))>.6f){PassedRequiredVia=RequiredVia;RequiredVia=-1;}
+  if(error<3&&viaSampled&&Vector3.Distance(vehicle.position,viaPreviousPosition)<=allowed&&viaPreviousRemaining>=-.25f&&remainingVia<-.25f&&Vector3.Dot(vehicle.forward,hdRoute.path.Tangent(progress))>.6f){if(RequiredVia>=0){PassedRequiredVia=RequiredVia;RequiredVia=-1;}else{PassedObservedEdge=ObservedEdge;ObservedEdge=-1;}}
   viaSampled=error<3;viaPreviousPosition=vehicle.position;viaPreviousRemaining=remainingVia;viaSampleTime=Time.time;
  }
  void RefreshHd(){

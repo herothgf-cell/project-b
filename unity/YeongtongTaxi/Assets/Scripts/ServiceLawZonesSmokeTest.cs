@@ -10,27 +10,27 @@ public class ServiceLawZonesSmokeTest : MonoBehaviour {
  void Check(bool b,string n){ok&=b;report.AppendLine((b?"PASS ":"FAIL ")+n);File.WriteAllText(ReportPath,"success="+ok+"\n"+report);}
  void Pose(Vector3 p,Vector3 dir,float speed=0){var t=session.taxi;t.body.position=p+Vector3.up*.65f;t.body.rotation=Quaternion.LookRotation(dir);t.transform.SetPositionAndRotation(t.body.position,t.body.rotation);t.body.velocity=dir*speed;Physics.SyncTransforms();}
  IEnumerator At(AssistedRoadNetwork.Path path,float at,float speed=3){var heading=path.Tangent(at);Pose(path.Position(at)-heading*2,heading,speed);yield return new WaitForFixedUpdate();yield return null;}
- IEnumerator Capture(string name){yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.GetFullPath("artifacts/"+name+".png"));yield return new WaitForSecondsRealtime(.2f);}
+ IEnumerator Capture(string name){if(Application.isBatchMode)yield break;yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.GetFullPath("artifacts/"+name+".png"));yield return new WaitForSecondsRealtime(.2f);}
  IEnumerator ViaBoundaries(ServiceLawZones zones){
   var loop=new AssistedRoadNetwork.Path(new[]{new Vector3(0,0,0),new Vector3(20,0,0),new Vector3(20,0,20),new Vector3(0,0,20),new Vector3(0,0,1),new Vector3(20,0,1)});float loopError;
   Check(loop.Project(new Vector3(10,0,.8f),out loopError)>70&&loop.ProjectRange(new Vector3(10,0,.8f),5,18,out loopError)<20,"route progress stays on first visit at overlapping junction");
   var z=zones.zones[0];var nav=session.jobs.nav;var incoming=nav.hd.paths[z.incoming];
-  Pose(incoming.Position(incoming.length-60),incoming.Tangent(incoming.length-60));nav.SetHdDestination(z.outgoing,25);nav.RequireVia(z.connector);
+  Pose(incoming.Position(incoming.length-60),incoming.Tangent(incoming.length-60));nav.SetHdDestination(z.outgoing,25);nav.ObserveEdge(z.connector);
   var path=nav.hdRoute.path;float end=nav.hdRoute.ends[nav.hdRoute.edges.IndexOf(z.connector)];
   Pose(path.Position(end-3),path.Tangent(end-3),20);yield return new WaitForFixedUpdate();yield return null;
-  for(int i=0;i<15&&nav.RequiredVia>=0;i++){float at=end-2.5f+i*.5f;Pose(path.Position(at),path.Tangent(at),20);yield return new WaitForFixedUpdate();yield return null;}
-  Check(nav.PassedRequiredVia==z.connector,"72 km/h continuous crossing releases waypoint");
-  Pose(incoming.Position(incoming.length-60),incoming.Tangent(incoming.length-60));nav.SetHdDestination(z.outgoing,25);nav.RequireVia(z.connector);path=nav.hdRoute.path;end=nav.hdRoute.ends[nav.hdRoute.edges.IndexOf(z.connector)];
+  for(int i=0;i<15&&nav.ObservedEdge>=0;i++){float at=end-2.5f+i*.5f;Pose(path.Position(at),path.Tangent(at),20);yield return new WaitForFixedUpdate();yield return null;}
+  Check(nav.PassedObservedEdge==z.connector,"72 km/h continuous crossing releases waypoint");
+  Pose(incoming.Position(incoming.length-60),incoming.Tangent(incoming.length-60));nav.SetHdDestination(z.outgoing,25);nav.ObserveEdge(z.connector);path=nav.hdRoute.path;end=nav.hdRoute.ends[nav.hdRoute.edges.IndexOf(z.connector)];
   Pose(path.Position(end-5),path.Tangent(end-5));yield return new WaitForFixedUpdate();yield return null;
   Pose(path.Position(end+15),path.Tangent(end+15));yield return new WaitForFixedUpdate();yield return null;
-  Check(nav.RequiredVia==z.connector,"teleport across connector does not satisfy waypoint");nav.Clear();
+  Check(nav.ObservedEdge==z.connector,"teleport across connector does not satisfy waypoint");nav.Clear();
  }
  IEnumerator ExtraCase(bool deferred){
   var zones=GetComponent<ServiceLawZones>();var jobs=session.jobs;jobs.ClearForDay();int offer=-1;
-  for(int round=0;round<100&&offer<0;round++){jobs.Generate();for(int i=0;i<3;i++){var z=zones.ZoneFor(jobs.offers[i]);if(z!=null&&z.variant==8){offer=i;break;}}}
+  var fixture=new JobOffer{fare=5000,seconds=2000,requiredScore=60};if(zones.ConfigureScenario(fixture,zones.scenarios.Find(x=>x.variant==8))){jobs.offers[0]=fixture;offer=0;}
   Check(offer>=0,"additional encounter offer");if(offer<0)yield break;
   Check(jobs.Accept(offer),"additional encounter accepted");var selected=jobs.current;var pickup=jobs.stops[selected.pickup];Pose(pickup.Kerb,pickup.Direction);Check(jobs.Interact(),"additional passenger boarded");string trip=session.law.tripId;int reds=session.manners.redEvents;
-  var incoming=jobs.nav.hd.paths[zones.Assigned.incoming];float start=Mathf.Max(0,incoming.length-70);Pose(incoming.Position(start),incoming.Tangent(start));jobs.nav.RequireVia(zones.Assigned.connector);
+  var incoming=jobs.nav.hd.paths[zones.Assigned.incoming];float start=Mathf.Max(0,incoming.length-70);Pose(incoming.Position(start),incoming.Tangent(start));jobs.nav.ObserveEdge(zones.Assigned.connector);jobs.nav.Refresh();
   zones.enabled=!deferred;for(int i=0;i<5;i++)yield return null;
   var path=deferred?jobs.nav.hdRoute.path:zones.Live.Route.path;float end=deferred?jobs.nav.hdRoute.ends[jobs.nav.hdRoute.edges.IndexOf(zones.Assigned.connector)]:path.length;
   for(float at=0;at<end+4;at+=.5f)yield return At(path,Mathf.Min(path.length,at));
@@ -72,13 +72,13 @@ public class ServiceLawZonesSmokeTest : MonoBehaviour {
   yield return ViaBoundaries(zones);
   for(int variant=8;variant<=14;variant++){
    jobs.ClearForDay();int offer=-1;
-   for(int round=0;round<100&&offer<0;round++){jobs.Generate();for(int i=0;i<jobs.offers.Length;i++){var z=zones.ZoneFor(jobs.offers[i]);if(z!=null&&z.variant==variant){offer=i;break;}}}
+   var course=zones.scenarios.Find(x=>x.variant==variant);var fixture=new JobOffer{fare=5000,seconds=2000,requiredScore=60};if(zones.ConfigureScenario(fixture,course)){jobs.offers[0]=fixture;offer=0;}
    Check(offer>=0,"reachable passenger offer for condition "+variant);if(offer<0)continue;
    Check(jobs.Accept(offer),"accept normal call "+variant);var selected=jobs.current;var pickup=jobs.stops[selected.pickup];Pose(pickup.Kerb,pickup.Direction);var before=taxi.transform.position;Check(jobs.Interact()&&jobs.trip.State==TripState.OnTrip,"board passenger "+variant);
    Check(Vector3.Distance(before,taxi.transform.position)<.01f&&map==session.world.GetInstanceID()&&vehicle==taxi.GetInstanceID(),"boarding does not teleport or replace map/taxi "+variant);
-   string trip=session.law.tripId;Check(zones.Assigned!=null&&jobs.nav.RequiredVia==zones.Assigned.connector&&jobs.nav.hdRoute.edges.Contains(zones.Assigned.connector),"navigation crosses assigned situation "+variant);
-   int connector=zones.Assigned.connector;jobs.nav.TogglePreference();Check(jobs.nav.hdRoute!=null&&jobs.nav.hdRoute.edges.Contains(connector),"route preference retains situation "+variant);
-   var drop=jobs.stops[selected.drop];Pose(drop.Kerb,drop.Direction);Check(!jobs.Interact()&&jobs.trip.State==TripState.OnTrip,"drop before required road is rejected "+variant);Pose(pickup.Kerb,pickup.Direction);
+   string trip=session.law.tripId;Check(zones.Assigned!=null&&jobs.nav.RequiredVia==-1&&jobs.nav.ObservedEdge==zones.Assigned.connector&&jobs.nav.hdRoute.edges.Contains(zones.Assigned.connector),"navigation crosses assigned situation "+variant);
+   int connector=zones.Assigned.connector;jobs.nav.TogglePreference();Check(jobs.nav.hdRoute!=null&&jobs.nav.RequiredVia==-1,"route preference has no forced situation "+variant);
+   var drop=jobs.stops[selected.drop];Pose(pickup.Kerb,pickup.Direction);
    var incoming=jobs.nav.hd.paths[zones.Assigned.incoming];float approachAt=Mathf.Max(0,incoming.length-70);Pose(incoming.Position(approachAt),incoming.Tangent(approachAt));jobs.nav.Refresh();
    for(int tick=0;tick<10&&!zones.Live.Active;tick++)yield return null;
    Check(zones.Live.Active,"situation activates in existing scene "+variant);if(!zones.Live.Active)continue;

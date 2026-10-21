@@ -16,7 +16,7 @@ public class PassengerRequestUI : MonoBehaviour {
   return true;
  }
  bool ChangesRoute {get{return request.Kind==RequestKind.SafeStop||request.Kind==RequestKind.DestinationChange||request.Kind==RequestKind.ViaStop;}}
- public bool PrepareProposal(){if(!ChangesRoute)return true;var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.Assigned!=null&&!zones.Completed)return false;
+ public bool PrepareProposal(){if(!ChangesRoute)return true;var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.Live&&zones.Live.Active)return false;
   if(Time.time<proposalUntil&&Vector3.Distance(proposalPosition,session.taxi.transform.position)<.25f)return proposal>=0;proposalUntil=Time.time+1;proposalPosition=session.taxi.transform.position;
   float best=float.MaxValue;proposal=-1;var jobs=session.jobs;
   for(int i=0;i<jobs.stops.Length;i++){if(i==jobs.current.drop||i==jobs.current.pickup)continue;float d;int f;float t;
