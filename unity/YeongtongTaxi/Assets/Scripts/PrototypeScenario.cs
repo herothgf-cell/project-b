@@ -8,9 +8,9 @@ public sealed class PrototypeScenario {
  public HdRoadGraph.RoutePath route,alternative;
  public static List<PrototypeScenario> Build(HdRoadGraph hd,MapStop[] stops){
   var result=new List<PrototypeScenario>();if(hd==null||stops.Length<12)return result;
-  int[] pickup={11,7,7,7,7,4,5},drop={0,4,4,4,6,5,8},links={1182,1158,1180,1050,1248,1133,1351};
+  int[] pickup={7,9,7,7,7,4,5},drop={0,4,4,4,6,5,8},links={1182,1158,1180,1050,1248,1133,1351};
   for(int i=0;i<7;i++){
-   var s=new PrototypeScenario{id="PS0"+(i+1),pickup=pickup[i],drop=drop[i],connector=links[i],variant=i+8,beforePickup=i<2};
+   var s=new PrototypeScenario{id="PS0"+(i+1),pickup=pickup[i],drop=drop[i],connector=links[i],variant=i+8,beforePickup=false};
    if(!ConnectorValid(hd,s.connector,i>=4?-1:0))continue;
    var a=stops[s.beforePickup?(i==0?7:9):s.pickup];var b=stops[s.beforePickup?s.pickup:s.drop];
    s.route=hd.Via(a.laneEdge,a.laneAt,s.connector,b.laneEdge,b.laneAt);

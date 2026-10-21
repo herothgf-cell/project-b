@@ -79,21 +79,20 @@ public sealed class ServiceLawZones : MonoBehaviour {
  public bool ConfigureScenario(JobOffer offer,PrototypeScenario scenario){
   if(!Ready||scenario==null)return false;var hd=session.jobs.nav.hd;var stops=session.jobs.stops;
   var p=stops[scenario.pickup];var d=stops[scenario.drop];float at;int start=hd.Nearest(session.taxi.transform.position,session.taxi.transform.forward,out at);
-  var pickupRoute=scenario.beforePickup?hd.Via(start,at,scenario.connector,p.laneEdge,p.laneAt):hd.Route(start,at,p.laneEdge,p.laneAt);
-  bool alreadyAtPickup=!scenario.beforePickup&&start==p.laneEdge&&Mathf.Abs(at-p.laneAt)<.25f;
-  if(pickupRoute==null&&!alreadyAtPickup||(scenario.beforePickup&&!PrototypeScenario.Valid(pickupRoute,scenario.connector)))return false;
-  var delivery=scenario.beforePickup?hd.Route(p.laneEdge,p.laneAt,d.laneEdge,d.laneAt):scenario.route;if(delivery==null)return false;
+  var pickupRoute=hd.Route(start,at,p.laneEdge,p.laneAt);
+  bool alreadyAtPickup=start==p.laneEdge&&Mathf.Abs(at-p.laneAt)<.25f;
+  if(pickupRoute==null&&!alreadyAtPickup)return false;
+  var delivery=scenario.route;if(delivery==null)return false;
   int zone=zones.FindIndex(z=>z.connector==scenario.connector);if(scenario.variant>0&&zone<0)return false;
   offer.pickup=scenario.pickup;offer.drop=scenario.drop;offer.scenarioId=scenario.id;offer.zoneIndex=zone;
   offer.distance=Mathf.Max(delivery.path.length,scenario.alternative==null?0:scenario.alternative.path.length);offer.waitSeconds=50;
-  offer.pickupSeconds=Mathf.Max(180,(alreadyAtPickup?0:pickupRoute.path.length)/4+120+(scenario.beforePickup?35:0));return true;
+  offer.pickupSeconds=Mathf.Max(180,(alreadyAtPickup?0:pickupRoute.path.length)/4+120);return true;
  }
  public void BeginPickup(JobOffer offer){
-  EndTrip();CurrentScenario=scenarios.Find(s=>s.id==offer.scenarioId);PickupPhase=CurrentScenario!=null&&CurrentScenario.beforePickup;
-  if(PickupPhase){Assigned=ZoneFor(offer);Completed=false;LastFeedback=null;LastTitle="";session.jobs.nav.RequireVia(CurrentScenario.connector);}
+  EndTrip();CurrentScenario=scenarios.Find(s=>s.id==offer.scenarioId);PickupPhase=false;Completed=false;LastFeedback=null;LastTitle="";session.jobs.nav.RequireVia(-1);
  }
  public void BeginTrip(JobOffer offer){
-  bool pre=CurrentScenario!=null&&CurrentScenario.beforePickup;EndTrip();CurrentScenario=scenarios.Find(s=>s.id==offer.scenarioId);PickupPhase=false;Assigned=pre?null:ZoneFor(offer);Completed=pre;LastFeedback=null;LastTitle="";
+  EndTrip();CurrentScenario=scenarios.Find(s=>s.id==offer.scenarioId);PickupPhase=false;Assigned=ZoneFor(offer);Completed=false;LastFeedback=null;LastTitle="";
   if(Assigned!=null)session.jobs.nav.RequireVia(Assigned.connector);
   if(CurrentScenario!=null&&(CurrentScenario.id=="PS08"||CurrentScenario.id=="PS09")){
    var course=GetComponent<ScenarioChoiceSituation>();if(!course)course=gameObject.AddComponent<ScenarioChoiceSituation>();course.session=session;course.Begin(CurrentScenario);session.jobs.nav.RequireVia(CurrentScenario.connector);

@@ -41,7 +41,7 @@ public class FuelStationProbe : MonoBehaviour {
    yield return new WaitForSecondsRealtime(.2f);Check(Time.timeScale==0&&session.paused&&Math.Abs(session.business.ledger.Elapsed-elapsed)<.001,"menu freezes enabled operating clock");session.business.enabledCampaign=false;
    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-captureFuelStations")>=0)Capture(station);
    Check(session.services.ConfirmAction(true),"actual pump purchase "+station.id);Check(account.Fuel>fuel&&account.Cash<cash,"fuel added and charged");Check(Math.Abs(session.business.ledger.Elapsed-elapsed-10)<.01,"exactly ten service seconds");
-   Time.timeScale=8;yield return Drive(second,station.id+" pump to separate exit");
+   Check(session.services.open,"ten-point refill keeps menu open");session.services.Toggle();Time.timeScale=8;yield return Drive(second,station.id+" pump to separate exit");
    Check(!session.services.AtFuelPump(),"after exit no refueling");Check(Vector3.Dot(taxi.transform.forward,station.direction)>.9f,"exit joins same traffic direction");
    Check(sideContacts==0&&curbSamples==0,"no side collision/curb contact "+station.id+" sides="+sideContacts+" curbSamples="+curbSamples+" maxError="+maxError.ToString("0.00"));
   }

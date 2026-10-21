@@ -1,4 +1,5 @@
 {
+  "includeScenarioRoutes": true,
   "edgeIds": [
     "A222BC004016:0",
     "A2218G611368:2",
@@ -238,5 +239,5 @@
     "A2218G611368"
   ],
   "status": "gameplay-provisional",
-  "scope": "Startup/stop1 -> fuel north -> stops2,3,4,5. Shared graph pavement envelope; not surveyed widths."
+  "scope": "Startup/fuel1 plus all nine passenger scenario routes, bypass and pickup approaches. Shared graph pavement/sidewalk envelope; not surveyed widths."
 }

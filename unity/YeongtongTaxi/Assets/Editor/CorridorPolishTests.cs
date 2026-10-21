@@ -17,6 +17,7 @@ public static class CorridorPolishTests {
   var go=new GameObject("Corridor pavement checks");int samples=0,pairs=0;
   try{
    var env=go.AddComponent<RoadEnvironment>();env.Build(map);var graph=new HdRoadGraph(map);
+   foreach(var stop in map.stops){Check(stop.hasPassengerAnchor&&!env.OnRoad(stop.Passenger),"passenger outside roadway "+stop.name);Check(stop.CanStop(stop.Kerb,stop.Direction,0),"curb interaction remains reachable "+stop.name);}
    foreach(int i in Enumerable.Range(0,map.hdEdges.Length).Where(i=>result.edges.Contains(map.hdEdges[i].id))){var p=graph.paths[i];for(float at=0;at<=p.length;at+=2){var point=p.Position(at);var right=TrafficSystem.Right(p.Tangent(at));foreach(float side in new[]{-1.5f,0,1.5f}){Check(env.OnRoad(point+right*side),"lane pavement clearance "+map.hdEdges[i].id);samples++;}}}
    foreach(var a in map.stops.Take(5))foreach(var b in map.stops.Take(5)){if(a==b)continue;Check(graph.Route(a.laneEdge,a.laneAt,b.laneEdge,b.laneAt)!=null,"service route retained");pairs++;}
    FuelStationLayout.Apply(map);Check(FuelStationLayout.For(map).Count==3,"fuel entries/exits still have clear plots");var fuel=FuelStationLayout.For(map)[0].approach;

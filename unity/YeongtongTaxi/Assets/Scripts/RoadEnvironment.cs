@@ -60,7 +60,14 @@ public class RoadEnvironment : MonoBehaviour {
    }
   }
   // Each validated stop receives a continuous standing area, even between generated paving segments.
-  foreach(var stop in map.stops){var centre=stop.V(.08f)+TrafficSystem.Right(stop.Direction)*(stop.width*.5f+1);var platform=WorldBuilder.Box("승하차 보도",centre,new Vector3(1.9f,.16f,5),WorldBuilder.Mat("Stop pavement",new Color(.65f,.63f,.58f)),transform);platform.transform.rotation=Quaternion.LookRotation(stop.Direction);}
+  foreach(var stop in map.stops){
+   var right=TrafficSystem.Right(stop.Direction);bool placed=false;
+   // Find the outside of the complete road envelope, not the passenger's lane width.
+   foreach(float along in new[]{0f,3,-3,6,-6,9,-9}){for(float offset=2.85f;offset<=45;offset+=.25f){var p=stop.Kerb+right*offset+stop.Direction*along;if(!PavingClear(p,right,stop.Direction))continue;
+    stop.passengerAnchor=p+Vector3.up*.16f;stop.hasPassengerAnchor=true;
+    var platform=WorldBuilder.Box("승하차 보도",p+Vector3.up*.08f,new Vector3(1.9f,.16f,2.9f),WorldBuilder.Mat("Stop pavement",new Color(.65f,.63f,.58f)),transform);platform.transform.rotation=Quaternion.LookRotation(stop.Direction);placed=true;break;}if(placed)break;}
+   if(!placed)throw new System.InvalidOperationException("No safe sidewalk for passenger: "+stop.name);
+  }
   var mesh=new Mesh();mesh.indexFormat=UnityEngine.Rendering.IndexFormat.UInt32;mesh.SetVertices(vertices);mesh.SetTriangles(triangles,0);mesh.RecalculateNormals();var obj=new GameObject("인도와 낮은 연석");obj.transform.SetParent(transform);obj.AddComponent<MeshFilter>().sharedMesh=mesh;obj.AddComponent<MeshRenderer>().sharedMaterial=WorldBuilder.Mat("Sidewalk",new Color(.65f,.63f,.58f));obj.AddComponent<MeshCollider>().sharedMesh=mesh;
  }
  static void Quad(List<Vector3> v,List<int> t,Vector3 a,Vector3 b,Vector3 c,Vector3 d){int k=v.Count;v.AddRange(new[]{a,b,c,d});t.AddRange(new[]{k,k+1,k+2,k,k+2,k+3});}

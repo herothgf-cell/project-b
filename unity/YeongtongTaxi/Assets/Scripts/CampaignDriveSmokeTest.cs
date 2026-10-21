@@ -41,7 +41,7 @@ public class CampaignDriveSmokeTest : MonoBehaviour {
     Check(arrived&&jobs.Interact()&&b.ledger.Account.Cash>cash,"normal fare credited day="+day+" ride="+ride);
     if(!arrived)break;
     float resultEnd=Time.time+4.2f;while(Time.time<resultEnd&&!b.ShowingSummary&&!b.taxPrompt)yield return null;
-    if(ride==0&&b.ledger.CanAccept){for(int fill=0;fill<2&&b.ledger.Account.Fuel<99;fill++){session.services.Toggle();bool bought=session.services.Buy(0);Check(bought,"visit fuel station day="+day+" purchase="+fill);if(!bought)break;Time.timeScale=8;}}
+    if(ride==0&&b.ledger.CanAccept){for(int fill=0;fill<10&&b.ledger.Account.Fuel<99;fill++){session.services.Toggle();bool bought=session.services.Buy(0);Check(bought,"visit fuel station day="+day+" purchase="+fill);if(session.services.open)session.services.Toggle();if(!bought)break;Time.timeScale=8;}}
     if(!b.ledger.CanAccept)break;
    }
    if(session.services.open)session.services.Toggle();

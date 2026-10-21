@@ -16,8 +16,8 @@ public class CorridorPolishProbe : MonoBehaviour {
    samples++;var p=path.Position(at);var d=path.Tangent(at);
    foreach(var hit in Physics.OverlapBox(p+Vector3.up*.7f,new Vector3(.94f,.48f,1.8f),Quaternion.LookRotation(d),1,QueryTriggerInteraction.Ignore))if(hit.name.StartsWith("Building ")){blocked++;if(blocked<10)report.AppendLine("blocked "+hit.name+" "+graph.edges[i].id);}
   }}ok&=blocked==0;
-  string folder=Path.GetFullPath("artifacts");Directory.CreateDirectory(folder);var camera=Camera.main;s.drivingCamera.enabled=false;
-  var stops=map.stops.Take(5).ToList();stops.Insert(1,FuelStationLayout.For(map)[0].approach);
+  foreach(var stop in map.stops){bool clear=stop.hasPassengerAnchor&&!s.roadEnvironment.OnRoad(stop.Passenger);ok&=clear;report.AppendLine("sidewalk "+stop.name+" clear="+clear+" offset="+Vector3.Distance(stop.Kerb,stop.Passenger));}string folder=Path.GetFullPath("artifacts");Directory.CreateDirectory(folder);var camera=Camera.main;s.drivingCamera.enabled=false;
+  var stops=map.stops.ToList();stops.Insert(1,FuelStationLayout.For(map)[0].approach);
   for(int i=0;i<stops.Count;i++){var stop=stops[i];var target=stop.V()+stop.Direction*10;camera.transform.SetPositionAndRotation(stop.V()-stop.Direction*22+Vector3.up*13,Quaternion.LookRotation(target-(stop.V()-stop.Direction*22+Vector3.up*13)));camera.fieldOfView=60;
    var texture=new RenderTexture(1280,720,24);var previous=RenderTexture.active;camera.targetTexture=texture;camera.Render();RenderTexture.active=texture;var pixels=new Texture2D(1280,720,TextureFormat.RGB24,false);pixels.ReadPixels(new Rect(0,0,1280,720),0,0);pixels.Apply();File.WriteAllBytes(Path.Combine(folder,"corridor-site-"+i+".png"),pixels.EncodeToPNG());camera.targetTexture=null;RenderTexture.active=previous;Destroy(pixels);texture.Release();Destroy(texture);
   }

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TrafficJunction {
@@ -72,6 +72,8 @@ public class TrafficSystem : MonoBehaviour {
         foreach(var hit in Physics.OverlapSphere(j.center,100,(1<<8)|(1<<9),QueryTriggerInteraction.Ignore)){
             var root=hit.attachedRigidbody?hit.attachedRigidbody.gameObject:hit.gameObject;if(root==self)continue;
             var car=root.GetComponent<TrafficCar>();var heading=root.transform.forward;
+            // A moving leader on the same directed turn is a following gap, not crossing traffic.
+            if(turn>0&&car&&MovingLeader(self.GetComponent<TrafficCar>(),car))continue;
             float facing=Vector3.Dot(heading,incoming);if(turn<0?facing>-.7f:facing>.7f)continue;
             if(turn<0&&car&&car.CurrentTurn<0)continue;
             int axis=Mathf.Abs(Vector3.Dot(heading,AxisDirection(j,0)))>.7f?0:1;
@@ -165,12 +167,12 @@ public class TrafficSystem : MonoBehaviour {
     public float ReservationDistance(TrafficCar car){return Mathf.Max(8,car.speed*car.speed/6+3);}
     bool SameTrafficStream(TrafficCar a,TrafficCar b){
         if(!a||!b)return false;
-        // A shared left-turn connector is one following stream, even while the
+        // A shared directed turn connector is one following stream, even while the
         // leader has rotated away from the follower's approach heading.
-        if(a.CurrentTurn<0&&a.route.graphPath!=null&&b.route.graphPath!=null){
-            foreach(var entry in a.route.stops){if(entry.Movement(a.route)>=0||a.distance>entry.exitDistance||entry.distance-a.distance>30)continue;
+        if(a.CurrentTurn!=0&&a.route.graphPath!=null&&b.route.graphPath!=null){
+            foreach(var entry in a.route.stops){if(entry.Movement(a.route)!=a.CurrentTurn||a.distance>entry.exitDistance||entry.distance-a.distance>30)continue;
                 bool shared=false;
-                foreach(int edge in a.route.graphPath.edges)if(roadMap.hdEdges[edge].ruleId==entry.junction.name&&roadMap.hdEdges[edge].turn<0&&b.route.graphPath.edges.Contains(edge)){shared=true;break;}
+                foreach(int edge in a.route.graphPath.edges)if(roadMap.hdEdges[edge].ruleId==entry.junction.name&&roadMap.hdEdges[edge].turn==entry.Movement(a.route)&&b.route.graphPath.edges.Contains(edge)){shared=true;break;}
                 if(!shared)continue;
                 float deviation;float leaderAt=a.route.graphPath.path.Project(b.transform.position,out deviation);
                 if(Mathf.Abs(leaderAt-a.distance)<60&&deviation<.8f&&Vector3.Dot(a.route.Tangent(leaderAt),b.transform.forward)>.95f)return true;

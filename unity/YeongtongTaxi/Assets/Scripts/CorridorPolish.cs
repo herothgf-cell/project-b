@@ -7,9 +7,9 @@ using UnityEngine;
 // Game-only pavement envelope. The compiled, directed lanes remain authoritative;
 // never infer a new legal lane or turn from a panorama or a wide source polygon.
 public static class CorridorPolish {
- [Serializable] public class Settings {public string status;public string[] roadIds,edgeIds;}
+ [Serializable] public class Settings {public string status;public bool includeScenarioRoutes;public string[] roadIds,edgeIds;}
  public sealed class Change {public string roadId;public float before,after;}
- public sealed class Result {public readonly List<Change> widths=new List<Change>();public readonly HashSet<string> edges=new HashSet<string>();public int ribbons;}
+ public sealed class Result {public readonly List<Change> widths=new List<Change>();public readonly HashSet<string> edges=new HashSet<string>(),sources=new HashSet<string>();public int ribbons;}
  static readonly ConditionalWeakTable<MapData,Result> results=new ConditionalWeakTable<MapData,Result>();
  public const float HalfLane=1.9f;
  public static Result For(MapData map){Result result;return results.TryGetValue(map,out result)?result:null;}
@@ -23,6 +23,12 @@ public static class CorridorPolish {
   if(For(map)!=null)return;
   var selected=new HashSet<string>(config.roadIds);var result=new Result();
   var roads=map.roads.ToDictionary(r=>r.id);foreach(var id in selected)if(!roads.ContainsKey(id))throw new InvalidOperationException("Corridor source changed: "+id);
+  if(config.includeScenarioRoutes){
+   var graph=new HdRoadGraph(map);var origin=map.stops[0];var paths=new List<HdRoadGraph.RoutePath>();
+   foreach(var scenario in PrototypeScenario.Build(graph,map.stops)){paths.Add(scenario.route);if(scenario.alternative!=null)paths.Add(scenario.alternative);var pickup=map.stops[scenario.pickup];var approach=graph.Route(origin.laneEdge,origin.laneAt,pickup.laneEdge,pickup.laneAt);if(approach!=null)paths.Add(approach);}
+   foreach(var path in paths)foreach(int index in path.edges)foreach(var id in (map.hdEdges[index].sourceId??"").Split(','))if(roads.ContainsKey(id))selected.Add(id);
+  }
+  result.sources.UnionWith(selected);
   var lanes=map.hdEdges.Where(e=>!e.disabled&&e.status=="provisional"&&e.change==0&&e.turn==0&&!e.id.StartsWith("join:")).ToArray();
   var bySource=new Dictionary<string,List<HdEdge>>();foreach(var e in lanes)foreach(var id in e.sourceId.Split(',')){List<HdEdge> list;if(!bySource.TryGetValue(id,out list)){list=new List<HdEdge>();bySource[id]=list;}list.Add(e);}
   foreach(var id in selected){

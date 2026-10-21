@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ServiceStops : MonoBehaviour {
  public DriveSession session;public bool open;public string notice="";public int pending=-1;public string destination="";
- float noticeUntil;int pendingFuel=-1;public bool FillTank; public float FuelAmount {get{return Mathf.Min(FillTank?100:50,100-session.business.ledger.Account.Fuel);}}
+ float noticeUntil;int pendingFuel=-1;public float FuelAmount {get{return Mathf.Min(10,100-session.business.ledger.Account.Fuel);}}
  // Retained for meal/parking and old regional stop references. Eungye fuel uses actual pump bays.
  public readonly int[] indices={3,6,9};
  readonly string[] names={"임시 주유소","임시 식당","임시 주차장"};
@@ -46,13 +46,13 @@ public class ServiceStops : MonoBehaviour {
  public bool Buy(int kind){
   if(kind<0||kind>1||session.FullMapOpen||!open||!CanUse(kind))return false;var b=session.business;var a=b.ledger.Account;int day=b.ledger.Day;
   bool ok=kind==0?a.Refuel(session.law.ids.Next("fuel"),FuelAmount,day):a.Meal(session.law.ids.Next("meal"),day);
-  if(ok){b.ledger.Advance(10,0);notice="이용 완료 · 영업시간 10초 경과";noticeUntil=Time.unscaledTime+4;destination="";Close();}else notice="현금·연료 잔량 또는 오늘 이용 여부를 확인하세요";return ok;
+  if(ok){b.ledger.Advance(10,0);notice="이용 완료 · 영업시간 10초 경과";noticeUntil=Time.unscaledTime+4;destination="";if(kind!=0)Close();}else notice="현금·연료 잔량 또는 오늘 이용 여부를 확인하세요";return ok;
  }
  void Row(float x,float y,string label,int kind,int station,GUIStyle style,GUIStyle button){
   GUI.Label(new Rect(x+20,y,330,51),label,style);
   if(GUI.Button(new Rect(x+360,y,105,42),"길 안내",button)){if(station>=0)GuideFuel(station);else Guide(kind);}
-  GUI.enabled=CanUse(kind)&&(station<0||FuelAtPump==station);
-  if(GUI.Button(new Rect(x+480,y,220,42),kind==0?"주유 비용 확인":kind==1?"식사 비용 확인":"주차·영업 마감",button))RequestAction(kind);GUI.enabled=true;
+  GUI.enabled=CanUse(kind)&&(station<0||FuelAtPump==station)&&(kind!=0||FuelAmount>.001f);
+  if(GUI.Button(new Rect(x+480,y,220,42),kind==0?"+"+FuelAmount.ToString("0.#")+"% 주유 · "+Mathf.CeilToInt(FuelAmount*session.business.settings.fuelUnitPrice)+"원":kind==1?"식사 비용 확인":"주차·영업 마감",button)){if(kind==0)Buy(0);else RequestAction(kind);}GUI.enabled=true;
  }
  void OnGUI(){
   if(session.business.ledger.Account==null||PracticeSession.Enabled)return;
@@ -61,7 +61,7 @@ public class ServiceStops : MonoBehaviour {
   GUI.depth=-110;float height=Stations.Count>0?565:450,x=(Screen.width-720)/2f,y=(Screen.height-height)/2f;
   GUI.color=new Color(.04f,.09f,.12f,1);GUI.DrawTexture(new Rect(x,y,720,height),Texture2D.whiteTexture);GUI.color=Color.white;
   var b=session.business;var a=b.ledger.Account;GUI.Label(new Rect(x+20,y+15,680,55),"생활 거점 (메뉴 동안 시간 정지)\n현금 "+a.Cash.ToString("N0")+"원 · 미납 "+a.Debt.ToString("N0")+"원 · 연료 "+a.Fuel.ToString("0.0")+"%",style);
-  if(pending>=0){if(pending==0&&GUI.Button(new Rect(x+30,y+80,660,30),FillTank?"선택: 가득 주유 · 클릭하면 50% 주유":"선택: 최대 50% 주유 · 클릭하면 가득 주유",button))FillTank=!FillTank;GUI.Label(new Rect(x+30,y+110,660,160),Quote(pending)+"\n\n확정할 때만 결제합니다. 현금이 부족하면 실행하지 않습니다.",style);if(GUI.Button(new Rect(x+30,y+height-130,310,50),"확정",button))ConfirmAction(true);if(GUI.Button(new Rect(x+380,y+height-130,310,50),"취소",button))ConfirmAction(false);return;}
+  if(pending>=0){GUI.Label(new Rect(x+30,y+110,660,160),Quote(pending)+"\n\n확정할 때만 결제합니다. 현금이 부족하면 실행하지 않습니다.",style);if(GUI.Button(new Rect(x+30,y+height-130,310,50),"확정",button))ConfirmAction(true);if(GUI.Button(new Rect(x+380,y+height-130,310,50),"취소",button))ConfirmAction(false);return;}
   int row=0;
   if(Stations.Count>0){for(int i=0;i<Stations.Count;i++)Row(x,y+85+row++*62,Stations[i].name,0,i,style,button);}else Row(x,y+85+row++*62,names[0]+" · "+session.jobs.stops[indices[0]].name,0,-1,style,button);
   for(int i=1;i<3;i++)Row(x,y+85+row++*62,names[i]+" · "+session.jobs.stops[indices[i]].name,i,-1,style,button);

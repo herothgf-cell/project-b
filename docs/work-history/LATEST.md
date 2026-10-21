@@ -1,5 +1,8 @@
 # 최신 작업 인계
 
+## 최신 실행 수정: 승차·보도·주유·우회전
+
+[검증·인계](2026-10-21-pickup-sidewalk-right-turn.md). PS01~09 상황 미체험 승차/하차 허용, 승객12곳 보도 배치, +10% 반복 주유, 시나리오 주변126개 도로 폭·828개 차로 노면 정비. 동일 우회전 경로의 이동 앞차를 교차 차량으로 오인하던 대기를 수정했다. 기본 BuildHybrid/은계이며 실제 현장 규제 확정이 아니다. 별도 하루20분·컨디션 기획 변경은 보존하고 구현 완료로 표시하지 않는다.
 ## 최신 기획 인계: 하루20분·운전자
 
 [이번 기획 기록](2026-10-21-one-day-driver-design.md) · [운전자 별도 기획](../content-design/10-driver-condition.md) · [캠페인](../content-design/07-campaign.md) · [P7 체크리스트](../prototype-development-checklist.md#하루20분과-운전자-전환-p7).

@@ -62,7 +62,7 @@ public class LiveTrafficValidationTest : MonoBehaviour {
    session.jobs.nav.SetDestination(goal);yield return Drive("service approach "+kind);
    Check(arrived&&session.jobs.At(session.services.indices[kind]),"right-side same-direction service stop "+kind);
    if(arrived){session.services.Toggle();Check(session.services.open,"service menu "+kind);int cash=session.business.ledger.Account.Cash;double clock=session.business.ledger.Elapsed;Check(session.services.RequestAction(kind),"quote "+kind);Check(!session.services.ConfirmAction(false)&&cash==session.business.ledger.Account.Cash&&clock==session.business.ledger.Elapsed,"cancel does not charge "+kind);
-    if(kind<2){session.services.RequestAction(kind);Check(session.services.ConfirmAction(true),"actual purchase "+kind);}else session.services.Toggle();Time.timeScale=4;
+    if(kind<2){session.services.RequestAction(kind);Check(session.services.ConfirmAction(true),"actual purchase "+kind);}if(session.services.open)session.services.Toggle();Time.timeScale=4;
     session.jobs.nav.Clear();session.jobs.nav.StartFreeGuidance();yield return Drive("service egress "+kind,45);
    }
   }

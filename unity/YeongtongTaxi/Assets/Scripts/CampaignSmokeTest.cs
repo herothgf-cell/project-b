@@ -16,7 +16,7 @@ public class CampaignSmokeTest : MonoBehaviour {
   foreach(var offer in jobs.offers)Check(offer.seconds>=120&&offer.seconds>=offer.distance/4+90+offer.waitSeconds,"generous offer deadline without fare change");
   for(int i=0;i<3;i++){PlaceService(i);yield return new WaitForSeconds(.4f);Check(session.services.CanUse(i),"service stop alignment "+i);session.services.Toggle();Check(session.services.open&&Time.timeScale==0,"station menu freezes "+i);
    if(capture&&i==0){yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.GetFullPath("artifacts/campaign-service.png"));yield return new WaitForSecondsRealtime(.3f);}
-   if(i<2)Check(session.services.Buy(i),"station purchase "+i);else session.services.Toggle();}
+   if(i<2)Check(session.services.Buy(i),"station purchase "+i);if(session.services.open)session.services.Toggle();}
   Place(0);yield return new WaitForSeconds(.4f);Check(jobs.Interact(),"roadside pickup v2");
   Check(!string.IsNullOrEmpty(session.law.tripId),"trip identity assigned");session.requests.request.DeferSafety();
   Check(!b.RequestEndDay()&&b.ledger.State==BusinessState.Open&&jobs.trip.State==TripState.OnTrip,"N cannot close day while occupied");
