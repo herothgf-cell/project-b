@@ -14,6 +14,7 @@ public class TrafficCar : MonoBehaviour {
     public float distance, speed,totalTravel;public int completedRoutes; public bool waitingForSignal, waitingForObstacle, waitingForJunction,entryBlocked;
     public string blockedName="";public int redStops, departures; bool previouslyStopped, recycling;
     Rigidbody body; BoxCollider hit; Renderer[] renderers; Renderer[] brakeLights;
+    readonly TrafficOverlapQuery overlaps=new TrafficOverlapQuery();
     Material brakeOn, brakeOff,indicatorOn,indicatorOff;Renderer[] indicators;
     public void Initialize(TrafficSystem owner,TrafficRoute path,float initial,int index) {
         system=owner;route=path;
@@ -38,10 +39,11 @@ public class TrafficCar : MonoBehaviour {
     }
     void SetVisible(bool value){hit.enabled=value;foreach(var r in renderers)r.enabled=value;}
     public void Recycle(){if(distance>=route.length-.01f)completedRoutes++;system.Release(this);recycling=true;speed=0;SetVisible(false);body.position=new Vector3(-100,-100,-100);}
-    void FixedUpdate() {
+    void FixedUpdate() {using(TrafficPerformanceProbe.Measure("TrafficCar.FixedUpdate"))Tick();}
+    void Tick() {
         if(recycling) {
             if(!respawn)return;
-            if(Physics.OverlapBox(route.start+Vector3.up*.8f,new Vector3(1.1f,.7f,4),Quaternion.LookRotation(route.direction),(1<<8)|(1<<9)).Length==0) Place(0);
+            if(overlaps.Box(route.start+Vector3.up*.8f,new Vector3(1.1f,.7f,4),Quaternion.LookRotation(route.direction),(1<<8)|(1<<9))==0) Place(0);
             return;
         }
         if(district!=null&&distance>=route.length-.01f){if(!district.Continue(this))speed=0;return;}
@@ -52,14 +54,15 @@ public class TrafficCar : MonoBehaviour {
             if(distance>stop.exitDistance&&released.Add(stop)){system.Release(this,stop.junction);if(stoppedAt==stop.junction)stoppedAt=null;}
             if(remaining>=-.05f&&remaining<=system.ReservationDistance(this))system.Request(this,stop);
             // Once beyond the stop line, clear the intersection even when its signal changes.
-            if(remaining>=-.05f && !system.CanEnter(this,stop)) {
+            if(remaining>=-.05f && remaining<=TrafficRules.SignalObservationDistance(speed) && !system.CanEnter(this,stop)) {
                 system.CancelApproach(this,stop);
                 if(remaining<gap){gap=Mathf.Max(0,remaining);waitingForSignal=true;}
             }
         }
         obstacleCar=null;float detection=Mathf.Max(8,speed*speed/6+6);
         for(float ahead=.5f;ahead<detection+3;ahead+=.5f){float at=Mathf.Min(route.length,distance+ahead);var facing=route.Tangent(at);bool blocked=false;
-            foreach(var h in Physics.OverlapBox(route.Position(at)+Vector3.up*.85f,new Vector3(.95f,.55f,2.25f),Quaternion.LookRotation(facing),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore))if(h.attachedRigidbody!=body){blockedName=h.name;obstacleCar=h.GetComponentInParent<TrafficCar>();blocked=true;break;}
+            int contacts=overlaps.Box(route.Position(at)+Vector3.up*.85f,new Vector3(.95f,.55f,2.25f),Quaternion.LookRotation(facing),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore);
+            for(int contact=0;contact<contacts;contact++){var h=overlaps.hits[contact];if(h.attachedRigidbody!=body){blockedName=h.name;obstacleCar=h.GetComponentInParent<TrafficCar>();blocked=true;break;}}
             if(blocked){float obstacleGap=Mathf.Max(0,ahead-1.5f);if(obstacleGap<gap){gap=obstacleGap;waitingForObstacle=true;waitingForSignal=false;}break;}
         }
         entryBlocked=false;foreach(var stop in route.stops){float remaining=stop.distance-distance;if(remaining>=-.05f&&remaining<=system.ReservationDistance(this)&&system.CanEnter(this,stop)){

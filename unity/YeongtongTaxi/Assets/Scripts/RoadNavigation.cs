@@ -143,7 +143,7 @@ public class RoadNavigation : MonoBehaviour {
  void UseFreeRoute(HdRoadGraph.RoutePath route){hdRoute=route;hdGoal=route.edges[route.edges.Count-1];hdGoalAt=hd.paths[hdGoal].length;destination=route.path.Position(route.path.length);}
  public void TogglePreference(){PreferLargeRoad=false;PreferFastest=!PreferFastest;selected=null;if(hd!=null)hdRoute=null;rerouteNotice=PreferenceLabel+" 경로 선택";noticeUntil=Time.time+5;if(active)Refresh();}
  public void Clear(){avoidEdge=-1;PreferLargeRoad=false;PassedRequiredVia=RequiredVia=-1;freeGuidance=false;active=false;selected=null;hdRoute=null;path.Clear();alternativePath.Clear();if(line!=null)line.positionCount=0;remaining=estimatedSeconds=alternativeSeconds=alternativeDistance=0;rerouteNotice="";instruction="호출을 선택하거나 길가 손님을 찾아보세요";}
- void Update(){if(active&&Time.time>=nextUpdate){Refresh();nextUpdate=Time.time+1;}}
+ void Update(){if(active&&Time.time>=nextUpdate){using(TrafficPerformanceProbe.Measure("Navigation.Refresh"))Refresh();nextUpdate=Time.time+1;}}
  static bool SameRoute(RouteResult a,RouteResult b){if(a==null||b==null||a.chain.Count!=b.chain.Count)return false;for(int i=0;i<a.chain.Count;i++)if(a.chain[i]!=b.chain[i])return false;return true;}
  RouteResult RemainingSelection(Vector3 start,Vector3 heading){
   if(selected==null)return null;float progress;int initial=InitialEdge(start,heading,out progress),at=selected.chain.IndexOf(initial);if(at<0)return null;

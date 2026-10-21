@@ -26,7 +26,15 @@ public class TrafficRoute {
     public float length;
     public int axis,turn;public Vector3[] points;float[] cumulative;
     public void SetPoints(Vector3[] values){points=values;cumulative=new float[points.Length];for(int i=1;i<points.Length;i++)cumulative[i]=cumulative[i-1]+Vector3.Distance(points[i-1],points[i]);start=points[0];end=points[points.Length-1];direction=(points[1]-points[0]).normalized;length=cumulative[cumulative.Length-1];}
-    public Vector3 Position(float d){if(points==null)return start+direction*d;for(int i=1;i<points.Length;i++)if(d<=cumulative[i])return Vector3.Lerp(points[i-1],points[i],Mathf.InverseLerp(cumulative[i-1],cumulative[i],d));return end;}
+    public Vector3 Position(float d){
+        if(points==null)return start+direction*d;
+        if(points.Length<2||d>length)return end;
+        // Lower bound preserves the old first matching segment at duplicate vertices.
+        // Collision lookahead samples this route many times per physics tick.
+        int lo=1,hi=points.Length-1;
+        while(lo<hi){int mid=lo+(hi-lo)/2;if(cumulative[mid]>=d)hi=mid;else lo=mid+1;}
+        return Vector3.Lerp(points[lo-1],points[lo],Mathf.InverseLerp(cumulative[lo-1],cumulative[lo],d));
+    }
     public Vector3 Tangent(float d){return (Position(Mathf.Min(length,d+.4f))-Position(Mathf.Max(0,d-.4f))).normalized;}
 
     public readonly List<TrafficStop> stops = new List<TrafficStop>();
@@ -46,6 +54,7 @@ public class TrafficSystem : MonoBehaviour {
     Material[] lit, unlit;
     readonly List<Vector3> whitePaint=new List<Vector3>(), yellowPaint=new List<Vector3>();
     MapData roadMap;
+    readonly TrafficOverlapQuery overlaps=new TrafficOverlapQuery();
 
     public Vector3 AxisDirection(TrafficJunction j,int axis){var d=j.direction.sqrMagnitude>.1f?j.direction:mainDirection;return axis==0?d:Right(d);}
     public int Sign(Vector3 direction,int axis,TrafficJunction j=null){return Vector3.Dot(direction,j!=null?AxisDirection(j,axis):axis==0?mainDirection:Right(mainDirection))>=0?1:-1;}
@@ -69,7 +78,8 @@ public class TrafficSystem : MonoBehaviour {
     }
     public bool YieldClear(TrafficJunction j,Vector3 incoming,int turn,GameObject self){
         if(turn==0||turn<0&&j.leftTurnMode!=LeftTurnMode.Permissive)return true;
-        foreach(var hit in Physics.OverlapSphere(j.center,100,(1<<8)|(1<<9),QueryTriggerInteraction.Ignore)){
+        int contacts=overlaps.Sphere(j.center,100,(1<<8)|(1<<9),QueryTriggerInteraction.Ignore);
+        for(int contact=0;contact<contacts;contact++){var hit=overlaps.hits[contact];
             var root=hit.attachedRigidbody?hit.attachedRigidbody.gameObject:hit.gameObject;if(root==self)continue;
             var car=root.GetComponent<TrafficCar>();var heading=root.transform.forward;
             // A moving leader on the same directed turn is a following gap, not crossing traffic.
@@ -202,12 +212,14 @@ public class TrafficSystem : MonoBehaviour {
 
         // A moving same-lane leader is protected by the car-following gap check. All other
         // occupied movements stay exclusive, including stopped leaders and conflicting turns.
-        foreach(var hit in Physics.OverlapBox(j.center+Vector3.up*.85f,new Vector3(j.halfWidth[0]+.4f,.55f,j.halfWidth[1]+.4f),Quaternion.LookRotation(AxisDirection(j,0)),(1<<8)|(1<<9))){var other=hit.GetComponentInParent<TrafficCar>();if(other!=car&&!MovingLeader(car,other))return false;}
+        int contacts=overlaps.Box(j.center+Vector3.up*.85f,new Vector3(j.halfWidth[0]+.4f,.55f,j.halfWidth[1]+.4f),Quaternion.LookRotation(AxisDirection(j,0)),(1<<8)|(1<<9));
+        for(int contact=0;contact<contacts;contact++){var other=overlaps.hits[contact].GetComponentInParent<TrafficCar>();if(other!=car&&!MovingLeader(car,other))return false;}
         if(!ExitClear(car,stop))return false;
         j.reservations.Add(car);if(!j.owner)j.owner=car;return true;
     }
     public bool ExitClear(TrafficCar car,TrafficStop stop){var exit=car.route.Position(stop.exitDistance);var dir=car.route.Tangent(stop.exitDistance);
-        foreach(var hit in Physics.OverlapBox(exit+Vector3.up*.85f,new Vector3(1.05f,.55f,4.5f),Quaternion.LookRotation(dir),(1<<8)|(1<<9)|1)){var other=hit.GetComponentInParent<TrafficCar>();if(other!=car&&!MovingLeader(car,other))return false;}return true;
+        int contacts=overlaps.Box(exit+Vector3.up*.85f,new Vector3(1.05f,.55f,4.5f),Quaternion.LookRotation(dir),(1<<8)|(1<<9)|1);
+        for(int contact=0;contact<contacts;contact++){var other=overlaps.hits[contact].GetComponentInParent<TrafficCar>();if(other!=car&&!MovingLeader(car,other))return false;}return true;
     }
     public void Release(TrafficCar car,TrafficJunction j,bool clearRequest=true){j.reservations.Remove(car);if(clearRequest)j.requests.Remove(car);if(j.owner==car){j.owner=null;foreach(var reserved in j.reservations){j.owner=reserved;break;}}}
     public void Release(TrafficCar car){foreach(var j in junctions)Release(car,j);}

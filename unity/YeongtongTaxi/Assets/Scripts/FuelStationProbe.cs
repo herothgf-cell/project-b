@@ -9,9 +9,13 @@ using UnityEngine;
 // Position is set only at the initial approach to each independent station case.
 public class FuelStationProbe : MonoBehaviour {
  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Attach(){if(Array.IndexOf(Environment.GetCommandLineArgs(),"-fuelFacilitiesTest")>=0)new GameObject("Fuel facilities physical test").AddComponent<FuelStationProbe>();}
- DriveSession session;bool success=true;readonly StringBuilder report=new StringBuilder();float maxError;int sideContacts,curbSamples;bool driving;
+ public DriveSession session;public bool externallyDriven;
+public bool Passed { get { return success; } }
+ public void RecordContacts(){var recorder=session.taxi.gameObject.GetComponent<FuelStationContactRecorder>();if(!recorder)recorder=session.taxi.gameObject.AddComponent<FuelStationContactRecorder>();recorder.owner=this;}
+ bool success=true;readonly StringBuilder report=new StringBuilder();float maxError;int sideContacts,curbSamples;bool driving;
  void Check(bool ok,string message){report.AppendLine((ok?"PASS ":"FAIL ")+message);if(!ok){success=false;Debug.LogError("FUEL_TEST "+message);}}
  IEnumerator Start(){
+  if(externallyDriven)yield break;
   yield return new WaitForSecondsRealtime(2);session=FindObjectOfType<DriveSession>();
   if(!session){Debug.LogError("FUEL_TEST no session");Application.Quit(1);yield break;}
   session.business.StopAllCoroutines();session.business.preparing=false;session.business.enabledCampaign=false;session.business.taxPrompt=false;session.business.useV2=true;
@@ -56,7 +60,8 @@ public class FuelStationProbe : MonoBehaviour {
   }
   Check(onRoad,"full vehicle footprint paved "+label);Check(noCurbs,"curb-free swept footprint "+label);
  }
- IEnumerator Drive(List<Vector3> points,string label){
+ public IEnumerator Drive(List<Vector3> points,string label){
+  RecordContacts();int contactsBefore=sideContacts,curbsBefore=curbSamples;
   var path=new AssistedRoadNetwork.Path(points.ToArray());var taxi=session.taxi;float begin=Time.time,at=0;driving=true;bool arrived=false;
   taxi.assistance.SetActive(false);taxi.automated=true;taxi.autoBrake=false;taxi.autoServiceBrake=0;
   while(Time.time-begin<100){
@@ -73,6 +78,7 @@ public class FuelStationProbe : MonoBehaviour {
    yield return new WaitForFixedUpdate();
   }
   taxi.autoThrottle=0;taxi.autoSteer=0;taxi.autoServiceBrake=0;taxi.autoBrake=true;yield return new WaitForSeconds(.5f);driving=false;
+  Check(sideContacts==contactsBefore&&curbSamples==curbsBefore,label+" no side or curb contacts");
   Check(arrived,label+" physical completion seconds="+(Time.time-begin).ToString("0.0")+" error="+maxError.ToString("0.00"));
  }
  internal void Contact(Collision collision){if(!driving)return;foreach(var point in collision.contacts)if(Mathf.Abs(point.normal.y)<.6f){sideContacts++;break;}}

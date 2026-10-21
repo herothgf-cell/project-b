@@ -6,6 +6,7 @@ using UnityEngine;
 
 // Physical taxi inputs, original ambient traffic. Only test starts are positioned.
 public class LiveTrafficValidationTest : MonoBehaviour {
+ public bool externallyDriven;public float legTimeout=420;
  public float cruise=6;public DriveSession session;bool ok=true,arrived;readonly StringBuilder report=new StringBuilder();
  readonly HashSet<TrafficJunction> stopped=new HashSet<TrafficJunction>();
  void Check(bool value,string name){ok&=value;report.AppendLine((value?"PASS ":"FAIL ")+name);Flush();}
@@ -35,7 +36,7 @@ public class LiveTrafficValidationTest : MonoBehaviour {
   HdRoadGraph.RoutePath traced=null;float probe=0;
   float initialError;initial=nav.ProjectVehicle(out initialError);minProgress=initial;
   Check(session.assisted.SetActive(true),name+" steering armed");
-  while(Time.time-start<420){
+  while(Time.time-start<legTimeout){
    var route=nav.hdRoute;if(route==null)break;if(route!=traced){float err;float pp=route.path.Project(taxi.transform.position,out err);report.AppendLine("ROUTE t="+(Time.time-start)+" pos="+taxi.transform.position+" tangent="+route.path.Tangent(pp)+" forward="+taxi.transform.forward+" length="+route.path.length+" edge="+route.EdgeAt(pp)+" via="+nav.RequiredVia);traced=route;minProgress=pp;lastProgressTime=Time.time;Flush();}float error;float at=nav.ProjectVehicle(out error);maxError=Mathf.Max(maxError,error);if(Time.time>=probe){probe=Time.time+1;report.AppendLine("TRACE t="+(Time.time-start).ToString("F1")+" pos="+taxi.transform.position+" at="+at.ToString("F1")+" error="+error.ToString("F2")+" tangent="+route.path.Tangent(at)+" forward="+taxi.transform.forward+" target="+route.path.Position(at+5));Flush();}
    float remain=route.path.length-at;if(distanceLimit>0)remain=Mathf.Min(remain,distanceLimit-(at-initial));
    float bend=Vector3.Angle(route.path.Tangent(at),route.path.Tangent(Mathf.Min(route.path.length,at+12)));float speed=remain<12?Mathf.Sqrt(2*Mathf.Max(0,remain-1)):bend>12?3.2f:cruise;
@@ -54,6 +55,7 @@ public class LiveTrafficValidationTest : MonoBehaviour {
   Check(deduction==0,name+" no independent law deduction");Flush();
  }
  IEnumerator Start(){
+  if(externallyDriven)yield break;
   yield return new WaitForSeconds(1);var taxi=session.taxi;taxi.automated=true;taxi.autoBrake=true;session.assisted.allowAutomated=true;session.roadConditions.enabled=false;session.business.enabledCampaign=false;Time.timeScale=4;
   Check(session.world.map.mapId=="eungye"&&session.traffic.cars.Count>=24,"Eungye and 24 ambient vehicles");float traveled=Travel();
   for(int kind=0;kind<3;kind++){
