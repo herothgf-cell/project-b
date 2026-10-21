@@ -6,7 +6,7 @@ public class MapIdentityProbe : MonoBehaviour {
  IEnumerator Start(){
   yield return new WaitForSecondsRealtime(2);
   var session=FindObjectOfType<DriveSession>();var map=session.world.map;
-  bool ok=map.mapId=="eungye"&&map.hybrid&&map.coordinateStatus=="verified"&&map.width==2100&&map.depth==1750&&map.stops.Length==12&&map.roads.Length==889;
+  bool ok=map.mapId=="eungye"&&map.hybrid&&map.coordinateStatus=="verified"&&map.width==2100&&map.depth==1750&&map.stops.Length==12&&map.roads.Length==889+FuelStationLayout.For(map).Count*3&&FuelStationLayout.For(map).Count==3;
   string text="success="+ok+"\nmap="+map.mapId+" hybrid="+map.hybrid+" extent="+map.width+"x"+map.depth+" roads="+map.roads.Length+" stops="+map.stops.Length+"\nsource="+map.source;
   Directory.CreateDirectory(Path.GetFullPath("artifacts"));
   File.WriteAllText(Path.GetFullPath("artifacts/map-identity.txt"),text);Debug.Log(text);

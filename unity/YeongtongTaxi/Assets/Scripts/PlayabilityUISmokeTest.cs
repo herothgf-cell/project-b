@@ -25,7 +25,7 @@ public class PlayabilityUISmokeTest : MonoBehaviour {
   session.jobs.Accept(0);int before=session.manners.ledger.Score;
   var e=new LawEvent{id="ui-score-probe",day=session.business.ledger.Day,family="signal"};e.Add("L01",LawVerdict.Violation,20);session.law.ledger.Record(e);
   Check(session.manners.ledger.Score==before&&session.law.ledger.Score(e.day)==80,"law deduction does not change passenger manners");
-  if(lawCaption!=null)Check(((string)lawCaption.GetValue(hud,null)).Contains("80"),"law gauge uses today's actual score");
+  if(lawCaption!=null)Check(((string)lawCaption.GetValue(hud,null)).Contains("80")&&((string)lawCaption.GetValue(hud,null)).Contains("운전 점수"),"driving score gauge uses actual score and player-facing name");
   if(caption!=null)Check(((string)caption.GetValue(hud,null)).Contains("탑승 전"),"no fabricated passenger score before boarding");
   foreach(var size in new[]{new Vector2Int(1280,720),new Vector2Int(1600,900),new Vector2Int(1920,1080)}){
    Screen.SetResolution(size.x,size.y,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.7f);

@@ -22,6 +22,7 @@ public class RoadEnvironment : MonoBehaviour {
    AddBounds(roadCells,i,Mathf.Min(s.a.x,s.b.x)-radius,Mathf.Min(s.a.z,s.b.z)-radius,Mathf.Max(s.a.x,s.b.x)+radius,Mathf.Max(s.a.z,s.b.z)+radius);
   }
   for(int i=0;i<map.buildings.Length;i++){
+   if(SceneBuildingVisibility.Hidden(map,map.buildings[i].id))continue;
    var points=map.buildings[i].points;if(points.Length==0)continue;
    float minX=points[0].x,maxX=minX,minZ=points[0].z,maxZ=minZ;
    for(int j=1;j<points.Length;j++){var p=points[j];minX=Mathf.Min(minX,p.x);maxX=Mathf.Max(maxX,p.x);minZ=Mathf.Min(minZ,p.z);maxZ=Mathf.Max(maxZ,p.z);}

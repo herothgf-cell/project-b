@@ -64,7 +64,7 @@ public class EconomyLedger {
  public bool NextDay(){if(State!=BusinessState.Summary)return false;Day++;Income=Rides=FailedTrips=0;Elapsed=Metres=fuel=0;State=BusinessState.Open;return true;}
  public EconomySnapshot Snapshot(){return new EconomySnapshot{settings=Settings,records=records.ConvertAll(r=>r.Copy()).ToArray()};}
  public static EconomyLedger RestoreCampaign(EconomySnapshot days,AccountSnapshot account){
-  var a=CampaignAccount.Restore(account);var result=new EconomyLedger(account.settings);result.Account=a;
+  var a=CampaignAccount.Restore(account);var result=new EconomyLedger(a.Snapshot().settings);result.Account=a;
   if(days==null||days.records==null||days.records.Length>result.Settings.days)throw new ArgumentException("Invalid campaign days");
   foreach(var r in days.records){
    if(r==null||r.day!=result.records.Count+1||r.income<0||r.rides<0||r.failedTrips<0||r.metres<0||float.IsNaN(r.metres)||float.IsInfinity(r.metres))throw new ArgumentException("Invalid campaign sequence");

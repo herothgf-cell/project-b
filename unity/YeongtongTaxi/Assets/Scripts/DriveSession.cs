@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 public class DriveSession : MonoBehaviour {
     public string startupRegion="";
     public TaxiController taxi; public WorldBuilder world; public TrafficSystem traffic; public DrivingCamera drivingCamera; public TaxiSignals signals;
@@ -55,6 +55,7 @@ public class DriveSession : MonoBehaviour {
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-liveExitChoicesTest")>=0)gameObject.AddComponent<LiveExitChoicesTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-liveTrafficTest")>=0)gameObject.AddComponent<LiveTrafficValidationTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-lawZoneLabelsTest")>=0)gameObject.AddComponent<LawZoneLabelsSmokeTest>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadReadabilityTest")>=0)gameObject.AddComponent<RoadReadabilityProbe>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-playabilityUITest")>=0)gameObject.AddComponent<PlayabilityUISmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-manualHandlingTest")>=0)gameObject.AddComponent<ManualHandlingSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-serviceLawZonesTest")>=0)gameObject.AddComponent<ServiceLawZonesSmokeTest>().session=this;

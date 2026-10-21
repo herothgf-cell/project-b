@@ -43,7 +43,8 @@ public class DrivingReadability : MonoBehaviour {
   foreach(var incident in session.roadConditions.incidents)Dot(Project(incident.position),Color.red,8);
   for(int pass=0;pass<2;pass++)for(int i=1;i<jobs.nav.path.Count;i++){var a=Project(jobs.nav.path[i-1]);var b=Project(jobs.nav.path[i]);Line(a,b,pass==0?Color.black:Color.cyan,pass==0?8:4);}
   for(int i=0;i<jobs.stops.Length;i++)if(jobs.people[i].activeSelf)Marker(jobs.stops[i].V(),"승",new Color(.3f,1,.55f),false);
-  if(session.business.useV2)foreach(int i in session.services.indices)Marker(jobs.stops[i].V(),"거",new Color(1,.5f,1),false);
+  if(session.business.useV2)for(int k=1;k<session.services.indices.Length;k++)Marker(jobs.stops[session.services.indices[k]].V(),k==1?"식":"주차",new Color(1,.5f,1),false);
+  DrawFuelStations();
   if(jobs.trip.State==TripState.ToPickup||jobs.trip.State==TripState.OnTrip){
    if(jobs.trip.State==TripState.ToPickup)Marker(jobs.stops[jobs.current.pickup].V(),"승차",new Color(.3f,1,.55f),true);
    Marker(jobs.stops[jobs.current.drop].V(),"도착",new Color(1,.5f,.8f),true);
@@ -53,18 +54,23 @@ public class DrivingReadability : MonoBehaviour {
   var player=Project(session.taxi.transform.position);var forward=new Vector2(session.taxi.transform.forward.x,-session.taxi.transform.forward.z).normalized;var side=new Vector2(-forward.y,forward.x);
   Dot(player,Color.black,24);Line(player-forward*6-side*7,player+forward*11,Color.yellow,5);Line(player+forward*11,player-forward*6+side*7,Color.yellow,5);Line(player-forward*6+side*7,player-forward*6-side*7,Color.yellow,5);
   GUI.EndGroup();
-  GUI.Label(new Rect(x,324,Size,23),"▲ 나  ━ 경로  ● 법규 (분홍: 이번 경유)",new GUIStyle(label){fontSize=12});
+  GUI.Label(new Rect(x,324,Size,23),"▲ 나  ━ 경로  ● 상황  노랑1·2·3 주유소",new GUIStyle(label){fontSize=12});
   if(GUI.Button(new Rect(x,349,140,26),Facilities?"시설 표시 끄기":"시설 정보 보기",KoreanText.Button(13)))Facilities=!Facilities;
   if(GUI.Button(new Rect(x+146,349,134,26),"G 전체 지도",KoreanText.Button(13)))GetComponent<FullMapOverlay>().Open();
   GUI.Label(new Rect(x+4,379,276,22),"© OSM / ODbL · 현장 규제 미검증",new GUIStyle(label){fontSize=11});
   if(Facilities){var status=GetComponent<HybridMapStatus>();Panel(new Rect(x-310,42,300,145));GUI.Label(new Rect(x-300,50,280,130),"시설 □ 주황: 임시 / 초록: 확인\n"+(status?status.current:"시설 정보 없음"),label);}
   DrawSignal(x);
  }
+ void DrawFuelStations(){
+  var stations=FuelStationLayout.For(session.world.map);var style=new GUIStyle(label){fontSize=11,alignment=TextAnchor.MiddleCenter};
+  for(int i=0;i<stations.Count;i++){var p=Project(stations[i].pump);if(p.x<9||p.y<9||p.x>Size-9||p.y>Size-9)continue;Dot(p,Color.black,19);Dot(p,new Color(1,.75f,.15f),15);style.normal.textColor=Color.black;GUI.Label(new Rect(p.x-7,p.y-9,14,18),(i+1).ToString(),style);}
+ }
  static Vector2 ClampedZone(Vector2 p){var d=p-Vector2.one*(Size/2);float k=(Size/2-14)/Mathf.Max(Mathf.Abs(d.x),Mathf.Abs(d.y));return Vector2.one*(Size/2)+d*Mathf.Min(1,k);}
  public void LayoutLawZones(){
   ZoneLabels.Clear();var zones=GetComponent<ServiceLawZones>();if(!zones||!zones.Ready)return;
   SetBounds();PrepareMarkers();var occupied=new List<Rect>();var player=Project(session.taxi.transform.position);occupied.Add(new Rect(player.x-18,player.y-18,36,36));
   if(session.jobs.nav.active)ReserveMarker(session.jobs.nav.destination,occupied);
+  foreach(var station in FuelStationLayout.For(session.world.map)){var p=Project(station.pump);if(p.x>=4&&p.y>=4&&p.x<=Size-4&&p.y<=Size-4)occupied.Add(new Rect(p.x-8,p.y-8,16,16));}
   if(session.jobs.Active){ReserveMarker(session.jobs.stops[session.jobs.current.drop].V(),occupied);if(session.jobs.trip.State==TripState.ToPickup)ReserveMarker(session.jobs.stops[session.jobs.current.pickup].V(),occupied);}
   var selected=session.jobs.Active?zones.ZoneFor(session.jobs.current):null;var ordered=new List<ServiceLawZone>();if(selected!=null)ordered.Add(selected);foreach(var z in zones.zones)if(z!=selected)ordered.Add(z);
   foreach(var zone in ordered){var anchor=Project(zone.junction.center);bool outside=anchor.x<4||anchor.y<4||anchor.x>Size-4||anchor.y>Size-4;bool chosen=zone==selected;if(outside&&!chosen)continue;if(outside)anchor=ClampedZone(anchor);

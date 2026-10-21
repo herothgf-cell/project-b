@@ -2,7 +2,7 @@ using System;
 class PrototypeStateTests {
  static void Check(bool ok,string reason){if(!ok)throw new Exception(reason);}
  static void Main(){
-  var s=new PrototypeSettings();Check(s.days==3&&s.daySeconds==480&&s.target==30000,"campaign defaults");
+  var s=new PrototypeSettings();Check(s.days==3&&s.daySeconds==720&&s.target==30000,"campaign defaults");
   var ids=new PrototypeIds("test");Check(ids.Next("trip")!=ids.Next("trip"),"unique trips");
   var ledger=new LawLedger();
   var e=new LawEvent{ id="exit-1",day=1,family="exit",tripId="",reason="observed insertion" };

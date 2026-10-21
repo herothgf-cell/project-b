@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 
-// Real Rigidbody/steering inputs, real fare formula and 480-second shifts.
+// Real Rigidbody/steering inputs, real fare formula and 720-second shifts.
 // Ambient cars are disabled to isolate campaign/navigation from traffic congestion.
 public class CampaignDriveSmokeTest : MonoBehaviour {
  public DriveSession session;bool ok=true,arrived;bool lawful;string observedEntry="";readonly StringBuilder report=new StringBuilder();
@@ -30,7 +30,7 @@ public class CampaignDriveSmokeTest : MonoBehaviour {
  IEnumerator Start(){
   yield return new WaitForSeconds(1);lawful=System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-lawfulDrive")>=0;session.jobs.nav.PreferFastest=!lawful;Time.timeScale=8;var b=session.business;var jobs=session.jobs;session.taxi.automated=true;session.taxi.autoBrake=true;session.assisted.allowAutomated=true;session.roadConditions.enabled=false;
   foreach(var c in session.traffic.cars){c.Recycle();c.enabled=false;}
-  Check(b.ledger.Account!=null&&b.ledger.Settings.days==3&&b.ledger.Settings.daySeconds==480,"unmodified campaign settings");
+  Check(b.ledger.Account!=null&&b.ledger.Settings.days==3&&b.ledger.Settings.daySeconds==720,"unmodified campaign settings");
   for(int day=1;day<=3;day++){
    Place(jobs.stops[0]);yield return new WaitForSeconds(.6f);
    for(int ride=0;ride<2;ride++){
@@ -48,7 +48,7 @@ public class CampaignDriveSmokeTest : MonoBehaviour {
    // Let the actual game clock reach closing; no Advance() or injected fare.
    float timeout=Time.realtimeSinceStartup+120;
    while(!b.ShowingSummary&&Time.realtimeSinceStartup<timeout)yield return new WaitForSecondsRealtime(.1f);
-   Check(b.ShowingSummary&&b.ledger.Elapsed>=480,"automatic 480-second settlement day="+day);
+   Check(b.ShowingSummary&&b.ledger.Elapsed>=720,"automatic 720-second settlement day="+day);
    Check(b.SaveCheckpoint(),"checkpoint day="+day);
    report.AppendLine("DAY "+day+" income="+b.ledger.Income+" net="+b.ledger.TotalNet+" fuel="+b.ledger.Account.Fuel+" rides="+b.ledger.Rides+" failures="+b.ledger.FailedTrips+" law="+session.law.ledger.Score(day));Flush();
    Check(!b.taxPrompt,"settlement without tax prompt day="+day);

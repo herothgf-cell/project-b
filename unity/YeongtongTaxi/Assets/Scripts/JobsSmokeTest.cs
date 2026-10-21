@@ -9,7 +9,7 @@ public class JobsSmokeTest : MonoBehaviour {
   bool accept=j.Accept(0);bool reject=!j.Accept(1);Move(j.current.pickup);yield return new WaitForSeconds(.6f);bool board=j.Interact()&&j.trip.State==TripState.OnTrip;
   var original=j.nav.path.Count;Move((j.current.drop+2)%j.stops.Length);j.nav.Refresh();bool reroute=j.nav.path.Count>1;Move(j.current.drop);yield return new WaitForSeconds(.6f);int fare=j.current.fare;bool paid=j.Interact()&&j.balance==fare;bool once=!j.Interact()&&j.balance==fare;
   yield return new WaitForSeconds(4.1f);Move(1);yield return new WaitForSeconds(.6f);bool street=j.Interact()&&j.trip.State==TripState.OnTrip;
-  int earned=j.balance;j.trip.Tick(10000);yield return null;bool failure=j.trip.State==TripState.Failed&&j.balance==earned;
+  int earned=j.balance;j.trip.Tick(10000);yield return null;bool retained=j.trip.State==TripState.OnTrip&&j.trip.Remaining==0;Move(j.current.drop);yield return new WaitForSeconds(.6f);bool failure=retained&&j.Interact()&&j.trip.State==TripState.Failed&&j.balance==earned;
   yield return new WaitForSeconds(4.1f);j.Accept(1);Move(j.current.pickup);yield return new WaitForSeconds(.6f);j.Interact();
   Time.timeScale=0;float remaining=j.trip.Remaining;yield return new WaitForSecondsRealtime(.3f);bool pause=j.trip.Remaining==remaining;Time.timeScale=1;
   session.signals.Clear();session.signals.Toggle(-1);yield return null;yield return null;bool left=session.assist.Mode=="LEFT CAMERA";

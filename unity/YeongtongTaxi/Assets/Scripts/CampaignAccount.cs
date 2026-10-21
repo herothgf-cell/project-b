@@ -65,7 +65,7 @@ public class CampaignAccount {
   // checkpoint look solvent or hide duplicate transaction identities.
   var checkedAccount=new CampaignAccount(snapshot.settings);
   foreach(var e in snapshot.entries)if(e==null||e.day<1||!checkedAccount.Post(e.id,e.kind,e.day,e.cash,e.debt))throw new ArgumentException("Invalid transaction");
-  var a=new CampaignAccount(snapshot.settings);
+  var a=new CampaignAccount(snapshot.settings.WithCurrentOperationBalance());
   foreach(var e in snapshot.entries)if(!ExcludedCost(e.kind)&&!a.Post(e.id,e.kind,e.day,e.cash,e.debt))throw new ArgumentException("Invalid migrated transaction");
   // No refund transaction is added. Normalized snapshots no longer contain the
   // removed costs, so later loads cannot refund or forgive them again.

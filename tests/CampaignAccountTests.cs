@@ -4,12 +4,12 @@ class CampaignAccountTests {
  static void Main(){try{Run();}catch(Exception ex){Console.WriteLine(ex.Message);Environment.Exit(1);}}
  static void Run(){
   var a=new CampaignAccount(new PrototypeSettings());
-  Check(a.Cash==10000&&a.Net==0&&a.Fuel==35,"initial assets excluded from profit");
+  Check(a.Cash==10000&&a.Net==0&&a.Fuel==60,"initial assets excluded from profit");
   Check(a.Fare("trip1",5000)&&!a.Fare("trip1",5000)&&a.Net==5000,"fare exactly once");
-  Check(a.Refuel("fuel1",50)&&a.Fuel==85&&a.Cash==13000,"actual fuel purchase");
+  Check(a.Refuel("fuel1",25)&&a.Fuel==85&&a.Cash==14000,"actual fuel purchase");
   Check(!a.Refuel("fuel1",50)&&a.Fuel==85,"duplicate refuel rejected");
-  Check(a.Refuel("fuel2",50)&&a.Fuel==100&&a.Cash==12400,"capped fuel charged actual quantity");
-  a.Consume(60,1000);Check(Math.Abs(a.Fuel-87)<.001,"distance and idle consumption");
+  Check(a.Refuel("fuel2",50)&&a.Fuel==100&&a.Cash==13400,"capped fuel charged actual quantity");
+  a.Consume(60,1000);Check(Math.Abs(a.Fuel-95.9f)<.001,"distance and idle consumption");
   Check(a.Meal("meal1",1)&&!a.Meal("meal2",1),"one meal per day");
   int before=a.Cash;
   Check(!a.Renew("renew1")&&!a.PayTax("tax1")&&a.Cash==before,"excluded payments cannot deduct cash");
@@ -24,18 +24,21 @@ class CampaignAccountTests {
   var clone=CampaignAccount.Restore(poor.Snapshot());Check(clone.Net==poor.Net&&clone.Debt==0,"snapshot round trip");
   Check(!clone.Fare("trip",10000),"dedup survives restore");
   var balance=new CampaignAccount(new PrototypeSettings());
-  for(int day=1;day<=3;day++){balance.Fare("day"+day,18000,day);if(day==1||day==3)balance.Refuel("fuel-day"+day,50,day);balance.Consume(480,3000);if(day==2)balance.Renew("balance-insurance",day);if(day==3)balance.PayTax("balance-tax",day);balance.CloseDay(day);}
-  Check(balance.Net==39500&&balance.GoalMet,"54k revenue minus 4k fuel and 10.5k meal/parking achieves goal");
+  for(int day=1;day<=3;day++){balance.Fare("day"+day,18000,day);balance.Consume(720,3000);balance.CloseDay(day);}
+  Check(balance.Net==43500&&balance.GoalMet&&Math.Abs(balance.Fuel-20.4f)<.001,"three twelve-minute 3km shifts use 39.6 fuel points and retain living costs");
   Migration();
   Console.WriteLine("PASS campaign cash/debt/fuel/meal/parking/excluded costs/migration/restore");
  }
  static AccountEntry Entry(string id,string kind,int day,int cash,int debt){return new AccountEntry{id=id,kind=kind,day=day,cash=cash,debt=debt};}
  static void Migration(){
-  var old=new AccountSnapshot{version=2,settings=new PrototypeSettings(),fuel=42,entries=new[]{
+  var old=new AccountSnapshot{version=2,settings=new PrototypeSettings{daySeconds=480,initialFuel=35,fuelPerKm=12.5f,idlePerMinute=.5f},fuel=42,entries=new[]{
    Entry("fare:old","fare",1,20000,0),Entry("insurance","insurance",1,-6000,0),Entry("meal1","meal",1,-3000,0),Entry("parking:1","parking",1,-500,0),Entry("settlement:1","settlement",1,0,0),
    Entry("tax-due","tax-due",3,0,1500),Entry("tax-paid","tax-payment",3,-1500,-1500),Entry("meal3","meal",3,-3000,0),Entry("parking:3","parking",3,-500,0),Entry("settlement:3","settlement",3,0,0)}};
   var migrated=CampaignAccount.Restore(old);
   Check(migrated.Cash==23000&&migrated.Debt==0&&migrated.Net==13000&&migrated.Fuel==42,"legacy paid insurance and tax excluded with other costs/fuel retained");
+  var consumed=CampaignAccount.Restore(migrated.Snapshot());consumed.Consume(60,1000);
+  Check(Math.Abs(consumed.Fuel-37.9f)<.001&&consumed.Cash==23000,"restored account adopts slower fuel consumption while preserving owned fuel and cash");
+  Check(old.settings.daySeconds==480&&old.settings.fuelPerKm==12.5f,"operation balance migration never changes input settings");
   Check(!migrated.Fare("old",20000)&&!migrated.CloseDay(3),"migration keeps fare and settlement identities");
   var again=CampaignAccount.Restore(migrated.Snapshot());
   Check(again.Cash==23000&&again.Net==13000&&again.Entries.Length==7,"repeated save and restore never refunds twice");

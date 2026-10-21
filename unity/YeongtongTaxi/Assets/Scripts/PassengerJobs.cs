@@ -3,7 +3,7 @@ public class JobOffer {public int zoneIndex=-1;public int pickup,drop,fare,requi
 public class PassengerJobs : MonoBehaviour {
  public DriveSession session;public readonly FareTrip trip=new FareTrip(); public JobOffer[] offers=new JobOffer[3];public JobOffer current;
  public int balance,completed,failed;public string message="1·2·3으로 호출 선택 / 길가 손님 옆에 정차 후 F";
- public RoadNavigation nav;public MapStop[] stops;public GameObject[] people;public float[] cooldown;GameObject marker;float resultUntil;int generation;
+ public RoadNavigation nav;public MapStop[] stops;public GameObject[] people;public float[] cooldown;GameObject marker;float resultUntil;int generation;bool deadlineNotice;
  public bool Active {get{return trip.State==TripState.ToPickup||trip.State==TripState.OnTrip;}}
  public void Initialize(DriveSession owner){session=owner;stops=session.world.map.stops;nav=gameObject.AddComponent<RoadNavigation>();nav.Build(session.world.map,session.taxi.transform);cooldown=new float[stops.Length];people=new GameObject[stops.Length];
   var coat=WorldBuilder.Mat("Passenger coat",new Color(.12f,.6f,.72f));var skin=WorldBuilder.Mat("Passenger head",new Color(.86f,.65f,.44f));
@@ -18,7 +18,7 @@ public class PassengerJobs : MonoBehaviour {
   }
   marker=GameObject.CreatePrimitive(PrimitiveType.Cylinder);marker.name="Pickup or destination zone";marker.transform.localScale=new Vector3(3,.03f,9);marker.GetComponent<Renderer>().sharedMaterial=WorldBuilder.Mat("Destination zone",new Color(.2f,.8f,.75f));Destroy(marker.GetComponent<Collider>());marker.SetActive(false);Generate();
  }
- JobOffer Make(int pickup,int drop){float distance=nav.Distance(stops[pickup],stops[drop]);var offer=new JobOffer{pickup=pickup,drop=drop,requiredScore=new[]{60,70,85}[(pickup+drop)%3],distance=distance};var zones=GetComponent<ServiceLawZones>();if(zones)zones.ConfigureOffer(offer);offer.fare=3000+Mathf.CeilToInt(offer.distance*4/100)*100;offer.seconds=Mathf.Max(75,Mathf.Ceil(offer.distance/6+50+offer.waitSeconds));return offer;}
+ JobOffer Make(int pickup,int drop){float distance=nav.Distance(stops[pickup],stops[drop]);var offer=new JobOffer{pickup=pickup,drop=drop,requiredScore=new[]{60,70,85}[(pickup+drop)%3],distance=distance};var zones=GetComponent<ServiceLawZones>();if(zones)zones.ConfigureOffer(offer);offer.fare=3000+Mathf.CeilToInt(offer.distance*4/100)*100;offer.seconds=Mathf.Max(120,Mathf.Ceil(offer.distance/4+90+offer.waitSeconds));return offer;}
  public void Generate(){if(stops.Length<2)return;for(int i=0;i<3;i++){int p=(generation+i*2)%stops.Length;int d=(p+3+i)%stops.Length;if(p==d)d=(d+1)%stops.Length;offers[i]=Make(p,d);}generation++;}
  public bool Accept(int index){if(index<0||index>=offers.Length||trip.State!=TripState.Idle||Time.timeScale==0||!session.business.CanAccept)return false;current=offers[index];if(float.IsInfinity(current.distance))return false;if(!trip.Accept(current.fare,current.seconds))return false;message="호출 수락 · 픽업 장소: "+KoreanText.Stop(stops[current.pickup].name);SetGoal(current.pickup);return true;}
  void SetGoal(int index){nav.SetDestination(stops[index]);marker.transform.rotation=Quaternion.LookRotation(stops[index].Direction);marker.SetActive(true);marker.transform.position=stops[index].Kerb+Vector3.up*.085f;}
@@ -29,15 +29,17 @@ public class PassengerJobs : MonoBehaviour {
    current=Make(closest,(closest+3)%stops.Length);if(float.IsInfinity(current.distance))return false;trip.Accept(current.fare,current.seconds);return Board();
   }
   if(trip.State==TripState.ToPickup){if(!session.business.CanAccept)return false;if(!At(current.pickup)){message="승차 지점 오른쪽 연석에 화살표 방향으로 정차 후 F";return false;}return Board();}
-  if(trip.State==TripState.OnTrip){if(!At(current.drop)){message="목적지 오른쪽 연석에 화살표 방향으로 정차 후 F";return false;}var zones=GetComponent<ServiceLawZones>();if(zones&&zones.Assigned!=null&&!zones.Completed){message="운행 상황 구역 미통과 · 내비의 경유 구간을 먼저 지나세요";return false;}if(session.requests)session.requests.Finish();int pay=MannerLedger.Payment(trip.Complete(),session.manners.ledger.Score,current.requiredScore);if(pay<=0)return false;balance+=pay;completed++;session.business.RecordFare(pay);session.business.RecordPassenger(pay,"운송 완료");message=(session.manners.ledger.Score>=current.requiredScore?"요구 점수 달성! ":"요구 점수 미달 · 요금 70% 지급 ")+"+"+pay.ToString("N0")+"원";Finish();return true;}
+  if(trip.State==TripState.OnTrip){if(!At(current.drop)){message="목적지 오른쪽 연석에 화살표 방향으로 정차 후 F";return false;}var zones=GetComponent<ServiceLawZones>();if(zones&&zones.Assigned!=null&&!zones.Completed){message="운행 상황 구역 미통과 · 내비의 경유 구간을 먼저 지나세요";return false;}if(session.requests)session.requests.Finish();int pay=MannerLedger.Payment(trip.Complete(),session.manners.ledger.Score,current.requiredScore);
+   if(trip.State==TripState.Failed){failed++;session.business.RecordPassenger(0,"시간 초과 후 목적지 도착");session.business.RecordFailure();message="늦은 도착 · 승객 하차 완료 / 요금 0원";Finish();return true;}
+   if(pay<=0)return false;balance+=pay;completed++;session.business.RecordFare(pay);session.business.RecordPassenger(pay,"운송 완료");message=(session.manners.ledger.Score>=current.requiredScore?"요구 점수 달성! ":"요구 점수 미달 · 요금 70% 지급 ")+"+"+pay.ToString("N0")+"원";Finish();return true;}
   return false;
  }
  bool Board(){if(!trip.Board())return false;if(session.law)session.law.tripId=session.law.ids.Next("trip");session.manners.BeginRide();if(session.requests)session.requests.Begin();cooldown[current.pickup]=Time.time+60;people[current.pickup].SetActive(false);message="승객 탑승 · 목적지: "+KoreanText.Stop(stops[current.drop].name);SetGoal(current.drop);var zones=GetComponent<ServiceLawZones>();if(zones)zones.BeginTrip(current);return true;}
- public void ClearForDay(){var zones=GetComponent<ServiceLawZones>();if(zones)zones.EndTrip();if(session.law)session.law.tripId="";trip.Clear();current=null;resultUntil=0;nav.Clear();marker.SetActive(false);for(int i=0;i<cooldown.Length;i++)cooldown[i]=0;Generate();message="1·2·3으로 호출 선택 / 길가 손님 옆에 정차 후 F";}
+ public void ClearForDay(){var zones=GetComponent<ServiceLawZones>();if(zones)zones.EndTrip();if(session.law)session.law.tripId="";trip.Clear();current=null;resultUntil=0;deadlineNotice=false;nav.Clear();marker.SetActive(false);for(int i=0;i<cooldown.Length;i++)cooldown[i]=0;Generate();message="1·2·3으로 호출 선택 / 길가 손님 옆에 정차 후 F";}
  void Finish(){nav.Clear();marker.SetActive(false);resultUntil=Time.time+4;}
- public void RecordExpiredTrip(){if(trip.State==TripState.Failed&&resultUntil==0){failed++;session.business.RecordPassenger(0,"시간 초과");session.business.RecordFailure();message="제한 시간 초과 · 요금이 지급되지 않았습니다";Finish();}}
+ public void RecordExpiredTrip(){if(trip.State==TripState.OnTrip&&trip.Remaining<=0&&!deadlineNotice){deadlineNotice=true;message="제한 시간 초과 · 목적지까지 운송을 계속하세요 / 도착 후 요금 0원";}}
  void Update(){trip.Tick(Time.deltaTime);RecordExpiredTrip();
-  if(resultUntil>0&&Time.time>=resultUntil){trip.Clear();resultUntil=0;Generate();}
+  if(resultUntil>0&&Time.time>=resultUntil){trip.Clear();resultUntil=0;deadlineNotice=false;Generate();}
   if(Time.timeScale>0){if(Input.GetKeyDown(KeyCode.Alpha1))Accept(0);if(Input.GetKeyDown(KeyCode.Alpha2))Accept(1);if(Input.GetKeyDown(KeyCode.Alpha3))Accept(2);if(Input.GetKeyDown(KeyCode.F)||Input.GetKeyDown(KeyCode.JoystickButton8))Interact();}
   for(int i=0;i<people.Length;i++)people[i].SetActive((Time.time>=cooldown[i]||trip.State==TripState.ToPickup&&current.pickup==i)&&!(trip.State==TripState.OnTrip&&current.pickup==i));
  }

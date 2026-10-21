@@ -304,24 +304,7 @@ public class TrafficSystem : MonoBehaviour {
         car.Initialize(this,route,distance,index); cars.Add(car);return car;
     }
     void PaintRoads(MapData map) {
-        var openings=RoadJunctionGeometry.Build(map);
-        foreach(var road in map.roads) for(int i=1;i<road.points.Length;i++) {
-            if(road.suppressPaint)continue;
-            var a=road.points[i-1].V(); var b=road.points[i].V(); var dir=(b-a).normalized; float length=Vector3.Distance(a,b);
-            for(float s=.3f;s<length;s+=1f) {
-                var p=a+dir*s; bool junctionArea=false;
-                foreach(var j in junctions) if(Vector3.Distance(p,j.center)<18) junctionArea=true;
-                foreach(var opening in openings)if(Vector3.Distance(p,opening.center)<opening.radius)junctionArea=true;
-                if(junctionArea) continue;
-                float piece=Mathf.Min(.95f,length-s);
-                if(road.DisplayLanes>1)Mark("Centre line",p,dir,.14f,piece,road.oneWay==0?yellow:white);
-                foreach(int side in new[]{-1,1}) {
-                    Mark("Road edge",p+Right(dir)*side*(road.width*.5f-.3f),dir,.12f,piece,white);
-                    int lanes=Mathf.Max(1,road.DisplayLanes/2);
-                    if(((int)s%6)<3&&(road.oneWay==0||side==Mathf.Sign(road.oneWay)))for(int lane=1;lane<lanes;lane++)Mark("Lane divider",p+Right(dir)*side*road.width*.5f*lane/lanes,dir,.13f,piece,white);
-                }
-            }
-        }
+        RoadPaintGeometry.Paint(map,junctions,(name,p,dir,width,length,isYellow)=>Mark(name,p,dir,width,length,isYellow?yellow:white));
     }
     void Mark(string name,Vector3 p,Vector3 dir,float width,float length,Material material) {
         p.y=.071f;var right=Right(dir)*width*.5f;var along=dir*length*.5f;var list=material==yellow?yellowPaint:whitePaint;list.AddRange(new[]{p-right-along,p-right+along,p+right+along,p+right-along});

@@ -16,7 +16,7 @@ public class CampaignRestartSmokeTest : MonoBehaviour {
   if(!ok){Application.Quit(1);yield break;}
   s.taxi.automated=true;s.taxi.autoBrake=true;
   Check(!Call(b,"RequestRestart"),"moving business cannot open reset directly");
-  b.ledger.RecordFare("restart-old-trip",8000);b.ledger.Advance(480,0);b.ledger.Settle();b.ledger.NextDay();
+  b.ledger.RecordFare("restart-old-trip",8000);b.ledger.Advance(720,0);b.ledger.Settle();b.ledger.NextDay();
   var stop=s.jobs.stops[0];s.taxi.body.velocity=s.taxi.body.angularVelocity=Vector3.zero;s.taxi.body.position=stop.Kerb+Vector3.up*.65f;s.taxi.body.rotation=Quaternion.LookRotation(stop.Direction);s.taxi.transform.SetPositionAndRotation(s.taxi.body.position,s.taxi.body.rotation);Physics.SyncTransforms();yield return new WaitForSeconds(.3f);
   report.AppendLine("BOARD FIXTURE speed="+s.taxi.body.velocity.magnitude+" at="+s.jobs.At(0)+" canAccept="+b.CanAccept+" time="+Time.timeScale+" state="+s.jobs.trip.State);
   s.taxi.body.velocity=s.taxi.body.angularVelocity=Vector3.zero;
@@ -31,11 +31,11 @@ public class CampaignRestartSmokeTest : MonoBehaviour {
   Call(b,"RequestRestart");Directory.CreateDirectory(b.SavePath+".tmp");
   try{Check(!Call(b,"ConfirmRestart",true)&&b.ledger==old&&File.ReadAllText(b.SavePath)==bytes&&b.SaveFailed&&b.restartPrompt,"failed save preserves current campaign and visible error");}finally{Directory.Delete(b.SavePath+".tmp");}
   Check(Call(b,"ConfirmRestart",true),"restart after failure retry");yield return null;yield return null;
-  Check(b.ledger.Day==1&&b.ledger.Elapsed==0&&b.ledger.Account.Cash==10000&&b.ledger.Account.Debt==0&&b.ledger.Account.Fuel==35&&!b.ledger.Account.Renewed&&!b.ledger.Account.TaxPaid,"fresh first day finances and fuel");
+  Check(b.ledger.Day==1&&b.ledger.Elapsed==0&&b.ledger.Account.Cash==10000&&b.ledger.Account.Debt==0&&b.ledger.Account.Fuel==60&&!b.ledger.Account.Renewed&&!b.ledger.Account.TaxPaid,"fresh first day finances and fuel");
   Check(b.passengers.Count==0&&b.practices.Count==0&&s.law.ledger.Events.Length==0&&s.law.ids.campaign!=campaign&&s.jobs.trip.State==TripState.Idle,"old history and trip cleared");
   Check(b.preparing&&Time.timeScale==0&&s.jobs.At(s.services.indices[2]),"returns to first day parking preparation");
   var saved=JsonUtility.FromJson<CampaignCheckpoint>(File.ReadAllText(b.SavePath));var restored=EconomyLedger.RestoreCampaign(saved.days,saved.account);
-  Check(restored.Day==1&&restored.Account.Fuel==35&&restored.Account.Cash==10000&&saved.ids.campaign==s.law.ids.campaign&&saved.law.Length==0&&saved.passengers.Length==0,"new checkpoint reloads with matching identity");
+  Check(restored.Day==1&&restored.Account.Fuel==60&&restored.Account.Cash==10000&&saved.ids.campaign==s.law.ids.campaign&&saved.law.Length==0&&saved.passengers.Length==0,"new checkpoint reloads with matching identity");
   Check(!Call(b,"ConfirmRestart",true),"duplicate confirm blocked");
   Check(Call(b,"RequestRestart")&&!Call(b,"ConfirmRestart",false),"preparation supports cancel");yield return Capture("restart-first-day");
   b.Depart();b.ledger.RequestClose();b.ledger.Settle();Time.timeScale=0;

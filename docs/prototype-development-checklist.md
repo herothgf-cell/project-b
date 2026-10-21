@@ -83,7 +83,7 @@
 | 정체·우회 | 정체 차량과 경로 비용 비교·시험 재시작 | 신호 대기열에서 A 대기/B 우회/C 앞부분 진입을 판정하는 장면 | [RoadConditions](../unity/YeongtongTaxi/Assets/Scripts/RoadConditions.cs), [기존 시험](../unity/YeongtongTaxi/Assets/Scripts/AssistedRouteTrial.cs) |
 | 신호·우회전 | 일반 차량 신호·정지·양보 판정 | 우회전전용신호·이동 보행자·횡단 의도와 실제 상태 연결 | [신호 규칙](../unity/YeongtongTaxi/Assets/Scripts/KoreanSignalRules.cs), [교통 판정](../unity/YeongtongTaxi/Assets/Scripts/TrafficSystem.cs) |
 | 승객 운송 | 호출 3개·길가 승객·승하차·시간 초과·운임 지급 | 조용한 운행/도착 문의·연료 고갈 종료·거점 연결 | [PassengerJobs](../unity/YeongtongTaxi/Assets/Scripts/PassengerJobs.cs), [FareTrip](../unity/YeongtongTaxi/Assets/Scripts/FareTrip.cs) |
-| 승객 매너 | 100점 시작·요구 60/70/85점·충족 100%/미달 70%/시간 초과 0원 | 안전상 보류·필수 제동 예외, 별도 법규 점수와 기록 | [매너](../unity/YeongtongTaxi/Assets/Scripts/DrivingManners.cs), [지급률](../unity/YeongtongTaxi/Assets/Scripts/MannerLedger.cs) |
+| 승객 매너 | 100점 시작·요구 60/70/85점·충족 100%/미달 70%/시간 초과 0원 | 안전상 보류·필수 제동 예외, 별도 운전 점수와 기록 | [매너](../unity/YeongtongTaxi/Assets/Scripts/DrivingManners.cs), [지급률](../unity/YeongtongTaxi/Assets/Scripts/MannerLedger.cs) |
 | 경제·마감 | 7일·하루 600초·목표 100,000원, 자동 연료/보험/식비, 마지막 탑승 운송 후 정산 | 현금·미납·직접 결제·납부 일정, 3일·480초·30,000원과 새 성공 조건 | [장부](../unity/YeongtongTaxi/Assets/Scripts/EconomyLedger.cs), [진행](../unity/YeongtongTaxi/Assets/Scripts/BusinessProgress.cs) |
 | 화면·저장 | 운송 HUD·하루 결과, 설정과 완료 정산을 v1으로 저장·복원 | 법규 카드·거점/납부 화면, 새 상태를 묶는 별도 버전 저장 | [결과 화면](../unity/YeongtongTaxi/Assets/Scripts/BusinessHUD.cs), [저장](../unity/YeongtongTaxi/Assets/Scripts/BusinessProgress.cs) |
 
@@ -332,3 +332,17 @@ P1-01·03 완료 근거는 위 공통 관찰·AI·횡단보도 위치 검사다.
 - [x] 보험·세금 화면과 비용·새 미납·출발 제한·완납 목표 조건 제외. 기존v2계정 검증 후v3 정규화·반복 이관 무중복, 생활비·연료·승객/법규 기록 유지. 3일 회계 Player 종료0·success=True.
 - [x] 모델18묶음, 물리·UI·필요 제동/신호 경계, 녹색 대기열·미니맵·5조건 H 물리 회귀. Unity 은계 빌드·배포 manifest 갱신. [검증 근거와 범위](work-history/2026-10-21-playability-and-hud.md).
 - 사용자 수동 체감·일반 교통 포함3일 전체 밸런스·새 PC 하드웨어 검증은 이 결과에 포함하지 않는다.
+
+## 2026-10-21 도로·주유소·운송 마감 보완
+
+근거: [작업 이력과 명령/한계](work-history/2026-10-21-road-facilities-and-operation.md). `[x]`는 해당 범위의 구현·검증 완료이며 전체 현장 대조·사람의 수동 캠페인 완료를 뜻하지 않는다.
+
+- [x] 흰 박스 추가3개 식별·원본 보존 후 표시/충돌/도로면 조회 통일.24,974곳 차로 충돌 조회에서 건물 차단0.
+- [x] 공통 차로 그래프 기준 황색 중앙선/백색 차로선·교차로 개구부 보완. 실제2+2차로22구간144단면 검사,원본 정밀지도 유지.
+- [x] 하루720초·운송 기한 확대·기존 저장 새 밸런스 적용. 탑승 중 N 금지·시간 종료 목적지 하차 대기·늦은 하차0원/중복 방지 통합 검사.
+- [x] 새 연료60%,4%포인트/km+0.1%포인트/분. 기존 잔량 보존·탑승 고갈 운송/위치 유지 검사.
+- [x] 입출구 분리 게임 주유소3곳·주유 구역 결제·공유 접근 내비·지도 표시. 자동 물리 진출입/구매3곳,측면 충돌/연석 접촉0.
+- [x] ‘운전 점수’ 표시,승객 매너 독립 유지.3해상도 UI 검사·실제 창 캡처 확인.
+- [ ] 사람의 일반 교통 포함 식당/주차/주유소 수동 왕복 및3일×12분 밸런스 비교. 자동 시설 주행·위치 배치 회계 검사와 구분.
+
+기존 원안의 가득 주유/호출별 연료 예측,P4 지도 선택 이벤트,P5 승객 확장과 현장 데이터 대조는 위 기능으로 자동 완료하지 않는다.

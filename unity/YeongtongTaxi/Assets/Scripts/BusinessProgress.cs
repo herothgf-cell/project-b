@@ -63,6 +63,7 @@ public class BusinessProgress : MonoBehaviour {
  void Freeze(){session.paused=false;Time.timeScale=0;}
  public bool RequestEndDay(){
   if(session.FullMapOpen||!enabledCampaign||!ledger.CanAccept||session.paused||Time.timeScale==0)return false;
+  if(session.jobs.trip.State==TripState.OnTrip){notice="승객 탑승 중에는 영업을 마칠 수 없습니다 · 목적지 하차 후 N";noticeUntil=Time.unscaledTime+4;return false;}
   if(session.taxi.body.velocity.magnitude>=.56f){notice="안전한 곳에 정차한 뒤 N으로 영업을 마치세요";noticeUntil=Time.unscaledTime+4;return false;}
   ledger.RequestClose();return true;
  }
@@ -100,8 +101,10 @@ public class BusinessProgress : MonoBehaviour {
  public void ConfirmTaxClose(bool pay){taxPrompt=false;}
  void RecoverFuel(){
   string id=session.law.ids.Next("fuel-recovery");if(!ledger.Account.RecoverFuel(id,ledger.Day))return;
-  if(session.jobs.trip.State==TripState.OnTrip){RecordPassenger(0,"연료 고갈");ledger.RecordFailure();session.jobs.message="연료 고갈 · 운송 실패 / 요금 0원";}
-  session.jobs.ClearForDay();session.taxi.ResetTaxi();session.law.ResetObservation();ledger.Advance(30,0);notice="연료 고갈 · 20% 공급 + 지원비 1,800원 / 영업시간 30초 경과";noticeUntil=Time.unscaledTime+8;
+  bool occupied=session.jobs.trip.State==TripState.OnTrip;
+  if(occupied){session.taxi.body.velocity=Vector3.zero;session.taxi.body.angularVelocity=Vector3.zero;session.jobs.trip.Tick(30);session.jobs.RecordExpiredTrip();}
+  else {session.jobs.ClearForDay();session.taxi.ResetTaxi();session.law.ResetObservation();}
+  ledger.Advance(30,0);notice="연료 고갈 · "+(occupied?"현재 위치에 20% 공급 · 승객 운송 계속":"출발지 복귀 후 20% 공급")+" + 지원비 1,800원 / 30초 경과";noticeUntil=Time.unscaledTime+8;
  }
  public bool SaveCheckpoint(){ledger.RefreshSummary();return WriteCheckpoint(ledger);}
  bool WriteCheckpoint(EconomyLedger value,PrototypeIds resetIds=null){

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -112,7 +112,7 @@ public sealed class ServiceLawZones : MonoBehaviour {
   if(Assigned!=null&&!Completed){float distance=Vector3.Distance(session.taxi.transform.position,Assigned.junction.center);if(distance<260){float y=Screen.height-355;Panel(new Rect(16,y,430,170));GUI.Label(new Rect(28,y+10,406,148),"운송 중 상황 · "+Assigned.Title+"\n창작 구역 · 약 "+distance.ToString("0")+"m\n"+(Live.Active?Live.Progress:ConfusionPracticeState.Guidance(Assigned.variant)),text);}}
   if(LastFeedback!=null&&(session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f||Time.time<toastUntil)){
    float y=Screen.height-405;Panel(new Rect(16,y,430,70));GUI.Label(new Rect(28,y+4,405,30),LastFeedback.outcome,text);
-   GUI.enabled=session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f;if(GUI.Button(new Rect(28,y+36,405,28),"운행 법규 결과 · 잘한 점 / 보완 위치 (정차 시)",button))ToggleDetails();GUI.enabled=true;
+   GUI.enabled=session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f;if(GUI.Button(new Rect(28,y+36,405,28),"운전 평가 결과 · 잘한 점 / 보완 위치 (정차 시)",button))ToggleDetails();GUI.enabled=true;
   }
  }
  static void Panel(Rect r){GUI.color=new Color(.025f,.055f,.075f,.96f);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}

@@ -20,9 +20,10 @@ public class WorldBuilder : MonoBehaviour {
     void RenderBatches(Dictionary<Vector2Int,GeometryBatch> batches,string name,Material material){foreach(var item in batches){var mesh=new Mesh();mesh.indexFormat=UnityEngine.Rendering.IndexFormat.UInt32;mesh.SetVertices(item.Value.vertices);mesh.SetTriangles(item.Value.indices,0);mesh.RecalculateNormals();mesh.RecalculateBounds();var obj=new GameObject(name+" "+item.Key);obj.transform.SetParent(transform);obj.AddComponent<MeshFilter>().sharedMesh=mesh;obj.AddComponent<MeshRenderer>().sharedMaterial=material;}}
     public void Build() {
         map=RoadRulesTrial.Enabled?RoadRulesTrial.CreateMap():MapCatalog.Load();
+        FuelStationLayout.Apply(map);
         MapSupplements.DrawCrossings(map,transform);
         var ground=Mat("Ground",new Color(.33f,.40f,.32f)); var asphalt=Mat("Road",new Color(.16f,.18f,.20f));
-        var stripe=Mat("Paint",new Color(.88f,.79f,.39f)); var building=Mat("Buildings",new Color(.70f,.67f,.60f));
+        var building=Mat("Buildings",new Color(.70f,.67f,.60f));
         Box("Terrain",new Vector3(map.width/2,-.5f,map.depth/2),new Vector3(map.width+80,1,map.depth+80),ground,transform);
         if(map.areas!=null)foreach(var area in map.areas){
             if(area.points==null||area.triangles==null)continue;
@@ -47,9 +48,8 @@ public class WorldBuilder : MonoBehaviour {
         }
         RenderBatches(roadBatches,"도로 표면",asphalt);
         if(map.HasHd)HdRouteTrial.DrawMarkings(map,transform);
-        var hidden=new HashSet<string>();var sceneOverrides=Resources.Load<TextAsset>("eungye-scene-overrides");if(map.hybrid&&sceneOverrides)foreach(var id in JsonUtility.FromJson<SceneOverrides>(sceneOverrides.text).hiddenBuildings)hidden.Add(id);
         foreach(var b in map.buildings) {
-            if(hidden.Contains(b.id)){Debug.Log("PROVISIONAL_BUILDING_HIDDEN "+b.id);continue;}
+            if(SceneBuildingVisibility.Hidden(map,b.id)){Debug.Log("PROVISIONAL_BUILDING_HIDDEN "+b.id+" · 원본 보존 / 생성 차로 겹침 검토 대기");continue;}
             var vertices=new List<Vector3>(); var indices=new List<int>(); int n=b.points.Length;
             for(int i=0;i<n;i++) vertices.Add(b.points[i].V(b.height));
             for(int i=0;i<b.triangles.Length;i+=3) { indices.Add(b.triangles[i+2]); indices.Add(b.triangles[i+1]); indices.Add(b.triangles[i]); }
@@ -63,6 +63,7 @@ public class WorldBuilder : MonoBehaviour {
             Batch(buildingBatches,mesh.bounds.center).Add(vertices,indices);
         }
         RenderBatches(buildingBatches,"건물 외형",building);
+        FuelStationLayout.Draw(map,transform);
         foreach(var t in map.targets) {
             var m=Mat(t.name,t.name=="T1"?new Color(.1f,.75f,.9f):new Color(1,.5f,.12f));
             var label=new GameObject(t.name+" label"); label.transform.position=t.V(8); label.transform.SetParent(transform); var text=label.AddComponent<TextMesh>(); text.text=t.name; text.fontSize=64; text.characterSize=.15f; text.anchor=TextAnchor.MiddleCenter; text.color=m.color; label.AddComponent<FaceCamera>();

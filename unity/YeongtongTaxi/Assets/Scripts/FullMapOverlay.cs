@@ -40,7 +40,12 @@ public class FullMapOverlay : MonoBehaviour {
   float x=map.xMax+24,w=Screen.width-x-28,y=86;
   GUI.Label(new Rect(x,y,w,33),"법규 상황 구역",heading);y+=39;
   if(zones.Ready)foreach(var z in zones.zones){bool chosen=z==selected;Fill(new Rect(x,y,w,53),chosen?new Color(.27f,.08f,.23f):new Color(.07f,.10f,.12f));var s=new GUIStyle(text){fontSize=14};s.normal.textColor=chosen?new Color(1,.65f,.93f):Color.white;GUI.Label(new Rect(x+9,y+5,w-18,45),(chosen?"이번 경유 · ":"")+z.Title+"\n창작 교육 상황",s);y+=59;}
-  GUI.Label(new Rect(x,Mathf.Max(y+10,map.yMax-48),w,60),jobs.nav.active?"현재 경로: "+jobs.nav.remaining.ToString("0")+"m · "+jobs.nav.PreferenceLabel:"호출을 선택하면 승차·도착과 경유 경로가 표시됩니다.",text);
+  var stations=FuelStationLayout.For(data);if(stations.Count>0){
+   GUI.Label(new Rect(x,y+4,w,24),"주유소 · 게임시설 / 입구까지 내비 안내",text);
+   for(int i=0;i<stations.Count;i++){
+    var station=stations[i];var anchor=Project(station.pump,map);var box=LawZoneMapLayout.Place(anchor,new Vector2(82,26),map,occupied);occupied.Add(box);Line(anchor,new Vector2(Mathf.Clamp(anchor.x,box.xMin,box.xMax),Mathf.Clamp(anchor.y,box.yMin,box.yMax)),new Color(1,.75f,.15f),2);Dot(anchor,new Color(1,.75f,.15f),9);Fill(box,Color.black);GUI.Label(box,"주유 "+(i+1),text);GUI.Label(new Rect(x,y+31+i*25,w,25),(i+1)+" · "+station.name.Replace(" (게임시설)",""),text);
+   }
+  }else GUI.Label(new Rect(x,Mathf.Max(y+10,map.yMax-48),w,60),jobs.nav.active?"현재 경로: "+jobs.nav.remaining.ToString("0")+"m · "+jobs.nav.PreferenceLabel:"호출을 선택하면 승차·도착과 경유 경로가 표시됩니다.",text);
   GUI.Label(new Rect(28,Screen.height-54,Screen.width-56,45),"법규 구역은 은계 지도에 배치한 창작 상황입니다. 시설·현장 규제 확인과 구분합니다.  © OpenStreetMap contributors / ODbL",text);
  }
  void Target(Vector3 world,string title,Color color,Rect map,List<Rect> occupied){var p=Project(world,map);Dot(p,Color.black,17);Dot(p,color,11);var box=LawZoneMapLayout.Place(p,new Vector2(66,26),map,occupied);Fill(box,Color.black);GUI.Label(box,title,text);occupied.Add(new Rect(p.x-10,p.y-10,20,20));occupied.Add(box);}
