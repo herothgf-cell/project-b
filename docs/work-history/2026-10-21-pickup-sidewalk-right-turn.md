@@ -48,3 +48,9 @@ Unity 2022.3.62f2, 기본 `PrototypeBuild.BuildHybrid`, 은계 실행파일. 아
 - 별도 작업에서 커밋한 하루20분·운전자 컨디션 기획은 보존했다. 이번 실행파일에 그 미래 기획을 구현했다고 표시하지 않는다.
 - 필수 지도 입력과 지도 ZIP은 변경하지 않았다. 다른 PC는 pull 후 기본 은계 exe 실행. 기존 실행 중 게임은 종료 후 다시 실행해야 새 코드가 적용된다.
 - 배포 파일별 크기·SHA256과 빌드 소스 커밋은 `distribution/EungyeTaxi-build-manifest.json` 참조. 이 문서의 실제 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-21-pickup-sidewalk-right-turn.md`로 확인한다.
+
+## 배포 확인
+
+- 구현 커밋 `b933d1f73251653137082c69d4e010801e816442`를 실제 Git 출력으로 확인했다.
+- 마지막 `PrototypeBuild.BuildHybrid`도 종료 0 (`artifacts/service-traffic-publish-build.log`). 이후 테스트 소스의 끝 공백만 정리했으며 실행 로직은 변경하지 않았다.
+- 배포 실행 폴더 128개 파일의 크기·SHA256을 다시 계산하고 대조했다. 기본 은계 실행 폴더 전체와 manifest를 함께 배포한다.
