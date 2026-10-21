@@ -25,7 +25,7 @@ public sealed class PassengerExpansionTest : MonoBehaviour {
    if(kind==RequestKind.ShortRoad)Check(!jobs.nav.PreferFastest&&jobs.nav.hdRoute!=null,"shortest route applied");
    if(kind==RequestKind.Comfort)s.manners.Deduct("accel",2,"급가속",0);
    if(kind==RequestKind.SafeStop||kind==RequestKind.DestinationChange){var d=jobs.stops[jobs.current.drop];Pose(d.Kerb,d.Direction);}
-   s.requests.Finish();Check(s.requests.request.ResponseText().Length>8,"record result "+kind);
+   if(kind==RequestKind.RejectIllegal)Check(s.requests.DialogueReply.Contains("신호는 지켜야"),"illegal request dialogue clearly refuses");Check(!s.requests.DialogueReply.StartsWith(s.requests.request.Id+" · "),"dialogue hides request code");s.requests.Finish();Check(s.requests.request.ResponseText().Length>8,"record result "+kind);
    if(kind==RequestKind.SafeStop||kind==RequestKind.DestinationChange||kind==RequestKind.ViaStop)Check(s.requests.request.ResponseText().Contains("달성"),"changed destination or via goal reflects actual stopped position "+kind);
    if(kind==RequestKind.Comfort)Check(s.requests.request.ResponseText().Contains("미달"),"comfort records actual harsh event");
    if(kind==RequestKind.LostItem)Check(s.requests.request.ResponseText().Contains(id+":lost-item"),"lost item followup linked once without payout");

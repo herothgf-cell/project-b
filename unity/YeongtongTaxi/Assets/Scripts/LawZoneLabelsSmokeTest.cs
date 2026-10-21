@@ -17,7 +17,7 @@ public class LawZoneLabelsSmokeTest : MonoBehaviour {
   Check(found.Count==7,"all seven actual routed situations retained behind call cards");
   foreach(var size in new[]{new Vector2Int(1280,720),new Vector2Int(1600,900)}){
    Screen.SetResolution(size.x,size.y,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.6f);map.Overview=true;map.LayoutLawZones();
-   Check(map.ZoneLabels.Count==7,"all seven names on overview "+size.x);
+   map.Facilities=true;map.LayoutLawZones();Check(map.ZoneLabels.Count==7,"all seven names on overview "+size.x);
    foreach(var a in map.ZoneLabels){Check(a.text.Contains(a.zone.MapTitle)&&a.rect.xMin>=0&&a.rect.yMin>=0&&a.rect.xMax<=280&&a.rect.yMax<=280,"name visible and inside minimap "+a.zone.variant);foreach(var b in map.ZoneLabels)if(a!=b)Check(!a.rect.Overlaps(b.rect),"names do not overlap "+a.zone.variant+"/"+b.zone.variant);}
    yield return Capture("law-zone-overview-"+size.x);
   }

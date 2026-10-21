@@ -31,18 +31,18 @@ public class PassengerRequestUI : MonoBehaviour {
   else switch(kind){
    case RequestKind.Quiet:response="조용히 운행하겠습니다";break;
    case RequestKind.Eta:response="내비 예상 "+Mathf.CeilToInt(nav.estimatedSeconds)+"초 안내 (교통에 따라 변경)";break;
-   case RequestKind.Comfort:response="불필요한 급가감속·충돌 없이 운행 목표";break;
-   case RequestKind.OnTime:response="법규를 지키며 기존 운송 기한 내 도착 목표";break;
-   case RequestKind.LargeRoad:if(!nav.SetPassengerPreference(true,true))return false;expectedBroad=nav.LargeRoadShare();expectedDistance=nav.remaining;response="큰길 우선 경로 적용 · 지도 형상 기준, 현장 규제 미확인";break;
-   case RequestKind.ShortRoad:if(!nav.SetPassengerPreference(false,false))return false;expectedDistance=nav.remaining;response="연결된 짧은 경로 적용";break;
+   case RequestKind.Comfort:response="네, 급하게 밟거나 멈추지 않고 편안히 모실게요.";break;
+   case RequestKind.OnTime:response="신호를 지키면서 약속한 시간에 도착하도록 할게요.";break;
+   case RequestKind.LargeRoad:if(!nav.SetPassengerPreference(true,true))return false;expectedBroad=nav.LargeRoadShare();expectedDistance=nav.remaining;response="네, 가능한 큰길을 따라 모셔다드릴게요.";break;
+   case RequestKind.ShortRoad:if(!nav.SetPassengerPreference(false,false))return false;expectedDistance=nav.remaining;response="네, 짧은 길로 안내해 드릴게요.";break;
    case RequestKind.Empathy:response="속상하셨겠어요. 편안히 말씀하시거나 쉬셔도 괜찮아요";break;
    case RequestKind.RouteAdvice:if(!nav.SetPassengerPreference(false,true))return false;response="빠른 길 적용 · "+Mathf.CeilToInt(nav.estimatedSeconds)+"초 / "+Mathf.CeilToInt(nav.remaining)+"m 예상";break;
    case RequestKind.Interview:response="응원합니다. 편하게 준비하실 수 있게 운행할게요";break;
-   case RequestKind.Music:response="음악 변경 요청 확인 (텍스트만 · 실제 음원 없음)";break;
+   case RequestKind.Music:response="음악을 바꿔 달라는 말씀이시죠? (프로토에서는 대화만 제공)";break;
    case RequestKind.FareHelp:response="약정 "+session.jobs.current.fare.ToString("N0")+"원 · 매너 미달 시70%, 늦은 도착0원 · 할인·미수금 없음";break;
-   case RequestKind.LocalChat:response="은계 게임 지도에서 안전하게 모셔다드릴게요";break;
-   case RequestKind.LostItem:response="하차 시 소지품 확인 및 발견 물품 보관·신고 안내";break;
-   default:response="불법 요구 거절 · 안전을 위해 신호를 지킵니다 · 감점 없음";break;
+   case RequestKind.LocalChat:response="은계 주변을 다니고 있어요. 안전하게 모셔다드릴게요.";break;
+   case RequestKind.LostItem:response="내리실 때 소지품을 함께 확인해 드릴게요.";break;
+   default:response="죄송하지만 신호는 지켜야 해요. 안전하게 모셔다드릴게요.";break;
   }
   request.Accept(response);travelled=broadTravel=0;sample=false;resultUntil=Time.time+6;return true;
  }
@@ -72,13 +72,14 @@ public class PassengerRequestUI : MonoBehaviour {
   Vector3 p=session.taxi.transform.position;if(request.Accepted&&sample){float d=Vector3.Distance(previous,p);if(d<Mathf.Max(2,session.taxi.body.velocity.magnitude*Time.deltaTime+1)){travelled+=d;if(session.jobs.nav.CurrentRoadWidth()>=12)broadTravel+=d;}}previous=p;sample=true;
   if(Input.GetKeyDown(KeyCode.I))RespondAlternative();if(Input.GetKeyDown(KeyCode.U))Respond(false);if(Input.GetKeyDown(KeyCode.Y))Respond(true);
  }
+ public string DialogueReply {get{if(request.SafetyDeferred)return "안전한 곳에 정차한 뒤 확인할게요.";string value=request.ResponseText();string prefix=request.Id+" · ";return value.StartsWith(prefix)?value.Substring(prefix.Length):value;}}
  void OnGUI(){if(!session.business.useV2||session.jobs.trip.State!=TripState.OnTrip||session.paused)return;if(request.Resolved&&Time.time>resultUntil)return;
-  string text=request.Resolved?"응답 결과\n"+request.ResponseText():"손님\n“"+lines[(int)request.Kind]+"”";
+  string text=request.Resolved?"나\n“"+DialogueReply+"”":"손님\n“"+lines[(int)request.Kind]+"”";
   if(!request.Resolved){if(ChangesRoute){if(!PrepareProposal())text+="\n안전한 변경 경로 준비 중 · 원래 운행 유지";else text+="\n"+KoreanText.Stop(session.jobs.stops[proposal].name)+" · 추가 "+addedDistance.ToString("0")+"m\n새 약정 "+newFare.ToString("N0")+"원 · 남은 기한 "+Mathf.CeilToInt(newRemaining)+"초";}
    if(AlternativeLabel.Length>0)text+="\nI "+AlternativeLabel;
-   text+="\nY "+(ChangesRoute?"표시 조건으로 변경 확정":"응답·요청 수락")+" / U 안전상 보류 (감점 없음)";}
+   text+="\nY "+(ChangesRoute?"네, 이 조건으로 변경할게요":request.Kind==RequestKind.RejectIllegal?"신호는 지켜야 해요":"네, 알겠습니다")+" / U 안전한 곳에서 확인할게요";}
   if(!SafeToRespond()&&!request.Resolved)text="손님\n“"+lines[(int)request.Kind]+"”\n안전하게 정차하면 답변할 수 있어요. 지금은 보류 · 감점 없음";
-  if(!ChangesRoute)text+="\n운임·목적지 유지 · 운행 점수와 별도";
+  if(!ChangesRoute)text+="\n조건: 운임·목적지 그대로";
   var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14,wordWrap=true};style.normal.textColor=new Color(.1f,.16f,.2f);float width=Mathf.Min(440,Screen.width*.37f);float height=style.CalcHeight(new GUIContent(text),width-32)+24;float y=Mathf.Min(390,Screen.height-190-height);
   GUI.color=new Color(.94f,.97f,.91f,.97f);GUI.DrawTexture(new Rect(16,y,width,height),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(30,y+height-1,12,10),Texture2D.whiteTexture);GUI.color=Color.white;GUI.Label(new Rect(32,y+12,width-32,height-24),text,style);
  }

@@ -29,6 +29,8 @@ public class PlayabilityUISmokeTest : MonoBehaviour {
   var hud=session.GetComponent<DriveHUD>();var caption=typeof(DriveHUD).GetProperty("MannerCaption");var lawCaption=typeof(DriveHUD).GetProperty("LawCaption");
   Check(caption!=null&&lawCaption!=null,"two independent score gauges exposed");
   Screen.SetResolution(1280,720,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);
+  Check(!hud.OfferText(0).Contains("승객 요청")&&!hud.OfferText(0).Contains(PassengerRequestUI.UpcomingTitle(session.jobs.completed)),"call cards never reveal passenger request");mini.Facilities=false;mini.Overview=true;mini.LayoutLawZones();foreach(var zone in mini.ZoneLabels)Check(zone.rect.width<=20,"compact zone icons reserve no text panels");
+  yield return Capture("playability-compact-minimap-1280");mini.Overview=false;
   yield return Capture("playability-fuel-offers-1280");
   session.jobs.offers[0]=new JobOffer{pickup=0,drop=1,fare=5000,seconds=600,requiredScore=70,distance=500,pickupSeconds=600};session.jobs.Accept(0);int before=session.manners.ledger.Score;
   var e=new LawEvent{id="ui-score-probe",day=session.business.ledger.Day,family="signal"};e.Add("L01",LawVerdict.Violation,20);session.law.ledger.Record(e);

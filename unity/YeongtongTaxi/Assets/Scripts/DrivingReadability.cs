@@ -50,17 +50,17 @@ public class DrivingReadability : MonoBehaviour {
   for(int i=0;i<jobs.stops.Length;i++)if(jobs.people[i].activeSelf)Marker(jobs.stops[i].V(),"승",new Color(.3f,1,.55f),false);
   if(session.business.useV2)for(int k=1;k<session.services.indices.Length;k++)Marker(jobs.stops[session.services.indices[k]].V(),k==1?"식":"주차",new Color(1,.5f,1),false);
   DrawFuelStations();
+  DrawLawZones();
   if(jobs.trip.State==TripState.ToPickup||jobs.trip.State==TripState.OnTrip){
    if(jobs.trip.State==TripState.ToPickup)Marker(jobs.stops[jobs.current.pickup].V(),"승차",new Color(.3f,1,.55f),true);
    Marker(jobs.stops[jobs.current.drop].V(),"도착",new Color(1,.5f,.8f),true);
   }
   if(jobs.nav.active)Marker(jobs.nav.destination,jobs.trip.State==TripState.ToPickup?"승차":jobs.trip.State==TripState.OnTrip?"도착":"목표",jobs.trip.State==TripState.ToPickup?new Color(.3f,1,.55f):new Color(1,.5f,.8f),true);
-  DrawLawZones();
   var player=Project(session.taxi.transform.position);var forward=new Vector2(session.taxi.transform.forward.x,-session.taxi.transform.forward.z).normalized;var side=new Vector2(-forward.y,forward.x);
-  Dot(player,Color.black,24);Line(player-forward*6-side*7,player+forward*11,Color.yellow,5);Line(player+forward*11,player-forward*6+side*7,Color.yellow,5);Line(player-forward*6+side*7,player-forward*6-side*7,Color.yellow,5);
+  Circle(player,Color.black,34);Circle(player,new Color(.95f,.95f,.95f),29);Circle(player,new Color(.12f,.16f,.18f),24);Line(player-forward*6-side*7,player+forward*11,Color.yellow,5);Line(player+forward*11,player-forward*6+side*7,Color.yellow,5);Line(player-forward*6+side*7,player-forward*6-side*7,Color.yellow,5);
   GUI.EndGroup();
-  GUI.Label(new Rect(x,324,Size,23),"▲ 나  ━ 경로  ● 상황  노랑1·2·3 주유소",new GUIStyle(label){fontSize=12});
-  if(GUI.Button(new Rect(x,349,140,26),Facilities?"시설 표시 끄기":"시설 정보 보기",KoreanText.Button(13)))Facilities=!Facilities;
+  GUI.Label(new Rect(x,324,Size,23),"노랑: 나 · 초록: 승차 · 분홍: 도착",new GUIStyle(label){fontSize=12});
+  if(GUI.Button(new Rect(x,349,140,26),Facilities?"상세 숨기기":"상세 표시",KoreanText.Button(13)))Facilities=!Facilities;
   if(GUI.Button(new Rect(x+146,349,134,26),"M 전체 지도",KoreanText.Button(13)))GetComponent<FullMapOverlay>().Open();
   GUI.Label(new Rect(x+4,379,276,22),"© OSM / ODbL · 현장 규제 미검증",new GUIStyle(label){fontSize=11});
   if(Facilities){var status=GetComponent<HybridMapStatus>();Panel(new Rect(x-310,42,300,145));GUI.Label(new Rect(x-300,50,280,130),"시설 □ 주황: 임시 / 초록: 확인\n"+(status?status.current:"시설 정보 없음"),label);}
@@ -81,10 +81,15 @@ public class DrivingReadability : MonoBehaviour {
   foreach(var zone in ordered){var anchor=Project(zone.junction.center);bool outside=anchor.x<4||anchor.y<4||anchor.x>Size-4||anchor.y>Size-4;bool chosen=zone==selected;if(outside&&!chosen)continue;if(outside)anchor=ClampedZone(anchor);
    ZoneLabels.Add(new ZoneLabel{zone=zone,anchor=anchor,selected=chosen,text=zone.MapTitle+(chosen?"\n"+(outside?"경유 · 지도 밖":"이번 경유"):"")});occupied.Add(new Rect(anchor.x-5,anchor.y-5,10,10));
   }
-  foreach(var item in ZoneLabels){var size=new Vector2(92,item.selected?48:34);item.rect=LawZoneMapLayout.Place(item.anchor,size,new Rect(4,4,Size-8,Size-8),occupied);occupied.Add(item.rect);}
+  foreach(var item in ZoneLabels){var size=Facilities?new Vector2(92,item.selected?48:34):new Vector2(18,18);item.rect=LawZoneMapLayout.Place(item.anchor,size,new Rect(4,4,Size-8,Size-8),occupied);occupied.Add(item.rect);}
  }
  void DrawLawZones(){
   LayoutLawZones();var style=new GUIStyle(label){fontSize=11,alignment=TextAnchor.MiddleCenter,wordWrap=false,padding=new RectOffset(2,2,1,1)};
+  if(!Facilities){foreach(var item in ZoneLabels){var p=item.anchor;var c=item.selected?new Color(1,.55f,.85f):new Color(1,.7f,.25f);Circle(p,Color.black,20);Circle(p,new Color(.12f,.17f,.2f),16);
+    if(item.zone.Title.Contains("좌회전")){Line(p+new Vector2(4,5),p+new Vector2(4,-4),c,2);Line(p+new Vector2(4,-4),p+new Vector2(-5,-4),c,2);Line(p+new Vector2(-5,-4),p+new Vector2(-1,-8),c,2);Line(p+new Vector2(-5,-4),p+new Vector2(-1,0),c,2);}
+    else if(item.zone.Title.Contains("출구")){for(int k=-1;k<=1;k++)Line(p+new Vector2(-5,k*4),p+new Vector2(5,k*4),c,2);}
+    else {Circle(p+Vector2.up*-4,c,4);Circle(p,c,4);Circle(p+Vector2.up*4,c,4);}
+   }return;}
   foreach(var item in ZoneLabels){var r=item.rect;Line(item.anchor,new Vector2(Mathf.Clamp(item.anchor.x,r.xMin,r.xMax),Mathf.Clamp(item.anchor.y,r.yMin,r.yMax)),item.selected?Color.magenta:new Color(1,.7f,.2f),1.5f);}
   foreach(var item in ZoneLabels){Panel(item.rect);style.normal.textColor=item.selected?new Color(1,.65f,.95f):new Color(1,.84f,.5f);GUI.Label(item.rect,item.text,style);}
   foreach(var item in ZoneLabels){Dot(item.anchor,Color.black,item.selected?12:9);Dot(item.anchor,item.selected?Color.magenta:new Color(1,.7f,.2f),item.selected?8:5);}
@@ -104,6 +109,11 @@ public class DrivingReadability : MonoBehaviour {
  void Marker(Vector3 world,string text,Color color,bool clamp){
   bool outside;var p=MarkerPoint(world,clamp,out outside);if(outside&&!clamp)return;
   if(outside){var d=Project(world)-Vector2.one*(Size/2);text+=Mathf.Abs(d.x)>Mathf.Abs(d.y)?(d.x>0?" →":" ←"):(d.y>0?" ↓":" ↑");}
+  if(clamp&&!Facilities){Circle(p,Color.black,26);Circle(p,color,21);
+   if(text.StartsWith("승차")){Circle(p+new Vector2(0,-4),Color.black,6);Line(p+new Vector2(0,0),p+new Vector2(0,7),Color.black,3);Line(p+new Vector2(-5,3),p+new Vector2(5,3),Color.black,2);}
+   else {Line(p+new Vector2(-4,-7),p+new Vector2(-4,8),Color.black,2);for(int row=0;row<2;row++)for(int col=0;col<3;col++)Dot(p+new Vector2(-1+col*3,-5+row*3),(row+col)%2==0?Color.black:Color.white,3);}
+   if(outside){var d=(Project(world)-Vector2.one*(Size/2)).normalized;var side=new Vector2(-d.y,d.x);Line(p+d*17,p+d*11+side*4,color,3);Line(p+d*17,p+d*11-side*4,color,3);}return;
+  }
   Dot(p,Color.black,clamp?23:15);Dot(p,color,clamp?17:10);
   if(clamp){var r=MarkerTextBounds(world);GUI.color=Color.black;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;GUI.Label(new Rect(r.x+2,r.y,r.width-2,r.height),text,label);}
  }
@@ -128,6 +138,8 @@ public class DrivingReadability : MonoBehaviour {
  void Lamp(Rect r,string text,SignalColor signal){Dot(new Vector2(r.x+11,r.y+14),signal==SignalColor.Green?Color.green:signal==SignalColor.Red?Color.red:Color.yellow,18);GUI.Label(new Rect(r.x+25,r.y,r.width-25,r.height),text+"\n"+State(signal),new GUIStyle(label){fontSize=13});}
  static string State(SignalColor signal){return signal==SignalColor.Green?"녹색":signal==SignalColor.Red?"적색 · 정지":"황색";}
  static void Panel(Rect r){GUI.color=new Color(.025f,.055f,.075f,.96f);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
+ static Texture2D circleTexture;
+ static void Circle(Vector2 p,Color c,float size){if(!circleTexture){circleTexture=new Texture2D(32,32,TextureFormat.RGBA32,false);for(int y=0;y<32;y++)for(int x=0;x<32;x++)circleTexture.SetPixel(x,y,new Color(1,1,1,Mathf.Clamp01(16-Vector2.Distance(new Vector2(x+.5f,y+.5f),new Vector2(16,16)))));circleTexture.Apply();}GUI.color=c;GUI.DrawTexture(new Rect(p.x-size/2,p.y-size/2,size,size),circleTexture);GUI.color=Color.white;}
  static void Dot(Vector2 p,Color c,float size){GUI.color=c;GUI.DrawTexture(new Rect(p.x-size/2,p.y-size/2,size,size),Texture2D.whiteTexture);GUI.color=Color.white;}
  static void Line(Vector2 a,Vector2 b,Color c,float width){var old=GUI.matrix;GUI.color=c;GUIUtility.RotateAroundPivot(Mathf.Atan2(b.y-a.y,b.x-a.x)*Mathf.Rad2Deg,a);GUI.DrawTexture(new Rect(a.x,a.y-width/2,Vector2.Distance(a,b),width),Texture2D.whiteTexture);GUI.matrix=old;GUI.color=Color.white;}
 }
