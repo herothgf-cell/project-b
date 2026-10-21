@@ -4,7 +4,7 @@
 
 ## 먼저 읽을 것
 
-1. [이번 작업: 수동 운전·HUD·전체지도·비용 제외](2026-10-21-playability-and-hud.md)
+1. [이번 작업: 프로토 시나리오 기획](2026-10-21-prototype-scenarios.md), [기획 본문](../content-design/09-prototype-scenarios.md). 직전 빌드 검증은 [수동 운전·HUD·전체지도·비용 제외](2026-10-21-playability-and-hud.md)
 2. [실행 폴더·지도 ZIP Git 배포](2026-10-21-git-playable-distribution.md), [바로 실행 안내](../../distribution/README.md)
 3. [지도3개 전달 ZIP](2026-10-20-map-transfer-bundle.md), [새 PC 개발 안내](map-transfer-guide.md)
 4. [구역 이름과 PC 인계](2026-10-20-law-zone-labels-and-handoff.md)
@@ -12,6 +12,9 @@
 6. [PC 이동 절차](README.md), [개발 체크리스트](../prototype-development-checklist.md), [프로토 범위](../prototype-scope.md)
 
 ## 현재 상태
+
+- 최신 작업은 문서만 변경: 기존 승객 요청을 유지한 9개 승객 코스 초안(법규 7·선택 2). 12개 생성 승하차 후보와 7개 경유 조합의 그래프 연결 확인. 고정 배정·승차 전 활성화·P4 선택 코스는 미구현이며 이번 빌드/플레이 검사는 없음.
+- 아래 빌드·8분 설정은 직전 배포 인계 기준이다. 동시에 진행 중인 로컬 작업에는 12분 영업·연료 지원·도로시설 변경이 있으므로 최신 코드/기획과 배포 상태를 혼동하지 않는다. 시나리오의 시간 밸런스는 통합 후 재검증한다.
 
 - Unity2022.3.62f2, `unity/YeongtongTaxi`, 게임 소스 `f284213`, 기본 실행 `builds/EungyeTaxi/EungyeTaxi.exe`. 빌드는 `PrototypeBuild.BuildHybrid`.
 - 은계 전체 도로망+국도42 실제 차로+OSM 보완. 실제/임시/창작 상태를 구분한다. 승객 운송 중7개 법규 상황 구역을 내비/H가 경유한다. 법규·승객 매너·운임은 별도다.
@@ -25,8 +28,9 @@
 - 테스트만 할 때는 Git main을 받은 뒤 `builds/EungyeTaxi/EungyeTaxi.exe`를 바로 실행한다. Unity와 지도 압축 해제는 필요 없다. 실행 폴더 전체와 배포 manifest를 Git으로 받는다. 새 PC 하드웨어 검사는 미수행이다.
 - 개발할 때는 Git의 `distribution/maps/Eungye-map-inputs-2026-10-20.zip`을 저장소 루트에 푼다. 묶음857,580바이트, 지도3개 해시 검증. 원본 재수입용 raw자료는 별도다. 체크 도구는 실제 Editor 설치를 보장하지 않는다.
 - 게임 진행 저장은 코드 동기화에 포함되지 않는다. 소스 수정 뒤에는 실행파일도 새로 빌드하고 배포 manifest를 갱신해야 한다.
-- 기존 사용자 미커밋 상태: `README.md` 수정, 라이선스 관련3개 문서와 `licenses/` 미추적. 이번 작업과 분리해 보존한다.
+- 이번 문서 작업 시작 시 `README.md`, 다수 C# 소스/테스트 수정, 도로시설 계획·라이선스 문서와 신규 도로/주유소 소스 등이 미커밋 상태였다. 이번 문서 커밋에 포함하지 않는다. 실제 상태는 `git status --short`로 확인한다.
+- 필수 입력 3개 및 배포 지도 ZIP·실행 폴더는 이번에 변경하지 않았다. 로컬 `eungye-map.json`과 생성 `eungye-hybrid-map.json`을 읽었으며, 이번 문서 작업에서 strict 입력 해시 검사는 재실행하지 않았다. 이전 입력 확인 결과와 이번 생성 지도 스냅샷 대조를 구분한다.
 
 ## 이어갈 때
 
-현재 코드·기획·체크리스트를 먼저 대조한다. 별도 연습으로만 구현하지 않고 기본 은계 영업의 운송 흐름을 유지한다. 남은 개발 항목은 체크리스트의 미완료 항목을 따른다. 새 작업 종료 시 날짜별 기록을 추가하고 이 LATEST를 갱신한다. 현재 커밋은 `git log -1 --oneline`으로 확인한다.
+현재 코드·기획·체크리스트를 먼저 대조한다. 프로토 시나리오 초안 검토 후 PS-A 위치 확정 → PS-B 고정 배정 → PS-C 승차 전 접근 → PS-D/P4 선택 코스 → PS-E 운송·캠페인 확인 순서를 제안한다. 기존 승객 요청을 유지하고 별도 연습으로만 구현하지 않는다. 진행 중인 도로/영업 변경과 지도 버전을 먼저 맞춘다. 새 작업 종료 시 날짜별 기록을 추가하고 이 LATEST를 갱신한다. 이번 이력 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-21-prototype-scenarios.md`로 확인한다.
