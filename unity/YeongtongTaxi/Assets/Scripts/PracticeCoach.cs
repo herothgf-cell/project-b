@@ -76,7 +76,7 @@ public class PracticeCoach : MonoBehaviour {
   GUI.Label(new Rect(x+22,y0+16,w-44,28),AttemptTitle+" · 이번 시도 결과",text);
   GUI.Label(new Rect(x+22,y0+52,w-44,55),Report.outcome,new GUIStyle(text){fontSize=21,fontStyle=FontStyle.Bold});
   var details=Report.Details();float contentHeight=Mathf.Max(290,text.CalcHeight(new GUIContent(details),w-75));scroll=GUI.BeginScrollView(new Rect(x+22,y0+115,w-44,h-225),scroll,new Rect(0,0,w-65,contentHeight));GUI.Label(new Rect(0,0,w-75,contentHeight),details,text);GUI.EndScrollView();
-  GUI.Label(new Rect(x+22,y0+h-103,w-44,37),ConfusionMode?"가상 교육 구간의 관찰 결과입니다. 시선 확인은 평가하지 않습니다. 운전 점수와 승객 매너·요금은 별도입니다.":ExitMode?"대기열 진입·진행 방해 관찰 결과입니다. 교차로 신호 등 다른 법규는 F8에서 별도로 확인하세요.":"이번 시도의 신호·정지·보행 통과 조건 평가입니다. 시선 확인·전체 운전 능력은 평가하지 않습니다.",new GUIStyle(text){fontSize=13});
+  GUI.Label(new Rect(x+22,y0+h-103,w-44,37),ConfusionMode?"가상 교육 구간의 관찰 결과입니다. 시선 확인은 평가하지 않습니다. 운전 점수와 승객 만족도·요금은 별도입니다.":ExitMode?"대기열 진입·진행 방해 관찰 결과입니다. 교차로 신호 등 다른 법규는 F8에서 별도로 확인하세요.":"이번 시도의 신호·정지·보행 통과 조건 평가입니다. 시선 확인·전체 운전 능력은 평가하지 않습니다.",new GUIStyle(text){fontSize=13});
   float bw=(w-64)/3;if(GUI.Button(new Rect(x+22,y0+h-55,bw,38),"같은 조건 다시 연습",button))session.GetComponent<PracticeSession>().RetryCurrent();
   if(GUI.Button(new Rect(x+32+bw,y0+h-55,bw,38),"다른 조건 선택",button))session.GetComponent<PracticeSession>().OpenPicker();
   if(GUI.Button(new Rect(x+42+bw*2,y0+h-55,bw,38),"닫고 계속 / F8 상세",button))CloseResult();

@@ -6,8 +6,9 @@ public class DrivingManners : MonoBehaviour {
  Crossing crossing;
  readonly System.Collections.Generic.List<string> rideReasons=new System.Collections.Generic.List<string>();
  public string RideReasons {get{return rideReasons.Count==0?"감점 없음":string.Join(" / ",rideReasons.ToArray());}}
- Vector3 previousVelocity,previousFront;float suppressed,filtered,harshTime,offroadTime;bool harshLatched,offroadLatched;int sample;
- public void BeginRide(){ledger.Reset();rideReasons.Clear();lastEvent="승객 탑승 · 매너 100점으로 시작";eventUntil=Time.time+4;Suppress(.8f);}
+ public bool ComfortAccepted;public int necessaryBrakeEvents;
+ Vector3 previousVelocity,previousFront;float suppressed,filtered,harshTime,offroadTime;bool harshLatched,offroadLatched,necessaryLatched;int sample;
+ public void BeginRide(){ComfortAccepted=false;ledger.Reset();rideReasons.Clear();lastEvent="승객 탑승 · 승객 만족도 100점으로 시작";eventUntil=Time.time+4;Suppress(.8f);}
  public void Suppress(float seconds){crossing=null;stops.Clear();suppressed=Time.time+seconds;previousVelocity=GetComponent<Rigidbody>().velocity;previousFront=transform.position+transform.forward*2;filtered=0;harshTime=0;harshLatched=false;offroadTime=0;offroadLatched=false;}
  void Start(){Suppress(1);}
  public bool Deduct(string key,int amount,string reason,float cooldown=3){if(!ledger.Penalize(key,amount,Time.time,cooldown))return false;events++;if(key.StartsWith("red"))redEvents++;if(key=="collision")collisionEvents++;if(key=="accel")accelEvents++;if(key=="brake")brakeEvents++;if(key=="sidewalk")boundaryEvents++;lastEvent=reason+" -"+amount+"점";rideReasons.Add(lastEvent);eventUntil=Time.time+4;return true;}
@@ -15,8 +16,9 @@ public class DrivingManners : MonoBehaviour {
   if(Time.time>=suppressed){
    CheckSignal(previousFront,front);
    float accel=DriveMath.TravelAcceleration(Vector3.Dot((velocity-previousVelocity)/Time.fixedDeltaTime,transform.forward),session.taxi.Speed);filtered=Mathf.Lerp(filtered,accel,1-Mathf.Exp(-Time.fixedDeltaTime/.25f));
-   bool harsh=DriveMath.HarshPassengerMotion(filtered,session.taxi.Speed,filtered<0&&NecessaryBraking());
-   if(harsh){harshTime+=Time.fixedDeltaTime;if(harshTime>.45f&&!harshLatched){Deduct(filtered>0?"accel":"brake",2,filtered>0?"급가속":"급제동",6);harshLatched=true;}}else{harshTime=0;harshLatched=false;}
+   bool required=filtered<0&&NecessaryBraking();bool excluded=required&&DriveMath.HarshPassengerMotion(filtered,session.taxi.Speed,false);if(excluded&&!necessaryLatched)necessaryBrakeEvents++;necessaryLatched=excluded;
+   bool harsh=DriveMath.HarshPassengerMotion(filtered,session.taxi.Speed,required);
+   if(harsh){harshTime+=Time.fixedDeltaTime;if(harshTime>.45f&&!harshLatched){Deduct(filtered>0?"accel":"brake",MannerLedger.MotionPenalty(ComfortAccepted),(ComfortAccepted?"차멀미 배려 요청 중 ":"")+(filtered>0?"급가속":"급제동"),6);harshLatched=true;}}else{harshTime=0;harshLatched=false;}
    if(++sample%5==0){int outside=0;foreach(float side in new[]{-.8f,.8f})foreach(float end in new[]{-1.25f,1.25f})if(!session.roadEnvironment.OnRoad(transform.TransformPoint(new Vector3(side,0,end)),.1f))outside++;
     if(outside>=2&&velocity.magnitude>1){offroadTime+=Time.fixedDeltaTime*5;if(offroadTime>.7f&&!offroadLatched){Deduct("sidewalk",5,"도로 경계·인도 침범",4);offroadLatched=true;}}else if(outside==0){offroadTime=0;offroadLatched=false;}
    }

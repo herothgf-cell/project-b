@@ -3,6 +3,26 @@ class PassengerRequestTests {
  static void Check(bool ok,string reason){if(!ok)throw new Exception(reason);}
  static void Main(){
   var r=new PassengerRequest();r.Begin("trip1",RequestKind.Quiet);
+  Check(PassengerRequest.EtaSeconds(240,-1)==216&&PassengerRequest.EtaSeconds(240,0)==240&&PassengerRequest.EtaSeconds(240,1)==264,"three ETA estimates");
+  Check(PassengerRequest.EtaComparison(216,232).Contains("늦어짐")&&PassengerRequest.EtaComparison(216,201).Contains("예상 범위"),"ETA tolerance");
+  var reward=PassengerReward.Calculate(RequestKind.Comfort,85,85,5000,5000,8,true,true);
+  Check(reward.satisfaction==93&&reward.bonus==260&&reward.Total==5260,"proportional DR bonus 10 won floor");
+  Check(PassengerReward.Calculate(RequestKind.Comfort,100,85,5000,5000,8,true,true).bonus==500,"DR cap");
+  Check(PassengerReward.Calculate(RequestKind.Comfort,80,85,5000,3500,8,true,true).bonus==0,"70 percent fare excludes bonus despite positive satisfaction");
+  Check(PassengerReward.Calculate(RequestKind.Comfort,100,85,5000,0,8,false,true).bonus==0,"late excludes bonus");
+  Check(PassengerReward.Calculate(RequestKind.Comfort,100,85,5000,5000,8,true,false).bonus==0,"confirmed law violation excludes bonus");
+  foreach(var noBonus in new[]{RequestKind.Music,RequestKind.FareHelp,RequestKind.LostItem,RequestKind.RejectIllegal,RequestKind.Quiet,RequestKind.Eta})Check(PassengerReward.Calculate(noBonus,100,60,9000,9000,8,true,true).bonus==0,"excluded bonus "+noBonus);
+  foreach(RequestKind category in new[]{RequestKind.Comfort,RequestKind.Empathy,RequestKind.DestinationChange}){var q=new PassengerRequest();q.Begin("outcome-"+category,category);q.Accept();q.CompleteGoal(true,"observed");q.Finish();Check(q.SatisfactionDelta==(category==RequestKind.Comfort?8:category==RequestKind.Empathy?5:6),"category positive delta");q.CompleteGoal(false,"late");Check(q.SatisfactionDelta>0,"result delta immutable");}
+  var ignored=new PassengerRequest();ignored.Begin("ignored",RequestKind.Empathy);ignored.ObserveOpportunity(true);Check(ignored.Finish()==0&&ignored.SatisfactionDelta==-5,"CH ignore changes only satisfaction");
+  var unknown=new PassengerRequest();unknown.Begin("unknown",RequestKind.LargeRoad);unknown.Accept();unknown.CompleteUnknown("우회 사유 불명");unknown.Finish();Check(unknown.SatisfactionDelta==0,"unknown neutral");
+  Check(MannerLedger.MotionPenalty(true)==4&&MannerLedger.MotionPenalty(false)==2,"comfort replaces motion deduction");
+  Check(float.IsNaN(PassengerRequest.EtaSeconds(float.PositiveInfinity,0))&&float.IsNaN(PassengerRequest.EtaSeconds(-1,0)),"unavailable ETA blocked");
+  Check(PassengerRequest.EtaSeconds(600,-1)==570&&PassengerRequest.EtaComparison(216,200).Contains("예상보다 빠름"),"ETA cap and early arrival");
+  Check(PassengerReward.Calculate(RequestKind.Empathy,100,70,9000,9000,5,true,true).bonus==300&&PassengerReward.Calculate(RequestKind.DestinationChange,100,70,9000,9000,6,true,true).bonus==400,"CH and EV category caps");
+  Check(PassengerReward.Calculate(RequestKind.Comfort,77,85,5000,5000,8,true,true).bonus==0,"exact requirement has no bonus");
+  foreach(var category in new[]{RequestKind.Comfort,RequestKind.Empathy,RequestKind.DestinationChange}){var q=new PassengerRequest();q.Begin("failed-"+category,category);q.Accept();Check(q.SatisfactionDelta==0,"selection alone not reward");q.CompleteGoal(false,"observed failure");q.Finish();Check(q.SatisfactionDelta==(category==RequestKind.Comfort?-10:category==RequestKind.Empathy?-5:-8),"category negative delta");}
+  foreach(RequestKind kind in Enum.GetValues(typeof(RequestKind))){var q=new PassengerRequest();q.Begin("deferred-"+kind,kind);q.ObserveOpportunity(true);q.DeferSafety();q.Finish();Check(q.SatisfactionDelta==0,"every safety defer neutral");}
+  var settledTrip=new FareTrip();settledTrip.Accept(5000,100);settledTrip.Board();int fare=settledTrip.Complete();Check(PassengerReward.Calculate(RequestKind.Comfort,85,85,5000,fare,8,true,true).Total==5260&&settledTrip.Complete()==0,"delivery state gates one-time base and bonus settlement");
   Check(!r.Begin("trip1",RequestKind.Eta),"one request total per trip");
   Check(r.Finish()==0,"no opportunity is not refusal");
   r.Begin("trip2",RequestKind.Quiet);r.ObserveOpportunity(true);r.DeferSafety();Check(r.Finish()==0,"safety defer exempt");

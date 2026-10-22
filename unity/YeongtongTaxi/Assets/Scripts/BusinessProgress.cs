@@ -79,8 +79,8 @@ public class BusinessProgress : MonoBehaviour {
  public void RecordPassenger(int paid,string outcome){
   if(!useV2||PracticeSession.Enabled||session.jobs.current==null||string.IsNullOrEmpty(session.law.tripId))return;
   foreach(var old in passengers)if(old.tripId==session.law.tripId)return;
-  var jobs=session.jobs;var offer=jobs.current;
-  passengers.Add(new PassengerResult{tripId=session.law.tripId,offerId=jobs.OfferId,day=ledger.Day,pickup=jobs.stops[offer.pickup].name,destination=jobs.stops[offer.drop].name,outcome=outcome,quoted=offer.fare,paid=paid,score=session.manners.ledger.Score,required=offer.requiredScore,elapsed=Mathf.Max(0,offer.seconds-jobs.trip.Remaining),request=session.requests.request.Resolved?session.requests.request.ResponseText():"미응답 · 운송 종료",mannerReason=session.manners.RideReasons});
+  var jobs=session.jobs;var offer=jobs.current;var reward=jobs.RequestReward??PassengerReward.Calculate(RequestKind.Quiet,session.manners.ledger.Score,offer.requiredScore,offer.fare,paid,0,paid>0,true);
+  passengers.Add(new PassengerResult{tripId=session.law.tripId,offerId=jobs.OfferId,day=ledger.Day,pickup=jobs.stops[offer.pickup].name,destination=jobs.stops[offer.drop].name,outcome=outcome,quoted=offer.fare,paid=paid,baseFare=reward.baseFare,bonus=reward.bonus,satisfaction=reward.satisfaction,satisfactionDelta=reward.satisfactionDelta,excessScore=reward.excessScore,bonusReason=reward.bonusReason,score=session.manners.ledger.Score,required=offer.requiredScore,elapsed=Mathf.Max(0,offer.seconds-jobs.trip.Remaining),request=session.requests.request.Resolved?session.requests.request.ResponseText():"미응답 · 운송 종료",mannerReason=session.manners.RideReasons});
  }
  public void RecordFare(int amount){if(!enabledCampaign)return;if(ledger.Account!=null)ledger.RecordFare(session.law.tripId,amount);else ledger.RecordFare(amount);}
  public void RecordFailure(){if(enabledCampaign)ledger.RecordFailure();}

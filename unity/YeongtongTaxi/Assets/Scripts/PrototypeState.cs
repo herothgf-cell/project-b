@@ -60,6 +60,7 @@ public enum PedestrianState { None, Intending, Crossing, Unknown }
 [Serializable] public class PassengerResult {
  public string tripId,offerId,pickup,destination,outcome,request,mannerReason;
  public int day,quoted,paid,score,required;public float elapsed;
+ public int baseFare,bonus,satisfaction,satisfactionDelta,excessScore;public string bonusReason;
 }
 // No dependency on passenger manners, fares, Unity time, or physics.
 public class LawLedger {

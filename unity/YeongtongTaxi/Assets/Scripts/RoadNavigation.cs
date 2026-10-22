@@ -29,6 +29,7 @@ public class RoadNavigation : MonoBehaviour {
  public int hdGoal=-1; public float hdGoalAt; public bool freeGuidance; bool hybrid; float nextHdCosts; float[] hdSeconds;
  public readonly List<Vector3> path=new List<Vector3>(),alternativePath=new List<Vector3>();
  public float remaining,estimatedSeconds,alternativeSeconds,alternativeDistance;
+ public static string FormatEta(float seconds){return float.IsNaN(seconds)||float.IsInfinity(seconds)?"계산 중":Mathf.CeilToInt(Mathf.Max(0,seconds)/60f)+"분";}
  public string instruction="호출을 선택하거나 길가 손님을 찾아보세요",rerouteNotice="";
  public Transform vehicle;public Vector3 destination;public bool active;
  public RoadConditions conditions;

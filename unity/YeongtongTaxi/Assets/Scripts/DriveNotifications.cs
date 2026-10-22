@@ -12,7 +12,7 @@ public class DriveNotifications : MonoBehaviour {
   var journal=session.GetComponent<DrivingScoreJournal>();if(journal&&!journal.Loaded)return;
   if(!ready||ledger!=session.law.ledger){ledger=session.law.ledger;manner=session.manners.ledger.Score;score=ledger.TotalScore;queue.Clear();current=null;ready=true;return;}
   int next=session.manners.ledger.Score;
-  if(next!=manner){Push(next>manner&&session.manners.lastEvent.Contains("100점으로 시작")?"새 승객 · 매너 100점으로 초기화":"승객 매너 "+Delta(next-manner)+" · "+session.manners.lastEvent,next>manner);manner=next;}
+  if(next!=manner){Push(next>manner&&session.manners.lastEvent.Contains("100점으로 시작")?"새 승객 · 만족도 100점으로 초기화":"승객 만족도 "+Delta(next-manner)+" · "+session.manners.lastEvent,next>manner);manner=next;}
   next=ledger.TotalScore;if(next!=score){var events=ledger.Events;string reason=events.Length>0?events[events.Length-1].action:"";Push("운행 점수 "+Delta(next-score)+" · "+(next>score?"준수 확인":reason),next>score);score=next;}
   if(current!=null&&Time.unscaledTime-current.since>=4)current=null;
   if(current==null&&queue.Count>0){current=queue.Dequeue();current.since=Time.unscaledTime;}

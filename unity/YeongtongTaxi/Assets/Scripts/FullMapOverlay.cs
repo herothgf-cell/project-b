@@ -1,9 +1,20 @@
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 
 // One modal shares the real navigation path and situation definitions with the minimap.
 public class FullMapOverlay : MonoBehaviour {
  public DriveSession session;public bool IsOpen {get;private set;}
+ bool locationCopied;
+ public static string DescribeLocation(MapData map,Vector3 position,float heading,IEnumerable<TrafficJunction> junctions){
+  TrafficJunction nearest=null;float distance=float.MaxValue;
+  foreach(var junction in junctions){var delta=junction.center-position;delta.y=0;float d=delta.magnitude;if(d<distance){nearest=junction;distance=d;}}
+  string id=string.IsNullOrEmpty(map.mapId)?(HdRouteTrial.Enabled?"route42":"unknown"):map.mapId;
+  return "지역: "+(id=="unknown"?"미지정":MapCatalog.Name(id))+" ("+id+")\n지도 좌표(m): x="+position.x.ToString("R",CultureInfo.InvariantCulture)+", z="+position.z.ToString("R",CultureInfo.InvariantCulture)+
+   "\n방향(도, 북=0 / 동=90): "+Mathf.Repeat(heading,360).ToString("R",CultureInfo.InvariantCulture)+
+   "\n가까운 교차로: "+(nearest==null?"없음":nearest.name+" ("+distance.ToString("0.0",CultureInfo.InvariantCulture)+"m)");
+ }
+ public string LocationText {get{return DescribeLocation(session.world.map,session.taxi.transform.position,session.taxi.transform.eulerAngles.y,session.traffic.junctions);}}
  public bool ShowFacilities=true,ShowTraffic=true,ShowLaw=true;
  public sealed class MapMarker {public Vector3 position;public string label;public Color color;public bool named;}
  public List<MapMarker> VisibleMarkers(){
@@ -29,7 +40,7 @@ public class FullMapOverlay : MonoBehaviour {
   if(IsOpen)return false;
   var b=session.business;
   if(session.ChoiceOpen||session.PracticeMenuOpen||session.PracticeBusy||b.preparing||b.ShowingSummary||b.restartPrompt||b.pendingPayment>=0||b.taxPrompt||session.services.open||session.law.HistoryOpen)return false;
-  previousPause=session.paused;previousScale=Time.timeScale;session.paused=true;Time.timeScale=0;IsOpen=true;return true;
+  previousPause=session.paused;previousScale=Time.timeScale;session.paused=true;Time.timeScale=0;locationCopied=false;IsOpen=true;return true;
  }
  public void Close(){if(!IsOpen)return;IsOpen=false;dragging=false;closedFrame=Time.frameCount;session.paused=previousPause;Time.timeScale=previousScale;}
  void Update(){if(IsOpen){if(Input.GetKeyDown(KeyCode.M)||Input.GetKeyDown(KeyCode.Escape))Close();}else if(Input.GetKeyDown(KeyCode.M))Open();}
@@ -38,7 +49,7 @@ public class FullMapOverlay : MonoBehaviour {
  void OnGUI(){if(!IsOpen)return;if(text==null){text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=15,wordWrap=true};heading=new GUIStyle(text){fontSize=22,fontStyle=FontStyle.Bold};button=KoreanText.Button(14);text.normal.textColor=heading.normal.textColor=Color.white;}GUI.depth=-220;GUI.ModalWindow(94721,new Rect(0,0,Screen.width,Screen.height),Draw,GUIContent.none,GUIStyle.none);}
  void Draw(int id){
   Fill(new Rect(0,0,Screen.width,Screen.height),new Color(.025f,.045f,.055f,.99f));
-  GUI.Label(new Rect(28,18,Screen.width-240,35),"은계 전체 지도 · 북쪽 ↑",heading);
+  GUI.Label(new Rect(28,18,Screen.width-240,35),MapCatalog.Name(session.world.map.mapId)+" 전체 지도 · 북쪽 ↑",heading);
   if(GUI.Button(new Rect(Screen.width-190,20,160,36),"M / Esc 닫기",button)){Close();return;}
   GUI.Label(new Rect(28,55,Screen.width-56,26),"지도를 보는 동안 영업시간과 주행이 멈춥니다.  ▲ 내 위치   청록선: 실제 내비 경로   초록: 승차   분홍: 도착·이번 상황",text);
   var viewport=MapRect;var ev=Event.current;
@@ -66,7 +77,12 @@ public class FullMapOverlay : MonoBehaviour {
   }
   var forward=new Vector2(session.taxi.transform.forward.x,-session.taxi.transform.forward.z).normalized;var side=new Vector2(-forward.y,forward.x);Dot(player,Color.black,26);Line(player-forward*7-side*8,player+forward*12,Color.yellow,5);Line(player+forward*12,player-forward*7+side*8,Color.yellow,5);Line(player-forward*7+side*8,player-forward*7-side*8,Color.yellow,5);
   GUI.EndGroup();float x=viewport.xMax+24,w=Screen.width-x-28,y=86;
-  filterScroll=GUI.BeginScrollView(new Rect(x,y,w,map.height),filterScroll,new Rect(0,0,w-20,840));x=0;y=0;w-=20;
+  filterScroll=GUI.BeginScrollView(new Rect(x,y,w,map.height),filterScroll,new Rect(0,0,w-20,1100));x=0;y=0;w-=20;
+  GUI.Label(new Rect(x,y,w,30),"현재 위치 · 문의용 좌표",heading);y+=34;
+  var location=LocationText;var locationStyle=new GUIStyle(GUI.skin.textArea){font=KoreanText.Font,fontSize=14,wordWrap=true,padding=new RectOffset(7,7,6,6)};
+  float locationHeight=Mathf.Max(112,locationStyle.CalcHeight(new GUIContent(location),w));
+  GUI.TextArea(new Rect(x,y,w,locationHeight),location,locationStyle);y+=locationHeight+6;
+  if(GUI.Button(new Rect(x,y,w,30),locationCopied?"현재 위치 복사됨":"현재 위치 복사",button)){GUIUtility.systemCopyBuffer=location;locationCopied=true;}y+=36;
   GUI.Label(new Rect(x,y,w,28),"확대 "+ZoomLevel.ToString("0.0")+"배 · 휠 / +/-",text);y+=30;
   if(GUI.Button(new Rect(x,y,w/2-3,30),"+ 확대",button))Zoom(1);if(GUI.Button(new Rect(x+w/2+3,y,w/2-3,30),"− 축소",button))Zoom(-1);y+=36;
   if(GUI.Button(new Rect(x,y,w/2-3,30),"내 위치",button))FocusPlayer();if(GUI.Button(new Rect(x+w/2+3,y,w/2-3,30),"전체 보기",button))ResetView();y+=36;

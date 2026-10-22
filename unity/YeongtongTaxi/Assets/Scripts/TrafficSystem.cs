@@ -4,6 +4,7 @@ using UnityEngine;
 public class TrafficJunction {
     public bool scenarioOpposingGreen,scenarioFlashing,scenarioLampOn=true;public bool scenarioSignal; public SignalColor scenarioForward; public bool signalized=true; public RoadObservation rightTurnObservation; public int observationAxis,observationSign; public HybridJunctionRule facility; public int crosswalkApproaches,stopLineApproaches;
     public readonly List<int> lampAxes=new List<int>(),lampSigns=new List<int>();
+    public readonly List<int> lampStates=new List<int>();
     public Vector3 direction;
     public LeftTurnMode leftTurnMode;
     public float[] halfWidth={5,10};public int[] laneCount={1,2};public bool[] centeredLane={false,false};
@@ -36,6 +37,12 @@ public class TrafficRoute {
         return Vector3.Lerp(points[lo-1],points[lo],Mathf.InverseLerp(cumulative[lo-1],cumulative[lo],d));
     }
     public Vector3 Tangent(float d){return (Position(Mathf.Min(length,d+.4f))-Position(Mathf.Max(0,d-.4f))).normalized;}
+    public float ProjectNear(Vector3 point,float around,out float error){
+        float low=Mathf.Max(0,around-65),high=Mathf.Min(length,around+65),best=float.PositiveInfinity,result=around;
+        int lo=1,hi=cumulative.Length-1;while(lo<hi){int mid=(lo+hi)/2;if(cumulative[mid]>=low)hi=mid;else lo=mid+1;}
+        for(int i=lo;i<points.Length&&cumulative[i-1]<=high;i++){var d=points[i]-points[i-1];float t=Mathf.Clamp01(Vector3.Dot(point-points[i-1],d)/Mathf.Max(.00001f,d.sqrMagnitude));float at=Mathf.Lerp(cumulative[i-1],cumulative[i],t);if(at<low||at>high)continue;float e=(point-points[i-1]-d*t).sqrMagnitude;if(e<best){best=e;result=at;}}
+        error=Mathf.Sqrt(best);return result;
+    }
 
     public readonly List<TrafficStop> stops = new List<TrafficStop>();
 }
@@ -55,26 +62,32 @@ public class TrafficSystem : MonoBehaviour {
     readonly List<Vector3> whitePaint=new List<Vector3>(), yellowPaint=new List<Vector3>();
     MapData roadMap;
     readonly TrafficOverlapQuery overlaps=new TrafficOverlapQuery();
+    readonly Dictionary<TrafficStop,Dictionary<TrafficStop,bool>> conflicts=new Dictionary<TrafficStop,Dictionary<TrafficStop,bool>>();
 
     public Vector3 AxisDirection(TrafficJunction j,int axis){var d=j.direction.sqrMagnitude>.1f?j.direction:mainDirection;return axis==0?d:Right(d);}
     public int Sign(Vector3 direction,int axis,TrafficJunction j=null){return Vector3.Dot(direction,j!=null?AxisDirection(j,axis):axis==0?mainDirection:Right(mainDirection))>=0?1:-1;}
-    public SignalColor Signal(TrafficJunction junction, int axis,int sign=1) { return junction.scenarioSignal?(axis==junction.observationAxis&&(sign==junction.observationSign||junction.scenarioOpposingGreen)?junction.scenarioForward:SignalColor.Red):junction.signalized?KoreanSignalRules.Signal(Clock+junction.offset,junction.leftTurnMode,axis,sign):SignalColor.Green; }
-    public float SecondsToSignalChange(TrafficJunction junction,int axis,int sign=1){return junction==null||!junction.signalized||junction.scenarioSignal?-1:KoreanSignalRules.SecondsToChange(Clock+junction.offset,junction.leftTurnMode,axis,sign);}
+    public bool HasPedestrianPhase(TrafficJunction j){return j.signalized&&j.facility!=null&&j.facility.crosswalk;}
+    float VehicleCycle(TrafficJunction j){return 17*(j.leftTurnMode==LeftTurnMode.Permissive?2:4);}
+    float PhaseTime(TrafficJunction j){float cycle=VehicleCycle(j)+(HasPedestrianPhase(j)?12:0);return ((Clock+j.offset)%cycle+cycle)%cycle;}
+    public bool PedestrianGreen(TrafficJunction j,int axis,int sign){if(j.rightTurnObservation!=null&&j.observationAxis==axis&&j.observationSign==sign)return j.rightTurnObservation.pedestrianGreen;if(j.scenarioSignal||!HasPedestrianPhase(j))return false;float phase=PhaseTime(j);return phase>=VehicleCycle(j)&&phase<VehicleCycle(j)+10;}
+    public SignalColor Signal(TrafficJunction junction, int axis,int sign=1) { return junction.scenarioSignal?(axis==junction.observationAxis&&(sign==junction.observationSign||junction.scenarioOpposingGreen)?junction.scenarioForward:SignalColor.Red):junction.signalized?(PhaseTime(junction)>=VehicleCycle(junction)?SignalColor.Red:KoreanSignalRules.Signal(PhaseTime(junction),junction.leftTurnMode,axis,sign)):SignalColor.Green; }
+    public float SecondsToSignalChange(TrafficJunction j,int axis,int sign=1){if(j==null||!j.signalized||j.scenarioSignal)return -1;float phase=PhaseTime(j),cycle=VehicleCycle(j);int approach=j.leftTurnMode==LeftTurnMode.Permissive?axis:axis*2+(sign>0?0:1);if(phase>=cycle)return cycle+12+approach*17-phase;float seconds=KoreanSignalRules.SecondsToChange(phase,j.leftTurnMode,axis,sign);return seconds+(HasPedestrianPhase(j)&&phase+seconds>=cycle-.001f?12:0);}
     public SignalColor LeftSignal(TrafficJunction junction,int axis,int sign=1){if(junction.scenarioSignal&&junction.leftTurnMode==LeftTurnMode.Permissive)return SignalColor.Red;return Signal(junction,axis,sign);}
     public SignalColor MovementSignal(TrafficJunction junction,int axis,int turn,int sign=1){return Signal(junction,axis,sign);}
     public RoadObservation Observe(TrafficJunction j,int axis,int sign,Vector3 direction,GameObject self){
         var o=j.rightTurnObservation!=null&&j.observationAxis==axis&&j.observationSign==sign?j.rightTurnObservation.Copy():new RoadObservation{known=true,pedestrian=PedestrianState.None};
-        o.forward=Signal(j,axis,sign);o.trafficClear=YieldClear(j,direction,1,self);return o;
+        o.forward=Signal(j,axis,sign);if(j.rightTurnObservation==null)o.pedestrianGreen=PedestrianGreen(j,axis,sign);o.trafficClear=YieldClear(j,direction,1,self);return o;
     }
     public bool CanEnter(TrafficCar car,TrafficStop stop){
         if(!stop.junction.signalized&&!stop.junction.scenarioSignal)return true;
         var direction=car.route.graphPath==null?car.route.direction:car.route.Tangent(Mathf.Max(0,stop.distance));int turn=stop.Movement(car.route);
-        var observed=Observe(stop.junction,stop.axis,Sign(direction,stop.axis,stop.junction),direction,car.gameObject);
+        var j=stop.junction;int sign=Sign(direction,stop.axis,j);
+        var observed=j.rightTurnObservation!=null&&j.observationAxis==stop.axis&&j.observationSign==sign?j.rightTurnObservation.Copy():new RoadObservation{known=true,pedestrian=PedestrianState.None};
+        observed.forward=Signal(j,stop.axis,sign);observed.trafficClear=turn==0&&!j.scenarioFlashing||YieldClear(j,direction,turn,car.gameObject);
         if(stop.junction.scenarioFlashing)return (observed.forward!=SignalColor.Red||car.stoppedAt==stop.junction)&&observed.PedestrianClear&&YieldClear(stop.junction,direction,turn,car.gameObject);
         if(turn>0)return observed.MayTurnRight(car.stoppedAt==stop.junction);
-        if(stop.junction.scenarioSignal)return observed.forward==SignalColor.Green&&(turn==0||observed.PedestrianClear)&&YieldClear(stop.junction,direction,turn,car.gameObject);
-        return KoreanSignalRules.MayEnter(Clock+stop.junction.offset,stop.junction.leftTurnMode,stop.axis,Sign(direction,stop.axis,stop.junction),turn,car.stoppedAt==stop.junction,
-            YieldClear(stop.junction,direction,turn,car.gameObject),observed.PedestrianClear);
+        if(stop.junction.scenarioSignal)return observed.forward==SignalColor.Green&&(turn==0||observed.PedestrianClear)&&observed.trafficClear;
+        return observed.forward==SignalColor.Green&&observed.trafficClear&&(turn==0||observed.PedestrianClear);
     }
     public bool YieldClear(TrafficJunction j,Vector3 incoming,int turn,GameObject self){
         if(turn==0||turn<0&&j.leftTurnMode!=LeftTurnMode.Permissive)return true;
@@ -177,6 +190,7 @@ public class TrafficSystem : MonoBehaviour {
     public float ReservationDistance(TrafficCar car){return Mathf.Max(8,car.speed*car.speed/6+3);}
     bool SameTrafficStream(TrafficCar a,TrafficCar b){
         if(!a||!b)return false;
+        if(a.route==b.route)return true;
         // A shared directed turn connector is one following stream, even while the
         // leader has rotated away from the follower's approach heading.
         if(a.CurrentTurn!=0&&a.route.graphPath!=null&&b.route.graphPath!=null){
@@ -184,15 +198,23 @@ public class TrafficSystem : MonoBehaviour {
                 bool shared=false;
                 foreach(int edge in a.route.graphPath.edges)if(roadMap.hdEdges[edge].ruleId==entry.junction.name&&roadMap.hdEdges[edge].turn==entry.Movement(a.route)&&b.route.graphPath.edges.Contains(edge)){shared=true;break;}
                 if(!shared)continue;
-                float deviation;float leaderAt=a.route.graphPath.path.Project(b.transform.position,out deviation);
+                float deviation;float leaderAt=a.route.ProjectNear(b.transform.position,a.distance,out deviation);
                 if(Mathf.Abs(leaderAt-a.distance)<60&&deviation<.8f&&Vector3.Dot(a.route.Tangent(leaderAt),b.transform.forward)>.95f)return true;
             }
         }
         if(a.CurrentTurn!=0||b.CurrentTurn!=0)return false;if(a.route==b.route)return true;
         if(a.route.graphPath==null||b.route.graphPath==null||Vector3.Dot(a.transform.forward,b.transform.forward)<.95f)return false;
-        float error;float at=a.route.graphPath.path.Project(b.transform.position,out error);return error<.8f&&Mathf.Abs(at-a.distance)<60;
+        float error;float at=a.route.ProjectNear(b.transform.position,a.distance,out error);return error<.8f&&Mathf.Abs(at-a.distance)<60;
     }
-    bool Ahead(TrafficCar a,TrafficCar b){if(a.route==b.route)return b.distance>a.distance;float error;return a.route.graphPath.path.Project(b.transform.position,out error)>a.distance+.1f;}
+    bool Ahead(TrafficCar a,TrafficCar b){if(a.route==b.route)return b.distance>a.distance;float error;return a.route.ProjectNear(b.transform.position,a.distance,out error)>a.distance+.1f;}
+    TrafficStop ActiveStop(TrafficCar car,TrafficJunction j){foreach(var s in car.route.stops)if(s.junction==j&&s.exitDistance>=car.distance-.1f)return s;return null;}
+    bool Conflicts(TrafficCar a,TrafficStop sa,TrafficCar b){
+        if(!b)return true;var sb=ActiveStop(b,sa.junction);if(sb==null)return true;if(SameTrafficStream(a,b))return false;
+        Dictionary<TrafficStop,bool> row;if(!conflicts.TryGetValue(sa,out row)){row=new Dictionary<TrafficStop,bool>();conflicts[sa]=row;}bool value;if(row.TryGetValue(sb,out value))return value;
+        value=false;float aEnd=Mathf.Min(a.route.length,sa.exitDistance+8),bEnd=Mathf.Min(b.route.length,sb.exitDistance+8);
+        for(float x=Mathf.Max(0,sa.distance-3);x<aEnd&&!value;x+=2){var p=a.route.Position(x);var q=a.route.Position(Mathf.Min(aEnd,x+2));for(float y=Mathf.Max(0,sb.distance-3);y<=bEnd;y+=2){var r=b.route.Position(y);var delta=q-p;float t=Mathf.Clamp01(Vector3.Dot(r-p,delta)/Mathf.Max(.00001f,delta.sqrMagnitude));if((r-p-delta*t).sqrMagnitude<2.6f*2.6f){value=true;break;}}}
+        row[sb]=value;Dictionary<TrafficStop,bool> reverse;if(!conflicts.TryGetValue(sb,out reverse)){reverse=new Dictionary<TrafficStop,bool>();conflicts[sb]=reverse;}reverse[sa]=value;return value;
+    }
     public bool MovingLeader(TrafficCar car,TrafficCar other){
         // Detection alone does not mean a stopped queue: a whole convoy can see the
         // car ahead while maintaining its cruise speed. Strictly increasing route
@@ -207,13 +229,13 @@ public class TrafficSystem : MonoBehaviour {
         var j=stop.junction;
         Request(car,stop);float mine=j.requests[car];
         if(!CanEnter(car,stop))return false;
-        foreach(var reserved in j.reservations)if(reserved!=car&&!SameTrafficStream(car,reserved))return false;
-        if(!j.reservations.Contains(car))foreach(var pair in j.requests){var other=pair.Key;if(other==car||!other||!other.enabled||other.entryBlocked||SameTrafficStream(car,other))continue;foreach(var approach in other.route.stops)if(approach.junction==j&&approach.distance-other.distance>=-.05f&&approach.distance-other.distance<=ReservationDistance(other)&&CanEnter(other,approach)&&ExitClear(other,approach)){if(pair.Value<mine||(pair.Value==mine&&other.GetInstanceID()<car.GetInstanceID()))return false;}}
+        foreach(var reserved in j.reservations)if(reserved!=car&&Conflicts(car,stop,reserved))return false;
+        if(!j.reservations.Contains(car))foreach(var pair in j.requests){var other=pair.Key;if(other==car||!other||!other.enabled||other.entryBlocked||!Conflicts(car,stop,other))continue;foreach(var approach in other.route.stops)if(approach.junction==j&&approach.distance-other.distance>=-.05f&&approach.distance-other.distance<=ReservationDistance(other)&&CanEnter(other,approach)&&ExitClear(other,approach)){if(pair.Value<mine||(pair.Value==mine&&other.GetInstanceID()<car.GetInstanceID()))return false;}}
 
         // A moving same-lane leader is protected by the car-following gap check. All other
         // occupied movements stay exclusive, including stopped leaders and conflicting turns.
         int contacts=overlaps.Box(j.center+Vector3.up*.85f,new Vector3(j.halfWidth[0]+.4f,.55f,j.halfWidth[1]+.4f),Quaternion.LookRotation(AxisDirection(j,0)),(1<<8)|(1<<9));
-        for(int contact=0;contact<contacts;contact++){var other=overlaps.hits[contact].GetComponentInParent<TrafficCar>();if(other!=car&&!MovingLeader(car,other))return false;}
+        for(int contact=0;contact<contacts;contact++){var other=overlaps.hits[contact].GetComponentInParent<TrafficCar>();if(other!=car&&!MovingLeader(car,other)&&(SameTrafficStream(car,other)||Conflicts(car,stop,other)))return false;}
         if(!ExitClear(car,stop))return false;
         j.reservations.Add(car);if(!j.owner)j.owner=car;return true;
     }
@@ -334,6 +356,7 @@ public class TrafficSystem : MonoBehaviour {
         if(j.facility==null||j.facility.crosswalk){j.crosswalkApproaches++;for(float x=-halfWidth+.65f;x<halfWidth-.3f;x+=.95f) Mark("Crosswalk "+j.name,j.center-direction*(conflictHalfWidth+TrafficJunction.CrosswalkCentreOffset)+right*x,direction,.5f,TrafficJunction.CrosswalkDepth,white);}
         if(j.facility==null||j.facility.stopLine){j.stopLineApproaches++;Mark("Stop line "+j.name,j.center-direction*stop+right*halfWidth*.5f,direction,halfWidth-.3f,.4f,white);}
         if(!j.signalized)return;
+        if(j.facility==null||j.facility.crosswalk)PedestrianSignalDisplay.Create(this,j,direction,halfWidth,conflictHalfWidth,transform);
         // Far-side placement keeps the signal visible from a stopped driver's eye position.
         var root=new GameObject(j.name+" signal approach"); root.transform.SetParent(transform); root.transform.position=j.center+direction*stop+right*(halfWidth+.6f); root.transform.rotation=Quaternion.LookRotation(direction);
         var support=roadMap.hybrid?root.transform.InverseTransformPoint(RoadsidePlacement.FindPole(roadMap,root.transform.position)):Vector3.zero;
@@ -347,13 +370,13 @@ public class TrafficSystem : MonoBehaviour {
         for(int i=0;i<3;i++) {
             var ball=GameObject.CreatePrimitive(PrimitiveType.Sphere); ball.name="Signal lamp "+(SignalColor)i; ball.transform.SetParent(root.transform,false);ball.transform.localPosition=new Vector3(-reach+(permissive?(i-1)*.6f:i==0?-.9f:i==1?-.3f:.9f),4.55f,-.22f);ball.transform.localScale=new Vector3(.56f,.56f,.18f); Destroy(ball.GetComponent<Collider>());lamps[i]=ball.GetComponent<Renderer>();
         }
-        j.lamps.Add(lamps);int approachAxis=Mathf.Abs(Vector3.Dot(direction,AxisDirection(j,0)))>.7f?0:1;j.lampAxes.Add(approachAxis);j.lampSigns.Add(Sign(direction,approachAxis,j));
+        j.lamps.Add(lamps);j.lampStates.Add(-1);int approachAxis=Mathf.Abs(Vector3.Dot(direction,AxisDirection(j,0)))>.7f?0:1;j.lampAxes.Add(approachAxis);j.lampSigns.Add(Sign(direction,approachAxis,j));
         if(j.facility!=null){var label=new GameObject("Facility provenance "+j.name);label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(-reach,2.8f,-.1f);var text=label.AddComponent<TextMesh>();text.text=j.facility.facilityStatus=="verified"?"현장 확인 시설":"임시 교통시설";text.fontSize=40;text.characterSize=.065f;text.anchor=TextAnchor.MiddleCenter;text.color=j.facility.facilityStatus=="verified"?Color.green:new Color(1,.75f,.2f);KoreanText.Apply(text);label.AddComponent<RoadSignLabel>();}
 
         if(permissive){
-            WorldBuilder.Box("비보호 표지",new Vector3(-reach,3.6f,0),new Vector3(1.5f,1.05f,.1f),WorldBuilder.Mat("Sign blue",new Color(.02f,.15f,.6f)),root.transform,false);
-            var label=new GameObject("비보호좌회전 안내");label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(-reach,3.6f,-.07f);
-            var text=label.AddComponent<TextMesh>();text.text="↰\n비보호";text.fontSize=48;text.characterSize=.06f;text.anchor=TextAnchor.MiddleCenter;text.alignment=TextAlignment.Center;KoreanText.Apply(text);label.AddComponent<RoadSignLabel>();
+            WorldBuilder.Box("비보호 표지",new Vector3(-reach,5.65f,0),new Vector3(2.75f,.95f,.1f),WorldBuilder.Mat("Sign blue",new Color(.02f,.15f,.6f)),root.transform,false);
+            var label=new GameObject("비보호좌회전 안내");label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(-reach,5.65f,-.07f);
+            var text=label.AddComponent<TextMesh>();text.text="← 비보호 좌회전";KoreanText.Fit(text,2.5f,.72f);
             j.leftLamps.Add(new Renderer[0]);return;
         }
         var arrow=new List<Renderer>();var origin=new Vector3(-reach+.3f,4.55f,-.24f);
@@ -363,6 +386,7 @@ public class TrafficSystem : MonoBehaviour {
     void Update() {
         foreach(var j in junctions) for(int approach=0;approach<j.lamps.Count;approach++) {
             var left=LeftSignal(j,j.lampAxes[approach],j.lampSigns[approach]);int color=(int)Signal(j,j.lampAxes[approach],j.lampSigns[approach]);
+            int state=color+((!j.scenarioFlashing||j.scenarioLampOn)?4:0)+(left==SignalColor.Green?8:0);if(j.lampStates[approach]==state)continue;j.lampStates[approach]=state;
             foreach(var arrow in j.leftLamps[approach])arrow.sharedMaterial=left==SignalColor.Green?lit[2]:unlit[2];
             for(int i=0;i<3;i++) j.lamps[approach][i].sharedMaterial=i==color&&(!j.scenarioFlashing||j.scenarioLampOn)?lit[i]:unlit[i];
         }
