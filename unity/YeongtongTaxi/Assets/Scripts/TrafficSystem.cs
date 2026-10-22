@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TrafficJunction {
+public class TrafficJunction { public RoadMapSignalProgram editorProgram; public float[] editorStops=new float[4],editorCrossings=new float[4]; public float StopDistance(int axis,int sign){int i=axis*2+(sign>0?0:1);return editorStops[i]>0?editorStops[i]:halfWidth[1-axis]+4;} public float CrossDistance(int axis,int sign){int i=axis*2+(sign>0?0:1);return editorCrossings[i]>0?editorCrossings[i]:halfWidth[1-axis]+CrosswalkCentreOffset;}
     public bool scenarioOpposingGreen,scenarioFlashing,scenarioLampOn=true;public bool scenarioSignal; public SignalColor scenarioForward; public bool signalized=true; public RoadObservation rightTurnObservation; public int observationAxis,observationSign; public HybridJunctionRule facility; public int crosswalkApproaches,stopLineApproaches;
     public readonly List<int> lampAxes=new List<int>(),lampSigns=new List<int>();
     public readonly List<int> lampStates=new List<int>();
@@ -60,7 +60,7 @@ public class TrafficSystem : MonoBehaviour {
     Material white, yellow, dark, pole;
     Material[] lit, unlit;
     readonly List<Vector3> whitePaint=new List<Vector3>(), yellowPaint=new List<Vector3>();
-    MapData roadMap;
+    MapData roadMap;HdRoadGraph editorGraph;bool editorSpeedRules;public float EditorSpeedLimit(TrafficCar car){if(!editorSpeedRules||editorGraph==null||car.route.graphPath==null)return 0;int edge=car.route.graphPath.EdgeAt(car.distance);float error;float at=editorGraph.paths[edge].Project(car.transform.position,out error);return RoadMapRules.SpeedLimit(roadMap,editorGraph.edges[edge].id,at);}RoadMapWalker[] editorWalkers;bool EditorPedestrian(TrafficJunction j){return editorWalkers!=null&&System.Array.Exists(editorWalkers,w=>w&&w.crossing.junctionId==j.name&&w.Crossing);}public Vector3 StopPosition(TrafficJunction j,int axis,int sign){var f=roadMap.editorDocument==null?null:System.Array.Find(roadMap.editorDocument.facilities,x=>x.kind=="stopLine"&&x.junctionId==j.name&&x.axis==axis&&x.sign==sign);return f==null?j.center-AxisDirection(j,axis)*sign*j.StopDistance(axis,sign):f.Position;} public Vector3 StopNormal(TrafficJunction j,int axis,int sign){var f=roadMap.editorDocument==null?null:System.Array.Find(roadMap.editorDocument.facilities,x=>x.kind=="stopLine"&&x.junctionId==j.name&&x.axis==axis&&x.sign==sign);return f==null?AxisDirection(j,axis)*sign:Quaternion.Euler(0,f.yaw,0)*Vector3.forward;} public float EditorSpeedLimit(Vector3 position,Vector3 heading){if(editorGraph==null||!editorSpeedRules)return 0;float at;int edge=editorGraph.Nearest(position,heading,out at);return edge<0?0:RoadMapRules.SpeedLimit(roadMap,editorGraph.edges[edge].id,at);} public string EditorLaneId(Vector3 position,Vector3 heading){if(editorGraph==null)return null;float at;int edge=editorGraph.Nearest(position,heading,out at);return edge<0?null:editorGraph.edges[edge].id;}
     readonly TrafficOverlapQuery overlaps=new TrafficOverlapQuery();
     readonly Dictionary<TrafficStop,Dictionary<TrafficStop,bool>> conflicts=new Dictionary<TrafficStop,Dictionary<TrafficStop,bool>>();
 
@@ -69,21 +69,21 @@ public class TrafficSystem : MonoBehaviour {
     public bool HasPedestrianPhase(TrafficJunction j){return j.signalized&&j.facility!=null&&j.facility.crosswalk;}
     float VehicleCycle(TrafficJunction j){return 17*(j.leftTurnMode==LeftTurnMode.Permissive?2:4);}
     float PhaseTime(TrafficJunction j){float cycle=VehicleCycle(j)+(HasPedestrianPhase(j)?12:0);return ((Clock+j.offset)%cycle+cycle)%cycle;}
-    public bool PedestrianGreen(TrafficJunction j,int axis,int sign){if(j.rightTurnObservation!=null&&j.observationAxis==axis&&j.observationSign==sign)return j.rightTurnObservation.pedestrianGreen;if(j.scenarioSignal||!HasPedestrianPhase(j))return false;float phase=PhaseTime(j);return phase>=VehicleCycle(j)&&phase<VehicleCycle(j)+10;}
-    public SignalColor Signal(TrafficJunction junction, int axis,int sign=1) { return junction.scenarioSignal?(axis==junction.observationAxis&&(sign==junction.observationSign||junction.scenarioOpposingGreen)?junction.scenarioForward:SignalColor.Red):junction.signalized?(PhaseTime(junction)>=VehicleCycle(junction)?SignalColor.Red:KoreanSignalRules.Signal(PhaseTime(junction),junction.leftTurnMode,axis,sign)):SignalColor.Green; }
-    public float SecondsToSignalChange(TrafficJunction j,int axis,int sign=1){if(j==null||!j.signalized||j.scenarioSignal)return -1;float phase=PhaseTime(j),cycle=VehicleCycle(j);int approach=j.leftTurnMode==LeftTurnMode.Permissive?axis:axis*2+(sign>0?0:1);if(phase>=cycle)return cycle+12+approach*17-phase;float seconds=KoreanSignalRules.SecondsToChange(phase,j.leftTurnMode,axis,sign);return seconds+(HasPedestrianPhase(j)&&phase+seconds>=cycle-.001f?12:0);}
-    public SignalColor LeftSignal(TrafficJunction junction,int axis,int sign=1){if(junction.scenarioSignal&&junction.leftTurnMode==LeftTurnMode.Permissive)return SignalColor.Red;return Signal(junction,axis,sign);}
-    public SignalColor MovementSignal(TrafficJunction junction,int axis,int turn,int sign=1){return Signal(junction,axis,sign);}
+    public bool PedestrianGreen(TrafficJunction j,int axis,int sign){if(j.editorProgram!=null)return j.editorProgram.Walk(axis,sign,Clock);if(j.rightTurnObservation!=null&&j.observationAxis==axis&&j.observationSign==sign)return j.rightTurnObservation.pedestrianGreen;if(j.scenarioSignal||!HasPedestrianPhase(j))return false;float phase=PhaseTime(j);return phase>=VehicleCycle(j)&&phase<VehicleCycle(j)+10;}
+    public SignalColor Signal(TrafficJunction junction, int axis,int sign=1) { if(junction.editorProgram!=null)return junction.editorProgram.Movement(axis,sign,0,Clock); return junction.scenarioSignal?(axis==junction.observationAxis&&(sign==junction.observationSign||junction.scenarioOpposingGreen)?junction.scenarioForward:SignalColor.Red):junction.signalized?(PhaseTime(junction)>=VehicleCycle(junction)?SignalColor.Red:KoreanSignalRules.Signal(PhaseTime(junction),junction.leftTurnMode,axis,sign)):SignalColor.Green; }
+    public float SecondsToSignalChange(TrafficJunction j,int axis,int sign=1){if(j!=null&&j.editorProgram!=null)return -1;if(j==null||!j.signalized||j.scenarioSignal)return -1;float phase=PhaseTime(j),cycle=VehicleCycle(j);int approach=j.leftTurnMode==LeftTurnMode.Permissive?axis:axis*2+(sign>0?0:1);if(phase>=cycle)return cycle+12+approach*17-phase;float seconds=KoreanSignalRules.SecondsToChange(phase,j.leftTurnMode,axis,sign);return seconds+(HasPedestrianPhase(j)&&phase+seconds>=cycle-.001f?12:0);}
+    public SignalColor LeftSignal(TrafficJunction junction,int axis,int sign=1){if(junction.editorProgram!=null)return junction.editorProgram.Movement(axis,sign,-1,Clock);if(junction.scenarioSignal&&junction.leftTurnMode==LeftTurnMode.Permissive)return SignalColor.Red;return Signal(junction,axis,sign);}
+    public SignalColor MovementSignal(TrafficJunction junction,int axis,int turn,int sign=1){return junction.editorProgram!=null?junction.editorProgram.Movement(axis,sign,turn,Clock):Signal(junction,axis,sign);}
     public RoadObservation Observe(TrafficJunction j,int axis,int sign,Vector3 direction,GameObject self){
         var o=j.rightTurnObservation!=null&&j.observationAxis==axis&&j.observationSign==sign?j.rightTurnObservation.Copy():new RoadObservation{known=true,pedestrian=PedestrianState.None};
-        o.forward=Signal(j,axis,sign);if(j.rightTurnObservation==null)o.pedestrianGreen=PedestrianGreen(j,axis,sign);o.trafficClear=YieldClear(j,direction,1,self);return o;
+        o.forward=j.editorProgram!=null?j.editorProgram.Movement(axis,sign,0,Clock,self?EditorLaneId(self.transform.position,self.transform.forward):null):Signal(j,axis,sign);if(j.editorProgram!=null){o.dedicated=true;o.right=j.editorProgram.Movement(axis,sign,1,Clock,self?EditorLaneId(self.transform.position,self.transform.forward):null);}if(j.rightTurnObservation==null)o.pedestrianGreen=PedestrianGreen(j,axis,sign);if(j.editorProgram!=null&&EditorPedestrian(j))o.pedestrian=PedestrianState.Crossing;o.trafficClear=YieldClear(j,direction,1,self);return o;
     }
     public bool CanEnter(TrafficCar car,TrafficStop stop){
         if(!stop.junction.signalized&&!stop.junction.scenarioSignal)return true;
         var direction=car.route.graphPath==null?car.route.direction:car.route.Tangent(Mathf.Max(0,stop.distance));int turn=stop.Movement(car.route);
         var j=stop.junction;int sign=Sign(direction,stop.axis,j);
         var observed=j.rightTurnObservation!=null&&j.observationAxis==stop.axis&&j.observationSign==sign?j.rightTurnObservation.Copy():new RoadObservation{known=true,pedestrian=PedestrianState.None};
-        observed.forward=Signal(j,stop.axis,sign);observed.trafficClear=turn==0&&!j.scenarioFlashing||YieldClear(j,direction,turn,car.gameObject);
+        observed.forward=j.editorProgram!=null?j.editorProgram.Movement(stop.axis,sign,turn,Clock,car.route.graphPath!=null?editorGraph.edges[car.route.graphPath.EdgeAt(Mathf.Max(0,stop.distance))].id:null):MovementSignal(j,stop.axis,turn,sign);if(j.editorProgram!=null)return observed.forward==SignalColor.Green&&!EditorPedestrian(j)&&observed.PedestrianClear&&YieldClear(j,direction,turn,car.gameObject);observed.trafficClear=turn==0&&!j.scenarioFlashing||YieldClear(j,direction,turn,car.gameObject);
         if(stop.junction.scenarioFlashing)return (observed.forward!=SignalColor.Red||car.stoppedAt==stop.junction)&&observed.PedestrianClear&&YieldClear(stop.junction,direction,turn,car.gameObject);
         if(turn>0)return observed.MayTurnRight(car.stoppedAt==stop.junction);
         if(stop.junction.scenarioSignal)return observed.forward==SignalColor.Green&&(turn==0||observed.PedestrianClear)&&observed.trafficClear;
@@ -134,7 +134,7 @@ public class TrafficSystem : MonoBehaviour {
     }
     public void Request(TrafficCar car,TrafficStop stop){if(!stop.junction.requests.ContainsKey(car))stop.junction.requests[car]=Time.time;}
     public void Build(MapData map, bool spawnCars) {
-        roadMap=map;
+        roadMap=map;if(map.editorDocument!=null){editorGraph=new HdRoadGraph(map);editorSpeedRules=System.Array.Exists(map.editorDocument.facilities,f=>f.kind=="sign"&&f.rule&&f.type=="제한속도");}
         mainDirection = (map.targets[1].V() - map.targets[0].V()).normalized;
         if(map.HasHd&&!map.hybrid)return;
         white = WorldBuilder.Mat("White road paint", new Color(.93f,.92f,.84f));
@@ -153,7 +153,7 @@ public class TrafficSystem : MonoBehaviour {
                 foreach(var road in map.roads)for(int n=1;n<road.points.Length;n++){var a=road.points[n-1].V();var d=road.points[n].V()-a;if(Mathf.Abs(Vector3.Dot(d.normalized,heading))<.85f)continue;float at=Mathf.Clamp01(Vector3.Dot(j.center-a,d)/d.sqrMagnitude);float error=Vector3.Distance(j.center,a+d*at);if(error<=best){best=error;j.halfWidth[axis]=road.width*.5f;j.laneCount[axis]=Mathf.Max(1,road.DisplayLanes/2);j.centeredLane[axis]=road.DisplayLanes==1;}}
             }
             if(map.hybrid){j.facility=configured[i];j.signalized=j.facility.signalMode>0;if(j.facility.approaches.Length>0){j.halfWidth=new[]{0f,0f};foreach(var a in j.facility.approaches){var d=new Vector3(a.dx,0,a.dz).normalized;int axis=Mathf.Abs(Vector3.Dot(d,AxisDirection(j,0)))>.7f?0:1;j.halfWidth[axis]=Mathf.Max(j.halfWidth[axis],a.width*.5f);}for(int axis=0;axis<2;axis++){j.halfWidth[axis]=Mathf.Max(3,j.halfWidth[axis]);j.laneCount[axis]=Mathf.Max(1,Mathf.RoundToInt(j.halfWidth[axis]/3.5f));}}}
-            junctions.Add(j);
+            if(map.editorDocument!=null){j.editorProgram=System.Array.Find(map.editorDocument.signals,p=>p.junctionId==j.name);foreach(var f in map.editorDocument.facilities){if(f.junctionId!=j.name)continue;int k=f.axis*2+(f.sign>0?0:1);var dir=AxisDirection(j,f.axis)*f.sign;float distance=Vector3.Dot(j.center-f.Position,dir);if(f.kind=="stopLine")j.editorStops[k]=distance;if(f.kind=="crosswalk")j.editorCrossings[k]=distance;}}junctions.Add(j);
         }
         PaintRoads(map);
         foreach(var junction in junctions) {
@@ -163,7 +163,7 @@ public class TrafficSystem : MonoBehaviour {
                 AddApproach(junction, direction, junction.halfWidth[axis], junction.halfWidth[1-axis]);
             }
         }
-        PaintMesh(whitePaint,white);PaintMesh(yellowPaint,yellow);
+        PaintMesh(whitePaint,white);PaintMesh(yellowPaint,yellow);RoadMapFacilities.Build(map.editorDocument,transform,this);editorWalkers=GetComponentsInChildren<RoadMapWalker>();
         if(spawnCars&&map.hybrid){gameObject.AddComponent<DistrictTraffic>().Initialize(this,map,true);return;}
         if(spawnCars&&junctions.Count>0) {
             if(map.mapId=="eungye")Physics.SyncTransforms();
@@ -352,10 +352,10 @@ public class TrafficSystem : MonoBehaviour {
     void PaintMesh(List<Vector3> vertices,Material material){var mesh=new Mesh();mesh.indexFormat=UnityEngine.Rendering.IndexFormat.UInt32;var triangles=new List<int>();for(int i=0;i<vertices.Count;i+=4)triangles.AddRange(new[]{i,i+1,i+2,i,i+2,i+3});mesh.SetVertices(vertices);mesh.SetTriangles(triangles,0);mesh.RecalculateNormals();var obj=new GameObject(material.name);obj.transform.SetParent(transform);obj.AddComponent<MeshFilter>().sharedMesh=mesh;obj.AddComponent<MeshRenderer>().sharedMaterial=material;}
     void AddApproach(TrafficJunction j,Vector3 direction,float halfWidth,float conflictHalfWidth) {
         var right=Right(direction);
-        float stop=conflictHalfWidth+4;
-        if(j.facility==null||j.facility.crosswalk){j.crosswalkApproaches++;for(float x=-halfWidth+.65f;x<halfWidth-.3f;x+=.95f) Mark("Crosswalk "+j.name,j.center-direction*(conflictHalfWidth+TrafficJunction.CrosswalkCentreOffset)+right*x,direction,.5f,TrafficJunction.CrosswalkDepth,white);}
-        if(j.facility==null||j.facility.stopLine){j.stopLineApproaches++;Mark("Stop line "+j.name,j.center-direction*stop+right*halfWidth*.5f,direction,halfWidth-.3f,.4f,white);}
-        if(!j.signalized)return;
+        int editAxis=Mathf.Abs(Vector3.Dot(direction,AxisDirection(j,0)))>.7f?0:1;int editSign=Sign(direction,editAxis,j);bool editedStop=roadMap.editorDocument!=null&&System.Array.Exists(roadMap.editorDocument.facilities,f=>f.junctionId==j.name&&f.kind=="stopLine"&&f.axis==editAxis&&f.sign==editSign);bool editedCross=roadMap.editorDocument!=null&&System.Array.Exists(roadMap.editorDocument.facilities,f=>f.junctionId==j.name&&f.kind=="crosswalk"&&f.axis==editAxis&&f.sign==editSign);float stop=j.StopDistance(editAxis,editSign);
+        if(!editedCross&&(j.facility==null||j.facility.crosswalk)){j.crosswalkApproaches++;for(float x=-halfWidth+.65f;x<halfWidth-.3f;x+=.95f) Mark("Crosswalk "+j.name,j.center-direction*(conflictHalfWidth+TrafficJunction.CrosswalkCentreOffset)+right*x,direction,.5f,TrafficJunction.CrosswalkDepth,white);}
+        if(!editedStop&&(j.facility==null||j.facility.stopLine)){j.stopLineApproaches++;Mark("Stop line "+j.name,j.center-direction*stop+right*halfWidth*.5f,direction,halfWidth-.3f,.4f,white);}
+        if(!j.signalized||j.editorProgram!=null)return;
         if(j.facility==null||j.facility.crosswalk)PedestrianSignalDisplay.Create(this,j,direction,halfWidth,conflictHalfWidth,transform);
         // Far-side placement keeps the signal visible from a stopped driver's eye position.
         var root=new GameObject(j.name+" signal approach"); root.transform.SetParent(transform); root.transform.position=j.center+direction*stop+right*(halfWidth+.6f); root.transform.rotation=Quaternion.LookRotation(direction);

@@ -19,7 +19,7 @@ public class BusinessProgress : MonoBehaviour {
  bool testMode;float noticeUntil; CampaignCheckpoint loaded; public bool useV2; public bool taxPrompt,preparing; public PrototypeSettings settings=new PrototypeSettings();
  public bool SaveFailed {get;private set;}
  public int pendingPayment=-1; public bool restartPrompt;
- bool CanRestartNow {get{return enabledCampaign&&useV2&&!session.ChoiceOpen&&!session.FullMapOpen&&!session.PracticeMenuOpen&&!PracticeSession.Enabled&&!session.GetComponent<PracticeSession>().Busy&&pendingPayment<0&&!session.services.open&&!session.law.HistoryOpen&&!taxPrompt&&(preparing||ShowingSummary||session.paused);}}
+ bool CanRestartNow {get{return !RoadMapRuntime.Trial&&enabledCampaign&&useV2&&!session.ChoiceOpen&&!session.FullMapOpen&&!session.PracticeMenuOpen&&!PracticeSession.Enabled&&!session.GetComponent<PracticeSession>().Busy&&pendingPayment<0&&!session.services.open&&!session.law.HistoryOpen&&!taxPrompt&&(preparing||ShowingSummary||session.paused);}}
  public bool RequestRestart(){if(restartPrompt||!CanRestartNow)return false;restartPrompt=true;return true;}
  public bool ConfirmRestart(bool accept){if(!restartPrompt)return false;if(!accept){restartPrompt=false;return false;}if(!CanRestartNow){restartPrompt=false;return false;}return ResetCampaign(true);}
  // Retained for older callers; excluded features never open a payment modal.
@@ -32,11 +32,11 @@ public class BusinessProgress : MonoBehaviour {
   session=owner;initialFollowing=owner.traffic.mitOptions.Enabled;var args=Environment.GetCommandLineArgs();
   foreach(var arg in args)if(arg.EndsWith("Test")){testMode=true;if(arg!="-economyTest"&&arg!="-hybridTest"&&arg!="-hybridQuickTest")enabledCampaign=false;}
   if(Array.IndexOf(args,"-assistedTrial")>=0||RoadRulesTrial.Enabled||HdRouteTrial.Enabled){testMode=true;enabledCampaign=false;}
-  if(PracticeSession.Enabled){testMode=true;enabledCampaign=false;}
+  if(PracticeSession.Enabled||RoadMapRuntime.Trial){testMode=true;enabledCampaign=false;}
   if(!testMode||Array.IndexOf(args,"-oneDayTest")>=0||Array.IndexOf(args,"-oneDayReloadTest")>=0||Array.IndexOf(args,"-oneDayMode")>=0){settings=PrototypeSettings.ForOneDay();if(testMode)enabledCampaign=true;}
   useV2=Array.IndexOf(args,"-serviceLawZonesTest")>=0||PracticeSession.Enabled||!testMode||(Array.IndexOf(args,"-campaignTest")>=0||Array.IndexOf(args,"-completionTest")>=0||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-campaignDriveTest")>=0)||Array.IndexOf(args,"-scenarioTest")>=0||Array.IndexOf(args,"-contentFlowTest")>=0||Array.IndexOf(args,"-exitTransportTest")>=0||Array.IndexOf(args,"-hybridV2")>=0;
   if((Array.IndexOf(args,"-serviceLawZonesTest")>=0||Array.IndexOf(args,"-campaignTest")>=0||Array.IndexOf(args,"-completionTest")>=0||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-campaignDriveTest")>=0))enabledCampaign=true;
-  useV2|=settings.oneDay;
+  if(RoadMapRuntime.Trial){settings=PrototypeSettings.ForOneDay();useV2=true;}useV2|=settings.oneDay;
   SavePath=testMode?Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts",useV2?"campaign-v2-test.json":"economy-player-checkpoint.json")):Path.Combine(Path.GetDirectoryName(Application.persistentDataPath),"영통 택시 시뮬레이터",PrototypeSettings.SaveFile);
   if(settings.oneDay)SavePath=Path.Combine(Path.GetDirectoryName(SavePath),testMode?"one-day-test.json":"campaign-day20-v1.json");
   ledger=useV2?new EconomyLedger(settings):new EconomyLedger(new EconomySettings());
@@ -60,7 +60,7 @@ public class BusinessProgress : MonoBehaviour {
   ledger.Advance(Time.fixedDeltaTime,metres);
   if(ledger.Account!=null&&ledger.Account.Fuel<=0)RecoverFuel();
  }
- void Update(){if(enabledCampaign&&!preparing&&ledger.Operating){realSeconds+=Time.unscaledDeltaTime;mixedFollowing|=session.traffic.mitOptions.Enabled!=initialFollowing;}if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil){notice="";noticeUntil=0;}}
+ void Update(){if(enabledCampaign&&!preparing&&!session.paused&&ledger.Operating){realSeconds+=Time.unscaledDeltaTime;mixedFollowing|=session.traffic.mitOptions.Enabled!=initialFollowing;}if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil){notice="";noticeUntil=0;}}
  void LateUpdate(){
   if(enabledCampaign&&ledger.OneDay&&ledger.Operating&&ledger.Driver.fatigue>=100){notice="피로 한계 · 신규 승객 수락 불가 · F7 주차장 수면 또는 퇴근";if(session.jobs.trip.State==TripState.ToPickup){session.jobs.ClearForDay();session.jobs.message="피로 한계로 미탑승 호출 취소 · 점수 감점 없음";}}
   if(session.FullMapOpen||!enabledCampaign||ledger.State!=BusinessState.Closing)return;
@@ -117,8 +117,8 @@ public class BusinessProgress : MonoBehaviour {
   else {session.jobs.ClearForDay();session.taxi.ResetTaxi();session.law.ResetObservation();session.jobs.ResetOffers();}
   ledger.Advance(30,0);notice="연료 고갈 · "+(occupied?"현재 위치에 20% 공급 · 승객 운송 계속":"출발지 복귀 후 20% 공급")+" + 지원비 1,800원 / 30초 경과";noticeUntil=Time.unscaledTime+8;
  }
- public bool SaveCheckpoint(){ledger.RefreshSummary();return WriteCheckpoint(ledger);}
- bool WriteCheckpoint(EconomyLedger value,PrototypeIds resetIds=null){
+ public bool SaveCheckpoint(){if(RoadMapRuntime.Trial)return true;ledger.RefreshSummary();return WriteCheckpoint(ledger);}
+ bool WriteCheckpoint(EconomyLedger value,PrototypeIds resetIds=null){if(RoadMapRuntime.Trial)return true;
   try{
    Directory.CreateDirectory(Path.GetDirectoryName(SavePath));
    var archive=new System.Collections.Generic.List<CompletedDay>(completedDays);

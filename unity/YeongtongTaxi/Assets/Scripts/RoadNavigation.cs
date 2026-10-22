@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class RoadNavigation : MonoBehaviour {
- public HdRoadGraph hd;
+ public HdRoadGraph hd;MapData editorMap;
  public HdRoadGraph.RoutePath hdRoute;
  HdRoadGraph.RoutePath viaObservedRoute;Vector3 viaPreviousPosition;float viaPreviousRemaining,viaSampleTime;bool viaSampled;
  HdRoadGraph.RoutePath projectedRoute;Vector3 projectedPosition;float projectedAt;
@@ -47,7 +47,7 @@ public class RoadNavigation : MonoBehaviour {
  LineRenderer line;float nextUpdate,lastRouteChange=-100,noticeUntil;MapStop goal;RouteResult selected;float[] delays;
  int NodeFor(Vector3 p){string key=p.x.ToString("F2",System.Globalization.CultureInfo.InvariantCulture)+","+p.z.ToString("F2",System.Globalization.CultureInfo.InvariantCulture);int id;if(ids.TryGetValue(key,out id))return id;id=nodes.Count;ids[key]=id;nodes.Add(new Node{p=p});return id;}
  int AddEdge(int a,int b,float width,float offset,int lanes){int index=edges.Count;edges.Add(new Edge{from=a,to=b,length=Vector3.Distance(nodes[a].p,nodes[b].p),offset=offset,innerOffset=lanes==1?0:width/lanes*.5f,lanes=Mathf.Max(1,lanes/2),width=width,direction=(nodes[b].p-nodes[a].p).normalized});nodes[a].outgoing.Add(index);return index;}
- public void Build(MapData map,Transform taxi){
+ public void Build(MapData map,Transform taxi){editorMap=map;
   vehicle=taxi;nodes.Clear();edges.Clear();ids.Clear();selected=null;path.Clear();alternativePath.Clear();
   hd=map.HasHd?new HdRoadGraph(map):null;hybrid=map.hybrid;hdSeconds=hd==null?null:new float[hd.edges.Length];
   if(hd==null)foreach(var road in map.roads)for(int i=1;i<road.points.Length;i++){
@@ -201,7 +201,7 @@ public class RoadNavigation : MonoBehaviour {
  }
  void RefreshHd(){
   bool observe=Time.time>=nextHdCosts||hdRoute==null;
-  if(observe){nextHdCosts=Time.time+6;for(int i=0;i<hd.paths.Length;i++){var p=hd.paths[i];float delay=0;if(conditions!=null)for(int k=1;k<p.points.Length;k++)delay+=conditions.ExtraSeconds(p.points[k-1],p.points[k],(p.points[k]-p.points[k-1]).normalized,3.2f);hdSeconds[i]=p.length/8+delay;}}
+  if(observe){nextHdCosts=Time.time+6;for(int i=0;i<hd.paths.Length;i++){var p=hd.paths[i];float delay=0;if(conditions!=null)for(int k=1;k<p.points.Length;k++)delay+=conditions.ExtraSeconds(p.points[k-1],p.points[k],(p.points[k]-p.points[k-1]).normalized,3.2f);hdSeconds[i]=RoadMapRules.TravelSeconds(editorMap,hd.edges[i].id,p.length,8)+delay;}}
   float progress=0,error=float.MaxValue;
   if(hdRoute!=null)progress=ProjectVehicle(out error);
 

@@ -72,7 +72,7 @@ public class TrafficCar : MonoBehaviour {
         }}
         float cruise=route.turn!=0?4.5f:route.axis==0?9:7;
         if(district!=null){float bend=Vector3.Angle(route.Tangent(distance),route.Tangent(Mathf.Min(route.length,distance+14)));cruise=bend>12||CurrentTurn!=0?4.5f:9;}
-        float target=TrafficRules.SafeSpeed(gap,cruise);baselineTarget=target;
+        float editorLimit=system.EditorSpeedLimit(this);if(editorLimit>0)cruise=Mathf.Min(cruise,editorLimit/3.6f);float target=TrafficRules.SafeSpeed(gap,cruise);baselineTarget=target;
         target=MitTrafficFollowing.Limit(system.mitOptions.Enabled,target,gap,
             obstacleCar?obstacleCar.speed:0,obstacleCar?Vector3.Dot(transform.forward,obstacleCar.transform.forward):0,
             waitingForObstacle&&obstacleCar!=null&&obstacleCar.Visible);

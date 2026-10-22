@@ -11,7 +11,7 @@ public static class MapCatalog {
   availability[id]=ready;return ready;
  }
  public static string NextRegion {get{return string.IsNullOrEmpty(LockedRegion)?PlayerPrefs.GetString("next-region","yeongtong"):LockedRegion;}}
- public static bool SelectNext(string id){if(!string.IsNullOrEmpty(LockedRegion)&&id!=LockedRegion||!Available(id))return false;PlayerPrefs.SetString("next-region",id);PlayerPrefs.Save();return true;}
+ public static bool SelectNext(string id){if(RoadMapRuntime.Trial)return false;if(!string.IsNullOrEmpty(LockedRegion)&&id!=LockedRegion||!Available(id))return false;PlayerPrefs.SetString("next-region",id);PlayerPrefs.Save();return true;}
  public static MapData Load(){
   if(HdRouteTrial.Enabled){var hd=Resources.Load<TextAsset>("route42-map");if(!hd)throw new System.InvalidOperationException("tools/import_hdmap.py 로 국도42호선 자료를 생성하세요.");return JsonUtility.FromJson<MapData>(hd.text);}
   var args=System.Environment.GetCommandLineArgs();string region=NextRegion;foreach(var arg in args)if(arg.EndsWith("Test")||arg=="-assistedTrial")region="yeongtong";
@@ -20,6 +20,6 @@ public static class MapCatalog {
   if(!Available(region)&&!string.IsNullOrEmpty(LockedRegion))throw new System.InvalidOperationException("빌드에 필요한 지도 자료가 없습니다: "+region);
   if(!Available(region)){Debug.LogWarning(Name(region)+" 지도 자료/검토 지점 미준비 · 영통으로 시작합니다");region="yeongtong";}
   var asset=Resources.Load<TextAsset>(Resource(region));if(!asset)throw new System.InvalidOperationException("지도 JSON이 없습니다. tools/import_ngii_map.py build --config config/maps/yeongtong.json 을 실행하세요.");
-  var result=JsonUtility.FromJson<MapData>(asset.text);result.mapId=region;MapSupplements.Apply(result,asset.bytes);ReviewedLaneLayout.Apply(result);CorridorPolish.Apply(result);return result;
+  var result=JsonUtility.FromJson<MapData>(asset.text);result.mapId=region;MapSupplements.Apply(result,asset.bytes);ReviewedLaneLayout.Apply(result);result=RoadMapRuntime.Apply(result);CorridorPolish.Apply(result);return result;
  }
 }

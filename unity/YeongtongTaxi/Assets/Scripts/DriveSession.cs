@@ -10,7 +10,8 @@ public class DriveSession : MonoBehaviour {
     public bool PracticeBusy {get{var p=GetComponent<PracticeSession>();return p&&p.Busy;}}
     public bool ChoiceOpen {get{var c=GetComponent<ScenarioChoiceSituation>();return c&&(c.Open||c.ClosedThisFrame);}}
     public bool paused;public bool ShowHints; public int visits; bool inside;
-    public bool FullMapOpen {get{var map=GetComponent<FullMapOverlay>();return map&&map.IsOpen;}}
+    public bool EditorOpen {get{var e=GetComponent<RoadMapEditor>();return e&&(e.IsOpen||e.ClosedThisFrame);}}
+    public bool FullMapOpen {get{var map=GetComponent<FullMapOverlay>();return map&&map.IsOpen||EditorOpen;}}
     void Awake() {
         MapCatalog.LockedRegion=startupRegion;
         foreach(var arg in System.Environment.GetCommandLineArgs())if(arg.EndsWith("Test"))Application.runInBackground=true;
@@ -26,7 +27,7 @@ public class DriveSession : MonoBehaviour {
         var cam=new GameObject("Driving Camera"); cam.tag="MainCamera"; var c=cam.AddComponent<Camera>(); c.fieldOfView=62; c.nearClipPlane=.08f; c.farClipPlane=700; c.backgroundColor=new Color(.57f,.74f,.84f); c.clearFlags=CameraClearFlags.Skybox; cam.AddComponent<AudioListener>(); drivingCamera=cam.AddComponent<DrivingCamera>();drivingCamera.target=taxi.transform;
         RenderSettings.ambientLight=new Color(.65f,.69f,.75f); RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Flat;
         var sun=new GameObject("Sun").AddComponent<Light>(); sun.type=LightType.Directional; sun.intensity=1.15f; sun.transform.rotation=Quaternion.Euler(45,-35,0); sun.shadows=LightShadows.Soft;
-        gameObject.AddComponent<DriveHUD>().session=this;gameObject.AddComponent<DrivingReadability>().session=this;gameObject.AddComponent<FullMapOverlay>().session=this;
+        gameObject.AddComponent<RoadMapEditor>().session=this;gameObject.AddComponent<RoadMapTrialSession>();gameObject.AddComponent<DriveHUD>().session=this;gameObject.AddComponent<DrivingReadability>().session=this;gameObject.AddComponent<FullMapOverlay>().session=this;
         manners=taxi.gameObject.AddComponent<DrivingManners>();manners.session=this;
         jobs=gameObject.AddComponent<PassengerJobs>();jobs.Initialize(this);
         if(world.map.HasHd){jobs.enabled=world.map.hybrid;assisted.hd.nav=jobs.nav;}
@@ -77,6 +78,7 @@ public class DriveSession : MonoBehaviour {
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-campaignDriveTest")>=0)gameObject.AddComponent<CampaignDriveSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-exitTransportTest")>=0)gameObject.AddComponent<ExitTransportSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-driveFeedbackTest")>=0)gameObject.AddComponent<DriveFeedbackSmokeTest>().session=this;
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadMapEditorTest")>=0)gameObject.AddComponent<RoadMapEditorProbe>();
         if(driveTest) gameObject.AddComponent<DriveSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-trafficTest")>=0) gameObject.AddComponent<TrafficSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-jobsTest")>=0) gameObject.AddComponent<JobsSmokeTest>().session=this;
