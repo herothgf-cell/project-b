@@ -10,8 +10,9 @@ public class DriveSession : MonoBehaviour {
     public bool PracticeBusy {get{var p=GetComponent<PracticeSession>();return p&&p.Busy;}}
     public bool ChoiceOpen {get{var c=GetComponent<ScenarioChoiceSituation>();return c&&(c.Open||c.ClosedThisFrame);}}
     public bool paused;public bool ShowHints; public int visits; bool inside;
+    public bool RideResultOpen {get{var result=GetComponent<RideCompletionPanel>();return result&&result.Open;}}
     public bool EditorOpen {get{var e=GetComponent<RoadMapEditor>();return e&&(e.IsOpen||e.ClosedThisFrame);}}
-    public bool FullMapOpen {get{var map=GetComponent<FullMapOverlay>();return map&&map.IsOpen||EditorOpen;}}
+    public bool FullMapOpen {get{var map=GetComponent<FullMapOverlay>();return map&&map.IsOpen||EditorOpen||RideResultOpen;}}
     void Awake() {
         MapCatalog.LockedRegion=startupRegion;
         foreach(var arg in System.Environment.GetCommandLineArgs())if(arg.EndsWith("Test"))Application.runInBackground=true;
@@ -34,6 +35,7 @@ public class DriveSession : MonoBehaviour {
         business=gameObject.AddComponent<BusinessProgress>();business.Initialize(this);gameObject.AddComponent<BusinessHUD>().session=this;
         law=taxi.gameObject.AddComponent<DrivingLaw>();law.session=this;services=gameObject.AddComponent<ServiceStops>();services.session=this;requests=gameObject.AddComponent<PassengerRequestUI>();requests.session=this;gameObject.AddComponent<RightTurnSituation>().session=this;gameObject.AddComponent<ExitQueueObserver>().session=this;gameObject.AddComponent<ExitQueueSituation>().session=this;gameObject.AddComponent<PracticeSession>().session=this;gameObject.AddComponent<PracticeCoach>().session=this;gameObject.AddComponent<ConfusionPractice>().session=this;gameObject.AddComponent<ServiceLawZones>().session=this;
         gameObject.AddComponent<RoadSignage>().session=this;gameObject.AddComponent<DriveNotifications>().session=this;gameObject.AddComponent<DrivingScoreJournal>().session=this;
+        gameObject.AddComponent<RideCompletionPanel>().session=this;
         roadConditions=gameObject.AddComponent<RoadConditions>();roadConditions.Initialize(this);jobs.nav.conditions=roadConditions;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-districtTrafficTest")>=0)gameObject.AddComponent<DistrictTrafficSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-mitTrafficTest")>=0)gameObject.AddComponent<MitTrafficSmokeTest>().session=this;

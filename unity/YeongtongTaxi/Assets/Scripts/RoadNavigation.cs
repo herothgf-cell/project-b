@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class RoadNavigation : MonoBehaviour {
+ public bool HasDestination {get{return active&&!freeGuidance;}}
  public HdRoadGraph hd;MapData editorMap;
  public HdRoadGraph.RoutePath hdRoute;
  HdRoadGraph.RoutePath viaObservedRoute;Vector3 viaPreviousPosition;float viaPreviousRemaining,viaSampleTime;bool viaSampled;
@@ -65,7 +66,7 @@ public class RoadNavigation : MonoBehaviour {
    }
   }
   if(line==null){line=new GameObject("우측 차로 안내 경로").AddComponent<LineRenderer>();line.transform.SetParent(transform);line.startWidth=line.endWidth=.25f;line.material=WorldBuilder.Mat("Navigation cyan",Color.cyan);line.material.EnableKeyword("_EMISSION");line.material.SetColor("_EmissionColor",Color.cyan);line.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;}
-  line.positionCount=0;
+  Clear();
  }
  int NearestNode(Vector3 p){int best=-1;float dist=float.MaxValue;p.y=0;for(int i=0;i<nodes.Count;i++){float d=(nodes[i].p-p).sqrMagnitude;if(d<dist){dist=d;best=i;}}return best;}
  int InitialEdge(Vector3 start,Vector3 heading,out float progress){
@@ -184,7 +185,7 @@ public class RoadNavigation : MonoBehaviour {
    if(Mathf.Abs(angle)>=35){instruction=(angle>0?"우회전":"좌회전")+" · "+until.ToString("0")+"m · "+(angle<0?1:edge.lanes)+"차로 준비";break;}
   }
   if(remaining<25)instruction="진행 방향 오른쪽 연석에 정차 후 F";
-  if(line!=null){line.positionCount=path.Count;for(int i=0;i<path.Count;i++)line.SetPosition(i,path[i]+Vector3.up*.19f);}
+  if(line!=null){line.positionCount=freeGuidance?0:path.Count;for(int i=0;i<line.positionCount;i++)line.SetPosition(i,path[i]+Vector3.up*.19f);}
  }
  void FixedUpdate(){
   if(!active||hdRoute==null||vehicle==null){viaSampled=false;return;}
@@ -224,7 +225,7 @@ public class RoadNavigation : MonoBehaviour {
   remaining=Mathf.Max(0,hdRoute.path.length-progress);estimatedSeconds=HdSeconds(hdRoute,progress);
   float altAt;int altStart=hd.Nearest(vehicle.position,vehicle.forward,out altAt);var alternate=GoalRoute(altStart,altAt,PreferFastest?null:hdSeconds);if(alternate!=null){alternativePath.AddRange(alternate.path.points);alternativeDistance=alternate.path.length;alternativeSeconds=HdSeconds(alternate,0);}
   instruction=freeGuidance?"자유 주행 · "+hd.Instruction(hdRoute,progress):remaining<18?(hybrid?"오른쪽 승하차 지점 · 정차 후 F":"시험 도착 지점 · 직접 감속하여 정차"):hd.Instruction(hdRoute,progress);
-  line.positionCount=path.Count;for(int i=0;i<path.Count;i++)line.SetPosition(i,path[i]+Vector3.up*.19f);
+  line.positionCount=freeGuidance?0:path.Count;for(int i=0;i<line.positionCount;i++)line.SetPosition(i,path[i]+Vector3.up*.19f);
  }
  float HdSeconds(HdRoadGraph.RoutePath route,float at){float result=0,begin=0;for(int i=0;i<route.edges.Count;i++){int e=route.edges[i];float length=Mathf.Max(0,route.ends[i]-Mathf.Max(at,begin));result+=hdSeconds[e]*length/Mathf.Max(.01f,hd.paths[e].length);begin=route.ends[i];}return result;}
  public float CurrentRoadWidth(){if(hd==null||vehicle==null)return 0;float at;int edge=hd.Nearest(vehicle.position,vehicle.forward,out at);return edge>=0?passengerRoadWidths[edge]:0;}

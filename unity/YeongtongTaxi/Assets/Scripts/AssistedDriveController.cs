@@ -17,7 +17,7 @@ public class AssistedDriveController : MonoBehaviour {
     AssistedRoadNetwork.Lane changeTarget;
     AssistedRoadNetwork.Join turnJoin;
     float progress,noticeUntil;string notice;
-    public void Initialize(TaxiController vehicle,MapData map){taxi=vehicle;signals=GetComponent<TaxiSignals>();if(map.HasHd)hd=new HdSteering();else network.Build(map);Status="H · 보조 운전 켜기";}
+    public void Initialize(TaxiController vehicle,MapData map){taxi=vehicle;signals=GetComponent<TaxiSignals>();if(map.HasHd)hd=new HdSteering();else network.Build(map);SetActive(false);}
     void Notify(string message){notice=message;noticeUntil=Time.time+3;Status=message;}
     public bool SetActive(bool active){
         manoeuvre=null;turnJoin=null;changeTarget=null;PendingTurn=0;input.Reset();progress=0;

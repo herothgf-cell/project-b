@@ -5,7 +5,7 @@ $taskSources = @('PostTripServicePolicy', 'OneDayOfferPolicy', 'DriverCondition'
 $taskOutput = Join-Path $taskRoot 'artifacts'
 New-Item -ItemType Directory -Force -Path $taskOutput | Out-Null
 $taskResults = @()
-foreach ($taskName in @('PostTripServicePolicyTests', 'OneDayCampaignTests', 'MitTrafficFollowingTests', 'RoadGeometryTests', 'ConfusionPracticeTests', 'PracticeFeedbackTests', 'PracticeConditionsTests', 'PrototypeStateTests', 'PrototypeCompletionTests', 'CampaignAccountTests', 'CampaignLifecycleTests', 'PassengerRequestTests', 'EconomyTests', 'DriveMathTests', 'ManualHandlingTests', 'CornerAssistTests', 'MannerTests', 'FareTripTests', 'AssistedDrivingPolicyTests', 'KoreanSignalTests', 'ProtectedSignalTests', 'TrafficRulesTests')) {
+foreach ($taskName in @('PostTripServicePolicyTests', 'OneDayCampaignTests', 'ThreeDayCampaignTests', 'MitTrafficFollowingTests', 'RoadGeometryTests', 'ConfusionPracticeTests', 'PracticeFeedbackTests', 'PracticeConditionsTests', 'PrototypeStateTests', 'PrototypeCompletionTests', 'CampaignAccountTests', 'CampaignLifecycleTests', 'PassengerRequestTests', 'EconomyTests', 'DriveMathTests', 'ManualHandlingTests', 'CornerAssistTests', 'MannerTests', 'FareTripTests', 'AssistedDrivingPolicyTests', 'KoreanSignalTests', 'ProtectedSignalTests', 'TrafficRulesTests')) {
     $taskExe = Join-Path $taskOutput "$taskName.exe"
     & $taskCompiler /nologo "/out:$taskExe" (Join-Path $taskRoot "tests/$taskName.cs") @taskSources
     if ($LASTEXITCODE -ne 0) { throw "$taskName compilation failed" }

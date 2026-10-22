@@ -60,10 +60,10 @@ public class FullMapOverlay : MonoBehaviour {
   GUI.BeginGroup(viewport);var map=new Rect(0,0,viewport.width,viewport.height);Fill(map,new Color(.10f,.15f,.17f));var data=session.world.map;var tile=GetComponent<DriveHUD>().tile;
   if(tile){var a=Project(new Vector3(0,0,data.depth),map);float span=Mathf.Max(data.width,data.depth);GUI.DrawTexture(new Rect(a.x,a.y,data.width/span*map.width*ZoomLevel,data.depth/span*map.height*ZoomLevel),tile);}
   var jobs=session.jobs;
-  for(int pass=0;pass<2;pass++)for(int i=1;i<jobs.nav.path.Count;i++)Line(Project(jobs.nav.path[i-1],map),Project(jobs.nav.path[i],map),pass==0?Color.black:Color.cyan,pass==0?7:3);
+  if(jobs.nav.HasDestination)for(int pass=0;pass<2;pass++)for(int i=1;i<jobs.nav.path.Count;i++)Line(Project(jobs.nav.path[i-1],map),Project(jobs.nav.path[i],map),pass==0?Color.black:Color.cyan,pass==0?7:3);
   var occupied=new List<Rect>();var player=Project(session.taxi.transform.position,map);occupied.Add(new Rect(player.x-18,player.y-18,36,36));
   if(jobs.Active){if(jobs.trip.State==TripState.ToPickup)Target(jobs.stops[jobs.current.pickup].V(),"승차",new Color(.3f,1,.55f),map,occupied);Target(jobs.stops[jobs.current.drop].V(),"도착",new Color(1,.5f,.8f),map,occupied);}
-  else if(jobs.nav.active)Target(jobs.nav.destination,"목표",Color.cyan,map,occupied);
+  else if(jobs.nav.HasDestination)Target(jobs.nav.destination,"목표",Color.cyan,map,occupied);
   var zones=GetComponent<ServiceLawZones>();var selected=jobs.Active?zones.ZoneFor(jobs.current):null;
   var nameStyle=new GUIStyle(text){fontSize=13,alignment=TextAnchor.MiddleCenter};
   foreach(var zone in VisibleLawZones()){
@@ -93,7 +93,7 @@ public class FullMapOverlay : MonoBehaviour {
   ShowLaw=Filter(new Rect(x,y,w,32),ShowLaw,"교통 법규 · 전체 상황 구역");y+=43;
   GUI.Label(new Rect(x,y,w,40),"승차·도착·내 위치·내비 경로는 항상 표시",text);y+=43;
   if(ShowTraffic){GUI.Label(new Rect(x,y,w,38),"하늘색: 이동 차량 · 주황: 대기 차량\n빨강: 정체·정차 상황",text);y+=44;}
-  if(ShowLaw){GUI.Label(new Rect(x,y,w,26),"법규 상황 · 창작 교육 구역",text);y+=30;foreach(var z in VisibleLawZones()){var row=new Rect(x,y,w,28);Fill(row,z==selected?new Color(.27f,.08f,.23f):new Color(.07f,.10f,.12f));GUI.Label(new Rect(x+6,y,w-12,28),(z==selected?"이번 경유 · ":"")+z.Title,new GUIStyle(text){fontSize=13});y+=30;}}
+  if(ShowLaw){GUI.Label(new Rect(x,y,w,26),"법규 상황 · 창작 교육 구역",text);y+=30;foreach(var z in VisibleLawZones()){var row=new Rect(x,y,w,28);Fill(row,z==selected?new Color(.27f,.08f,.23f):new Color(.07f,.10f,.12f));GUI.Label(new Rect(x+6,y,w-12,28),(z==selected?"상황 구역 · ":"")+z.Title,new GUIStyle(text){fontSize=13});y+=30;}}
   if(ShowFacilities){GUI.Label(new Rect(x,y+6,w,45),"주유소 1·2·3: 게임시설\nF7에서 입구까지 길 안내 선택",new GUIStyle(text){fontSize=13});}
   GUI.EndScrollView();
   GUI.Label(new Rect(28,Screen.height-54,Screen.width-56,45),"법규 구역은 은계 지도에 배치한 창작 상황입니다. 시설·현장 규제 확인과 구분합니다.  © OpenStreetMap contributors / ODbL",text);
