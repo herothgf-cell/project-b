@@ -44,6 +44,7 @@ T2 좌표 검색으로 열린 은행동677의 아파트 내부 2025-12 촬영점
 - 독립 읽기 전용 코드 검토에서 현재 변경분의 배포를 막는 결함 없음.
 - Strict 로컬 입력 검사 종료0, `Input issues: 0`. 입력3개·입력 manifest·OSM 기준·ZIP은 변경 없음.
 - 배포 실행 폴더 전체와 manifest를 Git으로 전달한다. manifest의 `sourceCommit`은 실제 소스 커밋을 사용하고 전체 파일의 크기/SHA256을 생성 후 재대조한다. 이력의 실제 커밋 확인: `git log -1 --oneline -- docs/work-history/2026-10-22-all-intersections-and-arrows.md`.
+- 실제 배포 소스 커밋 `83d59eaeb890dd2b1805b3f2612acb1838ad52ba`. 배포127파일/84,593,335바이트, 전체 크기/SHA256 대조 오류0. Unity가 재생성한 실행 폴더 전체를 포함하며 이전 빌드의 불필요한 `level0.resS`는 새 빌드에 없다.
 
 ## 실행 재현
 
