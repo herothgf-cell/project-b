@@ -8,7 +8,7 @@ using UnityEngine;
 public class LiveTrafficValidationTest : MonoBehaviour {
  public bool externallyDriven;public float legTimeout=420;
  public float cruise=6;public DriveSession session;bool ok=true,arrived;readonly StringBuilder report=new StringBuilder();
- readonly HashSet<TrafficJunction> stopped=new HashSet<TrafficJunction>();
+ readonly HashSet<string> stopped=new HashSet<string>();
  void Check(bool value,string name){ok&=value;report.AppendLine((value?"PASS ":"FAIL ")+name);Flush();}
  void Flush(){File.WriteAllText("artifacts/live-traffic-validation.txt","success="+ok+"\n"+report);}
  void Place(Vector3 p,Vector3 dir){var t=session.taxi;session.assisted.SetActive(false);t.autoThrottle=0;t.autoBrake=true;t.body.velocity=t.body.angularVelocity=Vector3.zero;t.body.position=p+Vector3.up*.65f;t.body.rotation=Quaternion.LookRotation(dir);t.transform.SetPositionAndRotation(t.body.position,t.body.rotation);Physics.SyncTransforms();session.law.ResetObservation();session.manners.Suppress(1);stopped.Clear();}
@@ -17,26 +17,27 @@ public class LiveTrafficValidationTest : MonoBehaviour {
   var taxi=session.taxi;float limit=cruise;float detection=Mathf.Max(20,taxi.Speed*taxi.Speed/4+8);
   for(float step=1;step<detection;step+=.7f){float ahead=Mathf.Min(path.length,at+step);bool hit=false;foreach(var c in Physics.OverlapBox(path.Position(ahead)+Vector3.up*.85f,new Vector3(.94f,.45f,2.1f),Quaternion.LookRotation(path.Tangent(ahead)),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore))if(c.attachedRigidbody!=taxi.body){hit=true;break;}if(hit){limit=Mathf.Min(limit,Mathf.Sqrt(3*Mathf.Max(0,step-3)));break;}}
   foreach(var j in session.traffic.junctions){if(!j.signalized&&!j.scenarioSignal)continue;for(int axis=0;axis<2;axis++)foreach(int sign in new[]{-1,1}){
-   var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(taxi.transform.forward,dir)<.85f)continue;
+   var key=j.name+"/"+axis+"/"+sign;var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(taxi.transform.forward,dir)<.85f){stopped.Remove(key);continue;}
    var front=taxi.transform.position+taxi.transform.forward*2;float gap=Vector3.Dot(j.center-dir*j.StopDistance(axis)-front,dir),side=Vector3.Dot(front-j.center,TrafficSystem.Right(dir));
-   if(gap<-.4f||gap>45||side<=.15f||side>=j.halfWidth[axis])continue;
-   if(gap<=3&&taxi.body.velocity.magnitude<.05f)stopped.Add(j);
+   if(gap<-.4f||gap>45||side<=.15f||side>=j.halfWidth[axis]){stopped.Remove(key);continue;}
+   if(gap<=3&&taxi.body.velocity.magnitude<.05f)stopped.Add(key);
    var o=session.traffic.Observe(j,axis,sign,dir,taxi.gameObject);bool right=false;var nav=session.jobs.nav;
    if(nav.hdRoute!=null){float begin=0;for(int k=0;k<nav.hdRoute.edges.Count;k++){var edge=nav.hd.edges[nav.hdRoute.edges[k]];if(edge.ruleId==j.name&&edge.turn>0&&begin-at<55&&nav.hdRoute.ends[k]>at)right=true;begin=nav.hdRoute.ends[k];}}
-   bool permitted=right?o.MayTurnRight(stopped.Contains(j)):o.forward==SignalColor.Green;
-   var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.Owns(j)){var state=zones.Live.State;permitted=state.Flashing?(state.Variant==9||stopped.Contains(j)):state.Signal==SignalColor.Green;permitted&=!state.Blocked&&!state.Oncoming;}
+   bool permitted=right?o.MayTurnRight(stopped.Contains(key)):o.forward==SignalColor.Green;
+   var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.Owns(j)){var state=zones.Live.State;permitted=state.Flashing?(state.Variant==9||stopped.Contains(key)):state.Signal==SignalColor.Green;permitted&=!state.Blocked&&!state.Oncoming;}
    if(!permitted)limit=Mathf.Min(limit,Mathf.Sqrt(3*Mathf.Max(0,gap-1)));
   }}return limit;
  }
  public bool Arrived {get{return arrived;}}
  public bool Passed {get{return ok;}}
  public IEnumerator Drive(string name,float distanceLimit=0){
-  var taxi=session.taxi;var nav=session.jobs.nav;arrived=false;float start=Time.time,initial=0,maxError=0,minProgress=0,lastProgressTime=Time.time,maxStopped=0;int collisions=session.manners.collisionEvents,reds=session.manners.redEvents,brakes=session.manners.brakeEvents,lawStart=session.law.ledger.Events.Length;
+  stopped.Clear();var taxi=session.taxi;var nav=session.jobs.nav;arrived=false;float start=Time.time,initial=0,maxError=0,minProgress=0,lastProgressTime=Time.time,maxStopped=0;int collisions=session.manners.collisionEvents,reds=session.manners.redEvents,brakes=session.manners.brakeEvents,lawStart=session.law.ledger.Events.Length;
   Check(nav.hdRoute!=null,name+" connected navigation");if(nav.hdRoute==null)yield break;
   HdRoadGraph.RoutePath traced=null;float probe=0;
   float initialError;initial=nav.ProjectVehicle(out initialError);minProgress=initial;
   Check(session.assisted.SetActive(true),name+" steering armed");
   while(Time.time-start<legTimeout){
+   if(session.business.ShowingSummary){report.AppendLine("DAY_ENDED "+name);break;}
    var route=nav.hdRoute;if(route==null)break;if(route!=traced){float err;float pp=route.path.Project(taxi.transform.position,out err);report.AppendLine("ROUTE t="+(Time.time-start)+" pos="+taxi.transform.position+" tangent="+route.path.Tangent(pp)+" forward="+taxi.transform.forward+" length="+route.path.length+" edge="+route.EdgeAt(pp)+" via="+nav.RequiredVia);traced=route;minProgress=pp;lastProgressTime=Time.time;Flush();}float error;float at=nav.ProjectVehicle(out error);maxError=Mathf.Max(maxError,error);if(Time.time>=probe){probe=Time.time+1;report.AppendLine("TRACE t="+(Time.time-start).ToString("F1")+" pos="+taxi.transform.position+" at="+at.ToString("F1")+" error="+error.ToString("F2")+" tangent="+route.path.Tangent(at)+" forward="+taxi.transform.forward+" target="+route.path.Position(at+5));Flush();}
    float remain=route.path.length-at;if(distanceLimit>0)remain=Mathf.Min(remain,distanceLimit-(at-initial));
    float bend=Vector3.Angle(route.path.Tangent(at),route.path.Tangent(Mathf.Min(route.path.length,at+12)));float speed=remain<12?Mathf.Sqrt(2*Mathf.Max(0,remain-1)):bend>12?3.2f:cruise;

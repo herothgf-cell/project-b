@@ -52,7 +52,7 @@ public class BusinessProgress : MonoBehaviour {
   else if(useV2&&!testMode){preparing=true;Freeze();}
  }
  void Start(){if(loaded!=null&&session.law){session.law.ids=loaded.ids;foreach(var e in loaded.law)session.law.ledger.Record(e);}if(preparing)StartCoroutine(PlaceAtParking());}
- System.Collections.IEnumerator PlaceAtParking(){yield return null;var stop=session.jobs.stops[session.services.indices[2]];session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();session.law.ResetObservation();session.jobs.ResetOffers();}
+ public System.Collections.IEnumerator PlaceAtParking(){yield return null;var stop=session.jobs.stops[session.services.indices[2]];session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();session.law.ResetObservation();session.jobs.ResetOffers();}
 
  void FixedUpdate(){
   if(!enabledCampaign||!ledger.Operating)return;

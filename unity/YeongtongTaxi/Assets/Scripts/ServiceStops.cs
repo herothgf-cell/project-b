@@ -9,8 +9,10 @@ public class ServiceStops : MonoBehaviour {
  readonly string[] names={"임시 주유소","임시 식당","임시 주차장"};
  public IReadOnlyList<FuelStationLayout.FuelStation> Stations {get{return FuelStationLayout.For(session.world.map);}}
  public int FuelAtPump {get{var taxi=session.taxi;for(int i=0;i<Stations.Count;i++)if(Stations[i].CanRefuel(taxi.transform.position,taxi.transform.forward,taxi.body.velocity.magnitude))return i;return -1;}}
+ public FuelStationLayout.FuelStation RestArea {get{return FuelStationLayout.Rest(session.world.map);}}
+ public bool AtRestArea(){var r=RestArea;var t=session.taxi;return r!=null&&r.CanRefuel(t.transform.position,t.transform.forward,t.body.velocity.magnitude);}
  public bool AtFuelPump(){return Stations.Count>0?FuelAtPump>=0:session.world.map.mapId!="eungye"&&session.jobs.At(indices[0]);}
- public bool CanUse(int kind){bool daily=session.business.ledger.OneDay;return kind>=0&&kind<=(daily?3:2)&&session.business.ledger.State==BusinessState.Open&&(daily&&kind>0?session.jobs.trip.State!=TripState.OnTrip:!session.jobs.Active)&&session.taxi.body.velocity.magnitude<.56f&&(kind==0?AtFuelPump():session.jobs.At(indices[kind==3?2:kind]));}
+ public bool CanUse(int kind){bool daily=session.business.ledger.OneDay;return kind>=0&&kind<=(daily?3:2)&&session.business.ledger.State==BusinessState.Open&&(daily&&kind>0?session.jobs.trip.State!=TripState.OnTrip:!session.jobs.Active)&&session.taxi.body.velocity.magnitude<.56f&&(kind==0?AtFuelPump():kind==3?(AtRestArea()||session.jobs.At(indices[2])):session.jobs.At(indices[kind]));}
  public string Quote(int kind){if(kind<0||kind>3)return "";var b=session.business;var a=b.ledger.Account;if(b.ledger.OneDay&&(kind==1||kind==3)){var preview=b.ledger.Driver.Copy();if(kind==1)preview.Meal();else preview.Sleep();return (kind==1?"식사 3,000원 · 50초 (부족분은 미납)":"수면 무료 · 100초")+"\n포만감 "+preview.satiety.ToString("0")+" · 피로 "+preview.fatigue.ToString("0")+" 예상\n미탑승 호출은 취소됩니다. 엔진 정지 · 점수 변화 없음";}return kind==0?"주유 "+FuelAmount.ToString("0.0")+"% · "+Mathf.CeilToInt(FuelAmount*session.business.settings.fuelUnitPrice).ToString("N0")+"원 / 10초":kind==1?"식사 3,000원 / 10초 (하루 1회)":"주차·영업 마감 · 하루 주차비 500원";}
  void Start(){
   if(session.business.ledger.Account==null){enabled=false;return;}
@@ -34,6 +36,7 @@ public class ServiceStops : MonoBehaviour {
  public bool Guide(int kind){
   if(!open||kind<0||kind>3||session.jobs.trip.State==TripState.OnTrip)return false;
   if(session.jobs.Active){if(!session.business.ledger.OneDay)return false;session.jobs.ClearForDay();}
+  if(kind==3&&RestArea!=null){var taxi=session.taxi;var graph=session.jobs.nav.hd;float restDistance=PassengerJobs.DirectedDistance(graph,taxi.transform.position,taxi.transform.forward,RestArea.approach);float baseDistance=PassengerJobs.DirectedDistance(graph,taxi.transform.position,taxi.transform.forward,session.jobs.stops[indices[2]]);if(restDistance<baseDistance){session.jobs.nav.SetDestination(RestArea.approach);destination="동부 휴식 주차구역 · 입구부터 수동 진입 · 파란 정차선에서 F7";Close();return true;}}
   if(kind==3)kind=2;
   if(kind==0&&Stations.Count>0){int closest=0;float best=float.MaxValue;for(int i=0;i<Stations.Count;i++){float distance=(Stations[i].entrance-session.taxi.transform.position).sqrMagnitude;if(distance<best){best=distance;closest=i;}}return GuideFuel(closest);}
   session.jobs.nav.SetDestination(session.jobs.stops[indices[kind]]);destination=names[kind]+" · 오른쪽 정차 화살표에서 F7";Close();return true;
@@ -68,7 +71,7 @@ public class ServiceStops : MonoBehaviour {
   int row=0;
   if(Stations.Count>0){for(int i=0;i<Stations.Count;i++)Row(x,y+85+row++*62,Stations[i].name,0,i,style,button);}else Row(x,y+85+row++*62,names[0]+" · "+session.jobs.stops[indices[0]].name,0,-1,style,button);
   for(int i=1;i<3;i++)Row(x,y+85+row++*62,names[i]+" · "+session.jobs.stops[indices[i]].name,i,-1,style,button);
-  if(b.ledger.OneDay)Row(x,y+85+row++*62,"주차장 수면 · 무료 / 피로 −40",3,-1,style,button);
+  if(b.ledger.OneDay)Row(x,y+85+row++*62,"수면 · 기존 주차장 / 동부 휴식구역\n무료 / 피로 −40",3,-1,style,button);
   GUI.Label(new Rect(x+20,y+height-155,680,108),notice+"\n"+(Stations.Count>0?"주유소는 빈 부지에 배치한 게임시설입니다. 내비/H는 도로 입구 앞까지 안내합니다. H 해제 후 화살표를 따라 수동 진입 → 주유 구역에 같은 방향으로 정차 → F7 → 별도 출구. 도로변에서는 주유할 수 없습니다.":"주유소·식당·주차장은 임시 배치된 생활 거점입니다."),style);
   if(GUI.Button(new Rect(x+20,y+height-45,680,35),"취소·주행으로 돌아가기 (F7)",button))Close();
  }

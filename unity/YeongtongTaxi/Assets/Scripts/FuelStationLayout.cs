@@ -18,7 +18,7 @@ public static class FuelStationLayout {
    return Mathf.Abs(position.y-pump.y)<1.5f&&speed<.56f&&heading.sqrMagnitude>.1f&&Vector3.Dot(heading.normalized,direction)>.9f&&delta.sqrMagnitude<=2.8f*2.8f&&Mathf.Abs(Vector3.Dot(delta,TrafficSystem.Right(direction)))<1.15f;
   }
  }
- sealed class Layout {public readonly IReadOnlyList<FuelStation> stations;public Layout(List<FuelStation> entries){stations=entries.AsReadOnly();}}
+ sealed class Layout {public readonly IReadOnlyList<FuelStation> stations;public readonly FuelStation rest;public Layout(List<FuelStation> entries,FuelStation restArea=null){stations=entries.AsReadOnly();rest=restArea;}}
  static readonly ConditionalWeakTable<MapData,Layout> layouts=new ConditionalWeakTable<MapData,Layout>();
  static readonly IReadOnlyList<FuelStation> none=new List<FuelStation>().AsReadOnly();
  static readonly string[] keys={"north","south","east"},labels={"은계북부 주유소 (게임시설)","은계남부 주유소 (게임시설)","은계동부 주유소 (게임시설)"};
@@ -27,6 +27,7 @@ public static class FuelStationLayout {
  static MapPoint Point(Vector3 value){return new MapPoint{x=value.x,z=value.z};}
  static MapRoad Surface(string id,float width,IList<Vector3> positions){var pts=new MapPoint[positions.Count];for(int i=0;i<pts.Length;i++)pts[i]=Point(positions[i]);return new MapRoad{id=id,name="주유소 게임시설 노면",width=width,lanes=1,sourceLanes=1,oneWay=1,suppressPaint=true,points=pts};}
  public static IReadOnlyList<FuelStation> For(MapData map){if(map==null)return none;Layout layout;return layouts.TryGetValue(map,out layout)?layout.stations:none;}
+ public static FuelStation Rest(MapData map){Layout layout;return map!=null&&layouts.TryGetValue(map,out layout)?layout.rest:null;}
  public static void Apply(MapData map){
   if(map==null)return;Layout existing;if(layouts.TryGetValue(map,out existing))return;
   var entries=new List<FuelStation>();
@@ -37,23 +38,29 @@ public static class FuelStationLayout {
    if(edge<0){Debug.LogWarning("FUEL_LAYOUT_MISSING reviewed Eungye lane "+laneIds[site]);continue;}
    var path=graph.paths[edge];float at=laneAts[site];
    if(at<32||at+32>path.length)throw new InvalidOperationException("Fuel station reviewed lane changed: "+keys[site]);
-   var centre=path.Position(at);var dir=path.Tangent(at);var right=TrafficSystem.Right(dir);float depth=depths[site];
+   entries.Add(CreateFacility(map,graph,edge,at,depths[site],keys[site],labels[site]));
+  }
+  // Never leave a partly populated set of facilities if an input changed.
+  if(entries.Count!=3){Debug.LogWarning("FUEL_LAYOUT_UNAVAILABLE expected three reviewed Eungye sites; no facilities appended");entries.Clear();}
+  FuelStation rest=null;int restEdge=Array.FindIndex(map.hdEdges,e=>e.id==laneIds[2]&&!e.disabled);
+  if(entries.Count==3&&restEdge>=0){for(float at=laneAts[2]+80;at+32<graph.paths[restEdge].length;at+=20){try{rest=CreateFacility(map,graph,restEdge,at,17,"rest-east","은계 동부 휴식 주차구역 (게임시설)");break;}catch(InvalidOperationException){}}
+   if(rest==null)throw new InvalidOperationException("No clear rest parking plot along east service corridor");}
+  var roads=new List<MapRoad>(map.roads);foreach(var station in entries)roads.AddRange(station.surfaces);if(rest!=null)roads.AddRange(rest.surfaces);map.roads=roads.ToArray();
+  layouts.Add(map,new Layout(entries,rest));
+ }
+ static FuelStation CreateFacility(MapData map,HdRoadGraph graph,int edge,float at,float depth,string key,string label){var path=graph.paths[edge];
+   var centre=path.Position(at);var dir=path.Tangent(at);var right=TrafficSystem.Right(dir);
    Func<float,float,Vector3> q=(along,across)=>centre+dir*along+right*across;
    // Two smooth, separate driveways. Both meet this same rightmost traffic lane.
    var enter=new List<Vector3>();var leave=new List<Vector3>();
    for(int i=0;i<=24;i++){float along,across;SOffset(i/24f,18,depth,out along,out across);enter.Add(q(-24+along,across));leave.Add(q(6+along,depth-across));}
    enter[0]=path.Position(at-24);leave[leave.Count-1]=path.Position(at+24);
-   var surfaces=new[]{Surface("fuel:"+keys[site]+":court",20,new[]{q(-12,depth),q(12,depth)}),Surface("fuel:"+keys[site]+":entrance",7.2f,enter),Surface("fuel:"+keys[site]+":exit",7.2f,leave)};
-   ValidatePlot(map,surfaces,keys[site]);
+   var surfaces=new[]{Surface("fuel:"+key+":court",20,new[]{q(-12,depth),q(12,depth)}),Surface("fuel:"+key+":entrance",7.2f,enter),Surface("fuel:"+key+":exit",7.2f,leave)};
+   ValidatePlot(map,surfaces,key);
    var approachPosition=path.Position(at-28);var approachDirection=path.Tangent(at-28);
-   var stop=new MapStop{name=labels[site]+" 입구 · 내부 수동 운전",x=approachPosition.x,z=approachPosition.z,dx=approachDirection.x,dz=approachDirection.z,width=3,graphStop=true,laneEdge=edge,laneAt=at-28};
+   var stop=new MapStop{name=label+" 입구 · 내부 수동 운전",x=approachPosition.x,z=approachPosition.z,dx=approachDirection.x,dz=approachDirection.z,width=3,graphStop=true,laneEdge=edge,laneAt=at-28};
    var drive=new List<Vector3>(enter);drive.Add(q(0,depth));drive.AddRange(leave);
-   entries.Add(new FuelStation(labels[site],keys[site],stop,enter[0],leave[leave.Count-1],q(0,depth),dir,drive.ToArray(),new[]{q(-23,depth-10),q(23,depth-10),q(23,depth+10),q(-23,depth+10)},surfaces));
-  }
-  // Never leave a partly populated set of facilities if an input changed.
-  if(entries.Count!=3){Debug.LogWarning("FUEL_LAYOUT_UNAVAILABLE expected three reviewed Eungye sites; no facilities appended");entries.Clear();}
-  var roads=new List<MapRoad>(map.roads);foreach(var station in entries)roads.AddRange(station.surfaces);map.roads=roads.ToArray();
-  layouts.Add(map,new Layout(entries));
+   return new FuelStation(label,key,stop,enter[0],leave[leave.Count-1],q(0,depth),dir,drive.ToArray(),new[]{q(-23,depth-10),q(23,depth-10),q(23,depth+10),q(-23,depth+10)},surfaces);
  }
  // Two tangent circular arcs give a roughly 9m minimum turning radius for these plots.
  // The same lateral shift with a cubic smoothstep tightens to about 3m at the mouth.
@@ -84,6 +91,12 @@ public static class FuelStationLayout {
  public static void Draw(MapData map,Transform parent){
   if(parent.Find("주유소 게임시설"))return;var root=new GameObject("주유소 게임시설");root.transform.SetParent(parent,false);
   var red=WorldBuilder.Mat("Fuel red",new Color(.76f,.12f,.11f));var white=WorldBuilder.Mat("Fuel white",new Color(.93f,.94f,.91f));var dark=WorldBuilder.Mat("Fuel pump screen",new Color(.025f,.10f,.13f));var yellow=WorldBuilder.Mat("Fuel arrows",new Color(1,.88f,.18f));var concrete=WorldBuilder.Mat("Fuel island",new Color(.55f,.56f,.54f));
+  var rest=Rest(map);if(rest!=null){var lot=new GameObject(rest.name);lot.transform.SetParent(root.transform,false);lot.transform.position=rest.pump;lot.transform.rotation=Quaternion.LookRotation(rest.direction);var blue=WorldBuilder.Mat("Rest bay",new Color(.1f,.55f,.85f));
+   foreach(float x in new[]{-1.4f,1.4f})WorldBuilder.Box("휴식 주차 경계",new Vector3(x,.065f,0),new Vector3(.12f,.02f,6),blue,lot.transform,false);
+   foreach(float z in new[]{-3f,3f})WorldBuilder.Box("휴식 주차선",new Vector3(0,.065f,z),new Vector3(2.8f,.02f,.12f),blue,lot.transform,false);
+   Label(lot.transform,"휴식 안내","P · 휴식 주차 (게임시설)\n빈차 정차 · F7 · 무료 수면 100초",new Vector3(0,2.7f,0),.065f);
+   for(int i=5;i+2<rest.drivePath.Length;i+=9)Arrow(rest.drivePath[i],(rest.drivePath[i+2]-rest.drivePath[i]).normalized,root.transform,blue);
+  }
   foreach(var station in For(map)){
    var obj=new GameObject(station.name);obj.transform.SetParent(root.transform,false);obj.transform.position=station.pump;obj.transform.rotation=Quaternion.LookRotation(station.direction);
    Transform t=obj.transform;
