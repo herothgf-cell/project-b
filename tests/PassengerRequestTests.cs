@@ -2,6 +2,16 @@ using System;
 class PassengerRequestTests {
  static void Check(bool ok,string reason){if(!ok)throw new Exception(reason);}
  static void Main(){
+  foreach(RequestKind kind in Enum.GetValues(typeof(RequestKind))){
+   var choices=PassengerRequestChoices.For(kind);Check(choices.Length>=2&&choices.Length<=4,"visible replies for "+kind);
+   Check(choices[choices.Length-1].reply==PassengerReply.Defer,"safety defer available "+kind);
+   foreach(var choice in choices)Check(!string.IsNullOrEmpty(choice.label)&&!string.IsNullOrEmpty(choice.effect),"choice and actual effect explained "+kind);
+   Check(choices[0].reply==(kind==RequestKind.Eta?PassengerReply.EtaFaster:PassengerReply.Accept),"primary dispatch "+kind);
+  }
+  Check(PassengerRequestChoices.For(RequestKind.Eta).Length==4,"three ETA buttons and defer");
+  Check(PassengerRequestChoices.For(RequestKind.Comfort)[0].effect.Contains("-4"),"comfort warns actual stronger penalty");
+  Check(PassengerRequestChoices.For(RequestKind.Music)[0].effect.Contains("변경 없음"),"music must not claim audio changed");
+  Check(PassengerRequestChoices.For(RequestKind.RejectIllegal)[0].label.Contains("지켜"),"illegal request has no accept violation action");
   var r=new PassengerRequest();r.Begin("trip1",RequestKind.Quiet);
   Check(PassengerRequest.EtaSeconds(240,-1)==216&&PassengerRequest.EtaSeconds(240,0)==240&&PassengerRequest.EtaSeconds(240,1)==264,"three ETA estimates");
   Check(PassengerRequest.EtaComparison(216,232).Contains("늦어짐")&&PassengerRequest.EtaComparison(216,201).Contains("예상 범위"),"ETA tolerance");

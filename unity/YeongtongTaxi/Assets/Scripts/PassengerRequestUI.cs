@@ -3,11 +3,12 @@ public class PassengerRequestUI : MonoBehaviour {
  public DriveSession session;public readonly PassengerRequest request=new PassengerRequest();
  string observedTrip="";float stoppedSeconds,resultUntil,travelled,broadTravel,expectedDistance,expectedBroad,etaAt,etaPredicted,etaNav,acceptedAt;int motionBefore,lawBefore,accelBefore,brakeBefore,necessaryBefore;Vector3 previous;bool sample,etaSelected,quietReply,adviceFastest;
  public bool SuppressFollowupDialogue {get{return quietReply;}}
+ string selectedEffect="";PassengerRequestChoice[] cachedChoices;RequestKind cachedKind;
  int proposal=-1;float proposalUntil;Vector3 proposalPosition;float addedDistance,newRemaining;int newFare;
  static readonly string[] lines={"조용히 운행해 주세요.","도착까지 얼마나 걸릴까요?","차멀미가 심해요. 부드럽게 운전해 주세요.","급해요. 규칙을 지키며 제시간에 도착해 주세요.","골목 대신 큰길로 가 주세요.","가능한 짧은 길로 가 주세요.","가까운 안전한 승하차 지점에 내려 주세요.","오늘 속상한 일이 있었어요.","어느 길이 좋을까요? 빠른 길을 추천해 주세요.","오늘 면접인데 잘할 수 있을까요?","라디오 음악을 바꿔 주세요. (텍스트 연출)","택시비가 부족한데 요금을 알려 주세요.","이 동네에서 오래 일하셨어요?","다른 승하차 지점으로 목적지를 바꿔 주세요.","안전한 승하차 지점에 잠깐 들러 주세요.","하차 후 분실물 발견 시 보관·신고 절차를 부탁드려요.","빨간불이어도 그냥 가 주세요."};
  public static string UpcomingTitle(int completed){return lines[Mathf.Abs(completed)%lines.Length];}
  public void Begin(){if(!session.business.useV2)return;BeginKind((RequestKind)(session.jobs.completed%lines.Length));}
- public void BeginKind(RequestKind kind){observedTrip=session.law.tripId;if(kind==RequestKind.LargeRoad&&!session.jobs.nav.HasLargeRoadAlternative())kind=RequestKind.Eta;
+ public void BeginKind(RequestKind kind){selectedEffect="";observedTrip=session.law.tripId;if(kind==RequestKind.LargeRoad&&!session.jobs.nav.HasLargeRoadAlternative())kind=RequestKind.Eta;
   if(!request.Begin(observedTrip,kind))return;stoppedSeconds=travelled=broadTravel=0;resultUntil=0;proposal=-1;proposalUntil=0;sample=etaSelected=quietReply=false;session.manners.ComfortAccepted=false;
   motionBefore=MotionCount();lawBefore=session.law.ledger.Events.Length;
  }
@@ -47,7 +48,7 @@ public class PassengerRequestUI : MonoBehaviour {
    case RequestKind.Music:response="음악을 바꿔 달라는 말씀이시죠? (프로토에서는 대화만 제공)";break;
    case RequestKind.FareHelp:response="약정 "+session.jobs.current.fare.ToString("N0")+"원 · 승객 만족도 요구 미달 시70%, 늦은 도착0원 · 할인·미수금 없음";break;
    case RequestKind.LocalChat:response="은계 주변을 다니고 있어요. 안전하게 모셔다드릴게요.";break;
-   case RequestKind.LostItem:response="내리실 때 소지품을 함께 확인해 드릴게요.";break;
+   case RequestKind.LostItem:response="하차 후 분실물을 발견하면 보관·신고 절차를 안내하겠습니다. (텍스트 사건)";break;
    default:response="죄송하지만 신호는 지켜야 해요. 안전하게 모셔다드릴게요.";break;
   }
   if(kind==RequestKind.LargeRoad||kind==RequestKind.ShortRoad||kind==RequestKind.RouteAdvice)response+=" · 거리 "+beforeDistance.ToString("0")+"→"+nav.remaining.ToString("0")+"m / ETA "+Mathf.CeilToInt(beforeEta)+"→"+RoadNavigation.FormatEta(nav.estimatedSeconds)+"";
@@ -82,20 +83,44 @@ public class PassengerRequestUI : MonoBehaviour {
  void Update(){if(!session.business.useV2||session.jobs.trip.State!=TripState.OnTrip||session.paused)return;
   bool safe=SafeToRespond();if(safe){stoppedSeconds+=Time.deltaTime;request.ObserveOpportunity(stoppedSeconds>=2);}else stoppedSeconds=0;
   Vector3 p=session.taxi.transform.position;if(request.Accepted&&sample){float d=Vector3.Distance(previous,p);if(d<Mathf.Max(2,session.taxi.body.velocity.magnitude*Time.deltaTime+1)){travelled+=d;if(session.jobs.nav.CurrentRoadWidth()>=12)broadTravel+=d;}}previous=p;sample=true;
-  if(request.Kind==RequestKind.Eta){if(Input.GetKeyDown(KeyCode.Y))RespondEta(-1);if(Input.GetKeyDown(KeyCode.I))RespondEta(0);if(Input.GetKeyDown(KeyCode.O))RespondEta(1);}else {if(Input.GetKeyDown(KeyCode.I))RespondAlternative();if(Input.GetKeyDown(KeyCode.Y))Respond(true);}if(Input.GetKeyDown(KeyCode.U))Respond(false);
+  if(Input.GetKeyDown(KeyCode.Y))Choose(request.Kind==RequestKind.Eta?PassengerReply.EtaFaster:PassengerReply.Accept);
+  if(Input.GetKeyDown(KeyCode.I))Choose(request.Kind==RequestKind.Eta?PassengerReply.EtaNormal:PassengerReply.Alternative);
+  if(Input.GetKeyDown(KeyCode.O)&&request.Kind==RequestKind.Eta)Choose(PassengerReply.EtaRelaxed);
+  if(Input.GetKeyDown(KeyCode.U))Choose(PassengerReply.Defer);
  }
- public string DialogueReply {get{if(request.SafetyDeferred)return "안전한 곳에 정차한 뒤 확인할게요.";string value=request.ResponseText();string prefix=request.Id+" · ";return value.StartsWith(prefix)?value.Substring(prefix.Length):value;}}
+ public string DialogueReply {get{if(request.SafetyDeferred)return ChangesRoute?"이번에는 원래 목적지로 안전하게 모시겠습니다.":"안전한 곳에 정차한 뒤 확인할게요.";string value=request.ResponseText();string prefix=request.Id+" · ";return value.StartsWith(prefix)?value.Substring(prefix.Length):value;}}
  static string EtaChoice(float value){return (value/60).ToString("0.0")+"분";}
+ public PassengerRequestChoice[] ReplyChoices {get{if(cachedChoices==null||cachedKind!=request.Kind){cachedKind=request.Kind;cachedChoices=PassengerRequestChoices.For(cachedKind);}return cachedChoices;}}
+ public bool CanChoose(PassengerReply reply){
+  if(request.Resolved||session.jobs.trip.State!=TripState.OnTrip||session.paused||Time.timeScale==0)return false;
+  bool offered=false;foreach(var c in ReplyChoices)if(c.reply==reply)offered=true;if(!offered)return false;
+  if(reply==PassengerReply.Defer)return true;
+  if(!SafeToRespond())return false;
+  if(request.Kind==RequestKind.Eta)return session.jobs.nav.path.Count>=2&&!float.IsNaN(PassengerRequest.EtaSeconds(session.jobs.nav.estimatedSeconds,0));
+  return !ChangesRoute||PrepareProposal();
+ }
+ public bool Choose(PassengerReply reply){if(!CanChoose(reply))return false;bool applied;
+  switch(reply){case PassengerReply.EtaFaster:applied=RespondEta(-1);break;case PassengerReply.EtaNormal:applied=RespondEta(0);break;case PassengerReply.EtaRelaxed:applied=RespondEta(1);break;case PassengerReply.Alternative:applied=RespondAlternative();break;default:applied=Respond(reply!=PassengerReply.Defer);break;}
+  if(applied)foreach(var c in ReplyChoices)if(c.reply==reply)selectedEffect=c.effect;return applied;
+ }
+ public string ChoiceText(PassengerRequestChoice choice){string label=choice.label;
+  if(request.Kind==RequestKind.Eta&&choice.reply!=PassengerReply.Defer){int option=choice.reply==PassengerReply.EtaFaster?-1:choice.reply==PassengerReply.EtaRelaxed?1:0;float seconds=PassengerRequest.EtaSeconds(session.jobs.nav.estimatedSeconds,option);label+=" · "+(float.IsNaN(seconds)?"경로 확인 중":EtaChoice(seconds));}
+  return label+"\n"+choice.effect;
+ }
+ public static Rect ReplyButtonRect(Rect area,int index){float w=(area.width-8)/2;return new Rect(area.x+(index%2)*(w+8),area.y+(index/2)*49,w,45);}
  void OnGUI(){if(!session.business.useV2||session.jobs.trip.State!=TripState.OnTrip||session.paused)return;if(request.Resolved&&Time.time>resultUntil&&!etaSelected)return;
-  string text=request.Resolved?"나\n“"+DialogueReply+"”":"손님\n“"+lines[(int)request.Kind]+"”";
-  if(etaSelected)text="도착 예상 안내\n현재 내비 남은 "+RoadNavigation.FormatEta(session.jobs.nav.estimatedSeconds)+" · 최초 안내까지 "+RoadNavigation.FormatEta(Mathf.Max(0,etaPredicted-(Time.time-etaAt)))+"\n최초 안내 "+RoadNavigation.FormatEta(etaPredicted)+" 뒤 도착 · 교통에 따라 변동";
-  if(!request.Resolved){if(ChangesRoute){if(!PrepareProposal())text+="\n안전한 변경 경로 준비 중 · 원래 운행 유지";else text+="\n"+KoreanText.Stop(session.jobs.stops[proposal].name)+" · 추가 "+addedDistance.ToString("0")+"m\n새 약정 "+newFare.ToString("N0")+"원 · 남은 기한 "+Mathf.CeilToInt(newRemaining)+"초";}
-   if(AlternativeLabel.Length>0)text+="\nI "+AlternativeLabel;
-   if(request.Kind==RequestKind.Eta){float eta=session.jobs.nav.estimatedSeconds;if(session.jobs.nav.path.Count<2||float.IsNaN(PassengerRequest.EtaSeconds(eta,0)))text+="\n현재 경로를 확인한 뒤 안내할게요";else text+="\nY 조금 빠르게 약 "+EtaChoice(PassengerRequest.EtaSeconds(eta,-1))+"\nI 내비 예상에 맞춰 약 "+EtaChoice(eta)+"\nO 조금 여유롭게 약 "+EtaChoice(PassengerRequest.EtaSeconds(eta,1))+"\n교통에 따라 달라질 수 있는 예상";text+="\nU 안전한 곳에서 확인할게요";}
-   else text+="\nY "+(ChangesRoute?"네, 이 조건으로 변경할게요":request.Kind==RequestKind.RejectIllegal?"신호는 지켜야 해요":"네, 알겠습니다")+" / U 안전한 곳에서 확인할게요";}
-  if(!SafeToRespond()&&!request.Resolved)text="손님\n“"+lines[(int)request.Kind]+"”\n안전하게 정차하면 답변할 수 있어요. 지금은 보류 · 감점 없음";
-  if(!ChangesRoute)text+="\n조건: 운임·목적지 그대로";
-  var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14,wordWrap=true};style.normal.textColor=new Color(.1f,.16f,.2f);float width=Mathf.Min(440,Screen.width*.37f);float height=style.CalcHeight(new GUIContent(text),width-32)+24;float y=Mathf.Min(390,Screen.height-190-height);
-  GUI.color=new Color(.94f,.97f,.91f,.97f);GUI.DrawTexture(new Rect(16,y,width,height),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(30,y+height-1,12,10),Texture2D.whiteTexture);GUI.color=Color.white;GUI.Label(new Rect(32,y+12,width-32,height-24),text,style);
+  string text=request.Resolved?"나  “"+DialogueReply+"”":"손님  “"+lines[(int)request.Kind]+"”";
+  if(etaSelected)text="도착 예상 안내 · 교통에 따라 변동\n현재 남은 "+RoadNavigation.FormatEta(session.jobs.nav.estimatedSeconds)+" · 최초 안내까지 "+RoadNavigation.FormatEta(Mathf.Max(0,etaPredicted-(Time.time-etaAt)));
+  if(!request.Resolved){if(ChangesRoute){if(!PrepareProposal())text+="\n안전한 변경 후보 없음 · 원래 운행 유지 가능";else text+="\n"+KoreanText.Stop(session.jobs.stops[proposal].name)+" · 추가 "+addedDistance.ToString("0")+"m · 새 약정 "+newFare.ToString("N0")+"원 / 기한 "+Mathf.CeilToInt(newRemaining)+"초";}
+   if(!SafeToRespond())text+="\n안전하게 정차하면 답변을 선택할 수 있어요.";
+  }else if(selectedEffect.Length>0)text+="\n적용: "+selectedEffect;
+  var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=13,wordWrap=true};style.normal.textColor=new Color(.1f,.16f,.2f);
+  float width=Mathf.Min(490,Screen.width*.39f),textHeight=Mathf.Min(132,style.CalcHeight(new GUIContent(text),width-24));int rows=request.Resolved?0:(ReplyChoices.Length+1)/2;float height=textHeight+24+rows*49;
+  // Keep the reply beside the road view and above the passenger destination card.
+  float y=Mathf.Max(332,Screen.height-198-height);var panel=new Rect(16,y,width,height);
+  GUI.color=new Color(.94f,.97f,.91f,.99f);GUI.DrawTexture(panel,Texture2D.whiteTexture);GUI.DrawTexture(new Rect(30,y+height-1,12,8),Texture2D.whiteTexture);GUI.color=Color.white;GUI.Label(new Rect(28,y+8,width-24,textHeight),text,style);
+  if(!request.Resolved){var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=11,wordWrap=true,padding=new RectOffset(4,4,2,2)};var area=new Rect(24,y+textHeight+18,width-16,rows*49);
+   for(int i=0;i<ReplyChoices.Length;i++){var choice=ReplyChoices[i];bool enabled=GUI.enabled;GUI.enabled=enabled&&CanChoose(choice.reply);if(GUI.Button(ReplyButtonRect(area,i),ChoiceText(choice),button))Choose(choice.reply);GUI.enabled=enabled;}
+  }
  }
 }

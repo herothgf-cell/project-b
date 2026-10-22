@@ -16,9 +16,9 @@ public sealed class PassengerExpansionTest : MonoBehaviour {
    s.law.tripId=s.law.ids.Next("request-fixture");s.requests.BeginKind(kind);
    string id=s.law.tripId;int fare=jobs.current.fare;Check(!s.requests.request.Begin(id,RequestKind.Quiet),"one interactive request per trip "+kind);
    Check(s.requests.SafeToRespond(),"safe pickup response position "+kind);
-   bool response=s.requests.Respond(true);Check(response,"accept appropriate response "+kind);
+   bool response=s.requests.Choose(s.requests.ReplyChoices[0].reply);Check(response,"accept appropriate response "+kind);
    Check(s.law.tripId==id,"same transport identity "+kind);
-   Check(!s.requests.Respond(true),"duplicate response rejected "+kind);
+   Check(!s.requests.Choose(s.requests.ReplyChoices[0].reply),"duplicate response rejected "+kind);
    if(kind==RequestKind.ViaStop){Check(jobs.PassengerViaPending,"via phase keeps passenger");int via=jobs.PassengerViaStop;if(via>=0){var v=jobs.stops[via];Pose(v.Kerb,v.Direction);float before=jobs.trip.Remaining;int quoted=jobs.trip.Fare;Check(jobs.Interact()&&!jobs.PassengerViaPending&&jobs.trip.State==TripState.OnTrip,"actual via stop F retains occupied ride");Check(s.law.tripId==id&&jobs.trip.Fare==quoted&&jobs.trip.Remaining==before,"via stop no duplicate fare time or identity");}}
    if(kind==RequestKind.FareHelp||kind==RequestKind.RejectIllegal)Check(jobs.current.fare==fare,"no discount or illegal reward "+kind);
    if(kind==RequestKind.LargeRoad)Check(jobs.nav.PreferLargeRoad&&jobs.nav.hdRoute!=null,"large road route shares directed graph");
@@ -36,8 +36,20 @@ public sealed class PassengerExpansionTest : MonoBehaviour {
    var saved=s.business.passengers[s.business.passengers.Count-1];var restored=JsonUtility.FromJson<PassengerResult>(JsonUtility.ToJson(saved));Check(saved.baseFare==reward.baseFare&&saved.bonus==reward.bonus&&saved.satisfaction==reward.satisfaction&&restored.bonus==reward.bonus&&restored.satisfactionDelta==reward.satisfactionDelta,"settlement fields serialize and restore "+kind);
    s.services.ObserveCompletedTrip();Check(s.services.PostTripVisible,"post-trip destinations appear "+kind);Check(s.services.GuideAfterTrip(1)&&jobs.nav.active&&!s.services.PostTripVisible,"chosen meal destination sets navigation "+kind);
   }
+  foreach(RequestKind kind in System.Enum.GetValues(typeof(RequestKind)))foreach(var choice in PassengerRequestChoices.For(kind)){
+   jobs.ClearForDay();if(zones)zones.EndTrip();Pose(jobs.stops[0].Kerb,jobs.stops[0].Direction);Check(jobs.Interact(),"choice fixture boards "+kind+"/"+choice.reply);if(zones)zones.EndTrip();s.law.tripId=s.law.ids.Next("button-fixture");s.requests.BeginKind(kind);
+   Check(s.requests.request.Kind==kind,"requested kind available "+kind);int law=s.law.ledger.TotalScore,oldFare=jobs.current.fare;
+   s.paused=true;Check(!s.requests.Choose(choice.reply),"paused button blocked "+kind+"/"+choice.reply);s.paused=false;
+   if(choice.reply!=PassengerReply.Defer){s.taxi.body.velocity=Vector3.forward*2;Check(!s.requests.Choose(choice.reply),"moving response blocked "+kind+"/"+choice.reply);s.taxi.body.velocity=Vector3.zero;}
+   Check(s.requests.CanChoose(choice.reply)&&s.requests.Choose(choice.reply),"visible choice applies "+kind+"/"+choice.reply);
+   Check(!s.requests.Choose(choice.reply)&&s.law.ledger.TotalScore==law,"choice cannot repeat or award law points "+kind+"/"+choice.reply);
+   if(choice.reply==PassengerReply.Defer){s.requests.Finish();Check(s.requests.request.SatisfactionDelta==0&&jobs.current.fare==oldFare,"defer keeps fare and neutral result "+kind);}
+   if(kind==RequestKind.Empathy||kind==RequestKind.Interview)Check(s.requests.SuppressFollowupDialogue==(choice.reply==PassengerReply.Alternative),"quiet alternative actual effect "+kind+"/"+choice.reply);
+   if(kind==RequestKind.RouteAdvice&&choice.reply!=PassengerReply.Defer)Check(jobs.nav.PreferFastest==(choice.reply==PassengerReply.Accept),"route button applies chosen route preference");
+  }
+  for(int i=0;i<4;i++){var area=new Rect(24,400,474,98);var r=PassengerRequestUI.ReplyButtonRect(area,i);Check(area.Contains(r.min)&&area.Contains(r.max-Vector2.one*.01f),"reply button contained "+i);for(int j=0;j<i;j++)Check(!r.Overlaps(PassengerRequestUI.ReplyButtonRect(area,j)),"reply buttons separate "+i+"/"+j);}
   jobs.ClearForDay();Pose(jobs.stops[0].Kerb,jobs.stops[0].Direction);jobs.Interact();s.law.tripId=s.law.ids.Next("safety-fixture");s.requests.BeginKind(RequestKind.Interview);
-  if(s.traffic.junctions.Count>0){Pose(s.traffic.junctions[0].center,Vector3.forward);Check(!s.requests.SafeToRespond()&&!s.requests.Respond(true),"junction auto defers interaction");Check(s.requests.Respond(false),"safety defer always available");}
+  if(s.traffic.junctions.Count>0){Pose(s.traffic.junctions[0].center,Vector3.forward);Check(!s.requests.SafeToRespond()&&!s.requests.Choose(s.requests.ReplyChoices[0].reply),"junction auto defers interaction");Check(s.requests.Respond(false),"safety defer always available");}
   File.WriteAllText("artifacts/passenger-expansion-test.txt",log.ToString());Debug.Log(log.ToString());Application.Quit(ok?0:1);
  }
 }
