@@ -55,3 +55,4 @@
 - 최종 실행파일 추가 검사: `-reviewedLaneTrafficTest -roadMapInput <수정본>` 종료0. T1 NPC2대 각각 경로1회 완료, 최소 차간 거리11.99949m. 공유 그래프 일치·실행 충돌 표본762개 건물 침범0. **Kinematic NPC 검사이며 택시 물리 주행/신호 시간표 검사는 아니다.**
 - 최종 `player7.log`: `-roadMapEditorTest -oneDayMode` 종료0, 편집/저장/프로세스 격리16항목 success=True, 자식 리비전 일치. 세 해상도 캡처 확인, 예외 검색0. 고정 지도 텍스처로 영역 밖 선 그리기 문제를 해결했다.
 - 신규 `tools/update_distribution_manifest.ps1`로 실제 소스 커밋과 파일 크기·SHA256을 생성하고 `-VerifyOnly`로 실행 폴더 전체 대조한다. 최종 배포 커밋에서 manifest를 함께 보관한다.
+- 최종 배포: 소스 커밋 0cb57ea158345b0aa6673fe1b39aff0635205748, manifest 실제 127파일/84685847바이트 SHA256·크기 재검증 종료0. 필수 입력 Strict 재검사 종료0. sourceCommit은 실제 소스 커밋을 기록했다.

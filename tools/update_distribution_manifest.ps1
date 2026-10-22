@@ -21,7 +21,7 @@ if ($SourceCommit -notmatch '^[0-9a-fA-F]{40}$') {throw 'Pass the actual 40-char
 & git -C $taskRoot cat-file -e "$SourceCommit`^{commit}"
 if ($LASTEXITCODE -ne 0) {throw 'Source commit does not exist'}
 $taskEntries=@(Get-ChildItem -LiteralPath (Join-Path $taskRoot 'builds/EungyeTaxi') -File -Recurse | Sort-Object FullName | ForEach-Object {
-    [ordered]@{path=[IO.Path]::GetRelativePath($taskRoot,$_.FullName).Replace('\','/');bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}
+    [pscustomobject][ordered]@{path=[IO.Path]::GetRelativePath($taskRoot,$_.FullName).Replace('\','/');bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}
 })
 $taskOutput=[ordered]@{sourceCommit=$SourceCommit;unity='2022.3.62f2';region='eungye';entrypoint='builds/EungyeTaxi/EungyeTaxi.exe';validatedOn=$ValidatedOn;totalBytes=($taskEntries | Measure-Object bytes -Sum).Sum;validation=[ordered]@{build='PrototypeBuild.BuildRoadMapEditor exit 0';modelSuites=22;editorCoreAssertions=15;editorExtendedTests=$true;editorPlayerAssertions=16;trialIsolation=$true;manualDriving=$false;fieldReviewComplete=$false;fieldWorkStoppedByUser=$true};files=$taskEntries}
 $taskOutput | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $taskManifestPath -Encoding utf8
