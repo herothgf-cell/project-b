@@ -1,21 +1,19 @@
 {
-  "sourceCommit": "579d5b88b7b8d8910ec6fb2d863ad332bdb9e096",
+  "sourceCommit": "f5e6fe556cdb965a431c64dfbc9f8cef930bf3d7",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-10-22",
-  "totalBytes": 84882735.0,
+  "totalBytes": 84883759.0,
   "validation": {
     "build": "PrototypeBuild.BuildHybrid exit 0",
-    "modelSuites": 23,
-    "passengerRequestKinds": 17,
-    "passengerReplyChoices": 42,
+    "restaurantGraphAndSeparation": true,
+    "restaurantPassengerStopRoundTrips": 12,
+    "oneDayStateAndMealChecks": 28,
     "passengerPositionChecks": 525,
-    "presentationPositionChecks": 20,
     "localInputIssues": 0,
-    "manualMouseClick": false,
     "manualDriving": false,
-    "fullThreeDayPhysicalDrive": false,
+    "restaurantPhysicalDrive": false,
     "fieldReviewComplete": false,
     "fieldWorkStoppedByUser": true
   },
@@ -28,7 +26,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "ed366921779f211b79186a8d3b716c56170d0de538626d062ab01c6b4a2573e7"
+      "sha256": "264653b9c8a2f4eba73b7a85e477a33b0ff376caf8d472bab160d569fa86f2a3"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -57,8 +55,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 894976,
-      "sha256": "af24fccf4bdc8ddd6e0936b38e267ea88297716f4ef3d5bb77aa27ca7dee01c2"
+      "bytes": 896000,
+      "sha256": "f84298156af705436290d9f03befe3af66f86cc7a6871c5e0fe4ed2a83f63a28"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",

@@ -31,7 +31,7 @@ public class PassengerJobs : MonoBehaviour {
   if(start==goal.laneEdge&&Mathf.Abs(at-goal.laneAt)<.25f)return 0;
   var route=graph.Route(start,at,goal.laneEdge,goal.laneAt);return route==null?float.PositiveInfinity:route.path.length;
  }
- float OfferRank(JobOffer o,double elapsed){float pickup=DirectedDistance(nav.hd,session.taxi.transform.position,session.taxi.transform.forward,stops[o.pickup]);float meal=0;if(elapsed>=300&&elapsed<900){var drop=stops[o.drop];meal=DirectedDistance(nav.hd,drop.Kerb,drop.Direction,stops[session.services.indices[1]]);}int id=0;int.TryParse(o.scenarioId.Replace("PS",""),out id);return OneDayOfferPolicy.Rank(o.distance,pickup,meal,elapsed,id,generation);}
+ float OfferRank(JobOffer o,double elapsed){float pickup=DirectedDistance(nav.hd,session.taxi.transform.position,session.taxi.transform.forward,stops[o.pickup]);float meal=0;if(elapsed>=300&&elapsed<900){var drop=stops[o.drop];meal=DirectedDistance(nav.hd,drop.Kerb,drop.Direction,session.services.MealStop);}int id=0;int.TryParse(o.scenarioId.Replace("PS",""),out id);return OneDayOfferPolicy.Rank(o.distance,pickup,meal,elapsed,id,generation);}
  void SetGoal(int index){nav.SetDestination(stops[index]);marker.transform.rotation=Quaternion.LookRotation(stops[index].Direction);marker.SetActive(true);marker.transform.position=stops[index].Kerb+Vector3.up*.085f;}
  public bool At(int index){return stops[index].CanStop(session.taxi.transform.position,session.taxi.transform.forward,session.taxi.body.velocity.magnitude);}
  float PickupBudget(JobOffer offer){
