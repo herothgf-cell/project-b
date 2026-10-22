@@ -7,6 +7,14 @@ public static class FuelStationLayoutTests {
  static void Check(bool ok,string message){if(!ok)throw new Exception("FUEL_LAYOUT: "+message);}
  public static void Run(){
   var map=JsonUtility.FromJson<MapData>(File.ReadAllText("Assets/Resources/eungye-hybrid-map.json"));map.mapId="eungye";
+  var meal=ServiceStops.CreateMealStop(map);var mealGraph=new HdRoadGraph(map);
+  Check(meal!=map.stops[6]&&meal.name.Contains("식당"),"restaurant is independent of passenger stops");
+  Check(meal.x>600&&meal.x<740&&meal.z>300&&meal.z<370,"restaurant is in screenshot south block");
+  Check(Vector3.Distance(meal.V(),map.stops[6].V())>150&&Vector3.Distance(meal.V(),map.stops[0].V())>200,"restaurant separated from previous service and starting parking");
+  Check(Vector3.Distance(mealGraph.paths[meal.laneEdge].Position(meal.laneAt),meal.V())<.05f,"restaurant approach uses shared navigation lane");
+  Check(meal.CanStop(meal.Kerb,meal.Direction,0)&&!meal.CanStop(map.stops[6].Kerb,map.stops[6].Direction,0),"only new meal location accepts stop");
+  foreach(var stop in map.stops){Check(mealGraph.Route(stop.laneEdge,stop.laneAt,meal.laneEdge,meal.laneAt)!=null,"restaurant reachable from all passenger stops");Check(mealGraph.Route(meal.laneEdge,meal.laneAt,stop.laneEdge,stop.laneAt)!=null,"restaurant exit can reach all passenger stops");}
+  Debug.Log("RESTAURANT_LAYOUT position="+meal.V()+" edge="+meal.laneEdge+" at="+meal.laneAt);
   int roadCount=map.roads.Length,edgeCount=map.hdEdges.Length,buildingCount=map.buildings.Length;
   FuelStationLayout.Apply(map);var stations=FuelStationLayout.For(map);
   Check(stations.Count==3,"three game stations on real Eungye input");
