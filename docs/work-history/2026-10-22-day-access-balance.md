@@ -75,3 +75,5 @@
 화면 검증: rest-render-live.log exit0, artifacts/rest-parking-review.png에서 분리된 진입/진출과 파란 주차면·건물 비침범 확인. J5057 고정 위치/48대/Direct3D11/30초 렌더 평균59.94FPS, p99 16.95ms. 전 구역 이동 성능이나 실제 수동 조작 검사는 아니다.
 
 다음: 별도 차로 작업 완료 후 통합 빌드와 해시 갱신·푸시, 시작점 픽업 접근을 줄이는 후보 배치 검토, 여러 코스/무작위 사건/요청 응답 포함 수동 하루 검증(P7-06), 기존 거리뷰 접근 방향별 확인 계속. 이번 커밋은 실행 폴더 배포를 포함하지 않는다.
+
+로컬 실행 폴더128파일의 크기/SHA256을 다시 계산·검증했다(84,683,158바이트). distribution/EungyeTaxi-build-manifest.json은 local-validation-only-awaiting-integration 및 미커밋 소스 포함 상태를 명시하며 실행 폴더와 함께 미배포 변경으로 남긴다. 통합 작업 후 단일 소스로 재빌드하고 다시 생성해야 한다.
