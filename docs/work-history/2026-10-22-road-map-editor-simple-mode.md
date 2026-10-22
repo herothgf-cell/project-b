@@ -33,7 +33,7 @@
 - 최종 실행파일 `-roadMapEditorTest`: 리뷰 수정 후 `artifacts/easy-editor/player-reviewed.log` 종료0, `editor-player-test.txt` 28 PASS/success=True, `trial-child-test.txt` success=True/revision4. 로그 Exception/FAIL 없음. 검사 내용은 기본 모드/도로 클릭/방향과 취소/표지 배치/저장·불러오기/3해상도/표지·노면·신호·고급 버튼/자동 추천 시험/부모 시간·돈·연료·저장파일 격리다.
 - `pwsh -File tools/check_workspace.ps1 -Strict`: 필수 지도 입력3개 해시 일치, Input issues=0, 종료0. 입력/ZIP/OSM 설정 변경 없음.
 - 화면 캡처: `artifacts/road-map-editor/editor-1280.png`, `editor-1600.png`, `editor-1920.png`, `editor-tab-표지.png`, `editor-tab-노면.png`, `editor-tab-신호.png`, `editor-advanced.png`. 기본/신호/고급 화면 시각 확인.
-- 배포 해시는 실제 소스 커밋 후 manifest를 재생성하고 아래 배포 검증 절에 기록한다. 로그/캡처는 Git 제외 로컬 산출물이다.
+- 배포 해시는 실제 소스 커밋 `258b5eb` 후 manifest를 재생성했다. `pwsh -File tools/update_distribution_manifest.ps1 -VerifyOnly`: DISTRIBUTION_OK files=128 bytes=84846191, 종료0. 새 Unity 씬의 `EungyeTaxi_Data/level0.resS`도 배포에 포함한다. 로그/캡처는 Git 제외 로컬 산출물이다.
 
 ## 실행·재현
 
@@ -48,3 +48,7 @@
 - 사람의 전체 수동 편집/모든 팝업 클릭·자동차 물리 주행·하루 캠페인·임의 신규 형상/신호 조합·다른 PC 실행은 미검증이다. 자동 API/GUI 렌더/별도 프로세스 검사로 이 항목을 완료 처리하지 않는다.
 - 현장 조사 중단 지시 유지. 생성 지도 원본을 재작성하거나 실측 규제를 확정하지 않았다.
 - 사용자가 이번 실행본을 확인한 뒤 별도 요청으로 병합/푸시한다. worktree와 브랜치를 유지한다.
+
+## 커밋과 인계
+
+소스/사용법 커밋은 실제 git log -1 --oneline -- docs/work-history/2026-10-22-road-map-editor-simple-mode.md로 확인한 258b5eb다. 후속 배포 커밋에는 실행 폴더 변경·실제 소스 해시가 담긴 manifest·이 검증 결과를 함께 넣는다. 이번 작업은 로컬 커밋만이며 병합/푸시하지 않았다.
