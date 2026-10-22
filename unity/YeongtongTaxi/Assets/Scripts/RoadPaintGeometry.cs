@@ -4,12 +4,14 @@ using UnityEngine;
 // Synthetic paint follows the same compiled lanes used by navigation and AI.
 // Imported HD markings remain in HdRouteTrial, with their original colours.
 public sealed class RoadPaintGeometry {
+ readonly MapData map;
  sealed class LanePath {public AssistedRoadNetwork.Path path;public string id;public int number;}
  readonly Dictionary<string,List<LanePath>> roads=new Dictionary<string,List<LanePath>>();
  readonly Dictionary<string,List<LanePath>> corridors=new Dictionary<string,List<LanePath>>();
  readonly Dictionary<string,float> widths=new Dictionary<string,float>();
  readonly HashSet<string> polished=new HashSet<string>();
  public RoadPaintGeometry(MapData map){
+  this.map=map;
   if(!map.hybrid||!map.HasHd)return;
   foreach(var edge in map.hdEdges){
    if(edge.disabled||edge.status!="provisional"||edge.turn!=0||edge.change!=0||edge.id.StartsWith("join:")||edge.id.StartsWith("fuel:")||edge.sourceId.StartsWith("fuel:"))continue;
@@ -27,6 +29,7 @@ public sealed class RoadPaintGeometry {
    // Offset curves end at slightly different stations around a bend. Allow
    // one paint sample at the end; junction openings still clip the paint.
    if(Mathf.Abs(along)>1f||Mathf.Abs(alignment)<.85f)continue;
+   if(lane.id.StartsWith("reviewed:")&&along<-.01f)continue;
    float offset=Vector3.Dot(p-point,TrafficSystem.Right(direction));int sign=alignment>0?1:-1;
    if(!result.Exists(x=>x.direction==sign&&Mathf.Abs(x.offset-offset)<.5f))result.Add(new RoadGeometry.Lane(offset,sign));
   }result.Sort((a,b)=>a.offset.CompareTo(b.offset));return result;
@@ -79,7 +82,7 @@ public sealed class RoadPaintGeometry {
      var p=path.Position(at);var dir=path.Tangent(at);float piece=Mathf.Min(.96f,2*(path.length-at));var lanes=Sample(corridor.Value,p,dir,float.MaxValue);
      if(lanes.Count==0)continue;
      foreach(var line in RoadGeometry.Boundaries(lanes)){
-      if(line.dashed&&(phase+at)%6>=3)continue;var q=p+TrafficSystem.Right(dir)*line.offset;
+      if(line.dashed&&(phase+at)%6>=3)continue;var q=p+TrafficSystem.Right(dir)*line.offset;if(line.yellow)q=ReviewedLaneLayout.Centreline(map,corridor.Key,q);
       if(!InOpening(q,junctions,openings,piece*.5f))mark(line.yellow?"Centre line":"Lane divider",q,dir,line.yellow?.14f:.13f,piece,line.yellow);
      }
      float laneWidth=lanes.Count>1?float.MaxValue:width;

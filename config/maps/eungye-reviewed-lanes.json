@@ -1,0 +1,18 @@
+{
+  "pockets": [
+    {
+      "id": "T1-SE",
+      "junctionId": "J4396_13458",
+      "approachLaneIds": [
+        "local:6037:12153:4590:13330",
+        "local:6077:12206:4634:13380",
+        "local:6118:12259:4679:13430"
+      ],
+      "laneLength": 25.0,
+      "taperLength": 30.0,
+      "offset": 3.0,
+      "checkedAt": "2026-10-22",
+      "evidence": "Naver Roadview 2026-05, panorama lygcigyMAFesMYe7CZrtIA, Eungye-ro SE approach to Gyesu-ro junction: median-side left/U-turn pocket plus through lanes. Geometry 25m + 30m taper / 3m offset is provisional game clearance, not surveyed. U-turn routing is not yet supported."
+    }
+  ]
+}

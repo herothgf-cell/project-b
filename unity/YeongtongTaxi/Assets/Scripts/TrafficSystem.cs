@@ -322,6 +322,7 @@ public class TrafficSystem : MonoBehaviour {
     }
     void PaintRoads(MapData map) {
         RoadPaintGeometry.Paint(map,junctions,(name,p,dir,width,length,isYellow)=>Mark(name,p,dir,width,length,isYellow?yellow:white));
+        ReviewedLaneLayout.Paint(map,(name,p,dir,width,length,isYellow)=>Mark(name,p,dir,width,length,isYellow?yellow:white));
     }
     void Mark(string name,Vector3 p,Vector3 dir,float width,float length,Material material) {
         p.y=.071f;var right=Right(dir)*width*.5f;var along=dir*length*.5f;var list=material==yellow?yellowPaint:whitePaint;list.AddRange(new[]{p-right-along,p-right+along,p+right+along,p+right-along});
