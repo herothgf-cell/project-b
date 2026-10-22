@@ -30,3 +30,7 @@
 로컬 Unity 실행 경로는 `D:/Program Files/Unity Hub/Editor/2022.3.62f2/Editor/Unity.exe`, 통합 작업 폴더는 `C:/Users/USER/.codex/worktrees/easy-road-editor/project-b`다. 로그는 `artifacts/` 로컬 산출물이며 Git 제외다.
 
 자동 날짜 상태/위치 제어/편집 API·렌더·프로세스 검사는 사람의 수동 편집·물리 운전·60분3일 캠페인·모든 형상/신호 조합·다른 PC 재현을 대신하지 않는다. 이 항목은 계속 미검증이며 현장 지도 조사 중단을 유지한다. 다음은 사용자의 통합 실행본 확인과 수동 플레이 검증이다.
+
+## 최종 배포 검증
+
+실제 통합 소스/병합 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-22-easy-editor-main-integration.md`로 확인한 `aa7eb84`다. 이 전체 해시로 manifest sourceCommit을 갱신했다. 배포 `-VerifyOnly` 결과는 `DISTRIBUTION_OK files=128 bytes=84865607`, 종료0이다. 제품 소스 변경 없이 배포 해시/인계만 후속 커밋한다. main을 검증된 통합 커밋으로 fast-forward하고 origin/main에 푸시한다. 기존 사용자 문서 변경은 narrow stash/3-way 복원으로 별도 유지한다.
