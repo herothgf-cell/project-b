@@ -10,6 +10,7 @@ public static class PrototypeBuild {
     public static void BuildAssistedChecks(){BuildAt("../../builds/AssistedTaxiChecks/AssistedTaxiChecks.exe");}
     [MenuItem("Taxi/Build Windows Prototype")]
     public static void Build(){BuildAt("../../builds/YeongtongTaxi/YeongtongTaxi.exe");}
+    public static void BuildReviewedMap(){LaneDirectionPaintTests.Run();BuildHybrid();}
     static void BuildAt(string destination,string region="") {
         PlayerSettings.companyName="Taxi Prototype";PlayerSettings.productName="택시 시뮬레이터";PlayerSettings.defaultScreenWidth=1600;PlayerSettings.defaultScreenHeight=900;PlayerSettings.fullScreenMode=FullScreenMode.Windowed;PlayerSettings.runInBackground=true;PlayerSettings.resizableWindow=true;
         var input=new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset")[0]);var axes=input.FindProperty("m_Axes");bool exists=false;for(int i=0;i<axes.arraySize;i++)if(axes.GetArrayElementAtIndex(i).FindPropertyRelative("m_Name").stringValue=="TaxiSteer")exists=true;

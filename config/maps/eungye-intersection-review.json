@@ -1,0 +1,5179 @@
+{
+  "schemaVersion": 1,
+  "coordinateSystem": "NGII EPSG:5186 + config bounds origin; pyproj EPSG:4326",
+  "source": "eungye-hybrid-map.json unchanged baseline; runtime reviewed pockets recorded separately",
+  "note": "Graph turns are provisional game movements, never field verification. No-active-join entries remain in the inventory.",
+  "junctions": [
+    {
+      "id": "J0_10594",
+      "x": 0.0,
+      "z": 1059.430908203125,
+      "latitude": 37.4435577,
+      "longitude": 126.7954618,
+      "searchUrl": "https://map.naver.com/p/search/37.4435577%2C%20126.7954618",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J0_17232",
+      "x": 0.0,
+      "z": 1723.1690673828125,
+      "latitude": 37.449538,
+      "longitude": 126.7954455,
+      "searchUrl": "https://map.naver.com/p/search/37.4495380%2C%20126.7954455",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J0_2913",
+      "x": 0.0,
+      "z": 291.33050537109375,
+      "latitude": 37.436637,
+      "longitude": 126.7954806,
+      "searchUrl": "https://map.naver.com/p/search/37.4366370%2C%20126.7954806",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J0_3340",
+      "x": 0.0,
+      "z": 334.0328063964844,
+      "latitude": 37.4370218,
+      "longitude": 126.7954795,
+      "searchUrl": "https://map.naver.com/p/search/37.4370218%2C%20126.7954795",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J0_4521",
+      "x": 0.0,
+      "z": 452.06781005859375,
+      "latitude": 37.4380853,
+      "longitude": 126.7954767,
+      "searchUrl": "https://map.naver.com/p/search/37.4380853%2C%20126.7954767",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J0_5330",
+      "x": 0.0,
+      "z": 532.9752807617188,
+      "latitude": 37.4388143,
+      "longitude": 126.7954747,
+      "searchUrl": "https://map.naver.com/p/search/37.4388143%2C%20126.7954747",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J0_78",
+      "x": 0.0,
+      "z": 7.815899848937988,
+      "latitude": 37.4340825,
+      "longitude": 126.7954875,
+      "searchUrl": "https://map.naver.com/p/search/37.4340825%2C%20126.7954875",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J0_7911",
+      "x": 0.0,
+      "z": 791.0811157226562,
+      "latitude": 37.4411398,
+      "longitude": 126.7954683,
+      "searchUrl": "https://map.naver.com/p/search/37.4411398%2C%20126.7954683",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J10277_0",
+      "x": 1027.662841796875,
+      "z": 0.0,
+      "latitude": 37.4340316,
+      "longitude": 126.8070993,
+      "searchUrl": "https://map.naver.com/p/search/37.4340316%2C%20126.8070993",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J10580_1415",
+      "x": 1058.0489501953125,
+      "z": 141.54299926757812,
+      "latitude": 37.4353075,
+      "longitude": 126.8074393,
+      "searchUrl": "https://map.naver.com/p/search/37.4353075%2C%20126.8074393",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:232:0,37612023:A0020000:787:0,37612023:A0020000:1205:0,37612023:A0020000:367:0,37612023:A0020000:1062:0,37612023:A0020000:419:0,37612023:A0020000:1374:0",
+          "lanes": [
+            {
+              "id": "local:14385:13336:10603:1539:part:2",
+              "family": "local:14385:13336:10603:1539",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:14344:13354:10560:1555:part:2",
+              "family": "local:14344:13354:10560:1555",
+              "number": 2,
+              "graphTurns": "S"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:232:0",
+          "lanes": [
+            {
+              "id": "local:10300:20:10559:1292:part:2",
+              "family": "local:10300:20:10559:1292",
+              "number": 1,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:10347:20:10603:1275:part:2",
+              "family": "local:10347:20:10603:1275",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J10587_15883",
+      "x": 1058.739990234375,
+      "z": 1588.27197265625,
+      "latitude": 37.4483427,
+      "longitude": 126.8074137,
+      "searchUrl": "https://map.naver.com/p/search/37.4483427%2C%20126.8074137",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "NW",
+          "sourceId": "37612023:A0020000:1420:0,37612023:A0020000:1419:0,37612023:A0020000:1240:0,37612023:A0020000:1034:0,37612023:A0020000:359:0,37612023:A0020000:1202:0,37612023:A0020000:1705:0,37612023:A0020000:2238:0,37612023:A0020000:2231:0,37612023:A0020000:2232:0,37612023:A0020000:2230:0,37612023:A0020000:2234:0,37612023:A0020000:2233:0,37612023:A0020000:2227:0",
+          "lanes": [
+            {
+              "id": "local:5978:17124:10508:15987",
+              "family": "local:5978:17124:10508:15987",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:85:0,37612023:A0020000:86:0,37612023:A0020000:88:0,37612023:A0020000:89:0,37612023:A0020000:90:0,37612023:A0020000:91:0,37612023:A0020000:92:0,37612023:A0020000:94:0,37612023:A0020000:99:0",
+          "lanes": [
+            {
+              "id": "local:11605:16081:10719:15876:part:2",
+              "family": "local:11605:16081:10719:15876",
+              "number": 1,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:11589:16123:10729:15920:part:2",
+              "family": "local:11589:16123:10729:15920",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:100:0,37612023:A0020000:101:0,37612023:A0020000:131:0,37612023:A0020000:1234:0,37612023:A0020000:364:0,37612023:A0020000:1512:0,37612023:A0020000:774:0",
+          "lanes": [
+            {
+              "id": "local:7461:14834:10469:15824:part:2",
+              "family": "local:7461:14834:10469:15824",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:7479:14787:10482:15776:part:2",
+              "family": "local:7479:14787:10482:15776",
+              "number": 2,
+              "graphTurns": "S"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J1130_11745",
+      "x": 112.98999786376953,
+      "z": 1174.5009765625,
+      "latitude": 37.4445967,
+      "longitude": 126.7967358,
+      "searchUrl": "https://map.naver.com/p/search/37.4445967%2C%20126.7967358",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J11438_16313",
+      "x": 1143.7679443359375,
+      "z": 1631.3060302734375,
+      "latitude": 37.448732,
+      "longitude": 126.8083736,
+      "searchUrl": "https://map.naver.com/p/search/37.4487320%2C%20126.8083736",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J11599_0",
+      "x": 1159.9322509765625,
+      "z": 0.0,
+      "latitude": 37.4340341,
+      "longitude": 126.8085938,
+      "searchUrl": "https://map.naver.com/p/search/37.4340341%2C%20126.8085938",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J11723_16107",
+      "x": 1172.31103515625,
+      "z": 1610.7120361328125,
+      "latitude": 37.448547,
+      "longitude": 126.8086967,
+      "searchUrl": "https://map.naver.com/p/search/37.4485470%2C%20126.8086967",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "NW",
+          "sourceId": "37612023:A0020000:130:0,37612023:A0020000:83:0,37612023:A0020000:2101:0,37612023:A0020000:2100:0,37612023:A0020000:2102:0",
+          "lanes": [
+            {
+              "id": "local:11451:16290:11622:16174",
+              "family": "local:11451:16290:11622:16174",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NE",
+          "sourceId": "37612023:A0020000:84:0,37612023:A0020000:82:0,37612023:A0020000:81:0,37612023:A0020000:80:0,37612023:A0020000:2097:0,37612023:A0020000:2096:0,37612023:A0020000:2094:0,37612023:A0020000:2087:0,37612023:A0020000:2086:0,37612023:A0020000:2085:0,37612023:A0020000:2133:0,37612023:A0020000:2132:0,37612023:A0020000:2131:0,37612023:A0020000:2129:0,37612023:A0020000:2128:0,37612023:A0020000:2127:0,37612023:A0020000:2136:0",
+          "lanes": [
+            {
+              "id": "local:13329:17496:11823:16177:part:2",
+              "family": "local:13329:17496:11823:16177",
+              "number": 1,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:13291:17521:11806:16218:part:2",
+              "family": "local:13291:17521:11806:16218",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:85:0,37612023:A0020000:86:0,37612023:A0020000:88:0,37612023:A0020000:89:0,37612023:A0020000:90:0,37612023:A0020000:91:0,37612023:A0020000:92:0,37612023:A0020000:94:0,37612023:A0020000:99:0",
+          "lanes": [
+            {
+              "id": "local:10709:15832:11621:16039:part:2",
+              "family": "local:10709:15832:11621:16039",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:10699:15788:11637:15997:part:2",
+              "family": "local:10699:15788:11637:15997",
+              "number": 2,
+              "graphTurns": "S"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J1200_0",
+      "x": 119.97599792480469,
+      "z": 0.0,
+      "latitude": 37.4340145,
+      "longitude": 126.7968433,
+      "searchUrl": "https://map.naver.com/p/search/37.4340145%2C%20126.7968433",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J12009_13066",
+      "x": 1200.906982421875,
+      "z": 1306.56005859375,
+      "latitude": 37.4458071,
+      "longitude": 126.8090268,
+      "searchUrl": "https://map.naver.com/p/search/37.4458071%2C%20126.8090268",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J12418_15681",
+      "x": 1241.75,
+      "z": 1568.095947265625,
+      "latitude": 37.4481643,
+      "longitude": 126.8094824,
+      "searchUrl": "https://map.naver.com/p/search/37.4481643%2C%20126.8094824",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J12454_13505",
+      "x": 1245.406982421875,
+      "z": 1350.5360107421875,
+      "latitude": 37.4462041,
+      "longitude": 126.8095287,
+      "searchUrl": "https://map.naver.com/p/search/37.4462041%2C%20126.8095287",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J12646_16313",
+      "x": 1264.553955078125,
+      "z": 1631.3409423828125,
+      "latitude": 37.4487345,
+      "longitude": 126.8097387,
+      "searchUrl": "https://map.naver.com/p/search/37.4487345%2C%20126.8097387",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J12741_13862",
+      "x": 1274.1070556640625,
+      "z": 1386.2259521484375,
+      "latitude": 37.4465262,
+      "longitude": 126.8098522,
+      "searchUrl": "https://map.naver.com/p/search/37.4465262%2C%20126.8098522",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J13005_10038",
+      "x": 1300.498046875,
+      "z": 1003.75,
+      "latitude": 37.4430805,
+      "longitude": 126.8101592,
+      "searchUrl": "https://map.naver.com/p/search/37.4430805%2C%20126.8101592",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J1310_12443",
+      "x": 131.02699279785156,
+      "z": 1244.2960205078125,
+      "latitude": 37.4452259,
+      "longitude": 126.7969379,
+      "searchUrl": "https://map.naver.com/p/search/37.4452259%2C%20126.7969379",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "NE",
+          "sourceId": "37612022:A0020000:1103:0,37612022:A0020000:1134:0,37612022:A0020000:2213:0",
+          "lanes": [
+            {
+              "id": "local:1487:12701:1341:12534",
+              "family": "local:1487:12701:1341:12534",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:1149:0,37612022:A0020000:1653:0,37612022:A0020000:2681:0",
+          "lanes": [
+            {
+              "id": "local:923:11971:1273:12356",
+              "family": "local:923:11971:1273:12356",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:3251:0,37612022:A0020000:2329:0,37612022:A0020000:3128:0",
+          "lanes": [
+            {
+              "id": "local:1553:12241:1396:12401",
+              "family": "local:1553:12241:1396:12401",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J13358_17500",
+      "x": 1335.8480224609375,
+      "z": 1750.0,
+      "latitude": 37.4498049,
+      "longitude": 126.8105417,
+      "searchUrl": "https://map.naver.com/p/search/37.4498049%2C%20126.8105417",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J13559_5902",
+      "x": 1355.886962890625,
+      "z": 590.155029296875,
+      "latitude": 37.439355,
+      "longitude": 126.8107945,
+      "searchUrl": "https://map.naver.com/p/search/37.4393550%2C%20126.8107945",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J13649_9396",
+      "x": 1364.925048828125,
+      "z": 939.593017578125,
+      "latitude": 37.4425036,
+      "longitude": 126.8108887,
+      "searchUrl": "https://map.naver.com/p/search/37.4425036%2C%20126.8108887",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J13653_8715",
+      "x": 1365.322021484375,
+      "z": 871.5239868164062,
+      "latitude": 37.4418903,
+      "longitude": 126.8108947,
+      "searchUrl": "https://map.naver.com/p/search/37.4418903%2C%20126.8108947",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J13741_5954",
+      "x": 1374.135009765625,
+      "z": 595.3809814453125,
+      "latitude": 37.4394024,
+      "longitude": 126.8110005,
+      "searchUrl": "https://map.naver.com/p/search/37.4394024%2C%20126.8110005",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J13878_17500",
+      "x": 1387.791259765625,
+      "z": 1750.0,
+      "latitude": 37.4498059,
+      "longitude": 126.8111287,
+      "searchUrl": "https://map.naver.com/p/search/37.4498059%2C%20126.8111287",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J14455_13437",
+      "x": 1445.4930419921875,
+      "z": 1343.718017578125,
+      "latitude": 37.4461463,
+      "longitude": 126.81179,
+      "searchUrl": "https://map.naver.com/p/search/37.4461463%2C%20126.8117900",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:1072:0,37612023:A0020000:661:0,37612023:A0020000:1647:0",
+          "lanes": [
+            {
+              "id": "local:15340:13471:14576:13452",
+              "family": "local:15340:13471:14576:13452",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SW",
+          "sourceId": "37612023:A0020000:232:0,37612023:A0020000:787:0,37612023:A0020000:1205:0,37612023:A0020000:367:0,37612023:A0020000:1062:0,37612023:A0020000:419:0,37612023:A0020000:1374:0",
+          "lanes": [
+            {
+              "id": "local:10645:1523:14427:13317:part:2",
+              "family": "local:10645:1523:14427:13317",
+              "number": 1,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:10688:1507:14469:13299:part:2",
+              "family": "local:10688:1507:14469:13299",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:1374:0,37612023:A0020000:1159:0,37612023:A0020000:507:0,37612023:A0020000:2125:0,37612023:A0020000:2114:0,37612023:A0020000:2175:0,37612023:A0020000:2147:0",
+          "lanes": [
+            {
+              "id": "local:13874:17470:14472:13559:part:2",
+              "family": "local:13874:17470:14472:13559",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:13841:17439:14429:13574:part:2",
+              "family": "local:13841:17439:14429:13574",
+              "number": 2,
+              "graphTurns": "S"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J1516_974",
+      "x": 151.55999755859375,
+      "z": 97.38099670410156,
+      "latitude": 37.4348925,
+      "longitude": 126.7971978,
+      "searchUrl": "https://map.naver.com/p/search/37.4348925%2C%20126.7971978",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J15315_620",
+      "x": 1531.498046875,
+      "z": 61.952999114990234,
+      "latitude": 37.434599,
+      "longitude": 126.8127907,
+      "searchUrl": "https://map.naver.com/p/search/37.4345990%2C%20126.8127907",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J15358_13451",
+      "x": 1535.7569580078125,
+      "z": 1345.10400390625,
+      "latitude": 37.4461604,
+      "longitude": 126.81281,
+      "searchUrl": "https://map.naver.com/p/search/37.4461604%2C%20126.8128100",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J1566_12751",
+      "x": 156.593994140625,
+      "z": 1275.1390380859375,
+      "latitude": 37.4455043,
+      "longitude": 126.7972261,
+      "searchUrl": "https://map.naver.com/p/search/37.4455043%2C%20126.7972261",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "NE",
+          "sourceId": "37612022:A0020000:1089:0,37612022:A0020000:1124:0,37612022:A0020000:2984:0",
+          "lanes": [
+            {
+              "id": "local:1758:13003:1605:12838",
+              "family": "local:1758:13003:1605:12838",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:1103:0,37612022:A0020000:1134:0,37612022:A0020000:2213:0",
+          "lanes": [
+            {
+              "id": "local:1387:12496:1532:12661",
+              "family": "local:1387:12496:1532:12661",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:2888:0,37612022:A0020000:2770:0,37612022:A0020000:3397:0",
+          "lanes": [
+            {
+              "id": "local:1869:12480:1641:12700",
+              "family": "local:1869:12480:1641:12700",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J15726_0",
+      "x": 1572.5850830078125,
+      "z": 0.0,
+      "latitude": 37.4340415,
+      "longitude": 126.8132563,
+      "searchUrl": "https://map.naver.com/p/search/37.4340415%2C%20126.8132563",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J15738_10652",
+      "x": 1573.76904296875,
+      "z": 1065.1610107421875,
+      "latitude": 37.4436388,
+      "longitude": 126.8132458,
+      "searchUrl": "https://map.naver.com/p/search/37.4436388%2C%20126.8132458",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J1592_12160",
+      "x": 159.2469940185547,
+      "z": 1216.0379638671875,
+      "latitude": 37.4449718,
+      "longitude": 126.7972575,
+      "searchUrl": "https://map.naver.com/p/search/37.4449718%2C%20126.7972575",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:3952:0,37612022:A0020000:2417:0,37612022:A0020000:1750:0",
+          "lanes": [
+            {
+              "id": "local:1810:11942:1669:12115",
+              "family": "local:1810:11942:1669:12115",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612022:A0020000:3251:0,37612022:A0020000:2329:0,37612022:A0020000:3128:0",
+          "lanes": [
+            {
+              "id": "local:1357:12362:1514:12203",
+              "family": "local:1357:12362:1514:12203",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:1125:0,37612022:A0020000:1088:0,37612022:A0020000:1189:0",
+          "lanes": [
+            {
+              "id": "local:1155:11747:1538:12093",
+              "family": "local:1155:11747:1538:12093",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NE",
+          "sourceId": "37612022:A0020000:4099:0,37612022:A0020000:4022:0,37612022:A0020000:3994:0",
+          "lanes": [
+            {
+              "id": "local:1842:12396:1646:12228",
+              "family": "local:1842:12396:1646:12228",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J16009_10873",
+      "x": 1600.85595703125,
+      "z": 1087.262939453125,
+      "latitude": 37.4438384,
+      "longitude": 126.8135514,
+      "searchUrl": "https://map.naver.com/p/search/37.4438384%2C%20126.8135514",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J1651_10792",
+      "x": 165.12600708007812,
+      "z": 1079.197021484375,
+      "latitude": 37.443739,
+      "longitude": 126.7973273,
+      "searchUrl": "https://map.naver.com/p/search/37.4437390%2C%20126.7973273",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J175_8109",
+      "x": 17.50200080871582,
+      "z": 810.9039916992188,
+      "latitude": 37.4413188,
+      "longitude": 126.7956656,
+      "searchUrl": "https://map.naver.com/p/search/37.4413188%2C%20126.7956656",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J1760_13927",
+      "x": 175.95700073242188,
+      "z": 1392.675048828125,
+      "latitude": 37.4465637,
+      "longitude": 126.797442,
+      "searchUrl": "https://map.naver.com/p/search/37.4465637%2C%20126.7974420",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J1832_1891",
+      "x": 183.20700073242188,
+      "z": 189.05599975585938,
+      "latitude": 37.4357191,
+      "longitude": 126.7975532,
+      "searchUrl": "https://map.naver.com/p/search/37.4357191%2C%20126.7975532",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "S",
+          "sourceId": "37612022:A0020000:2766:0,37612022:A0020000:2818:0,37612022:A0020000:2774:0",
+          "lanes": [
+            {
+              "id": "local:1874:1473:1852:1797",
+              "family": "local:1874:1473:1852:1797",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612022:A0020000:1382:0,37612022:A0020000:2082:0,37612022:A0020000:2089:0",
+          "lanes": [
+            {
+              "id": "local:675:2171:1735:1890",
+              "family": "local:675:2171:1735:1890",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612022:A0020000:2428:0,37612022:A0020000:3641:0,37612022:A0020000:1948:0",
+          "lanes": [
+            {
+              "id": "local:1856:2244:1808:1989",
+              "family": "local:1856:2244:1808:1989",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J1847_13055",
+      "x": 184.66299438476562,
+      "z": 1305.4930419921875,
+      "latitude": 37.4457783,
+      "longitude": 126.7975425,
+      "searchUrl": "https://map.naver.com/p/search/37.4457783%2C%20126.7975425",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:1089:0,37612022:A0020000:1124:0,37612022:A0020000:2984:0",
+          "lanes": [
+            {
+              "id": "local:1649:12797:1802:12963",
+              "family": "local:1649:12797:1802:12963",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:1151:0,37612022:A0020000:3406:0,37612022:A0020000:1105:0",
+          "lanes": [
+            {
+              "id": "local:2161:12780:1937:13006",
+              "family": "local:2161:12780:1937:13006",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NE",
+          "sourceId": "37612022:A0020000:3699:0,37612022:A0020000:1968:0,37612022:A0020000:3925:0,37612022:A0020000:1083:0,37612022:A0020000:1221:0,37612022:A0020000:1518:0",
+          "lanes": [
+            {
+              "id": "local:2535:13859:1893:13144",
+              "family": "local:2535:13859:1893:13144",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J1855_1391",
+      "x": 185.48500061035156,
+      "z": 139.12399291992188,
+      "latitude": 37.4352692,
+      "longitude": 126.7975801,
+      "searchUrl": "https://map.naver.com/p/search/37.4352692%2C%20126.7975801",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "S",
+          "sourceId": "37612022:A0020000:1331:0,37612022:A0020000:2828:0,37612022:A0020000:2081:0",
+          "lanes": [
+            {
+              "id": "local:1919:1008:1879:1313",
+              "family": "local:1919:1008:1879:1313",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612022:A0020000:2301:0,37612022:A0020000:2230:0,37612022:A0020000:2163:0,37612022:A0020000:3413:0,37612022:A0020000:1688:0,37612022:A0020000:1406:0",
+          "lanes": [
+            {
+              "id": "local:536:1700:1772:1379",
+              "family": "local:536:1700:1772:1379",
+              "number": 1,
+              "graphTurns": "L"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612022:A0020000:2766:0,37612022:A0020000:2818:0,37612022:A0020000:2774:0",
+          "lanes": [
+            {
+              "id": "local:1802:1794:1824:1469",
+              "family": "local:1802:1794:1824:1469",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J1882_11791",
+      "x": 188.2480010986328,
+      "z": 1179.10595703125,
+      "latitude": 37.4446396,
+      "longitude": 126.7975861,
+      "searchUrl": "https://map.naver.com/p/search/37.4446396%2C%20126.7975861",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:1113:0,37612022:A0020000:1981:0,37612022:A0020000:1130:0",
+          "lanes": [
+            {
+              "id": "local:2097:11488:2004:11671",
+              "family": "local:2097:11488:2004:11671",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612022:A0020000:3952:0,37612022:A0020000:2417:0,37612022:A0020000:1750:0",
+          "lanes": [
+            {
+              "id": "local:1628:12078:1766:11910",
+              "family": "local:1628:12078:1766:11910",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:1096:0,37612022:A0020000:1169:0,37612022:A0020000:3014:0,37612022:A0020000:3177:0,37612022:A0020000:1101:0",
+          "lanes": [
+            {
+              "id": "local:33:10578:1758:11679:part:2",
+              "family": "local:33:10578:1758:11679",
+              "number": 1,
+              "graphTurns": "L"
+            },
+            {
+              "id": "local:65:10524:1791:11626:part:2",
+              "family": "local:65:10524:1791:11626",
+              "number": 2,
+              "graphTurns": "R"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J1897_12424",
+      "x": 189.73300170898438,
+      "z": 1242.416015625,
+      "latitude": 37.4452101,
+      "longitude": 126.7976014,
+      "searchUrl": "https://map.naver.com/p/search/37.4452101%2C%20126.7976014",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "NE",
+          "sourceId": "37612022:A0020000:1257:0,37612022:A0020000:1092:0,37612022:A0020000:1163:0",
+          "lanes": [
+            {
+              "id": "local:2127:12642:1933:12475",
+              "family": "local:2127:12642:1933:12475",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:1158:0,37612022:A0020000:1106:0,37612022:A0020000:2563:0",
+          "lanes": [
+            {
+              "id": "local:2148:12148:1948:12388",
+              "family": "local:2148:12148:1948:12388",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612022:A0020000:2888:0,37612022:A0020000:2770:0,37612022:A0020000:3397:0",
+          "lanes": [
+            {
+              "id": "local:1620:12678:1847:12460",
+              "family": "local:1620:12678:1847:12460",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:4099:0,37612022:A0020000:4022:0,37612022:A0020000:3994:0",
+          "lanes": [
+            {
+              "id": "local:1666:12206:1862:12374",
+              "family": "local:1666:12206:1862:12374",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J1906_2331",
+      "x": 190.59300231933594,
+      "z": 233.11199951171875,
+      "latitude": 37.4361162,
+      "longitude": 126.7976356,
+      "searchUrl": "https://map.naver.com/p/search/37.4361162%2C%20126.7976356",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "S",
+          "sourceId": "37612022:A0020000:2428:0,37612022:A0020000:3641:0,37612022:A0020000:1948:0",
+          "lanes": [
+            {
+              "id": "local:1873:1982:1920:2232",
+              "family": "local:1873:1982:1920:2232",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612022:A0020000:1443:0,37612022:A0020000:3574:0,37612022:A0020000:1404:0,37612022:A0020000:2785:0,37612022:A0020000:2177:0,37612022:A0020000:4521:0",
+          "lanes": [
+            {
+              "id": "local:1903:4938:1912:2429",
+              "family": "local:1903:4938:1912:2429",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612022:A0020000:2925:0,37612022:A0020000:4034:0,37612022:A0020000:2430:0",
+          "lanes": [
+            {
+              "id": "local:874:2638:1811:2358",
+              "family": "local:874:2638:1811:2358",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J1919_877",
+      "x": 191.90899658203125,
+      "z": 87.65699768066406,
+      "latitude": 37.4348056,
+      "longitude": 126.797654,
+      "searchUrl": "https://map.naver.com/p/search/37.4348056%2C%20126.7976540",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "N",
+          "sourceId": "37612022:A0020000:1331:0,37612022:A0020000:2828:0,37612022:A0020000:2081:0",
+          "lanes": [
+            {
+              "id": "local:1844:1310:1885:1004",
+              "family": "local:1844:1310:1885:1004",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612022:A0020000:1702:0,37612022:A0020000:4634:0,37612023:A0020000:28:0,37612023:A0020000:1148:0",
+          "lanes": [
+            {
+              "id": "local:4944:928:2049:928",
+              "family": "local:4944:928:2049:928",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:2671:0,37612022:A0020000:3380:0",
+          "lanes": [
+            {
+              "id": "local:2445:30:2004:778",
+              "family": "local:2445:30:2004:778",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J1927_5181",
+      "x": 192.718994140625,
+      "z": 518.0750122070312,
+      "latitude": 37.4386838,
+      "longitude": 126.7976527,
+      "searchUrl": "https://map.naver.com/p/search/37.4386838%2C%20126.7976527",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "S",
+          "sourceId": "37612022:A0020000:1443:0,37612022:A0020000:3574:0,37612022:A0020000:1404:0,37612022:A0020000:2785:0,37612022:A0020000:2177:0,37612022:A0020000:4521:0",
+          "lanes": [
+            {
+              "id": "local:1957:2414:1950:4938",
+              "family": "local:1957:2414:1950:4938",
+              "number": 1,
+              "graphTurns": "R"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J19634_14435",
+      "x": 1963.385986328125,
+      "z": 1443.4859619140625,
+      "latitude": 37.4470544,
+      "longitude": 126.8176404,
+      "searchUrl": "https://map.naver.com/p/search/37.4470544%2C%20126.8176404",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J19999_13844",
+      "x": 1999.89794921875,
+      "z": 1384.4410400390625,
+      "latitude": 37.446523,
+      "longitude": 126.8180543,
+      "searchUrl": "https://map.naver.com/p/search/37.4465230%2C%20126.8180543",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J2028_5458",
+      "x": 202.78900146484375,
+      "z": 545.7559814453125,
+      "latitude": 37.4389334,
+      "longitude": 126.7977658,
+      "searchUrl": "https://map.naver.com/p/search/37.4389334%2C%20126.7977658",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "NE",
+          "sourceId": "37612022:A0020000:1102:0,37612022:A0020000:2327:0,37612022:A0020000:2122:0,37612022:A0020000:2943:0,37612022:A0020000:4629:0,37612023:A0020000:34:0,37612023:A0020000:1659:0",
+          "lanes": [
+            {
+              "id": "local:4442:8620:2062:5530",
+              "family": "local:4442:8620:2062:5530",
+              "number": 1,
+              "graphTurns": "R"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612022:A0020000:1722:0,37612022:A0020000:1135:0,37612022:A0020000:2676:0",
+          "lanes": [
+            {
+              "id": "local:1148:5608:1946:5459",
+              "family": "local:1148:5608:1946:5459",
+              "number": 1,
+              "graphTurns": "L"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J2050_14356",
+      "x": 204.96600341796875,
+      "z": 1435.572998046875,
+      "latitude": 37.4469507,
+      "longitude": 126.7977688,
+      "searchUrl": "https://map.naver.com/p/search/37.4469507%2C%20126.7977688",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J20556_17500",
+      "x": 2055.599365234375,
+      "z": 1750.0,
+      "latitude": 37.4498177,
+      "longitude": 126.8186758,
+      "searchUrl": "https://map.naver.com/p/search/37.4498177%2C%20126.8186758",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J21000_16941",
+      "x": 2100.0,
+      "z": 1694.1376953125,
+      "latitude": 37.4493151,
+      "longitude": 126.8191788,
+      "searchUrl": "https://map.naver.com/p/search/37.4493151%2C%20126.8191788",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J2111_11389",
+      "x": 211.12600708007812,
+      "z": 1138.9019775390625,
+      "latitude": 37.4442778,
+      "longitude": 126.7978456,
+      "searchUrl": "https://map.naver.com/p/search/37.4442778%2C%20126.7978456",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "NE",
+          "sourceId": "37612022:A0020000:4129:0,37612022:A0020000:1132:0,37612022:A0020000:3374:0",
+          "lanes": [
+            {
+              "id": "local:2382:11530:2191:11442",
+              "family": "local:2382:11530:2191:11442",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612022:A0020000:1113:0,37612022:A0020000:1981:0,37612022:A0020000:1130:0",
+          "lanes": [
+            {
+              "id": "local:1947:11639:2039:11459",
+              "family": "local:1947:11639:2039:11459",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:2320:0,37612022:A0020000:1077:0,37612022:A0020000:2486:0",
+          "lanes": [
+            {
+              "id": "local:2261:11110:2182:11317",
+              "family": "local:2261:11110:2182:11317",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J2145_15970",
+      "x": 214.53900146484375,
+      "z": 1596.989990234375,
+      "latitude": 37.4484053,
+      "longitude": 126.7978731,
+      "searchUrl": "https://map.naver.com/p/search/37.4484053%2C%20126.7978731",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:182:0,37612022:A0020000:451:0,37612022:A0020000:4658:0,37612022:A0020000:320:0,37612022:A0020000:4663:0,37612022:A0020000:1128:0,37612022:A0020000:3495:0,37612022:A0020000:1091:0,37612022:A0020000:2576:0,37612022:A0020000:1888:0,37612022:A0020000:1198:0,37612022:A0020000:1764:0,37612022:A0020000:4668:0,37612022:A0020000:2929:0,37612022:A0020000:1079:0",
+          "lanes": [
+            {
+              "id": "local:271:12424:2001:15803",
+              "family": "local:271:12424:2001:15803",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NE",
+          "sourceId": "37612022:A0020000:632:0,37612022:A0020000:2:0,37612022:A0020000:4657:0,37612022:A0020000:4594:0",
+          "lanes": [
+            {
+              "id": "local:3825:17530:2277:16153",
+              "family": "local:3825:17530:2277:16153",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612022:A0020000:10:0,37612022:A0020000:34:0,37612022:A0020000:181:0",
+          "lanes": [
+            {
+              "id": "local:967:17150:1989:16125:part:2",
+              "family": "local:967:17150:1989:16125",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:929:17101:1939:16087:part:3",
+              "family": "local:929:17101:1939:16087",
+              "number": 2,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:891:17051:1890:16049:part:2",
+              "family": "local:891:17051:1890:16049",
+              "number": 3,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:221:0,37612022:A0020000:699:0,37612022:A0020000:3342:0,37612022:A0020000:3985:0,37612022:A0020000:4632:0,37612023:A0020000:31:0,37612023:A0020000:1668:0",
+          "lanes": [
+            {
+              "id": "local:4258:13644:2301:15817:part:2",
+              "family": "local:4258:13644:2301:15817",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:4302:13688:2349:15857:part:3",
+              "family": "local:4302:13688:2349:15857",
+              "number": 2,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:4347:13732:2398:15897:part:2",
+              "family": "local:4347:13732:2398:15897",
+              "number": 3,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J2202_12694",
+      "x": 220.18099975585938,
+      "z": 1269.364013671875,
+      "latitude": 37.4454535,
+      "longitude": 126.7979448,
+      "searchUrl": "https://map.naver.com/p/search/37.4454535%2C%20126.7979448",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "NW",
+          "sourceId": "37612022:A0020000:1151:0,37612022:A0020000:3406:0,37612022:A0020000:1105:0",
+          "lanes": [
+            {
+              "id": "local:1894:12964:2118:12737",
+              "family": "local:1894:12964:2118:12737",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:1257:0,37612022:A0020000:1092:0,37612022:A0020000:1163:0",
+          "lanes": [
+            {
+              "id": "local:1953:12452:2147:12620",
+              "family": "local:1953:12452:2147:12620",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:2330:0,37612022:A0020000:3344:0,37612022:A0020000:3898:0",
+          "lanes": [
+            {
+              "id": "local:2485:12385:2282:12642",
+              "family": "local:2485:12385:2282:12642",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NE",
+          "sourceId": "37612022:A0020000:2476:0,37612022:A0020000:2955:0,37612022:A0020000:1703:0,37612022:A0020000:1666:0,37612022:A0020000:1157:0,37612022:A0020000:1892:0",
+          "lanes": [
+            {
+              "id": "local:2989:13414:2260:12764",
+              "family": "local:2989:13414:2260:12764",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J2225_12001",
+      "x": 222.5030059814453,
+      "z": 1200.1190185546875,
+      "latitude": 37.4448296,
+      "longitude": 126.7979727,
+      "searchUrl": "https://map.naver.com/p/search/37.4448296%2C%20126.7979727",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:3830:0,37612022:A0020000:2501:0,37612022:A0020000:1115:0",
+          "lanes": [
+            {
+              "id": "local:2453:11651:2331:11872",
+              "family": "local:2453:11651:2331:11872",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612022:A0020000:1158:0,37612022:A0020000:1106:0,37612022:A0020000:2563:0",
+          "lanes": [
+            {
+              "id": "local:1925:12369:2123:12131",
+              "family": "local:1925:12369:2123:12131",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NE",
+          "sourceId": "37612022:A0020000:2891:0,37612022:A0020000:3906:0,37612022:A0020000:3455:0",
+          "lanes": [
+            {
+              "id": "local:2414:12161:2348:12117",
+              "family": "local:2414:12161:2348:12117",
+              "number": 1,
+              "graphTurns": "L"
+            },
+            {
+              "id": "local:2372:12214:2312:12174",
+              "family": "local:2372:12214:2312:12174",
+              "number": 2,
+              "graphTurns": "R"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J2262_11010",
+      "x": 226.17300415039062,
+      "z": 1100.97998046875,
+      "latitude": 37.4439364,
+      "longitude": 126.7980166,
+      "searchUrl": "https://map.naver.com/p/search/37.4439364%2C%20126.7980166",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "W",
+          "sourceId": "37612022:A0020000:1123:0,37612022:A0020000:2652:0,37612022:A0020000:1715:0",
+          "lanes": [
+            {
+              "id": "local:1680:10771:2181:10953",
+              "family": "local:1680:10771:2181:10953",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612022:A0020000:2077:0,37612022:A0020000:1140:0,37612022:A0020000:1300:0",
+          "lanes": [
+            {
+              "id": "local:2545:11137:2343:11066",
+              "family": "local:2545:11137:2343:11066",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612022:A0020000:2320:0,37612022:A0020000:1077:0,37612022:A0020000:2486:0",
+          "lanes": [
+            {
+              "id": "local:2123:11289:2200:11089",
+              "family": "local:2123:11289:2200:11089",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J229_12423",
+      "x": 22.895999908447266,
+      "z": 1242.322021484375,
+      "latitude": 37.445206,
+      "longitude": 126.795716,
+      "searchUrl": "https://map.naver.com/p/search/37.4452060%2C%20126.7957160",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J2326_14165",
+      "x": 232.64700317382812,
+      "z": 1416.5260009765625,
+      "latitude": 37.4467797,
+      "longitude": 126.7980821,
+      "searchUrl": "https://map.naver.com/p/search/37.4467797%2C%20126.7980821",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J2338_7936",
+      "x": 233.7830047607422,
+      "z": 793.6439819335938,
+      "latitude": 37.4411675,
+      "longitude": 126.79811,
+      "searchUrl": "https://map.naver.com/p/search/37.4411675%2C%20126.7981100",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "E",
+          "sourceId": "37612022:A0020000:1133:0,37612022:A0020000:4260:0",
+          "lanes": [
+            {
+              "id": "local:2732:7826:2493:7911",
+              "family": "local:2732:7826:2493:7911",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:1108:0,37612022:A0020000:1482:0,37612022:A0020000:4665:0,37612022:A0020000:3078:0,37612022:A0020000:4671:0,37612022:A0020000:3211:0,37612022:A0020000:2968:0",
+          "lanes": [
+            {
+              "id": "local:1093:5743:2303:7782:part:2",
+              "family": "local:1093:5743:2303:7782",
+              "number": 1,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:1149:5713:2360:7756:part:2",
+              "family": "local:1149:5713:2360:7756",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612022:A0020000:2931:0,37612022:A0020000:1467:0,37612022:A0020000:3348:0",
+          "lanes": [
+            {
+              "id": "local:2590:8760:2361:8090:part:2",
+              "family": "local:2590:8760:2361:8090",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:2535:8791:2300:8107:part:2",
+              "family": "local:2535:8791:2300:8107",
+              "number": 2,
+              "graphTurns": "S"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J2414_0",
+      "x": 241.41879272460938,
+      "z": 0.0,
+      "latitude": 37.4340168,
+      "longitude": 126.7982155,
+      "searchUrl": "https://map.naver.com/p/search/37.4340168%2C%20126.7982155",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J2468_11558",
+      "x": 246.81300354003906,
+      "z": 1155.7750244140625,
+      "latitude": 37.4444306,
+      "longitude": 126.7982485,
+      "searchUrl": "https://map.naver.com/p/search/37.4444306%2C%20126.7982485",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:1084:0,37612022:A0020000:1107:0,37612022:A0020000:1129:0",
+          "lanes": [
+            {
+              "id": "local:2640:11234:2536:11490",
+              "family": "local:2640:11234:2536:11490",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NE",
+          "sourceId": "37612022:A0020000:1141:0,37612022:A0020000:3693:0,37612022:A0020000:1144:0",
+          "lanes": [
+            {
+              "id": "local:2743:11710:2540:11614",
+              "family": "local:2743:11710:2540:11614",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612022:A0020000:3830:0,37612022:A0020000:2501:0,37612022:A0020000:1115:0",
+          "lanes": [
+            {
+              "id": "local:2279:11842:2400:11623",
+              "family": "local:2279:11842:2400:11623",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:4129:0,37612022:A0020000:1132:0,37612022:A0020000:3374:0",
+          "lanes": [
+            {
+              "id": "local:2204:11415:2394:11503",
+              "family": "local:2204:11415:2394:11503",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J2564_12237",
+      "x": 256.3919982910156,
+      "z": 1223.6910400390625,
+      "latitude": 37.4450427,
+      "longitude": 126.7983551,
+      "searchUrl": "https://map.naver.com/p/search/37.4450427%2C%20126.7983551",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:1097:0,37612022:A0020000:3995:0,37612022:A0020000:3285:0",
+          "lanes": [
+            {
+              "id": "local:2815:11831:2667:12104",
+              "family": "local:2815:11831:2667:12104",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612022:A0020000:2330:0,37612022:A0020000:3344:0,37612022:A0020000:3898:0",
+          "lanes": [
+            {
+              "id": "local:2235:12605:2438:12348",
+              "family": "local:2235:12605:2438:12348",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:2891:0,37612022:A0020000:3906:0,37612022:A0020000:3455:0",
+          "lanes": [
+            {
+              "id": "local:2383:12059:2455:12108",
+              "family": "local:2383:12059:2455:12108",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:2419:12002:2497:12055",
+              "family": "local:2419:12002:2497:12055",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NE",
+          "sourceId": "37612022:A0020000:2446:0,37612022:A0020000:3443:0,37612022:A0020000:2564:0,37612022:A0020000:2543:0,37612022:A0020000:2825:0,37612022:A0020000:2538:0",
+          "lanes": [
+            {
+              "id": "local:3361:12816:2684:12355:part:2",
+              "family": "local:3361:12816:2684:12355",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:3323:12871:2647:12412:part:2",
+              "family": "local:3323:12871:2647:12412",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J2608_13908",
+      "x": 260.77899169921875,
+      "z": 1390.844970703125,
+      "latitude": 37.4465488,
+      "longitude": 126.7984006,
+      "searchUrl": "https://map.naver.com/p/search/37.4465488%2C%20126.7984006",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:3699:0,37612022:A0020000:1968:0,37612022:A0020000:3925:0,37612022:A0020000:1083:0,37612022:A0020000:1221:0,37612022:A0020000:1518:0",
+          "lanes": [
+            {
+              "id": "local:1927:13115:2569:13829",
+              "family": "local:1927:13115:2569:13829",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612022:A0020000:1200:0,37612022:A0020000:2391:0,37612022:A0020000:1671:0",
+          "lanes": [
+            {
+              "id": "local:2324:14131:2532:13951",
+              "family": "local:2324:14131:2532:13951",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:3892:0,37612022:A0020000:2517:0,37612022:A0020000:3290:0",
+          "lanes": [
+            {
+              "id": "local:3027:13540:2689:13871",
+              "family": "local:3027:13540:2689:13871",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J2627_8762",
+      "x": 262.6839904785156,
+      "z": 876.2340087890625,
+      "latitude": 37.4419122,
+      "longitude": 126.7984346,
+      "searchUrl": "https://map.naver.com/p/search/37.4419122%2C%20126.7984346",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J2640_11139",
+      "x": 263.98199462890625,
+      "z": 1113.93798828125,
+      "latitude": 37.4440539,
+      "longitude": 126.7984435,
+      "searchUrl": "https://map.naver.com/p/search/37.4440539%2C%20126.7984435",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "N",
+          "sourceId": "37612022:A0020000:1084:0,37612022:A0020000:1107:0,37612022:A0020000:1129:0",
+          "lanes": [
+            {
+              "id": "local:2481:11466:2583:11215",
+              "family": "local:2481:11466:2583:11215",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612022:A0020000:1095:0,37612022:A0020000:1536:0,37612022:A0020000:1790:0",
+          "lanes": [
+            {
+              "id": "local:2930:11272:2715:11197",
+              "family": "local:2930:11272:2715:11197",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612022:A0020000:2077:0,37612022:A0020000:1140:0,37612022:A0020000:1300:0",
+          "lanes": [
+            {
+              "id": "local:2362:11009:2565:11081",
+              "family": "local:2362:11009:2565:11081",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J2741_7793",
+      "x": 274.1099853515625,
+      "z": 779.27001953125,
+      "latitude": 37.4410387,
+      "longitude": 126.7985661,
+      "searchUrl": "https://map.naver.com/p/search/37.4410387%2C%20126.7985661",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J2830_11736",
+      "x": 283.01800537109375,
+      "z": 1173.5980224609375,
+      "latitude": 37.4445918,
+      "longitude": 126.7986572,
+      "searchUrl": "https://map.naver.com/p/search/37.4445918%2C%20126.7986572",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "W",
+          "sourceId": "37612022:A0020000:1141:0,37612022:A0020000:3693:0,37612022:A0020000:1144:0",
+          "lanes": [
+            {
+              "id": "local:2554:11587:2755:11683",
+              "family": "local:2554:11587:2755:11683",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NE",
+          "sourceId": "37612022:A0020000:1085:0,37612022:A0020000:2983:0,37612022:A0020000:1114:0",
+          "lanes": [
+            {
+              "id": "local:3369:12015:2904:11791",
+              "family": "local:3369:12015:2904:11791",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612022:A0020000:1097:0,37612022:A0020000:3995:0,37612022:A0020000:3285:0",
+          "lanes": [
+            {
+              "id": "local:2614:12077:2763:11802",
+              "family": "local:2614:12077:2763:11802",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:1119:0,37612022:A0020000:1683:0,37612022:A0020000:1100:0",
+          "lanes": [
+            {
+              "id": "local:3019:11364:2893:11665",
+              "family": "local:3019:11364:2893:11665",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J3025_11270",
+      "x": 302.5050048828125,
+      "z": 1126.9830322265625,
+      "latitude": 37.4441722,
+      "longitude": 126.7988786,
+      "searchUrl": "https://map.naver.com/p/search/37.4441722%2C%20126.7988786",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "N",
+          "sourceId": "37612022:A0020000:1119:0,37612022:A0020000:1683:0,37612022:A0020000:1100:0",
+          "lanes": [
+            {
+              "id": "local:2838:11641:2963:11342",
+              "family": "local:2838:11641:2963:11342",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612022:A0020000:1095:0,37612022:A0020000:1536:0,37612022:A0020000:1790:0",
+          "lanes": [
+            {
+              "id": "local:2735:11140:2948:11214",
+              "family": "local:2735:11140:2948:11214",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612022:A0020000:1137:0,37612022:A0020000:1146:0,37612022:A0020000:3627:0,37612022:A0020000:3670:0,37612022:A0020000:4626:0,37612023:A0020000:38:0,37612023:A0020000:2024:0",
+          "lanes": [
+            {
+              "id": "local:4029:11636:3101:11324",
+              "family": "local:4029:11636:3101:11324",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J3063_13458",
+      "x": 306.3280029296875,
+      "z": 1345.8409423828125,
+      "latitude": 37.4461442,
+      "longitude": 126.7989165,
+      "searchUrl": "https://map.naver.com/p/search/37.4461442%2C%20126.7989165",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:2476:0,37612022:A0020000:2955:0,37612022:A0020000:1703:0,37612022:A0020000:1666:0,37612022:A0020000:1157:0,37612022:A0020000:1892:0",
+          "lanes": [
+            {
+              "id": "local:2280:12741:3009:13392",
+              "family": "local:2280:12741:3009:13392",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612022:A0020000:3892:0,37612022:A0020000:2517:0,37612022:A0020000:3290:0",
+          "lanes": [
+            {
+              "id": "local:2652:13831:2986:13504",
+              "family": "local:2652:13831:2986:13504",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:1576:0,37612022:A0020000:1136:0,37612022:A0020000:3398:0",
+          "lanes": [
+            {
+              "id": "local:3441:13031:3139:13412",
+              "family": "local:3441:13031:3139:13412",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J3395_12007",
+      "x": 339.5260009765625,
+      "z": 1200.696044921875,
+      "latitude": 37.4448371,
+      "longitude": 126.7992951,
+      "searchUrl": "https://map.naver.com/p/search/37.4448371%2C%20126.7992951",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J3516_12881",
+      "x": 351.5840148925781,
+      "z": 1288.1300048828125,
+      "latitude": 37.4456251,
+      "longitude": 126.7994293,
+      "searchUrl": "https://map.naver.com/p/search/37.4456251%2C%20126.7994293",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "NW",
+          "sourceId": "37612022:A0020000:1576:0,37612022:A0020000:1136:0,37612022:A0020000:3398:0",
+          "lanes": [
+            {
+              "id": "local:3098:13376:3396:12998",
+              "family": "local:3098:13376:3396:12998",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NE",
+          "sourceId": "37612022:A0020000:3613:0,37612022:A0020000:4627:0,37612023:A0020000:36:0,37612023:A0020000:441:0",
+          "lanes": [
+            {
+              "id": "local:4187:13357:3637:12998",
+              "family": "local:4187:13357:3637:12998",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:4154:13408:3604:13048",
+              "family": "local:4154:13408:3604:13048",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:3933:0,37612022:A0020000:2354:0,37612022:A0020000:1143:0,37612022:A0020000:3986:0,37612022:A0020000:4628:0,37612023:A0020000:35:0,37612023:A0020000:2026:0",
+          "lanes": [
+            {
+              "id": "local:4112:11731:3620:12751",
+              "family": "local:4112:11731:3620:12751",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:2446:0,37612022:A0020000:3443:0,37612022:A0020000:2564:0,37612022:A0020000:2543:0,37612022:A0020000:2825:0,37612022:A0020000:2538:0",
+          "lanes": [
+            {
+              "id": "local:2721:12299:3399:12760:part:2",
+              "family": "local:2721:12299:3399:12760",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:2757:12242:3437:12704:part:2",
+              "family": "local:2757:12242:3437:12704",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J3754_11003",
+      "x": 375.3800048828125,
+      "z": 1100.3199462890625,
+      "latitude": 37.4439334,
+      "longitude": 126.7997027,
+      "searchUrl": "https://map.naver.com/p/search/37.4439334%2C%20126.7997027",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J3879_17500",
+      "x": 387.8833923339844,
+      "z": 1750.0,
+      "latitude": 37.4497873,
+      "longitude": 126.7998284,
+      "searchUrl": "https://map.naver.com/p/search/37.4497873%2C%20126.7998284",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J3888_10040",
+      "x": 388.7879943847656,
+      "z": 1004.0,
+      "latitude": 37.4430658,
+      "longitude": 126.7998565,
+      "searchUrl": "https://map.naver.com/p/search/37.4430658%2C%20126.7998565",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J4122_11640",
+      "x": 412.19000244140625,
+      "z": 1164.02099609375,
+      "latitude": 37.444508,
+      "longitude": 126.8001172,
+      "searchUrl": "https://map.naver.com/p/search/37.4445080%2C%20126.8001172",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "W",
+          "sourceId": "37612022:A0020000:1137:0,37612022:A0020000:1146:0,37612022:A0020000:3627:0,37612022:A0020000:3670:0,37612022:A0020000:4626:0,37612023:A0020000:38:0,37612023:A0020000:2024:0",
+          "lanes": [
+            {
+              "id": "local:3118:11277:4044:11588",
+              "family": "local:3118:11277:4044:11588",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612022:A0020000:3933:0,37612022:A0020000:2354:0,37612022:A0020000:1143:0,37612022:A0020000:3986:0,37612022:A0020000:4628:0,37612023:A0020000:35:0,37612023:A0020000:2026:0",
+          "lanes": [
+            {
+              "id": "local:3577:12726:4065:11716",
+              "family": "local:3577:12726:4065:11716",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:492:0,37612023:A0020000:1723:0,37612023:A0020000:1687:0",
+          "lanes": [
+            {
+              "id": "local:4298:11162:4191:11571",
+              "family": "local:4298:11162:4191:11571",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J4289_11068",
+      "x": 428.8900146484375,
+      "z": 1106.77197265625,
+      "latitude": 37.4439925,
+      "longitude": 126.8003072,
+      "searchUrl": "https://map.naver.com/p/search/37.4439925%2C%20126.8003072",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "W",
+          "sourceId": "37612022:A0020000:3346:0,37612022:A0020000:4630:0,37612023:A0020000:33:0,37612023:A0020000:1751:0",
+          "lanes": [
+            {
+              "id": "local:3777:10978:4203:11029",
+              "family": "local:3777:10978:4203:11029",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:492:0,37612023:A0020000:1723:0,37612023:A0020000:1687:0",
+          "lanes": [
+            {
+              "id": "local:4135:11550:4240:11149",
+              "family": "local:4135:11550:4240:11149",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:1235:0,37612023:A0020000:513:0,37612023:A0020000:1446:0",
+          "lanes": [
+            {
+              "id": "local:4433:10137:4333:10985",
+              "family": "local:4433:10137:4333:10985",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:1403:0,37612023:A0020000:1546:0,37612023:A0020000:631:0",
+          "lanes": [
+            {
+              "id": "local:5350:11260:4374:11108",
+              "family": "local:5350:11260:4374:11108",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J4396_13458",
+      "x": 439.593994140625,
+      "z": 1345.81103515625,
+      "latitude": 37.4461465,
+      "longitude": 126.8004225,
+      "searchUrl": "https://map.naver.com/p/search/37.4461465%2C%20126.8004225",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:3613:0,37612022:A0020000:4627:0,37612023:A0020000:36:0,37612023:A0020000:441:0",
+          "lanes": [
+            {
+              "id": "local:3670:12947:4220:13307",
+              "family": "local:3670:12947:4220:13307",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:3703:12897:4253:13257",
+              "family": "local:3703:12897:4253:13257",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "partial",
+          "observations": [
+            "Daeun-ro SW approach: three main approach lanes visible beside double-yellow centreline, plus separate right-turn channel, island and raised yellow crossing. Main arrows partly covered by stopped vehicles."
+          ],
+          "checkedAt": "2026-10-22",
+          "captureMonth": "2026-05",
+          "panoramas": [
+            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=KZrxORPt-Jn3zwtOy4_fJg,0,-20,80,Float",
+            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=Gt8uVRqgKeZM7OpmxIiatw,40,-20,80,Float",
+            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=k6Hq9-HHe8ugksyc3e7Icw,40,-20,80,Float",
+            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=I8f5uWuSVYaR8BJ1KOvTWg,40,-20,80,Float"
+          ],
+          "remaining": [
+            "Graph has two main lanes; extra median-side approach lane role and taper not yet confirmed through occluding vehicles.",
+            "U-turn, exact dimensions and signal timing not established."
+          ],
+          "applied": true
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612022:A0020000:221:0,37612022:A0020000:699:0,37612022:A0020000:3342:0,37612022:A0020000:3985:0,37612022:A0020000:4632:0,37612023:A0020000:31:0,37612023:A0020000:1668:0",
+          "lanes": [
+            {
+              "id": "local:2253:15777:4213:13601:part:2",
+              "family": "local:2253:15777:4213:13601",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:2205:15737:4168:13557:part:3",
+              "family": "local:2205:15737:4168:13557",
+              "number": 2,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:2157:15697:4123:13513:part:2",
+              "family": "local:2157:15697:4123:13513",
+              "number": 3,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "partial",
+          "observations": [
+            "Three straight arrows on red main carriageway; additional median-side left/U-turn space. Separate right-turn channel behind island, with pedestrian crossing. 50 sign visible."
+          ],
+          "checkedAt": "2026-10-22",
+          "captureMonth": "2026-05",
+          "panoramas": [
+            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=Om0JYhDp_TKToChPfJovqQ,0,-20,80,Float",
+            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=pbIhvNw5ofVGzsLRZ9jVWQ,0,-20,80,Float"
+          ],
+          "remaining": [
+            "U-turn route, pocket start location, island/crosswalk survey and signal timing unconfirmed."
+          ],
+          "applied": true
+        },
+        {
+          "direction": "NE",
+          "sourceId": "37612023:A0020000:1526:0,37612023:A0020000:1271:0,37612023:A0020000:1590:0",
+          "lanes": [
+            {
+              "id": "local:5489:14147:4576:13604:part:2",
+              "family": "local:5489:14147:4576:13604",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:5458:14200:4544:13656:part:3",
+              "family": "local:5458:14200:4544:13656",
+              "number": 2,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:5427:14252:4512:13708:part:2",
+              "family": "local:5427:14252:4512:13708",
+              "number": 3,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "partial",
+          "observations": [
+            "Main carriageway three lanes: middle and outer arrows straight. Separate right-turn channel with island and yellow raised pedestrian crossing. U-turn road marking/sign visible on inner lane."
+          ],
+          "checkedAt": "2026-10-22",
+          "captureMonth": "2026-05",
+          "panoramas": [
+            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=Wm3F_NxTBIk8SHgGY83TeA,0,-20,80,Float",
+            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=C05LjSoKPvjCfwsrheEcxQ,0,-20,80,Float",
+            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=rxRynSnOv8mm0LjFYjVMwA,0,-20,80,Float"
+          ],
+          "remaining": [
+            "Inner left arrow partly vehicle-occluded; U-turn route, exact dimensions and signal timing unconfirmed."
+          ],
+          "applied": true
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612023:A0020000:1571:0,37612023:A0020000:790:0,37612023:A0020000:607:0",
+          "lanes": [
+            {
+              "id": "local:6037:12153:4590:13330:part:2",
+              "family": "local:6037:12153:4590:13330",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:6077:12206:4634:13380:part:3",
+              "family": "local:6077:12206:4634:13380",
+              "number": 2,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:6118:12259:4679:13430:part:2",
+              "family": "local:6118:12259:4679:13430",
+              "number": 3,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "partial",
+          "observations": [
+            "Three through lanes plus median-side left/U-turn pocket; left/U-turn sign and crossing visible. Existing left pocket implemented with provisional dimensions."
+          ],
+          "checkedAt": "2026-10-22",
+          "captureMonth": "2026-05",
+          "panoramas": [
+            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=lygcigyMAFesMYe7CZrtIA,0,-20,80,Float",
+            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=NeRkbKpCLPyjXB6lsBHKhw,0,-20,80,Float"
+          ],
+          "remaining": [
+            "U-turn route, separate right channel, dimensions and signal timing unconfirmed."
+          ],
+          "applied": true
+        }
+      ]
+    },
+    {
+      "id": "J4410_10055",
+      "x": 440.9670104980469,
+      "z": 1005.4910278320312,
+      "latitude": 37.4430802,
+      "longitude": 126.8004461,
+      "searchUrl": "https://map.naver.com/p/search/37.4430802%2C%20126.8004461",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "W",
+          "sourceId": "37612022:A0020000:860:0,37612022:A0020000:4636:0,37612023:A0020000:26:0,37612023:A0020000:1336:0",
+          "lanes": [
+            {
+              "id": "local:3908:10026:4330:10037",
+              "family": "local:3908:10026:4330:10037",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:473:0,37612023:A0020000:1086:0,37612023:A0020000:519:0,37612023:A0020000:1686:0",
+          "lanes": [
+            {
+              "id": "local:4525:8775:4432:9975",
+              "family": "local:4525:8775:4432:9975",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:1235:0,37612023:A0020000:513:0,37612023:A0020000:1446:0",
+          "lanes": [
+            {
+              "id": "local:4284:10975:4383:10133",
+              "family": "local:4284:10975:4383:10133",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J4572_8649",
+      "x": 457.2359924316406,
+      "z": 864.864013671875,
+      "latitude": 37.4418135,
+      "longitude": 126.8006334,
+      "searchUrl": "https://map.naver.com/p/search/37.4418135%2C%20126.8006334",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:1102:0,37612022:A0020000:2327:0,37612022:A0020000:2122:0,37612022:A0020000:2943:0,37612022:A0020000:4629:0,37612023:A0020000:34:0,37612023:A0020000:1659:0",
+          "lanes": [
+            {
+              "id": "local:2103:5502:4463:8575",
+              "family": "local:2103:5502:4463:8575",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612023:A0020000:473:0,37612023:A0020000:1086:0,37612023:A0020000:519:0,37612023:A0020000:1686:0",
+          "lanes": [
+            {
+              "id": "local:4387:9975:4494:8743",
+              "family": "local:4387:9975:4494:8743",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:681:0,37612023:A0020000:1362:0,37612023:A0020000:943:0,37612023:A0020000:1178:0,37612023:A0020000:1232:0,37612023:A0020000:667:0,37612023:A0020000:527:0,37612023:A0020000:734:0,37612023:A0020000:1395:0",
+          "lanes": [
+            {
+              "id": "local:7568:9586:4680:8738",
+              "family": "local:7568:9586:4680:8738",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J466_1732",
+      "x": 46.64099884033203,
+      "z": 173.15699768066406,
+      "latitude": 37.4355732,
+      "longitude": 126.7960105,
+      "searchUrl": "https://map.naver.com/p/search/37.4355732%2C%20126.7960105",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "E",
+          "sourceId": "37612022:A0020000:2301:0,37612022:A0020000:2230:0,37612022:A0020000:2163:0,37612022:A0020000:3413:0,37612022:A0020000:1688:0,37612022:A0020000:1406:0",
+          "lanes": [
+            {
+              "id": "local:1780:1408:543:1729",
+              "family": "local:1780:1408:543:1729",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612022:A0020000:3475:0,37612022:A0020000:3224:0,37612022:A0020000:4139:0,37612022:A0020000:3474:0,37612022:A0020000:1540:0,37612022:A0020000:3763:0,37612022:A0020000:4026:0,37612022:A0020000:1502:0",
+          "lanes": [
+            {
+              "id": "local:27:92:467:1653",
+              "family": "local:27:92:467:1653",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612022:A0020000:4235:0,37612022:A0020000:3385:0,37612022:A0020000:1453:0",
+          "lanes": [
+            {
+              "id": "local:565:2142:466:1810",
+              "family": "local:565:2142:466:1810",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J495_4339",
+      "x": 49.48099899291992,
+      "z": 433.8900146484375,
+      "latitude": 37.4379225,
+      "longitude": 126.7960362,
+      "searchUrl": "https://map.naver.com/p/search/37.4379225%2C%20126.7960362",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "W",
+          "sourceId": "37612022:A0020000:1307:0,37612022:A0020000:3683:0",
+          "lanes": [
+            {
+              "id": "local:16:4501:398:4360",
+              "family": "local:16:4501:398:4360",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612022:A0020000:2326:0,37612022:A0020000:2190:0,37612022:A0020000:4502:0",
+          "lanes": [
+            {
+              "id": "local:770:5101:499:4442",
+              "family": "local:770:5101:499:4442",
+              "number": 1,
+              "graphTurns": "SR"
+            },
+            {
+              "id": "portal:A2218G611398:0:out",
+              "family": "local:770:5101:499:4442",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:2362:0,37612022:A0020000:3706:0,37612022:A0020000:2323:0,37612022:A0020000:3362:0,37612022:A0020000:1082:0,37612022:A0020000:1148:0,37612022:A0020000:1871:0,37612022:A0020000:2548:0",
+          "lanes": [
+            {
+              "id": "local:34:3346:482:4238",
+              "family": "local:34:3346:482:4238",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J4989_17500",
+      "x": 498.8575134277344,
+      "z": 1750.0,
+      "latitude": 37.4497894,
+      "longitude": 126.8010826,
+      "searchUrl": "https://map.naver.com/p/search/37.4497894%2C%20126.8010826",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J5057_4449",
+      "x": 505.7019958496094,
+      "z": 444.8739929199219,
+      "latitude": 37.4380302,
+      "longitude": 126.801191,
+      "searchUrl": "https://map.naver.com/p/search/37.4380302%2C%20126.8011910",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "W",
+          "sourceId": "37612022:A0020000:4413:0,37612022:A0020000:4651:0,37612023:A0020000:11:0,37612023:A0020000:269:0",
+          "lanes": [
+            {
+              "id": "local:2123:4953:4780:4331",
+              "family": "local:2123:4953:4780:4331",
+              "number": 3,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:209:0,37612023:A0020000:286:0,37612023:A0020000:363:0",
+          "lanes": [
+            {
+              "id": "local:6283:4335:5335:4564",
+              "family": "local:6283:4335:5335:4564",
+              "number": 3,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:260:0,37612023:A0020000:1714:0,37612023:A0020000:821:0",
+          "lanes": [
+            {
+              "id": "local:5121:2697:5122:4210",
+              "family": "local:5121:2697:5122:4210",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:339:0,37612023:A0020000:680:0,37612023:A0020000:1065:0",
+          "lanes": [
+            {
+              "id": "local:7868:6438:4994:4693",
+              "family": "local:7868:6438:4994:4693",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J5070_0",
+      "x": 506.970703125,
+      "z": 0.0,
+      "latitude": 37.4340219,
+      "longitude": 126.801216,
+      "searchUrl": "https://map.naver.com/p/search/37.4340219%2C%20126.8012160",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J5074_877",
+      "x": 507.4070129394531,
+      "z": 87.66999816894531,
+      "latitude": 37.4348118,
+      "longitude": 126.8012188,
+      "searchUrl": "https://map.naver.com/p/search/37.4348118%2C%20126.8012188",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "W",
+          "sourceId": "37612022:A0020000:1702:0,37612022:A0020000:4634:0,37612023:A0020000:28:0,37612023:A0020000:1148:0",
+          "lanes": [
+            {
+              "id": "local:2050:827:4943:827",
+              "family": "local:2050:827:4943:827",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:488:0,37612023:A0020000:1278:0,37612023:A0020000:1511:0",
+          "lanes": [
+            {
+              "id": "local:7660:918:5205:927",
+              "family": "local:7660:918:5205:927",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:564:0,37612023:A0020000:1486:0",
+          "lanes": [
+            {
+              "id": "local:5121:18:5124:746",
+              "family": "local:5121:18:5124:746",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:624:0,37612023:A0020000:1561:0,37612023:A0020000:1453:0",
+          "lanes": [
+            {
+              "id": "local:5033:2461:5031:1007",
+              "family": "local:5033:2461:5031:1007",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J5076_2580",
+      "x": 507.6189880371094,
+      "z": 257.9530029296875,
+      "latitude": 37.4363461,
+      "longitude": 126.8012172,
+      "searchUrl": "https://map.naver.com/p/search/37.4363461%2C%20126.8012172",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:260:0,37612023:A0020000:1714:0,37612023:A0020000:821:0",
+          "lanes": [
+            {
+              "id": "local:5034:4203:5033:2698",
+              "family": "local:5034:4203:5033:2698",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:413:0,37612023:A0020000:623:0,37612023:A0020000:586:0",
+          "lanes": [
+            {
+              "id": "local:5632:2599:5194:2601",
+              "family": "local:5632:2599:5194:2601",
+              "number": 1,
+              "graphTurns": "L"
+            },
+            {
+              "id": "local:5633:2643:5195:2645",
+              "family": "local:5633:2643:5195:2645",
+              "number": 2,
+              "graphTurns": "R"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:624:0,37612023:A0020000:1561:0,37612023:A0020000:1453:0",
+          "lanes": [
+            {
+              "id": "local:5119:1007:5121:2462",
+              "family": "local:5119:1007:5121:2462",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J5461_11263",
+      "x": 546.0650024414062,
+      "z": 1126.281982421875,
+      "latitude": 37.4441705,
+      "longitude": 126.8016309,
+      "searchUrl": "https://map.naver.com/p/search/37.4441705%2C%20126.8016309",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:1403:0,37612023:A0020000:1546:0,37612023:A0020000:631:0",
+          "lanes": [
+            {
+              "id": "local:4382:11054:5360:11206",
+              "family": "local:4382:11054:5360:11206",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612023:A0020000:560:0,37612023:A0020000:1734:0",
+          "lanes": [
+            {
+              "id": "local:6118:10453:5518:11176",
+              "family": "local:6118:10453:5518:11176",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NE",
+          "sourceId": "37612023:A0020000:1308:0,37612023:A0020000:1496:0,37612023:A0020000:1639:0",
+          "lanes": [
+            {
+              "id": "local:6005:11856:5523:11354",
+              "family": "local:6005:11856:5523:11354",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J5692_14220",
+      "x": 569.197021484375,
+      "z": 1421.970947265625,
+      "latitude": 37.4468352,
+      "longitude": 126.8018853,
+      "searchUrl": "https://map.naver.com/p/search/37.4468352%2C%20126.8018853",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "SE",
+          "sourceId": "37612023:A0020000:540:0,37612023:A0020000:649:0,37612023:A0020000:1012:0",
+          "lanes": [
+            {
+              "id": "local:6326:13507:5852:14076",
+              "family": "local:6326:13507:5852:14076",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SW",
+          "sourceId": "37612023:A0020000:1526:0,37612023:A0020000:1271:0,37612023:A0020000:1590:0",
+          "lanes": [
+            {
+              "id": "local:4608:13553:5519:14095:part:2",
+              "family": "local:4608:13553:5519:14095",
+              "number": 1,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:4640:13501:5550:14042:part:3",
+              "family": "local:4640:13501:5550:14042",
+              "number": 2,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:4672:13449:5581:13990:part:2",
+              "family": "local:4672:13449:5581:13990",
+              "number": 3,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:1335:0,37612023:A0020000:1158:0,37612023:A0020000:1323:0",
+          "lanes": [
+            {
+              "id": "local:7043:14739:5877:14332:part:2",
+              "family": "local:7043:14739:5877:14332",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:7023:14796:5857:14389:part:3",
+              "family": "local:7023:14796:5857:14389",
+              "number": 2,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:7003:14854:5837:14446:part:2",
+              "family": "local:7003:14854:5837:14446",
+              "number": 3,
+              "graphTurns": "S"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J5750_2576",
+      "x": 575.0180053710938,
+      "z": 257.61199951171875,
+      "latitude": 37.4363443,
+      "longitude": 126.8019787,
+      "searchUrl": "https://map.naver.com/p/search/37.4363443%2C%20126.8019787",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:413:0,37612023:A0020000:623:0,37612023:A0020000:586:0",
+          "lanes": [
+            {
+              "id": "local:5194:2557:5632:2555",
+              "family": "local:5194:2557:5632:2555",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:5194:2513:5632:2511",
+              "family": "local:5194:2513:5632:2511",
+              "number": 2,
+              "graphTurns": "S"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:585:0,37612023:A0020000:1123:0,37612023:A0020000:411:0,37612023:A0020000:1036:0,37612023:A0020000:902:0,37612023:A0020000:675:0",
+          "lanes": [
+            {
+              "id": "local:6387:3402:5713:2694",
+              "family": "local:6387:3402:5713:2694",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:394:0,37612023:A0020000:1112:0,37612023:A0020000:1293:0",
+          "lanes": [
+            {
+              "id": "local:7086:2591:5868:2598:part:2",
+              "family": "local:7086:2591:5868:2598",
+              "number": 1,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:7087:2635:5869:2642:part:2",
+              "family": "local:7087:2635:5869:2642",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J5852_16963",
+      "x": 585.1640014648438,
+      "z": 1696.2979736328125,
+      "latitude": 37.4493072,
+      "longitude": 126.8020592,
+      "searchUrl": "https://map.naver.com/p/search/37.4493072%2C%20126.8020592",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "NE",
+          "sourceId": "37612023:A0020000:1420:0,37612023:A0020000:1419:0,37612023:A0020000:1240:0,37612023:A0020000:1034:0,37612023:A0020000:359:0,37612023:A0020000:1202:0,37612023:A0020000:1705:0,37612023:A0020000:2238:0,37612023:A0020000:2231:0,37612023:A0020000:2232:0,37612023:A0020000:2230:0,37612023:A0020000:2234:0,37612023:A0020000:2233:0,37612023:A0020000:2227:0",
+          "lanes": [
+            {
+              "id": "local:10539:16004:5952:17147",
+              "family": "local:10539:16004:5952:17147",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612023:A0020000:578:0,37612023:A0020000:2228:0,37612023:A0020000:2236:0",
+          "lanes": [
+            {
+              "id": "local:7260:14995:6050:16894:part:2",
+              "family": "local:7260:14995:6050:16894",
+              "number": 1,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:7319:15001:6080:16946:part:2",
+              "family": "local:7319:15001:6080:16946",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612023:A0020000:2226:0,37612023:A0020000:2235:0",
+          "lanes": [
+            {
+              "id": "local:4974:17454:5645:17011:part:2",
+              "family": "local:4974:17454:5645:17011",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:4914:17388:5607:16931:part:2",
+              "family": "local:4914:17388:5607:16931",
+              "number": 2,
+              "graphTurns": "S"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J608_2207",
+      "x": 60.757999420166016,
+      "z": 220.72799682617188,
+      "latitude": 37.4360021,
+      "longitude": 126.7961688,
+      "searchUrl": "https://map.naver.com/p/search/37.4360021%2C%20126.7961688",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "E",
+          "sourceId": "37612022:A0020000:1382:0,37612022:A0020000:2082:0,37612022:A0020000:2089:0",
+          "lanes": [
+            {
+              "id": "local:1742:1924:685:2204",
+              "family": "local:1742:1924:685:2204",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612022:A0020000:4235:0,37612022:A0020000:3385:0,37612022:A0020000:1453:0",
+          "lanes": [
+            {
+              "id": "local:509:1797:608:2129",
+              "family": "local:509:1797:608:2129",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612022:A0020000:3400:0,37612022:A0020000:1830:0,37612022:A0020000:1973:0",
+          "lanes": [
+            {
+              "id": "local:714:2621:608:2286",
+              "family": "local:714:2621:608:2286",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J6113_10423",
+      "x": 611.31298828125,
+      "z": 1042.321044921875,
+      "latitude": 37.4434153,
+      "longitude": 126.8023702,
+      "searchUrl": "https://map.naver.com/p/search/37.4434153%2C%20126.8023702",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J6199_11987",
+      "x": 619.9400024414062,
+      "z": 1198.7110595703125,
+      "latitude": 37.4448245,
+      "longitude": 126.802464,
+      "searchUrl": "https://map.naver.com/p/search/37.4448245%2C%20126.8024640",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "SW",
+          "sourceId": "37612023:A0020000:1308:0,37612023:A0020000:1496:0,37612023:A0020000:1639:0",
+          "lanes": [
+            {
+              "id": "local:5578:11296:6062:11799",
+              "family": "local:5578:11296:6062:11799",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NE",
+          "sourceId": "37612023:A0020000:1568:0,37612023:A0020000:1242:0,37612023:A0020000:610:0",
+          "lanes": [
+            {
+              "id": "local:6744:12572:6339:12177",
+              "family": "local:6744:12572:6339:12177",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612023:A0020000:1571:0,37612023:A0020000:790:0,37612023:A0020000:607:0",
+          "lanes": [
+            {
+              "id": "local:4546:13281:5996:12100:part:2",
+              "family": "local:4546:13281:5996:12100",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:4502:13231:5956:12047:part:3",
+              "family": "local:4502:13231:5956:12047",
+              "number": 2,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:4457:13181:5915:11994:part:2",
+              "family": "local:4457:13181:5915:11994",
+              "number": 3,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612023:A0020000:1464:0,37612023:A0020000:935:0,37612023:A0020000:1574:0",
+          "lanes": [
+            {
+              "id": "local:7747:9855:6400:11866:part:2",
+              "family": "local:7747:9855:6400:11866",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:7809:9881:6444:11916:part:2",
+              "family": "local:7809:9881:6444:11916",
+              "number": 2,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:7870:9907:6489:11965:part:1",
+              "family": "local:7870:9907:6489:11965",
+              "number": 3,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J6366_13416",
+      "x": 636.5789794921875,
+      "z": 1341.636962890625,
+      "latitude": 37.4461126,
+      "longitude": 126.8026487,
+      "searchUrl": "https://map.naver.com/p/search/37.4461126%2C%20126.8026487",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "NW",
+          "sourceId": "37612023:A0020000:540:0,37612023:A0020000:649:0,37612023:A0020000:1012:0",
+          "lanes": [
+            {
+              "id": "local:5802:14035:6279:13464",
+              "family": "local:5802:14035:6279:13464",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NE",
+          "sourceId": "37612023:A0020000:886:0,37612023:A0020000:418:0,37612023:A0020000:1562:0",
+          "lanes": [
+            {
+              "id": "local:7162:13779:6426:13494",
+              "family": "local:7162:13779:6426:13494",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612023:A0020000:1350:0,37612023:A0020000:1612:0,37612023:A0020000:737:0",
+          "lanes": [
+            {
+              "id": "local:6831:12735:6453:13369",
+              "family": "local:6831:12735:6453:13369",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J6478_4105",
+      "x": 647.7540283203125,
+      "z": 410.54400634765625,
+      "latitude": 37.4377236,
+      "longitude": 126.802797,
+      "searchUrl": "https://map.naver.com/p/search/37.4377236%2C%20126.8027970",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:209:0,37612023:A0020000:286:0,37612023:A0020000:363:0",
+          "lanes": [
+            {
+              "id": "local:5252:4219:6200:3990",
+              "family": "local:5252:4219:6200:3990",
+              "number": 3,
+              "graphTurns": "R"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:305:0,37612023:A0020000:372:0,37612023:A0020000:231:0",
+          "lanes": [
+            {
+              "id": "local:7779:3974:6755:4221",
+              "family": "local:7779:3974:6755:4221",
+              "number": 3,
+              "graphTurns": "S"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J6481_3341",
+      "x": 648.0780029296875,
+      "z": 334.135009765625,
+      "latitude": 37.4370351,
+      "longitude": 126.8028024,
+      "searchUrl": "https://map.naver.com/p/search/37.4370351%2C%20126.8028024",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:242:0,37612023:A0020000:697:0,37612023:A0020000:696:0",
+          "lanes": [
+            {
+              "id": "local:6450:3862:6452:3446",
+              "family": "local:6450:3862:6452:3446",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:585:0,37612023:A0020000:1123:0,37612023:A0020000:411:0,37612023:A0020000:1036:0,37612023:A0020000:902:0,37612023:A0020000:675:0",
+          "lanes": [
+            {
+              "id": "local:5788:2694:6370:3328",
+              "family": "local:5788:2694:6370:3328",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:815:0,37612023:A0020000:998:0,37612023:A0020000:1241:0,37612023:A0020000:606:0,37612023:A0020000:965:0,37612023:A0020000:1092:0",
+          "lanes": [
+            {
+              "id": "local:7241:2687:6592:3354",
+              "family": "local:7241:2687:6592:3354",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J681_888",
+      "x": 68.06199645996094,
+      "z": 88.76300048828125,
+      "latitude": 37.4348132,
+      "longitude": 126.7962546,
+      "searchUrl": "https://map.naver.com/p/search/37.4348132%2C%20126.7962546",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J6858_12618",
+      "x": 685.7839965820312,
+      "z": 1261.8299560546875,
+      "latitude": 37.4453945,
+      "longitude": 126.8032066,
+      "searchUrl": "https://map.naver.com/p/search/37.4453945%2C%20126.8032066",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:1748:0,37612023:A0020000:878:0,37612023:A0020000:1233:0",
+          "lanes": [
+            {
+              "id": "local:8455:10237:6929:12523",
+              "family": "local:8455:10237:6929:12523",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NE",
+          "sourceId": "37612023:A0020000:495:0,37612023:A0020000:1143:0,37612023:A0020000:860:0",
+          "lanes": [
+            {
+              "id": "local:7222:12821:6942:12709",
+              "family": "local:7222:12821:6942:12709",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612023:A0020000:1350:0,37612023:A0020000:1612:0,37612023:A0020000:737:0",
+          "lanes": [
+            {
+              "id": "local:6406:13326:6775:12704",
+              "family": "local:6406:13326:6775:12704",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SW",
+          "sourceId": "37612023:A0020000:1568:0,37612023:A0020000:1242:0,37612023:A0020000:610:0",
+          "lanes": [
+            {
+              "id": "local:6395:12113:6802:12509",
+              "family": "local:6395:12113:6802:12509",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J7204_2569",
+      "x": 720.4180297851562,
+      "z": 256.8760070800781,
+      "latitude": 37.4363404,
+      "longitude": 126.8036217,
+      "searchUrl": "https://map.naver.com/p/search/37.4363404%2C%20126.8036217",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:815:0,37612023:A0020000:998:0,37612023:A0020000:1241:0,37612023:A0020000:606:0,37612023:A0020000:965:0,37612023:A0020000:1092:0",
+          "lanes": [
+            {
+              "id": "local:6575:3281:7166:2686",
+              "family": "local:6575:3281:7166:2686",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:873:0,37612023:A0020000:614:0,37612023:A0020000:996:0",
+          "lanes": [
+            {
+              "id": "local:7735:2588:7322:2590",
+              "family": "local:7735:2588:7322:2590",
+              "number": 1,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:7735:2632:7323:2634",
+              "family": "local:7735:2632:7323:2634",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:394:0,37612023:A0020000:1112:0,37612023:A0020000:1293:0",
+          "lanes": [
+            {
+              "id": "local:5868:2554:7086:2547:part:2",
+              "family": "local:5868:2554:7086:2547",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:5868:2510:7086:2503:part:2",
+              "family": "local:5868:2510:7086:2503",
+              "number": 2,
+              "graphTurns": "S"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J7254_14780",
+      "x": 725.3499755859375,
+      "z": 1478.0179443359375,
+      "latitude": 37.4473431,
+      "longitude": 126.8036486,
+      "searchUrl": "https://map.naver.com/p/search/37.4473431%2C%20126.8036486",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:1498:0,37612023:A0020000:895:0,37612023:A0020000:641:0",
+          "lanes": [
+            {
+              "id": "local:7335:13923:7310:14570",
+              "family": "local:7335:13923:7310:14570",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:100:0,37612023:A0020000:101:0,37612023:A0020000:131:0,37612023:A0020000:1234:0,37612023:A0020000:364:0,37612023:A0020000:1512:0,37612023:A0020000:774:0",
+          "lanes": [
+            {
+              "id": "local:10455:15872:7443:14880:part:2",
+              "family": "local:10455:15872:7443:14880",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:10442:15920:7425:14927:part:2",
+              "family": "local:10442:15920:7425:14927",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:578:0,37612023:A0020000:2228:0,37612023:A0020000:2236:0",
+          "lanes": [
+            {
+              "id": "local:6021:16841:7200:14988:part:2",
+              "family": "local:6021:16841:7200:14988",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:5992:16789:7141:14981:part:2",
+              "family": "local:5992:16789:7141:14981",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:1335:0,37612023:A0020000:1158:0,37612023:A0020000:1323:0",
+          "lanes": [
+            {
+              "id": "local:5897:14274:7063:14681:part:2",
+              "family": "local:5897:14274:7063:14681",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:5917:14217:7083:14624:part:3",
+              "family": "local:5917:14217:7083:14624",
+              "number": 2,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:5937:14159:7103:14567:part:2",
+              "family": "local:5937:14159:7103:14567",
+              "number": 3,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J7292_13794",
+      "x": 729.1580200195312,
+      "z": 1379.427001953125,
+      "latitude": 37.4464549,
+      "longitude": 126.803694,
+      "searchUrl": "https://map.naver.com/p/search/37.4464549%2C%20126.8036940",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:1193:0,37612023:A0020000:1120:0,37612023:A0020000:1547:0",
+          "lanes": [
+            {
+              "id": "local:7388:12954:7347:13670",
+              "family": "local:7388:12954:7347:13670",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:886:0,37612023:A0020000:418:0,37612023:A0020000:1562:0",
+          "lanes": [
+            {
+              "id": "local:6460:13446:7182:13724",
+              "family": "local:6460:13446:7182:13724",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:1498:0,37612023:A0020000:895:0,37612023:A0020000:641:0",
+          "lanes": [
+            {
+              "id": "local:7213:14566:7238:13919",
+              "family": "local:7213:14566:7238:13919",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J7355_12821",
+      "x": 735.5460205078125,
+      "z": 1282.14404296875,
+      "latitude": 37.4455784,
+      "longitude": 126.8037685,
+      "searchUrl": "https://map.naver.com/p/search/37.4455784%2C%20126.8037685",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:495:0,37612023:A0020000:1143:0,37612023:A0020000:860:0",
+          "lanes": [
+            {
+              "id": "local:6977:12632:7249:12740",
+              "family": "local:6977:12632:7249:12740",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:1116:0,37612023:A0020000:430:0,37612023:A0020000:750:0",
+          "lanes": [
+            {
+              "id": "local:8824:10924:7438:12714",
+              "family": "local:8824:10924:7438:12714",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:1193:0,37612023:A0020000:1120:0,37612023:A0020000:1547:0",
+          "lanes": [
+            {
+              "id": "local:7250:13665:7291:12941",
+              "family": "local:7250:13665:7291:12941",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J7801_9629",
+      "x": 780.0560302734375,
+      "z": 962.85498046875,
+      "latitude": 37.4427025,
+      "longitude": 126.804279,
+      "searchUrl": "https://map.naver.com/p/search/37.4427025%2C%20126.8042790",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "NE",
+          "sourceId": "37612023:A0020000:831:0,37612023:A0020000:565:0,37612023:A0020000:843:0",
+          "lanes": [
+            {
+              "id": "local:8396:10088:7969:9761",
+              "family": "local:8396:10088:7969:9761",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SW",
+          "sourceId": "37612023:A0020000:681:0,37612023:A0020000:1362:0,37612023:A0020000:943:0,37612023:A0020000:1178:0,37612023:A0020000:1232:0,37612023:A0020000:667:0,37612023:A0020000:527:0,37612023:A0020000:734:0,37612023:A0020000:1395:0",
+          "lanes": [
+            {
+              "id": "local:4711:8643:7608:9494",
+              "family": "local:4711:8643:7608:9494",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612023:A0020000:1464:0,37612023:A0020000:935:0,37612023:A0020000:1574:0",
+          "lanes": [
+            {
+              "id": "local:6355:11817:7686:9830:part:2",
+              "family": "local:6355:11817:7686:9830",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:6310:11767:7624:9804:part:3",
+              "family": "local:6310:11767:7624:9804",
+              "number": 2,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:6266:11718:7563:9778:part:2",
+              "family": "local:6266:11718:7563:9778",
+              "number": 3,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:1753:0,37612023:A0020000:1543:0,37612023:A0020000:977:0,37612023:A0020000:1641:0",
+          "lanes": [
+            {
+              "id": "local:8104:6564:7902:9419:part:2",
+              "family": "local:8104:6564:7902:9419",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:8161:6563:7957:9434:part:3",
+              "family": "local:8161:6563:7957:9434",
+              "number": 2,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:8218:6563:8012:9449:part:2",
+              "family": "local:8218:6563:8012:9449",
+              "number": 3,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J7816_0",
+      "x": 781.5665283203125,
+      "z": 0.0,
+      "latitude": 37.4340271,
+      "longitude": 126.8043186,
+      "searchUrl": "https://map.naver.com/p/search/37.4340271%2C%20126.8043186",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J7841_867",
+      "x": 784.1329956054688,
+      "z": 86.70500183105469,
+      "latitude": 37.4348083,
+      "longitude": 126.8043456,
+      "searchUrl": "https://map.naver.com/p/search/37.4348083%2C%20126.8043456",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:673:0,37612023:A0020000:674:0,37612023:A0020000:688:0",
+          "lanes": [
+            {
+              "id": "local:7830:1476:7811:1051",
+              "family": "local:7830:1476:7811:1051",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:7754:1479:7736:1054",
+              "family": "local:7754:1479:7736:1054",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:488:0,37612023:A0020000:1278:0,37612023:A0020000:1511:0",
+          "lanes": [
+            {
+              "id": "local:5204:826:7659:817",
+              "family": "local:5204:826:7659:817",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:500:0,37612023:A0020000:1377:0,37612023:A0020000:1317:0",
+          "lanes": [
+            {
+              "id": "local:8228:888:8024:892",
+              "family": "local:8228:888:8024:892",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:1031:0,37612023:A0020000:646:0",
+          "lanes": [
+            {
+              "id": "local:7854:19:7874:684",
+              "family": "local:7854:19:7874:684",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:7930:17:7950:682",
+              "family": "local:7930:17:7950:682",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J7876_1656",
+      "x": 787.635009765625,
+      "z": 165.60800170898438,
+      "latitude": 37.4355193,
+      "longitude": 126.8043833,
+      "searchUrl": "https://map.naver.com/p/search/37.4355193%2C%20126.8043833",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:123:0,37612023:A0020000:124:0,37612023:A0020000:125:0",
+          "lanes": [
+            {
+              "id": "local:8268:1673:8058:1672",
+              "family": "local:8268:1673:8058:1672",
+              "number": 1,
+              "graphTurns": "L"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:672:0,37612023:A0020000:671:0,37612023:A0020000:1030:0",
+          "lanes": [
+            {
+              "id": "local:7871:2385:7846:1840",
+              "family": "local:7871:2385:7846:1840",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:7795:2388:7771:1843",
+              "family": "local:7795:2388:7771:1843",
+              "number": 2,
+              "graphTurns": "S"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:673:0,37612023:A0020000:674:0,37612023:A0020000:688:0",
+          "lanes": [
+            {
+              "id": "local:7887:1047:7906:1473",
+              "family": "local:7887:1047:7906:1473",
+              "number": 1,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:7963:1044:7982:1469",
+              "family": "local:7963:1044:7982:1469",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J790_2695",
+      "x": 79.01499938964844,
+      "z": 269.48199462890625,
+      "latitude": 37.4364417,
+      "longitude": 126.7963739,
+      "searchUrl": "https://map.naver.com/p/search/37.4364417%2C%20126.7963739",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "W",
+          "sourceId": "37612022:A0020000:1360:0,37612022:A0020000:2545:0,37612022:A0020000:3466:0,37612022:A0020000:3960:0,37612022:A0020000:3159:0",
+          "lanes": [
+            {
+              "id": "local:14:2889:692:2706",
+              "family": "local:14:2889:692:2706",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612022:A0020000:2925:0,37612022:A0020000:4034:0,37612022:A0020000:2430:0",
+          "lanes": [
+            {
+              "id": "local:1832:2392:887:2676",
+              "family": "local:1832:2392:887:2676",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612022:A0020000:3400:0,37612022:A0020000:1830:0,37612022:A0020000:1973:0",
+          "lanes": [
+            {
+              "id": "local:651:2273:757:2607",
+              "family": "local:651:2273:757:2607",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J7917_2565",
+      "x": 791.6690063476562,
+      "z": 256.5150146484375,
+      "latitude": 37.4363385,
+      "longitude": 126.8044268,
+      "searchUrl": "https://map.naver.com/p/search/37.4363385%2C%20126.8044268",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:672:0,37612023:A0020000:671:0,37612023:A0020000:1030:0",
+          "lanes": [
+            {
+              "id": "local:7922:1836:7947:2382",
+              "family": "local:7922:1836:7947:2382",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:7998:1833:8023:2378",
+              "family": "local:7998:1833:8023:2378",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:544:0,37612023:A0020000:1004:0,37612023:A0020000:1508:0",
+          "lanes": [
+            {
+              "id": "local:8296:2598:8098:2596",
+              "family": "local:8296:2598:8098:2596",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:873:0,37612023:A0020000:614:0,37612023:A0020000:996:0",
+          "lanes": [
+            {
+              "id": "local:7322:2546:7735:2544",
+              "family": "local:7322:2546:7735:2544",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:7322:2502:7734:2500",
+              "family": "local:7322:2502:7734:2500",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:298:0,37612023:A0020000:1607:0,37612023:A0020000:971:0",
+          "lanes": [
+            {
+              "id": "local:7924:3503:7887:2749:part:2",
+              "family": "local:7924:3503:7887:2749",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:7848:3507:7812:2752:part:2",
+              "family": "local:7848:3507:7812:2752",
+              "number": 2,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J7973_3744",
+      "x": 797.3309936523438,
+      "z": 374.39599609375,
+      "latitude": 37.4374007,
+      "longitude": 126.804488,
+      "searchUrl": "https://map.naver.com/p/search/37.4374007%2C%20126.8044880",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:305:0,37612023:A0020000:372:0,37612023:A0020000:231:0",
+          "lanes": [
+            {
+              "id": "local:6672:3876:7695:3629",
+              "family": "local:6672:3876:7695:3629",
+              "number": 3,
+              "graphTurns": "R"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:294:0,37612023:A0020000:700:0,37612023:A0020000:1244:0",
+          "lanes": [
+            {
+              "id": "local:8032:6164:7960:3988:part:2",
+              "family": "local:8032:6164:7960:3988",
+              "number": 1,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:7975:6165:7904:3992:part:3",
+              "family": "local:7975:6165:7904:3992",
+              "number": 2,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:7918:6167:7847:3996:part:2",
+              "family": "local:7918:6167:7847:3996",
+              "number": 3,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:298:0,37612023:A0020000:1607:0,37612023:A0020000:971:0",
+          "lanes": [
+            {
+              "id": "local:7963:2745:8000:3499:part:2",
+              "family": "local:7963:2745:8000:3499",
+              "number": 1,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:8039:2741:8076:3496:part:2",
+              "family": "local:8039:2741:8076:3496",
+              "number": 2,
+              "graphTurns": "S"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J8066_6364",
+      "x": 806.64501953125,
+      "z": 636.3770141601562,
+      "latitude": 37.4397614,
+      "longitude": 126.8045871,
+      "searchUrl": "https://map.naver.com/p/search/37.4397614%2C%20126.8045871",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:339:0,37612023:A0020000:680:0,37612023:A0020000:1065:0",
+          "lanes": [
+            {
+              "id": "local:5126:4691:7863:6307",
+              "family": "local:5126:4691:7863:6307",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:1380:0,37612023:A0020000:2059:0,37612023:A0020000:2080:0,37612023:A0020000:2071:0,37612023:A0020000:928:0",
+          "lanes": [
+            {
+              "id": "local:9032:10757:8270:6402",
+              "family": "local:9032:10757:8270:6402",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:294:0,37612023:A0020000:700:0,37612023:A0020000:1244:0",
+          "lanes": [
+            {
+              "id": "local:8017:3985:8089:6162:part:2",
+              "family": "local:8017:3985:8089:6162",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:8074:3981:8146:6160:part:2",
+              "family": "local:8074:3981:8146:6160",
+              "number": 2,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:8131:3977:8203:6159:part:2",
+              "family": "local:8131:3977:8203:6159",
+              "number": 3,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:1753:0,37612023:A0020000:1543:0,37612023:A0020000:977:0,37612023:A0020000:1641:0",
+          "lanes": [
+            {
+              "id": "local:7847:9404:8047:6565:part:2",
+              "family": "local:7847:9404:8047:6565",
+              "number": 1,
+              "graphTurns": "LS"
+            },
+            {
+              "id": "local:7792:9389:7990:6566:part:3",
+              "family": "local:7792:9389:7990:6566",
+              "number": 2,
+              "graphTurns": "S"
+            },
+            {
+              "id": "local:7737:9374:7933:6566:part:2",
+              "family": "local:7737:9374:7933:6566",
+              "number": 3,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J814_17308",
+      "x": 81.43299865722656,
+      "z": 1730.8070068359375,
+      "latitude": 37.4496084,
+      "longitude": 126.7963656,
+      "searchUrl": "https://map.naver.com/p/search/37.4496084%2C%20126.7963656",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "SW",
+          "sourceId": "37612022:A0020000:12:0,37612022:A0020000:4599:0",
+          "lanes": [
+            {
+              "id": "local:0:17199:685:17132",
+              "family": "local:0:17199:685:17132",
+              "number": 1,
+              "graphTurns": "R"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SE",
+          "sourceId": "37612022:A0020000:10:0,37612022:A0020000:34:0,37612022:A0020000:181:0",
+          "lanes": [
+            {
+              "id": "local:2039:16162:1005:17200:part:2",
+              "family": "local:2039:16162:1005:17200",
+              "number": 1,
+              "graphTurns": "L"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J8314_858",
+      "x": 831.3829956054688,
+      "z": 85.80400085449219,
+      "latitude": 37.4348011,
+      "longitude": 126.8048795,
+      "searchUrl": "https://map.naver.com/p/search/37.4348011%2C%20126.8048795",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:742:0,37612023:A0020000:913:0,37612023:A0020000:1402:0",
+          "lanes": [
+            {
+              "id": "local:8318:1581:8293:945",
+              "family": "local:8318:1581:8293:945",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:582:0,37612023:A0020000:643:0,37612023:A0020000:493:0",
+          "lanes": [
+            {
+              "id": "local:8674:881:8401:884",
+              "family": "local:8674:881:8401:884",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:500:0,37612023:A0020000:1377:0,37612023:A0020000:1317:0",
+          "lanes": [
+            {
+              "id": "local:8023:835:8227:832",
+              "family": "local:8023:835:8227:832",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J8346_1658",
+      "x": 834.5759887695312,
+      "z": 165.8249969482422,
+      "latitude": 37.4355222,
+      "longitude": 126.8049137,
+      "searchUrl": "https://map.naver.com/p/search/37.4355222%2C%20126.8049137",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:123:0,37612023:A0020000:124:0,37612023:A0020000:125:0",
+          "lanes": [
+            {
+              "id": "local:8058:1642:8268:1643",
+              "family": "local:8058:1642:8268:1643",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:742:0,37612023:A0020000:913:0,37612023:A0020000:1402:0",
+          "lanes": [
+            {
+              "id": "local:8341:944:8366:1579",
+              "family": "local:8341:944:8366:1579",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:1239:0,37612023:A0020000:541:0,37612023:A0020000:1321:0",
+          "lanes": [
+            {
+              "id": "local:8682:1680:8424:1682",
+              "family": "local:8682:1680:8424:1682",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:1538:0,37612023:A0020000:949:0,37612023:A0020000:930:0",
+          "lanes": [
+            {
+              "id": "local:8357:2481:8326:1737",
+              "family": "local:8357:2481:8326:1737",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J8385_2569",
+      "x": 838.5269775390625,
+      "z": 256.91900634765625,
+      "latitude": 37.436343,
+      "longitude": 126.8049562,
+      "searchUrl": "https://map.naver.com/p/search/37.4363430%2C%20126.8049562",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:1538:0,37612023:A0020000:949:0,37612023:A0020000:930:0",
+          "lanes": [
+            {
+              "id": "local:8374:1735:8405:2479",
+              "family": "local:8374:1735:8405:2479",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:544:0,37612023:A0020000:1004:0,37612023:A0020000:1508:0",
+          "lanes": [
+            {
+              "id": "local:8099:2537:8297:2539",
+              "family": "local:8099:2537:8297:2539",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:851:0,37612023:A0020000:1542:0,37612023:A0020000:954:0",
+          "lanes": [
+            {
+              "id": "local:8673:2597:8474:2600",
+              "family": "local:8673:2597:8474:2600",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J8501_10134",
+      "x": 850.10400390625,
+      "z": 1013.3839721679688,
+      "latitude": 37.443159,
+      "longitude": 126.8050693,
+      "searchUrl": "https://map.naver.com/p/search/37.4431590%2C%20126.8050693",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "NE",
+          "sourceId": "37612023:A0020000:399:0,37612023:A0020000:796:0,37612023:A0020000:1737:0",
+          "lanes": [
+            {
+              "id": "local:8831:10738:8535:10241",
+              "family": "local:8831:10738:8535:10241",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "SW",
+          "sourceId": "37612023:A0020000:831:0,37612023:A0020000:565:0,37612023:A0020000:843:0",
+          "lanes": [
+            {
+              "id": "local:8025:9707:8449:10031",
+              "family": "local:8025:9707:8449:10031",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612023:A0020000:1748:0,37612023:A0020000:878:0,37612023:A0020000:1233:0",
+          "lanes": [
+            {
+              "id": "local:6870:12500:8407:10195",
+              "family": "local:6870:12500:8407:10195",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J866_5285",
+      "x": 86.61000061035156,
+      "z": 528.489990234375,
+      "latitude": 37.4387756,
+      "longitude": 126.7964534,
+      "searchUrl": "https://map.naver.com/p/search/37.4387756%2C%20126.7964534",
+      "configured": true,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "S",
+          "sourceId": "37612022:A0020000:2326:0,37612022:A0020000:2190:0,37612022:A0020000:4502:0",
+          "lanes": [
+            {
+              "id": "local:562:4417:834:5080",
+              "family": "local:562:4417:834:5080",
+              "number": 1,
+              "graphTurns": "L"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612022:A0020000:4294:0,37612022:A0020000:4430:0",
+          "lanes": [
+            {
+              "id": "local:12:5183:654:5150",
+              "family": "local:12:5183:654:5150",
+              "number": 3,
+              "graphTurns": "R"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J8761_1656",
+      "x": 876.0579833984375,
+      "z": 165.63800048828125,
+      "latitude": 37.4355212,
+      "longitude": 126.8053824,
+      "searchUrl": "https://map.naver.com/p/search/37.4355212%2C%20126.8053824",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:1239:0,37612023:A0020000:541:0,37612023:A0020000:1321:0",
+          "lanes": [
+            {
+              "id": "local:8424:1634:8683:1632",
+              "family": "local:8424:1634:8683:1632",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:393:0,37612023:A0020000:454:0,37612023:A0020000:784:0",
+          "lanes": [
+            {
+              "id": "local:8785:940:8785:1578",
+              "family": "local:8785:940:8785:1578",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:813:0,37612023:A0020000:1153:0,37612023:A0020000:705:0",
+          "lanes": [
+            {
+              "id": "local:9072:1678:8839:1681",
+              "family": "local:9072:1678:8839:1681",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:593:0,37612023:A0020000:991:0,37612023:A0020000:1096:0",
+          "lanes": [
+            {
+              "id": "local:8738:2476:8737:1734",
+              "family": "local:8738:2476:8737:1734",
+              "number": 1,
+              "graphTurns": "LSR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J8761_854",
+      "x": 876.094970703125,
+      "z": 85.36100006103516,
+      "latitude": 37.4347979,
+      "longitude": 126.8053847,
+      "searchUrl": "https://map.naver.com/p/search/37.4347979%2C%20126.8053847",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:393:0,37612023:A0020000:454:0,37612023:A0020000:784:0",
+          "lanes": [
+            {
+              "id": "local:8737:1578:8737:940",
+              "family": "local:8737:1578:8737:940",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:582:0,37612023:A0020000:643:0,37612023:A0020000:493:0",
+          "lanes": [
+            {
+              "id": "local:8400:828:8675:825",
+              "family": "local:8400:828:8675:825",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:686:0,37612023:A0020000:1328:0,37612023:A0020000:803:0,37612023:A0020000:434:0",
+          "lanes": [
+            {
+              "id": "local:9125:1575:8847:878",
+              "family": "local:9125:1575:8847:878",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J8762_2565",
+      "x": 876.1729736328125,
+      "z": 256.5119934082031,
+      "latitude": 37.43634,
+      "longitude": 126.8053816,
+      "searchUrl": "https://map.naver.com/p/search/37.4363400%2C%20126.8053816",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:864:0,37612023:A0020000:1506:0,37612023:A0020000:618:0,37612023:A0020000:1154:0",
+          "lanes": [
+            {
+              "id": "local:9175:1730:8851:2587",
+              "family": "local:9175:1730:8851:2587",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:851:0,37612023:A0020000:1542:0,37612023:A0020000:954:0",
+          "lanes": [
+            {
+              "id": "local:8474:2541:8672:2538",
+              "family": "local:8474:2541:8672:2538",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:593:0,37612023:A0020000:991:0,37612023:A0020000:1096:0",
+          "lanes": [
+            {
+              "id": "local:8785:1734:8786:2476",
+              "family": "local:8785:1734:8786:2476",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J888_11977",
+      "x": 88.77400207519531,
+      "z": 1197.68896484375,
+      "latitude": 37.4448051,
+      "longitude": 126.7964616,
+      "searchUrl": "https://map.naver.com/p/search/37.4448051%2C%20126.7964616",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J892_723",
+      "x": 89.15599822998047,
+      "z": 72.28600311279297,
+      "latitude": 37.4346652,
+      "longitude": 126.7964933,
+      "searchUrl": "https://map.naver.com/p/search/37.4346652%2C%20126.7964933",
+      "configured": false,
+      "classification": "no-active-join",
+      "approaches": []
+    },
+    {
+      "id": "J8921_10835",
+      "x": 892.10498046875,
+      "z": 1083.5340576171875,
+      "latitude": 37.4437919,
+      "longitude": 126.8055423,
+      "searchUrl": "https://map.naver.com/p/search/37.4437919%2C%20126.8055423",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "SW",
+          "sourceId": "37612023:A0020000:399:0,37612023:A0020000:796:0,37612023:A0020000:1737:0",
+          "lanes": [
+            {
+              "id": "local:8599:10197:8901:10704",
+              "family": "local:8599:10197:8901:10704",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NW",
+          "sourceId": "37612023:A0020000:1116:0,37612023:A0020000:430:0,37612023:A0020000:750:0",
+          "lanes": [
+            {
+              "id": "local:7346:12686:8782:10837",
+              "family": "local:7346:12686:8782:10837",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "E",
+          "sourceId": "37612023:A0020000:1380:0,37612023:A0020000:2059:0,37612023:A0020000:2080:0,37612023:A0020000:2071:0,37612023:A0020000:928:0",
+          "lanes": [
+            {
+              "id": "local:8265:6305:9056:10851",
+              "family": "local:8265:6305:9056:10851",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J9150_1653",
+      "x": 914.9970092773438,
+      "z": 165.25100708007812,
+      "latitude": 37.4355185,
+      "longitude": 126.8058224,
+      "searchUrl": "https://map.naver.com/p/search/37.4355185%2C%20126.8058224",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "S",
+          "sourceId": "37612023:A0020000:686:0,37612023:A0020000:1328:0,37612023:A0020000:803:0,37612023:A0020000:434:0",
+          "lanes": [
+            {
+              "id": "local:8848:830:9173:1574",
+              "family": "local:8848:830:9173:1574",
+              "number": 1,
+              "graphTurns": "LS"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "W",
+          "sourceId": "37612023:A0020000:813:0,37612023:A0020000:1153:0,37612023:A0020000:705:0",
+          "lanes": [
+            {
+              "id": "local:8839:1633:9072:1630",
+              "family": "local:8839:1633:9072:1630",
+              "number": 1,
+              "graphTurns": "LR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "N",
+          "sourceId": "37612023:A0020000:864:0,37612023:A0020000:1506:0,37612023:A0020000:618:0,37612023:A0020000:1154:0",
+          "lanes": [
+            {
+              "id": "local:8850:2539:9127:1731",
+              "family": "local:8850:2539:9127:1731",
+              "number": 1,
+              "graphTurns": "SR"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    },
+    {
+      "id": "J993_5620",
+      "x": 99.29900360107422,
+      "z": 562.0369873046875,
+      "latitude": 37.4390781,
+      "longitude": 126.796596,
+      "searchUrl": "https://map.naver.com/p/search/37.4390781%2C%20126.7965960",
+      "configured": false,
+      "classification": "routable-junction",
+      "approaches": [
+        {
+          "direction": "E",
+          "sourceId": "37612022:A0020000:1722:0,37612022:A0020000:1135:0,37612022:A0020000:2676:0",
+          "lanes": [
+            {
+              "id": "local:1954:5493:1147:5643",
+              "family": "local:1954:5493:1147:5643",
+              "number": 1,
+              "graphTurns": "R"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        },
+        {
+          "direction": "NE",
+          "sourceId": "37612022:A0020000:1108:0,37612022:A0020000:1482:0,37612022:A0020000:4665:0,37612022:A0020000:3078:0,37612022:A0020000:4671:0,37612022:A0020000:3211:0,37612022:A0020000:2968:0",
+          "lanes": [
+            {
+              "id": "local:2246:7808:1038:5772:part:2",
+              "family": "local:2246:7808:1038:5772",
+              "number": 1,
+              "graphTurns": "L"
+            }
+          ],
+          "status": "unreviewed",
+          "observations": []
+        }
+      ]
+    }
+  ]
+}

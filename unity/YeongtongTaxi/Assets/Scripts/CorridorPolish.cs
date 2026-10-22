@@ -23,6 +23,9 @@ public static class CorridorPolish {
   if(For(map)!=null)return;
   var selected=new HashSet<string>(config.roadIds);var result=new Result();
   var roads=map.roads.ToDictionary(r=>r.id);foreach(var id in selected)if(!roads.ContainsKey(id))throw new InvalidOperationException("Corridor source changed: "+id);
+  // Reviewed geometry needs the same pavement/building-clearance policy even
+  // when an added turn is outside the initial service-route corridor.
+  foreach(var edge in map.hdEdges)if(!edge.disabled&&edge.id.Contains("reviewed:"))foreach(var id in edge.sourceId.Split(','))if(roads.ContainsKey(id))selected.Add(id);
   if(config.includeScenarioRoutes){
    var graph=new HdRoadGraph(map);var origin=map.stops[0];var paths=new List<HdRoadGraph.RoutePath>();
    foreach(var scenario in PrototypeScenario.Build(graph,map.stops)){paths.Add(scenario.route);if(scenario.alternative!=null)paths.Add(scenario.alternative);var pickup=map.stops[scenario.pickup];var approach=graph.Route(origin.laneEdge,origin.laneAt,pickup.laneEdge,pickup.laneAt);if(approach!=null)paths.Add(approach);}

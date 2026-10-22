@@ -11,7 +11,7 @@ public sealed class ReviewedLaneLayoutProbe : MonoBehaviour {
   var map=session.world.map;var graph=session.jobs.nav.hd;var district=FindObjectOfType<DistrictTraffic>();
   bool shared=ReferenceEquals(graph.edges,map.hdEdges)&&district&&ReferenceEquals(district.graph.edges,map.hdEdges);int samples=0,blocked=0;
   Physics.SyncTransforms();
-  for(int i=0;i<graph.edges.Length;i++)if(graph.edges[i].id.Contains("reviewed:T1-SE:"))for(float at=0;at<=graph.paths[i].length;at+=1){
+  for(int i=0;i<graph.edges.Length;i++)if(graph.edges[i].id.Contains("reviewed:T1-")&&!graph.edges[i].disabled)for(float at=0;at<=graph.paths[i].length;at+=1){
    var p=graph.paths[i].Position(at)+Vector3.up;var direction=graph.paths[i].Tangent(at);samples++;
    if(Physics.OverlapBox(p,new Vector3(.95f,.65f,1.8f),Quaternion.LookRotation(direction),1,QueryTriggerInteraction.Ignore).Any(c=>c.name.StartsWith("Building ")))blocked++;
   }
@@ -19,6 +19,12 @@ public sealed class ReviewedLaneLayoutProbe : MonoBehaviour {
   string folder=Path.GetFullPath("artifacts");Directory.CreateDirectory(folder);
   Capture(Camera.main,midpoint+Vector3.up*58,midpoint+forward*.1f,Path.Combine(folder,"t1-reviewed-lane-overview.png"));
   Capture(Camera.main,path.Position(0)-forward*30+Vector3.up*13,midpoint+forward*8,Path.Combine(folder,"t1-reviewed-lane-approach.png"));
+  var junction=System.Array.Find(map.junctionRules,j=>j.id=="J4396_13458").V();
+  Capture(Camera.main,junction+Vector3.up*145,junction+Vector3.forward*.1f,Path.Combine(folder,"t1-all-directions.png"));
+  foreach(var arrow in LaneDirectionPaint.Layout(map).Where(a=>map.hdEdges[a.edgeIndex].ruleId=="J4396_13458")){
+   string id=map.hdEdges[arrow.edgeIndex].id.Replace(':','_');
+   Capture(Camera.main,arrow.centre-arrow.forward*12+Vector3.up*20,arrow.centre,Path.Combine(folder,"lane-arrow-"+id+".png"));
+  }
   if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-reviewedLaneTrafficTest")>=0){
    session.business.preparing=false;session.business.enabledCampaign=false;session.business.enabled=false;
    foreach(var car in session.traffic.cars){car.respawn=false;car.Recycle();car.enabled=false;}

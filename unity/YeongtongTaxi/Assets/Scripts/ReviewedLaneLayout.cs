@@ -8,7 +8,8 @@ using UnityEngine;
 // Applied after the unchanged OSM base, before pavement and all graph consumers.
 public static class ReviewedLaneLayout {
  [Serializable] public class Pocket {public string id,junctionId,evidence,checkedAt;public string[] approachLaneIds;public float laneLength,taperLength,offset;}
- [Serializable] public class Settings {public Pocket[] pockets;}
+ [Serializable] public class Slip {public string id,junctionId,laneId,evidence,checkedAt;public float takeoff=35,taperLength=14,offset=3;}
+ [Serializable] public class Settings {public Pocket[] pockets;public Slip[] slips;}
  sealed class Taper {public string source;public AssistedRoadNetwork.Path path;public float start,length,offset;}
  sealed class Applied {public readonly List<Tuple<HdEdge,int>> arrows=new List<Tuple<HdEdge,int>>();public readonly List<Taper> tapers=new List<Taper>();}
  static readonly ConditionalWeakTable<MapData,Applied> applied=new ConditionalWeakTable<MapData,Applied>();
@@ -23,7 +24,7 @@ public static class ReviewedLaneLayout {
  public static void Apply(MapData map,Settings settings){
   Applied old;if(applied.TryGetValue(map,out old))return;
   var state=new Applied();var edges=new List<HdEdge>(map.hdEdges);
-  foreach(var item in settings.pockets){
+  foreach(var item in settings.pockets??new Pocket[0]){
    DateTime date;
    if(string.IsNullOrWhiteSpace(item.id)||string.IsNullOrWhiteSpace(item.evidence)||!DateTime.TryParseExact(item.checkedAt,"yyyy-MM-dd",System.Globalization.CultureInfo.InvariantCulture,System.Globalization.DateTimeStyles.None,out date)||item.approachLaneIds==null||item.approachLaneIds.Length<2||item.laneLength<15||item.taperLength<20||item.offset<2.6f||item.offset>3.5f)throw new InvalidOperationException("Invalid reviewed pocket "+item.id);
    var indices=item.approachLaneIds.Select(id=>edges.FindIndex(e=>e.toNode==id+":end"&&e.ruleId==item.junctionId&&!e.disabled)).ToArray();
@@ -61,6 +62,30 @@ public static class ReviewedLaneLayout {
    state.arrows.Add(Tuple.Create(pocket,-1));state.arrows.Add(Tuple.Create(edges[tailIndices[0]],0));
    state.tapers.Add(new Taper{source=original.sourceId,path=path,start=cut,length=item.taperLength,offset=item.offset});
   }
+  foreach(var item in settings.slips??new Slip[0]){
+   DateTime date;
+   if(string.IsNullOrWhiteSpace(item.id)||string.IsNullOrWhiteSpace(item.evidence)||!DateTime.TryParseExact(item.checkedAt,"yyyy-MM-dd",System.Globalization.CultureInfo.InvariantCulture,System.Globalization.DateTimeStyles.None,out date)||item.takeoff<30||item.taperLength<10||item.takeoff-item.taperLength<18||item.offset<2.6f||item.offset>3.5f)throw new InvalidOperationException("Invalid reviewed slip "+item.id);
+   int index=edges.FindIndex(e=>e.toNode==item.laneId+":end"&&e.ruleId==item.junctionId&&!e.disabled);
+   if(index<0)throw new InvalidOperationException("Missing slip approach "+item.id);
+   var original=edges[index];var path=Path(original);float cut=path.length-item.takeoff;
+   int right=original.next.Where(i=>edges[i].turn==1&&!edges[i].disabled).DefaultIfEmpty(-1).First();
+   if(cut<10||right<0||edges[right].status=="ngii")throw new InvalidOperationException("Missing provisional right join "+item.id);
+   var oldJoin=edges[right];var exit=Path(oldJoin);string prefix="reviewed:"+item.id;
+   int tailIndex=edges.Count,taperIndex=tailIndex+1,slipIndex=tailIndex+2,joinIndex=tailIndex+3;
+   string split=prefix+":split";
+   edges.Add(new HdEdge{id=original.id+":part:"+prefix,sourceId=original.sourceId,fromNode=split,toNode=original.toNode,points=Slice(path,cut,path.length),number=original.number,status="provisional",ruleId=item.junctionId,roadName=original.roadName,next=original.next.Where(i=>i!=right).ToArray(),sourceOffset=original.sourceOffset+cut});
+   foreach(var stop in map.stops)if(stop.laneEdge==index&&stop.laneAt>cut){stop.laneEdge=tailIndex;stop.laneAt-=cut;}
+   original.points=Slice(path,0,cut);original.toNode=split;original.next=new[]{tailIndex,taperIndex};
+   var taper=new List<MapPoint>();for(int i=0;i<=20;i++){float t=i/20f,d=cut+item.taperLength*t;var p=path.Position(d)+TrafficSystem.Right(path.Tangent(d))*item.offset*t*t*(3-2*t);taper.Add(P(p));}
+   var lane=new List<MapPoint>();float begin=cut+item.taperLength,end=path.length-6;
+   for(float d=begin;d<end;d+=1)lane.Add(P(path.Position(d)+TrafficSystem.Right(path.Tangent(d))*item.offset));lane.Add(P(path.Position(end)+TrafficSystem.Right(path.Tangent(end))*item.offset));
+   edges.Add(new HdEdge{id=prefix+":taper",sourceId=original.sourceId,fromNode=split,toNode=prefix+":lane-start",points=taper.ToArray(),number=original.number+1,change=1,status="provisional",ruleId=item.junctionId,next=new[]{slipIndex}});
+   var slip=new HdEdge{id=prefix+":lane",sourceId=original.sourceId,fromNode=prefix+":lane-start",toNode=prefix+":lane-end",points=lane.ToArray(),number=original.number+1,status="provisional",ruleId=item.junctionId,evidence=item.evidence,updated=item.checkedAt,next=new[]{joinIndex}};edges.Add(slip);
+   var from=lane[lane.Count-1].V();var to=exit.Position(exit.length);var forward=path.Tangent(end);var heading=exit.Tangent(exit.length);float handle=Vector3.Distance(from,to)*.5f;var curve=new MapPoint[33];
+   for(int i=0;i<curve.Length;i++){float t=i/32f,u=1-t;curve[i]=P(u*u*u*from+3*u*u*t*(from+forward*handle)+3*u*t*t*(to-heading*handle)+t*t*t*to);}
+   edges.Add(new HdEdge{id="join:"+prefix+":right",sourceId=oldJoin.sourceId,fromNode=slip.toNode,toNode=oldJoin.toNode,points=curve,number=oldJoin.number,turn=1,status="provisional",ruleId=item.junctionId,evidence=item.evidence,updated=item.checkedAt,next=oldJoin.next});
+   oldJoin.disabled=true;oldJoin.next=new int[0];
+  }
   map.hdEdges=edges.ToArray();applied.Add(map,state);
  }
  public static Vector3 Centreline(MapData map,string source,Vector3 point){
@@ -75,11 +100,6 @@ public static class ReviewedLaneLayout {
   foreach(var taper in state.tapers)for(float at=0;at<taper.length;at+=1){float t=at/taper.length,blend=t*t*(3-2*t);if(taper.offset*blend<1.8f||at%6>=3)continue;
    var direction=taper.path.Tangent(taper.start+at);var point=taper.path.Position(taper.start+at)-TrafficSystem.Right(direction)*taper.offset*blend*.5f;mark("Reviewed pocket taper",point,direction,.13f,.96f,false);
   }
-  foreach(var arrow in state.arrows){var p=Path(arrow.Item1);float at=Mathf.Max(3,p.length-10);var origin=p.Position(at);var forward=p.Tangent(at);var right=TrafficSystem.Right(forward);
-   Action<Vector3,Vector3> line=(a,b)=>mark("Reviewed lane arrow",(a+b)*.5f,(b-a).normalized,.18f,Vector3.Distance(a,b),false);
-   var tip=origin+forward*2;line(origin-forward*2,tip);
-   if(arrow.Item2<0){var left=tip-right*1.6f;line(tip,left);line(left,left+right*.7f+forward*.6f);line(left,left+right*.7f-forward*.6f);}
-   else{line(tip,tip-forward*.9f+right*.65f);line(tip,tip-forward*.9f-right*.65f);}
-  }
+  LaneDirectionPaint.Paint(map,mark);
  }
 }

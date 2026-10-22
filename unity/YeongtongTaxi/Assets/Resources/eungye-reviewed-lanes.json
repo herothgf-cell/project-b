@@ -13,6 +13,52 @@
       "offset": 3.0,
       "checkedAt": "2026-10-22",
       "evidence": "Naver Roadview 2026-05, panorama lygcigyMAFesMYe7CZrtIA, Eungye-ro SE approach to Gyesu-ro junction: median-side left/U-turn pocket plus through lanes. Geometry 25m + 30m taper / 3m offset is provisional game clearance, not surveyed. U-turn routing is not yet supported."
+    },
+    {
+      "id": "T1-NW",
+      "junctionId": "J4396_13458",
+      "approachLaneIds": [
+        "local:2253:15777:4213:13601",
+        "local:2205:15737:4168:13557",
+        "local:2157:15697:4123:13513"
+      ],
+      "laneLength": 25.0,
+      "taperLength": 30.0,
+      "offset": 3.0,
+      "checkedAt": "2026-10-22",
+      "evidence": "Naver Roadview 2026-05 panorama pbIhvNw5ofVGzsLRZ9jVWQ, Eungye-ro NW approach: three through arrows plus median-side left/U-turn space. Dimensions are provisional game clearance, not surveyed. U-turn routing is unimplemented."
+    }
+  ],
+  "slips": [
+    {
+      "id": "T1-NE-right",
+      "junctionId": "J4396_13458",
+      "laneId": "local:5427:14252:4512:13708",
+      "takeoff": 35.0,
+      "taperLength": 14.0,
+      "offset": 3.0,
+      "checkedAt": "2026-10-22",
+      "evidence": "Naver Roadview 2026-05 panorama C05LjSoKPvjCfwsrheEcxQ: straight arrow on outer main lane; separate right-turn channel behind pedestrian island. Geometry is provisional, island and crosswalk coordinates not surveyed."
+    },
+    {
+      "id": "T1-NW-right",
+      "junctionId": "J4396_13458",
+      "laneId": "local:2157:15697:4123:13513",
+      "takeoff": 35.0,
+      "taperLength": 14.0,
+      "offset": 3.0,
+      "checkedAt": "2026-10-22",
+      "evidence": "Naver Roadview 2026-05 panorama pbIhvNw5ofVGzsLRZ9jVWQ: straight arrow on outer main lane; separate right-turn channel behind pedestrian island. Geometry is provisional, island and crosswalk coordinates not surveyed."
+    },
+    {
+      "id": "T1-SW-right",
+      "junctionId": "J4396_13458",
+      "laneId": "local:3703:12897:4253:13257",
+      "takeoff": 35.0,
+      "taperLength": 14.0,
+      "offset": 3.0,
+      "checkedAt": "2026-10-22",
+      "evidence": "Naver Roadview 2026-05 panorama k6Hq9-HHe8ugksyc3e7Icw: separate right-turn channel with pedestrian island and raised yellow crossing on Daeun-ro SW approach. Dimensions provisional. Main inner lane arrow vehicle-occluded."
     }
   ]
 }

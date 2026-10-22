@@ -27,11 +27,27 @@ public static class ReviewedLaneLayoutTests {
   var through=map.hdEdges.First(e=>e.fromNode=="reviewed:T1-SE:split:0");
   Check(through.number==2&&!through.next.Any(i=>map.hdEdges[i].turn<0),"inner through lane no longer turns left");
   Check(!map.hdEdges.Any(e=>e.next.Any(i=>map.hdEdges[i].disabled)),"no route enters disabled old left join");
+  foreach(string side in new[]{"NW","NE"}){
+   int slip=Array.FindIndex(map.hdEdges,e=>e.id=="reviewed:T1-"+side+"-right:lane");
+   Check(slip>=0&&map.hdEdges[map.hdEdges[slip].next.Single()].turn==1,"separate right channel "+side);
+   var main=map.hdEdges.Single(e=>e.toNode==(side=="NW"?"local:2157:15697:4123:13513":"local:5427:14252:4512:13708")+":end");
+   Check(main.next.All(n=>map.hdEdges[n].turn==0),"main outer lane straight only "+side);
+  }
+  Check(map.hdEdges.Any(e=>e.id=="reviewed:T1-NW:pocket"),"NW separate left pocket");
   int count=map.hdEdges.Length;ReviewedLaneLayout.Apply(map);Check(count==map.hdEdges.Length,"layout is not duplicated");
   int arrows=0;ReviewedLaneLayout.Paint(map,(name,p,d,w,l,y)=>arrows++);Check(arrows>=6,"left and through pavement arrows exist");
+  float minSide=float.MaxValue,maxSide=float.MinValue;
+  var arrowPath=graph.paths[pocket];float arrowAt=Mathf.Max(3,arrowPath.length-10);
+  var arrowOrigin=arrowPath.Position(arrowAt);var arrowRight=TrafficSystem.Right(arrowPath.Tangent(arrowAt));
+  ReviewedLaneLayout.Paint(map,(name,p,d,w,l,y)=>{if(name!="Lane arrow reviewed:T1-SE:pocket")return;
+   float side=Vector3.Dot(p-arrowOrigin,arrowRight);if(Mathf.Abs(side)>4)return;
+   float half=Mathf.Abs(Vector3.Dot(d,arrowRight))*l*.5f+Mathf.Abs(Vector3.Dot(TrafficSystem.Right(d),arrowRight))*w*.5f;
+   minSide=Mathf.Min(minSide,side-half);maxSide=Mathf.Max(maxSide,side+half);
+  });
+  Check(Mathf.Abs((minSide+maxSide)*.5f)<.03f,"left arrow footprint is centred across its lane");
   var go=new GameObject("Reviewed lane clearance");int samples=0;
   try{var env=go.AddComponent<RoadEnvironment>();env.Build(map);
-   for(int i=0;i<map.hdEdges.Length;i++)if(map.hdEdges[i].id.Contains("reviewed:T1-SE:")){var path=graph.paths[i];for(float d=0;d<=path.length;d+=1)foreach(float side in new[]{-.95f,0,.95f}){Check(env.OnRoad(path.Position(d)+TrafficSystem.Right(path.Tangent(d))*side),"vehicle-width pavement "+map.hdEdges[i].id);samples++;}}
+   for(int i=0;i<map.hdEdges.Length;i++)if(map.hdEdges[i].id.Contains("reviewed:T1-")&&!map.hdEdges[i].disabled){var path=graph.paths[i];for(float d=0;d<=path.length;d+=1)foreach(float side in new[]{-.95f,0,.95f}){Check(env.OnRoad(path.Position(d)+TrafficSystem.Right(path.Tangent(d))*side),"vehicle-width pavement "+map.hdEdges[i].id);samples++;}}
    var system=go.AddComponent<TrafficSystem>();var district=go.AddComponent<DistrictTraffic>();district.Initialize(system,map,false);
    int taper=Array.FindIndex(map.hdEdges,e=>e.id=="reviewed:T1-SE:taper");int exit=map.hdEdges[edge.next[0]].next[0];
    var route=district.CreateRoute(taper,0,exit,Mathf.Min(10,graph.paths[exit].length));
