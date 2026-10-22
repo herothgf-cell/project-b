@@ -33,7 +33,7 @@ public class DrivingReadability : MonoBehaviour {
   bounds=new Rect(Overview?(map.width-span)/2:p.x-span/2,Overview?(map.depth-span)/2:p.z-span/2,span,span);
  }
  void OnGUI(){
-  if(session.PracticeMenuOpen||session.business.preparing||session.business.ShowingSummary||session.services.open||session.law.HistoryOpen||session.business.restartPrompt||session.business.taxPrompt)return;
+  if(session.RideResultOpen||session.PracticeMenuOpen||session.business.preparing||session.business.ShowingSummary||session.services.open||session.law.HistoryOpen||session.business.restartPrompt||session.business.taxPrompt)return;
   if(label==null){label=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14,wordWrap=true};label.normal.textColor=Color.white;}
   float x=Screen.width-Size-16;SetBounds();PrepareMarkers();var jobs=session.jobs;var map=session.world.map;
   Panel(new Rect(x-5,10,Size+10,397));
@@ -46,7 +46,7 @@ public class DrivingReadability : MonoBehaviour {
   if(Facilities&&map.hybrid)foreach(var j in map.junctionRules)Dot(Project(j.V()),j.facilityStatus=="verified"?Color.green:new Color(1,.6f,.1f),6);
   foreach(var car in session.traffic.cars)if(car.Visible)Dot(Project(car.transform.position),new Color(.55f,.6f,.65f),3);
   foreach(var incident in session.roadConditions.incidents)Dot(Project(incident.position),Color.red,8);
-  for(int pass=0;pass<2;pass++)for(int i=1;i<jobs.nav.path.Count;i++){var a=Project(jobs.nav.path[i-1]);var b=Project(jobs.nav.path[i]);Line(a,b,pass==0?Color.black:Color.cyan,pass==0?8:4);}
+  if(jobs.nav.HasDestination)for(int pass=0;pass<2;pass++)for(int i=1;i<jobs.nav.path.Count;i++){var a=Project(jobs.nav.path[i-1]);var b=Project(jobs.nav.path[i]);Line(a,b,pass==0?Color.black:Color.cyan,pass==0?8:4);}
   for(int i=0;i<jobs.stops.Length;i++)if(jobs.people[i].activeSelf)Marker(jobs.stops[i].V(),"승",new Color(.3f,1,.55f),false);
   var rest=FuelStationLayout.Rest(session.world.map);if(rest!=null)Marker(rest.pump,"P 휴식",Color.cyan,false);
   if(session.business.useV2)for(int k=1;k<session.services.indices.Length;k++)Marker(jobs.stops[session.services.indices[k]].V(),k==1?"식":"주차",new Color(1,.5f,1),false);
@@ -56,7 +56,7 @@ public class DrivingReadability : MonoBehaviour {
    if(jobs.trip.State==TripState.ToPickup)Marker(jobs.stops[jobs.current.pickup].V(),"승차",new Color(.3f,1,.55f),true);
    Marker(jobs.stops[jobs.current.drop].V(),"도착",new Color(1,.5f,.8f),true);
   }
-  if(jobs.nav.active)Marker(jobs.nav.destination,jobs.trip.State==TripState.ToPickup?"승차":jobs.trip.State==TripState.OnTrip?"도착":"목표",jobs.trip.State==TripState.ToPickup?new Color(.3f,1,.55f):new Color(1,.5f,.8f),true);
+  if(jobs.nav.HasDestination)Marker(jobs.nav.destination,jobs.trip.State==TripState.ToPickup?"승차":jobs.trip.State==TripState.OnTrip?"도착":"목표",jobs.trip.State==TripState.ToPickup?new Color(.3f,1,.55f):new Color(1,.5f,.8f),true);
   var player=Project(session.taxi.transform.position);var forward=new Vector2(session.taxi.transform.forward.x,-session.taxi.transform.forward.z).normalized;var side=new Vector2(-forward.y,forward.x);
   Circle(player,Color.black,34);Circle(player,new Color(.95f,.95f,.95f),29);Circle(player,new Color(.12f,.16f,.18f),24);Line(player-forward*6-side*7,player+forward*11,Color.yellow,5);Line(player+forward*11,player-forward*6+side*7,Color.yellow,5);Line(player-forward*6+side*7,player-forward*6-side*7,Color.yellow,5);
   GUI.EndGroup();
@@ -66,6 +66,17 @@ public class DrivingReadability : MonoBehaviour {
   GUI.Label(new Rect(x+4,379,276,22),"© OSM / ODbL · 현장 규제 미검증",new GUIStyle(label){fontSize=11});
   if(Facilities){var status=GetComponent<HybridMapStatus>();Panel(new Rect(x-310,42,300,145));GUI.Label(new Rect(x-300,50,280,130),"시설 □ 주황: 임시 / 초록: 확인\n"+(status?status.current:"시설 정보 없음"),label);}
   DrawSignal(x);
+  DrawNavigation(x);
+ }
+ public string NavigationSummary {get{var nav=session.jobs.nav;return nav.HasDestination?nav.PreferenceLabel+" · "+nav.remaining.ToString("0")+"m · 약 "+RoadNavigation.FormatEta(nav.estimatedSeconds):"목적지를 선택하면 경로를 안내합니다";}}
+ void DrawNavigation(float x){
+  var nav=session.jobs.nav;const float y=553;Panel(new Rect(x-5,y,Size+10,124));
+  GUI.Label(new Rect(x+8,y+5,Size-16,37),nav.HasDestination?nav.instruction:"내비게이션 · 목적지 대기",new GUIStyle(label){fontSize=15,fontStyle=FontStyle.Bold});
+  GUI.Label(new Rect(x+8,y+43,Size-16,23),NavigationSummary,new GUIStyle(label){fontSize=12});
+  GUI.enabled=nav.HasDestination&&!session.paused;
+  if(GUI.Button(new Rect(x+8,y+69,Size-16,25),"Tab · "+(nav.PreferFastest?"짧은 길":"빠른 길")+" 선택",KoreanText.Button(13)))nav.TogglePreference();
+  GUI.enabled=true;
+  GUI.Label(new Rect(x+8,y+97,Size-16,23),!nav.HasDestination?"호출·승객·지도에서 목적지 선택":string.IsNullOrEmpty(nav.rerouteNotice)?"정체·정차 차량을 반영한 예상 시간":nav.rerouteNotice,new GUIStyle(label){fontSize=11});
  }
  void DrawFuelStations(){
   var stations=FuelStationLayout.For(session.world.map);var style=new GUIStyle(label){fontSize=11,alignment=TextAnchor.MiddleCenter};
@@ -75,7 +86,7 @@ public class DrivingReadability : MonoBehaviour {
  public void LayoutLawZones(){
   ZoneLabels.Clear();var zones=GetComponent<ServiceLawZones>();if(!zones||!zones.Ready)return;
   SetBounds();PrepareMarkers();var occupied=new List<Rect>();var player=Project(session.taxi.transform.position);occupied.Add(new Rect(player.x-18,player.y-18,36,36));
-  if(session.jobs.nav.active)ReserveMarker(session.jobs.nav.destination,occupied);
+  if(session.jobs.nav.HasDestination)ReserveMarker(session.jobs.nav.destination,occupied);
   foreach(var station in FuelStationLayout.For(session.world.map)){var p=Project(station.pump);if(p.x>=4&&p.y>=4&&p.x<=Size-4&&p.y<=Size-4)occupied.Add(new Rect(p.x-8,p.y-8,16,16));}
   if(session.jobs.Active){ReserveMarker(session.jobs.stops[session.jobs.current.drop].V(),occupied);if(session.jobs.trip.State==TripState.ToPickup)ReserveMarker(session.jobs.stops[session.jobs.current.pickup].V(),occupied);}
   var selected=session.jobs.Active?zones.ZoneFor(session.jobs.current):null;var ordered=new List<ServiceLawZone>();if(selected!=null)ordered.Add(selected);foreach(var z in zones.zones)if(z!=selected)ordered.Add(z);
@@ -102,7 +113,7 @@ public class DrivingReadability : MonoBehaviour {
  static Rect MarkerTextRect(Vector2 p){return new Rect(Mathf.Clamp(p.x-24,0,Size-65),p.y>Size-48?p.y-23:p.y+10,65,22);}
  void PrepareMarkers(){
   markerLabels.Clear();var jobs=session.jobs;var occupied=new List<Rect>();var player=Project(session.taxi.transform.position);occupied.Add(new Rect(player.x-16,player.y-16,32,32));var targets=new List<Vector3>();
-  if(jobs.Active){if(jobs.trip.State==TripState.ToPickup)targets.Add(jobs.stops[jobs.current.pickup].V());targets.Add(jobs.stops[jobs.current.drop].V());}if(jobs.nav.active)targets.Add(jobs.nav.destination);
+  if(jobs.Active){if(jobs.trip.State==TripState.ToPickup)targets.Add(jobs.stops[jobs.current.pickup].V());targets.Add(jobs.stops[jobs.current.drop].V());}if(jobs.nav.HasDestination)targets.Add(jobs.nav.destination);
   foreach(var target in targets){var key=new Vector2(target.x,target.z);if(markerLabels.ContainsKey(key))continue;bool outside;var p=MarkerPoint(target,true,out outside);occupied.Add(new Rect(p.x-10,p.y-10,20,20));var box=LawZoneMapLayout.Place(p,new Vector2(65,22),new Rect(3,3,Size-6,Size-6),occupied);markerLabels[key]=box;occupied.Add(box);}
  }
  public Rect MarkerTextBounds(Vector3 world){Rect r;if(markerLabels.TryGetValue(new Vector2(world.x,world.z),out r))return r;bool outside;return MarkerTextRect(MarkerPoint(world,true,out outside));}

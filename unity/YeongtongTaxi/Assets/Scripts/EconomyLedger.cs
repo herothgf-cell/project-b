@@ -17,6 +17,7 @@ public enum BusinessState { Open, Closing, Summary, Won, Lost, Completed }
  public int version=1;
  public EconomySettings settings;
  public DayRecord[] records;
+ public int currentDay;public bool dayOpen;
 }
 
 // Engine-independent accounting. Only settlement commits a day's net earnings.
@@ -32,6 +33,9 @@ public class EconomyLedger {
  public int Income {get;private set;}
  public int Rides {get;private set;}
  public int FailedTrips {get;private set;}
+ public int TotalIncome {get{int total=0;foreach(var record in records)total+=record.income;return total+(Operating?Income:0);}}
+ public int TotalExpenses {get{return TotalIncome-TotalNet;}}
+ double nightlyFatigueRecovery;
  int legacyTotal; public int TotalNet {get{return Account==null?legacyTotal:Account.Net;}private set{legacyTotal=value;}}
  public double Elapsed {get;private set;}
  public double Metres {get;private set;}
@@ -46,7 +50,7 @@ public class EconomyLedger {
  public int RemainingGoal {get{return Math.Max(0,Settings.target-TotalNet);}}
  public double SecondsLeft {get{return Math.Max(0,Settings.daySeconds-Elapsed);}}
  public EconomyLedger(EconomySettings settings){if(settings==null||!settings.Valid)throw new ArgumentException("Invalid economy settings");Settings=settings;Day=1;State=BusinessState.Open;}
- public EconomyLedger(PrototypeSettings settings):this(new EconomySettings{days=settings.days,target=settings.target,daySeconds=settings.daySeconds,insurance=0,food=0,fuelPerKm=0,idlePerHour=0}){Account=new CampaignAccount(settings);OneDay=settings.oneDay;if(OneDay)Driver=new DriverCondition();}
+ public EconomyLedger(PrototypeSettings settings):this(new EconomySettings{days=settings.days,target=settings.target,daySeconds=settings.daySeconds,insurance=0,food=0,fuelPerKm=0,idlePerHour=0}){Account=new CampaignAccount(settings);OneDay=settings.oneDay;nightlyFatigueRecovery=settings.nightlyFatigueRecovery;if(OneDay)Driver=new DriverCondition();}
  public bool RecordFare(string trip,int amount){if(!Operating||Account==null||!Account.Fare(trip,amount,Day))return false;Income+=amount;Rides++;return true;}
  public bool RecordFare(int amount){if(!Operating||amount<=0)return false;Income+=amount;Rides++;return true;}
  public void RecordFailure(){if(Operating)FailedTrips++;}
@@ -68,11 +72,11 @@ public class EconomyLedger {
   if(Account!=null){Account.CloseDay(Day);record.food=Account.Expense(Day,"meal");record.insurance=Account.Expense(Day,"insurance");record.net=Income-Account.Expense(Day,null);}
   record.elapsed=Elapsed;record.endReason=EndReason;record.driver=Driver==null?null:Driver.Copy();records.Add(record);if(Account==null)TotalNet+=record.net;State=Outcome();return true;
  }
- BusinessState Outcome(){if(OneDay)return BusinessState.Completed;return (Account==null?TotalNet>=Settings.target:Account.GoalMet)?BusinessState.Won:Day>=Settings.days?BusinessState.Lost:BusinessState.Summary;}
+ BusinessState Outcome(){if(OneDay)return Day>=Settings.days?BusinessState.Completed:BusinessState.Summary;return (Account==null?TotalNet>=Settings.target:Account.GoalMet)?BusinessState.Won:Day>=Settings.days?BusinessState.Lost:BusinessState.Summary;}
  public bool DepartureAllowed {get{return Account==null||Account.InsuranceValid(Day+1);}}
  public void RefreshSummary(){if(Account==null||Operating||Last==null)return;Last.insurance=Account.Expense(Day,"insurance");Last.food=Account.Expense(Day,"meal");Last.fuel=FuelCost;Last.net=Income-Account.Expense(Day,null);State=Outcome();}
- public bool NextDay(){if(State!=BusinessState.Summary)return false;Day++;Income=Rides=FailedTrips=0;Elapsed=Metres=fuel=0;State=BusinessState.Open;return true;}
- public EconomySnapshot Snapshot(){return new EconomySnapshot{settings=Settings,records=records.ConvertAll(r=>r.Copy()).ToArray()};}
+ public bool NextDay(){if(State!=BusinessState.Summary)return false;Day++;Income=Rides=FailedTrips=0;Elapsed=Metres=fuel=0;EndReason=null;services.Clear();if(Driver!=null){Driver=new DriverCondition{satiety=Driver.satiety,fatigue=Math.Max(0,Driver.fatigue-nightlyFatigueRecovery)};}State=BusinessState.Open;return true;}
+ public EconomySnapshot Snapshot(){return new EconomySnapshot{settings=Settings,records=records.ConvertAll(r=>r.Copy()).ToArray(),currentDay=Day,dayOpen=Operating};}
  public static EconomyLedger RestoreCampaign(EconomySnapshot days,AccountSnapshot account){
   var a=CampaignAccount.Restore(account);var result=new EconomyLedger(a.Snapshot().settings);result.Account=a;
   if(days==null||days.records==null||days.records.Length>result.Settings.days)throw new ArgumentException("Invalid campaign days");
@@ -81,7 +85,9 @@ public class EconomyLedger {
    if(r==null||r.day!=result.records.Count+1||r.income<0||r.rides<0||r.failedTrips<0||r.metres<0||float.IsNaN(r.metres)||float.IsInfinity(r.metres))throw new ArgumentException("Invalid campaign sequence");
    var normalized=r.Copy();normalized.insurance=0;normalized.food=a.Expense(r.day,"meal");normalized.fuel=a.Expense(r.day,"fuel")+a.Expense(r.day,"fuel-recovery");normalized.net=r.income-a.Expense(r.day,null);result.records.Add(normalized);
   }
-  if(result.Last!=null){var r=result.Last;result.Day=r.day;result.Income=r.income;result.Rides=r.rides;result.FailedTrips=r.failedTrips;result.Metres=r.metres;result.Elapsed=r.elapsed;result.EndReason=r.endReason;if(result.OneDay){if(r.driver==null)throw new ArgumentException("Missing driver checkpoint");r.driver.Validate();result.Driver=r.driver.Copy();}result.State=result.Outcome();}return result;
+  if(result.Last!=null){var r=result.Last;result.Day=r.day;result.Income=r.income;result.Rides=r.rides;result.FailedTrips=r.failedTrips;result.Metres=r.metres;result.Elapsed=r.elapsed;result.EndReason=r.endReason;if(result.OneDay){if(r.driver==null)throw new ArgumentException("Missing driver checkpoint");r.driver.Validate();result.Driver=r.driver.Copy();}result.State=result.Outcome();}
+  if(days.dayOpen){if(days.currentDay!=result.records.Count+1||days.currentDay>result.Settings.days)throw new ArgumentException("Invalid campaign start boundary");if(result.Last!=null&&!result.NextDay())throw new ArgumentException("Cannot reopen completed campaign");}
+  return result;
  }
  public static EconomyLedger Restore(EconomySnapshot snapshot){
   if(snapshot==null||snapshot.version!=1||snapshot.records==null)throw new ArgumentException("Invalid checkpoint");

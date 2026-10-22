@@ -1,6 +1,6 @@
 using UnityEngine;
 public class DriveHUD : MonoBehaviour {
- public DriveSession session;public Texture2D tile;GUIStyle title,body,small;const int W=1024,H=1024;
+ public DriveSession session;public Texture2D tile;public bool HelpOpen {get;private set;}GUIStyle title,body,small;const int W=1024,H=1024;
  void Start(){tile=new Texture2D(W,H);var pixels=new Color[W*H];for(int i=0;i<pixels.Length;i++)pixels[i]=new Color(.10f,.15f,.17f);tile.SetPixels(pixels);
   if(session.world.map.areas!=null)foreach(var area in session.world.map.areas){
    if(area.kind!="water"||area.points==null||area.points.Length<3)continue;
@@ -19,36 +19,24 @@ public class DriveHUD : MonoBehaviour {
  public string MannerCaption {get{return session.jobs.trip.State==TripState.OnTrip?"승객 만족도 "+session.manners.ledger.Score+"점 / 요구 "+session.jobs.current.requiredScore+"점":session.jobs.trip.State==TripState.ToPickup?"승객 만족도 · 탑승 전 / 요구 "+session.jobs.current.requiredScore+"점":"승객 만족도 · 탑승 시 100점으로 시작";}}
  public string LawCaption {get{int valid=0;foreach(var e in session.law.ledger.Events)foreach(var r in e.rules)if(r.verdict==LawVerdict.Compliant||r.verdict==LawVerdict.Violation)valid++;return "운행 점수 "+session.law.ledger.TotalScore+"점 · "+(valid==0?"아직 유효 평가 없음":"유효 "+valid+"건")+" · F8";}}
  void Gauge(Rect r,float value,Color color,int requirement=-1){GUI.color=new Color(.13f,.18f,.21f);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=color;GUI.DrawTexture(new Rect(r.x,r.y,r.width*Mathf.Clamp01(value/100),r.height),Texture2D.whiteTexture);if(requirement>=0){GUI.color=Color.white;GUI.DrawTexture(new Rect(r.x+r.width*Mathf.Clamp01(requirement/100f)-1,r.y-2,2,r.height+4),Texture2D.whiteTexture);}GUI.color=Color.white;}
- void OnGUI(){if(PracticeSession.Enabled&&!session.paused)return;if(session.ChoiceOpen||session.PracticeMenuOpen||session.business.restartPrompt||session.jobs==null||session.business.ShowingSummary||session.business.preparing||session.business.taxPrompt||session.services.open||session.law.HistoryOpen)return;if(title==null){GUI.skin.font=KoreanText.Font;title=new GUIStyle(GUI.skin.label){fontSize=23,fontStyle=FontStyle.Bold};body=new GUIStyle(GUI.skin.label){fontSize=16};small=new GUIStyle(GUI.skin.label){fontSize=13};title.normal.textColor=body.normal.textColor=small.normal.textColor=Color.white;}
+ void OnGUI(){if(PracticeSession.Enabled&&!session.paused)return;if(session.RideResultOpen||session.ChoiceOpen||session.PracticeMenuOpen||session.business.restartPrompt||session.jobs==null||session.business.ShowingSummary||session.business.preparing||session.business.taxPrompt||session.services.open||session.law.HistoryOpen)return;if(title==null){GUI.skin.font=KoreanText.Font;title=new GUIStyle(GUI.skin.label){fontSize=23,fontStyle=FontStyle.Bold};body=new GUIStyle(GUI.skin.label){fontSize=16};small=new GUIStyle(GUI.skin.label){fontSize=13};title.normal.textColor=body.normal.textColor=small.normal.textColor=Color.white;}
   var jobs=session.jobs;GUI.Box(new Rect(16,16,380,176),GUIContent.none);GUI.Label(new Rect(28,22,360,35),RoadRulesTrial.Enabled?"가상 도로 규칙 시험장":MapCatalog.Name(session.world.map.mapId),title);
   GUI.Label(new Rect(28,54,355,25),Mathf.Abs(session.taxi.Speed*3.6f).ToString("00")+" km/h   "+(session.taxi.Speed<-.2f?"R":"D")+"   수입 "+(session.business.enabledCampaign?session.business.ledger.Income:jobs.balance).ToString("N0")+"원",body);
-  GUI.Label(new Rect(28,80,355,23),(session.drivingCamera.FirstPerson?"1인칭":"3인칭")+" · "+(session.assisted.Active?"보조":"수동")+"   방향지시등: "+(session.signals.direction<0?"좌측":session.signals.direction>0?"우측":"꺼짐"),small);
+  GUI.Label(new Rect(28,80,355,23),(session.drivingCamera.FirstPerson?"1인칭":"3인칭")+" · "+(session.assisted.Active?"보조":"수동")+"   방향지시등: "+(session.signals.Hazards?"비상등":session.signals.direction<0?"좌측":session.signals.direction>0?"우측":"꺼짐"),small);
   bool occupied=jobs.trip.State==TripState.OnTrip;GUI.Label(new Rect(28,103,355,20),MannerCaption,small);Gauge(new Rect(28,124,355,6),occupied?session.manners.ledger.Score:0,occupied?(session.manners.ledger.Score>=jobs.current.requiredScore?new Color(.2f,.85f,.55f):new Color(1,.5f,.2f)):Color.gray,occupied?jobs.current.requiredScore:-1);
   GUI.Label(new Rect(28,132,355,20),LawCaption,small);Gauge(new Rect(28,153,355,6),session.law.ledger.TotalScore,new Color(.35f,.7f,1));
   GUI.Label(new Rect(28,164,355,24),Time.time<session.manners.eventUntil?session.manners.lastEvent:"지도·시설 현장 규제 미검증 · 운행 점수·만족도 별도",new GUIStyle(small){fontSize=11,wordWrap=true});
-  float navY=session.assist.Visible?Screen.height-50:Mathf.Max(555,Screen.height-205);float navWidth=Mathf.Min(600,Screen.width-832),navX=Screen.width-navWidth-16;
-  if(session.assist.Visible){GUI.Box(new Rect(navX,navY,navWidth,38),GUIContent.none);GUI.Label(new Rect(navX+8,navY+4,navWidth-16,30),jobs.nav.active?jobs.nav.instruction:"교통 상황을 확인하세요",small);}
-  else if(jobs.nav.active){
-   GUI.Box(new Rect(navX,navY,navWidth,110),GUIContent.none);
-   GUI.Label(new Rect(navX+12,navY+6,navWidth-24,28),jobs.nav.instruction,body);
-   GUI.Label(new Rect(navX+12,navY+30,navWidth-24,28),jobs.nav.PreferenceLabel+" · "+jobs.nav.remaining.ToString("0")+"m · 약 "+RoadNavigation.FormatEta(jobs.nav.estimatedSeconds),body);
-   GUI.enabled=!session.paused;
-   if(GUI.Button(new Rect(navX+12,navY+57,navWidth-24,26),"Tab: "+(jobs.nav.PreferFastest?"짧은 길":"빠른 길")+" 선택 · "+jobs.nav.alternativeDistance.ToString("0")+"m / 약 "+RoadNavigation.FormatEta(jobs.nav.alternativeSeconds),KoreanText.Button(13)))jobs.nav.TogglePreference();
-   GUI.enabled=true;
-   GUI.Label(new Rect(navX+12,navY+84,navWidth-24,25),string.IsNullOrEmpty(jobs.nav.rerouteNotice)?"정체·정차 차량을 반영한 예상 시간":jobs.nav.rerouteNotice,small);
-  }else if(!RoadRulesTrial.Enabled&&!HdRouteTrial.Enabled){GUI.Box(new Rect(navX,navY,navWidth,58),GUIContent.none);GUI.Label(new Rect(navX+12,navY+5,navWidth-24,48),session.roadConditions.Notice,new GUIStyle(small){wordWrap=true});}
   if(session.assist.Visible)GUI.Label(new Rect(Screen.width*.745f,Screen.height*.69f-26,Screen.width*.24f,25),(session.assist.Mode=="REAR CAMERA"?"후방 카메라":session.assist.Mode=="LEFT CAMERA"?"좌측 카메라":"우측 카메라"),body);
-  float assistY=session.business.enabledCampaign?330:198;
-  if(!session.services.PostTripVisible){GUI.Box(new Rect(16,assistY,380,62),GUIContent.none);GUI.Label(new Rect(28,assistY+3,365,26),session.assisted.Status,small);
-  GUI.Label(new Rect(28,assistY+29,365,24),session.assisted.Active?"A/D 차로 · Q/E 회전 · 가능 "+session.assisted.AvailableTurns+" · H 수동":"수동: 직접 조향 / H 보조 → Q/E 회전 · W 가속",small);}
-  if(!RoadRulesTrial.Enabled&&!HdRouteTrial.Enabled){
+  float helpY=Screen.height-42;
+  if(GUI.Button(new Rect(16,helpY,150,28),HelpOpen?"도움말 닫기":"도움말 · 조작법",KoreanText.Button(13)))HelpOpen=!HelpOpen;
+  if(HelpOpen)DrawHelp(Mathf.Max(200,Screen.height-310));
+  if(!HelpOpen&&!RoadRulesTrial.Enabled&&!HdRouteTrial.Enabled){
   float y=Screen.height-211;
   if(jobs.trip.State==TripState.Idle){float offersY=Screen.height-318;GUI.Box(new Rect(16,offersY,790,248),GUIContent.none);GUI.Label(new Rect(28,offersY+5,760,25),"호출 선택 1·2·3 / 길가 손님 옆 F · M 전체 지도",body);
    var offerStyle=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=14,alignment=TextAnchor.MiddleLeft,wordWrap=true,padding=new RectOffset(10,10,3,3)};
    GUI.enabled=session.business.CanAccept&&!session.paused;for(int i=0;i<3;i++)if(GUI.Button(new Rect(28,offersY+35+i*68,762,65),OfferText(i),offerStyle))jobs.Accept(i);GUI.enabled=true;
   }else if(jobs.trip.State==TripState.Complete||jobs.trip.State==TripState.Failed){float resultY=Screen.height-280;GUI.Box(new Rect(16,resultY,790,200),GUIContent.none);GUI.Label(new Rect(28,resultY+8,760,32),jobs.trip.State==TripState.Complete?"운송 완료 · 승객 만족도와 정산":"운송 종료 · 정산",title);GUI.Label(new Rect(28,resultY+45,760,145),jobs.message,new GUIStyle(body){wordWrap=true});}else{GUI.Box(new Rect(16,y+28,790,115),GUIContent.none);string state=jobs.trip.State==TripState.ToPickup?"승객에게 이동 중":jobs.trip.State==TripState.OnTrip?"승객 운송 중":(jobs.trip.State==TripState.Complete?"운송 완료":"운송 실패");GUI.Label(new Rect(28,y+34,760,36),state+"    요금: "+(jobs.trip.State==TripState.OnTrip&&jobs.trip.Remaining<=0?"0원 (시간 초과)":jobs.current.fare.ToString("N0")+"원")+(jobs.trip.State==TripState.ToPickup?"    승객 대기: "+Mathf.CeilToInt(jobs.trip.PickupRemaining)+"초":jobs.trip.State==TripState.OnTrip?(jobs.trip.Remaining>0?"    남은 시간: "+Mathf.CeilToInt(jobs.trip.Remaining)+"초":"    시간 초과 · 목적지 하차"):""),title);GUI.Label(new Rect(28,y+72,760,26),jobs.message,body);GUI.Label(new Rect(28,y+101,760,24),"오른쪽 연석 · 화살표와 같은 방향 · 시속 2km 미만 · F 승하차",small);}
   }
-  GUI.Box(new Rect(16,Screen.height-59,790,48),GUIContent.none);GUI.Label(new Rect(28,Screen.height-56,760,22),"WASD 운전 · Space 제동 · F 승하차 · Q/E 깜빡이 · C 시점 · Esc 정지 · F11 전체화면",small);GUI.Label(new Rect(28,Screen.height-34,760,22),session.drivingCamera.FirstPerson?"M 전체지도 · Z/X 좌우 보기 · V 코너 시선 · B 뒤보기":"M 전체지도 · F7 거점 · F8 기록 · F10 안내 · B 뒤보기 / 후진·깜빡이: 보조 카메라",small);
   if(session.paused){
    float x=Screen.width/2f-240,y=Screen.height/2f-235;
    GUI.Box(new Rect(x,y,480,470),"일시정지 · 운행 지역");
@@ -61,13 +49,22 @@ public class DriveHUD : MonoBehaviour {
    GUI.Label(new Rect(x+20,y+164,440,55),string.IsNullOrEmpty(MapCatalog.LockedRegion)?"지역 변경은 게임을 다시 실행할 때 적용됩니다.\n영업 마감(N) 후 종료하면 정산 결과가 저장됩니다.":"은계 전용 빌드 · 현재 지역으로 시작합니다.\n영업 마감(N) 후 종료하면 정산 결과가 저장됩니다.",small);
    GUI.enabled=!session.PracticeBusy;
    if(GUI.Button(new Rect(x+20,y+230,440,40),"계속 운전")){session.paused=false;Time.timeScale=1;}
-   if(session.business.useV2&&GUI.Button(new Rect(x+20,y+282,440,40),session.business.ledger.OneDay?"새 하루 시작":"1일차부터 다시 시작"))session.business.RequestRestart();
+   if(session.business.useV2&&GUI.Button(new Rect(x+20,y+282,440,40),session.business.ledger.Settings.days>1?"1일차부터 다시 시작":"새 하루 시작"))session.business.RequestRestart();
    if(GUI.Button(new Rect(x+20,y+334,215,40),"지도 편집"))session.GetComponent<RoadMapEditor>().Open();
    if(GUI.Button(new Rect(x+245,y+334,215,40),"운전 연습 선택"))session.GetComponent<PracticeSession>().OpenPicker();
    GUI.enabled=true;
    if(GUI.Button(new Rect(x+20,y+386,440,40),"게임 종료 (완료한 정산까지 저장)"))Application.Quit();
    if(GUI.Button(new Rect(x+20,y+434,440,28),session.traffic.mitOptions.Label+" · 클릭하여 변경",KoreanText.Button(14)))session.traffic.mitOptions.SetEnabled(!session.traffic.mitOptions.Enabled);
   }
+ }
+ public string DrivingHelpText {get{return "수동: W 가속 · S 감속 / 정차 후 후진 · A/D 조향 · Space 제동\nQ/E 방향지시등 · G 비상등 · H 조향 보조 켜기/끄기\n보조: A/D 차로 변경 · Q/E 다음 교차로 회전 예약\n보조 중에도 가속·감속·제동과 신호 판단은 직접 합니다.\nC 시점 · B 뒤보기 · Z/X 좌우 보기 · V 코너 시선\nF 승하차 · M 전체 지도 · Tab 경로 변경 · +/- 미니맵 확대/축소\nF7 거점 · F8 기록 · F10 안내 · Esc 정지 · F11 전체화면";}}
+ void DrawHelp(float y){
+  int depth=GUI.depth;GUI.depth=-20;
+  GUI.Box(new Rect(16,y,480,247),GUIContent.none);
+  GUI.Label(new Rect(28,y+6,456,25),session.assisted.Active?"조향 보조 · H로 수동 전환":"수동 운전 · H로 조향 보조",body);
+  GUI.Label(new Rect(28,y+33,456,28),session.assisted.Status,new GUIStyle(small){wordWrap=true});
+  GUI.Label(new Rect(28,y+65,456,178),DrivingHelpText,new GUIStyle(small){wordWrap=true});
+  GUI.depth=depth;
  }
  Vector2 Mini(Vector3 p,Rect r){return new Vector2(r.x+p.x/session.world.map.width*r.width,r.y+(1-p.z/session.world.map.depth)*r.height);}
  void Dot(Vector2 p,Color c,float size){GUI.color=c;GUI.DrawTexture(new Rect(p.x-size/2,p.y-size/2,size,size),Texture2D.whiteTexture);GUI.color=Color.white;}
