@@ -10,6 +10,7 @@ public static class PrototypeBuild {
     public static void BuildAssistedChecks(){BuildAt("../../builds/AssistedTaxiChecks/AssistedTaxiChecks.exe");}
     [MenuItem("Taxi/Build Windows Prototype")]
     public static void Build(){BuildAt("../../builds/YeongtongTaxi/YeongtongTaxi.exe");}
+    public static void BuildEasyRoadMapEditor(){EasyRoadEditorTests.Run();BuildRoadMapEditor();}
     public static void BuildRoadMapEditor(){EungyeHybridBuilder.Generate();RoadMapEditorTests.Run();RoadMapExtendedTests.Run();BuildHybrid();}
     public static void BuildReviewedMap(){LaneDirectionPaintTests.Run();BuildHybrid();}
     static void BuildAt(string destination,string region="") {
