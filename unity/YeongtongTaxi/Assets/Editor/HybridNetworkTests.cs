@@ -16,8 +16,13 @@ public static class HybridNetworkTests {
   var original=JsonUtility.FromJson<MapData>(File.ReadAllText("Assets/Resources/route42-map.json"));
   for(int i=0;i<original.hdEdges.Length;i++){var a=original.hdEdges[i];var b=map.hdEdges[i];Check(a.id==b.id&&a.fromNode==b.fromNode&&a.toNode==b.toNode&&a.points.Length==b.points.Length,"HD identity "+i);for(int k=0;k<a.points.Length;k++)Check(Vector3.Distance(a.points[k].V(),b.points[k].V())<.001f,"HD geometry "+i);foreach(int n in a.next)Check(b.next.Contains(n),"HD connection preserved "+i);}
   foreach(var stop in map.stops)Check(graph.Route(stop.laneEdge,stop.laneAt+1,stop.laneEdge,stop.laneAt)!=null,"passed stop circuit "+stop.name);
-  var chosen=map.hdEdges.First(e=>e.id.StartsWith("join:")&&e.turn!=0);var settings=new HybridOverrides{junctions=new[]{new HybridJunctionRule{id=chosen.ruleId,allowLeft=false,allowRight=false,allowStraight=true}}};
+  var chosen=map.hdEdges.Where(e=>e.id.StartsWith("join:")&&e.turn!=0).GroupBy(e=>e.ruleId+":"+e.turn).First(g=>g.Count()>1).First();var settings=new HybridOverrides{junctions=new[]{new HybridJunctionRule{id=chosen.ruleId,allowLeft=false,allowRight=false,allowStraight=true}}};
   var blocked=EungyeHybridBuilder.Generate(settings,false);Check(!blocked.hdEdges.Any(e=>e.id.StartsWith("join:")&&e.ruleId==chosen.ruleId&&e.turn!=0),"editable junction prohibits turns");
+  string laneId=chosen.id.Substring(5,chosen.id.LastIndexOf(':')-5);
+  var laneSetting=new HybridOverrides{laneTurns=new[]{new HybridLaneTurnOverride{junctionId=chosen.ruleId,laneId=laneId,turns=chosen.turn<0?"SR":"LS",status="provisional"}}};
+  var laneBlocked=EungyeHybridBuilder.Generate(JsonUtility.FromJson<HybridOverrides>(JsonUtility.ToJson(laneSetting)),false);
+  Check(!laneBlocked.hdEdges.Any(e=>e.id==chosen.id),"lane override removes only the forbidden turn");
+  Check(laneBlocked.hdEdges.Any(e=>e.ruleId==chosen.ruleId&&e.turn==chosen.turn&&e.id!=chosen.id),"other approach keeps the turn");
   Check(graph.Forward(map.stops[2].laneEdge,map.stops[2].laneAt)!=null,"free driving continuation");
   bool detour=false;foreach(var a in map.stops){if(detour)break;foreach(var b in map.stops){if(a==b)continue;var shortest=graph.Route(a.laneEdge,a.laneAt,b.laneEdge,b.laneAt);int avoid=shortest.edges[shortest.edges.Count/2];var weights=graph.paths.Select(p=>p.length/8).ToArray();weights[avoid]+=10000;var fast=graph.Route(a.laneEdge,a.laneAt,b.laneEdge,b.laneAt,weights);if(fast!=null&&!fast.edges.Contains(avoid)){detour=true;break;}}}Check(detour,"weighted traffic detour");
   var signalObject=new GameObject("hybrid signal test");var carObject=new GameObject("hybrid test car");

@@ -767,5 +767,6 @@
     }
   ],
   "roads": [],
+  "laneTurns": [],
   "disabledPortals": []
 }

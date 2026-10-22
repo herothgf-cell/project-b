@@ -49,12 +49,23 @@ public static class EungyeHybridBuilder {
   foreach(var e in edges){e.status="ngii";e.ruleId="NGII:"+e.sourceId;}
   var local=new Dictionary<int,int>();
   foreach(var l in net.lanes){if(covered.Contains(l.id))continue;string id=LaneId(l);local[l.id]=edges.Count;edges.Add(new HdEdge{id=id,sourceId=l.sourceIds,fromNode=id+":start",toNode=id+":end",points=Points(l.path.points),number=l.index+1,status="provisional",ruleId=Junction(net.NodePosition(l.to)),next=new int[0]});}
+  var laneTurns=new Dictionary<string,HybridLaneTurnOverride>();
+  foreach(var item in overrides.laneTurns??new HybridLaneTurnOverride[0]){
+   if(item==null||string.IsNullOrEmpty(item.junctionId)||string.IsNullOrEmpty(item.laneId)||string.IsNullOrEmpty(item.turns)||item.turns.Any(c=>c!='L'&&c!='S'&&c!='R')||item.turns.Distinct().Count()!=item.turns.Length)throw new Exception("Invalid lane turn override");
+   if(item.status!="verified"&&item.status!="provisional")throw new Exception("Invalid lane turn status "+item.laneId);
+   DateTime checkedAt;
+   if(item.status=="verified"&&(string.IsNullOrWhiteSpace(item.evidence)||!DateTime.TryParseExact(item.checkedAt,"yyyy-MM-dd",System.Globalization.CultureInfo.InvariantCulture,System.Globalization.DateTimeStyles.None,out checkedAt)))throw new Exception("Verified lane turn requires evidence and date "+item.laneId);
+   var found=edges.Skip(originals).FirstOrDefault(e=>e.id==item.laneId&&e.ruleId==item.junctionId);
+   if(found==null||laneTurns.ContainsKey(item.laneId))throw new Exception("Unknown/duplicate lane turn override "+item.laneId);
+   laneTurns.Add(item.laneId,item);
+  }
   foreach(var l in net.lanes){int first;if(!local.TryGetValue(l.id,out first))continue;var rule=rules[edges[first].ruleId];
    for(int turn=-1;turn<=1;turn++){
     if(turn<0&&!rule.allowLeft||turn>0&&!rule.allowRight||turn==0&&!rule.allowStraight)continue;
+    HybridLaneTurnOverride laneRule;if(laneTurns.TryGetValue(edges[first].id,out laneRule)&&laneRule.turns.IndexOf(turn<0?'L':turn>0?'R':'S')<0)continue;
     var join=net.Connection(l,turn);int target;if(join==null||!local.TryGetValue(join.target.id,out target))continue;
     if(!envelope.Clear(join.path.points))continue;
-    edges.Add(new HdEdge{id="join:"+edges[first].id+":"+turn,sourceId=edges[first].sourceId,fromNode=edges[first].toNode,toNode=edges[target].fromNode,points=Points(join.path.points),number=join.target.index+1,turn=turn,status="provisional",ruleId=rule.id,next=new int[0]});
+    edges.Add(new HdEdge{id="join:"+edges[first].id+":"+turn,sourceId=edges[first].sourceId,fromNode=edges[first].toNode,toNode=edges[target].fromNode,points=Points(join.path.points),number=join.target.index+1,turn=turn,status="provisional",evidence=laneRule==null?"":laneRule.evidence,updated=laneRule==null?"":laneRule.checkedAt,ruleId=rule.id,next=new int[0]});
    }
   }
   // Provisional lane changes use split nodes; the original road's interior is
