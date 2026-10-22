@@ -46,7 +46,7 @@ public class WorldBuilder : MonoBehaviour {
                 Batch(roadBatches,p.V()).Add(vertices,indices);
             }
         }
-        RenderBatches(roadBatches,"도로 표면",asphalt);
+        RenderBatches(roadBatches,"도로 표면",asphalt);if(map.editorDocument!=null)foreach(var r in map.roads){if(!r.id.StartsWith("editor:")||!System.Array.Exists(r.points,p=>p.elevation>.001f))continue;var vertices=new List<Vector3>();var faces=new List<int>();for(int i=1;i<r.points.Length;i++){var a=r.points[i-1].V(.045f);var b=r.points[i].V(.045f);var side=TrafficSystem.Right((b-a).normalized)*r.width*.5f;int n=vertices.Count;vertices.AddRange(new[]{a-side,b-side,b+side,a+side});faces.AddRange(new[]{n,n+1,n+2,n,n+2,n+3});}var mesh=new Mesh();mesh.SetVertices(vertices);mesh.SetTriangles(faces,0);mesh.RecalculateNormals();var collider=new GameObject("사용자 높이 차로 충돌 "+r.id);collider.transform.SetParent(transform);collider.AddComponent<MeshCollider>().sharedMesh=mesh;}
         if(map.HasHd)HdRouteTrial.DrawMarkings(map,transform);
         foreach(var b in map.buildings) {
             if(SceneBuildingVisibility.Hidden(map,b.id)){Debug.Log("PROVISIONAL_BUILDING_HIDDEN "+b.id+" · 원본 보존 / 생성 차로 겹침 검토 대기");continue;}

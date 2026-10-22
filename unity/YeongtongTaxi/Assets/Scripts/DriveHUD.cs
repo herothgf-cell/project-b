@@ -62,7 +62,8 @@ public class DriveHUD : MonoBehaviour {
    GUI.enabled=!session.PracticeBusy;
    if(GUI.Button(new Rect(x+20,y+230,440,40),"계속 운전")){session.paused=false;Time.timeScale=1;}
    if(session.business.useV2&&GUI.Button(new Rect(x+20,y+282,440,40),session.business.ledger.OneDay?"새 하루 시작":"1일차부터 다시 시작"))session.business.RequestRestart();
-   if(GUI.Button(new Rect(x+20,y+334,440,40),"운전 연습 선택 · 출구 정체 / 우회전"))session.GetComponent<PracticeSession>().OpenPicker();
+   if(GUI.Button(new Rect(x+20,y+334,215,40),"지도 편집"))session.GetComponent<RoadMapEditor>().Open();
+   if(GUI.Button(new Rect(x+245,y+334,215,40),"운전 연습 선택"))session.GetComponent<PracticeSession>().OpenPicker();
    GUI.enabled=true;
    if(GUI.Button(new Rect(x+20,y+386,440,40),"게임 종료 (완료한 정산까지 저장)"))Application.Quit();
    if(GUI.Button(new Rect(x+20,y+434,440,28),session.traffic.mitOptions.Label+" · 클릭하여 변경",KoreanText.Button(14)))session.traffic.mitOptions.SetEnabled(!session.traffic.mitOptions.Enabled);

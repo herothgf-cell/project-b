@@ -16,6 +16,7 @@ public static class ReviewedLaneLayout {
  static MapPoint P(Vector3 p){return new MapPoint{x=p.x,z=p.z};}
  static AssistedRoadNetwork.Path Path(HdEdge e){return new AssistedRoadNetwork.Path(e.points.Select(p=>p.V()).ToArray());}
  static MapPoint[] Slice(AssistedRoadNetwork.Path p,float a,float b){var points=new List<MapPoint>{P(p.Position(a))};for(float d=a+1;d<b;d+=1)points.Add(P(p.Position(d)));points.Add(P(p.Position(b)));return points.ToArray();}
+ public static void CopyState(MapData from,MapData to){Applied state;if(applied.TryGetValue(from,out state)&&!applied.TryGetValue(to,out var ignored))applied.Add(to,state);}
  public static void Apply(MapData map){
   if(map.mapId!="eungye"||!map.hybrid)return;
   var asset=Resources.Load<TextAsset>("eungye-reviewed-lanes");if(!asset)throw new InvalidOperationException("Missing reviewed lane settings");

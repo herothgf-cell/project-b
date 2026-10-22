@@ -11,14 +11,14 @@ public class DrivingLaw : MonoBehaviour {
  public bool HistoryOpen {get{return showHistory;}}
  Vector3 previous; bool initialized,showHistory; Vector2 scroll;
  readonly Dictionary<string,bool> stops=new Dictionary<string,bool>();
- class Entry {public TrafficJunction junction;public Vector3 direction;public int axis,sign;public bool stopped,pedestrianYield;public RoadObservation observed;public string id;}
+ float speedingSeconds;bool speedRecorded;void CheckEditorSpeed(){float limit=session.traffic.EditorSpeedLimit(session.taxi.transform.position,session.taxi.transform.forward);if(limit<=0||session.taxi.body.velocity.magnitude*3.6f<=limit+3){speedingSeconds=0;speedRecorded=false;return;}speedingSeconds+=Time.fixedDeltaTime;if(speedingSeconds<2||speedRecorded)return;speedRecorded=true;var e=new LawEvent{id=ids.Next("editor-speed"),day=Day,family="사용자 제한속도",action="제한속도 초과",reason="게임 설정 "+limit+"km/h · 3km/h 여유 초과 2초",speed=session.taxi.body.velocity.magnitude,seconds=(float)session.business.ledger.Elapsed};e.Add("editor-speed",LawVerdict.Violation,5);ledger.Record(e);} class Entry {public bool edited;public SignalColor left;public TrafficJunction junction;public Vector3 direction;public int axis,sign;public bool stopped,pedestrianYield;public RoadObservation observed;public string id;}
  Entry entry;
  public int Day {get{return session.business.ledger.Day;}}
  public bool StopRecorded(TrafficJunction junction){return entry!=null&&entry.junction==junction&&entry.stopped||stops.ContainsKey(junction.name+":0:1");}
  public void ResetObservation(){initialized=false;entry=null;stops.Clear();}
  void FixedUpdate(){
   if(!session||session.paused||session.business.ShowingSummary)return;
-  var taxi=session.taxi;var front=taxi.transform.position+taxi.transform.forward*2;
+  CheckEditorSpeed();var taxi=session.taxi;var front=taxi.transform.position+taxi.transform.forward*2;
   if(!initialized||Vector3.Distance(previous,front)>10){previous=front;initialized=true;entry=null;stops.Clear();return;}
   if(entry!=null){
    var q=front-entry.junction.center;float along=Vector3.Dot(q,entry.direction),side=Vector3.Dot(q,TrafficSystem.Right(entry.direction));
@@ -28,7 +28,7 @@ public class DrivingLaw : MonoBehaviour {
    if(right||left||through){
     LawEvent e;
     if(right){var now=session.traffic.Observe(entry.junction,entry.axis,entry.sign,entry.direction,taxi.gameObject);now.forward=entry.observed.forward;now.dedicated=entry.observed.dedicated;now.right=entry.observed.right;e=LawEvaluator.RightTurn(entry.id,Day,now,entry.stopped,settings,entry.pedestrianYield||(entry.stopped&&entry.observed.pedestrian!=PedestrianState.None&&entry.observed.pedestrian!=PedestrianState.Unknown));}
-    else {e=new LawEvent{id=entry.id,day=Day,family="signal",observation=entry.observed.Copy(),action=left?"좌회전":"직진",reason="진입 시점 차량 신호"};e.Add("L01",left?LawVerdict.Deferred:entry.observed.forward==SignalColor.Red?LawVerdict.Violation:entry.observed.forward==SignalColor.Green?LawVerdict.Compliant:LawVerdict.Deferred,settings.redStraightPenalty);}
+    else {e=new LawEvent{id=entry.id,day=Day,family="signal",observation=entry.observed.Copy(),action=left?"좌회전":"직진",reason="진입 시점 차량 신호"};e.Add("L01",left?(entry.edited?(entry.left==SignalColor.Red?LawVerdict.Violation:entry.left==SignalColor.Green?LawVerdict.Compliant:LawVerdict.Deferred):LawVerdict.Deferred):entry.observed.forward==SignalColor.Red?LawVerdict.Violation:entry.observed.forward==SignalColor.Green?LawVerdict.Compliant:LawVerdict.Deferred,settings.redStraightPenalty);}
     var situation=session.GetComponent<RightTurnSituation>();if(right&&situation&&situation.Active&&situation.junction==entry.junction)e.scenario="R"+situation.variant;
     e.junction=entry.junction.name;e.tripId=tripId;e.occupied=session.jobs.trip.State==TripState.OnTrip;e.assisted=session.assisted.Active;e.speed=taxi.body.velocity.magnitude;e.seconds=(float)session.business.ledger.Elapsed;
     ledger.Record(e);entry=null;
@@ -37,12 +37,12 @@ public class DrivingLaw : MonoBehaviour {
   if(entry==null)foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)foreach(int sign in new[]{-1,1}){
    var training=session.GetComponent<ConfusionPractice>();var zones=session.GetComponent<ServiceLawZones>();if(training&&training.Owns(j)||zones&&zones.Owns(j))continue;
    if(!j.signalized&&!j.scenarioSignal)continue;
-   var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(taxi.transform.forward,dir)<.7f)continue;var stop=j.center-dir*j.StopDistance(axis);
-   float before=Vector3.Dot(previous-stop,dir),after=Vector3.Dot(front-stop,dir),lane=Vector3.Dot(front-j.center,TrafficSystem.Right(dir));string key=j.name+":"+axis+":"+sign;
+   var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(taxi.transform.forward,dir)<.7f)continue;var stop=session.traffic.StopPosition(j,axis,sign);var planeNormal=session.traffic.StopNormal(j,axis,sign);
+   float before=Vector3.Dot(previous-stop,planeNormal),after=Vector3.Dot(front-stop,planeNormal),lane=Vector3.Dot(front-j.center,TrafficSystem.Right(dir));string key=j.name+":"+axis+":"+sign;
    if(after< -8||after>8)stops.Remove(key);
    if(lane<=.15f||lane>=j.halfWidth[axis])continue;
    if(after>=-3&&after<=TrafficJunction.StopLineEntryTolerance&&taxi.body.velocity.magnitude<.05f)stops[key]=true;
-   if(before<TrafficJunction.StopLineEntryTolerance&&after>=TrafficJunction.StopLineEntryTolerance){entry=new Entry{junction=j,direction=dir,axis=axis,sign=sign,stopped=stops.ContainsKey(key),observed=session.traffic.Observe(j,axis,sign,dir,taxi.gameObject),id=ids.Next("event")};stops.Remove(key);break;}
+   if(before<TrafficJunction.StopLineEntryTolerance&&after>=TrafficJunction.StopLineEntryTolerance){entry=new Entry{edited=j.editorProgram!=null,left=j.editorProgram!=null?j.editorProgram.Movement(axis,sign,-1,session.traffic.Clock,session.traffic.EditorLaneId(taxi.transform.position,taxi.transform.forward)):SignalColor.Red,junction=j,direction=dir,axis=axis,sign=sign,stopped=stops.ContainsKey(key),observed=session.traffic.Observe(j,axis,sign,dir,taxi.gameObject),id=ids.Next("event")};stops.Remove(key);break;}
   }
   previous=front;
  }

@@ -58,9 +58,9 @@ public sealed class DistrictTraffic : MonoBehaviour {
    var inbound=heading;float alignment=.7f;
    if(j.facility!=null)foreach(var arm in j.facility.approaches){var direction=new Vector3(arm.dx,0,arm.dz).normalized;float dot=Vector3.Dot(direction,heading);if(dot>alignment){alignment=dot;inbound=direction;}}
    axis=Mathf.Abs(Vector3.Dot(inbound,system.AxisDirection(j,0)))>.7f?0:1;
-   var plane=j.center-inbound*j.StopDistance(axis);float crossing=-1,nearest=float.MaxValue;
-   float start=Mathf.Max(0,enter-50),previous=Vector3.Dot(route.Position(start)-plane,inbound);
-   for(float d=start+.5f;d<=Mathf.Min(route.length,exit)+.5f;d+=.5f){float value=Vector3.Dot(route.Position(d)-plane,inbound);if(previous<=0&&value>0){float at=d-.5f+.5f*(-previous)/(value-previous);if(Mathf.Abs(at-enter)<nearest){nearest=Mathf.Abs(at-enter);crossing=at;}}previous=value;}
+   int sign=system.Sign(inbound,axis,j);bool edited=j.editorStops[axis*2+(sign>0?0:1)]>0;var plane=edited?system.StopPosition(j,axis,sign):j.center-inbound*j.StopDistance(axis);var normal=edited?system.StopNormal(j,axis,sign):inbound;float crossing=-1,nearest=float.MaxValue;
+   float start=Mathf.Max(0,enter-50),previous=Vector3.Dot(route.Position(start)-plane,normal);
+   for(float d=start+.5f;d<=Mathf.Min(route.length,exit)+.5f;d+=.5f){float value=Vector3.Dot(route.Position(d)-plane,normal);if(previous<=0&&value>0){float at=d-.5f+.5f*(-previous)/(value-previous);if(Mathf.Abs(at-enter)<nearest){nearest=Mathf.Abs(at-enter);crossing=at;}}previous=value;}
    // The bumper reaches the same plane used to draw the line, even on a curved turn.
    if(crossing>=0)enter=Mathf.Max(1,crossing-2.1f);
    exit=Mathf.Min(route.length-1,exit);

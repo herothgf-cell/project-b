@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 public class DrivingManners : MonoBehaviour {
  public DriveSession session;public readonly MannerLedger ledger=new MannerLedger();public string lastEvent="안전하게 운전해 주세요";public float eventUntil;public string collisionDiagnostic="none";public int events,redEvents,collisionEvents,accelEvents,brakeEvents,boundaryEvents;
  class Crossing {public TrafficJunction junction;public Vector3 direction;public int axis;public bool through,left,right,penalized,yieldPenalized,uncertain;}
@@ -61,11 +61,11 @@ public class DrivingManners : MonoBehaviour {
   foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)foreach(int sign in new[]{-1,1}){
    var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.Owns(j))continue;
    if(!j.signalized&&!j.scenarioSignal)continue;
-   var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(transform.forward,dir)<.7f)continue;var stop=j.center-dir*j.StopDistance(axis);float a=Vector3.Dot(before-stop,dir),b=Vector3.Dot(after-stop,dir);float lane=Vector3.Dot(after-j.center,TrafficSystem.Right(dir));string key=j.name+axis+sign;
+   var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(transform.forward,dir)<.7f)continue;var stop=session.traffic.StopPosition(j,axis,sign);var planeNormal=session.traffic.StopNormal(j,axis,sign);float a=Vector3.Dot(before-stop,planeNormal),b=Vector3.Dot(after-stop,planeNormal);float lane=Vector3.Dot(after-j.center,TrafficSystem.Right(dir));string key=j.name+axis+sign;
    if(b>=-3&&b<=TrafficJunction.StopLineEntryTolerance&&lane>.15f&&lane<j.halfWidth[axis]&&session.taxi.body.velocity.magnitude<.05f)stops[key]=Time.time;
    if(a<TrafficJunction.StopLineEntryTolerance&&b>=TrafficJunction.StopLineEntryTolerance&&lane>.15f&&lane<j.halfWidth[axis]){
     float last;bool stopped=stops.TryGetValue(key,out last)&&Time.time-last<8;stops.Remove(key);
-    var forward=session.traffic.Signal(j,axis,sign);var leftSignal=session.traffic.LeftSignal(j,axis,sign);bool uncertain=forward==SignalColor.Yellow||leftSignal==SignalColor.Yellow;bool through=forward==SignalColor.Green,allowedLeft=leftSignal==SignalColor.Green;
+    string laneId=session.traffic.EditorLaneId(transform.position,transform.forward);var forward=j.editorProgram!=null?j.editorProgram.Movement(axis,sign,0,session.traffic.Clock,laneId):session.traffic.Signal(j,axis,sign);var leftSignal=j.editorProgram!=null?j.editorProgram.Movement(axis,sign,-1,session.traffic.Clock,laneId):session.traffic.LeftSignal(j,axis,sign);bool uncertain=forward==SignalColor.Yellow||leftSignal==SignalColor.Yellow;bool through=forward==SignalColor.Green,allowedLeft=leftSignal==SignalColor.Green;
     bool right=session.traffic.Observe(j,axis,sign,dir,gameObject).RightSignalPermits(stopped);bool red=!uncertain&&!through&&!allowedLeft&&!right;
     if(red)Deduct("red"+j.name+axis+sign,12,"적색 신호 통과",5);
     crossing=new Crossing{junction=j,direction=dir,axis=axis,through=through,left=allowedLeft,right=right,penalized=red,uncertain=uncertain};

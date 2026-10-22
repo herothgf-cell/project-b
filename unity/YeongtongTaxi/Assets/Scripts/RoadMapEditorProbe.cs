@@ -1,0 +1,19 @@
+using System;
+using System.Collections;
+using System.IO;
+using System.Linq;
+using System.Text;
+using UnityEngine;
+public sealed class RoadMapEditorProbe:MonoBehaviour {
+ DriveSession s;bool success=true;StringBuilder report=new StringBuilder();string folder;
+ void Check(bool condition,string name){report.AppendLine((condition?"PASS ":"FAIL ")+name);success&=condition;}
+ IEnumerator Start(){yield return new WaitForSecondsRealtime(2);s=GetComponent<DriveSession>();folder=Path.GetFullPath("artifacts/road-map-editor");Directory.CreateDirectory(folder);var e=GetComponent<RoadMapEditor>();double clock=s.business.ledger.Elapsed;string account=s.business.ledger.Account==null?"":JsonUtility.ToJson(s.business.ledger.Account.Snapshot());string save=File.Exists(s.business.SavePath)?File.ReadAllText(s.business.SavePath):null;
+  Check(e.Open(),"open editor");yield return new WaitForSecondsRealtime(.5f);Check(s.paused&&Time.timeScale==0,"editor freezes simulation");Check(s.business.ledger.Elapsed==clock,"operating clock preserved");e.Check();Check(!RoadMapValidator.Validate(RoadMapRuntime.Baseline,e.document).Any(i=>i.error),"initial map valid");
+  var lane=e.document.lanes.First(l=>!l.disabled&&l.ruleId==s.world.map.junctionRules.OrderBy(r=>Vector3.Distance(r.V(),s.world.map.targets[0].V())).First().id&&l.next.Any(id=>e.document.lanes.First(n=>n.id==id).turn!=0));e.Select(lane.id);e.Centre=new Vector2(lane.points.Last().x,lane.points.Last().z);e.TrialStart=lane.id;var target=s.jobs.stops[1];e.TrialGoal=s.jobs.nav.hd.edges[target.laneEdge].id;
+  e.history.Commit(e.document);lane.width=3.2f;e.document.revision++;string changed=JsonUtility.ToJson(e.document);e.document=e.history.Undo(e.document);Check(e.document.lanes.First(l=>l.id==lane.id).width!=3.2f,"undo width");e.document=e.history.Redo(e.document);Check(JsonUtility.ToJson(e.document)==changed,"redo width");e.FilePath=Path.Combine(folder,"ui-draft.json");Check(e.Save(),"save draft");e.Load(e.FilePath);e.Select(lane.id);Check(e.document.lanes.First(l=>l.id==lane.id).width==3.2f,"load edited width");
+  foreach(var size in new[]{new Vector2Int(1280,720),new Vector2Int(1600,900),new Vector2Int(1920,1080)}){Screen.SetResolution(size.x,size.y,false);yield return new WaitForSecondsRealtime(.4f);yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(folder,"editor-"+size.x+".png"));yield return new WaitForSecondsRealtime(.15f);}
+  e.Select(lane.id);var j=s.traffic.junctions.First(x=>x.name==lane.ruleId);var program=RoadMapSignalProgram.Import(s.traffic,j);e.document.signals=new[]{program};typeof(RoadMapEditor).GetMethod("ImportSignalFacilities",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(e,new object[]{j,program});var signalIssues=RoadMapValidator.Validate(RoadMapRuntime.Baseline,e.document);Check(!signalIssues.Any(i=>i.error),"import signals valid: "+string.Join(" / ",signalIssues.Where(i=>i.error).Take(3).Select(i=>i.ToString())));e.document.revision++;e.Save();
+  Check(e.Trial(),"launch separate trial process");yield return new WaitForSecondsRealtime(12);var runner=GetComponent<RoadMapTrialSession>();Check(!runner.Busy,"test trial child completed");Check(s.paused&&Time.timeScale==0,"parent stays frozen during trial");Check(s.business.ledger.Elapsed==clock,"parent clock unchanged after child");Check((s.business.ledger.Account==null?"":JsonUtility.ToJson(s.business.ledger.Account.Snapshot()))==account,"parent money fuel preserved");Check((File.Exists(s.business.SavePath)?File.ReadAllText(s.business.SavePath):null)==save,"parent checkpoint bytes preserved");
+  e.Close();Check(!e.IsOpen,"close editor");report.AppendLine("success="+success);File.WriteAllText(Path.Combine(folder,"editor-player-test.txt"),report.ToString());Debug.Log(report.ToString());Application.Quit(success?0:1);
+ }
+}

@@ -15,6 +15,6 @@ public sealed class MitTrafficOptions {
  }
  public void SetEnabled(bool value,bool persist=true){
   Enabled=value;
-  if(persist&&!TestRun){PlayerPrefs.SetInt(PreferenceKey,value?1:0);PlayerPrefs.Save();}
+  if(persist&&!TestRun&&!RoadMapRuntime.Trial){PlayerPrefs.SetInt(PreferenceKey,value?1:0);PlayerPrefs.Save();}
  }
 }

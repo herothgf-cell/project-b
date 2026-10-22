@@ -18,7 +18,7 @@ public sealed class ServiceLawZones : MonoBehaviour {
  public PracticeFeedback LastFeedback {get;private set;}
  public string LastTitle {get;private set;}public bool Completed {get;private set;}
  public bool Ready {get;private set;}int sequence;float toastUntil;bool details;Vector2 scroll;
- public bool Owns(TrafficJunction j){return Live&&Live.Owns(j);}
+ public bool Owns(TrafficJunction j){return j.editorProgram==null&&Live&&Live.Owns(j);}
  public bool RequiredBraking(){
   if(!Live||!Live.Active)return false;var taxi=session.taxi;var front=taxi.transform.position+taxi.transform.forward*2;var q=front-Live.Junction.center;float gap=Live.StopAlong-Vector3.Dot(q,Live.Direction),side=Vector3.Dot(q,TrafficSystem.Right(Live.Direction));
   if(Live.State.Left&&Live.State.Oncoming&&Vector3.Distance(front,Live.Junction.center)<Live.Junction.StopDistance(Live.Axis)+5)return true;
