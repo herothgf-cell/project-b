@@ -78,7 +78,7 @@ public static class FuelStationLayout {
   if(maxX<Mathf.Min(a.x,b.x)-radius||minX>Mathf.Max(a.x,b.x)+radius||maxZ<Mathf.Min(a.z,b.z)-radius||minZ>Mathf.Max(a.z,b.z)+radius)return false;
   if(Inside(a,ring)||Inside(b,ring))return true;for(int i=0;i<ring.Length;i++)if(SegmentDistance(a,b,ring[i].V(),ring[(i+1)%ring.Length].V())<radius)return true;return false;
  }
- static void ValidatePlot(MapData map,MapRoad[] surfaces,string id){
+ internal static void ValidatePlot(MapData map,MapRoad[] surfaces,string id){
   foreach(var surface in surfaces)for(int i=1;i<surface.points.Length;i++){
    var a=surface.points[i-1].V();var b=surface.points[i].V();float radius=surface.width*.5f;
    foreach(var p in new[]{a,b})if(p.x-radius<3||p.z-radius<3||p.x+radius>map.width-3||p.z+radius>map.depth-3)throw new InvalidOperationException("Fuel plot outside map "+id);

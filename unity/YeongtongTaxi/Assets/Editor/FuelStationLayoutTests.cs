@@ -15,6 +15,11 @@ public static class FuelStationLayoutTests {
   Check(meal.CanStop(meal.Kerb,meal.Direction,0)&&!meal.CanStop(map.stops[6].Kerb,map.stops[6].Direction,0),"only new meal location accepts stop");
   foreach(var stop in map.stops){Check(mealGraph.Route(stop.laneEdge,stop.laneAt,meal.laneEdge,meal.laneAt)!=null,"restaurant reachable from all passenger stops");Check(mealGraph.Route(meal.laneEdge,meal.laneAt,stop.laneEdge,stop.laneAt)!=null,"restaurant exit can reach all passenger stops");}
   Debug.Log("RESTAURANT_LAYOUT position="+meal.V()+" edge="+meal.laneEdge+" at="+meal.laneAt);
+  var restaurant=RestaurantSiteLayout.For(map);Check(restaurant!=null,"restaurant physical plot exists");
+  Check(restaurant.CanDine(restaurant.parking,restaurant.direction,0),"parked in restaurant bay can dine");
+  Check(!restaurant.CanDine(restaurant.approach.Kerb,restaurant.direction,0),"roadside approach cannot dine");
+  Check(!restaurant.CanDine(restaurant.parking,-restaurant.direction,0)&&!restaurant.CanDine(restaurant.parking,restaurant.direction,1),"restaurant heading and stop required");
+  Check(Vector3.Distance(restaurant.parking,restaurant.approach.V())>15,"meal bay is off-road");
   int roadCount=map.roads.Length,edgeCount=map.hdEdges.Length,buildingCount=map.buildings.Length;
   FuelStationLayout.Apply(map);var stations=FuelStationLayout.For(map);
   Check(stations.Count==3,"three game stations on real Eungye input");
@@ -22,6 +27,7 @@ public static class FuelStationLayoutTests {
   Check(map.hdEdges.Length==edgeCount&&map.buildings.Length==buildingCount,"no graph jumps or building removal");
   var graph=new HdRoadGraph(map);var rest=FuelStationLayout.Rest(map);Check(rest!=null&&rest.name.Contains("게임시설"),"separate fictional rest lot");Check(Vector3.Distance(rest.pump,stations[2].pump)>60,"separate rest and fuel plots");Check(rest.approach.laneEdge==stations[2].approach.laneEdge&&rest.approach.laneAt>stations[2].approach.laneAt+63,"rest entry follows fuel exit on same shared lane");Check(rest.CanRefuel(rest.pump,rest.direction,0)&&!rest.CanRefuel(rest.entrance,rest.direction,0),"rest needs actual bay stop");foreach(var station in stations)Check(!station.CanRefuel(rest.pump,rest.direction,0),"rest never permits fueling");Debug.Log("REST_LAYOUT position="+rest.pump+" approach="+rest.approach.laneAt+" edge="+rest.approach.laneEdge);
 
+  RestaurantSiteLayout.Apply(map);int withRestaurant=map.roads.Length;RestaurantSiteLayout.Apply(map);Check(withRestaurant==roadCount+15&&map.roads.Length==withRestaurant,"restaurant paving appended once");Check(map.hdEdges.Length==edgeCount&&map.buildings.Length==buildingCount,"restaurant keeps original road graph and buildings");
   foreach(var station in stations){
    Check(station.name.Contains("게임시설"),"fictional status visible");
    Check(station.approach.graphStop,"entrance uses shared graph");

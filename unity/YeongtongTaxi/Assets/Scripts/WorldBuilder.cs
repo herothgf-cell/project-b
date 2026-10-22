@@ -20,7 +20,7 @@ public class WorldBuilder : MonoBehaviour {
     void RenderBatches(Dictionary<Vector2Int,GeometryBatch> batches,string name,Material material){foreach(var item in batches){var mesh=new Mesh();mesh.indexFormat=UnityEngine.Rendering.IndexFormat.UInt32;mesh.SetVertices(item.Value.vertices);mesh.SetTriangles(item.Value.indices,0);mesh.RecalculateNormals();mesh.RecalculateBounds();var obj=new GameObject(name+" "+item.Key);obj.transform.SetParent(transform);obj.AddComponent<MeshFilter>().sharedMesh=mesh;obj.AddComponent<MeshRenderer>().sharedMaterial=material;}}
     public void Build() {
         map=RoadRulesTrial.Enabled?RoadRulesTrial.CreateMap():MapCatalog.Load();
-        FuelStationLayout.Apply(map);
+        FuelStationLayout.Apply(map);RestaurantSiteLayout.Apply(map);
         MapSupplements.DrawCrossings(map,transform);
         var ground=Mat("Ground",new Color(.33f,.40f,.32f)); var asphalt=Mat("Road",new Color(.16f,.18f,.20f));
         var building=Mat("Buildings",new Color(.70f,.67f,.60f));
@@ -63,7 +63,7 @@ public class WorldBuilder : MonoBehaviour {
             Batch(buildingBatches,mesh.bounds.center).Add(vertices,indices);
         }
         RenderBatches(buildingBatches,"건물 외형",building);
-        FuelStationLayout.Draw(map,transform);
+        FuelStationLayout.Draw(map,transform);RestaurantSiteLayout.Draw(map,transform);
         foreach(var t in map.targets) {
             var m=Mat(t.name,t.name=="T1"?new Color(.1f,.75f,.9f):new Color(1,.5f,.12f));
             var label=new GameObject(t.name+" label"); label.transform.position=t.V(8); label.transform.SetParent(transform); var text=label.AddComponent<TextMesh>(); text.text=t.name; text.fontSize=64; text.characterSize=.15f; text.anchor=TextAnchor.MiddleCenter; text.color=m.color; label.AddComponent<FaceCamera>();
