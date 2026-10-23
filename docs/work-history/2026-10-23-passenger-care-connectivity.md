@@ -1,6 +1,6 @@
 # 은계 도로 연결·TIP·취객/청결·중단 운송 이어하기
 
-상태: **기능 구현·자동 검증·배포 빌드 완료. 소스/실행폴더를 main에 커밋·푸시하는 단계.** 별도 은계-only 폴더 이동은 이 배포 완료 후 담당 채팅에서 통합한다. 이번 작업은 기존 경로에서 더 이상 기능을 추가하지 않는다.
+상태: **기능 구현·자동 검증·배포 빌드 완료. 소스 e7e0e07 보존, 실행폴더/manifest 해시 검증 완료.** 별도 은계-only 폴더 이동은 이 배포 완료 후 담당 채팅에서 통합한다. 이번 작업은 기존 경로에서 더 이상 기능을 추가하지 않는다.
 
 ## 요구와 구현
 
@@ -48,3 +48,7 @@
 ## 보존 및 배포
 
 README/라이선스/XMind와 문서06/09의 기존4줄 변경은 이 커밋에 섞지 않는다. 문서06/09와 LATEST에는 이번 작업 블록만 별도로 staging한다. 정식 프로젝트와 원본 입력/배포 지도ZIP은 변경하지 않았다. 소스 커밋 뒤 실제40자리 해시로 manifest를 생성하고 실행폴더 전체 해시 검증 후 별도 배포 커밋을 만든다.
+
+## 배포 패키지 확인
+
+소스 `e7e0e071544da7a3932d9d8cdba4104c81c335d1`은 `git log -1 --oneline -- docs/work-history/2026-10-23-passenger-care-connectivity.md`로 확인했다. 이 소스와 최종 `PrototypeBuild.BuildHybrid` 실행폴더를 manifest에 연결했다. `tools/update_distribution_manifest.ps1 -VerifyOnly` 종료0: **128파일/118,737,930바이트** 전체 크기·SHA256 일치. 실행 `builds/EungyeTaxi/EungyeTaxi.exe`. 다른 PC는 main pull 후 이 실행파일을 열면 된다. 정식 지도/필수3입력/지도ZIP은 그대로다.
