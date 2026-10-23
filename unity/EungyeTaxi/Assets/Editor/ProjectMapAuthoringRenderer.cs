@@ -41,8 +41,10 @@ public sealed class ProjectMapAuthoringRenderer : IDisposable {
    RoadMapFacilities.Build(map.editorDocument,Root,null);
    foreach(var o in map.projectScene.objects)if(o.IsService){var t=Root.Find(o.name);if(t)serviceRoots[o.id]=t.gameObject;}
    var objects=map.projectScene.objects.ToDictionary(o=>o.id);
-   foreach(var road in map.roads??new MapRoad[0]){ProjectMapObject o;objects.TryGetValue("road:"+road.id,out o);var r=new Record{id="road:"+road.id,kind="road",source=o};WorldBuilder.AppendRoad(road,r.geometry);Add(r);}
-   foreach(var b in map.buildings??new MapBuilding[0]){if(SceneBuildingVisibility.Hidden(map,b.id))continue;ProjectMapObject o;objects.TryGetValue("building:"+b.id,out o);var r=new Record{id="building:"+b.id,kind="building",source=o};r.triangles=b.triangles;r.topology=b.points;var g=WorldBuilder.BuildingGeometry(b);WorldBuilder.Batch(r.geometry,WorldBuilder.GeometryBounds(g).center).Add(g.vertices,g.indices);Add(r);}
+   var roadObjects=objects.Values.Where(o=>o.kind=="road").ToDictionary(o=>o.id.StartsWith("road:")?o.id.Substring(5):o.id);
+   var buildingObjects=objects.Values.Where(o=>o.kind=="building").ToDictionary(o=>o.id.StartsWith("building:")?o.id.Substring(9):o.id);
+   foreach(var road in map.roads??new MapRoad[0]){ProjectMapObject o;roadObjects.TryGetValue(road.id,out o);var r=new Record{id=o==null?"road:"+road.id:o.id,kind="road",source=o};WorldBuilder.AppendRoad(road,r.geometry);Add(r);}
+   foreach(var b in map.buildings??new MapBuilding[0]){if(SceneBuildingVisibility.Hidden(map,b.id))continue;ProjectMapObject o;buildingObjects.TryGetValue(b.id,out o);var r=new Record{id=o==null?"building:"+b.id:o.id,kind="building",source=o};r.triangles=b.triangles;r.topology=b.points;var g=WorldBuilder.BuildingGeometry(b);WorldBuilder.Batch(r.geometry,WorldBuilder.GeometryBounds(g).center).Add(g.vertices,g.indices);Add(r);}
    // Runtime laybys can cut one authored sidewalk into several render pieces.
    // Keep every piece under its original editable identity before batching.
    var areaRecords=new Dictionary<string,Record>();int index=0;

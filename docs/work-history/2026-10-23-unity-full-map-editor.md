@@ -56,3 +56,5 @@ Unity2022.3.62f2 → unity/EungyeTaxi → Taxi/프로젝트 지도 3D 편집. �
 - 분리 작업 폴더에서 git push origin HEAD:main 종료0. git ls-remote 원격 main 6b329c491d5da0ca3ff9e9a3ce9b6f28d6779a8f 일치 확인. 다른 PC는 현재 검증본을 pull해 편집/빌드할 수 있다. 기본 폴더는 동시 작업 보호를 위해 수정하지 않았으며 해당 채팅에 푸시 해시와 통합 주의사항을 전달했다.
 
 - 출구가 없는 회전 방향을 켜면 조용히 무시하는 대신 도착 차로 클릭 연결 모드로 전환하도록 개선했다. ProjectMapTrafficToolsTests 최종 재실행 종료0(native-tools-final.log). Editor 전용 변경이며 runtime 재빌드는 불필요하다.
+
+- 신규 건물/도로가 다시 열기 후 원본 접두사가 없어 선택 ID를 잃는 문제를 추가 RED1로 재현하고, 렌더러가 정식 객체 ID를 보존하도록 수정했다. NewObjectIdentity GREEN0. 기존 생성 면과 가져온 안정 ID 모두 같은 방식으로 선택한다.

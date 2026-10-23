@@ -2,6 +2,12 @@ using System;
 using UnityEngine;
 using System.Linq;
 public static class ProjectMapAuthoringRendererTests {
+ public static void NewObjectIdentity(){
+  var building=new ProjectMapObject{id="editor:new-building",kind="building",width=6,height=8,enabled=true,points=ProjectMapScene.Rectangle(new Vector3(10,0,10),Vector3.forward,6,6)};
+  var road=new ProjectMapObject{id="editor:new-road",kind="road",width=4,enabled=true,points=new[]{new MapPoint{x=20,z=5},new MapPoint{x=30,z=5}}};
+  var map=new MapData{mapId="fixture",width=40,depth=40,roads=new MapRoad[0],buildings=new MapBuilding[0],targets=new MapTarget[0],stops=new MapStop[0],areas=new MapArea[0]};ProjectMapScene.Apply(map,new ProjectMapScene{objects=new[]{building,road}});
+  using(var renderer=new ProjectMapAuthoringRenderer()){renderer.Initialize(map);Check(renderer.BoundsFor(building.id).size.y>7,"new authored building keeps identity after reload");Check(renderer.Pick(new Ray(new Vector3(10,20,10),Vector3.down))==building.id,"new building selectable after reload");Check(renderer.Pick(new Ray(new Vector3(25,20,5),Vector3.down))==road.id,"new road selectable after reload");}Debug.Log("NEW_OBJECT_IDENTITY_TEST_OK");
+ }
  static void Check(bool ok,string message){if(!ok)throw new Exception("AUTHORING_RENDERER: "+message);}
  public static void FragmentedAreas(){
   var o=new ProjectMapObject{id="area:split",kind="sidewalk",width=10,height=.14f,enabled=true,points=ProjectMapScene.Rectangle(new Vector3(5,0,5),Vector3.forward,10,10)};
