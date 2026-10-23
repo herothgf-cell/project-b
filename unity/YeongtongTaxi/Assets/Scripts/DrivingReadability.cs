@@ -46,9 +46,9 @@ public class DrivingReadability : MonoBehaviour {
   if(Facilities&&map.hybrid)foreach(var j in map.junctionRules)Dot(Project(j.V()),j.facilityStatus=="verified"?Color.green:new Color(1,.6f,.1f),6);
   var overlay=GetComponent<FullMapOverlay>();
   if(overlay.ShowTraffic){foreach(var car in session.traffic.cars)if(car.Visible)Dot(Project(car.transform.position),new Color(.55f,.6f,.65f),3);foreach(var incident in session.roadConditions.incidents)Dot(Project(incident.position),Color.red,8);}
-  for(int pass=0;pass<2;pass++)foreach(var segment in overlay.RoutePaint)Line(Project(segment.a),Project(segment.b),pass==0?Color.black:segment.color,pass==0?8:4);
+  for(int pass=0;pass<2;pass++)foreach(var segment in overlay.RoutePaint)HudGlyph.MapLine(Project(segment.a),Project(segment.b),pass==0?(segment.passenger?new Color(.5f,.08f,.35f):Color.black):segment.color,pass==0?8:4,new Rect(0,0,Size,Size));
   if(overlay.ShowFacilities)foreach(var place in overlay.Places()){var p=Project(place.position);if(p.x<14||p.y<14||p.x>Size-14||p.y>Size-14)continue;if(HudGlyph.Button(new Rect(p.x-13,p.y-13,26,26),place.glyph,place.name,true)){if(overlay.Open())overlay.SelectPlace(place);}}
-  if(!jobs.Active)for(int i=0;i<jobs.offers.Length;i++){var offer=jobs.offers[i];if(offer==null)continue;var p=Project(jobs.stops[offer.pickup].V())+new Vector2((i-1)*20,0);if(p.x<12||p.y<12||p.x>Size-12||p.y>Size-12)continue;if(GUI.Button(new Rect(p.x-10,p.y-10,20,20),(i+1).ToString(),KoreanText.Button(11))){if(overlay.Open())overlay.SelectOffer(i);}}
+  if(!jobs.Active)for(int i=0;i<jobs.offers.Length;i++){var offer=jobs.offers[i];if(offer==null)continue;var p=ClampedZone(Project(jobs.stops[offer.pickup].V()))+new Vector2((i-1)*20,0);p=new Vector2(Mathf.Clamp(p.x,12,Size-12),Mathf.Clamp(p.y,12,Size-12));if(GUI.Button(new Rect(p.x-10,p.y-10,20,20),(i+1).ToString(),KoreanText.Button(11))){if(overlay.Open())overlay.SelectOffer(i);}}
   if(!jobs.Active&&overlay.PreviewOffer!=null){Marker(jobs.stops[overlay.PreviewOffer.pickup].V(),"승차",new Color(.3f,1,.55f),true);Marker(jobs.stops[overlay.PreviewOffer.drop].V(),"도착",new Color(1,.5f,.8f),true);}
   if(overlay.ShowLaw)DrawLawZones();
   if(jobs.trip.State==TripState.ToPickup||jobs.trip.State==TripState.OnTrip){
@@ -60,9 +60,10 @@ public class DrivingReadability : MonoBehaviour {
   Circle(player,Color.black,34);Circle(player,new Color(.95f,.95f,.95f),29);Circle(player,new Color(.12f,.16f,.18f),24);Line(player-forward*6-side*7,player+forward*11,Color.yellow,5);Line(player+forward*11,player-forward*6+side*7,Color.yellow,5);Line(player-forward*6+side*7,player-forward*6-side*7,Color.yellow,5);
   if(Event.current.type==EventType.MouseUp&&Event.current.button==0&&new Rect(0,0,Size,Size).Contains(Event.current.mousePosition)){var p=Event.current.mousePosition;var world=new Vector3(bounds.x+p.x/Size*bounds.width,0,bounds.y+(1-p.y/Size)*bounds.height);if(overlay.Open())overlay.SelectRoadPoint(world);Event.current.Use();}
   GUI.EndGroup();
-  GUI.Label(new Rect(x,324,Size,23),"노랑: 나 · 초록: 승차 · 분홍: 도착",new GUIStyle(label){fontSize=12});
-  if(GUI.Button(new Rect(x,349,140,26),Facilities?"상세 숨기기":"상세 표시",KoreanText.Button(13)))Facilities=!Facilities;
-  if(GUI.Button(new Rect(x+146,349,134,26),"M 전체 지도",KoreanText.Button(13)))GetComponent<FullMapOverlay>().Open();
+  GUI.Label(new Rect(x,324,Size,23),"실선 승차까지 · 점선 승객 운송",new GUIStyle(label){fontSize=12});
+  if(GUI.Button(new Rect(x,349,86,26),Facilities?"상세 숨기기":"상세 표시",KoreanText.Button(13)))Facilities=!Facilities;
+  if(GUI.Button(new Rect(x+92,349,94,26),"호출 보기",KoreanText.Button(12))){if(overlay.Open())overlay.ShowCalls();}
+  if(GUI.Button(new Rect(x+192,349,88,26),"M 전체 지도",KoreanText.Button(13)))GetComponent<FullMapOverlay>().Open();
   GUI.Label(new Rect(x+4,379,276,22),"© OSM / ODbL · 현장 규제 미검증",new GUIStyle(label){fontSize=11});
   if(Facilities){var status=GetComponent<HybridMapStatus>();Panel(new Rect(x-310,42,300,145));GUI.Label(new Rect(x-300,50,280,130),"시설 □ 주황: 임시 / 초록: 확인\n"+(status?status.current:"시설 정보 없음"),label);}
   var matrix=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.TRS(new Vector3(0,-285*scale),Quaternion.identity,new Vector3(scale,scale,1));

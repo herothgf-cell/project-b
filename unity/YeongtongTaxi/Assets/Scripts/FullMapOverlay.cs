@@ -50,7 +50,7 @@ public partial class FullMapOverlay : MonoBehaviour {
  Vector2 Project(Vector3 p,Rect map){float span=Mathf.Max(session.world.map.width,session.world.map.depth);var unit=new Vector2(.5f+(p.x-session.world.map.width/2)/span,.5f-(p.z-session.world.map.depth/2)/span);return map.center+(unit-center)*Mathf.Min(map.width,map.height)*ZoomLevel;}
  void OnGUI(){if(!IsOpen)return;if(text==null){text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=15,wordWrap=true};heading=new GUIStyle(text){fontSize=22,fontStyle=FontStyle.Bold};button=KoreanText.Button(14);text.normal.textColor=heading.normal.textColor=Color.white;}GUI.depth=-220;GUI.ModalWindow(94721,new Rect(0,0,Screen.width,Screen.height),Draw,GUIContent.none,GUIStyle.none);}
  public bool FocusStop(int index){if(index<0||index>=session.jobs.stops.Length)return false;FocusWorld(session.jobs.stops[index].V());return true;}
- public bool SelectOffer(int index){var j=session.jobs;if(!IsOpen||j.Active||index<0||index>=j.offers.Length||j.offers[index]==null)return false;SelectedOffer=index;selectedOffer=j.offers[index];selectedPlace=null;previewPath=j.nav.Find(j.stops[selectedOffer.pickup],j.stops[selectedOffer.drop]);RefreshRoutePaint(true);return FocusStop(selectedOffer.pickup);}
+ public bool SelectOffer(int index){var j=session.jobs;if(!IsOpen||j.Active||index<0||index>=j.offers.Length||j.offers[index]==null)return false;SelectedOffer=index;selectedOffer=j.offers[index];selectedPlace=null;previewPath=j.nav.Find(j.stops[selectedOffer.pickup],j.stops[selectedOffer.drop]);pickupPath=j.nav.PreviewTo(j.stops[selectedOffer.pickup]);FitRoutes(pickupPath,previewPath);RefreshRoutePaint(true);return true;}
  public bool FocusSelectedStop(bool pickup){var o=session.jobs.Active?session.jobs.current:selectedOffer;return o!=null&&FocusStop(pickup?o.pickup:o.drop);}
  public bool AcceptSelected(){var j=session.jobs;if(!IsOpen||previousPause||SelectedOffer<0||SelectedOffer>=j.offers.Length||selectedOffer==null||j.offers[SelectedOffer]!=selectedOffer||!session.business.CanAccept||j.Active)return false;int index=SelectedOffer;Close();bool accepted=j.Accept(index);if(!accepted)Open();return accepted;}
  void Draw(int id){
@@ -62,7 +62,7 @@ public partial class FullMapOverlay : MonoBehaviour {
   var viewport=MapRect;var ev=Event.current;var jobs=session.jobs;
   GUI.BeginGroup(viewport);var map=new Rect(0,0,viewport.width,viewport.height);Fill(map,new Color(.78f,.84f,.79f));var data=session.world.map;var tile=GetComponent<DriveHUD>().LightTile;
   if(tile){var a=Project(new Vector3(0,0,data.depth),map);float span=Mathf.Max(data.width,data.depth),pixels=Mathf.Min(map.width,map.height);GUI.DrawTexture(new Rect(a.x,a.y,data.width/span*pixels*ZoomLevel,data.depth/span*pixels*ZoomLevel),tile);}
-  for(int pass=0;pass<2;pass++)foreach(var segment in RoutePaint)Line(Project(segment.a,map),Project(segment.b,map),pass==0?Color.black:segment.color,pass==0?7:4);
+  for(int pass=0;pass<2;pass++)foreach(var segment in RoutePaint)HudGlyph.MapLine(Project(segment.a,map),Project(segment.b,map),pass==0?(segment.passenger?new Color(.5f,.08f,.35f):Color.black):segment.color,pass==0?7:4,new Rect(0,0,MapRect.width,MapRect.height));
   if(ShowFacilities)foreach(var place in Places()){var p=Project(place.position,map);if(!map.Contains(p))continue;if(HudGlyph.Button(new Rect(p.x-15,p.y-15,30,30),place.glyph,place.name,true))SelectPlace(place);}
   if(selectedPlace!=null){var p=Project(selectedPlace.position,map);Dot(p,Color.magenta,10);}
 
@@ -73,8 +73,8 @@ public partial class FullMapOverlay : MonoBehaviour {
   }
   foreach(var zone in VisibleLawZones()){var p=Project(zone.junction.center,map);if(!map.Contains(p))continue;Dot(p,new Color(1,.55f,.1f),14);var box=LawZoneMapLayout.Place(p,new Vector2(146,42),map,occupied);occupied.Add(box);Fill(box,new Color(.08f,.13f,.17f,.95f));GUI.Label(box,zone.MapTitle,text);}
   // Both pickup and destination remain clickable; clicking changes only the view.
-  if(selectedPlace!=null){}else if(jobs.Active){StopPin(jobs.current.pickup,"승차",new Color(.2f,.8f,.5f),map);StopPin(jobs.current.drop,"하차",new Color(1,.35f,.7f),map);}
-  else {
+  if(jobs.Active&&selectedPlace==null){StopPin(jobs.current.pickup,"승차",new Color(.2f,.8f,.5f),map);StopPin(jobs.current.drop,"하차",new Color(1,.35f,.7f),map);}
+  else if(!jobs.Active){
    for(int i=0;i<jobs.offers.Length;i++){var o=jobs.offers[i];if(o==null)continue;var p=Project(jobs.stops[o.pickup].V(),map);p+=new Vector2((i-1)*24,0);if(map.Contains(p)&&GUI.Button(new Rect(p.x-15,p.y-15,30,30),(i+1).ToString(),button))SelectOffer(i);}
    if(selectedOffer!=null){StopPin(selectedOffer.pickup,"승차",new Color(.2f,.8f,.5f),map);StopPin(selectedOffer.drop,"하차",new Color(1,.35f,.7f),map);}
   }
@@ -93,7 +93,7 @@ public partial class FullMapOverlay : MonoBehaviour {
   GUI.EndGroup();
   float x=viewport.xMax+16,w=Screen.width-x-20;GUI.Label(new Rect(x,90,w,32),selectedPlace!=null?"선택한 장소":jobs.Active?"진행 중인 운송":"주변 호출",heading);
   if(selectedPlace==null){
-  GUI.Label(new Rect(x,122,w,25),"경로: 초록 원활 · 주황 서행 · 빨강 정체",new GUIStyle(text){fontSize=11});
+  GUI.Label(new Rect(x,122,w,25),"실선: 승차까지 · 점선: 승객 운송",new GUIStyle(text){fontSize=11});
   filterScroll=GUI.BeginScrollView(new Rect(x,152,w,viewport.height-138),filterScroll,new Rect(0,0,w-20,jobs.Active?220:jobs.offers.Length*160+110));float rw=w-24;
   if(!jobs.Active)for(int i=0;i<jobs.offers.Length;i++){var o=jobs.offers[i];if(o==null)continue;float y=i*160;var old=GUI.backgroundColor;if(i==SelectedOffer)GUI.backgroundColor=new Color(.25f,.9f,.7f);
    if(GUI.Button(new Rect(0,y,rw,138),(i+1)+"  "+KoreanText.Stop(jobs.stops[o.pickup].name)+"\n→ "+KoreanText.Stop(jobs.stops[o.drop].name)+"\n예상 "+o.fare.ToString("N0")+"원 · 운송 기한 "+RoadNavigation.FormatEta(o.seconds),new GUIStyle(button){alignment=TextAnchor.MiddleLeft,wordWrap=true,padding=new RectOffset(12,12,10,10)}))SelectOffer(i);GUI.backgroundColor=old;}
