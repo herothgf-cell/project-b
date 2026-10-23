@@ -36,7 +36,7 @@ public sealed partial class ProjectMapSceneWindow {
   }
  }
  bool HandleObjectCreation(SceneView view,Event e){if(!placingObject)return false;if(e.type==EventType.KeyDown&&e.keyCode==KeyCode.Escape){placingObject=false;e.Use();return true;}int control=GUIUtility.GetControlID(FocusType.Passive);if(e.type==EventType.Layout&&!e.alt)HandleUtility.AddDefaultControl(control);if(e.type==EventType.MouseDown&&e.button==0&&!e.alt&&GUIUtility.hotControl==0&&HandleUtility.nearestControl==control){var ray=HandleUtility.GUIPointToWorldRay(e.mousePosition);float distance;if(new Plane(Vector3.up,Vector3.zero).Raycast(ray,out distance))Safe(()=>{selected=session.CreateObject(createKinds[createKind],ray.GetPoint(distance));placingObject=false;RefreshObjectList();});e.Use();}return true;}
- public void CheckProject(){validationIssues=RoadMapValidator.Validate(session.Baseline,session.Document);ShowStatus("검사: 오류 "+validationIssues.Count(i=>i.error)+" / 참고 "+validationIssues.Count(i=>!i.error));}
+ public void CheckProject(){validationIssues=RoadMapValidator.Validate(session.Baseline,session.Document).OrderByDescending(i=>i.error).ToList();ShowStatus("검사: 오류 "+validationIssues.Count(i=>i.error)+" / 참고 "+validationIssues.Count(i=>!i.error));}
  void DrawProjectTools(){
   EditorGUILayout.HelpBox("Unity에서 편집 → 검사 → 프로젝트에 저장 → Build Eungye Hybrid. 정식 지도 JSON을 Git에 커밋·푸시하면 다른 PC의 pull/빌드에 같은 내용이 적용됩니다.",MessageType.Info);
   if(GUILayout.Button("전체 지도 검사",GUILayout.Height(30)))Safe(CheckProject);

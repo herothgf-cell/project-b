@@ -58,3 +58,10 @@ Unity2022.3.62f2 → unity/EungyeTaxi → Taxi/프로젝트 지도 3D 편집. �
 - 출구가 없는 회전 방향을 켜면 조용히 무시하는 대신 도착 차로 클릭 연결 모드로 전환하도록 개선했다. ProjectMapTrafficToolsTests 최종 재실행 종료0(native-tools-final.log). Editor 전용 변경이며 runtime 재빌드는 불필요하다.
 
 - 신규 건물/도로가 다시 열기 후 원본 접두사가 없어 선택 ID를 잃는 문제를 추가 RED1로 재현하고, 렌더러가 정식 객체 ID를 보존하도록 수정했다. NewObjectIdentity GREEN0. 기존 생성 면과 가져온 안정 ID 모두 같은 방식으로 선택한다.
+
+
+## 최신 운행 기능 최종 통합
+
+다른 채팅의 사용자 직접 승인과 완료 신호를 확인하고, 소스2855958/배포66eaf0f를19f75d6에서 보존 병합했다. 즉시 점수 알림·대기 승객 분리·결과 정산 간소화 구현을 유지했다. 문서 충돌은 두 기록을 모두 보존했고 generated build/scene/manifest는 재생성한다. DriveFeedbackSmokeTest의 제품명 기대값은 은계 전용 제품명으로 맞췄다.
+
+NativeMapEditorChecks.BuildIntegrated 종료0: 실지도 문서/규칙/표지 합성·신규 객체 재선택·native tools·JsonUtility14·활성회계22·정차850·도로2412·명시규칙우선·은계기본/NativeParity·Scene미리보기와 최종 BuildHybrid. 로그 artifacts/native-integrated-final-build.log. 검사 패널은 오류를 경고보다 먼저 표시해 기존 자료의 근거 경고에 수정할 오류가 가리지 않도록 했다.
