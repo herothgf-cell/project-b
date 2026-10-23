@@ -4,27 +4,29 @@ using UnityEngine;
 public class DriveNotifications : MonoBehaviour {
  public DriveSession session;
  class Notice {public string text;public bool positive,passenger;public float since;}
- readonly Queue<Notice> queue=new Queue<Notice>();Notice current;LawLedger ledger;int score;bool ready;string observedTrip;PassengerScoreView passenger;
+ readonly List<Notice> visible=new List<Notice>();LawLedger ledger;int score,lawCount;bool ready;string observedTrip;PassengerScoreView passenger;
  public bool FuelLow {get{return session.business.enabledCampaign&&session.business.ledger.Account!=null&&session.business.ledger.Account.Fuel<=15;}}
- public string VisibleText {get{return current==null?"":current.text;}}
+ public string VisibleText {get{return visible.Count==0?"":visible[0].text;}}
+ public string[] VisibleTexts {get{return visible.ConvertAll(n=>(n.passenger?"만족도":"운행")+" | "+n.text).ToArray();}}
  void LateUpdate(){
   if(!session||!session.law||!session.business)return;
   var journal=session.GetComponent<DrivingScoreJournal>();if(journal&&!journal.Loaded)return;
   RefreshScores();
  }
- // Observes the same resolved values as the gauges; never changes gameplay or re-awards points.
+ // Values are observed only. Every new notice is immediately visible, without a FIFO delay.
  public void RefreshScores(){
+  visible.RemoveAll(n=>Time.unscaledTime-n.since>=3);
   var jobs=session.jobs;var view=jobs.ScoreView;string trip=jobs.HasPassengerScore?session.law.tripId:null;
-  if(!ready||ledger!=session.law.ledger){ledger=session.law.ledger;score=ledger.TotalScore;observedTrip=trip;passenger=view;queue.Clear();current=null;ready=true;return;}
-  if(trip!=observedTrip){ClearPassengerNotices();observedTrip=trip;passenger=view;if(trip!=null)Push("승객 탑승 · "+view.Caption+" · 청결 +"+view.clean+" 포함",true,true);}
-  else if(trip!=null){int delta=view.value-passenger.value;if(delta!=0){string reason="";if(view.drive!=passenger.drive)reason+="주행 "+Delta(view.drive-passenger.drive)+" ("+session.manners.lastEvent+") ";if(view.request!=passenger.request)reason+="요청 이행 "+Delta(view.request-passenger.request)+" ";if(view.time!=passenger.time)reason+="도착 시간 "+Delta(view.time-passenger.time);Push("승객 만족도 "+Delta(delta)+" → "+view.value+" / 요구 "+view.required+" · "+reason,delta>0,true);}passenger=view;}
-  int next=ledger.TotalScore;if(next!=score){var events=ledger.Events;string reason=events.Length>0?events[events.Length-1].action:"";Push("운행 점수 "+Delta(next-score)+" → "+next+" · "+(next>score?"준수 확인":reason),next>score);score=next;}
-  if(current!=null&&Time.unscaledTime-current.since>=4)current=null;
-  if(current==null&&queue.Count>0){current=queue.Dequeue();current.since=Time.unscaledTime;}
+  if(!ready||ledger!=session.law.ledger){ledger=session.law.ledger;score=ledger.TotalScore;lawCount=ledger.Count;observedTrip=trip;passenger=view;visible.Clear();ready=true;return;}
+  if(trip!=observedTrip){visible.RemoveAll(n=>n.passenger);observedTrip=trip;passenger=view;}
+  else if(trip!=null){
+   int after=PassengerScoreView.Calculate(view.start,view.drive,passenger.request,passenger.time);if(after!=passenger.value)Push(ScoreFeedback.Text(session.manners.lastEvent,after-passenger.value),after>passenger.value,true);
+   int requested=PassengerScoreView.Calculate(view.start,view.drive,view.request,passenger.time);if(requested!=after)Push(ScoreFeedback.Text(requested>after?"요청 이행":"요청 미이행",requested-after),requested>after,true);
+   if(view.value!=requested)Push(ScoreFeedback.Text("도착 시간",view.value-requested),view.value>requested,true);passenger=view;
+  }
+  if(lawCount!=ledger.Count){var events=ledger.Events;for(int i=lawCount;i<events.Length;i++){int next=LawLedger.ScoreAfter(score,events[i]);if(next!=score)Push(ScoreFeedback.Text(ScoreFeedback.LawReason(events[i],next-score),next-score),next>score);score=next;}lawCount=events.Length;}
  }
- static string Delta(int n){return (n>0?"+":"")+n+"점";}
- void ClearPassengerNotices(){if(current!=null&&current.passenger)current=null;int count=queue.Count;while(count-->0){var item=queue.Dequeue();if(!item.passenger)queue.Enqueue(item);}}
- void Push(string text,bool good,bool passenger=false){if(queue.Count>=4)queue.Dequeue();queue.Enqueue(new Notice{text=text,positive=good,passenger=passenger});}
+ void Push(string text,bool good,bool passenger=false){visible.Insert(0,new Notice{text=text,positive=good,passenger=passenger,since=Time.unscaledTime});if(visible.Count>4)visible.RemoveAt(visible.Count-1);}
  void OnGUI(){
   if(!ready||session.FullMapOpen||session.ChoiceOpen||session.PracticeMenuOpen||session.law.HistoryOpen||session.business.preparing||session.business.ShowingSummary)return;
   float width=Mathf.Min(460,Screen.width*.38f),x=(Screen.width-width)/2,y=140*CockpitUI.Scale;
@@ -34,8 +36,10 @@ public class DriveNotifications : MonoBehaviour {
    GUI.DrawTexture(new Rect(x+12,y+10,17,29),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x+29,y+16,7,4),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x+33,y+16,4,21),Texture2D.whiteTexture);GUI.color=Color.black;GUI.DrawTexture(new Rect(x+15,y+13,11,9),Texture2D.whiteTexture);GUI.color=Color.white;
    GUI.Label(new Rect(x+47,y+3,width-55,44),"연료 부족 "+session.business.ledger.Account.Fuel.ToString("0")+"% · F7 주유소 안내",style);y+=56;
   }
-  if(current==null)return;float age=Time.unscaledTime-current.since,alpha=Mathf.Clamp01(age/.25f)*Mathf.Clamp01((4-age)/.5f);y-=24*(1-alpha);
-  float height=Mathf.Max(52,style.CalcHeight(new GUIContent(current.text),width-24)+12);Panel(new Rect(x,y,width,height),new Color(.035f,.07f,.09f,.95f*alpha));GUI.color=new Color(current.positive?.5f:1,current.positive?1:.7f,.6f,alpha);GUI.Label(new Rect(x+12,y+3,width-24,height-6),current.text,style);GUI.color=Color.white;
+  foreach(var notice in visible){float age=Time.unscaledTime-notice.since,alpha=Mathf.Clamp01((3-age)/.35f);float height=Mathf.Max(38,style.CalcHeight(new GUIContent(notice.text),width-94)+10);
+   Panel(new Rect(x,y,width,height),new Color(.035f,.07f,.09f,.98f*alpha));GUI.color=new Color(notice.passenger?.3f:.4f,notice.passenger?.9f:.7f,notice.passenger?.6f:1,alpha);GUI.Label(new Rect(x+10,y+5,65,height-5),notice.passenger?"만족도":"운행",style);
+   GUI.color=new Color(notice.positive?.55f:1,notice.positive?1:.65f,.65f,alpha);GUI.Label(new Rect(x+82,y+5,width-94,height-5),notice.text,style);GUI.color=Color.white;y+=height+5;
+  }
  }
  static void Panel(Rect r,Color c){GUI.color=c;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
 }

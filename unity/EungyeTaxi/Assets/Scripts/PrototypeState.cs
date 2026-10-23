@@ -68,14 +68,15 @@ public enum PedestrianState { None, Intending, Crossing, Unknown }
  public int startSatisfaction,startDeficit,cleanBonus,driveDelta,timeDelta,cleanlinessAfter;
  public float referenceSeconds,arrivalElapsed,disembarkElapsed;public bool drunk,vomited,wakeDelayed;public string timeReason;
  public string pickupStopId,dropStopId,mapRevision,catalogRevision,stopEvidence;
- public bool hasDrivingScore;public int drivingScore;
+ public bool hasDrivingScore;public int drivingScore,initialFare;
 }
 // No dependency on passenger manners, fares, Unity time, or physics.
 public class LawLedger {
  readonly List<LawEvent> events=new List<LawEvent>();
  public int Count {get{return events.Count;}}
  // Campaign score follows event order; only observed compliance recovers one point.
- public int TotalScore {get{int score=100;foreach(var e in events){bool good=false,bad=false;foreach(var r in e.rules){good|=r.verdict==LawVerdict.Compliant;bad|=r.verdict==LawVerdict.Violation;}score=Math.Max(0,Math.Min(100,score-e.Deduction+(good&&!bad?1:0)));}return score;}}
+ public static int ScoreAfter(int score,LawEvent e){bool good=false,bad=false;foreach(var r in e.rules){good|=r.verdict==LawVerdict.Compliant;bad|=r.verdict==LawVerdict.Violation;}return Math.Max(0,Math.Min(100,score-e.Deduction+(good&&!bad?1:0)));}
+ public int TotalScore {get{int score=100;foreach(var e in events)score=ScoreAfter(score,e);return score;}}
  public LawEvent[] Events {get{return events.ConvertAll(e=>e.Copy()).ToArray();}}
  public bool Record(LawEvent e){
   if(e==null||string.IsNullOrEmpty(e.id)||e.day<1)throw new ArgumentException("Invalid law event");

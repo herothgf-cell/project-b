@@ -14,7 +14,7 @@ public class DrivingManners : MonoBehaviour {
  public void BeginRide(){ComfortAccepted=false;ledger.Reset();rideReasons.Clear();lastEvent="승객 탑승 · 운전 만족도 M 100점으로 시작";eventUntil=Time.time+4;Suppress(.8f);}
  public void Suppress(float seconds){crossing=null;stops.Clear();suppressed=Time.time+seconds;previousVelocity=GetComponent<Rigidbody>().velocity;previousFront=transform.position+transform.forward*2;filtered=0;harshTime=0;harshLatched=false;offroadTime=0;offroadLatched=false;}
  void Start(){Suppress(1);}
- public bool Deduct(string key,int amount,string reason,float cooldown=3){if(!ledger.Penalize(key,amount,Time.time,cooldown))return false;events++;if(key.StartsWith("red"))redEvents++;if(key=="collision")collisionEvents++;if(key=="accel")accelEvents++;if(key=="brake")brakeEvents++;if(key=="sidewalk")boundaryEvents++;lastEvent=reason+" -"+amount+"점";rideReasons.Add(lastEvent);eventUntil=Time.time+4;return true;}
+ public bool Deduct(string key,int amount,string reason,float cooldown=3){var notices=session&&session.jobs&&session.law&&session.requests?session.GetComponent<DriveNotifications>():null;if(notices)notices.RefreshScores();if(!ledger.Penalize(key,amount,Time.time,cooldown))return false;events++;if(key.StartsWith("red"))redEvents++;if(key=="collision")collisionEvents++;if(key=="accel")accelEvents++;if(key=="brake")brakeEvents++;if(key=="sidewalk")boundaryEvents++;lastEvent=reason+" -"+amount+"점";rideReasons.Add(lastEvent);eventUntil=Time.time+4;if(notices)notices.RefreshScores();return true;}
  void FixedUpdate(){if(!session)return;var body=session.taxi.body;var velocity=body.velocity;var front=transform.position+transform.forward*2;
   if(Time.time>=suppressed){
    CheckSignal(previousFront,front);
