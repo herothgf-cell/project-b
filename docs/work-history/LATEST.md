@@ -1,5 +1,9 @@
 # 최신 작업 인계
 
+## 2026-10-23 은계 전용 프로젝트 정리
+
+[작업·검증](2026-10-23-eungye-only.md) · [Unity 사용법](../unity-map-editor-guide.md). Unity 경로 **unity/EungyeTaxi**, 지도 선택/기본 실행/Build는 은계로 통일. 영통 전용 설정·입력 제외, 은계 ZIP2입력/크기·SHA256 실제 검증. 정식 은계 지도 해시 유지, 기존 캠페인 새 은계 저장 폴더로 무손실 복사. 정책/저장·기존 편집·새 Scene·보조망·Python41(skip3)·모델·BuildHybrid/Strict 종료0. 다음은 Hub 새 경로 등록·실제 사람 조작/다른 PC. 배포 결과는 위 이력 기준.
+
 ## 2026-10-23 Unity 3D 프로젝트 지도 편집
 
 [사용법](../unity-map-editor-guide.md) · [구현·검증·남은 범위](2026-10-23-unity-scene-map-editor.md). 실행 월드 공유 형상/재질, Scene 클릭·W/E/R/F·꼭짓점·정차점/접근 차로, 객체 Undo/초안/충돌 처리, 정식 JSON 저장. Session/Renderer/수입 링 저장/Window/기존 편집 검사 및 원본 입력 없는 BuildHybrid·새 exe 프로젝트23검사 종료0. 전체 지도100회 편집 평균0.204ms/p95 0.345ms(CPU 갱신만), 전체 생성1회. 기본 은계exe; 정식 지도/입력3개/ZIP 보존, Strict0. 다음 확인은 실제 Unity 마우스·다른 물리PC·수동 캠페인. 배포 소스/manifest/main 결과는 위 기록 기준.
@@ -178,7 +182,7 @@
 
 ## 현재 구현과 빌드
 
-- Unity 2022.3.62f2, unity/YeongtongTaxi, PrototypeBuild.BuildHybrid. 기본 실행 builds/EungyeTaxi/EungyeTaxi.exe. 소스 커밋과 파일별 해시는 distribution/EungyeTaxi-build-manifest.json 참조.
+- Unity 2022.3.62f2, unity/EungyeTaxi, PrototypeBuild.BuildHybrid. 기본 실행 builds/EungyeTaxi/EungyeTaxi.exe. 소스 커밋과 파일별 해시는 distribution/EungyeTaxi-build-manifest.json 참조.
 - 은계 전체 도로망+국도42 실제 차로+OSM. 원본/임시/게임 창작 상태를 구분한다.
 - 일반 영업 PS01~09 코스, PS01/02 승차 전 상황, PS08 정상/우회 선택, PS09 실제 정지·보행 대기. PS03~09 미체험도 목적지 하차 가능(평가 기회 없음). 승객 요청17종과 픽업 대기 기한. 호출 카드의 경유 상황 설명 제거.
 - 운행 점수는 승객 매너와 별도 누적. 날짜/재실행 유지, 새 캠페인 100점 초기화. 준수 사건당1점, 위반 사건은 최대 감점. 회계는 하루 정산 저장, 운행 사건은 별도 저널 즉시 저장이다.

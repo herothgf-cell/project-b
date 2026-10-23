@@ -33,7 +33,7 @@
 | [은계 자료 검토](../eungye-source-review.md) | 실제 지역 자료와 공간 구성 근거 |
 | [기존 경제 구현 기록](../economy-progression-validation.md) | 과거 7일·10분·10만원 및 자동 비용의 기록. 현재 기본 캠페인이 아님 |
 | [기존 조향 보조 검증](../assisted-driving-validation.md) | 기존 주행 보조 구현과 검증 기록 |
-| [현재 빌드 안내](../../unity/YeongtongTaxi/README.md) | 현재 은계 실행·조작·저장 안내 |
+| [현재 빌드 안내](../../unity/EungyeTaxi/README.md) | 현재 은계 실행·조작·저장 안내 |
 
 ## 현재 개발 상태
 

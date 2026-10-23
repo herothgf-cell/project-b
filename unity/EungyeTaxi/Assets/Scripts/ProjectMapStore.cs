@@ -6,7 +6,7 @@ using UnityEngine;
 public static class ProjectMapStore {
  public const string RelativePath="config/maps/project/eungye.project.json";
  public const string ResourceName="eungye-project-map";
- public static bool IsRoot(string root){return !string.IsNullOrWhiteSpace(root)&&(File.Exists(Path.Combine(root,".git"))||Directory.Exists(Path.Combine(root,".git")))&&File.Exists(Path.Combine(root,"unity/YeongtongTaxi/ProjectSettings/ProjectVersion.txt"));}
+ public static bool IsRoot(string root){return !string.IsNullOrWhiteSpace(root)&&(File.Exists(Path.Combine(root,".git"))||Directory.Exists(Path.Combine(root,".git")))&&File.Exists(Path.Combine(root,"unity/EungyeTaxi/ProjectSettings/ProjectVersion.txt"));}
  public static string FindRoot(string start){try{var dir=new DirectoryInfo(Path.GetFullPath(start));for(int i=0;dir!=null&&i<10;i++,dir=dir.Parent)if(IsRoot(dir.FullName))return dir.FullName;}catch{}return "";}
  public static string SourcePath(string root){if(!IsRoot(root))throw new InvalidOperationException("프로젝트 루트 폴더를 지정하세요 (.git 및 unity 폴더가 있는 project-b).");return Path.Combine(Path.GetFullPath(root),RelativePath);}
  public static string Fingerprint(string root){string path=SourcePath(root);return File.Exists(path)?ProjectMapPackage.Digest(File.ReadAllText(path)):"";}

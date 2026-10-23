@@ -2,14 +2,14 @@
 
 **2026-10-21 배포 변경:** 실행 폴더와 지도 ZIP을 Git main에 포함했다. **테스트만 할 때는 pull 후 `builds/EungyeTaxi/EungyeTaxi.exe`를 바로 실행**한다. Unity 설치·지도 압축 해제는 필요 없다. 2026-10-23부터 정식 `config/maps/project/eungye.project.json`이 있으면 개발 빌드도 이 ZIP 없이 가능하다. Unity의 Taxi > Build Eungye Hybrid가 프로젝트 지도를 검증해 포함한다. 아래 ZIP 절차는 정식 지도 이전 작업 또는 원본 재수입용이다. 원본을 재수입할 때만 `distribution/maps/Eungye-map-inputs-2026-10-20.zip`을 저장소 루트에 푼다. [빌드 없는 실행 안내](../../distribution/README.md)를 따른다. 아래는 개발 환경 준비 절차다.
 
-이 ZIP은 개발에 필요한 생성 지도 3개와 안내·검증용 목록을 담는다. 코드, Unity Editor, 원본 NGII/OSM, 실행파일은 포함하지 않는다. `unity/YeongtongTaxi`는 기존 프로젝트 폴더 이름이며 기본 빌드 지역은 은계다.
+이 ZIP은 개발에 필요한 생성 지도 2개와 안내·검증용 목록을 담는다. 코드, Unity Editor, 원본 NGII/OSM, 실행파일은 포함하지 않는다. 프로젝트 폴더는 `unity/EungyeTaxi`이며 은계만 사용한다.
 
 ## 1. 코드와 개발 도구 준비
 
 - GitHub `https://github.com/herothgf-cell/project-b`의 main을 복제한다. 이미 있으면 로컬 작업을 보존한 뒤 `git pull --ff-only`로 갱신한다.
 - Windows PC의 Unity Hub에서 **Unity 2022.3.62f2**를 설치하고 Windows 빌드 대상을 사용할 수 있는지 확인한다. 현재 기본 Mono 빌드를 사용한다. IL2CPP로 변경할 때만 해당 Windows Build Support 모듈과 C++ 도구를 추가한다.
 - 입력 검사에는 **PowerShell 7 (`pwsh`)**을 사용한다.
-- 이 묶음의 기준 코드는 `2dde7ea`다. 이후 지도가 바뀐 커밋에서는 저장소 manifest와 일치하는 새 묶음이 필요할 수 있다.
+- 2026-10-23 은계 전용 경로와 입력2개로 정리했다. 이후 지도가 바뀐 커밋에서는 저장소 manifest와 일치하는 새 묶음이 필요할 수 있다.
 
 ## 2. ZIP을 저장소 루트에 풀기
 
@@ -19,9 +19,8 @@
 
 ```text
 C:\git\project-b\
-  unity\YeongtongTaxi\Assets\Resources\drive-map.json
-  unity\YeongtongTaxi\Assets\Resources\eungye-map.json
-  unity\YeongtongTaxi\Assets\Resources\route42-map.json
+  unity\EungyeTaxi\Assets\Resources\eungye-map.json
+  unity\EungyeTaxi\Assets\Resources\route42-map.json
   _handoff\map-transfer-guide.md
   _handoff\local-input-manifest.json
 ```
@@ -44,7 +43,7 @@ Get-FileHash -LiteralPath "$env:USERPROFILE\Downloads\Eungye-map-inputs-2026-10-
 
 ## 3. 빌드하고 실행
 
-1. Unity Hub의 Add로 **`C:\git\project-b\unity\YeongtongTaxi`**를 추가해 2022.3.62f2로 연다. 첫 Asset import가 끝날 때까지 기다린다.
+1. Unity Hub의 Add로 **`C:\git\project-b\unity\EungyeTaxi`**를 추가해 2022.3.62f2로 연다. 첫 Asset import가 끝날 때까지 기다린다.
 2. Unity 상단 **Taxi > Build Eungye Hybrid**를 선택한다. 이 명령이 통합 지도·OSM 보완 입력과 기본 은계 장면을 준비하고 검사 후 Windows 실행파일을 만든다.
 3. 빌드가 성공하면 **`C:\git\project-b\builds\EungyeTaxi\EungyeTaxi.exe`**를 실행한다. 화면 지역명이 **시흥 은계지구**인지 확인한다. 일반 Windows Prototype 빌드 메뉴는 사용하지 않는다.
 4. WASD 운전, Space 제동, 1/2/3 호출 선택, F 승하차, Q/E 깜빡이, C 시점, H 조향 보조, M 지도 전체/주변, Esc 일시정지. H를 켜도 가감속·신호 판단은 직접 한다.

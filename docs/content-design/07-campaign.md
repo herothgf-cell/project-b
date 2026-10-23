@@ -21,7 +21,7 @@
 | 결과 | 목표 달성/미달과 다음 날 | 일별 정산·다음 날·3일 최종 결과 비교·새 캠페인 |
 | 보험·세금 | 프로토 제외 | 계속 제외. 갱신·납부를 다시 도입하지 않음 |
 
-현재 설정 근거: [PrototypeState](../../unity/YeongtongTaxi/Assets/Scripts/PrototypeState.cs), [진행·정산](../../unity/YeongtongTaxi/Assets/Scripts/BusinessProgress.cs). 기존 자동 완주 결과는 [이전 검증](../prototype-completion-validation.md)의 조건에 한정하며 하루20분 검증으로 사용하지 않는다.
+현재 설정 근거: [PrototypeState](../../unity/EungyeTaxi/Assets/Scripts/PrototypeState.cs), [진행·정산](../../unity/EungyeTaxi/Assets/Scripts/BusinessProgress.cs). 기존 자동 완주 결과는 [이전 검증](../prototype-completion-validation.md)의 조건에 한정하며 하루20분 검증으로 사용하지 않는다.
 
 ## 시간 규칙
 

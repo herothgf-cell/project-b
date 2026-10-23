@@ -1,7 +1,7 @@
 {
   "id": "eungye",
   "rawDirectory": "data/raw/ngii/eungye",
-  "output": "unity/YeongtongTaxi/Assets/Resources/eungye-map.json",
+  "output": "unity/EungyeTaxi/Assets/Resources/eungye-map.json",
   "acquisitionStatus": "Two actual 2025 1:5000 SHP packages supplied; local planar crop, no road elevation/grade separation reconstruction.",
   "bounds": [
     181900,

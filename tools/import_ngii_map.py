@@ -1,7 +1,7 @@
 """Validate NGII NGI/NDA/XML packages and export one local, planar driving map.
 
 No reprojection or automatic datum inference is performed. Use `--help` for CLI.
-The legacy exporter remains independent; only its pure geometry helpers are reused.
+Only region-independent planar geometry helpers are shared.
 """
 import argparse
 import csv
@@ -15,7 +15,7 @@ import xml.etree.ElementTree as ET
 from collections import Counter
 from pathlib import Path
 
-from export_drive_map import clip_segment, densify, triangulate
+from map_geometry import clip_segment, densify, triangulate
 from ngii_shapefile import archive_metadata, xml_metadata, parse_archive
 
 ROOT = Path(__file__).resolve().parents[1]

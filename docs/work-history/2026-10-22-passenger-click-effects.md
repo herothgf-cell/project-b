@@ -19,7 +19,7 @@ CH04는 현재 기획대로 실제 음악 변경 없이 범위를 설명하며 �
 ## 검증과 결과
 
 - 테스트 먼저 추가 후 모델 검사: 선택지 API 미구현으로 PassengerRequestTests 컴파일 실패 확인. 구현 후 `pwsh -File tools/test_prototype.ps1`23묶음 종료0.
-- Unity2022.3.62f2 `-batchmode -nographics -quit -projectPath unity/YeongtongTaxi -executeMethod PrototypeBuild.BuildHybrid`: 종료0, `artifacts/passenger-buttons-build.log`. 기존 간편 도로 편집기 통합 소스 유지.
+- Unity2022.3.62f2 `-batchmode -nographics -quit -projectPath unity/EungyeTaxi -executeMethod PrototypeBuild.BuildHybrid`: 종료0, `artifacts/passenger-buttons-build.log`. 기존 간편 도로 편집기 통합 소스 유지.
 - 기본 exe `-batchmode -nographics -passengerExpansionTest -oneDayMode -hybridV2`: 종료0,525 PASS/FAIL0. 기존17종 정산/JSON복원/중복 지급 방지와42선택 전체 디스패처·안전 조건·선택별 경로/대화 효과를 위치 제어로 검사. `artifacts/passenger-expansion-test.txt`, `artifacts/passenger-buttons-player.log`.
 - 기본 exe `-batchmode -nographics -presentationHudTest -oneDayMode -hybridV2`: 종료0,20 PASS. 승하차·비상등·결과창/지급·초기 경로 없음 회귀.
 - 최초 실행 검사에서는 -oneDayMode를 누락해 캠페인 장부가 비활성화되어 정산/생활거점 검사51개가 실패했다. 옵션을 바로잡고 동일 생산코드로525개 통과를 확인했다. 검사를 통과시키려고 장부/지급 정책을 바꾸지 않았다.

@@ -42,7 +42,7 @@
 
 `builds/EungyeTaxi/EungyeTaxi.exe` 실행 → 출발 → Esc → 지도 편집. 세부 절차는 사용 안내 참조.
 
-자동 UI 검사는 저장소 루트에서 기본 exe에 `-eungye -oneDayMode -roadMapEditorTest -screen-fullscreen 0 -logFile <절대경로>`를 전달한다. 결과는 `artifacts/road-map-editor/editor-player-test.txt`와 `trial-child-test.txt`다. Unity 배치는 `-batchmode -nographics -quit -projectPath <저장소>/unity/YeongtongTaxi -executeMethod PrototypeBuild.BuildRoadMapEditor -logFile <절대경로>`다.
+자동 UI 검사는 저장소 루트에서 기본 exe에 `-eungye -oneDayMode -roadMapEditorTest -screen-fullscreen 0 -logFile <절대경로>`를 전달한다. 결과는 `artifacts/road-map-editor/editor-player-test.txt`와 `trial-child-test.txt`다. Unity 배치는 `-batchmode -nographics -quit -projectPath <저장소>/unity/EungyeTaxi -executeMethod PrototypeBuild.BuildRoadMapEditor -logFile <절대경로>`다.
 
 ## 최종 추가 검증·인계
 

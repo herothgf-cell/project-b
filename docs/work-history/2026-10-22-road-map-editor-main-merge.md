@@ -6,7 +6,7 @@ README와 LATEST의 기존 미커밋 변경은 두 파일만 명시적으로 sta
 
 ## 병합 후 검증
 
-- `git diff --exit-code codex/road-map-editor HEAD -- unity/YeongtongTaxi builds/EungyeTaxi distribution/EungyeTaxi-build-manifest.json`: 종료0. 검증된 편집기 코드·빌드·manifest와 동일하다.
+- `git diff --exit-code codex/road-map-editor HEAD -- unity/EungyeTaxi builds/EungyeTaxi distribution/EungyeTaxi-build-manifest.json`: 종료0. 검증된 편집기 코드·빌드·manifest와 동일하다.
 - `pwsh -File tools/update_distribution_manifest.ps1 -VerifyOnly`: 종료0, 배포127파일/84,685,847바이트 크기·SHA256 일치.
 - `pwsh -File tools/check_workspace.ps1 -Strict`: 종료0, Input issues0.
 - 코드/실행 폴더 변경이 없어 Unity 재빌드와 수동/물리/캠페인 검사를 반복하지 않았다. 기존 검증 범위는 [구현 이력](2026-10-22-road-map-editor-implementation.md)을 따른다.

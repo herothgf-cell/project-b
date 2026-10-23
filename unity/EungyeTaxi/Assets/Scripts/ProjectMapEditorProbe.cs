@@ -17,7 +17,7 @@ public sealed class ProjectMapEditorProbe:MonoBehaviour {
   var sidewalk=e.document.scene.objects.First(o=>o.kind=="sidewalk");sidewalk.height=.15f;
   var meal=e.document.scene.objects.First(o=>o.kind=="restaurant");meal.name="프로젝트 식당 검사";
   e.SelectSceneObject(meal.id);e.SetSceneServicePosition(meal.Position+meal.Direction*.1f);e.document.revision++;
-  string root=Path.Combine(folder,"player-clone");Directory.CreateDirectory(Path.Combine(root,".git"));Directory.CreateDirectory(Path.Combine(root,"unity/YeongtongTaxi/ProjectSettings"));File.WriteAllText(Path.Combine(root,"unity/YeongtongTaxi/ProjectSettings/ProjectVersion.txt"),"m_EditorVersion: 2022.3.62f2");
+  string root=Path.Combine(folder,"player-clone");Directory.CreateDirectory(Path.Combine(root,".git"));Directory.CreateDirectory(Path.Combine(root,"unity/EungyeTaxi/ProjectSettings"));File.WriteAllText(Path.Combine(root,"unity/EungyeTaxi/ProjectSettings/ProjectVersion.txt"),"m_EditorVersion: 2022.3.62f2");
   if(File.Exists(ProjectMapStore.SourcePath(root)))File.Delete(ProjectMapStore.SourcePath(root));
   string previousRoot=e.ProjectRoot;e.SetProjectRoot(root);Check(e.SaveProject(),"editor publishes complete project");
   if(File.Exists(ProjectMapStore.SourcePath(root))){

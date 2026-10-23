@@ -30,7 +30,7 @@
 | 보험 갱신·세금 납부일 관리 | 프로토 포함, [05](05-daily-operation.md) 담당 | 사용자가 확정한 일상 비용 관리. 사고 보험청구와 분리 |
 | 개인 예약과 사고의 연계 | 제외·기획만 | 개인 예약 자체도 프로토 제외. 예약 취소·변경·신뢰 영향은 후속 검토 |
 
-현재 물리충돌은 [TaxiController](../../unity/YeongtongTaxi/Assets/Scripts/TaxiController.cs), 충돌 매너 감점은 [DrivingManners](../../unity/YeongtongTaxi/Assets/Scripts/DrivingManners.cs)의 기존 구현을 확인했다. 이번 문서 작업은 이 코드를 변경하거나 새 사고 기능을 추가하지 않는다.
+현재 물리충돌은 [TaxiController](../../unity/EungyeTaxi/Assets/Scripts/TaxiController.cs), 충돌 매너 감점은 [DrivingManners](../../unity/EungyeTaxi/Assets/Scripts/DrivingManners.cs)의 기존 구현을 확인했다. 이번 문서 작업은 이 코드를 변경하거나 새 사고 기능을 추가하지 않는다.
 
 ## 후속 플레이 흐름
 

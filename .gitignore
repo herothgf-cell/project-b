@@ -10,8 +10,6 @@ __pycache__/
 # Locally acquired map data and derived geometry are managed separately.
 data/raw/
 data/inspection/
-unity/**/Assets/Resources/drive-map.json
-unity/**/Assets/Resources/drive-map.json.meta
 unity/**/Assets/Resources/eungye-map.json
 unity/**/Assets/Resources/eungye-map.json.meta
 unity/**/Assets/Resources/route42-map.json

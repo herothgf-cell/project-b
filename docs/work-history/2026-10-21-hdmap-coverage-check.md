@@ -6,7 +6,7 @@
 
 - 질문: 현재 게임 맵이 있는 은계 지역에 국토지리정보원 정밀도로지도가 있는가?
 - **부분적으로 있다.** 이미 확보한 32개 정밀도로지도 ZIP의 도형을 EPSG:5186으로 변환해 대조한 기존 검사에서 2025 패키지 일반국도 42호선 SEC002 차로 링크 322개, 고속국도 100호선 SEC06 174개, 고속국도 110호선 SEC02 55개가 게임 영역과 교차했다. 링크 수는 도로 길이나 차로 수가 아니다. `docs/eungye-source-review.md`의 원본 검토 결과를 따른다.
-- 국도 42호선 자료는 `tools/import_hdmap.py`로 별도 변환했고 현재 혼합 지도 생성기 `unity/YeongtongTaxi/Assets/Editor/EungyeHybridBuilder.cs`가 결합한다. 정밀 차로와 게임용 임시 연결을 구분한다.
+- 국도 42호선 자료는 `tools/import_hdmap.py`로 별도 변환했고 현재 혼합 지도 생성기 `unity/EungyeTaxi/Assets/Editor/EungyeHybridBuilder.cs`가 결합한다. 정밀 차로와 게임용 임시 연결을 구분한다.
 - 은계호수공원 주변 T1·T2·T3에는 확보한 정밀도로지도 차로 중심선이 없다. 기존 검토상 가장 가까운 확보 차로 중심선과의 거리는 약 514m·477m·386m이며 그 선은 고속도로에 속한다.
 - 뒤에 추가된 평택시흥선 및 시흥 자율주행시범운행지구 ZIP 두 개도 영역과 겹치지 않는다. `config/maps/eungye-detail-coverage.json`의 33개 A2_LINK 레이어 검사에서 중첩 0, 가장 가까운 경계 상자 약 6.60km다.
 

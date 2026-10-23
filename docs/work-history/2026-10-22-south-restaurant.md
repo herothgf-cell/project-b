@@ -18,7 +18,7 @@
 ## 실제 검증
 
 - 먼저 위치/연결 회귀를 추가해 `FuelStationLayoutTests.Run` 실행:CreateMealStop 미구현 컴파일 오류,종료1 확인.
-- 구현 후 Unity2022.3.62f2 `-batchmode -nographics -quit -projectPath unity/YeongtongTaxi -executeMethod PrototypeBuild.BuildHybrid`:종료0. FuelStationLayoutTests에 새 식당 범위/분리/공유차로/12곳 왕복 검사가 포함됨. `artifacts/restaurant-build.log`의 RESTAURANT_LAYOUT 위치 확인.
+- 구현 후 Unity2022.3.62f2 `-batchmode -nographics -quit -projectPath unity/EungyeTaxi -executeMethod PrototypeBuild.BuildHybrid`:종료0. FuelStationLayoutTests에 새 식당 범위/분리/공유차로/12곳 왕복 검사가 포함됨. `artifacts/restaurant-build.log`의 RESTAURANT_LAYOUT 위치 확인.
 - 기본 exe `-batchmode -nographics -oneDayTest -hybridV2`:종료0. 독립 식당에서 식사 확인·취소 무차감·3,000원/50초·연료 무소모·정산 저장 확인. `artifacts/one-day-runtime.txt`, `artifacts/restaurant-day.log`.
 - 기본 exe `-batchmode -nographics -passengerExpansionTest -oneDayMode -hybridV2`:종료0,525 PASS/FAIL0. 기존17종/42선택·정산/저장·운송 후 식사 선택이 새 내비 목적지를 사용하는 회귀 포함.
 - `pwsh -File tools/check_workspace.ps1 -Strict`:종료0/Input issues0. 필수 지도3개/ZIP/OSM 입력 변경 없음.

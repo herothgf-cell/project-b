@@ -129,15 +129,15 @@
 
 | 영역 | 기존 구현 | 추가로 필요한 것 | 근거 |
 |---|---|---|---|
-| 기본 운전·시점 | 수동 조향·가감속·1/3인칭·키보드/패드 입력 | 새 상황·거점의 현재 PC 키보드 조작 검증 | [TaxiController](../unity/YeongtongTaxi/Assets/Scripts/TaxiController.cs), [조작 안내](../unity/YeongtongTaxi/README.md) |
-| 조향 보조·내비 | 차로 유지·변경·회전, 빠른 길/짧은 길, 재탐색 | 출구를 놓쳤을 때의 안내·거점 접근·새 장면 연결 | [보조](../unity/YeongtongTaxi/Assets/Scripts/AssistedDriveController.cs), [내비](../unity/YeongtongTaxi/Assets/Scripts/RoadNavigation.cs) |
-| 은계 맵·일반 차량 | 통합 도로망·승하차 12곳·일반 차량 24대·신호/추종 기반 | 대표 상황 2종과 거점 배치, 상황 재현용 AI 제어 | [현재 은계 범위](../README.md#은계-통합-영업-지도), [교통](../unity/YeongtongTaxi/Assets/Scripts/DistrictTraffic.cs) |
-| 정체·우회 | 정체 차량과 경로 비용 비교·시험 재시작 | 신호 대기열에서 A 대기/B 우회/C 앞부분 진입을 판정하는 장면 | [RoadConditions](../unity/YeongtongTaxi/Assets/Scripts/RoadConditions.cs), [기존 시험](../unity/YeongtongTaxi/Assets/Scripts/AssistedRouteTrial.cs) |
-| 신호·우회전 | 일반 차량 신호·정지·양보 판정 | 우회전전용신호·이동 보행자·횡단 의도와 실제 상태 연결 | [신호 규칙](../unity/YeongtongTaxi/Assets/Scripts/KoreanSignalRules.cs), [교통 판정](../unity/YeongtongTaxi/Assets/Scripts/TrafficSystem.cs) |
-| 승객 운송 | 호출 3개·길가 승객·승하차·시간 초과·운임 지급 | 조용한 운행/도착 문의·연료 고갈 종료·거점 연결 | [PassengerJobs](../unity/YeongtongTaxi/Assets/Scripts/PassengerJobs.cs), [FareTrip](../unity/YeongtongTaxi/Assets/Scripts/FareTrip.cs) |
-| 승객 매너 | 100점 시작·요구 60/70/85점·충족 100%/미달 70%/시간 초과 0원 | 안전상 보류·필수 제동 예외, 별도 운전 점수와 기록 | [매너](../unity/YeongtongTaxi/Assets/Scripts/DrivingManners.cs), [지급률](../unity/YeongtongTaxi/Assets/Scripts/MannerLedger.cs) |
-| 경제·마감 | 7일·하루 600초·목표 100,000원, 자동 연료/보험/식비, 마지막 탑승 운송 후 정산 | 현금·미납·직접 결제·납부 일정, 3일·480초·30,000원과 새 성공 조건 | [장부](../unity/YeongtongTaxi/Assets/Scripts/EconomyLedger.cs), [진행](../unity/YeongtongTaxi/Assets/Scripts/BusinessProgress.cs) |
-| 화면·저장 | 운송 HUD·하루 결과, 설정과 완료 정산을 v1으로 저장·복원 | 법규 카드·거점/납부 화면, 새 상태를 묶는 별도 버전 저장 | [결과 화면](../unity/YeongtongTaxi/Assets/Scripts/BusinessHUD.cs), [저장](../unity/YeongtongTaxi/Assets/Scripts/BusinessProgress.cs) |
+| 기본 운전·시점 | 수동 조향·가감속·1/3인칭·키보드/패드 입력 | 새 상황·거점의 현재 PC 키보드 조작 검증 | [TaxiController](../unity/EungyeTaxi/Assets/Scripts/TaxiController.cs), [조작 안내](../unity/EungyeTaxi/README.md) |
+| 조향 보조·내비 | 차로 유지·변경·회전, 빠른 길/짧은 길, 재탐색 | 출구를 놓쳤을 때의 안내·거점 접근·새 장면 연결 | [보조](../unity/EungyeTaxi/Assets/Scripts/AssistedDriveController.cs), [내비](../unity/EungyeTaxi/Assets/Scripts/RoadNavigation.cs) |
+| 은계 맵·일반 차량 | 통합 도로망·승하차 12곳·일반 차량 24대·신호/추종 기반 | 대표 상황 2종과 거점 배치, 상황 재현용 AI 제어 | [현재 은계 범위](../README.md#은계-통합-영업-지도), [교통](../unity/EungyeTaxi/Assets/Scripts/DistrictTraffic.cs) |
+| 정체·우회 | 정체 차량과 경로 비용 비교·시험 재시작 | 신호 대기열에서 A 대기/B 우회/C 앞부분 진입을 판정하는 장면 | [RoadConditions](../unity/EungyeTaxi/Assets/Scripts/RoadConditions.cs), [기존 시험](../unity/EungyeTaxi/Assets/Scripts/AssistedRouteTrial.cs) |
+| 신호·우회전 | 일반 차량 신호·정지·양보 판정 | 우회전전용신호·이동 보행자·횡단 의도와 실제 상태 연결 | [신호 규칙](../unity/EungyeTaxi/Assets/Scripts/KoreanSignalRules.cs), [교통 판정](../unity/EungyeTaxi/Assets/Scripts/TrafficSystem.cs) |
+| 승객 운송 | 호출 3개·길가 승객·승하차·시간 초과·운임 지급 | 조용한 운행/도착 문의·연료 고갈 종료·거점 연결 | [PassengerJobs](../unity/EungyeTaxi/Assets/Scripts/PassengerJobs.cs), [FareTrip](../unity/EungyeTaxi/Assets/Scripts/FareTrip.cs) |
+| 승객 매너 | 100점 시작·요구 60/70/85점·충족 100%/미달 70%/시간 초과 0원 | 안전상 보류·필수 제동 예외, 별도 운전 점수와 기록 | [매너](../unity/EungyeTaxi/Assets/Scripts/DrivingManners.cs), [지급률](../unity/EungyeTaxi/Assets/Scripts/MannerLedger.cs) |
+| 경제·마감 | 7일·하루 600초·목표 100,000원, 자동 연료/보험/식비, 마지막 탑승 운송 후 정산 | 현금·미납·직접 결제·납부 일정, 3일·480초·30,000원과 새 성공 조건 | [장부](../unity/EungyeTaxi/Assets/Scripts/EconomyLedger.cs), [진행](../unity/EungyeTaxi/Assets/Scripts/BusinessProgress.cs) |
+| 화면·저장 | 운송 HUD·하루 결과, 설정과 완료 정산을 v1으로 저장·복원 | 법규 카드·거점/납부 화면, 새 상태를 묶는 별도 버전 저장 | [결과 화면](../unity/EungyeTaxi/Assets/Scripts/BusinessHUD.cs), [저장](../unity/EungyeTaxi/Assets/Scripts/BusinessProgress.cs) |
 
 착수 전 v1 코드의 `fuel`은 연료 **잔량이 아니라 누적 비용**이다. 이번 v2의 잔량은 `CampaignAccount.Fuel`로 분리했다. 정체 시험은 새 출구 콘텐츠 전체가 아니며, 시험 재시작도 사건 카드에서 영업 상태를 보존하는 복습 기능은 아니다.
 
@@ -208,7 +208,7 @@ P1에서는 L05 보호구역 상황을 만들지 않는다. L08은 속도·행�
 | 미납 결제·거점 재입력·당일 종료 후 재실행 | 중복 차감·중복 지급·부분 저장 없음 | P2-01~06·P3-03 |
 | 수익 목표 달성 + 납부 미완료 | 남은 날 진행 또는 최종 실패, 잘못된 조기 성공·진행 불능 없음 | P3-02·05 |
 
-기존 검사 기반: [C# 계산·지도·Player 검사 안내](../README.md#검증), [매너 검사](../tests/MannerTests.cs), [경제 검사](../tests/EconomyTests.cs), [은계 빌드](../unity/YeongtongTaxi/Assets/Editor/PrototypeBuild.cs). 기능별 변경을 확인한 뒤 P3에서 통합 검증하며, 모든 테스트를 끝으로 미루지 않는다.
+기존 검사 기반: [C# 계산·지도·Player 검사 안내](../README.md#검증), [매너 검사](../tests/MannerTests.cs), [경제 검사](../tests/EconomyTests.cs), [은계 빌드](../unity/EungyeTaxi/Assets/Editor/PrototypeBuild.cs). 기능별 변경을 확인한 뒤 P3에서 통합 검증하며, 모든 테스트를 끝으로 미루지 않는다.
 
 ## 이번 개발에서 제외
 
@@ -567,3 +567,9 @@ P1-01·03 완료 근거는 위 공통 관찰·AI·횡단보도 위치 검사다.
 - [x] 실행 월드 공유 렌더링, Scene 직접 선택/W·E·R/꼭짓점/정차점·접근 차로, 객체 단위 Undo·초안, 정식 JSON 저장.
 - [x] 기존 사용자 씬 보존, 부분 메시 갱신·저장 재현 자동 검사. [사용법](unity-map-editor-guide.md) · [검증 기록](work-history/2026-10-23-unity-scene-map-editor.md).
 - [ ] 사람의 연속 마우스 조작·실제 다른 PC·전체 캠페인 주행 확인.
+
+## 2026-10-23 은계 전용 전환
+
+- [x] Unity 프로젝트 EungyeTaxi 이동, 지역/실행/빌드 은계 기본, 영통 전용 설정·입력 제외, 은계 ZIP2입력과 해시 검증.
+- [x] 캠페인 저장/백업 이전, 기존 지도·편집·모델·새 경로 빌드 자동 검사. [근거](work-history/2026-10-23-eungye-only.md).
+- [ ] 사람이 Hub 새 경로 등록·다른 PC·전체 캠페인 확인.

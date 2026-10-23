@@ -11,11 +11,11 @@
 
 ## 변경 파일
 
-병합 대상은 기존 두 커밋 묶음의 소스/사용법/기획/검사와 배포 파일이다. 충돌 해결·인계는 `docs/prototype-scope.md`, `docs/work-history/LATEST.md`, 이 기록, `tools/update_distribution_manifest.ps1`, 생성 `unity/YeongtongTaxi/Assets/Scenes/FirstDrive.unity`, `builds/EungyeTaxi/` 및 `distribution/EungyeTaxi-build-manifest.json`이다.
+병합 대상은 기존 두 커밋 묶음의 소스/사용법/기획/검사와 배포 파일이다. 충돌 해결·인계는 `docs/prototype-scope.md`, `docs/work-history/LATEST.md`, 이 기록, `tools/update_distribution_manifest.ps1`, 생성 `unity/EungyeTaxi/Assets/Scenes/FirstDrive.unity`, `builds/EungyeTaxi/` 및 `distribution/EungyeTaxi-build-manifest.json`이다.
 
 ## 검증
 
-- Unity2022.3.62f2 `-batchmode -quit -projectPath unity/YeongtongTaxi -executeMethod PrototypeBuild.BuildEasyRoadMapEditor`: 종료0. `artifacts/easy-editor/build-integrated.log`, 간편7/기존 편집 핵심15/확장 검사·BuildHybrid 검사를 포함한다.
+- Unity2022.3.62f2 `-batchmode -quit -projectPath unity/EungyeTaxi -executeMethod PrototypeBuild.BuildEasyRoadMapEditor`: 종료0. `artifacts/easy-editor/build-integrated.log`, 간편7/기존 편집 핵심15/확장 검사·BuildHybrid 검사를 포함한다.
 - `pwsh -File tools/test_prototype.ps1`: 종료0,23모델 묶음. `artifacts/easy-editor/model-integrated.txt`.
 - `pwsh -File tools/check_workspace.ps1 -Strict`: 종료0,필수 지도3개 일치/Input issues=0. 지도입력·ZIP·OSM 대조 설정 변경 없음.
 - 통합 실행파일 `-roadMapEditorTest`: 종료0,28 PASS/success=True. 시험 자식 success=True/revision4. 기본 간편 화면·3해상도·저장/취소·부모 영업 격리 검사 통과. `artifacts/easy-editor/player-integrated.log`.

@@ -12,7 +12,7 @@ OUTPUT = ROOT / 'config/maps/eungye-intersection-review.json'
 
 
 def refresh():
-    data = json.loads((ROOT / 'unity/YeongtongTaxi/Assets/Resources/eungye-hybrid-map.json').read_text(encoding='utf-8-sig'))
+    data = json.loads((ROOT / 'unity/EungyeTaxi/Assets/Resources/eungye-hybrid-map.json').read_text(encoding='utf-8-sig'))
     old = json.loads(OUTPUT.read_text(encoding='utf-8-sig')) if OUTPUT.exists() else {}
     previous = {j['id']: j for j in old.get('junctions', [])}
     transformer = Transformer.from_crs(5186, 4326, always_xy=True)

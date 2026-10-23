@@ -14,9 +14,9 @@
 
 ## 변경 파일
 
-- `unity/YeongtongTaxi/Assets/Scripts/MapData.cs`
-- `unity/YeongtongTaxi/Assets/Editor/EungyeHybridBuilder.cs`
-- `unity/YeongtongTaxi/Assets/Editor/HybridNetworkTests.cs`
+- `unity/EungyeTaxi/Assets/Scripts/MapData.cs`
+- `unity/EungyeTaxi/Assets/Editor/EungyeHybridBuilder.cs`
+- `unity/EungyeTaxi/Assets/Editor/HybridNetworkTests.cs`
 - `config/maps/eungye-traffic-overrides.json`
 - `docs/map-polish-plan.md`
 - `docs/work-history/LATEST.md`
@@ -27,7 +27,7 @@
 ## 수행한 검증과 결과
 
 - `pwsh -File tools/check_workspace.ps1 -Strict`: 종료 0, 필수 입력 지도 3개 존재, `Input issues: 0`. 원본 입력 지도·OSM 대조 설정·입력 manifest 변경 없음.
-- Unity 2022.3.62f2 배치 명령 `-batchmode -nographics -quit -projectPath D:/Git/project-b/unity/YeongtongTaxi -executeMethod HybridNetworkTests.Run`: 종료 0, `HYBRID_NETWORK_TEST_OK edges=1765 stops=12 pairs=132 portals=24`. 한 진입 차로의 금지 회전을 제거해도 같은 교차로의 다른 차로 회전은 유지되는 검사를 추가했다. 로그는 `artifacts/hybrid-lane-turn-test-final.log`.
+- Unity 2022.3.62f2 배치 명령 `-batchmode -nographics -quit -projectPath D:/Git/project-b/unity/EungyeTaxi -executeMethod HybridNetworkTests.Run`: 종료 0, `HYBRID_NETWORK_TEST_OK edges=1765 stops=12 pairs=132 portals=24`. 한 진입 차로의 금지 회전을 제거해도 같은 교차로의 다른 차로 회전은 유지되는 검사를 추가했다. 로그는 `artifacts/hybrid-lane-turn-test-final.log`.
 - 최초 일반 샌드박스 Unity 실행은 라이선스 IPC 60초 타임아웃(코드 검사 미실행)이었고, 같은 배치 검사를 권한 상승으로 재실행해 통과했다.
 - 위치 제어 검사, 자동 물리 주행, 수동 플레이, 전체 캠페인 검사는 수행하지 않았다. 배포 BuildHybrid도 실행하지 않았다. 사용자 변경이 이미 있는 `builds/EungyeTaxi/`와 `PrototypeBuild.cs`를 덮어쓰지 않았다.
 

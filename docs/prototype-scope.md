@@ -87,7 +87,7 @@
 | 보험·식비 일일 정산 | 보험 직접 갱신으로 교체·세금 기한/납부·식당 중복 방지·주차비·미납 |
 | 경제 일일 저장 | 연료·법규 히스토리 등 신규 상태 저장 |
 
-위 표는 착수 전 기준이다. 현재 구현·잔여 검증은 [최신 체크리스트](prototype-development-checklist.md#최신-남은-작업-요약)를 따른다. [승객 코드](../unity/YeongtongTaxi/Assets/Scripts/PassengerJobs.cs), [현재 매너](../unity/YeongtongTaxi/Assets/Scripts/DrivingManners.cs), [경제 코드](../unity/YeongtongTaxi/Assets/Scripts/EconomyLedger.cs).
+위 표는 착수 전 기준이다. 현재 구현·잔여 검증은 [최신 체크리스트](prototype-development-checklist.md#최신-남은-작업-요약)를 따른다. [승객 코드](../unity/EungyeTaxi/Assets/Scripts/PassengerJobs.cs), [현재 매너](../unity/EungyeTaxi/Assets/Scripts/DrivingManners.cs), [경제 코드](../unity/EungyeTaxi/Assets/Scripts/EconomyLedger.cs).
 
 ## 최소 화면
 
@@ -207,3 +207,5 @@
 정식 자료는 Git 추적 `config/maps/project/eungye.project.json`이다. 기준 지도를 포함하므로 개인 AppData나 원본 GIS 없이 pull 후 BuildHybrid로 재현한다. 개인 초안과 프로젝트 저장은 구분하며, 변경 충돌·해시·형상·접근 검사를 통과한 자료만 배포한다. 관련 [사용법](road-map-editor-guide.md), [설계](superpowers/specs/2026-10-23-project-map-editor.md), [작업 이력](work-history/2026-10-23-project-map-editor.md)을 따른다.
 
 2026-10-23 지도 제작: Unity Scene에서 실행파일과 같은 정적 지도 형상을 직접 선택/이동/회전/크기 조절한다. 정식 프로젝트 JSON 및 기존 주행 그래프를 유지하며 변경 객체/구역만 갱신한다. 차량/승객/HUD 시뮬레이션은 별도 실행파일에서 확인한다. [사용법](unity-map-editor-guide.md).
+
+2026-10-23 현재 지도는 은계 한 곳으로 통일한다. Unity 프로젝트는 unity/EungyeTaxi이며 영통 선택·대체 지도와 전용 수입 설정은 제거했다. 은계 국도42와 공통 연습 기능은 유지한다. [검증](work-history/2026-10-23-eungye-only.md).

@@ -7,14 +7,14 @@
 
 ## Constraints
 
-- 기존 데이터·문서는 유지한다. Git 저장소가 아니므로 별도 `unity/YeongtongTaxi` 폴더에서 작업한다.
+- 기존 데이터·문서는 유지한다. Git 저장소가 아니므로 별도 `unity/EungyeTaxi` 폴더에서 작업한다.
 - 기존 Unity 설치를 사용하고 라이선스/실행이 막히면 실제 검증 상태를 구분한다.
 - 원본 투영 좌표의 상대 배치만 사용. 임의 EPSG 지정 없음.
 
 ## Tasks
 
 - [x] 데이터: `tools/export_drive_map.py`, `tests/test_drive_map.py`. 경계 진출입 선분 클리핑, 경계 외 건물, 원점 이동, T1–T2 연결과 비어 있는 도로 처리 검사. 테스트 실패 후 구현.
-- [x] Unity: `unity/YeongtongTaxi`. 런타임 MapData/WorldBuilder/TaxiController/FollowCamera/DriveHUD/DriveSession 작성. 테스트용 수치 조향/제동 정책은 순수 C#으로 검사 가능하게 분리.
+- [x] Unity: `unity/EungyeTaxi`. 런타임 MapData/WorldBuilder/TaxiController/FollowCamera/DriveHUD/DriveSession 작성. 테스트용 수치 조향/제동 정책은 순수 C#으로 검사 가능하게 분리.
 - [x] 에디터: 시작 장면 생성, 필수 설정 적용, Windows 빌드 명령. 입력 누락, 리셋, 일시정지, 비정상 위치 복구 확인.
 - [x] 검증: Unity 배치 컴파일·빌드, 자동 가속/제동/조향/복구 검사, 가능한 화면 캡처. 실행법과 미검증 항목 기록.
 

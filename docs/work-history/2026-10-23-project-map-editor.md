@@ -16,7 +16,7 @@
 
 - 모델/런타임: `Assets/Scripts/ProjectMapScene.cs`, `ProjectMapPackage.cs`, `ProjectMapStore.cs`, `RoadMapDocumentJson.cs`, `RoadSurfaceIndex.cs` 신규. MapData/MapCatalog, RoadMapDocument/Composer/Validator/Runtime/Store, WorldBuilder, RoadEnvironment, CorridorPolish, ReviewedPavement, SceneBuildingVisibility, RestaurantSiteLayout, FuelStationLayout, ServiceStops, BusinessProgress, FullMapOverlay, DrivingReadability 연결.
 - 편집 UI: RoadMapEditorScene/Project 신규, RoadMapEditor/Simple/SimpleInteraction/Canvas/Facilities 및 RoadMapTrialSession. 기존 간편·고급·분리 시험 기능 유지.
-- 검사/빌드: ProjectMapBuild, ProjectMapSceneTests, ProjectMapSceneEditorTests, ProjectMapStoreTests, ProjectMapEditorProbe 신규; PrototypeBuild/MapIdentityProbe/RoadMapEditorProbe/RestaurantLotProbe 조정. 위 Assets 경로는 모두 `unity/YeongtongTaxi/` 아래다.
+- 검사/빌드: ProjectMapBuild, ProjectMapSceneTests, ProjectMapSceneEditorTests, ProjectMapStoreTests, ProjectMapEditorProbe 신규; PrototypeBuild/MapIdentityProbe/RoadMapEditorProbe/RestaurantLotProbe 조정. 위 Assets 경로는 모두 `unity/EungyeTaxi/` 아래다.
 - `tools/check_workspace.ps1`: 프로젝트가 있으면 없는 재수입 입력을 허용하되, 존재하는 입력의 잘못된 해시는 계속 거부한다. 재수입용 `-RequireRawInputs` 추가.
 - `tools/update_distribution_manifest.ps1`: 실제 검증 JSON 입력과 프로젝트 지도 SHA256/내용 해시/크기를 기록.
 - 사용법/PC 이동/기획12/범위/체크리스트/설계·계획/이력/배포 실행폴더와 manifest 동기화.

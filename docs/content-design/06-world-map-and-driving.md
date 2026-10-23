@@ -84,13 +84,13 @@
 | 항목 | 확인한 현재 상태 | 이번 기획에서 남은 일 | 근거 |
 |---|---|---|---|
 | 은계 맵 | 지역 도로·국도 42호선 통합 경로망과 임시 시설 설정 존재 | 배치된 상황·거점의 수동 연결·시야 검증 | [저장소 README](../../README.md#은계-통합-영업-지도), [지도 설정](../../config/maps/eungye-traffic-overrides.json) |
-| 수동·보조 주행 | 수동 운전과 차로 유지·변경·회전 조향 기능 존재 | 새 상황과 거점에서 상태 전환·조작 가독성 확인 | [조작 안내](../../unity/YeongtongTaxi/README.md), [보조 코드](../../unity/YeongtongTaxi/Assets/Scripts/AssistedDriveController.cs) |
-| 내비 | 빠른 길/짧은 길 선택·경로 재탐색 코드 존재 | 출구 안내 시점·우회 연결·실측/예상 구분 검증 | [내비 코드](../../unity/YeongtongTaxi/Assets/Scripts/RoadNavigation.cs) |
-| 일반 차량 | 통합 차로망 경로 생성·연속 운행과 교차로 정지 처리 존재 | 구현된 대기열·교차 교통의 수동 상황 확인 | [일반 차량 코드](../../unity/YeongtongTaxi/Assets/Scripts/DistrictTraffic.cs), [현재 기능 안내](../../README.md#은계-통합-영업-지도) |
-| 가상 시험장 | 별도 도로 규칙·보조 운전 시험 모드 존재 | 출구 세 선택·우회전 콘텐츠의 수동 완주 | [시험장 안내](../../unity/YeongtongTaxi/README.md#한국-도로-규칙-시험장), [기존 검증 기록](../assisted-driving-validation.md) |
+| 수동·보조 주행 | 수동 운전과 차로 유지·변경·회전 조향 기능 존재 | 새 상황과 거점에서 상태 전환·조작 가독성 확인 | [조작 안내](../../unity/EungyeTaxi/README.md), [보조 코드](../../unity/EungyeTaxi/Assets/Scripts/AssistedDriveController.cs) |
+| 내비 | 빠른 길/짧은 길 선택·경로 재탐색 코드 존재 | 출구 안내 시점·우회 연결·실측/예상 구분 검증 | [내비 코드](../../unity/EungyeTaxi/Assets/Scripts/RoadNavigation.cs) |
+| 일반 차량 | 통합 차로망 경로 생성·연속 운행과 교차로 정지 처리 존재 | 구현된 대기열·교차 교통의 수동 상황 확인 | [일반 차량 코드](../../unity/EungyeTaxi/Assets/Scripts/DistrictTraffic.cs), [현재 기능 안내](../../README.md#은계-통합-영업-지도) |
+| 가상 시험장 | 별도 도로 규칙·보조 운전 시험 모드 존재 | 출구 세 선택·우회전 콘텐츠의 수동 완주 | [시험장 안내](../../unity/EungyeTaxi/README.md#한국-도로-규칙-시험장), [기존 검증 기록](../assisted-driving-validation.md) |
 | 보행자·우회전전용신호 | R1~R5 시험 상황의 보행·전용 신호·관찰 판정 구현 | 도시 전역 보행자는 제외, 제작 장면의 수동 가독성 확인 | [현재 상황 검증](../prototype-completion-validation.md) |
-| 운영 거점 | 거점 3종 공유 내비·주유소 3곳 입구/주유/출구 자동 물리 주행·비용 확인/취소 검증 | 주유소·식당·주차장까지 수동 왕복 검증 | [현재 정산 안내](../../unity/YeongtongTaxi/README.md#기간-목표와-하루-정산), [신규 경제 기획](05-daily-operation.md) |
-| 물리충돌·매너 | 물리충돌과 조건부 충돌 매너 -10 구현 존재 | 기존 기능으로 구분. 신규 사고 이벤트·파손·책임판정·수리·보험청구 개발은 제외 | [충돌 코드](../../unity/YeongtongTaxi/Assets/Scripts/DrivingManners.cs), [사고 범위](08-accidents-and-repairs.md) |
+| 운영 거점 | 거점 3종 공유 내비·주유소 3곳 입구/주유/출구 자동 물리 주행·비용 확인/취소 검증 | 주유소·식당·주차장까지 수동 왕복 검증 | [현재 정산 안내](../../unity/EungyeTaxi/README.md#기간-목표와-하루-정산), [신규 경제 기획](05-daily-operation.md) |
+| 물리충돌·매너 | 물리충돌과 조건부 충돌 매너 -10 구현 존재 | 기존 기능으로 구분. 신규 사고 이벤트·파손·책임판정·수리·보험청구 개발은 제외 | [충돌 코드](../../unity/EungyeTaxi/Assets/Scripts/DrivingManners.cs), [사고 범위](08-accidents-and-repairs.md) |
 
 ## 프로토 확인 항목과 남은 결정
 

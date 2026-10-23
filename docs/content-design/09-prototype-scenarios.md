@@ -55,11 +55,11 @@
 | 승차 전 사건 | 실제 운송 ID는 승차 때 생성 | 수락한 호출 ID에 빈차 사건 연결 후 운송 ID와 연계. 탑승 여부는 계속 false |
 | 경유 완료 | 지정 연결을 실제 통과해야 하차 가능 | 필수 통과와 합법적 우회 허용을 구분. 우회했는데 원래 지점을 다시 통과하도록 강제하지 않음 |
 
-근거: [승객 코드](../../unity/YeongtongTaxi/Assets/Scripts/PassengerJobs.cs), [요청 UI](../../unity/YeongtongTaxi/Assets/Scripts/PassengerRequestUI.cs), [요청 모델](../../unity/YeongtongTaxi/Assets/Scripts/PassengerRequest.cs), [영업 법규 구역](../../unity/YeongtongTaxi/Assets/Scripts/ServiceLawZones.cs), [기존 구역 검증](../eungye-in-service-law-zones.md). 실행 검증 결과와 배포 소스는 최신 작업 이력·배포 manifest를 따른다.
+근거: [승객 코드](../../unity/EungyeTaxi/Assets/Scripts/PassengerJobs.cs), [요청 UI](../../unity/EungyeTaxi/Assets/Scripts/PassengerRequestUI.cs), [요청 모델](../../unity/EungyeTaxi/Assets/Scripts/PassengerRequest.cs), [영업 법규 구역](../../unity/EungyeTaxi/Assets/Scripts/ServiceLawZones.cs), [기존 구역 검증](../eungye-in-service-law-zones.md). 실행 검증 결과와 배포 소스는 최신 작업 이력·배포 manifest를 따른다.
 
 ## 승하차 위치 기준
 
-아래는 로컬 생성 지도 `unity/YeongtongTaxi/Assets/Resources/eungye-hybrid-map.json`에서 읽은 실제 게임 지점이다. S01만 ‘국도42 승하차 1’, 나머지는 ‘은계 승하차 N’이다. 학교·병원·역 등 실제 시설 이름을 임의로 붙이지 않는다. S번호는 이 문서의 별칭이며 아직 코드의 영구 ID가 아니다.
+아래는 로컬 생성 지도 `unity/EungyeTaxi/Assets/Resources/eungye-hybrid-map.json`에서 읽은 실제 게임 지점이다. S01만 ‘국도42 승하차 1’, 나머지는 ‘은계 승하차 N’이다. 학교·병원·역 등 실제 시설 이름을 임의로 붙이지 않는다. S번호는 이 문서의 별칭이며 아직 코드의 영구 ID가 아니다.
 
 | 별칭 | 표시 번호 | 지도 기준점 X, Z (m, 반올림) | laneEdge / laneAt (m) |
 |---|---|---|---|

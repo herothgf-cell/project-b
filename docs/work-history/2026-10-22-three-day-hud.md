@@ -18,7 +18,7 @@
 
 | 종류 | 명령/증거 | 결과와 한계 |
 |---|---|---|
-| 빌드·생성 그래프 검사 | Unity2022.3.62f2 `-batchmode -nographics -quit -projectPath unity/YeongtongTaxi -executeMethod PrototypeBuild.BuildHybrid`; artifacts/three-day-hud-build.log | 종료0. 기본 은계·기존 도로 정비 통합 |
+| 빌드·생성 그래프 검사 | Unity2022.3.62f2 `-batchmode -nographics -quit -projectPath unity/EungyeTaxi -executeMethod PrototypeBuild.BuildHybrid`; artifacts/three-day-hud-build.log | 종료0. 기본 은계·기존 도로 정비 통합 |
 | 모델 자동 검사 | `pwsh -File tools/test_prototype.ps1` | 23묶음 종료0. 3일 장부·이월·목표 없는 종료·기존 요청/운전/교통 회귀 포함 |
 | 날짜/저장 상태 제어 | exe `-batchmode -nographics -threeDayTest -hybridV2` 뒤 별도 프로세스 `-threeDayReloadTest -hybridV2` | 각각 종료0,9+11 PASS. 1,200초 시작·저장 실패 롤백·피로80→20/포만감55 이월·2일차 복원·법규85 유지·3일 누적51,000수입/1,500지출/49,500순수익·중복 보관 방지 |
 | 위치 제어 상호작용 | exe `-batchmode -nographics -presentationHudTest -oneDayMode -hybridV2` | 종료0,20 PASS. 승하차·비상등·팝업 정지/재개·정산 중복 방지·내비 없음/승객 목적지/H 내부 경로 비표시 |

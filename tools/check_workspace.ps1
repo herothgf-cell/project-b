@@ -6,7 +6,7 @@ $taskManifest = Get-Content -LiteralPath $taskManifestPath -Raw -Encoding UTF8 |
 $taskIssues = 0
 Write-Output ("Workspace: " + $taskRoot)
 & git -C $taskRoot log -1 --oneline
-$taskVersion = Get-Content -LiteralPath (Join-Path $taskRoot 'unity/YeongtongTaxi/ProjectSettings/ProjectVersion.txt') -Raw
+$taskVersion = Get-Content -LiteralPath (Join-Path $taskRoot 'unity/EungyeTaxi/ProjectSettings/ProjectVersion.txt') -Raw
 if ($taskVersion -notmatch ('m_EditorVersion: ' + [regex]::Escape($taskManifest.unity) + '(\s|$)')) {
     Write-Output 'MISMATCH Unity project version'; $taskIssues++
 } else { Write-Output ("OK Unity project " + $taskManifest.unity + ' (Editor installation is checked separately in Unity Hub)') }

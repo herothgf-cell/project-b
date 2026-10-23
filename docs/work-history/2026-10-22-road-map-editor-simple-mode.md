@@ -18,10 +18,10 @@
 
 ## 변경 파일
 
-- `unity/YeongtongTaxi/Assets/Scripts/RoadMapEasySelection.cs`: 도로 선택/접근 묶기/친숙한 이름/버튼 문구 맞춤.
+- `unity/EungyeTaxi/Assets/Scripts/RoadMapEasySelection.cs`: 도로 선택/접근 묶기/친숙한 이름/버튼 문구 맞춤.
 - `RoadMapEditorSimple.cs`, `RoadMapEditorSimpleInteraction.cs`(같은 Scripts 폴더): 간편 화면·클릭 작업·자동 초안·시험 추천.
 - 같은 폴더의 `RoadMapEditor.cs`, `RoadMapEditorCanvas.cs`, `RoadMapEditorProperties.cs`, `RoadMapEditorProbe.cs`: 화면 라우팅/지도/버튼/프로세스 검사.
-- `unity/YeongtongTaxi/Assets/Editor/EasyRoadEditorTests.cs`, `PrototypeBuild.cs`, 생성된 `.meta`, `Assets/Scenes/FirstDrive.unity`.
+- `unity/EungyeTaxi/Assets/Editor/EasyRoadEditorTests.cs`, `PrototypeBuild.cs`, 생성된 `.meta`, `Assets/Scenes/FirstDrive.unity`.
 - `docs/road-map-editor-guide.md`, `docs/prototype-development-checklist.md`, `docs/prototype-scope.md`, `docs/content-design/12-road-map-editor.md`, 이 기록과 `LATEST.md`.
 - `tools/update_distribution_manifest.ps1`, `builds/EungyeTaxi/` 변경 바이너리, `distribution/EungyeTaxi-build-manifest.json`.
 
@@ -40,7 +40,7 @@
 1. **이번 브랜치 worktree의** `builds/EungyeTaxi/EungyeTaxi.exe` 실행 → 출발 → Esc → 지도 편집. 원래 main 폴더의 exe는 이번 작업에서 교체하지 않았다.
 2. 도로 선 클릭 → 왼쪽 진입 방향 → 오른쪽 차로 번호 → ←/↑/→ → 저장하고 시험. 남쪽 진입은 남쪽에서 교차로로 들어오는 방향이다.
 3. 자동 재현: 저장소 루트에서 exe에 `-eungye -oneDayMode -roadMapEditorTest -screen-fullscreen 0 -screen-width 1600 -screen-height 900 -logFile <로그 절대 경로>`를 전달한다.
-4. 빌드: Unity batchmode `-projectPath unity/YeongtongTaxi -executeMethod PrototypeBuild.BuildEasyRoadMapEditor -quit -logFile <로그 절대 경로>`.
+4. 빌드: Unity batchmode `-projectPath unity/EungyeTaxi -executeMethod PrototypeBuild.BuildEasyRoadMapEditor -quit -logFile <로그 절대 경로>`.
 5. PC별 로컬 Unity: `D:/Program Files/Unity Hub/Editor/2022.3.62f2/Editor/Unity.exe`. 이번 worktree의 절대 위치: `C:/Users/USER/.codex/worktrees/easy-road-editor/project-b`.
 
 ## 미검증·다음 작업

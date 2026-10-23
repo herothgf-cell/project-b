@@ -24,12 +24,12 @@ OFF는 새 속도 제한만 우회하고 기존 차량 AI를 사용한다. 차�
 
 | 파일 | 역할 / 출처 |
 |---|---|
-| `unity/YeongtongTaxi/Assets/Scripts/MitTrafficFollowing.cs` | MIT 샘플의 속도 상한 분기를 수정한 순수 계산 |
-| `unity/YeongtongTaxi/Assets/Scripts/TrafficCar.cs` | 기존 안전 속도 뒤에 선택적 상한 적용 |
-| `unity/YeongtongTaxi/Assets/Scripts/MitTrafficOptions.cs` | 프로젝트 작성 설정·저장·테스트 분리 |
-| `unity/YeongtongTaxi/Assets/Scripts/TrafficSystem.cs` | 차량들이 공유하는 설정 초기화 |
-| `unity/YeongtongTaxi/Assets/Scripts/DriveHUD.cs` | Esc 메뉴의 ON/OFF 버튼 |
-| `unity/YeongtongTaxi/Assets/Editor/PrototypeBuild.cs` | 빌드 폴더에 원문 라이선스와 수정 고지 복사 |
+| `unity/EungyeTaxi/Assets/Scripts/MitTrafficFollowing.cs` | MIT 샘플의 속도 상한 분기를 수정한 순수 계산 |
+| `unity/EungyeTaxi/Assets/Scripts/TrafficCar.cs` | 기존 안전 속도 뒤에 선택적 상한 적용 |
+| `unity/EungyeTaxi/Assets/Scripts/MitTrafficOptions.cs` | 프로젝트 작성 설정·저장·테스트 분리 |
+| `unity/EungyeTaxi/Assets/Scripts/TrafficSystem.cs` | 차량들이 공유하는 설정 초기화 |
+| `unity/EungyeTaxi/Assets/Scripts/DriveHUD.cs` | Esc 메뉴의 ON/OFF 버튼 |
+| `unity/EungyeTaxi/Assets/Editor/PrototypeBuild.cs` | 빌드 폴더에 원문 라이선스와 수정 고지 복사 |
 | `licenses/mchrbn-unity-traffic-simulation/` | 커밋, 원본 코드·README, MIT 원문·수정 고지 |
 
 Copyright (c) 2019 Matthieu Cherubini, MIT. 원본 커밋 `4f03f4c276e2b82f033a5f037f43036ba9ab6be3`. 상업 이용·수정·배포 허용 조건에 따라 저작권과 MIT 전문을 보존한다. 샘플 에셋은 포함하지 않는다. 사용자 배포물에는 `ThirdPartyNotices/mchrbn-unity-traffic-simulation-MIT.txt` 및 `...-NOTICE.txt`를 동봉한다. 다른 게임 구성요소의 라이선스까지 MIT로 바뀌는 것은 아니다.

@@ -69,4 +69,4 @@
 |---|---|
 | 은계 주행·교통·9코스·17요청·독립 운행 점수·거점·3일×12분캠페인·저장 | 하루20분·결과 비교·포만감/피로·식사 회복·수면 |
 
-현재 구현의 조작법은 [Unity 안내](../unity/YeongtongTaxi/README.md), 당시 검증은 [경제 기록](economy-progression-validation.md) 등을 따른다. 신규 개발 범위는 [프로토타입 기획](prototype-scope.md)과 [로드맵](content-design/00-RoadMap.md)을 기준으로 한다.
+현재 구현의 조작법은 [Unity 안내](../unity/EungyeTaxi/README.md), 당시 검증은 [경제 기록](economy-progression-validation.md) 등을 따른다. 신규 개발 범위는 [프로토타입 기획](prototype-scope.md)과 [로드맵](content-design/00-RoadMap.md)을 기준으로 한다.

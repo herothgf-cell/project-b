@@ -19,9 +19,9 @@ Ruling: 기존 안쪽 차로를 좌회전 전용으로 바꾸면 직진 차로 �
 ## 변경 파일
 
 - `config/maps/eungye-reviewed-lanes.json`, 동일한 `Assets/Resources/eungye-reviewed-lanes.json` 및 meta
-- `unity/YeongtongTaxi/Assets/Scripts/ReviewedLaneLayout.cs`, `ReviewedLaneLayoutProbe.cs` 및 meta
+- `unity/EungyeTaxi/Assets/Scripts/ReviewedLaneLayout.cs`, `ReviewedLaneLayoutProbe.cs` 및 meta
 - `MapCatalog.cs`, `RoadPaintGeometry.cs`, `TrafficSystem.cs`의 차로 적용/표시 호출
-- `unity/YeongtongTaxi/Assets/Editor/ReviewedLaneLayoutTests.cs` 및 meta, `PrototypeBuild.cs`
+- `unity/EungyeTaxi/Assets/Editor/ReviewedLaneLayoutTests.cs` 및 meta, `PrototypeBuild.cs`
 - `docs/map-polish-plan.md`, `docs/prototype-development-checklist.md`, `docs/prototype-scope.md`, `docs/work-history/LATEST.md`, 이 파일
 
 공유 `TrafficSystem.cs`·체크리스트·LATEST의 다른 채팅 변경은 해당 작업의 부분만 스테이징한다. 다른 승객·교통·가독성 코드와 배포 폴더의 동시 변경은 이번 소스 커밋에 포함하지 않는다.

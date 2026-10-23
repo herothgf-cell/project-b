@@ -14,7 +14,7 @@
 
 ## 변경 파일
 
-- `unity/YeongtongTaxi/Assets/Editor/ProjectMapEditSession.cs`, `ProjectMapEditObjectHandle.cs`, 해당 테스트: 객체 단위 편집/Undo/정식 저장/초안.
+- `unity/EungyeTaxi/Assets/Editor/ProjectMapEditSession.cs`, `ProjectMapEditObjectHandle.cs`, 해당 테스트: 객체 단위 편집/Undo/정식 저장/초안.
 - `ProjectMapAuthoringRenderer.cs`, 해당 테스트: 공유 형상/재질, 구역별 갱신, 삼각형 선택 판정, 리소스 정리.
 - `ProjectMapSceneWindow.cs`, 해당 테스트: 독립 Scene/도구/게임 카메라/패널/수명주기.
 - `Assets/Scripts/WorldBuilder.cs`: 기존 생성식을 공통 함수로 추출하고 편집 모드에서 콜라이더 제거를 안전하게 처리.

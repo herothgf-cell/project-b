@@ -67,7 +67,7 @@ def all_stops_connected(edges,stops,disabled):
 
 
 def build():
-    path=Path('unity/YeongtongTaxi/Assets/Resources/eungye-hybrid-map.json');raw=path.read_bytes();m=json.loads(raw.decode('utf-8-sig'))
+    path=Path('unity/EungyeTaxi/Assets/Resources/eungye-hybrid-map.json');raw=path.read_bytes();m=json.loads(raw.decode('utf-8-sig'))
     osm=json.loads(Path('data/inspection/osm-eungye.json').read_text(encoding='utf-8'))
     allowed={'primary','primary_link','secondary','secondary_link','tertiary','tertiary_link','residential','unclassified','living_street','service','road'}
     ways=[w for w in osm['ways'] if w['tags'].get('highway') in allowed and w['tags'].get('bridge','no')=='no' and w['tags'].get('tunnel','no')=='no' and w['tags'].get('layer','0')=='0']

@@ -52,12 +52,12 @@ Quiet/Eta, 완료 운송 수에 따른 요청 교대, Y 수락/U 안전상 보�
 2. 저장소 루트에서 아래 명령으로 생성 지도 후보 위치·구역을 확인한다. 생성 파일이 없으면 기존 개발 준비 절차로 생성하고 스냅샷 차이를 기록한다.
 
 ```powershell
-$scenarioMap = Get-Content -Raw unity/YeongtongTaxi/Assets/Resources/eungye-hybrid-map.json | ConvertFrom-Json
+$scenarioMap = Get-Content -Raw unity/EungyeTaxi/Assets/Resources/eungye-hybrid-map.json | ConvertFrom-Json
 $scenarioMap.stops | Select-Object name,x,z,dx,dz,laneEdge,laneAt
 foreach ($scenarioEdge in @(1182,1158,1180,1050,1248,1133,1351)) {
     $scenarioMap.hdEdges[$scenarioEdge] | Select-Object id,ruleId,turn,next
 }
-Get-FileHash unity/YeongtongTaxi/Assets/Resources/eungye-hybrid-map.json -Algorithm SHA256
+Get-FileHash unity/EungyeTaxi/Assets/Resources/eungye-hybrid-map.json -Algorithm SHA256
 ```
 
 3. 코드 구현 전에 현재 지도/영업 변경과 통합 기획을 대조하고 PS-A부터 진행한다. 경유 연결만으로 실제 운송 검증을 대신하지 않는다.

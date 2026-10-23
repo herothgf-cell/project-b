@@ -31,7 +31,7 @@
 
 ## 파일 구성과 인터페이스
 
-아래 새 파일은 `unity/YeongtongTaxi/Assets/Scripts/`에 둔다. 테스트는 `Assets/Editor/`와 실행파일용 Probe로 나눈다.
+아래 새 파일은 `unity/EungyeTaxi/Assets/Scripts/`에 둔다. 테스트는 `Assets/Editor/`와 실행파일용 Probe로 나눈다.
 
 | 파일 | 책임·외부 인터페이스 |
 |---|---|

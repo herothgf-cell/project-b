@@ -41,8 +41,9 @@ public class BusinessProgress : MonoBehaviour {
   useV2=Array.IndexOf(args,"-serviceLawZonesTest")>=0||PracticeSession.Enabled||!testMode||(Array.IndexOf(args,"-campaignTest")>=0||Array.IndexOf(args,"-completionTest")>=0||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-campaignDriveTest")>=0)||Array.IndexOf(args,"-scenarioTest")>=0||Array.IndexOf(args,"-contentFlowTest")>=0||Array.IndexOf(args,"-exitTransportTest")>=0||Array.IndexOf(args,"-hybridV2")>=0;
   if((Array.IndexOf(args,"-serviceLawZonesTest")>=0||Array.IndexOf(args,"-campaignTest")>=0||Array.IndexOf(args,"-completionTest")>=0||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-campaignDriveTest")>=0))enabledCampaign=true;
   if(RoadMapRuntime.Trial){settings=PrototypeSettings.ForOneDay();useV2=true;}useV2|=settings.oneDay;
-  SavePath=testMode?Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts",useV2?"campaign-v2-test.json":"economy-player-checkpoint.json")):Path.Combine(Path.GetDirectoryName(Application.persistentDataPath),"영통 택시 시뮬레이터",PrototypeSettings.SaveFile);
+  SavePath=testMode?Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts",useV2?"campaign-v2-test.json":"economy-player-checkpoint.json")):Path.Combine(Path.GetDirectoryName(Application.persistentDataPath),"은계 택시 시뮬레이터",PrototypeSettings.SaveFile);
   if(settings.oneDay)SavePath=Path.Combine(Path.GetDirectoryName(SavePath),settings.days>1?(testMode?"three-day-test.json":PrototypeSettings.ThreeDaySaveFile):(testMode?"one-day-test.json":"campaign-day20-v1.json"));
+  if(!testMode)try{SavePath=CampaignSaveLocation.Resolve(Path.GetDirectoryName(Application.persistentDataPath),Path.GetFileName(SavePath));}catch(Exception e){Debug.LogWarning("이전 캠페인 저장 복사 실패: "+e.Message);}
   ledger=useV2?new EconomyLedger(settings):new EconomyLedger(new EconomySettings());
   if(!testMode||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-oneDayReloadTest")>=0||Array.IndexOf(args,"-threeDayReloadTest")>=0){
    foreach(var path in new[]{SavePath,SavePath+".bak"}){

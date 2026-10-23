@@ -33,11 +33,10 @@ Unity 편집기도 아래와 같은 정식 프로젝트 JSON을 저장한다. �
 | 정식 프로젝트 지도 | `config/maps/project/eungye.project.json` — 빌드에 적용할 기준·편집 데이터 | 포함 |
 | 빌드용 복사본 | `Assets/Resources/eungye-project-map.json` — BuildHybrid가 정식 파일에서 생성 | 제외 |
 | 개인 수정본·자동 초안 | Unity 사용자 데이터의 `RoadMaps/` — 개인 작업/시험용 | 제외 |
-| 재수입용 생성 입력 | `Assets/Resources/drive-map.json`, `eungye-map.json`, `route42-map.json` | JSON 제외, 기존 ZIP 배포 |
 | GIS 원본 | `data/raw/` — 재수입 작업용 NGII/OSM | 제외 |
 | 배포 실행파일 | `builds/EungyeTaxi/` — 위 프로젝트 지도 포함 | 포함 |
 
-현재 정식 프로젝트 지도가 있으면 **BuildHybrid에 재수입용 입력 3개나 원본 GIS가 필요하지 않다.** `pwsh -File tools/check_workspace.ps1 -Strict`는 프로젝트 구조와 존재하는 입력의 해시를 확인하고, Unity 빌드가 정식 지도 내부 해시·형상·연결을 검사한다. 재수입 작업은 `-RequireRawInputs`로 입력 3개를 모두 확인한다. 정식 지도 파일을 지우고 재수입하면 편집한 내용이 사라질 수 있으므로 Git 이력을 먼저 보존한다.
+현재 정식 프로젝트 지도가 있으면 **BuildHybrid에 재수입용 입력 2개나 원본 GIS가 필요하지 않다.** `pwsh -File tools/check_workspace.ps1 -Strict`는 프로젝트 구조와 존재하는 입력의 해시를 확인하고, Unity 빌드가 정식 지도 내부 해시·형상·연결을 검사한다. 재수입 작업은 `-RequireRawInputs`로 입력 2개를 모두 확인한다. 정식 지도 파일을 지우고 재수입하면 편집한 내용이 사라질 수 있으므로 Git 이력을 먼저 보존한다.
 
 
 ## 수정할 도로는 어떻게 고르나요?

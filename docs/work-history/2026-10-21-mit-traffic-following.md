@@ -18,7 +18,7 @@ Esc → 앞차 추종 보완 ON/OFF. 최초 ON, 선택 저장, OFF에서 기존 
 - `licenses/mchrbn-unity-traffic-simulation/`: 원본 README·코드·커밋·LICENSE·NOTICE·해시 증빙.
 - `docs/mit-traffic-following.md`, 범위/체크리스트/세계·주행 기획, 이력/LATEST: 사용·출처·인계.
 
-위 Assets 경로는 `unity/YeongtongTaxi/` 기준이다. 전체 파일 매핑은 [기능 문서](../mit-traffic-following.md). 로컬 제3자 사용 대장에도 CODE-001을 추가했다. 기존 감사 문서/README의 미커밋 변경은 별도 유지한다.
+위 Assets 경로는 `unity/EungyeTaxi/` 기준이다. 전체 파일 매핑은 [기능 문서](../mit-traffic-following.md). 로컬 제3자 사용 대장에도 CODE-001을 추가했다. 기존 감사 문서/README의 미커밋 변경은 별도 유지한다.
 
 ## 실제 검증
 

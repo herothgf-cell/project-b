@@ -119,7 +119,7 @@
 
 기존 보험·세금 제외를 위한 계정 이관은 유지한다. 이를 다시 활성화하거나 기존 저널을 일일 저장만으로 되돌리는 작업은 포함하지 않는다.
 
-관련: [로드맵](00-RoadMap.md) · [캠페인](07-campaign.md) · [운전자](10-driver-condition.md) · [맵·거점](06-world-map-and-driving.md) · [승객](04-passengers-and-reservations.md) · [현재 연료 장부](../../unity/YeongtongTaxi/Assets/Scripts/CampaignAccount.cs).
+관련: [로드맵](00-RoadMap.md) · [캠페인](07-campaign.md) · [운전자](10-driver-condition.md) · [맵·거점](06-world-map-and-driving.md) · [승객](04-passengers-and-reservations.md) · [현재 연료 장부](../../unity/EungyeTaxi/Assets/Scripts/CampaignAccount.cs).
 
 ### 2026-10-21 10% 단위 주유 변경
 

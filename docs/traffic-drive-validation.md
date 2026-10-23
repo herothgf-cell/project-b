@@ -35,4 +35,4 @@
 
 실물 패드 버튼 매핑·손맛, 사용자 수동 키보드 입력, 장시간 밀집 교통 안정성, 모든 충돌 경우는 별도 검증 대상이다. 자동 검사는 입력값과 공개 제어 함수를 사용한다.
 
-실행 및 조작: [Unity 프로젝트 README](../unity/YeongtongTaxi/README.md).
+실행 및 조작: [Unity 프로젝트 README](../unity/EungyeTaxi/README.md).

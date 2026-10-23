@@ -16,7 +16,7 @@ from shapely import constrained_delaunay_triangles
 
 def build():
     archive=ROOT/'data/raw/ngii/hdmap/eungye/(B110)정밀도로지도_202610157368.zip'
-    base=ROOT/'unity/YeongtongTaxi/Assets/Resources/eungye-hybrid-map.json'
+    base=ROOT/'unity/EungyeTaxi/Assets/Resources/eungye-hybrid-map.json'
     data=json.loads(base.read_text(encoding='utf-8-sig'))
     region=box(435,375,575,515)
     lanes=unary_union([LineString([(p['x'],p['z']) for p in e['points']]).buffer(2.4) for e in data['hdEdges'] if not e.get('disabled') and len(e['points'])>1])

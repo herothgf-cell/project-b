@@ -161,23 +161,5 @@ class ImportTests(unittest.TestCase):
         with self.assertRaisesRegex(ImportFailure, 'unreviewed direction'):
             build_map(config('100'), self.folder)
 
-    def test_real_package_parses_directly_without_inspection_cache(self):
-        raw = ROOT / 'data/raw/ngii'
-        if not list(raw.glob('*.ngi')):
-            self.skipTest('User-provided raw NGII package absent')
-        result, report = build_map(config('377092296', provisional=True), raw)
-        self.assertEqual(report['sourceFeatureCount'], 1942)
-        self.assertGreater(len(result['roads']), 100)
-        self.assertGreater(len(result['buildings']), 100)
-        self.assertEqual(result['coordinateStatus'], 'provisional')
-        self.assertGreaterEqual(len(result['stops']), 6)
-        self.assertTrue(all(r['sourceLanes'] in [1, 2, 4, 5] for r in result['roads']))
-        self.assertEqual(len({r['id'] for r in result['roads']}), len(result['roads']))
-        for stop in result['stops']:
-            offset = stop['width'] * .5 + .85
-            x, z = stop['x'] + stop['dz'] * offset, stop['z'] - stop['dx'] * offset
-            self.assertFalse(any(inside(x, z, b['points']) for b in result['buildings']))
-
-
 if __name__ == '__main__':
     unittest.main()

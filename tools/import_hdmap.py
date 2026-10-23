@@ -151,7 +151,7 @@ def build():
             cases.append({'name':'차로 변경 시험','turn':0,'startEdge':before[0],'startAt':1.,'goalEdge':after[0],'goalAt':min(30,length(edges[after[0]]['points'])-2),'expected':[before[0],i,after[0]],'captureEnds':False});break
     if len(cases)!=5:raise ValueError('No verified lane-change trial')
     def points(p):return [{'x':round(x,4),'z':round(z,4)} for x,z in p]
-    base=json.loads((ROOT/'unity/YeongtongTaxi/Assets/Resources/eungye-map.json').read_text(encoding='utf-8'))
+    base=json.loads((ROOT/'unity/EungyeTaxi/Assets/Resources/eungye-map.json').read_text(encoding='utf-8'))
     base.update(mapId='route42',source='국토지리정보원 국도42호선 SEC002 · 2025 패키지 / 객체 갱신 2020·2022 / 시험 신호',coordinateStatus='EPSG:5179 → 5186, local origin 181900,537200')
     base['roads']=[{'id':e['id'],'width':3.8,'lanes':1,'sourceLanes':1,'oneWay':1,'points':points(e['points'])} for e in raw]
     base['targets']=[{'name':'R42-A','x':500,'z':430},{'name':'R42-B','x':790,'z':370}]
@@ -161,7 +161,7 @@ def build():
     base['hdSignals']=[{'x':round(m['points'][0][0],4),'z':round(m['points'][0][1],4)} for m in layers['c1_trafficlight']]
     # Trial does not use passenger kerb approach or campaign logic.
     base['stops']=[]
-    out=ROOT/'unity/YeongtongTaxi/Assets/Resources/route42-map.json';out.write_text(json.dumps(base,ensure_ascii=False,separators=(',',':')),encoding='utf-8')
+    out=ROOT/'unity/EungyeTaxi/Assets/Resources/route42-map.json';out.write_text(json.dumps(base,ensure_ascii=False,separators=(',',':')),encoding='utf-8')
     report={'provenance':provenance,'lanes':len(raw),'edges':len(edges),'changes':len(changes),'trials':cases,'missingSuccessors':[e['id'] for e in edges if not e['next']],'rule':'Node ID + <0.15m endpoint + non-opposing tangent; changes require reciprocal IDs and white single dashed 212 over entire crossing.'}
     (ROOT/'data/inspection/ngii').mkdir(parents=True,exist_ok=True)
     (ROOT/'data/inspection/ngii/route42-validation.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')

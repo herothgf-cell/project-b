@@ -44,7 +44,7 @@ public static class FuelStationLayoutTests {
   }
   var second=JsonUtility.FromJson<MapData>(File.ReadAllText("Assets/Resources/eungye-hybrid-map.json"));second.mapId="eungye";FuelStationLayout.Apply(second);
   Check(second.roads.Length==roadCount+12&&!object.ReferenceEquals(stations,FuelStationLayout.For(second)),"per-map cache");
-  var empty=new MapData{mapId="yeongtong"};FuelStationLayout.Apply(empty);Check(FuelStationLayout.For(empty).Count==0,"other maps keep original stops");
+  var empty=new MapData{mapId="synthetic"};FuelStationLayout.Apply(empty);Check(FuelStationLayout.For(empty).Count==0,"other maps keep original stops");
   Debug.Log("FUEL_STATION_LAYOUT_TEST_OK stations="+stations.Count+" originalRoads="+roadCount+" buildings="+buildingCount+" graph="+edgeCount);
  }
 }

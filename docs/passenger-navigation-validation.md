@@ -36,4 +36,4 @@
 
 전체 지도로 경계를 넓히자 기존 직선 교통 경로가 굽은 도로를 벗어나 건물을 통과할 수 있었다. 교차 도로 AI를 검토한 양쪽60m 이내로 제한하고 양방향 중심선을1m 간격으로 확인해 건물 겹침0건을 확인했다. 승하차 후보는 교차로20m 이내와 차량/손님 위치의 건물 겹침을 제외하도록 바꿨다.
 
-차로 검증 근거와 미확정 사항: [지도·차로 보고서](road-lanes-and-map-expansion.md). 조작 및 실행: [README](../unity/YeongtongTaxi/README.md).
+차로 검증 근거와 미확정 사항: [지도·차로 보고서](road-lanes-and-map-expansion.md). 조작 및 실행: [README](../unity/EungyeTaxi/README.md).
