@@ -3,7 +3,7 @@
 ## 2026-10-23 운전 편의·UI 시안
 
 - [x] 1인칭 자동 코너 시선/롤 완화,수동 저속 조향,법규 지도 기본 꺼짐,기사식당3메뉴. 모델23묶음/BuildHybrid/수동입력 자동물리/식당20검사 종료0. [근거](work-history/2026-10-23-driving-comfort-ui-proposal.md).
-- [ ] 메인·M 지도 UI [시안 승인](content-design/13-driving-map-ui.md) 후 실제 배치/호출목록/아이콘/좌표팝업 적용.
+- [x] 메인·M 지도 UI 승인 후 배치/호출목록/도형아이콘/좌표팝업/승하차 포커스 적용. 모델23묶음·지도16·기존HUD20·3해상도렌더·BuildHybrid 종료0. [근거](work-history/2026-10-23-approved-cockpit-map-ui.md).
 - [ ] 사람의 조작감·화면 가독성·전체3일 검증.
 
 

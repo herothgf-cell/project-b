@@ -1,6 +1,9 @@
 using UnityEngine;
 public class DriveHUD : MonoBehaviour {
  public DriveSession session;public Texture2D tile;public bool HelpOpen {get;private set;}GUIStyle title,body,small;const int W=1024,H=1024;
+ public void ToggleHelp(){HelpOpen=!HelpOpen;}
+ Texture2D lightTile;public Texture2D LightTile {get{if(lightTile||!tile)return lightTile;lightTile=new Texture2D(W,H);var colors=tile.GetPixels();for(int i=0;i<colors.Length;i++){var c=colors[i];colors[i]=c.b>.4f&&c.r<.2f?new Color(.54f,.78f,.86f):c.r>.3f?new Color(.98f,.99f,.96f):new Color(.83f,.88f,.82f);}lightTile.SetPixels(colors);lightTile.Apply();return lightTile;}}
+ void OnDestroy(){if(tile)Destroy(tile);if(lightTile)Destroy(lightTile);}
  void Start(){tile=new Texture2D(W,H);var pixels=new Color[W*H];for(int i=0;i<pixels.Length;i++)pixels[i]=new Color(.10f,.15f,.17f);tile.SetPixels(pixels);
   if(session.world.map.areas!=null)foreach(var area in session.world.map.areas){
    if(area.kind!="water"||area.points==null||area.points.Length<3)continue;
@@ -19,24 +22,9 @@ public class DriveHUD : MonoBehaviour {
  public string MannerCaption {get{return session.jobs.trip.State==TripState.OnTrip?"승객 만족도 "+session.manners.ledger.Score+"점 / 요구 "+session.jobs.current.requiredScore+"점":session.jobs.trip.State==TripState.ToPickup?"승객 만족도 · 탑승 전 / 요구 "+session.jobs.current.requiredScore+"점":"승객 만족도 · 탑승 시 100점으로 시작";}}
  public string LawCaption {get{int valid=0;foreach(var e in session.law.ledger.Events)foreach(var r in e.rules)if(r.verdict==LawVerdict.Compliant||r.verdict==LawVerdict.Violation)valid++;return "운행 점수 "+session.law.ledger.TotalScore+"점 · "+(valid==0?"아직 유효 평가 없음":"유효 "+valid+"건")+" · F8";}}
  void Gauge(Rect r,float value,Color color,int requirement=-1){GUI.color=new Color(.13f,.18f,.21f);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=color;GUI.DrawTexture(new Rect(r.x,r.y,r.width*Mathf.Clamp01(value/100),r.height),Texture2D.whiteTexture);if(requirement>=0){GUI.color=Color.white;GUI.DrawTexture(new Rect(r.x+r.width*Mathf.Clamp01(requirement/100f)-1,r.y-2,2,r.height+4),Texture2D.whiteTexture);}GUI.color=Color.white;}
- void OnGUI(){if(PracticeSession.Enabled&&!session.paused)return;if(session.RideResultOpen||session.ChoiceOpen||session.PracticeMenuOpen||session.business.restartPrompt||session.jobs==null||session.business.ShowingSummary||session.business.preparing||session.business.taxPrompt||session.services.open||session.law.HistoryOpen)return;if(title==null){GUI.skin.font=KoreanText.Font;title=new GUIStyle(GUI.skin.label){fontSize=23,fontStyle=FontStyle.Bold};body=new GUIStyle(GUI.skin.label){fontSize=16};small=new GUIStyle(GUI.skin.label){fontSize=13};title.normal.textColor=body.normal.textColor=small.normal.textColor=Color.white;}
-  var jobs=session.jobs;GUI.Box(new Rect(16,16,380,176),GUIContent.none);GUI.Label(new Rect(28,22,360,35),RoadRulesTrial.Enabled?"가상 도로 규칙 시험장":MapCatalog.Name(session.world.map.mapId),title);
-  GUI.Label(new Rect(28,54,355,25),Mathf.Abs(session.taxi.Speed*3.6f).ToString("00")+" km/h   "+(session.taxi.Speed<-.2f?"R":"D")+"   수입 "+(session.business.enabledCampaign?session.business.ledger.Income:jobs.balance).ToString("N0")+"원",body);
-  GUI.Label(new Rect(28,80,355,23),(session.drivingCamera.FirstPerson?"1인칭":"3인칭")+" · "+(session.assisted.Active?"보조":"수동")+"   방향지시등: "+(session.signals.Hazards?"비상등":session.signals.direction<0?"좌측":session.signals.direction>0?"우측":"꺼짐"),small);
-  bool occupied=jobs.trip.State==TripState.OnTrip;GUI.Label(new Rect(28,103,355,20),MannerCaption,small);Gauge(new Rect(28,124,355,6),occupied?session.manners.ledger.Score:0,occupied?(session.manners.ledger.Score>=jobs.current.requiredScore?new Color(.2f,.85f,.55f):new Color(1,.5f,.2f)):Color.gray,occupied?jobs.current.requiredScore:-1);
-  GUI.Label(new Rect(28,132,355,20),LawCaption,small);Gauge(new Rect(28,153,355,6),session.law.ledger.TotalScore,new Color(.35f,.7f,1));
-  GUI.Label(new Rect(28,164,355,24),Time.time<session.manners.eventUntil?session.manners.lastEvent:"지도·시설 현장 규제 미검증 · 운행 점수·만족도 별도",new GUIStyle(small){fontSize=11,wordWrap=true});
-  if(session.assist.Visible)GUI.Label(new Rect(Screen.width*.745f,Screen.height*.69f-26,Screen.width*.24f,25),(session.assist.Mode=="REAR CAMERA"?"후방 카메라":session.assist.Mode=="LEFT CAMERA"?"좌측 카메라":"우측 카메라"),body);
-  float helpY=Screen.height-42;
-  if(GUI.Button(new Rect(16,helpY,150,28),HelpOpen?"도움말 닫기":"도움말 · 조작법",KoreanText.Button(13)))HelpOpen=!HelpOpen;
-  if(HelpOpen)DrawHelp(Mathf.Max(200,Screen.height-310));
-  if(!HelpOpen&&!RoadRulesTrial.Enabled&&!HdRouteTrial.Enabled){
-  float y=Screen.height-211;
-  if(jobs.trip.State==TripState.Idle){float offersY=Screen.height-318;GUI.Box(new Rect(16,offersY,790,248),GUIContent.none);GUI.Label(new Rect(28,offersY+5,760,25),"호출 선택 1·2·3 / 길가 손님 옆 F · M 전체 지도",body);
-   var offerStyle=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=14,alignment=TextAnchor.MiddleLeft,wordWrap=true,padding=new RectOffset(10,10,3,3)};
-   GUI.enabled=session.business.CanAccept&&!session.paused;for(int i=0;i<3;i++)if(GUI.Button(new Rect(28,offersY+35+i*68,762,65),OfferText(i),offerStyle))jobs.Accept(i);GUI.enabled=true;
-  }else if(jobs.trip.State==TripState.Complete||jobs.trip.State==TripState.Failed){float resultY=Screen.height-280;GUI.Box(new Rect(16,resultY,790,200),GUIContent.none);GUI.Label(new Rect(28,resultY+8,760,32),jobs.trip.State==TripState.Complete?"운송 완료 · 승객 만족도와 정산":"운송 종료 · 정산",title);GUI.Label(new Rect(28,resultY+45,760,145),jobs.message,new GUIStyle(body){wordWrap=true});}else{GUI.Box(new Rect(16,y+28,790,115),GUIContent.none);string state=jobs.trip.State==TripState.ToPickup?"승객에게 이동 중":jobs.trip.State==TripState.OnTrip?"승객 운송 중":(jobs.trip.State==TripState.Complete?"운송 완료":"운송 실패");GUI.Label(new Rect(28,y+34,760,36),state+"    요금: "+(jobs.trip.State==TripState.OnTrip&&jobs.trip.Remaining<=0?"0원 (시간 초과)":jobs.current.fare.ToString("N0")+"원")+(jobs.trip.State==TripState.ToPickup?"    승객 대기: "+Mathf.CeilToInt(jobs.trip.PickupRemaining)+"초":jobs.trip.State==TripState.OnTrip?(jobs.trip.Remaining>0?"    남은 시간: "+Mathf.CeilToInt(jobs.trip.Remaining)+"초":"    시간 초과 · 목적지 하차"):""),title);GUI.Label(new Rect(28,y+72,760,26),jobs.message,body);GUI.Label(new Rect(28,y+101,760,24),"오른쪽 연석 · 화살표와 같은 방향 · 시속 2km 미만 · F 승하차",small);}
-  }
+ void OnGUI(){if(PracticeSession.Enabled&&!session.paused)return;if(session.FullMapOpen||session.RideResultOpen||session.ChoiceOpen||session.PracticeMenuOpen||session.business.restartPrompt||session.jobs==null||session.business.ShowingSummary||session.business.preparing||session.business.taxPrompt||session.services.open||session.law.HistoryOpen)return;if(title==null){GUI.skin.font=KoreanText.Font;title=new GUIStyle(GUI.skin.label){fontSize=23,fontStyle=FontStyle.Bold};body=new GUIStyle(GUI.skin.label){fontSize=16};small=new GUIStyle(GUI.skin.label){fontSize=13};title.normal.textColor=body.normal.textColor=small.normal.textColor=Color.white;}
+  CockpitUI.Draw(this);
+  if(HelpOpen)DrawHelp(Mathf.Max(140,Screen.height-310));
   if(session.paused){
    float x=Screen.width/2f-240,y=Screen.height/2f-235;
    GUI.Box(new Rect(x,y,480,470),"일시정지 · 운행 지역");

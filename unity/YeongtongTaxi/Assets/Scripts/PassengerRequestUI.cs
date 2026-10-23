@@ -114,13 +114,15 @@ public class PassengerRequestUI : MonoBehaviour {
   if(!request.Resolved){if(ChangesRoute){if(!PrepareProposal())text+="\n안전한 변경 후보 없음 · 원래 운행 유지 가능";else text+="\n"+KoreanText.Stop(session.jobs.stops[proposal].name)+" · 추가 "+addedDistance.ToString("0")+"m · 새 약정 "+newFare.ToString("N0")+"원 / 기한 "+Mathf.CeilToInt(newRemaining)+"초";}
    if(!SafeToRespond())text+="\n안전하게 정차하면 답변을 선택할 수 있어요.";
   }else if(selectedEffect.Length>0)text+="\n적용: "+selectedEffect;
-  var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=13,wordWrap=true};style.normal.textColor=new Color(.1f,.16f,.2f);
-  float width=Mathf.Min(490,Screen.width*.39f),textHeight=Mathf.Min(132,style.CalcHeight(new GUIContent(text),width-24));int rows=request.Resolved?0:(ReplyChoices.Length+1)/2;float height=textHeight+24+rows*49;
+  var priorMatrix=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));float vw=Screen.width/scale,vh=Screen.height/scale;
+  var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=15,wordWrap=true};style.normal.textColor=new Color(.1f,.16f,.2f);
+  float width=540,textHeight=Mathf.Min(132,style.CalcHeight(new GUIContent(text),width-24));int rows=request.Resolved?0:(ReplyChoices.Length+1)/2;float height=textHeight+24+rows*49;
   // Keep the reply beside the road view and above the passenger destination card.
-  float y=Mathf.Max(332,Screen.height-198-height);var panel=new Rect(16,y,width,height);
-  GUI.color=new Color(.94f,.97f,.91f,.99f);GUI.DrawTexture(panel,Texture2D.whiteTexture);GUI.DrawTexture(new Rect(30,y+height-1,12,8),Texture2D.whiteTexture);GUI.color=Color.white;GUI.Label(new Rect(28,y+8,width-24,textHeight),text,style);
-  if(!request.Resolved){var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=11,wordWrap=true,padding=new RectOffset(4,4,2,2)};var area=new Rect(24,y+textHeight+18,width-16,rows*49);
+  float y=vh-24-height,x=(vw-width)/2;var panel=new Rect(x,y,width,height);
+  GUI.color=new Color(.94f,.97f,.91f,.99f);GUI.DrawTexture(panel,Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x+14,y+height-1,12,8),Texture2D.whiteTexture);GUI.color=Color.white;GUI.Label(new Rect(x+12,y+8,width-24,textHeight),text,style);
+  if(!request.Resolved){var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=11,wordWrap=true,padding=new RectOffset(4,4,2,2)};var area=new Rect(x+8,y+textHeight+18,width-16,rows*49);
    for(int i=0;i<ReplyChoices.Length;i++){var choice=ReplyChoices[i];bool enabled=GUI.enabled;GUI.enabled=enabled&&CanChoose(choice.reply);if(GUI.Button(ReplyButtonRect(area,i),ChoiceText(choice),button))Choose(choice.reply);GUI.enabled=enabled;}
   }
+  GUI.matrix=priorMatrix;
  }
 }

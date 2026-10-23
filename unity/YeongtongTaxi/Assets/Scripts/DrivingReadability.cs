@@ -33,9 +33,9 @@ public class DrivingReadability : MonoBehaviour {
   bounds=new Rect(Overview?(map.width-span)/2:p.x-span/2,Overview?(map.depth-span)/2:p.z-span/2,span,span);
  }
  void OnGUI(){
-  if(session.RideResultOpen||session.PracticeMenuOpen||session.business.preparing||session.business.ShowingSummary||session.services.open||session.law.HistoryOpen||session.business.restartPrompt||session.business.taxPrompt)return;
+  if(session.FullMapOpen||session.RideResultOpen||session.PracticeMenuOpen||session.business.preparing||session.business.ShowingSummary||session.services.open||session.law.HistoryOpen||session.business.restartPrompt||session.business.taxPrompt)return;
   if(label==null){label=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14,wordWrap=true};label.normal.textColor=Color.white;}
-  float x=Screen.width-Size-16;SetBounds();PrepareMarkers();var jobs=session.jobs;var map=session.world.map;
+  var originalMatrix=GUI.matrix;float uiScale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(uiScale,uiScale,1));float x=Screen.width/uiScale-Size-16;SetBounds();PrepareMarkers();var jobs=session.jobs;var map=session.world.map;
   Panel(new Rect(x-5,10,Size+10,397));
   GUI.Label(new Rect(x+5,14,145,24),"주변 "+ZoomSpan.ToString("0")+"m · 북 ↑",label);
   GUI.enabled=zoomIndex>0;if(GUI.Button(new Rect(x+166,14,53,24),"+ 확대",KoreanText.Button(12)))Zoom(1);
@@ -65,8 +65,9 @@ public class DrivingReadability : MonoBehaviour {
   if(GUI.Button(new Rect(x+146,349,134,26),"M 전체 지도",KoreanText.Button(13)))GetComponent<FullMapOverlay>().Open();
   GUI.Label(new Rect(x+4,379,276,22),"© OSM / ODbL · 현장 규제 미검증",new GUIStyle(label){fontSize=11});
   if(Facilities){var status=GetComponent<HybridMapStatus>();Panel(new Rect(x-310,42,300,145));GUI.Label(new Rect(x-300,50,280,130),"시설 □ 주황: 임시 / 초록: 확인\n"+(status?status.current:"시설 정보 없음"),label);}
-  DrawSignal(x);
-  DrawNavigation(x);
+  var matrix=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.TRS(new Vector3(0,-285*scale),Quaternion.identity,new Vector3(scale,scale,1));
+  DrawSignal(29);
+  DrawNavigation(29);GUI.matrix=originalMatrix;
  }
  public string NavigationSummary {get{var nav=session.jobs.nav;return nav.HasDestination?nav.PreferenceLabel+" · "+nav.remaining.ToString("0")+"m · 약 "+RoadNavigation.FormatEta(nav.estimatedSeconds):"목적지를 선택하면 경로를 안내합니다";}}
  void DrawNavigation(float x){
@@ -153,5 +154,5 @@ public class DrivingReadability : MonoBehaviour {
  static Texture2D circleTexture;
  static void Circle(Vector2 p,Color c,float size){if(!circleTexture){circleTexture=new Texture2D(32,32,TextureFormat.RGBA32,false);for(int y=0;y<32;y++)for(int x=0;x<32;x++)circleTexture.SetPixel(x,y,new Color(1,1,1,Mathf.Clamp01(16-Vector2.Distance(new Vector2(x+.5f,y+.5f),new Vector2(16,16)))));circleTexture.Apply();}GUI.color=c;GUI.DrawTexture(new Rect(p.x-size/2,p.y-size/2,size,size),circleTexture);GUI.color=Color.white;}
  static void Dot(Vector2 p,Color c,float size){GUI.color=c;GUI.DrawTexture(new Rect(p.x-size/2,p.y-size/2,size,size),Texture2D.whiteTexture);GUI.color=Color.white;}
- static void Line(Vector2 a,Vector2 b,Color c,float width){var old=GUI.matrix;GUI.color=c;GUIUtility.RotateAroundPivot(Mathf.Atan2(b.y-a.y,b.x-a.x)*Mathf.Rad2Deg,a);GUI.DrawTexture(new Rect(a.x,a.y-width/2,Vector2.Distance(a,b),width),Texture2D.whiteTexture);GUI.matrix=old;GUI.color=Color.white;}
+ static void Line(Vector2 a,Vector2 b,Color c,float width){HudGlyph.MapLine(a,b,c,width,new Rect(0,0,Size,Size));}
 }
