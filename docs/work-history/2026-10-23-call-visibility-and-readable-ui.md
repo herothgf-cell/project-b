@@ -36,3 +36,6 @@ builds/EungyeTaxi/EungyeTaxi.exe → M → 식당 등 시설 선택 → 우측 �
 최종 확인: artifacts/readable-release-player.log MAP_INTERACTION_CHECKS 43 ok=True / 프로세스 종료0, FAIL/Exception 없음. 기존 -presentationHudTest -hybridV2 -batchmode -nographics 20 PASS/종료0(artifacts/readable-release-hud.log). 새 글꼴/불투명 패널 적용 후 재시작 팝업 뒤 F7 미표시도 이미지 확인.
 
 배포 확인: 실제 소스 커밋 c1eb81c (git log 확인). 기본 은계 실행폴더129파일/118,730,710바이트 SHA256 검증 종료0. 글꼴 OFL 안내도 실행폴더에 포함. 현재 로컬 main 커밋/실행파일 갱신까지 진행했고 원격 푸시는 수행하지 않았다.
+
+## 후속 요청에 따른 메인 푸시 완료
+2026-10-23 fetch 후 2 ahead/0 behind. git push origin main 종료0(b96756e..4360033). UI 소스c1eb81c/실행파일4360033 원격 배포 완료. 실행폴더129파일/118,730,710바이트 SHA256 재검증 종료0. 다른 PC는 main pull 후 은계exe 실행. 별도 README/문서/미추적 변경은 포함하지 않았으며 미검증 범위는 위와 같다.
