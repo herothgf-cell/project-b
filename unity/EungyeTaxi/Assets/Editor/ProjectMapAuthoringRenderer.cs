@@ -38,6 +38,7 @@ public sealed class ProjectMapAuthoringRenderer : IDisposable {
   try{
    var sourceAreas=(map.areas??new MapArea[0]).Where(a=>!string.IsNullOrEmpty(a.evidence)).GroupBy(a=>a.evidence).ToDictionary(g=>g.Key,g=>g.First());
    var builder=Root.gameObject.AddComponent<WorldBuilder>();builder.BuildStatic(map,false,true,false);Object.DestroyImmediate(builder);
+   RoadMapFacilities.Build(map.editorDocument,Root,null);
    foreach(var o in map.projectScene.objects)if(o.IsService){var t=Root.Find(o.name);if(t)serviceRoots[o.id]=t.gameObject;}
    var objects=map.projectScene.objects.ToDictionary(o=>o.id);
    foreach(var road in map.roads??new MapRoad[0]){ProjectMapObject o;objects.TryGetValue("road:"+road.id,out o);var r=new Record{id="road:"+road.id,kind="road",source=o};WorldBuilder.AppendRoad(road,r.geometry);Add(r);}

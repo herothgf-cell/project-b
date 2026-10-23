@@ -20,7 +20,11 @@ public static class EungyeConnectivityRepair {
  static bool SamePoints(MapPoint[] a,MapPoint[] b){if(a==null||b==null||a.Length!=b.Length)return false;for(int i=0;i<a.Length;i++)if(Vector3.Distance(a[i].V(),b[i].V())>.001f)return false;return true;}
  static bool Unedited(MapData map,MapData baseline,IEnumerable<int> indices){
   if(map.editorDocument==null||baseline==null)return true;
-  foreach(int i in indices){var current=map.hdEdges[i];var original=Array.Find(baseline.hdEdges,e=>e.id==current.id);if(original==null||current.disabled!=original.disabled||current.turn!=original.turn||current.change!=original.change||!SamePoints(current.points,original.points))return false;
+  foreach(int i in indices){var current=map.hdEdges[i];
+   // Explicit authoring rules keep their lane identity and distance intervals.
+   // Automatic repair must not split a lane under a speed sign or bound signal.
+   if(map.editorDocument.facilities.Any(f=>f.rule&&f.laneId==current.id)||map.editorDocument.signals.Any(p=>p.groups.Any(g=>g.laneIds.Contains(current.id))))return false;
+   var original=Array.Find(baseline.hdEdges,e=>e.id==current.id);if(original==null||current.disabled!=original.disabled||current.turn!=original.turn||current.change!=original.change||!SamePoints(current.points,original.points))return false;
    var actual=current.next.Select(n=>map.hdEdges[n].id).OrderBy(x=>x);var expected=original.next.Select(n=>baseline.hdEdges[n].id).OrderBy(x=>x);if(!actual.SequenceEqual(expected))return false;
   }return true;
  }

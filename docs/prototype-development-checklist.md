@@ -1,5 +1,7 @@
 # 프로토타입 개발 우선순위 체크리스트
 
+2026-10-23 Unity 통합: 기존 Esc의 차로·출구/차로변경·노면·표지·차량/보행 신호, 건물/부지 생성·삭제를 Unity 3D 편집 창으로 옮긴다. 실제 주행 공통 문서/검사·정식 저장·다른 PC 빌드 경로를 유지한다. [사용법](unity-map-editor-guide.md) · [검증 기록](work-history/2026-10-23-unity-full-map-editor.md).
+
 ## P9 취객 운송·차량 청결도·세차 (프로토 추가, 구현·수동 검증 남음)
 
 기준: [취객·청결도15](content-design/15-drunk-passengers-and-cleanliness.md) · [승객04](content-design/04-passengers-and-reservations.md) · [경제05](content-design/05-daily-operation.md) · [HUD13](content-design/13-driving-map-ui.md). 기능 구현·모델/위치 제어 검증을 마쳤다. 사람의 수동 하루 운행과 경제 밸런스는 남아 있다. 기존9코스·17요청·법규 성향은 유지한다. [검증 근거](work-history/2026-10-23-passenger-care-connectivity.md).

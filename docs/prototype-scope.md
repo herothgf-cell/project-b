@@ -1,5 +1,7 @@
 # 프로토타입 개발을 위한 통합 기획
 
+2026-10-23 Unity 통합: 기존 Esc의 차로·출구/차로변경·노면·표지·차량/보행 신호, 건물/부지 생성·삭제를 Unity 3D 편집 창으로 옮긴다. 실제 주행 공통 문서/검사·정식 저장·다른 PC 빌드 경로를 유지한다. [사용법](unity-map-editor-guide.md) · [검증 기록](work-history/2026-10-23-unity-full-map-editor.md).
+
 프로토 추가(구현·자동 검증, 수동 체험 남음): [취객·차량 청결도·주유소 세차](content-design/15-drunk-passengers-and-cleanliness.md)를 [P9 체크리스트](prototype-development-checklist.md)에 넣는다. 취객의 구토·도착 후 기상 지연, 청결도에 따른 승차 거부/시작 만족도 가산, 기존 주유소 F7 세차, 연료 우측 HUD를 포함한다. 취객·청결·세차·중단 운송 이어하기를 구현하며 사고·수리/단골·예약 제외는 유지한다.
 
 2026-10-23 승객 후속 구현: [승객04](content-design/04-passengers-and-reservations.md#최종-승객-만족도와-운임) · [만족도·보너스11](content-design/11-passenger-request-effects.md#2026-10-23-최신-기획--만족도와-보너스-개편-개발-전) · [승하차 다양화14](content-design/14-passenger-stop-variety.md). 기존 3일×20분 캠페인과 9개 상황 코스는 유지한다. 요구 만족도에 도달할 때부터 모든 정상 운송에 보너스를 지급하는 방향이며, 초기 만족도 추첨·요청/시간 변화·일반 영업용 정차 포켓 12곳을 반영했다. 수동 경제 밸런스와 안정 주행 M 회복은 남아 있다.

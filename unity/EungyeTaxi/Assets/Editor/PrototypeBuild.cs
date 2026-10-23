@@ -14,7 +14,7 @@ public static class PrototypeBuild {
     public static void BuildRoadMapEditor(){if(ProjectMapBuild.HasSource){ProjectMapBuild.RunTests();BuildHybrid();return;}EungyeHybridBuilder.Generate();RoadMapEditorTests.Run();RoadMapExtendedTests.Run();BuildHybrid();}
     public static void BuildReviewedMap(){LaneDirectionPaintTests.Run();BuildHybrid();}
     static void BuildAt(string destination,string region="") {
-        PlayerSettings.companyName="Taxi Prototype";PlayerSettings.productName="택시 시뮬레이터";PlayerSettings.defaultScreenWidth=1600;PlayerSettings.defaultScreenHeight=900;PlayerSettings.fullScreenMode=FullScreenMode.Windowed;PlayerSettings.runInBackground=true;PlayerSettings.resizableWindow=true;
+        PlayerSettings.companyName="Taxi Prototype";PlayerSettings.productName=region=="eungye"?"은계 택시 시뮬레이터":"택시 시뮬레이터";PlayerSettings.defaultScreenWidth=1600;PlayerSettings.defaultScreenHeight=900;PlayerSettings.fullScreenMode=FullScreenMode.Windowed;PlayerSettings.runInBackground=true;PlayerSettings.resizableWindow=true;
         var input=new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset")[0]);var axes=input.FindProperty("m_Axes");bool exists=false;for(int i=0;i<axes.arraySize;i++)if(axes.GetArrayElementAtIndex(i).FindPropertyRelative("m_Name").stringValue=="TaxiSteer")exists=true;
         if(!exists){axes.InsertArrayElementAtIndex(axes.arraySize);var a=axes.GetArrayElementAtIndex(axes.arraySize-1);a.FindPropertyRelative("m_Name").stringValue="TaxiSteer";a.FindPropertyRelative("type").intValue=2;a.FindPropertyRelative("axis").intValue=0;a.FindPropertyRelative("joyNum").intValue=0;a.FindPropertyRelative("dead").floatValue=.15f;a.FindPropertyRelative("sensitivity").floatValue=1;a.FindPropertyRelative("invert").boolValue=false;input.ApplyModifiedProperties();}
         bool lookExists=false;for(int i=0;i<axes.arraySize;i++)if(axes.GetArrayElementAtIndex(i).FindPropertyRelative("m_Name").stringValue=="TaxiLook")lookExists=true;
@@ -30,6 +30,7 @@ public static class PrototypeBuild {
         System.IO.File.Copy("../../licenses/mchrbn-unity-traffic-simulation/LICENSE.txt",System.IO.Path.Combine(notices,"mchrbn-unity-traffic-simulation-MIT.txt"),true);
         System.IO.File.Copy("../../licenses/mchrbn-unity-traffic-simulation/NOTICE.txt",System.IO.Path.Combine(notices,"mchrbn-unity-traffic-simulation-NOTICE.txt"),true);
         System.IO.File.Copy("../../licenses/NotoSansKR-OFL.txt",System.IO.Path.Combine(notices,"NotoSansKR-OFL.txt"),true);
+        if(region=="eungye"&&ProjectMapBuild.HasSource){var package=ProjectMapStore.Load(ProjectMapBuild.Root);System.IO.File.WriteAllText(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(output),ProjectMapBuildStamp.FileName),JsonUtility.ToJson(new ProjectMapBuildStamp{baselineHash=package.baselineHash,contentHash=package.contentHash},true));}
         Debug.Log("PROTOTYPE_BUILD_OK "+output);
     }
 }

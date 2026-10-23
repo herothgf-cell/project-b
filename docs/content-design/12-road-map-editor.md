@@ -1,5 +1,7 @@
 # 도로·교차로 편집기 기획서
 
+2026-10-23 Unity 통합: 기존 Esc의 차로·출구/차로변경·노면·표지·차량/보행 신호, 건물/부지 생성·삭제를 Unity 3D 편집 창으로 옮긴다. 실제 주행 공통 문서/검사·정식 저장·다른 PC 빌드 경로를 유지한다. [사용법](../unity-map-editor-guide.md) · [검증 기록](../work-history/2026-10-23-unity-full-map-editor.md).
+
 2026-10-22 간편 편집: 기본 진입 화면은 도로명/지도 클릭 → 진입 방향 → 차로 번호 → 방향 버튼 순서다. 배치·적용 대상·출구 연결은 지도 클릭으로 선택하고, 신호 기본 시간표·저장하고 시험·고급 전환을 제공한다. 버튼 문구는 영역에 맞춘다. [개선 기록](../work-history/2026-10-22-road-map-editor-simple-mode.md)을 따른다.
 
 2026-10-23 프로젝트 지도 확장: 건물·도로 노면·보도·주차장·식당/휴식 부지·물/일반 부지의 형상과 서비스 위치를 편집한다. Git 추적 `config/maps/project/eungye.project.json`을 정식 자료로 관리하고 BuildHybrid가 직접 포함한다. 개인 수정본과 정식 배포를 구분한다. [설계](../superpowers/specs/2026-10-23-project-map-editor.md)와 [사용법](../road-map-editor-guide.md)을 따른다.

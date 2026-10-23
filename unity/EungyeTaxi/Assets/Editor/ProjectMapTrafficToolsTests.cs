@@ -1,0 +1,17 @@
+using System;
+using System.IO;
+using System.Linq;
+using UnityEngine;
+public static class ProjectMapTrafficToolsTests {
+ static void Check(bool condition,string text){if(!condition)throw new Exception("TRAFFIC_TOOLS_FAIL "+text);}
+ public static void Run(){
+  Check(ProjectMapTrafficTools.AllowsFacilityPick("")&&ProjectMapTrafficTools.AllowsFacilityPick("target")&&ProjectMapTrafficTools.AllowsFacilityPick("groupWalk"),"facility selection intents");foreach(var intent in new[]{"connect","bind","groupLane","place"})Check(!ProjectMapTrafficTools.AllowsFacilityPick(intent),"lane operation source must survive facility hit: "+intent);
+  string source=ProjectMapStore.FindRoot(Application.dataPath);string root=Path.Combine(source,"artifacts/unity-scene-editor/traffic-tools-clone-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(Path.Combine(root,".git"));Directory.CreateDirectory(Path.Combine(root,"unity/EungyeTaxi/ProjectSettings"));File.WriteAllText(Path.Combine(root,"unity/EungyeTaxi/ProjectSettings/ProjectVersion.txt"),"2022.3.62f2");Directory.CreateDirectory(Path.GetDirectoryName(ProjectMapStore.SourcePath(root)));string sourceText=File.ReadAllText(ProjectMapStore.SourcePath(source));File.WriteAllText(ProjectMapStore.SourcePath(root),sourceText);string failure="";
+  using(var session=ProjectMapEditSession.Open(root))using(var tools=new ProjectMapTrafficTools(session,s=>failure=s)){
+   var lane=session.Traffic.lanes.First(l=>!l.disabled&&l.points.Length>1);tools.SelectLane(lane.id);Check(tools.SelectedLaneId==lane.id&&tools.FocusBounds.HasValue,"lane selection and focus");Check(tools.CachedLaneCount==session.Traffic.lanes.Count(l=>l.points!=null&&l.points.Length>0),"initial spatial cache");int before=tools.CachedLaneCount;session.EditTraffic(d=>RoadMapAuthoringOperations.DuplicateLane(d,lane.id),"test cache refresh");Check(tools.CachedLaneCount>before,"traffic event refreshes spatial cache");
+   var rule=session.Baseline.junctionRules.First(r=>r.crosswalk);session.EditTraffic(d=>{var groupIds=d.signals.Where(p=>p.junctionId==rule.id).SelectMany(p=>p.groups).Select(g=>g.id).ToArray();d.signals=d.signals.Where(p=>p.junctionId!=rule.id).ToArray();d.facilities=d.facilities.Where(f=>f.junctionId!=rule.id&&!groupIds.Contains(f.groupId)).ToArray();},"test reset signal");tools.SelectJunction(rule.id);tools.CreateDefaultProgram();Check(failure=="","default program transaction: "+failure);var program=session.Traffic.signals.Single(p=>p.junctionId==rule.id);Check(program.groups.Any(g=>g.pedestrian),"pedestrian groups created");foreach(var g in program.groups){Check(program.stages.Any(s=>s.groups.Contains(g.id)),"group has active stage");var head=session.Traffic.facilities.FirstOrDefault(f=>f.groupId==g.id);Check(head!=null&&session.Traffic.facilities.Any(f=>f.id==head.targetId&&f.kind==(g.pedestrian?"crosswalk":"stopLine")),"head has correct mark target");if(g.pedestrian)Check(g.crosswalkId==head.targetId,"pedestrian target matches crossing");}var ids=program.groups.Select(g=>g.id).Concat(session.Traffic.facilities.Where(f=>f.junctionId==rule.id).Select(f=>f.id)).Concat(new[]{rule.id}).ToArray();var issues=RoadMapValidator.Validate(session.Baseline,session.Document);Check(!issues.Any(i=>i.error&&ids.Contains(i.id)),"generated program validation: "+string.Join(" / ",issues.Where(i=>i.error).Take(3).Select(i=>i.ToString())));Check(File.ReadAllText(ProjectMapStore.SourcePath(source))==sourceText,"source untouched");
+  }
+  Debug.Log("PROJECT_MAP_TRAFFIC_TOOLS_TESTS_OK");
+ }
+}
+

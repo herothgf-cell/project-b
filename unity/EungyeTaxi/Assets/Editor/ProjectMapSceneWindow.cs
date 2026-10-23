@@ -6,7 +6,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public sealed class ProjectMapSceneWindow : EditorWindow {
+public sealed partial class ProjectMapSceneWindow : EditorWindow {
  ProjectMapEditSession session;
  ProjectMapAuthoringRenderer renderer;
  Scene scene;
@@ -32,9 +32,10 @@ public sealed class ProjectMapSceneWindow : EditorWindow {
  void OnEnable(){SceneView.duringSceneGui+=SceneGUI;EditorApplication.update+=Tick;EditorApplication.playModeStateChanged+=PlayMode;EditorApplication.delayCall+=Restore;}
  void Restore(){if(!string.IsNullOrEmpty(reopenRoot)&&session==null&&!EditorApplication.isPlayingOrWillChangePlaymode)Safe(()=>LoadProject(reopenRoot));}
  void OnDisable(){EditorApplication.delayCall-=Restore;SceneView.duringSceneGui-=SceneGUI;EditorApplication.update-=Tick;EditorApplication.playModeStateChanged-=PlayMode;Release();}
- void PlayMode(PlayModeStateChange state){if(state==PlayModeStateChange.ExitingEditMode)Release();if(state==PlayModeStateChange.EnteredEditMode)EditorApplication.delayCall+=Restore;}
+ void PlayMode(PlayModeStateChange state){if(state==PlayModeStateChange.ExitingEditMode){try{if(session!=null)session.WriteDraft();Release();}catch(Exception e){error=e.Message;EditorApplication.isPlaying=false;Debug.LogException(e);}}if(state==PlayModeStateChange.EnteredEditMode)EditorApplication.delayCall+=Restore;}
  void Release(){
-  try{if(session!=null)session.Dispose();}catch(Exception e){Debug.LogException(e);}finally{session=null;}
+  if(session!=null)session.Dispose();if(trafficTools!=null)trafficTools.Dispose();session=null;
+  trafficTools=null;trafficRefresh=false;
   if(renderer!=null)renderer.Dispose();renderer=null;
   if(texture){texture.Release();DestroyImmediate(texture);}texture=null;
   if(editView){SetCustomScene(editView,default(Scene));if(Application.isBatchMode)DestroyImmediate(editView);else editView.Close();}editView=null;
@@ -42,6 +43,7 @@ public sealed class ProjectMapSceneWindow : EditorWindow {
   preview=null;selected="";draftPending=false;pickApproach=false;
  }
  void LoadProject(string root){
+  if(session!=null)session.WriteDraft();
   Release();session=ProjectMapEditSession.Open(root);
   scene=EditorSceneManager.NewPreviewScene();scene.name="지도 편집 미리보기 (저장하지 않음)";
   try{
@@ -53,6 +55,7 @@ public sealed class ProjectMapSceneWindow : EditorWindow {
    SetLayers();billboards=renderer.Root.GetComponentsInChildren<FaceCamera>();var list=session.Objects.ToArray();ids=list.Select(o=>o.id).ToArray();labels=list.Select(o=>KindName(o.kind)+" · "+(string.IsNullOrEmpty(o.name)?o.id:o.name)).ToArray();
    approachLanes=session.InitialMap.editorDocument.lanes;
    session.Changed+=Changed;
+   trafficTools=new ProjectMapTrafficTools(session,ShowStatus);trafficTools.FocusRequested+=FrameTraffic;session.TrafficChanged+=QueueTrafficRefresh;
    recoveryConflict=false;if(session.HasDraft)try{session.RecoverDraft();}catch(IOException e){recoveryConflict=true;error=e.Message;}
    reopenRoot=root;minSize=new Vector2(380,500);if(!Application.isBatchMode){EnsureSceneView();var first=list.FirstOrDefault(o=>o.enabled&&o.kind=="restaurant")??list.FirstOrDefault(o=>o.enabled&&o.kind=="building");if(first!=null){SelectObject(first.id);Focus();}}
   }catch{Release();throw;}
@@ -70,7 +73,7 @@ public sealed class ProjectMapSceneWindow : EditorWindow {
  public void ArchiveConflictingDraft(){if(session==null||!session.HasDraft)return;string path=session.DraftPath;File.Move(path,path+".preserved-"+Guid.NewGuid().ToString("N"));recoveryConflict=false;error="";}
  static string KindName(string value){switch(value){case "building":return "건물";case "road":return "도로 노면";case "sidewalk":return "보도";case "parking":return "주차장";case "restaurant":return "식당 부지";case "rest":return "휴식 부지";case "water":return "물";case "land":return "녹지";default:return value;}}
  void SetLayers(){if(renderer!=null&&renderer.Root)foreach(var t in renderer.Root.GetComponentsInChildren<Transform>(true))t.gameObject.layer=29;}
- void Changed(string[] changed){foreach(string id in changed)renderer.UpdateObject(session.GetObject(id));draftPending=true;draftAfter=EditorApplication.timeSinceStartup+2;Repaint();SceneView.RepaintAll();}
+ void Changed(string[] changed){if(changed.Length>16)QueueTrafficRefresh();else foreach(string id in changed)renderer.UpdateObject(session.GetObject(id));if(ids.Length!=session.Count)RefreshObjectList();draftPending=true;draftAfter=EditorApplication.timeSinceStartup+2;Repaint();SceneView.RepaintAll();}
  public void SelectObject(string id){if(session==null)return;session.GetObject(id);selected=id;handleYaw=0;Selection.activeObject=null;Repaint();SceneView.RepaintAll();}
  public void ApplyTransform(Vector3 delta,float yaw,Vector2 scale,float heightScale){if(recoveryConflict)throw new InvalidOperationException("충돌 초안을 먼저 보관하세요.");if(session!=null&&!string.IsNullOrEmpty(selected))session.Transform(selected,delta,yaw,scale,heightScale);}
  public void SaveProject(){if(session==null)return;session.Save();draftPending=false;error="";ShowNotification(new GUIContent("프로젝트 지도 저장 완료"));}
@@ -91,8 +94,13 @@ public sealed class ProjectMapSceneWindow : EditorWindow {
   if(recoveryConflict){EditorGUILayout.HelpBox("기준 지도가 달라 초안을 자동 복구할 수 없습니다. 초안을 별도 파일로 보관하면 현재 프로젝트 지도를 편집할 수 있습니다.",MessageType.Warning);if(GUILayout.Button("충돌 초안 보관 후 현재 지도 편집"))Safe(ArchiveConflictingDraft);return;}
   if(!editView&&GUILayout.Button("3D Scene 다시 열기",GUILayout.Height(28)))Safe(()=>{EnsureSceneView();Focus();});
   EditorGUILayout.BeginHorizontal();if(GUILayout.Button("프로젝트에 저장",GUILayout.Height(30)))Safe(SaveProject);if(GUILayout.Button("실행취소",GUILayout.Height(30)))Undo.PerformUndo();if(GUILayout.Button("다시 실행",GUILayout.Height(30)))Undo.PerformRedo();EditorGUILayout.EndHorizontal();
-  EditorGUILayout.LabelField(session.Dirty?"저장 전 변경: "+session.EditedObjectCount+"개":"프로젝트에 저장된 상태");
+  EditorGUILayout.LabelField(session.Dirty?"저장 전 변경: "+session.EditedObjectCount+"개 객체 / 차로·시설 포함":"프로젝트에 저장된 상태");
   EditorGUILayout.HelpBox("Scene에서 클릭 → W 이동 / E 회전 / R 크기. Alt+드래그로 둘러보기. 도로 형상 편집은 주행 경로를 자동으로 이동하지 않습니다.",MessageType.Info);
+  editorMode=GUILayout.Toolbar(editorMode,new[]{"건물·부지","차로·표지·신호","검사·시험·자료"},GUILayout.Height(30));
+  if(previewStale)EditorGUILayout.HelpBox("미리보기 갱신 대기 / 이전 표시 중 · 연결 오류가 있으면 차로 도구에서 수정하세요. 정식 저장은 전체 검사를 통과해야 합니다.",MessageType.Warning);
+  if(!string.IsNullOrEmpty(status))EditorGUILayout.HelpBox(status,MessageType.Info);
+  if(editorMode!=0){if(editorMode==1)trafficTools.DrawGUI();else DrawProjectTools();DrawCameraPreview();return;}
+  DrawObjectCreation();
   string[] kinds={"전체","building","road","sidewalk","parking","restaurant","rest","water","land"};int index=Array.IndexOf(kinds,filter);int chosen=EditorGUILayout.Popup("선택 대상",Mathf.Max(0,index),kinds.Select(KindName).ToArray());filter=chosen==0?"":kinds[chosen];
   search=EditorGUILayout.TextField("이름 검색",search);
   if(!string.IsNullOrWhiteSpace(search)){scroll=EditorGUILayout.BeginScrollView(scroll,GUILayout.Height(100));int shown=0;for(int i=0;i<ids.Length&&shown<30;i++)if(labels[i].IndexOf(search,StringComparison.OrdinalIgnoreCase)>=0){if(GUILayout.Button(labels[i],EditorStyles.miniButton)){SelectObject(ids[i]);Focus();}shown++;}EditorGUILayout.EndScrollView();}
@@ -109,6 +117,9 @@ public sealed class ProjectMapSceneWindow : EditorWindow {
    }else serviceMode=false;
    EditorGUILayout.BeginHorizontal();if(GUILayout.Button("선택으로 이동"))Focus();if(GUILayout.Button("운전자 높이에서 보기")){preview.transform.position=b.center+new Vector3(0,1.07f-b.extents.y,-Mathf.Max(8,b.extents.z+5));preview.transform.rotation=Quaternion.Euler(2,0,0);preview.fieldOfView=82;follow=false;}EditorGUILayout.EndHorizontal();
   }
+  DrawCameraPreview();
+ }
+ void DrawCameraPreview(){
   follow=EditorGUILayout.Toggle("Scene 시점으로 게임 화면 보기",follow);
   var rect=GUILayoutUtility.GetAspectRect(16f/9f);if(texture)GUI.DrawTexture(rect,texture,ScaleMode.ScaleToFit,false);
   EditorGUILayout.LabelField("게임 카메라 FOV 62° · 거리 700m / 차량·승객·HUD 제외",EditorStyles.miniLabel);
@@ -116,6 +127,9 @@ public sealed class ProjectMapSceneWindow : EditorWindow {
  }
  void SceneGUI(SceneView view){
   if(session==null||renderer==null||view!=editView||recoveryConflict)return;var e=Event.current;
+  if(editorMode==1){trafficTools.SceneGUI(view,e);return;}
+  if(editorMode==2)return;
+  if(HandleObjectCreation(view,e))return;
   if(e.type==EventType.KeyDown&&e.keyCode==KeyCode.F&&!string.IsNullOrEmpty(selected)){Focus();e.Use();}
   if(e.type==EventType.MouseDown&&e.button==0&&!e.alt){Undo.IncrementCurrentGroup();undoGroup=Undo.GetCurrentGroup();Undo.SetCurrentGroupName("지도 객체 조작");}
   if(!string.IsNullOrEmpty(selected)){
@@ -134,10 +148,11 @@ public sealed class ProjectMapSceneWindow : EditorWindow {
  }
   void AssignApproach(Ray ray){
   float distance;if(!new Plane(Vector3.up,Vector3.zero).Raycast(ray,out distance))return;var point=ray.GetPoint(distance);float best=20,at=0;string lane=null;
-  foreach(var edge in approachLanes??new RoadMapLane[0]){if(edge.disabled||edge.points==null)continue;float along=0;for(int i=1;i<edge.points.Length;i++){var a=edge.points[i-1].V();var b=edge.points[i].V();var delta=b-a;float length=delta.magnitude;if(length<.001f)continue;float t=Mathf.Clamp01(Vector3.Dot(point-a,delta)/delta.sqrMagnitude);float d=Vector3.Distance(point,a+delta*t);if(d<best){best=d;lane=edge.id;at=along+length*t;}along+=length;}}
+  foreach(var edge in session.Traffic.lanes??new RoadMapLane[0]){if(edge.disabled||edge.points==null)continue;float along=0;for(int i=1;i<edge.points.Length;i++){var a=edge.points[i-1].V();var b=edge.points[i].V();var delta=b-a;float length=delta.magnitude;if(length<.001f)continue;float t=Mathf.Clamp01(Vector3.Dot(point-a,delta)/delta.sqrMagnitude);float d=Vector3.Distance(point,a+delta*t);if(d<best){best=d;lane=edge.id;at=along+length*t;}along+=length;}}
   if(lane==null)throw new InvalidOperationException("주행 차로 가까이를 클릭하세요 (20m 이내).");var o=session.GetObject(selected);session.SetService(selected,o.Position,o.yaw,lane,at);pickApproach=false;
  }
- void Tick(){if(draftPending&&GUIUtility.hotControl==0&&EditorApplication.timeSinceStartup>draftAfter){draftPending=false;Safe(()=>session.WriteDraft());}if(!preview||EditorApplication.timeSinceStartup<nextPreview)return;nextPreview=EditorApplication.timeSinceStartup+.1;
+ void Tick(){if(trafficRefresh&&session!=null&&GUIUtility.hotControl==0&&EditorApplication.timeSinceStartup>trafficRefreshAfter){trafficRefresh=false;Safe(RebuildTrafficPreview);}
+  if(draftPending&&GUIUtility.hotControl==0&&EditorApplication.timeSinceStartup>draftAfter){draftPending=false;Safe(()=>session.WriteDraft());}if(!preview||EditorApplication.timeSinceStartup<nextPreview)return;nextPreview=EditorApplication.timeSinceStartup+.1;
   if(follow&&editView){var c=editView.camera;preview.transform.SetPositionAndRotation(c.transform.position,c.transform.rotation);preview.fieldOfView=62;}
   var ambient=RenderSettings.ambientLight;var mode=RenderSettings.ambientMode;try{RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Flat;RenderSettings.ambientLight=new Color(.65f,.69f,.75f);foreach(var label in billboards)if(label)label.transform.rotation=preview.transform.rotation;preview.Render();}finally{RenderSettings.ambientLight=ambient;RenderSettings.ambientMode=mode;}Repaint();
  }
