@@ -44,15 +44,13 @@ public class DrivingReadability : MonoBehaviour {
   var tile=GetComponent<DriveHUD>().tile;
   if(tile)GUI.DrawTextureWithTexCoords(new Rect(-bounds.x/bounds.width*Size,(1-(map.depth-bounds.y)/bounds.height)*Size,map.width/bounds.width*Size,map.depth/bounds.height*Size),tile,new Rect(0,0,1,1));
   if(Facilities&&map.hybrid)foreach(var j in map.junctionRules)Dot(Project(j.V()),j.facilityStatus=="verified"?Color.green:new Color(1,.6f,.1f),6);
-  foreach(var car in session.traffic.cars)if(car.Visible)Dot(Project(car.transform.position),new Color(.55f,.6f,.65f),3);
-  foreach(var incident in session.roadConditions.incidents)Dot(Project(incident.position),Color.red,8);
-  if(jobs.nav.HasDestination)for(int pass=0;pass<2;pass++)for(int i=1;i<jobs.nav.path.Count;i++){var a=Project(jobs.nav.path[i-1]);var b=Project(jobs.nav.path[i]);Line(a,b,pass==0?Color.black:Color.cyan,pass==0?8:4);}
-  for(int i=0;i<jobs.stops.Length;i++)if(jobs.people[i].activeSelf)Marker(jobs.stops[i].V(),"승",new Color(.3f,1,.55f),false);
-  if(ProjectMapScene.Active(map)){foreach(var o in map.projectScene.objects)if(o.enabled&&o.IsService)Marker(o.Position,o.kind=="restaurant"?"식":o.kind=="rest"?"휴식":"주차",o.kind=="rest"?Color.cyan:new Color(1,.5f,1),false);}
-  else {var rest=FuelStationLayout.Rest(map);if(rest!=null)Marker(rest.pump,"P 휴식",Color.cyan,false);
-   if(session.business.useV2)for(int k=1;k<session.services.indices.Length;k++)Marker((k==1?session.services.MealPosition:session.services.StopFor(k).V()),k==1?"식":"주차",new Color(1,.5f,1),false);}
-  DrawFuelStations();
-  DrawLawZones();
+  var overlay=GetComponent<FullMapOverlay>();
+  if(overlay.ShowTraffic){foreach(var car in session.traffic.cars)if(car.Visible)Dot(Project(car.transform.position),new Color(.55f,.6f,.65f),3);foreach(var incident in session.roadConditions.incidents)Dot(Project(incident.position),Color.red,8);}
+  for(int pass=0;pass<2;pass++)foreach(var segment in overlay.RoutePaint)Line(Project(segment.a),Project(segment.b),pass==0?Color.black:segment.color,pass==0?8:4);
+  if(overlay.ShowFacilities)foreach(var place in overlay.Places()){var p=Project(place.position);if(p.x<14||p.y<14||p.x>Size-14||p.y>Size-14)continue;if(HudGlyph.Button(new Rect(p.x-13,p.y-13,26,26),place.glyph,place.name,true)){if(overlay.Open())overlay.SelectPlace(place);}}
+  if(!jobs.Active)for(int i=0;i<jobs.offers.Length;i++){var offer=jobs.offers[i];if(offer==null)continue;var p=Project(jobs.stops[offer.pickup].V())+new Vector2((i-1)*20,0);if(p.x<12||p.y<12||p.x>Size-12||p.y>Size-12)continue;if(GUI.Button(new Rect(p.x-10,p.y-10,20,20),(i+1).ToString(),KoreanText.Button(11))){if(overlay.Open())overlay.SelectOffer(i);}}
+  if(!jobs.Active&&overlay.PreviewOffer!=null){Marker(jobs.stops[overlay.PreviewOffer.pickup].V(),"승차",new Color(.3f,1,.55f),true);Marker(jobs.stops[overlay.PreviewOffer.drop].V(),"도착",new Color(1,.5f,.8f),true);}
+  if(overlay.ShowLaw)DrawLawZones();
   if(jobs.trip.State==TripState.ToPickup||jobs.trip.State==TripState.OnTrip){
    if(jobs.trip.State==TripState.ToPickup)Marker(jobs.stops[jobs.current.pickup].V(),"승차",new Color(.3f,1,.55f),true);
    Marker(jobs.stops[jobs.current.drop].V(),"도착",new Color(1,.5f,.8f),true);
@@ -60,6 +58,7 @@ public class DrivingReadability : MonoBehaviour {
   if(jobs.nav.HasDestination)Marker(jobs.nav.destination,jobs.trip.State==TripState.ToPickup?"승차":jobs.trip.State==TripState.OnTrip?"도착":"목표",jobs.trip.State==TripState.ToPickup?new Color(.3f,1,.55f):new Color(1,.5f,.8f),true);
   var player=Project(session.taxi.transform.position);var forward=new Vector2(session.taxi.transform.forward.x,-session.taxi.transform.forward.z).normalized;var side=new Vector2(-forward.y,forward.x);
   Circle(player,Color.black,34);Circle(player,new Color(.95f,.95f,.95f),29);Circle(player,new Color(.12f,.16f,.18f),24);Line(player-forward*6-side*7,player+forward*11,Color.yellow,5);Line(player+forward*11,player-forward*6+side*7,Color.yellow,5);Line(player-forward*6+side*7,player-forward*6-side*7,Color.yellow,5);
+  if(Event.current.type==EventType.MouseUp&&Event.current.button==0&&new Rect(0,0,Size,Size).Contains(Event.current.mousePosition)){var p=Event.current.mousePosition;var world=new Vector3(bounds.x+p.x/Size*bounds.width,0,bounds.y+(1-p.y/Size)*bounds.height);if(overlay.Open())overlay.SelectRoadPoint(world);Event.current.Use();}
   GUI.EndGroup();
   GUI.Label(new Rect(x,324,Size,23),"노랑: 나 · 초록: 승차 · 분홍: 도착",new GUIStyle(label){fontSize=12});
   if(GUI.Button(new Rect(x,349,140,26),Facilities?"상세 숨기기":"상세 표시",KoreanText.Button(13)))Facilities=!Facilities;

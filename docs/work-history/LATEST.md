@@ -1,5 +1,10 @@
 # 최신 작업 인계
 
+## 2026-10-23 지도 목적지·시설 정보·HUD 피드백
+
+[구현/검증/남은 확인](2026-10-23-map-destinations-hud-feedback.md). 도움말 중앙/상단 기록/두 점수 아이콘, 위치팝업, 미니맵·M 시설/도로 선택→상세→길안내, 호출 경로 미리보기, 혼잡색과 상황기본OFF. BuildHybrid/지도32/모델/HUD 검사 종료0. 3해상도 렌더, 수동마우스·시설주행/전체3일 미검증. 기본 은계exe, 입력/ZIP/프로젝트 지도 변경 없음.
+
+
 ## 2026-10-23 프로젝트 지도 편집·Git 배포
 
 [사용법](../road-map-editor-guide.md) · [구현/검증/남은 범위](2026-10-23-project-map-editor.md). 건물·보도·도로 외형·주차장·식당/휴식 부지를 간편 편집하고 `config/maps/project/eungye.project.json`에 정식 저장한다. 커밋/push→다른 PC pull→BuildHybrid로 동일 장면 적용; 원본 GIS/입력 ZIP 없는 빌드 종료0. 프로젝트23/개인 구버전3/기존 편집28 및 시험 격리·3일 상태20/HUD20·새 지도 조작16 검사 종료0. 기본 은계 `builds/EungyeTaxi/EungyeTaxi.exe`; 기존 입력3개/ZIP 해시 유지. 실제 다른 물리 PC/수동 전체 주행·모든 형상 조합은 미검증. 승인된 주행/M UI 구현을 함께 통합하며 현장 조사 중단은 유지. 배포 파일/실제 소스 해시는 manifest 기준.

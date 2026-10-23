@@ -24,7 +24,7 @@ public class DriveHUD : MonoBehaviour {
  void Gauge(Rect r,float value,Color color,int requirement=-1){GUI.color=new Color(.13f,.18f,.21f);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=color;GUI.DrawTexture(new Rect(r.x,r.y,r.width*Mathf.Clamp01(value/100),r.height),Texture2D.whiteTexture);if(requirement>=0){GUI.color=Color.white;GUI.DrawTexture(new Rect(r.x+r.width*Mathf.Clamp01(requirement/100f)-1,r.y-2,2,r.height+4),Texture2D.whiteTexture);}GUI.color=Color.white;}
  void OnGUI(){if(PracticeSession.Enabled&&!session.paused)return;if(session.FullMapOpen||session.RideResultOpen||session.ChoiceOpen||session.PracticeMenuOpen||session.business.restartPrompt||session.jobs==null||session.business.ShowingSummary||session.business.preparing||session.business.taxPrompt||session.services.open||session.law.HistoryOpen)return;if(title==null){GUI.skin.font=KoreanText.Font;title=new GUIStyle(GUI.skin.label){fontSize=23,fontStyle=FontStyle.Bold};body=new GUIStyle(GUI.skin.label){fontSize=16};small=new GUIStyle(GUI.skin.label){fontSize=13};title.normal.textColor=body.normal.textColor=small.normal.textColor=Color.white;}
   CockpitUI.Draw(this);
-  if(HelpOpen)DrawHelp(Mathf.Max(140,Screen.height-310));
+  if(HelpOpen)DrawHelp();
   if(session.paused){
    float x=Screen.width/2f-240,y=Screen.height/2f-235;
    GUI.Box(new Rect(x,y,480,470),"일시정지 · 운행 지역");
@@ -46,14 +46,18 @@ public class DriveHUD : MonoBehaviour {
   }
  }
  public string DrivingHelpText {get{return "수동: W 가속 · S 감속 / 정차 후 후진 · A/D 조향 · Space 제동\nQ/E 방향지시등 · G 비상등 · H 조향 보조 켜기/끄기\n보조: A/D 차로 변경 · Q/E 다음 교차로 회전 예약\n보조 중에도 가속·감속·제동과 신호 판단은 직접 합니다.\nC 시점 · B 뒤보기 · Z/X 좌우 보기 · V 코너 시선\nF 승하차 · M 전체 지도 · Tab 경로 변경 · +/- 미니맵 확대/축소\nF7 거점 · F8 기록 · F10 안내 · Esc 정지 · F11 전체화면";}}
- void DrawHelp(float y){
-  int depth=GUI.depth;GUI.depth=-20;
-  GUI.Box(new Rect(16,y,480,247),GUIContent.none);
-  GUI.Label(new Rect(28,y+6,456,25),session.assisted.Active?"조향 보조 · H로 수동 전환":"수동 운전 · H로 조향 보조",body);
-  GUI.Label(new Rect(28,y+33,456,28),session.assisted.Status,new GUIStyle(small){wordWrap=true});
-  GUI.Label(new Rect(28,y+65,456,178),DrivingHelpText,new GUIStyle(small){wordWrap=true});
-  GUI.depth=depth;
+ public static Rect HelpBounds(float width,float height){float scale=Mathf.Min(1,width/1600f,height/900f);return new Rect(width/2-300*scale,height/2-150*scale,600*scale,300*scale);}
+ void DrawHelp(){
+  int depth=GUI.depth;GUI.depth=-20;var matrix=GUI.matrix;float scale=CockpitUI.Scale;
+  GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));var r=HelpBounds(Screen.width,Screen.height);r=new Rect(r.x/scale,r.y/scale,r.width/scale,r.height/scale);
+  GUI.Box(r,GUIContent.none);
+  GUI.Label(new Rect(r.x+18,r.y+12,490,28),session.assisted.Active?"조향 보조 · H로 수동 전환":"수동 운전 · H로 조향 보조",body);
+  if(GUI.Button(new Rect(r.x+516,r.y+10,66,30),"닫기",KoreanText.Button(14)))HelpOpen=false;
+  GUI.Label(new Rect(r.x+18,r.y+48,564,36),session.assisted.Status,new GUIStyle(small){wordWrap=true});
+  GUI.Label(new Rect(r.x+18,r.y+90,564,198),DrivingHelpText,new GUIStyle(body){wordWrap=true});
+  GUI.matrix=matrix;GUI.depth=depth;
  }
+
  Vector2 Mini(Vector3 p,Rect r){return new Vector2(r.x+p.x/session.world.map.width*r.width,r.y+(1-p.z/session.world.map.depth)*r.height);}
  void Dot(Vector2 p,Color c,float size){GUI.color=c;GUI.DrawTexture(new Rect(p.x-size/2,p.y-size/2,size,size),Texture2D.whiteTexture);GUI.color=Color.white;}
  void Line(Vector2 a,Vector2 b,Color color,float width){var matrix=GUI.matrix;GUI.color=color;GUIUtility.RotateAroundPivot(Mathf.Atan2(b.y-a.y,b.x-a.x)*Mathf.Rad2Deg,a);GUI.DrawTexture(new Rect(a.x,a.y,Vector2.Distance(a,b),width),Texture2D.whiteTexture);GUI.matrix=matrix;GUI.color=Color.white;}
