@@ -61,3 +61,12 @@ Unity Hub에서 **`unity/EungyeTaxi`**를 다시 추가해 2022.3.62f2로 연다
 - 최종 exe: 지역 지정 없이 프로젝트 지도23검사 success=True/종료0. 실제 두 프로세스 liveSave9/liveReload23검사 종료0. 수동 운전/화면 품질 검증으로 해석하지 않는다.
 - 배포 manifest는 실제 소스 해시와 최종 실행폴더 전수 크기/SHA256으로 재생성한다. 정식 지도 SHA256은 기존 1b8ab6b86d435935d74cac8c83249daee41eb61a3d89d09fccfca3004c706714 그대로다.
 - 기본 작업 폴더의 기존 README/기획06·09/LATEST 변경과 미추적 라이선스/XMind 문서는 별도 보존한다. 이전 Unity 생성 캐시는 artifacts/eungye-only/previous-project-generated-cache로 이동해 보존하며 새 경로에 검증된 은계 입력2개를 준비한다.
+
+
+## 기본 폴더 전환·main 푸시 완료
+
+- 기본 작업 폴더 main을 8ca8dc8로 fast-forward, 기존 별도 문서4개 변경을 복원했다. README 충돌은 라이선스 안내 문단을 그대로 보존해 해결했고 미커밋 상태로 남겼다. 미추적 라이선스/XMind 파일도 보존했다. 소스 충돌/미해결 인덱스는 없다.
+- 기존 Unity 생성 캐시와 은퇴 drive-map 입력은 artifacts/eungye-only/previous-project-generated-cache에 보존했다. 기존 경로에 소스나 Unity 프로세스가 없음을 확인한 뒤 이동했다. 새 unity/EungyeTaxi에 ZIP의 입력2개를 크기/SHA256 확인 후 준비했다.
+- 기본 폴더 check_workspace -Strict -RequireRawInputs 종료0, 배포 manifest VerifyOnly 종료0:128파일/118,256,797바이트. 정식 지도 SHA256 기존값 일치.
+- git push origin main 종료0, git ls-remote로 원격 main 8ca8dc8ba3fae299d462d07cf9ea224f4c67cc82 확인. 이력 실제 커밋은 git log -1 --oneline -- docs/work-history/2026-10-23-eungye-only.md에서 8ca8dc8 확인했다. 이 후속 결과 기록은 별도 문서 커밋으로 남긴다.
+- Unity Hub에서 예전 항목을 목록에서 제거하고 D:/Git/project-b/unity/EungyeTaxi를 추가해 Unity2022.3.62f2로 연다. 이전 Library 캐시는 보존만 했으므로 새 경로 최초 import는 시간이 필요하다. 기존 지도 수정과 개인 영업 저장은 보존된다. 수동 Unity 편집·다른 물리 PC·전체 캠페인 검증은 여전히 별도다.
