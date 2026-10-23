@@ -36,12 +36,20 @@ public sealed class ProjectMapAuthoringRenderer : IDisposable {
   // service signs and boundaries. Geometry below uses the same runtime generators.
   var observer=WorldBuilder.MaterialCreated;WorldBuilder.MaterialCreated=m=>{owned.Add(m);if(observer!=null)observer(m);};
   try{
+   var sourceAreas=(map.areas??new MapArea[0]).Where(a=>!string.IsNullOrEmpty(a.evidence)).GroupBy(a=>a.evidence).ToDictionary(g=>g.Key,g=>g.First());
    var builder=Root.gameObject.AddComponent<WorldBuilder>();builder.BuildStatic(map,false,true,false);Object.DestroyImmediate(builder);
    foreach(var o in map.projectScene.objects)if(o.IsService){var t=Root.Find(o.name);if(t)serviceRoots[o.id]=t.gameObject;}
    var objects=map.projectScene.objects.ToDictionary(o=>o.id);
    foreach(var road in map.roads??new MapRoad[0]){ProjectMapObject o;objects.TryGetValue("road:"+road.id,out o);var r=new Record{id="road:"+road.id,kind="road",source=o};WorldBuilder.AppendRoad(road,r.geometry);Add(r);}
    foreach(var b in map.buildings??new MapBuilding[0]){if(SceneBuildingVisibility.Hidden(map,b.id))continue;ProjectMapObject o;objects.TryGetValue("building:"+b.id,out o);var r=new Record{id="building:"+b.id,kind="building",source=o};r.triangles=b.triangles;r.topology=b.points;var g=WorldBuilder.BuildingGeometry(b);WorldBuilder.Batch(r.geometry,WorldBuilder.GeometryBounds(g).center).Add(g.vertices,g.indices);Add(r);}
-   int index=0;foreach(var a in map.areas??new MapArea[0]){if(a.points==null||a.triangles==null){index++;continue;}string id=string.IsNullOrEmpty(a.evidence)?"area:"+index:a.evidence;ProjectMapObject o;objects.TryGetValue(id,out o);var r=new Record{id=id,kind=a.kind,source=o};r.triangles=a.triangles;r.topology=a.points;WorldBuilder.AppendArea(a,r.geometry);Add(r);index++;}
+   // Runtime laybys can cut one authored sidewalk into several render pieces.
+   // Keep every piece under its original editable identity before batching.
+   var areaRecords=new Dictionary<string,Record>();int index=0;
+   foreach(var a in map.areas??new MapArea[0]){if(a.points==null||a.triangles==null){index++;continue;}string id=string.IsNullOrEmpty(a.evidence)?"area:"+index:a.evidence;Record r;
+    if(!areaRecords.TryGetValue(id,out r)){ProjectMapObject o;objects.TryGetValue(id,out o);MapArea trusted;sourceAreas.TryGetValue(id,out trusted);r=new Record{id=id,kind=a.kind,source=o,triangles=(trusted??a).triangles,topology=(trusted??a).points};areaRecords.Add(id,r);}
+    WorldBuilder.AppendArea(a,r.geometry);index++;
+   }
+   foreach(var record in areaRecords.Values)Add(record);
    foreach(var c in chunks.Values)Rebuild(c);
    foreach(var mesh in Root.GetComponentsInChildren<MeshFilter>(true).Select(f=>f.sharedMesh))Track(mesh);
    // No editor physics world is needed, including decorative primitive colliders.
@@ -97,7 +105,7 @@ public sealed class ProjectMapAuthoringRenderer : IDisposable {
  public Bounds BoundsFor(string id){Record r;return records.TryGetValue(id,out r)?r.bounds:new Bounds();}
  public string Pick(Ray ray,string kindFilter=""){
   if(!Root)return null;var local=new Ray(Root.InverseTransformPoint(ray.origin),Root.InverseTransformDirection(ray.direction));float closest=float.PositiveInfinity;string result=null;
-  foreach(var r in records.Values){if(!string.IsNullOrEmpty(kindFilter)&&r.kind!=kindFilter)continue;float entry;var bounds=r.bounds;bounds.Expand(.002f);if(!bounds.IntersectRay(local,out entry)||entry>closest)continue;
+  foreach(var r in records.Values){if(r.source==null||!r.source.enabled)continue;if(!string.IsNullOrEmpty(kindFilter)&&r.kind!=kindFilter)continue;float entry;var bounds=r.bounds;bounds.Expand(.002f);if(!bounds.IntersectRay(local,out entry)||entry>closest)continue;
    foreach(var g in r.geometry.Values)for(int i=0;i<g.indices.Count;i+=3){float distance;if(Hit(local,g.vertices[g.indices[i]],g.vertices[g.indices[i+1]],g.vertices[g.indices[i+2]],out distance)&&distance<closest){closest=distance;result=r.id;}}
   }return result;
  }

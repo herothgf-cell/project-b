@@ -46,3 +46,7 @@ Unity Hub에서 **`unity/EungyeTaxi`**를 다시 추가해 2022.3.62f2로 연다
 - 기본 D:/Git/project-b에서 다른 채팅이 승객/청결도/UI 등 코드를 활발히 수정 중인 것을 확인했다. 작업 중인 소스 폴더의 이름을 바꾸거나 사용자 코드를 stash하지 않고 main 통합을 보류했다. 이 변경은 분리 브랜치 codex/eungye-only에서 보존하며, 사용자에게 다른 채팅으로 경로/통합 순서를 조율할 메시지 전송 승인을 요청했다. 원래 작업 폴더는 아직 변경하지 않았다.
 
 - 최종 배포 c04aa6a를 origin/codex/eungye-only로 푸시 종료0. 최종 새 exe 역시 지역 지정 옵션 없이 프로젝트23검사 종료0/success=True(release-player.log). main과 기본 폴더는 동시 구현 작업 보호를 위해 변경하지 않았다.
+
+## 통합 사전 회귀 보완
+
+사용자가 다른 채팅과의 통합 조율 메시지 전송을 승인했고 경로/저장 이전/통합 담당을 전달했다. 동시 작업의 승하차 포켓이 하나의 보도를 여러 렌더 조각으로 분리하는 구조를 확인했다. 조각의 원본 ID가 같으면 기존 편집 렌더러가 앞 조각을 덮어쓰는 오류를 synthetic test RED(exit1 first fragment retained)로 재현했다. 조각을 원본 ID별로 합쳐 배치하고, 정식 문서에 없는 runtime 전용 면은 표시만 하며 직접 선택 대상에서는 제외했다. FragmentedAreas/기존 Renderer 검사 모두 exit0. 마우스 드래그에 전체 합성은 추가하지 않았다.

@@ -3,6 +3,14 @@ using UnityEngine;
 using System.Linq;
 public static class ProjectMapAuthoringRendererTests {
  static void Check(bool ok,string message){if(!ok)throw new Exception("AUTHORING_RENDERER: "+message);}
+ public static void FragmentedAreas(){
+  var o=new ProjectMapObject{id="area:split",kind="sidewalk",width=10,height=.14f,enabled=true,points=ProjectMapScene.Rectangle(new Vector3(5,0,5),Vector3.forward,10,10)};
+  Func<float,string,MapArea> area=(x,id)=>{var points=ProjectMapScene.Rectangle(new Vector3(x,0,5),Vector3.forward,4,10);return new MapArea{kind="sidewalk",evidence=id,height=.14f,points=points,triangles=ProjectMapScene.Triangulate(points)};};
+  var map=new MapData{mapId="fixture",width=40,depth=40,roads=new MapRoad[0],buildings=new MapBuilding[0],targets=new MapTarget[0],stops=new MapStop[0],areas=new[]{area(2,o.id),area(8,o.id),area(22,"runtime:pocket")},projectScene=new ProjectMapScene{objects=new[]{o}}};
+  using(var renderer=new ProjectMapAuthoringRenderer()){
+   renderer.Initialize(map);Check(renderer.Root.GetComponentsInChildren<MeshFilter>().Any(f=>f.sharedMesh.vertices.Any(v=>v.x>20)),"runtime-only surface remains rendered");Check(renderer.Pick(new Ray(new Vector3(2,20,5),Vector3.down),"sidewalk")==o.id,"first fragment retained for authored area");Check(renderer.Pick(new Ray(new Vector3(8,20,5),Vector3.down),"sidewalk")==o.id,"last fragment retained");Check(renderer.BoundsFor(o.id).size.x>9.9f,"bounds include all fragments");Check(renderer.Pick(new Ray(new Vector3(5,20,5),Vector3.down),"sidewalk")==null,"cut gap stays empty");Check(renderer.Pick(new Ray(new Vector3(22,20,5),Vector3.down),"sidewalk")==null,"runtime-only area is rendered but not offered as an editable source ID");
+  }Debug.Log("FRAGMENTED_AREA_TEST_OK");
+ }
  public static void Run(){
   var type=typeof(WorldBuilder).Assembly.GetType("ProjectMapAuthoringRenderer")??Type.GetType("ProjectMapAuthoringRenderer, Assembly-CSharp-Editor");
   Check(type!=null,"renderer implementation exists");
