@@ -35,7 +35,7 @@ public sealed class ProjectMapEditSession : IDisposable {
  ProjectMapEditSession(string projectRoot){
   root=Path.GetFullPath(projectRoot);string text=File.ReadAllText(ProjectMapStore.SourcePath(root));fingerprint=ProjectMapPackage.Digest(text);var package=ProjectMapPackage.Parse(text);baseline=package.baseline;original=package.document;
   index=original.scene.objects.ToDictionary(o=>o.id);foreach(var pair in index)saved[pair.Key]=JsonUtility.ToJson(pair.Value);
-  InitialMap=package.Compose();Undo.undoRedoPerformed+=OnUndoRedo;AssemblyReloadEvents.beforeAssemblyReload+=BeforeReload;
+  InitialMap=package.Compose();EungyeConnectivityRepair.Apply(InitialMap,baseline);Undo.undoRedoPerformed+=OnUndoRedo;AssemblyReloadEvents.beforeAssemblyReload+=BeforeReload;
  }
  static ProjectMapObject Copy(ProjectMapObject o){return JsonUtility.FromJson<ProjectMapObject>(JsonUtility.ToJson(o));}
  public ProjectMapObject GetObject(string id){ProjectMapEditObjectHandle handle;return Copy(handles.TryGetValue(id,out handle)?handle.value:index[id]);}

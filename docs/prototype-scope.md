@@ -1,8 +1,8 @@
 # 프로토타입 개발을 위한 통합 기획
 
-프로토 추가(미구현): [취객·차량 청결도·주유소 세차](content-design/15-drunk-passengers-and-cleanliness.md)를 [P9 체크리스트](prototype-development-checklist.md#p9-취객-운송차량-청결도세차-프로토-추가-미구현)에 넣는다. 취객의 구토·도착 후 기상 지연, 청결도에 따른 승차 거부/시작 만족도 가산, 기존 주유소 F7 세차, 연료 우측 HUD를 포함한다. 현재 빌드에는 없으며 사고·수리/단골·예약 제외는 유지한다.
+프로토 추가(구현·자동 검증, 수동 체험 남음): [취객·차량 청결도·주유소 세차](content-design/15-drunk-passengers-and-cleanliness.md)를 [P9 체크리스트](prototype-development-checklist.md)에 넣는다. 취객의 구토·도착 후 기상 지연, 청결도에 따른 승차 거부/시작 만족도 가산, 기존 주유소 F7 세차, 연료 우측 HUD를 포함한다. 취객·청결·세차·중단 운송 이어하기를 구현하며 사고·수리/단골·예약 제외는 유지한다.
 
-2026-10-23 승객 후속 기획(미구현): [승객04](content-design/04-passengers-and-reservations.md#최종-승객-만족도와-운임) · [만족도·보너스11](content-design/11-passenger-request-effects.md#2026-10-23-최신-기획--만족도와-보너스-개편-개발-전) · [승하차 다양화14](content-design/14-passenger-stop-variety.md). 기존 3일×20분 캠페인과 9개 상황 코스는 유지한다. 요구 만족도에 도달할 때부터 모든 정상 운송에 보너스를 지급하는 방향이며, 초기 만족도 추첨·요청/시간 변화·일반 영업 지점 추가는 아직 현재 빌드에 반영되지 않았다.
+2026-10-23 승객 후속 구현: [승객04](content-design/04-passengers-and-reservations.md#최종-승객-만족도와-운임) · [만족도·보너스11](content-design/11-passenger-request-effects.md#2026-10-23-최신-기획--만족도와-보너스-개편-개발-전) · [승하차 다양화14](content-design/14-passenger-stop-variety.md). 기존 3일×20분 캠페인과 9개 상황 코스는 유지한다. 요구 만족도에 도달할 때부터 모든 정상 운송에 보너스를 지급하는 방향이며, 초기 만족도 추첨·요청/시간 변화·일반 영업용 정차 포켓 12곳을 반영했다. 수동 경제 밸런스와 안정 주행 M 회복은 남아 있다.
 
 2026-10-23 가독성 보정: 시설 선택 중 호출 상시 표시/접근 실선 복구, Noto Sans KR 포함, 주요 팝업 불투명, 상황/F7 안내와 속도계 분리. 세부 동작은 [UI13](content-design/13-driving-map-ui.md) 참고.
 
@@ -64,7 +64,7 @@
 | 운전자 | 포만감·피로·식당 회복·주차장 수면·수락 제한(신규) | 조작·시야 강제 변화 | [10](content-design/10-driver-condition.md) |
 | 납부 일정 | 없음 | 보험료·보험 갱신·세금 납부·만료/기한·관련 성공 조건 전체 제외 | [05](content-design/05-daily-operation.md) |
 | 캠페인 | 하루20분·순수익 비교·새 하루(추가 개발) | 장편 서사·무한 경영 | [07](content-design/07-campaign.md) |
-| 저장 | 하루 정산에 새 비용·연료·법규 기록 포함 | 운행 중 전체 상태 자동 저장 | [05](content-design/05-daily-operation.md) |
+| 저장 | v3 중단 운송·시간·회계·컨디션·청결·요청 함께 저장/복원, v2 읽기 호환 | 임의 지도 리비전 변경 뒤 운송 자동 재배치 | [05](content-design/05-daily-operation.md) |
 | 개인 예약·단골 | 없음·기획만 | 예약 접수·시간 조율·관계 저장 | [04](content-design/04-passengers-and-reservations.md) |
 | 사고·수리 | 없음·기획만 | 사고 사건·파손·책임 판정·수리비·수리 대기·보험 청구 | [08](content-design/08-accidents-and-repairs.md) |
 

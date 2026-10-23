@@ -6,6 +6,23 @@ using UnityEngine;
 public partial class FullMapOverlay : MonoBehaviour {
  public DriveSession session;public bool IsOpen {get;private set;}
  bool locationCopied,locationOpen; public int SelectedOffer {get;private set;}=-1; JobOffer selectedOffer;
+ string acceptFeedback="";bool selectedPickupReachable;public int AcceptButtonClickCount {get;private set;}
+ public string AcceptFeedback {get{return acceptFeedback;}}
+ public Rect AcceptButtonBounds {get{var viewport=MapRect;float x=viewport.xMax+16;return new Rect(x,viewport.yMax-50,Screen.width-x-20,44);}}
+ public string AcceptBlockedReason {get{
+  var j=session.jobs;if(!IsOpen)return "먼저 지도를 열어 호출을 선택하세요";
+  if(locationOpen)return "위치 정보를 닫고 호출을 선택하세요";
+  if(previousPause)return "일시정지를 해제한 뒤 호출을 수락하세요";
+  if(j.Active)return "진행 중인 운송을 마친 뒤 수락할 수 있습니다";
+  if(selectedPlace!=null)return "아래 호출 목록에서 호출을 선택하세요";
+  if(SelectedOffer<0||SelectedOffer>=j.offers.Length||selectedOffer==null)return "호출 번호나 목록을 먼저 선택하세요";
+  if(j.offers[SelectedOffer]!=selectedOffer)return "호출이 갱신됐습니다 · 목록에서 다시 선택하세요";
+  if(j.AcceptanceLocked)return "세차 후 다시 수락할 수 있습니다 · 주유소 F7";
+  if(!session.business.CanAccept)return session.business.ledger.Driver!=null&&!session.business.ledger.Driver.CanAccept?"피로가 가득 찼습니다 · 휴식 후 수락하세요":"현재 영업 상태에서는 호출을 수락할 수 없습니다";
+  if(float.IsInfinity(selectedOffer.distance)||float.IsNaN(selectedOffer.distance))return "승차부터 하차까지 연결 경로가 없습니다 · 다른 호출을 선택하세요";
+  if(!selectedPickupReachable)return "현재 위치에서 승차 지점까지 연결 경로가 없습니다";
+  return "";
+ }}
  public static string DescribeLocation(MapData map,Vector3 position,float heading,IEnumerable<TrafficJunction> junctions){
   TrafficJunction nearest=null;float distance=float.MaxValue;
   foreach(var junction in junctions){var delta=junction.center-position;delta.y=0;float d=delta.magnitude;if(d<distance){nearest=junction;distance=d;}}
@@ -41,18 +58,18 @@ public partial class FullMapOverlay : MonoBehaviour {
  public bool Open(){
   if(IsOpen)return false;
   var b=session.business;
-  if(session.ChoiceOpen||session.PracticeMenuOpen||session.PracticeBusy||b.preparing||b.ShowingSummary||b.restartPrompt||b.pendingPayment>=0||b.taxPrompt||session.services.open||session.law.HistoryOpen)return false;
-  previousPause=session.paused;previousScale=Time.timeScale;session.paused=true;Time.timeScale=0;locationCopied=false;locationOpen=false;if(SelectedOffer>=0&&session.jobs.offers[SelectedOffer]!=selectedOffer){SelectedOffer=-1;selectedOffer=null;}IsOpen=true;return true;
+  if(session.ChoiceOpen||session.RideResultOpen||session.PracticeMenuOpen||session.PracticeBusy||b.preparing||b.ShowingSummary||b.restartPrompt||b.pendingPayment>=0||b.taxPrompt||session.services.open||session.law.HistoryOpen)return false;
+  previousPause=session.paused;previousScale=Time.timeScale;session.paused=true;Time.timeScale=0;locationCopied=false;locationOpen=false;if(SelectedOffer>=0&&session.jobs.offers[SelectedOffer]!=selectedOffer){SelectedOffer=-1;selectedOffer=null;}IsOpen=true;if(selectedOffer!=null&&!session.jobs.Active)SelectOffer(SelectedOffer);return true;
  }
- public void Close(){if(!IsOpen)return;IsOpen=false;dragging=false;closedFrame=Time.frameCount;session.paused=previousPause;Time.timeScale=previousScale;}
+ public void Close(){if(!IsOpen)return;IsOpen=false;dragging=false;closedFrame=Time.frameCount;session.paused=previousPause;Time.timeScale=previousPause?0:previousScale>0?previousScale:1;}
  void Update(){RefreshRoutePaint();if(IsOpen){if(Input.GetKeyDown(KeyCode.M)||Input.GetKeyDown(KeyCode.Escape)){if(locationOpen)locationOpen=false;else Close();}}else if(Input.GetKeyDown(KeyCode.M))Open();}
  void OnDisable(){if(IsOpen)Close();}
  Vector2 Project(Vector3 p,Rect map){float span=Mathf.Max(session.world.map.width,session.world.map.depth);var unit=new Vector2(.5f+(p.x-session.world.map.width/2)/span,.5f-(p.z-session.world.map.depth/2)/span);return map.center+(unit-center)*Mathf.Min(map.width,map.height)*ZoomLevel;}
  void OnGUI(){if(!IsOpen)return;if(text==null){text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true};heading=new GUIStyle(text){font=KoreanText.BoldFont,fontSize=22};button=KoreanText.Button(14);text.normal.textColor=heading.normal.textColor=Color.white;}GUI.depth=-220;GUI.ModalWindow(94721,new Rect(0,0,Screen.width,Screen.height),Draw,GUIContent.none,GUIStyle.none);}
  public bool FocusStop(int index){if(index<0||index>=session.jobs.stops.Length)return false;FocusWorld(session.jobs.stops[index].V());return true;}
- public bool SelectOffer(int index){var j=session.jobs;if(!IsOpen||j.Active||index<0||index>=j.offers.Length||j.offers[index]==null)return false;SelectedOffer=index;selectedOffer=j.offers[index];selectedPlace=null;previewPath=j.nav.Find(j.stops[selectedOffer.pickup],j.stops[selectedOffer.drop]);pickupPath=j.nav.PreviewTo(j.stops[selectedOffer.pickup]);FitRoutes(pickupPath,previewPath);RefreshRoutePaint(true);return true;}
+ public bool SelectOffer(int index){var j=session.jobs;if(!IsOpen||j.Active||index<0||index>=j.offers.Length||j.offers[index]==null)return false;SelectedOffer=index;selectedOffer=j.offers[index];selectedPlace=null;acceptFeedback="";previewPath=j.nav.Find(j.stops[selectedOffer.pickup],j.stops[selectedOffer.drop]);pickupPath=j.nav.PreviewTo(j.stops[selectedOffer.pickup]);float distance=PassengerJobs.DirectedDistance(j.nav.hd,session.taxi.transform.position,session.taxi.transform.forward,j.stops[selectedOffer.pickup]);selectedPickupReachable=!float.IsInfinity(distance)&&!float.IsNaN(distance);FitRoutes(pickupPath,previewPath);RefreshRoutePaint(true);return true;}
  public bool FocusSelectedStop(bool pickup){var o=session.jobs.Active?session.jobs.current:selectedOffer;return o!=null&&FocusStop(pickup?o.pickup:o.drop);}
- public bool AcceptSelected(){var j=session.jobs;if(!IsOpen||previousPause||SelectedOffer<0||SelectedOffer>=j.offers.Length||selectedOffer==null||j.offers[SelectedOffer]!=selectedOffer||!session.business.CanAccept||j.Active)return false;int index=SelectedOffer;Close();bool accepted=j.Accept(index);if(!accepted)Open();return accepted;}
+ public bool AcceptSelected(){var j=session.jobs;string reason=AcceptBlockedReason;if(!string.IsNullOrEmpty(reason)){acceptFeedback=reason;return false;}int index=SelectedOffer;Close();bool accepted=j.Accept(index);if(!accepted){string message=j.message;Open();acceptFeedback=string.IsNullOrEmpty(message)?"호출을 수락하지 못했습니다 · 목록에서 다시 선택하세요":message;}else acceptFeedback="";return accepted;}
  void Draw(int id){
   Fill(new Rect(0,0,Screen.width,Screen.height),new Color(.035f,.07f,.09f));
   GUI.enabled=!locationOpen;

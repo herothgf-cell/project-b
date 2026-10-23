@@ -1,6 +1,6 @@
 # 승객 운송·운전 만족도·요청 기획
 
-상태: 승객 운송과 요청 17종은 구현·자동 검증됨. **시작 만족도, 공통 보너스, 승하차 지점 다양화, 운전 만족도 회복, 취객·청결도는 프로토 개발 전 기획**이다. 기존 구현을 재구성한 변경 기록은 [별도 문서](04-passengers-and-reservations-history.md)에 보존한다.
+상태: 승객 운송과 요청 17종은 구현·자동 검증됨. **시작 만족도·공통 보너스·게임 정차 후보 12곳·취객·청결도는 구현·자동 검증 완료(수동 체험 제외)**이다. 안정 주행에 따른 운전 만족도 회복(+2/구간·최대 +6)은 아직 미구현이다. 기존 구현을 재구성한 변경 기록은 [별도 문서](04-passengers-and-reservations-history.md)에 보존한다.
 
 관련 기획: [요청별 선택·효과·결산](11-passenger-request-effects.md) · [승하차 지점 다양화](14-passenger-stop-variety.md) · [취객·청결도](15-drunk-passengers-and-cleanliness.md) · [9개 상황 코스](09-prototype-scenarios.md) · [법규 성향](02-driving-evaluation.md) · [일일 경제](05-daily-operation.md) · [캠페인](07-campaign.md) · [프로토 범위](../prototype-scope.md).
 

@@ -1,0 +1,8 @@
+using System;
+using System.Collections;
+using System.IO;
+using UnityEngine;
+public sealed class LiveLoadGuardProbe:MonoBehaviour {
+ [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]static void Install(){if(Array.IndexOf(Environment.GetCommandLineArgs(),"-liveInvalidTest")>=0)new GameObject("Corrupt live save guard").AddComponent<LiveLoadGuardProbe>();}
+ IEnumerator Start(){yield return new WaitForSecondsRealtime(2);var s=FindObjectOfType<DriveSession>();var b=s.business;bool ok=false;try{string before=File.ReadAllText(b.SavePath),backup=File.ReadAllText(b.SavePath+".bak");if(!b.ResumeBlocked||b.CanAccept||!b.preparing||Time.timeScale!=0)throw new Exception("invalid live save did not block departure");b.Depart();if(!b.preparing||b.SaveCheckpoint()||File.ReadAllText(b.SavePath)!=before||File.ReadAllText(b.SavePath+".bak")!=backup)throw new Exception("failed resume overwrites existing save");if(!b.RequestRestart()||!b.ConfirmRestart(true)||b.ResumeBlocked||b.ledger.Day!=1)throw new Exception("explicit restart cannot recover blocked campaign");var data=JsonUtility.FromJson<CampaignCheckpoint>(File.ReadAllText(b.SavePath));if(data.version!=3||data.hasLive||data.days.active.elapsed!=0)throw new Exception("new campaign persisted stale live payload");ok=true;Debug.Log("LIVE_LOAD_GUARD_OK checks=4");}catch(Exception e){Debug.LogException(e);}File.WriteAllText("artifacts/live-load-guard.txt",ok?"PASS blocked departure, primary+backup preservation, explicit reset and clean v3 boundary":"FAIL");Application.Quit(ok?0:1);}
+}

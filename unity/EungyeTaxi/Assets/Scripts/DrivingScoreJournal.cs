@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using UnityEngine;
 
-// Independent score journal: trip/economy still resume from the daily checkpoint.
+// Independent score journal, linked to the live campaign identity.
 [Serializable] public class DrivingScoreSnapshot {public string campaign;public int sequence;public LawEvent[] events;}
 public class DrivingScoreJournal : MonoBehaviour {
  public DriveSession session; public bool Loaded {get;private set;}
@@ -15,6 +15,7 @@ public class DrivingScoreJournal : MonoBehaviour {
  }
  System.Collections.IEnumerator Start(){
   yield return null;
+  if(session.business.ResumeBlocked){Loaded=true;enabled=false;yield break;}
   foreach(var arg in Environment.GetCommandLineArgs())if(arg.EndsWith("Test")){Loaded=true;enabled=false;yield break;}
   if(PracticeSession.Enabled||RoadMapRuntime.Trial){Loaded=true;enabled=false;yield break;}
   // Ensure a newly created campaign has a stable identity before journaling events.

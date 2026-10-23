@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable] public sealed class ServiceLawZonesSnapshot {public string scenarioId,assignedId,lastTitle;public bool pickupPhase,completed,hasObservation,hasFeedback;public int sequence;public PracticeFeedback lastFeedback;public ConfusionLiveSnapshot observation;}
 public sealed class ServiceLawZone {
  public string id;public int variant,incoming,connector,outgoing;public TrafficJunction junction;
  public string Title {get{return ConfusionPracticeState.Title(variant);}}
@@ -18,6 +19,9 @@ public sealed class ServiceLawZones : MonoBehaviour {
  public PracticeFeedback LastFeedback {get;private set;}
  public string LastTitle {get;private set;}public bool Completed {get;private set;}
  public bool Ready {get;private set;}int sequence;float toastUntil;bool details;Vector2 scroll;
+ public ServiceLawZonesSnapshot CaptureLive(){var state=Live?Live.CaptureLive():null;return new ServiceLawZonesSnapshot{scenarioId=CurrentScenario==null?null:CurrentScenario.id,assignedId=Assigned==null?null:Assigned.id,lastTitle=LastTitle,pickupPhase=PickupPhase,completed=Completed,sequence=sequence,lastFeedback=LastFeedback,hasFeedback=LastFeedback!=null,hasObservation=state!=null,observation=state};}
+ public void PrepareForRestore(){if(Live&&Live.Active)Live.Stop();var choice=GetComponent<ScenarioChoiceSituation>();if(choice)choice.Stop();Assigned=null;Completed=false;}
+ public void RestoreLive(ServiceLawZonesSnapshot s){if(s==null)return;if(!Ready||s.sequence<0)throw new ArgumentException("Invalid live service zones");CurrentScenario=string.IsNullOrEmpty(s.scenarioId)?null:scenarios.Find(x=>x.id==s.scenarioId);Assigned=string.IsNullOrEmpty(s.assignedId)?null:zones.Find(x=>x.id==s.assignedId);if(!string.IsNullOrEmpty(s.scenarioId)&&CurrentScenario==null||!string.IsNullOrEmpty(s.assignedId)&&Assigned==null)throw new ArgumentException("Saved service zone removed");PickupPhase=s.pickupPhase;Completed=s.completed;sequence=s.sequence;LastTitle=s.lastTitle;LastFeedback=s.hasFeedback?s.lastFeedback:null;toastUntil=Time.time+(LastFeedback==null?0:12);if(s.hasObservation)Live.RestoreLive(s.observation,Assigned);}
  public bool Owns(TrafficJunction j){return j.editorProgram==null&&Live&&Live.Owns(j);}
  public bool RequiredBraking(){
   if(!Live||!Live.Active)return false;var taxi=session.taxi;var front=taxi.transform.position+taxi.transform.forward*2;var q=front-Live.Junction.center;float gap=Live.StopAlong-Vector3.Dot(q,Live.Direction),side=Vector3.Dot(q,TrafficSystem.Right(Live.Direction));
@@ -105,17 +109,26 @@ public sealed class ServiceLawZones : MonoBehaviour {
  public void ToggleDetails(){if(LastFeedback!=null)details=!details;}
  public void BeginAlternative(){if(Live&&Live.Active)Live.Stop();Assigned=null;Completed=false;}
  public void CompleteAlternative(){Completed=true;LastTitle="출구 우회";LastFeedback=new PracticeFeedback{outcome="우회 경로 통과",good="선택한 대체 연결도로를 실제로 통과했습니다.",issues="원래 대기열 합류는 평가 기회 없음입니다.",next="목적지까지 안내 차로를 따라 진행하세요."};toastUntil=Time.time+12;}
- Vector2 situationScroll;
+ Vector2 situationScroll;public bool TipExpanded {get;private set;}=true;
+ public void ToggleTip(){TipExpanded=!TipExpanded;}
  void OnGUI(){
-  if(!Ready||session.PracticeMenuOpen||session.business.preparing||session.business.restartPrompt||session.law.HistoryOpen||session.services.open)return;
+  if(!Ready||session.FullMapOpen||session.PracticeMenuOpen||session.business.preparing||session.business.restartPrompt||session.law.HistoryOpen||session.services.open)return;
   var text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=15,wordWrap=true};var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=14};
   if(details&&LastFeedback!=null){
    float w=Mathf.Min(650,Screen.width-40),h=Mathf.Min(450,Screen.height-40),x=(Screen.width-w)/2,y=(Screen.height-h)/2;Panel(new Rect(x,y,w,h));GUI.Label(new Rect(x+18,y+15,w-36,55),LastTitle+" · 이번 운송 법규 결과\n"+LastFeedback.outcome,text);
    string content=LastFeedback.Details();float ch=Mathf.Max(250,text.CalcHeight(new GUIContent(content),w-60));scroll=GUI.BeginScrollView(new Rect(x+18,y+80,w-36,h-150),scroll,new Rect(0,0,w-56,ch));GUI.Label(new Rect(0,0,w-60,ch),content,text);GUI.EndScrollView();
    if(GUI.Button(new Rect(x+18,y+h-54,w-36,36),"닫기 · 운행은 계속됩니다",button))details=false;return;
   }
-  if(Assigned!=null&&!Completed){float distance=Vector3.Distance(session.taxi.transform.position,Assigned.junction.center);if(distance<260){var r=CockpitUI.SituationBounds(Screen.width,Screen.height);Panel(r);var content="운송 중 상황 · "+Assigned.Title+"\n창작 구역 · 약 "+distance.ToString("0")+"m\n"+(Live.Active?Live.Progress:ConfusionPracticeState.Guidance(Assigned.variant));situationScroll=DrawSituationCard(r,content,situationScroll);}}
-  if(LastFeedback!=null&&(session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f||Time.time<toastUntil)){var r=CockpitUI.SituationBounds(Screen.width,Screen.height,true);Panel(r);GUI.Label(new Rect(r.x+10,r.y+4,r.width-20,30),LastFeedback.outcome,text);GUI.enabled=session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f;if(GUI.Button(new Rect(r.x+10,r.y+36,r.width-20,r.height-40),"운전 평가 결과 · 정차 시 확인",KoreanText.Button(13)))ToggleDetails();GUI.enabled=true;}
+  string tip=null;bool result=false;
+  if(Assigned!=null&&!Completed){float distance=Vector3.Distance(session.taxi.transform.position,Assigned.junction.center);if(distance<260)tip=Assigned.Title+"\n창작 구역 · 약 "+distance.ToString("0")+"m\n"+(Live.Active?Live.Progress:ConfusionPracticeState.Guidance(Assigned.variant));}
+  if(tip==null&&LastFeedback!=null&&(session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f||Time.time<toastUntil)){tip=LastFeedback.outcome;result=true;}
+  if(tip!=null){float scale=CockpitUI.Scale;bool expanded=TipExpanded;var r=CockpitUI.SituationBounds(Screen.width,Screen.height,result,session.jobs.Active);if(!expanded)r.height=38*scale;Panel(r);
+   GUI.Label(new Rect(r.x+10*scale,r.y+3*scale,120*scale,30*scale),"TIP",new GUIStyle(text){font=KoreanText.BoldFont,fontSize=Mathf.RoundToInt(17*scale)});
+   if(GUI.Button(new Rect(r.xMax-104*scale,r.y+5*scale,94*scale,28*scale),TipExpanded?"숨기기 ▲":"펼치기 ▼",KoreanText.Button(Mathf.RoundToInt(13*scale))))ToggleTip();
+   if(expanded){float footer=result?36*scale:0;var body=new Rect(r.x,r.y+36*scale,r.width,r.height-36*scale-footer);situationScroll=DrawSituationCard(body,tip,situationScroll);
+    if(result){GUI.enabled=session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f;if(GUI.Button(new Rect(r.x+10*scale,r.yMax-34*scale,r.width-20*scale,28*scale),"운전 평가 · 정차 시 확인",KoreanText.Button(Mathf.RoundToInt(13*scale))))ToggleDetails();GUI.enabled=true;}
+   }
+  }
 
  }
  public static Vector2 DrawSituationCard(Rect r,string content,Vector2 position){Panel(r);var text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=15,wordWrap=true};float ch=Mathf.Max(r.height-20,text.CalcHeight(new GUIContent(content),r.width-36)+8);position=GUI.BeginScrollView(new Rect(r.x+10,r.y+8,r.width-20,r.height-16),position,new Rect(0,0,r.width-36,ch));GUI.Label(new Rect(0,0,r.width-36,ch),content,text);GUI.EndScrollView();return position;}

@@ -1,5 +1,8 @@
 ﻿using System;
 
+[Serializable] public sealed class ConfusionPracticeSnapshot {
+ public int variant;public bool known,started,entered,finished,correctRoute,stopped,entryBlocked,entryRed,conflictSeen,failedYield,sawBlock,hasBlocked,blocked,hasOncoming,oncoming;public float elapsed;
+}
 // Local teaching fixtures only. Durations and penalties are game values, not legal thresholds/fines.
 public sealed class ConfusionPracticeState {
  public const int First=8,Last=14;
@@ -9,6 +12,8 @@ public sealed class ConfusionPracticeState {
  bool sawBlock;bool? observedBlocked,observedOncoming;
  public void ObserveTraffic(bool blocked,bool oncoming){observedBlocked=blocked;observedOncoming=oncoming;}
  public ConfusionPracticeState(int variant){if(!Contains(variant))throw new ArgumentOutOfRangeException("variant");Variant=variant;}
+ public ConfusionPracticeSnapshot Snapshot(){return new ConfusionPracticeSnapshot{variant=Variant,known=Known,started=Started,entered=Entered,finished=Finished,correctRoute=CorrectRoute,stopped=Stopped,entryBlocked=EntryBlocked,entryRed=EntryRed,conflictSeen=ConflictSeen,failedYield=FailedYield,sawBlock=sawBlock,hasBlocked=observedBlocked.HasValue,blocked=observedBlocked.GetValueOrDefault(),hasOncoming=observedOncoming.HasValue,oncoming=observedOncoming.GetValueOrDefault(),elapsed=Elapsed};}
+ public static ConfusionPracticeState Restore(ConfusionPracticeSnapshot s){if(s==null||!Contains(s.variant)||float.IsNaN(s.elapsed)||float.IsInfinity(s.elapsed)||s.elapsed<0||s.finished&&!s.entered)throw new ArgumentException("Invalid saved road observation");return new ConfusionPracticeState(s.variant){Known=s.known,Started=s.started,Entered=s.entered,Finished=s.finished,CorrectRoute=s.correctRoute,Stopped=s.stopped,EntryBlocked=s.entryBlocked,EntryRed=s.entryRed,ConflictSeen=s.conflictSeen,FailedYield=s.failedYield,Elapsed=s.elapsed,sawBlock=s.sawBlock,observedBlocked=s.hasBlocked?(bool?)s.blocked:null,observedOncoming=s.hasOncoming?(bool?)s.oncoming:null};}
  public static bool Contains(int v){return v>=First&&v<=Last;}
  public bool Left {get{return Variant>=12;}}
  public bool Flashing {get{return Variant<=9;}}

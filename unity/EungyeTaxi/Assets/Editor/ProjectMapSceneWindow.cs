@@ -20,6 +20,7 @@ public sealed class ProjectMapSceneWindow : EditorWindow {
  FaceCamera[] billboards=new FaceCamera[0];
  string selected="", search="", filter="", error="";
  string[] ids=new string[0], labels=new string[0];
+ RoadMapLane[] approachLanes;
  Vector2 scroll, panelScroll;
  bool vertices, follow=true;
  double nextPreview;
@@ -50,6 +51,7 @@ public sealed class ProjectMapSceneWindow : EditorWindow {
    var sun=new GameObject("Game sunlight").AddComponent<Light>();SceneManager.MoveGameObjectToScene(sun.gameObject,scene);sun.type=LightType.Directional;sun.intensity=1.15f;sun.shadows=LightShadows.Soft;sun.transform.rotation=Quaternion.Euler(45,-35,0);sun.cullingMask=1<<29;
    texture=new RenderTexture(800,450,24);texture.Create();preview.targetTexture=texture;
    SetLayers();billboards=renderer.Root.GetComponentsInChildren<FaceCamera>();var list=session.Objects.ToArray();ids=list.Select(o=>o.id).ToArray();labels=list.Select(o=>KindName(o.kind)+" · "+(string.IsNullOrEmpty(o.name)?o.id:o.name)).ToArray();
+   approachLanes=session.InitialMap.editorDocument.lanes;
    session.Changed+=Changed;
    recoveryConflict=false;if(session.HasDraft)try{session.RecoverDraft();}catch(IOException e){recoveryConflict=true;error=e.Message;}
    reopenRoot=root;minSize=new Vector2(380,500);if(!Application.isBatchMode){EnsureSceneView();var first=list.FirstOrDefault(o=>o.enabled&&o.kind=="restaurant")??list.FirstOrDefault(o=>o.enabled&&o.kind=="building");if(first!=null){SelectObject(first.id);Focus();}}
@@ -126,7 +128,7 @@ public sealed class ProjectMapSceneWindow : EditorWindow {
  }
   void AssignApproach(Ray ray){
   float distance;if(!new Plane(Vector3.up,Vector3.zero).Raycast(ray,out distance))return;var point=ray.GetPoint(distance);float best=20,at=0;string lane=null;
-  foreach(var edge in session.InitialMap.hdEdges??new HdEdge[0]){if(edge.disabled||edge.points==null)continue;float along=0;for(int i=1;i<edge.points.Length;i++){var a=edge.points[i-1].V();var b=edge.points[i].V();var delta=b-a;float length=delta.magnitude;if(length<.001f)continue;float t=Mathf.Clamp01(Vector3.Dot(point-a,delta)/delta.sqrMagnitude);float d=Vector3.Distance(point,a+delta*t);if(d<best){best=d;lane=edge.id;at=along+length*t;}along+=length;}}
+  foreach(var edge in approachLanes??new RoadMapLane[0]){if(edge.disabled||edge.points==null)continue;float along=0;for(int i=1;i<edge.points.Length;i++){var a=edge.points[i-1].V();var b=edge.points[i].V();var delta=b-a;float length=delta.magnitude;if(length<.001f)continue;float t=Mathf.Clamp01(Vector3.Dot(point-a,delta)/delta.sqrMagnitude);float d=Vector3.Distance(point,a+delta*t);if(d<best){best=d;lane=edge.id;at=along+length*t;}along+=length;}}
   if(lane==null)throw new InvalidOperationException("주행 차로 가까이를 클릭하세요 (20m 이내).");var o=session.GetObject(selected);session.SetService(selected,o.Position,o.yaw,lane,at);pickApproach=false;
  }
  void Tick(){if(draftPending&&GUIUtility.hotControl==0&&EditorApplication.timeSinceStartup>draftAfter){draftPending=false;Safe(()=>session.WriteDraft());}if(!preview||EditorApplication.timeSinceStartup<nextPreview)return;nextPreview=EditorApplication.timeSinceStartup+.1;

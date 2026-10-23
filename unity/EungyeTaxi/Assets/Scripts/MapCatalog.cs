@@ -11,8 +11,8 @@ public static class MapCatalog {
  public static bool SelectNext(string id){if(RoadMapRuntime.Trial||id!="eungye"||!Available(id))return false;PlayerPrefs.SetString("next-region","eungye");PlayerPrefs.Save();return true;}
  public static MapData Load(){
   if(HdRouteTrial.Enabled){var hd=Resources.Load<TextAsset>("route42-map");if(!hd)throw new System.InvalidOperationException("tools/import_hdmap.py 로 은계 국도42호선 자료를 생성하세요.");return JsonUtility.FromJson<MapData>(hd.text);}
-  var project=Resources.Load<TextAsset>(ProjectMapStore.ResourceName);if(project){var package=ProjectMapPackage.Parse(project.text);return RoadMapRuntime.Apply(package.baseline,package.document,package.contentHash);}
+  var project=Resources.Load<TextAsset>(ProjectMapStore.ResourceName);if(project){var package=ProjectMapPackage.Parse(project.text);var composed=RoadMapRuntime.Apply(package.baseline,package.document,package.contentHash);EungyeConnectivityRepair.Apply(composed,RoadMapRuntime.Baseline);return composed;}
   if(!Available("eungye"))throw new System.InvalidOperationException("은계 프로젝트 지도가 없습니다. 정식 config/maps/project/eungye.project.json을 준비하고 Taxi > Build Eungye Hybrid를 실행하세요.");
-  var asset=Resources.Load<TextAsset>(Resource);var result=JsonUtility.FromJson<MapData>(asset.text);result.mapId="eungye";MapSupplements.Apply(result,asset.bytes);ReviewedLaneLayout.Apply(result);result=RoadMapRuntime.Apply(result);CorridorPolish.Apply(result);return result;
+  var asset=Resources.Load<TextAsset>(Resource);var result=JsonUtility.FromJson<MapData>(asset.text);result.mapId="eungye";MapSupplements.Apply(result,asset.bytes);ReviewedLaneLayout.Apply(result);result=RoadMapRuntime.Apply(result);CorridorPolish.Apply(result);EungyeConnectivityRepair.Apply(result,RoadMapRuntime.Baseline);return result;
  }
 }

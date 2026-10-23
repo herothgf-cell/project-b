@@ -95,7 +95,7 @@ M 지도에 가용 호출 승차 위치와 오른쪽 호출 목록을 표시한�
 | 합법적 대기·우회, 부적절한 요구 거절 | 0 | 유지 원칙 | 승객의 재촉·불만 대사 자체를 감점 조건으로 쓰지 않음 |
 | 운행 점수 하락 | 0 | 분리 원칙 | 이 점수만으로 승객 만족도·운임을 자동 변경하지 않음 |
 
-출처: [현재 감점 코드](../../unity/YeongtongTaxi/Assets/Scripts/DrivingManners.cs), [점수·지급 코드](../../unity/YeongtongTaxi/Assets/Scripts/MannerLedger.cs). 현재 구현의 자동 감점과 위 표의 예외 보완안은 개발 시 구분해야 한다.
+출처: [현재 감점 코드](../../unity/EungyeTaxi/Assets/Scripts/DrivingManners.cs), [점수·지급 코드](../../unity/EungyeTaxi/Assets/Scripts/MannerLedger.cs). 현재 구현의 자동 감점과 위 표의 예외 보완안은 개발 시 구분해야 한다.
 
 ## 요구와 응답
 

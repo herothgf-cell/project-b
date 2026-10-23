@@ -6,6 +6,9 @@ using UnityEditor;
 using UnityEngine;
 public static class EungyeOnlyTests {
  static void Check(bool ok,string message){if(!ok)throw new Exception("EUNGYE_ONLY_FAIL "+message);}
+ public static void NativeParity(){
+  var runtime=MapCatalog.Load();using(var session=ProjectMapEditSession.Open(ProjectMapStore.FindRoot(Application.dataPath))){Check(runtime.hdEdges.Any(e=>e.id.StartsWith(EungyeConnectivityRepair.Prefix)),"runtime has connectivity supplement");Check(session.InitialMap.hdEdges.Length==runtime.hdEdges.Length,"native editor and executable share supplemented lane geometry");}Debug.Log("EUNGYE_NATIVE_PARITY_OK");
+ }
  public static void Run(){
   string previous=PlayerPrefs.GetString("next-region","");string locked=MapCatalog.LockedRegion;
   try{

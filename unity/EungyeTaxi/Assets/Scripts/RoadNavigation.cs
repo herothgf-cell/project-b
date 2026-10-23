@@ -20,6 +20,7 @@ public class RoadNavigation : MonoBehaviour {
  public int ObservedEdge {get;private set;}=-1;
  public int PassedObservedEdge {get;private set;}=-1;
  public void ObserveEdge(int edge){ObservedEdge=edge;PassedObservedEdge=-1;viaSampled=false;}
+ public void RestoreObservedEdge(int edge,int passed){if(hd!=null&&(edge< -1||edge>=hd.edges.Length||passed< -1||passed>=hd.edges.Length))throw new System.ArgumentException("Invalid navigation observation");ObservedEdge=edge;PassedObservedEdge=passed;viaSampled=false;}
  public int PassedRequiredVia {get;private set;}=-1;
  public int RequiredVia {get;private set;}=-1;
  public void RequireVia(int edge){viaSampled=false;PassedRequiredVia=-1;RequiredVia=edge;hdRoute=null;if(active)Refresh();}
