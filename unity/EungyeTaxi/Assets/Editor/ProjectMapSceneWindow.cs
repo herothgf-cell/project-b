@@ -59,7 +59,13 @@ public sealed class ProjectMapSceneWindow : EditorWindow {
  }
   // Unity 2022.3 exposes isolated SceneView rendering internally. Keep this version
  // adapter in one place and fail explicitly rather than replacing the user's scene.
- static void SetCustomScene(SceneView view,Scene value){var property=typeof(SceneView).GetProperty("customScene",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.NonPublic);if(property==null)throw new NotSupportedException("이 Unity 버전은 독립 지도 Scene 미리보기를 지원하지 않습니다. 2022.3.62f2를 사용하세요.");property.SetValue(view,value,null);}
+ static void SetCustomScene(SceneView view,Scene value){var property=typeof(SceneView).GetProperty("customScene",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.NonPublic);if(property==null)throw new NotSupportedException("이 Unity 버전은 독립 지도 Scene 미리보기를 지원하지 않습니다. 2022.3.62f2를 사용하세요.");property.SetValue(view,value,null);
+  // SceneView inherits the main-stage mask on creation. A custom preview scene
+  // needs the same zero override used by Unity's PreviewSceneStage, otherwise
+  // meshes are culled while Handles still draw the selection outline.
+  var mask=typeof(SceneView).GetProperty("overrideSceneCullingMask",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.Public|System.Reflection.BindingFlags.NonPublic);
+  if(mask==null)throw new NotSupportedException("이 Unity 버전은 독립 지도 Scene 표시 필터를 지원하지 않습니다.");
+  mask.SetValue(view,0UL,null);}
   public void EnsureSceneView(){if(editView)return;editView=CreateInstance<SceneView>();editView.titleContent=new GUIContent("지도 3D Scene");SetCustomScene(editView,scene);if(!Application.isBatchMode)editView.Show();}
  public void ArchiveConflictingDraft(){if(session==null||!session.HasDraft)return;string path=session.DraftPath;File.Move(path,path+".preserved-"+Guid.NewGuid().ToString("N"));recoveryConflict=false;error="";}
  static string KindName(string value){switch(value){case "building":return "건물";case "road":return "도로 노면";case "sidewalk":return "보도";case "parking":return "주차장";case "restaurant":return "식당 부지";case "rest":return "휴식 부지";case "water":return "물";case "land":return "녹지";default:return value;}}
