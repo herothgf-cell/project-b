@@ -1,24 +1,21 @@
 {
-  "sourceCommit": "235e086ade2216b354dde0462d97a896007b47c8",
+  "sourceCommit": "d63544561904285267e7ba9edb44d5a94d52a383",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-10-23",
-  "totalBytes": 106329682.0,
+  "totalBytes": 106331730.0,
   "validation": {
-    "fieldReviewComplete": false,
+    "manualMouse": false,
+    "manualDriving": false,
+    "build": "PrototypeBuild.BuildHybrid exit 0",
     "renderedResolutions": [
       "1280x720",
       "1600x900",
       "1920x1080"
     ],
     "mapInteractionAssertions": 32,
-    "presentationHud": "exit 0",
-    "fullCampaign": false,
-    "modelTests": "tools/test_prototype.ps1 exit 0",
-    "build": "PrototypeBuild.BuildHybrid exit 0",
-    "manualDriving": false,
-    "manualMouse": false
+    "fullCampaign": false
   },
   "files": [
     {
@@ -29,7 +26,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "81facdb99d22bbb05a13ef2707a0e3b8ece5bbfadbfb6d700351c4ee813dbd35"
+      "sha256": "ad93b20815246153deac37c4f656e85963e9796b0565aa1ec1ebd2adb0ffc772"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -58,8 +55,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 996864,
-      "sha256": "de6c95db6e377bafe4bce67215450a87d44e3b538576d4b28ef1f2eb8747680c"
+      "bytes": 998912,
+      "sha256": "f612a42e5f900af3fca5687852349487eb2919ce61f451fc954e97386f1be76e"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
