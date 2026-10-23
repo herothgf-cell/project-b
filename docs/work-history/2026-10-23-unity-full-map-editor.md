@@ -47,3 +47,8 @@ Unity2022.3.62f2 → unity/EungyeTaxi → Taxi/프로젝트 지도 3D 편집. �
 
 - 최종 exe 자동 위치/상태 검사: -unityTrafficTest 종료0 success=True/6검사(실제 공유 그래프 좌회전 차단·제한속도17·표지/노면 메시·영업격리). -projectMapTest 종료0/23 PASS success=True. 실제 별도 프로세스 -liveSaveTest9/-liveReloadTest23 모두 종료0. 정식 지도/영업 저장을 사용하는 수동 운전은 하지 않았다.
 - 소스 a37e1db를 만들고 기존 main의 프로토 잔여 점검 문서5f2e636과 원격 마인드맵 변경을 보존 통합한다. 소스/최종 배포 실제 해시는 git log와 manifest를 기준으로 한다.
+
+
+## 배포 자료 확정
+
+실제 소스421556431810279083eaceb16b074cf3d5c71dd9 기준 최종 실행폴더130파일/118,418,816바이트. manifest 생성·VerifyOnly 종료0. 기본 폴더에서 다른 채팅의 후속 런타임 구현이 진행 중임을 발견해 사용자 변경을 stash/덮어쓰기하지 않고 메시지로 통합 순서를 조율했다. 이번에는 Unity 프로젝트 경로 이동이 없다. 별도 작업 코드와 빌드 파일은 이 커밋에 섞지 않는다.
