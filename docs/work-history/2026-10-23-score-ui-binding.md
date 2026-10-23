@@ -50,3 +50,7 @@ HUD/알림이 내부 운전 만족도 M(탑승100)을 승객 만족도 S로 표�
 ## 실행폴더 배포 확인
 
 소스 `5b9e52e2bfb69ba2b9d9b288d4819d0ecdbf3cf3`는 실제 `git log -1 --oneline -- docs/work-history/2026-10-23-score-ui-binding.md`로 확인했다. 최종 BuildHybrid 실행폴더와 이 소스를 배포 manifest에 연결했다. `tools/update_distribution_manifest.ps1 -VerifyOnly` exit0: **128파일·112,668,978바이트**, 모든 파일 크기/SHA256 일치. `tools/check_workspace.ps1 -Strict` exit0·필수 입력2개와 정식 은계 지도 준비 이상0. 기본 실행 `builds/EungyeTaxi/EungyeTaxi.exe`.
+
+## 원격 반영
+
+`git push origin main` exit0. 소스5b9e52e와 실행폴더06ccb1e를 반영했으며 `git ls-remote origin refs/heads/main`에서 실제 `06ccb1e9e34c93fda50532bf2c8b8861d21601c4`를 확인했다. 푸시 후에도 실행폴더128개 SHA256 재검증 exit0. 이 절을 포함한 후속 커밋은 배포 완료 기록만 보강한다.
