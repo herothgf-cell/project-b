@@ -12,16 +12,18 @@ using UnityEngine;
  public Vector3 Position {get{return new Vector3(x,0,z);}}
 }
 [Serializable] public class RoadMapDocument {
- public int schema=1,revision=1;public string mapId,baseHash,id=Guid.NewGuid().ToString("N"),name="내 은계 수정본",savedAt="";public RoadMapLane[] lanes=new RoadMapLane[0];public RoadMapFacility[] facilities=new RoadMapFacility[0];public RoadMapSignalProgram[] signals=new RoadMapSignalProgram[0];
+ public ProjectMapScene scene;public string projectRevision="";public int schema=1,revision=1;public string mapId,baseHash,id=Guid.NewGuid().ToString("N"),name="내 은계 수정본",savedAt="";public RoadMapLane[] lanes=new RoadMapLane[0];public RoadMapFacility[] facilities=new RoadMapFacility[0];public RoadMapSignalProgram[] signals=new RoadMapSignalProgram[0];
  public static RoadMapDocument Create(MapData map){return new RoadMapDocument{mapId=map.mapId,baseHash=RoadMapRuntime.Hash(map),lanes=map.hdEdges.Select(e=>RoadMapLane.From(e,map.hdEdges)).ToArray()};}
- public RoadMapDocument Copy(){return JsonUtility.FromJson<RoadMapDocument>(JsonUtility.ToJson(this));}
+ public string ToJson(bool pretty=false){var json=JsonUtility.ToJson(this,pretty);if(scene!=null)return json;int start,end;if(RoadMapDocumentJson.Member(json,"scene",out start,out end))json=json.Substring(0,start)+"null"+json.Substring(end);return json;}
+ public static RoadMapDocument Parse(string json){var result=JsonUtility.FromJson<RoadMapDocument>(json);if(result==null)return null;int start,end;if(!RoadMapDocumentJson.Member(json,"scene",out start,out end)||json.Substring(start,end-start).Trim()=="null")result.scene=null;return result;}
+ public RoadMapDocument Copy(){return Parse(ToJson());}
  public string Version {get{return name+" · r"+revision;}}
 }
 public sealed class RoadMapEditHistory {
  readonly System.Collections.Generic.Stack<string> undo=new System.Collections.Generic.Stack<string>(),redo=new System.Collections.Generic.Stack<string>();
  public RoadMapEditHistory(RoadMapDocument document){}
  public bool CanUndo {get{return undo.Count>0;}} public bool CanRedo {get{return redo.Count>0;}}
- public void Commit(RoadMapDocument document){undo.Push(JsonUtility.ToJson(document));if(undo.Count>30){var keep=undo.Take(30).Reverse().ToArray();undo.Clear();foreach(var item in keep)undo.Push(item);}redo.Clear();}
- public RoadMapDocument Undo(RoadMapDocument document){if(!CanUndo)return document;redo.Push(JsonUtility.ToJson(document));return JsonUtility.FromJson<RoadMapDocument>(undo.Pop());}
- public RoadMapDocument Redo(RoadMapDocument document){if(!CanRedo)return document;undo.Push(JsonUtility.ToJson(document));return JsonUtility.FromJson<RoadMapDocument>(redo.Pop());}
+ public void Commit(RoadMapDocument document){undo.Push(document.ToJson());if(undo.Count>30){var keep=undo.Take(30).Reverse().ToArray();undo.Clear();foreach(var item in keep)undo.Push(item);}redo.Clear();}
+ public RoadMapDocument Undo(RoadMapDocument document){if(!CanUndo)return document;redo.Push(document.ToJson());return RoadMapDocument.Parse(undo.Pop());}
+ public RoadMapDocument Redo(RoadMapDocument document){if(!CanRedo)return document;undo.Push(document.ToJson());return RoadMapDocument.Parse(redo.Pop());}
 }

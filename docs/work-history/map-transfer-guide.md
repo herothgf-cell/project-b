@@ -1,6 +1,6 @@
 # 은계 지도 입력 묶음 — 새 PC 사용법
 
-**2026-10-21 배포 변경:** 실행 폴더와 지도 ZIP을 Git main에 포함했다. **테스트만 할 때는 pull 후 `builds/EungyeTaxi/EungyeTaxi.exe`를 바로 실행**한다. Unity 설치·지도 압축 해제는 필요 없다. 개발할 때만 `distribution/maps/Eungye-map-inputs-2026-10-20.zip`을 저장소 루트에 푼다. [빌드 없는 실행 안내](../../distribution/README.md)를 따른다. 아래는 개발 환경 준비 절차다.
+**2026-10-21 배포 변경:** 실행 폴더와 지도 ZIP을 Git main에 포함했다. **테스트만 할 때는 pull 후 `builds/EungyeTaxi/EungyeTaxi.exe`를 바로 실행**한다. Unity 설치·지도 압축 해제는 필요 없다. 2026-10-23부터 정식 `config/maps/project/eungye.project.json`이 있으면 개발 빌드도 이 ZIP 없이 가능하다. Unity의 Taxi > Build Eungye Hybrid가 프로젝트 지도를 검증해 포함한다. 아래 ZIP 절차는 정식 지도 이전 작업 또는 원본 재수입용이다. 원본을 재수입할 때만 `distribution/maps/Eungye-map-inputs-2026-10-20.zip`을 저장소 루트에 푼다. [빌드 없는 실행 안내](../../distribution/README.md)를 따른다. 아래는 개발 환경 준비 절차다.
 
 이 ZIP은 개발에 필요한 생성 지도 3개와 안내·검증용 목록을 담는다. 코드, Unity Editor, 원본 NGII/OSM, 실행파일은 포함하지 않는다. `unity/YeongtongTaxi`는 기존 프로젝트 폴더 이름이며 기본 빌드 지역은 은계다.
 

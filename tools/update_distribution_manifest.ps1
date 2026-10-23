@@ -1,4 +1,4 @@
-param([string]$SourceCommit, [string]$ValidatedOn = '2026-10-22', [switch]$VerifyOnly)
+param([string]$SourceCommit, [string]$ValidatedOn = '2026-10-22', [switch]$VerifyOnly, [string]$ValidationReport)
 $ErrorActionPreference='Stop'
 $taskRoot=Split-Path $PSScriptRoot -Parent
 $taskManifestPath=Join-Path $taskRoot 'distribution/EungyeTaxi-build-manifest.json'
@@ -24,5 +24,8 @@ $taskEntries=@(Get-ChildItem -LiteralPath (Join-Path $taskRoot 'builds/EungyeTax
     [pscustomobject][ordered]@{path=[IO.Path]::GetRelativePath($taskRoot,$_.FullName).Replace('\','/');bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}
 })
 $taskOutput=[ordered]@{sourceCommit=$SourceCommit;unity='2022.3.62f2';region='eungye';entrypoint='builds/EungyeTaxi/EungyeTaxi.exe';validatedOn=$ValidatedOn;totalBytes=($taskEntries | Measure-Object bytes -Sum).Sum;validation=[ordered]@{build='PrototypeBuild.BuildEasyRoadMapEditor exit 0';modelSuites=23;campaignStateAssertions=20;presentationHudAssertions=20;editorCoreAssertions=15;easyEditorCoreAssertions=7;buttonResolutions=@(1280,1600,1920);editorExtendedTests=$true;editorPlayerAssertions=28;trialIsolation=$true;manualDriving=$false;fieldReviewComplete=$false;fieldWorkStoppedByUser=$true};files=$taskEntries}
+if ($ValidationReport) {$taskOutput.validation=Get-Content -LiteralPath $ValidationReport -Raw -Encoding UTF8 | ConvertFrom-Json}
+$taskProjectPath=Join-Path $taskRoot 'config/maps/project/eungye.project.json'
+if(Test-Path -LiteralPath $taskProjectPath){$taskProject=Get-Content -LiteralPath $taskProjectPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 100;$taskOutput.projectMap=[ordered]@{path='config/maps/project/eungye.project.json';contentHash=$taskProject.contentHash;bytes=(Get-Item -LiteralPath $taskProjectPath).Length;sha256=(Get-FileHash -LiteralPath $taskProjectPath -Algorithm SHA256).Hash.ToLowerInvariant()}}
 $taskOutput | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $taskManifestPath -Encoding utf8
 Write-Output "DISTRIBUTION_MANIFEST_WRITTEN files=$($taskEntries.Count)"

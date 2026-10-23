@@ -17,7 +17,7 @@ public class WorldBuilder : MonoBehaviour {
         public void Add(IList<Vector3> points,IList<int> faces){int offset=vertices.Count;for(int i=0;i<points.Count;i++)vertices.Add(points[i]);for(int i=0;i<faces.Count;i++)indices.Add(offset+faces[i]);}
     }
     static GeometryBatch Batch(Dictionary<Vector2Int,GeometryBatch> batches,Vector3 position){var key=new Vector2Int(Mathf.FloorToInt(position.x/128),Mathf.FloorToInt(position.z/128));GeometryBatch batch;if(!batches.TryGetValue(key,out batch)){batch=new GeometryBatch();batches[key]=batch;}return batch;}
-    void RenderBatches(Dictionary<Vector2Int,GeometryBatch> batches,string name,Material material){foreach(var item in batches){var mesh=new Mesh();mesh.indexFormat=UnityEngine.Rendering.IndexFormat.UInt32;mesh.SetVertices(item.Value.vertices);mesh.SetTriangles(item.Value.indices,0);mesh.RecalculateNormals();mesh.RecalculateBounds();var obj=new GameObject(name+" "+item.Key);obj.transform.SetParent(transform);obj.AddComponent<MeshFilter>().sharedMesh=mesh;obj.AddComponent<MeshRenderer>().sharedMaterial=material;}}
+    void RenderBatches(Dictionary<Vector2Int,GeometryBatch> batches,string name,Material material,bool solid=false){foreach(var item in batches){var mesh=new Mesh();mesh.indexFormat=UnityEngine.Rendering.IndexFormat.UInt32;mesh.SetVertices(item.Value.vertices);mesh.SetTriangles(item.Value.indices,0);mesh.RecalculateNormals();mesh.RecalculateBounds();var obj=new GameObject(name+" "+item.Key);obj.transform.SetParent(transform);obj.AddComponent<MeshFilter>().sharedMesh=mesh;obj.AddComponent<MeshRenderer>().sharedMaterial=material;if(solid)obj.AddComponent<MeshCollider>().sharedMesh=mesh;}}
     public void Build() {
         map=RoadRulesTrial.Enabled?RoadRulesTrial.CreateMap():MapCatalog.Load();
         FuelStationLayout.Apply(map);RestaurantSiteLayout.Apply(map);
@@ -25,13 +25,18 @@ public class WorldBuilder : MonoBehaviour {
         var ground=Mat("Ground",new Color(.33f,.40f,.32f)); var asphalt=Mat("Road",new Color(.16f,.18f,.20f));
         var building=Mat("Buildings",new Color(.70f,.67f,.60f));
         Box("Terrain",new Vector3(map.width/2,-.5f,map.depth/2),new Vector3(map.width+80,1,map.depth+80),ground,transform);
+        var areaBatches=new Dictionary<string,Dictionary<Vector2Int,GeometryBatch>>();
         if(map.areas!=null)foreach(var area in map.areas){
             if(area.points==null||area.triangles==null)continue;
-            var mesh=new Mesh();mesh.indexFormat=UnityEngine.Rendering.IndexFormat.UInt32;var vertices=new Vector3[area.points.Length];for(int i=0;i<vertices.Length;i++)vertices[i]=area.points[i].V(.02f);
-            var triangles=(int[])area.triangles.Clone();for(int i=0;i<triangles.Length;i+=3){int swap=triangles[i];triangles[i]=triangles[i+2];triangles[i+2]=swap;}
-            mesh.vertices=vertices;mesh.triangles=triangles;mesh.RecalculateNormals();mesh.RecalculateBounds();
-            var obj=new GameObject(area.name);obj.transform.SetParent(transform);obj.AddComponent<MeshFilter>().sharedMesh=mesh;obj.AddComponent<MeshRenderer>().sharedMaterial=Mat(area.kind,new Color(.13f,.42f,.59f));
+            Dictionary<Vector2Int,GeometryBatch> batches;if(!areaBatches.TryGetValue(area.kind,out batches)){batches=new Dictionary<Vector2Int,GeometryBatch>();areaBatches.Add(area.kind,batches);}
+            float top=area.kind=="sidewalk"?Mathf.Max(.02f,area.height):area.kind=="water"||area.kind=="land"?.02f:.052f;
+            var vertices=new List<Vector3>();foreach(var p in area.points)vertices.Add(p.V(top));var faces=new List<int>();
+            for(int i=0;i<area.triangles.Length;i+=3)faces.AddRange(new[]{area.triangles[i+2],area.triangles[i+1],area.triangles[i]});
+            if(area.kind=="sidewalk"){float winding=0;for(int i=0;i<area.points.Length;i++){var a=area.points[i];var b=area.points[(i+1)%area.points.Length];winding+=a.x*b.z-b.x*a.z;}
+             for(int i=0;i<area.points.Length;i++){int j=(i+1)%area.points.Length,n=vertices.Count;vertices.AddRange(new[]{area.points[i].V(),area.points[j].V(),area.points[j].V(top),area.points[i].V(top)});faces.AddRange(winding>0?new[]{n,n+2,n+1,n,n+3,n+2}:new[]{n,n+1,n+2,n,n+2,n+3});}}
+            Batch(batches,ProjectMapScene.Center(area.points)).Add(vertices,faces);
         }
+        foreach(var entry in areaBatches){var color=entry.Key=="water"?new Color(.13f,.42f,.59f):entry.Key=="land"?new Color(.39f,.47f,.32f):entry.Key=="sidewalk"?new Color(.65f,.63f,.58f):new Color(.23f,.25f,.26f);RenderBatches(entry.Value,entry.Key,Mat(entry.Key,color),entry.Key=="sidewalk");}
         var roadBatches=new Dictionary<Vector2Int,GeometryBatch>();
         var buildingBatches=new Dictionary<Vector2Int,GeometryBatch>();
         foreach(var road in map.roads) {
@@ -63,7 +68,7 @@ public class WorldBuilder : MonoBehaviour {
             Batch(buildingBatches,mesh.bounds.center).Add(vertices,indices);
         }
         RenderBatches(buildingBatches,"건물 외형",building);
-        FuelStationLayout.Draw(map,transform);RestaurantSiteLayout.Draw(map,transform);
+        FuelStationLayout.Draw(map,transform);RestaurantSiteLayout.Draw(map,transform);ProjectMapScene.DrawServices(map,transform);
         foreach(var t in map.targets) {
             var m=Mat(t.name,t.name=="T1"?new Color(.1f,.75f,.9f):new Color(1,.5f,.12f));
             var label=new GameObject(t.name+" label"); label.transform.position=t.V(8); label.transform.SetParent(transform); var text=label.AddComponent<TextMesh>(); text.text=t.name; text.fontSize=64; text.characterSize=.15f; text.anchor=TextAnchor.MiddleCenter; text.color=m.color; label.AddComponent<FaceCamera>();

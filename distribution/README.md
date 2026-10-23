@@ -14,7 +14,9 @@ Windows 64비트 PC에서 저장소 main을 clone하거나 기존 작업을 보�
 
 ## 개발도 이어가려면
 
-지도 입력 ZIP은 **`distribution/maps/Eungye-map-inputs-2026-10-20.zip`**에 있다. 저장소 루트에서 다음 명령을 사용한다.
+정식 프로젝트 지도는 **`config/maps/project/eungye.project.json`**이다. pull 후 `pwsh -File tools/check_workspace.ps1 -Strict`를 실행하고 Unity의 **Taxi > Build Eungye Hybrid**로 빌드한다. 이 경로에는 원본 지도 ZIP이 필요하지 않다. 건물·보도·생활 부지 수정은 [프로젝트 편집 사용법](../docs/road-map-editor-guide.md)을 따른다.
+
+기존 지도 재수입 작업에만 아래 ZIP 입력을 준비한다. ZIP은 **`distribution/maps/Eungye-map-inputs-2026-10-20.zip`**에 있다.
 
 ```powershell
 Expand-Archive -LiteralPath distribution/maps/Eungye-map-inputs-2026-10-20.zip -DestinationPath .

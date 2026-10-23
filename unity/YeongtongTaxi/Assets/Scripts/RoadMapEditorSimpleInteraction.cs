@@ -4,6 +4,7 @@ using UnityEngine;
 public partial class RoadMapEditor {
  public void EasyMapClick(Vector3 position){
   if(confirmClose||showSaved)return;
+  if(tool=="건물·부지"){SceneMapClick(position);return;}if(tool=="프로젝트")return;
   var facility=document.facilities.OrderBy(f=>(f.Position-position).sqrMagnitude).FirstOrDefault();
   if(facility!=null&&Vector3.Distance(facility.Position,position)>Span/950*14)facility=null;
   if(easyAction=="place"){PlaceEasyFacility(position);return;}
@@ -26,6 +27,7 @@ public partial class RoadMapEditor {
  }
  void EasyCanvasOverlay(){
   if(!SimpleMode)return;
+  if(tool=="건물·부지"){SceneCanvasOverlay();return;}if(tool=="프로젝트")return;
   if(easyAction=="connect"){var source=document.lanes.FirstOrDefault(l=>l.id==easySource);if(source!=null){var a=source.points.Last().V();var b=Unproject(Event.current.mousePosition);for(int i=0;i<=28;i++){float t=i/28f;var pos=Vector3.Lerp(a,b,t);var at=Project(pos);if(canvas.Contains(at))Dot(at,Color.yellow,4);}}}
   if(easyAction=="place"&&canvas.Contains(Event.current.mousePosition)){Dot(Event.current.mousePosition,Color.yellow,18);GUI.Label(new Rect(Event.current.mousePosition.x+15,Event.current.mousePosition.y+8,160,28),placeType,label);}
   foreach(var l in ApproachLanes(easyApproach)){var path=new AssistedRoadNetwork.Path(l.points.Select(p=>p.V()).ToArray());if(path.length<9)continue;var p=path.Position(Mathf.Max(0,path.length-7));var at=Project(p);if(canvas.Contains(at)){Fill(new Rect(at.x-14,at.y-14,28,28),new Color(.03f,.07f,.1f));var style=new GUIStyle(label){alignment=TextAnchor.MiddleCenter,fontSize=18};GUI.Label(new Rect(at.x-14,at.y-14,28,28),Mathf.Max(1,l.number).ToString(),style);}}

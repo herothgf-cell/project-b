@@ -30,7 +30,7 @@ public class RoadEnvironment : MonoBehaviour {
   }
  }
  public bool OnRoad(Vector3 point,float margin=0){
-  if(roadCells.Count==0||ReviewedPavement.Contains(map,point))return false;point.y=0;
+  if(ReviewedPavement.Contains(map,point))return false;if(ProjectMapScene.OnArea(map,point,false))return true;if(roadCells.Count==0)return false;point.y=0;
   if(queryId==int.MaxValue){System.Array.Clear(checkedSegments,0,checkedSegments.Length);queryId=0;}queryId++;
   // Index the original road envelope, then expand the query by abs(margin).
   // The absolute value preserves the legacy squared-radius behavior even
@@ -51,6 +51,7 @@ public class RoadEnvironment : MonoBehaviour {
   foreach(float x in SampleAcross)foreach(float z in SampleAlong){var q=p+right*x+dir*z;if(q.x<1||q.z<1||q.x>map.width-1||q.z>map.depth-1||OnRoad(q,-.03f)||InBuilding(q))return false;}return true;
  }
  public void Build(MapData data){map=data;segments.Clear();sidewalkPieces=0;foreach(var r in map.roads)for(int i=1;i<r.points.Length;i++)segments.Add(new Segment{a=r.points[i-1].V(),b=r.points[i].V(),half=r.width*.5f});IndexGeometry();
+  if(ProjectMapScene.Active(map)){sidewalkPieces=System.Array.FindAll(map.areas,a=>a.kind=="sidewalk").Length;foreach(var stop in map.stops)if(!stop.hasPassengerAnchor){float best=2500;foreach(var area in map.areas)if(area.kind=="sidewalk"){var p=ProjectMapScene.Center(area.points);float distance=(p-stop.Kerb).sqrMagnitude;if(distance<best&&!OnRoad(p)){best=distance;stop.passengerAnchor=p+Vector3.up*area.height;stop.hasPassengerAnchor=true;}}}return;}
   ReviewedPavement.Draw(map,transform);
   var vertices=new List<Vector3>();var triangles=new List<int>();
   foreach(var s in segments){var d=s.b-s.a;float len=d.magnitude;var dir=d/len;var right=TrafficSystem.Right(dir);

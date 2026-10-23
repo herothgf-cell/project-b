@@ -6,7 +6,7 @@ public static class MapCatalog {
  public static string[] Ids {get{return string.IsNullOrEmpty(LockedRegion)?new[]{"yeongtong","eungye"}:new[]{LockedRegion};}}
  public static string Name(string id){return id=="route42"?"은계 · 국도 42호선 차로 시험":id=="eungye"?"시흥 은계지구":"영통·반달공원";}
  static string Resource(string id){return id=="eungye"?(Resources.Load<TextAsset>("eungye-hybrid-map")?"eungye-hybrid-map":"eungye-map"):"drive-map";}
- public static bool Available(string id){bool ready;if(availability.TryGetValue(id,out ready))return ready;ready=false;var asset=Resources.Load<TextAsset>(Resource(id));
+ public static bool Available(string id){if(id=="eungye"&&Resources.Load<TextAsset>(ProjectMapStore.ResourceName))return true;bool ready;if(availability.TryGetValue(id,out ready))return ready;ready=false;var asset=Resources.Load<TextAsset>(Resource(id));
   if(asset)try{var map=JsonUtility.FromJson<MapData>(asset.text);ready=map!=null&&map.roads!=null&&map.roads.Length>0&&map.targets!=null&&map.targets.Length>=2&&map.stops!=null&&map.stops.Length>=4;}catch{ready=false;}
   availability[id]=ready;return ready;
  }
@@ -17,6 +17,7 @@ public static class MapCatalog {
   var args=System.Environment.GetCommandLineArgs();string region=NextRegion;foreach(var arg in args)if(arg.EndsWith("Test")||arg=="-assistedTrial")region="yeongtong";
   if(System.Array.IndexOf(args,"-eungye")>=0||System.Array.IndexOf(args,"-eungyeTest")>=0||System.Array.IndexOf(args,"-hybridTest")>=0)region="eungye";
   if(!string.IsNullOrEmpty(LockedRegion))region=LockedRegion;
+  if(region=="eungye"){var project=Resources.Load<TextAsset>(ProjectMapStore.ResourceName);if(project){var package=ProjectMapPackage.Parse(project.text);return RoadMapRuntime.Apply(package.baseline,package.document,package.contentHash);}}
   if(!Available(region)&&!string.IsNullOrEmpty(LockedRegion))throw new System.InvalidOperationException("빌드에 필요한 지도 자료가 없습니다: "+region);
   if(!Available(region)){Debug.LogWarning(Name(region)+" 지도 자료/검토 지점 미준비 · 영통으로 시작합니다");region="yeongtong";}
   var asset=Resources.Load<TextAsset>(Resource(region));if(!asset)throw new System.InvalidOperationException("지도 JSON이 없습니다. tools/import_ngii_map.py build --config config/maps/yeongtong.json 을 실행하세요.");

@@ -48,8 +48,9 @@ public class DrivingReadability : MonoBehaviour {
   foreach(var incident in session.roadConditions.incidents)Dot(Project(incident.position),Color.red,8);
   if(jobs.nav.HasDestination)for(int pass=0;pass<2;pass++)for(int i=1;i<jobs.nav.path.Count;i++){var a=Project(jobs.nav.path[i-1]);var b=Project(jobs.nav.path[i]);Line(a,b,pass==0?Color.black:Color.cyan,pass==0?8:4);}
   for(int i=0;i<jobs.stops.Length;i++)if(jobs.people[i].activeSelf)Marker(jobs.stops[i].V(),"승",new Color(.3f,1,.55f),false);
-  var rest=FuelStationLayout.Rest(session.world.map);if(rest!=null)Marker(rest.pump,"P 휴식",Color.cyan,false);
-  if(session.business.useV2)for(int k=1;k<session.services.indices.Length;k++)Marker((k==1?session.services.MealPosition:session.services.StopFor(k).V()),k==1?"식":"주차",new Color(1,.5f,1),false);
+  if(ProjectMapScene.Active(map)){foreach(var o in map.projectScene.objects)if(o.enabled&&o.IsService)Marker(o.Position,o.kind=="restaurant"?"식":o.kind=="rest"?"휴식":"주차",o.kind=="rest"?Color.cyan:new Color(1,.5f,1),false);}
+  else {var rest=FuelStationLayout.Rest(map);if(rest!=null)Marker(rest.pump,"P 휴식",Color.cyan,false);
+   if(session.business.useV2)for(int k=1;k<session.services.indices.Length;k++)Marker((k==1?session.services.MealPosition:session.services.StopFor(k).V()),k==1?"식":"주차",new Color(1,.5f,1),false);}
   DrawFuelStations();
   DrawLawZones();
   if(jobs.trip.State==TripState.ToPickup||jobs.trip.State==TripState.OnTrip){

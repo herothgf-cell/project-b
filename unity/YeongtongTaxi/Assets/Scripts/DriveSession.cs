@@ -81,6 +81,7 @@ public class DriveSession : MonoBehaviour {
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-exitTransportTest")>=0)gameObject.AddComponent<ExitTransportSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-driveFeedbackTest")>=0)gameObject.AddComponent<DriveFeedbackSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadMapEditorTest")>=0)gameObject.AddComponent<RoadMapEditorProbe>();
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-projectMapTest")>=0||System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-projectMapStaleTest")>=0)gameObject.AddComponent<ProjectMapEditorProbe>();
         if(driveTest) gameObject.AddComponent<DriveSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-trafficTest")>=0) gameObject.AddComponent<TrafficSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-jobsTest")>=0) gameObject.AddComponent<JobsSmokeTest>().session=this;

@@ -58,7 +58,7 @@ public class BusinessProgress : MonoBehaviour {
   else if(useV2&&!testMode){preparing=true;Freeze();}
  }
  void Start(){if(loaded!=null&&session.law){session.law.ids=loaded.ids;foreach(var e in loaded.law)session.law.ledger.Record(e);}if(preparing)StartCoroutine(PlaceAtParking());}
- public System.Collections.IEnumerator PlaceAtParking(){yield return null;var stop=session.jobs.stops[session.services.indices[2]];session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();session.law.ResetObservation();session.jobs.ResetOffers();}
+ public System.Collections.IEnumerator PlaceAtParking(){yield return null;var stop=session.services.ParkingStop;session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();session.law.ResetObservation();session.jobs.ResetOffers();}
 
  void FixedUpdate(){
   if(!enabledCampaign||!ledger.Operating)return;
@@ -79,7 +79,7 @@ public class BusinessProgress : MonoBehaviour {
   if(session.FullMapOpen||!enabledCampaign||ledger.State!=BusinessState.Open||session.paused||Time.timeScale==0)return false;
   if(session.jobs.trip.State==TripState.OnTrip){notice="승객 탑승 중에는 영업을 마칠 수 없습니다 · 목적지 하차 후 N";noticeUntil=Time.unscaledTime+4;return false;}
   if(session.taxi.body.velocity.magnitude>=.56f){notice="안전한 곳에 정차한 뒤 N으로 영업을 마치세요";noticeUntil=Time.unscaledTime+4;return false;}
-  if(ledger.OneDay&&!session.jobs.At(session.services.indices[2])){notice="자발적 퇴근은 주차장에서 합니다 · F7 길 안내";noticeUntil=Time.unscaledTime+4;return false;}
+  if(ledger.OneDay&&!session.services.AtParking()){notice="자발적 퇴근은 주차장에서 합니다 · F7 길 안내";noticeUntil=Time.unscaledTime+4;return false;}
   ledger.RequestClose();return true;
  }
  public void RecordPassenger(int paid,string outcome){

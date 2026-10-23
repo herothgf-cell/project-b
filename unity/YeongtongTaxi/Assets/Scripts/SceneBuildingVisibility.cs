@@ -10,7 +10,8 @@ public static class SceneBuildingVisibility {
  sealed class Footprint {public MapBuilding building;public RoadGeometry.Point[] ring;}
  static readonly ConditionalWeakTable<MapData,State> states=new ConditionalWeakTable<MapData,State>();
  public const float TaxiHalfWidth=.95f;
- public static bool Hidden(MapData map,string id){return map!=null&&StateFor(map).hidden.Contains(id??"");}
+ public static void Reset(MapData map){states.Remove(map);}
+ public static bool Hidden(MapData map,string id){return map!=null&&!ProjectMapScene.Active(map)&&StateFor(map).hidden.Contains(id??"");}
  public static IList<Conflict> Conflicts(MapData map){return StateFor(map).conflicts.AsReadOnly();}
  static State StateFor(MapData map){State result;if(states.TryGetValue(map,out result))return result;result=Build(map);states.Add(map,result);return result;}
  static RoadGeometry.Point P(Vector3 p){return new RoadGeometry.Point(p.x,p.z);}

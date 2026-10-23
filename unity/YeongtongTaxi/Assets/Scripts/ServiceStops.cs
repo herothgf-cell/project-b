@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ServiceStops : MonoBehaviour {
@@ -18,28 +19,34 @@ public class ServiceStops : MonoBehaviour {
  public int PostTripRecommendation {get{return recommended;}}
  public IReadOnlyList<FuelStationLayout.FuelStation> Stations {get{return FuelStationLayout.For(session.world.map);}}
  public int FuelAtPump {get{var taxi=session.taxi;for(int i=0;i<Stations.Count;i++)if(Stations[i].CanRefuel(taxi.transform.position,taxi.transform.forward,taxi.body.velocity.magnitude))return i;return -1;}}
- public FuelStationLayout.FuelStation RestArea {get{return FuelStationLayout.Rest(session.world.map);}}
+ public FuelStationLayout.FuelStation RestArea {get{var map=session.world.map;if(ProjectMapScene.Active(map)){var o=Nearest("rest");return o==null?null:FuelStationLayout.FromObject(map,o);}return FuelStationLayout.Rest(map);}}
+ ProjectMapObject Nearest(string kind){var position=session.taxi?session.taxi.transform.position:Vector3.zero;return ProjectMapScene.Services(session.world.map,kind).OrderBy(o=>(o.Position-position).sqrMagnitude).FirstOrDefault();}
+ public bool HasService(int kind){return !ProjectMapScene.Active(session.world.map)||kind==0||Nearest(kind==1?"restaurant":kind==3?"rest":"parking")!=null||kind==3&&Nearest("parking")!=null;}
+ public MapStop ParkingStop {get{var map=session.world.map;if(ProjectMapScene.Active(map)){var o=Nearest("parking");if(o!=null)return ProjectMapScene.ParkingStop(o);}return session.jobs.stops[indices[2]];}}
+ public bool AtParking(){var t=session.taxi;var map=session.world.map;if(ProjectMapScene.Active(map))return ProjectMapScene.Services(map,"parking").Any(o=>ProjectMapScene.CanUse(o,t.transform.position,t.transform.forward,t.body.velocity.magnitude));return session.jobs.At(indices[2]);}
+ static MapStop Unavailable(string name){return new MapStop{name=name+" 없음",x=-10000,z=-10000,dx=0,dz=1,width=3,laneEdge=-1,graphStop=true};}
  MapData mealMap;MapStop mealStop;
- public MapStop MealStop {get{var map=session.world.map;if(!ReferenceEquals(mealMap,map)||mealStop==null){mealMap=map;mealStop=CreateMealStop(map);}return mealStop;}}
- public MapStop StopFor(int kind){return kind==1?MealStop:session.jobs.stops[indices[kind==3?2:kind]];}
+ public MapStop MealStop {get{var map=session.world.map;if(ProjectMapScene.Active(map)){var o=Nearest("restaurant");return o==null?Unavailable("식당"):ProjectMapScene.ServiceStop(map,o);}if(!ReferenceEquals(mealMap,map)||mealStop==null){mealMap=map;mealStop=CreateMealStop(map);}return mealStop;}}
+ public MapStop StopFor(int kind){if(kind==1)return MealStop;if((kind==2||kind==3)&&ProjectMapScene.Active(session.world.map)){var o=Nearest("parking");return o==null?Unavailable("주차장"):ProjectMapScene.ServiceStop(session.world.map,o);}return session.jobs.stops[indices[kind==3?2:kind]];}
  public static MapStop CreateMealStop(MapData map){
+  if(ProjectMapScene.Active(map)){var o=ProjectMapScene.Services(map,"restaurant").FirstOrDefault();return o==null?Unavailable("식당"):ProjectMapScene.ServiceStop(map,o);}
   if(map.mapId!="eungye"||!map.HasHd)return map.stops[6%map.stops.Length];
   return RestaurantSiteLayout.For(map).approach;
  }
- public RestaurantSiteLayout.Site Restaurant {get{return RestaurantSiteLayout.For(session.world.map);}}
+ public RestaurantSiteLayout.Site Restaurant {get{var map=session.world.map;if(ProjectMapScene.Active(map)){var o=Nearest("restaurant");return o==null?null:RestaurantSiteLayout.FromObject(map,o);}return RestaurantSiteLayout.For(map);}}
  public Vector3 MealPosition {get{return Restaurant!=null?Restaurant.parking:MealStop.V();}}
  public MapStop MealParkingStop {get{return Restaurant!=null?Restaurant.ParkingStop:MealStop;}}
- public bool AtRestaurant(){var t=session.taxi;return Restaurant!=null?Restaurant.CanDine(t.transform.position,t.transform.forward,t.body.velocity.magnitude):MealStop.CanStop(t.transform.position,t.transform.forward,t.body.velocity.magnitude);}
- public bool AtRestArea(){var r=RestArea;var t=session.taxi;return r!=null&&r.CanRefuel(t.transform.position,t.transform.forward,t.body.velocity.magnitude);}
+ public bool AtRestaurant(){var t=session.taxi;if(ProjectMapScene.Active(session.world.map))return ProjectMapScene.Services(session.world.map,"restaurant").Any(o=>ProjectMapScene.CanUse(o,t.transform.position,t.transform.forward,t.body.velocity.magnitude));return Restaurant!=null?Restaurant.CanDine(t.transform.position,t.transform.forward,t.body.velocity.magnitude):MealStop.CanStop(t.transform.position,t.transform.forward,t.body.velocity.magnitude);}
+ public bool AtRestArea(){if(ProjectMapScene.Active(session.world.map)){var taxi=session.taxi;return ProjectMapScene.Services(session.world.map,"rest").Any(o=>ProjectMapScene.CanUse(o,taxi.transform.position,taxi.transform.forward,taxi.body.velocity.magnitude));}var r=RestArea;var t=session.taxi;return r!=null&&r.CanRefuel(t.transform.position,t.transform.forward,t.body.velocity.magnitude);}
  public bool AtFuelPump(){return Stations.Count>0?FuelAtPump>=0:session.world.map.mapId!="eungye"&&session.jobs.At(indices[0]);}
- public bool CanUse(int kind){bool daily=session.business.ledger.OneDay;return kind>=0&&kind<=(daily?3:2)&&session.business.ledger.State==BusinessState.Open&&(daily&&kind>0?session.jobs.trip.State!=TripState.OnTrip:!session.jobs.Active)&&session.taxi.body.velocity.magnitude<.56f&&(kind==0?AtFuelPump():kind==1?AtRestaurant():kind==3?(AtRestArea()||session.jobs.At(indices[2])):StopFor(kind).CanStop(session.taxi.transform.position,session.taxi.transform.forward,session.taxi.body.velocity.magnitude));}
+ public bool CanUse(int kind){bool daily=session.business.ledger.OneDay;return kind>=0&&kind<=(daily?3:2)&&session.business.ledger.State==BusinessState.Open&&(daily&&kind>0?session.jobs.trip.State!=TripState.OnTrip:!session.jobs.Active)&&session.taxi.body.velocity.magnitude<.56f&&(kind==0?AtFuelPump():kind==1?AtRestaurant():kind==3?(AtRestArea()||AtParking()):AtParking());}
  public string Quote(int kind){if(kind<0||kind>3)return "";var b=session.business;var a=b.ledger.Account;if(b.ledger.OneDay&&(kind==1||kind==3)){var preview=b.ledger.Driver.Copy();if(kind==1)preview.Meal();else preview.Sleep();return (kind==1?"식사 3,000원 · 50초 (부족분은 미납)":"수면 무료 · 100초")+"\n포만감 "+preview.satiety.ToString("0")+" · 피로 "+preview.fatigue.ToString("0")+" 예상\n미탑승 호출은 취소됩니다. 엔진 정지 · 점수 변화 없음";}return kind==0?"주유 "+FuelAmount.ToString("0.0")+"% · "+Mathf.CeilToInt(FuelAmount*session.business.settings.fuelUnitPrice).ToString("N0")+"원 / 10초":kind==1?"식사 3,000원 / 10초 (하루 1회)":"주차·영업 마감 · 하루 주차비 500원";}
  void Start(){
   if(session.business.ledger.Account==null){enabled=false;return;}
   observedCompleted=session.jobs.completed;observedFailed=session.jobs.failed;
   if(session.world.map.mapId=="eungye")indices[2]=0;
   for(int i=0;i<indices.Length;i++){
-   indices[i]%=session.jobs.stops.Length;if(i==0&&Stations.Count>0||i==1&&Restaurant!=null)continue;
+   indices[i]%=session.jobs.stops.Length;if(ProjectMapScene.Active(session.world.map)&&i>0)continue;if(i==0&&Stations.Count>0||i==1&&Restaurant!=null)continue;
    var label=new GameObject(i==1?MealStop.name:names[i]);label.transform.position=StopFor(i).Passenger+Vector3.up*3.2f;var t=label.AddComponent<TextMesh>();t.text=(i==1?"식당 · 식사":names[i])+" · F7";t.fontSize=40;t.characterSize=.09f;t.anchor=TextAnchor.MiddleCenter;t.color=Color.yellow;KoreanText.Apply(t);label.AddComponent<FaceCamera>();
   }
  }
@@ -60,8 +67,8 @@ public class ServiceStops : MonoBehaviour {
   postTripFuel=-1;postTripDistances[0]=float.PositiveInfinity;
   for(int i=0;i<Stations.Count;i++){float d=ServiceDistance(Stations[i].approach);if(d<postTripDistances[0]){postTripDistances[0]=d;postTripFuel=i;}}
   if(Stations.Count==0&&session.world.map.mapId!="eungye")postTripDistances[0]=ServiceDistance(session.jobs.stops[indices[0]]);
-  postTripDistances[1]=ServiceDistance(MealStop);
-  postTripDistances[2]=ServiceDistance(session.jobs.stops[indices[2]]);
+  postTripDistances[1]=HasService(1)?ServiceDistance(MealStop):float.PositiveInfinity;
+  postTripDistances[2]=HasService(2)?ServiceDistance(StopFor(2)):float.PositiveInfinity;
   postTripDistances[3]=RestArea==null?postTripDistances[2]:Mathf.Min(postTripDistances[2],ServiceDistance(RestArea.approach));
   var ledger=session.business.ledger;recommended=PostTripServicePolicy.Recommend(ledger.Account.Fuel,ledger.Driver.satiety,ledger.Driver.fatigue,ledger.SecondsLeft,postTripDistances);
  }
@@ -101,9 +108,9 @@ public class ServiceStops : MonoBehaviour {
   session.jobs.nav.SetDestination(Stations[station].approach);destination=Stations[station].name+" · 입구 앞까지 내비/H 안내 · 내부는 H 해제 후 수동 진입";Close();return true;
  }
  public bool Guide(int kind){
-  if(!open||kind<0||kind>3||session.jobs.trip.State==TripState.OnTrip)return false;
+  if(!open||kind<0||kind>3||!HasService(kind)||session.jobs.trip.State==TripState.OnTrip)return false;
   if(session.jobs.Active){if(!session.business.ledger.OneDay)return false;session.jobs.ClearForDay();}
-  if(kind==3&&RestArea!=null){var taxi=session.taxi;var graph=session.jobs.nav.hd;float restDistance=PassengerJobs.DirectedDistance(graph,taxi.transform.position,taxi.transform.forward,RestArea.approach);float baseDistance=PassengerJobs.DirectedDistance(graph,taxi.transform.position,taxi.transform.forward,session.jobs.stops[indices[2]]);if(restDistance<baseDistance){session.jobs.nav.SetDestination(RestArea.approach);destination="동부 휴식 주차구역 · 입구부터 수동 진입 · 파란 정차선에서 F7";Close();return true;}}
+  if(kind==3&&RestArea!=null){var taxi=session.taxi;var graph=session.jobs.nav.hd;float restDistance=PassengerJobs.DirectedDistance(graph,taxi.transform.position,taxi.transform.forward,RestArea.approach);float baseDistance=PassengerJobs.DirectedDistance(graph,taxi.transform.position,taxi.transform.forward,StopFor(2));if(restDistance<baseDistance){session.jobs.nav.SetDestination(RestArea.approach);destination="동부 휴식 주차구역 · 입구부터 수동 진입 · 파란 정차선에서 F7";Close();return true;}}
   if(kind==3)kind=2;
   if(kind==0&&Stations.Count>0){int closest=0;float best=float.MaxValue;for(int i=0;i<Stations.Count;i++){float distance=(Stations[i].entrance-session.taxi.transform.position).sqrMagnitude;if(distance<best){best=distance;closest=i;}}return GuideFuel(closest);}
   session.jobs.nav.SetDestination(StopFor(kind));destination=kind==1&&Restaurant!=null?"식당 입구 앞까지 안내 · H 해제 후 주차 칸에 진입 · 정차 후 F7":names[kind]+" · 오른쪽 정차 화살표에서 F7";Close();return true;
@@ -123,7 +130,7 @@ public class ServiceStops : MonoBehaviour {
  }
  void Row(float x,float y,string label,int kind,int station,GUIStyle style,GUIStyle button){
   GUI.Label(new Rect(x+20,y,330,51),label,style);
-  if(GUI.Button(new Rect(x+360,y,105,42),"길 안내",button)){if(station>=0)GuideFuel(station);else Guide(kind);}
+  GUI.enabled=HasService(kind);if(GUI.Button(new Rect(x+360,y,105,42),"길 안내",button)){if(station>=0)GuideFuel(station);else Guide(kind);}
   GUI.enabled=CanUse(kind)&&(station<0||FuelAtPump==station)&&(kind!=0||FuelAmount>.001f);
   if(GUI.Button(new Rect(x+480,y,220,42),kind==0?"+"+FuelAmount.ToString("0.#")+"% 주유 · "+Mathf.CeilToInt(FuelAmount*session.business.settings.fuelUnitPrice)+"원":kind==1?"식사 비용 확인":kind==3?"수면 · 100초":"주차·영업 마감",button)){if(kind==0)Buy(0);else RequestAction(kind);}GUI.enabled=true;
  }

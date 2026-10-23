@@ -22,29 +22,29 @@ public partial class RoadMapEditor {
  void DrawSimple(int id){ GUI.enabled=!(showSaved||confirmClose);
   Fill(new Rect(0,0,1600,900),new Color(.035f,.055f,.075f));
   EasyLabel(new Rect(18,12,490,34),"은계 지도 편집 · 간편 편집",23);
-  if(EasyButton(new Rect(530,10,70,36),"취소")){document=history.Undo(document);numbers.Clear();easyAction="select";SyncEasySelection();}
-  if(EasyButton(new Rect(610,10,90,36),"다시 실행")){document=history.Redo(document);numbers.Clear();easyAction="select";SyncEasySelection();}
+  if(EasyButton(new Rect(530,10,70,36),"취소")){document=history.Undo(document);numbers.Clear();if(preview)preview.Clear();easyAction="select";SyncEasySelection();}
+  if(EasyButton(new Rect(610,10,90,36),"다시 실행")){document=history.Redo(document);numbers.Clear();if(preview)preview.Clear();easyAction="select";SyncEasySelection();}
   if(EasyButton(new Rect(710,10,80,36),"검사"))Check();
-  if(EasyButton(new Rect(800,10,80,36),"저장"))Save();
+  if(EasyButton(new Rect(800,10,80,36),"개인 저장"))Save();
   if(EasyButton(new Rect(890,10,170,36),"저장하고 시험"))SaveAndTrial();
   if(EasyButton(new Rect(1070,10,130,36),"다음 실행에 사용")){Check();if(!issues.Any(i=>i.error)&&Save())try{RoadMapStore.SetDefault(FilePath,RoadMapRuntime.Baseline);notice="다음 실행부터 이 수정본을 사용합니다.";}catch(Exception e){notice=e.Message;}}
   if(EasyButton(new Rect(1210,10,110,36),show3D?"평면 보기":"3D 확인")){show3D=!show3D;if(preview)preview.Clear();}
-  if(EasyButton(new Rect(1330,10,125,36),"고급 편집")){SimpleMode=false;easyAction="select";}
+  if(EasyButton(new Rect(1330,10,125,36),"고급 편집")){SimpleMode=false;easyAction="select";if(tool=="건물·부지"||tool=="프로젝트")tool="차로";}
   if(EasyButton(new Rect(1465,10,115,36),"닫기 / Esc")){if(Dirty)confirmClose=true;else Close();}
-  string[] tools={"차로","노면","표지","신호"};for(int i=0;i<tools.Length;i++)if(EasyButton(new Rect(18+i*105,51,98,34),(tool==tools[i]?"● ":"")+tools[i])){tool=tools[i];easyAction="select";}
-  EasyLabel(new Rect(460,52,1120,32),EasyHint(),15);
-  DrawEasyLeft(new Rect(18,94,230,736));
+  string[] tools={"차로","노면","표지","신호","건물·부지","프로젝트"};for(int i=0;i<tools.Length;i++)if(EasyButton(new Rect(18+i*105,51,98,34),(tool==tools[i]?"● ":"")+tools[i])){tool=tools[i];easyAction="select";}
+  EasyLabel(new Rect(660,52,920,32),EasyHint(),15);
+  if(tool=="건물·부지"||tool=="프로젝트")DrawSceneLeft(new Rect(18,94,230,736));else DrawEasyLeft(new Rect(18,94,230,736));
   Canvas(new Rect(260,90,950,600));
   DrawEasyProperties(new Rect(1220,90,365,740));
   Fill(new Rect(260,700,950,130),new Color(.065f,.095f,.12f));
   issueScroll=GUI.BeginScrollView(new Rect(268,706,934,118),issueScroll,new Rect(0,0,910,Mathf.Max(104,issues.Count*44)));
-  if(issues.Count==0)EasyLabel(new Rect(4,5,900,85),"수정 순서: 도로 클릭 → 진입 방향 → 차로 → 화살표/배치 → 저장하고 시험\n휠: 확대/축소 · 오른쪽/중간 버튼 드래그: 지도 이동 · 선택한 시설 드래그: 위치 이동",16);
-  for(int i=0;i<issues.Count;i++){var issue=issues[i];GUI.color=issue.error?new Color(1,.65f,.55f):new Color(1,.87f,.5f);string message=issue.message;if(EasyButton(new Rect(0,i*44,904,40),(issue.error?"수정 필요 · ":"참고 · ")+message)){Select(issue.id);Centre=new Vector2(issue.position.x,issue.position.z);show3D=false;}GUI.color=Color.white;}
+  if(issues.Count==0)EasyLabel(new Rect(4,5,900,85),(tool=="건물·부지"||tool=="프로젝트"?"수정 순서: 종류 선택 → 면 클릭 → 이동/모양 변경 → 검사·시험 → 프로젝트 저장":"수정 순서: 도로 클릭 → 진입 방향 → 차로 → 화살표/배치 → 저장하고 시험")+"\n휠: 확대/축소 · 오른쪽/중간 버튼 드래그: 지도 이동 · 선택한 시설 드래그: 위치 이동",16);
+  for(int i=0;i<issues.Count;i++){var issue=issues[i];GUI.color=issue.error?new Color(1,.65f,.55f):new Color(1,.87f,.5f);string message=issue.message;if(EasyButton(new Rect(0,i*44,904,40),(issue.error?"수정 필요 · ":"참고 · ")+message)){if(SceneView.objects.Any(o=>o.id==issue.id))SelectSceneObject(issue.id);else Select(issue.id);Centre=new Vector2(issue.position.x,issue.position.z);show3D=false;}GUI.color=Color.white;}
   GUI.EndScrollView();
   EasyLabel(new Rect(18,841,1560,48),(Dirty?"● 미저장 · ":"")+notice+"\n수정본: "+document.name+" · 적용 중: "+RoadMapRuntime.Notice,14);
   GUI.enabled=true;DrawSavedPopup();if(confirmClose){Fill(new Rect(465,300,670,225),new Color(.13f,.18f,.24f));EasyLabel(new Rect(490,320,620,70),"저장하지 않은 수정이 있습니다.\n저장하고 닫거나 초안을 유지할 수 있습니다.",20);if(EasyButton(new Rect(490,407,195,44),"저장하고 닫기")&&Save())Close();if(EasyButton(new Rect(695,407,195,44),"초안 유지하고 닫기"))Close();if(EasyButton(new Rect(900,407,210,44),"편집 계속"))confirmClose=false;if(EasyButton(new Rect(490,463,620,36),"초안 버리고 닫기"))Close(false);}
  }
- string EasyHint(){switch(easyAction){case "place":return "지도에서 놓을 위치를 클릭하세요. Esc: 배치 취소 · 배치 후 드래그로 이동";case "connect":return "연결할 도착 차로를 클릭하세요. 점선은 연결 미리보기입니다. Esc: 취소";case "bindLane":return "이 시설이 적용될 차로를 지도에서 클릭하세요. Esc: 취소";case "bindMark":return "제어할 정지선 또는 횡단보도를 클릭하세요. Esc: 취소";case "signalLane":return "신호를 적용할 진입 차로를 클릭하세요. Esc: 취소";case "signalWalk":return "이 보행 신호가 제어할 횡단보도를 클릭하세요. Esc: 취소";case "trialStart":return "시험 주행의 출발 차로를 클릭하세요.";case "trialGoal":return "시험 주행의 도착 차로를 클릭하세요.";default:return "도로를 클릭해 선택하세요 · 숫자/ID 없이 편집 · 휠 확대 · 오른쪽 드래그로 지도 이동";}}
+ string EasyHint(){switch(easyAction){case "sceneCreate":return "지도 클릭: 새 도형 배치 · Esc: 취소";case "sceneService":return "부지 안의 주차 / 서비스 위치를 클릭하세요.";case "sceneLane":return "차량이 진입할 접근 차로를 클릭하세요.";case "place":return "지도에서 놓을 위치를 클릭하세요. Esc: 배치 취소 · 배치 후 드래그로 이동";case "connect":return "연결할 도착 차로를 클릭하세요. 점선은 연결 미리보기입니다. Esc: 취소";case "bindLane":return "이 시설이 적용될 차로를 지도에서 클릭하세요. Esc: 취소";case "bindMark":return "제어할 정지선 또는 횡단보도를 클릭하세요. Esc: 취소";case "signalLane":return "신호를 적용할 진입 차로를 클릭하세요. Esc: 취소";case "signalWalk":return "이 보행 신호가 제어할 횡단보도를 클릭하세요. Esc: 취소";case "trialStart":return "시험 주행의 출발 차로를 클릭하세요.";case "trialGoal":return "시험 주행의 도착 차로를 클릭하세요.";default:if(tool=="건물·부지")return "도형 선택 / 드래그 이동 · 오른쪽 속성에서 꼭짓점·회전·크기 편집";if(tool=="프로젝트")return "프로젝트 자료에 저장하면 다른 PC와 빌드에서 같은 지도를 사용합니다.";return "도로를 클릭해 선택하세요 · 숫자/ID 없이 편집 · 휠 확대 · 오른쪽 드래그로 지도 이동";}}
  void DrawEasyLeft(Rect rect){Fill(rect,new Color(.065f,.095f,.13f));GUI.BeginGroup(rect);EasyLabel(new Rect(10,8,210,28),"1. 수정할 도로 선택",17);search=GUI.TextField(new Rect(10,43,210,32),search,field);EasyLabel(new Rect(10,78,210,40),"도로명 검색 또는 지도에서\n도로 선을 클릭하세요.",14);
   if(EasyButton(new Rect(10,124,100,38),"T1로 이동")){Focus(session.world.map.junctionRules.OrderBy(r=>Vector3.Distance(r.V(),session.world.map.targets[0].V())).First().id);search="";}
   if(EasyButton(new Rect(120,124,100,38),"내 위치")){var p=session.taxi.transform.position;Centre=new Vector2(p.x,p.z);Span=180;}
@@ -62,7 +62,7 @@ public partial class RoadMapEditor {
  void DrawSavedPopup(){  if(showSaved){Fill(new Rect(275,105,900,560),new Color(.08f,.13f,.18f));EasyLabel(new Rect(295,120,660,30),"저장한 수정본 선택",20);if(EasyButton(new Rect(1010,117,140,36),"목록 닫기"))showSaved=false;easySavedScroll=GUI.BeginScrollView(new Rect(295,168,850,475),easySavedScroll,new Rect(0,0,825,Mathf.Max(460,savedChoices.Count*44)));for(int i=0;i<savedChoices.Count;i++){var item=savedChoices[i];if(EasyButton(new Rect(0,i*44,825,40),item.Item2)){Load(item.Item1);showSaved=false;easyAction="select";}}GUI.EndScrollView();if(savedChoices.Count==0)EasyLabel(new Rect(295,185,850,80),"아직 저장한 수정본이 없습니다. 상단 저장 버튼으로 먼저 저장하세요.");}
  }
  void EasySection(string text){Caption(text);}
- void DrawEasyProperties(Rect rect){Fill(rect,new Color(.065f,.095f,.13f));easyRightScroll=GUI.BeginScrollView(rect,easyRightScroll,new Rect(0,0,330,Mathf.Max(1000,propHeight)));propY=8;
+ void DrawEasyProperties(Rect rect){Fill(rect,new Color(.065f,.095f,.13f));easyRightScroll=GUI.BeginScrollView(rect,easyRightScroll,new Rect(0,0,330,Mathf.Max(1000,propHeight)));propY=8;if(tool=="건물·부지"||tool=="프로젝트"){if(tool=="건물·부지")DrawSceneProperties();else DrawProjectProperties();propHeight=Mathf.Max(900,propY+40);GUI.EndScrollView();return;}
   EasySection("2. "+(Lane!=null?"진입 방향과 차로":Facility!=null?"선택한 시설":"도로를 먼저 선택하세요"));
   if(Lane!=null){var l=Lane;Caption(RoadMapEasySelection.RoadLabel(l)+"\n"+RoadMapEasySelection.Direction(l));var lanes=ApproachLanes(easyApproach);for(int i=0;i<lanes.Length;i++){var item=lanes[i];if(FittedButton(new Rect(0,propY,330,42),(selected==item.id?"선택 · ":"")+item.number+"차로   "+RoadMapEasySelection.TurnLabel(RoadMapEasySelection.Turns(document,item))))Select(item.id);propY+=48;}}
   if(tool=="신호"){if(Facility!=null)EasyFacility();EasySignals();}else if(Facility!=null)EasyFacility();else if(Lane!=null&&tool=="차로")EasyLane();

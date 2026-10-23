@@ -15,12 +15,12 @@ public static class CorridorPolish {
  public static Result For(MapData map){Result result;return results.TryGetValue(map,out result)?result:null;}
  public static bool Includes(MapData map,string edge){var r=For(map);return r!=null&&r.edges.Contains(edge);}
  public static void Apply(MapData map){
-  if(map==null||map.mapId!="eungye"||!map.hybrid||!map.HasHd||For(map)!=null)return;
+  if(map==null||ProjectMapScene.Active(map)||map.mapId!="eungye"||!map.hybrid||!map.HasHd||For(map)!=null)return;
   var asset=Resources.Load<TextAsset>("eungye-corridor-polish");if(!asset)throw new InvalidOperationException("Missing Eungye corridor polish settings");
   var config=JsonUtility.FromJson<Settings>(asset.text);Apply(map,config);
  }
  public static void Apply(MapData map,Settings config){
-  if(For(map)!=null)return;
+  if(ProjectMapScene.Active(map)||For(map)!=null)return;
   var selected=new HashSet<string>(config.roadIds);var result=new Result();
   var roads=map.roads.ToDictionary(r=>r.id);foreach(var id in selected)if(!roads.ContainsKey(id))throw new InvalidOperationException("Corridor source changed: "+id);
   // Reviewed geometry needs the same pavement/building-clearance policy even

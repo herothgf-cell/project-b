@@ -1,13 +1,47 @@
 using System.Linq;
 using UnityEngine;
 public sealed class RoadMapPreview : MonoBehaviour {
- Camera cameraView;RenderTexture texture;string version="";GameObject geometry;public RenderTexture Texture {get{return texture;}}
- public void Clear(){version="";if(geometry)Destroy(geometry);geometry=null;}
- public void Draw(RoadMapDocument d,Vector2 centre,float span){string key=d.id+":"+d.revision+":"+centre+":"+span;if(key==version)return;Clear();version=key;if(!cameraView){var c=new GameObject("편집 3D 카메라");c.transform.SetParent(transform);cameraView=c.AddComponent<Camera>();cameraView.enabled=false;cameraView.cullingMask=1<<30;cameraView.clearFlags=CameraClearFlags.SolidColor;cameraView.backgroundColor=new Color(.2f,.26f,.3f);texture=new RenderTexture(950,600,16);cameraView.targetTexture=texture;cameraView.farClipPlane=5000;}
-  geometry=new GameObject("편집 미리보기");geometry.transform.SetParent(transform);var road=WorldBuilder.Mat("Preview asphalt",new Color(.2f,.23f,.26f));var paint=WorldBuilder.Mat("Preview lanes",new Color(.3f,.9f,.85f));foreach(var l in d.lanes.Where(l=>!l.disabled)){for(int i=1;i<l.points.Length;i++){var a=l.points[i-1].V(l.heights!=null&&i-1<l.heights.Length?l.heights[i-1]:0);var b=l.points[i].V(l.heights!=null&&i<l.heights.Length?l.heights[i]:0);if(Vector2.Distance(new Vector2(a.x,a.z),centre)>span)continue;var obj=WorldBuilder.Box("차로 "+l.id,(a+b)*.5f,new Vector3(l.width,.08f,Vector3.Distance(a,b)),road,geometry.transform,false);obj.transform.rotation=Quaternion.LookRotation(b-a);obj.layer=30;var line=WorldBuilder.Box("차로 중심",(a+b)*.5f+Vector3.up*.06f,new Vector3(.12f,.025f,Vector3.Distance(a,b)),paint,geometry.transform,false);line.transform.rotation=obj.transform.rotation;line.layer=30;}}
-  RoadMapFacilities.Build(d,geometry.transform,null);foreach(Transform item in geometry.GetComponentsInChildren<Transform>())item.gameObject.layer=30;var target=new Vector3(centre.x,0,centre.y);cameraView.transform.position=target+new Vector3(0,span*.65f,-span*.55f);cameraView.transform.LookAt(target);cameraView.fieldOfView=58;cameraView.Render();}
- void OnDestroy(){if(texture){texture.Release();Destroy(texture);}if(geometry)Destroy(geometry);}
+ Camera cameraView;RenderTexture texture;string version="";GameObject geometry;
+ readonly System.Collections.Generic.List<Material> ownedMaterials=new System.Collections.Generic.List<Material>();
+ readonly System.Collections.Generic.List<Mesh> ownedMeshes=new System.Collections.Generic.List<Mesh>();
+ public RenderTexture Texture {get{return texture;}}
+ public void Clear(){version="";if(geometry){geometry.SetActive(false);Destroy(geometry);}geometry=null;foreach(var mesh in ownedMeshes)if(mesh)Destroy(mesh);ownedMeshes.Clear();foreach(var material in ownedMaterials)if(material)Destroy(material);ownedMaterials.Clear();}
+ Material PreviewMaterial(string name,Color color){var m=WorldBuilder.Mat(name,color);ownedMaterials.Add(m);return m;}
+ public void Draw(RoadMapDocument d,Vector2 centre,float span,ProjectMapScene scene=null){
+  string key=d.GetHashCode()+":"+d.id+":"+d.revision+":"+centre+":"+span;if(key==version)return;Clear();version=key;
+  if(!cameraView){var c=new GameObject("편집 3D 카메라");c.transform.SetParent(transform);cameraView=c.AddComponent<Camera>();cameraView.enabled=false;cameraView.cullingMask=1<<30;cameraView.clearFlags=CameraClearFlags.SolidColor;cameraView.backgroundColor=new Color(.2f,.26f,.3f);texture=new RenderTexture(950,600,16);cameraView.targetTexture=texture;cameraView.farClipPlane=5000;}
+  geometry=new GameObject("편집 미리보기");geometry.transform.SetParent(transform);
+  var road=PreviewMaterial("Preview asphalt",new Color(.2f,.23f,.26f));var paint=PreviewMaterial("Preview lanes",new Color(.3f,.9f,.85f));
+  var floor=PreviewMaterial("Preview ground",new Color(.2f,.29f,.21f));WorldBuilder.Box("지면",new Vector3(centre.x,-.2f,centre.y),new Vector3(span*3,.2f,span*3),floor,geometry.transform,false);
+  if(scene!=null){
+   var materials=new System.Collections.Generic.Dictionary<string,Material>();
+   foreach(var o in scene.objects.Where(x=>x.enabled&&x.points!=null&&x.points.Length>1)){
+    if(o.points.Max(p=>p.x)<centre.x-span||o.points.Min(p=>p.x)>centre.x+span||o.points.Max(p=>p.z)<centre.y-span||o.points.Min(p=>p.z)>centre.y+span)continue;
+    Material material;if(!materials.TryGetValue(o.kind,out material)){material=PreviewMaterial("Preview "+o.kind,RoadMapEditor.SceneColor(o.kind));materials[o.kind]=material;}
+    if(o.kind=="road"){for(int i=1;i<o.points.Length;i++)Segment(o.name,o.points[i-1].V(.02f),o.points[i].V(.02f),o.width,.05f,material);continue;}
+    Polygon(o,material);
+    if(o.kind=="parking"||o.kind=="restaurant"||o.kind=="rest"){var bay=WorldBuilder.Box("주차 / 서비스 "+o.name,new Vector3(o.serviceX,.15f,o.serviceZ),new Vector3(2.6f,.05f,5.5f),paint,geometry.transform,false);bay.transform.rotation=Quaternion.Euler(0,o.yaw,0);}
+   }
+  }
+  foreach(var l in d.lanes.Where(l=>!l.disabled)){for(int i=1;i<l.points.Length;i++){var a=l.points[i-1].V(l.heights!=null&&i-1<l.heights.Length?l.heights[i-1]:0);var b=l.points[i].V(l.heights!=null&&i<l.heights.Length?l.heights[i]:0);if(Mathf.Max(a.x,b.x)<centre.x-span||Mathf.Min(a.x,b.x)>centre.x+span||Mathf.Max(a.z,b.z)<centre.y-span||Mathf.Min(a.z,b.z)>centre.y+span)continue;if(scene==null)Segment("차로 "+l.id,a,b,l.width,.08f,road);Segment("차로 중심",a+Vector3.up*.1f,b+Vector3.up*.1f,.12f,.025f,paint);}}
+  RoadMapFacilities.Build(d,geometry.transform,null);foreach(Transform item in geometry.GetComponentsInChildren<Transform>())item.gameObject.layer=30;
+  var target=new Vector3(centre.x,0,centre.y);cameraView.transform.position=target+new Vector3(0,span*.65f,-span*.55f);cameraView.transform.LookAt(target);cameraView.fieldOfView=58;cameraView.Render();
+ }
+ void Segment(string name,Vector3 a,Vector3 b,float width,float height,Material material){if((b-a).sqrMagnitude<.00001f)return;var obj=WorldBuilder.Box(name,(a+b)*.5f,new Vector3(width,height,Vector3.Distance(a,b)),material,geometry.transform,false);obj.transform.rotation=Quaternion.LookRotation(b-a);}
+ void Polygon(ProjectMapObject o,Material material){
+  int[] roof;try{roof=ProjectMapScene.Triangulate(o.points);}catch(System.ArgumentException){return;}
+  float height=o.kind=="building"?Mathf.Max(.2f,o.height):Mathf.Max(.025f,o.height);
+  var vertices=new System.Collections.Generic.List<Vector3>();var faces=new System.Collections.Generic.List<int>();
+  foreach(var p in o.points)vertices.Add(p.V(height));
+  for(int i=0;i<roof.Length;i+=3){int a=roof[i],b=roof[i+1],c=roof[i+2];faces.AddRange(Vector3.Cross(vertices[b]-vertices[a],vertices[c]-vertices[a]).y>=0?new[]{a,b,c}:new[]{c,b,a});}
+  float area=0;for(int i=0;i<o.points.Length;i++){var a=o.points[i];var b=o.points[(i+1)%o.points.Length];area+=a.x*b.z-b.x*a.z;}
+  if(height>.03f)for(int i=0;i<o.points.Length;i++){int j=(i+1)%o.points.Length,n=vertices.Count;vertices.AddRange(new[]{o.points[i].V(),o.points[j].V(),o.points[j].V(height),o.points[i].V(height)});faces.AddRange(area>0?new[]{n,n+2,n+1,n,n+3,n+2}:new[]{n,n+1,n+2,n,n+2,n+3});}
+  var mesh=new Mesh{name="Preview polygon "+o.id};mesh.indexFormat=UnityEngine.Rendering.IndexFormat.UInt32;mesh.SetVertices(vertices);mesh.SetTriangles(faces,0);mesh.RecalculateNormals();mesh.RecalculateBounds();ownedMeshes.Add(mesh);
+  var obj=new GameObject(o.kind+" "+o.name);obj.transform.SetParent(geometry.transform);obj.AddComponent<MeshFilter>().sharedMesh=mesh;obj.AddComponent<MeshRenderer>().sharedMaterial=material;
+ }
+ void OnDestroy(){Clear();if(texture){texture.Release();Destroy(texture);}}
 }
+
 public sealed class RoadMapLamp : MonoBehaviour {
  public TrafficSystem system;public RoadMapSignalProgram program;public string groupId;public Renderer red,yellow,green;Material off,onRed,onYellow,onGreen;
  public void Initialize(){off=WorldBuilder.Mat("Editor lamp off",new Color(.07f,.08f,.09f));onRed=WorldBuilder.Mat("Editor red",Color.red);onYellow=WorldBuilder.Mat("Editor yellow",Color.yellow);onGreen=WorldBuilder.Mat("Editor green",Color.green);foreach(var m in new[]{onRed,onYellow,onGreen}){m.EnableKeyword("_EMISSION");m.SetColor("_EmissionColor",m.color*2);}Update();}

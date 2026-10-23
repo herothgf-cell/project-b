@@ -27,7 +27,9 @@ public static class FuelStationLayout {
  static MapPoint Point(Vector3 value){return new MapPoint{x=value.x,z=value.z};}
  static MapRoad Surface(string id,float width,IList<Vector3> positions){var pts=new MapPoint[positions.Count];for(int i=0;i<pts.Length;i++)pts[i]=Point(positions[i]);return new MapRoad{id=id,name="주유소 게임시설 노면",width=width,lanes=1,sourceLanes=1,oneWay=1,suppressPaint=true,points=pts};}
  public static IReadOnlyList<FuelStation> For(MapData map){if(map==null)return none;Layout layout;return layouts.TryGetValue(map,out layout)?layout.stations:none;}
- public static FuelStation Rest(MapData map){Layout layout;return map!=null&&layouts.TryGetValue(map,out layout)?layout.rest:null;}
+ public static void Reset(MapData map){layouts.Remove(map);}
+ public static FuelStation FromObject(MapData map,ProjectMapObject o){var stop=ProjectMapScene.ServiceStop(map,o);var drive=new Vector3[51];for(int i=0;i<drive.Length;i++)drive[i]=Vector3.Lerp(stop.V(),o.Position,i/50f);var entry=stop.V();var leave=stop.V();var entryRoad=Array.Find(map.roads,r=>r.id=="fuel:rest-east:entrance");var exitRoad=Array.Find(map.roads,r=>r.id=="fuel:rest-east:exit");if(o.id=="service:rest-east"&&entryRoad!=null&&exitRoad!=null&&Vector3.Distance(entryRoad.points[entryRoad.points.Length-1].V()+o.Direction*6,o.Position)<.1f){var path=new List<Vector3>();foreach(var p in entryRoad.points)path.Add(p.V());path.Add(o.Position);foreach(var p in exitRoad.points)path.Add(p.V());drive=path.ToArray();entry=entryRoad.points[0].V();leave=exitRoad.points[exitRoad.points.Length-1].V();}return new FuelStation(o.name,o.id,stop,entry,leave,o.Position,o.Direction,drive,Array.ConvertAll(o.points,p=>p.V()),new MapRoad[0]);}
+ public static FuelStation Rest(MapData map){if(ProjectMapScene.Active(map)){foreach(var o in ProjectMapScene.Services(map,"rest"))return FromObject(map,o);return null;}Layout layout;return map!=null&&layouts.TryGetValue(map,out layout)?layout.rest:null;}
  public static void Apply(MapData map){
   if(map==null)return;Layout existing;if(layouts.TryGetValue(map,out existing))return;
   var entries=new List<FuelStation>();
@@ -43,9 +45,9 @@ public static class FuelStationLayout {
   // Never leave a partly populated set of facilities if an input changed.
   if(entries.Count!=3){Debug.LogWarning("FUEL_LAYOUT_UNAVAILABLE expected three reviewed Eungye sites; no facilities appended");entries.Clear();}
   FuelStation rest=null;int restEdge=Array.FindIndex(map.hdEdges,e=>e.id==laneIds[2]&&!e.disabled);
-  if(entries.Count==3&&restEdge>=0){for(float at=laneAts[2]+80;at+32<graph.paths[restEdge].length;at+=20){try{rest=CreateFacility(map,graph,restEdge,at,17,"rest-east","은계 동부 휴식 주차구역 (게임시설)");break;}catch(InvalidOperationException){}}
+  if(!ProjectMapScene.Active(map)&&entries.Count==3&&restEdge>=0){for(float at=laneAts[2]+80;at+32<graph.paths[restEdge].length;at+=20){try{rest=CreateFacility(map,graph,restEdge,at,17,"rest-east","은계 동부 휴식 주차구역 (게임시설)");break;}catch(InvalidOperationException){}}
    if(rest==null)throw new InvalidOperationException("No clear rest parking plot along east service corridor");}
-  var roads=new List<MapRoad>(map.roads);foreach(var station in entries)roads.AddRange(station.surfaces);if(rest!=null)roads.AddRange(rest.surfaces);map.roads=roads.ToArray();
+  if(!ProjectMapScene.Active(map)){var roads=new List<MapRoad>(map.roads);foreach(var station in entries)foreach(var surface in station.surfaces)if(!roads.Exists(r=>r.id==surface.id))roads.Add(surface);if(rest!=null)foreach(var surface in rest.surfaces)if(!roads.Exists(r=>r.id==surface.id))roads.Add(surface);map.roads=roads.ToArray();}
   layouts.Add(map,new Layout(entries,rest));
  }
  static FuelStation CreateFacility(MapData map,HdRoadGraph graph,int edge,float at,float depth,string key,string label){var path=graph.paths[edge];
@@ -56,7 +58,7 @@ public static class FuelStationLayout {
    for(int i=0;i<=24;i++){float along,across;SOffset(i/24f,18,depth,out along,out across);enter.Add(q(-24+along,across));leave.Add(q(6+along,depth-across));}
    enter[0]=path.Position(at-24);leave[leave.Count-1]=path.Position(at+24);
    var surfaces=new[]{Surface("fuel:"+key+":court",20,new[]{q(-12,depth),q(12,depth)}),Surface("fuel:"+key+":entrance",7.2f,enter),Surface("fuel:"+key+":exit",7.2f,leave)};
-   ValidatePlot(map,surfaces,key);
+   if(!ProjectMapScene.Active(map))ValidatePlot(map,surfaces,key);
    var approachPosition=path.Position(at-28);var approachDirection=path.Tangent(at-28);
    var stop=new MapStop{name=label+" 입구 · 내부 수동 운전",x=approachPosition.x,z=approachPosition.z,dx=approachDirection.x,dz=approachDirection.z,width=3,graphStop=true,laneEdge=edge,laneAt=at-28};
    var drive=new List<Vector3>(enter);drive.Add(q(0,depth));drive.AddRange(leave);
@@ -91,7 +93,7 @@ public static class FuelStationLayout {
  public static void Draw(MapData map,Transform parent){
   if(parent.Find("주유소 게임시설"))return;var root=new GameObject("주유소 게임시설");root.transform.SetParent(parent,false);
   var red=WorldBuilder.Mat("Fuel red",new Color(.76f,.12f,.11f));var white=WorldBuilder.Mat("Fuel white",new Color(.93f,.94f,.91f));var dark=WorldBuilder.Mat("Fuel pump screen",new Color(.025f,.10f,.13f));var yellow=WorldBuilder.Mat("Fuel arrows",new Color(1,.88f,.18f));var concrete=WorldBuilder.Mat("Fuel island",new Color(.55f,.56f,.54f));
-  var rest=Rest(map);if(rest!=null){var lot=new GameObject(rest.name);lot.transform.SetParent(root.transform,false);lot.transform.position=rest.pump;lot.transform.rotation=Quaternion.LookRotation(rest.direction);var blue=WorldBuilder.Mat("Rest bay",new Color(.1f,.55f,.85f));
+  var rest=Rest(map);if(rest!=null&&!ProjectMapScene.Active(map)){var lot=new GameObject(rest.name);lot.transform.SetParent(root.transform,false);lot.transform.position=rest.pump;lot.transform.rotation=Quaternion.LookRotation(rest.direction);var blue=WorldBuilder.Mat("Rest bay",new Color(.1f,.55f,.85f));
    foreach(float x in new[]{-1.4f,1.4f})WorldBuilder.Box("휴식 주차 경계",new Vector3(x,.065f,0),new Vector3(.12f,.02f,6),blue,lot.transform,false);
    foreach(float z in new[]{-3f,3f})WorldBuilder.Box("휴식 주차선",new Vector3(0,.065f,z),new Vector3(2.8f,.02f,.12f),blue,lot.transform,false);
    Label(lot.transform,"휴식 안내","P · 휴식 주차 (게임시설)\n빈차 정차 · F7 · 무료 수면 100초",new Vector3(0,2.7f,0),.065f);
