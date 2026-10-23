@@ -39,3 +39,7 @@
 - 별도 지도 편집 작업과 통합은 사용자에게 전달/통합 허락을 받은 뒤 진행한다. 이 소스 검증 뒤 상대의 main을 통합한 최종 빌드·manifest·검증 결과를 후속 절에 남긴다.
 - 기본 지역은 은계, 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`. 생성 입력2개·정식 지도·OSM 대조·지도 ZIP은 본 작업에서 변경하지 않았다. Unity/Python 설치 경로는 PC별 로컬 환경이며 저장소 경로에 포함하지 않는다.
 - 소스 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-23-compact-feedback-waiting-receipt.md`로 확인한다.
+
+## 개별 소스·빌드 확정
+
+소스는 `2855958`로 실제 커밋했다. 기존 사용자 README·기획06/09·라이선스·지도 편집 문서는 제외했고 LATEST는 본 작업 절만 부분 커밋했다. 검증한 실행 폴더는 해당 소스 기준 manifest를 `artifacts/compact-feedback-validation.json`으로 갱신해 VerifyOnly 종료0(128파일)·Strict 종료0을 확인했다. 이 개별 빌드를 별도 커밋하고 지도 편집 담당 채팅에 전달한 뒤, 통합 빌드는 그 채팅에서 재생성·검증한다. 이 시점의 빌드를 최종 통합 배포로 혼동하지 않는다.
