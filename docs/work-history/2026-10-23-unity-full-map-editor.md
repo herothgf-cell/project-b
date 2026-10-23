@@ -65,3 +65,6 @@ Unity2022.3.62f2 → unity/EungyeTaxi → Taxi/프로젝트 지도 3D 편집. �
 다른 채팅의 사용자 직접 승인과 완료 신호를 확인하고, 소스2855958/배포66eaf0f를19f75d6에서 보존 병합했다. 즉시 점수 알림·대기 승객 분리·결과 정산 간소화 구현을 유지했다. 문서 충돌은 두 기록을 모두 보존했고 generated build/scene/manifest는 재생성한다. DriveFeedbackSmokeTest의 제품명 기대값은 은계 전용 제품명으로 맞췄다.
 
 NativeMapEditorChecks.BuildIntegrated 종료0: 실지도 문서/규칙/표지 합성·신규 객체 재선택·native tools·JsonUtility14·활성회계22·정차850·도로2412·명시규칙우선·은계기본/NativeParity·Scene미리보기와 최종 BuildHybrid. 로그 artifacts/native-integrated-final-build.log. 검사 패널은 오류를 경고보다 먼저 표시해 기존 자료의 근거 경고에 수정할 오류가 가리지 않도록 했다.
+
+- 통합 exe 6개 프로세스 모두 종료0: nativeTraffic6, projectMap23 success=True, passengerCare163(화면 캡처 옵션 없음; 기존167은 캡처용 Board4 추가), 실제 시간 driveFeedback16 success=True, liveSave9/liveReload23. 알림·대기/정산·저장 기능과 새 편집기의 주행 규칙을 함께 확인했다. 로그 artifacts/integrated-player-*.log.
+- 최종 소스20b6593(실제 커밋). 정식 지도/원본 입력 해시와 빌드 stamp를 유지하고 최종 manifest를 다시 생성·검증한다. 이후 기본 폴더 main을 FF하며 기존 사용자 LATEST만 임시 보존/복원하고 나머지 미커밋 문서는 그대로 유지한다.
