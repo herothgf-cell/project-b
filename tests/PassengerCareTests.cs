@@ -1,8 +1,17 @@
 using System;
 class PassengerCareTests {
  static int checks;
- static void Check(bool ok,string message){checks++;if(!ok)throw new Exception(message);}
+ static void Check(bool ok,string message){checks++;if(!ok){Console.WriteLine("FAIL "+message);throw new Exception(message);}}
  static void Main(){
+  var reported=PassengerReward.CalculateDetailed(100,85,5000,5000,0,true,76,3,100,100,false);
+  Check(reported.Breakdown.Contains("기본 73 + 청결 3 = 시작 76"),"receipt must explain cleanliness already included in 76, not an extra missing +3");
+  var shown=PassengerScoreView.Live(76,3,85,100,0);Check(shown.value==76&&shown.Caption.Contains("요구 85"),"HUD shows S76 and R85 rather than internal M100");
+  shown=PassengerScoreView.Live(76,3,85,98,5);Check(shown.value==79&&shown.drive==-2&&shown.request==5,"live driving -2 and request +5 update displayed79");
+  var finished=PassengerReward.CalculateDetailed(98,85,5000,5000,5,true,76,3,100,100,false);Check(PassengerScoreView.Settled(finished).value==shown.value,"equal arrival ETA does not change live score or add clean3 twice");
+  Check(PassengerScoreView.Settled(PassengerReward.CalculateDetailed(98,85,5000,5000,5,true,76,3,100,80,false)).value==91,"safe early time+12 joins same score at arrival only");
+  Check(PassengerScoreView.Live(97,3,100,100,8).value==100&&PassengerScoreView.Live(3,0,60,0,-10).value==0,"display clamps exactly like reward");
+  var lawView=new LawLedger();var lawEvent=new LawEvent{id="score-ui-violation",day=1};lawEvent.Add("red",LawVerdict.Violation,20);lawView.Record(lawEvent);Check(lawView.TotalScore==80&&shown.value==79,"independent law20 does not replace passenger79");
+  var goodEvent=new LawEvent{id="score-ui-compliant",day=2};goodEvent.Add("yield",LawVerdict.Compliant,0);lawView.Record(goodEvent);Check(lawView.TotalScore==81,"actual compliance raises cumulative score by1 across days");var savedLaw=new LawLedger();foreach(var item in lawView.Events)savedLaw.Record(item);Check(savedLaw.TotalScore==81&&!savedLaw.Record(goodEvent),"restored law score and event dedup unchanged");
   var care=new VehicleCare();Check(care.Cleanliness==100&&care.BoardingBonus==3,"new campaign clean100 and boarding +3");
   Check(care.Finish("plain",false)&&care.Cleanliness==98&&!care.Finish("plain",true),"normal -2 once per trip");
   Check(care.Finish("vomit",true)&&care.Cleanliness==10,"vomit min10 instead of -2");Check(care.Refuse("offer1")&&care.AcceptanceLocked&&care.Refusals==1&&!care.Refuse("offer1"),"refusal once; no ride identity created");

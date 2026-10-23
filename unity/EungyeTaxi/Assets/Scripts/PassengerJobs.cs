@@ -14,6 +14,8 @@ public class PassengerJobs : MonoBehaviour {
  public int balance,completed,failed;public string message="1·2·3으로 호출 선택 / 길가 손님 옆에 정차 후 F";
  public RoadNavigation nav;public MapStop[] stops;public GameObject[] people;public float[] cooldown;GameObject marker;float resultUntil,nextOfferRetry;int generation;int offerPhase=-1;bool deadlineNotice,passengerChangeApplied;int passengerVia=-1;public int PassengerViaStop {get{return passengerVia;}}public bool PassengerViaPending {get{return passengerVia>=0;}}public string OfferId {get;private set;}
  public PassengerReward RequestReward {get;private set;}
+ public bool HasPassengerScore {get{return current!=null&&(trip.State==TripState.OnTrip||((trip.State==TripState.Complete||trip.State==TripState.Failed)&&trip.ArrivalLocked&&RequestReward!=null));}}
+ public PassengerScoreView ScoreView {get{return RequestReward!=null&&trip.ArrivalLocked?PassengerScoreView.Settled(RequestReward):PassengerScoreView.Live(StartSatisfaction,CleanBonus,current==null?0:current.requiredScore,session.manners.ledger.Score,session.requests?session.requests.request.SatisfactionDelta:0);}}
  public int Cleanliness {get{return session.business.ledger.Care.Cleanliness;}}
  public bool NeedsWash {get{return session.business.ledger.Care.NeedsWash;}}
  public bool AcceptanceLocked {get{return session.business.ledger.Care.AcceptanceLocked;}}

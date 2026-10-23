@@ -51,7 +51,7 @@ public class PassengerRequestUI : MonoBehaviour {
    case RequestKind.RouteAdvice:if(!nav.SetPassengerPreference(false,true))return false;adviceFastest=true;expectedDistance=nav.remaining;response="빠른 길 적용 · "+RoadNavigation.FormatEta(nav.estimatedSeconds)+" / "+Mathf.CeilToInt(nav.remaining)+"m 예상";break;
    case RequestKind.Interview:response="응원합니다. 편하게 준비하실 수 있게 운행할게요";break;
    case RequestKind.Music:response="음악을 바꿔 달라는 말씀이시죠? (프로토에서는 대화만 제공)";break;
-   case RequestKind.FareHelp:response="약정 "+session.jobs.current.fare.ToString("N0")+"원 · 승객 만족도 요구 미달 시70%, 늦은 도착0원 · 할인·미수금 없음";break;
+   case RequestKind.FareHelp:response="약정 "+session.jobs.current.fare.ToString("N0")+"원 · 운전 만족도(M) 요구 미달 시70%, 늦은 도착0원 · 할인·미수금 없음";break;
    case RequestKind.LocalChat:response="은계 주변을 다니고 있어요. 안전하게 모셔다드릴게요.";break;
    case RequestKind.LostItem:response="하차 후 분실물을 발견하면 보관·신고 절차를 안내하겠습니다. (텍스트 사건)";break;
    default:response="죄송하지만 신호는 지켜야 해요. 안전하게 모셔다드릴게요.";break;
