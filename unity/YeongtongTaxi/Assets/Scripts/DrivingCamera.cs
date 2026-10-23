@@ -3,7 +3,8 @@ public class DrivingCamera : MonoBehaviour {
     public Transform target;
     public bool FirstPerson { get; private set; }
     public bool RearView { get; private set; }
-    public bool testRearView;public float testLook;public float LookYaw {get;private set;}public bool cornerLook=true;TaxiController taxi;
+    public bool testRearView;public float testLook;public float LookYaw {get;private set;}public bool cornerLook=false;TaxiController taxi;
+    float stableYaw;
     Camera view; GameObject cockpit; bool snap=true;
     void Start() {
         view=GetComponent<Camera>();taxi=target.GetComponent<TaxiController>();cockpit=new GameObject("Temporary cockpit");cockpit.transform.SetParent(target,false);cockpit.transform.localPosition=new Vector3(-.43f,1.07f,.6f);
@@ -27,7 +28,16 @@ public class DrivingCamera : MonoBehaviour {
     }
     void LateUpdate() {
         if(!target)return;
-        if(FirstPerson){transform.position=target.TransformPoint(new Vector3(-.43f,1.07f,.6f));float manual=testLook!=0?testLook:(Input.GetKey(KeyCode.Z)?-1:Input.GetKey(KeyCode.X)?1:Input.GetAxisRaw("TaxiLook"));float desiredYaw=Mathf.Abs(manual)>.15f?manual*65:cornerLook?taxi.SteeringInput*18*Mathf.Clamp01(Mathf.Abs(taxi.Speed)/3):0;LookYaw=Mathf.Lerp(LookYaw,desiredYaw,1-Mathf.Exp(-5*Time.deltaTime));transform.rotation=target.rotation*Quaternion.Euler(2,RearView?180:LookYaw,0);return;}
+        if(FirstPerson){
+            float yaw=target.eulerAngles.y;
+            stableYaw=snap?yaw:Mathf.LerpAngle(stableYaw,yaw,1-Mathf.Exp(-14*Time.deltaTime));
+            // Keep the eye attached to the driver, but do not inherit suspension roll/pitch.
+            transform.position=target.position+Quaternion.Euler(0,yaw,0)*new Vector3(-.43f,1.07f,.6f);
+            float manual=testLook!=0?testLook:(Input.GetKey(KeyCode.Z)?-1:Input.GetKey(KeyCode.X)?1:Input.GetAxisRaw("TaxiLook"));
+            float desiredYaw=Mathf.Abs(manual)>.15f?manual*65:cornerLook?taxi.SteeringInput*6*Mathf.Clamp01(Mathf.Abs(taxi.Speed)/3):0;
+            LookYaw=Mathf.Lerp(LookYaw,desiredYaw,1-Mathf.Exp(-5*Time.deltaTime));
+            transform.rotation=Quaternion.Euler(2,stableYaw+(RearView?180:LookYaw),0);snap=false;return;
+        }
         var focus=target.position+Vector3.up*1.3f;var forward=RearView?-target.forward:target.forward;var desired=focus-forward*9+Vector3.up*4.5f;
         RaycastHit hit;var delta=desired-focus;if(Physics.SphereCast(focus,.25f,delta.normalized,out hit,delta.magnitude,~((1<<8)|(1<<9))))desired=focus+delta.normalized*Mathf.Max(1,hit.distance-.3f);
         transform.position=snap?desired:Vector3.Lerp(transform.position,desired,1-Mathf.Exp(-7*Time.deltaTime));transform.LookAt(focus+forward*3);snap=false;

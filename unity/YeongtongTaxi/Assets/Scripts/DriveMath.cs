@@ -1,6 +1,12 @@
 using System;
 public static class DriveMath {
     public const float ParkingSteerAngle=42f;
+    // Manual parking turns are tighter; H retains its calibrated bicycle geometry.
+    // Fade out the extra steering by 30kph to preserve the high-speed grip limit.
+    public static float ManualSteerAngle(float speedKph) {
+        float blend=Math.Max(0,Math.Min(1,(30-Math.Abs(speedKph))/16));
+        return Math.Min(48,SteerAngle(speedKph)*(1+.14f*blend));
+    }
     public struct Demand { public float motor, brake; }
     public static float SteerAngle(float speedKph) {
         float speed=Math.Abs(speedKph)/3.6f;

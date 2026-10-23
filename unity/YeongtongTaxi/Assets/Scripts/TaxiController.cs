@@ -54,7 +54,7 @@ public class TaxiController : MonoBehaviour {
         if(assistance)assistance.Apply(ref steer,ref manual);
         var demand=assistedSteering?manual:DriveMath.CornerAssist(manual,Speed,steer);
         CornerAssisting=demand.motor<manual.motor||demand.brake>manual.brake;
-        float centerAngle=steer*DriveMath.SteerAngle(Speed*3.6f);
+        float centerAngle=steer*(assistedSteering?DriveMath.SteerAngle(Speed*3.6f):DriveMath.ManualSteerAngle(Speed*3.6f));
         for(int i=0;i<4;i++) { wheels[i].steerAngle=i<2?DriveMath.WheelSteerAngle(centerAngle,i==0):0; wheels[i].motorTorque=i>=2?demand.motor*1100:0; wheels[i].brakeTorque=demand.brake*3500; }
         body.AddForce(Vector3.down*body.velocity.sqrMagnitude*6);
         int grounded=0;foreach(var wheel in wheels)if(wheel.isGrounded)grounded++;

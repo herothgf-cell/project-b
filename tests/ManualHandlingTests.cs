@@ -17,6 +17,9 @@ class ManualHandlingTests {
    Check(speed*speed*Math.Tan(DriveMath.SteerAngle(kph)*Math.PI/180)/2.6<=5.01,"high-speed lateral stability at "+kph);
   }
   Check(DriveMath.SteerAngle(-8)==DriveMath.SteerAngle(8),"reverse uses the same parking steering geometry");
+  Check(2.6/Math.Tan(DriveMath.ManualSteerAngle(8)*Math.PI/180)<2.4,"manual low-speed center radius below 2.4m");
+  Check(DriveMath.ManualSteerAngle(-8)==DriveMath.ManualSteerAngle(8),"manual reverse symmetry");
+  foreach(float speed in new[]{30f,50f,90f})Check(DriveMath.ManualSteerAngle(speed)==DriveMath.SteerAngle(speed),"manual high-speed limit preserved "+speed);
   float outer=DriveMath.WheelSteerAngle(42,true),inner=DriveMath.WheelSteerAngle(42,false);
   Check(inner>42&&outer<42,"inside front wheel turns tighter to prevent low-speed tyre scrub");
   double leftRadius=2.6/Math.Tan(outer*Math.PI/180)-.85;

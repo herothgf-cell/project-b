@@ -32,12 +32,15 @@ public class ManualHandlingSmokeTest : MonoBehaviour {
   float brakingDistance=Vector3.Distance(brakingStart,t.transform.position);t.autoThrottle=0;t.autoBrake=true;
   Check(brakeElapsed<5&&brakingDistance>=3&&brakingDistance<12&&m.brakeEvents==brakeBefore,"ordinary S stop distance="+brakingDistance+" seconds="+brakeElapsed+" no harsh deduction "+probe.Summary());probe.Capture("");
   foreach(int side in new[]{-1,1}){
+   var camera=FindObjectOfType<DrivingCamera>();camera.SetFirstPerson(side<0);
+   Check(!camera.cornerLook,"automatic corner gaze is off by default");
    Place(padCenter,Vector3.forward);yield return Settle();m.Suppress(20);
    Vector3 start=t.transform.position;float time=0,angle=0,maxTilt=0;
    t.autoSteer=side;
    while(time<10&&angle<90){t.autoThrottle=t.Speed<2.2f?.75f:0;yield return new WaitForFixedUpdate();time+=Time.fixedDeltaTime;angle=Mathf.Abs(Vector3.SignedAngle(Vector3.forward,t.transform.forward,Vector3.up));maxTilt=Mathf.Max(maxTilt,Vector3.Angle(t.transform.up,Vector3.up));}
    Vector3 delta=t.transform.position-start;float radius=(Mathf.Abs(delta.x)+Mathf.Abs(delta.z))*.5f;t.autoThrottle=0;t.autoBrake=true;
-   Check(angle>=90&&radius<=3.6f&&maxTilt<15,"physical low-speed 90deg side="+side+" radius="+radius+" delta="+delta+" seconds="+time+" tilt="+maxTilt);
+   Check(angle>=90&&radius<=3.2f&&maxTilt<15,"physical low-speed 90deg side="+side+" radius="+radius+" delta="+delta+" seconds="+time+" tilt="+maxTilt);
+   if(camera.FirstPerson)Check(Mathf.Abs(camera.LookYaw)<.01f&&Mathf.Abs(Vector3.Dot(camera.transform.right,Vector3.up))<.001f,"first person has no automatic side gaze or roll during physical turn");
   }
   foreach(int side in new[]{-1,1}){
    Place(padCenter,Vector3.forward);yield return Settle();m.Suppress(20);t.body.velocity=Vector3.forward*25;t.autoSteer=side;

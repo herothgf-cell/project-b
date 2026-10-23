@@ -5,6 +5,10 @@ public class ServiceStops : MonoBehaviour {
  public bool PostTripVisible {get{return postTrip;}}
  public DriveSession session;public bool open;public string notice="";public int pending=-1;public string destination="";
  float noticeUntil;int pendingFuel=-1;public float FuelAmount {get{return Mathf.Min(10,100-session.business.ledger.Account.Fuel);}}
+ static readonly string[] mealMenu={"제육백반","된장찌개 정식","소고기국밥"};
+ public int SelectedMeal {get;private set;}
+ public string MealName {get{return mealMenu[SelectedMeal];}}
+ public bool SelectMeal(int index){if(!open||pending!=1||index<0||index>=mealMenu.Length)return false;SelectedMeal=index;return true;}
  // Legacy regional references; Eungye meal has a dedicated stop. Retained for meal/parking and old regional stop references. Eungye fuel uses actual pump bays.
  public readonly int[] indices={3,6,9};
  readonly string[] names={"임시 주유소","임시 식당","임시 주차장"};
@@ -130,7 +134,9 @@ public class ServiceStops : MonoBehaviour {
   GUI.depth=-110;float height=Stations.Count>0?625:510,x=(Screen.width-720)/2f,y=(Screen.height-height)/2f;
   GUI.color=new Color(.04f,.09f,.12f,1);GUI.DrawTexture(new Rect(x,y,720,height),Texture2D.whiteTexture);GUI.color=Color.white;
   var b=session.business;var a=b.ledger.Account;GUI.Label(new Rect(x+20,y+15,680,55),"생활 거점 (메뉴 동안 시간 정지)\n현금 "+a.Cash.ToString("N0")+"원 · 미납 "+a.Debt.ToString("N0")+"원 · 연료 "+a.Fuel.ToString("0.0")+"%",style);
-  if(pending>=0){GUI.Label(new Rect(x+30,y+110,660,160),Quote(pending)+"\n\n확정할 때만 처리합니다. 식사 부족금은 생활비 미납으로 기록합니다.",style);if(GUI.Button(new Rect(x+30,y+height-130,310,50),"확정",button))ConfirmAction(true);if(GUI.Button(new Rect(x+380,y+height-130,310,50),"취소",button))ConfirmAction(false);return;}
+  if(pending>=0){GUI.Label(new Rect(x+30,y+110,660,160),(pending==1?MealName+" · ":"")+Quote(pending)+"\n\n확정할 때만 처리합니다. 식사 부족금은 생활비 미납으로 기록합니다.",style);
+   if(pending==1){for(int i=0;i<mealMenu.Length;i++)if(GUI.Button(new Rect(x+30+i*220,y+285,210,48),(SelectedMeal==i?"✓ ":"")+mealMenu[i],button))SelectMeal(i);GUI.Label(new Rect(x+30,y+340,660,50),"기사식당 프로토 메뉴 · 모두 3,000원 / 50초 / 포만감 +70 (최대 100)",style);}
+   if(GUI.Button(new Rect(x+30,y+height-130,310,50),"확정",button))ConfirmAction(true);if(GUI.Button(new Rect(x+380,y+height-130,310,50),"취소",button))ConfirmAction(false);return;}
   int row=0;
   if(Stations.Count>0){for(int i=0;i<Stations.Count;i++)Row(x,y+85+row++*62,Stations[i].name,0,i,style,button);}else Row(x,y+85+row++*62,names[0]+" · "+session.jobs.stops[indices[0]].name,0,-1,style,button);
   for(int i=1;i<3;i++)Row(x,y+85+row++*62,(i==1?"식당":names[i])+" · "+StopFor(i).name,i,-1,style,button);

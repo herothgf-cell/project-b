@@ -15,7 +15,7 @@ public class FullMapOverlay : MonoBehaviour {
    "\n가까운 교차로: "+(nearest==null?"없음":nearest.name+" ("+distance.ToString("0.0",CultureInfo.InvariantCulture)+"m)");
  }
  public string LocationText {get{return DescribeLocation(session.world.map,session.taxi.transform.position,session.taxi.transform.eulerAngles.y,session.traffic.junctions);}}
- public bool ShowFacilities=true,ShowTraffic=true,ShowLaw=true;
+ public bool ShowFacilities=true,ShowTraffic=true,ShowLaw=false;
  public sealed class MapMarker {public Vector3 position;public string label;public Color color;public bool named;}
  public List<MapMarker> VisibleMarkers(){
   var markers=new List<MapMarker>();
