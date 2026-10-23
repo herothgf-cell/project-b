@@ -205,3 +205,5 @@
 건물·보도·도로 노면·주차장·식당/휴식 부지·물/일반 부지를 간편 편집에서 추가/선택/이동/회전/크기/꼭짓점/삭제한다. 주차 정차점·방향·접근 차로는 실제 생활 서비스와 내비/지도 핀에 연결한다. 기존 차로/시설 편집과 분리 시험은 유지한다.
 
 정식 자료는 Git 추적 `config/maps/project/eungye.project.json`이다. 기준 지도를 포함하므로 개인 AppData나 원본 GIS 없이 pull 후 BuildHybrid로 재현한다. 개인 초안과 프로젝트 저장은 구분하며, 변경 충돌·해시·형상·접근 검사를 통과한 자료만 배포한다. 관련 [사용법](road-map-editor-guide.md), [설계](superpowers/specs/2026-10-23-project-map-editor.md), [작업 이력](work-history/2026-10-23-project-map-editor.md)을 따른다.
+
+2026-10-23 지도 제작: Unity Scene에서 실행파일과 같은 정적 지도 형상을 직접 선택/이동/회전/크기 조절한다. 정식 프로젝트 JSON 및 기존 주행 그래프를 유지하며 변경 객체/구역만 갱신한다. 차량/승객/HUD 시뮬레이션은 별도 실행파일에서 확인한다. [사용법](unity-map-editor-guide.md).

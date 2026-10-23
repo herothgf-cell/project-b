@@ -1,5 +1,9 @@
 # 최신 작업 인계
 
+## 2026-10-23 Unity 3D 프로젝트 지도 편집
+
+[사용법](../unity-map-editor-guide.md) · [구현·검증·남은 범위](2026-10-23-unity-scene-map-editor.md). 실행 월드 공유 형상/재질, Scene 클릭·W/E/R/F·꼭짓점·정차점/접근 차로, 객체 Undo/초안/충돌 처리, 정식 JSON 저장. Session/Renderer/수입 링 저장/Window/기존 편집 검사 및 원본 입력 없는 BuildHybrid·새 exe 프로젝트23검사 종료0. 전체 지도100회 편집 평균0.204ms/p95 0.345ms(CPU 갱신만), 전체 생성1회. 기본 은계exe; 정식 지도/입력3개/ZIP 보존, Strict0. 다음 확인은 실제 Unity 마우스·다른 물리PC·수동 캠페인. 배포 소스/manifest/main 결과는 위 기록 기준.
+
 ## 2026-10-23 호출·폰트·팝업 수정 메인 배포
 
 [배포 기록](2026-10-23-call-visibility-and-readable-ui.md#후속-요청에-따른-메인-푸시-완료). 소스c1eb81c/실행파일4360033 origin/main 푸시 종료0. 배포129파일 해시 일치. 지도입력/ZIP 변경 없음. 직접 클릭·운전/전체3일 확인은 남아 있음. 다른 작업 변경 보존.

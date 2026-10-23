@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -74,11 +74,9 @@ using UnityEngine;
   foreach(var o in scene.objects){if(o==null)throw new ArgumentException("빈 장면 객체");if(!o.enabled)continue;
    if(o.kind=="road"){roads.Add(new MapRoad{id=Strip(o.id,"road:"),name=o.name,width=o.width,lanes=o.lanes,sourceLanes=o.lanes,oneWay=o.oneWay?1:0,suppressPaint=o.suppressPaint,points=Copy(o.points)});continue;}
    int[] triangles;try{triangles=Triangulate(o.points);}catch(ArgumentException){
-    // Some imported clipped rings contain coincident clipping vertices. Only
-    // identical source geometry can retain its original trusted triangulation.
-    var b=(map.buildings??new MapBuilding[0]).FirstOrDefault(x=>"building:"+x.id==o.id&&SamePoints(x.points,o.points));
-    MapArea a=null;if(o.id!=null&&o.id.StartsWith("area:")){int n;if(int.TryParse(o.id.Substring(5),out n)&&map.areas!=null&&n>=0&&n<map.areas.Length&&SamePoints(map.areas[n].points,o.points))a=map.areas[n];}
-    triangles=b!=null?b.triangles:a!=null?a.triangles:null;if(!ValidTriangles(triangles,o.points.Length))throw new ArgumentException("다각형 삼각분할 실패: "+o.id);
+    // Coincident clipping vertices have trusted imported triangles. Transforming
+    // that exact topology may retain them; arbitrary vertex edits still reject.
+    triangles=SourceTriangles(map,o);if(!ValidTriangles(triangles,o.points.Length))throw new ArgumentException("다각형 삼각분할 실패: "+o.id);
    }
    if(o.kind=="building")buildings.Add(new MapBuilding{id=Strip(o.id,"building:"),name=o.name,height=o.height,points=Copy(o.points),triangles=triangles});
    else areas.Add(new MapArea{kind=o.kind,name=o.name,evidence=o.id,height=o.height,points=Copy(o.points),triangles=triangles});
@@ -100,6 +98,27 @@ using UnityEngine;
   var label=new GameObject("시설 안내");label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(0,2.7f,0);var text=label.AddComponent<TextMesh>();text.text=o.name+"\n"+(o.kind=="restaurant"?"식사":o.kind=="rest"?"휴식":"영업 주차")+" · 정차 후 F7";text.fontSize=48;text.characterSize=.065f;text.anchor=TextAnchor.MiddleCenter;text.color=Color.white;KoreanText.Apply(text);label.AddComponent<FaceCamera>();
  }}
  public static bool SamePoints(MapPoint[] a,MapPoint[] b){if(a==null||b==null||a.Length!=b.Length)return false;for(int i=0;i<a.Length;i++)if(a[i]==null||b[i]==null||a[i].x!=b[i].x||a[i].z!=b[i].z)return false;return true;}
+ // A positive, nonsingular affine map preserves polygon topology and triangle
+ // winding. Double calculations and float-ULP tolerance support large map coords.
+ public static bool AffineRing(MapPoint[] before,MapPoint[] after){
+  if(before==null||after==null||before.Length!=after.Length||before.Length<3||before.Any(p=>p==null||!Finite(p.x)||!Finite(p.z))||after.Any(p=>p==null||!Finite(p.x)||!Finite(p.z)))return false;
+  if(SamePoints(before,after))return true;
+  int second=0,third=0;double longest=0,best=0,ax=0,az=0,bx=0,bz=0;
+  for(int i=1;i<before.Length;i++){double x=(double)before[i].x-before[0].x,z=(double)before[i].z-before[0].z,d=x*x+z*z;if(d>longest){longest=d;second=i;}}
+  ax=(double)before[second].x-before[0].x;az=(double)before[second].z-before[0].z;
+  for(int i=1;i<before.Length;i++){double x=(double)before[i].x-before[0].x,z=(double)before[i].z-before[0].z,d=ax*z-az*x;if(Math.Abs(d)>Math.Abs(best)){best=d;third=i;bx=x;bz=z;}}
+  if(Math.Abs(best)<1e-10)return false;
+  double ux=(double)after[second].x-after[0].x,uz=(double)after[second].z-after[0].z,vx=(double)after[third].x-after[0].x,vz=(double)after[third].z-after[0].z;
+  if((ux*vz-uz*vx)/best<=1e-10)return false;
+  for(int i=0;i<before.Length;i++){double x=(double)before[i].x-before[0].x,z=(double)before[i].z-before[0].z,u=(x*bz-z*bx)/best,v=(ax*z-az*x)/best;double expectedX=after[0].x+ux*u+vx*v,expectedZ=after[0].z+uz*u+vz*v;double tolerance=.0005+Math.Max(Math.Abs(after[i].x),Math.Abs(after[i].z))*2e-7;if(Math.Abs(expectedX-after[i].x)>tolerance||Math.Abs(expectedZ-after[i].z)>tolerance)return false;}
+  return true;
+ }
+ static int[] SourceTriangles(MapData map,ProjectMapObject obj){
+  if(obj.kind=="building"){var b=(map.buildings??new MapBuilding[0]).FirstOrDefault(x=>"building:"+x.id==obj.id&&AffineRing(x.points,obj.points));return b==null?null:b.triangles;}
+  var area=(map.areas??new MapArea[0]).FirstOrDefault(a=>a.evidence==obj.id&&a.kind==obj.kind&&AffineRing(a.points,obj.points));
+  if(area==null&&obj.id!=null&&obj.id.StartsWith("area:")){int n;if(int.TryParse(obj.id.Substring(5),out n)&&map.areas!=null&&n>=0&&n<map.areas.Length){var a=map.areas[n];if((a.kind==obj.kind||(a.kind=="water"?"water":"land")==obj.kind)&&AffineRing(a.points,obj.points))area=a;}}
+  return area==null?null:area.triangles;
+ }
  static bool Finite(float n){return !float.IsNaN(n)&&!float.IsInfinity(n);}
  static bool ValidTriangles(int[] t,int count){return t!=null&&t.Length>=3&&t.Length%3==0&&t.All(i=>i>=0&&i<count);}
  static double Cross(MapPoint a,MapPoint b,MapPoint c){return ((double)b.x-a.x)*(c.z-a.z)-((double)b.z-a.z)*(c.x-a.x);}
@@ -126,7 +145,7 @@ using UnityEngine;
    ProjectMapObject old;bool same=original.TryGetValue(o.id,out old)&&old.kind==o.kind&&SamePoints(old.points,o.points);bool unchanged=same&&old.width==o.width&&old.height==o.height&&old.serviceX==o.serviceX&&old.serviceZ==o.serviceZ&&old.yaw==o.yaw&&old.laneId==o.laneId&&old.laneAt==o.laneAt;
    if(!same&&o.points.Any(p=>p.x<0||p.z<0||p.x>baseline.width||p.z>baseline.depth))error(o,"지도 경계 밖 형상");
    if(o.kind=="road"){if(o.width<.3f||o.width>80||o.lanes<1||o.lanes>16)error(o,"도로 폭0.3~80m / 차로1~16 필요");if(!same)for(int i=1;i<o.points.Length;i++){if((o.points[i].V()-o.points[i-1].V()).sqrMagnitude<.000001f)error(o,"중복 도로 제어점");for(int j=i+2;j<o.points.Length;j++)if(Intersects(o.points[i-1],o.points[i],o.points[j-1],o.points[j]))error(o,"도로 중심선 자기 교차");}}
-   else {try{Triangulate(o.points);}catch(ArgumentException ex){if(!same)error(o,ex.Message);}if(o.width<=0||o.width>1000)error(o,"객체 폭은 0보다 크고 1000m 이하여야 합니다");if(o.height<0||o.height>300||o.kind=="building"&&o.height<.2f||o.kind=="sidewalk"&&o.height>1)error(o,"건물 높이0.2~300m / 보도0~1m 범위");}
+   else {try{Triangulate(o.points);}catch(ArgumentException ex){if(!same&&(old==null||old.kind!=o.kind||!ValidTriangles(SourceTriangles(baseline,o),o.points.Length)))error(o,ex.Message);}if(o.width<=0||o.width>1000)error(o,"객체 폭은 0보다 크고 1000m 이하여야 합니다");if(o.height<0||o.height>300||o.kind=="building"&&o.height<.2f||o.kind=="sidewalk"&&o.height>1)error(o,"건물 높이0.2~300m / 보도0~1m 범위");}
    if(!o.enabled)continue;valid.Add(o);
    if(o.IsService){RoadMapLane lane;if(string.IsNullOrEmpty(o.laneId)||!lanes.TryGetValue(o.laneId,out lane)||lane.disabled||lane.points==null||lane.points.Length<2||lane.points.Any(p=>p==null)){error(o,"시설 접근 차로를 지정하세요");continue;}var path=new AssistedRoadNetwork.Path(lane.points.Select(p=>p.V()).ToArray());if(o.laneAt<0||o.laneAt>path.length)error(o,"시설 접근 거리가 차로 길이를 벗어납니다");if(!Contains(o.points,o.Position))error(o,"정차 위치를 시설 부지 안에 두세요");if(!unchanged){foreach(var d in new[]{-2f,2f})foreach(var s in new[]{-.95f,.95f})if(!Contains(o.points,o.Position+o.Direction*d+TrafficSystem.Right(o.Direction)*s)){error(o,"정차 칸이 차량 폭/길이를 포함하지 못합니다");goto bayChecked;}bayChecked:;}}
   }

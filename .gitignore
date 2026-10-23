@@ -37,3 +37,6 @@ unity/**/Assets/Resources/eungye-project-map.json
 unity/**/Assets/Resources/eungye-project-map.json.meta
 config/maps/project/*.bak
 config/maps/project/*.lock
+
+# Local sparse Unity map-editor recovery drafts, never project data.
+/Library/ProjectMapEditor/
