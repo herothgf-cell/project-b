@@ -3,6 +3,11 @@ class PassengerCareTests {
  static int checks;
  static void Check(bool ok,string message){checks++;if(!ok){Console.WriteLine("FAIL "+message);throw new Exception(message);}}
  static void Main(){
+  Check(ScoreFeedback.Text("급제동 -2점",-2)=="급제동 · -2","short cause and actual delta without duplicate penalty");
+  Check(ScoreFeedback.Text("요청 이행",5)=="요청 이행 · +5","short positive change");
+  int waitingCount=0;for(int i=0;i<1000;i++){bool present=PassengerWaitingPolicy.Present("fixed-day",0,"stop"+i);Check(present==PassengerWaitingPolicy.Present("fixed-day",0,"stop"+i),"waiting seed does not flicker/reroll");if(present)waitingCount++;}Check(waitingCount>250&&waitingCount<450,"sparse roadside population includes occupied and empty candidates");
+  var receipt=new PassengerResult{initialFare=5000,quoted=6000,paid=6200,cleanBonus=3,driveDelta=-43,satisfactionDelta=5};Check(RideReceiptSummary.Money(receipt)=="기본 운임  5,000원\n보너스  +1,200원\n최종 운임  6,200원","initial quote vs actual net fare change incl changed destination");
+  receipt.paid=3500;Check(RideReceiptSummary.Money(receipt).Contains("보너스  -1,500원"),"fare reduction appears as signed adjustment");Check(RideReceiptSummary.Factors(receipt)=="청결 · +3\n주행 · -43\n요청 이행 · +5","receipt lists only nonzero short satisfaction causes");receipt.initialFare=0;Check(RideReceiptSummary.InitialFare(receipt)==6000,"old receipts without initial quote fall back without fake zeros");
   var reported=PassengerReward.CalculateDetailed(100,85,5000,5000,0,true,76,3,100,100,false);
   Check(reported.Breakdown.Contains("기본 73 + 청결 3 = 시작 76"),"receipt must explain cleanliness already included in 76, not an extra missing +3");
   var shown=PassengerScoreView.Live(76,3,85,100,0);Check(shown.value==76&&shown.Caption.Contains("요구 85"),"HUD shows S76 and R85 rather than internal M100");

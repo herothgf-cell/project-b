@@ -2,6 +2,15 @@
 
 2026-10-23 Unity 통합: 기존 Esc의 차로·출구/차로변경·노면·표지·차량/보행 신호, 건물/부지 생성·삭제를 Unity 3D 편집 창으로 옮긴다. 실제 주행 공통 문서/검사·정식 저장·다른 PC 빌드 경로를 유지한다. [사용법](unity-map-editor-guide.md) · [검증 기록](work-history/2026-10-23-unity-full-map-editor.md).
 
+## 2026-10-23 후속 요청 · 간단 알림/대기 승객/결과 정산
+
+[구현·검증 근거](work-history/2026-10-23-compact-feedback-waiting-receipt.md). 모델/위치 제어/실제 시간 경과·저장 프로세스 검증을 구분한다.
+
+- [x] 운행 점수/만족도 변화는 `원인 · 증감치` 즉시 알림,대기열 없이 동시 표시·자동 해제 검증.
+- [x] 24개 정차 후보와 실제 대기 승객 분리,빈 길가/수락 호출 보장/하차지 비강제·저장 복원 검증.
+- [x] 운행 결과의 최초 예상 운임/증감/실수령3줄,만족도 영향 요소만 짧게 표시·기존 지급 정책 보존 검증.
+- 수익·운송량·생활 시간 밸런스는 사용자 직접 테스트 담당. P7-06/P8-06/P9-07의 수동 검증을 개발자가 완료했다고 표시하지 않는다.
+
 ## P9 취객 운송·차량 청결도·세차 (프로토 추가, 구현·수동 검증 남음)
 
 기준: [취객·청결도15](content-design/15-drunk-passengers-and-cleanliness.md) · [승객04](content-design/04-passengers-and-reservations.md) · [경제05](content-design/05-daily-operation.md) · [HUD13](content-design/13-driving-map-ui.md). 기능 구현·모델/위치 제어 검증을 마쳤다. 사람의 수동 하루 운행과 경제 밸런스는 남아 있다. 기존9코스·17요청·법규 성향은 유지한다. [검증 근거](work-history/2026-10-23-passenger-care-connectivity.md).
