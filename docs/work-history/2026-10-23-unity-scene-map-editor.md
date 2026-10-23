@@ -55,3 +55,6 @@
 빌드 및 새 exe 회귀 검사, 실제 소스 커밋·manifest·main 푸시 결과는 검증 완료 후 아래에 추가한다.
 
 - 새 은계 exe의 -eungye -hybridV2 -oneDayMode -projectMapTest 종료0: 23항목 PASS, success=True. 프로젝트 정식 저장/복제/재열기/충돌 거부, 건물·보도·식당 재현, 서비스 위치/핀, 기존 편집 버튼3해상도, 영업 시간 격리 확인. 이는 API·위치 제어 검사이며 실제 수동 운전이 아니다. 숨김 exe 스크린샷은 시각 근거로 사용하지 않는다; 별도 GPU RenderTexture 결과를 확인했다.
+
+- 소스/이력 실제 커밋: 7f41e3bf354a34fd6955fb05ab571d16abe15f77 (git log로 확인). 최신 main의 경로 조사 문서 c1d3a73을 ed0e40b에서 보존 병합했으며 제품 소스 변경은 없었다.
+- 배포 실행 폴더129파일/105,282,281바이트, distribution/EungyeTaxi-build-manifest.json 생성 및 전수 크기/SHA256 검증 종료0. sourceCommit은 위 실제 소스 커밋이다. 기존 정식 지도21342670바이트/contentHash19d3037e76db5a176eba20568624f32e1d25e2c47c51a4bbbd26d32b8191da1b 및 원본 입력/ZIP 변경 없음.
