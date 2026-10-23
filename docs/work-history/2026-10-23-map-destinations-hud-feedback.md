@@ -31,3 +31,6 @@ builds/EungyeTaxi/EungyeTaxi.exe → 미니맵 시설 아이콘 또는 M 지도 
 
 ## 배포 확인
 실제 소스 커밋235e086(git log 확인). 배포128파일/106,329,682바이트 SHA256 검증 종료0. distribution/EungyeTaxi-build-manifest.json은 해당 실제 소스 및 이번 검증 범위를 기록한다. 이번 요청의 변경은 로컬 main에 커밋했고 원격 푸시는 실행하지 않았다.
+
+## 사용자 요청 후 원격 배포
+2026-10-23 git fetch 후 2 ahead / 0 behind. git push origin main 종료0(3bcac76..e9abf5c). 소스235e086과 실행파일e9abf5c 원격 배포 완료. 배포128파일/106,329,682바이트 SHA256 재검증 종료0. 기존 README/LATEST의 별도 변경 및 미추적 문서는 포함하지 않았다. 재빌드/새 수동검사는 수행하지 않았고 위 검증 범위가 유지된다.
