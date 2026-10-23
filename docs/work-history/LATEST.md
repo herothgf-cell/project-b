@@ -1,5 +1,9 @@
 # 최신 작업 인계
 
+## 2026-10-23 취객·차량 청결도·주유소 세차 프로토 기획
+
+[작업 기록](2026-10-23-drunk-passenger-cleanliness-plan.md) · [상세 기획15](../content-design/15-drunk-passengers-and-cleanliness.md) · [P9 체크리스트](../prototype-development-checklist.md#p9-취객-운송차량-청결도세차-프로토-추가-미구현). 취객 구토/기상 지연, 첫 유효 도착 시각과 하차 대기 분리, 청결도에 따른 승차 거부·시작 만족도 가산, 기존 주유소 F7 세차·실내 청소, 연료 우측 HUD를 **프로토 범위에 추가했다. 전부 문서 기획이며 미구현**이다. 다음은 P9 상태·회계·HUD·운송 분기 구현 및 위치 제어/자동 물리/수동 하루 검증. 기본 은계 빌드·정식 지도·필수 입력3개·ZIP·manifest는 변경/재검증하지 않았다. 다른 미커밋 변경은 보존.
+
 ## 2026-10-23 Unity 3D 프로젝트 지도 편집
 
 [사용법](../unity-map-editor-guide.md) · [구현·검증·남은 범위](2026-10-23-unity-scene-map-editor.md). 실행 월드 공유 형상/재질, Scene 클릭·W/E/R/F·꼭짓점·정차점/접근 차로, 객체 Undo/초안/충돌 처리, 정식 JSON 저장. Session/Renderer/수입 링 저장/Window/기존 편집 검사 및 원본 입력 없는 BuildHybrid·새 exe 프로젝트23검사 종료0. 전체 지도100회 편집 평균0.204ms/p95 0.345ms(CPU 갱신만), 전체 생성1회. 기본 은계exe; 정식 지도/입력3개/ZIP 보존, Strict0. 다음 확인은 실제 Unity 마우스·다른 물리PC·수동 캠페인. 배포 소스/manifest/main 결과는 위 기록 기준.

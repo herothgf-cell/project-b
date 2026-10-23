@@ -1,5 +1,9 @@
 # 프로토타입 개발을 위한 통합 기획
 
+프로토 추가(미구현): [취객·차량 청결도·주유소 세차](content-design/15-drunk-passengers-and-cleanliness.md)를 [P9 체크리스트](prototype-development-checklist.md#p9-취객-운송차량-청결도세차-프로토-추가-미구현)에 넣는다. 취객의 구토·도착 후 기상 지연, 청결도에 따른 승차 거부/시작 만족도 가산, 기존 주유소 F7 세차, 연료 우측 HUD를 포함한다. 현재 빌드에는 없으며 사고·수리/단골·예약 제외는 유지한다.
+
+2026-10-23 승객 후속 기획(미구현): [승객04](content-design/04-passengers-and-reservations.md#최종-승객-만족도와-운임) · [만족도·보너스11](content-design/11-passenger-request-effects.md#2026-10-23-최신-기획--만족도와-보너스-개편-개발-전) · [승하차 다양화14](content-design/14-passenger-stop-variety.md). 기존 3일×20분 캠페인과 9개 상황 코스는 유지한다. 요구 만족도에 도달할 때부터 모든 정상 운송에 보너스를 지급하는 방향이며, 초기 만족도 추첨·요청/시간 변화·일반 영업 지점 추가는 아직 현재 빌드에 반영되지 않았다.
+
 2026-10-23 가독성 보정: 시설 선택 중 호출 상시 표시/접근 실선 복구, Noto Sans KR 포함, 주요 팝업 불투명, 상황/F7 안내와 속도계 분리. 세부 동작은 [UI13](content-design/13-driving-map-ui.md) 참고.
 
 2026-10-23 지도 목적지 선택: 미니맵/M 시설·도로 클릭 → 정보와 경로 미리보기 → 길안내 시작. 호출 선택은 승차~하차 미리보기이며 운송 중 시설 안내로 목적지 변경은 차단. 교통/법규 기본OFF, 경로 게임 혼잡색은 유지. [UI 상세](content-design/13-driving-map-ui.md).
