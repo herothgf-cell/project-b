@@ -46,3 +46,7 @@ HUD/알림이 내부 운전 만족도 M(탑승100)을 승객 만족도 S로 표�
 기본 `builds/EungyeTaxi/EungyeTaxi.exe` → M 호출 수락 → 정차 F 승차. 우측 하단에서 현재 S/요구R와 시작·청결 포함 표시 확인. 운전 사건에 따른 S 변화, 하차 결과의 같은 내역, 정보/F8의 누적 운행 점수와 운송 기록 확인.
 
 자동 위치 제어는 실제 물리 주행/사람의 수동 플레이가 아니다. 이 작업에서 20분·3일 전체 캠페인/경제 체감은 다시 검사하지 않았다. P8-07 안정 주행 M 회복도 이번 범위에 추가하지 않았다. 원본 지도/정식 지도/지도ZIP/입력 해시는 변경하지 않았다. 시작 시 확인한 다른 문서·라이선스/XMind 변경을 보존하고 커밋에 섞지 않는다. PC별 Unity 경로는 로컬 설치 정보다.
+
+## 실행폴더 배포 확인
+
+소스 `5b9e52e2bfb69ba2b9d9b288d4819d0ecdbf3cf3`는 실제 `git log -1 --oneline -- docs/work-history/2026-10-23-score-ui-binding.md`로 확인했다. 최종 BuildHybrid 실행폴더와 이 소스를 배포 manifest에 연결했다. `tools/update_distribution_manifest.ps1 -VerifyOnly` exit0: **128파일·112,668,978바이트**, 모든 파일 크기/SHA256 일치. `tools/check_workspace.ps1 -Strict` exit0·필수 입력2개와 정식 은계 지도 준비 이상0. 기본 실행 `builds/EungyeTaxi/EungyeTaxi.exe`.
