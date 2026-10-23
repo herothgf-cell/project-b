@@ -65,3 +65,4 @@ main 동시 작업이 끝난 뒤 주행/M 지도 소스50e1bd6·배포c8c2eda를
 - 시험 실행 창의 숨김 설정을 확인해 자동 검사(-roadMapEditorTest)에서만 숨기고, 사용자가 여는 실제 시험 창은 Normal로 시작하도록 수정했다. 실제 OS 창 클릭은 수동 확인 범위로 남긴다.
 - UI 통합 `ProjectMapBuild.Build` 종료0(`ui-integrated-build.log`), 원본 입력 분리/복원 완료. 통합 exe 프로젝트23·기존 편집28·새 지도 상호작용16·HUD20항목 모두 종료0(`ui-final-*.log`), FAIL/Exception 없음. 지도 상호작용은 API 검사이며 실제 마우스 클릭 검사가 아니다.
 - 시험 창 표시 수정 후 최종 BuildHybrid 종료0(`ui-release-build.log`, 원본 입력 분리·복원), 편집/시험 종료·영업 격리28항목 종료0(`ui-release-editor.log`).
+- 최종 통합 소스/이력 실제 커밋: 3ae72c9ea0cef2e05665286c477935dc90402728. UI 통합 배포 128파일/92868546바이트 SHA256 전수 검증 종료0. 최종 sourceCommit과 지도 SHA256는 distribution/EungyeTaxi-build-manifest.json 기준.
