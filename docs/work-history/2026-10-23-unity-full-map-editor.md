@@ -68,3 +68,13 @@ NativeMapEditorChecks.BuildIntegrated 종료0: 실지도 문서/규칙/표지 �
 
 - 통합 exe 6개 프로세스 모두 종료0: nativeTraffic6, projectMap23 success=True, passengerCare163(화면 캡처 옵션 없음; 기존167은 캡처용 Board4 추가), 실제 시간 driveFeedback16 success=True, liveSave9/liveReload23. 알림·대기/정산·저장 기능과 새 편집기의 주행 규칙을 함께 확인했다. 로그 artifacts/integrated-player-*.log.
 - 최종 소스20b6593(실제 커밋). 정식 지도/원본 입력 해시와 빌드 stamp를 유지하고 최종 manifest를 다시 생성·검증한다. 이후 기본 폴더 main을 FF하며 기존 사용자 LATEST만 임시 보존/복원하고 나머지 미커밋 문서는 그대로 유지한다.
+
+
+## 최종 main 배포와 현재 PC 반영
+
+- 기본 D:/Git/project-b main을88895e6로 fast-forward 완료. 사용자 LATEST만 명시적으로 임시 보존/복원했으며 README/기획06·09와 미추적 라이선스/마인드맵/기존 편집 계획 문서는 그대로 유지했다. 소스/빌드 미커밋 없음.
+- 기본 폴더 VerifyOnly 종료0:130파일/118,426,992바이트. Strict -RequireRawInputs 종료0:은계 배경/국도42 입력2개 SHA256 일치, build stamp의 baseline/content 해시도 존재한다.
+- git push origin main 종료0. git ls-remote main=88895e6c95ed72c2047a9d9fa34acdcd87ecbabb 확인. 작업 이력의 실제 커밋도 git log -1 --oneline -- 이력에서88895e6 확인했다. 다른 작업 채팅에서도 원본/원격/manifest를 독립적으로 읽기검증했다.
+- Unity2022.3.62f2에서 기존 지도 편집 패널과 Scene 창을 닫고 Taxi → 프로젝트 지도3D편집으로 다시 연다. 차로·표지·신호 탭에서 직접 편집하고 검사·프로젝트 저장·빌드를 수행한다. 다른 PC는 pull후 같은 메뉴로 편집 가능하며 정식 지도 변경은 해당 JSON을 커밋/푸시해야 전달된다.
+
+- 현재 기본 폴더에서도 ProjectMapSceneWindowTests.Run 최종 종료0. 실제 Scene 카메라144픽셀 렌더,100회 객체 갱신 평균0.215ms/p95 0.370ms/최대0.465ms·전체 생성1회,선택/저장/사용자 씬 보존 검사 통과. 로그 artifacts/native-map-editor/root-window-final.log. Unity GUI에서 사람의 마우스 편집 및 다른 물리 PC 검증은 별도다.

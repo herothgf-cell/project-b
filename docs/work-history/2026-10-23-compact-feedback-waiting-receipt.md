@@ -43,3 +43,10 @@
 ## 개별 소스·빌드 확정
 
 소스는 `2855958`로 실제 커밋했다. 기존 사용자 README·기획06/09·라이선스·지도 편집 문서는 제외했고 LATEST는 본 작업 절만 부분 커밋했다. 검증한 실행 폴더는 해당 소스 기준 manifest를 `artifacts/compact-feedback-validation.json`으로 갱신해 VerifyOnly 종료0(128파일)·Strict 종료0을 확인했다. 이 개별 빌드를 별도 커밋하고 지도 편집 담당 채팅에 전달한 뒤, 통합 빌드는 그 채팅에서 재생성·검증한다. 이 시점의 빌드를 최종 통합 배포로 혼동하지 않는다.
+
+
+## 지도 편집기와 통합 배포 완료
+
+사용자 승인으로 지도 편집 작업과 통합했다. 통합소스20b6593/실행배포88895e6에 본 작업 runtime을 보존했다. 통합 BuildHybrid 및 실제 exe care163(화면 캡처 옵션 없음; 앞167은 캡처 Board4 추가)/실제 시간 알림16/liveSave9+liveReload23 모두 종료0. 지도 편집 native6/project23도 종료0.
+
+D:/Git/project-b 원본과 GitHub 원격 main88895e6c95ed72c2047a9d9fa34acdcd87ecbabb 일치 확인, manifest130파일118,426,992바이트 VerifyOnly0/Strict입력2개0, 은계 제품명과 project-map-build.json stamp를 유지했다. 원래 README/06·09/LATEST·라이선스/마인드맵 사용자 변경을 보존했다. 최종 문서 기록은 별도 커밋으로 추가한다. 전체 통합 검증과 사용법은 [Unity 편집기 통합 기록](2026-10-23-unity-full-map-editor.md)을 따른다. 앞 '통합 예정'은 당시 상태이며 현재는 완료했다.
