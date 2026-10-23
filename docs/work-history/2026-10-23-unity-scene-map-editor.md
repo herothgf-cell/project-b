@@ -58,3 +58,9 @@
 
 - 소스/이력 실제 커밋: 7f41e3bf354a34fd6955fb05ab571d16abe15f77 (git log로 확인). 최신 main의 경로 조사 문서 c1d3a73을 ed0e40b에서 보존 병합했으며 제품 소스 변경은 없었다.
 - 배포 실행 폴더129파일/105,282,281바이트, distribution/EungyeTaxi-build-manifest.json 생성 및 전수 크기/SHA256 검증 종료0. sourceCommit은 위 실제 소스 커밋이다. 기존 정식 지도21342670바이트/contentHash19d3037e76db5a176eba20568624f32e1d25e2c47c51a4bbbd26d32b8191da1b 및 원본 입력/ZIP 변경 없음.
+
+## main 반영·푸시 완료
+
+- 소스7f41e3b/통합ed0e40b/배포47cdf7d를 main에 fast-forward한 뒤 origin/main 푸시 종료0(ea5fb1c→47cdf7d). main에서 배포129파일 크기/SHA256 재검증 종료0.
+- 다른 작업의 README/승객 기획/라이선스/XMind 변경은 커밋하지 않았다. 충돌한 LATEST와 함께 범위·체크리스트3문서만 별도 보존했고, 원래 텍스트가 모두 남았는지 대조 후 미커밋 상태로 복원했다.
+- 다음 작업은 사용자가 보이는 Unity에서 실제 마우스로 조작감·시점·단축키를 확인하는 것이다. 다른 PC는 pull 후 Unity 프로젝트를 열어 같은 도구를 쓸 수 있으며, 정식 JSON 수정 후 BuildHybrid하면 실행 지도에 반영된다.
