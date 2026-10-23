@@ -14,4 +14,3 @@ public static class ProjectMapTrafficToolsTests {
   Debug.Log("PROJECT_MAP_TRAFFIC_TOOLS_TESTS_OK");
  }
 }
-

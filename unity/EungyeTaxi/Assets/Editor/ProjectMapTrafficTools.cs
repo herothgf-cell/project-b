@@ -82,16 +82,3 @@ public sealed class ProjectMapTrafficTools : IDisposable {
   if(picked==null)return false;if(pending=="groupLane"){string id=picked.id;Edit("신호 차로 연결",d=>{var g=d.signals.First(a=>a.junctionId==junction).groups.First(a=>a.id==selectedGroup);g.laneIds=g.laneIds.Concat(new[]{id}).Distinct().ToArray();});pending="";}else if(pending=="connect"&&lane!=null){string target=picked.id;Edit("차로 연결",d=>RoadMapAuthoringOperations.Connect(d,lane.id,target,turn-1,change-1));pending="";}else if(pending=="bind"&&facility!=null){string target=picked.id;Edit("시설 차로 연결",d=>{var f=d.facilities.First(a=>a.id==facility.id);f.laneId=target;f.junctionId=d.lanes.First(a=>a.id==target).ruleId;});pending="";}else SelectLane(picked.id);e.Use();return true;
  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
