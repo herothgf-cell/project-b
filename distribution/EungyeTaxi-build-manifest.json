@@ -1,23 +1,18 @@
 {
-  "sourceCommit": "c2b57a6e1e63ca51ba21e984210ad2ab23527e82",
+  "sourceCommit": "0735c58d7c460abca2a58eaf124499b751ac8ace",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
-  "validatedOn": "2026-10-22",
-  "totalBytes": 84894468.0,
+  "validatedOn": "2026-10-23",
+  "totalBytes": 84896772.0,
   "validation": {
     "build": "PrototypeBuild.BuildHybrid exit 0",
     "modelSuites": 23,
-    "restaurantPlotAndBuildingClearance": true,
-    "restaurantPhysicalDriveChecks": 16,
-    "restaurantSideAndCurbContacts": 0,
-    "ambientTrafficRetained": true,
-    "oneDayStateAndMealChecks": 28,
-    "defaultEungyeIdentity": true,
-    "localInputIssues": 0,
+    "manualInputPhysicsAssertions": 18,
+    "restaurantPhysicsAssertions": 20,
+    "uiProposalOnly": true,
+    "mainMapLayoutApprovalPending": true,
     "manualDriving": false,
-    "fullThreeDayPhysicalDrive": false,
-    "restaurantSignPixelReview": false,
     "fieldReviewComplete": false,
     "fieldWorkStoppedByUser": true
   },
@@ -30,7 +25,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "d28a1c13e4735afafa89732abc1b90777c205d713c7687eab297801d47bf9b5f"
+      "sha256": "9bcb8b569155bf4dd52bad4421d92894e33ea4a2733d4dc0dd95cea17a21210c"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -49,8 +44,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
-      "bytes": 1344,
-      "sha256": "03fe2c3246ab1853be45ee70d03c646bd9c9cd10db5e022b25f962d20904e3b1"
+      "bytes": 1600,
+      "sha256": "61092150b895862dd3ee175f41291720bddcd4c79784657df5265f9e12fdfa64"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0.resS",
@@ -59,8 +54,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 906240,
-      "sha256": "7fdce899e307e863ed9dff77ffb37655b81565cf6ee8e11d56f7bbfbf43e6fab"
+      "bytes": 908288,
+      "sha256": "7872e9c4926d56c01e235fbc4f4535405f1b30bb8915b9e6e233980b83640b57"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
