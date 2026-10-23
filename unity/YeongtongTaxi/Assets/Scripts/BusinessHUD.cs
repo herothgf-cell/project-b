@@ -17,7 +17,7 @@ public class BusinessHUD : MonoBehaviour {
   var b=session.business;var e=b.ledger;if(e.OneDay){OneDayHUD.Draw(session);return;}GUI.depth=-30;
   if(b.restartPrompt){float rx=(Screen.width-620)/2f,ry=(Screen.height-300)/2f;GUI.depth=-150;Fill(new Rect(rx,ry,620,300),new Color(.04f,.09f,.12f,1));GUI.Label(new Rect(rx+25,ry+25,570,130),"1일차부터 다시 시작할까요?\n운행 점수 100점 · 현재 캠페인의 저장과 운송·법규·연습 기록을 초기화합니다.\n현금 10,000원 · 연료 60% · 1일차 영업 준비로 돌아갑니다.\n취소하면 현재 진행을 그대로 유지합니다.",text);GUI.Label(new Rect(rx+25,ry+165,570,45),b.saveStatus,small);if(GUI.Button(new Rect(rx+25,ry+230,275,45),"초기화하고 1일차 시작",button))b.ConfirmRestart(true);if(GUI.Button(new Rect(rx+320,ry+230,275,45),"취소",button))b.ConfirmRestart(false);return;}
   if(b.preparing){
-   float px=(Screen.width-620)/2f,py=(Screen.height-600)/2f;Fill(new Rect(px,py,620,600),new Color(.04f,.09f,.12f,.98f));var account=e.Account;
+   float px=(Screen.width-620)/2f,py=(Screen.height-600)/2f;Fill(new Rect(px,py,620,600),new Color(.04f,.09f,.12f,1));var account=e.Account;
    GUI.Label(new Rect(px+20,py+20,580,45),e.Day+"일차 영업 준비 · 3일 × 12분 / 순수익 30,000원",new GUIStyle(text){fontSize=20});
    GUI.Label(new Rect(px+20,py+80,580,65),"현금 "+Won(account.Cash)+" · 미납 "+Won(account.Debt)+" · 연료 "+account.Fuel.ToString("0")+"%\n운송 수입에서 주유·식사·주차 비용을 뺀 순수익으로 도전합니다.",text);
    GUI.Label(new Rect(px+20,py+155,580,40),"식사 하루 3,000원 · 주차 하루 500원 · 주유는 보충량만큼 결제",small);
@@ -29,7 +29,7 @@ public class BusinessHUD : MonoBehaviour {
    if(GUI.Button(new Rect(px+20,py+535,280,45),"영업 시작",button))b.Depart();if(GUI.Button(new Rect(px+320,py+535,280,45),"1일차부터 다시 시작",button))b.RequestRestart();GUI.enabled=true;return;
   }
   if(b.ShowingSummary){Summary(b,e);return;}
-  Fill(new Rect(16,202,380,119),new Color(.04f,.09f,.12f,.94f));
+  Fill(new Rect(16,202,380,119),new Color(.04f,.09f,.12f,1));
   int remaining=Mathf.CeilToInt((float)e.SecondsLeft);
   GUI.Label(new Rect(28,209,245,25),e.Day+" / "+e.Settings.days+"일 · "+(e.SecondsLeft<=60&&e.CanAccept?"마감 임박 · ":"")+(e.State==BusinessState.Closing?"마감 대기":remaining/60+":"+(remaining%60).ToString("00")+" 남음"),text);
   GUI.enabled=e.CanAccept&&!session.paused&&session.jobs.trip.State!=TripState.OnTrip;
@@ -38,10 +38,10 @@ public class BusinessHUD : MonoBehaviour {
   GUI.Label(new Rect(28,263,355,22),"오늘 요금 "+Won(e.Income)+" · 예상 순수익 "+Won(e.ProjectedNet),small);
   Progress(new Rect(28,291,355,5),e);
   GUI.Label(new Rect(28,298,355,20),e.Account==null?"목표까지 "+Won(e.RemainingGoal):"현금 "+Won(e.Account.Cash)+" · 미납 "+Won(e.Account.Debt)+" · 연료 "+e.Account.Fuel.ToString("0")+"%",small);
-  if(!string.IsNullOrEmpty(b.notice)){Fill(new Rect(410,300,Screen.width-680,52),new Color(.04f,.09f,.12f,.94f));var wrap=new GUIStyle(small){wordWrap=true};GUI.Label(new Rect(420,305,Screen.width-700,44),b.notice,wrap);}
+  if(!string.IsNullOrEmpty(b.notice)){Fill(new Rect(410,300,Screen.width-680,52),new Color(.04f,.09f,.12f,1));var wrap=new GUIStyle(small){wordWrap=true};GUI.Label(new Rect(420,305,Screen.width-700,44),b.notice,wrap);}
  }
  void Summary(BusinessProgress b,EconomyLedger e){
-  Fill(new Rect(0,0,Screen.width,Screen.height),new Color(.015f,.025f,.04f,.91f));
+  Fill(new Rect(0,0,Screen.width,Screen.height),new Color(.015f,.025f,.04f,1));
   float x=(Screen.width-640)/2f,y=(Screen.height-588)/2f;
   Fill(new Rect(x,y,640,588),new Color(.055f,.10f,.14f));
   string result=e.State==BusinessState.Won?"목표 달성!":e.State==BusinessState.Lost?"도전 종료 · 목표 금액 미달":"오늘 영업을 마쳤습니다";

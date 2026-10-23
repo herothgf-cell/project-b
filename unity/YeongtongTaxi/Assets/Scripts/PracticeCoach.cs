@@ -81,5 +81,5 @@ public class PracticeCoach : MonoBehaviour {
   if(GUI.Button(new Rect(x+32+bw,y0+h-55,bw,38),"다른 조건 선택",button))session.GetComponent<PracticeSession>().OpenPicker();
   if(GUI.Button(new Rect(x+42+bw*2,y0+h-55,bw,38),"닫고 계속 / F8 상세",button))CloseResult();
  }
- static void Box(Rect rect){GUI.color=new Color(.035f,.075f,.10f,.98f);GUI.DrawTexture(rect,Texture2D.whiteTexture);GUI.color=Color.white;}
+ static void Box(Rect rect){GUI.color=new Color(.035f,.075f,.10f,1);GUI.DrawTexture(rect,Texture2D.whiteTexture);GUI.color=Color.white;}
 }

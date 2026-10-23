@@ -46,7 +46,7 @@ public class DrivingReadability : MonoBehaviour {
   if(Facilities&&map.hybrid)foreach(var j in map.junctionRules)Dot(Project(j.V()),j.facilityStatus=="verified"?Color.green:new Color(1,.6f,.1f),6);
   var overlay=GetComponent<FullMapOverlay>();
   if(overlay.ShowTraffic){foreach(var car in session.traffic.cars)if(car.Visible)Dot(Project(car.transform.position),new Color(.55f,.6f,.65f),3);foreach(var incident in session.roadConditions.incidents)Dot(Project(incident.position),Color.red,8);}
-  for(int pass=0;pass<2;pass++)foreach(var segment in overlay.RoutePaint)HudGlyph.MapLine(Project(segment.a),Project(segment.b),pass==0?(segment.passenger?new Color(.5f,.08f,.35f):Color.black):segment.color,pass==0?8:4,new Rect(0,0,Size,Size));
+  for(int pass=0;pass<2;pass++)foreach(var segment in overlay.RoutePaint)HudGlyph.MapLine(Project(segment.a),Project(segment.b),pass==0?(segment.passenger?new Color(.8f,.12f,.55f):new Color(.05f,.65f,1)):segment.color,pass==0?(segment.passenger?7:11):4,new Rect(0,0,Size,Size));
   if(overlay.ShowFacilities)foreach(var place in overlay.Places()){var p=Project(place.position);if(p.x<14||p.y<14||p.x>Size-14||p.y>Size-14)continue;if(HudGlyph.Button(new Rect(p.x-13,p.y-13,26,26),place.glyph,place.name,true)){if(overlay.Open())overlay.SelectPlace(place);}}
   if(!jobs.Active)for(int i=0;i<jobs.offers.Length;i++){var offer=jobs.offers[i];if(offer==null)continue;var p=ClampedZone(Project(jobs.stops[offer.pickup].V()))+new Vector2((i-1)*20,0);p=new Vector2(Mathf.Clamp(p.x,12,Size-12),Mathf.Clamp(p.y,12,Size-12));if(GUI.Button(new Rect(p.x-10,p.y-10,20,20),(i+1).ToString(),KoreanText.Button(11))){if(overlay.Open())overlay.SelectOffer(i);}}
   if(!jobs.Active&&overlay.PreviewOffer!=null){Marker(jobs.stops[overlay.PreviewOffer.pickup].V(),"승차",new Color(.3f,1,.55f),true);Marker(jobs.stops[overlay.PreviewOffer.drop].V(),"도착",new Color(1,.5f,.8f),true);}
@@ -57,14 +57,13 @@ public class DrivingReadability : MonoBehaviour {
   }
   if(jobs.nav.HasDestination)Marker(jobs.nav.destination,jobs.trip.State==TripState.ToPickup?"승차":jobs.trip.State==TripState.OnTrip?"도착":"목표",jobs.trip.State==TripState.ToPickup?new Color(.3f,1,.55f):new Color(1,.5f,.8f),true);
   var player=Project(session.taxi.transform.position);var forward=new Vector2(session.taxi.transform.forward.x,-session.taxi.transform.forward.z).normalized;var side=new Vector2(-forward.y,forward.x);
-  Circle(player,Color.black,34);Circle(player,new Color(.95f,.95f,.95f),29);Circle(player,new Color(.12f,.16f,.18f),24);Line(player-forward*6-side*7,player+forward*11,Color.yellow,5);Line(player+forward*11,player-forward*6+side*7,Color.yellow,5);Line(player-forward*6+side*7,player-forward*6-side*7,Color.yellow,5);
+  Circle(player,Color.black,34);Circle(player,new Color(.95f,.95f,1),29);Circle(player,new Color(.12f,.16f,.18f),24);Line(player-forward*6-side*7,player+forward*11,Color.yellow,5);Line(player+forward*11,player-forward*6+side*7,Color.yellow,5);Line(player-forward*6+side*7,player-forward*6-side*7,Color.yellow,5);
   if(Event.current.type==EventType.MouseUp&&Event.current.button==0&&new Rect(0,0,Size,Size).Contains(Event.current.mousePosition)){var p=Event.current.mousePosition;var world=new Vector3(bounds.x+p.x/Size*bounds.width,0,bounds.y+(1-p.y/Size)*bounds.height);if(overlay.Open())overlay.SelectRoadPoint(world);Event.current.Use();}
   GUI.EndGroup();
   GUI.Label(new Rect(x,324,Size,23),"실선 승차까지 · 점선 승객 운송",new GUIStyle(label){fontSize=12});
-  if(GUI.Button(new Rect(x,349,86,26),Facilities?"상세 숨기기":"상세 표시",KoreanText.Button(13)))Facilities=!Facilities;
-  if(GUI.Button(new Rect(x+92,349,94,26),"호출 보기",KoreanText.Button(12))){if(overlay.Open())overlay.ShowCalls();}
-  if(GUI.Button(new Rect(x+192,349,88,26),"M 전체 지도",KoreanText.Button(13)))GetComponent<FullMapOverlay>().Open();
-  GUI.Label(new Rect(x+4,379,276,22),"© OSM / ODbL · 현장 규제 미검증",new GUIStyle(label){fontSize=11});
+  if(GUI.Button(new Rect(x,349,185,32),"주변 호출 보기 (M)",KoreanText.Button(13))){if(overlay.Open())overlay.ShowCalls();}
+  if(GUI.Button(new Rect(x+192,349,88,32),"M 전체 지도",KoreanText.Button(13)))GetComponent<FullMapOverlay>().Open();
+  GUI.Label(new Rect(x+4,385,276,22),"© OSM / ODbL · 현장 규제 미검증",new GUIStyle(label){fontSize=11});
   if(Facilities){var status=GetComponent<HybridMapStatus>();Panel(new Rect(x-310,42,300,145));GUI.Label(new Rect(x-300,50,280,130),"시설 □ 주황: 임시 / 초록: 확인\n"+(status?status.current:"시설 정보 없음"),label);}
   var matrix=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.TRS(new Vector3(0,-285*scale),Quaternion.identity,new Vector3(scale,scale,1));
   DrawSignal(29);
@@ -105,7 +104,7 @@ public class DrivingReadability : MonoBehaviour {
     else {Circle(p+Vector2.up*-4,c,4);Circle(p,c,4);Circle(p+Vector2.up*4,c,4);}
    }return;}
   foreach(var item in ZoneLabels){var r=item.rect;Line(item.anchor,new Vector2(Mathf.Clamp(item.anchor.x,r.xMin,r.xMax),Mathf.Clamp(item.anchor.y,r.yMin,r.yMax)),item.selected?Color.magenta:new Color(1,.7f,.2f),1.5f);}
-  foreach(var item in ZoneLabels){Panel(item.rect);style.normal.textColor=item.selected?new Color(1,.65f,.95f):new Color(1,.84f,.5f);GUI.Label(item.rect,item.text,style);}
+  foreach(var item in ZoneLabels){Panel(item.rect);style.normal.textColor=item.selected?new Color(1,.65f,1):new Color(1,.84f,.5f);GUI.Label(item.rect,item.text,style);}
   foreach(var item in ZoneLabels){Dot(item.anchor,Color.black,item.selected?12:9);Dot(item.anchor,item.selected?Color.magenta:new Color(1,.7f,.2f),item.selected?8:5);}
  }
  Vector2 MarkerPoint(Vector3 world,bool clamp,out bool outside){
@@ -151,7 +150,7 @@ public class DrivingReadability : MonoBehaviour {
  }
  void Lamp(Rect r,string text,SignalColor signal){Dot(new Vector2(r.x+11,r.y+14),signal==SignalColor.Green?Color.green:signal==SignalColor.Red?Color.red:Color.yellow,18);GUI.Label(new Rect(r.x+25,r.y,r.width-25,r.height),text+"\n"+State(signal),new GUIStyle(label){fontSize=13});}
  static string State(SignalColor signal){return signal==SignalColor.Green?"녹색":signal==SignalColor.Red?"적색 · 정지":"황색";}
- static void Panel(Rect r){GUI.color=new Color(.025f,.055f,.075f,.96f);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
+ static void Panel(Rect r){GUI.color=new Color(.025f,.055f,.075f,1);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
  static Texture2D circleTexture;
  static void Circle(Vector2 p,Color c,float size){if(!circleTexture){circleTexture=new Texture2D(32,32,TextureFormat.RGBA32,false);for(int y=0;y<32;y++)for(int x=0;x<32;x++)circleTexture.SetPixel(x,y,new Color(1,1,1,Mathf.Clamp01(16-Vector2.Distance(new Vector2(x+.5f,y+.5f),new Vector2(16,16)))));circleTexture.Apply();}GUI.color=c;GUI.DrawTexture(new Rect(p.x-size/2,p.y-size/2,size,size),circleTexture);GUI.color=Color.white;}
  static void Dot(Vector2 p,Color c,float size){GUI.color=c;GUI.DrawTexture(new Rect(p.x-size/2,p.y-size/2,size,size),Texture2D.whiteTexture);GUI.color=Color.white;}

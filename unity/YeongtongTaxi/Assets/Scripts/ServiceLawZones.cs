@@ -105,6 +105,7 @@ public sealed class ServiceLawZones : MonoBehaviour {
  public void ToggleDetails(){if(LastFeedback!=null)details=!details;}
  public void BeginAlternative(){if(Live&&Live.Active)Live.Stop();Assigned=null;Completed=false;}
  public void CompleteAlternative(){Completed=true;LastTitle="출구 우회";LastFeedback=new PracticeFeedback{outcome="우회 경로 통과",good="선택한 대체 연결도로를 실제로 통과했습니다.",issues="원래 대기열 합류는 평가 기회 없음입니다.",next="목적지까지 안내 차로를 따라 진행하세요."};toastUntil=Time.time+12;}
+ Vector2 situationScroll;
  void OnGUI(){
   if(!Ready||session.PracticeMenuOpen||session.business.preparing||session.business.restartPrompt||session.law.HistoryOpen||session.services.open)return;
   var text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=15,wordWrap=true};var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=14};
@@ -113,11 +114,10 @@ public sealed class ServiceLawZones : MonoBehaviour {
    string content=LastFeedback.Details();float ch=Mathf.Max(250,text.CalcHeight(new GUIContent(content),w-60));scroll=GUI.BeginScrollView(new Rect(x+18,y+80,w-36,h-150),scroll,new Rect(0,0,w-56,ch));GUI.Label(new Rect(0,0,w-60,ch),content,text);GUI.EndScrollView();
    if(GUI.Button(new Rect(x+18,y+h-54,w-36,36),"닫기 · 운행은 계속됩니다",button))details=false;return;
   }
-  if(Assigned!=null&&!Completed){float distance=Vector3.Distance(session.taxi.transform.position,Assigned.junction.center);if(distance<260){float y=Screen.height-355;Panel(new Rect(16,y,430,170));GUI.Label(new Rect(28,y+10,406,148),"운송 중 상황 · "+Assigned.Title+"\n창작 구역 · 약 "+distance.ToString("0")+"m\n"+(Live.Active?Live.Progress:ConfusionPracticeState.Guidance(Assigned.variant)),text);}}
-  if(LastFeedback!=null&&(session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f||Time.time<toastUntil)){
-   float y=Screen.height-405;Panel(new Rect(16,y,430,70));GUI.Label(new Rect(28,y+4,405,30),LastFeedback.outcome,text);
-   GUI.enabled=session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f;if(GUI.Button(new Rect(28,y+36,405,28),"운전 평가 결과 · 잘한 점 / 보완 위치 (정차 시)",button))ToggleDetails();GUI.enabled=true;
-  }
+  if(Assigned!=null&&!Completed){float distance=Vector3.Distance(session.taxi.transform.position,Assigned.junction.center);if(distance<260){var r=CockpitUI.SituationBounds(Screen.width,Screen.height);Panel(r);var content="운송 중 상황 · "+Assigned.Title+"\n창작 구역 · 약 "+distance.ToString("0")+"m\n"+(Live.Active?Live.Progress:ConfusionPracticeState.Guidance(Assigned.variant));situationScroll=DrawSituationCard(r,content,situationScroll);}}
+  if(LastFeedback!=null&&(session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f||Time.time<toastUntil)){var r=CockpitUI.SituationBounds(Screen.width,Screen.height,true);Panel(r);GUI.Label(new Rect(r.x+10,r.y+4,r.width-20,30),LastFeedback.outcome,text);GUI.enabled=session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f;if(GUI.Button(new Rect(r.x+10,r.y+36,r.width-20,r.height-40),"운전 평가 결과 · 정차 시 확인",KoreanText.Button(13)))ToggleDetails();GUI.enabled=true;}
+
  }
- static void Panel(Rect r){GUI.color=new Color(.025f,.055f,.075f,.96f);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
+ public static Vector2 DrawSituationCard(Rect r,string content,Vector2 position){Panel(r);var text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=15,wordWrap=true};float ch=Mathf.Max(r.height-20,text.CalcHeight(new GUIContent(content),r.width-36)+8);position=GUI.BeginScrollView(new Rect(r.x+10,r.y+8,r.width-20,r.height-16),position,new Rect(0,0,r.width-36,ch));GUI.Label(new Rect(0,0,r.width-36,ch),content,text);GUI.EndScrollView();return position;}
+ static void Panel(Rect r){GUI.color=new Color(.025f,.055f,.075f,1);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
 }

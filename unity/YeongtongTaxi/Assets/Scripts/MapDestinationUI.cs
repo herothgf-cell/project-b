@@ -9,7 +9,7 @@ public partial class FullMapOverlay {
  public JobOffer PreviewOffer {get{return selectedOffer;}}
  List<Vector3> pickupPath=new List<Vector3>(),ridePath=new List<Vector3>();JobOffer cachedRide;
  public int PickupPreviewPointCount {get{return pickupPath.Count;}}
- public void ShowCalls(){selectedPlace=null;previewPath.Clear();RefreshRoutePaint(true);}
+ public void ShowCalls(){selectedPlace=null;if(selectedOffer!=null&&SelectedOffer>=0&&!session.jobs.Active)SelectOffer(SelectedOffer);else {previewPath.Clear();RefreshRoutePaint(true);}}
  List<Vector3> previewPath=new List<Vector3>();Place selectedPlace;float nextPaint;
  public int PreviewPointCount {get{return previewPath.Count;}}
  public string SelectedPlaceName {get{return selectedPlace==null?"":selectedPlace.name;}}
@@ -36,5 +36,18 @@ public partial class FullMapOverlay {
   if(jobs.trip.State==TripState.ToPickup&&jobs.current!=null){if(cachedRide!=jobs.current){cachedRide=jobs.current;ridePath=jobs.nav.Find(jobs.stops[jobs.current.pickup],jobs.stops[jobs.current.drop]);}PaintPath(ridePath,true);}else cachedRide=null;
  }
 
- void DrawPlaceDetails(float x,float w,Rect viewport){GUI.enabled=!locationOpen;GUI.Label(new Rect(x,140,w,42),selectedPlace.name,heading);GUI.Label(new Rect(x,190,w,210),selectedPlace.description,text);float length=0;for(int i=1;i<previewPath.Count;i++)length+=Vector3.Distance(previewPath[i-1],previewPath[i]);GUI.Label(new Rect(x,410,w,85),previewPath.Count<2?"연결된 경로를 찾지 못했습니다.":"입구까지 약 "+length.ToString("0")+"m\n경로: 초록 원활 · 주황 서행 · 빨강 정체",text);if(session.jobs.Active)GUI.Label(new Rect(x,510,w,70),"운송 중에는 시설 정보를 확인할 수 있습니다. 길안내는 운송을 마친 뒤 시작하세요.",text);if(GUI.Button(new Rect(x,viewport.yMax-104,w,42),"주변 호출 보기",button)){selectedPlace=null;previewPath.Clear();RefreshRoutePaint(true);}GUI.enabled=!locationOpen&&!previousPause&&!session.jobs.Active&&previewPath.Count>1;if(GUI.Button(new Rect(x,viewport.yMax-50,w,44),"길안내 시작",button))StartPlaceGuidance();GUI.enabled=true;}
+ Vector2 facilityScroll;
+ public string ApproachSummary {get{var jobs=session.jobs;var p=jobs.Active?jobs.nav.path:pickupPath;float d=0;for(int i=1;i<p.Count;i++)d+=Vector3.Distance(p[i-1],p[i]);return p.Count<2?"승차 경로를 찾지 못했습니다":"내 차 → 승차 · "+d.ToString("0")+"m · 하늘색 실선";}}
+ void DrawSidebar(float x,float w,Rect viewport){var jobs=session.jobs;GUI.Label(new Rect(x,90,w,34),"주변 호출 보기 (M)",heading);float top=132;
+  if(selectedPlace!=null){float height=Mathf.Min(270,viewport.height*.44f);KoreanText.Panel(new Rect(x,top,w,height));var detail=selectedPlace.name+"\n\n"+selectedPlace.description;float length=0;for(int i=1;i<previewPath.Count;i++)length+=Vector3.Distance(previewPath[i-1],previewPath[i]);float body=height-100;float ch=Mathf.Max(body,text.CalcHeight(new GUIContent(detail),w-36)+12);facilityScroll=GUI.BeginScrollView(new Rect(x+8,top+8,w-16,body),facilityScroll,new Rect(0,0,w-36,ch));GUI.Label(new Rect(0,0,w-36,ch),detail,text);GUI.EndScrollView();GUI.Label(new Rect(x+8,top+height-90,w-16,32),previewPath.Count<2?"연결 경로 없음":"입구까지 약 "+length.ToString("0")+"m",new GUIStyle(text){font=KoreanText.BoldFont,fontSize=15});GUI.enabled=!locationOpen&&!previousPause&&!jobs.Active&&previewPath.Count>1;if(GUI.Button(new Rect(x+8,top+height-48,w-16,40),jobs.Active?"운송 완료 후 길안내 가능":"시설 길안내 시작",button))StartPlaceGuidance();GUI.enabled=!locationOpen;top+=height+12;}
+  else {GUI.Label(new Rect(x,top,w,50),selectedOffer!=null||jobs.trip.State==TripState.ToPickup?ApproachSummary:"번호를 선택하면 승차·운송 경로를 표시합니다",text);top+=54;}
+  GUI.Label(new Rect(x,top,w,28),"호출 목록 · 점선은 승객 운송 경로",new GUIStyle(text){font=KoreanText.BoldFont,fontSize=14});top+=32;
+  float listHeight=Mathf.Max(90,viewport.yMax-top-60),rw=w-24;float content=0;var rows=new System.Collections.Generic.List<string>();var indices=new System.Collections.Generic.List<int>();var heights=new System.Collections.Generic.List<float>();
+  if(!jobs.Active)for(int i=0;i<jobs.offers.Length;i++){var o=jobs.offers[i];if(o==null)continue;var caption=(i+1)+"  "+KoreanText.Stop(jobs.stops[o.pickup].name)+"\n→ "+KoreanText.Stop(jobs.stops[o.drop].name)+"\n"+o.fare.ToString("N0")+"원 · 기한 "+RoadNavigation.FormatEta(o.seconds);float height=Mathf.Max(104,button.CalcHeight(new GUIContent(caption),rw-20)+24);rows.Add(caption);indices.Add(i);heights.Add(height);content+=height+10;}
+  var chosen=jobs.Active?jobs.current:selectedOffer;float foot=content;if(chosen!=null)content+=100;if(jobs.Active)content+=44;
+  filterScroll=GUI.BeginScrollView(new Rect(x,top,w,listHeight),filterScroll,new Rect(0,0,w-20,Mathf.Max(listHeight,content)));float y=0;
+  for(int k=0;k<rows.Count;k++){int index=indices[k];var old=GUI.backgroundColor;if(index==SelectedOffer)GUI.backgroundColor=new Color(.35f,1,.8f);if(GUI.Button(new Rect(0,y,rw,heights[k]),rows[k],new GUIStyle(button){alignment=TextAnchor.MiddleLeft,padding=new RectOffset(10,10,4,4)}))SelectOffer(index);GUI.backgroundColor=old;y+=heights[k]+10;}
+  if(chosen!=null){if(GUI.Button(new Rect(0,foot,rw,42),"승차 · "+KoreanText.Stop(jobs.stops[chosen.pickup].name),button))FocusStop(chosen.pickup);if(GUI.Button(new Rect(0,foot+50,rw,42),"하차 · "+KoreanText.Stop(jobs.stops[chosen.drop].name),button))FocusStop(chosen.drop);}
+  if(jobs.Active)GUI.Label(new Rect(0,foot+100,rw,44),"운송 중 · 신규 호출은 운송 완료 후",text);GUI.EndScrollView();GUI.enabled=!locationOpen&&!previousPause&&!jobs.Active&&selectedPlace==null&&selectedOffer!=null&&session.business.CanAccept;if(GUI.Button(new Rect(x,viewport.yMax-50,w,44),"선택한 호출 수락",button))AcceptSelected();GUI.enabled=true;
+ }
 }

@@ -23,7 +23,7 @@ public class DriveNotifications : MonoBehaviour {
   if(!ready||session.FullMapOpen||session.ChoiceOpen||session.PracticeMenuOpen||session.law.HistoryOpen||session.business.preparing||session.business.ShowingSummary)return;
   float width=Mathf.Min(460,Screen.width*.38f),x=(Screen.width-width)/2,y=140*CockpitUI.Scale;
   var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true,alignment=TextAnchor.MiddleLeft};GUI.depth=-80;
-  if(FuelLow){Panel(new Rect(x,y,width,50),new Color(.23f,.12f,.015f,.96f));GUI.color=session.business.ledger.Account.Fuel<=5?Color.red:Color.yellow;
+  if(FuelLow){Panel(new Rect(x,y,width,50),new Color(.23f,.12f,.015f,1));GUI.color=session.business.ledger.Account.Fuel<=5?Color.red:Color.yellow;
    // Pump icon uses geometry so missing font glyphs cannot hide the warning.
    GUI.DrawTexture(new Rect(x+12,y+10,17,29),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x+29,y+16,7,4),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x+33,y+16,4,21),Texture2D.whiteTexture);GUI.color=Color.black;GUI.DrawTexture(new Rect(x+15,y+13,11,9),Texture2D.whiteTexture);GUI.color=Color.white;
    GUI.Label(new Rect(x+47,y+3,width-55,44),"연료 부족 "+session.business.ledger.Account.Fuel.ToString("0")+"% · F7 주유소 안내",style);y+=56;

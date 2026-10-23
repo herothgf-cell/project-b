@@ -119,7 +119,7 @@ public class PassengerRequestUI : MonoBehaviour {
   float width=540,textHeight=Mathf.Min(132,style.CalcHeight(new GUIContent(text),width-24));int rows=request.Resolved?0:(ReplyChoices.Length+1)/2;float height=textHeight+24+rows*49;
   // Keep the reply beside the road view and above the passenger destination card.
   float y=vh-24-height,x=(vw-width)/2;var panel=new Rect(x,y,width,height);
-  GUI.color=new Color(.94f,.97f,.91f,.99f);GUI.DrawTexture(panel,Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x+14,y+height-1,12,8),Texture2D.whiteTexture);GUI.color=Color.white;GUI.Label(new Rect(x+12,y+8,width-24,textHeight),text,style);
+  GUI.color=new Color(.94f,.97f,.91f,1);GUI.DrawTexture(panel,Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x+14,y+height-1,12,8),Texture2D.whiteTexture);GUI.color=Color.white;GUI.Label(new Rect(x+12,y+8,width-24,textHeight),text,style);
   if(!request.Resolved){var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=11,wordWrap=true,padding=new RectOffset(4,4,2,2)};var area=new Rect(x+8,y+textHeight+18,width-16,rows*49);
    for(int i=0;i<ReplyChoices.Length;i++){var choice=ReplyChoices[i];bool enabled=GUI.enabled;GUI.enabled=enabled&&CanChoose(choice.reply);if(GUI.Button(ReplyButtonRect(area,i),ChoiceText(choice),button))Choose(choice.reply);GUI.enabled=enabled;}
   }

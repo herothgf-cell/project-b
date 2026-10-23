@@ -84,11 +84,11 @@ public class ServiceStops : MonoBehaviour {
  }
  void DrawPostTrip(GUIStyle style,GUIStyle button){
   if(!postTrip||session.paused||session.FullMapOpen||session.PracticeMenuOpen||session.PracticeBusy||session.ChoiceOpen||session.business.restartPrompt||session.business.taxPrompt||session.business.ShowingSummary||session.business.preparing||session.law.HistoryOpen)return;
-  float width=Mathf.Min(790,Screen.width-32),x=16,y=Mathf.Max(326,Screen.height-394);
-  GUI.depth=-20;GUI.color=new Color(.04f,.09f,.12f,.96f);GUI.DrawTexture(new Rect(x,y,width,70),Texture2D.whiteTexture);GUI.color=Color.white;
+  float scale=CockpitUI.Scale,width=610*scale,x=365*scale,y=110*scale;
+  GUI.depth=-20;GUI.color=new Color(.04f,.09f,.12f,1);GUI.DrawTexture(new Rect(x,y,width,80),Texture2D.whiteTexture);GUI.color=Color.white;
   string[] labels={"주유","식사","귀가 주차장","수면"};
   string reason=recommended==0?"연료 15% 이하":recommended==1?"포만감 25 미만":recommended==3?"피로 70 이상":recommended==2?"마감까지 3분 이내":"현재 컨디션 양호";
-  GUI.Label(new Rect(x+10,y+2,width-20,24),"운송 후 생활 거점 · "+(recommended<0?"계속 영업 가능":labels[recommended]+" 권장")+" ("+reason+") · 선택 시에만 길 안내",style);
+  GUI.Label(new Rect(x+10,y+2,width-20,28),"운송 후 생활 거점 · "+(recommended<0?"계속 영업 가능":labels[recommended]+" 권장"),new GUIStyle(style){fontSize=14});
   float cell=(width-20)/5;
   for(int i=0;i<4;i++){
    GUI.enabled=!session.jobs.Active&&!float.IsInfinity(postTripDistances[i]);
@@ -99,7 +99,7 @@ public class ServiceStops : MonoBehaviour {
  }
  public void Toggle(){
   if(open){Close();return;}
-  if(session.FullMapOpen||session.PracticeMenuOpen||session.PracticeBusy||session.business.restartPrompt||PracticeSession.Enabled||session.business.preparing||session.law.HistoryOpen||session.business.ShowingSummary||session.business.taxPrompt||(session.business.ledger.OneDay?session.jobs.trip.State==TripState.OnTrip:session.jobs.Active)||session.taxi.body.velocity.magnitude>=.56f){notice="빈차로 안전하게 정차한 뒤 F7";return;}
+  if(session.FullMapOpen||session.PracticeMenuOpen||session.PracticeBusy||session.business.restartPrompt||PracticeSession.Enabled||session.business.preparing||session.law.HistoryOpen||session.business.ShowingSummary||session.business.taxPrompt||(session.business.ledger.OneDay?session.jobs.trip.State==TripState.OnTrip:session.jobs.Active)||session.taxi.body.velocity.magnitude>=.56f){notice="빈차로 안전하게 정차한 뒤 F7";noticeUntil=Time.unscaledTime+4;return;}
   pending=-1;pendingFuel=-1;open=true;session.paused=true;Time.timeScale=0;
  }
  void Close(){pending=-1;pendingFuel=-1;open=false;DismissPostTrip();session.paused=false;Time.timeScale=1;}
@@ -137,7 +137,9 @@ public class ServiceStops : MonoBehaviour {
  void OnGUI(){
   if(session.business.ledger.Account==null||PracticeSession.Enabled)return;
   var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true};var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=14,wordWrap=true};
-  if(!open){if((session.ShowHints||notice!=""||destination!="")&&!session.business.ShowingSummary&&!session.business.preparing&&!session.law.HistoryOpen)GUI.Label(new Rect(420,94,Mathf.Max(500,Screen.width-440),58),"F7 거점 · "+notice+(destination==""?"":"\n"+destination),style);DrawPostTrip(style,button);return;}
+  style.normal.textColor=Color.white;
+  if(!open){if(!session.paused&&!session.business.restartPrompt&&!session.GetComponent<DriveHUD>().HelpOpen&&!session.FullMapOpen&&!session.ChoiceOpen&&!session.RideResultOpen&&!session.PracticeMenuOpen&&!session.business.ShowingSummary&&!session.business.preparing&&!session.law.HistoryOpen){if(session.ShowHints||notice!=""||destination!=""){var hint=CockpitUI.ServiceHintBounds(Screen.width,Screen.height);KoreanText.Panel(hint);var hintStyle=new GUIStyle(style){font=KoreanText.BoldFont,fontSize=Mathf.Max(13,Mathf.RoundToInt(16*CockpitUI.Scale)),alignment=TextAnchor.UpperLeft};var msg="F7 생활 거점"+(notice==""?"":"\n"+notice)+(destination==""?"":"\n"+destination);GUI.Label(new Rect(hint.x+10,hint.y+8,hint.width-20,hint.height-16),msg,hintStyle);}DrawPostTrip(style,button);}return;}
+
   GUI.depth=-110;float height=Stations.Count>0?625:510,x=(Screen.width-720)/2f,y=(Screen.height-height)/2f;
   GUI.color=new Color(.04f,.09f,.12f,1);GUI.DrawTexture(new Rect(x,y,720,height),Texture2D.whiteTexture);GUI.color=Color.white;
   var b=session.business;var a=b.ledger.Account;GUI.Label(new Rect(x+20,y+15,680,55),"생활 거점 (메뉴 동안 시간 정지)\n현금 "+a.Cash.ToString("N0")+"원 · 미납 "+a.Debt.ToString("N0")+"원 · 연료 "+a.Fuel.ToString("0.0")+"%",style);
@@ -148,7 +150,7 @@ public class ServiceStops : MonoBehaviour {
   if(Stations.Count>0){for(int i=0;i<Stations.Count;i++)Row(x,y+85+row++*62,Stations[i].name,0,i,style,button);}else Row(x,y+85+row++*62,names[0]+" · "+session.jobs.stops[indices[0]].name,0,-1,style,button);
   for(int i=1;i<3;i++)Row(x,y+85+row++*62,(i==1?"식당":names[i])+" · "+StopFor(i).name,i,-1,style,button);
   if(b.ledger.OneDay)Row(x,y+85+row++*62,"수면 · 기존 주차장 / 동부 휴식구역\n무료 / 피로 −40",3,-1,style,button);
-  GUI.Label(new Rect(x+20,y+height-155,680,108),notice+"\n"+(Stations.Count>0?"주유소는 빈 부지에 배치한 게임시설입니다. 내비/H는 도로 입구 앞까지 안내합니다. H 해제 후 화살표를 따라 수동 진입 → 주유 구역에 같은 방향으로 정차 → F7 → 별도 출구. 도로변에서는 주유할 수 없습니다.":"주유소·식당·주차장은 임시 배치된 생활 거점입니다."),style);
+  GUI.Label(new Rect(x+20,y+height-155,680,108),notice+"\n"+(Stations.Count>0?"주유소는 빈 부지에 배치한 게임시설입니다. 내비/H는 도로 입구 앞까지 안내합니다. H 해제 후 화살표를 따라 수동 진입 → 주유 구역에 같은 방향으로 정차 → F7 → 별도 출구. 도로변에서는 주유할 수 없습니다.":"주유소·식당·주차장은 임시 배치된 생활 거점입니다."),new GUIStyle(style){fontSize=14});
   if(GUI.Button(new Rect(x+20,y+height-45,680,35),"취소·주행으로 돌아가기 (F7)",button))Close();
  }
 }

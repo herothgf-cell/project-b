@@ -50,7 +50,7 @@ public class DriveHUD : MonoBehaviour {
  void DrawHelp(){
   int depth=GUI.depth;GUI.depth=-20;var matrix=GUI.matrix;float scale=CockpitUI.Scale;
   GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));var r=HelpBounds(Screen.width,Screen.height);r=new Rect(r.x/scale,r.y/scale,r.width/scale,r.height/scale);
-  GUI.Box(r,GUIContent.none);
+  KoreanText.Panel(r);
   GUI.Label(new Rect(r.x+18,r.y+12,490,28),session.assisted.Active?"조향 보조 · H로 수동 전환":"수동 운전 · H로 조향 보조",body);
   if(GUI.Button(new Rect(r.x+516,r.y+10,66,30),"닫기",KoreanText.Button(14)))HelpOpen=false;
   GUI.Label(new Rect(r.x+18,r.y+48,564,36),session.assisted.Status,new GUIStyle(small){wordWrap=true});

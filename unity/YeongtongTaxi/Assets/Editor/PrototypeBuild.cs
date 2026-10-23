@@ -29,6 +29,7 @@ public static class PrototypeBuild {
         var notices=System.IO.Path.Combine(System.IO.Path.GetDirectoryName(output),"ThirdPartyNotices");System.IO.Directory.CreateDirectory(notices);
         System.IO.File.Copy("../../licenses/mchrbn-unity-traffic-simulation/LICENSE.txt",System.IO.Path.Combine(notices,"mchrbn-unity-traffic-simulation-MIT.txt"),true);
         System.IO.File.Copy("../../licenses/mchrbn-unity-traffic-simulation/NOTICE.txt",System.IO.Path.Combine(notices,"mchrbn-unity-traffic-simulation-NOTICE.txt"),true);
+        System.IO.File.Copy("../../licenses/NotoSansKR-OFL.txt",System.IO.Path.Combine(notices,"NotoSansKR-OFL.txt"),true);
         Debug.Log("PROTOTYPE_BUILD_OK "+output);
     }
 }

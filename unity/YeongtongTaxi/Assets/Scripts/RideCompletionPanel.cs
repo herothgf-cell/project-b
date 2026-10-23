@@ -17,7 +17,7 @@ public sealed class RideCompletionPanel:MonoBehaviour {
  public string Receipt {get{if(Result==null)return "";var r=Result;bool modern=!string.IsNullOrEmpty(r.bonusReason);return "기본 운임  "+(modern?r.baseFare:r.paid).ToString("N0")+"원\n감사 보너스  "+r.bonus.ToString("N0")+"원\n합계  "+r.paid.ToString("N0")+"원";}}
  void OnGUI(){if(!Open||Result==null)return;
   var before=GUI.matrix;float scale=Mathf.Min(1,Screen.width/780f,Screen.height/740f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);float sw=Screen.width/scale,sh=Screen.height/scale,x=(sw-650)/2,y=(sh-650)/2;GUI.depth=-180;
-  Fill(new Rect(0,0,sw,sh),new Color(0,0,0,.65f));Fill(new Rect(x,y,650,650),new Color(.055f,.09f,.11f,.99f));
+  Fill(new Rect(0,0,sw,sh),new Color(0,0,0,.65f));Fill(new Rect(x,y,650,650),new Color(.055f,.09f,.11f,1));
   var label=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=18,wordWrap=true};var title=new GUIStyle(label){fontSize=34,fontStyle=FontStyle.Bold,alignment=TextAnchor.MiddleCenter};var large=new GUIStyle(label){fontSize=26,fontStyle=FontStyle.Bold};var button=KoreanText.Button(18);var r=Result;bool success=r.paid>0,modern=!string.IsNullOrEmpty(r.bonusReason);int satisfaction=modern?r.satisfaction:r.score;
   GUI.Label(new Rect(x+25,y+20,600,52),success?"운행 완료!":"운송 종료",title);
   GUI.Label(new Rect(x+25,y+84,600,50),KoreanText.Stop(r.pickup)+"  →  "+KoreanText.Stop(r.destination),label);

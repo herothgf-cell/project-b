@@ -6,7 +6,7 @@ public static class OneDayHUD {
  static void Styles(){if(text!=null)return;text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=18,wordWrap=true};small=new GUIStyle(text){fontSize=14};title=new GUIStyle(text){fontSize=25,fontStyle=FontStyle.Bold};button=KoreanText.Button(16);}
  static string Money(int n){return n.ToString("N0")+"원";}
  static string Clock(double value){int n=Mathf.CeilToInt((float)System.Math.Max(0,value));return n/60+":"+(n%60).ToString("00");}
- static void Panel(Rect r){GUI.color=new Color(.035f,.08f,.11f,.98f);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
+ static void Panel(Rect r){GUI.color=new Color(.035f,.08f,.11f,1);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
  public static void Draw(DriveSession s){if(s.RideResultOpen)return;Styles();var b=s.business;var e=b.ledger;var d=e.Driver;if(d==null)return;bool multi=e.Settings.days>1;GUI.depth=-35;
   if(!b.preparing&&!b.ShowingSummary&&!b.restartPrompt){
    return; // Live operation is composed by CockpitUI.
