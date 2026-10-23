@@ -2,7 +2,12 @@
 
 ## 2026-10-23 프로젝트 지도 편집·Git 배포
 
-[사용법](../road-map-editor-guide.md) · [구현/검증/남은 범위](2026-10-23-project-map-editor.md). 건물·보도·도로 외형·주차장·식당/휴식 부지를 간편 편집하고 `config/maps/project/eungye.project.json`에 정식 저장한다. 커밋/push→다른 PC pull→BuildHybrid로 동일 장면 적용; 원본 GIS/입력 ZIP 없는 빌드 종료0. 프로젝트23/개인 구버전3/기존 편집28 및 시험 격리·3일 상태20/HUD20 검사 종료0. 기본 은계 `builds/EungyeTaxi/EungyeTaxi.exe`; 기존 입력3개/ZIP 해시 유지. 실제 다른 물리 PC/수동 전체 주행·모든 형상 조합은 미검증. 주행/M UI 시안 승인 대기와 현장 조사 중단 유지. 배포 파일/실제 소스 해시는 manifest 기준.
+[사용법](../road-map-editor-guide.md) · [구현/검증/남은 범위](2026-10-23-project-map-editor.md). 건물·보도·도로 외형·주차장·식당/휴식 부지를 간편 편집하고 `config/maps/project/eungye.project.json`에 정식 저장한다. 커밋/push→다른 PC pull→BuildHybrid로 동일 장면 적용; 원본 GIS/입력 ZIP 없는 빌드 종료0. 프로젝트23/개인 구버전3/기존 편집28 및 시험 격리·3일 상태20/HUD20·새 지도 조작16 검사 종료0. 기본 은계 `builds/EungyeTaxi/EungyeTaxi.exe`; 기존 입력3개/ZIP 해시 유지. 실제 다른 물리 PC/수동 전체 주행·모든 형상 조합은 미검증. 승인된 주행/M UI 구현을 함께 통합하며 현장 조사 중단은 유지. 배포 파일/실제 소스 해시는 manifest 기준.
+
+## 2026-10-23 승인 UI 구현·승하차 포커스
+
+[구현/검증/다음 확인](2026-10-23-approved-cockpit-map-ui.md). 사용자 승인13 주행HUD/M지도 반영. 지도호출선택과수락 분리,승하차핀/버튼포커스,도형필터/좌표팝업,큰속도/잔액/2점수/하단대화. 모델23·지도16·HUD20·3해상도렌더/BuildHybrid 종료0. T2정차48대30초 평균59.96FPS/p99 16.97ms. 수동클릭/모든요청화면/전체3일 미검증. 기본 은계exe/입력3개·ZIP 변경없음/Strict0. 아래시안승인대기는 과거상태. 기존사용자문서변경보존.
+
 
 ## 2026-10-23 운전 편의·식당 메뉴·UI 시안 승인 대기
 

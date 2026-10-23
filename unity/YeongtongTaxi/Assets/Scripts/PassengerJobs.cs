@@ -75,7 +75,7 @@ System.Collections.Generic.Dictionary<JobOffer,float> fuelCache=new System.Colle
  public void RecordExpiredTrip(){if(trip.State==TripState.OnTrip&&trip.Remaining<=0&&!deadlineNotice){deadlineNotice=true;message="제한 시간 초과 · 목적지까지 운송을 계속하세요 / 도착 후 요금 0원";}}
  void Update(){if(session.business.ledger.OneDay&&trip.State==TripState.Idle){double elapsed=session.business.ledger.Elapsed;int phase=elapsed<300?0:elapsed<900?1:2;if(phase!=offerPhase||offers[0]==null&&Time.time>=nextOfferRetry)Generate();}trip.Tick(Time.deltaTime);if(trip.PickupExpired&&resultUntil==0){message="승객 대기 시간 초과 · 호출 취소 / 요금 없음";Finish();if(session.law)session.law.tripId="";}RecordExpiredTrip();
   if(resultUntil>0&&Time.time>=resultUntil){trip.Clear();OfferId="";resultUntil=0;deadlineNotice=false;Generate();}
-  var choice=GetComponent<ScenarioChoiceSituation>();if(Time.timeScale>0&&!(choice&&(choice.Open||choice.ClosedThisFrame))){if(Input.GetKeyDown(KeyCode.Alpha1))Accept(0);if(Input.GetKeyDown(KeyCode.Alpha2))Accept(1);if(Input.GetKeyDown(KeyCode.Alpha3))Accept(2);if(Input.GetKeyDown(KeyCode.F)||Input.GetKeyDown(KeyCode.JoystickButton8))Interact();}
+  var choice=GetComponent<ScenarioChoiceSituation>();if(Time.timeScale>0&&!(choice&&(choice.Open||choice.ClosedThisFrame))){if(Input.GetKeyDown(KeyCode.F)||Input.GetKeyDown(KeyCode.JoystickButton8))Interact();}
   for(int i=0;i<people.Length;i++)people[i].SetActive((Time.time>=cooldown[i]||trip.State==TripState.ToPickup&&current.pickup==i)&&!(trip.State==TripState.OnTrip&&current.pickup==i));
  }
 }

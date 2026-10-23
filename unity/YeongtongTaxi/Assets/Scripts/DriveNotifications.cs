@@ -21,7 +21,7 @@ public class DriveNotifications : MonoBehaviour {
  void Push(string text,bool good){if(queue.Count>=4)queue.Dequeue();queue.Enqueue(new Notice{text=text,positive=good});}
  void OnGUI(){
   if(!ready||session.FullMapOpen||session.ChoiceOpen||session.PracticeMenuOpen||session.law.HistoryOpen||session.business.preparing||session.business.ShowingSummary)return;
-  float width=Mathf.Min(460,Screen.width*.38f),x=(Screen.width-width)/2,y=8;
+  float width=Mathf.Min(460,Screen.width*.38f),x=(Screen.width-width)/2,y=140*CockpitUI.Scale;
   var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true,alignment=TextAnchor.MiddleLeft};GUI.depth=-80;
   if(FuelLow){Panel(new Rect(x,y,width,50),new Color(.23f,.12f,.015f,.96f));GUI.color=session.business.ledger.Account.Fuel<=5?Color.red:Color.yellow;
    // Pump icon uses geometry so missing font glyphs cannot hide the warning.

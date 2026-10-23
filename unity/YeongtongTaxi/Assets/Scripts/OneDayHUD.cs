@@ -9,12 +9,8 @@ public static class OneDayHUD {
  static void Panel(Rect r){GUI.color=new Color(.035f,.08f,.11f,.98f);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
  public static void Draw(DriveSession s){if(s.RideResultOpen)return;Styles();var b=s.business;var e=b.ledger;var d=e.Driver;if(d==null)return;bool multi=e.Settings.days>1;GUI.depth=-35;
   if(!b.preparing&&!b.ShowingSummary&&!b.restartPrompt){
-   Panel(new Rect(16,202,380,126));int minute=480+(int)(System.Math.Min(e.Settings.daySeconds,e.Elapsed)*720/e.Settings.daySeconds);
-   GUI.Label(new Rect(26,205,252,25),e.Day+"/"+e.Settings.days+"일 · "+(e.State==BusinessState.Closing?"마감 후 +"+Clock(e.Elapsed-e.Settings.daySeconds):minute/60+":"+(minute%60).ToString("00")+" · 남은 "+Clock(e.SecondsLeft)),new GUIStyle(text){fontSize=16});
-   GUI.enabled=e.State==BusinessState.Open&&!s.paused&&s.jobs.trip.State!=TripState.OnTrip;if(GUI.Button(new Rect(282,205,104,25),"N 퇴근",button))b.RequestEndDay();GUI.enabled=true;
-   DriverStatusGauges.Draw(new Rect(26,234,360,52),d,e.Account);
-   GUI.Label(new Rect(26,290,360,18),"오늘 수입 "+Money(e.Income)+" · 누적 순수익 "+Money(e.TotalNet),new GUIStyle(small){fontSize=12});
-   GUI.Label(new Rect(26,309,360,18),"현금 "+Money(e.Account.Cash)+" · 미납 "+Money(e.Account.Debt),new GUIStyle(small){fontSize=12});return;
+   return; // Live operation is composed by CockpitUI.
+
   }
   var saved=GUI.matrix;float scale=Mathf.Min(1,Screen.width/800f,Screen.height/730f);GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,Vector3.one*scale);float x=(Screen.width/scale-720)/2,y=(Screen.height/scale-680)/2;GUI.depth=-150;Panel(new Rect(x,y,720,680));
   if(b.restartPrompt){GUI.Label(new Rect(x+25,y+25,670,55),multi?"새 3일 캠페인을 시작할까요?":"새 하루를 시작할까요?",title);GUI.Label(new Rect(x+25,y+100,670,210),"현금 10,000원 · 연료 60% · 포만감 80 · 피로 10\n1일차와 운행 점수 100점부터 시작합니다.\n이전 완료 결과는 보존합니다. 취소하면 현재 진행을 유지합니다.",text);GUI.Label(new Rect(x+25,y+360,670,65),b.saveStatus,small);if(GUI.Button(new Rect(x+25,y+590,325,55),multi?"새 3일 시작":"새 하루 시작",button))b.ConfirmRestart(true);if(GUI.Button(new Rect(x+370,y+590,325,55),"취소",button))b.ConfirmRestart(false);}
