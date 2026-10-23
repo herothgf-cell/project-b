@@ -34,3 +34,5 @@ KoreanText, ReadableUITheme(신규), 폰트2종/메타/라이선스, PrototypeBu
 builds/EungyeTaxi/EungyeTaxi.exe → M → 식당 등 시설 선택 → 우측 시설 정보 아래 호출 목록 확인 → 호출 선택/주변 호출 보기 (M) 재진입 시 하늘색 접근 실선 확인. 도움말/F7 팝업은 불투명. 운송 중 상황과 거점 안내는 속도계와 별도 공간 사용.
 
 최종 확인: artifacts/readable-release-player.log MAP_INTERACTION_CHECKS 43 ok=True / 프로세스 종료0, FAIL/Exception 없음. 기존 -presentationHudTest -hybridV2 -batchmode -nographics 20 PASS/종료0(artifacts/readable-release-hud.log). 새 글꼴/불투명 패널 적용 후 재시작 팝업 뒤 F7 미표시도 이미지 확인.
+
+배포 확인: 실제 소스 커밋 c1eb81c (git log 확인). 기본 은계 실행폴더129파일/118,730,710바이트 SHA256 검증 종료0. 글꼴 OFL 안내도 실행폴더에 포함. 현재 로컬 main 커밋/실행파일 갱신까지 진행했고 원격 푸시는 수행하지 않았다.
