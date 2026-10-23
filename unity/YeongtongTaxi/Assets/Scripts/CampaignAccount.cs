@@ -41,6 +41,7 @@ public class CampaignAccount {
   Fuel=Math.Max(0,Fuel-(float)(metres/1000*settings.fuelPerKm+seconds/60*settings.idlePerMinute));
  }
  public bool Meal(string id,int day){if(settings.oneDay){if(string.IsNullOrEmpty(id)||Has(id))return false;Mandatory(id,"meal",day,settings.meal);return true;}return !Ate(day)&&Post(id,"meal",day,-settings.meal,0);}
+ public bool Wash(string id,int day){if(day<1||string.IsNullOrEmpty(id)||Has(id))return false;Mandatory(id,"wash",day,2000);return true;}
  // Compatibility entry points cannot reactivate excluded prototype features.
  public bool Renew(string id,int day=1){return false;}
  public bool PayTax(string id,int day=1){return false;}

@@ -1,4 +1,5 @@
 using UnityEngine;
+[System.Serializable] public sealed class DrivingMannersSnapshot {public int score,events,redEvents,collisionEvents,accelEvents,brakeEvents,boundaryEvents,necessaryBrakeEvents;public bool comfortAccepted;public string[] reasons;}
 public class DrivingManners : MonoBehaviour {
  public DriveSession session;public readonly MannerLedger ledger=new MannerLedger();public string lastEvent="안전하게 운전해 주세요";public float eventUntil;public string collisionDiagnostic="none";public int events,redEvents,collisionEvents,accelEvents,brakeEvents,boundaryEvents;
  class Crossing {public TrafficJunction junction;public Vector3 direction;public int axis;public bool through,left,right,penalized,yieldPenalized,uncertain;}
@@ -7,8 +8,10 @@ public class DrivingManners : MonoBehaviour {
  readonly System.Collections.Generic.List<string> rideReasons=new System.Collections.Generic.List<string>();
  public string RideReasons {get{return rideReasons.Count==0?"감점 없음":string.Join(" / ",rideReasons.ToArray());}}
  public bool ComfortAccepted;public int necessaryBrakeEvents;
+ public DrivingMannersSnapshot CaptureLive(){return new DrivingMannersSnapshot{score=ledger.Score,events=events,redEvents=redEvents,collisionEvents=collisionEvents,accelEvents=accelEvents,brakeEvents=brakeEvents,boundaryEvents=boundaryEvents,necessaryBrakeEvents=necessaryBrakeEvents,comfortAccepted=ComfortAccepted,reasons=rideReasons.ToArray()};}
+ public void RestoreLive(DrivingMannersSnapshot s){ledger.RestoreScore(s.score);events=s.events;redEvents=s.redEvents;collisionEvents=s.collisionEvents;accelEvents=s.accelEvents;brakeEvents=s.brakeEvents;boundaryEvents=s.boundaryEvents;necessaryBrakeEvents=s.necessaryBrakeEvents;ComfortAccepted=s.comfortAccepted;rideReasons.Clear();if(s.reasons!=null)rideReasons.AddRange(s.reasons);Suppress(.8f);}
  Vector3 previousVelocity,previousFront;float suppressed,filtered,harshTime,offroadTime;bool harshLatched,offroadLatched,necessaryLatched;int sample;
- public void BeginRide(){ComfortAccepted=false;ledger.Reset();rideReasons.Clear();lastEvent="승객 탑승 · 승객 만족도 100점으로 시작";eventUntil=Time.time+4;Suppress(.8f);}
+ public void BeginRide(){ComfortAccepted=false;ledger.Reset();rideReasons.Clear();lastEvent="승객 탑승 · 운전 만족도 M 100점으로 시작";eventUntil=Time.time+4;Suppress(.8f);}
  public void Suppress(float seconds){crossing=null;stops.Clear();suppressed=Time.time+seconds;previousVelocity=GetComponent<Rigidbody>().velocity;previousFront=transform.position+transform.forward*2;filtered=0;harshTime=0;harshLatched=false;offroadTime=0;offroadLatched=false;}
  void Start(){Suppress(1);}
  public bool Deduct(string key,int amount,string reason,float cooldown=3){if(!ledger.Penalize(key,amount,Time.time,cooldown))return false;events++;if(key.StartsWith("red"))redEvents++;if(key=="collision")collisionEvents++;if(key=="accel")accelEvents++;if(key=="brake")brakeEvents++;if(key=="sidewalk")boundaryEvents++;lastEvent=reason+" -"+amount+"점";rideReasons.Add(lastEvent);eventUntil=Time.time+4;return true;}

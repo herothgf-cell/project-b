@@ -1,4 +1,5 @@
 using System;
+[Serializable] public sealed class RightPracticeSnapshot {public int variant;public bool started;public float elapsed;}
 
 // Training timing only; these durations are not legal stopping requirements.
 public class RightPracticeState {
@@ -6,6 +7,8 @@ public class RightPracticeState {
  public bool Started {get;private set;}
  public float Elapsed {get;private set;}
  public RightPracticeState(int variant){Variant=Math.Max(1,Math.Min(6,variant));}
+ public RightPracticeSnapshot Snapshot(){return new RightPracticeSnapshot{variant=Variant,started=Started,elapsed=Elapsed};}
+ public static RightPracticeState Restore(RightPracticeSnapshot s){if(s==null||s.variant<1||s.variant>6||float.IsNaN(s.elapsed)||float.IsInfinity(s.elapsed)||s.elapsed<0||!s.started&&s.elapsed>0)throw new ArgumentException("Invalid pedestrian timer");return new RightPracticeState(s.variant){Started=s.started,Elapsed=s.elapsed};}
  public void Advance(float seconds,bool stoppedAtDecisionPoint){
   if(float.IsNaN(seconds)||float.IsInfinity(seconds)||seconds<0)return;
   if(stoppedAtDecisionPoint)Started=true;

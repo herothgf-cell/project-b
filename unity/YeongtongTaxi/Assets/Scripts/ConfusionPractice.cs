@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 
+[Serializable] public sealed class ConfusionLiveSnapshot {public ConfusionPracticeSnapshot state;public LawEvent attemptEvent;public bool stopSeen,shown,initialized,hasFixture,fixtureVisible,hasAttemptEvent;public Vector3 previous;public float fixtureDistance;}
 // Fictional operation on an existing Eungye lane connector. Never edits surveyed map/source records.
 public sealed class ConfusionPractice : MonoBehaviour {
  public DriveSession session;
@@ -17,6 +18,8 @@ public sealed class ConfusionPractice : MonoBehaviour {
  public bool LampOn {get{return !Active||!State.Flashing||Time.unscaledTime%1<.5f;}}
  public float StopAlong {get{return -Junction.StopDistance(Axis);}}
  TrafficCar fixture;GameObject marks;LeftTurnMode previousMode;Vector3 previous;bool initialized,stopSeen,shown;float connectorEnd;
+ public ConfusionLiveSnapshot CaptureLive(){if(!Active||!LiveMode)return null;return new ConfusionLiveSnapshot{state=State.Snapshot(),attemptEvent=AttemptEvent==null?null:AttemptEvent.Copy(),hasAttemptEvent=AttemptEvent!=null,stopSeen=stopSeen,shown=shown,initialized=initialized,previous=previous,hasFixture=fixture!=null,fixtureVisible=fixture&&fixture.Visible,fixtureDistance=fixture?fixture.distance:0};}
+ public void RestoreLive(ConfusionLiveSnapshot s,ServiceLawZone zone){if(s==null){Stop();return;}if(zone==null||s.state==null||s.state.variant!=zone.variant||float.IsNaN(s.fixtureDistance)||float.IsInfinity(s.fixtureDistance)||s.fixtureDistance<0)throw new ArgumentException("Invalid live service observation");var restored=ConfusionPracticeState.Restore(s.state);if(!StartInService(zone))throw new ArgumentException("Cannot restore service observation");State=restored;AttemptEvent=!s.hasAttemptEvent||s.attemptEvent==null?null:s.attemptEvent.Copy();stopSeen=s.stopSeen;shown=s.shown;initialized=s.initialized;previous=s.previous;if(fixture){if(s.hasFixture&&s.fixtureVisible)fixture.Place(Mathf.Min(fixture.route.length,s.fixtureDistance));else fixture.Recycle();}ApplySignal();}
  public bool StartAttempt(int variant){
   if(!PracticeSession.Enabled||!ConfusionPracticeState.Contains(variant))return false;
   // Select a legal graph connection with room before and after it; navigation and H share this route.

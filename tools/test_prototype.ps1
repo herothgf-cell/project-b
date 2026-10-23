@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path $PSScriptRoot -Parent
 $taskCompiler = Join-Path $env:WINDIR 'Microsoft.NET/Framework64/v4.0.30319/csc.exe'
-$taskSources = @('PostTripServicePolicy', 'OneDayOfferPolicy', 'DriverCondition', 'MitTrafficFollowing', 'RoadGeometry', 'TrafficRules', 'PrototypeState', 'CampaignAccount', 'EconomyLedger', 'PassengerRequest', 'RightPracticeState', 'PracticeFeedback', 'ConfusionPracticeState', 'DriveMath', 'MannerLedger', 'FareTrip', 'AssistedDrivingPolicy', 'KoreanSignalRules') | ForEach-Object { Join-Path $taskRoot "unity/YeongtongTaxi/Assets/Scripts/$_.cs" }
+$taskSources = @('VehicleCare', 'PostTripServicePolicy', 'OneDayOfferPolicy', 'DriverCondition', 'MitTrafficFollowing', 'RoadGeometry', 'TrafficRules', 'PrototypeState', 'CampaignAccount', 'EconomyLedger', 'PassengerRequest', 'RightPracticeState', 'PracticeFeedback', 'ConfusionPracticeState', 'DriveMath', 'MannerLedger', 'FareTrip', 'AssistedDrivingPolicy', 'KoreanSignalRules') | ForEach-Object { Join-Path $taskRoot "unity/YeongtongTaxi/Assets/Scripts/$_.cs" }
 $taskOutput = Join-Path $taskRoot 'artifacts'
 New-Item -ItemType Directory -Force -Path $taskOutput | Out-Null
 $taskResults = @()

@@ -30,6 +30,7 @@ using UnityEngine;
  }
  static readonly ConditionalWeakTable<MapData,SceneIndex> indexes=new ConditionalWeakTable<MapData,SceneIndex>();
  static SceneIndex Index(MapData map){SceneIndex value;if(!indexes.TryGetValue(map,out value)){value=new SceneIndex(map);indexes.Add(map,value);}return value;}
+ public static void InvalidateAreaIndex(MapData map){indexes.Remove(map);}
  public static bool OnArea(MapData map,Vector3 point,bool sidewalk){if(!Active(map))return false;List<MapArea> list;if(!Index(map).areas.TryGetValue(new Vector2Int(Mathf.FloorToInt(point.x/32),Mathf.FloorToInt(point.z/32)),out list))return false;return list.Any(a=>(a.kind=="sidewalk")==sidewalk&&Contains(a.points,point));}
  static readonly string[] kinds={"road","building","sidewalk","parking","restaurant","rest","water","land"};
  public static bool Active(MapData map){return map!=null&&map.projectScene!=null;}

@@ -17,10 +17,10 @@ public static class MapCatalog {
   var args=System.Environment.GetCommandLineArgs();string region=NextRegion;foreach(var arg in args)if(arg.EndsWith("Test")||arg=="-assistedTrial")region="yeongtong";
   if(System.Array.IndexOf(args,"-eungye")>=0||System.Array.IndexOf(args,"-eungyeTest")>=0||System.Array.IndexOf(args,"-hybridTest")>=0)region="eungye";
   if(!string.IsNullOrEmpty(LockedRegion))region=LockedRegion;
-  if(region=="eungye"){var project=Resources.Load<TextAsset>(ProjectMapStore.ResourceName);if(project){var package=ProjectMapPackage.Parse(project.text);return RoadMapRuntime.Apply(package.baseline,package.document,package.contentHash);}}
+  if(region=="eungye"){var project=Resources.Load<TextAsset>(ProjectMapStore.ResourceName);if(project){var package=ProjectMapPackage.Parse(project.text);var composed=RoadMapRuntime.Apply(package.baseline,package.document,package.contentHash);EungyeConnectivityRepair.Apply(composed,RoadMapRuntime.Baseline);return composed;}}
   if(!Available(region)&&!string.IsNullOrEmpty(LockedRegion))throw new System.InvalidOperationException("빌드에 필요한 지도 자료가 없습니다: "+region);
   if(!Available(region)){Debug.LogWarning(Name(region)+" 지도 자료/검토 지점 미준비 · 영통으로 시작합니다");region="yeongtong";}
   var asset=Resources.Load<TextAsset>(Resource(region));if(!asset)throw new System.InvalidOperationException("지도 JSON이 없습니다. tools/import_ngii_map.py build --config config/maps/yeongtong.json 을 실행하세요.");
-  var result=JsonUtility.FromJson<MapData>(asset.text);result.mapId=region;MapSupplements.Apply(result,asset.bytes);ReviewedLaneLayout.Apply(result);result=RoadMapRuntime.Apply(result);CorridorPolish.Apply(result);return result;
+  var result=JsonUtility.FromJson<MapData>(asset.text);result.mapId=region;MapSupplements.Apply(result,asset.bytes);ReviewedLaneLayout.Apply(result);result=RoadMapRuntime.Apply(result);CorridorPolish.Apply(result);EungyeConnectivityRepair.Apply(result,RoadMapRuntime.Baseline);return result;
  }
 }

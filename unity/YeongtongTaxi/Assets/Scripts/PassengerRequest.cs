@@ -1,9 +1,12 @@
 public enum RequestKind { Quiet, Eta, Comfort, OnTime, LargeRoad, ShortRoad, SafeStop, Empathy, RouteAdvice, Interview, Music, FareHelp, LocalChat, DestinationChange, ViaStop, LostItem, RejectIllegal }
+[System.Serializable] public sealed class PassengerRequestSnapshot {public string trip,response;public RequestKind kind;public bool resolved,accepted,opportunity,finished,safety,goalRecorded;public int satisfactionDelta;}
 public class PassengerRequest {
  public string Trip {get;private set;} public RequestKind Kind {get;private set;}
  public bool Resolved {get;private set;} public bool Accepted {get;private set;} public bool SafetyDeferred {get{return safety;}}
  public int SatisfactionDelta {get;private set;}
  bool opportunity,finished,safety,goalRecorded;string response="";
+ public PassengerRequestSnapshot Snapshot(){return new PassengerRequestSnapshot{trip=Trip,kind=Kind,response=response,resolved=Resolved,accepted=Accepted,opportunity=opportunity,finished=finished,safety=safety,goalRecorded=goalRecorded,satisfactionDelta=SatisfactionDelta};}
+ public void Restore(PassengerRequestSnapshot s){if(s==null||!System.Enum.IsDefined(typeof(RequestKind),s.kind)||s.satisfactionDelta< -10||s.satisfactionDelta>8)throw new System.ArgumentException("Invalid passenger request");Trip=s.trip;Kind=s.kind;response=s.response??"";Resolved=s.resolved;Accepted=s.accepted;opportunity=s.opportunity;finished=s.finished;safety=s.safety;goalRecorded=s.goalRecorded;SatisfactionDelta=s.satisfactionDelta;}
  public string Id {get{return Kind<=RequestKind.Eta?Kind.ToString():Kind<=RequestKind.SafeStop?"DR0"+((int)Kind-1):Kind<=RequestKind.LocalChat?"CH0"+((int)Kind-6):"EV0"+((int)Kind-12);}}
  public bool Begin(string trip,RequestKind kind){if(Trip==trip)return false;Trip=trip;Kind=kind;Resolved=Accepted=opportunity=finished=safety=goalRecorded=false;SatisfactionDelta=0;response="";return true;}
  public void ObserveOpportunity(bool stopped){opportunity|=stopped;}
@@ -12,7 +15,7 @@ public class PassengerRequest {
  public void DeferSafety(){if(Resolved||finished)return;Resolved=true;safety=true;response="안전상 보류 · 감점 없음";}
  public void CompleteGoal(bool success,string reason){if(!Accepted||finished||goalRecorded)return;goalRecorded=true;SatisfactionDelta=Delta(Kind,success);response+=(success?" · 달성: ":" · 미달: ")+reason;}
  public void CompleteUnknown(string reason){if(!Accepted||finished||goalRecorded)return;goalRecorded=true;response+=" · 판정 불가: "+reason+" · 만족도 변화 없음";}
- public static int Delta(RequestKind kind,bool success){return kind<=RequestKind.Eta?0:kind<=RequestKind.SafeStop?(success?8:-10):kind<=RequestKind.LocalChat?(success?5:-5):(success?6:-8);}
+ public static int Delta(RequestKind kind,bool success){return kind==RequestKind.Quiet?(success?5:0):kind==RequestKind.Eta||kind==RequestKind.LostItem||kind==RequestKind.RejectIllegal?0:kind<=RequestKind.SafeStop?(success?8:-10):kind<=RequestKind.LocalChat?(success?5:-5):(success?6:-8);}
  public static float EtaSeconds(float eta,int option){if(float.IsNaN(eta)||float.IsInfinity(eta)||eta<0)return float.NaN;return eta+System.Math.Max(-1,System.Math.Min(1,option))*System.Math.Min(30,eta*.1f);}
  public static string EtaComparison(float predicted,float actual){float difference=actual-predicted;return difference< -15?"예상보다 빠름":difference>15?"늦어짐":"예상 범위";}
  public string ResponseText(){return (Kind<=RequestKind.Eta?"":Id+" · ")+(response.Length>0?response:Resolved?"응답 완료":"응답 대기");}
@@ -21,15 +24,19 @@ public class PassengerRequest {
 // Settlement is a value calculated once at delivery; fare policy continues to use M.
 [System.Serializable] public class PassengerReward {
  public int baseFare,bonus,satisfaction,satisfactionDelta,excessScore,sourceManner,requiredScore;public string bonusReason="";
+ public int startSatisfaction,startDeficit,cleanBonus,driveDelta,timeDelta;public float referenceSeconds,actualSeconds;public string timeReason="";
  public int Total {get{return baseFare+bonus;}}
  public static PassengerReward Calculate(RequestKind kind,int manner,int required,int fare,int paid,int delta,bool onTime,bool lawClear){
-  var result=new PassengerReward{sourceManner=manner,requiredScore=required,baseFare=paid,satisfactionDelta=delta,satisfaction=System.Math.Max(0,System.Math.Min(100,manner+delta))};result.excessScore=System.Math.Max(0,result.satisfaction-required);
-  bool eligible=kind>RequestKind.Eta&&kind!=RequestKind.Music&&kind!=RequestKind.FareHelp&&kind!=RequestKind.LostItem&&kind!=RequestKind.RejectIllegal;
-  result.bonusReason=!eligible?"이 요청은 보너스 대상 아님":!onTime?"시간 초과":paid!=fare||manner<required?"기본 운임 100% 조건 미달":!lawClear?"확정 법규 위반 있음":delta<=0?"긍정 요청 이행 없음":result.excessScore<=0?"요구 점수 초과 없음":"요구 점수 초과 비율 적용";
-  if(eligible&&onTime&&paid==fare&&manner>=required&&lawClear&&delta>0&&required<100){int percent=kind<=RequestKind.SafeStop?10:kind<=RequestKind.LocalChat?5:8;int limit=kind<=RequestKind.SafeStop?500:kind<=RequestKind.LocalChat?300:400;int cap=System.Math.Min(limit,(int)((long)fare*percent/100));result.bonus=(int)((long)cap*result.excessScore/(100-required)/10)*10;}
-  return result;
+  return CalculateDetailed(manner,required,fare,paid,delta,onTime,100,0,0,0,false);
  }
- public string Summary {get{return "기본 운임 "+baseFare.ToString("N0")+"원 · 최종 승객 만족도 "+satisfaction+"점 ("+sourceManner+(satisfactionDelta>=0?"+":"")+satisfactionDelta+") / 요구 "+requiredScore+"점 · 초과 "+excessScore+"점\n감사 보너스 "+bonus.ToString("N0")+"원 · "+bonusReason+" · 합계 "+Total.ToString("N0")+"원";}}
+ public static int Deficit(string trip){return new[]{4,8,12}[(int)(DrunkRideState.Hash(trip+":satisfaction")%3)];}
+ public static PassengerReward CalculateDetailed(int manner,int required,int fare,int paid,int delta,bool onTime,int start,int clean,float reference,float actual,bool unsafeDriving){
+  bool valid=reference>=1&&!float.IsNaN(reference)&&!float.IsInfinity(reference)&&actual>=0&&!float.IsNaN(actual)&&!float.IsInfinity(actual);int time=valid&&!unsafeDriving?System.Math.Max(0,System.Math.Min(12,(int)System.Math.Round(60*(reference-actual)/reference,System.MidpointRounding.AwayFromZero))):0;
+  var r=new PassengerReward{sourceManner=manner,requiredScore=required,baseFare=onTime?paid:0,startSatisfaction=start,cleanBonus=clean,driveDelta=manner-100,satisfactionDelta=delta,timeDelta=time,referenceSeconds=reference,actualSeconds=actual,timeReason=!valid?"기준 ETA 없음/1초 미만":unsafeDriving?"위험 운전으로 시간 가산 없음":time>0?"안전한 조기 도착":"조기 도착 가산 없음"};r.satisfaction=System.Math.Max(0,System.Math.Min(100,start+r.driveDelta+delta+time));r.excessScore=System.Math.Max(0,r.satisfaction-required);r.bonusReason=!onTime?"도착 기한 초과":r.satisfaction<required?"요구 만족도 미달":"요구 만족도 도달 · 공통 보너스";
+  if(onTime&&r.satisfaction>=required&&required<100){int cap=System.Math.Min(500,fare/10);r.bonus=(int)((long)cap*(100-required+4*r.excessScore)/(5*(100-required))/10)*10;}return r;
+ }
+ public string Breakdown {get{return startSatisfaction+" + 주행 "+driveDelta+" + 요청 "+satisfactionDelta+" + 시간 "+timeDelta+" = "+satisfaction+" / 요구 "+requiredScore+" (청결 +"+cleanBonus+")";}}
+ public string Summary {get{return "약정 운임과 별도 · 기본 운임 "+baseFare.ToString("N0")+"원 · "+Breakdown+"\n보너스 "+bonus.ToString("N0")+"원 · "+bonusReason+" · 합계 "+Total.ToString("N0")+"원";}}
 }
 
 // Mouse and keyboard share these replies; descriptions match implemented prototype effects.

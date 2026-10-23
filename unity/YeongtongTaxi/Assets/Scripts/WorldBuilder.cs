@@ -25,6 +25,7 @@ public class WorldBuilder : MonoBehaviour {
     }
     public void BuildStatic(MapData source,bool collisions=true,bool decorations=true,bool includeGeometry=true) {
         map=source;
+        if(decorations)PassengerStopCatalog.Apply(map);
         if(decorations){FuelStationLayout.Apply(map);RestaurantSiteLayout.Apply(map);}
         if(decorations)MapSupplements.DrawCrossings(map,transform);
         var ground=Mat("Ground",new Color(.33f,.40f,.32f)); var asphalt=Mat("Road",SurfaceColor("road"));
@@ -52,7 +53,7 @@ public class WorldBuilder : MonoBehaviour {
         }
         RenderBatches(buildingBatches,"건물 외형",building);
         if(!decorations)return;
-        FuelStationLayout.Draw(map,transform);RestaurantSiteLayout.Draw(map,transform);ProjectMapScene.DrawServices(map,transform);
+        PassengerStopCatalog.Draw(map,transform);FuelStationLayout.Draw(map,transform);RestaurantSiteLayout.Draw(map,transform);ProjectMapScene.DrawServices(map,transform);
         foreach(var t in map.targets) {
             var m=Mat(t.name,t.name=="T1"?new Color(.1f,.75f,.9f):new Color(1,.5f,.12f));
             var label=new GameObject(t.name+" label"); label.transform.position=t.V(8); label.transform.SetParent(transform); var text=label.AddComponent<TextMesh>(); text.text=t.name; text.fontSize=64; text.characterSize=.15f; text.anchor=TextAnchor.MiddleCenter; text.color=m.color; label.AddComponent<FaceCamera>();

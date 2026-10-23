@@ -18,6 +18,9 @@ class ConfusionPracticeTests {
   var observed=New(10);observed.Advance(20,true,true);observed.ObserveTraffic(true,false);observed.Enter(true);observed.Complete(true);Check(observed.Event("actual-block",1).Deduction>0,"actual observed blockage overrides fixture timer");
   var gap=New(13);gap.ObserveTraffic(false,false);gap.Enter(false);gap.Conflict();gap.Complete(true);Check(gap.Event("actual-gap",1).Deduction==0,"actual clear oncoming path overrides fixture timer");
   Check(New(10).Blocked&&New(13).Oncoming,"retry restores hazards");
+  var preserved=ConfusionPracticeState.Restore(observed.Snapshot());Check(preserved.Elapsed==observed.Elapsed&&preserved.EntryBlocked&&preserved.Finished&&preserved.Event("restore-block",1).Deduction==observed.Event("before-block",1).Deduction,"save preserves observed illegal entry after later timing changes");
+  preserved=ConfusionPracticeState.Restore(gap.Snapshot());Check(!preserved.Oncoming&&preserved.ConflictSeen&&preserved.CorrectRoute&&preserved.Event("restore-clear",1).Deduction==0,"save preserves actual clear observation and completed conflict");
+  var walking=new RightPracticeState(6);walking.Advance(2.5f,true);var pedestrian=RightPracticeState.Restore(walking.Snapshot());Check(pedestrian.Started&&pedestrian.Elapsed==2.5f&&pedestrian.CrossingProgress==walking.CrossingProgress&&pedestrian.Observe().pedestrian==PedestrianState.Crossing,"PS09 pedestrian restore keeps elapsed crossing phase");
   Console.WriteLine("PASS confusion practice timing, entry snapshots, yield, wrong route, unknown and feedback");
  }catch(Exception e){Console.WriteLine(e);Environment.Exit(1);}}
 }

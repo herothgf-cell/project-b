@@ -1,4 +1,7 @@
 using UnityEngine;
+[System.Serializable] public sealed class ScenarioChoiceSnapshot {
+ public string courseId,plan,junctionName;public bool completed,open,offered,alternate,observing,previousPause;public float previousScale,releasedAge;public int day,panelsToday,axis,sign;public Vector3 direction;public RightPracticeSnapshot pedestrian;
+}
 
 // Normal-business choice: input selects a plan, never teleports/steers or scores the answer.
 public sealed class ScenarioChoiceSituation : MonoBehaviour {
@@ -8,6 +11,11 @@ public sealed class ScenarioChoiceSituation : MonoBehaviour {
  public bool ClosedThisFrame {get{return closedFrame==Time.frameCount;}}
  bool offered,alternate,observing,previousPause;float previousScale;int closedFrame=-1,day=-1,panelsToday;
  TrafficJunction junction;Vector3 direction;int axis,sign;RightPracticeState pedestrianState;GameObject person;float releasedAt;
+ public ScenarioChoiceSnapshot CaptureLive(){if(Course==null)return null;return new ScenarioChoiceSnapshot{courseId=Course.id,plan=Plan,completed=Completed,open=Open,offered=offered,alternate=alternate,observing=observing,previousPause=previousPause,previousScale=previousScale,releasedAge=Completed?Mathf.Max(0,Time.time-releasedAt):0,day=day,panelsToday=panelsToday,junctionName=junction==null?null:junction.name,direction=direction,axis=axis,sign=sign,pedestrian=pedestrianState==null?null:pedestrianState.Snapshot()};}
+ public void RestoreLive(ScenarioChoiceSnapshot saved){if(saved==null){Stop();return;}var zones=GetComponent<ServiceLawZones>();var course=zones.scenarios.Find(c=>c.id==saved.courseId);if(course==null||saved.alternate&&course.id!="PS08"||saved.panelsToday<0||float.IsNaN(saved.releasedAge)||float.IsInfinity(saved.releasedAge)||saved.releasedAge<0)throw new System.ArgumentException("Invalid saved driving plan");Stop();Course=course;Plan=saved.plan??"직접 운전";Completed=saved.completed;offered=saved.offered;alternate=saved.alternate;day=saved.day;panelsToday=saved.panelsToday;Open=saved.open;previousPause=saved.previousPause;previousScale=saved.previousScale>0?saved.previousScale:1;releasedAt=Time.time-saved.releasedAge;closedFrame=-1;
+  if(alternate){zones.BeginAlternative();session.jobs.nav.AvoidEdge=Course.connector;session.jobs.nav.ObserveEdge(Course.alternate);if(Completed)zones.CompleteAlternative();session.jobs.nav.Refresh();}
+  if(saved.observing){junction=session.traffic.junctions.Find(j=>j.name==saved.junctionName);if(Course.id!="PS09"||junction==null||saved.axis<0||saved.axis>1||Mathf.Abs(saved.sign)!=1||saved.direction.sqrMagnitude<.9f)throw new System.ArgumentException("Invalid saved pedestrian observation");direction=saved.direction;axis=saved.axis;sign=saved.sign;pedestrianState=RightPracticeState.Restore(saved.pedestrian);CreatePedestrian();observing=true;ObserveRightTurn(false);}
+ }
  public void Begin(PrototypeScenario course){Stop();Course=course;Completed=offered=alternate=false;Plan="직접 운전";if(day!=session.law.Day){day=session.law.Day;panelsToday=0;}}
  public void Stop(){Close();if(observing&&junction!=null){junction.scenarioSignal=false;junction.rightTurnObservation=null;}if(person)Destroy(person);observing=false;Course=null;}
  public string DetourDiagnostic {get;private set;}="";
@@ -17,7 +25,7 @@ public sealed class ScenarioChoiceSituation : MonoBehaviour {
  public bool Select(int choice){if(!Open)return false;
   if(Course.id=="PS08"&&choice==1){if(!CanDetour())return false;alternate=true;GetComponent<ServiceLawZones>().BeginAlternative();session.jobs.nav.AvoidEdge=Course.connector;session.jobs.nav.ObserveEdge(Course.alternate);session.jobs.nav.Refresh();Plan="다음 연결도로 우회";}
   else Plan=Course.id=="PS09"?(choice==0?"신호·보행자 확인 후 판단":"직접 운전"):(choice==0?"줄 뒤에서 대기":choice==2?"앞부분 진입 가능 여부 검토":"직접 운전");
-  Close();return true;
+  Close();session.business.SaveCheckpoint();return true;
  }
  void Close(){if(!Open)return;Open=false;closedFrame=Time.frameCount;session.paused=previousPause;Time.timeScale=previousScale;}
  void Update(){
@@ -38,10 +46,11 @@ public sealed class ScenarioChoiceSituation : MonoBehaviour {
   // Never replace an existing fixture or place a person through a live vehicle.
   if(GetComponent<RightTurnSituation>().Active||GetComponent<ExitQueueSituation>().Active)return;
   var point=CrossingPoint(.35f);foreach(var car in session.traffic.cars)if(car.Visible&&Vector3.Distance(car.transform.position,point)<8)return;
-  pedestrianState=new RightPracticeState(6);person=GameObject.CreatePrimitive(PrimitiveType.Capsule);person.name="PS09 횡단 보행자 · 창작";person.transform.localScale=new Vector3(.6f,.85f,.6f);Destroy(person.GetComponent<Collider>());person.GetComponent<Renderer>().material.color=new Color(.95f,.45f,.1f);observing=true;ObserveRightTurn();
+  pedestrianState=new RightPracticeState(6);CreatePedestrian();observing=true;ObserveRightTurn();
  }
+ void CreatePedestrian(){person=GameObject.CreatePrimitive(PrimitiveType.Capsule);person.name="PS09 횡단 보행자 · 창작";person.transform.localScale=new Vector3(.6f,.85f,.6f);Destroy(person.GetComponent<Collider>());person.GetComponent<Renderer>().material.color=new Color(.95f,.45f,.1f);}
  Vector3 CrossingPoint(float t){return junction.center+TrafficSystem.Right(direction)*(junction.halfWidth[axis]+4)+direction*Mathf.Lerp(-junction.halfWidth[1-axis]-1,junction.halfWidth[1-axis]+1,t)+Vector3.up*.85f;}
- void ObserveRightTurn(){var front=session.taxi.transform.position+session.taxi.transform.forward*2;float gap=-junction.StopDistance(axis)-Vector3.Dot(front-junction.center,direction);bool stopped=gap>=-TrafficJunction.StopLineEntryTolerance&&gap<3&&session.taxi.body.velocity.magnitude<.05f&&Vector3.Dot(session.taxi.transform.forward,direction)>.8f;pedestrianState.Advance(Time.deltaTime,stopped);var o=pedestrianState.Observe();o.forward=SignalColor.Red;junction.scenarioSignal=true;junction.observationAxis=axis;junction.observationSign=sign;junction.scenarioForward=o.forward;junction.rightTurnObservation=o;person.SetActive(o.pedestrian!=PedestrianState.None);person.transform.position=CrossingPoint(pedestrianState.CrossingProgress);}
+ void ObserveRightTurn(bool advance=true){var front=session.taxi.transform.position+session.taxi.transform.forward*2;float gap=-junction.StopDistance(axis)-Vector3.Dot(front-junction.center,direction);bool stopped=gap>=-TrafficJunction.StopLineEntryTolerance&&gap<3&&session.taxi.body.velocity.magnitude<.05f&&Vector3.Dot(session.taxi.transform.forward,direction)>.8f;if(advance)pedestrianState.Advance(Time.deltaTime,stopped);var o=pedestrianState.Observe();o.forward=SignalColor.Red;junction.scenarioSignal=true;junction.observationAxis=axis;junction.observationSign=sign;junction.scenarioForward=o.forward;junction.rightTurnObservation=o;person.SetActive(o.pedestrian!=PedestrianState.None);person.transform.position=CrossingPoint(pedestrianState.CrossingProgress);}
  void RecordCompletion(){var e=new LawEvent{id=session.law.ids.Next("course"),day=session.law.Day,tripId=session.law.tripId,scenario=Course.id,family="코스 계획",occupied=true,seconds=(float)session.business.ledger.Elapsed,action=Plan,reason=alternate?"실제 대체 도로 통과 · 원래 출구 합류는 평가 기회 없음":"지정 연결 통과. 선택 자체는 채점하지 않으며 실제 정지·양보 평가는 별도 운행 기록에 남습니다."};e.Add("계획 선택",alternate?LawVerdict.NoOpportunity:LawVerdict.Deferred,0);session.law.ledger.Record(e);}
  void OnGUI(){if(!Open||Course==null)return;float w=Mathf.Min(650,Screen.width-30),h=Course.id=="PS08"?330:240,x=(Screen.width-w)/2,y=(Screen.height-h)/2;GUI.Box(new Rect(x,y,w,h),"");var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=18,wordWrap=true};var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=16};GUI.Label(new Rect(x+20,y+15,w-40,95),Course.id=="PS08"?"출구 앞 대기열 · 운전 계획\n줄 뒤 대기 또는 연결도로 우회를 선택하세요. 선택만으로 점수를 매기지 않습니다.":"운행 중 우회전 · 신호와 보행자\n정지선에서 멈추고 횡단 중인 보행자가 지난 뒤 주변 교통을 확인하세요. 직접 운전합니다.",style);
   string[] choices=Course.id=="PS08"?new[]{"줄 뒤에서 대기","다음 연결도로로 우회","앞부분 진입을 검토","직접 운전"}:new[]{"신호·보행자를 확인한 뒤 판단","직접 운전"};for(int i=0;i<choices.Length;i++){GUI.enabled=!(i==1&&Course.id=="PS08")||CanDetour();if(GUI.Button(new Rect(x+20,y+115+i*45,w-40,36),choices[i],button))Select(i);}GUI.enabled=true;
