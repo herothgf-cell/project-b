@@ -50,3 +50,14 @@ Unity Hub에서 **`unity/EungyeTaxi`**를 다시 추가해 2022.3.62f2로 연다
 ## 통합 사전 회귀 보완
 
 사용자가 다른 채팅과의 통합 조율 메시지 전송을 승인했고 경로/저장 이전/통합 담당을 전달했다. 동시 작업의 승하차 포켓이 하나의 보도를 여러 렌더 조각으로 분리하는 구조를 확인했다. 조각의 원본 ID가 같으면 기존 편집 렌더러가 앞 조각을 덮어쓰는 오류를 synthetic test RED(exit1 first fragment retained)로 재현했다. 조각을 원본 ID별로 합쳐 배치하고, 정식 문서에 없는 runtime 전용 면은 표시만 하며 직접 선택 대상에서는 제외했다. FragmentedAreas/기존 Renderer 검사 모두 exit0. 마우스 드래그에 전체 합성은 추가하지 않았다.
+
+
+## 조율 후 최신 main 통합·최종 검증
+
+다른 채팅에 사용자 승인으로 메시지를 보내 통합 순서를 조율했다. 해당 작업이 main 14f4d2e까지 푸시하고 기존 폴더 수정을 중단한 뒤 b6f2ab8/edc0bdf에서 통합했다. 취객·청결·호출·v3 운송 저장·도로 보완을 보존했다. 최종 검토에서 보완 도로가 분할되면 접근 차로 선택이 일부 누락되는 것을 확인해 정식 문서 차로 원형으로 선택하도록 수정했다. 실행 미리보기는 보완 그래프를 유지하며 정차점은 런타임 분할 차로로 재투영된다.
+
+- 통합 EungyeOnly.Run / NativeParity / PrototypeCareChecks / SceneWindow / FragmentedAreas 모두 종료0. 실제 JsonUtility14·활성 회계22·정차850·도로2412 검사를 포함한다.
+- 최종 SceneWindow 재검사와 BuildHybrid 모두 종료0. 소스 7f3d6b2 (실제 git commit 결과).
+- 최종 exe: 지역 지정 없이 프로젝트 지도23검사 success=True/종료0. 실제 두 프로세스 liveSave9/liveReload23검사 종료0. 수동 운전/화면 품질 검증으로 해석하지 않는다.
+- 배포 manifest는 실제 소스 해시와 최종 실행폴더 전수 크기/SHA256으로 재생성한다. 정식 지도 SHA256은 기존 1b8ab6b86d435935d74cac8c83249daee41eb61a3d89d09fccfca3004c706714 그대로다.
+- 기본 작업 폴더의 기존 README/기획06·09/LATEST 변경과 미추적 라이선스/XMind 문서는 별도 보존한다. 이전 Unity 생성 캐시는 artifacts/eungye-only/previous-project-generated-cache로 이동해 보존하며 새 경로에 검증된 은계 입력2개를 준비한다.
