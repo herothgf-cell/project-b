@@ -57,3 +57,4 @@
 - 통합 후3일 상태/새 프로세스 복원20항목과 HUD20항목 종료0(`integrated-threeDayTest.log`, `integrated-threeDayReloadTest.log`, `integrated-presentationHudTest.log`). 이는 상태/API 검사이며 수동3일 주행이 아니다.
 - 최종 숨김 창 실행의 스크린샷은 검게 캡처되어 시각 검증 자료로 사용하지 않는다. UI 시각 확인은 통합 전 표시된 창의1280/1600/1920 화면과3D 확인 결과이며, 최종 실행에서는 저장/API·버튼 크기 계측만 회귀 검사했다.
 - 최종 식당20항목 종료0(`release-restaurant.log`): 일반 차량 유지, 차량 물리 진입/출차 측면·연석 접촉0, 실제 정차 칸/방향, 도로변 식사 차단, 메뉴3종/중복 결제 방지. 모델23묶음(`tools/test_prototype.ps1`) 종료0, 필수 입력 Strict/RequireRawInputs 종료0. 원본 입력 해시는 변경하지 않았다.
+- 실제 소스 커밋: 31b176a2115269eb841ed4994f146e0077b3f260 (이력 파일 git log 확인). 배포 실행폴더 128파일/92861804바이트를 manifest로 생성·SHA256 전수 확인 종료0. 정식 지도 21342670바이트/파일 SHA256 1b8ab6b86d435935d74cac8c83249daee41eb61a3d89d09fccfca3004c706714. main에는 이 소스 및 검증된 실행폴더를 함께 반영한다.
