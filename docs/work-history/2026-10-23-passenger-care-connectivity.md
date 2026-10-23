@@ -52,3 +52,7 @@ README/라이선스/XMind와 문서06/09의 기존4줄 변경은 이 커밋에 �
 ## 배포 패키지 확인
 
 소스 `e7e0e071544da7a3932d9d8cdba4104c81c335d1`은 `git log -1 --oneline -- docs/work-history/2026-10-23-passenger-care-connectivity.md`로 확인했다. 이 소스와 최종 `PrototypeBuild.BuildHybrid` 실행폴더를 manifest에 연결했다. `tools/update_distribution_manifest.ps1 -VerifyOnly` 종료0: **128파일/118,737,930바이트** 전체 크기·SHA256 일치. 실행 `builds/EungyeTaxi/EungyeTaxi.exe`. 다른 PC는 main pull 후 이 실행파일을 열면 된다. 정식 지도/필수3입력/지도ZIP은 그대로다.
+
+## 원격 배포 완료
+
+`git push origin main` 종료0. 소스e7e0e07와 배포fab8fb5를 origin/main에 반영했고 `git ls-remote origin refs/heads/main`에서 `fab8fb5c298ad6dfdec83f66ddfa7242ac47f115`를 확인했다. 푸시 후 실행폴더128파일 해시 재검증 종료0. 이후 커밋은 이 완료 기록만 보강한다. 기존 Unity 폴더에서 이번 기능 개발은 종료했으며, 별도 은계-only 이동/통합은 담당 채팅이 최신 main 기준으로 진행할 수 있다.
