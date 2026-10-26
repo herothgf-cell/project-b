@@ -35,3 +35,5 @@ AdditionalReviewedUturnMap.Apply가 재현 가능한3개 join·조건 표지·�
 main84757ef(시작/구형 저장/운임 수정)을 병합하고 양쪽 기획·체크리스트·이력을 보존했다. 유턴 검사 도구는 StartupReady 후2프레임 기다리도록 맞췄다. 통합 BuildHybrid 종료0, 통합 exe -additionalUturnTest 종료0:3경로/정적61샘플 차단0/kinematic NPC3완주. 원래 작업의 운임·저장 검사는 해당 이력의 결과를 유지하며 이번에 전체 재실행하지 않았다. 통합 로그는 artifacts/2026-10-26-additional-uturns/에 보존한다.
 
 최종 공동 소스/빌드 커밋3d19b13402405b25a0ee4529de83acebcc9b45c7. manifest 재생성/VerifyOnly 종료0:130파일105,647,070바이트. 통합 Strict 종료0. main fast-forward 및 push 결과는 후속 기록에 남긴다.
+
+main bdc934cbde40eadb59f36b2d177d25a6502412f5 fast-forward 및 origin/main push 종료0, ls-remote 동일 해시 확인. 사용자 .mmst와 기존 미추적 자료는 보존했다.
