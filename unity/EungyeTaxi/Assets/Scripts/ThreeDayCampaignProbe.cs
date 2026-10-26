@@ -13,7 +13,7 @@ public class ThreeDayCampaignProbe:MonoBehaviour {
  void Check(bool value,string text){ok&=value;report.AppendLine((value?"PASS ":"FAIL ")+text);Directory.CreateDirectory("artifacts");File.WriteAllText("artifacts/three-day-runtime"+(Array.IndexOf(Environment.GetCommandLineArgs(),"-threeDayReloadTest")>=0?"-reload":"")+".txt","success="+ok+"\n"+report);}
  CampaignCheckpoint Saved(){return JsonUtility.FromJson<CampaignCheckpoint>(File.ReadAllText(s.business.SavePath));}
  IEnumerator Start(){
-  s=FindObjectOfType<DriveSession>();var b=s.business;b.enabled=false;Time.timeScale=0;
+  while(!(s=FindObjectOfType<DriveSession>())||!s.StartupReady)yield return null;var b=s.business;b.enabled=false;Time.timeScale=0;
   yield return new WaitForSecondsRealtime(2);b.enabled=true;Time.timeScale=0;s.taxi.enabled=false;s.taxi.body.isKinematic=true;s.taxi.body.detectCollisions=false;
   yield return null; // Let the production Start restore the independent law journal while physics remains frozen.
   Check(b.ledger.OneDay&&b.ledger.Settings.days==3&&b.SavePath.EndsWith("three-day-test.json"),"three-day modern mode has separate save path");
