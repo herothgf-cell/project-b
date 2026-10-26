@@ -168,6 +168,7 @@ MonoBehaviour:
   requests: {fileID: 0}
   assisted: {fileID: 0}
   roadConditions: {fileID: 0}
+  ambientPedestrians: {fileID: 0}
   paused: 0
   ShowHints: 0
   visits: 0
