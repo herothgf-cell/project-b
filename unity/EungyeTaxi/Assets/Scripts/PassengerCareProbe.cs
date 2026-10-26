@@ -13,9 +13,16 @@ public sealed class PassengerCareProbe:MonoBehaviour {
  void Fresh(){s.business.settings=PrototypeSettings.ForThreeDays();s.business.ledger=new EconomyLedger(s.business.settings);s.business.passengers.Clear();s.business.enabledCampaign=true;s.business.useV2=true;s.business.preparing=false;s.paused=false;Time.timeScale=1;s.jobs.ClearForDay();s.law.ids=new PrototypeIds(Guid.NewGuid().ToString("N"));s.law.ledger=new LawLedger();s.law.tripId="";}
  JobOffer Offer(){return new JobOffer{pickup=0,drop=3,fare=5000,seconds=120,requiredScore=70,distance=s.jobs.nav.Distance(s.jobs.stops[0],s.jobs.stops[3])};}
  void Board(DrunkRideCase kind){var j=s.jobs;j.ForcedRideCase=kind;var o=Offer();j.offers[0]=o;Stop(o.pickup);Check(j.Accept(0)&&j.trip.State==TripState.ToPickup,"accept "+kind);Check(j.Interact()&&j.trip.State==TripState.OnTrip,"board "+kind);Check(j.StartSatisfaction==o.requiredScore-j.StartDeficit+3,"clean3 baseline once "+kind);var saved=JsonUtility.FromJson<CampaignCheckpoint>(File.ReadAllText(s.business.SavePath));Check(saved.version==3&&saved.live!=null&&saved.live.jobs.trip.state==TripState.OnTrip&&saved.live.jobs.drunk.identity==j.DrunkRide.identity,"boarding immediately persists stable active seed "+kind);}
- IEnumerator Start(){yield return new WaitForSecondsRealtime(2);s=FindObjectOfType<DriveSession>();while(!s.StartupReady)yield return null;yield return null;yield return null;bool ok=false;try{Run();ok=true;}catch(Exception error){report.AppendLine(error.ToString());Debug.LogException(error);}if(ok&&Array.IndexOf(Environment.GetCommandLineArgs(),"-fareCapture")>=0)yield return CaptureFare();if(ok&&Array.IndexOf(Environment.GetCommandLineArgs(),"-careCapture")>=0)yield return CaptureCare();if(ok&&Array.IndexOf(Environment.GetCommandLineArgs(),"-scoreCapture")>=0)yield return CaptureScores();Directory.CreateDirectory("artifacts");File.WriteAllText("artifacts/passenger-care-integration.txt",report.ToString()+"\nchecks="+checks+"\n");Debug.Log("PASSENGER_CARE_INTEGRATION_"+(ok?"OK":"FAILED")+" checks="+checks);Application.Quit(ok?0:1);}
+ IEnumerator Start(){yield return new WaitForSecondsRealtime(2);s=FindObjectOfType<DriveSession>();while(!s.StartupReady)yield return null;yield return null;yield return null;if(Array.IndexOf(Environment.GetCommandLineArgs(),"-fuelMenuCapture")>=0){yield return CaptureFuelMenu();Application.Quit(0);yield break;}bool ok=false;try{Run();ok=true;}catch(Exception error){report.AppendLine(error.ToString());Debug.LogException(error);}if(ok&&Array.IndexOf(Environment.GetCommandLineArgs(),"-fareCapture")>=0)yield return CaptureFare();if(ok&&Array.IndexOf(Environment.GetCommandLineArgs(),"-careCapture")>=0)yield return CaptureCare();if(ok&&Array.IndexOf(Environment.GetCommandLineArgs(),"-scoreCapture")>=0)yield return CaptureScores();Directory.CreateDirectory("artifacts");File.WriteAllText("artifacts/passenger-care-integration.txt",report.ToString()+"\nchecks="+checks+"\n");Debug.Log("PASSENGER_CARE_INTEGRATION_"+(ok?"OK":"FAILED")+" checks="+checks);Application.Quit(ok?0:1);}
+ IEnumerator CaptureFuelMenu(){
+  s.business.enabled=false;s.jobs.enabled=false;s.requests.enabled=false;s.assisted.enabled=false;s.taxi.enabled=false;s.taxi.body.isKinematic=true;s.taxi.body.interpolation=RigidbodyInterpolation.None;
+  Fresh();var offer=Offer();s.jobs.offers[0]=offer;Stop(offer.pickup);if(!s.jobs.Accept(0)){Debug.LogError("FUEL_MENU_CAPTURE_FAILED pickup");Application.Quit(1);yield break;}
+  var station=s.services.Stations[0];Pose(station.pump,station.direction);s.services.open=true;s.paused=true;Time.timeScale=0;
+  foreach(int width in new[]{1280,1920,1280}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.8f);Pose(station.pump,station.direction);yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.GetFullPath("artifacts/fuel-menu-"+width+".png"));yield return new WaitForSecondsRealtime(.5f);}
+  Debug.Log("FUEL_MENU_CAPTURE_OK");
+ }
  void Run(){s.business.enabled=false;s.jobs.enabled=false;s.jobs.nav.enabled=false;s.requests.enabled=false;s.law.enabled=false;s.manners.enabled=false;s.GetComponent<ServiceLawZones>().enabled=false;s.taxi.enabled=false;s.taxi.body.isKinematic=true;s.taxi.body.interpolation=RigidbodyInterpolation.None;foreach(var c in s.traffic.cars){c.Recycle();c.enabled=false;}
-  CheckDrunkDialogue();CheckWaitingPopulation();
+  CheckPickupFuel();CheckDrunkDialogue();CheckWaitingPopulation();
   Fresh();s.jobs.offers[1]=s.jobs.offers[2]=null;var idle=JsonUtility.FromJson<PassengerJobsSnapshot>(JsonUtility.ToJson(s.jobs.CaptureLive()));s.jobs.RestoreLive(idle);Check(s.jobs.trip.State==TripState.Idle&&s.jobs.current==null&&s.jobs.DrunkRide==null&&s.jobs.offers[1]==null&&s.jobs.offers[2]==null,"fresh idle JsonUtility roundtrip preserves nullable passenger and empty offers");
   var first=Offer();s.jobs.offers[0]=first;Stop(first.pickup);Check(s.jobs.Accept(0),"first pickup pre-board snapshot");var pickup=JsonUtility.FromJson<PassengerJobsSnapshot>(JsonUtility.ToJson(s.jobs.CaptureLive()));s.jobs.RestoreLive(pickup);Check(s.jobs.trip.State==TripState.ToPickup&&s.jobs.current!=null&&s.jobs.DrunkRide==null&&s.jobs.RequestReward==null,"first ToPickup JsonUtility roundtrip has no fake drunk/reward");
   foreach(var kind in new[]{DrunkRideCase.Normal,DrunkRideCase.Vomit,DrunkRideCase.Sleepy,DrunkRideCase.Both}){Fresh();Board(kind);var j=s.jobs;bool vomit=kind==DrunkRideCase.Vomit||kind==DrunkRideCase.Both;bool sleepy=kind==DrunkRideCase.Sleepy||kind==DrunkRideCase.Both;j.DrunkRide.Advance(116,.8f);Check(!j.DrunkRide.Vomited,"progress jump warns before actual event "+kind);j.DrunkRide.Advance(3,.8f);j.trip.Tick(119);Check(j.DrunkRide.Vomited==vomit&&j.Cleanliness==100,"vomit waits until disembark "+kind);Stop(j.current.drop);Check(j.Interact(),"first valid arrival "+kind);int expected=j.RequestReward.Total;
@@ -28,6 +35,19 @@ public sealed class PassengerCareProbe:MonoBehaviour {
   Fresh();Stop(0);s.jobs.Generate();int ordinary=0;foreach(var o in s.jobs.offers)if(o!=null&&string.IsNullOrEmpty(o.scenarioId)){ordinary++;Check(!string.IsNullOrEmpty(o.pickupStopId)&&!string.IsNullOrEmpty(o.catalogRevision),"ordinary stable catalog IDs");}Check(s.jobs.stops.Length>12&&ordinary>0,"additional stops reach normal call generation");Check(s.GetComponent<ServiceLawZones>().scenarios.Count==9,"nine fixed courses preserved");
   CheckScoreFlow();CheckRecoveryFlow();CheckScenarioRestore();
  }
+ void CheckPickupFuel(){
+  Fresh();var j=s.jobs;var service=s.services;var offer=Offer();j.offers[0]=offer;Stop(offer.pickup);Check(j.Accept(0),"fuel pickup accepted");string id=j.OfferId;float beforeWait=j.trip.PickupRemaining;
+  var pump=service.Stations[0];Pose(pump.pump,pump.direction);service.open=true;
+  Check(service.FuelMenuOnly&&service.GuideFuel(0)&&j.Active&&j.OfferId==id&&j.trip.PickupRemaining==beforeWait,"fuel guide keeps pickup identity and clock");service.open=true;
+  int cash=s.business.ledger.Account.Cash;float fuel=s.business.ledger.Account.Fuel;double elapsed=s.business.ledger.Elapsed;
+  Check(service.Buy(0),"pickup fuel purchase");Check(j.trip.State==TripState.ToPickup&&j.OfferId==id&&j.trip.PickupRemaining==beforeWait-10,"fuel retains call and advances pickup wait10");
+  Check(s.business.ledger.Account.Cash==cash-400&&s.business.ledger.Account.Fuel>fuel+9&&s.business.ledger.Elapsed==elapsed+10,"fuel cost volume elapsed");
+  var savedFuel=JsonUtility.FromJson<CampaignCheckpoint>(File.ReadAllText(s.business.SavePath));Check(savedFuel.live.jobs.trip.state==TripState.ToPickup&&savedFuel.live.jobs.offerId==id,"fuel checkpoint retains accepted call");
+  Check(service.RequestAction(4)&&service.ConfirmAction(true),"pickup wash purchase");Check(j.trip.State==TripState.ToPickup&&j.OfferId==id&&j.trip.PickupRemaining==beforeWait-40,"wash retains call and advances pickup wait30");
+  Check(j.nav.hdGoal==j.stops[offer.pickup].laneEdge,"service exit resumes pickup navigation");
+  Pose(pump.pump,pump.direction);service.open=true;j.trip.Tick(j.trip.PickupRemaining-5);Check(service.Buy(0)&&j.trip.PickupExpired&&!j.Active,"service time can expire pickup honestly");
+  service.Toggle();Fresh();
+ }
  IEnumerator CaptureCare(){
   s.requests.enabled=true;s.services.open=false;s.GetComponent<RideCompletionPanel>().Close();
   for(int phase=0;phase<3;phase++){
@@ -37,7 +57,9 @@ public sealed class PassengerCareProbe:MonoBehaviour {
    Time.timeScale=0;s.paused=false;
    foreach(int width in new[]{1280,1920}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.GetFullPath("artifacts/care-"+new[]{"warning","vomit","refusal"}[phase]+"-"+width+".png"));yield return new WaitForSecondsRealtime(.3f);}
   }
-  s.requests.enabled=false;Time.timeScale=1;
+  Fresh();var offer=Offer();s.jobs.offers[0]=offer;Stop(offer.pickup);Check(s.jobs.Accept(0),"capture pickup accepted");var station=s.services.Stations[0];Pose(station.pump,station.direction);s.services.open=true;s.paused=true;Time.timeScale=0;
+  foreach(int width in new[]{1280,1920}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.GetFullPath("artifacts/fuel-menu-"+width+".png"));yield return new WaitForSecondsRealtime(.3f);}
+  s.services.open=false;s.requests.enabled=false;Time.timeScale=1;
  }
  IEnumerator CaptureFare(){
   Screen.SetResolution(1280,720,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);

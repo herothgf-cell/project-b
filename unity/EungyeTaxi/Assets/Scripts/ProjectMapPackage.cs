@@ -20,7 +20,9 @@ using UnityEngine;
  }
  public static ProjectMapPackage Parse(string json){
   if(string.IsNullOrWhiteSpace(json)||json.Length>128*1024*1024||!json.TrimStart().StartsWith("{"))throw new InvalidDataException("프로젝트 지도 JSON이 올바르지 않습니다.");
-  var p=JsonUtility.FromJson<ProjectMapPackage>(json);if(p==null)throw new InvalidDataException("프로젝트 지도 자료가 없습니다.");p.Validate();return p;
+  var watch=System.Diagnostics.Stopwatch.StartNew();
+  var p=JsonUtility.FromJson<ProjectMapPackage>(json);if(p==null)throw new InvalidDataException("프로젝트 지도 자료가 없습니다.");
+  long parse=watch.ElapsedMilliseconds;p.Validate();Debug.Log("STARTUP_MAP parse_ms="+parse+" validate_ms="+(watch.ElapsedMilliseconds-parse));return p;
  }
  public void Validate(){
   if(schema!=1||baseline==null||document==null||document.scene==null)throw new InvalidDataException("프로젝트 지도 형식/장면 자료가 누락되었습니다.");

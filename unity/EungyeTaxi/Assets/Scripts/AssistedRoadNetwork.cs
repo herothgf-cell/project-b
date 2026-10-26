@@ -8,7 +8,13 @@ public sealed class AssistedRoadNetwork {
         readonly float[] distances;
         public float length {get{return distances[distances.Length-1];}}
         public Path(Vector3[] values){points=values;distances=new float[values.Length];for(int i=1;i<values.Length;i++)distances[i]=distances[i-1]+Vector3.Distance(values[i-1],values[i]);}
-        public Vector3 Position(float distance){for(int i=1;i<points.Length;i++)if(distance<=distances[i])return Vector3.Lerp(points[i-1],points[i],Mathf.InverseLerp(distances[i-1],distances[i],distance));return points[points.Length-1];}
+        public Vector3 Position(float distance){
+            if(points.Length<2||distance>length||float.IsNaN(distance))return points[points.Length-1];
+            // Lower bound retains the first segment at duplicate points and exact ends.
+            int lo=1,hi=points.Length-1;
+            while(lo<hi){int mid=lo+(hi-lo)/2;if(distances[mid]>=distance)hi=mid;else lo=mid+1;}
+            return Vector3.Lerp(points[lo-1],points[lo],Mathf.InverseLerp(distances[lo-1],distances[lo],distance));
+        }
         public Vector3 Tangent(float distance){return (Position(Mathf.Min(length,distance+.25f))-Position(Mathf.Max(0,distance-.25f))).normalized;}
         public float ProjectRange(Vector3 position,float from,float to,out float error){position.y=0;float best=float.MaxValue,at=from;for(int i=1;i<points.Length;i++){if(distances[i]<from||distances[i-1]>to)continue;var delta=points[i]-points[i-1];float lo=Mathf.InverseLerp(distances[i-1],distances[i],Mathf.Max(from,distances[i-1])),hi=Mathf.InverseLerp(distances[i-1],distances[i],Mathf.Min(to,distances[i]));float t=Mathf.Clamp(Vector3.Dot(position-points[i-1],delta)/Mathf.Max(.001f,delta.sqrMagnitude),lo,hi);float sq=(position-(points[i-1]+delta*t)).sqrMagnitude;if(sq<best){best=sq;at=Mathf.Lerp(distances[i-1],distances[i],t);}}error=Mathf.Sqrt(best);return at;}
         public float Project(Vector3 position,out float error){position.y=0;float best=float.MaxValue,at=0;for(int i=1;i<points.Length;i++){var delta=points[i]-points[i-1];float t=Mathf.Clamp01(Vector3.Dot(position-points[i-1],delta)/Mathf.Max(.001f,delta.sqrMagnitude));float sq=(position-(points[i-1]+delta*t)).sqrMagnitude;if(sq<best){best=sq;at=Mathf.Lerp(distances[i-1],distances[i],t);}}error=Mathf.Sqrt(best);return at;}

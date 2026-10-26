@@ -45,6 +45,7 @@ public sealed class DistrictTraffic : MonoBehaviour {
   return Vector3.Angle(route.Tangent(at-3),route.Tangent(at+3))<8;
  }
  void SeedDistributed(){
+  var watch=System.Diagnostics.Stopwatch.StartNew();
   var candidates=new List<Seed>();var sampled=new HashSet<Vector2Int>();
   for(int a=0;a<map.stops.Length;a++){if(!service.Contains(a))continue;var start=map.stops[a];
    for(int b=0;b<map.stops.Length;b++){if(a==b||!service.Contains(b))continue;var end=map.stops[b];var route=CreateRoute(start.laneEdge,start.laneAt,end.laneEdge,end.laneAt);if(route==null||!Clear(route))continue;
@@ -53,11 +54,17 @@ public sealed class DistrictTraffic : MonoBehaviour {
     }
    }
   }
+  long samplingMs=watch.ElapsedMilliseconds;int candidateCount=candidates.Count;
   var loads=new Dictionary<Vector2Int,int>();
+  var visiblePositions=new List<Vector3>(48);
   while(system.cars.Count<48&&candidates.Count>0){
+   // Seeding is synchronous: positions cannot change during this candidate pass.
+   // Read Unity transforms once instead of crossing into native code for every
+   // candidate/car pair, retaining the same order and spacing score.
+   visiblePositions.Clear();foreach(var car in system.cars)if(car.Visible)visiblePositions.Add(car.transform.position);
    int best=-1;float bestScore=-1;
    for(int i=0;i<candidates.Count;i++){var seed=candidates[i];float spacing=float.MaxValue;
-    foreach(var car in system.cars)if(car.Visible)spacing=Mathf.Min(spacing,(seed.position-car.transform.position).sqrMagnitude);
+    foreach(var position in visiblePositions)spacing=Mathf.Min(spacing,(seed.position-position).sqrMagnitude);
     if(spacing<100)continue;int load;loads.TryGetValue(seed.cell,out load);
     // Fill unrepresented cells first, then balance density and maximize spacing.
     float score=1000000f/(load+1)+Mathf.Min(spacing,100000);
@@ -68,6 +75,7 @@ public sealed class DistrictTraffic : MonoBehaviour {
    var spawned=system.Spawn(chosen.route,chosen.at,system.cars.Count);if(!spawned)continue;
    spawned.district=this;int selectedLoad;loads.TryGetValue(chosen.cell,out selectedLoad);loads[chosen.cell]=selectedLoad+1;
   }
+  Debug.Log("STARTUP_TRAFFIC candidates="+candidateCount+" sample_ms="+samplingMs+" seed_ms="+(watch.ElapsedMilliseconds-samplingMs));
  }
  public bool Occupied(Vector3 p,Vector3 heading,TrafficCar self){foreach(var hit in Physics.OverlapBox(p+Vector3.up*.85f,new Vector3(1.1f,.55f,4),Quaternion.LookRotation(heading),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore))if(self==null||hit.GetComponentInParent<TrafficCar>()!=self)return true;return false;}
  // A saved live pose is restored after seeding. Defer NPCs intersecting the
@@ -88,9 +96,13 @@ public sealed class DistrictTraffic : MonoBehaviour {
    begin=path.ends[k];
   }
   // Source straight lanes can pass a junction without carrying a turn edge.
+  // Each junction uses the same 2m samples. Interpolate once per route rather
+  // than once per junction, preserving the original sample grid and boundaries.
+  var samples=new Vector3[Mathf.FloorToInt(route.length/2)+1];
+  for(int i=0;i<samples.Length;i++)samples[i]=route.Position(i*2f);
   foreach(var j in system.junctions){if(!j.signalized&&!j.name.StartsWith("임시 HD"))continue;
    float radius=Mathf.Max(j.halfWidth[0],j.halfWidth[1])+2,entry=-1;
-   for(float d=0;d<=route.length+2;d+=2){bool inside=d<=route.length&&Vector3.Distance(route.Position(d),j.center)<=radius;
+   for(float d=0;d<=route.length+2;d+=2){bool inside=d<=route.length&&Vector3.Distance(samples[(int)(d/2)],j.center)<=radius;
     if(inside&&entry<0)entry=d;if(!inside&&entry>=0){float exit=Mathf.Min(d,route.length);bool exists=route.stops.Exists(s=>s.junction==j&&s.distance<=exit+5&&s.exitDistance>=entry-5);if(!exists)AddStop(route,j,entry-5,exit+5,0);entry=-1;}
    }
   }

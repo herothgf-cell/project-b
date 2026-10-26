@@ -20,8 +20,11 @@ public class WorldBuilder : MonoBehaviour {
     public static GeometryBatch Batch(Dictionary<Vector2Int,GeometryBatch> batches,Vector3 position){var key=new Vector2Int(Mathf.FloorToInt(position.x/128),Mathf.FloorToInt(position.z/128));GeometryBatch batch;if(!batches.TryGetValue(key,out batch)){batch=new GeometryBatch();batches[key]=batch;}return batch;}
     public void RenderBatches(Dictionary<Vector2Int,GeometryBatch> batches,string name,Material material,bool solid=false){foreach(var item in batches){var mesh=new Mesh();mesh.indexFormat=UnityEngine.Rendering.IndexFormat.UInt32;mesh.SetVertices(item.Value.vertices);mesh.SetTriangles(item.Value.indices,0);mesh.RecalculateNormals();mesh.RecalculateBounds();var obj=new GameObject(name+" "+item.Key);obj.transform.SetParent(transform);obj.AddComponent<MeshFilter>().sharedMesh=mesh;obj.AddComponent<MeshRenderer>().sharedMaterial=material;if(solid)obj.AddComponent<MeshCollider>().sharedMesh=mesh;}}
     public void Build() {
+        var watch=System.Diagnostics.Stopwatch.StartNew();
         map=RoadRulesTrial.Enabled?RoadRulesTrial.CreateMap():MapCatalog.Load();
+        Debug.Log("STARTUP_WORLD map_ms="+watch.ElapsedMilliseconds);watch.Restart();
         BuildStatic(map);
+        Debug.Log("STARTUP_WORLD geometry_ms="+watch.ElapsedMilliseconds);
     }
     public void BuildStatic(MapData source,bool collisions=true,bool decorations=true,bool includeGeometry=true) {
         map=source;

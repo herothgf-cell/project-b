@@ -136,9 +136,31 @@ using UnityEngine;
  }
  static bool GeometryChanged(ProjectMapObject o,Dictionary<string,ProjectMapObject> original){ProjectMapObject old;return !original.TryGetValue(o.id,out old)||old.kind!=o.kind||!SamePoints(old.points,o.points)||old.width!=o.width||old.serviceX!=o.serviceX||old.serviceZ!=o.serviceZ||old.yaw!=o.yaw;}
  static bool Overlap(MapPoint[] a,MapPoint[] b){if(a.Max(p=>p.x)<b.Min(p=>p.x)||b.Max(p=>p.x)<a.Min(p=>p.x)||a.Max(p=>p.z)<b.Min(p=>p.z)||b.Max(p=>p.z)<a.Min(p=>p.z))return false;if(Contains(a,b[0].V())||Contains(b,a[0].V()))return true;for(int i=0;i<a.Length;i++)for(int j=0;j<b.Length;j++)if(Intersects(a[i],a[(i+1)%a.Length],b[j],b[(j+1)%b.Length]))return true;return false;}
- public static List<RoadMapIssue> Validate(MapData baseline,RoadMapDocument document){var issues=new List<RoadMapIssue>();if(document==null||document.scene==null)return issues;
+ sealed class ValidationShape {
+  public float minX,maxX,minZ,maxZ;public RoadGeometry.Point[] ring;
+  public ValidationShape(MapPoint[] points){minX=maxX=points[0].x;minZ=maxZ=points[0].z;ring=new RoadGeometry.Point[points.Length];for(int i=0;i<points.Length;i++){var p=points[i];minX=Mathf.Min(minX,p.x);maxX=Mathf.Max(maxX,p.x);minZ=Mathf.Min(minZ,p.z);maxZ=Mathf.Max(maxZ,p.z);ring[i]=new RoadGeometry.Point(p.x,p.z);}}
+ }
+ static ValidationShape Shape(MapPoint[] points,Dictionary<MapPoint[],ValidationShape> shapes){ValidationShape shape;if(!shapes.TryGetValue(points,out shape)){shape=new ValidationShape(points);shapes.Add(points,shape);}return shape;}
+ static bool Sweep(MapPoint[] path,float clearance,MapPoint[] polygon,Dictionary<MapPoint[],ValidationShape> shapes,bool broadPhase){
+  if(path.Length<2)return false;var a=Shape(path,shapes);var b=Shape(polygon,shapes);float margin=Mathf.Abs(clearance)+.001f;
+  // A swept segment cannot touch a polygon outside its expanded bounding box.
+  // Cache only for this validation call: in-place editor changes are never stale.
+  if(broadPhase&&(a.maxX+margin<b.minX||a.minX-margin>b.maxX||a.maxZ+margin<b.minZ||a.minZ-margin>b.maxZ))return false;
+  for(int i=1;i<a.ring.Length;i++){
+   var p=a.ring[i-1];var q=a.ring[i];
+   if(broadPhase&&(Mathf.Max(p.x,q.x)+margin<b.minX||Mathf.Min(p.x,q.x)-margin>b.maxX||Mathf.Max(p.z,q.z)+margin<b.minZ||Mathf.Min(p.z,q.z)-margin>b.maxZ))continue;
+   if(RoadGeometry.SweptLaneIntersects(p,q,b.ring,clearance))return true;
+  }return false;
+ }
+ public static List<RoadMapIssue> Validate(MapData baseline,RoadMapDocument document){return ValidateCore(baseline,document,true);}
+#if UNITY_EDITOR
+ public static List<RoadMapIssue> ValidateWithoutBroadPhase(MapData baseline,RoadMapDocument document){return ValidateCore(baseline,document,false);}
+#endif
+ static List<RoadMapIssue> ValidateCore(MapData baseline,RoadMapDocument document,bool broadPhase){var issues=new List<RoadMapIssue>();if(document==null||document.scene==null)return issues;
   Action<ProjectMapObject,string> error=(o,m)=>issues.Add(new RoadMapIssue{error=true,id=o==null?"장면":o.id,message=m,position=o!=null&&o.points!=null&&o.points.Length>0&&o.points[0]!=null?o.points[0].V():Vector3.zero});
+  var validationWatch=System.Diagnostics.Stopwatch.StartNew();
   if(document.scene.objects==null){error(null,"장면 객체 배열 누락");return issues;}var original=Baseline(baseline).byId;var ids=new HashSet<string>();var valid=new List<ProjectMapObject>();
+  Debug.Log("STARTUP_SCENE baseline_ms="+validationWatch.ElapsedMilliseconds);validationWatch.Restart();
   var lanes=new Dictionary<string,RoadMapLane>();foreach(var l in document.lanes??new RoadMapLane[0])if(l!=null&&!string.IsNullOrEmpty(l.id)&&!lanes.ContainsKey(l.id))lanes.Add(l.id,l);
   foreach(var o in document.scene.objects){if(o==null||string.IsNullOrWhiteSpace(o.id)||!ids.Add(o.id)){error(o,"없는/중복 장면 ID");continue;}if(!kinds.Contains(o.kind)){error(o,"미지원 객체 종류");continue;}
    if(o.points==null||o.points.Length<(o.kind=="road"?2:3)||o.points.Any(p=>p==null||!Finite(p.x)||!Finite(p.z))){error(o,"유효한 형상 점이 부족합니다");continue;}
@@ -152,13 +174,16 @@ using UnityEngine;
   }
   if(baseline.mapId=="eungye"&&baseline.hybrid&&!valid.Any(o=>o.kind=="parking"))error(null,"영업 시작·마감을 위한 주차장 1개 이상이 필요합니다");
   if(issues.Any(i=>i.error))return issues;
+  Debug.Log("STARTUP_SCENE objects_ms="+validationWatch.ElapsedMilliseconds);validationWatch.Restart();
   var obstacles=valid.Where(o=>o.kind=="building"||o.kind=="water").ToArray();
+  var shapes=new Dictionary<MapPoint[],ValidationShape>();
   foreach(var service in valid.Where(o=>o.IsService)){var footprint=Rectangle(service.Position,service.Direction,1.9f,4);foreach(var obstacle in obstacles)if((GeometryChanged(service,original)||GeometryChanged(obstacle,original))&&Overlap(footprint,obstacle.points)){error(service,"차량 정차 공간이 건물/물과 겹칩니다: "+obstacle.id);break;}}
   foreach(var o in valid){if(!GeometryChanged(o,original))continue;
-   if(o.kind=="building"||o.kind=="sidewalk"||o.kind=="water")foreach(var lane in lanes.Values){if(lane.disabled||lane.points==null||lane.points.Any(p=>p==null))continue;var ring=o.points.Select(p=>new RoadGeometry.Point(p.x,p.z)).ToArray();bool hit=false;for(int i=1;i<lane.points.Length;i++)if(RoadGeometry.SweptLaneIntersects(new RoadGeometry.Point(lane.points[i-1].x,lane.points[i-1].z),new RoadGeometry.Point(lane.points[i].x,lane.points[i].z),ring,lane.width*.5f)){hit=true;break;}if(hit){error(o,"주행 차로 침범: "+lane.id);break;}}
-   if(o.kind=="building"||o.kind=="water")foreach(var road in valid.Where(x=>x.kind=="road")){var ring=o.points.Select(p=>new RoadGeometry.Point(p.x,p.z)).ToArray();bool hit=false;for(int i=1;i<road.points.Length;i++)if(RoadGeometry.SweptLaneIntersects(new RoadGeometry.Point(road.points[i-1].x,road.points[i-1].z),new RoadGeometry.Point(road.points[i].x,road.points[i].z),ring,road.width*.5f)){hit=true;break;}if(hit){error(o,"도로 노면 침범: "+road.id);break;}}
-   if(o.kind=="road")foreach(var obstacle in obstacles){var ring=obstacle.points.Select(p=>new RoadGeometry.Point(p.x,p.z)).ToArray();bool hit=false;for(int i=1;i<o.points.Length;i++)if(RoadGeometry.SweptLaneIntersects(new RoadGeometry.Point(o.points[i-1].x,o.points[i-1].z),new RoadGeometry.Point(o.points[i].x,o.points[i].z),ring,o.width*.5f)){hit=true;break;}if(hit){error(o,"도로가 건물/물과 겹칩니다: "+obstacle.id);break;}}
+   if(o.kind=="building"||o.kind=="sidewalk"||o.kind=="water")foreach(var lane in lanes.Values){if(lane.disabled||lane.points==null||lane.points.Any(p=>p==null))continue;if(Sweep(lane.points,lane.width*.5f,o.points,shapes,broadPhase)){error(o,"주행 차로 침범: "+lane.id);break;}}
+   if(o.kind=="building"||o.kind=="water")foreach(var road in valid.Where(x=>x.kind=="road")){if(Sweep(road.points,road.width*.5f,o.points,shapes,broadPhase)){error(o,"도로 노면 침범: "+road.id);break;}}
+   if(o.kind=="road")foreach(var obstacle in obstacles){if(Sweep(o.points,o.width*.5f,obstacle.points,shapes,broadPhase)){error(o,"도로가 건물/물과 겹칩니다: "+obstacle.id);break;}}
   }
+  Debug.Log("STARTUP_SCENE overlap_ms="+validationWatch.ElapsedMilliseconds);
   return issues;
  }
 }
