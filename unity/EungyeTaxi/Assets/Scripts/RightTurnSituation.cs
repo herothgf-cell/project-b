@@ -5,6 +5,7 @@ public class RightTurnSituation : MonoBehaviour {
  public DriveSession session;public TrafficJunction junction;public int variant;
  GameObject pedestrian,label;TextMesh sign,dedicatedLight,pedestrianLight;RightPracticeState state;
  public bool Active {get{return variant>0;}}
+ public bool TryActiveCrossing(out Vector3 a,out Vector3 b){a=b=Vector3.zero;if(!Active||variant<5||state==null||state.Observe().pedestrian!=PedestrianState.Crossing||junction==null)return false;var dir=session.traffic.AxisDirection(junction,0);var root=junction.center+TrafficSystem.Right(dir)*(junction.halfWidth[0]+5);a=root+dir*(-junction.halfWidth[1]-1)+Vector3.up*.85f;b=root+dir*(junction.halfWidth[1]+1)+Vector3.up*.85f;return true;}
  void Start(){
   if(!session.business.useV2){enabled=false;return;}
   float nearest=float.MaxValue;foreach(var j in session.traffic.junctions){float d=Vector3.Distance(j.center,new Vector3(575,0,257));if(j.signalized&&d<nearest){nearest=d;junction=j;}}
@@ -20,7 +21,7 @@ public class RightTurnSituation : MonoBehaviour {
  public bool Select(int value){
   if(value==0){Stop();return true;}
   var exit=GetComponent<ExitQueueSituation>();if(exit&&exit.Active)return false;
-  if(value<1||value>6||junction==null||session.jobs.Active||session.taxi.body.velocity.magnitude>=.56f||Vector3.Distance(session.taxi.transform.position,junction.center)<80)return false;
+  if(value<1||value>6||junction==null||session.jobs.Active||session.taxi.body.velocity.magnitude>=.56f||Vector3.Distance(session.taxi.transform.position,junction.center)<80||value>=5&&session.ambientPedestrians&&session.ambientPedestrians.CrossingOccupied(junction))return false;
   variant=value;state=new RightPracticeState(value);junction.rightTurnObservation=null;junction.scenarioSignal=false;pedestrian.SetActive(false);label.SetActive(value>0);
   if(value>0){var dir=session.traffic.AxisDirection(junction,0);var point=junction.center-dir*70+TrafficSystem.Right(dir)*(junction.halfWidth[0]-1.75f);session.jobs.nav.SetDestination(point);}
   return true;

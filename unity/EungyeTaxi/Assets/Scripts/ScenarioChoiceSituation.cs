@@ -8,6 +8,8 @@ public sealed class ScenarioChoiceSituation : MonoBehaviour {
  public DriveSession session;public PrototypeScenario Course {get;private set;}
  public bool Completed {get;private set;}public bool Open {get;private set;}public string Plan {get;private set;}="직접 운전";
  public bool ActiveObservation {get{return observing;}}
+ public TrafficJunction ActiveJunction {get{return observing?junction:null;}}
+ public bool TryActiveCrossing(out Vector3 a,out Vector3 b){a=b=Vector3.zero;if(!observing||pedestrianState==null||pedestrianState.Observe().pedestrian!=PedestrianState.Crossing)return false;a=CrossingPoint(0);b=CrossingPoint(1);return true;}
  public bool ClosedThisFrame {get{return closedFrame==Time.frameCount;}}
  bool offered,alternate,observing,previousPause;float previousScale;int closedFrame=-1,day=-1,panelsToday;
  TrafficJunction junction;Vector3 direction;int axis,sign;RightPracticeState pedestrianState;GameObject person;float releasedAt;
@@ -44,7 +46,7 @@ public sealed class ScenarioChoiceSituation : MonoBehaviour {
   var hd=session.jobs.nav.hd;junction=session.traffic.junctions.Find(j=>j.name==hd.edges[Course.connector].ruleId);if(junction==null)return;
   direction=hd.paths[route.edges[k-1]].Tangent(hd.paths[route.edges[k-1]].length-2);axis=Mathf.Abs(Vector3.Dot(direction,session.traffic.AxisDirection(junction,0)))>.7f?0:1;sign=session.traffic.Sign(direction,axis,junction);direction=session.traffic.AxisDirection(junction,axis)*sign;
   // Never replace an existing fixture or place a person through a live vehicle.
-  if(GetComponent<RightTurnSituation>().Active||GetComponent<ExitQueueSituation>().Active)return;
+  if(GetComponent<RightTurnSituation>().Active||GetComponent<ExitQueueSituation>().Active||session.ambientPedestrians&&session.ambientPedestrians.CrossingOccupied(junction))return;
   var point=CrossingPoint(.35f);foreach(var car in session.traffic.cars)if(car.Visible&&Vector3.Distance(car.transform.position,point)<8)return;
   pedestrianState=new RightPracticeState(6);CreatePedestrian();observing=true;ObserveRightTurn();
  }

@@ -9,6 +9,7 @@ public class DriveSession : MonoBehaviour {
     public bool PracticeMenuOpen {get{var p=GetComponent<PracticeSession>();var c=GetComponent<PracticeCoach>();return p&&p.PickerOpen||c&&c.ResultOpen;}}
     public bool PracticeBusy {get{var p=GetComponent<PracticeSession>();return p&&p.Busy;}}
     public bool ChoiceOpen {get{var c=GetComponent<ScenarioChoiceSituation>();return c&&(c.Open||c.ClosedThisFrame);}}
+    public AmbientPedestrianSystem ambientPedestrians;
     public bool paused;public bool ShowHints; public int visits; bool inside;
     public bool RideResultOpen {get{var result=GetComponent<RideCompletionPanel>();return result&&result.Open;}}
     public bool EditorOpen {get{var e=GetComponent<RoadMapEditor>();return e&&(e.IsOpen||e.ClosedThisFrame);}}
@@ -25,6 +26,7 @@ public class DriveSession : MonoBehaviour {
         assisted=taxi.gameObject.AddComponent<AssistedDriveController>();assisted.Initialize(taxi,world.map);taxi.assistance=assisted;
         bool driveTest=System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-smokeTest")>=0;
         traffic=new GameObject("Traffic simulation").AddComponent<TrafficSystem>();traffic.Build(world.map,!driveTest);
+        if(world.map.hybrid){ambientPedestrians=new GameObject("일반 보행자").AddComponent<AmbientPedestrianSystem>();ambientPedestrians.Initialize(this);traffic.ambientPedestrians=ambientPedestrians;}
         var cam=new GameObject("Driving Camera"); cam.tag="MainCamera"; var c=cam.AddComponent<Camera>(); c.fieldOfView=62; c.nearClipPlane=.08f; c.farClipPlane=700; c.backgroundColor=new Color(.57f,.74f,.84f); c.clearFlags=CameraClearFlags.Skybox; cam.AddComponent<AudioListener>(); drivingCamera=cam.AddComponent<DrivingCamera>();drivingCamera.target=taxi.transform;
         RenderSettings.ambientLight=new Color(.65f,.69f,.75f); RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Flat;
         var sun=new GameObject("Sun").AddComponent<Light>(); sun.type=LightType.Directional; sun.intensity=1.15f; sun.transform.rotation=Quaternion.Euler(45,-35,0); sun.shadows=LightShadows.Soft;
@@ -81,6 +83,7 @@ public class DriveSession : MonoBehaviour {
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-exitTransportTest")>=0)gameObject.AddComponent<ExitTransportSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-driveFeedbackTest")>=0)gameObject.AddComponent<DriveFeedbackSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadMapEditorTest")>=0)gameObject.AddComponent<RoadMapEditorProbe>();
+        if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-ambientPedestrianTest")>=0||System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-ambientPedestrianReloadTest")>=0)gameObject.AddComponent<AmbientPedestrianProbe>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-projectMapTest")>=0||System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-projectMapStaleTest")>=0)gameObject.AddComponent<ProjectMapEditorProbe>();
         if(driveTest) gameObject.AddComponent<DriveSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-trafficTest")>=0) gameObject.AddComponent<TrafficSmokeTest>().session=this;

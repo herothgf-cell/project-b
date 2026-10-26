@@ -60,6 +60,7 @@ public class TrafficCar : MonoBehaviour {
             }
         }
         obstacleCar=null;float detection=Mathf.Max(8,speed*speed/6+6);
+        if(system.ambientPedestrians!=null){float pedestrianGap=system.ambientPedestrians.OccupiedCrossingGap(this,detection);if(pedestrianGap<gap){gap=pedestrianGap;waitingForObstacle=true;blockedName="occupied pedestrian crossing";}}
         for(float ahead=.5f;ahead<detection+3;ahead+=.5f){float at=Mathf.Min(route.length,distance+ahead);var facing=route.Tangent(at);bool blocked=false;
             int contacts=overlaps.Box(route.Position(at)+Vector3.up*.85f,new Vector3(.95f,.55f,2.25f),Quaternion.LookRotation(facing),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore);
             for(int contact=0;contact<contacts;contact++){var h=overlaps.hits[contact];if(h.attachedRigidbody!=body){blockedName=h.name;obstacleCar=h.GetComponentInParent<TrafficCar>();blocked=true;break;}}

@@ -5,7 +5,7 @@ using UnityEngine;
 [Serializable] public class CompletedDay {public string id,configuration;public DayRecord result;public float fuel;public int cash,debt,score;public int days=1,totalIncome,totalExpenses,totalNet;}
 [Serializable] public class CampaignCheckpoint { public int version=3; public bool hasLive;public LiveCampaignCheckpoint live; public string comparisonVersion; public EconomySnapshot days; public AccountSnapshot account; public LawEvent[] law; public PrototypeIds ids; public PassengerResult[] passengers; public PracticeResult[] practices; public CompletedDay[] completedDays; }
 
-[Serializable] public class LiveCampaignCheckpoint {public string mapRevision,tripId;public Vector3 position;public Quaternion rotation;public PassengerJobsSnapshot jobs;public bool preparing,preferFastest,hasDestination;public Vector3 destination;public double realSeconds;}
+[Serializable] public class LiveCampaignCheckpoint {public string mapRevision,tripId;public Vector3 position;public Quaternion rotation;public PassengerJobsSnapshot jobs;public AmbientPedestrianSnapshot ambientPedestrians;public bool preparing,preferFastest,hasDestination;public Vector3 destination;public double realSeconds;}
 
 public class BusinessProgress : MonoBehaviour {
  public DriveSession session;
@@ -39,6 +39,7 @@ public class BusinessProgress : MonoBehaviour {
   session=owner;owner.taxi.business=this;gameObject.AddComponent<DrowsinessHUD>().business=this;initialFollowing=owner.traffic.mitOptions.Enabled;var args=Environment.GetCommandLineArgs();
   foreach(var arg in args)if(arg.EndsWith("Test")){testMode=true;if(arg!="-economyTest"&&arg!="-hybridTest"&&arg!="-hybridQuickTest")enabledCampaign=false;}
   if(Array.IndexOf(args,"-assistedTrial")>=0||RoadRulesTrial.Enabled||HdRouteTrial.Enabled){testMode=true;enabledCampaign=false;}
+  bool ambientTest=Array.IndexOf(args,"-ambientPedestrianTest")>=0||Array.IndexOf(args,"-ambientPedestrianReloadTest")>=0;if(ambientTest){testMode=true;enabledCampaign=true;}
   if(PracticeSession.Enabled||RoadMapRuntime.Trial){testMode=true;enabledCampaign=false;}
   if(!testMode){settings=PrototypeSettings.ForThreeDays();}
   if(Array.IndexOf(args,"-oneDayTest")>=0||Array.IndexOf(args,"-oneDayReloadTest")>=0||Array.IndexOf(args,"-oneDayMode")>=0){settings=PrototypeSettings.ForOneDay();if(testMode)enabledCampaign=true;}
@@ -51,9 +52,10 @@ public class BusinessProgress : MonoBehaviour {
   if(Array.IndexOf(args,"-liveSaveTest")>=0||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0))SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/live-campaign-test.json"));
   if(Array.IndexOf(args,"-passengerCareTest")>=0)SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/passenger-care-test.json"));
   if(Array.IndexOf(args,"-liveInvalidTest")>=0)SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/live-invalid-test.json"));
+  if(ambientTest){settings=PrototypeSettings.ForOneDay();useV2=true;enabledCampaign=true;SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/ambient-pedestrian-test.json"));}
   if(!testMode)try{SavePath=CampaignSaveLocation.Resolve(Path.GetDirectoryName(Application.persistentDataPath),Path.GetFileName(SavePath));}catch(Exception e){Debug.LogWarning("이전 캠페인 저장 복사 실패: "+e.Message);}
   ledger=useV2?new EconomyLedger(settings):new EconomyLedger(new EconomySettings());
-  if(!testMode||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0)||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-oneDayReloadTest")>=0||Array.IndexOf(args,"-threeDayReloadTest")>=0){
+  if(!testMode||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0)||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-oneDayReloadTest")>=0||Array.IndexOf(args,"-threeDayReloadTest")>=0||Array.IndexOf(args,"-ambientPedestrianReloadTest")>=0){
    foreach(var path in new[]{SavePath,SavePath+".bak"}){
     if(!File.Exists(path))continue;
     try{var candidate=JsonUtility.FromJson<CampaignCheckpoint>(File.ReadAllText(path));if(candidate==null||(candidate.version!=2&&candidate.version!=3)||candidate.law==null||candidate.ids==null||string.IsNullOrEmpty(candidate.ids.campaign)||candidate.ids.sequence<0)throw new Exception("Invalid v2 checkpoint");if(settings.oneDay&&(candidate.account==null||candidate.account.settings==null||!candidate.account.settings.oneDay||candidate.account.settings.days!=settings.days))throw new Exception("Different campaign mode");if(!candidate.hasLive)candidate.live=null;if(candidate.version==3&&candidate.days!=null&&candidate.days.hasActive&&candidate.days.active!=null&&candidate.days.active.elapsed>0&&candidate.live==null)throw new Exception("Missing active session");ValidateLivePayload(candidate.live,owner);var restored=EconomyLedger.RestoreCampaign(candidate.days,candidate.account);var checkedLaw=new LawLedger();foreach(var e in candidate.law)checkedLaw.Record(e);ledger=restored;loaded=candidate;saveStatus=path==SavePath?"저장된 정산 결과를 불러왔습니다":"백업에서 정산 결과를 복구했습니다";break;}
@@ -75,6 +77,7 @@ public class BusinessProgress : MonoBehaviour {
  void RestoreLive(LiveCampaignCheckpoint snapshot){
   try{if(snapshot.jobs==null||!Valid(snapshot.position.x)||!Valid(snapshot.position.y)||!Valid(snapshot.position.z)||snapshot.position.x<0||snapshot.position.z<0||snapshot.position.x>session.world.map.width||snapshot.position.z>session.world.map.depth)throw new Exception("Invalid live vehicle position");
    if(snapshot.mapRevision!=session.world.map.editorRevision)throw new Exception("Map revision changed; cannot restore active trip on edited geometry");
+   if(session.ambientPedestrians)session.ambientPedestrians.Restore(snapshot.ambientPedestrians);
    session.taxi.SetSpawn(snapshot.position,snapshot.rotation);session.taxi.ResetTaxi();var district=session.traffic.GetComponent<DistrictTraffic>();if(district)district.ClearPlayerOverlap();session.law.tripId=snapshot.tripId??"";session.law.ResetObservation();session.jobs.RestoreLive(snapshot.jobs);realSeconds=snapshot.realSeconds;preparing=snapshot.preparing;
    if(!session.jobs.Active&&snapshot.hasDestination)session.jobs.nav.SetDestination(snapshot.destination);
    session.jobs.nav.PreferFastest=snapshot.preferFastest;session.assisted.SetActive(false);session.paused=!preparing;Time.timeScale=0;saveStatus="중단한 위치·운송·시간·장부 복원 완료 · 계속 운전";resumeBlocked=false;
@@ -85,6 +88,7 @@ public class BusinessProgress : MonoBehaviour {
   PassengerJobs.NormalizePresence(live.jobs);
   new FareTrip().Restore(live.jobs==null?null:live.jobs.trip);
   if(live.mapRevision!=owner.world.map.editorRevision||live.jobs==null||live.jobs.trip==null||live.jobs.offers==null||live.jobs.offers.Length!=3||live.jobs.cooldown==null||live.jobs.cooldown.Length!=(live.jobs.stopIds!=null?live.jobs.stopIds.Length:owner.jobs.stops.Length)||double.IsNaN(live.realSeconds)||double.IsInfinity(live.realSeconds)||live.realSeconds<0)throw new Exception("Invalid live checkpoint/map revision");
+  if(owner.ambientPedestrians)owner.ambientPedestrians.Validate(live.ambientPedestrians);
   if(!Valid(live.position.x)||!Valid(live.position.y)||!Valid(live.position.z)||live.position.x<0||live.position.z<0||live.position.x>owner.world.map.width||live.position.z>owner.world.map.depth||!Valid(live.rotation.x)||!Valid(live.rotation.y)||!Valid(live.rotation.z)||!Valid(live.rotation.w)||Mathf.Abs(1-(live.rotation.x*live.rotation.x+live.rotation.y*live.rotation.y+live.rotation.z*live.rotation.z+live.rotation.w*live.rotation.w))>.05f)throw new Exception("Invalid live pose");
   var j=live.jobs;int stopCount=j.stops!=null?j.stops.Length:owner.jobs.stops.Length;
   foreach(var o in j.offers)ValidateOffer(o,stopCount);ValidateOffer(j.current,stopCount);
@@ -98,7 +102,7 @@ public class BusinessProgress : MonoBehaviour {
  }
  static void ValidateOffer(JobOffer o,int count){if(o!=null&&(o.pickup<0||o.pickup>=count||o.drop<0||o.drop>=count||o.fare<0))throw new Exception("Invalid live stop reference");}
  static bool Valid(float value){return !float.IsNaN(value)&&!float.IsInfinity(value);}
- LiveCampaignCheckpoint CaptureLive(){return new LiveCampaignCheckpoint{mapRevision=session.world.map.editorRevision,tripId=session.law.tripId,position=session.taxi.transform.position,rotation=session.taxi.transform.rotation,jobs=session.jobs.CaptureLive(),preparing=preparing,preferFastest=session.jobs.nav.PreferFastest,hasDestination=session.jobs.nav.HasDestination,destination=session.jobs.nav.destination,realSeconds=realSeconds};}
+ LiveCampaignCheckpoint CaptureLive(){return new LiveCampaignCheckpoint{mapRevision=session.world.map.editorRevision,tripId=session.law.tripId,position=session.taxi.transform.position,rotation=session.taxi.transform.rotation,jobs=session.jobs.CaptureLive(),ambientPedestrians=session.ambientPedestrians?session.ambientPedestrians.Capture():null,preparing=preparing,preferFastest=session.jobs.nav.PreferFastest,hasDestination=session.jobs.nav.HasDestination,destination=session.jobs.nav.destination,realSeconds=realSeconds};}
  float nextSave;int lastLawCount=-1;
  void OnApplicationQuit(){if(!testMode&&enabledCampaign&&session&&session.requests)SaveCheckpoint();}
  void OnApplicationPause(bool value){if(value&&!testMode&&enabledCampaign&&session&&session.requests)SaveCheckpoint();}
