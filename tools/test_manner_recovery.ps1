@@ -30,6 +30,30 @@ $ledger.Penalize('red', 12, $now, 0) | Out-Null
 Check ((Recover $ledger 4) -eq 4 -and $ledger.Score -eq 88) 'law loss remains after motion recovery'
 $progressType = 'StableDrivingProgress' -as [type]
 Check ($null -ne $progressType) 'stable distance and time progress API exists'
+$turnback = [Activator]::CreateInstance($progressType)
+$turnback.Observe(0, 0, 1, 1, $true) | Out-Null
+for ($x = 1; $x -le 50; $x++) { $turnback.Observe($x, 0, 1, 1, $true) | Out-Null }
+$earned = $false
+for ($x = 49; $x -ge 28; $x--) { $earned = $turnback.Observe($x, 0, 1, 1, $true) -or $earned }
+Check (-not $earned) 'a pre-award out-and-back cannot turn fifty unique metres into sixty moving seconds'
+$savedTurnback = [Activator]::CreateInstance($progressType)
+$savedTurnback.Restore($turnback.Capture())
+$savedTurnback.Rebase(28, 0)
+$beforeSavedReturn = $savedTurnback.Capture()
+for ($x = 29; $x -le 50; $x++) { $savedTurnback.Observe($x, 0, 1, 1, $true) | Out-Null }
+Check ($savedTurnback.Capture().seconds -eq $beforeSavedReturn.seconds) 'save and restore retain closed cells on a repeated path'
+$within = [Activator]::CreateInstance($progressType)
+$within.Observe(0, 0, 1, 1, $true) | Out-Null
+for ($x = 1; $x -le 9; $x++) { $within.Observe($x, 0, 1, 1, $true) | Out-Null }
+$beforeReturn = $within.Capture()
+for ($x = 8; $x -ge 1; $x--) { $within.Observe($x, 0, 1, 1, $true) | Out-Null }
+$afterReturn = $within.Capture()
+Check ($afterReturn.seconds -eq $beforeReturn.seconds -and $afterReturn.distance -eq $beforeReturn.distance) 'retrace inside the active ten-metre cell earns no distance or moving time'
+$savedWithin = [Activator]::CreateInstance($progressType)
+$savedWithin.Restore($beforeReturn)
+$savedWithin.Rebase(9, 0)
+for ($x = 8; $x -ge 1; $x--) { $savedWithin.Observe($x, 0, 1, 1, $true) | Out-Null }
+Check ($savedWithin.Capture().seconds -eq $beforeReturn.seconds) 'save and restore retain the active-cell frontier'
 $progress = [Activator]::CreateInstance($progressType)
 $progress.Observe(0, 0, 1, 1, $true) | Out-Null
 $earned = $false

@@ -15,8 +15,10 @@ public static class PedestrianSignalPlacementTests {
   Check(PedestrianSignalPlacement.TryPlace(map,j,Vector3.forward,0,1,1,5,5,out right,out face),"right walk endpoint found");
   Check(left.x<0&&right.x>8.4f&&Mathf.Abs(left.y-.42f)<.01f&&Mathf.Abs(right.y-.42f)<.01f,"posts use walk tops outside active lane footprint");
   Check(Gap(right,crossing.points[0],crossing.points[1])>2.1f,"post footing clears active lane");
-  var island=Walk(9,12,-9,-5,.58f);island.kind="island";map.areas=new[]{island};
-  Check(PedestrianSignalPlacement.TryPlace(map,j,Vector3.forward,0,1,1,5,5,out right,out face)&&Mathf.Abs(right.y-.58f)<.01f,"island provides a raised post site");
+  var island=Walk(9,12,-9,-5,.58f);map.areas=new[]{island};
+  Check(PedestrianSignalPlacement.TryPlace(map,j,Vector3.forward,0,1,1,5,5,out right,out face)&&Mathf.Abs(right.y-.58f)<.01f,"raised sidewalk island provides a grounded post site");
+  island.kind="island";
+  Check(!PedestrianSignalPlacement.TryPlace(map,j,Vector3.forward,0,1,1,5,5,out right,out face),"unsupported island area cannot provide a floating post site");
   map.areas=new[]{Walk(-10,-6,-9,-5,.42f),Walk(6,10,-9,-5,.42f)};
   var absent=new MapData{areas=new MapArea[0],hdEdges=new[]{crossing}};Vector3 unused;
   Check(!PedestrianSignalPlacement.TryPlace(absent,j,Vector3.forward,0,1,1,5,5,out unused,out face),"missing walk returns no post");

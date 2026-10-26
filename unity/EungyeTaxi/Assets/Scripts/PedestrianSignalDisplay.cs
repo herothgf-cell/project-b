@@ -59,7 +59,7 @@ public static class PedestrianSignalPlacement {
   }
   facing=across*side;var desired=center+facing*(halfWidth+1.1f);
   var walks=new List<MapArea>();foreach(var area in map.areas??new MapArea[0]){
-   if((area.kind!="sidewalk"&&area.kind!="island")||area.points==null||area.points.Length<3)continue;
+   if(area.kind!="sidewalk"||area.points==null||area.points.Length<3)continue;
    float minX=float.MaxValue,maxX=float.MinValue,minZ=float.MaxValue,maxZ=float.MinValue;
    foreach(var vertex in area.points){minX=Mathf.Min(minX,vertex.x);maxX=Mathf.Max(maxX,vertex.x);minZ=Mathf.Min(minZ,vertex.z);maxZ=Mathf.Max(maxZ,vertex.z);}
    if(Near(minX,maxX,desired.x,SearchRadius+Footing)&&Near(minZ,maxZ,desired.z,SearchRadius+Footing))walks.Add(area);
