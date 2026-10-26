@@ -22,7 +22,7 @@ Files: new AmbientPedestrianPlacement.cs/AmbientPedestrian.cs/AmbientPedestrianS
 - [ ] Read existing signal placement, map geometry, scenarios/save/collision and implement safe route selection for actual four candidate hubs. Cache geometry, avoid18k polygon scans everyframe. Recordactualpositions/slots/unavailable reasons.
 - [ ] Implement actors/state and walking animation; signal entry/vehicle-clear/finish, scenario budget ownership and route-local yield. Keep passenger arrays/F/UI untouched.
 - [ ] Integrate checkpoint capture/validation/restore before motion, old/malformed snapshot handling and one-contact collision event.
-- [ ] Add narrowly scoped runtime probe for safe placement+red/green/finish/yield; passenger separation; actual live checkpoint restore whilecrossing. One visual capture actualactors at representative hub. Test flag early-isolates realcampaignsave. Essential model tests only ifchangedstatebenefits. Runonefocused editorcompile/geometry check ifneeded, no BuildHybrid (parent ownsfinalbuild).
+- [ ] Add narrowly scoped runtime probe for safe placement+red/green/finish/yield; passenger separation; actual live checkpoint save whilecrossing plus one freshprocess reload via -ambientPedestrianReloadTest and isolatedartifactpath. One visual capture actualactors at representative hub. Test flag early-isolates realcampaignsave. Essential model tests only ifchangedstatebenefits. Runonefocused editorcompile/geometry check ifneeded, no BuildHybrid (parent ownsfinalbuild).
 - [ ] Self-review, history report actualcommands/results, commit allownedsource/meta, release Unityslot. Do notspawnagents.
 
 ## Task2 — Review, default build and handoff (parent)

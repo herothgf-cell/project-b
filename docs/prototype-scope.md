@@ -62,7 +62,7 @@
 |---|---|---|---|
 | 맵 | 은계 기반 맵, 대표 상황용 가상 구간 | 전국·실측 시설 전체·실시간 교통 API | [06](content-design/06-world-map-and-driving.md) |
 | 주행 | 기존 키보드·패드·1/3인칭·조향 보조 유지 | 신규 물리 엔진·차량 종류 확대 | [06](content-design/06-world-map-and-driving.md) |
-| AI | 기존 차량 흐름·대기열·상황용 보행자 | 도시 전역 보행 군중과 생활 시뮬레이션 | [06](content-design/06-world-map-and-driving.md) |
+| AI | 기존 차량 흐름·대기열·상황용 보행자·검증된 일상 보행6슬롯 | 도시 전역 보행 군중과 생활 시뮬레이션 | [06](content-design/06-world-map-and-driving.md) |
 | 상황 | 출구 정체와 우회전 횡단보도 조건 비교 | 전체 면허문제·복합 날씨 상황 | [01](content-design/01-driving-situations.md) |
 | 법규 | 별도 점수·근거·준수/위반/보류·간단 성향 | 실제 범칙금 청구·면허 정지 등 행정처분 | [02](content-design/02-driving-evaluation.md) |
 | 기록 | 사건 카드·일일 누적·동일 상황 재시작 | 영상 리플레이·정교한 장기 숙련 단계 | [03](content-design/03-history-and-mastery.md) |
@@ -222,4 +222,4 @@
 
 2026-10-23 현재 지도는 은계 한 곳으로 통일한다. Unity 프로젝트는 unity/EungyeTaxi이며 영통 선택·대체 지도와 전용 수입 설정은 제거했다. 은계 국도42와 공통 연습 기능은 유지한다. [검증](work-history/2026-10-23-eungye-only.md).
 
-2026-10-26: 정산3줄·소폭 조향 감속 수정·최대48대 일반 차량 분산을 반영했다. 추가 유턴 관찰3접근은 개인 안내 지도 전용이다. 일반 보행자4거점 최대12명은 [승인안](content-design/16-ambient-pedestrians-proposal.md)만 작성했으며 구현 승인 대기다.
+2026-10-26: 정산3줄·소폭 조향 감속 수정·최대48대 일반 차량 분산을 반영했다. 추가 유턴 관찰3접근은 개인 안내 지도 전용이다. 일반 보행자4거점 최대12명 [승인안](content-design/16-ambient-pedestrians-proposal.md)은 승인 후 안전한6슬롯 소스를 구현했다. 기본 실행 파일 검증 결과는 [구현 기록](work-history/2026-10-26-ambient-pedestrians.md)을 따른다.
