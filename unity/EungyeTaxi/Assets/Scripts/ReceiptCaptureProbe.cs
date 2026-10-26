@@ -20,10 +20,11 @@ public sealed class ReceiptCaptureProbe:MonoBehaviour {
    business.enabledCampaign=false;business.preparing=false;business.passengers.Clear();
    fixture=new PassengerResult{farePolicyVersion=3,initialFare=4900,quoted=4900,boardingDrivingScore=100,drivingAdjustedFare=5390,baseFare=5290,bonus=160,paid=5450,satisfaction=71,required=60,elapsed=50,score=0,cleanBonus=3,driveDelta=0,satisfactionDelta=8,timeDelta=12,bonusReason="fixture",pickup=session.jobs.stops[0].name,destination=session.jobs.stops[3].name};
    business.passengers.Add(fixture);
-   Screen.SetResolution(1920,1080,FullScreenMode.Windowed);
+   Screen.SetResolution(1280,720,FullScreenMode.Windowed);
    Directory.CreateDirectory(Path.GetDirectoryName(Screenshot));
   }catch(Exception error){errorMessage=error.ToString();Debug.LogException(error);}
   if(string.IsNullOrEmpty(errorMessage))yield return new WaitForSecondsRealtime(.7f);
+  if(string.IsNullOrEmpty(errorMessage)){Screen.SetResolution(1920,1080,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.7f);}
   if(string.IsNullOrEmpty(errorMessage)){
    try{
     var panel=session.GetComponent<RideCompletionPanel>();if(!panel||!panel.ShowLast())throw new Exception("RideCompletionPanel.ShowLast failed");

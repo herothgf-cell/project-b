@@ -19,3 +19,9 @@
 - 기본 실행 builds/EungyeTaxi/EungyeTaxi.exe. 빌드 PrototypeBuild.BuildHybrid.
 - 실행 플래그: -manualSteeringCorrectionsTest / -trafficDistributionTest / -receiptCaptureTest. 앞 두 개는 -batchmode -nographics 가능, 캡처는 그래픽 모드에서 실행한다. 테스트 저장은 실제 영업 저장과 분리한다.
 - 개별 변경 근거: [조향](2026-10-26-manual-steering-corrections.md), [차량](2026-10-26-traffic-distribution.md).
+
+## 최종 코드 검토와 동시 main 통합
+- main72e2d4e의 피로·초과 영업·운전 점수 변경을 병합했다. 새 운임 version3도 완료 창은3줄로 정리하고 F8 상세·안정 주행 안심 요인·새 운전 점수와 실제 산식은 보존했다. 병합 후 집중 승객 모델11,435단언 exit0(수정 담당 실행 보고).
+- 검토 P2: 신규 배치의 null-self 점유 검사에서 택시/정적 장애물을 누락하던 조건 수정. 실제 저장 위치 복원 후 겹치는 NPC를 재배치 대기로 전환하여 플레이어 위치를 보존한다. 기존 교통 실행 검사에 layer0/8 실물 장애물과 실제 RestoreLive 호출만 추가했다.
+- 조향 첫 실행은30km/h 좌우 최소28.4991km/h가95% 기준28.5보다0.0009 낮아 종료1. 자동 보조/제동0·모터550Nm·종료34.8365는 충족했다. 최소속도 판정에만0.01km/h 측정 허용오차를 명시하고 나머지 기준은 유지했다. 최종 재실행 결과는 별도 기록한다.
+- 첫 정산 실행 데이터 검사 종료0, 캡처는 검은 화면이므로 화면 확인 성공으로 취급하지 않는다. 숨김 창의 실제 크기를 바꿔 렌더 표면을 초기화한 후 최종 빌드에서 한 번 재확인한다.
