@@ -18,7 +18,7 @@
 
 변경: `docs/content-design/04-passengers-and-reservations.md`, `docs/content-design/11-passenger-request-effects.md`, `docs/prototype-development-checklist.md`, `docs/prototype-scope.md`, 이 기록, `docs/work-history/LATEST.md`.
 
-문서 변경만 수행했다. `git diff --check` 종료 0. 문서 예시를 JavaScript 계산으로 대조해 기본 운임 `5,000/4,900/4,700/4,000원`, 보너스 요구치별 `60/180/300`, `80/240/400`, `100/310/500원`을 확인했다. 로컬 `python.exe`는 WindowsApps 실행 오류로 사용하지 못했다. 운임 계산·회복 코드, Unity 빌드, 위치 제어, 자동 물리 주행, 사람의 수동 20분/3일 캠페인 검사는 수행하지 않았다. 기존 사용자 작업 트리 변경은 보존한다.
+문서 변경만 수행했다. `git diff --check` 종료 0. 문서 예시를 JavaScript 계산으로 대조해 기본 운임 `5,000/4,900/4,700/4,000원`, 보너스 요구치별 `80/240/400`, `100/300/500`, `130/400/650원`을 확인했다. 로컬 `python.exe`는 WindowsApps 실행 오류로 사용하지 못했다. 운임 계산·회복 코드, Unity 빌드, 위치 제어, 자동 물리 주행, 사람의 수동 20분/3일 캠페인 검사는 수행하지 않았다. 기존 사용자 작업 트리 변경은 보존한다.
 
 ## 다음 작업·재현
 
