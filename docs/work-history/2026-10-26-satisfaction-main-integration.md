@@ -44,3 +44,5 @@ Unity 2022.3.62f2 `PrototypeBuild.BuildHybrid`로 기본 은계 `builds/EungyeTa
 ## 배포 기록
 
 소스·문서 커밋은 `299e741cdb115e437c868da2aeb69f8304decf64`, 기본 실행 폴더·manifest 커밋은 `18e6e81cec7321ece618b58416e5c1da543fc570`이다. `pwsh -File tools/update_distribution_manifest.ps1 -VerifyOnly`는 `DISTRIBUTION_OK files=130 bytes=105538085`, 종료0이었다. manifest의 `sourceCommit`은 실제 소스 커밋이며, 검증란에 안정성 검사 종료1과 미수행 수동 운전을 명시했다. 이력 문서 자신의 실제 커밋은 커밋 후 `git log -1 --oneline -- docs/work-history/2026-10-26-satisfaction-main-integration.md`로 확인한다.
+
+`git fetch origin main` 뒤 원격 `ae64e8249f9a276e744d0f1a0049dcfcb6789504`가 통합 HEAD의 조상임을 확인했다. `git push origin HEAD:main`은 `ae64e82..f45e384` 빠른 전진으로 종료0이었고 `git ls-remote origin refs/heads/main`은 `f45e38472f9cb27683300926d0169e558a56b654`와 일치했다. 원래 `C:/git/project-b`의 로컬 main 체크아웃에는 작업 전부터 수정된 `LATEST.md`와 미추적 자료가 있어 그 폴더의 파일·브랜치 포인터는 건드리지 않았다. 이 기록 추가 커밋도 원격 main에 푸시하고 최종 해시를 다시 확인한다.
