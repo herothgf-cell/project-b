@@ -39,6 +39,6 @@
 
 ### Task 3: Integration, documentation and distribution
 **Files:** relevant checklist/scope/design/editor guide, docs/work-history/2026-10-26-uturn-medians.md, LATEST, distribution manifest and tracked build folder.
-- [ ] Run integrated Unity map checks, BuildHybrid, runtime U-turn/routing/median collision checks and visual capture. Run model suite once after integration.
-- [ ] Review full diff with a fresh reviewer and fix actionable findings. Record unreviewed field locations honestly.
+- [x] Run integrated Unity map checks, BuildHybrid, runtime U-turn/routing/median collision checks and visual capture. Run model suite once after integration.
+- [x] Review full diff with a fresh reviewer and fix actionable findings. Record unreviewed field locations honestly.
 - [ ] Update docs/history and build manifest; verify manifest and strict workspace. Commit only task changes. Integrate into user's primary checkout without overwriting preexisting work, according to user authorization.

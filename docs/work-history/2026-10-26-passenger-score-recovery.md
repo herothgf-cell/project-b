@@ -38,3 +38,9 @@
 - 검토에서 기존 10m 칸의 남은 시간이 역주행 때 적립되는 문제를 확인했다. 50m 전진 후 22m 역주행해 60초 회복 구간이 완성되는 모델 검사를 먼저 추가했고 `FAIL a pre-award out-and-back cannot turn fifty unique metres into sixty moving seconds` 종료 1을 확인했다. 셀 재진입을 닫은 뒤에는 같은 셀 내부 왕복도 남은 시간을 적립하는 것을 별도 RED로 확인했다.
 - 활성 칸의 진입점에서 더 멀어진 거리만 시간·거리로 인정하고, 떠난 칸의 재진입을 닫는다. 저장에는 활성 칸과 진입점·최대 도달 거리를 포함한다. 이전 버전의 회복 저장은 활성 칸을 닫힌 것으로 안전하게 복원한다. `pwsh -NoProfile -File tools/test_manner_recovery.ps1` 최종 16개 PASS, `MANNER_RECOVERY_MODEL_OK`, 종료 0. 저장 후 새 구간의 진행과 재진입 차단도 검사했다.
 - 보행 신호 P2: 현재 렌더·충돌이 지원하는 `sidewalk` 영역만 신호 지지면으로 인정한다. 실제 중앙 안전지대는 `sidewalk` 종류이므로 높이 0.58m의 보도형 중앙 안전지대 fixture를 유지하고, 미지원 `island` 종류는 배제하는 검사를 추가했다. 이 변경 뒤 Unity 편집기 검사는 상위 통합 작업에서 실행한다.
+
+## 후속 통합 검사
+- 최종 회복 모델16검사 종료0, 전체 모델23묶음 종료0.
+- `FollowupIntegrationChecks.Run`의 회복 Unity10검사 통과, 전체 통합 프로세스 종료0(`artifacts/followup-integration-checks2.log`). 최종 실행파일 위치 제어/화면 검사는 [통합 기록](2026-10-26-junction-trip-followups.md)을 따른다.
+
+- 후속 최종 BuildHybrid와 `-passengerCareTest -scoreCapture` 종료0,176검사 통과.3해상도 실시간 게이지/알림 및 결과창 실제 M·S 기준을 확인했다. 기존 빌드 미반영이라는 위 설명은 구현 중간 시점의 기록이다. 최종 배포는 [통합 기록](2026-10-26-junction-trip-followups.md)을 따른다.

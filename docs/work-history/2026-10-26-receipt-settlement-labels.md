@@ -15,3 +15,6 @@
 ## 재현
 
 저장소 루트에서 `pwsh -NoProfile -File tools/test_passenger_care.ps1`를 실행한다. 제시 5,000원·기본 운임 3,500원·계산 보너스 0원·실지급 3,500원 사례의 둘째 줄은 `정산 증감  -1,500원`이다.
+
+## 후속 통합 확인
+통합 BuildHybrid와 `-passengerCareTest -scoreCapture`가 종료0/176검사로 통과했다.1920 결과창에서 제시5,000원/정산 증감−1,500원/최종3,500원 및 실제 M·S 기준 설명을 확인했다. [통합·배포 기록](2026-10-26-junction-trip-followups.md)을 따른다.

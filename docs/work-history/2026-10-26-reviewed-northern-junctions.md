@@ -45,3 +45,6 @@
 - `ReviewedRoadFacilitiesTests`를 전체 차로 선분과 난간/충격흡수부 선분 간 최소거리(내부 교차와 양끝 포함), 실제 폭, 추가0.4m 여유로 바꿨다. 끝점 근접·중앙 교차·폭 변화 합성 회귀와 실제 생성 콜라이더를 대상으로4.6×2.1m 차량 상자0.5m 간격 검사도 추가했다. 단순 임계값 하향이 아니며 지도/시설 위치는 변경하지 않았다.
 - `ReviewedRoadFacilitiesTests.Run` 실제 Unity 종료0. 최소 경계 여유0.5198102m, 실제 콜라이더 차량 표본664 통과. 로그 `artifacts/reviewed-facilities-clearance-green.log`.
 - 통합 로그의 `TrafficSystem.cs` 신호 구체 Collider 제거가 편집 모드에서 Destroy를 사용하던 오류도, 편집 모드만 DestroyImmediate를 쓰도록 좁게 수정했다. 런타임 제거 방식은 같다. 이 부분의 통합 로그 재확인은 상위 aggregate 검사에서 수행한다.
+
+## 최종 통합
+두 교차로의 실행파일 카메라·4개 새 연결 NPC 주행과 전체 유턴/중앙선·보행 신호 검사를 수행했다. 마지막 횡단보도 노면선 절단, 실제 신호 관찰, 빌드/배포의 최종 결과는 [통합 기록](2026-10-26-junction-trip-followups.md)을 따른다. 전체 사람 운전/모든 접근부 현장 전수 대조 완료를 뜻하지 않는다.
