@@ -2929,14 +2929,28 @@
           "sourceId": "37612023:A0020000:339:0,37612023:A0020000:680:0,37612023:A0020000:1065:0",
           "lanes": [
             {
-              "id": "local:7868:6438:4994:4693",
-              "family": "local:7868:6438:4994:4693",
+              "id": "reviewed:J5057-N:left",
+              "family": "reviewed:J5057-N:left",
               "number": 1,
-              "graphTurns": "SR"
+              "graphTurns": "L"
+            },
+            {
+              "id": "editor:segment:bG9jYWw6Nzg2ODo2NDM4OjQ5OTQ6NDY5Mw:17bfeab69bf24f50afe4ded94519c8b1",
+              "family": "local:7868:6438:4994:4693",
+              "number": 2,
+              "graphTurns": "S"
+            },
+            {
+              "id": "reviewed:J5057-N:right",
+              "family": "reviewed:J5057-N:right",
+              "number": 3,
+              "graphTurns": "R"
             }
           ],
-          "status": "unreviewed",
-          "observations": []
+          "status": "observed-partial",
+          "observations": [
+            "2026-10-26 checked Naver panorama dcuIEvnfmTeYM4mY2DWaXA, capture2026-05: north incoming inner LEFT-only, middle STRAIGHT, curb RIGHT-only; opposing northbound1. NW raised triangular refuge and separated slip-right with pedestrian/cycle crossing and yellow speed table observed. Source URL https://map.naver.com/p/entry/coordinates/3zafbw,2AGEMu?c=16,0,0,0,adh&p=dcuIEvnfmTeYM4mY2DWaXA,35,-8,50,Float . Game widths, taper lengths, island outline and signal timings are estimates. Other approaches not fully reviewed."
+          ]
         }
       ]
     },
@@ -3034,14 +3048,22 @@
           "sourceId": "37612023:A0020000:260:0,37612023:A0020000:1714:0,37612023:A0020000:821:0",
           "lanes": [
             {
-              "id": "local:5034:4203:5033:2698",
-              "family": "local:5034:4203:5033:2698",
+              "id": "reviewed:J5076-N:left",
+              "family": "reviewed:J5076-N:left",
               "number": 1,
-              "graphTurns": "LS"
+              "graphTurns": "L"
+            },
+            {
+              "id": "editor:segment:bG9jYWw6NTAzNDo0MjAzOjUwMzM6MjY5OA:e95362da57f848b691efebf061483b33",
+              "family": "local:5034:4203:5033:2698",
+              "number": 2,
+              "graphTurns": "S"
             }
           ],
-          "status": "unreviewed",
-          "observations": []
+          "status": "observed-partial",
+          "observations": [
+            "2026-10-26 checked Naver panorama Po3cjZOgY9v4qPfVBPGTYg, capture2026-05: north incoming inner LEFT-only and outer STRAIGHT; opposing northbound1. Black rail with yellow post bands on double yellow. East arm is existing Eungye Beonyeong-gil, not a private entrance. Source URL https://map.naver.com/p/entry/coordinates/3zaffK,2AGAoR?c=17,0,0,0,adh&p=Po3cjZOgY9v4qPfVBPGTYg,0,-12,65,Float . Game lane pocket/rail dimensions and timing are estimates. Other approaches not fully reviewed."
+          ]
         },
         {
           "direction": "E",

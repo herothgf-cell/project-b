@@ -9,8 +9,15 @@
       "checkedAt": "2026-10-26",
       "observed": "Yellow diagonally hatched central strip with a metal W-beam barrier and a crash cushion before the western crosswalk; length also visible looking east. No U-turn permission established here.",
       "estimated": "Game geometry: paired source-line strip x=230..365 m; barrier x=235..345 m, 0.4 m wide and 0.75 m high; western crash cushion x=233..235 m, 0.5 m wide and 0.55 m high. End points and dimensions are conservative estimates, not surveyed measurements.",
-      "northMarkIds": ["B2218G612675", "B2218G612683", "B2218G612682"],
-      "southMarkIds": ["B222BC004744", "B222BC004132"],
+      "northMarkIds": [
+        "B2218G612675",
+        "B2218G612683",
+        "B2218G612682"
+      ],
+      "southMarkIds": [
+        "B222BC004744",
+        "B222BC004132"
+      ],
       "hatchFromX": 230.0,
       "hatchToX": 365.0,
       "barrierFromX": 235.0,
@@ -22,6 +29,71 @@
       "cushionHeight": 0.55,
       "openings": [],
       "segments": []
+    },
+    {
+      "id": "J5076-north-post-rail",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p/entry/coordinates/3zaffK,2AGAoR?c=17,0,0,0,adh&p=Po3cjZOgY9v4qPfVBPGTYg,0,-12,65,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-10-26",
+      "observed": "North approach has southbound left-only and straight lanes, one opposing northbound lane, and a black rail with yellow post bands on the double yellow centre line.",
+      "estimated": "Game dimensions: x509.48, z280..299; width0.25m, height0.9m, posts at <=2m. Endpoints, spacing, appearance and dimensions are estimates, not surveyed measurements.",
+      "northMarkIds": [],
+      "southMarkIds": [],
+      "openings": [],
+      "segments": [
+        {
+          "kind": "post-rail",
+          "points": [
+            {
+              "x": 509.48,
+              "z": 280
+            },
+            {
+              "x": 509.48,
+              "z": 282
+            },
+            {
+              "x": 509.48,
+              "z": 284
+            },
+            {
+              "x": 509.48,
+              "z": 286
+            },
+            {
+              "x": 509.48,
+              "z": 288
+            },
+            {
+              "x": 509.48,
+              "z": 290
+            },
+            {
+              "x": 509.48,
+              "z": 292
+            },
+            {
+              "x": 509.48,
+              "z": 294
+            },
+            {
+              "x": 509.48,
+              "z": 296
+            },
+            {
+              "x": 509.48,
+              "z": 298
+            },
+            {
+              "x": 509.48,
+              "z": 299
+            }
+          ],
+          "width": 0.25,
+          "height": 0.9
+        }
+      ]
     }
   ]
 }

@@ -22,7 +22,7 @@ public sealed class RoadPaintGeometry {
   }
   foreach(var road in map.roads)widths[road.id]=road.width;
  }
- static string Family(string id){int part=id.IndexOf(":part:");return part<0?id:id.Substring(0,part);}
+ static string Family(string id){id=RoadMapAuthoringOperations.Origin(new RoadMapLane{id=id});int part=id.IndexOf(":part:");return part<0?id:id.Substring(0,part);}
  static List<RoadGeometry.Lane> Sample(List<LanePath> list,Vector3 point,Vector3 direction,float width){
   var result=new List<RoadGeometry.Lane>();
   foreach(var lane in list){float error;float at=lane.path.Project(point,out error);if(error>width+1)continue;var p=lane.path.Position(at);var d=lane.path.Tangent(at);float along=Vector3.Dot(point-p,d),alignment=Vector3.Dot(d,direction);
