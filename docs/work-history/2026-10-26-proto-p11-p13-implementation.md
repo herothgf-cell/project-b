@@ -65,3 +65,41 @@ P13 핵심 구현 후 기존 고빈도 File.Replace 저장 경고를 먼저 재�
 소스117f9bc 재빌드 종료0. 하루 저장/복원과3일 저장/복원 모두 종료0. 자동 물리 하루는 48차량 유지,255.7게임초/1.30km 픽업 접근까지 진행했으나 신호 매너 판정1건 및 포켓 승차 실패로 종료1(`verified-physical-day.log`, `one-day-traffic-drive.txt`, `live-traffic-validation.txt`). 충돌0·독립 법규 감점0이며 전체 하루/거점 왕복 성공이 아니다. 자동 컨트롤러는 내비 차로 종점까지 주행하며 추가 포켓의 연석 정차를 별도로 수행하지 않는다. 신호 매너와 법규 평가 차이는 추가 재현이 필요하다. 검사 시작 대기 수정과 달리 이 결과는 성공으로 바꾸지 않는다.
 
 화면 캡처는 상대 경로가 Player 데이터 폴더 기준으로 해석되어 최초 저장 실패. 절대 경로로 수정 후 다시 확인한다. 손상 저장 검사 도구도 동일하게 StartupReady 대기를 적용했다. 제품 동작 코드는 변경하지 않는다.
+
+## 최종 실행 결과·배포 인계
+
+최종 소스 `1e78d56b5e3297a28cc543990537d333c6188621`, 브랜치 `codex/proto-p11-p13`. `PrototypeBuild.BuildHybrid` 종료0, `artifacts/proto-final-build-capture.log`. 기본 실행 `builds/EungyeTaxi/EungyeTaxi.exe`. 원격 push/main 병합은 하지 않는다. 생성 씬은 빌드가 갱신한 동일 설정의 객체ID 변경만 포함한다.
+
+| 검사 | 결과 | 실제 범위 |
+|---|---|---|
+| 모델24묶음 / care13,301 | 종료0 | 순수 규칙·회계·상태 검사 |
+| 최종 Editor 묶음 | 종료0 | P11~P13·리뷰 회귀3건·저장500회/잠금·기존 지도/경로/주유/보행 |
+| 신규 저장/새 프로세스 복원 | 6/11단언, 각각0 | 복수 약속·공차 지표·점유 대기/실제 퇴장·한 번 정산, 위치/시계 제어 |
+| 기존 진행 운송 저장/복원 | 9/23단언, 각각0 | 구형 단일 요청·취객·동일 운송/법규/회계 경계 |
+| 승객 통합 | 201단언,0 | 주유/세차·만족도·회복·취객·상황 저장, 위치 제어 |
+| 하루 및3일 저장/새 프로세스 복원 | 각각0 | 식사/수면/초과 영업/명시 마감·날짜·회계·실패 보존. 위치/시계/회계 fixture이며 실제3일 주행 아님 |
+| 손상 저장 새 프로세스 | 4단언,0 | 기본/백업 보존, 출발 금지, 명시 재시작으로 정상 저장 복구 |
+| 자동 물리 하루 | **종료1** | 255.74초/1,304.45m/운송0, 충돌0·독립 법규 감점0·신호 매너1. 픽업 연석 정차와 신호 평가 재현 남음 |
+| 실제 렌더 캡처 | **시각 확인 미완료** | 절대 경로 PNG는 생성됐으나 숨긴 창 캡처가 검정 화면. 실행 종료0을 가독성 통과로 취급하지 않음 |
+| 필수입력 Strict | 종료0 | Input issues0, 선택 import2개 부재, 지도/ZIP 미수정 |
+| 배포 manifest | 종료0 | 130파일/105,686,443바이트 SHA256 일치, 검증 한계도 manifest에 명시 |
+
+독립 headless 신규 저장/복원 시작 준비16,394/16,468ms, 마지막 렌더16,307ms. 과거 약19초보다 짧지만 직전 후속 작업의14,178ms보다 빠르다고 주장하지 않는다. 캐시·부하가 같은 반복 성능 비교나 장시간 FPS 검사는 아니다.
+
+손상 저장 로그 `verified-final-liveInvalidTest.log`; 하루/3일 로그 `verified-oneDayTest.log`, `verified-oneDayReloadTest.log`, `verified-threeDayTest.log`, `verified-threeDayReloadTest.log`. 최종 렌더 `verified-final-protoExpansionTest.log`와 `proto-expansion-map.png`(검정 캡처). 다른 실행 로그는 위 단계별 기록 참고. `artifacts/`는 Git 배포 제외이며 주요 결과를 본 기록과 manifest에 보존했다.
+
+### 재현 명령
+
+- Unity batchmode executeMethod: `ProtoReviewRegressionTests.RunFinal`, 빌드는 `PrototypeBuild.BuildHybrid`.
+- 저장/복원: 기본 exe에 `-batchmode -nographics -protoExpansionTest`, 다음 별도 프로세스에 `-protoExpansionReloadTest`. 각각 `-logFile <절대 로그 경로>` 지정.
+- 기존 진행 운송은 `-liveSaveTest` → `-liveReloadTest`, 승객은 `-passengerCareTest`.
+- 회계 경계는 `-threeDayTest` → `-threeDayReloadTest`, `-oneDayTest` → `-oneDayReloadTest`. 동일 저장을 쓰는 물리 하루와 동시에 실행하지 않는다.
+- 자동 물리는 `-batchmode -nographics -oneDayMode -hybridV2 -oneDayTrafficTest`. 현재 결과는 실패이며 합격 기준을 완화하지 않았다.
+- 손상 저장은 **격리 검사 경로만** `artifacts/live-invalid-test.json`과 `.bak`에 잘못된 JSON을 준비한 뒤 `-liveInvalidTest`. 실제 사용자 저장에 실행하지 않는다.
+- 배포 `pwsh -File tools/update_distribution_manifest.ps1 -VerifyOnly`, 입력 `pwsh -File tools/check_workspace.ps1 -Strict`.
+
+### 남은 작업과 완료 판단
+
+P11·P12·P13 대기 경로의 기능 구현/자동 저장·회계 검증은 반영됐다. **최종 안정화 전체 완료는 아니다.** 자동 주행 컨트롤러의 포켓 진입·정차, 신호 매너1건과 독립 법규0의 차이를 재현/수정하고 물리 하루를 통과해야 한다. 실제 보이는 창의 UI·사람의20분/3일 경제 체감·장시간 안정성도 남는다. P13 안전 대체 이동은 현재 맵의 검증 후보 쌍 확보 전까지 제외한다.
+
+마인드맵 원본 SHA256 `F1951492F9C5A13941E60A17D92EB31B1A7471FB8ABA7996D47A0C2E02F00937` 유지. 추가/수정 가지 목록은 `docs/content-design/17-proto-operation-expansion.md` 마지막 절에서 사용자 검토용으로 제공하며 원본에 적용하지 않았다.
