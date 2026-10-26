@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 [Serializable] public sealed class ConfusionPracticeSnapshot {
  public int variant;public bool known,started,entered,finished,correctRoute,stopped,entryBlocked,entryRed,conflictSeen,failedYield,sawBlock,hasBlocked,blocked,hasOncoming,oncoming;public float elapsed;
@@ -29,7 +29,7 @@ public sealed class ConfusionPracticeState {
  public void Conflict(){if(!Entered||Finished||ConflictSeen)return;ConflictSeen=true;FailedYield=Left&&Oncoming;}
  public void Complete(bool correct){if(!Entered||Finished)return;Finished=true;CorrectRoute=correct&&(!Left||ConflictSeen);}
  public LawEvent Event(string id,int day){
-  var e=new LawEvent{id=id,day=day,family="confusion",scenario="C"+Variant,action=Left?"비보호 좌회전":"직진",reason="가상 교육 구간 · "+Title(Variant)+" · ① 정지선 / ② 교차로 통과",observation=new RoadObservation{known=Known,forward=EntryRed?SignalColor.Red:Variant==8?SignalColor.Red:Variant==9?SignalColor.Yellow:SignalColor.Green,trafficClear=!FailedYield,pedestrian=PedestrianState.None}};
+  var e=new LawEvent{recoveryPolicyVersion=1,id=id,day=day,family="confusion",scenario="C"+Variant,action=Left?"비보호 좌회전":"직진",reason="가상 교육 구간 · "+Title(Variant)+" · ① 정지선 / ② 교차로 통과",observation=new RoadObservation{known=Known,forward=EntryRed?SignalColor.Red:Variant==8?SignalColor.Red:Variant==9?SignalColor.Yellow:SignalColor.Green,trafficClear=!FailedYield,pedestrian=PedestrianState.None}};
   string rule=Variant==8?"F02":Variant==9?"F03":Left?"F05":"F06";
   bool violation=Variant==8?!Stopped:Left?EntryRed||FailedYield:EntryBlocked;
   var verdict=!Known||!Entered?LawVerdict.Deferred:violation?LawVerdict.Violation:!Finished||!CorrectRoute?LawVerdict.Deferred:Variant==9?LawVerdict.Deferred:Variant==11?LawVerdict.NoOpportunity:LawVerdict.Compliant;

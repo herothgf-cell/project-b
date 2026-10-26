@@ -23,9 +23,10 @@ public sealed class RideCompletionPanel:MonoBehaviour {
   GUI.Label(new Rect(x+25,y+84,600,50),KoreanText.Stop(r.pickup)+"  →  "+KoreanText.Stop(r.destination),label);
   GUI.Label(new Rect(x+25,y+139,600,30),"승객 만족도  "+satisfaction+" / 100 · 요구 "+r.required+"점",label);
   Fill(new Rect(x+25,y+174,600,12),new Color(.15f,.2f,.22f));Fill(new Rect(x+25,y+174,600*Mathf.Clamp01(satisfaction/100f),12),new Color(1,.64f,.17f));
-  GUI.Label(new Rect(x+25,y+200,600,30),"운송 시간  "+Duration(r.elapsed)+"     운행 점수  "+(r.hasDrivingScore?r.drivingScore:session.law.ledger.TotalScore)+"점",label);
+  GUI.Label(new Rect(x+25,y+200,600,30),"운송 시간  "+Duration(r.elapsed)+"     운전 점수  "+(r.hasDrivingScore?r.drivingScore:session.law.ledger.TotalScore)+"점",label);
   string factors=modern?RideReceiptSummary.Factors(r):"만족도 기록 없음";var factorStyle=new GUIStyle(label);while(factorStyle.fontSize>14&&factorStyle.CalcHeight(new GUIContent(factors),600)>95)factorStyle.fontSize--;GUI.Label(new Rect(x+25,y+241,600,95),factors,factorStyle);
-  Fill(new Rect(x+25,y+347,600,155),new Color(.1f,.15f,.17f));GUI.Label(new Rect(x+42,y+358,566,138),Receipt,large);
+  var receiptStyle=new GUIStyle(large);while(receiptStyle.fontSize>18&&receiptStyle.CalcHeight(new GUIContent(Receipt),566)>138)receiptStyle.fontSize--;
+  Fill(new Rect(x+25,y+347,600,155),new Color(.1f,.15f,.17f));GUI.Label(new Rect(x+42,y+358,566,138),Receipt,receiptStyle);
   if(modern)GUI.Label(new Rect(x+25,y+506,600,44),RideReceiptSummary.Rule(r),new GUIStyle(label){fontSize=14});
   GUI.Label(new Rect(x+25,y+550,600,25),(r.paid>0?"운임 지급 완료":"시간 초과 · 운임 없음")+(r.wakeDelayed?" · 기상 대기":""),new GUIStyle(label){fontSize=16});
   if(GUI.Button(new Rect(x+25,y+580,290,46),(session.business.ShowingSummary||session.business.ledger.State==BusinessState.Closing)?"영업 정산 확인":"계속 영업",button))Close();

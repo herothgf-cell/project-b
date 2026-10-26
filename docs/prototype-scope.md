@@ -1,5 +1,7 @@
 # 프로토타입 개발을 위한 통합 기획
 
+2026-10-26 피로·점수 개정: [운전자10](content-design/10-driver-condition.md)의 피로100 졸음(예고2초 후 시야3초/조작중단1초),20분 이후 초과 영업과 거점 휴식·종료를 추가한다. 피로100 신규 수락 차단과 시간 종료 자동 정산은 폐기한다. [운전 점수02](content-design/02-driving-evaluation.md)는 신규 준수+3과 승차점수0/70/100의 기본 운임90/100/110% 보정을 제공한다. [승객04](content-design/04-passengers-and-reservations.md)는350m/45초 회복과 안심+2·최대4를 적용한다. 아래 과거 기록보다 이 개정이 우선하며 실제 검증은 최신 작업 이력 기준이다.
+
 2026-10-26 유턴·중앙분리대: 확인된 T1 접근3곳의 조건부 유턴, 수인로 중앙 방호울타리/안전지대, 전체 노면선 감사 및 정식 지도 화살표 표시를 구현했다. 두 교차로 차로·교통섬·보행 신호, 만족도 회복·내비·승하차9 후속 수정은 [통합 기록](work-history/2026-10-26-junction-trip-followups.md)을 따른다. 검증·현장 확인 범위는 [작업 기록](work-history/2026-10-26-uturn-medians.md), [거리뷰 근거](content-design/2026-10-26-uturn-median-observations.md)를 따른다. 전체 현장 확인·사람의 수동 운전 검증을 뜻하지 않는다.
 
 2026-10-26 운임 구현: [승객 만족도별 운임·보너스 개정](content-design/11-passenger-request-effects.md#2026-10-26-운임·보너스-개정안)에 따라 기본 운임을 최종 승객 만족도 `S`의 요구치 `R` 미달 폭에 따라 점진 감액하고, 높은 `R`의 보너스 상한과 상승폭을 키웠다. 시작 만족도는 요구치 미만·동일·초과 모두 가능하다. [P8-07 안정 주행 회복](content-design/04-passengers-and-reservations.md#p8-07-안정-주행-회복-구현-사양-2026-10-26-검토안)은 별도 통합 작업에서 구현했다. 자동 물리·수동 경제 밸런스는 별도 검증한다.
@@ -67,7 +69,7 @@
 | 승객 | 호출·길가 승객·매너·조용한 운행/도착 문의 | 복잡한 대화·음성·창문/음악 전체 기능 | [04](content-design/04-passengers-and-reservations.md) |
 | 거점 | 입출구 분리 주유소 3곳·식당·주차장 외부 정차 메뉴 | 실내 보행·시설 운영 미니게임 | [05](content-design/05-daily-operation.md) |
 | 경제 | 개인택시·운임·방문비·현금·미납 | 법인·대출·차량매매·실제 세무신고 | [05](content-design/05-daily-operation.md) |
-| 운전자 | 포만감·피로·식당 회복·주차장 수면·수락 제한(신규) | 조작·시야 강제 변화 | [10](content-design/10-driver-condition.md) |
+| 운전자 | 포만감·피로·식당 회복·거점 수면,피로100 졸음·초과 영업 | 질병·스트레스·강제 충돌 | [10](content-design/10-driver-condition.md) |
 | 납부 일정 | 없음 | 보험료·보험 갱신·세금 납부·만료/기한·관련 성공 조건 전체 제외 | [05](content-design/05-daily-operation.md) |
 | 캠페인 | 하루20분·순수익 비교·새 하루(추가 개발) | 장편 서사·무한 경영 | [07](content-design/07-campaign.md) |
 | 저장 | v3 중단 운송·시간·회계·컨디션·청결·요청 함께 저장/복원, v2 읽기 호환 | 임의 지도 리비전 변경 뒤 운송 자동 재배치 | [05](content-design/05-daily-operation.md) |

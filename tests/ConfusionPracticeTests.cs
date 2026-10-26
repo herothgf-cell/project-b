@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 class ConfusionPracticeTests {
  static void Check(bool b,string n){if(!b)throw new Exception(n);}
  static ConfusionPracticeState New(int v){return new ConfusionPracticeState(v);}
  static void Main(){try{
   var red=New(8);red.Advance(180,false,false);Check(red.Signal==SignalColor.Red,"flashing red persists on approach");red.Enter(false);red.Complete(true);Check(red.Event("red",1).Deduction>0,"rolling red flash violation");
-  red=New(8);red.Enter(true);red.Complete(true);Check(red.Event("stop",1).Deduction==0,"red flash full stop permits passage");
+  red=New(8);red.Enter(true);red.Complete(true);Check(red.Event("stop",1).Deduction==0,"red flash full stop permits passage");Check(red.Event("new-recovery",1).recoveryPolicyVersion==1&&LawLedger.ScoreAfter(70,red.Event("new-recovery",1))==73,"production confusion event uses three point recovery");
   var yellow=New(9);yellow.Enter(false);yellow.Complete(true);Check(yellow.Event("yellow",1).Deduction==0,"yellow flash does not require full stop");Check(yellow.Feedback().issues.Contains("시선"),"cannot infer driver attention");
   var blocked=New(10);blocked.Advance(180,false,false);Check(blocked.Blocked,"queue cannot expire on distant approach");blocked.Enter(true);blocked.Advance(10,true,true);blocked.Complete(true);Check(blocked.Event("bad",1).Deduction>0,"later opening does not erase illegal entry");
   blocked=New(10);blocked.Advance(5,true,true);Check(!blocked.Blocked,"queue opens after local wait");blocked.Enter(true);blocked.Complete(true);Check(blocked.Event("wait",1).Deduction==0,"wait outside box then enter");

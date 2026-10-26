@@ -7,7 +7,7 @@ public class DriveNotifications : MonoBehaviour {
  readonly List<Notice> visible=new List<Notice>();LawLedger ledger;int score,lawCount;bool ready;string observedTrip;PassengerScoreView passenger;
  public bool FuelLow {get{return session.business.enabledCampaign&&session.business.ledger.Account!=null&&session.business.ledger.Account.Fuel<=15;}}
  public string VisibleText {get{return visible.Count==0?"":visible[0].text;}}
- public string[] VisibleTexts {get{return visible.ConvertAll(n=>(n.passenger?"만족도":"운행")+" | "+n.text).ToArray();}}
+ public string[] VisibleTexts {get{return visible.ConvertAll(n=>(n.passenger?"만족도":"운전")+" | "+n.text).ToArray();}}
  void LateUpdate(){
   if(!session||!session.law||!session.business)return;
   var journal=session.GetComponent<DrivingScoreJournal>();if(journal&&!journal.Loaded)return;
@@ -20,8 +20,9 @@ public class DriveNotifications : MonoBehaviour {
   if(!ready||ledger!=session.law.ledger){ledger=session.law.ledger;score=ledger.TotalScore;lawCount=ledger.Count;observedTrip=trip;passenger=view;visible.Clear();ready=true;return;}
   if(trip!=observedTrip){visible.RemoveAll(n=>n.passenger);observedTrip=trip;passenger=view;}
   else if(trip!=null){
-   int after=PassengerScoreView.Calculate(view.start,view.drive,passenger.request,passenger.time);if(after!=passenger.value)Push(ScoreFeedback.Text(session.manners.lastEvent,after-passenger.value),after>passenger.value,true);
-   int requested=PassengerScoreView.Calculate(view.start,view.drive,view.request,passenger.time);if(requested!=after)Push(ScoreFeedback.Text(requested>after?"요청 이행":"요청 미이행",requested-after),requested>after,true);
+   int after=PassengerScoreView.Calculate(view.start,view.drive,passenger.request,passenger.time,passenger.comfort);if(after!=passenger.value)Push(ScoreFeedback.Text(session.manners.lastEvent,after-passenger.value),after>passenger.value,true);
+   int requested=PassengerScoreView.Calculate(view.start,view.drive,view.request,passenger.time,passenger.comfort);if(requested!=after)Push(ScoreFeedback.Text(requested>after?"요청 이행":"요청 미이행",requested-after),requested>after,true);
+   int comforted=PassengerScoreView.Calculate(view.start,view.drive,view.request,passenger.time,view.comfort);if(comforted!=requested)Push(ScoreFeedback.Text("안정 주행 안심",comforted-requested),comforted>requested,true);requested=comforted;
    if(view.value!=requested)Push(ScoreFeedback.Text("도착 시간",view.value-requested),view.value>requested,true);passenger=view;
   }
   if(lawCount!=ledger.Count){var events=ledger.Events;for(int i=lawCount;i<events.Length;i++){int next=LawLedger.ScoreAfter(score,events[i]);if(next!=score)Push(ScoreFeedback.Text(ScoreFeedback.LawReason(events[i],next-score),next-score),next>score);score=next;}lawCount=events.Length;}
@@ -37,7 +38,7 @@ public class DriveNotifications : MonoBehaviour {
    GUI.Label(new Rect(x+47,y+3,width-55,44),"연료 부족 "+session.business.ledger.Account.Fuel.ToString("0")+"% · F7 주유소 안내",style);y+=56;
   }
   foreach(var notice in visible){float age=Time.unscaledTime-notice.since,alpha=Mathf.Clamp01((3-age)/.35f);float height=Mathf.Max(38,style.CalcHeight(new GUIContent(notice.text),width-94)+10);
-   Panel(new Rect(x,y,width,height),new Color(.035f,.07f,.09f,.98f*alpha));GUI.color=new Color(notice.passenger?.3f:.4f,notice.passenger?.9f:.7f,notice.passenger?.6f:1,alpha);GUI.Label(new Rect(x+10,y+5,65,height-5),notice.passenger?"만족도":"운행",style);
+   Panel(new Rect(x,y,width,height),new Color(.035f,.07f,.09f,.98f*alpha));GUI.color=new Color(notice.passenger?.3f:.4f,notice.passenger?.9f:.7f,notice.passenger?.6f:1,alpha);GUI.Label(new Rect(x+10,y+5,65,height-5),notice.passenger?"만족도":"운전",style);
    GUI.color=new Color(notice.positive?.55f:1,notice.positive?1:.65f,.65f,alpha);GUI.Label(new Rect(x+82,y+5,width-94,height-5),notice.text,style);GUI.color=Color.white;y+=height+5;
   }
  }

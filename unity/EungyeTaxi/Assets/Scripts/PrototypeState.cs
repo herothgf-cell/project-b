@@ -47,7 +47,7 @@ public enum PedestrianState { None, Intending, Crossing, Unknown }
  public LawFinding Copy(){return (LawFinding)MemberwiseClone();}
 }
 [Serializable] public class LawEvent {
- public PracticeRoute practice;
+ public int recoveryPolicyVersion; public PracticeRoute practice;
  public string id,tripId,family,scenario,junction,reason,action;
  public int day;public float seconds,speed;public bool assisted,occupied;
  public RoadObservation observation;
@@ -68,14 +68,14 @@ public enum PedestrianState { None, Intending, Crossing, Unknown }
  public int startSatisfaction,startDeficit,cleanBonus,driveDelta,timeDelta,cleanlinessAfter;
  public float referenceSeconds,arrivalElapsed,disembarkElapsed;public bool drunk,vomited,wakeDelayed;public string timeReason;
  public string pickupStopId,dropStopId,mapRevision,catalogRevision,stopEvidence;
- public bool hasDrivingScore;public int drivingScore,initialFare;
+ public bool hasDrivingScore;public int drivingScore,initialFare;public int boardingDrivingScore,drivingAdjustedFare,comfortDelta;
 }
 // No dependency on passenger manners, fares, Unity time, or physics.
 public class LawLedger {
  readonly List<LawEvent> events=new List<LawEvent>();
  public int Count {get{return events.Count;}}
- // Campaign score follows event order; only observed compliance recovers one point.
- public static int ScoreAfter(int score,LawEvent e){bool good=false,bad=false;foreach(var r in e.rules){good|=r.verdict==LawVerdict.Compliant;bad|=r.verdict==LawVerdict.Violation;}return Math.Max(0,Math.Min(100,score-e.Deduction+(good&&!bad?1:0)));}
+ // Campaign score follows event order; only observed compliance uses the recovery policy recorded with each event.
+ public static int ScoreAfter(int score,LawEvent e){bool good=false,bad=false;foreach(var r in e.rules){good|=r.verdict==LawVerdict.Compliant;bad|=r.verdict==LawVerdict.Violation;}return Math.Max(0,Math.Min(100,score-e.Deduction+(good&&!bad?(e.recoveryPolicyVersion>=1?3:1):0)));}
  public int TotalScore {get{int score=100;foreach(var e in events)score=ScoreAfter(score,e);return score;}}
  public LawEvent[] Events {get{return events.ConvertAll(e=>e.Copy()).ToArray();}}
  public bool Record(LawEvent e){
@@ -95,12 +95,12 @@ public class LawLedger {
 }
 public static class LawEvaluator {
  public static LawEvent Exit(string id,int day,bool knownSignalQueue,bool changedLane,bool insertedAhead,bool obstructed,PrototypeSettings settings=null){
-  var s=settings??new PrototypeSettings();var e=new LawEvent{id=id,day=day,family="exit",action=insertedAhead?"앞부분 진입":changedLane?"뒤 합류":"직진·우회",reason="신호 대기열 "+(knownSignalQueue?"확인":"불명확")+" · 차로 진입 "+(changedLane?"있음":"없음")+" · 앞부분 진입 "+(insertedAhead?"있음":"없음")+" · 상대 진행 방해 "+(obstructed?"관찰":"미관찰")};
+  var s=settings??new PrototypeSettings();var e=new LawEvent{recoveryPolicyVersion=1,id=id,day=day,family="exit",action=insertedAhead?"앞부분 진입":changedLane?"뒤 합류":"직진·우회",reason="신호 대기열 "+(knownSignalQueue?"확인":"불명확")+" · 차로 진입 "+(changedLane?"있음":"없음")+" · 앞부분 진입 "+(insertedAhead?"있음":"없음")+" · 상대 진행 방해 "+(obstructed?"관찰":"미관찰")};
   e.Add("L06",!knownSignalQueue?LawVerdict.Deferred:!changedLane?LawVerdict.NoOpportunity:insertedAhead?LawVerdict.Violation:LawVerdict.Compliant,s.insertionPenalty);
   e.Add("L07",!knownSignalQueue?LawVerdict.Deferred:!changedLane?LawVerdict.NoOpportunity:obstructed?LawVerdict.Violation:LawVerdict.Compliant,s.interferencePenalty);return e;
  }
  public static LawEvent RightTurn(string id,int day,RoadObservation o,bool stopped,PrototypeSettings settings=null,bool yielded=false){
-  var s=settings??new PrototypeSettings();var e=new LawEvent{id=id,day=day,family="right",observation=o.Copy(),action="우회전",reason="관찰한 신호·보행 상태와 정지 여부"};
+  var s=settings??new PrototypeSettings();var e=new LawEvent{recoveryPolicyVersion=1,id=id,day=day,family="right",observation=o.Copy(),action="우회전",reason="관찰한 신호·보행 상태와 정지 여부"};
   if(!o.known||o.pedestrian==PedestrianState.Unknown){e.Add("L02",LawVerdict.Deferred,0);e.reason="관찰 불명확 · 판정 보류";return e;}
   if(o.dedicated)e.Add("L03",o.right==SignalColor.Green?LawVerdict.Compliant:o.right==SignalColor.Red?LawVerdict.Violation:LawVerdict.Deferred,s.dedicatedRedPenalty);
   else e.Add("L02",o.forward==SignalColor.Red?(stopped?LawVerdict.Compliant:LawVerdict.Violation):LawVerdict.NoOpportunity,s.redRightPenalty);

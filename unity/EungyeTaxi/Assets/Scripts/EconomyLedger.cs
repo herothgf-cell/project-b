@@ -61,15 +61,23 @@ public class EconomyLedger {
  public void RecordFailure(){if(Operating)FailedTrips++;}
  public void Advance(double seconds,double metres){
   if(!Operating||double.IsNaN(seconds)||double.IsInfinity(seconds)||double.IsNaN(metres)||double.IsInfinity(metres)||seconds<0||metres<0)return;
-  Elapsed+=seconds;Metres+=metres;fuel+=metres/1000*Settings.fuelPerKm+seconds/3600*Settings.idlePerHour;
+  double before=Elapsed;Elapsed+=seconds;Metres+=metres;fuel+=metres/1000*Settings.fuelPerKm+seconds/3600*Settings.idlePerHour;
   if(Account!=null)Account.Consume(seconds,metres);
   if(Driver!=null)Driver.Advance(seconds);
-  if(Elapsed>=Settings.daySeconds)RequestClose("시간 종료");
+  BudgetCrossed(before);
  }
- public bool UseMeal(string id){if(!OneDay||State!=BusinessState.Open||SecondsLeft<50||services.Contains(id)||!Account.Meal(id,Day))return false;services.Add(id);Driver.Meal();ServiceTime(50);return true;}
- public bool UseSleep(string id){if(!OneDay||State!=BusinessState.Open||SecondsLeft<100||string.IsNullOrEmpty(id)||!services.Add(id))return false;Driver.Sleep();ServiceTime(100);return true;}
- public bool UseWash(string id){if(Account==null||State!=BusinessState.Open||SecondsLeft<30||string.IsNullOrEmpty(id)||services.Contains(id)||!Account.Wash(id,Day))return false;services.Add(id);Care.Wash();if(Driver!=null)Driver.Advance(30);ServiceTime(30);return true;}
- void ServiceTime(double seconds){Elapsed+=seconds;if(Elapsed>=Settings.daySeconds)RequestClose("시간 종료");}
+ public DriverCondition PreviewConditionService(bool sleeping){
+  if(Driver==null)return null;
+  var next=Driver.Copy();bool crosses=Elapsed<Settings.daySeconds&&Elapsed+(sleeping?100:50)>=Settings.daySeconds;
+  if(sleeping){if(crosses)next.fatigue=100;next.Sleep();}
+  else {next.Meal();if(crosses)next.fatigue=100;}
+  return next;
+ }
+ public bool UseMeal(string id){if(!OneDay||State!=BusinessState.Open||services.Contains(id)||!Account.Meal(id,Day))return false;services.Add(id);Driver=PreviewConditionService(false);ServiceTime(50);return true;}
+ public bool UseSleep(string id){if(!OneDay||State!=BusinessState.Open||string.IsNullOrEmpty(id)||!services.Add(id))return false;var next=PreviewConditionService(true);ServiceTime(100);Driver=next;return true;}
+ public bool UseWash(string id){if(Account==null||State!=BusinessState.Open||string.IsNullOrEmpty(id)||services.Contains(id)||!Account.Wash(id,Day))return false;services.Add(id);Care.Wash();if(Driver!=null)Driver.Advance(30);ServiceTime(30);return true;}
+ void ServiceTime(double seconds){double before=Elapsed;Elapsed+=seconds;BudgetCrossed(before);}
+ void BudgetCrossed(double before){if(before<Settings.daySeconds&&Elapsed>=Settings.daySeconds){if(OneDay)Driver.fatigue=100;else RequestClose("시간 종료");}}
  public void RequestClose(){RequestClose("조기 퇴근");}
  public void RequestClose(string reason){if(State==BusinessState.Open){State=BusinessState.Closing;EndReason=reason;}}
  public bool Settle(){

@@ -34,5 +34,5 @@ public class DrivingScoreJournal : MonoBehaviour {
   File.WriteAllText(path+".tmp",JsonUtility.ToJson(new DrivingScoreSnapshot{campaign=session.law.ids.campaign,sequence=session.law.ids.sequence,events=session.law.ledger.Events},true));
   if(File.Exists(path))File.Replace(path+".tmp",path,path+".bak");else File.Move(path+".tmp",path);
   campaign=session.law.ids.campaign;savedCount=session.law.ledger.Count;
- }catch(Exception ex){Debug.LogWarning("Driving score journal save failed: "+ex.Message);session.business.saveStatus="운행 점수 저장 실패 · 저장 공간을 확인하세요";}}
+ }catch(Exception ex){Debug.LogWarning("Driving score journal save failed: "+ex.Message);session.business.saveStatus="운전 점수 저장 실패 · 저장 공간을 확인하세요";}}
 }
