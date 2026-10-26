@@ -1,0 +1,34 @@
+using System;
+using System.Collections;
+using System.Linq;
+using System.Reflection;
+using UnityEngine;
+
+// Controlled-position integration. Invoked with -navigationTripTest.
+public sealed class NavigationTripProbe:MonoBehaviour {
+ int checks;DriveSession s;
+ [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]static void Install(){if(Array.IndexOf(Environment.GetCommandLineArgs(),"-navigationTripTest")>=0)new GameObject("Navigation trip regression").AddComponent<NavigationTripProbe>();}
+ void Check(bool pass,string name){checks++;Debug.Log((pass?"PASS ":"FAIL ")+name);if(!pass)throw new Exception("NAVIGATION_TRIP_FAIL "+name);}
+ void Pose(Vector3 point,Vector3 direction){var t=s.taxi;t.body.position=point+Vector3.up*.65f;t.body.rotation=Quaternion.LookRotation(direction);t.transform.SetPositionAndRotation(t.body.position,t.body.rotation);t.body.velocity=Vector3.zero;Physics.SyncTransforms();}
+ void Stop(int index){var stop=s.jobs.stops[index];Pose(stop.Kerb,stop.Direction);}
+ bool Restore(FullMapOverlay map){var method=typeof(FullMapOverlay).GetMethod("RestoreTripRoute",BindingFlags.Instance|BindingFlags.Public);return method!=null&&(bool)method.Invoke(map,null);}
+ int[] Pins(FullMapOverlay map){var property=typeof(FullMapOverlay).GetProperty("ActiveStopPins",BindingFlags.Instance|BindingFlags.Public);return property==null?new int[0]:(int[])property.GetValue(map,null);}
+ IEnumerator Start(){yield return new WaitForSecondsRealtime(2);s=FindObjectOfType<DriveSession>();bool ok=false;try{Run();ok=true;}catch(Exception e){Debug.LogException(e);}Debug.Log("NAVIGATION_TRIP_"+(ok?"OK":"FAILED")+" checks="+checks);Application.Quit(ok?0:1);}
+ void Run(){
+  s.business.settings=PrototypeSettings.ForThreeDays();s.business.ledger=new EconomyLedger(s.business.settings);s.business.enabledCampaign=true;s.business.Depart();s.jobs.ClearForDay();s.business.enabled=false;s.jobs.enabled=false;s.jobs.nav.enabled=false;s.requests.enabled=false;s.law.enabled=false;s.manners.enabled=false;s.GetComponent<ServiceLawZones>().enabled=false;s.taxi.enabled=false;s.taxi.body.isKinematic=true;s.taxi.body.interpolation=RigidbodyInterpolation.None;foreach(var c in s.traffic.cars){c.Recycle();c.enabled=false;}
+  var j=s.jobs;var map=s.GetComponent<FullMapOverlay>();var start=j.stops[0];var startPath=j.nav.hd.paths[start.laneEdge];float startAt=start.laneAt-25;Pose(startPath.Position(startAt),startPath.Tangent(startAt));
+  j.ForcedRideCase=DrunkRideCase.Normal;j.offers[0]=new JobOffer{pickup=0,drop=8,fare=5000,seconds=1000,requiredScore=70,distance=j.nav.Distance(j.stops[0],j.stops[8])};
+  Check(j.Accept(0)&&j.current.drop==8&&j.nav.hdGoal==j.stops[0].laneEdge,"S09 destination fixture accepts directed pickup");int cash=s.business.ledger.Account.Cash;
+  Check(map.Open(),"M opens with active pickup");var place=map.Places()[0];Check(map.SelectPlace(place)&&map.SelectedPlaceName==place.name,"M previews arbitrary place during pickup");
+  Check(Pins(map).SequenceEqual(new[]{0,8}),"active pickup/drop pins remain while place preview selected");Check(!map.StartPlaceGuidance()&&j.current.drop==8&&s.business.ledger.Account.Cash==cash,"place preview cannot overwrite passenger destination");
+  Check(Restore(map)&&map.SelectedPlaceName==""&&map.RoutePaint.Count>0,"obvious M return restores active pickup route");map.Close();
+  Stop(0);Check(j.Interact()&&j.trip.State==TripState.OnTrip,"passenger boards for S09");Check(j.nav.hdGoal==j.stops[8].laneEdge,"onboard destination is S09 directed lane");
+  var saved=JsonUtility.FromJson<PassengerJobsSnapshot>(JsonUtility.ToJson(j.CaptureLive()));var originalKerb=j.stops[8].Kerb;j.RestoreLive(saved);
+  Check(j.current.drop==8&&Vector3.Distance(j.stops[8].Kerb,originalKerb)<.01f&&j.nav.hdGoal==j.stops[8].laneEdge,"active save restores corrected S09 kerb and destination");
+  Check(map.Open()&&map.SelectPlace(place),"M previews place with passenger onboard");Check(Pins(map).SequenceEqual(new[]{0,8}),"onboard pickup/drop pins remain during preview");Check(Restore(map)&&map.RoutePaint.Count>0&&j.current.drop==8,"M restores onboard S09 route without changing trip");map.Close();
+  var via=JsonUtility.FromJson<PassengerJobsSnapshot>(JsonUtility.ToJson(j.CaptureLive()));via.passengerVia=2;via.changeApplied=true;j.RestoreLive(via);Check(map.Open()&&map.SelectPlace(place),"M opens preview during saved via request");Check(Pins(map).SequenceEqual(new[]{0,8,2}),"pickup/drop/via pins remain during preview");Check(Restore(map)&&j.nav.hdGoal==j.stops[2].laneEdge,"M restores via route without changing final drop");map.Close();j.RestoreLive(saved);
+  var stop=j.stops[8];Pose(stop.V(),stop.Direction);Check(!j.At(8)&&!j.Interact(),"lane-center near miss cannot complete S09");Pose(stop.Kerb+TrafficSystem.Right(stop.Direction)*1.3f,stop.Direction);Check(!j.At(8)&&!j.Interact(),"far-curb near miss cannot complete S09");Pose(stop.Kerb,-stop.Direction);Check(!j.At(8)&&!j.Interact(),"wrong direction cannot complete S09");
+  Stop(8);Check(j.At(8)&&j.Interact()&&j.trip.State==TripState.Complete,"right-curb S09 drop completes");Check(s.business.ledger.Rides==1&&s.business.ledger.Account.Cash>cash,"S09 fare settles exactly once");int settled=s.business.ledger.Account.Cash;Check(j.trip.Complete()==0&&s.business.ledger.Account.Cash==settled,"second completion cannot settle fare again");
+  j.ClearForDay();j.ForcedRideCase=DrunkRideCase.Sleepy;j.offers[0]=new JobOffer{pickup=0,drop=8,fare=5000,seconds=1000,requiredScore=70,distance=j.nav.Distance(j.stops[0],j.stops[8])};Stop(0);Check(j.Accept(0)&&j.Interact()&&j.DrunkRide.SleepPlanned,"S09 sleepy passenger boards");Stop(8);Check(j.Interact()&&j.Active&&j.trip.ArrivalLocked&&j.DrunkRide.Waiting,"S09 first safe arrival enters wake wait");var waiting=JsonUtility.FromJson<PassengerJobsSnapshot>(JsonUtility.ToJson(j.CaptureLive()));j.RestoreLive(waiting);Check(j.current.drop==8&&j.DrunkRide.Waiting&&Vector3.Distance(j.stops[8].Kerb,originalKerb)<.01f,"S09 wake wait and corrected kerb survive save restore");j.DrunkRide.Advance(14.99f,1);Check(j.Interact()&&j.Active&&s.business.ledger.Rides==1,"S09 wake before 15 seconds leaves trip unsettled");j.DrunkRide.Advance(15.01f,1);Pose(stop.V(),stop.Direction);j.SendMessage("UpdateCare");Check(j.Active&&s.business.ledger.Rides==1,"S09 automatic exit blocked at lane-center near miss");Stop(8);j.SendMessage("UpdateCare");Check(j.trip.State==TripState.Complete&&s.business.ledger.Rides==2,"S09 safe return automatically disembarks once");Check(j.trip.Complete()==0&&s.business.ledger.Rides==2,"S09 sleepy fare cannot settle again");
+ }
+}

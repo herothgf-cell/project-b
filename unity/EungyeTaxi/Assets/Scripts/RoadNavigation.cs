@@ -204,14 +204,24 @@ public class RoadNavigation : MonoBehaviour {
   if(error<3&&viaSampled&&Vector3.Distance(vehicle.position,viaPreviousPosition)<=allowed&&viaPreviousRemaining>=-.25f&&remainingVia<-.25f&&Vector3.Dot(vehicle.forward,hdRoute.path.Tangent(progress))>.6f){if(RequiredVia>=0){PassedRequiredVia=RequiredVia;RequiredVia=-1;}else{PassedObservedEdge=ObservedEdge;ObservedEdge=-1;}}
   viaSampled=error<3;viaPreviousPosition=vehicle.position;viaPreviousRemaining=remainingVia;viaSampleTime=Time.time;
  }
+ bool CrossingPlannedLaneChange(float progress,float error){
+  if(hdRoute==null||error>4.5f)return false;
+  var change=hd.edges[hdRoute.EdgeAt(progress)];if(change.change==0)return false;
+  if(Vector3.Dot(vehicle.forward,hdRoute.path.Tangent(progress))<.6f)return false;
+  float at;int lane=hd.Nearest(vehicle.position,vehicle.forward,out at);
+  // Only the source lane of this directed connector may keep the incumbent
+  // while the car crosses its width. A nearby disconnected lane cannot.
+  return lane>=0&&hd.edges[lane].fromNode==change.fromNode;
+ }
  void RefreshHd(){
   bool observe=Time.time>=nextHdCosts||hdRoute==null;
   if(observe){nextHdCosts=Time.time+6;for(int i=0;i<hd.paths.Length;i++){var p=hd.paths[i];float delay=0;if(conditions!=null)for(int k=1;k<p.points.Length;k++)delay+=conditions.ExtraSeconds(p.points[k-1],p.points[k],(p.points[k]-p.points[k-1]).normalized,3.2f);hdSeconds[i]=RoadMapRules.TravelSeconds(editorMap,hd.edges[i].id,p.length,8)+delay;}}
   float progress=0,error=float.MaxValue;
   if(hdRoute!=null)progress=ProjectVehicle(out error);
+  bool crossing=CrossingPlannedLaneChange(progress,error);
 
   if(freeGuidance&&hdRoute!=null&&hdRoute.path.length-progress<30&&hd.edges[hdGoal].next.Length>0){float at;int start=hd.Nearest(vehicle.position,vehicle.forward,out at);var forward=hd.Forward(start,at);if(forward!=null){UseFreeRoute(forward);progress=0;}}
-  if(hdRoute==null||error>2.5f||Vector3.Dot(vehicle.forward,hdRoute.path.Tangent(progress))<.3f){
+  if(hdRoute==null||!crossing&&(error>2.5f||Vector3.Dot(vehicle.forward,hdRoute.path.Tangent(progress))<.3f)){
    float at;int start=hd.Nearest(vehicle.position,vehicle.forward,out at);
    bool previous=hdRoute!=null;
    if(freeGuidance){hdRoute=hd.Forward(start,at);if(hdRoute!=null)UseFreeRoute(hdRoute);}
@@ -221,7 +231,7 @@ public class RoadNavigation : MonoBehaviour {
   }
   path.Clear();alternativePath.Clear();remaining=estimatedSeconds=alternativeSeconds=alternativeDistance=0;
   if(hdRoute==null){instruction="연결된 경로 없음 · 안내 차로로 복귀하세요";line.positionCount=0;return;}
-  if(observe&&hybrid&&!freeGuidance){float at;int start=hd.Nearest(vehicle.position,vehicle.forward,out at);var candidate=GoalRoute(start,at,PreferLargeRoad?passengerRoadCosts:PreferFastest?hdSeconds:null);
+  if(observe&&hybrid&&!freeGuidance&&!crossing){float at;int start=hd.Nearest(vehicle.position,vehicle.forward,out at);var candidate=GoalRoute(start,at,PreferLargeRoad?passengerRoadCosts:PreferFastest?hdSeconds:null);
    if(!PreferLargeRoad&&PreferFastest&&candidate!=null&&HdSeconds(candidate,0)<HdSeconds(hdRoute,progress)*.9f-3){hdRoute=candidate;progress=ProjectVehicle(out error);recalculationCount++;rerouteNotice="교통 상황 반영 · 경로 재탐색";}
   }
   path.Add(hdRoute.path.Position(progress));float accumulated=0;

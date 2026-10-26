@@ -29,13 +29,19 @@ public sealed class PassengerStopCatalog {
  public static PassengerStopCatalog For(MapData map){PassengerStopCatalog result;if(!cache.TryGetValue(map,out result)){Apply(map);cache.TryGetValue(map,out result);}return result;}
  public static void Apply(MapData map){
   PassengerStopCatalog prior;if(cache.TryGetValue(map,out prior))return;
-  var result=new PassengerStopCatalog{Stops=map.stops,LegacyCount=map.stops.Length,Revision="legacy"};cache.Add(map,result);
-  for(int i=0;i<map.stops.Length;i++)result.Entries.Add(new PassengerStopEntry{StopId="S"+(i+1).ToString("00"),Index=i,Stop=map.stops[i],EvidenceStatus="legacy-scenario",Category="scenario",MapRevision=map.editorRevision});
+  var legacyStops=(MapStop[])map.stops.Clone();
+  // S09's third lane is 3.04 m inside the right road edge in the packaged
+  // Eungye map. Its original width=3 put the taxi target at lane center and
+  // the waiting passenger on asphalt. Keep the canonical map object intact.
+  if(map.mapId=="eungye"&&map.hdEdges!=null&&legacyStops.Length>8){var s=legacyStops[8];if(s!=null&&s.name=="은계 승하차 9"&&s.graphStop&&s.laneEdge>=0&&s.laneEdge<map.hdEdges.Length&&map.hdEdges[s.laneEdge].id=="local:7003:14854:5837:14446:part:1"&&Mathf.Abs(s.width-3)<.01f&&Mathf.Abs(s.laneAt-15.99997f)<.02f&&Mathf.Abs(s.x-675.727905f)<.02f&&Mathf.Abs(s.z-1476.793335f)<.02f&&Mathf.Abs(s.dx+0.94404477f)<.01f&&Mathf.Abs(s.dz+0.32981756f)<.01f)
+   legacyStops[8]=new MapStop{name=s.name,x=s.x,z=s.z,elevation=s.elevation,dx=s.dx,dz=s.dz,width=6.6f,laneEdge=s.laneEdge,laneAt=s.laneAt,graphStop=s.graphStop};}
+  var result=new PassengerStopCatalog{Stops=legacyStops,LegacyCount=legacyStops.Length,Revision="legacy"};cache.Add(map,result);
+  for(int i=0;i<legacyStops.Length;i++)result.Entries.Add(new PassengerStopEntry{StopId="S"+(i+1).ToString("00"),Index=i,Stop=legacyStops[i],EvidenceStatus="legacy-scenario",Category="scenario",MapRevision=map.editorRevision});
   if(map.mapId!="eungye"||!map.HasHd||!ProjectMapScene.Active(map))return;
   var asset=Resources.Load<TextAsset>("eungye-passenger-stops");if(!asset)return;
   var data=JsonUtility.FromJson<PassengerStopCatalogData>(asset.text);
   if(data==null||data.schema!=1||data.mapId!=map.mapId||data.candidates==null)return;
-  result.Revision=data.revision;var graph=new HdRoadGraph(map);var geometry=new Geometry(map);var used=new HashSet<string>();var combined=new List<MapStop>(map.stops);
+  result.Revision=data.revision;var graph=new HdRoadGraph(map);var geometry=new Geometry(map);var used=new HashSet<string>();var combined=new List<MapStop>(legacyStops);
   foreach(var c in data.candidates){
    string reason;MapStop stop;
    if(c==null||string.IsNullOrEmpty(c.stopId)||!used.Add(c.stopId)){result.Rejected.Add("duplicate/missing stopId");continue;}

@@ -59,7 +59,7 @@ public partial class FullMapOverlay : MonoBehaviour {
   if(IsOpen)return false;
   var b=session.business;
   if(session.ChoiceOpen||session.RideResultOpen||session.PracticeMenuOpen||session.PracticeBusy||b.preparing||b.ShowingSummary||b.restartPrompt||b.pendingPayment>=0||b.taxPrompt||session.services.open||session.law.HistoryOpen)return false;
-  previousPause=session.paused;previousScale=Time.timeScale;session.paused=true;Time.timeScale=0;locationCopied=false;locationOpen=false;if(SelectedOffer>=0&&session.jobs.offers[SelectedOffer]!=selectedOffer){SelectedOffer=-1;selectedOffer=null;}IsOpen=true;if(selectedOffer!=null&&!session.jobs.Active)SelectOffer(SelectedOffer);return true;
+  previousPause=session.paused;previousScale=Time.timeScale;session.paused=true;Time.timeScale=0;locationCopied=false;locationOpen=false;if(SelectedOffer>=0&&session.jobs.offers[SelectedOffer]!=selectedOffer){SelectedOffer=-1;selectedOffer=null;}IsOpen=true;if(session.jobs.Active)RestoreTripRoute();else if(selectedOffer!=null)SelectOffer(SelectedOffer);return true;
  }
  public void Close(){if(!IsOpen)return;IsOpen=false;dragging=false;closedFrame=Time.frameCount;session.paused=previousPause;Time.timeScale=previousPause?0:previousScale>0?previousScale:1;}
  void Update(){RefreshRoutePaint();if(IsOpen){if(Input.GetKeyDown(KeyCode.M)||Input.GetKeyDown(KeyCode.Escape)){if(locationOpen)locationOpen=false;else Close();}}else if(Input.GetKeyDown(KeyCode.M))Open();}
@@ -89,8 +89,8 @@ public partial class FullMapOverlay : MonoBehaviour {
    if(marker.named){var box=LawZoneMapLayout.Place(p,new Vector2(82,26),map,occupied);occupied.Add(box);Fill(box,new Color(.05f,.12f,.15f,.9f));GUI.Label(box,marker.label,text);}
   }
   foreach(var zone in VisibleLawZones()){var p=Project(zone.junction.center,map);if(!map.Contains(p))continue;Dot(p,new Color(1,.55f,.1f),14);var box=LawZoneMapLayout.Place(p,new Vector2(146,42),map,occupied);occupied.Add(box);Fill(box,new Color(.08f,.13f,.17f,1));GUI.Label(box,zone.MapTitle,text);}
-  // Both pickup and destination remain clickable; clicking changes only the view.
-  if(jobs.Active&&selectedPlace==null){StopPin(jobs.current.pickup,"승차",new Color(.2f,.8f,.5f),map);StopPin(jobs.current.drop,"하차",new Color(1,.35f,.7f),map);}
+  // Active pickup, drop and via pins remain visible while browsing facilities.
+  if(jobs.Active&&jobs.current!=null){StopPin(jobs.current.pickup,"승차",new Color(.2f,.8f,.5f),map);StopPin(jobs.current.drop,"하차",new Color(1,.35f,.7f),map);if(jobs.PassengerViaPending)StopPin(jobs.PassengerViaStop,"경유",new Color(1,.8f,.2f),map);}
   else if(!jobs.Active){
    for(int i=0;i<jobs.offers.Length;i++){var o=jobs.offers[i];if(o==null)continue;var p=CallPinPosition(i,map);if(GUI.Button(new Rect(p.x-15,p.y-15,30,30),new GUIContent((i+1).ToString(),KoreanText.Stop(jobs.stops[o.pickup].name)+" · 호출 "+(i+1)),button))SelectOffer(i);}
    if(selectedOffer!=null){StopPin(selectedOffer.pickup,"승차",new Color(.2f,.8f,.5f),map);StopPin(selectedOffer.drop,"하차",new Color(1,.35f,.7f),map);}
