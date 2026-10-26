@@ -22,3 +22,7 @@
 ## 재현
 
 저장소 루트에서 `git diff --check`, `git diff -- docs/content-design/04-passengers-and-reservations-history.md docs/content-design/04-passengers-and-reservations.md docs/prototype-development-checklist.md`로 문서 변경을 확인한다. 현행 동작은 `unity/EungyeTaxi/Assets/Scripts/MannerLedger.cs`, `DrivingManners.cs`, `PassengerRequest.cs`를 따른다. 필수 로컬 지도 입력 상태는 [최신 인계](LATEST.md)의 직전 통합 기록과 `pwsh -File tools/check_workspace.ps1 -Strict` 기준이다.
+
+## main 반영
+
+기획·체크리스트·이력은 로컬 `main`의 `9ccdda76b70c5d39123d57655d964db8746408a6`에 함께 커밋했다. `git fetch origin main` 뒤 원격 선행 상태를 확인하고 `git push origin main` 종료0, `git ls-remote origin refs/heads/main`에서 해당 해시 일치를 확인했다. 이 푸시 기록 추가 후 문서 자신의 최종 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-26-score-recovery-easing-spec.md`로 다시 확인한다.
