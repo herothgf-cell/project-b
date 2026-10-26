@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 public class DriveSession : MonoBehaviour {
     public string startupRegion="";
     public TaxiController taxi; public WorldBuilder world; public TrafficSystem traffic; public DrivingCamera drivingCamera; public TaxiSignals signals;
@@ -14,11 +15,25 @@ public class DriveSession : MonoBehaviour {
     public bool RideResultOpen {get{var result=GetComponent<RideCompletionPanel>();return result&&result.Open;}}
     public bool EditorOpen {get{var e=GetComponent<RoadMapEditor>();return e&&(e.IsOpen||e.ClosedThisFrame);}}
     public bool FullMapOpen {get{var map=GetComponent<FullMapOverlay>();return map&&map.IsOpen||EditorOpen||RideResultOpen;}}
+    public bool StartupReady {get;private set;}
+    string loadingStage="은계 지도를 준비하고 있습니다";
+    Camera loadingCamera;
+    GUIStyle loadingTitle,loadingDetail;
     void Awake() {
         MapCatalog.LockedRegion=startupRegion;
         foreach(var arg in System.Environment.GetCommandLineArgs())if(arg.EndsWith("Test"))Application.runInBackground=true;
         Application.targetFrameRate=60; QualitySettings.vSyncCount=0;
+        Time.timeScale=0;paused=true;
+        loadingCamera=new GameObject("시작 준비 화면").AddComponent<Camera>();
+        loadingCamera.clearFlags=CameraClearFlags.SolidColor;loadingCamera.backgroundColor=new Color(.06f,.09f,.13f);loadingCamera.cullingMask=0;
+    }
+    IEnumerator Start() {
+        // Render the loading screen before synchronous map construction.
+        yield return null;yield return null;
+        var startupTimer=System.Diagnostics.Stopwatch.StartNew();var stageTimer=System.Diagnostics.Stopwatch.StartNew();
         world=new GameObject("NGII tile").AddComponent<WorldBuilder>(); world.Build();
+        Debug.Log("STARTUP_TIMING world_ms="+stageTimer.ElapsedMilliseconds);loadingStage="도로와 교통을 준비하고 있습니다";
+        yield return null;stageTimer.Restart();
         roadEnvironment=new GameObject("인도와 도로 경계").AddComponent<RoadEnvironment>();roadEnvironment.Build(world.map);
         var dir=(world.map.targets[1].V()-world.map.targets[0].V()).normalized; var right=new Vector3(dir.z,0,-dir.x);
         taxi=new GameObject("Temporary Taxi").AddComponent<TaxiController>(); taxi.Create(world.map.targets[0].V(.65f)-dir*(RoadRulesTrial.Enabled?90:23)+right*(RoadRulesTrial.Enabled?1.75f:2.5f),Quaternion.LookRotation(dir));
@@ -26,7 +41,10 @@ public class DriveSession : MonoBehaviour {
         assisted=taxi.gameObject.AddComponent<AssistedDriveController>();assisted.Initialize(taxi,world.map);taxi.assistance=assisted;
         bool driveTest=System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-smokeTest")>=0;
         traffic=new GameObject("Traffic simulation").AddComponent<TrafficSystem>();traffic.Build(world.map,!driveTest);
+        Debug.Log("STARTUP_TIMING roads_taxi_traffic_ms="+stageTimer.ElapsedMilliseconds);loadingStage="보행자와 영업 상태를 준비하고 있습니다";
+        yield return null;stageTimer.Restart();
         if(world.map.hybrid){ambientPedestrians=new GameObject("일반 보행자").AddComponent<AmbientPedestrianSystem>();ambientPedestrians.Initialize(this);traffic.ambientPedestrians=ambientPedestrians;}
+        Debug.Log("STARTUP_TIMING ambient_ms="+stageTimer.ElapsedMilliseconds);stageTimer.Restart();
         var cam=new GameObject("Driving Camera"); cam.tag="MainCamera"; var c=cam.AddComponent<Camera>(); c.fieldOfView=62; c.nearClipPlane=.08f; c.farClipPlane=700; c.backgroundColor=new Color(.57f,.74f,.84f); c.clearFlags=CameraClearFlags.Skybox; cam.AddComponent<AudioListener>(); drivingCamera=cam.AddComponent<DrivingCamera>();drivingCamera.target=taxi.transform;
         RenderSettings.ambientLight=new Color(.65f,.69f,.75f); RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Flat;
         var sun=new GameObject("Sun").AddComponent<Light>(); sun.type=LightType.Directional; sun.intensity=1.15f; sun.transform.rotation=Quaternion.Euler(45,-35,0); sun.shadows=LightShadows.Soft;
@@ -34,6 +52,7 @@ public class DriveSession : MonoBehaviour {
         manners=taxi.gameObject.AddComponent<DrivingManners>();manners.session=this;
         jobs=gameObject.AddComponent<PassengerJobs>();jobs.Initialize(this);
         if(world.map.HasHd){jobs.enabled=world.map.hybrid;assisted.hd.nav=jobs.nav;}
+        paused=false;Time.timeScale=1;
         business=gameObject.AddComponent<BusinessProgress>();business.Initialize(this);gameObject.AddComponent<BusinessHUD>().session=this;
         law=taxi.gameObject.AddComponent<DrivingLaw>();law.session=this;services=gameObject.AddComponent<ServiceStops>();services.session=this;requests=gameObject.AddComponent<PassengerRequestUI>();requests.session=this;gameObject.AddComponent<RightTurnSituation>().session=this;gameObject.AddComponent<ExitQueueObserver>().session=this;gameObject.AddComponent<ExitQueueSituation>().session=this;gameObject.AddComponent<PracticeSession>().session=this;gameObject.AddComponent<PracticeCoach>().session=this;gameObject.AddComponent<ConfusionPractice>().session=this;gameObject.AddComponent<ServiceLawZones>().session=this;
         gameObject.AddComponent<RoadSignage>().session=this;gameObject.AddComponent<DriveNotifications>().session=this;gameObject.AddComponent<DrivingScoreJournal>().session=this;
@@ -91,8 +110,20 @@ public class DriveSession : MonoBehaviour {
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-cockpitTest")>=0) gameObject.AddComponent<CockpitSmokeTest>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-flowTest")>=0) gameObject.AddComponent<TrafficFlowProbe>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-stabilityTest")>=0) gameObject.AddComponent<StabilitySmokeTest>().session=this;
+        // Preserve the pause selected by BusinessProgress for preparation or saved-session restoration.
+        StartupReady=true;
+        if(loadingCamera)Destroy(loadingCamera.gameObject);
+        Debug.Log("STARTUP_TIMING gameplay_ms="+stageTimer.ElapsedMilliseconds+" total_ms="+startupTimer.ElapsedMilliseconds);
+    }
+    void OnGUI(){
+        if(StartupReady)return;
+        GUI.depth=-10000;var oldColor=GUI.color;GUI.color=new Color(.06f,.09f,.13f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=oldColor;
+        if(loadingTitle==null){loadingTitle=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=28,alignment=TextAnchor.MiddleCenter};loadingDetail=new GUIStyle(loadingTitle){fontSize=18};}
+        GUI.Label(new Rect(0,Screen.height*.43f,Screen.width,50),"은계 택시 시뮬레이터",loadingTitle);
+        GUI.Label(new Rect(0,Screen.height*.43f+55,Screen.width,40),loadingStage,loadingDetail);
     }
     void Update() {
+        if(!StartupReady)return;
         var choice=GetComponent<ScenarioChoiceSituation>();if(choice&&(choice.Open||choice.ClosedThisFrame))return;
         if(FullMapOpen||GetComponent<FullMapOverlay>().ClosedThisFrame)return;
         if(Input.GetKeyDown(KeyCode.F10))ShowHints=!ShowHints;

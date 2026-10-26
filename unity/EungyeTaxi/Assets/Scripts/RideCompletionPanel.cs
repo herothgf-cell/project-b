@@ -27,7 +27,7 @@ public sealed class RideCompletionPanel:MonoBehaviour {
   string factors=modern?RideReceiptSummary.Factors(r):"만족도 기록 없음";var factorStyle=new GUIStyle(label);while(factorStyle.fontSize>14&&factorStyle.CalcHeight(new GUIContent(factors),600)>95)factorStyle.fontSize--;GUI.Label(new Rect(x+25,y+241,600,95),factors,factorStyle);
   var receiptStyle=new GUIStyle(large);while(receiptStyle.fontSize>18&&receiptStyle.CalcHeight(new GUIContent(Receipt),566)>138)receiptStyle.fontSize--;
   Fill(new Rect(x+25,y+347,600,155),new Color(.1f,.15f,.17f));GUI.Label(new Rect(x+42,y+358,566,138),Receipt,receiptStyle);
-  GUI.Label(new Rect(x+25,y+514,600,25),(r.paid>0?"운임 지급 완료":"시간 초과 · 운임 없음")+(r.wakeDelayed?" · 기상 대기":""),new GUIStyle(label){fontSize=16});
+  GUI.Label(new Rect(x+25,y+514,600,25),RideReceiptSummary.PaymentStatus(r)+(r.wakeDelayed?" · 기상 대기":""),new GUIStyle(label){fontSize=16});
   if(GUI.Button(new Rect(x+25,y+580,290,46),(session.business.ShowingSummary||session.business.ledger.State==BusinessState.Closing)?"영업 정산 확인":"계속 영업",button))Close();
   GUI.enabled=!session.business.ShowingSummary&&session.business.ledger.State==BusinessState.Open;if(GUI.Button(new Rect(x+335,y+580,290,46),"생활 거점 선택",button)){Close();session.services.Toggle();}GUI.enabled=true;GUI.matrix=before;
  }
