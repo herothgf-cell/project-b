@@ -68,6 +68,13 @@ public static class ImportedMarkingRendererTests {
   Check(generatedYellow.Count(crosswalkBand)==0&&generatedWhite.Count(crosswalkBand)==0,"J5057 generated dividers stay out of authored north crosswalk");
   Check(generatedYellow.Count(inner)==0&&generatedWhite.Count(inner)==0,"J5057 generated dividers stop at authored crossing on junction side");
   Check(generatedYellow.Count(upstream)+generatedWhite.Count(upstream)>0,"J5057 valid generated approach dividers remain upstream");
+  var sideIds=new[]{"B2218G610330","B2218G610901","B2218G613342","B222BC004751"};
+  var sideMarks=composed.hdMarks.Where(m=>sideIds.Contains(m.id)).ToArray();Check(sideMarks.Length==sideIds.Length,"J5057 east/west imported hooks and outer source edge exist");
+  var sideMap=new MapData{roads=composed.roads,hdEdges=composed.hdEdges,hdMarks=sideMarks,junctionRules=composed.junctionRules,editorDocument=composed.editorDocument};
+  var sideVertices=YellowVertices(sideMap);
+  Check(QuadsNear(sideVertices,new Vector3(493.9f,0,458.7f),.65f)==0&&QuadsNear(sideVertices,new Vector3(520.5f,0,454.7f),.65f)==0,"J5057 west/east interior yellow hooks end at generated crosswalks");
+  Check(QuadsNear(sideVertices,new Vector3(523.2f,0,457.2f),.65f)==0,"J5057 east no-stopping tip does not enter generated crossing");
+  Check(QuadsNear(sideVertices,new Vector3(475.5f,0,436f),.65f)>0&&QuadsNear(sideVertices,new Vector3(490.7f,0,429.8f),.65f)>0,"J5057 observed outer yellow kerb persists outside crossing and inner channel");
   Debug.Log("IMPORTED_MARKING_RENDERER_TEST_OK");
  }
 }
