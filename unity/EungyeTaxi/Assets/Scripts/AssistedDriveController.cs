@@ -67,9 +67,9 @@ public class AssistedDriveController : MonoBehaviour {
         Notify(warning?"뒤차가 빠르게 접근합니다 · 속도와 간격을 확인하세요":"차선 변경 중 · 주변 차량을 확인하세요");return true;
     }
     public bool RequestTurn(int side){
-        if(!Active||Time.timeScale==0||side!= -1&&side!=1)return false;
+        if(!Active||Time.timeScale==0||side!= -2&&side!= -1&&side!=1)return false;
         if(hd!=null){if(Changing||Turning)return false;bool accepted=hd.Request(side,false);Status=hd.status;return accepted;}
-        if(manoeuvre!=null){Notify("이동 중에는 회전 선택을 바꿀 수 없습니다");return false;}
+        if(side==UturnMovement.Turn)return false;if(manoeuvre!=null){Notify("이동 중에는 회전 선택을 바꿀 수 없습니다");return false;}
         int wanted=PendingTurn==side?0:side;
         if(wanted!=0&&network.Connection(CurrentLane,wanted)==null){Notify("현재 차로에서 그 방향으로 회전할 수 없습니다");return false;}
         PendingTurn=wanted;signals.Clear();if(wanted!=0)signals.Toggle(wanted);Notify(wanted<0?"다음 교차로 좌회전 예약":wanted>0?"다음 교차로 우회전 예약":"다음 교차로 직진 선택");return true;

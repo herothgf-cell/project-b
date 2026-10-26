@@ -73,13 +73,13 @@ public class TrafficSystem : MonoBehaviour {
     public SignalColor Signal(TrafficJunction junction, int axis,int sign=1) { if(junction.editorProgram!=null)return junction.editorProgram.Movement(axis,sign,0,Clock); return junction.scenarioSignal?(axis==junction.observationAxis&&(sign==junction.observationSign||junction.scenarioOpposingGreen)?junction.scenarioForward:SignalColor.Red):junction.signalized?(PhaseTime(junction)>=VehicleCycle(junction)?SignalColor.Red:KoreanSignalRules.Signal(PhaseTime(junction),junction.leftTurnMode,axis,sign)):SignalColor.Green; }
     public float SecondsToSignalChange(TrafficJunction j,int axis,int sign=1){if(j!=null&&j.editorProgram!=null)return -1;if(j==null||!j.signalized||j.scenarioSignal)return -1;float phase=PhaseTime(j),cycle=VehicleCycle(j);int approach=j.leftTurnMode==LeftTurnMode.Permissive?axis:axis*2+(sign>0?0:1);if(phase>=cycle)return cycle+12+approach*17-phase;float seconds=KoreanSignalRules.SecondsToChange(phase,j.leftTurnMode,axis,sign);return seconds+(HasPedestrianPhase(j)&&phase+seconds>=cycle-.001f?12:0);}
     public SignalColor LeftSignal(TrafficJunction junction,int axis,int sign=1){if(junction.editorProgram!=null)return junction.editorProgram.Movement(axis,sign,-1,Clock);if(junction.scenarioSignal&&junction.leftTurnMode==LeftTurnMode.Permissive)return SignalColor.Red;return Signal(junction,axis,sign);}
-    public SignalColor MovementSignal(TrafficJunction junction,int axis,int turn,int sign=1){return junction.editorProgram!=null?junction.editorProgram.Movement(axis,sign,turn,Clock):Signal(junction,axis,sign);}
+    public SignalColor MovementSignal(TrafficJunction junction,int axis,int turn,int sign=1){return turn==UturnMovement.Turn?SignalColor.Red:junction.editorProgram!=null?junction.editorProgram.Movement(axis,sign,turn,Clock):Signal(junction,axis,sign);}
     public RoadObservation Observe(TrafficJunction j,int axis,int sign,Vector3 direction,GameObject self){
         var o=j.rightTurnObservation!=null&&j.observationAxis==axis&&j.observationSign==sign?j.rightTurnObservation.Copy():new RoadObservation{known=true,pedestrian=PedestrianState.None};
         o.forward=j.editorProgram!=null?j.editorProgram.Movement(axis,sign,0,Clock,self?EditorLaneId(self.transform.position,self.transform.forward):null):Signal(j,axis,sign);if(j.editorProgram!=null){o.dedicated=true;o.right=j.editorProgram.Movement(axis,sign,1,Clock,self?EditorLaneId(self.transform.position,self.transform.forward):null);}if(j.rightTurnObservation==null)o.pedestrianGreen=PedestrianGreen(j,axis,sign);if(j.editorProgram!=null&&EditorPedestrian(j))o.pedestrian=PedestrianState.Crossing;o.trafficClear=YieldClear(j,direction,1,self);return o;
     }
     public bool CanEnter(TrafficCar car,TrafficStop stop){
-        if(!stop.junction.signalized&&!stop.junction.scenarioSignal)return true;
+        if(stop.Movement(car.route)==UturnMovement.Turn){var uturnJunction=stop.junction;var heading=car.route.Tangent(stop.distance);int uturnSign=Sign(heading,stop.axis,uturnJunction);string lane=car.route.graphPath!=null&&editorGraph!=null?editorGraph.edges[car.route.graphPath.EdgeAt(Mathf.Max(0,stop.distance))].id:null;return UturnPermitted(uturnJunction,stop.axis,uturnSign,lane)&&Observe(uturnJunction,stop.axis,uturnSign,heading,car.gameObject).PedestrianClear&&!EditorPedestrian(uturnJunction)&&UturnClear(car,stop); }if(!stop.junction.signalized&&!stop.junction.scenarioSignal)return true;
         var direction=car.route.graphPath==null?car.route.direction:car.route.Tangent(Mathf.Max(0,stop.distance));int turn=stop.Movement(car.route);
         var j=stop.junction;int sign=Sign(direction,stop.axis,j);
         var observed=j.rightTurnObservation!=null&&j.observationAxis==stop.axis&&j.observationSign==sign?j.rightTurnObservation.Copy():new RoadObservation{known=true,pedestrian=PedestrianState.None};
@@ -89,16 +89,19 @@ public class TrafficSystem : MonoBehaviour {
         if(stop.junction.scenarioSignal)return observed.forward==SignalColor.Green&&(turn==0||observed.PedestrianClear)&&observed.trafficClear;
         return observed.forward==SignalColor.Green&&observed.trafficClear&&(turn==0||observed.PedestrianClear);
     }
+    public RoadMapFacility UturnCondition(string laneId){return UturnMovement.Condition(roadMap==null?null:roadMap.editorDocument,laneId);}
+    public bool UturnPermitted(TrafficJunction j,int axis,int sign,string laneId){var condition=UturnCondition(laneId);if(condition==null)return false;bool left=j.editorProgram!=null?j.editorProgram.Movement(axis,sign,-1,Clock,laneId)==SignalColor.Green:j.leftTurnMode!=LeftTurnMode.Permissive&&LeftSignal(j,axis,sign)==SignalColor.Green;bool walk=j.editorProgram!=null&&!string.IsNullOrEmpty(condition.groupId)?j.editorProgram.Color(condition.groupId,Clock)==SignalColor.Green:PedestrianGreen(j,axis,sign);return UturnMovement.Allows(condition.type,left,walk,true);}
+    bool UturnClear(TrafficCar car,TrafficStop stop){int count=overlaps.Sphere(stop.junction.center,100,(1<<8)|(1<<9),QueryTriggerInteraction.Ignore);for(int i=0;i<count;i++){var hit=overlaps.hits[i];var root=hit.attachedRigidbody?hit.attachedRigidbody.gameObject:hit.gameObject;if(root==car.gameObject)continue;var other=root.GetComponent<TrafficCar>();if(other&&MovingLeader(car,other))continue;float speed=other?other.speed:hit.attachedRigidbody?hit.attachedRigidbody.velocity.magnitude:0;for(float at=Mathf.Max(0,stop.distance);at<=Mathf.Min(car.route.length,stop.exitDistance+8);at+=1.5f){var point=car.route.Position(at);var offset=point-root.transform.position;float along=Vector3.Dot(offset,root.transform.forward);float side=Mathf.Abs(Vector3.Dot(offset,Right(root.transform.forward)));if(offset.sqrMagnitude<3.2f*3.2f||side<3.2f&&along>=-3&&along<Mathf.Max(8,speed*6+5))return false;}}return true;}
     public bool YieldClear(TrafficJunction j,Vector3 incoming,int turn,GameObject self){
-        if(turn==0||turn<0&&j.leftTurnMode!=LeftTurnMode.Permissive)return true;
+        if(turn==0||turn==-1&&j.leftTurnMode!=LeftTurnMode.Permissive)return true;
         int contacts=overlaps.Sphere(j.center,100,(1<<8)|(1<<9),QueryTriggerInteraction.Ignore);
         for(int contact=0;contact<contacts;contact++){var hit=overlaps.hits[contact];
             var root=hit.attachedRigidbody?hit.attachedRigidbody.gameObject:hit.gameObject;if(root==self)continue;
             var car=root.GetComponent<TrafficCar>();var heading=root.transform.forward;
             // A moving leader on the same directed turn is a following gap, not crossing traffic.
             if(turn>0&&car&&MovingLeader(self.GetComponent<TrafficCar>(),car))continue;
-            float facing=Vector3.Dot(heading,incoming);if(turn<0?facing>-.7f:facing>.7f)continue;
-            if(turn<0&&car&&car.CurrentTurn<0)continue;
+            float facing=Vector3.Dot(heading,incoming);if(turn!=UturnMovement.Turn&&(turn<0?facing>-.7f:facing>.7f))continue;
+            if(turn==-1&&car&&car.CurrentTurn<0)continue;
             int axis=Mathf.Abs(Vector3.Dot(heading,AxisDirection(j,0)))>.7f?0:1;
             float along=Vector3.Dot(j.center-root.transform.position,heading);
             float side=Mathf.Abs(Vector3.Dot(j.center-root.transform.position,Right(heading)));

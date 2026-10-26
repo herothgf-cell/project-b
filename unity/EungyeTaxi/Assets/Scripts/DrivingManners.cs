@@ -2,7 +2,7 @@ using UnityEngine;
 [System.Serializable] public sealed class DrivingMannersSnapshot {public int score,events,redEvents,collisionEvents,accelEvents,brakeEvents,boundaryEvents,necessaryBrakeEvents;public bool comfortAccepted;public string[] reasons;}
 public class DrivingManners : MonoBehaviour {
  public DriveSession session;public readonly MannerLedger ledger=new MannerLedger();public string lastEvent="안전하게 운전해 주세요";public float eventUntil;public string collisionDiagnostic="none";public int events,redEvents,collisionEvents,accelEvents,brakeEvents,boundaryEvents;
- class Crossing {public TrafficJunction junction;public Vector3 direction;public int axis;public bool through,left,right,penalized,yieldPenalized,uncertain;}
+ class Crossing {public TrafficJunction junction;public Vector3 direction;public int axis;public bool through,left,right,uturnSigned,uturnAllowed,penalized,yieldPenalized,uncertain;}
  readonly System.Collections.Generic.Dictionary<string,float> stops=new System.Collections.Generic.Dictionary<string,float>();
  Crossing crossing;
  readonly System.Collections.Generic.List<string> rideReasons=new System.Collections.Generic.List<string>();
@@ -54,12 +54,13 @@ public class DrivingManners : MonoBehaviour {
   if(crossing!=null){
    // A driver may wait inside a permissive junction; evaluate yielding when actually turning.
    float angle=Vector3.SignedAngle(crossing.direction,transform.forward,Vector3.up);
-   int turning=angle< -15?-1:angle>15?1:0;
+   int turning=angle< -110&&crossing.uturnSigned?UturnMovement.Turn:angle< -15?-1:angle>15?1:0;
    if(turning!=0&&!crossing.yieldPenalized&&session.taxi.body.velocity.magnitude>.3f&&!session.traffic.YieldClear(crossing.junction,crossing.direction,turning,gameObject)){
-    Deduct("yield"+crossing.junction.name,8,turning<0?"비보호 좌회전 양보 위반":"우회전 양보 위반",5);crossing.yieldPenalized=true;
+    Deduct("yield"+crossing.junction.name,8,turning==UturnMovement.Turn?"유턴 양보 위반":turning<0?"비보호 좌회전 양보 위반":"우회전 양보 위반",5);crossing.yieldPenalized=true;
    }
    var q=after-crossing.junction.center;float along=Vector3.Dot(q,crossing.direction),side=Vector3.Dot(q,TrafficSystem.Right(crossing.direction));float edge=crossing.junction.halfWidth[crossing.axis]+4;bool left=side< -edge,right=side>edge,through=along>crossing.junction.StopDistance(crossing.axis)+3;
-   if(left||right||through){if(!crossing.uncertain&&!crossing.penalized&&!(left?crossing.left:right?crossing.right:crossing.through))Deduct("redmovement"+crossing.junction.name,12,left?"좌회전 신호 위반":right?"우회전 전 일시정지 위반":"진행 방향 신호 위반",5);crossing=null;}
+   bool reversed=Vector3.Dot(transform.forward,crossing.direction)<-.7f;bool uturn=reversed&&(left||along< -crossing.junction.StopDistance(crossing.axis)-3);bool holdLeft=crossing.uturnSigned&&left&&!uturn&&side> -edge-5;
+   if(uturn||left&&!holdLeft||right||through){bool allowed=uturn?crossing.uturnAllowed:left?crossing.left:right?crossing.right:crossing.through;if(!crossing.uncertain&&!crossing.penalized&&!allowed)Deduct("redmovement"+crossing.junction.name,12,uturn?"유턴 조건 위반":left?"좌회전 신호 위반":right?"우회전 전 일시정지 위반":"진행 방향 신호 위반",5);crossing=null;}
   }
   foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)foreach(int sign in new[]{-1,1}){
    var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.Owns(j))continue;
@@ -69,9 +70,9 @@ public class DrivingManners : MonoBehaviour {
    if(a<TrafficJunction.StopLineEntryTolerance&&b>=TrafficJunction.StopLineEntryTolerance&&lane>.15f&&lane<j.halfWidth[axis]){
     float last;bool stopped=stops.TryGetValue(key,out last)&&Time.time-last<8;stops.Remove(key);
     string laneId=session.traffic.EditorLaneId(transform.position,transform.forward);var forward=j.editorProgram!=null?j.editorProgram.Movement(axis,sign,0,session.traffic.Clock,laneId):session.traffic.Signal(j,axis,sign);var leftSignal=j.editorProgram!=null?j.editorProgram.Movement(axis,sign,-1,session.traffic.Clock,laneId):session.traffic.LeftSignal(j,axis,sign);bool uncertain=forward==SignalColor.Yellow||leftSignal==SignalColor.Yellow;bool through=forward==SignalColor.Green,allowedLeft=leftSignal==SignalColor.Green;
-    bool right=session.traffic.Observe(j,axis,sign,dir,gameObject).RightSignalPermits(stopped);bool red=!uncertain&&!through&&!allowedLeft&&!right;
+    var observed=session.traffic.Observe(j,axis,sign,dir,gameObject);bool right=observed.RightSignalPermits(stopped);bool uturnSigned=session.traffic.UturnCondition(laneId)!=null;bool allowedUturn=uturnSigned&&observed.PedestrianClear&&session.traffic.UturnPermitted(j,axis,sign,laneId);bool red=!uncertain&&!through&&!allowedLeft&&!right&&!allowedUturn;
     if(red)Deduct("red"+j.name+axis+sign,12,"적색 신호 통과",5);
-    crossing=new Crossing{junction=j,direction=dir,axis=axis,through=through,left=allowedLeft,right=right,penalized=red,uncertain=uncertain};
+    crossing=new Crossing{junction=j,direction=dir,axis=axis,through=through,left=allowedLeft,right=right,uturnSigned=uturnSigned,uturnAllowed=allowedUturn,penalized=red,uncertain=uncertain};
    }
   }
  }
