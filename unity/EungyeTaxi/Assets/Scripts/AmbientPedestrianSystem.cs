@@ -20,7 +20,7 @@ public sealed class AmbientPedestrianSystem : MonoBehaviour {
  public AmbientPedestrian At(string id){return actors.Find(a=>a.route.id==id);}
  public bool ScenarioOwns(TrafficJunction j){if(j==null)return false;var right=session.GetComponent<RightTurnSituation>();if(right&&right.Active&&right.junction==j)return true;var choice=session.GetComponent<ScenarioChoiceSituation>();return choice&&choice.ActiveJunction==j;}
  public bool CrossingOccupied(TrafficJunction j){foreach(var a in actors)if(a.route.junction==j&&a.Crossing)return true;return false;}
- public bool MayStartCrossing(AmbientPedestrian actor){if(ScenarioOwns(actor.route.junction))return false;var route=actor.route;var traffic=session.traffic;Vector3 from=actor.state.reverse?route.b:route.a,to=actor.state.reverse?route.a:route.b;var middle=(from+to)*.5f;
+ public bool MayStartCrossing(AmbientPedestrian actor){if(actor.state.deferredReveal||ScenarioOwns(actor.route.junction))return false;var route=actor.route;var traffic=session.traffic;Vector3 from=actor.state.reverse?route.b:route.a,to=actor.state.reverse?route.a:route.b;var middle=(from+to)*.5f;
   foreach(var car in traffic.cars){if(!car||!car.Visible)continue;float near=DistanceToSegment(car.transform.position,from,to);if(near<5.5f)return false;for(float ahead=0;ahead<=Mathf.Max(8,car.speed*2);ahead+=2)if(DistanceToSegment(car.route.Position(Mathf.Min(car.route.length,car.distance+ahead)),from,to)<2.6f&&Vector3.Distance(car.transform.position,middle)<22)return false;}
   var taxi=session.taxi;if(taxi&&taxi.body){var body=taxi.GetComponent<BoxCollider>();if(body&&TaxiBodyNearSegment(body,from,to,5.5f))return false;}return true;
  }
