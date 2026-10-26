@@ -38,3 +38,10 @@
 - 두 북쪽 접근 이외의 전 방향 현장 대조, 실측 치수, 실제 신호 시간, 별도 우회전 횡단보도 보행 운영은 확정하지 않았다. 원본 입력/입력 ZIP을 변경하지 않았으므로 입력 manifest 갱신 대상은 아니다.
 - Unity 프로젝트 `unity/EungyeTaxi`에서 `-batchmode -nographics -quit -executeMethod ReviewedJunctionMapTests.Run`으로 검사한다. 적용은 `ReviewedJunctionMap.Apply` 또는 Taxi/Project Map/Apply Reviewed Northern Junctions. 이미 적용됐으면 재적용하지 않고 검사한다.
 - 로컬 검사 환경: Unity2022.3.62f2, Windows. 프로세스는 Start-Process -WindowStyle Hidden -Wait -PassThru로 실행하고 ExitCode를 확인했다. 기본 실행/최종 배포 해시는 상위 통합 기록을 따른다.
+
+## 후속 통합 검사: 중앙 난간 여유 기준 수정
+
+- `FollowupIntegrationChecks`가 고정 중심거리2.4m 검사에서 실패했다. 실제 J5076 새 좌회전 차로와 난간 북쪽 끝의 최소 중심거리는2.394807m, 차로 반폭1.75m와 난간 반폭0.125m를 제외한 경계 여유는0.51981m였다. 지도 충돌은 없으며 기존 수인로 최소 경계 여유는1.33296m다.
+- `ReviewedRoadFacilitiesTests`를 전체 차로 선분과 난간/충격흡수부 선분 간 최소거리(내부 교차와 양끝 포함), 실제 폭, 추가0.4m 여유로 바꿨다. 끝점 근접·중앙 교차·폭 변화 합성 회귀와 실제 생성 콜라이더를 대상으로4.6×2.1m 차량 상자0.5m 간격 검사도 추가했다. 단순 임계값 하향이 아니며 지도/시설 위치는 변경하지 않았다.
+- `ReviewedRoadFacilitiesTests.Run` 실제 Unity 종료0. 최소 경계 여유0.5198102m, 실제 콜라이더 차량 표본664 통과. 로그 `artifacts/reviewed-facilities-clearance-green.log`.
+- 통합 로그의 `TrafficSystem.cs` 신호 구체 Collider 제거가 편집 모드에서 Destroy를 사용하던 오류도, 편집 모드만 DestroyImmediate를 쓰도록 좁게 수정했다. 런타임 제거 방식은 같다. 이 부분의 통합 로그 재확인은 상위 aggregate 검사에서 수행한다.

@@ -28,12 +28,35 @@ public static class ReviewedRoadFacilitiesTests {
   var real=ReviewedRoadFacilities.Plan(actual,reviewed);
   Check(real.barriers.Count>15&&real.hatches.Count>15,"reviewed Suin-ro site has segmented rail and strip hatching");
   Check(real.cushions.Count==1&&real.cushions[0].a.x>=230&&real.cushions[0].b.x<=235,"western crash cushion stays within reviewed strip before the barrier");
-  foreach(var rail in real.barriers){
-   var point=(rail.a+rail.b)*.5f;float nearest=float.MaxValue;
-   foreach(var lane in actual.hdEdges){if(lane.disabled||lane.points==null)continue;for(int i=1;i<lane.points.Length;i++){Vector3 a=lane.points[i-1].V(),b=lane.points[i].V(),delta=b-a;float t=Mathf.Clamp01(Vector3.Dot(point-a,delta)/Mathf.Max(.0001f,delta.sqrMagnitude));nearest=Mathf.Min(nearest,Vector3.Distance(point,a+delta*t));}}
-   Check(nearest>2.4f,"median rail clear of all live lane center corridors: "+nearest);
+  Check(SegmentDistance(Vector3.zero,Vector3.right*10,new Vector3(10,0,2.2f),new Vector3(20,0,2.2f))<RequiredClearance(3.5f,.25f),"endpoint-near corridor is rejected although the rail midpoint is far away");
+  Check(SegmentDistance(Vector3.zero,Vector3.right*10,new Vector3(5,0,-5),new Vector3(5,0,5))==0,"interior crossing is rejected although all endpoints are distant");
+  Check(RequiredClearance(4,.4f)>RequiredClearance(3.5f,.25f),"clearance accounts for actual lane and rail widths");
+  var widths=package.document.lanes.ToDictionary(l=>l.id,l=>l.width);var nearby=new System.Collections.Generic.HashSet<int>();
+  float minimumGap=float.MaxValue;string closest="";
+  foreach(var rail in real.barriers.Concat(real.cushions)){
+   for(int laneIndex=0;laneIndex<actual.hdEdges.Length;laneIndex++){var lane=actual.hdEdges[laneIndex];if(lane.disabled||lane.points==null)continue;
+    for(int i=1;i<lane.points.Length;i++){float distance=SegmentDistance(rail.a,rail.b,lane.points[i-1].V(),lane.points[i].V());
+     if(distance<8)nearby.Add(laneIndex);float gap=distance-widths[lane.id]*.5f-rail.width*.5f;
+     if(gap<minimumGap){minimumGap=gap;closest=rail.facilityId+" / "+lane.id;}
+     Check(distance>=RequiredClearance(widths[lane.id],rail.width),"complete rail/cushion and lane corridor plus 0.4m margin: "+rail.facilityId+" / "+lane.id+" gap="+gap);
+    }
+   }
   }
-  var live=new GameObject("live median test");try{ReviewedRoadFacilities.Draw(actual,live.transform,true);Check(live.GetComponentsInChildren<Collider>().Length>=real.barriers.Count+real.cushions.Count,"every rail and cushion segment is collidable");}finally{UnityEngine.Object.DestroyImmediate(live);}
+  Debug.Log("REVIEWED_ROAD_FACILITY_MIN_GAP "+minimumGap+"m "+closest);
+  var live=new GameObject("live median test");try{
+   ReviewedRoadFacilities.Draw(actual,live.transform,true);Check(live.GetComponentsInChildren<Collider>().Length>=real.barriers.Count+real.cushions.Count,"every rail and cushion segment is collidable");Physics.SyncTransforms();int samples=0;
+   foreach(int index in nearby){var lane=actual.hdEdges[index];var path=new AssistedRoadNetwork.Path(lane.points.Select(p=>p.V()).ToArray());
+    for(float station=0;station<=path.length;station+=.5f){var point=path.Position(station);bool close=false;foreach(var rail in real.barriers.Concat(real.cushions))if(PointDistance(point,rail.a,rail.b)<5){close=true;break;}if(!close)continue;
+     var hits=Physics.OverlapBox(point+Vector3.up*.85f,new Vector3(1.05f,.55f,2.3f),Quaternion.LookRotation(path.Tangent(station)),~0,QueryTriggerInteraction.Ignore);
+     Check(!hits.Any(c=>c.transform.IsChildOf(live.transform)),"4.6x2.1m taxi box clears actual rail colliders: "+lane.id+" station="+station);samples++;
+    }
+   }Check(samples>100,"actual nearby lane taxi sweep has meaningful coverage");Debug.Log("REVIEWED_ROAD_FACILITY_TAXI_SWEEP samples="+samples);
+  }finally{UnityEngine.Object.DestroyImmediate(live);}
   Debug.Log("REVIEWED_ROAD_FACILITIES_TEST_OK barriers="+layout.barriers.Count+" hatch="+layout.hatches.Count);
  }
+
+ // Reserve a 0.4m shoulder outside the entire authored lane, in addition to each physical half-width.
+ static float RequiredClearance(float laneWidth,float railWidth){return laneWidth*.5f+railWidth*.5f+.4f;}
+ static float PointDistance(Vector3 point,Vector3 a,Vector3 b){var delta=b-a;float t=Mathf.Clamp01(Vector3.Dot(point-a,delta)/Mathf.Max(.000001f,delta.sqrMagnitude));return Vector3.Distance(point,a+delta*t);}
+ static float SegmentDistance(Vector3 a,Vector3 b,Vector3 c,Vector3 d){RoadGeometry.Point hit;if(RoadGeometry.TryCrossing(new RoadGeometry.Point(a.x,a.z),new RoadGeometry.Point(b.x,b.z),new RoadGeometry.Point(c.x,c.z),new RoadGeometry.Point(d.x,d.z),out hit))return 0;return Mathf.Min(Mathf.Min(PointDistance(a,c,d),PointDistance(b,c,d)),Mathf.Min(PointDistance(c,a,b),PointDistance(d,a,b)));}
 }
