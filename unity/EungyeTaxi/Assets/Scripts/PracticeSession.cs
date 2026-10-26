@@ -24,7 +24,7 @@ public class PracticeSession : MonoBehaviour {
  public bool StartSelected(){
   if(!PickerOpen||Busy)return false;
   if(Enabled){if(!(ConfusionPracticeState.Contains(SelectedVariant)?GetComponent<ConfusionPractice>().StartAttempt(SelectedVariant):SelectedVariant==7?StartDirectExit():StartRight(SelectedVariant)))return false;changedConditions=true;notice="";PickerOpen=false;session.paused=false;Time.timeScale=1;return true;}
-  bool ok=Begin(new LawEvent{id=session.law.ids.Next("practice"),day=session.business.ledger.Day,scenario=ConfusionPracticeState.Contains(SelectedVariant)?"C"+SelectedVariant:SelectedVariant==7?"exit":"R"+SelectedVariant},session.business.preparing);
+  bool ok=Begin(new LawEvent{recoveryPolicyVersion=1,id=session.law.ids.Next("practice"),day=session.business.ledger.Day,scenario=ConfusionPracticeState.Contains(SelectedVariant)?"C"+SelectedVariant:SelectedVariant==7?"exit":"R"+SelectedVariant},session.business.preparing);
   if(ok)CancelPicker();return ok;
  }
  public bool StartDirectExit(){

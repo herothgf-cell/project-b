@@ -32,15 +32,15 @@ $progressType = 'StableDrivingProgress' -as [type]
 Check ($null -ne $progressType) 'stable distance and time progress API exists'
 $turnback = [Activator]::CreateInstance($progressType)
 $turnback.Observe(0, 0, 1, 1, $true) | Out-Null
-for ($x = 1; $x -le 50; $x++) { $turnback.Observe($x, 0, 1, 1, $true) | Out-Null }
+for ($x = 1; $x -le 35; $x++) { $turnback.Observe($x, 0, 1, 1, $true) | Out-Null }
 $earned = $false
-for ($x = 49; $x -ge 28; $x--) { $earned = $turnback.Observe($x, 0, 1, 1, $true) -or $earned }
-Check (-not $earned) 'a pre-award out-and-back cannot turn fifty unique metres into sixty moving seconds'
+for ($x = 34; $x -ge 28; $x--) { $earned = $turnback.Observe($x, 0, 1, 1, $true) -or $earned }
+Check (-not $earned) 'a pre-award out-and-back cannot turn thirty-five unique metres into forty-five moving seconds'
 $savedTurnback = [Activator]::CreateInstance($progressType)
 $savedTurnback.Restore($turnback.Capture())
 $savedTurnback.Rebase(28, 0)
 $beforeSavedReturn = $savedTurnback.Capture()
-for ($x = 29; $x -le 50; $x++) { $savedTurnback.Observe($x, 0, 1, 1, $true) | Out-Null }
+for ($x = 29; $x -le 35; $x++) { $savedTurnback.Observe($x, 0, 1, 1, $true) | Out-Null }
 Check ($savedTurnback.Capture().seconds -eq $beforeSavedReturn.seconds) 'save and restore retain closed cells on a repeated path'
 $within = [Activator]::CreateInstance($progressType)
 $within.Observe(0, 0, 1, 1, $true) | Out-Null
@@ -57,14 +57,14 @@ Check ($savedWithin.Capture().seconds -eq $beforeReturn.seconds) 'save and resto
 $progress = [Activator]::CreateInstance($progressType)
 $progress.Observe(0, 0, 1, 1, $true) | Out-Null
 $earned = $false
-for ($x = 1; $x -le 60; $x++) { $earned = $progress.Observe($x, 0, 1, 1, $true) -or $earned }
-Check ($earned) 'sixty seconds of new moving path earns a segment'
+for ($x = 1; $x -le 45; $x++) { $earned = $progress.Observe($x, 0, 1, 1, $true) -or $earned }
+Check ($earned) 'forty-five seconds of new moving path earns a segment'
 $snapshot = $progress.Capture()
 $restored = [Activator]::CreateInstance($progressType)
 $restored.Restore($snapshot)
-$restored.Rebase(60, 0)
+$restored.Rebase(45, 0)
 $farmed = $false
-for ($x = 59; $x -ge 0; $x--) { $farmed = $restored.Observe($x, 0, 1, 1, $true) -or $farmed }
+for ($x = 44; $x -ge 0; $x--) { $farmed = $restored.Observe($x, 0, 1, 1, $true) -or $farmed }
 Check (-not $farmed) 'reverse traversal of saved path earns nothing'
 for ($i = 0; $i -lt 100; $i++) { $farmed = $restored.Observe(0, 0, 0, 1, $true) -or $farmed }
 Check (-not $farmed) 'idle time earns nothing'
@@ -75,23 +75,23 @@ $resumed = [Activator]::CreateInstance($progressType)
 $resumed.Restore($partial.Capture())
 $resumed.Rebase(30, 0)
 $earned = $false
-for ($x = 31; $x -le 60; $x++) { $earned = $resumed.Observe($x, 0, 1, 1, $true) -or $earned }
+for ($x = 31; $x -le 45; $x++) { $earned = $resumed.Observe($x, 0, 1, 1, $true) -or $earned }
 Check ($earned) 'saved partial moving time completes on a new path'
 $slow = [Activator]::CreateInstance($progressType)
 $slow.Observe(0, 0, 0.5, 1, $true) | Out-Null
 $earned = $false
-for ($step = 1; $step -le 60; $step++) { $earned = $slow.Observe($step * 0.5, 0, 0.5, 1, $true) -or $earned }
-Check ($earned) 'sixty moving seconds also works at the minimum accepted speed'
+for ($step = 1; $step -le 45; $step++) { $earned = $slow.Observe($step * 0.5, 0, 0.5, 1, $true) -or $earned }
+Check ($earned) 'forty-five moving seconds also works at the minimum accepted speed'
 $broken = [Activator]::CreateInstance($progressType)
 $broken.Observe(0, 0, 1, 1, $true) | Out-Null
 for ($x = 1; $x -le 30; $x++) { $broken.Observe($x, 0, 1, 1, $true) | Out-Null }
 $broken.Observe(30, 0, 1, 1, $false) | Out-Null
 $earned = $false
-for ($x = 31; $x -le 60; $x++) { $earned = $broken.Observe($x, 0, 1, 1, $true) -or $earned }
+for ($x = 31; $x -le 45; $x++) { $earned = $broken.Observe($x, 0, 1, 1, $true) -or $earned }
 Check (-not $earned) 'harsh motion breaks the stable segment'
 $distance = [Activator]::CreateInstance($progressType)
 $distance.Observe(0, 0, 10, 0.1, $true) | Out-Null
 $earned = $false
-for ($x = 1; $x -le 500; $x++) { $earned = $distance.Observe($x, 0, 10, 0.1, $true) -or $earned }
-Check ($earned) 'five hundred metres of new moving path earns a segment'
+for ($x = 1; $x -le 350; $x++) { $earned = $distance.Observe($x, 0, 10, 0.1, $true) -or $earned }
+Check ($earned) 'three hundred fifty metres of new moving path earns a segment'
 Write-Output 'MANNER_RECOVERY_MODEL_OK'

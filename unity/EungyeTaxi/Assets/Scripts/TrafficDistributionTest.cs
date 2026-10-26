@@ -16,6 +16,23 @@ public sealed class TrafficDistributionTest : MonoBehaviour {
   Check(session.business.SavePath.IndexOf("artifacts",StringComparison.OrdinalIgnoreCase)>=0,"Test flag isolates campaign save path="+session.business.SavePath);
   Time.timeScale=3;var traffic=session.traffic;var district=traffic.GetComponent<DistrictTraffic>();bool safe;int visible,cells;
   string snapshot=TrafficDistributionSnapshot.Inspect(traffic,out safe,out visible,out cells);Check(visible>=24&&cells>=8&&traffic.cars.Count<=48,"initial "+snapshot);Check(safe,"initial ordinary starts, >=10m spacing, player/static clearance");
+  // Exercise actual collider admission rather than only a clear default taxi pose.
+  var blocker=GameObject.CreatePrimitive(PrimitiveType.Cube);blocker.name="Traffic admission blocker fixture";blocker.transform.position=new Vector3(-5000,.85f,-5000);blocker.transform.localScale=Vector3.one;
+  foreach(int layer in new[]{0,8}){blocker.layer=layer;Physics.SyncTransforms();Check(district.Occupied(new Vector3(-5000,0,-5000),Vector3.forward,null),"null-self admission detects blocker layer="+layer);}
+  blocker.SetActive(false);Destroy(blocker);Physics.SyncTransforms();
+  TrafficCar seeded=null;foreach(var car in traffic.cars)if(car.Visible){seeded=car;break;}
+  Check(seeded!=null,"saved-pose overlap seed fixture exists");
+  if(seeded){
+   float seedDistance=seeded.distance;var seedPosition=seeded.transform.position;var seedRotation=seeded.transform.rotation;
+   var original=new LiveCampaignCheckpoint{position=session.taxi.transform.position,rotation=session.taxi.transform.rotation,mapRevision=session.world.map.editorRevision,jobs=session.jobs.CaptureLive(),preparing=false};
+   var atSeed=new LiveCampaignCheckpoint{position=seedPosition+Vector3.up*.65f,rotation=seedRotation,mapRevision=original.mapRevision,jobs=session.jobs.CaptureLive(),preparing=false};
+   // Invoke the production saved-live restore, including NPC cleanup before unpausing.
+   session.business.SendMessage("RestoreLive",atSeed,SendMessageOptions.RequireReceiver);Physics.SyncTransforms();
+   Check(!session.business.ResumeBlocked&&Vector3.Distance(session.taxi.transform.position,atSeed.position)<.01f,"saved taxi pose restored at seeded NPC without moving player");
+   bool playerClear=true;foreach(var car in traffic.cars)if(car.Visible&&Physics.CheckBox(car.transform.position+Vector3.up*.85f,new Vector3(1.1f,.55f,4),car.transform.rotation,1<<8,QueryTriggerInteraction.Ignore))playerClear=false;
+   Check(!seeded.Visible&&playerClear,"restore-at-seed defers overlapping NPC before simulation resumes");
+   session.business.SendMessage("RestoreLive",original,SendMessageOptions.RequireReceiver);seeded.Place(seedDistance);session.paused=false;Time.timeScale=3;
+  }
   session.taxi.body.isKinematic=true;session.taxi.gameObject.SetActive(false);Physics.SyncTransforms();
   int overlaps=0;var initial=new Dictionary<TrafficCar,float>();foreach(var car in traffic.cars)initial[car]=car.totalTravel;
   for(int sample=0;sample<20;sample++){

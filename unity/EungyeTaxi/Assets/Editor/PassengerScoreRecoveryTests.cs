@@ -7,6 +7,13 @@ public static class PassengerScoreRecoveryTests {
  static int checks;
  static void Check(bool ok,string name){checks++;if(!ok)throw new Exception("PASSENGER_SCORE_RECOVERY_FAIL "+name);}
  public static void Run(){
+  var oldLaw=JsonUtility.FromJson<LawEvent>("{\"id\":\"old\",\"day\":1,\"rules\":[{\"rule\":\"yield\",\"verdict\":0,\"penalty\":0}]}");
+  Check(LawLedger.ScoreAfter(70,oldLaw)==71,"actual legacy JsonUtility event keeps one point");
+  var freshLaw=LawEvaluator.Exit("new",1,true,true,false,false);var newLaw=JsonUtility.FromJson<LawEvent>(JsonUtility.ToJson(freshLaw));
+  Check(LawLedger.ScoreAfter(70,newLaw)==73,"new event keeps three point policy after JsonUtility");
+  var mixedLedger=new LawLedger();var violation=new LawEvent{id="bad",day=1};violation.Add("red",LawVerdict.Violation,20);mixedLedger.Record(violation);mixedLedger.Record(oldLaw);mixedLedger.Record(newLaw);
+  var journal=JsonUtility.FromJson<DrivingScoreSnapshot>(JsonUtility.ToJson(new DrivingScoreSnapshot{campaign="version-test",sequence=3,events=mixedLedger.Events}));var reloaded=new LawLedger();var ids=new PrototypeIds("version-test");
+  Check(DrivingScoreJournal.Restore(journal,ids,reloaded)&&reloaded.TotalScore==84&&DrivingScoreJournal.Restore(journal,ids,reloaded)&&reloaded.TotalScore==84,"mixed-version journal restores without replaying compliance");
   var ledger=new MannerLedger();ledger.Penalize("brake",2,1,0);
   var recover=typeof(MannerLedger).GetMethod("RecoverStable");Check(recover!=null,"stable recovery entry point");
   Check((int)recover.Invoke(ledger,new object[]{2})==2&&ledger.Score==100,"motion loss recovers only once");

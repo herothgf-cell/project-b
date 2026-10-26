@@ -69,7 +69,14 @@ public sealed class DistrictTraffic : MonoBehaviour {
    spawned.district=this;int selectedLoad;loads.TryGetValue(chosen.cell,out selectedLoad);loads[chosen.cell]=selectedLoad+1;
   }
  }
- public bool Occupied(Vector3 p,Vector3 heading,TrafficCar self){foreach(var hit in Physics.OverlapBox(p+Vector3.up*.85f,new Vector3(1.1f,.55f,4),Quaternion.LookRotation(heading),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore))if(hit.GetComponentInParent<TrafficCar>()!=self)return true;return false;}
+ public bool Occupied(Vector3 p,Vector3 heading,TrafficCar self){foreach(var hit in Physics.OverlapBox(p+Vector3.up*.85f,new Vector3(1.1f,.55f,4),Quaternion.LookRotation(heading),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore))if(self==null||hit.GetComponentInParent<TrafficCar>()!=self)return true;return false;}
+ // A saved live pose is restored after seeding. Defer NPCs intersecting the
+ // restored player footprint; their usual occupancy-gated respawn remains intact.
+ public void ClearPlayerOverlap(){
+  Physics.SyncTransforms();
+  foreach(var car in system.cars)if(car.Visible&&Physics.CheckBox(car.transform.position+Vector3.up*.85f,new Vector3(1.1f,.55f,4),car.transform.rotation,1<<8,QueryTriggerInteraction.Ignore))car.Recycle();
+  Physics.SyncTransforms();
+ }
  public TrafficRoute CreateRoute(int start,float at,int goal,float end){
   string key=start+":"+at.ToString("R")+":"+goal+":"+end.ToString("R");TrafficRoute route;if(routes.TryGetValue(key,out route))return route;
   var path=graph.Route(start,at,goal,end);if(path==null||path.path.length<10)return null;

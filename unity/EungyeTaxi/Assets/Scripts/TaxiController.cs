@@ -2,7 +2,7 @@ using UnityEngine;
 public class TaxiController : MonoBehaviour {
     public Rigidbody body; public WheelCollider[] wheels=new WheelCollider[4]; Transform[] visuals=new Transform[4];
     public bool automated; public float autoThrottle,autoSteer,autoServiceBrake; public bool autoBrake;
-    public AssistedDriveController assistance;
+    public AssistedDriveController assistance;public BusinessProgress business;
     float throttle,steer,motorDemand; bool brake; Vector3 spawn; Quaternion spawnRotation;
     public float SteeringInput {get{return steer;}}
     public bool CornerAssisting {get;private set;}
@@ -53,6 +53,7 @@ public class TaxiController : MonoBehaviour {
         bool assistedSteering=assistance&&assistance.Active&&(!automated||assistance.allowAutomated);
         if(assistance)assistance.Apply(ref steer,ref manual);
         var demand=assistedSteering?manual:DriveMath.CornerAssist(manual,Speed,steer);
+        if(business&&business.DrowsyControlsLost){demand.motor=0;demand.brake=0;motorDemand=0;steer=0;}
         CornerAssisting=demand.motor<manual.motor||demand.brake>manual.brake;
         float centerAngle=steer*(assistedSteering?DriveMath.SteerAngle(Speed*3.6f):DriveMath.ManualSteerAngle(Speed*3.6f));
         for(int i=0;i<4;i++) { wheels[i].steerAngle=i<2?DriveMath.WheelSteerAngle(centerAngle,i==0):0; wheels[i].motorTorque=i>=2?demand.motor*1100:0; wheels[i].brakeTorque=demand.brake*3500; }

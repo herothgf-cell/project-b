@@ -14,6 +14,9 @@ public class BusinessProgress : MonoBehaviour {
  public readonly System.Collections.Generic.List<PracticeResult> practices=new System.Collections.Generic.List<PracticeResult>();
  public readonly System.Collections.Generic.List<CompletedDay> completedDays=new System.Collections.Generic.List<CompletedDay>();
  double realSeconds;bool initialFollowing,mixedFollowing;
+ public bool DrowsinessRunning {get{return enabledCampaign&&ledger!=null&&ledger.Operating&&ledger.Driver!=null&&!preparing&&!restoring&&!resumeBlocked&&!PracticeSession.Enabled&&!session.PracticeBusy&&!session.PracticeMenuOpen&&!session.ChoiceOpen&&!session.FullMapOpen&&!session.paused&&!session.services.open&&!session.law.HistoryOpen&&!session.RideResultOpen&&Time.timeScale>0;}}
+ public bool DrowsinessEligible {get{return DrowsinessRunning&&session.taxi.body.velocity.magnitude>=.56f;}}
+ public bool DrowsyControlsLost {get{return DrowsinessRunning&&ledger.Driver.drowsiness!=null&&ledger.Driver.drowsiness.ControlsLost;}}
  public string ComparisonVersion {get{if(loaded!=null&&ShowingSummary&&loaded.completedDays!=null)foreach(var day in loaded.completedDays)if(day.id==loaded.ids.campaign)return day.configuration;return (settings.days>1?PrototypeSettings.ThreeDayVersion:PrototypeSettings.OneDayVersion)+"-following-"+(mixedFollowing?"mixed":initialFollowing?"on":"off");}}
  public bool enabledCampaign=true;
  public string notice="",saveStatus="하루 정산 시 자동 저장됩니다";
@@ -33,7 +36,7 @@ public class BusinessProgress : MonoBehaviour {
  public bool ShowingSummary {get{return enabledCampaign&&ledger!=null&&ledger.ShowingSummary;}}
  public bool CanAccept {get{return !resumeBlocked&&!restoring&&!PracticeSession.Enabled&&!preparing&&(!enabledCampaign||ledger.CanAccept);}}
  public void Initialize(DriveSession owner){
-  session=owner;initialFollowing=owner.traffic.mitOptions.Enabled;var args=Environment.GetCommandLineArgs();
+  session=owner;owner.taxi.business=this;gameObject.AddComponent<DrowsinessHUD>().business=this;initialFollowing=owner.traffic.mitOptions.Enabled;var args=Environment.GetCommandLineArgs();
   foreach(var arg in args)if(arg.EndsWith("Test")){testMode=true;if(arg!="-economyTest"&&arg!="-hybridTest"&&arg!="-hybridQuickTest")enabledCampaign=false;}
   if(Array.IndexOf(args,"-assistedTrial")>=0||RoadRulesTrial.Enabled||HdRouteTrial.Enabled){testMode=true;enabledCampaign=false;}
   if(PracticeSession.Enabled||RoadMapRuntime.Trial){testMode=true;enabledCampaign=false;}
@@ -72,7 +75,7 @@ public class BusinessProgress : MonoBehaviour {
  void RestoreLive(LiveCampaignCheckpoint snapshot){
   try{if(snapshot.jobs==null||!Valid(snapshot.position.x)||!Valid(snapshot.position.y)||!Valid(snapshot.position.z)||snapshot.position.x<0||snapshot.position.z<0||snapshot.position.x>session.world.map.width||snapshot.position.z>session.world.map.depth)throw new Exception("Invalid live vehicle position");
    if(snapshot.mapRevision!=session.world.map.editorRevision)throw new Exception("Map revision changed; cannot restore active trip on edited geometry");
-   session.taxi.SetSpawn(snapshot.position,snapshot.rotation);session.taxi.ResetTaxi();session.law.tripId=snapshot.tripId??"";session.law.ResetObservation();session.jobs.RestoreLive(snapshot.jobs);realSeconds=snapshot.realSeconds;preparing=snapshot.preparing;
+   session.taxi.SetSpawn(snapshot.position,snapshot.rotation);session.taxi.ResetTaxi();var district=session.traffic.GetComponent<DistrictTraffic>();if(district)district.ClearPlayerOverlap();session.law.tripId=snapshot.tripId??"";session.law.ResetObservation();session.jobs.RestoreLive(snapshot.jobs);realSeconds=snapshot.realSeconds;preparing=snapshot.preparing;
    if(!session.jobs.Active&&snapshot.hasDestination)session.jobs.nav.SetDestination(snapshot.destination);
    session.jobs.nav.PreferFastest=snapshot.preferFastest;session.assisted.SetActive(false);session.paused=!preparing;Time.timeScale=0;saveStatus="중단한 위치·운송·시간·장부 복원 완료 · 계속 운전";resumeBlocked=false;
   }catch(Exception ex){preparing=false;session.paused=true;Time.timeScale=0;saveStatus="운송 복원 중단 · 지도/저장 상태 확인 필요: "+ex.Message;Debug.LogWarning(saveStatus);resumeBlocked=true;}
@@ -105,12 +108,13 @@ public class BusinessProgress : MonoBehaviour {
   if(!enabledCampaign||!ledger.Operating||preparing||restoring||resumeBlocked||session.paused||Time.timeScale<=0)return;
   var v=session.taxi.body.velocity;double metres=Math.Sqrt(v.x*v.x+v.z*v.z)*Time.fixedDeltaTime;
   ledger.Advance(Time.fixedDeltaTime,metres);
+  if(ledger.Driver!=null)ledger.Driver.drowsiness.Advance(Time.fixedDeltaTime,DrowsinessRunning,ledger.Driver.fatigue,session.taxi.body.velocity.magnitude>=.56f);
   if(ledger.Account!=null&&ledger.Account.Fuel<=0)RecoverFuel();
  }
  void Update(){if(enabledCampaign&&!preparing&&!session.paused&&ledger.Operating){realSeconds+=Time.unscaledDeltaTime;mixedFollowing|=session.traffic.mitOptions.Enabled!=initialFollowing;}if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil){notice="";noticeUntil=0;}}
  void LateUpdate(){
   if(!restoring&&!testMode&&enabledCampaign&&session.law&&session.requests&&(Time.unscaledTime>=nextSave||session.law.ledger.Count!=lastLawCount)){nextSave=Time.unscaledTime+5;lastLawCount=session.law.ledger.Count;SaveCheckpoint();}
-  if(enabledCampaign&&ledger.OneDay&&ledger.Operating&&ledger.Driver.fatigue>=100){notice="피로 한계 · 신규 승객 수락 불가 · F7 주차장 수면 또는 퇴근";if(session.jobs.trip.State==TripState.ToPickup){session.jobs.ClearForDay();session.jobs.message="피로 한계로 미탑승 호출 취소 · 점수 감점 없음";}}
+  if(enabledCampaign&&ledger.OneDay&&ledger.Operating&&ledger.Driver.fatigue>=100){notice="피로 100 · 졸음 위험 · 계속 영업 가능 · F7 휴식/주차장 수면·영업 종료";noticeUntil=Time.unscaledTime+2;}
   if(session.FullMapOpen||!enabledCampaign||ledger.State!=BusinessState.Closing)return;
   if(session.jobs.trip.State==TripState.OnTrip){notice="영업 종료 대기 · 현재 승객 운송 후 정산합니다";return;}
   session.jobs.RecordExpiredTrip();
@@ -121,14 +125,14 @@ public class BusinessProgress : MonoBehaviour {
   if(session.FullMapOpen||!enabledCampaign||ledger.State!=BusinessState.Open||session.paused||Time.timeScale==0)return false;
   if(session.jobs.trip.State==TripState.OnTrip){notice="승객 탑승 중에는 영업을 마칠 수 없습니다 · 목적지 하차 후 N";noticeUntil=Time.unscaledTime+4;return false;}
   if(session.taxi.body.velocity.magnitude>=.56f){notice="안전한 곳에 정차한 뒤 N으로 영업을 마치세요";noticeUntil=Time.unscaledTime+4;return false;}
-  if(ledger.OneDay&&!session.services.AtParking()){notice="자발적 퇴근은 주차장에서 합니다 · F7 길 안내";noticeUntil=Time.unscaledTime+4;return false;}
-  ledger.RequestClose();return true;
+  if(ledger.OneDay&&!session.services.AtEndDayHub()){notice="주차장·휴식 거점에서 쉬며 영업을 마치세요 · F7 길 안내";noticeUntil=Time.unscaledTime+4;return false;}
+  if(ledger.OneDay&&!ledger.UseSleep(session.law.ids.Next("end-rest")))return false;ledger.RequestClose("생활 거점 휴식·영업 종료");return true;
  }
  public void RecordPassenger(int paid,string outcome){
   if(!useV2||PracticeSession.Enabled||session.jobs.current==null||string.IsNullOrEmpty(session.law.tripId))return;
   foreach(var old in passengers)if(old.tripId==session.law.tripId)return;
   var jobs=session.jobs;var offer=jobs.current;var reward=jobs.RequestReward??PassengerReward.Calculate(RequestKind.Quiet,session.manners.ledger.Score,offer.requiredScore,offer.fare,paid,0,paid>0,true);
-  passengers.Add(new PassengerResult{initialFare=jobs.InitialFare,farePolicyVersion=reward.farePolicyVersion,hasDrivingScore=true,drivingScore=session.law.ledger.TotalScore,tripId=session.law.tripId,offerId=jobs.OfferId,day=ledger.Day,pickupStopId=offer.pickupStopId,dropStopId=offer.dropStopId,mapRevision=offer.mapRevision,catalogRevision=offer.catalogRevision,stopEvidence=offer.stopEvidence,pickup=jobs.stops[offer.pickup].name,destination=jobs.stops[offer.drop].name,outcome=outcome,quoted=offer.fare,paid=paid,baseFare=reward.baseFare,bonus=reward.bonus,satisfaction=reward.satisfaction,satisfactionDelta=reward.satisfactionDelta,excessScore=reward.excessScore,bonusReason=reward.bonusReason,startSatisfaction=reward.startSatisfaction,startDeficit=reward.startDeficit,cleanBonus=reward.cleanBonus,driveDelta=reward.driveDelta,timeDelta=reward.timeDelta,referenceSeconds=reward.referenceSeconds,timeReason=reward.timeReason,cleanlinessAfter=ledger.Care.Cleanliness,drunk=jobs.DrunkRide!=null&&jobs.DrunkRide.IsDrunk,vomited=jobs.DrunkRide!=null&&jobs.DrunkRide.Vomited,wakeDelayed=jobs.DrunkRide!=null&&jobs.DrunkRide.SleepPlanned,arrivalElapsed=jobs.DrunkRide==null?0:jobs.DrunkRide.ArrivalElapsed,disembarkElapsed=jobs.DrunkRide==null?0:jobs.DrunkRide.DisembarkElapsed,score=reward.sourceManner,required=offer.requiredScore,elapsed=Mathf.Max(0,offer.seconds-jobs.trip.Remaining),request=session.requests.request.Resolved?session.requests.request.ResponseText():"미응답 · 운송 종료",mannerReason=session.manners.RideReasons});
+  passengers.Add(new PassengerResult{boardingDrivingScore=reward.boardingDrivingScore,drivingAdjustedFare=reward.drivingAdjustedFare,comfortDelta=reward.comfortDelta,initialFare=jobs.InitialFare,farePolicyVersion=reward.farePolicyVersion,hasDrivingScore=true,drivingScore=session.law.ledger.TotalScore,tripId=session.law.tripId,offerId=jobs.OfferId,day=ledger.Day,pickupStopId=offer.pickupStopId,dropStopId=offer.dropStopId,mapRevision=offer.mapRevision,catalogRevision=offer.catalogRevision,stopEvidence=offer.stopEvidence,pickup=jobs.stops[offer.pickup].name,destination=jobs.stops[offer.drop].name,outcome=outcome,quoted=offer.fare,paid=paid,baseFare=reward.baseFare,bonus=reward.bonus,satisfaction=reward.satisfaction,satisfactionDelta=reward.satisfactionDelta,excessScore=reward.excessScore,bonusReason=reward.bonusReason,startSatisfaction=reward.startSatisfaction,startDeficit=reward.startDeficit,cleanBonus=reward.cleanBonus,driveDelta=reward.driveDelta,timeDelta=reward.timeDelta,referenceSeconds=reward.referenceSeconds,timeReason=reward.timeReason,cleanlinessAfter=ledger.Care.Cleanliness,drunk=jobs.DrunkRide!=null&&jobs.DrunkRide.IsDrunk,vomited=jobs.DrunkRide!=null&&jobs.DrunkRide.Vomited,wakeDelayed=jobs.DrunkRide!=null&&jobs.DrunkRide.SleepPlanned,arrivalElapsed=jobs.DrunkRide==null?0:jobs.DrunkRide.ArrivalElapsed,disembarkElapsed=jobs.DrunkRide==null?0:jobs.DrunkRide.DisembarkElapsed,score=reward.sourceManner,required=offer.requiredScore,elapsed=Mathf.Max(0,offer.seconds-jobs.trip.Remaining),request=session.requests.request.Resolved?session.requests.request.ResponseText():"미응답 · 운송 종료",mannerReason=session.manners.RideReasons});
  }
  public void RecordFare(int amount){if(!enabledCampaign)return;if(ledger.Account!=null)ledger.RecordFare(session.law.tripId,amount);else ledger.RecordFare(amount);}
  public void RecordFailure(){if(enabledCampaign)ledger.RecordFailure();}

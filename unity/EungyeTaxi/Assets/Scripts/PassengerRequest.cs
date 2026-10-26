@@ -23,6 +23,14 @@ public class PassengerRequest {
 }
 // Settlement is a value calculated once at delivery from final passenger satisfaction.
 [System.Serializable] public class PassengerReward {
+ public int boardingDrivingScore,drivingAdjustedFare,comfortDelta;
+ public static int AdjustedFare(int fare,int score){score=System.Math.Max(0,System.Math.Min(100,score));return score<=70?(int)((long)fare*(630+score)/700/10*10):(int)((long)fare*(300+score-70)/300/10*10);}
+ public static PassengerReward CalculateWithDrivingScore(int manner,int required,int fare,int delta,bool onTime,int start,int clean,float reference,float actual,bool unsafeDriving,int boardingScore,int comfort){
+  var r=CalculateDetailed(manner,required,fare,0,delta,onTime,start,clean,reference,actual,unsafeDriving,comfort);
+  r.farePolicyVersion=3;r.boardingDrivingScore=boardingScore;r.drivingAdjustedFare=AdjustedFare(fare,boardingScore);
+  int missing=System.Math.Max(0,required-r.satisfaction),deduction=System.Math.Min(200,missing*5);
+  r.baseFare=!onTime?0:missing==0?r.drivingAdjustedFare:(int)(((long)r.drivingAdjustedFare*(1000-deduction)/10000)*10);return r;
+ }
  public int baseFare,bonus,satisfaction,satisfactionDelta,excessScore,sourceManner,requiredScore,farePolicyVersion,quotedFare;public string bonusReason="";
  public int startSatisfaction,startDeficit,cleanBonus,driveDelta,timeDelta;public float referenceSeconds,actualSeconds;public string timeReason="";
  public int Total {get{return baseFare+bonus;}}
@@ -31,26 +39,27 @@ public class PassengerRequest {
  }
  // Signed legacy field: positive means below R, zero means at R, negative means above R.
  public static int Deficit(string trip){return new[]{-12,-8,-4,0,4,8,12}[(int)(DrunkRideState.Hash(trip+":satisfaction")%7)];}
- public static PassengerReward CalculateDetailed(int manner,int required,int fare,int paid,int delta,bool onTime,int start,int clean,float reference,float actual,bool unsafeDriving){
+ public static PassengerReward CalculateDetailed(int manner,int required,int fare,int paid,int delta,bool onTime,int start,int clean,float reference,float actual,bool unsafeDriving,int comfort=0){
   bool valid=reference>=1&&!float.IsNaN(reference)&&!float.IsInfinity(reference)&&actual>=0&&!float.IsNaN(actual)&&!float.IsInfinity(actual);int time=valid&&!unsafeDriving?System.Math.Max(0,System.Math.Min(12,(int)System.Math.Round(60*(reference-actual)/reference,System.MidpointRounding.AwayFromZero))):0;
-  var r=new PassengerReward{farePolicyVersion=2,quotedFare=fare,sourceManner=manner,requiredScore=required,startSatisfaction=start,cleanBonus=clean,driveDelta=manner-100,satisfactionDelta=delta,timeDelta=time,referenceSeconds=reference,actualSeconds=actual,timeReason=!valid?"기준 ETA 없음/1초 미만":unsafeDriving?"위험 운전으로 시간 가산 없음":time>0?"안전한 조기 도착":"조기 도착 가산 없음"};r.satisfaction=PassengerScoreView.Calculate(start,r.driveDelta,delta,time);r.excessScore=System.Math.Max(0,r.satisfaction-required);r.bonusReason=!onTime?"도착 기한 초과":r.satisfaction<required?"요구 만족도 미달":"요구 만족도 도달 · 가중 보너스";
+  var r=new PassengerReward{comfortDelta=comfort,farePolicyVersion=2,quotedFare=fare,sourceManner=manner,requiredScore=required,startSatisfaction=start,cleanBonus=clean,driveDelta=manner-100,satisfactionDelta=delta,timeDelta=time,referenceSeconds=reference,actualSeconds=actual,timeReason=!valid?"기준 ETA 없음/1초 미만":unsafeDriving?"위험 운전으로 시간 가산 없음":time>0?"안전한 조기 도착":"조기 도착 가산 없음"};r.satisfaction=PassengerScoreView.Calculate(start,r.driveDelta,delta,time,comfort);r.excessScore=System.Math.Max(0,r.satisfaction-required);r.bonusReason=!onTime?"도착 기한 초과":r.satisfaction<required?"요구 만족도 미달":"요구 만족도 도달 · 가중 보너스";
   if(onTime){int missing=System.Math.Max(0,required-r.satisfaction);int deductionPermille=System.Math.Min(200,missing*5);r.baseFare=missing==0?fare:(int)(((long)fare*(1000-deductionPermille)/10000)*10);}
   if(onTime&&r.satisfaction>=required&&required<100){int weight=required==60?800:required==70?1000:required==85?1300:1000;int cap=(int)(((long)System.Math.Min(500,fare/10)*weight/10000)*10);r.bonus=(int)((long)cap*(100-required+4*r.excessScore)/(5*(100-required))/10)*10;}return r;
  }
  public string Breakdown {get{var view=PassengerScoreView.Settled(this);return view.Baseline+"\n"+view.Breakdown;}}
- public string Summary {get{string fare=farePolicyVersion>=2&&baseFare>0?"약정 "+quotedFare.ToString("N0")+"원 · 요구 미달 "+System.Math.Max(0,requiredScore-satisfaction)+"점 · 감액 "+System.Math.Max(0,quotedFare-baseFare).ToString("N0")+"원 · ":"약정 운임과 별도 · ";return fare+"기본 운임 "+baseFare.ToString("N0")+"원 · "+Breakdown+"\n보너스 "+bonus.ToString("N0")+"원 · "+bonusReason+" · 합계 "+Total.ToString("N0")+"원";}}
+ public string Summary {get{string fare=farePolicyVersion>=2&&baseFare>0?"약정 "+quotedFare.ToString("N0")+"원 · 요구 미달 "+System.Math.Max(0,requiredScore-satisfaction)+"점 · 감액 "+System.Math.Max(0,quotedFare-baseFare).ToString("N0")+"원 · ":"약정 운임과 별도 · ";if(farePolicyVersion>=3)fare="원약정 "+quotedFare.ToString("N0")+"원 · 승차 운전 점수 "+boardingDrivingScore+" · 보정 "+(drivingAdjustedFare-quotedFare).ToString("+0;-0;0")+"원 → "+drivingAdjustedFare.ToString("N0")+"원 · 만족도 감액 "+(baseFare==0?0:System.Math.Max(0,drivingAdjustedFare-baseFare)).ToString("N0")+"원 · ";return fare+"기본 운임 "+baseFare.ToString("N0")+"원 · "+Breakdown+"\n보너스 "+bonus.ToString("N0")+"원 · "+bonusReason+" · 합계 "+Total.ToString("N0")+"원";}}
 }
 
 // One presentation value for HUD, notifications and receipts. Time is awarded only at arrival.
 public struct PassengerScoreView {
- public int value,required,start,clean,drive,request,time;
- public static int Calculate(int start,int drive,int request,int time){return System.Math.Max(0,System.Math.Min(100,start+drive+request+time));}
- public static PassengerScoreView Live(int start,int clean,int required,int manner,int request){return new PassengerScoreView{value=Calculate(start,manner-100,request,0),required=required,start=start,clean=clean,drive=manner-100,request=request};}
- public static PassengerScoreView Settled(PassengerReward r){return new PassengerScoreView{value=r.satisfaction,required=r.requiredScore,start=r.startSatisfaction,clean=r.cleanBonus,drive=r.driveDelta,request=r.satisfactionDelta,time=r.timeDelta};}
- public static PassengerScoreView Recorded(PassengerResult r){return new PassengerScoreView{value=r.satisfaction,required=r.required,start=r.startSatisfaction,clean=r.cleanBonus,drive=r.driveDelta,request=r.satisfactionDelta,time=r.timeDelta};}
+ public static int ComfortGain(int mannerGain,int satisfaction,int required,int recovered){return mannerGain>0?0:System.Math.Max(0,System.Math.Min(2,System.Math.Min(4-recovered,required-satisfaction)));}
+ public int value,required,start,clean,drive,request,time,comfort;
+ public static int Calculate(int start,int drive,int request,int time,int comfort=0){return System.Math.Max(0,System.Math.Min(100,start+drive+request+time+comfort));}
+ public static PassengerScoreView Live(int start,int clean,int required,int manner,int request,int comfort=0){return new PassengerScoreView{value=Calculate(start,manner-100,request,0,comfort),comfort=comfort,required=required,start=start,clean=clean,drive=manner-100,request=request};}
+ public static PassengerScoreView Settled(PassengerReward r){return new PassengerScoreView{value=r.satisfaction,comfort=r.comfortDelta,required=r.requiredScore,start=r.startSatisfaction,clean=r.cleanBonus,drive=r.driveDelta,request=r.satisfactionDelta,time=r.timeDelta};}
+ public static PassengerScoreView Recorded(PassengerResult r){return new PassengerScoreView{value=r.satisfaction,comfort=r.comfortDelta,required=r.required,start=r.startSatisfaction,clean=r.cleanBonus,drive=r.driveDelta,request=r.satisfactionDelta,time=r.timeDelta};}
  public string Caption {get{return "승객 만족도 "+value+" · 요구 "+required;}}
  public string Baseline {get{return "기본 "+(start-clean)+" + 청결 "+clean+" = 시작 "+start+" (청결 포함)";}}
- public string Breakdown {get{return "시작 "+start+" + 주행 "+drive+" + 요청 "+request+" + 시간 "+time+" = "+value+" / 요구 "+required;}}
+ public string Breakdown {get{return "시작 "+start+" + 주행 "+drive+" + 요청 "+request+(comfort==0?"":" + 안심 "+comfort)+" + 시간 "+time+" = "+value+" / 요구 "+required;}}
 }
 
 // Mouse and keyboard share these replies; descriptions match implemented prototype effects.

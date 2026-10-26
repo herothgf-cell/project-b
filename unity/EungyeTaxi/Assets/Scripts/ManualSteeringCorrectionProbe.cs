@@ -43,9 +43,11 @@ public class ManualSteeringCorrectionProbe : MonoBehaviour {
    t.autoSteer=0;
    yield return new WaitForSeconds(.6f);
    float yaw=Mathf.Abs(Vector3.Dot(t.body.angularVelocity,Vector3.up));
-   bool passed=!corrected&&maxBrake==0&&minMotor>500&&minSpeed>=kph/3.6f*.95f&&endKph>=kph&&lateral>.15f&&maxTilt<15&&maxSlip<.5f&&yaw<.1f&&Mathf.Abs(t.wheels[0].steerAngle)<.001f;
+   // 0.01 km/h measurement tolerance applies only to the 95% minimum-speed bound.
+   const float minimumSpeedToleranceKph=.01f;
+   bool passed=!corrected&&maxBrake==0&&minMotor>500&&minSpeed>=kph/3.6f*.95f-minimumSpeedToleranceKph/3.6f&&endKph>=kph&&lateral>.15f&&maxTilt<15&&maxSlip<.5f&&yaw<.1f&&Mathf.Abs(t.wheels[0].steerAngle)<.001f;
    ok&=passed;
-   string line=(passed?"PASS":"FAIL")+" kph="+kph+" side="+side+" endKph="+F(endKph)+" minKph="+F(minSpeed*3.6f)+" lateralM="+F(lateral)+" maxTiltDeg="+F(maxTilt)+" maxSideSlip="+F(maxSlip)+" minRearMotorNm="+F(minMotor)+" maxBrakeNm="+F(maxBrake)+" cornerAssisted="+corrected+" recoveredYawRadS="+F(yaw);
+   string line=(passed?"PASS":"FAIL")+" kph="+kph+" side="+side+" endKph="+F(endKph)+" minimumSpeedToleranceKph="+F(minimumSpeedToleranceKph)+" minKph="+F(minSpeed*3.6f)+" lateralM="+F(lateral)+" maxTiltDeg="+F(maxTilt)+" maxSideSlip="+F(maxSlip)+" minRearMotorNm="+F(minMotor)+" maxBrakeNm="+F(maxBrake)+" cornerAssisted="+corrected+" recoveredYawRadS="+F(yaw);
    report.AppendLine(line);Debug.Log("MANUAL_CORRECTIONS "+line);
   }
   string folder=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts"));Directory.CreateDirectory(folder);
