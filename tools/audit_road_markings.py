@@ -122,7 +122,8 @@ def audit(map_data, catalog=None):
                 "parallel_501_candidate" if mark["id"] in safety_ids else
                 "centerline" if kind == "501" else
                 "safety_area" if kind == "531" else
-                "road_edge" if kind == "505" else "other_imported")
+                "road_edge" if kind == "505" else
+                "no_stopping_parking_line" if kind == "515" else "other_imported")
         roles[role] += 1
     generated = _generated_sources(map_data.get("hdEdges", []))
     imported_yellow = [mark for mark in unique if str(mark.get("type", "")).startswith("1")]
@@ -166,7 +167,8 @@ def _markdown(report):
     lines += ["", "## Roles after deduplication", ""]
     lines += [f"- {key}: {count}" for key, count in report["markRoles"].items()]
     lines += ["", "Kind 501 denotes a centerline in the source. Parallel 501 pairs are candidates until a facility catalog names the reviewed strip; "
-              "kind 531 denotes a safety area; kind 505 is a road edge.", "",
+              "kind 531 denotes a safety area; kind 505 is a road edge; kind 515 is a no-stopping/parking line.",
+              "NGII code reference: https://www.codil.or.kr/filebank/original/RK/OTKCRK240337/OTKCRK240337.pdf", "",
               f"Exact duplicate pairs: {len(report['exactDuplicatePairs'])}; parallel 501 review candidates: "
               f"{len(report['parallelCenterlineCandidates'])}; generated-yellow source candidates: "
               f"{len(report['generatedYellowSourceCandidates'])}.", "",
@@ -192,7 +194,10 @@ def main():
     args = parser.parse_args()
     package = json.loads(Path(args.package).read_text(encoding="utf-8"))
     catalog = json.loads(Path(args.catalog).read_text(encoding="utf-8")) if Path(args.catalog).exists() else None
-    report = audit(package["baseline"] if "baseline" in package else package, catalog)
+    map_data = dict(package["baseline"]) if "baseline" in package else package
+    if "document" in package:
+        map_data["hdEdges"] = package["document"]["lanes"]
+    report = audit(map_data, catalog)
     stem = Path(args.output)
     stem.parent.mkdir(parents=True, exist_ok=True)
     stem.with_suffix(".json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

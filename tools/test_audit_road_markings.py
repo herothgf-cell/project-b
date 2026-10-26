@@ -21,11 +21,13 @@ class AuditRoadMarkingsTests(unittest.TestCase):
             {"id": "north", "type": "111", "kind": "501", "points": [{"x": 0, "z": 2}, {"x": 10, "z": 2}]},
             {"id": "south", "type": "111", "kind": "501", "points": [{"x": 0, "z": -2}, {"x": 10, "z": -2}]},
             {"id": "edge", "type": "111", "kind": "505", "points": [{"x": 0, "z": 8}, {"x": 10, "z": 8}]},
+            {"id": "parking-ban", "type": "111", "kind": "515", "points": [{"x": 0, "z": 10}, {"x": 10, "z": 10}]},
         ]
         catalog = {"facilities": [{"kind": "paired-median", "sourceUrl": "https://example.test/panorama", "northMarkIds": ["north"], "southMarkIds": ["south"]}]}
         report = audit({"roads": [], "hdEdges": [], "hdMarks": marks}, catalog)
         self.assertEqual(report["markRoles"]["central_safety_boundary"], 2)
         self.assertEqual(report["markRoles"]["road_edge"], 1)
+        self.assertEqual(report["markRoles"]["no_stopping_parking_line"], 1)
 
     def test_generated_centre_sample_reports_near_imported_line_without_folding_roles(self):
         def lane(name, z, reverse=False):
