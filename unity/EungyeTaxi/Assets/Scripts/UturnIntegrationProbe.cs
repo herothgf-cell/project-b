@@ -15,7 +15,7 @@ public sealed class UturnIntegrationProbe : MonoBehaviour {
   foreach(var c in session.traffic.cars){c.respawn=false;c.Recycle();c.enabled=false;}
   var graph=session.jobs.nav.hd;var district=FindObjectOfType<DistrictTraffic>();var map=session.world.map;string folder=Path.GetFullPath("artifacts");Directory.CreateDirectory(folder);
   Check(ReferenceEquals(graph.edges,map.hdEdges)&&district&&ReferenceEquals(district.graph.edges,map.hdEdges),"shared player/NPC graph");
-  var turns=graph.edges.Select((edge,index)=>new{edge,index}).Where(x=>x.edge.turn==-2&&!x.edge.disabled).ToArray();Check(turns.Length==3,"three reviewed movements");
+  var turns=graph.edges.Select((edge,index)=>new{edge,index}).Where(x=>x.edge.turn==-2&&!x.edge.disabled).ToArray();Check(turns.Length==6,"six reviewed movements");
   Physics.SyncTransforms();int blocked=0,samples=0;var environment=FindObjectOfType<RoadEnvironment>();
   foreach(var item in turns){var path=graph.paths[item.index];for(float d=0;d<=path.length;d+=1){samples++;var p=path.Position(d);if(Physics.OverlapBox(p+Vector3.up,new Vector3(.95f,.6f,1.8f),Quaternion.LookRotation(path.Tangent(d)),1,QueryTriggerInteraction.Ignore).Any(c=>c.name.StartsWith("Building ")||c.name.Contains("중앙분리")||c.name.Contains("Median")))blocked++;}}
   Check(blocked==0,"U-turn static collider samples="+samples+" blocked="+blocked);
