@@ -95,3 +95,10 @@
 - 실제 소스/기록 커밋 `dfca2f48c1df65d3ab43ce9876d8050be2027eac` 기준으로 BuildHybrid 실행 폴더 전체의 크기·SHA256을 갱신했다.
 - `tools/update_distribution_manifest.ps1 -SourceCommit dfca2f48c1df65d3ab43ce9876d8050be2027eac -ValidatedOn 2026-10-26 -ValidationReport artifacts/map-trip-release-validation.json`: 종료0,130파일. 이어 `-VerifyOnly`: 종료0,130파일/105,536,133바이트 일치.
 - manifest 검증 항목은 실제 BuildHybrid·모델·편집기·위치 제어·NPC·자동 물리·화면 결과로 구성했고, 사람 수동/캠페인/현장 전수 검증은 false로 기록했다. 기본 은계 실행폴더와 정식 지도 사본을 함께 커밋한다.
+
+## 기본 작업 폴더 반영 완료
+- 배포 커밋 `5a30bfb`를 기본 작업 폴더의 로컬 main에 `git merge --ff-only codex/eungye-uturn-medians`로 반영했다(종료0). 기준 소스는 manifest의 실제40자리 커밋이다. 원격 푸시는 수행하지 않았다.
+- 기본 폴더에서 `tools/update_distribution_manifest.ps1 -VerifyOnly`: 종료0,130파일/105,536,133바이트. `tools/check_workspace.ps1 -Strict`: 종료0/Input issues0. 실행 경로 `builds/EungyeTaxi/EungyeTaxi.exe`에 새 실행파일이 있다.
+- 기존 사용자 `LATEST.md`의 현황 재확인 절을 백업·정확히 복원해 미커밋 상태로 남겼고, 기존 미추적 Unity/기획 파일도 보존했다. 사용자 변경을 이번 커밋에 섞지 않았다.
+- 검사 로그·최종 화면·독립 검토·당시 계획/판단 기록은 `artifacts/2026-10-26-map-trip/`에 보존했다. `primary-distribution-verify.txt`, `primary-workspace-strict.txt`는 반영 후의 실제 검증 결과다.
+- 다음 작업은 사람의 수동20분/3일 플레이·Unity GUI 편집 검증 및 명시하지 않은 접근부 거리뷰 조사다. 별도 운임 점진 감액 기획을 이 작업의 현행 지급 규칙과 혼동하지 않는다.
