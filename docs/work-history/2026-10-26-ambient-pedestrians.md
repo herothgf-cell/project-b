@@ -46,3 +46,6 @@
 ## 내린 판단
 - NPC 자동 양보와 택시 관찰·접촉을 연결하되 수동/H 가감속은 운전자 소유를 유지했다. H는 기존에 조향만 담당하며 자동 제동까지 원하면 별도 제어 정책 변경이 필요하다.
 - 안전 재등장을 기다리는 숨긴 행인은 신규 횡단도 시작하지 못하게 했다. 잘못 보수적으로 판단했을 때의 비용은 행인이 더 오래 기다리는 것이며, 보이지 않는 상태로 차도에 진입시키지 않는다.
+
+## main 통합·푸시
+검증 기록/배포 커밋은 실제 `git log -1 --oneline -- docs/work-history/2026-10-26-ambient-pedestrians.md` 결과 **2341730 Ship integrated pedestrian build with focused validation**이다. 기본 저장소 main1973175에서2341730으로 fast-forward, 기본 실행 폴더 VerifyOnly 종료0(130파일/105,615,671바이트), `git push origin main` 종료0을 확인했다. 사용자 `.mmst` 변경 및 기존 미추적 폴더/파일은 보존했다. 테스트/검토 artifacts는 기본 저장소 지정 폴더에 복사한 뒤 임시 작업 공간을 정리한다.
