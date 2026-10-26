@@ -23,7 +23,7 @@ public static class ReviewedLaneLayoutTests {
   Check(pocket>=0,"T1 southeast approach has a separate short left-turn lane");
   var graph=new HdRoadGraph(map);
   var edge=map.hdEdges[pocket];
-  Check(edge.number==1&&edge.next.Length==1&&map.hdEdges[edge.next[0]].turn==-1,"pocket permits left only");
+  Check(edge.number==1&&edge.next.Any(n=>map.hdEdges[n].turn==-1)&&edge.next.All(n=>map.hdEdges[n].turn==-1||map.hdEdges[n].turn==UturnMovement.Turn),"pocket permits left and explicit reviewed U-turn only");
   var through=map.hdEdges.First(e=>e.fromNode=="reviewed:T1-SE:split:0");
   Check(through.number==2&&!through.next.Any(i=>map.hdEdges[i].turn<0),"inner through lane no longer turns left");
   Check(!map.hdEdges.Any(e=>e.next.Any(i=>map.hdEdges[i].disabled)),"no route enters disabled old left join");

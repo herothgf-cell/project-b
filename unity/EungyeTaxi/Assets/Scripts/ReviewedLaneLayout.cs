@@ -23,6 +23,8 @@ public static class ReviewedLaneLayout {
   Apply(map,JsonUtility.FromJson<Settings>(asset.text));
  }
  public static void Apply(MapData map,Settings settings){
+  // A composed project document already owns its lane geometry.
+  if(map.editorDocument!=null)return;
   Applied old;if(applied.TryGetValue(map,out old))return;
   var state=new Applied();var edges=new List<HdEdge>(map.hdEdges);
   foreach(var item in settings.pockets??new Pocket[0]){
@@ -97,7 +99,7 @@ public static class ReviewedLaneLayout {
   }return point;
  }
  public static void Paint(MapData map,Action<string,Vector3,Vector3,float,float,bool> mark){
-  Applied state;if(!applied.TryGetValue(map,out state))return;
+  Applied state;if(!applied.TryGetValue(map,out state)){LaneDirectionPaint.Paint(map,mark);return;}
   foreach(var taper in state.tapers)for(float at=0;at<taper.length;at+=1){float t=at/taper.length,blend=t*t*(3-2*t);if(taper.offset*blend<1.8f||at%6>=3)continue;
    var direction=taper.path.Tangent(taper.start+at);var point=taper.path.Position(taper.start+at)-TrafficSystem.Right(direction)*taper.offset*blend*.5f;mark("Reviewed pocket taper",point,direction,.13f,.96f,false);
   }

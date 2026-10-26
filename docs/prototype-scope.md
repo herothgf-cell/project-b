@@ -1,5 +1,7 @@
 # 프로토타입 개발을 위한 통합 기획
 
+2026-10-26 유턴·중앙분리대: 확인된 T1 접근3곳의 조건부 유턴, 수인로 중앙 방호울타리/안전지대, 전체 노면선 감사 및 정식 지도 화살표 표시를 구현한다. 검증·현장 확인 범위는 [작업 기록](work-history/2026-10-26-uturn-medians.md), [거리뷰 근거](content-design/2026-10-26-uturn-median-observations.md)를 따른다. 전체 현장 확인·사람의 수동 운전 검증을 뜻하지 않는다.
+
 2026-10-23 Unity 통합: 기존 Esc의 차로·출구/차로변경·노면·표지·차량/보행 신호, 건물/부지 생성·삭제를 Unity 3D 편집 창으로 옮긴다. 실제 주행 공통 문서/검사·정식 저장·다른 PC 빌드 경로를 유지한다. [사용법](unity-map-editor-guide.md) · [검증 기록](work-history/2026-10-23-unity-full-map-editor.md).
 
 프로토 추가(구현·자동 검증, 수동 체험 남음): [취객·차량 청결도·주유소 세차](content-design/15-drunk-passengers-and-cleanliness.md)를 [P9 체크리스트](prototype-development-checklist.md)에 넣는다. 취객의 구토·도착 후 기상 지연, 청결도에 따른 승차 거부/시작 만족도 가산, 기존 주유소 F7 세차, 연료 우측 HUD를 포함한다. 취객·청결·세차·중단 운송 이어하기를 구현하며 사고·수리/단골·예약 제외는 유지한다.

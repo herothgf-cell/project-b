@@ -2520,18 +2520,27 @@
           ],
           "status": "partial",
           "observations": [
-            "Three straight arrows on red main carriageway; additional median-side left/U-turn space. Separate right-turn channel behind island, with pedestrian crossing. 50 sign visible."
+            "Three straight arrows on red main carriageway; additional median-side left/U-turn space. Separate right-turn channel behind island, with pedestrian crossing. 50 sign visible.",
+            "2026-10-26 zoomed sign review: U-turn permitted on left green OR pedestrian green (좌회전시 / 보행신호시). Capture2026-05. Game path and signal timing are provisional."
           ],
-          "checkedAt": "2026-10-22",
+          "checkedAt": "2026-10-26",
           "captureMonth": "2026-05",
           "panoramas": [
             "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=Om0JYhDp_TKToChPfJovqQ,0,-20,80,Float",
-            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=pbIhvNw5ofVGzsLRZ9jVWQ,0,-20,80,Float"
+            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=pbIhvNw5ofVGzsLRZ9jVWQ,0,-20,80,Float",
+            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16,0,0,0,adh&p=pbIhvNw5ofVGzsLRZ9jVWQ,125,8,25,Float"
           ],
           "remaining": [
-            "U-turn route, pocket start location, island/crosswalk survey and signal timing unconfirmed."
+            "Exact dimensions, pocket start position, island/crosswalk geometry and actual signal timing not surveyed; other lane roles retain prior partial observations."
           ],
-          "applied": true
+          "applied": true,
+          "uturn": {
+            "observed": true,
+            "condition": "left-or-pedestrian-green",
+            "movementId": "join:reviewed:T1-NW:uturn",
+            "geometry": "game-estimated",
+            "captureMonth": "2026-05"
+          }
         },
         {
           "direction": "NE",
@@ -2558,19 +2567,28 @@
           ],
           "status": "partial",
           "observations": [
-            "Main carriageway three lanes: middle and outer arrows straight. Separate right-turn channel with island and yellow raised pedestrian crossing. U-turn road marking/sign visible on inner lane."
+            "Main carriageway three lanes: middle and outer arrows straight. Separate right-turn channel with island and yellow raised pedestrian crossing. U-turn road marking/sign visible on inner lane.",
+            "2026-10-26 zoomed sign review: U-turn permitted on left green OR pedestrian green (좌회전시 / 보행신호시). Capture2026-05. Game path and signal timing are provisional."
           ],
-          "checkedAt": "2026-10-22",
+          "checkedAt": "2026-10-26",
           "captureMonth": "2026-05",
           "panoramas": [
             "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=Wm3F_NxTBIk8SHgGY83TeA,0,-20,80,Float",
             "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=C05LjSoKPvjCfwsrheEcxQ,0,-20,80,Float",
-            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=rxRynSnOv8mm0LjFYjVMwA,0,-20,80,Float"
+            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=rxRynSnOv8mm0LjFYjVMwA,0,-20,80,Float",
+            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16,0,0,0,adh&p=C05LjSoKPvjCfwsrheEcxQ,230,12,30,Float"
           ],
           "remaining": [
-            "Inner left arrow partly vehicle-occluded; U-turn route, exact dimensions and signal timing unconfirmed."
+            "Exact dimensions, pocket start position, island/crosswalk geometry and actual signal timing not surveyed; other lane roles retain prior partial observations."
           ],
-          "applied": true
+          "applied": true,
+          "uturn": {
+            "observed": true,
+            "condition": "left-or-pedestrian-green",
+            "movementId": "join:reviewed:T1-NE:uturn",
+            "geometry": "game-estimated",
+            "captureMonth": "2026-05"
+          }
         },
         {
           "direction": "SE",
@@ -2597,18 +2615,27 @@
           ],
           "status": "partial",
           "observations": [
-            "Three through lanes plus median-side left/U-turn pocket; left/U-turn sign and crossing visible. Existing left pocket implemented with provisional dimensions."
+            "Three through lanes plus median-side left/U-turn pocket; left/U-turn sign and crossing visible. Existing left pocket implemented with provisional dimensions.",
+            "2026-10-26 zoomed sign review: U-turn permitted on left green OR pedestrian green (좌회전시 / 보행신호시). Capture2026-05. Game path and signal timing are provisional."
           ],
-          "checkedAt": "2026-10-22",
+          "checkedAt": "2026-10-26",
           "captureMonth": "2026-05",
           "panoramas": [
             "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=lygcigyMAFesMYe7CZrtIA,0,-20,80,Float",
-            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=NeRkbKpCLPyjXB6lsBHKhw,0,-20,80,Float"
+            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16.00,0,0,0,adh&p=NeRkbKpCLPyjXB6lsBHKhw,0,-20,80,Float",
+            "https://map.naver.com/p/entry/coordinates/3zadbu,2AGZTu?c=16,0,0,0,adh&p=NeRkbKpCLPyjXB6lsBHKhw,-70,12,50,Float"
           ],
           "remaining": [
-            "U-turn route, separate right channel, dimensions and signal timing unconfirmed."
+            "Exact dimensions, pocket start position, island/crosswalk geometry and actual signal timing not surveyed; other lane roles retain prior partial observations."
           ],
-          "applied": true
+          "applied": true,
+          "uturn": {
+            "observed": true,
+            "condition": "left-or-pedestrian-green",
+            "movementId": "join:reviewed:T1-SE:uturn",
+            "geometry": "game-estimated",
+            "captureMonth": "2026-05"
+          }
         }
       ]
     },
