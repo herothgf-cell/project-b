@@ -27,3 +27,14 @@ R5/PS09가 해당 거점을 사용할 때 일반 횡단 대기 행인을 숨기�
 ## 남은 필수 확인과 재현
 
 최종 빌드 후 같은 실행 파일에서 `-ambientPedestrianTest`를 한 번 실행해 적색 진입 금지·녹색/마지막 2초·실제 NPC 정지·비교통 경로 통과·승객 분리·화면을 확인한다. 종료 결과는 `artifacts/ambient-pedestrian-test.txt`, 이미지는 `artifacts/ambient-pedestrians.png`, 중간 저장은 `artifacts/ambient-pedestrian-test.json`이다. 그 다음 **새 프로세스**로 `-ambientPedestrianReloadTest`를 실행해 실제 `BusinessProgress` 시작 복원과 횡단 점유·위치·재개를 확인한다 (`artifacts/ambient-pedestrian-reload.txt`). 두 실행의 결과는 아직 미검증이며 최종 빌드 담당자가 기록한다. 수동 운전, 전체 캠페인, 장시간 성능은 검사하지 않았다.
+
+## 최종 소스 리뷰 수정 (같은 날)
+
+- 긴 J5057/T2 횡단의 끝에 있는 택시 차체도 전체 횡단 경로를 따라 최근접점으로 검사한다. 기존 중앙 14m 제한을 제거했다.
+- 집중 프로브에서 같은 녹색 완주 후 휴식 만료까지 신호를 고정해 재진입 금지를 확인한다. 적색 중 완주 검사는 별도로 실행한다.
+- R5/PS09 소유권이 끝나도 대기 보행자는 택시와 80m 초과로 떨어지고 화면 밖이 될 때까지 숨긴다. 숨김 상태를 저장하고 시나리오 복원 뒤 정지 상태에서도 다시 조정한다. 이미 횡단 중인 행인은 숨기지 않는다.
+- PS09 채점 완료 후에도 상황 보행자는 계속 이동하며 도착할 때까지 횡단 점유와 일반차 양보를 유지한다. 도착과 최소 4초가 모두 충족된 뒤 소유권을 해제한다.
+- 횡단 경로의 대기 상태 중간 진행률, 횡단 중 남은 휴식 시간 등 불가능한 저장 조합을 복원 전에 거부한다. 구 저장의 null 보행자 배열 처리 규칙은 유지한다.
+- 동일 집중 프로브에 긴 횡단 끝 택시, 잘못된 저장 상태, PS09 도착 전 소유권, 가까운 거리 지연 재등장의 좁은 확인을 추가했다.
+
+검증: Unity 2022.3.62f2 `-batchmode -nographics -quit -projectPath unity/EungyeTaxi -logFile artifacts/ambient-review-compile.log` 실행. 로그에 `Exiting batchmode successfully now!`가 있고 컴파일 오류가 없었다. `git diff --check`도 소스 파일에서 통과했다. 이 수정 후 player 집중 저장/새 프로세스 복원 검사는 최종 빌드 담당자가 실행할 예정이며 아직 수행하지 않았다. 지도 배치 검색, 전체 캠페인 및 수동 운전 검사는 반복하지 않았다.
