@@ -4,6 +4,7 @@ public static class FollowupIntegrationChecks {
  public static void Run(){
   UturnIntegrationChecks.Run();
   ReviewedJunctionMapTests.Run();
+  ReviewedJunctionObserverTests.Run();
   PassengerScoreRecoveryTests.Run();
   NavigationStopRegressionTests.Run();
   PedestrianSignalPlacementTests.Run();

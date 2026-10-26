@@ -42,7 +42,7 @@ public class DrivingLaw : MonoBehaviour {
    var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(taxi.transform.forward,dir)<.7f)continue;var stop=session.traffic.StopPosition(j,axis,sign);var planeNormal=session.traffic.StopNormal(j,axis,sign);
    float before=Vector3.Dot(previous-stop,planeNormal),after=Vector3.Dot(front-stop,planeNormal),lane=Vector3.Dot(front-j.center,TrafficSystem.Right(dir));string key=j.name+":"+axis+":"+sign;
    if(after< -8||after>8)stops.Remove(key);
-   if((lane<=.15f||lane>=j.halfWidth[axis])&&!session.traffic.SignedUturnApproach(j,axis,sign,taxi.transform.position,taxi.transform.forward))continue;
+   if((lane<=.15f||lane>=j.halfWidth[axis])&&!session.traffic.DirectedApproach(j,axis,sign,taxi.transform.position,taxi.transform.forward))continue;
    if(after>=-3&&after<=TrafficJunction.StopLineEntryTolerance&&taxi.body.velocity.magnitude<.05f)stops[key]=true;
    if(before<TrafficJunction.StopLineEntryTolerance&&after>=TrafficJunction.StopLineEntryTolerance){string laneId=session.traffic.EditorLaneId(taxi.transform.position,taxi.transform.forward);var observed=session.traffic.Observe(j,axis,sign,dir,taxi.gameObject);bool uturnSigned=session.traffic.UturnCondition(laneId)!=null;entry=new Entry{edited=j.editorProgram!=null,left=j.editorProgram!=null?j.editorProgram.Movement(axis,sign,-1,session.traffic.Clock,laneId):SignalColor.Red,junction=j,direction=dir,axis=axis,sign=sign,stopped=stops.ContainsKey(key),observed=observed,uturnSigned=uturnSigned,uturnAllowed=uturnSigned&&observed.PedestrianClear&&session.traffic.UturnPermitted(j,axis,sign,laneId),id=ids.Next("event")};stops.Remove(key);break;}
   }

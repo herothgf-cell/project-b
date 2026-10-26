@@ -67,7 +67,7 @@ public class DrivingManners : MonoBehaviour {
   foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)foreach(int sign in new[]{-1,1}){
    var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.Owns(j))continue;
    if(!j.signalized&&!j.scenarioSignal)continue;
-   var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(transform.forward,dir)<.7f)continue;var stop=session.traffic.StopPosition(j,axis,sign);var planeNormal=session.traffic.StopNormal(j,axis,sign);float a=Vector3.Dot(before-stop,planeNormal),b=Vector3.Dot(after-stop,planeNormal);float lane=Vector3.Dot(after-j.center,TrafficSystem.Right(dir));bool validLane=lane>.15f&&lane<j.halfWidth[axis]||session.traffic.SignedUturnApproach(j,axis,sign,transform.position,transform.forward);string key=j.name+axis+sign;
+   var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(transform.forward,dir)<.7f)continue;var stop=session.traffic.StopPosition(j,axis,sign);var planeNormal=session.traffic.StopNormal(j,axis,sign);float a=Vector3.Dot(before-stop,planeNormal),b=Vector3.Dot(after-stop,planeNormal);float lane=Vector3.Dot(after-j.center,TrafficSystem.Right(dir));bool validLane=lane>.15f&&lane<j.halfWidth[axis]||session.traffic.DirectedApproach(j,axis,sign,transform.position,transform.forward);string key=j.name+axis+sign;
    if(b>=-3&&b<=TrafficJunction.StopLineEntryTolerance&&validLane&&session.taxi.body.velocity.magnitude<.05f)stops[key]=Time.time;
    if(a<TrafficJunction.StopLineEntryTolerance&&b>=TrafficJunction.StopLineEntryTolerance&&validLane){
     float last;bool stopped=stops.TryGetValue(key,out last)&&Time.time-last<8;stops.Remove(key);
