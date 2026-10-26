@@ -1,5 +1,7 @@
 # 프로토타입 개발을 위한 통합 기획
 
+2026-10-26 기획 검토안: [승객 만족도별 운임·보너스 개정](content-design/11-passenger-request-effects.md#2026-10-26-운임·보너스-개정안)은 문서 단계다. 기본 운임을 최종 승객 만족도 `S`의 요구치 `R` 미달 폭에 따라 점진 감액하고, 높은 `R`의 보너스 상한과 상승폭을 키운다. [P8-07 안정 주행 회복 사양](content-design/04-passengers-and-reservations.md#p8-07-안정-주행-회복-구현-사양-2026-10-26-검토안)도 구현 전이다. 현재 빌드의 기존 지급액·안정 주행 상태와 구분한다.
+
 2026-10-23 Unity 통합: 기존 Esc의 차로·출구/차로변경·노면·표지·차량/보행 신호, 건물/부지 생성·삭제를 Unity 3D 편집 창으로 옮긴다. 실제 주행 공통 문서/검사·정식 저장·다른 PC 빌드 경로를 유지한다. [사용법](unity-map-editor-guide.md) · [검증 기록](work-history/2026-10-23-unity-full-map-editor.md).
 
 프로토 추가(구현·자동 검증, 수동 체험 남음): [취객·차량 청결도·주유소 세차](content-design/15-drunk-passengers-and-cleanliness.md)를 [P9 체크리스트](prototype-development-checklist.md)에 넣는다. 취객의 구토·도착 후 기상 지연, 청결도에 따른 승차 거부/시작 만족도 가산, 기존 주유소 F7 세차, 연료 우측 HUD를 포함한다. 취객·청결·세차·중단 운송 이어하기를 구현하며 사고·수리/단골·예약 제외는 유지한다.
