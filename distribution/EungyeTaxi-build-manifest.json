@@ -1,37 +1,23 @@
 {
-  "sourceCommit": "ccabbd0b07491d10a078b48d5cdf1b1eab2bf10d",
+  "sourceCommit": "3d19b13402405b25a0ee4529de83acebcc9b45c7",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-10-26",
-  "totalBytes": 105626725.0,
+  "totalBytes": 105647070.0,
   "validation": {
-    "build": "PrototypeBuild.BuildHybrid exit 0",
-    "passengerCareModelAssertions": 13301,
-    "legacyJsonAssertions": 10,
-    "startupPlayerAssertions": 8,
-    "passengerCarePlayerAssertions": 207,
-    "liveSaveAssertions": 9,
-    "legacyLiveReloadAssertions": 23,
-    "startupTotalMilliseconds": [
-      18527,
-      19704
-    ],
-    "screenshots": [
-      "loading",
-      "day-one-preparation",
-      "departed-hud",
-      "fare-s48-r60",
-      "fare-s0"
-    ],
-    "documentationLinks": 319,
-    "workspaceStrictIssues": 0,
-    "manualDriving": false,
+    "build": "Integrated PrototypeBuild.BuildHybrid exit 0",
+    "additionalUturns": 3,
+    "executableProbe": "Integrated -additionalUturnTest exit 0",
+    "staticVehicleSamples": 61,
+    "staticBlocked": 0,
+    "kinematicNpcCompletions": 3,
+    "humanManualDriving": false,
+    "rigidbodyDriving": false,
     "fullCampaign": false,
-    "knownLimitations": [
-      "Initial geometry still takes about19seconds; loading feedback is not a total startup speed optimization",
-      "One transient File.Replace warning in high-frequency care test; later persistence assertions passed"
-    ]
+    "originalInputsUnchanged": true,
+    "integratedMain": "84757ef6d1047a1da2e1545440dcd36b9d2c1b40",
+    "observer": "AdditionalUturnObserverTests.Run exit 0"
   },
   "files": [
     {
@@ -42,17 +28,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "cf4eecfff676eb0c38e5b7db8a9713f4a0e2cb94183fd9e20061b0b0cddeab24"
+      "sha256": "5ba56d9b0d9dfb1d7e95520289fadae8bd36e7d82c323e9e87b1147b5e4ec0fd"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 30308,
-      "sha256": "8757cc8ac005abeccf045daf3ff0b26e87ef44ab29c5ace86a1717bc54b52a04"
+      "bytes": 30348,
+      "sha256": "e51a04126438bb4223c595469b75f5412a93bc6d55c92a0fe88def095b8e8be8"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 24776,
-      "sha256": "56a4b31a68fc3b852539a8c82c4867669bf99e059ddce0aa5381785060cebef6"
+      "bytes": 24928,
+      "sha256": "b9674f2537ac2d9cd501e4f927def1a2f861033c3c19c6340ebf6c523c482664"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -62,7 +48,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
       "bytes": 1356,
-      "sha256": "8074097d5a1eb7efbab559d6dacbbbd8b69a3365c9e034ad606abb75747a3e8d"
+      "sha256": "36322cafc84d4ab4ba8397ae32628b586dd6ebf203b15a1170780f41eaa64256"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0.resS",
@@ -71,8 +57,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 1311744,
-      "sha256": "7ebe839d699fb1104691e09fdb88300be3c6d96a971287d866603921bd82f46d"
+      "bytes": 1315328,
+      "sha256": "38567987a8308c06d9448acbcba972505d83599b26b908b52e489d55c0aa5600"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -521,8 +507,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 34067150,
-      "sha256": "a3ed4be717b6fafc51acef0497a6c31212ffc66e740fd4fdfae06869960d6f03"
+      "bytes": 34083566,
+      "sha256": "b2b7b2838a4d01ed615e82b08fafd85e1ac3feef3ad81ca0ae7156bb40a4b22e"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Resources/unity default resources",
@@ -536,8 +522,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/RuntimeInitializeOnLoads.json",
-      "bytes": 4289,
-      "sha256": "b9124bdfd1304f8f82430a285fa51faf4a3932ba32448631cc1a01ae48776d94"
+      "bytes": 4442,
+      "sha256": "df92d18342f8f8334b9d2e0690a7c6de480e96e380417d1ab469dacb23a90e64"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/ScriptingAssemblies.json",
@@ -547,7 +533,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/sharedassets0.assets",
       "bytes": 7624,
-      "sha256": "4369f1764925b01d98cda39103fa9c21df1eab3ba71d406fba44b5bcc896983e"
+      "sha256": "e1a5f3dcb06749cc6df34f3fd13d1e9d3738eedebc260f0859d5937840ab321d"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi.exe",
@@ -657,7 +643,7 @@
     {
       "path": "builds/EungyeTaxi/project-map-build.json",
       "bytes": 177,
-      "sha256": "fb7cb63e4a247196e8bb2871afa7d24c6dde843150923e695ffdd543b585f928"
+      "sha256": "e00ac62b61431d094a23656044d64b8bb63330e05fb0116627463609143b3095"
     },
     {
       "path": "builds/EungyeTaxi/ThirdPartyNotices/mchrbn-unity-traffic-simulation-MIT.txt",
@@ -687,8 +673,8 @@
   ],
   "projectMap": {
     "path": "config/maps/project/eungye.project.json",
-    "contentHash": "c14a2a4b277e040dce001f2df7f89cc0404555a10b85ef931f2b9de14b6b05dc",
-    "bytes": 21443452,
-    "sha256": "6d9dc1e9e0f2a393b4f02f63dd7a7a6d10a3105235667d28f9104f819f29355b"
+    "contentHash": "44ebdedb71e84f436fd15e457841473e1d2761a66989a3bcf5fc50d01654b895",
+    "bytes": 21459862,
+    "sha256": "076efcf598b4db12c0710ab60f11af0eadd22a88e496a4bd77e22323898bb8c3"
   }
 }
