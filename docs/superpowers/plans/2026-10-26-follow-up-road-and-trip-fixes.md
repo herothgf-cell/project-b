@@ -3,14 +3,14 @@
 User explicitly requests completing current U-turn/centreline/median work first, then:
 - (504.753723,475.289825): Naver cross-check whole junction marking layout, separate right-turn lane, misplaced pedestrian signals.
 - Survey and implement observed pedestrian refuge/traffic islands between sidewalks, signal poles and slip right turns (user second panorama attachment).
-- (505.3904,273.581268): verify two lanes each direction with inner left-turn lane via Naver.
+- (505.3904,273.581268): verify the incoming two-lane approach and inner left-turn lane via Naver.
 - Fare settlement: satisfaction60 required70 still pays base9200; determine intended rules, clarify UI or fix discrepancy.
 - Satisfaction: inspect positive live changes, implement live gauge/feedback.
 - Navigation briefly loses route on lane change; fix.
 - Full map clicked destination overrides trip route and hides ride destination; provide restore-trip-route control and preserve markers.
 - Eungye stop9 drop-off fails; reproduce/fix.
 
-Attachments are in user chat, filenames 89c91fcc, baea1d5b, 918070ab, b528d509. Do not lose this queue after context compaction. No code work for this queue started yet.
+Attachments are in user chat, filenames 89c91fcc, baea1d5b, 918070ab, b528d509. Do not lose this queue after context compaction. Tasks A/B/C are now in implementation; final integration status is recorded below.
 
 ## Execution plan (approved continuation; no additional design gate)
 Keep the U-turn/median changes and finish their focused review before applying the following fixes. Use existing design documents as binding economy/score policy; do not silently change fares to compare the wrong score.
@@ -41,7 +41,7 @@ Serialize Unity project use. Run relevant regressions, BuildHybrid, executable p
 
 ## Preliminary field read (during final checks of previous task; no follow-up map edits yet)
 - J5057 north-side island panorama dcuIEvnfmTeYM4mY2DWaXA, capture2026-05: a raised triangular refuge island with pedestrian/cycle crossing; curved slip road separated from main approach, curb edge and yellow speed table. It is on the north-west corner (looking north, main approach is to camera right; west-side apartment/rail on left).
-- Heading30,-8,60 and16,-3,30 show three southbound approach arrow positions: curb right turn, middle straight, inner turn to left (last requires head-on cross-check). Need exact through/outgoing counts and graph pairing before change.
+- Heading30,-8,60 and16,-3,30 show three southbound approach arrow positions: curb right turn, middle straight, inner left-only; heading35,-8,50 subsequently confirmed all three arrows and one opposing northbound lane.
 - URL: https://map.naver.com/p/entry/coordinates/3zafbw,2AGEMu?c=16,0,0,0,adh&p=dcuIEvnfmTeYM4mY2DWaXA,16,-3,30,Float . Heading190,-12,70 shows island and main crossing.
-- J5076_2580 coordinate lookup37.4363461,126.8012172 resolved entry3zaffK,2AGAoR and panoramaPo3cjZOgY9v4qPfVBPGTYg (2026-05). View0,-12,65 from junction lookingnorth clearly shows southbound2lanes: inner LEFT-only, outer STRAIGHT; opposing northbound1lane behind median railing. Black/yellow post rail on yellow double line before crossing. View180,-8,70 shows crossing/private east-side entrance and south road continuing with median. Need graph support for east entrance or explicitly separate field arrow from unavailable route; do not invent routecontinuation.
+- J5076_2580 coordinate lookup37.4363461,126.8012172 resolved entry3zaffK,2AGAoR and panoramaPo3cjZOgY9v4qPfVBPGTYg (2026-05). View0,-12,65 from junction lookingnorth clearly shows southbound2lanes: inner LEFT-only, outer STRAIGHT; opposing northbound1lane behind median railing. Black/yellow post rail on yellow double line before crossing. View180,-8,70 shows crossing/east-side 은계번영길 and south road continuing with median. The east arm is already in the graph, so the left movement uses that existing road.
 - Sources: https://map.naver.com/p/entry/coordinates/3zaffK,2AGAoR?c=17,0,0,0,adh&p=Po3cjZOgY9v4qPfVBPGTYg,0,-12,65,Float ; samepano180,-8,70.

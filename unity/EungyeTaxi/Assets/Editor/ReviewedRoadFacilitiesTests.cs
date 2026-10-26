@@ -22,7 +22,7 @@ public static class ReviewedRoadFacilitiesTests {
   Check(ReviewedRoadFacilities.Plan(new MapData{mapId="other",hdMarks=map.hdMarks},catalog).barriers.Count==0,"map ID guards facility placement");
   var root=new GameObject("facility test");try{ReviewedRoadFacilities.Draw(map,root.transform,false);Check(root.GetComponentsInChildren<Collider>().Length==0,"authoring preview has no colliders");}finally{UnityEngine.Object.DestroyImmediate(root);}
   var package=ProjectMapStore.Load(ProjectMapBuild.Root);
-  var actual=package.baseline;
+  var actual=package.Compose();
   var json=File.ReadAllText(Path.Combine(ProjectMapBuild.Root,"config/maps/eungye-road-facilities.json"));
   var reviewed=JsonUtility.FromJson<ReviewedRoadFacilities.Catalog>(json);
   var real=ReviewedRoadFacilities.Plan(actual,reviewed);
