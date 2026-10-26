@@ -359,7 +359,7 @@ public class TrafficSystem : MonoBehaviour {
         if(!editedCross&&(j.facility==null||j.facility.crosswalk)){j.crosswalkApproaches++;for(float x=-halfWidth+.65f;x<halfWidth-.3f;x+=.95f) Mark("Crosswalk "+j.name,j.center-direction*(conflictHalfWidth+TrafficJunction.CrosswalkCentreOffset)+right*x,direction,.5f,TrafficJunction.CrosswalkDepth,white);}
         if(!editedStop&&(j.facility==null||j.facility.stopLine)){j.stopLineApproaches++;Mark("Stop line "+j.name,j.center-direction*stop+right*halfWidth*.5f,direction,halfWidth-.3f,.4f,white);}
         if(!j.signalized||j.editorProgram!=null)return;
-        if(j.facility==null||j.facility.crosswalk)PedestrianSignalDisplay.Create(this,j,direction,halfWidth,conflictHalfWidth,transform);
+        if(j.facility==null||j.facility.crosswalk)PedestrianSignalDisplay.Create(this,roadMap,j,direction,halfWidth,conflictHalfWidth,transform);
         // Far-side placement keeps the signal visible from a stopped driver's eye position.
         var root=new GameObject(j.name+" signal approach"); root.transform.SetParent(transform); root.transform.position=j.center+direction*stop+right*(halfWidth+.6f); root.transform.rotation=Quaternion.LookRotation(direction);
         var support=roadMap.hybrid?root.transform.InverseTransformPoint(RoadsidePlacement.FindPole(roadMap,root.transform.position)):Vector3.zero;
