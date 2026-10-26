@@ -2,6 +2,7 @@ using System;
 public enum TripState { Idle, ToPickup, OnTrip, Complete, Failed }
 [Serializable] public sealed class FareTripSnapshot {public TripState state;public int fare;public float remaining,pickupRemaining;public bool pickupExpired,arrivalLocked,arrivedOnTime;}
 public class FareTrip {
+ public bool ExtendForSystemDelay(float seconds){if(float.IsNaN(seconds)||float.IsInfinity(seconds)||seconds<=0||seconds>90||ArrivalLocked)return false;if(State==TripState.ToPickup&&!PickupExpired){PickupRemaining+=seconds;return true;}if(State==TripState.OnTrip){Remaining+=seconds;return true;}return false;}
  public TripState State {get;private set;} public float Remaining {get;private set;} public int Fare {get;private set;}
  public float PickupRemaining {get;private set;} public bool PickupExpired {get;private set;}
  public bool ArrivalLocked {get;private set;}public bool ArrivedOnTime {get;private set;}

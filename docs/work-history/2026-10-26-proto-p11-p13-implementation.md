@@ -31,3 +31,17 @@ P12 지역별 수요·공차 성과 → P13 공간 점유 → 저장 안정화·
 변경: `PassengerDemandPolicy.cs`, `OperationMetrics.cs`, `EconomyLedger.cs`, `PassengerJobs.cs`, `BusinessProgress.cs`, `ServiceStops.cs`, `MapDestinationUI.cs`, `OneDayHUD.cs`, 집중 검사와 순수 모델 컴파일 목록.
 
 `ProtoExpansionTests.RunP12`: 미구현 검사 종료1(`p12-red.log`)→단계/분포2,000후보/중립/거리·시간·서비스/복원/날짜 이월 및 최신P11 묶음 종료0(`p12.log`, PROTO_P11_OK/PROTO_P12_OK). UI 화면/실제 운전/전체 회귀는 마지막에 확인한다.
+
+## P13 진행
+
+검증된 일반 게임 포켓만 점유, 동시1대·30게임초 후 포켓 앞7m로 저속 이동, 시야 밖 제거. 접근 중 생성/차량·승객 겹침을 막고 원래 승하차 위치가 비면 그대로 사용한다. 새 승차 후보/수락/정차 판정에 점유를 반영하고 진행 운송은 유지한다. 사건당 한 번 잔여 점유+이동 여유(상한90초) 기한 보호, 같은 운송/운임 유지, 경로 요청에 시스템 사유 기록. 점유 상태·기한 보호 여부를 진행 저장에 포함한다.
+
+**지도에 따른 제한:** 현재 추가12후보 중 직선150m 이내 쌍이0개다. 계획의 ‘안전한 대안 없음’ 경로를 적용하여 현재 배포 범위는 대기만 제공한다. `TryGetAlternative`는 false를 반환하며, 안전 대체 이동 기능이 완성됐다고 주장하지 않는다. 새 후보·지도 연결을 임의로 만들지 않았다. 차량 이동 경로를 플레이어/NPC가 막으면 안전을 위해 해소가 늦어질 수 있다.
+
+변경: `StopOccupancyPolicy.cs`, `StopOccupancySystem.cs`, `FareTrip.cs`, `DriveSession.cs`, `PassengerJobs.cs`, `BusinessProgress.cs`, 요청 관찰/UI, 지도 핀, 집중 검사.
+
+`ProtoExpansionTests.RunP13`: 미구현 경계 종료1(`p13-red.log`)→점유1대·해소·기한 한 번·복원·원운임 유지·도착 잠금·실제 후보12/근거리쌍0 확인 종료0(`p13.log`). 실제 렌더링/물리 진입·통합 저장은 최종 단계에서 확인한다.
+
+## 최종 안정화 시작
+
+P13 핵심 구현 후 기존 고빈도 File.Replace 저장 경고를 먼저 재현/진단하고 전체 회귀·독립 리뷰·빌드를 진행한다. 아직 최종 완료/배포 갱신 상태가 아니다.

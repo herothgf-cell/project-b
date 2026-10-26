@@ -2,6 +2,19 @@ using System;
 using UnityEngine;
 
 public static class ProtoExpansionTests {
+ public static void RunP13(){
+  Check(typeof(PassengerRequest).Assembly.GetType("StopOccupancyPolicy")!=null,"stop occupancy must have a finite saved lifecycle");
+  var p=new StopOccupancyPolicy();Check(p.Begin("event1","EG-GAME-01")&&!p.Begin("event2","EG-GAME-02"),"one occupancy at a time");
+  var trip=new FareTrip();trip.Accept(5000,120,90);float extra=p.Protection();Check(extra>30&&extra<90&&trip.ExtendForSystemDelay(extra)&&trip.Fare==5000,"pickup protection without fare change");p.Protected("trip1");Check(p.Protection()==0,"one compensation per event");
+  p=StopOccupancyPolicy.Restore(p.Capture());Check(p.Protection()==0&&p.Blocking,"restore retains compensation and occupied space");
+  p.Advance(30,false);Check(p.Blocking&&p.Capture().exitMetres==0,"exit cannot cross a blocked path");p.Advance(5,true);Check(!p.Blocking&&p.Active,"finite departure clears stop while visible vehicle remains");p.Removed();Check(!p.Active,"out of view removal permits next event");
+  trip.Board();Check(trip.ExtendForSystemDelay(20)&&trip.Remaining==140&&trip.Fare==5000,"ontrip deadline only");trip.LockArrival();Check(!trip.ExtendForSystemDelay(20),"arrival cannot be extended");
+  MapCatalog.LockedRegion="eungye";var map=MapCatalog.Load();FuelStationLayout.Apply(map);var catalog=PassengerStopCatalog.For(map);int pairs=0;
+  for(int i=catalog.LegacyCount;i<catalog.Stops.Length;i++)for(int j=i+1;j<catalog.Stops.Length;j++)if(Vector3.Distance(catalog.Stops[i].Kerb,catalog.Stops[j].Kerb)<=150)pairs++;
+  Check(catalog.Stops.Length>catalog.LegacyCount,"actual validated ordinary bays exist");Debug.Log("P13_GEOMETRY ordinary="+(catalog.Stops.Length-catalog.LegacyCount)+" nearbyPairs="+pairs+"; current release uses wait-only, no invented alternative");
+  Check(StopOccupancyPolicy.Restore(null).Active==false,"legacy save has no occupancy");
+  Debug.Log("PROTO_P13_OK");
+ }
  public static void RunP12(){
   Check(typeof(PassengerRequest).Assembly.GetType("OperationMetrics")!=null,"operation metrics must record empty travel separately");
   Check(PassengerDemandPolicy.Weight("residential",299.9)==3&&PassengerDemandPolicy.Weight("residential",300)==1&&PassengerDemandPolicy.Weight("office",300)==3&&PassengerDemandPolicy.Weight("commercial",900)==3&&PassengerDemandPolicy.Weight("commercial",99999)==3,"demand phase boundaries and overtime");

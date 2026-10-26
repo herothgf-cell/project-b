@@ -18,6 +18,7 @@ public class PassengerRequestUI : MonoBehaviour {
  public int TotalSatisfactionDelta {get{int value=0;foreach(var o in observations)if(o)value+=o.request.SatisfactionDelta;return Mathf.Clamp(value,-10,10);}}
  public string Summary {get{var text=new List<string>();for(int i=0;i<observations.Count;i++)if(observations[i])text.Add((i+1)+". "+observations[i].request.ResponseText()+" ["+observations[i].request.SatisfactionDelta.ToString("+0;-0;0")+"]");if(schedule!=null)foreach(var slot in schedule.Capture().slots)if(!slot.presented)text.Add(slot.kind+" · 미발생 중립");if(text.Count==0)text.Add("요청 없음");if(lostItem&&finished)text.Add("하차 후 사건 "+session.law.tripId+":lost-item · 지갑 발견 → 보관·신고 절차 안내 (텍스트 사건)");return string.Join("\n",text.ToArray())+"\n요청 합계 "+TotalSatisfactionDelta.ToString("+0;-0;0");}}
  public bool LawClear {get{var events=session.law.ledger.Events;for(int i=boardingLawCount;i<events.Length;i++)if(events[i].Deduction>0)return false;return true;}}
+ public void ExemptSystemRoute(string reason){foreach(var o in observations)if(o)o.SystemRouteReason=reason;}
  void Clear(){foreach(var o in observations)if(o){if(Application.isPlaying)Destroy(o);else DestroyImmediate(o);}observations.Clear();active=-1;schedule=null;stopSeconds=0;finished=lostItem=legacy=false;empty.Restore(new PassengerRequestSnapshot{resolved=true,response="요청 없음"});}
  PassengerRequestObservation NewObservation(){var o=gameObject.AddComponent<PassengerRequestObservation>();o.enabled=false;o.session=session;return o;}
  public void Begin(){
