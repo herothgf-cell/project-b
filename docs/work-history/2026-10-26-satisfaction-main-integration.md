@@ -40,3 +40,7 @@ HUD smoke 재검사에서는 기록된 실행 인자 `-presentationHudTest -oneD
 ## 남은 확인과 실행
 
 Unity 2022.3.62f2 `PrototypeBuild.BuildHybrid`로 기본 은계 `builds/EungyeTaxi/EungyeTaxi.exe`를 갱신했다. 승객 관리·17종 요청·저장/복원·HUD·서비스 지역 플레이어 검사는 위 결과를 따른다. 안정성 자동 물리 검사 실패 항목의 원인 진단, 사람의 수동20분·3일 경제 체감은 남아 있다. 지도 생성 입력과 ZIP은 변경하지 않았다. 다른 PC의 필수 입력은 `pwsh -File tools/check_workspace.ps1 -Strict`로 확인한다. 배포 manifest 파일 크기/SHA256 결과는 아래 배포 기록에 추가한다.
+
+## 배포 기록
+
+소스·문서 커밋은 `299e741cdb115e437c868da2aeb69f8304decf64`, 기본 실행 폴더·manifest 커밋은 `18e6e81cec7321ece618b58416e5c1da543fc570`이다. `pwsh -File tools/update_distribution_manifest.ps1 -VerifyOnly`는 `DISTRIBUTION_OK files=130 bytes=105538085`, 종료0이었다. manifest의 `sourceCommit`은 실제 소스 커밋이며, 검증란에 안정성 검사 종료1과 미수행 수동 운전을 명시했다. 이력 문서 자신의 실제 커밋은 커밋 후 `git log -1 --oneline -- docs/work-history/2026-10-26-satisfaction-main-integration.md`로 확인한다.
