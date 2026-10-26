@@ -51,3 +51,7 @@
 기본 지역 은계, 실행 `builds/EungyeTaxi/EungyeTaxi.exe`. 일반 시작은 준비 화면에서 영업 시작1회로 시간과 호출이 열린다. 구형 저장은 초기화 없이 이어하기. 진단은 `-campaignStartupTest`, 기존 격리 저장 복원 `-liveReloadTest`, 운임/화면 `-passengerCareTest -fareCapture`를 사용한다. 사용자 저장은 읽기만 했고 사용자가 실행 중이던 게임에서 저장이 갱신된 것을 확인해 최종 교체 전 게임 종료 답변을 받았다. 실제 테스트 파일은 artifacts의 별도 경로다.
 
 지도 입력/JSON/ZIP은 변경하지 않는다. 사용자 .mmst 및 기존 미추적 자료도 유지한다.
+
+## 배포
+
+검증된 소스 커밋은 `ccabbd0b07491d10a078b48d5cdf1b1eab2bf10d`다. 기본 은계 실행 폴더와 `distribution/EungyeTaxi-build-manifest.json`을 함께 갱신했다. `tools/update_distribution_manifest.ps1 -VerifyOnly` 종료0,130파일/105,626,725바이트 크기·SHA256 일치. 이번 기록의 실제 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-26-startup-save-fare-fixes.md`로 확인한다.
