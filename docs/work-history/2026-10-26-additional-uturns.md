@@ -25,3 +25,7 @@ AdditionalReviewedUturnMap.Apply가 재현 가능한3개 join·조건 표지·�
 기본 builds/EungyeTaxi/EungyeTaxi.exe. 새 지도에서 M좌표 약725/1478,807/636,797/374에서 각각 위 진입 방향으로 접근한다. 표지 조건과 교통 안전을 확인하고 유턴한다. 개발 재현은 Unity2022.3.62f2의 AdditionalReviewedUturnMap.Apply, AdditionalUturnObserverTests.Run, PrototypeBuild.BuildHybrid 순서. 실행 검사는 -batchmode -nographics -additionalUturnTest이며 artifacts/additional-uturn-probe.txt에 기록한다.
 
 기존 저장의 지도 해시가 달라지는 경우 현행 저장 호환 검사를 우회하지 않는다. 실측 정지선/신호 주기와 사람 주행 체감은 미검증이다. 로컬 검사 로그는 artifacts/additional-uturns/에 보존하며 Git 제외다.
+
+## 검증된 독립 배포
+
+소스 efc59e88db1aec8cf413f0c531c51c4589a13a98. 최종 observer 종료0. 배포 manifest 재생성/VerifyOnly 종료0:130파일105,636,520바이트. main의 다른 대화에서 시작/저장/운임 수정이 진행 중이므로 해당 변경을 보존해 통합 조율 중이다. 이 단계의 독립 빌드가 최종 공동 배포라는 뜻은 아니다.
