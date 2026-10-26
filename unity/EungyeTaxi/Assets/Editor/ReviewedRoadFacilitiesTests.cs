@@ -17,6 +17,8 @@ public static class ReviewedRoadFacilitiesTests {
    Check(Mathf.Max(segment.a.x,segment.b.x)<=40.01f||Mathf.Min(segment.a.x,segment.b.x)>=59.99f,"declared opening remains clear");
    Check(Mathf.Abs(segment.a.z)<=2.01f&&Mathf.Abs(segment.b.z)<=2.01f,"geometry remains inside source boundaries, clear of live lanes at z +/-7");
   }
+  var postRail=new ReviewedRoadFacilities.Catalog{mapId="fixture",facilities=new[]{new ReviewedRoadFacilities.Facility{id="post-rail",segments=new[]{new ReviewedRoadFacilities.ExplicitSegment{kind="post-rail",width=.25f,height=.9f,points=new[]{new MapPoint{x=20,z=0},new MapPoint{x=20,z=5}}}}}}};
+  var railLayout=ReviewedRoadFacilities.Plan(map,postRail);Check(railLayout.barriers.Count==3&&railLayout.barriers.All(l=>Vector3.Distance(l.a,l.b)<=2.001f),"observed post rail is collidable layout with posts at most2m apart");
   Check(ReviewedRoadFacilities.Plan(new MapData{mapId="other",hdMarks=map.hdMarks},catalog).barriers.Count==0,"map ID guards facility placement");
   var root=new GameObject("facility test");try{ReviewedRoadFacilities.Draw(map,root.transform,false);Check(root.GetComponentsInChildren<Collider>().Length==0,"authoring preview has no colliders");}finally{UnityEngine.Object.DestroyImmediate(root);}
   var package=ProjectMapStore.Load(ProjectMapBuild.Root);
