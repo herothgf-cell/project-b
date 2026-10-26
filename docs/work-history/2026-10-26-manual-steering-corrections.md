@@ -34,3 +34,6 @@ foreach($taskName in @('CornerAssistTests','DriveMathTests','ManualHandlingTests
 기본 빌드 `PrototypeBuild.BuildHybrid`, 기본 실행 `builds/EungyeTaxi/EungyeTaxi.exe`. 통합 담당자가 최종 빌드 후 `-batchmode -nographics -manualSteeringCorrectionsTest -logFile <절대 로그 경로>`로 실행하고 종료코드 및 `artifacts/manual-steering-corrections.txt`를 확인한다. 이 기록 작성 시 실제 Rigidbody 검사는 준비만 되었으며 **미실행**이다. 후속 통합 기록의 실제 결과를 따른다.
 
 전용 검사는 기존 TaxiController/WheelCollider를 외딴 평면에서 구동한다. 초기 위치/속도만 설정하고 이후 물리는 강제하지 않는다. 30/50/70km/h 좌우 .25 입력의 속도 유지·횡이동·모터/브레이크·기울기·타이어 미끄러짐·조향 복귀를 확인한다. `Test` 접미사로 기존 시험 저장 격리를 적용하며 실제 캠페인을 불러오지 않는다. 사람의 키보드/패드 체감·전체 캠페인 플레이는 미검증이다. 지도 입력·배포 빌드·manifest는 이 하위 작업에서 변경하지 않았다.
+
+## 최종 통합 결과
+최종 BuildHybrid 및 해당 실행 검사 종료0. [통합 기록](2026-10-26-handling-traffic-receipt.md)의 실제 측정값·실행 범위·남은 확인을 따른다.

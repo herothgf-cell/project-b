@@ -21,3 +21,6 @@ Unity 2022.3.62f2에서 `unity/EungyeTaxi`를 대상으로 `-batchmode -nographi
 ## 변경 파일
 
 `unity/EungyeTaxi/Assets/Scripts/DistrictTraffic.cs`, `TrafficDistributionSnapshot.cs`/`.meta`, `TrafficDistributionTest.cs`/`.meta`, `unity/EungyeTaxi/Assets/Editor/TrafficDistributionTests.cs`/`.meta`, 이 기록, `.superpowers/sdd/2026-10-26-handling-traffic-receipt/task-3-report.md`.
+
+## 최종 통합 결과
+최종 BuildHybrid 및 해당 실행 검사 종료0. [통합 기록](2026-10-26-handling-traffic-receipt.md)의 실제 측정값·실행 범위·남은 확인을 따른다.
