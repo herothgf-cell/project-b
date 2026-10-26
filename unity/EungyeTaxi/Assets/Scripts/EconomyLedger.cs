@@ -8,12 +8,14 @@ public enum BusinessState { Open, Closing, Summary, Won, Lost, Completed }
  public bool Valid {get{return days>=1&&days<=30&&target>0&&target<=10000000&&daySeconds>=1&&daySeconds<=7200&&insurance>=0&&insurance<=100000&&food>=0&&food<=100000&&fuelPerKm>=0&&fuelPerKm<=10000&&idlePerHour>=0&&idlePerHour<=10000;}}
 }
 [Serializable] public class DayRecord {
+ public OperationMetricsSnapshot metrics;
  public double elapsed,realSeconds; public string endReason; public DriverCondition driver;
  public int day,income,rides,failedTrips,fuel,insurance,food,wash,net;
  public float metres;
- public DayRecord Copy(){var c=(DayRecord)MemberwiseClone();c.driver=driver==null?null:driver.Copy();return c;}
+ public DayRecord Copy(){var c=(DayRecord)MemberwiseClone();c.driver=driver==null?null:driver.Copy();c.metrics=metrics==null?null:metrics.Copy();return c;}
 }
 [Serializable] public class EconomySnapshot {
+ public OperationMetricsSnapshot metrics;
  public int version=1;
  public EconomySettings settings;
  public DayRecord[] records;
@@ -26,6 +28,11 @@ public enum BusinessState { Open, Closing, Summary, Won, Lost, Completed }
 
 // Engine-independent accounting. Only settlement commits a day's net earnings.
 public class EconomyLedger {
+ OperationMetrics metrics=new OperationMetrics();public OperationMetrics Metrics {get{return metrics;}private set{metrics=value;}}
+ public OperationMetricsSnapshot TotalMetrics {get{var total=new OperationMetricsSnapshot{captured=true};foreach(var r in records)AddMetrics(total,r.metrics);if(Operating)AddMetrics(total,Metrics.Capture());return total;}}
+ static void AddMetrics(OperationMetricsSnapshot total,OperationMetricsSnapshot value){if(value==null||!value.captured)return;total.emptyMetres+=value.emptyMetres;total.occupiedMetres+=value.occupiedMetres;total.emptyMovingSeconds+=value.emptyMovingSeconds;total.emptyWaitingSeconds+=value.emptyWaitingSeconds;total.serviceSeconds+=value.serviceSeconds;}
+ public void AdvanceOperation(double seconds,double metres,bool occupied){if(!Operating)return;Advance(seconds,metres);Metrics.Observe(metres,seconds,occupied,false);}
+ public void AdvanceService(double seconds){if(!Operating)return;Advance(seconds,0);Metrics.Observe(0,seconds,false,true);}
  public VehicleCare Care {get;private set;}
  public bool OneDay {get;private set;}
  public DriverCondition Driver {get;private set;}
@@ -76,21 +83,21 @@ public class EconomyLedger {
  public bool UseMeal(string id){if(!OneDay||State!=BusinessState.Open||services.Contains(id)||!Account.Meal(id,Day))return false;services.Add(id);Driver=PreviewConditionService(false);ServiceTime(50);return true;}
  public bool UseSleep(string id){if(!OneDay||State!=BusinessState.Open||string.IsNullOrEmpty(id)||!services.Add(id))return false;var next=PreviewConditionService(true);ServiceTime(100);Driver=next;return true;}
  public bool UseWash(string id){if(Account==null||State!=BusinessState.Open||string.IsNullOrEmpty(id)||services.Contains(id)||!Account.Wash(id,Day))return false;services.Add(id);Care.Wash();if(Driver!=null)Driver.Advance(30);ServiceTime(30);return true;}
- void ServiceTime(double seconds){double before=Elapsed;Elapsed+=seconds;BudgetCrossed(before);}
+ void ServiceTime(double seconds){double before=Elapsed;Elapsed+=seconds;Metrics.Observe(0,seconds,false,true);BudgetCrossed(before);}
  void BudgetCrossed(double before){if(before<Settings.daySeconds&&Elapsed>=Settings.daySeconds){if(OneDay)Driver.fatigue=100;else RequestClose("시간 종료");}}
  public void RequestClose(){RequestClose("조기 퇴근");}
  public void RequestClose(string reason){if(State==BusinessState.Open){State=BusinessState.Closing;EndReason=reason;}}
  public bool Settle(){
   if(State!=BusinessState.Closing)return false;
-  var record=new DayRecord{day=Day,income=Income,rides=Rides,failedTrips=FailedTrips,metres=(float)Metres,fuel=FuelCost,insurance=Settings.insurance,food=Settings.food,net=ProjectedNet};
+  var record=new DayRecord{metrics=Metrics.Capture(),day=Day,income=Income,rides=Rides,failedTrips=FailedTrips,metres=(float)Metres,fuel=FuelCost,insurance=Settings.insurance,food=Settings.food,net=ProjectedNet};
   if(Account!=null){Account.CloseDay(Day);record.food=Account.Expense(Day,"meal");record.insurance=Account.Expense(Day,"insurance");record.net=Income-Account.Expense(Day,null);}
   record.wash=Account==null?0:Account.Expense(Day,"wash");record.elapsed=Elapsed;record.endReason=EndReason;record.driver=Driver==null?null:Driver.Copy();records.Add(record);if(Account==null)TotalNet+=record.net;State=Outcome();return true;
  }
  BusinessState Outcome(){if(OneDay)return Day>=Settings.days?BusinessState.Completed:BusinessState.Summary;return (Account==null?TotalNet>=Settings.target:Account.GoalMet)?BusinessState.Won:Day>=Settings.days?BusinessState.Lost:BusinessState.Summary;}
  public bool DepartureAllowed {get{return Account==null||Account.InsuranceValid(Day+1);}}
  public void RefreshSummary(){if(Account==null||Operating||Last==null)return;Last.insurance=Account.Expense(Day,"insurance");Last.food=Account.Expense(Day,"meal");Last.fuel=FuelCost;Last.net=Income-Account.Expense(Day,null);State=Outcome();}
- public bool NextDay(){if(State!=BusinessState.Summary)return false;Day++;Care.BeginDay(Day);Income=Rides=FailedTrips=0;Elapsed=Metres=fuel=0;EndReason=null;services.Clear();if(Driver!=null){Driver=new DriverCondition{satiety=Driver.satiety,fatigue=Math.Max(0,Driver.fatigue-nightlyFatigueRecovery)};}State=BusinessState.Open;return true;}
- public EconomySnapshot Snapshot(){return new EconomySnapshot{settings=Settings,records=records.ConvertAll(r=>r.Copy()).ToArray(),currentDay=Day,dayOpen=Operating,care=Care.Snapshot(),hasActive=Operating,active=Operating?new ActiveDaySnapshot{state=State,income=Income,rides=Rides,failedTrips=FailedTrips,elapsed=Elapsed,metres=Metres,fuel=fuel,endReason=EndReason,driver=Driver==null?null:Driver.Copy(),services=new List<string>(services).ToArray()}:null};}
+ public bool NextDay(){if(State!=BusinessState.Summary)return false;Day++;Metrics=new OperationMetrics();Care.BeginDay(Day);Income=Rides=FailedTrips=0;Elapsed=Metres=fuel=0;EndReason=null;services.Clear();if(Driver!=null){Driver=new DriverCondition{satiety=Driver.satiety,fatigue=Math.Max(0,Driver.fatigue-nightlyFatigueRecovery)};}State=BusinessState.Open;return true;}
+ public EconomySnapshot Snapshot(){return new EconomySnapshot{metrics=Metrics.Capture(),settings=Settings,records=records.ConvertAll(r=>r.Copy()).ToArray(),currentDay=Day,dayOpen=Operating,care=Care.Snapshot(),hasActive=Operating,active=Operating?new ActiveDaySnapshot{state=State,income=Income,rides=Rides,failedTrips=FailedTrips,elapsed=Elapsed,metres=Metres,fuel=fuel,endReason=EndReason,driver=Driver==null?null:Driver.Copy(),services=new List<string>(services).ToArray()}:null};}
  public static EconomyLedger RestoreCampaign(EconomySnapshot days,AccountSnapshot account){
   var a=CampaignAccount.Restore(account);var result=new EconomyLedger(a.Snapshot().settings);result.Account=a;
   if(days==null||days.records==null||days.records.Length>result.Settings.days)throw new ArgumentException("Invalid campaign days");
@@ -102,7 +109,7 @@ public class EconomyLedger {
   if(result.Last!=null){var r=result.Last;result.Day=r.day;result.Income=r.income;result.Rides=r.rides;result.FailedTrips=r.failedTrips;result.Metres=r.metres;result.Elapsed=r.elapsed;result.EndReason=r.endReason;if(result.OneDay){if(r.driver==null)throw new ArgumentException("Missing driver checkpoint");r.driver.Validate();result.Driver=r.driver.Copy();}result.State=result.Outcome();}
   if(days.dayOpen){if(days.currentDay!=result.records.Count+1||days.currentDay>result.Settings.days)throw new ArgumentException("Invalid campaign start boundary");if(result.Last!=null&&!result.NextDay())throw new ArgumentException("Cannot reopen completed campaign");}
   if(days.hasActive){var v=days.active;if(v==null)throw new ArgumentException("Missing active day");if(!days.dayOpen||v.state!=BusinessState.Open&&v.state!=BusinessState.Closing||v.income<0||v.rides<0||v.failedTrips<0||!Finite(v.elapsed)||!Finite(v.metres)||!Finite(v.fuel)||v.elapsed<0||v.metres<0||v.fuel<0||v.services==null)throw new ArgumentException("Invalid active day");if(result.OneDay){if(v.driver==null)throw new ArgumentException("Missing active condition");v.driver.Validate();result.Driver=v.driver.Copy();}result.State=v.state;result.Income=v.income;result.Rides=v.rides;result.FailedTrips=v.failedTrips;result.Elapsed=v.elapsed;result.Metres=v.metres;result.fuel=v.fuel;result.EndReason=v.endReason;foreach(var id in v.services)if(string.IsNullOrEmpty(id)||!result.services.Add(id))throw new ArgumentException("Invalid service identity");}
-  result.Care=VehicleCare.Restore(days.care);result.Care.BeginDay(result.Day);return result;
+  result.Metrics=OperationMetrics.Restore(days.metrics,result.Elapsed);result.Care=VehicleCare.Restore(days.care);result.Care.BeginDay(result.Day);return result;
  }
  static bool Finite(double value){return !double.IsNaN(value)&&!double.IsInfinity(value);}
  public static EconomyLedger Restore(EconomySnapshot snapshot){

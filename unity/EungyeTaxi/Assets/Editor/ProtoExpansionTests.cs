@@ -2,6 +2,22 @@ using System;
 using UnityEngine;
 
 public static class ProtoExpansionTests {
+ public static void RunP12(){
+  Check(typeof(PassengerRequest).Assembly.GetType("OperationMetrics")!=null,"operation metrics must record empty travel separately");
+  Check(PassengerDemandPolicy.Weight("residential",299.9)==3&&PassengerDemandPolicy.Weight("residential",300)==1&&PassengerDemandPolicy.Weight("office",300)==3&&PassengerDemandPolicy.Weight("commercial",900)==3&&PassengerDemandPolicy.Weight("commercial",99999)==3,"demand phase boundaries and overtime");
+  Check(PassengerDemandPolicy.Region("unknown")=="neutral"&&PassengerDemandPolicy.Weight("neutral",0)==1,"unknown candidates neutral");
+  int early=0,late=0;for(int i=0;i<2000;i++){if(PassengerDemandPolicy.Priority("draw"+i,"EG-GAME-03",0)<PassengerDemandPolicy.Priority("draw"+i,"EG-GAME-02",0))early++;if(PassengerDemandPolicy.Priority("draw"+i,"EG-GAME-03",900)<PassengerDemandPolicy.Priority("draw"+i,"EG-GAME-02",900))late++;}
+  Check(early>1300&&late<700,"same candidates change relative selection, not fares");
+  var m=new OperationMetrics();m.Observe(100,10,false,false);m.Observe(0,20,false,false);m.Observe(200,20,true,false);m.Observe(0,30,false,true);m.Observe(10000,.02,false,false);
+  var v=m.Capture();Check(v.emptyMetres==100&&v.occupiedMetres==200&&v.emptyMovingSeconds==10&&v.emptyWaitingSeconds==20&&v.serviceSeconds==30,"pickup, occupancy, waiting, service and teleport boundaries");
+  var copy=OperationMetrics.Restore(v);copy.Observe(10,1,false,false);Check(copy.Capture().emptyMetres==110&&v.emptyMetres==100,"restore is independent and does not replay distance");
+  Check(OperationMetrics.Restore(null,120).Capture().startedAt==120,"legacy history starts at restore boundary");
+  var e=new EconomyLedger(PrototypeSettings.ForThreeDays());e.AdvanceOperation(10,100,false);e.AdvanceService(10);Check(e.Elapsed==20&&e.Metrics.Capture().serviceSeconds==10,"service advances clock once");
+  var resumed=EconomyLedger.RestoreCampaign(e.Snapshot(),e.Account.Snapshot());Check(resumed.Metrics.Capture().emptyMetres==100&&resumed.Elapsed==20,"active metrics restored with accounting boundary");
+  e.RequestClose();Check(e.Settle()&&e.Last.metrics.emptyMetres==100,"daily settlement captures metrics");Check(e.NextDay()&&e.Metrics.Capture().emptyMetres==0&&e.TotalMetrics.emptyMetres==100,"day reset retains campaign total once");
+  RunP11();
+  Debug.Log("PROTO_P12_OK");
+ }
  static void Check(bool condition,string message){if(!condition)throw new Exception("P11: "+message);}
  public static void RunP11(){
   Check(typeof(PassengerRequest).Assembly.GetType("PassengerRequestSchedule")!=null,

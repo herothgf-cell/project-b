@@ -122,7 +122,7 @@ public class BusinessProgress : MonoBehaviour {
  void FixedUpdate(){
   if(!enabledCampaign||!ledger.Operating||preparing||restoring||resumeBlocked||session.paused||Time.timeScale<=0)return;
   var v=session.taxi.body.velocity;double metres=Math.Sqrt(v.x*v.x+v.z*v.z)*Time.fixedDeltaTime;
-  ledger.Advance(Time.fixedDeltaTime,metres);
+  if(!session.PracticeBusy&&!PracticeSession.Enabled)ledger.AdvanceOperation(Time.fixedDeltaTime,metres,session.jobs.trip.State==TripState.OnTrip);else ledger.Advance(Time.fixedDeltaTime,metres);
   if(ledger.Driver!=null)ledger.Driver.drowsiness.Advance(Time.fixedDeltaTime,DrowsinessRunning,ledger.Driver.fatigue,session.taxi.body.velocity.magnitude>=.56f);
   if(ledger.Account!=null&&ledger.Account.Fuel<=0)RecoverFuel();
  }

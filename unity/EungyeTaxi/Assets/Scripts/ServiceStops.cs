@@ -129,7 +129,7 @@ public class ServiceStops : MonoBehaviour {
   if(kind==4){if(!b.ledger.UseWash(session.law.ids.Next("wash"))){notice="서비스를 이용할 수 없습니다";noticeUntil=Time.unscaledTime+5;return false;}session.jobs.AdvancePickupWait(30);notice="세차·실내 청소 완료 · 청결 100 / 30초 경과 · 2,000원";noticeUntil=Time.unscaledTime+5;destination="";Close();b.SaveCheckpoint();return true;}
   if(b.ledger.OneDay&&(kind==1||kind==3)){int seconds=kind==1?50:100;bool done=kind==1?b.ledger.UseMeal(session.law.ids.Next("meal")):b.ledger.UseSleep(session.law.ids.Next("sleep"));if(!done){notice="서비스를 이용할 수 없습니다";noticeUntil=Time.unscaledTime+5;return false;}if(session.jobs.Active)session.jobs.ClearForDay();b.SaveCheckpoint();notice=(kind==1?"식사":"수면")+" 완료 · "+seconds+"초 경과";noticeUntil=Time.unscaledTime+4;Close();return true;}
   bool ok=kind==0?a.Refuel(session.law.ids.Next("fuel"),FuelAmount,day):a.Meal(session.law.ids.Next("meal"),day);
-  if(ok){b.ledger.Advance(10,0);session.jobs.AdvancePickupWait(10);session.jobs.ResumePickupNavigation();b.SaveCheckpoint();notice="이용 완료 · 영업시간 10초 경과";noticeUntil=Time.unscaledTime+4;destination="";if(kind!=0)Close();}else notice="현금·연료 잔량 또는 오늘 이용 여부를 확인하세요";return ok;
+  if(ok){b.ledger.AdvanceService(10);session.jobs.AdvancePickupWait(10);session.jobs.ResumePickupNavigation();b.SaveCheckpoint();notice="이용 완료 · 영업시간 10초 경과";noticeUntil=Time.unscaledTime+4;destination="";if(kind!=0)Close();}else notice="현금·연료 잔량 또는 오늘 이용 여부를 확인하세요";return ok;
  }
  void Row(float x,float y,string label,int kind,int station,GUIStyle style,GUIStyle button){
   GUI.Label(new Rect(x+20,y,330,51),label,style);
