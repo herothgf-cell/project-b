@@ -31,3 +31,7 @@
 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`. 소스 빌드는 `PrototypeBuild.BuildHybrid`. 자동 프로브는 별도 시험 저장을 사용한다. 하루/3일은 `-oneDayTest` 다음 `-oneDayReloadTest`, `-threeDayTest` 다음 `-threeDayReloadTest`를 별도 프로세스로 실행한다.
 
 자동 상태/위치 제어 검사는 사람의 수동 주행과 다르다. 수동20분·초과 영업·3일 경제/졸음 체감, 전체 교통 물리 주행은 미검증. 이전 통합 기록의 안정성 자동 물리 검사 전체 실패를 이번 상태 검사로 해결했다고 보지 않는다. 수치·빈도는 시험값이다. 사용자 기존 미추적 파일은 변경/커밋하지 않는다.
+
+## 배포 확인
+
+소스 커밋은 실제 이력 조회로 확인한 9a4b5ff389f32b20db2435e986f187453ce4ae0f. 최종 BuildHybrid 실행 폴더130파일·105,551,860바이트를 manifest에 기록했고 전체 SHA256 검증 종료0. 원격 main을 fetch하여 로컬 HEAD의 조상임을 확인했다. 배포 커밋과 원격 최신 해시는 git log 및 origin/main으로 확인한다.
