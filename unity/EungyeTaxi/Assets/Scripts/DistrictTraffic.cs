@@ -26,10 +26,48 @@ public sealed class DistrictTraffic : MonoBehaviour {
   // into such endpoints. Every admitted goal can continue indefinitely.
   for(int i=0;i<map.stops.Length;i++)service.Add(i);bool changed;
   do{changed=false;foreach(int a in new List<int>(service)){bool onward=false;var start=map.stops[a];foreach(int b in service){if(a==b)continue;var end=map.stops[b];var r=CreateRoute(start.laneEdge,start.laneAt,end.laneEdge,end.laneAt);if(r!=null&&Clear(r)){onward=true;break;}}if(!onward){service.Remove(a);changed=true;}}}while(changed);
-  for(int n=0;n<144&&system.cars.Count<48;n++){if(!service.Contains(n%map.stops.Length))continue;var start=map.stops[n%map.stops.Length];var route=Next(start.laneEdge,start.laneAt);if(route==null)continue;var car=system.Spawn(route,0,n);if(!car)continue;car.district=this;
-   if(Occupied(route.start,route.direction,car))car.Recycle();
+  SeedDistributed();
+  int visible=0;var cells=new HashSet<Vector2Int>();foreach(var car in system.cars)if(car.Visible){visible++;cells.Add(Cell(car.transform.position));}
+  Debug.Log("DISTRICT_TRAFFIC_READY allocated="+system.cars.Count+" visible="+visible+" cells250m="+cells.Count+" junctions="+system.junctions.Count+" service="+service.Count);
+ }
+ // Reuse physically verified journeys whose goals have an admitted onward route.
+ // Sampling along them avoids filling the 48 slots with recycled copies at 12 stops.
+ sealed class Seed {public TrafficRoute route;public float at;public Vector3 position;public Vector2Int cell;}
+ static Vector2Int Cell(Vector3 p){return new Vector2Int(Mathf.FloorToInt(p.x/250),Mathf.FloorToInt(p.z/250));}
+ bool OrdinaryStart(TrafficRoute route,float at){
+  int edge=route.graphPath.EdgeAt(at);var e=graph.edges[edge];
+  if(e.disabled||e.turn!=0||e.change!=0||e.id.StartsWith("join:")||e.id.IndexOf("parking",System.StringComparison.OrdinalIgnoreCase)>=0||e.id.IndexOf("service",System.StringComparison.OrdinalIgnoreCase)>=0)return false;
+  float error;float local=graph.paths[edge].Project(route.Position(at),out error);
+  if(error>.2f||local<8||local>graph.paths[edge].length-8)return false;
+  // Never appear inside or immediately across a controlled junction or stop.
+  foreach(var stop in route.stops)if(at>stop.distance-10&&at<stop.exitDistance+8)return false;
+  foreach(var stop in map.stops)if(Vector3.Distance(route.Position(at),stop.V())<15)return false;
+  return Vector3.Angle(route.Tangent(at-3),route.Tangent(at+3))<8;
+ }
+ void SeedDistributed(){
+  var candidates=new List<Seed>();var sampled=new HashSet<Vector2Int>();
+  for(int a=0;a<map.stops.Length;a++){if(!service.Contains(a))continue;var start=map.stops[a];
+   for(int b=0;b<map.stops.Length;b++){if(a==b||!service.Contains(b))continue;var end=map.stops[b];var route=CreateRoute(start.laneEdge,start.laneAt,end.laneEdge,end.laneAt);if(route==null||!Clear(route))continue;
+    for(float at=12;at<route.length-12;at+=20){if(!OrdinaryStart(route,at))continue;var p=route.Position(at);var key=new Vector2Int(Mathf.RoundToInt(p.x/3),Mathf.RoundToInt(p.z/3));if(!sampled.Add(key))continue;
+     candidates.Add(new Seed{route=route,at=at,position=p,cell=Cell(p)});
+    }
+   }
   }
-  Debug.Log("DISTRICT_TRAFFIC_READY cars="+system.cars.Count+" junctions="+system.junctions.Count+" service="+service.Count);
+  var loads=new Dictionary<Vector2Int,int>();
+  while(system.cars.Count<48&&candidates.Count>0){
+   int best=-1;float bestScore=-1;
+   for(int i=0;i<candidates.Count;i++){var seed=candidates[i];float spacing=float.MaxValue;
+    foreach(var car in system.cars)if(car.Visible)spacing=Mathf.Min(spacing,(seed.position-car.transform.position).sqrMagnitude);
+    if(spacing<100)continue;int load;loads.TryGetValue(seed.cell,out load);
+    // Fill unrepresented cells first, then balance density and maximize spacing.
+    float score=1000000f/(load+1)+Mathf.Min(spacing,100000);
+    if(score>bestScore){bestScore=score;best=i;}
+   }
+   if(best<0)break;var chosen=candidates[best];candidates.RemoveAt(best);
+   if(Occupied(chosen.position,chosen.route.Tangent(chosen.at),null))continue;
+   var spawned=system.Spawn(chosen.route,chosen.at,system.cars.Count);if(!spawned)continue;
+   spawned.district=this;int selectedLoad;loads.TryGetValue(chosen.cell,out selectedLoad);loads[chosen.cell]=selectedLoad+1;
+  }
  }
  public bool Occupied(Vector3 p,Vector3 heading,TrafficCar self){foreach(var hit in Physics.OverlapBox(p+Vector3.up*.85f,new Vector3(1.1f,.55f,4),Quaternion.LookRotation(heading),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore))if(hit.GetComponentInParent<TrafficCar>()!=self)return true;return false;}
  public TrafficRoute CreateRoute(int start,float at,int goal,float end){
