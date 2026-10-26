@@ -31,6 +31,14 @@ public class PassengerRequest {
   int missing=System.Math.Max(0,required-r.satisfaction),deduction=System.Math.Min(200,missing*5);
   r.baseFare=!onTime?0:missing==0?r.drivingAdjustedFare:(int)(((long)r.drivingAdjustedFare*(1000-deduction)/10000)*10);return r;
  }
+ // Policy4 applies only to newly boarded rides; saved policy2/3 rides keep their agreement.
+ public static PassengerReward CalculateCurrentFare(int manner,int required,int fare,int delta,bool onTime,int start,int clean,float reference,float actual,bool unsafeDriving,int boardingScore,int comfort){
+  var r=CalculateWithDrivingScore(manner,required,fare,delta,onTime,start,clean,reference,actual,unsafeDriving,boardingScore,comfort);
+  r.farePolicyVersion=4;
+  if(r.satisfaction==0){r.baseFare=r.bonus=0;if(onTime)r.bonusReason="승객 만족도 0 · 운임 전액 감액";}
+  else if(r.satisfaction<required){r.bonus=0;r.baseFare=onTime?(int)((long)System.Math.Min(fare,r.drivingAdjustedFare)*r.satisfaction/required/10*10):0;}
+  return r;
+ }
  public int baseFare,bonus,satisfaction,satisfactionDelta,excessScore,sourceManner,requiredScore,farePolicyVersion,quotedFare;public string bonusReason="";
  public int startSatisfaction,startDeficit,cleanBonus,driveDelta,timeDelta;public float referenceSeconds,actualSeconds;public string timeReason="";
  public int Total {get{return baseFare+bonus;}}

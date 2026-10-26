@@ -10,7 +10,7 @@ public sealed class AdditionalUturnIntegrationProbe : MonoBehaviour {
  readonly StringBuilder report=new StringBuilder();bool ok=true;
  void Check(bool value,string text){ok&=value;report.AppendLine((value?"PASS ":"FAIL ")+text);}
  IEnumerator Start(){
-  yield return new WaitForSecondsRealtime(2);var session=FindObjectOfType<DriveSession>();Time.timeScale=0;session.drivingCamera.enabled=false;
+  yield return new WaitForSecondsRealtime(2);var session=FindObjectOfType<DriveSession>();while(!session.StartupReady)yield return null;yield return null;yield return null;Time.timeScale=0;session.drivingCamera.enabled=false;
   session.business.preparing=false;session.business.enabledCampaign=false;session.business.enabled=false;session.jobs.enabled=false;
   foreach(var c in session.traffic.cars){c.respawn=false;c.Recycle();c.enabled=false;}
   var graph=session.jobs.nav.hd;var district=FindObjectOfType<DistrictTraffic>();var map=session.world.map;string folder=Path.GetFullPath("artifacts");Directory.CreateDirectory(folder);

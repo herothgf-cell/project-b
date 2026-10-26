@@ -11,7 +11,7 @@
 - [x] Add reproducible AdditionalReviewedUturnMap authoring and focused three-approach validation (routes, signal conditions, opposite-direction rejection).
 - [x] Apply via ProjectMapStore; verify vehicle clearance and stop-line observer at these three approaches only. Correct actual geometry failures.
 - [x] Review complete diff, BuildHybrid, minimal execution check, regenerate distribution manifest.
-- [ ] Update observation status, scope/checklist and work history with actual results; merge main and push preserving user changes.
+- [x] Update observation status, scope/checklist and work history with actual results; merge main and push preserving user changes.
 
 ## Constraints / review focus
 Only observed incoming directions; left signal OR pedestrian signal permission with existing pedestrian/traffic clearance. No speculative other U-turns. Minimal tests, no full campaign. Check native lane rule binding at ⑥, continued straight links, geometric radius, existing T1 preservation, map hash/save compatibility. Keep private location map as historical artifact.

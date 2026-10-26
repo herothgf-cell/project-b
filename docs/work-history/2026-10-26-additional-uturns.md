@@ -29,3 +29,7 @@ AdditionalReviewedUturnMap.Apply가 재현 가능한3개 join·조건 표지·�
 ## 검증된 독립 배포
 
 소스 efc59e88db1aec8cf413f0c531c51c4589a13a98. 최종 observer 종료0. 배포 manifest 재생성/VerifyOnly 종료0:130파일105,636,520바이트. main의 다른 대화에서 시작/저장/운임 수정이 진행 중이므로 해당 변경을 보존해 통합 조율 중이다. 이 단계의 독립 빌드가 최종 공동 배포라는 뜻은 아니다.
+
+## 최신 main 공동 통합
+
+main84757ef(시작/구형 저장/운임 수정)을 병합하고 양쪽 기획·체크리스트·이력을 보존했다. 유턴 검사 도구는 StartupReady 후2프레임 기다리도록 맞췄다. 통합 BuildHybrid 종료0, 통합 exe -additionalUturnTest 종료0:3경로/정적61샘플 차단0/kinematic NPC3완주. 원래 작업의 운임·저장 검사는 해당 이력의 결과를 유지하며 이번에 전체 재실행하지 않았다. 통합 로그는 artifacts/2026-10-26-additional-uturns/에 보존한다.
