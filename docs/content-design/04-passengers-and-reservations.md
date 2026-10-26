@@ -2,6 +2,8 @@
 
 상태: 승객 운송과 요청 17종, 요구치 차이에 따른 운임·보너스, 게임 정차 후보·취객·청결도를 구현·자동 검증했다. 안정 주행 운전 만족도 회복(+2/구간·최대 +6)도 구현했다. 사람의 수동 운전과 경제 체감은 남아 있다. 기존 구현을 재구성한 변경 기록은 [별도 문서](04-passengers-and-reservations-history.md)에 보존한다.
 
+회복을 조금 쉽게 하는 **미구현 기획안**은 [2026-10-26 운전 만족도·승객 만족도 회복 완화안](04-passengers-and-reservations-history.md#2026-10-26-운전-만족도승객-만족도-회복-완화안--기획만)에 있다. 아래 500m/60초·급가감속 감점만 회복하는 규칙은 현재 실행 기준이다.
+
 관련 기획: [요청별 선택·효과·결산](11-passenger-request-effects.md) · [승하차 지점 다양화](14-passenger-stop-variety.md) · [취객·청결도](15-drunk-passengers-and-cleanliness.md) · [9개 상황 코스](09-prototype-scenarios.md) · [법규 성향](02-driving-evaluation.md) · [일일 경제](05-daily-operation.md) · [캠페인](07-campaign.md) · [프로토 범위](../prototype-scope.md).
 
 ## 시스템의 역할과 적용 범위
