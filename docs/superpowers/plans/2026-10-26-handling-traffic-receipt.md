@@ -57,3 +57,6 @@
 - [ ] Run fresh task reviews and final whole-branch review, resolve actionable findings.
 - [ ] Run relevant integrated models/BuildHybrid/receipt screens/real steering physics and traffic tests, verify manifest/Strict.
 - [ ] Record history/LATEST/checklist and integrate completed authorized fixes to default local executable, preserve primary changes. No pedestrian implementation; final request approval of concrete proposal.
+
+## User testing constraint (supersedes broader gates)
+Run only essential focused checks for changed behavior. Baseline23model suites already passed; do not rerun all models or full stability/campaign scenarios. Task1 focused receipt models already passed. Use minimal actual steering correction/brake checks, traffic active distribution/clear spawn/short movement checks, and one final BuildHybrid plus receipt capture. Broaden only for a concrete failure caused by these edits. Human manual/campaign remains unverified.
