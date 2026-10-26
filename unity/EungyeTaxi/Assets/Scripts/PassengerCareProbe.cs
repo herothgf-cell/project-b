@@ -26,9 +26,19 @@ public sealed class PassengerCareProbe:MonoBehaviour {
   foreach(var station in s.services.Stations){Pose(station.pump,station.direction);s.services.open=true;double elapsed=s.business.ledger.Elapsed;int cost=s.business.ledger.Account.Expense(1,"wash");Check(s.services.RequestAction(4)&&!s.services.ConfirmAction(false),"wash cancellation "+station.id);Check(s.business.ledger.Elapsed==elapsed&&s.business.ledger.Account.Expense(1,"wash")==cost,"cancel no cost/time "+station.id);Check(s.services.RequestAction(4)&&s.services.ConfirmAction(true),"wash standalone at "+station.id);Check(s.jobs.Cleanliness==100&&!s.jobs.AcceptanceLocked&&s.business.ledger.Elapsed==elapsed+30,"wash30 and unlock "+station.id);}
   Fresh();Board(DrunkRideCase.Sleepy);s.jobs.trip.Tick(121);s.jobs.DrunkRide.Advance(121,.8f);Stop(s.jobs.current.drop);s.jobs.Interact();s.business.ledger.Advance(1201,0);Check(s.business.ledger.State==BusinessState.Closing&&s.jobs.Active,"closing cannot remove sleeping passenger");s.jobs.DrunkRide.Advance(15,1);s.jobs.Interact();Check(s.jobs.trip.State==TripState.Failed&&s.business.ledger.Rides==0&&s.business.ledger.FailedTrips==1,"late before arrival stays zero despite wake");
   Fresh();Stop(0);s.jobs.Generate();int ordinary=0;foreach(var o in s.jobs.offers)if(o!=null&&string.IsNullOrEmpty(o.scenarioId)){ordinary++;Check(!string.IsNullOrEmpty(o.pickupStopId)&&!string.IsNullOrEmpty(o.catalogRevision),"ordinary stable catalog IDs");}Check(s.jobs.stops.Length>12&&ordinary>0,"additional stops reach normal call generation");Check(s.GetComponent<ServiceLawZones>().scenarios.Count==9,"nine fixed courses preserved");
-  CheckScoreFlow();CheckScenarioRestore();
+  CheckScoreFlow();CheckRecoveryFlow();CheckScenarioRestore();
  }
  string Notices(DriveNotifications notifications){return string.Join("\n",notifications.VisibleTexts);}
+
+ void CheckRecoveryFlow(){
+  Fresh();Board(DrunkRideCase.Normal);var j=s.jobs;var state=JsonUtility.FromJson<PassengerJobsSnapshot>(JsonUtility.ToJson(j.CaptureLive()));state.current.requiredScore=70;state.startSatisfaction=60;state.cleanBonus=0;j.RestoreLive(state);
+  var notices=s.GetComponent<DriveNotifications>();notices.RefreshScores();Check(s.manners.Deduct("brake",2,"급제동",0)&&j.ScoreView.value==58,"motion loss lowers live S gauge");
+  var p=s.taxi.transform.position;for(int i=0;i<=60;i++)s.manners.ObserveStable(p.x+i,p.z,1,1,true);
+  Check(s.manners.ledger.Score==100&&j.ScoreView.value==60&&notices.VisibleText=="안정적인 주행 · +2","stable recovery changes live S gauge and immediate positive notice");
+  var saved=JsonUtility.FromJson<CampaignCheckpoint>(File.ReadAllText(s.business.SavePath));Check(saved.live.jobs.manners.recoveryCaptured&&saved.live.jobs.manners.stableRecovered==2&&saved.live.jobs.manners.stable!=null,"shipping checkpoint contains recovery progress");
+  j.RestoreLive(saved.live.jobs);Check(s.manners.ledger.Score==100&&s.manners.ledger.StableRecovered==2&&j.ScoreView.value==60,"restored recovery cannot double count and retains live S");
+  var fare=MannerLedger.Payment(5000,s.manners.ledger.Score,70);var reward=PassengerReward.CalculateDetailed(s.manners.ledger.Score,70,5000,fare,0,true,60,0,0,0,false);Check(reward.baseFare==5000&&reward.bonus==0&&reward.satisfaction==60,"S60 below R70 leaves M100 base fare full and bonus zero");
+ }
 
  void CheckScoreFlow(){
   Fresh();var j=s.jobs;var notices=s.GetComponent<DriveNotifications>();notices.RefreshScores();Board(DrunkRideCase.Normal);

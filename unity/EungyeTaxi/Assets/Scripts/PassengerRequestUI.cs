@@ -83,7 +83,7 @@ public class PassengerRequestUI : MonoBehaviour {
    if(!success&&(request.Kind==RequestKind.LargeRoad||request.Kind==RequestKind.ShortRoad||request.Kind==RequestKind.OnTime&&Violations()==0))request.CompleteUnknown(reason+" · 합법적 대기·우회와 불필요한 이탈을 구분할 관찰 부족");
    else request.CompleteGoal(success,reason);
   }
-  int deduction=request.Finish();if(deduction>0)session.manners.Deduct("request:"+observedTrip,deduction,"조용한 운행 요청 미응답",0);
+  int deduction=request.Finish();var notices=session.GetComponent<DriveNotifications>();if(notices)notices.RefreshScores();if(deduction>0)session.manners.Deduct("request:"+observedTrip,deduction,"조용한 운행 요청 미응답",0);
  }
  void Update(){if(!session.business.useV2||session.jobs.trip.State!=TripState.OnTrip||session.jobs.trip.ArrivalLocked||session.paused)return;
   bool safe=SafeToRespond();if(safe){stoppedSeconds+=Time.deltaTime;request.ObserveOpportunity(stoppedSeconds>=2);}else stoppedSeconds=0;
