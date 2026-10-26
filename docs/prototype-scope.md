@@ -4,6 +4,8 @@
 
 ## 경험 목표
 
+현재는 핵심 플레이가 가능한 기반이며 **개발 완료는 아니다**. 기존 P11·저장 안정성·수동20분/3일 검증이 남는다. 사용자가 선택한 후속 개발 순서와 범위는 [17 확장 기획](content-design/17-proto-operation-expansion.md)의 P11→P12 수요/공차→P13 공간 점유이며, 신규 개발과 단순 다듬기를 구분한다.
+
 | 질문 | 확인할 경험 |
 |---|---|
 | 운전 판단이 재미있는가 | 정체에서 대기·우회·진입 검토의 실제 시간과 거리, 신호·보행자 조건을 비교 |
@@ -21,6 +23,7 @@
 | 기록 | 사건 카드·일일/누적 결과·동일 조건 연습 | 영상 리플레이·장기 숙련 레벨 | [03](content-design/03-history-and-mastery.md) |
 | 승객 | 호출·길가 승객·24정차 후보·17종 요청·만족도·보너스 | 복잡한 대화·실제 음악·음성 연기·분실물 반환 퀘스트 | [04](content-design/04-passengers-and-reservations.md),[11](content-design/11-passenger-request-effects.md),[14](content-design/14-passenger-stop-variety.md) |
 | 요청 변경 목표 | 무작위0~2건·승차 또는 운행 중 안전 정차 발생·개별 평가/저장 | 현재는 기획만, 기존 단일 순환 요청과 구분 | [04 요청 배정](content-design/04-passengers-and-reservations.md#요청-배정과-등장-시점--변경-기획-미구현) |
+| 선택된 후속 확장 | 지역/영업 단계별 수요·공차 성과 비교 → 일반 승하차 공간 일시 점유/안전 대안 | 미구현. 가중치·집계 경계·점유/기한 보정 세부 검토, 수요 할증·전역 도로 공사 제외 | [17 확장](content-design/17-proto-operation-expansion.md) |
 | 취객·청결 | 취객 특성·평소 대사·구토 예고/발생·기상 지연·청결·세차 전 호출 잠금·길가 거부 | 의학적 대응·강제 하차·사고/수리 콘텐츠 | [15](content-design/15-drunk-passengers-and-cleanliness.md) |
 | 생활 거점·경제 | 주유소3곳·식당·주차/휴식·세차, 개인택시 현금/미납/비용 | 실내 보행·시설 미니게임·보험·세금·법인 운영·차량매매 | [05](content-design/05-daily-operation.md) |
 | 운전자 | 포만감·피로·식사/수면·피로100 졸음과 예정20분 이후 초과 영업 | 질병·스트레스·강제 충돌 | [10](content-design/10-driver-condition.md) |
