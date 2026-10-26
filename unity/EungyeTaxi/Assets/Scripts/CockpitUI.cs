@@ -27,6 +27,8 @@ public static class CockpitUI {
   HudGlyph.Draw(new Rect(w-296,h-98,28,28),7,new Color(.4f,.7f,1));GUI.Label(new Rect(w-256,h-103,216,30),"운전 점수  "+s.law.ledger.TotalScore,text);Gauge(new Rect(w-256,h-61,216,8),s.law.ledger.TotalScore,new Color(.4f,.7f,1));
   Panel(new Rect(24,405,320,jobs.Active?100:50));if(jobs.Active){bool pickup=jobs.trip.State==TripState.ToPickup;GUI.Label(new Rect(38,414,292,44),(pickup?"승차":"하차")+" · "+KoreanText.Stop(jobs.stops[pickup?jobs.current.pickup:jobs.current.drop].name),text);GUI.Label(new Rect(38,463,292,36),(pickup?"대기 "+Clock(jobs.trip.PickupRemaining):"남은 "+Clock(jobs.trip.Remaining))+" · "+(pickup?PassengerReward.AdjustedFare(jobs.current.fare,s.law.ledger.TotalScore):jobs.DrivingFareCaptured?PassengerReward.AdjustedFare(jobs.current.fare,jobs.BoardingDrivingScore):jobs.current.fare).ToString("N0")+"원",small);}else if(GUI.Button(new Rect(38,414,292,32),"주변 호출 보기 (M)",KoreanText.Button(16)))s.GetComponent<FullMapOverlay>().Open();
 
+  // Separate care speech from the request choices (which occupy at most the bottom 254px).
+  string careDialogue=jobs.VisibleCareDialogue;if(careDialogue.Length>0){var careArea=new Rect((w-540)/2,h-350,540,72);Panel(careArea);GUI.Label(new Rect(careArea.x+12,careArea.y+8,516,60),careDialogue,text);}
   GUI.matrix=previous;
  }
 }
