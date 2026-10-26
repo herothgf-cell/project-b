@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -53,6 +54,20 @@ public static class ImportedMarkingRendererTests {
   Check(QuadsNear(reviewedVertices,new Vector3(508.7f,0,474.5f),.6f)==0,"J5057 imported 501 does not cross authored north crosswalk");
   Check(QuadsNear(reviewedVertices,new Vector3(508.7f,0,469.5f),.6f)==0&&QuadsNear(reviewedVertices,new Vector3(502.9f,0,469.5f),.6f)==0,"J5057 north centerline and V are absent from active junction lanes");
   Check(QuadsNear(reviewedVertices,new Vector3(508.8f,0,476.8f),.6f)>0,"J5057 imported centerline remains north of authored crosswalk");
+  var rule=composed.junctionRules.First(x=>x.id=="J5057_4449");
+  var junction=new TrafficJunction{name=rule.id,center=rule.V(),direction=new Vector3(rule.dx,0,rule.dz).normalized};
+  var generatedYellow=new List<Vector3>();var generatedWhite=new List<Vector3>();
+  RoadPaintGeometry.Paint(composed,new List<TrafficJunction>{junction},(name,p,dir,width,length,isYellow)=>{
+   if(p.x<498||p.x>518||p.z<462||p.z>488)return;
+   if(isYellow)generatedYellow.Add(p);else generatedWhite.Add(p);
+  });
+  Func<Vector3,bool> crosswalkBand=p=>p.x>=499.8f&&p.x<=515.7f&&p.z>=473.3f&&p.z<=475.7f;
+  Func<Vector3,bool> inner=p=>p.x>=499.8f&&p.x<=515.7f&&p.z>=468f&&p.z<473.3f;
+  Func<Vector3,bool> upstream=p=>p.x>=499.8f&&p.x<=515.7f&&p.z>478f&&p.z<485f;
+  Debug.Log("J5057_GENERATED_PAINT red-cross="+generatedYellow.Count(crosswalkBand)+" white-cross="+generatedWhite.Count(crosswalkBand)+" red-inner="+generatedYellow.Count(inner)+" white-inner="+generatedWhite.Count(inner)+" upstream="+(generatedYellow.Count(upstream)+generatedWhite.Count(upstream)));
+  Check(generatedYellow.Count(crosswalkBand)==0&&generatedWhite.Count(crosswalkBand)==0,"J5057 generated dividers stay out of authored north crosswalk");
+  Check(generatedYellow.Count(inner)==0&&generatedWhite.Count(inner)==0,"J5057 generated dividers stop at authored crossing on junction side");
+  Check(generatedYellow.Count(upstream)+generatedWhite.Count(upstream)>0,"J5057 valid generated approach dividers remain upstream");
   Debug.Log("IMPORTED_MARKING_RENDERER_TEST_OK");
  }
 }

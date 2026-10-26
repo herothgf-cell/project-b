@@ -10,6 +10,23 @@ public sealed class RoadPaintGeometry {
  readonly Dictionary<string,List<LanePath>> corridors=new Dictionary<string,List<LanePath>>();
  readonly Dictionary<string,float> widths=new Dictionary<string,float>();
  readonly HashSet<string> polished=new HashSet<string>();
+ sealed class AuthoredCrosswalkOpening {
+  public Vector3 center,toward,across;public float halfWidth,halfDepth,reach;
+  public bool Contains(Vector3 point,float extra){var delta=point-center;float along=Vector3.Dot(delta,toward);
+   return along>=-halfDepth-extra&&along<=reach+extra&&Mathf.Abs(Vector3.Dot(delta,across))<=halfWidth+extra;
+  }
+  public static List<AuthoredCrosswalkOpening> Build(MapData map){var result=new List<AuthoredCrosswalkOpening>();
+   if(map.editorDocument==null||map.editorDocument.facilities==null||map.junctionRules==null)return result;
+   foreach(var facility in map.editorDocument.facilities){if(facility==null||facility.kind!="crosswalk"||string.IsNullOrEmpty(facility.junctionId)||facility.width<=0)continue;
+    HybridJunctionRule junction=null;foreach(var rule in map.junctionRules)if(rule.id==facility.junctionId){junction=rule;break;}
+    if(junction==null)continue;var forward=Quaternion.Euler(0,facility.yaw,0)*Vector3.forward;forward.y=0;forward.Normalize();
+    var towardJunction=junction.V()-facility.Position;towardJunction.y=0;if(Vector3.Dot(forward,towardJunction)<0)forward=-forward;
+    float reach=Vector3.Dot(forward,towardJunction);if(reach<2)continue;
+    result.Add(new AuthoredCrosswalkOpening{center=facility.Position,toward=forward,across=TrafficSystem.Right(forward),
+     halfWidth=facility.width*.5f,halfDepth=Mathf.Max(.2f,facility.length*.5f),reach=reach});
+   }return result;
+  }
+ }
  public RoadPaintGeometry(MapData map){
   this.map=map;
   if(!map.hybrid||!map.HasHd)return;
@@ -49,8 +66,8 @@ public sealed class RoadPaintGeometry {
   List<LanePath> group;return corridors.TryGetValue(edge.sourceId,out group)?Sample(group,point,direction,float.MaxValue):new List<RoadGeometry.Lane>();
  }
  public static void Paint(MapData map,List<TrafficJunction> junctions,System.Action<string,Vector3,Vector3,float,float,bool> mark){
-  var layout=new RoadPaintGeometry(map);var openings=RoadJunctionGeometry.Build(map);
-  if(layout.corridors.Count>0){layout.PaintCompiled(junctions,openings,mark);return;}
+  var layout=new RoadPaintGeometry(map);var openings=RoadJunctionGeometry.Build(map);var authored=AuthoredCrosswalkOpening.Build(map);
+  if(layout.corridors.Count>0){layout.PaintCompiled(junctions,openings,authored,mark);return;}
   foreach(var road in map.roads){if(road.suppressPaint||road.id!=null&&road.id.StartsWith("fuel:"))continue;
    float distance=0;
    for(int i=1;i<road.points.Length;i++){
@@ -61,15 +78,15 @@ public sealed class RoadPaintGeometry {
      foreach(var boundary in RoadGeometry.Boundaries(lanes)){
       if(boundary.dashed&&((distance+at)%6)>=3)continue;
       var q=p+TrafficSystem.Right(dir)*boundary.offset;
-      if(InOpening(q,junctions,openings,piece*.5f))continue;
+      if(InOpening(q,junctions,openings,authored,piece*.5f))continue;
       mark(boundary.yellow?"Centre line":"Lane divider",q,dir,boundary.yellow?.14f:.13f,piece,boundary.yellow);
      }
-     foreach(int side in new[]{-1,1}){var q=p+TrafficSystem.Right(dir)*side*(road.width*.5f-.3f);if(!InOpening(q,junctions,openings,piece*.5f))mark("Road edge",q,dir,.12f,piece,false);}
+     foreach(int side in new[]{-1,1}){var q=p+TrafficSystem.Right(dir)*side*(road.width*.5f-.3f);if(!InOpening(q,junctions,openings,authored,piece*.5f))mark("Road edge",q,dir,.12f,piece,false);}
     }distance+=length;
    }
   }
  }
- void PaintCompiled(List<TrafficJunction> junctions,List<RoadJunctionGeometry.Opening> openings,System.Action<string,Vector3,Vector3,float,float,bool> mark){
+ void PaintCompiled(List<TrafficJunction> junctions,List<RoadJunctionGeometry.Opening> openings,List<AuthoredCrosswalkOpening> authored,System.Action<string,Vector3,Vector3,float,float,bool> mark){
   foreach(var corridor in corridors){
    var first=corridor.Value.Find(x=>x.number==1);if(first==null)continue;string family=Family(first.id);float width=float.MaxValue;
    foreach(var id in corridor.Key.Split(',')){float value;if(widths.TryGetValue(id,out value))width=Mathf.Min(width,value);}if(width==float.MaxValue)continue;
@@ -83,19 +100,20 @@ public sealed class RoadPaintGeometry {
      if(lanes.Count==0)continue;
      foreach(var line in RoadGeometry.Boundaries(lanes)){
       if(line.dashed&&(phase+at)%6>=3)continue;var q=p+TrafficSystem.Right(dir)*line.offset;if(line.yellow)q=ReviewedLaneLayout.Centreline(map,corridor.Key,q);
-      if(!InOpening(q,junctions,openings,piece*.5f))mark(line.yellow?"Centre line":"Lane divider",q,dir,line.yellow?.14f:.13f,piece,line.yellow);
+      if(!InOpening(q,junctions,openings,authored,piece*.5f))mark(line.yellow?"Centre line":"Lane divider",q,dir,line.yellow?.14f:.13f,piece,line.yellow);
      }
      float laneWidth=lanes.Count>1?float.MaxValue:width;
      for(int i=1;i<lanes.Count;i++)laneWidth=Mathf.Min(laneWidth,lanes[i].offset-lanes[i-1].offset);
      float outerHalf=polished.Contains(corridor.Key)?Mathf.Min(laneWidth*.5f,CorridorPolish.HalfLane):laneWidth*.5f;
      foreach(float edge in new[]{lanes[0].offset-outerHalf+.15f,lanes[lanes.Count-1].offset+outerHalf-.15f}){
-      var q=p+TrafficSystem.Right(dir)*edge;if(!InOpening(q,junctions,openings,piece*.5f))mark("Road edge",q,dir,.12f,piece,false);
+      var q=p+TrafficSystem.Right(dir)*edge;if(!InOpening(q,junctions,openings,authored,piece*.5f))mark("Road edge",q,dir,.12f,piece,false);
      }
     }phase+=path.length;
    }
   }
  }
- static bool InOpening(Vector3 point,List<TrafficJunction> junctions,List<RoadJunctionGeometry.Opening> openings,float extra){
+ static bool InOpening(Vector3 point,List<TrafficJunction> junctions,List<RoadJunctionGeometry.Opening> openings,List<AuthoredCrosswalkOpening> authored,float extra){
+  foreach(var crossing in authored)if(crossing.Contains(point,extra))return true;
   foreach(var j in junctions)if(Vector3.Distance(point,j.center)<18+extra)return true;
   foreach(var j in openings)if(Vector3.Distance(point,j.center)<j.radius+extra)return true;
   return false;
