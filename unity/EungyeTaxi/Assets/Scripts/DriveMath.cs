@@ -31,9 +31,9 @@ public static class DriveMath {
         return (float)Math.Sqrt(5*2.6/Math.Max(.001,Math.Tan(angle)));
     }
     public static Demand CornerAssist(Demand demand,float speedMs,float steering,bool physicalSteering=false) {
-        // Assisted steering is normalized against the speed-dependent wheel limit.
-        // Convert it back to the actual wheel angle before applying the corner cap.
-        if(physicalSteering)steering*=SteerAngle(speedMs*3.6f)/ParkingSteerAngle;
+        // Both control modes normalize input against their speed-dependent wheel limit.
+        // Use the same physical angle as TaxiController, not a 42-degree parking turn.
+        steering*=(physicalSteering?SteerAngle(speedMs*3.6f):ManualSteerAngle(speedMs*3.6f))/ParkingSteerAngle;
         // Keep the existing lateral-grip limit, but stop accelerating away from a tight turn.
         if(speedMs<=.5f||Math.Abs(steering)<.2f)return demand;
         float target=CornerSpeed(steering);

@@ -23,6 +23,13 @@ class CornerAssistTests {
   Check(otherSide.motor==correction.motor&&otherSide.brake==correction.brake,"assisted corrections symmetric");
   Check(DriveMath.CornerAssist(new DriveMath.Demand{brake=1},speed,smallWheelInput,true).brake==1,"assisted correction preserves manual brake");
   Check(DriveMath.CornerAssist(full,25/3.6f,1,true).motor==0,"assisted tight low-speed turn still slows");
+  bool retainsDemand=true;
+  foreach(float kph in new[]{30f,50f,70f}) foreach(float side in new[]{-1f,1f}) {
+   var small=DriveMath.CornerAssist(new DriveMath.Demand{motor=.5f},kph/3.6f,side*.25f);
+   Console.WriteLine("manual correction kph="+kph+" input="+(side*.25f)+" motor="+small.motor+" brake="+small.brake);
+   retainsDemand &= small.motor==.5f&&small.brake==0;
+  }
+  Check(retainsDemand,"small manual corrections at 30/50/70kph retain throttle without automatic braking");
   Console.WriteLine("PASS: "+count+" corner-assistance checks");
  }
 }
