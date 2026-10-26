@@ -50,6 +50,7 @@ public class BusinessProgress : MonoBehaviour {
   if(Array.IndexOf(args,"-assistedTrial")>=0||RoadRulesTrial.Enabled||HdRouteTrial.Enabled){testMode=true;enabledCampaign=false;}
   bool ambientTest=Array.IndexOf(args,"-ambientPedestrianTest")>=0||Array.IndexOf(args,"-ambientPedestrianReloadTest")>=0;if(ambientTest){testMode=true;enabledCampaign=true;}
   bool startupTest=Array.IndexOf(args,"-campaignStartupTest")>=0;
+  bool protoTest=Array.IndexOf(args,"-protoExpansionTest")>=0||Array.IndexOf(args,"-protoExpansionReloadTest")>=0;
   if(PracticeSession.Enabled||RoadMapRuntime.Trial){testMode=true;enabledCampaign=false;}
   if(!testMode){settings=PrototypeSettings.ForThreeDays();}
   if(Array.IndexOf(args,"-oneDayTest")>=0||Array.IndexOf(args,"-oneDayReloadTest")>=0||Array.IndexOf(args,"-oneDayMode")>=0){settings=PrototypeSettings.ForOneDay();if(testMode)enabledCampaign=true;}
@@ -63,17 +64,18 @@ public class BusinessProgress : MonoBehaviour {
   if(Array.IndexOf(args,"-passengerCareTest")>=0)SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/passenger-care-test.json"));
   if(Array.IndexOf(args,"-liveInvalidTest")>=0)SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/live-invalid-test.json"));
   if(ambientTest){settings=PrototypeSettings.ForOneDay();useV2=true;enabledCampaign=true;SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/ambient-pedestrian-test.json"));}
+  if(protoTest){settings=PrototypeSettings.ForThreeDays();useV2=true;enabledCampaign=true;SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/proto-expansion-test.json"));}
   if(startupTest){settings=PrototypeSettings.ForThreeDays();useV2=true;enabledCampaign=true;SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/campaign-startup-test.json"));}
   if(!testMode)try{SavePath=CampaignSaveLocation.Resolve(Path.GetDirectoryName(Application.persistentDataPath),Path.GetFileName(SavePath));}catch(Exception e){Debug.LogWarning("이전 캠페인 저장 복사 실패: "+e.Message);}
   ledger=useV2?new EconomyLedger(settings):new EconomyLedger(new EconomySettings());
-  if(!testMode||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0)||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-oneDayReloadTest")>=0||Array.IndexOf(args,"-threeDayReloadTest")>=0||Array.IndexOf(args,"-ambientPedestrianReloadTest")>=0){
+  if(protoTest&&Array.IndexOf(args,"-protoExpansionReloadTest")>=0||!testMode||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0)||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-oneDayReloadTest")>=0||Array.IndexOf(args,"-threeDayReloadTest")>=0||Array.IndexOf(args,"-ambientPedestrianReloadTest")>=0){
    foreach(var path in new[]{SavePath,SavePath+".bak"}){
     if(!File.Exists(path))continue;
     try{var candidate=ParseCheckpoint(File.ReadAllText(path));if(candidate==null||(candidate.version!=2&&candidate.version!=3)||candidate.law==null||candidate.ids==null||string.IsNullOrEmpty(candidate.ids.campaign)||candidate.ids.sequence<0)throw new Exception("Invalid v2 checkpoint");if(settings.oneDay&&(candidate.account==null||candidate.account.settings==null||!candidate.account.settings.oneDay||candidate.account.settings.days!=settings.days))throw new Exception("Different campaign mode");if(!candidate.hasLive)candidate.live=null;if(candidate.version==3&&candidate.days!=null&&candidate.days.hasActive&&candidate.days.active!=null&&candidate.days.active.elapsed>0&&candidate.live==null)throw new Exception("Missing active session");ValidateLivePayload(candidate.live,owner);var restored=EconomyLedger.RestoreCampaign(candidate.days,candidate.account);var checkedLaw=new LawLedger();foreach(var e in candidate.law)checkedLaw.Record(e);ledger=restored;loaded=candidate;saveStatus=path==SavePath?"저장된 정산 결과를 불러왔습니다":"백업에서 정산 결과를 복구했습니다";break;}
     catch(Exception ex){saveStatus="저장 읽기 실패 · 새 영업을 시작합니다";Debug.LogWarning("Campaign load failed: "+ex.Message);}
    }
   }
-  if(loaded==null&&(File.Exists(SavePath)||File.Exists(SavePath+".bak"))&&(!testMode||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0))){resumeBlocked=true;SaveFailed=true;saveStatus="저장 복원 실패 · 기존 파일 보존 중 · 지도/저장 확인 또는 새 캠페인 선택";}
+  if(loaded==null&&(File.Exists(SavePath)||File.Exists(SavePath+".bak"))&&(protoTest&&Array.IndexOf(args,"-protoExpansionReloadTest")>=0||!testMode||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0))){resumeBlocked=true;SaveFailed=true;saveStatus="저장 복원 실패 · 기존 파일 보존 중 · 지도/저장 확인 또는 새 캠페인 선택";}
   if(loaded!=null){if(loaded.passengers!=null)passengers.AddRange(loaded.passengers);if(loaded.practices!=null)practices.AddRange(loaded.practices);if(loaded.completedDays!=null)completedDays.AddRange(loaded.completedDays);}
   if(loaded!=null&&!string.IsNullOrEmpty(loaded.comparisonVersion)){mixedFollowing=loaded.comparisonVersion.EndsWith("mixed");initialFollowing=loaded.comparisonVersion.EndsWith("on");mixedFollowing|=initialFollowing!=owner.traffic.mitOptions.Enabled;}
   CaptureDayStart();
@@ -199,9 +201,8 @@ public class BusinessProgress : MonoBehaviour {
    var keptPassengers=current?passengers.ToArray():new PassengerResult[0];
    var configuration=current?ComparisonVersion:(settings.days>1?PrototypeSettings.ThreeDayVersion:PrototypeSettings.OneDayVersion)+"-following-"+(session.traffic.mitOptions.Enabled?"on":"off");
    var data=value.Account==null?JsonUtility.ToJson(value.Snapshot(),true):JsonUtility.ToJson(new CampaignCheckpoint{hasLive=value==ledger&&!preparing&&value.Operating&&session.requests,live=value==ledger&&!preparing&&value.Operating&&session.requests?CaptureLive():null,comparisonVersion=configuration,days=boundaryDays,account=boundaryAccount,completedDays=archive.ToArray(),passengers=keptPassengers,practices=current?practices.ToArray():new PracticeResult[0],law=current&&session.law?session.law.ledger.Events:new LawEvent[0],ids=current&&session.law?session.law.ids:resetIds??new PrototypeIds(Guid.NewGuid().ToString("N"))},true);
-   File.WriteAllText(SavePath+".tmp",data);
-   if(File.Exists(SavePath))File.Replace(SavePath+".tmp",SavePath,SavePath+".bak");else File.Move(SavePath+".tmp",SavePath);
-   completedDays.Clear();completedDays.AddRange(archive);SaveFailed=false;saveStatus="저장 완료 · 중단한 운송·시간·장부를 함께 이어갑니다";return true;
+   string backupNote=CampaignCheckpointWriter.Write(SavePath,data);
+   completedDays.Clear();completedDays.AddRange(archive);SaveFailed=false;saveStatus="저장 완료 · 중단한 운송·시간·장부를 함께 이어갑니다"+(backupNote.Length>0?" · "+backupNote:"");return true;
   }catch(Exception ex){SaveFailed=true;saveStatus="저장 실패 · 저장 재시도 버튼을 눌러주세요";Debug.LogWarning("Campaign save failed: "+ex.Message);return false;}
  }
 }

@@ -47,12 +47,13 @@ public class PassengerRequestUI : MonoBehaviour {
    }
   }return true;
  }
+ public bool PresentationAvailable {get{return !session.paused&&!session.FullMapOpen&&!session.ChoiceOpen&&string.IsNullOrEmpty(session.jobs.VisibleCareDialogue);}}
  public bool SafeToRespond(){return ClearSpace()&&(legacy||stopSeconds>=2);}
- public bool Respond(bool accept){if(!Current||!SafeToRespond()&&!legacy)return false;bool ok=Current.Respond(accept);AfterResponse(ok);return ok;}
- public bool RespondEta(int option){bool ok=Current&&Current.RespondEta(option);AfterResponse(ok);return ok;}
- public bool RespondAlternative(){bool ok=Current&&Current.RespondAlternative();AfterResponse(ok);return ok;}
+ public bool Respond(bool accept){if(!PresentationAvailable||!Current||!SafeToRespond()&&!legacy)return false;bool ok=Current.Respond(accept);AfterResponse(ok);return ok;}
+ public bool RespondEta(int option){bool ok=PresentationAvailable&&Current&&Current.RespondEta(option);AfterResponse(ok);return ok;}
+ public bool RespondAlternative(){bool ok=PresentationAvailable&&Current&&Current.RespondAlternative();AfterResponse(ok);return ok;}
  public bool PrepareProposal(){return Current&&Current.PrepareProposal();}
- public bool CanChoose(PassengerReply reply){return Current&&SafeToRespond()&&Current.CanChoose(reply);}
+ public bool CanChoose(PassengerReply reply){return PresentationAvailable&&Current&&SafeToRespond()&&Current.CanChoose(reply);}
  public bool Choose(PassengerReply reply){bool ok=CanChoose(reply)&&Current.Choose(reply);AfterResponse(ok);return ok;}
  void AfterResponse(bool ok){if(!ok)return;if(schedule!=null)schedule.Responded();session.business.SaveCheckpoint();}
  public string DialogueReply {get{return Current?Current.DialogueReply:"";}}
@@ -67,14 +68,14 @@ public class PassengerRequestUI : MonoBehaviour {
   if(schedule!=null){
    if(Current&&Current.request.Resolved)schedule.Responded();
    float moving=session.taxi.body.velocity.magnitude>.1f?Time.deltaTime:0;
-   bool dialogue=string.IsNullOrEmpty(session.jobs.VisibleCareDialogue);
+   bool dialogue=PresentationAvailable;
    int slot=schedule.Tick(moving,1-session.jobs.nav.remaining/initialDistance,SafeToRespond()&&dialogue,false);
    if(slot>=0){var state=schedule.Capture().slots[slot];var o=NewObservation();observations[slot]=o;active=slot;o.BeginKind(state.kind);session.business.SaveCheckpoint();}
   }
-  foreach(var o in observations)if(o)o.Observe(o==Current);
+  foreach(var o in observations)if(o)o.Observe(o==Current&&PresentationAvailable);
  }
  public void Finish(){if(finished)return;finished=true;if(schedule!=null)schedule.Tick(0,1,false,true);foreach(var o in observations)if(o)o.Finish();session.manners.ComfortAccepted=false;}
- void OnGUI(){if(Current&&string.IsNullOrEmpty(session.jobs.VisibleCareDialogue))Current.Draw();}
+ void OnGUI(){if(Current&&PresentationAvailable)Current.Draw();}
  public PassengerRequestUISnapshot CaptureLive(){
   var s=Current?JsonUtility.FromJson<PassengerRequestUISnapshot>(JsonUtility.ToJson(Current.CaptureLive())):new PassengerRequestUISnapshot{request=empty.Snapshot()};
   s.version=legacy||schedule==null?0:2;s.active=active;s.boardingLawCount=boardingLawCount;s.initialDistance=initialDistance;s.finished=finished;s.lostItem=lostItem;
