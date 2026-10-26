@@ -90,3 +90,8 @@
 - 최신 `j5057-reviewed-junction.png`·`j5057-reviewed-island.png`에서 북쪽과 동·서 횡단보도 안 겹친 노란 선 제거, 바깥 연석 곡선/교통섬/분리 우회전 유지를 직접 확인했다. `j5076-reviewed-left-lane.png`, `suin-reviewed-median.png`, `t1-reviewed-uturns.png`도 직접 열어 확인했다.
 - 마지막 두 변경은 노면 렌더에 한정된다. 같은 운송 로직의 앞선 승객176/내비30/모델23 결과를 유지하고, 변경된 렌더는 전용 회귀·감사·새 패키지 화면/주행으로 확인했다. 사람의 수동 운전/전체 캠페인/시설 실측은 미검증이다.
 - 작업 폴더 `tools/check_workspace.ps1 -Strict`: 종료0/Input issues0. 정식 지도 해시 일치, 가져오기용 두 입력은 OPTIONAL 부재. 원본 입력/ZIP과 입력 manifest는 변경하지 않았다.
+
+## 배포 파일 검증
+- 실제 소스/기록 커밋 `dfca2f48c1df65d3ab43ce9876d8050be2027eac` 기준으로 BuildHybrid 실행 폴더 전체의 크기·SHA256을 갱신했다.
+- `tools/update_distribution_manifest.ps1 -SourceCommit dfca2f48c1df65d3ab43ce9876d8050be2027eac -ValidatedOn 2026-10-26 -ValidationReport artifacts/map-trip-release-validation.json`: 종료0,130파일. 이어 `-VerifyOnly`: 종료0,130파일/105,536,133바이트 일치.
+- manifest 검증 항목은 실제 BuildHybrid·모델·편집기·위치 제어·NPC·자동 물리·화면 결과로 구성했고, 사람 수동/캠페인/현장 전수 검증은 false로 기록했다. 기본 은계 실행폴더와 정식 지도 사본을 함께 커밋한다.
