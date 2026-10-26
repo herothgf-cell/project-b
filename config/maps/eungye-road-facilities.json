@@ -1,0 +1,27 @@
+{
+  "mapId": "eungye",
+  "facilities": [
+    {
+      "id": "suin-ro-parking-east-central-strip",
+      "kind": "paired-median",
+      "sourceUrl": "https://map.naver.com/p/entry/coordinates/3za91A,2AGGdk?c=16.18,0,0,0,adh&p=RH2sSoLSyA5LtdOijavljA,159.2,-24.29,80,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-10-26",
+      "observed": "Yellow diagonally hatched central strip with a metal W-beam barrier and a crash cushion before the western crosswalk; length also visible looking east. No U-turn permission established here.",
+      "estimated": "Game geometry: paired source-line strip x=230..365 m; barrier x=235..345 m, 0.4 m wide and 0.75 m high; western crash cushion x=233..235 m, 0.5 m wide and 0.55 m high. End points and dimensions are conservative estimates, not surveyed measurements.",
+      "northMarkIds": ["B2218G612675", "B2218G612683", "B2218G612682"],
+      "southMarkIds": ["B222BC004744", "B222BC004132"],
+      "hatchFromX": 230.0,
+      "hatchToX": 365.0,
+      "barrierFromX": 235.0,
+      "barrierToX": 345.0,
+      "barrierWidth": 0.4,
+      "barrierHeight": 0.75,
+      "cushionLength": 2.0,
+      "cushionWidth": 0.5,
+      "cushionHeight": 0.55,
+      "openings": [],
+      "segments": []
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
 
 public class HdRouteTrial : MonoBehaviour {
  public DriveSession session;
@@ -37,15 +39,26 @@ public class HdRouteTrial : MonoBehaviour {
  public static void DrawMarkings(MapData map,Transform parent){
   var white=WorldBuilder.Mat("HD white",new Color(.95f,.94f,.87f));var yellow=WorldBuilder.Mat("HD yellow",new Color(1,.72f,.1f));var blue=WorldBuilder.Mat("HD blue",new Color(.12f,.4f,1));
   var vertices=new[]{new List<Vector3>(),new List<Vector3>(),new List<Vector3>()};var triangles=new[]{new List<int>(),new List<int>(),new List<int>()};
+  var drawn=new HashSet<string>();
   foreach(var mark in map.hdMarks??new HdMark[0]){
-   if(mark.points.Length<2)continue;int color=mark.type.StartsWith("1")?1:mark.type.StartsWith("3")?2:0;
+   if(mark.points==null||mark.points.Length<2)continue;
+   string forward=MarkKey(mark,false),reverse=MarkKey(mark,true);if(!drawn.Add(string.CompareOrdinal(forward,reverse)<0?forward:reverse))continue;
+   int color=mark.type.StartsWith("1")?1:mark.type.StartsWith("3")?2:0;
    var ps=new Vector3[mark.points.Length];for(int i=0;i<ps.Length;i++)ps[i]=mark.points[i].V(.075f);
    var path=new AssistedRoadNetwork.Path(ps);bool dashed=mark.type=="112"||mark.type=="212"||mark.type=="312";
    float step=dashed?6:2,paint=dashed?3:2.05f;
-   for(float d=0;d<path.length;d+=step){var a=path.Position(d);var b=path.Position(Mathf.Min(path.length,d+paint));var side=TrafficSystem.Right((b-a).normalized)*.075f;int k=vertices[color].Count;
-    vertices[color].AddRange(new[]{a-side,b-side,b+side,a+side});triangles[color].AddRange(new[]{k,k+1,k+2,k,k+2,k+3});
+   for(float d=0;d<path.length;d+=step){var a=path.Position(d);var b=path.Position(Mathf.Min(path.length,d+paint));if((b-a).sqrMagnitude<.0001f)continue;
+    var right=TrafficSystem.Right((b-a).normalized);int strokes=mark.type=="121"?2:1;
+    for(int stroke=0;stroke<strokes;stroke++){float offset=strokes==2?(stroke==0?-.11f:.11f):0;float half=strokes==2?.055f:.075f;var shift=right*offset;var side=right*half;int k=vertices[color].Count;
+     vertices[color].AddRange(new[]{a+shift-side,b+shift-side,b+shift+side,a+shift+side});triangles[color].AddRange(new[]{k,k+1,k+2,k,k+2,k+3});
+    }
    }
   }
   for(int c=0;c<3;c++){var mesh=new Mesh();mesh.indexFormat=UnityEngine.Rendering.IndexFormat.UInt32;mesh.SetVertices(vertices[c]);mesh.SetTriangles(triangles[c],0);mesh.RecalculateNormals();var g=new GameObject("원본 노면선 "+c);g.transform.SetParent(parent);g.AddComponent<MeshFilter>().sharedMesh=mesh;g.AddComponent<MeshRenderer>().sharedMaterial=new[]{white,yellow,blue}[c];}
+ }
+ static string MarkKey(HdMark mark,bool reverse){
+  var key=new StringBuilder(mark.type).Append('|').Append(mark.kind).Append('|');
+  for(int i=0;i<mark.points.Length;i++){var point=mark.points[reverse?mark.points.Length-1-i:i];key.Append(point.x.ToString("R",CultureInfo.InvariantCulture)).Append(',').Append(point.z.ToString("R",CultureInfo.InvariantCulture)).Append(';');}
+  return key.ToString();
  }
 }
