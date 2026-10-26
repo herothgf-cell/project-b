@@ -11,10 +11,10 @@ public static class PassengerScoreRecoveryTests {
   var recover=typeof(MannerLedger).GetMethod("RecoverStable");Check(recover!=null,"stable recovery entry point");
   Check((int)recover.Invoke(ledger,new object[]{2})==2&&ledger.Score==100,"motion loss recovers only once");
   var view=PassengerScoreView.Live(68,0,70,ledger.Score,0);Check(view.value==68&&view.required==70,"live gauge uses recovered M and still compares R");
-  var reward=PassengerReward.CalculateDetailed(100,70,5000,MannerLedger.Payment(5000,100,70),0,true,60,0,0,0,false);
-  Check(reward.satisfaction==60&&reward.baseFare==5000&&reward.bonus==0,"S60 below R70 keeps full M100 base and no bonus");
-  var reduced=PassengerReward.CalculateDetailed(68,70,5000,MannerLedger.Payment(5000,68,70),4,true,100,0,0,0,false);
-  Check(reduced.baseFare==3500&&reduced.satisfaction==72&&reduced.bonus>0,"M below R pays 70 percent while S above R earns bonus");
+  var reward=PassengerReward.CalculateDetailed(100,70,5000,0,0,true,60,0,0,0,false);
+  Check(reward.satisfaction==60&&reward.baseFare==4750&&reward.bonus==0,"S60 below R70 deducts ten missing points despite M100");
+  var reduced=PassengerReward.CalculateDetailed(68,70,5000,0,4,true,100,0,0,0,false);
+  Check(reduced.baseFare==5000&&reduced.satisfaction==72&&reduced.bonus>0,"S above R keeps full base and earns bonus despite M below R");
   var late=PassengerReward.CalculateDetailed(100,70,5000,0,30,false,60,0,0,0,false);
   Check(late.baseFare==0&&late.bonus==0&&late.satisfaction==90,"late arrival pays zero despite high M and S");
   var result=new PassengerResult{initialFare=5000,quoted=5000,baseFare=5000,paid=5000,bonus=0,score=100,satisfaction=60,required=70,bonusReason="요구 만족도 미달"};

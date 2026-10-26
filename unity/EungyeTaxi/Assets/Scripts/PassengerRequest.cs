@@ -21,22 +21,24 @@ public class PassengerRequest {
  public string ResponseText(){return (Kind<=RequestKind.Eta?"":Id+" · ")+(response.Length>0?response:Resolved?"응답 완료":"응답 대기");}
  public int Finish(){if(finished)return 0;finished=true;int deduction=Kind==RequestKind.Quiet&&!Resolved&&opportunity?5:0;if(!Resolved){bool ignored=opportunity&&(Kind==RequestKind.Empathy||Kind==RequestKind.Interview||Kind==RequestKind.LocalChat);if(ignored)SatisfactionDelta=-5;response=deduction>0?"정차 응답 기회 후 미응답 -5점":ignored?"미달: 안전한 응답 기회 후 미응답 · 하차 만족도 -5점":"안전한 응답 없이 운송 종료 · 감점 없음";Resolved=true;}return deduction;}
 }
-// Settlement is a value calculated once at delivery; fare policy continues to use M.
+// Settlement is a value calculated once at delivery from final passenger satisfaction.
 [System.Serializable] public class PassengerReward {
- public int baseFare,bonus,satisfaction,satisfactionDelta,excessScore,sourceManner,requiredScore;public string bonusReason="";
+ public int baseFare,bonus,satisfaction,satisfactionDelta,excessScore,sourceManner,requiredScore,farePolicyVersion,quotedFare;public string bonusReason="";
  public int startSatisfaction,startDeficit,cleanBonus,driveDelta,timeDelta;public float referenceSeconds,actualSeconds;public string timeReason="";
  public int Total {get{return baseFare+bonus;}}
  public static PassengerReward Calculate(RequestKind kind,int manner,int required,int fare,int paid,int delta,bool onTime,bool lawClear){
   return CalculateDetailed(manner,required,fare,paid,delta,onTime,100,0,0,0,false);
  }
- public static int Deficit(string trip){return new[]{4,8,12}[(int)(DrunkRideState.Hash(trip+":satisfaction")%3)];}
+ // Signed legacy field: positive means below R, zero means at R, negative means above R.
+ public static int Deficit(string trip){return new[]{-12,-8,-4,0,4,8,12}[(int)(DrunkRideState.Hash(trip+":satisfaction")%7)];}
  public static PassengerReward CalculateDetailed(int manner,int required,int fare,int paid,int delta,bool onTime,int start,int clean,float reference,float actual,bool unsafeDriving){
   bool valid=reference>=1&&!float.IsNaN(reference)&&!float.IsInfinity(reference)&&actual>=0&&!float.IsNaN(actual)&&!float.IsInfinity(actual);int time=valid&&!unsafeDriving?System.Math.Max(0,System.Math.Min(12,(int)System.Math.Round(60*(reference-actual)/reference,System.MidpointRounding.AwayFromZero))):0;
-  var r=new PassengerReward{sourceManner=manner,requiredScore=required,baseFare=onTime?paid:0,startSatisfaction=start,cleanBonus=clean,driveDelta=manner-100,satisfactionDelta=delta,timeDelta=time,referenceSeconds=reference,actualSeconds=actual,timeReason=!valid?"기준 ETA 없음/1초 미만":unsafeDriving?"위험 운전으로 시간 가산 없음":time>0?"안전한 조기 도착":"조기 도착 가산 없음"};r.satisfaction=PassengerScoreView.Calculate(start,r.driveDelta,delta,time);r.excessScore=System.Math.Max(0,r.satisfaction-required);r.bonusReason=!onTime?"도착 기한 초과":r.satisfaction<required?"요구 만족도 미달":"요구 만족도 도달 · 공통 보너스";
-  if(onTime&&r.satisfaction>=required&&required<100){int cap=System.Math.Min(500,fare/10);r.bonus=(int)((long)cap*(100-required+4*r.excessScore)/(5*(100-required))/10)*10;}return r;
+  var r=new PassengerReward{farePolicyVersion=2,quotedFare=fare,sourceManner=manner,requiredScore=required,startSatisfaction=start,cleanBonus=clean,driveDelta=manner-100,satisfactionDelta=delta,timeDelta=time,referenceSeconds=reference,actualSeconds=actual,timeReason=!valid?"기준 ETA 없음/1초 미만":unsafeDriving?"위험 운전으로 시간 가산 없음":time>0?"안전한 조기 도착":"조기 도착 가산 없음"};r.satisfaction=PassengerScoreView.Calculate(start,r.driveDelta,delta,time);r.excessScore=System.Math.Max(0,r.satisfaction-required);r.bonusReason=!onTime?"도착 기한 초과":r.satisfaction<required?"요구 만족도 미달":"요구 만족도 도달 · 가중 보너스";
+  if(onTime){int missing=System.Math.Max(0,required-r.satisfaction);int deductionPermille=System.Math.Min(200,missing*5);r.baseFare=missing==0?fare:(int)(((long)fare*(1000-deductionPermille)/10000)*10);}
+  if(onTime&&r.satisfaction>=required&&required<100){int weight=required==60?800:required==70?1000:required==85?1300:1000;int cap=(int)(((long)System.Math.Min(500,fare/10)*weight/10000)*10);r.bonus=(int)((long)cap*(100-required+4*r.excessScore)/(5*(100-required))/10)*10;}return r;
  }
  public string Breakdown {get{var view=PassengerScoreView.Settled(this);return view.Baseline+"\n"+view.Breakdown;}}
- public string Summary {get{return "약정 운임과 별도 · 기본 운임 "+baseFare.ToString("N0")+"원 · "+Breakdown+"\n보너스 "+bonus.ToString("N0")+"원 · "+bonusReason+" · 합계 "+Total.ToString("N0")+"원";}}
+ public string Summary {get{string fare=farePolicyVersion>=2&&baseFare>0?"약정 "+quotedFare.ToString("N0")+"원 · 요구 미달 "+System.Math.Max(0,requiredScore-satisfaction)+"점 · 감액 "+System.Math.Max(0,quotedFare-baseFare).ToString("N0")+"원 · ":"약정 운임과 별도 · ";return fare+"기본 운임 "+baseFare.ToString("N0")+"원 · "+Breakdown+"\n보너스 "+bonus.ToString("N0")+"원 · "+bonusReason+" · 합계 "+Total.ToString("N0")+"원";}}
 }
 
 // One presentation value for HUD, notifications and receipts. Time is awarded only at arrival.

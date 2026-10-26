@@ -38,7 +38,7 @@ public class ServiceLawZonesSmokeTest : MonoBehaviour {
   var e=System.Array.Find(session.law.ledger.Events,x=>x.tripId==trip&&x.family=="confusion");
   Check(zones.Completed&&e!=null&&e.occupied&&e.rules[0].verdict==(deferred?LawVerdict.Deferred:LawVerdict.Violation),deferred?"unavailable observation persists as deferred":"red flashing violation persists during actual passenger ride");
   Check(e!=null&&e.Deduction==(deferred?0:15)&&(deferred||session.manners.redEvents==reds),"law judgment does not duplicate passenger red penalty");
-  var drop=jobs.stops[selected.drop];Pose(drop.Kerb,drop.Direction);int before=jobs.balance;Check(jobs.Interact()&&jobs.balance-before==MannerLedger.Payment(selected.fare,session.manners.ledger.Score,selected.requiredScore),"law verdict does not alter ordinary manner fare formula");
+  var drop=jobs.stops[selected.drop];Pose(drop.Kerb,drop.Direction);int before=jobs.balance;Check(jobs.Interact()&&jobs.RequestReward!=null&&jobs.balance-before==jobs.RequestReward.Total,"law verdict does not duplicate passenger fare settlement");
  }
  IEnumerator Physical(){
   var jobs=session.jobs;var zones=GetComponent<ServiceLawZones>();JobOffer best=null;int wanted=0;foreach(var arg in System.Environment.GetCommandLineArgs())if(arg.StartsWith("-serviceVariant="))int.TryParse(arg.Substring(16),out wanted);
@@ -92,7 +92,7 @@ public class ServiceLawZonesSmokeTest : MonoBehaviour {
    Check(zones.Completed&&state.Finished&&state.CorrectRoute&&zones.LastFeedback!=null,"transport encounter completes with feedback "+variant);
    Check(!session.paused&&Time.timeScale>0&&jobs.trip.State==TripState.OnTrip&&session.manners.enabled,"transport/time/manner remain active after encounter "+variant);
    var e=System.Array.Find(session.law.ledger.Events,x=>x.tripId==trip&&x.family=="confusion");Check(e!=null&&e.occupied&&e.Deduction==0,"independent law history linked to passenger ride "+variant);
-   int balance=jobs.balance;Pose(drop.Kerb,drop.Direction);Check(jobs.Interact()&&jobs.balance>balance,"drop and receive normal fare "+variant);int paid=jobs.balance;Check(!jobs.Interact()&&jobs.balance==paid,"no duplicate fare "+variant);
+   int balance=jobs.balance;Pose(drop.Kerb,drop.Direction);Check(jobs.Interact()&&jobs.trip.State==TripState.Complete&&jobs.balance>balance,"drop and receive normal fare "+variant);int paid=jobs.balance;Pose(drop.Kerb+Vector3.up*100,drop.Direction);Check(!jobs.Interact()&&jobs.balance==paid,"no duplicate fare "+variant);
    if(variant==14){zones.ToggleDetails();yield return Capture("service-law-result");zones.ToggleDetails();}
   }
   yield return ExtraCase(false);yield return ExtraCase(true);

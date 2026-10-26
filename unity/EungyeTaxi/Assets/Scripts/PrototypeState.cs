@@ -64,7 +64,7 @@ public enum PedestrianState { None, Intending, Crossing, Unknown }
 [Serializable] public class PassengerResult {
  public string tripId,offerId,pickup,destination,outcome,request,mannerReason;
  public int day,quoted,paid,score,required;public float elapsed;
- public int baseFare,bonus,satisfaction,satisfactionDelta,excessScore;public string bonusReason;
+ public int baseFare,bonus,satisfaction,satisfactionDelta,excessScore,farePolicyVersion;public string bonusReason;
  public int startSatisfaction,startDeficit,cleanBonus,driveDelta,timeDelta,cleanlinessAfter;
  public float referenceSeconds,arrivalElapsed,disembarkElapsed;public bool drunk,vomited,wakeDelayed;public string timeReason;
  public string pickupStopId,dropStopId,mapRevision,catalogRevision,stopEvidence;
