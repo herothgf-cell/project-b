@@ -19,16 +19,16 @@ Spec: docs/content-design/16-ambient-pedestrians-proposal.md (A explicitly appro
 
 ## Task1 — Integrated pedestrian runtime and essential verification probe
 Files: new AmbientPedestrianPlacement.cs/AmbientPedestrian.cs/AmbientPedestrianSystem.cs (or similarly clear focused names), existing DriveSession.cs/TrafficSystem.cs/TrafficCar.cs/AssistedDriveController path, BusinessProgress.cs save, scenario owners and collision integration as necessary; focused AmbientPedestrianProbe.cs +meta. Optional small pure state file/test only if valuable.
-- [ ] Read existing signal placement, map geometry, scenarios/save/collision and implement safe route selection for actual four candidate hubs. Cache geometry, avoid18k polygon scans everyframe. Recordactualpositions/slots/unavailable reasons.
-- [ ] Implement actors/state and walking animation; signal entry/vehicle-clear/finish, scenario budget ownership and route-local yield. Keep passenger arrays/F/UI untouched.
-- [ ] Integrate checkpoint capture/validation/restore before motion, old/malformed snapshot handling and one-contact collision event.
-- [ ] Add narrowly scoped runtime probe for safe placement+red/green/finish/yield; passenger separation; actual live checkpoint save whilecrossing plus one freshprocess reload via -ambientPedestrianReloadTest and isolatedartifactpath. One visual capture actualactors at representative hub. Test flag early-isolates realcampaignsave. Essential model tests only ifchangedstatebenefits. Runonefocused editorcompile/geometry check ifneeded, no BuildHybrid (parent ownsfinalbuild).
-- [ ] Self-review, history report actualcommands/results, commit allownedsource/meta, release Unityslot. Do notspawnagents.
+- [x] Read existing signal placement, map geometry, scenarios/save/collision and implement safe route selection for actual four candidate hubs. Cache geometry, avoid18k polygon scans everyframe. Recordactualpositions/slots/unavailable reasons.
+- [x] Implement actors/state and walking animation; signal entry/vehicle-clear/finish, scenario budget ownership and route-local yield. Keep passenger arrays/F/UI untouched.
+- [x] Integrate checkpoint capture/validation/restore before motion, old/malformed snapshot handling and one-contact collision event.
+- [x] Add narrowly scoped runtime probe for safe placement+red/green/finish/yield; passenger separation; actual live checkpoint save whilecrossing plus one freshprocess reload via -ambientPedestrianReloadTest and isolatedartifactpath. One visual capture actualactors at representative hub. Test flag early-isolates realcampaignsave. Essential model tests only ifchangedstatebenefits. Runonefocused editorcompile/geometry check ifneeded, no BuildHybrid (parent ownsfinalbuild).
+- [x] Self-review, history report actualcommands/results, commit allownedsource/meta, release Unityslot. Do notspawnagents.
 
 ## Task2 — Review, default build and handoff (parent)
-- [ ] Fresh spec/quality whole-branch review; one combinedfixwave ifneeded.
-- [ ] BuildHybrid once, focused player3gates and image; fix only concrete failures.
-- [ ] Update design/scope/checklist/history/LATEST with actual counts and limitations. Regenerate/verify deploymentmanifest, preserve artifacts and integrate defaultlocalmain. No remote push requested.
+- [x] Fresh spec/quality whole-branch review; one combinedfixwave ifneeded.
+- [x] BuildHybrid once, focused player3gates and image; fix only concrete failures.
+- [x] Update design/scope/checklist/history/LATEST with actual counts and limitations. Regenerate/verify deploymentmanifest, preserve artifacts and integrate defaultlocalmain. No remote push requested.
 
 ## Review focus
 Restored crossing while green changes; caralready beyondstopline; nonintersectinglanes notfrozen; scenario activation whileambientcrossing; unsupported safegeometry doesn'tspawn onroad oroverpass; usercampaign save untouched byprobe.

@@ -1,39 +1,25 @@
 {
-  "sourceCommit": "3ab236bdbd0b7282920f3445975b820a53f88893",
+  "sourceCommit": "64a61d859e7df01d7dce3fb6f92182cffcf8033c",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-10-26",
-  "totalBytes": 105569899.0,
+  "totalBytes": 105615671.0,
   "validation": {
     "build": "PrototypeBuild.BuildHybrid exit 0",
-    "sourceCommit": "3ab236bdbd0b7282920f3445975b820a53f88893",
-    "focusedReceiptModelAssertions": 11435,
-    "focusedSteeringModelChecks": 48,
-    "manualCorrectionRigidbodyCases": 6,
-    "manualCorrectionExit": 0,
-    "trafficDistributionExit": 0,
-    "trafficVisible": 48,
-    "traffic250mCells": 28,
-    "trafficMotionSeconds": 20,
-    "trafficMoved": 48,
-    "trafficBodyOverlaps": 0,
-    "trafficPlayerRestoreClearance": true,
-    "trafficStaticAndPlayerAdmission": true,
-    "trafficRedGreenQueue": true,
-    "receiptCaptureExit": 0,
-    "receiptVersion": 3,
-    "receiptScreenshotResolution": "1920x1080",
-    "receiptScreenshotVisuallyReviewed": true,
-    "strictInputIssues": 0,
-    "manualHumanDriving": false,
-    "fullCampaignRun": false,
-    "fullModelRerun": false,
-    "pedestriansImplemented": false,
-    "additionalUturnsGameImplemented": false,
-    "additionalUturnApproachesObserved": 3,
-    "fieldReviewComplete": false,
-    "notes": "Focused tests only per user. Final whole-branch fixes and scoped rereview approved. Main72e2d4e fatigue/score policies preserved."
+    "runtimeSource": "62ff330932ef667ecb4ba805b36cbcb2be20ec7d",
+    "finalChange": "capture-only probe and serialized null scene reference; production pedestrian logic unchanged",
+    "ambientSafeSlots": 6,
+    "ambientSidewalks": 3,
+    "ambientCrossings": 3,
+    "ambientPlayerSave": "exit 0: focused placement, signals, kinematic NPC yielding, passenger separation, live checkpoint",
+    "ambientFreshProcessReload": "exit 0: restored crossing position/occupancy and resumed",
+    "ambientCapture": "exit 0: 1920x1080 actual grey pedestrian and teal passenger visually inspected; pause panel covers middle",
+    "drunkCareIntegration": "main1973175 prior verified care11467/JSON14/player203/save9/reload23 preserved; not rerun",
+    "contentLinks": "other task inspected integrated20 documents/318 relative links, 0 errors",
+    "fullCampaignRepeated": false,
+    "manualDriving": false,
+    "longTermPerformance": false
   },
   "files": [
     {
@@ -44,17 +30,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "b865459aaf21ce2d845ff2de147a042ca5e802c09e6c2a571f644e6e0a09ad1d"
+      "sha256": "2aa08293370cc6d89acd1a9bcea44f8bad45c0ad2cf38033ec0250167ecaacbf"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 30084,
-      "sha256": "e852bd1ab8ebe23f2fd0852b0343f0369eed50d30b27379e082bfae54b81de51"
+      "bytes": 30260,
+      "sha256": "2e477fb2ce04bbffff50b86cdf1d06cafc035203e890f0f6f6215f44ac85e572"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 24136,
-      "sha256": "55a128dd440b020be562b2213c0a057f3a9e6fb95e33532f574dbc1afefe8372"
+      "bytes": 24664,
+      "sha256": "98c477edc4137cb1b2d70e4d59bcf834b8ef47ac10fdb4793f49422820735952"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -63,8 +49,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
-      "bytes": 1344,
-      "sha256": "7613aaf62cbef71842bee518d367cfb916ebc3fff9ea88a5ca133d899ddd824e"
+      "bytes": 1356,
+      "sha256": "f9270186cdca09df541c3a6565278222e3e9f018545aecf32733e910d3fbe50d"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0.resS",
@@ -73,8 +59,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 1255936,
-      "sha256": "703cff7c46d88a4167e66c3056fff99b60d6fd39387cc0808f478a65dc8f5d72"
+      "bytes": 1300992,
+      "sha256": "1c798e3511e263b4716b0a1129747fad9fb2644415f9cd387262b889e4f8eae5"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -524,7 +510,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
       "bytes": 34067150,
-      "sha256": "d1349cd9ec94e4ca26ea3e36ba9faab229ead0257879ac3473bbc01a0dd3cee8"
+      "sha256": "9ab01f28f40bca6d4026e4de3b27d5d1f3d405ac246e875cf8b45ad313a1eb0e"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Resources/unity default resources",
@@ -549,7 +535,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/sharedassets0.assets",
       "bytes": 7624,
-      "sha256": "5b01356d02cef14fbe7ceee8c1e2500684c14b9e71c29a81a44f39073e627c2e"
+      "sha256": "fc233c96e57ff1b2be7536c76e65a802d006c389e523759792d9c8072e5324e2"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi.exe",
