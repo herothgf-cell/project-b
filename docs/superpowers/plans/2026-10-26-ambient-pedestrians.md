@@ -11,7 +11,7 @@ Spec: docs/content-design/16-ambient-pedestrians-proposal.md (A explicitly appro
 - J5057/J5076/T1/T2 candidates, max12 including scenario actors:8 sidewalk+4 crossing. Each supported hub2sidewalk1crossing. Unsafe/unverified slots empty, report why.
 - Sidewalk20–40m,1.2–1.4m/s, full body clearance and actual height; walking anim and grey/brown/purple clothing, passenger teal/F/pins unchanged.
 - Use existing crossing geometry and same pedestrian signal as visible lamps. Wait on red/last2s green, only enter vehicle-clear crossing; finish on red, no same-green teleport/re-cross.
-- Yield only intersecting vehicle paths, including cars past stop line. Existing manual driver responsibility/law semantics preserved, H and NPC protect occupied crossing. Waiting sidewalk actors do not freeze unrelated traffic.
+- Yield only intersecting vehicle paths, including cars past stop line. Existing manual/H acceleration-brake ownership stays with driver; NPCs yield automatically and taxi observation/contact uses crossing occupancy. Waiting sidewalk actors do not freeze unrelated traffic.
 - R5/PS09 share slots; no overlap/extra actors. First spawn before presentation; later replenishment offscreen and>80m taxi; never despawn crossing actors.
 - Save movement and crossing occupancy, restore before simulation; old saves start safe. Trigger contact uses existing collision event once, no physical taxi bouncing/new fees.
 - No canonical map JSON/input/ZIP changes. No other economy/handling changes. Preserve main6fb97e8.
