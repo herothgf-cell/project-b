@@ -17,6 +17,7 @@ public static class NavigationStopRegressionTests {
   var right=TrafficSystem.Right(stop.Direction);var curbDistance=Vector3.Dot(stop.Kerb-stop.V(),right);
   Check(curbDistance>1.6f&&curbDistance<2.1f,"S09 taxi target is near actual right curb, not lane center");
   Debug.Log("S09_POSITION kerb="+stop.Kerb.ToString("F5")+" passenger="+stop.Passenger.ToString("F5")+" source="+stop.V().ToString("F5"));
+  Check(original.hasPassengerAnchor&&!stop.hasPassengerAnchor,"only packaged S09 sidewalk anchor is replaced by curb-side waiting position");
   Check(Vector2.Distance(new Vector2(stop.Kerb.x,stop.Kerb.z),new Vector2(675.13423f,1478.49262f))<.05f&&Vector2.Distance(new Vector2(stop.Passenger.x,stop.Passenger.z),new Vector2(674.35916f,1480.71112f))<.05f,"S09 taxi and waiting passenger match measured curb-side positions");
   Check(Mathf.Abs(original.width-3)<.01f,"canonical package stop geometry is not mutated");
   Check(stop.CanStop(stop.Kerb+Vector3.up*.65f,stop.Direction,0),"S09 right-curb stop is valid");
@@ -24,6 +25,9 @@ public static class NavigationStopRegressionTests {
   Check(!stop.CanStop(stop.Kerb+right*1.3f+Vector3.up*.65f,stop.Direction,0),"S09 beyond curb tolerance does not count");
   Check(!stop.CanStop(stop.Kerb+Vector3.up*.65f,-stop.Direction,0),"S09 wrong-way stop does not count");
   var edited=Map();edited.stops[8].x+=5;var editedStop=PassengerStopCatalog.For(edited).Stops[8];Check(Mathf.Abs(editedStop.width-3)<.01f&&Mathf.Abs(editedStop.x-edited.stops[8].x)<.01f,"custom-edited S09 geometry is respected");
+  var package=ProjectMapStore.Load(ProjectMapBuild.Root);var sidewalk=package.document.scene.objects.First(o=>o.id=="sidewalk:stop:8");foreach(var point in sidewalk.points){point.x+=.65f;point.z+=.45f;}var shiftedAnchor=ProjectMapScene.Center(sidewalk.points)+Vector3.up*sidewalk.height;var sidewalkEdited=RoadMapComposer.Compose(package.baseline,package.document);var customStop=PassengerStopCatalog.For(sidewalkEdited).Stops[8];
+  Check(sidewalkEdited.stops[8].hasPassengerAnchor&&Vector3.Distance(sidewalkEdited.stops[8].passengerAnchor,shiftedAnchor)<.01f,"edited scene sidewalk supplies S09 waiting anchor");
+  Check(Mathf.Abs(customStop.width-6.6f)<.01f&&customStop.hasPassengerAnchor&&Vector3.Distance(customStop.Passenger,shiftedAnchor)<.01f,"S09 curb correction retains independently edited sidewalk waiting anchor");
   var taxi=new GameObject("nav regression taxi");var root=new GameObject("nav regression");try{
    var nav=root.AddComponent<RoadNavigation>();var graph=new HdRoadGraph(map);int beforeIndex=Edge(map,BeforeId),sourceIndex=Edge(map,SourceId),goalIndex=Edge(map,GoalId),changeIndex=Edge(map,ChangeId);Check(beforeIndex>=0&&sourceIndex>=0&&goalIndex>=0&&changeIndex>=0,"actual directed fixture edges resolve by stable ID");var before=graph.paths[beforeIndex];taxi.transform.SetPositionAndRotation(before.Position(before.length-2)+Vector3.up*.65f,Quaternion.LookRotation(before.Tangent(before.length-2)));
    nav.Build(map,taxi.transform);nav.SetHdDestination(goalIndex,10);
