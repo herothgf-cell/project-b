@@ -40,6 +40,60 @@ public class HdRouteTrial : MonoBehaviour {
    return false;
   }
  }
+ // An authored crosswalk supersedes source paint in its striped band. On
+ // its junction side, old source paint is hidden only where reviewed lanes
+ // now drive; outside lane edges and upstream source lines remain visible.
+ sealed class AuthoredJunctionPaintMask {
+  sealed class Zone {
+   public Vector3 crossing,junction,toward,across;public float halfWidth,halfDepth,reach,coreRadius;
+   public bool Crosswalk(Vector3 p){var delta=p-crossing;return Mathf.Abs(Vector3.Dot(delta,toward))<=halfDepth+.15f&&Mathf.Abs(Vector3.Dot(delta,across))<=halfWidth+.15f;}
+   public bool JunctionSide(Vector3 p){var delta=p-crossing;float along=Vector3.Dot(delta,toward);
+    return along>=-halfDepth-.15f&&along<=reach+.5f&&Mathf.Abs(Vector3.Dot(delta,across))<=halfWidth+1f;
+   }
+   public bool Core(Vector3 p){if(Vector3.Dot(p-crossing,toward)<-halfDepth-.15f)return false;
+    var delta=p-junction;return delta.x*delta.x+delta.z*delta.z<=coreRadius*coreRadius;
+   }
+   public bool NearBox(float minX,float maxX,float minZ,float maxZ){float margin=Mathf.Max(coreRadius,halfWidth)+2f;
+    return maxX>=Mathf.Min(crossing.x,junction.x)-margin&&minX<=Mathf.Max(crossing.x,junction.x)+margin&&
+           maxZ>=Mathf.Min(crossing.z,junction.z)-margin&&minZ<=Mathf.Max(crossing.z,junction.z)+margin;
+   }
+  }
+  struct LaneSpan {public Vector3 a,b;public float interior;}
+  readonly List<Zone> zones=new List<Zone>();readonly List<LaneSpan> lanes=new List<LaneSpan>();
+  public AuthoredJunctionPaintMask(MapData map){
+   if(map.editorDocument==null||map.editorDocument.facilities==null||map.junctionRules==null)return;
+   foreach(var crossing in map.editorDocument.facilities){if(crossing==null||crossing.kind!="crosswalk"||string.IsNullOrEmpty(crossing.junctionId)||crossing.width<=0)continue;
+    HybridJunctionRule junction=null;foreach(var rule in map.junctionRules)if(rule.id==crossing.junctionId){junction=rule;break;}if(junction==null)continue;
+    var forward=Quaternion.Euler(0,crossing.yaw,0)*Vector3.forward;var toward=junction.V()-crossing.Position;toward.y=0;
+    if(toward.sqrMagnitude<.1f)continue;forward.y=0;forward.Normalize();if(Vector3.Dot(forward,toward)<0)forward=-forward;
+    zones.Add(new Zone{crossing=crossing.Position,junction=junction.V(),toward=forward,across=TrafficSystem.Right(forward),
+     halfWidth=crossing.width*.5f,halfDepth=Mathf.Max(.2f,crossing.length*.5f),reach=Vector3.Dot(toward,forward),coreRadius=18f});
+   }
+   if(zones.Count==0)return;
+   var widths=new Dictionary<string,float>();if(map.editorDocument.lanes!=null)foreach(var lane in map.editorDocument.lanes)
+    if(lane!=null&&!string.IsNullOrEmpty(lane.id))widths[lane.id]=Mathf.Max(.5f,lane.width);
+   foreach(var lane in map.hdEdges??new HdEdge[0]){if(lane.disabled||lane.points==null||lane.points.Length<2)continue;
+    float width;if(!widths.TryGetValue(lane.id??"",out width))width=3.5f;float interior=width*.5f-.15f;if(interior<=0)continue;
+    for(int i=1;i<lane.points.Length;i++){Vector3 a=lane.points[i-1].V(),b=lane.points[i].V();
+     if((b-a).sqrMagnitude<.001f)continue;float minX=Mathf.Min(a.x,b.x),maxX=Mathf.Max(a.x,b.x),minZ=Mathf.Min(a.z,b.z),maxZ=Mathf.Max(a.z,b.z);
+     if(zones.Exists(zone=>zone.NearBox(minX,maxX,minZ,maxZ)))lanes.Add(new LaneSpan{a=a,b=b,interior=interior});
+    }
+   }
+  }
+  public bool MightAffect(HdMark mark){if(zones.Count==0)return false;float minX=float.MaxValue,maxX=float.MinValue,minZ=float.MaxValue,maxZ=float.MinValue;
+   foreach(var p in mark.points){minX=Mathf.Min(minX,p.x);maxX=Mathf.Max(maxX,p.x);minZ=Mathf.Min(minZ,p.z);maxZ=Mathf.Max(maxZ,p.z);}
+   return zones.Exists(zone=>zone.NearBox(minX,maxX,minZ,maxZ));
+  }
+  bool LaneInterior(Vector3 p){foreach(var lane in lanes){var delta=lane.b-lane.a;float length=delta.x*delta.x+delta.z*delta.z;if(length<.001f)continue;
+    float at=Mathf.Clamp01(((p.x-lane.a.x)*delta.x+(p.z-lane.a.z)*delta.z)/length);var nearest=Vector3.Lerp(lane.a,lane.b,at);
+    if(Mathf.Abs(p.y-nearest.y)>1f)continue;float dx=p.x-nearest.x,dz=p.z-nearest.z;if(dx*dx+dz*dz<lane.interior*lane.interior)return true;
+   }return false;
+  }
+  public bool Covers(Vector3 p){foreach(var zone in zones)if(zone.Crosswalk(p))return true;
+   foreach(var zone in zones)if((zone.JunctionSide(p)||zone.Core(p))&&LaneInterior(p))return true;
+   return false;
+  }
+ }
  public DriveSession session;
  public int selection;
  public bool finished;
@@ -75,7 +129,7 @@ public class HdRouteTrial : MonoBehaviour {
  public static void DrawMarkings(MapData map,Transform parent){
   var white=WorldBuilder.Mat("HD white",new Color(.95f,.94f,.87f));var yellow=WorldBuilder.Mat("HD yellow",new Color(1,.72f,.1f));var blue=WorldBuilder.Mat("HD blue",new Color(.12f,.4f,1));
   var vertices=new[]{new List<Vector3>(),new List<Vector3>(),new List<Vector3>()};var triangles=new[]{new List<int>(),new List<int>(),new List<int>()};
-  var roadsideMask=new LocalRoadSurfaceMask(map);
+  var roadsideMask=new LocalRoadSurfaceMask(map);var authoredMask=new AuthoredJunctionPaintMask(map);
   var drawn=new HashSet<string>();
   foreach(var mark in map.hdMarks??new HdMark[0]){
    if(mark.points==null||mark.points.Length<2)continue;
@@ -84,8 +138,10 @@ public class HdRouteTrial : MonoBehaviour {
    var ps=new Vector3[mark.points.Length];for(int i=0;i<ps.Length;i++)ps[i]=mark.points[i].V(.075f);
    var path=new AssistedRoadNetwork.Path(ps);bool dashed=mark.type=="112"||mark.type=="212"||mark.type=="312";
    bool roadside=mark.kind=="505"||mark.kind=="515";
-   float step=roadside ? .5f : dashed ? 6 : 2,paint=roadside ? .5f : dashed ? 3 : 2.05f;
-   for(float d=0;d<path.length;d+=step){if(roadside&&dashed&&d%6>=3)continue;var a=path.Position(d);var b=path.Position(Mathf.Min(path.length,d+paint));if((b-a).sqrMagnitude<.0001f)continue;
+   bool editedYellow=color==1&&(mark.kind=="501"||roadside)&&authoredMask.MightAffect(mark);
+   float step=roadside||editedYellow ? .5f : dashed ? 6 : 2,paint=roadside||editedYellow ? .5f : dashed ? 3 : 2.05f;
+   for(float d=0;d<path.length;d+=step){if((roadside||editedYellow)&&dashed&&d%6>=3)continue;var a=path.Position(d);var b=path.Position(Mathf.Min(path.length,d+paint));if((b-a).sqrMagnitude<.0001f)continue;
+    if(editedYellow&&authoredMask.Covers((a+b)*.5f))continue;
     if(roadside&&roadsideMask.CoversTransverse((a+b)*.5f,(b-a).normalized))continue;
     var right=TrafficSystem.Right((b-a).normalized);int strokes=mark.type=="121"?2:1;
     for(int stroke=0;stroke<strokes;stroke++){float offset=strokes==2?(stroke==0?-.11f:.11f):0;float half=strokes==2?.055f:.075f;var shift=right*offset;var side=right*half;int k=vertices[color].Count;
