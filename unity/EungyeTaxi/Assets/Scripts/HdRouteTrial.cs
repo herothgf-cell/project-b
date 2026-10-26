@@ -4,6 +4,42 @@ using System.Globalization;
 using System.Text;
 
 public class HdRouteTrial : MonoBehaviour {
+ // The imported roadside line predates the widened local road surface. Hide
+ // only the portion crossed by that surface; longitudinal source lines remain.
+ sealed class LocalRoadSurfaceMask {
+  const float Cell=20f;
+  sealed class Segment {public Vector3 a,b,direction;public float halfWidth,lengthSquared;}
+  readonly Dictionary<Vector2Int,List<Segment>> cells=new Dictionary<Vector2Int,List<Segment>>();
+  static int Grid(float coordinate){return Mathf.FloorToInt(coordinate/Cell);}
+  public LocalRoadSurfaceMask(MapData map){
+   foreach(var road in map.roads??new MapRoad[0]){
+    if(road.suppressPaint||road.points==null||road.points.Length<2||road.width<=0||
+       (road.id??"").StartsWith("fuel:")||(road.id??"").StartsWith("polish:"))continue;
+    for(int i=1;i<road.points.Length;i++){
+     var a=road.points[i-1].V();var b=road.points[i].V();var delta=b-a;delta.y=0;
+     if(delta.sqrMagnitude<.001f)continue;
+     var segment=new Segment{a=a,b=b,direction=delta.normalized,halfWidth=road.width*.5f,lengthSquared=delta.sqrMagnitude};
+     float padding=segment.halfWidth+.15f;
+     for(int x=Grid(Mathf.Min(a.x,b.x)-padding);x<=Grid(Mathf.Max(a.x,b.x)+padding);x++)
+      for(int z=Grid(Mathf.Min(a.z,b.z)-padding);z<=Grid(Mathf.Max(a.z,b.z)+padding);z++){
+       var key=new Vector2Int(x,z);List<Segment> list;if(!cells.TryGetValue(key,out list)){list=new List<Segment>();cells.Add(key,list);}list.Add(segment);
+      }
+    }
+   }
+  }
+  public bool CoversTransverse(Vector3 point,Vector3 tangent){
+   List<Segment> list;if(!cells.TryGetValue(new Vector2Int(Grid(point.x),Grid(point.z)),out list))return false;
+   foreach(var road in list){
+    if(Mathf.Abs(Vector3.Dot(tangent,road.direction))>=.85f)continue;
+    var to=point-road.a;float at=(to.x*(road.b.x-road.a.x)+to.z*(road.b.z-road.a.z))/road.lengthSquared;
+    if(at<0||at>1)continue;
+    var nearest=Vector3.Lerp(road.a,road.b,at);if(Mathf.Abs(point.y-nearest.y)>1f)continue;
+    float dx=point.x-nearest.x,dz=point.z-nearest.z,limit=road.halfWidth+.15f;
+    if(dx*dx+dz*dz<=limit*limit)return true;
+   }
+   return false;
+  }
+ }
  public DriveSession session;
  public int selection;
  public bool finished;
@@ -39,6 +75,7 @@ public class HdRouteTrial : MonoBehaviour {
  public static void DrawMarkings(MapData map,Transform parent){
   var white=WorldBuilder.Mat("HD white",new Color(.95f,.94f,.87f));var yellow=WorldBuilder.Mat("HD yellow",new Color(1,.72f,.1f));var blue=WorldBuilder.Mat("HD blue",new Color(.12f,.4f,1));
   var vertices=new[]{new List<Vector3>(),new List<Vector3>(),new List<Vector3>()};var triangles=new[]{new List<int>(),new List<int>(),new List<int>()};
+  var roadsideMask=new LocalRoadSurfaceMask(map);
   var drawn=new HashSet<string>();
   foreach(var mark in map.hdMarks??new HdMark[0]){
    if(mark.points==null||mark.points.Length<2)continue;
@@ -46,8 +83,10 @@ public class HdRouteTrial : MonoBehaviour {
    int color=mark.type.StartsWith("1")?1:mark.type.StartsWith("3")?2:0;
    var ps=new Vector3[mark.points.Length];for(int i=0;i<ps.Length;i++)ps[i]=mark.points[i].V(.075f);
    var path=new AssistedRoadNetwork.Path(ps);bool dashed=mark.type=="112"||mark.type=="212"||mark.type=="312";
-   float step=dashed?6:2,paint=dashed?3:2.05f;
-   for(float d=0;d<path.length;d+=step){var a=path.Position(d);var b=path.Position(Mathf.Min(path.length,d+paint));if((b-a).sqrMagnitude<.0001f)continue;
+   bool roadside=mark.kind=="505"||mark.kind=="515";
+   float step=roadside ? .5f : dashed ? 6 : 2,paint=roadside ? .5f : dashed ? 3 : 2.05f;
+   for(float d=0;d<path.length;d+=step){if(roadside&&dashed&&d%6>=3)continue;var a=path.Position(d);var b=path.Position(Mathf.Min(path.length,d+paint));if((b-a).sqrMagnitude<.0001f)continue;
+    if(roadside&&roadsideMask.CoversTransverse((a+b)*.5f,(b-a).normalized))continue;
     var right=TrafficSystem.Right((b-a).normalized);int strokes=mark.type=="121"?2:1;
     for(int stroke=0;stroke<strokes;stroke++){float offset=strokes==2?(stroke==0?-.11f:.11f):0;float half=strokes==2?.055f:.075f;var shift=right*offset;var side=right*half;int k=vertices[color].Count;
      vertices[color].AddRange(new[]{a+shift-side,b+shift-side,b+shift+side,a+shift+side});triangles[color].AddRange(new[]{k,k+1,k+2,k,k+2,k+3});
