@@ -102,3 +102,8 @@
 - 기존 사용자 `LATEST.md`의 현황 재확인 절을 백업·정확히 복원해 미커밋 상태로 남겼고, 기존 미추적 Unity/기획 파일도 보존했다. 사용자 변경을 이번 커밋에 섞지 않았다.
 - 검사 로그·최종 화면·독립 검토·당시 계획/판단 기록은 `artifacts/2026-10-26-map-trip/`에 보존했다. `primary-distribution-verify.txt`, `primary-workspace-strict.txt`는 반영 후의 실제 검증 결과다.
 - 다음 작업은 사람의 수동20분/3일 플레이·Unity GUI 편집 검증 및 명시하지 않은 접근부 거리뷰 조사다. 별도 운임 점진 감액 기획을 이 작업의 현행 지급 규칙과 혼동하지 않는다.
+
+## 사용자 요청에 따른 main 푸시
+- 사용자가 main 병합과 푸시를 요청했다. 로컬 main에는 이미 구현·빌드·검증 기록이 병합돼 있었다. `git fetch origin` 종료0, 원격 대비 뒤처짐0/앞섬30이며 원격 main이 로컬 main의 조상임을 확인했다.
+- `git push origin main` 종료0: 원격 main이12935f5에서 `c572fb9952ff76769e26de43133ef9683200be4a`로 갱신됐다. `git ls-remote origin refs/heads/main`의 실제 해시와 로컬 HEAD 일치를 확인했다.
+- 이 푸시 기록도 별도 문서 커밋으로 main에 반영한다. 실행파일·지도·manifest는 앞서 검증한 배포 그대로이며, 기존 사용자 LATEST 수정과 미추적 파일은 보존했다.
