@@ -16,7 +16,7 @@ public sealed class ProtoExpansionProbe : MonoBehaviour {
   while(!(s=FindObjectOfType<DriveSession>())||!s.StartupReady)yield return null;yield return null;yield return null;
   reload=Array.IndexOf(Environment.GetCommandLineArgs(),"-protoExpansionReloadTest")>=0;bool ok=false;
   try{Disable();if(reload)Reload();else Save();ok=true;}catch(Exception e){Debug.LogException(e);}
-  if(ok&&Array.IndexOf(Environment.GetCommandLineArgs(),"-protoCapture")>=0){Screen.SetResolution(1280,720,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.8f);s.GetComponent<FullMapOverlay>().Open();yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot("artifacts/proto-expansion-map.png");yield return new WaitForSecondsRealtime(.3f);s.GetComponent<FullMapOverlay>().Close();}
+  if(ok&&Array.IndexOf(Environment.GetCommandLineArgs(),"-protoCapture")>=0){Screen.SetResolution(1280,720,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.8f);s.GetComponent<FullMapOverlay>().Open();yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.GetFullPath("artifacts/proto-expansion-map.png"));yield return new WaitForSecondsRealtime(.3f);s.GetComponent<FullMapOverlay>().Close();}
   Debug.Log("PROTO_EXPANSION_"+(reload?"RELOAD_":"SAVE_")+(ok?"OK":"FAILED")+" checks="+checks);Application.Quit(ok?0:1);
  }
  void Disable(){s.business.enabled=s.jobs.enabled=s.jobs.nav.enabled=s.requests.enabled=s.law.enabled=s.manners.enabled=s.taxi.enabled=s.assisted.enabled=false;s.taxi.body.isKinematic=true;s.taxi.body.interpolation=RigidbodyInterpolation.None;s.GetComponent<ServiceLawZones>().enabled=false;s.GetComponent<StopOccupancySystem>().enabled=false;}
