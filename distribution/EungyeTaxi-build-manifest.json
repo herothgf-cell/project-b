@@ -1,23 +1,30 @@
 {
-  "sourceCommit": "3d19b13402405b25a0ee4529de83acebcc9b45c7",
+  "sourceCommit": "acb30334f2e0938bd7e6462ab8f58537cfd2562e",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-10-26",
-  "totalBytes": 105647070.0,
+  "totalBytes": 105654238.0,
   "validation": {
-    "build": "Integrated PrototypeBuild.BuildHybrid exit 0",
-    "additionalUturns": 3,
-    "executableProbe": "Integrated -additionalUturnTest exit 0",
-    "staticVehicleSamples": 61,
-    "staticBlocked": 0,
-    "kinematicNpcCompletions": 3,
-    "humanManualDriving": false,
-    "rigidbodyDriving": false,
+    "build": "PrototypeBuild.BuildHybrid exit 0",
+    "focusedEditorTests": "ServiceStartupFollowupTests.Run exit 0",
+    "modelSuites": 24,
+    "passengerCareModelAssertions": 13301,
+    "pathEquivalenceAssertions": 11672,
+    "currentMapRoutePairs": 132,
+    "currentMapSamples": 110186,
+    "routeAuditPairs": 671,
+    "routeAuditFailures": 0,
+    "validationDifferentialCases": 3,
+    "headlessStartupBeforeMs": 18730,
+    "headlessStartupAfterMs": 14178,
+    "visibleTraffic": 48,
+    "occupied250mCells": 28,
+    "passengerCareRuntimeAssertions": 201,
+    "saveReplacementWarning": "Observed intermittent File.Replace warning during rapid automated checkpoint writes; first run failed checkpoint assertion, final headless run exit0 with one warning. Not resolved by this task.",
+    "manualDriving": false,
     "fullCampaign": false,
-    "originalInputsUnchanged": true,
-    "integratedMain": "84757ef6d1047a1da2e1545440dcd36b9d2c1b40",
-    "observer": "AdditionalUturnObserverTests.Run exit 0"
+    "mapInputsChanged": false
   },
   "files": [
     {
@@ -28,12 +35,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "5ba56d9b0d9dfb1d7e95520289fadae8bd36e7d82c323e9e87b1147b5e4ec0fd"
+      "sha256": "356d4f1308fddf868afe760c9bb8ae1e7b7daeae6b9935f127d208441b6d8823"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
       "bytes": 30348,
-      "sha256": "e51a04126438bb4223c595469b75f5412a93bc6d55c92a0fe88def095b8e8be8"
+      "sha256": "b2ed26d1627c390e3944314d5b6b16b0506d89d53f17e3d32f5885b047f969c8"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
@@ -57,8 +64,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 1315328,
-      "sha256": "38567987a8308c06d9448acbcba972505d83599b26b908b52e489d55c0aa5600"
+      "bytes": 1322496,
+      "sha256": "2153ce08f853346bf77f805ffcfe83fe994d6f4a7e4bfbfdeef5e4f6b8a1b4de"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -508,7 +515,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
       "bytes": 34083566,
-      "sha256": "b2b7b2838a4d01ed615e82b08fafd85e1ac3feef3ad81ca0ae7156bb40a4b22e"
+      "sha256": "be0fe6baad01821dc2274e025183dc0b504593594cc163fba61636fdbbd24e72"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Resources/unity default resources",

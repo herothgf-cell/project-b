@@ -45,3 +45,7 @@
 화면 전용 보완 후 최종 BuildHybrid 종료0 (`artifacts/service-startup-capture-build.log`), `-passengerCareTest -fuelMenuCapture` 종료0/저장경고0. `artifacts/fuel-menu-1280.png`, `artifacts/fuel-menu-1920.png`를 직접 확인: 주유소1행+세차1행, 두 버튼 활성, 청결/대기 시간 안내, 식사/수면 없음, 잘림 없음. 초기 캡처의 검은 프레임/보간 위치 복귀는 캡처 fixture를 보완해 해결했다. 최종 화면 실행 준비14,662ms. manifest 결과는 배포 절차 후 기록한다. 전체20분/3일 캠페인, 사람의 수동 운전·교통 속 세차 왕복·보행 체감은 수행하지 않았다. 자동 위치 제어 검사는 수동 운전이나 자동 물리주행 검사가 아니다.
 
 지도/입력 ZIP 변경 없음. 현 지도 hash `44ebdedb71e84f436fd15e457841473e1d2761a66989a3bcf5fc50d01654b895`. 사용자 `.mmst`, 콘텐츠 하위 폴더, 별도 Unity/root 폴더 및 이전 status-review 기록은 이번 변경과 섞지 않는다.
+
+## 로컬 배포
+
+소스/기획/본 기록 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-26-service-signal-startup.md`로 확인한 `acb3033`이다. 해당40자리 소스 해시로 배포 manifest 생성. `tools/update_distribution_manifest.ps1 -VerifyOnly` 종료0: **130파일 / 105,654,238바이트**, 각 SHA256 일치. 최종 Strict 종료0. 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`. 원격 push는 하지 않았다.
