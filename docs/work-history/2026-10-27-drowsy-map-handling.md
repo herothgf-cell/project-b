@@ -31,10 +31,24 @@
 
 리뷰가 판단 보류한 실제 렌더·물리 체감·실행 저장·배포 무결성은 아래 실제 실행 결과/미검증 구분으로 처리한다. 신규 남행 창은 게임용 provisional이며 현장 전수 규제 검증으로 확대하지 않는다. 최종 Editor 실행 중 실수로 두 번째 Unity를 시작해 프로젝트 중복 실행 충돌 종료1073741845가 발생했다. 이 실행은 출구 RED 근거가 아니며 기존 프로세스 종료 후 순차 실행한다.
 
-진행 중. 실제 최종 Editor/Player/화면·저장·BuildHybrid·manifest 결과로 갱신한다. 위치제어 검사와 사람의 물리 조작/장시간 주행은 구분한다. 이번 요청에는 추가 main 병합/푸시가 없어 작업 브랜치에서 제공한다.
+최종 검증·기본 배포 교체 완료. 위치제어 검사와 사람의 물리 조작/장시간 주행은 구분한다. 이번 요청에는 추가 main 병합/푸시가 없어 작업 브랜치에서 제공한다.
 
 1차 `LatestFeedbackTests.RunFinal` 종료0 (`latest-feedback-final-editor.log`, `LATEST_FEEDBACK_FINAL_EDITOR_OK`). 리뷰 수정의 실제 출구 RED는 단독 `latest-exit-continuity-red2.log`에서 북부 출구 sample40에 실패, 수정 후 `latest-exit-continuity-green.log` `LATEST_EXIT_CONTINUITY_OK`: 북/남/동 주유소·동부 휴식·식당의 출구 전 구간 preview+active 안내와 시설밖 거부 통과. 해당 GREEN 이후 최종 통합/빌드·실행 검사를 수행한다. 정식 지도1888차로, contentHash `76ebb91c8e5ae202f81c15a5df399375db2273157406eccc4b07ef258ebfe758`. 필수 입력2개/ZIP은 유지한다.
 
 기존 사용자 게임 프로세스(PID41776,14:03시작)가 기본 배포 파일을 사용 중이라 임의 종료하지 않고 저장·종료를 요청했다. 실행 중 파일을 덮어쓰지 않으며 배포 교체 결과를 아래에 추가한다.
+
+사용자가 저장 후 종료를 회신했고 `USER_GAME_COUNT=0`을 확인했다. 이후 기본 `PrototypeBuild.BuildHybrid` 종료0 (`latest-feedback-release-build.log`, `PROTOTYPE_BUILD_OK builds/EungyeTaxi/EungyeTaxi.exe`). 별도 검증 빌드의 숨김 창 실행은 UI27 논리 검사가 통과했어도 캡처가 전부 검게 나와 시각 완료 근거에서 제외했다. 숨김 피로 실행의4개 contrast 실패/종료1도 같은 이유로 기록하며 다른 기능 단언 실패는 없었다. 실제 표시 창으로 기본 배포를 다시 실행하여 캡처/조건/내비를 확인한다.
+
+리뷰 반영 후 `LatestFeedbackTests.RunFinal` 재실행 종료0 (`latest-feedback-reviewed-editor.log`, 전체 Editor/244출구연속 검사 포함). 소스 `a2fc016d43053d0a3cfc56e93c546fdcd068c29d`에서 `PrototypeBuild.BuildAssistedChecks` 종료0 (`latest-feedback-validation-build.log`). 이는 같은 은계/BuildAt 파이프라인을 별도 `builds/AssistedTaxiChecks/`에 출력한 **검증 전용** 빌드이며 기본 BuildHybrid 배포 교체 완료로 계산하지 않는다. 해당 stamp는76ebb91c...와 일치한다. 최종 모델26 종료0 (`latest-feedback-final-model.log`), 필수 입력 Strict 종료0·문제0/선택2개 없음 (`latest-feedback-workspace.log`).
+
+기본 첫 BuildHybrid에서 실제 표시 Player: UI27/피로34/내비30 각각 종료0. 피로34에는 실제 접지/매너 활성 자동 정차,0원 취소,긴급 회복80/Closing,당일 정산 단1회,실제 JsonUtility 종료 상태 복원이 포함된다. 졸음4화면 중 Zzzz/상실 문구 직접 확인,호출 목록의 예상 운임만 표시되는 화면 확인. 다만 시설 패널 캡처는 Open 직후 OnGUI가 그려지기 전 월드 프레임을 읽었으므로 UI 시각 완료로 계산하지 않았다. 검사 장치에0.3초 repaint 대기와 검은 캡처/실제 지도 모달 픽셀 검사를 추가했다(`f61d18c`,일반 게임 기능 변경 없음). 해당 소스로 최종 BuildHybrid/UI 재검사 후 아래 manifest에 반영한다.
+
+### 최종 실행·배포 결과
+
+- 소스 `f61d18cdafdef98534c6fe8c4c0b00e6a7781704`, 정식 `PrototypeBuild.BuildHybrid` 종료0 (`latest-feedback-confirmed-build.log`). 기본 `builds/EungyeTaxi/EungyeTaxi.exe` 교체 완료. 마지막 소스 변경은 UI 캡처 검사 장치뿐이며 일반 피로/내비 코드는 앞선34/30실행과 동일하다.
+- 최종 기본 실행 `-hybridV2 -feedbackUITest`:44검사 종료0 (`latest-confirmed-ui.log`). 시작 문구·시설 패널1280/1920·호출 요금 단순화 화면 직접 확인. 검은 캡처나 지도 열기 전 월드 프레임을 더 이상 성공으로 계산하지 않는다. 졸음 toast/Zzzz/종료 메시지도 실제 표시 캡처에서 직접 확인했다.
+- `tools/update_distribution_manifest.ps1 -SourceCommit f61d18cdafdef98534c6fe8c4c0b00e6a7781704 -ValidatedOn 2026-10-27 -ValidationReport artifacts/latest-feedback-release-validation.json`, 이어 `-VerifyOnly` 종료0:130파일/105,863,666바이트 전수 SHA256 일치. 검증 보고서 내용은 추적 manifest의validation에 포함했다. 빌드 stamp/정식 지도 hash76ebb91c...일치.
+- `git diff --check` 종료0. 마인드맵 SHA256 `F1951492F9C5A13941E60A17D92EB31B1A7471FB8ABA7996D47A0C2E02F00937` 유지. 검증 전용 AssistedTaxiChecks/산출물·기존 사용자 미추적 파일은 커밋하지 않는다.
+- 남은 범위: 사람의 저속 조작감/시설 물리 왕복/장시간3일 밸런스·다른PC/DPI 및 전체 현장 규제 검증. 일부 비주유 시설의 기능 소제목은 리뷰 Minor 보류. 이전 피로 취소 영수증의 요청 이력 표시 후속도 유지한다. 기본 게임을 임의 종료하지 않았고 사용자의 저장·종료 회신 후 교체했다.
 
 재현: 기본 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 `PrototypeBuild.BuildHybrid`. Unity `LatestFeedbackTests.RunFinal`은 읽기 검사, `LatestFeedbackTests.ApplySouth`는 정식 지도 저장이므로 일반 재검사에서 실행하지 않는다. Player `-hybridV2 -fatigueOvertimeTest -fatigueCapture`, `-hybridV2 -feedbackUITest`. 실제 이력 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-27-drowsy-map-handling.md`로 확인한다.

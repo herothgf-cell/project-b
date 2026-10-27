@@ -13,7 +13,7 @@
 - [x] 2. Map: reproduce all station route failures at screenshot-like positions and current parking; fix only actual connectivity/arrival selection. Remove facility detailed paragraphs, keep name/capability/distance/action; fit Korean tooltip; offer rows retain pickup/drop and estimated fare only. Exit continuity focused RED sample40→GREEN including rest/restaurant.
 - [x] 3. Navigation: identify southbound source of screenshot, pin unwanted south-block loop with exact source/target route. Correct evidence-backed lane changes/turn links only; retain footprint/validator. If no evidence supports proposed turn, document limitation rather than invent permission.
 - [x] 4. Manual handling: add low-speed tighter-turn regression, preserve high-speed and H automation calibration; adjust steering curve/input response modestly.
-- [ ] 5. Final integrated Editor/model/Player/UI/save checks, single independent review, BuildHybrid and130-file manifest verification. Update content docs/checklist/history/LATEST; commit own files. No new main push requested in this message; keep feature branch unless explicitly requested.
+- [x] 5. Final integrated Editor/model/Player/UI/save checks, single independent review, BuildHybrid and130-file manifest verification. Editor0/exit244/model26/care13301/fatigue34/navigation30/UI44; final sourcef61d18c/BuildHybrid0/130files105863666bytes hashes0. Content/history/LATEST updated, own files committed, user mindmap preserved. No main push requested this turn; feature branch kept.
 
 ## Review focus
 

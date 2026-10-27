@@ -1,39 +1,38 @@
 {
-  "sourceCommit": "251c21982cbe410b0954b07afc7c1974d5ceeb33",
+  "sourceCommit": "f61d18cdafdef98534c6fe8c4c0b00e6a7781704",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-10-27",
-  "totalBytes": 105789674.0,
+  "totalBytes": 105863666.0,
   "validation": {
-    "build": "PrototypeBuild.BuildHybrid exit 0 (road-fatigue-confirmed-build-retry.log)",
-    "sourceCommit": "251c21982cbe410b0954b07afc7c1974d5ceeb33",
-    "modelSuites": 25,
+    "build": "PrototypeBuild.BuildHybrid exit 0; latest-feedback-confirmed-build.log",
+    "sourceCommit": "f61d18cdafdef98534c6fe8c4c0b00e6a7781704",
+    "productionSourceCommit": "a2fc016d43053d0a3cfc56e93c546fdcd068c29d",
+    "finalChangeNote": "f61d18c changes only screenshot-test repaint timing and blank/modal assertions; production behavior unchanged",
+    "modelSuites": 26,
     "passengerCareModelAssertions": 13301,
-    "editorIntegrated": "ROAD_FATIGUE_FINAL_EDITOR_OK exit 0",
-    "persistedLaneChangeLinks": 14,
-    "medianRailSegments": 44,
+    "editorIntegrated": "LatestFeedbackTests.RunFinal exit 0; latest-feedback-reviewed-editor.log",
+    "facilityExitAssertions": 244,
+    "southboundRouteMetresBefore": 1752.25,
+    "southboundRouteMetresAfter": 709.09,
+    "additionalSouthLaneChanges": 14,
     "navigationPlayerAssertions": 30,
-    "fatigueFinalHeadlessAssertions": 24,
-    "fatigueRenderedAssertions": 30,
-    "fatigueRenderedNote": "Production behavior unchanged; later changes only repair NavigationTripProbe startup/API fixtures",
-    "passengerCarePlayerAssertions": 201,
-    "scenarioCourses": 9,
-    "scenarioAssertions": 99,
-    "liveSaveAssertions": 9,
-    "liveReloadAssertions": 23,
-    "renderedUiAssertions": 14,
+    "fatigueRenderedPlayerAssertions": 34,
+    "fatigueChecksSource": "a2fc016 default build; production identical to f61d18c",
+    "finalRenderedUiAssertions": 44,
     "renderedResolutions": [
       1280,
       1920
     ],
-    "workspaceStrict": "exit 0; required input issues 0; optional imports absent 2",
+    "visualInspection": "startup spelling, facility name/compact panel at1280/1920, fare-only rows, initial toast/Zzzz and blackout ending message",
+    "workspaceStrict": "exit 0; required input issues0; optional imports absent2",
     "manualDriving": false,
     "fullCampaignPhysicalDriving": false,
     "fieldReviewComplete": false,
-    "fieldReviewLimit": "J7973 Naver approaches reviewed; J5750 exact junction signal removal based on explicit user report",
-    "knownMinor": "Fatigue-cancelled receipt may omit previously answered request history",
-    "mapContentHash": "48a84e21ffb5c6803fef8edddc90015695cf9806ca42c6137563895ef307f998"
+    "fieldReviewLimit": "South lane-change windows are provisional game geometry; no new real-world turn permission asserted",
+    "deferredMinor": "Non-fuel facility panels do not have a separate capability subtitle; facility names/icons/local F7 remain",
+    "mapContentHash": "76ebb91c8e5ae202f81c15a5df399375db2273157406eccc4b07ef258ebfe758"
   },
   "files": [
     {
@@ -44,7 +43,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "d193023d9a8ab9d7939bd3bd0e737e518170d01601ee565e1f8746cde7d371e4"
+      "sha256": "d197ac4110158d69536caa55f9986fac4176bba01a40d261265602afebda4638"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -73,8 +72,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 1385984,
-      "sha256": "687954785d73551f248e850e6ab89781b7d636aa90bee1daed5d6f91b3c35fe4"
+      "bytes": 1389568,
+      "sha256": "1e017443923253077a0c41b041455306cf722fdf3a8eb0a60436ade02167c67e"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -523,8 +522,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 34153398,
-      "sha256": "55d479e0014cc2d9b9a0f456f17b5054a2951e42ca08ab3cec8c2e6e10745b2e"
+      "bytes": 34223806,
+      "sha256": "d2c2fa9b6095ebb278fe4bf96657d6d78f4266b5cbeb98c10580c0dcd110fa81"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Resources/unity default resources",
@@ -659,7 +658,7 @@
     {
       "path": "builds/EungyeTaxi/project-map-build.json",
       "bytes": 177,
-      "sha256": "9fea86d48f0486aaf54534e6ea276573c7a7bce7bc3af4eb05e1a2035e8e91e6"
+      "sha256": "16114fe0a4f299f65c3f4dce83ba73917900bc415b05f30cb06de8c7ac2285aa"
     },
     {
       "path": "builds/EungyeTaxi/ThirdPartyNotices/mchrbn-unity-traffic-simulation-MIT.txt",
@@ -689,8 +688,8 @@
   ],
   "projectMap": {
     "path": "config/maps/project/eungye.project.json",
-    "contentHash": "48a84e21ffb5c6803fef8edddc90015695cf9806ca42c6137563895ef307f998",
-    "bytes": 21528624,
-    "sha256": "6cdffa698f2b2b7385d5a504a517cc17575abfdb732f1751b6bfd683dbd6d014"
+    "contentHash": "76ebb91c8e5ae202f81c15a5df399375db2273157406eccc4b07ef258ebfe758",
+    "bytes": 21599032,
+    "sha256": "f6180eb6543962fa8e296ce9dfbffe814f9b00a4bae714e373f512fa5a566514"
   }
 }
