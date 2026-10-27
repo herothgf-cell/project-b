@@ -88,6 +88,7 @@ public sealed class ServiceLawZones : MonoBehaviour {
   if(Live&&Live.Active){if(Live.State.Entered&&!Live.State.Finished){Live.RecordObservation();LastFeedback=Live.Feedback();LastTitle=Assigned==null?"상황 미완료":Assigned.Title;}Live.Stop();}session.jobs.nav.ObserveEdge(-1);Assigned=null;details=false;PickupPhase=false;CurrentScenario=null;var course=GetComponent<ScenarioChoiceSituation>();if(course)course.Stop();
  }
  void Update(){
+  tipSlide=Mathf.MoveTowards(tipSlide,TipExpanded?1:0,Time.unscaledDeltaTime*4);
   if(!Ready)return;
   if(session.jobs.trip.State!=TripState.OnTrip&&!(PickupPhase&&session.jobs.trip.State==TripState.ToPickup)){if(Assigned!=null)EndTrip();return;}
   if(Assigned==null||Completed||session.paused||session.PracticeMenuOpen||session.business.ShowingSummary)return;
@@ -109,6 +110,7 @@ public sealed class ServiceLawZones : MonoBehaviour {
  public void ToggleDetails(){if(LastFeedback!=null)details=!details;}
  public void BeginAlternative(){if(Live&&Live.Active)Live.Stop();Assigned=null;Completed=false;}
  public void CompleteAlternative(){Completed=true;LastTitle="출구 우회";LastFeedback=new PracticeFeedback{outcome="우회 경로 통과",good="선택한 대체 연결도로를 실제로 통과했습니다.",issues="원래 대기열 합류는 평가 기회 없음입니다.",next="목적지까지 안내 차로를 따라 진행하세요."};toastUntil=Time.time+12;}
+ float tipSlide=1;
  Vector2 situationScroll;public bool TipExpanded {get;private set;}=true;
  public void ToggleTip(){TipExpanded=!TipExpanded;}
  void OnGUI(){
@@ -125,11 +127,15 @@ public sealed class ServiceLawZones : MonoBehaviour {
   string service=session.services.TipText;
   if(!string.IsNullOrEmpty(service))tip=(tip==null?"":tip+"\n\n")+service;
   if(!string.IsNullOrEmpty(session.services.notice))tip=session.services.notice+(tip==null?"":"\n\n"+tip);
-  if(tip!=null){float scale=CockpitUI.Scale;bool expanded=TipExpanded;var r=CockpitUI.SituationBounds(Screen.width,Screen.height,result,session.jobs.Active);if(!expanded)r.height=38*scale;Panel(r);
+  var occupancy=GetComponent<StopOccupancySystem>();bool occupied=occupancy&&occupancy.AffectsActive;
+  if(occupied)tip=occupancy.Status+"\n안전한 곳에서 대기 · 영업/연료 시간은 계속 흐름"+(tip==null?"":"\n\n"+tip);
+  if(tip!=null){float scale=CockpitUI.Scale;var r=CockpitUI.SlidingTipBounds(Screen.width,Screen.height,result&&!occupied,session.jobs.Active,tipSlide);Panel(r);
    GUI.Label(new Rect(r.x+10*scale,r.y+3*scale,120*scale,30*scale),"TIP",new GUIStyle(text){font=KoreanText.BoldFont,fontSize=Mathf.RoundToInt(17*scale)});
-   if(GUI.Button(new Rect(r.xMax-104*scale,r.y+5*scale,94*scale,28*scale),TipExpanded?"숨기기 ▲":"펼치기 ▼",KoreanText.Button(Mathf.RoundToInt(13*scale))))ToggleTip();
-   if(expanded){float footer=result?36*scale:0;var body=new Rect(r.x,r.y+36*scale,r.width,r.height-36*scale-footer);situationScroll=DrawSituationCard(body,tip,situationScroll);
-    if(result){GUI.enabled=session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f;if(GUI.Button(new Rect(r.x+10*scale,r.yMax-34*scale,r.width-20*scale,28*scale),"운전 평가 · 정차 시 확인",KoreanText.Button(Mathf.RoundToInt(13*scale))))ToggleDetails();GUI.enabled=true;}
+   if(GUI.Button(new Rect(r.xMax-104*scale,r.y+5*scale,94*scale,28*scale),"◀ 숨기기",KoreanText.Button(Mathf.RoundToInt(13*scale))))ToggleTip();
+   if(!TipExpanded&&GUI.Button(new Rect(Mathf.Max(0,r.xMax),r.y,54*scale,36*scale),"TIP ▶",KoreanText.Button(Mathf.RoundToInt(13*scale))))ToggleTip();
+   if(tipSlide>0){float footer=result||occupied?36*scale:0;var body=new Rect(r.x,r.y+36*scale,r.width,r.height-36*scale-footer);situationScroll=DrawSituationCard(body,tip,situationScroll);
+    if(occupied){GUI.enabled=!session.paused&&session.taxi.body.velocity.magnitude<=.1f;if(GUI.Button(new Rect(r.x+10*scale,r.yMax-34*scale,r.width-20*scale,28*scale),"안전한 곳에서 대기",KoreanText.Button(Mathf.RoundToInt(13*scale))))occupancy.Resolve(false);GUI.enabled=true;}
+    else if(result){GUI.enabled=session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f;if(GUI.Button(new Rect(r.x+10*scale,r.yMax-34*scale,r.width-20*scale,28*scale),"운전 평가 · 정차 시 확인",KoreanText.Button(Mathf.RoundToInt(13*scale))))ToggleDetails();GUI.enabled=true;}
    }
   }
 

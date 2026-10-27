@@ -39,7 +39,8 @@ using System;
   double phase=elapsed/duration,pulse=phase<.35?phase/.35:1-(phase-.35)/.65;
   return (.55+.08*episode)*pulse*pulse*(3-2*pulse);
  }}
- public bool ControlsLost {get{return Blackout;}}
+ public bool Microsleep {get{return visionSeconds<120&&VisionLoss>=.5;}}
+ public bool ControlsLost {get{return Blackout||Microsleep;}}
  public Drowsiness Copy(){return (Drowsiness)MemberwiseClone();}
  public void Recover(){visionSeconds=checkSeconds=remaining=0;phase=effect=0;}
 

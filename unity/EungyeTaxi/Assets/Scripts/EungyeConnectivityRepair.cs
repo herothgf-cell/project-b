@@ -40,8 +40,14 @@ public static class EungyeConnectivityRepair {
   foreach(var pair in new[]{new[]{"A2218G611368","A2218G611366","B2218G610332"},new[]{"A2218G611366","A2218G611365","B2218G612674"},new[]{"A2218G611365","A2218G611364","B2218G612673"}}){
    var right=GetFamily(map,baseline,pair[0]);var left=GetFamily(map,baseline,pair[1]);var mark=Array.Find(map.hdMarks??new HdMark[0],m=>m.id==pair[2]&&m.type=="212"&&m.kind=="503");if(right==null||left==null||mark==null||mark.points.Length<2)continue;
    foreach(bool inward in new[]{true,false}){var from=inward?right:left;var to=inward?left:right;float ignored;float dashedStart=from.path.Project(mark.points[0].V(),out ignored),dashedEnd=from.path.Project(mark.points.Last().V(),out ignored);if(dashedStart>dashedEnd){float swap=dashedStart;dashedStart=dashedEnd;dashedEnd=swap;}
-    foreach(float start in new[]{60f,100,132}){float error;float targetStart=to.path.Project(from.path.Position(start),out error),end=targetStart+32;if(start<dashedStart+4||start+32>dashedEnd-4||end>to.path.length-12||error<2.5f||error>4.5f||Vector3.Dot(from.path.Tangent(start),to.path.Tangent(targetStart))<.98f)continue;
-     var points=new MapPoint[49];for(int i=0;i<points.Length;i++){float t=i/(float)(points.Length-1),blend=t*t*t*(t*(t*6-15)+10);points[i]=P(Vector3.Lerp(from.path.Position(start+32*t),to.path.Position(targetStart+32*t),blend));}
+    int corridor=Array.FindIndex(new[]{"A2218G611368","A2218G611366","A2218G611365"},id=>id==pair[0]);
+    var windows=new List<Vector2>{new Vector2(60,32),new Vector2(100,32),new Vector2(132,32)};
+    // Source captures have different longitudinal origins. Align consecutive
+    // windows in world space, rather than reusing each lane's numeric distance.
+    var reference=GetFamily(map,baseline,"A2218G611368");
+    if(inward&&reference!=null){float ignoredStart;float late=from.path.Project(reference.path.Position(114+14*corridor),out ignoredStart);windows.Add(new Vector2(late,12));}
+    foreach(var window in windows){float start=window.x,length=window.y,error;float targetStart=to.path.Project(from.path.Position(start),out error),end=targetStart+length;if(start<dashedStart+4||start+length>dashedEnd-4||end>to.path.length-12||error<2.5f||error>4.5f||Vector3.Dot(from.path.Tangent(start),to.path.Tangent(targetStart))<.98f)continue;
+     var points=new MapPoint[49];for(int i=0;i<points.Length;i++){float t=i/(float)(points.Length-1),blend=t*t*t*(t*(t*6-15)+10);points[i]=P(Vector3.Lerp(from.path.Position(start+length*t),to.path.Position(targetStart+length*t),blend));}
      if(!geometry.Clear(points,from.path.Tangent(start)))continue;changes.Add(new Change{from=from,to=to,at=start,end=end,side=inward?-1:1,points=points,mark=pair[2]});
     }
    }
@@ -72,7 +78,19 @@ public static class EungyeConnectivityRepair {
   // Pin this inference to those exact captured endpoint locations and headings.
   bool capturedArrow=third>=0&&west>=0&&Vector3.Distance(map.hdEdges[third].points.Last().V(),new Vector3(222.11833f,0,518.43613f))<.2f&&Vector3.Distance(edges[west].points[0].V(),new Vector3(173.34722f,0,528.71651f))<.2f;
   if(third>=0&&west>=0&&capturedArrow){int originalThird=Array.FindIndex(map.hdEdges,e=>e.id=="A2218G611366:3");int originalWest=Array.FindIndex(map.hdEdges,e=>e.id=="A2218G611305:0");if(Unedited(map,baseline,new[]{originalThird,originalWest})){List<Part> split;if(parts.TryGetValue(third,out split))third=split.Last().index;var a=Path(edges[third]);var b=Path(edges[west]);if(edges[third].next.Length==0&&Vector3.Dot(a.Tangent(a.length),b.Tangent(0))>.97f&&Vector3.Distance(a.Position(a.length),b.Position(0))<60){var points=Curve(a.Position(a.length),a.Tangent(a.length),b.Position(0),b.Tangent(0));if(geometry.Clear(points,a.Tangent(a.length))){var edge=Extra("straight-third", "A2218G611366 + A2218G611305",edges[third].toNode,edges[west].fromNode,points,4,Evidence+" / missing straight connector; not a left-turn permission");edge.next=new[]{west};edges[third].next=new[]{edges.Count};edges.Add(edge);}else Debug.Log("EUNGYE_CONNECTIVITY_STRAIGHT_SKIPPED "+geometry.Reason);}}}
-  map.hdEdges=edges.ToArray();new HdRoadGraph(map);Debug.Log("EUNGYE_CONNECTIVITY_REPAIR added="+map.hdEdges.Count(e=>e.id.StartsWith(Prefix)&&e.status=="provisional-connectivity-repair")+" laneChanges="+changes.Count+" southPortal="+(portal!=null)+" straightThird="+map.hdEdges.Any(e=>e.id==Prefix+"straight-third")+" / current field left-turn permission unverified; no left turn added");
+  // The captured west-side reversal already exists (A2218G611778). Restore
+  // its straight approach and the captured right-turn's downstream landing;
+  // never replace the prohibited west-approach left with a new turn.
+  int innerOriginal=Array.FindIndex(map.hdEdges,e=>e.id=="A2218G611364:2"&&!e.disabled),innerExit=edges.FindIndex(e=>e.id=="A2218G611780:0"&&!e.disabled);
+  if(innerOriginal>=0&&innerExit>=0&&Unedited(map,baseline,new[]{innerOriginal,innerExit})){
+   List<Part> split;int inner=parts.TryGetValue(innerOriginal,out split)?split.Last().index:innerOriginal;
+   var a=Path(edges[inner]);var b=Path(edges[innerExit]);var points=Curve(a.Position(a.length),a.Tangent(a.length),b.Position(0),b.Tangent(0));
+   if(Vector3.Distance(points[0].V(),points.Last().V())<60&&Vector3.Dot(a.Tangent(a.length),b.Tangent(0))>.97f&&geometry.Clear(points,a.Tangent(a.length))){var edge=Extra("west-inner-straight","A2218G611364 + A2218G611780",edges[inner].toNode,edges[innerExit].fromNode,points,1,Evidence+" / straight continuity to existing captured reversal; user-reported west U-turn2026-10-27, signal conditions not field certified");edge.next=new[]{innerExit};edges[inner].next=edges[inner].next.Concat(new[]{edges.Count}).ToArray();edges.Add(edge);}
+  }
+  int rightLanding=edges.FindIndex(e=>e.id=="A222BC004226:0"&&!e.disabled);
+  var southPortal=edges.FirstOrDefault(e=>e.id==Prefix+"south-portal");
+  if(rightLanding>=0&&southPortal!=null&&edges[rightLanding].next.Length==0&&Unedited(map,baseline,new[]{rightLanding})&&Vector3.Distance(edges[rightLanding].points.Last().V(),southPortal.points[0].V())<.1f){var edge=Extra("west-return-right-landing","A222BC004226 + "+southPortal.sourceId,edges[rightLanding].toNode,southPortal.toNode,southPortal.points,1,Evidence+" / existing captured right-turn shares exact south departure endpoint");edge.next=southPortal.next;edges[rightLanding].next=new[]{edges.Count};edges.Add(edge);}
+  map.hdEdges=edges.ToArray();new HdRoadGraph(map);Debug.Log("EUNGYE_CONNECTIVITY_REPAIR added="+map.hdEdges.Count(e=>e.id.StartsWith(Prefix)&&e.status=="provisional-connectivity-repair")+" laneChanges="+changes.Count+" southPortal="+(portal!=null)+" straightThird="+map.hdEdges.Any(e=>e.id==Prefix+"straight-third")+" / no prohibited west-approach left turn added");
  }
  public static bool FootprintClear(MapData map,HdEdge edge){var p=Path(edge);return new Clearance(map).Clear(edge.points,p.Tangent(0));}
  sealed class Clearance {

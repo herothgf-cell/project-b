@@ -21,6 +21,7 @@ public class BusinessProgress : MonoBehaviour {
  public bool DrowsinessRunning {get{return enabledCampaign&&ledger!=null&&ledger.Operating&&ledger.Driver!=null&&!preparing&&!restoring&&!resumeBlocked&&!PracticeSession.Enabled&&!session.PracticeBusy&&!session.PracticeMenuOpen&&!session.ChoiceOpen&&!session.FullMapOpen&&!session.paused&&!session.services.open&&!session.law.HistoryOpen&&!session.RideResultOpen&&Time.timeScale>0;}}
  public bool DrowsinessEligible {get{return DrowsinessRunning&&session.taxi.body.velocity.magnitude>=.56f;}}
  public bool DrowsyControlsLost {get{return DrowsinessRunning&&ledger.Driver.drowsiness!=null&&(ledger.Driver.drowsiness.Blackout||ledger.Driver.drowsiness.PassengerMustLeave&&session.jobs.Active);}}
+ public bool DrowsyMicrosleep {get{return DrowsinessRunning&&ledger.Driver.drowsiness!=null&&ledger.Driver.drowsiness.Microsleep;}}
  public string ComparisonVersion {get{if(loaded!=null&&ShowingSummary&&loaded.completedDays!=null)foreach(var day in loaded.completedDays)if(day.id==loaded.ids.campaign)return day.configuration;return (settings.days>1?PrototypeSettings.ThreeDayVersion:PrototypeSettings.OneDayVersion)+"-following-"+(mixedFollowing?"mixed":initialFollowing?"on":"off");}}
  public bool enabledCampaign=true;
  public string notice="",saveStatus="하루 정산 시 자동 저장됩니다";

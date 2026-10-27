@@ -10,7 +10,7 @@ public static class EungyeConnectivityRepairTests {
  public static void Run(){
   checks=0;var package=ProjectMapStore.Load(ProjectMapBuild.Root);var original=package.Compose();var map=Clone(original);var before=new HdRoadGraph(map);var positions=map.stops.Select(s=>s.V()).ToArray();var kerbs=map.stops.Select(s=>s.Kerb).ToArray();float oldDistance=before.Route(map.stops[0].laneEdge,map.stops[0].laneAt,map.stops[7].laneEdge,map.stops[7].laneAt).path.length;
   EungyeConnectivityRepair.Apply(map,package.baseline);var graph=new HdRoadGraph(map);var added=map.hdEdges.Where(e=>e.id.StartsWith(EungyeConnectivityRepair.Prefix)&&e.status=="provisional-connectivity-repair").ToArray();
-  Check(added.Length==20&&added.Count(e=>e.change!=0)==18,"18 evidence-bounded lane changes and two forward connectors");
+  Check(added.Length==25&&added.Count(e=>e.change!=0)==21,"21 evidence-bounded lane changes and four forward connectors");
   Check(added.Any(e=>e.id.EndsWith("straight-third"))&&added.Any(e=>e.id.EndsWith("south-portal")),"missing straight third lane and south capture portal restored");
   Check(added.Any(e=>e.change==-1&&e.sourceId=="A2218G611368,A2218G611366"),"late outer-to-third change available");
   Check(added.All(e=>e.turn==0&&e.status=="provisional-connectivity-repair"&&!string.IsNullOrEmpty(e.evidence)),"no invented left/right turn or verification claim");

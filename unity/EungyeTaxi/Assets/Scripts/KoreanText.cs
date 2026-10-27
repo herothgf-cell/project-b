@@ -1,6 +1,8 @@
 using UnityEngine;
 public static class KoreanText {
- static Font font,bold;
+ static Font font,bold,sign;
+ // Road labels must not share the frequently repacked HUD dynamic atlas.
+ public static Font SignFont {get{if(!sign){sign=UnityEngine.Object.Instantiate(BoldFont);sign.name="Road sign Korean atlas";}return sign;}}
  public static Font Font {get{if(!font)font=Resources.Load<Font>("Fonts/NotoSansKR-Medium");if(!font)font=UnityEngine.Font.CreateDynamicFontFromOSFont("Malgun Gothic",18);return font;}}
  public static Font BoldFont {get{if(!bold)bold=Resources.Load<Font>("Fonts/NotoSansKR-Bold");return bold?bold:Font;}}
  static Texture2D surface,control,hover,pressed;static GUISkin prepared;
@@ -19,7 +21,7 @@ public static class KoreanText {
  // Fit the rendered Korean glyphs, including multiline height, inside a physical sign.
  public static void Fit(TextMesh text,float width,float height){
   text.fontSize=80;text.characterSize=.1f;text.anchor=TextAnchor.MiddleCenter;text.alignment=TextAlignment.Center;
-  Apply(text);Font.RequestCharactersInTexture(text.text,text.fontSize,text.fontStyle);
+  text.font=SignFont;text.GetComponent<Renderer>().sharedMaterial=SignFont.material;SignFont.RequestCharactersInTexture(text.text,text.fontSize,text.fontStyle);
   var size=text.GetComponent<Renderer>().localBounds.size;
   if(size.x>0&&size.y>0)text.characterSize*=Mathf.Min(width/size.x,height/size.y);
   if(!text.GetComponent<RoadSignLabel>())text.gameObject.AddComponent<RoadSignLabel>();

@@ -9,6 +9,7 @@ public static class CockpitUI {
  // TIP uses the left column between the current job and the speedometer.
  public static Rect SituationBounds(float w,float h,bool result=false,bool activeJob=true){float s=Mathf.Min(1,w/1600f,h/900f);float top=JobBounds(w,h,activeJob).yMax+12*s;return new Rect(24*s,top,320*s,Mathf.Min((result?118:220)*s,h-232*s-top));}
  public static Rect ServiceHintBounds(float w,float h){float s=Mathf.Min(1,w/1600f,h/900f);return new Rect(365*s,200*s,410*s,110*s);}
+ public static Rect SlidingTipBounds(float w,float h,bool result,bool active,float visible){var r=SituationBounds(w,h,result,active);float s=Mathf.Min(1,w/1600f,h/900f);r.x=Mathf.Lerp(-r.width,r.x,Mathf.Clamp01(visible));return r;}
  public static string Clock(double seconds){int n=Mathf.CeilToInt((float)System.Math.Max(0,seconds));return n/60+":"+(n%60).ToString("00");}
  static void Panel(Rect r){GUI.color=new Color(.045f,.10f,.14f,1);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
  static void Gauge(Rect r,int score,Color c){GUI.color=new Color(.2f,.29f,.32f);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=c;GUI.DrawTexture(new Rect(r.x,r.y,r.width*Mathf.Clamp01(score/100f),r.height),Texture2D.whiteTexture);GUI.color=Color.white;}

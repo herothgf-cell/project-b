@@ -72,7 +72,19 @@ public sealed class PassengerStopCatalog {
  static bool Validate(MapData map,HdRoadGraph graph,Geometry g,PassengerStopCandidate c,out MapStop stop,out string reason){
   stop=null;reason="";if(c.evidenceStatus!="game-only-field-unverified"){reason="not a reviewed fictional game bay";return false;}
   int edge=Array.FindIndex(map.hdEdges,e=>e.id==c.laneId&&!e.disabled&&e.turn==0&&e.change==0);
-  if(edge<0){reason="approach lane removed/disabled";return false;}var path=graph.paths[edge];var pos=path.Position(c.laneAt);var dir=path.Tangent(c.laneAt);var right=TrafficSystem.Right(dir);
+  if(edge<0){reason="approach lane removed/disabled";return false;}var path=graph.paths[edge];float localAt=c.laneAt;
+  // Authoring-only cuts are not new junctions. Keep the exact original
+  // world anchor and full continuous approach for bay-clearance checks, while
+  // navigation targets the owning downstream segment. Never nearest-snap.
+  if(map.editorDocument!=null){var lineage=map.editorDocument.lanes.Where(l=>RoadMapAuthoringOperations.Origin(l)==c.laneId).OrderBy(l=>l.sourceOffset).ToArray();
+   if(lineage.Length>1){var points=new List<Vector3>();bool continuous=true;float offset=lineage[0].sourceOffset;
+    for(int k=0;k<lineage.Length;k++){var lane=lineage[k];int index=Array.FindIndex(graph.edges,e=>e.id==lane.id&&!e.disabled&&e.turn==0&&e.change==0);if(index<0){continuous=false;break;}var segment=graph.paths[index];if(k>0&&(Mathf.Abs(lane.sourceOffset-offset)>.02f||lineage[k-1].toNode!=lane.fromNode||!lineage[k-1].next.Contains(lane.id)||Vector3.Distance(points.Last(),segment.points[0])>.02f)){continuous=false;break;}if(k==0)points.Add(segment.points[0]);points.AddRange(segment.points.Skip(1));offset=lane.sourceOffset+segment.length;
+     if(c.laneAt>=lane.sourceOffset&&c.laneAt<offset){edge=index;localAt=c.laneAt-lane.sourceOffset;}
+    }
+    if(!continuous){reason="split approach continuity changed";return false;}path=new AssistedRoadNetwork.Path(points.ToArray());
+   }
+  }
+  var pos=path.Position(c.laneAt);var dir=path.Tangent(c.laneAt);var right=TrafficSystem.Right(dir);
   if(c.laneAt<15||c.laneAt>path.length-15||FlatDistance(pos,Pos(c))>.3f||Vector3.Dot(dir,Dir(c))<.995f){reason="approach geometry changed";return false;}
   var bay=pos+right*c.bayOffset;var passenger=new Vector3(c.passengerX,.14f,c.passengerZ);
   if(c.bayOffset<3.1f||c.bayOffset>3.9f||FlatDistance(passenger,bay+right*2.4f)>.1f){reason="invalid bay/sidewalk dimensions";return false;}
@@ -91,7 +103,7 @@ public sealed class PassengerStopCatalog {
   if(!connects){reason="existing sidewalk removed";return false;}
   foreach(float along in new[]{-11f,-8,0,8,11})foreach(float across in new[]{-1.5f,0,.5f,1,1.5f,2,2.5f,c.bayOffset,c.bayOffset+1.5f}){var p=pos+dir*along+right*across;if(!bounds(p)||g.Blocked(p)){reason="entry obstruction";return false;}}
   foreach(float along in new[]{-14f,-13,-12,12,13,14})foreach(float across in new[]{2f,3,4,5,c.bayOffset+3.35f}){var p=pos+dir*along+right*across;if(!bounds(p)||g.OnRoad(p,-.03f)||g.Blocked(p)){reason="sidewalk connector obstructed";return false;}}
-  stop=new MapStop{name=c.name,x=pos.x,z=pos.z,elevation=pos.y,dx=dir.x,dz=dir.z,width=3+2*c.bayOffset,laneEdge=edge,laneAt=c.laneAt,graphStop=true,hasPassengerAnchor=true,passengerAnchor=passenger};return true;
+  stop=new MapStop{name=c.name,x=pos.x,z=pos.z,elevation=pos.y,dx=dir.x,dz=dir.z,width=3+2*c.bayOffset,laneEdge=edge,laneAt=localAt,graphStop=true,hasPassengerAnchor=true,passengerAnchor=passenger};return true;
  }
  static MapPoint P(Vector3 p){return new MapPoint{x=p.x,z=p.z,elevation=p.y};}
  static MapArea Walk(Vector3 p,Vector3 dir,float width,float length,string id){var ring=ProjectMapScene.Rectangle(p,dir,width,length);return new MapArea{kind="sidewalk",name="게임 승하차 보도",evidence=id,height=.14f,points=ring,triangles=ProjectMapScene.Triangulate(ring)};}

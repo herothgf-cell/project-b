@@ -398,9 +398,9 @@ public class TrafficSystem : MonoBehaviour {
         if(j.facility!=null){var label=new GameObject("Facility provenance "+j.name);label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(-reach,2.8f,-.1f);var text=label.AddComponent<TextMesh>();text.text=j.facility.facilityStatus=="verified"?"현장 확인 시설":"임시 교통시설";text.fontSize=40;text.characterSize=.065f;text.anchor=TextAnchor.MiddleCenter;text.color=j.facility.facilityStatus=="verified"?Color.green:new Color(1,.75f,.2f);KoreanText.Apply(text);label.AddComponent<RoadSignLabel>();}
 
         if(permissive){
-            WorldBuilder.Box("비보호 표지",new Vector3(-reach,5.65f,0),new Vector3(2.75f,.95f,.1f),WorldBuilder.Mat("Sign blue",new Color(.02f,.15f,.6f)),root.transform,false);
+            WorldBuilder.Box("비보호 표지",new Vector3(-reach,5.65f,0),new Vector3(4.5f,1.45f,.1f),WorldBuilder.Mat("Sign blue",new Color(.02f,.15f,.6f)),root.transform,false);
             var label=new GameObject("비보호좌회전 안내");label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(-reach,5.65f,-.07f);
-            var text=label.AddComponent<TextMesh>();text.text="← 비보호 좌회전";KoreanText.Fit(text,2.5f,.72f);
+            var text=label.AddComponent<TextMesh>();text.text="비보호 좌회전";KoreanText.Fit(text,4.2f,1.25f);
             j.leftLamps.Add(new Renderer[0]);return;
         }
         var arrow=new List<Renderer>();var origin=new Vector3(-reach+.3f,4.55f,-.24f);

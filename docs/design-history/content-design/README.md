@@ -25,3 +25,7 @@
 | [README-history](README-history.md) | 문서 통합 전 원문·당시 규칙 |
 
 [이전 Proto 범위](../prototype-scope-history.md) · [이전 체크리스트](../prototype-development-checklist-history.md) · [지도 관찰 근거](../../map-observations/README.md)
+
+## 승인된 마인드맵 직접 반영
+
+2026-10-27 후속 승인으로 현재 원본의 가지와 Detail-Links를 최신 기획에 맞췄다. 시작 당시 사용자 편집/과거 노트 전체는 [마인드맵 보존본](2026-10-27-mindmap-before-update.mmst)에 남겼으며 현재 기획 기준으로 읽지 않는다. 적용·검증은 [작업 이력](../../work-history/2026-10-27-nav-tip-drowsy-mindmap.md)을 따른다.
