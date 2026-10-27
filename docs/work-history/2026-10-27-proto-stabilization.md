@@ -65,3 +65,11 @@
 ## 배포
 
 소스 `1d068bae198e146af0ee57664e6d1c18dced6232`, 기본 `builds/EungyeTaxi/EungyeTaxi.exe`, 은계 BuildHybrid0. `distribution/EungyeTaxi-build-manifest.json`을 실제 검증 보고서로 갱신하고130파일/105,694,422바이트 전체 SHA256 대조 **종료0**. 사람의 수동 플레이/3일 전체 물리는 false로, 연속 물리 하루·기술 안정화는 pass로 명시했다. 구현하지 않은 안전 대체 이동도 wait-only로 기록했다.
+
+## main 병합·원격 확인
+
+- 배포 커밋 `a6f65cab34327d01326021b13d3b8df36a605261` 생성 후 origin/main의 조상 관계를 다시 확인했다.
+- `git switch main`, `git merge --ff-only codex/proto-p11-p13` **종료0**. 병합된 Assets/실행폴더와 검증 브랜치의 차이0, main에서 manifest 재검사0.
+- `git push origin main` **종료0**: `83230c6..a6f65ca main -> main`. `git ls-remote origin refs/heads/main`이 실제 배포 커밋 `a6f65cab34327d01326021b13d3b8df36a605261`과 일치했다.
+- 이 확인 결과를 LATEST와 본 기록에 문서 커밋으로 추가한다. 실행파일/검증 소스는 바뀌지 않는다. 자신을 포함하는 문서 커밋 해시를 추측하지 않으며 최신 기록 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-27-proto-stabilization.md`로 조회한다.
+- 사용자 마인드맵 수정과 기존 미추적 환경 폴더는 원격 커밋에서 제외하고 로컬에 보존했다. 작업 브랜치는 배포 커밋에 남겨 두고 현재 체크아웃은 main이다.
