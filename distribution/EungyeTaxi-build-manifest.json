@@ -1,38 +1,30 @@
 {
-  "sourceCommit": "f61d18cdafdef98534c6fe8c4c0b00e6a7781704",
+  "sourceCommit": "e9c6faef74ab482d01bdeffaa98b0d6e937529cc",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-10-27",
-  "totalBytes": 105863666.0,
+  "totalBytes": 105870100.0,
   "validation": {
-    "build": "PrototypeBuild.BuildHybrid exit 0; latest-feedback-confirmed-build.log",
-    "sourceCommit": "f61d18cdafdef98534c6fe8c4c0b00e6a7781704",
-    "productionSourceCommit": "a2fc016d43053d0a3cfc56e93c546fdcd068c29d",
-    "finalChangeNote": "f61d18c changes only screenshot-test repaint timing and blank/modal assertions; production behavior unchanged",
-    "modelSuites": 26,
-    "passengerCareModelAssertions": 13301,
-    "editorIntegrated": "LatestFeedbackTests.RunFinal exit 0; latest-feedback-reviewed-editor.log",
-    "facilityExitAssertions": 244,
-    "southboundRouteMetresBefore": 1752.25,
-    "southboundRouteMetresAfter": 709.09,
-    "additionalSouthLaneChanges": 14,
-    "navigationPlayerAssertions": 30,
-    "fatigueRenderedPlayerAssertions": 34,
-    "fatigueChecksSource": "a2fc016 default build; production identical to f61d18c",
-    "finalRenderedUiAssertions": 44,
-    "renderedResolutions": [
-      1280,
-      1920
-    ],
-    "visualInspection": "startup spelling, facility name/compact panel at1280/1920, fare-only rows, initial toast/Zzzz and blackout ending message",
-    "workspaceStrict": "exit 0; required input issues0; optional imports absent2",
+    "build": "PrototypeBuild.BuildHybrid exit 0",
+    "modelSuites": 27,
+    "drowsyBlinkAssertions": 76,
+    "editor": "UturnBlinkFeedbackTests.RunFinal exit 0 (includes LatestFeedbackTests.RunFinal)",
+    "uturnMountEditorAssertions": 9,
+    "uturnBlinkPlayerAssertions": 24,
+    "fatigueOvertimePlayerAssertions": 34,
+    "actualRenderedCaptures": true,
+    "exactPosition": {
+      "x": 807.6996,
+      "z": 607.1715,
+      "heading": 3.280868,
+      "junction": "J8066_6364"
+    },
+    "mapChanged": false,
+    "trialIsolation": true,
     "manualDriving": false,
-    "fullCampaignPhysicalDriving": false,
-    "fieldReviewComplete": false,
-    "fieldReviewLimit": "South lane-change windows are provisional game geometry; no new real-world turn permission asserted",
-    "deferredMinor": "Non-fuel facility panels do not have a separate capability subtitle; facility names/icons/local F7 remain",
-    "mapContentHash": "76ebb91c8e5ae202f81c15a5df399375db2273157406eccc4b07ef258ebfe758"
+    "fullPhysicalCampaign": false,
+    "fieldReviewComplete": false
   },
   "files": [
     {
@@ -43,17 +35,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "d197ac4110158d69536caa55f9986fac4176bba01a40d261265602afebda4638"
+      "sha256": "58023c0dce4020478446c93237c15f58771055d314a64d6faba72b5b4b1acaee"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 30788,
-      "sha256": "5784444327699e5d2416fbdbba27c8502b90e4cbd28afb4357a6e8e63f5f3837"
+      "bytes": 30836,
+      "sha256": "5022945b4bf975f32f1709e667561f5ce28ff209aebb3e07ca9cff86bf5827a2"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 26176,
-      "sha256": "f4f5e44ed153d97c2342a2ca2782d7bf2d096dede3e717b3e064f2295402fe05"
+      "bytes": 26280,
+      "sha256": "0226e972c1fe5734246906fbc2e8a2c271e92f4a59bed91356b6ca7cf2beaf06"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -72,8 +64,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 1389568,
-      "sha256": "1e017443923253077a0c41b041455306cf722fdf3a8eb0a60436ade02167c67e"
+      "bytes": 1395712,
+      "sha256": "536218ae8f30916a7d1503c6a8c4c2663a0d96a35a3bf24a9dcdaad8de6133ed"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -537,8 +529,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/RuntimeInitializeOnLoads.json",
-      "bytes": 4870,
-      "sha256": "69d4c95d808fd872dd4639f82c409ae4069bf24da227115907e0bf0f33ac8fad"
+      "bytes": 5008,
+      "sha256": "e0fcccd1a26f5d3613af651e523dbaef6d34ef9582bbc4472943b8844d5e7879"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/ScriptingAssemblies.json",

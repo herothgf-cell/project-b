@@ -8,7 +8,7 @@
 
 - [x] 1. RED exact authored U-turn rendering fixture and early close/reopen curve. Inspect actual native signal pose, no nearest unrelated junction fallback.
 - [x] 2. Mount conditional U-turn signs above exact matching vehicle signal; keep unmapped/editor-preview fallback explicit and nonconditional signs unchanged. Early blink cycles at30,50,70,90,110seconds; duration grows.120~180seconds smooth permanent closure. Existing toast/Zzzz/day close and paused/saved exposure remain.
-- [ ] 3. Focused GREEN + full model26, final grouped Editor/persistence/signs/previous direct-turn/exit checks, one independent review, BuildHybrid, visible Player capture at exact user pose + sampled blink/video frames and complete blackout cancellation. Avoid repeating full suites per edit.
+- [x] 3. Focused GREEN + full model27, final grouped Editor/persistence/signs/previous direct-turn/exit checks, one independent review, BuildHybrid, visible Player capture at exact user pose + sampled blink frames and complete blackout cancellation. Avoid repeating full suites per edit.
 - [ ] 4. Update design06/10/checklist/history/LATEST, commit source; build/manifest all130files; preserve user changes; fetch main, merge locally and push, verify remote SHA and record actual result.
 
 ## Review focus

@@ -19,7 +19,10 @@ RoadMapFacilities/DriverCondition/DrowsinessHUD, 위치 제어 UturnBlinkProbe, 
 - Editor: 초점 검사 종료0 후 `UturnBlinkFeedbackTests.RunFinal` 종료0. 표지9검사(정방향/반대편·수직/회전/상부 간격/별도 지주/편집 fallback), 기존 UI/운영/경로 전체, JsonUtility 피로 저장12·자동 정차·직접 회전·시설 출구 연속244 포함.
 - 독립 읽기 전용 코드 리뷰 Critical/Important0. Minor인 방향·간격·preview 회귀 검사 및 캡처 오래된 파일 재사용 가능성을 보완했다. 캡처는 이전 동일 산출물을 제거하고 실제 픽셀 명암과 눈꺼풀 재개방도 검사한다.
 - Strict 입력 검사0·지도/ZIP 변경0, 마인드맵 SHA256 `F1951492F9C5A13941E60A17D92EB31B1A7471FB8ABA7996D47A0C2E02F00937` 유지. 샌드박스 라이선스 접속 정체는 정상 환경의 동일 검사로 재실행했다.
-- 빌드/실제 렌더·배포/병합 결과는 아래 완료 후 기록한다.
+- 소스 `e9c6faef74ab482d01bdeffaa98b0d6e937529cc`, 기본 BuildHybrid 종료0 (`PROTOTYPE_BUILD_OK`).
+- 실제 기본 Player `-uturnBlinkTest` 종료0·24검사, 제보 좌표 표지·눈감김1/3·재개방1/3·최종 감김·완전 차단7장. 이미지 존재뿐 아니라 실제 명암과 눈꺼풀 밴드 픽셀의 재개방 차이를 검사했다. 실제 렌더를 눈으로도 확인했다.
+- 같은 빌드 `-fatigueOvertimeTest -fatigueCapture` 종료0·34검사. 접지 바퀴 기반 자동 감속·정차 후1회 취소, 운임0/추가 감점0,180초 입력 차단, 귀가 피로20 회복·당일 Closing/정산·재로드 영업 불가, 정상 수면40 유지.
+- 배포 manifest는 실제 소스 해시와 이번 검증 보고서로 생성. 기본130파일/105,870,100바이트 전수 SHA256·크기·개수 검사0. 실행 폴더 전체를 Git 배포하며 생성 FirstDrive 씬도 함께 포함한다. main 통합/푸시 결과는 아래 완료 후 기록한다.
 
 ## 재현·구분
 
