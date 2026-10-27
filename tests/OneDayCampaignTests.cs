@@ -18,7 +18,9 @@ class OneDayCampaignTests {
   var meal=new DriverCondition{satiety=26,fatigue=20};meal.Meal();Check(Math.Abs(meal.fatigue-24.6)<.0001&&Math.Abs(meal.satiety-(26-50.0/12+70))<.0001,"meal elapsed before recovery");
   var rest=new DriverCondition{satiety=20,fatigue=80};rest.Sleep();Check(rest.fatigue==40&&Math.Abs(rest.satiety-(20-100.0/12))<.0001,"sleep no awake fatigue");
   Check(OneDayOfferPolicy.Rank(500,100,1000,0,1,0)<OneDayOfferPolicy.Rank(2000,100,1000,0,2,0),"early shorter route first");Check(OneDayOfferPolicy.Rank(500,100,1000,1000,1,0)<OneDayOfferPolicy.Rank(2000,100,1000,1000,2,0),"late shorter route first");Check(OneDayOfferPolicy.Rank(1000,100,0,600,1,0)<OneDayOfferPolicy.Rank(1000,100,2000,600,1,0),"middle meal access priority");
-  var budget=typeof(OneDayOfferPolicy).GetMethod("PickupSeconds");Check(budget!=null,"pickup budget policy exists");Check((float)budget.Invoke(null,new object[]{1732f})>=700,"measured 558-second signal-limited pickup has margin");Check((float)budget.Invoke(null,new object[]{0f})==180,"nearby pickup keeps three-minute minimum");
+  var budget=typeof(OneDayOfferPolicy).GetMethod("PickupSeconds");Check(budget!=null,"pickup budget policy exists");Check((float)budget.Invoke(null,new object[]{1732f})>=700,"measured 558-second signal-limited pickup has margin");Check((float)budget.Invoke(null,new object[]{0f})==150,"nearby pickup retains two-and-half-minute minimum");
+  Check(OneDayOfferPolicy.TransportSeconds(100,20,2)==185&&OneDayOfferPolicy.TransportSeconds(100,20,1)==210&&OneDayOfferPolicy.TransportSeconds(100,20,0)==240,"safe ETA plus waiting and ordered urgency deadlines");
+  var urgencies=new bool[3];for(int i=0;i<30;i++){string candidate="campaign:day1:candidate:"+i;int urgency=OneDayOfferPolicy.Urgency(candidate);urgencies[urgency]=true;Check(urgency==OneDayOfferPolicy.Urgency(candidate),"candidate urgency stable");}Check(urgencies[0]&&urgencies[1]&&urgencies[2],"new candidates cover all urgency types");
   Console.WriteLine("PASS one-day budget, repeated services, debt and settlement");
  }
 }

@@ -72,7 +72,7 @@ public class DrivingReadability : MonoBehaviour {
  public string NavigationSummary {get{var nav=session.jobs.nav;return nav.HasDestination?nav.PreferenceLabel+" · "+nav.remaining.ToString("0")+"m · 약 "+RoadNavigation.FormatEta(nav.estimatedSeconds):"목적지를 선택하면 경로를 안내합니다";}}
  void DrawNavigation(float x){
   var nav=session.jobs.nav;const float y=553;Panel(new Rect(x-5,y,Size+10,124));
-  GUI.Label(new Rect(x+8,y+5,Size-16,37),nav.HasDestination?nav.instruction:"내비게이션 · 목적지 대기",new GUIStyle(label){fontSize=15,fontStyle=FontStyle.Bold});
+  GUI.Label(new Rect(x+8,y+5,Size-16,37),nav.HasDestination?nav.instruction:"내비게이션 · 목적지 대기",new GUIStyle(label){font=KoreanText.Font,fontSize=15,fontStyle=FontStyle.Normal});
   GUI.Label(new Rect(x+8,y+43,Size-16,23),NavigationSummary,new GUIStyle(label){fontSize=12});
   GUI.enabled=nav.HasDestination&&!session.paused;
   if(GUI.Button(new Rect(x+8,y+69,Size-16,25),"Tab · "+(nav.PreferFastest?"짧은 길":"빠른 길")+" 선택",KoreanText.Button(13)))nav.TogglePreference();

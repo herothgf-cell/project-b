@@ -14,7 +14,7 @@ using System.Collections.Generic;
  public float daySeconds=720,initialFuel=60,fuelPerKm=4,idlePerMinute=.1f,fuelUnitPrice=40;
  public PrototypeSettings WithCurrentOperationBalance(){var copy=(PrototypeSettings)MemberwiseClone();var current=new PrototypeSettings();copy.daySeconds=oneDay?1200:current.daySeconds;copy.initialFuel=current.initialFuel;copy.fuelPerKm=current.fuelPerKm;copy.idlePerMinute=current.idlePerMinute;return copy;}
  public int insuranceExpiryDay=2,taxDueDay=3;
- public int redStraightPenalty=20,redRightPenalty=15,dedicatedRedPenalty=20,pedestrianPenalty=25,insertionPenalty=15,interferencePenalty=15;
+ public int redStraightPenalty=20,redRightPenalty=5,dedicatedRedPenalty=20,pedestrianPenalty=25,insertionPenalty=15,interferencePenalty=15;
  public const int SaveVersion=2;
  public const string SaveFile="campaign-v2.json";
 }
@@ -73,6 +73,8 @@ public enum PedestrianState { None, Intending, Crossing, Unknown }
 // No dependency on passenger manners, fares, Unity time, or physics.
 public class LawLedger {
  readonly List<LawEvent> events=new List<LawEvent>();
+ public int Revision {get;private set;}
+ public LawEvent LastChanged {get;private set;}
  public int Count {get{return events.Count;}}
  // Campaign score follows event order; only observed compliance uses the recovery policy recorded with each event.
  public static int ScoreAfter(int score,LawEvent e){bool good=false,bad=false;foreach(var r in e.rules){good|=r.verdict==LawVerdict.Compliant;bad|=r.verdict==LawVerdict.Violation;}return Math.Max(0,Math.Min(100,score-e.Deduction+(good&&!bad?(e.recoveryPolicyVersion>=1?3:1):0)));}
@@ -81,7 +83,14 @@ public class LawLedger {
  public bool Record(LawEvent e){
   if(e==null||string.IsNullOrEmpty(e.id)||e.day<1)throw new ArgumentException("Invalid law event");
   foreach(var old in events)if(old.id==e.id)return false;
-  events.Add(e.Copy());return true;
+  events.Add(e.Copy());LastChanged=e.Copy();Revision++;return true;
+ }
+ // One physical incident may first be an encroachment and then a full violation.
+ // Merge its findings so the existing maximum-per-incident rule remains effective.
+ public bool RecordIncident(LawEvent e){
+  if(e==null||string.IsNullOrEmpty(e.id)||e.day<1)throw new ArgumentException("Invalid law incident");
+  for(int i=0;i<events.Count;i++)if(events[i].id==e.id){var old=events[i];var merged=e.Copy();foreach(var r in old.rules){var present=merged.rules.Find(x=>x.rule==r.rule);if(present==null)merged.rules.Add(r.Copy());else if(r.verdict==LawVerdict.Violation){present.verdict=r.verdict;present.penalty=Math.Max(present.penalty,r.penalty);}}events[i]=merged;LastChanged=merged.Copy();Revision++;return false;}
+  return Record(e);
  }
  public int Score(int day){int score=100;foreach(var e in events)if(e.day==day)score-=e.Deduction;return Math.Max(0,score);}
  public string DaySummary(int day){int count=0,good=0,bad=0,deferred=0,none=0;foreach(var e in events){if(e.day!=day)continue;count++;foreach(var r in e.rules){if(r.verdict==LawVerdict.Compliant)good++;else if(r.verdict==LawVerdict.Violation)bad++;else if(r.verdict==LawVerdict.Deferred)deferred++;else none++;}}
@@ -94,6 +103,7 @@ public class LawLedger {
  public string Summary(string family,string rule){var recent=Recent(family,rule,5);if(recent.Count<5)return "기록 부족 · 유효 관찰 "+recent.Count+"/5건";int violations=recent.FindAll(r=>r.verdict==LawVerdict.Violation).Count;return "최근 유효 관찰 5건 · 준수 "+(5-violations)+" / 위반 "+violations+"건";}
 }
 public static class LawEvaluator {
+ public static LawEvent StopLine(string id,int day,RoadObservation o){var e=new LawEvent{recoveryPolicyVersion=1,id=id,day=day,family="signal",action="정지선 침범",observation=o.Copy(),reason="정지 의무 신호에서 정지선을 넘은 정차"};e.Add("L09",o.known&&o.forward==SignalColor.Red?LawVerdict.Violation:LawVerdict.NoOpportunity,1);return e;}
  public static LawEvent Exit(string id,int day,bool knownSignalQueue,bool changedLane,bool insertedAhead,bool obstructed,PrototypeSettings settings=null){
   var s=settings??new PrototypeSettings();var e=new LawEvent{recoveryPolicyVersion=1,id=id,day=day,family="exit",action=insertedAhead?"앞부분 진입":changedLane?"뒤 합류":"직진·우회",reason="신호 대기열 "+(knownSignalQueue?"확인":"불명확")+" · 차로 진입 "+(changedLane?"있음":"없음")+" · 앞부분 진입 "+(insertedAhead?"있음":"없음")+" · 상대 진행 방해 "+(obstructed?"관찰":"미관찰")};
   e.Add("L06",!knownSignalQueue?LawVerdict.Deferred:!changedLane?LawVerdict.NoOpportunity:insertedAhead?LawVerdict.Violation:LawVerdict.Compliant,s.insertionPenalty);

@@ -40,8 +40,10 @@ public class ServiceStops : MonoBehaviour {
  public bool AtRestArea(){if(ProjectMapScene.Active(session.world.map)){var taxi=session.taxi;return ProjectMapScene.Services(session.world.map,"rest").Any(o=>ProjectMapScene.CanUse(o,taxi.transform.position,taxi.transform.forward,taxi.body.velocity.magnitude));}var r=RestArea;var t=session.taxi;return r!=null&&r.CanRefuel(t.transform.position,t.transform.forward,t.body.velocity.magnitude);}
  public bool AtEndDayHub(){return AtParking()||AtRestArea();}
  public bool AtFuelPump(){return Stations.Count>0?FuelAtPump>=0:session.world.map.mapId!="eungye"&&session.jobs.At(indices[0]);}
- public bool FuelMenuOnly {get{return AtFuelPump()||session.jobs.trip.State==TripState.ToPickup;}}
- public bool CanUse(int kind){if(kind==0||kind==4)return session.business.ledger.State==BusinessState.Open&&session.jobs.trip.State!=TripState.OnTrip&&session.taxi.body.velocity.magnitude<.56f&&AtFuelPump();bool daily=session.business.ledger.OneDay;return kind>=1&&kind<=(daily?3:2)&&session.business.ledger.State==BusinessState.Open&&(daily?session.jobs.trip.State!=TripState.OnTrip:!session.jobs.Active)&&session.taxi.body.velocity.magnitude<.56f&&(kind==1?AtRestaurant():kind==3?(AtRestArea()||AtParking()):AtEndDayHub());}
+ public bool FuelMenuOnly {get{return AtFuelPump();}}
+ public int[] LocalActions {get{int pump=FuelAtPump;if(pump>=0)return Stations[pump].SupportsWash?new[]{0,4}:new[]{0};if(AtFuelPump())return new[]{0,4};if(AtRestaurant())return new[]{1};if(AtEndDayHub())return session.business.ledger.OneDay?new[]{3,2}:new[]{2};return new int[0];}}
+ public string TipText {get{string text=destination;if(session.ShowHints)text+=(text.Length==0?"":"\n")+"F7 현재 시설 이용 · M 지도에서 거점 안내";return text;}}
+ public bool CanUse(int kind){if(kind==0||kind==4){int pump=FuelAtPump;bool wash=kind!=4||(pump>=0?Stations[pump].SupportsWash:Stations.Count==0);return wash&&session.business.ledger.State==BusinessState.Open&&session.jobs.trip.State!=TripState.OnTrip&&session.taxi.body.velocity.magnitude<.56f&&AtFuelPump();}bool daily=session.business.ledger.OneDay;return kind>=1&&kind<=(daily?3:2)&&session.business.ledger.State==BusinessState.Open&&(daily?session.jobs.trip.State!=TripState.OnTrip:!session.jobs.Active)&&session.taxi.body.velocity.magnitude<.56f&&(kind==1?AtRestaurant():kind==3?(AtRestArea()||AtParking()):AtEndDayHub());}
  public string Quote(int kind){if(kind==4)return "세차·실내 청소 2,000원 · 30초 (부족분은 미납)\n청결도 100 회복 · 엔진 정지\n취소 시 비용/시간/청결 변화 없음";if(kind<0||kind>3)return "";var b=session.business;var a=b.ledger.Account;if(b.ledger.OneDay&&(kind==1||kind==3)){var preview=b.ledger.PreviewConditionService(kind==3);return (kind==1?"식사 3,000원 · 50초 (부족분은 미납)":"수면 무료 · 100초")+"\n포만감 "+preview.satiety.ToString("0")+" · 피로 "+preview.fatigue.ToString("0")+" 예상\n미탑승 호출은 취소됩니다. 엔진 정지 · 점수 변화 없음";}return kind==0?"주유 "+FuelAmount.ToString("0.0")+"% · "+Mathf.CeilToInt(FuelAmount*session.business.settings.fuelUnitPrice).ToString("N0")+"원 / 10초":kind==1?"식사 3,000원 / 10초 (하루 1회)":"무료 수면 100초 · 피로 −40 후 영업 종료 · 하루 주차비 500원";}
  void Start(){
   if(session.business.ledger.Account==null){enabled=false;return;}
@@ -102,6 +104,7 @@ public class ServiceStops : MonoBehaviour {
  public void Toggle(){
   if(open){Close();return;}
   if(session.FullMapOpen||session.PracticeMenuOpen||session.PracticeBusy||session.business.restartPrompt||PracticeSession.Enabled||session.business.preparing||session.law.HistoryOpen||session.business.ShowingSummary||session.business.taxPrompt||(session.business.ledger.OneDay?session.jobs.trip.State==TripState.OnTrip:session.jobs.Active)||session.taxi.body.velocity.magnitude>=.56f){notice="빈차로 안전하게 정차한 뒤 F7";noticeUntil=Time.unscaledTime+4;return;}
+  if(LocalActions.Length==0){notice="현재 시설의 정차 구역이 아닙니다 · M 지도에서 생활 거점을 선택하세요";noticeUntil=Time.unscaledTime+5;return;}
   pending=-1;pendingFuel=-1;open=true;session.paused=true;Time.timeScale=0;
  }
  void Close(bool resumePickup=true){pending=-1;pendingFuel=-1;open=false;DismissPostTrip();session.paused=false;Time.timeScale=1;if(resumePickup){session.jobs.ResumePickupNavigation();if(session.jobs.trip.State==TripState.ToPickup)destination="";}}
@@ -132,8 +135,7 @@ public class ServiceStops : MonoBehaviour {
   if(ok){b.ledger.AdvanceService(10);session.jobs.AdvancePickupWait(10);session.jobs.ResumePickupNavigation();b.SaveCheckpoint();notice="이용 완료 · 영업시간 10초 경과";noticeUntil=Time.unscaledTime+4;destination="";if(kind!=0)Close();}else notice="현금·연료 잔량 또는 오늘 이용 여부를 확인하세요";return ok;
  }
  void Row(float x,float y,string label,int kind,int station,GUIStyle style,GUIStyle button){
-  GUI.Label(new Rect(x+20,y,330,51),label,style);
-  GUI.enabled=HasService(kind==4?0:kind);if(GUI.Button(new Rect(x+360,y,105,42),"길 안내",button)){if(station>=0)GuideFuel(station);else Guide(kind==4?0:kind);}
+  GUI.Label(new Rect(x+20,y,420,51),label,style);
   GUI.enabled=CanUse(kind)&&(station<0||FuelAtPump==station)&&(kind!=0||FuelAmount>.001f);
   if(GUI.Button(new Rect(x+480,y,220,42),kind==0?"+"+FuelAmount.ToString("0.#")+"% 주유 · "+Mathf.CeilToInt(FuelAmount*session.business.settings.fuelUnitPrice)+"원":kind==4?"세차·실내 청소 · 2,000원":kind==1?"식사 비용 확인":kind==3?"수면 · 100초":"휴식·영업 종료",button)){if(kind==0)Buy(0);else RequestAction(kind);}GUI.enabled=true;
  }
@@ -141,21 +143,18 @@ public class ServiceStops : MonoBehaviour {
   if(session.business.ledger.Account==null||PracticeSession.Enabled)return;
   var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true};var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=14,wordWrap=true};
   style.normal.textColor=Color.white;
-  if(!open){if(!session.paused&&!session.business.restartPrompt&&!session.GetComponent<DriveHUD>().HelpOpen&&!session.FullMapOpen&&!session.ChoiceOpen&&!session.RideResultOpen&&!session.PracticeMenuOpen&&!session.business.ShowingSummary&&!session.business.preparing&&!session.law.HistoryOpen){if(session.ShowHints||notice!=""||destination!=""){var hint=CockpitUI.ServiceHintBounds(Screen.width,Screen.height);KoreanText.Panel(hint);var hintStyle=new GUIStyle(style){font=KoreanText.BoldFont,fontSize=Mathf.Max(13,Mathf.RoundToInt(16*CockpitUI.Scale)),alignment=TextAnchor.UpperLeft};var msg="F7 생활 거점"+(notice==""?"":"\n"+notice)+(destination==""?"":"\n"+destination);GUI.Label(new Rect(hint.x+10,hint.y+8,hint.width-20,hint.height-16),msg,hintStyle);}DrawPostTrip(style,button);}return;}
+  if(!open){if(!session.paused&&!session.business.restartPrompt&&!session.GetComponent<DriveHUD>().HelpOpen&&!session.FullMapOpen&&!session.ChoiceOpen&&!session.RideResultOpen&&!session.PracticeMenuOpen&&!session.business.ShowingSummary&&!session.business.preparing&&!session.law.HistoryOpen)DrawPostTrip(style,button);return;}
 
-  bool fuelOnly=FuelMenuOnly;int pump=FuelAtPump;GUI.depth=-110;float height=fuelOnly?(pump>=0?400:525):Stations.Count>0?687:572,x=(Screen.width-720)/2f,y=(Screen.height-height)/2f;
+  int pump=FuelAtPump;var actions=LocalActions;bool fuelOnly=FuelMenuOnly,restaurant=System.Array.IndexOf(actions,1)>=0;GUI.depth=-110;float height=pending==1?525:pending>=0?430:350+Mathf.Max(0,actions.Length-1)*62,x=(Screen.width-720)/2f,y=(Screen.height-height)/2f;
   GUI.color=new Color(.04f,.09f,.12f,1);GUI.DrawTexture(new Rect(x,y,720,height),Texture2D.whiteTexture);GUI.color=Color.white;
-  var b=session.business;var a=b.ledger.Account;GUI.Label(new Rect(x+20,y+15,680,65),(fuelOnly?"주유·세차":"생활 거점")+" (메뉴 동안 시간 정지)\n현금 "+a.Cash.ToString("N0")+"원 · 미납 "+a.Debt.ToString("N0")+"원 · 연료 "+a.Fuel.ToString("0.0")+"% · 청결 "+b.ledger.Care.Cleanliness.ToString("0"),style);
+  var b=session.business;var a=b.ledger.Account;GUI.Label(new Rect(x+20,y+15,680,65),(fuelOnly?(pump>=0?Stations[pump].ServiceLabel:"주유·세차"):restaurant?"기사 식당":"주차·휴식")+" (메뉴 동안 시간 정지)\n현금 "+a.Cash.ToString("N0")+"원 · 미납 "+a.Debt.ToString("N0")+"원 · 연료 "+a.Fuel.ToString("0.0")+"% · 청결 "+b.ledger.Care.Cleanliness.ToString("0"),style);
   if(pending>=0){GUI.Label(new Rect(x+30,y+110,660,160),(pending==1?MealName+" · ":"")+Quote(pending)+"\n\n확정할 때만 처리합니다."+(session.jobs.trip.State==TripState.ToPickup?" 소요 시간은 승객 대기시간에서도 차감됩니다.":""),style);
    if(pending==1){for(int i=0;i<mealMenu.Length;i++)if(GUI.Button(new Rect(x+30+i*220,y+285,210,48),(SelectedMeal==i?"✓ ":"")+mealMenu[i],button))SelectMeal(i);GUI.Label(new Rect(x+30,y+340,660,50),"기사식당 프로토 메뉴 · 모두 3,000원 / 50초 / 포만감 +70 (최대 100)",style);}
    if(GUI.Button(new Rect(x+30,y+height-130,310,50),"확정",button))ConfirmAction(true);if(GUI.Button(new Rect(x+380,y+height-130,310,50),"취소",button))ConfirmAction(false);return;}
   int row=0;
-  if(Stations.Count>0){for(int i=0;i<Stations.Count;i++){if(fuelOnly&&pump>=0&&i!=pump)continue;Row(x,y+85+row++*62,Stations[i].name,0,i,style,button);}}else Row(x,y+85+row++*62,names[0]+" · "+session.jobs.stops[indices[0]].name,0,-1,style,button);
-  Row(x,y+85+row++*62,"주유소 세차·실내 청소\n청결 100 회복 / 30초",4,-1,style,button);
-  if(!fuelOnly){for(int i=1;i<3;i++)Row(x,y+85+row++*62,(i==1?"식당":"주차장·휴식 거점")+" · "+StopFor(i).name,i,-1,style,button);
-  if(b.ledger.OneDay)Row(x,y+85+row++*62,"수면 · 기존 주차장 / 동부 휴식구역\n무료 / 피로 −40",3,-1,style,button);}
-  string pickupWarning=session.jobs.trip.State==TripState.ToPickup?"호출 유지 · 남은 대기 "+session.jobs.trip.PickupRemaining.ToString("0")+"초 · 주유 10초/세차 30초 차감\n":"";
-  GUI.Label(new Rect(x+20,y+height-155,680,108),pickupWarning+notice+"\n"+(Stations.Count>0?"내비/H는 주유소 입구까지 안내합니다. H 해제 후 수동 진입 → 주유 구역에 같은 방향으로 정차 → F7. 도로변에서는 주유·세차할 수 없습니다. 이용 후 별도 출구로 나가세요.":"주유소·식당·주차장은 임시 배치된 생활 거점입니다."),new GUIStyle(style){fontSize=14});
+  foreach(int kind in actions){string label=kind==0?(pump>=0?Stations[pump].name:names[0]):kind==4?"세차·실내 청소\n청결 100 회복 / 30초":kind==1?"식당 · "+MealStop.name:kind==3?"무료 수면 · 100초 / 피로 −40":"현재 거점에서 휴식·영업 종료";Row(x,y+85+row++*62,label,kind,pump,style,button);}
+  string pickupWarning=session.jobs.trip.State==TripState.ToPickup?(fuelOnly?"호출 유지 · 남은 대기 "+session.jobs.trip.PickupRemaining.ToString("0")+"초 · 이용 시간 차감":"식사·수면 확정 시 미탑승 호출 취소")+"\n":"";
+  GUI.Label(new Rect(x+20,y+height-155,680,108),pickupWarning+notice+"\n"+(fuelOnly?"현재 주유소에서만 이용합니다. 이용 후 별도 출구로 나가세요.":restaurant?"현재 식당에서 식사합니다. 다른 시설은 M 지도에서 선택하세요.":"현재 주차·휴식 거점에서 이용합니다. 다른 시설은 M 지도에서 선택하세요."),new GUIStyle(style){fontSize=14});
   if(GUI.Button(new Rect(x+20,y+height-45,680,35),"취소·주행으로 돌아가기 (F7)",button))Close();
  }
 }

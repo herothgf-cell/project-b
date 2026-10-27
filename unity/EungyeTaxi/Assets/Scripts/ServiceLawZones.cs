@@ -112,7 +112,7 @@ public sealed class ServiceLawZones : MonoBehaviour {
  Vector2 situationScroll;public bool TipExpanded {get;private set;}=true;
  public void ToggleTip(){TipExpanded=!TipExpanded;}
  void OnGUI(){
-  if(!Ready||session.FullMapOpen||session.PracticeMenuOpen||session.business.preparing||session.business.restartPrompt||session.law.HistoryOpen||session.services.open)return;
+  if(PracticeSession.Enabled||session.FullMapOpen||session.PracticeMenuOpen||session.ChoiceOpen||session.RideResultOpen||session.business.preparing||session.business.restartPrompt||session.business.ShowingSummary||session.business.taxPrompt||session.law.HistoryOpen||session.services.open||session.GetComponent<DriveHUD>().HelpOpen)return;
   var text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=15,wordWrap=true};var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=14};
   if(details&&LastFeedback!=null){
    float w=Mathf.Min(650,Screen.width-40),h=Mathf.Min(450,Screen.height-40),x=(Screen.width-w)/2,y=(Screen.height-h)/2;Panel(new Rect(x,y,w,h));GUI.Label(new Rect(x+18,y+15,w-36,55),LastTitle+" · 이번 운송 법규 결과\n"+LastFeedback.outcome,text);
@@ -122,6 +122,9 @@ public sealed class ServiceLawZones : MonoBehaviour {
   string tip=null;bool result=false;
   if(Assigned!=null&&!Completed){float distance=Vector3.Distance(session.taxi.transform.position,Assigned.junction.center);if(distance<260)tip=Assigned.Title+"\n창작 구역 · 약 "+distance.ToString("0")+"m\n"+(Live.Active?Live.Progress:ConfusionPracticeState.Guidance(Assigned.variant));}
   if(tip==null&&LastFeedback!=null&&(session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f||Time.time<toastUntil)){tip=LastFeedback.outcome;result=true;}
+  string service=session.services.TipText;
+  if(!string.IsNullOrEmpty(service))tip=(tip==null?"":tip+"\n\n")+service;
+  if(!string.IsNullOrEmpty(session.services.notice))tip=session.services.notice+(tip==null?"":"\n\n"+tip);
   if(tip!=null){float scale=CockpitUI.Scale;bool expanded=TipExpanded;var r=CockpitUI.SituationBounds(Screen.width,Screen.height,result,session.jobs.Active);if(!expanded)r.height=38*scale;Panel(r);
    GUI.Label(new Rect(r.x+10*scale,r.y+3*scale,120*scale,30*scale),"TIP",new GUIStyle(text){font=KoreanText.BoldFont,fontSize=Mathf.RoundToInt(17*scale)});
    if(GUI.Button(new Rect(r.xMax-104*scale,r.y+5*scale,94*scale,28*scale),TipExpanded?"숨기기 ▲":"펼치기 ▼",KoreanText.Button(Mathf.RoundToInt(13*scale))))ToggleTip();

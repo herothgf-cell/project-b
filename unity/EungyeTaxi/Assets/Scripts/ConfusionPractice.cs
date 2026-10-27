@@ -64,7 +64,7 @@ public sealed class ConfusionPractice : MonoBehaviour {
   Mark("① 정지선 · 가상 교육",Route.path.Position(stopAt),right,3.3f,Color.yellow);
   Mark(variant>=12?"② 대향차 양보 후 좌회전":"② 출구 공간 확인 후 직진",Route.path.Position(connectorEnd+10),TrafficSystem.Right(Route.path.Tangent(connectorEnd+10)),3.3f,Color.cyan);
   Label("가상 교육 구간 · 실제 규제 아님\n"+ConfusionPracticeState.Title(variant),Junction.center-Direction*45+right*(Junction.halfWidth[Axis]+2)+Vector3.up*4,Color.yellow);
-  if(variant>=12)Label("← 비보호\n녹색에서 대향차 양보",Junction.center-Direction*Junction.StopDistance(Axis)+right*(Junction.halfWidth[Axis]+2)+Vector3.up*4,Color.white);
+  // RoadSignage follows the active approach and displays permissive-left above its signal.
   if(variant==10||variant==13){var route=new TrafficRoute();
    if(variant==10)route.SetPoints(new[]{Route.path.Position(connectorEnd+1.5f),Route.path.Position(Route.path.length)});
    else route.SetPoints(new[]{Junction.center+Direction*6-right*1.75f,Junction.center-Direction*65-right*1.75f});

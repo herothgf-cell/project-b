@@ -12,7 +12,9 @@ public static class FuelStationLayout {
   public readonly Vector3 entrance,exit,pump,direction;
   public readonly Vector3[] drivePath,plot;
   internal readonly MapRoad[] surfaces;
-  internal FuelStation(string label,string key,MapStop stop,Vector3 entry,Vector3 leave,Vector3 bay,Vector3 heading,Vector3[] path,Vector3[] boundary,MapRoad[] paving){name=label;id=key;approach=stop;entrance=entry;exit=leave;pump=bay;direction=heading;drivePath=path;plot=boundary;surfaces=paving;}
+  public readonly bool SupportsWash;
+  public string ServiceLabel {get{return SupportsWash?"주유+세차":"주유 전용";}}
+  internal FuelStation(string label,string key,MapStop stop,Vector3 entry,Vector3 leave,Vector3 bay,Vector3 heading,Vector3[] path,Vector3[] boundary,MapRoad[] paving,bool supportsWash=true){name=label;id=key;approach=stop;entrance=entry;exit=leave;pump=bay;direction=heading;drivePath=path;plot=boundary;surfaces=paving;SupportsWash=supportsWash;}
   public bool CanRefuel(Vector3 position,Vector3 heading,float speed){
    var delta=position-pump;delta.y=0;heading.y=0;
    return Mathf.Abs(position.y-pump.y)<1.5f&&speed<.56f&&heading.sqrMagnitude>.1f&&Vector3.Dot(heading.normalized,direction)>.9f&&delta.sqrMagnitude<=2.8f*2.8f&&Mathf.Abs(Vector3.Dot(delta,TrafficSystem.Right(direction)))<1.15f;

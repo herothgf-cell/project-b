@@ -13,7 +13,7 @@ public static class CockpitUI {
  static void Panel(Rect r){GUI.color=new Color(.045f,.10f,.14f,1);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
  static void Gauge(Rect r,int score,Color c){GUI.color=new Color(.2f,.29f,.32f);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=c;GUI.DrawTexture(new Rect(r.x,r.y,r.width*Mathf.Clamp01(score/100f),r.height),Texture2D.whiteTexture);GUI.color=Color.white;}
  public static void Draw(DriveHUD hud){Styles();var s=hud.session;var e=s.business.ledger;var jobs=s.jobs;var previous=GUI.matrix;float scale=Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));float w=Screen.width/scale,h=Screen.height/scale;
-  Panel(new Rect(24,20,790,86));GUI.Label(new Rect(42,35,250,40),MapCatalog.Name(s.world.map.mapId),title);
+  Panel(new Rect(24,20,790,86));GUI.Label(new Rect(42,35,250,40),MapCatalog.Name(s.world.map.mapId),new GUIStyle(title){font=KoreanText.Font,fontStyle=FontStyle.Normal});
   int minute=480+(int)(e.Elapsed*720/e.Settings.daySeconds);
   GUI.Label(new Rect(302,33,190,28),(minute/60%24)+":"+(minute%60).ToString("00")+" · "+e.Day+" / "+e.Settings.days+"일",text);GUI.Label(new Rect(302,64,190,25),e.State==BusinessState.Closing?"퇴근 대기":e.Elapsed>=e.Settings.daySeconds?"초과 영업 +"+Clock(e.Elapsed-e.Settings.daySeconds):"남은 "+Clock(e.SecondsLeft),small);
   if(GUI.Button(new Rect(510,40,84,42),"정보",KoreanText.Button(15)))s.law.OpenHistory();

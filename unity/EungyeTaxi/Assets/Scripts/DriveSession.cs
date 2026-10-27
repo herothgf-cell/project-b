@@ -16,7 +16,7 @@ public class DriveSession : MonoBehaviour {
     public bool EditorOpen {get{var e=GetComponent<RoadMapEditor>();return e&&(e.IsOpen||e.ClosedThisFrame);}}
     public bool FullMapOpen {get{var map=GetComponent<FullMapOverlay>();return map&&map.IsOpen||EditorOpen||RideResultOpen;}}
     public bool StartupReady {get;private set;}
-    string loadingStage="은계 지도를 준비하고 있습니다";
+    string loadingStage="지도를 준비 중입니다.";
     Camera loadingCamera;
     GUIStyle loadingTitle,loadingDetail;
     void Awake() {
@@ -119,7 +119,7 @@ public class DriveSession : MonoBehaviour {
         if(StartupReady)return;
         GUI.depth=-10000;var oldColor=GUI.color;GUI.color=new Color(.06f,.09f,.13f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=oldColor;
         if(loadingTitle==null){loadingTitle=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=28,alignment=TextAnchor.MiddleCenter};loadingDetail=new GUIStyle(loadingTitle){fontSize=18};}
-        GUI.Label(new Rect(0,Screen.height*.43f,Screen.width,50),"은계 택시 시뮬레이터",loadingTitle);
+        GUI.Label(new Rect(0,Screen.height*.43f,Screen.width,50),"택시 시뮬래이터",loadingTitle);
         GUI.Label(new Rect(0,Screen.height*.43f+55,Screen.width,40),loadingStage,loadingDetail);
     }
     void Update() {

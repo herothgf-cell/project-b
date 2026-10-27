@@ -13,7 +13,7 @@ public class CampaignSmokeTest : MonoBehaviour {
   if(capture){Screen.SetResolution(1600,900,false);b.preparing=true;Time.timeScale=0;yield return new WaitForSecondsRealtime(.8f);yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.GetFullPath("artifacts/campaign-preparation.png"));yield return new WaitForSecondsRealtime(.4f);b.preparing=false;Time.timeScale=1;}
   session.taxi.automated=true;session.taxi.autoBrake=true;foreach(var c in session.traffic.cars){c.Recycle();c.enabled=false;}
   Check(a!=null&&b.ledger.Settings.days==3&&b.ledger.Settings.daySeconds==720&&a.Fuel>59,"v2 active twelve-minute schedule and starting fuel");
-  foreach(var offer in jobs.offers)Check(offer.seconds>=120&&offer.seconds>=offer.distance/4+90+offer.waitSeconds,"generous offer deadline without fare change");
+  foreach(var offer in jobs.offers)Check(offer.timingPolicyVersion==1&&offer.seconds>=90&&offer.seconds>=offer.safeRouteSeconds+45+offer.waitSeconds,"new passenger deadlines retain safe route and traffic margin");
   for(int i=0;i<3;i++){PlaceService(i);yield return new WaitForSeconds(.4f);Check(session.services.CanUse(i),"service stop alignment "+i);session.services.Toggle();Check(session.services.open&&Time.timeScale==0,"station menu freezes "+i);
    if(capture&&i==0){yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.GetFullPath("artifacts/campaign-service.png"));yield return new WaitForSecondsRealtime(.3f);}
    if(i<2)Check(session.services.Buy(i),"station purchase "+i);if(session.services.open)session.services.Toggle();}

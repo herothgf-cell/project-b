@@ -37,7 +37,7 @@ public partial class FullMapOverlay : MonoBehaviour {
  public List<MapMarker> VisibleMarkers(){
   var markers=new List<MapMarker>();
   var occupancy=session.GetComponent<StopOccupancySystem>();if(occupancy){var state=occupancy.Capture();int index=session.jobs.Catalog.IndexOf(state.stopId);if(state.active&&index>=0)markers.Add(new MapMarker{position=session.jobs.stops[index].Kerb,label="일시 점유",color=new Color(1,.55f,.2f),named=true});}
-  if(ShowFacilities){int i=0;foreach(var station in FuelStationLayout.For(session.world.map))markers.Add(new MapMarker{position=station.pump,label="주유 "+(++i),color=new Color(1,.75f,.15f),named=true});
+  if(ShowFacilities){int i=0;foreach(var station in FuelStationLayout.For(session.world.map))markers.Add(new MapMarker{position=station.pump,label=station.ServiceLabel+" "+(++i),color=new Color(1,.75f,.15f),named=true});
    if(ProjectMapScene.Active(session.world.map)){foreach(var o in session.world.map.projectScene.objects)if(o.enabled&&o.IsService)markers.Add(new MapMarker{position=o.Position,label=o.name,color=o.kind=="rest"?Color.cyan:new Color(.9f,.6f,1),named=true});}
    else {var rest=FuelStationLayout.Rest(session.world.map);if(rest!=null)markers.Add(new MapMarker{position=rest.pump,label="휴식 주차",color=Color.cyan,named=true});
     if(session.business.useV2)for(int k=1;k<session.services.indices.Length;k++)markers.Add(new MapMarker{position=(k==1?session.services.MealPosition:session.services.StopFor(k).V()),label=k==1?"식당":"주차장",color=new Color(.9f,.6f,1),named=true});}}
@@ -60,7 +60,7 @@ public partial class FullMapOverlay : MonoBehaviour {
   if(IsOpen)return false;
   var b=session.business;
   if(session.ChoiceOpen||session.RideResultOpen||session.PracticeMenuOpen||session.PracticeBusy||b.preparing||b.ShowingSummary||b.restartPrompt||b.pendingPayment>=0||b.taxPrompt||session.services.open||session.law.HistoryOpen)return false;
-  previousPause=session.paused;previousScale=Time.timeScale;session.paused=true;Time.timeScale=0;locationCopied=false;locationOpen=false;if(SelectedOffer>=0&&session.jobs.offers[SelectedOffer]!=selectedOffer){SelectedOffer=-1;selectedOffer=null;}IsOpen=true;if(session.jobs.Active)RestoreTripRoute();else if(selectedOffer!=null)SelectOffer(SelectedOffer);return true;
+  previousPause=session.paused;previousScale=Time.timeScale;session.paused=true;Time.timeScale=0;locationCopied=false;locationOpen=false;if(SelectedOffer>=0&&session.jobs.offers[SelectedOffer]!=selectedOffer){SelectedOffer=-1;selectedOffer=null;}IsOpen=true;if(session.jobs.Active)RestoreTripRoute(false);else if(selectedOffer!=null)SelectOffer(SelectedOffer);return true;
  }
  public void Close(){if(!IsOpen)return;IsOpen=false;dragging=false;closedFrame=Time.frameCount;session.paused=previousPause;Time.timeScale=previousPause?0:previousScale>0?previousScale:1;}
  void Update(){RefreshRoutePaint();if(IsOpen){if(Input.GetKeyDown(KeyCode.M)||Input.GetKeyDown(KeyCode.Escape)){if(locationOpen)locationOpen=false;else Close();}}else if(Input.GetKeyDown(KeyCode.M))Open();}
@@ -81,7 +81,7 @@ public partial class FullMapOverlay : MonoBehaviour {
   GUI.BeginGroup(viewport);var map=new Rect(0,0,viewport.width,viewport.height);Fill(map,new Color(.78f,.84f,.79f));var data=session.world.map;var tile=GetComponent<DriveHUD>().LightTile;
   if(tile){var a=Project(new Vector3(0,0,data.depth),map);float span=Mathf.Max(data.width,data.depth),pixels=Mathf.Min(map.width,map.height);GUI.DrawTexture(new Rect(a.x,a.y,data.width/span*pixels*ZoomLevel,data.depth/span*pixels*ZoomLevel),tile);}
   for(int pass=0;pass<2;pass++)foreach(var segment in RoutePaint)HudGlyph.MapLine(Project(segment.a,map),Project(segment.b,map),pass==0?(segment.passenger?new Color(.8f,.12f,.55f):new Color(.05f,.65f,1)):segment.color,pass==0?(segment.passenger?7:11):4,new Rect(0,0,MapRect.width,MapRect.height));
-  if(ShowFacilities)foreach(var place in Places()){var p=Project(place.position,map);if(!map.Contains(p))continue;if(HudGlyph.Button(new Rect(p.x-15,p.y-15,30,30),place.glyph,place.name,true))SelectPlace(place);}
+  if(ShowFacilities)foreach(var place in Places()){var p=Project(place.position,map);if(!map.Contains(p))continue;if(HudGlyph.Button(new Rect(p.x-15,p.y-15,30,30),place.glyph,place.name,true))SelectPlace(place);if(!string.IsNullOrEmpty(place.capabilityLabel)){var badge=new Rect(Mathf.Clamp(p.x-42,0,map.width-84),Mathf.Clamp(p.y-39,0,map.height-22),84,22);Fill(badge,new Color(.04f,.1f,.14f,1));GUI.Label(badge,place.capabilityLabel,new GUIStyle(text){fontSize=12,alignment=TextAnchor.MiddleCenter});}}
   if(selectedPlace!=null){var p=Project(selectedPlace.position,map);Dot(p,Color.magenta,10);}
 
   var occupied=new List<Rect>();
@@ -111,7 +111,7 @@ public partial class FullMapOverlay : MonoBehaviour {
    if(ev.type==EventType.KeyDown&&(ev.keyCode==KeyCode.Equals||ev.keyCode==KeyCode.KeypadPlus||ev.keyCode==KeyCode.Plus||ev.keyCode==KeyCode.Minus||ev.keyCode==KeyCode.KeypadMinus)){Zoom(ev.keyCode==KeyCode.Minus||ev.keyCode==KeyCode.KeypadMinus?-1:1);ev.Use();}}
   GUI.EndGroup();
   float x=viewport.xMax+16,w=Screen.width-x-20;DrawSidebar(x,w,viewport);
-  GUI.Label(new Rect(24,Screen.height-23,Screen.width-48,22),"© OpenStreetMap contributors / ODbL · NGII 기반 게임 지도",new GUIStyle(text){fontSize=11});
+  GUI.Label(new Rect(24,Screen.height-23,Screen.width-48,22),"승하차 화살표 = 차량 정차 방향 · © OpenStreetMap contributors / ODbL · NGII 기반 게임 지도",new GUIStyle(text){fontSize=11});
   if(!string.IsNullOrEmpty(GUI.tooltip)&&!locationOpen){Fill(new Rect(32,144,180,28),new Color(.04f,.1f,.14f,1));GUI.Label(new Rect(40,145,170,26),GUI.tooltip,text);}
   if(locationOpen){Fill(new Rect(0,0,Screen.width,Screen.height),new Color(0,0,0,.7f));var r=new Rect(Screen.width/2-240,Screen.height/2-150,480,300);Fill(r,new Color(.04f,.08f,.12f));GUI.BeginGroup(r);LocationPopup(94722);GUI.EndGroup();}
  }
@@ -121,8 +121,12 @@ public partial class FullMapOverlay : MonoBehaviour {
  void LocationPopup(int id){GUI.Label(new Rect(20,8,440,34),"현재 위치",heading);GUI.TextArea(new Rect(20,48,440,165),LocationText,new GUIStyle(GUI.skin.textArea){font=KoreanText.Font,fontSize=16,wordWrap=true,normal={textColor=Color.white}});if(GUI.Button(new Rect(20,230,210,42),locationCopied?"복사됨":"좌표 복사",button)){GUIUtility.systemCopyBuffer=LocationText;locationCopied=true;}if(GUI.Button(new Rect(250,230,210,42),"닫기",button))locationOpen=false;}
  public Vector2 CallPinPosition(int index,Rect map){var raw=Project(session.jobs.stops[session.jobs.offers[index].pickup].V(),map);var p=new Vector2(Mathf.Clamp(raw.x,20,map.width-20),Mathf.Clamp(raw.y,80,map.height-20));p.x=Mathf.Clamp(p.x+(index-1)*36,20,map.width-20);if(p.x>map.width-80&&p.y>map.height-185)p.x=map.width-94;return p;}
  public int AvailableCallCount {get{if(session.jobs.Active)return 0;int count=0;foreach(var o in session.jobs.offers)if(o!=null)count++;return count;}}
- static Rect StopPinLabel(Vector2 p,Rect map){return new Rect(Mathf.Clamp(p.x-27,map.xMin,map.xMax-54),Mathf.Clamp(p.y+18,map.yMin,map.yMax-30),54,30);}
- void StopPin(int stop,string caption,Color color,Rect map){var p=Project(session.jobs.stops[stop].V(),map);if(!map.Contains(p))return;var old=GUI.backgroundColor;GUI.backgroundColor=color;if(GUI.Button(StopPinLabel(p,map),caption,button))FocusStop(stop);if(GUI.Button(new Rect(p.x-10,p.y-10,20,20),GUIContent.none))FocusStop(stop);GUI.backgroundColor=old;}
+ static Rect StopPinLabel(Vector2 p,Rect map){return new Rect(Mathf.Clamp(p.x+32,map.xMin,map.xMax-54),Mathf.Clamp(p.y-15,map.yMin,map.yMax-30),54,30);}
+ void StopPin(int stop,string caption,Color color,Rect map){var target=session.jobs.stops[stop];var p=Project(target.V(),map);if(!map.Contains(p))return;var old=GUI.backgroundColor;GUI.backgroundColor=color;if(GUI.Button(StopPinLabel(p,map),caption,button))FocusStop(stop);if(GUI.Button(new Rect(p.x-10,p.y-10,20,20),new GUIContent("",caption+" · 화살표 방향으로 정차")))FocusStop(stop);GUI.backgroundColor=old;
+  // Map north points up: the stop's lane heading, never its lateral kerb offset.
+  var forward=new Vector2(target.dx,-target.dz).normalized;if(forward.sqrMagnitude<.1f)return;var side=new Vector2(-forward.y,forward.x);var tip=p+forward*28;var a=tip-forward*10+side*7;var b=tip-forward*10-side*7;
+  foreach(float width in new[]{8f,4f}){var paint=width>4?Color.black:color;Line(p,tip,paint,width);Line(a,tip,paint,width);Line(tip,b,paint,width);}
+ }
  static void Fill(Rect r,Color c){GUI.color=c;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
  static void Dot(Vector2 p,Color c,float size){Fill(new Rect(p.x-size/2,p.y-size/2,size,size),c);}
  void Line(Vector2 a,Vector2 b,Color c,float width){HudGlyph.MapLine(a,b,c,width,new Rect(0,0,MapRect.width,MapRect.height));}
