@@ -32,4 +32,11 @@ RoadMapFacilities/DriverCondition/DrowsinessHUD, 위치 제어 UturnBlinkProbe, 
 
 ## 로컬 환경
 
+## 통합 완료
+
+- 원격 main `79e3d22`가 작업 브랜치의 조상임을 fetch 후 확인. 로컬 main에 `57eb4c4c42a344a516b9d630eec32cc830617704`까지 fast-forward 병합0. 앞선 a2fc016/f61d18c/83ddd28 작업도 포함한다.
+- 병합 상태에서 모델27종 종료0·배포130파일/105,870,100바이트 전수 SHA256 재검사0.
+- `git push origin main` 종료0, `git ls-remote origin refs/heads/main`과 로컬 HEAD `57eb4c4c42a344a516b9d630eec32cc830617704` 일치 확인. 본 결과 기록은 후속 문서 커밋으로 함께 push한다.
+- 사용자 .mmst 변경·기존 untracked 파일 보존. 지도 원본은 이번 표지/눈감김 수정에서는 변경0이며 이전 작업의 남행 연결 수정은 main 통합에 포함된다.
+
 Windows Unity2022.3.62f2. 기본 은계 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 `PrototypeBuild.BuildHybrid`. 소스 시작83ddd28. 실제 최종 이력 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-27-uturn-blink-followup.md`로 확인한다.
