@@ -57,7 +57,7 @@
 
 `feedback-deployment-build.log`:최종 BuildHybrid 종료0. `feedback-player-prototypeScenario-final.log`:9코스·PS08 미노출·PS09 유지·실제 기한 만료/내비 해제 종료0, FAIL0. 최종 배포 Assembly-CSharp.dll SHA256은 `ACBE4201E8848A1920CB513B35B2650BC9D249D265DD65DA4623C7347CB60642`다. 표시/운송 코드는 앞선 UI14·승객201·저장9/복원23 검사와 동일하며 마지막 빌드 변경은 코스 검사 fixture뿐이다.
 
-소스·문서 커밋 뒤 실제 소스 SHA로 배포 manifest를 생성·검증한다. 현재 작업 브랜치에 보존하고 main 변경/push는 하지 않는다. 실제 이력 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-27-playtest-feedback.md`로 확인한다.
+소스·문서 커밋 `7a222002b3b2578ee0810a0e2e4ed30ae39ba2b0`으로 배포 manifest를 생성했다. `tools/update_distribution_manifest.ps1 -VerifyOnly` 종료0: **130파일·105,710,114바이트 전체 크기/SHA256 일치**. 최종9코스는99검사·FAIL0·종료0. 실행 폴더와 manifest/인계 문서를 함께 별도 배포 커밋한다. 현재 작업 브랜치에 보존하고 main 변경/push는 하지 않는다. 실제 이력 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-27-playtest-feedback.md`로 확인한다.
 
 ## 재현 방법·제한
 
