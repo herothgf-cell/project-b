@@ -1,5 +1,13 @@
 # 최신 작업 인계
 
+## PVP 작업 브랜치: 2026-10-27 기획·개발 계획
+
+브랜치 feature/pvp-prototype은 main 60b15edd6094d9a6383de4d0c75c4a40d49eda40에서 분기했다. [PVP 기획 입구](../content-design/pvp/README.md) · [개발 로드맵](../content-design/pvp/08-development-roadmap.md) · [이번 작업 이력](2026-10-27-pvp-planning.md).
+
+이번 변경은 PVP 시스템/콘텐츠별 기획과 개발 계획 문서다. PVP 코드·전용 맵·별도 실행파일·네트워크는 미구현이며, 경기 시간·인원·배점·충돌·SDK는 [결정 상태](../content-design/pvp/09-decisions-and-balance.md)를 따른다. 다음은 독립 실행 구조·자체 제작 시험장·민첩한 조작 후보 검증이다.
+
+현재 실행 가능한 게임은 기존 builds/EungyeTaxi/EungyeTaxi.exe이고 빌드는 PrototypeBuild.BuildHybrid다. 기존 배포·지도 입력·manifest·사용자 마인드맵은 변경하지 않았다. 아래 캠페인 인계는 분기 기준의 기존 작업 기록으로 보존한다. PVP 문서 검증과 미수행 제품 검증은 위 작업 이력에 구분한다.
+
 ## 최신 완료: 2026-10-27 내비·TIP·표지·졸음·마인드맵
 
 [최신 요구/변경/검증 기록](2026-10-27-nav-tip-drowsy-mindmap.md). 제보 경로2504→703m, 점유 안내 TIP 슬라이드 통합, 표지 가독성, 짧은 눈감김 입력 불응(제동 가능), 사용자 승인 마인드맵 직접 반영/Detail-Links290개 갱신. 모델28·그래프2549·전체 Editor 종료0·마인드맵/Strict 통과. 게임 종료 후 글꼴 렌더 회귀도 수정하고 기본 빌드·최종 Player9/38검사·실제 화면 확인을 마쳤다. 배포 d462660 main 통합·push0·원격 SHA 일치 확인.
@@ -46,3 +54,4 @@
 [직전까지의 인계 모음](2026-10-27-handoff-before-design-refresh.md) · [P11~P13 안정화](2026-10-27-proto-stabilization.md) · [도로/피로](2026-10-27-road-fatigue-integration.md) · [시설·지도·조향](2026-10-27-drowsy-map-handling.md) · [표지·눈감김 배포](2026-10-27-uturn-blink-followup.md).
 
 위 과거 인계의 ‘미구현/병합 없음/같은 날 계속 영업’은 당시 상태다. 최신 기획·main 코드와 실제 날짜별 증거를 우선한다. 이 문서의 커밋은 git log -1 --oneline -- docs/work-history/LATEST.md로 확인한다.
+
