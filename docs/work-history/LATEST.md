@@ -1,5 +1,11 @@
 # 최신 작업 인계
 
+## 최신 문서 작업: 2026-10-27 제안서 2차·마인드맵 제품 비전
+
+[32장 제안서](../proposals/project-b-game-proposal-v2.pptx) · [양식/마인드맵 검토표](../proposals/proposal-v2-review.md) · [작업 기록](2026-10-27-game-proposal-v2.md). 필수19항목 중18개 내용 포함, 실제 제안 참여자 정보는 기존 사용자 지시대로 제출 전 확인 필요. 현재 구현과 차량 성장·단골/예약·환경·경제의 목표/후속 구상을 분리하고 시안2장을 생성·내장했다.
+
+PPT32장 패키지/레이아웃/글꼴/재가져오기 통과·전 슬라이드 렌더 확인. 게임 코드·빌드·지도·manifest·마인드맵 원본은 변경 없음. 기본 실행은 은계 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드는 BuildHybrid. 필수 로컬 입력은 직전 Strict 통과 인계 유지, 이번 문서 작업 재검사 없음. 다음은 회사 참여자·채택 기능·인력/예산/일정 확정, 게임은 기존 수동20분/3일 체감 검증. 기존 사용자 변경 보존.
+
 ## 최신 저장소 정리: 2026-10-27
 
 [브랜치 삭제·보존 근거](2026-10-27-branch-cleanup.md). main 포함 확인 후 로컬8개·원격5개 삭제. 원격은 main만 남았고, 로컬은 main과 codex/satisfaction-fare-recovery만 남았다. 후자는 고유3커밋의 초기 회복/운임 구현·옛 빌드/이력이라 사용자 내용 검토 후 삭제 여부 결정 대기다. StableDriveRecovery.cs가 main에 없지만 회복 기능은 StableDrivingProgress라는 별도 구현으로 존재한다. 별도 worktree는 같은817c5dc detached로 보존했다.
