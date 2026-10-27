@@ -50,9 +50,9 @@ Interface: campaign snapshots, active elapsed time, cancellation, existing parki
 ### Task 4: final verification and integration
 
 Files: work history/LATEST/checklist, distribution manifest, full tracked build folder.
-- [ ] Single integrated Editor/model/Player/save/visual verification; fix discovered important errors.
-- [ ] Fresh whole-change review; record unverified manual/field cases.
-- [ ] Commit source/docs, build BuildHybrid, verify actual shipped execution and all130 distribution hashes.
+- [x] Single integrated Editor/model/Player/save/visual verification; fix discovered important errors. Editor/model25/care13301, Player navigation30/fatigue24/rendered30/passenger201/scenario99/save9/reload23/UI14.
+- [x] Fresh whole-change review; record unverified manual/field cases. Important system-brake grading fixed, cancelled-receipt history minor deferred.
+- [x] Commit source/docs, build BuildHybrid, verify actual shipped execution and all130 distribution hashes. Source251c219, BuildHybrid0;130files/105789674bytes.
 - [ ] Fetch/check remote main, merge feature into local main preserving user's dirty mindmap, normal push and verify remote SHA.
 
 ## Execution ledger
@@ -62,5 +62,5 @@ Files: work history/LATEST/checklist, distribution manifest, full tracked build 
 - Ruling: corrected image locations are J7973/J8066; prior J8066/J7801 assumption was one block north and was not persisted.
 - Ruling: J5750 removes prototype signals on explicit user report; nearby Naver view is not exact field verification. Cost: precise access/lane dimensions still need targeted evidence.
 - Ruling: emergency home uses existing parking and same-day100s/-20, no new house/day transition. Cost if intent differs: flow adjustment later.
-- Final review: one read-only reviewer, Critical0/Important1/Minor1. Important system-brake grading RED reproduced, fix uses short grace only after actual system deceleration; suite and grounded Player verification pending.
+- Final review: one read-only reviewer, Critical0/Important1/Minor1. Important system-brake grading RED reproduced, fix uses short grace only after actual system deceleration; integrated suite and actual grounded Player pass (law100/M100 retained).
 - Final minor (deferred): cancelled receipt can lose completed request history (UI Clear); no fare/cancellation duplication. Recorded in integration history for follow-up.

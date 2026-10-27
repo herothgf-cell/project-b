@@ -46,4 +46,18 @@
 
 ## 최종 배포·통합 결과
 
-검증·빌드·실행·manifest·main 통합은 진행 중이다. 실제 종료 결과와 원격 SHA를 확인한 뒤 갱신한다. 이력의 실제 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-27-road-fatigue-integration.md`로 확인한다.
+검증 소스 `251c21982cbe410b0954b07afc7c1974d5ceeb33`에서 최종 `PrototypeBuild.BuildHybrid` 종료0 (`artifacts/road-fatigue-confirmed-build-retry.log`). 직전 실패한 시험 Player가 잠깐 `resources.assets`를 점유해 첫 빌드는 실패했으며, Player/Editor 종료 확인 후 순차 재빌드해 성공했다. 실패 빌드를 배포하지 않는다.
+
+| 최종 실행 구분 | 실제 결과 |
+|---|---|
+| 내비 실제 Player | `confirmed-navigationTripTest.log`: `NAVIGATION_TRIP_OK checks=30`, 종료0 |
+| 피로 실제 Player | `confirmed-fatigueOvertimeTest.log`/`fatigue-overtime-runtime.txt`:24 PASS, success=True, 종료0. 접지 차량·활성 법규/매너 관찰에서 자동 정차 law100→100/M100→100 |
+| 렌더 피로 | `road-fatigue-final-player.log`:30 PASS, 종료0. 경고·지속 축소·완전 상실3 PNG 직접 확인. 이후 변경은 내비 시험 장치만이며 일반 피로 코드는 동일 |
+| 승객·시나리오 | `road-fatigue-passengerCareTest.log`:201, `road-fatigue-prototypeScenarioTest.log`:9코스/99 PASS, 각각 종료0. 위치 제어 검사를 전체 물리 운전으로 계산하지 않음 |
+| 별도 프로세스 저장 | `road-fatigue-liveSaveTest.log`:9, `road-fatigue-liveReloadTest.log`:23, 각각 종료0 |
+| 실제 UI | `road-fatigue-final-ui.log`: `FEEDBACK_UI_OK checks=14`; 시작·주유/세차·식당·신호·TIP·지도1280/1920 캡처. 시작/시설/신호/1920지도 및 피로3화면 직접 시각 확인. 작은 지도 밀집 배지 겹침은 이전 한계 유지 |
+| 배포 무결성 | manifest 새 생성 후 `tools/update_distribution_manifest.ps1 -VerifyOnly` 종료0:130파일/105,789,674바이트 전수 SHA256 일치 |
+
+검증 보고서는 배포 manifest의 `validation`에 저장했다. 빌드 지도 stamp·정식 프로젝트 contentHash는 `48a84e21ffb5c6803fef8edddc90015695cf9806ca42c6137563895ef307f998`로 일치한다. 필요한 지도 입력/ZIP은 변경하지 않았다. 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`다.
+
+main 병합·원격 푸시는 아래 후속 통합 항목에서 실제 결과를 기록한다. 이력의 실제 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-27-road-fatigue-integration.md`로 확인한다.
