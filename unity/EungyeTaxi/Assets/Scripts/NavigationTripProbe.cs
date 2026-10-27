@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
 // Controlled-position integration. Invoked with -navigationTripTest.
@@ -11,8 +10,8 @@ public sealed class NavigationTripProbe:MonoBehaviour {
  void Check(bool pass,string name){checks++;Debug.Log((pass?"PASS ":"FAIL ")+name);if(!pass)throw new Exception("NAVIGATION_TRIP_FAIL "+name);}
  void Pose(Vector3 point,Vector3 direction){var t=s.taxi;t.body.position=point+Vector3.up*.65f;t.body.rotation=Quaternion.LookRotation(direction);t.transform.SetPositionAndRotation(t.body.position,t.body.rotation);t.body.velocity=Vector3.zero;Physics.SyncTransforms();}
  void Stop(int index){var stop=s.jobs.stops[index];Pose(stop.Kerb,stop.Direction);}
- bool Restore(FullMapOverlay map){var method=typeof(FullMapOverlay).GetMethod("RestoreTripRoute",BindingFlags.Instance|BindingFlags.Public);return method!=null&&(bool)method.Invoke(map,null);}
- int[] Pins(FullMapOverlay map){var property=typeof(FullMapOverlay).GetProperty("ActiveStopPins",BindingFlags.Instance|BindingFlags.Public);return property==null?new int[0]:(int[])property.GetValue(map,null);}
+ bool Restore(FullMapOverlay map){return map.RestoreTripRoute();}
+ int[] Pins(FullMapOverlay map){return map.ActiveStopPins;}
  IEnumerator Start(){yield return new WaitForSecondsRealtime(2);s=FindObjectOfType<DriveSession>();float deadline=Time.realtimeSinceStartup+60;while(s&&!s.StartupReady&&Time.realtimeSinceStartup<deadline)yield return null;bool ok=false;try{if(!s||!s.StartupReady)throw new Exception("Navigation probe startup did not complete");Run();ok=true;}catch(Exception e){Debug.LogException(e);}Debug.Log("NAVIGATION_TRIP_"+(ok?"OK":"FAILED")+" checks="+checks);Application.Quit(ok?0:1);}
  void Run(){
   s.business.settings=PrototypeSettings.ForThreeDays();s.business.ledger=new EconomyLedger(s.business.settings);s.business.enabledCampaign=s.business.useV2=true;s.business.Depart();s.business.preparing=false;s.paused=false;Time.timeScale=1;s.jobs.ClearForDay();s.business.enabled=false;s.jobs.enabled=false;s.jobs.nav.enabled=false;s.requests.enabled=false;s.law.enabled=false;s.manners.enabled=false;s.GetComponent<ServiceLawZones>().enabled=false;s.taxi.enabled=false;s.taxi.body.isKinematic=true;s.taxi.body.interpolation=RigidbodyInterpolation.None;foreach(var c in s.traffic.cars){c.Recycle();c.enabled=false;}
