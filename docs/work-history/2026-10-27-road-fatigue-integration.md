@@ -23,6 +23,7 @@
 | 모델/청결 | `tools/test_prototype.ps1`25묶음·`tools/test_passenger_care.ps1`13,301단언·`tools/check_workspace.ps1 -Strict`, 각각 종료0. 필수 입력 문제0/선택 가져오기2개 없음 |
 | 리뷰 수정 | 단일 독립 리뷰 Critical0/Important1/Minor1. 자동6m/s² 감속을 일반 급제동으로 관찰할 수 있어, 실제 자동 감속을 한 직후의 짧은 물리 순서 여유에 한해서 필요 제동으로 분류. 충돌·신호 관찰은 끄지 않음. `FatigueSystemBrakeTests` clean RED 종료1→GREEN. 수정 후 모델25묶음/전체 `RoadFatigueFinalVerification.Run` 종료0 (`artifacts/road-fatigue-reviewed-editor.log`, `FATIGUE_SYSTEM_BRAKE_TESTS_OK` / `ROAD_FATIGUE_FINAL_EDITOR_OK`) |
 | 접지 장치 수정 | 첫 Player 검사 종료1: law100→100/M100→98. 진단 실행에서 `급가속 -2점`임을 확인했다. 실제 제동이 아니라 정차한 시험 차량에16m/s를 순간 주입한 장치 오류였다. 초기 속도 주입 후 `Suppress(0)`으로 관찰 기준만 재설정하며, 관찰 유예나 컴포넌트 비활성화 없이 실제 접지/활성 M 제동을 검증한다. 해당 실패를 감점 없는 완료로 계산하지 않음 |
+| 실행 장치 준비 경계 | 승객201/9코스99/별도 저장9·복원23 종료0 이후 `navigationTripTest`가0검사/NRE 종료1. 고정2초 후 실제 게임 준비 전에 business를 만지는 구형 probe였다. 다른 probe와 같이 StartupReady를 기다리고60초 실패 제한을 추가했다. 일반 게임 코드는 바꾸지 않음; 수정 후 해당 실행 재검증 |
 
 ## 리뷰 판단·남은 범위
 
