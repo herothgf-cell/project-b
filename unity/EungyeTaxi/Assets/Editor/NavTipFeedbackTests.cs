@@ -2,7 +2,14 @@ using System;
 using System.Linq;
 using UnityEngine;
 public static class NavTipFeedbackTests {
- public static void RunFinal(){Route();EungyeConnectivityRepairTests.Run();UturnBlinkFeedbackTests.RunFinal();ProjectMapBuild.RunTests();Debug.Log("NAV_TIP_FINAL_EDITOR_OK");}
+ public static void FontIsolation(){
+  KoreanText.BoldFont.RequestCharactersInTexture("정보 퇴근 도움말 000 TIP",18);
+  KoreanText.SignFont.RequestCharactersInTexture("유턴 좌회전 보행 신호 시",80);
+  Debug.Log("FONT_ATLAS boldMaterial="+KoreanText.BoldFont.material.GetInstanceID()+" signMaterial="+KoreanText.SignFont.material.GetInstanceID());
+  if(KoreanText.SignFont.material==KoreanText.BoldFont.material||KoreanText.SignFont.material.mainTexture==KoreanText.BoldFont.material.mainTexture)throw new Exception("FONT_ISOLATION_FAIL sign requests must not overwrite HUD bold atlas");
+  Debug.Log("FONT_ISOLATION_OK");
+ }
+ public static void RunFinal(){FontIsolation();Route();EungyeConnectivityRepairTests.Run();UturnBlinkFeedbackTests.RunFinal();ProjectMapBuild.RunTests();Debug.Log("NAV_TIP_FINAL_EDITOR_OK");}
  public static void Diagnose(){
   MapCatalog.LockedRegion="eungye";var map=MapCatalog.Load();var stops=PassengerStopCatalog.For(map).Stops;var g=new HdRoadGraph(map);
   foreach(var s in map.stops)Debug.Log("FEEDBACK_STOP "+s.name+" pos="+s.V()+" lane="+g.edges[s.laneEdge].id+" at="+s.laneAt);

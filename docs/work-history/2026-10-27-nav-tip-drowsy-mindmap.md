@@ -32,7 +32,13 @@
 | 마인드맵 | update_content_mindmap.ps1 -ValidateOnly 종료0:290 ID/링크, 기존 사용자 ID 소실0. 시작 보존본 해시 일치 |
 | 필수 로컬 입력 | check_workspace.ps1 -Strict: Input issues0, 정식 지도 해시76ebb91c8e5ae202f81c15a5df399375db2273157406eccc4b07ef258ebfe758 유지 |
 | Editor 최종 | NavTipFeedbackTests.RunFinal 완료, NAV_TIP_FINAL_EDITOR_OK·PROJECT_MAP_TESTS_OK·UTURN_BLINK_FINAL_EDITOR_OK 확인, Unity 종료0 |
-| 기본 빌드/Player | 사용자 게임 EungyeTaxi.exe가 실행 중이어서 기본 빌드 교체와 새 Player 검사 대기. 저장/종료를 요청함. 배포/최종 실행 완료로 표시하지 않음 |
+| 기본 빌드/Player | 사용자 종료 응답 후 BuildHybrid 종료0. 최초 Player의8개 구조 검사는 통과했지만 화면 확인에서 굵은 HUD 글꼴 깨짐 발견, 배포 보류 후 수정. 아래 후속 검증 참조 |
+
+## 게임 종료 후 렌더 회귀 수정
+
+Font.Instantiate는 글꼴 개체만 복사하고 원본 HUD Bold와 같은 material을 공유했다. 표지80픽셀 문자를 요청하면 공유 재질의 atlas가 바뀌어 HUD 글자 UV와 맞지 않았다. FontIsolation 집중 검사는 두 material ID가 같은17264임을 출력하며 종료1로 재현했다. 기존 Noto Bold와 동일 바이트/OFL인 별도 임포트 리소스 NotoSansKR-Signs.ttf를 두고 로드하도록 수정했다. material17268/17282 및 texture 분리 검사 FONT_ISOLATION_OK·종료0 확인. 별도 OS 글꼴 의존성은 추가하지 않았다.
+
+최초 실행 검사 FatigueOvertimeProbe는38항목·종료0: 깊은 눈감김 중 실제 휠 가속0/조향 유지/브레이크 유지, 재개방 복귀, 메뉴 제외, 탑승객 정차 취소/0원,180초 입력 차단·귀가/피로-20·당일 마감·복원 포함. 이 결과만으로 글꼴 가독성까지 통과했다고 판단하지 않았다. 수정 빌드에서 다시 화면을 확인한다.
 
 읽기 전용 최종 리뷰는 Critical/Important 지적0. EOF 공백 정리 후 diff --check 통과. 리뷰에서 실제 클릭/렌더/물리 유턴·사람 조작감/전체 캠페인은 자동 확인으로 대체할 수 없다고 구분했으며, 앞의 세 가지 중 렌더·실제 입력 검사는 후속 Player probe로 확인한다. 물리 유턴 전 구간과 사람 전체 캠페인은 미검증으로 유지한다.
 

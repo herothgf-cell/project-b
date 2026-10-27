@@ -2,7 +2,7 @@ using UnityEngine;
 public static class KoreanText {
  static Font font,bold,sign;
  // Road labels must not share the frequently repacked HUD dynamic atlas.
- public static Font SignFont {get{if(!sign){sign=UnityEngine.Object.Instantiate(BoldFont);sign.name="Road sign Korean atlas";}return sign;}}
+ public static Font SignFont {get{if(!sign)sign=Resources.Load<Font>("Fonts/NotoSansKR-Signs");return sign?sign:BoldFont;}}
  public static Font Font {get{if(!font)font=Resources.Load<Font>("Fonts/NotoSansKR-Medium");if(!font)font=UnityEngine.Font.CreateDynamicFontFromOSFont("Malgun Gothic",18);return font;}}
  public static Font BoldFont {get{if(!bold)bold=Resources.Load<Font>("Fonts/NotoSansKR-Bold");return bold?bold:Font;}}
  static Texture2D surface,control,hover,pressed;static GUISkin prepared;
