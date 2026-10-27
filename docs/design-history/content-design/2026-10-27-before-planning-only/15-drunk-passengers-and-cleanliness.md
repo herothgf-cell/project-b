@@ -1,6 +1,6 @@
 # 취객 운송·차량 청결도·세차
 
-취객은 일반 승객의 특성이며 [승객 요청](04-passengers-and-reservations.md#승객-요청과-응답) 건수와 별도로 처리한다. 이 문서는 플레이 규칙을 정의한다. 날짜별 변경 경위는 [이전 기획](../design-history/content-design/15-drunk-passengers-and-cleanliness-history.md), 실제 구현·검증 상태는 [P9 체크리스트](../prototype-development-checklist.md)와 [작업 이력](../work-history/LATEST.md)을 따른다. 확률·시간·비용은 게임 시험값이다.
+취객은 일반 승객의 특성이며 [승객 요청](04-passengers-and-reservations.md#승객-요청과-응답) 건수와 별도로 처리한다. 이 문서는 플레이 규칙을 정의한다. 날짜별 변경 경위는 [이전 기획](../../../content-design/../design-history/content-design/15-drunk-passengers-and-cleanliness-history.md), 실제 구현·검증 상태는 [P9 체크리스트](../../../content-design/../prototype-development-checklist.md)와 [작업 이력](../../../content-design/../work-history/LATEST.md)을 따른다. 확률·시간·비용은 게임 시험값이다.
 
 ## 발생 조건과 운송 흐름
 

@@ -1,8 +1,8 @@
 # 승객 운송·운전 만족도·요청 기획
 
-이 문서는 현재 main의 운송 규칙을 다룬다. 날짜별 변경 경위와 이전 규칙은 [승객 기획 이력](../design-history/content-design/04-passengers-and-reservations-history.md)에 보존한다. 구현·검증 상태는 [개발 체크리스트](../prototype-development-checklist.md)와 [작업 이력](../work-history/LATEST.md)에서 확인한다.
+이 문서는 현재 main의 운송 규칙을 다룬다. 날짜별 변경 경위와 이전 규칙은 [승객 기획 이력](../../../content-design/../design-history/content-design/04-passengers-and-reservations-history.md)에 보존한다. 구현·검증 상태는 [개발 체크리스트](../../../content-design/../prototype-development-checklist.md)와 [작업 이력](../../../content-design/../work-history/LATEST.md)에서 확인한다.
 
-관련 기획: [요청별 선택·효과·결산](11-passenger-request-effects.md) · [승하차 지점 다양화](14-passenger-stop-variety.md) · [취객·청결도](15-drunk-passengers-and-cleanliness.md) · [9개 상황 코스](09-prototype-scenarios.md) · [법규 성향](02-driving-evaluation.md) · [일일 경제](05-daily-operation.md) · [캠페인](07-campaign.md) · [프로토 범위](../prototype-scope.md).
+관련 기획: [요청별 선택·효과·결산](11-passenger-request-effects.md) · [승하차 지점 다양화](14-passenger-stop-variety.md) · [취객·청결도](15-drunk-passengers-and-cleanliness.md) · [9개 상황 코스](09-prototype-scenarios.md) · [법규 성향](02-driving-evaluation.md) · [일일 경제](05-daily-operation.md) · [캠페인](07-campaign.md) · [프로토 범위](../../../content-design/../prototype-scope.md).
 
 ## 시스템의 역할과 적용 범위
 
@@ -64,7 +64,7 @@
 | 안정적인 주행 구간 | +2/구간, 운송당 최대 +6 | 모델·편집기 검증, 물리 주행 후속 | 불필요한 급가감속 없이 실제 이동 350m 또는 이동 중 누적 45초마다 1회. 정차·동일 구간 반복으로 쌓지 않음. 해당 운송의 **급가감속으로 잃은 점수만** 회복하고 100점 상한 |
 | 합법적 신호 대기·우회, 위험 회피 제동, 부적절한 요구 거절 | 0 | 유지 원칙 | 불이익 없음. 서 있는 것만으로 회복 점수도 주지 않음 |
 
-회복은 안전하고 부드러운 운전을 운송 중 회복 기회로 표현한다. 충돌·신호·양보·인도 침범 감점은 이 규칙으로 지우지 않는다. 예를 들어 급제동 -2 뒤 안정 주행을 충족하면 +2로 돌아오지만, 신호 위반 -12 뒤 안정 주행만으로 12점을 회복할 수 없다. 실제 이동한 10m 공간 칸마다 거리 14m·이동 시간 20초까지만 쌓는다. 각 칸은 처음 진입한 방향에서 더 멀리 전진한 부분만 인정하고, 칸을 떠난 뒤 재진입해도 다시 적립하지 않는다. 정차·같은 구간 왕복 적립을 막으며, 활성 칸의 진행 상태까지 운송 저장에 포함한다. 회복 조건·거리·상한은 물리 주행 테스트에서 조정할 초깃값이다. DR01의 개별 급가감속은 `M`에서 한 번만 차감하고, 요청 전체 이행 여부는 하차 때 `Δrequest`로 한 번 판정한다. 구현 근거: [DrivingManners.cs](../../unity/EungyeTaxi/Assets/Scripts/DrivingManners.cs) · [MannerLedger.cs](../../unity/EungyeTaxi/Assets/Scripts/MannerLedger.cs).
+회복은 안전하고 부드러운 운전을 운송 중 회복 기회로 표현한다. 충돌·신호·양보·인도 침범 감점은 이 규칙으로 지우지 않는다. 예를 들어 급제동 -2 뒤 안정 주행을 충족하면 +2로 돌아오지만, 신호 위반 -12 뒤 안정 주행만으로 12점을 회복할 수 없다. 실제 이동한 10m 공간 칸마다 거리 14m·이동 시간 20초까지만 쌓는다. 각 칸은 처음 진입한 방향에서 더 멀리 전진한 부분만 인정하고, 칸을 떠난 뒤 재진입해도 다시 적립하지 않는다. 정차·같은 구간 왕복 적립을 막으며, 활성 칸의 진행 상태까지 운송 저장에 포함한다. 회복 조건·거리·상한은 물리 주행 테스트에서 조정할 초깃값이다. DR01의 개별 급가감속은 `M`에서 한 번만 차감하고, 요청 전체 이행 여부는 하차 때 `Δrequest`로 한 번 판정한다. 구현 근거: [DrivingManners.cs](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/DrivingManners.cs) · [MannerLedger.cs](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/MannerLedger.cs).
 
 ### 안정 주행 회복 규칙
 
@@ -131,7 +131,7 @@
 
 ## 단골과 개인 예약의 후속 기획
 
-프로토에서는 제외한다. 일반 운송 → 재이용·선호 확인 → 게임 안의 연락 동의 → 조건이 보이는 예약 제안 → 일정 충돌 확인·수락 → 안전한 픽업·운송 → 약속 이행 피드백으로 잇는다. 거절·수신 중지는 가능하고 거절 자체로 운임·운전 만족도·법규 성향을 깎지 않는다. 한 번의 운송으로 단골을 확정하지 않는다. 동시 예약 수, 지각·노쇼, 취소 비용, 관계 보상은 후속 결정 사항이다. 당시 상세 단계와 예외는 [변경 기록](../design-history/content-design/04-passengers-and-reservations-history.md#단골과-개인-예약의-후속-기획)에 보존한다.
+프로토에서는 제외한다. 일반 운송 → 재이용·선호 확인 → 게임 안의 연락 동의 → 조건이 보이는 예약 제안 → 일정 충돌 확인·수락 → 안전한 픽업·운송 → 약속 이행 피드백으로 잇는다. 거절·수신 중지는 가능하고 거절 자체로 운임·운전 만족도·법규 성향을 깎지 않는다. 한 번의 운송으로 단골을 확정하지 않는다. 동시 예약 수, 지각·노쇼, 취소 비용, 관계 보상은 후속 결정 사항이다. 당시 상세 단계와 예외는 [변경 기록](../../../content-design/../design-history/content-design/04-passengers-and-reservations-history.md#단골과-개인-예약의-후속-기획)에 보존한다.
 
 ## 화면과 검증 기준
 
@@ -145,4 +145,4 @@
 | 자동 검증 | 정상/미달/시간 초과 정산, 회복 상한·중복 방지, 요청 이행/중립, 저장·복원, 17종 응답, 운송 ID 중복 지급 방지 |
 | 수동 주행 | 위험 회피 제동, 합법적 대기, 실제 경로 후보, 승하차 안전성, 피드백 가독성을 별도 확인 |
 
-기존 통합 검사와 남은 수동 검증 상태는 [검증 문서](../prototype-completion-validation.md)와 [개발 체크리스트](../prototype-development-checklist.md)를 따른다. 현재 수치는 게임 시험값이며 수동 플레이 밸런스 확정과 구분한다.
+기존 통합 검사와 남은 수동 검증 상태는 [검증 문서](../../../content-design/../prototype-completion-validation.md)와 [개발 체크리스트](../../../content-design/../prototype-development-checklist.md)를 따른다. 현재 수치는 게임 시험값이며 수동 플레이 밸런스 확정과 구분한다.

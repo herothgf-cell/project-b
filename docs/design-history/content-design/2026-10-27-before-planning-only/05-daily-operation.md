@@ -1,6 +1,6 @@
 # 개인택시 경제와 생활 거점
 
-기준일: 2026-10-26. 현재 구현 규칙을 통합했다. 이전 수치·설계 변경은 [변경 이력](../design-history/content-design/05-daily-operation-history.md), 실행 검증은 [최신 작업 기록](../work-history/LATEST.md)을 따른다. 기본은 [3일 캠페인](07-campaign.md)이며 하루 20분 뒤에도 초과 영업할 수 있다.
+기준일: 2026-10-26. 현재 구현 규칙을 통합했다. 이전 수치·설계 변경은 [변경 이력](../../../content-design/../design-history/content-design/05-daily-operation-history.md), 실행 검증은 [최신 작업 기록](../../../content-design/../work-history/LATEST.md)을 따른다. 기본은 [3일 캠페인](07-campaign.md)이며 하루 20분 뒤에도 초과 영업할 수 있다.
 
 ## 수입과 정산
 
@@ -79,9 +79,9 @@ F7은 **현재 정차한 시설의 서비스만** 표시한다. 주유소는 그
 
 | 범위 | 근거·남은 확인 |
 |---|---|
-| 거래·저장·서비스 | [취객·청결 통합](../work-history/2026-10-23-passenger-care-connectivity.md), [피로·초과 영업](../work-history/2026-10-26-fatigue-score-overtime.md)의 자동 검사 |
-| 시설 물리 진입 | [식당 진출입 검사](../work-history/2026-10-22-restaurant-parking.md). 검사한 경로·조건에 한정 |
-| 정산 표시 | [3줄 정산 기록](../work-history/2026-10-26-handling-traffic-receipt.md) |
+| 거래·저장·서비스 | [취객·청결 통합](../../../content-design/../work-history/2026-10-23-passenger-care-connectivity.md), [피로·초과 영업](../../../content-design/../work-history/2026-10-26-fatigue-score-overtime.md)의 자동 검사 |
+| 시설 물리 진입 | [식당 진출입 검사](../../../content-design/../work-history/2026-10-22-restaurant-parking.md). 검사한 경로·조건에 한정 |
+| 정산 표시 | [3줄 정산 기록](../../../content-design/../work-history/2026-10-26-handling-traffic-receipt.md) |
 | 남은 프로토 확인 | 일반 교통 포함 수동 20분·초과 영업·3일의 다건 수익/생활 밸런스, 시설 수동 접근·혼잡 합류 |
 
-관련: [캠페인07](07-campaign.md) · [운전자10](10-driver-condition.md) · [취객·청결15](15-drunk-passengers-and-cleanliness.md) · [체크리스트](../prototype-development-checklist.md).
+관련: [캠페인07](07-campaign.md) · [운전자10](10-driver-condition.md) · [취객·청결15](15-drunk-passengers-and-cleanliness.md) · [체크리스트](../../../content-design/../prototype-development-checklist.md).

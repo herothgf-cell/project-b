@@ -2,7 +2,7 @@
 
 기준일: 2026-10-26 · 상태: 프로토 제외·후속 기획만. 현재 충돌 기능과 후속 사고 콘텐츠를 구분한다.
 
-[로드맵](00-RoadMap.md) · [기획 총괄](README.md) · [맵·주행](06-world-map-and-driving.md)
+[로드맵](00-RoadMap.md) · [기획 총괄](../../../content-design/README.md) · [맵·주행](06-world-map-and-driving.md)
 
 사고가 발생했을 때 운송과 영업에 어떤 변화가 생기는지 정리한 후속 기획이다. **이번 프로토에서는 신규 사고 콘텐츠를 모두 비활성으로 두며, 아래 흐름·화면·비용을 개발 범위에 넣지 않는다.**
 
@@ -12,7 +12,7 @@
 
 **남은 확인:** 아래 문서는 후속 기획으로 보존하며 구현 완료 목록에 넣지 않는다.
 
-근거: [통합 검증](../prototype-completion-validation.md) · [개발 체크리스트](../prototype-development-checklist.md). 아래 상세 표는 목표 설계를 포함하므로 표의 ‘포함’만으로 검증 완료를 뜻하지 않는다.
+근거: [통합 검증](../../../content-design/../prototype-completion-validation.md) · [개발 체크리스트](../../../content-design/../prototype-development-checklist.md). 아래 상세 표는 목표 설계를 포함하므로 표의 ‘포함’만으로 검증 완료를 뜻하지 않는다.
 
 ## 적용 범위
 
@@ -30,7 +30,7 @@
 | 보험 갱신·세금 납부일 관리 | 프로토 제외, [05](05-daily-operation.md) 기준 | 갱신·납부 일정·비용·성공 조건도 도입하지 않음 |
 | 개인 예약과 사고의 연계 | 제외·기획만 | 개인 예약 자체도 프로토 제외. 예약 취소·변경·신뢰 영향은 후속 검토 |
 
-현재 물리충돌은 [TaxiController](../../unity/EungyeTaxi/Assets/Scripts/TaxiController.cs), 충돌 매너 감점은 [DrivingManners](../../unity/EungyeTaxi/Assets/Scripts/DrivingManners.cs)의 기존 구현을 확인했다. 이번 문서 작업은 이 코드를 변경하거나 새 사고 기능을 추가하지 않는다.
+현재 물리충돌은 [TaxiController](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/TaxiController.cs), 충돌 매너 감점은 [DrivingManners](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/DrivingManners.cs)의 기존 구현을 확인했다. 이번 문서 작업은 이 코드를 변경하거나 새 사고 기능을 추가하지 않는다.
 
 ## 후속 플레이 흐름
 

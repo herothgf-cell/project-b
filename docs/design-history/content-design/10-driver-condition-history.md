@@ -1,6 +1,6 @@
 # 변경 전 기획·구현 이력
 
-2026-10-26 통합 정리 전 원문이다. 폐기된 수치·미구현 표기가 포함되어 있으며 현재 규칙은 [10-driver-condition](../../content-design/10-driver-condition.md)를 따른다. 날짜별 실제 검증은 [작업 이력](../../work-history/LATEST.md)을 따른다.
+2026-10-26 통합 정리 전 원문이다. 폐기된 수치·미구현 표기가 포함되어 있으며 현재 규칙은 [10-driver-condition](2026-10-27-before-planning-only/10-driver-condition.md)를 따른다. 날짜별 실제 검증은 [작업 이력](../../work-history/LATEST.md)을 따른다.
 
 # 운전자 설정과 하루 컨디션
 
@@ -74,7 +74,7 @@
 
 ## 수치와 변화 제안
 
-시간 단위는 [캠페인](../../content-design/07-campaign.md)의 영업 예산이다. 1분은 실제 주행 60초에 해당하고, 게임 시각으로는 36분이다.
+시간 단위는 [캠페인](2026-10-27-before-planning-only/07-campaign.md)의 영업 예산이다. 1분은 실제 주행 60초에 해당하고, 게임 시각으로는 36분이다.
 
 | 요소 | 초깃값·범위 | 변화 | 영향 |
 |---|---|---|---|
@@ -138,7 +138,7 @@
 | 반복 | 새 하루 초기값 동일, 완료 결과는 보존, 재시작 취소/저장 실패는 현 상태 유지 |
 | 밸런스 | 일반 교통에서 식사1회·휴식0~1회가 자연스러운지 측정. 수치로 강제 정답을 만들지 않음 |
 
-관련: [캠페인](../../content-design/07-campaign.md) · [경제](../../content-design/05-daily-operation.md) · [승객 코스](../../content-design/09-prototype-scenarios.md) · [개발 체크리스트](../../prototype-development-checklist.md).
+관련: [캠페인](2026-10-27-before-planning-only/07-campaign.md) · [경제](2026-10-27-before-planning-only/05-daily-operation.md) · [승객 코스](2026-10-27-before-planning-only/09-prototype-scenarios.md) · [개발 체크리스트](../../prototype-development-checklist.md).
 
 ## 구현 근거 (2026-10-21)
 

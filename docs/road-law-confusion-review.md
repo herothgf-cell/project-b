@@ -1,6 +1,6 @@
 # 법규 후보 62개의 실생활 혼동 가능성 검토
 
-기준일: 2026년 10월 20일. 원본: [법규 후보 F01~F62](content-design/02-driving-evaluation.md).
+기준일: 2026년 10월 20일. 원본: [법규 후보 F01~F62](content-design/01-driving-and-traffic.md).
 
 ## 결론과 평가 기준
 

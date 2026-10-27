@@ -20,7 +20,7 @@ P12/P13은 이번 문서에서 부여한 추적 번호다. 기존 Proto 완료 �
 
 ## 1. P11 승객 요청 다양화
 
-공통 규칙은 [04 요청 배정](../../../content-design/04-passengers-and-reservations.md), 개별 내용은 [11 요청별 효과](../../../content-design/11-passenger-request-effects.md)가 단일 기준이다. 새로운 요청17종을 다시 만드는 작업이 아니다.
+공통 규칙은 [04 요청 배정](../2026-10-27-before-planning-only/04-passengers-and-reservations.md), 개별 내용은 [11 요청별 효과](../2026-10-27-before-planning-only/11-passenger-request-effects.md)가 단일 기준이다. 새로운 요청17종을 다시 만드는 작업이 아니다.
 
 - 후보 ID에 요청 수·종류·순서·발생 시점을 고정하고 재수락/저장 복원으로 다시 추첨하지 않는다.
 - 승차 또는 운행 중 안전 정차 때 제시한다. 주행 중 선택을 강요하지 않으며 기회 없는 짧은 운송은 중립이다.

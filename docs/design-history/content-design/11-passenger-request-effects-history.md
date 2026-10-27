@@ -1,6 +1,6 @@
 # 승객 요청 기획 변경 이력
 
-2026-10-26 콘텐츠 문서 통합 전 원문을 보존한다. 아래의 현재/신규/미구현 표기는 작성 당시 상태이며, 적용할 규칙은 [04 승객 운송](../../content-design/04-passengers-and-reservations.md)과 [11 요청별 콘텐츠](../../content-design/11-passenger-request-effects.md)를 따른다. 개발·검증 결과는 [작업 이력](../../work-history/LATEST.md)을 확인한다.
+2026-10-26 콘텐츠 문서 통합 전 원문을 보존한다. 아래의 현재/신규/미구현 표기는 작성 당시 상태이며, 적용할 규칙은 [04 승객 운송](2026-10-27-before-planning-only/04-passengers-and-reservations.md)과 [11 요청별 콘텐츠](2026-10-27-before-planning-only/11-passenger-request-effects.md)를 따른다. 개발·검증 결과는 [작업 이력](../../work-history/LATEST.md)을 확인한다.
 
 ---
 
@@ -57,8 +57,8 @@
 | 값 | 새 기획·테스트 초깃값 | 표시·저장 |
 |---|---|---|
 | 요구 만족도 `R` | 현행 60·70·85점 유지 | 호출 전 카드에 표시 |
-| 탑승 시작 만족도 `S0` | `R - D + Δclean`. `D`는 4·8·12점 중 운송별 무작위 선택. [차량 청결도](../../content-design/15-drunk-passengers-and-cleanliness.md)가 승차 시 80점 이상이면 `Δclean=+3`, 그 외 0. 승객/운송 ID에 묶어 확정하며 재시작·저장 복원으로 재추첨하지 않음 | 탑승 직후 `시작 만족도 / 요구 만족도`와 청결 가산을 구분 표시. 무작위 차이는 운전자 잘못으로 표기하지 않음 |
-| 주행 변화 `Δdrive` | 운전 만족도 `M`의 변화량 `M - 100`을 사용. [04의 안정 주행 회복안](../../content-design/04-passengers-and-reservations.md#운전-만족도-감점상승-요인) 적용 시에는 감점·회복 후 `M`을 사용. 필요한 위험 회피 제동·합법적 대기는 감점하지 않음 | 사건별 원인·감점·회복 표시. 운전 점수(법규 성향)와 분리 |
+| 탑승 시작 만족도 `S0` | `R - D + Δclean`. `D`는 4·8·12점 중 운송별 무작위 선택. [차량 청결도](2026-10-27-before-planning-only/15-drunk-passengers-and-cleanliness.md)가 승차 시 80점 이상이면 `Δclean=+3`, 그 외 0. 승객/운송 ID에 묶어 확정하며 재시작·저장 복원으로 재추첨하지 않음 | 탑승 직후 `시작 만족도 / 요구 만족도`와 청결 가산을 구분 표시. 무작위 차이는 운전자 잘못으로 표기하지 않음 |
+| 주행 변화 `Δdrive` | 운전 만족도 `M`의 변화량 `M - 100`을 사용. [04의 안정 주행 회복안](2026-10-27-before-planning-only/04-passengers-and-reservations.md#운전-만족도-감점상승-요인) 적용 시에는 감점·회복 후 `M`을 사용. 필요한 위험 회피 제동·합법적 대기는 감점하지 않음 | 사건별 원인·감점·회복 표시. 운전 점수(법규 성향)와 분리 |
 | 요청 변화 `Δrequest` | DR 이행 +8/미이행 -10, CH +5/-5, EV +6/-8의 현행 제안값. 대답만 했거나 정당하게 거절·보류, 관찰 불가면 0. 조용한 운행 미응답 -5처럼 이미 `Δdrive`에 반영한 사건은 한 번만 반영 | 요청/선택/실제 이행/변화량을 하차 때 표시 |
 | 시간 변화 `Δtime` | 탑승 시점의 정상 내비 예상 운송시간 `Tref`와 실제 소요시간 `Tactual` 비교. `clamp(round(60 × (Tref-Tactual)/Tref), 0, 12)`점. 예정보다 10% 빠르면 약 +6, 20% 빠르면 최대 +12. 늦어도 법규·승객 감점으로 환산하지 않음 | 탑승 때 기준 ETA, 하차 때 실제 시간·시간 가산과 미적용 이유 표시 |
 | 최종 만족도 `S` | `clamp(S0 + Δdrive + Δrequest + Δtime, 0, 100)` | 원인별 변화량과 `S / R`을 결산·히스토리에 보존 |
@@ -118,7 +118,7 @@
 
 기준일: 2026-10-22 · 상태: 기존 17종의 효과 보완 기획, 아래 효과는 2026-10-22 구현·자동 검사 적용, 수동 주행 체감 미검증
 
-승객의 말에 답하면 운행 중 실제로 무엇이 달라지는지 보여준다. 탑승 후 요청 하나를 제공하는 현재 구조를 유지하고, 선택 직후에는 적용 조건을, 하차 후에는 실제 행동과 결과를 짧게 알려준다. 현재 구현 범위는 [04 승객 기획](../../content-design/04-passengers-and-reservations.md)과 `PassengerRequestUI.cs`를 기준으로 확인했다.
+승객의 말에 답하면 운행 중 실제로 무엇이 달라지는지 보여준다. 탑승 후 요청 하나를 제공하는 현재 구조를 유지하고, 선택 직후에는 적용 조건을, 하차 후에는 실제 행동과 결과를 짧게 알려준다. 현재 구현 범위는 [04 승객 기획](2026-10-27-before-planning-only/04-passengers-and-reservations.md)과 `PassengerRequestUI.cs`를 기준으로 확인했다.
 
 | 공통 규칙 | 기획 |
 |---|---|
@@ -221,7 +221,7 @@ DR01 감점 초깃값은 현재 `DrivingManners` 코드의 실제 급가속·급
 
 현재 `Y/I/U` 입력과 안전 정차 판정은 유지할 수 있으나, ETA의 세 답변은 의미가 보이는 별도 선택 표시가 필요하다. 버튼 표기 방식은 현재 말풍선 UI 안에서 정하고 운전 중 긴 선택지를 띄우지 않는다. 위 내용은 기획이며 코드·빌드 적용 및 자동/수동 검증은 별도 작업이다.
 
-관련: [승객 운송](../../content-design/04-passengers-and-reservations.md) · [하루 캠페인](../../content-design/07-campaign.md) · [법규 성향](../../content-design/02-driving-evaluation.md) · [개발 체크리스트](../../prototype-development-checklist.md).
+관련: [승객 운송](2026-10-27-before-planning-only/04-passengers-and-reservations.md) · [하루 캠페인](2026-10-27-before-planning-only/07-campaign.md) · [법규 성향](2026-10-27-before-planning-only/02-driving-evaluation.md) · [개발 체크리스트](../../prototype-development-checklist.md).
 
 ## 2026-10-22 구현 판정 범위
 

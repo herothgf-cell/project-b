@@ -6,9 +6,9 @@
 
 # 택시 운전 게임 콘텐츠 기획 목록
 
-**프로토 추가 기획·미구현:** [취객·차량 청결도·주유소 세차](../../content-design/15-drunk-passengers-and-cleanliness.md)는 구토와 도착 후 기상 지연, 청결에 따른 승차 거부/만족도 상승, 세차 비용·시간, 연료 우측 HUD를 다룬다. 개발 순서는 [P9](../../prototype-development-checklist.md#p9-취객-운송차량-청결도세차-프로토-추가-미구현)를 따른다.
+**프로토 추가 기획·미구현:** [취객·차량 청결도·주유소 세차](2026-10-27-before-planning-only/15-drunk-passengers-and-cleanliness.md)는 구토와 도착 후 기상 지연, 청결에 따른 승차 거부/만족도 상승, 세차 비용·시간, 연료 우측 HUD를 다룬다. 개발 순서는 [P9](../../prototype-development-checklist.md#p9-취객-운송차량-청결도세차-프로토-추가-미구현)를 따른다.
 
-2026-10-23 **개발 전 기획:** [승객 만족도·보너스 개편](11-passenger-request-effects-history.md#2026-10-23-이전-정책-기록--만족도와-보너스-개편)은 승차 초기 만족도를 운송별로 낮게 추첨하고, 실제 요청 이행·안전한 조기 도착을 최종 만족도에 반영한다. 요구치에 **도달하면** 모든 정상 운송에 보너스를 지급하고 초과분에 따라 늘린다. [승하차 지점 다양화](../../content-design/14-passenger-stop-variety.md)는 기존 9코스/12곳을 보존하며 일반 영업 후보를 늘리는 기획이다. 두 변경 모두 현재 빌드에는 미적용이다.
+2026-10-23 **개발 전 기획:** [승객 만족도·보너스 개편](11-passenger-request-effects-history.md#2026-10-23-이전-정책-기록--만족도와-보너스-개편)은 승차 초기 만족도를 운송별로 낮게 추첨하고, 실제 요청 이행·안전한 조기 도착을 최종 만족도에 반영한다. 요구치에 **도달하면** 모든 정상 운송에 보너스를 지급하고 초과분에 따라 늘린다. [승하차 지점 다양화](2026-10-27-before-planning-only/14-passenger-stop-variety.md)는 기존 9코스/12곳을 보존하며 일반 영업 후보를 늘리는 기획이다. 두 변경 모두 현재 빌드에는 미적용이다.
 
 **현재 은계 빌드는 하루20분·포만감/피로·식당/수면을 적용했다. 승객 요청별 새 선택 효과와 피드백은 2026-10-22 기획이며 미구현이다. 보험·세금·예약·사고 제외는 유지한다.**
 
@@ -20,20 +20,20 @@
 
 | 문서 | 주요 내용 | 프로토 범위 |
 |---|---|---|
-| [00 로드맵](../../content-design/00-RoadMap.md) | 현재 기획·구현 상태, 남은 작업, 개발 순서 | 전체 범위의 기준 |
-| [01 운전 상황](../../content-design/01-driving-situations.md) | 출구 정체 세 선택·우회전 조건·플레이 예시 | 대표 상황 2종 포함 |
-| [02 법규 준수 성향](../../content-design/02-driving-evaluation.md) | 독립 점수·판정 조건·보류·한국 법규 근거 | 최소 판정과 성향 포함 |
-| [03 히스토리와 숙련](../../content-design/03-history-and-mastery.md) | 사건 카드·일일/캠페인 기록·동일 상황 재시작 | 최소 기록·복습 포함 |
-| [04 승객과 개인 예약](../../content-design/04-passengers-and-reservations.md) | 기본 운송·운전 만족도·요청·후속 예약 흐름 | 운송·요청 포함, 단골·예약은 기획만 |
-| [05 개인택시 경제](../../content-design/05-daily-operation.md) | 주유·식사·주차·장부 | 생활 거점 포함, 보험·세금 제외 |
-| [06 맵과 주행](../../content-design/06-world-map-and-driving.md) | 은계 맵·상황 구간·거점·보조·내비·AI | 기존 기반과 상황용 최소 기능 포함 |
-| [07 캠페인](../../content-design/07-campaign.md) | 하루20분·수익 비교·재도전 | 구현, 수동 하루 검증 남음 |
-| [08 사고와 수리](../../content-design/08-accidents-and-repairs.md) | 사고 이후 안전조치·기록·운송 처리·수리·복귀 | 전 항목 기획만, 프로토 개발 제외 |
-| [09 프로토 시나리오](../../content-design/09-prototype-scenarios.md) | 승객별 승하차 위치·법규 7코스·선택 2코스, 승차 전/운송 중/하차 접근 배치 | 9코스 구현 기반 유지, 하루20분 노출·길이 조정 필요 |
-| [10 운전자 설정](../../content-design/10-driver-condition.md) | 포만감·피로·식사·수면·영업 제한 | 구현, 수동 하루 검증 남음 |
-| [11 승객 요청 효과](../../content-design/11-passenger-request-effects.md) | 17종 선택지·적용 효과·주행/하차 피드백 | 기존 기능과 신규 보완 구분 |
-| [14 승하차 지점 다양화](../../content-design/14-passenger-stop-variety.md) | 일반 영업용 안전 정차 후보·호출 반복 억제·지도 검증 | 신규 기획, 미구현 |
-| [15 취객·차량 청결도](../../content-design/15-drunk-passengers-and-cleanliness.md) | 확률적 구토·기상 지연·승차 거부·청결 가산·주유소 세차 | 프로토 추가, 전 항목 미구현 |
+| [00 로드맵](2026-10-27-before-planning-only/00-RoadMap.md) | 현재 기획·구현 상태, 남은 작업, 개발 순서 | 전체 범위의 기준 |
+| [01 운전 상황](2026-10-27-before-planning-only/01-driving-situations.md) | 출구 정체 세 선택·우회전 조건·플레이 예시 | 대표 상황 2종 포함 |
+| [02 법규 준수 성향](2026-10-27-before-planning-only/02-driving-evaluation.md) | 독립 점수·판정 조건·보류·한국 법규 근거 | 최소 판정과 성향 포함 |
+| [03 히스토리와 숙련](2026-10-27-before-planning-only/03-history-and-mastery.md) | 사건 카드·일일/캠페인 기록·동일 상황 재시작 | 최소 기록·복습 포함 |
+| [04 승객과 개인 예약](2026-10-27-before-planning-only/04-passengers-and-reservations.md) | 기본 운송·운전 만족도·요청·후속 예약 흐름 | 운송·요청 포함, 단골·예약은 기획만 |
+| [05 개인택시 경제](2026-10-27-before-planning-only/05-daily-operation.md) | 주유·식사·주차·장부 | 생활 거점 포함, 보험·세금 제외 |
+| [06 맵과 주행](2026-10-27-before-planning-only/06-world-map-and-driving.md) | 은계 맵·상황 구간·거점·보조·내비·AI | 기존 기반과 상황용 최소 기능 포함 |
+| [07 캠페인](2026-10-27-before-planning-only/07-campaign.md) | 하루20분·수익 비교·재도전 | 구현, 수동 하루 검증 남음 |
+| [08 사고와 수리](2026-10-27-before-planning-only/08-accidents-and-repairs.md) | 사고 이후 안전조치·기록·운송 처리·수리·복귀 | 전 항목 기획만, 프로토 개발 제외 |
+| [09 프로토 시나리오](2026-10-27-before-planning-only/09-prototype-scenarios.md) | 승객별 승하차 위치·법규 7코스·선택 2코스, 승차 전/운송 중/하차 접근 배치 | 9코스 구현 기반 유지, 하루20분 노출·길이 조정 필요 |
+| [10 운전자 설정](2026-10-27-before-planning-only/10-driver-condition.md) | 포만감·피로·식사·수면·영업 제한 | 구현, 수동 하루 검증 남음 |
+| [11 승객 요청 효과](2026-10-27-before-planning-only/11-passenger-request-effects.md) | 17종 선택지·적용 효과·주행/하차 피드백 | 기존 기능과 신규 보완 구분 |
+| [14 승하차 지점 다양화](2026-10-27-before-planning-only/14-passenger-stop-variety.md) | 일반 영업용 안전 정차 후보·호출 반복 억제·지도 검증 | 신규 기획, 미구현 |
+| [15 취객·차량 청결도](2026-10-27-before-planning-only/15-drunk-passengers-and-cleanliness.md) | 확률적 구토·기상 지연·승차 거부·청결 가산·주유소 세차 | 프로토 추가, 전 항목 미구현 |
 
 ## 함께 읽을 문서
 

@@ -6,14 +6,14 @@
 
 | 목적 | 읽을 문서 |
 |---|---|
-| 게임 전체 범위와 다음 개발 | [00 로드맵](../../../content-design/00-RoadMap.md), [Proto 범위](../../../content-design/../prototype-scope.md), [개발 체크리스트](../../../content-design/../prototype-development-checklist.md) |
-| 운전 판단 | [01 상황](../../../content-design/01-driving-situations.md) → [02 법규·점수](../../../content-design/02-driving-evaluation.md) → [03 기록·복습](../../../content-design/03-history-and-mastery.md) |
-| 승객 운송 | [04 운송·요청 배정·정산](../../../content-design/04-passengers-and-reservations.md) → [11 요청별 콘텐츠](../../../content-design/11-passenger-request-effects.md) → [15 취객·청결](../../../content-design/15-drunk-passengers-and-cleanliness.md) |
-| 영업 운영 | [05 경제·거점](../../../content-design/05-daily-operation.md) → [10 운전자 상태](../../../content-design/10-driver-condition.md) → [07 캠페인](../../../content-design/07-campaign.md) |
-| 다음 확장·마인드맵 검토 | [17 요청→수요·공차→공간 점유](../../../content-design/17-proto-operation-expansion.md): 선택된 개발 순서·미구현 범위·완료 기준·마인드맵 변경안 |
-| 월드 제작 | [06 맵·주행](../../../content-design/06-world-map-and-driving.md) → [09 코스](../../../content-design/09-prototype-scenarios.md) → [14 정차 후보](../../../content-design/14-passenger-stop-variety.md) |
-| 도구·표시 | [12 지도 편집](../../../content-design/12-road-map-editor.md), [13 HUD·전체지도](../../../content-design/13-driving-map-ui.md) |
-| 후속 검토 | [08 사고·수리](../../../content-design/08-accidents-and-repairs.md): Proto 제외 / [16 일반 보행자](../../../content-design/16-ambient-pedestrians-proposal.md): 승인 A안 안전6슬롯 구현 |
+| 게임 전체 범위와 다음 개발 | [00 로드맵](../2026-10-27-before-planning-only/00-RoadMap.md), [Proto 범위](../../../content-design/../prototype-scope.md), [개발 체크리스트](../../../content-design/../prototype-development-checklist.md) |
+| 운전 판단 | [01 상황](../2026-10-27-before-planning-only/01-driving-situations.md) → [02 법규·점수](../2026-10-27-before-planning-only/02-driving-evaluation.md) → [03 기록·복습](../2026-10-27-before-planning-only/03-history-and-mastery.md) |
+| 승객 운송 | [04 운송·요청 배정·정산](../2026-10-27-before-planning-only/04-passengers-and-reservations.md) → [11 요청별 콘텐츠](../2026-10-27-before-planning-only/11-passenger-request-effects.md) → [15 취객·청결](../2026-10-27-before-planning-only/15-drunk-passengers-and-cleanliness.md) |
+| 영업 운영 | [05 경제·거점](../2026-10-27-before-planning-only/05-daily-operation.md) → [10 운전자 상태](../2026-10-27-before-planning-only/10-driver-condition.md) → [07 캠페인](../2026-10-27-before-planning-only/07-campaign.md) |
+| 다음 확장·마인드맵 검토 | [17 요청→수요·공차→공간 점유](../2026-10-27-before-planning-only/17-proto-operation-expansion.md): 선택된 개발 순서·미구현 범위·완료 기준·마인드맵 변경안 |
+| 월드 제작 | [06 맵·주행](../2026-10-27-before-planning-only/06-world-map-and-driving.md) → [09 코스](../2026-10-27-before-planning-only/09-prototype-scenarios.md) → [14 정차 후보](../2026-10-27-before-planning-only/14-passenger-stop-variety.md) |
+| 도구·표시 | [12 지도 편집](../2026-10-27-before-planning-only/12-road-map-editor.md), [13 HUD·전체지도](../2026-10-27-before-planning-only/13-driving-map-ui.md) |
+| 후속 검토 | [08 사고·수리](../2026-10-27-before-planning-only/08-accidents-and-repairs.md): Proto 제외 / [16 일반 보행자](../2026-10-27-before-planning-only/16-ambient-pedestrians-proposal.md): 승인 A안 안전6슬롯 구현 |
 
 ## 중복을 막는 관리 기준
 

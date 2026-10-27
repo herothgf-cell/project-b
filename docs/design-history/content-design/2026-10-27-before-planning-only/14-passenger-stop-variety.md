@@ -1,6 +1,6 @@
 # 승객 승하차 지점 다양화
 
-기준일: 2026-10-26. **기존 S01~S12 + 일반 영업용 포켓 12곳, 총 24개 후보**와 실제 대기 승객 분포가 구현됐다. 변경 전 사양·좌표 보정 과정은 [변경 이력](../design-history/content-design/14-passenger-stop-variety-history.md), 승객 운송은 [04](04-passengers-and-reservations.md), 고정 9코스는 [09](09-prototype-scenarios.md)를 따른다.
+기준일: 2026-10-26. **기존 S01~S12 + 일반 영업용 포켓 12곳, 총 24개 후보**와 실제 대기 승객 분포가 구현됐다. 변경 전 사양·좌표 보정 과정은 [변경 이력](../../../content-design/../design-history/content-design/14-passenger-stop-variety-history.md), 승객 운송은 [04](04-passengers-and-reservations.md), 고정 9코스는 [09](09-prototype-scenarios.md)를 따른다.
 
 ## 콘텐츠와 적용 범위
 
@@ -76,10 +76,10 @@
 
 | 구분 | 증거·조건 |
 |---|---|
-| 후보/연결/저장 | [24후보·취객 통합](../work-history/2026-10-23-passenger-care-connectivity.md) |
-| 대기 분포 | [대기 승객 분리](../work-history/2026-10-23-compact-feedback-waiting-receipt.md) |
-| S09 | [교차로·운송 후속](../work-history/2026-10-26-junction-trip-followups.md) |
+| 후보/연결/저장 | [24후보·취객 통합](../../../content-design/../work-history/2026-10-23-passenger-care-connectivity.md) |
+| 대기 분포 | [대기 승객 분리](../../../content-design/../work-history/2026-10-23-compact-feedback-waiting-receipt.md) |
+| S09 | [교차로·운송 후속](../../../content-design/../work-history/2026-10-26-junction-trip-followups.md) |
 | 남은 프로토 확인 | 모든 신규 정차점 수동 진입/복귀, 장시간 반복·20분/3일 수익 체감, 편집 뒤 실제 동선 |
 | 후속 콘텐츠 | 시간대·유형별 대사/호출 설명 다양화, 추가 후보. 승인 없는 추가 개발로 취급하지 않음 |
 
-관련: [지도 편집기12](12-road-map-editor.md) · [UI13](13-driving-map-ui.md) · [체크리스트](../prototype-development-checklist.md).
+관련: [지도 편집기12](12-road-map-editor.md) · [UI13](13-driving-map-ui.md) · [체크리스트](../../../content-design/../prototype-development-checklist.md).

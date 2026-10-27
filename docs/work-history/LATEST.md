@@ -1,10 +1,10 @@
 # 최신 작업 인계
 
-## 현재 작업: 2026-10-27 기획서 최신화
+## 현재 작업: 2026-10-27 플레이 기획 재통합·마인드맵 검토
 
-기획 정리 커밋 `5a70eb4` main push 종료0·원격 SHA 일치 확인. 문서40개/로컬 링크641개/앵커25개·신규 표 열 수 검사0, 게임/지도/배포 변경0·배포 전수해시 일치. 이번 결과 기록의 실제 커밋은 아래 git log 명령으로 확인한다.
+직전 기획 정리501e548 이후 사용자 피드백에 따라20개 본문을6개 플레이 기획+가지별 검토표로 재통합했다. 현재 규칙은 각 주제 한 곳에만 둔다. 개발/제작 참고·후속·정리 전 원문은 content-design 밖으로 분리했다. 원본 .mmst는 읽기만 했으며 검토 전 변경 금지다. 이번 작업 결과는 [재통합 이력](2026-10-27-planning-only-mindmap-review.md)에 기록한다.
 
-[기획 정리·검증·푸시 이력](2026-10-27-design-refresh.md). 현재 규칙은 [content-design/README](../content-design/README.md), [행동·결과·영향표](../content-design/18-simulation-action-results.md), [시스템 구조](../content-design/19-content-system-structure.md)에서 읽는다. 기획 변경 경위/마인드맵 검토안은 [기획 이력](../design-history/content-design/2026-10-27-design-decisions.md)으로 분리했다. 문서만 수정하며 코드·지도·실행 파일·배포 manifest·사용자 마인드맵은 유지한다.
+[기획 입구](../content-design/README.md) · [마인드맵 가지별 추가/수정/삭제 검토](../content-design/06-mindmap-review.md) · [별도 개발 참고](../technical-reference/README.md) · [이전 정리 이력](2026-10-27-design-refresh.md). 게임 코드·지도·실행 파일·배포 manifest·사용자 마인드맵은 유지한다.
 
 ## 현재 실행·배포 기준
 

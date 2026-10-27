@@ -24,7 +24,7 @@
 
 **남은 확인:** 실제 교차로 전체의 법규 검증과 무위반 수동 완주는 미완료다. 개별 후보의 적용 법조문·예외 전수 감수는 별도이며 현재 게임 판정과 현실 전체 규정을 동일시하지 않는다.
 
-근거: [통합 검증](../prototype-completion-validation.md) · [개발 체크리스트](../prototype-development-checklist.md). 아래 상세 표는 목표 설계를 포함하므로 표의 ‘포함’만으로 검증 완료를 뜻하지 않는다.
+근거: [통합 검증](../../../content-design/../prototype-completion-validation.md) · [개발 체크리스트](../../../content-design/../prototype-development-checklist.md). 아래 상세 표는 목표 설계를 포함하므로 표의 ‘포함’만으로 검증 완료를 뜻하지 않는다.
 
 ## 역할과 프로토 범위
 
@@ -291,6 +291,6 @@ L08의 서행을 임의의 전국 공통 속도 숫자로 설명하지 않는다
 | 은계 영업 | 7개 법규 구역과 PS01~09의 실제 주행 관찰. 상황 미체험으로 승하차 차단 없음 | 일반 교통 포함 수동 주행·실제 현장 규제 대조 |
 | 별도 연습 | 출구 정체·우회전·혼동 연습. 영업 점수와 경제 보존 | 반복 복습 사용성 |
 | 관찰 실패 | 안전한 AI 배치 불가·신호/표지 불명은 보류 | 오류 원인 기록과 개별 수정 |
-| 확장 선정 | [62개 혼동 검토표](../road-law-confusion-review.md)의 교육 후보26·기본수칙22·특수14 분류 참고 | 전국 오답률 순위가 아님. 후보별 시행일·예외 확인 후 구현 |
+| 확장 선정 | [62개 혼동 검토표](../../../content-design/../road-law-confusion-review.md)의 교육 후보26·기본수칙22·특수14 분류 참고 | 전국 오답률 순위가 아님. 후보별 시행일·예외 확인 후 구현 |
 
-[변경 이력](../design-history/content-design/02-driving-evaluation-history.md) · [영업 구역 검증](../eungye-in-service-law-zones.md) · [연습 검증](../eungye-confusion-practice-validation.md) · [최신 작업 기록](../work-history/LATEST.md).
+[변경 이력](../../../content-design/../design-history/content-design/02-driving-evaluation-history.md) · [영업 구역 검증](../../../content-design/../eungye-in-service-law-zones.md) · [연습 검증](../../../content-design/../eungye-confusion-practice-validation.md) · [최신 작업 기록](../../../content-design/../work-history/LATEST.md).

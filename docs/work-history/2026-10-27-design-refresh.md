@@ -33,6 +33,6 @@ PassengerRequest/Schedule/UI/Observation, PassengerDemandPolicy, OperationMetric
 
 ## 읽는 위치·남은 범위
 
-[현재 기획 입구](../content-design/README.md) → [행동 결과/영향](../content-design/18-simulation-action-results.md) → [콘텐츠·시스템](../content-design/19-content-system-structure.md). 과거 정책은 [기획 변경 이력](../design-history/content-design/2026-10-27-design-decisions.md).
+[현재 기획 입구](../content-design/README.md) → [행동 결과/영향](../design-history/content-design/2026-10-27-before-planning-only/18-simulation-action-results.md) → [콘텐츠·시스템](../design-history/content-design/2026-10-27-before-planning-only/19-content-system-structure.md). 과거 정책은 [기획 변경 이력](../design-history/content-design/2026-10-27-design-decisions.md).
 
 사람의20분/3일 경제·조작/빈도 체감, 다른PC/DPI·패드·장시간 성능, 근거 있는 지도 제보 보완, 안전 후보 확보 후 P13 대체 이동은 별도다. .mmst는 사용자 검토 대상. 실제 본 이력 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-27-design-refresh.md`로 확인한다.

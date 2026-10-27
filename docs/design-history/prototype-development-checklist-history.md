@@ -21,7 +21,7 @@
 
 ## P9 취객 운송·차량 청결도·세차 (프로토 추가, 구현·수동 검증 남음)
 
-기준: [취객·청결도15](../content-design/15-drunk-passengers-and-cleanliness.md) · [승객04](../content-design/04-passengers-and-reservations.md) · [경제05](../content-design/05-daily-operation.md) · [HUD13](../content-design/13-driving-map-ui.md). 기능 구현·모델/위치 제어 검증을 마쳤다. 사람의 수동 하루 운행과 경제 밸런스는 남아 있다. 기존9코스·17요청·법규 성향은 유지한다. [검증 근거](../work-history/2026-10-23-passenger-care-connectivity.md).
+기준: [취객·청결도15](content-design/2026-10-27-before-planning-only/15-drunk-passengers-and-cleanliness.md) · [승객04](content-design/2026-10-27-before-planning-only/04-passengers-and-reservations.md) · [경제05](content-design/2026-10-27-before-planning-only/05-daily-operation.md) · [HUD13](content-design/2026-10-27-before-planning-only/13-driving-map-ui.md). 기능 구현·모델/위치 제어 검증을 마쳤다. 사람의 수동 하루 운행과 경제 밸런스는 남아 있다. 기존9코스·17요청·법규 성향은 유지한다. [검증 근거](../work-history/2026-10-23-passenger-care-connectivity.md).
 
 - [x] P9-01 차량 청결도 0~100 상태를 새 캠페인 100점으로 시작, 날짜·저장 복원에 이월. 일반 운송 하차 -2, 구토 하차 시 10점 이하로 급락하며 같은 하차에서 중복 감소하지 않음.
 - [x] P9-02 주행 좌측 하단 **연료 우측** 청결 아이콘·게이지·수치와 30 미만 `세차 필요` 경고 구현. 1280/1600/1920 해상도에서 기존 연료·포만감·피로·속도계와 겹침 확인.
@@ -35,7 +35,7 @@
 
 2026-10-26 운임 구현: [11 운임·보너스 개정안](content-design/11-passenger-request-effects-history.md#2026-10-26-운임·보너스-개정안)에 따라 최종 `S`가 요구 `R`에 못 미치는 점수당 기본 운임 0.5% 감액(최대 20%)으로 기존 `M` 문턱의 100%/70%를 교체하고, 보너스 상한에 요구치별 0.8/1.0/1.3 가중치를 적용한다. 시작 만족도는 `R` 미만·동일·초과가 모두 가능하다. P8-07 회복의 모델·통합 검증은 [후속 기록](../work-history/2026-10-26-junction-trip-followups.md)을 따른다.
 
-기준: [승객04](../content-design/04-passengers-and-reservations.md#최종-승객-만족도와-운임) · [만족도·보너스11](content-design/11-passenger-request-effects-history.md#2026-10-23-이전-정책-기록--만족도와-보너스-개편) · [승하차14](../content-design/14-passenger-stop-variety.md). 이전 `감사 보너스`와 초과분만 지급하던 규칙을 아래 공통 보너스로 대체했다. P8-07 구현·자동 검증은 완료했고 P8-06 수동 경제 검증은 남아 있다.
+기준: [승객04](content-design/2026-10-27-before-planning-only/04-passengers-and-reservations.md#최종-승객-만족도와-운임) · [만족도·보너스11](content-design/11-passenger-request-effects-history.md#2026-10-23-이전-정책-기록--만족도와-보너스-개편) · [승하차14](content-design/2026-10-27-before-planning-only/14-passenger-stop-variety.md). 이전 `감사 보너스`와 초과분만 지급하던 규칙을 아래 공통 보너스로 대체했다. P8-07 구현·자동 검증은 완료했고 P8-06 수동 경제 검증은 남아 있다.
 
 - [x] P8-01 운송별 시작 만족도 `S0`를 요구치보다 낮거나·같거나·높게 확정하고 승객 후보 ID·저장 복원에 고정. 부호 있는 차이 `D=-12,-8,-4,0,4,8,12`와 청결 가산을 적용. 재수락·재시작 추첨 악용과 결과 표시 확인.
 - [x] P8-02 주행 감점·요청 실제 이행·안전한 조기 도착을 한 번씩 최종 만족도에 반영. 위험 운전 조기 도착 가산 금지, 합법적 지연·판정 불가 중립, ETA 기준·시간 제한 분리 확인.
@@ -43,7 +43,7 @@
 - [x] P8-04 현재 UI·대사·기록의 `감사 보너스`를 `보너스`로 바꾸고, 현재 구현/신규 기획 문구를 혼동하지 않도록 검증.
 - [x] P8-05 은계 안전 정차 후보 검수 후 일반 호출·길가 승객의 승하차 조합 확대. 기존 12곳/PS01~09 보존, 정차 방향·보도 대기·경로·기한·지도 편집 후 연결 검사.
 - [ ] P8-06 **모델/위치 제어 완료, 자동 물리·수동 경제 검증 남음.** 위치 제어·자동 물리·사람의 실제 주행을 구분해 만족도/보너스 경제 밸런스와 반복 호출 체감을 확인.
-- [x] P8-07 `매너`의 사용자 표시를 `운전 만족도`로 통일하고, 실제 이동의 안정 주행 구간에 한해 급가감속 감점 회복(+2/구간·최대 +6)을 구현·검증. 100점 상한, 법규·충돌·인도 침범 감점 비회복, 정차·반복 구간 점수 쌓기 방지를 확인. [기획](../content-design/04-passengers-and-reservations.md#운전-만족도-감점상승-요인).
+- [x] P8-07 `매너`의 사용자 표시를 `운전 만족도`로 통일하고, 실제 이동의 안정 주행 구간에 한해 급가감속 감점 회복(+2/구간·최대 +6)을 구현·검증. 100점 상한, 법규·충돌·인도 침범 감점 비회복, 정차·반복 구간 점수 쌓기 방지를 확인. [기획](content-design/2026-10-27-before-planning-only/04-passengers-and-reservations.md#운전-만족도-감점상승-요인).
 - [x] P8-07 후속 회복 구현: 안정350m/45초, M 회복이 없는 기회에 S<R 승객 안심 +2(최대+4·R 상한). 모델·저장 검사 완료. [후속 기록](../work-history/2026-10-26-fatigue-score-overtime.md). 수동 주행·경제 체감은 남음.
 - [x] P8-08 만족도 HUD·증감 알림·요구 점수·결과/F8을 실제 S에 연결하고, 청결 가산이 S0에 포함됨을 표시. 운전 점수는 독립 누적 법규 장부에 연결하며 신규 하차 결과에 기록. 모델/위치 제어 검증 근거는 [점수 연결 기록](../work-history/2026-10-23-score-ui-binding.md). P8-07 회복 구현·모델 검증은 완료했으며 수동 경제 밸런스는 별도.
 
@@ -66,7 +66,7 @@
 - [x] 간편 편집 기본·도로명/지도 클릭 선택·진입 방향/차로 번호·방향 버튼·클릭 연결/배치·신호 기본형·저장하고 시험 구현.
 - [x] 간편 편집 최종 BuildEasyRoadMapEditor·핵심7·실행파일28항목·3해상도 버튼 맞춤·저장/시험 격리 검사 통과. [검증 기록](../work-history/2026-10-22-road-map-editor-simple-mode.md).
 
-상세: [도로·교차로 편집기](../content-design/12-road-map-editor.md). 기존 지도 보정 완료와 구분한다.
+상세: [도로·교차로 편집기](content-design/2026-10-27-before-planning-only/12-road-map-editor.md). 기존 지도 보정 완료와 구분한다.
 
 - [x] E1 차로/제어점/폭/높이/대기차로/출구 편집·JSON·취소/복원·별도 시험 세션·공유 그래프 연결.
 - [x] E2 노면·표지 배치와 지원 규칙(좌/우 금지·진입 금지·구간 제한속도) 연결. 나머지 표지는 안내용.
@@ -82,7 +82,7 @@
 
 기존 주행·영업 기반에 대표 운전 상황, 독립 법규 기록, 생활 비용과 납부 일정을 연결한다. **P0 준비 → P1 핵심 판단 → P2 생활·경제 → P3 캠페인 완주** 순서로 진행한다. P0~P3은 모두 프로토 필수이며, 번호는 착수 순서를 뜻한다.
 
-기준: [로드맵](../content-design/00-RoadMap.md) · [통합 범위](../prototype-scope.md) · [콘텐츠 목록](../content-design/README.md)
+기준: [로드맵](content-design/2026-10-27-before-planning-only/00-RoadMap.md) · [통합 범위](../prototype-scope.md) · [콘텐츠 목록](../content-design/README.md)
 
 ## 프로토 범위 정정 (2026-10-20 사용자 결정)
 
@@ -102,7 +102,7 @@
 
 **2026-10-21 구현 반영: P7-01~05 자동 검증 완료, P7-06의 수동 하루·화면 검증은 남음.** 기존 3일×12분·3만원 캠페인의 완료 기록은 보존하며 새 하루20분의 검증으로 간주하지 않는다. 보험·세금·예약·사고 제외는 유지한다.
 
-기준: [운전자](../content-design/10-driver-condition.md) · [캠페인](../content-design/07-campaign.md) · [경제](../content-design/05-daily-operation.md) · [승객 코스](../content-design/09-prototype-scenarios.md)
+기준: [운전자](content-design/2026-10-27-before-planning-only/10-driver-condition.md) · [캠페인](content-design/2026-10-27-before-planning-only/07-campaign.md) · [경제](content-design/2026-10-27-before-planning-only/05-daily-operation.md) · [승객 코스](content-design/2026-10-27-before-planning-only/09-prototype-scenarios.md)
 
 | 우선순위·작업 | 개발 내용 | 완료 기준 |
 |---|---|---|
@@ -141,7 +141,7 @@
 
 ## 2026-10-20 웹 추가 기획을 반영한 개발 목록
 
-원문: [지도 연동 선택 이벤트](content-design/01-driving-situations-history.md#은계-지도-연동--상황-판단-선택-이벤트-신규-기획-미구현), [승객 요구 확장](../content-design/04-passengers-and-reservations.md#승객-요청과-응답), [법규 후보·공통 관찰 데이터](../content-design/02-driving-evaluation.md). 추가 계획을 완료 기능으로 표시하지 않는다. P4는 추가 프로토 개발 항목이며, P5/P6은 단계적 후속 개발이다. 아래는 기존 P0~P3의 완료를 취소하거나 제외 콘텐츠를 자동 포함하는 목록이 아니다.
+원문: [지도 연동 선택 이벤트](content-design/01-driving-situations-history.md#은계-지도-연동--상황-판단-선택-이벤트-신규-기획-미구현), [승객 요구 확장](content-design/2026-10-27-before-planning-only/04-passengers-and-reservations.md#승객-요청과-응답), [법규 후보·공통 관찰 데이터](content-design/2026-10-27-before-planning-only/02-driving-evaluation.md). 추가 계획을 완료 기능으로 표시하지 않는다. P4는 추가 프로토 개발 항목이며, P5/P6은 단계적 후속 개발이다. 아래는 기존 P0~P3의 완료를 취소하거나 제외 콘텐츠를 자동 포함하는 목록이 아니다.
 
 | 우선·작업 ID | 개발할 내용 | 선행 조건·검증 기준 | 상태 |
 |---|---|---|---|
@@ -152,7 +152,7 @@
 | P5-01 기존 기능 재사용 요청 | DR01 승차감·DR02 정시 도착·CH02 길 추천·CH03 응원·EV04 불법 요구 거절 | 필요한 급제동·합법적 대기·정당한 거절 무감점 검증 후, 운송당 요청 1개와 독립 법규 유지. 승객 목표/완료 기록 신규 개발 | 구현·자동 검사 완료 / 교통 중 체감 검증 남음 |
 | P5-02 경로·승하차 확장 | DR03 큰길·DR04 짧은 길·DR05 안전 정차·EV01 목적지 변경·EV02 경유 | 큰길 비용·안전 정차 후보·운송 상태 전환·변경 전후 거리/기한/약정 요금 정책 확정, 저장·마감 회귀 | 구현·자동 검사 완료 / 교통 중 체감 검증 남음 |
 | P5-03 대화·별도 사건 | CH01 고민·CH06 동네 대사, CH04 음악·CH05 요금 부족·EV03 분실물 | 대화 자동 연기/무감점, 오디오·할인/미수금·보관/반환은 각각 별도 정책·상태 필요. 임의 추가 운임 없음 | 텍스트 상호작용 구현 / 실제 음악·미수금·분실물 보관은 확장 범위 |
-| P5-04 요청 효과·피드백 보완 | [17종 요청별 효과 기획](../content-design/11-passenger-request-effects.md)의 ETA 세 답변·DR01 멀미 조건부 감점·DR/CH/EV 하차 만족도·요구 점수 초과분 비례 감사 보너스 | 실제 코드 -2점 기준 단일 감점 교체·필요한 제동 예외·법규 분리. 기본 운임 100%/70%/0원 유지, 요구 점수 경계·상한·10원 내림·장부/저장 중복 검사 | 구현·모델/17종 위치 제어 검사 완료 / 수동 체감 후속 |
+| P5-04 요청 효과·피드백 보완 | [17종 요청별 효과 기획](content-design/2026-10-27-before-planning-only/11-passenger-request-effects.md)의 ETA 세 답변·DR01 멀미 조건부 감점·DR/CH/EV 하차 만족도·요구 점수 초과분 비례 감사 보너스 | 실제 코드 -2점 기준 단일 감점 교체·필요한 제동 예외·법규 분리. 기본 운임 100%/70%/0원 유지, 요구 점수 경계·상한·10원 내림·장부/저장 중복 검사 | 구현·모델/17종 위치 제어 검사 완료 / 수동 체감 후속 |
 | P6-01 법규 관찰 데이터 | 도로 규제 구간·차로 화살표/변경 가능선·표지·정지선·횡단보도/교통·정차 관찰, 출처/확인일/불명 상태 | 검증된 차로 연결과 공통 사건 ID·중복 감점 방지·관찰 불명 보류. 후보 62개를 일괄 활성화하지 않음 | 은계 영업 구역·선택 연습 관찰 구현 / 현장 공통 데이터 후속 |
 | P6-02 법규 후보 단계 적용 | F01~F62 카탈로그에서 데이터가 갖춰진 항목을 소규모로 선택 | 카탈로그의 P1/P2/P3는 후보 우선순위이며 현재 프로토 작업 번호와 다름. 시행·예외·근거 재확인 후 정상/위반/관찰 불명/기회 없음 검사 | F02·F03·F06·F05 영업 구역 7종·선택 연습 / 나머지 후속 |
 | A-01 아트·HUD 시안 | 캐주얼 그래픽·HUD 시안 | 2026-10-20 사용자 결정으로 프로토 작업·완료 기준에서 제외 | 프로토 제외 |
@@ -168,7 +168,7 @@
 - [x] **PS-D 선택 코스:** PS08/PS09와 P4-01~04 연결. 우회 대체 완료·실제 행동 판정·전체 일시정지/복구·중복/입력 유출 검사. 자동 검증 근거: 2026-10-21 승객 코스 작업 이력.
 - [ ] **PS-E 검증·배포:** 위치 제어/자동 물리/수동 운전/3일 캠페인 검사를 구분하고 기존 요청·경제·정산 회귀 후 현재 PC 빌드·배포 manifest 갱신.
 
-기획 작성만 완료 표시한다. 구체적 범위와 근거는 [프로토 시나리오](../content-design/09-prototype-scenarios.md), [이번 작업 이력](../work-history/2026-10-21-prototype-scenarios.md)을 따른다.
+기획 작성만 완료 표시한다. 구체적 범위와 근거는 [프로토 시나리오](content-design/2026-10-27-before-planning-only/09-prototype-scenarios.md), [이번 작업 이력](../work-history/2026-10-21-prototype-scenarios.md)을 따른다.
 
 ## 상태와 완료 표시
 
@@ -211,7 +211,7 @@ P2의 장부·거점 작업은 P0 이후 P1과 병렬 진행할 수 있다. 개�
 
 ## P0 개발 시작 전 기반 정리
 
-참고: [06 맵·주행](../content-design/06-world-map-and-driving.md), [통합 범위](../prototype-scope.md).
+참고: [06 맵·주행](content-design/2026-10-27-before-planning-only/06-world-map-and-driving.md), [통합 범위](../prototype-scope.md).
 
 - [ ] **P0-01 기존 은계 실행과 기본 운송 확인 — 검증.** 지도 자료를 준비하고 수동/보조 주행, 시점 전환, 호출·길가 승차·하차·정산을 확인한다. 완료 기준: 같은 빌드에서 기본 운송 1회를 끝내고 막힘·입력·화면 문제를 기록한다. 과거 자동 검사 결과만으로 완료 처리하지 않는다.
 - [ ] **P0-02 상황·거점 위치 선정 — 보완.** 출구 대기열과 우회로, 우회전 교차로, 주유소·식당·주차장 각 1곳 이상의 제작 위치를 잡는다. 완료 기준: 짧은 영업 동선 안에서 접근·정차·복귀가 가능하고 필요한 신호·표지를 미리 볼 수 있다.
@@ -219,7 +219,7 @@ P2의 장부·거점 작업은 P0 이후 P1과 병렬 진행할 수 있다. 개�
 
 ## P1 운전 판단과 기록을 먼저 완성
 
-참고: [01 운전 상황](../content-design/01-driving-situations.md), [02 법규](../content-design/02-driving-evaluation.md), [03 히스토리](../content-design/03-history-and-mastery.md), [06 맵·AI](../content-design/06-world-map-and-driving.md).
+참고: [01 운전 상황](content-design/2026-10-27-before-planning-only/01-driving-situations.md), [02 법규](content-design/2026-10-27-before-planning-only/02-driving-evaluation.md), [03 히스토리](content-design/2026-10-27-before-planning-only/03-history-and-mastery.md), [06 맵·AI](content-design/2026-10-27-before-planning-only/06-world-map-and-driving.md).
 
 - [x] **P1-01 우회전 신호·보행 상태 연결 — 신규·보완.** 전방 차량 신호, 우회전전용신호, 보행 신호, 보행자의 없음/횡단 의도/횡단 중을 구분한다. 완료 기준: 화면·AI·판정이 같은 상태를 사용하고 현재의 보행자 안전 여부 고정값을 실제 관찰값으로 바꾼다. 선행: P0.
 - [ ] **P1-02 출구 정체 A/B/C 제작 — 신규·보완.** 신호 대기열 뒤 합류, 직진 우회, 앞부분 진입을 실제 운전으로 수행하게 한다. 완료 기준: 상대 진행 방해·진입 포기를 구분하고, 합법적 대기·우회로도 운송을 마칠 수 있다. 놓친 출구는 다음 경로로 재탐색한다. 선행: P0.
@@ -232,7 +232,7 @@ P1에서는 L05 보호구역 상황을 만들지 않는다. L08은 속도·행�
 
 ## P2 승객 요구와 생활 비용 연결
 
-참고: [04 승객](../content-design/04-passengers-and-reservations.md), [05 경제·납부](../content-design/05-daily-operation.md), [06 거점](../content-design/06-world-map-and-driving.md).
+참고: [04 승객](content-design/2026-10-27-before-planning-only/04-passengers-and-reservations.md), [05 경제·납부](content-design/2026-10-27-before-planning-only/05-daily-operation.md), [06 거점](content-design/2026-10-27-before-planning-only/06-world-map-and-driving.md).
 
 - [x] **P2-01 현금·미납·거래 장부 — 신규·기존 정산 보완.** 실제 지급 운임을 입금하고 지출·미납·예정 납부를 분리한다. 완료 기준: 목표액은 `현금 − 시작 현금 − 미납`, 미납 결제는 현금과 미납을 함께 줄여 비용을 두 번 빼지 않는다. 같은 지급·결제 재입력도 한 번만 반영한다. 선행: P0-03.
 - [ ] **P2-02 거점 접근과 정차 메뉴 — 신규.** 주유소·식당·주차장을 지도·내비·상호작용에 연결한다. 완료 기준: 빈차 정차 후 비용·시간·확정/취소를 확인하고 도로로 복귀할 수 있으며, 주차장에서 납부 관리·영업 종료를 선택한다. 선행: P0-02, P2-01.
@@ -242,11 +242,11 @@ P1에서는 L05 보호구역 상황을 만들지 않는다. L08은 속도·행�
 - [x] **P2-06 세금 고지·직접 납부 — 신규.** 기한·알림·조기 납부·완납·미납을 구현한다. 완료 기준: 3일차 기한 제안에서 미납이면 현금을 자동 출금하지 않고 비용과 미납을 한 번 반영한다. 결제·마감 재입력으로 이중 비용이 생기지 않는다. 선행: P2-01·02.
 - [ ] **P2-07 승객 요청과 매너 예외 — 신규·보완.** 운송당 상호작용 요청 최대 1개로 조용한 운행/도착 문의를 제공하고 수락·안전상 보류를 표시한다. 완료 기준: 안전상 보류·도착 문의는 무감점, 조용한 요청 미처리는 응답 기회가 있었을 때만 제안 감점한다. 필요한 위험 회피 제동을 구분하면서 기존 100%/70%/시간 초과 0원 지급을 유지한다. 선행: 기존 운송·내비, 맥락 예외는 P1의 상황 정보.
 
-시작 현금 10,000원, 보험 6,000원, 세금 1,500원 등은 [05의 게임용 제안값](../content-design/05-daily-operation.md)이다. 현실 금액이나 사용자가 별도로 확정한 비용으로 취급하지 않는다. 사고 책임 판정·수리비·보험 청구는 P2에 추가하지 않는다.
+시작 현금 10,000원, 보험 6,000원, 세금 1,500원 등은 [05의 게임용 제안값](content-design/2026-10-27-before-planning-only/05-daily-operation.md)이다. 현실 금액이나 사용자가 별도로 확정한 비용으로 취급하지 않는다. 사고 책임 판정·수리비·보험 청구는 P2에 추가하지 않는다.
 
 ## P3 캠페인 통합과 최종 확인
 
-참고: [07 캠페인](../content-design/07-campaign.md), [통합 범위](../prototype-scope.md), [05 저장 기준](../content-design/05-daily-operation.md).
+참고: [07 캠페인](content-design/2026-10-27-before-planning-only/07-campaign.md), [통합 범위](../prototype-scope.md), [05 저장 기준](content-design/2026-10-27-before-planning-only/05-daily-operation.md).
 
 - [x] **P3-01 3일 영업과 마감 연결 — 보완.** 3일·하루 480초·목표 30,000원으로 바꾸고 준비·영업·마감 예고·마지막 운송·정산을 연결한다. 완료 기준: 마감 후 새 수락 차단, 미탑승 호출 취소, 탑승 임무는 원래 기한 내 완료/실패 후 정산한다. 일시정지·결과·복습에는 영업 시간이 흐르지 않는다. 선행: P1·P2.
 - [x] **P3-02 성공·실패·다음 날 판정 — 보완.** 순수익 목표와 보험 갱신·세금 납부 완료를 함께 확인한다. 완료 기준: 목표만 달성한 미완납 상태는 남은 날로 진행하고, 모두 충족하면 정산에서 성공한다. 마지막 날 목표/납부 미충족과 보험 만료·자금 부족을 구분해 안내한다. 선행: P2-05·06, P3-01.
@@ -271,8 +271,8 @@ P1에서는 L05 보호구역 상황을 만들지 않는다. L08은 속도·행�
 
 | 항목 | 처리 |
 |---|---|
-| 개인 예약·단골 관계 | [04 후속 기획](../content-design/04-passengers-and-reservations.md)만 유지 |
-| 사고 이벤트·파손·책임 판정·수리비·수리 대기·보험 청구 | [08 후속 기획](../content-design/08-accidents-and-repairs.md)만 유지. 기존 물리 충돌·조건부 매너 -10은 기존 기반 |
+| 개인 예약·단골 관계 | [04 후속 기획](content-design/2026-10-27-before-planning-only/04-passengers-and-reservations.md)만 유지 |
+| 사고 이벤트·파손·책임 판정·수리비·수리 대기·보험 청구 | [08 후속 기획](content-design/2026-10-27-before-planning-only/08-accidents-and-repairs.md)만 유지. 기존 물리 충돌·조건부 매너 -10은 기존 기반 |
 | 보호구역 L05·그 밖의 면허시험 상황 대량 제작 | 두 대표 상황 이후 후속 검토 |
 | 서행 L08 자동 감점 | 측정 기준 확정 전 보류, 속도·행동 사실만 기록 |
 | 전국 지도·군중 생활·야간/날씨·법인 경영·차량 구매 | 프로토 제외 |

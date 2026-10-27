@@ -14,7 +14,7 @@
 | 10/27 도로/내비 | 일부 직접 좌/우 회전·연속 차로변경 연결 누락 | 제보 접근의 연결과 남행 차로변경 보완·일부 난간/무신호 반영 | [도로](../../work-history/2026-10-27-road-fatigue-integration.md), [남행](../../work-history/2026-10-27-drowsy-map-handling.md) |
 | 10/27 피로 정책 | 확률/일시 회복, 이후 지속 축소·같은 날 긴급 휴식 | 누적120초 안전 취소/180초 암전·귀가100초/-20 후 당일 마감 | [마감](../../work-history/2026-10-27-drowsy-map-handling.md) |
 | 10/27 눈감김/표지 후속 | 60초부터 계속 축소·유턴 표지 별도 지주 | 30~120초 반복 눈감김/재개방 후 최종 감김, 정확한 접근 신호등 상부 부착 | [후속 배포](../../work-history/2026-10-27-uturn-blink-followup.md) |
-| 10/27 공복/청결 | 배고픔 아이디어·하차 중심 청결 저하 | 포만감10미만 피로2배, 활성120초당 청결-1 추가 | [컨디션](../../content-design/10-driver-condition.md), [청결](../../content-design/15-drunk-passengers-and-cleanliness.md) |
+| 10/27 공복/청결 | 배고픔 아이디어·하차 중심 청결 저하 | 포만감10미만 피로2배, 활성120초당 청결-1 추가 | [컨디션](2026-10-27-before-planning-only/10-driver-condition.md), [청결](2026-10-27-before-planning-only/15-drunk-passengers-and-cleanliness.md) |
 | 10/27 기획 정리 | 현재 규칙·이전 계획·날짜별 덧붙임 혼재 | 현재 규칙/행동 영향표/시스템 구조/이력으로 분리, 미구현 문구 정정 | [이번 작업 이력](../../work-history/2026-10-27-design-refresh.md) |
 
 ## 이번 정리 전 원문

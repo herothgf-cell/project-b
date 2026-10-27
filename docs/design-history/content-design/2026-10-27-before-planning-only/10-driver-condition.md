@@ -1,6 +1,6 @@
 # 운전자 설정과 하루 컨디션
 
-기준일: 2026-10-27. 포만감·피로·식사·수면과 피로100의 반복 눈감김/최종 시야 차단·안전 하차·긴급 귀가 후 당일 마감을 정의한다. 수치·시간은 게임 시험값이며 실제 생리 기준이 아니다. 이전 정책·후속 아이디어는 [변경 이력](../design-history/content-design/2026-10-27-design-decisions.md)에 분리한다.
+기준일: 2026-10-27. 포만감·피로·식사·수면과 피로100의 반복 눈감김/최종 시야 차단·안전 하차·긴급 귀가 후 당일 마감을 정의한다. 수치·시간은 게임 시험값이며 실제 생리 기준이 아니다. 이전 정책·후속 아이디어는 [변경 이력](../../../content-design/../design-history/content-design/2026-10-27-design-decisions.md)에 분리한다.
 
 ## 캐릭터와 범위
 
@@ -71,8 +71,8 @@
 | 준비·주행 | 배경 한 줄·초기 상태, 포만감/피로 숫자·아이콘·게이지, 한계/졸음 예고·초과 영업·거점 종료 안내 |
 | 거점·결과 | 이용 전후 상태·시간·가격, 식사/수면 횟수·소비 시간·최종 상태·운송 건수·순수익 |
 | 저장 | v3 운송/회계/시간과 상태 함께 복원, 기존 즉시 운행 사건 저널과 완료 결과 보존 |
-| 자동 검사 | 기존 [피로·초과 영업 기록](../work-history/2026-10-26-fatigue-score-overtime.md)의 확률/깜박임은 과거 정책. 신규 누적·저장·120초취소·180초귀가 집중 검사 결과는 최신 작업 이력 기준 |
+| 자동 검사 | 기존 [피로·초과 영업 기록](../../../content-design/../work-history/2026-10-26-fatigue-score-overtime.md)의 확률/깜박임은 과거 정책. 신규 누적·저장·120초취소·180초귀가 집중 검사 결과는 최신 작업 이력 기준 |
 | 코드 근거 | `DriverCondition`/`Drowsiness`, `EconomyLedger.PreviewConditionService`/`BudgetCrossed`, `BusinessProgress.RequestEndDay` |
 | 남은 프로토 | P7-06 일반 교통 속 수동 20분·초과 영업·3일 체감. 식사·휴식 횟수와 졸음 강도/빈도의 적절성은 사용자 테스트 |
 
-관련: [캠페인07](07-campaign.md) · [경제05](05-daily-operation.md) · [체크리스트](../prototype-development-checklist.md).
+관련: [캠페인07](07-campaign.md) · [경제05](05-daily-operation.md) · [체크리스트](../../../content-design/../prototype-development-checklist.md).

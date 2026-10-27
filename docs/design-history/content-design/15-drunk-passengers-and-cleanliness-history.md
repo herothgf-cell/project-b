@@ -19,7 +19,7 @@
 
 상태: **구현·자동 검증 완료(수동 체험 제외)**. 취객·청결도·기상 대기·세차·HUD·장부·진행 운송 저장을 구현했다. 실제 수동 20분/3일 경제 밸런스는 미검증이다. 아래 확률·시간·비용은 하루 20분 영업에서 시험할 **게임용 초깃값**이며 실제 택시 요금이나 청소비 기준이 아니다.
 
-연결: [승객 운송](../../content-design/04-passengers-and-reservations.md) · [요청별 만족도](../../content-design/11-passenger-request-effects.md) · [경제·주유소](../../content-design/05-daily-operation.md) · [주행 HUD](../../content-design/13-driving-map-ui.md) · [프로토 체크리스트](../../prototype-development-checklist.md).
+연결: [승객 운송](2026-10-27-before-planning-only/04-passengers-and-reservations.md) · [요청별 만족도](2026-10-27-before-planning-only/11-passenger-request-effects.md) · [경제·주유소](2026-10-27-before-planning-only/05-daily-operation.md) · [주행 HUD](2026-10-27-before-planning-only/13-driving-map-ui.md) · [프로토 체크리스트](../../prototype-development-checklist.md).
 
 ## 경험 목표와 범위
 

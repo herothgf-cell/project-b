@@ -1,6 +1,6 @@
 # 콘텐츠 범위와 현재 구성
 
-현재 기준: 2026-10-27, main 배포 소스 e9c6fae. 이 문서는 현재 플레이 범위만 설명한다. 변경 경위는 [기획 변경 이력](../design-history/content-design/2026-10-27-design-decisions.md), 명령·검증 결과는 [작업 이력](../work-history/LATEST.md)에서 분리한다.
+현재 기준: 2026-10-27, main 배포 소스 e9c6fae. 이 문서는 현재 플레이 범위만 설명한다. 변경 경위는 [기획 변경 이력](../../../content-design/../design-history/content-design/2026-10-27-design-decisions.md), 명령·검증 결과는 [작업 이력](../../../content-design/../work-history/LATEST.md)에서 분리한다.
 
 ## 핵심 경험과 콘텐츠 묶음
 
@@ -40,4 +40,4 @@ P11/P12/P13 대기 경로의 개발을 다시 미구현으로 취급하지 않�
 | 연출 확장 | 실제 음악 변경·음성 연기·영상 리플레이·악천후 | 텍스트 응대·사건 카드·선택 연습과 구분 |
 | 공간 대안 | 미검증 인도·반대 차로·임의 근거리 대체 정차 | 현재 검증된 원래 지점의 해소 대기만 제공 |
 
-신규 아이디어는 승인 없이 필수 범위로 추가하지 않는다. 후속 제안·마인드맵 변경 검토는 [변경 이력](../design-history/content-design/2026-10-27-design-decisions.md)에서 별도 관리하며 .mmst 원본은 수정하지 않는다.
+신규 아이디어는 승인 없이 필수 범위로 추가하지 않는다. 후속 제안·마인드맵 변경 검토는 [변경 이력](../../../content-design/../design-history/content-design/2026-10-27-design-decisions.md)에서 별도 관리하며 .mmst 원본은 수정하지 않는다.

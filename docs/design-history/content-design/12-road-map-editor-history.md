@@ -1,6 +1,6 @@
 # 변경 이력: 12-road-map-editor
 
-이 파일은 통합 전 문서를 보존한 이력이다. 과거 수치·미구현·완료 표시는 당시 상태이며 현재 사양은 [본 문서](../../content-design/12-road-map-editor.md)를 따른다. 실제 실행 검증은 [작업 이력](../../work-history/LATEST.md)을 확인한다.
+이 파일은 통합 전 문서를 보존한 이력이다. 과거 수치·미구현·완료 표시는 당시 상태이며 현재 사양은 [본 문서](2026-10-27-before-planning-only/12-road-map-editor.md)를 따른다. 실제 실행 검증은 [작업 이력](../../work-history/LATEST.md)을 확인한다.
 
 ## 2026-10-26 문서 통합 전 원문
 
@@ -16,7 +16,7 @@
 
 구현: [사용법](../../road-map-editor-guide.md) · [구현/검증과 제한](../../work-history/2026-10-22-road-map-editor-implementation.md). 아래는 목표 기획이며 모든 문장을 자동 검증 완료로 해석하지 않는다. 신호 가져오기는 보호 접근별 분리 단계, 상충 검사는 보수적 축 기준, 표지는 지원 규칙만 적용한다.
 
-관련: [지도 정비 계획](../../map-polish-plan.md), [맵·주행](../../content-design/06-world-map-and-driving.md), [체크리스트](../../prototype-development-checklist.md).
+관련: [지도 정비 계획](../../map-polish-plan.md), [맵·주행](2026-10-27-before-planning-only/06-world-map-and-driving.md), [체크리스트](../../prototype-development-checklist.md).
 
 ## 1. 목적과 범위
 

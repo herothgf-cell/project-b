@@ -1,6 +1,6 @@
 # 일반 보행자·횡단·차량 양보
 
-현재 기준: 2026-10-27. 상황용 보행자·승객과 별도로 안전6슬롯(보도3·횡단3)을 사용한다. 초기 A/B안과 구현 전 조사는 [기획 변경 이력](../design-history/content-design/2026-10-27-design-decisions.md)에 분리한다.
+현재 기준: 2026-10-27. 상황용 보행자·승객과 별도로 안전6슬롯(보도3·횡단3)을 사용한다. 초기 A/B안과 구현 전 조사는 [기획 변경 이력](../../../content-design/../design-history/content-design/2026-10-27-design-decisions.md)에 분리한다.
 
 ## 행동·결과·영향
 
@@ -37,4 +37,4 @@ NPC는 연결된 횡단 경로에 자동 양보한다. 수동/H 운전에서 가
 | 승객 | 대기·픽업·목적지 하차 | 청록색 외형·F 승차·호출/지도 핀 |
 | 편집 Walker | 사용자 신호 프로그램과 연결한 횡단 | 신호등 표시만으로 자동 일반 인구가 늘어나지 않음 |
 
-관련 기준: [06 월드](06-world-map-and-driving.md), [02 평가](02-driving-evaluation.md), [14 승객](14-passenger-stop-variety.md), [19 시스템](19-content-system-structure.md). 실제 배치/저장 검증 근거는 [보행자 구현 기록](../work-history/2026-10-26-ambient-pedestrians.md)에 둔다.
+관련 기준: [06 월드](06-world-map-and-driving.md), [02 평가](02-driving-evaluation.md), [14 승객](14-passenger-stop-variety.md), [19 시스템](19-content-system-structure.md). 실제 배치/저장 검증 근거는 [보행자 구현 기록](../../../content-design/../work-history/2026-10-26-ambient-pedestrians.md)에 둔다.

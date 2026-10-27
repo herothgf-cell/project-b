@@ -4,7 +4,7 @@
 
 ## 경험 목표
 
-현재 구현은 P11 요청 다양화·P12 수요/공차·P13 점유 대기와 후속 운전/시설/피로 수정까지 포함한다. 안전 대체 이동은 미구현이며 사람의 조작감·경제 체감은 별도다. [행동 결과표](content-design/18-simulation-action-results.md), [시스템 구조](content-design/19-content-system-structure.md), [변경 이력](design-history/content-design/2026-10-27-design-decisions.md)을 구분해 읽는다.
+현재 구현은 P11 요청 다양화·P12 수요/공차·P13 점유 대기와 후속 운전/시설/피로 수정까지 포함한다. 안전 대체 이동은 미구현이며 사람의 조작감·경제 체감은 별도다. [현재 플레이 기획](content-design/README.md), [가지별 마인드맵 검토](content-design/06-mindmap-review.md), [변경 이력](design-history/content-design/2026-10-27-design-decisions.md)을 구분해 읽는다.
 
 | 질문 | 확인할 경험 |
 |---|---|
@@ -17,20 +17,20 @@
 
 | 영역 | Proto에 포함 | 제외 또는 별도 승인 | 기준 |
 |---|---|---|---|
-| 월드 | 은계 기반 도로·차로·건물·시설·합법 경로·지도 편집 | 전국/실측 전체 복원·실시간 교통 API | [06](content-design/06-world-map-and-driving.md),[12](content-design/12-road-map-editor.md) |
-| 주행·AI | 키보드/패드·1/3인칭·수동/보조, 일반 차량48대와 신호·대기열 | 신규 물리 엔진·차종 확대·전역 군중 | [06](content-design/06-world-map-and-driving.md) |
-| 상황·법규 | 출구A/B/C·우회전R1~R5·9코스, 관찰 가능한 준수/위반/보류와 점수 | 후보62개 일괄 자동 판정·실제 벌금/면허처분 | [01](content-design/01-driving-situations.md),[02](content-design/02-driving-evaluation.md),[09](content-design/09-prototype-scenarios.md) |
-| 기록 | 사건 카드·일일/누적 결과·동일 조건 연습 | 영상 리플레이·장기 숙련 레벨 | [03](content-design/03-history-and-mastery.md) |
-| 승객 | 호출·길가 승객·24정차 후보·17종 요청·만족도·보너스 | 복잡한 대화·실제 음악·음성 연기·분실물 반환 퀘스트 | [04](content-design/04-passengers-and-reservations.md),[11](content-design/11-passenger-request-effects.md),[14](content-design/14-passenger-stop-variety.md) |
-| 요청 배정 | 무작위0~2건·승차 또는 운행 중 안전 정차 발생·개별 평가/저장 | P11 구현·자동 검사 완료, 수동 빈도/답변 여유 별도 | [04 요청 배정](content-design/04-passengers-and-reservations.md#요청-배정과-등장-시점--변경-기획-미구현) |
-| 영업 전략·제한 구현 | 지역/영업 단계별 수요·공차 성과 비교 → 일반 승하차 공간 일시 점유/안전 대안 | P12/P13 대기 경로 구현. 안전 대체 쌍 없음으로 대체 이동 제외; 수요 할증·전역 도로 공사 제외 | [17 확장](content-design/17-proto-operation-expansion.md) |
-| 취객·청결 | 취객 특성·평소 대사·구토 예고/발생·기상 지연·청결·세차 전 호출 잠금·길가 거부 | 의학적 대응·강제 하차·사고/수리 콘텐츠 | [15](content-design/15-drunk-passengers-and-cleanliness.md) |
-| 생활 거점·경제 | 주유소3곳·식당·주차/휴식·세차, 개인택시 현금/미납/비용 | 실내 보행·시설 미니게임·보험·세금·법인 운영·차량매매 | [05](content-design/05-daily-operation.md) |
-| 운전자 | 포만감·피로·식사/수면·피로100 졸음과 예정20분 이후 초과 영업 | 질병·스트레스·강제 충돌 | [10](content-design/10-driver-condition.md) |
-| 캠페인 | 3일×예정20분·초과 영업/휴식 종료·일별 순수익 비교·새 캠페인 | 고정3만원 달성형·장편 서사·무한 경영 | [07](content-design/07-campaign.md) |
-| 저장 | v3 중단 운송·위치·시간·요청·회계·차량/운전자 상태, 구v2 호환 | 지도 리비전 불일치의 임의 운송 재배치 | [05](content-design/05-daily-operation.md),[07](content-design/07-campaign.md) |
-| 일반 보행자 | 상황용과 별도로 안전 보도3명·횡단3명 | 승인4후보/최대12명, 안전 경로 부족 슬롯은 비움 | [16](content-design/16-ambient-pedestrians-proposal.md) |
-| 후속 관계·사고 | 후속 기획만 보존 | 예약·단골·사고 사건·수리·보험 청구 개발 | [04](content-design/04-passengers-and-reservations.md),[08](content-design/08-accidents-and-repairs.md) |
+| 월드 | 은계 기반 도로·차로·건물·시설·합법 경로·지도 편집 | 전국/실측 전체 복원·실시간 교통 API | [06](content-design/01-driving-and-traffic.md),[12](technical-reference/map-editor-specification.md) |
+| 주행·AI | 키보드/패드·1/3인칭·수동/보조, 일반 차량48대와 신호·대기열 | 신규 물리 엔진·차종 확대·전역 군중 | [06](content-design/01-driving-and-traffic.md) |
+| 상황·법규 | 출구A/B/C·우회전R1~R5·9코스, 관찰 가능한 준수/위반/보류와 점수 | 후보62개 일괄 자동 판정·실제 벌금/면허처분 | [01](content-design/01-driving-and-traffic.md),[02](content-design/01-driving-and-traffic.md),[09](content-design/02-passengers-and-fares.md) |
+| 기록 | 사건 카드·일일/누적 결과·동일 조건 연습 | 영상 리플레이·장기 숙련 레벨 | [03](content-design/04-campaign-and-feedback.md) |
+| 승객 | 호출·길가 승객·24정차 후보·17종 요청·만족도·보너스 | 복잡한 대화·실제 음악·음성 연기·분실물 반환 퀘스트 | [04](content-design/02-passengers-and-fares.md),[11](content-design/02-passengers-and-fares.md),[14](content-design/02-passengers-and-fares.md) |
+| 요청 배정 | 무작위0~2건·승차 또는 운행 중 안전 정차 발생·개별 평가/저장 | P11 구현·자동 검사 완료, 수동 빈도/답변 여유 별도 | [04 요청 배정](content-design/02-passengers-and-fares.md) |
+| 영업 전략·제한 구현 | 지역/영업 단계별 수요·공차 성과 비교 → 일반 승하차 공간 일시 점유/안전 대안 | P12/P13 대기 경로 구현. 안전 대체 쌍 없음으로 대체 이동 제외; 수요 할증·전역 도로 공사 제외 | [17 확장](content-design/03-life-and-economy.md) |
+| 취객·청결 | 취객 특성·평소 대사·구토 예고/발생·기상 지연·청결·세차 전 호출 잠금·길가 거부 | 의학적 대응·강제 하차·사고/수리 콘텐츠 | [15](content-design/03-life-and-economy.md) |
+| 생활 거점·경제 | 주유소3곳·식당·주차/휴식·세차, 개인택시 현금/미납/비용 | 실내 보행·시설 미니게임·보험·세금·법인 운영·차량매매 | [05](content-design/03-life-and-economy.md) |
+| 운전자 | 포만감·피로·식사/수면·피로100 졸음과 예정20분 이후 초과 영업 | 질병·스트레스·강제 충돌 | [10](content-design/03-life-and-economy.md) |
+| 캠페인 | 3일×예정20분·초과 영업/휴식 종료·일별 순수익 비교·새 캠페인 | 고정3만원 달성형·장편 서사·무한 경영 | [07](content-design/04-campaign-and-feedback.md) |
+| 저장 | v3 중단 운송·위치·시간·요청·회계·차량/운전자 상태, 구v2 호환 | 지도 리비전 불일치의 임의 운송 재배치 | [05](content-design/03-life-and-economy.md),[07](content-design/04-campaign-and-feedback.md) |
+| 일반 보행자 | 상황용과 별도로 안전 보도3명·횡단3명 | 승인4후보/최대12명, 안전 경로 부족 슬롯은 비움 | [16](content-design/01-driving-and-traffic.md) |
+| 후속 관계·사고 | 후속 기획만 보존 | 예약·단골·사고 사건·수리·보험 청구 개발 | [04](content-design/02-passengers-and-fares.md),[08](future-design/accidents-and-repairs.md) |
 
 ## 공통 상태·화면
 

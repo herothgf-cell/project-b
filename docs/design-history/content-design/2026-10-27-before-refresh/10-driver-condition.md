@@ -11,7 +11,7 @@
 | 목적 | 운송·경로·식사·휴식을 스스로 배치하고 남긴 수익 비교 |
 | 성장 | 플레이어 판단 숙련. 능력치 구매·차량 성능 강화 제외 |
 | 이름·나이·성별 | 프로토 진행 조건으로 고정하지 않음 |
-| 반복 | 3일 내 상태 이월, 새 캠페인에서 동일 초기값. [07 캠페인](../../../content-design/07-campaign.md) 기준 |
+| 반복 | 3일 내 상태 이월, 새 캠페인에서 동일 초기값. [07 캠페인](../2026-10-27-before-planning-only/07-campaign.md) 기준 |
 | 포함 | 포만감·피로 안내, 거점 식사/수면, 이동 중 졸음, 저장 복원 |
 | 제외 | 스트레스·질병·추가 체력, 실내 보행·침대 조작·수면 미니게임, 강제 충돌 |
 
@@ -56,13 +56,13 @@
 |---|---|
 | 접근 | 식당 또는 주차장/휴식 구역으로 직접 이동·빈차·지정 방향 정차 |
 | 호출 | 미탑승 호출은 취소 후 식사/수면 이용. 탑승 중은 목적지 하차 후 이용 |
-| 확인 | 소비 시간·가격·회복 후 예상 상태를 표시. 비용·시설 조건은 [05](../../../content-design/05-daily-operation.md) 기준 |
+| 확인 | 소비 시간·가격·회복 후 예상 상태를 표시. 비용·시설 조건은 [05](../2026-10-27-before-planning-only/05-daily-operation.md) 기준 |
 | 확정 | 비용/미납·경과·회복을 동일 이용 ID에 한 번 적용 |
 | 취소 | 돈·시간·상태 변화 없음 |
 | 계속 영업 | 남은 예정 시간과 관계없이 서비스 이용·호출 재개 가능, 자동 호출 수락 없음 |
 | 휴식·영업 종료 | 빈차로 주차장·휴식 구역에 정차 후 무료 수면 100초·피로 40 회복, 실제 초과 시간·비용·결과 한 번 정산 |
 | 자금 부족 | 식사는 미납·수면은 무료, 신규 대출 없음. 미납도 비용으로 기록 |
-| 세차 | [15](../../../content-design/15-drunk-passengers-and-cleanliness.md)의 시간만큼 깨어 있는 컨디션 경과. 식사/수면 대체 아님 |
+| 세차 | [15](../2026-10-27-before-planning-only/15-drunk-passengers-and-cleanliness.md)의 시간만큼 깨어 있는 컨디션 경과. 식사/수면 대체 아님 |
 
 ## 표시·저장·검증
 
@@ -75,7 +75,7 @@
 | 코드 근거 | `DriverCondition`/`Drowsiness`, `EconomyLedger.PreviewConditionService`/`BudgetCrossed`, `BusinessProgress.RequestEndDay` |
 | 남은 프로토 | P7-06 일반 교통 속 수동 20분·초과 영업·3일 체감. 식사·휴식 횟수와 졸음 강도/빈도의 적절성은 사용자 테스트 |
 
-관련: [캠페인07](../../../content-design/07-campaign.md) · [경제05](../../../content-design/05-daily-operation.md) · [체크리스트](../../../content-design/../prototype-development-checklist.md).
+관련: [캠페인07](../2026-10-27-before-planning-only/07-campaign.md) · [경제05](../2026-10-27-before-planning-only/05-daily-operation.md) · [체크리스트](../../../content-design/../prototype-development-checklist.md).
 
 ## 배고픔 후속 아이디어 — 미구현·선택안
 

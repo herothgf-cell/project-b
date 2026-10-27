@@ -6,23 +6,23 @@
 
 # 프로토타입 개발을 위한 통합 기획
 
-2026-10-26 피로·점수 개정: [운전자10](../content-design/10-driver-condition.md)의 피로100 졸음(예고2초 후 시야3초/조작중단1초),20분 이후 초과 영업과 거점 휴식·종료를 추가한다. 피로100 신규 수락 차단과 시간 종료 자동 정산은 폐기한다. [운전 점수02](../content-design/02-driving-evaluation.md)는 신규 준수+3과 승차점수0/70/100의 기본 운임90/100/110% 보정을 제공한다. [승객04](../content-design/04-passengers-and-reservations.md)는350m/45초 회복과 안심+2·최대4를 적용한다. 아래 과거 기록보다 이 개정이 우선하며 실제 검증은 최신 작업 이력 기준이다.
+2026-10-26 피로·점수 개정: [운전자10](content-design/2026-10-27-before-planning-only/10-driver-condition.md)의 피로100 졸음(예고2초 후 시야3초/조작중단1초),20분 이후 초과 영업과 거점 휴식·종료를 추가한다. 피로100 신규 수락 차단과 시간 종료 자동 정산은 폐기한다. [운전 점수02](content-design/2026-10-27-before-planning-only/02-driving-evaluation.md)는 신규 준수+3과 승차점수0/70/100의 기본 운임90/100/110% 보정을 제공한다. [승객04](content-design/2026-10-27-before-planning-only/04-passengers-and-reservations.md)는350m/45초 회복과 안심+2·최대4를 적용한다. 아래 과거 기록보다 이 개정이 우선하며 실제 검증은 최신 작업 이력 기준이다.
 
 2026-10-26 유턴·중앙분리대: 확인된 T1 접근3곳의 조건부 유턴, 수인로 중앙 방호울타리/안전지대, 전체 노면선 감사 및 정식 지도 화살표 표시를 구현했다. 두 교차로 차로·교통섬·보행 신호, 만족도 회복·내비·승하차9 후속 수정은 [통합 기록](../work-history/2026-10-26-junction-trip-followups.md)을 따른다. 검증·현장 확인 범위는 [작업 기록](../work-history/2026-10-26-uturn-medians.md), [거리뷰 근거](../map-observations/2026-10-26-uturn-median-observations.md)를 따른다. 전체 현장 확인·사람의 수동 운전 검증을 뜻하지 않는다.
 
-2026-10-26 운임 구현: [승객 만족도별 운임·보너스 개정](content-design/11-passenger-request-effects-history.md#2026-10-26-운임·보너스-개정안)에 따라 기본 운임을 최종 승객 만족도 `S`의 요구치 `R` 미달 폭에 따라 점진 감액하고, 높은 `R`의 보너스 상한과 상승폭을 키웠다. 시작 만족도는 요구치 미만·동일·초과 모두 가능하다. [P8-07 안정 주행 회복](../content-design/04-passengers-and-reservations.md#p8-07-안정-주행-회복-구현-사양-2026-10-26-검토안)은 별도 통합 작업에서 구현했다. 자동 물리·수동 경제 밸런스는 별도 검증한다.
+2026-10-26 운임 구현: [승객 만족도별 운임·보너스 개정](content-design/11-passenger-request-effects-history.md#2026-10-26-운임·보너스-개정안)에 따라 기본 운임을 최종 승객 만족도 `S`의 요구치 `R` 미달 폭에 따라 점진 감액하고, 높은 `R`의 보너스 상한과 상승폭을 키웠다. 시작 만족도는 요구치 미만·동일·초과 모두 가능하다. [P8-07 안정 주행 회복](content-design/2026-10-27-before-planning-only/04-passengers-and-reservations.md#p8-07-안정-주행-회복-구현-사양-2026-10-26-검토안)은 별도 통합 작업에서 구현했다. 자동 물리·수동 경제 밸런스는 별도 검증한다.
 
 2026-10-23 Unity 통합: 기존 Esc의 차로·출구/차로변경·노면·표지·차량/보행 신호, 건물/부지 생성·삭제를 Unity 3D 편집 창으로 옮긴다. 실제 주행 공통 문서/검사·정식 저장·다른 PC 빌드 경로를 유지한다. [사용법](../unity-map-editor-guide.md) · [검증 기록](../work-history/2026-10-23-unity-full-map-editor.md).
 
-프로토 추가(구현·자동 검증, 수동 체험 남음): [취객·차량 청결도·주유소 세차](../content-design/15-drunk-passengers-and-cleanliness.md)를 [P9 체크리스트](../prototype-development-checklist.md)에 넣는다. 취객의 구토·도착 후 기상 지연, 청결도에 따른 승차 거부/시작 만족도 가산, 기존 주유소 F7 세차, 연료 우측 HUD를 포함한다. 취객·청결·세차·중단 운송 이어하기를 구현하며 사고·수리/단골·예약 제외는 유지한다.
+프로토 추가(구현·자동 검증, 수동 체험 남음): [취객·차량 청결도·주유소 세차](content-design/2026-10-27-before-planning-only/15-drunk-passengers-and-cleanliness.md)를 [P9 체크리스트](../prototype-development-checklist.md)에 넣는다. 취객의 구토·도착 후 기상 지연, 청결도에 따른 승차 거부/시작 만족도 가산, 기존 주유소 F7 세차, 연료 우측 HUD를 포함한다. 취객·청결·세차·중단 운송 이어하기를 구현하며 사고·수리/단골·예약 제외는 유지한다.
 
-2026-10-23 승객 후속 구현: [승객04](../content-design/04-passengers-and-reservations.md#최종-승객-만족도와-운임) · [만족도·보너스11](content-design/11-passenger-request-effects-history.md#2026-10-23-이전-정책-기록--만족도와-보너스-개편) · [승하차 다양화14](../content-design/14-passenger-stop-variety.md). 기존 3일×20분 캠페인과 9개 상황 코스는 유지한다. 요구 만족도에 도달할 때부터 모든 정상 운송에 보너스를 지급하는 방향이며, 초기 만족도 추첨·요청/시간 변화·일반 영업용 정차 포켓 12곳을 반영했다. 안정 주행 M 회복은 2026-10-26 구현했다. 실제 이동500m 또는 이동 중60초마다 급가감속 손실만 +2, 운송당 최대+6이며 S 게이지·알림·저장과 연동한다. 수동 경제 밸런스는 남아 있다.
+2026-10-23 승객 후속 구현: [승객04](content-design/2026-10-27-before-planning-only/04-passengers-and-reservations.md#최종-승객-만족도와-운임) · [만족도·보너스11](content-design/11-passenger-request-effects-history.md#2026-10-23-이전-정책-기록--만족도와-보너스-개편) · [승하차 다양화14](content-design/2026-10-27-before-planning-only/14-passenger-stop-variety.md). 기존 3일×20분 캠페인과 9개 상황 코스는 유지한다. 요구 만족도에 도달할 때부터 모든 정상 운송에 보너스를 지급하는 방향이며, 초기 만족도 추첨·요청/시간 변화·일반 영업용 정차 포켓 12곳을 반영했다. 안정 주행 M 회복은 2026-10-26 구현했다. 실제 이동500m 또는 이동 중60초마다 급가감속 손실만 +2, 운송당 최대+6이며 S 게이지·알림·저장과 연동한다. 수동 경제 밸런스는 남아 있다.
 
-2026-10-23 가독성 보정: 시설 선택 중 호출 상시 표시/접근 실선 복구, Noto Sans KR 포함, 주요 팝업 불투명, 상황/F7 안내와 속도계 분리. 세부 동작은 [UI13](../content-design/13-driving-map-ui.md) 참고.
+2026-10-23 가독성 보정: 시설 선택 중 호출 상시 표시/접근 실선 복구, Noto Sans KR 포함, 주요 팝업 불투명, 상황/F7 안내와 속도계 분리. 세부 동작은 [UI13](content-design/2026-10-27-before-planning-only/13-driving-map-ui.md) 참고.
 
-2026-10-23 지도 목적지 선택: 미니맵/M 시설·도로 클릭 → 정보와 경로 미리보기 → 길안내 시작. 호출 선택은 승차~하차 미리보기이며 운송 중 시설 안내로 목적지 변경은 차단. 교통/법규 기본OFF, 경로 게임 혼잡색은 유지. [UI 상세](../content-design/13-driving-map-ui.md).
+2026-10-23 지도 목적지 선택: 미니맵/M 시설·도로 클릭 → 정보와 경로 미리보기 → 길안내 시작. 호출 선택은 승차~하차 미리보기이며 운송 중 시설 안내로 목적지 변경은 차단. 교통/법규 기본OFF, 경로 게임 혼잡색은 유지. [UI 상세](content-design/2026-10-27-before-planning-only/13-driving-map-ui.md).
 
-2026-10-23 사용자 승인: [주행·전체지도UI13](../content-design/13-driving-map-ui.md) 배치 구현. M 호출목록/핀 선택→별도수락,승하차 클릭은 보기포커스만 변경. 큰속도/도형게이지/잔액/분리된점수/하단대화,지도필터·좌표팝업. 기존1/2/3 즉시호출수락 제거,길가F 유지.
+2026-10-23 사용자 승인: [주행·전체지도UI13](content-design/2026-10-27-before-planning-only/13-driving-map-ui.md) 배치 구현. M 호출목록/핀 선택→별도수락,승하차 클릭은 보기포커스만 변경. 큰속도/도형게이지/잔액/분리된점수/하단대화,지도필터·좌표팝업. 기존1/2/3 즉시호출수락 제거,길가F 유지.
 
 2026-10-22 편집 편의성: 간편 편집 기본·도로명/지도 클릭·진입 방향·차로 번호·큰 방향 버튼·클릭 연결/배치·신호 기본형·저장하고 시험·자동 초안. [사용법](../road-map-editor-guide.md) · [개선 기록](../work-history/2026-10-22-road-map-editor-simple-mode.md).
 
@@ -33,15 +33,15 @@
 시작 내비 경로는 비우며 운행 점수 구역을 목적지/경유지로 강제하지 않는다. 기존 승객9코스/17요청·만족도/운행 점수 분리·탑승 중 마감 대기를 보존한다. 보험·세금·예약·사고·수리 제외와 현장 도로 조사 중단은 유지한다. 자동 상태/위치 제어 검사는 수동3일 밸런스 검증으로 취급하지 않는다.
 
 
-2026-10-22 후속 기획: [도로·교차로 편집기](../content-design/12-road-map-editor.md)에 사용자 차로/노면 편집, 표지·차량/보행 신호 배치와 운영 연결, 변경 차로 기반 내비를 정의했다. E1~E4 실행파일 편집·저장·별도 시험·공유 경로/신호를 구현했다. [사용법](../road-map-editor-guide.md)과 [검증/한계](../work-history/2026-10-22-road-map-editor-implementation.md)를 따른다. 수동 편집/하루·임의 신호/신규 형상 전체 검증은 별도다.
+2026-10-22 후속 기획: [도로·교차로 편집기](content-design/2026-10-27-before-planning-only/12-road-map-editor.md)에 사용자 차로/노면 편집, 표지·차량/보행 신호 배치와 운영 연결, 변경 차로 기반 내비를 정의했다. E1~E4 실행파일 편집·저장·별도 시험·공유 경로/신호를 구현했다. [사용법](../road-map-editor-guide.md)과 [검증/한계](../work-history/2026-10-22-road-map-editor-implementation.md)를 따른다. 수동 편집/하루·임의 신호/신규 형상 전체 검증은 별도다.
 
-**최신 기획(2026-10-21): 하루20분·하루 순수익 비교·포만감/피로·식당/수면을 도입한다. 하루20분 구현·자동 검증을 마쳤으며 수동 하루 밸런스는 미검증이다. 보험·세금·예약·사고 제외는 유지한다.** 상세 기준: [운전자](../content-design/10-driver-condition.md) · [캠페인](../content-design/07-campaign.md). 날짜가 붙은 과거 구현/검증 절은 당시 기록으로 보존한다.
+**최신 기획(2026-10-21): 하루20분·하루 순수익 비교·포만감/피로·식당/수면을 도입한다. 하루20분 구현·자동 검증을 마쳤으며 수동 하루 밸런스는 미검증이다. 보험·세금·예약·사고 제외는 유지한다.** 상세 기준: [운전자](content-design/2026-10-27-before-planning-only/10-driver-condition.md) · [캠페인](content-design/2026-10-27-before-planning-only/07-campaign.md). 날짜가 붙은 과거 구현/검증 절은 당시 기록으로 보존한다.
 
 기준일: 2026년 10월 21일 · 버전: 0.5 · 상태: 사용자 결정 반영 통합 기획
 
 2026-10-21 변경: 수동 가속·저속 회전 완화, 넓은 임시 시작 주차 지점, G 전체지도와 매너/법규 별도 게이지를 적용한다. 보험·세금은 아래 현재 범위대로 제외하며 과거 착수 전 표는 이력이다.
 
-2026-10-21 별도 기획 추가: [프로토 시나리오](../content-design/09-prototype-scenarios.md)는 기존 승객 요청을 유지하면서 승객별 승하차 위치와 법규/선택 상황을 연결하는 9코스 초안이다. 승차 전·운송 중·하차 접근을 구분하며, 기존 7구역 활용과 P4 선택 2코스를 제안한다. 신규 코스 구현·좌표 확정·캠페인 검증 완료를 뜻하지 않으며, 9코스 전부를 3일 내 필수 운송으로 요구하지 않는다.
+2026-10-21 별도 기획 추가: [프로토 시나리오](content-design/2026-10-27-before-planning-only/09-prototype-scenarios.md)는 기존 승객 요청을 유지하면서 승객별 승하차 위치와 법규/선택 상황을 연결하는 9코스 초안이다. 승차 전·운송 중·하차 접근을 구분하며, 기존 7구역 활용과 P4 선택 2코스를 제안한다. 신규 코스 구현·좌표 확정·캠페인 검증 완료를 뜻하지 않으며, 9코스 전부를 3일 내 필수 운송으로 요구하지 않는다.
 
 2026-10-21 추가: 3일×12분·연료4%포인트/km+0.1%포인트/분·새 캠페인60%. 승객 탑승 중 N 마감 금지·날짜 종료는 목적지 하차까지 대기. 기한 초과 시에도 승객 유지 후 목적지에서0원 처리. 화면 점수 명칭은 ‘운전 점수’이며 승객 매너와 별도다. 차선은 공유 차로 그래프를 따라 중앙 황색/동방향 백색으로 구분하고 도로 겹침 건물은 원본을 보존해 표시·충돌에서 제외한다. 주유소는 실제 시설 확인이 아닌 게임시설이다.
 
@@ -66,21 +66,21 @@
 
 | 영역 | 이번 프로토에서 개발 | 개발하지 않음 | 기준 문서 |
 |---|---|---|---|
-| 맵 | 은계 기반 맵, 대표 상황용 가상 구간 | 전국·실측 시설 전체·실시간 교통 API | [06](../content-design/06-world-map-and-driving.md) |
-| 주행 | 기존 키보드·패드·1/3인칭·조향 보조 유지 | 신규 물리 엔진·차량 종류 확대 | [06](../content-design/06-world-map-and-driving.md) |
-| AI | 기존 차량 흐름·대기열·상황용 보행자 | 도시 전역 보행 군중과 생활 시뮬레이션 | [06](../content-design/06-world-map-and-driving.md) |
-| 상황 | 출구 정체와 우회전 횡단보도 조건 비교 | 전체 면허문제·복합 날씨 상황 | [01](../content-design/01-driving-situations.md) |
-| 법규 | 별도 점수·근거·준수/위반/보류·간단 성향 | 실제 범칙금 청구·면허 정지 등 행정처분 | [02](../content-design/02-driving-evaluation.md) |
-| 기록 | 사건 카드·일일 누적·동일 상황 재시작 | 영상 리플레이·정교한 장기 숙련 단계 | [03](../content-design/03-history-and-mastery.md) |
-| 승객 | 호출·길가 승객·매너·조용한 운행/도착 문의 | 복잡한 대화·음성·창문/음악 전체 기능 | [04](../content-design/04-passengers-and-reservations.md) |
-| 거점 | 입출구 분리 주유소 3곳·식당·주차장 외부 정차 메뉴 | 실내 보행·시설 운영 미니게임 | [05](../content-design/05-daily-operation.md) |
-| 경제 | 개인택시·운임·방문비·현금·미납 | 법인·대출·차량매매·실제 세무신고 | [05](../content-design/05-daily-operation.md) |
-| 운전자 | 포만감·피로·식당 회복·거점 수면,피로100 졸음·초과 영업 | 질병·스트레스·강제 충돌 | [10](../content-design/10-driver-condition.md) |
-| 납부 일정 | 없음 | 보험료·보험 갱신·세금 납부·만료/기한·관련 성공 조건 전체 제외 | [05](../content-design/05-daily-operation.md) |
-| 캠페인 | 하루20분·순수익 비교·새 하루(추가 개발) | 장편 서사·무한 경영 | [07](../content-design/07-campaign.md) |
-| 저장 | v3 중단 운송·시간·회계·컨디션·청결·요청 함께 저장/복원, v2 읽기 호환 | 임의 지도 리비전 변경 뒤 운송 자동 재배치 | [05](../content-design/05-daily-operation.md) |
-| 개인 예약·단골 | 없음·기획만 | 예약 접수·시간 조율·관계 저장 | [04](../content-design/04-passengers-and-reservations.md) |
-| 사고·수리 | 없음·기획만 | 사고 사건·파손·책임 판정·수리비·수리 대기·보험 청구 | [08](../content-design/08-accidents-and-repairs.md) |
+| 맵 | 은계 기반 맵, 대표 상황용 가상 구간 | 전국·실측 시설 전체·실시간 교통 API | [06](content-design/2026-10-27-before-planning-only/06-world-map-and-driving.md) |
+| 주행 | 기존 키보드·패드·1/3인칭·조향 보조 유지 | 신규 물리 엔진·차량 종류 확대 | [06](content-design/2026-10-27-before-planning-only/06-world-map-and-driving.md) |
+| AI | 기존 차량 흐름·대기열·상황용 보행자 | 도시 전역 보행 군중과 생활 시뮬레이션 | [06](content-design/2026-10-27-before-planning-only/06-world-map-and-driving.md) |
+| 상황 | 출구 정체와 우회전 횡단보도 조건 비교 | 전체 면허문제·복합 날씨 상황 | [01](content-design/2026-10-27-before-planning-only/01-driving-situations.md) |
+| 법규 | 별도 점수·근거·준수/위반/보류·간단 성향 | 실제 범칙금 청구·면허 정지 등 행정처분 | [02](content-design/2026-10-27-before-planning-only/02-driving-evaluation.md) |
+| 기록 | 사건 카드·일일 누적·동일 상황 재시작 | 영상 리플레이·정교한 장기 숙련 단계 | [03](content-design/2026-10-27-before-planning-only/03-history-and-mastery.md) |
+| 승객 | 호출·길가 승객·매너·조용한 운행/도착 문의 | 복잡한 대화·음성·창문/음악 전체 기능 | [04](content-design/2026-10-27-before-planning-only/04-passengers-and-reservations.md) |
+| 거점 | 입출구 분리 주유소 3곳·식당·주차장 외부 정차 메뉴 | 실내 보행·시설 운영 미니게임 | [05](content-design/2026-10-27-before-planning-only/05-daily-operation.md) |
+| 경제 | 개인택시·운임·방문비·현금·미납 | 법인·대출·차량매매·실제 세무신고 | [05](content-design/2026-10-27-before-planning-only/05-daily-operation.md) |
+| 운전자 | 포만감·피로·식당 회복·거점 수면,피로100 졸음·초과 영업 | 질병·스트레스·강제 충돌 | [10](content-design/2026-10-27-before-planning-only/10-driver-condition.md) |
+| 납부 일정 | 없음 | 보험료·보험 갱신·세금 납부·만료/기한·관련 성공 조건 전체 제외 | [05](content-design/2026-10-27-before-planning-only/05-daily-operation.md) |
+| 캠페인 | 하루20분·순수익 비교·새 하루(추가 개발) | 장편 서사·무한 경영 | [07](content-design/2026-10-27-before-planning-only/07-campaign.md) |
+| 저장 | v3 중단 운송·시간·회계·컨디션·청결·요청 함께 저장/복원, v2 읽기 호환 | 임의 지도 리비전 변경 뒤 운송 자동 재배치 | [05](content-design/2026-10-27-before-planning-only/05-daily-operation.md) |
+| 개인 예약·단골 | 없음·기획만 | 예약 접수·시간 조율·관계 저장 | [04](content-design/2026-10-27-before-planning-only/04-passengers-and-reservations.md) |
+| 사고·수리 | 없음·기획만 | 사고 사건·파손·책임 판정·수리비·수리 대기·보험 청구 | [08](content-design/2026-10-27-before-planning-only/08-accidents-and-repairs.md) |
 
 ## 사용자 결정과 세부 제안
 
@@ -149,7 +149,7 @@
 
 프로토 검증 환경은 현재 PC와 키보드 주행 기준이다. 실물 패드·새 PC 검증은 프로토에서 제외하며 출시 일정은 별도다. 기존 성능·빌드 기록을 신규 프로토 완료 근거로 사용하지 않는다.
 
-관련: [로드맵](../content-design/00-RoadMap.md) · [게임 개요](../game-design.md) · [문서 목록](../content-design/README.md) · [기존 경제 검증](../economy-progression-validation.md).
+관련: [로드맵](content-design/2026-10-27-before-planning-only/00-RoadMap.md) · [게임 개요](../game-design.md) · [문서 목록](../content-design/README.md) · [기존 경제 검증](../economy-progression-validation.md).
 
 ## 추가 기획의 개발 단계 (2026-10-20)
 
@@ -228,4 +228,4 @@
 
 2026-10-23 현재 지도는 은계 한 곳으로 통일한다. Unity 프로젝트는 unity/EungyeTaxi이며 영통 선택·대체 지도와 전용 수입 설정은 제거했다. 은계 국도42와 공통 연습 기능은 유지한다. [검증](../work-history/2026-10-23-eungye-only.md).
 
-2026-10-26: 정산3줄·소폭 조향 감속 수정·최대48대 일반 차량 분산을 반영했다. 추가 유턴 관찰3접근은 개인 안내 지도 전용이다. 일반 보행자4거점 최대12명은 [승인안](../content-design/16-ambient-pedestrians-proposal.md)만 작성했으며 구현 승인 대기다.
+2026-10-26: 정산3줄·소폭 조향 감속 수정·최대48대 일반 차량 분산을 반영했다. 추가 유턴 관찰3접근은 개인 안내 지도 전용이다. 일반 보행자4거점 최대12명은 [승인안](content-design/2026-10-27-before-planning-only/16-ambient-pedestrians-proposal.md)만 작성했으며 구현 승인 대기다.

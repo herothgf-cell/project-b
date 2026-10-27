@@ -1,6 +1,6 @@
 # 변경 전 기획·구현 이력
 
-2026-10-26 통합 정리 전 원문이다. 폐기된 수치·미구현 표기가 포함되어 있으며 현재 규칙은 [14-passenger-stop-variety](../../content-design/14-passenger-stop-variety.md)를 따른다. 날짜별 실제 검증은 [작업 이력](../../work-history/LATEST.md)을 따른다.
+2026-10-26 통합 정리 전 원문이다. 폐기된 수치·미구현 표기가 포함되어 있으며 현재 규칙은 [14-passenger-stop-variety](2026-10-27-before-planning-only/14-passenger-stop-variety.md)를 따른다. 날짜별 실제 검증은 [작업 이력](../../work-history/LATEST.md)을 따른다.
 
 # 승객 승하차 지점 다양화 기획
 
@@ -29,7 +29,7 @@
 
 배치는 `config/maps/eungye-passenger-stops.json`, 생성·검사는 `tools/build_passenger_stop_catalog.py`. 정식 지도/필수 입력을 덮지 않는 게임 전용 보완이다. 현장 미확인(`game-only-field-unverified`)을 보존한다.
 
-기준일: 2026-10-23 · 상태: **게임용 후보 12곳 구현·형상/연결 자동 검증**. [승객 운송](../../content-design/04-passengers-and-reservations.md), [기존 9코스와 S01~S12](../../content-design/09-prototype-scenarios.md), [맵·주행](../../content-design/06-world-map-and-driving.md), [지도 편집기](../../content-design/12-road-map-editor.md)와 연결한다.
+기준일: 2026-10-23 · 상태: **게임용 후보 12곳 구현·형상/연결 자동 검증**. [승객 운송](2026-10-27-before-planning-only/04-passengers-and-reservations.md), [기존 9코스와 S01~S12](2026-10-27-before-planning-only/09-prototype-scenarios.md), [맵·주행](2026-10-27-before-planning-only/06-world-map-and-driving.md), [지도 편집기](2026-10-27-before-planning-only/12-road-map-editor.md)와 연결한다.
 
 ## 목적과 적용 범위
 
@@ -75,7 +75,7 @@
 - 호출의 목적지·약정 운임·요구 만족도는 수락 전에 보여준다. 핵심 요청 1개는 탑승 뒤 나타나므로 특정 지점에 특정 요청을 고정하지 않는다.
 - 목적지·경유 요청은 실제 선택 가능한 안전 후보가 있을 때만 제시한다. 후보가 사라지거나 지도를 수정해 연결이 끊겼다면 원래 운송을 유지하고 중립 결과를 기록한다.
 - 시간 민감 요청은 합법적 대기와 접근 거리를 포함해 기한을 조정한다. 먼 승차지 때문에 승객 요청을 처음부터 실패로 만들지 않는다.
-- 요청 이행 결과는 [승객 요청·만족도](../../content-design/11-passenger-request-effects.md)에 따라 하차 때 판정한다. 지점 유형 자체가 만족도나 보너스를 자동 지급하지 않는다.
+- 요청 이행 결과는 [승객 요청·만족도](2026-10-27-before-planning-only/11-passenger-request-effects.md)에 따라 하차 때 판정한다. 지점 유형 자체가 만족도나 보너스를 자동 지급하지 않는다.
 
 ## 개발 순서와 검증
 

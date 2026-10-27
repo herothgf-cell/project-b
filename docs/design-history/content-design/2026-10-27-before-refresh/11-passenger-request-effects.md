@@ -1,6 +1,6 @@
 # 승객 요청별 콘텐츠와 효과
 
-요청의 배정·발생 시점·복수 요청·저장 규칙과 만족도·운임은 [04 승객 운송](../../../content-design/04-passengers-and-reservations.md)을 기준으로 한다. 이 문서는 17종 요청의 대사, 선택, 실제 효과와 관찰 기준을 정의한다. 과거 산식·구현 대조표는 [11 변경 이력](../../../content-design/../design-history/content-design/11-passenger-request-effects-history.md), 개발 완료 여부는 [체크리스트](../../../content-design/../prototype-development-checklist.md)에 둔다.
+요청의 배정·발생 시점·복수 요청·저장 규칙과 만족도·운임은 [04 승객 운송](../2026-10-27-before-planning-only/04-passengers-and-reservations.md)을 기준으로 한다. 이 문서는 17종 요청의 대사, 선택, 실제 효과와 관찰 기준을 정의한다. 과거 산식·구현 대조표는 [11 변경 이력](../../../content-design/../design-history/content-design/11-passenger-request-effects-history.md), 개발 완료 여부는 [체크리스트](../../../content-design/../prototype-development-checklist.md)에 둔다.
 
 ## 공통 표현과 평가
 
@@ -64,4 +64,4 @@ EV03은 P11에서 운행 중 요청 수와 분리한 하차 후 텍스트 사건
 - 앞선 요청의 효과·평가가 다음 요청으로 덮이지 않음. 충돌하는 약속·중복 점수·중복 정산 없음.
 - 안전 정차 기회 없는 짧은 운송·취객 기상 대기·저장 복원·목적지 변경 이후에도 미발생 요청의 감점 없음.
 
-수치·빈도·상한은 [04](../../../content-design/04-passengers-and-reservations.md)의 시험값을 사용하며, 수동 운행으로 대화 빈도와 운임 영향을 확인한다.
+수치·빈도·상한은 [04](../2026-10-27-before-planning-only/04-passengers-and-reservations.md)의 시험값을 사용하며, 수동 운행으로 대화 빈도와 운임 영향을 확인한다.

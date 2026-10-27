@@ -83,6 +83,6 @@
 | 출처 | `licenses/NotoSansKR-OFL.txt`, Unity 폰트 리소스 OFL, 배포 ThirdPartyNotices에 보존 |
 | 검증 남음 | 실제 수동 운전 중 신호·호출·점수 가독성,20분/3일 체감. 자동 위치 제어/해상도 캡처와 구분 |
 
-조향·시야는 [06 주행](06-world-map-and-driving.md), 식사 메뉴·현금·수면은 [05 운영](05-daily-operation.md)을 따른다. 설명용 [인터랙션 시안](../ui/2026-10-23-cockpit-map-preview.html)·[주행 배치](../ui/2026-10-23-driving-proposal.png)·[지도 배치](../ui/2026-10-23-map-proposal.png)의 배경/좌표/잔액은 실제 실행 증거가 아니다.
+조향·시야는 [06 주행](06-world-map-and-driving.md), 식사 메뉴·현금·수면은 [05 운영](05-daily-operation.md)을 따른다. 설명용 [인터랙션 시안](../../../content-design/../ui/2026-10-23-cockpit-map-preview.html)·[주행 배치](../../../content-design/../ui/2026-10-23-driving-proposal.png)·[지도 배치](../../../content-design/../ui/2026-10-23-map-proposal.png)의 배경/좌표/잔액은 실제 실행 증거가 아니다.
 
-[변경 이력](../design-history/content-design/13-driving-map-ui-history.md) · [UI 검증](../work-history/2026-10-23-approved-cockpit-map-ui.md) · [정산 최신 검증](../work-history/2026-10-26-handling-traffic-receipt.md).
+[변경 이력](../../../content-design/../design-history/content-design/13-driving-map-ui-history.md) · [UI 검증](../../../content-design/../work-history/2026-10-23-approved-cockpit-map-ui.md) · [정산 최신 검증](../../../content-design/../work-history/2026-10-26-handling-traffic-receipt.md).

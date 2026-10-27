@@ -28,4 +28,4 @@
 
 ## 다음 작업과 재현
 
-다음 개발은 [P8 체크리스트](../prototype-development-checklist.md#p8-승객-만족도보너스-및-승하차-다양화-2026-10-23-기획-미구현)를 따른다. 현재 게임은 `builds/EungyeTaxi/EungyeTaxi.exe`를 실행하면 **기존** 보너스 규칙으로 동작한다. 새 기획은 [11](../design-history/content-design/11-passenger-request-effects-history.md#2026-10-23-이전-정책-기록--만족도와-보너스-개편)과 [14](../content-design/14-passenger-stop-variety.md)에서 읽는다.
+다음 개발은 [P8 체크리스트](../prototype-development-checklist.md#p8-승객-만족도보너스-및-승하차-다양화-2026-10-23-기획-미구현)를 따른다. 현재 게임은 `builds/EungyeTaxi/EungyeTaxi.exe`를 실행하면 **기존** 보너스 규칙으로 동작한다. 새 기획은 [11](../design-history/content-design/11-passenger-request-effects-history.md#2026-10-23-이전-정책-기록--만족도와-보너스-개편)과 [14](../design-history/content-design/2026-10-27-before-planning-only/14-passenger-stop-variety.md)에서 읽는다.

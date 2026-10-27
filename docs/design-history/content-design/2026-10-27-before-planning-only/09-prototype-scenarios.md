@@ -2,7 +2,7 @@
 
 은계 일반 영업의 승하차와 자연스러운 상황 관찰을 연결한다. PS01~09는 콘텐츠 후보이며 하루에 전부 체험할 의무 운송 목록이 아니다. 상황 미체험·합법적 우회로 승차·하차·운임 지급을 막지 않는다.
 
-현재 일반 영업 정책: PS08 `출구 앞 대기열 · 운전 계획` 팝업과 선택 절차는 일반 영업에서 제외한다. 출구가 화면에서 명확하지 않아 판단이 어려운 피드백에 따른다. 자동 노출·시간 정지·선택 요구를 하지 않는다. 일반 도로 정체·기본 법규 관찰·PS09 보행 조건은 유지한다. 구형 저장에서 열려 있던 PS08 팝업은 다시 열지 않으며, 이미 선택했던 우회 경로는 진행 호환을 위해 보존한다. PS08의 이전 선택 사양은 [변경 이력](../design-history/content-design/2026-10-27-before-refresh/09-prototype-scenarios.md)에 분리한다.
+현재 일반 영업 정책: PS08 `출구 앞 대기열 · 운전 계획` 팝업과 선택 절차는 일반 영업에서 제외한다. 출구가 화면에서 명확하지 않아 판단이 어려운 피드백에 따른다. 자동 노출·시간 정지·선택 요구를 하지 않는다. 일반 도로 정체·기본 법규 관찰·PS09 보행 조건은 유지한다. 구형 저장에서 열려 있던 PS08 팝업은 다시 열지 않으며, 이미 선택했던 우회 경로는 진행 호환을 위해 보존한다. PS08의 이전 선택 사양은 [변경 이력](../../../content-design/../design-history/content-design/2026-10-27-before-refresh/09-prototype-scenarios.md)에 분리한다.
 
 ## 콘텐츠와 공통 조건
 
@@ -29,7 +29,7 @@
 | PS08 대체 경로 | 혼잡 연결 하나를 제외해 실제 목적지까지 재탐색 | 우회 경로도 강제 경유점 없음 |
 | 상황 관찰 | 연속 위치·진행 방향·신호·교통 조건 | 텔레포트는 통과로 인정하지 않음 |
 
-현재 `PrototypeScenario.Build`는 입력 지도에서 조건에 맞는 코스·연결을 다시 선택한다. S01~S12 별칭은 문서용이며 영구ID가 아니다. 구 지도 좌표·차로 번호·거리·SHA256 표는 [이력](../design-history/content-design/09-prototype-scenarios-history.md)에 보존한다. 현재 지점은 정식 지도와 `MapStop`을 확인하고 재생성 때 경로 검사를 수행한다. `eungye-map.json`의 Stop A~H와 통합 지도 지점을 혼동하지 않는다. 좌표는 실제 시설명이나 정차 허가를 보증하지 않는다.
+현재 `PrototypeScenario.Build`는 입력 지도에서 조건에 맞는 코스·연결을 다시 선택한다. S01~S12 별칭은 문서용이며 영구ID가 아니다. 구 지도 좌표·차로 번호·거리·SHA256 표는 [이력](../../../content-design/../design-history/content-design/09-prototype-scenarios-history.md)에 보존한다. 현재 지점은 정식 지도와 `MapStop`을 확인하고 재생성 때 경로 검사를 수행한다. `eungye-map.json`의 Stop A~H와 통합 지도 지점을 혼동하지 않는다. 좌표는 실제 시설명이나 정차 허가를 보증하지 않는다.
 
 ## 상황별 판단과 피드백
 
@@ -84,7 +84,7 @@
 | 수동·캠페인 남음 | PS08 대기/우회·PS09 보행, 시야·조작·오감점,20분/3일 운송량·만족도·운임·생활/청결 비용 비교 |
 | 신규 필수 구현 여부 | 기존9코스·17요청과 P11 무작위/다중 등장은 구현. PS08 영업 팝업 제외, 시간대/유형별 추가 대사는 미구현 |
 
-실행 결과는 [최신 이력](../work-history/LATEST.md)과 [체크리스트](../prototype-development-checklist.md)에 종류별로 기록한다. [변경 전 원문](../design-history/content-design/09-prototype-scenarios-history.md)의 개발 순서는 현재 미구현 목록이 아니다.
+실행 결과는 [최신 이력](../../../content-design/../work-history/LATEST.md)과 [체크리스트](../../../content-design/../prototype-development-checklist.md)에 종류별로 기록한다. [변경 전 원문](../../../content-design/../design-history/content-design/09-prototype-scenarios-history.md)의 개발 순서는 현재 미구현 목록이 아니다.
 
 ## 법규 자료와 확인 한계
 
@@ -100,4 +100,4 @@
 
 따라서 이번 작업은 현행 법령 전수 감수 완료가 아니다. 새 판정 추가 전 해당 시행일·조문·예외와 [기존 법규 근거](02-driving-evaluation.md)를 다시 대조한다. 시선처럼 관찰할 수 없는 사실, 현장 규제 미확인 구간, 선택 메뉴 응답만으로 자동 위반을 추가하지 않는다.
 
-관련: [승객·요청](04-passengers-and-reservations.md) · [운전 상황·P4](01-driving-situations.md) · [현재 은계 7구역](../eungye-in-service-law-zones.md) · [프로토 범위](../prototype-scope.md).
+관련: [승객·요청](04-passengers-and-reservations.md) · [운전 상황·P4](01-driving-situations.md) · [현재 은계 7구역](../../../content-design/../eungye-in-service-law-zones.md) · [프로토 범위](../../../content-design/../prototype-scope.md).

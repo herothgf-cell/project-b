@@ -9,7 +9,7 @@ F8 및 정산 화면에서 법규/승객 결과를 별도 탭으로 조회한다
 
 **남은 확인:** 실제 사용자가 기록을 이해하고 다음 운전에 반영하는지, 창 전환과 반복 복습의 사용성은 수동 확인 대상이다. 영상 리플레이는 구현하지 않았다.
 
-근거: [통합 검증](../prototype-completion-validation.md) · [개발 체크리스트](../prototype-development-checklist.md). 아래 상세 표는 목표 설계를 포함하므로 표의 ‘포함’만으로 검증 완료를 뜻하지 않는다.
+근거: [통합 검증](../../../content-design/../prototype-completion-validation.md) · [개발 체크리스트](../../../content-design/../prototype-development-checklist.md). 아래 상세 표는 목표 설계를 포함하므로 표의 ‘포함’만으로 검증 완료를 뜻하지 않는다.
 
 ## 프로토 포함·제외
 
@@ -128,4 +128,4 @@ F8 및 정산 화면에서 법규/승객 결과를 별도 탭으로 조회한다
 운전 점수 사건은 현재 캠페인 ID의 별도 저널에 변경 시 저장해 재실행에도 유지한다. 운행 진행 저장은 중단 운송·요청·차량 상태·시간·장부를 복원하고, 정산 체크포인트와 법규 즉시 저널을 구분한다. 새 캠페인에서는 새 ID와 빈 기록을 저장하며 이전 캠페인의 저널을 읽지 않는다. 창 제목은 ‘택시 시뮬레이터’로 바꾸지만 기존 저장 위치를 유지해 종전 저장을 이어 읽는다. 별도 연습과 자동 검사는 실제 사용자의 점수 저널에 쓰지 않는다.
 
 
-[변경 이력](../design-history/content-design/03-history-and-mastery-history.md) · [진행 저장 검증](../work-history/2026-10-23-passenger-care-connectivity.md).
+[변경 이력](../../../content-design/../design-history/content-design/03-history-and-mastery-history.md) · [진행 저장 검증](../../../content-design/../work-history/2026-10-23-passenger-care-connectivity.md).

@@ -1,6 +1,6 @@
 # 콘텐츠·시스템 구성과 데이터 흐름
 
-현재 기준: 2026-10-27. 게임은 Unity의 은계 실행 프로젝트와 공유 지도 패키지를 중심으로 구성된다. 이 문서는 **어느 콘텐츠가 어떤 데이터를 읽고 누구에게 결과를 전달하는지** 설명한다. 변경/검증 히스토리는 [기획 이력](../design-history/content-design/2026-10-27-design-decisions.md)과 [작업 이력](../work-history/LATEST.md)에 둔다.
+현재 기준: 2026-10-27. 게임은 Unity의 은계 실행 프로젝트와 공유 지도 패키지를 중심으로 구성된다. 이 문서는 **어느 콘텐츠가 어떤 데이터를 읽고 누구에게 결과를 전달하는지** 설명한다. 변경/검증 히스토리는 [기획 이력](../../../content-design/../design-history/content-design/2026-10-27-design-decisions.md)과 [작업 이력](../../../content-design/../work-history/LATEST.md)에 둔다.
 
 ## 1. 플레이 루프와 시스템 연결
 
@@ -42,19 +42,19 @@
 
 | 계층/기능 | 핵심 코드 | 소유하는 책임 | 연결 경계 |
 |---|---|---|---|
-| 실행 조립 | [DriveSession](../../unity/EungyeTaxi/Assets/Scripts/DriveSession.cs) | 준비·공통 세션·모달/조작 상태 | 개별 운임/법규 산식을 UI에서 복제하지 않음 |
-| 월드/지도 | [ProjectMapPackage](../../unity/EungyeTaxi/Assets/Scripts/ProjectMapPackage.cs), [WorldBuilder](../../unity/EungyeTaxi/Assets/Scripts/WorldBuilder.cs) | 정식 문서·형상·게임 데이터 구성 | 지도 리비전·원본/게임 보정 구분 |
-| 방향 경로 | [HdRoadGraph](../../unity/EungyeTaxi/Assets/Scripts/HdRoadGraph.cs), [RoadNavigation](../../unity/EungyeTaxi/Assets/Scripts/RoadNavigation.cs), [ServiceDepartureNavigation](../../unity/EungyeTaxi/Assets/Scripts/ServiceDepartureNavigation.cs) | 통행 연결·회전·차로변경·시설 출구 안내 | 직선 최단거리보다 실제 방향/제한 우선 |
-| 차량/교통 | [TaxiController](../../unity/EungyeTaxi/Assets/Scripts/TaxiController.cs), [TrafficSystem](../../unity/EungyeTaxi/Assets/Scripts/TrafficSystem.cs) | 플레이어 물리·신호/NPC 경로·양보 | H는 조향 보조, 가감속·정지 판단은 사용자 |
-| 표지/보행 | [RoadMapFacilities](../../unity/EungyeTaxi/Assets/Scripts/RoadMapFacilities.cs), [AmbientPedestrianSystem](../../unity/EungyeTaxi/Assets/Scripts/AmbientPedestrianSystem.cs) | 저작 시설 표시·신호 부착·행인 상태 | 시설 표시와 적용 법규/행인 생성은 별개 |
-| 승객/운송 | [PassengerJobs](../../unity/EungyeTaxi/Assets/Scripts/PassengerJobs.cs), [FareTrip](../../unity/EungyeTaxi/Assets/Scripts/FareTrip.cs), [PassengerStopCatalog](../../unity/EungyeTaxi/Assets/Scripts/PassengerStopCatalog.cs) | 후보·수락/승하차·목표·기한·도착 잠금 | 동일 운송 ID·정산1회 |
-| 요청 | [PassengerRequestUI](../../unity/EungyeTaxi/Assets/Scripts/PassengerRequestUI.cs), [PassengerRequestSchedule](../../unity/EungyeTaxi/Assets/Scripts/PassengerRequestSchedule.cs), [PassengerRequestObservation](../../unity/EungyeTaxi/Assets/Scripts/PassengerRequestObservation.cs) | 배정·안전 제시·응답·개별 관찰/합산 | 미발생/보류0·상충 방지·경로 요청 보호 |
-| 점수/운임 | [DrivingLaw](../../unity/EungyeTaxi/Assets/Scripts/DrivingLaw.cs), [DrivingManners](../../unity/EungyeTaxi/Assets/Scripts/DrivingManners.cs), [PassengerRequest / PassengerReward](../../unity/EungyeTaxi/Assets/Scripts/PassengerRequest.cs) | 법규 점수·M·S/보정 약정·최종 지급 | 세 점수를 혼합하지 않고 승차/하차 스냅샷 유지 |
-| 수요/공차 | [PassengerDemandPolicy](../../unity/EungyeTaxi/Assets/Scripts/PassengerDemandPolicy.cs), [OperationMetrics](../../unity/EungyeTaxi/Assets/Scripts/OperationMetrics.cs) | 상대 가중·거리/시간 관찰 | 기록이 시계·연료·거래를 다시 만들지 않음 |
-| 공간 점유 | [StopOccupancySystem](../../unity/EungyeTaxi/Assets/Scripts/StopOccupancySystem.cs), [StopOccupancyPolicy](../../unity/EungyeTaxi/Assets/Scripts/StopOccupancyPolicy.cs) | 생성/해소·점유 상태·기한 보호 | 검증 대안 없으면 대기만, 같은 사건 재보정 방지 |
-| 생활 상태 | [DriverCondition / Drowsiness](../../unity/EungyeTaxi/Assets/Scripts/DriverCondition.cs), [VehicleCare](../../unity/EungyeTaxi/Assets/Scripts/VehicleCare.cs) | 포만감·피로/노출·청결·취객 상태 | 서비스·수면·활성 경과 종류 구분 |
-| 경제/캠페인 | [EconomyLedger](../../unity/EungyeTaxi/Assets/Scripts/EconomyLedger.cs), [CampaignAccount](../../unity/EungyeTaxi/Assets/Scripts/CampaignAccount.cs), [BusinessProgress](../../unity/EungyeTaxi/Assets/Scripts/BusinessProgress.cs) | 영업 상태·비용/미납·이월·저장 연결 | 비용/정산/날짜 이월1회, 손상 저장 보존 |
-| 시설/UI | [ServiceStops](../../unity/EungyeTaxi/Assets/Scripts/ServiceStops.cs), [FullMapOverlay](../../unity/EungyeTaxi/Assets/Scripts/FullMapOverlay.cs), [DrowsinessHUD](../../unity/EungyeTaxi/Assets/Scripts/DrowsinessHUD.cs) | 시설별 메뉴·지도·졸음 표시 | 표시가 실제 거래·운송 상태를 우회하지 않음 |
+| 실행 조립 | [DriveSession](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/DriveSession.cs) | 준비·공통 세션·모달/조작 상태 | 개별 운임/법규 산식을 UI에서 복제하지 않음 |
+| 월드/지도 | [ProjectMapPackage](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/ProjectMapPackage.cs), [WorldBuilder](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/WorldBuilder.cs) | 정식 문서·형상·게임 데이터 구성 | 지도 리비전·원본/게임 보정 구분 |
+| 방향 경로 | [HdRoadGraph](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/HdRoadGraph.cs), [RoadNavigation](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/RoadNavigation.cs), [ServiceDepartureNavigation](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/ServiceDepartureNavigation.cs) | 통행 연결·회전·차로변경·시설 출구 안내 | 직선 최단거리보다 실제 방향/제한 우선 |
+| 차량/교통 | [TaxiController](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/TaxiController.cs), [TrafficSystem](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/TrafficSystem.cs) | 플레이어 물리·신호/NPC 경로·양보 | H는 조향 보조, 가감속·정지 판단은 사용자 |
+| 표지/보행 | [RoadMapFacilities](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/RoadMapFacilities.cs), [AmbientPedestrianSystem](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/AmbientPedestrianSystem.cs) | 저작 시설 표시·신호 부착·행인 상태 | 시설 표시와 적용 법규/행인 생성은 별개 |
+| 승객/운송 | [PassengerJobs](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/PassengerJobs.cs), [FareTrip](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/FareTrip.cs), [PassengerStopCatalog](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/PassengerStopCatalog.cs) | 후보·수락/승하차·목표·기한·도착 잠금 | 동일 운송 ID·정산1회 |
+| 요청 | [PassengerRequestUI](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/PassengerRequestUI.cs), [PassengerRequestSchedule](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/PassengerRequestSchedule.cs), [PassengerRequestObservation](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/PassengerRequestObservation.cs) | 배정·안전 제시·응답·개별 관찰/합산 | 미발생/보류0·상충 방지·경로 요청 보호 |
+| 점수/운임 | [DrivingLaw](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/DrivingLaw.cs), [DrivingManners](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/DrivingManners.cs), [PassengerRequest / PassengerReward](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/PassengerRequest.cs) | 법규 점수·M·S/보정 약정·최종 지급 | 세 점수를 혼합하지 않고 승차/하차 스냅샷 유지 |
+| 수요/공차 | [PassengerDemandPolicy](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/PassengerDemandPolicy.cs), [OperationMetrics](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/OperationMetrics.cs) | 상대 가중·거리/시간 관찰 | 기록이 시계·연료·거래를 다시 만들지 않음 |
+| 공간 점유 | [StopOccupancySystem](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/StopOccupancySystem.cs), [StopOccupancyPolicy](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/StopOccupancyPolicy.cs) | 생성/해소·점유 상태·기한 보호 | 검증 대안 없으면 대기만, 같은 사건 재보정 방지 |
+| 생활 상태 | [DriverCondition / Drowsiness](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/DriverCondition.cs), [VehicleCare](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/VehicleCare.cs) | 포만감·피로/노출·청결·취객 상태 | 서비스·수면·활성 경과 종류 구분 |
+| 경제/캠페인 | [EconomyLedger](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/EconomyLedger.cs), [CampaignAccount](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/CampaignAccount.cs), [BusinessProgress](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/BusinessProgress.cs) | 영업 상태·비용/미납·이월·저장 연결 | 비용/정산/날짜 이월1회, 손상 저장 보존 |
+| 시설/UI | [ServiceStops](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/ServiceStops.cs), [FullMapOverlay](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/FullMapOverlay.cs), [DrowsinessHUD](../../../content-design/../../unity/EungyeTaxi/Assets/Scripts/DrowsinessHUD.cs) | 시설별 메뉴·지도·졸음 표시 | 표시가 실제 거래·운송 상태를 우회하지 않음 |
 
 ## 4. 상태와 데이터 생명주기
 

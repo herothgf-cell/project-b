@@ -4,14 +4,14 @@
 
 | 진입·자료 | 현재 기능 | 제한·확인 |
 |---|---|---|
-| Unity `Taxi → 프로젝트 지도 3D 편집` | 차로/출구/차로변경·노면·표지·차량/보행 신호, 건물/부지 생성·삭제, 검사·정식 저장·빌드 통합 | [Unity 사용법](../unity-map-editor-guide.md). 실제 Unity GUI 수동 사용성은 별도 검증 |
-| 실행파일 Esc 편집 | 도로명/지도 클릭→진입 방향→차로 번호→방향 버튼, 지도 클릭 배치·출구 연결, 기본 신호 시간표·저장하고 시험·고급 전환 | [게임 내 사용법](../road-map-editor-guide.md) |
+| Unity `Taxi → 프로젝트 지도 3D 편집` | 차로/출구/차로변경·노면·표지·차량/보행 신호, 건물/부지 생성·삭제, 검사·정식 저장·빌드 통합 | [Unity 사용법](../content-design/../unity-map-editor-guide.md). 실제 Unity GUI 수동 사용성은 별도 검증 |
+| 실행파일 Esc 편집 | 도로명/지도 클릭→진입 방향→차로 번호→방향 버튼, 지도 클릭 배치·출구 연결, 기본 신호 시간표·저장하고 시험·고급 전환 | [게임 내 사용법](../content-design/../road-map-editor-guide.md) |
 | 형상·서비스 | 건물·노면·보도·주차장·식당/휴식·물/일반 부지, 정차점·접근 차로 편집 | 형상을 옮긴다고 주행 그래프를 자동 재설계하지 않음 |
 | Unity 조작 | Scene 클릭·W/E/R·꼭짓점, 공통 WorldBuilder 형상/재질·게임 카메라 미리보기, 희소Undo/초안·128m 영향 구역 갱신 | 별도 미리보기 씬으로 기존 사용자 씬 보호. 차량/승객 시뮬레이션은 시험 실행에서 확인 |
 | 정식 지도 | Git 추적 `config/maps/project/eungye.project.json`, BuildHybrid 포함·다른PC pull 후 재현 | 개인 수정본/초안과 정식 배포 구분 |
 | 신호·표지 | 보호 접근별 분리 단계 가져오기, 보수적 축 기반 상충 검사, 지원하는 표지 규칙 적용 | 실제 현장 신호 주기·모든 표지 규칙을 검증했다는 뜻이 아님 |
 
-아래 표는 편집 기능이 지켜야 하는 설계·검사 조건이다. 모든 상세 조건의 수동 검증 완료를 뜻하지 않는다. [통합 구현·검증](../work-history/2026-10-23-unity-full-map-editor.md) · [변경 이력](../design-history/content-design/12-road-map-editor-history.md) · [지도 정비](../map-polish-plan.md).
+아래 표는 편집 기능이 지켜야 하는 설계·검사 조건이다. 모든 상세 조건의 수동 검증 완료를 뜻하지 않는다. [통합 구현·검증](../content-design/../work-history/2026-10-23-unity-full-map-editor.md) · [변경 이력](../content-design/../design-history/content-design/12-road-map-editor-history.md) · [지도 정비](../content-design/../map-polish-plan.md).
 
 ## 1. 사용 흐름과 화면
 

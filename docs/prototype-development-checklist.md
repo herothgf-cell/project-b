@@ -21,7 +21,7 @@
 
 2026-10-27: P11~P13 기술 통합·저장·실제 지도 화면과 연속 물리 하루의 운송/시설/마감 검사를 통과했다. 사람의 조작감·빈도·경제 체감 체크는 별도로 유지한다. [최종 안정화 기록](work-history/2026-10-27-proto-stabilization.md).
 
-기준: [04 요청 배정](content-design/04-passengers-and-reservations.md#요청-배정과-등장-시점--변경-기획-미구현), [11 요청별 콘텐츠](content-design/11-passenger-request-effects.md). 구현과 자동 검사 범위는 아래 표시하며 수동 체감은 별도로 남긴다.
+기준: [04 요청 배정](content-design/02-passengers-and-fares.md), [11 요청별 콘텐츠](content-design/02-passengers-and-fares.md). 구현과 자동 검사 범위는 아래 표시하며 수동 체감은 별도로 남긴다.
 
 - [x] P11-01 후보 ID 기반 요청 수·종류·순서·시점 추첨, 첫 운송/특정 정차점 고정 제거. 0/1/2건·같은 후보 재수락/저장 복원·신규 후보 변주 검사.
 - [x] P11-02 승차 또는 운행 중 안전 정차에서만 새 요청 제시. 신호 대기 허용 조건·주행 재개 입력 보류·상황 화면 중첩 방지·짧은 운송 미발생 중립 검사.
@@ -31,7 +31,7 @@
 
 ## P12·P13 선택된 후속 확장
 
-순서와 상세 기준: [17 확장 기획](content-design/17-proto-operation-expansion.md). 기존 Proto 마감과 이번 확장 마감을 분리한다. P12와 P13 대기 경로를 구현했다. 대체 이동은 안전 후보 쌍 확보 전까지 제공하지 않는다. 수동 플레이 검증은 별도다.
+순서와 상세 기준: [17 확장 기획](content-design/03-life-and-economy.md). 기존 Proto 마감과 이번 확장 마감을 분리한다. P12와 P13 대기 경로를 구현했다. 대체 이동은 안전 후보 쌍 확보 전까지 제공하지 않는다. 수동 플레이 검증은 별도다.
 
 - [x] P12-01 후보 지역 태그·중립 기본값·영업 단계별 수요 가중·안전/접근 조건 우선·후보 부족 처리.
 - [x] P12-02 상대 수요와 호출 픽업/탑승 거리·시간·예상 운임 비교. 수입 보장/할증 없음.
@@ -45,7 +45,7 @@
 
 ## P9 취객·청결·세차
 
-기준: [15 취객](content-design/15-drunk-passengers-and-cleanliness.md).
+기준: [15 취객](content-design/03-life-and-economy.md).
 
 - [x] P9-01 청결0~100·새 캠페인100·활성120초당-1·일반 하차-2·구토 하차min(C,10), 운송ID 중복 방지·소수초 나머지/날짜/저장 이월.
 - [x] P9-02 연료 우측 청결 게이지·30미만 세차 필요 경고.
@@ -59,7 +59,7 @@
 
 ## P8 만족도·운임·승하차
 
-기준: [04 운임 계산](content-design/04-passengers-and-reservations.md#운임과-보너스-계산), [14 정차 후보](content-design/14-passenger-stop-variety.md).
+기준: [04 운임 계산](content-design/02-passengers-and-fares.md), [14 정차 후보](content-design/02-passengers-and-fares.md).
 
 - [x] P8-01 후보별 부호 있는 시작 차이 D와 청결 가산, 요구치 미만/동일/초과 시작 및 저장 고정.
 - [x] P8-02 주행·실제 요청 이행·안전 조기 도착·안심 회복의 만족도 반영, 정당한 보류 중립.
@@ -95,7 +95,7 @@
 
 | 분류 | 항목 |
 |---|---|
-| 승인 구현 | [일반 보행자16](content-design/16-ambient-pedestrians-proposal.md)의4후보 최대12명 중 안전6슬롯. [필수 검사·한계](work-history/2026-10-26-ambient-pedestrians.md) |
+| 승인 구현 | [일반 보행자16](content-design/01-driving-and-traffic.md)의4후보 최대12명 중 안전6슬롯. [필수 검사·한계](work-history/2026-10-26-ambient-pedestrians.md) |
 | 선택적 후속 | 추가 수요 밸런싱·후보 유형별 대사, 추가 법규 후보와 현장 규제. 핵심 Proto의 새 필수 완료 기준으로 자동 추가하지 않음 |
 | Proto 제외 | 보험·세금·예약/단골·신규 사고/수리/보험 청구·실제 음악·반환 퀘스트·영상 리플레이·전역 군중·아트 전면 개편 |
 | 별도 환경 검사 | 다른 물리PC·실물 패드. 현재 콘텐츠 미구현 개수로 계산하지 않음 |

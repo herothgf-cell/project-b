@@ -52,7 +52,7 @@
 
 ## 2026-10-26 Proto 후속 확장 기획
 
-[문서 변경·검증·미구현 범위](2026-10-26-proto-expansion-plan.md). 사용자 선택 순서 **P11 요청 다양화 → P12 지역별 수요·공차 수익성 → P13 승하차 공간 점유**를 [기획17](../content-design/17-proto-operation-expansion.md)에 정리했다. 모두 남은 신규 개발이며 수치/세부 정책은 검토안이다. 마인드맵은 수정하지 않았고17의 마지막 절에 가지별 추가/수정안을 보관한다.
+[문서 변경·검증·미구현 범위](2026-10-26-proto-expansion-plan.md). 사용자 선택 순서 **P11 요청 다양화 → P12 지역별 수요·공차 수익성 → P13 승하차 공간 점유**를 [기획17](../design-history/content-design/2026-10-27-before-planning-only/17-proto-operation-expansion.md)에 정리했다. 모두 남은 신규 개발이며 수치/세부 정책은 검토안이다. 마인드맵은 수정하지 않았고17의 마지막 절에 가지별 추가/수정안을 보관한다.
 
 현재는 플레이 가능한 Proto 기반이며 개발 완료가 아니다. 기존 P11·저장 교체 경고 해소·수동20분/3일 검증과 P12/P13 확장 마감을 구분한다. 다음은 세부 기획 검토 후 P11, 안정성 문제는 우선 진단. 문서만 변경: 기본 은계 배포52108d0/지도/입력ZIP 유지, 필수 입력은 직전 Strict0·선택2개 부재 결과를 인계한다(이번 문서 작업에서 재검사하지 않음).
 
@@ -85,7 +85,7 @@ care 모델13,301·구형 JSON10·실제 첫 시작8·승객/운임207·별도 �
 
 ## 2026-10-26 정산 간소화·조향·차량 분산 통합
 
-[구현·필수 검사·재현](2026-10-26-handling-traffic-receipt.md). 정산창3줄/순증감 보너스, 수동 소폭 조향 자동 감속 수정, 일반 차량48대/28구역 분산과 저장 위치 겹침 방지를 반영했다. main72e2d4e의 피로·초과 영업·운전 점수 기능을 보존했다. 추가 유턴3접근은 개인 M형 안내 지도에만 표시했으며 게임 지도는 유지했다. [보행자4거점 최대12명 안](../content-design/16-ambient-pedestrians-proposal.md)은 사용자 승인 대기·미구현이다.
+[구현·필수 검사·재현](2026-10-26-handling-traffic-receipt.md). 정산창3줄/순증감 보너스, 수동 소폭 조향 자동 감속 수정, 일반 차량48대/28구역 분산과 저장 위치 겹침 방지를 반영했다. main72e2d4e의 피로·초과 영업·운전 점수 기능을 보존했다. 추가 유턴3접근은 개인 M형 안내 지도에만 표시했으며 게임 지도는 유지했다. [보행자4거점 최대12명 안](../design-history/content-design/2026-10-27-before-planning-only/16-ambient-pedestrians-proposal.md)은 사용자 승인 대기·미구현이다.
 
 기본 은계 `builds/EungyeTaxi/EungyeTaxi.exe`, BuildHybrid 종료0. 변경부 조향6조건·교통 배치/복원/20초 이동·정산1920화면 확인 통과. 전체 모델/캠페인 반복은 사용자 요청으로 생략했다. 배포130파일/105,569,899바이트 SHA256 검증0. 지도 contentHash c14a2a4b277e040dce001f2df7f89cc0404555a10b85ef931f2b9de14b6b05dc, 필수 입력/ZIP 유지·선택 가져오기2개 부재·Strict 오류0. 다음은 보행자 승인, 수동 주행/장시간 밀도 체감이다.
 
@@ -145,7 +145,7 @@ care 모델13,301·구형 JSON10·실제 첫 시작8·승객/운임207·별도 �
 
 ## 2026-10-23 취객·차량 청결도·주유소 세차 프로토 기획
 
-[작업 기록](2026-10-23-drunk-passenger-cleanliness-plan.md) · [상세 기획15](../content-design/15-drunk-passengers-and-cleanliness.md) · [P9 체크리스트](../prototype-development-checklist.md#p9-취객-운송차량-청결도세차-프로토-추가-미구현). 취객 구토/기상 지연, 첫 유효 도착 시각과 하차 대기 분리, 청결도에 따른 승차 거부·시작 만족도 가산, 기존 주유소 F7 세차·실내 청소, 연료 우측 HUD를 **프로토 범위에 추가했다. 전부 문서 기획이며 미구현**이다. 다음은 P9 상태·회계·HUD·운송 분기 구현 및 위치 제어/자동 물리/수동 하루 검증. 기본 은계 빌드·정식 지도·필수 입력3개·ZIP·manifest는 변경/재검증하지 않았다. 다른 미커밋 변경은 보존.
+[작업 기록](2026-10-23-drunk-passenger-cleanliness-plan.md) · [상세 기획15](../design-history/content-design/2026-10-27-before-planning-only/15-drunk-passengers-and-cleanliness.md) · [P9 체크리스트](../prototype-development-checklist.md#p9-취객-운송차량-청결도세차-프로토-추가-미구현). 취객 구토/기상 지연, 첫 유효 도착 시각과 하차 대기 분리, 청결도에 따른 승차 거부·시작 만족도 가산, 기존 주유소 F7 세차·실내 청소, 연료 우측 HUD를 **프로토 범위에 추가했다. 전부 문서 기획이며 미구현**이다. 다음은 P9 상태·회계·HUD·운송 분기 구현 및 위치 제어/자동 물리/수동 하루 검증. 기본 은계 빌드·정식 지도·필수 입력3개·ZIP·manifest는 변경/재검증하지 않았다. 다른 미커밋 변경은 보존.
 
 ## 2026-10-23 Unity 3D 프로젝트 지도 편집
 
@@ -268,7 +268,7 @@ care 모델13,301·구형 JSON10·실제 첫 시작8·승객/운임207·별도 �
 
 ## 2026-10-22 승객 요청별 효과 기획
 
-[작업 기록](2026-10-22-passenger-request-effects-plan.md) · [17종 효과표](../content-design/11-passenger-request-effects.md) · [P5-04 체크리스트](../prototype-development-checklist.md). ETA 문의의 세 도착 예상 답변, DR01 멀미 요청의 급가감속 매너 감점 강화, DR/CH/EV의 하차 만족도 증감과 조건부 소액 감사 보너스를 기획했다. **최신 사용자 결정: 보너스는 최종 만족도가 승객 요구 점수를 초과한 비율에 따라 지급하며 범주별 상한은 유지한다.** 문서 작업이며 신규 효과는 미구현이다. 기본 운임과 법규 기록은 분리하고 보너스는 하차 때만 1회 계산한다. 다음 개발은 P5-04로 분리하고 기존 P7-06 수동 하루 검증과 혼동하지 않는다. 기본 은계 BuildHybrid·필수 로컬 지도 입력 상태는 이 문서 작업에서 변경하거나 재검증하지 않았다.
+[작업 기록](2026-10-22-passenger-request-effects-plan.md) · [17종 효과표](../design-history/content-design/2026-10-27-before-planning-only/11-passenger-request-effects.md) · [P5-04 체크리스트](../prototype-development-checklist.md). ETA 문의의 세 도착 예상 답변, DR01 멀미 요청의 급가감속 매너 감점 강화, DR/CH/EV의 하차 만족도 증감과 조건부 소액 감사 보너스를 기획했다. **최신 사용자 결정: 보너스는 최종 만족도가 승객 요구 점수를 초과한 비율에 따라 지급하며 범주별 상한은 유지한다.** 문서 작업이며 신규 효과는 미구현이다. 기본 운임과 법규 기록은 분리하고 보너스는 하차 때만 1회 계산한다. 다음 개발은 P5-04로 분리하고 기존 P7-06 수동 하루 검증과 혼동하지 않는다. 기본 은계 BuildHybrid·필수 로컬 지도 입력 상태는 이 문서 작업에서 변경하거나 재검증하지 않았다.
 
 ## 2026-10-22 호출 접근·동부 휴식 주차구역
 
@@ -298,7 +298,7 @@ care 모델13,301·구형 JSON10·실제 첫 시작8·승객/운임207·별도 �
 [검증·인계](2026-10-21-pickup-sidewalk-right-turn.md). PS01~09 상황 미체험 승차/하차 허용, 승객12곳 보도 배치, +10% 반복 주유, 시나리오 주변126개 도로 폭·828개 차로 노면 정비. 동일 우회전 경로의 이동 앞차를 교차 차량으로 오인하던 대기를 수정했다. 기본 BuildHybrid/은계이며 실제 현장 규제 확정이 아니다. 별도 하루20분·컨디션 기획 변경은 보존하고 구현 완료로 표시하지 않는다.
 ## 최신 기획 인계: 하루20분·운전자
 
-[이번 기획 기록](2026-10-21-one-day-driver-design.md) · [운전자 별도 기획](../content-design/10-driver-condition.md) · [캠페인](../content-design/07-campaign.md) · [P7 체크리스트](../prototype-development-checklist.md#하루20분과-운전자-전환-p7).
+[이번 기획 기록](2026-10-21-one-day-driver-design.md) · [운전자 별도 기획](../design-history/content-design/2026-10-27-before-planning-only/10-driver-condition.md) · [캠페인](../design-history/content-design/2026-10-27-before-planning-only/07-campaign.md) · [P7 체크리스트](../prototype-development-checklist.md#하루20분과-운전자-전환-p7).
 
 사용자 합의: 하루20분·하루 순수익 비교, 배고픔/피로는 식사·휴식과 영업 가능 시간에 영향. 새 P7-01~06은 모두 미구현이다. 이번 작업은 문서만 수정했으며 기존3일×12분·3만원 캠페인 구현/검증 기록과 아래 빌드 인계를 보존한다. 다음 개발은 P7 시간 규칙 → 운전자/거점 → 결과/저장 → 승객 배치·수동 밸런스다. 기본 은계 실행·지도 입력은 변경하지 않았고 로컬 입력 해시는 이번 문서 작업에서 재검증하지 않았다.
 
@@ -320,7 +320,7 @@ care 모델13,301·구형 JSON10·실제 첫 시작8·승객/운임207·별도 �
 1. [전체지도 확대·48대 교통·잔여 범위](2026-10-21-map-zoom-and-traffic.md), [직접 플레이 안내](../prototype-playtest-guide.md)
 2. [승객 코스·요청·운행 피드백 구현/검증](2026-10-21-passenger-scenarios-and-feedback.md)
 3. [도로·주유 시설·운송 마감](2026-10-21-road-facilities-and-operation.md)
-4. [개발 체크리스트](../prototype-development-checklist.md), [범위](../prototype-scope.md), [9코스 기획](../content-design/09-prototype-scenarios.md)
+4. [개발 체크리스트](../prototype-development-checklist.md), [범위](../prototype-scope.md), [9코스 기획](../design-history/content-design/2026-10-27-before-planning-only/09-prototype-scenarios.md)
 5. [실행 안내](../../distribution/README.md), [PC 이동](README.md), [지도 전달](map-transfer-guide.md)
 
 ## 현재 구현과 빌드

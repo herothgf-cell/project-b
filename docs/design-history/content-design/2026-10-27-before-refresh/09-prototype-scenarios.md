@@ -8,14 +8,14 @@
 
 | 항목 | 규칙 | 연결 |
 |---|---|---|
-| 실행·캠페인 | 기본 은계에서3일×예정20분, 초과 영업·생활 거점에서 종료 | [캠페인](../../../content-design/07-campaign.md) |
+| 실행·캠페인 | 기본 은계에서3일×예정20분, 초과 영업·생활 거점에서 종료 | [캠페인](../2026-10-27-before-planning-only/07-campaign.md) |
 | 시작 경로 | 수동 주행·목적지 없음. 호출 수락/탑승/사용자 생활 거점 안내 선택 때 경로 생성 | 목적지 없는 H 차로 유지는 내비 경로로 표시하지 않음 |
-| 승하차 | 호출 선택/명시 수락, 길가F 승차, 목적지 방향·안전 정차 | [승객04](../../../content-design/04-passengers-and-reservations.md), [지점14](../../../content-design/14-passenger-stop-variety.md) |
+| 승하차 | 호출 선택/명시 수락, 길가F 승차, 목적지 방향·안전 정차 | [승객04](../2026-10-27-before-planning-only/04-passengers-and-reservations.md), [지점14](../2026-10-27-before-planning-only/14-passenger-stop-variety.md) |
 | 상황 | 일반 방향 경로에서 관찰. 내비 필수 경유지로 설정하지 않음 | 미체험은 평가 기회 없음·점수 보상 없음 |
-| 요청 | 현재17종·현행 배정 사용. 승객의 명시 요청을 수락한 중간 정차는 상황과 별개 | [요청11](../../../content-design/11-passenger-request-effects.md) |
-| 요청 배정 | 무작위0~2개·안전 정차 응답·다중 시점 구현, 실제 빈도 체감은 별도 확인 | [배정·등장 시점](../../../content-design/04-passengers-and-reservations.md#요청-배정과-등장-시점--변경-기획-미구현) |
-| 운임 | 빈차 픽업 거리를 운임에 합산하지 않음. 선택 버튼 자체의 보너스 없음 | [운임과 보너스 계산](../../../content-design/04-passengers-and-reservations.md#운임과-보너스-계산) |
-| 취객·청결 | 기존 운송의 별도 특성. 첫 도착 판정/기상 대기/세차 연결 | [15](../../../content-design/15-drunk-passengers-and-cleanliness.md) |
+| 요청 | 현재17종·현행 배정 사용. 승객의 명시 요청을 수락한 중간 정차는 상황과 별개 | [요청11](../2026-10-27-before-planning-only/11-passenger-request-effects.md) |
+| 요청 배정 | 무작위0~2개·안전 정차 응답·다중 시점 구현, 실제 빈도 체감은 별도 확인 | [배정·등장 시점](../2026-10-27-before-planning-only/04-passengers-and-reservations.md#요청-배정과-등장-시점--변경-기획-미구현) |
+| 운임 | 빈차 픽업 거리를 운임에 합산하지 않음. 선택 버튼 자체의 보너스 없음 | [운임과 보너스 계산](../2026-10-27-before-planning-only/04-passengers-and-reservations.md#운임과-보너스-계산) |
+| 취객·청결 | 기존 운송의 별도 특성. 첫 도착 판정/기상 대기/세차 연결 | [15](../2026-10-27-before-planning-only/15-drunk-passengers-and-cleanliness.md) |
 | 범위 제외 | 단골·예약·보험·세금·사고·수리 | 각 문서의 후속 기획 유지 |
 
 ## 코스 생성과 위치 기준
@@ -55,7 +55,7 @@
 | PS09 우회전 | 신호·보행자를 확인한 뒤 판단 / 직접 운전 | 자동 정지·정답 퀴즈가 아님. 전용 신호/보행자 변형은 조건별 비교 |
 | 최초 유효 접근 | 사전 안내 후 패널, 운송당1회·하루 최대2회 | 늦은 접근·회전 중에는 강제 팝업 생략 |
 | 패널 표시 | 물리·신호·AI·영업/운송 시간·연료 정지, 같은 상태로 재개 | M/Esc/정산/연습/거점 메뉴 중첩 금지·선택 입력 유출 방지 |
-| 재방문 | 짧은 안내, 노출 기록 저장 | [선택 이벤트](../../../content-design/01-driving-situations.md#은계-지도-연동--상황-판단-선택-이벤트) 기준 |
+| 재방문 | 짧은 안내, 노출 기록 저장 | [선택 이벤트](../2026-10-27-before-planning-only/01-driving-situations.md#은계-지도-연동--상황-판단-선택-이벤트) 기준 |
 
 상황을 지나가지 않았으면 평가 기회 없음으로 남기며 정상 목적지 하차를 허용한다. 실제 관찰한 위반은 우회·복귀로 삭제하지 않는다. PS01/02도 승차 전 필수 통과 조건이 없다. 승객이 수락받은 EV02 중간 정차는 별도 운송 요청이다.
 
@@ -98,6 +98,6 @@
 | [정책브리핑 꼬리물기·끼어들기 안내](https://www.korea.kr/news/policyNewsView.do?newsId=148954527) | 교차로 공간·통행 방해 및 정체 대기열 상황 선정 참고 |
 | [도로교통법 제25조](https://www.law.go.kr/법령/도로교통법/제25조), [현행 시행규칙](https://www.law.go.kr/법령/도로교통법시행규칙) | 현행 재확인 경로. 이번 웹 도구에서는 동적 조문 본문을 읽지 못함 |
 
-따라서 이번 작업은 현행 법령 전수 감수 완료가 아니다. 새 판정 추가 전 해당 시행일·조문·예외와 [기존 법규 근거](../../../content-design/02-driving-evaluation.md)를 다시 대조한다. 시선처럼 관찰할 수 없는 사실, 현장 규제 미확인 구간, 선택 메뉴 응답만으로 자동 위반을 추가하지 않는다.
+따라서 이번 작업은 현행 법령 전수 감수 완료가 아니다. 새 판정 추가 전 해당 시행일·조문·예외와 [기존 법규 근거](../2026-10-27-before-planning-only/02-driving-evaluation.md)를 다시 대조한다. 시선처럼 관찰할 수 없는 사실, 현장 규제 미확인 구간, 선택 메뉴 응답만으로 자동 위반을 추가하지 않는다.
 
-관련: [승객·요청](../../../content-design/04-passengers-and-reservations.md) · [운전 상황·P4](../../../content-design/01-driving-situations.md) · [현재 은계 7구역](../../../content-design/../eungye-in-service-law-zones.md) · [프로토 범위](../../../content-design/../prototype-scope.md).
+관련: [승객·요청](../2026-10-27-before-planning-only/04-passengers-and-reservations.md) · [운전 상황·P4](../2026-10-27-before-planning-only/01-driving-situations.md) · [현재 은계 7구역](../../../content-design/../eungye-in-service-law-zones.md) · [프로토 범위](../../../content-design/../prototype-scope.md).

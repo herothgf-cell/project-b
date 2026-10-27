@@ -1,6 +1,6 @@
 # 3일 영업 캠페인과 결과 비교
 
-기준일: 2026-10-27. **3일·하루 예정 20분·초과 영업·거점 휴식 후 마감**이 현재 구현이다. 이전 독립 하루/12분/자동 마감 정책은 [변경 이력](../design-history/content-design/07-campaign-history.md)에 보존한다. [경제05](05-daily-operation.md), [운전자10](10-driver-condition.md)이 비용·상태의 기준이다.
+기준일: 2026-10-27. **3일·하루 예정 20분·초과 영업·거점 휴식 후 마감**이 현재 구현이다. 이전 독립 하루/12분/자동 마감 정책은 [변경 이력](../../../content-design/../design-history/content-design/07-campaign-history.md)에 보존한다. [경제05](05-daily-operation.md), [운전자10](10-driver-condition.md)이 비용·상태의 기준이다.
 
 ## 진행과 조건
 
@@ -69,10 +69,10 @@
 
 | 구분 | 증거·남은 항목 |
 |---|---|
-| 3일 상태·이월 | [3일 캠페인 기록](../work-history/2026-10-22-three-day-hud.md)의 모델·별도 프로세스 검사 |
-| 중단 상태·청결·회계 | [취객·저장 통합](../work-history/2026-10-23-passenger-care-connectivity.md)의 위치 제어/저장 검사 |
-| 피로·초과 영업·마감 | [구현·자동 검사](../work-history/2026-10-26-fatigue-score-overtime.md). 현재 코드 `EconomyLedger`·`BusinessProgress`와 대조 |
+| 3일 상태·이월 | [3일 캠페인 기록](../../../content-design/../work-history/2026-10-22-three-day-hud.md)의 모델·별도 프로세스 검사 |
+| 중단 상태·청결·회계 | [취객·저장 통합](../../../content-design/../work-history/2026-10-23-passenger-care-connectivity.md)의 위치 제어/저장 검사 |
+| 피로·초과 영업·마감 | [구현·자동 검사](../../../content-design/../work-history/2026-10-26-fatigue-score-overtime.md). 현재 코드 `EconomyLedger`·`BusinessProgress`와 대조 |
 | 남은 체험 | 일반 차량 포함 사람이 수동으로 20분·초과 영업·3일 진행, 다건 수익·휴식·졸음·야간 회복 체감 |
 | 검증 구분 | 위치 제어·모델 검사를 자동 물리 주행/수동 플레이/전체 캠페인 완료로 바꾸어 적지 않음 |
 
-관련: [체크리스트](../prototype-development-checklist.md) · [최신 인계](../work-history/LATEST.md).
+관련: [체크리스트](../../../content-design/../prototype-development-checklist.md) · [최신 인계](../../../content-design/../work-history/LATEST.md).

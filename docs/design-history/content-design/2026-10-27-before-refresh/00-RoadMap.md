@@ -17,19 +17,19 @@
 
 | 주제 | 규칙을 정의하는 문서 | 연결되는 내용 |
 |---|---|---|
-| 도로 판단 장면 | [01 운전 상황](../../../content-design/01-driving-situations.md) | PS08/09 계획 선택, 출구A/B/C·우회전R1~R5 |
-| 법규와 점수 | [02 평가](../../../content-design/02-driving-evaluation.md), [03 기록](../../../content-design/03-history-and-mastery.md) | 사건 단위 준수·위반·보류, 운송 점수와 누적 점수 구분 |
-| 승객 | [04 운송](../../../content-design/04-passengers-and-reservations.md) | 시작/최종 만족도, 운임·보너스, 요청 배정·시점·복수 발생 |
-| 요청별 대사·효과 | [11 요청 목록](../../../content-design/11-passenger-request-effects.md) | 17종 선택·관찰·예외. 공통 배정/정산 산식은04 참조 |
-| 생활·캠페인 | [05 경제](../../../content-design/05-daily-operation.md), [07 캠페인](../../../content-design/07-campaign.md), [10 운전자](../../../content-design/10-driver-condition.md) | 현금/미납·서비스, 날짜 진행, 피로/포만감·졸음 |
-| 맵·영업 동선 | [06 월드](../../../content-design/06-world-map-and-driving.md), [09 코스](../../../content-design/09-prototype-scenarios.md), [14 정차 후보](../../../content-design/14-passenger-stop-variety.md) | 경로·차량·상황 연결·대기 승객 |
-| 편집·표시 | [12 지도 편집](../../../content-design/12-road-map-editor.md), [13 HUD/지도](../../../content-design/13-driving-map-ui.md) | 공유 지도 문서·편집·저장, 운전/응대/결과 UI |
-| 취객·청결 | [15 취객](../../../content-design/15-drunk-passengers-and-cleanliness.md) | 대사·구토 예고·기상·호출 잠금·길가 거부·세차 |
-| 후속 제안 | [08 사고](../../../content-design/08-accidents-and-repairs.md), [16 일반 보행자](../../../content-design/16-ambient-pedestrians-proposal.md) | 사고는 Proto 제외, 일반 보행자는 승인된 안전6슬롯 구현 |
+| 도로 판단 장면 | [01 운전 상황](../2026-10-27-before-planning-only/01-driving-situations.md) | PS08/09 계획 선택, 출구A/B/C·우회전R1~R5 |
+| 법규와 점수 | [02 평가](../2026-10-27-before-planning-only/02-driving-evaluation.md), [03 기록](../2026-10-27-before-planning-only/03-history-and-mastery.md) | 사건 단위 준수·위반·보류, 운송 점수와 누적 점수 구분 |
+| 승객 | [04 운송](../2026-10-27-before-planning-only/04-passengers-and-reservations.md) | 시작/최종 만족도, 운임·보너스, 요청 배정·시점·복수 발생 |
+| 요청별 대사·효과 | [11 요청 목록](../2026-10-27-before-planning-only/11-passenger-request-effects.md) | 17종 선택·관찰·예외. 공통 배정/정산 산식은04 참조 |
+| 생활·캠페인 | [05 경제](../2026-10-27-before-planning-only/05-daily-operation.md), [07 캠페인](../2026-10-27-before-planning-only/07-campaign.md), [10 운전자](../2026-10-27-before-planning-only/10-driver-condition.md) | 현금/미납·서비스, 날짜 진행, 피로/포만감·졸음 |
+| 맵·영업 동선 | [06 월드](../2026-10-27-before-planning-only/06-world-map-and-driving.md), [09 코스](../2026-10-27-before-planning-only/09-prototype-scenarios.md), [14 정차 후보](../2026-10-27-before-planning-only/14-passenger-stop-variety.md) | 경로·차량·상황 연결·대기 승객 |
+| 편집·표시 | [12 지도 편집](../2026-10-27-before-planning-only/12-road-map-editor.md), [13 HUD/지도](../2026-10-27-before-planning-only/13-driving-map-ui.md) | 공유 지도 문서·편집·저장, 운전/응대/결과 UI |
+| 취객·청결 | [15 취객](../2026-10-27-before-planning-only/15-drunk-passengers-and-cleanliness.md) | 대사·구토 예고·기상·호출 잠금·길가 거부·세차 |
+| 후속 제안 | [08 사고](../2026-10-27-before-planning-only/08-accidents-and-repairs.md), [16 일반 보행자](../2026-10-27-before-planning-only/16-ambient-pedestrians-proposal.md) | 사고는 Proto 제외, 일반 보행자는 승인된 안전6슬롯 구현 |
 
 ## 남은 Proto 구현과 검증
 
-사용자가 선택한 후속 순서는 **P11 승객 요청 다양화 → P12 지역별 수요·공차 수익성 → P13 승하차 공간 점유**다. [17 확장 기획](../../../content-design/17-proto-operation-expansion.md)에 범위·검토할 수치·마인드맵 변경안을 정리했다. 모두 신규 개발 잔여이며, 이번 문서 반영으로 구현 완료가 되지 않는다. 핵심 플레이 기반은 있으나 P11/저장 안정성/수동 캠페인 검증이 남아 **Proto 개발 완료 또는 다듬기만 남은 상태는 아니다.** P12/P13 확장 마감과 기존 Proto 마감은 구분한다.
+사용자가 선택한 후속 순서는 **P11 승객 요청 다양화 → P12 지역별 수요·공차 수익성 → P13 승하차 공간 점유**다. [17 확장 기획](../2026-10-27-before-planning-only/17-proto-operation-expansion.md)에 범위·검토할 수치·마인드맵 변경안을 정리했다. 모두 신규 개발 잔여이며, 이번 문서 반영으로 구현 완료가 되지 않는다. 핵심 플레이 기반은 있으나 P11/저장 안정성/수동 캠페인 검증이 남아 **Proto 개발 완료 또는 다듬기만 남은 상태는 아니다.** P12/P13 확장 마감과 기존 Proto 마감은 구분한다.
 
 | 구분 | 남은 내용 | 진행 조건·완료 기준 |
 |---|---|---|
