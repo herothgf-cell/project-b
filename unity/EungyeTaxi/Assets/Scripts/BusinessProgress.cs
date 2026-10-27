@@ -137,7 +137,6 @@ public class BusinessProgress : MonoBehaviour {
  void Update(){if(enabledCampaign&&!preparing&&!session.paused&&ledger.Operating&&(ledger.Driver==null||DrowsinessRunning)){realSeconds+=Time.unscaledDeltaTime;mixedFollowing|=session.traffic.mitOptions.Enabled!=initialFollowing;}if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil){notice="";noticeUntil=0;}}
  void LateUpdate(){
   if(!restoring&&!testMode&&enabledCampaign&&session.law&&session.requests&&(Time.unscaledTime>=nextSave||session.law.ledger.Count!=lastLawCount)){nextSave=Time.unscaledTime+5;lastLawCount=session.law.ledger.Count;SaveCheckpoint();}
-  if(enabledCampaign&&ledger.OneDay&&ledger.Operating&&ledger.Driver.fatigue>=100){notice=ledger.Driver.drowsiness.Blackout?"시야 상실 · 정차 후 귀가 휴식 버튼을 누르세요":ledger.Driver.drowsiness.PassengerMustLeave?"졸음 위험 · 운송 취소 / 신규 승차 불가 · 거점 수면 필요":"피로100 · 졸음 누적 / 시야 축소 위험 · F7 거점 수면 권장";noticeUntil=Time.unscaledTime+2;}
   if(session.FullMapOpen||!enabledCampaign||ledger.State!=BusinessState.Closing)return;
   if(session.jobs.trip.State==TripState.OnTrip){notice="영업 종료 대기 · 현재 승객 운송 후 정산합니다";return;}
   session.jobs.RecordExpiredTrip();
@@ -147,7 +146,7 @@ public class BusinessProgress : MonoBehaviour {
  public bool RequestEmergencyHome(){
   if(!DrowsinessRunning||!ledger.Driver.drowsiness.Blackout||session.taxi.body.velocity.magnitude>=.56f)return false;
   session.jobs.CancelForFatigue();if(session.jobs.Active||!ledger.UseEmergencySleep(session.law.ids.Next("emergency-home")))return false;
-  session.jobs.ClearForDay();session.assisted.SetActive(false);var stop=session.services.ParkingStop;session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();session.law.ResetObservation();var district=session.traffic.GetComponent<DistrictTraffic>();if(district)district.ClearPlayerOverlap();notice="귀가 휴식(임시 주차 거점) · 100초 경과 / 피로 −20 (정상 수면 −40) · 같은 날 영업 계속";noticeUntil=Time.unscaledTime+10;SaveCheckpoint();return true;
+  session.jobs.ClearForDay();session.assisted.SetActive(false);var stop=session.services.ParkingStop;session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();session.law.ResetObservation();var district=session.traffic.GetComponent<DistrictTraffic>();if(district)district.ClearPlayerOverlap();notice="졸음 운전으로 위험합니다. 오늘 영업을 종료합니다. · 피로 −20";noticeUntil=Time.unscaledTime+10;SaveCheckpoint();return true;
  }
  public bool RequestEndDay(){
   if(session.FullMapOpen||!enabledCampaign||ledger.State!=BusinessState.Open||session.paused||Time.timeScale==0)return false;

@@ -11,7 +11,8 @@ using System;
   if(double.IsNaN(seconds)||double.IsInfinity(seconds)||seconds<0)return;
   // Integrate exactly across the hunger threshold, independent of frame size.
   double normal=Math.Min(seconds,Math.Max(0,(satiety-25)*12));
-  if(!sleeping)fatigue=Math.Min(100,fatigue+normal/15+(seconds-normal)/10);
+  double hungry=Math.Min(seconds-normal,Math.Max(0,(Math.Min(satiety,25)-10)*12));
+  if(!sleeping)fatigue=Math.Min(100,fatigue+normal/15+hungry/10+(seconds-normal-hungry)*2/15);
   satiety=Math.Max(0,satiety-seconds/12);
  }
  public void Meal(){Advance(50);satiety=Math.Min(100,satiety+70);meals++;mealSeconds+=50;}

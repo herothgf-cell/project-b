@@ -112,7 +112,7 @@ public partial class FullMapOverlay : MonoBehaviour {
   GUI.EndGroup();
   float x=viewport.xMax+16,w=Screen.width-x-20;DrawSidebar(x,w,viewport);
   GUI.Label(new Rect(24,Screen.height-23,Screen.width-48,22),"승하차 화살표 = 차량 정차 방향 · © OpenStreetMap contributors / ODbL · NGII 기반 게임 지도",new GUIStyle(text){fontSize=11});
-  if(!string.IsNullOrEmpty(GUI.tooltip)&&!locationOpen){Fill(new Rect(32,144,180,28),new Color(.04f,.1f,.14f,1));GUI.Label(new Rect(40,145,170,26),GUI.tooltip,text);}
+  if(!string.IsNullOrEmpty(GUI.tooltip)&&!locationOpen){float tw=Mathf.Min(330,viewport.width-24),th=text.CalcHeight(new GUIContent(GUI.tooltip),tw-16)+16;var tip=new Rect(viewport.x+12,viewport.y+64,tw,th);Fill(tip,new Color(.04f,.1f,.14f,1));GUI.Label(new Rect(tip.x+8,tip.y+8,tw-16,th-16),GUI.tooltip,text);}
   if(locationOpen){Fill(new Rect(0,0,Screen.width,Screen.height),new Color(0,0,0,.7f));var r=new Rect(Screen.width/2-240,Screen.height/2-150,480,300);Fill(r,new Color(.04f,.08f,.12f));GUI.BeginGroup(r);LocationPopup(94722);GUI.EndGroup();}
  }
  public void ShowLocation(){locationOpen=true;locationCopied=false;}

@@ -10,7 +10,9 @@ public static class PlaytestNavigationAudit {
  static float Cost(HdRoadGraph graph,HdRoadGraph.RoutePath route){float result=route.path.length;for(int k=1;k<route.edges.Count;k++)if(graph.edges[route.edges[k]].change!=0)result+=12;return result;}
  static void Describe(HdRoadGraph graph,string name,HdRoadGraph.RoutePath route){Check(route!=null,name+" is reachable");Debug.Log("PLAYTEST_NAV_ROUTE "+name+" distance="+route.path.length.ToString("F2")+" cost="+Cost(graph,route).ToString("F2")+" edges="+string.Join(" | ",route.edges.Select(i=>graph.edges[i].id)));}
  public static void Run(){
-  var package=ProjectMapStore.Load(ProjectMapBuild.Root);var map=RoadMapComposer.Compose(package.baseline,package.document);var graph=new HdRoadGraph(map);
+  // Historical reproduction belongs to the unchanged imported baseline. The
+  // current authored southbound corridor is covered by LatestFeedbackTests.SouthRoute.
+  var package=ProjectMapStore.Load(ProjectMapBuild.Root);var map=package.baseline;var graph=new HdRoadGraph(map);
   int west=Edge(graph,"local:2103:5502:4463:8575"),blue=Edge(graph,"local:4711:8643:7608:9494"),northGoal=Edge(graph,"local:8265:6305:9056:10851");
   var first=graph.Route(west,0,northGoal,434.46582f);var blueFirst=graph.Via(west,0,blue,northGoal,434.46582f);
   Describe(graph,"image1 northbound S04",first);Describe(graph,"image1 through blue road",blueFirst);

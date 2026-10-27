@@ -28,7 +28,7 @@ public static class PlaytestLaneChangeRepair {
  static void RequireEvidence(RoadMapEvidence evidence){if(evidence==null||!evidence.appearanceConfirmed||string.IsNullOrWhiteSpace(evidence.url)||string.IsNullOrWhiteSpace(evidence.checkedAt))throw new ArgumentException("Observed dashed-separator evidence is required");}
  static Window Plan(RoadMapLane from,RoadMapLane to,float start,int side,float endMargin,RoadMapEvidence evidence,float distance=32){
   var a=Path(from);var b=Path(to);float error,targetStart=b.Project(a.Position(start),out error),end=targetStart+distance;
-  if(from.disabled||to.disabled||from.change!=0||to.change!=0||from.turn!=0||to.turn!=0||to.number-from.number!=side||start+distance>a.length-endMargin||end>b.length-endMargin||error<2||error>7||Vector3.Dot(a.Tangent(start),b.Tangent(targetStart))<.98f||Vector3.Dot(b.Position(targetStart)-a.Position(start),TrafficSystem.Right(a.Tangent(start)))*side<2)throw new InvalidOperationException("Lane-change geometry is not an adjacent forward window");
+  if(from.disabled||to.disabled||from.change!=0||to.change!=0||from.turn!=0||to.turn!=0||to.number-from.number!=side||start+distance>a.length-endMargin||end>b.length-endMargin||error<2||error>7||Vector3.Dot(a.Tangent(start),b.Tangent(targetStart))<.98f||Vector3.Dot(b.Position(targetStart)-a.Position(start),TrafficSystem.Right(a.Tangent(start)))*side<2)throw new InvalidOperationException("Lane-change geometry is not an adjacent forward window: "+from.id+" -> "+to.id+" start="+start+" lengths="+a.length+","+b.length+" targetEnd="+end+" gap="+error+" numbers="+from.number+","+to.number);
   var points=new MapPoint[49];for(int k=0;k<points.Length;k++){float t=k/(float)(points.Length-1),blend=t*t*t*(t*(t*6-15)+10);points[k]=P(Vector3.Lerp(a.Position(start+distance*t),b.Position(targetStart+distance*t),blend));}
   // Imported HD capture slices already carry a nonzero sourceOffset. The
   // editor lineage API takes global source distance, while Path takes local.
@@ -50,18 +50,32 @@ public static class PlaytestLaneChangeRepair {
   // line is over 120m farther along the authored pocket continuation.
   var outer=doc.lanes.Single(l=>l.id=="A2218G611417:3");var middle=doc.lanes.Single(l=>l.id=="A2218G611415:3");var inner=doc.lanes.Single(l=>l.id=="A2218G611416:2");
   windows.Add(Plan(outer,middle,12,-1,8,westEvidence,24));windows.Add(Plan(middle,inner,48,-1,8,westEvidence,24));
+  return Materialize(package,doc,windows,Prefix);
+ }
+ public static RoadMapDocument ApplySouthbound(ProjectMapPackage package){
+  const string prefix="reviewed:latest:south-change:";var doc=package.document.Copy();int existing=doc.lanes.Count(l=>l.id.StartsWith(prefix));if(existing==14)return doc;if(existing>0)throw new InvalidOperationException("Incomplete southbound repair");
+  var windows=new List<Window>();
+  var evidence=new RoadMapEvidence{state="provisional",checkedAt="2026-10-27",appearanceConfirmed=false,note="Extend existing authored same-direction dashed lane-change semantics on this corridor. No new turn permission or real-world survey claim."};
+  foreach(var family in new[]{new[]{"local:7847:9404:8047:6565:part:2","local:7792:9389:7990:6566:part:3","local:7737:9374:7933:6566:part:2"},new[]{"local:8032:6164:7960:3988:part:2","local:7975:6165:7904:3992:part:3","local:7918:6167:7847:3996:part:2"}}){
+   var lanes=family.Select(id=>doc.lanes.Single(l=>l.id==id)).ToArray();
+   foreach(float start in new[]{20f,70f,120f})for(int i=0;i<2;i++)windows.Add(Plan(lanes[i],lanes[i+1],start,1,20,evidence));
+   if(family[0].Contains("7847")){windows.Add(Plan(lanes[0],lanes[1],164,1,20,evidence,24));windows.Add(Plan(lanes[1],lanes[2],194,1,20,evidence,24));}
+  }
+  return Materialize(package,doc,windows,prefix);
+ }
+ static RoadMapDocument Materialize(ProjectMapPackage package,RoadMapDocument doc,List<Window> windows,string prefix){
   // Split all endpoints before wiring changes. Existing turns/signals/service
   // distances are remapped by the same authoring operations as the map editor.
   foreach(var window in windows){Split(doc,window.from,window.start,true);Split(doc,window.to,window.end,false);}
   foreach(var window in windows){
    var from=Split(doc,window.from,window.start,true);var to=Split(doc,window.to,window.end,false);
    string id=RoadMapAuthoringOperations.Connect(doc,from.id,to.id,0,window.side);var change=doc.lanes.Single(l=>l.id==id);
-   string stable=Prefix+window.from+":"+window.to+":"+Number(window.start);
+   string stable=prefix+window.from+":"+window.to+":"+Number(window.start);
    from.next=from.next.Select(n=>n==id?stable:n).ToArray();change.id=stable;change.points=window.points;change.heights=new float[window.points.Length];change.evidence=JsonUtility.FromJson<RoadMapEvidence>(JsonUtility.ToJson(window.evidence));change.status="provisional";
   }
   var errors=RoadMapValidator.Validate(package.baseline,doc).Where(e=>e.error).ToArray();if(errors.Length>0)throw new InvalidOperationException("Lane-change document rejected: "+string.Join(" / ",errors.Take(5).Select(e=>e.ToString())));
   var map=RoadMapComposer.Compose(package.baseline,doc);
-  foreach(var edge in map.hdEdges.Where(e=>e.id.StartsWith(Prefix)))if(!EungyeConnectivityRepair.FootprintClear(map,edge))throw new InvalidOperationException("Lane-change footprint outside road or inside sidewalk/building: "+edge.id);
+  foreach(var edge in map.hdEdges.Where(e=>e.id.StartsWith(prefix)))if(!EungyeConnectivityRepair.FootprintClear(map,edge))throw new InvalidOperationException("Lane-change footprint outside road or inside sidewalk/building: "+edge.id);
   Debug.Log("PLAYTEST_LANE_CHANGE_PREVIEW changes="+windows.Count+" / authoring only; source file has not been saved");return doc;
  }
 }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoadNavigation : MonoBehaviour {
+public partial class RoadNavigation : MonoBehaviour {
  public bool HasDestination {get{return active&&!freeGuidance;}}
  public HdRoadGraph hd;MapData editorMap;
  public HdRoadGraph.RoutePath hdRoute;
@@ -137,7 +137,7 @@ public class RoadNavigation : MonoBehaviour {
  public List<Vector3> Find(MapStop a,MapStop b){if(hd!=null&&a.graphStop&&b.graphStop){var r=hd.Route(a.laneEdge,a.laneAt,b.laneEdge,b.laneAt);return r==null?new List<Vector3>():new List<Vector3>(r.path.points);}var route=Route(a.Kerb-a.Direction*3,a.Direction,b.V(),b.Direction,true,false,false);var result=route==null?new List<Vector3>():route.points;if(result.Count>0)FinishApproach(result,b);return result;}
  public List<Vector3> PreviewPoint(Vector3 point){if(hd!=null){float at;int start=hd.Nearest(vehicle.position,vehicle.forward,out at);var candidates=new List<Vector3>();for(int i=0;i<hd.paths.Length;i++){float error;float to=hd.paths[i].Project(point,out error);if(error<35)candidates.Add(new Vector3(i,to,error));}candidates.Sort((a,b)=>a.z.CompareTo(b.z));for(int k=0;k<Mathf.Min(24,candidates.Count);k++){var c=candidates[k];var r=hd.Route(start,at,(int)c.x,c.y);if(r!=null&&r.path.points.Length>1)return new List<Vector3>(r.path.points);}return new List<Vector3>();}var route=Route(vehicle.position,vehicle.forward,point,Vector3.zero,false,false,false);return route==null?new List<Vector3>():route.points;}
 
- public List<Vector3> PreviewTo(MapStop stop){if(hd!=null&&stop.graphStop){float at;int start=hd.Nearest(vehicle.position,vehicle.forward,out at);var route=hd.Route(start,at,stop.laneEdge,stop.laneAt);return route==null?new List<Vector3>():new List<Vector3>(route.path.points);}var r=Route(vehicle.position,vehicle.forward,stop.V(),stop.Direction,true,false,false);return r==null?new List<Vector3>():r.points;}
+ public List<Vector3> PreviewTo(MapStop stop){if(hd!=null&&stop.graphStop){float at;int start=hd.Nearest(vehicle.position,vehicle.forward,out at);if(start<0){List<Vector3> departure;if(ServiceDeparture(stop.laneEdge,stop.laneAt,out departure))return departure;}var route=hd.Route(start,at,stop.laneEdge,stop.laneAt);return route==null?new List<Vector3>():new List<Vector3>(route.path.points);}var r=Route(vehicle.position,vehicle.forward,stop.V(),stop.Direction,true,false,false);return r==null?new List<Vector3>():r.points;}
  static void FinishApproach(List<Vector3> route,MapStop stop){if(route.Count>1)route.RemoveAt(route.Count-1);route.Add(stop.Kerb-stop.Direction*3);route.Add(stop.Kerb);}
  public float Distance(Vector3 a,Vector3 b){return Length(Find(a,b));}
  public float Distance(MapStop a,MapStop b){return Length(Find(a,b));}
@@ -214,6 +214,8 @@ public class RoadNavigation : MonoBehaviour {
   return lane>=0&&hd.edges[lane].fromNode==change.fromNode;
  }
  void RefreshHd(){
+  float roadAt;List<Vector3> departure;
+  if(!freeGuidance&&hd.Nearest(vehicle.position,vehicle.forward,out roadAt)<0&&ServiceDeparture(hdGoal,hdGoalAt,out departure)){hdRoute=null;path.Clear();path.AddRange(departure);alternativePath.Clear();remaining=Length(path);estimatedSeconds=remaining/5;alternativeDistance=alternativeSeconds=0;instruction="시설 출구까지 수동 이동 · 도로 합류 후 안내 계속";line.positionCount=path.Count;for(int i=0;i<path.Count;i++)line.SetPosition(i,path[i]+Vector3.up*.19f);return;}
   bool observe=Time.time>=nextHdCosts||hdRoute==null;
   if(observe){nextHdCosts=Time.time+6;for(int i=0;i<hd.paths.Length;i++){var p=hd.paths[i];float delay=0;if(conditions!=null)for(int k=1;k<p.points.Length;k++)delay+=conditions.ExtraSeconds(p.points[k-1],p.points[k],(p.points[k]-p.points[k-1]).normalized,3.2f);hdSeconds[i]=RoadMapRules.TravelSeconds(editorMap,hd.edges[i].id,p.length,8)+delay;}}
   float progress=0,error=float.MaxValue;
