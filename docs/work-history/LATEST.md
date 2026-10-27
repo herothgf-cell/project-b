@@ -1,5 +1,11 @@
 # 최신 작업 인계
 
+## 최신 저장소 정리: 2026-10-27
+
+[브랜치 삭제·보존 근거](2026-10-27-branch-cleanup.md). main 포함 확인 후 로컬8개·원격5개 삭제. 원격은 main만 남았고, 로컬은 main과 codex/satisfaction-fare-recovery만 남았다. 후자는 고유3커밋의 초기 회복/운임 구현·옛 빌드/이력이라 사용자 내용 검토 후 삭제 여부 결정 대기다. StableDriveRecovery.cs가 main에 없지만 회복 기능은 StableDrivingProgress라는 별도 구현으로 존재한다. 별도 worktree는 같은817c5dc detached로 보존했다.
+
+기존 미푸시 제안서 커밋·사용자 .mmst 변경·untracked를 보존했으며 main 푸시는 하지 않았다. 빌드/지도/필수 입력/manifest와 게임 검증 상태는 아래 기존 배포 인계 그대로다.
+
 ## 최신 문서 작업: 2026-10-27 회사 개발 착수 제안서 1차
 
 [제작·검증 기록](2026-10-27-game-proposal.md) · [제안 자료](../proposals/README.md) · [24장 PPTX](../proposals/project-b-game-proposal-v1.pptx) · [별도 조작 매뉴얼](../proposals/project-b-prototype-manual-v1.md).
