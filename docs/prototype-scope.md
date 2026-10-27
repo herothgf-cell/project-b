@@ -4,11 +4,7 @@
 
 ## 경험 목표
 
-추가 피드백: 졸음 상실 후 긴급 휴식은 당일 영업 종료로 변경하고,포만감10미만 피로2배를 적용한다. 지도 호출 행은 예상 운임 중심으로 간소화하며 시설 내부는 지정 출구 수동 안내 뒤 차로 내비를 이어간다. [구현·제한·검증](work-history/2026-10-27-drowsy-map-handling.md).
-
-2026-10-27 플레이 피드백: PS08 계획 팝업/선택은 일반 영업에서 제외하고 일반 교통과 법규 관찰은 보존한다. 신규 승객 시간 난도·역주행/정지선 점수·시설별 F7·TIP와 지도 방향 표시를 보완한다. [변경/검증 기록](work-history/2026-10-27-playtest-feedback.md), [내비 차로변경 한계](work-history/2026-10-27-navigation-playtest-diagnosis.md)를 이전 자동 검증 범위와 구분한다.
-
-P11·P12·P13 대기 경로와 저장 안정화를 구현하고, 자동 모델·저장/3일 회계·실제 지도 화면·연속 물리 운송/시설/마감 검사를 통과했다. [최종 안정화 기록](work-history/2026-10-27-proto-stabilization.md)의 범위가 기준이다. 사람의 조작감·20분/3일 경제 체감과 안전 후보가 없는 대체 이동은 별도다. 기능 확장 범위는 [17 기획](content-design/17-proto-operation-expansion.md)을 따른다.
+현재 구현은 P11 요청 다양화·P12 수요/공차·P13 점유 대기와 후속 운전/시설/피로 수정까지 포함한다. 안전 대체 이동은 미구현이며 사람의 조작감·경제 체감은 별도다. [행동 결과표](content-design/18-simulation-action-results.md), [시스템 구조](content-design/19-content-system-structure.md), [변경 이력](design-history/content-design/2026-10-27-design-decisions.md)을 구분해 읽는다.
 
 | 질문 | 확인할 경험 |
 |---|---|
@@ -26,8 +22,8 @@ P11·P12·P13 대기 경로와 저장 안정화를 구현하고, 자동 모델·
 | 상황·법규 | 출구A/B/C·우회전R1~R5·9코스, 관찰 가능한 준수/위반/보류와 점수 | 후보62개 일괄 자동 판정·실제 벌금/면허처분 | [01](content-design/01-driving-situations.md),[02](content-design/02-driving-evaluation.md),[09](content-design/09-prototype-scenarios.md) |
 | 기록 | 사건 카드·일일/누적 결과·동일 조건 연습 | 영상 리플레이·장기 숙련 레벨 | [03](content-design/03-history-and-mastery.md) |
 | 승객 | 호출·길가 승객·24정차 후보·17종 요청·만족도·보너스 | 복잡한 대화·실제 음악·음성 연기·분실물 반환 퀘스트 | [04](content-design/04-passengers-and-reservations.md),[11](content-design/11-passenger-request-effects.md),[14](content-design/14-passenger-stop-variety.md) |
-| 요청 변경 목표 | 무작위0~2건·승차 또는 운행 중 안전 정차 발생·개별 평가/저장 | P11 구현·자동 검사 완료, 수동 빈도/답변 여유 별도 | [04 요청 배정](content-design/04-passengers-and-reservations.md#요청-배정과-등장-시점--변경-기획-미구현) |
-| 선택된 후속 확장 | 지역/영업 단계별 수요·공차 성과 비교 → 일반 승하차 공간 일시 점유/안전 대안 | P12/P13 대기 경로 구현. 안전 대체 쌍 없음으로 대체 이동 제외; 수요 할증·전역 도로 공사 제외 | [17 확장](content-design/17-proto-operation-expansion.md) |
+| 요청 배정 | 무작위0~2건·승차 또는 운행 중 안전 정차 발생·개별 평가/저장 | P11 구현·자동 검사 완료, 수동 빈도/답변 여유 별도 | [04 요청 배정](content-design/04-passengers-and-reservations.md#요청-배정과-등장-시점--변경-기획-미구현) |
+| 영업 전략·제한 구현 | 지역/영업 단계별 수요·공차 성과 비교 → 일반 승하차 공간 일시 점유/안전 대안 | P12/P13 대기 경로 구현. 안전 대체 쌍 없음으로 대체 이동 제외; 수요 할증·전역 도로 공사 제외 | [17 확장](content-design/17-proto-operation-expansion.md) |
 | 취객·청결 | 취객 특성·평소 대사·구토 예고/발생·기상 지연·청결·세차 전 호출 잠금·길가 거부 | 의학적 대응·강제 하차·사고/수리 콘텐츠 | [15](content-design/15-drunk-passengers-and-cleanliness.md) |
 | 생활 거점·경제 | 주유소3곳·식당·주차/휴식·세차, 개인택시 현금/미납/비용 | 실내 보행·시설 미니게임·보험·세금·법인 운영·차량매매 | [05](content-design/05-daily-operation.md) |
 | 운전자 | 포만감·피로·식사/수면·피로100 졸음과 예정20분 이후 초과 영업 | 질병·스트레스·강제 충돌 | [10](content-design/10-driver-condition.md) |
@@ -59,7 +55,7 @@ P11·P12·P13 대기 경로와 저장 안정화를 구현하고, 자동 모델·
 | 수동20분·3일 | 운송·식사·휴식·주유·세차 비용과 시간·순수익·가독성 | 현장 전체 도로 검증 |
 | 배포 | BuildHybrid 실행·필수 입력 상태·실행폴더 SHA256 | 다른 물리 PC·실물 패드 체험 |
 
-신규 요청 배정 구현과 검증 잔여를 분리해 관리한다. 이미 구현된 회복·세차·운임·3일 캠페인을 과거 문구 때문에 미구현으로 되돌리지 않는다.
+요청 배정은 구현됐으며 수동 빈도/경제 검증 잔여를 분리해 관리한다. 이미 구현된 회복·세차·운임·3일 캠페인을 과거 문구 때문에 미구현으로 되돌리지 않는다.
 
 ## 2026-10-26 추가 유턴 ④·⑤·⑥
 

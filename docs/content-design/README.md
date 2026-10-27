@@ -2,6 +2,8 @@
 
 여기는 **현재 콘텐츠의 요소·조건·효과·예외**를 읽는 곳이다. 날짜별 개발 경위와 이전 규칙은 [기획 이력](../design-history/content-design/README.md), 실제 검증·빌드·명령 결과는 [작업 이력](../work-history/LATEST.md)에서 관리한다.
 
+현재 기준: 2026-10-27 main 배포 규칙. 코드 동작을 바꾸지 않고 현재 구현과 미구현을 구분한다. [요소별 행동·결과·영향표](18-simulation-action-results.md) → [콘텐츠·시스템 구조](19-content-system-structure.md)를 먼저 읽으면 전체 연결을 파악할 수 있다.
+
 ## 읽는 순서
 
 | 목적 | 읽을 문서 |
@@ -10,7 +12,9 @@
 | 운전 판단 | [01 상황](01-driving-situations.md) → [02 법규·점수](02-driving-evaluation.md) → [03 기록·복습](03-history-and-mastery.md) |
 | 승객 운송 | [04 운송·요청 배정·정산](04-passengers-and-reservations.md) → [11 요청별 콘텐츠](11-passenger-request-effects.md) → [15 취객·청결](15-drunk-passengers-and-cleanliness.md) |
 | 영업 운영 | [05 경제·거점](05-daily-operation.md) → [10 운전자 상태](10-driver-condition.md) → [07 캠페인](07-campaign.md) |
-| 다음 확장·마인드맵 검토 | [17 요청→수요·공차→공간 점유](17-proto-operation-expansion.md): 선택된 개발 순서·미구현 범위·완료 기준·마인드맵 변경안 |
+| 영업 전략 | [17 요청·수요·공차·공간 점유](17-proto-operation-expansion.md): P11/P12 구현과 P13 대기 제공·대체 이동 미구현 |
+| 전체 영향·시스템 | [18 행동 결과](18-simulation-action-results.md), [19 구조](19-content-system-structure.md): 점수·돈·시간·컨디션·저장의 연결 |
+| 변경 경위·마인드맵 검토 | [기획 변경 이력](../design-history/content-design/2026-10-27-design-decisions.md): 과거 정책·결정 순서·미승인 제안 |
 | 월드 제작 | [06 맵·주행](06-world-map-and-driving.md) → [09 코스](09-prototype-scenarios.md) → [14 정차 후보](14-passenger-stop-variety.md) |
 | 도구·표시 | [12 지도 편집](12-road-map-editor.md), [13 HUD·전체지도](13-driving-map-ui.md) |
 | 후속 검토 | [08 사고·수리](08-accidents-and-repairs.md): Proto 제외 / [16 일반 보행자](16-ambient-pedestrians-proposal.md): 승인 A안 안전6슬롯 구현 |
@@ -25,7 +29,7 @@
 | 피로·포만감·졸음 | 10. 식사/휴식의 결제·시간은05, 날짜 이월은07 |
 | 취객·구토·호출 잠금·거부·세차 | 15. 04/05/13은 같은 규칙을 링크 |
 | 정차 후보·대기 인구 | 14.09는 상황 코스 연결,06은 월드/내비 기반 |
-| 지역 수요·공차 성과·승하차 공간 점유 | 17의 미구현 확장 기획. 기존 요청 배정은04, 안전 후보는14를 참조 |
+| 지역 수요·공차 성과·승하차 공간 점유 | 17의 현재 영업 전략 규칙(P13은 대기만 제공). 기존 요청 배정은04, 안전 후보는14를 참조 |
 | 화면 배치·입력 | 13. 개별 기획서는 필요한 정보·행동만 정의 |
 | 구현 상태와 완료 체크 | 개발 체크리스트. 날짜별 변경 사항은 작업 이력 |
 | 과거 설계·지도 관찰 | 기획 이력 / 지도 관찰 자료. 현재 규칙 본문에 연속으로 덧붙이지 않음 |

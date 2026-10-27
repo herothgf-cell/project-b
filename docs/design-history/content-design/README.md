@@ -4,6 +4,8 @@
 
 | 문서 | 내용 |
 |---|---|
+| [2026-10-27 결정 요약](2026-10-27-design-decisions.md) | P11~P13 구현·제한, 표지/피로/시설/내비 정책 변화·후속 제안·마인드맵 검토안 |
+| [2026-10-27 정리 전 원문](2026-10-27-before-refresh/README-index.md) | 최신화 직전12개 기획 원문 보존, 현재 문서와 분리 |
 | [00-RoadMap-history](00-RoadMap-history.md) | 문서 통합 전 원문·당시 규칙 |
 | [01-driving-situations-history](01-driving-situations-history.md) | 문서 통합 전 원문·당시 규칙 |
 | [02-driving-evaluation-history](02-driving-evaluation-history.md) | 문서 통합 전 원문·당시 규칙 |
