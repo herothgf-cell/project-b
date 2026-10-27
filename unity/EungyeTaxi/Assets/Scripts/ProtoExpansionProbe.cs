@@ -16,8 +16,12 @@ public sealed class ProtoExpansionProbe : MonoBehaviour {
   while(!(s=FindObjectOfType<DriveSession>())||!s.StartupReady)yield return null;yield return null;yield return null;
   reload=Array.IndexOf(Environment.GetCommandLineArgs(),"-protoExpansionReloadTest")>=0;bool ok=false;
   try{Disable();if(reload)Reload();else Save();ok=true;}catch(Exception e){Debug.LogException(e);}
-  if(ok&&Array.IndexOf(Environment.GetCommandLineArgs(),"-protoCapture")>=0){Screen.SetResolution(1280,720,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.8f);s.GetComponent<FullMapOverlay>().Open();yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.GetFullPath("artifacts/proto-expansion-map.png"));yield return new WaitForSecondsRealtime(.3f);s.GetComponent<FullMapOverlay>().Close();}
+  if(ok&&Array.IndexOf(Environment.GetCommandLineArgs(),"-protoCapture")>=0){var capture=CaptureMaps();while(true){bool more;try{more=capture.MoveNext();}catch(Exception e){Debug.LogException(e);ok=false;break;}if(!more)break;yield return capture.Current;}var map=s.GetComponent<FullMapOverlay>();if(map.IsOpen)map.Close();}
   Debug.Log("PROTO_EXPANSION_"+(reload?"RELOAD_":"SAVE_")+(ok?"OK":"FAILED")+" checks="+checks);Application.Quit(ok?0:1);
+ }
+ IEnumerator CaptureMaps(){
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-protoCaptureFail")>=0)throw new IOException("Intentional capture failure regression");
+  foreach(int width in new[]{1280,1920}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.8f);var map=s.GetComponent<FullMapOverlay>();Check(map.Open(),"map actually opens for capture");yield return null;yield return null;yield return new WaitForEndOfFrame();var shot=ScreenCapture.CaptureScreenshotAsTexture();Check(shot!=null,"rendered map pixels available");File.WriteAllBytes(Path.GetFullPath("artifacts/proto-expansion-map-"+width+".png"),shot.EncodeToPNG());Destroy(shot);map.Close();}
  }
  void Disable(){s.business.enabled=s.jobs.enabled=s.jobs.nav.enabled=s.requests.enabled=s.law.enabled=s.manners.enabled=s.taxi.enabled=s.assisted.enabled=false;s.taxi.body.isKinematic=true;s.taxi.body.interpolation=RigidbodyInterpolation.None;s.GetComponent<ServiceLawZones>().enabled=false;s.GetComponent<StopOccupancySystem>().enabled=false;}
  void Save(){

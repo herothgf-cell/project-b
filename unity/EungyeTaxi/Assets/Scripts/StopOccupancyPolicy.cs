@@ -1,6 +1,6 @@
 using System;
 [Serializable] public sealed class StopOccupancySnapshot {
- public int version=1,sequence;public string eventId,stopId,attemptedTrip,protectedTrip;
+ public int version=1,sequence,day;public string eventId,stopId,attemptedTrip,protectedTrip,campaign;
  public float remaining,exitMetres;public double nextAt;public bool active,compensated;
  public StopOccupancySnapshot Copy(){return (StopOccupancySnapshot)MemberwiseClone();}
 }

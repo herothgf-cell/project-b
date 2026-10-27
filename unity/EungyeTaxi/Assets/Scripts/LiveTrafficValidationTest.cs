@@ -18,12 +18,14 @@ public class LiveTrafficValidationTest : MonoBehaviour {
   for(float step=1;step<detection;step+=.7f){float ahead=Mathf.Min(path.length,at+step);bool hit=false;foreach(var c in Physics.OverlapBox(path.Position(ahead)+Vector3.up*.85f,new Vector3(.94f,.45f,2.1f),Quaternion.LookRotation(path.Tangent(ahead)),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore))if(c.attachedRigidbody!=taxi.body){hit=true;break;}if(hit){limit=Mathf.Min(limit,Mathf.Sqrt(3*Mathf.Max(0,step-3)));break;}}
   foreach(var j in session.traffic.junctions){if(!j.signalized&&!j.scenarioSignal)continue;for(int axis=0;axis<2;axis++)foreach(int sign in new[]{-1,1}){
    var key=j.name+"/"+axis+"/"+sign;var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(taxi.transform.forward,dir)<.85f){stopped.Remove(key);continue;}
-   var front=taxi.transform.position+taxi.transform.forward*2;float gap=Vector3.Dot(j.center-dir*j.StopDistance(axis)-front,dir),side=Vector3.Dot(front-j.center,TrafficSystem.Right(dir));
-   if(gap<-.4f||gap>45||side<=.15f||side>=j.halfWidth[axis]){stopped.Remove(key);continue;}
+   var front=taxi.transform.position+taxi.transform.forward*2;float gap=Vector3.Dot(session.traffic.StopPosition(j,axis,sign)-front,session.traffic.StopNormal(j,axis,sign)),side=Vector3.Dot(front-j.center,TrafficSystem.Right(dir));
+   bool validLane=side>.15f&&side<j.halfWidth[axis]||session.traffic.DirectedApproach(j,axis,sign,taxi.transform.position,taxi.transform.forward);
+   if(gap<-.4f||gap>45||!validLane){stopped.Remove(key);continue;}
    if(gap<=3&&taxi.body.velocity.magnitude<.05f)stopped.Add(key);
-   var o=session.traffic.Observe(j,axis,sign,dir,taxi.gameObject);bool right=false;var nav=session.jobs.nav;
-   if(nav.hdRoute!=null){float begin=0;for(int k=0;k<nav.hdRoute.edges.Count;k++){var edge=nav.hd.edges[nav.hdRoute.edges[k]];if(edge.ruleId==j.name&&edge.turn>0&&begin-at<55&&nav.hdRoute.ends[k]>at)right=true;begin=nav.hdRoute.ends[k];}}
-   bool permitted=right?o.MayTurnRight(stopped.Contains(key)):o.forward==SignalColor.Green;
+   var o=session.traffic.Observe(j,axis,sign,dir,taxi.gameObject);int turn=0;var nav=session.jobs.nav;
+   if(nav.hdRoute!=null){float begin=0;for(int k=0;k<nav.hdRoute.edges.Count;k++){var edge=nav.hd.edges[nav.hdRoute.edges[k]];if(edge.ruleId==j.name&&begin-at<55&&nav.hdRoute.ends[k]>at){turn=edge.turn;break;}begin=nav.hdRoute.ends[k];}}
+   string laneId=session.traffic.EditorLaneId(taxi.transform.position,taxi.transform.forward);
+   bool permitted=turn==UturnMovement.Turn?session.traffic.UturnPermitted(j,axis,sign,laneId)&&o.PedestrianClear:turn>0?o.MayTurnRight(stopped.Contains(key)):turn<0?(j.editorProgram!=null?j.editorProgram.Movement(axis,sign,turn,session.traffic.Clock,laneId):session.traffic.LeftSignal(j,axis,sign))==SignalColor.Green&&o.PedestrianClear&&session.traffic.YieldClear(j,dir,turn,taxi.gameObject):o.forward==SignalColor.Green;
    var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.Owns(j)){var state=zones.Live.State;permitted=state.Flashing?(state.Variant==9||stopped.Contains(key)):state.Signal==SignalColor.Green;permitted&=!state.Blocked&&!state.Oncoming;}
    if(!permitted)limit=Mathf.Min(limit,Mathf.Sqrt(3*Mathf.Max(0,gap-1)));
   }}return limit;
@@ -39,6 +41,7 @@ public class LiveTrafficValidationTest : MonoBehaviour {
   while(Time.time-start<legTimeout){
    if(session.business.ShowingSummary){report.AppendLine("DAY_ENDED "+name);break;}
    var route=nav.hdRoute;if(route==null)break;if(route!=traced){float err;float pp=route.path.Project(taxi.transform.position,out err);report.AppendLine("ROUTE t="+(Time.time-start)+" pos="+taxi.transform.position+" tangent="+route.path.Tangent(pp)+" forward="+taxi.transform.forward+" length="+route.path.length+" edge="+route.EdgeAt(pp)+" via="+nav.RequiredVia);traced=route;minProgress=pp;lastProgressTime=Time.time;Flush();}float error;float at=nav.ProjectVehicle(out error);maxError=Mathf.Max(maxError,error);if(Time.time>=probe){probe=Time.time+1;report.AppendLine("TRACE t="+(Time.time-start).ToString("F1")+" pos="+taxi.transform.position+" at="+at.ToString("F1")+" error="+error.ToString("F2")+" tangent="+route.path.Tangent(at)+" forward="+taxi.transform.forward+" target="+route.path.Position(at+5));Flush();}
+   if(session.manners.redEvents>reds)report.AppendLine("SIGNAL_EVENT "+session.manners.lastEvent+" pos="+taxi.transform.position+" heading="+taxi.transform.forward);
    float remain=route.path.length-at;if(distanceLimit>0)remain=Mathf.Min(remain,distanceLimit-(at-initial));
    float bend=Vector3.Angle(route.path.Tangent(at),route.path.Tangent(Mathf.Min(route.path.length,at+12)));float speed=remain<12?Mathf.Sqrt(2*Mathf.Max(0,remain-1)):bend>12?3.2f:cruise;
    speed=Limit(route.path,at,Mathf.Min(cruise,speed));taxi.autoThrottle=taxi.Speed<speed-.1f?.23f:0;taxi.autoBrake=speed<.15f&&taxi.Speed<.3f;taxi.autoServiceBrake=Mathf.Clamp((taxi.Speed-speed)*.06f,0,.12f);

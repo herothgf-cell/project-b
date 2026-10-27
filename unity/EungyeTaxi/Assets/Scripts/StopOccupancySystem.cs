@@ -4,7 +4,7 @@ using UnityEngine;
 // candidate pair: waiting is the shipped fallback, never sidewalk improvisation.
 public sealed class StopOccupancySystem : MonoBehaviour {
  public DriveSession session;StopOccupancyPolicy policy=new StopOccupancyPolicy();GameObject car;
- int sequence;double nextAt=60,lastElapsed=-1;string attemptedTrip="";MapStop stop;
+ int sequence,observedDay;double nextAt=60,lastElapsed=-1;string attemptedTrip="",observedCampaign;MapStop stop;
  public bool IsOccupied(string stopId){var s=policy.Capture();return policy.Blocking&&s.stopId==stopId;}
  public bool IsOccupied(int index){var e=session.jobs.Catalog.Entry(index);return e!=null&&IsOccupied(e.StopId);}
  public bool TryGetAlternative(string stopId,out MapStop alternative){alternative=null;return false;}
@@ -31,6 +31,13 @@ public sealed class StopOccupancySystem : MonoBehaviour {
  void Update(){
   if(!session||!session.business||!session.business.enabledCampaign||!session.business.ledger.Operating||session.business.preparing||session.paused||session.PracticeBusy||PracticeSession.Enabled)return;
   double now=session.business.ledger.Elapsed;
+  int day=session.business.ledger.Day;
+  string campaign=session.law.ids.campaign;
+  if(observedDay!=0&&observedDay!=day||observedCampaign!=null&&observedCampaign!=campaign||lastElapsed>=0&&now<lastElapsed){
+   if(car){if(Application.isPlaying)Destroy(car);else DestroyImmediate(car);car=null;}
+   policy=new StopOccupancyPolicy();stop=null;attemptedTrip="";nextAt=60;lastElapsed=now;
+  }
+  observedDay=day;observedCampaign=campaign;
   float delta=lastElapsed<0?0:(float)System.Math.Max(0,now-lastElapsed);lastElapsed=now;
   if(policy.Active){
    if(!car&&stop!=null&&Clear(stop.Kerb+stop.Direction*policy.Capture().exitMetres))MakeCar();
@@ -43,7 +50,7 @@ public sealed class StopOccupancySystem : MonoBehaviour {
   else if(now>=nextAt){nextAt=now+120;var entries=j.Catalog.Entries;for(int n=0;n<entries.Count;n++){int index=(n+sequence)%entries.Count;if(Spawn(index))break;}}
  }
  void OnGUI(){if(!AffectsActive||session.paused||session.FullMapOpen||session.ChoiceOpen)return;var prior=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);float x=(Screen.width/scale-540)/2;var rect=new Rect(x,130,540,104);KoreanText.Panel(rect);GUI.Label(new Rect(x+12,138,516,58),Status,new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14,wordWrap=true});GUI.enabled=session.taxi.body.velocity.magnitude<=.1f;if(GUI.Button(new Rect(x+12,199,516,28),"안전한 곳에서 대기 · 영업/연료 시간은 계속 흐름",KoreanText.Button(13)))Resolve(false);GUI.enabled=true;GUI.matrix=prior;}
- public StopOccupancySnapshot Capture(){var s=policy.Capture();s.sequence=sequence;s.nextAt=nextAt;s.attemptedTrip=attemptedTrip;return s;}
- public void Restore(StopOccupancySnapshot s){lastElapsed=session.business.ledger.Elapsed;policy=StopOccupancyPolicy.Restore(s);if(car){Destroy(car);car=null;}if(s==null||s.version==0)return;sequence=s.sequence;nextAt=s.nextAt;attemptedTrip=s.attemptedTrip;stop=null;if(policy.Active){int i=session.jobs.Catalog.IndexOf(s.stopId);if(!session.jobs.Catalog.IsAdditional(i))throw new System.ArgumentException("Saved occupancy bay unavailable");stop=session.jobs.stops[i];} }
+ public StopOccupancySnapshot Capture(){var s=policy.Capture();s.sequence=sequence;s.day=observedDay;s.campaign=observedCampaign;s.nextAt=nextAt;s.attemptedTrip=attemptedTrip;return s;}
+ public void Restore(StopOccupancySnapshot s){observedCampaign=s!=null&&!string.IsNullOrEmpty(s.campaign)?s.campaign:session.law.ids.campaign;observedDay=s!=null&&s.day>0?s.day:session.business.ledger.Day;lastElapsed=session.business.ledger.Elapsed;policy=StopOccupancyPolicy.Restore(s);if(car){Destroy(car);car=null;}if(s==null||s.version==0)return;sequence=s.sequence;nextAt=s.nextAt;attemptedTrip=s.attemptedTrip;stop=null;if(policy.Active){int i=session.jobs.Catalog.IndexOf(s.stopId);if(!session.jobs.Catalog.IsAdditional(i))throw new System.ArgumentException("Saved occupancy bay unavailable");stop=session.jobs.stops[i];} }
  void OnDestroy(){if(car){if(Application.isPlaying)Destroy(car);else DestroyImmediate(car);}}
 }

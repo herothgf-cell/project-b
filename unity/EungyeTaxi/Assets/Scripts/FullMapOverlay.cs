@@ -85,7 +85,8 @@ public partial class FullMapOverlay : MonoBehaviour {
   if(selectedPlace!=null){var p=Project(selectedPlace.position,map);Dot(p,Color.magenta,10);}
 
   var occupied=new List<Rect>();
-  foreach(var marker in VisibleMarkers()){if(marker.named&&marker.label!="정체·정차")continue;
+  if(jobs.Active&&jobs.current!=null)foreach(int index in ActiveStopPins){var pin=Project(jobs.stops[index].V(),map);if(map.Contains(pin)){occupied.Add(StopPinLabel(pin,map));occupied.Add(new Rect(pin.x-12,pin.y-12,24,24));}}
+  foreach(var marker in VisibleMarkers()){if(marker.named&&marker.label!="정체·정차"&&marker.label!="일시 점유")continue;
    var p=Project(marker.position,map);if(!map.Contains(p))continue;Dot(p,Color.black,marker.named?13:7);Dot(p,marker.color,marker.named?9:4);
    if(marker.named){var box=LawZoneMapLayout.Place(p,new Vector2(82,26),map,occupied);occupied.Add(box);Fill(box,new Color(.05f,.12f,.15f,.9f));GUI.Label(box,marker.label,text);}
   }
@@ -120,7 +121,8 @@ public partial class FullMapOverlay : MonoBehaviour {
  void LocationPopup(int id){GUI.Label(new Rect(20,8,440,34),"현재 위치",heading);GUI.TextArea(new Rect(20,48,440,165),LocationText,new GUIStyle(GUI.skin.textArea){font=KoreanText.Font,fontSize=16,wordWrap=true,normal={textColor=Color.white}});if(GUI.Button(new Rect(20,230,210,42),locationCopied?"복사됨":"좌표 복사",button)){GUIUtility.systemCopyBuffer=LocationText;locationCopied=true;}if(GUI.Button(new Rect(250,230,210,42),"닫기",button))locationOpen=false;}
  public Vector2 CallPinPosition(int index,Rect map){var raw=Project(session.jobs.stops[session.jobs.offers[index].pickup].V(),map);var p=new Vector2(Mathf.Clamp(raw.x,20,map.width-20),Mathf.Clamp(raw.y,80,map.height-20));p.x=Mathf.Clamp(p.x+(index-1)*36,20,map.width-20);if(p.x>map.width-80&&p.y>map.height-185)p.x=map.width-94;return p;}
  public int AvailableCallCount {get{if(session.jobs.Active)return 0;int count=0;foreach(var o in session.jobs.offers)if(o!=null)count++;return count;}}
- void StopPin(int stop,string caption,Color color,Rect map){var p=Project(session.jobs.stops[stop].V(),map);if(!map.Contains(p))return;var old=GUI.backgroundColor;GUI.backgroundColor=color;if(GUI.Button(new Rect(p.x-27,p.y+18,54,30),caption,button))FocusStop(stop);if(GUI.Button(new Rect(p.x-10,p.y-10,20,20),GUIContent.none))FocusStop(stop);GUI.backgroundColor=old;}
+ static Rect StopPinLabel(Vector2 p,Rect map){return new Rect(Mathf.Clamp(p.x-27,map.xMin,map.xMax-54),Mathf.Clamp(p.y+18,map.yMin,map.yMax-30),54,30);}
+ void StopPin(int stop,string caption,Color color,Rect map){var p=Project(session.jobs.stops[stop].V(),map);if(!map.Contains(p))return;var old=GUI.backgroundColor;GUI.backgroundColor=color;if(GUI.Button(StopPinLabel(p,map),caption,button))FocusStop(stop);if(GUI.Button(new Rect(p.x-10,p.y-10,20,20),GUIContent.none))FocusStop(stop);GUI.backgroundColor=old;}
  static void Fill(Rect r,Color c){GUI.color=c;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
  static void Dot(Vector2 p,Color c,float size){Fill(new Rect(p.x-size/2,p.y-size/2,size,size),c);}
  void Line(Vector2 a,Vector2 b,Color c,float width){HudGlyph.MapLine(a,b,c,width,new Rect(0,0,MapRect.width,MapRect.height));}
