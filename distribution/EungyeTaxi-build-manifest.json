@@ -1,46 +1,85 @@
 {
-  "sourceCommit": "1e78d56b5e3297a28cc543990537d333c6188621",
+  "sourceCommit": "1d068bae198e146af0ee57664e6d1c18dced6232",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
-  "validatedOn": "2026-10-26",
-  "totalBytes": 105686443.0,
+  "validatedOn": "2026-10-27",
+  "totalBytes": 105694422.0,
   "validation": {
-    "build": "PrototypeBuild.BuildHybrid exit 0",
-    "sourceCommit": "1e78d56b5e3297a28cc543990537d333c6188621",
+    "build": "PrototypeBuild.BuildHybrid exit 0; stabilized-build-clean.log",
+    "sourceCommit": "1d068bae198e146af0ee57664e6d1c18dced6232",
+    "scriptSha256": "352f953948d794ef655ec9d77850f59f4525520623625838eb794229178c393e",
+    "physicalTestAndFinalBuildScriptMatch": true,
     "modelSuites": 24,
     "passengerCareModelAssertions": 13301,
-    "focusedEditorTests": "ProtoReviewRegressionTests.RunFinal exit 0: P11/P12/P13, review regressions, checkpoint writer, ServiceStartupFollowupTests",
-    "checkpointWriter": "500 consecutive writes, transient/permanent lock, original and pending preservation, recovery: pass",
-    "newProcessExpansion": "save 6 / reload 11 assertions, exit 0; requests, metrics, occupancy departure and one settlement",
-    "legacyLiveProcess": "save 9 / reload 23 assertions, exit 0",
+    "editor": "StabilizationRegressionTests.RunFinal exit 0; day and new campaign followup exit 0",
+    "checkpointWriter": "500 writes, transient and permanent lock, original/pending preservation and recovery passed",
+    "newProcessExpansion": "save6/reload11 passed with requests, metrics, protected occupancy departure and one settlement",
+    "legacyLiveProcess": "save9/reload23 passed",
     "passengerCareRuntimeAssertions": 201,
-    "corruptSaveProcess": "4 assertions, exit 0; primary and backup preserved, explicit restart recovery",
-    "oneDayAccountingProcess": "oneDayTest and oneDayReloadTest exit 0; controlled positions and clocks",
-    "threeDayAccountingProcess": "threeDayTest and threeDayReloadTest exit 0; controlled clocks and revenue fixtures",
-    "physicalDay": {
-      "passed": false,
-      "exitCode": 1,
-      "gameSeconds": 255.74,
-      "metres": 1304.45,
-      "rides": 0,
+    "threeDayAccountingProcess": "threeDayTest and threeDayReloadTest exit 0; controlled clocks and accounting fixtures",
+    "oneDayPhysical": {
+      "passed": true,
+      "exitCode": 0,
+      "trafficCars": 48,
+      "gameSeconds": 1630.64,
+      "metres": 4514.49,
+      "rides": 1,
+      "income": 8220,
+      "net": 4320,
+      "meals": 1,
+      "explicitSleeps": 1,
+      "refills": 1,
+      "closingRestApplied": true,
       "collisions": 0,
+      "mannerSignalEvents": 0,
+      "harshBrakes": 0,
       "independentLawDeduction": 0,
-      "mannerSignalEvents": 1,
-      "failure": "signal manner check and curb boarding; driver stops at navigation lane endpoint, not pocket curb"
+      "settledAndSaved": true
     },
-    "uiCapture": "PNG written but black hidden-window capture: visual readability not verified",
-    "headlessStartupSamplesMs": [
-      16394,
-      16468
-    ],
-    "renderStartupMs": 16307,
-    "occupancyAlternative": "wait-only; 12 admitted game bays, zero pairs within 150 m; no alternative relocation implemented",
+    "corruptSaveProcess": "4 assertions, exit 0; primary and backup preservation, blocked departure, explicit clean restart",
+    "captureFailureHandling": "intentional IOException exits 1 without hanging; expected failure",
+    "renderedUI": {
+      "passed": true,
+      "resolutions": [
+        1280,
+        1920
+      ],
+      "startupStages": [
+        "loading",
+        "preparation",
+        "ready"
+      ],
+      "occupancyAndDropLabelsReadable": true
+    },
+    "renderedPerformance": {
+      "seconds": 300.0154,
+      "frames": 14827,
+      "avgFPS": 49.4208,
+      "p50ms": 19.2319,
+      "p95ms": 24.9534,
+      "p99ms": 34.6192,
+      "gc0": 107,
+      "ambientMetres": 69264.55,
+      "managedBytesBefore": 127250432,
+      "managedBytesAfter": 141778944,
+      "graphics": "Direct3D11",
+      "trafficCars": 48,
+      "stationary": "J5057_4449",
+      "otherPlayerProcesses": 0
+    },
+    "startupSamplesMs": {
+      "headless": 14347,
+      "rendered": 13596
+    },
+    "occupancyAlternative": "wait-only; 12 reviewed game bays, zero safe nearby candidate pairs; alternative relocation excluded",
+    "technicalStabilizationPassed": true,
     "manualDriving": false,
-    "fullCampaignPhysical": false,
-    "stabilityComplete": false,
+    "humanEconomicBalanceReviewed": false,
+    "fullThreeDayPhysical": false,
+    "fieldReviewComplete": false,
     "mapInputsChanged": false,
-    "workspaceStrict": "exit 0; input issues 0; two optional import files absent"
+    "workspaceStrict": "exit0; input issues0; two optional import inputs absent"
   },
   "files": [
     {
@@ -51,17 +90,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "24cd0741d707810e30d26ab7c22d77fa6b3574b4bcdea121004120e89cc41554"
+      "sha256": "c449bb0cf0560645ef7a60368542971790b5a55746184ad7b0dc31ec1d3d2c8b"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 30700,
-      "sha256": "a97248a5fde18b7c1e506934e6cd458017425861a74c84be86325c10b3b26c6a"
+      "bytes": 30748,
+      "sha256": "150422e0283de54795bffd977fed17d00acac44dd03ed78c9c93d9500fb44d7c"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 25920,
-      "sha256": "405fec7e8df7b07ac9629fad0bf17e1535d42c497d2552dd42864ccf6c28627e"
+      "bytes": 26032,
+      "sha256": "bc9e1ef78e1c3c5ce6d799ca18da1258bc6fd1ba64cefbfc947509fe08223bad"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -71,7 +110,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
       "bytes": 1356,
-      "sha256": "9e14b306083ac9afb3bc61d8f94d670b3162a70804650bd4f23e253338632e31"
+      "sha256": "d10818e830cbc1a08e998372f61351a4f2010ff2b30567e5cd2b4b8baafed8c5"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0.resS",
@@ -80,8 +119,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 1353216,
-      "sha256": "24dc4c26929285512e4ff238c688a073b1720398bf8489f8bb711d04e39f04c8"
+      "bytes": 1360896,
+      "sha256": "352f953948d794ef655ec9d77850f59f4525520623625838eb794229178c393e"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -545,8 +584,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/RuntimeInitializeOnLoads.json",
-      "bytes": 4583,
-      "sha256": "8b833163145dc559a08fe466a5b8c7faca34c6cf152c6cfac6fa1b9c6aaf7046"
+      "bytes": 4722,
+      "sha256": "a18964c659e5527235712cc5b7f516e0181e3847b16a12daa9fc5add827f273c"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/ScriptingAssemblies.json",
@@ -556,7 +595,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/sharedassets0.assets",
       "bytes": 7624,
-      "sha256": "210be982acc05488199720e7a8394346e4b1901bb278bfa7d454ab5f204eae2f"
+      "sha256": "90e02725cd00599da59a4169a47efebb2a84073d821abadbd0cb27db2dd61c00"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi.exe",
