@@ -48,7 +48,11 @@ Font.Instantiate는 글꼴 개체만 복사하고 원본 HUD Bold와 같은 mate
 
 distribution/EungyeTaxi-build-manifest.json은 실제 소스 커밋과 이번 검증 결과로 갱신했다. update_distribution_manifest.ps1 -VerifyOnly:130파일·112,072,682바이트의 크기/개수/SHA256 일치. 지도 contentHash/필수 입력과 지도 ZIP은 그대로다. 마인드맵290노드/290링크·기존 ID 전수 보존 재검사0, 현재 기획 Markdown41개 상대 링크 누락0, diff --check0.
 
-사용자가 선택한 main 통합·푸시를 이어간다. 실제 게시 커밋/원격 일치 여부는 게시 확인 후 기록한다.
+## main 게시 확인
+
+실제 배포 커밋 d462660d785d68c53df8faa2ea17510797e931b4를 main에 fast-forward 병합했다. 병합 트리와 검증 브랜치의 diff0, main에서 배포130파일/마인드맵290노드 재검사0. git push origin main 종료0 후 git ls-remote origin refs/heads/main이 동일 d462660d785d68c53df8faa2ea17510797e931b4임을 확인했다. 이 게시 확인 문서는 후속 문서 커밋에 함께 남긴다. 자신의 최종 기록 커밋은 아래 git log 명령으로 확인한다.
+
+변경 전 사용자 .mmst 보존본은 Git blob과 작업 파일의 무필터 해시도 동일(c755a76793bac819351194bc4b801a01ec67780c)하여 커밋 중 줄바꿈 변환이 없음을 확인했다. 기존 untracked는 그대로 남겼다. 실행 검증용 Player는 모두 정상 종료했다.
 
 읽기 전용 최종 리뷰는 Critical/Important 지적0. EOF 공백 정리 후 diff --check 통과. 리뷰에서 실제 클릭/렌더/물리 유턴·사람 조작감/전체 캠페인은 자동 확인으로 대체할 수 없다고 구분했으며, 앞의 세 가지 중 렌더·실제 입력 검사는 후속 Player probe로 확인한다. 물리 유턴 전 구간과 사람 전체 캠페인은 미검증으로 유지한다.
 
