@@ -27,7 +27,7 @@ PassengerRequest/Schedule/UI/Observation, PassengerDemandPolicy, OperationMetric
 - 최종 `pwsh -File artifacts/check_design_docs.ps1` 종료0: 40파일/641로컬 링크/25앵커, 신규18/19 표 열 수 오류0. 과거 원문 스냅샷은 파일 링크만 검사하며 원래 버전의 앵커 완전성까지 현재 문서 기준으로 판정하지 않는다.
 - `git diff --check` 종료0, `git diff --quiet -- unity config builds distribution` 종료0으로 런타임·지도·배포 변경 없음 확인. `update_distribution_manifest.ps1 -VerifyOnly` 종료0: 130파일/105,870,100바이트 전체해시 일치.
 - 마인드맵 SHA256 `F1951492F9C5A13941E60A17D92EB31B1A7471FB8ABA7996D47A0C2E02F00937` 유지. 같은 후보의 요청·경로형 요청 최대1개·P13 실제 대기/해소/보정·졸음/마감·청결 정책을 코드와 대조했다.
-- main commit/push 및 원격 SHA 결과는 실제 수행 후 아래 기록한다.
+- 기획 변경 커밋 `5a70eb47df18499959376325629132d032e20ddc`를 main에 커밋, `git push origin main` 종료0. `git ls-remote origin refs/heads/main`과 로컬 HEAD 일치 확인. 본 결과 기록은 후속 문서 커밋으로 push한다.
 - 문서만 변경하므로 Unity/모델/물리/수동 캠페인 재검사·빌드는 실행하지 않는다. 직전 게임 검증은 이전 배포 이력의 범위만 유효하다.
 - 사용자 .mmst·개인 메모·기존 untracked 보존/stage 제외. 기본 배포130파일/105,870,100바이트는 이전 manifest 기준 유지.
 
