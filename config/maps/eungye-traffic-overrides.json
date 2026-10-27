@@ -1,6 +1,19 @@
 {
   "junctions": [
     {
+      "id": "J5750_2576", "x": 575.018, "z": 257.612,
+      "status": "provisional", "allowLeft": true, "allowRight": true, "allowStraight": true,
+      "signalMode": 0, "dx": -0.9999873, "dz": 0.0050346,
+      "crosswalk": true, "stopLine": true,
+      "facilityStatus": "user-corrected", "facilityCheckedAt": "2026-10-27",
+      "facilityEvidence": "User screenshot4 reports an unsignalized crossing. Nearby Naver approach reviewed; exact private-access dimensions not surveyed. Remove fictional prototype signals, retain crossing and directed T-junction connections.",
+      "approaches": [
+        {"dx":-0.999987,"dz":0.005035,"width":17.6},
+        {"dx":0.999987,"dz":-0.005091,"width":17.6},
+        {"dx":-0.001055,"dz":-0.999999,"width":15.0}
+      ]
+    },
+    {
       "x": 188.2480010986328,
       "z": 1179.10595703125,
       "id": "J1882_11791",

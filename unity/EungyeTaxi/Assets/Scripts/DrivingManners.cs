@@ -32,6 +32,7 @@ public class DrivingManners : MonoBehaviour {
   previousVelocity=velocity;previousFront=front;
  }
  public bool NecessaryBraking(){
+  if(session.business&&session.business.SystemFatigueBraking)return true;
   var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.RequiredBraking())return true;
   // Observation only: assistance never takes over accelerator/brake input.
   float distance=Mathf.Max(5,session.taxi.body.velocity.magnitude*2+4);

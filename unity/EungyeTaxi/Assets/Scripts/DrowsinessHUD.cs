@@ -4,9 +4,10 @@ public class DrowsinessHUD : MonoBehaviour {
  public BusinessProgress business;
  void OnGUI(){
   if(!business||!business.DrowsinessRunning)return;
-  var d=business.ledger.Driver.drowsiness;if(d==null||d.phase==0)return;
+  var d=business.ledger.Driver.drowsiness;if(d==null||d.visionSeconds<=0)return;
   GUI.depth=10;
-  if(d.Tunnel){GUI.color=new Color(0,0,0,.94f);float w=Screen.width,h=Screen.height;GUI.DrawTexture(new Rect(0,0,w*.28f,h),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(w*.72f,0,w*.28f,h),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(w*.28f,0,w*.44f,h*.25f),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(w*.28f,h*.75f,w*.44f,h*.25f),Texture2D.whiteTexture);GUI.color=Color.white;}
-  GUI.depth=-40;var rect=new Rect(Screen.width/2f-230,Screen.height*.65f,460,55);KoreanText.Panel(rect);GUI.Label(rect,d.Warning?"졸음 예고 · 안전하게 정차하세요":d.ControlsLost?"졸음 · 잠시 조작 불가":"졸음 · 시야 축소",new GUIStyle(GUI.skin.label){font=KoreanText.BoldFont,fontSize=22,alignment=TextAnchor.MiddleCenter});
+  if(d.Tunnel){GUI.color=Color.black;float w=Screen.width,h=Screen.height,x=w*.5f*(float)d.VisionLoss,y=h*.5f*(float)d.VisionLoss;GUI.DrawTexture(new Rect(0,0,x,h),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(w-x,0,x,h),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x,0,w-2*x,y),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x,h-y,w-2*x,y),Texture2D.whiteTexture);GUI.color=Color.white;}
+  GUI.depth=-40;float width=Mathf.Min(690,Screen.width-24);var rect=new Rect((Screen.width-width)/2,Screen.height*.63f,width,d.Blackout?155:70);KoreanText.Panel(rect);var style=new GUIStyle(GUI.skin.label){font=KoreanText.BoldFont,fontSize=20,wordWrap=true,alignment=TextAnchor.MiddleCenter};GUI.Label(new Rect(rect.x+10,rect.y+5,rect.width-20,d.Blackout?72:60),d.Blackout?"시야 상실 · 차량 정차 후 귀가하여 쉬세요\n긴급 귀가 휴식은 피로 회복 −20 (정상 수면 −40)":d.PassengerMustLeave?"졸음 위험 · 승객 중도 하차/호출 취소 · 정차 중\n휴식 전 신규 승차 불가 · 가까운 거점에서 수면":d.Warning?"졸음 예고 · 곧 시야가 좁아집니다 · 거점에서 쉬세요":"졸음 · 시야가 계속 좁아집니다 · 수면 전 회복되지 않습니다",style);
+  if(d.Blackout&&GUI.Button(new Rect(rect.x+20,rect.y+85,rect.width-40,52),"귀가 휴식(임시 주차 거점) · 100초 / 같은 날 계속",new GUIStyle(GUI.skin.button){font=KoreanText.BoldFont,fontSize=19}))business.RequestEmergencyHome();
  }
 }

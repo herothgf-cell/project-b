@@ -74,6 +74,7 @@ public class PassengerRequestUI : MonoBehaviour {
   }
   foreach(var o in observations)if(o)o.Observe(o==Current&&PresentationAvailable);
  }
+ public void CancelForFatigue(){Clear();finished=true;session.manners.ComfortAccepted=false;}
  public void Finish(){if(finished)return;finished=true;if(schedule!=null)schedule.Tick(0,1,false,true);foreach(var o in observations)if(o)o.Finish();session.manners.ComfortAccepted=false;}
  void OnGUI(){if(Current&&PresentationAvailable)Current.Draw();}
  public PassengerRequestUISnapshot CaptureLive(){

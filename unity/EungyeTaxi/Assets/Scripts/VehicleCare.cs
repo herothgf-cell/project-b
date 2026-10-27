@@ -4,6 +4,7 @@ using System.Collections.Generic;
 [Serializable] public class VehicleCareSnapshot {
  public int cleanliness=100,day=1,drunksBoarded,refusals;
  public bool acceptanceLocked,vomitUnwashed;
+ public double dirtSeconds;
  public string[] settled=new string[0],refused=new string[0];
 }
 // Vehicle condition is independent of manners, law and fare. Identities make effects replay safe.
@@ -17,15 +18,17 @@ public sealed class VehicleCare {
  public bool NeedsWash {get{return Cleanliness<30||VomitUnwashed;}}
  public int BoardingBonus {get{return Cleanliness>=80?3:0;}}
  readonly HashSet<string> settled=new HashSet<string>(),refused=new HashSet<string>();
+ double dirtSeconds;
  public VehicleCare(){Cleanliness=100;Day=1;}
  public void BeginDay(int day){if(day!=Day){Day=day;DrunksBoarded=0;}}
  public bool Refuse(string id){if(!NeedsWash||string.IsNullOrEmpty(id)||!refused.Add(id))return false;Refusals++;AcceptanceLocked=true;return true;}
  public bool BoardDrunk(){if(NeedsWash||DrunksBoarded>=1)return false;DrunksBoarded++;return true;}
  public void MarkVomit(){VomitUnwashed=true;AcceptanceLocked=true;}
  public bool Finish(string trip,bool vomited){if(string.IsNullOrEmpty(trip)||!settled.Add(trip))return false;if(vomited)MarkVomit();Cleanliness=vomited?Math.Min(Cleanliness,10):Math.Max(0,Cleanliness-2);return true;}
- public void Wash(){Cleanliness=100;AcceptanceLocked=false;VomitUnwashed=false;}
- public VehicleCareSnapshot Snapshot(){return new VehicleCareSnapshot{cleanliness=Cleanliness,day=Day,drunksBoarded=DrunksBoarded,refusals=Refusals,acceptanceLocked=AcceptanceLocked,vomitUnwashed=VomitUnwashed,settled=new List<string>(settled).ToArray(),refused=new List<string>(refused).ToArray()};}
- public static VehicleCare Restore(VehicleCareSnapshot s){if(s==null)return new VehicleCare();if(s.cleanliness<0||s.cleanliness>100||s.day<1||s.drunksBoarded<0||s.drunksBoarded>1||s.refusals<0||s.acceptanceLocked&&s.cleanliness>=30&&!s.vomitUnwashed)throw new ArgumentException("Invalid vehicle care");var c=new VehicleCare{Cleanliness=s.cleanliness,Day=s.day,DrunksBoarded=s.drunksBoarded,Refusals=s.refusals,VomitUnwashed=s.vomitUnwashed,AcceptanceLocked=s.acceptanceLocked||s.vomitUnwashed||s.cleanliness<30};foreach(var id in s.settled??new string[0])if(string.IsNullOrEmpty(id)||!c.settled.Add(id))throw new ArgumentException("Invalid care trip");foreach(var id in s.refused??new string[0])if(string.IsNullOrEmpty(id)||!c.refused.Add(id))throw new ArgumentException("Invalid refusal");return c;}
+ public void Advance(double seconds){if(double.IsNaN(seconds)||double.IsInfinity(seconds)||seconds<=0)return;double total=dirtSeconds+seconds;double points=Math.Floor(total/120);dirtSeconds=total%120;Cleanliness=(int)Math.Max(0,Cleanliness-Math.Min(100,points));}
+ public void Wash(){Cleanliness=100;dirtSeconds=0;AcceptanceLocked=false;VomitUnwashed=false;}
+ public VehicleCareSnapshot Snapshot(){return new VehicleCareSnapshot{dirtSeconds=dirtSeconds,cleanliness=Cleanliness,day=Day,drunksBoarded=DrunksBoarded,refusals=Refusals,acceptanceLocked=AcceptanceLocked,vomitUnwashed=VomitUnwashed,settled=new List<string>(settled).ToArray(),refused=new List<string>(refused).ToArray()};}
+ public static VehicleCare Restore(VehicleCareSnapshot s){if(s==null)return new VehicleCare();if(double.IsNaN(s.dirtSeconds)||double.IsInfinity(s.dirtSeconds)||s.dirtSeconds<0||s.dirtSeconds>=120||s.cleanliness<0||s.cleanliness>100||s.day<1||s.drunksBoarded<0||s.drunksBoarded>1||s.refusals<0||s.acceptanceLocked&&s.cleanliness>=30&&!s.vomitUnwashed)throw new ArgumentException("Invalid vehicle care");var c=new VehicleCare{dirtSeconds=s.dirtSeconds,Cleanliness=s.cleanliness,Day=s.day,DrunksBoarded=s.drunksBoarded,Refusals=s.refusals,VomitUnwashed=s.vomitUnwashed,AcceptanceLocked=s.acceptanceLocked||s.vomitUnwashed||s.cleanliness<30};foreach(var id in s.settled??new string[0])if(string.IsNullOrEmpty(id)||!c.settled.Add(id))throw new ArgumentException("Invalid care trip");foreach(var id in s.refused??new string[0])if(string.IsNullOrEmpty(id)||!c.refused.Add(id))throw new ArgumentException("Invalid refusal");return c;}
 }
 
 public enum DrunkRideCase { Random, Normal, Vomit, Sleepy, Both }

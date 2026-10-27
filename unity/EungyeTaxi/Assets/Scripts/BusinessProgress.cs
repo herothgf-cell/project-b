@@ -14,9 +14,13 @@ public class BusinessProgress : MonoBehaviour {
  public readonly System.Collections.Generic.List<PracticeResult> practices=new System.Collections.Generic.List<PracticeResult>();
  public readonly System.Collections.Generic.List<CompletedDay> completedDays=new System.Collections.Generic.List<CompletedDay>();
  double realSeconds;bool initialFollowing,mixedFollowing;
+ float fatigueBrakeUntil=-1;
+ // Short physics-order grace only after this component actually removed speed.
+ // Do not exempt ordinary player braking merely because the driver is tired.
+ public bool SystemFatigueBraking {get{return Time.fixedTime<=fatigueBrakeUntil&&ledger!=null&&ledger.Driver!=null&&ledger.Driver.drowsiness.PassengerMustLeave;}}
  public bool DrowsinessRunning {get{return enabledCampaign&&ledger!=null&&ledger.Operating&&ledger.Driver!=null&&!preparing&&!restoring&&!resumeBlocked&&!PracticeSession.Enabled&&!session.PracticeBusy&&!session.PracticeMenuOpen&&!session.ChoiceOpen&&!session.FullMapOpen&&!session.paused&&!session.services.open&&!session.law.HistoryOpen&&!session.RideResultOpen&&Time.timeScale>0;}}
  public bool DrowsinessEligible {get{return DrowsinessRunning&&session.taxi.body.velocity.magnitude>=.56f;}}
- public bool DrowsyControlsLost {get{return DrowsinessRunning&&ledger.Driver.drowsiness!=null&&ledger.Driver.drowsiness.ControlsLost;}}
+ public bool DrowsyControlsLost {get{return DrowsinessRunning&&ledger.Driver.drowsiness!=null&&(ledger.Driver.drowsiness.Blackout||ledger.Driver.drowsiness.PassengerMustLeave&&session.jobs.Active);}}
  public string ComparisonVersion {get{if(loaded!=null&&ShowingSummary&&loaded.completedDays!=null)foreach(var day in loaded.completedDays)if(day.id==loaded.ids.campaign)return day.configuration;return (settings.days>1?PrototypeSettings.ThreeDayVersion:PrototypeSettings.OneDayVersion)+"-following-"+(mixedFollowing?"mixed":initialFollowing?"on":"off");}}
  public bool enabledCampaign=true;
  public string notice="",saveStatus="하루 정산 시 자동 저장됩니다";
@@ -123,21 +127,28 @@ public class BusinessProgress : MonoBehaviour {
 
  void FixedUpdate(){
   if(!enabledCampaign||!ledger.Operating||preparing||restoring||resumeBlocked||session.paused||Time.timeScale<=0)return;
+  if(ledger.Driver!=null&&!DrowsinessRunning)return;
   var v=session.taxi.body.velocity;double metres=Math.Sqrt(v.x*v.x+v.z*v.z)*Time.fixedDeltaTime;
   if(!session.PracticeBusy&&!PracticeSession.Enabled)ledger.AdvanceOperation(Time.fixedDeltaTime,metres,session.jobs.trip.State==TripState.OnTrip);else ledger.Advance(Time.fixedDeltaTime,metres);
   if(ledger.Driver!=null)ledger.Driver.drowsiness.Advance(Time.fixedDeltaTime,DrowsinessRunning,ledger.Driver.fatigue,session.taxi.body.velocity.magnitude>=.56f);
+  if(DrowsyControlsLost){session.assisted.SetActive(false);if(session.taxi.body.velocity.sqrMagnitude>.001f)fatigueBrakeUntil=Time.fixedTime+.1f;session.taxi.body.velocity=Vector3.MoveTowards(session.taxi.body.velocity,Vector3.zero,6*Time.fixedDeltaTime);if(session.taxi.body.velocity.magnitude<.56f){session.taxi.body.velocity=Vector3.zero;session.taxi.body.angularVelocity=Vector3.zero;session.jobs.CancelForFatigue();}}
   if(ledger.Account!=null&&ledger.Account.Fuel<=0)RecoverFuel();
  }
- void Update(){if(enabledCampaign&&!preparing&&!session.paused&&ledger.Operating){realSeconds+=Time.unscaledDeltaTime;mixedFollowing|=session.traffic.mitOptions.Enabled!=initialFollowing;}if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil){notice="";noticeUntil=0;}}
+ void Update(){if(enabledCampaign&&!preparing&&!session.paused&&ledger.Operating&&(ledger.Driver==null||DrowsinessRunning)){realSeconds+=Time.unscaledDeltaTime;mixedFollowing|=session.traffic.mitOptions.Enabled!=initialFollowing;}if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil){notice="";noticeUntil=0;}}
  void LateUpdate(){
   if(!restoring&&!testMode&&enabledCampaign&&session.law&&session.requests&&(Time.unscaledTime>=nextSave||session.law.ledger.Count!=lastLawCount)){nextSave=Time.unscaledTime+5;lastLawCount=session.law.ledger.Count;SaveCheckpoint();}
-  if(enabledCampaign&&ledger.OneDay&&ledger.Operating&&ledger.Driver.fatigue>=100){notice="피로 100 · 졸음 위험 · 계속 영업 가능 · F7 휴식/주차장 수면·영업 종료";noticeUntil=Time.unscaledTime+2;}
+  if(enabledCampaign&&ledger.OneDay&&ledger.Operating&&ledger.Driver.fatigue>=100){notice=ledger.Driver.drowsiness.Blackout?"시야 상실 · 정차 후 귀가 휴식 버튼을 누르세요":ledger.Driver.drowsiness.PassengerMustLeave?"졸음 위험 · 운송 취소 / 신규 승차 불가 · 거점 수면 필요":"피로100 · 졸음 누적 / 시야 축소 위험 · F7 거점 수면 권장";noticeUntil=Time.unscaledTime+2;}
   if(session.FullMapOpen||!enabledCampaign||ledger.State!=BusinessState.Closing)return;
   if(session.jobs.trip.State==TripState.OnTrip){notice="영업 종료 대기 · 현재 승객 운송 후 정산합니다";return;}
   session.jobs.RecordExpiredTrip();
   if(ledger.Settle()){ledger.Last.realSeconds=realSeconds;taxPrompt=false;session.jobs.ClearForDay();session.services.open=false;session.services.pending=-1;Freeze();SaveCheckpoint();}
  }
  void Freeze(){session.paused=false;Time.timeScale=0;}
+ public bool RequestEmergencyHome(){
+  if(!DrowsinessRunning||!ledger.Driver.drowsiness.Blackout||session.taxi.body.velocity.magnitude>=.56f)return false;
+  session.jobs.CancelForFatigue();if(session.jobs.Active||!ledger.UseEmergencySleep(session.law.ids.Next("emergency-home")))return false;
+  session.jobs.ClearForDay();session.assisted.SetActive(false);var stop=session.services.ParkingStop;session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();session.law.ResetObservation();var district=session.traffic.GetComponent<DistrictTraffic>();if(district)district.ClearPlayerOverlap();notice="귀가 휴식(임시 주차 거점) · 100초 경과 / 피로 −20 (정상 수면 −40) · 같은 날 영업 계속";noticeUntil=Time.unscaledTime+10;SaveCheckpoint();return true;
+ }
  public bool RequestEndDay(){
   if(session.FullMapOpen||!enabledCampaign||ledger.State!=BusinessState.Open||session.paused||Time.timeScale==0)return false;
   if(session.jobs.trip.State==TripState.OnTrip){notice="승객 탑승 중에는 영업을 마칠 수 없습니다 · 목적지 하차 후 N";noticeUntil=Time.unscaledTime+4;return false;}
@@ -151,6 +162,7 @@ public class BusinessProgress : MonoBehaviour {
   var jobs=session.jobs;var offer=jobs.current;var reward=jobs.RequestReward??PassengerReward.Calculate(RequestKind.Quiet,session.manners.ledger.Score,offer.requiredScore,offer.fare,paid,0,paid>0,true);
   passengers.Add(new PassengerResult{boardingDrivingScore=reward.boardingDrivingScore,drivingAdjustedFare=reward.drivingAdjustedFare,comfortDelta=reward.comfortDelta,initialFare=jobs.InitialFare,farePolicyVersion=reward.farePolicyVersion,hasDrivingScore=true,drivingScore=session.law.ledger.TotalScore,tripId=session.law.tripId,offerId=jobs.OfferId,day=ledger.Day,pickupStopId=offer.pickupStopId,dropStopId=offer.dropStopId,mapRevision=offer.mapRevision,catalogRevision=offer.catalogRevision,stopEvidence=offer.stopEvidence,pickup=jobs.stops[offer.pickup].name,destination=jobs.stops[offer.drop].name,outcome=outcome,quoted=offer.fare,paid=paid,baseFare=reward.baseFare,bonus=reward.bonus,satisfaction=reward.satisfaction,satisfactionDelta=reward.satisfactionDelta,excessScore=reward.excessScore,bonusReason=reward.bonusReason,startSatisfaction=reward.startSatisfaction,startDeficit=reward.startDeficit,cleanBonus=reward.cleanBonus,driveDelta=reward.driveDelta,timeDelta=reward.timeDelta,referenceSeconds=reward.referenceSeconds,timeReason=reward.timeReason,cleanlinessAfter=ledger.Care.Cleanliness,drunk=jobs.DrunkRide!=null&&jobs.DrunkRide.IsDrunk,vomited=jobs.DrunkRide!=null&&jobs.DrunkRide.Vomited,wakeDelayed=jobs.DrunkRide!=null&&jobs.DrunkRide.SleepPlanned,arrivalElapsed=jobs.DrunkRide==null?0:jobs.DrunkRide.ArrivalElapsed,disembarkElapsed=jobs.DrunkRide==null?0:jobs.DrunkRide.DisembarkElapsed,score=reward.sourceManner,required=offer.requiredScore,elapsed=Mathf.Max(0,offer.seconds-jobs.trip.Remaining),request=session.requests.Summary,mannerReason=session.manners.RideReasons});
  }
+ public void RecordFatigueCancellation(){RecordPassenger(0,"졸음 위험 · 중도 하차/운송 취소");foreach(var result in passengers)if(result.tripId==session.law.tripId){result.cancelledForFatigue=true;result.baseFare=result.bonus=result.paid=0;result.bonusReason="졸음 위험 운송 취소";}}
  public void RecordFare(int amount){if(!enabledCampaign)return;if(ledger.Account!=null)ledger.RecordFare(session.law.tripId,amount);else ledger.RecordFare(amount);}
  public void RecordFailure(){if(enabledCampaign)ledger.RecordFailure();}
  public bool NextDay(){

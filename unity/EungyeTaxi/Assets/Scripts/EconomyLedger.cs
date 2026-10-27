@@ -31,7 +31,7 @@ public class EconomyLedger {
  OperationMetrics metrics=new OperationMetrics();public OperationMetrics Metrics {get{return metrics;}private set{metrics=value;}}
  public OperationMetricsSnapshot TotalMetrics {get{var total=new OperationMetricsSnapshot{captured=true};foreach(var r in records)AddMetrics(total,r.metrics);if(Operating)AddMetrics(total,Metrics.Capture());return total;}}
  static void AddMetrics(OperationMetricsSnapshot total,OperationMetricsSnapshot value){if(value==null||!value.captured)return;total.emptyMetres+=value.emptyMetres;total.occupiedMetres+=value.occupiedMetres;total.emptyMovingSeconds+=value.emptyMovingSeconds;total.emptyWaitingSeconds+=value.emptyWaitingSeconds;total.serviceSeconds+=value.serviceSeconds;}
- public void AdvanceOperation(double seconds,double metres,bool occupied){if(!Operating)return;Advance(seconds,metres);Metrics.Observe(metres,seconds,occupied,false);}
+ public void AdvanceOperation(double seconds,double metres,bool occupied){if(!Operating)return;double before=Elapsed;Advance(seconds,metres);Care.Advance(Elapsed-before);Metrics.Observe(metres,seconds,occupied,false);}
  public void AdvanceService(double seconds){if(!Operating)return;Advance(seconds,0);Metrics.Observe(0,seconds,false,true);}
  public VehicleCare Care {get;private set;}
  public bool OneDay {get;private set;}
@@ -81,7 +81,8 @@ public class EconomyLedger {
   return next;
  }
  public bool UseMeal(string id){if(!OneDay||State!=BusinessState.Open||services.Contains(id)||!Account.Meal(id,Day))return false;services.Add(id);Driver=PreviewConditionService(false);ServiceTime(50);return true;}
- public bool UseSleep(string id){if(!OneDay||State!=BusinessState.Open||string.IsNullOrEmpty(id)||!services.Add(id))return false;var next=PreviewConditionService(true);ServiceTime(100);Driver=next;return true;}
+ public bool UseSleep(string id){if(!OneDay||State!=BusinessState.Open||Driver.drowsiness.Blackout||string.IsNullOrEmpty(id)||!services.Add(id))return false;var next=PreviewConditionService(true);ServiceTime(100);Driver=next;return true;}
+ public bool UseEmergencySleep(string id){if(!OneDay||State!=BusinessState.Open||Driver.drowsiness==null||!Driver.drowsiness.Blackout||string.IsNullOrEmpty(id)||!services.Add(id))return false;var next=Driver.Copy();if(Elapsed<Settings.daySeconds&&Elapsed+100>=Settings.daySeconds)next.fatigue=100;next.EmergencySleep();ServiceTime(100);Driver=next;return true;}
  public bool UseWash(string id){if(Account==null||State!=BusinessState.Open||string.IsNullOrEmpty(id)||services.Contains(id)||!Account.Wash(id,Day))return false;services.Add(id);Care.Wash();if(Driver!=null)Driver.Advance(30);ServiceTime(30);return true;}
  void ServiceTime(double seconds){double before=Elapsed;Elapsed+=seconds;Metrics.Observe(0,seconds,false,true);BudgetCrossed(before);}
  void BudgetCrossed(double before){if(before<Settings.daySeconds&&Elapsed>=Settings.daySeconds){if(OneDay)Driver.fatigue=100;else RequestClose("시간 종료");}}

@@ -2,6 +2,20 @@
   "mapId": "eungye",
   "facilities": [
     {
+      "id": "J7973-reviewed-median",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p/entry/coordinates/3zanLi,2AGD8X?c=15.99,0,0,0,adh&p=mFn3SPTx5TLQAlev8v1uyQ,21.47,10,80,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-10-27",
+      "observed": "Black median posts with yellow reflective bands and connecting rails on Eungye-ro approaching the Suin-ro intersection. Signalized zebra crossings and curb corners; no detached pedestrian refuge island confirmed in viewed approaches.",
+      "estimated": "Conservative short game segments only, outside crossing/turning area. Position, length, post spacing, width0.25m and height0.9m are game estimates, not surveyed. Longer rails and other approaches remain unreviewed.",
+      "northMarkIds": [], "southMarkIds": [], "openings": [],
+      "segments": [
+        {"kind":"post-rail","points":[{"x":793.5,"z":295},{"x":793.7,"z":329}],"width":0.25,"height":0.9},
+        {"kind":"post-rail","points":[{"x":798.9,"z":414},{"x":800.6,"z":464}],"width":0.25,"height":0.9}
+      ]
+    },
+    {
       "id": "suin-ro-parking-east-central-strip",
       "kind": "paired-median",
       "sourceUrl": "https://map.naver.com/p/entry/coordinates/3za91A,2AGGdk?c=16.18,0,0,0,adh&p=RH2sSoLSyA5LtdOijavljA,159.2,-24.29,80,Float",
