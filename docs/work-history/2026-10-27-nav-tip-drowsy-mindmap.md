@@ -40,6 +40,16 @@ Font.Instantiate는 글꼴 개체만 복사하고 원본 HUD Bold와 같은 mate
 
 최초 실행 검사 FatigueOvertimeProbe는38항목·종료0: 깊은 눈감김 중 실제 휠 가속0/조향 유지/브레이크 유지, 재개방 복귀, 메뉴 제외, 탑승객 정차 취소/0원,180초 입력 차단·귀가/피로-20·당일 마감·복원 포함. 이 결과만으로 글꼴 가독성까지 통과했다고 판단하지 않았다. 수정 빌드에서 다시 화면을 확인한다.
 
+## 최종 빌드·실행 검증
+
+게임 소스는 실제 커밋 b11ac5f1c9b79c8e694367cda72c9b386a35085e다. 수정 후 PrototypeBuild.BuildHybrid와 모델28개 프로그램 모두 종료0. 최종 기본 Player -navTipFeedbackTest의9검사·-fatigueOvertimeTest -fatigueCapture의38검사 모두 success=True·프로세스 종료0이다.
+
+실제 PNG의 TIP 열린/숨김/점유 상태, 정상 HUD 굵은 글꼴, 신호 상부 표지와 최종 암전 안내를 직접 확인했다. 총8개 렌더 캡처, 표지 전용 재질/atlas 분리도 실제 Player에서 확인했다. 자동 검사는 UI 상태 전환 API와 실제 휠/게임 결과를 검증한 것이며 사람이 버튼을 클릭한 수동 플레이 또는703m 전 구간 자동 물리 주행과 혼동하지 않는다.
+
+distribution/EungyeTaxi-build-manifest.json은 실제 소스 커밋과 이번 검증 결과로 갱신했다. update_distribution_manifest.ps1 -VerifyOnly:130파일·112,072,682바이트의 크기/개수/SHA256 일치. 지도 contentHash/필수 입력과 지도 ZIP은 그대로다. 마인드맵290노드/290링크·기존 ID 전수 보존 재검사0, 현재 기획 Markdown41개 상대 링크 누락0, diff --check0.
+
+사용자가 선택한 main 통합·푸시를 이어간다. 실제 게시 커밋/원격 일치 여부는 게시 확인 후 기록한다.
+
 읽기 전용 최종 리뷰는 Critical/Important 지적0. EOF 공백 정리 후 diff --check 통과. 리뷰에서 실제 클릭/렌더/물리 유턴·사람 조작감/전체 캠페인은 자동 확인으로 대체할 수 없다고 구분했으며, 앞의 세 가지 중 렌더·실제 입력 검사는 후속 Player probe로 확인한다. 물리 유턴 전 구간과 사람 전체 캠페인은 미검증으로 유지한다.
 
 로그/이미지는 Git 제외 artifacts/nav-tip-*, artifacts/fatigue-*에 둔다. 실제 검사 명령은 NavTipFeedbackTests.RunFinal, 기본 PrototypeBuild.BuildHybrid, Player -navTipFeedbackTest 및 -fatigueOvertimeTest -fatigueCapture다. Player 검사는 테스트 저장 위치를 사용하며 사용자 영업 저장을 덮지 않는다.
