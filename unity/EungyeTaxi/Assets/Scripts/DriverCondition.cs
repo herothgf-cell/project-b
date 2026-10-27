@@ -31,7 +31,14 @@ using System;
  public bool Tunnel {get{return visionSeconds>=60;}}
  public bool PassengerMustLeave {get{return visionSeconds>=120;}}
  public bool Blackout {get{return visionSeconds>=180;}}
- public double VisionLoss {get{return visionSeconds<60?0:Math.Min(1,(visionSeconds-30)/150);}}
+ public double VisionLoss {get{
+  if(visionSeconds<30)return 0;
+  if(visionSeconds>=120){double p=Math.Min(1,(visionSeconds-120)/60);return p*p*(3-2*p);}
+  int episode=(int)((visionSeconds-30)/20);double elapsed=visionSeconds-(30+episode*20),duration=1.2+.7*episode;
+  if(elapsed>=duration)return 0;
+  double phase=elapsed/duration,pulse=phase<.35?phase/.35:1-(phase-.35)/.65;
+  return (.55+.08*episode)*pulse*pulse*(3-2*pulse);
+ }}
  public bool ControlsLost {get{return Blackout;}}
  public Drowsiness Copy(){return (Drowsiness)MemberwiseClone();}
  public void Recover(){visionSeconds=checkSeconds=remaining=0;phase=effect=0;}

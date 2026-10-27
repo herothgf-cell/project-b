@@ -6,7 +6,7 @@ public class DrowsinessHUD : MonoBehaviour {
   if(!business||!business.DrowsinessRunning)return;
   var d=business.ledger.Driver.drowsiness;if(d==null||d.visionSeconds<=0)return;
   GUI.depth=10;
-  if(d.Tunnel){GUI.color=Color.black;float w=Screen.width,h=Screen.height,x=w*.5f*(float)d.VisionLoss,y=h*.5f*(float)d.VisionLoss;GUI.DrawTexture(new Rect(0,0,x,h),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(w-x,0,x,h),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x,0,w-2*x,y),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x,h-y,w-2*x,y),Texture2D.whiteTexture);GUI.color=Color.white;}
+  if(d.VisionLoss>0){float loss=(float)d.VisionLoss,w=Screen.width,h=Screen.height;GUI.color=new Color(0,0,0,.35f*loss);GUI.DrawTexture(new Rect(0,0,w,h),Texture2D.whiteTexture);GUI.color=Color.black;float x=w*.175f*loss,y=h*.5f*loss;GUI.DrawTexture(new Rect(0,0,x,h),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(w-x,0,x,h),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x,0,w-2*x,y),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x,h-y,w-2*x,y),Texture2D.whiteTexture);GUI.color=Color.white;}
   GUI.depth=-40;var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=20,wordWrap=true,alignment=TextAnchor.MiddleCenter};
   if(!d.Blackout){
    if(d.visionSeconds<=5){float width=Mathf.Min(690,Screen.width-24);var toast=new Rect((Screen.width-width)/2,Screen.height*.75f,width,70);KoreanText.Panel(toast);GUI.Label(toast,"졸음 운전 위험 · 시야가 점점 좁아집니다 · 가까운 거점에서 쉬세요",style);}

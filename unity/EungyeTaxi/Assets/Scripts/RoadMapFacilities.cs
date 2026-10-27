@@ -50,8 +50,22 @@ public sealed class RoadMapLamp : MonoBehaviour {
 public static class RoadMapFacilities {
  public static void Build(RoadMapDocument d,Transform parent,TrafficSystem system){if(d==null)return;var white=WorldBuilder.Mat("Editor paint",Color.white);var yellow=WorldBuilder.Mat("Editor centre",Color.yellow);var dark=WorldBuilder.Mat("Editor housing",new Color(.05f,.06f,.08f));var blue=WorldBuilder.Mat("Editor sign",new Color(.04f,.2f,.6f));foreach(var f in d.facilities){var root=new GameObject("사용자 시설 "+f.id);root.transform.SetParent(parent,false);root.transform.SetPositionAndRotation(f.Position,Quaternion.Euler(0,f.yaw,0));root.transform.localScale=Vector3.one*f.scale;
    if(f.kind=="crosswalk"){if(system){var program=d.signals.FirstOrDefault(p=>p.junctionId==f.junctionId);if(program!=null&&program.groups.Any(g=>g.pedestrian&&g.crosswalkId==f.id)){var walker=new GameObject("사용자 횡단 보행자").AddComponent<RoadMapWalker>();walker.transform.SetParent(parent);walker.crossing=f;walker.program=program;walker.system=system;}}for(float x=-f.width*.5f+.3f;x<f.width*.5f;x+=.95f)WorldBuilder.Box("횡단보도",new Vector3(x,.083f,0),new Vector3(.5f,.015f,f.length),white,root.transform,false);continue;}if(f.kind=="stopLine"||f.kind=="line"||f.kind=="centreLine"){WorldBuilder.Box(f.kind,new Vector3(0,.085f,0),new Vector3(f.width,.02f,f.length),f.kind=="centreLine"?yellow:white,root.transform,false);continue;}
-   WorldBuilder.Box("지주",new Vector3(0,f.height*.5f,0),new Vector3(.12f,f.height,.12f),dark,root.transform,false);
-   if(f.kind=="sign"){WorldBuilder.Box("표지",new Vector3(0,f.height,0),new Vector3(f.width,1.2f,.12f),blue,root.transform,false);var label=new GameObject("표지 문구");label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(0,f.height,-.09f);var mesh=label.AddComponent<TextMesh>();mesh.text=(f.type=="제한속도"?f.speed.ToString("0")+" km/h":f.type)+"\n"+f.text;mesh.color=Color.white;KoreanText.Fit(mesh,f.width*.9f,1.05f);continue;}
+   // Match authored approach identity; a nearer opposite signal must not steal the board.
+   bool mounted=false;
+   if(f.kind=="sign"&&UturnMovement.IsCondition(f.type)&&system){
+    var junction=system.junctions.FirstOrDefault(j=>j.name==f.junctionId);
+    if(junction!=null)for(int i=0;i<junction.lamps.Count;i++){
+     if(junction.lampAxes[i]!=f.axis||junction.lampSigns[i]!=f.sign)continue;
+     var lamps=junction.lamps[i];if(lamps==null||lamps.Length==0||!lamps[0])continue;
+     var signal=lamps[0].transform.parent;var housing=signal.Find("Signal housing");if(!housing)continue;
+     root.transform.SetParent(signal,false);
+     // Reserve the existing permissive/generic upper board, then add a gap.
+     root.transform.SetPositionAndRotation(housing.position+Vector3.up*(1.15f+.575f+.6f*Mathf.Abs(f.scale)+.2f),signal.rotation);
+     root.transform.localScale=Vector3.one*f.scale;mounted=true;break;
+    }
+   }
+   if(!mounted)WorldBuilder.Box("지주",new Vector3(0,f.height*.5f,0),new Vector3(.12f,f.height,.12f),dark,root.transform,false);
+   if(f.kind=="sign"){float boardHeight=mounted?0:f.height;WorldBuilder.Box("표지",new Vector3(0,boardHeight,0),new Vector3(f.width,1.2f,.12f),blue,root.transform,false);var label=new GameObject("표지 문구");label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(0,boardHeight,-.09f);var mesh=label.AddComponent<TextMesh>();mesh.text=(f.type=="제한속도"?f.speed.ToString("0")+" km/h":f.type)+"\n"+f.text;mesh.color=Color.white;KoreanText.Fit(mesh,f.width*.9f,1.05f);continue;}
    bool pedestrian=f.kind=="pedestrianSignal";WorldBuilder.Box("신호함",new Vector3(0,f.height,0),new Vector3(pedestrian?.65f:2.2f,pedestrian?1.2f:.7f,.3f),dark,root.transform,false);var display=root.AddComponent<RoadMapLamp>();display.system=system;display.program=d.signals.FirstOrDefault(p=>p.junctionId==f.junctionId);display.groupId=f.groupId;
    display.red=WorldBuilder.Box("적색",new Vector3(pedestrian?0:-.65f,f.height+(pedestrian?.27f:0),-.18f),new Vector3(.42f,.42f,.07f),dark,root.transform,false).GetComponent<Renderer>();if(!pedestrian)display.yellow=WorldBuilder.Box("황색",new Vector3(0,f.height,-.18f),new Vector3(.42f,.42f,.07f),dark,root.transform,false).GetComponent<Renderer>();display.green=WorldBuilder.Box("녹색",new Vector3(pedestrian?0:.65f,f.height-(pedestrian?.27f:0),-.18f),new Vector3(.42f,.42f,.07f),dark,root.transform,false).GetComponent<Renderer>();display.Initialize();var caption=new GameObject("제어 진행 안내");caption.transform.SetParent(root.transform,false);caption.transform.localPosition=new Vector3(0,f.height-.85f,-.18f);var captionMesh=caption.AddComponent<TextMesh>();captionMesh.text=f.text;captionMesh.color=Color.white;KoreanText.Fit(captionMesh,2.3f,.35f);
   }}
