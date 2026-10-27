@@ -60,4 +60,10 @@
 
 검증 보고서는 배포 manifest의 `validation`에 저장했다. 빌드 지도 stamp·정식 프로젝트 contentHash는 `48a84e21ffb5c6803fef8edddc90015695cf9806ca42c6137563895ef307f998`로 일치한다. 필요한 지도 입력/ZIP은 변경하지 않았다. 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`다.
 
-main 병합·원격 푸시는 아래 후속 통합 항목에서 실제 결과를 기록한다. 이력의 실제 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-27-road-fatigue-integration.md`로 확인한다.
+### main 통합·원격 확인
+
+`git fetch origin main` 종료0, 당시 main/origin/main `abc1c4f` 분기0/0 확인. 사용자 마인드맵 변경을 유지한 채 `git switch main`·`git merge --ff-only codex/playtest-feedback-20261027` 종료0, 배포 커밋 `24c8ce38b73f4c9e2373efe3eb701d8cc219e345`로 로컬 main 통합했다. 병합 결과에서 `tools/test_prototype.ps1`25묶음, `tools/update_distribution_manifest.ps1 -VerifyOnly`130파일/105,789,674바이트, `git diff --check` 각각 종료0.
+
+`git push origin main` 종료0 (`abc1c4f..24c8ce3 main -> main`). 이어 `git rev-parse HEAD`와 `git ls-remote origin refs/heads/main` 모두 위 배포 SHA로 일치했다. 이 문서는 그 실제 결과를 기록하는 후속 문서 커밋에 포함한다. 소스/실행파일은 해당 배포 커밋 이후 변경하지 않았다. 사용자 `.mmst` 해시 유지와 기존 미추적 파일 보존도 재확인했다.
+
+현재 후속은 위 경미한 취소 영수증 요청 이력, 사람의 수동 주행/장시간 밸런스와 제보 소교차로 정확한 현장 근거다. 기술 자동 검사 통과를 이 미검증 범위의 완료로 확대하지 않는다. 이력의 실제 최신 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-27-road-fatigue-integration.md`로 확인한다.

@@ -53,7 +53,7 @@ Files: work history/LATEST/checklist, distribution manifest, full tracked build 
 - [x] Single integrated Editor/model/Player/save/visual verification; fix discovered important errors. Editor/model25/care13301, Player navigation30/fatigue24/rendered30/passenger201/scenario99/save9/reload23/UI14.
 - [x] Fresh whole-change review; record unverified manual/field cases. Important system-brake grading fixed, cancelled-receipt history minor deferred.
 - [x] Commit source/docs, build BuildHybrid, verify actual shipped execution and all130 distribution hashes. Source251c219, BuildHybrid0;130files/105789674bytes.
-- [ ] Fetch/check remote main, merge feature into local main preserving user's dirty mindmap, normal push and verify remote SHA.
+- [x] Fetch/check remote main, merge feature into local main preserving user's dirty mindmap, normal push and verify remote SHA. Fast-forward24c8ce3; merged model25/130file hashes0; push0/remote SHA equal. Result documentation committed afterward.
 
 ## Execution ledger
 
