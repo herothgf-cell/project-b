@@ -67,7 +67,7 @@ public class TrafficSystem : MonoBehaviour {
 
     public Vector3 AxisDirection(TrafficJunction j,int axis){var d=j.direction.sqrMagnitude>.1f?j.direction:mainDirection;return axis==0?d:Right(d);}
     public int Sign(Vector3 direction,int axis,TrafficJunction j=null){return Vector3.Dot(direction,j!=null?AxisDirection(j,axis):axis==0?mainDirection:Right(mainDirection))>=0?1:-1;}
-    public bool HasPedestrianPhase(TrafficJunction j){return j.signalized&&j.facility!=null&&j.facility.crosswalk;}
+    public bool HasPedestrianPhase(TrafficJunction j){return j.editorProgram!=null?System.Array.Exists(j.editorProgram.groups,g=>g.pedestrian&&System.Array.Exists(j.editorProgram.stages,s=>System.Array.IndexOf(s.groups,g.id)>=0)):j.signalized&&j.facility!=null&&j.facility.crosswalk;}
     float VehicleCycle(TrafficJunction j){return 17*(j.leftTurnMode==LeftTurnMode.Permissive?2:4);}
     float PhaseTime(TrafficJunction j){float cycle=VehicleCycle(j)+(HasPedestrianPhase(j)?12:0);return ((Clock+j.offset)%cycle+cycle)%cycle;}
     public bool PedestrianGreen(TrafficJunction j,int axis,int sign){if(j.editorProgram!=null)return j.editorProgram.Walk(axis,sign,Clock);
@@ -259,9 +259,23 @@ public class TrafficSystem : MonoBehaviour {
         // A moving same-lane leader is protected by the car-following gap check. All other
         // occupied movements stay exclusive, including stopped leaders and conflicting turns.
         int contacts=overlaps.Box(j.center+Vector3.up*.85f,new Vector3(j.halfWidth[0]+.4f,.55f,j.halfWidth[1]+.4f),Quaternion.LookRotation(AxisDirection(j,0)),(1<<8)|(1<<9));
-        for(int contact=0;contact<contacts;contact++){var other=overlaps.hits[contact].GetComponentInParent<TrafficCar>();if(other!=car&&!MovingLeader(car,other)&&(SameTrafficStream(car,other)||Conflicts(car,stop,other)))return false;}
+        for(int contact=0;contact<contacts;contact++){var hit=overlaps.hits[contact];var other=hit.GetComponentInParent<TrafficCar>();if(other==car||MovingLeader(car,other))continue;
+            // This box is only a broad phase. A red approach or a queued follower
+            // can touch it without occupying this green movement's swept corridor.
+            if(OccupiesMovement(car,stop,hit))return false;
+        }
         if(!ExitClear(car,stop))return false;
         j.reservations.Add(car);if(!j.owner)j.owner=car;return true;
+    }
+    public bool OccupiesMovement(TrafficCar car,TrafficStop stop,Collider blocker){
+        // Include the bumpers and a conservative body width. Reservations still
+        // protect future crossing conflicts; this checks actual present occupancy.
+        float end=Mathf.Min(car.route.length,stop.exitDistance+2.25f);
+        for(float at=Mathf.Max(car.distance,stop.distance)-2.25f;at<=end+.5f;at+=.5f){
+            var point=car.route.Position(Mathf.Clamp(at,0,end))+Vector3.up*.85f;
+            if((blocker.ClosestPoint(point)-point).sqrMagnitude<1.15f*1.15f)return true;
+        }
+        return false;
     }
     public bool ExitClear(TrafficCar car,TrafficStop stop){var exit=car.route.Position(stop.exitDistance);var dir=car.route.Tangent(stop.exitDistance);
         int contacts=overlaps.Box(exit+Vector3.up*.85f,new Vector3(1.05f,.55f,4.5f),Quaternion.LookRotation(dir),(1<<8)|(1<<9)|1);

@@ -64,10 +64,61 @@ public class PassengerJobs : MonoBehaviour {
  public string DemandHint(JobOffer offer){string region=PassengerDemandPolicy.Region(offer.pickupStopId);return "게임 "+PassengerDemandPolicy.Label(region)+" · 상대 수요 "+PassengerDemandPolicy.Weight(region,session.business.ledger.Elapsed)+"배";}
  public string TimeComparison(JobOffer offer){float pickup=DirectedDistance(nav.hd,session.taxi.transform.position,session.taxi.transform.forward,stops[offer.pickup]);if(float.IsInfinity(pickup)||float.IsNaN(pickup))return "현재 위치에서 픽업 경로 없음";float a=pickup/4,b=(offer.timingPolicyVersion>=1?offer.safeRouteSeconds:offer.distance/8)+offer.waitSeconds;return "픽업 "+pickup.ToString("0")+"m / 약 "+RoadNavigation.FormatEta(a)+" · 탑승 "+offer.distance.ToString("0")+"m / 약 "+RoadNavigation.FormatEta(b)+"\n총 예상 "+RoadNavigation.FormatEta(a+b)+" · "+(offer.timingPolicyVersion>=1?"시간 성향 "+OneDayOfferPolicy.UrgencyLabel(offer.urgency):"기존 약정")+" (신호·교통에 따라 변동, 운임은 순이익 아님)";}
  void Stamp(JobOffer offer){if(string.IsNullOrEmpty(offer.candidateSeed))offer.candidateSeed=(session.law?session.law.ids.campaign:"initial")+":"+(session.business==null?1:session.business.ledger.Day)+":"+generation+":"+offer.pickup+":"+offer.drop+":"+offer.scenarioId;var p=Catalog.Entry(offer.pickup);var d=Catalog.Entry(offer.drop);offer.pickupStopId=p==null?runtimeStopIds[offer.pickup]:p.StopId;offer.dropStopId=d==null?runtimeStopIds[offer.drop]:d.StopId;offer.mapRevision=session.world.map.editorRevision;offer.catalogRevision=Catalog.Revision;offer.stopEvidence=(p==null?"saved-active-stop":p.EvidenceStatus)+" / "+(d==null?"saved-active-stop":d.EvidenceStatus);}
- public JobOffer[] OrdinaryCandidates(){var result=new System.Collections.Generic.List<JobOffer>();if(session.business==null||session.business.ledger==null||session.services==null||Catalog.Stops.Length<=Catalog.LegacyCount||nav.hd==null)return result.ToArray();var pickups=new System.Collections.Generic.List<int>();var distances=new float[stops.Length];for(int i=0;i<stops.Length;i++){distances[i]=DirectedDistance(nav.hd,session.taxi.transform.position,session.taxi.transform.forward,stops[i]);if(!StopOccupied(i)&&!float.IsInfinity(distances[i])&&Time.time>=cooldown[i])pickups.Add(i);}pickups.Sort((a,b)=>distances[a].CompareTo(distances[b]));if(pickups.Count>6)pickups.RemoveRange(6,pickups.Count-6);int extra=-1;float extraDistance=float.PositiveInfinity;for(int i=Catalog.LegacyCount;i<stops.Length;i++)if(!StopOccupied(i)&&Time.time>=cooldown[i]&&distances[i]<extraDistance){extra=i;extraDistance=distances[i];}if(extra>=0&&!pickups.Contains(extra))pickups.Add(extra);
-  foreach(int p in pickups)for(int step=0;step<4;step++){int d=(p+3+generation*5+step*7)%stops.Length;if(d==p)d=(d+1)%stops.Length;var o=Make(p,d);if(o==null||float.IsInfinity(o.distance))continue;float expected=distances[p]/4+o.distance/8+o.waitSeconds;var ledger=session.business.ledger;if(ledger.OneDay&&expected>ledger.SecondsLeft)continue;if(ledger.Account!=null){float fuel=(distances[p]+o.distance)/1000*session.business.settings.fuelPerKm+expected/60*session.business.settings.idlePerMinute;if(fuel>ledger.Account.Fuel)continue;}o.pickupSeconds=OneDayOfferPolicy.PickupSeconds(distances[p]);result.Add(o);}return result.ToArray();}
- void MixOrdinaryOffers(){var normal=OrdinaryCandidates();if(normal.Length==0)return;float target=new[]{400f,900f,1600f}[generation%3];System.Array.Sort(normal,(a,b)=>NormalRank(a,target).CompareTo(NormalRank(b,target)));var selected=new System.Collections.Generic.List<JobOffer>();foreach(var o in normal){bool duplicate=selected.Exists(x=>x.pickup==o.pickup||x.pickup==o.pickup&&x.drop==o.drop);if(duplicate)continue;selected.Add(o);if(selected.Count==2)break;}if(selected.Count==0)return;var fixedOffer=offers[0];offers[0]=selected[0];offers[1]=selected.Count>1?selected[1]:fixedOffer;offers[2]=selected.Count>1?fixedOffer:null;}
- float NormalRank(JobOffer o,float target){return (float)PassengerDemandPolicy.Priority(o.candidateSeed,o.pickupStopId,session.business.ledger.Elapsed)*1000+(DirectedDistance(nav.hd,session.taxi.transform.position,session.taxi.transform.forward,stops[o.pickup])+Mathf.Abs(o.distance-target)*.4f)*.1f+PassengerStopCatalog.RepeatPenalty(o.pickup,o.drop,previousPickup,previousDrop);}
+ System.Collections.Generic.Dictionary<int,float> generationPickupDistances;
+ float PickupDistance(int pickup){float distance;if(generationPickupDistances!=null&&generationPickupDistances.TryGetValue(pickup,out distance))return distance;distance=DirectedDistance(nav.hd,session.taxi.transform.position,session.taxi.transform.forward,stops[pickup]);if(generationPickupDistances!=null)generationPickupDistances[pickup]=distance;return distance;}
+ int PickupCell(int pickup){return OneDayOfferPolicy.PickupCell(stops[pickup].x,stops[pickup].z,session.world.map.width,session.world.map.depth);}
+ static bool Finite(float value){return !float.IsInfinity(value)&&!float.IsNaN(value);}
+ public JobOffer[] OrdinaryCandidates(){
+  var result=new System.Collections.Generic.List<JobOffer>();
+  if(session.business==null||session.business.ledger==null||session.services==null||Catalog==null||nav.hd==null)return result.ToArray();
+  var cells=new System.Collections.Generic.List<int>[9];for(int c=0;c<cells.Length;c++)cells[c]=new System.Collections.Generic.List<int>();
+  var distances=new float[stops.Length];
+  for(int i=0;i<stops.Length;i++){distances[i]=PickupDistance(i);if(!StopOccupied(i)&&Finite(distances[i])&&Time.time>=cooldown[i])cells[PickupCell(i)].Add(i);}
+  foreach(var cell in cells)cell.Sort((a,b)=>{int rank=distances[a].CompareTo(distances[b]);return rank!=0?rank:a.CompareTo(b);});
+  var pickups=new System.Collections.Generic.List<int>();
+  // One pickup per occupied map cell before adding a second. Rotate within each
+  // cell too, so the closest stops cannot monopolize successive generations.
+  for(int round=0;round<stops.Length&&pickups.Count<OneDayOfferPolicy.OrdinaryPickupLimit;round++){
+   bool added=false;for(int offset=0;offset<9&&pickups.Count<OneDayOfferPolicy.OrdinaryPickupLimit;offset++){
+    var cell=cells[(generation+offset)%9];if(round>=cell.Count)continue;
+    pickups.Add(cell[(generation+round)%cell.Count]);added=true;
+   }if(!added)break;
+  }
+  foreach(int p in pickups)for(int step=0;step<4;step++){
+   int d=(p+3+generation*5+step*7)%stops.Length;if(d==p)d=(d+1)%stops.Length;
+   var o=Make(p,d);if(o==null||!Finite(o.distance))continue;
+   float expected=distances[p]/4+o.distance/8+o.waitSeconds;var ledger=session.business.ledger;
+   // OneDay deliberately permits overtime. SecondsLeft becomes zero there;
+   // using it as a hard cutoff removed every ordinary offer after closing time.
+   if(ledger.Account!=null){float fuel=(distances[p]+o.distance)/1000*session.business.settings.fuelPerKm+expected/60*session.business.settings.idlePerMinute;if(fuel>ledger.Account.Fuel)continue;}
+   o.pickupSeconds=OneDayOfferPolicy.PickupSeconds(distances[p]);result.Add(o);
+  }return result.ToArray();
+ }
+ JobOffer SpreadOffer(System.Collections.Generic.List<JobOffer> pool,System.Collections.Generic.List<JobOffer> selected,bool rotate){
+  for(int pass=0;pass<3;pass++){
+   JobOffer best=null;int bestCell=10;
+   foreach(var o in pool){
+    bool same=false,near=false,cellUsed=false;foreach(var prior in selected){same|=prior.pickup==o.pickup;var delta=stops[prior.pickup].Kerb-stops[o.pickup].Kerb;delta.y=0;near|=delta.sqrMagnitude<OneDayOfferPolicy.PickupSeparation*OneDayOfferPolicy.PickupSeparation;cellUsed|=PickupCell(prior.pickup)==PickupCell(o.pickup);}
+    if(same||pass<2&&near||pass==0&&cellUsed)continue;
+    int cell=(PickupCell(o.pickup)-generation%9+9)%9;
+    if(best==null||rotate&&cell<bestCell){best=o;bestCell=cell;}
+   }if(best!=null)return best;
+  }return null;
+ }
+ void MixOrdinaryOffers(){
+  var normal=OrdinaryCandidates();float target=new[]{400f,900f,1600f}[generation%3];
+  var ranks=new System.Collections.Generic.Dictionary<JobOffer,float>();foreach(var o in normal)ranks[o]=NormalRank(o,target);
+  System.Array.Sort(normal,(a,b)=>{int rank=ranks[a].CompareTo(ranks[b]);return rank!=0?rank:string.CompareOrdinal(a.candidateSeed,b.candidateSeed);});
+  var scenarios=new System.Collections.Generic.List<JobOffer>();foreach(var o in offers)if(o!=null&&Finite(o.distance)&&Finite(PickupDistance(o.pickup))&&!StopOccupied(o.pickup)&&Time.time>=cooldown[o.pickup])scenarios.Add(o);
+  var selected=new System.Collections.Generic.List<JobOffer>();if(scenarios.Count>0)selected.Add(scenarios[0]);
+  var pool=new System.Collections.Generic.List<JobOffer>(normal);pool.AddRange(scenarios);
+  while(selected.Count<3){var o=SpreadOffer(pool,selected,selected.Count==0);if(o==null)break;selected.Add(o);}
+  // Keep ordinary offers in the familiar first slots, retaining a scenario
+  // opportunity without allowing it to duplicate a selected pickup.
+  if(scenarios.Count>0&&selected.Count>1){var scenario=selected[0];selected.RemoveAt(0);selected.Add(scenario);}
+  for(int i=0;i<offers.Length;i++)offers[i]=i<selected.Count?selected[i]:null;
+ }
+ float NormalRank(JobOffer o,float target){return (float)PassengerDemandPolicy.Priority(o.candidateSeed,o.pickupStopId,session.business.ledger.Elapsed)*1000+(PickupDistance(o.pickup)+Mathf.Abs(o.distance-target)*.4f)*.1f+PassengerStopCatalog.RepeatPenalty(o.pickup,o.drop,previousPickup,previousDrop);}
  int PinSavedStop(string id,MapStop saved){int found=runtimeStopIds.IndexOf(id);if(found>=0)return found;if(saved==null)throw new System.ArgumentException("Missing saved stop geometry");var all=new System.Collections.Generic.List<MapStop>(stops);all.Add(saved);stops=all.ToArray();runtimeStopIds.Add(id);System.Array.Resize(ref cooldown,stops.Length);System.Array.Resize(ref people,stops.Length);var person=new GameObject(id+" 진행 중 승객 보존");person.transform.SetParent(transform);person.transform.position=saved.Passenger;WorldBuilder.Box("저장된 승객",Vector3.up*.85f,new Vector3(.48f,1.15f,.3f),WorldBuilder.Mat("Saved passenger",Color.cyan),person.transform,false);people[stops.Length-1]=person;return stops.Length-1;}
  public static void NormalizePresence(PassengerJobsSnapshot s){if(s==null)return;
   if(s.behaviorVersion==0)s.behavior=null;
@@ -103,7 +154,8 @@ public class PassengerJobs : MonoBehaviour {
   return result;
  }
  public void ResetOffers(){generation=0;Generate();}
- public void Generate(){nextOfferRetry=Time.time+3;if(stops.Length<2)return;var zones=GetComponent<ServiceLawZones>();if(session.business!=null&&session.business.ledger!=null&&session.business.ledger.OneDay&&zones&&zones.Ready){var candidates=new System.Collections.Generic.List<JobOffer>();foreach(var course in zones.scenarios){var offer=Make(course.pickup,course.drop,course);if(offer!=null)candidates.Add(offer);}double elapsed=session.business.ledger.Elapsed;offerPhase=elapsed<300?0:elapsed<900?1:2;var ranks=new System.Collections.Generic.Dictionary<JobOffer,float>();foreach(var candidate in candidates)ranks[candidate]=OfferRank(candidate,elapsed);candidates.RemoveAll(o=>float.IsInfinity(ranks[o]));candidates.Sort((a,b)=>ranks[a].CompareTo(ranks[b]));for(int i=0;i<3;i++)offers[i]=i<candidates.Count?candidates[i]:null;MixOrdinaryOffers();generation++;return;}for(int i=0;i<3;i++){offers[i]=null;
+ public void Generate(){generationPickupDistances=new System.Collections.Generic.Dictionary<int,float>();try{GenerateOffers();}finally{generationPickupDistances=null;}}
+ void GenerateOffers(){nextOfferRetry=Time.time+3;if(stops.Length<2)return;var zones=GetComponent<ServiceLawZones>();if(session.business!=null&&session.business.ledger!=null&&session.business.ledger.OneDay&&zones&&zones.Ready){var candidates=new System.Collections.Generic.List<JobOffer>();foreach(var course in zones.scenarios){var offer=Make(course.pickup,course.drop,course);if(offer!=null)candidates.Add(offer);}double elapsed=session.business.ledger.Elapsed;offerPhase=elapsed<300?0:elapsed<900?1:2;var ranks=new System.Collections.Generic.Dictionary<JobOffer,float>();foreach(var candidate in candidates)ranks[candidate]=OfferRank(candidate,elapsed);candidates.RemoveAll(o=>!Finite(ranks[o]));candidates.Sort((a,b)=>{int rank=ranks[a].CompareTo(ranks[b]);return rank!=0?rank:string.CompareOrdinal(a.candidateSeed,b.candidateSeed);});var selected=new System.Collections.Generic.List<JobOffer>();for(int i=0;i<3;i++){offers[i]=SpreadOffer(candidates,selected,i==0);if(offers[i]!=null)selected.Add(offers[i]);}MixOrdinaryOffers();generation++;return;}for(int i=0;i<3;i++){offers[i]=null;
   if(zones&&zones.Ready&&zones.scenarios.Count>0)for(int k=0;k<zones.scenarios.Count;k++){var scenario=zones.scenarios[(generation+i+k)%zones.scenarios.Count];bool duplicate=false;for(int j=0;j<i;j++)if(offers[j]!=null&&offers[j].scenarioId==scenario.id)duplicate=true;if(duplicate)continue;var candidate=Make(scenario.pickup,scenario.drop,scenario);if(candidate!=null){offers[i]=candidate;break;}}
   if(offers[i]==null){int p=(generation+i*2)%stops.Length,d=(p+3+i)%stops.Length;if(p==d)d=(d+1)%stops.Length;offers[i]=Make(p,d);}
  }MixOrdinaryOffers();generation++;} public bool Accept(int index){PrepareForNextCall();string rejection=AcceptanceRejection(index);if(rejection!=""){message=rejection;return false;}if(trip.State!=TripState.Idle)return false;Behavior=null;current=offers[index];InitialFare=current.fare;Stamp(current);if(float.IsInfinity(current.distance))return false;float pickup=PickupBudget(current);if(float.IsInfinity(pickup)||!trip.Accept(current.fare,current.seconds,pickup))return false;OfferId=session.law?session.law.ids.Next("offer"):"offer";if(session.law)session.law.tripId=OfferId;message="호출 수락 · 픽업 장소: "+KoreanText.Stop(stops[current.pickup].name);SetGoal(current.pickup);RefreshWaitingPassengers();var zones=GetComponent<ServiceLawZones>();if(zones)zones.BeginPickup(current);session.business.SaveCheckpoint();return true;}
@@ -113,7 +165,7 @@ public class PassengerJobs : MonoBehaviour {
   if(start==goal.laneEdge&&Mathf.Abs(at-goal.laneAt)<.25f)return 0;
   var route=graph.Route(start,at,goal.laneEdge,goal.laneAt);return route==null?float.PositiveInfinity:route.path.length;
  }
- float OfferRank(JobOffer o,double elapsed){if(Time.time<cooldown[o.pickup])return float.PositiveInfinity;float pickup=DirectedDistance(nav.hd,session.taxi.transform.position,session.taxi.transform.forward,stops[o.pickup]);float meal=0;if(elapsed>=300&&elapsed<900){var drop=stops[o.drop];meal=DirectedDistance(nav.hd,drop.Kerb,drop.Direction,session.services.MealStop);}int id=0;int.TryParse(o.scenarioId.Replace("PS",""),out id);return OneDayOfferPolicy.Rank(o.distance,pickup,meal,elapsed,id,generation);}
+ float OfferRank(JobOffer o,double elapsed){if(Time.time<cooldown[o.pickup]||StopOccupied(o.pickup)||!Finite(o.distance))return float.PositiveInfinity;float pickup=PickupDistance(o.pickup);if(!Finite(pickup))return float.PositiveInfinity;float meal=0;if(elapsed>=300&&elapsed<900&&session.services){var drop=stops[o.drop];meal=DirectedDistance(nav.hd,drop.Kerb,drop.Direction,session.services.MealStop);}int id=0;int.TryParse(o.scenarioId.Replace("PS",""),out id);return OneDayOfferPolicy.Rank(o.distance,pickup,meal,elapsed,id,generation)+(float)PassengerDemandPolicy.Priority(o.candidateSeed,o.pickupStopId,elapsed)*1000+PassengerStopCatalog.RepeatPenalty(o.pickup,o.drop,previousPickup,previousDrop);}
  public void ResumePickupNavigation(){if(trip.State==TripState.ToPickup&&current!=null)SetGoal(current.pickup);}
  public void AdvancePickupWait(float seconds){if(trip.State!=TripState.ToPickup)return;trip.Tick(seconds);if(trip.PickupExpired){message="승객 대기 시간 초과 · 호출 취소 / 요금 없음";Finish();if(session.law)session.law.tripId="";}}
  void SetGoal(int index){nav.SetDestination(stops[index]);marker.transform.rotation=Quaternion.LookRotation(stops[index].Direction);marker.SetActive(true);marker.transform.position=stops[index].Kerb+Vector3.up*.085f;}

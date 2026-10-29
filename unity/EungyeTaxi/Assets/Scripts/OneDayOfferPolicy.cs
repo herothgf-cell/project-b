@@ -1,4 +1,12 @@
 public static class OneDayOfferPolicy {
+ // Bound route work independently of catalog size; rank only within geographic strata.
+ public const int OrdinaryPickupLimit=12;
+ public const float PickupSeparation=120;
+ public static int PickupCell(float x,float z,float width,float depth){
+  int col=System.Math.Max(0,System.Math.Min(2,(int)(x/System.Math.Max(1,width)*3)));
+  int row=System.Math.Max(0,System.Math.Min(2,(int)(z/System.Math.Max(1,depth)*3)));
+  return row*3+col;
+ }
  // Directed road distances; no forced situation waypoints.
  public static float PickupSeconds(float distance){return System.Math.Max(150,distance/3+150);}
  // Candidate identity is saved with the offer. Never use randomized runtime string hashes.

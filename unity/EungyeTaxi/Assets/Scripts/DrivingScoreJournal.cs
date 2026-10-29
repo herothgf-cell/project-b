@@ -12,7 +12,10 @@ public class DrivingScoreJournal : MonoBehaviour {
   if(data==null||data.events==null||data.sequence<0||data.campaign!=ids.campaign)return false;
   var checkedLedger=new LawLedger();foreach(var e in data.events)checkedLedger.Record(e);
   var existing=new System.Collections.Generic.Dictionary<string,LawEvent>();foreach(var e in ledger.Events)existing[e.id]=e;
-  foreach(var e in checkedLedger.Events){LawEvent old;if(!existing.TryGetValue(e.id,out old))ledger.Record(e);else if(e.Deduction>old.Deduction||e.Deduction==old.Deduction&&e.rules.Count>old.rules.Count)ledger.RecordIncident(e);}ids.sequence=Math.Max(ids.sequence,data.sequence);return true;
+  foreach(var e in checkedLedger.Events){LawEvent old;if(!existing.TryGetValue(e.id,out old))ledger.Record(e);else ledger.RecordIncident(e);}ids.sequence=Math.Max(ids.sequence,data.sequence);
+  // Recover identity from actual evidence as well as the snapshot header. A
+  // stale sequence must never make the next real incident reuse a saved ID.
+  foreach(var e in ledger.Events){int split=e.id.LastIndexOf(':'),sequence;if(e.id.StartsWith(ids.campaign+":",StringComparison.Ordinal)&&split>=0&&int.TryParse(e.id.Substring(split+1),out sequence))ids.sequence=Math.Max(ids.sequence,sequence);}return true;
  }
  System.Collections.IEnumerator Start(){
   yield return null;

@@ -4,7 +4,11 @@ using UnityEngine;
 // NPCs use precisely the directed lane edges used by navigation and H steering.
 public sealed class DistrictTraffic : MonoBehaviour {
  public HdRoadGraph graph;public TrafficSystem system;public MapData map;
- public int continued,excluded;int sequence;
+ public const int PoolCap=72,LocalTarget=18,CandidateBudget=128,RelocationBudget=2;
+ public int continued,excluded;int sequence,seedCursor;float nextPopulationUpdate;
+ DriveSession liveSession;
+ readonly List<Seed> populationSeeds=new List<Seed>();
+ readonly Dictionary<Vector2Int,int> populationLoads=new Dictionary<Vector2Int,int>();
  readonly Dictionary<string,TrafficJunction> joins=new Dictionary<string,TrafficJunction>();
  readonly Dictionary<int,TrafficJunction> hdTurns=new Dictionary<int,TrafficJunction>();
  readonly Dictionary<string,TrafficRoute> routes=new Dictionary<string,TrafficRoute>();
@@ -31,7 +35,7 @@ public sealed class DistrictTraffic : MonoBehaviour {
   Debug.Log("DISTRICT_TRAFFIC_READY allocated="+system.cars.Count+" visible="+visible+" cells250m="+cells.Count+" junctions="+system.junctions.Count+" service="+service.Count);
  }
  // Reuse physically verified journeys whose goals have an admitted onward route.
- // Sampling along them avoids filling the 48 slots with recycled copies at 12 stops.
+ // Sampling along them avoids filling the pool with recycled copies at service stops.
  sealed class Seed {public TrafficRoute route;public float at;public Vector3 position;public Vector2Int cell;}
  static Vector2Int Cell(Vector3 p){return new Vector2Int(Mathf.FloorToInt(p.x/250),Mathf.FloorToInt(p.z/250));}
  bool OrdinaryStart(TrafficRoute route,float at){
@@ -56,8 +60,9 @@ public sealed class DistrictTraffic : MonoBehaviour {
   }
   long samplingMs=watch.ElapsedMilliseconds;int candidateCount=candidates.Count;
   var loads=new Dictionary<Vector2Int,int>();
-  var visiblePositions=new List<Vector3>(48);
-  while(system.cars.Count<48&&candidates.Count>0){
+  populationSeeds.AddRange(candidates);
+  var visiblePositions=new List<Vector3>(PoolCap);
+  while(system.cars.Count<PoolCap&&candidates.Count>0){
    // Seeding is synchronous: positions cannot change during this candidate pass.
    // Read Unity transforms once instead of crossing into native code for every
    // candidate/car pair, retaining the same order and spacing score.
@@ -76,6 +81,27 @@ public sealed class DistrictTraffic : MonoBehaviour {
    spawned.district=this;int selectedLoad;loads.TryGetValue(chosen.cell,out selectedLoad);loads[chosen.cell]=selectedLoad+1;
   }
   Debug.Log("STARTUP_TRAFFIC candidates="+candidateCount+" sample_ms="+samplingMs+" seed_ms="+(watch.ElapsedMilliseconds-samplingMs));
+ }
+ // Rebalance only off-camera ordinary road space, never an active junction queue.
+ bool Offscreen(Vector3 p,Camera camera){var screen=camera.WorldToViewportPoint(p+Vector3.up);return screen.z<=0||screen.x<-.15f||screen.x>1.15f||screen.y<-.15f||screen.y>1.15f;}
+ void Update(){
+  if(Time.time<nextPopulationUpdate)return;nextPopulationUpdate=Time.time+5;
+  if(!liveSession)liveSession=FindObjectOfType<DriveSession>();
+  if(!liveSession||!liveSession.taxi||!liveSession.drivingCamera||liveSession.paused||populationSeeds.Count==0)return;
+  var camera=liveSession.drivingCamera.GetComponent<Camera>();if(!camera)return;
+  var player=liveSession.taxi.transform.position;populationLoads.Clear();int local=0;
+  foreach(var car in system.cars)if(car&&car.Visible){var p=car.transform.position;var cell=Cell(p);int load;populationLoads.TryGetValue(cell,out load);populationLoads[cell]=load+1;if((p-player).sqrMagnitude<500*500)local++;}
+  int moved=0;
+  for(int n=0;n<CandidateBudget&&local<LocalTarget&&moved<RelocationBudget;n++){
+   var seed=populationSeeds[seedCursor++%populationSeeds.Count];float radius=(seed.position-player).sqrMagnitude;
+   if(radius<160*160||radius>500*500||!Offscreen(seed.position,camera))continue;
+   int destinationLoad;populationLoads.TryGetValue(seed.cell,out destinationLoad);if(destinationLoad>=6)continue;
+   bool spaced=true;foreach(var car in system.cars)if(car&&car.Visible&&(car.transform.position-seed.position).sqrMagnitude<100){spaced=false;break;}if(!spaced||Occupied(seed.position,seed.route.Tangent(seed.at),null))continue;
+   TrafficCar donor=null;Vector2Int source=default(Vector2Int);
+   foreach(var car in system.cars){if(!car||!car.Visible||!car.enabled||car.waitingForSignal||car.waitingForJunction||car.waitingForObstacle)continue;var p=car.transform.position;var cell=Cell(p);int load;populationLoads.TryGetValue(cell,out load);if(load<=1||(p-player).sqrMagnitude<650*650||!Offscreen(p,camera)||!OrdinaryStart(car.route,car.distance))continue;donor=car;source=cell;break;}
+   if(!donor)break;
+   donor.route=seed.route;donor.Place(seed.at);populationLoads[source]--;populationLoads[seed.cell]=destinationLoad+1;local++;moved++;
+  }
  }
  public bool Occupied(Vector3 p,Vector3 heading,TrafficCar self){foreach(var hit in Physics.OverlapBox(p+Vector3.up*.85f,new Vector3(1.1f,.55f,4),Quaternion.LookRotation(heading),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore))if(self==null||hit.GetComponentInParent<TrafficCar>()!=self)return true;return false;}
  // A saved live pose is restored after seeding. Defer NPCs intersecting the

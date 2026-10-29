@@ -11,6 +11,21 @@
       "path": "unity/EungyeTaxi/Assets/Resources/route42-map.json",
       "bytes": 2935176,
       "sha256": "82b30e1df6fdcb50fcf0d672f87a2f3ba6f7157350fa29a1f1567d394c4c68d1"
+    },
+    {
+      "path": "config/maps/project/eungye.project.json",
+      "bytes": 21606473,
+      "sha256": "da2354c93bf312bc2aa03d281fa2d7985a3de0c688075d5208634c854a6a600d"
+    },
+    {
+      "path": "config/maps/eungye-traffic-overrides.json",
+      "bytes": 19586,
+      "sha256": "ece5685c0f383bc032c8053e992d4fdc5b4528b28cd6c256ee97cedd3b3cd606"
+    },
+    {
+      "path": "config/maps/eungye-corridor-polish.json",
+      "bytes": 13134,
+      "sha256": "c068a49060903c9621f520b1b08ab6fd2a7b42768f5ffeef0b54fd306d5520ab"
     }
   ]
 }

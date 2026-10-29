@@ -39,6 +39,7 @@ public class TrafficCar : MonoBehaviour {
     }
     void SetVisible(bool value){hit.enabled=value;foreach(var r in renderers)r.enabled=value;}
     public void Recycle(){if(distance>=route.length-.01f)completedRoutes++;system.Release(this);recycling=true;speed=0;SetVisible(false);body.position=new Vector3(-100,-100,-100);}
+    void OnDisable(){if(system)system.Release(this);}
     void FixedUpdate() {using(TrafficPerformanceProbe.Measure("TrafficCar.FixedUpdate"))Tick();}
     void Tick() {
         if(recycling) {

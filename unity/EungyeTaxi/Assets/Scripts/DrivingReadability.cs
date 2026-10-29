@@ -13,6 +13,20 @@ public class DrivingReadability : MonoBehaviour {
  public TrafficJunction SignalTarget {get;private set;}
  public int SignalAxis {get;private set;}public int SignalSign {get;private set;}
  Rect bounds;GUIStyle label;const float Size=280;
+ MapRouteRaster routeRaster;Texture2D routeTexture;Rect routeBounds;float nextRouteRaster;int routeCount=-1,routeZoom=-1;
+ FullMapOverlay.PaintedSegment routeFirst,routeLast;
+ void DrawRouteRaster(FullMapOverlay overlay){
+  if(Event.current.type!=EventType.Repaint)return;var segments=overlay.RoutePaint;int count=segments.Count;var first=count>0?segments[0]:null;var last=count>0?segments[count-1]:null;
+  bool changed=routeCount!=count||routeFirst!=first||routeLast!=last||routeBounds!=bounds||routeZoom!=zoomIndex;
+  if(routeTexture==null||changed&&Time.unscaledTime>=nextRouteRaster){
+   if(routeRaster==null)routeRaster=new MapRouteRaster((int)Size,(int)Size);
+   if(routeTexture==null){routeTexture=new Texture2D((int)Size,(int)Size,TextureFormat.RGBA32,false);routeTexture.name="Cached minimap routes";routeTexture.filterMode=FilterMode.Point;routeTexture.wrapMode=TextureWrapMode.Clamp;}
+   routeRaster.Clear();for(int pass=0;pass<2;pass++)foreach(var segment in segments){var color=pass==0?(segment.passenger?new Color(.8f,.12f,.55f):new Color(.05f,.65f,1)):segment.color;routeRaster.Line(Project(segment.a),Project(segment.b),color,pass==0?(segment.passenger?7:11):4);}
+   routeTexture.SetPixels32(routeRaster.Pixels);routeTexture.Apply(false,false);routeCount=count;routeFirst=first;routeLast=last;routeBounds=bounds;routeZoom=zoomIndex;nextRouteRaster=Time.unscaledTime+.1f;
+  }
+  var oldColor=GUI.color;try{GUI.color=Color.white;GUI.DrawTexture(new Rect(0,0,Size,Size),routeTexture);}finally{GUI.color=oldColor;}
+ }
+ void OnDestroy(){if(routeTexture)Destroy(routeTexture);}
  readonly Dictionary<Vector2,Rect> markerLabels=new Dictionary<Vector2,Rect>();
  public void SelectSignal(){
   SignalTarget=null;float best=125;var taxi=session.taxi;
@@ -32,7 +46,8 @@ public class DrivingReadability : MonoBehaviour {
   float span=ZoomSpan;
   bounds=new Rect(Overview?(map.width-span)/2:p.x-span/2,Overview?(map.depth-span)/2:p.z-span/2,span,span);
  }
- void OnGUI(){
+ void OnGUI(){using(TrafficPerformanceProbe.Measure("DrivingReadability.OnGUI"))DrawInterface();}
+ void DrawInterface(){
   if(session.FullMapOpen||session.RideResultOpen||session.PracticeMenuOpen||session.business.preparing||session.business.ShowingSummary||session.services.open||session.law.HistoryOpen||session.business.restartPrompt||session.business.taxPrompt)return;
   if(label==null){label=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14,wordWrap=true};label.normal.textColor=Color.white;}
   var originalMatrix=GUI.matrix;float uiScale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(uiScale,uiScale,1));float x=Screen.width/uiScale-Size-16;SetBounds();PrepareMarkers();var jobs=session.jobs;var map=session.world.map;
@@ -46,7 +61,7 @@ public class DrivingReadability : MonoBehaviour {
   if(Facilities&&map.hybrid)foreach(var j in map.junctionRules)Dot(Project(j.V()),j.facilityStatus=="verified"?Color.green:new Color(1,.6f,.1f),6);
   var overlay=GetComponent<FullMapOverlay>();
   if(overlay.ShowTraffic){foreach(var car in session.traffic.cars)if(car.Visible)Dot(Project(car.transform.position),new Color(.55f,.6f,.65f),3);foreach(var incident in session.roadConditions.incidents)Dot(Project(incident.position),Color.red,8);}
-  for(int pass=0;pass<2;pass++)foreach(var segment in overlay.RoutePaint)HudGlyph.MapLine(Project(segment.a),Project(segment.b),pass==0?(segment.passenger?new Color(.8f,.12f,.55f):new Color(.05f,.65f,1)):segment.color,pass==0?(segment.passenger?7:11):4,new Rect(0,0,Size,Size));
+  DrawRouteRaster(overlay);
   if(overlay.ShowFacilities)foreach(var place in overlay.Places()){var p=Project(place.position);if(p.x<14||p.y<14||p.x>Size-14||p.y>Size-14)continue;if(HudGlyph.Button(new Rect(p.x-13,p.y-13,26,26),place.glyph,place.name,true)){if(overlay.Open())overlay.SelectPlace(place);}}
   if(!jobs.Active)for(int i=0;i<jobs.offers.Length;i++){var offer=jobs.offers[i];if(offer==null)continue;var p=ClampedZone(Project(jobs.stops[offer.pickup].V()))+new Vector2((i-1)*20,0);p=new Vector2(Mathf.Clamp(p.x,12,Size-12),Mathf.Clamp(p.y,12,Size-12));if(GUI.Button(new Rect(p.x-10,p.y-10,20,20),(i+1).ToString(),KoreanText.Button(11))){if(overlay.Open())overlay.SelectOffer(i);}}
   if(!jobs.Active&&overlay.PreviewOffer!=null){Marker(jobs.stops[overlay.PreviewOffer.pickup].V(),"승차",new Color(.3f,1,.55f),true);Marker(jobs.stops[overlay.PreviewOffer.drop].V(),"도착",new Color(1,.5f,.8f),true);}
@@ -66,7 +81,7 @@ public class DrivingReadability : MonoBehaviour {
   GUI.Label(new Rect(x+4,385,276,22),"© OSM / ODbL · 현장 규제 미검증",new GUIStyle(label){fontSize=11});
   if(Facilities){var status=GetComponent<HybridMapStatus>();Panel(new Rect(x-310,42,300,145));GUI.Label(new Rect(x-300,50,280,130),"시설 □ 주황: 임시 / 초록: 확인\n"+(status?status.current:"시설 정보 없음"),label);}
   var matrix=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.TRS(new Vector3(0,-285*scale),Quaternion.identity,new Vector3(scale,scale,1));
-  DrawSignal(29);
+  using(TrafficPerformanceProbe.Measure("DrivingReadability.Signal"))DrawSignal(29);
   DrawNavigation(29);GUI.matrix=originalMatrix;
  }
  public string NavigationSummary {get{var nav=session.jobs.nav;return nav.HasDestination?nav.PreferenceLabel+" · "+nav.remaining.ToString("0")+"m · 약 "+RoadNavigation.FormatEta(nav.estimatedSeconds):"목적지를 선택하면 경로를 안내합니다";}}

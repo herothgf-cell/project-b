@@ -63,6 +63,7 @@ public static class PedestrianSignalConsistencyTests {
   Check(actor.state.normalCrossings==0&&actor.state.redWait==0&&!actor.state.jaywalking,"legacy save safely starts with no jaywalk budget");
   var invalid=system.Capture();invalid.actors[0].normalCrossings=-1;bool rejected=false;try{system.Validate(invalid);}catch(ArgumentException){rejected=true;}Check(rejected,"invalid jaywalk budget rejected");
   junction.editorProgram=new RoadMapSignalProgram{groups=new[]{new RoadMapSignalGroup{id="walk",pedestrian=true,axis=1,sign=-1}},stages=new[]{new RoadMapStage{green=10,yellow=0,clearance=2,groups=new[]{"walk"}}}};
+  Check(traffic.HasPedestrianPhase(junction),"authored pedestrian program supports a midblock crossing without legacy crosswalk flags");
   traffic.manualTime=11;advance(1);Check(!actor.Crossing,"authored program red blocks ordinary departure");
   traffic.manualTime=1;Check(traffic.PedestrianGreenRemaining(junction,1,-1)<0,"authored program currently exposes unknown countdown");advance(1);
   Check(actor.Crossing&&!actor.state.jaywalking,"authored green with unknown countdown permits ordinary crossing");

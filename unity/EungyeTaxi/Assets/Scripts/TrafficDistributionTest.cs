@@ -12,10 +12,11 @@ public sealed class TrafficDistributionTest : MonoBehaviour {
  void Check(bool value,string message){ok&=value;report.AppendLine((value?"PASS ":"FAIL ")+message);Debug.Log("TRAFFIC_DISTRIBUTION "+message+"="+value);}
  IEnumerator Start(){
   var session=FindObjectOfType<DriveSession>();if(!session){Check(false,"session exists");Finish();yield break;}
+  while(!session.StartupReady)yield return null;
   session.business.enabledCampaign=false;session.business.enabled=false;session.paused=false;session.roadConditions.enabled=false;
   Check(session.business.SavePath.IndexOf("artifacts",StringComparison.OrdinalIgnoreCase)>=0,"Test flag isolates campaign save path="+session.business.SavePath);
   Time.timeScale=3;var traffic=session.traffic;var district=traffic.GetComponent<DistrictTraffic>();bool safe;int visible,cells;
-  string snapshot=TrafficDistributionSnapshot.Inspect(traffic,out safe,out visible,out cells);Check(visible>=24&&cells>=8&&traffic.cars.Count<=48,"initial "+snapshot);Check(safe,"initial ordinary starts, >=10m spacing, player/static clearance");
+  string snapshot=TrafficDistributionSnapshot.Inspect(traffic,out safe,out visible,out cells);Check(visible>=48&&cells>=8&&traffic.cars.Count<=DistrictTraffic.PoolCap,"initial "+snapshot);Check(safe,"initial ordinary starts, >=10m spacing, player/static clearance");
   // Exercise actual collider admission rather than only a clear default taxi pose.
   var blocker=GameObject.CreatePrimitive(PrimitiveType.Cube);blocker.name="Traffic admission blocker fixture";blocker.transform.position=new Vector3(-5000,.85f,-5000);blocker.transform.localScale=Vector3.one;
   foreach(int layer in new[]{0,8}){blocker.layer=layer;Physics.SyncTransforms();Check(district.Occupied(new Vector3(-5000,0,-5000),Vector3.forward,null),"null-self admission detects blocker layer="+layer);}

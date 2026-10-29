@@ -18,6 +18,21 @@ class PrototypeStateTests {
   Check(ledger.TotalScore==86&&!ledger.Record(compliant)&&ledger.TotalScore==86,"one recovery per observed event");
   var restored=new LawLedger();foreach(var saved in ledger.Events)restored.Record(saved);
   Check(restored.TotalScore==86&&new LawLedger().TotalScore==100,"restore cumulative score and new campaign reset");
+  var repeated=new LawLedger();
+  for(int i=0;i<4;i++){var incident=new LawEvent{id="repeat-"+i,day=1,tripId="same-trip",family="signal"};incident.Add("L02",LawVerdict.Violation,4);repeated.Record(incident);}
+  Check(repeated.TotalScore==84,"four independent violations reach reported score84");
+  var fifth=new LawEvent{id="repeat-4",day=1,tripId="same-trip",family="signal"};fifth.Add("L02",LawVerdict.Violation,4);repeated.Record(fifth);
+  Check(repeated.TotalScore==80&&!repeated.Record(fifth)&&repeated.TotalScore==80,"same trip and family do not cap independent violations; duplicate occurrence is ignored");
+  var partial=LawEvaluator.StopLine("progressive",1,new RoadObservation{known=true,forward=SignalColor.Red});repeated.RecordIncident(partial);
+  var full=new LawEvent{id="progressive",day=1,family="signal"};full.Add("L01",LawVerdict.Violation,20);repeated.RecordIncident(full);
+  Check(repeated.TotalScore==60&&repeated.Count==6,"stop line incident upgrades to full maximum deduction once");
+  int revision=repeated.Revision;repeated.RecordIncident(full);repeated.RecordIncident(partial);
+  Check(repeated.TotalScore==60&&repeated.Revision==revision,"duplicate or stale incident observations do not rescore or invalidate UI");
+  var leftRed=LawEvaluator.Signal("left-red",1,new RoadObservation{known=true,forward=SignalColor.Green},true,SignalColor.Red);
+  var leftGreen=LawEvaluator.Signal("left-green",1,new RoadObservation{known=true,forward=SignalColor.Red},true,SignalColor.Green);
+  var leftYellow=LawEvaluator.Signal("left-yellow",1,new RoadObservation{known=true,forward=SignalColor.Green},true,SignalColor.Yellow);
+  Check(leftRed.Deduction==20&&leftRed.rules[0].verdict==LawVerdict.Violation,"left red is evaluated even when forward green");
+  Check(leftGreen.Deduction==0&&leftGreen.rules[0].verdict==LawVerdict.Compliant&&leftYellow.rules[0].verdict==LawVerdict.Deferred,"left arrow green complies and yellow remains deferred");
   var bypass=new LawEvent{id="exit-2",day=1,family="exit"};bypass.Add("L06",LawVerdict.NoOpportunity,15);ledger.Record(bypass);
   Check(ledger.ValidCount("exit","L06")==1,"no opportunity excluded");
   Check(ledger.Summary("exit","L06").Contains("기록 부족"),"do not infer from few observations");

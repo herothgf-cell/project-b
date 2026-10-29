@@ -1226,7 +1226,11 @@
           "status": "unreviewed",
           "observations": []
         }
-      ]
+      ],
+      "gameGeometryReview": {
+        "date": "2026-10-29",
+        "scope": "Remove overlapping longitudinal paint, separate U-turn/other glyphs, normalize only clear provisional connectors; preserve reviewed curves and legal movements. Source dimensions remain game estimates."
+      }
     },
     {
       "id": "J19634_14435",
@@ -2952,7 +2956,11 @@
             "2026-10-26 checked Naver panorama dcuIEvnfmTeYM4mY2DWaXA, capture2026-05: north incoming inner LEFT-only, middle STRAIGHT, curb RIGHT-only; opposing northbound1. NW raised triangular refuge and separated slip-right with pedestrian/cycle crossing and yellow speed table observed. Source URL https://map.naver.com/p/entry/coordinates/3zafbw,2AGEMu?c=16,0,0,0,adh&p=dcuIEvnfmTeYM4mY2DWaXA,35,-8,50,Float . Game widths, taper lengths, island outline and signal timings are estimates. Other approaches not fully reviewed."
           ]
         }
-      ]
+      ],
+      "gameGeometryReview": {
+        "date": "2026-10-29",
+        "scope": "Remove overlapping longitudinal paint, separate U-turn/other glyphs, normalize only clear provisional connectors; preserve reviewed curves and legal movements. Source dimensions remain game estimates."
+      }
     },
     {
       "id": "J5070_0",
@@ -4105,7 +4113,11 @@
           "status": "unreviewed",
           "observations": []
         }
-      ]
+      ],
+      "gameGeometryReview": {
+        "date": "2026-10-29",
+        "scope": "Remove overlapping longitudinal paint, separate U-turn/other glyphs, normalize only clear provisional connectors; preserve reviewed curves and legal movements. Source dimensions remain game estimates."
+      }
     },
     {
       "id": "J7816_0",
@@ -4474,7 +4486,11 @@
           "status": "unreviewed",
           "observations": []
         }
-      ]
+      ],
+      "gameGeometryReview": {
+        "date": "2026-10-29",
+        "scope": "Remove overlapping longitudinal paint, separate U-turn/other glyphs, normalize only clear provisional connectors; preserve reviewed curves and legal movements. Source dimensions remain game estimates."
+      }
     },
     {
       "id": "J8066_6364",
@@ -4566,7 +4582,11 @@
           "status": "unreviewed",
           "observations": []
         }
-      ]
+      ],
+      "gameGeometryReview": {
+        "date": "2026-10-29",
+        "scope": "Remove overlapping longitudinal paint, separate U-turn/other glyphs, normalize only clear provisional connectors; preserve reviewed curves and legal movements. Source dimensions remain game estimates."
+      }
     },
     {
       "id": "J814_17308",
@@ -5222,7 +5242,22 @@
           "status": "unreviewed",
           "observations": []
         }
-      ]
+      ],
+      "gameGeometryReview": {
+        "date": "2026-10-29",
+        "scope": "Remove overlapping longitudinal paint, separate U-turn/other glyphs, normalize only clear provisional connectors; preserve reviewed curves and legal movements. Source dimensions remain game estimates."
+      }
     }
-  ]
+  ],
+  "commercialCrossingReview": {
+    "date": "2026-10-29",
+    "sourceMonth": "2026-05",
+    "unsignalized": [
+      "J5750_2576",
+      "J7204_2569"
+    ],
+    "signalizedMidblock": "J6480_2573",
+    "sourceUrl": "https://map.naver.com/p/entry/coordinates/3zao1h,2AGJhI?c=15,0,0,0,adh&p=i7qori-dtj0W3l_zrXdqrg,-45,10,80,Float",
+    "note": "Facility existence matched to user capture and Naver panorama; coordinates, geometry and 54s timing are game estimates."
+  }
 }
