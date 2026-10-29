@@ -84,3 +84,15 @@ driving 러너는 -Case baseline/lag-swap/violation, -Executable <복사본 exe>
 다른 물리PC·LAN/인터넷/방화벽, 사람 키보드/패드·화면 시야/고지·장시간 조작감, WheelCollider/다른 지도/복수 신호군·금지차로/합류·복잡한 측면 책임·간접 봉쇄·전체 교통/공급/수익 밸런스는 [19](../content-design/pvp/19-driving-npc-rules-acceptance.md)에 분리했다. P2 전체나 공개 랭킹 운영 완료로 표시하지 않는다. 유형별 수면/준비/응답/오염과 PVP 내구도/수리는 후속이다.
 
 동시 작업의 PVP Git 배포 규칙을 보존한다. 소스 커밋을 먼저 확정한 뒤 최신 main HUD를 포함해 재빌드·복사본 운송/격리·전체 해시 검증 후 실행 폴더/manifest를 별도 커밋한다. 실제 소스 해시·복사본 결과·게시 결과는 확인 뒤 아래에 추가한다. 자기 자신을 포함할 커밋 해시는 추측하지 않는다.
+
+## 최종 소스·실행 폴더 검증
+
+- 실제 소스 커밋: `32b23317c8781a99fb4f72a1a125b9eb75bd2c9e`. 최신 main HUD 병합 뒤 이 커밋의 Unity 소스에 미커밋 변경이 없는 상태에서 다시 검사·빌드했다.
+- `driving-packaged-model.log`: Editor 종료0, 16개 접근/12개 연속 운송 경로와 법규/NPC25,628개 관측 검사 통과. `driving-packaged-build.log`: BuildClient 종료0/`PVP_BUILD_OK`.
+- 프로젝트·Library 밖 `artifacts/pvp/runtime-copy-<고유값>/`에 전체 실행 폴더를 복사하고139개 파일의 크기·SHA256 동일성을 확인했다. 복사본 자체를 작업 디렉터리로 실행했다.
+- `driving-copied-isolation.log`: 복사본 종료0/`PVP_RUNTIME_ISOLATION_OK`.
+- `driving-packaged-baseline.log`: 복사본 실제 두 Player 종료0. host199.541m/client319.404m, 각1회 운송·33/44점, fixture0/도로 경계 차단0, 동일 최종 원장/결과, 공유 NPC/보행 상태145개 표본 일치. 앞서 수행한3프로필 전체 결과와 별도로 기록한다.
+- `driving-package-validation.json`을 근거로 `update_pvp_distribution_manifest.ps1 -SourceCommit <위 소스40자리> -ValidatedOn 2026-10-29 -Rebuilt -ValidationReport artifacts/pvp/driving-package-validation.json` 실행0. manifest 검증0: **139파일93,199,109바이트**. 로그/복사본은 Git 제외 로컬 증거이고 전체 원본 실행 폴더·manifest는 Git 배포한다.
+- 싱글 manifest 재검증0: **130파일112,194,710바이트**. 싱글 실행 폴더/지도 입력/Unity 소스 추가 변경 없음. 화면·사람 입력·다른 물리PC 검증은 수행하지 않았다.
+
+배포 커밋·원격 반영은 실제 결과를 확인한 뒤 아래 게시 확인에 기록한다.

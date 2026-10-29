@@ -1,20 +1,38 @@
 {
   "formatVersion": 1,
-  "sourceCommit": "236108baaf4ab075171db33dc49440d298fa8111",
-  "branchBaseCommit": "9489e6ed51b8e85ad1e50c67463bae94b9f315ac",
+  "sourceCommit": "32b23317c8781a99fb4f72a1a125b9eb75bd2c9e",
+  "branchBaseCommit": "32b23317c8781a99fb4f72a1a125b9eb75bd2c9e",
   "unity": "2022.3.62f2",
   "platform": "Windows64",
   "entrypoint": "builds/PvpPrototype/PvpPrototype.exe",
   "validatedOn": "2026-10-29",
-  "totalBytes": 93137205.0,
+  "totalBytes": 93199109.0,
   "validation": {
-    "existingVerifiedBuild": true,
-    "sourceRebuiltForPackaging": false,
+    "existingVerifiedBuild": false,
+    "sourceRebuiltForPackaging": true,
     "copiedRuntimeFolderHashVerified": true,
     "copiedRuntimeIsolation": "exit 0 / PVP_RUNTIME_ISOLATION_OK",
-    "singleDistribution": "130 files / 112193174 bytes / SHA256 verified",
+    "singleDistributionFiles": 130,
+    "singleDistributionBytes": 112194710.0,
     "differentPhysicalPC": false,
-    "notes": "Existing competition release build; concurrent uncommitted NPC/driving source is excluded. Runtime copy launched outside Unity project/cache. Headless smoke is not visual or cross-PC LAN acceptance."
+    "notes": "Hash inventory; execution evidence is supplied separately.",
+    "report": {
+      "sourceCommit": "32b23317c8781a99fb4f72a1a125b9eb75bd2c9e",
+      "buildExit": 0,
+      "modelExit": 0,
+      "copyHashEqual": true,
+      "copyFileCount": 139,
+      "copyExit": 0,
+      "copyMarker": "PVP_RUNTIME_ISOLATION_OK",
+      "driveBaselineExit": 0,
+      "copyWorkingDirectory": "artifacts/pvp/runtime-copy-789b8a4894094ad7a6f757fb4d25adf7",
+      "inputOnlyDriving": true,
+      "fullProfileValidationLog": "artifacts/pvp/driving-release-players.log",
+      "copiedBaselineLog": "artifacts/pvp/driving-packaged-baseline.log",
+      "humanInput": false,
+      "differentPhysicalPC": false,
+      "notes": "Committed-source clean rebuild after main HUD merge; copied runtime launched with its own working directory. Earlier same PvP code passed baseline, RTT150ms/loss3% spawn swap, and deliberate violations. Planar motor inputs, no runtime authority position fixture."
+    }
   },
   "files": [
     {
@@ -130,17 +148,17 @@
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/boot.config",
       "bytes": 164,
-      "sha256": "51f37d01b488cc7519bb63574dc7efdeec3224ffd32551150e08680c9364381b"
+      "sha256": "aa8320ec54feb4af45aa6d4009eded86ae6e949aa4445a511cc67745f62cc119"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/globalgamemanagers",
-      "bytes": 51804,
-      "sha256": "b5e12ddefe67f151f1e301aebfdda6ee68fc96ca6c254b97e4aa74fde00c2b2a"
+      "bytes": 52028,
+      "sha256": "25271b546649ee229798012dce89763e5e23338768c5400bce68a5eb497e6e4a"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/globalgamemanagers.assets",
-      "bytes": 97880,
-      "sha256": "ab4c4a04672070672e508d1d807cc2fa408d8e628dea6ccf711053538b05782d"
+      "bytes": 98488,
+      "sha256": "638981f5aa951d8de4c6378fa5cc0f3661dc2af376f76205017bcdf3902a5acd"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/globalgamemanagers.assets.resS",
@@ -150,12 +168,12 @@
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/level0",
       "bytes": 1140,
-      "sha256": "b040ebd7744f946355c5427bd4fb7bbc18197b4cc8c05a43a66a88cee363a817"
+      "sha256": "4e9a70cd8640088ec7cd5b013680686a7305b8de5c08c2e1f462fb76dc0d59ac"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 1537024,
-      "sha256": "673f738d029c1dfaeba8f3da9cf743f6e2f47e06b5d5a231267523608ce00075"
+      "bytes": 1597952,
+      "sha256": "334a4e5b6c8a9148e049fbe41e675fb3b46b5cc325831bd0522273d4559be376"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/Managed/Mono.Security.dll",
@@ -669,8 +687,8 @@
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/RuntimeInitializeOnLoads.json",
-      "bytes": 6503,
-      "sha256": "4bb583d62eadf4300db224efc96185b038d5f739dd5d1de54a528fd95c04f50e"
+      "bytes": 6647,
+      "sha256": "bc504dcf5ea0e3132bfccf6d848fe4cc4f344aba3fc288b914ddb03fbc99cf86"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/ScriptingAssemblies.json",
@@ -680,7 +698,7 @@
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/sharedassets0.assets",
       "bytes": 8388,
-      "sha256": "c9697d394108f43ec1a47f777c5ba1e10eb247cd5dc9b638bd2a0e520c15febb"
+      "sha256": "a6bb48bcb420eea0fdb9061b9ac800c0e437bb0e37e9a67bbeb099f041f0873f"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype.exe",
