@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 [Serializable] public sealed class PassengerRequestSlot {
@@ -28,6 +28,14 @@ public sealed class PassengerRequestSchedule {
    selected.Add(new PassengerRequestSlot{kind=k,threshold=threshold});pool.RemoveAll(v=>!Compatible(k,v));
   }
   result.state.slots=selected.ToArray();return result;
+ }
+ public bool BindRepresentative(RequestKind kind,RequestKind[] eligible,float threshold=-1){
+  if(state.slots.Length==0||Array.IndexOf(eligible,kind)<0)return false;
+  state.slots[0].kind=kind;if(threshold>=0)state.slots[0].threshold=Math.Min(.65f,threshold);
+  for(int i=1;i<state.slots.Length;i++)if(!Compatible(kind,state.slots[i].kind)){
+   bool found=false;foreach(var candidate in eligible)if(Compatible(kind,candidate)){state.slots[i].kind=candidate;found=true;break;}
+   if(!found){Array.Resize(ref state.slots,i);break;}
+  }return true;
  }
  public int Tick(float movingSeconds,float progress,bool safeStop,bool arrivalLocked){
   if(float.IsNaN(movingSeconds)||float.IsInfinity(movingSeconds)||movingSeconds<0||float.IsNaN(progress)||float.IsInfinity(progress))throw new ArgumentException("Invalid request clock");

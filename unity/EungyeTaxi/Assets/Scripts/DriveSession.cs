@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 public class DriveSession : MonoBehaviour {
     public string startupRegion="";
@@ -54,7 +54,7 @@ public class DriveSession : MonoBehaviour {
         if(world.map.HasHd){jobs.enabled=world.map.hybrid;assisted.hd.nav=jobs.nav;}
         paused=false;Time.timeScale=1;
         business=gameObject.AddComponent<BusinessProgress>();business.Initialize(this);gameObject.AddComponent<BusinessHUD>().session=this;
-        law=taxi.gameObject.AddComponent<DrivingLaw>();law.session=this;services=gameObject.AddComponent<ServiceStops>();services.session=this;requests=gameObject.AddComponent<PassengerRequestUI>();requests.session=this;gameObject.AddComponent<RightTurnSituation>().session=this;gameObject.AddComponent<ExitQueueObserver>().session=this;gameObject.AddComponent<ExitQueueSituation>().session=this;gameObject.AddComponent<PracticeSession>().session=this;gameObject.AddComponent<PracticeCoach>().session=this;gameObject.AddComponent<ConfusionPractice>().session=this;gameObject.AddComponent<ServiceLawZones>().session=this;
+        law=taxi.gameObject.AddComponent<DrivingLaw>();law.session=this;services=gameObject.AddComponent<ServiceStops>();services.session=this;requests=gameObject.AddComponent<PassengerRequestUI>();requests.session=this;gameObject.AddComponent<PassengerBehaviorUI>().session=this;gameObject.AddComponent<RightTurnSituation>().session=this;gameObject.AddComponent<ExitQueueObserver>().session=this;gameObject.AddComponent<ExitQueueSituation>().session=this;gameObject.AddComponent<PracticeSession>().session=this;gameObject.AddComponent<PracticeCoach>().session=this;gameObject.AddComponent<ConfusionPractice>().session=this;gameObject.AddComponent<ServiceLawZones>().session=this;
         gameObject.AddComponent<RoadSignage>().session=this;gameObject.AddComponent<DriveNotifications>().session=this;gameObject.AddComponent<DrivingScoreJournal>().session=this;
         gameObject.AddComponent<RideCompletionPanel>().session=this;gameObject.AddComponent<StopOccupancySystem>().session=this;
         roadConditions=gameObject.AddComponent<RoadConditions>();roadConditions.Initialize(this);jobs.nav.conditions=roadConditions;

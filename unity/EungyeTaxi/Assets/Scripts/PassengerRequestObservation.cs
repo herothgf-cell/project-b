@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 [System.Serializable] public class PassengerRequestObservationSnapshot {
  public string systemRouteReason;
  public PassengerRequestSnapshot request;public string observedTrip,selectedEffect;public float stoppedSeconds,travelled,broadTravel,expectedDistance,expectedBroad,etaAge,etaPredicted,etaNav,acceptedAge,addedDistance,newRemaining;public int motionBefore,lawBefore,accelBefore,brakeBefore,necessaryBefore,proposal,newFare;public bool etaSelected,quietReply,adviceFastest,preferLarge,preferFast;
@@ -116,6 +116,7 @@ public class PassengerRequestObservation : MonoBehaviour {
   return label+"\n"+choice.effect;
  }
  public static Rect ReplyButtonRect(Rect area,int index){float w=(area.width-8)/2;return new Rect(area.x+(index%2)*(w+8),area.y+(index/2)*49,w,45);}
+ public bool PanelVisible {get{return !request.Resolved||Time.time<=resultUntil||etaSelected;}}
  public void Draw(){if(!session.business.useV2||session.jobs.trip.State!=TripState.OnTrip||session.jobs.trip.ArrivalLocked||session.paused)return;if(request.Resolved&&Time.time>resultUntil&&!etaSelected)return;
   string text=request.Resolved?"나  “"+DialogueReply+"”":"손님  “"+lines[(int)request.Kind]+"”";
   if(etaSelected)text="도착 예상 안내 · 교통에 따라 변동\n현재 남은 "+RoadNavigation.FormatEta(session.jobs.nav.estimatedSeconds)+" · 최초 안내까지 "+RoadNavigation.FormatEta(Mathf.Max(0,etaPredicted-(Time.time-etaAt)));

@@ -17,7 +17,7 @@
 
 아래 표는 현재 실행 파일 기준이다. 사용자는 Proto 확장 방향으로 **충돌에 따른 수리비·시간 손실과 내구도0 운행 불가**를 선택했다. 기존 사고 수리 제외 결정을 부분 변경하며 아직 미구현이다. 성능 저하·보험·과실 판정은 제외한다. [차량 세부안](content-design/03-life-and-economy.md#추가-기획-충돌-내구도와-수리)의 수치는 시험값이다.
 
-취객 미등장 보완과 지속 응대 승객은 [승객 검토안](content-design/02-passengers-and-fares.md#추가-기획-승객-유형과-상호작용)에 정리했다. 취객을 공통 승객 유형으로 통합하고 운행/상태 영향형 후보를 확대했다. 내구도·수리는 사용자 1차 확인 완료이며 아직 미구현이다. 승객 후보 채택·세부안 검토 후 구현·체감 검증을 진행한다.
+승객11유형·34변주, 일반 승객, 적재/하역·오염 짐·음식 섭취/흘림을 사용자 요청에 따라 구현한다. [승객 기준](content-design/02-passengers-and-fares.md#추가-기획-승객-유형과-상호작용)과 [검증 기록](work-history/2026-10-29-passenger-types-implementation.md)을 따른다. 내구도·수리는 사용자 1차 확인 완료·미구현이며 이번 승객 변경과 별도다. 새 P13 대체 지점·별도 용무 대기는 추가하지 않는다.
 
 ## 포함·제외 범위
 
@@ -27,7 +27,7 @@
 | 주행·AI | 키보드/패드·1/3인칭·수동/보조, 일반 차량48대와 신호·대기열 | 신규 물리 엔진·차종 확대·전역 군중 | [06](content-design/01-driving-and-traffic.md) |
 | 상황·법규 | 출구A/B/C·우회전R1~R5·9코스, 관찰 가능한 준수/위반/보류와 점수 | 후보62개 일괄 자동 판정·실제 벌금/면허처분 | [01](content-design/01-driving-and-traffic.md),[02](content-design/01-driving-and-traffic.md),[09](content-design/02-passengers-and-fares.md) |
 | 기록 | 사건 카드·일일/누적 결과·동일 조건 연습 | 영상 리플레이·장기 숙련 레벨 | [03](content-design/04-campaign-and-feedback.md) |
-| 승객 | 호출·길가 승객·24정차 후보·17종 요청·만족도·보너스 | 복잡한 대화·실제 음악·음성 연기·분실물 반환 퀘스트 | [04](content-design/02-passengers-and-fares.md),[11](content-design/02-passengers-and-fares.md),[14](content-design/02-passengers-and-fares.md) |
+| 승객 | 호출·길가 승객·24정차 후보·17종 요청·11유형/34변주·일반 승객·만족도·보너스 | 복잡한 대화·실제 음악·음성 연기·분실물 반환 퀘스트 | [04](content-design/02-passengers-and-fares.md),[11](content-design/02-passengers-and-fares.md),[14](content-design/02-passengers-and-fares.md) |
 | 요청 배정 | 무작위0~2건·승차 또는 운행 중 안전 정차 발생·개별 평가/저장 | P11 구현·자동 검사 완료, 수동 빈도/답변 여유 별도 | [04 요청 배정](content-design/02-passengers-and-fares.md) |
 | 영업 전략·제한 구현 | 지역/영업 단계별 수요·공차 성과 비교 → 일반 승하차 공간 일시 점유/안전 대안 | P12/P13 대기 경로 구현. 안전 대체 쌍 없음으로 대체 이동 제외; 수요 할증·전역 도로 공사 제외 | [17 확장](content-design/03-life-and-economy.md) |
 | 취객·청결 | 취객 특성·평소 대사·구토 예고/발생·기상 지연·청결·세차 전 호출 잠금·길가 거부 | 의학적 대응·강제 하차·사고/수리 콘텐츠 | [15](content-design/03-life-and-economy.md) |
