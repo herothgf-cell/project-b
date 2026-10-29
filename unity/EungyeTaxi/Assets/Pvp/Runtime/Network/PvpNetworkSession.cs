@@ -8,98 +8,162 @@ using Unity.Netcode.Transports.UTP;
 using Unity.Collections;
 using Pvp.Map;
 using Pvp.Driving;
+using Pvp.Passengers;
 namespace Pvp.Network {
-// Account-free direct-IP experiment. No relay, match, score, reconnect identity or host migration.
+[Serializable] public sealed class PvpWelcome {public string Session,Ticket;public int Epoch;public float Grace;public bool Resumed;public PvpDriveSnapshot State;}
+[Serializable] public struct PvpControl {public int Epoch,Index;}
+// Direct-IP trusted-LAN trial. Tickets stay in process memory; no host migration or account authentication.
 public sealed class PvpNetworkSession:MonoBehaviour {
- sealed class Peer {public PvpNetworkMotor Motor;public PvpInputBuffer Inputs=new PvpInputBuffer();public int Ack;public Vector3 Start;public Peer(PvpMapRuntime map,int slot){Motor=new PvpNetworkMotor(map,slot);Start=Motor.Capture().State.Position;}}
- NetworkManager manager;GameObject networkRoot;PvpPracticeSession practice;PvpMapRuntime map;PvpPrediction prediction;
- readonly Dictionary<ulong,Peer> peers=new Dictionary<ulong,Peer>();readonly Dictionary<ulong,GameObject> visuals=new Dictionary<ulong,GameObject>();
- Material remoteMaterial;bool host,ready,reverse,stopping;int tick,samples;float started,connectedAt=-1,lastSnapshot,accumulator;
- PvpDriveSnapshot latestAuthority;Vector3 ownStart;bool gotOwnStart;float ownDistance;
- public bool Probe; public float ProbeSeconds=14;public string ExpectedRejection;
- public string Status {get;private set;} public float RemoteDistance {get;private set;}public int Samples {get{return samples;}}
- public void Begin(bool asHost,string address,ushort port,bool badMap=false){
-  IPAddress parsed;if(!IPAddress.TryParse(address,out parsed)||parsed.AddressFamily!=System.Net.Sockets.AddressFamily.InterNetwork||port==0)throw new ArgumentException("IPv4 address and port required");
+ sealed class Peer {
+  public PvpNetworkMotor Motor;public PvpInputBuffer Inputs=new PvpInputBuffer();public int Ack,Epoch,PassengerIndex;public Vector3 Start;
+  public Peer(PvpMapRuntime map,int slot){Motor=new PvpNetworkMotor(map,slot);Start=Motor.Capture().State.Position;}
+  public void Freeze(){var state=Motor.Capture();state.State.Speed=0;state.State.Steering=0;Motor.Restore(state);Inputs=new PvpInputBuffer();}
+ }
+ sealed class Remote {public GameObject Object;public PvpVehicleState Current,Target;}
+ NetworkManager manager;GameObject networkRoot;PvpPracticeSession practice;PvpMapRuntime map;PvpPrediction prediction;PvpReconnectRegistry registry;
+ readonly Dictionary<ulong,Peer> peers=new Dictionary<ulong,Peer>();readonly Dictionary<ulong,Remote> visuals=new Dictionary<ulong,Remote>();
+ Material remoteMaterial;bool host,ready,reverse,stopping,terminal,needsRetry,leaving,welcomeReady,dropPerformed,previewSent;
+ int tick,samples,epoch,reconnects;float started,attemptStarted,driveStart=-1,lastSnapshot,accumulator,retryAt,retryDeadline,leaveDeadline;
+ string address,credential,sessionId;ushort port;
+ PvpDriveSnapshot latestAuthority;Vector3 ownStart,dropPosition;bool gotOwnStart,contentRestored;int dropPreview;float ownDistance,restoreError,resumedAt,postResumeDistance;Vector3 resumedPosition;
+ public bool Probe,ProbeReconnect,ProbeTamperTicket,ProbeLeave,ProbeExternalDrop;public float ProbeSeconds=14,ProbeRetryDelay=1,ReconnectGraceSeconds=30;public string ExpectedRejection;
+ public string Status {get;private set;}public float RemoteDistance {get;private set;}public int Samples {get{return samples;}}
+ public void Begin(bool asHost,string ip,ushort listenPort,bool badMap=false){
+  IPAddress parsed;if(!IPAddress.TryParse(ip,out parsed)||parsed.AddressFamily!=System.Net.Sockets.AddressFamily.InterNetwork||listenPort==0)throw new ArgumentException("IPv4 address and port required");
   if(NetworkManager.Singleton!=null)throw new InvalidOperationException("Network manager already active");
-  host=asHost;Application.runInBackground=true;started=Time.realtimeSinceStartup;Status="접속 중";
+  host=asHost;address=ip;port=listenPort;Application.runInBackground=true;started=Time.realtimeSinceStartup;Status="접속 중";
   var bootstrap=GetComponent<PvpBootstrap>();bootstrap.StartPractice();practice=GetComponent<PvpPracticeSession>();if(practice==null)throw new InvalidOperationException(bootstrap.StartupError);practice.SetScripted(true);map=practice.Map;
-  networkRoot=new GameObject("PVP direct IP transport");manager=networkRoot.AddComponent<NetworkManager>();var transport=networkRoot.AddComponent<UnityTransport>();
-  transport.SetConnectionData(address,port,asHost?address:null);
-  manager.NetworkConfig=new NetworkConfig{NetworkTransport=transport,EnableSceneManagement=false,ConnectionApproval=true,TickRate=50,ForceSamePrefabs=false};
-  manager.NetworkConfig.ConnectionData=Encoding.UTF8.GetBytes(JsonUtility.ToJson(PvpAdmission.Hello(badMap?"wrong-map":map.MapHash)));
-  manager.ConnectionApprovalCallback=Approve;manager.OnClientConnectedCallback+=Connected;manager.OnClientDisconnectCallback+=Disconnected;
-  bool result=host?manager.StartHost():manager.StartClient();if(!result)throw new InvalidOperationException("Transport could not start");
-  manager.CustomMessagingManager.RegisterNamedMessageHandler("drive",ReceiveInput);manager.CustomMessagingManager.RegisterNamedMessageHandler("state",ReceiveState);
-  if(host&&!peers.ContainsKey(0))Connected(0);
   remoteMaterial=new Material(Shader.Find("Standard")){color=new Color(.2f,.6f,1)};
+  if(host){registry=new PvpReconnectRegistry(ReconnectGraceSeconds);sessionId=Guid.NewGuid().ToString("N");}
+  OpenTransport(badMap);
+ }
+ void OpenTransport(bool badMap=false){
+  attemptStarted=Time.realtimeSinceStartup;terminal=false;welcomeReady=host;
+  networkRoot=new GameObject("PVP direct IP transport");manager=networkRoot.AddComponent<NetworkManager>();var transport=networkRoot.AddComponent<UnityTransport>();
+  transport.SetConnectionData(address,port,host?address:null);transport.DisconnectTimeoutMS=3000;transport.ConnectTimeoutMS=1000;transport.MaxConnectAttempts=3;
+  manager.NetworkConfig=new NetworkConfig{NetworkTransport=transport,EnableSceneManagement=false,ConnectionApproval=true,TickRate=50,ForceSamePrefabs=false};
+  var hello=PvpAdmission.Hello(badMap?"wrong-map":map.MapHash);hello.Ticket=credential;
+  manager.NetworkConfig.ConnectionData=Encoding.UTF8.GetBytes(JsonUtility.ToJson(hello));
+  manager.ConnectionApprovalCallback=Approve;manager.OnClientConnectedCallback+=Connected;manager.OnClientDisconnectCallback+=Disconnected;
+  if(!(host?manager.StartHost():manager.StartClient()))throw new InvalidOperationException("Transport could not start");
+  var messages=manager.CustomMessagingManager;messages.RegisterNamedMessageHandler("drive",ReceiveInput);messages.RegisterNamedMessageHandler("state",ReceiveState);messages.RegisterNamedMessageHandler("welcome",ReceiveWelcome);messages.RegisterNamedMessageHandler("preview",ReceivePreview);messages.RegisterNamedMessageHandler("leave",ReceiveLeave);
+  if(host&&!peers.ContainsKey(0))Connected(0);
   Debug.Log("PVP_NETWORK_STARTED role="+(host?"host":"client")+" SDK=NGO1.12.0 protocol="+PvpAdmission.Protocol+" map="+map.MapHash);
  }
  void Approve(NetworkManager.ConnectionApprovalRequest req,NetworkManager.ConnectionApprovalResponse res){
-  string reason=null;try{if(req.Payload==null||req.Payload.Length>1024)reason="invalid handshake";else reason=PvpAdmission.Reject(JsonUtility.FromJson<PvpJoinHello>(Encoding.UTF8.GetString(req.Payload)),map.MapHash);}catch{reason="invalid handshake";}
-  if(reason==null&&manager.ConnectedClientsIds.Count>=2)reason="trial full";res.Approved=reason==null;res.CreatePlayerObject=false;res.Pending=false;res.Reason=reason??"";
+  string reason=null;PvpJoinHello hello=null;bool resumed;
+  try{if(req.Payload==null||req.Payload.Length>1024)reason="invalid handshake";else {hello=JsonUtility.FromJson<PvpJoinHello>(Encoding.UTF8.GetString(req.Payload));reason=PvpAdmission.Reject(hello,map.MapHash);}
+   if(reason==null&&req.ClientNetworkId!=0)registry.TryReserve(req.ClientNetworkId,hello.Ticket,Time.realtimeSinceStartup,out resumed,out reason);
+  }catch{reason="invalid handshake";}
+  res.Approved=reason==null;res.CreatePlayerObject=false;res.Pending=false;res.Reason=reason??"";
   if(reason!=null)Debug.Log("PVP_ADMISSION_REJECT "+reason);
  }
  void Connected(ulong id){
-  if(host){if(!peers.ContainsKey(id))peers[id]=new Peer(map,id==0?0:1);if(id!=0){connectedAt=Time.realtimeSinceStartup;Debug.Log("PVP_PEER_JOINED");}ready=true;Status="호스트 / 직접 IP 주행";}
-  else if(manager.IsConnectedClient){Status="연결됨 / 권한 상태 수신 대기";connectedAt=Time.realtimeSinceStartup;}
+  if(host){
+   if(id==0){if(!peers.ContainsKey(0))peers[0]=new Peer(map,0);ready=true;Status="호스트 / 직접 IP 주행";return;}
+   if(!registry.Confirm(id,Time.realtimeSinceStartup)){manager.DisconnectClient(id,"reconnect expired");return;}
+   bool resumed=peers.ContainsKey(1);if(!resumed)peers[1]=new Peer(map,1);var peer=peers[1];peer.Inputs=new PvpInputBuffer();peer.Ack=0;peer.Epoch=registry.Epoch;
+   if(driveStart<0)driveStart=Time.realtimeSinceStartup;
+   Send("welcome",id,new PvpWelcome{Session=sessionId,Ticket=registry.TicketFor(id),Epoch=registry.Epoch,Grace=ReconnectGraceSeconds,Resumed=resumed,State=Snapshot(1,peer)});
+   Status=resumed?"상대 재접속 · 기존 상태 복원":"상대 접속";Debug.Log(resumed?"PVP_PEER_RESUMED":"PVP_PEER_JOINED");
+  }else if(manager.IsConnectedClient)Status="연결됨 / 서버 복원 상태 수신 대기";
+ }
+ void ReceiveWelcome(ulong sender,FastBufferReader reader){
+  if(host||sender!=0)return;
+  try{var welcome=Read<PvpWelcome>(reader,4096);if(welcome==null||string.IsNullOrEmpty(welcome.Session)||welcome.Ticket==null||welcome.Ticket.Length!=44||welcome.Epoch<1||float.IsNaN(welcome.Grace)||welcome.Grace<=0||welcome.Grace>120||welcome.State.Owner!=1||welcome.State.Epoch!=welcome.Epoch||welcome.State.Ack!=0)throw new ArgumentException("invalid welcome");
+   if(sessionId!=null&&sessionId!=welcome.Session)throw new ArgumentException("host session changed");
+   sessionId=welcome.Session;credential=welcome.Ticket;epoch=welcome.Epoch;ReconnectGraceSeconds=welcome.Grace;prediction=new PvpPrediction(map,1);welcomeReady=true;retryDeadline=0;needsRetry=false;
+   if(welcome.Resumed){reconnects++;resumedAt=Time.realtimeSinceStartup;resumedPosition=welcome.State.State.Position;restoreError=Vector3.Distance(dropPosition,welcome.State.State.Position);contentRestored=welcome.State.PassengerIndex==dropPreview;Debug.Log("PVP_RECONNECT_RESTORED epoch="+epoch+" positionError="+restoreError+" preview="+welcome.State.PassengerIndex);}
+   ApplyOwn(welcome.State);if(driveStart<0)driveStart=Time.realtimeSinceStartup;
+  }catch(Exception e){Terminal(e.Message);}
  }
  void Disconnected(ulong id){
   if(stopping)return;
-  if(host){peers.Remove(id);if(visuals.TryGetValue(id,out var visual)){Destroy(visual);visuals.Remove(id);}Status="상대 연결 종료";}
-  else {ready=false;Status="연결 종료: "+manager.DisconnectReason;Debug.Log("PVP_NETWORK_DISCONNECTED "+manager.DisconnectReason);if(Probe){bool expected=!string.IsNullOrEmpty(ExpectedRejection)&&manager.DisconnectReason.Contains(ExpectedRejection);Finish(expected,"admission/disconnect "+manager.DisconnectReason);}}
+  if(host){if(registry!=null&&registry.Disconnect(id,Time.realtimeSinceStartup)&&peers.TryGetValue(1,out var peer)){peer.Freeze();Status="상대 연결 끊김 / 복귀 대기";PresentRemote(Snapshot(1,peer));}return;}
+  ready=false;string reason=manager==null?"connection lost":manager.DisconnectReason??"";Status="연결 종료: "+reason;Debug.Log("PVP_NETWORK_DISCONNECTED "+reason);
+  if(Probe&&!string.IsNullOrEmpty(ExpectedRejection)&&reason.Contains(ExpectedRejection)){Finish(true,"expected rejection "+reason);return;}
+  if(leaving){if(Probe)Finish(reason.Contains("left session"),"explicit leave "+reason);else Exit();return;}
+  if(Probe&&!ProbeReconnect){Finish(false,"admission/disconnect "+reason);return;}
+  if(string.IsNullOrEmpty(credential)||PvpReconnectPolicy.IsTerminalRejection(reason)){Terminal(reason);return;}
+  RequestReconnect(1);
  }
+ void RequestReconnect(float delay){
+  if(host||stopping||leaving)return;if(string.IsNullOrEmpty(credential)){Terminal("no reconnect credential");return;}
+  if(retryDeadline<=0)retryDeadline=Time.realtimeSinceStartup+ReconnectGraceSeconds;
+  ready=false;welcomeReady=false;prediction=null;terminal=false;needsRetry=true;retryAt=Time.realtimeSinceStartup+delay;CloseTransport();Status="연결 복구 중 · 서버 차량 상태를 기다립니다";
+ }
+ static T Read<T>(FastBufferReader reader,int limit){if(reader.Length>limit)throw new ArgumentException("oversized message");reader.ReadValueSafe(out string json);return JsonUtility.FromJson<T>(json);}
  void ReceiveInput(ulong sender,FastBufferReader reader){
-  if(!host||sender==0||!peers.TryGetValue(sender,out var peer))return;
-  try{if(reader.Length>1024)throw new ArgumentException("oversized input");reader.ReadValueSafe(out string json);var cmd=JsonUtility.FromJson<PvpDriveCommand>(json);peer.Inputs.Enqueue(cmd);}
-  catch{manager.DisconnectClient(sender,"invalid drive input");}
+  if(!host||sender==0||!peers.TryGetValue(1,out var peer))return;
+  try{var cmd=Read<PvpDriveCommand>(reader,1024);if(!registry.CanDrive(sender,cmd.Epoch))return;peer.Inputs.Enqueue(cmd);}catch{manager.DisconnectClient(sender,"invalid drive input");}
+ }
+ void ReceivePreview(ulong sender,FastBufferReader reader){
+  if(!host)return;try{var choice=Read<PvpControl>(reader,512);if(!registry.CanDrive(sender,choice.Epoch)||choice.Index<0||choice.Index>=PvpPassengerCatalog.Count)return;peers[1].PassengerIndex=choice.Index;}catch{manager.DisconnectClient(sender,"invalid preview choice");}
+ }
+ void ReceiveLeave(ulong sender,FastBufferReader reader){
+  if(!host)return;try{var request=Read<PvpControl>(reader,512);if(!registry.CanDrive(sender,request.Epoch))return;if(registry.Leave(sender)){peers[1].Freeze();PresentRemote(Snapshot(1,peers[1]));manager.DisconnectClient(sender,"left session");Status="상대가 나갔습니다 · 새 세션에서 참가 가능";}}catch{manager.DisconnectClient(sender,"invalid leave request");}
  }
  void ReceiveState(ulong sender,FastBufferReader reader){
-  if(host||sender!=NetworkManager.ServerClientId)return;
-  try{if(reader.Length>2048)throw new ArgumentException("oversized state");reader.ReadValueSafe(out string json);var state=JsonUtility.FromJson<PvpDriveSnapshot>(json);
-   if(state.Owner==manager.LocalClientId){if(prediction==null)prediction=new PvpPrediction(map,1);prediction.Reconcile(state);latestAuthority=state;if(!gotOwnStart){ownStart=state.State.Position;gotOwnStart=true;}ownDistance=Mathf.Max(ownDistance,Vector3.Distance(ownStart,state.State.Position));ready=true;lastSnapshot=Time.realtimeSinceStartup;samples++;practice.PresentNetworkState(prediction.State.State);Status="클라이언트 / 입력 예측·권한 보정";}
-   else PresentRemote(state);
-  }catch(Exception e){Fail(e.Message);}
+  if(host||sender!=0||!welcomeReady)return;
+  try{var state=Read<PvpDriveSnapshot>(reader,2048);if(state.Owner==1){if(state.Epoch==epoch)ApplyOwn(state);}else if(state.Owner==0)PresentRemote(state);}catch(Exception e){Terminal(e.Message);}
  }
- void Send<T>(string name,ulong target,T value){string json=JsonUtility.ToJson(value);using(var writer=new FastBufferWriter(4096,Allocator.Temp)){writer.WriteValueSafe(json);manager.CustomMessagingManager.SendNamedMessage(name,target,writer,NetworkDelivery.ReliableSequenced);}}
- void PresentRemote(PvpDriveSnapshot s){
-  if(!visuals.TryGetValue(s.Owner,out var visual)){visual=GameObject.CreatePrimitive(PrimitiveType.Cube);visual.name="PVP remote authority vehicle";visual.transform.SetParent(transform,false);visual.transform.localScale=new Vector3(1.8f,1.3f,3.6f);visual.GetComponent<Renderer>().sharedMaterial=remoteMaterial;Destroy(visual.GetComponent<Collider>());visuals[s.Owner]=visual;}
-  visual.transform.SetPositionAndRotation(s.State.Position+Vector3.up*.75f,Quaternion.Euler(0,s.State.YawDegrees,0));
+ void ApplyOwn(PvpDriveSnapshot state){
+  if(state.PassengerIndex<0||state.PassengerIndex>=PvpPassengerCatalog.Count)throw new ArgumentException("invalid passenger content index");
+  prediction.Reconcile(state);latestAuthority=state;if(reconnects>0)postResumeDistance=Mathf.Max(postResumeDistance,Vector3.Distance(resumedPosition,state.State.Position));if(!gotOwnStart){ownStart=state.State.Position;gotOwnStart=true;}ownDistance=Mathf.Max(ownDistance,Vector3.Distance(ownStart,state.State.Position));ready=true;lastSnapshot=Time.realtimeSinceStartup;samples++;practice.PresentNetworkState(prediction.State.State);Status=reconnects>0?"재접속 완료 / 서버 상태 복원":"클라이언트 / 입력 예측·권한 보정";
  }
- PvpVehicleInput InputNow(){
-  if(Probe){float age=connectedAt<0?0:Time.realtimeSinceStartup-connectedAt;return new PvpVehicleInput(age>0&&age<2?1:0,age>=2?1:0,0);}
-  return new PvpVehicleInput(Input.GetKey(KeyCode.W)?1:0,Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.Space)?1:0,(Input.GetKey(KeyCode.D)?1:0)-(Input.GetKey(KeyCode.A)?1:0),reverse,Application.isFocused);
+ void Send<T>(string name,ulong target,T value){using(var writer=new FastBufferWriter(4096,Allocator.Temp)){writer.WriteValueSafe(JsonUtility.ToJson(value));manager.CustomMessagingManager.SendNamedMessage(name,target,writer,NetworkDelivery.ReliableSequenced);}}
+ PvpDriveSnapshot Snapshot(ulong owner,Peer peer){var state=peer.Motor.Capture();state.Owner=owner;state.Ack=peer.Ack;state.Tick=tick;state.Epoch=peer.Epoch;state.PassengerIndex=peer.PassengerIndex;state.Connected=owner==0||registry.Connected;return state;}
+ void PresentRemote(PvpDriveSnapshot state){
+  if(!visuals.TryGetValue(state.Owner,out var remote)){var obj=GameObject.CreatePrimitive(PrimitiveType.Cube);obj.name="PVP remote authority vehicle";obj.transform.SetParent(transform,false);obj.transform.localScale=new Vector3(1.8f,1.3f,3.6f);obj.GetComponent<Renderer>().sharedMaterial=remoteMaterial;Destroy(obj.GetComponent<Collider>());remote=new Remote{Object=obj,Current=state.State};visuals[state.Owner]=remote;}
+  if(!remote.Object.activeSelf)remote.Current=state.State;remote.Target=state.State;remote.Object.SetActive(state.Connected);
  }
+ void LateUpdate(){foreach(var remote in visuals.Values){if(!remote.Object.activeSelf)continue;remote.Current=PvpRemotePresentation.Step(remote.Current,remote.Target,Time.unscaledDeltaTime);remote.Object.transform.SetPositionAndRotation(remote.Current.Position+Vector3.up*.75f,Quaternion.Euler(0,remote.Current.YawDegrees,0));}}
+ PvpVehicleInput InputNow(){if(Probe){if(!host&&reconnects>0){bool accelerating=Time.realtimeSinceStartup-resumedAt<1;return new PvpVehicleInput(accelerating?1:0,accelerating?0:1,0);}float age=driveStart<0?0:Time.realtimeSinceStartup-driveStart;return new PvpVehicleInput(age>0&&age<2?1:0,age>=2?1:0,0);}return new PvpVehicleInput(Input.GetKey(KeyCode.W)?1:0,Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.Space)?1:0,(Input.GetKey(KeyCode.D)?1:0)-(Input.GetKey(KeyCode.A)?1:0),reverse,Application.isFocused);}
  void Update(){
-  if(manager==null||stopping)return;
+  if(stopping)return;float now=Time.realtimeSinceStartup;
   if(!Probe&&Input.GetKeyDown(KeyCode.Escape)){Stop();return;}
-  if(!Probe&&ready&&Input.GetKeyDown(KeyCode.Q)&&Mathf.Abs(practice.Capture().Speed)<.35f)reverse=!reverse;
+  if(leaving){if(now>=leaveDeadline){if(Probe)Finish(false,"leave acknowledgement timeout");else Exit();}return;}
+  if(terminal)return;
   try{
+   if(needsRetry){if(now>=retryDeadline){Terminal("reconnect timeout");return;}if(now>=retryAt&&NetworkManager.Singleton==null){needsRetry=false;try{OpenTransport();}catch{RequestReconnect(1);}}return;}
+   if(manager==null)return;
+   if(!host&&retryDeadline>0&&now>=retryDeadline){Terminal("reconnect timeout");return;}
+   if(!host&&ready&&PvpReconnectPolicy.ShouldRecover(prediction.PendingCount,now-lastSnapshot)){if(Probe&&!ProbeReconnect)Terminal("authority timeout");else RequestReconnect(1);return;}
+   if(!ready&&now-attemptStarted>8){if(string.IsNullOrEmpty(credential))Terminal("connection timeout");else RequestReconnect(1);return;}
+   if(!Probe&&ready&&Input.GetKeyDown(KeyCode.Q)&&Mathf.Abs(practice.Capture().Speed)<.35f)reverse=!reverse;
+   if(Probe&&!host&&ready&&!previewSent){SelectPreview(10);previewSent=true;}
+   if(Probe&&!host&&ready&&!dropPerformed&&now-started>5&&(ProbeReconnect||ProbeLeave)){
+    dropPerformed=true;dropPosition=latestAuthority.State.Position;dropPreview=latestAuthority.PassengerIndex;
+    if(ProbeLeave){Stop();return;}if(ProbeTamperTicket)credential="invalid-ticket";if(!ProbeExternalDrop){RequestReconnect(ProbeRetryDelay);return;}
+   }
+   if(host)registry.Expire(now);
    accumulator+=Time.unscaledDeltaTime;int steps=0;while(accumulator>=PvpNetworkMotor.Delta&&steps++<5){accumulator-=PvpNetworkMotor.Delta;Advance();}if(steps>5)accumulator=0;
-   float now=Time.realtimeSinceStartup;
-   if(!host&&ready&&now-lastSnapshot>3)throw new InvalidOperationException("authority timeout");
-   if(!ready&&now-started>12)throw new InvalidOperationException("connection timeout");
-   if(Probe&&now-started>ProbeSeconds){float positionError=prediction==null?0:Vector3.Distance(prediction.State.State.Position,latestAuthority.State.Position);
-    float yawError=prediction==null?0:Mathf.Abs(Mathf.DeltaAngle(prediction.State.State.YawDegrees,latestAuthority.State.YawDegrees));
-    float speedError=prediction==null?0:Mathf.Abs(prediction.State.State.Speed-latestAuthority.State.Speed);
-    bool ok=string.IsNullOrEmpty(ExpectedRejection)&&(host?RemoteDistance>10:samples>20&&prediction!=null&&prediction.PendingCount<30&&ownDistance>10&&positionError<.05f&&yawError<.1f&&speedError<.05f&&Mathf.Abs(latestAuthority.State.Speed)<.05f);
-    Finish(ok,"samples="+samples+" pending="+(prediction==null?0:prediction.PendingCount)+" remoteDistance="+RemoteDistance+" ownDistance="+ownDistance+" positionError="+positionError+" yawError="+yawError+" speedError="+speedError+" maxCorrection="+(prediction==null?0:prediction.MaxCorrection));}
-  }catch(Exception e){Fail(e.Message);}
+   if(Probe&&now-started>ProbeSeconds){
+    float positionError=prediction==null?0:Vector3.Distance(prediction.State.State.Position,latestAuthority.State.Position);float yawError=prediction==null?0:Mathf.Abs(Mathf.DeltaAngle(prediction.State.State.YawDegrees,latestAuthority.State.YawDegrees));float speedError=prediction==null?0:Mathf.Abs(prediction.State.State.Speed-latestAuthority.State.Speed);
+    bool ok=string.IsNullOrEmpty(ExpectedRejection)&&!ProbeLeave&&(host?RemoteDistance>10:samples>20&&prediction!=null&&prediction.PendingCount<30&&ownDistance>10&&positionError<.05f&&yawError<.1f&&speedError<.05f&&Mathf.Abs(latestAuthority.State.Speed)<.05f&&latestAuthority.PassengerIndex==10&&(!ProbeReconnect||reconnects>0&&restoreError<.001f&&contentRestored&&postResumeDistance>2));
+    Finish(ok,"samples="+samples+" pending="+(prediction==null?0:prediction.PendingCount)+" remoteDistance="+RemoteDistance+" ownDistance="+ownDistance+" positionError="+positionError+" yawError="+yawError+" speedError="+speedError+" maxCorrection="+(prediction==null?0:prediction.MaxCorrection)+" postResumeDistance="+postResumeDistance+" reconnects="+reconnects+" preview="+latestAuthority.PassengerIndex);
+   }
+  }catch(Exception e){Terminal(e.Message);}
  }
  void Advance(){
   if(!ready)return;tick++;
-  if(host){
-   foreach(var pair in peers){var peer=pair.Value;PvpVehicleInput input;if(pair.Key==0)input=InputNow();else input=peer.Inputs.InputForTick(out peer.Ack);peer.Motor.Step(input);
-    var state=peer.Motor.Capture();state.Owner=pair.Key;state.Ack=peer.Ack;state.Tick=tick;
-    if(pair.Key==0)practice.PresentNetworkState(state.State);else{RemoteDistance=Mathf.Max(RemoteDistance,Vector3.Distance(peer.Start,state.State.Position));PresentRemote(state);}
-    if(tick%5==0)foreach(ulong id in manager.ConnectedClientsIds)if(id!=0)Send("state",id,state);
-   }
-  }else if(prediction!=null){var cmd=prediction.Predict(InputNow());Send("drive",NetworkManager.ServerClientId,cmd);practice.PresentNetworkState(prediction.State.State);}
+  if(host){foreach(var pair in peers){var peer=pair.Value;if(pair.Key==0)peer.Motor.Step(InputNow());else if(registry.Connected)peer.Motor.Step(peer.Inputs.InputForTick(out peer.Ack));var state=Snapshot(pair.Key,peer);if(pair.Key==0)practice.PresentNetworkState(state.State);else{RemoteDistance=Mathf.Max(RemoteDistance,Vector3.Distance(peer.Start,state.State.Position));PresentRemote(state);}if(tick%5==0)foreach(ulong id in manager.ConnectedClientsIds)if(id!=0)Send("state",id,state);}}
+  else if(prediction!=null){var cmd=prediction.Predict(InputNow());cmd.Epoch=epoch;Send("drive",0,cmd);practice.PresentNetworkState(prediction.State.State);}
  }
- void Fail(string cause){Status="주행 중단: "+cause;Debug.LogError("PVP_NETWORK_FAIL "+cause);if(Probe)Finish(false,cause);else Stop();}
- void Finish(bool ok,string detail){if(stopping)return;Debug.Log((ok?"PVP_NETWORK_PLAYER_OK ":"PVP_NETWORK_PLAYER_FAIL ")+(host?"host ":"client ")+detail);stopping=true;if(manager!=null)manager.Shutdown();Application.Quit(ok?0:1);}
- public void Stop(){if(stopping)return;stopping=true;Cleanup();if(practice!=null)practice.ExitPractice();Destroy(this);}
+ void SelectPreview(int index){if(!ready)return;if(host)peers[0].PassengerIndex=index;else Send("preview",0,new PvpControl{Epoch=epoch,Index=index});}
+ void Terminal(string reason){Status="접속 중단: "+reason;ready=false;terminal=true;needsRetry=false;CloseTransport();if(Probe)Finish(false,reason);}
+ void Finish(bool ok,string detail){if(stopping)return;Debug.Log((ok?"PVP_NETWORK_PLAYER_OK ":"PVP_NETWORK_PLAYER_FAIL ")+(host?"host ":"client ")+detail);stopping=true;CloseTransport();Application.Quit(ok?0:1);}
+ public void Stop(){if(stopping||leaving)return;if(!host&&manager!=null&&manager.IsConnectedClient&&welcomeReady){leaving=true;ready=false;leaveDeadline=Time.realtimeSinceStartup+2;Status="나가기 확인 중";Send("leave",0,new PvpControl{Epoch=epoch});}else Exit();}
+ void Exit(){if(stopping)return;stopping=true;credential=null;Cleanup();if(practice!=null)practice.ExitPractice();Destroy(this);}
+ void CloseTransport(){if(manager!=null){manager.OnClientConnectedCallback-=Connected;manager.OnClientDisconnectCallback-=Disconnected;manager.Shutdown();manager=null;}if(networkRoot!=null){Destroy(networkRoot);networkRoot=null;}}
  void OnDestroy(){Cleanup();}
- void Cleanup(){if(manager!=null){manager.OnClientConnectedCallback-=Connected;manager.OnClientDisconnectCallback-=Disconnected;manager.Shutdown();}if(networkRoot!=null)Destroy(networkRoot);foreach(var v in visuals.Values)if(v!=null)Destroy(v);visuals.Clear();if(remoteMaterial!=null)Destroy(remoteMaterial);}
- void OnGUI(){GUILayout.BeginArea(new Rect(16,16,620,155),GUI.skin.box);GUILayout.Label("PVP 직접 IP 주행 시험 / 경기·승객·정산 없음");GUILayout.Label(Status??"준비 중");GUILayout.Label("W 가속 · S/Space 제동 · A/D 조향 · 정차 후 Q 전후진 · Esc 종료");GUILayout.Label("서버50Hz / 차량A / 택시 간 충돌 없음 / 재접속·복구 미구현");if(GUILayout.Button("접속 종료"))Stop();GUILayout.EndArea();}
+ void Cleanup(){CloseTransport();credential=null;foreach(var v in visuals.Values)if(v.Object!=null)Destroy(v.Object);visuals.Clear();if(remoteMaterial!=null)Destroy(remoteMaterial);}
+ void OnGUI(){
+  GUILayout.BeginArea(new Rect(16,16,650,285),GUI.skin.box);GUILayout.Label("PVP 직접 IP 주행 시험 / 운송·정산 없음");GUILayout.Label(Status??"준비 중");GUILayout.Label("W 가속 · S/Space 제동 · A/D 조향 · 정차 후 Q 전후진 · Esc 나가기");GUILayout.Label("서버50Hz / 차량A / 무접촉 / 재접속 유예 "+ReconnectGraceSeconds+"초 (시험값)");
+  int index=host&&peers.ContainsKey(0)?peers[0].PassengerIndex:latestAuthority.PassengerIndex;var card=PvpPassengerCatalog.At(index);GUILayout.Space(8);GUILayout.Label("승객 콘텐츠 미리보기 · 게임 효과 미적용");GUILayout.Label(card.TypeLabel+" / "+card.VariantLabel);GUILayout.Label(card.Dialogue);
+  GUI.enabled=ready;if(GUILayout.Button("다음 승객 변주"))SelectPreview((index+1)%PvpPassengerCatalog.Count);GUI.enabled=true;
+  if(!host&&!ready&&!string.IsNullOrEmpty(credential)&&!leaving&&GUILayout.Button("재접속"))RequestReconnect(1);
+  if(GUILayout.Button("나가기 · 재접속 자격 종료"))Stop();GUILayout.EndArea();
+ }
 }
 }

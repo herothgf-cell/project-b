@@ -5,7 +5,7 @@ using Pvp.Map;
 using Pvp.Driving;
 namespace Pvp.Network {
 [Serializable] public struct PvpDriveCommand {
- public int Sequence; public float Throttle,Brake,Steering; public bool Reverse,Connected;
+ public int Sequence,Epoch; public float Throttle,Brake,Steering; public bool Reverse,Connected;
  public PvpVehicleInput Input {get{return new PvpVehicleInput(Throttle,Brake,Steering,Reverse,Connected);}}
  public bool Valid {get{return Sequence>0&&Finite(Throttle)&&Finite(Brake)&&Finite(Steering)&&Throttle>=0&&Throttle<=1&&Brake>=0&&Brake<=1&&Mathf.Abs(Steering)<=1;}}
  static bool Finite(float f){return !float.IsNaN(f)&&!float.IsInfinity(f);}
@@ -20,7 +20,7 @@ public sealed class PvpInputBuffer {
  public PvpVehicleInput InputForTick(out int acknowledgement){PvpDriveCommand latest;if(TakeLatest(out latest)){held=latest;silentTicks=0;}else silentTicks=Math.Min(FreshTicks,silentTicks+1);acknowledgement=held.Sequence;return silentTicks<FreshTicks?held.Input:new PvpVehicleInput(0,0,0,false,false);}
  public bool TakeLatest(out PvpDriveCommand command){command=default(PvpDriveCommand);if(pending.Count==0)return false;while(pending.Count>0)command=pending.Dequeue();return true;}
 }
-[Serializable] public struct PvpDriveSnapshot {public ulong Owner; public int Ack,Tick,Edge;public float Fraction;public PvpVehicleState State;}
+[Serializable] public struct PvpDriveSnapshot {public ulong Owner; public int Ack,Tick,Edge,Epoch,PassengerIndex;public bool Connected;public float Fraction;public PvpVehicleState State;}
 // Shared authoritative and replay step: motor plus directed road anchor.
 public sealed class PvpNetworkMotor {
  public const float Delta=.02f;
@@ -38,9 +38,9 @@ public sealed class PvpPrediction {
  public PvpDriveCommand Predict(PvpVehicleInput input){if(pending.Count>=128)throw new InvalidOperationException("Authority timeout: input history full");var cmd=new PvpDriveCommand{Sequence=++next,Throttle=input.Throttle,Brake=input.Brake,Steering=input.Steering,Reverse=input.ReverseRequested,Connected=input.Connected};if(!cmd.Valid)throw new ArgumentException("Invalid input");pending.Add(cmd);motor.Step(input);return cmd;}
  public void Reconcile(PvpDriveSnapshot s){if(s.Tick<=lastTick||s.Ack<ack)return;if(s.Ack>next)throw new ArgumentException("Future acknowledgement");var before=motor.Capture().State.Position;motor.Restore(s);pending.RemoveAll(c=>c.Sequence<=s.Ack);foreach(var c in pending)motor.Step(c.Input);MaxCorrection=Mathf.Max(MaxCorrection,Vector3.Distance(before,motor.Capture().State.Position));ack=s.Ack;lastTick=s.Tick;}
 }
-[Serializable] public sealed class PvpJoinHello {public string Protocol,Build,Map,Rules;}
+[Serializable] public sealed class PvpJoinHello {public string Protocol,Build,Map,Rules,Ticket;}
 public static class PvpAdmission {
- public const string Protocol="pvp-drive-1",Rules="50hz-A-no-contact-v1";
+ public const string Protocol="pvp-drive-2",Rules="50hz-A-no-contact-reconnect-v2";
  public static string Build {get{return string.IsNullOrEmpty(Application.buildGUID)?"editor-driving-lab-1":Application.buildGUID;}}
  public static string Reject(PvpJoinHello hello,string map){if(hello==null)return "missing handshake";if(hello.Protocol!=Protocol)return "protocol mismatch";if(hello.Build!=Build)return "build mismatch";if(hello.Map!=map)return "map mismatch";if(hello.Rules!=Rules)return "settings mismatch";return null;}
  public static PvpJoinHello Hello(string map){return new PvpJoinHello{Protocol=Protocol,Build=Build,Map=map,Rules=Rules};}

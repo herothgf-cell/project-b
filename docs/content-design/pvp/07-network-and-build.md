@@ -161,6 +161,12 @@ Dedicated 전환은 상태 권한 위치를 바꾸는 작업 외에도 결과 �
 
 ## 2026-10-29 구현 상태 갱신
 
-본문의 초기 미구현 설명은 분기 당시 기록이다. 현재는 `Runtime/Network/PvpNetworkSession.cs`, `PvpNetworkMotor.cs`, `PvpNetworkProbe.cs`에 NGO 직접 IP 경로가 있다. Fusion 어댑터는 만들지 않았다. SDK와 런타임·자동 검사·한계는 [실제 이력](../../work-history/2026-10-29-pvp-direct-ip-network.md)을 따른다. 소유자는 연결 ID에서 정하고 클라이언트가 위치/점수를 제출하지 않는다. 공개 계정 인증·재접속 자격은 아직 없으므로 실제 인터넷 공개 경쟁용 보안 완료로 보지 않는다.
+본문의 초기 미구현 설명은 분기 당시 기록이다. 현재는 `Runtime/Network/PvpNetworkSession.cs`, `PvpNetworkMotor.cs`, `PvpNetworkProbe.cs`에 NGO 직접 IP 경로가 있다. Fusion 어댑터는 만들지 않았다. SDK와 런타임·자동 검사·한계는 [실제 이력](../../work-history/2026-10-29-pvp-direct-ip-network.md)을 따른다. 소유자는 서버의 고정 슬롯(host0/guest1)과 현재 연결ID·epoch의 대응으로 정하고 클라이언트가 위치/점수를 제출하지 않는다. 후속 재접속 자격은 같은 프로세스의 메모리256bit bearer ticket이며 공개 계정 인증이 아니다. 직접IP 암호화/인터넷 공개 경쟁용 보안 완료로 보지 않는다.
 
 새 SDK 추가 후 이전 ScriptingAssemblies 목록이 남는 실패를 재현하여 PVP 빌드는 CleanBuildCache와 빌드 후 필수 네트워크 어셈블리 목록 검사로 보호한다. 기존 BuildHybrid와 캠페인 배포는 변경하지 않는다.
+
+## 재접속 후속 (2026-10-29)
+
+[계획](14-reconnect-content-plan.md) · [실제 검증](../../work-history/2026-10-29-pvp-reconnect-content.md). 호스트가 살아 있는 동안 자동/수동 복귀, 서버가 단절을 감지한 시점의 정지·숨김·상태 보존, 새 연결epoch 입력 검증을 구현했다. 유예30초는 시험값이며 검사에서3초로 축소할 수 있다. 120개 미확인 입력 또는3초 snapshot 침묵이면128개 이력 소진 전에 복귀를 시작한다. 서버가 이전 연결을 아직 감지하지 못한 일시 중복 거절은 기존 기한 안에서 재시도한다.
+
+명시 나가기는 자격을 폐기한다. 퇴장/만료 후 다른 손님을 같은 슬롯에 새로 받으려면 호스트 세션을 다시 시작한다. 호스트 상실·앱 재시작 복귀·호스트 이전·공개 계정 인증은 미지원. 자격은 파일/로그에 저장하지 않는다. 원격 차량의 화면 보간은 서버 물리 상태와 별개다. 승객 선택은 현재 미리보기 상태만 복원하며 실제 운송 상태 복원을 뜻하지 않는다.

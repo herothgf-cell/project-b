@@ -92,3 +92,7 @@
 2026-10-27의 기획 단계에서는 제품 QA를 모두 미수행으로 두었다. 당시 문서 검증은 [기획 작업 이력](../../work-history/2026-10-27-pvp-planning.md)에 보존한다. 2026-10-29에는 설정 검증·저장 경로·로그 분리·빌드 설정 복원 코드의 독립 검사를 수행했다. 이는 QA-ISO-01의 기반 코드 증거이며, Unity 씬 로드·실제 Player·QA-BUILD-01 전체 통과는 아니다. 정확한 실행 결과와 남은 항목은 [P1 작업 이력](../../work-history/2026-10-29-pvp-startup-isolation.md)을 따른다.
 
 관련: [08 개발 로드맵](08-development-roadmap.md) · [09 결정·설정](09-decisions-and-balance.md) · [기획 입구](README.md)
+
+## 재접속 증거 추가 (2026-10-29)
+
+`tools/test_pvp_reconnect.ps1`은 정상 복귀·위조 거절·유예 종료·명시 퇴장·실제 패킷 차단 복구·호스트 종료를 독립 Player로 검사한다. 복귀는 같은 서버 슬롯/선택/위치와 새로운 epoch, 복귀 후 권한 차량 이동까지 확인한다. 서버 만료 정확한 경계·중복 연결·옛 epoch 거절은 Editor 모델 검사다. 실제 화면은 한글 HUD/승객 대사 확인이며 수동 운전 검사가 아니다. [검사별 결과와 미완료 수용](../../work-history/2026-10-29-pvp-reconnect-content.md)을 근거로 사용하며 P2 전체 통과로 표시하지 않는다.
