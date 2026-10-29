@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
-  "sourceCommit": "758753dcfc1de9638c4e041352c4875c306a6993",
-  "branchBaseCommit": "758753dcfc1de9638c4e041352c4875c306a6993",
+  "sourceCommit": "a5c13de67f3b6e92b50c898d765aca10670e3ba6",
+  "branchBaseCommit": "a5c13de67f3b6e92b50c898d765aca10670e3ba6",
   "unity": "2022.3.62f2",
   "platform": "Windows64",
   "entrypoint": "builds/PvpPrototype/PvpPrototype.exe",
   "validatedOn": "2026-10-29",
-  "totalBytes": 93207621.0,
+  "totalBytes": 93263189.0,
   "validation": {
     "existingVerifiedBuild": false,
     "sourceRebuiltForPackaging": true,
@@ -17,7 +17,7 @@
     "differentPhysicalPC": false,
     "notes": "Hash inventory; execution evidence is supplied separately.",
     "report": {
-      "sourceCommit": "758753dcfc1de9638c4e041352c4875c306a6993",
+      "sourceCommit": "a5c13de67f3b6e92b50c898d765aca10670e3ba6",
       "buildExit": 0,
       "modelExit": 0,
       "copyHashEqual": true,
@@ -25,17 +25,25 @@
       "copyExit": 0,
       "copyMarker": "PVP_RUNTIME_ISOLATION_OK",
       "driveBaselineExit": 0,
-      "copyWorkingDirectory": "artifacts/pvp/runtime-copy-761ced5ee1fc4ec3a67114556f4cbeee",
+      "copyWorkingDirectory": "artifacts/pvp/runtime-copy-42d549da354f401bb7ac1c1804ded3eb",
       "inputOnlyDriving": true,
-      "soloMode": true,
-      "soloBaselineExit": 0,
+      "expandedMode": true,
+      "expandedInputServiceExit": 0,
       "networkRegressionExit": 0,
       "reconnectRegressionExit": 0,
-      "fullProfileValidationLog": "artifacts/pvp/solo-bot-violation-green.log",
-      "copiedBaselineLog": "artifacts/pvp/solo-packaged-baseline.log",
+      "fullProfileValidationLog": "artifacts/pvp/expanded-final-model.log",
+      "copiedBaselineLog": "artifacts/pvp/expanded-packaged-baseline.log",
       "humanInput": false,
       "differentPhysicalPC": false,
-      "notes": "Committed-source clean rebuild of single-window offline bot match. Copied runtime launched from its own working directory and passed input-only passenger transport, no-network, settlement, invalid config and exit/restart. Same feature passed observed speeding then lawful recovery in solo-bot-violation-green.log; existing actual two-player baseline and six reconnect cases passed before probe-only refinement and offline help text. Planar motor inputs, no position fixture or human-screen acceptance."
+      "notes": "Committed-source expanded district. Copied runtime from its own directory passed actual input transport to fuel station, cancel/retry, exactly one expense, NPC/rules, result/cleanup/restart with zero position fixtures/boundaries. Same committed build passed two-player result and traffic equality. Chase/map/cockpit rendered frames inspected; human feel, other-PC and long balance remain unverified.",
+      "releaseNetworkExit": 0,
+      "releaseNetworkLog": "artifacts/pvp/expanded-release-network.log",
+      "renderExit": 0,
+      "renderImages": [
+        "artifacts/pvp/expanded-release.png",
+        "artifacts/pvp/expanded-release-map.png",
+        "artifacts/pvp/expanded-release-driver.png"
+      ]
     }
   },
   "files": [
@@ -152,17 +160,17 @@
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/boot.config",
       "bytes": 164,
-      "sha256": "afccbc8be7ee2011853fac9ef7c5f4ac8dad58db1d0ea1eff9a541c0f123557a"
+      "sha256": "8a5687555e1d035e1a517a7dc6e28d07a5dabad00bc1274ace5e928ca5b67f21"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/globalgamemanagers",
-      "bytes": 52116,
-      "sha256": "dc8e2dfe198fff4801f186607c3fc3dadc0619955a9e7476e3be8c03ff04f9af"
+      "bytes": 52420,
+      "sha256": "aa16bfa22010e6a12fb42058bc08ab4a5df1de4e25a9d964050a6b9fe68ac318"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/globalgamemanagers.assets",
-      "bytes": 98720,
-      "sha256": "4e60ef7680e3c5a912b9ca03ff174802d23bf1b314213b7d9fa3024df924b5e3"
+      "bytes": 99576,
+      "sha256": "7aa22a97919468d8dee054138b90595dfd0a8836085f8f8532942df773231c50"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/globalgamemanagers.assets.resS",
@@ -172,12 +180,12 @@
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/level0",
       "bytes": 1140,
-      "sha256": "4e9a70cd8640088ec7cd5b013680686a7305b8de5c08c2e1f462fb76dc0d59ac"
+      "sha256": "453b948266e748c443c9e0915ae619d9ef033ed99677fac6507e93c0f3ca8d2f"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 1606144,
-      "sha256": "dd96f643ec3e66dd76b10bc4baf5c132e56d4f60545ca76e345467d9505688c7"
+      "bytes": 1660416,
+      "sha256": "e44eb40c229f78268525c9ccbc547b9e285b5120cbd9fb290e3694cd9a087be9"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/Managed/Mono.Security.dll",
@@ -701,8 +709,8 @@
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/sharedassets0.assets",
-      "bytes": 8388,
-      "sha256": "e92bc541da842f3910f965bf19c01cc33a8d57a79eb01fe59c3b4dbeb99ef5a5"
+      "bytes": 8524,
+      "sha256": "2f6ab43db9b50ddb3a27687fcd1c1c14e36973f48fe0c842b12485bc4193a0f0"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype.exe",

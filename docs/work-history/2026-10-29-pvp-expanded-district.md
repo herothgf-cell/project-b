@@ -57,3 +57,15 @@ pwsh -File tools/update_pvp_distribution_manifest.ps1 -VerifyOnly
 모델 서비스의 위치/관측 제어 검사, 실제 평면 모터 입력 운송, 자동 프레임 캡처, 사람 플레이를 구분한다. 사람 키보드/패드/장기 시야·수익/서비스 경제·봇 전략·다른PC/인터넷/동시 시설 이용은 별도 수용이다. 유형별 승객 효과/PVP 손상·수리·복잡한 충돌 책임 전체는 후속이다. 전체P2/공개랭킹 수용으로 표시하지 않는다.
 
 수정 후 실제 시설 통합과 확정 소스·최종 패키지/원격 게시 결과는 확인 후 아래에 추가한다. 소스 확정 후 실제 커밋에서 재빌드하고 전체 실행 폴더·복사본·manifest/Git index 해시를 검증한다.
+
+## 확정 소스·최종 실제 실행/화면·배포
+
+- 소스 `a5c13de67f3b6e92b50c898d765aca10670e3ba6`에서 Unity 소스 미커밋 변경이 없는 상태로 전체 `PvpExpandedTests.RunAll`/`BuildClient` 재실행0: `expanded-packaged-model.log`, `expanded-packaged-build.log`. 과거 회귀·확장/연속 주유 모델 모두 통과했다.
+- 전체 실행 폴더를 프로젝트/Library 밖 `artifacts/pvp/runtime-copy-<고유값>/`로 복사해139개 파일의 크기/SHA256 동일성을 확인하고 복사본 디렉터리에서 실행했다. `-pvpIsolationCheck` 종료0/`PVP_RUNTIME_ISOLATION_OK`: `expanded-copied-isolation.log`.
+- 복사본 실제 통합 Player/러너0: `expanded-packaged-baseline.log`, `expanded-player.log`. 사람 자리1회/1,560.586m, 봇2회/1,397.952m, fixture/도로 경계 차단/위반 감점0. 시설까지 실제 주행→주유 취소→재시도→완료, **서비스2점1회**, 사람 운임30+안전3−서비스2=31점/봇77점, 원장7개. 주유 후 다시 운송을 시작했고 마감 미완료 운임은 추가 지급하지 않았다. HUD/월드 정리·초기 화면 복귀·새 경기의 점수0/연료100도 확인했다.
+- 같은 확정 빌드의 실제2Player 러너0: `expanded-release-network.log`. 각1회199.541m/319.414m,33/44점, fixture/경계0, 동일 최종 결과·NPC/보행144표본 일치. 합류 수정 전 결과와 별도로 확인했다.
+- 최종1280×720 실제 그래픽 프레임: `expanded-release.png`(추적), `expanded-release-map.png`(전체지도), `expanded-release-driver.png`(운전석). 자동 캡처/비검은색 검사0 후3개 이미지를 직접 읽어 한글/주유 시간·비용/지도명/카메라를 확인했다. `expanded-release-render.log` 종료0. 사람 조작감 검증은 아니다.
+- `expanded-package-validation.json`을 근거로 `update_pvp_distribution_manifest.ps1 -SourceCommit <위40자리> -ValidatedOn 2026-10-29 -Rebuilt -ValidationReport artifacts/pvp/expanded-package-validation.json` 종료0. **PVP139파일93,263,189바이트**, VerifyOnly0. driveBaselineExit는 복사본 실제 입력 운송/주유 통합 검사다.
+- 기존 싱글 **130파일112,194,710바이트** manifest 재검증0. 공통 소스/싱글 실행 폴더/지도 입력 변경 없음. 이 작업의 최종 소스/실행 폴더만 별도 배포하며 다른 채팅 checkout은 보존했다.
+
+원본 실행 폴더/manifest·최종 사용법·이력을 함께 배포 커밋하고 원격 확인 결과는 아래 게시 확인에 기록한다. 로그/복사본/이미지는 Git 제외 로컬 증거다.
