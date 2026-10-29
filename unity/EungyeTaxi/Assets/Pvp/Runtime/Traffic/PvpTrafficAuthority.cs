@@ -2,9 +2,9 @@ using System;
 using UnityEngine;
 namespace Pvp.Traffic {
 [Serializable] public struct PvpTrafficSnapshot {
- public int Tick,Phase,NextChangeTick,ObstacleXmm;
+ public PvpTrafficActor[] Npcs,Pedestrians;public int Tick,Phase,NextChangeTick,ObstacleXmm;
  public Vector3 ObstaclePosition {get{return new Vector3(ObstacleXmm/1000f,0,0);}}
- public string Signature {get{return Tick+":"+Phase+":"+NextChangeTick+":"+ObstacleXmm;}}
+ public string Signature {get{string s=Tick+":"+Phase+":"+NextChangeTick+":"+ObstacleXmm;if(Npcs!=null)foreach(var actor in Npcs)s+="|N"+actor.Signature;if(Pedestrians!=null)foreach(var actor in Pedestrians)s+="|P"+actor.Signature;return s;}}
 }
 // Minimal central test crossing, not a complete public-road traffic controller.
 public sealed class PvpTrafficAuthority {

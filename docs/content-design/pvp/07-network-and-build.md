@@ -181,3 +181,7 @@ Dedicated 전환은 상태 권한 위치를 바꾸는 작업 외에도 결과 �
 ## 2026-10-29 공유 경기 후속
 
 PvpCompetitionBridge가 권한 교통/경기/승객/점수 전체 집계와 최근16개 원장을 배포한다. 기존 입력 메시지와 경기 요청은 현재 연결epoch로 묶고, 경기 요청/응답에는 MatchId를 포함한다. 최대32KiB writer와 ReliableFragmentedSequenced를 사용한다. 전체 집계 snapshot으로 누락 순번 이후 상태를 대체하며 클라이언트 합계로 원장을 덮어쓰지 않는다. 같은 서버 프로세스의 재접속만 지원한다. [실행 계획](16-shared-world-competition-plan.md) · [수용 범위](17-competition-acceptance.md).
+
+## 2026-10-29 실제 입력 주행·공유 교통 후속
+
+[최신 수용·환경별 잔여 표](19-driving-npc-rules-acceptance.md)와 [실제 검사 이력](../../work-history/2026-10-29-pvp-input-driving-npc-rules.md)을 따른다. 위치 제어 없이 실제 모터 입력으로 운송하고 서버 NPC2대/보행1명·신호/우회전/지속 속도·방향/접촉 책임·보류를 연결했다. 이전의 해당 미구현/미검증 설명은 당시 기록이다. 다른PC·사람/화면 시야·복합 교통/금지차로 자산은 별도 수용으로 남긴다.
