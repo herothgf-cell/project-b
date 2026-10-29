@@ -1,8 +1,13 @@
 # 최신 작업 인계
 
+## 최신: 2026-10-29 좌측 하단 내구도 아이콘
+
+[작업·검증 기록](2026-10-29-durability-hud-icon.md). 기존 상태 계기판의 다섯 번째 렌치 아이콘·수치·막대에 실제 내구도를 연결했다. 우측 상시 패널은 제거하고 고장/견인 선택창은 유지한다. BuildHybrid·격리 Player 종료0,100/50/0 ×1280×720/1872×864 fixture6검사와 실제6화면 확인. 기본 실행은 builds/EungyeTaxi/EungyeTaxi.exe / 은계이며 손상·수리 규칙과 지도 입력은 그대로다. 다음은 기존 사람의20분/3일 체감 검증이다. 배포·게시 결과는 같은 기록에 남긴다. 아래는 이전 작업 당시 상태다.
+
+
 ## 최신 배포: 2026-10-29 싱글·PvP 실행 폴더 Git 배포
 
-[작업/검증 기록](2026-10-29-pvp-git-playable-distribution.md). PvP 브랜치에서 싱글은 builds/EungyeTaxi/EungyeTaxi.exe(130파일/112,193,174바이트·main 내구도/수리 배포 일치), PvP는 builds/PvpPrototype/PvpPrototype.exe(검증된 기존 공유 경쟁 빌드139파일/93,137,205바이트)로 실행한다. PvP 전체 폴더 Git 포함·전용 SHA256 manifest/검사 도구를 추가했다. 소스/Library 밖 복사본 실행 종료0. 동시 작업 중인 NPC/주행 미커밋 소스와 실행 중인 기존 앱은 보존했다. 별도PC/LAN 수용은 미검증. 실제 게시 결과는 위 기록에 추가하며 아래는 이전 시점 기록이다.
+[작업/검증 기록](2026-10-29-pvp-git-playable-distribution.md). PvP 브랜치에서 싱글은 builds/EungyeTaxi/EungyeTaxi.exe(130파일/112,193,174바이트·main 내구도/수리 배포 일치), PvP는 builds/PvpPrototype/PvpPrototype.exe(검증된 기존 공유 경쟁 빌드139파일/93,137,205바이트)로 실행한다. PvP 전체 폴더 Git 포함·전용 SHA256 manifest/검사 도구를 추가했다. 소스/Library 밖 복사본 실행 종료0. 동시 작업 중인 NPC/주행 미커밋 소스와 실행 중인 기존 앱은 보존했다. 별도PC/LAN 수용은 미검증. 배포 b8ad18a의 원격 게시를 확인했다. 최신 main HUD를 병합해 싱글은130파일/112,194,710바이트로 갱신했다.  아래는 이전 시점 기록이다.
 
 ## PVP 최신: 2026-10-29 공유 교통·승객 경쟁·정산
 

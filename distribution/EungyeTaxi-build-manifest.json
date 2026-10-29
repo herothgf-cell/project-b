@@ -1,48 +1,36 @@
 {
-  "sourceCommit": "8f8d05be2d2a51e3e5d3e047260a6cc2c0f8f8db",
+  "sourceCommit": "0706cffe6054e3b90dcd99d3a274bc758877672f",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-10-29",
-  "totalBytes": 112193174.0,
+  "totalBytes": 112194710.0,
   "validation": {
-    "build": "VehicleDurabilityIntegrationTests.Build / PrototypeBuild.BuildHybrid exit 0",
-    "durabilityModelAssertions": 191,
-    "passengerCareModelAssertions": 13301,
-    "passengerBehaviorModelAssertions": 430,
-    "modelSuites": 28,
-    "durabilityEditorAssertions": 10,
-    "passengerBehaviorEditorAssertions": 1526,
-    "passengerCarePersistenceAssertions": 14,
-    "liveCampaignAssertions": 22,
-    "p11Editor": true,
-    "pvpEditorIsolation": true,
-    "localPhysXScenarios": 15,
-    "durabilityPlayerAssertions": 70,
-    "activeReloadAssertions": 8,
-    "summaryReloadAssertions": 2,
-    "preparationReloadAssertions": 7,
-    "pendingLiveReloadAssertions": 2,
-    "isolatedDurabilityProcesses": 5,
-    "legacyPassengerCarePlayerAssertions": 201,
-    "legacyPassengerBehaviorPlayerAssertions": 164,
-    "legacyPassengerBehaviorReloadAssertions": 8,
-    "visibleUiCapture": true,
-    "uiResolution": [
-      1280,
-      720
+    "build": "PrototypeBuild.BuildHybrid exit 0",
+    "playerExitCode": 0,
+    "hudFixtureAssertions": 6,
+    "hudResolutions": [
+      [
+        1280,
+        720
+      ],
+      [
+        1872,
+        864
+      ]
     ],
-    "uiScreens": [
-      "disabled",
-      "repair",
-      "summary"
+    "durabilityStates": [
+      100,
+      50,
+      0
     ],
-    "positionControlled": true,
+    "visualScreensVerified": 6,
+    "gameplayRulesChanged": false,
     "manualDriving": false,
-    "fullCampaignManual": false,
-    "isolatedTestSave": true,
-    "mapInputsChanged": false,
-    "notes": "Local PhysX fixtures plus controlled actual campaign lifecycle; no full road driving or human20min/3day calibration. Paid repair-bay reservation survives active/summary/preparing/pending occupied reload. Dedicated space overlap and blank/fade captures checked."
+    "fullCampaign": false,
+    "gameplayBaselineSource": "8f8d05b",
+    "buildLog": "artifacts/durability-hud-verified-build.log",
+    "playerLog": "artifacts/durability-hud-verified-capture.log"
   },
   "files": [
     {
@@ -53,7 +41,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "4338b8238af0b7a86a2d4a07e561f2d0d0a65e4d894b57c39e20e87f6cc1ac28"
+      "sha256": "8a658208a3b514ce5bb88c3cb72fb454c87d905771a6c5303a334dbc55c05e12"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -82,8 +70,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 1523200,
-      "sha256": "feea4c184774c9f13d302590a25a38dc0a442d1a50f9d1bbf1ed3e970099672b"
+      "bytes": 1524736,
+      "sha256": "9adb4431c370d474288e11cccb452b14da3a49582d95b86e1d5ee1ccd60c9429"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",

@@ -29,3 +29,7 @@ feature/pvp-prototype 체크아웃 후 pull한다. 싱글은 builds/EungyeTaxi/E
 - git add 뒤 실제 인덱스 blob139개를 모두 읽어 manifest 크기/SHA256과 일치 확인. Git 추적 파일 집합도139개로 같고 관련 없는 staged 소스0개. .gitattributes의 -text로 다른 PC checkout의 줄바꿈 변환을 방지한다.
 - 현재 소스 커밋9489e6ed51b8e85ad1e50c67463bae94b9f315ac에는 완료 싱글 내구도/수리 main 병합이 포함된다. 원격 PvP e75c461은 그 조상이므로 일반 fast-forward push를 사용한다.
 - 기존 미커밋 NPC/주행/규칙 및 네트워크 소스와 기존 실행 중 앱을 보존했다. 그 변경은 이 배포 커밋에 포함하지 않는다. 게시 결과는 실제 원격 확인 뒤 추가한다.
+
+## 실제 게시·싱글 HUD 동기화
+
+배포 b8ad18acc990435b09122156b5738d6ee434310f를 feature/pvp-prototype에 일반 push했고 원격 동일 해시를 확인했다. 이후 main의 d631a57bcac57e7ed5d270cf5947dc0d5cab3339(소스0706cff)를 병합해 싱글 내구도 아이콘과 검증 실행 폴더130파일112,194,710바이트도 반영했다. LATEST 충돌은 양쪽 인계를 보존했다. 진행 중 NPC 소스·새 로컬 PvP 시험 빌드·프로젝트 설정은 stage하지 않고 보존한다. 게시 PvP139파일은 기존 검증 산출물 그대로이며 새 시험 빌드의 완료/배포를 의미하지 않는다.
