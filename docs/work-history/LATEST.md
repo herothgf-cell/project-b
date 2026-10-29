@@ -4,7 +4,7 @@
 
 [구현·검증 이력](2026-10-29-world-traffic-followups.md). 지정6교차로 도색/방향 표시·일반 연결45개 정돈, 상가 양끝 무신호/중앙 단일 신호 횡단보도, 녹색 정체·시설 완료 안내·보호 좌회전/사건 기록·초과 영업 호출 분산을 수정했다.72대 풀/8허브 상한·실제 안전 보행23명과 예산 재배치, 미니맵 재사용 레이어로 동일 밀도60초 평균16.30→43.08fps(p95 117.94→38.82ms) 개선. 모델·Editor11그룹/Startup11672·BuildHybrid·Player7프로세스 종료0, Strict issues0. 위치 fixture/실제 NPC 물리 검사이며 수동 전체 캠페인과 구분한다.
 
-기본 실행 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 / `PrototypeBuild.BuildHybrid`. Git 프로젝트 지도와 신호/보정 원본의 실제 바이트·SHA256 갱신, 원시 지도2개/지도 ZIP 미변경. 소스7c66186 기준 실행폴더130파일112,252,826바이트와 배포manifest 크기/SHA256 검증 종료0. main 게시의 실제 해시는 후속 검증 기록에 기재한다. 사용자/PvP untracked 보존. 다음은 사람20분/3일·장시간 교통과 주행 중 UI 체감, 기존 P13 후속이다. 아래는 이전 작업의 당시 상태다.
+기본 실행 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 / `PrototypeBuild.BuildHybrid`. Git 프로젝트 지도와 신호/보정 원본의 실제 바이트·SHA256 갱신, 원시 지도2개/지도 ZIP 미변경. 소스7c66186 기준 실행폴더130파일112,252,826바이트와 배포manifest 크기/SHA256 검증 종료0. 배포b82ceda의 main 푸시 및 원격 동일 해시를 확인했다.1920 전체 지도 추가 실제 캡처도 종료0·정렬 확인. 사용자/PvP untracked 보존. 다음은 사람20분/3일·장시간 교통과 주행 중 UI 체감, 기존 P13 후속이다. 아래는 이전 작업의 당시 상태다.
 
 # 최신 작업 인계
 
