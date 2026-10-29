@@ -69,3 +69,8 @@ PVP exe/로그/캡처는 Git 제외 로컬 산출물이다. main 병합은 소�
 - 다른 채팅은 C:/git/project-b의 codex/passenger-type-variants에서 계속 작업 중이다. 해당 checkout·미커밋/미추적 파일·작업 브랜치를 수정하지 않았다. 완료 대기 없이 이미 main에 게시된 커밋만 통합했다. 해당 작업은 나중에 최신 main을 병합하고 검증해야 한다.
 - 사용자 요청 이후 UI 도구·키보드·마우스·창 활성화 없음. 기존 실행 중 PVP 창도 임의 종료하지 않았다. Task2 실제 화면·입력·사람 수용 게이트는 여전히 미완료.
 - 원격 main 게시에는 일반 fast-forward push만 사용하며 강제 push하지 않는다. 게시 성공 여부/최종 SHA는 Git 원격 확인으로 보고한다.
+
+### 원격 반영 확인
+
+일반 atomic push 종료0. main과 feature/pvp-prototype가 모두 835f6cfc7aa8fb067da9b74e3126e275fca32498인 것을 git ls-remote로 확인했다. 로컬 main도 같은 통합 상태로 갱신했고 다른 checkout은 codex/passenger-type-variants 그대로 유지됐다. 이 문단은 해당 게시 결과의 후속 기록이며 자기 커밋 해시를 미리 기재하지 않는다.
+
