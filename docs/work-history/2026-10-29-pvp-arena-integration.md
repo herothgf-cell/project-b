@@ -57,3 +57,15 @@ PVP exe/로그/캡처는 Git 제외 로컬 산출물이다. main 병합은 소�
 ## 통합 결과
 
 최신 main 반영·검증·원격 게시 결과는 아래 후속 기록으로 추가한다. 이 파일의 실제 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-29-pvp-arena-integration.md`로 확인한다.
+
+### 통합 검증 완료 (2026-10-29)
+
+- PVP 구현 커밋 `66c5368`; 최신 main `3293e3b`를 반영한 병합 `2507300`.
+- 실제 충돌은 docs/content-design/README.md와 docs/work-history/LATEST.md. PVP와 main의 캠페인 기획·인계 블록을 모두 유지해 해결했다.
+- 통합 후 `PvpTask2Tests.Run` 종료0 (merged-editor.log), `PvpBuild.BuildClient` 종료0 (merged-build.log).
+- `-batchmode -nographics` Player 격리2프로세스 및 시험장 입력 모델 검사 모두 종료0. 진단 파일이 서로 다르고 자동 이동28.116m 확인. 이 재검사는 순차 프로세스이며 앞선 Task1 동시2프로세스 검사와 구분한다.
+- 캠페인 모델·PVP 모델·Strict·배포 manifest 검사 모두 종료0. manifest130파일/112072682바이트 일치. main 대비 캠페인 Assets/Scripts·ProjectSettings·기본 배포·distribution·config/maps 변경 없음.
+- 검토에서 발견한 분기점 선택·material 정리·시작 실패 재시도 문제 해결 후 검토자 재확인. 추가 병합 차단 문제 없음.
+- 다른 채팅은 C:/git/project-b의 codex/passenger-type-variants에서 계속 작업 중이다. 해당 checkout·미커밋/미추적 파일·작업 브랜치를 수정하지 않았다. 완료 대기 없이 이미 main에 게시된 커밋만 통합했다. 해당 작업은 나중에 최신 main을 병합하고 검증해야 한다.
+- 사용자 요청 이후 UI 도구·키보드·마우스·창 활성화 없음. 기존 실행 중 PVP 창도 임의 종료하지 않았다. Task2 실제 화면·입력·사람 수용 게이트는 여전히 미완료.
+- 원격 main 게시에는 일반 fast-forward push만 사용하며 강제 push하지 않는다. 게시 성공 여부/최종 SHA는 Git 원격 확인으로 보고한다.

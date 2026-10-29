@@ -1,5 +1,9 @@
 # 최신 작업 인계
 
+## 통합 최신: 2026-10-29 PVP·캠페인 기획 병합
+
+[통합 검증 이력](2026-10-29-pvp-arena-integration.md): PVP 구현66c5368 + main3293e3b를2507300에서 통합. 두 공용 문서 충돌은 양쪽 내용 보존으로 해결. 통합 Editor·BuildClient·headless Player3개·캠페인/PVP 모델·Strict·manifest130파일 검사 모두 종료0. 캠페인 소스/배포 변경 없음. 다른 채팅의 passenger-type-variants와 미커밋 파일은 그대로이며 후속 통합 때 최신 main을 반영해야 한다. PVP 화면/사람 주행 검증은 미완료, PC UI 자동 조작은 사용자 요청으로 중단.
+
 ## PVP 최신: 2026-10-29 자체 시험장·차량 후보
 
 [구현·검증·통합 이력](2026-10-29-pvp-arena-integration.md). 자체 맵·방향 경로·복구·차량A/B·오프라인 실행 연결 구현, Unity 자동 검사 통과. Task2 화면/실물 입력/사람 체감은 미검증이며 사용자 요청으로 PC 조작 중단. 다음은 해당 수용 검증이며 P2는 미착수. PVP 로컬 builds/PvpPrototype/PvpPrototype.exe는 Git 제외. 기본 은계 실행/BuildHybrid/배포/manifest 유지, 필수 입력 Strict0. 아래 항목은 이전 시점 기록.
