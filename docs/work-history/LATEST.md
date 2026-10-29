@@ -1,5 +1,13 @@
 # 최신 작업 인계
 
+## PVP 작업 브랜치: 2026-10-29 시작·저장·빌드 기반
+
+`feature/pvp-prototype`에서 로드맵 Task 1의 전용 시작 씬·한글 설정 확인 화면·불변 설정·전용 저장·프로세스별 진단·Windows 빌드 소스를 추가했다. [요구/변경/검증 기록](2026-10-29-pvp-startup-isolation.md) · [현재 로드맵과 실행 명령](../content-design/pvp/08-development-roadmap.md).
+
+순수 PVP 검사 8개 그룹·실제 두 .NET 프로세스 진단 분리·러너 실패 기록 회귀 1개, 기존 캠페인 모델 28개 클래스, 실제 Unity 참조 DLL을 이용한 PVP 런타임 컴파일을 통과했다. 소스 검토의 세 보완점도 수정·재검토했다. **Unity Editor/Player 실행과 EXE 제작은 미수행이며 Task 1/P1 엔진 게이트는 미완료**다. 다음은 이미 추가된 기반 코드를 재작성하는 것이 아니라 Unity import·Editor 검사·독립 빌드·두 Player·화면 확인이다. 이후 자체 경기장·주행 Task 2로 진행한다.
+
+기존 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 기존 빌드는 `PrototypeBuild.BuildHybrid`다. 기존 캠페인 소스·씬·지도 입력·배포 manifest·마인드맵은 변경하지 않았고, 이 환경에서 지도 ZIP/Strict 점검을 수행한 것으로 표시하지 않는다. 기존 캠페인 개발은 AGENTS.md의 입력 준비 절차를 따른다. 아래 기록은 이전 기획과 분기 기준의 캠페인 이력으로 보존한다.
+
 ## PVP 작업 브랜치: 2026-10-27 기획·개발 계획
 
 브랜치 feature/pvp-prototype은 main 60b15edd6094d9a6383de4d0c75c4a40d49eda40에서 분기했다. [PVP 기획 입구](../content-design/pvp/README.md) · [개발 로드맵](../content-design/pvp/08-development-roadmap.md) · [이번 작업 이력](2026-10-27-pvp-planning.md).

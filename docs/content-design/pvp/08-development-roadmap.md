@@ -1,7 +1,9 @@
 # PVP 개발 로드맵 Implementation Plan
 
-상태: 기획 초안 / PVP 미구현  
+상태: 개발 계획 / Task 1 기반 소스·순수 코드 검사 완료, Unity 게이트 대기
 작성일: 2026-10-27
+
+진척 갱신: 2026-10-29. [P1 작업 이력](../../work-history/2026-10-29-pvp-startup-isolation.md)에 실제 명령·결과와 미수행 검증을 기록한다. P0 문서는 완료했고 Task 1의 전용 시작·설정·저장·빌드 기반을 추가했다. Unity Editor/Player 실행과 배포 게이트는 미완료다.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -16,13 +18,13 @@
 ## Global Constraints
 
 - 기준 main은 `60b15edd6094d9a6383de4d0c75c4a40d49eda40`, 작업 브랜치는 `feature/pvp-prototype`다. 초기 프로젝트는 `unity/EungyeTaxi`다.
-- 이번 작업은 문서 작성까지다. 아래 코드·파일·인터페이스·테스트는 **후속 신규 제안이며 아직 구현·실행되지 않았다**.
-- 현재 게임 코드·씬·지도·패키지·실행파일·배포 manifest·사용자 `.mmst`는 이번 문서 커밋에서 변경하지 않는다.
+- 2026-10-27의 문서 단계는 완료했다. 이후 구현 여부는 각 Task의 체크와 작업 이력에서 확인하며, 아직 착수하지 않은 Task의 파일·인터페이스는 후속 제안이다.
+- PVP 개발은 전용 경로에 추가한다. 기존 캠페인 소스·씬·지도·배포 실행파일·manifest·사용자 `.mmst`를 함께 덮어쓰지 않는다. 필요한 의존성 변경은 해당 Task에서 이유와 영향을 기록한다.
 - 자체 제작 맵을 사용하고 기존 은계 맵을 PVP 경기장으로 사용하지 않는다. 전면 공통화·새 엔진·영구 복제 브랜치를 선행 조건으로 두지 않는다.
 - `MatchDurationSeconds`는 필수 양수 설정이며 제품 기본 경기 시간은 미정이다. `FinishGraceSeconds` 등 후보값은 09에만 둔다.
 - 참가 인원·충돌·네트워크 SDK·배점은 사용자 확정 방향과 구분한다. 초기 초대방에 공개 매칭·계정·영구 랭킹을 선행 요구하지 않는다.
 - 운임·위반·원장 정책은 04·05, 마감·재접속·결과 확정 정책은 01을 구현한다. 이 로드맵에서 별도 산식을 만들지 않는다.
-- 모든 제품 작업 체크박스는 미완료다. 문서 검토 통과, 자동검사, 실제 온라인 플레이, 배포 완료를 각각 증거로 갱신한다.
+- 문서 검토, 순수 코드 자동검사, Unity 검사, 실제 온라인 플레이, 배포 완료를 각각 증거로 갱신한다. 소스 추가만으로 실행 검증 체크를 완료하지 않는다.
 
 ## Review Focus
 
@@ -54,7 +56,7 @@ Task 1→2→3이 기술 위험을 먼저 줄인다. Task 4→5가 경기의 최
 
 ## 파일·타입 계약의 읽는 방법
 
-아래 `Create`는 전부 신규 제안 경로이고 `Modify`는 해당 선행 Task에서 만든 PVP 파일에 대한 후속 수정이다. 현재 파일 존재를 뜻하지 않는다.
+아래 `Create`는 각 Task에서 추가할 경로이고 `Modify`는 선행 Task에서 만든 PVP 파일의 후속 수정이다. 실제 생성·검증 여부는 Task별 진척과 작업 이력을 확인한다.
 런타임 네임스페이스는 `Pvp`, 빌드는 `Pvp.Editor`, 테스트는 `Pvp.Tests.EditMode` 또는 `Pvp.Tests.PlayMode`를 제안한다. SDK의 네트워크 직렬화 타입은 Network 폴더 경계에서 변환한다.
 문자열 ID는 경기 안에서 안정적으로 유지하고, `PvpStateSnapshot`은 외부에서 수정할 수 없는 전달용 상태다. 구체 필드는 01·04·05·07의 계약을 모아 정의하며 공급/법규/정산 책임을 한 클래스에 몰지 않는다.
 
@@ -81,13 +83,17 @@ Task 1→2→3이 기술 위험을 먼저 줄인다. Task 4→5가 경기의 최
 **Interfaces:** `PvpSessionConfig.Freeze(string matchId, string mapHash) : PvpMatchSettings`; `PvpBootstrap.Initialize(PvpMatchSettings settings) : void`; `PvpLocalStore.Resolve(string fileName) : string`; `PvpBuild.BuildClient() : void`.
 `PvpMatchSettings`는 같은 설정 파일에 정의한 불변 값 묶음이다. `Freeze`는 필수 설정 누락을 오류로 처리하며 경기 ID·맵 hash·설정 hash를 함께 고정한다.
 
-- [ ] `PvpIsolationTests`에 `MissingDuration_IsRejected`, `SavePath_DoesNotTouchCampaign`, `BuildFailure_RestoresSettings`의 기대 실패를 먼저 고정한다.
-- [ ] 테스트 실행 환경을 확인하고 해당 테스트의 실패를 기록한다. 필요한 테스트 의존성·assembly 설정은 이 기능을 검증하는 최소 범위로 추가한다.
-- [ ] 전용 시작 경로와 저장 폴더, PVP 씬을 명시한 빌드를 구현한다. `DriveSession`·`CampaignSaveLocation.Resolve`를 호출하지 않는다.
-- [ ] 테스트와 실제 독립 실행에서 캠페인 저장·기존 씬 목록·기본 실행 폴더 보존, 두 프로세스 진단 파일의 비충돌을 확인한다.
-- [ ] QA-ISO-01·QA-BUILD-01의 시작·저장·출력 분리 증거를 기록하고 이 분리 단위를 커밋한다. 실제 맵 로드·다른 PC 배포 검증은 선행 기능이 준비된 뒤 완료한다.
+- [x] `PvpIsolationTests`에 `MissingDuration_IsRejected`, `SavePath_DoesNotTouchCampaign`, `BuildFailure_RestoresSettings`를 포함한 8개 행동 검사 그룹을 먼저 작성하고 의도한 실패를 확인한다.
+- [x] 순수 C# 검사의 실패→통과와 실제 두 .NET 검사 프로세스의 로그 분리를 기록한다. 기존 저장소의 정적 `Run()`/CLI 방식으로 구현해 새 테스트 패키지는 추가하지 않는다.
+- [x] 전용 시작 경로·설정 동결·저장 폴더·PVP 씬을 명시한 빌드 소스를 추가한다. `DriveSession`·`CampaignSaveLocation.Resolve`를 호출하지 않는다. 런타임 소스는 실제 Unity Player 참조 DLL로 컴파일을 확인한다.
+- [x] QA-ISO-01의 설정·경로·로그·복원 코드 증거와 엔진 검증의 미수행 범위를 작업 이력에 기록한다.
+- [ ] Unity Editor에서 새 씬/스크립트 import와 `PvpEditorIsolationTests.Run`을 실행한다. 실제 PlayerSettings·씬 목록·InputManager·수정 중 씬 보호를 확인한다.
+- [ ] 별도 Windows 실행파일을 빌드하고 두 Unity Player를 실행해 진단 파일 분리와 실제 캠페인 저장·기존 실행 폴더 보존을 확인한다. 화면·입력·종료를 직접 확인한다.
+- [ ] QA-ISO-01·QA-BUILD-01의 실제 실행 부분을 통과시킨다. 맵 로드·다른 PC 배포 검증은 해당 선행 기능이 준비된 뒤 완료한다.
 
-**Gate:** 독립 시작 화면과 전용 실행물이 재현 가능하다. 아직 맵·차량·온라인 경기는 완료 상태가 아니다.
+**현재 상태:** 기반 소스와 순수 코드 검사는 완료했으나 Unity 실행 검증은 미수행이다. `Runtime/Core/PvpBuildTransaction.cs`, Editor 전용 검사, 명시적 Player 진단 probe, `tools/test_pvp.py`·`tools/test_pvp.ps1`를 보조 경로로 추가했다. 상세 내용과 실행 결과는 2026-10-29 작업 이력을 따른다.
+
+**Gate:** 독립 시작 화면과 전용 실행물이 재현되어야 한다. **현재 미통과**이며 이 게이트를 완료한 뒤 Task 2로 진행한다. 아직 맵·차량·온라인 경기는 완료 상태가 아니다.
 
 ### Task 2 · P1: 자체 맵과 빠른 조작 후보
 
@@ -214,29 +220,70 @@ Task 1→2→3이 기술 위험을 먼저 줄인다. Task 4→5가 경기의 최
 
 **Gate:** 전용 서버 실행과 결과 신뢰 계약을 실제로 검증한다. 공급자·인프라·계정 설계는 P5 진입 전 선택할 후속 계약이며 현재 존재하거나 비용이 확정됐다고 간주하지 않는다.
 
-## 후속 구현자가 사용할 검증 명령 예시
+## 현재 구현된 검증 진입점
 
-**아래 명령은 계획이며 이번 문서 작업에서 실행하지 않았다.** 테스트 파일·Category `PVP`·빌드 메서드가 구현되고 해당 Unity 및 테스트 패키지가 준비된 뒤 저장소 루트에서 사용한다. `$PvpUnityEditor`는 그 PC의 Unity `2022.3.62f2` 실행파일 절대 경로다.
-실패 테스트 확인은 같은 명령에 해당 테스트의 완전한 이름을 `-testFilter`로 지정한다. 예: `Pvp.Tests.EditMode.PvpSettlementTests.CompletionReplay_IsIdempotent`.
+현재 PVP 검사는 기존 저장소처럼 정적 `Run()`/CLI 방식이다. Unity Test Framework 패키지·NUnit 검색·`PVP` Category는 추가하지 않았으므로 `-runTests -testCategory PVP`를 현재 검사 명령으로 사용하지 않는다. 후속 Task에서 검사 방식을 바꾸면 실제 의존성과 명령을 함께 갱신한다.
 
-```powershell
-New-Item -ItemType Directory -Force artifacts/pvp
-& $PvpUnityEditor -batchmode -projectPath unity/EungyeTaxi -runTests -testPlatform EditMode -testCategory PVP -testResults artifacts/pvp/editmode.xml -logFile artifacts/pvp/editmode.log
-& $PvpUnityEditor -batchmode -projectPath unity/EungyeTaxi -runTests -testPlatform PlayMode -testCategory PVP -testResults artifacts/pvp/playmode.xml -logFile artifacts/pvp/playmode.log
-& $PvpUnityEditor -batchmode -quit -projectPath unity/EungyeTaxi -executeMethod Pvp.Editor.PvpBuild.BuildClient -logFile artifacts/pvp/build-client.log
-```
+### 순수 코드 검사 — 실제 수행
+
+저장소 루트에서 아래 중 사용 가능한 환경의 명령을 실행한다. Windows 스크립트는 .NET SDK 8+/Python 조합 또는 기존 .NET Framework C# 컴파일러를 사용한다. 이번 실행 환경에서는 Python/.NET SDK 경로를 수행했고 Windows PowerShell 경로 자체는 미수행이다.
 
 ```powershell
-# P5에서만 사용하는 후속 전용 서버 빌드 예시
-& $PvpUnityEditor -batchmode -quit -projectPath unity/EungyeTaxi -buildTarget Linux64 -standaloneBuildSubtarget Server -executeMethod Pvp.Editor.PvpBuild.BuildLinuxServer -logFile artifacts/pvp/build-server.log
+powershell -ExecutionPolicy Bypass -File tools/test_pvp.ps1
 ```
 
-합격은 로그의 실제 오류·종료 상태와 테스트 결과 XML의 실패·누락·실행 개수를 함께 확인한다. 테스트가 하나도 발견되지 않은 결과나 빌드 성공만으로 온라인·사람 검증을 통과시키지 않는다.
-Editor 자동검사 뒤 독립 Player·별도 PC에서 10의 시나리오를 수행한다. 의도한 기존 게임 코드 경계를 건드린 경우 해당 영향의 캠페인 회귀와 기본 빌드를 별도로 확인한다.
-명령 형식의 근거: [Unity Test Framework 명령행](https://docs.unity3d.com/Packages/com.unity.test-framework@1.1/manual/reference-command-line.html), [Unity 2022.3 Dedicated Server 빌드](https://docs.unity3d.com/2022.3/Documentation/Manual/dedicated-server-build.html). 실제 패키지 버전 문서와 실행 결과를 우선한다.
+```bash
+python tools/test_pvp.py
+# dotnet이 PATH에 없는 경우
+python tools/test_pvp.py --dotnet /absolute/path/to/dotnet
+```
+
+기대 결과는 `PVP_ISOLATION_OK cases=8`과 `PVP_TWO_PROCESS_DIAGNOSTICS_OK`다. 후자는 두 .NET 검사 프로세스의 파일 분리이며, Unity Player 두 대의 온라인/물리 검증이 아니다. Python 러너는 성공 결과를 `artifacts/pvp-tests/result.txt`에 남긴다. Windows .NET Framework 대체 경로는 콘솔 출력과 종료 코드를 확인한다.
+
+Python 러너는 검증 시작 시 이전 성공 기록을 지운다. 실패한 재실행 뒤 오래된 성공 기록이 남지 않는지 확인하는 회귀 검사는 아래와 같으며, 이번 작업에서 1/1 통과했다.
+
+```bash
+python -m unittest discover -s tests -p test_pvp_runner.py -v
+```
+
+### Unity Editor 검사와 Windows 빌드 — 준비됨, 미수행
+
+`$PvpUnityEditor`를 실제 Unity `2022.3.62f2` 실행파일 절대 경로로 지정한다. Windows64 빌드 지원 모듈이 필요하다. 같은 프로젝트를 다른 Unity 프로세스에서 닫고, 작업 중인 씬은 먼저 저장한 뒤 저장소 루트에서 실행한다. 빌드 메서드는 실행 중 플랫폼을 바꾸지 않으므로 `-buildTarget Win64`를 반드시 지정한다. 에디터 메뉴를 사용할 때도 Windows x86_64로 전환·재컴파일을 마친 뒤 실행한다.
+
+```powershell
+New-Item -ItemType Directory -Force artifacts/pvp | Out-Null
+& $PvpUnityEditor -batchmode -quit -projectPath unity/EungyeTaxi -buildTarget Win64 -executeMethod Pvp.Tests.EditMode.PvpEditorIsolationTests.Run -logFile artifacts/pvp/editor-isolation.log
+& $PvpUnityEditor -batchmode -quit -projectPath unity/EungyeTaxi -buildTarget Win64 -executeMethod Pvp.Editor.PvpBuild.BuildClient -logFile artifacts/pvp/build-client.log
+```
+
+각 명령의 종료 코드 0과 실제 로그의 `PVP_EDITOR_ISOLATION_OK` / `PVP_BUILD_OK`를 함께 확인한다. Editor 검사는 실제 설정을 바꾸고 복원하지만 비용이 큰 BuildPipeline 호출만 대체한다. 그 검사 성공이 실제 Player 빌드 성공을 대신하지 않는다. 빌드 메뉴는 `Taxi > PVP > Build isolated Windows client`다.
+
+### 별도 실행과 사람 확인 — 빌드 후 수행
+
+다음 PowerShell 예시는 만들어진 PVP 실행파일을 서로 다른 로그로 두 번 실행한다. 새 실행파일은 이번 작업에서 생성하지 않았다.
+
+```powershell
+$PvpExe = (Resolve-Path builds/PvpPrototype/PvpPrototype.exe).Path
+$PvpLogA = Join-Path (Get-Location) 'artifacts/pvp/player-a.log'
+$PvpLogB = Join-Path (Get-Location) 'artifacts/pvp/player-b.log'
+$PvpA = Start-Process $PvpExe -ArgumentList @('-pvpIsolationCheck', '-logFile', ('"' + $PvpLogA + '"')) -PassThru
+$PvpB = Start-Process $PvpExe -ArgumentList @('-pvpIsolationCheck', '-logFile', ('"' + $PvpLogB + '"')) -PassThru
+$PvpA.WaitForExit()
+$PvpB.WaitForExit()
+$PvpA.ExitCode
+$PvpB.ExitCode
+```
+
+각 Player 종료 코드 0과 `PVP_RUNTIME_ISOLATION_OK`를 확인하고 표시된 진단 파일 경로가 다른지 대조한다. 실제 캠페인 저장/백업과 기존 실행 폴더의 전후 해시도 비교한다. 마지막으로 진단 인자 없이 실행해 한글 표시·설정 입력·오류 안내·나가기를 직접 확인한다. 이 단계도 맵 주행·네트워크 접속 완료를 뜻하지 않는다.
+
+### 후속 전용 서버
+
+P5의 `PvpBuild.BuildLinuxServer()`는 아직 구현하지 않았다. P5 구현 때 실제 Linux Dedicated Server 지원 모듈과 서버 진입점을 검증한 뒤 명령을 추가한다.
+
+기술 근거: [Unity 2022.3 BuildPipeline.BuildPlayer](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/BuildPipeline.BuildPlayer.html), [빌드 타깃 전환과 batch mode 제한](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/EditorUserBuildSettings.SwitchActiveBuildTarget.html). 실행 가능한 명령과 실제 종료 결과를 완료 근거로 남긴다.
 
 ## 작업별 인계와 완료 표시
 
 각 Task는 [저장소 작업 규칙](../../../AGENTS.md)에 따라 요구·변경 파일·실제 명령·로그 위치·자동/사람/배포 결과·미검증 항목을 날짜별 이력에 남기고 `LATEST.md`를 갱신한다.
 PVP 작업을 기존 게임의 전체 수동 검증 완료로 표시하지 않는다. 원격 반영된 커밋 해시는 실제 확인 후 기록하고, 작업 이력에 자기 자신을 포함할 해시를 추측하지 않는다.
-다음 실행자는 먼저 현재 작업 트리와 최신 인계를 확인하고 첫 미완료 Task의 게이트부터 진행한다. 이번 문서 전달은 구현 착수를 뜻하지 않는다.
+다음 실행자는 먼저 현재 작업 트리와 최신 인계를 확인하고 첫 미완료 Task의 게이트부터 진행한다. 이미 추가된 기반 코드를 다시 생성하지 말고, 남은 Unity 실행 검증부터 확인한다.
