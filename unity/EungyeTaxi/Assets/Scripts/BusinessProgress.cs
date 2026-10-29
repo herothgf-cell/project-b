@@ -27,7 +27,7 @@ public class BusinessProgress : MonoBehaviour {
  public string notice="",saveStatus="하루 정산 시 자동 저장됩니다";
  public string SavePath {get;private set;}
  bool testMode;float noticeUntil; CampaignCheckpoint loaded; public bool useV2; public bool taxPrompt,preparing; public PrototypeSettings settings=new PrototypeSettings();
- public bool SaveFailed {get;private set;}public bool ResumeBlocked {get{return resumeBlocked;}}
+ public bool SaveFailed {get;private set;}public bool ResumeBlocked {get{return resumeBlocked;}}public bool IsRestoring {get{return restoring;}}
  public int pendingPayment=-1; public bool restartPrompt;
  EconomySnapshot startDays;AccountSnapshot startAccount;
  void CaptureDayStart(){startDays=ledger.Snapshot();startAccount=ledger.Account==null?null:ledger.Account.Snapshot();}
@@ -66,8 +66,10 @@ public class BusinessProgress : MonoBehaviour {
   SavePath=testMode?Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts",useV2?"campaign-v2-test.json":"economy-player-checkpoint.json")):Path.Combine(Path.GetDirectoryName(Application.persistentDataPath),"은계 택시 시뮬레이터",PrototypeSettings.SaveFile);
   if(settings.oneDay)SavePath=Path.Combine(Path.GetDirectoryName(SavePath),settings.days>1?(testMode?"three-day-test.json":PrototypeSettings.ThreeDaySaveFile):(testMode?"one-day-test.json":"campaign-day20-v1.json"));
   if(Array.IndexOf(args,"-liveSaveTest")>=0||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0))SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/live-campaign-test.json"));
-  bool behaviorTest=Array.IndexOf(args,"-passengerBehaviorTest")>=0||Array.IndexOf(args,"-passengerBehaviorReloadTest")>=0;
+  bool behaviorTest=Array.IndexOf(args,"-passengerBehaviorTest")>=0||(Array.IndexOf(args,"-passengerBehaviorReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilitySummaryReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0)));
   if(behaviorTest){settings=PrototypeSettings.ForThreeDays();useV2=true;enabledCampaign=true;SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/passenger-behavior-test.json"));}
+  bool durabilityTest=Array.IndexOf(args,"-vehicleDurabilityTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilitySummaryReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0));
+  if(durabilityTest){settings=PrototypeSettings.ForThreeDays();useV2=true;enabledCampaign=true;SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/vehicle-durability-test.json"));}
   if(Array.IndexOf(args,"-passengerCareTest")>=0)SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/passenger-care-test.json"));
   if(Array.IndexOf(args,"-liveInvalidTest")>=0)SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/live-invalid-test.json"));
   if(ambientTest){settings=PrototypeSettings.ForOneDay();useV2=true;enabledCampaign=true;SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/ambient-pedestrian-test.json"));}
@@ -75,23 +77,23 @@ public class BusinessProgress : MonoBehaviour {
   if(startupTest){settings=PrototypeSettings.ForThreeDays();useV2=true;enabledCampaign=true;SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/campaign-startup-test.json"));}
   if(!testMode)try{SavePath=CampaignSaveLocation.Resolve(Path.GetDirectoryName(Application.persistentDataPath),Path.GetFileName(SavePath));}catch(Exception e){Debug.LogWarning("이전 캠페인 저장 복사 실패: "+e.Message);}
   ledger=useV2?new EconomyLedger(settings):new EconomyLedger(new EconomySettings());
-  if(Array.IndexOf(args,"-passengerBehaviorReloadTest")>=0||protoTest&&Array.IndexOf(args,"-protoExpansionReloadTest")>=0||!testMode||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0)||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-oneDayReloadTest")>=0||Array.IndexOf(args,"-threeDayReloadTest")>=0||Array.IndexOf(args,"-ambientPedestrianReloadTest")>=0){
+  if((Array.IndexOf(args,"-passengerBehaviorReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilitySummaryReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0)))||protoTest&&Array.IndexOf(args,"-protoExpansionReloadTest")>=0||!testMode||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0)||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-oneDayReloadTest")>=0||Array.IndexOf(args,"-threeDayReloadTest")>=0||Array.IndexOf(args,"-ambientPedestrianReloadTest")>=0){
    foreach(var path in new[]{SavePath,SavePath+".bak"}){
     if(!File.Exists(path))continue;
     try{var candidate=ParseCheckpoint(File.ReadAllText(path));if(candidate==null||(candidate.version!=2&&candidate.version!=3)||candidate.law==null||candidate.ids==null||string.IsNullOrEmpty(candidate.ids.campaign)||candidate.ids.sequence<0)throw new Exception("Invalid v2 checkpoint");if(settings.oneDay&&(candidate.account==null||candidate.account.settings==null||!candidate.account.settings.oneDay||candidate.account.settings.days!=settings.days))throw new Exception("Different campaign mode");if(!candidate.hasLive)candidate.live=null;if(candidate.version==3&&candidate.days!=null&&candidate.days.hasActive&&candidate.days.active!=null&&candidate.days.active.elapsed>0&&candidate.live==null)throw new Exception("Missing active session");ValidateLivePayload(candidate.live,owner);var restored=EconomyLedger.RestoreCampaign(candidate.days,candidate.account);var checkedLaw=new LawLedger();foreach(var e in candidate.law)checkedLaw.Record(e);ledger=restored;loaded=candidate;saveStatus=path==SavePath?"저장된 정산 결과를 불러왔습니다":"백업에서 정산 결과를 복구했습니다";break;}
     catch(Exception ex){saveStatus="저장 읽기 실패 · 새 영업을 시작합니다";Debug.LogWarning("Campaign load failed: "+ex.Message);}
    }
   }
-  if(loaded==null&&(File.Exists(SavePath)||File.Exists(SavePath+".bak"))&&(Array.IndexOf(args,"-passengerBehaviorReloadTest")>=0||protoTest&&Array.IndexOf(args,"-protoExpansionReloadTest")>=0||!testMode||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0))){resumeBlocked=true;SaveFailed=true;saveStatus="저장 복원 실패 · 기존 파일 보존 중 · 지도/저장 확인 또는 새 캠페인 선택";}
+  if(loaded==null&&(File.Exists(SavePath)||File.Exists(SavePath+".bak"))&&((Array.IndexOf(args,"-passengerBehaviorReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilitySummaryReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0)))||protoTest&&Array.IndexOf(args,"-protoExpansionReloadTest")>=0||!testMode||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0))){resumeBlocked=true;SaveFailed=true;saveStatus="저장 복원 실패 · 기존 파일 보존 중 · 지도/저장 확인 또는 새 캠페인 선택";}
   if(loaded!=null){if(loaded.passengers!=null)passengers.AddRange(loaded.passengers);if(loaded.practices!=null)practices.AddRange(loaded.practices);if(loaded.completedDays!=null)completedDays.AddRange(loaded.completedDays);}
   if(loaded!=null&&!string.IsNullOrEmpty(loaded.comparisonVersion)){mixedFollowing=loaded.comparisonVersion.EndsWith("mixed");initialFollowing=loaded.comparisonVersion.EndsWith("on");mixedFollowing|=initialFollowing!=owner.traffic.mitOptions.Enabled;}
   CaptureDayStart();
   if(resumeBlocked){preparing=true;Freeze();}
   else if(loaded!=null&&loaded.live!=null)Freeze();
   else if(ShowingSummary)Freeze();
-  else if(useV2&&(!testMode||startupTest)){preparing=loaded==null||loaded.live==null||loaded.live.preparing;Freeze();}
+  else if(useV2&&(!testMode||startupTest||(Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0))){preparing=loaded==null||loaded.live==null||loaded.live.preparing;Freeze();}
  }
- void Start(){if(loaded!=null&&session.law){session.law.ids=loaded.ids;foreach(var e in loaded.law)session.law.ledger.Record(e);}if(loaded!=null&&loaded.live!=null){restoring=true;StartCoroutine(RestoreAfterInitialization(loaded.live));}else if(preparing)StartCoroutine(PlaceAtParking());}
+ void Start(){if(loaded!=null&&session.law){session.law.ids=loaded.ids;foreach(var e in loaded.law)session.law.ledger.Record(e);}if(loaded!=null&&loaded.live!=null){restoring=true;StartCoroutine(RestoreAfterInitialization(loaded.live));}else if(loaded!=null&&ledger.Care.Damage.Disabled&&!string.IsNullOrEmpty(ledger.Care.Damage.RepairBayId))StartCoroutine(RestoreReservedDamageBay());else if(preparing)StartCoroutine(PlaceAtParking());}
  bool resumeBlocked,restoring;
  System.Collections.IEnumerator RestoreAfterInitialization(LiveCampaignCheckpoint snapshot){yield return null;RestoreLive(snapshot);restoring=false;}
  void RestoreLive(LiveCampaignCheckpoint snapshot){
@@ -100,7 +102,7 @@ public class BusinessProgress : MonoBehaviour {
    if(session.ambientPedestrians)session.ambientPedestrians.Restore(snapshot.ambientPedestrians);
    session.taxi.SetSpawn(snapshot.position,snapshot.rotation);session.taxi.ResetTaxi();var district=session.traffic.GetComponent<DistrictTraffic>();if(district)district.ClearPlayerOverlap();session.law.tripId=snapshot.tripId??"";session.law.ResetObservation();session.jobs.RestoreLive(snapshot.jobs);var occupancy=session.GetComponent<StopOccupancySystem>();if(occupancy)occupancy.Restore(snapshot.occupancy);if(session.ambientPedestrians)session.ambientPedestrians.ReconcileVisibility();realSeconds=snapshot.realSeconds;preparing=snapshot.preparing;
    if(!session.jobs.Active&&snapshot.hasDestination)session.jobs.nav.SetDestination(snapshot.destination);
-   session.jobs.nav.PreferFastest=snapshot.preferFastest;session.assisted.SetActive(false);session.paused=!preparing;Time.timeScale=0;saveStatus="중단한 위치·운송·시간·장부 복원 완료 · 계속 운전";resumeBlocked=false;
+   session.jobs.nav.PreferFastest=snapshot.preferFastest;session.assisted.SetActive(false);session.paused=!preparing;Time.timeScale=0;saveStatus="중단한 위치·운송·시간·장부 복원 완료 · 계속 운전";resumeBlocked=false;if(session.damage&&ledger.Care.Damage.Disabled&&!string.IsNullOrEmpty(ledger.Care.Damage.RepairBayId)&&!session.damage.AtRepairBay)session.damage.RestoreReservedBay(false);
   }catch(Exception ex){preparing=false;session.paused=true;Time.timeScale=0;saveStatus="운송 복원 중단 · 지도/저장 상태 확인 필요: "+ex.Message;Debug.LogWarning(saveStatus);resumeBlocked=true;}
  }
  static void ValidateLivePayload(LiveCampaignCheckpoint live,DriveSession owner){
@@ -126,7 +128,8 @@ public class BusinessProgress : MonoBehaviour {
  float nextSave;int lastLawCount=-1;
  void OnApplicationQuit(){if(!testMode&&enabledCampaign&&session&&session.requests)SaveCheckpoint();}
  void OnApplicationPause(bool value){if(value&&!testMode&&enabledCampaign&&session&&session.requests)SaveCheckpoint();}
- public System.Collections.IEnumerator PlaceAtParking(){yield return null;var stop=session.services.ParkingStop;session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();session.law.ResetObservation();session.jobs.ResetOffers();}
+ System.Collections.IEnumerator RestoreReservedDamageBay(){while(!session.StartupReady)yield return null;session.damage.RestoreReservedBay();session.law.ResetObservation();session.jobs.ResetOffers();}
+ public System.Collections.IEnumerator PlaceAtParking(){yield return null;if(session.damage&&session.damage.Disabled&&!string.IsNullOrEmpty(ledger.Care.Damage.RepairBayId)){session.damage.RestoreReservedBay();session.law.ResetObservation();session.jobs.ResetOffers();yield break;}var stop=session.services.ParkingStop;session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();session.law.ResetObservation();session.jobs.ResetOffers();}
 
  void FixedUpdate(){
   if(!enabledCampaign||!ledger.Operating||preparing||restoring||resumeBlocked||session.paused||Time.timeScale<=0)return;
@@ -134,8 +137,8 @@ public class BusinessProgress : MonoBehaviour {
   var v=session.taxi.body.velocity;double metres=Math.Sqrt(v.x*v.x+v.z*v.z)*Time.fixedDeltaTime;
   if(!session.PracticeBusy&&!PracticeSession.Enabled)ledger.AdvanceOperation(Time.fixedDeltaTime,metres,session.jobs.trip.State==TripState.OnTrip);else ledger.Advance(Time.fixedDeltaTime,metres);
   if(ledger.Driver!=null)ledger.Driver.drowsiness.Advance(Time.fixedDeltaTime,DrowsinessRunning,ledger.Driver.fatigue,session.taxi.body.velocity.magnitude>=.56f);
-  if(DrowsyControlsLost){session.assisted.SetActive(false);if(session.taxi.body.velocity.sqrMagnitude>.001f)fatigueBrakeUntil=Time.fixedTime+.1f;session.taxi.body.velocity=Vector3.MoveTowards(session.taxi.body.velocity,Vector3.zero,6*Time.fixedDeltaTime);if(session.taxi.body.velocity.magnitude<.56f){session.taxi.body.velocity=Vector3.zero;session.taxi.body.angularVelocity=Vector3.zero;session.jobs.CancelForFatigue();}}
-  if(ledger.Account!=null&&ledger.Account.Fuel<=0)RecoverFuel();
+  if(DrowsyControlsLost&&!(session.damage&&session.damage.Disabled)){session.assisted.SetActive(false);if(session.taxi.body.velocity.sqrMagnitude>.001f)fatigueBrakeUntil=Time.fixedTime+.1f;session.taxi.body.velocity=Vector3.MoveTowards(session.taxi.body.velocity,Vector3.zero,6*Time.fixedDeltaTime);if(session.taxi.body.velocity.magnitude<.56f){session.taxi.body.velocity=Vector3.zero;session.taxi.body.angularVelocity=Vector3.zero;session.jobs.CancelForFatigue();}}
+  if(ledger.Account!=null&&ledger.Account.Fuel<=0&&!(session.damage&&session.damage.Disabled))RecoverFuel();
  }
  void Update(){if(enabledCampaign&&!preparing&&!session.paused&&ledger.Operating&&(ledger.Driver==null||DrowsinessRunning)){realSeconds+=Time.unscaledDeltaTime;mixedFollowing|=session.traffic.mitOptions.Enabled!=initialFollowing;}if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil){notice="";noticeUntil=0;}}
  void LateUpdate(){
@@ -143,13 +146,15 @@ public class BusinessProgress : MonoBehaviour {
   if(session.FullMapOpen||!enabledCampaign||ledger.State!=BusinessState.Closing)return;
   if(session.jobs.trip.State==TripState.OnTrip){notice="영업 종료 대기 · 현재 승객 운송 후 정산합니다";return;}
   session.jobs.RecordExpiredTrip();
+  if(session.damage&&session.damage.Disabled&&!session.damage.AtRepairBay)return;
   if(ledger.Settle()){ledger.Last.realSeconds=realSeconds;taxPrompt=false;session.jobs.ClearForDay();session.services.open=false;session.services.pending=-1;Freeze();SaveCheckpoint();}
  }
  void Freeze(){session.paused=false;Time.timeScale=0;}
  public bool RequestEmergencyHome(){
+  if(session.damage&&session.damage.Disabled&&!session.damage.AtRepairBay)return false;
   if(!DrowsinessRunning||!ledger.Driver.drowsiness.Blackout||session.taxi.body.velocity.magnitude>=.56f)return false;
   session.jobs.CancelForFatigue();if(session.jobs.Active||!ledger.UseEmergencySleep(session.law.ids.Next("emergency-home")))return false;
-  session.jobs.ClearForDay();session.assisted.SetActive(false);var stop=session.services.ParkingStop;session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();session.law.ResetObservation();var district=session.traffic.GetComponent<DistrictTraffic>();if(district)district.ClearPlayerOverlap();notice="졸음 운전으로 위험합니다. 오늘 영업을 종료합니다. · 피로 −20";noticeUntil=Time.unscaledTime+10;SaveCheckpoint();return true;
+  session.jobs.ClearForDay();session.assisted.SetActive(false);if(!(session.damage&&session.damage.Disabled&&session.damage.AtRepairBay)){var stop=session.services.ParkingStop;session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();}session.law.ResetObservation();var district=session.traffic.GetComponent<DistrictTraffic>();if(district)district.ClearPlayerOverlap();notice="졸음 운전으로 위험합니다. 오늘 영업을 종료합니다. · 피로 −20";noticeUntil=Time.unscaledTime+10;SaveCheckpoint();return true;
  }
  public bool RequestEndDay(){
   if(session.FullMapOpen||!enabledCampaign||ledger.State!=BusinessState.Open||session.paused||Time.timeScale==0)return false;
@@ -165,6 +170,7 @@ public class BusinessProgress : MonoBehaviour {
   passengers.Add(new PassengerResult{boardingDrivingScore=reward.boardingDrivingScore,drivingAdjustedFare=reward.drivingAdjustedFare,comfortDelta=reward.comfortDelta,initialFare=jobs.InitialFare,farePolicyVersion=reward.farePolicyVersion,hasDrivingScore=true,drivingScore=session.law.ledger.TotalScore,tripId=session.law.tripId,offerId=jobs.OfferId,day=ledger.Day,pickupStopId=offer.pickupStopId,dropStopId=offer.dropStopId,mapRevision=offer.mapRevision,catalogRevision=offer.catalogRevision,stopEvidence=offer.stopEvidence,pickup=jobs.stops[offer.pickup].name,destination=jobs.stops[offer.drop].name,outcome=outcome,quoted=offer.fare,paid=paid,baseFare=reward.baseFare,bonus=reward.bonus,satisfaction=reward.satisfaction,satisfactionDelta=reward.satisfactionDelta,excessScore=reward.excessScore,bonusReason=reward.bonusReason,startSatisfaction=reward.startSatisfaction,startDeficit=reward.startDeficit,cleanBonus=reward.cleanBonus,driveDelta=reward.driveDelta,timeDelta=reward.timeDelta,referenceSeconds=reward.referenceSeconds,timeReason=reward.timeReason,cleanlinessAfter=ledger.Care.Cleanliness,drunk=jobs.DrunkRide!=null&&jobs.DrunkRide.IsDrunk,vomited=jobs.DrunkRide!=null&&jobs.DrunkRide.Vomited,wakeDelayed=jobs.DrunkRide!=null&&jobs.DrunkRide.SleepPlanned,arrivalElapsed=jobs.DrunkRide==null?0:jobs.DrunkRide.ArrivalElapsed,disembarkElapsed=jobs.DrunkRide==null?0:jobs.DrunkRide.DisembarkElapsed,score=reward.sourceManner,required=offer.requiredScore,elapsed=Mathf.Max(0,offer.seconds-jobs.trip.Remaining),request=(jobs.Behavior==null?"":jobs.BehaviorSummary+"\n")+session.requests.Summary,mannerReason=session.manners.RideReasons});
  }
  public void RecordFatigueCancellation(){RecordPassenger(0,"졸음 위험 · 중도 하차/운송 취소");foreach(var result in passengers)if(result.tripId==session.law.tripId){result.cancelledForFatigue=true;result.baseFare=result.bonus=result.paid=0;result.bonusReason="졸음 위험 운송 취소";}}
+ public void RecordDamageCancellation(){RecordPassenger(0,"차량 내구도 0 · 안전 하차/운송 취소");foreach(var result in passengers)if(result.tripId==session.law.tripId){result.baseFare=result.bonus=result.paid=0;result.bonusReason="차량 고장 운송 취소";}}
  public void RecordFare(int amount){if(!enabledCampaign)return;if(ledger.Account!=null)ledger.RecordFare(session.law.tripId,amount);else ledger.RecordFare(amount);}
  public void RecordFailure(){if(enabledCampaign)ledger.RecordFailure();}
  public bool NextDay(){

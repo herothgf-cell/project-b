@@ -58,6 +58,8 @@ public class TaxiController : MonoBehaviour {
         // Brief eye closure cuts propulsion and holds the last wheel angle.
         // Braking remains available; neither manual nor assisted steering bypasses it.
         if(microsleep){demand.motor=0;motorDemand=0;}
+        var damage=GetComponent<VehicleDamageController>();
+        if(damage&&damage.Disabled){demand.motor=0;motorDemand=0;demand.brake=1;}
         CornerAssisting=demand.motor<manual.motor||demand.brake>manual.brake;
         float centerAngle=steer*(assistedSteering?DriveMath.SteerAngle(Speed*3.6f):DriveMath.ManualSteerAngle(Speed*3.6f));
         for(int i=0;i<4;i++) { if(!microsleep)wheels[i].steerAngle=i<2?DriveMath.WheelSteerAngle(centerAngle,i==0):0; wheels[i].motorTorque=i>=2?demand.motor*1100:0; wheels[i].brakeTorque=demand.brake*3500; }
@@ -88,5 +90,6 @@ public class TaxiController : MonoBehaviour {
         steer=0; throttle=0; motorDemand=0; brake=false;
         var indicators=GetComponent<TaxiSignals>();if(indicators)indicators.Clear();
         var manners=GetComponent<DrivingManners>();if(manners)manners.Suppress(.8f);
+        var damage=GetComponent<VehicleDamageController>();if(damage)damage.TechnicalRecovery();
     }
 }

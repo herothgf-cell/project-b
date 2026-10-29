@@ -1,0 +1,11 @@
+$ErrorActionPreference = 'Stop'
+$taskRoot = Split-Path $PSScriptRoot -Parent
+$taskCompiler = Join-Path $env:WINDIR 'Microsoft.NET/Framework64/v4.0.30319/csc.exe'
+$taskOutput = Join-Path $taskRoot 'artifacts'
+New-Item -ItemType Directory -Force -Path $taskOutput | Out-Null
+$taskSources = @('DriverCondition','PrototypeState','CampaignAccount','EconomyLedger','OperationMetrics','PassengerRequest','MannerLedger','FareTrip','VehicleCare','PassengerBehavior','TrafficRules','PassengerWaitingPolicy','ScoreFeedback','RideReceiptSummary') | ForEach-Object { Join-Path $taskRoot "unity/EungyeTaxi/Assets/Scripts/$_.cs" }
+$taskExe=Join-Path $taskOutput 'VehicleDamageTests.exe'
+& $taskCompiler /nologo "/out:$taskExe" (Join-Path $taskRoot 'tests/VehicleDamageTests.cs') @taskSources
+if($LASTEXITCODE -ne 0){throw 'VehicleDamageTests compile failed'}
+& $taskExe
+if($LASTEXITCODE -ne 0){throw 'VehicleDamageTests failed'}

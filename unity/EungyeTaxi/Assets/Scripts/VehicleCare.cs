@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 
 [Serializable] public class VehicleCareSnapshot {
+ public int damageVersion; public VehicleDamageSnapshot damage;
  public int encounterVersion,encounterDrunks,encounterMisses,encounterOrdinal;
  public bool encounterRest,encounterReserved;
  public PassengerType encounterType;
@@ -13,6 +14,7 @@ using System.Collections.Generic;
 }
 // Vehicle condition is independent of manners, law and fare. Identities make effects replay safe.
 public sealed class VehicleCare {
+ public VehicleDamage Damage {get;private set;}
  public int Cleanliness {get;private set;}
  public int Day {get;private set;}
  public int DrunksBoarded {get;private set;}
@@ -28,7 +30,7 @@ public sealed class VehicleCare {
  PassengerType encounterType;
  readonly HashSet<string> soiled=new HashSet<string>(),encounterTrips=new HashSet<string>();
  public PassengerType? ReservedPassenger {get{return encounterReserved?(PassengerType?)encounterType:null;}}
- public VehicleCare(){Cleanliness=100;Day=1;}
+ public VehicleCare(){Cleanliness=100;Day=1;Damage=new VehicleDamage();}
  public void BeginDay(int day){if(day!=Day){Day=day;DrunksBoarded=0;encounterDrunks=0;}}
  public bool Soil(string eventId,int amount){if(string.IsNullOrEmpty(eventId)||amount<=0||amount>100||!soiled.Add(eventId))return false;Cleanliness=Math.Max(0,Cleanliness-amount);if(Cleanliness<30)AcceptanceLocked=true;return true;}
  public PassengerType ReservePassenger(string seed,PassengerType[] eligible){
@@ -51,8 +53,8 @@ public sealed class VehicleCare {
  public bool Finish(string trip,bool vomited){if(string.IsNullOrEmpty(trip)||!settled.Add(trip))return false;if(vomited)MarkVomit();Cleanliness=vomited?Math.Min(Cleanliness,10):Math.Max(0,Cleanliness-2);return true;}
  public void Advance(double seconds){if(double.IsNaN(seconds)||double.IsInfinity(seconds)||seconds<=0)return;double total=dirtSeconds+seconds;double points=Math.Floor(total/120);dirtSeconds=total%120;Cleanliness=(int)Math.Max(0,Cleanliness-Math.Min(100,points));}
  public void Wash(){Cleanliness=100;dirtSeconds=0;AcceptanceLocked=false;VomitUnwashed=false;}
- public VehicleCareSnapshot Snapshot(){return new VehicleCareSnapshot{encounterVersion=1,encounterDrunks=encounterDrunks,encounterMisses=encounterMisses,encounterOrdinal=encounterOrdinal,encounterRest=encounterRest,encounterReserved=encounterReserved,encounterType=encounterType,soiled=new List<string>(soiled).ToArray(),encounterTrips=new List<string>(encounterTrips).ToArray(),dirtSeconds=dirtSeconds,cleanliness=Cleanliness,day=Day,drunksBoarded=DrunksBoarded,refusals=Refusals,acceptanceLocked=AcceptanceLocked,vomitUnwashed=VomitUnwashed,settled=new List<string>(settled).ToArray(),refused=new List<string>(refused).ToArray()};}
- public static VehicleCare Restore(VehicleCareSnapshot s){if(s==null)return new VehicleCare();if(s.encounterVersion==1&&(s.soiled==null||s.encounterTrips==null)||s.encounterVersion<0||s.encounterVersion>1||s.encounterDrunks<0||s.encounterDrunks>2||s.encounterMisses<0||s.encounterMisses>3||s.encounterOrdinal<0||!Enum.IsDefined(typeof(PassengerType),s.encounterType)||s.encounterVersion==0&&(s.encounterDrunks!=0||s.encounterMisses!=0||s.encounterOrdinal!=0||s.encounterRest||s.encounterReserved))throw new ArgumentException("Invalid encounter state");if(double.IsNaN(s.dirtSeconds)||double.IsInfinity(s.dirtSeconds)||s.dirtSeconds<0||s.dirtSeconds>=120||s.cleanliness<0||s.cleanliness>100||s.day<1||s.drunksBoarded<0||s.drunksBoarded>1||s.refusals<0||s.acceptanceLocked&&s.cleanliness>=30&&!s.vomitUnwashed)throw new ArgumentException("Invalid vehicle care");var c=new VehicleCare{encounterDrunks=s.encounterVersion==0?s.drunksBoarded:s.encounterDrunks,encounterMisses=s.encounterMisses,encounterOrdinal=s.encounterOrdinal,encounterRest=s.encounterRest,encounterReserved=s.encounterReserved,encounterType=s.encounterType,dirtSeconds=s.dirtSeconds,Cleanliness=s.cleanliness,Day=s.day,DrunksBoarded=s.drunksBoarded,Refusals=s.refusals,VomitUnwashed=s.vomitUnwashed,AcceptanceLocked=s.acceptanceLocked||s.vomitUnwashed||s.cleanliness<30};foreach(var id in s.settled??new string[0])if(string.IsNullOrEmpty(id)||!c.settled.Add(id))throw new ArgumentException("Invalid care trip");foreach(var id in s.refused??new string[0])if(string.IsNullOrEmpty(id)||!c.refused.Add(id))throw new ArgumentException("Invalid refusal");foreach(var id in s.soiled??new string[0])if(string.IsNullOrEmpty(id)||!c.soiled.Add(id))throw new ArgumentException("Invalid soil event");foreach(var id in s.encounterTrips??new string[0])if(string.IsNullOrEmpty(id)||!c.encounterTrips.Add(id))throw new ArgumentException("Invalid encounter trip");if(s.encounterVersion==1&&c.encounterTrips.Count!=c.encounterOrdinal)throw new ArgumentException("Encounter ordinal mismatch");return c;}
+ public VehicleCareSnapshot Snapshot(){return new VehicleCareSnapshot{damageVersion=1,damage=Damage.Snapshot(),encounterVersion=1,encounterDrunks=encounterDrunks,encounterMisses=encounterMisses,encounterOrdinal=encounterOrdinal,encounterRest=encounterRest,encounterReserved=encounterReserved,encounterType=encounterType,soiled=new List<string>(soiled).ToArray(),encounterTrips=new List<string>(encounterTrips).ToArray(),dirtSeconds=dirtSeconds,cleanliness=Cleanliness,day=Day,drunksBoarded=DrunksBoarded,refusals=Refusals,acceptanceLocked=AcceptanceLocked,vomitUnwashed=VomitUnwashed,settled=new List<string>(settled).ToArray(),refused=new List<string>(refused).ToArray()};}
+ public static VehicleCare Restore(VehicleCareSnapshot s){if(s==null)return new VehicleCare();if(s.damageVersion<0||s.damageVersion>1||s.damageVersion==1&&s.damage==null)throw new ArgumentException("Invalid damage checkpoint version");if(s.encounterVersion==1&&(s.soiled==null||s.encounterTrips==null)||s.encounterVersion<0||s.encounterVersion>1||s.encounterDrunks<0||s.encounterDrunks>2||s.encounterMisses<0||s.encounterMisses>3||s.encounterOrdinal<0||!Enum.IsDefined(typeof(PassengerType),s.encounterType)||s.encounterVersion==0&&(s.encounterDrunks!=0||s.encounterMisses!=0||s.encounterOrdinal!=0||s.encounterRest||s.encounterReserved))throw new ArgumentException("Invalid encounter state");if(double.IsNaN(s.dirtSeconds)||double.IsInfinity(s.dirtSeconds)||s.dirtSeconds<0||s.dirtSeconds>=120||s.cleanliness<0||s.cleanliness>100||s.day<1||s.drunksBoarded<0||s.drunksBoarded>1||s.refusals<0||s.acceptanceLocked&&s.cleanliness>=30&&!s.vomitUnwashed)throw new ArgumentException("Invalid vehicle care");var c=new VehicleCare{Damage=VehicleDamage.Restore(s.damageVersion==1?s.damage:null),encounterDrunks=s.encounterVersion==0?s.drunksBoarded:s.encounterDrunks,encounterMisses=s.encounterMisses,encounterOrdinal=s.encounterOrdinal,encounterRest=s.encounterRest,encounterReserved=s.encounterReserved,encounterType=s.encounterType,dirtSeconds=s.dirtSeconds,Cleanliness=s.cleanliness,Day=s.day,DrunksBoarded=s.drunksBoarded,Refusals=s.refusals,VomitUnwashed=s.vomitUnwashed,AcceptanceLocked=s.acceptanceLocked||s.vomitUnwashed||s.cleanliness<30};foreach(var id in s.settled??new string[0])if(string.IsNullOrEmpty(id)||!c.settled.Add(id))throw new ArgumentException("Invalid care trip");foreach(var id in s.refused??new string[0])if(string.IsNullOrEmpty(id)||!c.refused.Add(id))throw new ArgumentException("Invalid refusal");foreach(var id in s.soiled??new string[0])if(string.IsNullOrEmpty(id)||!c.soiled.Add(id))throw new ArgumentException("Invalid soil event");foreach(var id in s.encounterTrips??new string[0])if(string.IsNullOrEmpty(id)||!c.encounterTrips.Add(id))throw new ArgumentException("Invalid encounter trip");if(s.encounterVersion==1&&c.encounterTrips.Count!=c.encounterOrdinal)throw new ArgumentException("Encounter ordinal mismatch");return c;}
 }
 
 public enum DrunkRideCase { Random, Normal, Vomit, Sleepy, Both }
@@ -79,4 +81,47 @@ public enum DrunkRideCase { Random, Normal, Vomit, Sleepy, Both }
  public bool Disembark(bool safe,bool wake){if(!CanDisembark(safe,wake))return false;Settled=true;Waiting=false;DisembarkElapsed=Elapsed;return true;}
  public DrunkRideState Copy(){return (DrunkRideState)MemberwiseClone();}
  public void Validate(){foreach(float value in new[]{VomitProgress,Elapsed,ArrivalElapsed,DisembarkElapsed,WaitElapsed,WarningElapsed,NextDialogueElapsed,DialogueUntil})if(float.IsNaN(value)||float.IsInfinity(value)||value<0)throw new ArgumentException("Invalid drunk ride timing");if(DialogueCount<0||WarningElapsed>Elapsed||Warned&&(!IsDrunk||!VomitPlanned)||string.IsNullOrEmpty(identity)||VomitProgress<.3f||VomitProgress>.7f||Waiting&&(!ArrivalLocked||(!IsDrunk&&!NonDrunkSleep)||!SleepPlanned)||NonDrunkSleep&&IsDrunk||Vomited&&(!IsDrunk||!VomitPlanned)||ArrivalElapsed>Elapsed||DisembarkElapsed>Elapsed)throw new ArgumentException("Invalid drunk ride state");}
+}
+// The contact incident survives save/load; only .8 seconds with every contact absent ends it.
+[Serializable] public sealed class VehicleDamageSnapshot {
+ public int version;
+ public int durability=100,incidentTier;
+ public double detachedSeconds,graceSeconds;
+ public string repairBayId="";
+}
+public sealed class VehicleDamage {
+ public int Durability {get;private set;}
+ public bool Disabled {get{return Durability==0;}}
+ public string RepairBayId {get;private set;}
+ public int RepairCost {get{return (100-Durability)*200;}}
+ public double RepairSeconds {get{return Durability==100?0:10+.5*(100-Durability);}}
+ int incidentTier;
+ double detachedSeconds,graceSeconds;
+ public VehicleDamage(){Durability=100;RepairBayId="";}
+ static bool Finite(double value){return !double.IsNaN(value)&&!double.IsInfinity(value);}
+ static int Tier(double speed){return speed<1.5?0:speed<3?2:speed<6?6:speed<10?15:speed<15?30:50;}
+ public int Impact(double speed){
+  if(!Finite(speed)||speed<0||graceSeconds>0)return 0;
+  detachedSeconds=0;int tier=Tier(speed);int loss=Math.Min(Durability,Math.Max(0,tier-incidentTier));
+  incidentTier=Math.Max(incidentTier,tier);Durability-=loss;return loss;
+ }
+ public void Advance(double seconds,bool touching){
+  if(!Finite(seconds)||seconds<0)return;
+  graceSeconds=Math.Max(0,graceSeconds-seconds);if(graceSeconds<1e-12)graceSeconds=0;
+  if(touching){detachedSeconds=0;return;}
+  if(incidentTier==0)return;
+  detachedSeconds=Math.Min(.8,detachedSeconds+seconds);
+  if(detachedSeconds>=.8-1e-12){incidentTier=0;detachedSeconds=0;}
+ }
+ public void Suppress(double seconds){if(Finite(seconds)&&seconds>0)graceSeconds=Math.Max(graceSeconds,seconds);}
+ public void LeaveRepairBay(){RepairBayId="";}
+ internal void Repair(){Durability=100;incidentTier=0;detachedSeconds=0;LeaveRepairBay();}
+ internal void EnterRepairBay(string bayId){RepairBayId=bayId;}
+ public VehicleDamageSnapshot Snapshot(){return new VehicleDamageSnapshot{version=1,durability=Durability,incidentTier=incidentTier,detachedSeconds=detachedSeconds,graceSeconds=graceSeconds,repairBayId=RepairBayId};}
+ public static VehicleDamage Restore(VehicleDamageSnapshot value){
+  if(value==null)return new VehicleDamage();
+  bool validTier=value.incidentTier==0||value.incidentTier==2||value.incidentTier==6||value.incidentTier==15||value.incidentTier==30||value.incidentTier==50;
+  if(value.version!=1||value.durability<0||value.durability>100||value.incidentTier>100-value.durability||!validTier||!Finite(value.detachedSeconds)||value.detachedSeconds<0||value.detachedSeconds>=.8||value.incidentTier==0&&value.detachedSeconds!=0||!Finite(value.graceSeconds)||value.graceSeconds<0||value.repairBayId!=null&&value.repairBayId.Length>0&&(value.durability!=0||string.IsNullOrWhiteSpace(value.repairBayId)))throw new ArgumentException("Invalid vehicle damage");
+  return new VehicleDamage{Durability=value.durability,incidentTier=value.incidentTier,detachedSeconds=value.detachedSeconds,graceSeconds=value.graceSeconds,RepairBayId=value.repairBayId??""};
+ }
 }
