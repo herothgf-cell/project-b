@@ -9,4 +9,3 @@ $taskExe=Join-Path $taskRoot 'artifacts/PassengerBehaviorTests.exe'
 if($LASTEXITCODE -ne 0){throw 'PassengerBehaviorTests compile failed'}
 & $taskExe
 if($LASTEXITCODE -ne 0){throw 'PassengerBehaviorTests failed'}
-

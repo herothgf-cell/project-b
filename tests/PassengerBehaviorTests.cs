@@ -30,8 +30,3 @@ class PassengerBehaviorTests {
   Console.WriteLine("PASS PassengerBehaviorTests "+n);
  }
 }
-
-
-
-
-
