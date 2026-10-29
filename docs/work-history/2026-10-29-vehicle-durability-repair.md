@@ -22,9 +22,9 @@
 - 독립 실제 연결 검토가 날짜 이월·졸음 귀가에서 D0 견인 구역 이탈/재청구와 도착 확정 짐 하역 중 견인 불가를 발견했다. 별도 실행 회귀로 추가했다. 화면 검사에서 손상 컴포넌트를 꺼둔 fixture도 검토 지적대로 보완 대상에 포함한다.
 - 검사 실행 대기가 아직 완료되기 전에 검사 프로세스를 시작한1회는 해당 test 인자/로그 경로 프로세스만 종료하고 결과로 사용하지 않았다. 빌드 종료0 확인 후 새로 실행했고, 러너에 Unity 실행 중 차단을 추가했다.
 
-## 검증·배포 상태
+## 검증·배포 기준
 
-진행 중. 최종 명령·종료 결과·화면·배포 해시·커밋·남은 검증은 완료 후 아래에 기록한다. 기본 빌드는 PrototypeBuild.BuildHybrid, 실행은 builds/EungyeTaxi/EungyeTaxi.exe다. 새 검사는 artifacts/vehicle-durability-test.json 전용으로 사용자 저장을 사용하지 않는다.
+최종 명령·종료 결과·화면·배포 해시·커밋·남은 검증은 아래에 기록한다. 기본 빌드는 PrototypeBuild.BuildHybrid, 실행은 builds/EungyeTaxi/EungyeTaxi.exe다. 새 검사는 artifacts/vehicle-durability-test.json 전용으로 사용자 저장을 사용하지 않는다.
 
 ## 경계 보완·최종 검사
 
@@ -55,3 +55,11 @@
 - 재현: pwsh -File tools/test_vehicle_damage.ps1; Unity -batchmode -nographics -quit -projectPath unity/EungyeTaxi -executeMethod VehicleDurabilityIntegrationTests.Build -logFile <로그>; pwsh -File tools/test_vehicle_durability_player.ps1. 실제 화면 검사에는 승인된 -Capture -Visible 옵션을 추가한다. 첫 프로세스만 창을 표시하며 후속 재개는 headless다.
 - 이 PC Unity2022.3.62f2. 실행 파일은 기본 은계 builds/EungyeTaxi/EungyeTaxi.exe. 사용자 저장 대신 artifacts/vehicle-durability-test.json 및 기존 회귀 전용 저장만 사용했다.
 - 미수행: 사람20분/3일 운전·전체 도로/경계석·다른 PC/패드·장시간 체감/비용 밸런스. 로컬 PhysX fixture를 전체 차량/도로 실주행 완료로 표시하지 않는다.
+
+## 배포 검증
+
+- 실제 소스 커밋8f8d05be2d2a51e3e5d3e047260a6cc2c0f8f8db. 해당 소스의 기본 은계 BuildHybrid 실행 폴더 전체를 갱신했다.
+- pwsh -File tools/update_distribution_manifest.ps1 -SourceCommit <위 실제 해시> -ValidatedOn 2026-10-29 -ValidationReport artifacts/vehicle-durability-validation.json 종료0. -VerifyOnly 종료0:130파일112,193,174바이트 크기·SHA256 일치.
+- pwsh -File tools/check_workspace.ps1 -Strict 종료0, Input issues0. 선택 import2개 없음 허용, 프로젝트 지도 contentHash76ebb91c8e5ae202f81c15a5df399375db2273157406eccc4b07ef258ebfe758와 입력/ZIP 유지.
+- 문서10개 링크142/앵커25/표45 검사 오류0, 최종 stage diff --check 종료0. 실행 중인 기본 게임 없음 확인 후 게시한다. 다른 worktree의 PVP Unity는 종료하거나 변경하지 않았다.
+- 현재 원격 main9d05a40 기준, 소스/배포를 fast-forward 통합하고 게시 결과는 후속 기록으로 확정한다. 기존 사용자 untracked8항목은 보존했다.

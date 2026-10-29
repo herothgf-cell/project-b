@@ -1,43 +1,48 @@
 {
-  "sourceCommit": "7dec39f1dab5f6e7c8cde3a63977e7a6a3e423cb",
+  "sourceCommit": "8f8d05be2d2a51e3e5d3e047260a6cc2c0f8f8db",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-10-29",
-  "totalBytes": 112155810.0,
+  "totalBytes": 112193174.0,
   "validation": {
-    "build": "PassengerBehaviorReleaseTests.Build / PrototypeBuild.BuildHybrid exit 0",
-    "modelSuites": 28,
-    "passengerBehaviorModelAssertions": 430,
+    "build": "VehicleDurabilityIntegrationTests.Build / PrototypeBuild.BuildHybrid exit 0",
+    "durabilityModelAssertions": 191,
     "passengerCareModelAssertions": 13301,
+    "passengerBehaviorModelAssertions": 430,
+    "modelSuites": 28,
+    "durabilityEditorAssertions": 10,
     "passengerBehaviorEditorAssertions": 1526,
     "passengerCarePersistenceAssertions": 14,
     "liveCampaignAssertions": 22,
     "p11Editor": true,
-    "passengerBehaviorPlayerAssertions": 174,
-    "newProcessReloadAssertions": 8,
+    "pvpEditorIsolation": true,
+    "localPhysXScenarios": 15,
+    "durabilityPlayerAssertions": 70,
+    "activeReloadAssertions": 8,
+    "summaryReloadAssertions": 2,
+    "preparationReloadAssertions": 7,
+    "pendingLiveReloadAssertions": 2,
+    "isolatedDurabilityProcesses": 5,
     "legacyPassengerCarePlayerAssertions": 201,
+    "legacyPassengerBehaviorPlayerAssertions": 164,
+    "legacyPassengerBehaviorReloadAssertions": 8,
     "visibleUiCapture": true,
     "uiResolution": [
       1280,
       720
     ],
     "uiScreens": [
-      "preparation",
-      "food-choice",
-      "sleeping",
-      "receipt"
+      "disabled",
+      "repair",
+      "summary"
     ],
     "positionControlled": true,
     "manualDriving": false,
     "fullCampaignManual": false,
     "isolatedTestSave": true,
     "mapInputsChanged": false,
-    "notes": "User-authorized visible UI rerun: four actual frames inspected. Position-controlled tests, not human driving or full campaign. Separate PvP source preserved; no PvP executable distributed.",
-    "pvpEditorIsolation": true,
-    "pvpModelCases": 8,
-    "pvpDiagnosticProcesses": 2,
-    "sourceIntegration": "main 73e5962 + passenger behavior; merged source 7dec39f"
+    "notes": "Local PhysX fixtures plus controlled actual campaign lifecycle; no full road driving or human20min/3day calibration. Paid repair-bay reservation survives active/summary/preparing/pending occupied reload. Dedicated space overlap and blank/fade captures checked."
   },
   "files": [
     {
@@ -48,17 +53,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "c9d9a676a461dfac1db0415c2bcb6a7c45032f287f44cc0b3ee75f00f6de47ce"
+      "sha256": "4338b8238af0b7a86a2d4a07e561f2d0d0a65e4d894b57c39e20e87f6cc1ac28"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 31916,
-      "sha256": "d76f1ab215ee4a26bd4c3d00be22aeb977f6bc236b557bf692b51ad47fde58dc"
+      "bytes": 32004,
+      "sha256": "9993ea3e5f0860e415e8a99160586c44ed87cf211b3eba47d80e27ac1f9ab484"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 28680,
-      "sha256": "37e88cfa763473288cf6e549444ce05576010364d2b59a6578f381b753250180"
+      "bytes": 28936,
+      "sha256": "81ad39140134f0773cb81eea214860918dfaa355efa01c6a11d1d0ed9e391d20"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -67,8 +72,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
-      "bytes": 1356,
-      "sha256": "4d52ee8feee3cef21e48536b7938ffa05be31d4ad75e0985f82918590e21c674"
+      "bytes": 1368,
+      "sha256": "48cc2009d03513c7f00532e08709e607e26e8a5eb787742839655e074b9fa7bf"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0.resS",
@@ -77,8 +82,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 1486336,
-      "sha256": "6e6cb793f5b737e495cb192a6ca17fa555d6787648dde3133b85bb8ae32507e6"
+      "bytes": 1523200,
+      "sha256": "feea4c184774c9f13d302590a25a38dc0a442d1a50f9d1bbf1ed3e970099672b"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -542,8 +547,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/RuntimeInitializeOnLoads.json",
-      "bytes": 5294,
-      "sha256": "c5d9fb7db5a81fbc87b69d0f56c0d4d341fed4e126b903fc7a140c68fd15bfd8"
+      "bytes": 5438,
+      "sha256": "904a6009213fcbd215ebc940134754d4c9fc612db03d33e5107023f20165aa13"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/ScriptingAssemblies.json",
@@ -553,7 +558,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/sharedassets0.assets",
       "bytes": 7624,
-      "sha256": "a364280470be0927d4e151be1db03fae3eef6eadbacdb4e6e5c814d67c73e691"
+      "sha256": "d8d951d891ca8119b0fcf6d94665c4fc2d4c156bde1c895d00864fc2d9f59ba3"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi.exe",
