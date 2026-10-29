@@ -63,3 +63,9 @@
 - pwsh -File tools/check_workspace.ps1 -Strict 종료0, Input issues0. 선택 import2개 없음 허용, 프로젝트 지도 contentHash76ebb91c8e5ae202f81c15a5df399375db2273157406eccc4b07ef258ebfe758와 입력/ZIP 유지.
 - 문서10개 링크142/앵커25/표45 검사 오류0, 최종 stage diff --check 종료0. 실행 중인 기본 게임 없음 확인 후 게시한다. 다른 worktree의 PVP Unity는 종료하거나 변경하지 않았다.
 - 현재 원격 main9d05a40 기준, 소스/배포를 fast-forward 통합하고 게시 결과는 후속 기록으로 확정한다. 기존 사용자 untracked8항목은 보존했다.
+
+## main 게시 확인
+
+- 배포 커밋834d511d2adad45348dbfa634579d9622cb5e225. git switch main → git merge --ff-only codex/vehicle-durability-repair → git push origin main 모두 종료0.
+- git ls-remote origin refs/heads/main 및 git log -1 --oneline -- docs/work-history/2026-10-29-vehicle-durability-repair.md에서 실제 원격/이력 커밋834d511을 확인했다. 이 게시 확인 기록 자체의 후속 커밋 해시는 추측하지 않는다.
+- main 체크아웃 후 manifest -VerifyOnly 재검증 종료0:130파일112,193,174바이트. 남은 untracked는 작업 시작 전 사용자8항목뿐이다.
