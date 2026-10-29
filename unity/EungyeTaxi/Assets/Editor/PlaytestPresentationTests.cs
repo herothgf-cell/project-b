@@ -20,12 +20,23 @@ public static class PlaytestPresentationTests {
   try{
    var s=root.AddComponent<DriveSession>();s.traffic=root.AddComponent<TrafficSystem>();s.world=root.AddComponent<WorldBuilder>();s.world.map=new MapData{width=500,depth=500};s.roadEnvironment=root.AddComponent<RoadEnvironment>();s.roadEnvironment.map=s.world.map;
    var j=new TrafficJunction{name="fixture",center=new Vector3(100,0,100),direction=Vector3.forward,leftTurnMode=LeftTurnMode.ProtectedShared};j.lampAxes.Add(0);j.lampSigns.Add(1);s.traffic.junctions.Add(j);
-   var housing=WorldBuilder.Box("Signal housing",new Vector3(102,4.55f,125),new Vector3(2.2f,.85f,.35f),WorldBuilder.Mat("test housing",Color.black),s.traffic.transform,false);
-   var lamps=new Renderer[3];for(int i=0;i<3;i++){var lamp=WorldBuilder.Box("test lamp",new Vector3(102+i*.5f,4.55f,124.8f),Vector3.one*.2f,WorldBuilder.Mat("test lamp",Color.red),housing.transform,false);lamps[i]=lamp.GetComponent<Renderer>();}j.lamps.Add(lamps);
+   var approach=new GameObject("signal approach");approach.transform.SetParent(s.traffic.transform,false);
+   var housing=WorldBuilder.Box("Signal housing",new Vector3(102,4.55f,125),new Vector3(2.2f,.85f,.35f),WorldBuilder.Mat("test housing",Color.black),approach.transform,false);
+   var lamps=new Renderer[3];for(int i=0;i<3;i++){var lamp=WorldBuilder.Box("test lamp",new Vector3(102+i*.5f,4.55f,124.8f),Vector3.one*.2f,WorldBuilder.Mat("test lamp",Color.red),approach.transform,false);lamps[i]=lamp.GetComponent<Renderer>();}j.lamps.Add(lamps);
    var signs=root.AddComponent<RoadSignage>();signs.session=s;typeof(RoadSignage).GetMethod("Start",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(signs,null);
+   Check(signs.Count==0,"protected signal must not invent a crosswalk billboard");
+   foreach(var t in root.GetComponentsInChildren<TextMesh>())Check(!t.text.Contains("횡단보"),"no text-only crosswalk fallback");
    j.leftTurnMode=LeftTurnMode.Permissive;j.scenarioSignal=true;j.observationAxis=0;j.observationSign=1;signs.SendMessage("LateUpdate",SendMessageOptions.DontRequireReceiver);
    var captions=root.GetComponentsInChildren<TextMesh>();bool above=false;foreach(var t in captions)if(t.text.Contains("비보호")&&t.transform.position.y>5&&Vector2.Distance(new Vector2(t.transform.position.x,t.transform.position.z),new Vector2(lamps[0].transform.position.x,lamps[0].transform.position.z))<3)above=true;
    Check(above,"permissive sign is mounted above matching vehicle signal not roadside");
+   Check(signs.Count==1,"only one matching permissive sign");
+   var back=approach.transform.Find("비보호 표지/회색 뒷판");Check(back&&back.localScale.x<1&&back.localScale.y<1.2f,"sign is compact instead of4.5m banner");
+   var colour=back.GetComponent<Renderer>().sharedMaterial.color;Check(Mathf.Abs(colour.r-colour.b)<.1f,"back is neutral grey");
+   j.observationSign=-1;signs.SendMessage("LateUpdate");Check(signs.Count==0,"unrelated scenario approach hides permissive instruction");
+   j.observationSign=1;signs.SendMessage("LateUpdate");Check(signs.Count==1,"matching approach restores same sign");
+   j.leftTurnMode=LeftTurnMode.ProtectedShared;signs.SendMessage("LateUpdate");Check(signs.Count==0,"protected phase has no fallback crosswalk plate");
+   var native=RoadSignage.CreatePermissive(approach.transform,Vector3.up*6);Check(native.GetComponentsInChildren<TextMesh>()[0].text=="비보호","native traffic uses the same real condition face");
+
   }finally{UnityEngine.Object.DestroyImmediate(root);Time.timeScale=1;}
  }
  public static void Run(){RunChoice();RunSigns();Debug.Log("PLAYTEST_PRESENTATION_OK");}
@@ -34,5 +45,5 @@ public static class PlaytestPresentationTests {
  public static void RunFinal(){RunFocused();StabilizationRegressionTests.RunFinal();StabilizationRegressionTests.RunFollowup();Debug.Log("PLAYTEST_FINAL_EDITOR_OK");}
  public static void RunReviewFindings(){int failures=0;foreach(Action test in new Action[]{ServiceFacilityFeedbackTests.RunPickupReturn,PlaytestBalanceTests.RunFinalFindings})try{test();}catch(Exception e){failures++;Debug.LogException(e);}if(failures>0)throw new Exception("Review findings groups: "+failures);Debug.Log("FEEDBACK_REVIEW_FINDINGS_OK");}
  public static void BuildFinal(){RunFinal();PrototypeBuild.BuildHybrid();}
- public static void BuildPresentation(){Run();PrototypeBuild.BuildHybrid();}
+ public static void BuildPresentation(){Run();TrafficFlowTests.Run();PedestrianSignalConsistencyTests.Run();if(Resources.Load<TextAsset>("eungye-hybrid-map"))JunctionFacilityTests.Run();else Debug.Log("SIGNAGE_LEGACY_FIXTURE_ABSENT: project-map approaches are audited in RoadPresentationProbe");MapReadabilityTests.Run();PrototypeBuild.BuildHybrid();}
 }
