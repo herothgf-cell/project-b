@@ -10,7 +10,7 @@
 - [x] 시설: 완료한 식당 등 안내 해제/승객 경로 복원. 점수: 기존 좌회전 Deferred/저널 사건 합치기 원인 수정.
 - [x] 호출: 초과 영업 일반 후보 유지, 동일/인접 픽업 대신 지리적 층화 선택.
 - [x] 지도:6교차로 실제 폭 기반 도색 절단·중복 제거, 유턴/다른 방향 화살표 별도 배치. 상가 양끝 무신호/중앙 단일 신호 횡단보도.
-- [ ] 모든 수정 후 최종 회귀·실제 Player·저장 복원·밀도/CPU·화면 검사, 지도/배포 해시 및 이력 갱신.
+- [x] 모든 수정 후 최종 회귀·실제 Player·저장 복원·밀도/CPU·화면 검사, 지도/배포 해시 및 이력 갱신.
 
 ## 위치 대응·자료 조사
 
@@ -81,3 +81,8 @@
 최종 Player7개 프로세스 결과는 `artifacts/world-followup-native-results.json`, 성능은 `world-followup-release-performance.txt`, 교차로13화면은 `world-followup-J*-overhead/driver.png`와 commercial overview다. 최종 미니맵1280/1920 정렬·플레이어 화살표·경계와 전체 지도1280의 경로/호출 위치를 실제 GUI 캡처로 확인했다. 전체 지도 캡처는 열린 뒤2프레임 대기한다. 최종1920×1080 추가 프로세스도 종료0이며 미니맵/전체 지도 경로·플레이어 위치·경계를 확인했다. 해당10초 측정32.84fps는60초1280측정과 별도다. 배포 해시/게시 결과는 후속 기록에 남긴다.
 
 이번 성능 수치는 로컬 RTX4070 Laptop/Ultra 고정 지점의1분 측정으로 모든 PC/해상도/도로60fps 보장이 아니다. 사람이 직접20분/3일 운행하는 체감, 모든 도로의 신호 정체 장시간, 차량 이동 중 UI100ms 갱신 체감은 후속 수동 항목이다. 기존 PvP/사용자 untracked8항목을 보존했다. 원시 지도 ZIP은 변경하지 않았다.
+
+
+## 배포 준비 검증
+
+이력의 실제 소스 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-29-world-traffic-followups.md`로 확인한 `7c66186b2c36f86e6f43eca5a82df5a843a9074c`다. 이 소스 기준 기본 은계 실행 폴더130파일/112,252,826바이트를 갱신했다. `tools/update_distribution_manifest.ps1 -SourceCommit 7c66186b2c36f86e6f43eca5a82df5a843a9074c -ValidatedOn 2026-10-29 -ValidationReport artifacts/world-followup-validation.json` 종료0, `-VerifyOnly` 종료0로 전체 크기/SHA256을 확인했다. 실제 프로젝트 지도contentHash는 `81091210c8826a1030a9959978e4bf4fdbbe490d76017404428136f3fe1e296b`다. main 게시·원격 동일 해시 확인은 다음 기록으로 남긴다.
