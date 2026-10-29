@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
-  "sourceCommit": "32b23317c8781a99fb4f72a1a125b9eb75bd2c9e",
-  "branchBaseCommit": "32b23317c8781a99fb4f72a1a125b9eb75bd2c9e",
+  "sourceCommit": "758753dcfc1de9638c4e041352c4875c306a6993",
+  "branchBaseCommit": "758753dcfc1de9638c4e041352c4875c306a6993",
   "unity": "2022.3.62f2",
   "platform": "Windows64",
   "entrypoint": "builds/PvpPrototype/PvpPrototype.exe",
   "validatedOn": "2026-10-29",
-  "totalBytes": 93199109.0,
+  "totalBytes": 93207621.0,
   "validation": {
     "existingVerifiedBuild": false,
     "sourceRebuiltForPackaging": true,
@@ -17,7 +17,7 @@
     "differentPhysicalPC": false,
     "notes": "Hash inventory; execution evidence is supplied separately.",
     "report": {
-      "sourceCommit": "32b23317c8781a99fb4f72a1a125b9eb75bd2c9e",
+      "sourceCommit": "758753dcfc1de9638c4e041352c4875c306a6993",
       "buildExit": 0,
       "modelExit": 0,
       "copyHashEqual": true,
@@ -25,13 +25,17 @@
       "copyExit": 0,
       "copyMarker": "PVP_RUNTIME_ISOLATION_OK",
       "driveBaselineExit": 0,
-      "copyWorkingDirectory": "artifacts/pvp/runtime-copy-789b8a4894094ad7a6f757fb4d25adf7",
+      "copyWorkingDirectory": "artifacts/pvp/runtime-copy-761ced5ee1fc4ec3a67114556f4cbeee",
       "inputOnlyDriving": true,
-      "fullProfileValidationLog": "artifacts/pvp/driving-release-players.log",
-      "copiedBaselineLog": "artifacts/pvp/driving-packaged-baseline.log",
+      "soloMode": true,
+      "soloBaselineExit": 0,
+      "networkRegressionExit": 0,
+      "reconnectRegressionExit": 0,
+      "fullProfileValidationLog": "artifacts/pvp/solo-bot-violation-green.log",
+      "copiedBaselineLog": "artifacts/pvp/solo-packaged-baseline.log",
       "humanInput": false,
       "differentPhysicalPC": false,
-      "notes": "Committed-source clean rebuild after main HUD merge; copied runtime launched with its own working directory. Earlier same PvP code passed baseline, RTT150ms/loss3% spawn swap, and deliberate violations. Planar motor inputs, no runtime authority position fixture."
+      "notes": "Committed-source clean rebuild of single-window offline bot match. Copied runtime launched from its own working directory and passed input-only passenger transport, no-network, settlement, invalid config and exit/restart. Same feature passed observed speeding then lawful recovery in solo-bot-violation-green.log; existing actual two-player baseline and six reconnect cases passed before probe-only refinement and offline help text. Planar motor inputs, no position fixture or human-screen acceptance."
     }
   },
   "files": [
@@ -148,17 +152,17 @@
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/boot.config",
       "bytes": 164,
-      "sha256": "aa8320ec54feb4af45aa6d4009eded86ae6e949aa4445a511cc67745f62cc119"
+      "sha256": "afccbc8be7ee2011853fac9ef7c5f4ac8dad58db1d0ea1eff9a541c0f123557a"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/globalgamemanagers",
-      "bytes": 52028,
-      "sha256": "25271b546649ee229798012dce89763e5e23338768c5400bce68a5eb497e6e4a"
+      "bytes": 52116,
+      "sha256": "dc8e2dfe198fff4801f186607c3fc3dadc0619955a9e7476e3be8c03ff04f9af"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/globalgamemanagers.assets",
-      "bytes": 98488,
-      "sha256": "638981f5aa951d8de4c6378fa5cc0f3661dc2af376f76205017bcdf3902a5acd"
+      "bytes": 98720,
+      "sha256": "4e60ef7680e3c5a912b9ca03ff174802d23bf1b314213b7d9fa3024df924b5e3"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/globalgamemanagers.assets.resS",
@@ -172,8 +176,8 @@
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 1597952,
-      "sha256": "334a4e5b6c8a9148e049fbe41e675fb3b46b5cc325831bd0522273d4559be376"
+      "bytes": 1606144,
+      "sha256": "dd96f643ec3e66dd76b10bc4baf5c132e56d4f60545ca76e345467d9505688c7"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/Managed/Mono.Security.dll",
@@ -698,7 +702,7 @@
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/sharedassets0.assets",
       "bytes": 8388,
-      "sha256": "a6bb48bcb420eea0fdb9061b9ac800c0e437bb0e37e9a67bbeb099f041f0873f"
+      "sha256": "e92bc541da842f3910f965bf19c01cc33a8d57a79eb01fe59c3b4dbeb99ef5a5"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype.exe",

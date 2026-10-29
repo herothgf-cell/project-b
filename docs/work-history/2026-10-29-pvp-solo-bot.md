@@ -59,3 +59,14 @@ pwsh -File tools/update_pvp_distribution_manifest.ps1 -VerifyOnly
 사람 키보드/화면 시야/봇 난도·수익 경쟁 체감·장기 부하와 다른PC직접IP는 미검증이다. 현재 사람 입력은 키보드이며 패드 연동/체감은 후속이다. 유형별 수면/응답/오염 효과, PVP 내구도/수리, 간접 NPC봉쇄 밸런스와 복합 법규는 기존 잔여 그대로다. 봇 경기 결과는 로컬 시험용이며 P2전체/공개 랭킹 수용으로 올리지 않는다.
 
 소스 커밋을 확정한 뒤 재빌드·프로젝트/Library 밖 복사본 운송/격리·원본/복사본/Git index 해시·전용 manifest를 검증해 전체 PVP 실행 폴더를 배포한다. 실제 소스/배포 해시와 게시 결과는 확인 후 아래에 남긴다.
+
+## 최종 커밋 소스 재검사·복사본 배포
+
+- 소스 `758753dcfc1de9638c4e041352c4875c306a6993`에 Unity 소스 미커밋 변경이 없는 상태에서 `PvpSoloBotTests.RunAll`/`BuildClient`를 다시 실행했다. 각각 종료0: `solo-packaged-model.log`, `solo-packaged-build.log`.
+- 프로젝트/Library 밖 `artifacts/pvp/runtime-copy-<고유값>/`에 전체 폴더를 복사해139개 파일의 크기/SHA256 일치를 확인했다. 복사본 자체 디렉터리에서 실행했다.
+- 복사본 `-pvpIsolationCheck`: 종료0/`PVP_RUNTIME_ISOLATION_OK`, `solo-copied-isolation.log`.
+- 복사본 `test_pvp_solo_bot.ps1 -Case baseline -Executable <복사본>`: 러너/Player0,각2회·673.243m/746.522m·77/88점·fixture/경계0,transport없음, 시간 오류 거부/같은 NPC/정산/메뉴 복귀/빈 새 경기/재시작 확인. `solo-packaged-baseline.log`.
+- `solo-package-validation.json`에 근거해 `update_pvp_distribution_manifest.ps1 -SourceCommit <위40자리> -ValidatedOn 2026-10-29 -Rebuilt -ValidationReport artifacts/pvp/solo-package-validation.json` 종료0. **PVP139파일93,207,621바이트**, VerifyOnly0. 여기 driveBaselineExit는 복사본의 입력 기반1인 운송 검사 종료0을 뜻하며 기존2Player/6재접속의 별도 회귀도 report에 구분했다.
+- 기존 싱글 **130파일112,194,710바이트** manifest 재검증0. 싱글 실행 폴더/지도/공통 Unity 소스 변경 없음. 화면·사람 입력·다른 물리PC는 미검증이다.
+
+소스758753d와 별도로 이 최종 실행 폴더·전용 manifest/기록을 배포 커밋한다. 게시 확인에는 실제 원격 반영 결과를 남긴다.
