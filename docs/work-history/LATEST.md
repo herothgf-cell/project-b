@@ -10,6 +10,13 @@
 [승객·내구도 적용 요구](2026-10-29-pvp-followup-requirements.md)를 콘텐츠 검토표에 기록. 다음은 Task2 잔여 수용→Task3 네트워크→Task4/5 운송·정산이며 승객/내구도 확장은 별도 후보 검토. 완료 후 Unity 화면 확인 허용으로 기존 UI 전면 중단 지시 갱신; 사람 조작감 미검증 상태 유지. 이번 변경은 문서만이며 게임 검사·화면 조작 없음.
 
 ## 통합 최신: 2026-10-29 PVP·캠페인 기획 병합
+## 최신 구현·배포: 2026-10-29 승객11유형·34변주·준비/청결 사건
+
+[작업·검증 기록](2026-10-29-passenger-types-implementation.md). 기본 배포5ed29ce의 main 푸시·원격 동일 해시를 확인했다. 일반 승객과11유형,34변주·요청 응답 기억·적재/하역·수면·음식/짐 오염·취객 빈도 보완을 구현했다. 모델430/기존care13,301·전체prototype·Editor1,526+care14/live22/P11·BuildHybrid·Player174/새 프로세스8 종료0. 위치 제어 검증이며 실제 물리 주행·수동 전체 캠페인과 구분한다. 숨긴 창 캡처는 폐기하고 사용자 승인 후 실제 창1280×720의 적재·음식 선택·수면·정산4화면을 확인했다. 기존 care Player201검사도 종료0.
+
+현재 기본 실행 builds/EungyeTaxi/EungyeTaxi.exe / 은계 / BuildHybrid. 지도입력/ZIP은 기존 해시 유지, Strict0. 최신 main73e5962의 별도 PVP 작업을 보존해 병합했으며 통합 release Editor(PVP 분리 포함)·BuildHybrid 종료0. 통합 소스7dec39f 기준 실행폴더/manifest130파일112,155,810바이트 크기·SHA256 검증 종료0. 통합 Player174/재개8/기존care201과 실제4화면 재확인 완료. 다음은 사람20분/3일 체감과 내구도·수리 구현이다. 내구도·수리는1차 확인 완료·미구현 상태다. 사용자 .mmst/기존 untracked는 보존했다.
+
+## 이전 통합: 2026-10-29 PVP·캠페인 기획 병합
 
 [통합 검증 이력](2026-10-29-pvp-arena-integration.md): PVP 구현66c5368 + main3293e3b를2507300에서 통합. 두 공용 문서 충돌은 양쪽 내용 보존으로 해결. 통합 Editor·BuildClient·headless Player3개·캠페인/PVP 모델·Strict·manifest130파일 검사 모두 종료0. 캠페인 소스/배포 변경 없음. 다른 채팅의 passenger-type-variants와 미커밋 파일은 그대로이며 후속 통합 때 최신 main을 반영해야 한다. PVP 화면/사람 주행 검증은 미완료, PC UI 자동 조작은 사용자 요청으로 중단.
 
@@ -38,6 +45,7 @@
 이번 변경은 PVP 시스템/콘텐츠별 기획과 개발 계획 문서다. PVP 코드·전용 맵·별도 실행파일·네트워크는 미구현이며, 경기 시간·인원·배점·충돌·SDK는 [결정 상태](../content-design/pvp/09-decisions-and-balance.md)를 따른다. 다음은 독립 실행 구조·자체 제작 시험장·민첩한 조작 후보 검증이다.
 
 현재 실행 가능한 게임은 기존 builds/EungyeTaxi/EungyeTaxi.exe이고 빌드는 PrototypeBuild.BuildHybrid다. 기존 배포·지도 입력·manifest·사용자 마인드맵은 변경하지 않았다. 아래 캠페인 인계는 분기 기준의 기존 작업 기록으로 보존한다. PVP 문서 검증과 미수행 제품 검증은 위 작업 이력에 구분한다.
+
 
 ## 최신 기획: 2026-10-29 승객 유형 통합·아이데이션
 
