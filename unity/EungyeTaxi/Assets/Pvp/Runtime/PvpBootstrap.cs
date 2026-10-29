@@ -7,10 +7,12 @@ namespace Pvp {
     public sealed class PvpBootstrap : MonoBehaviour {
         public Pvp.Map.PvpMapDefinition PracticeMap;
         StreamWriter diagnostic;
+        Pvp.Map.PvpMapDefinition ownedMap;
         public PvpMatchSettings CurrentSettings { get; private set; }
         public string DiagnosticPath { get; private set; }
         public string StartupError { get; private set; }
         void Awake() {
+            if(PracticeMap==null||PracticeMap.MapId=="pvp_circuit_01") {ownedMap=Pvp.Map.PvpMapDefinition.CreateExpanded();PracticeMap=ownedMap;}
             var cameraObject=new GameObject("PVP startup camera");cameraObject.transform.SetParent(transform,false);
             var camera=cameraObject.AddComponent<Camera>();camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.035f,.05f,.08f);camera.cullingMask=0;
             gameObject.AddComponent<PvpPrototypePanel>();
@@ -19,7 +21,8 @@ namespace Pvp {
                 diagnostic=new StreamWriter(stream);diagnostic.AutoFlush=true;
                 diagnostic.WriteLine("PVP_STARTUP utc="+DateTime.UtcNow.ToString("O")+" unity="+Application.unityVersion+" diagnostic="+DiagnosticPath);
             } catch(Exception e) { StartupError="Diagnostic storage unavailable: "+e.Message;Debug.LogError(StartupError); }
-            if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpSoloBotCheck")>=0) gameObject.AddComponent<PvpSoloBotProbe>();
+            if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpExpandedCheck")>=0) gameObject.AddComponent<PvpExpandedProbe>();
+            else if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpSoloBotCheck")>=0) gameObject.AddComponent<PvpSoloBotProbe>();
             else if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpIsolationCheck")>=0) gameObject.AddComponent<PvpRuntimeIsolationProbe>();
             else if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNetworkRole")>=0) gameObject.AddComponent<Pvp.Network.PvpNetworkProbe>();
             else if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpPracticeCheck")>=0) gameObject.AddComponent<PvpPracticeProbe>();
@@ -57,6 +60,6 @@ namespace Pvp {
             CurrentSettings=settings;
             if(diagnostic!=null) diagnostic.WriteLine("PVP_SETTINGS match="+settings.MatchId+" map="+settings.MapHash+" settings="+settings.SettingsHash);
         }
-        void OnDestroy() { if(diagnostic!=null) { diagnostic.Dispose();diagnostic=null; } }
+        void OnDestroy() { if(diagnostic!=null) { diagnostic.Dispose();diagnostic=null; }if(ownedMap!=null){if(Application.isPlaying)Destroy(ownedMap);else DestroyImmediate(ownedMap);} }
     }
 }

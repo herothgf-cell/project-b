@@ -29,7 +29,7 @@ public sealed class PvpSoloBotProbe:MonoBehaviour {
    if(!Check(audit.FixtureWrites==0&&audit.DistanceMm>120000&&audit.BoundaryStops==0&&audit.Throttle>100&&audit.Steering>20&&audit.Brake>20,"input-only accepted motion player="+audit.Player))yield break;
    Debug.Log("PVP_SOLO_BOT_DRIVING_PROOF player="+audit.Player+" distanceMm="+audit.DistanceMm+" fixture="+audit.FixtureWrites+" boundaries="+audit.BoundaryStops);
   }
-  if(!Check(bridge.CurrentTraffic.Npcs.Length==2&&bridge.CurrentTraffic.Pedestrians.Length==1,"shared NPC world"))yield break;
+  if(!Check(bridge.CurrentTraffic.Npcs.Length==practice.Map.NpcPaths.Count&&bridge.CurrentTraffic.Pedestrians.Length==practice.Map.PedestrianPaths.Count,"shared NPC world"))yield break;
   Debug.Log("PVP_SOLO_BOT_RESULT "+bridge.ResultSignature+" violation="+violation);
   session.Stop();yield return null;yield return null;
   if(!Check(GetComponent<PvpNetworkSession>()==null&&GetComponent<PvpCompetitionBridge>()==null&&GetComponent<PvpPracticeSession>()==null&&GetComponent<PvpPrototypePanel>().enabled&&NetworkManager.Singleton==null,"exit cleans world and returns to menu"))yield break;

@@ -1,12 +1,15 @@
 using System;
 using UnityEngine;
 namespace Pvp.Map {
-[Serializable] public struct PvpConnection { public int From,To; public float NominalSpeed; public PvpConnection(int from,int to,float nominalSpeed=18){From=from;To=to;NominalSpeed=nominalSpeed;} }
+[Serializable] public struct PvpConnection { public int From,To; public float NominalSpeed,SpeedLimit; public PvpConnection(int from,int to,float nominalSpeed=18,float speedLimit=0){From=from;To=to;NominalSpeed=nominalSpeed;SpeedLimit=speedLimit>0?speedLimit:Mathf.Min(nominalSpeed,12);} }
 [Serializable] public struct PvpStop { public string Id,Name; public int Node; public Vector3 Position; public int NodeIndex {get{return Node;}} public PvpStop(string id,string name,int node,Vector3 position){Id=id;Name=name;Node=node;Position=position;} }
 [CreateAssetMenu(menuName="PVP/Map Definition")]
 public sealed class PvpMapDefinition:ScriptableObject {
  public string MapId="pvp_circuit_01"; public int Version=1; public float RoadWidth=8;
  public Vector3[] Nodes; public PvpConnection[] Connections; public PvpStop[] Stops; public int[] Spawns;
+ public bool ExpandedDistrict;public PvpSignalZone[] SignalZones;public PvpNpcPath[] NpcPaths;public PvpPedestrianPath[] PedestrianPaths;public PvpServicePoint[] Services;public PvpDistrict[] Districts;public int[] SupplyOrder,Destinations;
+ public PvpMovingObstacle Obstacle;
+ public static PvpMapDefinition CreateExpanded(){return PvpExpandedMap.Create();}
  public static PvpMapDefinition CreateDefault(){
   var d=CreateInstance<PvpMapDefinition>();
   d.Nodes=new[]{new Vector3(-60,0,-60),new Vector3(60,0,-60),new Vector3(60,0,60),new Vector3(-60,0,60),new Vector3(0,0,-60),new Vector3(60,0,0),new Vector3(0,0,60),new Vector3(-60,0,0),new Vector3(0,0,-72),new Vector3(72,0,0),new Vector3(0,0,72),new Vector3(-72,0,0)};

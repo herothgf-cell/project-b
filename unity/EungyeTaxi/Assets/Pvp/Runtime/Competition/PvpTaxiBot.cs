@@ -50,4 +50,15 @@ public sealed class PvpTaxiBot {
   }
   return decision;
  }
+ public PvpBotDecision StepWithServices(PvpCompetitionSnapshot match,PvpTrafficSnapshot traffic,PvpDriveSnapshot pose){
+  PvpServiceView service=null;if(match!=null&&match.Services!=null)foreach(var s in match.Services)if(s.Player==player)service=s;
+  if(service==null||map.Services.Count==0||match.Phase!=PvpRoundPhase.Running&&match.Phase!=PvpRoundPhase.Closing)return Step(match,traffic,pose);
+  var decision=new PvpBotDecision{Input=new PvpVehicleInput(0,1,0),TargetStop=-1};
+  if(service.Busy){Status=service.Status;return decision;}
+  if(service.Fuel<=PvpServiceAuthority.EmptyFuel){Status="연료 지원 대기";if(pose.Tick%30==0)decision.Command=new PvpPassengerCommand{MatchId=match.MatchId,RequestId="bot-"+player+"-"+(++sequence),PassengerId="roadside",Kind=4};return decision;}
+  if(service.Fuel>=30)return Step(match,traffic,pose);
+  float distance=float.PositiveInfinity;PvpServicePoint nearest=default(PvpServicePoint);foreach(var facility in map.Services){var route=PvpRoutePlanner.FindRoute(map,new PvpRoadPosition(pose.Edge,pose.Fraction),map.Stops[facility.StopIndex].Node);if(route.Found&&route.Distance<distance){nearest=facility;distance=route.Distance;}}
+  if(nearest.Id==null)return Step(match,traffic,pose);decision.TargetStop=nearest.StopIndex;pilot.ObserveTraffic(traffic);decision.Input=pilot.Input(pose,nearest.StopIndex,pose.Tick);Status="주유소로: "+nearest.Name;
+  if(pose.Tick%15==0&&pilot.Arrived(pose,nearest.StopIndex))decision.Command=new PvpPassengerCommand{MatchId=match.MatchId,RequestId="bot-"+player+"-"+(++sequence),PassengerId=nearest.Id,Kind=3};return decision;
+ }
 }}

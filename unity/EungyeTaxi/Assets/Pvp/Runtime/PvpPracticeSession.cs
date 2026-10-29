@@ -9,15 +9,19 @@ public sealed class PvpPracticeSession : MonoBehaviour {
     public PvpRoute CurrentRoute { get; private set; }
     public float DrivenDistance { get; private set; }
     public int BoundaryStops { get; private set; }
+    public bool Overview {get{return overview;}}
+    public string CameraModeName {get{return overview?"전체 지도":cockpit?"운전석":"추적 시점";}}
     PvpVehicleMotor motor;
     PvpRoadPosition road;
     GameObject world,car;
+    Renderer[] carRenderers;
+    bool carVisible=true;
     Camera view;
     LineRenderer routeLine;
-    Material carMaterial,routeMaterial;
+    Material routeMaterial;
     int target;
     PvpRouteMode routeMode;
-    bool reverse,overview,scripted;
+    bool reverse,overview,scripted,cockpit;
     float routeRefresh;
     string feedback="화살표 방향으로 주행하세요. 승객·정산·온라인은 아직 없습니다.";
     public void Begin(PvpMapDefinition definition) {
@@ -36,11 +40,10 @@ public sealed class PvpPracticeSession : MonoBehaviour {
         road=new PvpRoadPosition(edge,.05f);
         var forward=Map.Forward(road);
         motor=new PvpVehicleMotor();motor.Restore(new PvpVehicleState {Position=Map.Position(road),YawDegrees=Mathf.Atan2(forward.x,forward.z)*Mathf.Rad2Deg});
-        car=GameObject.CreatePrimitive(PrimitiveType.Cube);car.name="PVP trial taxi";car.transform.SetParent(world.transform,false);car.transform.localScale=new Vector3(1.8f,1.3f,3.6f);
-        carMaterial=new Material(Shader.Find("Standard")){color=new Color(1,.76f,.12f)};car.GetComponent<Renderer>().sharedMaterial=carMaterial;
-        var nose=GameObject.CreatePrimitive(PrimitiveType.Cube);nose.name="Taxi front";nose.transform.SetParent(car.transform,false);nose.transform.localPosition=new Vector3(0,.3f,.35f);nose.transform.localScale=new Vector3(.75f,.3f,.2f);nose.GetComponent<Renderer>().sharedMaterial=carMaterial;
+        car=PvpTaxiVisual.Build(world.transform);car.name="PVP trial taxi";carRenderers=car.GetComponentsInChildren<Renderer>();
         var lightObject=new GameObject("PVP sun");lightObject.transform.SetParent(world.transform,false);lightObject.transform.rotation=Quaternion.Euler(55,-30,0);var light=lightObject.AddComponent<Light>();light.type=LightType.Directional;light.intensity=1.2f;
-        view=GetComponentInChildren<Camera>();if(view!=null){view.cullingMask=~0;view.farClipPlane=500;view.backgroundColor=new Color(.09f,.15f,.15f);}
+        var fillObject=new GameObject("PVP soft fill");fillObject.transform.SetParent(world.transform,false);fillObject.transform.rotation=Quaternion.Euler(45,150,0);var fill=fillObject.AddComponent<Light>();fill.type=LightType.Directional;fill.intensity=.35f;fill.color=new Color(.78f,.86f,1);fill.shadows=LightShadows.None;
+        view=GetComponentInChildren<Camera>();if(view!=null){view.cullingMask=~0;view.nearClipPlane=.08f;view.farClipPlane=1500;view.fieldOfView=62;view.clearFlags=CameraClearFlags.SolidColor;view.backgroundColor=new Color(.58f,.74f,.83f);}
         var lineObject=new GameObject("PVP legal route");lineObject.transform.SetParent(world.transform,false);routeLine=lineObject.AddComponent<LineRenderer>();routeLine.widthMultiplier=.65f;routeMaterial=new Material(Shader.Find("Sprites/Default"));routeLine.sharedMaterial=routeMaterial;routeLine.startColor=routeLine.endColor=new Color(.1f,1,.9f);
         var panel=GetComponent<PvpPrototypePanel>();if(panel!=null)panel.enabled=false;
         UpdateCar();RefreshRoute();UpdateCamera(true);
@@ -50,6 +53,7 @@ public sealed class PvpPracticeSession : MonoBehaviour {
     public void PresentNetworkState(PvpVehicleState state) { motor.Restore(in state);routeLine.enabled=false;UpdateCar(); }
     public void ClearNetworkRoute(){if(routeLine!=null)routeLine.enabled=false;}
     public void ToggleNetworkOverview(){overview=!overview;UpdateCamera(true);}
+    public void ToggleCamera(){cockpit=!cockpit;overview=false;UpdateCamera(true);}
     public void PresentNetworkRoute(Pvp.Network.PvpDriveSnapshot pose,int stop) {
         if(motor==null||stop<0||stop>=Map.Stops.Count)return;road=new PvpRoadPosition(pose.Edge,pose.Fraction);target=stop;RefreshRoute();routeLine.enabled=true;
     }
@@ -72,9 +76,12 @@ public sealed class PvpPracticeSession : MonoBehaviour {
     }
     public void NextTarget(){target=(target+1)%Map.Stops.Count;RefreshRoute();}
     void RefreshRoute(){CurrentRoute=PvpRoutePlanner.FindRoute(Map,road,Map.Stops[target].Node,routeMode);routeLine.positionCount=CurrentRoute.Points.Length;for(int i=0;i<CurrentRoute.Points.Length;i++)routeLine.SetPosition(i,CurrentRoute.Points[i]+Vector3.up*.16f);}
-    void UpdateCar(){if(car==null)return;var state=motor.Capture();car.transform.position=state.Position+Vector3.up*.75f;car.transform.rotation=Quaternion.Euler(0,state.YawDegrees,0);}
+    void UpdateCar(){if(car==null)return;var state=motor.Capture();car.transform.position=state.Position;car.transform.rotation=Quaternion.Euler(0,state.YawDegrees,0);}
     void FixedUpdate(){if(motor==null||scripted)return;bool focus=Application.isFocused;float throttle=Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow)?1:0;float brake=Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)||Input.GetKey(KeyCode.Space)?1:0;float steer=(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0);var input=new PvpVehicleInput(throttle,brake,steer,reverse,focus);Step(input,Time.fixedDeltaTime);}
-    void Update(){if(motor==null||scripted)return;
+    void Update(){if(motor==null)return;
+        if(!Application.isFocused)return;
+        if(Input.GetKeyDown(KeyCode.C)||Input.GetKeyDown(KeyCode.V))ToggleCamera();
+        if(scripted)return;
         if(Input.GetKeyDown(KeyCode.Tab))NextTarget();
         if(Input.GetKeyDown(KeyCode.M))overview=!overview;
         if(Input.GetKeyDown(KeyCode.Q)&&Mathf.Abs(motor.Capture().Speed)<.35f){reverse=!reverse;feedback=reverse?"후진 선택":"전진 선택";}
@@ -85,10 +92,16 @@ public sealed class PvpPracticeSession : MonoBehaviour {
         routeRefresh+=Time.unscaledDeltaTime;if(routeRefresh>.25f){routeRefresh=0;RefreshRoute();}
     }
     void LateUpdate(){UpdateCamera(false);}
-    void UpdateCamera(bool immediate){if(view==null||motor==null)return;var p=motor.Capture().Position;var desired=overview?new Vector3(0,175,-.1f):p+new Vector3(0,36,-27);view.transform.position=immediate?desired:Vector3.Lerp(view.transform.position,desired,1-Mathf.Exp(-7*Time.unscaledDeltaTime));view.transform.LookAt(overview?Vector3.zero:p);}
-    void OnGUI(){if(motor==null||GetComponent<Pvp.Network.PvpNetworkSession>()!=null)return;var state=motor.Capture();GUILayout.BeginArea(new Rect(16,16,600,260),GUI.skin.box);GUILayout.Label("PVP 자체 시험장 / 오프라인 주행 후보 "+state.Profile);GUILayout.Label("속도 "+(Mathf.Abs(state.Speed)*3.6f).ToString("F0")+" km/h  | "+(reverse?"후진":"전진")+" | 주행 "+DrivenDistance.ToString("F0")+"m");GUILayout.Label("W/↑ 가속 · S/↓/Space 제동 · A/D 조향 · 정차 후 Q 전후진");GUILayout.Label("1/2 차량 후보 · Tab 목적지 · M 전체 지도 · Backspace 복구 · Esc 초기 화면");GUILayout.Label("목표: "+StopName(Map.Stops[target].Id)+" | "+(routeMode==PvpRouteMode.Shortest?"합법 최단 거리":"예상 최속 (시험 속도)")+" | "+(CurrentRoute.Found?CurrentRoute.Distance.ToString("F0")+"m":"경로 없음"));GUILayout.BeginHorizontal();if(GUILayout.Button("다음 정차점"))NextTarget();if(GUILayout.Button("경로 방식 변경")){routeMode=routeMode==PvpRouteMode.Shortest?PvpRouteMode.Fastest:PvpRouteMode.Shortest;RefreshRoute();}if(GUILayout.Button("초기 화면"))ExitPractice();GUILayout.EndHorizontal();GUILayout.Label(feedback);GUILayout.EndArea();}
+    void UpdateCamera(bool immediate){if(view==null||motor==null)return;var state=motor.Capture();var p=state.Position;var forward=Quaternion.Euler(0,state.YawDegrees,0)*Vector3.forward;
+        var center=(Map.BoundsMin+Map.BoundsMax)*.5f;var extent=Map.BoundsMax-Map.BoundsMin;float aspect=Mathf.Max(.5f,view.aspect);float altitude=Mathf.Max(extent.z,extent.x/aspect)*.92f+24;
+        var desired=overview?center+new Vector3(0,altitude,-.1f):cockpit?p+forward*.55f+Vector3.up*1.28f:p-forward*8.6f+Vector3.up*4.6f;
+        var look=overview?center:cockpit?p+forward*35+Vector3.up*1.22f:p+forward*5+Vector3.up*1.05f;
+        float blend=immediate?1:1-Mathf.Exp(-(cockpit?25:7)*Time.unscaledDeltaTime);view.transform.position=Vector3.Lerp(view.transform.position,desired,blend);view.transform.rotation=Quaternion.Slerp(view.transform.rotation,Quaternion.LookRotation(look-desired,Vector3.up),blend);
+        bool visible=overview||!cockpit;if(carRenderers!=null&&visible!=carVisible){foreach(var renderer in carRenderers)if(renderer!=null)renderer.enabled=visible;carVisible=visible;}
+    }
+    void OnGUI(){if(motor==null||GetComponent<Pvp.Network.PvpNetworkSession>()!=null)return;var state=motor.Capture();GUILayout.BeginArea(new Rect(16,16,600,260),GUI.skin.box);GUILayout.Label("PVP 자체 시험장 / 오프라인 주행 후보 "+state.Profile);GUILayout.Label("속도 "+(Mathf.Abs(state.Speed)*3.6f).ToString("F0")+" km/h  | "+(reverse?"후진":"전진")+" | 주행 "+DrivenDistance.ToString("F0")+"m");GUILayout.Label("W/↑ 가속 · S/↓/Space 제동 · A/D 조향 · 정차 후 Q 전후진");GUILayout.Label("1/2 차량 후보 · Tab 목적지 · M 전체 지도 · Backspace 복구 · Esc 초기 화면");GUILayout.Label("목표: "+Map.Stops[target].Name+" | "+(routeMode==PvpRouteMode.Shortest?"합법 최단 거리":"예상 최속 (시험 속도)")+" | "+(CurrentRoute.Found?CurrentRoute.Distance.ToString("F0")+"m":"경로 없음"));GUILayout.BeginHorizontal();if(GUILayout.Button("다음 정차점"))NextTarget();if(GUILayout.Button("경로 방식 변경")){routeMode=routeMode==PvpRouteMode.Shortest?PvpRouteMode.Fastest:PvpRouteMode.Shortest;RefreshRoute();}if(GUILayout.Button("초기 화면"))ExitPractice();GUILayout.EndHorizontal();GUILayout.Label(feedback);GUILayout.EndArea();}
     static string StopName(string id){if(id.Contains("terminal"))return "동쪽 터미널";if(id.Contains("market"))return "북쪽 상업 구역";if(id.Contains("warehouse"))return "서쪽 창고";return "남쪽 공원";}
     public void ExitPractice(){var panel=GetComponent<PvpPrototypePanel>();if(panel!=null)panel.enabled=true;DisposeWorld();if(Application.isPlaying)Destroy(this);else DestroyImmediate(this);}
     void OnDestroy(){DisposeWorld();}
-    void DisposeWorld(){if(world!=null){if(Application.isPlaying)Destroy(world);else DestroyImmediate(world);world=null;}if(carMaterial!=null){if(Application.isPlaying)Destroy(carMaterial);else DestroyImmediate(carMaterial);carMaterial=null;}if(routeMaterial!=null){if(Application.isPlaying)Destroy(routeMaterial);else DestroyImmediate(routeMaterial);routeMaterial=null;}if(view!=null){view.cullingMask=0;view.backgroundColor=new Color(.035f,.05f,.08f);}motor=null;}
+    void DisposeWorld(){if(world!=null){if(Application.isPlaying)Destroy(world);else DestroyImmediate(world);world=null;}if(routeMaterial!=null){if(Application.isPlaying)Destroy(routeMaterial);else DestroyImmediate(routeMaterial);routeMaterial=null;}if(view!=null){view.cullingMask=0;view.backgroundColor=new Color(.035f,.05f,.08f);}motor=null;}
 }}
