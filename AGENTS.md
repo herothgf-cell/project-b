@@ -19,3 +19,4 @@
 - 기본 실행 대상은 은계 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드는 `PrototypeBuild.BuildHybrid`다. 별도 연습과 기본 은계 영업을 혼동하지 않는다.
 - `data/raw/`, 생성 지도 JSON, `artifacts/`, Unity `Library/`와 다른 빌드는 Git에서 제외된다. 사용자 요청으로 `builds/EungyeTaxi/` 실행 폴더 전체와 `distribution/maps/` 지도 ZIP은 Git으로 배포한다. 다른 PC는 pull 후 바로 exe를 실행할 수 있고, 개발할 때는 지도 ZIP을 저장소 루트에 푼다. 배포 실행 폴더가 바뀌면 `distribution/EungyeTaxi-build-manifest.json`의 파일 크기·SHA256도 다시 생성/검증한다. 준비 방법은 `docs/work-history/README.md`를 따른다.
 - 필수 생성 입력 지도를 변경한 작업에서는 `config/maps/local-input-manifest.json`의 파일 크기·SHA256과 관련 OSM 대조 설정도 실제 자료로 다시 갱신/검증한다. 해시 오류를 우회하지 않는다.
+- 사용자 요청(2026-10-29)으로 PvP 브랜치의 `builds/PvpPrototype/` 실행 폴더 전체도 Git 배포한다. 싱글은 기존 `builds/EungyeTaxi/EungyeTaxi.exe`, PvP는 `builds/PvpPrototype/PvpPrototype.exe`로 각각 실행한다. PvP 빌드는 `Pvp.Editor.PvpBuild.BuildClient`, 전용 배포 해시는 `distribution/PvpPrototype-build-manifest.json`과 `tools/update_pvp_distribution_manifest.ps1 -VerifyOnly`로 관리한다. 다른 작업의 미커밋 소스를 검증된 배포본에 섞지 않는다.

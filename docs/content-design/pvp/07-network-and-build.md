@@ -1,5 +1,12 @@
 # PVP 네트워크·빌드·기존 코드 분리
 
+## 실행 파일 배포와 싱글 실행
+
+2026-10-29 사용자 요청으로 `builds/PvpPrototype/` 전체도 PvP 브랜치에서 Git 배포한다. 싱글 시뮬레이션은 `builds/EungyeTaxi/EungyeTaxi.exe`, PvP는 `builds/PvpPrototype/PvpPrototype.exe`다. 두 실행 경로를 유지하며 기본 싱글의 BuildHybrid·지도·배포 manifest는 보존한다.
+
+PvP는 `distribution/PvpPrototype-build-manifest.json`과 `pwsh -File tools/update_pvp_distribution_manifest.ps1 -VerifyOnly`로 전체 파일을 검증한다. 배포를 갱신할 때 실제 빌드 소스 커밋과 검사 날짜를 명시해 manifest를 생성하고 실행 폴더와 함께 커밋한다. exe만 옮기지 않고 Data/Mono/UnityPlayer/DLL/고지를 함께 유지한다. [배포 이력](../../work-history/2026-10-29-pvp-git-playable-distribution.md)에 실제 검증과 다른PC 미검증을 구분한다. 아래 내용의 로컬 전용 배포 설명은 당시 상태다.
+
+
 상태: P1 화면·자동 검증 및 NGO 직접 IP 실험 추가 / 원격PC·사람 조작감·P2 전체 수용 미완료
 작성일: 2026-10-27
 

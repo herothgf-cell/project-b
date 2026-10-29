@@ -1,5 +1,9 @@
 # 최신 작업 인계
 
+## 최신 배포: 2026-10-29 싱글·PvP 실행 폴더 Git 배포
+
+[작업/검증 기록](2026-10-29-pvp-git-playable-distribution.md). PvP 브랜치에서 싱글은 builds/EungyeTaxi/EungyeTaxi.exe(130파일/112,193,174바이트·main 내구도/수리 배포 일치), PvP는 builds/PvpPrototype/PvpPrototype.exe(검증된 기존 공유 경쟁 빌드139파일/93,137,205바이트)로 실행한다. PvP 전체 폴더 Git 포함·전용 SHA256 manifest/검사 도구를 추가했다. 소스/Library 밖 복사본 실행 종료0. 동시 작업 중인 NPC/주행 미커밋 소스와 실행 중인 기존 앱은 보존했다. 별도PC/LAN 수용은 미검증. 실제 게시 결과는 위 기록에 추가하며 아래는 이전 시점 기록이다.
+
 ## PVP 최신: 2026-10-29 공유 교통·승객 경쟁·정산
 
 [실제 구현·검사 이력](2026-10-29-pvp-shared-competition.md) · [콘텐츠별 수용/환경별 잔여](../content-design/pvp/17-competition-acceptance.md). 서버 공유 신호/이동 장애물, 공통 준비·시간 경계, 승객 단일 소유권/약정/현장 승하차, 원자 완료·안전 구간·감점 차액·음수/동점/무운송 제외·결과를구현했다. 실제 Player의 같은 tick 중재·장애물 차단·완료 RPC 재전송·운송 중 복귀·명시 이탈·최종 결과 일치, 모델33/기존 모델·network/reconnect 회귀 통과. 실제 결과 화면과 정상 종료도 확인했다. 구현236108b의 feature/pvp-prototype 원격 동일 해시를 확인했다.

@@ -1,5 +1,17 @@
 # 택시 PVP 기획·개발 계획
 
+## 실행 파일 배포: 2026-10-29
+
+`feature/pvp-prototype`를 pull하면 Windows64에서 아래 실행 폴더를 그대로 사용할 수 있다. Unity Editor 설치 없이 실행하며 exe와 같은 폴더의 Data·Mono·DLL·고지 파일을 함께 유지한다.
+
+| 플레이 | 실행 경로 | 배포 검증 |
+|---|---|---|
+| 기존 싱글 시뮬레이션 | builds/EungyeTaxi/EungyeTaxi.exe | 기존 EungyeTaxi manifest130파일 SHA256, 내구도/수리 완료 main 배포와 동일 |
+| PvP | builds/PvpPrototype/PvpPrototype.exe | [PvP manifest](../../../distribution/PvpPrototype-build-manifest.json)139파일 크기·SHA256 |
+
+[배포 작업/검증 이력](../../work-history/2026-10-29-pvp-git-playable-distribution.md)을 최신 실행 경로 기준으로 삼는다. 아래 ‘PvP exe Git 제외’ 등의 문구는 이전 시점 기록이다. 진행 중인 NPC/주행 소스 변경은 이번 검증된 실행 파일에 포함하지 않았다. 별도 물리 PC/LAN 수용 검증은 남아 있다.
+
+
 상태: 기획 초안 / P1 실행·저장·빌드 기반 코드 추가, Unity 실행 검증 대기
 작성일: 2026-10-27
 진척 갱신: 2026-10-29
