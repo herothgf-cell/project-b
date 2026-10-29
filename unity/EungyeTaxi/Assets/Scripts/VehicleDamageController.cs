@@ -137,9 +137,6 @@ public sealed class VehicleDamageController : MonoBehaviour {
     void OnGUI(){
         if(!Campaign||session.business.preparing||session.business.ShowingSummary||session.RideResultOpen||session.FullMapOpen||session.PracticeMenuOpen)return;
         var style=new GUIStyle(GUI.skin.label){fontSize=16,wordWrap=true};style.normal.textColor=Color.white;GUI.depth=-140;
-        float scale=CockpitUI.Scale;var rect=new Rect(Screen.width-620*scale,140*scale,280*scale,78*scale);GUI.color=Damage.Durability<=20?new Color(.45f,.08f,.05f,.95f):Damage.Durability<=50?new Color(.48f,.34f,.04f,.95f):new Color(.04f,.09f,.12f,.95f);GUI.DrawTexture(rect,Texture2D.whiteTexture);GUI.color=Color.white;
-        var gaugeStyle=new GUIStyle(style){fontSize=Mathf.Max(11,Mathf.RoundToInt(20*scale))};
-        GUI.Label(new Rect(rect.x+10*scale,rect.y+5*scale,260*scale,68*scale),"차량 내구도 "+Damage.Durability+" / 100\n"+(Disabled?"운행 불가 · 견인/정비 필요":Damage.Durability<=50?"수리 권장 · 주유소 정차 후 F7":"정상 운행 · 주유소에서 수리 가능"),gaugeStyle);
         if(Time.unscaledTime<noticeUntil&&!Disabled)GUI.Label(new Rect(Screen.width/2-230,165,460,65),Notice,style);
         if(Disabled&&!session.services.open&&!session.paused){
             float w=Mathf.Min(580,Screen.width-30),x=(Screen.width-w)/2,y=(Screen.height-290)/2;GUI.depth=-150;GUI.color=new Color(.06f,.09f,.12f,.98f);GUI.DrawTexture(new Rect(x,y,w,290),Texture2D.whiteTexture);GUI.color=Color.white;

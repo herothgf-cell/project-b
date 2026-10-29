@@ -55,9 +55,19 @@ public sealed class VehicleDurabilityProbe : MonoBehaviour {
         if(!passed)throw new Exception("review lifecycle regressions failed");
     }
     IEnumerator Capture(string name){yield return new WaitForSecondsRealtime(.55f);yield return null;yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.GetFullPath("artifacts/vehicle-durability-"+name+".png"));yield return new WaitForSecondsRealtime(.5f);}
+    IEnumerator CaptureHud(){
+        foreach(var size in new[]{new Vector2Int(1280,720),new Vector2Int(1872,864)}){
+            Screen.SetResolution(size.x,size.y,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.8f);
+            ok=Guard(()=>{Fresh();s.damage.enabled=true;typeof(VehicleDamageController).GetField("noticeUntil",Private).SetValue(s.damage,0f);Check(s.damage.Damage.Durability==100,"HUD healthy fixture");});if(!ok)yield break;yield return Capture("hud-100-"+size.x);
+            ok=Guard(()=>{Hit(15);Check(s.damage.Damage.Durability==50,"HUD warning fixture");});if(!ok)yield break;yield return Capture("hud-50-"+size.x);
+            ok=Guard(()=>{Hit(15);Check(s.damage.Damage.Durability==0,"HUD disabled fixture");});if(!ok)yield break;yield return Capture("hud-0-"+size.x);
+            Debug.Log("DURABILITY_HUD_CAPTURE "+Screen.width+"x"+Screen.height);
+        }
+    }
     IEnumerator Start(){
-        var args=Environment.GetCommandLineArgs();bool pending=Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0;bool summary=Array.IndexOf(args,"-vehicleDurabilitySummaryReloadTest")>=0,preparation=Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0;bool reload=pending||summary||preparation||Array.IndexOf(args,"-vehicleDurabilityReloadTest")>=0;yield return new WaitForSecondsRealtime(1);s=FindObjectOfType<DriveSession>();while(!s||!s.StartupReady){s=FindObjectOfType<DriveSession>();yield return null;}yield return null;yield return null;yield return null;Freeze();
-        if(pending)ok=Guard(()=>{Check(s.damage.Disabled&&s.damage.AtRepairBay&&!string.IsNullOrEmpty(s.damage.Damage.RepairBayId),"pending occupied live save restores paid bay in new process");Check(s.business.ledger.Account.Expense(1,"tow")==3000&&s.business.ledger.Elapsed==30,"pending live restart never repeats tow fee or time");});
+        var args=Environment.GetCommandLineArgs();bool hud=Array.IndexOf(args,"-vehicleDurabilityHudCapture")>=0;bool pending=Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0;bool summary=Array.IndexOf(args,"-vehicleDurabilitySummaryReloadTest")>=0,preparation=Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0;bool reload=pending||summary||preparation||Array.IndexOf(args,"-vehicleDurabilityReloadTest")>=0;yield return new WaitForSecondsRealtime(1);s=FindObjectOfType<DriveSession>();while(!s||!s.StartupReady){s=FindObjectOfType<DriveSession>();yield return null;}yield return null;yield return null;yield return null;Freeze();
+        if(hud)yield return CaptureHud();
+        else if(pending)ok=Guard(()=>{Check(s.damage.Disabled&&s.damage.AtRepairBay&&!string.IsNullOrEmpty(s.damage.Damage.RepairBayId),"pending occupied live save restores paid bay in new process");Check(s.business.ledger.Account.Expense(1,"tow")==3000&&s.business.ledger.Elapsed==30,"pending live restart never repeats tow fee or time");});
         else if(summary)ok=Guard(()=>{Check(s.business.ledger.State==BusinessState.Summary&&s.damage.Disabled&&s.damage.AtRepairBay,"new process summary restores paid repair bay");Check(s.business.NextDay(),"resume next day from restored summary");s.business.preparing=true;Time.timeScale=0;s.business.SaveCheckpoint();});
         else if(preparation)ok=Guard(()=>{Check(s.business.preparing&&s.damage.Disabled&&s.damage.AtRepairBay,"new process preparing restores paid repair bay");Check(s.business.ledger.Account.Expense(1,"tow")==3000&&s.business.ledger.Account.Expense(2,"tow")==0,"no duplicate tow across summary/preparing restarts");s.business.Depart();Check(s.damage.Repair(),"repair after preparing restart");Check(s.business.ledger.Account.Expense(2,"repair")==20000&&s.business.ledger.Account.Debt==13500,"preparing reload charges only repair plus previous day costs");Fresh();DestroyCar();Check(s.damage.Tow(),"paid tow before pending live save");var bay=s.damage.Bays.Find(b=>b.id==s.damage.Damage.RepairBayId);Stop(0);var block=GameObject.CreatePrimitive(PrimitiveType.Cube);block.transform.position=bay.position+Vector3.up;block.transform.localScale=new Vector3(3,2,6);Physics.SyncTransforms();Check(!s.damage.RestoreReservedBay()&&s.damage.RestoringReservedBay,"reserve stays pending while occupied before live save");s.business.SaveCheckpoint();});
         else if(reload)ok=Guard(()=>{Reload();Fresh();DestroyCar();Check(s.damage.Tow()&&s.damage.EndDisabledDay()&&s.business.ledger.Settle(),"prepare summary checkpoint");s.business.SaveCheckpoint();});else{
@@ -69,6 +79,6 @@ public sealed class VehicleDurabilityProbe : MonoBehaviour {
             }
             if(ok)ok=Guard(SaveDisabled);
         }
-        string result=(ok?"PASS":"FAIL")+" checks="+checks+"\n"+report;Directory.CreateDirectory("artifacts");File.WriteAllText("artifacts/vehicle-durability-"+(pending?"pending-live-reload":summary?"summary-reload":preparation?"preparation-reload":reload?"reload":"player")+".txt",result);Debug.Log("VEHICLE_DURABILITY_"+(reload?"RELOAD_":"PLAYER_")+(ok?"OK":"FAILED")+" checks="+checks);Application.Quit(ok?0:1);
+        string result=(ok?"PASS":"FAIL")+" checks="+checks+"\n"+report;Directory.CreateDirectory("artifacts");File.WriteAllText("artifacts/vehicle-durability-"+(hud?"hud":pending?"pending-live-reload":summary?"summary-reload":preparation?"preparation-reload":reload?"reload":"player")+".txt",result);Debug.Log("VEHICLE_DURABILITY_"+(reload?"RELOAD_":"PLAYER_")+(ok?"OK":"FAILED")+" checks="+checks);Application.Quit(ok?0:1);
     }
 }
