@@ -29,3 +29,7 @@
 ## 배포 산출물
 
 실제 소스 커밋0706cffe6054e3b90dcd99d3a274bc758877672f 기준 최종 실행 폴더130파일112,194,710바이트. 전용 HUD 검증 JSON으로 manifest를 생성하고 -VerifyOnly 종료0으로 모든 크기·SHA256을 대조했다. 필수 로컬 입력 Strict 종료0/문제0이며 지도 입력·배포 ZIP은 변경하지 않았다.
+
+## 원격 게시 확인
+
+main 배포 d631a57bcac57e7ed5d270cf5947dc0d5cab3339를 push하고 git ls-remote의 동일 해시를 확인했다. PvP 브랜치에는16aa387528b04a521d342696f9884f00607297ee로 main HUD/싱글 배포를 병합·push했고 원격 동일 해시를 확인했다. 병합 인덱스에서도 게시 PvP139개 blob 크기·SHA256이 기존 검증 manifest와 전부 일치했다(PVP_PUBLISHED_INDEX_OK). 해당 공간의 진행 중 NPC/규칙/프로젝트 설정·새 로컬 PvP 빌드는 커밋에 포함하지 않았다. 두 브랜치의 실행 경로는 각각 EungyeTaxi.exe(싱글), PvpPrototype.exe(PvP)이며, 다른 물리PC/LAN 검증은 별도다. 기본 작업 공간의 기존 미추적 파일도 보존했다.
