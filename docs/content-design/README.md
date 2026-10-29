@@ -21,7 +21,7 @@
 ## 2026-10-29 승객 확장과 차량 기획
 
 
-[승객 유형·상호작용](02-passengers-and-fares.md#추가-기획-승객-유형과-상호작용)은 일반 승객과11유형·34변주, 준비/하역, 음식·짐 오염을 포함한다. 구현·실행 검증 상태는 [최신 작업 기록](../work-history/2026-10-29-passenger-types-implementation.md)을 따른다. [충돌 내구도·수리](03-life-and-economy.md#추가-기획-충돌-내구도와-수리)는 사용자 1차 확인 완료·미구현으로 별도 관리한다.
+[승객 유형·상호작용](02-passengers-and-fares.md#추가-기획-승객-유형과-상호작용)은 일반 승객과11유형·34변주, 준비/하역, 음식·짐 오염을 포함한다. 구현·실행 검증 상태는 [승객 작업 기록](../work-history/2026-10-29-passenger-types-implementation.md)을 따른다. [충돌 내구도·수리](03-life-and-economy.md#추가-기획-충돌-내구도와-수리)는 사용자 승인에 따라 구현·자동 검증 완료이며 수치·서비스·저장 규칙은 해당 문서 한 곳에서 관리한다. 최종 Player·배포·수동 체감은 [P15](../prototype-development-checklist.md#p15-충돌-내구도수리견인)와 [차량 작업 기록](../work-history/2026-10-29-vehicle-durability-repair.md)을 따른다.
 
 ## 문서를 쓰는 기준
 
