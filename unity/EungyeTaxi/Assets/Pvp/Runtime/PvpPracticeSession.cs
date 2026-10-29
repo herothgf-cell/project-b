@@ -48,6 +48,11 @@ public sealed class PvpPracticeSession : MonoBehaviour {
     }
     public PvpVehicleState Capture(){if(motor==null)throw new InvalidOperationException("No practice");return motor.Capture();}
     public void PresentNetworkState(PvpVehicleState state) { motor.Restore(in state);routeLine.enabled=false;UpdateCar(); }
+    public void ClearNetworkRoute(){if(routeLine!=null)routeLine.enabled=false;}
+    public void ToggleNetworkOverview(){overview=!overview;UpdateCamera(true);}
+    public void PresentNetworkRoute(Pvp.Network.PvpDriveSnapshot pose,int stop) {
+        if(motor==null||stop<0||stop>=Map.Stops.Count)return;road=new PvpRoadPosition(pose.Edge,pose.Fraction);target=stop;RefreshRoute();routeLine.enabled=true;
+    }
     public void SetScripted(bool value){scripted=value;}
     public void Step(PvpVehicleInput input,float dt) {
         if(motor==null)throw new InvalidOperationException("No practice");

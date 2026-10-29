@@ -1,0 +1,90 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using Pvp.Map;
+using Pvp.Traffic;
+using Pvp.Competition;
+namespace Pvp.Network {
+[Serializable] public sealed class PvpSharedWorld {public PvpTrafficSnapshot Traffic;public PvpCompetitionSnapshot Match;public bool GuestReady,HasMatch;public PvpSharedWorld Normalize(){if(!HasMatch)Match=null;return this;}}
+// Network transport glue and presentation. The match model has no NGO or local input dependency.
+public sealed class PvpCompetitionBridge:MonoBehaviour {
+ PvpNetworkSession session;PvpMapRuntime map;PvpPracticeSession practice;PvpPassengerAuthority authority;PvpSharedWorld world;
+ readonly int[] crossings=new int[2];bool guestReady,readySent,raceQueued;int obstacleProbeTick=-1;Vector3 obstacleProbePosition;int counter,lastWorld=-1,sharedSamples,phaseMask;string duration="",grace="0",message="",selected,rememberedTrip;bool localMenuProbe;float previousTimeScale;bool completionReplaySent;bool pending,awaitingRestore;PvpPassengerCommand lastCommand;
+ GameObject obstacle,signal;Material obstacleMaterial,signalMaterial;readonly List<GameObject> passengerMarkers=new List<GameObject>();Material passengerMaterial;
+ public bool HasRound {get{return world!=null&&world.Match!=null;}}public bool TripRestored {get;private set;}
+ public bool DrivingAllowed {get{return session!=null&&session.IsHost&&authority!=null?authority.Round.CanComplete:!HasRound||world.Match.Phase==PvpRoundPhase.Running||world.Match.Phase==PvpRoundPhase.Closing;}}
+ public bool ProbeSucceeded {get{if(!HasRound||world.Match.Phase!=PvpRoundPhase.Results||world.Match.ResultVersion!=1||world.Match.Scores==null||world.Match.Scores.Length!=2||sharedSamples<10||phaseMask!=3)return false;return session.ProbeLeave?world.Match.Scores[0].Completed==1&&world.Match.Scores[1].Completed==0&&!world.Match.Scores[1].Eligible&&world.Match.LedgerSequence==2:world.Match.Scores[0].Completed>0&&world.Match.Scores[1].Completed>0&&world.Match.LedgerSequence==4;}}
+ public string ResultSignature {get{if(!HasRound)return "none";var s=world.Match;string result=s.MatchId+":"+s.LedgerSequence;foreach(var row in s.Scores)result+="|"+row.Player+":"+row.Score+":"+row.Fares+":"+row.Bonus+":"+row.Penalty+":"+row.Completed+":"+row.Rank+":"+row.Eligible;return result;}}
+ public void Begin(PvpNetworkSession network,PvpMapRuntime arena,PvpPracticeSession view){session=network;map=arena;practice=view;world=new PvpSharedWorld{Traffic=PvpTrafficAuthority.At(0)};
+  obstacleMaterial=new Material(Shader.Find("Standard")){color=new Color(1,.4f,.1f)};signalMaterial=new Material(Shader.Find("Standard"));passengerMaterial=new Material(Shader.Find("Standard")){color=new Color(.2f,.8f,1)};
+  obstacle=Primitive("PVP shared obstacle",PrimitiveType.Cube,obstacleMaterial);obstacle.transform.localScale=new Vector3(2.2f,1.2f,2.2f);
+  signal=Primitive("PVP shared signal",PrimitiveType.Sphere,signalMaterial);signal.transform.localScale=Vector3.one*1.6f;signal.transform.position=new Vector3(-3,2,-8);
+ }
+ GameObject Primitive(string name,PrimitiveType kind,Material material){var obj=GameObject.CreatePrimitive(kind);obj.name=name;obj.transform.SetParent(transform,false);obj.GetComponent<Renderer>().sharedMaterial=material;Destroy(obj.GetComponent<Collider>());return obj;}
+ public void GuestConnected(){if(authority!=null)authority.Round.Reconnect(1);}
+ public void GuestDisconnected(){guestReady=false;if(authority!=null)authority.Round.Disconnect(1,session.AuthorityTick,(int)Math.Ceiling(session.ReconnectGraceSeconds*50));}
+ public void GuestLeft(){guestReady=false;Debug.Log("PVP_MATCH_GUEST_LEFT");if(authority!=null){authority.Round.Leave(1);if(authority.Round.Tick<authority.Round.StartTick)authority.Round.Disconnect(1,session.AuthorityTick,0);}}
+ public void BeginReconnect(){rememberedTrip=OwnTrip()==null?null:OwnTrip().TripId;}
+ public void Reconnected(){awaitingRestore=rememberedTrip!=null;if(pending)session.IssueCompetitionCommand(lastCommand);}
+ public void ConnectionLost(){if(HasRound&&world.Match.Phase!=PvpRoundPhase.Results){world.Match.Phase=PvpRoundPhase.Aborted;world.Match.Reason="호스트 권한을 확인할 수 없습니다";}}
+ public void Queue(int player,PvpPassengerCommand command){if(command.Kind==0){if(authority==null||authority.Round.Phase==PvpRoundPhase.Lobby)guestReady=player==1;return;}if(authority==null)return;
+  if(session.ProbeCompetition&&command.Kind==2){var completed=authority.Passenger(command.PassengerId);if(completed!=null&&completed.Status==PvpPassengerStatus.Completed&&completed.Owner==player)Debug.Log("PVP_MATCH_COMPLETION_REPLAY_RECEIVED player="+player+" request="+command.RequestId);}
+  authority.Enqueue(player,command);
+  if(session.ProbeCompetition&&player==1&&command.Kind==1&&command.PassengerId=="p-1"&&!raceQueued){raceQueued=true;var competing=command;competing.RequestId="fixture-host-race";authority.Enqueue(0,competing);Debug.Log("PVP_MATCH_SAME_TICK_REQUESTS queued=2");}
+ }
+ public void StartRound(int seconds,int finishGrace){if(!session.IsHost||!session.GuestConnected||!guestReady)throw new InvalidOperationException("상대 준비와 연결을 확인하세요");if(authority!=null&&authority.Round.Phase!=PvpRoundPhase.Lobby)throw new InvalidOperationException("이 세션의 경기가 이미 시작됐습니다");
+  uint seed=session.ProbeCompetition?2u:BitConverter.ToUInt32(Guid.NewGuid().ToByteArray(),0);string id=Guid.NewGuid().ToString("N");var settings=new PvpSessionConfig{MatchDurationSeconds=seconds,FinishGraceSeconds=finishGrace,PlayerCount=2,RulesVersion="competition-v1-"+seed}.Freeze(id,map.MapHash);
+  authority=new PvpPassengerAuthority(map,settings,checked(session.AuthorityTick+150),seed);authority.Round.Advance(session.AuthorityTick);for(int slot=0;slot<2;slot++)session.ResetAuthoritySpawn(slot);world.HasMatch=true;world.Match=authority.Snapshot();message="공통 시작 대기";
+  Debug.Log("PVP_MATCH_STARTED id="+id+" start="+authority.Round.StartTick+" mainEnd="+authority.Round.MainEndTick+" finalEnd="+authority.Round.FinalEndTick+" seed="+seed);
+ }
+ public void BeforeTick(int tick){if(session.ProbeCompetition&&authority==null&&session.GuestConnected&&guestReady)StartRound(12,2);if(authority!=null){authority.Round.Advance(tick);if(session.ProbeCompetition){Fixture(tick);if(authority.Round.CanComplete&&tick-authority.Round.StartTick==100){var pose=authority.AtStop(0);pose.Edge=16;pose.Fraction=.5f;pose.State.Position=PvpTrafficAuthority.At(tick).ObstaclePosition;pose.State.Speed=1;pose.State.YawDegrees=0;session.SetFixtureStop(0,pose);obstacleProbeTick=tick;obstacleProbePosition=pose.State.Position;}}}}
+ void Fixture(int tick){if(!authority.Round.CanComplete)return;int age=tick-authority.Round.StartTick;var first=authority.Passenger("p-1");if(first==null)return;
+  if(first.Status==PvpPassengerStatus.Waiting||age<250){for(int p=0;p<2;p++)session.SetFixtureStop(p,authority.AtStop(0));}
+  else {if(first.Status==PvpPassengerStatus.Onboard)session.SetFixtureStop(first.Owner,authority.AtStop(first.Destination));
+   var second=authority.Passenger("p-2");if(second!=null&&(second.Status==PvpPassengerStatus.Waiting||second.Status==PvpPassengerStatus.Onboard))session.SetFixtureStop(0,authority.AtStop(second.Status==PvpPassengerStatus.Onboard&&age>=450?second.Destination:second.Pickup));}
+ }
+ public void AfterTick(int tick){if(tick==obstacleProbeTick){var pose=session.AuthorityPose(0);if(pose.State.Speed!=0||Vector3.Distance(pose.State.Position,obstacleProbePosition)>.001f)throw new InvalidOperationException("shared obstacle did not block authority motor");Debug.Log("PVP_SHARED_OBSTACLE_BLOCKED tick="+tick);}
+  if(authority!=null){for(int slot=0;slot<2;slot++)authority.ObserveVehicle(slot,session.AuthorityPose(slot),slot==0||session.GuestConnected);authority.Advance(tick);}
+  if(tick%5!=0)return;var state=new PvpSharedWorld{Traffic=PvpTrafficAuthority.At(tick),HasMatch=authority!=null,Match=authority==null?null:authority.Snapshot(),GuestReady=guestReady};Accept(state);session.BroadcastWorld(state);
+ }
+ public void ObserveCrossing(int player,PvpDriveSnapshot before,PvpDriveSnapshot after,int tick){if(authority==null||!authority.Round.CanComplete)return;
+  // One explicit test stop-line crossing, not inference of the rest of Korean traffic law.
+  if(before.Edge==16&&before.State.Position.z < -8&&after.State.Position.z>=-8&&PvpTrafficAuthority.At(tick).Phase==1)authority.ApplyIncident(player,"central-red-"+(++crossings[player]),1,7,tick);
+ }
+ public void Accept(PvpSharedWorld state){if(state==null||state.Traffic.Tick<=lastWorld)return;state.Normalize();if(state.Traffic.Phase<0||state.Traffic.Phase>1||state.Traffic.NextChangeTick<=state.Traffic.Tick||Math.Abs((long)state.Traffic.ObstacleXmm)>5000)throw new ArgumentException("Invalid shared traffic state");
+  if(state.Match!=null&&(state.Match.Scores==null||state.Match.Scores.Length!=2||state.Match.Passengers==null||state.Match.Passengers.Length>5||state.Match.Responses==null||state.Match.Responses.Length!=2))throw new ArgumentException("Invalid match snapshot");
+  world=state;lastWorld=state.Traffic.Tick;sharedSamples++;phaseMask|=1<<state.Traffic.Phase;
+  if(lastWorld%50==0&&session.Probe)Debug.Log("PVP_SHARED_SAMPLE "+state.Traffic.Signature);
+  if(HasRound){var response=state.Match.Responses[session.IsHost?0:1];if(pending&&response!=null&&response.RequestId==lastCommand.RequestId&&response.MatchId==lastCommand.MatchId){pending=false;message=response.Reason;if(session.ProbeCompetition&&response.Accepted&&lastCommand.Kind==2&&!completionReplaySent){completionReplaySent=true;session.IssueCompetitionCommand(lastCommand);var duplicate=lastCommand;duplicate.RequestId+="-repeat";session.IssueCompetitionCommand(duplicate);Debug.Log("PVP_MATCH_COMPLETION_REPLAY_SENT player="+(session.IsHost?0:1));}}
+   if(awaitingRestore){var trip=OwnTrip();if(trip!=null&&trip.TripId==rememberedTrip){TripRestored=true;awaitingRestore=false;Debug.Log("PVP_MATCH_TRIP_RESTORED trip="+trip.TripId+" ledger="+state.Match.LedgerSequence);}}
+  }
+ }
+ PvpPassengerView OwnTrip(){if(!HasRound)return null;int player=session.IsHost?0:1;foreach(var p in world.Match.Passengers)if(p.Status==PvpPassengerStatus.Onboard&&p.Owner==player)return p;return null;}
+ void Submit(PvpPassengerView passenger,int kind){lastCommand=new PvpPassengerCommand{MatchId=world.Match.MatchId,RequestId="action-"+(++counter),PassengerId=passenger.Id,Revision=passenger.Revision,Kind=kind};pending=true;session.IssueCompetitionCommand(lastCommand);}
+ void Update(){if(session==null||!session.InputReady)return;
+  if(!session.Probe&&Input.GetKeyDown(KeyCode.M))practice.ToggleNetworkOverview();
+  if(session.ProbeCompetition&&!session.IsHost&&HasRound&&world.Match.Phase==PvpRoundPhase.Running&&!localMenuProbe){localMenuProbe=true;previousTimeScale=Time.timeScale;Time.timeScale=0;Debug.Log("PVP_LOCAL_MENU_CHECK timescale=0 authorityTick="+world.Traffic.Tick);}
+  if(session.ProbeCompetition){if(!session.IsHost&&!readySent){session.IssueCompetitionCommand(new PvpPassengerCommand{Kind=0});readySent=true;}ProbeAction();}
+  if(!session.Probe&&HasRound&&Input.GetKeyDown(KeyCode.E)&&!pending){var own=OwnTrip();if(own!=null)Submit(own,2);else foreach(var p in world.Match.Passengers)if(p.Id==selected&&p.Status==PvpPassengerStatus.Waiting){Submit(p,1);break;}}
+ }
+ void ProbeAction(){if(!HasRound||!DrivingAllowed||pending||world.Traffic.Tick%15!=0)return;var own=OwnTrip();if(own!=null){if(Vector3.Distance(session.DisplayPose.State.Position,map.Stops[own.Destination].Position)<3)Submit(own,2);return;}
+  string target=session.IsHost?"p-2":"p-1";foreach(var p in world.Match.Passengers)if(p.Id==target&&p.Status==PvpPassengerStatus.Waiting&&Vector3.Distance(session.DisplayPose.State.Position,map.Stops[p.Pickup].Position)<3){if(session.IsHost&&authority!=null&&(authority.Passenger("p-1").Status==PvpPassengerStatus.Waiting||authority.Passenger("p-1").Status==PvpPassengerStatus.Onboard))return;Submit(p,1);return;}
+ }
+ void LateUpdate(){if(world==null)return;obstacle.transform.position=world.Traffic.ObstaclePosition+Vector3.up*.6f;signalMaterial.color=world.Traffic.Phase==0?Color.green:Color.red;
+  int marker=0;if(HasRound){var own=OwnTrip();foreach(var p in world.Match.Passengers)if(p.Status==PvpPassengerStatus.Waiting){if(marker==passengerMarkers.Count){var obj=Primitive("PVP waiting passenger",PrimitiveType.Capsule,passengerMaterial);obj.transform.localScale=new Vector3(.6f,1,.6f);passengerMarkers.Add(obj);}passengerMarkers[marker].SetActive(true);passengerMarkers[marker++].transform.position=map.Stops[p.Pickup].Position+Vector3.up;}
+   int stop=own==null?-1:own.Destination;if(own==null)foreach(var p in world.Match.Passengers)if(p.Id==selected&&p.Status==PvpPassengerStatus.Waiting)stop=p.Pickup;if(stop>=0)practice.PresentNetworkRoute(session.DisplayPose,stop);else practice.ClearNetworkRoute();
+  }for(int i=marker;i<passengerMarkers.Count;i++)passengerMarkers[i].SetActive(false);
+ }
+ void OnGUI(){if(session==null||world==null)return;float width=Mathf.Min(490,Screen.width*.43f);GUILayout.BeginArea(new Rect(Screen.width-width-16,16,width,Screen.height-32),GUI.skin.box);GUILayout.Label("공통 교통 · 서버 tick "+world.Traffic.Tick);GUILayout.Label((world.Traffic.Phase==0?"중앙 신호 녹색":"중앙 신호 적색")+" · 다음 전환 "+world.Traffic.NextChangeTick);GUILayout.Label("중앙 이동 장애물 / 택시 간 무접촉 시험");
+  if(!HasRound||world.Match.Phase==PvpRoundPhase.Lobby){if(session.IsHost){GUILayout.Label("경기 시간(초) 필수 / 마감 유예(초)");GUILayout.BeginHorizontal();duration=GUILayout.TextField(duration,5);grace=GUILayout.TextField(grace,4);GUILayout.EndHorizontal();GUI.enabled=session.GuestConnected&&guestReady;if(GUILayout.Button("준비된 2인 경기 시작")){try{int seconds,finish;if(!int.TryParse(duration,out seconds)||!int.TryParse(grace,out finish))throw new ArgumentException("초 단위 정수를 입력하세요");StartRound(seconds,finish);}catch(Exception e){message=e.Message;}}GUI.enabled=true;}else {GUI.enabled=session.InputReady;if(GUILayout.Button("준비 완료"))session.IssueCompetitionCommand(new PvpPassengerCommand{Kind=0});GUI.enabled=true;}GUILayout.Label(guestReady||world.GuestReady?"게스트 준비 완료":"게스트 준비 대기");}
+  else {var match=world.Match;GUILayout.Label("경기 "+match.Phase+" / 원장 "+match.LedgerSequence);GUILayout.Label("본 종료 "+Mathf.Max(0,(match.MainEndTick-world.Traffic.Tick)/50)+"초 · 최종 종료 "+Mathf.Max(0,(match.FinalEndTick-world.Traffic.Tick)/50)+"초");GUILayout.Label("E 승차/하차 · M 전체지도 · 정차 0.2초");
+   foreach(var row in match.Scores){GUILayout.Label((row.Player==0?"호스트":"게스트")+"  점수 "+row.Score+" / 완료 "+row.Completed+(match.Phase==PvpRoundPhase.Results?(row.Eligible?" / "+row.Rank+"위":" / "+row.Exclusion):" (잠정)"));GUILayout.Label("운임점수 "+row.FarePoints+" + 안전 "+row.Bonus+" - 위반 "+row.Penalty);}
+   if(match.Phase==PvpRoundPhase.Results){GUILayout.Label("확정 결과 v"+match.ResultVersion);if(match.Scores[0].Rank!=1&&match.Scores[1].Rank!=1)GUILayout.Label("승자 없음");}
+   var trip=OwnTrip();if(trip!=null){GUILayout.Label("운송: "+map.Stops[trip.Destination].Name+" / 약정 "+trip.QuotedFare+"원");var card=Passengers.PvpPassengerCatalog.At(trip.ContentIndex);GUILayout.Label(card.TypeLabel+" · "+card.Dialogue);GUI.enabled=session.InputReady&&!pending;if(GUILayout.Button("지정 목적지에서 하차"))Submit(trip,2);GUI.enabled=true;}
+   else foreach(var p in match.Passengers)if(p.Status==PvpPassengerStatus.Waiting){if(GUILayout.Button((selected==p.Id?"▶ ":"")+map.Stops[p.Pickup].Name+" → "+map.Stops[p.Destination].Name+" / "+p.QuotedFare+"원"))selected=p.Id;if(selected==p.Id){GUI.enabled=session.InputReady&&!pending;if(GUILayout.Button("이 승객 현장 승차"))Submit(p,1);GUI.enabled=true;}}
+   if(match.RecentEntries!=null&&match.RecentEntries.Length>0){var entry=match.RecentEntries[match.RecentEntries.Length-1];GUILayout.Label("최근 원장 #"+entry.Sequence+" "+entry.Kind+" "+entry.Amount);}
+  }GUILayout.Label(message+(pending?" · 서버 응답 대기":""));GUILayout.EndArea();
+ }
+ void OnDestroy(){if(localMenuProbe)Time.timeScale=previousTimeScale;foreach(var obj in passengerMarkers)if(obj!=null)Destroy(obj);if(obstacle!=null)Destroy(obstacle);if(signal!=null)Destroy(signal);foreach(var material in new[]{obstacleMaterial,signalMaterial,passengerMaterial})if(material!=null)Destroy(material);}
+}
+}
