@@ -25,3 +25,7 @@
 - 재현: 기본 exe에 -oneDayMode -hybridV2 -vehicleDurabilityTest -vehicleDurabilityHudCapture -screen-width 1280 -screen-height 720 -screen-fullscreen 0을 함께 전달한다. 저장 격리 플래그를 빼지 않는다. artifacts/vehicle-durability-hud-{100,50,0}-{1280,1872}.png 생성.
 - 이번에는 HUD/컴파일/상태 fixture를 검증했다. 이전 손상·수리 기능 회귀 결과는 이전 이력의 증거이며 이번에 전체 캠페인·수동 물리 주행을 다시 수행한 것은 아니다.
 - 변경 파일: 위 스크립트4개, 생성 FirstDrive.unity, 인터페이스 기획·체크리스트·이력·LATEST, 실행 폴더 DLL/boot.config 및 배포 manifest. 지도 입력 변경 없음.
+
+## 배포 산출물
+
+실제 소스 커밋0706cffe6054e3b90dcd99d3a274bc758877672f 기준 최종 실행 폴더130파일112,194,710바이트. 전용 HUD 검증 JSON으로 manifest를 생성하고 -VerifyOnly 종료0으로 모든 크기·SHA256을 대조했다. 필수 로컬 입력 Strict 종료0/문제0이며 지도 입력·배포 ZIP은 변경하지 않았다.
