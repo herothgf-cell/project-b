@@ -32,3 +32,7 @@
 - 최종1280×720 실제 화면4개 확인: 음식 선택, 허용81→86, 강제 흘림 청결100→92, 일반 승차감 요청 이행+8/미이행-10/보류0. 버튼·본문 잘림 없음. 음식/짐 일반 하차-2 별도 규칙 유지.
 - 추가 캡처는 artifacts/passenger-behavior-{food-choice,food-allowed,food-spill,request-effects}.png. 이전 이력처럼 단순 위치/상태 fixture이며 수동 실제 도로 주행은 수행하지 않았다.
 - check_workspace.ps1 -Strict 종료0/Input issues0. 지도·ZIP 변경 없음. 기획 수치와 UI 표현을 동기화하고 독립 검토 지적을 해결했다.
+
+## 배포 산출물
+
+실제 소스 커밋d32037b1386ca53a52d6d5fdb5d9c24f5faba526 기준 BuildHybrid 실행 폴더130파일112,198,806바이트를 기록했다. 전용 검증 JSON으로 manifest를 생성하고 -VerifyOnly 종료0으로 전체 파일 크기·SHA256 일치를 확인했다. 게시 결과는 실제 원격 확인 후 추가한다.
