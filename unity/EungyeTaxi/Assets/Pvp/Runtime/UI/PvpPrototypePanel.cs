@@ -10,15 +10,16 @@ namespace Pvp {
             GUILayout.BeginArea(new Rect((Screen.width-width)/2,Mathf.Max(16,(Screen.height-400)/2),width,400),GUI.skin.box);
             GUILayout.Label("PVP 프로토타입 / 초기 설정 확인");
             GUILayout.Space(12);
-            GUILayout.Label("시험장·차량·온라인 경기는 아직 준비 중입니다.");
-            GUILayout.Label("이 화면은 초기 설정만 확인하며 경기를 시작하지 않습니다.");
+            GUILayout.Label("자체 시험장에서 차량 후보를 비교할 수 있습니다. 온라인 경기는 준비 중입니다.");
+            GUILayout.Label("경기 설정 확인과 오프라인 주행 시험은 별도입니다.");
             duration=Field("경기 시간(초) — 필수",duration);
             players=Field("참가 인원 — 필수, 최소 2명",players);
             grace=Field("마감 유예(초) — 0 허용",grace);
             if(GUILayout.Button("설정 확인")) Validate();
             GUILayout.Label(message);
             var bootstrap=GetComponent<PvpBootstrap>();
-            if(bootstrap!=null&&!String.IsNullOrEmpty(bootstrap.StartupError)) GUILayout.Label("진단 기록을 저장하지 못했습니다. 로그를 확인하세요.");
+            if(bootstrap!=null&&!String.IsNullOrEmpty(bootstrap.StartupError)) GUILayout.Label(bootstrap.StartupError);
+            if(GUILayout.Button("오프라인 시험장 주행")) { if(bootstrap!=null) bootstrap.StartPractice(); }
             GUILayout.FlexibleSpace();
             if(GUILayout.Button("나가기")) Quit();
             GUILayout.EndArea();

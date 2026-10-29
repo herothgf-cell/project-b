@@ -87,13 +87,13 @@ Task 1→2→3이 기술 위험을 먼저 줄인다. Task 4→5가 경기의 최
 - [x] 순수 C# 검사의 실패→통과와 실제 두 .NET 검사 프로세스의 로그 분리를 기록한다. 기존 저장소의 정적 `Run()`/CLI 방식으로 구현해 새 테스트 패키지는 추가하지 않는다.
 - [x] 전용 시작 경로·설정 동결·저장 폴더·PVP 씬을 명시한 빌드 소스를 추가한다. `DriveSession`·`CampaignSaveLocation.Resolve`를 호출하지 않는다. 런타임 소스는 실제 Unity Player 참조 DLL로 컴파일을 확인한다.
 - [x] QA-ISO-01의 설정·경로·로그·복원 코드 증거와 엔진 검증의 미수행 범위를 작업 이력에 기록한다.
-- [ ] Unity Editor에서 새 씬/스크립트 import와 `PvpEditorIsolationTests.Run`을 실행한다. 실제 PlayerSettings·씬 목록·InputManager·수정 중 씬 보호를 확인한다.
-- [ ] 별도 Windows 실행파일을 빌드하고 두 Unity Player를 실행해 진단 파일 분리와 실제 캠페인 저장·기존 실행 폴더 보존을 확인한다. 화면·입력·종료를 직접 확인한다.
+- [x] Unity Editor에서 새 씬/스크립트 import와 `PvpEditorIsolationTests.Run`을 실행한다. 실제 PlayerSettings·씬 목록·InputManager·수정 중 씬 보호를 확인한다.
+- [x] 별도 Windows 실행파일을 빌드하고 두 Unity Player를 실행해 진단 파일 분리와 실제 캠페인 저장·기존 실행 폴더 보존을 확인한다. 화면·입력·종료를 직접 확인한다.
 - [ ] QA-ISO-01·QA-BUILD-01의 실제 실행 부분을 통과시킨다. 맵 로드·다른 PC 배포 검증은 해당 선행 기능이 준비된 뒤 완료한다.
 
 **현재 상태:** 기반 소스와 순수 코드 검사는 완료했으나 Unity 실행 검증은 미수행이다. `Runtime/Core/PvpBuildTransaction.cs`, Editor 전용 검사, 명시적 Player 진단 probe, `tools/test_pvp.py`·`tools/test_pvp.ps1`를 보조 경로로 추가했다. 상세 내용과 실행 결과는 2026-10-29 작업 이력을 따른다.
 
-**Gate:** 독립 시작 화면과 전용 실행물이 재현되어야 한다. **현재 미통과**이며 이 게이트를 완료한 뒤 Task 2로 진행한다. 아직 맵·차량·온라인 경기는 완료 상태가 아니다.
+**Gate:** 독립 시작 화면과 전용 실행물이 재현되어야 한다. **2026-10-29 이 PC의 Task 1 게이트 통과**. [실제 검사 이력](../../work-history/2026-10-29-pvp-review-validation.md). Task 2로 진행하며 QA-BUILD-01 다른 PC·맵 로드는 미완료다. 아직 맵·차량·온라인 경기는 완료 상태가 아니다.
 
 ### Task 2 · P1: 자체 맵과 빠른 조작 후보
 
@@ -287,3 +287,17 @@ P5의 `PvpBuild.BuildLinuxServer()`는 아직 구현하지 않았다. P5 구현 
 각 Task는 [저장소 작업 규칙](../../../AGENTS.md)에 따라 요구·변경 파일·실제 명령·로그 위치·자동/사람/배포 결과·미검증 항목을 날짜별 이력에 남기고 `LATEST.md`를 갱신한다.
 PVP 작업을 기존 게임의 전체 수동 검증 완료로 표시하지 않는다. 원격 반영된 커밋 해시는 실제 확인 후 기록하고, 작업 이력에 자기 자신을 포함할 해시를 추측하지 않는다.
 다음 실행자는 먼저 현재 작업 트리와 최신 인계를 확인하고 첫 미완료 Task의 게이트부터 진행한다. 이미 추가된 기반 코드를 다시 생성하지 말고, 남은 Unity 실행 검증부터 확인한다.
+
+## 2026-10-29 후속 검증
+
+[Task 1 실제 Unity 검사·빌드·두 Player·초기 UI 결과](../../work-history/2026-10-29-pvp-review-validation.md)와 [콘텐츠별 검토표](11-content-elements-review.md)를 추가했다. 본문 과거 미수행 설명은 첫 기반 커밋 당시 상태이며, 이번 실제 결과를 우선한다. Task 2 계약은 [구체 구현 계획](12-task2-implementation-plan.md)을 따른다.
+
+## Task 2 후속 진척 (2026-10-29)
+
+- [x] 자체 지도·방향 연결·도달성·복구 비전진과 차량 입력/상태 복원 자동 검사.
+- [x] 회색 상자 시험장·차량A/B·최단/예상최속 합법 경로·오프라인 시작 연결.
+- [x] Unity Editor 통합 및 실제 Player 입력 모델 검사. [정확한 결과와 한계](../../work-history/2026-10-29-pvp-arena-integration.md).
+- [ ] 실제 화면·키보드/패드·사람 조작감·전체 코스 비교. 사용자 요청으로 PC UI 자동 조작 중단.
+- [ ] QA-MAP-01/02·QA-DRV-01 전체 수용 및 P2 진입. 소스 구현/자동 검사를 전체 게이트 통과로 올리지 않는다.
+
+실제 파일은 계획의 이름과 일부 다르다: PvpMapRuntime.cs에 도로 런타임/경로 계산, Editor/PvpMapTests.cs·PvpVehicleTests.cs·PvpTask2Tests.cs에 기존 정적 Run 방식 검사를 둔다. 새 테스트 패키지를 추가하지 않았다.

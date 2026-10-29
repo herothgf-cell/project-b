@@ -1,9 +1,9 @@
 # 택시 PVP 기획·개발 계획
 
 상태: 기획 초안 / P1 실행·저장·빌드 기반 코드 추가, Unity 실행 검증 대기
-작성일: 2026-10-27  
+작성일: 2026-10-27
 진척 갱신: 2026-10-29
-작업 브랜치: feature/pvp-prototype  
+작업 브랜치: feature/pvp-prototype
 참고 기준: main 60b15edd6094d9a6383de4d0c75c4a40d49eda40
 
 자체 제작 맵에서 실제 플레이어들이 승객 운송으로 경쟁하는 별도 PVP 모드의 기획이다. 운임이 승패에 충분한 영향을 주며, 민첩한 조작과 운전의 정확성도 성적을 만든다. 기존 은계 시뮬레이션의 규칙과 현재 구현 상태는 [상위 기획](../README.md)을 따른다.
@@ -58,3 +58,11 @@
 4. 완료 체크는 실제 결과를 확인한 범위에만 한다. 기반 소스나 순수 C# 검사 통과를 Unity 빌드·실제 PVP 플레이 완료로 바꾸지 않는다.
 
 [이번 기획 작업 이력](../../work-history/2026-10-27-pvp-planning.md) · [기존 시뮬레이션 기획](../README.md)
+
+## 콘텐츠별 빠른 검토
+
+[콘텐츠별 요소 검토표](11-content-elements-review.md)는 기존 기획 양식으로 행동·결과·예외·상태를 정리하고 main 동시 작업과의 충돌 경계를 설명한다. [Task 1 실제 Unity 검증](../../work-history/2026-10-29-pvp-review-validation.md)에서 이 PC의 Editor·빌드·두 Player·초기 UI 통과를 확인했다. Task 2는 [구현 계획](12-task2-implementation-plan.md)에 따라 진행한다. 다른 PC 배포와 PVP 경기 완주는 미완료다.
+
+## 최신 구현·검증: 2026-10-29
+
+[Task 1 실제 Unity 검증](../../work-history/2026-10-29-pvp-review-validation.md) 및 [Task 2 시험장·차량](../../work-history/2026-10-29-pvp-arena-integration.md). 자체 시험장과 차량 후보는 로컬 Player에서 구현·자동 검사했다. 초기 문서의 ‘아직 없음’은 당시 상태이며 실제 파일/검사 상태는 이 두 이력을 우선한다. 온라인 경기·승객·정산은 미구현, Task 2 화면·실물 입력·사람 조작감 및 다른 PC 배포는 미검증이다.

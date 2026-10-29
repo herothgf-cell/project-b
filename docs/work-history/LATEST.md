@@ -1,5 +1,15 @@
 # 최신 작업 인계
 
+## PVP 최신: 2026-10-29 자체 시험장·차량 후보
+
+[구현·검증·통합 이력](2026-10-29-pvp-arena-integration.md). 자체 맵·방향 경로·복구·차량A/B·오프라인 실행 연결 구현, Unity 자동 검사 통과. Task2 화면/실물 입력/사람 체감은 미검증이며 사용자 요청으로 PC 조작 중단. 다음은 해당 수용 검증이며 P2는 미착수. PVP 로컬 builds/PvpPrototype/PvpPrototype.exe는 Git 제외. 기본 은계 실행/BuildHybrid/배포/manifest 유지, 필수 입력 Strict0. 아래 항목은 이전 시점 기록.
+
+
+## PVP 후속: 2026-10-29 기획 요소 검토·Task 1 실제 Unity 검증
+
+[검토·검증 이력](2026-10-29-pvp-review-validation.md) · [콘텐츠 요소 표](../content-design/pvp/11-content-elements-review.md). feature/pvp-prototype 별도 worktree. Unity 2022.3.62f2 Editor·Windows 빌드·두 Player 진단·초기 UI 입력/종료 통과. 캠페인 배포·저장·설정298파일 변경0, Strict0. 기본 은계 exe/BuildHybrid 유지, PVP는 로컬 builds/PvpPrototype/PvpPrototype.exe(Git 제외). 다음은 승인된 Task 2 자체 시험장·차량. 다른 PC 배포·온라인·사람 주행 체감 미검증. main과 LATEST.md 병합 충돌은 양쪽 이력 보존 필요. 아래 기존 캠페인·PVP 인계는 과거 시점 기록.
+
+
 ## PVP 작업 브랜치: 2026-10-29 시작·저장·빌드 기반
 
 `feature/pvp-prototype`에서 로드맵 Task 1의 전용 시작 씬·한글 설정 확인 화면·불변 설정·전용 저장·프로세스별 진단·Windows 빌드 소스를 추가했다. [요구/변경/검증 기록](2026-10-29-pvp-startup-isolation.md) · [현재 로드맵과 실행 명령](../content-design/pvp/08-development-roadmap.md).

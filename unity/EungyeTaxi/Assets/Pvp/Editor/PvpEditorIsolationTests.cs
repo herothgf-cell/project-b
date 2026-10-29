@@ -38,27 +38,42 @@ public static class PvpEditorIsolationTests {
             Check(Convert.ToBase64String(File.ReadAllBytes("ProjectSettings/InputManager.asset"))==Convert.ToBase64String(input),"InputManager unchanged");
         }
         Scene opened=default(Scene);
+        var inspectionActive=SceneManager.GetActiveScene();
+        bool openedForInspection=false;
         try {
-            opened=EditorSceneManager.OpenPreviewScene(PvpBuild.ScenePath);
+            // Unity 2022.3 has no OpenPreviewScene API. Preserve existing loaded scenes.
+            opened=SceneManager.GetSceneByPath(PvpBuild.ScenePath);
+            if(!opened.IsValid()||!opened.isLoaded) { opened=EditorSceneManager.OpenScene(PvpBuild.ScenePath,OpenSceneMode.Additive);openedForInspection=true; }
             int bootstraps=0;
             foreach(var root in opened.GetRootGameObjects()) foreach(var component in root.GetComponentsInChildren<MonoBehaviour>(true)) {
                 Check(component!=null,"scene has no missing script");
                 Check(component is PvpBootstrap,"serialized startup has only PVP bootstrap behavior");bootstraps++;
             }
             Check(bootstraps==1,"exactly one explicit bootstrap");
-        } finally { if(opened.IsValid()) EditorSceneManager.ClosePreviewScene(opened); }
+        } finally {
+            if(openedForInspection&&opened.IsValid()) EditorSceneManager.CloseScene(opened,true);
+            if(inspectionActive.IsValid()&&inspectionActive.isLoaded) SceneManager.SetActiveScene(inspectionActive);
+        }
+        Check(PvpBuild.SameSceneSetup(setup,EditorSceneManager.GetSceneManagerSetup()),"scene inspection restores setup");
         // Dirty-scene rejection must precede any build or PlayerSettings mutation.
         var active=SceneManager.GetActiveScene();
-        var fixture=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Additive);
-        var marker=new GameObject("PVP dirty-scene guard fixture");
-        SceneManager.MoveGameObjectToScene(marker,fixture);
+        string fixturePath="Assets/Pvp/Scenes/PvpIsolationFixture-"+Guid.NewGuid().ToString("N")+".unity";
+        Scene fixture=default(Scene);
+        GameObject marker=null;
         try {
+            File.Copy(PvpBuild.ScenePath,fixturePath);
+            AssetDatabase.ImportAsset(fixturePath);
+            fixture=EditorSceneManager.OpenScene(fixturePath,OpenSceneMode.Additive);
+            marker=new GameObject("PVP dirty-scene guard fixture");
+            SceneManager.MoveGameObjectToScene(marker,fixture);
             EditorSceneManager.MarkSceneDirty(fixture);bool rejected=false;
             try { PvpBuild.BuildWithBoundary(options=>{throw new Exception("dirty scene reached build");}); } catch(InvalidOperationException) { rejected=true; }
             Check(rejected,"dirty scenes rejected");
         } finally {
-            EditorSceneManager.CloseScene(fixture,true);
-            SceneManager.SetActiveScene(active);
+            if(marker!=null) UnityEngine.Object.DestroyImmediate(marker);
+            if(fixture.IsValid()) EditorSceneManager.CloseScene(fixture,true);
+            if(File.Exists(fixturePath)) AssetDatabase.DeleteAsset(fixturePath);
+            if(active.IsValid()&&active.isLoaded) SceneManager.SetActiveScene(active);
         }
         Debug.Log("PVP_EDITOR_ISOLATION_OK scene/player/build-list/input/failure/success/dirty-guard");
     }

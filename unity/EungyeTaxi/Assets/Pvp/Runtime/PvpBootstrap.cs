@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Pvp {
     // Scene-owned entry point only; opening campaign scenes never installs PvP.
     public sealed class PvpBootstrap : MonoBehaviour {
+        public Pvp.Map.PvpMapDefinition PracticeMap;
         StreamWriter diagnostic;
         public PvpMatchSettings CurrentSettings { get; private set; }
         public string DiagnosticPath { get; private set; }
@@ -19,6 +20,20 @@ namespace Pvp {
                 diagnostic.WriteLine("PVP_STARTUP utc="+DateTime.UtcNow.ToString("O")+" unity="+Application.unityVersion+" diagnostic="+DiagnosticPath);
             } catch(Exception e) { StartupError="Diagnostic storage unavailable: "+e.Message;Debug.LogError(StartupError); }
             if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpIsolationCheck")>=0) gameObject.AddComponent<PvpRuntimeIsolationProbe>();
+            else if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpPracticeCheck")>=0) gameObject.AddComponent<PvpPracticeProbe>();
+        }
+        public void StartPractice() {
+            if(GetComponent<PvpPracticeSession>()!=null) return;
+            PvpPracticeSession session=null;
+            try {
+                if(PracticeMap==null) throw new InvalidOperationException("PVP practice map missing");
+                session=gameObject.AddComponent<PvpPracticeSession>();session.Begin(PracticeMap);
+                StartupError=null;
+            } catch(Exception e) {
+                StartupError="시험장을 시작하지 못했습니다: "+e.Message;
+                if(session!=null) session.ExitPractice();
+                Debug.LogWarning(StartupError);
+            }
         }
         // Task2 supplies an actual verified map hash; freezing settings alone does
         // not load an arena, start a network connection, or claim a playable match.

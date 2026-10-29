@@ -1,7 +1,13 @@
 $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path $PSScriptRoot -Parent
 # .NET SDK path: cross-platform runner also launches two real client processes.
-if (Get-Command dotnet -ErrorAction SilentlyContinue) {
+$taskDotnet = Get-Command dotnet -ErrorAction SilentlyContinue
+$taskHasSdk = $false
+if ($taskDotnet) {
+    $taskSdks = @(& $taskDotnet.Source --list-sdks 2>$null)
+    $taskHasSdk = $LASTEXITCODE -eq 0 -and @($taskSdks | Where-Object { $_ -match '^(\d+)\.\d+\.\d+' -and [int]$Matches[1] -ge 8 }).Count -gt 0
+}
+if ($taskHasSdk) {
     $taskPython = Get-Command python -ErrorAction SilentlyContinue
     if (-not $taskPython) { $taskPython = Get-Command python3 -ErrorAction SilentlyContinue }
     if ($taskPython) {
@@ -33,4 +39,9 @@ try {
     $taskContents = @($taskPaths | ForEach-Object { Get-Content $_ -Raw })
     if ($taskContents[0] -eq $taskContents[1]) { throw 'Diagnostic client contents collided' }
     Write-Output 'PVP_TWO_PROCESS_DIAGNOSTICS_OK clients=2 distinct=2'
-} finally { if (Test-Path $taskTemp) { Remove-Item -Recurse -Force $taskTemp } }
+} finally {
+    $taskTempRoot = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\','/') + [IO.Path]::DirectorySeparatorChar
+    $taskResolved = [IO.Path]::GetFullPath($taskTemp)
+    if (-not $taskResolved.StartsWith($taskTempRoot,[StringComparison]::OrdinalIgnoreCase)) { throw 'Unexpected diagnostic cleanup path' }
+    if (Test-Path -LiteralPath $taskResolved) { Remove-Item -LiteralPath $taskResolved -Recurse -Force }
+}
