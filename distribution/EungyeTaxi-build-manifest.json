@@ -1,40 +1,48 @@
 {
-  "sourceCommit": "d32037b1386ca53a52d6d5fdb5d9c24f5faba526",
+  "sourceCommit": "e765b57a524bbc9cf3ef9035a8a6abbe58f5f1e4",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-10-29",
-  "totalBytes": 112198806.0,
+  "totalBytes": 112202390.0,
   "validation": {
-    "build": "PrototypeBuild.BuildHybrid exit 0",
-    "behaviorModelAssertions": 437,
-    "careModelAssertions": 13301,
-    "modelSuites": 28,
-    "passengerBehaviorPlayerAssertions": 189,
-    "passengerBehaviorReloadAssertions": 10,
+    "build": "PrototypeBuild.BuildHybrid via PlaytestPresentationTests.BuildPresentation exit 0",
+    "editorGroups": [
+      "PlaytestPresentationTests",
+      "TrafficFlowTests",
+      "PedestrianSignalConsistencyTests",
+      "MapReadabilityTests"
+    ],
+    "legacyJunctionFacilityTests": "not run: legacy eungye-hybrid-map absent in project-map mode; actual-map audit below",
+    "roadSignagePlayerAssertions": 303,
+    "actualSignalApproaches": 74,
+    "actualProtectedApproaches": 74,
+    "actualPermissiveApproaches": 0,
+    "driveFeedbackPlayerAssertions": 16,
     "playerExitCodes": [
       0,
       0
     ],
-    "uiResolutions": [
+    "visualScreensVerified": 4,
+    "actualJunctionResolutions": [
       [
-        1280,
-        720
+        1900,
+        998
       ]
     ],
-    "visualScreensVerified": 4,
-    "foodPermissionSatisfaction": 5,
-    "foodConsumptionCleanlinessLoss": 2,
-    "foodSpillChancePercent": 25,
-    "foodSpillExtraCleanlinessLoss": 6,
-    "normalExitLossSeparate": 2,
-    "reviewImportantFindings": 0,
+    "conditionFixtureResolution": [
+      1280,
+      720
+    ],
+    "conditionFrontBackUsesFixture": true,
+    "trafficRulesChanged": false,
     "manualDriving": false,
+    "fieldReviewComplete": false,
     "fullCampaign": false,
-    "buildLog": "artifacts/passenger-choice-effects-release-build.log",
+    "buildLog": "artifacts/road-signage-verified-build.log",
     "playerLogs": [
-      "artifacts/passengerBehaviorTest.log",
-      "artifacts/passengerBehaviorReloadTest.log"
+      "artifacts/road-signage-verified-player.log",
+      "artifacts/road-signage-feedback-player.log"
     ]
   },
   "files": [
@@ -46,7 +54,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "ee27508138c315d2d8c785cb8fe3619ee53a1dbf26f2f0201bcc7c00a1b36aec"
+      "sha256": "4117cce44c30fa9c4fc60b3808eeddb1c298433f756467ea697217d09d0a6b56"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -75,8 +83,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 1528832,
-      "sha256": "c8f8fa6c9081ff670847286a1bba20f65c12227b6aa827326e28009a575e0ffa"
+      "bytes": 1532416,
+      "sha256": "7da171db5ce1a5e418b66db2d11c3061cedc5cb6319339a32168c5359d2073aa"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",

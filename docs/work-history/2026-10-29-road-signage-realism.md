@@ -33,3 +33,7 @@
 변경 파일: RoadSignage.cs, TrafficSystem.cs, RoadPresentationProbe.cs, DriveFeedbackSmokeTest.cs, Editor/PlaytestPresentationTests.cs, 생성 FirstDrive.unity, 기획01/05·체크리스트·이력·LATEST, 실행 폴더 DLL/boot.config와 manifest.
 
 재현: 기본 은계 exe에 -presentationTest -hybridV2 -logFile artifacts/road-signage-player.log(절대 경로 권장)를 전달한다. 테스트는 artifacts 저장으로 격리하며 실제 운행을 자동 수행하지 않는다. Editor 검증/기본 빌드는 PlaytestPresentationTests.BuildPresentation을 사용한다.
+
+## 배포 산출물
+
+실제 소스 커밋e765b57a524bbc9cf3ef9035a8a6abbe58f5f1e4 기준 최종 실행 폴더130파일112,202,390바이트. 전용 검증 JSON으로 manifest를 생성하고 -VerifyOnly 종료0으로 전체 크기·SHA256 일치를 확인했다. 기본 실행 경로 builds/EungyeTaxi/EungyeTaxi.exe / 은계, 지도 입력/ZIP은 그대로다. 게시 결과는 실제 원격 확인 뒤 기록한다.
