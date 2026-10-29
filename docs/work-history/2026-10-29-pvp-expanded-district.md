@@ -69,3 +69,11 @@ pwsh -File tools/update_pvp_distribution_manifest.ps1 -VerifyOnly
 - 기존 싱글 **130파일112,194,710바이트** manifest 재검증0. 공통 소스/싱글 실행 폴더/지도 입력 변경 없음. 이 작업의 최종 소스/실행 폴더만 별도 배포하며 다른 채팅 checkout은 보존했다.
 
 원본 실행 폴더/manifest·최종 사용법·이력을 함께 배포 커밋하고 원격 확인 결과는 아래 게시 확인에 기록한다. 로그/복사본/이미지는 Git 제외 로컬 증거다.
+
+## 게시 확인
+
+- 소스 `a5c13de67f3b6e92b50c898d765aca10670e3ba6` → 배포 `41959138f41de3dc07fbffcdfc1dbbbb465306d5` 순서로 커밋했다.
+- Git index139개 blob 크기/SHA256과 실행 후 복사본139개 파일을 manifest와 대조했다: `PVP_EXPANDED_INDEX_AND_POST_RUN_COPY_OK files=139`. SourceCommit→현재HEAD 사이 Unity 소스/Packages/ProjectSettings 차이가 없음도 확인했다.
+- `git push origin feature/pvp-prototype` 종료0. `git ls-remote origin refs/heads/feature/pvp-prototype`와 로컬 HEAD 모두 위 배포40자리, `git status --short` 빈 출력이었다. 강제 푸시나 다른 작업 checkout 변경 없이 진행했다.
+- 그 시점 `git log -1 --oneline -- docs/work-history/2026-10-29-pvp-expanded-district.md`는 `4195913 build(pvp): ship verified expanded district and fuel service client`였다. 이 확인/체크는 별도 문서 커밋으로 남긴다.
+- 다른 PC는 feature 브랜치를 pull하고 전체 `builds/PvpPrototype/` 폴더를 유지해 실행한다. 실제 다른PC 통신·사람 장기 조작/밸런스 수용은 별도다.
