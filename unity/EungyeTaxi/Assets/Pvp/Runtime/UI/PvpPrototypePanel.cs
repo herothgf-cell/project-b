@@ -5,9 +5,10 @@ using UnityEngine;
 namespace Pvp {
     public sealed class PvpPrototypePanel : MonoBehaviour {
         string duration="",players="",grace="0",message="경기 시간과 참가 인원을 입력하세요. 기본 경기 시간은 정해지지 않았습니다.";
+        string networkAddress="127.0.0.1",networkPort="7777";
         void OnGUI() {
             float width=Mathf.Min(680,Screen.width-32);
-            GUILayout.BeginArea(new Rect((Screen.width-width)/2,Mathf.Max(16,(Screen.height-400)/2),width,400),GUI.skin.box);
+            GUILayout.BeginArea(new Rect((Screen.width-width)/2,Mathf.Max(16,(Screen.height-540)/2),width,540),GUI.skin.box);
             GUILayout.Label("PVP 프로토타입 / 초기 설정 확인");
             GUILayout.Space(12);
             GUILayout.Label("자체 시험장에서 차량 후보를 비교할 수 있습니다. 온라인 경기는 준비 중입니다.");
@@ -20,10 +21,18 @@ namespace Pvp {
             var bootstrap=GetComponent<PvpBootstrap>();
             if(bootstrap!=null&&!String.IsNullOrEmpty(bootstrap.StartupError)) GUILayout.Label(bootstrap.StartupError);
             if(GUILayout.Button("오프라인 시험장 주행")) { if(bootstrap!=null) bootstrap.StartPractice(); }
+            GUILayout.Space(8);
+            GUILayout.Label("직접 IP 주행 시험 (2인·경기 시간 없음·인터넷 초대방 아님)");
+            GUILayout.BeginHorizontal();GUILayout.Label("Host IP / 호스트의 수신 IP");networkAddress=GUILayout.TextField(networkAddress,45);networkPort=GUILayout.TextField(networkPort,5);GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            if(GUILayout.Button("호스트 시작")) StartNetwork(true);
+            if(GUILayout.Button("IP로 참가")) StartNetwork(false);
+            GUILayout.EndHorizontal();
             GUILayout.FlexibleSpace();
             if(GUILayout.Button("나가기")) Quit();
             GUILayout.EndArea();
         }
+        void StartNetwork(bool host){ushort port;if(!ushort.TryParse(networkPort,out port)||port==0){message="유효한 포트를 입력하세요.";return;}GetComponent<PvpBootstrap>().StartNetwork(host,networkAddress,port);}
         static string Field(string label,string value) { GUILayout.BeginHorizontal();GUILayout.Label(label,GUILayout.Width(320));value=GUILayout.TextField(value,10);GUILayout.EndHorizontal();return value; }
         void Validate() {
             int parsedDuration,parsedPlayers,parsedGrace;

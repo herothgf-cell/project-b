@@ -20,7 +20,14 @@ namespace Pvp {
                 diagnostic.WriteLine("PVP_STARTUP utc="+DateTime.UtcNow.ToString("O")+" unity="+Application.unityVersion+" diagnostic="+DiagnosticPath);
             } catch(Exception e) { StartupError="Diagnostic storage unavailable: "+e.Message;Debug.LogError(StartupError); }
             if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpIsolationCheck")>=0) gameObject.AddComponent<PvpRuntimeIsolationProbe>();
+            else if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNetworkRole")>=0) gameObject.AddComponent<Pvp.Network.PvpNetworkProbe>();
             else if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpPracticeCheck")>=0) gameObject.AddComponent<PvpPracticeProbe>();
+        }
+        public void StartNetwork(bool host,string address,ushort port) {
+            if(GetComponent<Pvp.Network.PvpNetworkSession>()!=null)return;
+            var session=gameObject.AddComponent<Pvp.Network.PvpNetworkSession>();
+            try { session.Begin(host,address,port);StartupError=null; }
+            catch(Exception e){StartupError="네트워크 시작 실패: "+e.Message;session.Stop();}
         }
         public void StartPractice() {
             if(GetComponent<PvpPracticeSession>()!=null) return;

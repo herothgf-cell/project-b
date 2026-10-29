@@ -16,6 +16,9 @@ public static class PvpBuild {
             var report=BuildPipeline.BuildPlayer(options);
             if(report==null||report.summary.result!=BuildResult.Succeeded) throw new InvalidOperationException("PVP build failed: "+(report==null?"no report":report.summary.result.ToString()));
         });
+        string assemblies=File.ReadAllText("../../builds/PvpPrototype/PvpPrototype_Data/ScriptingAssemblies.json");
+        if(!assemblies.Contains("Unity.Netcode.Runtime.dll")||!assemblies.Contains("Unity.Networking.Transport.dll"))
+            throw new InvalidOperationException("PVP build has stale scripting assembly metadata; networking initialization would be skipped.");
         string notices=Path.GetFullPath("../../builds/PvpPrototype/ThirdPartyNotices");
         Directory.CreateDirectory(notices);
         File.Copy("../../licenses/mchrbn-unity-traffic-simulation/LICENSE.txt",Path.Combine(notices,"mchrbn-unity-traffic-simulation-MIT.txt"),true);
@@ -41,7 +44,7 @@ public static class PvpBuild {
                 ()=>{
                     string output=Path.GetFullPath("../../builds/PvpPrototype/PvpPrototype.exe");
                     Directory.CreateDirectory(Path.GetDirectoryName(output));
-                    build(new BuildPlayerOptions { scenes=new[]{ScenePath},locationPathName=output,target=BuildTarget.StandaloneWindows64,options=BuildOptions.None });
+                    build(new BuildPlayerOptions { scenes=new[]{ScenePath},locationPathName=output,target=BuildTarget.StandaloneWindows64,options=BuildOptions.CleanBuildCache });
                 },
                 saved=>{PlayerSettings.productName=saved.product;PlayerSettings.runInBackground=saved.background;});
         } finally {

@@ -23,7 +23,14 @@ public sealed class PvpPracticeProbe:MonoBehaviour {
         }catch(Exception e){Debug.LogException(e);Application.Quit(1);yield break;}
         yield return new WaitForEndOfFrame();
         var args=Environment.GetCommandLineArgs();int capture=Array.IndexOf(args,"-pvpCapturePath");
-        if(capture>=0&&capture+1<args.Length){ScreenCapture.CaptureScreenshot(args[capture+1]);yield return null;yield return null;}
+        if(capture>=0&&capture+1<args.Length){// Capture the game after the startup splash, not its first black frame.
+            float deadline=Time.realtimeSinceStartup+15;
+            while(!UnityEngine.Rendering.SplashScreen.isFinished && Time.realtimeSinceStartup<deadline)yield return null;
+            yield return new WaitForSecondsRealtime(3);
+            yield return new WaitForSecondsRealtime(3);
+            for(int frame=0;frame<10;frame++)yield return null;
+            yield return new WaitForEndOfFrame();
+            ScreenCapture.CaptureScreenshot(args[capture+1]);yield return null;yield return null;}
         yield return new WaitForSeconds(.5f);Application.Quit(0);
     }
 }}
