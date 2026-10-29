@@ -96,3 +96,11 @@ driving 러너는 -Case baseline/lag-swap/violation, -Executable <복사본 exe>
 - 싱글 manifest 재검증0: **130파일112,194,710바이트**. 싱글 실행 폴더/지도 입력/Unity 소스 추가 변경 없음. 화면·사람 입력·다른 물리PC 검증은 수행하지 않았다.
 
 배포 커밋·원격 반영은 실제 결과를 확인한 뒤 아래 게시 확인에 기록한다.
+
+## 게시 확인
+
+- 소스 `32b2331` → 실행 폴더/manifest/최종 검사 이력 `f68fcf2d86e5d9ca68bd4308efec767f44374c7d` 순서로 커밋했다.
+- 커밋 전 `git cat-file --batch`로 Git index의139개 blob 크기/SHA256을 manifest와 대조했고, 실제 실행을 끝낸 복사본139개 파일도 다시 같은 해시임을 확인했다: `PVP_GIT_INDEX_AND_POST_RUN_COPY_OK files=139`.
+- `git push origin feature/pvp-prototype` 종료0. `git ls-remote origin refs/heads/feature/pvp-prototype`와 로컬 HEAD가 모두 위 배포40자리 해시임을 확인했다. 강제 푸시/다른 작업 checkout 변경 없이 진행했다.
+- 그 시점 `git status --short`는 빈 출력, `git log -1 --oneline -- docs/work-history/2026-10-29-pvp-input-driving-npc-rules.md`는 `f68fcf2 build(pvp): ship verified input driving and shared traffic runtime`였다. 이 게시 확인은 별도 문서 커밋으로 남긴다.
+- 다른 PC에서는 feature 브랜치 pull 후 `builds/PvpPrototype/` 전체 폴더를 보존한 채 `PvpPrototype.exe`를 실행한다. 기존 싱글은 `builds/EungyeTaxi/EungyeTaxi.exe`다. 실제 다른 PC 실행·사람 입력/화면 수용은 아직 미검증이다.
