@@ -19,7 +19,8 @@ namespace Pvp {
                 diagnostic=new StreamWriter(stream);diagnostic.AutoFlush=true;
                 diagnostic.WriteLine("PVP_STARTUP utc="+DateTime.UtcNow.ToString("O")+" unity="+Application.unityVersion+" diagnostic="+DiagnosticPath);
             } catch(Exception e) { StartupError="Diagnostic storage unavailable: "+e.Message;Debug.LogError(StartupError); }
-            if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpIsolationCheck")>=0) gameObject.AddComponent<PvpRuntimeIsolationProbe>();
+            if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpSoloBotCheck")>=0) gameObject.AddComponent<PvpSoloBotProbe>();
+            else if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpIsolationCheck")>=0) gameObject.AddComponent<PvpRuntimeIsolationProbe>();
             else if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNetworkRole")>=0) gameObject.AddComponent<Pvp.Network.PvpNetworkProbe>();
             else if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpPracticeCheck")>=0) gameObject.AddComponent<PvpPracticeProbe>();
         }
@@ -28,6 +29,12 @@ namespace Pvp {
             var session=gameObject.AddComponent<Pvp.Network.PvpNetworkSession>();
             try { session.Begin(host,address,port);StartupError=null; }
             catch(Exception e){StartupError="네트워크 시작 실패: "+e.Message;session.Stop();}
+        }
+        public void StartSolo(int seconds,int finishGrace) {
+            if(GetComponent<Pvp.Network.PvpNetworkSession>()!=null)return;
+            var session=gameObject.AddComponent<Pvp.Network.PvpNetworkSession>();
+            try {session.BeginOfflineBot(seconds,finishGrace);StartupError=null;}
+            catch(Exception e){StartupError="1인 경기를 시작하지 못했습니다: "+e.Message;session.Stop();}
         }
         public void StartPractice() {
             if(GetComponent<PvpPracticeSession>()!=null) return;

@@ -1,9 +1,9 @@
 # PVP 개발 로드맵 Implementation Plan
 
-상태: 개발 계획 / Task 1 기반 소스·순수 코드 검사 완료, Unity 게이트 대기
+상태: 개발 중 / Task1 Editor·분리 Player·Windows 빌드 자동 검증 통과, 자체 시험장·직접IP·한 창 봇 경기 구현, 사람/다른PC 수용 별도
 작성일: 2026-10-27
 
-진척 갱신: 2026-10-29. [P1 작업 이력](../../work-history/2026-10-29-pvp-startup-isolation.md)에 실제 명령·결과와 미수행 검증을 기록한다. P0 문서는 완료했고 Task 1의 전용 시작·설정·저장·빌드 기반을 추가했다. Unity Editor/Player 실행과 배포 게이트는 미완료다.
+진척 갱신: 2026-10-29. 최신은 [한 창 봇 경기](21-solo-bot-mode.md)와 [작업 이력](../../work-history/2026-10-29-pvp-solo-bot.md)을 따른다. Task1의 Editor/분리 Player/Windows 자동 게이트와 평면 모터 입력 운송·공유 NPC/법규/정산 검증을 통과했다. P2 전체/사람 조작감·다른PC 게이트는 미완료다. 이하 원계획/날짜별 후속에서 당시 상태와 최신 결과를 구분한다.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -338,3 +338,6 @@ PVP 작업을 기존 게임의 전체 수동 검증 완료로 표시하지 않�
 ## 최종 배포 검증 추가 — 2026-10-29
 
 실제 소스32b2331에서 최신 main HUD를 포함해 Editor 검사·BuildClient를 다시 통과했다. 전체 PVP139파일93,199,109바이트의 복사본으로 실행 격리와 두 Player 입력 운송을 검증했다(각199.541/319.404m, fixture/도로 경계 차단0, 동일 정산/NPC 상태). PVP·기존 싱글 manifest 모두 검증0. 위치 제어 회귀·입력 주행·사람 플레이를 구분한 결과와 남은 수용은 [19](19-driving-npc-rules-acceptance.md)를 따른다.
+## 한 창 봇 경기 — 2026-10-29
+
+기존2참가자 모델에 로컬 봇을 넣어 사람 한 명이 한 실행 창에서 직접 운송/NPC/법규/정산을 시험한다. 모델 각7회·실제 Player 정상/위반 각2회 운송, fixture/경계0·위반3감점·메뉴 복귀/재시작과 기존2Player/재접속/격리 회귀를 확인했다. 사용법/요소별 범위는 [21](21-solo-bot-mode.md), 명령/실패 보완/배포는 [이력](../../work-history/2026-10-29-pvp-solo-bot.md). 시간은 입력값이며10분으로 확정하지 않는다. 봇 난도/수익 경쟁·사람/화면·다른PC·장기 교통 수용은 별도다.

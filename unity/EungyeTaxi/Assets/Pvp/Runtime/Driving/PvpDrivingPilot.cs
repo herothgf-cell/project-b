@@ -3,7 +3,7 @@ using UnityEngine;
 using Pvp.Map;
 using Pvp.Network;
 namespace Pvp.Driving {
-// Test driver only. Produces the same bounded inputs as a person; never writes vehicle state.
+// Input-only route follower for local trial opponents and explicit probes; never writes vehicle state.
 public sealed class PvpDrivingPilot {
  Pvp.Traffic.PvpTrafficSnapshot traffic;int rightHold;bool rightServed;public bool ObeyTraffic=true;public float CruiseSpeed=8;public void ObserveTraffic(Pvp.Traffic.PvpTrafficSnapshot snapshot){traffic=snapshot;}
  readonly PvpMapRuntime map;
