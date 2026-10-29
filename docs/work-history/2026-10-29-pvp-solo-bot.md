@@ -70,3 +70,11 @@ pwsh -File tools/update_pvp_distribution_manifest.ps1 -VerifyOnly
 - 기존 싱글 **130파일112,194,710바이트** manifest 재검증0. 싱글 실행 폴더/지도/공통 Unity 소스 변경 없음. 화면·사람 입력·다른 물리PC는 미검증이다.
 
 소스758753d와 별도로 이 최종 실행 폴더·전용 manifest/기록을 배포 커밋한다. 게시 확인에는 실제 원격 반영 결과를 남긴다.
+
+## 게시 확인
+
+- 소스 `758753dcfc1de9638c4e041352c4875c306a6993` → 배포 `623e0d326cb86e0324e589324b9594505fe8c44c` 순서로 커밋했다.
+- 커밋 전 Git index의139개 blob 크기/SHA256과 실제 실행 후 복사본139개 파일을 manifest와 대조했다: `PVP_SOLO_INDEX_AND_POST_RUN_COPY_OK files=139`.
+- `git push origin feature/pvp-prototype` 종료0. `git ls-remote origin refs/heads/feature/pvp-prototype`와 로컬 HEAD가 모두 위 배포40자리 해시였으며 `git status --short`는 빈 출력이었다. 강제 푸시/다른 checkout 수정 없이 진행했다.
+- 그 시점 `git log -1 --oneline -- docs/work-history/2026-10-29-pvp-solo-bot.md`는 `623e0d3 build(pvp): distribute verified single-window bot client`였다. 이 게시 확인과 계획 체크는 별도 문서 커밋으로 남긴다.
+- 다른 PC는 feature 브랜치를 pull하고 전체 `builds/PvpPrototype/` 폴더를 유지해 실행한다. 실제 다른PC/사람 입력/화면 체감 검증은 별도다.
