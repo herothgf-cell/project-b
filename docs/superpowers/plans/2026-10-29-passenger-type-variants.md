@@ -47,4 +47,4 @@ Files: docs/content-design/02-passengers-and-fares.md, relevant scope/checklist,
 - [x] Expand every type to3+variants with stage/choice/action/state outcomes, reflect user food request and final behaviour. Label map-dependent exclusions honestly.
 - [x] Fresh code review of combined source; resolve material findings.
 - [x] Unity editor validation, BuildHybrid, isolated Player regression/UI screenshot, existing model regression. User running game must be closed before replacing binary; check process first.
-- [ ] Strict input/manifest verification, source+docs/history commit, build manifest and distribution commit, merge main and push. Record exact commands/results and limits.
+- [x] Strict input/manifest verification, source+docs/history commit, build manifest and distribution commit, merge main and push. Record exact commands/results and limits.

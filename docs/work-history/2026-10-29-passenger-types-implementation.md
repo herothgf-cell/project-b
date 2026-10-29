@@ -97,3 +97,9 @@
 - update_distribution_manifest.ps1 -SourceCommit <위 실제 통합 커밋> -ValidatedOn 2026-10-29 -ValidationReport artifacts/passenger-behavior-validation.json 및 -VerifyOnly 종료0. 전체130파일112,155,810바이트 크기·SHA256 일치. 배포 manifest는 실제 통합/Player/화면 검사와 미수행 수동 플레이를 구분한다.
 - Strict 필수 지도 issues0, 기존 입력/ZIP/프로젝트 지도 해시 유지. 사용자 저장·기존 untracked 보존. PVP 코드는 최신 main 그대로 통합했으며 PVP exe는 이번 캠페인 배포에 포함하지 않았다.
 - 남은 항목: 사람20분/3일 운행 체감·빈도/시간/청결 수치 밸런스, 내구도·수리 구현(1차 기획 확인 완료), 별도 용무 대기·새 지도 대체 정차점. 현재 완료로 표시하지 않는다.
+
+## main 게시 확인
+
+- 기본 배포 커밋5ed29ce8acb4e9e524a0bb12b2e45b610b8888d6. git switch main → git merge --ff-only codex/passenger-type-variants → git push origin main 모두 종료0.
+- git ls-remote origin refs/heads/main 및 git log -1 --oneline -- docs/work-history/2026-10-29-passenger-types-implementation.md로 실제 원격/이력 커밋5ed29ce 확인. 이 기록 자체의 후속 커밋 해시는 추측해 적지 않는다.
+- main 체크아웃에서 manifest 전체130파일112,155,810바이트 재검증 종료0, Strict issues0. 남은 untracked는 작업 전 사용자 파일8항목뿐이며 삭제/추가하지 않았다.
