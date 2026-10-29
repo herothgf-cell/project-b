@@ -79,3 +79,12 @@
 - 컨텐츠02를 중심으로00/03/05/06/README, scope/checklist, 계획/이력/LATEST 및 기본 실행 폴더/배포 manifest.
 - 재현: pwsh -File tools/test_passenger_behavior.ps1; pwsh -File tools/test_passenger_care.ps1; pwsh -File tools/test_prototype.ps1; Unity -batchmode -nographics -quit -projectPath unity/EungyeTaxi -executeMethod PassengerBehaviorReleaseTests.Build -logFile <로그>; pwsh -File tools/test_passenger_behavior_player.ps1. 화면 검사는 사용자 승인 후 -Capture -Visible 옵션을 추가한다.
 - 로컬 도구 정보: Unity2022.3.62f2. 사용자 저장 대신 artifacts/passenger-behavior-test.json/passenger-care-test.json만 사용한다. 작업 전부터 있던 사용자 untracked·.mmst·지도입력/지도ZIP은 유지했다.
+
+## 최신 main 동시 작업 통합
+
+- 최종 배포 직전 원격 main73e5962 확인. 별도 PVP 구현/기획이 base3293e3b 이후 추가되어 fast-forward 전 최신 main을 승객 브랜치에 병합했다.
+- 충돌은 content-design/README.md·work-history/LATEST.md 두 문서뿐. 양쪽 안내/검증 이력을 보존했고 PVP의 사용자 PC 조작 중단·미검증 항목도 유지했다. PVP 새 기능/실행파일을 이 작업에서 확장·배포하지 않는다.
+- 빌드 이후 신규 파일의 EOF/Unity meta 공백만 정리했다. 앞선 빌드/manifest 검증은 통합 전 결과로 보존하고, 합쳐진 소스로 캠페인 release/배포 검사를 다시 수행한다. 통합 release 검사는 PVP Editor 분리 검사를 포함한다.
+
+- 통합 소스 PassengerBehaviorReleaseTests.Build 종료0: 승객Editor1,526/care JSON14/live22/P11 및 PVP_EDITOR_ISOLATION_OK(씬·제품명·빌드목록·입력·성공/실패·dirty guard), BuildHybrid 성공. 로그 artifacts/passenger-behavior-merged-build.log.
+- 통합 후 tools/test_pvp.ps1 종료0: 모델8개·서로 다른 실제2프로세스 진단. 변경 문서29개 링크408/앵커34/표162개 검사 오류0. 새 PVP 실행파일은 만들지 않았다.

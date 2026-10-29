@@ -4,7 +4,38 @@
 
 [작업·검증 기록](2026-10-29-passenger-types-implementation.md). 일반 승객과11유형,34변주·요청 응답 기억·적재/하역·수면·음식/짐 오염·취객 빈도 보완을 구현했다. 모델430/기존care13,301·전체prototype·Editor1,526+care14/live22/P11·BuildHybrid·Player174/새 프로세스8 종료0. 위치 제어 검증이며 실제 물리 주행·수동 전체 캠페인과 구분한다. 숨긴 창 캡처는 폐기하고 사용자 승인 후 실제 창1280×720의 적재·음식 선택·수면·정산4화면을 확인했다. 기존 care Player201검사도 종료0.
 
-현재 기본 실행 builds/EungyeTaxi/EungyeTaxi.exe / 은계 / BuildHybrid. 지도입력/ZIP은 기존 해시 유지, Strict0. 실행폴더/manifest 최종 배포 검사는 진행 중이며 결과는 작업 기록에 추가한다. 다음은 배포 확정 및 사람20분/3일 체감. 내구도·수리는1차 확인 완료·미구현 상태다. 사용자 .mmst/기존 untracked는 보존했다.
+현재 기본 실행 builds/EungyeTaxi/EungyeTaxi.exe / 은계 / BuildHybrid. 지도입력/ZIP은 기존 해시 유지, Strict0. 최신 main73e5962의 별도 PVP 작업을 보존해 병합했으며 통합 release Editor(PVP 분리 포함)·BuildHybrid 종료0. 통합 실행폴더/manifest 최종 배포 검사는 진행 중이며 결과는 작업 기록에 추가한다. 다음은 배포 확정 및 사람20분/3일 체감. 내구도·수리는1차 확인 완료·미구현 상태다. 사용자 .mmst/기존 untracked는 보존했다.
+
+## 이전 통합: 2026-10-29 PVP·캠페인 기획 병합
+
+[통합 검증 이력](2026-10-29-pvp-arena-integration.md): PVP 구현66c5368 + main3293e3b를2507300에서 통합. 두 공용 문서 충돌은 양쪽 내용 보존으로 해결. 통합 Editor·BuildClient·headless Player3개·캠페인/PVP 모델·Strict·manifest130파일 검사 모두 종료0. 캠페인 소스/배포 변경 없음. 다른 채팅의 passenger-type-variants와 미커밋 파일은 그대로이며 후속 통합 때 최신 main을 반영해야 한다. PVP 화면/사람 주행 검증은 미완료, PC UI 자동 조작은 사용자 요청으로 중단.
+
+## PVP 최신: 2026-10-29 자체 시험장·차량 후보
+
+[구현·검증·통합 이력](2026-10-29-pvp-arena-integration.md). 자체 맵·방향 경로·복구·차량A/B·오프라인 실행 연결 구현, Unity 자동 검사 통과. Task2 화면/실물 입력/사람 체감은 미검증이며 사용자 요청으로 PC 조작 중단. 다음은 해당 수용 검증이며 P2는 미착수. PVP 로컬 builds/PvpPrototype/PvpPrototype.exe는 Git 제외. 기본 은계 실행/BuildHybrid/배포/manifest 유지, 필수 입력 Strict0. 아래 항목은 이전 시점 기록.
+
+
+## PVP 후속: 2026-10-29 기획 요소 검토·Task 1 실제 Unity 검증
+
+[검토·검증 이력](2026-10-29-pvp-review-validation.md) · [콘텐츠 요소 표](../content-design/pvp/11-content-elements-review.md). feature/pvp-prototype 별도 worktree. Unity 2022.3.62f2 Editor·Windows 빌드·두 Player 진단·초기 UI 입력/종료 통과. 캠페인 배포·저장·설정298파일 변경0, Strict0. 기본 은계 exe/BuildHybrid 유지, PVP는 로컬 builds/PvpPrototype/PvpPrototype.exe(Git 제외). 다음은 승인된 Task 2 자체 시험장·차량. 다른 PC 배포·온라인·사람 주행 체감 미검증. main과 LATEST.md 병합 충돌은 양쪽 이력 보존 필요. 아래 기존 캠페인·PVP 인계는 과거 시점 기록.
+
+
+## PVP 작업 브랜치: 2026-10-29 시작·저장·빌드 기반
+
+`feature/pvp-prototype`에서 로드맵 Task 1의 전용 시작 씬·한글 설정 확인 화면·불변 설정·전용 저장·프로세스별 진단·Windows 빌드 소스를 추가했다. [요구/변경/검증 기록](2026-10-29-pvp-startup-isolation.md) · [현재 로드맵과 실행 명령](../content-design/pvp/08-development-roadmap.md).
+
+순수 PVP 검사 8개 그룹·실제 두 .NET 프로세스 진단 분리·러너 실패 기록 회귀 1개, 기존 캠페인 모델 28개 클래스, 실제 Unity 참조 DLL을 이용한 PVP 런타임 컴파일을 통과했다. 소스 검토의 세 보완점도 수정·재검토했다. **Unity Editor/Player 실행과 EXE 제작은 미수행이며 Task 1/P1 엔진 게이트는 미완료**다. 다음은 이미 추가된 기반 코드를 재작성하는 것이 아니라 Unity import·Editor 검사·독립 빌드·두 Player·화면 확인이다. 이후 자체 경기장·주행 Task 2로 진행한다.
+
+기존 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 기존 빌드는 `PrototypeBuild.BuildHybrid`다. 기존 캠페인 소스·씬·지도 입력·배포 manifest·마인드맵은 변경하지 않았고, 이 환경에서 지도 ZIP/Strict 점검을 수행한 것으로 표시하지 않는다. 기존 캠페인 개발은 AGENTS.md의 입력 준비 절차를 따른다. 아래 기록은 이전 기획과 분기 기준의 캠페인 이력으로 보존한다.
+
+## PVP 작업 브랜치: 2026-10-27 기획·개발 계획
+
+브랜치 feature/pvp-prototype은 main 60b15edd6094d9a6383de4d0c75c4a40d49eda40에서 분기했다. [PVP 기획 입구](../content-design/pvp/README.md) · [개발 로드맵](../content-design/pvp/08-development-roadmap.md) · [이번 작업 이력](2026-10-27-pvp-planning.md).
+
+이번 변경은 PVP 시스템/콘텐츠별 기획과 개발 계획 문서다. PVP 코드·전용 맵·별도 실행파일·네트워크는 미구현이며, 경기 시간·인원·배점·충돌·SDK는 [결정 상태](../content-design/pvp/09-decisions-and-balance.md)를 따른다. 다음은 독립 실행 구조·자체 제작 시험장·민첩한 조작 후보 검증이다.
+
+현재 실행 가능한 게임은 기존 builds/EungyeTaxi/EungyeTaxi.exe이고 빌드는 PrototypeBuild.BuildHybrid다. 기존 배포·지도 입력·manifest·사용자 마인드맵은 변경하지 않았다. 아래 캠페인 인계는 분기 기준의 기존 작업 기록으로 보존한다. PVP 문서 검증과 미수행 제품 검증은 위 작업 이력에 구분한다.
+
 
 ## 최신 기획: 2026-10-29 승객 유형 통합·아이데이션
 
@@ -84,3 +115,4 @@ PPT32장 패키지/레이아웃/글꼴/재가져오기 통과·전 슬라이드 
 [직전까지의 인계 모음](2026-10-27-handoff-before-design-refresh.md) · [P11~P13 안정화](2026-10-27-proto-stabilization.md) · [도로/피로](2026-10-27-road-fatigue-integration.md) · [시설·지도·조향](2026-10-27-drowsy-map-handling.md) · [표지·눈감김 배포](2026-10-27-uturn-blink-followup.md).
 
 위 과거 인계의 ‘미구현/병합 없음/같은 날 계속 영업’은 당시 상태다. 최신 기획·main 코드와 실제 날짜별 증거를 우선한다. 이 문서의 커밋은 git log -1 --oneline -- docs/work-history/LATEST.md로 확인한다.
+

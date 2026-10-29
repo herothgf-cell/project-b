@@ -7,6 +7,7 @@ public static class PassengerBehaviorReleaseTests {
   PassengerCarePersistenceTests.Run();
   LiveCampaignTests.Run();
   ProtoExpansionTests.RunP11();
+        Pvp.Tests.EditMode.PvpEditorIsolationTests.Run();
   Debug.Log("PASSENGER_BEHAVIOR_RELEASE_EDITOR_OK");
  }
 }
