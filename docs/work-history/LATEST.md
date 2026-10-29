@@ -26,6 +26,38 @@
 
 현재 실행 가능한 게임은 기존 builds/EungyeTaxi/EungyeTaxi.exe이고 빌드는 PrototypeBuild.BuildHybrid다. 기존 배포·지도 입력·manifest·사용자 마인드맵은 변경하지 않았다. 아래 캠페인 인계는 분기 기준의 기존 작업 기록으로 보존한다. PVP 문서 검증과 미수행 제품 검증은 위 작업 이력에 구분한다.
 
+## 최신 기획: 2026-10-29 승객 유형 통합·아이데이션
+
+[작업 기록](2026-10-29-passenger-types-ideation.md). 취객을 공통 승객 유형으로 정리하고 운행/상태 영향형 후보11종(취객 포함)을 비교했다. 첫 확장 묶음·후속 후보는 제안이며 채택 대기. 내구도·수리 기획은 사용자 1차 확인 완료·미구현으로 상태 갱신했다. 다음은 승객 유형 채택/상세 검토와 구현 계획이다.
+
+기본 실행 builds/EungyeTaxi/EungyeTaxi.exe / 은계 / BuildHybrid 유지. 코드·빌드·지도·manifest·.mmst 변경 없음. 필수 로컬 입력은 기존 인계 유지, Strict와 게임 검사 재실행 없음.
+
+## 최신 기획: 2026-10-29 취객·지속 응대·충돌 내구도
+
+[작업 기록](2026-10-29-passenger-interaction-durability-plan.md). 취객 미등장 보완·지속 응대3유형과 충돌 강도별 내구도/수리·견인안을 기존 담당 문서에 통합했다. 사용자 확정 방향은 Proto 수리비·시간 중심, 내구도0 운행 불가. 세부 수치는 검토안이며 코드/빌드에는 미반영이다. 다음은 세부안 검토·구현 계획 확정이다.
+
+현재 실행은 기존 builds/EungyeTaxi/EungyeTaxi.exe / 은계 / BuildHybrid. 지도 입력·실행 파일·manifest 유지, Strict/게임 검증 재실행 없음. .mmst와 기존 untracked는 변경하지 않았다. 현재 실행·배포 근거는 아래 기존 인계를 따른다.
+
+## 최신 문서 작업: 2026-10-27 제안서 2차·마인드맵 제품 비전
+
+[32장 제안서](../proposals/project-b-game-proposal-v2.pptx) · [양식/마인드맵 검토표](../proposals/proposal-v2-review.md) · [작업 기록](2026-10-27-game-proposal-v2.md). 필수19항목 중18개 내용 포함, 실제 제안 참여자 정보는 기존 사용자 지시대로 제출 전 확인 필요. 현재 구현과 차량 성장·단골/예약·환경·경제의 목표/후속 구상을 분리하고 시안2장을 생성·내장했다.
+
+PPT32장 패키지/레이아웃/글꼴/재가져오기 통과·전 슬라이드 렌더 확인. 게임 코드·빌드·지도·manifest·마인드맵 원본은 변경 없음. 기본 실행은 은계 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드는 BuildHybrid. 필수 로컬 입력은 직전 Strict 통과 인계 유지, 이번 문서 작업 재검사 없음. 다음은 회사 참여자·채택 기능·인력/예산/일정 확정, 게임은 기존 수동20분/3일 체감 검증. 기존 사용자 변경 보존.
+
+## 최신 저장소 정리: 2026-10-27
+
+[브랜치 삭제·보존 근거](2026-10-27-branch-cleanup.md). main 포함 확인 후 로컬8개·원격5개 삭제. 원격은 main만 남았고, 로컬은 main과 codex/satisfaction-fare-recovery만 남았다. 후자는 고유3커밋의 초기 회복/운임 구현·옛 빌드/이력이라 사용자 내용 검토 후 삭제 여부 결정 대기다. StableDriveRecovery.cs가 main에 없지만 회복 기능은 StableDrivingProgress라는 별도 구현으로 존재한다. 별도 worktree는 같은817c5dc detached로 보존했다.
+
+기존 미푸시 제안서 커밋·사용자 .mmst 변경·untracked를 보존했으며 main 푸시는 하지 않았다. 빌드/지도/필수 입력/manifest와 게임 검증 상태는 아래 기존 배포 인계 그대로다.
+
+## 최신 문서 작업: 2026-10-27 회사 개발 착수 제안서 1차
+
+[제작·검증 기록](2026-10-27-game-proposal.md) · [제안 자료](../proposals/README.md) · [24장 PPTX](../proposals/project-b-game-proposal-v1.pptx) · [별도 조작 매뉴얼](../proposals/project-b-prototype-manual-v1.md).
+
+회사 내부 개발 착수 승인용 1차본. 참여자 명단은 사용자 지시에 따라 회사 제출 전 확인 필요. 핵심6명·8주 검증·12개월 로드맵과 KPI는 제안 가정이며 승인된 개발 범위가 아니다. PPT 패키지/레이아웃/글꼴/24장 재가져오기 검사 통과 및 전 슬라이드 렌더 확인. PowerPoint 네이티브 재생과 게임 재검사는 수행하지 않았다.
+
+게임 현재 빌드/지역은 아래 기존 배포 인계 그대로 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계, BuildHybrid. 필수 지도 입력·배포 파일·manifest 변경 없음, 직전 Strict 통과 상태를 유지하며 이번 문서 작업에서는 재실행하지 않음. 다음 문서 작업은 참여자·회사 단가·책임자/일정 확정이며, 게임 후속은 수동20분/3일 체감 검증. 기존 사용자 `.mmst`와 untracked 보존.
+
 ## 최신 완료: 2026-10-27 내비·TIP·표지·졸음·마인드맵
 
 [최신 요구/변경/검증 기록](2026-10-27-nav-tip-drowsy-mindmap.md). 제보 경로2504→703m, 점유 안내 TIP 슬라이드 통합, 표지 가독성, 짧은 눈감김 입력 불응(제동 가능), 사용자 승인 마인드맵 직접 반영/Detail-Links290개 갱신. 모델28·그래프2549·전체 Editor 종료0·마인드맵/Strict 통과. 게임 종료 후 글꼴 렌더 회귀도 수정하고 기본 빌드·최종 Player9/38검사·실제 화면 확인을 마쳤다. 배포 d462660 main 통합·push0·원격 SHA 일치 확인.
