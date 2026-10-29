@@ -92,3 +92,6 @@ pwsh -File tools/update_distribution_manifest.ps1 -VerifyOnly
 공개 계정 인증/암호화/호스트 이전/전체 서버 재시작 복구는 미지원이다. 같은 프로세스 재접속만 기존 운송/원장을 복원한다. 유형별 준비/수면/응답/오염과 내구도는 후속이며 상대 작업의 완료 커밋부터 재검토한다. 기본 은계 배포·지도는 보존했고 PVP exe는 builds/PvpPrototype/PvpPrototype.exe의 로컬 빌드/Git 제외다.
 
 게시 대상은 feature/pvp-prototype. 이 기록의 커밋은 git log -1 --oneline -- docs/work-history/2026-10-29-pvp-shared-competition.md로 확인한다. 실제 게시 확인은 후속 receipt에 남긴다.
+## 게시 확인
+
+구현 커밋236108baaf4ab075171db33dc49440d298fa8111을 feature/pvp-prototype에 푸시했다. 실제 git rev-parse HEAD와 git ls-remote origin refs/heads/feature/pvp-prototype가 같은 해시임을 확인했다. 구현 게시 직후 작업 트리는 깨끗했다. 이 후속 기록은 문서만 변경하며 실행 파일/검사 결과는 위 구현 소스와 같다.

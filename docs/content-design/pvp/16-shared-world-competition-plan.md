@@ -23,7 +23,7 @@
 - [x] 3. Runtime/Scoring/PvpScoreLedger.cs/SettlementService.cs. 완료 상태와 운임/안전 보너스 원자 확정, 사건 상향 차액·옛 안전 구간·checked 정수·음수/동점·무운송 제외·최종 자격 동결 검사.
 - [x] 4. Runtime/Network/PvpCompetitionBridge.cs + 기존 session/probe. 준비·호스트 필수 시간·카운트다운·목표/승하차·거절·원장 구성/결과·길안내·서버 상태 복귀. 최신 상태 전체 집계 snapshot과 최근 내역으로 누락을 복구.
 - [x] 5. tools/test_pvp_competition.ps1. 실제 두 Player 공유 교통 checksum/동시 요청/중복 완료/공통 종료·결과 checksum, 운송 중 복귀와 지연손실 검사. 기존 재접속·네트워크·모델·Strict/배포 회귀.
-- [ ] 6. 독립 리뷰·수정 후 이력/LATEST/로드맵·수치 후보 갱신, 커밋·feature/pvp-prototype push. 다른 checkout/main/배포는 보존.
+- [x] 6. 독립 리뷰·수정 후 이력/LATEST/로드맵·수치 후보 갱신, 커밋·feature/pvp-prototype push. 다른 checkout/main/배포는 보존.
 
 ## 리뷰 초점
 
