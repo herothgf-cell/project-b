@@ -1,6 +1,15 @@
-param([string]$SourceCommit,[string]$ValidatedOn,[switch]$VerifyOnly,[switch]$Rebuilt,[string]$ValidationReport)
+﻿param([string]$SourceCommit,[string]$ValidatedOn,[switch]$VerifyOnly,[switch]$Rebuilt,[string]$ValidationReport)
 $ErrorActionPreference='Stop'
 $taskRoot=Split-Path $PSScriptRoot -Parent
+$taskAlias=Join-Path $taskRoot 'distribution/PvpPrototype-build-manifest.json'
+if(Test-Path -LiteralPath $taskAlias){
+    $taskAliasData=Get-Content -LiteralPath $taskAlias -Raw -Encoding UTF8 | ConvertFrom-Json
+    if($taskAliasData.distributionMode -eq 'unified'){
+        if(!$VerifyOnly){throw 'PVP now shares EungyeTaxi.exe. Build PrototypeBuild.BuildHybrid and use update_distribution_manifest.ps1 with its validation report.'}
+        & (Join-Path $PSScriptRoot 'update_distribution_manifest.ps1') -VerifyOnly
+        exit $LASTEXITCODE
+    }
+}
 $taskBuild=Join-Path $taskRoot 'builds/PvpPrototype'
 $taskManifest=Join-Path $taskRoot 'distribution/PvpPrototype-build-manifest.json'
 $taskFiles=@(Get-ChildItem -LiteralPath $taskBuild -File -Recurse)

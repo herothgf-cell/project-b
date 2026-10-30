@@ -35,9 +35,9 @@ public static class LaneDirectionPaint {
  public static List<Arrow> Layout(MapData map){
   var result=new List<Arrow>();if(!map.hybrid||!map.HasHd)return result;var clearances=RoadJunctionGeometry.PaintClearances(map);
   for(int i=0;i<map.hdEdges.Length;i++){
-   var e=map.hdEdges[i];if(e.disabled||e.status!="provisional"||e.change!=0||e.turn!=0||e.id.StartsWith("join:")||e.id.StartsWith("fuel:"))continue;
+   var e=map.hdEdges[i];if(e.disabled||!(e.status=="provisional"||(map.mapId=="pvp-city-a"&&e.status=="authored-fictional"))||e.change!=0||e.turn!=0||e.id.StartsWith("join:")||e.id.StartsWith("fuel:"))continue;
    if((e.next??new int[0]).Any(n=>!map.hdEdges[n].disabled&&map.hdEdges[n].sourceId==e.sourceId&&map.hdEdges[n].turn==0&&map.hdEdges[n].change==0&&!map.hdEdges[n].id.StartsWith("join:")))continue;
-   int turns=0;foreach(int n in e.next??new int[0]){var join=map.hdEdges[n];if(join.disabled||!join.id.StartsWith("join:"))continue;turns|=UturnMovement.PaintMask(join.turn);}
+   int turns=0;foreach(int n in e.next??new int[0]){var join=map.hdEdges[n];if(join.disabled||!join.id.StartsWith("join:")||!(join.next??new int[0]).Any(target=>!map.hdEdges[target].disabled))continue;turns|=UturnMovement.PaintMask(join.turn);}
    if(turns==0)continue;
    var p=new AssistedRoadNetwork.Path(e.points.Select(x=>x.V()).ToArray());
    // A whole glyph must fit before the connector, without crossing a split.

@@ -163,6 +163,7 @@ public sealed class PvpSimulationFourDriverProbe : MonoBehaviour {
         NativeReceipts(match);Calls(match,"after driving");
         Check(human.traffic.cars.Count==npcs&&TrafficDistance(human)>trafficAt+100,"shared native NPC pool retained and physically moving");
         int[] scores=new int[4];for(int i=0;i<4;i++)scores[i]=match.Score(i);
+        if(PvpTrafficFlowMonitor.Active)PvpTrafficFlowMonitor.Active.WriteReport();
         match.Finish();yield return null;
         bool frozen=true;
         for(int i=0;i<4;i++)frozen&=match.Drivers[i].paused&&match.Drivers[i].taxi.autoBrake&&match.Drivers[i].taxi.autoThrottle==0&&match.Score(i)==scores[i]&&!match.Ledger.Settle("late-receipt",i,9999)&&!match.Drivers[i].jobs.Interact();
@@ -170,6 +171,8 @@ public sealed class PvpSimulationFourDriverProbe : MonoBehaviour {
         if(!allPaid){Complete();yield break;}
         bool expanded=PvpSimulationMode.Expanded;int seconds=PvpSimulationMode.DurationSeconds;
         DontDestroyOnLoad(gameObject);match.ReturnToMenu();yield return null;yield return null;
+        var unified=FindObjectOfType<UnifiedModeBootstrap>();
+        if(unified){Check(UnifiedModeBootstrap.Selected==UnifiedModeBootstrap.Mode.Menu&&!PvpSimulationMode.Active&&FindObjectsOfType<DriveSession>().Length==0,"unified mode menu unloads match");unified.StartPvp();yield return null;}
         var bootstrap=FindObjectOfType<Pvp.PvpBootstrap>();
         Check(bootstrap&&!PvpSimulationMode.Active&&FindObjectsOfType<DriveSession>().Length==0,"menu return destroys all four sessions and match-local board");
         if(bootstrap){

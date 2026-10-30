@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -97,7 +97,7 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
         Time.timeScale=0;
     }
     void LateUpdate(){if(Finished){foreach(var driver in drivers)driver.paused=true;Time.timeScale=0;}}
-    public void ReturnToMenu() { PvpSimulationMode.Reset();Time.timeScale=1;SceneManager.LoadScene("PvpBootstrap"); }
+    public void ReturnToMenu() { var unified=FindObjectOfType<UnifiedModeBootstrap>();if(unified){unified.ReturnToMenu();return;} PvpSimulationMode.Reset();Time.timeScale=1;SceneManager.LoadScene("PvpBootstrap"); }
     public void Restart() { bool expanded=PvpSimulationMode.Expanded;int seconds=PvpSimulationMode.DurationSeconds;PvpSimulationMode.Configure(expanded,seconds);Time.timeScale=1;SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
     void OnGUI() {
         if(!Human||Ledger==null||!Finished)return;
@@ -110,6 +110,7 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
         summary+="\n운송 수입 − 시설 지출";
         float x=Screen.width/2-250,y=Screen.height/2-160;
         GUI.Box(new Rect(x,y,500,320),summary,style);
-        if(GUI.Button(new Rect(x+30,y+260,440,40),"경기 설정으로 돌아가기",button))ReturnToMenu();
+        if(GUI.Button(new Rect(x+30,y+260,210,40),"같은 설정으로 재경기",button))Restart();
+        if(GUI.Button(new Rect(x+260,y+260,210,40),UnifiedModeBootstrap.IsUnified?"모드 선택으로 돌아가기":"경기 설정으로 돌아가기",button))ReturnToMenu();
     }
 }

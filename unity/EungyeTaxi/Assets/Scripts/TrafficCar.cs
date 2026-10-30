@@ -25,7 +25,7 @@ public class TrafficCar : MonoBehaviour {
         WorldBuilder.Box("Body",new Vector3(0,.65f,0),new Vector3(1.8f,.65f,4.2f),paint,transform,false);
         WorldBuilder.Box("Cabin",new Vector3(0,1.2f,-.2f),new Vector3(1.5f,.65f,2),glass,transform,false);
         WorldBuilder.Box("Roof",new Vector3(0,1.55f,-.2f),new Vector3(1.55f,.1f,2.1f),paint,transform,false);
-        for(int i=0;i<4;i++){var w=GameObject.CreatePrimitive(PrimitiveType.Cylinder);w.transform.SetParent(transform,false);w.transform.localPosition=new Vector3(i%2==0?-.87f:.87f,.34f,i<2?1.3f:-1.3f);w.transform.localRotation=Quaternion.Euler(0,0,90);w.transform.localScale=new Vector3(.68f,.12f,.68f);w.GetComponent<Renderer>().sharedMaterial=tyre;Destroy(w.GetComponent<Collider>());}
+        for(int i=0;i<4;i++){var w=GameObject.CreatePrimitive(PrimitiveType.Cylinder);w.transform.SetParent(transform,false);w.transform.localPosition=new Vector3(i%2==0?-.87f:.87f,.34f,i<2?1.3f:-1.3f);w.transform.localRotation=Quaternion.Euler(0,0,90);w.transform.localScale=new Vector3(.68f,.12f,.68f);w.GetComponent<Renderer>().sharedMaterial=tyre;var wheelCollider=w.GetComponent<Collider>();if(Application.isPlaying)Destroy(wheelCollider);else DestroyImmediate(wheelCollider);}
         brakeOn=WorldBuilder.Mat("Brake lit",Color.red);brakeOn.EnableKeyword("_EMISSION");brakeOn.SetColor("_EmissionColor",Color.red*2);brakeOff=WorldBuilder.Mat("Brake off",new Color(.25f,.015f,.01f));
         brakeLights=new Renderer[2];for(int i=0;i<2;i++)brakeLights[i]=WorldBuilder.Box("Brake light",new Vector3(i==0?-.6f:.6f,.7f,-2.11f),new Vector3(.38f,.18f,.035f),brakeOff,transform,false).GetComponent<Renderer>();
         indicatorOn=WorldBuilder.Mat("AI indicator lit",new Color(1,.45f,.02f));indicatorOn.EnableKeyword("_EMISSION");indicatorOn.SetColor("_EmissionColor",new Color(1,.4f,0)*2);indicatorOff=WorldBuilder.Mat("AI indicator off",new Color(.25f,.1f,0));indicators=new Renderer[4];
@@ -41,6 +41,18 @@ public class TrafficCar : MonoBehaviour {
     public void Recycle(){if(distance>=route.length-.01f)completedRoutes++;system.Release(this);recycling=true;speed=0;SetVisible(false);body.position=new Vector3(-100,-100,-100);}
     void OnDisable(){if(system)system.Release(this);}
     void FixedUpdate() {using(TrafficPerformanceProbe.Measure("TrafficCar.FixedUpdate"))Tick();}
+    // One conservative broad query skips dozens of narrow probes only when the
+    // entire original swept sampling envelope contains no other body. Dense or
+    // curved traffic still uses the unchanged per-pose collision checks below.
+    bool HasApproachBody(float detection){
+        var bounds=new Bounds(route.Position(Mathf.Min(route.length,distance+.5f))+Vector3.up*.85f,Vector3.zero);
+        float vertical=0;
+        for(float ahead=.5f;ahead<detection+3;ahead+=.5f){float at=Mathf.Min(route.length,distance+ahead);bounds.Encapsulate(route.Position(at)+Vector3.up*.85f);vertical=Mathf.Max(vertical,Mathf.Abs(route.Tangent(at).y));}
+        bounds.Expand(new Vector3(5.2f,1.1f+4.5f*vertical,5.2f));
+        int count=overlaps.Box(bounds.center,bounds.extents,Quaternion.identity,(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore);
+        for(int i=0;i<count;i++)if(overlaps.hits[i].attachedRigidbody!=body)return true;
+        return false;
+    }
     void Tick() {
         if(recycling) {
             if(!respawn)return;
@@ -73,7 +85,7 @@ public class TrafficCar : MonoBehaviour {
         if(mergeGap<gap){gap=mergeGap;waitingForMerge=true;waitingForJunction=true;}
         obstacleCar=null;float detection=Mathf.Max(8,speed*speed/6+6);
         if(system.ambientPedestrians!=null){float pedestrianGap=system.ambientPedestrians.OccupiedCrossingGap(this,detection);if(pedestrianGap<gap){gap=pedestrianGap;waitingForObstacle=true;blockedName="occupied pedestrian crossing";}}
-        for(float ahead=.5f;ahead<detection+3;ahead+=.5f){float at=Mathf.Min(route.length,distance+ahead);var facing=route.Tangent(at);bool blocked=false;
+        if(HasApproachBody(detection))for(float ahead=.5f;ahead<detection+3;ahead+=.5f){float at=Mathf.Min(route.length,distance+ahead);var facing=route.Tangent(at);bool blocked=false;
             int contacts=overlaps.Box(route.Position(at)+Vector3.up*.85f,new Vector3(.95f,.55f,2.25f),Quaternion.LookRotation(facing),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore);
             for(int contact=0;contact<contacts;contact++){var h=overlaps.hits[contact];if(h.attachedRigidbody!=body){blockedName=h.name;obstacleCar=h.GetComponentInParent<TrafficCar>();blocked=true;break;}}
             if(blocked){float obstacleGap=Mathf.Max(0,ahead-1.5f);if(obstacleGap<gap){gap=obstacleGap;waitingForObstacle=true;waitingForSignal=false;}break;}

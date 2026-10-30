@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using UnityEngine;
 
@@ -82,7 +82,8 @@ public class BusinessProgress : MonoBehaviour {
   if(protoTest){settings=PrototypeSettings.ForThreeDays();useV2=true;enabledCampaign=true;SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/proto-expansion-test.json"));}
   if(startupTest){settings=PrototypeSettings.ForThreeDays();useV2=true;enabledCampaign=true;SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/campaign-startup-test.json"));}
   if(startupReloadTest)SavePath=Path.Combine(Path.GetDirectoryName(SavePath),"campaign-startup-prepared.json");
-  if(!testMode)try{SavePath=CampaignSaveLocation.Resolve(Path.GetDirectoryName(Application.persistentDataPath),Path.GetFileName(SavePath));}catch(Exception e){Debug.LogWarning("이전 캠페인 저장 복사 실패: "+e.Message);}
+  if(UnifiedModeProbe.Enabled)SavePath=UnifiedModeProbe.CampaignPath;
+  if(!testMode&&!UnifiedModeProbe.Enabled)try{SavePath=CampaignSaveLocation.Resolve(Path.GetDirectoryName(Application.persistentDataPath),Path.GetFileName(SavePath));}catch(Exception e){Debug.LogWarning("이전 캠페인 저장 복사 실패: "+e.Message);}
   ledger=useV2?new EconomyLedger(settings):new EconomyLedger(new EconomySettings());
   if((Array.IndexOf(args,"-passengerBehaviorReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilitySummaryReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0)))||protoTest&&Array.IndexOf(args,"-protoExpansionReloadTest")>=0||!testMode||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0)||startupReloadTest||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-oneDayReloadTest")>=0||Array.IndexOf(args,"-threeDayReloadTest")>=0||Array.IndexOf(args,"-ambientPedestrianReloadTest")>=0){
    foreach(var path in new[]{SavePath,SavePath+".bak"}){
@@ -157,7 +158,7 @@ public class BusinessProgress : MonoBehaviour {
  }
  void Update(){if(enabledCampaign&&!preparing&&!session.paused&&ledger.Operating&&(ledger.Driver==null||DrowsinessRunning)){realSeconds+=Time.unscaledDeltaTime;mixedFollowing|=session.traffic.mitOptions.Enabled!=initialFollowing;}if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil){notice="";noticeUntil=0;}}
  void LateUpdate(){
-  if(PvpSimulationMode.Active)return;
+  if(SimulationSession)return;
   if(!restoring&&!testMode&&enabledCampaign&&session.law&&session.requests&&(Time.unscaledTime>=nextSave||session.law.ledger.Count!=lastLawCount)){nextSave=Time.unscaledTime+5;lastLawCount=session.law.ledger.Count;SaveCheckpoint();}
   if(session.FullMapOpen||!enabledCampaign||ledger.State!=BusinessState.Closing)return;
   if(session.jobs.trip.State==TripState.OnTrip){notice="영업 종료 대기 · 현재 승객 운송 후 정산합니다";return;}
@@ -174,7 +175,7 @@ public class BusinessProgress : MonoBehaviour {
   session.jobs.ClearForDay();session.assisted.SetActive(false);if(!(session.damage&&session.damage.Disabled&&session.damage.AtRepairBay)){var stop=session.services.ParkingStop;session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();}session.law.ResetObservation();var district=session.traffic.GetComponent<DistrictTraffic>();if(district)district.ClearPlayerOverlap();notice="졸음 운전으로 위험합니다. 오늘 영업을 종료합니다. · 피로 −20";noticeUntil=Time.unscaledTime+10;SaveCheckpoint();return true;
  }
  public bool RequestEndDay(){
-  if(PvpSimulationMode.Active)return false;
+  if(SimulationSession)return false;
   if(session.FullMapOpen||!enabledCampaign||ledger.State!=BusinessState.Open||session.paused||Time.timeScale==0)return false;
   if(session.jobs.trip.State==TripState.OnTrip){notice="승객 탑승 중에는 영업을 마칠 수 없습니다 · 목적지 하차 후 N";noticeUntil=Time.unscaledTime+4;return false;}
   if(session.taxi.body.velocity.magnitude>=.56f){notice="안전한 곳에 정차한 뒤 N으로 영업을 마치세요";noticeUntil=Time.unscaledTime+4;return false;}
@@ -206,7 +207,7 @@ public class BusinessProgress : MonoBehaviour {
   ResetCampaign(false);
  }
  bool ResetCampaign(bool showPreparation){
-  if(PvpSimulationMode.Active)return false;
+  if(SimulationSession)return false;
   if(resumeBlocked&&!PreserveRejectedFiles())return false;
   var next=useV2?new EconomyLedger(settings):new EconomyLedger(new EconomySettings());
   var nextIds=new PrototypeIds(Guid.NewGuid().ToString("N"));

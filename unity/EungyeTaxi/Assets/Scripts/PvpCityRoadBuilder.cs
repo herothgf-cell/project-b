@@ -23,7 +23,7 @@ public sealed class PvpCityRoadBuilder {
   for(int z=0;z<7;z++)for(int x=0;x<7;x++)Add(Key(x,z),new Vector3(X[x]+(z%2==1?32*(x%3-1):0),0,Z[z]+(x%2==1?25*(z%3-1):0)),x>0&&x<6&&z>0&&z<6&&(z==3||x%2==0||z%2==0),z!=3&&(x==2&&z==1||x==4&&z==5));
   for(int z=0;z<7;z++)for(int x=0;x<6;x++)Street(nodes[Key(x,z)],nodes[Key(x+1,z)],z==3?8:z%2==0?4:2,Vector3.right,z%2==1&&z!=3?(x%2==0?28:-28):0);
   for(int x=0;x<7;x++)for(int z=0;z<6;z++){
-   var a=nodes[Key(x,z)];var b=nodes[Key(x,z+1)];int count=x%2==0||x==3?4:2;
+   var a=nodes[Key(x,z)];var b=nodes[Key(x,z+1)];int count=x==3?6:x%2==0?4:2;
    if(z%2==0&&x<6){
     string block="alley:"+(x/2)+":"+(z/2);
     if(x%2==0){var entry=Add(block+":entry",Vector3.Lerp(a.p,b.p,.25f));var exit=Add(block+":exit",Vector3.Lerp(a.p,b.p,.75f));Street(a,entry,count,Vector3.forward);Street(entry,exit,count,Vector3.forward);Street(exit,b,count,Vector3.forward);}
@@ -34,7 +34,14 @@ public sealed class PvpCityRoadBuilder {
    string id="alley:"+x+":"+z;var entry=nodes[id+":entry"];var exit=nodes[id+":exit"];var east=nodes[id+":east"];
    float innerX=entry.p.x+175+(x+z)%2*35;
    var lower=Add(id+":lower",new Vector3(innerX,0,entry.p.z));var upper=Add(id+":upper",new Vector3(innerX,0,exit.p.z));var tee=Add(id+":tee",new Vector3(innerX,0,east.p.z));
-   Street(entry,lower,2,Vector3.right);Street(lower,tee,2,Vector3.forward);Street(tee,upper,2,Vector3.forward);Street(upper,exit,2,Vector3.left);Street(tee,east,2,Vector3.right,(x+z)%2==0?15:-15);
+   // A second inner loop provides a genuine alternative route inside each
+   // district. All crossings are explicit graph nodes, not visual overlaps.
+   var lowerEast=Add(id+":lower-east",lower.p+Vector3.right*130);
+   var upperEast=Add(id+":upper-east",upper.p+Vector3.right*130);
+   var innerEast=Add(id+":inner-east",tee.p+Vector3.right*130);
+   Street(entry,lower,2,Vector3.right);Street(lower,tee,2,Vector3.forward);Street(tee,upper,2,Vector3.forward);Street(upper,exit,2,Vector3.left);
+   Street(tee,innerEast,2,Vector3.right);Street(innerEast,east,2,Vector3.right,(x+z)%2==0?15:-15);
+   Street(lower,lowerEast,2,Vector3.right);Street(lowerEast,innerEast,2,Vector3.forward);Street(innerEast,upperEast,2,Vector3.forward);Street(upperEast,upper,2,Vector3.left);
   }
   foreach(var node in nodes.Values)Junction(node);
  }
@@ -49,8 +56,13 @@ public sealed class PvpCityRoadBuilder {
   points.Add(P(b));return points.ToArray();
  }
  void Street(Node a,Node b,int count,Vector3 direction,float bend=0){
+  // Subdivided arterial/alley links can be only 100 m long. Forcing 42 m
+  // cardinal tangents at both ends squeezed their lateral offset into 16 m,
+  // producing an unnecessary S-bend. Follow the real chord on these links;
+  // junction curves below use that same direction at both lane endpoints.
+  if(bend==0&&Vector3.Distance(a.p,b.p)<220)direction=(b.p-a.p).normalized;
   string id=a.id+"-"+b.id,roadId="city-road:"+(a.id.StartsWith("alley:")||b.id.StartsWith("alley:")?"alley:":"")+id;var centre=Centre(a.p,b.p,direction,bend);var path=Path(centre);
-  string name=count==8?"중앙역 대로":count==4?"도시 순환·연결도로":roadId.Contains("alley:")?"생활 골목":"주거 곡선도로";
+  string name=count==8?"중앙역 대로":count==6?"중앙 남북 연결대로":count==4?"도시 순환·연결도로":roadId.Contains("alley:")?"생활 골목":"주거 곡선도로";
   roads.Add(new MapRoad{id=roadId,name=name,width=count*3.5f,lanes=count,sourceLanes=count,points=centre});
   marks.Add(new HdMark{id="city-center:"+id,kind="501",type="111",points=Slice(path,22,path.length-22)});
   for(int side=-1;side<=1;side+=2)for(int line=1;line<count/2;line++)marks.Add(new HdMark{id="city-divider:"+id+":"+side+":"+line,kind="503",type="212",points=Offset(path,22,path.length-22,side*line*3.5f)});
@@ -62,7 +74,7 @@ public sealed class PvpCityRoadBuilder {
     if(change){
      // Three separated windows allow a fourth-lane driver to prepare a left
      // turn before this junction, without a detour through another block.
-     int windows=count==8?3:1;var boundaries=new List<float>{0};
+     int windows=count/2-1;var boundaries=new List<float>{0};
      for(int window=0;window<windows;window++){boundaries.Add(windows==1?30:10+window*50);boundaries.Add(windows==1?80:50+window*50);}boundaries.Add(lanePath.length);
      lane.gates=new int[windows];lane.targets=new int[windows];
      for(int part=0;part<boundaries.Count-1;part++){

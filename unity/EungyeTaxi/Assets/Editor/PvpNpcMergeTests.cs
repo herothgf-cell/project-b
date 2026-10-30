@@ -27,17 +27,18 @@ public static class PvpNpcMergeTests {
         foreach(var collider in car.GetComponentsInChildren<Collider>())if(collider.gameObject!=car.gameObject)UnityEngine.Object.DestroyImmediate(collider);
         return car;
     }
+    static int StopEdge(Fixture fixture,int index){return fixture.map.stops[index].laneEdge;}
     static void Pair(Fixture fixture,bool bay,float throughBack,bool reverse,float throughSpeed=0,float mergeSpeed=0){
         var root=new GameObject("arrival phase "+throughBack);root.transform.SetParent(fixture.root.transform);
         try{
             var district=fixture.district;var traffic=fixture.traffic;
             TrafficRoute throughRoute,mergeRoute;float throughAt,mergeAt;
             if(bay){
-                throughRoute=district.CreateRoute(2399,33.07626f,2408,32.19606f);throughAt=541.1207f-throughBack;
-                mergeRoute=district.CreateRoute(2402,32.33162f,2441,32.90477f);mergeAt=0;
+                throughRoute=district.CreateRoute(StopEdge(fixture,2),33.07626f,StopEdge(fixture,5),32.19606f);throughAt=541.1207f-throughBack;
+                mergeRoute=district.CreateRoute(StopEdge(fixture,3),32.33162f,StopEdge(fixture,16),32.90477f);mergeAt=0;
             }else{
-                throughRoute=district.CreateRoute(2423,32.64895f,2414,32.60079f);throughAt=1674.165f-throughBack;
-                mergeRoute=district.CreateRoute(2402,32.33162f,2411,32.64586f);mergeAt=1283.292f-20;
+                throughRoute=district.CreateRoute(StopEdge(fixture,10),32.64895f,StopEdge(fixture,7),32.60079f);throughAt=1674.165f-throughBack;
+                mergeRoute=district.CreateRoute(StopEdge(fixture,3),32.33162f,StopEdge(fixture,6),32.64586f);mergeAt=1283.292f-20;
             }
             var through=Car(root,fixture,throughRoute,throughAt,bay?61:16);
             var merging=Car(root,fixture,mergeRoute,mergeAt,bay?23:53);
@@ -84,9 +85,9 @@ public static class PvpNpcMergeTests {
             Check(fixture.traffic.AuthoredMergeCount>0&&NativeTrafficMergePolicy.Supports(fixture.map),"authored metadata survives native traffic Build");
             string original=fixture.map.mapId;fixture.map.mapId="eungye";Check(!NativeTrafficMergePolicy.Supports(fixture.map),"Eungye never activates PvP merge policy");fixture.map.mapId=original;
             Check(Attribute.IsDefined(typeof(MapData).GetField("pvpTrafficMerges"),typeof(NonSerializedAttribute)),"merge metadata never enters campaign map JSON");
-            var path=fixture.district.graph.paths[2402];var point=path.Position(32.33162f);
+            var path=fixture.district.graph.paths[StopEdge(fixture,3)];var point=path.Position(32.33162f);
             var parked=GameObject.CreatePrimitive(PrimitiveType.Cube);parked.name="manual player parked at passenger kerb";parked.transform.SetParent(fixture.root.transform);parked.layer=8;parked.transform.position=point+Vector3.up*.85f;parked.transform.rotation=Quaternion.LookRotation(path.Tangent(32.33162f));parked.transform.localScale=new Vector3(2,1.3f,5.4f);
-            var route=fixture.district.CreateRoute(2399,33.07626f,2408,32.19606f);var through=Car(fixture.root,fixture,route,541.1207f-45,61);Physics.SyncTransforms();
+            var route=fixture.district.CreateRoute(StopEdge(fixture,2),33.07626f,StopEdge(fixture,5),32.19606f);var through=Car(fixture.root,fixture,route,541.1207f-45,61);Physics.SyncTransforms();
             Steps(fixture,through,null,1000);
             Check(through.totalTravel>80,"a legitimately parked mid-bay player footprint must leave through traffic moving: "+through.totalTravel);
             Debug.Log("PVP_NPC_PARKED_BAY_OK through="+through.totalTravel+" metadata="+fixture.traffic.AuthoredMergeCount);
@@ -95,8 +96,8 @@ public static class PvpNpcMergeTests {
     public static void Guards(){
         bool automatic=Physics.autoSimulation;Physics.autoSimulation=false;
         try{using(var fixture=new Fixture()){
-            var throughRoute=fixture.district.CreateRoute(2423,32.64895f,2414,32.60079f);
-            var mergeRoute=fixture.district.CreateRoute(2402,32.33162f,2411,32.64586f);
+            var throughRoute=fixture.district.CreateRoute(StopEdge(fixture,10),32.64895f,StopEdge(fixture,7),32.60079f);
+            var mergeRoute=fixture.district.CreateRoute(StopEdge(fixture,3),32.33162f,StopEdge(fixture,6),32.64586f);
             var through=Car(fixture.root,fixture,throughRoute,1674.165f-20,16);
             var merging=Car(fixture.root,fixture,mergeRoute,1283.292f-20,53);
             var zone=Array.Find(fixture.map.pvpTrafficMerges,z=>z.id=="lane:city:3:2>2:2:head");Check(zone!=null,"recorded lane merge metadata exists");
@@ -129,8 +130,8 @@ public static class PvpNpcMergeTests {
     }
     public static void DriverIntent(){
         using(var fixture=new Fixture()){
-            var route=fixture.district.CreateRoute(2423,32.64895f,2414,32.60079f);
-            var mergingRoute=fixture.district.CreateRoute(2402,32.33162f,2411,32.64586f);
+            var route=fixture.district.CreateRoute(StopEdge(fixture,10),32.64895f,StopEdge(fixture,7),32.60079f);
+            var mergingRoute=fixture.district.CreateRoute(StopEdge(fixture,3),32.33162f,StopEdge(fixture,6),32.64586f);
             var upstream=Driver(fixture,route,1674.165f-40);string reason;
             fixture.traffic.MergeApproachGap(upstream,out reason);
             Check(fixture.traffic.MergeDiagnostics(upstream).Contains("owns:"),"upstream AI fixture acquires an unentered grant");
@@ -162,8 +163,8 @@ public static class PvpNpcMergeTests {
         var root=new GameObject("native queue "+blockedExit+"/"+lateFront+"/"+reverse);root.transform.SetParent(fixture.root.transform);
         try{
             var traffic=fixture.traffic;traffic.manualTime=0;
-            var frontRoute=fixture.district.CreateRoute(2405,32.88552f,2411,32.64586f);
-            var rearRoute=fixture.district.CreateRoute(2444,32.22271f,2393,32.93151f);
+            var frontRoute=fixture.district.CreateRoute(StopEdge(fixture,4),32.88552f,StopEdge(fixture,6),32.64586f);
+            var rearRoute=fixture.district.CreateRoute(StopEdge(fixture,17),32.22271f,StopEdge(fixture,0),32.93151f);
             var zone=Array.Find(fixture.map.pvpTrafficMerges,z=>z.id==id);Check(zone!=null,"recorded queue zone exists");
             GameObject obstacle=null;
             if(blockedExit){
@@ -208,8 +209,8 @@ public static class PvpNpcMergeTests {
     }
     public static void QueueHorizon(){
         using(var fixture=new Fixture()){
-            var frontRoute=fixture.district.CreateRoute(2405,32.88552f,2411,32.64586f);
-            var rearRoute=fixture.district.CreateRoute(2444,32.22271f,2393,32.93151f);
+            var frontRoute=fixture.district.CreateRoute(StopEdge(fixture,4),32.88552f,StopEdge(fixture,6),32.64586f);
+            var rearRoute=fixture.district.CreateRoute(StopEdge(fixture,17),32.22271f,StopEdge(fixture,0),32.93151f);
             var front=Car(fixture.root,fixture,frontRoute,1820.988f-25,38);
             var rear=Car(fixture.root,fixture,rearRoute,2903.78f-(34-11.7f),62);rear.speed=12.1f;
             Physics.SyncTransforms();string reason;fixture.traffic.MergeApproachGap(rear,out reason);
@@ -230,7 +231,7 @@ public static class PvpNpcMergeTests {
             var a=Car(fixture.root,fixture,aRoute,20,1);Physics.SyncTransforms();string reason;
             fixture.traffic.MergeApproachGap(a,out reason);Check(fixture.traffic.MergeDiagnostics(a).Contains("owns:lane:city:0:3>1:3:head "),"first-window fixture has a committed owner");
             var b=Car(fixture.root,fixture,bRoute,30,2);Physics.SyncTransforms();fixture.traffic.MergeApproachGap(b,out reason);
-            Check(!fixture.traffic.MergeDiagnostics(b).Contains("owns:lane:city:0:3>1:3:part:2 "),"an entrant denied by the first window cannot reserve the overlapping next window and block its current owner");
+            Check(fixture.traffic.MergeDiagnostics(b).Contains("owns:lane:city:0:3>1:3:head "),"physically disjoint native lanes own the first window simultaneously");
             Steps(fixture,a,b,1800);
             Check(a.totalTravel>80&&b.totalTravel>80,"both native lanes progress across adjacent overlapping windows");
             Debug.Log("PVP_NPC_MERGE_FUTURE_WINDOW_OK");
@@ -256,8 +257,103 @@ public static class PvpNpcMergeTests {
         try{using(var fixture=new Fixture())foreach(float speed in new[]{9f,4.5f})for(int phase=0;phase<=20;phase++)Pair(fixture,true,24+phase*.1f,false,speed,speed);Debug.Log("PVP_NPC_BAY_FINE_OK");}
         finally{Physics.autoSimulation=automatic;}
     }
+    public static void CommittedReroute(){
+        using(var fixture=new Fixture()){
+            int headA=Array.FindIndex(fixture.map.hdEdges,e=>e.id=="city:0:3>1:3:lane:1:head");
+            int headB=Array.FindIndex(fixture.map.hdEdges,e=>e.id=="city:0:3>1:3:lane:2:head");
+            int endA=Array.FindIndex(fixture.map.hdEdges,e=>e.id=="city:0:3>1:3:lane:1");
+            int endB=Array.FindIndex(fixture.map.hdEdges,e=>e.id=="city:0:3>1:3:lane:2");
+            var aRoute=fixture.district.CreateRoute(headA,0,endA,fixture.district.graph.paths[endA].length-1);
+            var bRoute=fixture.district.CreateRoute(headB,0,endB,fixture.district.graph.paths[endB].length-1);
+            var driver=Driver(fixture,aRoute,20);var neighbor=Car(fixture.root,fixture,bRoute,20,2);string reason;
+            fixture.traffic.MergeApproachGap(driver,out reason);fixture.traffic.MergeApproachGap(neighbor,out reason);
+            const string id="owns:lane:city:0:3>1:3:head ";
+            Check(fixture.traffic.MergeDiagnostics(driver).Contains(id)&&fixture.traffic.MergeDiagnostics(neighbor).Contains(id),"reroute fixture starts with two compatible committed lane grants");
+            // Traffic-aware navigation may replace hdRoute while already inside
+            // the window. It must not inherit permission to cross the next lane.
+            int change=Array.FindIndex(fixture.map.hdEdges,e=>e.id=="city:0:3>1:3:lane:1:head:change:2");
+            var changed=fixture.district.graph.Via(headA,0,change,endB,fixture.district.graph.paths[endB].length-1);
+            Check(changed!=null,"changed native route through the occupied first window exists");
+            bool crosses=false;foreach(int edge in changed.edges)crosses|=fixture.map.hdEdges[edge].change!=0;
+            Check(crosses,"changed native route really contains a lane change");driver.jobs.nav.hdRoute=changed;
+            float gap=fixture.traffic.MergeApproachGap(driver,out reason);
+            Check(gap<.1f,"committed reroute cannot enter a changed corridor occupied by a compatible original neighbor: "+gap+" "+reason);
+            Check(fixture.traffic.MergeDiagnostics(driver).Contains(id)&&fixture.traffic.MergeDiagnostics(neighbor).Contains(id),"denied reroute retains both physically occupied original corridors");
+            driver.jobs.nav.Clear();fixture.traffic.MergeApproachGap(driver,out reason);
+            Check(fixture.traffic.MergeDiagnostics(driver).Contains(id),"clearing denied reroute does not abandon committed physical occupancy");
+            driver.jobs.nav.hdRoute=changed;driver.jobs.nav.active=true;
+            fixture.traffic.cars.Remove(neighbor);UnityEngine.Object.DestroyImmediate(neighbor.gameObject);Physics.SyncTransforms();fixture.traffic.manualTime=.02f;
+            gap=fixture.traffic.MergeApproachGap(driver,out reason);
+            Check(gap>5,"changed corridor is admitted once the conflicting physical neighbor has cleared: "+gap+" "+reason);
+            Debug.Log("PVP_NATIVE_COMMITTED_REROUTE_OK");
+        }
+    }
+    public static void Convoy(){
+        bool automatic=Physics.autoSimulation;Physics.autoSimulation=false;
+        try{using(var fixture=new Fixture()){
+            int start=Array.FindIndex(fixture.map.hdEdges,e=>e.id=="city:0:3>1:3:lane:1:head");
+            int end=Array.FindIndex(fixture.map.hdEdges,e=>e.id=="city:0:3>1:3:lane:1");
+            var route=fixture.district.CreateRoute(start,0,end,fixture.district.graph.paths[end].length-1);
+            var front=Car(fixture.root,fixture,route,20,1);var rear=Car(fixture.root,fixture,route,10,2);front.speed=rear.speed=4.5f;Physics.SyncTransforms();string reason;
+            fixture.traffic.MergeApproachGap(front,out reason);fixture.traffic.manualTime=.02f;fixture.traffic.MergeApproachGap(rear,out reason);
+            const string id="owns:lane:city:0:3>1:3:head ";
+            Check(fixture.traffic.MergeDiagnostics(front).Contains(id)&&fixture.traffic.MergeDiagnostics(rear).Contains(id),"same authored straight stream follows a committed moving leader without waiting for the whole window to clear");
+            float minimum=float.PositiveInfinity;int stopped=0;
+            for(int i=0;i<600;i++){Steps(fixture,front,rear,1,.04f+i*Time.fixedDeltaTime);minimum=Mathf.Min(minimum,Vector3.Distance(front.transform.position,rear.transform.position));if(rear.speed<.1f)stopped++;}
+            Check(front.totalTravel>50&&rear.totalTravel>50&&minimum>=4.2f&&stopped<20,"native convoy keeps continuous progress and body headway: front="+front.totalTravel+" rear="+rear.totalTravel+" gap="+minimum+" stopped="+stopped);
+            Debug.Log("PVP_NATIVE_CONVOY_OK minHeadway="+minimum+" rearStoppedFrames="+stopped);
+        }}finally{Physics.autoSimulation=automatic;}
+    }
+    static void AddMovementPaths(HdRoadGraph graph,System.Collections.Generic.Dictionary<int,NativeTrafficMergeInterval> intervals,int edge,System.Collections.Generic.List<Vector3> prefix,System.Collections.Generic.List<Vector3[]> result,int depth){
+        Check(depth<16,"authored merge movements are acyclic");var interval=intervals[edge];var points=new System.Collections.Generic.List<Vector3>(prefix);var path=graph.paths[edge];
+        int count=Mathf.Max(2,Mathf.CeilToInt((interval.end-interval.begin)/2)+1);
+        for(int i=0;i<count;i++)points.Add(path.Position(Mathf.Lerp(interval.begin,interval.end,(float)i/(count-1))));
+        bool continued=false;if(!interval.clear)foreach(int next in graph.edges[edge].next)if(intervals.ContainsKey(next)){continued=true;AddMovementPaths(graph,intervals,next,points,result,depth+1);}
+        if(!continued)result.Add(points.ToArray());
+    }
+    public static void Corridors(){
+        var a=new[]{Vector3.zero,new Vector3(0,0,40)};
+        var b=new[]{new Vector3(3.2f,0,0),new Vector3(3.2f,0,40)};
+        Check(!NativeTrafficMergePolicy.CorridorsConflict(a,b),"parallel 3.2m lanes must be compatible");
+        Check(NativeTrafficMergePolicy.CorridorsConflict(a,new[]{new Vector3(3.2f,0,0),new Vector3(0,0,40)}),"lane change converging onto through lane must yield");
+        Check(NativeTrafficMergePolicy.CorridorsConflict(a,new[]{new Vector3(-10,0,20),new Vector3(10,0,20)}),"crossing paths conflict even between sampling points");
+        Check(!NativeTrafficMergePolicy.CorridorsConflict(a,new[]{new Vector3(-10,0,45),new Vector3(10,0,45)}),"separated paths remain independent");
+        var map=PvpCityMap.Create();var graph=new HdRoadGraph(map);int pairs=0,compatible=0,conflicting=0;
+        foreach(var zone in map.pvpTrafficMerges){
+            var paths=new System.Collections.Generic.List<Vector3[]>();
+            var intervals=new System.Collections.Generic.Dictionary<int,NativeTrafficMergeInterval>();var following=new System.Collections.Generic.HashSet<int>();
+            foreach(var interval in zone.intervals){Check(interval.laneId==map.hdEdges[interval.edge].id,"authored interval preserves full lane identity");intervals[interval.edge]=interval;}
+            foreach(var interval in zone.intervals)if(!interval.clear)foreach(int next in graph.edges[interval.edge].next)if(intervals.ContainsKey(next))following.Add(next);
+            foreach(var interval in zone.intervals)if(!following.Contains(interval.edge))AddMovementPaths(graph,intervals,interval.edge,new System.Collections.Generic.List<Vector3>(),paths,0);
+            Check(paths.Count>0,"every authored zone has full connected movements");
+            foreach(var points in paths)Check(NativeTrafficMergePolicy.CorridorsConflict(points,points),"every authored full movement conflicts with itself");
+            for(int i=0;i<paths.Count;i++)for(int j=i+1;j<paths.Count;j++){
+                bool conflict=NativeTrafficMergePolicy.CorridorsConflict(paths[i],paths[j]);
+                Check(conflict==NativeTrafficMergePolicy.CorridorsConflict(paths[j],paths[i]),"all authored movement pair conflicts are symmetric");
+                if(Vector3.Distance(paths[i][paths[i].Length-1],paths[j][paths[j].Length-1])<.1f)Check(conflict,"movements sharing a destination conflict");
+                pairs++;if(conflict)conflicting++;else compatible++;
+            }
+        }
+        Check(pairs>500&&compatible>0&&conflicting>0,"whole authored map contains both compatible and conflicting movement pairs");
+        Debug.Log("PVP_NATIVE_CORRIDORS_OK pairs="+pairs+" compatible="+compatible+" conflicting="+conflicting);
+    }
+    public static void PriorWindow(){
+        using(var fixture=new Fixture()){
+            int start=Array.FindIndex(fixture.map.hdEdges,e=>e.id=="city:0:3>1:3:lane:1:head");
+            int end=Array.FindIndex(fixture.map.hdEdges,e=>e.id=="city:0:3>1:3:lane:1");
+            var route=fixture.district.CreateRoute(start,0,end,fixture.district.graph.paths[end].length-1);
+            var a=Car(fixture.root,fixture,route,20,1);string reason;Physics.SyncTransforms();fixture.traffic.MergeApproachGap(a,out reason);
+            var b=Car(fixture.root,fixture,route,10,2);b.speed=15;Physics.SyncTransforms();fixture.traffic.MergeApproachGap(b,out reason);
+            Check(!fixture.traffic.MergeDiagnostics(b).Contains("owns:lane:city:0:3>1:3:part:2 "),"denied same-corridor rear cannot reserve a later overlapping window");
+            Debug.Log("PVP_NATIVE_PRIOR_WINDOW_OK");
+        }
+    }
     public static void Run(){
         string errors="";
+        try{CommittedReroute();}catch(Exception e){errors+="committed reroute: "+Detail(e)+"\n";}
+        try{Convoy();}catch(Exception e){errors+="convoy: "+Detail(e)+"\n";}
+        try{Corridors();}catch(Exception e){errors+="corridors: "+Detail(e)+"\n";}
+        try{PriorWindow();}catch(Exception e){errors+="prior window: "+Detail(e)+"\n";}
         try{Lane();}catch(Exception e){errors+="lane: "+Detail(e)+"\n";}
         try{Bay();}catch(Exception e){errors+="bay: "+Detail(e)+"\n";}
         try{Parking();}catch(Exception e){errors+="parking: "+Detail(e)+"\n";}

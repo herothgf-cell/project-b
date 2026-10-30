@@ -56,6 +56,10 @@ public class TrafficSystem : MonoBehaviour {
     public readonly List<TrafficJunction> junctions = new List<TrafficJunction>();
     public readonly List<TrafficCar> cars = new List<TrafficCar>();
     NativeTrafficMergePolicy authoredMerges;
+    public int MergeFleetObservations {get{return authoredMerges==null?0:authoredMerges.FleetObservations;}}
+    public int MergePhysicsQueries {get{return authoredMerges==null?0:authoredMerges.PhysicsQueries;}}
+    public int MergeGapCalls {get{return authoredMerges==null?0:authoredMerges.GapCalls;}}
+    public int MergePeakConcurrentGrants {get{return authoredMerges==null?0:authoredMerges.PeakConcurrentGrants;}}
     public int AuthoredMergeCount {get{return authoredMerges==null?0:authoredMerges.Count;}}
     public void RegisterMergeDriver(DriveSession driver){if(authoredMerges!=null)authoredMerges.Register(driver);}
     public float MergeApproachGap(TrafficCar car,out string reason){reason="";return authoredMerges==null?float.PositiveInfinity:authoredMerges.Gap(car,out reason);}

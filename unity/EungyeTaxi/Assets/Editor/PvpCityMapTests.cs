@@ -10,7 +10,16 @@ public static class PvpCityMapTests {
   var map=(MapData)type.GetMethod("Create").Invoke(null,null);
   Check(map.width==3600&&map.depth==2800,"approved dimensions");
   Check(map.stops.Length==18&&map.landmarks.Length==9,"18 hubs / nine districts");
-  Check(map.buildings.Length>=900,"urban block frontage density");
+  // Expanded inner alleys legitimately remove obstructing plots. Require
+  // visible street frontage throughout every district rather than preserving
+  // the previous street layout's arbitrary global building count.
+  var frontage=map.buildings.Where(b=>b.id.StartsWith("city-frontage:")).ToArray();
+  Debug.Log("PVP_CITY_DENSITY buildings="+map.buildings.Length+" frontage="+frontage.Length);
+  foreach(var district in map.landmarks.Where(l=>l.kind=="district")){
+   int count=frontage.Count(b=>b.name.StartsWith(district.name+" ",StringComparison.Ordinal));
+   Debug.Log("PVP_CITY_DISTRICT_FRONTAGE district="+district.name+" buildings="+count);
+   Check(count>=48,"street frontage distributed across district "+district.name+": "+count);
+  }
   Check(map.areas.Count(a=>a.kind=="sidewalk")>=1500,"continuous street sidewalks with access cutouts");
   Check(JsonUtility.ToJson(map)==JsonUtility.ToJson((MapData)type.GetMethod("Create").Invoke(null,null)),"deterministic authored geometry");
   Check(map.hybrid&&map.HasHd,"native hybrid directed graph");

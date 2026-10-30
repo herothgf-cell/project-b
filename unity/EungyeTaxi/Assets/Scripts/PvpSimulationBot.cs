@@ -12,6 +12,7 @@ public sealed class PvpSimulationBot : MonoBehaviour {
     public float TargetSpeed {get;private set;}
     public string ObstacleReason {get;private set;}
     Collider sensedCollider;
+    RaycastHit[] obstacleHits=new RaycastHit[32];
     public string MotionDiagnostics {
         get {
             var s=Session;var t=s.taxi;string obstacles="";
@@ -227,7 +228,9 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         string mergeStatus;float mergeGap=s.traffic.MergeApproachGap(s,out mergeStatus);
         if(mergeGap+3<result){result=mergeGap+3;ObstacleReason="merge:"+mergeStatus;}
         sensedCollider=null;
-        foreach(var hit in Physics.SphereCastAll(position+Vector3.up*.45f+heading*2.2f,.65f,heading,35,(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore)) {
+        int hitCount;
+        while(true){hitCount=Physics.SphereCastNonAlloc(position+Vector3.up*.45f+heading*2.2f,.65f,heading,obstacleHits,35,(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore);if(hitCount<obstacleHits.Length)break;System.Array.Resize(ref obstacleHits,obstacleHits.Length*2);}
+        for(int i=0;i<hitCount;i++){var hit=obstacleHits[i];
             if(hit.collider.transform.IsChildOf(taxi.transform)||hit.normal.y>.8f)continue;
             if(hit.distance<result){result=hit.distance;sensedCollider=hit.collider;ObstacleReason="collider:"+hit.collider.name+"@"+hit.distance.ToString("0.00");}
         }

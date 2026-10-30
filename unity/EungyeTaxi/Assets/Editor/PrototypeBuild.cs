@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditor.Build.Reporting;
@@ -21,7 +21,7 @@ public static class PrototypeBuild {
         if(!lookExists){axes.InsertArrayElementAtIndex(axes.arraySize);var look=axes.GetArrayElementAtIndex(axes.arraySize-1);look.FindPropertyRelative("m_Name").stringValue="TaxiLook";look.FindPropertyRelative("type").intValue=2;look.FindPropertyRelative("axis").intValue=3;look.FindPropertyRelative("dead").floatValue=.15f;look.FindPropertyRelative("sensitivity").floatValue=1;look.FindPropertyRelative("invert").boolValue=false;input.ApplyModifiedProperties();}
         // A referenced material ensures Standard is retained for generated geometry.
         if(!AssetDatabase.LoadAssetAtPath<Material>("Assets/Resources/RuntimeStandard.mat"))AssetDatabase.CreateAsset(new Material(Shader.Find("Standard")),"Assets/Resources/RuntimeStandard.mat");
-        var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);new GameObject("Drive Session").AddComponent<DriveSession>().startupRegion=region;System.IO.Directory.CreateDirectory("Assets/Scenes");EditorSceneManager.SaveScene(scene,"Assets/Scenes/FirstDrive.unity");
+        var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);if(region=="eungye")new GameObject("Mode Selection").AddComponent<UnifiedModeBootstrap>().startupRegion=region;else new GameObject("Drive Session").AddComponent<DriveSession>().startupRegion=region;System.IO.Directory.CreateDirectory("Assets/Scenes");EditorSceneManager.SaveScene(scene,"Assets/Scenes/FirstDrive.unity");
         EditorBuildSettings.scenes=new[]{new EditorBuildSettingsScene("Assets/Scenes/FirstDrive.unity",true)};AssetDatabase.SaveAssets();
         string output=System.IO.Path.GetFullPath(destination);System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(output));
         var report=BuildPipeline.BuildPlayer(new BuildPlayerOptions{scenes=new[]{"Assets/Scenes/FirstDrive.unity"},locationPathName=output,target=BuildTarget.StandaloneWindows64,options=BuildOptions.CleanBuildCache});

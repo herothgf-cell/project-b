@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.IO;
 using System.Text;
@@ -134,6 +134,8 @@ public sealed class PvpSimulationProbe : MonoBehaviour {
         PvpSimulationMode.Configure(expanded,duration);
         DontDestroyOnLoad(gameObject);match.ReturnToMenu();
         yield return null;yield return null;
+        var unified=FindObjectOfType<UnifiedModeBootstrap>();
+        if(unified){Check(UnifiedModeBootstrap.Selected==UnifiedModeBootstrap.Mode.Menu&&!PvpSimulationMode.Active&&FindObjectsOfType<DriveSession>().Length==0,"unified mode menu unloads match");unified.StartPvp();yield return null;}
         var bootstrap=FindObjectOfType<Pvp.PvpBootstrap>();
         Check(!PvpSimulationMode.Active&&FindObjectsOfType<DriveSession>().Length==0&&bootstrap&&bootstrap.GetComponent<Pvp.PvpPrototypePanel>().enabled,"return menu clears mode and both simulation sessions");
         if(bootstrap){

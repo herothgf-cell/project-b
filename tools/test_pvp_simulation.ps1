@@ -1,15 +1,16 @@
-param([string]$Executable,[switch]$Expanded,[switch]$Services,[switch]$Regression,[switch]$PaidFixture,[switch]$FourDrivers,[int]$TimeoutSeconds=1000)
+﻿param([string]$Executable,[switch]$Expanded,[switch]$Services,[switch]$Regression,[switch]$PaidFixture,[switch]$FourDrivers,[switch]$TrafficMonitor,[string]$OutputDirectory,[int]$TimeoutSeconds=1000)
 $ErrorActionPreference='Stop'
 if($FourDrivers -and ($Expanded -or $Regression -or $PaidFixture -or $Services)){throw 'FourDrivers uses the native A2 shared board without legacy fixtures'}
 if($PaidFixture -and ($Regression -or $Expanded -or $Services)){throw 'PaidFixture is an Eungye-only standalone fixture'}
 $taskRoot=Split-Path $PSScriptRoot -Parent
-$taskExe=if($Executable){[IO.Path]::GetFullPath($Executable)}else{Join-Path $taskRoot 'builds/PvpPrototype/PvpPrototype.exe'}
+$taskExe=if($Executable){[IO.Path]::GetFullPath($Executable)}else{Join-Path $taskRoot 'builds/EungyeTaxi/EungyeTaxi.exe'}
 $taskTag=if($FourDrivers){'four-driver'}elseif($Services){'services'}elseif($Expanded){'city'}elseif($Regression){'eungye-regression'}elseif($PaidFixture){'eungye-paid-fixture'}else{'eungye'}
-$taskFolder=Join-Path $taskRoot 'artifacts/pvp'
+$taskFolder=if($OutputDirectory){[IO.Path]::GetFullPath($OutputDirectory)}else{Join-Path $taskRoot 'artifacts/pvp'}
 New-Item -ItemType Directory -Force $taskFolder | Out-Null
 $taskLog=Join-Path $taskFolder ('simulation-'+$taskTag+'-player.log')
 $taskMode=if($FourDrivers){'-pvpSimulationFourDriverCheck'}elseif($Services){'-pvpSimulationServicesCheck'}else{'-pvpSimulationCheck'}
 $taskArgs=@('-batchmode','-nographics',$taskMode,'-pvpSimulationOutput',('"'+$taskFolder+'"'),'-logFile',('"'+$taskLog+'"'))
+if($TrafficMonitor){$taskArgs+=@('-pvpTrafficFlowMonitor','-pvpFlowOutput',('"'+$taskFolder+'"'))}
 if($Expanded){$taskArgs+='-pvpSimulationExpanded'}
 if($Regression){$taskArgs+='-pvpSimulationEungyeRegression'}
 if($PaidFixture){$taskArgs+='-pvpSimulationPaidFixture'}

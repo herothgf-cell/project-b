@@ -24,7 +24,7 @@ public class TaxiController : MonoBehaviour {
             var w=new GameObject("Wheel "+i); w.transform.SetParent(transform,false); w.transform.localPosition=new Vector3(i%2==0?-.85f:.85f,0,i<2?1.3f:-1.3f);
             var c=w.AddComponent<WheelCollider>(); c.radius=.34f; c.mass=25; c.suspensionDistance=.25f; var spring=c.suspensionSpring; spring.spring=35000; spring.damper=4500; spring.targetPosition=.5f; c.suspensionSpring=spring;
             var f=c.sidewaysFriction; f.stiffness=1.35f; c.sidewaysFriction=f; wheels[i]=c;
-            var v=GameObject.CreatePrimitive(PrimitiveType.Cylinder); v.name="Tyre visual"; v.transform.SetParent(transform,false); v.transform.localScale=new Vector3(.68f,.12f,.68f); v.GetComponent<Renderer>().sharedMaterial=black; Destroy(v.GetComponent<Collider>()); visuals[i]=v.transform;
+            var v=GameObject.CreatePrimitive(PrimitiveType.Cylinder); v.name="Tyre visual"; v.transform.SetParent(transform,false); v.transform.localScale=new Vector3(.68f,.12f,.68f); v.GetComponent<Renderer>().sharedMaterial=black; var visualCollider=v.GetComponent<Collider>();if(Application.isPlaying)Destroy(visualCollider);else DestroyImmediate(visualCollider); visuals[i]=v.transform;
         }
         foreach(var tr in GetComponentsInChildren<Transform>()) tr.gameObject.layer=8;
     }

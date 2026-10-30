@@ -5,17 +5,16 @@
 사용자가 승인한 확장 A를 기존 MapData로 구현하고, 기존 DriveSession·차량·승객·내구도·화면에 봇 경기 규칙을 연결했다. 아래 평면 모터/독립 HUD 검증은 이전 구현 기록이다. 실제 은계 운송·새 맵·서비스·재시작·배포 검증은 [이번 이력](../../work-history/2026-10-30-pvp-simulation-integration.md)과 콘텐츠25를 따른다. 소스 b5b5304의 Windows 실행 폴더139파일(115,076,876바이트)을 검증했다. 은계 고정 유효 운송·확장 A 기본 호출·혼잡 경로 도착·주유·실제 충돌·재시작·두 Player 격리 검사는 통과했다. 기본 은계 임의 호출의 혼잡/수익 밸런스와 사람 조작·다른 PC·기존 물리의 유저 간 네트워크 대전은 남아 있다. 실제 게시 영수증은 작업 이력을 따른다.
 
 
-## 실행 파일 배포: 2026-10-30
+## 통합 실행 파일 (2026-10-30 사용자 요청)
 
-`feature/pvp-prototype`를 pull하면 Windows64에서 아래 실행 폴더를 그대로 사용할 수 있다. Unity Editor 설치 없이 실행하며 exe와 같은 폴더의 Data·Mono·DLL·고지 파일을 함께 유지한다.
+`builds/EungyeTaxi/EungyeTaxi.exe` 하나에서 모드를 선택한다. 실행 폴더의 Data·Mono·DLL·고지를 함께 유지한다. PVP는 자체 도시만 제공하며 나1+봇3/공용8호출이다. 이전 독립 PVP 실행 폴더는 통합본의 최종 Player 검사 후 현재 배포에서 정리한다.
 
-| 플레이 | 실행 경로 | 배포 검증 |
+| 모드 | 맵/진행 | 저장 |
 |---|---|---|
-| 기존 싱글 시뮬레이션 | builds/EungyeTaxi/EungyeTaxi.exe | 최신 main c9e2ecf의 은계 배포130파일 SHA256 보존 |
-| 기존 시뮬레이션 기반 오프라인 봇 경기 | builds/PvpPrototype/PvpPrototype.exe | [PvP manifest](../../../distribution/PvpPrototype-build-manifest.json)139파일 크기·SHA256 |
+| 싱글 | 기존 은계 영업 준비·운송·3일 캠페인 | 기존 저장/복원 위치 유지 |
+| PVP | 자체 확장 A2 도시, 시간 직접 설정·봇3대 | 캠페인 저장 금지·별도 진단 |
 
-[현재 배포/검증 이력](../../work-history/2026-10-30-pvp-simulation-integration.md)과 [콘텐츠별 적용표·실제 화면](25-simulation-match.md)을 따른다. 메뉴에서 은계 또는 확장 A를 선택해 봇과 경기한다. 이전 평면 차량/IP 메뉴는 개발용이며 기존 물리 차량의 원격 대전으로 검증되지 않았다.
-
+[흐름·통합 모드·생활 기획27](27-flow-unified-mode.md), [최종 실제 결과](../../work-history/2026-10-30-pvp-flow-unified.md), [현재 배포 manifest](../../../distribution/EungyeTaxi-build-manifest.json)를 따른다. 기존 물리 차량의 원격4유저 대전과 사람 장시간 수용은 별도다. 아래는 이전 기획 기록이다.
 
 ## 최초 기획 당시 상태 — 현재 실행 기준 아님
 

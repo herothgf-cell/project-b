@@ -4,7 +4,7 @@ using UnityEngine;
 
 // Runtime-only authored traffic metadata. Campaign map serialization is unchanged.
 public sealed class NativeTrafficMergeInterval {
-    public int edge;public float begin,end;public bool merging,clear;
+    public int edge;public string laneId;public float begin,end;public bool merging,clear;
 }
 public sealed class NativeTrafficMergeZone {
     public string id;public Vector3 direction,exit;public Bounds bounds;
@@ -29,6 +29,8 @@ public static class PvpTrafficMergeLayout {
             var edge=graph.edges[i];if(edge.change==0)continue;
             int marker=edge.id.LastIndexOf(":change:",StringComparison.Ordinal);if(marker<0)continue;
             string key=edge.id.Substring(0,marker);int lane=key.IndexOf(":lane:",StringComparison.Ordinal);
+            // The broad group is only a lookup bucket. Full lane identity and
+            // route geometry below determine compatible concurrent grants.
             if(lane>=0){int end=key.IndexOf(':',lane+6);key=end<0?key.Substring(0,lane):key.Remove(lane,end-lane);}
             Builder group;if(!groups.TryGetValue(key,out group)){group=new Builder{id="lane:"+key,direction=graph.paths[i].Tangent(0)};groups[key]=group;}
             group.Add(i,0,graph.paths[i].length,true);
@@ -60,7 +62,7 @@ public static class PvpTrafficMergeLayout {
         foreach(var group in groups.Values){
             bool initialized=false;var bounds=new Bounds();Vector3 exit=Vector3.zero;float furthest=float.NegativeInfinity;
             foreach(var interval in group.intervals.Values){
-                var path=graph.paths[interval.edge];
+                interval.laneId=graph.edges[interval.edge].id;var path=graph.paths[interval.edge];
                 for(float at=interval.begin;at<=interval.end+.5f;at+=.5f){
                     var p=path.Position(Mathf.Min(interval.end,at));if(!initialized){bounds=new Bounds(p,Vector3.zero);initialized=true;}else bounds.Encapsulate(p);
                 }
