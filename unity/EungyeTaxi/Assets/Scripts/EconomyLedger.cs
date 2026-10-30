@@ -82,7 +82,7 @@ public class EconomyLedger {
  }
  public bool UseMeal(string id){if(!OneDay||State!=BusinessState.Open||services.Contains(id)||!Account.Meal(id,Day))return false;services.Add(id);Driver=PreviewConditionService(false);ServiceTime(50);return true;}
  public bool UseSleep(string id){if(!OneDay||State!=BusinessState.Open||Driver.drowsiness.Blackout||string.IsNullOrEmpty(id)||!services.Add(id))return false;var next=PreviewConditionService(true);ServiceTime(100);Driver=next;return true;}
- public bool UseEmergencySleep(string id){if(!OneDay||State!=BusinessState.Open||Driver.drowsiness==null||!Driver.drowsiness.Blackout||string.IsNullOrEmpty(id)||!services.Add(id))return false;var next=Driver.Copy();if(Elapsed<Settings.daySeconds&&Elapsed+100>=Settings.daySeconds)next.fatigue=100;next.EmergencySleep();ServiceTime(100);Driver=next;RequestClose("졸음 운전 위험 · 당일 영업 종료");return true;}
+ public bool UseEmergencySleep(string id,bool closeDay=true){if(!OneDay||State!=BusinessState.Open||Driver.drowsiness==null||!Driver.drowsiness.Blackout||string.IsNullOrEmpty(id)||!services.Add(id))return false;var next=Driver.Copy();if(Elapsed<Settings.daySeconds&&Elapsed+100>=Settings.daySeconds)next.fatigue=100;next.EmergencySleep();ServiceTime(100);Driver=next;if(closeDay)RequestClose("졸음 운전 위험 · 당일 영업 종료");return true;}
  public bool UseWash(string id){if(Account==null||State!=BusinessState.Open||string.IsNullOrEmpty(id)||services.Contains(id)||!Account.Wash(id,Day))return false;services.Add(id);Care.Wash();if(Driver!=null)Driver.Advance(30);ServiceTime(30);return true;}
  public int RepairCost {get{return Care.Damage.RepairCost;}}
  public double RepairSeconds {get{return Care.Damage.RepairSeconds;}}

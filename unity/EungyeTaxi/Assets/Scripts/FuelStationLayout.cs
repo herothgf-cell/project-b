@@ -12,9 +12,9 @@ public static class FuelStationLayout {
   public readonly Vector3 entrance,exit,pump,direction;
   public readonly Vector3[] drivePath,plot;
   internal readonly MapRoad[] surfaces;
-  public readonly bool SupportsWash;
+  public readonly bool SupportsWash; public readonly bool SupportsRepair;
   public string ServiceLabel {get{return SupportsWash?"주유+세차":"주유 전용";}}
-  internal FuelStation(string label,string key,MapStop stop,Vector3 entry,Vector3 leave,Vector3 bay,Vector3 heading,Vector3[] path,Vector3[] boundary,MapRoad[] paving,bool supportsWash=true){name=label;id=key;approach=stop;entrance=entry;exit=leave;pump=bay;direction=heading;drivePath=path;plot=boundary;surfaces=paving;SupportsWash=supportsWash;}
+  internal FuelStation(string label,string key,MapStop stop,Vector3 entry,Vector3 leave,Vector3 bay,Vector3 heading,Vector3[] path,Vector3[] boundary,MapRoad[] paving,bool supportsWash=true,bool supportsRepair=true){name=label;id=key;approach=stop;entrance=entry;exit=leave;pump=bay;direction=heading;drivePath=path;plot=boundary;surfaces=paving;SupportsWash=supportsWash;SupportsRepair=supportsRepair;}
   public bool CanRefuel(Vector3 position,Vector3 heading,float speed){
    var delta=position-pump;delta.y=0;heading.y=0;
    return Mathf.Abs(position.y-pump.y)<1.5f&&speed<.56f&&heading.sqrMagnitude>.1f&&Vector3.Dot(heading.normalized,direction)>.9f&&delta.sqrMagnitude<=2.8f*2.8f&&Mathf.Abs(Vector3.Dot(delta,TrafficSystem.Right(direction)))<1.15f;
@@ -29,6 +29,7 @@ public static class FuelStationLayout {
  static MapPoint Point(Vector3 value){return new MapPoint{x=value.x,z=value.z};}
  static MapRoad Surface(string id,float width,IList<Vector3> positions){var pts=new MapPoint[positions.Count];for(int i=0;i<pts.Length;i++)pts[i]=Point(positions[i]);return new MapRoad{id=id,name="주유소 게임시설 노면",width=width,lanes=1,sourceLanes=1,oneWay=1,suppressPaint=true,points=pts};}
  public static IReadOnlyList<FuelStation> For(MapData map){if(map==null)return none;Layout layout;return layouts.TryGetValue(map,out layout)?layout.stations:none;}
+ public static void RegisterAuthored(MapData map,List<FuelStation> stations){if(map==null||stations==null)throw new ArgumentNullException();layouts.Remove(map);layouts.Add(map,new Layout(new List<FuelStation>(stations)));}
  public static void Reset(MapData map){layouts.Remove(map);}
  public static FuelStation FromObject(MapData map,ProjectMapObject o){var stop=ProjectMapScene.ServiceStop(map,o);var drive=new Vector3[51];for(int i=0;i<drive.Length;i++)drive[i]=Vector3.Lerp(stop.V(),o.Position,i/50f);var entry=stop.V();var leave=stop.V();var entryRoad=Array.Find(map.roads,r=>r.id=="fuel:rest-east:entrance");var exitRoad=Array.Find(map.roads,r=>r.id=="fuel:rest-east:exit");if(o.id=="service:rest-east"&&entryRoad!=null&&exitRoad!=null&&Vector3.Distance(entryRoad.points[entryRoad.points.Length-1].V()+o.Direction*6,o.Position)<.1f){var path=new List<Vector3>();foreach(var p in entryRoad.points)path.Add(p.V());path.Add(o.Position);foreach(var p in exitRoad.points)path.Add(p.V());drive=path.ToArray();entry=entryRoad.points[0].V();leave=exitRoad.points[exitRoad.points.Length-1].V();}return new FuelStation(o.name,o.id,stop,entry,leave,o.Position,o.Direction,drive,Array.ConvertAll(o.points,p=>p.V()),new MapRoad[0]);}
  public static FuelStation Rest(MapData map){if(ProjectMapScene.Active(map)){foreach(var o in ProjectMapScene.Services(map,"rest"))return FromObject(map,o);return null;}Layout layout;return map!=null&&layouts.TryGetValue(map,out layout)?layout.rest:null;}
@@ -135,3 +136,4 @@ public static class FuelStationLayout {
   foreach(float side in new[]{-1f,1f}){var wing=WorldBuilder.Box("화살표 머리",new Vector3(side*.29f,0,.53f),new Vector3(.16f,.016f,.9f),paint,obj.transform,false);wing.transform.localRotation=Quaternion.Euler(0,-side*42,0);}
  }
 }
+

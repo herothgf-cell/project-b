@@ -97,7 +97,7 @@ public partial class FullMapOverlay : MonoBehaviour {
    for(int i=0;i<jobs.offers.Length;i++){var o=jobs.offers[i];if(o==null)continue;var p=CallPinPosition(i,map);if(GUI.Button(new Rect(p.x-15,p.y-15,30,30),new GUIContent((i+1).ToString(),KoreanText.Stop(jobs.stops[o.pickup].name)+" · 호출 "+(i+1)),button))SelectOffer(i);}
    if(selectedOffer!=null){StopPin(selectedOffer.pickup,"승차",new Color(.2f,.8f,.5f),map);StopPin(selectedOffer.drop,"하차",new Color(1,.35f,.7f),map);}
   }
-  var player=Project(session.taxi.transform.position,map);var forward=new Vector2(session.taxi.transform.forward.x,-session.taxi.transform.forward.z).normalized;var side=new Vector2(-forward.y,forward.x);Dot(player,Color.black,26);Line(player-forward*7-side*8,player+forward*12,Color.yellow,5);Line(player+forward*12,player-forward*7+side*8,Color.yellow,5);Line(player-forward*7+side*8,player-forward*7-side*8,Color.yellow,5);
+  if(session.simulationMatch&&session.simulationMatch.Bot){var rival=Project(session.simulationMatch.Bot.taxi.transform.position,map);if(map.Contains(rival)){Dot(rival,Color.black,22);Dot(rival,new Color(1,.35f,.7f),15);GUI.Label(new Rect(rival.x+12,rival.y-12,100,24),"경쟁 봇",text);}} var player=Project(session.taxi.transform.position,map);var forward=new Vector2(session.taxi.transform.forward.x,-session.taxi.transform.forward.z).normalized;var side=new Vector2(-forward.y,forward.x);Dot(player,Color.black,26);Line(player-forward*7-side*8,player+forward*12,Color.yellow,5);Line(player+forward*12,player-forward*7+side*8,Color.yellow,5);Line(player-forward*7+side*8,player-forward*7-side*8,Color.yellow,5);
   if(HudGlyph.Button(new Rect(12,12,44,42),0,"주요 시설",ShowFacilities))ShowFacilities=!ShowFacilities;
   if(HudGlyph.Button(new Rect(62,12,44,42),1,"교통 상황",ShowTraffic))ShowTraffic=!ShowTraffic;
   if(HudGlyph.Button(new Rect(112,12,44,42),2,"교통 법규",ShowLaw))ShowLaw=!ShowLaw;
@@ -111,7 +111,7 @@ public partial class FullMapOverlay : MonoBehaviour {
    if(ev.type==EventType.KeyDown&&(ev.keyCode==KeyCode.Equals||ev.keyCode==KeyCode.KeypadPlus||ev.keyCode==KeyCode.Plus||ev.keyCode==KeyCode.Minus||ev.keyCode==KeyCode.KeypadMinus)){Zoom(ev.keyCode==KeyCode.Minus||ev.keyCode==KeyCode.KeypadMinus?-1:1);ev.Use();}}
   GUI.EndGroup();
   float x=viewport.xMax+16,w=Screen.width-x-20;DrawSidebar(x,w,viewport);
-  GUI.Label(new Rect(24,Screen.height-23,Screen.width-48,22),"승하차 화살표 = 차량 정차 방향 · © OpenStreetMap contributors / ODbL · NGII 기반 게임 지도",new GUIStyle(text){fontSize=11});
+  GUI.Label(new Rect(24,Screen.height-23,Screen.width-48,22),(session.world.map.mapId=="pvp-city-a"?"승하차 화살표 = 차량 정차 방향 · 자체 제작 PVP 도시 · 가상 도로":"승하차 화살표 = 차량 정차 방향 · © OpenStreetMap contributors / ODbL · NGII 기반 게임 지도"),new GUIStyle(text){fontSize=11});
   if(!string.IsNullOrEmpty(GUI.tooltip)&&!locationOpen){float tw=Mathf.Min(330,viewport.width-24),th=text.CalcHeight(new GUIContent(GUI.tooltip),tw-16)+16;var tip=new Rect(viewport.x+12,viewport.y+64,tw,th);Fill(tip,new Color(.04f,.1f,.14f,1));GUI.Label(new Rect(tip.x+8,tip.y+8,tw-16,th-16),GUI.tooltip,text);}
   if(locationOpen){Fill(new Rect(0,0,Screen.width,Screen.height),new Color(0,0,0,.7f));var r=new Rect(Screen.width/2-240,Screen.height/2-150,480,300);Fill(r,new Color(.04f,.08f,.12f));GUI.BeginGroup(r);LocationPopup(94722);GUI.EndGroup();}
  }

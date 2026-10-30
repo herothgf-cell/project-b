@@ -9,12 +9,12 @@ public sealed class MitTrafficOptions {
  public MitTrafficOptions(){
   var args=Environment.GetCommandLineArgs();
   foreach(var arg in args)if(arg.EndsWith("Test",StringComparison.OrdinalIgnoreCase))TestRun=true;
-  Enabled=TestRun?false:PlayerPrefs.GetInt(PreferenceKey,1)!=0;
+  Enabled=PvpSimulationMode.Active?true:TestRun?false:PlayerPrefs.GetInt(PreferenceKey,1)!=0;
   if(Array.IndexOf(args,"-mitTrafficOn")>=0)Enabled=true;
   if(Array.IndexOf(args,"-mitTrafficOff")>=0)Enabled=false;
  }
  public void SetEnabled(bool value,bool persist=true){
   Enabled=value;
-  if(persist&&!TestRun&&!RoadMapRuntime.Trial){PlayerPrefs.SetInt(PreferenceKey,value?1:0);PlayerPrefs.Save();}
+  if(persist&&!PvpSimulationMode.Active&&!TestRun&&!RoadMapRuntime.Trial){PlayerPrefs.SetInt(PreferenceKey,value?1:0);PlayerPrefs.Save();}
  }
 }

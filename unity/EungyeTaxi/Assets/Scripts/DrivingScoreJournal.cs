@@ -21,7 +21,7 @@ public class DrivingScoreJournal : MonoBehaviour {
   yield return null;
   if(session.business.ResumeBlocked){Loaded=true;enabled=false;yield break;}
   foreach(var arg in Environment.GetCommandLineArgs())if(arg.EndsWith("Test")){Loaded=true;enabled=false;yield break;}
-  if(PracticeSession.Enabled||RoadMapRuntime.Trial){Loaded=true;enabled=false;yield break;}
+  if(PvpSimulationMode.Active||PracticeSession.Enabled||RoadMapRuntime.Trial){Loaded=true;enabled=false;yield break;}
   // Ensure a newly created campaign has a stable identity before journaling events.
   if(!File.Exists(session.business.SavePath)&&!session.business.SaveCheckpoint()){Loaded=true;enabled=false;yield break;}
   campaign=session.law.ids.campaign;

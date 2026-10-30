@@ -14,7 +14,7 @@ public class DrowsinessHUD : MonoBehaviour {
    return;
   }
   float panelWidth=Mathf.Min(690,Screen.width-24);var rect=new Rect((Screen.width-panelWidth)/2,Screen.height*.63f,panelWidth,155);KoreanText.Panel(rect);
-  GUI.Label(new Rect(rect.x+10,rect.y+5,rect.width-20,72),"졸음 운전으로 위험합니다. 오늘 영업을 종료합니다.\n정차 후 귀가 휴식 · 피로 −20 (정상 수면 −40)",style);
-  if(GUI.Button(new Rect(rect.x+20,rect.y+85,rect.width-40,52),"귀가 휴식 후 오늘 영업 종료 · 100초",KoreanText.Button(19)))business.RequestEmergencyHome();
+  GUI.Label(new Rect(rect.x+10,rect.y+5,rect.width-20,72),PvpSimulationMode.Active?"졸음 운전 위험 · 정차 후 긴급 휴식\n100초 동안 운행 정지 · 피로 −20 · 경기 계속":"졸음 운전으로 위험합니다. 오늘 영업을 종료합니다.\n정차 후 귀가 휴식 · 피로 −20 (정상 수면 −40)",style);
+  if(GUI.Button(new Rect(rect.x+20,rect.y+85,rect.width-40,52),PvpSimulationMode.Active?"긴급 휴식 · 100초 후 경기 계속":"귀가 휴식 후 오늘 영업 종료 · 100초",KoreanText.Button(19)))business.RequestEmergencyHome();
  }
 }

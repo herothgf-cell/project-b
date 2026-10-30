@@ -26,6 +26,14 @@ public class DriveHUD : MonoBehaviour {
   CockpitUI.Draw(this);
   if(HelpOpen)DrawHelp();
   if(session.paused){
+   if(session.simulationMatch){
+    if(session.simulationMatch.Finished)return;
+    float px=Screen.width/2f-240,py=Screen.height/2f-100;
+    GUI.Box(new Rect(px,py,480,200),"오프라인 경기 일시정지 · 두 택시와 경기 시간 정지");
+    if(GUI.Button(new Rect(px+20,py+55,440,45),"계속 운전")){session.paused=false;Time.timeScale=1;}
+    if(GUI.Button(new Rect(px+20,py+115,440,45),"경기 취소 · 설정으로 돌아가기"))session.simulationMatch.ReturnToMenu();
+    return;
+   }
    float x=Screen.width/2f-240,y=Screen.height/2f-235;
    GUI.Box(new Rect(x,y,480,470),"일시정지 · 운행 지역");
    GUI.Label(new Rect(x+20,y+34,440,26),"현재: "+MapCatalog.Name(session.world.map.mapId),body);

@@ -9,8 +9,8 @@ public sealed class PassengerBehaviorUI : MonoBehaviour {
 
  public bool Showing {get{if(!session||!session.jobs||session.requests.ResponseBlockedThisFrame||session.jobs.Behavior==null||!session.jobs.Active||session.paused||session.FullMapOpen||session.ChoiceOpen||!string.IsNullOrEmpty(session.jobs.VisibleCareDialogue))return false;var b=session.jobs.Behavior;return b.Type!=PassengerType.General&&!session.requests.HasPendingChoice&&(Time.time<noticeUntil||!session.jobs.BehaviorAsleep&&(session.jobs.BehaviorChoicesOpen||b.WorkRemaining>0||!b.Quiet&&(b.Elapsed<8||b.MovingSeconds>=30&&b.MovingSeconds<38)));}}
  public bool CanRespond {get{return Showing&&session.jobs.BehaviorChoicesOpen&&session.requests.SafeToRespond()&&(session.jobs.trip.State!=TripState.ToPickup||session.jobs.At(session.jobs.current.pickup));}}
- void Update(){if(!CanRespond)return;if(Input.GetKeyDown(KeyCode.Y))session.jobs.RespondBehavior(0);else if(Input.GetKeyDown(KeyCode.I))session.jobs.RespondBehavior(1);else if(Input.GetKeyDown(KeyCode.O))session.jobs.RespondBehavior(2);}
- void OnGUI(){if(!Showing)return;var behavior=session.jobs.Behavior;
+ void Update(){if(session.IsSimulationBot||!CanRespond)return;if(Input.GetKeyDown(KeyCode.Y))session.jobs.RespondBehavior(0);else if(Input.GetKeyDown(KeyCode.I))session.jobs.RespondBehavior(1);else if(Input.GetKeyDown(KeyCode.O))session.jobs.RespondBehavior(2);}
+ void OnGUI(){if(session.IsSimulationBot||!Showing)return;var behavior=session.jobs.Behavior;
   string text=behavior.TypeLabel+" · "+behavior.VariantLabel+"\n"+behavior.Dialogue;
   if(responseOwner==behavior&&Time.time<responseUntil&&responseNotice.Length>0)text+="\n"+responseNotice;
   if(behavior.Type==PassengerType.Food&&session.jobs.BehaviorChoicesOpen)text+="\n청결 효과는 일반 하차 -2와 별도 · 만족도 최대 100";

@@ -89,11 +89,11 @@ public class PassengerRequestUI : MonoBehaviour {
    int slot=schedule.Tick(moving,1-session.jobs.nav.remaining/initialDistance,SafeToRespond()&&dialogue,false);
    if(slot>=0){var state=schedule.Capture().slots[slot];var o=NewObservation();observations[slot]=o;active=slot;o.BeginKind(state.kind);BlockResponseThisFrame();SyncBehaviorContext();session.business.SaveCheckpoint();}
   }
-  foreach(var o in observations)if(o)o.Observe(o==Current&&PresentationAvailable);
+  foreach(var o in observations)if(o)o.Observe(!session.IsSimulationBot&&o==Current&&PresentationAvailable);
  }
  public void CancelForFatigue(){Clear();finished=true;session.manners.ComfortAccepted=false;}
  public void Finish(){if(finished)return;finished=true;if(schedule!=null)schedule.Tick(0,1,false,true);foreach(var o in observations)if(o)o.Finish();SyncBehaviorContext();session.manners.ComfortAccepted=false;}
- void OnGUI(){var behavior=GetComponent<PassengerBehaviorUI>();if(Current&&PresentationAvailable&&!(behavior&&behavior.Showing))Current.Draw();}
+ void OnGUI(){if(session.IsSimulationBot)return;var behavior=GetComponent<PassengerBehaviorUI>();if(Current&&PresentationAvailable&&!(behavior&&behavior.Showing))Current.Draw();}
  public PassengerRequestUISnapshot CaptureLive(){
   var s=Current?JsonUtility.FromJson<PassengerRequestUISnapshot>(JsonUtility.ToJson(Current.CaptureLive())):new PassengerRequestUISnapshot{request=empty.Snapshot()};
   s.version=legacy||schedule==null?0:2;s.active=active;s.boardingLawCount=boardingLawCount;s.initialDistance=initialDistance;s.finished=finished;s.lostItem=lostItem;

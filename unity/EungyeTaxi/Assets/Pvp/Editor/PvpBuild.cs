@@ -11,7 +11,7 @@ namespace Pvp.Editor {
 public static class PvpBuild {
     public const string ScenePath="Assets/Pvp/Scenes/PvpBootstrap.unity";
     [MenuItem("Taxi/PVP/Build isolated Windows client")]
-    public static void BuildClient() {
+    public static void BuildClient() { if(ProjectMapBuild.HasSource)ProjectMapBuild.Prepare();
         BuildWithBoundary(options=>{
             var report=BuildPipeline.BuildPlayer(options);
             if(report==null||report.summary.result!=BuildResult.Succeeded) throw new InvalidOperationException("PVP build failed: "+(report==null?"no report":report.summary.result.ToString()));

@@ -9,7 +9,7 @@ public partial class RoadMapEditor : MonoBehaviour {
  public bool SimpleMode=true;public int TextOverflowCount {get;private set;} public RoadMapLane Lane {get{return document==null?null:document.lanes.FirstOrDefault(l=>l.id==selected);}}
  public RoadMapFacility Facility {get{return document==null?null:document.facilities.FirstOrDefault(f=>f.id==selected);}}
  public string SelectedId {get{return selected;}}
- public bool Open(){if(IsOpen)return true;if(session.world.map.mapId!="eungye"||session.FullMapOpen||session.ChoiceOpen||session.PracticeBusy||session.PracticeMenuOpen||session.services.open||session.law.HistoryOpen||session.business.restartPrompt)return false;
+ public bool Open(){if(PvpSimulationMode.Active)return false;if(IsOpen)return true;if(session.world.map.mapId!="eungye"||session.FullMapOpen||session.ChoiceOpen||session.PracticeBusy||session.PracticeMenuOpen||session.services.open||session.law.HistoryOpen||session.business.restartPrompt)return false;
   if(document==null){document=RoadMapRuntime.Active==null?RoadMapDocument.Create(RoadMapRuntime.Baseline):RoadMapRuntime.Active.Copy();history=new RoadMapEditHistory(document);saved=document.ToJson();FilePath=System.IO.Path.Combine(RoadMapStore.DirectoryPath,"draft.json");var rule=session.world.map.junctionRules.OrderBy(r=>Vector3.Distance(r.V(),session.world.map.targets[0].V())).First();Focus(rule.id);}
   InitializeProject();previousPause=session.paused;previousScale=Time.timeScale;session.paused=true;Time.timeScale=0;IsOpen=true;return true;
  }

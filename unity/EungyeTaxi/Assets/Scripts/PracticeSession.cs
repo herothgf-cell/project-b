@@ -14,7 +14,7 @@ public class PracticeSession : MonoBehaviour {
  public string SelectedConditions {get{return ConfusionPracticeState.Contains(SelectedVariant)?ConfusionPracticeState.Conditions(SelectedVariant):SelectedVariant==7?"신호를 기다리는 차량 8대가 출구 차로에 줄 서 있습니다. 영업 기록 없이 준비된 은계 구간으로 이동합니다.":RightPracticeState.Conditions(SelectedVariant);}}
  public string SelectedGuidance {get{return ConfusionPracticeState.Contains(SelectedVariant)?ConfusionPracticeState.Guidance(SelectedVariant):SelectedVariant==7?"줄 맨 뒤에서 간격을 확보해 합류하거나 직진 후 우회하세요. 앞부분 진입과 상대 진행 방해는 결과에서 구분합니다. 완료 후 같은 조건으로 재시도할 수 있습니다.":RightPracticeState.Guidance(SelectedVariant);}}
  bool pickerPaused,changedConditions,ready;float pickerTime;
- public bool OpenPicker(){
+ public bool OpenPicker(){if(PvpSimulationMode.Active)return false;
   if(session.FullMapOpen||session.ChoiceOpen)return false;
   if(Enabled&&!ready||Busy||PickerOpen||session.business.restartPrompt||session.business.pendingPayment>=0||session.business.taxPrompt||session.services.open||session.law.HistoryOpen)return false;
   if(!Enabled&&!session.business.preparing&&!session.business.ShowingSummary&&!session.paused)return false;
@@ -53,7 +53,7 @@ public class PracticeSession : MonoBehaviour {
   session.jobs.nav.Clear();if(!situation.Select(variant))return false;session.law.ResetObservation();session.manners.Suppress(1);
   var goal=j.center+right*70-dir*1.75f;float at;int edge=session.jobs.nav.hd.Nearest(goal,right,out at);session.jobs.nav.SetHdDestination(edge,at);GetComponent<PracticeCoach>().BeginAttempt(situation);return true;
  }
- public bool Begin(LawEvent record,bool preparation=false){
+ public bool Begin(LawEvent record,bool preparation=false){if(PvpSimulationMode.Active)return false;
   if(session.business.restartPrompt||Enabled||Busy||!(session.business.ShowingSummary||preparation&&session.business.preparing||session.paused&&!session.services.open&&!session.law.HistoryOpen&&!session.business.taxPrompt&&session.business.pendingPayment<0)||record==null||Application.isEditor)return false;
   int variant=0;bool confusion=record.scenario!=null&&record.scenario.StartsWith("C")&&int.TryParse(record.scenario.Substring(1),out variant)&&ConfusionPracticeState.Contains(variant);if(!confusion&&record.practice==null&&record.scenario!="exit"&&!(record.scenario!=null&&record.scenario.StartsWith("R")&&int.TryParse(record.scenario.Substring(1),out variant)&&variant>=1&&variant<=6))return false;
   try{

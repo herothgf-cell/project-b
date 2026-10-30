@@ -18,7 +18,7 @@ public class TaxiSignals : MonoBehaviour {
     public void BeginPassengerStop(){passengerStop=true;direction=0;}
     public void Clear(){direction=0;manualHazards=passengerStop=false;}
     void Update() {
-        if(Time.timeScale>0) {
+        if(Time.timeScale>0 && !(GetComponent<TaxiController>()&&GetComponent<TaxiController>().business&&GetComponent<TaxiController>().business.session.IsSimulationBot)) {
             if(passengerStop){var body=GetComponent<Rigidbody>();if(body&&body.velocity.magnitude>1)passengerStop=false;}
             if(Input.GetKeyDown(KeyCode.G))ToggleHazards();
             var assistance=GetComponent<AssistedDriveController>();

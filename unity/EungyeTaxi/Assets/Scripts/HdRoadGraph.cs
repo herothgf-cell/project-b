@@ -81,6 +81,6 @@ public sealed class HdRoadGraph {
    if(edge.change!=0)return (edge.change<0?"왼쪽":"오른쪽")+" 차로 변경 · "+Mathf.Max(0,begin-at).ToString("0")+"m · 점선 구간";
    if(edge.turn!=0){int number=edges[route.edges[Mathf.Max(0,i-1)]].number;return UturnMovement.Label(edge.turn)+" · "+Mathf.Max(0,begin-at).ToString("0")+"m · "+(number>0&&number<10?number+"차로":"연결 차로")+" 준비";}
    begin=route.ends[i];
-  }var current=edges[route.EdgeAt(at)];return string.IsNullOrEmpty(current.roadName)?"안내 차로를 따라 직진":current.roadName+" 따라 직진 · OSM 명칭";
+  }var current=edges[route.EdgeAt(at)];return string.IsNullOrEmpty(current.roadName)?"안내 차로를 따라 직진":current.roadName+" 따라 직진"+(current.id.StartsWith("city:")?"":" · OSM 명칭");
  }
 }

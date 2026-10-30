@@ -69,7 +69,7 @@ public sealed class VehicleDamageController : MonoBehaviour {
     }
     public void BuildBays(){
         if(baysBuilt||!session||!session.services)return;baysBuilt=true;
-        foreach(var station in session.services.Stations){
+        foreach(var station in session.services.Stations){if(!station.SupportsRepair)continue;
             var position=station.pump+station.direction*13+TrafficSystem.Right(station.direction)*4;
             // A dedicated space entirely inside the existing service forecourt.
             bool inside=true;foreach(float x in new[]{-1.5f,1.5f})foreach(float z in new[]{-2.8f,2.8f})if(!Inside(position+TrafficSystem.Right(station.direction)*x+station.direction*z,station.plot))inside=false;
@@ -103,14 +103,14 @@ public sealed class VehicleDamageController : MonoBehaviour {
         Notice="이미 지불한 정비 공간 복원 완료 · 추가 견인비/시간 없음";noticeUntil=Time.unscaledTime+6;if(checkpoint)session.business.SaveCheckpoint();return true;
     }
     void Update(){if(!session||!session.business||session.business.ledger==null)return;if(!Damage.Disabled||string.IsNullOrEmpty(Damage.RepairBayId)){RestoringReservedBay=false;return;}if(Campaign&&!AtRepairBay&&Time.unscaledTime>=nextRestoreAttempt){nextRestoreAttempt=Time.unscaledTime+.5f;RestoreReservedBay();}}
-    public bool CanRepair {get{return Campaign&&session.business.ledger.Operating&&Damage.Durability<100&&session.jobs.trip.State!=TripState.OnTrip&&session.taxi.body.velocity.magnitude<.56f&&(AtRepairBay||session.services.AtFuelPump());}}
+    public bool CanRepair {get{return !(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))&&Campaign&&session.business.ledger.Operating&&Damage.Durability<100&&session.jobs.trip.State!=TripState.OnTrip&&session.taxi.body.velocity.magnitude<.56f&&(AtRepairBay||session.services.AtRepairPump());}}
     public string RepairQuote {get{return "내구도 "+Damage.Durability+" → 100\n수리 "+Damage.RepairCost.ToString("N0")+"원 · "+Damage.RepairSeconds.ToString("0.#")+"초 (부족분 미납)\n청결·연료 유지 · 엔진 정지";}}
     public bool Repair(){
         if(!CanRepair)return false;double seconds=Damage.RepairSeconds;int cost=Damage.RepairCost;
         if(!session.business.ledger.UseRepair(session.law.ids.Next("repair")))return false;
         session.jobs.AdvancePickupWait((float)seconds);TechnicalRecovery();Notice="수리 완료 · 내구도 100 · "+cost.ToString("N0")+"원 / "+seconds.ToString("0.#")+"초";noticeUntil=Time.unscaledTime+6;session.business.SaveCheckpoint();return true;
     }
-    public bool Tow(){
+    public bool Tow(){if(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))return false;
         if(!Campaign||!Disabled||!session.business.ledger.Operating||session.business.ShowingSummary||AtRepairBay||RestoringReservedBay||session.FullMapOpen)return false;
         if(session.taxi.body.velocity.magnitude>=.56f&&Time.time-disabledSince<5){Notice="제동 후 정차하면 견인할 수 있습니다";return false;}
         Bay free=null;float distance=float.MaxValue;foreach(var bay in Bays)if(BayClear(bay)){float d=(bay.position-transform.position).sqrMagnitude;if(d<distance){free=bay;distance=d;}}
@@ -125,7 +125,7 @@ public sealed class VehicleDamageController : MonoBehaviour {
         if(fixedArrival)session.jobs.ResolveVehicleFailure();
         Notice="견인 완료 · 3,000원 / 30초 · "+(session.jobs.Active?"확정 운임 유지 · 안전 하역 후 수리":"수리는 별도입니다");noticeUntil=Time.unscaledTime+6;session.business.SaveCheckpoint();return true;
     }
-    public bool EndDisabledDay(){
+    public bool EndDisabledDay(){if(PvpSimulationMode.Active)return false;
         if(!Campaign||!Disabled||!AtRepairBay||session.jobs.Active)return false;
         var ledger=session.business.ledger;
         if(ledger.State==BusinessState.Open&&ledger.OneDay){
@@ -134,7 +134,7 @@ public sealed class VehicleDamageController : MonoBehaviour {
         }
         ledger.RequestClose("차량 고장 · 정비 보류");session.business.SaveCheckpoint();return true;
     }
-    void OnGUI(){
+    void OnGUI(){if(session.IsSimulationBot)return;
         if(!Campaign||session.business.preparing||session.business.ShowingSummary||session.RideResultOpen||session.FullMapOpen||session.PracticeMenuOpen)return;
         var style=new GUIStyle(GUI.skin.label){fontSize=16,wordWrap=true};style.normal.textColor=Color.white;GUI.depth=-140;
         if(Time.unscaledTime<noticeUntil&&!Disabled)GUI.Label(new Rect(Screen.width/2-230,165,460,65),Notice,style);

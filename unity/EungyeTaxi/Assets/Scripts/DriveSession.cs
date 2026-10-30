@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 public class DriveSession : MonoBehaviour {
+    public bool IsSimulationBot;
+    public PvpSimulationMatch simulationMatch;
+    public int SimulationDriver {get{return IsSimulationBot?1:0;}}
     public string startupRegion="";
     public VehicleDamageController damage;
     public TaxiController taxi; public WorldBuilder world; public TrafficSystem traffic; public DrivingCamera drivingCamera; public TaxiSignals signals;
@@ -17,10 +20,12 @@ public class DriveSession : MonoBehaviour {
     public bool EditorOpen {get{var e=GetComponent<RoadMapEditor>();return e&&(e.IsOpen||e.ClosedThisFrame);}}
     public bool FullMapOpen {get{var map=GetComponent<FullMapOverlay>();return map&&map.IsOpen||EditorOpen||RideResultOpen;}}
     public bool StartupReady {get;private set;}
+    public void MarkSharedSimulationReady(){if(IsSimulationBot)StartupReady=true;}
     string loadingStage="지도를 준비 중입니다.";
     Camera loadingCamera;
     GUIStyle loadingTitle,loadingDetail;
     void Awake() {
+        if(IsSimulationBot)return;
         MapCatalog.LockedRegion=startupRegion;
         foreach(var arg in System.Environment.GetCommandLineArgs())if(arg.EndsWith("Test"))Application.runInBackground=true;
         Application.targetFrameRate=60; QualitySettings.vSyncCount=0;
@@ -29,6 +34,7 @@ public class DriveSession : MonoBehaviour {
         loadingCamera.clearFlags=CameraClearFlags.SolidColor;loadingCamera.backgroundColor=new Color(.06f,.09f,.13f);loadingCamera.cullingMask=0;
     }
     IEnumerator Start() {
+        if(IsSimulationBot)yield break;
         // Render the loading screen before synchronous map construction.
         yield return null;yield return null;
         var startupTimer=System.Diagnostics.Stopwatch.StartNew();var stageTimer=System.Diagnostics.Stopwatch.StartNew();
@@ -113,10 +119,12 @@ public class DriveSession : MonoBehaviour {
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-stabilityTest")>=0) gameObject.AddComponent<StabilitySmokeTest>().session=this;
         // Preserve the pause selected by BusinessProgress for preparation or saved-session restoration.
         StartupReady=true;
+        if(PvpSimulationMode.Active){simulationMatch=gameObject.AddComponent<PvpSimulationMatch>();simulationMatch.Initialize(this);}
         if(loadingCamera)Destroy(loadingCamera.gameObject);
         Debug.Log("STARTUP_TIMING gameplay_ms="+stageTimer.ElapsedMilliseconds+" total_ms="+startupTimer.ElapsedMilliseconds);
     }
     void OnGUI(){
+        if(IsSimulationBot)return;
         if(StartupReady)return;
         GUI.depth=-10000;var oldColor=GUI.color;GUI.color=new Color(.06f,.09f,.13f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=oldColor;
         if(loadingTitle==null){loadingTitle=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=28,alignment=TextAnchor.MiddleCenter};loadingDetail=new GUIStyle(loadingTitle){fontSize=18};}
@@ -124,6 +132,7 @@ public class DriveSession : MonoBehaviour {
         GUI.Label(new Rect(0,Screen.height*.43f+55,Screen.width,40),loadingStage,loadingDetail);
     }
     void Update() {
+        if(IsSimulationBot||simulationMatch&&simulationMatch.Finished)return;
         if(!StartupReady)return;
         var choice=GetComponent<ScenarioChoiceSituation>();if(choice&&(choice.Open||choice.ClosedThisFrame))return;
         if(FullMapOpen||GetComponent<FullMapOverlay>().ClosedThisFrame)return;

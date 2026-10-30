@@ -61,6 +61,7 @@ public class TaxiController : MonoBehaviour {
         var damage=GetComponent<VehicleDamageController>();
         if(damage&&damage.Disabled){demand.motor=0;motorDemand=0;demand.brake=1;}
         CornerAssisting=demand.motor<manual.motor||demand.brake>manual.brake;
+        if(business&&business.session.simulationMatch&&business.session.simulationMatch.ServiceLocked(business.session)){demand.motor=0;demand.brake=1;motorDemand=0;}
         float centerAngle=steer*(assistedSteering?DriveMath.SteerAngle(Speed*3.6f):DriveMath.ManualSteerAngle(Speed*3.6f));
         for(int i=0;i<4;i++) { if(!microsleep)wheels[i].steerAngle=i<2?DriveMath.WheelSteerAngle(centerAngle,i==0):0; wheels[i].motorTorque=i>=2?demand.motor*1100:0; wheels[i].brakeTorque=demand.brake*3500; }
         body.AddForce(Vector3.down*body.velocity.sqrMagnitude*6);

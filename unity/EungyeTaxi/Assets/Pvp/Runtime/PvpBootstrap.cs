@@ -6,7 +6,7 @@ namespace Pvp {
     // Scene-owned entry point only; opening campaign scenes never installs PvP.
     public sealed class PvpBootstrap : MonoBehaviour {
         public Pvp.Map.PvpMapDefinition PracticeMap;
-        StreamWriter diagnostic;
+        static bool simulationCommandConsumed; StreamWriter diagnostic;
         Pvp.Map.PvpMapDefinition ownedMap;
         public PvpMatchSettings CurrentSettings { get; private set; }
         public string DiagnosticPath { get; private set; }
@@ -27,7 +27,14 @@ namespace Pvp {
             else if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNetworkRole")>=0) gameObject.AddComponent<Pvp.Network.PvpNetworkProbe>();
             else if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpPracticeCheck")>=0) gameObject.AddComponent<PvpPracticeProbe>();
         }
-        public void StartNetwork(bool host,string address,ushort port) {
+        void Start() {
+            var args=Environment.GetCommandLineArgs();
+            bool check=Array.IndexOf(args,"-pvpSimulationCheck")>=0;
+            bool capture=Array.IndexOf(args,"-pvpSimulationCapture")>=0; bool service=Array.IndexOf(args,"-pvpSimulationServicesCheck")>=0;
+            if((check||capture||service)&&!simulationCommandConsumed){simulationCommandConsumed=true;StartSimulation(service||Array.IndexOf(args,"-pvpSimulationExpanded")>=0,1800);if(service)new GameObject("PVP native service probe").AddComponent<PvpSimulationServicesProbe>();if(check)new GameObject("PVP simulation acceptance probe").AddComponent<PvpSimulationProbe>();if(capture)gameObject.AddComponent<PvpSimulationCapture>();}
+            else if(PvpSimulationMode.Active)StartSimulation(PvpSimulationMode.Expanded,PvpSimulationMode.DurationSeconds);
+        }
+        public void StartSimulation(bool expanded,int seconds) { if(FindObjectOfType<DriveSession>())return; PvpSimulationMode.Configure(expanded,seconds);var panel=GetComponent<PvpPrototypePanel>();if(panel)panel.enabled=false;foreach(var camera in GetComponentsInChildren<Camera>())camera.gameObject.SetActive(false);new GameObject("PVP simulation · existing DriveSession").AddComponent<DriveSession>().startupRegion="eungye"; } public void StartNetwork(bool host,string address,ushort port) {
             if(GetComponent<Pvp.Network.PvpNetworkSession>()!=null)return;
             var session=gameObject.AddComponent<Pvp.Network.PvpNetworkSession>();
             try { session.Begin(host,address,port);StartupError=null; }
