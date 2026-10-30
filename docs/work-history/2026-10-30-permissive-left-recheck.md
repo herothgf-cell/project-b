@@ -27,7 +27,11 @@
 - `RealLeftBuildChecks.Build`: 실제 근거3/비보호 긍정0 검사, 시나리오·이전 저장 호환, 전체 WorldFollowup·Startup11,672, `PrototypeBuild.BuildHybrid` 모두 종료0. 로그 `artifacts/real-left-recheck-build.log`.
 - 최종 실제 Player2프로세스 종료0: `-realLeftOnlyTest -hybridV2`95검사/24.62초, `-prototypeScenarioTest -hybridV2`96검사/29.21초. 새 실행 폴더에서191검사 통과. 위치 제어·실제 승하차 API 검사이며 사람의 물리 주행/전체 캠페인 검사가 아니다.
 - 각 프로세스는 `artifacts/` 격리 저장 사용. 사용자 AppData 저장을 변경하지 않았다. `real-left-recheck-native-results.json`, `real-left-recheck-validation.json`에 실제 결과 기록.
-- `tools/check_workspace.ps1 -Strict`: 종료0/issues0. 원시2맵 JSON은 현 PC 미배치인 선택 입력이며 Git 프로젝트 지도 해시 정상. 지도/원시/ZIP 미변경.
+- `tools/check_workspace.ps1 -Strict`: 종료0/issues0. 가져오기용 `eungye-map.json/route42-map.json`은 현 PC 미배치인 선택 입력이며 Git 프로젝트 지도 해시 정상. 지도/원시/ZIP 미변경.
 - 독립 문서/근거 검토에 남은P1/P2 없음. 회전교차로와 대상 접근을 구분하고 긍정 확인0과 지역 전체 부재를 구분했다.
 
 기본 실행 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 / `PrototypeBuild.BuildHybrid`. 새로 확인된 비보호 허용 지점은0곳이며 기존 일반 영업 동작을 유지한다. 지역 전수 조사·현장 실시간 확인·사람20분/3일·다른 실제 PC 검증은 수행하지 않았다. 배포 해시 검증/게시 영수증은 아래 실제 결과를 따른다.
+
+## 배포 자료 검증
+
+실제 소스 커밋 `46cc44875e66ec01ea41cd61ff4cf63b894d309a`을 이력의 `git log -1 --oneline`으로 확인했다. `tools/update_distribution_manifest.ps1 -SourceCommit 46cc44875e66ec01ea41cd61ff4cf63b894d309a -ValidatedOn 2026-10-30 -ValidationReport artifacts/real-left-recheck-validation.json` 및 `-VerifyOnly` 종료0. 실행 폴더130파일112,293,085바이트의 크기/SHA256이 일치한다. 실제 main 게시 영수증은 게시 후 아래에 기록한다.

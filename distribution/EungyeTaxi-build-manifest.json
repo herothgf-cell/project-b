@@ -1,79 +1,42 @@
 {
-  "sourceCommit": "d6f29d81700853d2fb3195a841a313ef31617d08",
+  "sourceCommit": "46cc44875e66ec01ea41cd61ff4cf63b894d309a",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-10-30",
   "totalBytes": 112293085.0,
   "validation": {
-    "build": "PrototypeBuild.BuildHybrid exit 0",
-    "editorFullGate": "RealLeftBuildChecks.Build exit 0 (real-left-editor-build.log)",
-    "editorFinalGate": "WorldFollowupChecks.HudAndBuild exit 0 (real-left-final-build.log)",
-    "modelSuites": 28,
+    "build": "RealLeftBuildChecks.Build / PrototypeBuild.BuildHybrid exit 0 (real-left-recheck-build.log)",
+    "editorFullGate": "REAL_LEFT_EVIDENCE_OK reviewed=3 verified=0; PROTOTYPE_SCENARIO_TESTS_OK; WORLD_FOLLOWUP_EDITOR_OK",
     "startupPathAssertions": 11672,
     "nativeProcesses": [
       {
         "probe": "realLeftOnlyTest",
         "exit": 0,
-        "seconds": 25.73
+        "seconds": 24.62
       },
       {
         "probe": "prototypeScenarioTest",
         "exit": 0,
-        "seconds": 29.07
-      },
-      {
-        "probe": "serviceLawZonesTest",
-        "exit": 0,
-        "seconds": 50.98
-      },
-      {
-        "probe": "worldFollowupTest",
-        "exit": 0,
-        "seconds": 32.69
-      },
-      {
-        "probe": "lawZoneLabelsTest",
-        "exit": 0,
-        "seconds": 80.92
-      },
-      {
-        "probe": "driveFeedbackTest",
-        "exit": 0,
-        "seconds": 31.22
-      },
-      {
-        "probe": "playabilityUITest",
-        "exit": 0,
-        "seconds": 34.75
+        "seconds": 29.21
       }
     ],
     "nativeAssertions": {
       "real-left-only-runtime": 95,
-      "prototype-scenario-test": 96,
-      "service-law-zones-test": 72,
-      "world-followup-runtime": 468,
-      "law-zone-labels-test": 97,
-      "drive-feedback-test": 20,
-      "playability-ui-test": 60
-    },
-    "initialUiFailure": {
-      "exit": 1,
-      "reason": "Legacy facility test expected short names; project map has authored service names. Test corrected; no product facility changes.",
-      "resolvedBy": "Final playabilityUITest exit 0; final realLeftOnlyTest exit 0"
+      "prototype-scenario-test": 96
     },
     "realLeftEvidence": {
       "reviewedFormerApproaches": 3,
+      "newlyResolvedFrontApproaches": 2,
       "positivelyVerifiedPermissiveApproaches": 0,
-      "scope": "Not a district-wide absence finding"
+      "captureMonth": "2026-05",
+      "nearbyRoundaboutExcluded": true,
+      "scope": "Three existing approaches; not a district-wide absence claim"
     },
+    "gameplayRulesChanged": false,
+    "mapInputsChanged": false,
     "manualDriving": false,
-    "fieldReviewComplete": false,
-    "screenshotsReviewed": [
-      "1280 minimap overview and selected call",
-      "1920 full map",
-      "1280 occupied HUD"
-    ]
+    "fieldReviewComplete": false
   },
   "files": [
     {
@@ -84,7 +47,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "f00640095034c9acec1f60baa2956e39caff5337018aaf800b420de3759fba04"
+      "sha256": "4284ac4758a21d5d21cf5d852224fe548f316e3e389d359a5791a543e6c2a7ae"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
