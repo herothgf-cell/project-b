@@ -1,4 +1,4 @@
-param([string]$Executable,[switch]$Expanded,[switch]$Services,[switch]$Regression,[switch]$PaidFixture,[int]$TimeoutSeconds=620)
+param([string]$Executable,[switch]$Expanded,[switch]$Services,[switch]$Regression,[switch]$PaidFixture,[switch]$FourDrivers,[int]$TimeoutSeconds=1000)
 $ErrorActionPreference='Stop'
 if($FourDrivers -and ($Expanded -or $Regression -or $PaidFixture -or $Services)){throw 'FourDrivers uses the native A2 shared board without legacy fixtures'}
 if($PaidFixture -and ($Regression -or $Expanded -or $Services)){throw 'PaidFixture is an Eungye-only standalone fixture'}
