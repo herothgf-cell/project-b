@@ -160,8 +160,10 @@ public class DrivingReadability : MonoBehaviour {
    GUI.Label(new Rect(x+8,485,Size-16,32),"실제 현장 규제가 아닙니다",label);return;
   }
   Lamp(new Rect(x+8,444,126,38),"↑ 직진",o.forward);
-  Lamp(new Rect(x+142,444,130,38),j.leftTurnMode==LeftTurnMode.Permissive?"← 비보호":"← 좌회전",session.traffic.LeftSignal(j,SignalAxis,SignalSign));
-  GUI.Label(new Rect(x+8,482,Size-16,36),j.leftTurnMode==LeftTurnMode.Permissive?"← 비보호 좌회전 · 녹색에서 대향차 양보":o.dedicated?"→ 전용 우회전: "+State(o.right):"→ 우회전: 정지·보행자 조건 확인",label);
+  bool leftAvailable=session.traffic.HasLeftMovement(j,SignalAxis,SignalSign);
+  if(leftAvailable)Lamp(new Rect(x+142,444,130,38),j.leftTurnMode==LeftTurnMode.Permissive?"← 비보호":"← 좌회전",session.traffic.LeftSignal(j,SignalAxis,SignalSign));
+  else GUI.Label(new Rect(x+142,444,130,38),"좌회전 불가",label);
+  GUI.Label(new Rect(x+8,482,Size-16,36),leftAvailable&&j.leftTurnMode==LeftTurnMode.Permissive?"← 비보호 좌회전 · 녹색에서 대향차 양보":o.dedicated?"→ 전용 우회전: "+State(o.right):"→ 우회전: 정지·보행자 조건 확인",label);
  }
  void Lamp(Rect r,string text,SignalColor signal){Dot(new Vector2(r.x+11,r.y+14),signal==SignalColor.Green?Color.green:signal==SignalColor.Red?Color.red:Color.yellow,18);GUI.Label(new Rect(r.x+25,r.y,r.width-25,r.height),text+"\n"+State(signal),new GUIStyle(label){fontSize=13});}
  static string State(SignalColor signal){return signal==SignalColor.Green?"녹색":signal==SignalColor.Red?"적색 · 정지":"황색";}

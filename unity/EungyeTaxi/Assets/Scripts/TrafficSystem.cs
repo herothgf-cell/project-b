@@ -4,6 +4,7 @@ using UnityEngine;
 public class TrafficJunction { public RoadMapSignalProgram editorProgram; public float[] editorStops=new float[4],editorCrossings=new float[4]; public float StopDistance(int axis,int sign){int i=axis*2+(sign>0?0:1);return editorStops[i]>0?editorStops[i]:halfWidth[1-axis]+4;} public float CrossDistance(int axis,int sign){int i=axis*2+(sign>0?0:1);return editorCrossings[i]>0?editorCrossings[i]:halfWidth[1-axis]+CrosswalkCentreOffset;}
     public bool scenarioOpposingGreen,scenarioFlashing,scenarioLampOn=true;public bool scenarioSignal; public SignalColor scenarioForward; public bool signalized=true; public RoadObservation rightTurnObservation; public int observationAxis,observationSign; public HybridJunctionRule facility; public int crosswalkApproaches,stopLineApproaches;
     public readonly List<int> lampAxes=new List<int>(),lampSigns=new List<int>();
+    public readonly List<bool> leftMovements=new List<bool>();
     public readonly List<int> lampStates=new List<int>();
     public Vector3 direction;
     public LeftTurnMode leftTurnMode;
@@ -63,6 +64,8 @@ public class TrafficSystem : MonoBehaviour {
     readonly List<Vector3> whitePaint=new List<Vector3>(), yellowPaint=new List<Vector3>();
     MapData roadMap;HdRoadGraph editorGraph;bool editorSpeedRules;public float EditorSpeedLimit(TrafficCar car){if(!editorSpeedRules||editorGraph==null||car.route.graphPath==null)return 0;int edge=car.route.graphPath.EdgeAt(car.distance);float error;float at=editorGraph.paths[edge].Project(car.transform.position,out error);return RoadMapRules.SpeedLimit(roadMap,editorGraph.edges[edge].id,at);}RoadMapWalker[] editorWalkers;bool EditorPedestrian(TrafficJunction j){return editorWalkers!=null&&System.Array.Exists(editorWalkers,w=>w&&w.crossing.junctionId==j.name&&w.Crossing);}public Vector3 StopPosition(TrafficJunction j,int axis,int sign){var f=roadMap.editorDocument==null?null:System.Array.Find(roadMap.editorDocument.facilities,x=>x.kind=="stopLine"&&x.junctionId==j.name&&x.axis==axis&&x.sign==sign);return f==null?j.center-AxisDirection(j,axis)*sign*j.StopDistance(axis,sign):f.Position;} public Vector3 StopNormal(TrafficJunction j,int axis,int sign){var f=roadMap.editorDocument==null?null:System.Array.Find(roadMap.editorDocument.facilities,x=>x.kind=="stopLine"&&x.junctionId==j.name&&x.axis==axis&&x.sign==sign);return f==null?AxisDirection(j,axis)*sign:Quaternion.Euler(0,f.yaw,0)*Vector3.forward;} public float EditorSpeedLimit(Vector3 position,Vector3 heading){if(editorGraph==null||!editorSpeedRules)return 0;float at;int edge=editorGraph.Nearest(position,heading,out at);return edge<0?0:RoadMapRules.SpeedLimit(roadMap,editorGraph.edges[edge].id,at);} public string EditorLaneId(Vector3 position,Vector3 heading){if(editorGraph==null)return null;float at;int edge=editorGraph.Nearest(position,heading,out at);return edge<0?null:editorGraph.edges[edge].id;}
     readonly TrafficOverlapQuery overlaps=new TrafficOverlapQuery();
+    sealed class MovementEnvelope {public TrafficRoute route;public Vector3[] points;public float from,to;public Bounds bounds;}
+    readonly Dictionary<TrafficStop,MovementEnvelope> movementEnvelopes=new Dictionary<TrafficStop,MovementEnvelope>();
     readonly Dictionary<TrafficStop,Dictionary<TrafficStop,bool>> conflicts=new Dictionary<TrafficStop,Dictionary<TrafficStop,bool>>();
 
     public Vector3 AxisDirection(TrafficJunction j,int axis){var d=j.direction.sqrMagnitude>.1f?j.direction:mainDirection;return axis==0?d:Right(d);}
@@ -261,7 +264,8 @@ public class TrafficSystem : MonoBehaviour {
 
         // A moving same-lane leader is protected by the car-following gap check. All other
         // occupied movements stay exclusive, including stopped leaders and conflicting turns.
-        int contacts=overlaps.Box(j.center+Vector3.up*.85f,new Vector3(j.halfWidth[0]+.4f,.55f,j.halfWidth[1]+.4f),Quaternion.LookRotation(AxisDirection(j,0)),(1<<8)|(1<<9));
+        var envelope=MovementBounds(car,stop);
+        int contacts=overlaps.Box(envelope.center,envelope.extents,Quaternion.identity,(1<<8)|(1<<9));
         for(int contact=0;contact<contacts;contact++){var hit=overlaps.hits[contact];var other=hit.GetComponentInParent<TrafficCar>();if(other==car||MovingLeader(car,other))continue;
             // This box is only a broad phase. A red approach or a queued follower
             // can touch it without occupying this green movement's swept corridor.
@@ -269,6 +273,21 @@ public class TrafficSystem : MonoBehaviour {
         }
         if(!ExitClear(car,stop))return false;
         j.reservations.Add(car);if(!j.owner)j.owner=car;return true;
+    }
+    Bounds MovementBounds(TrafficCar car,TrafficStop stop){
+        MovementEnvelope cached;
+        if(movementEnvelopes.TryGetValue(stop,out cached)&&cached.route==car.route&&cached.points==car.route.points&&cached.from==stop.distance&&cached.to==stop.exitDistance)return cached.bounds;
+        // Curves and repaired connectors can extend outside the junction node's
+        // nominal rectangle. The broad phase must contain the whole corridor
+        // inspected by OccupiesMovement, including its endpoint margins.
+        float begin=Mathf.Clamp(stop.distance-2.25f,0,car.route.length),end=Mathf.Clamp(stop.exitDistance+2.25f,begin,car.route.length);
+        var bounds=new Bounds(car.route.Position(begin)+Vector3.up*.85f,Vector3.zero);
+        for(float at=begin;at<=end+.5f;at+=.5f)bounds.Encapsulate(car.route.Position(Mathf.Min(at,end))+Vector3.up*.85f);
+        // 2.25m covers the 1.15m narrow-phase radius plus any shifted sample
+        // origin at the stop boundary. Narrow-phase occupancy stays unchanged.
+        bounds.Expand(Vector3.one*4.5f);
+        movementEnvelopes[stop]=new MovementEnvelope{route=car.route,points=car.route.points,from=stop.distance,to=stop.exitDistance,bounds=bounds};
+        return bounds;
     }
     public bool OccupiesMovement(TrafficCar car,TrafficStop stop,Collider blocker){
         // Include the bumpers and a conservative body width. Reservations still
@@ -393,6 +412,27 @@ public class TrafficSystem : MonoBehaviour {
         p.y=.071f;var right=Right(dir)*width*.5f;var along=dir*length*.5f;var list=material==yellow?yellowPaint:whitePaint;list.AddRange(new[]{p-right-along,p-right+along,p+right+along,p+right-along});
     }
     void PaintMesh(List<Vector3> vertices,Material material){var mesh=new Mesh();mesh.indexFormat=UnityEngine.Rendering.IndexFormat.UInt32;var triangles=new List<int>();for(int i=0;i<vertices.Count;i+=4)triangles.AddRange(new[]{i,i+1,i+2,i,i+2,i+3});mesh.SetVertices(vertices);mesh.SetTriangles(triangles,0);mesh.RecalculateNormals();var obj=new GameObject(material.name);obj.transform.SetParent(transform);obj.AddComponent<MeshFilter>().sharedMesh=mesh;obj.AddComponent<MeshRenderer>().sharedMaterial=material;}
+    public bool HasLeftMovement(TrafficJunction j,int axis,int sign) {
+        if(j==null)return false;
+        for(int i=0;i<j.leftMovements.Count;i++)if(j.lampAxes[i]==axis&&j.lampSigns[i]==sign)return j.leftMovements[i];
+        if(j.facility!=null&&!j.facility.allowLeft)return false;
+        bool known=false;var edges=roadMap==null?null:roadMap.hdEdges;
+        if(edges!=null)foreach(var incoming in edges) {
+            if(incoming.ruleId!=j.name||incoming.turn!=0||incoming.change!=0||incoming.points==null||incoming.points.Length<2)continue;
+            var heading=(incoming.points[incoming.points.Length-1].V()-incoming.points[incoming.points.Length-2].V()).normalized;
+            int incomingAxis=Mathf.Abs(Vector3.Dot(heading,AxisDirection(j,0)))>.7f?0:1;
+            if(incomingAxis!=axis||Sign(heading,incomingAxis,j)!=sign)continue;
+            // A closed authored lane is still evidence for this exact approach.
+            known=true;if(incoming.disabled||incoming.next==null)continue;
+            foreach(int next in incoming.next) {
+                if(next<0||next>=edges.Length)continue;var left=edges[next];
+                if(left.disabled||left.ruleId!=j.name||left.turn!=-1||left.next==null)continue;
+                foreach(int exit in left.next)if(exit>=0&&exit<edges.Length&&!edges[exit].disabled)return true;
+            }
+        }
+        // Missing approach data does not establish a new prohibition.
+        return !known;
+    }
     void AddApproach(TrafficJunction j,Vector3 direction,float halfWidth,float conflictHalfWidth) {
         var right=Right(direction);
         int editAxis=Mathf.Abs(Vector3.Dot(direction,AxisDirection(j,0)))>.7f?0:1;int editSign=Sign(direction,editAxis,j);bool editedStop=roadMap.editorDocument!=null&&System.Array.Exists(roadMap.editorDocument.facilities,f=>f.junctionId==j.name&&f.kind=="stopLine"&&f.axis==editAxis&&f.sign==editSign);bool editedCross=roadMap.editorDocument!=null&&System.Array.Exists(roadMap.editorDocument.facilities,f=>f.junctionId==j.name&&f.kind=="crosswalk"&&f.axis==editAxis&&f.sign==editSign);float stop=j.StopDistance(editAxis,editSign);
@@ -407,17 +447,17 @@ public class TrafficSystem : MonoBehaviour {
         float reach=halfWidth-2.5f+.6f;
         var head=new Vector3(-reach,0,0);var span=head-support;
         var arm=WorldBuilder.Box("Signal arm",(head+support)*.5f+Vector3.up*4.9f,new Vector3(.12f,.12f,span.magnitude),pole,root.transform,false);arm.transform.localRotation=Quaternion.LookRotation(span);
-        bool permissive=j.leftTurnMode==LeftTurnMode.Permissive;
-        WorldBuilder.Box("Signal housing",new Vector3(-reach,4.55f,0),new Vector3(permissive?2.25f:2.9f,.85f,.35f),dark,root.transform,false);
+        bool permissive=j.leftTurnMode==LeftTurnMode.Permissive,hasLeft=HasLeftMovement(j,editAxis,editSign),threeLamps=permissive||!hasLeft;
+        WorldBuilder.Box("Signal housing",new Vector3(-reach,4.55f,0),new Vector3(threeLamps?2.25f:2.9f,.85f,.35f),dark,root.transform,false);
         var lamps=new Renderer[3];
         for(int i=0;i<3;i++) {
-            var ball=GameObject.CreatePrimitive(PrimitiveType.Sphere); ball.name="Signal lamp "+(SignalColor)i; ball.transform.SetParent(root.transform,false);ball.transform.localPosition=new Vector3(-reach+(permissive?(i-1)*.6f:i==0?-.9f:i==1?-.3f:.9f),4.55f,-.22f);ball.transform.localScale=new Vector3(.56f,.56f,.18f); if(Application.isPlaying)Destroy(ball.GetComponent<Collider>());else DestroyImmediate(ball.GetComponent<Collider>());lamps[i]=ball.GetComponent<Renderer>();
+            var ball=GameObject.CreatePrimitive(PrimitiveType.Sphere); ball.name="Signal lamp "+(SignalColor)i; ball.transform.SetParent(root.transform,false);ball.transform.localPosition=new Vector3(-reach+(threeLamps?(i-1)*.6f:i==0?-.9f:i==1?-.3f:.9f),4.55f,-.22f);ball.transform.localScale=new Vector3(.56f,.56f,.18f); if(Application.isPlaying)Destroy(ball.GetComponent<Collider>());else DestroyImmediate(ball.GetComponent<Collider>());lamps[i]=ball.GetComponent<Renderer>();
         }
-        j.lamps.Add(lamps);j.lampStates.Add(-1);int approachAxis=Mathf.Abs(Vector3.Dot(direction,AxisDirection(j,0)))>.7f?0:1;j.lampAxes.Add(approachAxis);j.lampSigns.Add(Sign(direction,approachAxis,j));
+        j.lamps.Add(lamps);j.lampStates.Add(-1);j.lampAxes.Add(editAxis);j.lampSigns.Add(editSign);j.leftMovements.Add(hasLeft);
         if(j.facility!=null){var label=new GameObject("Facility provenance "+j.name);label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(-reach,2.8f,-.1f);var text=label.AddComponent<TextMesh>();text.text=j.facility.facilityStatus=="verified"?"현장 확인 시설":"임시 교통시설";text.fontSize=40;text.characterSize=.065f;text.anchor=TextAnchor.MiddleCenter;text.color=j.facility.facilityStatus=="verified"?Color.green:new Color(1,.75f,.2f);KoreanText.Apply(text);label.AddComponent<RoadSignLabel>();}
 
-        if(permissive){
-            RoadSignage.CreatePermissive(root.transform,new Vector3(-reach,5.65f,0));
+        if(threeLamps){
+            if(permissive&&hasLeft)RoadSignage.CreatePermissive(root.transform,new Vector3(-reach,5.65f,0));
             j.leftLamps.Add(new Renderer[0]);return;
         }
         var arrow=new List<Renderer>();var origin=new Vector3(-reach+.3f,4.55f,-.24f);

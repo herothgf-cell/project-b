@@ -35,7 +35,7 @@
 | 생활 거점·경제 | 주유소3곳·식당·주차/휴식·세차, 개인택시 현금/미납/비용 | 실내 보행·시설 미니게임·보험·세금·법인 운영·차량매매 | [05](content-design/03-life-and-economy.md) |
 | 운전자 | 포만감·피로·식사/수면·피로100 졸음과 예정20분 이후 초과 영업 | 질병·스트레스·강제 충돌 | [10](content-design/03-life-and-economy.md) |
 | 캠페인 | 3일×예정20분·초과 영업/휴식 종료·일별 순수익 비교·새 캠페인 | 고정3만원 달성형·장편 서사·무한 경영 | [07](content-design/04-campaign-and-feedback.md) |
-| 저장 | v3 중단 운송·위치·시간·요청·회계·차량/운전자 상태, 구v2 호환 | 지도 리비전 불일치의 임의 운송 재배치 | [05](content-design/03-life-and-economy.md),[07](content-design/04-campaign-and-feedback.md) |
+| 저장 | v3 중단 운송·위치·시간·요청·회계·차량/운전자 상태, 구v2 호환. 복원 거부 시 명시적 확인과 원본/백업 보존 후 새 캠페인 | 지도 리비전 불일치의 임의 운송 재배치·손상된 원본의 자동 복구 보장 | [05](content-design/03-life-and-economy.md),[07](content-design/04-campaign-and-feedback.md),[복구 이력](work-history/2026-10-30-startup-and-junction-recovery.md) |
 | 일반 보행자 | 상황용과 별도로 최대8허브/36명, 현재 안전 배치23명(보도16/횡단7) | 안전 경로 부족 슬롯은 비움 | [16](content-design/01-driving-and-traffic.md) |
 | 후속 관계·사고 | 후속 기획만 보존, 현재 차량 내구도/복귀는 위 별도 행 | 예약·단골·확장 사고 사건·보험 청구·구급차 개발 | [04](content-design/02-passengers-and-fares.md),[08](future-design/accidents-and-repairs.md) |
 
