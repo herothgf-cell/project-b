@@ -34,4 +34,8 @@
 
 ## 배포 자료 검증
 
-실제 소스 커밋 `46cc44875e66ec01ea41cd61ff4cf63b894d309a`을 이력의 `git log -1 --oneline`으로 확인했다. `tools/update_distribution_manifest.ps1 -SourceCommit 46cc44875e66ec01ea41cd61ff4cf63b894d309a -ValidatedOn 2026-10-30 -ValidationReport artifacts/real-left-recheck-validation.json` 및 `-VerifyOnly` 종료0. 실행 폴더130파일112,293,085바이트의 크기/SHA256이 일치한다. 실제 main 게시 영수증은 게시 후 아래에 기록한다.
+실제 소스 커밋 `46cc44875e66ec01ea41cd61ff4cf63b894d309a`을 이력의 `git log -1 --oneline`으로 확인했다. `tools/update_distribution_manifest.ps1 -SourceCommit 46cc44875e66ec01ea41cd61ff4cf63b894d309a -ValidatedOn 2026-10-30 -ValidationReport artifacts/real-left-recheck-validation.json` 및 `-VerifyOnly` 종료0. 실행 폴더130파일112,293,085바이트의 크기/SHA256이 일치한다. 실제 main 게시 영수증은 아래를 따른다.
+
+## main 게시 영수증
+
+배포 커밋 `bcb710c87e363710d9be84c178ce857c53d80cc5`을 main에 fast-forward 병합하고 `git push origin main` 종료0을 확인했다. 로컬HEAD와 `git ls-remote origin refs/heads/main`이 같은 실제 해시로 일치했다. main에서130파일112,293,085바이트 전수 크기/SHA256 검증과 입력 Strict도 종료0/issues0이었다. 이 영수증은 실제 게시 이후 별도 문서 커밋으로 함께 게시한다. 기존 사용자/PvP untracked7항목은 보존했다.
