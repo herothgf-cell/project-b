@@ -94,3 +94,7 @@ J1927의 먼 원본530 B2218G610924/B222BC004101은 법규 판정에 쓰이지 �
 ## 미검증·남은 항목
 
 사람20분/3일·장시간 교통·모든 교차로의 실측 형상/전체 도로 주행·다른 실제 PC 성능은 미검증이다. 지도·경로 및 상태 제어 자동 검사를 수동 플레이로 표시하지 않는다. 최종 실행 폴더 크기/SHA256와 실제 게시 해시는 아래 완료 기록에서 확인한다.
+
+## 배포 검증
+
+소스 커밋은 `5a208a6988ec7e53c12298390c50593ce05283c4`다. `git log -1 --oneline -- docs/work-history/2026-10-30-stop-lines-uturns.md`로 실제 이력 커밋을 확인했다. `tools/update_distribution_manifest.ps1 -SourceCommit 5a208a6988ec7e53c12298390c50593ce05283c4 -ValidatedOn 2026-10-30 -ValidationReport artifacts/stop-uturn-validation.json`과 `-VerifyOnly` 모두 종료0. 실행 폴더130파일112,287,658바이트의 크기·SHA256이 일치한다. 입력 Strict 최종 검사도 종료0/issues0다. 아래 게시 영수증은 실제 원격 결과 확인 후 기록한다.
