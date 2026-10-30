@@ -38,4 +38,4 @@ Files: PvpBootstrap/PvpPrototypePanel/PvpBuild, MapCatalog, new runtime probe/ed
 
 ## Task 4 — Review and publication
 - [x] Independent review, fix material findings, run relevant regressions.
-- [ ] Update roadmap/content/history/LATEST with actual results and limitations; commit source and rebuilt distribution; push feature/pvp-prototype.
+- [x] Update roadmap/content/history/LATEST with actual results and limitations; commit source and rebuilt distribution; push feature/pvp-prototype.

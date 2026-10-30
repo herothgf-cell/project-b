@@ -106,4 +106,6 @@ PVP의 메모리 전용 세션/빈 저장 경로/운전 기록 비활성/모드 
 - 확장 A는3.6×2.8km/9권역/18거점/650방향 차로의 첫 MapData 구현이다. 시안의 해안·교량·다차로 간선/미술 완성까지 끝났다는 뜻이 아니다.
 
 ### 게시 영수증
-로컬 배포 검증 완료. 다음에 실제 커밋·원격 게시 결과를 기록한다.
+배포 커밋5be1db3099aa1f6c1608a33f0ac0d4eef0e24352를 feature/pvp-prototype에 푸시했고 git ls-remote로 동일 해시를 확인했다. 빌드 소스는 b5b5304다. 기록 자체의 실제 커밋은 git log -1 --oneline -- docs/work-history/2026-10-30-pvp-simulation-integration.md로 확인한다.
+
+공통 TrafficSystem/TrafficCar 소스의 예약 보호 경로 수정은 PVP에 재빌드되어 검증됐다. 기존 싱글 실행 폴더는 최신 main 배포 그대로 보존했으며, 공통 수정은 차기 싱글 재빌드 때 반영된다. 작업 worktree와 브랜치는 유지한다.
