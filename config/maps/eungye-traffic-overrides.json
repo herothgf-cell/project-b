@@ -1,19 +1,6 @@
 {
   "junctions": [
     {
-      "id": "J5750_2576", "x": 575.018, "z": 257.612,
-      "status": "provisional", "allowLeft": true, "allowRight": true, "allowStraight": true,
-      "signalMode": 0, "dx": -0.9999873, "dz": 0.0050346,
-      "crosswalk": true, "stopLine": true,
-      "facilityStatus": "user-corrected", "facilityCheckedAt": "2026-10-27",
-      "facilityEvidence": "User screenshot4 reports an unsignalized crossing. Nearby Naver approach reviewed; exact private-access dimensions not surveyed. Remove fictional prototype signals, retain crossing and directed T-junction connections.",
-      "approaches": [
-        {"dx":-0.999987,"dz":0.005035,"width":17.6},
-        {"dx":0.999987,"dz":-0.005091,"width":17.6},
-        {"dx":-0.001055,"dz":-0.999999,"width":15.0}
-      ]
-    },
-    {
       "x": 188.2480010986328,
       "z": 1179.10595703125,
       "id": "J1882_11791",
@@ -360,40 +347,6 @@
       ]
     },
     {
-      "x": 575.0180053710938,
-      "z": 257.61199951171875,
-      "id": "J5750_2576",
-      "status": "provisional",
-      "allowLeft": true,
-      "allowRight": true,
-      "allowStraight": true,
-      "signalMode": 2,
-      "dx": -0.9999873263155801,
-      "dz": 0.005034601098158297,
-      "crosswalk": true,
-      "stopLine": true,
-      "facilityStatus": "provisional",
-      "facilityEvidence": "Prototype placement from road connections; not field verified.",
-      "facilityCheckedAt": "",
-      "approaches": [
-        {
-          "dx": -0.999987,
-          "dz": 0.005035,
-          "width": 17.6
-        },
-        {
-          "dx": 0.999987,
-          "dz": -0.005091,
-          "width": 17.6
-        },
-        {
-          "dx": -0.001055,
-          "dz": -0.999999,
-          "width": 15.0
-        }
-      ]
-    },
-    {
       "x": 619.9400024414062,
       "z": 1198.7110595703125,
       "id": "J6199_11987",
@@ -468,40 +421,6 @@
           "dx": -0.362708,
           "dz": 0.931903,
           "width": 12.8
-        }
-      ]
-    },
-    {
-      "x": 720.4180297851562,
-      "z": 256.8760070800781,
-      "id": "J7204_2569",
-      "status": "provisional",
-      "allowLeft": true,
-      "allowRight": true,
-      "allowStraight": true,
-      "signalMode": 2,
-      "dx": -0.9999871913268347,
-      "dz": 0.005061341943446867,
-      "crosswalk": true,
-      "stopLine": true,
-      "facilityStatus": "provisional",
-      "facilityEvidence": "Prototype placement from road connections; not field verified.",
-      "facilityCheckedAt": "",
-      "approaches": [
-        {
-          "dx": -0.999987,
-          "dz": 0.005061,
-          "width": 17.6
-        },
-        {
-          "dx": 0.009054,
-          "dz": -0.999959,
-          "width": 15.0
-        },
-        {
-          "dx": 0.999987,
-          "dz": -0.005044,
-          "width": 17.6
         }
       ]
     },
@@ -777,6 +696,103 @@
           "width": 25.0
         }
       ]
+    },
+    {
+      "x": 575.0180053710938,
+      "z": 257.61199951171875,
+      "crosswalk": true,
+      "stopLine": false,
+      "facilityStatus": "user-corrected",
+      "facilityEvidence": "User map + Naver May2026 commercial T-crossing: marked crosswalk, no traffic signals. No surveyed timing or dimensions.",
+      "facilityCheckedAt": "2026-10-29",
+      "approaches": [
+        {
+          "dx": -0.999987006187439,
+          "dz": 0.005034999921917915,
+          "width": 17.600000381469727
+        },
+        {
+          "dx": 0.999987006187439,
+          "dz": -0.005090999882668257,
+          "width": 17.600000381469727
+        },
+        {
+          "dx": -0.0010550000006332994,
+          "dz": -0.9999989867210388,
+          "width": 15.0
+        }
+      ],
+      "id": "J5750_2576",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 0,
+      "dx": -0.9999873042106628,
+      "dz": 0.00503460131585598
+    },
+    {
+      "x": 720.4180297851562,
+      "z": 256.8760070800781,
+      "crosswalk": true,
+      "stopLine": false,
+      "facilityStatus": "user-corrected",
+      "facilityEvidence": "User map + Naver May2026 commercial T-crossing: marked crosswalk, no traffic signals. No surveyed timing or dimensions.",
+      "facilityCheckedAt": "2026-10-29",
+      "approaches": [
+        {
+          "dx": -0.999987006187439,
+          "dz": 0.005061000119894743,
+          "width": 17.600000381469727
+        },
+        {
+          "dx": 0.009053999558091164,
+          "dz": -0.9999589920043945,
+          "width": 15.0
+        },
+        {
+          "dx": 0.999987006187439,
+          "dz": -0.005044000223278999,
+          "width": 17.600000381469727
+        }
+      ],
+      "id": "J7204_2569",
+      "status": "provisional",
+      "allowLeft": true,
+      "allowRight": true,
+      "allowStraight": true,
+      "signalMode": 0,
+      "dx": -0.9999871850013733,
+      "dz": 0.005061341915279627
+    },
+    {
+      "x": 648.0,
+      "z": 257.29998779296875,
+      "crosswalk": false,
+      "stopLine": true,
+      "facilityStatus": "user-corrected",
+      "facilityEvidence": "https://map.naver.com/p/entry/coordinates/3zao1h,2AGJhI?c=15,0,0,0,adh&p=i7qori-dtj0W3l_zrXdqrg,-45,10,80,Float; single midblock crossing observed; mapped centre/dimensions and35/12s stages are game estimates.",
+      "facilityCheckedAt": "2026-10-29",
+      "approaches": [
+        {
+          "dx": 1.0,
+          "dz": 0.0,
+          "width": 17.600000381469727
+        },
+        {
+          "dx": -1.0,
+          "dz": 0.0,
+          "width": 17.600000381469727
+        }
+      ],
+      "id": "J6480_2573",
+      "status": "provisional",
+      "allowLeft": false,
+      "allowRight": false,
+      "allowStraight": true,
+      "signalMode": 2,
+      "dx": 1.0,
+      "dz": 0.0
     }
   ],
   "roads": [],

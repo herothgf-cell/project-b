@@ -5,14 +5,25 @@ using UnityEngine;
 public class DriveFeedbackSmokeTest : MonoBehaviour {
  public DriveSession session;bool ok=true;StringBuilder report=new StringBuilder();
  void Check(bool value,string message){ok&=value;report.AppendLine((value?"PASS ":"FAIL ")+message);}
+ void CheckRepeatedIncidents(DriveNotifications notices){
+  var original=session.law.ledger;var repeated=new LawLedger();session.law.ledger=repeated;
+  for(int i=0;i<4;i++){var e=new LawEvent{id="repeat-"+i,day=1,tripId="same",family="signal",action="신호 위반"};e.Add("L02",LawVerdict.Violation,4);repeated.Record(e);}notices.RefreshScores();
+  var next=new LawEvent{id="repeat-4",day=1,tripId="same",family="signal",action="신호 위반"};next.Add("L02",LawVerdict.Violation,4);repeated.Record(next);notices.RefreshScores();
+  Check(repeated.TotalScore==80&&notices.VisibleText.Contains("-4"),"score84 immediately changes for independent violation in same family and trip");
+  repeated.RecordIncident(next);notices.RefreshScores();Check(repeated.TotalScore==80&&repeated.Count==5,"same physical incident does not deduct each frame");session.law.ledger=original;notices.RefreshScores();
+  var ids=new PrototypeIds("journal");var source=new LawLedger();var bad=new LawEvent{id="journal:event:499",day=1};bad.Add("red",LawVerdict.Violation,20);source.Record(bad);var good=new LawEvent{id="journal:event:500",day=1,recoveryPolicyVersion=1};good.Add("zero",LawVerdict.Compliant,0);source.Record(good);
+  var upgrade=good.Copy();upgrade.rules[0].verdict=LawVerdict.Violation;
+  var snapshot=new DrivingScoreSnapshot{campaign="journal",sequence=1,events=new[]{upgrade}};DrivingScoreJournal.Restore(snapshot,ids,source);
+  Check(source.TotalScore==80&&ids.sequence==500&&ids.Next("event")=="journal:event:501","journal merges equal-penalty verdict upgrades and recovers actual event identity sequence");int revision=source.Revision;DrivingScoreJournal.Restore(snapshot,ids,source);Check(source.TotalScore==80&&source.Revision==revision,"journal replay is idempotent");
+ }
  IEnumerator Start(){
-  yield return new WaitForSecondsRealtime(2);session.business.enabledCampaign=true;session.business.Depart();session.taxi.automated=true;session.taxi.autoBrake=true;
+  while(!session.StartupReady)yield return null;yield return null;session.business.enabledCampaign=true;session.business.Depart();session.taxi.automated=true;session.taxi.autoBrake=true;
   var notices=session.GetComponent<DriveNotifications>();Check(Application.productName=="은계 택시 시뮬레이터","player title");
-  Check(session.traffic.cars.Count==48,"48 general cars");Check(session.GetComponent<RoadSignage>().Count>0,"game road signs created");
+  Check(session.traffic.cars.Count==DistrictTraffic.PoolCap,"production general car pool");int expectedSigns=0,signalApproaches=0;foreach(var junction in session.traffic.junctions)for(int i=0;i<junction.lamps.Count;i++){signalApproaches++;if(junction.leftTurnMode==LeftTurnMode.Permissive&&(!junction.scenarioSignal||junction.lampAxes[i]==junction.observationAxis&&junction.lampSigns[i]==junction.observationSign))expectedSigns++;}Check(signalApproaches>0&&session.GetComponent<RoadSignage>().Count==expectedSigns,"only applicable movement condition signs are created");
   session.business.ledger.Account.Consume(0,11500);yield return null;Check(notices.FuelLow,"top low fuel warning at 14 percent");
   var e=new LawEvent{id="feedback-bad",day=1,action="신호 위반"};e.Add("L01",LawVerdict.Violation,20);session.law.ledger.Record(e);yield return null;yield return null;
   Check(session.law.ledger.TotalScore==80&&notices.VisibleText.Contains("-20"),"law deduction toast uses actual score delta");
-  yield return new WaitForSecondsRealtime(4.4f);Check(notices.VisibleText=="","toast automatically dismisses");
+  CheckRepeatedIncidents(notices);yield return new WaitForSecondsRealtime(4.4f);Check(notices.VisibleText=="","toast automatically dismisses");
   var good=new LawEvent{id="feedback-good",day=2};good.Add("L02",LawVerdict.Compliant,0);session.law.ledger.Record(good);yield return null;yield return null;
   Check(session.law.ledger.TotalScore==81&&notices.VisibleText.Contains("+1"),"next day retains score and observed compliance recovers one");
   Check(session.business.SaveCheckpoint(),"checkpoint saves cumulative observations");var saved=JsonUtility.FromJson<CampaignCheckpoint>(File.ReadAllText(session.business.SavePath));var restored=new LawLedger();foreach(var entry in saved.law)restored.Record(entry);Check(restored.TotalScore==81,"serialized score restores across days");

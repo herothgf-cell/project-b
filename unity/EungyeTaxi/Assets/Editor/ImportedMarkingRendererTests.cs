@@ -8,9 +8,13 @@ public static class ImportedMarkingRendererTests {
  static HdMark Mark(string id,string type,bool reverse){return new HdMark{id=id,type=type,kind="506",points=reverse?new[]{new MapPoint{x=10,z=0},new MapPoint{x=0,z=0}}:new[]{new MapPoint{x=0,z=0},new MapPoint{x=10,z=0}}};}
  static int Vertices(params HdMark[] marks){var root=new GameObject("marking test");try{HdRouteTrial.DrawMarkings(new MapData{hdMarks=marks},root.transform);var child=root.transform.Find("원본 노면선 1");return child.GetComponent<MeshFilter>().sharedMesh.vertexCount;}finally{UnityEngine.Object.DestroyImmediate(root);}}
  static Vector3[] YellowVertices(MapData map){var root=new GameObject("roadside marking test");try{HdRouteTrial.DrawMarkings(map,root.transform);return root.transform.Find("원본 노면선 1").GetComponent<MeshFilter>().sharedMesh.vertices;}finally{UnityEngine.Object.DestroyImmediate(root);}}
+ static Vector3[] WhiteVertices(MapData map){var root=new GameObject("divider marking test");try{HdRouteTrial.DrawMarkings(map,root.transform);return root.transform.Find("원본 노면선 0").GetComponent<MeshFilter>().sharedMesh.vertices;}finally{UnityEngine.Object.DestroyImmediate(root);}}
  static int QuadsNear(Vector3[] vertices,Vector3 point,float radius){int count=0;for(int i=0;i<vertices.Length;i+=4){var centre=(vertices[i]+vertices[i+1]+vertices[i+2]+vertices[i+3])*.25f;if(Vector3.Distance(centre,point)<radius)count++;}return count;}
  static bool SpansX(Vector3[] vertices,float x){for(int i=0;i<vertices.Length;i+=4){float min=float.MaxValue,max=float.MinValue;for(int j=0;j<4;j++){min=Mathf.Min(min,vertices[i+j].x);max=Mathf.Max(max,vertices[i+j].x);}if(min<x&&max>x)return true;}return false;}
  public static void Run(){
+  SharedLongitudinalRegressions();
+  GeneratedCrosswalkRegressions();
+  ZeroReachCrosswalkRegressions();
   int single=Vertices(Mark("single","111",false));
   Check(single==20,"single solid control uses five strips");
   Check(Vertices(Mark("double","121",false))==2*single,"121 draws two separate solid strokes");
@@ -76,5 +80,42 @@ public static class ImportedMarkingRendererTests {
   Check(QuadsNear(sideVertices,new Vector3(523.2f,0,457.2f),.65f)==0,"J5057 east no-stopping tip does not enter generated crossing");
   Check(QuadsNear(sideVertices,new Vector3(475.5f,0,436f),.65f)>0&&QuadsNear(sideVertices,new Vector3(490.7f,0,429.8f),.65f)>0,"J5057 observed outer yellow kerb persists outside crossing and inner channel");
   Debug.Log("IMPORTED_MARKING_RENDERER_TEST_OK");
+ }
+ static void SharedLongitudinalRegressions(){
+  var points=new[]{new MapPoint{x=20,z=-30},new MapPoint{x=20,z=30}};
+  var divider=new HdMark{id="wide-divider",type="211",kind="506",points=points};
+  var map=new MapData{hdMarks=new[]{divider},junctionRules=new[]{new HybridJunctionRule{id="wide",dx=0,dz=1,crosswalk=true,stopLine=true,approaches=new[]{new HybridApproach{dx=0,dz=1,width=42.6f},new HybridApproach{dx=1,dz=0,width=14}}}}};
+  var white=WhiteVertices(map);
+  Check(QuadsNear(white,new Vector3(20,0,6),.8f)==0,"white imported506 divider clipped at physical wide-junction corner beyond18m");
+  Check(QuadsNear(white,new Vector3(20,0,-20),.8f)>0&&QuadsNear(white,new Vector3(20,0,20),.8f)>0,"white divider fragments survive outside approach opening");
+  divider.type="212";white=WhiteVertices(map);
+  Check(QuadsNear(white,new Vector3(20,0,-23),.6f)>0&&QuadsNear(white,new Vector3(20,0,-20),.6f)==0,"imported506 retains source dash stations after junction clipping");
+  divider.kind="501";divider.type="111";var yellow=YellowVertices(map);
+  Check(QuadsNear(yellow,new Vector3(20,0,6),.8f)==0&&QuadsNear(yellow,new Vector3(20,0,-20),.8f)>0,"imported501 shares physical clearance while upstream source survives");
+  var mask=new HdRouteTrial.LongitudinalJunctionPaintMask(map);
+  foreach(var kind in new[]{"525","530","532","505","515"}){divider.kind=kind;Check(!mask.MightAffect(divider),"non-longitudinal source kind retains separate semantics "+kind);}
+  divider.kind="530";divider.type="211";white=WhiteVertices(map);
+  Check(QuadsNear(white,new Vector3(20,0,6),1.2f)>0,"source stop/turn-guide categories do not receive blanket longitudinal clipping");
+  var empty=new HdRouteTrial.LongitudinalJunctionPaintMask(new MapData());divider.kind="506";
+  Check(!empty.MightAffect(divider)&&!empty.Covers(Vector3.zero,Vector3.forward,.25f),"minimal maps without rules create no paint exclusion");
+ }
+ static void GeneratedCrosswalkRegressions(){
+  var rule=new HybridJunctionRule{id="generated-only",dx=0,dz=1,crosswalk=true,stopLine=true,approaches=new[]{new HybridApproach{dx=0,dz=1,width=42.6f},new HybridApproach{dx=1,dz=0,width=14}}};
+  var hook=new HdMark{id="kerb-hook",kind="515",type="111",points=new[]{new MapPoint{x=20,z=-30},new MapPoint{x=20,z=30}}};
+  var map=new MapData{junctionRules=new[]{rule},hdMarks=new[]{hook}};
+  var bands=ReviewedCrosswalkGeometry.Build(map);Check(bands.Count==2&&bands.All(b=>!b.authored),"generated crosswalk zones exist without any authored facilities or document");
+  foreach(string kind in new[]{"505","515"}){hook.kind=kind;var vertices=YellowVertices(map);Check(QuadsNear(vertices,new Vector3(20,0,-8.8f),.9f)==0,"generated zebra clips actual kerb hook kind "+kind);Check(QuadsNear(vertices,new Vector3(20,0,-20),.8f)>0,"actual outer kerb preserved upstream kind "+kind);}
+  hook.type="212";hook.points=new[]{new MapPoint{x=0,z=-28},new MapPoint{x=0,z=30}};
+  foreach(string kind in new[]{"502","503"}){hook.kind=kind;var vertices=WhiteVertices(map);Check(QuadsNear(vertices,new Vector3(0,0,-2),.8f)==0,"longitudinal/taper kind clipped in physical opening "+kind);Check(QuadsNear(vertices,new Vector3(0,0,-26),.8f)>0,"source approach dash retained "+kind);}
+  hook.kind="525";var guide=WhiteVertices(map);Check(QuadsNear(guide,new Vector3(0,0,-2),.8f)>0,"legitimate dashed turn guide remains inside intersection");Check(QuadsNear(guide,new Vector3(0,0,-8.8f),.9f)==0,"turn guide ends before zebra band");
+ }
+ static void ZeroReachCrosswalkRegressions(){
+  var map=new MapData{junctionRules=new[]{new HybridJunctionRule{id="midblock",x=648,z=257.3f,dx=1,dz=0,crosswalk=false}},editorDocument=new RoadMapDocument{facilities=new[]{new RoadMapFacility{kind="crosswalk",junctionId="midblock",x=648,z=257.3f,yaw=90,width=17.6f,length=4}}}};
+  var zones=ReviewedCrosswalkGeometry.Build(map);Check(zones.Count==1&&zones[0].authored&&Mathf.Abs(zones[0].reach)<.001f,"authored zero-reach crossing exists even with generated crossing disabled");
+  var centre=new Vector3(648,0,257.3f);Check(zones[0].InBand(centre,0)&&!zones[0].JunctionSide(centre+Vector3.right*5,0)&&!zones[0].Core(centre+Vector3.right*5,18),"midblock masks stripe band without inventing a junction-side corridor");
+  Check(RoadPaintGeometry.InOpening(centre,new List<RoadJunctionGeometry.Clearance>(),new List<RoadJunctionGeometry.Opening>(),zones,0),"compiled paint checks zero-reach authored stripe band");
+  var line=new HdMark{id="midblock-hook",type="111",kind="515",points=new[]{new MapPoint{x=638,z=257.3f},new MapPoint{x=658,z=257.3f}}};map.hdMarks=new[]{line};
+  foreach(string kind in new[]{"505","515"}){line.kind=kind;var vertices=YellowVertices(map);Check(QuadsNear(vertices,centre,.8f)==0,"midblock zero-reach zebra clips kerb kind "+kind);Check(QuadsNear(vertices,centre+Vector3.right*6,.8f)>0,"midblock preserves kerb outside band "+kind);}
+  line.kind="525";line.type="212";var guide=WhiteVertices(map);Check(QuadsNear(guide,centre,.8f)==0&&QuadsNear(guide,centre-Vector3.right*9,.8f)>0,"zero-reach crossing trims dashed guide only inside stripe band");
  }
 }

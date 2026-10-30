@@ -4,6 +4,15 @@ class PassengerBehaviorTests {
  static void Check(bool ok,string message){n++;if(!ok){Console.WriteLine("FAIL "+message);Environment.Exit(1);}}
  static void Reject(Action action,string name){bool rejected=false;try{action();}catch(ArgumentException){rejected=true;}Check(rejected,name);}
  static void Main(){
+  var bonusProperty=typeof(PassengerBehaviorState).GetProperty("SatisfactionDelta");
+  Check(bonusProperty!=null,"food permission must reward satisfaction");
+  Func<PassengerBehaviorState,int> bonus=p=>(int)bonusProperty.GetValue(p,null);
+  var consent=PassengerBehaviorState.Create("consent",PassengerType.Food);consent.Board();
+  Check(bonus(consent)==0&&!consent.Respond(1,false)&&bonus(consent)==0,"no consent or unsafe response cannot award");
+  Check(consent.Respond(1,true)&&bonus(consent)==5,"permission adds5 before actual consumption");
+  Check(!consent.Respond(1,true)&&bonus(consent.Copy())==5,"repeat and restored choice cannot stack reward");
+  consent.Advance(25,false,true,.6f,100);consent.Arrive();consent.Finish(true);Check(bonus(consent)==5,"food reward persists through consumption and settlement");
+  foreach(int c in new[]{0,2}){var p=PassengerBehaviorState.Create("no-consent",PassengerType.Food);p.Board();p.Respond(c,true);Check(bonus(p)==0,"sealed or cleanup remains neutral");}
   Check(typeof(PassengerBehaviorState).GetMethod("BindEffectTrip")!=null,"dirt effects need actual trip identity, separate from candidate draw");
   Check(typeof(PassengerBehaviorState).GetMethod("SetRepresentativeContext")!=null,"dialogue must track actual representative request outcome");
   foreach(PassengerType t in Enum.GetValues(typeof(PassengerType))){var p=PassengerBehaviorState.Create("stable",t);p.Validate();var q=p.Copy();Check(p.Variant==q.Variant&&p.Dialogue==q.Dialogue,"stable variant "+t);if(t!=PassengerType.General){Check(p.Choices.Length>=2&&!p.Respond(0,false),"safe response "+t);Check(p.Respond(0,true)&&!p.Respond(0,true),"one response "+t);Check(p.Dialogue.Length>0,"response memory "+t);} }

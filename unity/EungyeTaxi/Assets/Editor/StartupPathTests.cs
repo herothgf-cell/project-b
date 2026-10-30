@@ -44,7 +44,7 @@ public static class StartupPathTests {
  }
  // Runtime callers can validate the fully built scene without edit-mode car creation.
  public static void ValidatePopulation(TrafficSystem system){
-  Check(system.cars.Count==48,"48 allocated cars");int visible=0;var cells=new HashSet<Vector2Int>();
+  Check(system.cars.Count==DistrictTraffic.PoolCap,"production allocated car pool");int visible=0;var cells=new HashSet<Vector2Int>();
   foreach(var car in system.cars){Check(car.Visible,"seed visible");visible++;var p=car.transform.position;cells.Add(new Vector2Int(Mathf.FloorToInt(p.x/250),Mathf.FloorToInt(p.z/250)));Check(car.route.graphPath!=null,"shared directed graph");float error;car.route.graphPath.path.Project(p,out error);Check(error<.2f,"seed on route");
    foreach(var other in system.cars)if(other!=car)Check((p-other.transform.position).sqrMagnitude>=99.9f,"10m initial spacing");
   }

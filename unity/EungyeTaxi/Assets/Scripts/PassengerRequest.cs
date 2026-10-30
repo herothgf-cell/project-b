@@ -77,6 +77,16 @@ public sealed class PassengerRequestChoice {
  public PassengerRequestChoice(PassengerReply reply,string label,string effect){this.reply=reply;this.label=label;this.effect=effect;}
 }
 public static class PassengerRequestChoices {
+ public static string SatisfactionEffect(RequestKind kind,PassengerReply reply){
+  if(reply==PassengerReply.Defer)return "만족도 변화 0";
+  int gain=PassengerRequest.Delta(kind,true),loss=PassengerRequest.Delta(kind,false);
+  if(gain==0)return "만족도 변화 0";
+  if(kind==RequestKind.LargeRoad||kind==RequestKind.ShortRoad)return "하차 시 이행 만족도 +"+gain+" · 합법 우회/판정 불가 0";
+  if(kind==RequestKind.Comfort)return "하차 시 이행 만족도 +"+gain+" / 미이행 "+loss;
+  if(kind==RequestKind.OnTime)return "하차 시 이행 +"+gain+" / 위반 동반 미이행 "+loss+" · 합법적 지연 0";
+  if(kind==RequestKind.SafeStop||kind==RequestKind.DestinationChange||kind==RequestKind.ViaStop)return "하차 시 이행 만족도 +"+gain+" / 미이행 "+loss;
+  return "하차 시 응대 만족도 +"+gain+" · 판정 불가 0";
+ }
  static PassengerRequestChoice C(PassengerReply reply,string label,string effect){return new PassengerRequestChoice(reply,label,effect);}
  public static PassengerRequestChoice[] For(RequestKind kind){
   var choices=new System.Collections.Generic.List<PassengerRequestChoice>();
@@ -91,15 +101,15 @@ public static class PassengerRequestChoices {
    case RequestKind.Empathy:choices.Add(C(PassengerReply.Accept,"이야기 들어드릴게요","공감 대사 · 하차 때 응대 결과 반영"));choices.Add(C(PassengerReply.Alternative,"조용히 가실까요?","조용한 배려 · 후속 대사 억제"));break;
    case RequestKind.RouteAdvice:choices.Add(C(PassengerReply.Accept,"빠른 길을 추천할게요","빠른 경로 적용 · 운임/기한 유지"));choices.Add(C(PassengerReply.Alternative,"짧은 길을 추천할게요","짧은 경로 적용 · 운임/기한 유지"));break;
    case RequestKind.Interview:choices.Add(C(PassengerReply.Accept,"응원할게요!","격려 대사 · 면접 결과는 평가하지 않음"));choices.Add(C(PassengerReply.Alternative,"조용히 준비하시게 할게요","조용한 배려 · 후속 대사 억제"));break;
-   case RequestKind.Music:choices.Add(C(PassengerReply.Accept,"가능한 범위를 안내할게요","프로토는 음악 변경 없음 · 보너스 없음"));break;
-   case RequestKind.FareHelp:choices.Add(C(PassengerReply.Accept,"약정 요금을 안내할게요","지급 규칙 안내 · 할인/추가 부채 없음"));choices.Add(C(PassengerReply.Alternative,"결제는 하차 때 확인할게요","동일 운임 유지 · 보너스 없음"));break;
+   case RequestKind.Music:choices.Add(C(PassengerReply.Accept,"가능한 범위를 안내할게요","음악 변경 없음 · 응대만 반영"));break;
+   case RequestKind.FareHelp:choices.Add(C(PassengerReply.Accept,"약정 요금을 안내할게요","지급 규칙 안내 · 할인/추가 부채 없음"));choices.Add(C(PassengerReply.Alternative,"결제는 하차 때 확인할게요","동일 약정 운임 유지"));break;
    case RequestKind.LocalChat:choices.Add(C(PassengerReply.Accept,"은계 주변을 다니고 있어요","지역 대사 · 하차 때 응대 결과 반영"));choices.Add(C(PassengerReply.Alternative,"안전하게 모셔다드릴게요","안전 운행 응대 · 동일 운임/목적지"));break;
    case RequestKind.DestinationChange:choices.Add(C(PassengerReply.Accept,"새 목적지로 변경할게요","미리 본 목적지/운임/기한으로 변경"));break;
    case RequestKind.ViaStop:choices.Add(C(PassengerReply.Accept,"안전한 지점에 들를게요","미리 본 약정 적용 · 경유지 F 정차 필요"));break;
-   case RequestKind.LostItem:choices.Add(C(PassengerReply.Accept,"보관·신고를 안내할게요","하차 후 텍스트 사건 기록 · 보너스 없음"));choices.Add(C(PassengerReply.Alternative,"안전한 전달 절차 안내","보관/전달 대사 · 반환 퀘스트 없음"));break;
+   case RequestKind.LostItem:choices.Add(C(PassengerReply.Accept,"보관·신고를 안내할게요","하차 후 보관·신고 기록"));choices.Add(C(PassengerReply.Alternative,"안전한 전달 절차 안내","보관/전달 대사 · 반환 퀘스트 없음"));break;
    case RequestKind.RejectIllegal:choices.Add(C(PassengerReply.Accept,"신호는 지켜야 해요","안전 거절 · 위반은 별도 관찰/보상 없음"));break;
    default:throw new System.ArgumentOutOfRangeException("kind");
   }
-  choices.Add(C(PassengerReply.Defer,kind==RequestKind.SafeStop||kind==RequestKind.DestinationChange?"원래 목적지로 모실게요":kind==RequestKind.ViaStop?"이번에는 경유가 어려워요":"안전한 곳에서 확인할게요","원래 운행 유지 · 요청 감점/보너스 없음"));return choices.ToArray();
+  choices.Add(C(PassengerReply.Defer,kind==RequestKind.SafeStop||kind==RequestKind.DestinationChange?"원래 목적지로 모실게요":kind==RequestKind.ViaStop?"이번에는 경유가 어려워요":"안전한 곳에서 확인할게요","원래 운행 유지"));for(int i=0;i<choices.Count;i++){var c=choices[i];choices[i]=C(c.reply,c.label,SatisfactionEffect(kind,c.reply)+"\n"+c.effect);}return choices.ToArray();
  }
 }

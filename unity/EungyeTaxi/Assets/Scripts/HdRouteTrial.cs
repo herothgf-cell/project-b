@@ -4,6 +4,28 @@ using System.Globalization;
 using System.Text;
 
 public class HdRouteTrial : MonoBehaviour {
+ // Only longitudinal source centre/divider lines are replaced in physical
+ // junction openings. Source turn guides, crossings, stop lines and kerbs
+ // retain their own semantics and existing, more selective masks.
+ public sealed class LongitudinalJunctionPaintMask {
+  readonly List<RoadJunctionGeometry.Clearance> zones;
+  readonly Dictionary<Vector2Int,List<RoadJunctionGeometry.Clearance>> cells=new Dictionary<Vector2Int,List<RoadJunctionGeometry.Clearance>>();
+  static Vector2 Extents(RoadJunctionGeometry.Clearance zone){var side=TrafficSystem.Right(zone.forward);return new Vector2(Mathf.Abs(zone.forward.x)*zone.halfDepth+Mathf.Abs(side.x)*zone.halfWidth+.6f,Mathf.Abs(zone.forward.z)*zone.halfDepth+Mathf.Abs(side.z)*zone.halfWidth+.6f);}
+  public LongitudinalJunctionPaintMask(MapData map){zones=RoadJunctionGeometry.PaintClearances(map);foreach(var zone in zones){var extent=Extents(zone);
+   for(int x=Mathf.FloorToInt((zone.center.x-extent.x)/32);x<=Mathf.FloorToInt((zone.center.x+extent.x)/32);x++)for(int z=Mathf.FloorToInt((zone.center.z-extent.y)/32);z<=Mathf.FloorToInt((zone.center.z+extent.y)/32);z++){
+    var key=new Vector2Int(x,z);List<RoadJunctionGeometry.Clearance> list;if(!cells.TryGetValue(key,out list)){list=new List<RoadJunctionGeometry.Clearance>();cells.Add(key,list);}list.Add(zone);
+   }
+  }}
+  public bool MightAffect(HdMark mark){
+   if(mark.kind!="501"&&mark.kind!="502"&&mark.kind!="503"&&mark.kind!="506"||mark.points==null||mark.points.Length<2)return false;
+   float minX=float.MaxValue,maxX=float.MinValue,minZ=float.MaxValue,maxZ=float.MinValue;
+   foreach(var p in mark.points){minX=Mathf.Min(minX,p.x);maxX=Mathf.Max(maxX,p.x);minZ=Mathf.Min(minZ,p.z);maxZ=Mathf.Max(maxZ,p.z);}
+   foreach(var zone in zones){var extent=Extents(zone);
+    if(maxX>=zone.center.x-extent.x&&minX<=zone.center.x+extent.x&&maxZ>=zone.center.z-extent.y&&minZ<=zone.center.z+extent.y)return true;
+   }return false;
+  }
+  public bool Covers(Vector3 centre,Vector3 tangent,float halfLength){List<RoadJunctionGeometry.Clearance> near;if(!cells.TryGetValue(new Vector2Int(Mathf.FloorToInt(centre.x/32),Mathf.FloorToInt(centre.z/32)),out near))return false;foreach(var zone in near)if(zone.Overlaps(centre,tangent,.19f,halfLength))return true;return false;}
+ }
  // The imported roadside line predates the widened local road surface. Hide
  // only the portion crossed by that surface; longitudinal source lines remain.
  sealed class LocalRoadSurfaceMask {
@@ -46,16 +68,23 @@ public class HdRouteTrial : MonoBehaviour {
  sealed class AuthoredJunctionPaintMask {
   struct LaneSpan {public Vector3 a,b;public float interior;}
   readonly List<ReviewedCrosswalkGeometry.Zone> zones;readonly List<LaneSpan> lanes=new List<LaneSpan>();
+  readonly Dictionary<Vector2Int,List<ReviewedCrosswalkGeometry.Zone>> zoneCells=new Dictionary<Vector2Int,List<ReviewedCrosswalkGeometry.Zone>>();
+  readonly Dictionary<Vector2Int,List<LaneSpan>> laneCells=new Dictionary<Vector2Int,List<LaneSpan>>();
+  readonly List<ReviewedCrosswalkGeometry.Zone> noZones=new List<ReviewedCrosswalkGeometry.Zone>();
+  static Vector2Int Cell(Vector3 p){return new Vector2Int(Mathf.FloorToInt(p.x/32),Mathf.FloorToInt(p.z/32));}
+  List<ReviewedCrosswalkGeometry.Zone> NearZones(Vector3 p){List<ReviewedCrosswalkGeometry.Zone> list;return zoneCells.TryGetValue(Cell(p),out list)?list:noZones;}
+  static void Index<T>(Dictionary<Vector2Int,List<T>> cells,T item,float minX,float maxX,float minZ,float maxZ){for(int x=Mathf.FloorToInt(minX/32);x<=Mathf.FloorToInt(maxX/32);x++)for(int z=Mathf.FloorToInt(minZ/32);z<=Mathf.FloorToInt(maxZ/32);z++){var key=new Vector2Int(x,z);List<T> list;if(!cells.TryGetValue(key,out list)){list=new List<T>();cells.Add(key,list);}list.Add(item);}}
   public AuthoredJunctionPaintMask(MapData map){
    zones=ReviewedCrosswalkGeometry.Build(map);
    if(zones.Count==0)return;
-   var widths=new Dictionary<string,float>();if(map.editorDocument.lanes!=null)foreach(var lane in map.editorDocument.lanes)
+   foreach(var zone in zones){float margin=Mathf.Max(18,zone.halfWidth)+3;Index(zoneCells,zone,Mathf.Min(zone.center.x,zone.junction.x)-margin,Mathf.Max(zone.center.x,zone.junction.x)+margin,Mathf.Min(zone.center.z,zone.junction.z)-margin,Mathf.Max(zone.center.z,zone.junction.z)+margin);}
+   var widths=new Dictionary<string,float>();if(map.editorDocument!=null&&map.editorDocument.lanes!=null)foreach(var lane in map.editorDocument.lanes)
     if(lane!=null&&!string.IsNullOrEmpty(lane.id))widths[lane.id]=Mathf.Max(.5f,lane.width);
    foreach(var lane in map.hdEdges??new HdEdge[0]){if(lane.disabled||lane.points==null||lane.points.Length<2)continue;
     float width;if(!widths.TryGetValue(lane.id??"",out width))width=3.5f;float interior=width*.5f-.15f;if(interior<=0)continue;
     for(int i=1;i<lane.points.Length;i++){Vector3 a=lane.points[i-1].V(),b=lane.points[i].V();
      if((b-a).sqrMagnitude<.001f)continue;float minX=Mathf.Min(a.x,b.x),maxX=Mathf.Max(a.x,b.x),minZ=Mathf.Min(a.z,b.z),maxZ=Mathf.Max(a.z,b.z);
-     if(zones.Exists(zone=>zone.NearBox(minX,maxX,minZ,maxZ)))lanes.Add(new LaneSpan{a=a,b=b,interior=interior});
+     if(zones.Exists(zone=>zone.NearBox(minX,maxX,minZ,maxZ))){var span=new LaneSpan{a=a,b=b,interior=interior};lanes.Add(span);Index(laneCells,span,minX-interior-1,maxX+interior+1,minZ-interior-1,maxZ+interior+1);}
     }
    }
   }
@@ -63,13 +92,14 @@ public class HdRouteTrial : MonoBehaviour {
    foreach(var p in mark.points){minX=Mathf.Min(minX,p.x);maxX=Mathf.Max(maxX,p.x);minZ=Mathf.Min(minZ,p.z);maxZ=Mathf.Max(maxZ,p.z);}
    return zones.Exists(zone=>zone.NearBox(minX,maxX,minZ,maxZ));
   }
-  bool LaneInterior(Vector3 p,float edgeAllowance){foreach(var lane in lanes){var delta=lane.b-lane.a;float length=delta.x*delta.x+delta.z*delta.z;if(length<.001f)continue;
+  public bool CrossingBand(Vector3 point,float extra){foreach(var zone in NearZones(point))if(zone.InBand(point,extra))return true;return false;}
+  bool LaneInterior(Vector3 p,float edgeAllowance){List<LaneSpan> near;if(!laneCells.TryGetValue(Cell(p),out near))return false;foreach(var lane in near){var delta=lane.b-lane.a;float length=delta.x*delta.x+delta.z*delta.z;if(length<.001f)continue;
     float at=Mathf.Clamp01(((p.x-lane.a.x)*delta.x+(p.z-lane.a.z)*delta.z)/length);var nearest=Vector3.Lerp(lane.a,lane.b,at);
     if(Mathf.Abs(p.y-nearest.y)>1f)continue;float dx=p.x-nearest.x,dz=p.z-nearest.z,limit=lane.interior+edgeAllowance;if(dx*dx+dz*dz<limit*limit)return true;
    }return false;
   }
-  public bool Covers(Vector3 p){foreach(var zone in zones)if(zone.InBand(p,.15f))return true;
-   foreach(var zone in zones){if(!zone.JunctionSide(p,.5f)&&!zone.Core(p,18f))continue;
+  public bool Covers(Vector3 p){var near=NearZones(p);foreach(var zone in near)if(zone.InBand(p,.15f))return true;
+   foreach(var zone in near){if(!zone.JunctionSide(p,.5f)&&!zone.Core(p,18f))continue;
     // The outermost lane may carry a real kerb-side yellow line. Only a
     // generated crossing's inner channels get the small lane-edge allowance.
     if(!zone.authored&&zone.Lateral(p)>zone.halfWidth-3.5f)continue;
@@ -113,7 +143,7 @@ public class HdRouteTrial : MonoBehaviour {
  public static void DrawMarkings(MapData map,Transform parent){
   var white=WorldBuilder.Mat("HD white",new Color(.95f,.94f,.87f));var yellow=WorldBuilder.Mat("HD yellow",new Color(1,.72f,.1f));var blue=WorldBuilder.Mat("HD blue",new Color(.12f,.4f,1));
   var vertices=new[]{new List<Vector3>(),new List<Vector3>(),new List<Vector3>()};var triangles=new[]{new List<int>(),new List<int>(),new List<int>()};
-  var roadsideMask=new LocalRoadSurfaceMask(map);var authoredMask=new AuthoredJunctionPaintMask(map);
+  var roadsideMask=new LocalRoadSurfaceMask(map);var authoredMask=new AuthoredJunctionPaintMask(map);var longitudinalMask=new LongitudinalJunctionPaintMask(map);
   var drawn=new HashSet<string>();
   foreach(var mark in map.hdMarks??new HdMark[0]){
    if(mark.points==null||mark.points.Length<2)continue;
@@ -123,8 +153,15 @@ public class HdRouteTrial : MonoBehaviour {
    var path=new AssistedRoadNetwork.Path(ps);bool dashed=mark.type=="112"||mark.type=="212"||mark.type=="312";
    bool roadside=mark.kind=="505"||mark.kind=="515";
    bool editedYellow=color==1&&(mark.kind=="501"||roadside)&&authoredMask.MightAffect(mark);
-   float step=roadside||editedYellow ? .5f : dashed ? 6 : 2,paint=roadside||editedYellow ? .5f : dashed ? 3 : 2.05f;
-   for(float d=0;d<path.length;d+=step){if((roadside||editedYellow)&&dashed&&d%6>=3)continue;var a=path.Position(d);var b=path.Position(Mathf.Min(path.length,d+paint));if((b-a).sqrMagnitude<.0001f)continue;
+   bool crossingLine=(mark.kind=="501"||mark.kind=="502"||mark.kind=="503"||mark.kind=="505"||mark.kind=="506"||mark.kind=="515"||mark.kind=="525")&&authoredMask.MightAffect(mark);
+   bool longitudinal=longitudinalMask.MightAffect(mark),fine=roadside||editedYellow||longitudinal||crossingLine;
+   float step=fine ? .5f : dashed ? 6 : 2,paint=fine ? .5f : dashed ? 3 : 2.05f;
+   for(float d=0;d<path.length;d+=step){if(fine&&dashed&&d%6>=3)continue;var a=path.Position(d);var b=path.Position(Mathf.Min(path.length,d+paint));if((b-a).sqrMagnitude<.0001f)continue;
+    if(longitudinal&&longitudinalMask.Covers((a+b)*.5f,(b-a).normalized,Vector3.Distance(a,b)*.5f))continue;
+    // Kerb hooks/tapers do not become lane interiors, but no longitudinal
+    // fragment may cross an actual zebra band. Turn guides only get this
+    // narrow band mask; their dashed interior curves remain source-authored.
+    if(crossingLine&&authoredMask.CrossingBand((a+b)*.5f,Vector3.Distance(a,b)*.5f+.19f))continue;
     if(editedYellow&&authoredMask.Covers((a+b)*.5f))continue;
     if(roadside&&roadsideMask.CoversTransverse((a+b)*.5f,(b-a).normalized))continue;
     var right=TrafficSystem.Right((b-a).normalized);int strokes=mark.type=="121"?2:1;

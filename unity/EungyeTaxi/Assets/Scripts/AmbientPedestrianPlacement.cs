@@ -16,6 +16,7 @@ public sealed class AmbientPedestrianRoute {
 
 // Built once from the loaded project scene. Nothing here searches map polygons per frame.
 public sealed class AmbientPedestrianPlacement {
+ public const int HubCap=8,ActorCap=36;
  const float BodyMargin=.38f;
  readonly MapData map;
  readonly TrafficSystem traffic;
@@ -39,7 +40,14 @@ public sealed class AmbientPedestrianPlacement {
  void Build(){
   var widths=new Dictionary<string,float>();if(map.editorDocument!=null)foreach(var lane in map.editorDocument.lanes??new RoadMapLane[0])if(lane!=null&&!string.IsNullOrEmpty(lane.id))widths[lane.id]=Mathf.Max(.5f,lane.width);
   var facilityAsset=Resources.Load<TextAsset>("eungye-road-facilities");var facilityLayout=facilityAsset?ReviewedRoadFacilities.Plan(map,JsonUtility.FromJson<ReviewedRoadFacilities.Catalog>(facilityAsset.text)):new ReviewedRoadFacilities.Layout();
-  foreach(string hub in Hubs){var j=traffic.junctions.Find(candidate=>candidate.name==hub);if(j==null){report.Add(hub+" missing runtime junction");continue;}
+  // Keep established route IDs, then choose distant hubs to spread the finite
+  // population. All added slots use the same full-body sidewalk safety checks.
+  var hubs=new List<string>(Hubs);
+  while(hubs.Count<HubCap){TrafficJunction best=null;float bestDistance=150*150;
+   foreach(var candidate in traffic.junctions){if(hubs.Contains(candidate.name)||!traffic.HasPedestrianPhase(candidate))continue;float nearest=float.MaxValue;foreach(var id in hubs){var existing=traffic.junctions.Find(j=>j.name==id);if(existing!=null)nearest=Mathf.Min(nearest,(existing.center-candidate.center).sqrMagnitude);}if(nearest>bestDistance){bestDistance=nearest;best=candidate;}}
+   if(best==null)break;hubs.Add(best.name);
+  }
+  foreach(string hub in hubs){var j=traffic.junctions.Find(candidate=>candidate.name==hub);if(j==null){report.Add(hub+" missing runtime junction");continue;}
    var localWalks=new List<MapArea>();var localHazards=new List<MapArea>();var localBuildings=new List<MapBuilding>();var localLanes=new List<Lane>();var cells=new Dictionary<Vector2Int,List<MapArea>>();var localLaneCells=new Dictionary<Vector2Int,List<Lane>>();
    foreach(var area in map.areas??new MapArea[0]){if(!Near(area.points,j.center,65))continue;if(area.kind=="sidewalk"){localWalks.Add(area);Index(cells,area);}else if(area.kind=="water")localHazards.Add(area);}
    foreach(var building in map.buildings??new MapBuilding[0])if(Near(building.points,j.center,65)&&!SceneBuildingVisibility.Hidden(map,building.id))localBuildings.Add(building);
@@ -50,6 +58,9 @@ public sealed class AmbientPedestrianPlacement {
    AmbientPedestrianRoute crossing;if(TryCrossing(j,out crossing)){routes.Add(crossing);report.Add(crossing.id+" "+crossing.a.ToString("F2")+" -> "+crossing.b.ToString("F2"));}else report.Add(hub+" crossing slot unavailable: painted crossing lacks safe sidewalk endpoints or pedestrian phase");
    report.Add(hub+" cached sidewalks="+localWalks.Count+" hazards="+localHazards.Count+" buildings="+localBuildings.Count+" laneSegments="+localLanes.Count+" barriers="+localObstacles.Count+" placed="+sidewalk+"+"+(crossing==null?0:1));
   }
+  // Companions share an already certified path, with stable separate save IDs.
+  // No additional geometry search or runtime polygon queries are needed.
+  foreach(var route in new List<AmbientPedestrianRoute>(routes))if(!route.crossing&&routes.Count<ActorCap)routes.Add(new AmbientPedestrianRoute{id=route.id+":companion",hub=route.hub,a=route.a,b=route.b,via=route.via,bent=route.bent});
  }
  static bool Contains(MapPoint[] polygon,Vector3 p){return ProjectMapScene.Contains(polygon,p);}
  static float SegmentDistance(Vector3 p,Vector3 a,Vector3 b){var d=b-a;float length=d.x*d.x+d.z*d.z;if(length<.00001f)return Vector2.Distance(new Vector2(p.x,p.z),new Vector2(a.x,a.z));float t=Mathf.Clamp01(((p.x-a.x)*d.x+(p.z-a.z)*d.z)/length);return Vector2.Distance(new Vector2(p.x,p.z),new Vector2(a.x+d.x*t,a.z+d.z*t));}
@@ -75,8 +86,12 @@ public sealed class AmbientPedestrianPlacement {
   Vector3 bestVia=Vector3.zero;for(float radius=12;radius<=54;radius+=3)for(int angle=0;angle<24;angle++){var unit=new Vector3(Mathf.Cos(angle*Mathf.PI/12),0,Mathf.Sin(angle*Mathf.PI/12));var seed=j.center+unit*radius;float elevation;if(!Support(j.name,seed,out elevation))continue;foreach(var direction in dirs){Vector3 a,via;if(!SafeWalk(j.name,seed,seed+direction*11,out a,out via))continue;foreach(float turn in new[]{-45f,-30f,30f,45f}){var next=Quaternion.Euler(0,turn,0)*direction;Vector3 join,b;if(!SafeWalk(j.name,seed+direction*11,seed+direction*11+next*11,out join,out b)||Mathf.Abs(join.y-via.y)>.1f)continue;bool duplicate=false;foreach(var placed in routes)if(!placed.crossing&&placed.hub==j.name&&(Vector3.Distance(placed.a,a)<9||Vector3.Distance(placed.b,b)<9))duplicate=true;if(duplicate)continue;float score=radius+Mathf.Abs(turn)*.01f;if(score<best){best=score;bestA=a;bestVia=via;bestB=b;}}}}
   if(best==float.MaxValue)return false;route=new AmbientPedestrianRoute{id=j.name+":sidewalk:"+slot,hub=j.name,a=bestA,via=bestVia,b=bestB,bent=true};return true;
  }
- bool TryCrossing(TrafficJunction j,out AmbientPedestrianRoute route){route=null;if(!traffic.HasPedestrianPhase(j)||j.facility==null||!j.facility.crosswalk)return false;
+ bool TryCrossing(TrafficJunction j,out AmbientPedestrianRoute route){route=null;if(!traffic.HasPedestrianPhase(j)||j.facility==null)return false;
    foreach(var approach in j.facility.approaches??new HybridApproach[0]){var incoming=new Vector3(approach.dx,0,approach.dz).normalized;if(incoming.sqrMagnitude<.5f)continue;int axis=Mathf.Abs(Vector3.Dot(incoming,traffic.AxisDirection(j,0)))>.7f?0:1,sign=traffic.Sign(incoming,axis,j);var across=TrafficSystem.Right(incoming);float width=approach.width*.5f;var center=j.center-incoming*(j.halfWidth[1-axis]+TrafficJunction.CrosswalkCentreOffset);var f=map.editorDocument==null?null:Array.Find(map.editorDocument.facilities,x=>x.kind=="crosswalk"&&x.junctionId==j.name&&x.axis==axis&&x.sign==sign);if(f!=null){center=f.Position;var explicitAcross=TrafficSystem.Right(Quaternion.Euler(0,f.yaw,0)*Vector3.forward);if(Vector3.Dot(explicitAcross,across)<0)explicitAcross=-explicitAcross;across=explicitAcross;width=f.width*.5f;}
+   // An authored midblock crossing can deliberately suppress all legacy stripes.
+   // Admit only its actual painted arm and its own pedestrian signal group.
+   if(!j.facility.crosswalk&&f==null)continue;
+   if(j.editorProgram!=null&&!Array.Exists(j.editorProgram.groups,g=>g.pedestrian&&g.axis==axis&&g.sign==sign))continue;
    // The center and width are exactly those used by TrafficSystem's rendered stripes.
      for(float along=-1f;along<=1.01f;along+=.25f){var lefts=new List<Vector3>();var rights=new List<Vector3>();for(float outside=.5f;outside<=7.51f;outside+=.25f){Vector3 left=center-across*(width+outside)+incoming*along,right=center+across*(width+outside)+incoming*along;float height;if(Support(j.name,left,out height))lefts.Add(new Vector3(left.x,height,left.z));if(Support(j.name,right,out height))rights.Add(new Vector3(right.x,height,right.z));}
      foreach(var left in lefts)foreach(var right in rights){if(Mathf.Abs(left.y-right.y)>.3f||!CrossingClear(j.name,left,right))continue;route=new AmbientPedestrianRoute{id=j.name+":crossing",hub=j.name,a=left,b=right,junction=j,axis=axis,sign=sign,crossing=true};return true;}

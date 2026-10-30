@@ -21,12 +21,20 @@ public static class HudGlyph {
  static void Box(int x,int y,int w,int h,bool clear=false){for(int i=x;i<x+w;i++)for(int j=y;j<y+h;j++)if(i>=0&&i<24&&j>=0&&j<24)drawing.SetPixel(i,23-j,clear?Color.clear:Color.white);}
  static void Line(float x,float y,float u,float v){int count=Mathf.CeilToInt(Vector2.Distance(new Vector2(x,y),new Vector2(u,v))*2);for(int i=0;i<=count;i++){float t=count==0?0:(float)i/count;Box(Mathf.RoundToInt(Mathf.Lerp(x,u,t)),Mathf.RoundToInt(Mathf.Lerp(y,v,t)),2,2);}}
  public static bool Button(Rect r,int kind,string tooltip,bool active=false){bool hit=GUI.Button(r,new GUIContent("",tooltip));Draw(new Rect(r.x+4,r.y+4,r.width-8,r.height-8),kind,active?new Color(.4f,1,.8f):Color.gray);return hit;}
- // Axis-aligned stamps avoid Unity IMGUI's rotated clipping bug inside scaled groups/windows.
+ // Axis-aligned stamps preserve clipping inside scaled IMGUI groups/windows.
+ // The live minimap route is separately cached into one raster texture.
  public static void MapLine(Vector2 a,Vector2 b,Color c,float width,Rect clip){
+  if(Event.current==null||Event.current.type!=EventType.Repaint||width<=0||float.IsNaN(width)||float.IsInfinity(width))return;
+  Vector2 start,end;if(!TryClipMapLine(a,b,clip,out start,out end))return;
+  float length=Vector2.Distance(start,end);int steps=Mathf.Max(1,Mathf.CeilToInt(length/Mathf.Max(1,width*.45f)));var oldColor=GUI.color;
+  try{GUI.color=c;for(int i=0;i<=steps;i++){var p=Vector2.Lerp(start,end,(float)i/steps);GUI.DrawTexture(new Rect(p.x-width/2,p.y-width/2,width,width),Texture2D.whiteTexture);}}
+  finally{GUI.color=oldColor;}
+ }
+ public static bool TryClipMapLine(Vector2 a,Vector2 b,Rect clip,out Vector2 start,out Vector2 end){
+  start=a;end=b;if(float.IsNaN(a.x)||float.IsNaN(a.y)||float.IsNaN(b.x)||float.IsNaN(b.y)||float.IsInfinity(a.x)||float.IsInfinity(a.y)||float.IsInfinity(b.x)||float.IsInfinity(b.y))return false;
   Vector2 delta=b-a;float lo=0,hi=1;
-  if(!Cut(-delta.x,a.x-clip.xMin,ref lo,ref hi)||!Cut(delta.x,clip.xMax-a.x,ref lo,ref hi)||!Cut(-delta.y,a.y-clip.yMin,ref lo,ref hi)||!Cut(delta.y,clip.yMax-a.y,ref lo,ref hi))return;
-  b=a+delta*hi;a+=delta*lo;float length=Vector2.Distance(a,b);int steps=Mathf.Max(1,Mathf.CeilToInt(length/Mathf.Max(1,width*.45f)));var old=GUI.color;GUI.color=c;
-  for(int i=0;i<=steps;i++){var p=Vector2.Lerp(a,b,(float)i/steps);GUI.DrawTexture(new Rect(p.x-width/2,p.y-width/2,width,width),Texture2D.whiteTexture);}GUI.color=old;
+  if(!Cut(-delta.x,a.x-clip.xMin,ref lo,ref hi)||!Cut(delta.x,clip.xMax-a.x,ref lo,ref hi)||!Cut(-delta.y,a.y-clip.yMin,ref lo,ref hi)||!Cut(delta.y,clip.yMax-a.y,ref lo,ref hi))return false;
+  start=a+delta*lo;end=a+delta*hi;return true;
  }
  static bool Cut(float p,float q,ref float lo,ref float hi){if(Mathf.Abs(p)<.00001f)return q>=0;float t=q/p;if(p<0){if(t>hi)return false;lo=Mathf.Max(lo,t);}else{if(t<lo)return false;hi=Mathf.Min(hi,t);}return true;}
 }

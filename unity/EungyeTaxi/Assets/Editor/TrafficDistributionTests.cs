@@ -15,7 +15,7 @@ public static class TrafficDistributionTests {
    int retained=0,newCells=0;foreach(var cell in oldCells)if(currentCells.Contains(cell))retained++;foreach(var cell in currentCells)if(!oldCells.Contains(cell))newCells++;
    result+=" oldCells="+oldCells.Count+" retainedOldCells="+retained+" newCells="+newCells;
    Directory.CreateDirectory("../../artifacts");File.WriteAllText("../../artifacts/traffic-distribution-editor.txt",result+"\nsafe="+safe);Debug.Log("TRAFFIC_DISTRIBUTION "+result);
-   if(visible<24||cells<8||retained<12||newCells<2||!safe||traffic.cars.Count>48)throw new Exception("TRAFFIC_DISTRIBUTION target >=24 visible / >=12 retained old cells / >=2 new cells / safe: "+result);
+   if(visible<48||cells<8||retained<12||newCells<2||!safe||traffic.cars.Count>DistrictTraffic.PoolCap)throw new Exception("TRAFFIC_DISTRIBUTION target >=48 visible / >=12 retained old cells / >=2 new cells / safe: "+result);
   }finally{UnityEngine.Object.DestroyImmediate(root);}
  }
  static Vector2Int Cell(Vector3 p){return new Vector2Int(Mathf.FloorToInt(p.x/250),Mathf.FloorToInt(p.z/250));}

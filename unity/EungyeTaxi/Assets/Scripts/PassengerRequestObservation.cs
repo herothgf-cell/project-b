@@ -115,7 +115,8 @@ public class PassengerRequestObservation : MonoBehaviour {
   if(request.Kind==RequestKind.Eta&&choice.reply!=PassengerReply.Defer){int option=choice.reply==PassengerReply.EtaFaster?-1:choice.reply==PassengerReply.EtaRelaxed?1:0;float seconds=PassengerRequest.EtaSeconds(session.jobs.nav.estimatedSeconds,option);label+=" · "+(float.IsNaN(seconds)?"경로 확인 중":EtaChoice(seconds));}
   return label+"\n"+choice.effect;
  }
- public static Rect ReplyButtonRect(Rect area,int index){float w=(area.width-8)/2;return new Rect(area.x+(index%2)*(w+8),area.y+(index/2)*49,w,45);}
+ const float ReplyRowHeight=77;
+ public static Rect ReplyButtonRect(Rect area,int index){float w=(area.width-8)/2;return new Rect(area.x+(index%2)*(w+8),area.y+(index/2)*ReplyRowHeight,w,ReplyRowHeight-4);}
  public bool PanelVisible {get{return !request.Resolved||Time.time<=resultUntil||etaSelected;}}
  public void Draw(){if(!session.business.useV2||session.jobs.trip.State!=TripState.OnTrip||session.jobs.trip.ArrivalLocked||session.paused)return;if(request.Resolved&&Time.time>resultUntil&&!etaSelected)return;
   string text=request.Resolved?"나  “"+DialogueReply+"”":"손님  “"+lines[(int)request.Kind]+"”";
@@ -125,11 +126,11 @@ public class PassengerRequestObservation : MonoBehaviour {
   }else if(selectedEffect.Length>0)text+="\n적용: "+selectedEffect;
   var priorMatrix=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));float vw=Screen.width/scale,vh=Screen.height/scale;
   var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=15,wordWrap=true};style.normal.textColor=new Color(.1f,.16f,.2f);
-  float width=540,textHeight=Mathf.Min(132,style.CalcHeight(new GUIContent(text),width-24));int rows=request.Resolved?0:(ReplyChoices.Length+1)/2;float height=textHeight+24+rows*49;
+  float width=540,textHeight=style.CalcHeight(new GUIContent(text),width-24);int rows=request.Resolved?0:(ReplyChoices.Length+1)/2;float height=textHeight+24+rows*ReplyRowHeight;
   // Keep the reply beside the road view and above the passenger destination card.
   float y=vh-24-height,x=(vw-width)/2;var panel=new Rect(x,y,width,height);
   GUI.color=new Color(.94f,.97f,.91f,1);GUI.DrawTexture(panel,Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x+14,y+height-1,12,8),Texture2D.whiteTexture);GUI.color=Color.white;GUI.Label(new Rect(x+12,y+8,width-24,textHeight),text,style);
-  if(!request.Resolved){var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=11,wordWrap=true,padding=new RectOffset(4,4,2,2)};var area=new Rect(x+8,y+textHeight+18,width-16,rows*49);
+  if(!request.Resolved){var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=11,wordWrap=true,padding=new RectOffset(4,4,2,2)};var area=new Rect(x+8,y+textHeight+18,width-16,rows*ReplyRowHeight);
    for(int i=0;i<ReplyChoices.Length;i++){var choice=ReplyChoices[i];bool enabled=GUI.enabled;GUI.enabled=enabled&&CanChoose(choice.reply);if(GUI.Button(ReplyButtonRect(area,i),ChoiceText(choice),button))session.requests.Choose(choice.reply);GUI.enabled=enabled;}
   }
   GUI.matrix=priorMatrix;

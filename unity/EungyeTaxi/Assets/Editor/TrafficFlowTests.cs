@@ -10,6 +10,19 @@ public static class TrafficFlowTests {
   t.Release(a);t.Release(b);b.route=r;b.Place(55);b.speed=0;Physics.SyncTransforms();Check(!t.MayEnter(a,r.stops[0]),"stopped same-stream car inside junction blocks entry");
   b.Place(65);b.speed=0;Physics.SyncTransforms();Check(!t.MayEnter(a,r.stops[0]),"stopped exit still blocks entry");
   b.Recycle();var cross=Route(j,0,true);b.route=cross;b.Place(50);Physics.SyncTransforms();Check(!t.MayEnter(a,r.stops[0]),"crossing occupied corridor must block");
+  // A stopped red arm touches the old junction-wide overlap box, but its
+  // physical footprint is entirely clear of the straight green corridor.
+  b.Place(39);cross.stops[0].distance=39;Physics.SyncTransforms();
+  Check(!t.CanEnter(b,cross.stops[0]),"cross approach remains red");
+  Check(t.MayEnter(a,r.stops[0]),"green clears despite red queue inside broad phase");
+  t.Release(a);b.Place(50);Physics.SyncTransforms();
+  Check(!t.MayEnter(a,r.stops[0]),"same red car physically in crossing still blocks green");
+  b.Recycle();Check(t.MayEnter(a,r.stops[0]),"green entry restored after actual blocker leaves");
+  a.enabled=false;
+  // Ordinary runtime MonoBehaviours do not receive this event in EditMode.
+  // Invoke its handler here; WorldFollowupProbe covers real Player dispatch.
+  if(!Application.isPlaying)typeof(TrafficCar).GetMethod("OnDisable",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance).Invoke(a,null);
+  Check(!j.reservations.Contains(a)&&!j.requests.ContainsKey(a),"disable handler releases reservation and request");a.enabled=true;
   j.facility=new HybridJunctionRule{crosswalk=true};t.manualTime=70;Check(t.PedestrianGreen(j,0,1),"dedicated pedestrian interval visible");for(int axis=0;axis<2;axis++)for(int sign=-1;sign<=1;sign+=2)Check(t.Signal(j,axis,sign)==SignalColor.Red,"pedestrian interval must not conflict with green vehicle movement");
   t.manualTime=79;Check(!t.PedestrianGreen(j,0,1)&&t.Signal(j,0)==SignalColor.Red,"pedestrian clearance");t.manualTime=80;Check(t.Signal(j,0)==SignalColor.Green,"vehicle cycle resumes after pedestrian clearance");
   float deviation;Check(Mathf.Abs(r.ProjectNear(new Vector3(1.75f,0,7),50,out deviation)-57)<.001f&&deviation<.001f,"local route projection stays exact");

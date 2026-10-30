@@ -90,7 +90,11 @@ public class LawLedger {
  // Merge its findings so the existing maximum-per-incident rule remains effective.
  public bool RecordIncident(LawEvent e){
   if(e==null||string.IsNullOrEmpty(e.id)||e.day<1)throw new ArgumentException("Invalid law incident");
-  for(int i=0;i<events.Count;i++)if(events[i].id==e.id){var old=events[i];var merged=e.Copy();foreach(var r in old.rules){var present=merged.rules.Find(x=>x.rule==r.rule);if(present==null)merged.rules.Add(r.Copy());else if(r.verdict==LawVerdict.Violation){present.verdict=r.verdict;present.penalty=Math.Max(present.penalty,r.penalty);}}events[i]=merged;LastChanged=merged.Copy();Revision++;return false;}
+  for(int i=0;i<events.Count;i++)if(events[i].id==e.id){var old=events[i];var merged=e.Copy();foreach(var r in old.rules){var present=merged.rules.Find(x=>x.rule==r.rule);if(present==null)merged.rules.Add(r.Copy());else if(r.verdict==LawVerdict.Violation){present.verdict=r.verdict;present.penalty=Math.Max(present.penalty,r.penalty);}else if(r.verdict==LawVerdict.Compliant&&present.verdict!=LawVerdict.Violation)present.verdict=r.verdict;}
+   // Replayed frames and older partial observations cannot replace a completed
+   // incident or repeatedly invalidate the score view/journal.
+   if(old.rules.Count==merged.rules.Count&&old.rules.TrueForAll(r=>merged.rules.Exists(x=>x.rule==r.rule&&x.verdict==r.verdict&&x.penalty==r.penalty)))return false;
+   events[i]=merged;LastChanged=merged.Copy();Revision++;return false;}
   return Record(e);
  }
  public int Score(int day){int score=100;foreach(var e in events)if(e.day==day)score-=e.Deduction;return Math.Max(0,score);}
@@ -104,6 +108,11 @@ public class LawLedger {
  public string Summary(string family,string rule){var recent=Recent(family,rule,5);if(recent.Count<5)return "기록 부족 · 유효 관찰 "+recent.Count+"/5건";int violations=recent.FindAll(r=>r.verdict==LawVerdict.Violation).Count;return "최근 유효 관찰 5건 · 준수 "+(5-violations)+" / 위반 "+violations+"건";}
 }
 public static class LawEvaluator {
+ public static LawEvent Signal(string id,int day,RoadObservation observed,bool left,SignalColor leftSignal,PrototypeSettings settings=null){
+  var s=settings??new PrototypeSettings();var signal=left?leftSignal:observed.forward;
+  var e=new LawEvent{recoveryPolicyVersion=1,id=id,day=day,family="signal",observation=observed.Copy(),action=left?"좌회전":"직진",reason="진입 시점 진행 방향 신호"};
+  e.Add("L01",!observed.known||signal==SignalColor.Yellow?LawVerdict.Deferred:signal==SignalColor.Red?LawVerdict.Violation:LawVerdict.Compliant,s.redStraightPenalty);return e;
+ }
  public static LawEvent StopLine(string id,int day,RoadObservation o){var e=new LawEvent{recoveryPolicyVersion=1,id=id,day=day,family="signal",action="정지선 침범",observation=o.Copy(),reason="정지 의무 신호에서 정지선을 넘은 정차"};e.Add("L09",o.known&&o.forward==SignalColor.Red?LawVerdict.Violation:LawVerdict.NoOpportunity,1);return e;}
  public static LawEvent Exit(string id,int day,bool knownSignalQueue,bool changedLane,bool insertedAhead,bool obstructed,PrototypeSettings settings=null){
   var s=settings??new PrototypeSettings();var e=new LawEvent{recoveryPolicyVersion=1,id=id,day=day,family="exit",action=insertedAhead?"앞부분 진입":changedLane?"뒤 합류":"직진·우회",reason="신호 대기열 "+(knownSignalQueue?"확인":"불명확")+" · 차로 진입 "+(changedLane?"있음":"없음")+" · 앞부분 진입 "+(insertedAhead?"있음":"없음")+" · 상대 진행 방해 "+(obstructed?"관찰":"미관찰")};
