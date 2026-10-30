@@ -24,7 +24,7 @@
 | 영역 | Proto에 포함 | 제외 또는 별도 승인 | 기준 |
 |---|---|---|---|
 | 월드 | 은계 기반 도로·차로·건물·시설·합법 경로·지도 편집 | 전국/실측 전체 복원·실시간 교통 API | [06](content-design/01-driving-and-traffic.md),[12](technical-reference/map-editor-specification.md) |
-| 주행·AI | 키보드/패드·1/3인칭·수동/보조, 일반 차량48대와 신호·대기열 | 신규 물리 엔진·차종 확대·전역 군중 | [06](content-design/01-driving-and-traffic.md) |
+| 주행·AI | 키보드/패드·1/3인칭·수동/보조, 일반 차량 최대72대와 신호·대기열 | 신규 물리 엔진·차종 확대·전역 군중 | [06](content-design/01-driving-and-traffic.md) |
 | 상황·법규 | 출구A/B/C·우회전R1~R5·9코스, 관찰 가능한 준수/위반/보류와 점수 | 후보62개 일괄 자동 판정·실제 벌금/면허처분 | [01](content-design/01-driving-and-traffic.md),[02](content-design/01-driving-and-traffic.md),[09](content-design/02-passengers-and-fares.md) |
 | 기록 | 사건 카드·일일/누적 결과·동일 조건 연습 | 영상 리플레이·장기 숙련 레벨 | [03](content-design/04-campaign-and-feedback.md) |
 | 승객 | 호출·길가 승객·24정차 후보·17종 요청·11유형/34변주·일반 승객·만족도·보너스 | 복잡한 대화·실제 음악·음성 연기·분실물 반환 퀘스트 | [04](content-design/02-passengers-and-fares.md),[11](content-design/02-passengers-and-fares.md),[14](content-design/02-passengers-and-fares.md) |
@@ -36,7 +36,7 @@
 | 운전자 | 포만감·피로·식사/수면·피로100 졸음과 예정20분 이후 초과 영업 | 질병·스트레스·강제 충돌 | [10](content-design/03-life-and-economy.md) |
 | 캠페인 | 3일×예정20분·초과 영업/휴식 종료·일별 순수익 비교·새 캠페인 | 고정3만원 달성형·장편 서사·무한 경영 | [07](content-design/04-campaign-and-feedback.md) |
 | 저장 | v3 중단 운송·위치·시간·요청·회계·차량/운전자 상태, 구v2 호환 | 지도 리비전 불일치의 임의 운송 재배치 | [05](content-design/03-life-and-economy.md),[07](content-design/04-campaign-and-feedback.md) |
-| 일반 보행자 | 상황용과 별도로 안전 보도3명·횡단3명 | 승인4후보/최대12명, 안전 경로 부족 슬롯은 비움 | [16](content-design/01-driving-and-traffic.md) |
+| 일반 보행자 | 상황용과 별도로 최대8허브/36명, 현재 안전 배치23명(보도16/횡단7) | 안전 경로 부족 슬롯은 비움 | [16](content-design/01-driving-and-traffic.md) |
 | 후속 관계·사고 | 후속 기획만 보존, 현재 차량 내구도/복귀는 위 별도 행 | 예약·단골·확장 사고 사건·보험 청구·구급차 개발 | [04](content-design/02-passengers-and-fares.md),[08](future-design/accidents-and-repairs.md) |
 
 ## 공통 상태·화면

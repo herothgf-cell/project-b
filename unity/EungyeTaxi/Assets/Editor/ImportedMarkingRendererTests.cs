@@ -15,6 +15,9 @@ public static class ImportedMarkingRendererTests {
   SharedLongitudinalRegressions();
   GeneratedCrosswalkRegressions();
   ZeroReachCrosswalkRegressions();
+  ReplacedStopLineRegressions();
+  UturnMedianRegressions();
+  UturnArrowFallbackRegressions();
   int single=Vertices(Mark("single","111",false));
   Check(single==20,"single solid control uses five strips");
   Check(Vertices(Mark("double","121",false))==2*single,"121 draws two separate solid strokes");
@@ -117,5 +120,50 @@ public static class ImportedMarkingRendererTests {
   var line=new HdMark{id="midblock-hook",type="111",kind="515",points=new[]{new MapPoint{x=638,z=257.3f},new MapPoint{x=658,z=257.3f}}};map.hdMarks=new[]{line};
   foreach(string kind in new[]{"505","515"}){line.kind=kind;var vertices=YellowVertices(map);Check(QuadsNear(vertices,centre,.8f)==0,"midblock zero-reach zebra clips kerb kind "+kind);Check(QuadsNear(vertices,centre+Vector3.right*6,.8f)>0,"midblock preserves kerb outside band "+kind);}
   line.kind="525";line.type="212";var guide=WhiteVertices(map);Check(QuadsNear(guide,centre,.8f)==0&&QuadsNear(guide,centre-Vector3.right*9,.8f)>0,"zero-reach crossing trims dashed guide only inside stripe band");
+ }
+ static void ReplacedStopLineRegressions(){
+  var rule=new HybridJunctionRule{id="stop-replacement",dx=0,dz=1,stopLine=true,approaches=new[]{new HybridApproach{dx=0,dz=1,width=14},new HybridApproach{dx=1,dz=0,width=30}}};
+  var old=new HdMark{id="old-stop",type="211",kind="530",points=new[]{new MapPoint{x=1,z=-25},new MapPoint{x=6,z=-25}}};
+  var map=new MapData{hybrid=true,junctionRules=new[]{rule},hdMarks=new[]{old}};
+  Check(WhiteVertices(map).Length==0,"source transverse stop line is replaced by the runtime approach stop");
+  old.points=new[]{new MapPoint{x=1,z=-70},new MapPoint{x=6,z=-70}};Check(WhiteVertices(map).Length>0,"distant source stop line outside replacement approach survives");
+  old.points=new[]{new MapPoint{x=1,z=-25},new MapPoint{x=1,z=-20}};Check(WhiteVertices(map).Length>0,"parallel source category530 is not treated as the approach stop line");
+  old.points=new[]{new MapPoint{x=-6,z=-25},new MapPoint{x=-1,z=-25}};Check(WhiteVertices(map).Length>0,"opposite carriageway source mark is not assigned to incoming approach");
+  rule.stopLine=false;old.points=new[]{new MapPoint{x=1,z=-25},new MapPoint{x=6,z=-25}};Check(WhiteVertices(map).Length>0,"source stop line survives without a runtime replacement");
+  var composed=ProjectMapStore.Load(ProjectMapBuild.Root).Compose();var ids=new[]{"B2218G610924","B222BC004101"};
+  var marks=composed.hdMarks.Where(m=>ids.Contains(m.id)).ToArray();Check(marks.Length==2,"J1927 two original transverse source stop lines are present");
+  composed.hdMarks=marks;Check(WhiteVertices(composed).Length==0,"J1927 stale source stops are absent on both carriageways while runtime stops remain canonical");
+ }
+ static void UturnMedianRegressions(){
+  var head=new RoadMapLane{id="uturn-head",points=new[]{new MapPoint{x=0,z=-20},new MapPoint{x=0,z=0}},next=new[]{"uturn-join"}};
+  var join=new RoadMapLane{id="uturn-join",turn=-2,points=new[]{new MapPoint{x=0,z=0},new MapPoint{x=-6,z=6},new MapPoint{x=-12,z=0}}};
+  var map=new MapData{editorDocument=new RoadMapDocument{lanes=new[]{head,join}},hdMarks=new[]{new HdMark{id="uturn-median",kind="501",type="111",points=new[]{new MapPoint{x=-6,z=-8},new MapPoint{x=-6,z=16}}}}};
+  var zones=UturnRoadMarkings.Build(map);Check(zones.Count==1&&Mathf.Abs(zones[0].width-12)<.001f&&Mathf.Abs(zones[0].length-8)<.001f,"U-turn median dimensions use across heading and furthest join station plus2m");
+  Check(UturnRoadMarkings.Covers(zones,new Vector3(-6,0,4))&&!UturnRoadMarkings.Covers(zones,new Vector3(-3,0,4))&&!UturnRoadMarkings.Covers(zones,new Vector3(-6,0,-3)),"U-turn replacement masks only the bounded median strip");
+  var strokes=new List<Vector3>();UturnRoadMarkings.Paint(map,(name,p,dir,width,length,yellow)=>{Check(!yellow&&length<=1.5f&&Vector3.Dot(dir,Vector3.forward)>.99f,"U-turn median is a white broken line along incoming heading");strokes.Add(p);});Check(strokes.Count==3,"U-turn allowed interval paints three separated strokes");
+  var yellow=YellowVertices(map);Check(QuadsNear(yellow,new Vector3(-6,0,4),.7f)==0&&QuadsNear(yellow,new Vector3(-6,0,-5),.7f)>0&&QuadsNear(yellow,new Vector3(-6,0,12),.7f)>0,"yellow501 ends only within U-turn interval and remains solid on both ends");
+  map.hdMarks[0].points=new[]{new MapPoint{x=-7.3f,z=-8},new MapPoint{x=-7.3f,z=16}};zones=UturnRoadMarkings.Build(map);
+  Check(Mathf.Abs(zones[0].sourceOffset-1.3f)<.001f&&Mathf.Abs(zones[0].start.x+7.3f)<.001f,"white U-turn median follows nearby aligned source501 axis");
+  Check(UturnRoadMarkings.Covers(zones,new Vector3(-6,0,4))&&UturnRoadMarkings.Covers(zones,new Vector3(-7.3f,0,4))&&!UturnRoadMarkings.Covers(zones,new Vector3(-8.3f,0,4))&&!UturnRoadMarkings.Covers(zones,new Vector3(-6,0,-3)),"source-offset mask covers both median axes only in allowed interval without symmetric overreach");
+  Check(QuadsNear(YellowVertices(map),new Vector3(-7.3f,0,4),.7f)==0,"offset source501 does not remain beside white U-turn strokes");
+  map.hdMarks[0].points=new[]{new MapPoint{x=-6,z=-8},new MapPoint{x=-6,z=16}};
+  map.hdMarks[0].kind="506";map.hdMarks[0].type="211";Check(QuadsNear(WhiteVertices(map),new Vector3(-6,0,4),1.2f)>0,"white lane divider is not erased by U-turn median mask");
+  head.disabled=true;Check(UturnRoadMarkings.Build(map).Count==0,"disabled incoming lane does not authorize median paint");
+  var actual=ProjectMapStore.Load(ProjectMapBuild.Root).Compose();var actualZones=UturnRoadMarkings.Build(actual);Check(actualZones.Count==6&&actualZones.Select(z=>z.incomingId).Distinct().Count()==6,"all six explicit U-turn approaches retain one unique median zone");
+  foreach(var zone in actualZones)Check(zone.width>=10&&zone.width<=40&&zone.length>2,"actual U-turn median spans the measured across gap and active join "+zone.joinId);
+ }
+ static void UturnArrowFallbackRegressions(){
+  var predecessor=new RoadMapLane{id="split:previous",sourceId="split",points=new[]{new MapPoint{x=0,z=-23},new MapPoint{x=0,z=-3}},next=new[]{"split:head"}};
+  var incoming=new RoadMapLane{id="split:head",sourceId="split",points=new[]{new MapPoint{x=0,z=-3},new MapPoint{x=0,z=0}},next=new[]{"join:split:uturn","split:ordinary"}};
+  var join=new RoadMapLane{id="join:split:uturn",turn=-2,points=new[]{new MapPoint{x=0,z=0},new MapPoint{x=-6,z=6},new MapPoint{x=-12,z=0}}};
+  var ordinary=new RoadMapLane{id="split:ordinary",sourceId="split",points=new[]{new MapPoint{x=0,z=0},new MapPoint{x=0,z=20}}};
+  var lanes=new[]{predecessor,incoming,join,ordinary};var edges=lanes.Select(l=>new HdEdge{id=l.id,sourceId=l.sourceId??"",status="provisional",turn=l.turn,points=l.points,next=l.next.Select(id=>Array.FindIndex(lanes,x=>x.id==id)).ToArray()}).ToArray();
+  var map=new MapData{hybrid=true,hdEdges=edges,editorDocument=new RoadMapDocument{lanes=lanes}};
+  Check(LaneDirectionPaint.Layout(map).Count==0,"short same-source split does not receive regular lane glyph");
+  var fallback=UturnRoadMarkings.FallbackArrows(map);Check(fallback.Count==1&&fallback[0].turns==LaneDirectionPaint.Uturn&&fallback[0].edgeIndex==1&&fallback[0].centre.z<=-6&&fallback[0].centre.z>=-15,"short U-turn head receives dedicated glyph on contiguous ordinary predecessor");
+  Check(incoming.next.Length==2&&edges[1].next.Length==2,"fallback paint preserves legal continuation and U-turn connections");
+  predecessor.disabled=true;Check(UturnRoadMarkings.FallbackArrows(map).Count==0,"short head cannot borrow disabled predecessor for glyph footprint");
+  var actual=ProjectMapStore.Load(ProjectMapBuild.Root).Compose();var arrows=LaneDirectionPaint.Layout(actual);arrows.AddRange(UturnRoadMarkings.FallbackArrows(actual));
+  foreach(var zone in UturnRoadMarkings.Build(actual))Check(arrows.Any(a=>actual.hdEdges[a.edgeIndex].id==zone.incomingId&&(a.turns&LaneDirectionPaint.Uturn)!=0),"actual U-turn has a regular or dedicated fallback arrow "+zone.joinId);
  }
 }

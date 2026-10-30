@@ -4,9 +4,41 @@ using System.Globalization;
 using System.Text;
 
 public class HdRouteTrial : MonoBehaviour {
+ // A configured approach already paints the stop used by traffic/law. The HD
+ // source may describe an older, wider junction: keep it as data, but do not
+ // draw a second transverse stop on that same incoming carriageway.
+ public sealed class ReplacedStopLineMask {
+  sealed class Approach {public Vector3 junction,direction,stop;public float halfWidth,upstream;}
+  readonly List<Approach> approaches=new List<Approach>();
+  public ReplacedStopLineMask(MapData map){
+   if(!map.hybrid)return;
+   foreach(var rule in map.junctionRules??new HybridJunctionRule[0]){
+    if(rule==null||rule.approaches==null)continue;var axis0=new Vector3(rule.dx,0,rule.dz).normalized;var widths=new[]{3f,3f};
+    foreach(var a in rule.approaches){var dir=new Vector3(a.dx,0,a.dz).normalized;int axis=Mathf.Abs(Vector3.Dot(dir,axis0))>.7f?0:1;widths[axis]=Mathf.Max(widths[axis],a.width*.5f);}
+    foreach(var a in rule.approaches){var dir=new Vector3(a.dx,0,a.dz).normalized;int axis=Mathf.Abs(Vector3.Dot(dir,axis0))>.7f?0:1;int sign=Vector3.Dot(dir,axis==0?axis0:TrafficSystem.Right(axis0))>=0?1:-1;
+     var facility=map.editorDocument==null?null:System.Array.Find(map.editorDocument.facilities??new RoadMapFacility[0],f=>f.kind=="stopLine"&&f.junctionId==rule.id&&f.axis==axis&&f.sign==sign);
+     if(!rule.stopLine&&facility==null)continue;
+     var stop=facility==null?rule.V()-dir*(widths[1-axis]+4):facility.Position;
+     // Associate source evidence within one full approach width upstream of
+     // its replacement. This scales with road geometry, not a fixed radius.
+     approaches.Add(new Approach{junction=rule.V(),direction=dir,stop=stop,halfWidth=a.width*.5f,upstream=Vector3.Dot(rule.V()-stop,dir)+a.width});
+    }
+   }
+  }
+  public bool Replaces(HdMark mark){
+   if(mark.kind!="530"||mark.points==null||mark.points.Length<2)return false;
+   var a=mark.points[0].V();var b=mark.points[mark.points.Length-1].V();var tangent=(b-a).normalized;var centre=(a+b)*.5f;
+   float nearest=float.MaxValue;Approach match=null;
+   foreach(var approach in approaches){var delta=centre-approach.junction;float upstream=-Vector3.Dot(delta,approach.direction),lateral=Vector3.Dot(delta,TrafficSystem.Right(approach.direction));
+    if(Mathf.Abs(Vector3.Dot(tangent,approach.direction))>.35f||upstream<0||upstream>approach.upstream||lateral<0||lateral>approach.halfWidth)continue;
+    float distance=(centre-approach.stop).sqrMagnitude;if(distance<nearest){nearest=distance;match=approach;}
+   }
+   return match!=null;
+  }
+ }
  // Only longitudinal source centre/divider lines are replaced in physical
  // junction openings. Source turn guides, crossings, stop lines and kerbs
- // retain their own semantics and existing, more selective masks.
+ // use their own selective masks, including replacement-stop association.
  public sealed class LongitudinalJunctionPaintMask {
   readonly List<RoadJunctionGeometry.Clearance> zones;
   readonly Dictionary<Vector2Int,List<RoadJunctionGeometry.Clearance>> cells=new Dictionary<Vector2Int,List<RoadJunctionGeometry.Clearance>>();
@@ -143,10 +175,11 @@ public class HdRouteTrial : MonoBehaviour {
  public static void DrawMarkings(MapData map,Transform parent){
   var white=WorldBuilder.Mat("HD white",new Color(.95f,.94f,.87f));var yellow=WorldBuilder.Mat("HD yellow",new Color(1,.72f,.1f));var blue=WorldBuilder.Mat("HD blue",new Color(.12f,.4f,1));
   var vertices=new[]{new List<Vector3>(),new List<Vector3>(),new List<Vector3>()};var triangles=new[]{new List<int>(),new List<int>(),new List<int>()};
-  var roadsideMask=new LocalRoadSurfaceMask(map);var authoredMask=new AuthoredJunctionPaintMask(map);var longitudinalMask=new LongitudinalJunctionPaintMask(map);
+  var roadsideMask=new LocalRoadSurfaceMask(map);var authoredMask=new AuthoredJunctionPaintMask(map);var longitudinalMask=new LongitudinalJunctionPaintMask(map);var stopMask=new ReplacedStopLineMask(map);var uturns=UturnRoadMarkings.Build(map);
   var drawn=new HashSet<string>();
   foreach(var mark in map.hdMarks??new HdMark[0]){
    if(mark.points==null||mark.points.Length<2)continue;
+   if(stopMask.Replaces(mark))continue;
    string forward=MarkKey(mark,false),reverse=MarkKey(mark,true);if(!drawn.Add(string.CompareOrdinal(forward,reverse)<0?forward:reverse))continue;
    int color=mark.type.StartsWith("1")?1:mark.type.StartsWith("3")?2:0;
    var ps=new Vector3[mark.points.Length];for(int i=0;i<ps.Length;i++)ps[i]=mark.points[i].V(.075f);
@@ -154,10 +187,12 @@ public class HdRouteTrial : MonoBehaviour {
    bool roadside=mark.kind=="505"||mark.kind=="515";
    bool editedYellow=color==1&&(mark.kind=="501"||roadside)&&authoredMask.MightAffect(mark);
    bool crossingLine=(mark.kind=="501"||mark.kind=="502"||mark.kind=="503"||mark.kind=="505"||mark.kind=="506"||mark.kind=="515"||mark.kind=="525")&&authoredMask.MightAffect(mark);
-   bool longitudinal=longitudinalMask.MightAffect(mark),fine=roadside||editedYellow||longitudinal||crossingLine;
+   bool uturnMedian=color==1&&mark.kind=="501"&&uturns.Count>0;
+   bool longitudinal=longitudinalMask.MightAffect(mark),fine=roadside||editedYellow||longitudinal||crossingLine||uturnMedian;
    float step=fine ? .5f : dashed ? 6 : 2,paint=fine ? .5f : dashed ? 3 : 2.05f;
    for(float d=0;d<path.length;d+=step){if(fine&&dashed&&d%6>=3)continue;var a=path.Position(d);var b=path.Position(Mathf.Min(path.length,d+paint));if((b-a).sqrMagnitude<.0001f)continue;
     if(longitudinal&&longitudinalMask.Covers((a+b)*.5f,(b-a).normalized,Vector3.Distance(a,b)*.5f))continue;
+    if(uturnMedian&&UturnRoadMarkings.Covers(uturns,(a+b)*.5f,Vector3.Distance(a,b)*.5f))continue;
     // Kerb hooks/tapers do not become lane interiors, but no longitudinal
     // fragment may cross an actual zebra band. Turn guides only get this
     // narrow band mask; their dashed interior curves remain source-authored.

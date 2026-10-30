@@ -4,6 +4,7 @@ using UnityEngine;
 [System.Serializable] public sealed class DrivingLawSnapshot {
  public float wrongSeconds,wrongDistance,clearSeconds;public bool wrongLatched;
  public LawEntrySnapshot entry;
+ public UpstreamUturnSnapshot upstreamUturn;
 }
 [System.Serializable] public sealed class LawEntrySnapshot {
  public string junction,id;public int axis,sign;public Vector3 direction;public bool edited,uturnSigned,uturnAllowed,stopped,pedestrianYield,encroached,entered;public SignalColor left;public RoadObservation observed;
@@ -21,12 +22,13 @@ public class DrivingLaw : MonoBehaviour {
  readonly Dictionary<string,bool> stops=new Dictionary<string,bool>();
  float speedingSeconds;bool speedRecorded;void CheckEditorSpeed(){float limit=session.traffic.EditorSpeedLimit(session.taxi.transform.position,session.taxi.transform.forward);if(limit<=0||session.taxi.body.velocity.magnitude*3.6f<=limit+3){speedingSeconds=0;speedRecorded=false;return;}speedingSeconds+=Time.fixedDeltaTime;if(speedingSeconds<2||speedRecorded)return;speedRecorded=true;var e=new LawEvent{recoveryPolicyVersion=1,id=ids.Next("editor-speed"),day=Day,family="사용자 제한속도",action="제한속도 초과",reason="게임 설정 "+limit+"km/h · 3km/h 여유 초과 2초",speed=session.taxi.body.velocity.magnitude,seconds=(float)session.business.ledger.Elapsed};e.Add("editor-speed",LawVerdict.Violation,5);ledger.Record(e);} class Entry {public bool edited,uturnSigned,uturnAllowed;public SignalColor left;public TrafficJunction junction;public Vector3 direction;public int axis,sign;public bool stopped,pedestrianYield,encroached,entered;public RoadObservation observed;public string id;}
  Entry entry;
+ readonly UpstreamUturnObserver upstreamUturn=new UpstreamUturnObserver();
  public int Day {get{return session.business.ledger.Day;}}
  public bool StopRecorded(TrafficJunction junction){return entry!=null&&entry.junction==junction&&entry.stopped||stops.ContainsKey(junction.name+":0:1");}
  float wrongSeconds,wrongDistance,clearSeconds,wrongSampleSeconds;bool wrongLatched;
- public DrivingLawSnapshot CaptureObservation(){return new DrivingLawSnapshot{wrongSeconds=wrongSeconds,wrongDistance=wrongDistance,clearSeconds=clearSeconds,wrongLatched=wrongLatched,entry=entry==null?null:new LawEntrySnapshot{junction=entry.junction.name,id=entry.id,axis=entry.axis,sign=entry.sign,direction=entry.direction,edited=entry.edited,uturnSigned=entry.uturnSigned,uturnAllowed=entry.uturnAllowed,stopped=entry.stopped,pedestrianYield=entry.pedestrianYield,encroached=entry.encroached,entered=entry.entered,left=entry.left,observed=entry.observed.Copy()}};}
- public void RestoreObservation(DrivingLawSnapshot s){ResetObservation();if(s==null)return;wrongSeconds=Mathf.Clamp(s.wrongSeconds,0,2);wrongDistance=Mathf.Clamp(s.wrongDistance,0,100);clearSeconds=Mathf.Clamp(s.clearSeconds,0,2);wrongLatched=s.wrongLatched;var e=s.entry;if(e!=null&&session.traffic&&e.axis>=0&&e.axis<2&&e.observed!=null){var j=session.traffic.junctions.Find(x=>x.name==e.junction);if(j!=null)entry=new Entry{junction=j,id=e.id,axis=e.axis,sign=e.sign,direction=e.direction,edited=e.edited,uturnSigned=e.uturnSigned,uturnAllowed=e.uturnAllowed,stopped=e.stopped,pedestrianYield=e.pedestrianYield,encroached=e.encroached,entered=e.entered,left=e.left,observed=e.observed.Copy()};}previous=session.taxi.transform.position+session.taxi.transform.forward*2;initialized=true;}
- public void ResetObservation(){initialized=false;entry=null;stops.Clear();wrongSeconds=wrongDistance=clearSeconds=wrongSampleSeconds=0;wrongLatched=false;}
+ public DrivingLawSnapshot CaptureObservation(){return new DrivingLawSnapshot{wrongSeconds=wrongSeconds,wrongDistance=wrongDistance,clearSeconds=clearSeconds,wrongLatched=wrongLatched,upstreamUturn=upstreamUturn.Capture(),entry=entry==null?null:new LawEntrySnapshot{junction=entry.junction.name,id=entry.id,axis=entry.axis,sign=entry.sign,direction=entry.direction,edited=entry.edited,uturnSigned=entry.uturnSigned,uturnAllowed=entry.uturnAllowed,stopped=entry.stopped,pedestrianYield=entry.pedestrianYield,encroached=entry.encroached,entered=entry.entered,left=entry.left,observed=entry.observed.Copy()}};}
+ public void RestoreObservation(DrivingLawSnapshot s){ResetObservation();if(s==null)return;wrongSeconds=Mathf.Clamp(s.wrongSeconds,0,2);wrongDistance=Mathf.Clamp(s.wrongDistance,0,100);clearSeconds=Mathf.Clamp(s.clearSeconds,0,2);wrongLatched=s.wrongLatched;var e=s.entry;if(e!=null&&session.traffic&&e.axis>=0&&e.axis<2&&e.observed!=null){var j=session.traffic.junctions.Find(x=>x.name==e.junction);if(j!=null)entry=new Entry{junction=j,id=e.id,axis=e.axis,sign=e.sign,direction=e.direction,edited=e.edited,uturnSigned=e.uturnSigned,uturnAllowed=e.uturnAllowed,stopped=e.stopped,pedestrianYield=e.pedestrianYield,encroached=e.encroached,entered=e.entered,left=e.left,observed=e.observed.Copy()};}upstreamUturn.Restore(s.upstreamUturn);previous=session.taxi.transform.position+session.taxi.transform.forward*2;initialized=true;}
+ public void ResetObservation(){initialized=false;entry=null;upstreamUturn.Reset();stops.Clear();wrongSeconds=wrongDistance=clearSeconds=wrongSampleSeconds=0;wrongLatched=false;}
  public void ObserveWrongWay(float seconds){
   if(seconds<=0||seconds>.5f||!session||!session.jobs||!session.jobs.nav||!session.taxi)return;
   var graph=session.jobs.nav.hd;var taxi=session.taxi;var velocity=taxi.body.velocity;velocity.y=0;float speed=velocity.magnitude;var pos=taxi.transform.position;
@@ -46,7 +48,13 @@ public class DrivingLaw : MonoBehaviour {
  void FixedUpdate(){
   if(!session||session.paused||session.business.ShowingSummary)return;
   CheckEditorSpeed();ObserveWrongWay(Time.fixedDeltaTime);var taxi=session.taxi;var front=taxi.transform.position+taxi.transform.forward*2;
-  if(!initialized||Vector3.Distance(previous,front)>10){previous=front;initialized=true;entry=null;stops.Clear();return;}
+  if(!initialized||Vector3.Distance(previous,front)>10){previous=front;initialized=true;entry=null;upstreamUturn.Reset();stops.Clear();return;}
+  var upstream=upstreamUturn.Observe(session.world&&session.world.map!=null?session.world.map.editorDocument:null,session.traffic,previous,front,taxi.transform.forward,taxi.gameObject,()=>ids.Next("event"));
+  if(upstream!=null){
+   var incident=UturnEvent(upstream.id,upstream.observation,upstream.allowed);incident.junction=upstream.junction;incident.tripId=tripId;incident.occupied=session.jobs.trip.State==TripState.OnTrip;incident.assisted=session.assisted&&session.assisted.Active;incident.speed=taxi.body.velocity.magnitude;incident.seconds=(float)session.business.ledger.Elapsed;ledger.RecordIncident(incident);
+   if(!upstream.allowed&&session.manners)session.manners.Deduct("redmovement"+upstream.junction,12,"유턴 조건 위반",5);
+   if(upstream.yieldViolated&&session.manners)session.manners.Deduct("yield"+upstream.junction,8,"유턴 양보 위반",5);
+  }
   if(entry!=null){
    var q=front-entry.junction.center;float along=Vector3.Dot(q,entry.direction),side=Vector3.Dot(q,TrafficSystem.Right(entry.direction));
    float edge=entry.junction.CrossingNearEdge(entry.axis);
@@ -62,7 +70,7 @@ public class DrivingLaw : MonoBehaviour {
    if(right||uturn||left&&!holdLeft||through){
     LawEvent e;
     if(right){var now=session.traffic.Observe(entry.junction,entry.axis,entry.sign,entry.direction,taxi.gameObject);now.forward=entry.observed.forward;now.dedicated=entry.observed.dedicated;now.right=entry.observed.right;e=LawEvaluator.RightTurn(entry.id,Day,now,entry.stopped,settings,entry.pedestrianYield||(entry.stopped&&entry.observed.pedestrian!=PedestrianState.None&&entry.observed.pedestrian!=PedestrianState.Unknown));}
-    else if(uturn){e=new LawEvent{recoveryPolicyVersion=1,id=entry.id,day=Day,family="signal",observation=entry.observed.Copy(),action="유턴",reason="진입 시점 유턴 보조표지·신호"};e.Add("L01",entry.uturnAllowed?LawVerdict.Compliant:LawVerdict.Violation,settings.redStraightPenalty);}
+    else if(uturn){e=UturnEvent(entry.id,entry.observed,entry.uturnAllowed);}
     else {e=LawEvaluator.Signal(entry.id,Day,entry.observed,left,entry.left,settings);if(left&&!entry.edited&&entry.junction.leftTurnMode==LeftTurnMode.Permissive)e.rules[0].verdict=!entry.observed.known||entry.observed.forward!=SignalColor.Red?LawVerdict.Deferred:LawVerdict.Violation;}
     var situation=session.GetComponent<RightTurnSituation>();if(right&&situation&&situation.Active&&situation.junction==entry.junction)e.scenario="R"+situation.variant;
     e.junction=entry.junction.name;e.tripId=tripId;e.occupied=session.jobs.trip.State==TripState.OnTrip;e.assisted=session.assisted.Active;e.speed=taxi.body.velocity.magnitude;e.seconds=(float)session.business.ledger.Elapsed;
@@ -81,6 +89,7 @@ public class DrivingLaw : MonoBehaviour {
   }
   previous=front;
  }
+ LawEvent UturnEvent(string id,RoadObservation observed,bool allowed){var e=new LawEvent{recoveryPolicyVersion=1,id=id,day=Day,family="signal",observation=observed.Copy(),action="유턴",reason="진입 시점 유턴 보조표지·신호"};e.Add("L01",allowed?LawVerdict.Compliant:LawVerdict.Violation,settings.redStraightPenalty);return e;}
  bool passengerTab;
  public void OpenHistory(bool passengers=false){if(session.FullMapOpen||session.ChoiceOpen)return;passengerTab=passengers;if(session.PracticeMenuOpen||session.PracticeBusy||session.business.restartPrompt||session.services.open||session.business.pendingPayment>=0||session.business.preparing||session.business.taxPrompt)return;showHistory=true;session.paused=true;Time.timeScale=0;}
  public void CloseHistory(){showHistory=false;session.paused=false;Time.timeScale=session.business.ShowingSummary?0:1;}

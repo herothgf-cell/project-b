@@ -81,7 +81,10 @@ public class TrafficSystem : MonoBehaviour {
     public SignalColor MovementSignal(TrafficJunction junction,int axis,int turn,int sign=1){return turn==UturnMovement.Turn?SignalColor.Red:junction.editorProgram!=null?junction.editorProgram.Movement(axis,sign,turn,Clock):Signal(junction,axis,sign);}
     public RoadObservation Observe(TrafficJunction j,int axis,int sign,Vector3 direction,GameObject self){
         var o=j.rightTurnObservation!=null&&j.observationAxis==axis&&j.observationSign==sign?j.rightTurnObservation.Copy():new RoadObservation{known=true,pedestrian=PedestrianState.None};
-        o.forward=j.editorProgram!=null?j.editorProgram.Movement(axis,sign,0,Clock,self?EditorLaneId(self.transform.position,self.transform.forward):null):Signal(j,axis,sign);if(j.editorProgram!=null){o.dedicated=true;o.right=j.editorProgram.Movement(axis,sign,1,Clock,self?EditorLaneId(self.transform.position,self.transform.forward):null);}if(j.rightTurnObservation==null)o.pedestrianGreen=PedestrianGreen(j,axis,sign);if(j.editorProgram!=null&&EditorPedestrian(j))o.pedestrian=PedestrianState.Crossing;if(ambientPedestrians!=null&&ambientPedestrians.ObservedPedestrian(j,direction,self))o.pedestrian=PedestrianState.Crossing;o.trafficClear=YieldClear(j,direction,1,self);return o;
+        // Unbound programs cannot use a lane ID. Resolving it twice per GUI
+        // pass scanned the complete graph at the commercial midblock signal.
+        string signalLane=null;if(j.editorProgram!=null&&self&&j.editorProgram.NeedsLaneId(axis,sign))signalLane=EditorLaneId(self.transform.position,self.transform.forward);
+        o.forward=j.editorProgram!=null?j.editorProgram.Movement(axis,sign,0,Clock,signalLane):Signal(j,axis,sign);if(j.editorProgram!=null){o.dedicated=true;o.right=j.editorProgram.Movement(axis,sign,1,Clock,signalLane);}if(j.rightTurnObservation==null)o.pedestrianGreen=PedestrianGreen(j,axis,sign);if(j.editorProgram!=null&&EditorPedestrian(j))o.pedestrian=PedestrianState.Crossing;if(ambientPedestrians!=null&&ambientPedestrians.ObservedPedestrian(j,direction,self))o.pedestrian=PedestrianState.Crossing;o.trafficClear=YieldClear(j,direction,1,self);return o;
     }
     public bool CanEnter(TrafficCar car,TrafficStop stop){
         if(stop.Movement(car.route)==UturnMovement.Turn){var uturnJunction=stop.junction;var heading=car.route.Tangent(stop.distance);int uturnSign=Sign(heading,stop.axis,uturnJunction);string lane=car.route.graphPath!=null&&editorGraph!=null?editorGraph.edges[car.route.graphPath.EdgeAt(Mathf.Max(0,stop.distance))].id:null;return UturnPermitted(uturnJunction,stop.axis,uturnSign,lane)&&Observe(uturnJunction,stop.axis,uturnSign,heading,car.gameObject).PedestrianClear&&!EditorPedestrian(uturnJunction)&&UturnClear(car,stop); }if(!stop.junction.signalized&&!stop.junction.scenarioSignal)return true;
@@ -284,7 +287,8 @@ public class TrafficSystem : MonoBehaviour {
     public void Release(TrafficCar car,TrafficJunction j,bool clearRequest=true){j.reservations.Remove(car);if(clearRequest)j.requests.Remove(car);if(j.owner==car){j.owner=null;foreach(var reserved in j.reservations){j.owner=reserved;break;}}}
     public void Release(TrafficCar car){foreach(var j in junctions)Release(car,j);}
     public void CancelApproach(TrafficCar car,TrafficStop stop){
-        if(stop.distance-car.distance>ReservationDistance(car))return;
+        // Reservations can have been acquired at a larger braking distance before
+        // the car slowed down. Distance is not evidence that no reservation exists.
         foreach(var active in car.route.stops)if(active.junction==stop.junction&&car.distance>active.distance+.05f&&car.distance<active.exitDistance)return;
         Release(car,stop.junction,false);
     }
@@ -383,6 +387,7 @@ public class TrafficSystem : MonoBehaviour {
     void PaintRoads(MapData map) {
         RoadPaintGeometry.Paint(map,junctions,(name,p,dir,width,length,isYellow)=>Mark(name,p,dir,width,length,isYellow?yellow:white));
         ReviewedLaneLayout.Paint(map,(name,p,dir,width,length,isYellow)=>Mark(name,p,dir,width,length,isYellow?yellow:white));
+        UturnRoadMarkings.Paint(map,(name,p,dir,width,length,isYellow)=>Mark(name,p,dir,width,length,isYellow?yellow:white));
     }
     void Mark(string name,Vector3 p,Vector3 dir,float width,float length,Material material) {
         p.y=.071f;var right=Right(dir)*width*.5f;var along=dir*length*.5f;var list=material==yellow?yellowPaint:whitePaint;list.AddRange(new[]{p-right-along,p-right+along,p+right+along,p+right-along});

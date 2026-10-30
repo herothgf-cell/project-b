@@ -36,10 +36,12 @@ public static class AdditionalReviewedUturnMap {
  public static void Validate(){
   var package=ProjectMapStore.Load(ProjectMapBuild.Root);var map=package.Compose();var graph=new HdRoadGraph(map);
   for(int i=0;i<Incoming.Length;i++){
-   int a=Array.FindIndex(map.hdEdges,l=>l.id==Incoming[i]),b=Array.FindIndex(map.hdEdges,l=>l.id==Outgoing[i]);
+   var movement=package.document.lanes.First(l=>l.id=="join:reviewed:"+Names[i]+":uturn");string exitId=movement.next.Single();
+   string incomingId=package.document.lanes.Single(l=>!l.disabled&&l.next.Contains(movement.id)).id;
+   int a=Array.FindIndex(map.hdEdges,l=>l.id==incomingId),b=Array.FindIndex(map.hdEdges,l=>l.id==exitId);
    var route=graph.Route(a,Mathf.Max(0,graph.paths[a].length-10),b,Mathf.Min(6,graph.paths[b].length));
    if(route==null||!route.edges.Any(e=>map.hdEdges[e].id=="join:reviewed:"+Names[i]+":uturn"))throw new Exception("Reviewed U-turn route missing "+Names[i]);
-   var from=package.document.lanes.First(l=>l.id==Incoming[i]);var target=package.document.lanes.First(l=>l.id==Outgoing[i]);UturnMovement.Geometry(from,target);
+   var from=package.document.lanes.First(l=>l.id==incomingId);var target=package.document.lanes.First(l=>l.id==exitId);UturnMovement.Geometry(from,target);
    if(UturnMovement.Condition(package.document,from.id)==null)throw new Exception("Reviewed U-turn condition missing");
   }
   Debug.Log("ADDITIONAL_UTURN_MAP_OK movements=3 evidence=2026-05 checked=2026-10-26 hashes=valid");

@@ -54,6 +54,10 @@ public class TrafficCar : MonoBehaviour {
             if(remaining>=-.05f&&remaining<.4f&&speed<.05f)stoppedAt=stop.junction;
             if(distance>stop.exitDistance&&released.Add(stop)){system.Release(this,stop.junction);if(stoppedAt==stop.junction)stoppedAt=null;}
             if(remaining>=-.05f&&remaining<=system.ReservationDistance(this))system.Request(this,stop);
+            // Braking for a queue shrinks the speed-dependent reservation horizon.
+            // Do not hold a previously acquired approach reservation outside it:
+            // that queue may need a conflicting green movement to drain first.
+            if(remaining>=-.05f&&remaining>system.ReservationDistance(this)&&stop.junction.reservations.Contains(this))system.CancelApproach(this,stop);
             // Once beyond the stop line, clear the intersection even when its signal changes.
             if(remaining>=-.05f && remaining<=TrafficRules.SignalObservationDistance(speed) && !system.CanEnter(this,stop)) {
                 system.CancelApproach(this,stop);
