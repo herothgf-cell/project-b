@@ -64,13 +64,13 @@ public class ServiceLawZonesSmokeTest : MonoBehaviour {
  IEnumerator Start(){
   Application.runInBackground=true;QualitySettings.vSyncCount=0;Application.targetFrameRate=120;
   yield return new WaitForSecondsRealtime(1.5f);var zones=GetComponent<ServiceLawZones>();var jobs=session.jobs;var taxi=session.taxi;session.business.Depart();if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-physicalService")>=0){yield return Physical();yield break;}taxi.automated=true;taxi.enabled=false;taxi.body.useGravity=false;taxi.body.detectCollisions=false;
-  Check(!PracticeSession.Enabled&&session.world.map.mapId=="eungye"&&zones.Ready,"normal Eungye business scene, no practice process");Check(zones.zones.Count==7,"seven distinct Eungye places registered");
+  Check(!PracticeSession.Enabled&&session.world.map.mapId=="eungye"&&zones.Ready,"normal Eungye business scene, no practice process");Check(zones.zones.Count==4,"four service places; fictional left conditions excluded");
   var unique=new System.Collections.Generic.HashSet<string>();foreach(var z in zones.zones)unique.Add(z.junction.name);Check(unique.Count==zones.zones.Count,"separate junction spaces");foreach(var z in zones.zones)report.AppendLine("ZONE "+z.variant+" "+z.junction.name+" "+z.junction.center+" connector="+z.connector);
   int map=session.world.GetInstanceID(),vehicle=taxi.GetInstanceID();var account=session.business.ledger.Account;int cash=account.Cash;
   // Keep ambient cars allocated but isolate these controlled boundary fixtures. Physical ambient drives are separate.
   foreach(var car in session.traffic.cars){car.Recycle();car.enabled=false;}
   yield return ViaBoundaries(zones);
-  for(int variant=8;variant<=14;variant++){
+  for(int variant=8;variant<=11;variant++){
    jobs.ClearForDay();int offer=-1;
    var course=zones.scenarios.Find(x=>x.variant==variant);var fixture=new JobOffer{fare=5000,seconds=2000,requiredScore=60};if(zones.ConfigureScenario(fixture,course)){jobs.offers[0]=fixture;offer=0;}
    Check(offer>=0,"reachable passenger offer for condition "+variant);if(offer<0)continue;
@@ -97,6 +97,6 @@ public class ServiceLawZonesSmokeTest : MonoBehaviour {
   }
   yield return ExtraCase(false);yield return ExtraCase(true);
   Check(account.Cash>cash,"fares actually reach campaign cash account");Check(!GetComponent<PracticeSession>().Busy&&map==session.world.GetInstanceID(),"no isolated practice launched across transport tests");
-  report.AppendLine("Controlled poses for 7 normal passenger trips. Ambient traffic isolated in these boundary cases; not manual or full-route wheel driving.");File.WriteAllText(ReportPath,"success="+ok+"\n"+report);Application.Quit(ok?0:1);
+  report.AppendLine("Controlled poses for 4 normal passenger trips. Ambient traffic isolated in these boundary cases; not manual or full-route wheel driving.");File.WriteAllText(ReportPath,"success="+ok+"\n"+report);Application.Quit(ok?0:1);
  }
 }

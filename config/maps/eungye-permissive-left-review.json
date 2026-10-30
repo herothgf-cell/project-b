@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "policy": "Only an approach-specific readable permissive-left sign plus the matching signal/road movement may justify permission. Missing or ambiguous evidence grants no new permission. Signal timings are not inferred from a still image.",
+  "verifiedApproaches": [],
+  "reviewedApproaches": [
+    {
+      "junctionId": "J7841_867",
+      "incoming": "west-to-east",
+      "requestedBearing": 90,
+      "status": "unconfirmed",
+      "month": "2026-05",
+      "url": "https://map.naver.com/p/entry/coordinates/3zanok,2AGwoP?c=15,0,0,0,adh&p=vAXkarXYAmpMy8qMKj31fQ,0,5,80,Float",
+      "observed": "은계로 연결 도로와 전방 신호를 확인했으나 서→동 해당 진입부의 비보호329 표지를 정면 판독하지 못함. 접근 방향 불일치 사진을 허용 근거로 쓰지 않음.",
+      "checkedAt": "2026-10-30",
+      "permissiveSignConfirmed": false,
+      "permissionGranted": false
+    },
+    {
+      "junctionId": "J6858_12618",
+      "incoming": "south-southeast-to-north-northwest",
+      "requestedBearing": 338,
+      "status": "not-confirmed-permissive",
+      "month": "2026-05",
+      "url": "https://map.naver.com/p/entry/coordinates/3zakqC,2AGXWh?c=15,0,0,0,adh&p=Ix6rbIKQdDKEt2ehapts1A,-22,4,55,Float",
+      "observed": "4구 차량 신호, 유턴 표지와 좌회전/보행 신호 조건판 확인. 비보호 좌회전329 문구는 확인되지 않음. 유턴 허용판을 비보호 좌회전 허용으로 해석하지 않음.",
+      "checkedAt": "2026-10-30",
+      "permissiveSignConfirmed": false,
+      "permissionGranted": false
+    },
+    {
+      "junctionId": "J8066_6364",
+      "incoming": "north-to-south",
+      "requestedBearing": 180,
+      "status": "approach-not-resolved",
+      "month": "2026-05",
+      "url": "https://map.naver.com/p/entry/coordinates/3zao1h,2AGJhI?c=15,0,0,0,adh&p=3EKy_X4MdjfjwJ8NFMRLzA,180,3,50,Float",
+      "observed": "해당 교차로 주변 도로를 확인했으나 북쪽 진입 정면의 비보호 표지를 판독하지 못함. 지도 핀과 촬영 위치/시선 방향을 구분해 보류.",
+      "checkedAt": "2026-10-30",
+      "permissiveSignConfirmed": false,
+      "permissionGranted": false
+    }
+  ],
+  "scope": "Former three fictional service approaches and nearby context; not a survey declaring no permissive turns anywhere in Eungye.",
+  "excludedEvidence": [
+    {
+      "url": "https://map.naver.com/p/entry/coordinates/3zanLi,2AGD8X?c=15.99,0,0,0,adh&p=8tKhgd4xCQY5MqAZhqKJMQ,180,5,60,Float",
+      "reason": "Pano/minimap corresponds to J7973 vicinity, not proof of the J8066 north approach."
+    }
+  ]
+}
