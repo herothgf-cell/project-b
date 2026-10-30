@@ -20,7 +20,7 @@ Interfaces: PvpSimulationMode.Active, Expanded, DurationSeconds; PvpSimulationMo
 - [x] Tests first for mode isolation/ownership/once-only settlement and actual components.
 - [x] Implement existing simulation human/bot sessions sharing world/traffic, distinct vehicle/jobs/law/damage state; no duplicate global cameras or world.
 - [x] Preserve UI by original components and small competition overlay; isolate campaign persistence before initialization.
-- [ ] Verify physical driving, transport, damage and settlement.
+- [x] Verify physical driving, transport, damage and settlement.
 
 ## Task 2 — Expanded A data
 Files: new Assets/Scripts/PvpCityMap.cs and Editor/PvpCityMapTests.cs only.
@@ -33,9 +33,9 @@ Interface: public static MapData PvpCityMap.Create(). Native MapData and existin
 Files: PvpBootstrap/PvpPrototypePanel/PvpBuild, MapCatalog, new runtime probe/editor runner, tools test runner.
 - [x] Connect existing PVP executable launch to original simulation match with Eungye default and expanded A selection. Legacy diagnostics remain explicit.
 - [x] Prepare current committed Eungye map inputs without overwriting campaign scene/build settings.
-- [ ] Run Eungye integration before custom-map runtime acceptance.
-- [ ] Build isolated Windows client, test copied distribution, capture actual original gameplay HUD, verify campaign/PVP hashes.
+- [x] Run Eungye integration before custom-map runtime acceptance.
+- [x] Build isolated Windows client, test copied distribution, capture actual original gameplay HUD, verify campaign/PVP distribution hashes (live campaign save later changed while a separate ordinary single Player was active; preserved, no final immutability claim).
 
 ## Task 4 — Review and publication
-- [ ] Independent review, fix material findings, run relevant regressions.
+- [x] Independent review, fix material findings, run relevant regressions.
 - [ ] Update roadmap/content/history/LATEST with actual results and limitations; commit source and rebuilt distribution; push feature/pvp-prototype.

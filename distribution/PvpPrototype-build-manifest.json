@@ -1,49 +1,55 @@
 {
   "formatVersion": 1,
-  "sourceCommit": "a5c13de67f3b6e92b50c898d765aca10670e3ba6",
-  "branchBaseCommit": "a5c13de67f3b6e92b50c898d765aca10670e3ba6",
+  "sourceCommit": "b5b53044be9600f11adc388fc6235603846844b3",
+  "branchBaseCommit": "b5b53044be9600f11adc388fc6235603846844b3",
   "unity": "2022.3.62f2",
   "platform": "Windows64",
   "entrypoint": "builds/PvpPrototype/PvpPrototype.exe",
-  "validatedOn": "2026-10-29",
-  "totalBytes": 93263189.0,
+  "validatedOn": "2026-10-30",
+  "totalBytes": 115076876.0,
   "validation": {
     "existingVerifiedBuild": false,
     "sourceRebuiltForPackaging": true,
     "copiedRuntimeFolderHashVerified": true,
     "copiedRuntimeIsolation": "exit 0 / PVP_RUNTIME_ISOLATION_OK",
     "singleDistributionFiles": 130,
-    "singleDistributionBytes": 112194710.0,
+    "singleDistributionBytes": 112293085.0,
     "differentPhysicalPC": false,
     "notes": "Hash inventory; execution evidence is supplied separately.",
     "report": {
-      "sourceCommit": "a5c13de67f3b6e92b50c898d765aca10670e3ba6",
-      "buildExit": 0,
-      "modelExit": 0,
+      "sourceCommit": "b5b53044be9600f11adc388fc6235603846844b3",
       "copyHashEqual": true,
-      "copyFileCount": 139,
       "copyExit": 0,
       "copyMarker": "PVP_RUNTIME_ISOLATION_OK",
+      "diagnosticProcesses": 2,
+      "diagnosticPathsDistinct": true,
+      "buildExit": 0,
+      "buildLog": "artifacts/pvp/simulation-build-16.log",
       "driveBaselineExit": 0,
-      "copyWorkingDirectory": "artifacts/pvp/runtime-copy-42d549da354f401bb7ac1c1804ded3eb",
-      "inputOnlyDriving": true,
-      "expandedMode": true,
-      "expandedInputServiceExit": 0,
-      "networkRegressionExit": 0,
-      "reconnectRegressionExit": 0,
-      "fullProfileValidationLog": "artifacts/pvp/expanded-final-model.log",
-      "copiedBaselineLog": "artifacts/pvp/expanded-packaged-baseline.log",
-      "humanInput": false,
+      "paidEungyeFixtureExit": 0,
+      "expandedDefaultCallsExit": 0,
+      "congestionNativeArrivalsExit": 0,
+      "servicesExit": 0,
+      "physicsTeleportDuringTransport": false,
+      "impactFixtureUsesPhysicalContacts": true,
+      "editorSuiteExit": 0,
+      "editorSuiteSourceCommit": "1c9b3e753e37c8d5714e2893fbfec427c70172f4",
+      "editorSuiteLog": "artifacts/pvp/simulation-build-15.log",
+      "postEditorChange": "Only collision test observer; runtime compile and all physical probes rerun on release source.",
+      "campaignModelClasses": 28,
+      "campaignModelExit": 0,
+      "campaignDataFilesPreserved": 1,
+      "campaignDataHashesEqual": false,
+      "singleDistributionFiles": 130,
+      "singleDistributionBytes": 112293085,
+      "nativeVisualCaptureExit": 0,
+      "nativeVisualCaptureSource": "1c9b3e753e37c8d5714e2893fbfec427c70172f4",
+      "ordinaryEungyeRandomCallPaidGate": "Candidate14 failed: both original trips arrived late with zero fare. Congestion/profit balance remains open; not hidden by fixed paid integration fixture.",
+      "humanPlayAcceptance": false,
       "differentPhysicalPC": false,
-      "notes": "Committed-source expanded district. Copied runtime from its own directory passed actual input transport to fuel station, cancel/retry, exactly one expense, NPC/rules, result/cleanup/restart with zero position fixtures/boundaries. Same committed build passed two-player result and traffic equality. Chase/map/cockpit rendered frames inspected; human feel, other-PC and long balance remain unverified.",
-      "releaseNetworkExit": 0,
-      "releaseNetworkLog": "artifacts/pvp/expanded-release-network.log",
-      "renderExit": 0,
-      "renderImages": [
-        "artifacts/pvp/expanded-release.png",
-        "artifacts/pvp/expanded-release-map.png",
-        "artifacts/pvp/expanded-release-driver.png"
-      ]
+      "nativeRemotePlayerCompetition": false,
+      "campaignDataPreservation": "Earlier comparison matched. Final comparison changed while a non-diagnostic EungyeTaxi.exe was active. Existing save and process left untouched; no final whole-file immutability claim.",
+      "campaignIsolationChecks": "Native simulation memory-only sessions, empty save paths, disabled score journal, teardown/replay no-save guards passed."
     }
   },
   "files": [
@@ -160,17 +166,17 @@
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/boot.config",
       "bytes": 164,
-      "sha256": "8a5687555e1d035e1a517a7dc6e28d07a5dabad00bc1274ace5e928ca5b67f21"
+      "sha256": "e98f2778b6bfb3c9c8a3df9891f053e40c7d44dbf2d1c8cacf3574270d0457ab"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/globalgamemanagers",
-      "bytes": 52420,
-      "sha256": "aa16bfa22010e6a12fb42058bc08ab4a5df1de4e25a9d964050a6b9fe68ac318"
+      "bytes": 53076,
+      "sha256": "d065205828f5210212006a74faab4343a4dab51abefa8d75a2c916e1227cd121"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/globalgamemanagers.assets",
-      "bytes": 99576,
-      "sha256": "7aa22a97919468d8dee054138b90595dfd0a8836085f8f8532942df773231c50"
+      "bytes": 101272,
+      "sha256": "80b5ce6c71542f7b7c94e7b80c6616beafbca89b41c39d935646b943aecef677"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/globalgamemanagers.assets.resS",
@@ -180,12 +186,12 @@
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/level0",
       "bytes": 1140,
-      "sha256": "453b948266e748c443c9e0915ae619d9ef033ed99677fac6507e93c0f3ca8d2f"
+      "sha256": "0ccaee09a1f4f5bc49ffbe56ecaecb3a3b58619a49deee25da5610946151ec73"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 1660416,
-      "sha256": "e44eb40c229f78268525c9ccbc547b9e285b5120cbd9fb290e3694cd9a087be9"
+      "bytes": 1849344,
+      "sha256": "b1a36020f4d54c143c6dfc0bd9737dc045decd586c89404a85ad254364417e2e"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/Managed/Mono.Security.dll",
@@ -684,8 +690,8 @@
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/resources.assets",
-      "bytes": 18816030,
-      "sha256": "134d6ed70cfa1be3d41ca4132672b435222662b44b01c756c89b71a39326d1b3"
+      "bytes": 40438158,
+      "sha256": "f08ca58a21bbda761f40bd7047b231ba5c72c97838c275eacad957f1670a298d"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/Resources/unity default resources",
@@ -699,8 +705,8 @@
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/RuntimeInitializeOnLoads.json",
-      "bytes": 6647,
-      "sha256": "bc504dcf5ea0e3132bfccf6d848fe4cc4f344aba3fc288b914ddb03fbc99cf86"
+      "bytes": 6926,
+      "sha256": "aa410381a95bf07e9c421913f51150680621a9406f16eea84ec9521cde29e09e"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/ScriptingAssemblies.json",
@@ -710,7 +716,7 @@
     {
       "path": "builds/PvpPrototype/PvpPrototype_Data/sharedassets0.assets",
       "bytes": 8524,
-      "sha256": "2f6ab43db9b50ddb3a27687fcd1c1c14e36973f48fe0c842b12485bc4193a0f0"
+      "sha256": "97e8d987d52af03fb2a60c9499d73cfa8335a401df8a2ec92e5f877c7bb9a0ed"
     },
     {
       "path": "builds/PvpPrototype/PvpPrototype.exe",
