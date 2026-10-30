@@ -166,7 +166,7 @@ public sealed class PvpSimulationProbe : MonoBehaviour {
         }
         for(int i=0;i<drivers.Length;i++){
             var s=drivers[i];s.taxi.autoThrottle=0;s.taxi.autoBrake=true;
-            Check(witnesses[i].Hit&&metres[i]>5&&s.business.ledger.Care.Damage.Durability<initial[i],"physical impact fixture driver="+i+" wallContact="+witnesses[i].Hit+" metres="+metres[i]+" durability="+initial[i]+">"+s.business.ledger.Care.Damage.Durability+"; no taxi pose/velocity edits");
+            Check(witnesses[i].Hit&&metres[i]>5&&s.business.ledger.Care.Damage.Durability<initial[i],"physical impact fixture driver="+i+" obstacleContact="+witnesses[i].Hit+" collider="+witnesses[i].Contact+" metres="+metres[i]+" durability="+initial[i]+">"+s.business.ledger.Care.Damage.Durability+"; no taxi pose/velocity edits");
             Destroy(walls[i]);Destroy(witnesses[i]);
         }
         yield return null;
