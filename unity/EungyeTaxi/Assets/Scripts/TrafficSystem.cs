@@ -55,6 +55,13 @@ public class TrafficSystem : MonoBehaviour {
     void Awake(){mitOptions=new MitTrafficOptions();}
     public readonly List<TrafficJunction> junctions = new List<TrafficJunction>();
     public readonly List<TrafficCar> cars = new List<TrafficCar>();
+    NativeTrafficMergePolicy authoredMerges;
+    public int AuthoredMergeCount {get{return authoredMerges==null?0:authoredMerges.Count;}}
+    public void RegisterMergeDriver(DriveSession driver){if(authoredMerges!=null)authoredMerges.Register(driver);}
+    public float MergeApproachGap(TrafficCar car,out string reason){reason="";return authoredMerges==null?float.PositiveInfinity:authoredMerges.Gap(car,out reason);}
+    public float MergeApproachGap(DriveSession driver,out string reason){reason="";return authoredMerges==null?float.PositiveInfinity:authoredMerges.Gap(driver,out reason);}
+    public string MergeDiagnostics(TrafficCar car){return authoredMerges==null?"off":authoredMerges.Diagnostics(car);}
+    public string MergeDiagnostics(DriveSession driver){return authoredMerges==null?"off":authoredMerges.Diagnostics(driver);}
     public bool manualClock;
     public float manualTime;
     public float Clock { get { return manualClock ? manualTime : Time.time; } }
@@ -166,6 +173,7 @@ public class TrafficSystem : MonoBehaviour {
     public void Request(TrafficCar car,TrafficStop stop){if(!stop.junction.requests.ContainsKey(car))stop.junction.requests[car]=Time.time;}
     public void Build(MapData map, bool spawnCars) {
         roadMap=map;if(map.editorDocument!=null){editorGraph=new HdRoadGraph(map);editorSpeedRules=System.Array.Exists(map.editorDocument.facilities,f=>f.kind=="sign"&&f.rule&&f.type=="제한속도");}
+        authoredMerges=NativeTrafficMergePolicy.Supports(map)?new NativeTrafficMergePolicy(this,map,editorGraph??new HdRoadGraph(map)):null;
         mainDirection = (map.targets[1].V() - map.targets[0].V()).normalized;
         if(map.HasHd&&!map.hybrid)return;
         white = WorldBuilder.Mat("White road paint", new Color(.93f,.92f,.84f));

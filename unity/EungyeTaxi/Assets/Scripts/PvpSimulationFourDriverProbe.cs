@@ -42,7 +42,7 @@ public sealed class PvpSimulationFourDriverProbe : MonoBehaviour {
         int first=route==null||route.graphPath==null?-1:route.graphPath.edges[0];float startAt=0,startError;
         if(first>=0&&car.district)startAt=car.district.graph.paths[first].Project(route.Position(0),out startError);
         var body=car.GetComponent<Rigidbody>();
-        return car.name+" enabled="+car.enabled+" visible="+car.Visible+" pos="+car.transform.position+" physicsPos="+(body?body.position:car.transform.position)+" heading="+car.transform.forward+" speed="+car.speed+" routeAt="+car.distance+" routeLength="+(route==null?0:route.length)+" startEdge="+first+" startAt="+startAt+" currentEdge="+edge+" lane="+lane+" turn="+(route==null?0:car.CurrentTurn)+" goalEdge="+(route==null?-1:route.goalEdge)+" goalAt="+(route==null?0:route.goalAt)+" completedRoutes="+car.completedRoutes+" totalTravel="+car.totalTravel+" signal="+car.waitingForSignal+" junction="+car.waitingForJunction+" entryBlocked="+car.entryBlocked+" obstacle="+car.waitingForObstacle+" blocked="+car.blockedName+" obstacleCar="+(car.obstacleCar?car.obstacleCar.name:"none")+" baseline="+car.baselineTarget+" following="+car.followingTarget+" stoppedAt="+(car.stoppedAt==null?"none":car.stoppedAt.name);
+        return car.name+" enabled="+car.enabled+" visible="+car.Visible+" pos="+car.transform.position+" physicsPos="+(body?body.position:car.transform.position)+" heading="+car.transform.forward+" speed="+car.speed+" routeAt="+car.distance+" routeLength="+(route==null?0:route.length)+" startEdge="+first+" startAt="+startAt+" currentEdge="+edge+" lane="+lane+" turn="+(route==null?0:car.CurrentTurn)+" goalEdge="+(route==null?-1:route.goalEdge)+" goalAt="+(route==null?0:route.goalAt)+" completedRoutes="+car.completedRoutes+" totalTravel="+car.totalTravel+" signal="+car.waitingForSignal+" junction="+car.waitingForJunction+" entryBlocked="+car.entryBlocked+" obstacle="+car.waitingForObstacle+" blocked="+car.blockedName+" obstacleCar="+(car.obstacleCar?car.obstacleCar.name:"none")+" baseline="+car.baselineTarget+" following="+car.followingTarget+" stoppedAt="+(car.stoppedAt==null?"none":car.stoppedAt.name)+" mergeWait="+car.waitingForMerge+" merge="+car.system.MergeDiagnostics(car);
     }
     static string ObstacleChain(TrafficCar first){
         var seen=new HashSet<TrafficCar>();var text=new StringBuilder();var car=first;
@@ -104,6 +104,7 @@ public sealed class PvpSimulationFourDriverProbe : MonoBehaviour {
         var human=match.Human;
         Check(match.Bot==match.Bots[0],"first bot compatibility");
         Calls(match,"initial");
+        Check(match.Human.traffic.AuthoredMergeCount>0,"PvP authored native merge gates survive world/traffic construction count="+match.Human.traffic.AuthoredMergeCount);
         var pilots=new PvpSimulationBot[4];
         bool native=true,isolated=true,sharedWorld=true;
         for(int i=0;i<4;i++){

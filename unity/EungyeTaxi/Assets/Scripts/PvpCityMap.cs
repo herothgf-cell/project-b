@@ -51,7 +51,7 @@ public static class PvpCityMap {
   var launch=graph.paths[Array.FindIndex(map.hdEdges,e=>e.id=="city:0:1>1:1")];var launchPosition=launch.Position(65);var launchDirection=launch.Tangent(65);
   var target=launchPosition+launchDirection*23-TrafficSystem.Right(launchDirection)*2.5f;var ahead=target+launchDirection*200;
   map.targets=new[]{new MapTarget{name="출발 도로",x=target.x,z=target.z},new MapTarget{name="진행 방향",x=ahead.x,z=ahead.z}};
-  streets.AttachDocument(map);
+  streets.AttachDocument(map);map.pvpTrafficMerges=PvpTrafficMergeLayout.Create(map);
   return map;
  }
  // Keep geometry near street level; all cutouts use the same asphalt envelopes

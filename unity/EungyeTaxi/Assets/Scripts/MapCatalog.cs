@@ -4,7 +4,7 @@ using UnityEngine;
 public static class MapCatalog {
  public static string LockedRegion="";
  public static string[] Ids {get{return new[]{"eungye"};}}
- public static string Name(string id){return id=="pvp-city-a"?"확장 A · PVP 도시":id=="route42"?"은계 · 국도 42호선 차로 시험":id=="eungye"?"시흥 은계지구":"지도";}
+ public static string Name(string id){return id=="pvp-city-a"?"확장 A2 · PVP 도시":id=="route42"?"은계 · 국도 42호선 차로 시험":id=="eungye"?"시흥 은계지구":"지도";}
  static string Resource {get{return Resources.Load<TextAsset>("eungye-hybrid-map")?"eungye-hybrid-map":"eungye-map";}}
  public static bool Available(string id){if(id!="eungye")return false;if(Resources.Load<TextAsset>(ProjectMapStore.ResourceName))return true;var asset=Resources.Load<TextAsset>(Resource);if(!asset)return false;try{var map=JsonUtility.FromJson<MapData>(asset.text);return map!=null&&map.roads!=null&&map.roads.Length>0&&map.targets!=null&&map.targets.Length>=2&&map.stops!=null&&map.stops.Length>=4;}catch{return false;}}
  public static string NextRegion {get{return "eungye";}}

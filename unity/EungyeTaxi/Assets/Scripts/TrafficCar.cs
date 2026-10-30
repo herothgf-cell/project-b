@@ -11,7 +11,7 @@ public class TrafficCar : MonoBehaviour {
     public TrafficJunction stoppedAt;
     public TrafficRoute route; public TrafficSystem system;
     public TrafficCar obstacleCar { get; private set; }
-    public float distance, speed,totalTravel;public int completedRoutes; public bool waitingForSignal, waitingForObstacle, waitingForJunction,entryBlocked;
+    public float distance, speed,totalTravel;public int completedRoutes; public bool waitingForSignal, waitingForObstacle, waitingForJunction,entryBlocked,waitingForMerge;public string mergeStatus="";
     public string blockedName="";public int redStops, departures; bool previouslyStopped, recycling;
     Rigidbody body; BoxCollider hit; Renderer[] renderers; Renderer[] brakeLights;
     readonly TrafficOverlapQuery overlaps=new TrafficOverlapQuery();
@@ -48,7 +48,7 @@ public class TrafficCar : MonoBehaviour {
             return;
         }
         if(district!=null&&distance>=route.length-.01f){if(!district.Continue(this))speed=0;return;}
-        float gap=1000;blockedName=""; waitingForSignal=false;waitingForObstacle=false;waitingForJunction=false;
+        float gap=1000;blockedName=""; waitingForSignal=false;waitingForObstacle=false;waitingForJunction=false;waitingForMerge=false;mergeStatus="";
         foreach(var stop in route.stops) {
             float remaining=stop.distance-distance;
             if(remaining>=-.05f&&remaining<.4f&&speed<.05f)stoppedAt=stop.junction;
@@ -69,6 +69,8 @@ public class TrafficCar : MonoBehaviour {
                 if(remaining<gap){gap=Mathf.Max(0,remaining);waitingForSignal=true;}
             }
         }
+        float mergeGap=system.MergeApproachGap(this,out mergeStatus);
+        if(mergeGap<gap){gap=mergeGap;waitingForMerge=true;waitingForJunction=true;}
         obstacleCar=null;float detection=Mathf.Max(8,speed*speed/6+6);
         if(system.ambientPedestrians!=null){float pedestrianGap=system.ambientPedestrians.OccupiedCrossingGap(this,detection);if(pedestrianGap<gap){gap=pedestrianGap;waitingForObstacle=true;blockedName="occupied pedestrian crossing";}}
         for(float ahead=.5f;ahead<detection+3;ahead+=.5f){float at=Mathf.Min(route.length,distance+ahead);var facing=route.Tangent(at);bool blocked=false;

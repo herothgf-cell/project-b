@@ -24,7 +24,7 @@ public sealed class PvpSimulationBot : MonoBehaviour {
             }
             if(StationarySeconds>10)foreach(var collider in Physics.OverlapSphere(t.transform.position+Vector3.up*.5f,3.5f,(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore))if(!collider.transform.IsChildOf(t.transform))obstacles+=collider.name+"/";
             int grounded=0;foreach(var wheel in t.wheels)if(wheel.isGrounded)grounded++;
-            return "stationary="+StationarySeconds.ToString("0")+" speed="+t.Speed.ToString("0.00")+" target="+TargetSpeed+" obstacle="+ObstacleReason+" throttle="+t.autoThrottle+" brake="+t.autoBrake+" serviceBrake="+t.autoServiceBrake+" torque="+t.wheels[2].motorTorque+" grounded="+grounded+" assistance="+s.assisted.Status+" lock="+s.simulationMatch.ServiceRemaining(s)+" fatigue="+s.business.ledger.Driver.fatigue+" controlLost="+s.business.DrowsyControlsLost+zoneState+" nearby="+obstacles+npc;
+            return "stationary="+StationarySeconds.ToString("0")+" speed="+t.Speed.ToString("0.00")+" target="+TargetSpeed+" obstacle="+ObstacleReason+" throttle="+t.autoThrottle+" brake="+t.autoBrake+" serviceBrake="+t.autoServiceBrake+" torque="+t.wheels[2].motorTorque+" grounded="+grounded+" assistance="+s.assisted.Status+" merge="+s.traffic.MergeDiagnostics(s)+" lock="+s.simulationMatch.ServiceRemaining(s)+" fatigue="+s.business.ledger.Driver.fatigue+" controlLost="+s.business.DrowsyControlsLost+zoneState+" nearby="+obstacles+npc;
         }
     }
     static string TrafficChain(TrafficCar car){var seen=new System.Collections.Generic.HashSet<TrafficCar>();string value="";for(int i=0;i<8&&car;i++){if(!seen.Add(car)){value+="cycle:"+car.name;break;}value+="["+car.name+" pos="+car.transform.position+" speed="+car.speed+" signal="+car.waitingForSignal+" junction="+car.waitingForJunction+" blocked="+car.blockedName+(car.waitingForSignal||car.waitingForJunction?TrafficSignalDiagnostics(car):"")+"]";car=car.obstacleCar;}return value;}
@@ -101,7 +101,7 @@ public sealed class PvpSimulationBot : MonoBehaviour {
     bool curbDeparture;
     sealed class StopEvidence {public int axis,sign;public bool crossed;}
     readonly System.Collections.Generic.Dictionary<TrafficJunction,StopEvidence> stoppedJunctions=new System.Collections.Generic.Dictionary<TrafficJunction,StopEvidence>();
-    public void Initialize(DriveSession session) { Session=session; }
+    public void Initialize(DriveSession session) { Session=session;if(session.traffic)session.traffic.RegisterMergeDriver(session); }
     public static float PickupDistance(HdRoadGraph graph,Vector3 position,Vector3 direction,MapStop stop){
         // Native graph routes intentionally omit zero-length paths. Already
         // being in the legal stopping envelope is a valid pickup, too.
@@ -224,6 +224,8 @@ public sealed class PvpSimulationBot : MonoBehaviour {
     public float ObstacleDistance(bool signals=true) {
         var s=Session;var taxi=s.taxi;float result=100;var position=taxi.transform.position;var heading=taxi.transform.forward;
         ObstacleReason="clear";
+        string mergeStatus;float mergeGap=s.traffic.MergeApproachGap(s,out mergeStatus);
+        if(mergeGap+3<result){result=mergeGap+3;ObstacleReason="merge:"+mergeStatus;}
         sensedCollider=null;
         foreach(var hit in Physics.SphereCastAll(position+Vector3.up*.45f+heading*2.2f,.65f,heading,35,(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore)) {
             if(hit.collider.transform.IsChildOf(taxi.transform)||hit.normal.y>.8f)continue;
