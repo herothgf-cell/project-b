@@ -1,0 +1,8 @@
+using System;
+using UnityEngine;
+public static class PvpA2RevisionChecks {
+ public static void Red(){int failures=0;Action<string,Action> check=(name,run)=>{try{run();Debug.Log("A2_RED_UNEXPECTED_PASS "+name);}catch(Exception e){failures++;Debug.Log("A2_RED_REPRO "+name+": "+e.Message);}};check("map",PvpCityA2Tests.Run);check("ledger",PvpSimulationFourDriverTests.Ledger);check("calls",PvpSimulationFourDriverTests.Calls);check("nearby",PvpSimulationFourDriverTests.Nearby);if(failures>0)throw new Exception("A2_RED failures="+failures);}
+ public static void Components(){int failures=0;Action<string,Action> check=(name,run)=>{try{run();Debug.Log("A2_COMPONENT_OK "+name);}catch(Exception e){failures++;Debug.Log("A2_COMPONENT_FAIL "+name+": "+e);}};check("map",PvpCityA2Tests.Run);check("map regression",PvpCityMapTests.Run);check("drivers",PvpSimulationFourDriverTests.Run);check("live map",PvpLiveMapTests.Run);if(failures>0)throw new Exception("A2_COMPONENT failures="+failures);}
+ public static void Review(){int failures=0;Action<string,Action> check=(name,run)=>{try{run();Debug.Log("A2_REVIEW_OK "+name);}catch(Exception e){failures++;Debug.Log("A2_REVIEW_FAIL "+name+": "+e);}};check("lane choices",PvpCityA2Tests.LaneChoices);check("spawn",PvpCityA2Tests.Spawn);check("live accounting",PvpLiveMapTests.Run);check("drivers services",PvpSimulationFourDriverTests.Run);if(failures>0)throw new Exception("A2_REVIEW failures="+failures);}
+ public static void Run(){PvpCityA2Tests.LaneChoices();PvpCityA2Tests.Spawn();PvpLiveMapTests.Run();PvpCityA2Tests.Run();PvpSimulationFourDriverTests.Run();PvpSimulationAllTests.Run();Debug.Log("PVP_A2_ALL_OK");}
+}

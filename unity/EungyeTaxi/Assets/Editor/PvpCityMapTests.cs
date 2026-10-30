@@ -32,7 +32,10 @@ public static class PvpCityMapTests {
    Check(station.drivePath.Length>20,"smooth separate service access");
    foreach(var p in station.drivePath)foreach(float side in new[]{-.95f,0,.95f})Check(!ProjectMapScene.OnArea(map,p+TrafficSystem.Right(station.direction)*side,true),"service access clear of raised sidewalk");
   }
-  foreach(var b in map.buildings)foreach(var p in b.points)foreach(var r in map.roads)for(int i=1;i<r.points.Length;i++)Check(Distance(p.V(),r.points[i-1].V(),r.points[i].V())>=r.width*.5f+2,"building clears road: "+b.id);
+  // Broad-phase only skips roads whose padded bounds cannot touch this corner.
+  // Keep the exact distance assertion for every potentially intersecting span.
+  var envelopes=map.roads.Select(r=>new{road=r,minX=r.points.Min(p=>p.x)-r.width*.5f-2,maxX=r.points.Max(p=>p.x)+r.width*.5f+2,minZ=r.points.Min(p=>p.z)-r.width*.5f-2,maxZ=r.points.Max(p=>p.z)+r.width*.5f+2}).ToArray();
+  foreach(var b in map.buildings)foreach(var p in b.points)foreach(var envelope in envelopes){if(p.x<envelope.minX||p.x>envelope.maxX||p.z<envelope.minZ||p.z>envelope.maxZ)continue;var r=envelope.road;for(int i=1;i<r.points.Length;i++)Check(Distance(p.V(),r.points[i-1].V(),r.points[i].V())>=r.width*.5f+2,"building clears road: "+b.id);}
   foreach(var e in map.hdEdges){Check(e.next.Length>0,"no dead-end lane "+e.id);foreach(int next in e.next){var a=(e.points.Last().V()-e.points[e.points.Length-2].V()).normalized;var b=(map.hdEdges[next].points[1].V()-map.hdEdges[next].points[0].V()).normalized;Check(Vector3.Dot(a,b)>.97f,"continuous approach tangent "+e.id);}}
   Debug.Log("PVP_CITY_TESTS_OK checks="+checks+" directedPairs="+pairs+" lanes="+map.hdEdges.Length);
  }

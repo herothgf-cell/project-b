@@ -9,7 +9,7 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
     public string Status {get;private set;}
     public bool Active {get{return stage!=0;}}
     int stage,kind;
-    float progress,retryAt;
+    float progress,retryAt,routeWait,offPathSeconds;
     MapStop approach;
     Vector3 bay,direction;
     Vector3[] entry,departure;
@@ -23,6 +23,16 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
         if(durability<45)return 5;
         return -1;
     }
+    public static bool AtApproach(MapStop stop,Vector3 position,Vector3 heading){return stop!=null&&stop.CanStop(position,heading,0);}
+    void Retry(DriveSession s,string reason){
+        routeWait=offPathSeconds=0;retryAt=Time.time+15;
+        // An unusable pump must not leave a taxi parked outside the road
+        // graph. Physically follow its authored exit before choosing again.
+        if(stage==2&&departure!=null&&departure.Length>1){
+            BeginManoeuvre(s,departure);stage=4;Stop(s,reason+" · 출구 복귀");return;
+        }
+        stage=0;manoeuvre=null;s.assisted.SetActive(false);s.jobs.nav.Clear();s.taxi.autoSteer=0;Stop(s,reason);
+    }
     public bool Tick(DriveSession s) {
         if(!s||!s.simulationMatch||s.simulationMatch.Finished||s.jobs.Active)return false;
         if(s.simulationMatch.ServiceLocked(s)){Stop(s,"서비스 진행 중");return Active;}
@@ -32,16 +42,22 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
             kind=NeededService(e.Account.Fuel,e.Driver.fatigue,e.Care.Cleanliness,e.Care.NeedsWash,e.Care.Damage.Durability);
             if(kind<0)return false;
             if(!Select(s)){retryAt=Time.time+15;return false;}
-            s.jobs.nav.SetDestination(approach);stage=1;
+            s.jobs.nav.SetDestination(approach);routeWait=offPathSeconds=0;stage=1;
         }
         if(stage==1) {
             Status="시설 접근 · "+approach.name;
             var r=s.jobs.nav.hdRoute;
-            if(r==null){s.jobs.nav.Refresh();Stop(s,"시설 연결 경로 대기");return true;}
-            float error;float at=s.jobs.nav.ProjectVehicle(out error);float remaining=r.path.length-at;
-            if(remaining<4&&s.taxi.body.velocity.magnitude<.6f) {
+            bool here=AtApproach(approach,s.taxi.transform.position,s.taxi.transform.forward);
+            if(r==null&&!here){
+                s.jobs.nav.Refresh();Stop(s,"시설 연결 경로 재탐색");routeWait+=Time.fixedDeltaTime;
+                if(routeWait>20)Retry(s,"시설 연결 불가 · 다음 경로 재시도");return true;
+            }
+            routeWait=0;float at=0,error;float remaining=0;
+            if(r!=null){at=s.jobs.nav.ProjectVehicle(out error);remaining=r.path.length-at;}
+            if((here||remaining<4)&&s.taxi.body.velocity.magnitude<.6f) {
                 BeginManoeuvre(s,entry);stage=2;
             } else {
+                if(here||r==null){Stop(s,"시설 진입 전 감속");return true;}
                 if(!s.assisted.Active&&!s.assisted.SetActive(true)){Stop(s,"시설 접근 차로 정렬 대기");return true;}
                 float bend=Vector3.Angle(r.path.Tangent(at),r.path.Tangent(Mathf.Min(r.path.length,at+12)));
                 float target=bend>12?3:6;
@@ -55,7 +71,7 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
         if(stage==2) {
             Status="시설 진입 · "+approach.name;
             if(s.services.CanUse(kind)){Stop(s,"시설 정차");stage=3;}
-            else {Follow(s);return true;}
+            else {if(Follow(s))Retry(s,"시설 정차점 이용 불가 · 접근 재시도");return true;}
         }
         if(stage==3) {
             Stop(s,"시설 이용 · "+approach.name);
@@ -135,7 +151,11 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
     }
     bool Follow(DriveSession s) {
         float error;progress=manoeuvre.ProjectRange(s.taxi.transform.position,Mathf.Max(0,progress-2),Mathf.Min(manoeuvre.length,progress+6),out error);
-        if(error>4){Stop(s,"시설 진입 경로 이탈 · 안전 정차");return false;}
+        if(error>4){
+            Stop(s,"시설 진입 경로 이탈 · 안전 정차");offPathSeconds+=Time.fixedDeltaTime;
+            if(offPathSeconds>20)Retry(s,"시설 진입 경로 재선택");return false;
+        }
+        offPathSeconds=0;
         float remaining=manoeuvre.length-progress;
         var target=manoeuvre.Position(Mathf.Min(manoeuvre.length,progress+2.8f));
         var local=s.taxi.transform.InverseTransformPoint(target+Vector3.up*(s.taxi.transform.position.y-target.y));

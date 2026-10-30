@@ -10,26 +10,10 @@ public static class PvpCityMap {
  static readonly float[] Z={200,600,1000,1400,1800,2200,2600};
  static readonly string[] Districts={"서남 공원","남부 시장","동남 터미널","서부 주거","중앙역 상업","동부 업무","서북 주거","북부 병원","동북 대학"};
  static MapPoint P(Vector3 p){return new MapPoint{x=p.x,z=p.z};}
- static Vector3 Node(int x,int z){return new Vector3(X[x],0,Z[z]);}
  static string Key(int x,int z){return x+":"+z;}
- sealed class Segment {public int edge;public string from,to;public Vector3 direction;}
  public static MapData Create(){
-  var roads=new List<MapRoad>();var edges=new List<HdEdge>();var segments=new List<Segment>();var marks=new List<HdMark>();var rules=new List<HybridJunctionRule>();
-  for(int z=0;z<7;z++)for(int x=0;x<6;x++)AddStreet(x,z,x+1,z,z%2==0,roads,edges,segments,marks);
-  for(int x=0;x<7;x++)for(int z=0;z<6;z++)AddStreet(x,z,x,z+1,x%2==0,roads,edges,segments,marks);
-  for(int z=0;z<7;z++)for(int x=0;x<7;x++){
-   string key=Key(x,z),rule="city-junction:"+key;var incoming=segments.Where(s=>s.to==key).ToArray();var outgoing=segments.Where(s=>s.from==key).ToArray();
-   var arms=incoming.Select(s=>new HybridApproach{dx=s.direction.x,dz=s.direction.z,width=7}).ToArray();
-   rules.Add(new HybridJunctionRule{id=rule,x=X[x],z=Z[z],dx=0,dz=1,signalMode=x>0&&x<6&&z>0&&z<6&&x%2==0&&z%2==0?2:0,stopLine=true,crosswalk=x>0&&x<6&&z>0&&z<6,approaches=arms,status="authored-fictional",facilityEvidence="approved expanded A fictional map"});
-   foreach(var a in incoming){var next=new List<int>();foreach(var b in outgoing){if(b.to==a.from)continue;
-    var start=edges[a.edge].points.Last().V();var end=edges[b.edge].points[0].V();var points=Curve(start,start+a.direction*8,end-b.direction*8,end,16);
-    int turn=Mathf.RoundToInt(Mathf.Sign(Vector3.Cross(a.direction,b.direction).y));if(Vector3.Dot(a.direction,b.direction)>.9f)turn=0;
-    next.Add(edges.Count);edges.Add(new HdEdge{id="join:"+rule+":"+a.edge+":"+b.edge,sourceId=rule,fromNode=edges[a.edge].toNode,toNode=edges[b.edge].fromNode,ruleId=rule,turn=turn,number=1,status="authored-fictional",points=points,next=new[]{b.edge}});
-    // Junction ribbons fill the swept turning path using ordinary road asphalt.
-    roads.Add(new MapRoad{id="city-join:"+a.edge+":"+b.edge,name="교차로",width=3.5f,lanes=1,sourceLanes=1,oneWay=1,suppressPaint=true,points=points});
-   }edges[a.edge].next=next.ToArray();}
-  }
-  var map=new MapData{mapId="pvp-city-a",source="확장 A · 가상 경쟁 도시",coordinateStatus="fictional metres",width=3600,depth=2800,hybrid=true,supplementApplied=true,roads=roads.ToArray(),hdEdges=edges.ToArray(),junctionRules=rules.ToArray(),hdMarks=marks.ToArray(),hdSignals=new MapPoint[0],hdTrials=new HdTrialCase[0],osmCrossings=new OsmCrossing[0],buildings=new MapBuilding[0],areas=new MapArea[0],stops=new MapStop[0],targets=new MapTarget[0],landmarks=new MapLandmark[0]};
+  var streets=new PvpCityRoadBuilder();var roads=streets.roads;
+  var map=new MapData{mapId="pvp-city-a",source="확장 A2 · 가상 경쟁 도시",coordinateStatus="fictional metres",width=3600,depth=2800,hybrid=true,supplementApplied=true,roads=roads.ToArray(),hdEdges=streets.edges.ToArray(),junctionRules=streets.rules.ToArray(),hdMarks=streets.marks.ToArray(),hdSignals=new MapPoint[0],hdTrials=new HdTrialCase[0],osmCrossings=new OsmCrossing[0],buildings=new MapBuilding[0],areas=new MapArea[0],stops=new MapStop[0],targets=new MapTarget[0],landmarks=new MapLandmark[0]};
   var graph=new HdRoadGraph(map);var stops=new List<MapStop>();var areas=new List<MapArea>();var objects=new List<ProjectMapObject>();var landmarks=new List<MapLandmark>();
   for(int dz=0;dz<3;dz++)for(int dx=0;dx<3;dx++){
    int cx=dx*2+1,cz=dz*2+1,index=dz*3+dx;string name=Districts[index];
@@ -58,9 +42,16 @@ public static class PvpCityMap {
    bool park=x<2&&z<2;if(park&&bx!=2)continue;
    buildings.Add(new MapBuilding{id="city-building:"+x+":"+z+":"+bx+":"+bz,name=Districts[(z/2)*3+x/2],height=park?5:8+((x*7+z*11+bx*3+bz)%7)*5,points=ProjectMapScene.Rectangle(center,Vector3.forward,50,45),triangles=new[]{0,1,2,0,2,3}});
   }
+  var roadClearance=new Clearance(roads);buildings.RemoveAll(b=>!roadClearance.Clear(b.points,3));
   AddUrbanFrontage(map,roads,buildings,areas);
   areas.Add(new MapArea{kind="land",name="서남 시민공원",points=ProjectMapScene.Rectangle(new Vector3(470,0,400),Vector3.forward,350,260),triangles=new[]{0,1,2,0,2,3}});
-  map.areas=areas.ToArray();map.buildings=buildings.ToArray();map.targets=new[]{new MapTarget{name="출발 도로",x=300,z=600},new MapTarget{name="진행 방향",x=500,z=600}};
+  map.areas=areas.ToArray();map.buildings=buildings.ToArray();
+  // Preserve DriveSession's normal 23m-back / 2.5m-right placement while
+  // deriving the target frame from this map's actual curved native lane.
+  var launch=graph.paths[Array.FindIndex(map.hdEdges,e=>e.id=="city:0:1>1:1")];var launchPosition=launch.Position(65);var launchDirection=launch.Tangent(65);
+  var target=launchPosition+launchDirection*23-TrafficSystem.Right(launchDirection)*2.5f;var ahead=target+launchDirection*200;
+  map.targets=new[]{new MapTarget{name="출발 도로",x=target.x,z=target.z},new MapTarget{name="진행 방향",x=ahead.x,z=ahead.z}};
+  streets.AttachDocument(map);
   return map;
  }
  // Keep geometry near street level; all cutouts use the same asphalt envelopes
@@ -92,8 +83,8 @@ public static class PvpCityMap {
    for(float pz=Z[z]+90;pz<Z[z+1]-65;pz+=54){add(new Vector3(X[x]+32,0,pz),26,34);add(new Vector3(X[x+1]-32,0,pz),26,34);}
   }
   int sidewalk=0;
-  foreach(var road in roads.Where(r=>r.id.StartsWith("city-road:"))){var a=road.points[0].V();var b=road.points.Last().V();var d=(b-a).normalized;float length=Vector3.Distance(a,b);
-   foreach(int side in new[]{-1,1})for(float at=20;at<length-20;at+=12){float end=Mathf.Min(at+12,length-20);var center=a+d*((at+end)*.5f)+TrafficSystem.Right(d)*(side*6);var ring=ProjectMapScene.Rectangle(center,d,3,end-at);
+  foreach(var road in roads.Where(r=>r.id.StartsWith("city-road:"))){var path=new AssistedRoadNetwork.Path(road.points.Select(p=>p.V()).ToArray());
+   foreach(int side in new[]{-1,1})for(float at=22;at<path.length-22;at+=12){float end=Mathf.Min(at+12,path.length-22);float middle=(at+end)*.5f;var d=path.Tangent(middle);var center=path.Position(middle)+TrafficSystem.Right(d)*(side*(road.width*.5f+2));var ring=ProjectMapScene.Rectangle(center,d,3,end-at);
     if(!clearance.Clear(ring,.4f))continue;areas.Add(new MapArea{kind="sidewalk",name="거리 보도 "+sidewalk++,height=.14f,points=ring,triangles=new[]{0,1,2,0,2,3}});
    }
   }
@@ -102,29 +93,20 @@ public static class PvpCityMap {
   var graph=new HdRoadGraph(map);var path=graph.paths[edge];var source=map.hdEdges[edge];var dir=path.Tangent(at);var right=TrafficSystem.Right(dir);var entry=path.Position(at-32);var exit=path.Position(at+32);var center=path.Position(at)+right*4.5f;
   string prefix=source.id+":bay";var all=new List<HdEdge>(map.hdEdges);int through=all.Count,bay=through+1,post=through+2;
   string originalEnd=source.toNode;int[] onward=source.next;var originalStart=source.points[0];var originalLast=source.points.Last();
-  source.points=new[]{originalStart,P(entry)};source.toNode=prefix+":split";source.next=new[]{through,bay};
-  all.Add(new HdEdge{id=prefix+":through",sourceId=source.sourceId,roadName=source.roadName,fromNode=source.toNode,toNode=prefix+":merge",number=1,status="authored-fictional",points=new[]{P(entry),P(exit)},next=new[]{post}});
+  source.points=PvpCityRoadBuilder.Slice(path,0,at-32);source.toNode=prefix+":split";source.next=new[]{through,bay};
+  all.Add(new HdEdge{id=prefix+":through",sourceId=source.sourceId,roadName=source.roadName,fromNode=source.toNode,toNode=prefix+":merge",number=source.number,status="authored-fictional",points=PvpCityRoadBuilder.Slice(path,at-32,at+32),next=new[]{post}});
   var enter=Curve(entry,entry+dir*16,center-dir*20,center-dir*7,24);var leave=Curve(center+dir*7,center+dir*20,exit-dir*16,exit,24);var pocket=new List<MapPoint>(enter);pocket.Add(P(center));pocket.AddRange(leave);
-  all.Add(new HdEdge{id=prefix+":pocket",sourceId=source.sourceId,roadName=name+" 승하차 진입",fromNode=source.toNode,toNode=prefix+":merge",number=1,status="authored-fictional",points=pocket.ToArray(),next=new[]{post}});
-  all.Add(new HdEdge{id=prefix+":post",sourceId=source.sourceId,roadName=source.roadName,fromNode=prefix+":merge",toNode=originalEnd,number=1,status="authored-fictional",points=new[]{P(exit),originalLast},next=onward});
+  all.Add(new HdEdge{id=prefix+":pocket",sourceId=source.sourceId,roadName=name+" 승하차 진입",fromNode=source.toNode,toNode=prefix+":merge",number=source.number,status="authored-fictional",points=pocket.ToArray(),next=new[]{post}});
+  all.Add(new HdEdge{id=prefix+":post",sourceId=source.sourceId,roadName=source.roadName,fromNode=prefix+":merge",toNode=originalEnd,ruleId=source.ruleId,number=source.number,status="authored-fictional",points=PvpCityRoadBuilder.Slice(path,at+32,path.length),next=onward});
   map.hdEdges=all.ToArray();roads.Add(Surface(prefix+":surface",3.5f,pocket.Select(p=>p.V()).ToArray()));
   var bayPath=new AssistedRoadNetwork.Path(pocket.Select(p=>p.V()).ToArray());float error;float stopAt=bayPath.Project(center,out error);return Stop(map,new HdRoadGraph(map),bay,stopAt,name);
- }
- static void AddStreet(int ax,int az,int bx,int bz,bool arterial,List<MapRoad> roads,List<HdEdge> edges,List<Segment> segments,List<HdMark> marks){
-  var a=Node(ax,az);var b=Node(bx,bz);var d=(b-a).normalized;string id=Key(ax,az)+"-"+Key(bx,bz);
-  // Both tiers are one lane each way; arterial sidewalks/setback distinguish the grid.
-  roads.Add(new MapRoad{id="city-road:"+id,name=arterial?"도시 순환·간선":"생활 도로",width=7,lanes=2,sourceLanes=2,points=new[]{P(a),P(b)}});
-  marks.Add(new HdMark{id="city-center:"+id,kind="501",type="111",points=new[]{P(a+d*14),P(b-d*14)}});
-  for(int sign=-1;sign<=1;sign+=2){var from=sign==1?a:b;var to=sign==1?b:a;var dir=d*sign;string f=sign==1?Key(ax,az):Key(bx,bz),t=sign==1?Key(bx,bz):Key(ax,az);string lane="city:"+f+">"+t;
-   segments.Add(new Segment{edge=edges.Count,from=f,to=t,direction=dir});edges.Add(new HdEdge{id=lane,sourceId="city-road:"+id,roadName=arterial?"간선도로":"생활도로",fromNode=lane+":start",toNode=lane+":end",number=1,status="authored-fictional",points=new[]{P(from+dir*12+TrafficSystem.Right(dir)*1.75f),P(to-dir*12+TrafficSystem.Right(dir)*1.75f)},next=new int[0]});
-  }
  }
  static MapStop Stop(MapData map,HdRoadGraph graph,int edge,float at,string name){var p=graph.paths[edge].Position(at);var d=graph.paths[edge].Tangent(at);return new MapStop{name=name,x=p.x,z=p.z,dx=d.x,dz=d.z,width=3,graphStop=true,laneEdge=edge,laneAt=at,hasPassengerAnchor=true,passengerAnchor=p+TrafficSystem.Right(d)*3.75f+Vector3.up*.16f};}
  static MapPoint[] Curve(Vector3 a,Vector3 b,Vector3 c,Vector3 d,int count){var points=new MapPoint[count+1];for(int i=0;i<=count;i++){float t=(float)i/count,u=1-t;points[i]=P(u*u*u*a+3*u*u*t*b+3*u*t*t*c+t*t*t*d);}return points;}
  static MapRoad Surface(string id,float width,Vector3[] points){return new MapRoad{id=id,name="시설 진입·주차",width=width,lanes=1,sourceLanes=1,oneWay=1,suppressPaint=true,points=Array.ConvertAll(points,P)};}
  static FuelStationLayout.FuelStation Facility(MapData map,HdRoadGraph graph,MapStop reference,int number,List<MapRoad> roads){
-  var d=reference.Direction;var right=TrafficSystem.Right(d);float at;int edge=graph.Nearest(reference.V()+d*110-right*4.5f,d,out at);if(edge<0||at<45||at+40>graph.paths[edge].length)throw new InvalidOperationException("City service access unavailable");var center=graph.paths[edge].Position(at);var pump=center+right*24;
-  var enter=Curve(center-d*40,center-d*20,pump-d*22,pump-d*6,24);var leave=Curve(pump+d*6,pump+d*22,center+d*20,center+d*40,24);
+  int edge=map.hdEdges[reference.laneEdge].next[0];var approachPath=graph.paths[edge];float at=approachPath.length*.5f;if(at<45||at+40>approachPath.length)throw new InvalidOperationException("City service access unavailable");var center=approachPath.Position(at);var d=approachPath.Tangent(at);var right=TrafficSystem.Right(d);var pump=center+right*24;
+  var entry=approachPath.Position(at-40);var exit=approachPath.Position(at+40);var enter=Curve(entry,entry+approachPath.Tangent(at-40)*20,pump-d*22,pump-d*6,24);var leave=Curve(pump+d*6,pump+d*22,exit-approachPath.Tangent(at+40)*20,exit,24);
   string id="city-fuel:"+number;string name=new[]{"북서 주유·정비·세차","중앙 주유·정비·세차","동부 주유"}[number];
   var paving=new[]{Surface(id+":court",24,new[]{pump-d*22,pump+d*22}),Surface(id+":entrance",7,Array.ConvertAll(enter,p=>p.V())),Surface(id+":exit",7,Array.ConvertAll(leave,p=>p.V()))};roads.AddRange(paving);
   var path=new List<Vector3>(Array.ConvertAll(enter,p=>p.V()));path.Add(pump);path.AddRange(Array.ConvertAll(leave,p=>p.V()));

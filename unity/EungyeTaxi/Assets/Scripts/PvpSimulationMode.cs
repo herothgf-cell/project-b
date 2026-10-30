@@ -13,18 +13,21 @@ public static class PvpSimulationMode {
     public static void Reset() { Clear(); }
 }
 
-// One match owns this ledger. No static claims, preferences or campaign saves.
+// Match-local ownership and native income. Each participant has its own ledger.
 public sealed class PvpSimulationLedger {
+    public const int DriverCount=4;
     readonly Dictionary<int,int> owners=new Dictionary<int,int>();
     readonly HashSet<string> settlements=new HashSet<string>();
-    readonly int[] scores=new int[2];
-    readonly int[] expenses=new int[2];
+    readonly int[] scores=new int[DriverCount];
+    readonly int[] expenses=new int[DriverCount];
     public bool Finished { get; private set; }
-    public bool Available(int pickup,int driver) { int owner;return !Finished&&(!owners.TryGetValue(pickup,out owner)||owner==driver); }
-    public bool TryClaim(int pickup,int driver) { if(pickup<0||driver<0||driver>1||!Available(pickup,driver))return false;owners[pickup]=driver;return true; }
+    static bool Valid(int driver){return driver>=0&&driver<DriverCount;}
+    public bool IsClaimed(int pickup){return owners.ContainsKey(pickup);}
+    public bool Available(int pickup,int driver) { int owner;return !Finished&&Valid(driver)&&(!owners.TryGetValue(pickup,out owner)||owner==driver); }
+    public bool TryClaim(int pickup,int driver) { if(pickup<0||!Available(pickup,driver))return false;owners[pickup]=driver;return true; }
     public void Release(int pickup,int driver) { int owner;if(owners.TryGetValue(pickup,out owner)&&owner==driver)owners.Remove(pickup); }
-    public bool Settle(string tripId,int driver,int fare) { if(Finished||driver<0||driver>1||fare<0||string.IsNullOrEmpty(tripId)||!settlements.Add(tripId))return false;scores[driver]+=fare;return true; }
-    public bool SyncExpenses(int driver,int cumulativeExpenses) {if(Finished||driver<0||driver>1||cumulativeExpenses<expenses[driver])return false;expenses[driver]=cumulativeExpenses;return true;}
-    public int Score(int driver) { return scores[driver]-expenses[driver]; }
+    public bool Settle(string tripId,int driver,int fare) { if(Finished||!Valid(driver)||fare<0||string.IsNullOrEmpty(tripId)||!settlements.Add(driver+":"+tripId))return false;scores[driver]+=fare;return true; }
+    public bool SyncExpenses(int driver,int cumulativeExpenses) {if(Finished||!Valid(driver)||cumulativeExpenses<expenses[driver])return false;expenses[driver]=cumulativeExpenses;return true;}
+    public int Score(int driver) { return Valid(driver)?scores[driver]-expenses[driver]:0; }
     public void Finish() { Finished=true;owners.Clear(); }
 }

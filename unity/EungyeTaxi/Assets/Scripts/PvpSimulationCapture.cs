@@ -4,12 +4,14 @@ using System.IO;
 using UnityEngine;
 public sealed class PvpSimulationCapture : MonoBehaviour {
  IEnumerator Start(){
+  var args=Environment.GetCommandLineArgs();int index=Array.IndexOf(args,"-pvpSimulationOutput");string folder=index>=0&&index+1<args.Length?args[index+1]:Application.persistentDataPath;Directory.CreateDirectory(folder);
+  if(Array.IndexOf(args,"-pvpSimulationMenuCapture")>=0){while(!UnityEngine.Rendering.SplashScreen.isFinished)yield return null;yield return new WaitForSecondsRealtime(2);yield return Save(Path.Combine(folder,"simulation-menu.png"));FindObjectOfType<Pvp.PvpBootstrap>().StartSimulation(true,7200);}
   PvpSimulationMatch match=null;float limit=Time.realtimeSinceStartup+180;
   while(!match&&Time.realtimeSinceStartup<limit){match=FindObjectOfType<PvpSimulationMatch>();yield return null;}
   if(!match||!match.Human){Debug.LogError("PVP_SIMULATION_CAPTURE_FAIL initialization");Application.Quit(1);yield break;}
   while(UnityEngine.Rendering.SplashScreen.isFinished==false)yield return null;
   yield return new WaitForSecondsRealtime(3);
-  var args=Environment.GetCommandLineArgs();int index=Array.IndexOf(args,"-pvpSimulationOutput");string folder=index>=0&&index+1<args.Length?args[index+1]:Application.persistentDataPath;Directory.CreateDirectory(folder);
+
   string prefix=Path.Combine(folder,"simulation-"+(PvpSimulationMode.Expanded?"city":"eungye"));
   yield return Save(prefix+"-drive.png");
   match.Human.drivingCamera.SetFirstPerson(true);yield return new WaitForSecondsRealtime(1);yield return Save(prefix+"-cockpit.png");

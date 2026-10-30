@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 public class DriveSession : MonoBehaviour {
     public bool IsSimulationBot;
     public PvpSimulationMatch simulationMatch;
-    public int SimulationDriver {get{return IsSimulationBot?1:0;}}
+    public int SimulationDriver {get{return simulationMatch?simulationMatch.DriverIndex(this):IsSimulationBot?1:0;}}
     public string startupRegion="";
     public VehicleDamageController damage;
     public TaxiController taxi; public WorldBuilder world; public TrafficSystem traffic; public DrivingCamera drivingCamera; public TaxiSignals signals;
@@ -18,6 +18,7 @@ public class DriveSession : MonoBehaviour {
     public bool paused;public bool ShowHints; public int visits; bool inside;
     public bool RideResultOpen {get{var result=GetComponent<RideCompletionPanel>();return result&&result.Open;}}
     public bool EditorOpen {get{var e=GetComponent<RoadMapEditor>();return e&&(e.IsOpen||e.ClosedThisFrame);}}
+    public bool LivePvpMapOpen {get{var map=GetComponent<FullMapOverlay>();return simulationMatch&&map&&map.IsOpen&&!paused&&Time.timeScale>0;}}
     public bool FullMapOpen {get{var map=GetComponent<FullMapOverlay>();return map&&map.IsOpen||EditorOpen||RideResultOpen;}}
     public bool StartupReady {get;private set;}
     public void MarkSharedSimulationReady(){if(IsSimulationBot)StartupReady=true;}

@@ -12,6 +12,7 @@ public partial class FullMapOverlay : MonoBehaviour {
  public string AcceptBlockedReason {get{
   var j=session.jobs;if(!IsOpen)return "먼저 지도를 열어 호출을 선택하세요";
   if(locationOpen)return "위치 정보를 닫고 호출을 선택하세요";
+  if(session.simulationMatch&&session.simulationMatch.Finished)return "경기가 종료되었습니다";
   if(previousPause)return "일시정지를 해제한 뒤 호출을 수락하세요";
   if(j.Active)return "진행 중인 운송을 마친 뒤 수락할 수 있습니다";
   if(selectedPlace!=null)return "아래 호출 목록에서 호출을 선택하세요";
@@ -60,9 +61,9 @@ public partial class FullMapOverlay : MonoBehaviour {
   if(IsOpen)return false;
   var b=session.business;
   if(session.ChoiceOpen||session.RideResultOpen||session.PracticeMenuOpen||session.PracticeBusy||b.preparing||b.ShowingSummary||b.restartPrompt||b.pendingPayment>=0||b.taxPrompt||session.services.open||session.law.HistoryOpen)return false;
-  previousPause=session.paused;previousScale=Time.timeScale;session.paused=true;Time.timeScale=0;locationCopied=false;locationOpen=false;if(SelectedOffer>=0&&session.jobs.offers[SelectedOffer]!=selectedOffer){SelectedOffer=-1;selectedOffer=null;}IsOpen=true;if(session.jobs.Active)RestoreTripRoute(false);else if(selectedOffer!=null)SelectOffer(SelectedOffer);return true;
+  previousPause=session.paused;previousScale=Time.timeScale;if(!session.simulationMatch||previousPause||previousScale<=0){session.paused=true;Time.timeScale=0;}locationCopied=false;locationOpen=false;if(SelectedOffer>=0&&session.jobs.offers[SelectedOffer]!=selectedOffer){SelectedOffer=-1;selectedOffer=null;}IsOpen=true;if(session.jobs.Active)RestoreTripRoute(false);else if(selectedOffer!=null)SelectOffer(SelectedOffer);return true;
  }
- public void Close(){if(!IsOpen)return;IsOpen=false;dragging=false;closedFrame=Time.frameCount;session.paused=previousPause;Time.timeScale=previousPause?0:previousScale>0?previousScale:1;}
+ public void Close(){if(!IsOpen)return;IsOpen=false;dragging=false;closedFrame=Time.frameCount;if(session.simulationMatch&&session.simulationMatch.Finished){session.paused=true;Time.timeScale=0;}else {session.paused=previousPause;Time.timeScale=previousPause?0:previousScale>0?previousScale:1;}}
  void Update(){RefreshRoutePaint();if(IsOpen){if(Input.GetKeyDown(KeyCode.M)||Input.GetKeyDown(KeyCode.Escape)){if(locationOpen)locationOpen=false;else Close();}}else if(Input.GetKeyDown(KeyCode.M))Open();}
  void OnDisable(){if(IsOpen)Close();}
  Vector2 Project(Vector3 p,Rect map){float span=Mathf.Max(session.world.map.width,session.world.map.depth);var unit=new Vector2(.5f+(p.x-session.world.map.width/2)/span,.5f-(p.z-session.world.map.depth/2)/span);return map.center+(unit-center)*Mathf.Min(map.width,map.height)*ZoomLevel;}
@@ -74,7 +75,7 @@ public partial class FullMapOverlay : MonoBehaviour {
  void Draw(int id){
   Fill(new Rect(0,0,Screen.width,Screen.height),new Color(.035f,.07f,.09f));
   GUI.enabled=!locationOpen;
-  GUI.Label(new Rect(24,20,Screen.width-420,38),MapCatalog.Name(session.world.map.mapId)+" 지도 · 북 ↑",heading);
+  GUI.Label(new Rect(24,20,Screen.width-420,38),MapCatalog.Name(session.world.map.mapId)+" 지도 · 북 ↑"+(session.simulationMatch?(session.LivePvpMapOpen?" · 경기 진행 중 / 내 차 제동":" · 일시정지"):""),heading);
   if(GUI.Button(new Rect(Screen.width-330,20,150,38),"위치 정보",button))ShowLocation();
   if(GUI.Button(new Rect(Screen.width-166,20,142,38),"M 닫기",button)){Close();return;}
   var viewport=MapRect;var ev=Event.current;var jobs=session.jobs;
@@ -97,7 +98,7 @@ public partial class FullMapOverlay : MonoBehaviour {
    for(int i=0;i<jobs.offers.Length;i++){var o=jobs.offers[i];if(o==null)continue;var p=CallPinPosition(i,map);if(GUI.Button(new Rect(p.x-15,p.y-15,30,30),new GUIContent((i+1).ToString(),KoreanText.Stop(jobs.stops[o.pickup].name)+" · 호출 "+(i+1)),button))SelectOffer(i);}
    if(selectedOffer!=null){StopPin(selectedOffer.pickup,"승차",new Color(.2f,.8f,.5f),map);StopPin(selectedOffer.drop,"하차",new Color(1,.35f,.7f),map);}
   }
-  if(session.simulationMatch&&session.simulationMatch.Bot){var rival=Project(session.simulationMatch.Bot.taxi.transform.position,map);if(map.Contains(rival)){Dot(rival,Color.black,22);Dot(rival,new Color(1,.35f,.7f),15);GUI.Label(new Rect(rival.x+12,rival.y-12,100,24),"경쟁 봇",text);}} var player=Project(session.taxi.transform.position,map);var forward=new Vector2(session.taxi.transform.forward.x,-session.taxi.transform.forward.z).normalized;var side=new Vector2(-forward.y,forward.x);Dot(player,Color.black,26);Line(player-forward*7-side*8,player+forward*12,Color.yellow,5);Line(player+forward*12,player-forward*7+side*8,Color.yellow,5);Line(player-forward*7+side*8,player-forward*7-side*8,Color.yellow,5);
+  if(session.simulationMatch)foreach(var bot in session.simulationMatch.Bots){int driver=bot.SimulationDriver;var rival=Project(bot.taxi.transform.position,map);if(map.Contains(rival)){Dot(rival,Color.black,22);Dot(rival,PvpDriverPresentation.Color(driver),15);GUI.Label(new Rect(rival.x+12,rival.y-12,100,24),PvpDriverPresentation.Name(driver),text);}} var player=Project(session.taxi.transform.position,map);var forward=new Vector2(session.taxi.transform.forward.x,-session.taxi.transform.forward.z).normalized;var side=new Vector2(-forward.y,forward.x);Dot(player,Color.black,26);Line(player-forward*7-side*8,player+forward*12,Color.yellow,5);Line(player+forward*12,player-forward*7+side*8,Color.yellow,5);Line(player-forward*7+side*8,player-forward*7-side*8,Color.yellow,5);
   if(HudGlyph.Button(new Rect(12,12,44,42),0,"주요 시설",ShowFacilities))ShowFacilities=!ShowFacilities;
   if(HudGlyph.Button(new Rect(62,12,44,42),1,"교통 상황",ShowTraffic))ShowTraffic=!ShowTraffic;
   if(HudGlyph.Button(new Rect(112,12,44,42),2,"교통 법규",ShowLaw))ShowLaw=!ShowLaw;

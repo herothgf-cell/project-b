@@ -20,7 +20,7 @@ public class BusinessProgress : MonoBehaviour {
  // Short physics-order grace only after this component actually removed speed.
  // Do not exempt ordinary player braking merely because the driver is tired.
  public bool SystemFatigueBraking {get{return Time.fixedTime<=fatigueBrakeUntil&&ledger!=null&&ledger.Driver!=null&&ledger.Driver.drowsiness.PassengerMustLeave;}}
- public bool DrowsinessRunning {get{return enabledCampaign&&ledger!=null&&ledger.Operating&&ledger.Driver!=null&&!preparing&&!restoring&&!resumeBlocked&&!PracticeSession.Enabled&&!session.PracticeBusy&&!session.PracticeMenuOpen&&!session.ChoiceOpen&&!session.FullMapOpen&&!session.paused&&!session.services.open&&!session.law.HistoryOpen&&!session.RideResultOpen&&Time.timeScale>0;}}
+ public bool DrowsinessRunning {get{return enabledCampaign&&ledger!=null&&ledger.Operating&&ledger.Driver!=null&&!preparing&&!restoring&&!resumeBlocked&&!PracticeSession.Enabled&&!session.PracticeBusy&&!session.PracticeMenuOpen&&!session.ChoiceOpen&&(!session.FullMapOpen||session.LivePvpMapOpen)&&!session.paused&&!session.services.open&&!session.law.HistoryOpen&&!session.RideResultOpen&&Time.timeScale>0;}}
  public bool DrowsinessEligible {get{return DrowsinessRunning&&session.taxi.body.velocity.magnitude>=.56f;}}
  public bool DrowsyControlsLost {get{return DrowsinessRunning&&ledger.Driver.drowsiness!=null&&(ledger.Driver.drowsiness.Blackout||ledger.Driver.drowsiness.PassengerMustLeave&&session.jobs.Active);}}
  public bool DrowsyMicrosleep {get{return DrowsinessRunning&&ledger.Driver.drowsiness!=null&&ledger.Driver.drowsiness.Microsleep;}}

@@ -91,7 +91,8 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         for(int i=0;i<8&&next;i++){if(!seen.Add(next)){value+="cycle:"+next.name;break;}value+="["+TrafficCarMotion(next)+"]";next=next.obstacleCar;}
         return value+"}";
     }
-    float nextOffer;
+    float nextOffer,routeLostSeconds;
+    public int RouteRecoveries {get;private set;}
     PvpSimulationBotServices services;
     AssistedRoadNetwork.Path curbPath;
     float curbProgress;
@@ -101,6 +102,12 @@ public sealed class PvpSimulationBot : MonoBehaviour {
     sealed class StopEvidence {public int axis,sign;public bool crossed;}
     readonly System.Collections.Generic.Dictionary<TrafficJunction,StopEvidence> stoppedJunctions=new System.Collections.Generic.Dictionary<TrafficJunction,StopEvidence>();
     public void Initialize(DriveSession session) { Session=session; }
+    public static float PickupDistance(HdRoadGraph graph,Vector3 position,Vector3 direction,MapStop stop){
+        // Native graph routes intentionally omit zero-length paths. Already
+        // being in the legal stopping envelope is a valid pickup, too.
+        if(stop.CanStop(position,direction,0))return 0;
+        return PassengerJobs.DirectedDistance(graph,position,direction,stop);
+    }
     public static float ThrottleFor(float speed,float target){return target>.15f&&speed<target-.05f?.5f:0;}
     public bool RefreshTerminalCalls(){var jobs=Session.jobs;if(jobs.Active||Session.RideResultOpen)return false;bool terminal=jobs.trip.State==TripState.Complete||jobs.trip.State==TripState.Failed;jobs.PrepareForNextCall();if(terminal)jobs.Generate();return terminal;}
     void Stop(string reason) {Session.taxi.autoThrottle=0;Session.taxi.autoBrake=true;Status=reason;}
@@ -127,9 +134,9 @@ public sealed class PvpSimulationBot : MonoBehaviour {
             for(int i=0;i<jobs.offers.Length;i++) {
                 var offer=jobs.offers[i];string rejection=jobs.AcceptanceRejection(i);if(offer==null||rejection!=""){SelectionDiagnostics+="["+i+":"+rejection+"]";continue;}
                 var stop=jobs.stops[offer.pickup];float at;int edge=jobs.nav.hd.Nearest(taxi.transform.position,taxi.transform.forward,out at);
-                var route=jobs.nav.hd.Route(edge,at,stop.laneEdge,stop.laneAt);
-                SelectionDiagnostics+="["+i+":"+offer.pickup+">"+offer.drop+" edge="+edge+" goal="+stop.laneEdge+" route="+(route==null?"null":route.path.length.ToString("0"))+"]";
-                if(route!=null&&route.path.length<distance){distance=route.path.length;best=i;}
+                float pickupDistance=PickupDistance(jobs.nav.hd,taxi.transform.position,taxi.transform.forward,stop);
+                SelectionDiagnostics+="["+i+":"+offer.pickup+">"+offer.drop+" edge="+edge+" goal="+stop.laneEdge+" route="+pickupDistance.ToString("0")+"]";
+                if(pickupDistance<distance){distance=pickupDistance;best=i;}
             }
             if(best>=0&&jobs.Accept(best)){s.assisted.SetActive(true);Status="승객 픽업 주행";}else jobs.Generate();
             return;
@@ -143,11 +150,18 @@ public sealed class PvpSimulationBot : MonoBehaviour {
             if(jobs.Active&&jobs.trip.State==TripState.OnTrip&&!jobs.trip.ArrivalLocked)s.assisted.SetActive(true);
             return;
         }
-        var nav=jobs.nav;var routePath=nav.hdRoute;
-        if(routePath==null){Stop("연결 경로 확인 중");nav.Refresh();return;}
-        float error;float progress=nav.ProjectVehicle(out error);float remain=routePath.path.length-progress;
+        var nav=jobs.nav;var routePath=nav.hdRoute;var stopGoal=jobs.stops[goal];
+        if(stopGoal.CanStop(taxi.transform.position,taxi.transform.forward,0)){Stop("승하차 지점 감속");return;}
+        // Road navigation may disappear once the taxi leaves its lane toward
+        // the authored kerb. Finish that physical manoeuvre before rerouting.
         if(curbPath!=null){FollowCurb();return;}
-        var stopGoal=jobs.stops[goal];
+        if(routePath==null){
+            Stop("연결 경로 확인 중");nav.Refresh();routeLostSeconds+=Time.fixedDeltaTime;
+            if(routeLostSeconds>20&&jobs.CancelUnboardedCall("픽업 연결 불가 · 공용 호출 다시 선택")){routeLostSeconds=0;RouteRecoveries++;}
+            return;
+        }
+        routeLostSeconds=0;
+        float error;float progress=nav.ProjectVehicle(out error);float remain=routePath.path.length-progress;
         float offset=Vector3.Distance(routePath.path.Position(routePath.path.length),stopGoal.Kerb);
         // Native navigation ends on the road lane; curb geometry is a separate
         // physical stopping contract. Pull over before arrival, then merge
@@ -179,7 +193,7 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         float lateral=Vector3.Dot(end-start,TrafficSystem.Right(taxi.transform.forward));if(Mathf.Abs(lateral)>.5f)Session.signals.Toggle(lateral>0?1:-1);
     }
     public static Vector3[] CurbPathPoints(Vector3 start,Vector3 startDirection,Vector3 end,Vector3 direction){
-        var before=end-direction*6;float length=Vector3.Distance(start,before);
+        var before=end-direction*Mathf.Min(6,Mathf.Max(0,Vector3.Dot(end-start,direction)*.35f));float length=Vector3.Distance(start,before);
         var control1=start+startDirection*Mathf.Max(4,length*.4f);
         var control2=before-direction*Mathf.Max(4,length*.4f);
         var points=new Vector3[31];
@@ -190,7 +204,10 @@ public sealed class PvpSimulationBot : MonoBehaviour {
     void FollowCurb(){
         var s=Session;var taxi=s.taxi;float error;
         curbProgress=curbPath.ProjectRange(taxi.transform.position,Mathf.Max(0,curbProgress-2),Mathf.Min(curbPath.length,curbProgress+7),out error);
-        if(error>4){Stop("승하차 접근 경로 확인 필요");return;}
+        if(error>4){
+            Stop("승하차 접근 경로 재탐색");curbPath=null;s.jobs.nav.Refresh();RouteRecoveries++;
+            if(StationarySeconds>20)s.jobs.CancelUnboardedCall("픽업 접근 불가 · 공용 호출 다시 선택");return;
+        }
         float remain=curbPath.length-curbProgress;
         var target=curbPath.Position(Mathf.Min(curbPath.length,curbProgress+3));target.y=taxi.transform.position.y;
         var local=taxi.transform.InverseTransformPoint(target);
