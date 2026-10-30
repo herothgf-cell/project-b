@@ -41,6 +41,7 @@ public sealed class ConfusionPractice : MonoBehaviour {
   LiveMode=false;return Setup(variant,selected,incoming,outgoing);
  }
  public bool CanStartInService(ServiceLawZone zone){
+  if(zone==null||!AllowsServiceVariant(zone.variant))return false;
   if(zone.variant!=10&&zone.variant!=13)return true;
   var hd=session.jobs.nav.hd;var route=hd.Route(zone.incoming,Mathf.Max(0,hd.paths[zone.incoming].length-75),zone.outgoing,25);if(route==null)return false;
   Vector3 a,b;
@@ -50,11 +51,12 @@ public sealed class ConfusionPractice : MonoBehaviour {
   for(float at=0;at<=length+3;at+=2)if(Physics.OverlapBox(Vector3.Lerp(a,b,Mathf.Clamp01(at/length))+Vector3.up*.85f,new Vector3(1.05f,.6f,2.5f),Quaternion.LookRotation(heading),(1<<8)|(1<<9),QueryTriggerInteraction.Ignore).Length>0)return false;
   return true;
  }
- public bool StartInService(ServiceLawZone zone){LiveMode=true;return Setup(zone.variant,zone.junction,zone.incoming,zone.outgoing);}
+ public static bool AllowsServiceVariant(int variant){return variant>=8&&variant<=11;}
+ public bool StartInService(ServiceLawZone zone){if(zone==null||!AllowsServiceVariant(zone.variant))return false;LiveMode=true;return Setup(zone.variant,zone.junction,zone.incoming,zone.outgoing);}
  bool Setup(int variant,TrafficJunction selected,int incoming,int outgoing){
   var hd=session.jobs.nav.hd;
   if(!LiveMode){GetComponent<PracticeCoach>().CloseResult();GetComponent<RightTurnSituation>().Stop();GetComponent<ExitQueueSituation>().Stop();}Stop();
-  Junction=selected;previousMode=Junction.leftTurnMode;Junction.leftTurnMode=variant>=12?LeftTurnMode.Permissive:previousMode;
+  Junction=selected;previousMode=Junction.leftTurnMode;if(!LiveMode&&variant>=12)Junction.leftTurnMode=LeftTurnMode.Permissive;
   if(!LiveMode)session.manners.enabled=false;State=new ConfusionPracticeState(variant);AttemptEvent=null;initialized=stopSeen=shown=false;
   float start=Mathf.Max(0,hd.paths[incoming].length-75);Route=hd.Route(incoming,start,outgoing,25);connectorEnd=Route.ends[1];
   Direction=hd.paths[incoming].Tangent(hd.paths[incoming].length-3);Axis=Mathf.Abs(Vector3.Dot(Direction,session.traffic.AxisDirection(Junction,0)))>.7f?0:1;Sign=session.traffic.Sign(Direction,Axis,Junction);Direction=session.traffic.AxisDirection(Junction,Axis)*Sign;

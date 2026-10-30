@@ -6,7 +6,7 @@ using UnityEngine;
 public sealed class ServiceLawZone {
  public string id;public int variant,incoming,connector,outgoing;public TrafficJunction junction;
  public string Title {get{return ConfusionPracticeState.Title(variant);}}
- public string MapTitle {get{switch(variant){case 8:return "적색 점멸\n정지 후 진행";case 9:return "황색 점멸\n주변 확인";case 10:return "녹색\n출구 정체";case 11:return "녹색\n출구 여유";case 12:return "비보호 좌회전\n적색 대기";case 13:return "비보호 좌회전\n대향차 양보";default:return "비보호 좌회전\n대향차 없음";}}}
+ public string MapTitle {get{switch(variant){case 8:return "적색 점멸\n정지 후 진행";case 9:return "황색 점멸\n주변 확인";case 10:return "녹색\n출구 정체";case 11:return "녹색\n출구 여유";default:return "일반 운송";}}}
 }
 // Persistent places in the normal Eungye world. Situations observe ordinary trips; they never add routing waypoints.
 public sealed class ServiceLawZones : MonoBehaviour {
@@ -23,10 +23,7 @@ public sealed class ServiceLawZones : MonoBehaviour {
  public static string TargetName(string id){switch(id){case "J7841_867":return "남쪽 주유소 동쪽 교차로";case "J6199_11987":case "J6858_12618":return "호수 남서쪽 큰 교차로";case "J8066_6364":return "상가 북쪽 큰 교차로";default:return "안내 대상 교차로";}}
  public string AssignedTip(float distance){
   if(Assigned==null)return null;
-  if(Assigned.variant<12)return Assigned.Title+"\n창작 구역 · 약 "+distance.ToString("0")+"m\n"+(Live&&Live.Active?Live.Progress:ConfusionPracticeState.Guidance(Assigned.variant));
-  var path=session.jobs.nav.hd.paths[Assigned.incoming];var heading=ApproachHeading(path.Tangent(Mathf.Max(0,path.length-1)));
-  bool active=Live&&Live.Active;
-  return (active?"현재 창작 비보호 좌회전 · 녹색/대향차 조건":"예정된 창작 비보호 좌회전 · 실제 적용 전")+"\n대상 "+TargetName(Assigned.junction.name)+" · "+heading+" 방향 접근 · 약 "+distance.ToString("0")+"m\n"+(active?Live.Progress:"대상 도착 전에는 현장 신호를 따르세요");
+  return Assigned.Title+"\n창작 구역 · 약 "+distance.ToString("0")+"m\n"+(Live&&Live.Active?Live.Progress:ConfusionPracticeState.Guidance(Assigned.variant));
  }
  // Read-only inventory of the actual generated courses in this loaded map.
  // Positions/headings come from the selected incoming lane, not a nearby signal.
@@ -40,7 +37,9 @@ public sealed class ServiceLawZones : MonoBehaviour {
  }
  public ServiceLawZonesSnapshot CaptureLive(){var state=Live?Live.CaptureLive():null;return new ServiceLawZonesSnapshot{scenarioId=CurrentScenario==null?null:CurrentScenario.id,assignedId=Assigned==null?null:Assigned.id,lastTitle=LastTitle,pickupPhase=PickupPhase,completed=Completed,sequence=sequence,lastFeedback=LastFeedback,hasFeedback=LastFeedback!=null,hasObservation=state!=null,observation=state};}
  public void PrepareForRestore(){if(Live&&Live.Active)Live.Stop();var choice=GetComponent<ScenarioChoiceSituation>();if(choice)choice.Stop();Assigned=null;Completed=false;}
- public void RestoreLive(ServiceLawZonesSnapshot s){if(s==null)return;if(!Ready||s.sequence<0)throw new ArgumentException("Invalid live service zones");CurrentScenario=string.IsNullOrEmpty(s.scenarioId)?null:scenarios.Find(x=>x.id==s.scenarioId);Assigned=string.IsNullOrEmpty(s.assignedId)?null:zones.Find(x=>x.id==s.assignedId);if(!string.IsNullOrEmpty(s.scenarioId)&&CurrentScenario==null||!string.IsNullOrEmpty(s.assignedId)&&Assigned==null)throw new ArgumentException("Saved service zone removed");PickupPhase=s.pickupPhase;Completed=s.completed;sequence=s.sequence;LastTitle=s.lastTitle;LastFeedback=s.hasFeedback?s.lastFeedback:null;toastUntil=Time.time+(LastFeedback==null?0:12);if(s.hasObservation)Live.RestoreLive(s.observation,Assigned);}
+ public static bool IsRetiredZoneId(string id){if(string.IsNullOrEmpty(id))return false;var parts=id.Split('-');int variant,connector;return parts.Length==4&&parts[0]=="eungye"&&parts[1]=="law"&&int.TryParse(parts[2],out variant)&&variant>=12&&variant<=14&&int.TryParse(parts[3],out connector)&&connector>=0;}
+ public static bool IsRetiredResultTitle(string title){return title==ConfusionPracticeState.Title(12)||title==ConfusionPracticeState.Title(13)||title==ConfusionPracticeState.Title(14);}
+ public void RestoreLive(ServiceLawZonesSnapshot s){if(s==null)return;if(!Ready||s.sequence<0)throw new ArgumentException("Invalid live service zones");CurrentScenario=string.IsNullOrEmpty(s.scenarioId)?null:scenarios.Find(x=>x.id==s.scenarioId);Assigned=string.IsNullOrEmpty(s.assignedId)?null:zones.Find(x=>x.id==s.assignedId);bool retired=IsRetiredZoneId(s.assignedId);if(!string.IsNullOrEmpty(s.scenarioId)&&CurrentScenario==null||!string.IsNullOrEmpty(s.assignedId)&&Assigned==null&&!retired)throw new ArgumentException("Saved service zone removed");PickupPhase=s.pickupPhase;Completed=s.completed;sequence=s.sequence;LastTitle=s.lastTitle;LastFeedback=s.hasFeedback?s.lastFeedback:null;toastUntil=Time.time+(LastFeedback==null?0:12);if(retired){if(Live&&Live.Active)Live.Stop();Assigned=null;Completed=false;}else if(s.hasObservation)Live.RestoreLive(s.observation,Assigned);if(retired||IsRetiredResultTitle(s.lastTitle)){LastTitle="";LastFeedback=null;toastUntil=0;}}
  public bool Owns(TrafficJunction j){return j.editorProgram==null&&Live&&Live.Owns(j);}
  public bool RequiredBraking(){
   if(!Live||!Live.Active)return false;var taxi=session.taxi;var front=taxi.transform.position+taxi.transform.forward*2;var q=front-Live.Junction.center;float gap=Live.StopAlong-Vector3.Dot(q,Live.Direction),side=Vector3.Dot(q,TrafficSystem.Right(Live.Direction));
@@ -54,7 +53,7 @@ public sealed class ServiceLawZones : MonoBehaviour {
  public void Register(){
   if(zones.Count>0)return;
   var hd=session.jobs.nav.hd;scenarios.AddRange(PrototypeScenario.Build(hd,session.jobs.stops));
-  foreach(var course in scenarios){if(course.variant==0||zones.Exists(z=>z.connector==course.connector))continue;
+  foreach(var course in scenarios){if(!ConfusionPractice.AllowsServiceVariant(course.variant)||zones.Exists(z=>z.connector==course.connector))continue;
    int k=course.route.edges.IndexOf(course.connector);var j=session.traffic.junctions.Find(x=>x.name==hd.edges[course.connector].ruleId);if(j==null||!j.signalized)continue;
    var zone=new ServiceLawZone{id="eungye-law-"+course.variant+"-"+course.connector,variant=course.variant,junction=j,incoming=course.route.edges[k-1],connector=course.connector,outgoing=course.route.edges[k+1]};zones.Add(zone);CreateSign(zone);
   }
@@ -65,7 +64,7 @@ public sealed class ServiceLawZones : MonoBehaviour {
   var obj=new GameObject(zone.id+" · 창작 상황 구역");obj.transform.SetParent(transform);obj.transform.position=point+TrafficSystem.Right(dir)*(zone.junction.halfWidth[0]+4)+Vector3.up*3;
   var t=obj.AddComponent<TextMesh>();t.fontSize=38;t.characterSize=.09f;t.anchor=TextAnchor.MiddleCenter;t.color=new Color(1,.75f,.25f);t.text="운행 상황 구역 · 창작\n"+zone.Title;KoreanText.Apply(t);obj.AddComponent<FaceCamera>();
  }
- public ServiceLawZone ZoneFor(JobOffer offer){return offer!=null&&offer.zoneIndex>=0&&offer.zoneIndex<zones.Count?zones[offer.zoneIndex]:null;}
+ public ServiceLawZone ZoneFor(JobOffer offer){if(offer==null)return null;var scenario=scenarios.Find(s=>s.id==offer.scenarioId);if(scenario!=null&&scenario.variant==0)return null;return offer.zoneIndex>=0&&offer.zoneIndex<zones.Count&&ConfusionPractice.AllowsServiceVariant(zones[offer.zoneIndex].variant)?zones[offer.zoneIndex]:null;}
  public string OfferSituation(JobOffer offer){var zone=ZoneFor(offer);return zone==null?"일반 운송 · 지정 상황 구역 없음":"경유 상황: "+zone.Title;}
  public void ConfigureOffer(JobOffer offer){
   if(!Ready||!session.jobs.stops[offer.pickup].graphStop||!session.jobs.stops[offer.drop].graphStop)return;
@@ -85,7 +84,7 @@ public sealed class ServiceLawZones : MonoBehaviour {
   bool alreadyAtPickup=start==p.laneEdge&&Mathf.Abs(at-p.laneAt)<.25f;
   if(pickupRoute==null&&!alreadyAtPickup)return false;
   var delivery=scenario.route;if(delivery==null)return false;
-  int zone=zones.FindIndex(z=>z.connector==scenario.connector);if(scenario.variant>0&&zone<0)return false;
+  int zone=scenario.variant==0?-1:zones.FindIndex(z=>z.connector==scenario.connector);if(scenario.variant>0&&zone<0)return false;
   offer.pickup=scenario.pickup;offer.drop=scenario.drop;offer.scenarioId=scenario.id;offer.zoneIndex=zone;
   offer.distance=delivery.path.length;offer.waitSeconds=50;
   offer.pickupSeconds=Mathf.Max(180,(alreadyAtPickup?0:pickupRoute.path.length)/4+120);return true;

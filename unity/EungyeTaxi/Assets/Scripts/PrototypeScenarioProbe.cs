@@ -37,7 +37,7 @@ public sealed class PrototypeScenarioProbe : MonoBehaviour {
       Check(state.Elapsed>elapsed,"pedestrian continues crossing after connector-first reroute");
      }
     }
-    PassVia();zones.SendMessage("Update");if(choice&&choice.Course!=null)choice.SendMessage("Update");
+    if(scenario.variant>0||scenario.id=="PS09")PassVia();else Check(zones.Assigned==null&&!zones.Live.Active&&jobs.nav.ObservedEdge==-1,scenario.id+" ordinary transport without invented left condition");zones.SendMessage("Update");if(choice&&choice.Course!=null)choice.SendMessage("Update");
    }
    AtStop(offer.drop);Check(jobs.Interact()&&jobs.trip.State==TripState.Complete,scenario.id+" actual delivery interaction and payment after course "+attempt);
   }}

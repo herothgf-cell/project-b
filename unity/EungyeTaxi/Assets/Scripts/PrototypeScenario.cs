@@ -26,7 +26,9 @@ public sealed class PrototypeScenario {
       for(int n=1;n<alternative.edges.Count-1;n++){int x=alternative.edges[n];if(hd.edges[x].id.StartsWith("join:")&&!string.IsNullOrEmpty(hd.edges[x].ruleId)&&Valid(alternative,x)){alternate=x;break;}}if(alternate<0)continue;}
      // Keep the authored passenger endpoints where possible; relocate the game situation instead of detouring the passenger.
      float cost=(a==pickups[i]?0:100000)+(b==drops[i]?0:100000)+r.path.length+(c==links[i]?0:3000);
-     if(cost>=score)continue;score=cost;best=new PrototypeScenario{id="PS0"+(i+1),pickup=a,drop=b,connector=c,variant=i<7?i+8:i==7?10:0,route=r,alternative=alternative,alternate=alternate};
+     // PS05–07 keep their saved trip identity and natural routes. Fictional permissive-left
+     // signal overrides belong only to standalone practice, never to normal service.
+     if(cost>=score)continue;score=cost;best=new PrototypeScenario{id="PS0"+(i+1),pickup=a,drop=b,connector=c,variant=i<4?i+8:i==7?10:0,route=r,alternative=alternative,alternate=alternate};
     }
    }
    if(best!=null){result.Add(best);if(i<7)occupied.Add(hd.edges[best.connector].ruleId);}
