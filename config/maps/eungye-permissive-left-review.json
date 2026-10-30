@@ -7,37 +7,94 @@
       "junctionId": "J7841_867",
       "incoming": "west-to-east",
       "requestedBearing": 90,
-      "status": "unconfirmed",
+      "status": "front-reviewed-no-positive-permissive-evidence",
       "month": "2026-05",
-      "url": "https://map.naver.com/p/entry/coordinates/3zanok,2AGwoP?c=15,0,0,0,adh&p=vAXkarXYAmpMy8qMKj31fQ,0,5,80,Float",
-      "observed": "은계로 연결 도로와 전방 신호를 확인했으나 서→동 해당 진입부의 비보호329 표지를 정면 판독하지 못함. 접근 방향 불일치 사진을 허용 근거로 쓰지 않음.",
+      "url": "https://map.naver.com/p/entry/coordinates/3zanok,2AGwoP?c=15.00,0,0,0,adh&p=dTMTFEM4C8evOk9yhEBvYw,87,10,55.94,Float",
+      "observed": "서측 촬영점BOo에서 동향87도로 회전하고 dTMT 정지선 부근으로 이동·확대. 대상 교차로 서→동의4구 차량 신호와 어린이보호 안내를 정면 확인. 비보호 좌회전329 표지의 긍정 근거는 확보하지 못함. 인접 회전교차로 사진은 제외.",
       "checkedAt": "2026-10-30",
       "permissiveSignConfirmed": false,
-      "permissionGranted": false
+      "permissionGranted": false,
+      "previousReview": {
+        "status": "unconfirmed",
+        "url": "https://map.naver.com/p/entry/coordinates/3zanok,2AGwoP?c=15,0,0,0,adh&p=vAXkarXYAmpMy8qMKj31fQ,0,5,80,Float",
+        "observed": "은계로 연결 도로와 전방 신호를 확인했으나 서→동 해당 진입부의 비보호329 표지를 정면 판독하지 못함. 접근 방향 불일치 사진을 허용 근거로 쓰지 않음."
+      },
+      "approachResolved": true,
+      "followupVisits": [
+        {
+          "pano": "BOo5KtbsxlzD5jbpw5uXTA",
+          "heading": 87,
+          "role": "서측 접근 원경, 대상 핀/교차로와 위치 대조"
+        },
+        {
+          "pano": "dTMTFEM4C8evOk9yhEBvYw",
+          "heading": 87,
+          "role": "정지선 부근 동향 신호·어린이보호 안내 확대 판독"
+        }
+      ],
+      "followupCheckedAt": "2026-10-30"
     },
     {
       "junctionId": "J6858_12618",
       "incoming": "south-southeast-to-north-northwest",
       "requestedBearing": 338,
-      "status": "not-confirmed-permissive",
+      "status": "front-reviewed-no-positive-permissive-evidence",
       "month": "2026-05",
       "url": "https://map.naver.com/p/entry/coordinates/3zakqC,2AGXWh?c=15,0,0,0,adh&p=Ix6rbIKQdDKEt2ehapts1A,-22,4,55,Float",
-      "observed": "4구 차량 신호, 유턴 표지와 좌회전/보행 신호 조건판 확인. 비보호 좌회전329 문구는 확인되지 않음. 유턴 허용판을 비보호 좌회전 허용으로 해석하지 않음.",
+      "observed": "기존 남남동 방면 정면 Ix6 사진과 교차로 내 근접 Ksp 촬영점을 대조.4구 차량 신호 확인, 유턴 조건판의 좌회전시/보행신호시는 Ix6 정면 자료에서 판독. Ksp에서는 유턴판 일부가 시야 밖이므로 원경/근접 자료의 판독 범위를 분리한다. 비보호 좌회전329 긍정 근거 없음.",
       "checkedAt": "2026-10-30",
       "permissiveSignConfirmed": false,
-      "permissionGranted": false
+      "permissionGranted": false,
+      "previousReview": {
+        "status": "not-confirmed-permissive",
+        "url": "https://map.naver.com/p/entry/coordinates/3zakqC,2AGXWh?c=15,0,0,0,adh&p=Ix6rbIKQdDKEt2ehapts1A,-22,4,55,Float",
+        "observed": "4구 차량 신호, 유턴 표지와 좌회전/보행 신호 조건판 확인. 비보호 좌회전329 문구는 확인되지 않음. 유턴 허용판을 비보호 좌회전 허용으로 해석하지 않음."
+      },
+      "followupVisits": [
+        {
+          "pano": "Ix6rbIKQdDKEt2ehapts1A",
+          "heading": -22,
+          "role": "기존 정면 신호·유턴 보조표지 재대조"
+        },
+        {
+          "pano": "KspRbguk-UHfD1yxbRcpTg",
+          "heading": -22,
+          "role": "교차로 내 근접 촬영점에서 차량 신호 대조, 유턴판은 일부 시야 밖",
+          "url": "https://map.naver.com/p/entry/coordinates/3zakqC,2AGXWh?c=15.00,0,0,0,adh&p=KspRbguk-UHfD1yxbRcpTg,-22,4,55,Float"
+        }
+      ],
+      "followupCheckedAt": "2026-10-30"
     },
     {
       "junctionId": "J8066_6364",
       "incoming": "north-to-south",
       "requestedBearing": 180,
-      "status": "approach-not-resolved",
+      "status": "front-reviewed-no-positive-permissive-evidence",
       "month": "2026-05",
-      "url": "https://map.naver.com/p/entry/coordinates/3zao1h,2AGJhI?c=15,0,0,0,adh&p=3EKy_X4MdjfjwJ8NFMRLzA,180,3,50,Float",
-      "observed": "해당 교차로 주변 도로를 확인했으나 북쪽 진입 정면의 비보호 표지를 판독하지 못함. 지도 핀과 촬영 위치/시선 방향을 구분해 보류.",
+      "url": "https://map.naver.com/p/entry/coordinates/3zao1h,2AGJhI?c=15.00,0,0,0,adh&p=_HDjObykfS0QFN1mRvdhww,-180,10,38.75,Float",
+      "observed": "북측 도로의 촬영점을 직접 선택하고 남향으로 회전, _HDj 정지선 가까운 지점으로 이동·확대. 북→남4구 차량 신호 및 유턴 표지의 좌회전시/보행신호시 조건판을 정면 판독. 비보호 좌회전329 표지의 긍정 근거는 확보하지 못함.",
       "checkedAt": "2026-10-30",
       "permissiveSignConfirmed": false,
-      "permissionGranted": false
+      "permissionGranted": false,
+      "previousReview": {
+        "status": "approach-not-resolved",
+        "url": "https://map.naver.com/p/entry/coordinates/3zao1h,2AGJhI?c=15,0,0,0,adh&p=3EKy_X4MdjfjwJ8NFMRLzA,180,3,50,Float",
+        "observed": "해당 교차로 주변 도로를 확인했으나 북쪽 진입 정면의 비보호 표지를 판독하지 못함. 지도 핀과 촬영 위치/시선 방향을 구분해 보류."
+      },
+      "approachResolved": true,
+      "followupVisits": [
+        {
+          "pano": "ozPqvrjQsRBwuklLqBzl6g",
+          "heading": -180,
+          "role": "북측 촬영점에서 남향 접근 방향 확보"
+        },
+        {
+          "pano": "_HDjObykfS0QFN1mRvdhww",
+          "heading": -180,
+          "role": "근접 촬영·확대,4구 신호와 유턴 보조표지 판독"
+        }
+      ],
+      "followupCheckedAt": "2026-10-30"
     }
   ],
   "scope": "Former three fictional service approaches and nearby context; not a survey declaring no permissive turns anywhere in Eungye.",
@@ -45,6 +102,11 @@
     {
       "url": "https://map.naver.com/p/entry/coordinates/3zanLi,2AGD8X?c=15.99,0,0,0,adh&p=8tKhgd4xCQY5MqAZhqKJMQ,180,5,60,Float",
       "reason": "Pano/minimap corresponds to J7973 vicinity, not proof of the J8066 north approach."
+    },
+    {
+      "url": "https://map.naver.com/p/entry/coordinates/3zanok,2AGwoP?c=15.00,0,0,0,adh&p=83HdAuKWcOEGLFTAefcqOw,59.02,10,80,Float",
+      "reason": "인접한 서쪽 회전교차로 후보. 좌표 핀의 J7841 교차로와 다른 장소임을 대조했으므로 비보호 근거로 제외."
     }
-  ]
+  ],
+  "followupSummary": "Former unresolved west and north approaches now viewed frontally from new camera positions. Three approaches compared using 2026-05 imagery; zero positive permissive-left signs verified. Nearby roundabout and mismatched approach photos excluded. No district-wide absence claim."
 }
