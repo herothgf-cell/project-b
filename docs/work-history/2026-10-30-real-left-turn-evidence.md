@@ -30,3 +30,7 @@
 기본 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계. 이전 저장은 그대로 이어가고 PS05~07은 일반 운송으로 진행한다. 개발 검증 진입점 `RealLeftBuildChecks.Build`, Player `-realLeftOnlyTest -hybridV2`, `-prototypeScenarioTest -hybridV2`, `-serviceLawZonesTest -hybridV2`. Test 접미사는 격리 저장을 사용한다.
 
 대상 정면 표지의 추가 판독과 지역 전수 조사는 미완료다. 읽을 수 있는 접근별 허용 근거를 확보하기 전 새 비보호 규제를 만들지 않는다. 사람20분/3일·다른 PC 검증은 별도다.
+
+## 배포 자료 검증
+
+실제 소스 커밋 `d6f29d81700853d2fb3195a841a313ef31617d08`을 `git log -1 --oneline -- docs/work-history/2026-10-30-real-left-turn-evidence.md`로 확인했다. `tools/update_distribution_manifest.ps1 -SourceCommit d6f29d81700853d2fb3195a841a313ef31617d08 -ValidatedOn 2026-10-30 -ValidationReport artifacts/real-left-validation.json`과 `-VerifyOnly` 종료0. 실행 폴더130파일112,293,085바이트의 크기/SHA256이 일치한다. 게시 결과는 실제 main 푸시 후 아래에 기록한다.

@@ -4,7 +4,7 @@
 
 [작업 기록](2026-10-30-real-left-turn-evidence.md). 기존 창작PS05~07의 비보호 전환/표지/TIP을 제거하고 일반 운송으로 유지한다. 네이버 거리뷰의 기존3접근 검토에서 비보호 표지 긍정 확인0곳이므로 신규 허용도0곳이다. 이는 은계 전체 부재 판정이 아니다. 이전 저장의 진행 중/종료된 창작 안내를 해제하고 승객 운송은 유지한다. 아래의 창작 비보호 목록은 이전 작업 당시 상태이며 현재 허용 목록이 아니다.
 
-기본 실행 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 / `PrototypeBuild.BuildHybrid`. 지도 입력·ZIP 미변경, 사용자/PvP untracked 보존. 모델28·전체 Editor/Startup11,672·BuildHybrid·최신 Player7종908검사 종료0. 초벌 UI의 오래된 시설명 비교1실패는 fixture 수정 후 최종 재빌드/정책95·UI60 통과로 해결했다. 최종 배포 해시는 최신 작업 기록에 갱신한다. 다음은 미확정 방향의 읽을 수 있는 표지 근거 확보와 기존 사람20분/3일 검사다.
+기본 실행 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 / `PrototypeBuild.BuildHybrid`. 지도 입력·ZIP 미변경, 사용자/PvP untracked 보존. 모델28·전체 Editor/Startup11,672·BuildHybrid·최신 Player7종908검사 종료0. 초벌 UI의 오래된 시설명 비교1실패는 fixture 수정 후 최종 재빌드/정책95·UI60 통과로 해결했다. 소스d6f29d8 기준 실행 폴더130파일112,293,085바이트의 크기/SHA256 검증 종료0. 실제 게시 해시는 최신 작업 기록에 갱신한다. 다음은 미확정 방향의 읽을 수 있는 표지 근거 확보와 기존 사람20분/3일 검사다.
 
 ## 2026-10-30 정지선·유턴·분리섬·상가 성능
 
