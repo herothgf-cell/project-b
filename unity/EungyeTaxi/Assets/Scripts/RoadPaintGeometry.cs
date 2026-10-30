@@ -114,9 +114,9 @@ public sealed class RoadPaintGeometry {
   List<LanePath> group;return corridors.TryGetValue(edge.sourceId,out group)?Sample(group,point,direction,float.MaxValue):new List<RoadGeometry.Lane>();
  }
  public static void Paint(MapData map,List<TrafficJunction> junctions,System.Action<string,Vector3,Vector3,float,float,bool> mark){
-  var layout=new RoadPaintGeometry(map);var openings=RoadJunctionGeometry.Build(map);var authored=ReviewedCrosswalkGeometry.Build(map);var clearances=RoadJunctionGeometry.PaintClearances(map,junctions);mark=UniquePaint(mark);
+  var layout=new RoadPaintGeometry(map);var openings=RoadJunctionGeometry.Build(map);var authored=ReviewedCrosswalkGeometry.Build(map);var clearances=RoadJunctionGeometry.PaintClearances(map,junctions);var uturns=UturnRoadMarkings.Build(map);mark=UniquePaint(mark);
   openings.RemoveAll(opening=>clearances.Exists(zone=>zone.kind=="core"&&(zone.center-opening.center).sqrMagnitude<4));
-  if(layout.corridors.Count>0){layout.PaintCompiled(clearances,openings,authored,mark);return;}
+  if(layout.corridors.Count>0){layout.PaintCompiled(clearances,openings,authored,uturns,mark);return;}
   foreach(var road in map.roads){if(road.suppressPaint||road.id!=null&&road.id.StartsWith("fuel:"))continue;
    float distance=0;
    for(int i=1;i<road.points.Length;i++){
@@ -128,6 +128,7 @@ public sealed class RoadPaintGeometry {
       if(boundary.dashed&&((distance+at)%6)>=3)continue;
       var q=p+TrafficSystem.Right(dir)*boundary.offset;
       if(InOpening(q,clearances,openings,authored,piece*.5f))continue;
+      if(boundary.yellow&&UturnRoadMarkings.Covers(uturns,q,piece*.5f))continue;
       mark(boundary.yellow?"Centre line":"Lane divider",q,dir,boundary.yellow?.14f:.13f,piece,boundary.yellow);
      }
      foreach(int side in new[]{-1,1}){var q=p+TrafficSystem.Right(dir)*side*(road.width*.5f-.3f);if(!InOpening(q,clearances,openings,authored,piece*.5f))mark("Road edge",q,dir,.12f,piece,false);}
@@ -135,7 +136,7 @@ public sealed class RoadPaintGeometry {
    }
   }
  }
- void PaintCompiled(List<RoadJunctionGeometry.Clearance> clearances,List<RoadJunctionGeometry.Opening> openings,List<ReviewedCrosswalkGeometry.Zone> authored,System.Action<string,Vector3,Vector3,float,float,bool> mark){
+ void PaintCompiled(List<RoadJunctionGeometry.Clearance> clearances,List<RoadJunctionGeometry.Opening> openings,List<ReviewedCrosswalkGeometry.Zone> authored,List<UturnRoadMarkings.Zone> uturns,System.Action<string,Vector3,Vector3,float,float,bool> mark){
   foreach(var corridor in corridors){
    var first=corridor.Value.Find(x=>x.number==1);if(first==null)continue;string family=Family(first.id);float width=float.MaxValue;
    foreach(var id in corridor.Key.Split(',')){float value;if(widths.TryGetValue(id,out value))width=Mathf.Min(width,value);}if(width==float.MaxValue)continue;
@@ -149,6 +150,7 @@ public sealed class RoadPaintGeometry {
      if(lanes.Count==0)continue;
      foreach(var line in RoadGeometry.Boundaries(lanes)){
       if(line.dashed&&(phase+at)%6>=3)continue;var q=p+TrafficSystem.Right(dir)*line.offset;if(line.yellow)q=ReviewedLaneLayout.Centreline(map,corridor.Key,q);
+      if(line.yellow&&UturnRoadMarkings.Covers(uturns,q,piece*.5f))continue;
       if(!InOpening(q,clearances,openings,authored,piece*.5f))mark(line.yellow?"Centre line":"Lane divider",q,dir,line.yellow?.14f:.13f,piece,line.yellow);
      }
      float laneWidth=lanes.Count>1?float.MaxValue:width;

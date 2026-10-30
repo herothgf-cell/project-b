@@ -5259,5 +5259,14 @@
     "signalizedMidblock": "J6480_2573",
     "sourceUrl": "https://map.naver.com/p/entry/coordinates/3zao1h,2AGJhI?c=15,0,0,0,adh&p=i7qori-dtj0W3l_zrXdqrg,-45,10,80,Float",
     "note": "Facility existence matched to user capture and Naver panorama; coordinates, geometry and 54s timing are game estimates."
+  },
+  "followup20261030": {
+    "source": "Naver May2026 street-view + user screenshots; physical dimensions remain game estimates",
+    "junctions": {
+      "J1927_5181": "Remove duplicate source530; explicit common stop planes align approach display and law.",
+      "J7973_3744": "SE splitter island game polygon; eastbound approach Uturn moved10m upstream through directed lineage.",
+      "J8066_6364": "South approach Uturn moved10m upstream; full car footprint outside crossing band."
+    },
+    "notClaimed": "No full field audit, surveyed lane dimensions, or real signal timing."
   }
 }

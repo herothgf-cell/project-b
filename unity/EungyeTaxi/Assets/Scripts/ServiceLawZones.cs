@@ -19,6 +19,25 @@ public sealed class ServiceLawZones : MonoBehaviour {
  public PracticeFeedback LastFeedback {get;private set;}
  public string LastTitle {get;private set;}public bool Completed {get;private set;}
  public bool Ready {get;private set;}int sequence;float toastUntil;bool details;Vector2 scroll;
+ static string ApproachHeading(Vector3 direction){if(Mathf.Abs(direction.x)>=Mathf.Abs(direction.z))return direction.x>=0?"동쪽":"서쪽";return direction.z>=0?"북쪽":"남쪽";}
+ public static string TargetName(string id){switch(id){case "J7841_867":return "남쪽 주유소 동쪽 교차로";case "J6199_11987":case "J6858_12618":return "호수 남서쪽 큰 교차로";case "J8066_6364":return "상가 북쪽 큰 교차로";default:return "안내 대상 교차로";}}
+ public string AssignedTip(float distance){
+  if(Assigned==null)return null;
+  if(Assigned.variant<12)return Assigned.Title+"\n창작 구역 · 약 "+distance.ToString("0")+"m\n"+(Live&&Live.Active?Live.Progress:ConfusionPracticeState.Guidance(Assigned.variant));
+  var path=session.jobs.nav.hd.paths[Assigned.incoming];var heading=ApproachHeading(path.Tangent(Mathf.Max(0,path.length-1)));
+  bool active=Live&&Live.Active;
+  return (active?"현재 창작 비보호 좌회전 · 녹색/대향차 조건":"예정된 창작 비보호 좌회전 · 실제 적용 전")+"\n대상 "+TargetName(Assigned.junction.name)+" · "+heading+" 방향 접근 · 약 "+distance.ToString("0")+"m\n"+(active?Live.Progress:"대상 도착 전에는 현장 신호를 따르세요");
+ }
+ // Read-only inventory of the actual generated courses in this loaded map.
+ // Positions/headings come from the selected incoming lane, not a nearby signal.
+ public string ScenarioInventory(){
+  var result=new System.Text.StringBuilder();var hd=session.jobs.nav.hd;
+  foreach(var course in scenarios){if(course.id!="PS05"&&course.id!="PS06"&&course.id!="PS07")continue;
+   int k=course.route.edges.IndexOf(course.connector),incoming=course.route.edges[k-1];var path=hd.paths[incoming];var p=path.Position(path.length);var direction=path.Tangent(Mathf.Max(0,path.length-1));var junction=session.traffic.junctions.Find(j=>j.name==hd.edges[course.connector].ruleId);
+   result.AppendFormat(System.Globalization.CultureInfo.InvariantCulture,"{0} variant={1} junction={2} center=({3:F2},{4:F2}) incoming={5} laneEnd=({6:F2},{7:F2}) heading=({8:F4},{9:F4}) approach={10} connector={11} currentLeft={12}\n",course.id,course.variant,junction==null?hd.edges[course.connector].ruleId:junction.name,junction==null?float.NaN:junction.center.x,junction==null?float.NaN:junction.center.z,hd.edges[incoming].id,p.x,p.z,direction.x,direction.z,ApproachHeading(direction),hd.edges[course.connector].id,junction==null?"unknown":junction.leftTurnMode.ToString());
+  }
+  return result.ToString();
+ }
  public ServiceLawZonesSnapshot CaptureLive(){var state=Live?Live.CaptureLive():null;return new ServiceLawZonesSnapshot{scenarioId=CurrentScenario==null?null:CurrentScenario.id,assignedId=Assigned==null?null:Assigned.id,lastTitle=LastTitle,pickupPhase=PickupPhase,completed=Completed,sequence=sequence,lastFeedback=LastFeedback,hasFeedback=LastFeedback!=null,hasObservation=state!=null,observation=state};}
  public void PrepareForRestore(){if(Live&&Live.Active)Live.Stop();var choice=GetComponent<ScenarioChoiceSituation>();if(choice)choice.Stop();Assigned=null;Completed=false;}
  public void RestoreLive(ServiceLawZonesSnapshot s){if(s==null)return;if(!Ready||s.sequence<0)throw new ArgumentException("Invalid live service zones");CurrentScenario=string.IsNullOrEmpty(s.scenarioId)?null:scenarios.Find(x=>x.id==s.scenarioId);Assigned=string.IsNullOrEmpty(s.assignedId)?null:zones.Find(x=>x.id==s.assignedId);if(!string.IsNullOrEmpty(s.scenarioId)&&CurrentScenario==null||!string.IsNullOrEmpty(s.assignedId)&&Assigned==null)throw new ArgumentException("Saved service zone removed");PickupPhase=s.pickupPhase;Completed=s.completed;sequence=s.sequence;LastTitle=s.lastTitle;LastFeedback=s.hasFeedback?s.lastFeedback:null;toastUntil=Time.time+(LastFeedback==null?0:12);if(s.hasObservation)Live.RestoreLive(s.observation,Assigned);}
@@ -122,7 +141,7 @@ public sealed class ServiceLawZones : MonoBehaviour {
    if(GUI.Button(new Rect(x+18,y+h-54,w-36,36),"닫기 · 운행은 계속됩니다",button))details=false;return;
   }
   string tip=null;bool result=false;
-  if(Assigned!=null&&!Completed){float distance=Vector3.Distance(session.taxi.transform.position,Assigned.junction.center);if(distance<260)tip=Assigned.Title+"\n창작 구역 · 약 "+distance.ToString("0")+"m\n"+(Live.Active?Live.Progress:ConfusionPracticeState.Guidance(Assigned.variant));}
+  if(Assigned!=null&&!Completed){float distance=Vector3.Distance(session.taxi.transform.position,Assigned.junction.center);if(distance<260)tip=AssignedTip(distance);}
   if(tip==null&&LastFeedback!=null&&(session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f||Time.time<toastUntil)){tip=LastFeedback.outcome;result=true;}
   string service=session.services.TipText;
   if(!string.IsNullOrEmpty(service))tip=(tip==null?"":tip+"\n\n")+service;

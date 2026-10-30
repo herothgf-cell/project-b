@@ -17,7 +17,8 @@ public sealed class WorldFollowupProbe : MonoBehaviour {
  void Check(bool value,string reason){checks++;report.AppendLine((value?"PASS ":"FAIL ")+reason);Debug.Log((value?"PASS ":"FAIL ")+reason);if(!value)throw new Exception(reason);}
  IEnumerator Start(){
   yield return new WaitForSecondsRealtime(2);float deadline=Time.realtimeSinceStartup+90;s=FindObjectOfType<DriveSession>();while(s&&!s.StartupReady&&Time.realtimeSinceStartup<deadline)yield return null;
-  bool ok=false;try{Check(s&&s.StartupReady,"runtime initialization completed");string save=Path.GetFullPath(s.business.SavePath).Replace('\\','/');Check(save.IndexOf("/artifacts/",StringComparison.OrdinalIgnoreCase)>=0,"generic Test suffix isolates save path: "+save);DisableLifecycle();Freeze();MapAndRoute();Overtime();LegacyLeft();Captures();ok=true;}catch(Exception e){report.AppendLine(e.ToString());Debug.LogException(e);}
+  yield return null;yield return null;
+  bool ok=false;try{Check(s&&s.StartupReady,"runtime initialization completed");string save=Path.GetFullPath(s.business.SavePath).Replace('\\','/');Check(save.IndexOf("/artifacts/",StringComparison.OrdinalIgnoreCase)>=0,"generic Test suffix isolates save path: "+save);Check(s.GetComponent<ServiceLawZones>().Ready&&s.GetComponent<ServiceLawZones>().scenarios.Count==9,"actual service zones complete deferred Start before inventory");report.AppendLine("ACTUAL_SCENARIO_INVENTORY\n"+s.GetComponent<ServiceLawZones>().ScenarioInventory());DisableLifecycle();Freeze();UpstreamUturns();MapAndRoute();SignalObservation();Overtime();LegacyLeft();Captures();ok=true;}catch(Exception e){report.AppendLine(e.ToString());Debug.LogException(e);}
   Directory.CreateDirectory("artifacts");File.WriteAllText("artifacts/world-followup-runtime.txt","success="+ok+"\nchecks="+checks+"\n"+report);Debug.Log("WORLD_FOLLOWUP_"+(ok?"OK":"FAILED")+" checks="+checks);Application.Quit(ok?0:1);
  }
  void DisableLifecycle(){
@@ -48,6 +49,15 @@ public sealed class WorldFollowupProbe : MonoBehaviour {
   Check(edge>=0&&error<8,"eastbound source lane spans the midblock with no fallback route");var route=district.CreateRoute(edge,Mathf.Max(0,mid-15),edge,Mathf.Min(graph.paths[edge].length,mid+55));
   Check(route!=null&&route.graphPath!=null&&route.graphPath.edges.All(i=>i==edge),"actual same-edge district route retains source geometry");var stop=route.stops.Find(x=>x.junction==junction);Check(stop!=null&&stop.distance>0&&stop.exitDistance>stop.distance,"same-edge midblock route has a positive real stop, no zero fallback");
  }
+ void SignalObservation(){
+  var traffic=s.traffic;var j=traffic.junctions.Single(q=>q.name==Crossing);var program=j.editorProgram;bool manual=traffic.manualClock;float clock=traffic.manualTime;traffic.manualClock=true;
+  try{Pose(new Vector3(620,0,255.18f),Vector3.right);int axis=0,sign=1;var dir=traffic.AxisDirection(j,axis)*sign;string lane=traffic.EditorLaneId(s.taxi.transform.position,s.taxi.transform.forward);Check(!string.IsNullOrEmpty(lane),"actual signal fixture lane resolves");
+   Check(!program.NeedsLaneId(axis,sign),"unbound midblock signal requires no graph search");
+   for(float time=0;time<program.Cycle;time+=1){traffic.manualTime=time;var o=traffic.Observe(j,axis,sign,dir,s.taxi.gameObject);Check(o.forward==program.Movement(axis,sign,0,time,lane)&&o.right==program.Movement(axis,sign,1,time,lane),"unbound observation retains exact phase t="+time);}
+   var g=program.groups.First(q=>!q.pedestrian&&q.axis==axis&&q.sign==sign&&q.turn==0);var original=g.laneIds;
+   try{g.laneIds=new[]{lane};Check(program.NeedsLaneId(axis,sign),"bound group requests one lane resolution");for(float time=0;time<program.Cycle;time+=1){traffic.manualTime=time;Check(traffic.Observe(j,axis,sign,dir,s.taxi.gameObject).forward==program.Movement(axis,sign,0,time,lane),"bound lane observation retains exact phase t="+time);}g.laneIds=new[]{"not-this-lane"};traffic.manualTime=2;Check(traffic.Observe(j,axis,sign,dir,s.taxi.gameObject).forward==SignalColor.Red,"bound group rejects different actual lane");}finally{g.laneIds=original;}
+  }finally{traffic.manualClock=manual;traffic.manualTime=clock;}
+ }
  int Cell(int index){var stops=s.jobs.stops;float minX=stops.Min(p=>p.x),maxX=stops.Max(p=>p.x),minZ=stops.Min(p=>p.z),maxZ=stops.Max(p=>p.z);var p=stops[index];return Mathf.Min(2,Mathf.FloorToInt(3*Mathf.InverseLerp(minX,maxX,p.x)))+3*Mathf.Min(2,Mathf.FloorToInt(3*Mathf.InverseLerp(minZ,maxZ,p.z)));}
  void Overtime(){
   var total=new HashSet<int>();var allCells=new HashSet<int>();var stops=s.jobs.stops;Pose(stops[0].Kerb,stops[0].Direction);
@@ -63,6 +73,32 @@ public sealed class WorldFollowupProbe : MonoBehaviour {
   Check(total.Count>=4&&allCells.Count>=3,"overtime generations cover at least four pickup locations and three cells");
  }
  void LawTick(){typeof(DrivingLaw).GetMethod("FixedUpdate",Private).Invoke(s.law,null);}
+ void FrontPose(Vector3 front,Vector3 heading){Pose(front-heading*2,heading);LawTick();}
+ void UpstreamUturns(){
+  var traffic=s.traffic;var map=s.world.map;var document=map.editorDocument;bool manual=traffic.manualClock;float clock=traffic.manualTime;traffic.manualClock=true;
+  try{foreach(string name in new[]{"J8066-S","J7973-E"}){
+   var turn=document.lanes.Single(l=>l.id=="join:reviewed:"+name+":uturn");var from=document.lanes.Single(l=>l.next.Contains(turn.id));var condition=UturnMovement.Condition(document,from.id);var junction=traffic.junctions.Single(j=>j.name==condition.junctionId);
+   var direction=(from.points.Last().V()-from.points[from.points.Length-2].V()).normalized;int axis=Mathf.Abs(Vector3.Dot(direction,traffic.AxisDirection(junction,0)))>.7f?0:1,sign=traffic.Sign(direction,axis,junction);
+   var gate=turn.points[0].V();var stop=traffic.StopPosition(junction,axis,sign);var normal=traffic.StopNormal(junction,axis,sign);var curve=new AssistedRoadNetwork.Path(turn.points.Select(p=>p.V()).ToArray());
+   Check(turn.points.All(p=>Vector3.Dot(p.V()-stop,normal)<-.25f),name+" actual Uturn stays upstream of shared road stop plane");
+   float legal=-1,illegal=-1,walk=-1;for(float time=0;time<240;time+=.5f){traffic.manualTime=time;if(traffic.UturnPermitted(junction,axis,sign,from.id)){if(legal<0)legal=time;if(traffic.PedestrianGreen(junction,axis,sign))walk=time;}else if(illegal<0&&traffic.LeftSignal(junction,axis,sign)!=SignalColor.Yellow)illegal=time;}
+   Check(legal>=0&&illegal>=0&&walk>=0,name+" actual left/pedestrian and prohibited phases exist");
+   foreach(float phase in new[]{legal,walk,illegal}){
+    bool allowed=phase!=illegal;traffic.manualTime=phase;s.law.ResetObservation();s.law.ledger=new LawLedger();s.manners.BeginRide();bool restored=false;
+    FrontPose(gate-direction*4,direction);FrontPose(gate-direction*.5f,direction);FrontPose(gate+direction*.1f,direction);
+    var snapshot=JsonUtility.FromJson<DrivingLawSnapshot>(JsonUtility.ToJson(s.law.CaptureObservation()));Check(snapshot.upstreamUturn!=null&&snapshot.upstreamUturn.allowed==allowed,name+" captures exact condition at movement gate phase="+phase);
+    s.law.RestoreObservation(snapshot);restored=true;
+    // Change the phase after entry: completing the curve must keep the entry verdict.
+    traffic.manualTime=allowed?illegal:legal;
+    for(float at=.5f;at<=curve.length+.5f;at+=.5f){float d=Mathf.Min(at,curve.length);FrontPose(curve.Position(d),curve.Tangent(d));}
+    var incidents=s.law.ledger.Events.Where(e=>e.action=="유턴").ToArray();Check(restored&&incidents.Length==1&&(incidents[0].Deduction==0)==allowed,name+" actual Player records one entry-phase Uturn after JSON restore phase="+phase);Check(s.manners.ledger.Score==(allowed?100:88),name+" Player manner condition agrees phase="+phase);
+   }
+   s.law.ResetObservation();s.law.ledger=new LawLedger();s.manners.BeginRide();traffic.manualTime=illegal;FrontPose(gate-direction*4,direction);
+   for(float at=-3.5f;at<=9;at+=.5f)FrontPose(gate+direction*at,direction);
+   Check(!s.law.ledger.Events.Any(e=>e.action=="유턴")&&s.law.CaptureObservation().upstreamUturn==null,name+" straight continuation across signed movement gate creates no Uturn event");
+   s.law.ResetObservation();FrontPose(gate-direction,direction);FrontPose(gate+direction*.1f,direction);Check(s.law.CaptureObservation().upstreamUturn!=null,name+" teleport fixture starts pending turn");FrontPose(gate+direction*100,direction);Check(s.law.CaptureObservation().upstreamUturn==null,name+" teleport resets pending movement");
+  }}finally{traffic.manualClock=manual;traffic.manualTime=clock;s.law.ResetObservation();}
+ }
  void LegacyLeft(){
   var traffic=s.traffic;bool manual=traffic.manualClock;float clock=traffic.manualTime;traffic.manualClock=true;
   var j=new TrafficJunction{name="world-followup-legacy-left",center=new Vector3(3000,0,3000),direction=Vector3.forward,signalized=true,leftTurnMode=LeftTurnMode.ProtectedShared};traffic.junctions.Add(j);
@@ -77,7 +113,7 @@ public sealed class WorldFollowupProbe : MonoBehaviour {
  void Captures(){
   if(SystemInfo.graphicsDeviceType==GraphicsDeviceType.Null){report.AppendLine("UNVERIFIED graphics device null: all visual captures skipped");return;}
   Directory.CreateDirectory("artifacts");var go=new GameObject("World followup capture camera");var camera=go.AddComponent<Camera>();camera.enabled=false;camera.nearClipPlane=.1f;camera.farClipPlane=2000;camera.fieldOfView=65;camera.useOcclusionCulling=false;camera.clearFlags=CameraClearFlags.Skybox;
-  try{foreach(string id in new[]{"J993_5620","J1927_5181","J5057_4449","J7973_3744","J8066_6364","J7801_9629"}){var j=Array.Find(s.world.map.junctionRules,x=>x.id==id);Check(j!=null,"capture target exists "+id);var center=new Vector3(j.x,0,j.z);Shot(camera,id+"-overhead",center+Vector3.up*90,center,Vector3.forward,true,55);var dir=new Vector3(j.dx,0,j.dz).normalized;Shot(camera,id+"-driver",center-dir*42+TrafficSystem.Right(dir)*2+Vector3.up*1.75f,center+Vector3.up*2,Vector3.up,false,0);}Shot(camera,"commercial-crossings-overview",new Vector3(648,200,257.3f),new Vector3(648,0,257.3f),Vector3.forward,true,120);}
+  try{foreach(string id in new[]{"J993_5620","J1927_5181","J5057_4449","J7973_3744","J8066_6364","J7801_9629"}){var j=Array.Find(s.world.map.junctionRules,x=>x.id==id);Check(j!=null,"capture target exists "+id);var center=new Vector3(j.x,0,j.z);Shot(camera,id+"-overhead",center+Vector3.up*90,center,Vector3.forward,true,55);var dir=new Vector3(j.dx,0,j.dz).normalized;Shot(camera,id+"-driver",center-dir*42+TrafficSystem.Right(dir)*2+Vector3.up*1.75f,center+Vector3.up*2,Vector3.up,false,0);}Shot(camera,"J8066-south-uturn-driver",new Vector3(809,1.8f,585),new Vector3(806,2,636),Vector3.up,false,0);Shot(camera,"J7973-island-close",new Vector3(818,35,357),new Vector3(813,0,356),Vector3.forward,true,22);Shot(camera,"commercial-crossings-overview",new Vector3(648,200,257.3f),new Vector3(648,0,257.3f),Vector3.forward,true,120);}
   finally{Destroy(go);}
  }
  void Shot(Camera camera,string name,Vector3 position,Vector3 target,Vector3 up,bool ortho,float size){

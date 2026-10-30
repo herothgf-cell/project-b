@@ -4,6 +4,7 @@ using System.Linq;
 [Serializable] public class RoadMapStage {public string name="단계";public float green=12,yellow=3,clearance=2;public string[] groups=new string[0];}
 [Serializable] public class RoadMapSignalProgram {
  public string junctionId;public RoadMapSignalGroup[] groups=new RoadMapSignalGroup[0];public RoadMapStage[] stages=new RoadMapStage[0];
+ public bool NeedsLaneId(int axis,int sign){return groups.Any(g=>!g.pedestrian&&g.axis==axis&&g.sign==sign&&(g.turn==0||g.turn==1)&&g.laneIds.Length>0);}
  public float Cycle {get{return stages.Sum(s=>s.green+s.yellow+s.clearance);}}
  public SignalColor Color(string id,float time){float cycle=Cycle;if(cycle<=0)return SignalColor.Red;float t=(time%cycle+cycle)%cycle;foreach(var stage in stages){float length=stage.green+stage.yellow+stage.clearance;if(t<length){if(!stage.groups.Contains(id))return SignalColor.Red;var group=groups.FirstOrDefault(g=>g.id==id);return t<stage.green?SignalColor.Green:t<stage.green+stage.yellow&&(group==null||!group.pedestrian)?SignalColor.Yellow:SignalColor.Red;}t-=length;}return SignalColor.Red;}
  public SignalColor Movement(int axis,int sign,int turn,float time,string laneId=null){var matches=groups.Where(g=>!g.pedestrian&&g.axis==axis&&g.sign==sign&&g.turn==turn&&(laneId==null||g.laneIds.Length==0||g.laneIds.Contains(laneId))).ToArray();return matches.Length==0?SignalColor.Red:matches.Select(g=>Color(g.id,time)).OrderByDescending(c=>c==SignalColor.Green?2:c==SignalColor.Yellow?1:0).First();}
