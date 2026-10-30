@@ -4,7 +4,7 @@
 
 [구현·검증 기록](2026-10-30-stop-lines-uturns.md). 중복 정지선 제거/사선 판정 일치, 봇 예약 반납, 두 유턴10m 상류 이동과 조건·저장/기존 감점 보완, 유턴6곳 표시·분리섬·창작 비보호 대상 안내를 적용했다. 차로 필터 없는 신호 HUD 전체 검색을 제거해 같은 지역/72차량/23보행/Ultra/1280×72060초31.74→59.56fps, p9538.40→16.71ms. 모델28·전체 Editor/Startup11,672·최종 도색/BuildHybrid·최종 Player7프로세스 종료0. 실제 Player 비보호PS05=J7841,PS06=J6858,PS07=J8066이며 고정 현장 규제와 구분한다.
 
-기본 실행 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 / `PrototypeBuild.BuildHybrid`. 프로젝트 지도와 입력 manifest 실제 크기/SHA256 갱신, 원시 지도/지도 ZIP 미변경. 소스5a208a6 기준 실행 폴더130파일112,287,658바이트의 크기/SHA256 검증과 Strict issues0을 확인했다.1920 영업/상태HUD 활성30초도59.76fps/p9516.67ms·종료0. main 게시 결과는 해당 이력의 영수증에 기록한다. 사용자/PvP untracked 보존. 다음은 사람20분/3일·장시간 교통과 다른 PC 체감이다. 아래는 이전 작업 당시 상태다.
+기본 실행 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 / `PrototypeBuild.BuildHybrid`. 프로젝트 지도와 입력 manifest 실제 크기/SHA256 갱신, 원시 지도/지도 ZIP 미변경. 현 PC 원시2맵 JSON은 미배치이며 Git 프로젝트 지도 모드에서는 선택 입력이다. 소스5a208a6 기준 실행 폴더130파일112,287,658바이트의 크기/SHA256 검증과 Strict issues0을 확인했다.1920 영업/상태HUD 활성30초도59.76fps/p9516.67ms·종료0. 배포78b8984의 main 푸시와 원격 동일 해시를 확인했고 main에서 전수 해시/Strict도 재확인했다. 상세 게시 영수증은 같은 이력에 있다. 사용자/PvP untracked 보존. 다음은 사람20분/3일·장시간 교통과 다른 PC 체감이다. 아래는 이전 작업 당시 상태다.
 
 ## 2026-10-29 교통·길안내·점수·호출·도로 표시 후속
 

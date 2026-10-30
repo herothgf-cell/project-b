@@ -10,7 +10,7 @@
 - [x] 네이버2026년05월 관찰을 근거로 J7973 분리섬 반영. 치수는 게임 추정으로 구분.
 - [x] 창작 비보호 좌회전의 실제 배치 목록과 예정/활성 TIP 구분.
 - [x] J6480 중앙 횡단보도 실제 Player 성능 계측·필요한 원인 수정.
-- [ ] 최종 Editor/Player·빌드·입력/배포 해시 검증, 이력/LATEST/기획서 갱신 및 main 게시.
+- [x] 최종 Editor/Player·빌드·입력/배포 해시 검증, 이력/LATEST/기획서 갱신 및 main 게시.
 
 ## 초기 근거
 
@@ -97,4 +97,8 @@ J1927의 먼 원본530 B2218G610924/B222BC004101은 법규 판정에 쓰이지 �
 
 ## 배포 검증
 
-소스 커밋은 `5a208a6988ec7e53c12298390c50593ce05283c4`다. `git log -1 --oneline -- docs/work-history/2026-10-30-stop-lines-uturns.md`로 실제 이력 커밋을 확인했다. `tools/update_distribution_manifest.ps1 -SourceCommit 5a208a6988ec7e53c12298390c50593ce05283c4 -ValidatedOn 2026-10-30 -ValidationReport artifacts/stop-uturn-validation.json`과 `-VerifyOnly` 모두 종료0. 실행 폴더130파일112,287,658바이트의 크기·SHA256이 일치한다. 입력 Strict 최종 검사도 종료0/issues0다. 아래 게시 영수증은 실제 원격 결과 확인 후 기록한다.
+소스 커밋은 `5a208a6988ec7e53c12298390c50593ce05283c4`다. `git log -1 --oneline -- docs/work-history/2026-10-30-stop-lines-uturns.md`로 실제 이력 커밋을 확인했다. `tools/update_distribution_manifest.ps1 -SourceCommit 5a208a6988ec7e53c12298390c50593ce05283c4 -ValidatedOn 2026-10-30 -ValidationReport artifacts/stop-uturn-validation.json`과 `-VerifyOnly` 모두 종료0. 실행 폴더130파일112,287,658바이트의 크기·SHA256이 일치한다. 입력 Strict 최종 검사도 종료0/issues0다. 실제 게시 결과는 아래 영수증을 따른다.
+
+## main 게시 영수증
+
+배포 커밋 `78b8984430aad39f9c879037b29a452e3b8c47c3`을 main에 fast-forward 병합하고 `git push origin main` 종료0을 확인했다. `git rev-parse HEAD`와 `git ls-remote origin refs/heads/main`이 위 실제 해시로 일치했다. main에서 배포130파일/112,287,658바이트 전수 크기/SHA256 검증과 입력 Strict도 다시 종료0/issues0이었다. 이 영수증은 실제 게시 이후의 문서 커밋으로 함께 게시한다. 사용자 및 별도 PvP 작업의 기존 untracked는 포함하지 않았다.
