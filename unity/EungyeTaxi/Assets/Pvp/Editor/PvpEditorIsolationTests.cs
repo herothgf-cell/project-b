@@ -15,6 +15,7 @@ public static class PvpEditorIsolationTests {
     public static void Run() {
         PvpIsolationTests.Run();
         PvpBuild.EnsureReady();
+        PersistedPlayerSettingsBoundary();
         string product=PlayerSettings.productName,company=PlayerSettings.companyName;
         bool background=PlayerSettings.runInBackground;
         string scenes=JsonUtility.ToJson(new SceneList { paths=Array.ConvertAll(EditorBuildSettings.scenes,x=>x.path+"|"+x.enabled) });
@@ -76,6 +77,41 @@ public static class PvpEditorIsolationTests {
             if(active.IsValid()&&active.isLoaded) SceneManager.SetActiveScene(active);
         }
         Debug.Log("PVP_EDITOR_ISOLATION_OK scene/player/build-list/input/failure/success/dirty-guard");
+    }
+    // BuildPipeline serializes temporary PlayerSettings. Getter-only assertions
+    // cannot detect restored values left dirty in memory after that write.
+    static void PersistedPlayerSettingsBoundary() {
+        const string path="ProjectSettings/ProjectSettings.asset";
+        byte[] originalBytes=File.ReadAllBytes(path);
+        string originalProduct=PlayerSettings.productName;
+        bool originalBackground=PlayerSettings.runInBackground;
+        try {
+            foreach(bool fail in new[]{false,true}) {
+                PlayerSettings.productName="Isolation original product";
+                PlayerSettings.runInBackground=false;
+                AssetDatabase.SaveAssets();
+                byte[] expectedBytes=File.ReadAllBytes(path);
+                var expected=new InvalidOperationException("intentional persisted-boundary failure");
+                try {
+                    PvpBuild.BuildWithBoundary(options=>{
+                        // Simulate the engine's project-settings write on both
+                        // successful and failed player builds, without a build.
+                        AssetDatabase.SaveAssets();
+                        Check(File.ReadAllText(path).Contains("productName: PvpPrototype"),"temporary product serialized by build fixture");
+                        if(fail)throw expected;
+                    });
+                } catch(InvalidOperationException e) {if(!fail||!System.Object.ReferenceEquals(e,expected))throw;}
+                Check(PlayerSettings.productName=="Isolation original product"&&!PlayerSettings.runInBackground,"persisted fixture restores memory");
+                Check(Convert.ToBase64String(File.ReadAllBytes(path))==Convert.ToBase64String(expectedBytes),"PlayerSettings file restored immediately after "+(fail?"failed":"successful")+" serialized build");
+                AssetDatabase.SaveAssets();
+                Check(Convert.ToBase64String(File.ReadAllBytes(path))==Convert.ToBase64String(expectedBytes),"later Editor save cannot reserialize temporary player settings");
+            }
+        } finally {
+            PlayerSettings.productName=originalProduct;
+            PlayerSettings.runInBackground=originalBackground;
+            AssetDatabase.SaveAssets();
+            File.WriteAllBytes(path,originalBytes);
+        }
     }
     [Serializable] sealed class SceneList { public string[] paths; }
 }

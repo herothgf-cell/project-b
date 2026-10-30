@@ -58,6 +58,11 @@ public class TrafficCar : MonoBehaviour {
             // Do not hold a previously acquired approach reservation outside it:
             // that queue may need a conflicting green movement to drain first.
             if(remaining>=-.05f&&remaining>system.ReservationDistance(this)&&stop.junction.reservations.Contains(this))system.CancelApproach(this,stop);
+            // A red stop line can lie inside another movement's curved corridor.
+            // Hold upstream until its committed owner clears; never move the line
+            // or grant full-stop evidence before actually reaching it.
+            float reservedGap=system.ReservedApproachGap(this,stop);
+            if(reservedGap<gap){gap=reservedGap;waitingForJunction=true;}
             // Once beyond the stop line, clear the intersection even when its signal changes.
             if(remaining>=-.05f && remaining<=TrafficRules.SignalObservationDistance(speed) && !system.CanEnter(this,stop)) {
                 system.CancelApproach(this,stop);

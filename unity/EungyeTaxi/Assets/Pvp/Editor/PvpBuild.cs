@@ -37,6 +37,8 @@ public static class PvpBuild {
         EnsureReady();
         var setup=EditorSceneManager.GetSceneManagerSetup();
         var scenes=EditorBuildSettings.scenes;
+        const string settingsPath="ProjectSettings/ProjectSettings.asset";
+        var settingsBytes=File.ReadAllBytes(settingsPath);
         try {
             PvpBuildTransaction.Run(
                 ()=>new PlayerSnapshot { product=PlayerSettings.productName,background=PlayerSettings.runInBackground },
@@ -48,10 +50,17 @@ public static class PvpBuild {
                 },
                 saved=>{PlayerSettings.productName=saved.product;PlayerSettings.runInBackground=saved.background;});
         } finally {
-            // Neither list nor setup is edited by this build path. Restore only if
-            // the engine/boundary changed them; avoid touching unchanged scenes.
-            if(!SameBuildScenes(scenes,EditorBuildSettings.scenes)) EditorBuildSettings.scenes=scenes;
-            if(!SameSceneSetup(setup,EditorSceneManager.GetSceneManagerSetup())) EditorSceneManager.RestoreSceneManagerSetup(setup);
+            try {
+                // Neither list nor setup is edited by this build path. Restore only if
+                // the engine/boundary changed them; avoid touching unchanged scenes.
+                if(!SameBuildScenes(scenes,EditorBuildSettings.scenes)) EditorBuildSettings.scenes=scenes;
+                if(!SameSceneSetup(setup,EditorSceneManager.GetSceneManagerSetup())) EditorSceneManager.RestoreSceneManagerSetup(setup);
+            } finally {
+                // BuildPipeline writes the temporary PlayerSettings to disk. The
+                // setters above restore memory only; preserve the exact original
+                // file as well, without saving unrelated dirty Editor assets.
+                File.WriteAllBytes(settingsPath,settingsBytes);
+            }
         }
     }
     static bool SameBuildScenes(EditorBuildSettingsScene[] a,EditorBuildSettingsScene[] b) {

@@ -157,7 +157,7 @@ public class BusinessProgress : MonoBehaviour {
  }
  void Freeze(){session.paused=false;Time.timeScale=0;}
  public bool RequestEmergencyHome(){
-  if(session.simulationMatch){if(session.simulationMatch.ServiceLocked(session)||!ledger.Driver.drowsiness.Blackout||session.taxi.body.velocity.magnitude>=.56f)return false;session.jobs.CancelForFatigue();if(session.jobs.Active||!ledger.UseEmergencySleep(session.law.ids.Next("pvp-emergency-rest"),false))return false;session.jobs.ClearForDay();session.assisted.SetActive(false);notice="긴급 휴식 100초 · 피로 −20 · 경기 계속";noticeUntil=Time.unscaledTime+10;SaveCheckpoint();return true;}
+  if(session.simulationMatch){if(session.simulationMatch.ServiceLocked(session)||!ledger.Driver.drowsiness.Blackout||session.taxi.body.velocity.magnitude>=.56f)return false;session.jobs.CancelForFatigue();if(session.jobs.Active||!ledger.UseEmergencySleepInMatch(session.law.ids.Next("pvp-emergency-rest")))return false;session.jobs.ClearForDay();session.assisted.SetActive(false);notice="긴급 휴식 100초 · 피로 −20 · 경기 계속";noticeUntil=Time.unscaledTime+10;SaveCheckpoint();return true;}
   if(session.damage&&session.damage.Disabled&&!session.damage.AtRepairBay)return false;
   if(!DrowsinessRunning||!ledger.Driver.drowsiness.Blackout||session.taxi.body.velocity.magnitude>=.56f)return false;
   session.jobs.CancelForFatigue();if(session.jobs.Active||!ledger.UseEmergencySleep(session.law.ids.Next("emergency-home")))return false;

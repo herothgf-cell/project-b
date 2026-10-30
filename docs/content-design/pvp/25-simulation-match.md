@@ -41,3 +41,12 @@
 ## 검증
 
 실제 결과 및 제한은 [작업 이력](../../work-history/2026-10-30-pvp-simulation-integration.md)에 기록한다. 기존 모델 검사/Editor 연결 검사/실제 입력 주행/상태 fixture/실제 화면/사람 조작을 구분한다.
+
+### 자동 검사 구분
+- `pwsh -File tools/test_pvp_simulation.ps1 -PaidFixture`: 은계 원래 호출9→15/8→2를 지정하고 실제 주행·해당 운송 양수 운임·정산·충돌·다른 맵 재시작 확인.
+- `pwsh -File tools/test_pvp_simulation.ps1 -Regression`: 혼잡 경로9→7/21→7의 실제 목적지 도착·원래 정산 확인. 시간 초과0원은 따로 표시하며 양수 운임 검사로 대체하지 않음.
+- `pwsh -File tools/test_pvp_simulation.ps1 -Expanded`: 확장 A의 기본 호출 실제 양수 운임 검사.
+- `pwsh -File tools/test_pvp_simulation.ps1 -Services`: 연료24 시작 fixture 뒤 실제 주유소 이동·자비 주유·차량별 대기·출차 검사.
+- 옵션 없는 은계 기본 호출 검사는 혼잡·호출 조합에 따라 시간 초과0원으로 실패할 수 있다. 실제 실패 기록을 남기며 기본 호출 수익·봇 전략·장기 난도는 미완료 항목이다.
+
+자동 운송은 원래 기본 위치에서 페달·조향 입력으로 수행한다. 일반 승객 선택/고정 호출/후속 충돌 벽/피로·시설 시간 검사 준비를 명시적으로 구분한다. 사람이 조작해 완주한 검사와 같지 않다.

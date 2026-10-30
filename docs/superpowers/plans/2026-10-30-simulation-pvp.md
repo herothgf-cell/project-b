@@ -8,7 +8,7 @@
 **Spec:** docs/work-history/2026-10-30-pvp-simulation-realignment.md plus user approval of expanded A map (2026-10-30).
 
 ## Constraints and review focus
-- Preserve original campaign saves, settings, scene, executable, inputs and other chat work. Latest main 2445f27 merged before edits.
+- Preserve original campaign saves, settings, scene, executable, inputs and other chat work. Main 2445f27 merged before edits; later 4ffcb1d and c9e2ecf integrated without touching the other checkout.
 - Existing camera/HUD/input/physical taxi/passenger behavior/damage remain the source of behavior.
 - Bot must drive physically and earn from actual transport, not elapsed-time fabricated earnings. Shared offer ownership and idempotent scoring required.
 - Match result freezes earnings; cancellation/restart must not leak state. No fixed ten-minute product rule.
@@ -17,22 +17,22 @@
 ## Task 1 — Simulation match
 Files: new Assets/Scripts/PvpSimulation*.cs, scoped existing DriveSession/BusinessProgress/PassengerJobs/HUD hooks.
 Interfaces: PvpSimulationMode.Active, Expanded, DurationSeconds; PvpSimulationMode.Configure(bool expanded,int seconds); PvpSimulationMatch attached to human DriveSession. Map factory called by root MapCatalog seam only when Active && Expanded.
-- [ ] Tests first for mode isolation/ownership/once-only settlement and actual components.
-- [ ] Implement existing simulation human/bot sessions sharing world/traffic, distinct vehicle/jobs/law/damage state; no duplicate global cameras or world.
-- [ ] Preserve UI by original components and small competition overlay; isolate campaign persistence before initialization.
+- [x] Tests first for mode isolation/ownership/once-only settlement and actual components.
+- [x] Implement existing simulation human/bot sessions sharing world/traffic, distinct vehicle/jobs/law/damage state; no duplicate global cameras or world.
+- [x] Preserve UI by original components and small competition overlay; isolate campaign persistence before initialization.
 - [ ] Verify physical driving, transport, damage and settlement.
 
 ## Task 2 — Expanded A data
 Files: new Assets/Scripts/PvpCityMap.cs and Editor/PvpCityMapTests.cs only.
 Interface: public static MapData PvpCityMap.Create(). Native MapData and existing HybridRoadNetwork pipeline; 3600×2800, 9 districts/18 passenger hubs, 3 fuel/2 repair/2 wash, connected ring/grid/local roads, original world styling.
-- [ ] Test dimensions/counts/lane graph connectivity and safe service/passenger approaches.
-- [ ] Implement deterministic authored map factory; actual existing metadata/scene format used for facilities.
-- [ ] Verify all stop pairs and road/rules consistency, buildings clear of drivable roads.
+- [x] Test dimensions/counts/lane graph connectivity and safe service/passenger approaches.
+- [x] Implement deterministic authored map factory; actual existing metadata/scene format used for facilities.
+- [x] Verify all stop pairs and road/rules consistency, buildings clear of drivable roads.
 
 ## Task 3 — Launch/build and integration
 Files: PvpBootstrap/PvpPrototypePanel/PvpBuild, MapCatalog, new runtime probe/editor runner, tools test runner.
-- [ ] Connect existing PVP executable launch to original simulation match with Eungye default and expanded A selection. Legacy diagnostics remain explicit.
-- [ ] Prepare current committed Eungye map inputs without overwriting campaign scene/build settings.
+- [x] Connect existing PVP executable launch to original simulation match with Eungye default and expanded A selection. Legacy diagnostics remain explicit.
+- [x] Prepare current committed Eungye map inputs without overwriting campaign scene/build settings.
 - [ ] Run Eungye integration before custom-map runtime acceptance.
 - [ ] Build isolated Windows client, test copied distribution, capture actual original gameplay HUD, verify campaign/PVP hashes.
 

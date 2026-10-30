@@ -1,8 +1,9 @@
-param([string]$Executable,[switch]$Expanded,[switch]$Services,[switch]$Regression,[int]$TimeoutSeconds=620)
+param([string]$Executable,[switch]$Expanded,[switch]$Services,[switch]$Regression,[switch]$PaidFixture,[int]$TimeoutSeconds=620)
 $ErrorActionPreference='Stop'
+if($PaidFixture -and ($Regression -or $Expanded -or $Services)){throw 'PaidFixture is an Eungye-only standalone fixture'}
 $taskRoot=Split-Path $PSScriptRoot -Parent
 $taskExe=if($Executable){[IO.Path]::GetFullPath($Executable)}else{Join-Path $taskRoot 'builds/PvpPrototype/PvpPrototype.exe'}
-$taskTag=if($Services){'services'}elseif($Expanded){'city'}elseif($Regression){'eungye-regression'}else{'eungye'}
+$taskTag=if($Services){'services'}elseif($Expanded){'city'}elseif($Regression){'eungye-regression'}elseif($PaidFixture){'eungye-paid-fixture'}else{'eungye'}
 $taskFolder=Join-Path $taskRoot 'artifacts/pvp'
 New-Item -ItemType Directory -Force $taskFolder | Out-Null
 $taskLog=Join-Path $taskFolder ('simulation-'+$taskTag+'-player.log')
@@ -10,6 +11,7 @@ $taskMode=if($Services){'-pvpSimulationServicesCheck'}else{'-pvpSimulationCheck'
 $taskArgs=@('-batchmode','-nographics',$taskMode,'-pvpSimulationOutput',('"'+$taskFolder+'"'),'-logFile',('"'+$taskLog+'"'))
 if($Expanded){$taskArgs+='-pvpSimulationExpanded'}
 if($Regression){$taskArgs+='-pvpSimulationEungyeRegression'}
+if($PaidFixture){$taskArgs+='-pvpSimulationPaidFixture'}
 $taskProcess=Start-Process $taskExe -ArgumentList $taskArgs -WorkingDirectory (Split-Path $taskExe -Parent) -WindowStyle Hidden -PassThru
 try{
  if(!$taskProcess.WaitForExit($TimeoutSeconds*1000)){throw ('Simulation timeout '+$taskLog)}

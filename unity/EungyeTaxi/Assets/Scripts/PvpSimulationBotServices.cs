@@ -154,21 +154,10 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
         s.taxi.autoServiceBrake=speed>target+.15f?Mathf.Clamp((speed-target)*.7f,.08f,.6f):0;
     }
     static float SafeSpeed(DriveSession s,bool signals) {
-        var taxi=s.taxi;var position=taxi.transform.position;var heading=taxi.transform.forward;float distance=100;
-        foreach(var hit in Physics.SphereCastAll(position+Vector3.up*.45f+heading*2.2f,.65f,heading,25,(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore)) {
-            if(hit.collider.transform.IsChildOf(taxi.transform)||hit.normal.y>.8f)continue;
-            distance=Mathf.Min(distance,hit.distance);
-        }
-        if(signals)foreach(var j in s.traffic.junctions) {
-            int axis=Mathf.Abs(Vector3.Dot(heading,s.traffic.AxisDirection(j,0)))>.7f?0:1;
-            var d=s.traffic.AxisDirection(j,axis);int sign=Vector3.Dot(heading,d)>0?1:-1;
-            var delta=j.center-position;float along=Vector3.Dot(delta,d)*sign;
-            float lateral=Mathf.Abs(Vector3.Dot(delta,TrafficSystem.Right(d)));float line=along-j.StopDistance(axis,sign)-2.4f;
-            if(line<-.5f||line>25||lateral>j.halfWidth[axis]+2)continue;
-            var observation=s.traffic.Observe(j,axis,sign,d*sign,taxi.gameObject);
-            if(observation.forward!=SignalColor.Green||!observation.PedestrianClear)distance=Mathf.Min(distance,line+3);
-        }
-        return Mathf.Sqrt(Mathf.Max(0,distance-3)*2.5f);
+        var pilot=s.GetComponent<PvpSimulationBot>();
+        // Street approaches share the same native movement signal / yield /
+        // pedestrian policy as passenger routes. Driveways query colliders only.
+        return pilot?Mathf.Sqrt(Mathf.Max(0,pilot.ObstacleDistance(signals)-3)*2.5f):0;
     }
 }
 

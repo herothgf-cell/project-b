@@ -64,6 +64,8 @@ public class TrafficSystem : MonoBehaviour {
     MapData roadMap;HdRoadGraph editorGraph;bool editorSpeedRules;public float EditorSpeedLimit(TrafficCar car){if(!editorSpeedRules||editorGraph==null||car.route.graphPath==null)return 0;int edge=car.route.graphPath.EdgeAt(car.distance);float error;float at=editorGraph.paths[edge].Project(car.transform.position,out error);return RoadMapRules.SpeedLimit(roadMap,editorGraph.edges[edge].id,at);}RoadMapWalker[] editorWalkers;bool EditorPedestrian(TrafficJunction j){return editorWalkers!=null&&System.Array.Exists(editorWalkers,w=>w&&w.crossing.junctionId==j.name&&w.Crossing);}public Vector3 StopPosition(TrafficJunction j,int axis,int sign){var f=roadMap.editorDocument==null?null:System.Array.Find(roadMap.editorDocument.facilities,x=>x.kind=="stopLine"&&x.junctionId==j.name&&x.axis==axis&&x.sign==sign);return f==null?j.center-AxisDirection(j,axis)*sign*j.StopDistance(axis,sign):f.Position;} public Vector3 StopNormal(TrafficJunction j,int axis,int sign){var f=roadMap.editorDocument==null?null:System.Array.Find(roadMap.editorDocument.facilities,x=>x.kind=="stopLine"&&x.junctionId==j.name&&x.axis==axis&&x.sign==sign);return f==null?AxisDirection(j,axis)*sign:Quaternion.Euler(0,f.yaw,0)*Vector3.forward;} public float EditorSpeedLimit(Vector3 position,Vector3 heading){if(editorGraph==null||!editorSpeedRules)return 0;float at;int edge=editorGraph.Nearest(position,heading,out at);return edge<0?0:RoadMapRules.SpeedLimit(roadMap,editorGraph.edges[edge].id,at);} public string EditorLaneId(Vector3 position,Vector3 heading){if(editorGraph==null)return null;float at;int edge=editorGraph.Nearest(position,heading,out at);return edge<0?null:editorGraph.edges[edge].id;}
     readonly TrafficOverlapQuery overlaps=new TrafficOverlapQuery();
     readonly Dictionary<TrafficStop,Dictionary<TrafficStop,bool>> conflicts=new Dictionary<TrafficStop,Dictionary<TrafficStop,bool>>();
+    readonly Dictionary<TrafficStop,Dictionary<TrafficStop,float>> approachGates=new Dictionary<TrafficStop,Dictionary<TrafficStop,float>>();
+    readonly Dictionary<TrafficStop,Bounds> movementBounds=new Dictionary<TrafficStop,Bounds>();
 
     public Vector3 AxisDirection(TrafficJunction j,int axis){var d=j.direction.sqrMagnitude>.1f?j.direction:mainDirection;return axis==0?d:Right(d);}
     public int Sign(Vector3 direction,int axis,TrafficJunction j=null){return Vector3.Dot(direction,j!=null?AxisDirection(j,axis):axis==0?mainDirection:Right(mainDirection))>=0?1:-1;}
@@ -261,7 +263,10 @@ public class TrafficSystem : MonoBehaviour {
 
         // A moving same-lane leader is protected by the car-following gap check. All other
         // occupied movements stay exclusive, including stopped leaders and conflicting turns.
-        int contacts=overlaps.Box(j.center+Vector3.up*.85f,new Vector3(j.halfWidth[0]+.4f,.55f,j.halfWidth[1]+.4f),Quaternion.LookRotation(AxisDirection(j,0)),(1<<8)|(1<<9));
+        // Authored curves may extend outside the nominal junction rectangle.
+        // Query the complete reserved corridor before applying the exact filter.
+        var bounds=ReservedMovementBounds(car,stop);
+        int contacts=overlaps.Box(bounds.center,bounds.extents,Quaternion.identity,(1<<8)|(1<<9));
         for(int contact=0;contact<contacts;contact++){var hit=overlaps.hits[contact];var other=hit.GetComponentInParent<TrafficCar>();if(other==car||MovingLeader(car,other))continue;
             // This box is only a broad phase. A red approach or a queued follower
             // can touch it without occupying this green movement's swept corridor.
@@ -269,6 +274,40 @@ public class TrafficSystem : MonoBehaviour {
         }
         if(!ExitClear(car,stop))return false;
         j.reservations.Add(car);if(!j.owner)j.owner=car;return true;
+    }
+    public Bounds ReservedMovementBounds(TrafficCar car,TrafficStop stop){
+        Bounds bounds;if(movementBounds.TryGetValue(stop,out bounds))return bounds;
+        float start=Mathf.Max(0,stop.distance-2.25f),end=Mathf.Min(car.route.length,stop.exitDistance+2.25f);
+        bounds=new Bounds(car.route.Position(start)+Vector3.up*.85f,Vector3.zero);
+        for(float at=start;at<=end+.5f;at+=.5f)bounds.Encapsulate(car.route.Position(Mathf.Min(at,end))+Vector3.up*.85f);
+        // Margin covers the exact 1.15m corridor test and half-metre sampling.
+        bounds.Expand(new Vector3(2.8f,1.1f,2.8f));movementBounds[stop]=bounds;return bounds;
+    }
+    public float ReservedApproachGap(TrafficCar car,TrafficStop stop){
+        float remaining=stop.distance-car.distance;
+        if(remaining<-.05f||remaining>40)return float.PositiveInfinity;
+        float gap=float.PositiveInfinity;
+        foreach(var owner in stop.junction.reservations){
+            if(!owner||owner==car||!Conflicts(car,stop,owner))continue;
+            var crossing=ActiveStop(owner,stop.junction);if(crossing==null)continue;
+            Dictionary<TrafficStop,float> row;if(!approachGates.TryGetValue(stop,out row)){row=new Dictionary<TrafficStop,float>();approachGates[stop]=row;}
+            float gate;if(!row.TryGetValue(crossing,out gate)){
+                gate=float.PositiveInfinity;
+                float end=Mathf.Min(owner.route.length,crossing.exitDistance+2.25f);
+                for(float at=Mathf.Max(0,stop.distance-40);at<=stop.distance+.5f;at+=.5f){
+                    var position=car.route.Position(Mathf.Min(at,stop.distance));var forward=car.route.Tangent(Mathf.Min(at,stop.distance));var right=Right(forward);bool touches=false;
+                    for(float otherAt=Mathf.Max(0,crossing.distance-2.25f);otherAt<=end+.5f;otherAt+=.5f){
+                        var delta=owner.route.Position(Mathf.Min(otherAt,end))-position;
+                        float x=Mathf.Max(0,Mathf.Abs(Vector3.Dot(delta,right))-.95f),z=Mathf.Max(0,Mathf.Abs(Vector3.Dot(delta,forward))-2.25f);
+                        if(x*x+z*z<1.15f*1.15f){touches=true;break;}
+                    }
+                    if(touches){gate=Mathf.Max(0,at-.6f);break;}
+                }
+                row[crossing]=gate;
+            }
+            gap=Mathf.Min(gap,Mathf.Max(0,gate-car.distance));
+        }
+        return gap;
     }
     public bool OccupiesMovement(TrafficCar car,TrafficStop stop,Collider blocker){
         // Include the bumpers and a conservative body width. Reservations still
