@@ -39,4 +39,8 @@
 
 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 기본 은계 지역, `PrototypeBuild.BuildHybrid`. Unity 로컬 환경은 2022.3.62f2다. Editor `-batchmode -quit -executeMethod StartJunctionChecks.Build`로 빌드 후 `-hybridV2`와 표의 검사 플래그를 사용한다. `-liveInvalidTest` 전 격리 저장의 mapRevision을 불일치로 설정하고 primary와 bak를 준비한다. `-campaignStartupTest` 뒤 `-campaignStartupPreparedReloadTest`를 실행하면 별도 프로세스 준비 저장 재개를 확인한다.
 
-게시·전수 해시 영수증은 검증과 실제 커밋 후 아래에 기록한다.
+## 배포 검증
+
+소스 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-30-startup-and-junction-recovery.md`로 확인한 `7b38ac0`이다. 이 소스에 대해 배포 manifest를 생성했고 `pwsh -File tools/update_distribution_manifest.ps1 -VerifyOnly` 종료0, 130파일/112,309,087바이트의 크기·SHA256을 확인했다. 실제 main 게시 해시는 게시 후 기록한다.
+
+실제로 열려 있던 PvP 작업 폴더는 별도의 소스 수정이 새로 생겼고 게임도 실행 중이다. 이 작업에서 해당 미커밋 소스에 main을 강제 병합하거나 사용자 게임을 종료하지 않는다. 기본 main 실행 폴더의 검증·게시와 해당 작업 폴더의 교체 완료를 구분한다.
