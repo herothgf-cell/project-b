@@ -121,11 +121,18 @@ public partial class FullMapOverlay : MonoBehaviour {
  public void HideLocation(){locationOpen=false;}
  void LocationPopup(int id){GUI.Label(new Rect(20,8,440,34),"현재 위치",heading);GUI.TextArea(new Rect(20,48,440,165),LocationText,new GUIStyle(GUI.skin.textArea){font=KoreanText.Font,fontSize=16,wordWrap=true,normal={textColor=Color.white}});if(GUI.Button(new Rect(20,230,210,42),locationCopied?"복사됨":"좌표 복사",button)){GUIUtility.systemCopyBuffer=LocationText;locationCopied=true;}if(GUI.Button(new Rect(250,230,210,42),"닫기",button))locationOpen=false;}
  public Vector2 CallPinPosition(int index,Rect map){
-  if(session.simulationMatch){var placed=new List<Vector2>();Vector2 result=Vector2.zero;for(int i=0;i<=index;i++){if(session.jobs.offers[i]==null)continue;var anchor=Project(session.jobs.stops[session.jobs.offers[i].pickup].V(),map);result=PlacePvpCallPin(anchor,map,placed);placed.Add(result);}return result;}
+  if(session.simulationMatch){var placed=PvpPinObstacles(map);Vector2 result=Vector2.zero;for(int i=0;i<=index;i++){if(session.jobs.offers[i]==null)continue;var anchor=Project(session.jobs.stops[session.jobs.offers[i].pickup].V(),map);result=PlacePvpCallPin(anchor,map,placed);placed.Add(new Rect(result.x-16,result.y-16,32,32));}return result;}
   var raw=Project(session.jobs.stops[session.jobs.offers[index].pickup].V(),map);var p=new Vector2(Mathf.Clamp(raw.x,20,map.width-20),Mathf.Clamp(raw.y,80,map.height-20));p.x=Mathf.Clamp(p.x+(index-1)*36,20,map.width-20);if(p.x>map.width-80&&p.y>map.height-185)p.x=map.width-94;return p;}
- static Vector2 PlacePvpCallPin(Vector2 anchor,Rect map,List<Vector2> occupied){
+ List<Rect> PvpPinObstacles(Rect map){
+  var occupied=new List<Rect>();
+  if(session.taxi){var p=Project(session.taxi.transform.position,map);occupied.Add(new Rect(p.x-16,p.y-16,32,32));}
+  foreach(var bot in session.simulationMatch.Bots)if(bot&&bot.taxi){var p=Project(bot.taxi.transform.position,map);occupied.Add(new Rect(p.x-13,p.y-13,26,26));occupied.Add(new Rect(p.x+12,p.y-12,100,24));}
+  if(ShowFacilities&&session.services)foreach(var place in Places()){var p=Project(place.position,map);if(!map.Contains(p))continue;occupied.Add(new Rect(p.x-16,p.y-16,32,32));if(!string.IsNullOrEmpty(place.capabilityLabel))occupied.Add(new Rect(Mathf.Clamp(p.x-42,0,map.width-84),Mathf.Clamp(p.y-39,0,map.height-22),84,22));}
+  return occupied;
+ }
+ static Vector2 PlacePvpCallPin(Vector2 anchor,Rect map,List<Rect> occupied){
   var best=new Vector2(Mathf.Clamp(anchor.x,20,map.width-20),Mathf.Clamp(anchor.y,80,map.height-20));float score=float.PositiveInfinity;
-  for(int y=-3;y<=3;y++)for(int x=-3;x<=3;x++){var p=new Vector2(Mathf.Clamp(anchor.x+x*36,20,map.width-20),Mathf.Clamp(anchor.y+y*36,80,map.height-20));if(p.x>map.width-80&&p.y>map.height-185)continue;bool clear=true;foreach(var other in occupied)if(Mathf.Abs(p.x-other.x)<32&&Mathf.Abs(p.y-other.y)<32){clear=false;break;}float distance=(p-anchor).sqrMagnitude;if(clear&&distance<score){best=p;score=distance;}}
+  for(int y=-3;y<=3;y++)for(int x=-3;x<=3;x++){var p=new Vector2(Mathf.Clamp(anchor.x+x*36,20,map.width-20),Mathf.Clamp(anchor.y+y*36,80,map.height-20));if(p.x>map.width-80&&p.y>map.height-185)continue;bool clear=true;foreach(var other in occupied)if(new Rect(p.x-16,p.y-16,32,32).Overlaps(other)){clear=false;break;}float distance=(p-anchor).sqrMagnitude;if(clear&&distance<score){best=p;score=distance;}}
   return best;
  }
  public int AvailableCallCount {get{if(session.jobs.Active)return 0;int count=0;foreach(var o in session.jobs.offers)if(o!=null)count++;return count;}}

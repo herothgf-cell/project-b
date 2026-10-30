@@ -15,7 +15,12 @@ public static class PvpCallPinTests {
    for(int i=0;i<8;i++)s.jobs.stops[i].x=400+i;
    var placed=new Rect[8];
    for(int i=0;i<8;i++){var raw=(Vector2)project.Invoke(map,new object[]{s.jobs.stops[i].V(),bounds});var p=map.CallPinPosition(i,bounds);placed[i]=new Rect(p.x-15,p.y-15,30,30);Check(bounds.Contains(placed[i].min)&&bounds.Contains(placed[i].max)&&Vector2.Distance(raw,p)<=110,"crowded call remains near real pickup and clickable");for(int j=0;j<i;j++)Check(!placed[i].Overlaps(placed[j]),"eight call buttons do not overlap");}
-   Debug.Log("PVP_CALL_PIN_OK 8 real anchors and 8 crowded clickable pins");
+   for(int i=0;i<8;i++)s.jobs.stops[i].x=100+i*100;
+   var taxiRoot=new GameObject("human marker");taxiRoot.transform.SetParent(root.transform);s.taxi=taxiRoot.AddComponent<TaxiController>();s.taxi.transform.position=s.jobs.stops[0].V();
+   var rivalRoot=new GameObject("bot marker");rivalRoot.transform.SetParent(root.transform);var rival=rivalRoot.AddComponent<DriveSession>();rival.taxi=rivalRoot.AddComponent<TaxiController>();rival.taxi.transform.position=s.jobs.stops[1].V();
+   ((System.Collections.Generic.List<DriveSession>)typeof(PvpSimulationMatch).GetField("bots",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(s.simulationMatch)).Add(rival);
+   for(int i=0;i<2;i++){var raw=(Vector2)project.Invoke(map,new object[]{s.jobs.stops[i].V(),bounds});var pin=map.CallPinPosition(i,bounds);Check(!new Rect(pin.x-15,pin.y-15,30,30).Overlaps(new Rect(raw.x-15,raw.y-15,30,30)),"call number remains visible beside human/bot marker "+i);}
+   Debug.Log("PVP_CALL_PIN_OK 8 real anchors, 8 crowded pins, human/bot visibility");
   }finally{UnityEngine.Object.DestroyImmediate(root);}
  }
  static void Check(bool value,string why){if(!value)throw new Exception("PVP_CALL_PIN: "+why);}
