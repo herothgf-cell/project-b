@@ -35,6 +35,68 @@ public sealed class PvpSimulationFourDriverProbe : MonoBehaviour {
             Check(unique&&paid==driver.jobs.balance&&match.Score(i)==paid-expenses,"driver="+i+" exactly-once native fares="+paid+" expenses="+expenses+" score="+match.Score(i));
         }
     }
+    string NpcMotion(TrafficCar car){
+        if(!car)return "missing";
+        var route=car.route;int edge=route==null||route.graphPath==null?-1:route.graphPath.EdgeAt(car.distance);
+        string lane=edge<0||!car.district?"none":car.district.graph.edges[edge].id;
+        int first=route==null||route.graphPath==null?-1:route.graphPath.edges[0];float startAt=0,startError;
+        if(first>=0&&car.district)startAt=car.district.graph.paths[first].Project(route.Position(0),out startError);
+        var body=car.GetComponent<Rigidbody>();
+        return car.name+" enabled="+car.enabled+" visible="+car.Visible+" pos="+car.transform.position+" physicsPos="+(body?body.position:car.transform.position)+" heading="+car.transform.forward+" speed="+car.speed+" routeAt="+car.distance+" routeLength="+(route==null?0:route.length)+" startEdge="+first+" startAt="+startAt+" currentEdge="+edge+" lane="+lane+" turn="+(route==null?0:car.CurrentTurn)+" goalEdge="+(route==null?-1:route.goalEdge)+" goalAt="+(route==null?0:route.goalAt)+" completedRoutes="+car.completedRoutes+" totalTravel="+car.totalTravel+" signal="+car.waitingForSignal+" junction="+car.waitingForJunction+" entryBlocked="+car.entryBlocked+" obstacle="+car.waitingForObstacle+" blocked="+car.blockedName+" obstacleCar="+(car.obstacleCar?car.obstacleCar.name:"none")+" baseline="+car.baselineTarget+" following="+car.followingTarget+" stoppedAt="+(car.stoppedAt==null?"none":car.stoppedAt.name);
+    }
+    static string ObstacleChain(TrafficCar first){
+        var seen=new HashSet<TrafficCar>();var text=new StringBuilder();var car=first;
+        while(car){
+            if(!seen.Add(car)){text.Append("CYCLE:").Append(car.name);break;}
+            text.Append("[").Append(car.name).Append(" enabled=").Append(car.enabled).Append(" visible=").Append(car.Visible).Append(" speed=").Append(car.speed).Append(" signal=").Append(car.waitingForSignal).Append(" junction=").Append(car.waitingForJunction).Append(" obstacle=").Append(car.waitingForObstacle).Append(" blocked=").Append(car.blockedName).Append("] -> ");
+            car=car.obstacleCar;
+        }
+        if(!car)text.Append("END");
+        return text.ToString();
+    }
+    static string MovementBlockers(TrafficCar car,TrafficStop stop){
+        var traffic=car.system;var text=new StringBuilder();var bounds=traffic.ReservedMovementBounds(car,stop);
+        text.Append(" occupied={");
+        foreach(var hit in Physics.OverlapBox(bounds.center,bounds.extents,Quaternion.identity,(1<<8)|(1<<9))){
+            var other=hit.GetComponentInParent<TrafficCar>();if(other==car||traffic.MovingLeader(car,other))continue;
+            if(traffic.OccupiesMovement(car,stop,hit))text.Append(hit.name).Append("@").Append(hit.transform.position).Append(";");
+        }
+        text.Append("} exitBlockers={");
+        foreach(var hit in Physics.OverlapBox(car.route.Position(stop.exitDistance)+Vector3.up*.85f,new Vector3(1.05f,.55f,4.5f),Quaternion.LookRotation(car.route.Tangent(stop.exitDistance)),(1<<8)|(1<<9)|1)){
+            var other=hit.GetComponentInParent<TrafficCar>();if(other!=car&&!traffic.MovingLeader(car,other))text.Append(hit.name).Append("@").Append(hit.transform.position).Append(";");
+        }
+        return text.Append("}").ToString();
+    }
+    void NpcSnapshot(PvpSimulationMatch match,string trigger){
+        var traffic=match.Human.traffic;
+        Log("NPC_SNAPSHOT_BEGIN time="+match.Elapsed+" trigger="+trigger+" allocated="+traffic.cars.Count);
+        foreach(var car in traffic.cars){
+            if(!car||!car.Visible)continue;
+            Log("NPC_STATE "+NpcMotion(car));
+            Log("NPC_CHAIN "+ObstacleChain(car));
+            foreach(var junction in traffic.junctions)if(junction.reservations.Contains(car)){
+                var holders=new StringBuilder();foreach(var holder in junction.reservations)holders.Append(holder?holder.name:"destroyed").Append(";");
+                float requested;bool hasRequest=junction.requests.TryGetValue(car,out requested);
+                Log("NPC_HELD car="+car.name+" junction="+junction.name+" owner="+(junction.owner?junction.owner.name:"none")+" holders={"+holders+"} requestAge="+(hasRequest?Time.time-requested:-1));
+            }
+            if(car.route==null)continue;
+            TrafficStop closest=null;float closestExit=float.PositiveInfinity;
+            foreach(var stop in car.route.stops){
+                float remaining=stop.distance-car.distance,exit=stop.exitDistance-car.distance;
+                if(exit>=-.1f&&exit<closestExit){closest=stop;closestExit=exit;}
+                if(remaining<-.05f&&exit<-.1f||remaining>Mathf.Max(40,traffic.ReservationDistance(car)+5))continue;
+                LogNpcStop(car,stop,match.Elapsed);
+            }
+            if(closest!=null&&closest.distance-car.distance>Mathf.Max(40,traffic.ReservationDistance(car)+5))Log("NPC_NEXT_STOP car="+car.name+" junction="+closest.junction.name+" remaining="+(closest.distance-car.distance)+" exitRemaining="+closestExit);
+        }
+        Log("NPC_SNAPSHOT_END time="+match.Elapsed);
+    }
+    void LogNpcStop(TrafficCar car,TrafficStop stop,float elapsed){
+        var traffic=car.system;var j=stop.junction;var holders=new StringBuilder();
+        foreach(var holder in j.reservations)holders.Append(holder?holder.name:"destroyed").Append(";");
+        Log("NPC_STOP time="+elapsed+" car="+car.name+" junction="+j.name+" axis="+stop.axis+" movement="+stop.Movement(car.route)+" remaining="+(stop.distance-car.distance)+" exitRemaining="+(stop.exitDistance-car.distance)+" reservationHorizon="+traffic.ReservationDistance(car)+" reservedApproachGap="+traffic.ReservedApproachGap(car,stop)+" canEnter="+traffic.CanEnter(car,stop)+" exitClear="+traffic.ExitClear(car,stop)+" held="+j.reservations.Contains(car)+" owner="+(j.owner?j.owner.name:"none")+" holders={"+holders+"}"+MovementBlockers(car,stop));
+    }
+
     IEnumerator Start(){
         float deadline=Time.realtimeSinceStartup+180;PvpSimulationMatch match=null;
         while(!match&&Time.realtimeSinceStartup<deadline){match=FindObjectOfType<PvpSimulationMatch>();yield return null;}
@@ -71,7 +133,7 @@ public sealed class PvpSimulationFourDriverProbe : MonoBehaviour {
             fullMap.Close();yield return null;
             Check(!human.taxi.PvpMapInputBlocked&&!human.paused&&Mathf.Approximately(Time.timeScale,3),"map close restores previous simulation speed and vehicle input");
         }else Check(false,"native full map missing");
-        deadline=Time.realtimeSinceStartup+600;float nextTelemetry=0;bool allPaid=false,claimsUnique=true;
+        deadline=Time.realtimeSinceStartup+600;float nextTelemetry=0,nextNpcSnapshot=0;bool allPaid=false,claimsUnique=true;
         while(!match.Finished&&Time.realtimeSinceStartup<deadline){
             var receiptPanel=human.GetComponent<RideCompletionPanel>();if(receiptPanel&&receiptPanel.Open){receiptPanel.Close();Time.timeScale=3;}
             allPaid=true;var claims=new HashSet<int>();
@@ -80,6 +142,12 @@ public sealed class PvpSimulationFourDriverProbe : MonoBehaviour {
                 if(driver.jobs.Active&&driver.jobs.current!=null)claimsUnique&=claims.Add(driver.jobs.current.pickup);
             }
             if(allPaid)break;
+            if(match.Elapsed>=nextNpcSnapshot){
+                var stalled=new StringBuilder();
+                for(int i=0;i<4;i++)if(pilots[i].StationarySeconds>=30)stalled.Append("driver=").Append(i).Append(" stationary=").Append(pilots[i].StationarySeconds).Append(";");
+                if(stalled.Length>0){NpcSnapshot(match,stalled.ToString());nextNpcSnapshot=match.Elapsed+30;}
+            }
+
             if(match.Elapsed>=nextTelemetry){
                 nextTelemetry=match.Elapsed+10;
                 for(int i=0;i<4;i++){
