@@ -147,6 +147,96 @@ public static class PvpNpcMergeTests {
         }
     }
 
+    static Vector3 ExitPoint(Fixture fixture,TrafficRoute route,float at,NativeTrafficMergeZone zone){
+        float firstError;float first=fixture.district.graph.paths[route.graphPath.edges[0]].Project(route.Position(0),out firstError);
+        float best=float.PositiveInfinity;
+        for(int k=0;k<route.graphPath.edges.Count;k++)foreach(var interval in zone.intervals){
+            if(!interval.clear||interval.edge!=route.graphPath.edges[k])continue;
+            float origin=k==0?-first:route.graphPath.ends[k-1],end=origin+interval.end;
+            if(end>=at&&end<best)best=end;
+        }
+        Check(!float.IsInfinity(best),"queue fixture has an authored exit on native route");return route.Position(best);
+    }
+    static void QueueCase(Fixture fixture,bool blockedExit,bool lateFront,bool reverse){
+        const string id="lane:city:3:2>2:2:head";
+        var root=new GameObject("native queue "+blockedExit+"/"+lateFront+"/"+reverse);root.transform.SetParent(fixture.root.transform);
+        try{
+            var traffic=fixture.traffic;traffic.manualTime=0;
+            var frontRoute=fixture.district.CreateRoute(2405,32.88552f,2411,32.64586f);
+            var rearRoute=fixture.district.CreateRoute(2444,32.22271f,2393,32.93151f);
+            var zone=Array.Find(fixture.map.pvpTrafficMerges,z=>z.id==id);Check(zone!=null,"recorded queue zone exists");
+            GameObject obstacle=null;
+            if(blockedExit){
+                var frontExit=ExitPoint(fixture,frontRoute,1820.988f,zone);var rearExit=ExitPoint(fixture,rearRoute,2903.78f,zone);
+                Check(Vector3.Distance(frontExit,rearExit)>3,"front/rear fixture uses distinct merge exit lanes");
+                obstacle=GameObject.CreatePrimitive(PrimitiveType.Cube);obstacle.name="front exit player footprint";obstacle.transform.SetParent(root.transform);obstacle.layer=8;obstacle.transform.position=frontExit+Vector3.up*.85f;obstacle.transform.rotation=Quaternion.LookRotation(zone.direction);obstacle.transform.localScale=new Vector3(2.1f,1.3f,5.4f);
+            }
+            TrafficCar front=null,middle=null,rear;
+            string reason;
+            if(lateFront){
+                rear=Car(root,fixture,rearRoute,2903.78f,62);Physics.SyncTransforms();
+                traffic.MergeApproachGap(rear,out reason);
+                Check(traffic.MergeDiagnostics(rear).Contains("owns:"+id+" "),"late-front fixture starts with a real unentered rear grant");
+                middle=Car(root,fixture,frontRoute,1815.138f,35);front=Car(root,fixture,frontRoute,1820.988f,38);
+            }else{
+                front=Car(root,fixture,frontRoute,1820.988f,38);middle=Car(root,fixture,frontRoute,1815.138f,35);rear=Car(root,fixture,rearRoute,2903.78f,62);
+            }
+            Physics.SyncTransforms();
+            traffic.MergeApproachGap(front,out reason);traffic.MergeApproachGap(rear,out reason);
+            Debug.Log("PVP_NATIVE_QUEUE_SAMPLE blockedExit="+blockedExit+" lateFront="+lateFront+" reverse="+reverse+" front="+traffic.MergeDiagnostics(front)+" rear="+traffic.MergeDiagnostics(rear));
+            Check(!traffic.MergeDiagnostics(rear).Contains("owns:"+id+" "),"an unentered rear grant must never hold a same-approach front queue, even if the front exit is blocked or the front arrives after the grant");
+            if(obstacle){UnityEngine.Object.DestroyImmediate(obstacle);Physics.SyncTransforms();}
+            var actors=reverse?new[]{rear,middle,front}:new[]{front,middle,rear};
+            for(int frame=0;frame<1800;frame++){
+                traffic.manualTime=frame*Time.fixedDeltaTime;
+                foreach(var car in actors)tick.Invoke(car,null);
+                Physics.Simulate(Time.fixedDeltaTime);Physics.SyncTransforms();
+                for(int a=0;a<actors.Length;a++)for(int b=a+1;b<actors.Length;b++){
+                    Vector3 direction;float depth;
+                    Check(!Physics.ComputePenetration(actors[a].GetComponent<BoxCollider>(),actors[a].transform.position,actors[a].transform.rotation,actors[b].GetComponent<BoxCollider>(),actors[b].transform.position,actors[b].transform.rotation,out direction,out depth)||depth<.005f,"queued merge keeps all native bodies separated");
+                }
+            }
+            Check(front.totalTravel>50&&middle.totalTravel>50&&rear.totalTravel>50,"all three native queued cars physically progress after front exit clears: "+front.totalTravel+"/"+middle.totalTravel+"/"+rear.totalTravel);
+        }finally{foreach(var car in root.GetComponentsInChildren<TrafficCar>()){fixture.traffic.Release(car);fixture.traffic.cars.Remove(car);}UnityEngine.Object.DestroyImmediate(root);}
+    }
+    public static void Queue(){
+        bool automatic=Physics.autoSimulation;Physics.autoSimulation=false;string errors="";
+        try{using(var fixture=new Fixture()){
+            foreach(bool blocked in new[]{false,true})foreach(bool late in new[]{false,true})foreach(bool reverse in new[]{false,true})try{QueueCase(fixture,blocked,late,reverse);}catch(Exception e){errors+=Detail(e)+"\n";}
+        }Check(errors.Length==0,errors);Debug.Log("PVP_NPC_MERGE_QUEUE_OK");}
+        finally{Physics.autoSimulation=automatic;}
+    }
+    public static void QueueHorizon(){
+        using(var fixture=new Fixture()){
+            var frontRoute=fixture.district.CreateRoute(2405,32.88552f,2411,32.64586f);
+            var rearRoute=fixture.district.CreateRoute(2444,32.22271f,2393,32.93151f);
+            var front=Car(fixture.root,fixture,frontRoute,1820.988f-25,38);
+            var rear=Car(fixture.root,fixture,rearRoute,2903.78f-(34-11.7f),62);rear.speed=12.1f;
+            Physics.SyncTransforms();string reason;fixture.traffic.MergeApproachGap(rear,out reason);
+            Check(!fixture.traffic.MergeDiagnostics(rear).Contains("owns:lane:city:3:2>2:2:head "),"a slower physical front queue cannot disappear merely because it is beyond its shorter request horizon");
+            Debug.Log("PVP_NPC_MERGE_QUEUE_HORIZON_OK");
+        }
+    }
+    public static void FutureWindow(){
+        bool automatic=Physics.autoSimulation;Physics.autoSimulation=false;
+        try{using(var fixture=new Fixture()){
+            int first=Array.FindIndex(fixture.map.hdEdges,e=>e.id=="city:0:3>1:3:lane:1:head");
+            int second=Array.FindIndex(fixture.map.hdEdges,e=>e.id=="city:0:3>1:3:lane:2:head");
+            int firstEnd=Array.FindIndex(fixture.map.hdEdges,e=>e.id=="city:0:3>1:3:lane:1");
+            int secondEnd=Array.FindIndex(fixture.map.hdEdges,e=>e.id=="city:0:3>1:3:lane:2");
+            Check(first>=0&&second>=0&&firstEnd>=0&&secondEnd>=0,"adjacent authored lane windows exist");
+            var aRoute=fixture.district.CreateRoute(first,0,firstEnd,fixture.district.graph.paths[firstEnd].length-1);
+            var bRoute=fixture.district.CreateRoute(second,0,secondEnd,fixture.district.graph.paths[secondEnd].length-1);
+            var a=Car(fixture.root,fixture,aRoute,20,1);Physics.SyncTransforms();string reason;
+            fixture.traffic.MergeApproachGap(a,out reason);Check(fixture.traffic.MergeDiagnostics(a).Contains("owns:lane:city:0:3>1:3:head "),"first-window fixture has a committed owner");
+            var b=Car(fixture.root,fixture,bRoute,30,2);Physics.SyncTransforms();fixture.traffic.MergeApproachGap(b,out reason);
+            Check(!fixture.traffic.MergeDiagnostics(b).Contains("owns:lane:city:0:3>1:3:part:2 "),"an entrant denied by the first window cannot reserve the overlapping next window and block its current owner");
+            Steps(fixture,a,b,1800);
+            Check(a.totalTravel>80&&b.totalTravel>80,"both native lanes progress across adjacent overlapping windows");
+            Debug.Log("PVP_NPC_MERGE_FUTURE_WINDOW_OK");
+        }}finally{Physics.autoSimulation=automatic;}
+    }
+
     public static void Lane(){Cases(false);}
     public static void Bay(){Cases(true);}
     public static void BayExact(){
@@ -173,6 +263,9 @@ public static class PvpNpcMergeTests {
         try{Parking();}catch(Exception e){errors+="parking: "+Detail(e)+"\n";}
         try{Guards();}catch(Exception e){errors+="guards: "+Detail(e)+"\n";}
         try{DriverIntent();}catch(Exception e){errors+="driver intent: "+Detail(e)+"\n";}
+        try{Queue();}catch(Exception e){errors+="queue: "+Detail(e)+"\n";}
+        try{QueueHorizon();}catch(Exception e){errors+="queue horizon: "+Detail(e)+"\n";}
+        try{FutureWindow();}catch(Exception e){errors+="future window: "+Detail(e)+"\n";}
         Check(errors.Length==0,errors);Debug.Log("PVP_NPC_MERGES_OK");
     }
 }

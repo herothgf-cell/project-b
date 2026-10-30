@@ -8,6 +8,7 @@ public sealed class NativeTrafficMergePolicy {
     sealed class Zone {
         public NativeTrafficMergeZone data;public Vehicle owner;public Vector3 entry,entryDirection;public bool committed;
         public readonly Dictionary<Vehicle,float> requests=new Dictionary<Vehicle,float>();
+        public readonly Dictionary<Vehicle,string> reasons=new Dictionary<Vehicle,string>();
     }
     sealed class Span {
         public Zone zone;public float begin,end;public bool merging;
@@ -92,12 +93,64 @@ public sealed class NativeTrafficMergePolicy {
         foreach(var span in vehicle.spans)if(span.zone==zone&&vehicle.at<=span.end+.05f&&span.begin-vehicle.at<=Horizon(vehicle))return span;
         return null;
     }
+    List<Vehicle> Fleet(){
+        foreach(var car in traffic.cars)if(car)Get(car);
+        var all=new List<Vehicle>(cars.Values);all.AddRange(drivers.Values);
+        foreach(var vehicle in all)Observe(vehicle);
+        return all;
+    }
+    static Span PhysicalSpan(Vehicle vehicle,Zone zone){
+        if(!vehicle.valid)return null;
+        foreach(var span in vehicle.spans)if(span.zone==zone&&vehicle.at<=span.end+.05f)return span;
+        return null;
+    }
+    static AssistedRoadNetwork.Path Path(Vehicle vehicle){
+        return vehicle.car?vehicle.car.route.graphPath.path:((HdRoadGraph.RoutePath)vehicle.route).path;
+    }
+    bool Approach(Vehicle vehicle,Span target,List<Vehicle> all,out string reason){
+        reason="";
+        // Acquiring a later overlapping window requires an actual grant for
+        // every earlier window still occupied or ahead on this same journey.
+        foreach(var earlier in vehicle.spans){
+            if(earlier==target||earlier.begin>=target.begin-.1f||earlier.end<vehicle.at-.05f)continue;
+            if(earlier.zone.owner!=vehicle){reason="earlier window:"+earlier.zone.data.id;return false;}
+        }
+        var path=Path(vehicle);float low=Mathf.Max(0,vehicle.at),high=Mathf.Min(path.length,target.end+1);
+        if(high>low+.75f)foreach(var other in all){
+            if(other==vehicle||!other.Alive||PhysicalSpan(other,target.zone)==null)continue;
+            // The front vehicle remains a real queue leader even outside its
+            // slower, shorter request horizon or with a blocked destination lane.
+            if(Vector3.Dot(other.position-vehicle.position,path.Tangent(low))<=.75f)continue;
+            float error;float at=path.ProjectRange(other.position,low,high,out error);
+            if(at>low+.75f&&error<1.45f){reason="front queue:"+other.Name;return false;}
+        }
+        float gate=Mathf.Min(path.length,target.begin);
+        if(gate>low+.1f){
+            // Registered actors are not the only physical obstacles. A manual
+            // player's body or static obstruction also prevents a rear grant.
+            var bounds=new Bounds(path.Position(low)+Vector3.up*.85f,Vector3.zero);
+            for(float at=low;at<=gate+1;at+=1)bounds.Encapsulate(path.Position(Mathf.Min(at,gate))+Vector3.up*.85f);
+            bounds.Expand(new Vector3(2.4f,1.4f,2.4f));
+            foreach(var hit in Physics.OverlapBox(bounds.center,bounds.extents,Quaternion.identity,(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore)){
+                if(hit.transform.IsChildOf(vehicle.Root.transform)||hit.attachedRigidbody==vehicle.Body)continue;
+                for(float at=low+.5f;at<=gate+.5f;at+=1){
+                    var point=path.Position(Mathf.Min(at,gate))+Vector3.up*.85f;
+                    if((hit.ClosestPoint(point)-point).sqrMagnitude<1.15f*1.15f){reason="physical approach:"+hit.name;return false;}
+                }
+            }
+        }
+        return true;
+    }
+
     bool Cleared(Zone zone){
         var owner=zone.owner;if(owner==null)return true;if(!owner.Alive)return true;
         var body=owner.Body;var position=body?body.position:owner.Root.transform.position;
-                if(Vector3.Dot(position-zone.data.exit,zone.data.direction)>.1f||!zone.data.bounds.Contains(position))return true;
+        if(Vector3.Dot(position-zone.data.exit,zone.data.direction)>.1f||!zone.data.bounds.Contains(position))return true;
         if(!zone.committed&&Vector3.Dot(position-zone.entry,zone.entryDirection)>.05f)zone.committed=true;
-        if(!zone.committed){Observe(owner);if(Upcoming(owner,zone)==null)return true;}
+                if(!zone.committed){
+            Observe(owner);var span=Upcoming(owner,zone);if(span==null)return true;
+            string reason;if(!Approach(owner,span,Fleet(),out reason))return true;
+        }
         return false;
     }
     bool ExitClear(Vehicle vehicle,Span span){
@@ -122,24 +175,26 @@ public sealed class NativeTrafficMergePolicy {
         return candidate.Root.GetInstanceID()<best.Root.GetInstanceID();
     }
     Vehicle Choose(Zone zone){
-        Vehicle best=null;Span bestSpan=null;var eligible=new HashSet<Vehicle>();
-        foreach(var car in traffic.cars)if(car)Get(car);
-        var all=new List<Vehicle>(cars.Values);all.AddRange(drivers.Values);
+        Vehicle best=null;Span bestSpan=null;var eligible=new HashSet<Vehicle>();var all=Fleet();
         foreach(var vehicle in all){
-            Observe(vehicle);var span=Upcoming(vehicle,zone);if(span==null)continue;
+            var span=Upcoming(vehicle,zone);if(span==null)continue;
             eligible.Add(vehicle);if(!zone.requests.ContainsKey(vehicle))zone.requests[vehicle]=traffic.Clock;
-            if(!ExitClear(vehicle,span))continue;
+            string reason;
+            if(!Approach(vehicle,span,all,out reason)){zone.reasons[vehicle]=reason;continue;}
+            if(!ExitClear(vehicle,span)){zone.reasons[vehicle]="exit occupied";continue;}
+            zone.reasons[vehicle]="eligible";
             if(Better(vehicle,span,best,bestSpan,zone)){best=vehicle;bestSpan=span;}
         }
-        foreach(var stale in new List<Vehicle>(zone.requests.Keys))if(!eligible.Contains(stale))zone.requests.Remove(stale);
+        foreach(var stale in new List<Vehicle>(zone.requests.Keys))if(!eligible.Contains(stale)){zone.requests.Remove(stale);zone.reasons.Remove(stale);}
         return best;
     }
-    void Release(Zone zone){if(zone.owner!=null){zone.owner.owned.Remove(zone);zone.requests.Remove(zone.owner);}zone.owner=null;zone.committed=false;}
+
+    void Release(Zone zone){if(zone.owner!=null){zone.owner.owned.Remove(zone);zone.requests.Remove(zone.owner);zone.reasons.Remove(zone.owner);}zone.owner=null;zone.committed=false;}
     string Describe(Vehicle vehicle){
         if(vehicle==null)return "unregistered";var text=new System.Text.StringBuilder();
         foreach(var zone in zones){
             if(zone.owner==vehicle){var body=vehicle.Body;var position=body?body.position:vehicle.position;text.Append("owns:").Append(zone.data.id).Append(" committed=").Append(zone.committed).Append(" exitAhead=").Append(Vector3.Dot(zone.data.exit-position,zone.data.direction).ToString("F1")).Append(";");}
-            else {float requested;if(zone.requests.TryGetValue(vehicle,out requested))text.Append("requests:").Append(zone.data.id).Append(" age=").Append((traffic.Clock-requested).ToString("F1")).Append(" owner=").Append(zone.owner==null?"none":zone.owner.Name).Append(";");}
+            else {float requested;if(zone.requests.TryGetValue(vehicle,out requested))text.Append("requests:").Append(zone.data.id).Append(" age=").Append((traffic.Clock-requested).ToString("F1")).Append(" owner=").Append(zone.owner==null?"none":zone.owner.Name).Append(" denied=").Append(zone.reasons.ContainsKey(vehicle)?zone.reasons[vehicle]:"pending").Append(";");}
         }
         return text.Length==0?"none":text.ToString();
     }
@@ -153,7 +208,7 @@ public sealed class NativeTrafficMergePolicy {
             if(vehicle.at>span.end+.05f||span.begin-vehicle.at>Horizon(vehicle))continue;
             var zone=span.zone;
             if(zone.owner!=null&&Cleared(zone))Release(zone);
-                        if(zone.owner==null){
+            if(zone.owner==null){
                 zone.owner=Choose(zone);
                 if(zone.owner!=null){
                     var admission=Upcoming(zone.owner,zone);zone.entry=admission.entry;zone.entryDirection=admission.entryDirection;
