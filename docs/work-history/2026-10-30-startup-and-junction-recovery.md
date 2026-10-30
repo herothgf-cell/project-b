@@ -41,6 +41,6 @@
 
 ## 배포 검증
 
-소스 커밋은 `git log -1 --oneline -- docs/work-history/2026-10-30-startup-and-junction-recovery.md`로 확인한 `7b38ac0`이다. 이 소스에 대해 배포 manifest를 생성했고 `pwsh -File tools/update_distribution_manifest.ps1 -VerifyOnly` 종료0, 130파일/112,309,087바이트의 크기·SHA256을 확인했다. 실제 main 게시 해시는 게시 후 기록한다.
+구현 커밋은 생성 직후 실제 이력으로 확인한 `7b38ac0`이다. 이 소스에 대해 배포 manifest를 생성했고 `pwsh -File tools/update_distribution_manifest.ps1 -VerifyOnly` 종료0, 130파일/112,309,087바이트의 크기·SHA256을 확인했다. 배포 `980814d0c0d4ad3f68827eacf7593967e7398438`을 main에 fast-forward/푸시했고 `git ls-remote origin refs/heads/main`의 동일 해시를 확인했다. main의 전수 해시 재검증도 종료0이다.
 
-실제로 열려 있던 PvP 작업 폴더는 별도의 소스 수정이 새로 생겼고 게임도 실행 중이다. 이 작업에서 해당 미커밋 소스에 main을 강제 병합하거나 사용자 게임을 종료하지 않는다. 기본 main 실행 폴더의 검증·게시와 해당 작업 폴더의 교체 완료를 구분한다.
+사용자의 게임 종료 응답 후 실제 PvP 작업 폴더의 기본 싱글도 같은 130파일/112,309,087바이트로 교체·전수 검증했다. 그 폴더의 실제 exe를 정상 창에서 `-campaignStartupTest -hybridV2`로 실행해 격리 준비·출발10검사 종료0을 다시 확인했다. 로컬 환경 경로는 `C:/Users/DRI/.codex/worktrees/pvp-review-validation/project-b`이며 해당 폴더 이력 `2026-10-30-main-single-runtime-refresh.md`의 실제 커밋은 `eeb309b`다. 별도 진행 중인 PvP 소스/전용 빌드 변경은 보존했다. 미게시 PvP 커밋까지 임의로 함께 게시하지 않기 위해 이 작업의 원격 게시는 main으로 한정했다. 해당 개발 소스에서 기본 싱글을 재빌드하기 전 main 소스 통합이 필요함을 그 폴더 LATEST에 인계했다. 사용자 저장을 초기화하거나 사용자 게임을 임의 종료하지 않았다.
