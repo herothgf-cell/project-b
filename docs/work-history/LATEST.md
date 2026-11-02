@@ -6,7 +6,7 @@
 
 현재 **`builds/EungyeTaxi/EungyeTaxi.exe`** → 은계 싱글 또는 자체도시PVP. 빌드소스d8f94ce, 검증된139파일115,057,083바이트로 교체·전수해시 확인. 사용자PID6980 게임은 직접 종료 응답/실제 종료 확인 후 교체했고 이전폴더를 백업했다.4대4.37~5.20km·전원 양수정산, 봇3대 모두 좌/우회전 통과.1920Ultra/72NPC60초 평균56.98fps/p9930.64ms,113.53ms 지연1회 남음.
 
-피로는 [PVP기획](../content-design/03-life-and-economy.md#pvp-driver-condition)에1.25배 후보(분당5/7.5/10)로 반영했으며 **게임 미적용**이다. 필수지도/ZIP·회사/제품/저장경로 유지, Strict issues0. 다른체크아웃의 현재localmain6244be9/미추적작업 보존. 실제사진지점/사람/장시간전도로/다른PC/기존물리원격4명은 별도다. 원격게시 결과는 이번 이력 말미에 기록한다.
+피로는 [PVP기획](../content-design/03-life-and-economy.md#pvp-driver-condition)에1.25배 후보(분당5/7.5/10)로 반영했으며 **게임 미적용**이다. 필수지도/ZIP·회사/제품/저장경로 유지, Strict issues0. 다른체크아웃의 현재localmain6244be9/미추적작업 보존. 실제사진지점/사람/장시간전도로/다른PC/기존물리원격4명은 별도다. 배포81e864b를 main·feature/pvp-prototype에 atomic 게시하고 원격 동일해시/manifest를 확인했다. 게시 영수증은 이번 이력 말미를 따른다.
 
 ## 2026-11-02 PVP 졸음·공복 기반 기획 수정
 

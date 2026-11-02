@@ -44,3 +44,6 @@
 사용자 게임 종료를 실제 확인하고 기존 실행폴더를 artifacts/pvp/pre-junction-publish-61c9e98에 통째로 옮겨 보관한 후 검증된 복사본을 builds/EungyeTaxi로 교체했다. 이동 대상/백업 절대경로가 이 작업공간 안인지 확인했으며 사용자 실행 중에는 변경하지 않았다. 새139파일115,057,083바이트 전체SHA256 일치. 기존 실행폴더의 불필요한 과거 level0.resS는 백업 안에 보존했다. 현재 EXE는 builds/EungyeTaxi/EungyeTaxi.exe, 싱글/PVP 선택 유지. 기존 회사/제품/저장 경로와 필수 지도입력/ZIP 유지.
 
 다른 체크아웃을 수정하지 않았다. 최종 확인 시 C:/git/project-b의 로컬main은6244be9이고 기존미추적7개 항목이 유지됐다(이 채팅이 해당 체크아웃을 checkout/reset/pull하지 않음). 필수입력 Strict issues0. 피로 가속1.25배·식사/휴식 후보는 기획만 수정했으며 게임 수치는 기존대로다. 사용자의 미전달 사진 지점의 당시 상태·장시간 전체도로·사람 운전·다른PC/기존물리원격4명은 미검증이다.
+
+## 게시 영수증
+배포커밋81e864b5c5ff9c4cb2c4d6e41c9b969a7fdc497e을 `git push --atomic origin HEAD:feature/pvp-prototype HEAD:main`으로 게시(exit0)했다. `git ls-remote`에서 두 원격이 같은 해시임을 확인했고, 게시후manifest139파일115,057,083바이트 검증exit0·작업트리clean이었다. 이 이력의 실제 배포커밋은 `git log -1 --oneline -- docs/work-history/2026-11-02-pvp-junction-followup.md`로81e864b임을 확인한 후 영수증을 추가했다. 다른 체크아웃의 사용자 작업은 그대로 두었다.
