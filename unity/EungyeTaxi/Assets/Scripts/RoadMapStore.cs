@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using UnityEngine;
 public static class RoadMapStore {
- public static string DirectoryPath {get{return Path.Combine(Application.persistentDataPath,"RoadMaps");}}
+ public static string DirectoryPath {get{return Path.Combine(CampaignSaveLocation.DirectoryFor(Path.GetDirectoryName(Application.persistentDataPath)),"RoadMaps");}}
  public static string DefaultPath {get{return Path.Combine(DirectoryPath,"active.json");}}
  public static RoadMapDocument Load(string path){var text=File.ReadAllText(path);if(!text.TrimStart().StartsWith("{"))throw new InvalidDataException("JSON 문서가 아닙니다");var d=RoadMapDocument.Parse(text);if(d==null||d.schema!=1||string.IsNullOrWhiteSpace(d.baseHash)||d.lanes==null||d.lanes.Length==0||d.facilities==null||d.signals==null)throw new InvalidDataException("지원하지 않는 수정본 또는 누락된 자료");return d;}
  public static void Save(string path,RoadMapDocument d){if(d.schema!=1)throw new InvalidDataException("지원하지 않는 스키마");string full=Path.GetFullPath(path);Directory.CreateDirectory(Path.GetDirectoryName(full));string temp=full+"."+Guid.NewGuid().ToString("N")+".tmp";try{var copy=d.Copy();copy.savedAt=DateTime.UtcNow.ToString("o");File.WriteAllText(temp,copy.ToJson(true));Load(temp);if(File.Exists(full))File.Replace(temp,full,full+".bak");else File.Move(temp,full);d.savedAt=copy.savedAt;}finally{if(File.Exists(temp))File.Delete(temp);}}

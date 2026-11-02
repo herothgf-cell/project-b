@@ -129,7 +129,7 @@ public class DriveSession : MonoBehaviour {
         if(StartupReady)return;
         GUI.depth=-10000;var oldColor=GUI.color;GUI.color=CasualUI.Canvas;GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=oldColor;
         if(loadingTitle==null){loadingTitle=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=28,alignment=TextAnchor.MiddleCenter};loadingDetail=new GUIStyle(loadingTitle){fontSize=18};}
-        GUI.Label(new Rect(0,Screen.height*.43f,Screen.width,50),"택시 시뮬레이터",loadingTitle);
+        GUI.Label(new Rect(0,Screen.height*.43f,Screen.width,50),"택시 시뮬레이션",loadingTitle);
         GUI.Label(new Rect(0,Screen.height*.43f+55,Screen.width,40),loadingStage,loadingDetail);
     }
     void Update() {

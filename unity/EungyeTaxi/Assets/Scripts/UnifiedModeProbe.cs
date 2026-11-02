@@ -52,7 +52,7 @@ public sealed class UnifiedModeProbe : MonoBehaviour {
         complete(error);
     }
     IEnumerator Run(){
-        actualDirectory=Path.Combine(Path.GetDirectoryName(Application.persistentDataPath),"은계 택시 시뮬레이터");
+        actualDirectory=CampaignSaveLocation.DirectoryFor(Path.GetDirectoryName(Application.persistentDataPath));
         if(Directory.Exists(actualDirectory))foreach(var path in Directory.GetFiles(actualDirectory,"*.json*"))originals[path]=File.ReadAllBytes(path);
         yield return null;
         Check(UnifiedModeBootstrap.Selected==UnifiedModeBootstrap.Mode.Menu&&Human()==null&&!File.Exists(CampaignPath),"initial menu does not initialize campaign");
