@@ -61,3 +61,20 @@
 별도 검토에서 FIFO 대기 후 PVP 식사/휴식을 시작하자마자 시설 창을 닫아 서비스가 취소되는 문제도 발견했다. 성공한 활성 시간제 서비스만 창을 유지하며 실패/즉시 작업은 닫는다. 실제 Unity에서 공유 FIFO→Buy 대기→Tick 입장→15초 식사/45초 휴식의 완료/금액·회복,5초 후 명시 취소의 비용·회복0을 RED/GREEN으로 검사하고 별도 재검토에서 해결을 확인했다.
 
 이 두 수정까지 포함한 `P1P2BuildChecks.ValidateMerged` 실제 종료0 (`artifacts/p1p2-final-acceptance-editor.log`): 체크포인트28, 시설30·기하2708, 승객26/36041, LAN JSON18, 도시90645, 테마·지도·내비·현재 프로필/모드 검사를 통과했다. 관리형 운영49·어댑터·서행21도 종료0. 앞선 실패는 보관한 `artifacts/p1p2-a539-native-evidence/`와 구분한다. 다음 최종 실행본에서 저장 재실행/실시간/물리/화면을 재검사한다.
+
+## 최종 최소 수용·실행본 갱신
+
+사용자의 마지막 요청에 따라 추가 리뷰·장시간/전체 주행·시각/성능 반복 검사를 중단하고, 실제 저장 재개와 새 기능 연결·기존 LAN 기본 연결만 최종 실행했다.
+
+| 검사 | 실제 결과·범위 |
+|---|---|
+| 최종 소스 | `a8fcb88a9a9d96d1e9a96fa2f6582fe9bc764922`, 현재 main 지도/HUD/LAN 보존 |
+| BuildHybrid | `artifacts/p1p2-build-release.log` 실제 종료0, 통합 EungyeTaxi.exe/실행폴더 |
+| 새 기능 실제 Player | `pwsh -File tools/test_p1p2_integration_player.ps1` 종료0. 시설30·교통/깜빡이·법규 JSON28·대체 승하차/예측. 위치 제어 fixture이며 전 구간 자동 주행이 아님 |
+| 승객·재개 | `pwsh -File tools/test_passenger_activities_player.ps1` 두 프로세스 모두 종료0. 본42·새 프로세스6: 용무 잔여/ID/목적지 유지, 계속하기 전 시간 불변, 계속하기 후1회 완료 |
+| 기존 LAN 기본 연결 | `pwsh -File tools/test_pvp_native_lan.ps1 -Port 18973 -TimeoutSeconds 180` 종료0. 호스트23/클라이언트26, 실제 WheelCollider 페달14.0097m·선점/새 상황의 오래된 운송 명령 거절·깜빡이/비상등·시설 점유 수신·72NPC/신호·봇 승계. 두 loopback 프로세스이며 다른PC/사람4인/전체 운송·재접속 반복 검사가 아님 |
+| 입력/저장/문서 | Strict issues0, 사용자 저장4파일 크기/SHA256 불변. 마인드맵340·171/0/53, 사용자ID/메모/접힘·재실행 불변. 변경 문서 상대 링크146개 누락0 |
+
+실행은 `builds/EungyeTaxi/EungyeTaxi.exe`에서 은계 싱글 또는 현재 PVP/기존 LAN을 선택한다. 일반 승하차24개와 은계 입력 지도/ZIP·회사/제품명·실제 저장 위치를 유지했다. 음악·에어컨·창문 실제 조작은 계속 보류한다. 실제 비보호 신규 장소는 판독된 긍정 표지 근거가 없어 추가하지 않았다. 사람 직접 운전·장시간 경제/성능·다른PC 수용은 미수행이며 이번 완료율로 과장하지 않는다.
+
+빌드의 자체 생성 `*_BurstDebugInformation_DoNotShip` 진단 폴더는 artifacts에 보관하고 실행에 필요한 폴더 전체를 배포한다. 배포 manifest는 위 실제 소스 SHA와 최종 크기/SHA256을 사용한다. 게시 명령과 원래 main 반영 결과는 게시 후 아래 영수증에 기록한다.
