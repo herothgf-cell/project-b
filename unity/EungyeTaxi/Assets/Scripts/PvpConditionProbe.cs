@@ -21,7 +21,8 @@ public sealed class PvpConditionProbe:MonoBehaviour {
   DriveSession chosen=null;PvpSimulationBot pilot=null;float best=400;
   foreach(var candidate in match.Bots){
    var controls=candidate.GetComponent<PvpSimulationBot>();var service=candidate.GetComponent<PvpSimulationBotServices>();
-   if(!controls||!service||service.Active||(candidate.jobs.Active&&candidate.jobs.trip.State!=TripState.ToPickup))continue;
+   if(!service)service=candidate.gameObject.AddComponent<PvpSimulationBotServices>();
+   if(!controls||service.Active||(candidate.jobs.Active&&candidate.jobs.trip.State!=TripState.ToPickup))continue;
    // Read the production selector only. These diagnostic fixtures never change a pose.
    var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
    typeof(PvpSimulationBotServices).GetField("kind",flags).SetValue(service,1);
@@ -47,6 +48,7 @@ public sealed class PvpConditionProbe:MonoBehaviour {
   Pvp.PvpBootstrap bootstrap;while(!(bootstrap=FindObjectOfType<Pvp.PvpBootstrap>()))yield return null;bootstrap.StartSimulation(true,7200);
   while(!(match=FindObjectOfType<PvpSimulationMatch>())||!match.Human||!match.Human.StartupReady)yield return null;human=match.Human;Time.timeScale=3;
   foreach(var driver in match.Drivers)Check(driver.business.SimulationSession&&driver.business.ledger.PvpProfile&&driver.business.SavePath=="","isolated PVP condition profile driver="+driver.SimulationDriver);
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpConditionDriveCheck")>=0)yield return BotDrive();
   yield return Site(1);var ledger=human.business.ledger;ledger.Driver.satiety=20;ledger.Driver.fatigue=60;ledger.Driver.drowsiness.Recover();
   int cash=ledger.Account.Cash;float start=match.Elapsed,npcs=Traffic(human);double elapsed=ledger.Elapsed,operation=match.Bot.business.ledger.Elapsed;
   Check(human.services.RequestAction(1),"native meal confirmation opens");yield return Capture("meal-quote");Check(human.services.ConfirmAction(true)&&match.ConditionServiceActive(human),"meal starts through native service API");Check(ledger.Account.Cash==cash&&ledger.Driver.satiety<=20.01,"no instant meal recovery/payment");
@@ -58,7 +60,6 @@ public sealed class PvpConditionProbe:MonoBehaviour {
   yield return Site(3);ledger.Driver.satiety=20;ledger.Driver.fatigue=80;ledger.Driver.drowsiness.visionSeconds=20;start=match.Elapsed;cash=ledger.Account.Cash;operation=match.Bot.business.ledger.Elapsed;
   Check(human.services.Buy(3),"rest starts");yield return Wait(10);Check(Math.Abs(ledger.Driver.fatigue-80)<.01&&ledger.Driver.drowsiness.visionSeconds==20,"partialrest holds fatigue/exposure without early recovery");yield return Capture("rest-pending");while(match.ConditionServiceActive(human))yield return null;
   Check(match.Elapsed-start>=44.95f&&ledger.Driver.fatigue<40.1&&ledger.Driver.fatigue>=40&&ledger.Driver.satiety<16.4&&ledger.Driver.drowsiness.visionSeconds==0&&ledger.PvpRests==1,"real45 second rest -40/reset with satiety consumption");Check(ledger.Account.Cash==cash&&match.Bot.business.ledger.Elapsed>operation,"free rest only payer waits");
-  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpConditionDriveCheck")>=0){human.services.Close();yield return BotDrive();}
   yield return Site(1);cash=ledger.Account.Cash;double satiety=ledger.Driver.satiety;Check(human.services.Buy(1),"unfinished end fixture begins");match.Finish();Check(!match.ConditionServiceActive(human)&&ledger.Account.Cash==cash&&ledger.Driver.satiety==satiety,"match end grants no unfinished fee/recovery");
   done=true;File.WriteAllText(Path.Combine(output,"pvp-condition-result.txt"),"success="+ok+" source=runtime pending-service acceptance; initial site placement fixtures\n");Debug.Log(ok?"PVP_CONDITION_PLAYER_OK":"PVP_CONDITION_PLAYER_FAIL");Time.timeScale=1;Application.Quit(ok?0:1);
  }
