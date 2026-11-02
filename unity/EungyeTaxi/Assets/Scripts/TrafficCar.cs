@@ -1,12 +1,27 @@
 using UnityEngine;
 public class TrafficCar : MonoBehaviour {
     public bool respawn=true;
+    public TrafficDriverProfile Profile {get;private set;}
+    public string ProfileLabel {get{return Profile==null?"보통":Profile.Label;}}
+    double lastLaneChangeCompleted=-100000;int observedLaneEdge=-1;
+    // Cooldowns slow the real approach to the next legal lane-change edge.
+    // They never release a reservation, remove a body or skip a route segment.
+    float ProfileLaneChangeGap(){
+        if(district==null||route.graphPath==null)return float.PositiveInfinity;
+        int edge=route.graphPath.EdgeAt(distance);
+        if(observedLaneEdge>=0&&edge!=observedLaneEdge&&district.graph.edges[observedLaneEdge].change!=0)lastLaneChangeCompleted=Time.time;
+        observedLaneEdge=edge;
+        if(district.graph.edges[edge].change!=0||Profile.LaneChangeReady(Time.time,lastLaneChangeCompleted))return float.PositiveInfinity;
+        float begin=0;
+        for(int i=0;i<route.graphPath.edges.Count;i++){int next=route.graphPath.edges[i];if(begin>=distance&&district.graph.edges[next].change!=0)return Mathf.Max(0,begin-distance-2);begin=route.graphPath.ends[i];}
+        return float.PositiveInfinity;
+    }
     public int mitFollowingTicks;public float baselineTarget,followingTarget;
     public DistrictTraffic district;
     readonly System.Collections.Generic.HashSet<TrafficStop> released=new System.Collections.Generic.HashSet<TrafficStop>();
     public bool Visible {get{return !recycling;}}
     public int CurrentTurn {get{if(route.graphPath==null)return route.turn;foreach(var stop in route.stops)if(distance<=stop.exitDistance&&stop.distance-distance<30)return stop.Movement(route);return 0;}}
-    public void Continue(TrafficRoute next){system.Release(this);released.Clear();stoppedAt=null;route=next;distance=0;completedRoutes++;}
+    public void Continue(TrafficRoute next){system.Release(this);released.Clear();stoppedAt=null;route=next;distance=0;observedLaneEdge=-1;completedRoutes++;}
 
     public TrafficJunction stoppedAt;
     public TrafficRoute route; public TrafficSystem system;
@@ -17,7 +32,7 @@ public class TrafficCar : MonoBehaviour {
     readonly TrafficOverlapQuery overlaps=new TrafficOverlapQuery();
     Material brakeOn, brakeOff,indicatorOn,indicatorOff;Renderer[] indicators;
     public void Initialize(TrafficSystem owner,TrafficRoute path,float initial,int index) {
-        system=owner;route=path;
+        system=owner;route=path;Profile=TrafficDriverProfile.ForIndex(index);gameObject.name+=" · "+ProfileLabel;
         body=gameObject.AddComponent<Rigidbody>(); body.isKinematic=true;body.interpolation=RigidbodyInterpolation.Interpolate;body.collisionDetectionMode=CollisionDetectionMode.ContinuousSpeculative;
         hit=gameObject.AddComponent<BoxCollider>();hit.center=new Vector3(0,.8f,0);hit.size=new Vector3(1.8f,1.25f,4.2f);
         Color[] colors={new Color(.15f,.34f,.62f),new Color(.72f,.16f,.13f),new Color(.75f,.77f,.77f),new Color(.18f,.4f,.33f)};
@@ -34,7 +49,7 @@ public class TrafficCar : MonoBehaviour {
         renderers=GetComponentsInChildren<Renderer>(); Place(initial);
     }
     public void Place(float position) {
-        system.Release(this);released.Clear();stoppedAt=null;distance=position;speed=0;recycling=false;SetVisible(true);
+        system.Release(this);released.Clear();stoppedAt=null;distance=position;speed=0;observedLaneEdge=-1;recycling=false;SetVisible(true);
         body.position=route.Position(distance);body.rotation=Quaternion.LookRotation(route.Tangent(distance));transform.SetPositionAndRotation(body.position,body.rotation);Physics.SyncTransforms();
     }
     void SetVisible(bool value){hit.enabled=value;foreach(var r in renderers)r.enabled=value;}
@@ -81,6 +96,7 @@ public class TrafficCar : MonoBehaviour {
                 if(remaining<gap){gap=Mathf.Max(0,remaining);waitingForSignal=true;}
             }
         }
+        gap=Mathf.Min(gap,ProfileLaneChangeGap());
         float mergeGap=system.MergeApproachGap(this,out mergeStatus);
         if(mergeGap<gap){gap=mergeGap;waitingForMerge=true;waitingForJunction=true;}
         obstacleCar=null;float detection=Mathf.Max(8,speed*speed/6+6);
@@ -97,12 +113,12 @@ public class TrafficCar : MonoBehaviour {
         }}
         float cruise=route.turn!=0?4.5f:route.axis==0?9:7;
         if(district!=null){float bend=Vector3.Angle(route.Tangent(distance),route.Tangent(Mathf.Min(route.length,distance+14)));cruise=bend>12||CurrentTurn!=0?4.5f:9;}
-        float editorLimit=system.EditorSpeedLimit(this);if(editorLimit>0)cruise=Mathf.Min(cruise,editorLimit/3.6f);float target=TrafficRules.SafeSpeed(gap,cruise);baselineTarget=target;
+        float editorLimit=system.EditorSpeedLimit(this);if(editorLimit>0)cruise=Mathf.Min(cruise,editorLimit/3.6f);float target=Profile.LimitSpeed(gap,cruise,waitingForObstacle&&obstacleCar!=null);baselineTarget=target;
         target=MitTrafficFollowing.Limit(system.mitOptions.Enabled,target,gap,
             obstacleCar?obstacleCar.speed:0,obstacleCar?Vector3.Dot(transform.forward,obstacleCar.transform.forward):0,
             waitingForObstacle&&obstacleCar!=null&&obstacleCar.Visible);
         followingTarget=target;if(target<baselineTarget-.001f)mitFollowingTicks++;
-        float previous=speed; speed=Mathf.MoveTowards(speed,target,(target<speed?5:2.2f)*Time.fixedDeltaTime);
+        float previous=speed; speed=Mathf.MoveTowards(speed,target,(target<speed?5:Profile.Acceleration)*Time.fixedDeltaTime);
         float step=Mathf.Min(speed*Time.fixedDeltaTime,Mathf.Max(0,gap)); distance+=step;totalTravel+=step;
         if(step<.0001f)speed=0;
         bool stopped=waitingForSignal&&speed<.1f;

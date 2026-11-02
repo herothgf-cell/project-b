@@ -51,6 +51,9 @@ public class TrafficStop { public TrafficJunction junction; public float distanc
 
 public class TrafficSystem : MonoBehaviour {
     public AmbientPedestrianSystem ambientPedestrians;
+    DriveSession demandSession;
+    void Start(){demandSession=FindObjectOfType<DriveSession>();}
+    public int DemandPhase {get{return SimulationDemandClock.Phase(demandSession);}}
     public MitTrafficOptions mitOptions {get;private set;}
     void Awake(){mitOptions=new MitTrafficOptions();}
     public readonly List<TrafficJunction> junctions = new List<TrafficJunction>();

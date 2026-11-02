@@ -6,7 +6,7 @@ public sealed class DistrictTraffic : MonoBehaviour {
  public HdRoadGraph graph;public TrafficSystem system;public MapData map;
  public const int PoolCap=72,LocalTarget=18,CandidateBudget=128,RelocationBudget=2;
  public int continued,excluded;int sequence,seedCursor;float nextPopulationUpdate;
- DriveSession liveSession;
+ DriveSession liveSession;string[] demandRegions;
  readonly List<Seed> populationSeeds=new List<Seed>();
  readonly Dictionary<Vector2Int,int> populationLoads=new Dictionary<Vector2Int,int>();
  readonly Dictionary<string,TrafficJunction> joins=new Dictionary<string,TrafficJunction>();
@@ -15,7 +15,7 @@ public sealed class DistrictTraffic : MonoBehaviour {
  readonly HashSet<TrafficRoute> cleared=new HashSet<TrafficRoute>(),blocked=new HashSet<TrafficRoute>();
  readonly HashSet<int> service=new HashSet<int>();
  public void Initialize(TrafficSystem owner,MapData data,bool spawn){
-  system=owner;map=data;graph=new HdRoadGraph(map);
+  system=owner;map=data;graph=new HdRoadGraph(map);demandRegions=SimulationDemandClock.NativeRegions(map);
   foreach(var j in system.junctions)joins[j.name]=j;
   var counts=new Dictionary<string,int>();foreach(var e in graph.edges)if(e.id.StartsWith("join:")){if(!counts.ContainsKey(e.ruleId))counts[e.ruleId]=0;counts[e.ruleId]++;}
   foreach(var r in map.junctionRules){int count;if(!counts.TryGetValue(r.id,out count)||count<3||joins.ContainsKey(r.id))continue;
@@ -151,6 +151,15 @@ public sealed class DistrictTraffic : MonoBehaviour {
   route.stops.Add(new TrafficStop{junction=j,axis=axis,turn=turn,distance=enter,exitDistance=exit});
  }
  bool Clear(TrafficRoute route){if(cleared.Contains(route))return true;if(blocked.Contains(route))return false;if(system.RouteClearOfStaticObstacles(route)){cleared.Add(route);return true;}blocked.Add(route);excluded++;return false;}
- TrafficRoute Next(int edge,float at){for(int n=0;n<map.stops.Length;n++){int index=(sequence++)%map.stops.Length;if(!service.Contains(index))continue;var end=map.stops[index];if(end.laneEdge==edge)continue;var route=CreateRoute(edge,at,end.laneEdge,end.laneAt);if(route!=null&&Clear(route))return route;}return null;}
+ TrafficRoute Next(int edge,float at){
+  // Rank only future journeys. Accepted/active routes and fleet size stay fixed.
+  int generation=sequence++,phase=system.DemandPhase;TrafficRoute best=null;double rank=double.PositiveInfinity;
+  for(int n=0;n<map.stops.Length;n++){int index=(generation+n)%map.stops.Length;if(!service.Contains(index))continue;var end=map.stops[index];if(end.laneEdge==edge)continue;
+   // Stable per-generation draws; destination demand changes direction rather
+   // than moving traffic through occupied space or bypassing the route graph.
+   double candidate=PassengerDemandPolicy.Priority(map.mapId+":traffic:"+generation,"S"+index,0)/PassengerDemandPolicy.Weight(demandRegions[index],phase,true);
+   if(candidate>=rank)continue;var route=CreateRoute(edge,at,end.laneEdge,end.laneAt);if(route!=null&&Clear(route)){rank=candidate;best=route;}
+  }return best;
+ }
  public bool Continue(TrafficCar car){var next=Next(car.route.goalEdge,car.route.goalAt);if(next==null)return false;car.Continue(next);continued++;return true;}
 }
