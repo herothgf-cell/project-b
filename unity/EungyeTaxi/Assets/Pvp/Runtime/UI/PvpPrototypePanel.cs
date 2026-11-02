@@ -7,21 +7,29 @@ namespace Pvp {
   bool legacy;Vector2 scroll;
   void OnGUI(){
    GUI.skin.font=KoreanText.Font;
+   if(PvpNativeLan.Instance){DrawNativeLobby();return;}
    float width=Mathf.Min(680,Screen.width-32),height=Mathf.Min(620,Screen.height-32);
    GUILayout.BeginArea(new Rect((Screen.width-width)/2,(Screen.height-height)/2,width,height),GUI.skin.box);scroll=GUILayout.BeginScrollView(scroll);
-   GUILayout.Label("은계 택시 시뮬레이터 · PVP 봇 대전");GUILayout.Space(16);
+   GUILayout.Label("은계 택시 시뮬레이터 · PVP 대전");GUILayout.Space(16);
    GUILayout.Label("나 1명 + 봇 3대 · 공용 호출 8개 · 오프라인 대결");
    GUILayout.BeginHorizontal();GUILayout.Label("경기 시간(초, 30~7200)");duration=GUILayout.TextField(duration,5);GUILayout.EndHorizontal();
    GUILayout.Label("PVP 전용 도시 · 3.6 × 2.8km · 다차로 / 골목·신호·유턴 / 승객 거점");
    if(GUILayout.Button("봇 3대와 경기 시작",GUILayout.Height(44))){int seconds;if(!int.TryParse(duration,out seconds)||seconds<30||seconds>7200)message="경기 시간은 30~7200초 범위에서 직접 입력하세요.";else GetComponent<PvpBootstrap>().StartSimulation(true,seconds);}
+   GUILayout.Space(10);GUILayout.Label("사람과 LAN 대전 · 최대4명 / 빈자리는 봇");
+   GUILayout.BeginHorizontal();networkAddress=GUILayout.TextField(networkAddress,45);networkPort=GUILayout.TextField(networkPort,5);GUILayout.EndHorizontal();
+   GUILayout.BeginHorizontal();if(GUILayout.Button("방 만들기"))Native(true);if(GUILayout.Button("IP로 참가"))Native(false);GUILayout.EndHorizontal();
+   GUILayout.Label(PvpNativeLan.LastNotice);
+   var boot=GetComponent<PvpBootstrap>();if(!string.IsNullOrEmpty(boot.StartupError))GUILayout.Label(boot.StartupError);
    GUILayout.Label(message);GUILayout.Space(12);
-   GUILayout.Label("운전  W/↑ 가속 · S/↓ 감속·후진 · A/D/←→ 조향 · Space 제동\n호출  M 지도에서 선택·수락 → 승차 지점 정차 → F 승하차\n시점  C 전환 · B 누르는 동안 후방 · Z/X 좌우 확인\n보조  H 조향 보조 · Q/E 방향지시(보조 중 방향 요청) · G 비상등\n시설  정차 후 F7 · Esc 일시정지");
+   GUILayout.Label("운전  W/↑ 가속 · S/↓ 감속·후진 · A/D/←→ 조향 · Space 제동\n호출  M 지도에서 선택·수락 → 승차 지점 정차 → F 승하차\n시점  C 전환 · B 누르는 동안 후방 · Z/X 좌우 확인\n보조  H 조향 보조 · Q/E 방향지시(보조 중 방향 요청) · G 비상등\n시설  정차 후 F7 · Esc 메뉴 (LAN 경기는 계속 진행)");
    GUILayout.Label("M 지도를 보는 동안에도 봇과 경기 시간은 진행됩니다. 내 차량은 제동합니다.");
    legacy=GUILayout.Toggle(legacy,"개발용 이전 시험장 검사 열기");
-   if(legacy){GUILayout.Label("이전 평면 모터 실험입니다. 기존 차량 기반 유저 간 네트워크 대전은 별도 전환 검증이 필요합니다.");if(GUILayout.Button("이전 오프라인 시험장"))GetComponent<PvpBootstrap>().StartPractice();GUILayout.BeginHorizontal();networkAddress=GUILayout.TextField(networkAddress,45);networkPort=GUILayout.TextField(networkPort,5);GUILayout.EndHorizontal();GUILayout.BeginHorizontal();if(GUILayout.Button("이전 IP 호스트"))Network(true);if(GUILayout.Button("이전 IP 참가"))Network(false);GUILayout.EndHorizontal();}
+   if(legacy){GUILayout.Label("이전 평면 모터 개발 검사입니다. 현재 도시 LAN 대전은 위의 방 만들기/IP 참가를 사용하세요.");if(GUILayout.Button("이전 오프라인 시험장"))GetComponent<PvpBootstrap>().StartPractice();GUILayout.BeginHorizontal();networkAddress=GUILayout.TextField(networkAddress,45);networkPort=GUILayout.TextField(networkPort,5);GUILayout.EndHorizontal();GUILayout.BeginHorizontal();if(GUILayout.Button("이전 IP 호스트"))Network(true);if(GUILayout.Button("이전 IP 참가"))Network(false);GUILayout.EndHorizontal();}
    var unified=FindObjectOfType<UnifiedModeBootstrap>();if(unified&&GUILayout.Button("모드 선택으로 돌아가기"))unified.ReturnToMenu();
    if(GUILayout.Button("나가기"))Application.Quit();GUILayout.EndScrollView();GUILayout.EndArea();
   }
+  void Native(bool host){ushort port;int seconds=1200;if(!ushort.TryParse(networkPort,out port)||port==0){message="포트를 확인하세요";return;}if(host&&(!int.TryParse(duration,out seconds)||seconds<30||seconds>7200)){message="경기 시간을 입력하세요";return;}GetComponent<PvpBootstrap>().StartNativeLan(host,host?"127.0.0.1":networkAddress,port,seconds);}
+  void DrawNativeLobby(){var lan=PvpNativeLan.Instance;if(!lan||lan.InMatch)return;GUILayout.BeginArea(new Rect((Screen.width-540)/2,(Screen.height-330)/2,540,330),GUI.skin.box);GUILayout.Label("은계 PVP · LAN 대기실");GUILayout.Label(lan.Status);GUILayout.Label("호스트 IP "+(lan.IsHost?PvpNativeLan.LocalAddress():lan.Address)+" : "+lan.Port);GUILayout.Label("경기 "+lan.Seconds+"초 · 빈자리는 봇으로 진행");for(int i=0;i<4;i++)GUILayout.Label(lan.Label(i));if(lan.IsHost&&!lan.Started&&GUILayout.Button("현재 인원으로 경기 시작"))lan.StartMatch();if(GUILayout.Button("방에서 나가기"))lan.LeaveToMenu();GUILayout.EndArea();}
   void Network(bool host){ushort port;if(!ushort.TryParse(networkPort,out port)||port==0){message="유효한 포트를 입력하세요.";return;}GetComponent<PvpBootstrap>().StartNetwork(host,networkAddress,port);}
  }
 }

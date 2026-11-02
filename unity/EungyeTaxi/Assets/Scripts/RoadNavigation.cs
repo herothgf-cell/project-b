@@ -3,6 +3,7 @@ using UnityEngine;
 
 public partial class RoadNavigation : MonoBehaviour {
  public bool HasDestination {get{return active&&!freeGuidance;}}
+ DriveSession NetworkSession {get{var t=vehicle?vehicle.GetComponent<TaxiController>():null;return t&&t.business?t.business.session:null;}}
  public HdRoadGraph hd;MapData editorMap;
  public HdRoadGraph.RoutePath hdRoute;
  HdRoadGraph.RoutePath viaObservedRoute;Vector3 viaPreviousPosition;float viaPreviousRemaining,viaSampleTime;bool viaSampled;
@@ -147,7 +148,7 @@ public partial class RoadNavigation : MonoBehaviour {
  public void SetHdDestination(int edge,float at){avoidEdge=-1;PassedRequiredVia=RequiredVia=-1;freeGuidance=false;hdGoal=edge;hdGoalAt=at;hdRoute=null;goal=null;active=true;if(edge>=0)destination=hd.paths[edge].Position(at);Refresh();}
  public bool StartFreeGuidance(){avoidEdge=-1;if(!hybrid||hd==null||vehicle==null)return false;float at;int start=hd.Nearest(vehicle.position,vehicle.forward,out at);var route=hd.Forward(start,at);if(route==null)return false;freeGuidance=true;goal=null;active=true;UseFreeRoute(route);RefreshHd();return true;}
  void UseFreeRoute(HdRoadGraph.RoutePath route){hdRoute=route;hdGoal=route.edges[route.edges.Count-1];hdGoalAt=hd.paths[hdGoal].length;destination=route.path.Position(route.path.length);}
- public void TogglePreference(){PreferLargeRoad=false;PreferFastest=!PreferFastest;selected=null;if(hd!=null)hdRoute=null;rerouteNotice=PreferenceLabel+" 경로 선택";noticeUntil=Time.time+5;if(active)Refresh();}
+ public void TogglePreference(){if(PvpNativeLan.Route(NetworkSession,"nav-preference"))return;PreferLargeRoad=false;PreferFastest=!PreferFastest;selected=null;if(hd!=null)hdRoute=null;rerouteNotice=PreferenceLabel+" 경로 선택";noticeUntil=Time.time+5;if(active)Refresh();}
  public void Clear(){avoidEdge=-1;PreferLargeRoad=false;PassedRequiredVia=RequiredVia=-1;freeGuidance=false;active=false;selected=null;hdRoute=null;path.Clear();alternativePath.Clear();if(line!=null)line.positionCount=0;remaining=estimatedSeconds=alternativeSeconds=alternativeDistance=0;rerouteNotice="";instruction="호출을 선택하거나 길가 손님을 찾아보세요";}
  void Update(){if(active&&Time.time>=nextUpdate){using(TrafficPerformanceProbe.Measure("Navigation.Refresh"))Refresh();nextUpdate=Time.time+1;}}
  static bool SameRoute(RouteResult a,RouteResult b){if(a==null||b==null||a.chain.Count!=b.chain.Count)return false;for(int i=0;i<a.chain.Count;i++)if(a.chain[i]!=b.chain[i])return false;return true;}
@@ -192,6 +193,7 @@ public partial class RoadNavigation : MonoBehaviour {
   if(line!=null){line.positionCount=freeGuidance?0:path.Count;for(int i=0;i<line.positionCount;i++)line.SetPosition(i,path[i]+Vector3.up*.19f);}
  }
  void FixedUpdate(){
+  if(PvpNativeLan.IsReplica(NetworkSession))return;
   if(!active||hdRoute==null||vehicle==null){viaSampled=false;return;}
   float error;float progress=ProjectVehicle(out error);
   int target=RequiredVia>=0?RequiredVia:ObservedEdge;
@@ -248,7 +250,7 @@ public partial class RoadNavigation : MonoBehaviour {
  // Pre-boarding eligibility must inspect the passenger destination without changing pickup guidance.
  public bool HasLargeRoadAlternativeTo(MapStop goal){if(hd==null||vehicle==null||goal==null||passengerRoadCosts==null)return false;float at;int start=hd.Nearest(vehicle.position,vehicle.forward,out at);if(start<0)return false;var route=hd.Route(start,at,goal.laneEdge,goal.laneAt,WithAvoidance(passengerRoadCosts));if(route==null)return false;foreach(int edge in route.edges)if(passengerRoadWidths[edge]>=12)return true;return false;}
  public bool HasLargeRoadAlternative(){if(hd==null||!active)return false;float at;int edge=hd.Nearest(vehicle.position,vehicle.forward,out at);var r=GoalRoute(edge,at,passengerRoadCosts);if(r==null)return false;foreach(int e in r.edges)if(passengerRoadWidths[e]>=12)return true;return false;}
- public bool SetPassengerPreference(bool large,bool fastest){if(large&&!HasLargeRoadAlternative())return false;PreferLargeRoad=large;PreferFastest=fastest;selected=null;hdRoute=null;if(active)Refresh();return path.Count>1;}
+ public bool SetPassengerPreference(bool large,bool fastest){if(PvpNativeLan.Route(NetworkSession,"nav-passenger",(large?1:0)|(fastest?2:0)))return true;if(large&&!HasLargeRoadAlternative())return false;PreferLargeRoad=large;PreferFastest=fastest;selected=null;hdRoute=null;if(active)Refresh();return path.Count>1;}
  public float LargeRoadShare(){if(hdRoute==null)return 0;float broad=0,total=0;foreach(int e in hdRoute.edges){total+=hd.paths[e].length;if(passengerRoadWidths[e]>=12)broad+=hd.paths[e].length;}return total>0?broad/total:0;}
  public bool RequestHdMovement(int side,bool change){
   if(hd==null||hdRoute==null||Time.timeScale==0)return false;

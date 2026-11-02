@@ -10,9 +10,9 @@ public sealed class RideCompletionPanel:MonoBehaviour {
  bool Automatic {get{foreach(var arg in Environment.GetCommandLineArgs())if(arg.EndsWith("Test"))return false;return !PracticeSession.Enabled&&!RoadMapRuntime.Trial;}}
  void Update(){if(!session||!session.business)return;int count=session.business.passengers.Count;if(count>observed){observed=count;if(Automatic)ShowLast();}else if(count<observed)observed=count;}
  public bool ShowLast(){if(Open||!session||session.jobs.Active||session.business.passengers.Count==0||session.EditorOpen)return false;
-  Result=session.business.passengers[session.business.passengers.Count-1];previousPause=session.paused;previousScale=Time.timeScale;Open=true;session.paused=true;Time.timeScale=0;return true;
+  Result=session.business.passengers[session.business.passengers.Count-1];previousPause=session.paused;previousScale=Time.timeScale;Open=true;if(!PvpNativeLan.RunningOnline){session.paused=true;Time.timeScale=0;}return true;
  }
- public void Close(){if(!Open)return;Open=false;session.paused=previousPause;Time.timeScale=(session.business.ShowingSummary||previousPause)?0:previousScale>0?previousScale:1;}
+ public void Close(){if(!Open)return;Open=false;if(PvpNativeLan.RunningOnline){session.paused=false;Time.timeScale=1;return;}session.paused=previousPause;Time.timeScale=(session.business.ShowingSummary||previousPause)?0:previousScale>0?previousScale:1;}
  public static string Duration(float value){int seconds=Mathf.CeilToInt(Mathf.Max(0,value));return seconds/60+"분 "+(seconds%60)+"초";}
  public string Receipt {get{return Result==null?"":RideReceiptSummary.Money(Result);}}
  void OnGUI(){if(!Open||Result==null)return;

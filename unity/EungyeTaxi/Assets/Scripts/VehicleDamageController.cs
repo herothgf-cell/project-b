@@ -38,6 +38,7 @@ public sealed class VehicleDamageController : MonoBehaviour {
     void OnCollisionStay(Collision collision){Observe(collision);}
     void OnCollisionExit(Collision collision){contacts.Remove(collision.collider);}
     void Observe(Collision collision){
+        if(PvpNativeLan.IsReplica(session))return;
         if(!Campaign||!session.business.ledger.Operating||session.business.preparing||session.paused||Time.timeScale<=0)return;
         float speed=0;bool contact=false;var other=collision.collider.GetComponentInParent<VehicleImpactMotion>();
         for(int i=0;i<collision.contactCount;i++){
@@ -59,6 +60,7 @@ public sealed class VehicleDamageController : MonoBehaviour {
     }
     public void TechnicalRecovery(){contacts.Clear();if(session&&session.business&&session.business.ledger!=null)Damage.Suppress(1);if(motion)motion.Sample();}
     void FixedUpdate(){
+        if(PvpNativeLan.IsReplica(session))return;
         if(!Campaign)return;contacts.RemoveWhere(c=>!c);Damage.Advance(Time.fixedDeltaTime,contacts.Count>0);
         if(!baysBuilt)BuildBays();
         // A paid reservation lasts until repair; temporary displacement never revokes it.
@@ -102,15 +104,16 @@ public sealed class VehicleDamageController : MonoBehaviour {
         session.taxi.SetSpawn(bay.position+Vector3.up*.15f,Quaternion.LookRotation(bay.direction));session.taxi.ResetTaxi();RestoringReservedBay=false;
         Notice="이미 지불한 정비 공간 복원 완료 · 추가 견인비/시간 없음";noticeUntil=Time.unscaledTime+6;if(checkpoint)session.business.SaveCheckpoint();return true;
     }
-    void Update(){if(!session||!session.business||session.business.ledger==null)return;if(!Damage.Disabled||string.IsNullOrEmpty(Damage.RepairBayId)){RestoringReservedBay=false;return;}if(Campaign&&!AtRepairBay&&Time.unscaledTime>=nextRestoreAttempt){nextRestoreAttempt=Time.unscaledTime+.5f;RestoreReservedBay();}}
-    public bool CanRepair {get{return !(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))&&Campaign&&session.business.ledger.Operating&&Damage.Durability<100&&session.jobs.trip.State!=TripState.OnTrip&&session.taxi.body.velocity.magnitude<.56f&&(AtRepairBay||session.services.AtRepairPump());}}
+    void Update(){if(PvpNativeLan.IsReplica(session))return;if(!session||!session.business||session.business.ledger==null)return;if(!Damage.Disabled||string.IsNullOrEmpty(Damage.RepairBayId)){RestoringReservedBay=false;return;}if(Campaign&&!AtRepairBay&&Time.unscaledTime>=nextRestoreAttempt){nextRestoreAttempt=Time.unscaledTime+.5f;RestoreReservedBay();}}
+    public bool CanRepair {get{return !(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))&&Campaign&&session.business.ledger.Operating&&Damage.Durability<100&&session.jobs.trip.State!=TripState.OnTrip&&(PvpNativeLan.IsReplica(session)?Mathf.Abs(session.taxi.Speed):session.taxi.body.velocity.magnitude)<.56f&&(AtRepairBay||session.services.AtRepairPump());}}
     public string RepairQuote {get{return "내구도 "+Damage.Durability+" → 100\n수리 "+Damage.RepairCost.ToString("N0")+"원 · "+Damage.RepairSeconds.ToString("0.#")+"초 (부족분 미납)\n청결·연료 유지 · 엔진 정지";}}
     public bool Repair(){
+        if(PvpNativeLan.Route(session,"repair"))return true;
         if(!CanRepair)return false;double seconds=Damage.RepairSeconds;int cost=Damage.RepairCost;
         if(!session.business.ledger.UseRepair(session.law.ids.Next("repair")))return false;
         session.jobs.AdvancePickupWait((float)seconds);TechnicalRecovery();Notice="수리 완료 · 내구도 100 · "+cost.ToString("N0")+"원 / "+seconds.ToString("0.#")+"초";noticeUntil=Time.unscaledTime+6;session.business.SaveCheckpoint();return true;
     }
-    public bool Tow(){if(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))return false;
+    public bool Tow(){if(PvpNativeLan.Route(session,"tow"))return true;if(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))return false;
         if(!Campaign||!Disabled||!session.business.ledger.Operating||session.business.ShowingSummary||AtRepairBay||RestoringReservedBay||session.FullMapOpen)return false;
         if(session.taxi.body.velocity.magnitude>=.56f&&Time.time-disabledSince<5){Notice="제동 후 정차하면 견인할 수 있습니다";return false;}
         Bay free=null;float distance=float.MaxValue;foreach(var bay in Bays)if(BayClear(bay)){float d=(bay.position-transform.position).sqrMagnitude;if(d<distance){free=bay;distance=d;}}
@@ -134,7 +137,7 @@ public sealed class VehicleDamageController : MonoBehaviour {
         }
         ledger.RequestClose("차량 고장 · 정비 보류");session.business.SaveCheckpoint();return true;
     }
-    void OnGUI(){if(session.IsSimulationBot)return;
+    void OnGUI(){if(session.IsSimulationBot||PvpNativeLan.IsRemoteHuman(session))return;
         if(!Campaign||session.business.preparing||session.business.ShowingSummary||session.RideResultOpen||session.FullMapOpen||session.PracticeMenuOpen)return;
         var style=new GUIStyle(GUI.skin.label){fontSize=16,wordWrap=true};style.normal.textColor=Color.white;GUI.depth=-140;
         if(Time.unscaledTime<noticeUntil&&!Disabled)GUI.Label(new Rect(Screen.width/2-230,165,460,65),Notice,style);

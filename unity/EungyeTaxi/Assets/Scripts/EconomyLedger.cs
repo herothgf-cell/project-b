@@ -39,6 +39,7 @@ public class EconomyLedger {
  public bool PvpProfile {get;private set;}
  public int PvpMeals {get;private set;}
  public int PvpRests {get;private set;}
+ public void ApplyNetworkPvpCounters(int meals,int rests){if(!PvpProfile||meals<0||rests<0)throw new ArgumentException("invalid PVP counters");PvpMeals=meals;PvpRests=rests;}
  public bool EnablePvpProfile(){if(!OneDay||!Operating||Account==null||Driver==null)return false;PvpProfile=true;return true;}
  public DriverCondition Driver {get;private set;}
  public string EndReason {get;private set;}

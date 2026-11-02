@@ -37,6 +37,8 @@ public sealed class PvpSimulationCallBoard {
         if(budget<=0&&Roadside.Length>0)retryAt=Time.time+2;
     }
     public bool CanGenerateAt(int pickup){if(ledger.IsClaimed(pickup))return false;float until;if(resting.TryGetValue(pickup,out until)&&Time.time<until)return false;foreach(var o in Offers)if(o!=null&&o.pickup==pickup)return false;foreach(var o in Roadside)if(o!=null&&o.pickup==pickup)return false;return true;}
+    public void ApplyNetworkView(JobOffer[] offers,JobOffer[] roadside){if(offers==null||offers.Length!=8||roadside==null||roadside.Length!=3)throw new ArgumentException("network call board");for(int i=0;i<Offers.Length;i++)Offers[i]=Stable(Offers[i],offers[i]);for(int i=0;i<Roadside.Length;i++)Roadside[i]=Stable(Roadside[i],roadside[i]);}
+    static JobOffer Stable(JobOffer old,JobOffer incoming){if(incoming!=null&&string.IsNullOrEmpty(incoming.candidateSeed))incoming=null;return old!=null&&incoming!=null&&old.candidateSeed==incoming.candidateSeed?old:incoming;}
     public JobOffer RoadsideAt(int pickup){return Array.Find(Roadside,o=>o!=null&&o.pickup==pickup);}
     public bool TryClaim(JobOffer offer,int driver){
         var pool=Array.IndexOf(Offers,offer)>=0?Offers:Roadside;

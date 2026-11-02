@@ -49,6 +49,7 @@ public sealed class UnifiedModeBootstrap : MonoBehaviour {
             if(session.business.IsRestoring){message="저장 복원이 끝난 뒤 다시 시도해 주세요.";return false;}
             if(!session.business.ResumeBlocked&&!session.business.SaveCheckpoint()){message="저장하지 못했습니다. 저장 상태를 확인한 뒤 다시 시도해 주세요.";return false;}
         }
+        if(PvpNativeLan.Instance)PvpNativeLan.Instance.StopTransport();
         Selected=Mode.Menu;PvpSimulationMode.Reset();Time.timeScale=1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);return true;
     }
@@ -60,7 +61,7 @@ public sealed class UnifiedModeBootstrap : MonoBehaviour {
             GUILayout.Label("은계 택시 시뮬레이터");GUILayout.Space(20);
             if(GUILayout.Button("싱글 플레이 · 은계 영업 이어하기",GUILayout.Height(55)))StartSingle();
             GUILayout.Label("기존 캠페인의 준비·운송·정산을 이어갑니다.");GUILayout.Space(12);
-            if(GUILayout.Button("PVP · 자체 도시에서 봇 3대와 경기",GUILayout.Height(55)))StartPvp();
+            if(GUILayout.Button("PVP · 자체 도시 봇 / LAN 사람 대전",GUILayout.Height(55)))StartPvp();
             GUILayout.Label("경기 시간 직접 설정 · 캠페인 저장과 분리");GUILayout.Space(12);
             if(GUILayout.Button("게임 종료"))Application.Quit();GUILayout.EndArea();return;
         }

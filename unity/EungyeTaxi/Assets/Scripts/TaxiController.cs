@@ -1,13 +1,15 @@
 using UnityEngine;
 public class TaxiController : MonoBehaviour {
     public Rigidbody body; public WheelCollider[] wheels=new WheelCollider[4]; Transform[] visuals=new Transform[4];
+    public bool NetworkReplica; public Vector3 ReplicaVelocity; public float ReplicaSteering;
     public bool automated; public float autoThrottle,autoSteer,autoServiceBrake; public bool autoBrake;
     public AssistedDriveController assistance;public BusinessProgress business;
     float throttle,steer,motorDemand; bool brake; Vector3 spawn; Quaternion spawnRotation;
-    public bool PvpMapInputBlocked {get{return business&&business.session&&business.session.simulationMatch&&(business.session.FullMapOpen||business.session.services&&business.session.services.open);}}
-    public float SteeringInput {get{return steer;}}
+    public bool PvpMapInputBlocked {get{return business&&business.session&&(PvpNativeLan.UiBlocked(business.session)||business.session.simulationMatch&&(business.session.FullMapOpen||business.session.services&&business.session.services.open));}}
+    public Vector3 ObservedVelocity {get{return NetworkReplica?ReplicaVelocity:body.velocity;}}
+    public float SteeringInput {get{return NetworkReplica?ReplicaSteering:steer;}}
     public bool CornerAssisting {get;private set;}
-    public float Speed {get{return Vector3.Dot(body.velocity,transform.forward);}}
+    public float Speed {get{return Vector3.Dot(NetworkReplica?ReplicaVelocity:body.velocity,transform.forward);}}
     public bool ReverseRequested {get{return throttle<-.1f;}}
     public void Create(Vector3 position,Quaternion rotation) {
         spawn=position; spawnRotation=rotation; transform.SetPositionAndRotation(position,rotation);
@@ -29,6 +31,7 @@ public class TaxiController : MonoBehaviour {
         foreach(var tr in GetComponentsInChildren<Transform>()) tr.gameObject.layer=8;
     }
     void Update() {
+        if(NetworkReplica)return;
         if(Time.timeScale==0)return;
         if(automated) {throttle=autoThrottle; steer=autoSteer; brake=autoBrake;} else {
             throttle=(Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow)||Input.GetKey(KeyCode.JoystickButton0)?1:0)-(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)||Input.GetKey(KeyCode.JoystickButton1)?1:0);
@@ -42,6 +45,7 @@ public class TaxiController : MonoBehaviour {
         if(transform.position.y < -5 || transform.position.y > 50) RequestReset();
     }
     void FixedUpdate() {
+        if(NetworkReplica)return;
         // Automated validation commands are produced per physics tick, including accelerated runs.
         if(automated){throttle=autoThrottle;steer=autoSteer;brake=autoBrake;}
         var manual=DriveMath.Resolve(throttle,Speed,brake);
@@ -76,6 +80,7 @@ public class TaxiController : MonoBehaviour {
     }
     public void SetSpawn(Vector3 position,Quaternion rotation){spawn=position;spawnRotation=rotation;}
     public void RequestReset() {
+        if(PvpNativeLan.Route(business?business.session:null,"reset"))return;
         var coach=PracticeSession.Enabled?FindObjectOfType<PracticeCoach>():null;
         if(coach&&coach.Active&&coach.GetComponent<PracticeSession>().RetryCurrent())return;
         ResetTaxi();

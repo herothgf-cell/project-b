@@ -1,5 +1,9 @@
 # 프로토타입 개발 체크리스트
 
+## PVP LAN·A3 — 2026-11-02
+
+[현재 구현/접속](content-design/pvp/30-native-lan.md), [지도 시안](content-design/pvp/29-city-a3-proposal.md), [검사 결과](work-history/2026-11-02-pvp-native-lan.md). 온라인 기존 native 연결/봇승계 구현, 최종 검사 결과는 이력에서 구분한다. A3 실제 지도·다른PC/사람4명/장시간 수용은 미완료다.
+
 ## PVP 승객 요소·봇 응대 — 2026-11-02
 
 - [x] 공유8호출+별도길가3명/정차현장선점, 진행비율별수요·지도대기자 연결.
