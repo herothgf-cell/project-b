@@ -37,7 +37,7 @@ public partial class PassengerJobs : MonoBehaviour {
   if(reset||now>=nextWaitingRefresh){if(reset){waitingSeed=seed;waitingGeneration=0;}else waitingGeneration++;nextWaitingRefresh=now+PassengerWaitingPolicy.RefreshSeconds;
    for(int i=0;i<stops.Length;i++)if(reset||Vector3.SqrMagnitude(stops[i].Passenger-session.taxi.transform.position)>90*90)roadsideWaiting[i]=PassengerWaitingPolicy.Present(waitingSeed,waitingGeneration,runtimeStopIds[i]);
   }
-  for(int i=0;i<people.Length;i++)if(people[i])people[i].SetActive(!session.IsSimulationBot&&HasWaitingPassenger(i));
+  var occupancy=session.GetComponent<StopOccupancySystem>();for(int i=0;i<people.Length;i++)if(people[i])people[i].SetActive(!session.IsSimulationBot&&(occupancy&&occupancy.IsWalkingPassenger(i)||HasWaitingPassenger(i)));
  }
  public int SettlementPolicyVersion {get;private set;} public int InitialFare {get;private set;} public bool DrivingFareCaptured {get;private set;} public int BoardingDrivingScore {get;private set;} public int ComfortRecovered {get;private set;}
  public PassengerReward RequestReward {get;private set;}
@@ -202,8 +202,10 @@ public partial class PassengerJobs : MonoBehaviour {
  float OfferRank(JobOffer o,double elapsed){if(Time.time<cooldown[o.pickup]||StopOccupied(o.pickup)||!Finite(o.distance))return float.PositiveInfinity;float pickup=PickupDistance(o.pickup);if(!Finite(pickup))return float.PositiveInfinity;float meal=0;if(elapsed>=300&&elapsed<900&&session.services){var drop=stops[o.drop];meal=DirectedDistance(nav.hd,drop.Kerb,drop.Direction,session.services.MealStop);}int id=0;int.TryParse(o.scenarioId.Replace("PS",""),out id);return OneDayOfferPolicy.Rank(o.distance,pickup,meal,elapsed,id,generation)+(float)DemandRank(o,generationDemandPhase)*1000+PassengerStopCatalog.RepeatPenalty(o.pickup,o.drop,previousPickup,previousDrop);}
  public void ResumePickupNavigation(){if(trip.State==TripState.ToPickup&&current!=null)SetGoal(current.pickup);}
  public void AdvancePickupWait(float seconds){if(trip.State!=TripState.ToPickup)return;trip.Tick(seconds);if(trip.PickupExpired){message="승객 대기 시간 초과 · 호출 취소 / 요금 없음";Finish();if(session.law)session.law.tripId="";}}
- void SetGoal(int index){nav.SetDestination(stops[index]);marker.transform.rotation=Quaternion.LookRotation(stops[index].Direction);marker.SetActive(true);marker.transform.position=stops[index].Kerb+Vector3.up*.085f;}
- public bool At(int index){return !StopOccupied(index)&&stops[index].CanStop(session.taxi.transform.position,session.taxi.transform.forward,session.taxi.body.velocity.magnitude);}
+ public MapStop EffectiveStop(int index){var occupancy=session?session.GetComponent<StopOccupancySystem>():null;MapStop alternative;var entry=Catalog==null?null:Catalog.Entry(index);return occupancy&&entry!=null&&occupancy.TryGetAlternative(entry.StopId,out alternative)?alternative:stops[index];}
+ public void RefreshActiveGoal(){if(Active&&current!=null)SetGoal(trip.State==TripState.ToPickup?current.pickup:PassengerViaPending?passengerVia:current.drop);}
+ void SetGoal(int index){var occupancy=session?session.GetComponent<StopOccupancySystem>():null;if(occupancy)occupancy.NotifyGoalChanged();var goal=EffectiveStop(index);nav.SetDestination(goal);marker.transform.rotation=Quaternion.LookRotation(goal.Direction);marker.SetActive(true);marker.transform.position=goal.Kerb+Vector3.up*.085f;}
+ public bool At(int index){var occupancy=session?session.GetComponent<StopOccupancySystem>():null;var goal=EffectiveStop(index);bool alternate=!ReferenceEquals(goal,stops[index]);return (!StopOccupied(index)||alternate)&&(!occupancy||occupancy.AlternativeReadyFor(index)&&occupancy.AlternativeBayClearFor(index))&&goal.CanStop(session.taxi.transform.position,session.taxi.transform.forward,session.taxi.body.velocity.magnitude);}
  float PickupBudget(JobOffer offer){
   return OneDayOfferPolicy.PickupSeconds(DirectedDistance(nav.hd,session.taxi.transform.position,session.taxi.transform.forward,stops[offer.pickup]));
  }

@@ -1,16 +1,14 @@
 using UnityEngine;
 
-// Only catalog-validated fictional bays. The current map has no safe <=150m
-// candidate pair: waiting is the shipped fallback, never sidewalk improvisation.
-public sealed class StopOccupancySystem : MonoBehaviour {
+// Only catalog-validated fictional bays; never infer real-world permission.
+public sealed partial class StopOccupancySystem : MonoBehaviour {
  public DriveSession session;StopOccupancyPolicy policy=new StopOccupancyPolicy();GameObject car;
  int sequence,observedDay;double nextAt=60,lastElapsed=-1;string attemptedTrip="",observedCampaign;MapStop stop;
- public bool IsOccupied(string stopId){var s=policy.Capture();return policy.Blocking&&s.stopId==stopId;}
+ public bool IsOccupied(string stopId){var s=policy.Capture();return (policy.Blocking||s.alternativeReturning)&&s.stopId==stopId;}
  public bool IsOccupied(int index){var e=session.jobs.Catalog.Entry(index);return e!=null&&IsOccupied(e.StopId);}
- public bool TryGetAlternative(string stopId,out MapStop alternative){alternative=null;return false;}
- public bool AffectsActive {get{var j=session.jobs;return j.Active&&j.current!=null&&IsOccupied(j.trip.State==TripState.ToPickup?j.current.pickup:j.PassengerViaPending?j.PassengerViaStop:j.current.drop);}}
- public string Status {get{var s=policy.Capture();return AffectsActive?"승하차 공간 일시 점유 · "+(s.remaining>0?Mathf.CeilToInt(s.remaining)+"초 후 이동":"차량이 앞쪽으로 이동 중")+"\n검증된 근거리 대체 지점 없음 · 원래 위치 유지 · 기한 보호1회":"";}}
- public bool Resolve(bool useAlternative){if(!AffectsActive||useAlternative||session.paused||session.taxi.body.velocity.magnitude>.1f)return false;Protect();session.jobs.message=Status;return true;}
+ public bool AffectsActive {get{var j=session.jobs;return j.Active&&j.current!=null&&(IsOccupied(j.trip.State==TripState.ToPickup?j.current.pickup:j.PassengerViaPending?j.PassengerViaStop:j.current.drop)||AlternativeMatchesActive());}}
+ public string Status {get{var s=policy.Capture();if(!AffectsActive)return "";if(s.alternativeAccepted&&!s.alternativeReturning)return s.alternativePickup?"게임 전용 대체 승차 지점 · 승객 이동 "+Mathf.FloorToInt(s.walkedMetres)+"/"+Mathf.CeilToInt(s.walkingMetres)+"m":"게임 전용 대체 하차 지점 · 승객은 차 안에 있습니다";return "승하차 공간 일시 점유 · "+(s.remaining>0?Mathf.CeilToInt(s.remaining)+"초 후 이동":"차량이 앞쪽으로 이동 중")+"\n"+(CanOfferAlternative?"검증된 게임 전용 대체 지점 선택 가능":"원래 위치 대기")+" · 기한 보호1회";}}
+ public bool Resolve(bool useAlternative){if(!AffectsActive||session.paused||session.taxi.body.velocity.magnitude>.1f)return false;if(useAlternative)return AcceptAlternative();Protect();session.jobs.message=Status;return true;}
  bool Visible(Vector3 p){foreach(var camera in Camera.allCameras){if(!camera.enabled)continue;var v=camera.WorldToViewportPoint(p+Vector3.up);if(v.z>0&&v.z<camera.farClipPlane&&v.x>-.05f&&v.x<1.05f&&v.y>-.05f&&v.y<1.05f)return true;}return false;}
  bool Clear(Vector3 p,bool newSpawn=false){
   var j=session.jobs;if(Vector3.Distance(p,session.taxi.transform.position)<(newSpawn?7:4.8f))return false;
@@ -23,7 +21,7 @@ public sealed class StopOccupancySystem : MonoBehaviour {
   var entry=session.jobs.Catalog.Entry(index);if(entry==null||!session.jobs.Catalog.IsAdditional(index)||entry.EvidenceStatus!="game-only-field-unverified")return false;
   var s=entry.Stop;if(Vector3.Distance(s.Kerb,session.taxi.transform.position)<100||Visible(s.Kerb))return false;
   stop=s;if(!Clear(s.Kerb,true)||!Clear(s.Kerb+s.Direction*7,true))return false;
-  if(!policy.Begin("occupancy:"+session.law.ids.campaign+":"+(++sequence),entry.StopId))return false;
+  if(policy.AlternativeActive||!policy.Begin("occupancy:"+session.law.ids.campaign+":"+(++sequence),entry.StopId))return false;
   MakeCar();Protect();session.jobs.RefreshWaitingPassengers();session.business.SaveCheckpoint();return true;
  }
  void MakeCar(){if(car||stop==null)return;car=GameObject.CreatePrimitive(PrimitiveType.Cube);car.name="일시 정차 차량 · "+policy.Capture().eventId;car.transform.SetPositionAndRotation(stop.Kerb+stop.Direction*policy.Capture().exitMetres+Vector3.up*.8f,Quaternion.LookRotation(stop.Direction));car.transform.localScale=new Vector3(1.8f,1.35f,4.3f);car.GetComponent<Renderer>().sharedMaterial=WorldBuilder.Mat("Occupancy car",new Color(.32f,.39f,.46f));var cabin=GameObject.CreatePrimitive(PrimitiveType.Cube);cabin.transform.SetParent(car.transform,false);cabin.transform.localPosition=new Vector3(0,.5f,-.08f);cabin.transform.localScale=new Vector3(.8f,.4f,.5f);cabin.GetComponent<Renderer>().sharedMaterial=WorldBuilder.Mat("Occupancy windows",new Color(.08f,.15f,.2f));if(Application.isPlaying)Destroy(cabin.GetComponent<Collider>());else DestroyImmediate(cabin.GetComponent<Collider>());}
@@ -39,6 +37,7 @@ public sealed class StopOccupancySystem : MonoBehaviour {
   }
   observedDay=day;observedCampaign=campaign;
   float delta=lastElapsed<0?0:(float)System.Math.Max(0,now-lastElapsed);lastElapsed=now;
+  AdvanceAlternativeRuntime(delta);
   if(policy.Active){
    if(!car&&stop!=null&&Clear(stop.Kerb+stop.Direction*policy.Capture().exitMetres))MakeCar();
    Protect();var old=policy.Capture();bool clear=car&&Clear(stop.Kerb+stop.Direction*Mathf.Min(7,old.exitMetres+1));policy.Advance(delta,clear);
@@ -50,7 +49,7 @@ public sealed class StopOccupancySystem : MonoBehaviour {
   else if(now>=nextAt){nextAt=now+120;var entries=j.Catalog.Entries;for(int n=0;n<entries.Count;n++){int index=(n+sequence)%entries.Count;if(Spawn(index))break;}}
  }
  // Presentation lives in ServiceLawZones' sliding TIP, not a floating modal.
- public StopOccupancySnapshot Capture(){var s=policy.Capture();s.sequence=sequence;s.day=observedDay;s.campaign=observedCampaign;s.nextAt=nextAt;s.attemptedTrip=attemptedTrip;return s;}
- public void Restore(StopOccupancySnapshot s){observedCampaign=s!=null&&!string.IsNullOrEmpty(s.campaign)?s.campaign:session.law.ids.campaign;observedDay=s!=null&&s.day>0?s.day:session.business.ledger.Day;lastElapsed=session.business.ledger.Elapsed;policy=StopOccupancyPolicy.Restore(s);if(car){Destroy(car);car=null;}if(s==null||s.version==0)return;sequence=s.sequence;nextAt=s.nextAt;attemptedTrip=s.attemptedTrip;stop=null;if(policy.Active){int i=session.jobs.Catalog.IndexOf(s.stopId);if(!session.jobs.Catalog.IsAdditional(i))throw new System.ArgumentException("Saved occupancy bay unavailable");stop=session.jobs.stops[i];} }
+ public StopOccupancySnapshot Capture(){ReconcileAlternativeTrip();var s=policy.Capture();s.sequence=sequence;s.day=observedDay;s.campaign=observedCampaign;s.nextAt=nextAt;s.attemptedTrip=attemptedTrip;return s;}
+ public void Restore(StopOccupancySnapshot s){observedCampaign=s!=null&&!string.IsNullOrEmpty(s.campaign)?s.campaign:session.law.ids.campaign;observedDay=s!=null&&s.day>0?s.day:session.business.ledger.Day;lastElapsed=session.business.ledger.Elapsed;policy=StopOccupancyPolicy.Restore(s);if(car){Destroy(car);car=null;}if(s==null||s.version==0)return;sequence=s.sequence;nextAt=s.nextAt;attemptedTrip=s.attemptedTrip;stop=null;if(policy.Active){int i=session.jobs.Catalog.IndexOf(s.stopId);if(!session.jobs.Catalog.IsAdditional(i))throw new System.ArgumentException("Saved occupancy bay unavailable");stop=session.jobs.stops[i];} RestoreAlternative(); }
  void OnDestroy(){if(car){if(Application.isPlaying)Destroy(car);else DestroyImmediate(car);}}
 }

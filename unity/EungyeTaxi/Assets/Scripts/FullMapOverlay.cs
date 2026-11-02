@@ -68,7 +68,7 @@ public partial class FullMapOverlay : MonoBehaviour {
  void OnDisable(){if(IsOpen)Close();}
  Vector2 Project(Vector3 p,Rect map){float span=Mathf.Max(session.world.map.width,session.world.map.depth);var unit=new Vector2(.5f+(p.x-session.world.map.width/2)/span,.5f-(p.z-session.world.map.depth/2)/span);return map.center+(unit-center)*Mathf.Min(map.width,map.height)*ZoomLevel;}
  void OnGUI(){if(!IsOpen)return;if(text==null){text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true};heading=new GUIStyle(text){font=KoreanText.BoldFont,fontSize=22};button=KoreanText.Button(14);text.normal.textColor=heading.normal.textColor=Color.white;}GUI.depth=-220;GUI.ModalWindow(94721,new Rect(0,0,Screen.width,Screen.height),Draw,GUIContent.none,GUIStyle.none);}
- public bool FocusStop(int index){if(index<0||index>=session.jobs.stops.Length)return false;FocusWorld(session.jobs.stops[index].V());return true;}
+ public bool FocusStop(int index){if(index<0||index>=session.jobs.stops.Length)return false;FocusWorld(session.jobs.Active?session.jobs.EffectiveStop(index).V():session.jobs.stops[index].V());return true;}
  public bool SelectOffer(int index){var j=session.jobs;if(!IsOpen||j.Active||index<0||index>=j.offers.Length||j.offers[index]==null)return false;HideFacilityPlanner();filterScroll=Vector2.zero;SelectedOffer=index;selectedOffer=j.offers[index];selectedPlace=null;acceptFeedback="";previewPath=j.nav.Find(j.stops[selectedOffer.pickup],j.stops[selectedOffer.drop]);pickupPath=j.nav.PreviewTo(j.stops[selectedOffer.pickup]);float distance=PassengerJobs.DirectedDistance(j.nav.hd,session.taxi.transform.position,session.taxi.transform.forward,j.stops[selectedOffer.pickup]);selectedPickupReachable=!float.IsInfinity(distance)&&!float.IsNaN(distance);FitRoutes(pickupPath,previewPath);RefreshRoutePaint(true);return true;}
  public bool FocusSelectedStop(bool pickup){var o=session.jobs.Active?session.jobs.current:selectedOffer;return o!=null&&FocusStop(pickup?o.pickup:o.drop);}
  public bool AcceptSelected(){var j=session.jobs;string reason=AcceptBlockedReason;if(!string.IsNullOrEmpty(reason)){acceptFeedback=reason;return false;}int index=SelectedOffer;Close();bool accepted=j.Accept(index);if(!accepted){string message=j.message;Open();acceptFeedback=string.IsNullOrEmpty(message)?"호출을 수락하지 못했습니다 · 목록에서 다시 선택하세요":message;}else acceptFeedback="";return accepted;}
@@ -86,7 +86,7 @@ public partial class FullMapOverlay : MonoBehaviour {
   if(selectedPlace!=null){var p=Project(selectedPlace.position,map);Dot(p,Color.magenta,10);}
 
   var occupied=new List<Rect>();
-  if(jobs.Active&&jobs.current!=null)foreach(int index in ActiveStopPins){var pin=Project(jobs.stops[index].V(),map);if(map.Contains(pin)){occupied.Add(StopPinLabel(pin,map));occupied.Add(new Rect(pin.x-12,pin.y-12,24,24));}}
+  if(jobs.Active&&jobs.current!=null)foreach(int index in ActiveStopPins){var pin=Project(jobs.EffectiveStop(index).V(),map);if(map.Contains(pin)){occupied.Add(StopPinLabel(pin,map));occupied.Add(new Rect(pin.x-12,pin.y-12,24,24));}}
   foreach(var marker in VisibleMarkers()){if(marker.named&&marker.label!="정체·정차"&&marker.label!="일시 점유")continue;
    var p=Project(marker.position,map);if(!map.Contains(p))continue;Dot(p,Color.black,marker.named?13:7);Dot(p,marker.color,marker.named?9:4);
    if(marker.named){var box=LawZoneMapLayout.Place(p,new Vector2(82,26),map,occupied);occupied.Add(box);Fill(box,new Color(.05f,.12f,.15f,.9f));GUI.Label(box,marker.label,text);}
@@ -137,7 +137,7 @@ public partial class FullMapOverlay : MonoBehaviour {
  }
  public int AvailableCallCount {get{if(session.jobs.Active)return 0;int count=0;foreach(var o in session.jobs.offers)if(o!=null)count++;return count;}}
  static Rect StopPinLabel(Vector2 p,Rect map){return new Rect(Mathf.Clamp(p.x+32,map.xMin,map.xMax-54),Mathf.Clamp(p.y-15,map.yMin,map.yMax-30),54,30);}
- void StopPin(int stop,string caption,Color color,Rect map){var target=session.jobs.stops[stop];var p=Project(target.V(),map);if(!map.Contains(p))return;var old=GUI.backgroundColor;GUI.backgroundColor=color;if(GUI.Button(StopPinLabel(p,map),caption,button))FocusStop(stop);if(GUI.Button(new Rect(p.x-10,p.y-10,20,20),new GUIContent("",caption+" · 화살표 방향으로 정차")))FocusStop(stop);GUI.backgroundColor=old;
+ void StopPin(int stop,string caption,Color color,Rect map){var target=session.jobs.Active?session.jobs.EffectiveStop(stop):session.jobs.stops[stop];var p=Project(target.V(),map);if(!map.Contains(p))return;var old=GUI.backgroundColor;GUI.backgroundColor=color;if(GUI.Button(StopPinLabel(p,map),caption,button))FocusStop(stop);if(GUI.Button(new Rect(p.x-10,p.y-10,20,20),new GUIContent("",caption+" · 화살표 방향으로 정차")))FocusStop(stop);GUI.backgroundColor=old;
   // Map north points up: the stop's lane heading, never its lateral kerb offset.
   var forward=new Vector2(target.dx,-target.dz).normalized;if(forward.sqrMagnitude<.1f)return;var side=new Vector2(-forward.y,forward.x);var tip=p+forward*28;var a=tip-forward*10+side*7;var b=tip-forward*10-side*7;
   foreach(float width in new[]{8f,4f}){var paint=width>4?Color.black:color;Line(p,tip,paint,width);Line(a,tip,paint,width);Line(tip,b,paint,width);}
