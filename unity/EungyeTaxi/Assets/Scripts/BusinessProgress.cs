@@ -147,7 +147,20 @@ public class BusinessProgress : MonoBehaviour {
   if(live.operationVersion!=1||live.signalsPresent&&live.signals==null||live.lawObservationPresent&&live.lawObservation==null)throw new ArgumentException("Invalid live operation state");
   if(!live.signalsPresent)live.signals=null;if(!live.lawObservationPresent)live.lawObservation=null;
   TaxiSignals.ValidateSnapshot(live.signals);var law=live.lawObservation;if(law==null)return;
+  NormalizeLawObservation(law);
   foreach(float value in new[]{law.wrongSeconds,law.wrongDistance,law.clearSeconds})if(!Valid(value)||value<0)throw new ArgumentException("Invalid law observation time");
+
+ }
+ static bool EmptyRoadObservation(RoadObservation o){return o==null||!o.known&&!o.trafficClear&&!o.dedicated&&!o.pedestrianGreen&&(int)o.forward==0&&(int)o.right==0&&(int)o.pedestrian==0;}
+ static bool EmptyLawEntry(LawEntrySnapshot e){return e==null||string.IsNullOrEmpty(e.junction)&&string.IsNullOrEmpty(e.id)&&e.axis==0&&e.sign==0&&e.direction==Vector3.zero&&!e.edited&&!e.uturnSigned&&!e.uturnAllowed&&!e.stopped&&!e.pedestrianYield&&!e.encroached&&!e.entered&&(int)e.left==0&&e.necessaryBefore==0&&!e.slowPresent&&(e.slow==null||e.slow.version==1&&e.slow.observedSeconds==0&&e.slow.continuousExcess==0&&!e.slow.violated&&!e.slow.necessary)&&EmptyRoadObservation(e.observed);}
+ static bool EmptyUpstream(UpstreamUturnSnapshot u){return u==null||string.IsNullOrEmpty(u.connector)&&string.IsNullOrEmpty(u.junction)&&string.IsNullOrEmpty(u.lane)&&string.IsNullOrEmpty(u.id)&&u.axis==0&&u.sign==0&&!u.allowed&&!u.confirmed&&!u.yieldViolated&&EmptyRoadObservation(u.observation);}
+ public static void NormalizeLawObservation(DrivingLawSnapshot law){
+  if(law==null)return;if(law.observationVersion<0||law.observationVersion>1)throw new ArgumentException("Unknown law observation version");
+  if(law.observationVersion==1){if(!law.entryPresent)law.entry=null;if(!law.upstreamPresent)law.upstreamUturn=null;}
+  else{if(EmptyLawEntry(law.entry))law.entry=null;if(EmptyUpstream(law.upstreamUturn))law.upstreamUturn=null;}
+  var u=law.upstreamUturn;if(law.observationVersion==1&&law.upstreamPresent&&u==null)throw new ArgumentException("Missing upstream turn state");
+  if(u!=null&&(string.IsNullOrEmpty(u.connector)||string.IsNullOrEmpty(u.junction)||string.IsNullOrEmpty(u.lane)||string.IsNullOrEmpty(u.id)||u.axis<0||u.axis>1||(u.sign!=-1&&u.sign!=1)||u.observation==null))throw new ArgumentException("Invalid upstream turn state");
+  if(law.observationVersion==1&&law.entryPresent&&law.entry==null)throw new ArgumentException("Missing law entry");
   var e=law.entry;if(e==null)return;
   if(string.IsNullOrEmpty(e.junction)||string.IsNullOrEmpty(e.id)||e.axis<0||e.axis>1||(e.sign!=-1&&e.sign!=1)||e.observed==null||!Valid(e.direction.x)||!Valid(e.direction.y)||!Valid(e.direction.z)||e.direction.sqrMagnitude<.5f||e.necessaryBefore<0)throw new ArgumentException("Invalid live law entry");
   if(e.slowPresent){if(e.slow==null)throw new ArgumentException("Missing slow-turn state");e.slow.Validate();}else e.slow=null;

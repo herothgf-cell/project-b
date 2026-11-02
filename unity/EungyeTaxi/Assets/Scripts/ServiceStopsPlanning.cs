@@ -54,7 +54,7 @@ public partial class ServiceStops {
   if(queuedSite==null)return;
   bool locked=session.simulationMatch&&session.simulationMatch.ServiceLocked(session);
   if(!locked&&!r.queue.IsAdmitted(GetInstanceID())&&r.queue.TryAdmit(queuedSite,GetInstanceID(),BayClear(queuedBay)))grantedAt=Time.time;
-  if(HumanFacilityUser&&queuedAction>=0&&!session.paused&&!locked){int action=queuedAction;if(!CanUse(action)){if(session.taxi.body.velocity.magnitude>.56f)CancelQueue();return;}if(r.queue.TryAdmit(queuedSite,GetInstanceID(),BayClear(queuedBay))){queuedAction=-1;open=true;Buy(action);open=false;}}
+  if(HumanFacilityUser&&queuedAction>=0&&!session.paused&&!locked){int action=queuedAction;if(!CanUse(action)){if(session.taxi.body.velocity.magnitude>.56f)CancelQueue();return;}if(r.queue.TryAdmit(queuedSite,GetInstanceID(),BayClear(queuedBay))){queuedAction=-1;open=true;bool bought=Buy(action);open=bought&&session.simulationMatch&&session.simulationMatch.ConditionServiceActive(session);}}
  }
  void ReconcileFacilityTicket(){
   if(queuedSite==null)return;if(!session||session.simulationMatch&&session.simulationMatch.Finished||session.jobs.Active&&session.jobs.trip.State==TripState.OnTrip){CancelQueue();return;}

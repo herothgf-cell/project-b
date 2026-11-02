@@ -26,7 +26,22 @@ public static class PvpConditionServiceTests {
   public void Tick(float value){match.AdvanceConditionService(s,value);}
   public void Dispose(){UnityEngine.Object.DestroyImmediate(root);if(active)PvpSimulationMode.Configure(expanded,duration);else PvpSimulationMode.Clear();Time.timeScale=scale;}
  }
+ static void QueuedService(int kind,bool cancel){
+  using(var f=new Fixture()){
+   var s=f.s;var map=PvpCityMap.Create();s.world.map=map;s.jobs.stops=map.stops;s.jobs.nav.hd=new HdRoadGraph(map);s.IsSimulationBot=false;
+   var start=map.stops[0];var path=s.jobs.nav.hd.paths[start.laneEdge];s.taxi.transform.SetPositionAndRotation(path.Position(start.laneAt),Quaternion.LookRotation(path.Tangent(start.laneAt)));
+   var options=s.services.FacilityOptions(kind);FacilityOption site=null;foreach(var option in options)if(option.Reachable){site=option;break;}Check(site!=null,"queued service has reachable authored site");
+   var otherObject=new GameObject("queue owner");otherObject.SetActive(false);otherObject.transform.SetParent(f.root.transform);var other=otherObject.AddComponent<DriveSession>();other.simulationMatch=f.match;other.IsSimulationBot=true;other.taxi=otherObject.AddComponent<TaxiController>();other.services=otherObject.AddComponent<ServiceStops>();other.services.session=other;
+   Check(other.services.CanEnterFacility(site),"prior ticket occupies FIFO");s.taxi.transform.SetPositionAndRotation(site.Bay,Quaternion.LookRotation(site.Direction));s.taxi.body.velocity=Vector3.zero;s.services.open=true;
+   var ledger=s.business.ledger;ledger.Driver.satiety=40;ledger.Driver.fatigue=80;int cash=ledger.Account.Cash;double before=ledger.Elapsed;
+   Check(!s.services.Buy(kind)&&s.services.QueueWaiting,"purchase waits behind existing ticket without charge");Check(ledger.Elapsed==before&&ledger.Account.Cash==cash,"queued purchase has no time or payment");
+   other.services.CancelQueue();s.services.TickFacilityQueue();Check(f.match.ConditionServiceActive(s)&&s.services.open,"actual queue admission keeps timed condition service open");
+   if(cancel){f.Tick(5);s.services.Close();Check(!f.match.ConditionServiceActive(s)&&ledger.Account.Cash==cash&&ledger.Elapsed==before+5&&ledger.PvpMeals==0&&ledger.Driver.satiety<40,"explicit cancellation keeps elapsed time with no payment or recovery");}
+   else {f.Tick(kind==1?15:45);Check(!f.match.ConditionServiceActive(s)&&ledger.Elapsed==before+(kind==1?15:45),"queued timed service completes exactly once");Check(kind==1?ledger.Account.Cash==cash-1000&&ledger.PvpMeals==1:ledger.Account.Cash==cash&&ledger.PvpRests==1&&Math.Abs(ledger.Driver.fatigue-40)<.001,"queued completion applies native payment and recovery");}
+  }
+ }
  public static void Run(){
+  QueuedService(1,false);QueuedService(3,false);QueuedService(1,true);
   using(var f=new Fixture()){
    var l=f.s.business.ledger;f.Site(1);double before=l.Elapsed;int cash=l.Account.Cash;double fatigue=l.Driver.fatigue,satiety=l.Driver.satiety;
    Check(f.match.BeginConditionService(f.s,1),"meal begins only at real safe fixture site");Check(l.Elapsed==before&&l.Account.Cash==cash&&l.Driver.satiety==satiety,"start has no instant charge, time jump or recovery");
