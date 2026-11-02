@@ -58,7 +58,7 @@ public sealed class UnifiedModeBootstrap : MonoBehaviour {
         if(Selected==Mode.Menu){
             float width=Mathf.Min(580,Screen.width-32);
             GUILayout.BeginArea(new Rect((Screen.width-width)/2,Screen.height*.28f,width,310),GUI.skin.box);
-            GUILayout.Label("은계 택시",new GUIStyle(GUI.skin.label){fontSize=28,font=KoreanText.BoldFont});GUILayout.Space(20);
+            GUILayout.Label("택시 시뮬레이션",new GUIStyle(GUI.skin.label){fontSize=28,font=KoreanText.BoldFont});GUILayout.Space(20);
             if(GUILayout.Button("은계 영업",GUILayout.Height(55)))StartSingle();
             GUILayout.Label("3일 캠페인 · 저장한 영업 이어하기");GUILayout.Space(12);
             if(GUILayout.Button("PVP 대전",GUILayout.Height(55)))StartPvp();
