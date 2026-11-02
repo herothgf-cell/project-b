@@ -2,7 +2,7 @@ using UnityEngine;
 public class DriveHUD : MonoBehaviour {
  public DriveSession session;public Texture2D tile;public bool HelpOpen {get;private set;}GUIStyle title,body,small;const int W=1024,H=1024;
  public void ToggleHelp(){HelpOpen=!HelpOpen;}
- Texture2D lightTile;public Texture2D LightTile {get{if(lightTile||!tile)return lightTile;lightTile=new Texture2D(W,H);var colors=tile.GetPixels();for(int i=0;i<colors.Length;i++){var c=colors[i];colors[i]=c.b>.4f&&c.r<.2f?new Color(.54f,.78f,.86f):c.r>.3f?new Color(.98f,.99f,.96f):new Color(.83f,.88f,.82f);}lightTile.SetPixels(colors);lightTile.Apply();return lightTile;}}
+ Texture2D lightTile;public Texture2D LightTile {get{if(!lightTile&&session&&session.world&&session.world.map!=null)lightTile=MapPresentation.Create(session.world.map,2048);return lightTile;}}
  void OnDestroy(){if(tile)Destroy(tile);if(lightTile)Destroy(lightTile);}
  void Start(){tile=new Texture2D(W,H);var pixels=new Color[W*H];for(int i=0;i<pixels.Length;i++)pixels[i]=new Color(.10f,.15f,.17f);tile.SetPixels(pixels);
   if(session.world.map.areas!=null)foreach(var area in session.world.map.areas){

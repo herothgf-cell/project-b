@@ -25,16 +25,17 @@ public sealed class BrightUIProbe:MonoBehaviour {
    Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);
    Check(CockpitUI.LayoutFits(Screen.width,Screen.height),"HUD reference fits "+width);
    yield return Capture("03-single-hud-"+width);
-   Check(map.Open(),"single map opens "+width);double elapsed=s.business.ledger.Elapsed;
+   Check(map.Open(),"single map opens "+width);double elapsed=s.business.ledger.Elapsed;int first=Array.FindIndex(s.jobs.offers,o=>o!=null);if(first>=0)Check(map.SelectOffer(first),"single call preview selects without accepting");
    yield return Capture("04-single-map-"+width);Check(s.business.ledger.Elapsed==elapsed,"single map freezes timing "+width);map.Close();
   }
   s.drivingCamera.SetFirstPerson(true);yield return Capture("04a-single-cockpit");s.drivingCamera.SetFirstPerson(false);
   var editor=s.GetComponent<RoadMapEditor>();editor.Open();yield return Capture("04b-editor-colors");editor.Close();
   // Normal native methods with controlled location, as in the existing receipt probe.
   foreach(var c in s.traffic.cars){c.Recycle();c.enabled=false;}
-  var jobs=s.jobs;jobs.ClearForDay();jobs.offers[0]=new JobOffer{pickup=0,drop=3,fare=5000,seconds=2000,requiredScore=70,distance=jobs.nav.Distance(jobs.stops[0],jobs.stops[3]),pickupSeconds=600};
+  var jobs=s.jobs;jobs.ClearForDay();jobs.ForcedPassengerType=PassengerType.General;jobs.ForcedRideCase=DrunkRideCase.Normal;jobs.offers[0]=new JobOffer{candidateSeed="bright-ui-general",pickup=0,drop=3,fare=5000,seconds=2000,requiredScore=70,distance=jobs.nav.Distance(jobs.stops[0],jobs.stops[3]),pickupSeconds=600};
   Pose(jobs.stops[0]);Check(jobs.Accept(0)&&jobs.Interact(),"fixture native call acceptance and boarding");
   var selectedRoute=jobs.nav.hdRoute;var cue=s.GetComponent<DrivingReadability>().TurnCue;Check(cue.Valid&&cue.Distance>=0,"single turn card reads live directed route");Check(jobs.nav.hdRoute==selectedRoute,"turn card never replaces selected route");yield return Capture("05a-single-navigation");
+  Check(map.Open(),"active single map opens");yield return Capture("05b-single-active-map");map.Close();
   s.requests.BeginKind(RequestKind.Comfort);s.requests.AdvanceSafeStop(3);yield return Capture("05-single-passenger-request");
   s.requests.request.DeferSafety();Pose(jobs.stops[jobs.current.drop]);Check(jobs.Interact(),"fixture native arrival and one settlement");
   var receipt=s.GetComponent<RideCompletionPanel>();if(!receipt.Open)receipt.ShowLast();int income=s.business.ledger.Income;
@@ -50,9 +51,10 @@ public sealed class BrightUIProbe:MonoBehaviour {
   map=s.GetComponent<FullMapOverlay>();
   foreach(int width in new[]{1280,1920}){
    Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);yield return Capture("09-pvp-hud-"+width);
-   Check(map.Open(),"PVP map opens "+width);float elapsed=s.simulationMatch.Elapsed;yield return Capture("10-pvp-map-"+width);Check(s.simulationMatch.Elapsed>elapsed&&!s.paused,"PVP map keeps match running "+width);map.Close();
+   Check(map.Open(),"PVP map opens "+width);float elapsed=s.simulationMatch.Elapsed;int first=Array.FindIndex(s.jobs.offers,o=>o!=null);if(first>=0)Check(map.SelectOffer(first),"PVP call preview selects without accepting");yield return Capture("10-pvp-map-"+width);Check(s.simulationMatch.Elapsed>elapsed&&!s.paused,"PVP map keeps match running "+width);map.Close();
   }
   int available=Array.FindIndex(s.jobs.offers,o=>o!=null);Check(available>=0&&s.jobs.Accept(available),"PVP human accepts real shared call for navigation");yield return new WaitForSecondsRealtime(.2f);Check(s.GetComponent<DrivingReadability>().TurnCue.Valid,"PVP turn card reads live pickup route");yield return Capture("10a-pvp-navigation");
+  Check(map.Open(),"active PVP map opens");yield return Capture("10b-pvp-active-map");map.Close();
   s.simulationMatch.Finish();yield return Capture("11-pvp-results");Check(Time.timeScale==0,"PVP final result pauses match");
   done=true;Debug.Log("BRIGHT_UI_RESULT "+(ok?"PASS":"FAIL")+" checks="+checks);Application.Quit(ok?0:1);
  }
