@@ -10,18 +10,18 @@ public partial class FullMapOverlay : MonoBehaviour {
  public string AcceptFeedback {get{return acceptFeedback;}}
  public Rect AcceptButtonBounds {get{var viewport=MapRect;float x=viewport.xMax+16;return new Rect(x,viewport.yMax-50,Screen.width-x-20,44);}}
  public string AcceptBlockedReason {get{
-  var j=session.jobs;if(!IsOpen)return "먼저 지도를 열어 호출을 선택하세요";
-  if(locationOpen)return "위치 정보를 닫고 호출을 선택하세요";
+  var j=session.jobs;if(!IsOpen)return "지도에서 호출을 선택하세요";
+  if(locationOpen)return "위치 정보창을 닫으세요";
   if(session.simulationMatch&&session.simulationMatch.Finished)return "경기가 종료되었습니다";
-  if(previousPause)return "일시정지를 해제한 뒤 호출을 수락하세요";
-  if(j.Active)return "진행 중인 운송을 마친 뒤 수락할 수 있습니다";
+  if(previousPause)return "일시정지를 해제하세요";
+  if(j.Active)return "현재 운송을 먼저 마치세요";
   if(selectedPlace!=null)return "아래 호출 목록에서 호출을 선택하세요";
-  if(SelectedOffer<0||SelectedOffer>=j.offers.Length||selectedOffer==null)return "호출 번호나 목록을 먼저 선택하세요";
-  if(j.offers[SelectedOffer]!=selectedOffer)return "호출이 갱신됐습니다 · 목록에서 다시 선택하세요";
-  if(j.AcceptanceLocked)return "세차 후 다시 수락할 수 있습니다 · 주유소 F7";
-  if(!session.business.CanAccept)return session.business.ledger.Driver!=null&&!session.business.ledger.Driver.CanAccept?"피로가 가득 찼습니다 · 휴식 후 수락하세요":"현재 영업 상태에서는 호출을 수락할 수 없습니다";
-  if(float.IsInfinity(selectedOffer.distance)||float.IsNaN(selectedOffer.distance))return "승차부터 하차까지 연결 경로가 없습니다 · 다른 호출을 선택하세요";
-  if(!selectedPickupReachable)return "현재 위치에서 승차 지점까지 연결 경로가 없습니다";
+  if(SelectedOffer<0||SelectedOffer>=j.offers.Length||selectedOffer==null)return "호출을 선택하세요";
+  if(j.offers[SelectedOffer]!=selectedOffer)return "새 호출로 바뀌었어요. 다시 선택하세요";
+  if(j.AcceptanceLocked)return "세차가 필요해요 · 주유소 F7";
+  if(!session.business.CanAccept)return session.business.ledger.Driver!=null&&!session.business.ledger.Driver.CanAccept?"피로가 높아요. 먼저 쉬세요":"현재 영업 상태에서는 호출을 수락할 수 없습니다";
+  if(float.IsInfinity(selectedOffer.distance)||float.IsNaN(selectedOffer.distance))return "운송 경로 없음 · 다른 호출 선택";
+  if(!selectedPickupReachable)return "승차 경로를 찾을 수 없어요";
   return "";
  }}
  public static string DescribeLocation(MapData map,Vector3 position,float heading,IEnumerable<TrafficJunction> junctions){
@@ -67,31 +67,31 @@ public partial class FullMapOverlay : MonoBehaviour {
  void Update(){RefreshRoutePaint();if(IsOpen){if(Input.GetKeyDown(KeyCode.M)||Input.GetKeyDown(KeyCode.Escape)){if(locationOpen)locationOpen=false;else Close();}}else if(Input.GetKeyDown(KeyCode.M))Open();}
  void OnDisable(){if(IsOpen)Close();}
  Vector2 Project(Vector3 p,Rect map){float span=Mathf.Max(session.world.map.width,session.world.map.depth);var unit=new Vector2(.5f+(p.x-session.world.map.width/2)/span,.5f-(p.z-session.world.map.depth/2)/span);return map.center+(unit-center)*Mathf.Min(map.width,map.height)*ZoomLevel;}
- void OnGUI(){if(!IsOpen)return;if(text==null){text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true};heading=new GUIStyle(text){font=KoreanText.BoldFont,fontSize=22};button=KoreanText.Button(14);text.normal.textColor=heading.normal.textColor=Color.white;}GUI.depth=-220;GUI.ModalWindow(94721,new Rect(0,0,Screen.width,Screen.height),Draw,GUIContent.none,GUIStyle.none);}
+ void OnGUI(){if(!IsOpen)return;if(text==null){text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true};heading=new GUIStyle(text){font=KoreanText.BoldFont,fontSize=22};button=KoreanText.Button(14);text.normal.textColor=heading.normal.textColor=CasualUI.Ink;}GUI.depth=-220;GUI.ModalWindow(94721,new Rect(0,0,Screen.width,Screen.height),Draw,GUIContent.none,GUIStyle.none);}
  public bool FocusStop(int index){if(index<0||index>=session.jobs.stops.Length)return false;FocusWorld(session.jobs.stops[index].V());return true;}
  public bool SelectOffer(int index){var j=session.jobs;if(!IsOpen||j.Active||index<0||index>=j.offers.Length||j.offers[index]==null)return false;SelectedOffer=index;selectedOffer=j.offers[index];selectedPlace=null;acceptFeedback="";previewPath=j.nav.Find(j.stops[selectedOffer.pickup],j.stops[selectedOffer.drop]);pickupPath=j.nav.PreviewTo(j.stops[selectedOffer.pickup]);float distance=PassengerJobs.DirectedDistance(j.nav.hd,session.taxi.transform.position,session.taxi.transform.forward,j.stops[selectedOffer.pickup]);selectedPickupReachable=!float.IsInfinity(distance)&&!float.IsNaN(distance);FitRoutes(pickupPath,previewPath);RefreshRoutePaint(true);return true;}
  public bool FocusSelectedStop(bool pickup){var o=session.jobs.Active?session.jobs.current:selectedOffer;return o!=null&&FocusStop(pickup?o.pickup:o.drop);}
  public bool AcceptSelected(){var j=session.jobs;string reason=AcceptBlockedReason;if(!string.IsNullOrEmpty(reason)){acceptFeedback=reason;return false;}int index=SelectedOffer;Close();bool accepted=j.Accept(index);if(!accepted){string message=j.message;Open();acceptFeedback=string.IsNullOrEmpty(message)?"호출을 수락하지 못했습니다 · 목록에서 다시 선택하세요":message;}else acceptFeedback="";return accepted;}
  void Draw(int id){
-  Fill(new Rect(0,0,Screen.width,Screen.height),new Color(.035f,.07f,.09f));
+  Fill(new Rect(0,0,Screen.width,Screen.height),CasualUI.Canvas);
   GUI.enabled=!locationOpen;
-  GUI.Label(new Rect(24,20,Screen.width-420,38),MapCatalog.Name(session.world.map.mapId)+" 지도 · 북 ↑"+(session.simulationMatch?(session.LivePvpMapOpen?" · 경기 진행 중 / 내 차 제동":" · 일시정지"):""),heading);
+  GUI.Label(new Rect(24,20,Screen.width-420,38),MapCatalog.Name(session.world.map.mapId)+" 지도 · 북 ↑"+(session.simulationMatch?(session.LivePvpMapOpen?" · 경기 진행 중 · 내 차 정지":" · 일시정지"):""),heading);
   if(GUI.Button(new Rect(Screen.width-330,20,150,38),"위치 정보",button))ShowLocation();
-  if(GUI.Button(new Rect(Screen.width-166,20,142,38),"M 닫기",button)){Close();return;}
+  if(GUI.Button(new Rect(Screen.width-166,20,142,38),"닫기 M",button)){Close();return;}
   var viewport=MapRect;var ev=Event.current;var jobs=session.jobs;
   GUI.BeginGroup(viewport);var map=new Rect(0,0,viewport.width,viewport.height);Fill(map,new Color(.78f,.84f,.79f));var data=session.world.map;var tile=GetComponent<DriveHUD>().LightTile;
   if(tile){var a=Project(new Vector3(0,0,data.depth),map);float span=Mathf.Max(data.width,data.depth),pixels=Mathf.Min(map.width,map.height);GUI.DrawTexture(new Rect(a.x,a.y,data.width/span*pixels*ZoomLevel,data.depth/span*pixels*ZoomLevel),tile);}
   for(int pass=0;pass<2;pass++)foreach(var segment in RoutePaint)HudGlyph.MapLine(Project(segment.a,map),Project(segment.b,map),pass==0?(segment.passenger?new Color(.8f,.12f,.55f):new Color(.05f,.65f,1)):segment.color,pass==0?(segment.passenger?7:11):4,new Rect(0,0,MapRect.width,MapRect.height));
-  if(ShowFacilities)foreach(var place in Places()){var p=Project(place.position,map);if(!map.Contains(p))continue;if(HudGlyph.Button(new Rect(p.x-15,p.y-15,30,30),place.glyph,place.name,true))SelectPlace(place);if(!string.IsNullOrEmpty(place.capabilityLabel)){var badge=new Rect(Mathf.Clamp(p.x-42,0,map.width-84),Mathf.Clamp(p.y-39,0,map.height-22),84,22);Fill(badge,new Color(.04f,.1f,.14f,1));GUI.Label(badge,place.capabilityLabel,new GUIStyle(text){fontSize=12,alignment=TextAnchor.MiddleCenter});}}
+  if(ShowFacilities)foreach(var place in Places()){var p=Project(place.position,map);if(!map.Contains(p))continue;if(HudGlyph.Button(new Rect(p.x-15,p.y-15,30,30),place.glyph,place.name,true))SelectPlace(place);if(!string.IsNullOrEmpty(place.capabilityLabel)){var badge=new Rect(Mathf.Clamp(p.x-42,0,map.width-84),Mathf.Clamp(p.y-39,0,map.height-22),84,22);CasualUI.Panel(badge);GUI.Label(badge,place.capabilityLabel,new GUIStyle(text){fontSize=12,alignment=TextAnchor.MiddleCenter});}}
   if(selectedPlace!=null){var p=Project(selectedPlace.position,map);Dot(p,Color.magenta,10);}
 
   var occupied=new List<Rect>();
   if(jobs.Active&&jobs.current!=null)foreach(int index in ActiveStopPins){var pin=Project(jobs.stops[index].V(),map);if(map.Contains(pin)){occupied.Add(StopPinLabel(pin,map));occupied.Add(new Rect(pin.x-12,pin.y-12,24,24));}}
   foreach(var marker in VisibleMarkers()){if(marker.named&&marker.label!="정체·정차"&&marker.label!="일시 점유")continue;
    var p=Project(marker.position,map);if(!map.Contains(p))continue;Dot(p,Color.black,marker.named?13:7);Dot(p,marker.color,marker.named?9:4);
-   if(marker.named){var box=LawZoneMapLayout.Place(p,new Vector2(82,26),map,occupied);occupied.Add(box);Fill(box,new Color(.05f,.12f,.15f,.9f));GUI.Label(box,marker.label,text);}
+   if(marker.named){var box=LawZoneMapLayout.Place(p,new Vector2(82,26),map,occupied);occupied.Add(box);CasualUI.Panel(box);GUI.Label(box,marker.label,text);}
   }
-  foreach(var zone in VisibleLawZones()){var p=Project(zone.junction.center,map);if(!map.Contains(p))continue;Dot(p,new Color(1,.55f,.1f),14);var box=LawZoneMapLayout.Place(p,new Vector2(146,42),map,occupied);occupied.Add(box);Fill(box,new Color(.08f,.13f,.17f,1));GUI.Label(box,zone.MapTitle,text);}
+  foreach(var zone in VisibleLawZones()){var p=Project(zone.junction.center,map);if(!map.Contains(p))continue;Dot(p,new Color(1,.55f,.1f),14);var box=LawZoneMapLayout.Place(p,new Vector2(146,42),map,occupied);occupied.Add(box);CasualUI.Panel(box);GUI.Label(box,zone.MapTitle,text);}
   // Active pickup, drop and via pins remain visible while browsing facilities.
   if(jobs.Active&&jobs.current!=null){StopPin(jobs.current.pickup,"승차",new Color(.2f,.8f,.5f),map);StopPin(jobs.current.drop,"하차",new Color(1,.35f,.7f),map);if(jobs.PassengerViaPending)StopPin(jobs.PassengerViaStop,"경유",new Color(1,.8f,.2f),map);}
   else if(!jobs.Active){
@@ -113,13 +113,13 @@ public partial class FullMapOverlay : MonoBehaviour {
   GUI.EndGroup();
   float x=viewport.xMax+16,w=Screen.width-x-20;DrawSidebar(x,w,viewport);
   GUI.Label(new Rect(24,Screen.height-23,Screen.width-48,22),(session.world.map.mapId=="pvp-city-a"?"승하차 화살표 = 차량 정차 방향 · 자체 제작 PVP 도시 · 가상 도로":"승하차 화살표 = 차량 정차 방향 · © OpenStreetMap contributors / ODbL · NGII 기반 게임 지도"),new GUIStyle(text){fontSize=11});
-  if(!string.IsNullOrEmpty(GUI.tooltip)&&!locationOpen){float tw=Mathf.Min(330,viewport.width-24),th=text.CalcHeight(new GUIContent(GUI.tooltip),tw-16)+16;var tip=new Rect(viewport.x+12,viewport.y+64,tw,th);Fill(tip,new Color(.04f,.1f,.14f,1));GUI.Label(new Rect(tip.x+8,tip.y+8,tw-16,th-16),GUI.tooltip,text);}
-  if(locationOpen){Fill(new Rect(0,0,Screen.width,Screen.height),new Color(0,0,0,.7f));var r=new Rect(Screen.width/2-240,Screen.height/2-150,480,300);Fill(r,new Color(.04f,.08f,.12f));GUI.BeginGroup(r);LocationPopup(94722);GUI.EndGroup();}
+  if(!string.IsNullOrEmpty(GUI.tooltip)&&!locationOpen){float tw=Mathf.Min(330,viewport.width-24),th=text.CalcHeight(new GUIContent(GUI.tooltip),tw-16)+16;var tip=new Rect(viewport.x+12,viewport.y+64,tw,th);CasualUI.Panel(tip);GUI.Label(new Rect(tip.x+8,tip.y+8,tw-16,th-16),GUI.tooltip,text);}
+  if(locationOpen){Fill(new Rect(0,0,Screen.width,Screen.height),new Color(0,0,0,.7f));var r=new Rect(Screen.width/2-240,Screen.height/2-150,480,300);CasualUI.Panel(r);GUI.BeginGroup(r);LocationPopup(94722);GUI.EndGroup();}
  }
  public void ShowLocation(){locationOpen=true;locationCopied=false;}
  public bool LocationOpen {get{return locationOpen;}}
  public void HideLocation(){locationOpen=false;}
- void LocationPopup(int id){GUI.Label(new Rect(20,8,440,34),"현재 위치",heading);GUI.TextArea(new Rect(20,48,440,165),LocationText,new GUIStyle(GUI.skin.textArea){font=KoreanText.Font,fontSize=16,wordWrap=true,normal={textColor=Color.white}});if(GUI.Button(new Rect(20,230,210,42),locationCopied?"복사됨":"좌표 복사",button)){GUIUtility.systemCopyBuffer=LocationText;locationCopied=true;}if(GUI.Button(new Rect(250,230,210,42),"닫기",button))locationOpen=false;}
+ void LocationPopup(int id){GUI.Label(new Rect(20,8,440,34),"현재 위치",heading);GUI.TextArea(new Rect(20,48,440,165),LocationText,new GUIStyle(GUI.skin.textArea){font=KoreanText.Font,fontSize=16,wordWrap=true,normal={textColor=CasualUI.Ink}});if(GUI.Button(new Rect(20,230,210,42),locationCopied?"복사됨":"좌표 복사",button)){GUIUtility.systemCopyBuffer=LocationText;locationCopied=true;}if(GUI.Button(new Rect(250,230,210,42),"닫기",button))locationOpen=false;}
  public Vector2 CallPinPosition(int index,Rect map){
   if(session.simulationMatch){var placed=PvpPinObstacles(map);Vector2 result=Vector2.zero;for(int i=0;i<=index;i++){if(session.jobs.offers[i]==null)continue;var anchor=Project(session.jobs.stops[session.jobs.offers[i].pickup].V(),map);result=PlacePvpCallPin(anchor,map,placed);placed.Add(new Rect(result.x-16,result.y-16,32,32));}return result;}
   var raw=Project(session.jobs.stops[session.jobs.offers[index].pickup].V(),map);var p=new Vector2(Mathf.Clamp(raw.x,20,map.width-20),Mathf.Clamp(raw.y,80,map.height-20));p.x=Mathf.Clamp(p.x+(index-1)*36,20,map.width-20);if(p.x>map.width-80&&p.y>map.height-185)p.x=map.width-94;return p;}

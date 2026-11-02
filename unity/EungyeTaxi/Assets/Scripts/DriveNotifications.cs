@@ -32,15 +32,15 @@ public class DriveNotifications : MonoBehaviour {
   if(!ready||session.FullMapOpen||session.ChoiceOpen||session.PracticeMenuOpen||session.law.HistoryOpen||session.business.preparing||session.business.ShowingSummary)return;
   float width=Mathf.Min(460,Screen.width*.38f),x=(Screen.width-width)/2,y=140*CockpitUI.Scale;
   var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true,alignment=TextAnchor.MiddleLeft};GUI.depth=-80;
-  if(FuelLow){Panel(new Rect(x,y,width,50),new Color(.23f,.12f,.015f,1));GUI.color=session.business.ledger.Account.Fuel<=5?Color.red:Color.yellow;
+  if(FuelLow){Panel(new Rect(x,y,width,50),new Color(1,.94f,.77f,1));GUI.color=session.business.ledger.Account.Fuel<=5?Color.red:Color.yellow;
    // Pump icon uses geometry so missing font glyphs cannot hide the warning.
    GUI.DrawTexture(new Rect(x+12,y+10,17,29),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x+29,y+16,7,4),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x+33,y+16,4,21),Texture2D.whiteTexture);GUI.color=Color.black;GUI.DrawTexture(new Rect(x+15,y+13,11,9),Texture2D.whiteTexture);GUI.color=Color.white;
    GUI.Label(new Rect(x+47,y+3,width-55,44),"연료 부족 "+session.business.ledger.Account.Fuel.ToString("0")+"% · M 주유소 안내 · 정차 후 F7",style);y+=56;
   }
   foreach(var notice in visible){float age=Time.unscaledTime-notice.since,alpha=Mathf.Clamp01((3-age)/.35f);float height=Mathf.Max(38,style.CalcHeight(new GUIContent(notice.text),width-94)+10);
-   Panel(new Rect(x,y,width,height),new Color(.035f,.07f,.09f,.98f*alpha));GUI.color=new Color(notice.passenger?.3f:.4f,notice.passenger?.9f:.7f,notice.passenger?.6f:1,alpha);GUI.Label(new Rect(x+10,y+5,65,height-5),notice.passenger?"만족도":"운전",style);
-   GUI.color=new Color(notice.positive?.55f:1,notice.positive?1:.65f,.65f,alpha);GUI.Label(new Rect(x+82,y+5,width-94,height-5),notice.text,style);GUI.color=Color.white;y+=height+5;
+   Panel(new Rect(x,y,width,height),new Color(1,1,1,alpha));GUI.color=new Color(1,1,1,alpha);style.normal.textColor=notice.passenger?CasualUI.Green:CasualUI.Blue;GUI.Label(new Rect(x+10,y+5,65,height-5),notice.passenger?"만족도":"운전",style);
+   GUI.color=new Color(1,1,1,alpha);style.normal.textColor=notice.positive?CasualUI.Green:CasualUI.Danger;GUI.Label(new Rect(x+82,y+5,width-94,height-5),notice.text,style);GUI.color=Color.white;y+=height+5;
   }
  }
- static void Panel(Rect r,Color c){GUI.color=c;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
+ static void Panel(Rect r,Color c){CasualUI.Panel(r,c);}
 }

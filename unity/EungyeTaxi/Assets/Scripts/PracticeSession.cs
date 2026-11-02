@@ -98,7 +98,7 @@ public class PracticeSession : MonoBehaviour {
   var style=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=15,wordWrap=true};GUI.depth=-160;
   if(PickerOpen){
    float width=Mathf.Min(900,Screen.width-32),height=Mathf.Min(800,Screen.height-32),x=(Screen.width-width)/2,y=(Screen.height-height)/2;
-   GUI.color=new Color(.035f,.075f,.10f,1);GUI.DrawTexture(new Rect(x,y,width,height),Texture2D.whiteTexture);GUI.color=Color.white;
+   CasualUI.Panel(new Rect(x,y,width,height));
    var text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true};
    GUI.Label(new Rect(x+22,y+14,width-44,40),"운전 연습 선택 · 영업 기록 없이 시작 / 목록 스크롤",text);
    float col=(width-70)/2,listHeight=Mathf.Max(120,height-440);

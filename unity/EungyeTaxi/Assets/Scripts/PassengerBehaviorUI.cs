@@ -13,12 +13,12 @@ public sealed class PassengerBehaviorUI : MonoBehaviour {
  void OnGUI(){if(session.IsSimulationBot||!Showing)return;var behavior=session.jobs.Behavior;
   string text=behavior.TypeLabel+" · "+behavior.VariantLabel+"\n"+behavior.Dialogue;
   if(responseOwner==behavior&&Time.time<responseUntil&&responseNotice.Length>0)text+="\n"+responseNotice;
-  if(behavior.Type==PassengerType.Food&&session.jobs.BehaviorChoicesOpen)text+="\n청결 효과는 일반 하차 -2와 별도 · 만족도 최대 100";
-  if(session.jobs.BehaviorChoicesOpen&&!CanRespond)text+="\n교차로·횡단보도 밖에서 2초 안전 정차 후 선택";
+  if(behavior.Type==PassengerType.Food&&session.jobs.BehaviorChoicesOpen)text+="\n기본 하차 청결 -2 별도 · 만족도 최대 100";
+  if(session.jobs.BehaviorChoicesOpen&&!CanRespond)text+="\n교차로·횡단보도 밖에서 2초 정차 후 답변";
   var old=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
   var label=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=15,wordWrap=true};label.normal.textColor=new Color(.1f,.16f,.2f);
   float width=540,height=label.CalcHeight(new GUIContent(text),516)+22;var choices=session.jobs.BehaviorChoicesOpen?behavior.Choices:new string[0];float[] choiceHeights=new float[choices.Length];var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=12,wordWrap=true};float choiceTotal=0;for(int i=0;i<choices.Length;i++){choiceHeights[i]=Mathf.Max(48,button.CalcHeight(new GUIContent(new[]{"Y","I","O"}[i]+" · "+choices[i]),width-24)+8);choiceTotal+=choiceHeights[i]+4;}height+=choiceTotal;float x=(Screen.width/scale-width)/2,y=Screen.height/scale-24-height;
-  GUI.color=new Color(.94f,.97f,.91f);GUI.DrawTexture(new Rect(x,y,width,height),Texture2D.whiteTexture);GUI.color=Color.white;float title=height-choiceTotal-16;GUI.Label(new Rect(x+12,y+8,516,title),text,label);
+  CasualUI.Panel(new Rect(x,y,width,height),CasualUI.Soft);float title=height-choiceTotal-16;GUI.Label(new Rect(x+12,y+8,516,title),text,label);
   float choiceY=y+title+12;for(int i=0;i<choices.Length;i++){bool enabled=GUI.enabled;GUI.enabled=enabled&&CanRespond;if(GUI.Button(new Rect(x+8,choiceY,width-16,choiceHeights[i]),new[]{"Y","I","O"}[i]+" · "+choices[i],button))session.jobs.RespondBehavior(i);GUI.enabled=enabled;choiceY+=choiceHeights[i]+4;}
   GUI.matrix=old;
  }
