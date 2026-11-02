@@ -62,3 +62,9 @@ A3 실제 지도 적용, 다른PC LAN/방화벽·사람주행·원격4명·장�
 - 현재 배포/실행은 이 worktree의 `builds/EungyeTaxi/EungyeTaxi.exe`. 은계 영업 또는PVP → 시간/방만들기 → 동일LAN IP·포트참가 → 호스트시작. 빈자리봇/앱실행유지30초재참가. A3는시안이며게임은현재A2도시. 다른PC/사람4명·물리패드·네트워크상태/장기경제/전도로·A3구현은미검증/별도.
 
 - 배포 manifest `tools/update_distribution_manifest.ps1 -SourceCommit 70200c703a00bcdfc32c8669e54aa812575e70fc -ValidatedOn 2026-11-02 -ValidationReport artifacts/pvp/native-lan-validation9.json` exit0. 통합/PVP위임 VerifyOnly 각각 exit0: **139파일115,169,424바이트** 크기/SHA256 전수일치.
+
+## 게시 영수증
+
+`git log -1 --oneline -- docs/work-history/2026-11-02-pvp-native-lan.md`로 실제 배포 커밋 **4a43b934fe9bf02d704d289526bd2f28248710c3**을 확인했다. `git push --atomic origin HEAD:refs/heads/feature/pvp-prototype HEAD:refs/heads/main` exit0. `git ls-remote`에서 두 원격이 동일한4a43b93을 반환했다. main d818c33을 강제푸시 없이 보존한 후속이며 게시 직후 이 worktree는 clean이다.
+
+실제 실행본 소스는70200c7/139파일115,169,424바이트이며 이 영수증/계획 표시는 실행본을 다시 바꾸지 않는다. 작업 worktree와 무시된 재현 로그/백업은 유지한다. 다른 `C:/git/project-b`의 로컬main·마인드맵 미커밋2파일·미추적폴더에는 checkout/pull/stash/reset/파일교체를 하지 않았다. 그 폴더는 자기 작업을 보존해 정상 갱신할 때 이 원격 배포를 받을 수 있다. 지금 검증된 실행본은 이 worktree의 `builds/EungyeTaxi/EungyeTaxi.exe`다.
