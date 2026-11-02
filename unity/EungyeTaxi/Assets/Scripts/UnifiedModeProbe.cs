@@ -9,15 +9,22 @@ public sealed class UnifiedModeProbe : MonoBehaviour {
     public static bool Enabled {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-unifiedModeCheck")>=0;}}
     static readonly string campaignPath=Path.Combine(Path.GetTempPath(),"taxi-unified-"+Guid.NewGuid().ToString("N"),"campaign.json");
     public static string CampaignPath {get{return campaignPath;}}
-    bool ok=true,done;float deadline;
+    bool ok=true,done;float activeSeconds,lastRealtime;string phase="initial menu";
     readonly Dictionary<string,byte[]> originals=new Dictionary<string,byte[]>();
     string actualDirectory;
     void Check(bool value,string label){ok&=value;Debug.Log("UNIFIED_MODE "+(value?"PASS ":"FAIL ")+label);}
-    void Awake(){DontDestroyOnLoad(gameObject);deadline=Time.realtimeSinceStartup+600;}
-    void Update(){if(!done&&Time.realtimeSinceStartup>deadline){Debug.LogError("UNIFIED_MODE timeout");Application.Quit(2);done=true;}}
+    void Awake(){DontDestroyOnLoad(gameObject);lastRealtime=Time.realtimeSinceStartup;}
+    void Update(){
+        float now=Time.realtimeSinceStartup,delta=Mathf.Max(0,now-lastRealtime);lastRealtime=now;
+        // A sleeping/suspended host can add hours between two frames. Keep a
+        // bounded allowance for slow startup frames, and report every excluded gap.
+        if(delta>30)Debug.LogWarning("UNIFIED_MODE clock_gap_seconds="+delta+" counted_seconds=30 phase="+phase);
+        activeSeconds+=Mathf.Min(delta,30);
+        if(!done&&activeSeconds>600){Debug.LogError("UNIFIED_MODE timeout active_seconds="+activeSeconds+" phase="+phase+" mode="+UnifiedModeBootstrap.Selected);Application.Quit(2);done=true;}
+    }
     DriveSession Human(){foreach(var s in FindObjectsOfType<DriveSession>())if(!s.IsSimulationBot)return s;return null;}
-    IEnumerator Ready(){while(!Human()||!Human().StartupReady||!Human().business||Human().business.IsRestoring)yield return null;yield return null;yield return null;}
-    IEnumerator Menu(){while(!FindObjectOfType<UnifiedModeBootstrap>()||UnifiedModeBootstrap.Selected!=UnifiedModeBootstrap.Mode.Menu||Human())yield return null;yield return null;}
+    IEnumerator Ready(){phase="waiting for gameplay "+UnifiedModeBootstrap.Selected;Debug.Log("UNIFIED_MODE_STAGE "+phase);while(!Human()||!Human().StartupReady||!Human().business||Human().business.IsRestoring)yield return null;yield return null;yield return null;}
+    IEnumerator Menu(){phase="waiting for unloaded mode menu";Debug.Log("UNIFIED_MODE_STAGE "+phase);while(!FindObjectOfType<UnifiedModeBootstrap>()||UnifiedModeBootstrap.Selected!=UnifiedModeBootstrap.Mode.Menu||Human())yield return null;yield return null;}
     static bool Same(byte[] a,byte[] b){if(a.Length!=b.Length)return false;for(int i=0;i<a.Length;i++)if(a[i]!=b[i])return false;return true;}
     IEnumerator Start(){
         var run=Run();
@@ -26,8 +33,23 @@ public sealed class UnifiedModeProbe : MonoBehaviour {
     IEnumerator Capture(string name){
         var args=Environment.GetCommandLineArgs();int i=Array.IndexOf(args,"-unifiedModeCaptureOutput");
         if(i<0||i+1>=args.Length||SystemInfo.graphicsDeviceType==UnityEngine.Rendering.GraphicsDeviceType.Null)yield break;
-        Directory.CreateDirectory(args[i+1]);yield return new WaitForEndOfFrame();
-        var image=ScreenCapture.CaptureScreenshotAsTexture();try{File.WriteAllBytes(Path.Combine(args[i+1],name+".png"),image.EncodeToPNG());}finally{Destroy(image);}
+        Directory.CreateDirectory(args[i+1]);phase="capture "+name;
+        bool captured=false;string error="";
+        var capture=StartCoroutine(CaptureFrame(Path.Combine(args[i+1],name+".png"),(failure)=>{error=failure;captured=true;}));
+        float start=activeSeconds;
+        while(!captured&&activeSeconds-start<10)yield return null;
+        if(!captured){StopCoroutine(capture);Check(false,"capture timeout "+name+"; rendering may be suspended/minimized");}
+        else Check(error.Length==0,"capture "+name+(error.Length==0?"":" error="+error));
+    }
+    IEnumerator CaptureFrame(string path,Action<string> complete){
+        // Rendering can stop while the process is still updating. The caller
+        // bounds this coroutine so an unavailable screenshot cannot hang the run.
+        yield return new WaitForEndOfFrame();
+        Texture2D image=null;string error="";
+        try{image=ScreenCapture.CaptureScreenshotAsTexture();File.WriteAllBytes(path,image.EncodeToPNG());}
+        catch(Exception ex){error=ex.Message;}
+        finally{if(image)Destroy(image);}
+        complete(error);
     }
     IEnumerator Run(){
         actualDirectory=Path.Combine(Path.GetDirectoryName(Application.persistentDataPath),"은계 택시 시뮬레이터");
@@ -72,6 +94,6 @@ public sealed class UnifiedModeProbe : MonoBehaviour {
         Check(File.ReadAllText(CampaignPath)=="invalid-unified-probe"&&File.ReadAllText(CampaignPath+".bak")=="invalid-unified-probe-backup","rejected original and backup preserved");
         foreach(var item in originals)Check(File.Exists(item.Key)&&Same(item.Value,File.ReadAllBytes(item.Key)),"user campaign unchanged "+Path.GetFileName(item.Key));
         if(Directory.Exists(actualDirectory))foreach(var path in Directory.GetFiles(actualDirectory,"*.json*"))Check(originals.ContainsKey(path),"no new user campaign file "+Path.GetFileName(path));
-        done=true;Debug.Log("UNIFIED_MODE_RESULT "+(ok?"PASS":"FAIL")+" isolated_campaign="+CampaignPath);Application.Quit(ok?0:1);
+        done=true;Debug.Log("UNIFIED_MODE_RESULT "+(ok?"PASS":"FAIL")+" active_seconds="+activeSeconds+" isolated_campaign="+CampaignPath);Application.Quit(ok?0:1);
     }
 }

@@ -22,4 +22,6 @@
 2. 해당 고정값을9구역 각48개 이상 가로변 건물로 바꾸고 기존 전역 도로·건물·승객·시설 여유 검사는 그대로 유지. 실제 구역별60~87개. EditMode의 NPC 바퀴 시각 콜라이더 제거도 수정.
 3. `PvpFlowUnifiedChecks.Corrections`, `artifacts/pvp/flow-final-editor2.log`, exit0. 교통 전체 재통과, 지도90645검사/거점306방향쌍 통과. 이후 마지막 코드 검토에서 '진입 후 다른 차로로 경로 재탐색 시 예전 corridor 허가를 그대로 사용'하는 경계 사례를 발견하여 수정·회귀 추가 중. 이 검토는 단계별 검토가 아니라 구현 후 한 차례 최종 검토다.
 4. `tools/check_workspace.ps1 -Strict`: issues0, 선택 가져오기2맵 미배치. 원격main 재확인dd709ae. 이전 싱글130파일112,309,087바이트 manifest 일치 확인 후 통합 빌드 교체 예정.
-5. 最終 리뷰 지적의 진입 후 경로 변경은 기존 점유 보호와 새 경로 허가를 분리해 수정했다. `PvpNpcMergeTests.Run`, `artifacts/pvp/flow-final-editor3.log`, exit0. 새 CommittedReroute와 기존 병렬/추종/막힌 진출/대기열/경로Clear·Continue 전부 통과. TaxiController의 Editor 시각 바퀴 콜라이더 제거를 정상화했다. 이후 관측 보고서가 재시작으로 이전 세션을 잃기 전에 저장되도록 진단만 연결했다.
+5. 최종 리뷰 지적의 진입 후 경로 변경은 기존 점유 보호와 새 경로 허가를 분리해 수정했다. `PvpNpcMergeTests.Run`, `artifacts/pvp/flow-final-editor3.log`, exit0. 새 CommittedReroute와 기존 병렬/추종/막힌 진출/대기열/경로Clear·Continue 전부 통과. TaxiController의 Editor 시각 바퀴 콜라이더 제거를 정상화했다. 이후 관측 보고서가 재시작으로 이전 세션을 잃기 전에 저장되도록 진단만 연결했다.
+
+후속 실행의 중단/성능 조사와 최종 배포는 [11월2일 이력](2026-11-02-pvp-flow-release.md)을 따른다.

@@ -122,7 +122,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &728944000
+--- !u!1 &430671147
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -130,56 +130,35 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 728944002}
-  - component: {fileID: 728944001}
+  - component: {fileID: 430671149}
+  - component: {fileID: 430671148}
   m_Layer: 0
-  m_Name: Drive Session
+  m_Name: Mode Selection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &728944001
+--- !u!114 &430671148
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 728944000}
+  m_GameObject: {fileID: 430671147}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7907702dfe379146b92aa5cd2c5991d, type: 3}
+  m_Script: {fileID: 11500000, guid: e67be88b55d84d15b87ecaf64e142361, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   startupRegion: eungye
-  damage: {fileID: 0}
-  taxi: {fileID: 0}
-  world: {fileID: 0}
-  traffic: {fileID: 0}
-  drivingCamera: {fileID: 0}
-  signals: {fileID: 0}
-  mirrors: {fileID: 0}
-  jobs: {fileID: 0}
-  assist: {fileID: 0}
-  roadEnvironment: {fileID: 0}
-  manners: {fileID: 0}
-  business: {fileID: 0}
-  law: {fileID: 0}
-  services: {fileID: 0}
-  requests: {fileID: 0}
-  assisted: {fileID: 0}
-  roadConditions: {fileID: 0}
-  ambientPedestrians: {fileID: 0}
-  paused: 0
-  ShowHints: 0
-  visits: 0
---- !u!4 &728944002
+--- !u!4 &430671149
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 728944000}
+  m_GameObject: {fileID: 430671147}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -192,4 +171,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 728944002}
+  - {fileID: 430671149}

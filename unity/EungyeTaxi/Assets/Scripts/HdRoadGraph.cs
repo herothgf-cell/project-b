@@ -13,22 +13,26 @@ public sealed class HdRoadGraph {
  }
  public readonly HdEdge[] edges;
  public readonly AssistedRoadNetwork.Path[] paths;
+ readonly Bounds[] pathBounds;
  public readonly HashSet<string> signalizedRules=new HashSet<string>();
  public HdRoadGraph(MapData map){
   if(map.junctionRules!=null)foreach(var rule in map.junctionRules)if(rule.signalMode>0)signalizedRules.Add(rule.id);
-  edges=map.hdEdges;paths=new AssistedRoadNetwork.Path[edges.Length];
+  edges=map.hdEdges;paths=new AssistedRoadNetwork.Path[edges.Length];pathBounds=new Bounds[edges.Length];
   for(int i=0;i<edges.Length;i++){
    if(edges[i].points==null||edges[i].points.Length<2)throw new ArgumentException("Invalid HD path");
    var p=new Vector3[edges[i].points.Length];for(int j=0;j<p.Length;j++)p[j]=edges[i].points[j].V();paths[i]=new AssistedRoadNetwork.Path(p);
+   var bounds=new Bounds(p[0],Vector3.zero);foreach(var point in p)bounds.Encapsulate(point);pathBounds[i]=bounds;
   }
   for(int i=0;i<edges.Length;i++)foreach(int j in edges[i].next){
    if(j<0||j>=edges.Length||edges[i].toNode!=edges[j].fromNode||Vector3.Distance(paths[i].Position(paths[i].length),paths[j].Position(0))>.15f)throw new ArgumentException("Broken HD connection "+edges[i].id);
   }
  }
  public int Nearest(Vector3 position,Vector3 heading,out float at){
-  int best=-1;float score=4;at=0;heading.y=0;
+  int best=-1;float score=4;at=0;heading.y=0;var ground=position;ground.y=0;
   for(int i=0;i<edges.Length;i++){
-   if(edges[i].disabled||edges[i].change!=0)continue;float error;float d=paths[i].Project(position,out error);
+   // Bounds reject only impossible candidates; original edge order, exact
+   // projection, heading threshold and strict tie handling remain unchanged.
+   if(edges[i].disabled||edges[i].change!=0||pathBounds[i].SqrDistance(ground)>score*score+.0001f)continue;float error;float d=paths[i].Project(position,out error);
    if(error>=score||heading.sqrMagnitude>.1f&&Vector3.Dot(heading.normalized,paths[i].Tangent(d))<.6f)continue;
    best=i;score=error;at=d;
   }return best;

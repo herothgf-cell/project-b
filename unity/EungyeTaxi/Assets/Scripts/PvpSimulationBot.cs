@@ -112,7 +112,8 @@ public sealed class PvpSimulationBot : MonoBehaviour {
     public static float ThrottleFor(float speed,float target){return target>.15f&&speed<target-.05f?.5f:0;}
     public bool RefreshTerminalCalls(){var jobs=Session.jobs;if(jobs.Active||Session.RideResultOpen)return false;bool terminal=jobs.trip.State==TripState.Complete||jobs.trip.State==TripState.Failed;jobs.PrepareForNextCall();if(terminal)jobs.Generate();return terminal;}
     void Stop(string reason) {Session.taxi.autoThrottle=0;Session.taxi.autoBrake=true;Status=reason;}
-    void FixedUpdate() {
+    void FixedUpdate(){using(TrafficPerformanceProbe.Measure("PvpBot.FixedUpdate"))Tick();}
+    void Tick() {
         var s=Session;if(!s||!s.simulationMatch||s.simulationMatch.Finished||Time.timeScale<=0)return;
         var taxi=s.taxi;var jobs=s.jobs;
         StationarySeconds=taxi.body.velocity.magnitude<.15f?StationarySeconds+Time.fixedDeltaTime:0;
@@ -132,9 +133,10 @@ public sealed class PvpSimulationBot : MonoBehaviour {
             int best=-1;float distance=float.PositiveInfinity;
             SelectionDiagnostics="accept="+s.business.CanAccept+" state="+jobs.trip.State+" ";
             // Shared claims are checked at selection and atomically at acceptance.
-            for(int i=0;i<jobs.offers.Length;i++) {
+            float selectionAt;int selectionEdge=jobs.nav.hd.Nearest(taxi.transform.position,taxi.transform.forward,out selectionAt);
+            using(TrafficPerformanceProbe.Measure("PvpBot.SelectOffer"))for(int i=0;i<jobs.offers.Length;i++) {
                 var offer=jobs.offers[i];string rejection=jobs.AcceptanceRejection(i);if(offer==null||rejection!=""){SelectionDiagnostics+="["+i+":"+rejection+"]";continue;}
-                var stop=jobs.stops[offer.pickup];float at;int edge=jobs.nav.hd.Nearest(taxi.transform.position,taxi.transform.forward,out at);
+                var stop=jobs.stops[offer.pickup];int edge=selectionEdge;
                 float pickupDistance=PickupDistance(jobs.nav.hd,taxi.transform.position,taxi.transform.forward,stop);
                 SelectionDiagnostics+="["+i+":"+offer.pickup+">"+offer.drop+" edge="+edge+" goal="+stop.laneEdge+" route="+pickupDistance.ToString("0")+"]";
                 if(pickupDistance<distance){distance=pickupDistance;best=i;}

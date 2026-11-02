@@ -56,6 +56,14 @@ public sealed class TrafficPerformanceProbe : MonoBehaviour {
   foreach(var sample in samples)timeline.AppendFormat(System.Globalization.CultureInfo.InvariantCulture,"{0:F3},{1:F3},{2:F2},{3:F2},{4},{5:F3},{6:F3},{7:F3},{8:F3},{9:F3},{10:F3},{11:F3}\n",sample.elapsed,sample.ms,sample.x,sample.z,sample.collections,sample.car,sample.pedestrian,sample.start,sample.navigation,sample.readability,sample.signal,sample.raster);
   Directory.CreateDirectory(OutputDirectory);File.WriteAllText(Output("traffic-performance.txt"),report);File.WriteAllText(Output("traffic-performance-frames.csv"),timeline.ToString());UnityEngine.Debug.Log(report);
   if(SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null){var fullMap=s.GetComponent<FullMapOverlay>();if(fullMap.Open()){yield return null;yield return null;yield return new WaitForEndOfFrame();var capture=ScreenCapture.CaptureScreenshotAsTexture();try{File.WriteAllBytes(Output("traffic-performance-fullmap.png"),capture.EncodeToPNG());}finally{Destroy(capture);fullMap.Close();}}}
+  if(PvpSite&&SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null){
+   var arrows=LaneDirectionPaint.Layout(s.world.map);var camera=Camera.main;var before=camera.transform.position;var rotation=camera.transform.rotation;
+   foreach(int mask in new[]{LaneDirectionPaint.Left|LaneDirectionPaint.Straight,LaneDirectionPaint.Right|LaneDirectionPaint.Straight,LaneDirectionPaint.Uturn}){
+    var arrow=arrows.Where(a=>(a.turns&mask)==mask).OrderBy(a=>(a.centre-position).sqrMagnitude).FirstOrDefault();if(arrow==null)continue;
+    var eye=arrow.centre-arrow.forward*28+Vector3.up*36;camera.transform.SetPositionAndRotation(eye,Quaternion.LookRotation(arrow.centre-eye));Capture(camera,Output("pvp-road-arrows-"+mask+".png"));UnityEngine.Debug.Log("PVP_ARROW_CAPTURE mask="+mask+" lane="+s.world.map.hdEdges[arrow.edgeIndex].id+" centre="+arrow.centre);
+   }
+   camera.transform.SetPositionAndRotation(before,rotation);
+  }
   if(PvpSite){bool valid=s.traffic.cars.Count==72&&frames.Count>0&&travelAfter>travelBefore;UnityEngine.Debug.Log(valid?"PVP_CITY_PERFORMANCE_OK":"PVP_CITY_PERFORMANCE_FAIL");Application.Quit(valid?0:1);}else Application.Quit(0);
  }
  float Percentile(float p){return frames.Count==0?0:frames[Mathf.Min(frames.Count-1,Mathf.FloorToInt(frames.Count*p))];}
