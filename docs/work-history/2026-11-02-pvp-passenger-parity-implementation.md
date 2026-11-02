@@ -50,3 +50,6 @@ BuildHybrid4 / passenger-final-build4.log exit0.139파일115,101,005바이트를
 최종Strict exit0/Input issues0. 배포manifest 생성 및 기본/PVPalias VerifyOnly 모두exit0/139파일115,101,005바이트. 원격main 최신ec3bc4b로추가완료커밋없음.
 
 마지막확인중 C:/git/project-b에다른채팅의새UI작업(추적수정23/미추적13)이생긴것을발견했다. 기존7미추적만있던시작상태와구분한다. 그쪽소스/인덱스/브랜치를수정·stash·reset·checkout·pull하지않았고미완료UI를이번PVP실행본에섞지않았다. 읽기전용상태목록/추적diff만 artifacts/pvp/passenger-other-checkout-status.txt 및 passenger-other-ui-preservation.patch에스냅샷했다(ignored, 전체백업아님). 그쪽의후속통합때MapDestinationUI/PassengerRequestObservation/ServiceStops 등겹치는UI파일에서이번native승객/PVP API를유지해야한다. 원격게시후기존미커밋을보존한정상3way통합은그작업에서진행한다. 실행본은이분리작업트리 builds/EungyeTaxi의최종검증본이다.
+
+## 게시 영수증
+`git log -1 --oneline -- docs/work-history/2026-11-02-pvp-passenger-parity-implementation.md`로실제배포커밋9aac1f3을확인했다. 최신origin/main이HEAD의조상임을확인한후 `git push --atomic origin HEAD:feature/pvp-prototype HEAD:main` 성공. `git ls-remote` 양쪽9aac1f3f4bd1de30bf8c83238c9b1232d2855aea 동일확인. 게시후기본/PVPaliasmanifest VerifyOnly exit0/139파일115,101,005바이트, 작업트리clean확인. 영수증추가는문서만변경하며빌드소스a2ce61b/동일실행본/실제검증결과를유지한다. 진행중타채팅UI미커밋은그폴더에보존했다.
