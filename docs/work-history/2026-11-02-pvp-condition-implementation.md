@@ -18,3 +18,25 @@
 실제Player·시설사용·주행/저장·배포결과는아래추가한다.20분은상태검증사례이며경기시간고정아님. 장기수익/운전감각/다른PC/원격실제4명수용은별도다.
 
 최종검사 fixture가 fixedDeltaTime=1로물리catch-up을확인할때 Unity가 MaximumAllowedTimestep도1로올리는것을발견했다. 테스트finally에서 두값모두원복하도록수정하고ProjectSettings기존0.33333334를복원했다. `PvpConditionServiceTests.Run` / condition-final-editor2.log exit0, TimeManager.asset diff없음. 첫빌드는수용배포로사용하지않고원래시간설정으로재빌드한다. 실제호출지도에피로예측표시를연결하고, 진단의선택적실제화면캡처를추가했다.
+
+## 실제 Player·화면 (소스399a6d6)
+BuildHybrid2 exit0.139파일115,079,212바이트를새폴더로복사하고전수SHA256동일확인. `tools/test_pvp_condition.ps1 -Capture -Executable artifacts/pvp/condition-runtime2/EungyeTaxi.exe -OutputDirectory artifacts/pvp/condition-player2`: exit0.4세션프로필/저장분리, 실제shared15초와45초·가격1000/무료·포만+60·피로−40/졸음해제, 부분이용/취소/재시도·중복비용방지·타드라이버/NPC진행·미완료경기종료무청구 통과. 초기시설배치/상태준비fixture는운송주행의완료증거와구분했다. 실제1600×900 식사견적/남은12초/휴식남은35초 화면확인·PC입력없음.
+
+같은복사본 `-batchmode -nographics -unifiedModeCheck` / condition-unified2: exit0,활성95.62311초. PVP→메뉴→싱글저장/같은캠페인복원→손상원본/백업거부·보존→메뉴, 기존사용자캠페인JSON/백업/운행JSON/백업4파일바이트불변·새파일없음. PVP프로필이싱글로전파되지않는것을모델/실행양쪽으로검사했다. 현재4대실제운송및봇회복후행동검사계속중.
+
+## 4대 장시간 주행: 미통과 기록
+`tools/test_pvp_simulation.ps1 -FourDrivers -TrafficMonitor -Executable artifacts/pvp/condition-runtime2/EungyeTaxi.exe -OutputDirectory artifacts/pvp/condition-four2`: exit1.600실초 제한까지1342.559게임초 진행. 인간3392.664m/11,030원, 봇1 3752.208m/0원, 봇2 7644.464m/29,760원, 봇3 6826.402m/5,810원. 공유8호출/소유권/중복정산방지/72NPC유지/결과동결은 통과했으나 봇1은 city-junction:2:2 대기열에 막혀 첫운송완료 실패. NPC총414,171.7m, 전체최대대기1175.91초. 전도로 교통수용을 완료로 표시하지 않는다. 이 검사에서 새식사/휴식 시설완료까지 입증되지 않았으므로 별도봇실제시설검사를 추가했다. 교통정체를 회복기능 성공으로 간주하거나 차량/신호를 위치제어로 통과시키지 않았다.
+
+## 최종 진단 보강
+소스 d3b87ea는 기능수정없이 선택적 `-pvpConditionDriveCheck`와 `tools/test_pvp_condition.ps1 -Drive`를 추가한다. 기존봇 중 생산시설선택기로400예상초 내 도달가능한 후보를 선택, 빈차만물리제동후미탑승호출취소, 포만20/피로0의조건fixture를준비한다. 이후 위치제어없이생산봇의실제주행/식사/출차를검사한다. 해당 초기조건준비와 자연장시간판단의증거를구분한다. BuildHybrid3 exit0, 새runtime139파일115,082,284바이트. Burst DoNotShip자료는 artifacts로이동해배포에서제외했다.
+
+소스d3b87ea의추가Drive검사는식사/휴식기존검사를통과했으나, 그뒤에는봇들이이미탑승운송중이어서적합한빈차후보가없었다(exit1). 이를기능성공으로기록하지않고진단순서만수정했다(5547466): 경기시작직후빈차를선택하고시설주행검사를먼저진행한다. 기능코드는399a6d6과동일하며추가진단만달라진다.
+
+최종 BuildHybrid4: source5547466b04108ddbf796d537bba1e0f04207bfe2, exit0, 139 files/115082284 bytes. condition-drive4 exit1: all human service assertions passed, but no eligible empty bot under400 estimated seconds. Bot meal roundtrip remains unverified. Four-driver queue failure remains unresolved. Strict inputs exit0/issues0; other checkout6244be9/untracked7 preserved.
+
+## 최종 수용 범위·재현
+PVP피로/사람시설실제경과·결제·회복·화면/싱글분리는통과했다. 장시간4대전원운송은교차로정체로실패했고봇식사왕복은조건에맞는후보미확보로미검증이다.20분수익/운전감각·다른PC/원격4인도별도다. 자동물리/초기시설배치fixture를사람직접플레이로표시하지않는다. 교통제어/지도원본/ZIP/캠페인회사·제품·저장경로불변.
+
+재현: Unity2022.3.62f2 `-batchmode -nographics -quit -projectPath unity/EungyeTaxi -executeMethod PvpConditionChecks.Run`; `pwsh -File tools/test_prototype.ps1`; 빌드 `PrototypeBuild.BuildHybrid`; 서비스 `pwsh -File tools/test_pvp_condition.ps1`; 선택적봇시설 `-Drive`;4대 `pwsh -File tools/test_pvp_simulation.ps1 -FourDrivers -TrafficMonitor`. 실제게임 builds/EungyeTaxi/EungyeTaxi.exe → PVP도시 → 지도시설/남부·북부주차장간편식 → 빈차로안전정차 → F7.
+
+배포manifest생성및기본/PVPalias VerifyOnly 모두exit0:139파일115,082,284바이트. build4↔condition-runtime4전수SHA256동일. 배포후게시영수증은아래추가한다.
