@@ -38,3 +38,6 @@ candidate4 동일빌드의10초같은승객유지구간:
 - 최종candidate6 승객회귀 client-perf-passenger6 exit0/38 PASS. 명칭통합candidate5 Unified는exit0/UNIFIED_MODE_RESULT PASS98.26672초/임시싱글체크포인트·복원·거부저장/실사용자파일보존통과. 이후6수정은replica에만적용해싱글복원분기는동일하다. 순수캠페인28모델도exit0.
 - candidate6의Burst DoNotShip 자료는부모절대경로검증후artifacts로분리. 실행중인타깃프로세스가없음을확인하고canonical `builds/EungyeTaxi`를전체교체해원본139파일/115,290,398바이트SHA256전수동일을검증했다. 실패빌드의파일을혼합배포하지않았다. 기본/PVP위임manifest VerifyOnly 각각exit0,Strict issues0. 지도/GIS/ZIP변경없음.
 - 실행은 `builds/EungyeTaxi/EungyeTaxi.exe` (택시시뮬레이션). 기존두창을닫고이실행본으로호스트/참가자를다시실행한다. 다른작업체크아웃실행본/미커밋문서에는쓰지않았다. 모든끊김제거/FullHD두창동시노출/다른PC·4인/장시간수용은주장하지않는다. 초기경로단발지연·원격입력의보간지연은남는다.
+
+## 게시 영수증
+`git log -1 --oneline -- docs/work-history/2026-11-02-pvp-client-stutter.md`로 실제배포커밋67a917a15c164caa0e302686177e11c015bd0a3d를확인했다. `git push --atomic origin HEAD:refs/heads/feature/pvp-prototype HEAD:refs/heads/main` exit0, `git ls-remote`에서두원격동일67a917a확인. 최신main81b48b1을강제푸시없이보존했다. 이영수증은동일실행본4a0cf2c/139파일115,290,398바이트를유지한다. 다른체크아웃/미커밋작업은수정하지않고현재작업트리와보존백업/계측로그를남긴다.
