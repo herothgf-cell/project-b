@@ -152,7 +152,8 @@ public class DrivingReadability : MonoBehaviour {
   GUI.Label(new Rect(x+8,415,Size-16,24),"전방 "+Vector3.Distance(session.taxi.transform.position,j.center).ToString("0")+"m · "+(j.facility!=null&&j.facility.facilityStatus=="verified"?"확인 시설":"임시 신호"),label);
   if(j.leftTurnMode==LeftTurnMode.Permissive){GUI.color=new Color(1,.75f,.12f);GUI.DrawTexture(new Rect(x-5,411,Size+10,4),Texture2D.whiteTexture);GUI.color=Color.white;}
   float next=session.traffic.SecondsToSignalChange(j,SignalAxis,SignalSign);
-  GUI.Label(new Rect(x+8,519,Size-16,25),next>=0?"다음 신호 변경까지 "+Mathf.CeilToInt(next)+"초":"상황 조건 진행 · 고정 시간 없음",new GUIStyle(label){fontSize=12});
+  bool slow=DrivingLaw.SlowTurnZoneEnabled(session.world.map.mapId,j.name);
+  GUI.Label(new Rect(x+8,519,Size-16,25),slow?"우회전 게임 서행 기준 10km/h":next>=0?"다음 신호 변경까지 "+Mathf.CeilToInt(next)+"초":"상황 조건 진행 · 고정 시간 없음",new GUIStyle(label){fontSize=12});
   var training=GetComponent<ConfusionPractice>();var zones=GetComponent<ServiceLawZones>();if(zones&&zones.Owns(j))training=zones.Live;
   if(training&&training.Owns(j)){
    string signal=training.State.Flashing?(training.State.Variant==8?"적색":"황색")+" 점멸":State(o.forward);

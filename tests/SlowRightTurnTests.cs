@@ -1,0 +1,19 @@
+using System;
+public static class SlowRightTurnTests {
+ static int count;
+ static void Check(bool value,string why){count++;if(!value)throw new Exception(why);}
+ static Type Kind;
+ static object New(){return Activator.CreateInstance(Kind);}
+ static void Observe(object state,float dt,float speed,bool turning,bool known,bool necessary){Kind.GetMethod("Observe").Invoke(state,new object[]{dt,speed,turning,known,necessary});}
+ static string Verdict(object state){return Kind.GetProperty("Verdict").GetValue(state,null).ToString();}
+ public static int Main(){try{Kind=typeof(SlowRightTurnTests).Assembly.GetType("SlowRightTurnState");Check(Kind!=null,"missing explicitly scoped game slow-turn observation");
+  var straight=New();Observe(straight,2,50,false,true,false);Check(Verdict(straight)=="NoOpportunity","straight approach is not right-turn speeding");
+  var slow=New();Observe(slow,1,10,true,true,false);Check(Verdict(slow)=="Compliant","observable slow right turn");
+  var spike=New();Observe(spike,.2f,30,true,true,false);Observe(spike,.8f,8,true,true,false);Check(Verdict(spike)=="Compliant","short sensor spike is not sustained violation");
+  var fast=New();Observe(fast,.4f,20,true,true,false);Check(Verdict(fast)=="NoOpportunity","insufficient observed time");Observe(fast,.4f,20,true,true,false);Check(Verdict(fast)=="Violation","sustained game limit exceeded");
+  var safe=New();Observe(safe,1,20,true,true,true);Check(Verdict(safe)=="Deferred","necessary safety avoidance not auto-blamed");
+  var unknown=New();Observe(unknown,1,20,true,false,false);Check(Verdict(unknown)=="NoOpportunity","unknown approach not scored");
+  var copy=Kind.GetMethod("Copy").Invoke(fast,null);Check(Verdict(copy)=="Violation","mid-turn checkpoint retains evidence");Observe(copy,0,20,true,true,false);Check(Verdict(copy)=="Violation","pause cannot create new evidence");
+  Console.WriteLine("PASS SlowRightTurnTests "+count);return 0;
+ }catch(Exception e){Console.Error.WriteLine("FAIL SlowRightTurnTests "+e.GetBaseException().Message);return 1;}}
+}

@@ -14,6 +14,44 @@ VERSION = '2026-11-02-progress'
 BACKUP = ROOT / 'docs/design-history/content-design/2026-11-02-mindmap-before-progress.mmst'
 PRIORITIES = 'docs/future-design/2026-11-02-simulation-priorities.md'
 MARKER = '<!-- mindmap-progress:end -->\n'
+IMPLEMENTED_P1P2 = {
+    '수동 주행 회전 후 방향지시등 자동 해제': ('TaxiSignals.cs', '실제 회전35도·직진 조향1초, 정차/비상등/보조 운전 및 저장 경계'),
+    '서행 의무 자동 감점 기준': ('DrivingLawSlowTurns.cs', '명시한 게임 관찰 구역만10km/h·여유2·0.75초. 법정 고정속도 주장 없음, 필요 제동 중립'),
+    '운전 험하게 하는 차량': ('TrafficCar.cs', '차분/보통/성급 성향. 적색·보행·차량 점유 안전 경계 유지'),
+    '추천1 · 실제 상황 반응형 승객': ('PassengerJobsActivities.cs', '실제 신호 대기·충격, 유형별 반응·대화 예산·재수면·음식 청결 사건'),
+    '추천1 · 다음 운송·시설 이용의 상태 예측': ('OperationForecastAdapter.cs', '기존 모델 복사·경로/시간 기반 예측. 원본 상태/돈/운임 불변'),
+    '추천1·지도 선행 · 안전 대체 승하차': ('StopOccupancyAlternatives.cs', '작성된 게임용 포켓과 보행 경로만 사용. 실제 도로 정차 허용 근거와 구분'),
+    '추천2 · 경유 중 용무 대기': ('PassengerJobsActivities.cs', '합의한20초 무료 용무 대기, 안전 정차에서 진행·동일 운송 유지'),
+    '추천2 · 시간대별 수요·교통 흐름': ('SimulationDemandClock.cs', '아침/낮/저녁 방향 가중, 수락 호출 유지·초과 영업 분산'),
+    '추천2 · 시설 혼잡·대안 비교': ('ServiceStopsPlanning.cs', '공유 시설 물리 진입 순서·명시적 취소·이동/대기/사용시간과 견적 비교'),
+    '추천2 · PVP 봇 식사·서비스 손익 판단': ('PvpSimulationBotServices.cs', '플레이어와 같은 비용/시간/효과, 방문당 한 작업·긴급 상태에서 호출 금지'),
+}
+
+def apply_p1p2(data):
+    def update(node):
+        records=[]
+        for child in node.get('children', []):
+            records.extend(update(child))
+        topic=node['topic']
+        match=next((value for prefix,value in IMPLEMENTED_P1P2.items() if topic.startswith(prefix)),None)
+        if not node.get('children') and match:
+            source,reason=match
+            node.setdefault('task', {})['progress']=.5
+            prefix,original=node.get('note','').split(MARKER,1)
+            node['note']='<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 50% 구현\n\n'+reason+'\n\n구현 근거: unity/EungyeTaxi/Assets/Scripts/'+source+'\n50%는 구현 단계이며 전체 수동 검증/출시 완료율이 아닙니다.\n'+MARKER+original
+            node['tags']=[t for t in node.get('tags',[]) if not t.startswith('단계:')]+['단계:50% 구현']
+        if not node.get('children') and '실제 음악 장치 조작' in topic:
+            node['tags']=[t for t in node.get('tags',[]) if t!='보류']+['보류']
+        stage=node.get('task',{}).get('progress')
+        if stage is not None:records.append(stage)
+        if node.get('children') and records:
+            counts=Counter(records);label=f'하위 집계: 50% {counts[.5]} / 25% {counts[.25]} / 0% {counts[0]}'
+            node['tags']=[t for t in node.get('tags',[]) if not t.startswith('단계:')]+['단계:'+label]
+            prefix,original=node['note'].split(MARKER,1)
+            prefix=prefix.split('\n',2);node['note']=prefix[0]+'\n## 사용자 지정 단계: '+label+'\n'+prefix[2]+MARKER+original
+        return records
+    update(data['root'])
+    return data
 DOCS = {
     '맵': ('05-interface-and-navigation.md', 'RoadMapEditor.cs'),
     '운전자': ('03-life-and-economy.md', 'DriverCondition.cs'),
@@ -59,7 +97,7 @@ def annotate(data, stamp):
             for child in n.get('children', []):
                 refresh(child, parents + [n['topic']])
         refresh(data['root'], [])
-        return data
+        return apply_p1p2(data)
     root = data['root']
 
     def split(topic, title, topics):
@@ -162,7 +200,7 @@ def annotate(data, stamp):
 
     records = visit(root, [])
     data.setdefault('meta', {}).update(progressReviewVersion=VERSION, updatedAt=stamp)
-    return data
+    return apply_p1p2(data)
 
 
 def outline(data):
@@ -217,7 +255,10 @@ def main():
     stamp = (working['meta']['updatedAt'] if working.get('meta', {}).get('progressReviewVersion') == VERSION
              else int(time.time() * 1000))
     result = annotate(copy.deepcopy(working), stamp)
-    validate(result, preserve_folds=True)
+    validate(result)
+    # The working map may have newer user folds than the historical backup.
+    before_folds={n['id']:n.get('collapsed') for n in walk(working['root'])}
+    assert before_folds=={n['id']:n.get('collapsed') for n in walk(result['root'])}, 'Current folded state changed'
     # Build a separate staged candidate: pre-existing user deletions/folds stay unstaged.
     head = subprocess.run(['git', 'show', 'HEAD:docs/content-design/택시 시뮬레이션.mmst'], capture_output=True, check=True).stdout
     (ROOT / 'artifacts/mindmap-progress-head-base.mmst').write_bytes(head)

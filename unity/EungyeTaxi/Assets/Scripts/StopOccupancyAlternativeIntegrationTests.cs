@@ -6,7 +6,13 @@ public static class StopOccupancyAlternativeIntegrationTests {
  public static void Run(){
   var root=new GameObject("alternative integration");
   try{
-   var map=ProjectMapStore.Load(ProjectMapBuild.Root).Compose();FuelStationLayout.Apply(map);var catalog=PassengerStopCatalog.For(map);
+   MapData map;
+#if UNITY_EDITOR
+   map=ProjectMapStore.Load(System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath,"../../.."))).Compose();
+#else
+   map=MapCatalog.Load();
+#endif
+   FuelStationLayout.Apply(map);var catalog=PassengerStopCatalog.For(map);
    int index=catalog.IndexOf("EG-GAME-02");var alternative=catalog.AlternativeFor("EG-GAME-02");Check(index>=0&&alternative!=null,"catalog pair available");
    var s=root.AddComponent<DriveSession>();s.business=root.AddComponent<BusinessProgress>();s.business.session=s;s.business.ledger=new EconomyLedger(PrototypeSettings.ForThreeDays());typeof(BusinessProgress).GetProperty("SimulationSession").GetSetMethod(true).Invoke(s.business,new object[]{true});s.law=root.AddComponent<DrivingLaw>();s.law.tripId="trip-test";
    s.taxi=root.AddComponent<TaxiController>();s.taxi.body=root.AddComponent<Rigidbody>();s.traffic=root.AddComponent<TrafficSystem>();

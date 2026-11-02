@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using UnityEngine;
 
 // Invoked by the coordinated Editor validation. No scene load or user save IO.
@@ -7,7 +8,7 @@ public static class TrafficDemandIndicatorIntegrationTests {
  public static void Run(){
   var owner=new GameObject("profile integration owner");var taxiObject=new GameObject("manual indicator integration");var cars=new GameObject[3];
   try{
-   var system=owner.AddComponent<TrafficSystem>();system.SendMessage("Awake");system.manualClock=true;system.manualTime=0;var route=new TrafficRoute();route.SetPoints(new[]{Vector3.zero,Vector3.forward*200});
+   var system=owner.AddComponent<TrafficSystem>();typeof(TrafficSystem).GetMethod("Awake",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(system,null);system.manualClock=true;system.manualTime=0;var route=new TrafficRoute();route.SetPoints(new[]{Vector3.zero,Vector3.forward*200});
    var red=new TrafficJunction{name="profile red fixture",scenarioSignal=true,scenarioForward=SignalColor.Red,observationAxis=0,observationSign=1};system.junctions.Add(red);
    route.stops.Add(new TrafficStop{junction=red,axis=0,turn=0,distance=15,exitDistance=50});
    for(int i=0;i<3;i++){
@@ -15,7 +16,7 @@ public static class TrafficDemandIndicatorIntegrationTests {
     Check(car.Profile.Kind==(TrafficTemperament)i&&car.ProfileLabel.Length>0,"stable runtime profile assignment "+i);
     Check(cars[i].GetComponent<BoxCollider>().enabled,"physical body retained for profile "+i);
     Check(car.Profile.LimitSpeed(0,9)==0,"red/occupied gap stops profile "+i);
-    car.Place(14.9f);for(int tick=0;tick<160;tick++)car.SendMessage("Tick");
+    car.Place(14.9f);for(int tick=0;tick<160;tick++)typeof(TrafficCar).GetMethod("Tick",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(car,null);
     Check(car.distance<=15&&car.speed<.1f&&car.waitingForSignal,"real red stop retained for profile "+i);
     Check(car.stoppedAt==red,"actual stop-line evidence reachable for profile "+i);
     cars[i].SetActive(false);

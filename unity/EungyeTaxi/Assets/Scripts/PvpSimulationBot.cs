@@ -118,6 +118,7 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         var taxi=s.taxi;var jobs=s.jobs;
         StationarySeconds=taxi.body.velocity.magnitude<.15f?StationarySeconds+Time.fixedDeltaTime:0;
         if(s.requests.SafeToRespond()){if(s.requests.HasPendingChoice)s.requests.Respond(false);if(jobs.BehaviorChoicesOpen)jobs.RespondBehavior(0);}
+        if(jobs.CanRespondSituation)jobs.RespondSituation(0);if(jobs.SituationWorkActive){Stop("승객 요청 작업 · 안전 정차");return;}
         MetresDriven+=taxi.body.velocity.magnitude*Time.fixedDeltaTime;
         if(s.simulationMatch.ServiceLocked(s)){Stop("서비스 진행 중");return;}
         if(s.business.ledger.Driver.drowsiness.Blackout){Stop("졸음 긴급 휴식");s.business.RequestEmergencyHome();return;}

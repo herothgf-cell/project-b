@@ -10,8 +10,9 @@ public class TaxiSignals : MonoBehaviour {
     void Awake(){taxi=GetComponent<TaxiController>();taxiBody=GetComponent<Rigidbody>();assistance=GetComponent<AssistedDriveController>();}
     float MotionHeading(){var v=taxiBody?taxiBody.velocity:Vector3.zero;return v.sqrMagnitude>.25f&&Vector3.Dot(v,transform.forward)>.5f?Mathf.Atan2(v.x,v.z)*Mathf.Rad2Deg:transform.eulerAngles.y;}
     public TaxiSignalsSnapshot CaptureLive(){return new TaxiSignalsSnapshot{direction=direction,manualHazards=manualHazards,passengerStop=passengerStop,cancellation=cancellation.Capture()};}
+    public static void ValidateSnapshot(TaxiSignalsSnapshot saved){if(saved==null)return;if(saved.direction< -1||saved.direction>1||(saved.manualHazards||saved.passengerStop)&&saved.direction!=0)throw new System.ArgumentException("Invalid taxi signal state");var check=new ManualIndicatorPolicy();check.Restore(saved.cancellation);if(saved.cancellation!=null&&saved.cancellation.direction!=0&&saved.cancellation.direction!=saved.direction)throw new System.ArgumentException("Inconsistent taxi signal cancellation");}
     public void RestoreLive(TaxiSignalsSnapshot saved){
-        Clear();if(saved==null)return;
+        ValidateSnapshot(saved);Clear();if(saved==null)return;
         if(saved.direction< -1||saved.direction>1||(saved.manualHazards||saved.passengerStop)&&saved.direction!=0)throw new System.ArgumentException("Invalid taxi signal state");
         cancellation.Restore(saved.cancellation);direction=saved.direction;manualHazards=saved.manualHazards;passengerStop=saved.passengerStop;
         if(saved.cancellation!=null&&saved.cancellation.direction!=0&&saved.cancellation.direction!=direction)throw new System.ArgumentException("Inconsistent taxi signal cancellation");
