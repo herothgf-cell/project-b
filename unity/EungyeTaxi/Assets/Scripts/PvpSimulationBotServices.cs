@@ -14,12 +14,14 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
     Vector3 bay,direction;
     Vector3[] entry,departure;
     AssistedRoadNetwork.Path manoeuvre;
-    bool fuelSite;FacilityOption selectedSite;float queueWaitStarted;string avoidSite;float avoidUntil;
+    bool purchaseComplete;FacilityOption selectedSite;float queueWaitStarted;string avoidSite;float avoidUntil;
 
     public static int NeededService(float fuel,double fatigue,int cleanliness,bool needsWash,int durability) {
         return BotServiceDecision.Needed(fuel,fatigue,80,cleanliness,needsWash,durability);
     }
     public static bool AtApproach(MapStop stop,Vector3 position,Vector3 heading){return stop!=null&&stop.CanStop(position,heading,0);}
+    static bool Critical(DriveSession s){var e=s.business.ledger;return e.Account.Fuel<8||e.Care.NeedsWash||e.Care.Cleanliness<30||e.Care.Damage.Durability<=20||e.Driver.fatigue>=90;}
+    bool HoldCritical(DriveSession s){if(!Critical(s))return false;Stop(s,"필수 시설 연결/대기 재시도 · 새 호출 보류");return true;}
     void Retry(DriveSession s,string reason){
         s.services.CancelQueue();if(selectedSite!=null){avoidSite=selectedSite.Id;avoidUntil=Time.time+60;}
         routeWait=offPathSeconds=0;retryAt=Time.time+15;
@@ -33,13 +35,14 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
     public bool Tick(DriveSession s) {
         if(!s||!s.simulationMatch)return false;s.services.TickFacilityQueue();
         if(s.simulationMatch.Finished||s.jobs.Active){s.services.CancelQueue();stage=0;return false;}
-        if(s.simulationMatch.ServiceLocked(s)){Stop(s,"서비스 진행 중");return Active;}
+        if(s.simulationMatch.ServiceLocked(s)){Stop(s,"서비스 진행 중");return true;}
         if(stage==0) {
-            if(Time.time<retryAt||s.jobs.trip.State!=TripState.Idle)return false;
+            if(s.jobs.trip.State!=TripState.Idle)return false;
+            if(Time.time<retryAt)return HoldCritical(s);
             var e=s.business.ledger;
             kind=BotServiceDecision.Needed(e.Account.Fuel,e.Driver.fatigue,e.Driver.satiety,e.Care.Cleanliness,e.Care.NeedsWash,e.Care.Damage.Durability);
             if(kind<0)return false;
-            if(!Select(s)){retryAt=Time.time+15;return false;}
+            if(!Select(s)){retryAt=Time.time+15;return HoldCritical(s);}
             s.jobs.nav.SetDestination(approach);routeWait=offPathSeconds=0;stage=1;
         }
         if(stage==1) {
@@ -79,10 +82,9 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
         if(stage==3) {
             Stop(s,"시설 이용 · "+approach.name);
             // Each purchase retains its native cash/condition/time validation.
-            int action=kind;
-            var e=s.business.ledger;
-            if(fuelSite)action=(e.Care.NeedsWash||e.Care.Cleanliness<45)&&s.services.CanUse(4)?4:e.Care.Damage.Durability<70&&s.services.CanUse(5)?5:e.Account.Fuel<60&&s.services.CanUse(0)?0:-1;
-            else if(kind==1&&e.Driver.satiety>=25||kind==3&&e.Driver.fatigue<35)action=-1;
+            // Exactly the native action whose price/time was planned. Further
+            // recovery needs get a new decision after actual physical departure.
+            int action=purchaseComplete?-1:kind;
             if(action>=0&&s.services.CanUse(action)) {
                 float scale=Time.timeScale;bool paused=s.paused;
                 // The bot has no modal. Buy's native Close is not allowed to
@@ -90,7 +92,7 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
                 s.services.open=true;
                 bool bought=s.services.Buy(action);
                 s.services.open=false;s.paused=paused;Time.timeScale=scale;
-                if(bought){s.simulationMatch.ObserveServiceTime(s);return true;}
+                if(bought){purchaseComplete=true;s.simulationMatch.ObserveServiceTime(s);return true;}
             }
             BeginManoeuvre(s,departure);stage=4;
         }
@@ -108,7 +110,7 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
         var e=s.business.ledger;var options=s.services.FacilityOptions(kind);FacilityOption best=null;float bestTime=float.PositiveInfinity;
         int nextFare=0;float nextSeconds=120;
         foreach(var offer in s.jobs.offers)if(offer!=null&&offer.fare>nextFare){nextFare=offer.fare;nextSeconds=Mathf.Max(30,offer.safeRouteSeconds+offer.waitSeconds+30);}
-        bool critical=e.Account.Fuel<8||e.Care.NeedsWash||e.Care.Cleanliness<30||e.Care.Damage.Durability<=20||e.Driver.fatigue>=90;
+        bool critical=Critical(s);
         foreach(var option in options){
             if(!option.Reachable||option.Quote==null||!option.Quote.Available||Time.time<avoidUntil&&option.Id==avoidSite)continue;
             // An unknown queue is not a zero wait. Optional recovery chooses
@@ -120,9 +122,7 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
             if(score<bestTime){bestTime=score;best=option;}
         }
         if(best==null)return false;selectedSite=best;approach=best.Approach;bay=best.Bay;direction=best.Direction;entry=best.Entry;
-        var leave=new List<Vector3>(best.Departure);var last=leave[leave.Count-1];float at;int edge=s.jobs.nav.hd.Nearest(last,direction,out at);
-        if(edge>=0){var lane=s.jobs.nav.hd.paths[edge];for(int step=1;step<=12;step++)leave.Add(lane.Position(Mathf.Min(lane.length,at+step)));}
-        departure=leave.ToArray();fuelSite=kind==0||kind==4||kind==5;queueWaitStarted=0;return true;
+        departure=best.Departure;purchaseComplete=false;queueWaitStarted=0;return true;
     }
     void BeginManoeuvre(DriveSession s,Vector3[] points) {
         s.assisted.SetActive(false);s.taxi.autoSteer=0;s.taxi.autoServiceBrake=0;

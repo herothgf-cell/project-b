@@ -5,7 +5,7 @@ using UnityEngine;
 
 public sealed class FacilityOption {
  public string Id,Name;public int Kind;public MapStop Approach;public Vector3 Bay,Direction;public Vector3[] Entry,Departure;
- public float TravelMetres,TravelSeconds;public int Waiting;public bool PhysicallyOccupied;public OperationServiceQuote Quote;
+ public float TravelMetres,TravelSeconds,RoadSeconds,EntrySeconds,DepartureSeconds;public int Waiting;public bool PhysicallyOccupied;public OperationServiceQuote Quote;
  public bool Reachable {get{return !float.IsInfinity(TravelSeconds)&&!float.IsNaN(TravelSeconds);}}
  public string Text {get{return Name+" · "+(!Reachable?"경로/예상시간 없음":"이동 약 "+Mathf.CeilToInt(TravelSeconds)+"초 / "+Mathf.CeilToInt(TravelMetres)+"m")+" · "+(Waiting>0?"대기 "+Waiting+"대 (시간 미정)":PhysicallyOccupied?"정차 공간 점유 · 대기시간 미정":"대기 차량 없음")+(Quote!=null&&Quote.Available?" · 이용 "+Quote.UseSeconds.ToString("0")+"초 / "+Quote.Price.ToString("N0")+"원"+(Quote.NewDebt>0?" (미납 "+Quote.NewDebt.ToString("N0")+"원)":""):" · 현재 견적 불가");}}
 }
@@ -13,7 +13,7 @@ public sealed class FacilityOption {
 public partial class ServiceStops {
  sealed class Registry {public readonly FacilityAdmissionQueue queue=new FacilityAdmissionQueue();public readonly Dictionary<int,ServiceStops> members=new Dictionary<int,ServiceStops>();}
  static readonly ConditionalWeakTable<object,Registry> registries=new ConditionalWeakTable<object,Registry>();
- Registry registry;string queuedSite;Vector3 queuedBay,queuedApproach;int queuedAction=-1;float grantedAt,nextEntranceScan;bool observedBay;
+ Registry registry;string queuedSite,suppressedSite;Vector3 queuedBay,queuedApproach,suppressedBay,suppressedApproach;int queuedAction=-1;float grantedAt,nextEntranceScan;bool observedBay;
  sealed class OptionCache {public float until;public object route;public List<FacilityOption> options;}
  readonly Dictionary<int,OptionCache> optionCaches=new Dictionary<int,OptionCache>();
  readonly Collider[] facilityColliders=new Collider[32];
@@ -23,10 +23,12 @@ public partial class ServiceStops {
  static string SiteId(Vector3 bay){return bay.x.ToString("F1",System.Globalization.CultureInfo.InvariantCulture)+":"+bay.z.ToString("F1",System.Globalization.CultureInfo.InvariantCulture);}
  bool BayClear(Vector3 bay){int count=Physics.OverlapBoxNonAlloc(bay+Vector3.up*.8f,new Vector3(2.3f,.8f,4.2f),facilityColliders,Quaternion.identity,(1<<8)|(1<<9),QueryTriggerInteraction.Ignore);if(count>=facilityColliders.Length)return false;for(int i=0;i<count;i++)if(facilityColliders[i]&&!facilityColliders[i].transform.IsChildOf(session.taxi.transform))return false;return true;}
  public bool CanEnterFacility(FacilityOption option){
-  if(option==null||!option.Reachable)return false;var r=SharedRegistry();if(queuedSite!=option.Id){CancelQueue();queuedSite=option.Id;queuedBay=option.Bay;queuedApproach=option.Approach.V();observedBay=false;grantedAt=Time.time;}
+  if(option==null||!option.Reachable)return false;suppressedSite=null;var r=SharedRegistry();if(queuedSite!=option.Id){ReleaseQueue();queuedSite=option.Id;queuedBay=option.Bay;queuedApproach=option.Approach.V();observedBay=false;grantedAt=Time.time;}
   r.queue.Request(queuedSite,GetInstanceID(),Time.time);bool already=r.queue.IsAdmitted(GetInstanceID());bool admitted=r.queue.TryAdmit(queuedSite,GetInstanceID(),BayClear(queuedBay));if(admitted&&!already)grantedAt=Time.time;return admitted;
  }
- public void CancelQueue(){if(registry!=null)registry.queue.Release(GetInstanceID());queuedSite=null;queuedAction=-1;observedBay=false;grantedAt=0;}
+ void ReleaseQueue(){if(registry!=null)registry.queue.Release(GetInstanceID());queuedSite=null;queuedAction=-1;observedBay=false;grantedAt=0;}
+ public void CancelQueue(){if(queuedSite!=null){suppressedSite=queuedSite;suppressedBay=queuedBay;suppressedApproach=queuedApproach;}ReleaseQueue();}
+ void ResetFacilityQueueIntent(){ReleaseQueue();suppressedSite=null;}
  void OnDestroy(){CancelQueue();if(registry!=null)registry.members.Remove(GetInstanceID());}
  public void TickFacilityQueue(){
   if(!session||!session.business||session.business.ledger==null)return;var r=SharedRegistry();r.queue.RemoveAbsent(delegate(int id){ServiceStops service;return r.members.TryGetValue(id,out service)&&service&&service.session&&(!service.session.simulationMatch||!service.session.simulationMatch.Finished);});
@@ -34,6 +36,7 @@ public partial class ServiceStops {
   foreach(var member in r.members.Values)if(member)member.ReconcileFacilityTicket();
   if(queuedSite==null)return;
   bool locked=session.simulationMatch&&session.simulationMatch.ServiceLocked(session);
+  if(!locked&&!r.queue.IsAdmitted(GetInstanceID())&&r.queue.TryAdmit(queuedSite,GetInstanceID(),BayClear(queuedBay)))grantedAt=Time.time;
   if(!session.IsSimulationBot&&queuedAction>=0&&!session.paused&&!locked){int action=queuedAction;if(!CanUse(action)){if(session.taxi.body.velocity.magnitude>.56f)CancelQueue();return;}if(r.queue.TryAdmit(queuedSite,GetInstanceID(),BayClear(queuedBay))){queuedAction=-1;open=true;Buy(action);open=false;}}
  }
  void ReconcileFacilityTicket(){
@@ -46,12 +49,13 @@ public partial class ServiceStops {
  }
  void ObservePlayerEntrance(){
   var position=session.taxi.transform.position;bool nearby=false;
+  if(suppressedSite!=null&&(position-suppressedBay).sqrMagnitude>45*45&&(position-suppressedApproach).sqrMagnitude>30*30)suppressedSite=null;
   foreach(var station in Stations)if((position-station.approach.V()).sqrMagnitude<35*35||(position-station.pump).sqrMagnitude<35*35){nearby=true;break;}
   if(!nearby&&ProjectMapScene.Active(session.world.map)){foreach(string type in new[]{"restaurant","rest","parking"})foreach(var obj in ProjectMapScene.Services(session.world.map,type))if((position-obj.Position).sqrMagnitude<45*45){nearby=true;break;}}
   else if(!nearby){nearby=(position-MealPosition).sqrMagnitude<45*45||(position-ParkingStop.Kerb).sqrMagnitude<35*35;var rest=RestArea;if(rest!=null)nearby|=(position-rest.pump).sqrMagnitude<35*35;}
   if(!nearby)return;
   foreach(int kind in new[]{0,1,3})foreach(var site in FacilityOptions(kind)){
-   if(!site.Reachable)continue;
+   if(!site.Reachable||site.Id==suppressedSite)continue;
    // Only the explicitly selected facility route queues on the public road.
    // Passing a driveway, or waiting at a nearby signal, creates no ticket.
    bool guided=destination.Length>0&&Vector3.Distance(position,site.Approach.V())<15&&(Vector3.Distance(session.jobs.nav.destination,site.Approach.Kerb)<3||Vector3.Distance(session.jobs.nav.destination,site.Approach.V())<3);
@@ -65,8 +69,17 @@ public partial class ServiceStops {
   if(!session.IsSimulationBot){queuedAction=action;notice="시설이 사용 중입니다 · "+QueueStatus;noticeUntil=Time.unscaledTime+8;Close(false);}return false;
  }
  FacilityOption Option(int kind,string name,MapStop approach,Vector3 bay,Vector3 direction,Vector3[] entry,Vector3[] departure){
-  float metres,seconds=OperationForecastAdapter.DirectedSeconds(session,approach,out metres);if(Vector3.Distance(session.taxi.transform.position,bay)<5){seconds=0;metres=0;}var r=SharedRegistry();string id=SiteId(bay);return new FacilityOption{Id=id,Name=name,Kind=kind,Approach=approach,Bay=bay,Direction=direction,Entry=entry,Departure=departure,TravelMetres=metres,TravelSeconds=seconds,Waiting=r.queue.Count(id)-(r.queue.Position(id,GetInstanceID())>0?1:0),PhysicallyOccupied=!BayClear(bay),Quote=OperationServiceQuote.Calculate(session.business.ledger,kind,seconds,metres)};
+  float metres,seconds=OperationForecastAdapter.DirectedSeconds(session,approach,out metres);
+  // Use the same authored paths (including final lane rejoin) as the physical
+  // bot. Road approach alone omits a material part of every facility detour.
+  var leave=new List<Vector3>(departure);var last=leave[leave.Count-1];float at=0;int edge=session.jobs.nav.hd==null?-1:session.jobs.nav.hd.Nearest(last,direction,out at);
+  if(edge>=0){var lane=session.jobs.nav.hd.paths[edge];for(int step=1;step<=12;step++)leave.Add(lane.Position(Mathf.Min(lane.length,at+step)));}departure=leave.ToArray();
+  float entryMetres=PathMetres(entry),exitMetres=PathMetres(departure);
+  if(Vector3.Distance(session.taxi.transform.position,bay)<5){seconds=0;metres=0;entryMetres=0;}
+  float entrySeconds=entryMetres/2.2f,exitSeconds=exitMetres/2.2f;var r=SharedRegistry();string id=SiteId(bay);
+  return new FacilityOption{Id=id,Name=name,Kind=kind,Approach=approach,Bay=bay,Direction=direction,Entry=entry,Departure=departure,TravelMetres=metres+entryMetres+exitMetres,TravelSeconds=seconds+entrySeconds+exitSeconds,RoadSeconds=seconds,EntrySeconds=entrySeconds,DepartureSeconds=exitSeconds,Waiting=r.queue.Count(id)-(r.queue.Position(id,GetInstanceID())>0?1:0),PhysicallyOccupied=!BayClear(bay),Quote=OperationServiceQuote.Calculate(session.business.ledger,kind,seconds+entrySeconds,metres+entryMetres)};
  }
+ static float PathMetres(Vector3[] points){float length=0;for(int i=1;i<points.Length;i++)length+=Vector3.Distance(points[i-1],points[i]);return length;}
  void AddDrive(List<FacilityOption> list,int kind,string name,MapStop approach,Vector3 bay,Vector3 direction,Vector3[] drive){if(drive==null||drive.Length<2)return;int split=0;float best=float.PositiveInfinity;for(int i=0;i<drive.Length;i++){float d=(drive[i]-bay).sqrMagnitude;if(d<best){best=d;split=i;}}var enter=new List<Vector3>();for(int i=0;i<split;i++)enter.Add(drive[i]);enter.Add(bay);var leave=new List<Vector3>{bay};for(int i=split+1;i<drive.Length;i++)leave.Add(drive[i]);if(enter.Count<2)enter.Insert(0,approach.V());if(leave.Count<2)return;list.Add(Option(kind,name,approach,bay,direction,enter.ToArray(),leave.ToArray()));}
  public List<FacilityOption> FacilityOptions(int kind){
   OptionCache cached;if(optionCaches.TryGetValue(kind,out cached)&&Time.unscaledTime<cached.until&&ReferenceEquals(cached.route,session.jobs.nav.hdRoute))return cached.options;
@@ -77,5 +90,5 @@ public partial class ServiceStops {
    else {var rest=RestArea;if(rest!=null)AddDrive(list,kind,"휴식 주차장",rest.approach,rest.pump,rest.direction,rest.drivePath);var stop=ParkingStop;list.Add(Option(kind,stop.name,stop,stop.Kerb,stop.Direction,new[]{stop.V(),stop.Kerb},new[]{stop.Kerb,stop.Kerb+stop.Direction*12}));}}
   list.Sort(delegate(FacilityOption a,FacilityOption b){return a.TravelSeconds.CompareTo(b.TravelSeconds);});optionCaches[kind]=new OptionCache{until=Time.unscaledTime+1,route=session.jobs.nav.hdRoute,options=list};return list;
  }
- public bool GuideFacility(FacilityOption option){if(option==null||!option.Reachable||session.jobs.trip.State==TripState.OnTrip)return false;CancelQueue();session.jobs.nav.SetDestination(option.Approach);destination=option.Text+" · 내부 수동 진입 · 정차 후 F7";if(open)Close(false);return true;}
+ public bool GuideFacility(FacilityOption option){if(option==null||!option.Reachable||session.jobs.trip.State==TripState.OnTrip)return false;ResetFacilityQueueIntent();session.jobs.nav.SetDestination(option.Approach);destination=option.Text+" · 내부 수동 진입 · 정차 후 F7";if(open)Close(false);return true;}
 }

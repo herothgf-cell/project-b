@@ -34,7 +34,7 @@ public static class OperationPlanningRuntimeChecks {
    Check(money==JsonUtility.ToJson(drivers[0].business.ledger.Account.Snapshot())&&elapsed==drivers[0].business.ledger.Elapsed,"admission and queue create no charge/time/condition effects");
    drivers[0].taxi.transform.position=site.Bay;Physics.SyncTransforms();drivers[0].services.TickFacilityQueue();drivers[0].services.CancelQueue();
    Check(!drivers[1].services.CanEnterFacility(site),"logical release cannot bypass real taxi occupying bay");
-   drivers[0].taxi.transform.position=site.Bay+site.Direction*25;Physics.SyncTransforms();Check(drivers[1].services.CanEnterFacility(site),"real departure admits next");
+   drivers[0].taxi.transform.position=site.Bay+site.Direction*25;Physics.SyncTransforms();drivers[1].services.TickFacilityQueue();Check(!drivers[1].services.QueueWaiting,"real Tick admits entrance ticket after physical departure without another entry request");
    UnityEngine.Object.DestroyImmediate(drivers[2].services);drivers[3].services.TickFacilityQueue();Check(drivers[3].services.QueueStatus.Contains("2번째"),"destroy/disconnect releases ticket");
    drivers[1].services.CancelQueue();Check(drivers[3].services.CanEnterFacility(site),"cancel releases next");drivers[3].services.CancelQueue();
    Check(drivers[0].services.CanEnterFacility(site),"transient restore reconstructs physical ticket");drivers[0].services.CancelQueue();

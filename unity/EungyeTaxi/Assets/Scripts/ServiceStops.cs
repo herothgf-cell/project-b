@@ -80,6 +80,7 @@ public partial class ServiceStops : MonoBehaviour {
  public bool GuideAfterTrip(int kind){
   if(!postTrip||kind<0||kind>3||session.jobs.Active||session.paused||session.business.ledger.State!=BusinessState.Open)return false;
   RefreshPostTrip();if(float.IsInfinity(postTripDistances[kind]))return false;
+  ResetFacilityQueueIntent();
   // Explicit route choice only; no popup, payment, rest or shift closing is performed here.
   if(kind==0&&postTripFuel>=0){session.jobs.nav.SetDestination(Stations[postTripFuel].approach);destination=Stations[postTripFuel].name+" · 입구부터 수동 진입 · 정차 후 F7";}
   else if(kind==3&&RestArea!=null&&ServiceDistance(RestArea.approach)<postTripDistances[2]){session.jobs.nav.SetDestination(RestArea.approach);destination="동부 휴식 주차구역 · 입구부터 수동 진입 · 정차 후 F7";}
@@ -114,10 +115,12 @@ public partial class ServiceStops : MonoBehaviour {
  public void CompleteServiceNavigation(){destination="";var jobs=session.jobs;if(jobs.trip.State==TripState.ToPickup&&jobs.current!=null)jobs.ResumePickupNavigation();else if(!jobs.Active)jobs.nav.Clear();}
  public bool GuideFuel(int station){
   if(!open||station<0||station>=Stations.Count||session.jobs.trip.State==TripState.OnTrip)return false;
+  ResetFacilityQueueIntent();
   session.jobs.nav.SetDestination(Stations[station].approach);destination=Stations[station].name+" · 입구 앞까지 내비/H 안내 · 내부는 H 해제 후 수동 진입";Close(false);return true;
  }
  public bool Guide(int kind){
   if(!open||kind<0||kind>3||!HasService(kind)||session.jobs.trip.State==TripState.OnTrip)return false;
+  ResetFacilityQueueIntent();
   if(session.jobs.Active&&kind!=0){if(!session.business.ledger.OneDay)return false;session.jobs.ClearForDay();}
   if(kind==3&&RestArea!=null){var taxi=session.taxi;var graph=session.jobs.nav.hd;float restDistance=PassengerJobs.DirectedDistance(graph,taxi.transform.position,taxi.transform.forward,RestArea.approach);float baseDistance=PassengerJobs.DirectedDistance(graph,taxi.transform.position,taxi.transform.forward,StopFor(2));if(restDistance<baseDistance){session.jobs.nav.SetDestination(RestArea.approach);destination="동부 휴식 주차구역 · 입구부터 수동 진입 · 파란 정차선에서 F7";Close();return true;}}
   if(kind==3)kind=2;
