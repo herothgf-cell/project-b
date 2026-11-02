@@ -31,3 +31,10 @@ candidate4 동일빌드의10초같은승객유지구간:
 명칭81b48b1 통합은확인된백업검증뒤git restore/merge가허용돼완료됐다. 캠페인/편집지도저장호환도원격main소스를그대로유지한다. 후보5에서제품명실제assert와최종재접속/렌더·싱글복원검사를진행한다.
 
 승차후큰길/짧은길요청복원도같은옵션에서SetPassengerPreference를반복하는경로가있어replica에한해옵션변경때만적용한다. 캠페인복원은기존대로다. 실제client내임시OnTrip모델로동일짧은길요청복원뒤hdRoute객체유지를assert하고즉시원래상태로복원한다(서버상태/차량위치변경없음;실제운송증거아님). 후보6최종검사에포함한다.
+
+## 최종 통합·배포 수용
+- 실제소스4a0cf2cefdce82940895f76fc3773d41f0b26ffa, 명칭81b48b1/P1P2·UI4900cea 모두보존. candidate6 최초Editor는기존PvpEditorIsolationTests의ProjectSettings.asset 메모리매핑잠금(Win32 1224)으로exit1. 새Editor로동일검사를재실행한 native-perf-final-build6-retry.log는exit0: 보간6/Native18/승객36041/테마·내비15/ProjectMap검사·동일Windows빌더통과. 임시설정원본의회사/제품값을확인했고검사를우회하지않았다.
+- 최종candidate6 `test_pvp_native_lan.ps1 -Executable artifacts/pvp/native-perf-candidate6/EungyeTaxi.exe -Reconnect` exit0, native-lan-20261102-185708-3720a8d2: host27/client34(합계61). 제품명/기존권한·입력13.921m/모델·소유권·P1P2시설/지시등·메뉴/같은차봇승계/재접속/정리 및임시client OnTrip 동일요청경로객체유지통과. steady19회 평균0.12/p950.24/max0.24ms; clientframe1161회 평균16.76/p9518.03/max67.52ms(headless이며GPU성능수치아님).
+- 최종candidate6 승객회귀 client-perf-passenger6 exit0/38 PASS. 명칭통합candidate5 Unified는exit0/UNIFIED_MODE_RESULT PASS98.26672초/임시싱글체크포인트·복원·거부저장/실사용자파일보존통과. 이후6수정은replica에만적용해싱글복원분기는동일하다. 순수캠페인28모델도exit0.
+- candidate6의Burst DoNotShip 자료는부모절대경로검증후artifacts로분리. 실행중인타깃프로세스가없음을확인하고canonical `builds/EungyeTaxi`를전체교체해원본139파일/115,290,398바이트SHA256전수동일을검증했다. 실패빌드의파일을혼합배포하지않았다. 기본/PVP위임manifest VerifyOnly 각각exit0,Strict issues0. 지도/GIS/ZIP변경없음.
+- 실행은 `builds/EungyeTaxi/EungyeTaxi.exe` (택시시뮬레이션). 기존두창을닫고이실행본으로호스트/참가자를다시실행한다. 다른작업체크아웃실행본/미커밋문서에는쓰지않았다. 모든끊김제거/FullHD두창동시노출/다른PC·4인/장시간수용은주장하지않는다. 초기경로단발지연·원격입력의보간지연은남는다.
