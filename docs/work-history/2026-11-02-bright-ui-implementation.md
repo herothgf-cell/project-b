@@ -85,3 +85,8 @@ Unity 로컬 환경은 `C:/Program Files/Unity/Hub/Editor/2022.3.62f2/Editor/Uni
 - 실제 통합 소스 커밋 `5578f32cbd10ce6b88d2042a6ff64683bcfcfc86`은 `3006e81` UI 소스와 원격 main `7597eaa`의 병합이다. 이전140파일 검증은 통합 전 단계이며 현재 배포 기준은 아래139파일이다.
 - 최종 `distribution/EungyeTaxi-build-manifest.json`: 소스5578f32, **139파일 / 115,115,573바이트**. 기본 및 PVP 위임 VerifyOnly 모두 종료0, 실제 크기/SHA256 전수 일치. 원격 최신 배포에서 이미 제거한 오래된 level0.resS를 되살리지 않는다.
 - 사용자 저장14파일의 SHA256 불변, 원격 대비 지도/차량/월드 생성 소스 불변, 원래 폴더의 별도 마인드맵 미커밋2파일은 보존 대상이다. 통합 UI20화면과 서비스3화면 중 검토용13개를 docs/ui에 보관했다.
+## 게시 영수증
+
+- `git log -1 --oneline -- docs/work-history/2026-11-02-bright-ui-implementation.md`로 실제 배포 커밋 `5df3c5abe88e89849d3857d3bc120ce064ab32a0`을 확인했다. `git push origin HEAD:main` 종료0, `git ls-remote origin refs/heads/main`이 같은 해시를 반환했다. 강제 푸시 없이 원격7597eaa를 보존했다.
+- 원래 `C:/git/project-b`는 검증된 이 작업의 임시 빌드/manifest/인계 변경만 보관·정리한 뒤 배포5df3c5a로 fast-forward했다. 사용자 마인드맵 미커밋2파일은 전후 SHA256 불변이며 다른 미추적 폴더/설정도 남겼다. 원래 폴더에서 최종 manifest139파일115,115,573바이트/Strict issues0을 다시 확인했다. 통합 작업트리의 ignored 검증 로그·캡처는 원래 artifacts/ui-bright에 복사했다.
+- 이 영수증과 계획 체크는 문서만 추가하며 빌드 소스5578f32·실행본·검증 범위를 바꾸지 않는다. 이후 사람의 장시간 UI/운전·전체20분/3일 캠페인 검증은 별도다.
