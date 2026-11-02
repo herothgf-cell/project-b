@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 [System.Serializable] public class PassengerRequestObservationSnapshot {
  public string systemRouteReason;
  public PassengerRequestSnapshot request;public string observedTrip,selectedEffect;public float stoppedSeconds,travelled,broadTravel,expectedDistance,expectedBroad,etaAge,etaPredicted,etaNav,acceptedAge,addedDistance,newRemaining;public int motionBefore,lawBefore,accelBefore,brakeBefore,necessaryBefore,proposal,newFare;public bool etaSelected,quietReply,adviceFastest,preferLarge,preferFast;
@@ -13,7 +13,7 @@ public class PassengerRequestObservation : MonoBehaviour {
  int proposal=-1;float proposalUntil;Vector3 proposalPosition;float addedDistance,newRemaining;int newFare;
  public PassengerRequestObservationSnapshot CaptureLive(){return new PassengerRequestObservationSnapshot{systemRouteReason=SystemRouteReason,request=request.Snapshot(),observedTrip=observedTrip,selectedEffect=selectedEffect,stoppedSeconds=stoppedSeconds,travelled=travelled,broadTravel=broadTravel,expectedDistance=expectedDistance,expectedBroad=expectedBroad,etaAge=Time.time-etaAt,etaPredicted=etaPredicted,etaNav=etaNav,acceptedAge=Time.time-acceptedAt,addedDistance=addedDistance,newRemaining=newRemaining,motionBefore=motionBefore,lawBefore=lawBefore,accelBefore=accelBefore,brakeBefore=brakeBefore,necessaryBefore=necessaryBefore,proposal=proposal,newFare=newFare,etaSelected=etaSelected,quietReply=quietReply,adviceFastest=adviceFastest,preferLarge=session.jobs.nav.PreferLargeRoad,preferFast=session.jobs.nav.PreferFastest};}
  public void RestoreLive(PassengerRequestObservationSnapshot s){SystemRouteReason=s.systemRouteReason??"";request.Restore(s.request);observedTrip=s.observedTrip;selectedEffect=s.selectedEffect;stoppedSeconds=0;travelled=s.travelled;broadTravel=s.broadTravel;expectedDistance=s.expectedDistance;expectedBroad=s.expectedBroad;etaAt=Time.time-s.etaAge;etaPredicted=s.etaPredicted;etaNav=s.etaNav;acceptedAt=Time.time-s.acceptedAge;addedDistance=s.addedDistance;newRemaining=s.newRemaining;motionBefore=s.motionBefore;lawBefore=s.lawBefore;accelBefore=s.accelBefore;brakeBefore=s.brakeBefore;necessaryBefore=s.necessaryBefore;proposal=s.proposal;newFare=s.newFare;etaSelected=s.etaSelected;quietReply=s.quietReply;adviceFastest=s.adviceFastest;sample=false;}
- static readonly string[] lines={"조용히 운행해 주세요.","도착까지 얼마나 걸릴까요?","차멀미가 심해요. 부드럽게 운전해 주세요.","급해요. 규칙을 지키며 제시간에 도착해 주세요.","골목 대신 큰길로 가 주세요.","가능한 짧은 길로 가 주세요.","가까운 안전한 승하차 지점에 내려 주세요.","오늘 속상한 일이 있었어요.","어느 길이 좋을까요? 빠른 길을 추천해 주세요.","오늘 면접인데 잘할 수 있을까요?","라디오 음악을 바꿔 주세요. (텍스트 연출)","택시비가 부족한데 요금을 알려 주세요.","이 동네에서 오래 일하셨어요?","다른 승하차 지점으로 목적지를 바꿔 주세요.","안전한 승하차 지점에 잠깐 들러 주세요.","하차 후 분실물 발견 시 보관·신고 절차를 부탁드려요.","빨간불이어도 그냥 가 주세요."};
+ static readonly string[] lines={"조용히 운행해 주세요.","도착까지 얼마나 걸릴까요?","차멀미가 심해요. 부드럽게 운전해 주세요.","급해요. 규칙을 지키며 제시간에 도착해 주세요.","골목 대신 큰길로 가 주세요.","가능한 짧은 길로 가 주세요.","가까운 안전한 승하차 지점에 내려 주세요.","오늘 속상한 일이 있었어요.","어느 길이 좋을까요? 빠른 길을 추천해 주세요.","오늘 면접인데 잘할 수 있을까요?","라디오 음악을 바꿔 주세요. (텍스트 연출)","택시비가 부족한데 요금을 알려 주세요.","이 동네에서 오래 일하셨어요?","다른 승하차 지점으로 목적지를 바꿔 주세요.","안전한 경유지에서 용무20초를 무료로 기다린 뒤 원래 목적지로 부탁해요.","하차 후 분실물 발견 시 보관·신고 절차를 부탁드려요.","빨간불이어도 그냥 가 주세요."};
  public static string UpcomingTitle(int completed){return lines[Mathf.Abs(completed)%lines.Length];}
  public void BeginKind(RequestKind kind){selectedEffect="";observedTrip=session.law.tripId;
   if(!request.Begin(observedTrip,kind))return;stoppedSeconds=travelled=broadTravel=0;resultUntil=0;proposal=-1;proposalUntil=0;sample=etaSelected=quietReply=false;
@@ -41,7 +41,7 @@ public class PassengerRequestObservation : MonoBehaviour {
   if(request.Kind==RequestKind.Eta)return RespondEta(0);
   var nav=session.jobs.nav;var kind=request.Kind;string response;
   float beforeDistance=nav.remaining,beforeEta=nav.estimatedSeconds;
-  if(ChangesRoute){if(!PrepareProposal())return false;bool ok=kind==RequestKind.ViaStop?session.jobs.TrySetPassengerVia(proposal):session.jobs.TryChangeDestination(proposal);if(!ok)return false;response=(kind==RequestKind.ViaStop?"안전 경유 수락: ":"안전 목적지 변경: ")+KoreanText.Stop(session.jobs.stops[proposal].name)+" · "+session.jobs.FareAgreementText(newFare)+" · 남은 기한 "+Mathf.CeilToInt(newRemaining)+"초 · 동일 운송";}
+  if(ChangesRoute){if(!PrepareProposal())return false;bool ok=kind==RequestKind.ViaStop?session.jobs.TrySetPassengerVia(proposal):session.jobs.TryChangeDestination(proposal);if(!ok)return false;response=(kind==RequestKind.ViaStop?"안전 경유 수락: ":"안전 목적지 변경: ")+KoreanText.Stop(session.jobs.stops[proposal].name)+" · "+session.jobs.FareAgreementText(newFare)+" · 남은 기한 "+Mathf.CeilToInt(newRemaining)+"초 · 동일 운송"+(kind==RequestKind.ViaStop?" · 무료 용무 대기20초 포함 · 영업시간·연료 소모 · 대기 할증0원":"");}
   else switch(kind){
    case RequestKind.Quiet:response="조용히 운행하겠습니다";break;
    case RequestKind.Eta:response="내비 예상 "+RoadNavigation.FormatEta(nav.estimatedSeconds)+" 안내 (교통에 따라 변경)";break;
@@ -121,7 +121,7 @@ public class PassengerRequestObservation : MonoBehaviour {
  public void Draw(){if(!session.business.useV2||session.jobs.trip.State!=TripState.OnTrip||session.jobs.trip.ArrivalLocked||session.paused)return;if(request.Resolved&&Time.time>resultUntil&&!etaSelected)return;
   string text=request.Resolved?"나  “"+DialogueReply+"”":"손님  “"+lines[(int)request.Kind]+"”";
   if(etaSelected)text="도착 예상 안내 · 교통에 따라 변동\n현재 남은 "+RoadNavigation.FormatEta(session.jobs.nav.estimatedSeconds)+" · 최초 안내까지 "+RoadNavigation.FormatEta(Mathf.Max(0,etaPredicted-(Time.time-etaAt)));
-  if(!request.Resolved){if(ChangesRoute){if(!PrepareProposal())text+="\n안전한 변경 후보 없음 · 원래 운행 유지 가능";else text+="\n"+KoreanText.Stop(session.jobs.stops[proposal].name)+" · 추가 "+addedDistance.ToString("0")+"m · "+session.jobs.FareAgreementText(newFare)+" / 기한 "+Mathf.CeilToInt(newRemaining)+"초";}
+  if(!request.Resolved){if(ChangesRoute){if(!PrepareProposal())text+="\n안전한 변경 후보 없음 · 원래 운행 유지 가능";else text+="\n"+KoreanText.Stop(session.jobs.stops[proposal].name)+" · 추가 "+addedDistance.ToString("0")+"m · "+session.jobs.FareAgreementText(newFare)+" / 기한 "+Mathf.CeilToInt(newRemaining)+"초"+(request.Kind==RequestKind.ViaStop?"\n용무20초 무료 대기에 동의 · 영업시간·연료 소모 · 원래 목적지 복귀 · 대기 할증0원":"");}
    if(!SafeToRespond())text+="\n안전하게 정차하면 답변을 선택할 수 있어요.";
   }else if(selectedEffect.Length>0)text+="\n적용: "+selectedEffect;
   var priorMatrix=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));float vw=Screen.width/scale,vh=Screen.height/scale;
