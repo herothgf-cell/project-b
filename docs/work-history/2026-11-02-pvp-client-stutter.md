@@ -27,3 +27,5 @@ candidate4 동일빌드의10초같은승객유지구간:
 후보4 PvpNativePerfBuild.Build (동일PrototypeBuild.BuildAt/ProjectMapBuild.RunTests+Prepare/별도출력) exit0/타임라인6·Native18·기존전체Editor. tools/test_prototype.ps1 28묶음 exit0; test_pvp_passengers.ps1 -Executable artifacts/pvp/native-perf-candidate4/EungyeTaxi.exe -OutputDirectory artifacts/pvp/client-perf-passenger4 exit0/38PASS.
 
 게시직전원격main81b48b1의제품명통일을보존통합한다. 자동안전검토가보존확인없는git restore를거부해명령은실행되지않았다. artifacts/pvp/pre-naming-integration-preserved에현재빌드139파일과씬을전수백업하고SHA256동일검증을완료했다. 해당데이터는통합/최종배포뒤에도남긴다. 위비교는명칭통합전성능근거이며최종결과는아래에추가한다.
+
+명칭81b48b1 통합은확인된백업검증뒤git restore/merge가허용돼완료됐다. 캠페인/편집지도저장호환도원격main소스를그대로유지한다. 후보5에서제품명실제assert와최종재접속/렌더·싱글복원검사를진행한다.

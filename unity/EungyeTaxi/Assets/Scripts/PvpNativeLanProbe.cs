@@ -8,7 +8,7 @@ using UnityEngine;
 // input messages and authoritative snapshots. Phase files coordinate assertions only.
 public sealed class PvpNativeLanProbe : MonoBehaviour {
  [Serializable] public sealed class Metrics {
-  public string graphics;public int width,height;public PvpNativePerfView[] performance;public string role,map,error;public bool passed;public int slot,checks,failed,driverCount,wheels,score,cash,durability,claim=-1;
+  public string product;public string graphics;public int width,height;public PvpNativePerfView[] performance;public string role,map,error;public bool passed;public int slot,checks,failed,driverCount,wheels,score,cash,durability,claim=-1;
   public float elapsed,metres,maxSpeed;public string trip,offer;public List<string> evidence=new List<string>();
  }
  [Serializable] public sealed class Model {public string offer,trip;public int pickup,score,cash,durability,npcs,manner;public float clock;}
@@ -46,7 +46,7 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   var match=lan.Match;var own=match.Human;metrics.slot=lan.LocalSlot;metrics.map=own.world.map.mapId;metrics.driverCount=match.Drivers.Count;metrics.wheels=own.taxi.wheels.Length;
   Check(metrics.map=="pvp-city-a"&&metrics.driverCount==4&&metrics.wheels==4,"native city and four original physical taxis");
   foreach(var d in match.Drivers)Check(d.business.SimulationSession&&d.business.SavePath==""&&d.taxi.wheels.Length==4,"native sessions retain campaign save isolation");
-  metrics.graphics=SystemInfo.graphicsDeviceType.ToString();metrics.width=Screen.width;metrics.height=Screen.height;
+  metrics.product=Application.productName;Check(metrics.product=="택시 시뮬레이션","latest main product name retained");metrics.graphics=SystemInfo.graphicsDeviceType.ToString();metrics.width=Screen.width;metrics.height=Screen.height;
   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeRenderCheck")>=0){Check(SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null,"graphics device is active");bool captured=false;StartCoroutine(CaptureFrame(()=>captured=true));yield return Until(()=>captured,"actual rendered frame captured",8);}
   if(host)yield return Host();else yield return Client();
   yield return Cleanup();
