@@ -14,7 +14,7 @@
 
 변경파일: PvpNativeLan/Replica/Probe 신규; PvpBootstrap/Panel·SimulationMatch/Mode/CallBoard/Bot/PassengerWorld/DriverPresentation; 기존Taxi/Business/Economy/Law/Manners/PassengerJobs/Requests/Service/Signals/Assist/Navigation/Damage/Receipt/Unified·TrafficCar의온라인조건부연결. 새 two-process runner 및 기획·체크리스트/로드맵.
 
-## 실제 검사 기록 (진행 중)
+## 실제 검사 기록 (초기·실패 포함)
 
 - Unity2022.3.62f2 `-batchmode -nographics -quit -projectPath unity/EungyeTaxi -executeMethod PvpPassengerParityTests.Run`, native-lan-editor1.log: 정상종료/PVP_PASSENGER_EDITOR_OK36041, 기존4인/격리/컨디션/도시90645 포함. 이후 최종 통합수정은 재검사 대상.
 - 배포/실제native LAN 검사는 아직 진행 전. 아래에 최종 exit/실제 수치를 추가한다.
@@ -51,3 +51,14 @@ A3 실제 지도 적용, 다른PC LAN/방화벽·사람주행·원격4명·장�
 
 - 최종 독립 코드 검토에서 추가 P2 한 건 발견: Gamepad JoystickButton7이 기존 pause로 빠져 호스트 공통 시계가 멈추는 문제다. Esc와 같은 온라인 메뉴로 연결하고, 이 메뉴 중 공통 시계 진행/자기 차 제동의 실제 Player assertion을 추가했다. 추가 critical/important 차단점은 없었다. 물리 패드 입력은 별도다.
 - Unified8 실제 앱은 exit0/UNIFIED_MODE_RESULT PASS, 사용자 JSON4파일/별도 전체6파일 SHA 불변. 부모 셸에서 기대 marker를 UNIFIED_MODE_OK로 잘못 쓴 탓에 runner만 missing marker로 종료했다. 실제 로그/종료 조건으로 구분하고 최종 재실행은 올바른 UNIFIED_MODE_RESULT PASS를 사용한다.
+
+## 배포 수용 — 최종 Build9
+
+- 실제 소스 `70200c703a00bcdfc32c8669e54aa812575e70fc`, PvpNativeLanTests.BuildValidated / native-lan-build9.log exit0: 밝은테마·회전안내15·승객36041·LAN JSON17·기존격리/도시/컨디션/4인계약 및 BuildHybrid 통과. main d818c33의 밝은UI/내비/마인드맵/법규 문서 보존.
+- `tools/test_pvp_native_lan.ps1 -Reconnect` / artifacts/pvp/native-lan-20261102-161231-07938bb5: host26/client28 **exit0**, 합계54. 메뉴 중 자기차 제동/공통시계 계속, 실제 페달 주행 **13.742274 m / 최고 4.027434 m/s**, 승객/소유권/모델/72NPC·신호/운전점수·명령거부/같은차봇/재접속/종료 통과. 같은PC 두프로세스이며 다른PC/4명/완전한원격운송/수동입력 수용은 아니다.
+- 최종 실행본 `test_pvp_passengers.ps1 -OutputDirectory artifacts/pvp/native-lan-final-passenger9` exit0/38PASS/17요청·점유·음식/짐/8+3. 명시적fixture다.
+- 최종 실행본 `-unifiedModeCheck -logFile artifacts/pvp/native-lan-final-unified9.log` exit0/UNIFIED_MODE_RESULT PASS active_seconds114.136. 초기메뉴/4인PVP/재시작/언로드/싱글 임시 실제저장·복원·거부원본/backup보존/메뉴 통과. 실제사용자JSON4파일 및 별도전체6파일 SHA256·파일수 불변 확인. PC 화면/입력 조작 없음.
+- 필수지도 `tools/check_workspace.ps1 -Strict` exit0/issues0; 선택import2맵미배치 유지. config/maps·distribution/maps·원본GIS·회사/제품명/저장위치 보존. 다른Cgit의 마인드맵 미커밋2파일과미추적폴더/설정에는쓰기없음.
+- 현재 배포/실행은 이 worktree의 `builds/EungyeTaxi/EungyeTaxi.exe`. 은계 영업 또는PVP → 시간/방만들기 → 동일LAN IP·포트참가 → 호스트시작. 빈자리봇/앱실행유지30초재참가. A3는시안이며게임은현재A2도시. 다른PC/사람4명·물리패드·네트워크상태/장기경제/전도로·A3구현은미검증/별도.
+
+- 배포 manifest `tools/update_distribution_manifest.ps1 -SourceCommit 70200c703a00bcdfc32c8669e54aa812575e70fc -ValidatedOn 2026-11-02 -ValidationReport artifacts/pvp/native-lan-validation9.json` exit0. 통합/PVP위임 VerifyOnly 각각 exit0: **139파일115,169,424바이트** 크기/SHA256 전수일치.
