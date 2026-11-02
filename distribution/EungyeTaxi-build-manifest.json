@@ -1,59 +1,38 @@
 {
-  "sourceCommit": "a8fcb88a9a9d96d1e9a96fa2f6582fe9bc764922",
+  "sourceCommit": "500dd9800fe77e57654d373b9cba8ccb69e7b305",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-02",
-  "totalBytes": 115283461.0,
+  "totalBytes": 115283958.0,
   "validation": {
     "build": "PrototypeBuild.BuildHybrid exit0",
-    "sourceCommit": "a8fcb88a9a9d96d1e9a96fa2f6582fe9bc764922",
-    "modelSuites": 28,
-    "editor": "P1P2BuildChecks.ValidateMerged exit0",
-    "checkpointJsonAssertions": 28,
-    "operationAdapterAssertions": 30,
-    "facilityGeometryAssertions": 2708,
-    "passengerEditorAssertions": 36041,
-    "pvpCityAssertions": 90645,
-    "nativeIntegration": "test_p1p2_integration_player.ps1 exit0; position-controlled fixtures",
-    "passengerNativeAssertions": 42,
-    "freshProcessRestoreAssertions": 6,
-    "nativeLan": {
-      "processes": 2,
-      "loopback": true,
-      "hostAssertions": 23,
-      "clientAssertions": 26,
-      "guestMetres": 14.009719848632812,
-      "reconnect": false
-    },
-    "userSavesUnchanged": 4,
-    "minimumVerificationRequested": true,
+    "sourceCommit": "500dd9800fe77e57654d373b9cba8ccb69e7b305",
+    "productName": "택시 시뮬레이션",
+    "nativeTitleSmoke": "driveFeedbackTest exit0",
+    "nativeSmokeChecks": 20,
+    "legacyCampaignAndRoadMapDirectoryPreserved": true,
+    "userSaveFilesUnchanged": 4,
+    "priorSimulationValidationSource": "a8fcb88a9a9d96d1e9a96fa2f6582fe9bc764922",
+    "minimalVerification": true,
     "manualDriving": false,
-    "fullPhysicalRoute": false,
-    "performanceRerun": false,
-    "otherPc": false,
-    "confirmedNewPermissiveApproaches": 0,
-    "heldControls": [
-      "music",
-      "air conditioning",
-      "windows"
-    ]
+    "performanceRerun": false
   },
   "files": [
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/app.info",
-      "bytes": 44,
-      "sha256": "0f2eedc00079ea6463a6ade1fcef9283d5fe4cf4cc5f82dbee1baae86159dbb3"
+      "bytes": 37,
+      "sha256": "2125735326f26530c81112e21c4a6eed17a1aaea4dad8d108e611253b065469a"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "a981f9a423452fd5d83656044d16612906fab63a1e3fe6251a4dbfe8238799f4"
+      "sha256": "44478b08165e8bf0d5d90bdfbe5632d747bc7a0a4a504a71b585335939e31b92"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 54948,
-      "sha256": "089afd937c3f9f1008eeb660f74b0915020d90f0c9b5b4b51af29bc94037796b"
+      "bytes": 54940,
+      "sha256": "15830d04a21b63e41f76117fc077721c9a09cba0754c52a72e7e78e9cd76d1e4"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
@@ -72,8 +51,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2158080,
-      "sha256": "f891a46b0e1661dcab642f3fbd6c49f54f6e434becd4223f85219682e4d21e54"
+      "bytes": 2158592,
+      "sha256": "2c98bea45f6d01197d0840d25f718e947b68a583a57217abf1eb0e505fe7623b"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
