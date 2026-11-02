@@ -36,3 +36,8 @@ CPU 범위: 합류990ms/전체NPC5372ms/경로갱신3454ms/화면1614ms. 소스 
 회사/제품명과 기존 캠페인 저장 경로를 유지했다. 다른 체크아웃의 로컬main d817d9a와 미추적 작업은 변경하지 않았다. 필수 지도 원본/프로젝트 지도/ZIP은 변경하지 않는다. 사람 직접 운전의 추월·합류·유턴 체감, 전 도로 장시간 교통,20분 수익/생활 밸런스, 다른 PC 성능/실제4명·기존 물리 원격 대전은 별도다. 피로/포만은 콘텐츠27의 후보 기획만 작성했고 기존 수치는 바꾸지 않았다.
 
 재현 명령: Unity2022.3.62f2 `-batchmode -nographics -quit -buildTarget Win64 -projectPath unity/EungyeTaxi -executeMethod PvpFlowUnifiedChecks.Run`, 성능 동등성 `PvpTrafficPerformanceTests.Run`, 빌드 `PrototypeBuild.BuildHybrid`. 실제 Player는 `-unifiedModeCheck`(임시 저장), 러너 `-FourDrivers -TrafficMonitor` 또는 `-Services`에 `-Executable`과 별도 `-OutputDirectory`를 지정한다. 성능은 `-pvpCityPerformanceTest -pvpTrafficFlowMonitor -trafficPerfSeconds 60 -trafficPerfOutput <출력폴더> -screen-fullscreen 0 -screen-width 1920 -screen-height 1080`이고 정상 렌더 창을 사용한다. 장시간 실행 공백이 발생한 결과를 수용 완료 근거로 사용하지 않는다.
+
+## 게시 영수증
+배포 커밋 `e6ab18cc83740809a1ae1f20c6517439b5b402cf`를 `git push --atomic origin HEAD:feature/pvp-prototype HEAD:main`으로 게시(exit0)했다. `git ls-remote`에서 두 원격 브랜치가 같은 해시임을 확인했다. 최신main dd709ae가 소스의 조상인 것도 게시 직전 확인했다. 게시 후140파일115,186,267바이트 manifest 재검증0, 작업 트리 clean. 이 이력 파일의 실제 배포 커밋은 `git log -1 --oneline -- docs/work-history/2026-11-02-pvp-flow-release.md`로 e6ab18c임을 확인한 후 영수증을 추가한다.
+
+다른 체크아웃 `C:/git/project-b`의 로컬main d817d9a와 기존 미추적7개 항목을 그대로 확인했다. 해당 채팅의 다음 작업은 보존된 변경을 유지하면서 정상 pull/merge로 최신main을 반영한다. 해당 체크아웃을 대신 reset/checkout하지 않았다.
