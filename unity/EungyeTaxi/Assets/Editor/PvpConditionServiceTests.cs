@@ -41,7 +41,7 @@ public static class PvpConditionServiceTests {
    Check(f.match.BeginConditionService(f.s,1),"end cancellation start");cash=l.Account.Cash;Set(f.match,"Elapsed",590f);f.Tick(10);Check(!f.match.ConditionServiceActive(f.s)&&l.Account.Cash==cash,"unfinished service at end boundary has no charge");Set(f.match,"Elapsed",585f);Check(f.match.BeginConditionService(f.s,1),"exact boundary fixture starts");f.Tick(15);f.match.Finish();Check(!f.match.ConditionServiceActive(f.s)&&l.Account.Cash==cash,"completion tied with match end cancels without charge");
   }
   // Reproduce several physics catch-up steps without any rendered Update.
-  float priorStep=Time.fixedDeltaTime;
+  float priorStep=Time.fixedDeltaTime,priorMaximum=Time.maximumDeltaTime;
   try{
    Time.fixedDeltaTime=1;
    using(var f=new Fixture()){
@@ -55,7 +55,7 @@ public static class PvpConditionServiceTests {
     Check(f.match.Finished&&!f.match.ConditionServiceActive(f.s)&&l.Elapsed==before+10&&l.Account.Cash==cash,"ten catch-up ticks cannot spend stale end budget to finish fifteen-second meal");
     f.Tick(1);fixedClock.Invoke(f.match,null);Check(l.Elapsed==before+10&&l.Account.Cash==cash&&f.match.Elapsed==600,"finished match cannot advance pending service or common clock again");
    }
-  }finally{Time.fixedDeltaTime=priorStep;}
+  }finally{Time.fixedDeltaTime=priorStep;Time.maximumDeltaTime=priorMaximum;}
   Debug.Log("PVP_CONDITION_SERVICE_TESTS_OK");
  }
 }

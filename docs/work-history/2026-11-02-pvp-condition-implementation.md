@@ -16,3 +16,5 @@
 `PvpConditionChecks.Run` / Unity2022.3.62f2 batchmode/nographics / artifacts/pvp/condition-final-editor1.log: exit0. 모델/캠페인분리·실시간pending/취소/중복/종료·물리catch-up·봇예측/완료카운터·전체도시306거점방향쌍/시설·통합모드계약통과. `tools/test_prototype.ps1` / condition-campaign-models.log: exit0, 기존캠페인28클래스모델검사통과. 모델명시소스목록3개러너에새공통PvpConditionRules를포함했다.
 
 실제Player·시설사용·주행/저장·배포결과는아래추가한다.20분은상태검증사례이며경기시간고정아님. 장기수익/운전감각/다른PC/원격실제4명수용은별도다.
+
+최종검사 fixture가 fixedDeltaTime=1로물리catch-up을확인할때 Unity가 MaximumAllowedTimestep도1로올리는것을발견했다. 테스트finally에서 두값모두원복하도록수정하고ProjectSettings기존0.33333334를복원했다. `PvpConditionServiceTests.Run` / condition-final-editor2.log exit0, TimeManager.asset diff없음. 첫빌드는수용배포로사용하지않고원래시간설정으로재빌드한다. 실제호출지도에피로예측표시를연결하고, 진단의선택적실제화면캡처를추가했다.
