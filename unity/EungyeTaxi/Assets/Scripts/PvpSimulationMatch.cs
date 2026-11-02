@@ -22,7 +22,7 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
     public int DriverIndex(DriveSession driver){return drivers.IndexOf(driver);}
     string[] networkStatuses;
     public void ApplyNetworkStatuses(string[] statuses){networkStatuses=statuses;}
-    public void ApplyNetworkView(float elapsed,bool finished,int[] scores,int[] claims,int[] kinds,float[] waits){Elapsed=elapsed;Ledger.ApplyNetworkView(scores,claims);for(int i=0;i<4;i++){conditionKinds[i]=kinds[i];conditionRemaining[i]=waits[i];}if(finished&&!Finished)Finish();}
+    public void ApplyNetworkView(float elapsed,bool finished,int[] scores,int[] claims,int[] kinds,float[] waits){Elapsed=elapsed;Ledger.ApplyNetworkView(scores,claims);for(int i=0;i<4;i++){conditionKinds[i]=kinds[i];conditionRemaining[i]=waits[i];}if(finished&&!Finished)Ledger.Finish();}
     public string DriverStatus(int driver){
         if(networkStatuses!=null&&driver>=0&&driver<networkStatuses.Length)return networkStatuses[driver]??"";
         if(driver<0||driver>=drivers.Count)return "";

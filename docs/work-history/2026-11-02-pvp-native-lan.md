@@ -38,3 +38,5 @@ A3 실제 지도 적용, 다른PC LAN/방화벽·사람주행·원격4명·장�
 - 최신main d818c33 밝은UI/마인드맵8커밋을통합. 충돌5파일(Panel/CockpitUI/driver표현/통합메뉴/체크리스트)은 밝은화면·간결문구·새내비를유지하면서 LAN메뉴/좌석표현/온라인종료를합쳤다. 자동병합된승객/시설/결과/법규/매치도조건을보존. 통합후BrightUITheme/NavigationCue+기존승객+LAN회귀/BuildHybrid를다시실행한다.
 
 - runtime5追加검사는시작직후client응답감시가발동해미통과. 23초동기월드생성중Time.unscaledTime이프레임시작값으로고정돼Bind의시간기준이오래된값인원인을확인했다. 감시기준을실시간realtimeSinceStartup으로통일한다. 밝은UI통합 Build6는Editor테마/내비15/승객36041/LAN17 및BuildHybrid exit0이나,이감시수정후Build7을최종수용대상으로삼는다.
+
+- 통합 Build7 테마/내비15·승객36041/LAN17/BuildHybrid exit0. 최종 client경기종료적용은권한없는view의 Ledger.Finish만사용하도록수정(호스트정산/비용관찰을client에서다시실행하지않음). 최종Build8에서검사/배포한다.
