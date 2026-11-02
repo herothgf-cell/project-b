@@ -32,3 +32,7 @@
 실제 소스 커밋 `3fd8ff43efab157c6c85adb26bee23cceac06e3d`는 `git log -1 --oneline --`로 확인했다. 해당 검증 후보의139파일/115,293,470바이트를 통합 실행 폴더에 복사하고 SHA256 전수를 비교해 동일함을 확인했다. 교체 전 canonical EXE 실행 프로세스와 기존 배포 미커밋 변경이 없음을 확인했다. Burst DoNotShip은 절대 부모 경로 확인 후 artifacts로 분리했다. 기본/PVP 위임 manifest VerifyOnly 모두 exit0. manifest는 실제 소스와 필수 최종 결과를 기록한다.
 
 게시 전 fetch에서 원격 main은 기존 `a3cfcf1`이며 현재 소스의 조상임을 확인했다. 다른 체크아웃/미커밋 파일/그쪽 실행본에는 쓰지 않았다. 원격 게시 결과는 아래 영수증으로 남긴다.
+
+
+## 게시 영수증
+`git log -1 --oneline -- docs/work-history/2026-11-02-pvp-notification-followup.md`에서 실제 배포 커밋 `fdb8f6500f07a39851b24d975d722d7f1189a316`을 확인했다. `git push --atomic origin HEAD:refs/heads/feature/pvp-prototype HEAD:refs/heads/main` exit0, `git ls-remote`로 두 원격이 동일한fdb8f65임을 확인했다. 작업트리도 clean이었다. 이 영수증 후속은 같은 소스3fd8ff4/배포139파일115,293,470바이트를 유지한다.

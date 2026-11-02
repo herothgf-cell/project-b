@@ -6,7 +6,7 @@
 
 Unity 최종 빌드 return code0, 보간9/Native21·기존 Editor, 실제 두 Player73검사(주행14m/알림·중복방지·봇승계/재접속/정리), D3D11/1280×720 알림 PNG 열람, 통합 모드·싱글 임시 저장/복원·사용자4파일 보존 exit0, Strict issues0. 알림은 서버 사건 모델 fixture이며 실제 신호 위반 물리 주행과 구분한다. 참가자 평균16.97ms/약59fps·p9517.83/max92.48ms는 짧은 이PC 검사다. 초기/경로 전환 단발 지연·다른PC4인/사람 장시간 운송/FullHD 두창은 별도 수용이다.
 
-현재 실행 `builds/EungyeTaxi/EungyeTaxi.exe` / 택시 시뮬레이션 / 은계 싱글·A2 PVP·LAN. 실제 소스3fd8ff4의139파일115,293,470바이트를 갱신하고 후보/배포 SHA256 전수·기본/PVP manifest VerifyOnly exit0을 확인했다. 원격 게시 영수증은 위 이력에 기록한다. 필수 지도·ZIP/저장 위치 유지, A3는 시안 상태다. 기존 두창을 닫고 양쪽 모두 갱신 실행본으로 다시 시작한다.
+현재 실행 `builds/EungyeTaxi/EungyeTaxi.exe` / 택시 시뮬레이션 / 은계 싱글·A2 PVP·LAN. 실제 소스3fd8ff4의139파일115,293,470바이트를 갱신하고 후보/배포 SHA256 전수·기본/PVP manifest VerifyOnly exit0을 확인했다. 배포fdb8f65를 main·feature/pvp-prototype에 atomic 게시하고 두 원격 동일 해시/clean을 확인했다. 영수증 후속도 같은 실행본을 유지한다. 필수 지도·ZIP/저장 위치 유지, A3는 시안 상태다. 기존 두창을 닫고 양쪽 모두 갱신 실행본으로 다시 시작한다.
 
 ## 2026-11-02 LAN 참가자 반복 끊김 수정
 
