@@ -21,7 +21,7 @@
 - [x] MapPresentation.cs: 스캔라인 면 채우기·도로 폭을 반영한 밝은 배경 캐시 생성. DriveHUD.LightTile에서 공유. 두 지도에 파란/분홍 경로·위치 핀·노란 차량 화살표 적용.
 - [x] DrivingReadability/CockpitUI: 두 카드로 재배치하고 정차/F 안내를 운행 요약으로 이동. 조건이 있는 실제 신호는 첫 카드에 간단히 유지.
 - [x] Unity Editor 지도/내비/클리핑 검사, BuildHybrid, 격리 Player UI probe의 싱글/PVP·해상도별 지도/운송 캡처 확인.
-- [ ] 독립 코드 리뷰·작업 이력/기획/체크리스트 갱신, 소스 커밋 후 실제 빌드 manifest 생성/검증·배포 main push.
+- [x] 독립 코드 리뷰·작업 이력/기획/체크리스트 갱신, 소스 커밋 후 실제 빌드 manifest 생성/검증·배포 main push.
 
 실행 방식: 기존 관리 작업트리에서 직접 구현한다. 사용자 승인된 이어서 진행 요청에 따라 추가 설계 승인 없이 실행한다.
 

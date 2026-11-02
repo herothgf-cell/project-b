@@ -64,3 +64,9 @@ UI 단독 후보8aa382c/배포 후보2a2293f는 원격에 게시하지 않았다
 통합 UI 최종 lan-integrated.log: Player exit0 /52검사·22캡처·사용자 저장14파일 경로/SHA256 불변. 최종8캡처도 이 실행본 것으로 교체했다. 원격 기준 git diff origin/main --check 통과(병합으로 들어온 원격 meta의 기존 공백은 수정하지 않음). 최종 소스 병합 커밋 이후 manifest를 재생성한다.
 
 실제 소스 병합 커밋은 `git log -1 --oneline -- <이력 파일>`로 확인한 **f27ffbe692fed9ce3af0916be46fea18c3e62f1b**. 이를 SourceCommit으로 lan-integrated-validation.json의 실제 결과를 사용해 통합 manifest를 다시 생성했다. 통합/PVP VerifyOnly 각각 exit0, **139파일115,172,656바이트 전수 크기·SHA256 일치**. 게시 영수증은 후속 절을 따른다.
+
+## 게시 영수증
+
+실제 배포 커밋 **3966accf29f6c71fb451cae0f950c4716703006c**, `git push origin HEAD:refs/heads/main` exit0. `git ls-remote origin refs/heads/main`에서 같은3966acc를 확인했다. 원격6ab68d9와 기존 UI 커밋들을 강제 푸시 없이 모두 보존했다.
+
+원래 `C:/git/project-b`의 main도3966acc로 fast-forward exit0. 마인드맵/목차 미커밋2파일 SHA256 불변과 기존 미추적 목록 보존을 확인했다. 원래 실행 폴더에서도 VerifyOnly exit0 /139파일115,172,656바이트 일치. 최종 실행 대상은 두 체크아웃 모두 builds/EungyeTaxi/EungyeTaxi.exe이며 소스f27ffbe이다. 이 영수증/계획 체크 표시는 실행본이나 manifest를 다시 바꾸지 않는다.
