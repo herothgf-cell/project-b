@@ -40,3 +40,14 @@ A3 실제 지도 적용, 다른PC LAN/방화벽·사람주행·원격4명·장�
 - runtime5追加검사는시작직후client응답감시가발동해미통과. 23초동기월드생성중Time.unscaledTime이프레임시작값으로고정돼Bind의시간기준이오래된값인원인을확인했다. 감시기준을실시간realtimeSinceStartup으로통일한다. 밝은UI통합 Build6는Editor테마/내비15/승객36041/LAN17 및BuildHybrid exit0이나,이감시수정후Build7을최종수용대상으로삼는다.
 
 - 통합 Build7 테마/내비15·승객36041/LAN17/BuildHybrid exit0. 최종 client경기종료적용은권한없는view의 Ledger.Finish만사용하도록수정(호스트정산/비용관찰을client에서다시실행하지않음). 최종Build8에서검사/배포한다.
+
+## 최종 통합 실행본 검사
+
+- 실제 빌드 소스 `d40554436c643c39db8ce27c22a2c41b414d9ba2`, `PvpNativeLanTests.BuildValidated` / native-lan-build8.log: exit0. BRIGHT_UI_THEME_OK / NAVIGATION_CUE_OK15 / PVP_PASSENGER_EDITOR_OK36041 / PVP_NATIVE_LAN_EDITOR_OK17 / PROTOTYPE_BUILD_OK. 캠페인 모델 tools/test_prototype.ps1 28클래스 exit0.
+- 두 실제 Player `tools/test_pvp_native_lan.ps1 -Reconnect` / native-lan-20261102-160337-f678c818: host25/client28, 양쪽 exit0. 클라이언트 페달 메시지로 호스트 WheelCollider 실제13.831477m·최고4.039638m/s, 클라이언트 표시13.831476m. 위치제어/순간이동 없음. 공용승객 명령·원자선점/경제·내구도·점수·운전 M/72NPC수·신호시계 복제·잘못된ID/중복/이전운송 gate 거부, 끊김 같은차/승객/claim 봇승계, 원래 ticket 좌석 재접속·인간 재제어·완전메뉴제거 통과. 호스트 경기36.74065초 동안 진행. 같은 PC loopback2프로세스이며 다른PC/4인 실제LAN/전체운송/네트워크지연 체감 검사가 아니다.
+- 기존 오프라인 `tools/test_pvp_passengers.ps1 -OutputDirectory artifacts/pvp/native-lan-final-passenger8`: exit0/38 PASS/PVP_PASSENGER_PLAYER_OK. 공용8+길가3/정차선점/17요청·음식/짐/공유점유30초·출차·72NPC진행. 명시적 위치·유형·요청 fixture이며 실제 주행 운송 증거와 구분한다.
+- Unity 내부 PC 화면·키보드·마우스 제어 없음. 새 LAN 화면 실제 렌더/사람 조작은 별도이며 최신 main의 밝은 UI·내비 소스를 보존하고 Editor 계약을 재검사했다.
+- 배포폴더는 Burst DoNotShip 자료를 검증된 artifacts 경로로 분리한139파일115,168,912바이트다. 싱글 전환/저장·최종해시/원격게시 결과는 이어서 기록한다.
+
+- 최종 독립 코드 검토에서 추가 P2 한 건 발견: Gamepad JoystickButton7이 기존 pause로 빠져 호스트 공통 시계가 멈추는 문제다. Esc와 같은 온라인 메뉴로 연결하고, 이 메뉴 중 공통 시계 진행/자기 차 제동의 실제 Player assertion을 추가했다. 추가 critical/important 차단점은 없었다. 물리 패드 입력은 별도다.
+- Unified8 실제 앱은 exit0/UNIFIED_MODE_RESULT PASS, 사용자 JSON4파일/별도 전체6파일 SHA 불변. 부모 셸에서 기대 marker를 UNIFIED_MODE_OK로 잘못 쓴 탓에 runner만 missing marker로 종료했다. 실제 로그/종료 조건으로 구분하고 최종 재실행은 올바른 UNIFIED_MODE_RESULT PASS를 사용한다.

@@ -52,6 +52,7 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
  IEnumerator Host(){
   var match=lan.Match;var guest=match.Drivers[1];var car=guest.taxi;int carId=car.GetInstanceID();
   Check(guest.GetComponent<PvpSimulationBot>()&&!guest.GetComponent<PvpSimulationBot>().enabled,"guest seat disables native bot while connected");
+  float menuElapsed=match.Elapsed;lan.ToggleMenu();yield return new WaitForSecondsRealtime(.5f);Check(!match.Human.paused&&Time.timeScale==1&&match.Elapsed>menuElapsed&&PvpNativeLan.UiBlocked(match.Human),"shared clock continues while own keyboard/pad menu brakes only local taxi");lan.ToggleMenu();
   Vector3 before=car.transform.position;float startTime=Time.realtimeSinceStartup,maxSpeed=0;
   while(!Has("drive-done")&&Time.realtimeSinceStartup<end){maxSpeed=Mathf.Max(maxSpeed,car.body.velocity.magnitude);yield return null;}
   metrics.metres=Vector3.Distance(before,car.transform.position);metrics.maxSpeed=maxSpeed;Check(Has("drive-done")&&metrics.metres>2&&maxSpeed>.5f,"guest pedal messages move host WheelCollider taxi; metres="+metrics.metres+" speed="+maxSpeed);

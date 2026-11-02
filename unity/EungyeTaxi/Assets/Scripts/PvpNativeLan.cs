@@ -41,12 +41,13 @@ public sealed class PvpNativeLan:MonoBehaviour {
  public static bool IsReplica(DriveSession s){return s&&Instance&&!Instance.IsHost&&!Instance.stopping&&s.business&&s.business.SimulationSession;}
  public static bool IsRemoteHuman(DriveSession s){if(!s||!Instance||!Instance.IsHost||!Instance.Match)return false;int slot=Instance.Match.DriverIndex(s);return slot>0&&Instance.seats[slot]!=null&&Instance.seats[slot].connected&&Instance.seats[slot].ready;}
  public static bool UiBlocked(DriveSession s){if(!s||!Instance||s.simulationMatch!=Instance.Match)return false;if(WaitingForWorld)return true;if(s==Instance.Match.Human)return Instance.MenuOpen||s.RideResultOpen||s.FullMapOpen||s.services.open||s.law.HistoryOpen;if(Instance.IsHost){int slot=Instance.Match.DriverIndex(s);return slot>=0&&Instance.seats[slot]!=null&&Instance.seats[slot].connected&&Instance.seats[slot].blocked;}return false;}
- public static bool HandleEscape(DriveSession s){if(!RunningOnline||s!=Instance.Match.Human||!Input.GetKeyDown(KeyCode.Escape))return false;Instance.MenuOpen=!Instance.MenuOpen;return true;}
+ public static bool HandleEscape(DriveSession s){if(!RunningOnline||s!=Instance.Match.Human||!(Input.GetKeyDown(KeyCode.Escape)||Input.GetKeyDown(KeyCode.JoystickButton7)))return false;Instance.ToggleMenu();return true;}
  public static bool Route(DriveSession s,string action,int value=0,string token=""){
   if(ApplyingReplica||!IsReplica(s))return false;
   if(Instance.Match&&s==Instance.Match.Human&&Instance.manager&&Instance.manager.IsConnectedClient&&Instance.Racing){var cmd=new PvpNativeCommand{sequence=++Instance.commandSeq,action=action,value=value,token=token??"",trip=s.law.tripId??"",request=s.requests.request.Id??""};Instance.Send("cmd",0,cmd);}
   return true;
  }
+ public void ToggleMenu(){MenuOpen=!MenuOpen;}
  public int ServerToLocal(int server){if(IsHost)return server;if(server==LocalSlot)return 0;int at=1;for(int i=0;i<4;i++)if(i!=LocalSlot){if(i==server)return at;at++;}return -1;}
  public int LocalToServer(int local){if(IsHost)return local;if(local==0)return LocalSlot;int at=1;for(int i=0;i<4;i++)if(i!=LocalSlot){if(at==local)return i;at++;}return -1;}
  public string Label(int local){int slot=LocalToServer(local);if(local==0)return "나";return slot>=0&&humans[slot]?"플레이어 "+(slot+1):"봇 "+(slot+1);}
