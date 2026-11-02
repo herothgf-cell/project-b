@@ -29,5 +29,6 @@ public sealed class PvpSimulationLedger {
     public bool Settle(string tripId,int driver,int fare) { if(Finished||!Valid(driver)||fare<0||string.IsNullOrEmpty(tripId)||!settlements.Add(driver+":"+tripId))return false;scores[driver]+=fare;return true; }
     public bool SyncExpenses(int driver,int cumulativeExpenses) {if(Finished||!Valid(driver)||cumulativeExpenses<expenses[driver])return false;expenses[driver]=cumulativeExpenses;return true;}
     public int Score(int driver) { return Valid(driver)?scores[driver]-expenses[driver]:0; }
+    public void ApplyNetworkView(int[] values,int[] claims){if(values==null||values.Length!=4)throw new ArgumentException("network score slots");owners.Clear();for(int i=0;i<4;i++){scores[i]=values[i];expenses[i]=0;}if(claims!=null)for(int i=0;i<claims.Length;i++)if(claims[i]>=0&&claims[i]<4)owners[i]=claims[i];}
     public void Finish() { Finished=true;owners.Clear(); }
 }

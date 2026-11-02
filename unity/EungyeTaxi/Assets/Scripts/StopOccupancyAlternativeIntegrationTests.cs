@@ -4,6 +4,7 @@ using UnityEngine;
 public static class StopOccupancyAlternativeIntegrationTests {
  static void Check(bool value,string message){if(!value)throw new Exception("OCCUPANCY_ALTERNATIVE: "+message);}
  public static void Run(){
+  float priorTimeScale=Time.timeScale;int priorFrameRate=Application.targetFrameRate,priorVSync=QualitySettings.vSyncCount;bool priorBackground=Application.runInBackground;string priorRegion=MapCatalog.LockedRegion;DriveSession fixture=null;
   var root=new GameObject("alternative integration");
   try{
    MapData map;
@@ -14,7 +15,7 @@ public static class StopOccupancyAlternativeIntegrationTests {
 #endif
    FuelStationLayout.Apply(map);var catalog=PassengerStopCatalog.For(map);
    int index=catalog.IndexOf("EG-GAME-02");var alternative=catalog.AlternativeFor("EG-GAME-02");Check(index>=0&&alternative!=null,"catalog pair available");
-   var s=root.AddComponent<DriveSession>();s.world=root.AddComponent<WorldBuilder>();s.world.map=map;s.business=root.AddComponent<BusinessProgress>();s.business.session=s;s.business.ledger=new EconomyLedger(PrototypeSettings.ForOneDay());typeof(BusinessProgress).GetProperty("SimulationSession").GetSetMethod(true).Invoke(s.business,new object[]{true});s.law=root.AddComponent<DrivingLaw>();s.law.tripId="trip-test";
+   var s=root.AddComponent<DriveSession>();fixture=s;s.paused=false;Time.timeScale=1;Check(!s.paused&&Time.timeScale>0,"fixture session is running");s.world=root.AddComponent<WorldBuilder>();s.world.map=map;s.business=root.AddComponent<BusinessProgress>();s.business.session=s;s.business.ledger=new EconomyLedger(PrototypeSettings.ForOneDay());typeof(BusinessProgress).GetProperty("SimulationSession").GetSetMethod(true).Invoke(s.business,new object[]{true});s.law=root.AddComponent<DrivingLaw>();s.law.tripId="trip-test";
    s.taxi=root.AddComponent<TaxiController>();s.taxi.body=root.AddComponent<Rigidbody>();s.traffic=root.AddComponent<TrafficSystem>();
    s.jobs=root.AddComponent<PassengerJobs>();s.jobs.session=s;typeof(PassengerJobs).GetProperty("Catalog").GetSetMethod(true).Invoke(s.jobs,new object[]{catalog});s.jobs.stops=catalog.Stops;s.jobs.people=new GameObject[catalog.Stops.Length];s.jobs.cooldown=new float[catalog.Stops.Length];var ids=(System.Collections.Generic.List<string>)typeof(PassengerJobs).GetField("runtimeStopIds",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(s.jobs);foreach(var e in catalog.Entries)ids.Add(e.StopId);
    s.jobs.people[index]=new GameObject("pickup person");s.jobs.people[index].transform.SetParent(root.transform);s.jobs.people[index].transform.position=catalog.Stops[index].Passenger;
@@ -41,6 +42,9 @@ public static class StopOccupancyAlternativeIntegrationTests {
    s.jobs.current=new JobOffer{pickup=0,drop=index,fare=5000};s.jobs.trip.Accept(5000,300,90);s.jobs.trip.Board();s.law.tripId="drop-trip";occupancy.Restore(new StopOccupancySnapshot{active=true,eventId="drop",stopId="EG-GAME-02",remaining=10,compensated=true});
    var oldPerson=s.jobs.people[index].transform.position;Check(occupancy.Resolve(true),"clear drop alternative accepted");Check(!occupancy.Capture().alternativePickup&&Vector3.Distance(oldPerson,s.jobs.people[index].transform.position)<.01f,"drop keeps passenger in taxi without moving roadside person");
    Debug.Log("STOP_OCCUPANCY_ALTERNATIVE_INTEGRATION_OK");
-  }finally{UnityEngine.Object.DestroyImmediate(root);}
+  }finally{
+   var camera=fixture?(Camera)typeof(DriveSession).GetField("loadingCamera",BindingFlags.NonPublic|BindingFlags.Instance).GetValue(fixture):null;if(camera)UnityEngine.Object.DestroyImmediate(camera.gameObject);
+   UnityEngine.Object.DestroyImmediate(root);Time.timeScale=priorTimeScale;Application.targetFrameRate=priorFrameRate;QualitySettings.vSyncCount=priorVSync;Application.runInBackground=priorBackground;MapCatalog.LockedRegion=priorRegion;
+  }
  }
 }

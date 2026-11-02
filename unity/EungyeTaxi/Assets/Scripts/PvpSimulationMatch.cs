@@ -20,10 +20,14 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
     public int BotScore {get{return Score(1);}}
     public int Score(int driver){return Ledger==null?0:Ledger.Score(driver);}
     public int DriverIndex(DriveSession driver){return drivers.IndexOf(driver);}
+    string[] networkStatuses;
+    public void ApplyNetworkStatuses(string[] statuses){networkStatuses=statuses;}
+    public void ApplyNetworkView(float elapsed,bool finished,int[] scores,int[] claims,int[] kinds,float[] waits){Elapsed=elapsed;Ledger.ApplyNetworkView(scores,claims);for(int i=0;i<4;i++){conditionKinds[i]=kinds[i];conditionRemaining[i]=waits[i];}if(finished&&!Finished)Ledger.Finish();}
     public string DriverStatus(int driver){
+        if(networkStatuses!=null&&driver>=0&&driver<networkStatuses.Length)return networkStatuses[driver]??"";
         if(driver<0||driver>=drivers.Count)return "";
         var session=drivers[driver];if(ConditionServiceActive(session))return (ConditionServiceKind(session)==1?"식사":"짧은 휴식")+" · "+ServiceRemaining(session).ToString("0.0")+"초";var pilot=session.GetComponent<PvpSimulationBot>();
-        if(pilot)return pilot.Status??"출발 준비";
+        if(pilot&&pilot.enabled)return pilot.Status??"출발 준비";
         return session.jobs.trip.State==TripState.ToPickup?"승객 픽업":session.jobs.trip.State==TripState.OnTrip?"승객 운송":"호출 선택";
     }
     public float Remaining {get{return Mathf.Max(0,PvpSimulationMode.DurationSeconds-Elapsed);}}
@@ -82,6 +86,7 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
         SharedCalls=new PvpSimulationCallBoard(Ledger,human.jobs.CreateSharedCandidate,human.jobs.stops.Length,3);
         PassengerWorld=gameObject.AddComponent<PvpPassengerWorld>();PassengerWorld.Initialize(this);
         foreach(var driver in drivers){driver.jobs.offers=SharedCalls.Offers;driver.jobs.message="M 지도에서 공용 호출 선택·수락 · 정차 후 F 승하차";}
+        if(PvpNativeLan.Instance)PvpNativeLan.Instance.Bind(this);
     }
     void CreateBot(DriveSession human,int index){
         var root=new GameObject("경쟁 택시 세션 "+index);root.SetActive(false);
@@ -122,12 +127,14 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
         bot.MarkSharedSimulationReady();root.SetActive(true);
     }
     void Update() {
+        if(PvpNativeLan.IsReplica(Human))return;
         if(Finished||!Human)return;
         foreach(var driver in drivers)ObserveServiceTime(driver);
     }
     // Run after BusinessProgress for every physics step, including catch-up steps
     // before a rendered Update. All drivers consume the same start-of-tick budget.
     void FixedUpdate(){
+        if(PvpNativeLan.IsReplica(Human)||PvpNativeLan.WaitingForWorld)return;
         if(Finished||!Human||Time.timeScale<=0||Human.paused)return;
         Elapsed=Mathf.Min(PvpSimulationMode.DurationSeconds,Elapsed+Time.fixedDeltaTime);
         if(Remaining<=0)Finish();
@@ -141,14 +148,14 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
         Time.timeScale=0;
     }
     void LateUpdate(){if(Finished){foreach(var driver in drivers)driver.paused=true;Time.timeScale=0;}}
-    public void ReturnToMenu() { var unified=FindObjectOfType<UnifiedModeBootstrap>();if(unified){unified.ReturnToMenu();return;} PvpSimulationMode.Reset();Time.timeScale=1;SceneManager.LoadScene("PvpBootstrap"); }
-    public void Restart() { bool expanded=PvpSimulationMode.Expanded;int seconds=PvpSimulationMode.DurationSeconds;PvpSimulationMode.Configure(expanded,seconds);Time.timeScale=1;SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
+    public void ReturnToMenu() { if(PvpNativeLan.RunningOnline){PvpNativeLan.Instance.LeaveToMenu();return;} var unified=FindObjectOfType<UnifiedModeBootstrap>();if(unified){unified.ReturnToMenu();return;} PvpSimulationMode.Reset();Time.timeScale=1;SceneManager.LoadScene("PvpBootstrap"); }
+    public void Restart() { if(PvpNativeLan.RunningOnline){PvpNativeLan.Instance.LeaveToMenu();return;} bool expanded=PvpSimulationMode.Expanded;int seconds=PvpSimulationMode.DurationSeconds;PvpSimulationMode.Configure(expanded,seconds);Time.timeScale=1;SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
     void OnGUI() {
         if(!Human||Ledger==null||!Finished)return;
         if(style==null){style=new GUIStyle(GUI.skin.box){font=KoreanText.Font,fontSize=16,alignment=TextAnchor.MiddleCenter,wordWrap=true};button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=16};}
         GUI.depth=-250;
         int best=int.MinValue,winners=0;string winner="";
-        for(int i=0;i<drivers.Count;i++){int score=Score(i);if(score>best){best=score;winners=1;winner=i==0?"나":"봇 "+i;}else if(score==best)winners++;}
+        for(int i=0;i<drivers.Count;i++){int score=Score(i);if(score>best){best=score;winners=1;winner=PvpDriverPresentation.Name(i);}else if(score==best)winners++;}
         string summary="경기 종료 · "+(winners>1?"공동 1위":winner+" 승리");
         for(int i=0;i<drivers.Count;i++)summary+="\n"+(i==0?"나":"봇 "+i)+" · "+Score(i).ToString("N0")+"원 / "+drivers[i].jobs.completed+"회";
         summary+="\n운송 수입 − 시설 지출";

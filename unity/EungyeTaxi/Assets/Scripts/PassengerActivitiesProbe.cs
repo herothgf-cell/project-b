@@ -43,7 +43,7 @@ public sealed class PassengerActivitiesProbe : MonoBehaviour {
  IEnumerator Start(){
   yield return new WaitForSecondsRealtime(2);s=FindObjectOfType<DriveSession>();while(s&&!s.StartupReady)yield return null;yield return null;yield return null;yield return null;
   bool reload=Array.IndexOf(Environment.GetCommandLineArgs(),"-passengerActivitiesReloadTest")>=0;bool ok=false;
-  try{Check(s!=null&&s.business.SavePath.Contains("artifacts"),"test session initialized with isolated save");Freeze();if(reload)ReloadChecks();else MainChecks();ok=true;}catch(Exception e){report.AppendLine(e.ToString());Debug.LogException(e);}
+  try{Check(s!=null&&string.Equals(Path.GetFullPath(s.business.SavePath),Path.GetFullPath("artifacts/passenger-activities-test.json"),StringComparison.OrdinalIgnoreCase)&&s.business.enabledCampaign&&!s.business.ResumeBlocked,"test session uses dedicated activities save and active campaign");Freeze();if(reload)ReloadChecks();else MainChecks();ok=true;}catch(Exception e){report.AppendLine(e.ToString());Debug.LogException(e);}
   Directory.CreateDirectory("artifacts");File.WriteAllText("artifacts/passenger-activities-"+(reload?"reload":"player")+".txt",(ok?"PASS":"FAIL")+" checks="+checks+"\n"+report);Debug.Log("PASSENGER_ACTIVITIES_"+(ok?"OK":"FAILED")+" checks="+checks);Application.Quit(ok?0:1);
  }
 }

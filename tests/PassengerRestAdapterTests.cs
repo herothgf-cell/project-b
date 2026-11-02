@@ -12,7 +12,7 @@ namespace UnityEngine {
 }
 public sealed class PassengerBehaviorUI:UnityEngine.Object {public void NotifyStateChanged(){}}
 public sealed class TestBody {public UnityEngine.Vector3 velocity;}
-public sealed class TestTaxi {public TestBody body=new TestBody();}
+public sealed class TestTaxi {public TestBody body=new TestBody();public UnityEngine.Vector3 ObservedVelocity {get{return body.velocity;}}}
 public sealed class TestManners {public TestScore ledger=new TestScore();}
 public sealed class TestScore {public int Score=100;}
 public sealed class TestRequests:UnityEngine.Object {public bool HasPendingChoice;public int ScheduledChoiceCount;public bool SafeToRespond(){return true;}public void SuspendUnansweredForSleep(){}}

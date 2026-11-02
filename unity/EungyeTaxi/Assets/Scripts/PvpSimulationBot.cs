@@ -127,6 +127,7 @@ public sealed class PvpSimulationBot : MonoBehaviour {
     void Tick() {
         var s=Session;if(!s||!s.simulationMatch||s.simulationMatch.Finished||Time.timeScale<=0)return;
         var taxi=s.taxi;var jobs=s.jobs;
+        if(PvpNativeLan.IsReplica(s)||PvpNativeLan.WaitingForWorld){Stop("경기 준비");return;}
         StationarySeconds=taxi.body.velocity.magnitude<.15f?StationarySeconds+Time.fixedDeltaTime:0;
         MetresDriven+=taxi.body.velocity.magnitude*Time.fixedDeltaTime;
         if(s.simulationMatch.ServiceLocked(s)){Stop("서비스 진행 중");return;}

@@ -13,7 +13,7 @@ public partial class PassengerJobs {
  public string ErrandStatus {get{return Errand==null||!Errand.Waiting?"":"승객 용무 · 무료 대기 "+Mathf.CeilToInt(Errand.Remaining)+"초 · 영업시간·연료 소모 · 안전 정차 유지";}}
  int ReservedPassengerChoices {get{return (session.requests?session.requests.ScheduledChoiceCount:0)+(Behavior!=null&&Behavior.Type!=PassengerType.General?1:0)+(Behavior!=null&&Behavior.SleepInterrupted?1:0);}}
  public bool CanRespondSituation {get{return SituationPending&&SituationPresentationAvailable&&session.requests.SafeToRespond();}}
- public bool RespondSituation(int answer){if(!CanRespondSituation||!Situation.Respond(answer,true))return false;if(Behavior!=null)Behavior.ReassureJolt(answer==1);session.requests.BlockResponseThisFrame();session.business.SaveCheckpoint();return true;}
+ public bool RespondSituation(int answer){if(PvpNativeLan.Route(session,"situation",answer,SituationPending?Situation.Pending.ToString():""))return true;if(!CanRespondSituation||!Situation.Respond(answer,true))return false;if(Behavior!=null)Behavior.ReassureJolt(answer==1);session.requests.BlockResponseThisFrame();session.business.SaveCheckpoint();return true;}
  void BeginPassengerActivities(){Situation=PassengerSituationState.Create(session.law.tripId,session.manners.brakeEvents,session.manners.accelEvents,session.manners.necessaryBrakeEvents);Errand=null;reactionSignal=null;nextReactionSignalSearch=0;}
  void ClearPassengerActivities(){Situation=null;Errand=null;reactionSignal=null;nextReactionSignalSearch=0;}
  public static void ValidateSituationSnapshot(PassengerJobsSnapshot s){

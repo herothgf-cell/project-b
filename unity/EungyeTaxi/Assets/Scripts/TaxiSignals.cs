@@ -4,6 +4,8 @@ using UnityEngine;
 }
 public class TaxiSignals : MonoBehaviour {
     public int direction { get; private set; }
+    DriveSession Session {get{var t=GetComponent<TaxiController>();return t&&t.business?t.business.session:null;}}
+    public void ApplyNetworkView(int signal,bool hazards){cancellation.Reset();direction=signal;manualHazards=hazards;passengerStop=false;}
     bool manualHazards,passengerStop;
     readonly ManualIndicatorPolicy cancellation=new ManualIndicatorPolicy();
     TaxiController taxi;Rigidbody taxiBody;AssistedDriveController assistance;
@@ -18,7 +20,7 @@ public class TaxiSignals : MonoBehaviour {
         if(saved.cancellation!=null&&saved.cancellation.direction!=0&&saved.cancellation.direction!=direction)throw new System.ArgumentException("Inconsistent taxi signal cancellation");
     }
     public void ObserveManualMotion(float signedSpeed,float heading,float steering,Vector3 position,float seconds,bool assisted){
-        if(cancellation.Observe(signedSpeed,heading,steering,position.x,position.z,seconds,Hazards,assisted))direction=0;
+        if(PvpNativeLan.IsReplica(Session))return;if(cancellation.Observe(signedSpeed,heading,steering,position.x,position.z,seconds,Hazards,assisted))direction=0;
     }
     public bool Hazards {get{return manualHazards||passengerStop;}}
     public bool Lit { get { return (direction!=0||Hazards) && (Time.time%.8f)<.4f; } }
@@ -31,18 +33,18 @@ public class TaxiSignals : MonoBehaviour {
             (side<0?left:right)[end]=lamp.GetComponent<Renderer>();
         }
     }
-    public void Toggle(int requested){manualHazards=passengerStop=false;direction=TrafficRules.ToggleIndicator(direction,requested);cancellation.Begin(direction,MotionHeading(),transform.position.x,transform.position.z);}
-    public void ToggleHazards(){bool enabled=!Hazards;manualHazards=enabled;passengerStop=false;if(enabled){direction=0;cancellation.Reset();}}
+    public void Toggle(int requested){if(PvpNativeLan.Route(Session,"signal",requested))return;manualHazards=passengerStop=false;direction=TrafficRules.ToggleIndicator(direction,requested);cancellation.Begin(direction,MotionHeading(),transform.position.x,transform.position.z);}
+    public void ToggleHazards(){if(PvpNativeLan.Route(Session,"hazards"))return;bool enabled=!Hazards;manualHazards=enabled;passengerStop=false;if(enabled){direction=0;cancellation.Reset();}}
     public void BeginPassengerStop(){passengerStop=true;direction=0;cancellation.Reset();}
     public void Clear(){direction=0;manualHazards=passengerStop=false;cancellation.Reset();}
-    public void ObserveMovement(float speed){if(passengerStop&&speed>1)passengerStop=false;}
+    public void ObserveMovement(float speed){if(PvpNativeLan.IsReplica(Session))return;if(passengerStop&&speed>1)passengerStop=false;}
     void Update() {
         if(Time.timeScale>0){
             if(!taxi)taxi=GetComponent<TaxiController>();if(!taxiBody)taxiBody=GetComponent<Rigidbody>();if(!assistance)assistance=GetComponent<AssistedDriveController>();
             if(taxiBody)ObserveMovement(taxiBody.velocity.magnitude);
             if(taxi&&taxiBody)ObserveManualMotion(taxi.Speed,MotionHeading(),taxi.SteeringInput,transform.position,Time.deltaTime,assistance&&assistance.Active);
         }
-        if(Time.timeScale>0 && !(taxi&&taxi.business&&taxi.business.session.IsSimulationBot)) {
+        if(Time.timeScale>0 && !PvpNativeLan.UiBlocked(Session)&&!PvpNativeLan.IsRemoteHuman(Session) && !(taxi&&taxi.business&&taxi.business.session.IsSimulationBot)) {
             if(Input.GetKeyDown(KeyCode.G))ToggleHazards();
             if(Input.GetKeyDown(KeyCode.Q)||Input.GetKeyDown(KeyCode.JoystickButton4)){if(assistance&&assistance.Active)assistance.RequestTurn(-1);else Toggle(-1);}
             if(Input.GetKeyDown(KeyCode.E)||Input.GetKeyDown(KeyCode.JoystickButton5)){if(assistance&&assistance.Active)assistance.RequestTurn(1);else Toggle(1);}

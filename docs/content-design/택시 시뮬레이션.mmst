@@ -73,19 +73,19 @@
                   },
                   {
                     "id": "2d37aadc-4be8-5135-8718-3a8382bb0687",
-                    "topic": "기존 차량 물리의 원격4유저 통합·수용 (미구현)",
+                    "topic": "기존 차량 물리의 원격4유저 통합·수용 (LAN 구현·검증 별도)",
                     "children": [],
                     "task": {
-                      "progress": 0
+                      "progress": 0.5
                     },
-                    "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 0% 기획 필요 · P3\n\n아이디어/검토는 있으나 실제 구현을 위한 조건·효과·예외 또는 지도/통합 계약의 추가 기획이 필요함\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n",
+                    "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 50% 구현\n\n동시 작업 main의 기존 차량 LAN 호스트/게스트 구현 보존. 다른PC4인·전체 원격 운송/장기 수용은 별도 검증\n\n구현 근거: unity/EungyeTaxi/Assets/Scripts/PvpNativeLan.cs\n50%는 구현 단계이며 전체 수동 검증/출시 완료율이 아닙니다.\n<!-- mindmap-progress:end -->\n",
                     "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/pvp/27-flow-unified-mode.md",
                     "hyperlinks": [
                       "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md"
                     ],
                     "tags": [
-                      "단계:0% 기획 필요 · P3",
-                      "우선:P3"
+                      "우선:P3",
+                      "단계:50% 구현"
                     ],
                     "modifiedAt": 1793599686837
                   }
@@ -93,12 +93,12 @@
                 "createdAt": 1793597387559,
                 "modifiedAt": 1793599686837,
                 "collapsed": true,
-                "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 1 / 25% 0 / 0% 1\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/pvp/27-flow-unified-mode.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n모드별 세션/저장 분리·기존 원격4유저 수용은 별도\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
+                "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 2 / 25% 0 / 0% 0\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/pvp/27-flow-unified-mode.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n모드별 세션/저장 분리·기존 원격4유저 수용은 별도\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
                 "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/pvp/27-flow-unified-mode.md",
                 "hyperlinks": [],
                 "tags": [
                   "현재 플레이 기획",
-                  "단계:하위 집계: 50% 1 / 25% 0 / 0% 1"
+                  "단계:하위 집계: 50% 2 / 25% 0 / 0% 0"
                 ]
               },
               {
@@ -120,12 +120,12 @@
             "createdAt": 1793597387559,
             "modifiedAt": 1793599686837,
             "collapsed": true,
-            "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 3 / 25% 0 / 0% 1\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/pvp/27-flow-unified-mode.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n실행·모드 선택 (단일 EungyeTaxi.exe)\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
+            "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 4 / 25% 0 / 0% 0\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/pvp/27-flow-unified-mode.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n실행·모드 선택 (단일 EungyeTaxi.exe)\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
             "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/pvp/27-flow-unified-mode.md",
             "hyperlinks": [],
             "tags": [
               "현재 플레이 기획",
-              "단계:하위 집계: 50% 3 / 25% 0 / 0% 1"
+              "단계:하위 집계: 50% 4 / 25% 0 / 0% 0"
             ]
           },
           {
@@ -4143,12 +4143,12 @@
         "createdAt": 1793597387559,
         "modifiedAt": 1793599686837,
         "collapsed": false,
-        "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 162 / 25% 0 / 0% 6\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/README.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n현재 플레이 기획\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
+        "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 163 / 25% 0 / 0% 5\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/README.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n현재 플레이 기획\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
         "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/README.md",
         "hyperlinks": [],
         "tags": [
           "현재 플레이 기획",
-          "단계:하위 집계: 50% 162 / 25% 0 / 0% 6"
+          "단계:하위 집계: 50% 163 / 25% 0 / 0% 5"
         ]
       },
       {
@@ -5836,11 +5836,11 @@
     ],
     "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/README.md",
     "hyperlinks": [],
-    "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 170 / 25% 0 / 0% 54\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/README.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 기획 읽기: 현재 / 기존 후속 / 추가 제안 / 제작 참고\n\n택시 시뮬레이션\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
+    "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 171 / 25% 0 / 0% 53\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/README.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 기획 읽기: 현재 / 기존 후속 / 추가 제안 / 제작 참고\n\n택시 시뮬레이션\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
     "modifiedAt": 1793599686837,
     "tags": [
       "기획 읽기: 현재 / 기존 후속 / 추가 제안 / 제작 참고",
-      "단계:하위 집계: 50% 170 / 25% 0 / 0% 54"
+      "단계:하위 집계: 50% 171 / 25% 0 / 0% 53"
     ]
   },
   "meta": {

@@ -15,6 +15,7 @@ BACKUP = ROOT / 'docs/design-history/content-design/2026-11-02-mindmap-before-pr
 PRIORITIES = 'docs/future-design/2026-11-02-simulation-priorities.md'
 MARKER = '<!-- mindmap-progress:end -->\n'
 IMPLEMENTED_P1P2 = {
+    '기존 차량 물리의 원격4유저 통합': ('PvpNativeLan.cs', '동시 작업 main의 기존 차량 LAN 호스트/게스트 구현 보존. 다른PC4인·전체 원격 운송/장기 수용은 별도 검증'),
     '수동 주행 회전 후 방향지시등 자동 해제': ('TaxiSignals.cs', '실제 회전35도·직진 조향1초, 정차/비상등/보조 운전 및 저장 경계'),
     '서행 의무 자동 감점 기준': ('DrivingLawSlowTurns.cs', '명시한 게임 관찰 구역만10km/h·여유2·0.75초. 법정 고정속도 주장 없음, 필요 제동 중립'),
     '운전 험하게 하는 차량': ('TrafficCar.cs', '차분/보통/성급 성향. 적색·보행·차량 점유 안전 경계 유지'),
@@ -36,6 +37,8 @@ def apply_p1p2(data):
         match=next((value for prefix,value in IMPLEMENTED_P1P2.items() if topic.startswith(prefix)),None)
         if not node.get('children') and match:
             source,reason=match
+            if topic.startswith('기존 차량 물리의 원격4유저 통합'):
+                node['topic']=topic.replace('(미구현)','(LAN 구현·검증 별도)')
             node.setdefault('task', {})['progress']=.5
             prefix,original=node.get('note','').split(MARKER,1)
             node['note']='<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 50% 구현\n\n'+reason+'\n\n구현 근거: unity/EungyeTaxi/Assets/Scripts/'+source+'\n50%는 구현 단계이며 전체 수동 검증/출시 완료율이 아닙니다.\n'+MARKER+original

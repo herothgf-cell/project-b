@@ -31,7 +31,7 @@ public partial class FullMapOverlay {
  }
  static string FacilityPlannerDetails(FacilityOption option){
   string travel=option.Reachable?"이동 약 "+Mathf.CeilToInt(option.TravelSeconds)+"초 / "+Mathf.CeilToInt(option.TravelMetres)+"m · 진입·출차 포함":"연결 경로·이동시간 확인 필요";
-  string wait=option.Waiting>0?"대기 "+option.Waiting+"대 · 대기시간 미정":option.PhysicallyOccupied?"정차 공간 점유 · 대기시간 미정":"현재 대기 차량 없음";
+  string wait=!option.QueueKnown?"시설 대기 정보 수신 중":option.Waiting>0?"대기 "+option.Waiting+"대 · 대기시간 미정":option.PhysicallyOccupied?"정차 공간 점유 · 대기시간 미정":"현재 대기 차량 없음";
   var quote=option.Quote;if(quote==null||!quote.Available)return travel+"\n"+wait+"\n현재 이용 견적 불가 · 현장 조건을 확인하세요";
   string price="이용 "+quote.UseSeconds.ToString("0")+"초 · "+quote.Price.ToString("N0")+"원"+(quote.NewDebt>0?" (미납 예상 "+quote.NewDebt.ToString("N0")+"원)":"");
   string effects="이용 직후 예상: 연료 "+quote.EndFuel.ToString("0.0")+"% · 포만 "+quote.EndSatiety.ToString("0")+" · 피로 "+quote.EndFatigue.ToString("0");
