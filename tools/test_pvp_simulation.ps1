@@ -21,7 +21,7 @@ try{
  $taskMarker=if($FourDrivers){'PVP_FOUR_DRIVER_OK'}elseif($Services){'PVP_SIMULATION_SERVICES_OK'}else{'PVP_SIMULATION_DONE success=True'}
  if(!(Select-String -LiteralPath $taskLog -SimpleMatch $taskMarker -Quiet)){throw ('Missing acceptance marker '+$taskLog)}
  if(Select-String -LiteralPath $taskLog -Pattern 'NullReferenceException|Exception:|PVP_SIMULATION FAIL|PVP_FOUR_DRIVER FAIL' -Quiet){throw ('Simulation error '+$taskLog)}
- Select-String -LiteralPath $taskLog -Pattern '^PVP_SIMULATION|^PVP_FOUR_DRIVER' | ForEach-Object {$_.Line}
+ Select-String -LiteralPath $taskLog -Pattern '^PVP_(SIMULATION(_SERVICES)?|FOUR_DRIVER) (PASS|FAIL)|^PVP_(FOUR_DRIVER_OK|SIMULATION_SERVICES_OK|SIMULATION_DONE)' | ForEach-Object {$_.Line}
 }finally{if(!$taskProcess.HasExited){Stop-Process -Id $taskProcess.Id -ErrorAction SilentlyContinue}}
 Write-Output ('PVP_SIMULATION_RUNNER_OK '+$taskTag)
 

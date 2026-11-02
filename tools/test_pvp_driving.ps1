@@ -1,8 +1,8 @@
-param([ValidateRange(1024,65000)][int]$Port=18301,[ValidateSet('all','baseline','lag-swap','violation')][string]$Case='all',[string]$Executable)
+﻿param([ValidateRange(1024,65000)][int]$Port=18301,[ValidateSet('all','baseline','lag-swap','violation')][string]$Case='all',[string]$Executable)
 $ErrorActionPreference='Stop'
 $root=Split-Path -Parent $PSScriptRoot
 $logs=Join-Path $root 'artifacts/pvp'
-$exe=if($Executable){[IO.Path]::GetFullPath($Executable)}else{Join-Path $root 'builds/PvpPrototype/PvpPrototype.exe'}
+$exe=if($Executable){[IO.Path]::GetFullPath($Executable)}else{Join-Path $root 'builds/EungyeTaxi/EungyeTaxi.exe'}
 $owned=[System.Collections.Generic.List[System.Diagnostics.Process]]::new()
 function Start-Drive($role,$testPort,$seconds,$label,[string[]]$extra=@()) {
  $log=Join-Path $logs ($label+'.log')

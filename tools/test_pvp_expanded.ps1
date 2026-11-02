@@ -1,7 +1,7 @@
-param([string]$Executable)
+﻿param([string]$Executable)
 $ErrorActionPreference='Stop'
 $taskRoot=Split-Path $PSScriptRoot -Parent
-$taskExe=if($Executable){[IO.Path]::GetFullPath($Executable)}else{Join-Path $taskRoot 'builds/PvpPrototype/PvpPrototype.exe'}
+$taskExe=if($Executable){[IO.Path]::GetFullPath($Executable)}else{Join-Path $taskRoot 'builds/EungyeTaxi/EungyeTaxi.exe'}
 $taskLog=Join-Path $taskRoot 'artifacts/pvp/expanded-player.log'
 $taskProcess=Start-Process $taskExe -ArgumentList @('-batchmode','-nographics','-pvpExpandedCheck','-logFile',('"'+$taskLog+'"')) -WorkingDirectory (Split-Path $taskExe -Parent) -WindowStyle Hidden -PassThru
 try{

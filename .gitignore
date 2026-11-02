@@ -5,7 +5,6 @@ unity/**/Logs/
 unity/**/UserSettings/
 /builds/*
 !/builds/EungyeTaxi/
-!/builds/PvpPrototype/
 artifacts/
 __pycache__/
 # Locally acquired map data and derived geometry are managed separately.

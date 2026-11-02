@@ -17,3 +17,22 @@ CPU 범위: 합류990ms/전체NPC5372ms/경로갱신3454ms/화면1614ms. 소스 
 
 ## 최종 수정 검증
 `PvpTrafficPerformanceTests.Run`, `artifacts/pvp/flow-final-editor4.log`: exit0, 실제 A2 및 동률/폐쇄/방향/4m경계의 차로 선택, 모든 작성 신호 위상 경계·차로 필터·보행·소수 주기, 제한속도 규칙 순서/구간/중첩을 이전 계산과 대조했다. 핵심 교통 허가/법규 의미는 바꾸지 않았다. 실제 재빌드/주행/성능은 아래 후속 결과로 구분한다.
+
+## 최종 통합 Player / 소스61c9e98
+- `PrototypeBuild.BuildHybrid` / `flow-final-build2.log`: exit0. 복사본 `flow-runtime2`의140파일115,186,267바이트 전체 크기/SHA256 일치.
+- 실제 창 `-unifiedModeCheck -unifiedModeCaptureOutput .../flow-mode3`: exit0 / `UNIFIED_MODE_RESULT PASS`, 활성92.11629초. 메뉴→PVP4→전역 모드 리셋에도4세션 저장금지→재경기→메뉴→싱글 준비/저장→메뉴→동일 캠페인 복원→원본·백업 손상 거부/출발 시 명시 복구 확인→메뉴 통과. 기존 사용자 캠페인JSON/백업/운행JSON/운행백업4파일 바이트 불변·새 사용자파일 없음.1600×900 메뉴/PVP설정/기존 싱글 준비 캡처 확인. 임시 캠페인을 이용한 프로그램 전환 검사이며 사람 버튼 조작 수용과 구분한다.
+- `tools/test_pvp_simulation.ps1 -FourDrivers -TrafficMonitor -Executable .../flow-runtime2/EungyeTaxi.exe -OutputDirectory .../flow-four2`: exit0. 실제 WheelCollider 거리4755.957/4374.620/5201.535/4614.557m, 운임11030/15870/24920/5810원. 공용8호출·승객 소유권·정산 중복 방지·지도 중 시간/교통 진행·결과 정지·메뉴 복귀·4명 재시작 초기화 통과. 위치 제어/목적지 순간이동 없이 자동 페달·조향으로 운송했다.
+- 같은4대 검사 읽기 전용 관측:813.9151게임초,72NPC 총378,051.4m,808차로 관측, 충돌하지 않는 경로 허가 최대9개, 합류 대기 최대31초(진출/신호로 막힌 교통의 대기 포함). 경로 오차 최대0.0001488m/방향 오차0.02798도.17/58,336샘플은 명시 정지 사유 없음으로 기록했다. 전2874링크 모두를 사람이 주행한 결과로 확대하지 않는다.
+- `tools/test_pvp_simulation.ps1 -Services -Executable .../flow-runtime2/EungyeTaxi.exe -OutputDirectory .../flow-services2`: exit0, 실제765.6517m 주행·정차/주유1,600원 지출·구매 연료 증가·지불자만 서비스 대기·출차/승객 영업 복귀 통과. 연료24로 낮춘 검사는 native Account.Consume fixture이며 거리/시간/운임을 주입하지 않았다. NPC72 유지.
+
+## 최종 지점 성능·표시 확인
+`flow-perf2` / 소스61c9e98 /1920×1080·Ultra·Direct3D11·72NPC·봇3·별도 Player 동시 실행 없음, exit0.60.01778초3455프레임: 평균57.56627fps, p9524.786ms/p9927.4565ms, 최대117.5951ms,50ms초과2회/100ms초과1회. NPC28,639.49m 진행. GC0 293회로 수집 자체가 사라진 것은 아니며, 전체 끊김 제거/고정60fps를 주장하지 않는다. 이전 관측은18초 원인불명 지연을 포함하므로 단순 배수 비교를 피한다. NPC 밀도·신호 규칙·그림자를 줄이지 않았다.
+
+실제 렌더에서 직좌/직우/유턴 표시와 신호등·다차로를 확인했다. 방향 표시 상세 촬영은 측정 종료 후 카메라만 이동한 정적 표시 확인이다. 실제 운송 주행 증거와 혼동하지 않는다. 일부 표시가 일반 추적 카메라의 뒤쪽에 있어 처음 지점 사진에는 보이지 않았지만, 접근 차로 상류의 렌더를 확인했다. 사진 속 빨간 차량은 일반 NPC 색상이며 특정 과거 차량의 의도는 확인 불가다.
+
+## 배포·보존·남은 수용
+현재 실행은 `builds/EungyeTaxi/EungyeTaxi.exe` 하나다. 은계 싱글/자체 도시 PVP를 선택하고 PVP는 나1+봇3·공용8호출이다. 구버전 별도 PVP139파일은 현재 배포에서 제거했고 기존 로컬 폴더 복사본과 Git 이력을 남겼다. PvP manifest는 통합 manifest 안내가 되었고 기존 VerifyOnly도 통합140파일115,186,267바이트를 검증한다. 이전 평면 모터 진단 러너의 기본 EXE 경로도 통합했다(이번에 옛 네트워크 검사를 재실행했다는 뜻은 아님).
+
+회사/제품명과 기존 캠페인 저장 경로를 유지했다. 다른 체크아웃의 로컬main d817d9a와 미추적 작업은 변경하지 않았다. 필수 지도 원본/프로젝트 지도/ZIP은 변경하지 않는다. 사람 직접 운전의 추월·합류·유턴 체감, 전 도로 장시간 교통,20분 수익/생활 밸런스, 다른 PC 성능/실제4명·기존 물리 원격 대전은 별도다. 피로/포만은 콘텐츠27의 후보 기획만 작성했고 기존 수치는 바꾸지 않았다.
+
+재현 명령: Unity2022.3.62f2 `-batchmode -nographics -quit -buildTarget Win64 -projectPath unity/EungyeTaxi -executeMethod PvpFlowUnifiedChecks.Run`, 성능 동등성 `PvpTrafficPerformanceTests.Run`, 빌드 `PrototypeBuild.BuildHybrid`. 실제 Player는 `-unifiedModeCheck`(임시 저장), 러너 `-FourDrivers -TrafficMonitor` 또는 `-Services`에 `-Executable`과 별도 `-OutputDirectory`를 지정한다. 성능은 `-pvpCityPerformanceTest -pvpTrafficFlowMonitor -trafficPerfSeconds 60 -trafficPerfOutput <출력폴더> -screen-fullscreen 0 -screen-width 1920 -screen-height 1080`이고 정상 렌더 창을 사용한다. 장시간 실행 공백이 발생한 결과를 수용 완료 근거로 사용하지 않는다.

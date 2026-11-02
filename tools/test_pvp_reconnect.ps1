@@ -1,7 +1,7 @@
-param([ValidateRange(1024,65000)][int]$Port=17901,[ValidateSet('all','resume','forged','expiry','leave','blackout','host-loss')][string]$Case='all')
+﻿param([ValidateRange(1024,65000)][int]$Port=17901,[ValidateSet('all','resume','forged','expiry','leave','blackout','host-loss')][string]$Case='all')
 $ErrorActionPreference='Stop'
 $root=Split-Path -Parent $PSScriptRoot
-$exe=Join-Path $root 'builds/PvpPrototype/PvpPrototype.exe'
+$exe=Join-Path $root 'builds/EungyeTaxi/EungyeTaxi.exe'
 $logs=Join-Path $root 'artifacts/pvp'
 New-Item -ItemType Directory -Force $logs | Out-Null
 $owned=[System.Collections.Generic.List[System.Diagnostics.Process]]::new()

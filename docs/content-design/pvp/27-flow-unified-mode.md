@@ -57,3 +57,19 @@
 최종 Editor에서201도로/2874차로 링크/420차로변경/4유턴,6차로9구간,606개 노면 방향 표시를 확인했다.18승객 거점의306개 방향쌍 및 기존 주유3·세차2·수리2·출발주차4 접근을 유지한다. 추가 골목45도로/27접점은9구역 내부의 두 번째 연결 고리다. 새 길의 통행 여유를 확보하면서 가로변 건물이 줄었으며 각 구역은60~87개다. 실제 실행/성능 수치는 [이번 이력](../../work-history/2026-10-30-pvp-flow-unified.md)에 구분해 기록한다.
 
 빨간 차는 `TrafficCar.Initialize`의 일반 NPC 색상4종 중 하나다. 특별 이벤트/방해 차량을 나타내는 색이 아니다. 사진 속 특정 차량의 당시 이동 목적은 식별할 수 없으며, 짧은 연결부의 과도한 S자 형상과 경로 이탈은 별도 검사한다.
+
+## 통합 실행 화면
+최종 소스61c9e98 / BuildHybrid2 / 실제 Player mode3의1600×900 캡처다. 프로그램의 진단 경로로 전환했고 PC 입력을 조작하지 않았다.
+
+![통합 모드 선택](images/flow-unified/01-mode-selection.png)
+![PVP 도시 전용 설정·조작 안내](images/flow-unified/02-pvp-city-setup.png)
+![기존 싱글 영업 준비](images/flow-unified/04-single-preparation.png)
+
+## 실제 방향 표시와 확장 골목
+아래는 소스61c9e98의 실제 Player 렌더다. 상세 표시는 성능 측정 후 카메라를 이동해 확인했다. 도로 법규/허용 방향은 같은 native graph에서 생성한다.
+
+![직좌·직우 접근 차로](images/flow-unified/pvp-road-arrows-3.png)
+![유턴 및 직진 차로](images/flow-unified/pvp-road-arrows-8.png)
+![추가 골목을 포함한 현재 전체 지도](images/flow-unified/traffic-performance-fullmap.png)
+
+최종 자동 물리 주행·저장 보존·성능 및 사람/다른PC의 남은 수용은 [11월2일 이력](../../work-history/2026-11-02-pvp-flow-release.md)을 따른다. 현재 단일 실행 메뉴에서 싱글/PVP를 선택한다.

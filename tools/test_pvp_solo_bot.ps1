@@ -1,7 +1,7 @@
-param([ValidateSet('all','baseline','violation')][string]$Case='all',[string]$Executable)
+﻿param([ValidateSet('all','baseline','violation')][string]$Case='all',[string]$Executable)
 $ErrorActionPreference='Stop'
 $taskRoot=Split-Path $PSScriptRoot -Parent
-$taskExe=if($Executable){[IO.Path]::GetFullPath($Executable)}else{Join-Path $taskRoot 'builds/PvpPrototype/PvpPrototype.exe'}
+$taskExe=if($Executable){[IO.Path]::GetFullPath($Executable)}else{Join-Path $taskRoot 'builds/EungyeTaxi/EungyeTaxi.exe'}
 $taskLogs=Join-Path $taskRoot 'artifacts/pvp'
 New-Item -ItemType Directory -Path $taskLogs -Force | Out-Null
 foreach($taskCase in @('baseline','violation')){

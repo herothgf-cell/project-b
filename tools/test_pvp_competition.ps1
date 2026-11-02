@@ -1,8 +1,8 @@
-param([ValidateRange(1024,65000)][int]$Port=18001,[ValidateSet('all','baseline','reconnect','leave')][string]$Case='all')
+﻿param([ValidateRange(1024,65000)][int]$Port=18001,[ValidateSet('all','baseline','reconnect','leave')][string]$Case='all')
 $ErrorActionPreference='Stop'
 $root=Split-Path -Parent $PSScriptRoot
 $logs=Join-Path $root 'artifacts/pvp'
-$exe=Join-Path $root 'builds/PvpPrototype/PvpPrototype.exe'
+$exe=Join-Path $root 'builds/EungyeTaxi/EungyeTaxi.exe'
 $owned=[System.Collections.Generic.List[System.Diagnostics.Process]]::new()
 function Start-Player($role,$testPort,$seconds,$label,[string[]]$extra=@()) {
  $log=Join-Path $logs ($label+'.log')
