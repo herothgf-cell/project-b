@@ -13,6 +13,17 @@ public static class PvpPassengerPolicy {
   if(type==PassengerType.MuddyLuggage)return remaining>=30?0:2;
   return type==PassengerType.Talkative?0:1;
  }
+ public static double OfferSeconds(double pickup,JobOffer offer){
+  if(offer==null||pickup<0||double.IsNaN(pickup)||double.IsInfinity(pickup))return double.PositiveInfinity;
+  double ride=offer.timingPolicyVersion>=1?offer.safeRouteSeconds:offer.distance/8;
+  double total=pickup/6+ride+Math.Max(0,offer.waitSeconds)+30;
+  return total<0||double.IsNaN(total)||double.IsInfinity(total)?double.PositiveInfinity:total;
+ }
+ public static double OfferRank(double pickup,JobOffer offer,DriverCondition driver,double remaining){
+  double total=OfferSeconds(pickup,offer);if(double.IsInfinity(total)||total>=remaining||driver==null)return double.PositiveInfinity;
+  if(PvpConditionRules.Forecast(driver,pickup/6).fatigue>=100||PvpConditionRules.Forecast(driver,total).PassengerMustLeave)return double.PositiveInfinity;
+  return total;
+ }
  public static bool PursueRoadside(double distance){return distance>=0&&distance<=250;}
- public static bool AcceptRoute(double extraSeconds,double remaining,double raceRemaining,double baseEta=0){return baseEta>=0&&baseEta+extraSeconds+30<raceRemaining&&extraSeconds>=0&&!double.IsInfinity(extraSeconds)&&!double.IsNaN(extraSeconds)&&extraSeconds+30<remaining&&extraSeconds+30<raceRemaining;}
+ public static bool AcceptRoute(double extraSeconds,double remaining,double raceRemaining,double baseEta=0,DriverCondition driver=null){return baseEta>=0&&baseEta+extraSeconds+30<raceRemaining&&extraSeconds>=0&&!double.IsInfinity(extraSeconds)&&!double.IsNaN(extraSeconds)&&extraSeconds+30<remaining&&extraSeconds+30<raceRemaining&&(driver==null||!PvpConditionRules.Forecast(driver,baseEta+extraSeconds).PassengerMustLeave);}
 }

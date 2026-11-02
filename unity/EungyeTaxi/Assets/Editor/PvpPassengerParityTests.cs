@@ -7,6 +7,7 @@ public static class PvpPassengerParityTests {
  static void Set(object o,string p,object v){o.GetType().GetProperty(p).SetValue(o,v,null);}
  public static void Run(){
   for(int phase=0;phase<3;phase++){int[] counts=new int[3];for(int seed=0;seed<12000;seed++){int pickup=PvpPassengerPolicy.Pickup(seed,18,new[]{100,600,1000}[phase],1200);Check(pickup>=0&&pickup<18,"valid pickup");counts[PvpPassengerPolicy.Region(pickup)]++;}Check(counts[phase]>counts[(phase+1)%3]*2&&counts[phase]>counts[(phase+2)%3]*2,"stage demand concentration");}
+  var fresh=new DriverCondition{satiety=100,fatigue=0};var shortRide=new JobOffer{timingPolicyVersion=1,safeRouteSeconds=100,distance=600};var longRide=new JobOffer{timingPolicyVersion=1,safeRouteSeconds=800,distance=5000};Check(PvpPassengerPolicy.OfferRank(1000,shortRide,fresh,7200)<PvpPassengerPolicy.OfferRank(100,longRide,fresh,7200),"complete trip time beats deceptively near pickup");Check(double.IsInfinity(PvpPassengerPolicy.OfferRank(10,longRide,new DriverCondition{satiety=80,fatigue=95},7200)),"predicted drowsy passenger cancellation excludes impossible contract");Check(double.IsInfinity(PvpPassengerPolicy.OfferRank(10,shortRide,fresh,60)),"trip cannot finish after race end");
   Check(PvpPassengerPolicy.PursueRoadside(250)&&!PvpPassengerPolicy.PursueRoadside(251)&&!PvpPassengerPolicy.PursueRoadside(double.NaN),"nearby opportunistic roadside pursuit, no cross-city unreserved chase");
   Check(PvpPassengerPolicy.Phase(150,600)==1&&PvpPassengerPolicy.Phase(450,600)==2,"duration-relative phases, no fixed20minute clock");
   var ledger=new PvpSimulationLedger();var board=new PvpSimulationCallBoard(ledger,i=>new JobOffer{pickup=i%18,drop=(i+1)%18,distance=100},18,3);var seen=new HashSet<int>();
@@ -18,6 +19,7 @@ public static class PvpPassengerParityTests {
   Check(PvpPassengerPolicy.BehaviorChoice(PassengerType.MuddyLuggage,false,80,500)==0&&PvpPassengerPolicy.BehaviorChoice(PassengerType.MuddyLuggage,false,80,20)==2,"muddy luggage protection versus final seconds");
   Check(PvpPassengerPolicy.BehaviorChoice(PassengerType.Luggage,false,80,500)==0&&PvpPassengerPolicy.BehaviorChoice(PassengerType.Luggage,false,80,20)==1,"luggage honors loading/unloading time");
   Check(PvpPassengerPolicy.AcceptRoute(20,200,300)&&!PvpPassengerPolicy.AcceptRoute(180,200,300)&&!PvpPassengerPolicy.AcceptRoute(double.NaN,200,300),"safe route change budget");
+  Check(!PvpPassengerPolicy.AcceptRoute(20,600,7200,250,new DriverCondition{satiety=80,fatigue=95}),"route response considers drowsy cancellation, not time budget alone");
   Check(!PvpPassengerPolicy.AcceptRoute(0,300,60,200),"full route cannot fit in final minute even with zero detour");
   bool active=PvpSimulationMode.Active,expanded=PvpSimulationMode.Expanded;int duration=PvpSimulationMode.DurationSeconds;float scale=Time.timeScale;var root=new GameObject("passenger parity fixture");root.SetActive(false);
   try{

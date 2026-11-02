@@ -12,7 +12,7 @@ public sealed class PvpBotPassengerResponses:MonoBehaviour {
   if(r.HasPendingChoice){
    var kind=r.request.Kind;bool applied=false,defer=false;
    if(kind==RequestKind.SafeStop||kind==RequestKind.DestinationChange||kind==RequestKind.ViaStop){
-    bool fits=r.PrepareProposal()&&PvpPassengerPolicy.AcceptRoute(r.ProposalExtraSeconds,j.trip.Remaining,s.simulationMatch.Remaining,j.nav.estimatedSeconds);
+    bool fits=r.PrepareProposal()&&PvpPassengerPolicy.AcceptRoute(r.ProposalExtraSeconds,j.trip.Remaining,s.simulationMatch.Remaining,j.nav.estimatedSeconds,s.business.ledger.Driver);
     applied=r.Respond(fits);defer=!fits;
    }else if(kind==RequestKind.Eta)applied=r.RespondEta(j.trip.Remaining>j.nav.estimatedSeconds+30?1:0);
    else if(kind==RequestKind.RouteAdvice)applied=j.trip.Remaining>j.nav.estimatedSeconds+60?r.RespondAlternative():r.Respond(true);
