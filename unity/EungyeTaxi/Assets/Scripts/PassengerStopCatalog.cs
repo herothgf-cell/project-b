@@ -18,7 +18,7 @@ public sealed class PassengerStopEntry {
 
 // Explicit fictional game laybys. Geometry review never asserts real-world
 // stopping permission. Canonical map inputs and the twelve scenario stops stay intact.
-public sealed class PassengerStopCatalog {
+public sealed partial class PassengerStopCatalog {
  public MapStop[] Stops {get;private set;}
  public readonly List<PassengerStopEntry> Entries=new List<PassengerStopEntry>();
  public readonly List<string> Rejected=new List<string>();
@@ -58,7 +58,7 @@ public sealed class PassengerStopCatalog {
   // Validate every candidate against the unchanged scene before making cutouts.
   foreach(var c in result.admitted.ToArray())try{InstallBay(map,c);}catch(InvalidOperationException error){var entry=result.Entries.First(e=>e.StopId==c.stopId);combined.Remove(entry.Stop);result.Entries.Remove(entry);result.admitted.Remove(c);result.Rejected.Add(c.stopId+": "+error.Message);}
   for(int i=0;i<result.Entries.Count;i++)result.Entries[i].Index=i;
-  result.Stops=combined.ToArray();ProjectMapScene.InvalidateAreaIndex(map);
+  result.Stops=combined.ToArray();result.RepairLegacyS09Sidewalk(map);result.InstallAlternatives(map,graph);ProjectMapScene.InvalidateAreaIndex(map);
  }
  public PassengerStopEntry Entry(int index){return index>=0&&index<Entries.Count?Entries[index]:null;}
  public int IndexOf(string id){var e=Entries.FirstOrDefault(x=>x.StopId==id);return e==null?-1:e.Index;}
@@ -125,7 +125,7 @@ public sealed class PassengerStopCatalog {
   var result=new List<MapPoint[]>();var current=ring;foreach(var plane in new[]{new Vector4(dir.x,dir.z,a,1),new Vector4(dir.x,dir.z,b,-1),new Vector4(side.x,side.z,c,1),new Vector4(side.x,side.z,d,-1)}){var outside=Clip(current,origin,plane,false);if(outside.Length>=3)result.Add(outside);current=Clip(current,origin,plane,true);if(current.Length<3)break;}return result;
  }
  static MapPoint[] Clip(MapPoint[] input,Vector3 origin,Vector4 plane,bool inside){var output=new List<MapPoint>();if(input.Length==0)return output.ToArray();Func<MapPoint,float> signed=p=>((p.x-origin.x)*plane.x+(p.z-origin.z)*plane.y-plane.z)*plane.w*(inside?1:-1);var previous=input[input.Length-1];float last=signed(previous);foreach(var next in input){float value=signed(next);if((last>=0)!=(value>=0)){float t=last/(last-value);output.Add(new MapPoint{x=Mathf.Lerp(previous.x,next.x,t),z=Mathf.Lerp(previous.z,next.z,t)});}if(value>=0)output.Add(next);previous=next;last=value;}return output.ToArray();}
- public static void Draw(MapData map,Transform parent){var catalog=For(map);if(catalog.admitted.Count==0)return;var paint=WorldBuilder.Mat("게임 승하차 포켓",new Color(.1f,.72f,.7f));foreach(var c in catalog.admitted){var dir=Dir(c);var right=TrafficSystem.Right(dir);var pos=Pos(c)+right*c.bayOffset;var root=new GameObject(c.stopId+" 게임 전용 승하차");root.transform.SetParent(parent,false);root.transform.position=pos;root.transform.rotation=Quaternion.LookRotation(dir);foreach(float side in new[]{-1.3f,1.3f})WorldBuilder.Box("게임 포켓 경계",new Vector3(side,.08f,0),new Vector3(.12f,.02f,8),paint,root.transform,false);foreach(float along in new[]{-4f,4})WorldBuilder.Box("게임 포켓 끝",new Vector3(0,.08f,along),new Vector3(2.7f,.02f,.12f),paint,root.transform,false);var label=new GameObject("게임용 표시");label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(2.6f,2.8f,0);var text=label.AddComponent<TextMesh>();text.text=c.name+"\n게임 전용 · 현장 미확인";text.fontSize=40;text.characterSize=.06f;text.anchor=TextAnchor.MiddleCenter;text.color=Color.cyan;KoreanText.Apply(text);label.AddComponent<FaceCamera>();}}
+ public static void Draw(MapData map,Transform parent){var catalog=For(map);if(catalog.admitted.Count==0)return;var paint=WorldBuilder.Mat("게임 승하차 포켓",new Color(.1f,.72f,.7f));foreach(var c in catalog.admitted.Concat(catalog.alternativeAdmitted)){var dir=Dir(c);var right=TrafficSystem.Right(dir);var pos=Pos(c)+right*c.bayOffset;var root=new GameObject(c.stopId+" 게임 전용 승하차");root.transform.SetParent(parent,false);root.transform.position=pos;root.transform.rotation=Quaternion.LookRotation(dir);foreach(float side in new[]{-1.3f,1.3f})WorldBuilder.Box("게임 포켓 경계",new Vector3(side,.08f,0),new Vector3(.12f,.02f,8),paint,root.transform,false);foreach(float along in new[]{-4f,4})WorldBuilder.Box("게임 포켓 끝",new Vector3(0,.08f,along),new Vector3(2.7f,.02f,.12f),paint,root.transform,false);var label=new GameObject("게임용 표시");label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(2.6f,2.8f,0);var text=label.AddComponent<TextMesh>();text.text=c.name+"\n게임 전용 · 현장 미확인";text.fontSize=40;text.characterSize=.06f;text.anchor=TextAnchor.MiddleCenter;text.color=Color.cyan;KoreanText.Apply(text);label.AddComponent<FaceCamera>();}}
 
  sealed class Geometry {
   struct Road {public Vector3 a,b;public float half;}
@@ -134,6 +134,16 @@ public sealed class PassengerStopCatalog {
   static void Add<T>(Dictionary<Vector2Int,List<T>> index,T item,IEnumerable<Vector3> points,float margin){var all=points.ToArray();for(int x=Mathf.FloorToInt((all.Min(p=>p.x)-margin)/32);x<=Mathf.FloorToInt((all.Max(p=>p.x)+margin)/32);x++)for(int z=Mathf.FloorToInt((all.Min(p=>p.z)-margin)/32);z<=Mathf.FloorToInt((all.Max(p=>p.z)+margin)/32);z++){var key=new Vector2Int(x,z);List<T> list;if(!index.TryGetValue(key,out list)){list=new List<T>();index.Add(key,list);}list.Add(item);}}
   public Geometry(MapData map){foreach(var road in map.roads)for(int i=1;i<road.points.Length;i++){var r=new Road{a=road.points[i-1].V(),b=road.points[i].V(),half=road.width*.5f};Add(roads,r,new[]{r.a,r.b},r.half+.2f);}foreach(var b in map.buildings)if(!SceneBuildingVisibility.Hidden(map,b.id))Add(blockers,b.points,b.points.Select(p=>p.V()),1);foreach(var a in map.areas)if(a.kind=="water"||a.kind=="parking"||a.kind=="restaurant"||a.kind=="rest")Add(blockers,a.points,a.points.Select(p=>p.V()),1);}
   static float Distance(Vector3 p,Vector3 a,Vector3 b){p.y=a.y=b.y=0;var d=b-a;return Vector3.Distance(p,a+d*Mathf.Clamp01(Vector3.Dot(p-a,d)/Mathf.Max(.00001f,d.sqrMagnitude)));}
+  public bool FootprintOnRoad(MapPoint[] footprint,float margin){
+   var checkedRoads=new HashSet<Road>();
+   for(int x=Mathf.FloorToInt(footprint.Min(p=>p.x)/32);x<=Mathf.FloorToInt(footprint.Max(p=>p.x)/32);x++)for(int z=Mathf.FloorToInt(footprint.Min(p=>p.z)/32);z<=Mathf.FloorToInt(footprint.Max(p=>p.z)/32);z++){
+    List<Road> list;if(!roads.TryGetValue(new Vector2Int(x,z),out list))continue;
+    foreach(var road in list)if(checkedRoads.Add(road)){
+     var direction=road.b-road.a;float length=direction.magnitude;if(length<.001f)continue;
+     if(Overlap(footprint,ProjectMapScene.Rectangle((road.a+road.b)*.5f,direction/length,Mathf.Max(.01f,2*(road.half+margin)),length+.1f)))return true;
+    }
+   }return false;
+  }
   public bool OnRoad(Vector3 p,float margin){List<Road> list;if(!roads.TryGetValue(Key(p),out list))return false;return list.Any(r=>Distance(p,r.a,r.b)<=r.half+margin);}
   public bool Blocked(Vector3 p){List<MapPoint[]> list;if(!blockers.TryGetValue(Key(p),out list))return false;foreach(var ring in list){if(ProjectMapScene.Contains(ring,p))return true;for(int i=0;i<ring.Length;i++)if(Distance(p,ring[i].V(),ring[(i+1)%ring.Length].V())<.5f)return true;}return false;}
   static double Cross(MapPoint a,MapPoint b,MapPoint c){return ((double)b.x-a.x)*(c.z-a.z)-((double)b.z-a.z)*(c.x-a.x);}

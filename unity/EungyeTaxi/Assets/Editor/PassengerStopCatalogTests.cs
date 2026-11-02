@@ -7,13 +7,22 @@ public static class PassengerStopCatalogTests {
  static void Check(bool okay,string message){checks++;if(!okay)throw new Exception("PASSENGER_STOP_CATALOG: "+message);}
  static MapData Load(){return ProjectMapStore.Load(ProjectMapBuild.Root).Compose();}
  public static void Run(){
-  checks=0;var map=Load();var original=map.stops.ToArray();var snapshot=JsonUtility.ToJson(map.stops[0]);int roadCount=map.roads.Length;
+  checks=0;var map=Load();var original=map.stops.ToArray();var originalJson=original.Select(stop=>JsonUtility.ToJson(stop)).ToArray();var snapshot=JsonUtility.ToJson(map.stops[0]);int roadCount=map.roads.Length;
   PassengerStopCatalog.Apply(map);var catalog=PassengerStopCatalog.For(map);
   Check(catalog.Stops.Length>=16,"at least four validated explicit game bays: "+string.Join(" / ",catalog.Rejected));
   Check(catalog.LegacyCount==12&&map.stops.Length==12,"original scenario indexing remains twelve");
-  for(int i=0;i<12;i++)Check(ReferenceEquals(original[i],catalog.Stops[i]),"legacy reference preserved "+i);
+  for(int i=0;i<12;i++){
+   Check(JsonUtility.ToJson(original[i])==originalJson[i],"source legacy stop unchanged "+i);
+   if(ReferenceEquals(original[i],catalog.Stops[i]))continue;
+   var source=original[i];var corrected=catalog.Stops[i];
+   Check(i==8&&map.mapId=="eungye"&&source.name=="은계 승하차 9"&&Mathf.Abs(source.width-3)<.01f&&Mathf.Abs(corrected.width-6.6f)<.01f,"only documented S09 sidewalk correction may clone a legacy stop");
+   Check(Vector3.Distance(source.V(),corrected.V())<.001f&&Vector3.Distance(source.Direction,corrected.Direction)<.001f&&source.laneEdge==corrected.laneEdge&&Mathf.Abs(source.laneAt-corrected.laneAt)<.001f&&source.graphStop==corrected.graphStop,"S09 correction preserves vehicle route anchor");
+   Check(catalog.LegacyS09SidewalkRepaired&&ProjectMapScene.OnArea(map,corrected.Passenger,true),"corrected S09 passenger anchor is on repaired game-only sidewalk");
+   foreach(float along in new[]{-6.5f,0,6.5f})foreach(float side in new[]{-1f,0,1f})Check(!ProjectMapScene.OnArea(map,corrected.Kerb+corrected.Direction*along+TrafficSystem.Right(corrected.Direction)*side,true),"S09 actual stopped body clear of raised sidewalk");
+   foreach(float along in new[]{-8f,0,8})foreach(float side in new[]{-.7f,0,.7f})Check(ProjectMapScene.OnArea(map,corrected.Passenger+corrected.Direction*along+TrafficSystem.Right(corrected.Direction)*side,true),"S09 continuous full1.5m passenger strip");
+  }
   Check(JsonUtility.ToJson(map.stops[0])==snapshot,"legacy position untouched");
-  Check(map.roads.Length==roadCount+catalog.Stops.Length-12,"one fictional asphalt pocket per additional stop");
+  Check(map.roads.Length==roadCount+catalog.Stops.Length-12+catalog.Alternatives.Count(),"one fictional asphalt pocket per additional or alternative stop");
   Check(catalog.Entries.Select(e=>e.StopId).Distinct().Count()==catalog.Stops.Length,"stable distinct IDs");
   var graph=new HdRoadGraph(map);int routes=0;
   foreach(var entry in catalog.Entries.Skip(12)){

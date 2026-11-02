@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "mapId": "eungye",
+  "revision": "eungye-game-alternatives-2026-11-02-v1",
+  "pairs": [
+    {
+      "originalStopId": "EG-GAME-02",
+      "bay": {
+        "laneId": "local:2050:827:4943:827",
+        "laneAt": 78,
+        "x": 282.99573990477427,
+        "z": 82.8349266221889,
+        "dx": 0.9999999983561315,
+        "dz": -5.7338792682772305e-05,
+        "bayOffset": 3.5,
+        "passengerX": 282.9954016058974,
+        "passengerZ": 76.93492663188772,
+        "sidewalkId": "game-extension:local:2050:827:4943:827",
+        "stopId": "EG-ALT-02-A",
+        "name": "게임 대체 승하차 2-A",
+        "category": "outer-link",
+        "evidenceStatus": "game-only-field-unverified",
+        "evidence": "Fictional alternative bay and authored continuous walking link; strict composed-map clearance required at runtime; no real facility or roadside legality claim."
+      },
+      "walkingPath": [
+        {
+          "x": 232.99542424205603,
+          "z": 76.93786262368867
+        },
+        {
+          "x": 282.9954016058974,
+          "z": 76.93492663188772
+        }
+      ]
+    }
+  ]
+}
