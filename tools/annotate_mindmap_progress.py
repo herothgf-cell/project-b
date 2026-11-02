@@ -214,7 +214,8 @@ def main():
     if not BACKUP.exists():
         BACKUP.write_bytes(before)
     working = json.loads(before.decode('utf-8-sig'))
-    stamp = int(time.time() * 1000)
+    stamp = (working['meta']['updatedAt'] if working.get('meta', {}).get('progressReviewVersion') == VERSION
+             else int(time.time() * 1000))
     result = annotate(copy.deepcopy(working), stamp)
     validate(result, preserve_folds=True)
     # Build a separate staged candidate: pre-existing user deletions/folds stay unstaged.
