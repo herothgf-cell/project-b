@@ -26,3 +26,9 @@
 
 ## 변경 파일
 `unity/EungyeTaxi/Assets/Scripts/`의 `PvpNativeReplica.cs`, `PvpNativeLan.cs`, `PvpNativePoseTimeline.cs`, `PvpNativeLanProbe.cs`, `DriveNotifications.cs`, `CockpitUI.cs`; `Assets/Editor/`의 `PvpNativePoseTests.cs`, `PvpNativeLanTests.cs`, 별도 검증 빌더 `PvpNativePerfBuild.cs`; 빌드로 재생성된 `FirstDrive.unity`(같은 Mode Selection, 내부 fileID만 변경). 관련 콘텐츠30/로드맵·개발 체크리스트·본 이력/LATEST와 최종 통합 배포·manifest를 함께 갱신한다. 지도/GIS/ZIP·캠페인 제품명/저장위치·다른 체크아웃은 변경하지 않는다.
+
+
+## 최종 소스·배포
+실제 소스 커밋 `3fd8ff43efab157c6c85adb26bee23cceac06e3d`는 `git log -1 --oneline --`로 확인했다. 해당 검증 후보의139파일/115,293,470바이트를 통합 실행 폴더에 복사하고 SHA256 전수를 비교해 동일함을 확인했다. 교체 전 canonical EXE 실행 프로세스와 기존 배포 미커밋 변경이 없음을 확인했다. Burst DoNotShip은 절대 부모 경로 확인 후 artifacts로 분리했다. 기본/PVP 위임 manifest VerifyOnly 모두 exit0. manifest는 실제 소스와 필수 최종 결과를 기록한다.
+
+게시 전 fetch에서 원격 main은 기존 `a3cfcf1`이며 현재 소스의 조상임을 확인했다. 다른 체크아웃/미커밋 파일/그쪽 실행본에는 쓰지 않았다. 원격 게시 결과는 아래 영수증으로 남긴다.

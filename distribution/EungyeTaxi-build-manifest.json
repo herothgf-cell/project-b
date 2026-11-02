@@ -1,43 +1,38 @@
 {
-  "sourceCommit": "4a0cf2cefdce82940895f76fc3773d41f0b26ffa",
+  "sourceCommit": "3fd8ff43efab157c6c85adb26bee23cceac06e3d",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-02",
-  "totalBytes": 115290398.0,
+  "totalBytes": 115293470.0,
   "validation": {
-    "build": "PvpNativePerfBuild.Build isolated Windows output; PrototypeBuild.BuildAt with ProjectMapBuild.RunTests/Prepare; final-build6-retry exit0",
-    "sourceCommit": "4a0cf2cefdce82940895f76fc3773d41f0b26ffa",
-    "editor": "pose timeline6/nativeLAN18/passenger36041/theme/navigation15/project map tests; exit0",
-    "campaignModelClasses": 28,
-    "campaignModels": "test_prototype.ps1 exit0",
+    "build": "PvpNativePerfBuild.Build / same PrototypeBuild.BuildAt via isolated output; Unity final return code 0",
+    "sourceCommit": "3fd8ff43efab157c6c85adb26bee23cceac06e3d",
+    "nativePoseAssertions": 9,
+    "nativeLanEditorAssertions": 21,
+    "navigationCueAssertions": 15,
     "nativeLan": {
-      "hostChecks": 27,
-      "clientChecks": 34,
-      "product": "택시 시뮬레이션",
-      "metres": 13.921245574951172,
-      "steadyOwn": {
-        "name": "own-steady",
-        "count": 19,
-        "averageMs": 0.12203157894736845,
-        "p95Ms": 0.2399,
-        "maxMs": 0.2399
-      },
-      "evidence": "artifacts/pvp/native-lan-20261102-185708-3720a8d2",
-      "scope": "same PC2 processes, native pedal/ownership/models/indicator/queue/bot takeover/rejoin/cleanup; transient local onboard request restore retains route; no server pose fixture"
+      "hostAssertions": 32,
+      "clientAssertions": 41,
+      "reconnect": true,
+      "hostPedalMetres": 14.002723,
+      "notificationFixture": true,
+      "notificationReplayDuplicate": false,
+      "render": "D3D11 1280x720 client-notices.png viewed"
     },
-    "sameBinarySteadyComparison": "candidate4 10s: legacy average68.75ms/p95103.82ms -> fixed0.15ms/p950.60ms",
-    "renderEvidence": "candidate4 183138-768b62ed actual visible guest1280x720 D3D11: mean frame16.90ms/p9517.97/max98.52; actual PNG viewed; host hidden. Earlier black captures excluded",
-    "passengerRegression": "final candidate6 test_pvp_passengers exit0/38 checks; explicit location/type/request fixtures",
-    "singleUnified": "merged-name candidate5 -unifiedModeCheck exit0 PASS98.26672s, temporary checkpoint/reload/rejected save and actual user files preserved; candidate6 subsequent guard only replica path",
-    "workspace": "Strict exit0 issues0, map/GIS/ZIP unchanged",
-    "preservation": "main81b48b1 naming+4900cea P1P2/UI preserved; original user checkout unmodified; target build copied139 files with full SHA comparison; settings/build/scene backup verified before safe restore",
-    "unverified": [
-      "fullHD two simultaneously visible windows",
-      "differentPC/4human/long matches",
-      "all stutter eliminated: startup/first-route single hitches remain",
-      "full remote physical transport and gamepad hardware"
-    ]
+    "clientFrames": {
+      "count": 1308,
+      "averageMs": 16.97,
+      "p95Ms": 17.83,
+      "maxMs": 92.48
+    },
+    "unifiedMode": "exit 0 / PASS active_seconds=110.5845; isolated single save/load/rejected save/user four files preserved",
+    "workspaceStrict": "exit 0; input issues 0",
+    "map": "A2 pvp-city-a; unchanged inputs/GIS/ZIP",
+    "manualDriving": false,
+    "remoteFourPlayers": false,
+    "allStutterResolved": false,
+    "history": "docs/work-history/2026-11-02-pvp-notification-followup.md"
   },
   "files": [
     {
@@ -48,7 +43,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "c94ad924ec5164cfec7f2f5fa208331ac586c37eb409ebc025f312abf29d10a1"
+      "sha256": "57523b2f033f2d847a97af44c592d2fe2f565f37259f428c4c1db08f0e79d16f"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -72,8 +67,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2164736,
-      "sha256": "3cdf44d64eef7481e54f49d810acd2e81ef7aa362a6c8dcff43518dabe858e0e"
+      "bytes": 2167808,
+      "sha256": "95285b2bd7c892b170139cdf2d9a61fcba147b9fca76fdd021e01f939d83d157"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
