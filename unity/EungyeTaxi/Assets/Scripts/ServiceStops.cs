@@ -164,6 +164,7 @@ public partial class ServiceStops : MonoBehaviour {
   foreach(int kind in actions){string label=kind==0?(pump>=0?Stations[pump].name:names[0]):kind==4?"세차·실내 청소\n청결 100 회복 / 30초":kind==1?"식당 · "+MealStop.name:kind==3?"무료 수면 · 100초 / 피로 −40":"현재 거점에서 휴식·영업 종료";Row(x,y+85+row++*62,label,kind,pump,style,button);}
   string pickupWarning=session.jobs.trip.State==TripState.ToPickup?(fuelOnly?"호출 유지 · 남은 대기 "+session.jobs.trip.PickupRemaining.ToString("0")+"초 · 이용 시간 차감":"식사·수면 확정 시 미탑승 호출 취소")+"\n":"";
   GUI.Label(new Rect(x+20,y+height-155,680,108),pickupWarning+notice+"\n"+(fuelOnly?"현재 주유소에서만 이용합니다. 이용 후 별도 출구로 나가세요.":restaurant?"현재 식당에서 식사합니다. 다른 시설은 M 지도에서 선택하세요.":"현재 주차·휴식 거점에서 이용합니다. 다른 시설은 M 지도에서 선택하세요."),new GUIStyle(style){fontSize=14});
-  if(GUI.Button(new Rect(x+20,y+height-45,680,35),"취소·주행으로 돌아가기 (F7)",button))Close();
+  if(GUI.Button(new Rect(x+20,y+height-45,430,35),"취소·주행으로 돌아가기 (F7)",button))Close();
+  if(GUI.Button(new Rect(x+460,y+height-45,240,35),"다른 시설·견적 비교",button))OpenFacilityPlanner(restaurant?1:fuelOnly?0:3);
  }
 }
