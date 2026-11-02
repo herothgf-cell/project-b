@@ -3,6 +3,21 @@ public static class PassengerSituationTests {
  static int checks;
  static void Check(bool ok,string reason){checks++;if(!ok){Console.WriteLine("FAIL "+reason);Environment.Exit(1);}}
  static PassengerSituationState Fresh(){return PassengerSituationState.Create("trip",0,0,0);}
+ static PassengerBehaviorState Sleeping(){var p=PassengerBehaviorState.Create("calm-rest",PassengerType.Sleeping);p.Variant=0;p.Respond(0,true);p.Board();p.Advance(21,false,true,.3f,100);return p;}
+ static void CalmRestChecks(){
+  foreach(string reason in new[]{"quiet","total-budget","reaction-budget","cooldown","modal"}){
+   var passenger=Sleeping();var reaction=Fresh();if(reason=="quiet")passenger.Quiet=true;if(reason=="reaction-budget")reaction.Reactions=2;if(reason=="cooldown"){reaction.Elapsed=5;reaction.LastReactionAt=0;}
+   Check(reaction.ApplyPhysicalObservation(passenger,1,0,0)&&!passenger.Sleeping,"physical wake despite blocked question: "+reason);
+   Check(!reaction.Observe(1,false,true,reason!="modal",passenger.Quiet,reason=="total-budget"?3:1,1,0,0,false)&&reaction.Pending==PassengerSituationKind.None,"question stays suppressed: "+reason);
+   passenger.Advance(14,false,true,.4f,100);Check(!passenger.Sleeping,"rest requires full15calm active seconds: "+reason);
+   passenger.Advance(1,false,true,.4f,100);Check(passenger.Sleeping&&reaction.Pending==PassengerSituationKind.None&&passenger.Quiet==(reason=="quiet"),"blocked question has neutral bounded return to rest: "+reason);
+  }
+  var repeated=Sleeping();var events=Fresh();events.ApplyPhysicalObservation(repeated,1,0,0);repeated.Advance(14,false,true,.4f,100);Check(events.ApplyPhysicalObservation(repeated,2,0,0),"fresh jolt resets already-awake calm timer");repeated.Advance(14,false,true,.4f,100);Check(!repeated.Sleeping,"repeat jolt restarts15second calm window");repeated.Advance(1,false,true,.4f,100);Check(repeated.Sleeping,"repeated jolt still returns to rest after calm interval");
+  var pending=Sleeping();var question=Fresh();question.ApplyPhysicalObservation(pending,1,0,0);question.Observe(1,false,true,true,false,1,1,0,0,false);pending.Advance(30,false,true,.4f,100,false,true);Check(!pending.Sleeping&&question.Pending!=PassengerSituationKind.None&&pending.JoltCalmRemaining==0,"bounded calm rest does not auto-answer or hide real pending reply");Check(question.Respond(1,true)&&pending.ReassureJolt(true)&&pending.Sleeping&&pending.Quiet,"pending reply still requires deliberate safe response");
+  var restored=Sleeping();restored.ObserveJolt();restored.Advance(5,false,true,.4f,100);var saved=restored.Copy();saved.Validate();saved.Advance(99,false,true,.4f,100,true);Check(saved.JoltCalmRemaining==10&&!saved.Sleeping,"pause preserves saved remaining calm time");saved.Advance(10,false,true,.4f,100);Check(saved.Sleeping&&saved.JoltCalmRemaining==0&&restored.JoltCalmRemaining==10,"save copy restores exact calm time without mutating original");
+  var legacy=Sleeping();legacy.ObserveJolt();legacy.JoltRestCaptured=false;legacy.JoltCalmRemaining=0;legacy.Advance(14,false,true,.4f,100);Check(!legacy.Sleeping&&legacy.JoltRestCaptured&&legacy.JoltCalmRemaining==1,"old awake save with missing calm fields starts neutral15second recovery");legacy.Advance(1,false,true,.4f,100);Check(legacy.Sleeping,"old awake save recovery completes without a new question");
+  var arrived=Sleeping();arrived.ObserveJolt();arrived.Arrive();arrived.Advance(99,true,false,1,100);Check(!arrived.Sleeping,"calm return never starts sleep after arrival");
+ }
  static void TypedChecks(){
   var sleeper=PassengerBehaviorState.Create("jolt-sleeper",PassengerType.Sleeping);sleeper.Variant=0;sleeper.Respond(0,true);sleeper.Board();sleeper.Advance(21,false,true,.3f,100);var s=Fresh();
   Check(s.ApplyPhysicalObservation(sleeper,1,0,0)&&!sleeper.Sleeping&&sleeper.JoltWoken,"observed jolt wakes sleeping passenger");
@@ -52,6 +67,6 @@ public static class PassengerSituationTests {
   var restored=e.Copy();restored.Validate();Check(restored.Advance(13,true,false)&&restored.Completed&&restored.OriginalDestinationId=="original"&&restored.TripId=="trip","restore completes original same-trip errand");
   Check(!restored.Advance(20,true,false)&&!restored.Start(true),"completion cannot restart or award twice");
   Check(e.Remaining==13,"snapshot copy is independent");
-  TypedChecks();Console.WriteLine("PASS PassengerSituationTests "+checks);
+  TypedChecks();CalmRestChecks();Console.WriteLine("PASS PassengerSituationTests "+checks);
  }
 }
