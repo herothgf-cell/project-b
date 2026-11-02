@@ -13,5 +13,6 @@ public static class PvpPassengerPolicy {
   if(type==PassengerType.MuddyLuggage)return remaining>=30?0:2;
   return type==PassengerType.Talkative?0:1;
  }
+ public static bool PursueRoadside(double distance){return distance>=0&&distance<=250;}
  public static bool AcceptRoute(double extraSeconds,double remaining,double raceRemaining,double baseEta=0){return baseEta>=0&&baseEta+extraSeconds+30<raceRemaining&&extraSeconds>=0&&!double.IsInfinity(extraSeconds)&&!double.IsNaN(extraSeconds)&&extraSeconds+30<remaining&&extraSeconds+30<raceRemaining;}
 }

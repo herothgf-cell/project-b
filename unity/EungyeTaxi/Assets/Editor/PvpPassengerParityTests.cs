@@ -7,6 +7,7 @@ public static class PvpPassengerParityTests {
  static void Set(object o,string p,object v){o.GetType().GetProperty(p).SetValue(o,v,null);}
  public static void Run(){
   for(int phase=0;phase<3;phase++){int[] counts=new int[3];for(int seed=0;seed<12000;seed++){int pickup=PvpPassengerPolicy.Pickup(seed,18,new[]{100,600,1000}[phase],1200);Check(pickup>=0&&pickup<18,"valid pickup");counts[PvpPassengerPolicy.Region(pickup)]++;}Check(counts[phase]>counts[(phase+1)%3]*2&&counts[phase]>counts[(phase+2)%3]*2,"stage demand concentration");}
+  Check(PvpPassengerPolicy.PursueRoadside(250)&&!PvpPassengerPolicy.PursueRoadside(251)&&!PvpPassengerPolicy.PursueRoadside(double.NaN),"nearby opportunistic roadside pursuit, no cross-city unreserved chase");
   Check(PvpPassengerPolicy.Phase(150,600)==1&&PvpPassengerPolicy.Phase(450,600)==2,"duration-relative phases, no fixed20minute clock");
   var ledger=new PvpSimulationLedger();var board=new PvpSimulationCallBoard(ledger,i=>new JobOffer{pickup=i%18,drop=(i+1)%18,distance=100},18,3);var seen=new HashSet<int>();
   foreach(var pool in new[]{board.Offers,board.Roadside})foreach(var o in pool)Check(o!=null&&seen.Add(o.pickup),"11 distinct shared waiting passengers");

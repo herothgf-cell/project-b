@@ -156,7 +156,7 @@ public sealed class PvpSimulationBot : MonoBehaviour {
                 if(pickupDistance<distance){distance=pickupDistance;best=i;}
             }
             int roadside=-1;var board=s.simulationMatch.SharedCalls;
-            if(board!=null)foreach(var offer in board.Roadside){if(offer==null||jobs.AcceptanceRejection(offer)!="")continue;float d=PickupDistance(jobs.nav.hd,taxi.transform.position,taxi.transform.forward,jobs.stops[offer.pickup]);if(d<distance){distance=d;roadside=offer.pickup;}}
+            if(board!=null)foreach(var offer in board.Roadside){if(offer==null||jobs.AcceptanceRejection(offer)!="")continue;float d=PickupDistance(jobs.nav.hd,taxi.transform.position,taxi.transform.forward,jobs.stops[offer.pickup]);if(PvpPassengerPolicy.PursueRoadside(d)&&d<distance){distance=d;roadside=offer.pickup;}}
             if(roadside>=0){roadsideGoal=roadside;jobs.nav.SetDestination(jobs.stops[roadside]);Status="길가 승객 접근 · 도착 전 선점 없음";return;}
             if(best>=0&&jobs.Accept(best)){s.assisted.SetActive(true);Status="승객 픽업 주행";}else jobs.Generate();
             return;
