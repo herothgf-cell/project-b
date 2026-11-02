@@ -3,6 +3,29 @@ public static class PassengerSituationTests {
  static int checks;
  static void Check(bool ok,string reason){checks++;if(!ok){Console.WriteLine("FAIL "+reason);Environment.Exit(1);}}
  static PassengerSituationState Fresh(){return PassengerSituationState.Create("trip",0,0,0);}
+ static void TypedChecks(){
+  var sleeper=PassengerBehaviorState.Create("jolt-sleeper",PassengerType.Sleeping);sleeper.Variant=0;sleeper.Respond(0,true);sleeper.Board();sleeper.Advance(21,false,true,.3f,100);var s=Fresh();
+  Check(s.ApplyPhysicalObservation(sleeper,1,0,0)&&!sleeper.Sleeping&&sleeper.JoltWoken,"observed jolt wakes sleeping passenger");
+  sleeper.Advance(10,false,true,.4f,100);Check(!sleeper.Sleeping&&!sleeper.SleepInterrupted,"jolt wake persists and does not misuse shallow-sleep interruption");
+  Check(s.Observe(1,false,true,true,false,1,1,0,0,false)&&s.Dialogue.Contains("잠"),"awake passenger receives typed neutral reassurance");
+  var wakeCopy=sleeper.Copy();wakeCopy.Validate();Check(wakeCopy.JoltWoken&&!wakeCopy.Sleeping,"awake state survives save copy");
+  Check(!s.ApplyPhysicalObservation(sleeper,1,0,0),"same observed jolt cannot wake twice");
+  var oldSleep=PassengerBehaviorState.Create("old-sleeper",PassengerType.Sleeping);oldSleep.Variant=0;oldSleep.Board();oldSleep.Advance(21,false,true,.3f,100);var oldReaction=Fresh();oldReaction.PhysicalCaptured=false;Check(!oldReaction.ApplyPhysicalObservation(oldSleep,99,0,0)&&oldSleep.Sleeping&&!oldSleep.JoltWoken,"missing old physical-counter capture primes neutrally without retroactive wake");
+  foreach(bool seed in new[]{false,true}){
+   var food=PassengerBehaviorState.Create("jolt-food",PassengerType.Food);food.SpillPlanned=seed;food.BindEffectTrip("food-trip");food.Board();food.Respond(1,true);food.Advance(20,false,true,.6f,100);
+   Check(food.ConsumptionOccurred&&!food.SpillOccurred&&food.DirtEvents.Length==1,"new food has five moving seconds between actual consumption and seeded spill");
+   var reaction=Fresh();bool changed=reaction.ApplyPhysicalObservation(food,0,0,1);Check(changed==seed&&food.SpillOccurred==seed,"necessary brake only brings forward already seeded consumed-food spill");
+   var care=new VehicleCare();foreach(var dirt in food.DirtEvents)care.Soil(dirt.Id,dirt.Amount);int clean=care.Cleanliness;
+   Check(clean==(seed?92:98)&&food.DirtEvents[0].Id=="food-trip:crumbs"&&(!seed||food.DirtEvents[1].Id=="food-trip:spill"),"physical food effect retains original dirt IDs");
+   var restored=food.Copy();restored.Advance(20,false,true,.7f,100);foreach(var dirt in restored.DirtEvents)care.Soil(dirt.Id,dirt.Amount);Check(care.Cleanliness==clean&&!reaction.ApplyPhysicalObservation(restored,0,0,1),"reload and natural spill cannot add another six dirt");
+  }
+  foreach(int choice in new[]{-1,0,2}){var food=PassengerBehaviorState.Create("sealed",PassengerType.Food);food.SpillPlanned=true;if(choice>=0)food.Respond(choice,true);if(choice==2)food.Advance(10,true,false,0,100);food.Board();food.Advance(20,false,true,.6f,100);Check(!Fresh().ApplyPhysicalObservation(food,1,0,0)&&food.DirtEvents.Length==0,"no spill without consumed permitted food");}
+  var legacy=PassengerBehaviorState.Create("legacy-food",PassengerType.Food);legacy.FoodSpillTimingVersion=0;legacy.SpillPlanned=true;legacy.Board();legacy.Respond(1,true);legacy.Advance(20,false,true,.6f,100);Check(legacy.SpillOccurred,"old food timing remains simultaneous");
+  var luggage=PassengerBehaviorState.Create("jolt-luggage",PassengerType.Luggage);luggage.Respond(0,true);luggage.Advance(10,true,false,0,100);luggage.Board();var l=Fresh();l.ApplyPhysicalObservation(luggage,1,0,0);Check(l.Observe(1,false,true,true,false,1,1,0,0,false)&&l.OffersReSecure&&l.Dialogue.Contains("짐"),"actual loaded luggage jolt offers inspection");
+  Check(!l.Respond(0,false)&&l.Respond(0,true)&&l.ReSecureRemaining==5,"five second resecure requires safe explicit consent");
+  Check(!l.AdvanceReSecure(4,false,false)&&l.ReSecureRemaining==5,"moving cannot resecure luggage");Check(!l.AdvanceReSecure(4,true,true)&&l.ReSecureRemaining==5,"pause cannot complete resecure");
+  Check(!l.AdvanceReSecure(2,true,false)&&l.ReSecureRemaining==3,"resecure consumes real active safe time");var saved=l.Copy();saved.Validate();Check(saved.AdvanceReSecure(3,true,false)&&saved.ReSecureRemaining==0&&!saved.AdvanceReSecure(5,true,false),"restored work completes once");
+ }
  public static void Main(){
   var s=Fresh();Check(!s.Observe(17.9f,true,false,true,false,0,0,0,0,false),"signal wait below18 seconds has no reaction");
   Check(s.Observe(.1f,true,false,true,false,0,0,0,0,false)&&s.Pending==PassengerSituationKind.SignalWait,"observed signal wait18 seconds opens reaction");
@@ -29,6 +52,6 @@ public static class PassengerSituationTests {
   var restored=e.Copy();restored.Validate();Check(restored.Advance(13,true,false)&&restored.Completed&&restored.OriginalDestinationId=="original"&&restored.TripId=="trip","restore completes original same-trip errand");
   Check(!restored.Advance(20,true,false)&&!restored.Start(true),"completion cannot restart or award twice");
   Check(e.Remaining==13,"snapshot copy is independent");
-  Console.WriteLine("PASS PassengerSituationTests "+checks);
+  TypedChecks();Console.WriteLine("PASS PassengerSituationTests "+checks);
  }
 }

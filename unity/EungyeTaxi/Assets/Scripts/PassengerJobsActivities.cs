@@ -6,12 +6,14 @@ public partial class PassengerJobs {
  public PassengerSituationState Situation {get;private set;}
  public PassengerErrandState Errand {get;private set;}
  TrafficJunction reactionSignal;int reactionAxis,reactionSign;float nextReactionSignalSearch;
+ public bool SituationWorkActive {get{return Situation!=null&&Situation.ReSecureRemaining>0;}}
+ public bool SituationVisible {get{return SituationPending||SituationWorkActive;}}
  public bool SituationPending {get{return Situation!=null&&Situation.Pending!=PassengerSituationKind.None;}}
  public bool SituationPresentationAvailable {get{return Active&&trip.State==TripState.OnTrip&&!trip.ArrivalLocked&&!session.paused&&Time.timeScale>0&&!session.FullMapOpen&&!session.ChoiceOpen&&session.requests&&!session.requests.ResponseBlockedThisFrame&&!session.requests.HasVisiblePanel&&!session.requests.HasPendingChoice&&!BehaviorChoicesOpen&&!BehaviorAsleep&&string.IsNullOrEmpty(VisibleCareDialogue)&&!(Errand!=null&&Errand.Waiting);}}
  public string ErrandStatus {get{return Errand==null||!Errand.Waiting?"":"승객 용무 · 무료 대기 "+Mathf.CeilToInt(Errand.Remaining)+"초 · 영업시간·연료 소모 · 안전 정차 유지";}}
  int ReservedPassengerChoices {get{return (session.requests?session.requests.ScheduledChoiceCount:0)+(Behavior!=null&&Behavior.Type!=PassengerType.General?1:0)+(Behavior!=null&&Behavior.SleepInterrupted?1:0);}}
  public bool CanRespondSituation {get{return SituationPending&&SituationPresentationAvailable&&session.requests.SafeToRespond();}}
- public bool RespondSituation(int answer){if(!CanRespondSituation||!Situation.Respond(answer,true))return false;session.requests.BlockResponseThisFrame();session.business.SaveCheckpoint();return true;}
+ public bool RespondSituation(int answer){if(!CanRespondSituation||!Situation.Respond(answer,true))return false;if(Behavior!=null)Behavior.ReassureJolt(answer==1);session.requests.BlockResponseThisFrame();session.business.SaveCheckpoint();return true;}
  void BeginPassengerActivities(){Situation=PassengerSituationState.Create(session.law.tripId,session.manners.brakeEvents,session.manners.accelEvents,session.manners.necessaryBrakeEvents);Errand=null;reactionSignal=null;nextReactionSignalSearch=0;}
  void ClearPassengerActivities(){Situation=null;Errand=null;reactionSignal=null;nextReactionSignalSearch=0;}
  public static void ValidateSituationSnapshot(PassengerJobsSnapshot s){
@@ -37,7 +39,7 @@ public partial class PassengerJobs {
   if(!Active||trip.State!=TripState.OnTrip||trip.ArrivalLocked||session.paused||Time.timeScale==0||float.IsNaN(seconds)||float.IsInfinity(seconds)||seconds<=0)return;
   bool changed=false;
   if(Errand!=null&&Errand.Waiting){bool safe=PassengerViaPending&&At(passengerVia)&&session.requests.SafeToRespond();if(Errand.Advance(seconds,safe,false)){passengerVia=-1;SetGoal(current.drop);message="20초 무료 용무 대기 완료 · 같은 승객의 원래 목적지로 출발하세요";changed=true;}else message=safe?ErrandStatus:"승객 용무 대기 중단 · 약속한 경유 장소로 돌아와 안전 정차하세요 · 남은 "+Mathf.CeilToInt(Errand.Remaining)+"초";}
-  if(Situation!=null){bool quiet=Behavior!=null&&Behavior.Quiet||session.requests.SuppressFollowupDialogue;bool available=SituationPresentationAvailable;changed|=Situation.Observe(seconds,ObservedSignalWait(),session.taxi.body.velocity.magnitude>.1f,available,quiet,ReservedPassengerChoices,session.manners.brakeEvents,session.manners.accelEvents,session.manners.necessaryBrakeEvents,false);}
+  if(Situation!=null){bool physical=Situation.ApplyPhysicalObservation(Behavior,session.manners.brakeEvents,session.manners.accelEvents,session.manners.necessaryBrakeEvents);changed|=physical;if(physical){var ui=GetComponent<PassengerBehaviorUI>();if(ui)ui.NotifyStateChanged();}changed|=Situation.AdvanceReSecure(seconds,session.requests.SafeToRespond(),false);if(SituationWorkActive)message=Situation.Dialogue;ApplyBehaviorDirt();bool quiet=Behavior!=null&&Behavior.Quiet||session.requests.SuppressFollowupDialogue;bool available=SituationPresentationAvailable;changed|=Situation.Observe(seconds,ObservedSignalWait(),session.taxi.body.velocity.magnitude>.1f,available,quiet,ReservedPassengerChoices,session.manners.brakeEvents,session.manners.accelEvents,session.manners.necessaryBrakeEvents,false);}
   if(changed)session.business.SaveCheckpoint();
  }
  bool InteractPassengerVia(){
