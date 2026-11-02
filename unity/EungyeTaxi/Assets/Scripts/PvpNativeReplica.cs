@@ -43,7 +43,7 @@ using UnityEngine;
     public PassengerResult[] passengers;
     public bool hasDestination;
     public Vector3 destination;
-    public string tripId;
+    public string tripId,mannersLastEvent;
     public bool serviceOpen,serviceQueueWaiting;
     public int servicePending=-1,serviceMeal,serviceFuel=-1,conditionKind=-1,pvpMeals,pvpRests;
     public float conditionRemaining;
@@ -58,7 +58,7 @@ public static class PvpNativeReplica {
         public void Draw(Transform target,double time){Vector3 p;Quaternion q;if(timeline.Sample(time,out p,out q))target.SetPositionAndRotation(p,q);}
     }
     sealed class View {
-        public bool bound;
+        public bool bound,ownApplied;
         public double received,serverTime,renderTime,lastDraw;public float clock;
         public readonly Pose[] taxis={new Pose(),new Pose(),new Pose(),new Pose()};
         public Pose[] npcs=new Pose[0];
@@ -111,7 +111,7 @@ public static class PvpNativeReplica {
             // Bot sessions intentionally have no campaign-only scenario registry.
             jobs.hasServiceZones=false;jobs.serviceZones=null;jobs.hasChoice=false;jobs.choice=null;
             frame.own=new PvpNativeOwn{economy=driver.business.ledger.Snapshot(),account=driver.business.ledger.Account.Snapshot(),jobs=jobs,
-                lawEvents=driver.law.ledger.Events,manners=driver.manners.CaptureLive(),passengers=driver.business.passengers.ToArray(),tripId=driver.law.tripId,
+                lawEvents=driver.law.ledger.Events,manners=driver.manners.CaptureLive(),passengers=driver.business.passengers.ToArray(),tripId=driver.law.tripId,mannersLastEvent=driver.manners.lastEvent,
                 hasDestination=driver.jobs.nav.HasDestination,destination=driver.jobs.nav.destination,serviceOpen=driver.services.open,servicePending=driver.services.pending,
                 serviceNotice=driver.services.notice,serviceDestination=driver.services.destination,serviceMeal=driver.services.SelectedMeal,serviceQueueStatus=driver.services.QueueStatus,serviceQueueWaiting=driver.services.QueueWaiting,serviceFacilities=driver.services.CaptureFacilityQueues(),
                 serviceFuel=driver.services.FuelAtPump,conditionKind=match.ConditionServiceKind(driver),conditionRemaining=match.ServiceRemaining(driver),
@@ -220,17 +220,25 @@ public static class PvpNativeReplica {
         driver.business.ledger.EnablePvpProfile();
         driver.business.ledger.ApplyNetworkPvpCounters(own.pvpMeals,own.pvpRests);
         PvpNativePerf.End("economy",stage);stage=PvpNativePerf.Start();driver.law.tripId=own.tripId??"";
-        var law=new LawLedger();if(own.lawEvents!=null)foreach(var entry in own.lawEvents)law.Record(entry);
-        driver.law.ledger=law;
+        // Keep observer identity after bootstrap; a full snapshot is not a new score session.
+        var view=State(lan);if(!view.ownApplied)driver.law.ledger=new LawLedger();
+        ApplyLawEvents(driver.law.ledger,own.lawEvents);view.ownApplied=true;
         if(own.manners!=null)driver.manners.RestoreLive(own.manners);
         own.jobs.hasServiceZones=false;own.jobs.serviceZones=null;own.jobs.hasChoice=false;own.jobs.choice=null;
         PvpNativePerf.End("law",stage);stage=PvpNativePerf.Start();driver.jobs.RestoreNetworkView(own.jobs,own.hasDestination,own.destination);
+        // RestoreNetworkView also restores manners; apply its authoritative feedback afterwards.
+        driver.manners.lastEvent=own.mannersLastEvent??"운전 상태 변화";
         PvpNativePerf.End("jobs",stage);stage=PvpNativePerf.Start();if(own.hasDestination&&(!driver.jobs.nav.HasDestination||(driver.jobs.nav.destination-own.destination).sqrMagnitude>.01f))driver.jobs.nav.SetDestination(own.destination);
         PvpNativePerf.End("destination",stage);driver.business.passengers.Clear();if(own.passengers!=null)driver.business.passengers.AddRange(own.passengers);
         driver.services.ApplyNetworkView(own.serviceOpen,own.servicePending,own.serviceNotice,own.serviceDestination,own.serviceMeal,own.serviceFuel);
         PvpNativePerf.End("own",perf);
         driver.services.ApplyNetworkQueue(own.serviceQueueStatus,own.serviceQueueWaiting);
         driver.services.ApplyNetworkFacilities(own.serviceFacilities);
+    }
+
+    public static void ApplyLawEvents(LawLedger ledger,LawEvent[] events){
+        // Host incidents are cumulative, including escalation of an existing id.
+        if(events!=null)foreach(var entry in events)ledger.RecordIncident(entry);
     }
 
     public static void Tick(PvpNativeLan lan){

@@ -1,5 +1,11 @@
 # 프로토타입 개발 체크리스트
 
+## PVP 참가자 알림·HUD 후속 — 2026-11-02
+
+- [x] 예상 도착 상태 HUD 숨김·동일 법규 ledger 복제/강화·만족도 사유 전달·불투명4초 알림·회전 외삽/송신 보정.
+- [x] 최종 Editor/Windows 빌드·두 Player73검사(알림은 서버 모델 fixture)/실제 알림 PNG·페달 물리 주행·재접속. [결과/배포](work-history/2026-11-02-pvp-notification-followup.md).
+- [ ] 실제 다른PC4인·사람 장시간 운송/FullHD 두창·초기 경로 단발 지연 제거는 별도.
+
 ## PVP LAN·A3 — 2026-11-02
 
 [현재 구현/접속](content-design/pvp/30-native-lan.md), [지도 시안](content-design/pvp/29-city-a3-proposal.md), [검사 결과](work-history/2026-11-02-pvp-native-lan.md). 온라인 기존 native 연결/봇승계 구현, 최종 검사 결과는 이력에서 구분한다. A3 실제 지도·다른PC/사람4명/장시간 수용은 미완료다.

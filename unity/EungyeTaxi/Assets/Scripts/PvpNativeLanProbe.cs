@@ -64,6 +64,11 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   int pickup=guest.jobs.current.pickup;Check(!match.Ledger.Available(pickup,0)&&match.Ledger.Available(pickup,1),"host passenger claim belongs only to guest");
   var model=new Model{offer=guest.jobs.current.candidateSeed,trip=guest.law.tripId,pickup=pickup,score=match.Score(1),cash=guest.business.ledger.Account.Cash,durability=guest.damage.Damage.Durability,npcs=match.Human.traffic.cars.Count,clock=match.Human.traffic.Clock,manner=guest.manners.ledger.Score};
   Mark("host-model",model);yield return Until(()=>Has("replica-checked"),"client compares authoritative native model");
+  // Explicit model fixture, not a claim of a physically driven red-light crossing.
+  Check(guest.jobs.trip.Board(),"notification fixture boards accepted model without moving taxi");var onboard=guest.jobs.CaptureLive();onboard.hasDrunk=true;onboard.drunk=DrunkRideState.Create("notice-fixture",false,DrunkRideCase.Normal);onboard.startSatisfaction=70;guest.jobs.RestoreLive(onboard);guest.law.tripId=guest.law.ids.Next("notice-fixture");guest.manners.BeginRide();Mark("notice-baseline");
+  yield return Until(()=>Has("notice-ready"),"guest establishes onboard notification baseline",10);
+  var violation=LawEvaluator.Signal("native-notice-fixture",1,new RoadObservation{known=true,forward=SignalColor.Red},false,SignalColor.Red);guest.law.ledger.RecordIncident(violation);guest.manners.Deduct("native-notice-fixture",12,"신호 위반",0);Mark("notice-event");
+  yield return Until(()=>Has("notice-checked"),"guest sees authoritative score and satisfaction notices",12);
   yield return Until(()=>lan.ConnectedGuests==0,"guest disconnect observed",40);
   Check(match.Drivers[1]==guest&&guest.taxi==car&&car.GetInstanceID()==carId&&guest.GetComponent<PvpSimulationBot>().enabled,"disconnect hands same original taxi to native bot");
   Check(guest.jobs.current!=null&&guest.jobs.current.candidateSeed==model.offer&&match.Ledger.Available(pickup,1),"disconnect preserves accepted passenger and exclusive claim");Mark("takeover");
@@ -99,10 +104,16 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   Check(own.traffic.cars.Count==model.npcs&&model.npcs==72&&Mathf.Abs(own.traffic.Clock-model.clock)<10,"shared 72 NPC population and signal clock mirrored");
   Check(own.manners.ledger.Score==model.manner,"native driving manner ledger mirrored");
   metrics.trip=own.law.tripId;metrics.offer=accepted;metrics.score=model.score;metrics.cash=model.cash;metrics.durability=model.durability;metrics.claim=model.pickup;Mark("replica-checked");
+  yield return Until(()=>Has("notice-baseline")&&own.jobs.HasPassengerScore,"onboard model notification baseline arrives",10);
+  var notices=own.GetComponent<DriveNotifications>();Check(notices!=null,"native guest has original notification UI");notices.RefreshScores();Mark("notice-ready");
+  yield return Until(()=>Has("notice-event")&&Array.Exists(notices.VisibleTexts,t=>t.StartsWith("운전 |")&&t.Contains("신호"))&&Array.Exists(notices.VisibleTexts,t=>t.StartsWith("만족도 |")&&t.Contains("신호")),"host signal incident produces guest driving and passenger satisfaction notices",10);
+  int noticeCount=notices.VisibleTexts.Length;yield return new WaitForSecondsRealtime(1);Check(notices.VisibleTexts.Length==noticeCount,"unchanged full snapshots retain visible notices without duplicates");
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeRenderCheck")>=0){bool captured=false;StartCoroutine(CaptureFrame(()=>captured=true,"client-notices.png"));yield return Until(()=>captured,"notification card render captured",8);}
+  Mark("notice-checked");
   int slot=lan.LocalSlot;lan.ProbeInput=null;lan.LeaveToMenu();yield return Until(()=>Has("takeover"),"host confirms same-car bot takeover",40);
   if(reconnect){yield return Bootstrap();yield return Until(()=>lan.Racing&&lan.Match&&lan.HasOwnFrame,"reconnect world ready",100);Check(lan.LocalSlot==slot,"same-process reconnect retains ticket seat");Mark("reconnected");yield return Until(()=>Has("reconnect-checked"),"host confirms reconnect identity");lan.LeaveToMenu();}
  }
- IEnumerator CaptureFrame(Action done){yield return new WaitForEndOfFrame();var texture=ScreenCapture.CaptureScreenshotAsTexture();File.WriteAllBytes(Path.Combine(directory,metrics.role+"-render.png"),texture.EncodeToPNG());Destroy(texture);done();}
+ IEnumerator CaptureFrame(Action done,string name=null){yield return new WaitForEndOfFrame();var texture=ScreenCapture.CaptureScreenshotAsTexture();File.WriteAllBytes(Path.Combine(directory,name??metrics.role+"-render.png"),texture.EncodeToPNG());Destroy(texture);done();}
  IEnumerator Cleanup(){
   if(PvpNativeLan.Instance)PvpNativeLan.Instance.LeaveToMenu();yield return null;yield return null;
   yield return Until(()=>!PvpNativeLan.Instance&&FindObjectsOfType<DriveSession>().Length==0,"native transport and all taxi sessions removed",20);

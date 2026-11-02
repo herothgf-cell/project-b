@@ -13,6 +13,6 @@ public sealed class PvpNativePoseTimeline {
   if(count==1||time<=times[0]){position=positions[0];rotation=rotations[0];return true;}
   for(int i=1;i<count;i++)if(time<=times[i]){float t=(float)((time-times[i-1])/(times[i]-times[i-1]));position=Vector3.Lerp(positions[i-1],positions[i],t);rotation=Quaternion.Slerp(rotations[i-1],rotations[i],t);return true;}
   int last=count-1;double span=times[last]-times[last-1];float extra=span>0?(float)(System.Math.Min(.1,System.Math.Max(0,time-times[last]))/span):0;
-  position=positions[last]+(positions[last]-positions[last-1])*extra;rotation=rotations[last];return true;
+  position=positions[last]+(positions[last]-positions[last-1])*extra;rotation=Quaternion.SlerpUnclamped(rotations[last-1],rotations[last],1+extra);return true;
  }
 }
