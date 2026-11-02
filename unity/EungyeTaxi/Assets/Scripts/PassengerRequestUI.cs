@@ -49,7 +49,7 @@ public class PassengerRequestUI : MonoBehaviour {
  // Explicit fixture/legacy path retains one selected request, without a random draw.
  public void BeginKind(RequestKind kind){Clear();legacy=true;boardingLawCount=session.law.ledger.Events.Length;var o=NewObservation();observations.Add(o);active=0;o.BeginKind(kind);}
  bool ClearSpace(){
-  if(session.taxi.body.velocity.magnitude>.1f||session.paused||Time.timeScale==0||session.taxi.body.angularVelocity.magnitude>.1f)return false;
+  if((PvpNativeLan.IsReplica(session)?Mathf.Abs(session.taxi.Speed):session.taxi.ObservedVelocity.magnitude)>.1f||session.paused||Time.timeScale==0||!PvpNativeLan.IsReplica(session)&&session.taxi.body.angularVelocity.magnitude>.1f)return false;
   var p=session.taxi.transform.position;
   foreach(var j in session.traffic.junctions){
    var d=p-j.center;float x=Mathf.Abs(Vector3.Dot(d,session.traffic.AxisDirection(j,0))),z=Mathf.Abs(Vector3.Dot(d,session.traffic.AxisDirection(j,1)));
@@ -63,16 +63,16 @@ public class PassengerRequestUI : MonoBehaviour {
    }
   }return true;
  }
- public bool PresentationAvailable {get{return (legacy||!ResponseBlockedThisFrame)&&!session.jobs.BehaviorAsleep&&!session.paused&&!session.FullMapOpen&&!session.ChoiceOpen&&string.IsNullOrEmpty(session.jobs.VisibleCareDialogue);}}
+ public bool PresentationAvailable {get{return !PvpNativeLan.UiBlocked(session)&&(legacy||!ResponseBlockedThisFrame)&&!session.jobs.BehaviorAsleep&&!session.paused&&!session.FullMapOpen&&!session.ChoiceOpen&&string.IsNullOrEmpty(session.jobs.VisibleCareDialogue);}}
  public bool SafeStationarySpace {get{return ClearSpace();}}
  public float ProposalExtraSeconds {get{return Current?Current.ProposalExtraSeconds:float.PositiveInfinity;}}
  public bool SafeToRespond(){return ClearSpace()&&(legacy||stopSeconds>=2);}
- public bool Respond(bool accept){if(!PresentationAvailable||!Current||!SafeToRespond()&&!legacy)return false;bool ok=Current.Respond(accept);AfterResponse(ok);return ok;}
- public bool RespondEta(int option){bool ok=PresentationAvailable&&Current&&Current.RespondEta(option);AfterResponse(ok);return ok;}
- public bool RespondAlternative(){bool ok=PresentationAvailable&&Current&&Current.RespondAlternative();AfterResponse(ok);return ok;}
+ public bool Respond(bool accept){if(PvpNativeLan.Route(session,"response",accept?1:0))return true;if(!PresentationAvailable||!Current||!SafeToRespond()&&!legacy)return false;bool ok=Current.Respond(accept);AfterResponse(ok);return ok;}
+ public bool RespondEta(int option){if(PvpNativeLan.Route(session,"eta",option))return true;bool ok=PresentationAvailable&&Current&&Current.RespondEta(option);AfterResponse(ok);return ok;}
+ public bool RespondAlternative(){if(PvpNativeLan.Route(session,"alternative"))return true;bool ok=PresentationAvailable&&Current&&Current.RespondAlternative();AfterResponse(ok);return ok;}
  public bool PrepareProposal(){return Current&&Current.PrepareProposal();}
  public bool CanChoose(PassengerReply reply){return PresentationAvailable&&Current&&SafeToRespond()&&Current.CanChoose(reply);}
- public bool Choose(PassengerReply reply){bool ok=CanChoose(reply)&&Current.Choose(reply);AfterResponse(ok);return ok;}
+ public bool Choose(PassengerReply reply){if(PvpNativeLan.Route(session,"reply",(int)reply))return true;bool ok=CanChoose(reply)&&Current.Choose(reply);AfterResponse(ok);return ok;}
  void AfterResponse(bool ok){if(!ok)return;if(!legacy)BlockResponseThisFrame();if(schedule!=null)schedule.Responded();SyncBehaviorContext();session.business.SaveCheckpoint();}
  public string DialogueReply {get{return Current?Current.DialogueReply:"";}}
  public string AlternativeLabel {get{return Current?Current.AlternativeLabel:"";}}
@@ -84,18 +84,19 @@ public class PassengerRequestUI : MonoBehaviour {
  void Update(){
   if(!session||!session.business.useV2)return;AdvanceSafeStop(Time.deltaTime);
   if(session.jobs.trip.State!=TripState.OnTrip||session.jobs.trip.ArrivalLocked||session.paused)return;
+  if(PvpNativeLan.IsReplica(session)){if(Current&&PresentationAvailable&&!session.IsSimulationBot)Current.ObserveInputOnly();return;}
   if(schedule!=null){
    if(Current&&Current.request.Resolved)schedule.Responded();
-   float moving=session.taxi.body.velocity.magnitude>.1f?Time.deltaTime:0;
+   float moving=session.taxi.ObservedVelocity.magnitude>.1f?Time.deltaTime:0;
    bool dialogue=PresentationAvailable;
    int slot=schedule.Tick(moving,1-session.jobs.nav.remaining/initialDistance,SafeToRespond()&&dialogue,false);
    if(slot>=0){var state=schedule.Capture().slots[slot];var o=NewObservation();observations[slot]=o;active=slot;o.BeginKind(state.kind);BlockResponseThisFrame();SyncBehaviorContext();session.business.SaveCheckpoint();}
   }
-  foreach(var o in observations)if(o)o.Observe(!session.IsSimulationBot&&o==Current&&PresentationAvailable);
+  foreach(var o in observations)if(o)o.Observe(!session.IsSimulationBot&&!PvpNativeLan.IsRemoteHuman(session)&&o==Current&&PresentationAvailable);
  }
  public void CancelForFatigue(){Clear();finished=true;session.manners.ComfortAccepted=false;}
  public void Finish(){if(finished)return;finished=true;if(schedule!=null)schedule.Tick(0,1,false,true);foreach(var o in observations)if(o)o.Finish();SyncBehaviorContext();session.manners.ComfortAccepted=false;}
- void OnGUI(){if(session.IsSimulationBot)return;var behavior=GetComponent<PassengerBehaviorUI>();if(Current&&PresentationAvailable&&!(behavior&&behavior.Showing))Current.Draw();}
+ void OnGUI(){if(session.IsSimulationBot||PvpNativeLan.IsRemoteHuman(session))return;var behavior=GetComponent<PassengerBehaviorUI>();if(Current&&PresentationAvailable&&!(behavior&&behavior.Showing))Current.Draw();}
  public PassengerRequestUISnapshot CaptureLive(){
   var s=Current?JsonUtility.FromJson<PassengerRequestUISnapshot>(JsonUtility.ToJson(Current.CaptureLive())):new PassengerRequestUISnapshot{request=empty.Snapshot()};
   s.version=legacy||schedule==null?0:2;s.active=active;s.boardingLawCount=boardingLawCount;s.initialDistance=initialDistance;s.finished=finished;s.lostItem=lostItem;
@@ -103,7 +104,7 @@ public class PassengerRequestUI : MonoBehaviour {
   if(!legacy){s.schedule=schedule==null?null:schedule.Capture();s.observations=observations.ConvertAll(o=>o?o.CaptureLive():new PassengerRequestObservationSnapshot()).ToArray();}return s;
  }
  public void RestoreLive(PassengerRequestUISnapshot s){
-  if(s==null)throw new ArgumentException("Missing request snapshot");Clear();boardingLawCount=s.version==2?s.boardingLawCount:s.lawBefore;initialDistance=s.initialDistance;finished=s.finished;lostItem=s.lostItem;
+  if(s==null)throw new ArgumentException("Missing request snapshot");float replicaStopSeconds=stopSeconds;Clear();if(PvpNativeLan.IsReplica(session))stopSeconds=replicaStopSeconds;boardingLawCount=s.version==2?s.boardingLawCount:s.lawBefore;initialDistance=s.initialDistance;finished=s.finished;lostItem=s.lostItem;
   if(s.version==0){legacy=true;var o=NewObservation();observations.Add(o);active=0;o.RestoreLive(s);}
   else if(s.version==2){
    schedule=PassengerRequestSchedule.Restore(s.schedule);var slots=schedule.Capture().slots;

@@ -49,6 +49,7 @@ public sealed class UnifiedModeBootstrap : MonoBehaviour {
             if(session.business.IsRestoring){message="저장 복원이 끝난 뒤 다시 시도해 주세요.";return false;}
             if(!session.business.ResumeBlocked&&!session.business.SaveCheckpoint()){message="저장하지 못했습니다. 저장 상태를 확인한 뒤 다시 시도해 주세요.";return false;}
         }
+        if(PvpNativeLan.Instance)PvpNativeLan.Instance.StopTransport();
         Selected=Mode.Menu;PvpSimulationMode.Reset();Time.timeScale=1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);return true;
     }
@@ -61,7 +62,7 @@ public sealed class UnifiedModeBootstrap : MonoBehaviour {
             if(GUILayout.Button("은계 영업",GUILayout.Height(55)))StartSingle();
             GUILayout.Label("3일 캠페인 · 저장한 영업 이어하기");GUILayout.Space(12);
             if(GUILayout.Button("PVP 대전",GUILayout.Height(55)))StartPvp();
-            GUILayout.Label("나 + 봇 3대 · 경기 시간 직접 설정");GUILayout.Space(12);
+            GUILayout.Label("봇 대전 / LAN 사람 대전 · 경기 시간 직접 설정");GUILayout.Space(12);
             if(GUILayout.Button("게임 종료"))Application.Quit();GUILayout.EndArea();return;
         }
         if(!human)foreach(var item in FindObjectsOfType<DriveSession>())if(!item.IsSimulationBot){human=item;break;}

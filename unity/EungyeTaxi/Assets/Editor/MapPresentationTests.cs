@@ -27,5 +27,5 @@ public static class MapPresentationTests {
   var hit=(Rect)type.GetMethod("PinHitBounds").Invoke(null,new object[]{anchor,26f});Require(hit.Contains(anchor)&&hit.Contains(bounds.min)&&hit.Contains(bounds.max),"Hit area must include anchor, entire pin and outline");
   NavigationCueTests.Run();BrightUIThemeTests.Run();Debug.Log("MAP_PRESENTATION_OK geometry / width / layers / clipping / immutable input / empty map / rectangular roads / pin anchor");
  }
- public static void Build(){Run();MapReadabilityTests.Run();LawZoneMapLayoutTests.Run();PrototypeBuild.BuildHybrid();}
+ public static void Build(){Run();MapReadabilityTests.Run();LawZoneMapLayoutTests.Run();PvpNativeLanTests.Run();PrototypeBuild.BuildHybrid();}
 }

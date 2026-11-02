@@ -1,38 +1,41 @@
 {
-  "sourceCommit": "8aa382c73b39951956b839e29a70ceb8301b0d44",
+  "sourceCommit": "70200c703a00bcdfc32c8669e54aa812575e70fc",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-02",
-  "totalBytes": 115118797.0,
+  "totalBytes": 115169424.0,
   "validation": {
-    "sourceCommit": "8aa382c73b39951956b839e29a70ceb8301b0d44",
-    "build": "PrototypeBuild.BuildHybrid exit 0 / MapPresentationTests.Build",
-    "editor": {
-      "mapFootprintsWidthClippingImmutableInputs": true,
-      "rectangularRoadWidths": true,
-      "pinAnchorsAndHitAreas": true,
-      "navigationCueAssertions": 15,
-      "mapReadability": true,
-      "lawZoneLabelLayout": true
+    "build": "PvpNativeLanTests.BuildValidated / PrototypeBuild.BuildHybrid exit0 / native-lan-build9.log",
+    "sourceCommit": "70200c703a00bcdfc32c8669e54aa812575e70fc",
+    "editor": "Bright UI theme; navigation15; passenger36041; native JSON17; all exit0",
+    "campaignModelClasses": 28,
+    "campaignModels": "tools/test_prototype.ps1 exit0",
+    "nativeLan": {
+      "scope": "same-PC loopback 2 Player processes, native input and host WheelCollider authority",
+      "hostChecks": 26,
+      "clientChecks": 28,
+      "hostMetres": 13.742274284362793,
+      "clientMetres": 13.742274284362793,
+      "maxSpeedMetresPerSecond": 4.027434349060059,
+      "verified": "world-ready barrier; menu self-brake/shared clock; native claim/models/scores/manner;72 NPC count/signal clock; invalid/duplicate/stale commands; same-car bot takeover;30s same-process ticket rejoin; menu cleanup",
+      "evidence": "artifacts/pvp/native-lan-20261102-161231-07938bb5"
     },
-    "modelSuites": 28,
-    "player": {
-      "uiAssertions": 52,
-      "renderedCaptures": 22,
-      "resolutions": [
-        "1280x720",
-        "1920x1080"
-      ],
-      "controlledFixtures": true,
-      "singleMapPauses": true,
-      "pvpMapStaysLive": true,
-      "userSaveFilesUnchanged": 14,
-      "manualDriving": false,
-      "wholeCampaign": false
-    },
-    "localInputs": "Strict exit 0 / issues 0",
-    "worldGeometryAndVehiclesUnchanged": true
+    "offlinePassengers": "final-passenger9 exit0 /38 checks /17 native requests /8+3/occupancy/food/luggage; explicit position/type/request fixtures",
+    "unified": "native-lan-final-unified9.log exit0 UNIFIED_MODE_RESULT PASS active_seconds114.136; restart/unload/single checkpoint/reload/rejected save preservation",
+    "campaignSavePreservation": "all6 files SHA256 and count unchanged; unified userJSON4 unchanged",
+    "workspace": "Strict exit0 issues0; maps/config/ZIP unchanged",
+    "otherWork": "d818c33 bright UI and navigation retained by merge; C:/git/project-b uncommitted mindmap and untracked files untouched",
+    "map": "A3 overview/market SVG+PNG proposal only; actual A2 remains",
+    "unverified": [
+      "different-PC LAN/firewall",
+      "four humans/manual driving/gamepad hardware",
+      "complete remote physical passenger transport and long matches",
+      "network latency/loss/bandwidth at4 players",
+      "A3 implementation/driveability",
+      "long-run bot recovery and revenue balance"
+    ],
+    "excluded": "old flat motor acceptance and failed/intermediate builds are not current native evidence"
   },
   "files": [
     {
@@ -43,17 +46,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "b40c4ef758c1efbfc9da50907f56b91942f000c4e7296831d571f70f6631080f"
+      "sha256": "7cf623b439ae6bc3665901524f80eee8bbb7b8f3aff7dada1f1dadbac53c90a8"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 54100,
-      "sha256": "ea6bbcdd9feb6ca5ee10e2ba0745ef91d36f65aa6149378316149a5ce79ba910"
+      "bytes": 54188,
+      "sha256": "e9f349b5a6cede326bae215655cc6ae3ab0926135fea66a4054d3c04d7fc83da"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 104040,
-      "sha256": "00596a6b4b18ef832c92c72dff1057ffdce9bc42c12d0124cbb2716ba8c09733"
+      "bytes": 104264,
+      "sha256": "0d21a69c4bc88fea6a6c8afe51b685ac4803d4b48de7b834b5f14ae3b95d332f"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -63,12 +66,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
       "bytes": 1140,
-      "sha256": "2262fb1326c08ccc00e11553f00fdc7603c5ebb0d356e3029ca3b9fe6d84dbe7"
+      "sha256": "1b8e07973cc1bee1db34b0b514fb3da9b4818b4648509a5a027be884b75f0765"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 1998336,
-      "sha256": "591e8ba9cda847f23e3fb37cd527a0693086dfbb01beb842daa9fa654adb3e1a"
+      "bytes": 2048512,
+      "sha256": "0cfed1935a9fb9e0345c82c2d91c57263e94a1f3f0f23c04614e8749a6b41548"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -563,12 +566,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Plugins/x86_64/lib_burst_generated.dll",
       "bytes": 394240,
-      "sha256": "d5ad21e9c9ecdf6531126e65704b2401835cb02a12e88dbe6ccbf29b40146c31"
+      "sha256": "47c5eb12ed1640aea5fa2c2a8121595737e9dab3de77b69f7da994d4050a6f24"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
       "bytes": 40438158,
-      "sha256": "5214abc959d60e8429fae7fc9fe20b4ffe9649f918e63b8cb05691305077778b"
+      "sha256": "f08ca58a21bbda761f40bd7047b231ba5c72c97838c275eacad957f1670a298d"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Resources/unity default resources",
@@ -582,8 +585,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/RuntimeInitializeOnLoads.json",
-      "bytes": 7767,
-      "sha256": "8a049c7e48e047d43f1e5bfc0e685d75e56e3087f3ad3524e87028094b822406"
+      "bytes": 7906,
+      "sha256": "df6d9d4775023241ce34b7c83717e83ad866fc39afd02e079532f98c7d8683b4"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/ScriptingAssemblies.json",
@@ -593,7 +596,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/sharedassets0.assets",
       "bytes": 7624,
-      "sha256": "82bcdf969ecbb4e435313a83598a4214863db64ae1e06a339ee69757c6b3bb63"
+      "sha256": "891d167748fd568a2f97d754ab98ded587381f1dbd23d8d0d904b0eab4bded69"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi.exe",

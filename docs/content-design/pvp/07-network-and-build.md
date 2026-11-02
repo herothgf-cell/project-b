@@ -1,5 +1,9 @@
 # PVP 네트워크·빌드·기존 코드 분리
 
+## 2026-11-02 현재 native LAN 프로토 기준
+
+현재 사용자가 선택한 사람 대전은 **같은 공유기·직접 IPv4 / 최대4인·빈자리봇**이다. 기존 NGO1.12/UnityTransport로 현재 시뮬레이션 물리·승객을 호스트 권한으로 연결했다. 접속·기능·한계는 [30](30-native-lan.md), 실제 통과/미검증은 [이번 이력](../../work-history/2026-11-02-pvp-native-lan.md)을 따른다. 아래 Fusion2/외부 서비스·구형 평면모터 기록은 당시 후보/개발 이력이며 현재 native LAN 배포의 필수 SDK/App ID가 아니다. 인터넷 중계 SDK의 최종 선택이나 원격4명 수용까지 확정한 것은 아니다.
+
 ## 실행 파일 배포와 싱글 실행
 
 2026-10-29 사용자 요청으로 `builds/PvpPrototype/` 전체도 PvP 브랜치에서 Git 배포한다. 싱글 시뮬레이션은 `builds/EungyeTaxi/EungyeTaxi.exe`, PvP는 `builds/PvpPrototype/PvpPrototype.exe`다. 두 실행 경로를 유지하며 기본 싱글의 BuildHybrid·지도·배포 manifest는 보존한다.

@@ -30,6 +30,7 @@ public class DrivingLaw : MonoBehaviour {
  public void RestoreObservation(DrivingLawSnapshot s){ResetObservation();if(s==null)return;wrongSeconds=Mathf.Clamp(s.wrongSeconds,0,2);wrongDistance=Mathf.Clamp(s.wrongDistance,0,100);clearSeconds=Mathf.Clamp(s.clearSeconds,0,2);wrongLatched=s.wrongLatched;var e=s.entry;if(e!=null&&session.traffic&&e.axis>=0&&e.axis<2&&e.observed!=null){var j=session.traffic.junctions.Find(x=>x.name==e.junction);if(j!=null)entry=new Entry{junction=j,id=e.id,axis=e.axis,sign=e.sign,direction=e.direction,edited=e.edited,uturnSigned=e.uturnSigned,uturnAllowed=e.uturnAllowed,stopped=e.stopped,pedestrianYield=e.pedestrianYield,encroached=e.encroached,entered=e.entered,left=e.left,observed=e.observed.Copy()};}upstreamUturn.Restore(s.upstreamUturn);previous=session.taxi.transform.position+session.taxi.transform.forward*2;initialized=true;}
  public void ResetObservation(){initialized=false;entry=null;upstreamUturn.Reset();stops.Clear();wrongSeconds=wrongDistance=clearSeconds=wrongSampleSeconds=0;wrongLatched=false;}
  public void ObserveWrongWay(float seconds){
+  if(PvpNativeLan.IsReplica(session)||PvpNativeLan.WaitingForWorld)return;
   if(seconds<=0||seconds>.5f||!session||!session.jobs||!session.jobs.nav||!session.taxi)return;
   var graph=session.jobs.nav.hd;var taxi=session.taxi;var velocity=taxi.body.velocity;velocity.y=0;float speed=velocity.magnitude;var pos=taxi.transform.position;
   if(speed<2||Vector3.Dot(velocity.normalized,taxi.transform.forward)<=.85f){wrongSeconds=wrongDistance=clearSeconds=wrongSampleSeconds=0;return;}
@@ -46,6 +47,7 @@ public class DrivingLaw : MonoBehaviour {
   wrongLatched=true;var e=new LawEvent{recoveryPolicyVersion=1,id=ids.Next("wrong-way"),day=Day,tripId=tripId,family="direction",action="역주행",junction=graph.edges[best].id,reason="방향이 정해진 차로 안에서 반대 방향 전진 2초·8m",speed=speed,seconds=(float)session.business.ledger.Elapsed,occupied=session.jobs.trip.State==TripState.OnTrip};e.Add("L10",LawVerdict.Violation,10);ledger.Record(e);if(session.manners)session.manners.Deduct("wrong-way:"+e.id,10,"역주행",0);
  }
  void FixedUpdate(){
+  if(PvpNativeLan.IsReplica(session)||PvpNativeLan.WaitingForWorld)return;
   if(!session||session.paused||session.business.ShowingSummary)return;
   CheckEditorSpeed();ObserveWrongWay(Time.fixedDeltaTime);var taxi=session.taxi;var front=taxi.transform.position+taxi.transform.forward*2;
   if(!initialized||Vector3.Distance(previous,front)>10){previous=front;initialized=true;entry=null;upstreamUturn.Reset();stops.Clear();return;}
@@ -91,8 +93,8 @@ public class DrivingLaw : MonoBehaviour {
  }
  LawEvent UturnEvent(string id,RoadObservation observed,bool allowed){var e=new LawEvent{recoveryPolicyVersion=1,id=id,day=Day,family="signal",observation=observed.Copy(),action="유턴",reason="진입 시점 유턴 보조표지·신호"};e.Add("L01",allowed?LawVerdict.Compliant:LawVerdict.Violation,settings.redStraightPenalty);return e;}
  bool passengerTab;
- public void OpenHistory(bool passengers=false){if(session.FullMapOpen||session.ChoiceOpen)return;passengerTab=passengers;if(session.PracticeMenuOpen||session.PracticeBusy||session.business.restartPrompt||session.services.open||session.business.pendingPayment>=0||session.business.preparing||session.business.taxPrompt)return;showHistory=true;session.paused=true;Time.timeScale=0;}
- public void CloseHistory(){showHistory=false;session.paused=false;Time.timeScale=session.business.ShowingSummary?0:1;}
+ public void OpenHistory(bool passengers=false){if(session.FullMapOpen||session.ChoiceOpen)return;passengerTab=passengers;if(session.PracticeMenuOpen||session.PracticeBusy||session.business.restartPrompt||session.services.open||session.business.pendingPayment>=0||session.business.preparing||session.business.taxPrompt)return;showHistory=true;if(!PvpNativeLan.RunningOnline){session.paused=true;Time.timeScale=0;}}
+ public void CloseHistory(){showHistory=false;if(!PvpNativeLan.RunningOnline){session.paused=false;Time.timeScale=session.business.ShowingSummary?0:1;}}
  void Update(){if(session.IsSimulationBot)return;if(!session.PracticeMenuOpen&&!session.PracticeBusy&&!session.business.restartPrompt&&session.business.pendingPayment<0&&!session.business.preparing&&!session.services.open&&!session.business.taxPrompt&&Input.GetKeyDown(KeyCode.F8)){if(showHistory)CloseHistory();else OpenHistory();}}
  static string PassengerHistoryText(PassengerResult r){bool modern=!string.IsNullOrEmpty(r.bonusReason);string settlement=modern?RideReceiptSummary.History(r)+"\n"+PassengerScoreView.Recorded(r).Baseline+"\n"+PassengerScoreView.Recorded(r).Breakdown+" · 초과 "+r.excessScore+"점\n"+r.bonusReason:"지급 "+r.paid.ToString("N0")+"원 · 만족도 "+r.score+" / 요구 "+r.required;return r.day+"일 · "+r.pickup+" → "+r.destination+"\n"+r.outcome+" · 약정 "+r.quoted.ToString("N0")+"원 · 운송 "+r.elapsed.ToString("0")+"초\n"+settlement+"\n"+r.request+"\n도착 "+r.arrivalElapsed.ToString("0")+"초 / 하차 "+r.disembarkElapsed.ToString("0")+"초 · "+(r.drunk?"취객 ":"")+(r.vomited?"구토 ":"")+(r.wakeDelayed?"기상 지연 ":"")+"청결 "+r.cleanlinessAfter+" · "+r.timeReason+"\n"+(r.hasDrivingScore?"하차 시 운전 점수 "+r.drivingScore+"점\n":"")+r.mannerReason;}
  void OnGUI(){if(session.IsSimulationBot)return;

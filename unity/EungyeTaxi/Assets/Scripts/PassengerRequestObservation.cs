@@ -90,12 +90,16 @@ public class PassengerRequestObservation : MonoBehaviour {
   int deduction=request.Finish();var notices=session.GetComponent<DriveNotifications>();if(notices)notices.RefreshScores();if(deduction>0)session.manners.Deduct("request:"+observedTrip,deduction,"조용한 운행 요청 미응답",0);
  }
  public void Observe(bool input){if(!session.business.useV2||session.jobs.trip.State!=TripState.OnTrip||session.jobs.trip.ArrivalLocked||session.paused)return;
-  bool safe=input&&SafeToRespond();if(safe){stoppedSeconds+=Time.deltaTime;request.ObserveOpportunity(stoppedSeconds>=2);}else stoppedSeconds=0;
-  Vector3 p=session.taxi.transform.position;if(request.Accepted&&sample){float d=Vector3.Distance(previous,p);if(d<Mathf.Max(2,session.taxi.body.velocity.magnitude*Time.deltaTime+1)){travelled+=d;if(session.jobs.nav.CurrentRoadWidth()>=12)broadTravel+=d;}}previous=p;sample=true;
-  if(input&&Input.GetKeyDown(KeyCode.Y))session.requests.Choose(request.Kind==RequestKind.Eta?PassengerReply.EtaFaster:PassengerReply.Accept);
-  if(input&&Input.GetKeyDown(KeyCode.I))session.requests.Choose(request.Kind==RequestKind.Eta?PassengerReply.EtaNormal:PassengerReply.Alternative);
-  if(input&&Input.GetKeyDown(KeyCode.O)&&request.Kind==RequestKind.Eta)session.requests.Choose(PassengerReply.EtaRelaxed);
-  if(input&&Input.GetKeyDown(KeyCode.U))session.requests.Choose(PassengerReply.Defer);
+  bool safe=(input||PvpNativeLan.IsRemoteHuman(session)&&session.requests.HasPendingChoice&&session.requests.request==request&&session.requests.PresentationAvailable)&&SafeToRespond();if(safe){stoppedSeconds+=Time.deltaTime;request.ObserveOpportunity(stoppedSeconds>=2);}else stoppedSeconds=0;
+  Vector3 p=session.taxi.transform.position;if(request.Accepted&&sample){float d=Vector3.Distance(previous,p);if(d<Mathf.Max(2,session.taxi.ObservedVelocity.magnitude*Time.deltaTime+1)){travelled+=d;if(session.jobs.nav.CurrentRoadWidth()>=12)broadTravel+=d;}}previous=p;sample=true;
+  if(input)ObserveInputOnly();
+ }
+ public void ObserveInputOnly(){
+  if(PvpNativeLan.UiBlocked(session)||PvpNativeLan.IsRemoteHuman(session))return;
+  if(Input.GetKeyDown(KeyCode.Y))session.requests.Choose(request.Kind==RequestKind.Eta?PassengerReply.EtaFaster:PassengerReply.Accept);
+  if(Input.GetKeyDown(KeyCode.I))session.requests.Choose(request.Kind==RequestKind.Eta?PassengerReply.EtaNormal:PassengerReply.Alternative);
+  if(Input.GetKeyDown(KeyCode.O)&&request.Kind==RequestKind.Eta)session.requests.Choose(PassengerReply.EtaRelaxed);
+  if(Input.GetKeyDown(KeyCode.U))session.requests.Choose(PassengerReply.Defer);
  }
  public string DialogueReply {get{if(request.SafetyDeferred)return ChangesRoute?"이번에는 원래 목적지로 안전하게 모시겠습니다.":"안전한 곳에 정차한 뒤 확인할게요.";string value=request.ResponseText();string prefix=request.Id+" · ";return value.StartsWith(prefix)?value.Substring(prefix.Length):value;}}
  static string EtaChoice(float value){return (value/60).ToString("0.0")+"분";}

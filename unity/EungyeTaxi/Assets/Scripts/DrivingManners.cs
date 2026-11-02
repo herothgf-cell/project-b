@@ -15,9 +15,9 @@ public class DrivingManners : MonoBehaviour {
  public void BeginRide(){ComfortAccepted=false;ledger.Reset();stable.Clear();rideReasons.Clear();lastEvent="승객 탑승 · 운전 만족도 M 100점으로 시작";eventUntil=Time.time+4;Suppress(.8f);}
  public void Suppress(float seconds){crossing=null;stops.Clear();suppressed=Time.time+seconds;previousVelocity=GetComponent<Rigidbody>().velocity;previousFront=transform.position+transform.forward*2;stable.Rebase(transform.position.x,transform.position.z);filtered=0;harshTime=0;harshLatched=false;offroadTime=0;offroadLatched=false;}
  void Start(){Suppress(1);}
- public bool Deduct(string key,int amount,string reason,float cooldown=3){var notices=session&&session.jobs&&session.law&&session.requests?session.GetComponent<DriveNotifications>():null;if(notices)notices.RefreshScores();if(!ledger.Penalize(key,amount,Time.time,cooldown))return false;stable.BreakSegment();events++;if(key.StartsWith("red"))redEvents++;if(key=="collision")collisionEvents++;if(key=="accel")accelEvents++;if(key=="brake")brakeEvents++;if(key=="sidewalk")boundaryEvents++;lastEvent=reason+" -"+amount+"점";rideReasons.Add(lastEvent);eventUntil=Time.time+4;if(notices)notices.RefreshScores();return true;}
- public void ObserveStable(float x,float z,float speed,float seconds,bool gentle){if(!session||!session.jobs||session.jobs.trip.State!=TripState.OnTrip||session.jobs.trip.ArrivalLocked)return;if(!stable.Observe(x,z,speed,seconds,gentle))return;int gain=ledger.RecoverStable(2);int comfort=session.jobs.RecoverComfort(gain);if(gain<=0&&comfort<=0)return;lastEvent=gain>0?"안정적인 주행 +"+gain+"점":"안정 주행 안심 +"+comfort+"점";rideReasons.Add(lastEvent);eventUntil=Time.time+4;var notices=session.GetComponent<DriveNotifications>();if(notices)notices.RefreshScores();if(session.business)session.business.SaveCheckpoint();}
- void FixedUpdate(){if(!session)return;var body=session.taxi.body;var velocity=body.velocity;var front=transform.position+transform.forward*2;
+ public bool Deduct(string key,int amount,string reason,float cooldown=3){if(PvpNativeLan.IsReplica(session))return false;var notices=session&&session.jobs&&session.law&&session.requests?session.GetComponent<DriveNotifications>():null;if(notices)notices.RefreshScores();if(!ledger.Penalize(key,amount,Time.time,cooldown))return false;stable.BreakSegment();events++;if(key.StartsWith("red"))redEvents++;if(key=="collision")collisionEvents++;if(key=="accel")accelEvents++;if(key=="brake")brakeEvents++;if(key=="sidewalk")boundaryEvents++;lastEvent=reason+" -"+amount+"점";rideReasons.Add(lastEvent);eventUntil=Time.time+4;if(notices)notices.RefreshScores();return true;}
+ public void ObserveStable(float x,float z,float speed,float seconds,bool gentle){if(PvpNativeLan.IsReplica(session)||PvpNativeLan.WaitingForWorld)return;if(!session||!session.jobs||session.jobs.trip.State!=TripState.OnTrip||session.jobs.trip.ArrivalLocked)return;if(!stable.Observe(x,z,speed,seconds,gentle))return;int gain=ledger.RecoverStable(2);int comfort=session.jobs.RecoverComfort(gain);if(gain<=0&&comfort<=0)return;lastEvent=gain>0?"안정적인 주행 +"+gain+"점":"안정 주행 안심 +"+comfort+"점";rideReasons.Add(lastEvent);eventUntil=Time.time+4;var notices=session.GetComponent<DriveNotifications>();if(notices)notices.RefreshScores();if(session.business)session.business.SaveCheckpoint();}
+ void FixedUpdate(){if(!session||PvpNativeLan.IsReplica(session)||PvpNativeLan.WaitingForWorld)return;var body=session.taxi.body;var velocity=body.velocity;var front=transform.position+transform.forward*2;
   if(Time.time>=suppressed){
    CheckSignal(previousFront,front);
    float accel=DriveMath.TravelAcceleration(Vector3.Dot((velocity-previousVelocity)/Time.fixedDeltaTime,transform.forward),session.taxi.Speed);filtered=Mathf.Lerp(filtered,accel,1-Mathf.Exp(-Time.fixedDeltaTime/.25f));
@@ -54,7 +54,7 @@ public class DrivingManners : MonoBehaviour {
   }
   return false;
  }
- public void CheckSignal(Vector3 before,Vector3 after){if(Vector3.Distance(before,after)>10)return;
+ public void CheckSignal(Vector3 before,Vector3 after){if(PvpNativeLan.IsReplica(session)||PvpNativeLan.WaitingForWorld)return;if(Vector3.Distance(before,after)>10)return;
   if(crossing!=null){
    var q=after-crossing.junction.center;float along=Vector3.Dot(q,crossing.direction),side=Vector3.Dot(q,TrafficSystem.Right(crossing.direction));
    string currentLane=crossing.entered?null:session.traffic.EditorLaneId(transform.position,transform.forward);
@@ -96,7 +96,7 @@ public class DrivingManners : MonoBehaviour {
    }
   }
  }
- void OnCollisionEnter(Collision collision){collisionDiagnostic=collision.collider.name+" prior="+previousVelocity.magnitude+" relative="+collision.relativeVelocity.magnitude+" normal="+(collision.contactCount>0?collision.GetContact(0).normal.ToString():"none")+" grace="+(suppressed-Time.time);if(Time.time<suppressed||previousVelocity.magnitude<1.5f||collision.relativeVelocity.magnitude<1.5f)return;
+ void OnCollisionEnter(Collision collision){if(PvpNativeLan.IsReplica(session)||PvpNativeLan.WaitingForWorld)return;collisionDiagnostic=collision.collider.name+" prior="+previousVelocity.magnitude+" relative="+collision.relativeVelocity.magnitude+" normal="+(collision.contactCount>0?collision.GetContact(0).normal.ToString():"none")+" grace="+(suppressed-Time.time);if(Time.time<suppressed||previousVelocity.magnitude<1.5f||collision.relativeVelocity.magnitude<1.5f)return;
   if(collision.contactCount>0&&collision.GetContact(0).normal.y>.65f)return;
   Deduct("collision",10,"충돌",3);suppressed=Time.time+.8f;filtered=0;
  }

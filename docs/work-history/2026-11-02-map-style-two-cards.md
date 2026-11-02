@@ -47,3 +47,18 @@
 게시용 최종 publication-build.log Unity exit0, publication.log Player exit0 /52체크·22캡처. 1280 PVP 지도 끝점 핀 여백과 1920 은계 지도/싱글·PVP 두 카드를 실제 캡처로 확인했다. 저장14파일 불변. 최종 확인8화면을 docs/ui/2026-11-02-map-style에 보관했다. 모델28묶음·Strict issues0 결과와 함께 이번 검증 범위다. 배포 실행 폴더139파일115,118,797바이트.
 
 소스/기획/실제 화면 커밋은 `git log -1 --oneline -- docs/work-history/2026-11-02-map-style-two-cards.md`로 확인한8aa382c이다. 실제40자리8aa382c73b39951956b839e29a70ceb8301b0d44를 SourceCommit으로 manifest를 생성했다. 통합/PVP VerifyOnly 모두 exit0: DISTRIBUTION_OK files139 bytes115118797. 공유 main 게시 뒤 실제 게시 결과를 덧붙인다.
+
+## 게시 직전 최신 LAN PVP 보존 통합
+
+UI 단독 후보8aa382c/배포 후보2a2293f는 원격에 게시하지 않았다. 마지막 fetch에서 원격 main에7개 새 커밋(끝6ab68d9663edb4d6162cea089751500e0c4eda8e)이 추가됐음을 확인해 푸시를 멈추고 통합했다. 위115,118,797바이트는 단독 후보이며 최종 배포는 이 후속 통합 결과를 기준으로 한다.
+
+충돌은 생성 빌드6파일·manifest·FirstDrive 씬·LATEST였다. 빌드/manifest/씬은 원격 것을 일단 유지한 뒤 현재 소스로 재생성하고 LATEST는 두 이력을 모두 유지했다. CockpitUI의 LAN 호스트/참가자/오프라인 표시는 자동 병합 후 보존 여부를 확인했다. 원격 대비 게임플레이/LAN 소스 변경 없음, UI8파일과 지도 검사 진입점만 차이임을 독립 리뷰로 확인했다.
+
+- `MapPresentationTests.Build` / lan-integrated-build.log: Unity exit0. 테마·내비15·지도/경계/라벨, 승객36,041·LAN JSON17·BuildHybrid 통과.
+- 최신 통합 상태에서 `tools/test_prototype.ps1` 모델28묶음 exit0, `tools/check_workspace.ps1 -Strict` exit0/issues0.
+- `tools/test_pvp_native_lan.ps1 -Port 18983 -Reconnect -TimeoutSeconds 300`: exit0, host26/client28(총54), artifacts/pvp/native-lan-20261102-163023-75390201. 실제 호스트 WheelCollider13.921978m·최고4.051656m/s, 메뉴 중 공유시계·자기차 제동·승객 선점/복제·봇 승계·동일 좌석 재접속/언로드 통과. 같은 PC loopback 두 프로세스이며 다른PC/4인 전체 운송 검사가 아니다.
+- 최종 통합 실행 폴더139파일115,172,656바이트. 맵은 기존 은계/A2이며 원격 A3는 시안 문서만 보존한다. UI가 지도 원본/차량/GIS/ZIP을 바꾼 것이 아니다.
+
+통합 후 UI52검사·manifest/실제 커밋/게시 결과를 확인해 아래에 덧붙인다.
+
+통합 UI 최종 lan-integrated.log: Player exit0 /52검사·22캡처·사용자 저장14파일 경로/SHA256 불변. 최종8캡처도 이 실행본 것으로 교체했다. 원격 기준 git diff origin/main --check 통과(병합으로 들어온 원격 meta의 기존 공백은 수정하지 않음). 최종 소스 병합 커밋 이후 manifest를 재생성한다.

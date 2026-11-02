@@ -5,7 +5,8 @@ public class TrafficCar : MonoBehaviour {
     public DistrictTraffic district;
     readonly System.Collections.Generic.HashSet<TrafficStop> released=new System.Collections.Generic.HashSet<TrafficStop>();
     public bool Visible {get{return !recycling;}}
-    public int CurrentTurn {get{if(route.graphPath==null)return route.turn;foreach(var stop in route.stops)if(distance<=stop.exitDistance&&stop.distance-distance<30)return stop.Movement(route);return 0;}}
+    bool networkView;int networkTurn;
+    public int CurrentTurn {get{if(networkView)return networkTurn;if(route.graphPath==null)return route.turn;foreach(var stop in route.stops)if(distance<=stop.exitDistance&&stop.distance-distance<30)return stop.Movement(route);return 0;}}
     public void Continue(TrafficRoute next){system.Release(this);released.Clear();stoppedAt=null;route=next;distance=0;completedRoutes++;}
 
     public TrafficJunction stoppedAt;
@@ -37,7 +38,21 @@ public class TrafficCar : MonoBehaviour {
         system.Release(this);released.Clear();stoppedAt=null;distance=position;speed=0;recycling=false;SetVisible(true);
         body.position=route.Position(distance);body.rotation=Quaternion.LookRotation(route.Tangent(distance));transform.SetPositionAndRotation(body.position,body.rotation);Physics.SyncTransforms();
     }
-    void SetVisible(bool value){hit.enabled=value;foreach(var r in renderers)r.enabled=value;}
+    // A client replica receives an authoritative pose and lamp state. Disabling
+    // this component stops its route AI/FixedUpdate; snapshots still call here.
+    public void ApplyNetworkView(Vector3 position,Quaternion rotation,float speed,bool visible,int turn,bool brake,float clock) {
+        networkView=true;networkTurn=turn;respawn=false;enabled=false;
+        this.speed=Mathf.Max(0,speed);recycling=!visible;
+        if(!body)body=GetComponent<Rigidbody>();
+        if(body){body.isKinematic=true;body.interpolation=RigidbodyInterpolation.None;body.position=position;body.rotation=rotation;}
+        transform.SetPositionAndRotation(position,rotation);
+        if(renderers==null)renderers=GetComponentsInChildren<Renderer>();
+        SetVisible(visible);
+        if(brakeLights!=null)foreach(var lamp in brakeLights)if(lamp)lamp.sharedMaterial=brake?brakeOn:brakeOff;
+        bool blinking=turn!=0&&Mathf.Repeat(clock,.8f)<.4f;
+        if(indicators!=null)for(int i=0;i<indicators.Length;i++)if(indicators[i])indicators[i].sharedMaterial=blinking&&(i%2==0?turn<0:turn>0)?indicatorOn:indicatorOff;
+    }
+    void SetVisible(bool value){if(hit)hit.enabled=value;if(renderers!=null)foreach(var r in renderers)if(r)r.enabled=value;}
     public void Recycle(){if(distance>=route.length-.01f)completedRoutes++;system.Release(this);recycling=true;speed=0;SetVisible(false);body.position=new Vector3(-100,-100,-100);}
     void OnDisable(){if(system)system.Release(this);}
     void FixedUpdate() {using(TrafficPerformanceProbe.Measure("TrafficCar.FixedUpdate"))Tick();}

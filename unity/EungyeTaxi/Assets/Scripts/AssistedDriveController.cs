@@ -12,6 +12,8 @@ public class AssistedDriveController : MonoBehaviour {
     public string AvailableTurns {get{if(hd!=null)return "내비 경로";if(!Active||CurrentLane==null)return "";return (network.Connection(CurrentLane,-1)!=null?"← ":"")+(network.Connection(CurrentLane,0)!=null?"↑ ":"")+(network.Connection(CurrentLane,1)!=null?"→":"");}}
     public bool allowAutomated;
     TaxiController taxi;TaxiSignals signals;
+    DriveSession Session {get{return taxi&&taxi.business?taxi.business.session:null;}}
+    public void ApplyNetworkView(bool active,string status){Active=active;Status=status??"";}
     readonly AssistedDrivingPolicy input=new AssistedDrivingPolicy();
     AssistedRoadNetwork.Path manoeuvre;
     AssistedRoadNetwork.Lane changeTarget;
@@ -20,6 +22,7 @@ public class AssistedDriveController : MonoBehaviour {
     public void Initialize(TaxiController vehicle,MapData map){taxi=vehicle;signals=GetComponent<TaxiSignals>();if(map.HasHd)hd=new HdSteering();else network.Build(map);SetActive(false);}
     void Notify(string message){notice=message;noticeUntil=Time.time+3;Status=message;}
     public bool SetActive(bool active){
+        if(PvpNativeLan.Route(Session,"assist",active?1:0))return true;
         manoeuvre=null;turnJoin=null;changeTarget=null;PendingTurn=0;input.Reset();progress=0;
         if(signals)signals.Clear();Active=false;
         if(hd!=null){Active=active&&hd.Arm(taxi);Status=active?hd.status:"수동 운전 · H로 실제 차로 보조";return Active==active;}
@@ -30,12 +33,13 @@ public class AssistedDriveController : MonoBehaviour {
         Active=true;noticeUntil=0;Status="보조 운전 · 가감속과 신호는 직접 판단";return true;
     }
     public void ReadInput(float lateral){
-        if(Time.timeScale==0)return;
+        if(Time.timeScale==0||PvpNativeLan.UiBlocked(Session)||PvpNativeLan.IsRemoteHuman(Session))return;
         if(Input.GetKeyDown(KeyCode.H))SetActive(!Active);
         if(!Active)return;
         int request=input.Pulse(lateral);if(request!=0)RequestLaneChange(request);
     }
     public bool RequestLaneChange(int side){
+        if(PvpNativeLan.Route(Session,"assist-lane",side))return true;
         if(!Active||Time.timeScale==0)return false;
         if(hd!=null){if(taxi.Speed<=.5f||Changing||Turning)return false;bool accepted=hd.Request(side,true);Status=hd.status;return accepted;}
         if(!AssistedDrivingPolicy.CanChange(CurrentLane.index,CurrentLane.count,side,manoeuvre!=null,taxi.Speed)){
@@ -67,6 +71,7 @@ public class AssistedDriveController : MonoBehaviour {
         Notify(warning?"뒤차가 빠르게 접근합니다 · 속도와 간격을 확인하세요":"차선 변경 중 · 주변 차량을 확인하세요");return true;
     }
     public bool RequestTurn(int side){
+        if(PvpNativeLan.Route(Session,"assist-turn",side))return true;
         if(!Active||Time.timeScale==0||side!= -2&&side!= -1&&side!=1)return false;
         if(hd!=null){if(Changing||Turning)return false;bool accepted=hd.Request(side,false);Status=hd.status;return accepted;}
         if(side==UturnMovement.Turn)return false;if(manoeuvre!=null){Notify("이동 중에는 회전 선택을 바꿀 수 없습니다");return false;}
@@ -75,6 +80,7 @@ public class AssistedDriveController : MonoBehaviour {
         PendingTurn=wanted;signals.Clear();if(wanted!=0)signals.Toggle(wanted);Notify(wanted<0?"다음 교차로 좌회전 예약":wanted>0?"다음 교차로 우회전 예약":"다음 교차로 직진 선택");return true;
     }
     public void Apply(ref float steering,ref DriveMath.Demand demand){
+        if(PvpNativeLan.IsReplica(Session))return;
         if(!Active||taxi.automated&&!allowAutomated)return;
         if(hd!=null){bool keep=hd.Apply(taxi,ref steering);if(!keep){Active=false;steering=0;if(signals)signals.Clear();}else if(signals&&signals.direction!=hd.indicator){signals.Clear();if(hd.indicator!=0)signals.Toggle(hd.indicator);}Status=hd.status;PendingTurn=hd.turn;return;}
         if(taxi.Speed<-.15f||taxi.ReverseRequested&&taxi.Speed<.2f){SetActive(false);Notify("후진 · 수동 운전으로 전환");return;}

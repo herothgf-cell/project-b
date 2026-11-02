@@ -20,7 +20,7 @@ public class BusinessProgress : MonoBehaviour {
  // Short physics-order grace only after this component actually removed speed.
  // Do not exempt ordinary player braking merely because the driver is tired.
  public bool SystemFatigueBraking {get{return Time.fixedTime<=fatigueBrakeUntil&&ledger!=null&&ledger.Driver!=null&&ledger.Driver.drowsiness.PassengerMustLeave;}}
- public bool DrowsinessRunning {get{return enabledCampaign&&ledger!=null&&ledger.Operating&&ledger.Driver!=null&&!preparing&&!restoring&&!resumeBlocked&&!PracticeSession.Enabled&&!session.PracticeBusy&&!session.PracticeMenuOpen&&!session.ChoiceOpen&&(!session.FullMapOpen||session.LivePvpMapOpen)&&!session.paused&&(!session.services.open||SimulationSession)&&!session.law.HistoryOpen&&!session.RideResultOpen&&Time.timeScale>0;}}
+ public bool DrowsinessRunning {get{return enabledCampaign&&ledger!=null&&ledger.Operating&&ledger.Driver!=null&&!preparing&&!restoring&&!resumeBlocked&&!PracticeSession.Enabled&&!session.PracticeBusy&&!session.PracticeMenuOpen&&!session.ChoiceOpen&&(!session.FullMapOpen||session.LivePvpMapOpen||PvpNativeLan.RunningOnline&&session.RideResultOpen)&&!session.paused&&(!session.services.open||SimulationSession)&&(!session.law.HistoryOpen||PvpNativeLan.RunningOnline)&&(!session.RideResultOpen||PvpNativeLan.RunningOnline)&&Time.timeScale>0;}}
  public bool DrowsinessEligible {get{return DrowsinessRunning&&session.taxi.body.velocity.magnitude>=.56f;}}
  public bool DrowsyControlsLost {get{return DrowsinessRunning&&ledger.Driver.drowsiness!=null&&(ledger.Driver.drowsiness.Blackout||ledger.Driver.drowsiness.PassengerMustLeave&&session.jobs.Active);}}
  public bool DrowsyMicrosleep {get{return DrowsinessRunning&&ledger.Driver.drowsiness!=null&&ledger.Driver.drowsiness.Microsleep;}}
@@ -54,7 +54,7 @@ public class BusinessProgress : MonoBehaviour {
  }
  public bool CanAccept {get{return !(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))&&!resumeBlocked&&!restoring&&!PracticeSession.Enabled&&!preparing&&(!enabledCampaign||ledger.CanAccept);}}
  public void Initialize(DriveSession owner){
-  if(PvpSimulationMode.Active){SimulationSession=true;session=owner;owner.taxi.business=this;if(!owner.IsSimulationBot)gameObject.AddComponent<DrowsinessHUD>().business=this;testMode=true;enabledCampaign=true;useV2=true;settings=PrototypeSettings.ForOneDay();settings.daySeconds=7200;ledger=new EconomyLedger(settings);ledger.EnablePvpProfile();SavePath="";saveStatus="오프라인 경기 · 캠페인 저장 안 함";CaptureDayStart();return;}
+  if(PvpSimulationMode.Active){SimulationSession=true;session=owner;owner.taxi.business=this;if(PvpNativeLan.IsReplica(owner)){owner.taxi.NetworkReplica=true;}if(!owner.IsSimulationBot)gameObject.AddComponent<DrowsinessHUD>().business=this;testMode=true;enabledCampaign=true;useV2=true;settings=PrototypeSettings.ForOneDay();settings.daySeconds=7200;ledger=new EconomyLedger(settings);ledger.EnablePvpProfile();SavePath="";saveStatus="오프라인 경기 · 캠페인 저장 안 함";CaptureDayStart();return;}
   session=owner;owner.taxi.business=this;gameObject.AddComponent<DrowsinessHUD>().business=this;initialFollowing=owner.traffic.mitOptions.Enabled;var args=Environment.GetCommandLineArgs();
   foreach(var arg in args)if(arg.EndsWith("Test")){testMode=true;if(arg!="-economyTest"&&arg!="-hybridTest"&&arg!="-hybridQuickTest")enabledCampaign=false;}
   if(Array.IndexOf(args,"-assistedTrial")>=0||RoadRulesTrial.Enabled||HdRouteTrial.Enabled){testMode=true;enabledCampaign=false;}
@@ -146,6 +146,7 @@ public class BusinessProgress : MonoBehaviour {
  public System.Collections.IEnumerator PlaceAtParking(){yield return null;if(session.damage&&session.damage.Disabled&&!string.IsNullOrEmpty(ledger.Care.Damage.RepairBayId)){session.damage.RestoreReservedBay();session.law.ResetObservation();session.jobs.ResetOffers();yield break;}var stop=session.services.ParkingStop;session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();session.law.ResetObservation();session.jobs.ResetOffers();}
 
  void FixedUpdate(){
+  if(PvpNativeLan.IsReplica(session)||session&&session.simulationMatch&&PvpNativeLan.WaitingForWorld)return;
   if(session.simulationMatch&&session.simulationMatch.AdvanceConditionService(session,Time.fixedDeltaTime))return;
   if(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))return;
   if(!enabledCampaign||!ledger.Operating||preparing||restoring||resumeBlocked||session.paused||Time.timeScale<=0)return;
@@ -157,8 +158,9 @@ public class BusinessProgress : MonoBehaviour {
   if(DrowsyControlsLost&&!(session.damage&&session.damage.Disabled)){session.assisted.SetActive(false);if(session.taxi.body.velocity.sqrMagnitude>.001f)fatigueBrakeUntil=Time.fixedTime+.1f;session.taxi.body.velocity=Vector3.MoveTowards(session.taxi.body.velocity,Vector3.zero,6*Time.fixedDeltaTime);if(session.taxi.body.velocity.magnitude<.56f){session.taxi.body.velocity=Vector3.zero;session.taxi.body.angularVelocity=Vector3.zero;session.jobs.CancelForFatigue();}}
   if(ledger.Account!=null&&ledger.Account.Fuel<=0&&!(session.damage&&session.damage.Disabled))RecoverFuel();
  }
- void Update(){if(enabledCampaign&&!preparing&&!session.paused&&ledger.Operating&&(ledger.Driver==null||DrowsinessRunning)){realSeconds+=Time.unscaledDeltaTime;mixedFollowing|=session.traffic.mitOptions.Enabled!=initialFollowing;}if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil){notice="";noticeUntil=0;}}
+ void Update(){if(PvpNativeLan.IsReplica(session)||session&&session.simulationMatch&&PvpNativeLan.WaitingForWorld)return;if(enabledCampaign&&!preparing&&!session.paused&&ledger.Operating&&(ledger.Driver==null||DrowsinessRunning)){realSeconds+=Time.unscaledDeltaTime;mixedFollowing|=session.traffic.mitOptions.Enabled!=initialFollowing;}if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil){notice="";noticeUntil=0;}}
  void LateUpdate(){
+  if(PvpNativeLan.IsReplica(session)||session&&session.simulationMatch&&PvpNativeLan.WaitingForWorld)return;
   if(SimulationSession)return;
   if(!restoring&&!testMode&&enabledCampaign&&session.law&&session.requests&&(Time.unscaledTime>=nextSave||session.law.ledger.Count!=lastLawCount)){nextSave=Time.unscaledTime+5;lastLawCount=session.law.ledger.Count;SaveCheckpoint();}
   if(session.FullMapOpen||!enabledCampaign||ledger.State!=BusinessState.Closing)return;
@@ -169,6 +171,7 @@ public class BusinessProgress : MonoBehaviour {
  }
  void Freeze(){session.paused=false;Time.timeScale=0;}
  public bool RequestEmergencyHome(){
+  if(PvpNativeLan.Route(session,"emergency-rest"))return true;
   if(session.simulationMatch){if(session.simulationMatch.ServiceLocked(session)||!ledger.Driver.drowsiness.Blackout||session.taxi.body.velocity.magnitude>=.56f)return false;session.jobs.CancelForFatigue();if(session.jobs.Active||!ledger.UseEmergencySleepInMatch(session.law.ids.Next("pvp-emergency-rest")))return false;session.jobs.ClearForDay();session.assisted.SetActive(false);notice="긴급 휴식 100초 · 피로 −20 · 경기 계속";noticeUntil=Time.unscaledTime+10;SaveCheckpoint();return true;}
   if(session.damage&&session.damage.Disabled&&!session.damage.AtRepairBay)return false;
   if(!DrowsinessRunning||!ledger.Driver.drowsiness.Blackout||session.taxi.body.velocity.magnitude>=.56f)return false;
@@ -242,7 +245,7 @@ public class BusinessProgress : MonoBehaviour {
   else {session.jobs.ClearForDay();session.taxi.ResetTaxi();session.law.ResetObservation();session.jobs.ResetOffers();}
   ledger.Advance(30,0);notice="연료 고갈 · "+(occupied?"현재 위치에 20% 공급 · 승객 운송 계속":"출발지 복귀 후 20% 공급")+" + 지원비 1,800원 / 30초 경과";noticeUntil=Time.unscaledTime+8;
  }
- public bool SaveCheckpoint(){if(SimulationSession){if(session.simulationMatch)session.simulationMatch.ObserveServiceTime(session);return true;}if(resumeBlocked||restoring){SaveFailed=true;return false;}if(RoadMapRuntime.Trial)return true;ledger.RefreshSummary();return WriteCheckpoint(ledger);}
+ public bool SaveCheckpoint(){if(PvpNativeLan.IsReplica(session))return true;if(SimulationSession){if(session.simulationMatch)session.simulationMatch.ObserveServiceTime(session);return true;}if(resumeBlocked||restoring){SaveFailed=true;return false;}if(RoadMapRuntime.Trial)return true;ledger.RefreshSummary();return WriteCheckpoint(ledger);}
  bool WriteCheckpoint(EconomyLedger value,PrototypeIds resetIds=null){if(SimulationSession)return true;if(RoadMapRuntime.Trial)return true;
   try{
    Directory.CreateDirectory(Path.GetDirectoryName(SavePath));

@@ -1,7 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable] public sealed class RoadIncidentView {
+ public string id;public Vector3 position,direction;public float roadWidth,remaining;public bool queue,visible;
+}
+[System.Serializable] public sealed class RoadTrafficSampleView {public Vector3 position,direction;public float delay;}
+[System.Serializable] public sealed class RoadConditionsSnapshot {
+ public int revision;public string notice;public RoadIncidentView[] incidents;public RoadTrafficSampleView[] samples;
+}
+
 public sealed class RoadIncident {
+ public string networkId;public float networkRemaining;
  public Vector3 position,direction;
  public float roadWidth,expiresAt;
  public bool queue;
@@ -17,19 +26,60 @@ public sealed class RoadConditions : MonoBehaviour {
  public string Notice {get;private set;}
  struct Sample {public Vector3 position,direction;public float delay;}
  readonly List<Sample> samples=new List<Sample>();
- bool automatic;float nextEvent,nextSample;int sequence;
+ bool automatic,networkView;float nextEvent,nextSample;int sequence,networkSequence;
  public void Initialize(DriveSession owner){
-  session=owner;automatic=!RoadRulesTrial.Enabled;
+  session=owner;automatic=!RoadRulesTrial.Enabled&&!PvpNativeLan.IsReplica(owner);
   foreach(var arg in System.Environment.GetCommandLineArgs())if(arg.EndsWith("Test")||arg=="-assistedTrial")automatic=false;
   nextEvent=Time.time+15;Notice="도로 상황을 관찰하며 경로를 선택하세요";
  }
  public RoadIncident AddIncident(Vector3 position,Vector3 direction,float roadWidth,float seconds,bool queue=false,bool spawnObjects=false){
-  var item=new RoadIncident{position=position,direction=direction.normalized,roadWidth=roadWidth,expiresAt=Time.time+Mathf.Max(0,seconds),queue=queue};
+  var item=new RoadIncident{networkId="road-incident:"+(++networkSequence),position=position,direction=direction.normalized,roadWidth=roadWidth,expiresAt=Time.time+Mathf.Max(0,seconds),queue=queue};
   incidents.Add(item);Revision++;
   if(spawnObjects)CreateVisuals(item);
   Notice=queue?"앞쪽 도로 정체 · 예상 소요 시간을 비교하세요":"정차 차량 발생 · 옆 차로 또는 우회 경로를 확인하세요";
   return item;
  }
+ public RoadConditionsSnapshot CaptureNetworkView(){
+  var values=new RoadIncidentView[incidents.Count];
+  for(int i=0;i<values.Length;i++){
+   var item=incidents[i];if(string.IsNullOrEmpty(item.networkId))item.networkId="road-incident:"+(++networkSequence);
+   values[i]=new RoadIncidentView{id=item.networkId,position=item.position,direction=item.direction,roadWidth=item.roadWidth,
+    remaining=Mathf.Max(0,item.expiresAt-Time.time),queue=item.queue,visible=item.visuals.Count>0};
+  }
+  var traffic=new RoadTrafficSampleView[samples.Count];
+  for(int i=0;i<traffic.Length;i++)traffic[i]=new RoadTrafficSampleView{position=samples[i].position,direction=samples[i].direction,delay=samples[i].delay};
+  return new RoadConditionsSnapshot{revision=Revision,notice=Notice,incidents=values,samples=traffic};
+ }
+ public void ApplyNetworkView(RoadConditionsSnapshot snapshot){
+  if(snapshot==null)return;
+  if(snapshot.incidents==null||snapshot.samples==null||snapshot.incidents.Length>64||snapshot.samples.Length>512)throw new System.ArgumentException("Invalid network road conditions");
+  var seen=new HashSet<string>();
+  foreach(var value in snapshot.incidents){
+   if(value==null||string.IsNullOrEmpty(value.id)||!seen.Add(value.id)||!Finite(value.position)||!Finite(value.direction)||value.direction.sqrMagnitude<.1f||
+    !Finite(value.roadWidth)||value.roadWidth<=0||!Finite(value.remaining)||value.remaining<0)throw new System.ArgumentException("Invalid network road incident");
+  }
+  foreach(var value in snapshot.samples)if(value==null||!Finite(value.position)||!Finite(value.direction)||!Finite(value.delay)||value.delay<0)throw new System.ArgumentException("Invalid network traffic sample");
+  networkView=true;automatic=false;
+  var old=new Dictionary<string,RoadIncident>();
+  foreach(var item in incidents)if(!string.IsNullOrEmpty(item.networkId))old[item.networkId]=item;
+  var keep=new List<RoadIncident>();
+  foreach(var value in snapshot.incidents){
+   RoadIncident item;
+   if(!old.TryGetValue(value.id,out item))item=new RoadIncident{networkId=value.id};
+   bool rebuild=item.queue!=value.queue||(item.position-value.position).sqrMagnitude>.0001f||(item.direction-value.direction).sqrMagnitude>.0001f;
+   if(rebuild||!value.visible){if(item.visuals.Count>0)Remove(item);}
+   item.position=value.position;item.direction=value.direction;item.roadWidth=value.roadWidth;item.queue=value.queue;
+   item.networkRemaining=value.remaining;item.expiresAt=Time.time+value.remaining;
+   if(value.visible&&item.visuals.Count==0)CreateVisuals(item);
+   keep.Add(item);
+  }
+  foreach(var item in incidents)if(!keep.Contains(item))Remove(item);
+  incidents.Clear();incidents.AddRange(keep);
+  samples.Clear();foreach(var value in snapshot.samples)samples.Add(new Sample{position=value.position,direction=value.direction,delay=value.delay});
+  Revision=snapshot.revision;Notice=snapshot.notice??"";
+ }
+ static bool Finite(float value){return !float.IsNaN(value)&&!float.IsInfinity(value);}
+ static bool Finite(Vector3 value){return Finite(value.x)&&Finite(value.y)&&Finite(value.z);}
  static bool OnSegment(Vector3 point,Vector3 heading,Vector3 a,Vector3 b,Vector3 direction,float width){
   if(Vector3.Dot(heading,direction)<.75f)return false;
   var delta=b-a;delta.y=0;float length=delta.magnitude;if(length<.01f)return false;
@@ -38,13 +88,14 @@ public sealed class RoadConditions : MonoBehaviour {
  }
  public float ExtraSeconds(Vector3 a,Vector3 b,Vector3 direction,float roadWidth){
   float delay=0;
-  foreach(var item in incidents){float remaining=item.expiresAt-Time.time;if(remaining<=0||!OnSegment(item.position,item.direction,a,b,direction,roadWidth))continue;
+  foreach(var item in incidents){float remaining=networkView?item.networkRemaining:item.expiresAt-Time.time;if(remaining<=0||!OnSegment(item.position,item.direction,a,b,direction,roadWidth))continue;
    delay+=roadWidth>=12?Mathf.Min(remaining,item.queue?12:8):Mathf.Min(remaining,90);
   }
   foreach(var sample in samples)if(OnSegment(sample.position,sample.direction,a,b,direction,roadWidth))delay+=sample.delay;
   return delay;
  }
  void Update(){
+  if(PvpNativeLan.IsReplica(session))return;
   for(int i=incidents.Count-1;i>=0;i--)if(incidents[i].expiresAt<=Time.time){Remove(incidents[i]);incidents.RemoveAt(i);Revision++;Notice="정차 구간 해소 · 경로를 다시 비교합니다";}
   if(!automatic||session==null||session.paused||session.business.ShowingSummary)return;
   if(Time.time>=nextSample){nextSample=Time.time+1;samples.Clear();
@@ -62,6 +113,7 @@ public sealed class RoadConditions : MonoBehaviour {
   return Physics.OverlapBox(p+Vector3.up*.9f,new Vector3(1.05f,.4f,2.5f),Quaternion.LookRotation(dir),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore).Length==0;
  }
  public bool TryCreateEvent(){
+  if(PvpNativeLan.IsReplica(session))return false;
   if(session.world.map.hybrid){var graph=session.jobs.nav.hd;bool congested=sequence%2==1;
    for(int k=0;k<graph.edges.Length;k++){int i=(sequence*37+k)%graph.edges.Length;var edge=graph.edges[i];var path=graph.paths[i];if(edge.turn!=0||edge.change!=0||edge.status=="provisional-portal"||path.length<65)continue;
     var p=path.Position(path.length*.5f);var direction=path.Tangent(path.length*.5f);if(!ClearAt(p,direction))continue;

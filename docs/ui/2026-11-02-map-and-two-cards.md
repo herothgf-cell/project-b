@@ -26,3 +26,5 @@
 실행 방식: 기존 관리 작업트리에서 직접 구현한다. 사용자 승인된 이어서 진행 요청에 따라 추가 설계 승인 없이 실행한다.
 
 검증: publication-build.log exit0·publication.log52체크/22캡처 exit0, 모델28묶음·Strict issues0·사용자 저장14파일 불변. 독립 리뷰 지적 수정 후 추가 결함 없음. 최종 화면은 [실제 캡처](2026-11-02-map-style/) 참조.
+
+원격 main6ab68d9의 최신 LAN PVP를 통합해 MapPresentationTests.Build에서 PvpNativeLanTests.Run도 검사한다. 통합 빌드 exit0 / UI52·LAN 두 프로세스 재접속54·모델28묶음/Strict0 재통과. 사용자 저장14파일 불변, 실제8캡처는 통합 실행본으로 갱신했다.
