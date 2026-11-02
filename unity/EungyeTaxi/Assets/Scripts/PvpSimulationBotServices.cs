@@ -8,9 +8,10 @@ using UnityEngine;
 public sealed class PvpSimulationBotServices : MonoBehaviour {
     public string Status {get;private set;}
     public bool Active {get{return stage!=0;}}
+    public int DecisionCount {get;private set;}
     int stage,kind;
     int conditionTripCount=-1,conditionMealsBefore,conditionRestsBefore;
-    float progress,retryAt,routeWait,offPathSeconds;
+    float progress,retryAt,routeWait,offPathSeconds,nextDecisionAt;
     MapStop approach;
     Vector3 bay,direction;
     Vector3[] entry,departure;
@@ -78,7 +79,10 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
         if(!s||!s.simulationMatch||s.simulationMatch.Finished||s.jobs.Active)return false;
         if(s.simulationMatch.ServiceLocked(s)){Stop(s,"서비스 진행 중");return Active;}
         if(stage==0) {
-            if(Time.time<retryAt||s.jobs.trip.State!=TripState.Idle)return false;
+            if(Time.time<retryAt||Time.time<nextDecisionAt||s.jobs.trip.State!=TripState.Idle)return false;
+            // Unclaimed roadside approaches remain Idle while driving. Expensive
+            // meal/rest graph searches must not run once per physics step.
+            nextDecisionAt=Time.time+5;DecisionCount++;
             var e=s.business.ledger;
             double mealDetour=double.PositiveInfinity,restDetour=double.PositiveInfinity;
             if(conditionTripCount!=s.jobs.completed+s.jobs.failed) {

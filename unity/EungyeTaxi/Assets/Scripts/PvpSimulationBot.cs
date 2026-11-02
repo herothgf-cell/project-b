@@ -26,7 +26,7 @@ public sealed class PvpSimulationBot : MonoBehaviour {
             }
             if(StationarySeconds>10)foreach(var collider in Physics.OverlapSphere(t.transform.position+Vector3.up*.5f,3.5f,(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore))if(!collider.transform.IsChildOf(t.transform))obstacles+=collider.name+"/";
             int grounded=0;foreach(var wheel in t.wheels)if(wheel.isGrounded)grounded++;
-            return "stationary="+StationarySeconds.ToString("0")+" speed="+t.Speed.ToString("0.00")+" target="+TargetSpeed+" obstacle="+ObstacleReason+" throttle="+t.autoThrottle+" brake="+t.autoBrake+" serviceBrake="+t.autoServiceBrake+" torque="+t.wheels[2].motorTorque+" grounded="+grounded+" assistance="+s.assisted.Status+" merge="+s.traffic.MergeDiagnostics(s)+" lock="+s.simulationMatch.ServiceRemaining(s)+" fatigue="+s.business.ledger.Driver.fatigue+" controlLost="+s.business.DrowsyControlsLost+zoneState+" nearby="+obstacles+npc;
+            return "serviceDecisions="+(services?services.DecisionCount:0)+" roadsideGoal="+roadsideGoal+" stationary="+StationarySeconds.ToString("0")+" speed="+t.Speed.ToString("0.00")+" target="+TargetSpeed+" obstacle="+ObstacleReason+" throttle="+t.autoThrottle+" brake="+t.autoBrake+" serviceBrake="+t.autoServiceBrake+" torque="+t.wheels[2].motorTorque+" grounded="+grounded+" assistance="+s.assisted.Status+" merge="+s.traffic.MergeDiagnostics(s)+" lock="+s.simulationMatch.ServiceRemaining(s)+" fatigue="+s.business.ledger.Driver.fatigue+" controlLost="+s.business.DrowsyControlsLost+zoneState+" nearby="+obstacles+npc;
         }
     }
     static string TrafficChain(TrafficCar car){var seen=new System.Collections.Generic.HashSet<TrafficCar>();string value="";for(int i=0;i<8&&car;i++){if(!seen.Add(car)){value+="cycle:"+car.name;break;}value+="["+car.name+" pos="+car.transform.position+" speed="+car.speed+" signal="+car.waitingForSignal+" junction="+car.waitingForJunction+" blocked="+car.blockedName+(car.waitingForSignal||car.waitingForJunction?TrafficSignalDiagnostics(car):"")+"]";car=car.obstacleCar;}return value;}
@@ -137,7 +137,7 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         if(passengerResponses.Tick(s)){Stop("승객 응대 · 안전 정차/작업");return;}
         RefreshTerminalCalls();
         if(!services)services=gameObject.AddComponent<PvpSimulationBotServices>();
-        if(services.Tick(s)){Status=services.Status;return;}
+        if(services.Tick(s)){roadsideGoal=-1;curbPath=null;Status=services.Status;return;}
         taxi.autoServiceBrake=0;
         if(!jobs.Active&&roadsideGoal>=0){var waiting=s.simulationMatch.SharedCalls.RoadsideAt(roadsideGoal);if(waiting!=null&&jobs.AcceptanceRejection(waiting)==""){DriveTo(roadsideGoal,true);return;}roadsideGoal=-1;curbPath=null;jobs.nav.Clear();s.assisted.SetActive(false);}
         if(!jobs.Active) {
@@ -208,7 +208,7 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         target=Mathf.Min(target,Mathf.Sqrt(Mathf.Max(0,barrier-3)*2.5f));
         TargetSpeed=target;taxi.autoThrottle=ThrottleFor(taxi.Speed,target);
         taxi.autoBrake=target<.15f||taxi.Speed>target+.25f;
-        Status=target<.15f?"신호·교통 대기":jobs.trip.State==TripState.ToPickup?"승객 픽업 주행":"승객 운송 중";
+        Status=target<.15f?"신호·교통 대기":roadside?"길가 승객 접근 · 도착 후 선점":jobs.trip.State==TripState.ToPickup?"승객 픽업 주행":"승객 운송 중";
     }
     void BeginCurb(Vector3 end,Vector3 direction,int goal,bool departure){
         var taxi=Session.taxi;var start=taxi.transform.position;start.y=end.y;

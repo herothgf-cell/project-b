@@ -12,3 +12,12 @@ executing-plans로 직접구현, 사용자지시로 단계별승인/검사 생�
 `tools/test_prototype.ps1`: exit0, 기존 캠페인28모델 클래스. `tools/check_workspace.ps1 -Strict`: exit0/Input issues0. 이후 실제Player/빌드·배포 결과를 추가한다. 실제사람/전유형PVP플레이/다른PC/원격4인 검증으로 표시하지 않는다.
 
 최종 PvpPassengerParityTests.Run / passenger-final-editor3.log: exit0/PVP_PASSENGER_EDITOR_OK checks36035. 신규 수요·8+3선점·4차량점유·수락/탑승전환중복보호·봇선택과 기존 FourDriver/유형Release/컨디션·도시접근·통합모드 계약 통과. 단계별검사대신 구현후최종실패를수정해재확인했다.
+
+## Windows 실행본 실제 API 검사
+소스08d7ee4135bc3fe726f480318981fa37636c0a91 / PrototypeBuild.BuildHybrid / passenger-final-build1.log exit0. 이전139파일배포를 artifacts/pvp/pre-passenger-ec3bc4b로백업. Burst DoNotShip자료를배포에서분리하고139파일115,099,981바이트를 passenger-runtime1로복사해전수SHA256동일확인.
+
+`pwsh -File tools/test_pvp_passengers.ps1 -Executable artifacts/pvp/passenger-runtime1/EungyeTaxi.exe -OutputDirectory artifacts/pvp/passenger-player1`: exit0/PVP_PASSENGER_PLAYER_OK. 공유8+별도길가3/실제연석F동등API탑승/중복·원격선점거부,17종요청의native봇응답(유효수락12종이상), 청결한차음식허용+5, 실제10초짐준비후탑승, 한점유차의네세션동일조회/중복기한보호없음/실제30초대기·7m출차/72NPC지속진행통과.
+
+이 검사는 초기위치·유형·명시적BeginKind요청fixture를사용했고봇응대컴포넌트를사람fixture세션에서실행했다. 요청의자연랜덤발생빈도/사람입력/전유형실제운송·수익을입증하지않는다. 실제4대페달/조향운송은별도검사중이다. PC입력/화면조작없음.
+
+同소스08d7ee4 -unifiedModeCheck: exit0/활성105.0523초, PVP→메뉴→싱글저장/복원·손상거부·원본4파일보존. Four1은Idle길가접근에서시설후보를매물리tick재계산해실제52게임초에과도한CPU를소모하는문제를발견했고소유PID24684만중단했다(운송수용결과없음). 시설의새판단만5초간격으로제한하고실제서비스/주행tick은유지, 시설전환시미선점길가목표해제·상태문구수정. Editor4 exit0/36036:150동일시각IdleTick에판단1회회귀추가.
