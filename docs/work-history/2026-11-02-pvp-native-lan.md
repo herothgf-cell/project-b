@@ -34,3 +34,5 @@ A3 실제 지도 적용, 다른PC LAN/방화벽·사람주행·원격4명·장�
 - PvpNativeLanTests.BuildValidated / native-lan-build4.log exit0: 승객36041+native JSON회귀17 및 BuildHybrid 통과. native-lan-20261102-154949-5c85b464 -Reconnect: 두프로세스 exit0, host24/client26 checks. 실제guest물리13.92146m/최고4.051594m/s, 선점·경제/내구도/점수 복제·잘못된명령상태불변·같은차봇승계/승객보존·30초ticket복귀/자리회수·양쪽메뉴제거 통과. 위치제어없음. 이후최종빌드에는클라이언트6초응답감시/정확한호스트daySeconds/중복시설표시방지·거부gate/NPC·신호시계/운전점수추가assert를포함한다.
 
 - 최종후보 BuildValidated5 exit0/승객36041+JSON17. 실행본을runtime5로전수SHA동일백업. 작업중원격main에밝은UI·마인드맵8커밋(d818c33)이게시됨을확인하여최종배포전에보존통합한다. 현재소스커밋은통합/배포완료주장이아니며최종결과는아래후속검사를따른다.
+
+- 최신main d818c33 밝은UI/마인드맵8커밋을통합. 충돌5파일(Panel/CockpitUI/driver표현/통합메뉴/체크리스트)은 밝은화면·간결문구·새내비를유지하면서 LAN메뉴/좌석표현/온라인종료를합쳤다. 자동병합된승객/시설/결과/법규/매치도조건을보존. 통합후BrightUITheme/NavigationCue+기존승객+LAN회귀/BuildHybrid를다시실행한다.

@@ -19,5 +19,5 @@ public static class PvpNativeLanTests {
   Check(!PvpNativeLan.IsReplica(null)&&!PvpNativeLan.UiBlocked(null),"offline null-safe hooks");
   Debug.Log("PVP_NATIVE_LAN_EDITOR_OK checks="+checks);
  }
- public static void BuildValidated(){Run();PrototypeBuild.BuildHybrid();}
+ public static void BuildValidated(){BrightUIThemeTests.Run();NavigationCueTests.Run();Run();PrototypeBuild.BuildHybrid();}
 }

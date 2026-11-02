@@ -6,7 +6,7 @@ using UnityEngine;
 
 // Run EungyeTaxi.exe -unifiedModeCheck. Uses a fresh temporary campaign only.
 public sealed class UnifiedModeProbe : MonoBehaviour {
-    public static bool Enabled {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-unifiedModeCheck")>=0;}}
+    public static bool Enabled {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-unifiedModeCheck")>=0||Array.IndexOf(Environment.GetCommandLineArgs(),"-brightUiCheck")>=0;}}
     static readonly string campaignPath=Path.Combine(Path.GetTempPath(),"taxi-unified-"+Guid.NewGuid().ToString("N"),"campaign.json");
     public static string CampaignPath {get{return campaignPath;}}
     bool ok=true,done;float activeSeconds,lastRealtime;string phase="initial menu";

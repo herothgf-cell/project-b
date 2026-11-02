@@ -20,7 +20,7 @@ public static class HudGlyph {
  }
  static void Box(int x,int y,int w,int h,bool clear=false){for(int i=x;i<x+w;i++)for(int j=y;j<y+h;j++)if(i>=0&&i<24&&j>=0&&j<24)drawing.SetPixel(i,23-j,clear?Color.clear:Color.white);}
  static void Line(float x,float y,float u,float v){int count=Mathf.CeilToInt(Vector2.Distance(new Vector2(x,y),new Vector2(u,v))*2);for(int i=0;i<=count;i++){float t=count==0?0:(float)i/count;Box(Mathf.RoundToInt(Mathf.Lerp(x,u,t)),Mathf.RoundToInt(Mathf.Lerp(y,v,t)),2,2);}}
- public static bool Button(Rect r,int kind,string tooltip,bool active=false){bool hit=GUI.Button(r,new GUIContent("",tooltip));Draw(new Rect(r.x+4,r.y+4,r.width-8,r.height-8),kind,active?new Color(.4f,1,.8f):Color.gray);return hit;}
+ public static bool Button(Rect r,int kind,string tooltip,bool active=false){bool hit=GUI.Button(r,new GUIContent("",tooltip));Draw(new Rect(r.x+4,r.y+4,r.width-8,r.height-8),kind,active?CasualUI.Blue:CasualUI.Muted);return hit;}
  // Axis-aligned stamps preserve clipping inside scaled IMGUI groups/windows.
  // The live minimap route is separately cached into one raster texture.
  public static void MapLine(Vector2 a,Vector2 b,Color c,float width,Rect clip){

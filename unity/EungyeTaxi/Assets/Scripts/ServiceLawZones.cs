@@ -159,5 +159,5 @@ public sealed class ServiceLawZones : MonoBehaviour {
 
  }
  public static Vector2 DrawSituationCard(Rect r,string content,Vector2 position){Panel(r);var text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=15,wordWrap=true};float ch=Mathf.Max(r.height-20,text.CalcHeight(new GUIContent(content),r.width-36)+8);position=GUI.BeginScrollView(new Rect(r.x+10,r.y+8,r.width-20,r.height-16),position,new Rect(0,0,r.width-36,ch));GUI.Label(new Rect(0,0,r.width-36,ch),content,text);GUI.EndScrollView();return position;}
- static void Panel(Rect r){GUI.color=new Color(.025f,.055f,.075f,1);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
+ static void Panel(Rect r){CasualUI.Panel(r);}
 }

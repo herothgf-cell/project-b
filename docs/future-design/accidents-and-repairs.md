@@ -2,7 +2,7 @@
 
 ## Proto 확장과의 경계
 
-2026-10-29 사용자 선택으로 **수리비·시간 중심, 내구도0 운행 불가**는 Proto 확장 기획에 포함한다. 세부 규칙은 [생활·차량 상태·경제](../content-design/03-life-and-economy.md#추가-기획-충돌-내구도와-수리) 한 곳에서 정의한다. 아직 구현하지 않았으며 현재 실행 파일은 물리 충돌과 기존 M 감점만 제공한다.
+2026-10-29 사용자 선택으로 **수리비·시간 중심, 내구도0 운행 불가**를 Proto에 구현했다. 충돌 강도별 내구도·수리·견인·정산/저장과 자동 검증을 완료했으며 사람의20분/3일 체감은 별도 잔여다. 세부 규칙은 [생활·차량 상태·경제](../content-design/03-life-and-economy.md#추가-기획-충돌-내구도와-수리) 한 곳에서 정의한다. 실제 결과는 [구현 이력](../work-history/2026-10-29-vehicle-durability-repair.md)을 따른다.
 
 과거 ‘신규 사고/수리 전부 Proto 제외’ 결정은 위 범위에 한해 변경했다. [기존 사고 기획 원문](../design-history/content-design/2026-10-27-before-planning-only/08-accidents-and-repairs.md)은 이력으로 남긴다. 구현·검증 상태는 [개발 체크리스트](../prototype-development-checklist.md)를 따른다.
 

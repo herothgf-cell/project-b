@@ -22,7 +22,7 @@ public class RoadRulesTrial : MonoBehaviour {
     static MapRoad Road(string id,float width,int lanes,float[] coords){var points=new MapPoint[coords.Length/2];for(int i=0;i<points.Length;i++)points[i]=new MapPoint{x=coords[i*2],z=coords[i*2+1]};return new MapRoad{id=id,width=width,sourceLanes=lanes,points=points};}
     void Start(){session.jobs.enabled=false;foreach(var person in session.jobs.people)person.SetActive(false);}
     void Update(){if(Time.timeScale==0)return;int next=Input.GetKeyDown(KeyCode.F6)?0:Input.GetKeyDown(KeyCode.F7)?1:Input.GetKeyDown(KeyCode.F8)?2:-1;if(next>=0){selection=next;SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);}}
-    void OnGUI(){GUI.skin.font=KoreanText.Font;GUI.Box(new Rect(16,Screen.height-162,740,124),GUIContent.none);var style=new GUIStyle(GUI.skin.label){fontSize=16};style.normal.textColor=Color.white;
+    void OnGUI(){GUI.skin.font=KoreanText.Font;GUI.Box(new Rect(16,Screen.height-162,740,124),GUIContent.none);var style=new GUIStyle(GUI.skin.label){fontSize=16};style.normal.textColor=CasualUI.Ink;
         GUI.Label(new Rect(28,Screen.height-156,710,27),"한국 도로 규칙 시험장 · "+Description,style);
         GUI.Label(new Rect(28,Screen.height-127,710,27),"F6: 2차선 비보호   F7: 4차선 보호   F8: 2차선 보호   R: 출발점",style);
         GUI.Label(new Rect(28,Screen.height-98,710,27),selection==0?"좌회전: 녹색 + 맞은편 차량 양보 / 적색 좌회전 금지":"좌회전: 녹색 화살표 / 반대편은 정지 · 직진과 공용 차로",style);

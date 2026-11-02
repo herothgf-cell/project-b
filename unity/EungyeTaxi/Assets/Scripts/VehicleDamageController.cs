@@ -139,10 +139,10 @@ public sealed class VehicleDamageController : MonoBehaviour {
     }
     void OnGUI(){if(session.IsSimulationBot||PvpNativeLan.IsRemoteHuman(session))return;
         if(!Campaign||session.business.preparing||session.business.ShowingSummary||session.RideResultOpen||session.FullMapOpen||session.PracticeMenuOpen)return;
-        var style=new GUIStyle(GUI.skin.label){fontSize=16,wordWrap=true};style.normal.textColor=Color.white;GUI.depth=-140;
+        var style=new GUIStyle(GUI.skin.label){fontSize=16,wordWrap=true};style.normal.textColor=CasualUI.Ink;GUI.depth=-140;
         if(Time.unscaledTime<noticeUntil&&!Disabled)GUI.Label(new Rect(Screen.width/2-230,165,460,65),Notice,style);
         if(Disabled&&!session.services.open&&!session.paused){
-            float w=Mathf.Min(580,Screen.width-30),x=(Screen.width-w)/2,y=(Screen.height-290)/2;GUI.depth=-150;GUI.color=new Color(.06f,.09f,.12f,.98f);GUI.DrawTexture(new Rect(x,y,w,290),Texture2D.whiteTexture);GUI.color=Color.white;
+            float w=Mathf.Min(580,Screen.width-30),x=(Screen.width-w)/2,y=(Screen.height-290)/2;GUI.depth=-150;CasualUI.Panel(new Rect(x,y,w,290));
             GUI.Label(new Rect(x+18,y+12,w-36,110),"차량 내구도 0 · 운행 불가\n"+(AtRepairBay?RepairQuote:"정차 후 견인 3,000원 · 30초 (부족분 미납)\n전용 정비 공간으로 이동 · 수리비/시간 별도\n정차 불가 5초 후에는 화면 전환으로 안전 복구"),style);
             GUI.Label(new Rect(x+18,y+128,w-36,55),Notice??"승객은 안전 정차 후 하차합니다. 운송 중 고장은 요금 0원 취소입니다.",style);
             if(AtRepairBay){GUI.enabled=CanRepair;if(GUI.Button(new Rect(x+18,y+192,w-36,36),session.jobs.Active?"안전 하역 중 · 잠시 기다려 주세요":"전량 수리 확정"))Repair();GUI.enabled=!session.jobs.Active;if(GUI.Button(new Rect(x+18,y+237,w-36,34),"정비를 미루고 휴식 후 오늘 영업 종료 · 100초"))EndDisabledDay();GUI.enabled=true;}

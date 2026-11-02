@@ -32,7 +32,7 @@ public class DriveSession : MonoBehaviour {
         Application.targetFrameRate=60; QualitySettings.vSyncCount=0;
         Time.timeScale=0;paused=true;
         loadingCamera=new GameObject("시작 준비 화면").AddComponent<Camera>();
-        loadingCamera.clearFlags=CameraClearFlags.SolidColor;loadingCamera.backgroundColor=new Color(.06f,.09f,.13f);loadingCamera.cullingMask=0;
+        loadingCamera.clearFlags=CameraClearFlags.SolidColor;loadingCamera.backgroundColor=CasualUI.Canvas;loadingCamera.cullingMask=0;
     }
     IEnumerator Start() {
         if(IsSimulationBot)yield break;
@@ -127,7 +127,7 @@ public class DriveSession : MonoBehaviour {
     void OnGUI(){
         if(IsSimulationBot)return;
         if(StartupReady)return;
-        GUI.depth=-10000;var oldColor=GUI.color;GUI.color=new Color(.06f,.09f,.13f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=oldColor;
+        GUI.depth=-10000;var oldColor=GUI.color;GUI.color=CasualUI.Canvas;GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=oldColor;
         if(loadingTitle==null){loadingTitle=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=28,alignment=TextAnchor.MiddleCenter};loadingDetail=new GUIStyle(loadingTitle){fontSize=18};}
         GUI.Label(new Rect(0,Screen.height*.43f,Screen.width,50),"택시 시뮬레이터",loadingTitle);
         GUI.Label(new Rect(0,Screen.height*.43f+55,Screen.width,40),loadingStage,loadingDetail);
