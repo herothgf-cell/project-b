@@ -227,6 +227,9 @@ public sealed class PvpSimulationBot : MonoBehaviour {
     }
     bool CurvedObstacleDistance(bool signals,out float distance,out Collider blocker){
         distance=100;blocker=null;
+        // Facility access uses a separate manoeuvre; canceled jobs can retain an
+        // old kerb path until service handling completes. Keep its forward guard.
+        if(!signals)return false;
         var taxi=Session.taxi;var shape=taxi.GetComponent<BoxCollider>();
         var nav=Session.jobs==null?null:Session.jobs.nav;
         var path=curbPath??(signals&&nav!=null&&nav.hdRoute!=null?nav.hdRoute.path:null);
@@ -239,6 +242,7 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         var horizontal=offset;horizontal.y=0;
         if(horizontal.sqrMagnitude>4||Vector3.Dot(heading,taxi.transform.forward)<.85f)return false;
         float horizon=Mathf.Min(35,path.length-progress);
+        if(horizon<3)return false; // No reliable future path beyond the endpoint.
         var bounds=new Bounds(taxi.transform.position+Vector3.up*.42f,Vector3.zero);
         for(float ahead=0;ahead<=horizon+.5f;ahead+=.5f){float step=Mathf.Min(ahead,horizon);bounds.Encapsulate(path.Position(progress+step)+offset+Vector3.up*.42f);}
         bounds.Expand(new Vector3(6,3,6));

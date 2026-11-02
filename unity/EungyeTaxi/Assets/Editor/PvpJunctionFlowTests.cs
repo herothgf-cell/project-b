@@ -51,6 +51,15 @@ public static class PvpJunctionFlowTests {
             Debug.Log("PVP_BOT_NATIVE_TURN_BLOCKER turn="+turn+" distance="+blockedDistance+" reason="+bot.ObstacleReason+" taxiActive="+taxiBox.gameObject.activeInHierarchy+" npcActive="+npc.gameObject.activeInHierarchy+" taxi="+taxiObject.transform.position+" npc="+npc.transform.position);
             Check(blockedDistance<=3,"actual selected-lane blocker retains a full stop "+turn+" distance="+blockedDistance+" reason="+bot.ObstacleReason);
             Debug.Log("PVP_BOT_NATIVE_TURN_SENSOR_OK turn="+turn+" lane="+map.hdEdges[edge].id+" oldHit="+oldHit.distance+" curvedClear="+sensed);
+
+            var tangent=path.path.Tangent(progress);var ahead=session.taxi.transform.position+tangent*6;ahead.y=0;
+            npc.transform.SetPositionAndRotation(ahead,Quaternion.LookRotation(tangent));npc.GetComponent<Rigidbody>().position=ahead;npc.GetComponent<Rigidbody>().rotation=npc.transform.rotation;
+            var kerbEnd=path.path.Position(progress);var stale=new AssistedRoadNetwork.Path(new[]{kerbEnd-tangent*10,kerbEnd});
+            typeof(PvpSimulationBot).GetField("curbPath",BindingFlags.NonPublic|BindingFlags.Instance).SetValue(bot,stale);
+            typeof(PvpSimulationBot).GetField("curbProgress",BindingFlags.NonPublic|BindingFlags.Instance).SetValue(bot,stale.length);Physics.SyncTransforms();
+            Check(bot.ObstacleDistance(false)<=3,"service driveway cannot trust stale completed kerb path "+turn);
+            Check(bot.ObstacleDistance()<=3,"short endpoint keeps forward obstacle protection "+turn);
+            Debug.Log("PVP_BOT_STALE_CURB_GUARD_OK turn="+turn);
         }finally{UnityEngine.Object.DestroyImmediate(root);}
     }
     public static void Run(){

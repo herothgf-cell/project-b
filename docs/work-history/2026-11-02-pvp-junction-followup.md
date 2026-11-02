@@ -22,3 +22,8 @@
 - `PvpJunctionFlowTests.Run`, `artifacts/pvp/junction-final-editor2.log`: exit0. 실제 A2 city-junction:1:1의 좌/우회전에서 기존 정면센서는 경로 밖 NPC를2.949m 장애물로 감지(목표속도0), 새 실제 경로검사는clear100이다. 같은NPC를 실제 경로 위에 놓으면거리1로 검출해 정지한다. 별도 기울어진/오프셋 경로의 native NPC 회전진행/차체겹침0/현재점유차단도 통과. 이는 배치fixture의 물리/센서 검사이며 사용자의 미전달 사진 사건을 재현했다는 뜻은 아니다.
 - 수정: PvpSimulationBot은 신뢰 가능한 native/연석 경로에서 실제BoxCollider를 따라 장애물 검사(한 번의 broad조회·0.5m간격 차체판정), 경로/정렬이 나쁘면 기존정면검사 유지. TrafficSystem은 같은교차로에서 선택 경로가 분리된 NPC 회전을 구분하되 예약/현재차체/진출차단은 유지. 생성 차로/곡선은 전역검사를 통과해 재배정하지 않았다.
 - 한 차례 최종 읽기전용 검토에서 별도 high/medium지적 없음. 실제 Player/성능·배포 결과는 이후 기록한다.
+
+## 보완 및 staging1 결과
+마지막 검토에서 취소/만료 운송의 연석 경로가 시설 이동 전에 남아 있을 수 있는 경계를 추가로 확인했다. 시설은 별도 조작 경로이므로 signals=false 센서는 기존 정면 검사를 유지하고, 남은 경로가3m 미만일 때도 정면 보호로 되돌린다. `PvpJunctionFlowTests.Run` / `junction-final-editor3.log` exit0: 좌·우 모두 기존 오탐/실제 장애물 정지와 취소 후 연석/짧은 끝점 보호 통과.
+
+소스047e62e의 staging1 `PvpJunctionFollowupChecks.BuildStaged` exit0, 별도 복사139파일115,057,083바이트 전수 해시 일치. 기존 배포140파일과의 차이는 과거 빌드 폴더에 남아 있던 level0.resS 한 파일이며 새 폴더 빌드에는 생성되지 않는다. 사용자 실행본은 그대로 유지했다. 복사본 four1 실제 물리 운송은 exit0/거리4784.195/4375.013/5200.865/3994.929m·4명 양수 정산·재시작 통과. 위 추가 보호 보완은 이후 소스/새 빌드에서 다시 확인한다.
