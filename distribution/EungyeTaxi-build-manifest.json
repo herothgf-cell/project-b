@@ -1,31 +1,50 @@
 {
-  "sourceCommit": "5547466b04108ddbf796d537bba1e0f04207bfe2",
+  "sourceCommit": "a2ce61beffe52a30e6b9a297ac0fa1a97dee2b95",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-02",
-  "totalBytes": 115082284.0,
+  "totalBytes": 115101005.0,
   "validation": {
     "build": "PrototypeBuild.BuildHybrid exit0",
-    "acceptedScope": "PVP condition profile/native timed human services/campaign isolation",
-    "editor": "PvpConditionChecks.Run exit0; model/service/bot policy/city306 directed pairs/unified contract",
+    "sourceCommit": "a2ce61beffe52a30e6b9a297ac0fa1a97dee2b95",
+    "editor": "PvpPassengerParityTests.Run exit0 checks36041; condition/city/unified/behavior/four-driver contracts",
     "campaignModelClasses": 28,
     "campaignModels": "exit0",
-    "nativeServices": "Final runtime human 15s meal/45s rest, completion-only cash/effects, cancel/end, NPC/other driver progression assertions all passed",
-    "screenshots": "1600x900 meal quote/pending/rest pending viewed; no PC input",
-    "unifiedSave": "exit0; PVP/menu/single/save/restore/corruption guard; four original user files unchanged",
-    "fourDriverTransportPassed": false,
-    "fourDriverFailure": "condition-four2 exit1: bot1 blocked city-junction:2:2, 3752.208m/no delivered receipt; other3 delivered",
-    "botMealDrivePassed": false,
-    "botMealDriveFailure": "condition-drive4 exit1: no eligible unoccupied production meal route under400 estimated seconds; physical roundtrip unverified",
+    "nativePassengerAcceptance": "passenger-player4 exit0: shared8+roadside3; stopped native pickup/atomic ownership;17 explicit requests resolved; native food+5/luggage work; shared obstruction30s/clear7m/72NPC progression",
+    "nativePassengerFixtures": "explicit placement/type/BeginKind; production bot-response component invoked on human fixture; not physical transport proof",
+    "fourNativePhysicalTransports": "passenger-four4 exit0/PVP_FOUR_DRIVER_OK;811.8596 game seconds; original native offers/poses/fares/deadlines/types unchanged; actual WheelCollider controls",
+    "driverMetres": [
+      4224.228,
+      3133.097,
+      2684.989,
+      4218.078
+    ],
+    "nativeFares": [
+      14160,
+      5970,
+      5690,
+      21860
+    ],
+    "nativeExpenses": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "npcCount": 72,
+    "npcMetres": 336357.2,
+    "restartAndModeReturn": "passed; all4 sessions and board destroyed; fresh scores/conditions/calls",
+    "unifiedModeAndUserSave": "passenger-unified4 exit0;101.0348 active seconds; PVP/menu/single/save/restore/corruption guard;4 existing user files unchanged",
     "strictInputs": "exit0/issues0",
     "manualDriving": false,
     "longMatchBalance": false,
-    "differentPC": false,
-    "remoteFourPlayers": false,
-    "otherCheckoutPreserved": "local main6244be9 + seven original untracked entries unchanged",
+    "botContinuousRecoveryAccepted": false,
+    "remaining": "Bots1/2 waited297/282game seconds after first fare; physical bot recovery roundtrip/continuous operation, all34 actual variants, full-city long traffic, differentPC/remote4 still unaccepted",
+    "priorFailures": "performance interruption and previous first-fare failures retained in docs/work-history/2026-11-02-pvp-passenger-parity-implementation.md",
+    "otherCheckout": "C:/git/project-b preserved; new uncommitted UI work observed and not integrated; tracked-diff snapshot only in ignored artifacts",
     "mapsCampaignIdentity": "unchanged",
-    "details": "docs/work-history/2026-11-02-pvp-condition-implementation.md"
+    "details": "docs/work-history/2026-11-02-pvp-passenger-parity-implementation.md"
   },
   "files": [
     {
@@ -36,17 +55,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "66075b016f3d1b9b53a2898b125c32c53b95851fe436725e5e1301756dc5040e"
+      "sha256": "c0b9810ebe2891255748d91654c37a58c9bcea274b8d7103ee36aaca8ff574c8"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 53700,
-      "sha256": "d85af23590b3b0607635fb0aa103245dba87c28d295e98f6495802a8552568ea"
+      "bytes": 53876,
+      "sha256": "ec2436083d43b3ac064666eaa9850b160a37b06433fd0c9511cb9e386de9c7f7"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 103016,
-      "sha256": "764466867a2a56939acf50b3cc1ea9b406ef98846b6ecf9f3ca57991f788fdcd"
+      "bytes": 103504,
+      "sha256": "05a3e1f3f9c2c5d9c1975afffd4eac433ee8321f319ec6327f84e190f6fcae29"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -56,12 +75,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
       "bytes": 1140,
-      "sha256": "2c4ab0c739695bd50a66a43ec55f8501ce7b744c68f8991368119569af194b79"
+      "sha256": "e4bb951369f963c09437fdb549cdda6a5c1ddd2f5728b39319211ffdb22177d0"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 1963520,
-      "sha256": "d1ce9fd9f3449f70ae43191f29c3c8eba354394f795a25159c93323f2de3e1d4"
+      "bytes": 1981440,
+      "sha256": "73cc633fdac7fcb54ba1bb21abebd5e6c4f69828df9dbfd7f0aa050014b5bf15"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -575,8 +594,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/RuntimeInitializeOnLoads.json",
-      "bytes": 7494,
-      "sha256": "ca990fd47579da54f846b5742201c8b0575223452ad253acbc3016919e611d6d"
+      "bytes": 7631,
+      "sha256": "e7d13b2ad1512e60993fedc51906a21d9308a9d80d244970cbbeb61a16f192c2"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/ScriptingAssemblies.json",
@@ -586,7 +605,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/sharedassets0.assets",
       "bytes": 7624,
-      "sha256": "a7074ae10e353d46b4629c38c39fe5bfe466097f96993d8bf281d035aeef1dcc"
+      "sha256": "8b85946fcf319a5309d4a262f878981872121f861e0c9fbcb28cb231681f7c10"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi.exe",

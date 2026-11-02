@@ -31,3 +31,22 @@ Build2 -unifiedModeCheck/passenger-unified2: exit0/활성94.63808초·기존사�
 Build3/abc6eab exit0,139파일115,100,493바이트를전수복사/해시대조. Four3는봇1의첫운송0원으로exit1: 나6326m/19,850원, 봇1 5781m/0원, 봇2 5444m/5,970원, 봇3 5083m/21,860원·비용2,800원. 근거리길가추격만제한해도기존“가장가까운픽업”선택은긴운송/졸음위험을무시했다. 전체주행은진행했으며전원양수정산으로표시하지않는다.
 
 봇호출순위를픽업경로/6+native운송ETA+대기+30초로변경했다. 픽업전피로100·예상졸음중도하차/경기종료후완료는배제한다. 시설계획도같은최단전체예상을사용하며휴식필요판단을위해위험추정은유지한다. 경유/목적지응답에도추가경로후졸음한계를검사했다. 실제페달/조향·운임/승객모델·사람안내값은변경없다. Editor6(호출순위) exit0/36040, 최종Editor7(응답피로포함) exit0/36041. 같은최종검사의실패·노출문제를고친재검사이며단계별검사를선행한것은아니다.
+
+## 최종 수용 — 소스 a2ce61beffe52a30e6b9a297ac0fa1a97dee2b95
+BuildHybrid4 / passenger-final-build4.log exit0.139파일115,101,005바이트를 passenger-runtime4로복사해전수SHA256동일확인. `tools/test_pvp_passengers.ps1 -Executable artifacts/pvp/passenger-runtime4/EungyeTaxi.exe -OutputDirectory artifacts/pvp/passenger-player4`: exit0/PVP_PASSENGER_PLAYER_OK. 최종 응답 피로 예측까지 포함한 실행본에서8+3/정차선점/17요청응답·음식+5·짐실제준비·공유점유/30초·출차·72NPC진행 재확인. 이 검사는 명시적 위치·유형·요청fixture다.
+
+`tools/test_pvp_simulation.ps1 -FourDrivers -TrafficMonitor -Executable artifacts/pvp/passenger-runtime4/EungyeTaxi.exe -OutputDirectory artifacts/pvp/passenger-four4`: exit0/PVP_FOUR_DRIVER_OK.811.8596게임초까지 실제 페달/조향/WheelCollider로 나4224.228m/14,160원, 봇1 3133.097m/5,970원, 봇2 2684.989m/5,690원, 봇3 4218.078m/21,860원 양수실제정산. 호출/기한/기본운임/승객종류/기본위치·신호를검사용으로바꾸지않았다. 공유소유권/정산중복방지/72NPC(336357.2m)/결과동결/메뉴해제/새4세션·점수·컨디션·공유8호출재시작 통과. 사람택시도기존bot페달조향으로자동운전한검사이며수동플레이아님.
+
+같은최종실행본 `-batchmode -nographics -unifiedModeCheck` / passenger-unified4: exit0/활성101.0348초. PVP→메뉴→싱글준비·저장·복원·손상원본/백업거부·보존→메뉴, 기존사용자캠페인/운행JSON및각백업4파일바이트불변·새저장파일없음. 이전08/b753의동일검사통과도위에분리기록했다.
+
+## 남은 수용/보존
+전유형34변주의실제PVP운송/자연랜덤빈도/사람20분플레이·수익균형/다른PC/원격기존물리4유저는미수용. 이번4대검사에서봇1/2는첫정산후유효호출선택대기약297/282게임초가있었다. 봇3은마지막에주유시설접근중이었다. 회복시설의봇실제왕복·장시간연속영업을완료로표시하지않으며이전피로작업의미검증도유지한다. 전도로장기교통도미수용(최대관측대기531초). 양수1회정산통과를이런장기수용으로대체하지않는다.
+
+싱글소스의승객분기/기본규칙·회사/제품/저장경로와필수GIS/지도ZIP은보존. 추가공통API는기존native동작을재사용하고PVP분기로만호출. 다른체크아웃은6244be9/미추적7항목그대로이며자동pull/파일교체없음. 현재작업트리에서만실행본을갱신했다. 배포manifest/게시영수증은아래추가한다.
+
+재현: Unity2022.3.62f2 `-batchmode -nographics -quit -projectPath unity/EungyeTaxi -executeMethod PvpPassengerParityTests.Run`; `pwsh -File tools/test_prototype.ps1`; 빌드 `PrototypeBuild.BuildHybrid`; 위Player러너/4대러너; `-unifiedModeCheck`. 실제실행 builds/EungyeTaxi/EungyeTaxi.exe → PVP도시 → 지도에서공유8호출또는길가승객 → 빈차로같은방향연석에정차/F. 공유점유는보이는임시차량/기한보호안내를따라대기한다.
+
+## 최종 보존/배포 준비
+최종Strict exit0/Input issues0. 배포manifest 생성 및 기본/PVPalias VerifyOnly 모두exit0/139파일115,101,005바이트. 원격main 최신ec3bc4b로추가완료커밋없음.
+
+마지막확인중 C:/git/project-b에다른채팅의새UI작업(추적수정23/미추적13)이생긴것을발견했다. 기존7미추적만있던시작상태와구분한다. 그쪽소스/인덱스/브랜치를수정·stash·reset·checkout·pull하지않았고미완료UI를이번PVP실행본에섞지않았다. 읽기전용상태목록/추적diff만 artifacts/pvp/passenger-other-checkout-status.txt 및 passenger-other-ui-preservation.patch에스냅샷했다(ignored, 전체백업아님). 그쪽의후속통합때MapDestinationUI/PassengerRequestObservation/ServiceStops 등겹치는UI파일에서이번native승객/PVP API를유지해야한다. 원격게시후기존미커밋을보존한정상3way통합은그작업에서진행한다. 실행본은이분리작업트리 builds/EungyeTaxi의최종검증본이다.
