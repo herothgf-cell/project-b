@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -29,7 +29,7 @@ public sealed class UnifiedModeBootstrap : MonoBehaviour {
         if(Selected==Mode.Single){StartSingle();return;}
         if(Selected==Mode.Pvp){StartPvp();return;}
         menuCamera=new GameObject("모드 선택 화면").AddComponent<Camera>();menuCamera.transform.SetParent(transform,false);
-        menuCamera.clearFlags=CameraClearFlags.SolidColor;menuCamera.backgroundColor=new Color(.06f,.09f,.13f);menuCamera.cullingMask=0;
+        menuCamera.clearFlags=CameraClearFlags.SolidColor;menuCamera.backgroundColor=CasualUI.Canvas;menuCamera.cullingMask=0;
     }
     void HideMenu(){if(menuCamera)menuCamera.gameObject.SetActive(false);message="";}
     public void StartSingle(){
@@ -57,17 +57,17 @@ public sealed class UnifiedModeBootstrap : MonoBehaviour {
         if(Selected==Mode.Menu){
             float width=Mathf.Min(580,Screen.width-32);
             GUILayout.BeginArea(new Rect((Screen.width-width)/2,Screen.height*.28f,width,310),GUI.skin.box);
-            GUILayout.Label("은계 택시 시뮬레이터");GUILayout.Space(20);
-            if(GUILayout.Button("싱글 플레이 · 은계 영업 이어하기",GUILayout.Height(55)))StartSingle();
-            GUILayout.Label("기존 캠페인의 준비·운송·정산을 이어갑니다.");GUILayout.Space(12);
-            if(GUILayout.Button("PVP · 자체 도시에서 봇 3대와 경기",GUILayout.Height(55)))StartPvp();
-            GUILayout.Label("경기 시간 직접 설정 · 캠페인 저장과 분리");GUILayout.Space(12);
+            GUILayout.Label("은계 택시",new GUIStyle(GUI.skin.label){fontSize=28,font=KoreanText.BoldFont});GUILayout.Space(20);
+            if(GUILayout.Button("은계 영업",GUILayout.Height(55)))StartSingle();
+            GUILayout.Label("3일 캠페인 · 저장한 영업 이어하기");GUILayout.Space(12);
+            if(GUILayout.Button("PVP 대전",GUILayout.Height(55)))StartPvp();
+            GUILayout.Label("나 + 봇 3대 · 경기 시간 직접 설정");GUILayout.Space(12);
             if(GUILayout.Button("게임 종료"))Application.Quit();GUILayout.EndArea();return;
         }
         if(!human)foreach(var item in FindObjectsOfType<DriveSession>())if(!item.IsSimulationBot){human=item;break;}
         if(human&&human.StartupReady&&(human.paused||human.business.preparing)&&!human.business.IsRestoring){
             GUI.depth=-300;
-            if(GUI.Button(new Rect(Screen.width-200,12,188,38),"모드 선택으로 돌아가기"))ReturnToMenu();
+            if(GUI.Button(new Rect(Screen.width-200,12,188,38),"모드 선택"))ReturnToMenu();
             if(message.Length>0)GUI.Box(new Rect(Screen.width-420,56,408,65),message);
         }
     }

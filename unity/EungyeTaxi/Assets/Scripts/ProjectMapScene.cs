@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -93,10 +93,11 @@ using UnityEngine;
  public static MapStop ParkingStop(ProjectMapObject o){return new MapStop{name=o.name,x=o.serviceX,z=o.serviceZ,dx=o.Direction.x,dz=o.Direction.z,width=3};}
  public static bool CanUse(ProjectMapObject o,Vector3 position,Vector3 heading,float speed){var d=position-o.Position;return o.enabled&&o.IsService&&Contains(o.points,position)&&Mathf.Abs(d.y)<1.5f&&speed<.56f&&Vector3.Dot(heading.normalized,o.Direction)>.9f&&Mathf.Abs(Vector3.Dot(d,o.Direction))<2.7f&&Mathf.Abs(Vector3.Dot(d,TrafficSystem.Right(o.Direction)))<1.15f;}
  public static void DrawServices(MapData map,Transform parent){if(!Active(map))return;var paint=WorldBuilder.Mat("Service bay",new Color(.95f,.8f,.18f));foreach(var o in map.projectScene.objects.Where(x=>x.enabled&&x.IsService)){
+  bool combined=map.mapId=="pvp-city-a"&&map.projectScene.objects.Any(x=>x.enabled&&x.kind==(o.kind=="restaurant"?"parking":"restaurant")&&(x.Position-o.Position).sqrMagnitude<.01f);if(combined&&o.kind=="parking")continue;
   var root=new GameObject(o.name);root.transform.SetParent(parent,false);root.transform.position=o.Position;root.transform.rotation=Quaternion.LookRotation(o.Direction);
   foreach(float x in new[]{-1.4f,1.4f})WorldBuilder.Box("정차 칸",new Vector3(x,.07f,0),new Vector3(.12f,.02f,6),paint,root.transform,false);
   foreach(float z in new[]{-3f,3f})WorldBuilder.Box("정차 선",new Vector3(0,.07f,z),new Vector3(2.8f,.02f,.12f),paint,root.transform,false);
-  var label=new GameObject("시설 안내");label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(0,2.7f,0);var text=label.AddComponent<TextMesh>();text.text=o.name+"\n"+(o.kind=="restaurant"?"식사":o.kind=="rest"?"휴식":"영업 주차")+" · 정차 후 F7";text.fontSize=48;text.characterSize=.065f;text.anchor=TextAnchor.MiddleCenter;text.color=Color.white;KoreanText.Apply(text);label.AddComponent<FaceCamera>();
+  var label=new GameObject("시설 안내");label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(0,2.7f,0);var text=label.AddComponent<TextMesh>();text.text=o.name+"\n"+(combined?"식사 · 짧은 휴식":o.kind=="restaurant"?"식사":o.kind=="rest"?"휴식":"영업 주차")+" · 정차 후 F7";text.fontSize=48;text.characterSize=.065f;text.anchor=TextAnchor.MiddleCenter;text.color=Color.white;KoreanText.Apply(text);label.AddComponent<FaceCamera>();
  }}
  public static bool SamePoints(MapPoint[] a,MapPoint[] b){if(a==null||b==null||a.Length!=b.Length)return false;for(int i=0;i<a.Length;i++)if(a[i]==null||b[i]==null||a[i].x!=b[i].x||a[i].z!=b[i].z)return false;return true;}
  // A positive, nonsingular affine map preserves polygon topology and triangle

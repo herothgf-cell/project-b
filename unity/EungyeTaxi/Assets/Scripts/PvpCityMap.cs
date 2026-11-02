@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -28,8 +28,24 @@ public static class PvpCityMap {
   // Four independent start areas with road-bound approaches and off-lane parking.
   foreach(int index in new[]{0,4,12,16}){
    var s=stops[index];var bay=s.Kerb+TrafficSystem.Right(s.Direction)*12-s.Direction*45;
+   // Join the actual directed lane on either side of the passenger-bay split.
+   // A straight extrapolation from the bay drifts off these curved roads.
+   int incoming=Array.FindIndex(map.hdEdges,e=>e.next.Contains(s.laneEdge));
+   if(incoming<0)throw new InvalidOperationException("City parking lane split unavailable");
+   int branch=Array.FindIndex(map.hdEdges[incoming].next,e=>e!=s.laneEdge);
+   if(branch<0)throw new InvalidOperationException("City parking rejoin lane unavailable");
+   int through=map.hdEdges[incoming].next[branch];
+   var approach=graph.paths[incoming];var rejoin=graph.paths[through];
+   if(approach.length<38||rejoin.length<12)throw new InvalidOperationException("City parking approach too short");
+   var entrance=approach.Position(approach.length-38);var exit=rejoin.Position(12);
    var o=new ProjectMapObject{id="city:start:"+index,kind="parking",name="출발 주차장 "+(objects.Count+1),laneId=map.hdEdges[s.laneEdge].id,laneAt=0,serviceX=bay.x,serviceZ=bay.z,yaw=Quaternion.LookRotation(s.Direction).eulerAngles.y,points=ProjectMapScene.Rectangle(bay,s.Direction,12,28)};objects.Add(o);
-   roads.Add(Surface(o.id,12,new[]{bay-s.Direction*14,bay+s.Direction*14}));roads.Add(Surface(o.id+":access",7,new[]{s.V()-TrafficSystem.Right(s.Direction)*4.5f-s.Direction*70,bay-s.Direction*12,bay+s.Direction*12,s.V()-TrafficSystem.Right(s.Direction)*4.5f-s.Direction*20}));
+   roads.Add(Surface(o.id,12,new[]{bay-s.Direction*14,bay+s.Direction*14}));roads.Add(Surface(o.id+":access",7,new[]{entrance,bay-s.Direction*12,bay+s.Direction*12,exit}));
+  }
+  // Meal counters share two existing safe parking courts and driveways.
+  // Services render only markings/signs; no building or collider blocks the bay.
+  foreach(int index in new[]{4,12}){
+   var parking=objects.Find(o=>o.id=="city:start:"+index);
+   objects.Add(new ProjectMapObject{id="city:meal:"+index,kind="restaurant",name=(index==4?"남부":"북부")+" 주차장 간편식",laneId=parking.laneId,laneAt=parking.laneAt,serviceX=parking.serviceX,serviceZ=parking.serviceZ,yaw=parking.yaw,points=parking.points});
   }
   map.projectScene=new ProjectMapScene{objects=objects.ToArray()};
   var facilities=new List<FuelStationLayout.FuelStation>();

@@ -50,7 +50,7 @@ public partial class RoadMapEditor {
   SceneEdit(o=>{o.laneId=lane.id;o.laneAt=at;o.yaw=Quaternion.LookRotation(heading).eulerAngles.y;});easyAction="select";notice="서비스 접근 차로 연결 완료 · 주차 위치와 방향을 확인하세요.";return true;
  }
  void DrawSceneLeft(Rect rect){
-  Fill(rect,new Color(.065f,.095f,.13f));GUI.BeginGroup(rect);
+  CasualUI.Panel(rect);GUI.BeginGroup(rect);
   EasyLabel(new Rect(10,8,210,28),"건물·부지 / 도로 노면",17);sceneSearch=GUI.TextField(new Rect(10,42,210,32),sceneSearch,field);
   for(int i=0;i<SceneKinds.Length;i++){int n=i;if(EasyButton(new Rect(8+(i%3)*73,82+(i/3)*37,69,33),(sceneFilter==SceneKinds[i]?"● ":"")+SceneNames[i])){sceneFilter=SceneKinds[n];if(n>0)sceneCreateKind=sceneFilter;sceneListScroll=Vector2.zero;}}
   var items=SceneView.objects.Where(o=>(sceneFilter==""||o.kind==sceneFilter)&&(string.IsNullOrWhiteSpace(sceneSearch)||((o.name??"")+" "+o.id).IndexOf(sceneSearch,StringComparison.OrdinalIgnoreCase)>=0)).ToArray();
@@ -107,8 +107,8 @@ public partial class RoadMapEditor {
  void SceneCanvasOverlay(){
   if(tool!="건물·부지")return;var o=SceneObject;
   if(o!=null){if(sceneVertices)for(int i=0;i<o.points.Length;i++){var p=Project(o.points[i]);if(canvas.Contains(p))Dot(p,i==sceneVertex?Color.red:Color.white,10);}
-   if(SceneService(o)){var p=Project(new Vector3(o.serviceX,0,o.serviceZ));if(canvas.Contains(p)){Dot(p,Color.yellow,13);GUI.Label(new Rect(p.x+10,p.y,160,26),"주차 / 서비스",label);var direction=Quaternion.Euler(0,o.yaw,0)*Vector3.forward;for(int n=1;n<=5;n++)Dot(Project(new Vector3(o.serviceX,0,o.serviceZ)+direction*n),Color.yellow,3);}}
+   if(SceneService(o)){var p=Project(new Vector3(o.serviceX,0,o.serviceZ));if(canvas.Contains(p)){Dot(p,Color.yellow,13);GUI.Label(new Rect(p.x+10,p.y,160,26),"주차 / 서비스",CanvasLabel);var direction=Quaternion.Euler(0,o.yaw,0)*Vector3.forward;for(int n=1;n<=5;n++)Dot(Project(new Vector3(o.serviceX,0,o.serviceZ)+direction*n),Color.yellow,3);}}
   }
-  if(easyAction=="sceneCreate"&&canvas.Contains(Event.current.mousePosition)){Dot(Event.current.mousePosition,Color.yellow,18);GUI.Label(new Rect(Event.current.mousePosition.x+14,Event.current.mousePosition.y,180,28),SceneName(sceneCreateKind)+" 추가",label);}
+  if(easyAction=="sceneCreate"&&canvas.Contains(Event.current.mousePosition)){Dot(Event.current.mousePosition,Color.yellow,18);GUI.Label(new Rect(Event.current.mousePosition.x+14,Event.current.mousePosition.y,180,28),SceneName(sceneCreateKind)+" 추가",CanvasLabel);}
  }
 }

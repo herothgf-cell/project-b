@@ -9,6 +9,3 @@ $taskExe=Join-Path $taskOutput 'TrafficDemandIndicatorTests.exe'
 if($LASTEXITCODE -ne 0){throw 'TrafficDemandIndicatorTests compile failed'}
 & $taskExe
 if($LASTEXITCODE -ne 0){throw 'TrafficDemandIndicatorTests failed'}
-
-
-

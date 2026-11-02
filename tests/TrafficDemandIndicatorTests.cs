@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 public static class TrafficDemandIndicatorTests {
  static int failures,checks;
  static void Check(bool value,string name){checks++;if(!value){failures++;Console.WriteLine("FAIL "+name);}}
@@ -52,4 +52,3 @@ public static class TrafficDemandIndicatorTests {
   restored.Restore(null);Check(!restored.Observe(4,40,0,2,3,2,false,false),"legacy save neutral migration");
  }
 }
-

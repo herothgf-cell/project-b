@@ -136,12 +136,19 @@ public class TrafficSystem : MonoBehaviour {
     bool UturnClear(TrafficCar car,TrafficStop stop){int count=overlaps.Sphere(stop.junction.center,100,(1<<8)|(1<<9),QueryTriggerInteraction.Ignore);for(int i=0;i<count;i++){var hit=overlaps.hits[i];var root=hit.attachedRigidbody?hit.attachedRigidbody.gameObject:hit.gameObject;if(root==car.gameObject)continue;var other=root.GetComponent<TrafficCar>();float deviation;float followerAt=car.route.ProjectNear(root.transform.position,car.distance,out deviation);if(deviation<.8f&&followerAt<car.distance-4.5f&&Vector3.Dot(car.route.Tangent(followerAt),root.transform.forward)>.95f)continue;if(other&&MovingLeader(car,other))continue;float speed=other?other.speed:hit.attachedRigidbody?hit.attachedRigidbody.velocity.magnitude:0;for(float at=Mathf.Max(0,stop.distance);at<=Mathf.Min(car.route.length,stop.exitDistance+8);at+=1.5f){var point=car.route.Position(at);var offset=point-root.transform.position;float along=Vector3.Dot(offset,root.transform.forward);float side=Mathf.Abs(Vector3.Dot(offset,Right(root.transform.forward)));if(offset.sqrMagnitude<3.2f*3.2f||side<3.2f&&along>=-3&&along<Mathf.Max(8,speed*6+5))return false;}}return true;}
     public bool YieldClear(TrafficJunction j,Vector3 incoming,int turn,GameObject self){
         if(turn==0||turn==-1&&j.leftTurnMode!=LeftTurnMode.Permissive)return true;
+        // A selected native route can differ from the nominal outer-lane curve
+        // used below (offset/skewed approaches and multilane T junctions).
+        // Disjoint planned corridors are not crossing traffic. Admission still
+        // checks present body occupancy, reservations and the exit independently.
+        var subject=self?self.GetComponent<TrafficCar>():null;
+        var subjectStop=subject&&subject.route!=null?ActiveStop(subject,j):null;
         int contacts=overlaps.Sphere(j.center,100,(1<<8)|(1<<9),QueryTriggerInteraction.Ignore);
         for(int contact=0;contact<contacts;contact++){var hit=overlaps.hits[contact];
             var root=hit.attachedRigidbody?hit.attachedRigidbody.gameObject:hit.gameObject;if(root==self)continue;
             var car=root.GetComponent<TrafficCar>();var heading=root.transform.forward;
             // A moving leader on the same directed turn is a following gap, not crossing traffic.
             if(turn>0&&car&&MovingLeader(self.GetComponent<TrafficCar>(),car))continue;
+            if(turn>0&&subjectStop!=null&&car&&car.route!=null&&ActiveStop(car,j)!=null&&!Conflicts(subject,subjectStop,car))continue;
             float facing=Vector3.Dot(heading,incoming);if(turn!=UturnMovement.Turn&&(turn<0?facing>-.7f:facing>.7f))continue;
             if(turn==-1&&car&&car.CurrentTurn<0)continue;
             int axis=Mathf.Abs(Vector3.Dot(heading,AxisDirection(j,0)))>.7f?0:1;

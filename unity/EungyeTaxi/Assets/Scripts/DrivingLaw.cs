@@ -100,7 +100,7 @@ public partial class DrivingLaw : MonoBehaviour {
  void OnGUI(){if(session.IsSimulationBot)return;
   var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14,wordWrap=true};var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=14};
   if(!showHistory){if(session.ShowHints&&!session.business.ShowingSummary&&!session.business.preparing&&!session.services.open)GUI.Label(new Rect(420,70,650,24),"F8 운전·운송 기록 · "+ledger.DaySummary(Day).Split('\n')[0],style);return;}
-  GUI.depth=-120;var box=new Rect(40,35,Mathf.Min(900,Screen.width-80),Screen.height-70);GUI.color=new Color(.025f,.045f,.06f,1);GUI.DrawTexture(box,Texture2D.whiteTexture);GUI.color=Color.white;
+  GUI.depth=-120;var box=new Rect(40,35,Mathf.Min(900,Screen.width-80),Screen.height-70);CasualUI.Panel(box);
   GUI.Label(new Rect(60,45,box.width-150,55),"운전 점수 "+ledger.TotalScore+"점 · "+Day+"일차 · "+ledger.DaySummary(Day),style);
   if(GUI.Button(new Rect(box.xMax-100,45,80,28),"닫기",button))CloseHistory();
   if(GUI.Button(new Rect(60,107,180,30),"법규 사건",button)){passengerTab=false;scroll=Vector2.zero;}

@@ -14,11 +14,13 @@ public static class OperationForecastAdapter {
  static bool ValidOffer(DriveSession s,JobOffer o){return s&&s.business&&s.business.ledger!=null&&s.jobs&&o!=null&&o.pickup>=0&&o.drop>=0&&o.pickup<s.jobs.stops.Length&&o.drop<s.jobs.stops.Length;}
  public static OperationForecast ForSelection(DriveSession s,JobOffer offer){
   if(!ValidOffer(s,offer))return Missing();var c=caches.GetOrCreateValue(s);Entry e;
-  string key=offer.pickup+":"+offer.drop+":"+offer.safeRouteSeconds+":"+offer.waitSeconds+":"+s.jobs.nav.PreferFastest+":"+s.jobs.nav.AvoidEdge;
+  var pickupStop=ReferenceEquals(s.jobs.current,offer)&&s.jobs.trip.State==TripState.ToPickup?s.jobs.EffectiveStop(offer.pickup):s.jobs.stops[offer.pickup];
+  string key=offer.pickup+":"+offer.drop+":"+pickupStop.laneEdge+":"+pickupStop.laneAt+":"+pickupStop.x+":"+pickupStop.z+":"+offer.safeRouteSeconds+":"+offer.waitSeconds+":"+s.jobs.nav.PreferFastest+":"+s.jobs.nav.AvoidEdge;
   if(c.offers.TryGetValue(offer,out e)&&Time.unscaledTime<e.until&&e.key==key&&ReferenceEquals(e.route,s.jobs.nav.hdRoute))return e.value;
-  if(c.offers.Count>16)c.offers.Clear();float pickup=PassengerJobs.DirectedDistance(s.jobs.nav.hd,s.taxi.transform.position,s.taxi.transform.forward,s.jobs.stops[offer.pickup]);
-  var ride=s.jobs.nav.hd==null?null:s.jobs.nav.hd.Route(s.jobs.stops[offer.pickup].laneEdge,s.jobs.stops[offer.pickup].laneAt,s.jobs.stops[offer.drop].laneEdge,s.jobs.stops[offer.drop].laneAt);
-  var value=!Valid(pickup)||ride==null||offer.timingPolicyVersion<1||!Valid(offer.safeRouteSeconds)||offer.safeRouteSeconds<=0||!Valid(offer.waitSeconds)?Missing():Make(s,pickup/4+offer.safeRouteSeconds+offer.waitSeconds,pickup+ride.path.length);
+  if(c.offers.Count>16)c.offers.Clear();float pickup=PassengerJobs.DirectedDistance(s.jobs.nav.hd,s.taxi.transform.position,s.taxi.transform.forward,pickupStop);
+  var ride=s.jobs.nav.hd==null?null:s.jobs.nav.hd.Route(pickupStop.laneEdge,pickupStop.laneAt,s.jobs.stops[offer.drop].laneEdge,s.jobs.stops[offer.drop].laneAt);
+  float rideSeconds=ReferenceEquals(pickupStop,s.jobs.stops[offer.pickup])?offer.safeRouteSeconds:RouteSeconds(s,ride);
+  var value=!Valid(pickup)||ride==null||offer.timingPolicyVersion<1||!Valid(rideSeconds)||rideSeconds<=0||!Valid(offer.waitSeconds)?Missing():Make(s,pickup/4+rideSeconds+offer.waitSeconds,pickup+ride.path.length);
   c.offers[offer]=new Entry{until=Time.unscaledTime+1,key=key,route=s.jobs.nav.hdRoute,value=value};return value;
  }
  public static OperationForecast ForActiveTrip(DriveSession s){

@@ -28,6 +28,7 @@ public class PassengerRequestObservation : MonoBehaviour {
  public bool RespondEta(int option){if(request.Kind!=RequestKind.Eta||request.Resolved||!SafeToRespond()||session.jobs.nav.path.Count<2)return false;float eta=session.jobs.nav.estimatedSeconds;float predicted=PassengerRequest.EtaSeconds(eta,option);if(float.IsNaN(predicted))return false;etaNav=eta;etaPredicted=predicted;etaAt=Time.time;etaSelected=true;request.Accept("내비 예상 "+EtaChoice(eta)+" / 안내 예상 "+EtaChoice(predicted)+" 뒤 도착 · 교통에 따라 달라질 수 있는 예상");resultUntil=Time.time+8;return true;}
  public bool SafeToRespond(){return session.requests.SafeToRespond();}
  bool ChangesRoute {get{return request.Kind==RequestKind.SafeStop||request.Kind==RequestKind.DestinationChange||request.Kind==RequestKind.ViaStop;}}
+ public float ProposalExtraSeconds {get{return Mathf.Max(0,addedDistance)/4;}}
  public bool PrepareProposal(){if(!ChangesRoute)return true;var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.Live&&zones.Live.Active)return false;
   if(Time.time<proposalUntil&&Vector3.Distance(proposalPosition,session.taxi.transform.position)<.25f)return proposal>=0;proposalUntil=Time.time+1;proposalPosition=session.taxi.transform.position;
   float best=float.MaxValue;proposal=-1;var jobs=session.jobs;
@@ -54,7 +55,7 @@ public class PassengerRequestObservation : MonoBehaviour {
    case RequestKind.Interview:response="응원합니다. 편하게 준비하실 수 있게 운행할게요";break;
    case RequestKind.Music:response="음악을 바꿔 달라는 말씀이시죠? (프로토에서는 대화만 제공)";break;
    case RequestKind.FareHelp:response=session.jobs.FareAgreementText(session.jobs.current.fare)+" · 승객 만족도 요구 미달 시 만족도/요구치 비율 지급 · 늦은 도착0원";break;
-   case RequestKind.LocalChat:response="은계 주변을 다니고 있어요. 안전하게 모셔다드릴게요.";break;
+   case RequestKind.LocalChat:response=session.simulationMatch?"이 도시 주변을 다니고 있어요. 안전하게 모셔다드릴게요.":"은계 주변을 다니고 있어요. 안전하게 모셔다드릴게요.";break;
    case RequestKind.LostItem:response="하차 후 분실물을 발견하면 보관·신고 절차를 안내하겠습니다. (텍스트 사건)";break;
    default:response="죄송하지만 신호는 지켜야 해요. 안전하게 모셔다드릴게요.";break;
   }
@@ -120,16 +121,16 @@ public class PassengerRequestObservation : MonoBehaviour {
  public bool PanelVisible {get{return !request.Resolved||Time.time<=resultUntil||etaSelected;}}
  public void Draw(){if(!session.business.useV2||session.jobs.trip.State!=TripState.OnTrip||session.jobs.trip.ArrivalLocked||session.paused)return;if(request.Resolved&&Time.time>resultUntil&&!etaSelected)return;
   string text=request.Resolved?"나  “"+DialogueReply+"”":"손님  “"+lines[(int)request.Kind]+"”";
-  if(etaSelected)text="도착 예상 안내 · 교통에 따라 변동\n현재 남은 "+RoadNavigation.FormatEta(session.jobs.nav.estimatedSeconds)+" · 최초 안내까지 "+RoadNavigation.FormatEta(Mathf.Max(0,etaPredicted-(Time.time-etaAt)));
-  if(!request.Resolved){if(ChangesRoute){if(!PrepareProposal())text+="\n안전한 변경 후보 없음 · 원래 운행 유지 가능";else text+="\n"+KoreanText.Stop(session.jobs.stops[proposal].name)+" · 추가 "+addedDistance.ToString("0")+"m · "+session.jobs.FareAgreementText(newFare)+" / 기한 "+Mathf.CeilToInt(newRemaining)+"초"+(request.Kind==RequestKind.ViaStop?"\n용무20초 무료 대기에 동의 · 영업시간·연료 소모 · 원래 목적지 복귀 · 대기 할증0원":"");}
-   if(!SafeToRespond())text+="\n안전하게 정차하면 답변을 선택할 수 있어요.";
+  if(etaSelected)text="예상 도착 · 교통에 따라 변동\n현재 남은 "+RoadNavigation.FormatEta(session.jobs.nav.estimatedSeconds)+" · 최초 안내까지 "+RoadNavigation.FormatEta(Mathf.Max(0,etaPredicted-(Time.time-etaAt)));
+  if(!request.Resolved){if(ChangesRoute){if(!PrepareProposal())text+="\n변경 가능한 곳 없음 · 현재 경로 유지";else text+="\n"+KoreanText.Stop(session.jobs.stops[proposal].name)+" · 추가 "+addedDistance.ToString("0")+"m · "+session.jobs.FareAgreementText(newFare)+" / 기한 "+Mathf.CeilToInt(newRemaining)+"초"+(request.Kind==RequestKind.ViaStop?"\n용무20초 무료 대기에 동의 · 영업시간·연료 소모 · 원래 목적지 복귀 · 대기 할증0원":"");}
+   if(!SafeToRespond())text+="\n안전 정차 후 답변하세요.";
   }else if(selectedEffect.Length>0)text+="\n적용: "+selectedEffect;
   var priorMatrix=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));float vw=Screen.width/scale,vh=Screen.height/scale;
   var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=15,wordWrap=true};style.normal.textColor=new Color(.1f,.16f,.2f);
   float width=540,textHeight=style.CalcHeight(new GUIContent(text),width-24);int rows=request.Resolved?0:(ReplyChoices.Length+1)/2;float height=textHeight+24+rows*ReplyRowHeight;
   // Keep the reply beside the road view and above the passenger destination card.
   float y=vh-24-height,x=(vw-width)/2;var panel=new Rect(x,y,width,height);
-  GUI.color=new Color(.94f,.97f,.91f,1);GUI.DrawTexture(panel,Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x+14,y+height-1,12,8),Texture2D.whiteTexture);GUI.color=Color.white;GUI.Label(new Rect(x+12,y+8,width-24,textHeight),text,style);
+  CasualUI.Panel(panel,CasualUI.Soft);GUI.Label(new Rect(x+12,y+8,width-24,textHeight),text,style);
   if(!request.Resolved){var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=11,wordWrap=true,padding=new RectOffset(4,4,2,2)};var area=new Rect(x+8,y+textHeight+18,width-16,rows*ReplyRowHeight);
    for(int i=0;i<ReplyChoices.Length;i++){var choice=ReplyChoices[i];bool enabled=GUI.enabled;GUI.enabled=enabled&&CanChoose(choice.reply);if(GUI.Button(ReplyButtonRect(area,i),ChoiceText(choice),button))session.requests.Choose(choice.reply);GUI.enabled=enabled;}
   }

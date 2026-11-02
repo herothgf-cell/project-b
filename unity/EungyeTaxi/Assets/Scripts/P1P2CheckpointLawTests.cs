@@ -42,6 +42,18 @@ public static class P1P2CheckpointLawTests {
    Reject(()=>BusinessProgress.ValidateOperationState(new LiveCampaignCheckpoint{operationVersion=1,signalsPresent=true}),"explicit missing signal state rejected");
    Reject(()=>BusinessProgress.ValidateOperationState(new LiveCampaignCheckpoint{operationVersion=1,lawObservationPresent=true,lawObservation=new DrivingLawSnapshot{wrongSeconds=float.NaN}}),"nonfinite live evidence rejected");
    var absent=new LiveCampaignCheckpoint{operationVersion=1,signals=new TaxiSignalsSnapshot{direction=2}};BusinessProgress.ValidateOperationState(absent);Check(absent.signals==null,"explicit absent signal remains neutral");
+   session.world=objects.AddComponent<WorldBuilder>();session.world.map=new MapData{mapId="eungye"};session.taxi.body=objects.AddComponent<Rigidbody>();session.taxi.body.useGravity=false;
+   session.manners=objects.AddComponent<DrivingManners>();
+   saved.entry.slowPresent=false;saved.entry.necessaryBefore=0;law.RestoreObservation(saved);
+   session.taxi.transform.rotation=Quaternion.identity;session.taxi.body.velocity=Vector3.forward*5;
+   var observe=typeof(DrivingLaw).GetMethod("ObserveSlowTurn",BindingFlags.Instance|BindingFlags.NonPublic);
+   for(int i=0;i<50;i++)observe.Invoke(law,null);
+   Check(law.CaptureObservation().entry.slow.observedSeconds==0,"runtime straight motion excluded");
+   session.taxi.transform.rotation=Quaternion.Euler(0,45,0);session.taxi.body.velocity=session.taxi.transform.forward*5;
+   for(int i=0;i<50;i++)observe.Invoke(law,null);
+   Check(law.CaptureObservation().entry.slow.Verdict==SlowRightTurnVerdict.Violation,"runtime actual heading and sustained speed observed");
+   session.manners.necessaryBrakeEvents=1;observe.Invoke(law,null);
+   Check(law.CaptureObservation().entry.slow.Verdict==SlowRightTurnVerdict.Deferred,"runtime necessary-brake counter protects same turn");
    Debug.Log("P1P2_CHECKPOINT_LAW_OK checks="+checks);
   }finally{UnityEngine.Object.DestroyImmediate(objects);}
  }

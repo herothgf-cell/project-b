@@ -40,8 +40,11 @@ def apply_p1p2(data):
             prefix,original=node.get('note','').split(MARKER,1)
             node['note']='<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 50% 구현\n\n'+reason+'\n\n구현 근거: unity/EungyeTaxi/Assets/Scripts/'+source+'\n50%는 구현 단계이며 전체 수동 검증/출시 완료율이 아닙니다.\n'+MARKER+original
             node['tags']=[t for t in node.get('tags',[]) if not t.startswith('단계:')]+['단계:50% 구현']
-        if not node.get('children') and '실제 음악 장치 조작' in topic:
+        if not node.get('children') and (topic.startswith('추천2 · 차량 내부 장치 조작') or topic in ('창문','에어컨','음악')):
             node['tags']=[t for t in node.get('tags',[]) if t!='보류']+['보류']
+            prefix,original=node.get('note','').split(MARKER,1)
+            if '사용자 요청: 실제 장치 조작 보류' not in prefix:
+                node['note']=prefix+'사용자 요청: 실제 장치 조작 보류. 기존 텍스트 응대와 구분합니다.\n'+MARKER+original
         stage=node.get('task',{}).get('progress')
         if stage is not None:records.append(stage)
         if node.get('children') and records:

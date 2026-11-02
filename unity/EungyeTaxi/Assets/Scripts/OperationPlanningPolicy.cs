@@ -11,7 +11,7 @@ public sealed class OperationForecast {
   if(account==null||driver==null||!Finite(seconds)||!Finite(metres)||!Finite(secondsLeft)||match&&!Finite(matchLeft))return new OperationForecast();
   var copy=CampaignAccount.Restore(account.Snapshot());copy.Consume(seconds,metres);var condition=driver==null?null:driver.Copy();
   bool overtime=campaignDay&&!match&&seconds>=secondsLeft;
-  if(condition!=null){condition.Advance(seconds);if(overtime&&secondsLeft>0)condition.fatigue=100;}
+  if(condition!=null){condition.Advance(seconds,false,match?PvpConditionRules.FatigueMultiplier:1);if(overtime&&secondsLeft>0)condition.fatigue=100;}
   return new OperationForecast{Available=true,EndFuel=copy.Fuel,EndSatiety=condition==null?0:condition.satiety,EndFatigue=condition==null?0:condition.fatigue,TravelSeconds=seconds,TravelMetres=metres,Overtime=overtime,MatchEndsBeforeArrival=match&&seconds>=matchLeft};
  }
 }
@@ -20,10 +20,11 @@ public sealed class OperationServiceQuote {
  public double EndFuel {get;private set;} public double EndSatiety {get;private set;} public double EndFatigue {get;private set;}
  public static OperationServiceQuote Calculate(EconomyLedger ledger,int kind,double seconds,double metres){
   if(ledger==null||ledger.Account==null||double.IsNaN(seconds)||double.IsInfinity(seconds)||seconds<0||double.IsNaN(metres)||double.IsInfinity(metres)||metres<0)return new OperationServiceQuote();
-  var clone=EconomyLedger.RestoreCampaign(ledger.Snapshot(),ledger.Account.Snapshot());clone.Advance(seconds,metres);
+  var clone=EconomyLedger.RestoreCampaign(ledger.Snapshot(),ledger.Account.Snapshot());if(ledger.PvpProfile&&!clone.EnablePvpProfile())return new OperationServiceQuote();clone.Advance(seconds,metres);
   int before=clone.Account.Expense(clone.Day,null),debt=clone.Account.Debt;double time=clone.Elapsed;bool done=false;
   if(kind==0){done=clone.Account.Refuel("forecast:fuel",Math.Min(10,100-clone.Account.Fuel),clone.Day);if(done)clone.AdvanceService(10);}
-  else if(kind==1){if(clone.OneDay)done=clone.UseMeal("forecast:meal");else {done=clone.Account.Meal("forecast:meal",clone.Day);if(done)clone.AdvanceService(10);}}
+  else if(kind==1){if(clone.PvpProfile){if(clone.Account.Cash>=PvpConditionRules.MealCost){clone.AdvancePvpConditionService(PvpConditionRules.MealSeconds,false);done=clone.CompletePvpMeal("forecast:meal");}}else if(clone.OneDay)done=clone.UseMeal("forecast:meal");else {done=clone.Account.Meal("forecast:meal",clone.Day);if(done)clone.AdvanceService(10);}}
+  else if(kind==3&&clone.PvpProfile){clone.AdvancePvpConditionService(PvpConditionRules.RestSeconds,true);done=clone.CompletePvpRest("forecast:rest");}
   else if(kind==3&&clone.OneDay)done=clone.UseSleep("forecast:sleep");else if(kind==4)done=clone.UseWash("forecast:wash");else if(kind==5)done=clone.UseRepair("forecast:repair");
   return new OperationServiceQuote{Available=done,TravelSeconds=seconds,UseSeconds=clone.Elapsed-time,Price=clone.Account.Expense(clone.Day,null)-before,NewDebt=clone.Account.Debt-debt,EndFuel=clone.Account.Fuel,EndSatiety=clone.Driver==null?0:clone.Driver.satiety,EndFatigue=clone.Driver==null?0:clone.Driver.fatigue};
  }

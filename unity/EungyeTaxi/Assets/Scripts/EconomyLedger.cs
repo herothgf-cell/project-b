@@ -35,6 +35,11 @@ public class EconomyLedger {
  public void AdvanceService(double seconds){if(!Operating)return;Advance(seconds,0);Metrics.Observe(0,seconds,false,true);}
  public VehicleCare Care {get;private set;}
  public bool OneDay {get;private set;}
+ // Runtime-only profile: no static setting or campaign checkpoint can carry it.
+ public bool PvpProfile {get;private set;}
+ public int PvpMeals {get;private set;}
+ public int PvpRests {get;private set;}
+ public bool EnablePvpProfile(){if(!OneDay||!Operating||Account==null||Driver==null)return false;PvpProfile=true;return true;}
  public DriverCondition Driver {get;private set;}
  public string EndReason {get;private set;}
  readonly HashSet<string> services=new HashSet<string>();
@@ -70,35 +75,52 @@ public class EconomyLedger {
   if(!Operating||double.IsNaN(seconds)||double.IsInfinity(seconds)||double.IsNaN(metres)||double.IsInfinity(metres)||seconds<0||metres<0)return;
   double before=Elapsed;Elapsed+=seconds;Metres+=metres;fuel+=metres/1000*Settings.fuelPerKm+seconds/3600*Settings.idlePerHour;
   if(Account!=null)Account.Consume(seconds,metres);
-  if(Driver!=null)Driver.Advance(seconds);
+  if(Driver!=null)Driver.Advance(seconds,false,PvpProfile?PvpConditionRules.FatigueMultiplier:1);
   BudgetCrossed(before);
  }
  public DriverCondition PreviewConditionService(bool sleeping){
   if(Driver==null)return null;
+  if(PvpProfile)return sleeping?PvpConditionRules.PreviewRest(Driver):PvpConditionRules.PreviewMeal(Driver);
   var next=Driver.Copy();bool crosses=Elapsed<Settings.daySeconds&&Elapsed+(sleeping?100:50)>=Settings.daySeconds;
   if(sleeping){if(crosses)next.fatigue=100;next.Sleep();}
   else {next.Meal();if(crosses)next.fatigue=100;}
   return next;
  }
- public bool UseMeal(string id){if(!OneDay||State!=BusinessState.Open||services.Contains(id)||!Account.Meal(id,Day))return false;services.Add(id);Driver=PreviewConditionService(false);ServiceTime(50);return true;}
- public bool UseSleep(string id){if(!OneDay||State!=BusinessState.Open||Driver.drowsiness.Blackout||string.IsNullOrEmpty(id)||!services.Add(id))return false;var next=PreviewConditionService(true);ServiceTime(100);Driver=next;return true;}
+ public bool UseMeal(string id){if(PvpProfile)return false;if(!OneDay||State!=BusinessState.Open||services.Contains(id)||!Account.Meal(id,Day))return false;services.Add(id);Driver=PreviewConditionService(false);ServiceTime(50);return true;}
+ public bool UseSleep(string id){if(PvpProfile)return false;if(!OneDay||State!=BusinessState.Open||Driver.drowsiness.Blackout||string.IsNullOrEmpty(id)||!services.Add(id))return false;var next=PreviewConditionService(true);ServiceTime(100);Driver=next;return true;}
+ // Scheduler owns duration and cancellation. Only this path accounts for a pending
+ // condition service frame; it must replace normal operation advancement.
+ public void AdvancePvpConditionService(double seconds,bool resting){
+  if(!PvpProfile||State!=BusinessState.Open||!Finite(seconds)||seconds<=0)return;
+  Elapsed+=seconds;Driver.Advance(seconds,resting,PvpConditionRules.FatigueMultiplier);
+  Metrics.Observe(0,seconds,false,true);
+ }
+ public bool CompletePvpMeal(string id){
+  if(!PvpProfile||State!=BusinessState.Open||string.IsNullOrEmpty(id)||services.Contains(id)||!Account.PvpMeal(id,Day))return false;
+  services.Add(id);Driver.satiety=Math.Min(100,Driver.satiety+PvpConditionRules.MealSatiety);PvpMeals++;return true;
+ }
+ public bool CompletePvpRest(string id){
+  if(!PvpProfile||State!=BusinessState.Open||string.IsNullOrEmpty(id)||!services.Add(id))return false;
+  Driver.fatigue=Math.Max(0,Driver.fatigue-PvpConditionRules.RestFatigue);
+  if(Driver.drowsiness!=null)Driver.drowsiness.Recover();PvpRests++;return true;
+ }
  public bool UseEmergencySleep(string id){return EmergencySleepCore(id,true);}
  public bool UseEmergencySleepInMatch(string id){return EmergencySleepCore(id,false);}
- bool EmergencySleepCore(string id,bool closeDay){if(!OneDay||State!=BusinessState.Open||Driver.drowsiness==null||!Driver.drowsiness.Blackout||string.IsNullOrEmpty(id)||!services.Add(id))return false;var next=Driver.Copy();if(Elapsed<Settings.daySeconds&&Elapsed+100>=Settings.daySeconds)next.fatigue=100;next.EmergencySleep();ServiceTime(100);Driver=next;if(closeDay)RequestClose("졸음 운전 위험 · 당일 영업 종료");return true;}
- public bool UseWash(string id){if(Account==null||State!=BusinessState.Open||string.IsNullOrEmpty(id)||services.Contains(id)||!Account.Wash(id,Day))return false;services.Add(id);Care.Wash();if(Driver!=null)Driver.Advance(30);ServiceTime(30);return true;}
+ bool EmergencySleepCore(string id,bool closeDay){if(PvpProfile&&closeDay)return false;if(!OneDay||State!=BusinessState.Open||Driver.drowsiness==null||!Driver.drowsiness.Blackout||string.IsNullOrEmpty(id)||!services.Add(id))return false;var next=Driver.Copy();if(!PvpProfile&&Elapsed<Settings.daySeconds&&Elapsed+100>=Settings.daySeconds)next.fatigue=100;next.EmergencySleep();ServiceTime(100);Driver=next;if(closeDay)RequestClose("졸음 운전 위험 · 당일 영업 종료");return true;}
+ public bool UseWash(string id){if(Account==null||State!=BusinessState.Open||string.IsNullOrEmpty(id)||services.Contains(id)||!Account.Wash(id,Day))return false;services.Add(id);Care.Wash();if(Driver!=null)Driver.Advance(30,false,PvpProfile?PvpConditionRules.FatigueMultiplier:1);ServiceTime(30);return true;}
  public int RepairCost {get{return Care.Damage.RepairCost;}}
  public double RepairSeconds {get{return Care.Damage.RepairSeconds;}}
  public bool UseRepair(string id){
   if(!Operating||Account==null||string.IsNullOrEmpty(id)||services.Contains(id)||Care.Damage.Durability==100)return false;
   double seconds=RepairSeconds;if(!Account.Repair(id,Day,100-Care.Damage.Durability))return false;
-  services.Add(id);Care.Damage.Repair();if(Driver!=null)Driver.Advance(seconds);ServiceTime(seconds);return true;
+  services.Add(id);Care.Damage.Repair();if(Driver!=null)Driver.Advance(seconds,false,PvpProfile?PvpConditionRules.FatigueMultiplier:1);ServiceTime(seconds);return true;
  }
  public bool UseTow(string id,string bayId){
   if(!Operating||Account==null||string.IsNullOrEmpty(id)||string.IsNullOrWhiteSpace(bayId)||services.Contains(id)||!Care.Damage.Disabled||!string.IsNullOrEmpty(Care.Damage.RepairBayId)||!Account.Tow(id,Day))return false;
-  services.Add(id);Care.Damage.EnterRepairBay(bayId);if(Driver!=null)Driver.Advance(30);ServiceTime(30);return true;
+  services.Add(id);Care.Damage.EnterRepairBay(bayId);if(Driver!=null)Driver.Advance(30,false,PvpProfile?PvpConditionRules.FatigueMultiplier:1);ServiceTime(30);return true;
  }
  void ServiceTime(double seconds){double before=Elapsed;Elapsed+=seconds;Metrics.Observe(0,seconds,false,true);BudgetCrossed(before);}
- void BudgetCrossed(double before){if(before<Settings.daySeconds&&Elapsed>=Settings.daySeconds){if(OneDay)Driver.fatigue=100;else RequestClose("시간 종료");}}
+ void BudgetCrossed(double before){if(PvpProfile)return;if(before<Settings.daySeconds&&Elapsed>=Settings.daySeconds){if(OneDay)Driver.fatigue=100;else RequestClose("시간 종료");}}
  public void RequestClose(){RequestClose("조기 퇴근");}
  public void RequestClose(string reason){if(State==BusinessState.Open){State=BusinessState.Closing;EndReason=reason;}}
  public bool Settle(){
@@ -110,7 +132,7 @@ public class EconomyLedger {
  BusinessState Outcome(){if(OneDay)return Day>=Settings.days?BusinessState.Completed:BusinessState.Summary;return (Account==null?TotalNet>=Settings.target:Account.GoalMet)?BusinessState.Won:Day>=Settings.days?BusinessState.Lost:BusinessState.Summary;}
  public bool DepartureAllowed {get{return Account==null||Account.InsuranceValid(Day+1);}}
  public void RefreshSummary(){if(Account==null||Operating||Last==null)return;Last.insurance=Account.Expense(Day,"insurance");Last.food=Account.Expense(Day,"meal");Last.fuel=FuelCost;Last.wash=Account.Expense(Day,"wash");Last.repair=Account.Expense(Day,"repair");Last.tow=Account.Expense(Day,"tow");Last.net=Income-Account.Expense(Day,null);State=Outcome();}
- public bool NextDay(){if(State!=BusinessState.Summary)return false;Day++;Metrics=new OperationMetrics();Care.BeginDay(Day);Income=Rides=FailedTrips=0;Elapsed=Metres=fuel=0;EndReason=null;services.Clear();if(Driver!=null){Driver=new DriverCondition{satiety=Driver.satiety,fatigue=Math.Max(0,Driver.fatigue-nightlyFatigueRecovery)};}State=BusinessState.Open;return true;}
+ public bool NextDay(){if(State!=BusinessState.Summary)return false;PvpProfile=false;PvpMeals=PvpRests=0;Day++;Metrics=new OperationMetrics();Care.BeginDay(Day);Income=Rides=FailedTrips=0;Elapsed=Metres=fuel=0;EndReason=null;services.Clear();if(Driver!=null){Driver=new DriverCondition{satiety=Driver.satiety,fatigue=Math.Max(0,Driver.fatigue-nightlyFatigueRecovery)};}State=BusinessState.Open;return true;}
  public EconomySnapshot Snapshot(){return new EconomySnapshot{metrics=Metrics.Capture(),settings=Settings,records=records.ConvertAll(r=>r.Copy()).ToArray(),currentDay=Day,dayOpen=Operating,care=Care.Snapshot(),hasActive=Operating,active=Operating?new ActiveDaySnapshot{state=State,income=Income,rides=Rides,failedTrips=FailedTrips,elapsed=Elapsed,metres=Metres,fuel=fuel,endReason=EndReason,driver=Driver==null?null:Driver.Copy(),services=new List<string>(services).ToArray()}:null};}
  public static EconomyLedger RestoreCampaign(EconomySnapshot days,AccountSnapshot account){
   var a=CampaignAccount.Restore(account);var result=new EconomyLedger(a.Snapshot().settings);result.Account=a;

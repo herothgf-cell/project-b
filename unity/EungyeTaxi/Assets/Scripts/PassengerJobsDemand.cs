@@ -11,9 +11,11 @@ public partial class PassengerJobs {
  // query. Existing accepted/shared offer objects are never re-ranked or rewritten.
  void SharedDemandEndpoints(int serial,out int pickup,out int drop){
   int stride=stops.Length/2+1;while(Gcd(stride,stops.Length)!=1)stride++;
-  int phase=SimulationDemandClock.Phase(session);double best=double.PositiveInfinity;pickup=0;drop=1;
+  int phase=SimulationDemandClock.Phase(session);double best=double.PositiveInfinity;pickup=-1;drop=-1;
   string seed=WaitingSeed+":shared:"+serial;
-  for(int k=0;k<6;k++){int candidate=serial+k*(stops.Length+1),p=(candidate*stride)%stops.Length;int offset=candidate%2==0?1+(candidate/stops.Length)%Mathf.Max(1,stops.Length/3):Mathf.Max(1,stops.Length/2)+(candidate/stops.Length)%Mathf.Max(1,stops.Length/3);int d=(p+offset)%stops.Length;if(d==p)d=(d+1)%stops.Length;
+  for(int k=0;k<6;k++){int candidate=serial+k*(stops.Length+1),p=session.simulationMatch?PvpPassengerPolicy.Pickup(candidate,stops.Length,session.simulationMatch.Elapsed,PvpSimulationMode.DurationSeconds):(candidate*stride)%stops.Length;
+   if(StopOccupied(p)||session.simulationMatch&&session.simulationMatch.SharedCalls!=null&&!session.simulationMatch.SharedCalls.CanGenerateAt(p))continue;
+   int offset=candidate%2==0?1+(candidate/stops.Length)%Mathf.Max(1,stops.Length/3):Mathf.Max(1,stops.Length/2)+(candidate/stops.Length)%Mathf.Max(1,stops.Length/3);int d=(p+offset)%stops.Length;if(d==p)d=(d+1)%stops.Length;
    double rank=PassengerDemandPolicy.OfferRegionPriority(seed,DemandRegion(p),DemandRegion(d),runtimeStopIds[p]+">"+runtimeStopIds[d],phase);if(rank>=best)continue;best=rank;pickup=p;drop=d;
   }
  }
