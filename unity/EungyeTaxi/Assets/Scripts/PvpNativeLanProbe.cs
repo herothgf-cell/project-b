@@ -8,7 +8,7 @@ using UnityEngine;
 // input messages and authoritative snapshots. Phase files coordinate assertions only.
 public sealed class PvpNativeLanProbe : MonoBehaviour {
  [Serializable] public sealed class Metrics {
-  public string role,map,error;public bool passed;public int slot,checks,failed,driverCount,wheels,score,cash,durability,claim=-1;
+  public string graphics;public int width,height;public PvpNativePerfView[] performance;public string role,map,error;public bool passed;public int slot,checks,failed,driverCount,wheels,score,cash,durability,claim=-1;
   public float elapsed,metres,maxSpeed;public string trip,offer;public List<string> evidence=new List<string>();
  }
  [Serializable] public sealed class Model {public string offer,trip;public int pickup,score,cash,durability,npcs,manner;public float clock;}
@@ -17,7 +17,7 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Attach(){if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeLanCheck")>=0&&!FindObjectOfType<PvpNativeLanProbe>()){var root=new GameObject("Native LAN acceptance probe");DontDestroyOnLoad(root);root.AddComponent<PvpNativeLanProbe>();}}
  void Check(bool value,string text){metrics.checks++;if(!value)metrics.failed++;metrics.evidence.Add((value?"PASS ":"FAIL ")+text);Debug.Log("PVP_NATIVE_PROBE "+metrics.role+" "+(value?"PASS ":"FAIL ")+text);if(!value)throw new InvalidOperationException(text);}
  string FileFor(string phase){return Path.Combine(directory,phase+".json");}
- void Mark(string phase,object value=null){File.WriteAllText(FileFor(phase),value==null?"{}":JsonUtility.ToJson(value,true));}
+ void Mark(string phase,object value=null){string path=FileFor(phase),temp=path+".tmp";File.WriteAllText(temp,value==null?"{}":JsonUtility.ToJson(value,true));File.Move(temp,path);}
  bool Has(string phase){return File.Exists(FileFor(phase));}
  IEnumerator Until(Func<bool> condition,string label,float seconds=90){float limit=Mathf.Min(end,Time.realtimeSinceStartup+seconds);while(!condition()&&Time.realtimeSinceStartup<limit)yield return null;Check(condition(),label);}
  IEnumerator Bootstrap(){
@@ -46,6 +46,8 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   var match=lan.Match;var own=match.Human;metrics.slot=lan.LocalSlot;metrics.map=own.world.map.mapId;metrics.driverCount=match.Drivers.Count;metrics.wheels=own.taxi.wheels.Length;
   Check(metrics.map=="pvp-city-a"&&metrics.driverCount==4&&metrics.wheels==4,"native city and four original physical taxis");
   foreach(var d in match.Drivers)Check(d.business.SimulationSession&&d.business.SavePath==""&&d.taxi.wheels.Length==4,"native sessions retain campaign save isolation");
+  metrics.graphics=SystemInfo.graphicsDeviceType.ToString();metrics.width=Screen.width;metrics.height=Screen.height;
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeRenderCheck")>=0){Check(SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null,"graphics device is active");bool captured=false;StartCoroutine(CaptureFrame(()=>captured=true));yield return Until(()=>captured,"actual rendered frame captured",8);}
   if(host)yield return Host();else yield return Client();
   yield return Cleanup();
  }
@@ -87,7 +89,7 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   lan.ProbeSendCommand(new PvpNativeCommand{action="interact",trip="stale-probe-trip",request=own.requests.request.Id});
   lan.ProbeSendCommand(new PvpNativeCommand{action="situation",value=0,token="stale-situation",trip="stale-probe-trip",request=own.requests.request.Id});
   lan.ProbeSendCommand(new PvpNativeCommand{action="accept",token=accepted,trip=trip,request=own.requests.request.Id});
-  yield return new WaitForSecondsRealtime(1);Check(own.jobs.Active&&own.jobs.current.candidateSeed==accepted&&own.jobs.trip.State==state,"stale trip and duplicate claim commands preserve active contract");Mark("accepted");
+  yield return new WaitForSecondsRealtime(1);Check(own.jobs.Active&&own.jobs.current.candidateSeed==accepted&&own.jobs.trip.State==state,"stale trip and duplicate claim commands preserve active contract");PvpNativePerf.Steady=true;yield return new WaitForSecondsRealtime(10);PvpNativePerf.Steady=false;Mark("accepted");
   yield return Until(()=>Has("host-model"),"host publishes native model");var model=JsonUtility.FromJson<Model>(File.ReadAllText(FileFor("host-model")));
   yield return Until(()=>own.jobs.current!=null&&own.jobs.current.candidateSeed==model.offer&&own.business.ledger.Account.Cash==model.cash&&own.damage.Damage.Durability==model.durability,"economy damage and passenger model replicated",10);
   Check(lan.Match.Score(0)==model.score&&lan.Match.Ledger.Available(model.pickup,0)&&!lan.Match.Ledger.Available(model.pickup,1),"score and exclusive claim mapped into client local seat");
@@ -97,11 +99,12 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   int slot=lan.LocalSlot;lan.ProbeInput=null;lan.LeaveToMenu();yield return Until(()=>Has("takeover"),"host confirms same-car bot takeover",40);
   if(reconnect){yield return Bootstrap();yield return Until(()=>lan.Racing&&lan.Match&&lan.HasOwnFrame,"reconnect world ready",100);Check(lan.LocalSlot==slot,"same-process reconnect retains ticket seat");Mark("reconnected");yield return Until(()=>Has("reconnect-checked"),"host confirms reconnect identity");lan.LeaveToMenu();}
  }
+ IEnumerator CaptureFrame(Action done){yield return new WaitForEndOfFrame();var texture=ScreenCapture.CaptureScreenshotAsTexture();File.WriteAllBytes(Path.Combine(directory,metrics.role+"-render.png"),texture.EncodeToPNG());Destroy(texture);done();}
  IEnumerator Cleanup(){
   if(PvpNativeLan.Instance)PvpNativeLan.Instance.LeaveToMenu();yield return null;yield return null;
   yield return Until(()=>!PvpNativeLan.Instance&&FindObjectsOfType<DriveSession>().Length==0,"native transport and all taxi sessions removed",20);
   var unified=FindObjectOfType<UnifiedModeBootstrap>();Check(!unified||UnifiedModeBootstrap.Selected==UnifiedModeBootstrap.Mode.Menu,"unified mode selection restored");
   if(!host)Mark("client-clean");
  }
- void Finish(){if(completed)return;completed=true;metrics.passed=metrics.failed==0;File.WriteAllText(Path.Combine(directory,metrics.role+"-metrics.json"),JsonUtility.ToJson(metrics,true));Debug.Log("PVP_NATIVE_LAN_"+(metrics.passed?"OK ":"FAIL ")+metrics.role);Application.Quit(metrics.passed?0:1);}
+ void Finish(){if(completed)return;completed=true;metrics.passed=metrics.failed==0;metrics.performance=PvpNativePerf.Capture();File.WriteAllText(Path.Combine(directory,metrics.role+"-metrics.json"),JsonUtility.ToJson(metrics,true));Debug.Log("PVP_NATIVE_LAN_"+(metrics.passed?"OK ":"FAIL ")+metrics.role);Application.Quit(metrics.passed?0:1);}
 }

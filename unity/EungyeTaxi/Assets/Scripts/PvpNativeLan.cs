@@ -94,7 +94,7 @@ public sealed class PvpNativeLan:MonoBehaviour {
    else if(kind=="cmd"){var cmd=Read<PvpNativeCommand>(reader,4096);if(!Racing||!Match||Match.Finished||!seat.ready||cmd.sequence<=seat.lastCommand)return;seat.lastCommand=cmd.sequence;if(Time.realtimeSinceStartup-seat.rateAt>1){seat.rateAt=Time.realtimeSinceStartup;seat.commandCount=0;}if(++seat.commandCount<=40)Execute(seat,cmd);}
   }else if(sender==0){
    if(kind=="room"){var room=Read<PvpNativeRoom>(reader,4096);if(room==null||room.slot<1||room.slot>3||room.seconds<30||room.seconds>7200||room.humans==null||room.humans.Length!=4)throw new ArgumentException("invalid room");LocalSlot=room.slot;Seconds=room.seconds;session=room.session;humans=room.humans;Started=room.started;Racing=room.racing;savedAddress=Address;savedPort=Port;savedTicket=room.ticket;Status=Started?"경기 준비/진행 중":"호스트의 시작을 기다리는 중";if(Started&&!Match)bootstrap.StartSimulation(true,Seconds);}
-   else if(kind=="frame"){var frame=Read<PvpNativeFrame>(reader,1024*1024);if(Match&&frame.recipient==LocalSlot){PvpNativeReplica.Apply(this,frame);lastFrameAt=Time.realtimeSinceStartup;receivedOwn|=frame.full;}}
+   else if(kind=="frame"){long perf=PvpNativePerf.Start();var frame=Read<PvpNativeFrame>(reader,1024*1024);if(Match&&frame.recipient==LocalSlot){PvpNativeReplica.Apply(this,frame);lastFrameAt=Time.realtimeSinceStartup;receivedOwn|=frame.full;}PvpNativePerf.End("receive",perf);}
    else if(kind=="closed"){LastNotice="호스트가 방을 종료했습니다";disconnectPending=true;}
   }
  }catch(Exception e){Debug.LogWarning("PVP_NATIVE_MESSAGE_REJECT "+kind+" "+e.Message);if(!IsHost){LastNotice="동기화 정보가 맞지 않아 연결을 종료합니다";disconnectPending=true;}}}
@@ -119,6 +119,7 @@ public sealed class PvpNativeLan:MonoBehaviour {
   if(stopping)return;if(disconnectPending){disconnectPending=false;LeaveToMenu();return;}
   if(IsHost&&Started&&Match&&!Racing){if(Time.realtimeSinceStartup>worldDeadline){var stale=new List<ulong>();foreach(var pair in peers)if(pair.Value.connected&&!pair.Value.ready)stale.Add(pair.Key);foreach(var id in stale)manager.DisconnectClient(id);worldDeadline=Time.realtimeSinceStartup+120;}bool all=seats[0].ready;foreach(var pair in peers)if(pair.Value.connected)all&=pair.Value.ready;if(all){Racing=true;foreach(var pair in peers)pair.Value.lastAt=Time.realtimeSinceStartup;Status="경기 중";SendRoom();}}
   if(!Match)return;
+  if(Racing)PvpNativePerf.Frame();
   if(!IsHost&&Racing&&Time.realtimeSinceStartup-lastFrameAt>6){LastNotice="호스트 응답이 없어 연결을 종료합니다. 30초 내 같은 방으로 재참가할 수 있습니다.";disconnectPending=true;return;}
   if(IsHost&&Racing){var expired=new List<ulong>();foreach(var pair in peers)if(pair.Value.connected&&pair.Value.ready&&Time.realtimeSinceStartup-pair.Value.lastAt>4)expired.Add(pair.Key);foreach(var id in expired)manager.DisconnectClient(id);}
   if(IsHost){if(Time.unscaledTime>=nextFrame){nextFrame=Time.unscaledTime+.1f;bool full=Time.unscaledTime>=nextFull;if(full)nextFull=Time.unscaledTime+.5f;foreach(var pair in peers)if(pair.Value.connected&&pair.Value.ready)Send("frame",pair.Key,PvpNativeReplica.Capture(this,pair.Value.slot,full));}}

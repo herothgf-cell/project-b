@@ -3,7 +3,7 @@ using UnityEngine;
 public static class PvpNativeLanTests {
  static int checks;static void Check(bool value,string name){checks++;if(!value)throw new Exception("Native LAN contract: "+name);}
  public static void Run(){
-  PvpPassengerParityTests.Run();checks=0;
+  PvpNativePoseTests.Run();PvpPassengerParityTests.Run();checks=0;
   var ledger=new EconomyLedger(PrototypeSettings.ForOneDay());Check(ledger.EnablePvpProfile(),"host PVP profile");
   var full=new PvpNativeFrame{full=true,own=new PvpNativeOwn{economy=ledger.Snapshot(),account=ledger.Account.Snapshot(),pvpMeals=2,pvpRests=1}};
   var restored=JsonUtility.FromJson<PvpNativeFrame>(JsonUtility.ToJson(full));

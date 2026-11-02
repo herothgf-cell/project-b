@@ -53,19 +53,13 @@ using UnityEngine;
 
 public static class PvpNativeReplica {
     sealed class Pose {
-        public Vector3 from,to;
-        public Quaternion fromRotation,toRotation;
-        public bool ready;
-        public void Target(Transform current,Vector3 position,Quaternion rotation,bool snap){
-            from=current.position;fromRotation=current.rotation;to=position;toRotation=rotation;
-            if(snap||!ready||Vector3.Distance(from,to)>30){from=to;fromRotation=toRotation;current.SetPositionAndRotation(to,toRotation);}
-            ready=true;
-        }
-        public void Draw(Transform target,float t){if(ready)target.SetPositionAndRotation(Vector3.Lerp(from,to,t),Quaternion.Slerp(fromRotation,toRotation,t));}
+        readonly PvpNativePoseTimeline timeline=new PvpNativePoseTimeline();
+        public void Target(Transform current,Vector3 position,Quaternion rotation,double time,bool snap){timeline.Push(time,position,rotation,snap);if(snap)current.SetPositionAndRotation(position,rotation);}
+        public void Draw(Transform target,double time){Vector3 p;Quaternion q;if(timeline.Sample(time,out p,out q))target.SetPositionAndRotation(p,q);}
     }
     sealed class View {
         public bool bound;
-        public float received,clock;
+        public double received,serverTime,renderTime,lastDraw;public float clock;
         public readonly Pose[] taxis={new Pose(),new Pose(),new Pose(),new Pose()};
         public Pose[] npcs=new Pose[0];
         public PvpNativeNpc[] latestNpcs;
@@ -138,7 +132,7 @@ public static class PvpNativeReplica {
             taxi.autoThrottle=0;taxi.autoSteer=0;taxi.autoBrake=true;
             foreach(var wheel in taxi.wheels){wheel.motorTorque=0;wheel.brakeTorque=0;wheel.enabled=false;}
             taxi.body.velocity=Vector3.zero;taxi.body.angularVelocity=Vector3.zero;
-            taxi.body.isKinematic=true;taxi.body.detectCollisions=false;
+            taxi.body.isKinematic=true;taxi.body.interpolation=RigidbodyInterpolation.None;taxi.body.detectCollisions=false;
             var pilot=driver.GetComponent<PvpSimulationBot>();if(pilot)pilot.enabled=false;
             driver.assisted.enabled=false;
             var list=new System.Collections.Generic.List<Transform>();
@@ -178,7 +172,7 @@ public static class PvpNativeReplica {
                 if(actor==null||actor.slot<0||actor.slot>=4)throw new ArgumentException("Invalid native actor slot");
                 int local=lan.ServerToLocal(actor.slot);var driver=match.Drivers[local];var taxi=driver.taxi;
                 conditions[local]=actor.conditionKind;remaining[local]=actor.conditionRemaining;
-                view.taxis[local].Target(taxi.transform,actor.position,actor.rotation,first||frame.finished);
+                view.taxis[local].Target(taxi.transform,actor.position,actor.rotation,frame.elapsed,first||frame.finished);
                 taxi.ReplicaVelocity=actor.velocity;taxi.ReplicaSteering=actor.steering;
                 // Read-only UI and navigation use Rigidbody velocity even on the kinematic view.
                 // Kinematic view velocity is exposed through TaxiController.ObservedVelocity.
@@ -204,7 +198,7 @@ public static class PvpNativeReplica {
                 foreach(var npc in frame.npcs){
                     if(npc==null||npc.index<0||npc.index>=view.npcs.Length)throw new ArgumentException("Invalid native NPC index");
                     var car=match.Human.traffic.cars[npc.index];
-                    view.npcs[npc.index].Target(car.transform,npc.position,npc.rotation,first||!npc.visible);
+                    view.npcs[npc.index].Target(car.transform,npc.position,npc.rotation,frame.elapsed,first||!npc.visible);
                     car.ApplyNetworkView(car.transform.position,car.transform.rotation,npc.speed,npc.visible,npc.turn,npc.brake,frame.trafficClock);
                 }
             }
@@ -212,27 +206,29 @@ public static class PvpNativeReplica {
                 match.Human.ambientPedestrians.Restore(frame.ambientPedestrians);
                 match.Human.ambientPedestrians.ReconcileVisibility();
             }
-            view.clock=frame.trafficClock;view.received=Time.unscaledTime;
+            view.clock=frame.trafficClock;view.serverTime=frame.elapsed;view.received=Time.realtimeSinceStartupAsDouble;if(first){view.renderTime=frame.elapsed-.1;view.lastDraw=view.received;}
             match.Human.traffic.manualTime=frame.trafficClock;
         }finally{PvpNativeLan.ApplyingReplica=wasApplying;}
     }
 
     static void ApplyOwn(PvpNativeLan lan,PvpNativeOwn own){
+        long perf=PvpNativePerf.Start();
         if(own.economy==null||own.account==null||own.jobs==null)throw new ArgumentException("Missing native owner model");
         var driver=lan.Match.Human;
-        driver.business.ledger=EconomyLedger.RestoreCampaign(own.economy,own.account);
+        long stage=PvpNativePerf.Start();driver.business.ledger=EconomyLedger.RestoreCampaign(own.economy,own.account);
         driver.business.ledger.Settings.daySeconds=own.economy.settings.daySeconds;
         driver.business.ledger.EnablePvpProfile();
         driver.business.ledger.ApplyNetworkPvpCounters(own.pvpMeals,own.pvpRests);
-        driver.law.tripId=own.tripId??"";
+        PvpNativePerf.End("economy",stage);stage=PvpNativePerf.Start();driver.law.tripId=own.tripId??"";
         var law=new LawLedger();if(own.lawEvents!=null)foreach(var entry in own.lawEvents)law.Record(entry);
         driver.law.ledger=law;
         if(own.manners!=null)driver.manners.RestoreLive(own.manners);
         own.jobs.hasServiceZones=false;own.jobs.serviceZones=null;own.jobs.hasChoice=false;own.jobs.choice=null;
-        driver.jobs.RestoreLive(own.jobs);
-        if(own.hasDestination&&(!driver.jobs.nav.HasDestination||(driver.jobs.nav.destination-own.destination).sqrMagnitude>.01f))driver.jobs.nav.SetDestination(own.destination);
-        driver.business.passengers.Clear();if(own.passengers!=null)driver.business.passengers.AddRange(own.passengers);
+        PvpNativePerf.End("law",stage);stage=PvpNativePerf.Start();driver.jobs.RestoreNetworkView(own.jobs,own.hasDestination,own.destination);
+        PvpNativePerf.End("jobs",stage);stage=PvpNativePerf.Start();if(own.hasDestination&&(!driver.jobs.nav.HasDestination||(driver.jobs.nav.destination-own.destination).sqrMagnitude>.01f))driver.jobs.nav.SetDestination(own.destination);
+        PvpNativePerf.End("destination",stage);driver.business.passengers.Clear();if(own.passengers!=null)driver.business.passengers.AddRange(own.passengers);
         driver.services.ApplyNetworkView(own.serviceOpen,own.servicePending,own.serviceNotice,own.serviceDestination,own.serviceMeal,own.serviceFuel);
+        PvpNativePerf.End("own",perf);
         driver.services.ApplyNetworkQueue(own.serviceQueueStatus,own.serviceQueueWaiting);
         driver.services.ApplyNetworkFacilities(own.serviceFacilities);
     }
@@ -240,15 +236,11 @@ public static class PvpNativeReplica {
     public static void Tick(PvpNativeLan lan){
         if(lan==null||lan.IsHost||!lan.InMatch||lan.Match==null)return;
         var view=State(lan);if(!view.bound||view.received<=0)return;
-        float age=Mathf.Max(0,Time.unscaledTime-view.received),blend=Mathf.Clamp01(age/.1f);
+        double now=Time.realtimeSinceStartupAsDouble,age=System.Math.Max(0,now-view.received),desired=view.serverTime+System.Math.Min(.2,age)-.1;double dt=System.Math.Max(0,now-view.lastDraw);view.lastDraw=now;if(System.Math.Abs(desired-view.renderTime)>1)view.renderTime=desired;else view.renderTime+=dt*System.Math.Max(.9,System.Math.Min(1.1,1+(desired-view.renderTime)*2));double playback=lan.Match.Finished?view.serverTime:view.renderTime;
         var match=lan.Match;
-        for(int i=0;i<match.Drivers.Count;i++)view.taxis[i].Draw(match.Drivers[i].taxi.transform,blend);
-        for(int i=0;i<view.npcs.Length;i++)view.npcs[i].Draw(match.Human.traffic.cars[i].transform,blend);
-        if(view.latestNpcs!=null)foreach(var npc in view.latestNpcs){
-            var car=match.Human.traffic.cars[npc.index];
-            car.ApplyNetworkView(car.transform.position,car.transform.rotation,npc.speed,npc.visible,npc.turn,npc.brake,view.clock+Mathf.Min(.25f,age));
-        }
+        for(int i=0;i<match.Drivers.Count;i++)view.taxis[i].Draw(match.Drivers[i].taxi.transform,playback);
+        for(int i=0;i<view.npcs.Length;i++)view.npcs[i].Draw(match.Human.traffic.cars[i].transform,playback);
         // Cap extrapolated signal time if the connection stops delivering snapshots.
-        match.Human.traffic.manualTime=view.clock+(match.Finished?0:Mathf.Min(.25f,age));
+        match.Human.traffic.manualTime=view.clock+(match.Finished?0:(float)System.Math.Min(.25,age));
     }
 }
