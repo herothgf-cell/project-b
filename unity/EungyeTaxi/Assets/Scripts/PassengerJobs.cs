@@ -276,7 +276,7 @@ System.Collections.Generic.Dictionary<JobOffer,float> fuelCache=new System.Colle
  public void AdvanceBehavior(float seconds){
   if(Behavior==null||!Active||session.paused||Time.timeScale==0)return;
   bool safe=session.requests&&session.requests.SafeToRespond()&&(trip.State!=TripState.ToPickup||At(current.pickup));
-  bool changed=Behavior.Advance(seconds,safe,session.taxi.body.velocity.magnitude>.1f,trip.State==TripState.OnTrip?Mathf.Clamp01(1-nav.remaining/Mathf.Max(1,boardingDistance)):0,session.manners.ledger.Score,false,SituationPending||Behavior.HasChoice||Behavior.FollowupPending||session.requests&&session.requests.HasPendingChoice);
+  bool changed=Behavior.Advance(seconds,safe,session.taxi.body.velocity.magnitude>.1f,trip.State==TripState.OnTrip?Mathf.Clamp01(1-nav.remaining/Mathf.Max(1,boardingDistance)):0,session.manners.ledger.Score,false,SituationPending||BehaviorChoicesOpen||Behavior.FollowupPending||session.requests&&session.requests.HasPendingChoice);
   if(Behavior.FollowupPending&&session.requests.ScheduledChoiceCount+(Situation==null?0:Situation.Reactions)>=2){Behavior.SuppressFollowup();changed=true;}
   ApplyBehaviorDirt();if(BehaviorAsleep&&session.requests)session.requests.SuspendUnansweredForSleep();
   if(changed){var behaviorUI=GetComponent<PassengerBehaviorUI>();if(behaviorUI)behaviorUI.NotifyStateChanged();session.business.SaveCheckpoint();}
