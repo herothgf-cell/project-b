@@ -1,0 +1,29 @@
+using System;
+using System.Collections;
+using System.IO;
+using UnityEngine;
+// Explicit placement/type/request fixtures verify native APIs, not physical transport receipts.
+public sealed class PvpPassengerProbe:MonoBehaviour {
+ PvpSimulationMatch match;DriveSession human;bool ok=true,done;float deadline;string output;
+ [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]static void Boot(){if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpPassengerCheck")<0)return;var o=new GameObject("PVP passenger acceptance");DontDestroyOnLoad(o);o.AddComponent<PvpPassengerProbe>();}
+ void Check(bool v,string why){ok&=v;Debug.Log("PVP_PASSENGER "+(v?"PASS ":"FAIL ")+why);}
+ void Update(){if(!done&&deadline>0&&Time.realtimeSinceStartup>deadline){Debug.LogError("PVP_PASSENGER timeout");done=true;Application.Quit(2);}}
+ IEnumerator Start(){deadline=Time.realtimeSinceStartup+360;var args=Environment.GetCommandLineArgs();int i=Array.IndexOf(args,"-pvpPassengerOutput");output=i>=0&&i+1<args.Length?args[i+1]:"artifacts";Directory.CreateDirectory(output);yield return Run();}
+ IEnumerator Wait(float seconds){float until=match.Elapsed+seconds;while(match.Elapsed<until&&!match.Finished)yield return null;}
+ static float Traffic(DriveSession s){float total=0;foreach(var car in s.traffic.cars)total+=car.totalTravel;return total;}
+ IEnumerator Board(PassengerType type){human.jobs.ClearForDay();human.jobs.ForcedPassengerType=type;human.business.ledger.Driver.fatigue=10;human.business.ledger.Driver.drowsiness.Recover();human.business.ledger.Care.Wash();JobOffer selected=null;foreach(var o in match.SharedCalls.Roadside)if(o!=null){selected=o;break;}if(selected==null)throw new Exception("no roadside fixture candidate");var stop=human.jobs.stops[selected.pickup];human.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));human.taxi.ResetTaxi();human.taxi.automated=true;human.taxi.autoBrake=true;human.taxi.autoThrottle=0;human.assisted.SetActive(false);yield return Wait(3);Check(human.jobs.HasWaitingPassenger(selected.pickup),"visible independent roadside passenger");Check(human.jobs.Interact(),"native stopped F-equivalent roadside pickup type="+type);Check(!match.SharedCalls.Contains(selected)&&!match.Bot.jobs.AcceptRoadside(selected.pickup),"no remote or duplicate roadside claim");}
+ IEnumerator Run(){
+  Pvp.PvpBootstrap bootstrap;while(!(bootstrap=FindObjectOfType<Pvp.PvpBootstrap>()))yield return null;bootstrap.StartSimulation(true,7200);while(!(match=FindObjectOfType<PvpSimulationMatch>())||!match.Human||!match.Human.StartupReady)yield return null;
+  human=match.Human;Time.timeScale=3;match.PassengerWorld.enabled=false;
+  foreach(var d in match.Drivers){var pilot=d.GetComponent<PvpSimulationBot>();if(pilot)pilot.enabled=false;d.assisted.SetActive(false);d.taxi.autoThrottle=0;d.taxi.autoBrake=true;d.jobs.ClearForDay();}
+  int calls=0,roadside=0;foreach(var o in match.SharedCalls.Offers)if(o!=null)calls++;foreach(var o in match.SharedCalls.Roadside)if(o!=null)roadside++;Check(calls==8&&roadside==3,"eight shared calls plus three separate roadside passengers");
+  yield return Board(PassengerType.General);var replies=human.gameObject.AddComponent<PvpBotPassengerResponses>();
+  foreach(RequestKind kind in Enum.GetValues(typeof(RequestKind))){human.requests.BeginKind(kind);yield return Wait(2.2f);float until=match.Elapsed+8;while(human.requests.HasPendingChoice&&match.Elapsed<until){replies.Tick(human);yield return null;}Check(!human.requests.HasPendingChoice,"native bot request response resolved "+kind);}
+  Check(replies.Accepted>=12,"bot accepts useful native requests rather than blanket deferral");
+  yield return Board(PassengerType.Food);human.requests.BeginKind(RequestKind.Quiet);float foodUntil=match.Elapsed+15;while(human.jobs.Behavior.Choice<0&&match.Elapsed<foodUntil){replies.Tick(human);yield return null;}Check(human.jobs.Behavior.Choice==1&&human.jobs.Behavior.SatisfactionDelta==5,"clean taxi permits food through native response with real satisfaction effect");
+  yield return Board(PassengerType.Luggage);float luggageUntil=match.Elapsed+25;while(human.jobs.trip.State!=TripState.OnTrip&&match.Elapsed<luggageUntil){replies.Tick(human);yield return null;}Check(human.jobs.trip.State==TripState.OnTrip&&human.jobs.Behavior.Choice==0&&human.jobs.Behavior.PreparationRemaining<=0,"native luggage work completes before boarding");
+  bool began=false;for(int n=0;n<human.jobs.stops.Length;n++){human.jobs.current.drop=n;if(match.PassengerWorld.TryBegin(n)){began=true;break;}}
+  Check(began,"shared obstruction starts only at hidden clear authored bay");if(began){int blocked=match.PassengerWorld.BlockedStop;foreach(var d in match.Drivers)Check(d.jobs.StopOccupied(blocked),"same obstruction observed driver="+d.SimulationDriver);int protectedCount=match.PassengerWorld.ProtectedCount;float remaining=human.jobs.trip.Remaining,npcs=Traffic(human),start=match.Elapsed;match.PassengerWorld.enabled=true;yield return Wait(5);Check(match.PassengerWorld.IsOccupied(blocked)&&match.PassengerWorld.ProtectedCount==protectedCount&&human.jobs.trip.Remaining<remaining,"30second obstruction and no repeated deadline gift");float until=match.Elapsed+70;while(match.PassengerWorld.IsOccupied(blocked)&&match.Elapsed<until)yield return null;Check(!match.PassengerWorld.IsOccupied(blocked)&&match.Elapsed-start>=29,"shared physical departure clears after real wait");Check(human.traffic.cars.Count==72&&Traffic(human)>npcs+100,"native72 NPC continue during obstruction and responses");}
+  match.Finish();File.WriteAllText(Path.Combine(output,"pvp-passenger-result.txt"),"success="+ok+" acceptance=nativeAPI with explicit site/type/request fixtures; no transport proof");done=true;Debug.Log(ok?"PVP_PASSENGER_PLAYER_OK":"PVP_PASSENGER_PLAYER_FAIL");Time.timeScale=1;Application.Quit(ok?0:1);
+ }
+}

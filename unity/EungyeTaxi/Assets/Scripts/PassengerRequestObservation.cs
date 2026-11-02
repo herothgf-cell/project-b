@@ -28,6 +28,7 @@ public class PassengerRequestObservation : MonoBehaviour {
  public bool RespondEta(int option){if(request.Kind!=RequestKind.Eta||request.Resolved||!SafeToRespond()||session.jobs.nav.path.Count<2)return false;float eta=session.jobs.nav.estimatedSeconds;float predicted=PassengerRequest.EtaSeconds(eta,option);if(float.IsNaN(predicted))return false;etaNav=eta;etaPredicted=predicted;etaAt=Time.time;etaSelected=true;request.Accept("내비 예상 "+EtaChoice(eta)+" / 안내 예상 "+EtaChoice(predicted)+" 뒤 도착 · 교통에 따라 달라질 수 있는 예상");resultUntil=Time.time+8;return true;}
  public bool SafeToRespond(){return session.requests.SafeToRespond();}
  bool ChangesRoute {get{return request.Kind==RequestKind.SafeStop||request.Kind==RequestKind.DestinationChange||request.Kind==RequestKind.ViaStop;}}
+ public float ProposalExtraSeconds {get{return Mathf.Max(0,addedDistance)/4;}}
  public bool PrepareProposal(){if(!ChangesRoute)return true;var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.Live&&zones.Live.Active)return false;
   if(Time.time<proposalUntil&&Vector3.Distance(proposalPosition,session.taxi.transform.position)<.25f)return proposal>=0;proposalUntil=Time.time+1;proposalPosition=session.taxi.transform.position;
   float best=float.MaxValue;proposal=-1;var jobs=session.jobs;
@@ -54,7 +55,7 @@ public class PassengerRequestObservation : MonoBehaviour {
    case RequestKind.Interview:response="응원합니다. 편하게 준비하실 수 있게 운행할게요";break;
    case RequestKind.Music:response="음악을 바꿔 달라는 말씀이시죠? (프로토에서는 대화만 제공)";break;
    case RequestKind.FareHelp:response=session.jobs.FareAgreementText(session.jobs.current.fare)+" · 승객 만족도 요구 미달 시 만족도/요구치 비율 지급 · 늦은 도착0원";break;
-   case RequestKind.LocalChat:response="은계 주변을 다니고 있어요. 안전하게 모셔다드릴게요.";break;
+   case RequestKind.LocalChat:response=session.simulationMatch?"이 도시 주변을 다니고 있어요. 안전하게 모셔다드릴게요.":"은계 주변을 다니고 있어요. 안전하게 모셔다드릴게요.";break;
    case RequestKind.LostItem:response="하차 후 분실물을 발견하면 보관·신고 절차를 안내하겠습니다. (텍스트 사건)";break;
    default:response="죄송하지만 신호는 지켜야 해요. 안전하게 모셔다드릴게요.";break;
   }

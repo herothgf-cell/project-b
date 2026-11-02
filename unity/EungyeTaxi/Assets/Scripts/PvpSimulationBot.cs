@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 // Commands pedals on the same WheelCollider taxi as the human. Never advances
 // fares by time, relocates a vehicle to a destination or removes shared traffic.
@@ -13,6 +13,7 @@ public sealed class PvpSimulationBot : MonoBehaviour {
     public string ObstacleReason {get;private set;}
     Collider sensedCollider;
     RaycastHit[] obstacleHits=new RaycastHit[32];
+    readonly TrafficOverlapQuery routeObstacles=new TrafficOverlapQuery();
     public string MotionDiagnostics {
         get {
             var s=Session;var t=s.taxi;string obstacles="";
@@ -25,7 +26,7 @@ public sealed class PvpSimulationBot : MonoBehaviour {
             }
             if(StationarySeconds>10)foreach(var collider in Physics.OverlapSphere(t.transform.position+Vector3.up*.5f,3.5f,(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore))if(!collider.transform.IsChildOf(t.transform))obstacles+=collider.name+"/";
             int grounded=0;foreach(var wheel in t.wheels)if(wheel.isGrounded)grounded++;
-            return "stationary="+StationarySeconds.ToString("0")+" speed="+t.Speed.ToString("0.00")+" target="+TargetSpeed+" obstacle="+ObstacleReason+" throttle="+t.autoThrottle+" brake="+t.autoBrake+" serviceBrake="+t.autoServiceBrake+" torque="+t.wheels[2].motorTorque+" grounded="+grounded+" assistance="+s.assisted.Status+" merge="+s.traffic.MergeDiagnostics(s)+" lock="+s.simulationMatch.ServiceRemaining(s)+" fatigue="+s.business.ledger.Driver.fatigue+" controlLost="+s.business.DrowsyControlsLost+zoneState+" nearby="+obstacles+npc;
+            return "serviceDecisions="+(services?services.DecisionCount:0)+" roadsideGoal="+roadsideGoal+" stationary="+StationarySeconds.ToString("0")+" speed="+t.Speed.ToString("0.00")+" target="+TargetSpeed+" obstacle="+ObstacleReason+" throttle="+t.autoThrottle+" brake="+t.autoBrake+" serviceBrake="+t.autoServiceBrake+" torque="+t.wheels[2].motorTorque+" grounded="+grounded+" assistance="+s.assisted.Status+" merge="+s.traffic.MergeDiagnostics(s)+" lock="+s.simulationMatch.ServiceRemaining(s)+" fatigue="+s.business.ledger.Driver.fatigue+" controlLost="+s.business.DrowsyControlsLost+zoneState+" nearby="+obstacles+npc;
         }
     }
     static string TrafficChain(TrafficCar car){var seen=new System.Collections.Generic.HashSet<TrafficCar>();string value="";for(int i=0;i<8&&car;i++){if(!seen.Add(car)){value+="cycle:"+car.name;break;}value+="["+car.name+" pos="+car.transform.position+" speed="+car.speed+" signal="+car.waitingForSignal+" junction="+car.waitingForJunction+" blocked="+car.blockedName+(car.waitingForSignal||car.waitingForJunction?TrafficSignalDiagnostics(car):"")+"]";car=car.obstacleCar;}return value;}
@@ -92,9 +93,9 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         for(int i=0;i<8&&next;i++){if(!seen.Add(next)){value+="cycle:"+next.name;break;}value+="["+TrafficCarMotion(next)+"]";next=next.obstacleCar;}
         return value+"}";
     }
-    float nextOffer,routeLostSeconds;
+    float nextOffer,routeLostSeconds;int roadsideGoal=-1;
     public int RouteRecoveries {get;private set;}
-    PvpSimulationBotServices services;
+    PvpSimulationBotServices services;PvpBotPassengerResponses passengerResponses;
     AssistedRoadNetwork.Path curbPath;
     float curbProgress;
     int curbGoal=-1;
@@ -109,6 +110,16 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         if(stop.CanStop(position,direction,0))return 0;
         return PassengerJobs.DirectedDistance(graph,position,direction,stop);
     }
+    // Match the complete pickup-plus-transport estimate used for offer selection.
+    // Keep unsafe estimates here: the service planner must know why rest is needed.
+    public static double UpcomingTripSeconds(DriveSession s){
+        double best=double.PositiveInfinity;var jobs=s.jobs;
+        for(int i=0;i<jobs.offers.Length;i++){
+            var offer=jobs.offers[i];if(offer==null||jobs.AcceptanceRejection(i)!="")continue;
+            float pickup=PickupDistance(jobs.nav.hd,s.taxi.transform.position,s.taxi.transform.forward,jobs.stops[offer.pickup]);
+            best=System.Math.Min(best,PvpPassengerPolicy.OfferSeconds(pickup,offer));
+        }return double.IsInfinity(best)?0:best;
+    }
     public static float ThrottleFor(float speed,float target){return target>.15f&&speed<target-.05f?.5f:0;}
     public bool RefreshTerminalCalls(){var jobs=Session.jobs;if(jobs.Active||Session.RideResultOpen)return false;bool terminal=jobs.trip.State==TripState.Complete||jobs.trip.State==TripState.Failed;jobs.PrepareForNextCall();if(terminal)jobs.Generate();return terminal;}
     void Stop(string reason) {Session.taxi.autoThrottle=0;Session.taxi.autoBrake=true;Status=reason;}
@@ -117,15 +128,17 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         var s=Session;if(!s||!s.simulationMatch||s.simulationMatch.Finished||Time.timeScale<=0)return;
         var taxi=s.taxi;var jobs=s.jobs;
         StationarySeconds=taxi.body.velocity.magnitude<.15f?StationarySeconds+Time.fixedDeltaTime:0;
-        if(s.requests.SafeToRespond()){if(s.requests.HasPendingChoice)s.requests.Respond(false);if(jobs.BehaviorChoicesOpen)jobs.RespondBehavior(0);}
         MetresDriven+=taxi.body.velocity.magnitude*Time.fixedDeltaTime;
         if(s.simulationMatch.ServiceLocked(s)){Stop("서비스 진행 중");return;}
         if(s.business.ledger.Driver.drowsiness.Blackout){Stop("졸음 긴급 휴식");s.business.RequestEmergencyHome();return;}
         if(s.damage.Disabled){Stop("차량 고장 · 견인/수리");if(taxi.body.velocity.magnitude<.56f){jobs.ResolveVehicleFailure();if(!jobs.Active){if(s.damage.AtRepairBay)s.damage.Repair();else s.damage.Tow();}}return;}
+        if(!passengerResponses)passengerResponses=gameObject.AddComponent<PvpBotPassengerResponses>();
+        if(passengerResponses.Tick(s)){Stop("승객 응대 · 안전 정차/작업");return;}
         RefreshTerminalCalls();
         if(!services)services=gameObject.AddComponent<PvpSimulationBotServices>();
-        if(services.Tick(s)){Status=services.Status;return;}
+        if(services.Tick(s)){roadsideGoal=-1;curbPath=null;Status=services.Status;return;}
         taxi.autoServiceBrake=0;
+        if(!jobs.Active&&roadsideGoal>=0){var waiting=s.simulationMatch.SharedCalls.RoadsideAt(roadsideGoal);if(waiting!=null&&jobs.AcceptanceRejection(waiting)==""){DriveTo(roadsideGoal,true);return;}roadsideGoal=-1;curbPath=null;jobs.nav.Clear();s.assisted.SetActive(false);}
         if(!jobs.Active) {
             curbPath=null;
             Stop("호출 선택 중");if(Time.time<nextOffer)return;nextOffer=Time.time+2;
@@ -139,17 +152,23 @@ public sealed class PvpSimulationBot : MonoBehaviour {
                 var stop=jobs.stops[offer.pickup];int edge=selectionEdge;
                 float pickupDistance=PickupDistance(jobs.nav.hd,taxi.transform.position,taxi.transform.forward,stop);
                 SelectionDiagnostics+="["+i+":"+offer.pickup+">"+offer.drop+" edge="+edge+" goal="+stop.laneEdge+" route="+pickupDistance.ToString("0")+"]";
-                if(pickupDistance<distance){distance=pickupDistance;best=i;}
+                float rank=(float)PvpPassengerPolicy.OfferRank(pickupDistance,offer,s.business.ledger.Driver,s.simulationMatch.Remaining);if(rank<distance){distance=rank;best=i;}
             }
+            int roadside=-1;var board=s.simulationMatch.SharedCalls;
+            if(board!=null)foreach(var offer in board.Roadside){if(offer==null||jobs.AcceptanceRejection(offer)!="")continue;float d=PickupDistance(jobs.nav.hd,taxi.transform.position,taxi.transform.forward,jobs.stops[offer.pickup]);float rank=(float)PvpPassengerPolicy.OfferRank(d,offer,s.business.ledger.Driver,s.simulationMatch.Remaining);if(PvpPassengerPolicy.PursueRoadside(d)&&rank<distance){distance=rank;roadside=offer.pickup;}}
+            if(roadside>=0){roadsideGoal=roadside;jobs.nav.SetDestination(jobs.stops[roadside]);Status="길가 승객 접근 · 도착 전 선점 없음";return;}
             if(best>=0&&jobs.Accept(best)){s.assisted.SetActive(true);Status="승객 픽업 주행";}else jobs.Generate();
             return;
         }
-        int goal=jobs.trip.State==TripState.ToPickup?jobs.current.pickup:jobs.PassengerViaPending?jobs.PassengerViaStop:jobs.current.drop;
+        DriveTo(jobs.trip.State==TripState.ToPickup?jobs.current.pickup:jobs.PassengerViaPending?jobs.PassengerViaStop:jobs.current.drop,false);
+    }
+    void DriveTo(int goal,bool roadside){
+        var s=Session;var taxi=s.taxi;var jobs=s.jobs;
         if(curbPath!=null&&(curbGoal!=goal||curbState!=jobs.trip.State))curbPath=null;
         if(jobs.At(goal)) {
             curbPath=null;
             Stop("안전 정차 · 승하차");s.assisted.SetActive(false);
-            jobs.Interact();
+            if(roadside){if(jobs.AcceptRoadside(goal)){roadsideGoal=-1;jobs.Interact();}else{roadsideGoal=-1;jobs.nav.Clear();}}else jobs.Interact();
             if(jobs.Active&&jobs.trip.State==TripState.OnTrip&&!jobs.trip.ArrivalLocked)s.assisted.SetActive(true);
             return;
         }
@@ -160,6 +179,7 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         if(curbPath!=null){FollowCurb();return;}
         if(routePath==null){
             Stop("연결 경로 확인 중");nav.Refresh();routeLostSeconds+=Time.fixedDeltaTime;
+            if(roadside&&routeLostSeconds>20){roadsideGoal=-1;curbPath=null;nav.Clear();return;}
             if(routeLostSeconds>20&&jobs.CancelUnboardedCall("픽업 연결 불가 · 공용 호출 다시 선택")){routeLostSeconds=0;RouteRecoveries++;}
             return;
         }
@@ -187,7 +207,7 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         target=Mathf.Min(target,Mathf.Sqrt(Mathf.Max(0,barrier-3)*2.5f));
         TargetSpeed=target;taxi.autoThrottle=ThrottleFor(taxi.Speed,target);
         taxi.autoBrake=target<.15f||taxi.Speed>target+.25f;
-        Status=target<.15f?"신호·교통 대기":jobs.trip.State==TripState.ToPickup?"승객 픽업 주행":"승객 운송 중";
+        Status=target<.15f?"신호·교통 대기":roadside?"길가 승객 접근 · 도착 후 선점":jobs.trip.State==TripState.ToPickup?"승객 픽업 주행":"승객 운송 중";
     }
     void BeginCurb(Vector3 end,Vector3 direction,int goal,bool departure){
         var taxi=Session.taxi;var start=taxi.transform.position;start.y=end.y;
@@ -224,17 +244,61 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         Status=curbDeparture?"연석 출발 · 차로 합류":"연석 접근 · 실제 승하차 정차";
         if(curbDeparture&&remain<1.2f&&taxi.body.velocity.magnitude<.56f){curbPath=null;taxi.autoServiceBrake=0;s.jobs.nav.Refresh();s.assisted.SetActive(true);}
     }
+    bool CurvedObstacleDistance(bool signals,out float distance,out Collider blocker){
+        distance=100;blocker=null;
+        // Facility access uses a separate manoeuvre; canceled jobs can retain an
+        // old kerb path until service handling completes. Keep its forward guard.
+        if(!signals)return false;
+        var taxi=Session.taxi;var shape=taxi.GetComponent<BoxCollider>();
+        var nav=Session.jobs==null?null:Session.jobs.nav;
+        var path=curbPath??(signals&&nav!=null&&nav.hdRoute!=null?nav.hdRoute.path:null);
+        if(path==null||shape==null)return false;
+        float error;float progress=curbPath!=null?curbProgress:nav.ProjectVehicle(out error);
+        var origin=path.Position(progress);var offset=taxi.transform.position-origin;
+        var heading=path.Tangent(progress);
+        // A lost route / badly aligned rejoin still needs the immediate physical
+        // forward sensor. Never sweep a remote navigation path as if we were on it.
+        var horizontal=offset;horizontal.y=0;
+        if(horizontal.sqrMagnitude>4||Vector3.Dot(heading,taxi.transform.forward)<.85f)return false;
+        float horizon=Mathf.Min(35,path.length-progress);
+        if(horizon<3)return false; // No reliable future path beyond the endpoint.
+        var bounds=new Bounds(taxi.transform.position+Vector3.up*.42f,Vector3.zero);
+        for(float ahead=0;ahead<=horizon+.5f;ahead+=.5f){float step=Mathf.Min(ahead,horizon);bounds.Encapsulate(path.Position(progress+step)+offset+Vector3.up*.42f);}
+        bounds.Expand(new Vector3(6,3,6));
+        int count=routeObstacles.Box(bounds.center,bounds.extents,Quaternion.identity,(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore);
+        // Broad-query once, then sweep the real taxi body along the same path
+        // used by steering. A tangent ray can stop forever beside a curved turn.
+        for(float ahead=0;ahead<=horizon+.5f;ahead+=.5f){
+            float step=Mathf.Min(ahead,horizon);var pose=path.Position(progress+step)+offset;
+            var rotation=Quaternion.LookRotation(path.Tangent(progress+step));
+            if(step<.01f){pose=taxi.transform.position;rotation=taxi.transform.rotation;}
+            for(int i=0;i<count;i++){
+                var hit=routeObstacles.hits[i];if(hit.transform.IsChildOf(taxi.transform))continue;
+                Vector3 normal;float penetration;
+                if(!Physics.ComputePenetration(shape,pose,rotation,hit,hit.transform.position,hit.transform.rotation,out normal,out penetration)||normal.y>.8f)continue;
+                // Match the original bumper cast's conservative stand-off in the
+                // existing distance-minus-three braking formula.
+                distance=Mathf.Max(0,step-1);blocker=hit;return true;
+            }
+        }
+        return true;
+    }
     public float ObstacleDistance(bool signals=true) {
         var s=Session;var taxi=s.taxi;float result=100;var position=taxi.transform.position;var heading=taxi.transform.forward;
         ObstacleReason="clear";
         string mergeStatus;float mergeGap=s.traffic.MergeApproachGap(s,out mergeStatus);
         if(mergeGap+3<result){result=mergeGap+3;ObstacleReason="merge:"+mergeStatus;}
         sensedCollider=null;
-        int hitCount;
-        while(true){hitCount=Physics.SphereCastNonAlloc(position+Vector3.up*.45f+heading*2.2f,.65f,heading,obstacleHits,35,(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore);if(hitCount<obstacleHits.Length)break;System.Array.Resize(ref obstacleHits,obstacleHits.Length*2);}
-        for(int i=0;i<hitCount;i++){var hit=obstacleHits[i];
-            if(hit.collider.transform.IsChildOf(taxi.transform)||hit.normal.y>.8f)continue;
-            if(hit.distance<result){result=hit.distance;sensedCollider=hit.collider;ObstacleReason="collider:"+hit.collider.name+"@"+hit.distance.ToString("0.00");}
+        float curvedDistance;Collider curvedBlocker;
+        if(CurvedObstacleDistance(signals,out curvedDistance,out curvedBlocker)){
+            if(curvedDistance<result){result=curvedDistance;sensedCollider=curvedBlocker;ObstacleReason="path collider:"+(curvedBlocker?curvedBlocker.name:"none")+"@"+curvedDistance.ToString("0.00");}
+        }else{
+            int hitCount;
+            while(true){hitCount=Physics.SphereCastNonAlloc(position+Vector3.up*.45f+heading*2.2f,.65f,heading,obstacleHits,35,(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore);if(hitCount<obstacleHits.Length)break;System.Array.Resize(ref obstacleHits,obstacleHits.Length*2);}
+            for(int i=0;i<hitCount;i++){var hit=obstacleHits[i];
+                if(hit.collider.transform.IsChildOf(taxi.transform)||hit.normal.y>.8f)continue;
+                if(hit.distance<result){result=hit.distance;sensedCollider=hit.collider;ObstacleReason="collider:"+hit.collider.name+"@"+hit.distance.ToString("0.00");}
+            }
         }
         foreach(var j in s.traffic.junctions) {
             int axis=Mathf.Abs(Vector3.Dot(heading,s.traffic.AxisDirection(j,0)))>.7f?0:1;

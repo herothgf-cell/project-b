@@ -4,6 +4,7 @@ using UnityEngine;
 public static class BrightUIThemeTests {
  public static void Build(){Run();ProjectMapBuild.RunTests();PvpFlowUnifiedChecks.Run();PrototypeBuild.BuildHybrid();}
  public static void Rebuild(){Run();NavigationCueTests.Run();PrototypeBuild.BuildHybrid();}
+ public static void IntegratedBuild(){Run();NavigationCueTests.Run();ProjectMapBuild.Prepare();PvpPassengerParityTests.Run();PvpConditionChecks.Run();PrototypeBuild.BuildHybrid();}
  public static void Run(){
   var surface=KoreanText.Surface;
   var center=surface.GetPixel(surface.width/2,surface.height/2);

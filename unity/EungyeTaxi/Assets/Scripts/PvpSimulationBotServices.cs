@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,14 +8,18 @@ using UnityEngine;
 public sealed class PvpSimulationBotServices : MonoBehaviour {
     public string Status {get;private set;}
     public bool Active {get{return stage!=0;}}
+    public int DecisionCount {get;private set;}
     int stage,kind;
-    float progress,retryAt,routeWait,offPathSeconds;
+    int conditionTripCount=-1,conditionMealsBefore,conditionRestsBefore;
+    float progress,retryAt,routeWait,offPathSeconds,nextDecisionAt;
     MapStop approach;
     Vector3 bay,direction;
     Vector3[] entry,departure;
     AssistedRoadNetwork.Path manoeuvre;
-    bool fuelSite;
+    bool fuelSite,conditionPurchased;
+    float selectedTravelSeconds;
 
+    // Compatibility for older diagnostic callers; runtime uses the forecast overload below.
     public static int NeededService(float fuel,double fatigue,int cleanliness,bool needsWash,int durability) {
         if(needsWash||cleanliness<45)return 4;
         if(fatigue>=55)return 3;
@@ -23,6 +27,44 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
         if(durability<45)return 5;
         return -1;
     }
+    // Production policy uses the same condition forecast as the human HUD.
+    // Detours include the legal approach, driveway and return to the road.
+    public static int NeededConditionService(DriverCondition driver,double tripSeconds,double remaining,double mealDetour,double restDetour) {
+        if(driver==null||remaining<=0)return -1;
+        double trip=Math.Max(0,tripSeconds);
+        double recoveryAccess=double.IsInfinity(restDetour)?0:Math.Max(0,restDetour);
+        double horizon=Math.Min(remaining,trip+recoveryAccess+PvpConditionRules.RestSeconds);
+        var continued=PvpConditionRules.Forecast(driver,horizon);
+        // No compulsory stop when the remaining race can finish below fatigue100.
+        if(PvpConditionRules.Forecast(driver,remaining).fatigue<100&&remaining<=trip+recoveryAccess+PvpConditionRules.RestSeconds)return -1;
+        bool risk=continued.fatigue>=100;
+        bool mealFits=Finite(mealDetour)&&mealDetour+PvpConditionRules.MealSeconds+trip<remaining;
+        bool restFits=Finite(restDetour)&&restDetour+PvpConditionRules.RestSeconds<remaining;
+        bool mealUseful=false;
+        if(mealFits&&driver.fatigue<100) {
+            var arrival=AdvanceCopy(driver,mealDetour);
+            var fed=PvpConditionRules.PreviewMeal(arrival);
+            var after=PvpConditionRules.Forecast(fed,Math.Max(0,horizon-mealDetour-PvpConditionRules.MealSeconds));
+            mealUseful=continued.satiety<25&&after.fatigue<100&&after.fatigue+1<continued.fatigue;
+        }
+        if(mealUseful&&(!risk||!restFits||mealDetour+PvpConditionRules.MealSeconds<restDetour+PvpConditionRules.RestSeconds))return 1;
+        if(risk&&restFits)return 3;
+        return -1;
+    }
+    static bool Finite(double value){return !double.IsNaN(value)&&!double.IsInfinity(value)&&value>=0;}
+    static DriverCondition AdvanceCopy(DriverCondition driver,double seconds){
+        var value=PvpConditionRules.Forecast(driver,seconds);var copy=driver.Copy();
+        copy.satiety=value.satiety;copy.fatigue=value.fatigue;copy.drowsiness.visionSeconds=value.drowsySeconds;return copy;
+    }
+    public static int NeededService(float fuel,DriverCondition driver,int cleanliness,bool needsWash,int durability,double tripSeconds,double remaining,double mealDetour,double restDetour){
+        if(needsWash||cleanliness<45)return 4;
+        int condition=NeededConditionService(driver,tripSeconds,remaining,mealDetour,restDetour);
+        if(condition>=0)return condition;
+        if(fuel<25)return 0;
+        if(durability<45)return 5;
+        return -1;
+    }
+    public static bool ConditionServiceCompleted(EconomyLedger ledger,int mealsBefore,int restsBefore){return ledger!=null&&(ledger.PvpMeals>mealsBefore||ledger.PvpRests>restsBefore);}
     public static bool AtApproach(MapStop stop,Vector3 position,Vector3 heading){return stop!=null&&stop.CanStop(position,heading,0);}
     void Retry(DriveSession s,string reason){
         routeWait=offPathSeconds=0;retryAt=Time.time+15;
@@ -37,12 +79,20 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
         if(!s||!s.simulationMatch||s.simulationMatch.Finished||s.jobs.Active)return false;
         if(s.simulationMatch.ServiceLocked(s)){Stop(s,"서비스 진행 중");return Active;}
         if(stage==0) {
-            if(Time.time<retryAt||s.jobs.trip.State!=TripState.Idle)return false;
+            if(Time.time<retryAt||Time.time<nextDecisionAt||s.jobs.trip.State!=TripState.Idle)return false;
+            // Unclaimed roadside approaches remain Idle while driving. Expensive
+            // meal/rest graph searches must not run once per physics step.
+            nextDecisionAt=Time.time+5;DecisionCount++;
             var e=s.business.ledger;
-            kind=NeededService(e.Account.Fuel,e.Driver.fatigue,e.Care.Cleanliness,e.Care.NeedsWash,e.Care.Damage.Durability);
+            double mealDetour=double.PositiveInfinity,restDetour=double.PositiveInfinity;
+            if(conditionTripCount!=s.jobs.completed+s.jobs.failed) {
+                kind=1;if(e.Account.Cash>=PvpConditionRules.MealCost&&Select(s))mealDetour=selectedTravelSeconds;
+                kind=3;if(Select(s))restDetour=selectedTravelSeconds;
+            }
+            kind=NeededService(e.Account.Fuel,e.Driver,e.Care.Cleanliness,e.Care.NeedsWash,e.Care.Damage.Durability,PvpSimulationBot.UpcomingTripSeconds(s),s.simulationMatch.Remaining,mealDetour,restDetour);
             if(kind<0)return false;
             if(!Select(s)){retryAt=Time.time+15;return false;}
-            s.jobs.nav.SetDestination(approach);routeWait=offPathSeconds=0;stage=1;
+            s.jobs.nav.SetDestination(approach);routeWait=offPathSeconds=0;conditionPurchased=false;stage=1;
         }
         if(stage==1) {
             Status="시설 접근 · "+approach.name;
@@ -79,15 +129,21 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
             int action=kind;
             var e=s.business.ledger;
             if(fuelSite)action=(e.Care.NeedsWash||e.Care.Cleanliness<45)&&s.services.CanUse(4)?4:e.Care.Damage.Durability<70&&s.services.CanUse(5)?5:e.Account.Fuel<60&&s.services.CanUse(0)?0:-1;
-            else if(e.Driver.fatigue<35)action=-1;
+            else if(conditionPurchased){
+                // A canceled pending service grants no effect and may be retried
+                // after physically leaving; only completion consumes this trip's visit.
+                if(ConditionServiceCompleted(e,conditionMealsBefore,conditionRestsBefore))conditionTripCount=s.jobs.completed+s.jobs.failed;
+                action=-1;
+            }
             if(action>=0&&s.services.CanUse(action)) {
                 float scale=Time.timeScale;bool paused=s.paused;
                 // The bot has no modal. Buy's native Close is not allowed to
                 // change the human's pause or the shared simulation speed.
                 s.services.open=true;
+                int mealsBefore=e.PvpMeals,restsBefore=e.PvpRests;
                 bool bought=s.services.Buy(action);
-                s.services.open=false;s.paused=paused;Time.timeScale=scale;
-                if(bought)return true;
+                s.services.open=bought&&(action==1||action==3);s.paused=paused;Time.timeScale=scale;
+                if(bought){if(kind==1||kind==3){conditionPurchased=true;conditionMealsBefore=mealsBefore;conditionRestsBefore=restsBefore;}return true;}
             }
             BeginManoeuvre(s,departure);stage=4;
         }
@@ -103,20 +159,29 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
     }
     bool Select(DriveSession s) {
         float best=float.PositiveInfinity;bool found=false;
-        if(kind==3) {
+        if(kind==1) {
+            if(ProjectMapScene.Active(s.world.map)) {
+                foreach(var o in ProjectMapScene.Services(s.world.map,"restaurant")) {
+                    var access=Array.Find(s.world.map.roads,r=>r.id==o.id.Replace("city:meal:","city:start:")+":access");
+                    if(o.id.StartsWith("city:meal:")&&access!=null)found=ConsiderParkingAccess(s,o,access,ref best)||found;
+                    else {
+                        var site=RestaurantSiteLayout.FromObject(s.world.map,o);
+                        var drive=new List<Vector3>(site.enter);drive.AddRange(site.leave);
+                        found=Consider(s,site.approach,site.parking,site.direction,drive.ToArray(),false,ref best)||found;
+                    }
+                }
+            } else {
+                var site=s.services.Restaurant;
+                if(site!=null){var drive=new List<Vector3>(site.enter);drive.AddRange(site.leave);found=Consider(s,site.approach,site.parking,site.direction,drive.ToArray(),false,ref best);}
+                else {var stop=s.services.MealStop;found=Consider(s,stop,stop.Kerb,stop.Direction,new[]{stop.Kerb,stop.Kerb+stop.Direction*12},false,ref best);}
+            }
+        } else if(kind==3) {
             var rest=s.services.RestArea;
             if(rest!=null)found=Consider(s,rest.approach,rest.pump,rest.direction,rest.drivePath,false,ref best);
             if(ProjectMapScene.Active(s.world.map))foreach(var o in ProjectMapScene.Services(s.world.map,"parking")) {
                 var access=Array.Find(s.world.map.roads,r=>r.id==o.id+":access");
                 if(access==null||access.points==null||access.points.Length<4)continue;
-                var points=new List<Vector3>();foreach(var p in access.points)points.Add(p.V());
-                // Authored start parks provide a through driveway and a middle bay.
-                points.Insert(points.Count/2,o.Position);
-                float at;int edge=s.jobs.nav.hd.Nearest(points[0],o.Direction,out at);
-                if(edge<0)continue;
-                var path=s.jobs.nav.hd.paths[edge];at=Mathf.Max(0,at-4);var p0=path.Position(at);var d=path.Tangent(at);
-                var stop=new MapStop{name=o.name,x=p0.x,z=p0.z,elevation=p0.y,dx=d.x,dz=d.z,width=3,graphStop=true,laneEdge=edge,laneAt=at};
-                found=Consider(s,stop,o.Position,o.Direction,points.ToArray(),false,ref best)||found;
+                found=ConsiderParkingAccess(s,o,access,ref best)||found;
             }
             // Older maps use a legal roadside parking stop without a driveway.
             if(!found&&!ProjectMapScene.Active(s.world.map)) {
@@ -129,6 +194,16 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
         }
         return found;
     }
+    bool ConsiderParkingAccess(DriveSession s,ProjectMapObject o,MapRoad access,ref float best){
+        var points=new List<Vector3>();foreach(var p in access.points)points.Add(p.V());
+        // Authored start parks provide a through driveway and a middle bay.
+        points.Insert(points.Count/2,o.Position);
+        float at;int edge=s.jobs.nav.hd.Nearest(points[0],o.Direction,out at);
+        if(edge<0)return false;
+        var path=s.jobs.nav.hd.paths[edge];at=Mathf.Max(0,at-4);var p0=path.Position(at);var d=path.Tangent(at);
+        var stop=new MapStop{name=o.name,x=p0.x,z=p0.z,elevation=p0.y,dx=d.x,dz=d.z,width=3,graphStop=true,laneEdge=edge,laneAt=at};
+        return Consider(s,stop,o.Position,o.Direction,points.ToArray(),false,ref best);
+    }
     bool Consider(DriveSession s,MapStop stop,Vector3 parking,Vector3 heading,Vector3[] drive,bool isFuel,ref float best) {
         if(drive==null||drive.Length<2)return false;
         float length=PassengerJobs.DirectedDistance(s.jobs.nav.hd,s.taxi.transform.position,s.taxi.transform.forward,stop);
@@ -139,6 +214,8 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
         var leave=new List<Vector3>{parking};for(int i=split+1;i<drive.Length;i++)leave.Add(drive[i]);
         var last=leave[leave.Count-1];float laneAt;int edge=s.jobs.nav.hd.Nearest(last,heading,out laneAt);
         if(edge>=0){var lane=s.jobs.nav.hd.paths[edge];for(int step=1;step<=12;step++)leave.Add(lane.Position(Mathf.Min(lane.length,laneAt+step)));}
+        float driveway=0;for(int i=1;i<drive.Length;i++)driveway+=Vector3.Distance(drive[i-1],drive[i]);
+        selectedTravelSeconds=length/4+driveway/2.2f;
         best=length;approach=stop;bay=parking;direction=heading;entry=enter.ToArray();departure=leave.ToArray();fuelSite=isFuel;
         return true;
     }

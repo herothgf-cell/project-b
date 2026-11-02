@@ -64,3 +64,19 @@ Unity 로컬 환경은 `C:/Program Files/Unity/Hub/Editor/2022.3.62f2/Editor/Uni
 - 실제 렌더 `player-navigation.log`: 종료0 / `BRIGHT_UI_RESULT PASS checks=44`, PNG20개. 기존 UI38검사에 실제 싱글 경로 거리·경로 객체 불변과 PVP 공용 호출 수락 후 승차 경로 카드·2화면을 추가했다. 위치 제어 UI 검사이며 전 구간 자동 물리 주행이 아니다.
 - 최종 지도 Strict 종료0/issues0, 지도/차량/월드 생성 소스 diff 없음, 사용자 저장14파일 목록/SHA256 불변. 배포용 실행폴더140파일, 디버그 정보는 범위 확인 후 artifacts로 이동했다.
 - 실제 최종 화면10개를 `docs/ui/2026-11-02-bright-ui/`에 보관했다. [싱글 회전 카드](../ui/2026-11-02-bright-ui/05a-single-navigation.png), [PVP 회전 카드](../ui/2026-11-02-bright-ui/10a-pvp-navigation.png).
+
+## 소스·통합 배포 준비
+
+- 소스 커밋 `3006e814a871171f913513cac5b3b48332de0131` (`feat: apply bright UI, concise copy and turn navigation`). UI/화면/기획/이번 체크리스트·LATEST 항목만 분리했다. 신규 Unity meta의 빈 필드 끝 공백은 GUID/설정을 바꾸지 않고 정리해 staged diff 검사를 통과했다.
+- `tools/update_distribution_manifest.ps1 -SourceCommit 3006e814a871171f913513cac5b3b48332de0131 -ValidatedOn 2026-11-02 -ValidationReport artifacts/ui-bright/distribution-validation.json` 종료0.
+- 통합 manifest와 PVP 위임 `-VerifyOnly` 모두 종료0: **140파일 / 115,200,835바이트**, 실제 크기·SHA256 전수 일치. 검증 보고서는 이번 테마/내비15·모델28·실제UI44와 수동/전체 캠페인 미검증을 구분했다.
+- 실행: `builds/EungyeTaxi/EungyeTaxi.exe` → 은계 영업 또는 PVP 대전. 회사/제품명·기존 저장 위치·지도 원본/ZIP 유지. 게시 결과는 아래 영수증에 기록한다.
+
+## 최신 원격 main 통합
+
+- 게시 직전 fetch에서 원격 main `7597eaa66586302eb5ea172bd387f1fac794590a`까지 PVP 피로/식사/휴식·승객 동등성·교차로 수정과 법규 문서가 추가된 것을 확인했다. UI만 게시하면서 이 기능을 되돌리지 않도록 네이티브 관리 작업트리 `bright-ui-main/project-b` / `codex/bright-ui-main`에서 3-way 통합했다. 원래 `C:/git/project-b`의 사용자 미커밋을 stash/reset하지 않았다.
+- 충돌은 체크리스트·LATEST·빌드 생성 Scene·지도 호출 예측·시설 UI에서 해결했다. 최신 PVP의 피로 예측·공용 선점·실시간 이용/중단·완료 시 결제/회복을 보존하며 짧은 문구·밝은 카드로 표현했다. 새 피로 안내는 대화/응답 화면과 겹치지 않게 숨긴다. 원격 변경 대비 지도/차량/월드 생성 소스 diff 없음.
+- `BrightUIThemeTests.IntegratedBuild` / `integrated-build.log` 종료0: 테마·내비15·승객36,041·PVP 피로/서비스/봇·도시90,645·모드/저장 검사와 BuildHybrid 통과. 통합 모델28묶음 종료0.
+- 실제 통합 UI `integrated-ui.log` 종료0 /44검사/20캡처. 여기부터가 최신 PVP를 포함한 최종 실행본이다. 추가 실제 PVP 서비스·승객 검사 결과와 최종 배포 해시는 아래에 기록한다.
+- 실제 서비스 `test_pvp_condition.ps1 -Capture` 종료0 /24검사: 식사/휴식 소요 시간·완료 시 결제·회복·중단/종료 시 미완료 보상 없음, 새 밝은 UI3캡처 확인. 실제 승객 `test_pvp_passengers.ps1` 종료0 /38검사: 공유8+길가3/선점·요청 응답·음식 효과·짐·점유 대기/해소·72NPC 진행 확인. 두 검사는 위치/유형/상태 fixture이며 수동 캠페인이나 전 구간 자동 물리 주행이 아니다.
+- 원격에서 이미 존재하던 meta 끝 공백/과거 문서 빈 줄은 변경하지 않았으며, 원격 main 대비 UI 차이의 staged 공백 검사는 종료0이다.

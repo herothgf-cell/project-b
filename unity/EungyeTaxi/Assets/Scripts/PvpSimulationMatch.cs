@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 // Four independent native driver sessions share the rendered traffic world.
+[DefaultExecutionOrder(10000)]
 public sealed class PvpSimulationMatch : MonoBehaviour {
     readonly List<DriveSession> drivers=new List<DriveSession>();
     readonly List<DriveSession> bots=new List<DriveSession>();
@@ -12,6 +13,7 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
     public DriveSession Bot {get{return bots.Count>0?bots[0]:null;}}
     public PvpSimulationLedger Ledger {get;private set;}
     public PvpSimulationCallBoard SharedCalls {get;private set;}
+    public PvpPassengerWorld PassengerWorld {get;private set;}
     public float Elapsed {get;private set;}
     public bool Finished {get{return Ledger!=null&&Ledger.Finished;}}
     public int HumanScore {get{return Score(0);}}
@@ -20,15 +22,49 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
     public int DriverIndex(DriveSession driver){return drivers.IndexOf(driver);}
     public string DriverStatus(int driver){
         if(driver<0||driver>=drivers.Count)return "";
-        var session=drivers[driver];var pilot=session.GetComponent<PvpSimulationBot>();
+        var session=drivers[driver];if(ConditionServiceActive(session))return (ConditionServiceKind(session)==1?"식사":"짧은 휴식")+" · "+ServiceRemaining(session).ToString("0.0")+"초";var pilot=session.GetComponent<PvpSimulationBot>();
         if(pilot)return pilot.Status??"출발 준비";
         return session.jobs.trip.State==TripState.ToPickup?"승객 픽업":session.jobs.trip.State==TripState.OnTrip?"승객 운송":"호출 선택";
     }
     public float Remaining {get{return Mathf.Max(0,PvpSimulationMode.DurationSeconds-Elapsed);}}
     GUIStyle style,button;
     readonly double[] observedServiceSeconds=new double[PvpSimulationLedger.DriverCount];
+    readonly int[] conditionKinds={-1,-1,-1,-1};
+    readonly float[] conditionRemaining=new float[PvpSimulationLedger.DriverCount];
+    readonly string[] conditionIds=new string[PvpSimulationLedger.DriverCount];
+    readonly Vector3[] conditionSites=new Vector3[PvpSimulationLedger.DriverCount];
+    public bool ConditionServiceActive(DriveSession driver){int i=DriverIndex(driver);return i>=0&&conditionKinds[i]>=0;}
+    public int ConditionServiceKind(DriveSession driver){int i=DriverIndex(driver);return i<0?-1:conditionKinds[i];}
+    public bool BeginConditionService(DriveSession driver,int kind){
+        int i=DriverIndex(driver);
+        if(i<0||Finished||ServiceLocked(driver)||(kind!=1&&kind!=3)||!driver.business.ledger.PvpProfile||!driver.services.open||!driver.services.CanContinueConditionService(kind)||(kind==1&&driver.business.ledger.Account.Cash<PvpConditionRules.MealCost))return false;
+        conditionKinds[i]=kind;conditionRemaining[i]=(float)(kind==1?PvpConditionRules.MealSeconds:PvpConditionRules.RestSeconds);
+        conditionIds[i]=driver.law.ids.Next(kind==1?"pvp-meal":"pvp-rest");conditionSites[i]=driver.taxi.transform.position;
+        driver.assisted.SetActive(false);driver.taxi.autoThrottle=0;driver.taxi.autoBrake=true;
+        return true;
+    }
+    public bool CancelConditionService(DriveSession driver){int i=DriverIndex(driver);if(i<0||conditionKinds[i]<0)return false;conditionKinds[i]=-1;conditionRemaining[i]=0;conditionIds[i]=null;return true;}
+    // Called instead of operation progression, once per driver's physics tick.
+    public bool AdvanceConditionService(DriveSession driver,float seconds){
+        int i=DriverIndex(driver);if(i<0||conditionKinds[i]<0)return false;
+        int kind=conditionKinds[i];
+        if(Finished||!driver.services.open||!driver.services.CanContinueConditionService(kind)||(driver.taxi.transform.position-conditionSites[i]).sqrMagnitude>4){CancelConditionService(driver);driver.services.FinishConditionService(kind,false);return true;}
+        float step=Mathf.Min(Mathf.Max(0,seconds),Mathf.Min(conditionRemaining[i],Remaining));
+        driver.business.ledger.AdvancePvpConditionService(step,kind==3);
+        if(kind==1)driver.business.ledger.Driver.drowsiness.Advance(step,true,driver.business.ledger.Driver.fatigue,false);
+        // This elapsed service has already passed on the common clock; do not create a legacy lock.
+        observedServiceSeconds[i]=driver.business.ledger.Elapsed-driver.business.SimulationOperationSeconds;
+        conditionRemaining[i]=Mathf.Max(0,conditionRemaining[i]-step);
+        if(conditionRemaining[i]<=.0001f&&Remaining>step){
+            string id=conditionIds[i];CancelConditionService(driver);
+            bool completed=kind==1?driver.business.ledger.CompletePvpMeal(id):driver.business.ledger.CompletePvpRest(id);
+            Ledger.SyncExpenses(i,driver.business.ledger.Account.Expense(driver.business.ledger.Day,null));
+            driver.services.FinishConditionService(kind,completed);
+        }else if(Remaining<=step)CancelConditionService(driver);
+        return true;
+    }
     readonly float[] serviceUntil=new float[PvpSimulationLedger.DriverCount];
-    public float ServiceRemaining(DriveSession driver){int index=DriverIndex(driver);return index<0?0:Mathf.Max(0,serviceUntil[index]-Elapsed);}
+    public float ServiceRemaining(DriveSession driver){int index=DriverIndex(driver);return index<0?0:Mathf.Max(conditionRemaining[index],Mathf.Max(0,serviceUntil[index]-Elapsed));}
     public bool ServiceLocked(DriveSession driver){return Finished||ServiceRemaining(driver)>0;}
     public void ObserveServiceTime(DriveSession driver){
         if(Finished||!driver||!driver.business)return;
@@ -36,13 +72,15 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
         Ledger.SyncExpenses(index,driver.business.ledger.Account.Expense(driver.business.ledger.Day,null));
         double charged=driver.business.ledger.Elapsed-driver.business.SimulationOperationSeconds;
         double added=charged-observedServiceSeconds[index];
+        if(conditionKinds[index]>=0)return;
         if(added>.05){serviceUntil[index]=Mathf.Max(Elapsed,serviceUntil[index])+(float)added;observedServiceSeconds[index]=charged;}
     }
     public void ReleaseCall(int pickup,int driver){if(SharedCalls!=null)SharedCalls.Release(pickup,driver);else Ledger.Release(pickup,driver);}
     public void Initialize(DriveSession human) {
-        Human=human;drivers.Add(human);human.simulationMatch=this;Ledger=new PvpSimulationLedger();
+        Human=human;drivers.Add(human);human.simulationMatch=this;Ledger=new PvpSimulationLedger();human.gameObject.AddComponent<PvpConditionHUD>().session=human;
         for(int index=1;index<PvpSimulationLedger.DriverCount;index++)CreateBot(human,index);
-        SharedCalls=new PvpSimulationCallBoard(Ledger,human.jobs.CreateSharedCandidate,human.jobs.stops.Length);
+        SharedCalls=new PvpSimulationCallBoard(Ledger,human.jobs.CreateSharedCandidate,human.jobs.stops.Length,3);
+        PassengerWorld=gameObject.AddComponent<PvpPassengerWorld>();PassengerWorld.Initialize(this);
         foreach(var driver in drivers){driver.jobs.offers=SharedCalls.Offers;driver.jobs.message="M 지도에서 공용 호출 선택·수락 · 정차 후 F 승하차";}
     }
     void CreateBot(DriveSession human,int index){
@@ -86,12 +124,18 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
     void Update() {
         if(Finished||!Human)return;
         foreach(var driver in drivers)ObserveServiceTime(driver);
-        if(Time.timeScale>0&&!Human.paused)Elapsed+=Time.deltaTime;
+    }
+    // Run after BusinessProgress for every physics step, including catch-up steps
+    // before a rendered Update. All drivers consume the same start-of-tick budget.
+    void FixedUpdate(){
+        if(Finished||!Human||Time.timeScale<=0||Human.paused)return;
+        Elapsed=Mathf.Min(PvpSimulationMode.DurationSeconds,Elapsed+Time.fixedDeltaTime);
         if(Remaining<=0)Finish();
     }
     public void Finish() {
         if(Finished)return;
         foreach(var driver in drivers)ObserveServiceTime(driver);
+        foreach(var driver in drivers)CancelConditionService(driver);
         Ledger.Finish();
         foreach(var driver in drivers){driver.paused=true;driver.taxi.autoThrottle=0;driver.taxi.autoBrake=true;}
         Time.timeScale=0;
