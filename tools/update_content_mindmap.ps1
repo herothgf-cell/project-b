@@ -5,6 +5,9 @@ $taskPath=Join-Path $taskRoot 'docs/content-design/택시 시뮬레이션.mmst'
 $taskArchive=Join-Path $taskRoot 'docs/design-history/content-design/2026-10-27-mindmap-before-update.mmst'
 $taskBase='https://github.com/herothgf-cell/project-b/blob/main/'
 $taskMap=Get-Content -LiteralPath $taskPath -Raw | ConvertFrom-Json
+if (!$ValidateOnly -and $taskMap.meta.organizationVersion -eq '2026-11-02') {
+    throw 'This is the historical 2026-10-27 migration. Use tools/organize_content_mindmap.py --validate-only for the organized map; do not reapply the old hierarchy.'
+}
 function Put($n,$key,$value){$n|Add-Member -NotePropertyName $key -NotePropertyValue $value -Force}
 function New-Topic($topic){[pscustomobject]@{id=[guid]::NewGuid().ToString();topic=$topic;children=@();createdAt=[DateTimeOffset]::Now.ToUnixTimeMilliseconds();modifiedAt=[DateTimeOffset]::Now.ToUnixTimeMilliseconds()}}
 function Child($n,$topic){$c=@($n.children|Where-Object topic -eq $topic);if($c.Count){return $c[0]};$c=New-Topic $topic;Put $n children @(@($n.children)+$c);return $c}
