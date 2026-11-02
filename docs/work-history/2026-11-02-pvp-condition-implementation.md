@@ -40,3 +40,6 @@ PVP피로/사람시설실제경과·결제·회복·화면/싱글분리는통과
 재현: Unity2022.3.62f2 `-batchmode -nographics -quit -projectPath unity/EungyeTaxi -executeMethod PvpConditionChecks.Run`; `pwsh -File tools/test_prototype.ps1`; 빌드 `PrototypeBuild.BuildHybrid`; 서비스 `pwsh -File tools/test_pvp_condition.ps1`; 선택적봇시설 `-Drive`;4대 `pwsh -File tools/test_pvp_simulation.ps1 -FourDrivers -TrafficMonitor`. 실제게임 builds/EungyeTaxi/EungyeTaxi.exe → PVP도시 → 지도시설/남부·북부주차장간편식 → 빈차로안전정차 → F7.
 
 배포manifest생성및기본/PVPalias VerifyOnly 모두exit0:139파일115,082,284바이트. build4↔condition-runtime4전수SHA256동일. 배포후게시영수증은아래추가한다.
+
+## 게시 영수증
+`git log -1 --oneline -- docs/work-history/2026-11-02-pvp-condition-implementation.md`로 실제배포커밋4802ecf를확인했다. `git push --atomic origin HEAD:feature/pvp-prototype HEAD:main` 성공. `git ls-remote` 양쪽4802ecfa97cd6811c8e0112739b043a5d25abe0c 동일확인. 게시후manifest VerifyOnly exit0/139파일115,082,284바이트, 작업트리clean. 이후영수증추가는문서만변경하며동일실행본/검증범위를유지한다. 다른체크아웃은자동pull/실행본교체없이보존했다.
