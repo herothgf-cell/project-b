@@ -1,5 +1,9 @@
 # 최신 작업 상태
 
+## 2026-11-02 PVP 피로·포만감 기획 분리
+
+[문서 작업 이력](2026-11-02-pvp-condition-design.md). 기존 [생활·경제 문서의 PVP 전용 항목](../content-design/03-life-and-economy.md#pvp-driver-condition)을 단일 기준으로 정리했다. 캠페인/현행 PVP/개선 후보를 구분하며 수치는 미적용·밸런스 미검증이다. 코드·실행본·필수 지도 입력은 변경하지 않았고 아래 통합 배포/검증 상태를 유지한다. 다음은 효과 조합·수치 결정 후 구현 검증이다.
+
 ## 2026-11-02 통합 실행·PVP 교통 흐름 배포
 
 [최종 수용·배포 이력](2026-11-02-pvp-flow-release.md) · [구현/Editor 기록](2026-10-30-pvp-flow-unified.md) · [요소별 기획·실제 화면27](../content-design/pvp/27-flow-unified-mode.md).

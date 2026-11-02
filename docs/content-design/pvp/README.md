@@ -1,5 +1,7 @@
 # 택시 PVP 기획·개발 계획
 
+PVP 피로·포만감 개선안은 [기존 생활·경제 기획의 PVP 전용 항목](../03-life-and-economy.md#pvp-driver-condition)에서 관리한다. 제안 수치는 미구현이며 캠페인 현행 규칙과 구분한다.
+
 ## 현재: 통합 실행·PVP 도시 (2026-11-02)
 
 `builds/EungyeTaxi/EungyeTaxi.exe` → 싱글 또는 PVP. PVP는 자체 도시/나1+봇3/공용8호출이다. [최종 수용·배포](../../work-history/2026-11-02-pvp-flow-release.md)와 [기획·실제 화면27](27-flow-unified-mode.md)을 따른다. 아래 날짜별 설명은 이전 단계 기록이다.
