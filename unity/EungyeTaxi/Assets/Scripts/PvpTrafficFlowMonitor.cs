@@ -16,6 +16,7 @@ public sealed class PvpTrafficFlowMonitor : MonoBehaviour {
     readonly Dictionary<TrafficCar,Motion> cars=new Dictionary<TrafficCar,Motion>();
     readonly Dictionary<PvpSimulationBot,float> bots=new Dictionary<PvpSimulationBot,float>();
     readonly HashSet<string> lanes=new HashSet<string>();
+    readonly Dictionary<PvpSimulationBot,HashSet<string>> leftLinks=new Dictionary<PvpSimulationBot,HashSet<string>>(),rightLinks=new Dictionary<PvpSimulationBot,HashSet<string>>();
     DriveSession session;float next,begin,last,maxError,maxHeadingError,maxHeadingStep;string worstLane="none";
     int samples;bool written;
     public static PvpTrafficFlowMonitor Active {get;private set;}
@@ -53,10 +54,16 @@ public sealed class PvpTrafficFlowMonitor : MonoBehaviour {
             state.visible=true;state.position=position;state.route=car.route;
         }
     }
+    void LateUpdate(){
+        if(!session||samples==0)return;
+        foreach(var row in bots){var bot=row.Key;if(!bot||!bot.Session||!bot.Session.jobs||!bot.Session.jobs.nav)continue;var nav=bot.Session.jobs.nav;var route=nav.hdRoute;if(!nav.active||route==null||bot.Session.taxi.body.velocity.magnitude<.2f)continue;
+            float error;float at=nav.ProjectVehicle(out error);if(error>2)continue;var edge=nav.hd.edges[route.EdgeAt(at)];var table=edge.turn==-1?leftLinks:edge.turn==1?rightLinks:null;if(table==null)continue;HashSet<string> links;if(!table.TryGetValue(bot,out links)){links=new HashSet<string>();table[bot]=links;}links.Add(edge.id);
+        }
+    }
     public string Snapshot(){
         var result=new StringBuilder();int movingCars=0,movingBots=0,total=0,moving=0,signal=0,merge=0,junction=0,obstacle=0,unexplained=0;float metres=0,maxPause=0,maxMergePause=0;
         foreach(var row in cars){var value=row.Value;if(value.physicalMetres>10)movingCars++;metres+=value.physicalMetres;total+=value.samples;moving+=value.moving;signal+=value.signal;merge+=value.merge;junction+=value.junction;obstacle+=value.obstacle;unexplained+=value.unexplained;maxPause=Mathf.Max(maxPause,value.maxPause);maxMergePause=Mathf.Max(maxMergePause,value.maxMergePause);}
-        foreach(var row in bots)if(row.Key){float travel=row.Key.MetresDriven-row.Value;if(travel>10)movingBots++;result.AppendLine("bot="+row.Key.name+" metres="+travel+" stationarySeconds="+row.Key.StationarySeconds+" status="+row.Key.Status);}
+        foreach(var row in bots)if(row.Key){float travel=row.Key.MetresDriven-row.Value;if(travel>10)movingBots++;result.AppendLine("bot="+row.Key.name+" metres="+travel+" observedUniqueLeftTurnLinks="+(leftLinks.ContainsKey(row.Key)?leftLinks[row.Key].Count:0)+" observedUniqueRightTurnLinks="+(rightLinks.ContainsKey(row.Key)?rightLinks[row.Key].Count:0)+" stationarySeconds="+row.Key.StationarySeconds+" status="+row.Key.Status);}
         result.Insert(0,"NATURAL_FLOW seconds="+(Time.time-begin)+" snapshots="+samples+" movingNPCs="+movingCars+" movingBots="+movingBots+" physicalNPCMetres="+metres+" observedLanes="+lanes.Count+"\nactorSamples="+total+" moving="+moving+" stoppedSignal="+signal+" stoppedMerge="+merge+" stoppedJunction="+junction+" stoppedObstacle="+obstacle+" stoppedUnexplained="+unexplained+" maxPauseSeconds="+maxPause+" maxMergePauseSeconds="+maxMergePause+"\nmaxRouteErrorMetres="+maxError+" maxHeadingErrorDegrees="+maxHeadingError+" maxPathHeadingStepDegrees="+maxHeadingStep+" worstDeviationLane="+worstLane+"\n");
         if(session)result.AppendLine("mergeCalls="+session.traffic.MergeGapCalls+" fleetObservations="+session.traffic.MergeFleetObservations+" mergePhysicsQueries="+session.traffic.MergePhysicsQueries+" peakCompatibleGrants="+session.traffic.MergePeakConcurrentGrants);
         foreach(var row in cars)if(row.Key)result.AppendLine("npc="+row.Key.name+" metres="+row.Value.physicalMetres+" maxPause="+row.Value.maxPause+" maxMergePause="+row.Value.maxMergePause+" samples="+row.Value.samples+" blocked="+row.Key.blockedName+" merge="+row.Key.mergeStatus);

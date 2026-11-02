@@ -13,6 +13,7 @@ public sealed class PvpSimulationBot : MonoBehaviour {
     public string ObstacleReason {get;private set;}
     Collider sensedCollider;
     RaycastHit[] obstacleHits=new RaycastHit[32];
+    readonly TrafficOverlapQuery routeObstacles=new TrafficOverlapQuery();
     public string MotionDiagnostics {
         get {
             var s=Session;var t=s.taxi;string obstacles="";
@@ -224,17 +225,57 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         Status=curbDeparture?"연석 출발 · 차로 합류":"연석 접근 · 실제 승하차 정차";
         if(curbDeparture&&remain<1.2f&&taxi.body.velocity.magnitude<.56f){curbPath=null;taxi.autoServiceBrake=0;s.jobs.nav.Refresh();s.assisted.SetActive(true);}
     }
+    bool CurvedObstacleDistance(bool signals,out float distance,out Collider blocker){
+        distance=100;blocker=null;
+        var taxi=Session.taxi;var shape=taxi.GetComponent<BoxCollider>();
+        var nav=Session.jobs==null?null:Session.jobs.nav;
+        var path=curbPath??(signals&&nav!=null&&nav.hdRoute!=null?nav.hdRoute.path:null);
+        if(path==null||shape==null)return false;
+        float error;float progress=curbPath!=null?curbProgress:nav.ProjectVehicle(out error);
+        var origin=path.Position(progress);var offset=taxi.transform.position-origin;
+        var heading=path.Tangent(progress);
+        // A lost route / badly aligned rejoin still needs the immediate physical
+        // forward sensor. Never sweep a remote navigation path as if we were on it.
+        var horizontal=offset;horizontal.y=0;
+        if(horizontal.sqrMagnitude>4||Vector3.Dot(heading,taxi.transform.forward)<.85f)return false;
+        float horizon=Mathf.Min(35,path.length-progress);
+        var bounds=new Bounds(taxi.transform.position+Vector3.up*.42f,Vector3.zero);
+        for(float ahead=0;ahead<=horizon+.5f;ahead+=.5f){float step=Mathf.Min(ahead,horizon);bounds.Encapsulate(path.Position(progress+step)+offset+Vector3.up*.42f);}
+        bounds.Expand(new Vector3(6,3,6));
+        int count=routeObstacles.Box(bounds.center,bounds.extents,Quaternion.identity,(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore);
+        // Broad-query once, then sweep the real taxi body along the same path
+        // used by steering. A tangent ray can stop forever beside a curved turn.
+        for(float ahead=0;ahead<=horizon+.5f;ahead+=.5f){
+            float step=Mathf.Min(ahead,horizon);var pose=path.Position(progress+step)+offset;
+            var rotation=Quaternion.LookRotation(path.Tangent(progress+step));
+            if(step<.01f){pose=taxi.transform.position;rotation=taxi.transform.rotation;}
+            for(int i=0;i<count;i++){
+                var hit=routeObstacles.hits[i];if(hit.transform.IsChildOf(taxi.transform))continue;
+                Vector3 normal;float penetration;
+                if(!Physics.ComputePenetration(shape,pose,rotation,hit,hit.transform.position,hit.transform.rotation,out normal,out penetration)||normal.y>.8f)continue;
+                // Match the original bumper cast's conservative stand-off in the
+                // existing distance-minus-three braking formula.
+                distance=Mathf.Max(0,step-1);blocker=hit;return true;
+            }
+        }
+        return true;
+    }
     public float ObstacleDistance(bool signals=true) {
         var s=Session;var taxi=s.taxi;float result=100;var position=taxi.transform.position;var heading=taxi.transform.forward;
         ObstacleReason="clear";
         string mergeStatus;float mergeGap=s.traffic.MergeApproachGap(s,out mergeStatus);
         if(mergeGap+3<result){result=mergeGap+3;ObstacleReason="merge:"+mergeStatus;}
         sensedCollider=null;
-        int hitCount;
-        while(true){hitCount=Physics.SphereCastNonAlloc(position+Vector3.up*.45f+heading*2.2f,.65f,heading,obstacleHits,35,(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore);if(hitCount<obstacleHits.Length)break;System.Array.Resize(ref obstacleHits,obstacleHits.Length*2);}
-        for(int i=0;i<hitCount;i++){var hit=obstacleHits[i];
-            if(hit.collider.transform.IsChildOf(taxi.transform)||hit.normal.y>.8f)continue;
-            if(hit.distance<result){result=hit.distance;sensedCollider=hit.collider;ObstacleReason="collider:"+hit.collider.name+"@"+hit.distance.ToString("0.00");}
+        float curvedDistance;Collider curvedBlocker;
+        if(CurvedObstacleDistance(signals,out curvedDistance,out curvedBlocker)){
+            if(curvedDistance<result){result=curvedDistance;sensedCollider=curvedBlocker;ObstacleReason="path collider:"+(curvedBlocker?curvedBlocker.name:"none")+"@"+curvedDistance.ToString("0.00");}
+        }else{
+            int hitCount;
+            while(true){hitCount=Physics.SphereCastNonAlloc(position+Vector3.up*.45f+heading*2.2f,.65f,heading,obstacleHits,35,(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore);if(hitCount<obstacleHits.Length)break;System.Array.Resize(ref obstacleHits,obstacleHits.Length*2);}
+            for(int i=0;i<hitCount;i++){var hit=obstacleHits[i];
+                if(hit.collider.transform.IsChildOf(taxi.transform)||hit.normal.y>.8f)continue;
+                if(hit.distance<result){result=hit.distance;sensedCollider=hit.collider;ObstacleReason="collider:"+hit.collider.name+"@"+hit.distance.ToString("0.00");}
+            }
         }
         foreach(var j in s.traffic.junctions) {
             int axis=Mathf.Abs(Vector3.Dot(heading,s.traffic.AxisDirection(j,0)))>.7f?0:1;
