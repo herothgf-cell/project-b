@@ -29,19 +29,24 @@ def walk(node):
 
 
 def validate(data):
+    progress_review = data.get('meta', {}).get('progressReviewVersion') == '2026-11-02-progress'
+    if progress_review:
+        from annotate_mindmap_progress import BACKUP as progress_backup, validate as validate_progress
+        validate_progress(data)
     nodes = list(walk(data['root']))
     ids = [n['id'] for n in nodes]
     assert len(ids) == len(set(ids)), 'Duplicate node IDs'
     by_id = {n['id']: n for n in nodes}
-    for archive in (OLD, BACKUP):
+    for archive in ((progress_backup,) if progress_review else (OLD, BACKUP)):
         if not archive.exists():
             continue
         originals = list(walk(read(archive)['root']))
         assert {n['id'] for n in originals} <= set(ids), f'Original node lost: {archive.name}'
-        if archive == BACKUP:
+        if archive == BACKUP or progress_review:
             for old in originals:
                 new = by_id[old['id']]
-                assert old.get('task') == new.get('task'), f'Original task changed: {old["topic"]}'
+                if not progress_review:
+                    assert old.get('task') == new.get('task'), f'Original task changed: {old["topic"]}'
                 for link in [old.get('hyperlink', ''), *old.get('hyperlinks', [])]:
                     if link and not link.startswith(BASE):
                         assert link in [new.get('hyperlink'), *new.get('hyperlinks', [])], 'External link lost'
@@ -55,8 +60,9 @@ def validate(data):
                 target = ROOT / unquote(url[len(BASE):].split('#')[0])
                 assert target.is_file(), f'Missing Detail-Link: {url}'
                 links += 1
-    assert len(data['root']['children']) == 4, 'Expected four reading groups'
-    print(f'MINDMAP_ORGANIZED_OK nodes={len(nodes)} links={links} originalIDs/tasks/notes/externalLinks=preserved')
+    if not progress_review:
+        assert len(data['root']['children']) == 4, 'Expected four reading groups'
+    print(f'MINDMAP_ORGANIZED_OK nodes={len(nodes)} links={links} originalIDs/notes/externalLinks=preserved')
 
 
 def generated_note(note):

@@ -98,5 +98,6 @@ if(!$ValidateOnly){
 $taskIds=[Collections.Generic.HashSet[string]]::new();$script:taskCount=0;$script:taskLinks=0
 function Check($n){if(!$taskIds.Add($n.id)){throw "Duplicate node ID: $($n.id)"};$script:taskCount++;foreach($url in @($n.hyperlink)+@($n.hyperlinks)){if(!$url){continue};$script:taskLinks++;if($url.StartsWith($taskBase)){$relative=[Uri]::UnescapeDataString($url.Substring($taskBase.Length).Split('#')[0]);if(!(Test-Path -LiteralPath (Join-Path $taskRoot $relative))){throw "Missing Detail-Link: $url"}}};foreach($c in $n.children){Check $c}}
 Check $taskMap.root
-if(Test-Path -LiteralPath $taskArchive){$before=Get-Content -LiteralPath $taskArchive -Raw|ConvertFrom-Json;function OldIds($n){if(!$taskIds.Contains($n.id)){throw "Original user node lost: $($n.topic)"};foreach($c in $n.children){OldIds $c}};OldIds $before.root}
+$taskPreserveArchive=if($taskMap.meta.progressReviewVersion -eq '2026-11-02-progress'){Join-Path $taskRoot 'docs/design-history/content-design/2026-11-02-mindmap-before-progress.mmst'}else{$taskArchive}
+if(Test-Path -LiteralPath $taskPreserveArchive){$before=Get-Content -LiteralPath $taskPreserveArchive -Raw|ConvertFrom-Json;function OldIds($n){if(!$taskIds.Contains($n.id)){throw "Original user node lost: $($n.topic)"};foreach($c in $n.children){OldIds $c}};OldIds $before.root}
 Write-Output "MINDMAP_OK nodes=$script:taskCount links=$script:taskLinks original IDs preserved"
