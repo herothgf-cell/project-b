@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -30,6 +30,12 @@ public static class PvpCityMap {
    var s=stops[index];var bay=s.Kerb+TrafficSystem.Right(s.Direction)*12-s.Direction*45;
    var o=new ProjectMapObject{id="city:start:"+index,kind="parking",name="출발 주차장 "+(objects.Count+1),laneId=map.hdEdges[s.laneEdge].id,laneAt=0,serviceX=bay.x,serviceZ=bay.z,yaw=Quaternion.LookRotation(s.Direction).eulerAngles.y,points=ProjectMapScene.Rectangle(bay,s.Direction,12,28)};objects.Add(o);
    roads.Add(Surface(o.id,12,new[]{bay-s.Direction*14,bay+s.Direction*14}));roads.Add(Surface(o.id+":access",7,new[]{s.V()-TrafficSystem.Right(s.Direction)*4.5f-s.Direction*70,bay-s.Direction*12,bay+s.Direction*12,s.V()-TrafficSystem.Right(s.Direction)*4.5f-s.Direction*20}));
+  }
+  // Meal counters share two existing safe parking courts and driveways.
+  // Services render only markings/signs; no building or collider blocks the bay.
+  foreach(int index in new[]{4,12}){
+   var parking=objects.Find(o=>o.id=="city:start:"+index);
+   objects.Add(new ProjectMapObject{id="city:meal:"+index,kind="restaurant",name=(index==4?"남부":"북부")+" 주차장 간편식",laneId=parking.laneId,laneAt=parking.laneAt,serviceX=parking.serviceX,serviceZ=parking.serviceZ,yaw=parking.yaw,points=parking.points});
   }
   map.projectScene=new ProjectMapScene{objects=objects.ToArray()};
   var facilities=new List<FuelStationLayout.FuelStation>();

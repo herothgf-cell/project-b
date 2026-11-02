@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 // Commands pedals on the same WheelCollider taxi as the human. Never advances
 // fares by time, relocates a vehicle to a destination or removes shared traffic.
@@ -109,6 +109,17 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         // being in the legal stopping envelope is a valid pickup, too.
         if(stop.CanStop(position,direction,0))return 0;
         return PassengerJobs.DirectedDistance(graph,position,direction,stop);
+    }
+    // Match the nearest-pickup choice and the native ETA shown to the human.
+    public static double UpcomingTripSeconds(DriveSession s){
+        double seconds=0;float best=float.PositiveInfinity;var jobs=s.jobs;
+        for(int i=0;i<jobs.offers.Length;i++){
+            var offer=jobs.offers[i];if(offer==null||jobs.AcceptanceRejection(i)!="")continue;
+            float pickup=PickupDistance(jobs.nav.hd,s.taxi.transform.position,s.taxi.transform.forward,jobs.stops[offer.pickup]);
+            if(float.IsNaN(pickup)||float.IsInfinity(pickup)||pickup>=best)continue;
+            best=pickup;seconds=pickup/4+(offer.timingPolicyVersion>=1?offer.safeRouteSeconds:offer.distance/8)+offer.waitSeconds;
+        }
+        return seconds;
     }
     public static float ThrottleFor(float speed,float target){return target>.15f&&speed<target-.05f?.5f:0;}
     public bool RefreshTerminalCalls(){var jobs=Session.jobs;if(jobs.Active||Session.RideResultOpen)return false;bool terminal=jobs.trip.State==TripState.Complete||jobs.trip.State==TripState.Failed;jobs.PrepareForNextCall();if(terminal)jobs.Generate();return terminal;}

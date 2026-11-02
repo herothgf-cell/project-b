@@ -4,7 +4,7 @@ public class TaxiController : MonoBehaviour {
     public bool automated; public float autoThrottle,autoSteer,autoServiceBrake; public bool autoBrake;
     public AssistedDriveController assistance;public BusinessProgress business;
     float throttle,steer,motorDemand; bool brake; Vector3 spawn; Quaternion spawnRotation;
-    public bool PvpMapInputBlocked {get{return business&&business.session&&business.session.simulationMatch&&business.session.FullMapOpen;}}
+    public bool PvpMapInputBlocked {get{return business&&business.session&&business.session.simulationMatch&&(business.session.FullMapOpen||business.session.services&&business.session.services.open);}}
     public float SteeringInput {get{return steer;}}
     public bool CornerAssisting {get;private set;}
     public float Speed {get{return Vector3.Dot(body.velocity,transform.forward);}}
