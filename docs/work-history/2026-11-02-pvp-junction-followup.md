@@ -27,3 +27,20 @@
 마지막 검토에서 취소/만료 운송의 연석 경로가 시설 이동 전에 남아 있을 수 있는 경계를 추가로 확인했다. 시설은 별도 조작 경로이므로 signals=false 센서는 기존 정면 검사를 유지하고, 남은 경로가3m 미만일 때도 정면 보호로 되돌린다. `PvpJunctionFlowTests.Run` / `junction-final-editor3.log` exit0: 좌·우 모두 기존 오탐/실제 장애물 정지와 취소 후 연석/짧은 끝점 보호 통과.
 
 소스047e62e의 staging1 `PvpJunctionFollowupChecks.BuildStaged` exit0, 별도 복사139파일115,057,083바이트 전수 해시 일치. 기존 배포140파일과의 차이는 과거 빌드 폴더에 남아 있던 level0.resS 한 파일이며 새 폴더 빌드에는 생성되지 않는다. 사용자 실행본은 그대로 유지했다. 복사본 four1 실제 물리 운송은 exit0/거리4784.195/4375.013/5200.865/3994.929m·4명 양수 정산·재시작 통과. 위 추가 보호 보완은 이후 소스/새 빌드에서 다시 확인한다.
+
+사용자 종료 응답 후 PID6980이 실제로 사라진 것을 확인했다. 이전 게임/배포파일을 자동 종료하거나 실행 중에 덮어쓰지 않았다. 소스d8f94ce의 staging2 BuildStaged2 exit0, 별도 복사139파일115,057,083바이트 전수SHA256 일치. 새 보호 분기를 포함한 복사본으로 최종 성능/운송/시설 검증을 진행한다.
+
+## 최종 성능 (소스d8f94ce 복사본)
+사용자 종료 후 다른Player/Editor 없이 `-pvpCityPerformanceTest -pvpTrafficFlowMonitor -trafficPerfSeconds 60 -screen-fullscreen 0 -screen-width 1920 -screen-height 1080` / `junction-perf2`: exit0. 요청1271.5697/1777.091·북358.478821, 실제 차로투영1272.27/1777.09에서 정지 관측. 초기배치fixture이며 운송 주행 증거와 구분한다.
+
+1920×1080/Ultra/Direct3D11/72NPC/봇3,60.00461초3419프레임 평균56.97896fps/p9525.6641ms/p9930.644ms/max113.5301ms,50ms초과2회/100ms초과1회/GC0 295회. NPC28,672.67m 진행. Bot.FixedUpdate2,320.17ms/60초로 경로 차체검사 비용은 기존보다 늘었으며 고정60fps/지연완전제거로 보고하지 않는다. 별도 읽기전용 관측에서도72NPC/봇3 모두 실제 이동, 잠시 신호 대기하는 봇은 계속 정상 대기로 기록한다.
+
+## 최종 실제 주행·시설 (소스d8f94ce)
+- `tools/test_pvp_simulation.ps1 -FourDrivers -TrafficMonitor -Executable artifacts/pvp/junction-runtime-copy2/EungyeTaxi.exe -OutputDirectory artifacts/pvp/junction-four2`: exit0.4대 WheelCollider 실제거리4755.061/4374.541/5196.901/4707.562m, 운임11030/15870/24920/5810원. 공용8호출·소유권·중복정산방지·지도중진행·결과동결·메뉴복귀·4명 재시작 통과. 위치를 옮겨 운송을 완료하지 않았다.
+- 읽기전용 관측:813.5782게임초,72NPC 총367,716.5m/841차로 관측. 봇1~3 각각 좌회전2/2/2·우회전2/2/4개 고유 링크를 실제 이동 중 통과, 마지막정지누적0. 합류 동시허가최대8, 최대합류대기20초. NPC최대정지140초(신호/교통 포함), 명시사유없는정지13/58,274샘플을 기록했다. 전도로 장시간 무정체/사람 체감 수용으로 확대하지 않는다.
+- `-Services` / `junction-services2`: exit0. 실제765.6574m·주유1600원·지불자만대기·연료보충·물리출차/승객업무복귀·NPC72 유지 통과. 연료24 fixture는 native Account.Consume만 사용했다.
+
+## 배포·보존·남은 수용
+사용자 게임 종료를 실제 확인하고 기존 실행폴더를 artifacts/pvp/pre-junction-publish-61c9e98에 통째로 옮겨 보관한 후 검증된 복사본을 builds/EungyeTaxi로 교체했다. 이동 대상/백업 절대경로가 이 작업공간 안인지 확인했으며 사용자 실행 중에는 변경하지 않았다. 새139파일115,057,083바이트 전체SHA256 일치. 기존 실행폴더의 불필요한 과거 level0.resS는 백업 안에 보존했다. 현재 EXE는 builds/EungyeTaxi/EungyeTaxi.exe, 싱글/PVP 선택 유지. 기존 회사/제품/저장 경로와 필수 지도입력/ZIP 유지.
+
+다른 체크아웃을 수정하지 않았다. 최종 확인 시 C:/git/project-b의 로컬main은6244be9이고 기존미추적7개 항목이 유지됐다(이 채팅이 해당 체크아웃을 checkout/reset/pull하지 않음). 필수입력 Strict issues0. 피로 가속1.25배·식사/휴식 후보는 기획만 수정했으며 게임 수치는 기존대로다. 사용자의 미전달 사진 지점의 당시 상태·장시간 전체도로·사람 운전·다른PC/기존물리원격4명은 미검증이다.
