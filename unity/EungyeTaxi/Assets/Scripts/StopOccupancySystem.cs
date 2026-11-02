@@ -6,10 +6,10 @@ public sealed class StopOccupancySystem : MonoBehaviour {
  public DriveSession session;StopOccupancyPolicy policy=new StopOccupancyPolicy();GameObject car;
  int sequence,observedDay;double nextAt=60,lastElapsed=-1;string attemptedTrip="",observedCampaign;MapStop stop;
  public bool IsOccupied(string stopId){var s=policy.Capture();return policy.Blocking&&s.stopId==stopId;}
- public bool IsOccupied(int index){var e=session.jobs.Catalog.Entry(index);return e!=null&&IsOccupied(e.StopId);}
+ public bool IsOccupied(int index){if(session.simulationMatch&&session.simulationMatch.PassengerWorld)return session.simulationMatch.PassengerWorld.IsOccupied(index);var e=session.jobs.Catalog.Entry(index);return e!=null&&IsOccupied(e.StopId);}
  public bool TryGetAlternative(string stopId,out MapStop alternative){alternative=null;return false;}
  public bool AffectsActive {get{var j=session.jobs;return j.Active&&j.current!=null&&IsOccupied(j.trip.State==TripState.ToPickup?j.current.pickup:j.PassengerViaPending?j.PassengerViaStop:j.current.drop);}}
- public string Status {get{var s=policy.Capture();return AffectsActive?"승하차 공간 일시 점유 · "+(s.remaining>0?Mathf.CeilToInt(s.remaining)+"초 후 이동":"차량이 앞쪽으로 이동 중")+"\n검증된 근거리 대체 지점 없음 · 원래 위치 유지 · 기한 보호1회":"";}}
+ public string Status {get{if(session.simulationMatch&&session.simulationMatch.PassengerWorld)return session.simulationMatch.PassengerWorld.Status(session);var s=policy.Capture();return AffectsActive?"승하차 공간 일시 점유 · "+(s.remaining>0?Mathf.CeilToInt(s.remaining)+"초 후 이동":"차량이 앞쪽으로 이동 중")+"\n검증된 근거리 대체 지점 없음 · 원래 위치 유지 · 기한 보호1회":"";}}
  public bool Resolve(bool useAlternative){if(!AffectsActive||useAlternative||session.paused||session.taxi.body.velocity.magnitude>.1f)return false;Protect();session.jobs.message=Status;return true;}
  bool Visible(Vector3 p){foreach(var camera in Camera.allCameras){if(!camera.enabled)continue;var v=camera.WorldToViewportPoint(p+Vector3.up);if(v.z>0&&v.z<camera.farClipPlane&&v.x>-.05f&&v.x<1.05f&&v.y>-.05f&&v.y<1.05f)return true;}return false;}
  bool Clear(Vector3 p,bool newSpawn=false){
@@ -29,6 +29,7 @@ public sealed class StopOccupancySystem : MonoBehaviour {
  void MakeCar(){if(car||stop==null)return;car=GameObject.CreatePrimitive(PrimitiveType.Cube);car.name="일시 정차 차량 · "+policy.Capture().eventId;car.transform.SetPositionAndRotation(stop.Kerb+stop.Direction*policy.Capture().exitMetres+Vector3.up*.8f,Quaternion.LookRotation(stop.Direction));car.transform.localScale=new Vector3(1.8f,1.35f,4.3f);car.GetComponent<Renderer>().sharedMaterial=WorldBuilder.Mat("Occupancy car",new Color(.32f,.39f,.46f));var cabin=GameObject.CreatePrimitive(PrimitiveType.Cube);cabin.transform.SetParent(car.transform,false);cabin.transform.localPosition=new Vector3(0,.5f,-.08f);cabin.transform.localScale=new Vector3(.8f,.4f,.5f);cabin.GetComponent<Renderer>().sharedMaterial=WorldBuilder.Mat("Occupancy windows",new Color(.08f,.15f,.2f));if(Application.isPlaying)Destroy(cabin.GetComponent<Collider>());else DestroyImmediate(cabin.GetComponent<Collider>());}
  void Protect(){if(!AffectsActive)return;float extra=policy.Protection();if(extra<=0)return;if(session.jobs.trip.ExtendForSystemDelay(extra)){policy.Protected(session.law.tripId);if(session.jobs.trip.State==TripState.OnTrip){session.jobs.current.seconds+=extra;session.requests.ExemptSystemRoute("승하차 공간 점유 "+policy.Capture().eventId);}session.jobs.message=Status;session.business.SaveCheckpoint();}}
  void Update(){
+  if(session&&session.simulationMatch)return;
   if(!session||!session.business||!session.business.enabledCampaign||!session.business.ledger.Operating||session.business.preparing||session.paused||session.PracticeBusy||PracticeSession.Enabled)return;
   double now=session.business.ledger.Elapsed;
   int day=session.business.ledger.Day;

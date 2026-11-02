@@ -13,6 +13,7 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
     public DriveSession Bot {get{return bots.Count>0?bots[0]:null;}}
     public PvpSimulationLedger Ledger {get;private set;}
     public PvpSimulationCallBoard SharedCalls {get;private set;}
+    public PvpPassengerWorld PassengerWorld {get;private set;}
     public float Elapsed {get;private set;}
     public bool Finished {get{return Ledger!=null&&Ledger.Finished;}}
     public int HumanScore {get{return Score(0);}}
@@ -78,7 +79,8 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
     public void Initialize(DriveSession human) {
         Human=human;drivers.Add(human);human.simulationMatch=this;Ledger=new PvpSimulationLedger();human.gameObject.AddComponent<PvpConditionHUD>().session=human;
         for(int index=1;index<PvpSimulationLedger.DriverCount;index++)CreateBot(human,index);
-        SharedCalls=new PvpSimulationCallBoard(Ledger,human.jobs.CreateSharedCandidate,human.jobs.stops.Length);
+        SharedCalls=new PvpSimulationCallBoard(Ledger,human.jobs.CreateSharedCandidate,human.jobs.stops.Length,3);
+        PassengerWorld=gameObject.AddComponent<PvpPassengerWorld>();PassengerWorld.Initialize(this);
         foreach(var driver in drivers){driver.jobs.offers=SharedCalls.Offers;driver.jobs.message="M 지도에서 공용 호출 선택·수락 · 정차 후 F 승하차";}
     }
     void CreateBot(DriveSession human,int index){

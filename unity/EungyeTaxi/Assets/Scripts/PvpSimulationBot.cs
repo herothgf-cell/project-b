@@ -93,9 +93,9 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         for(int i=0;i<8&&next;i++){if(!seen.Add(next)){value+="cycle:"+next.name;break;}value+="["+TrafficCarMotion(next)+"]";next=next.obstacleCar;}
         return value+"}";
     }
-    float nextOffer,routeLostSeconds;
+    float nextOffer,routeLostSeconds;int roadsideGoal=-1;
     public int RouteRecoveries {get;private set;}
-    PvpSimulationBotServices services;
+    PvpSimulationBotServices services;PvpBotPassengerResponses passengerResponses;
     AssistedRoadNetwork.Path curbPath;
     float curbProgress;
     int curbGoal=-1;
@@ -129,15 +129,17 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         var s=Session;if(!s||!s.simulationMatch||s.simulationMatch.Finished||Time.timeScale<=0)return;
         var taxi=s.taxi;var jobs=s.jobs;
         StationarySeconds=taxi.body.velocity.magnitude<.15f?StationarySeconds+Time.fixedDeltaTime:0;
-        if(s.requests.SafeToRespond()){if(s.requests.HasPendingChoice)s.requests.Respond(false);if(jobs.BehaviorChoicesOpen)jobs.RespondBehavior(0);}
         MetresDriven+=taxi.body.velocity.magnitude*Time.fixedDeltaTime;
         if(s.simulationMatch.ServiceLocked(s)){Stop("서비스 진행 중");return;}
         if(s.business.ledger.Driver.drowsiness.Blackout){Stop("졸음 긴급 휴식");s.business.RequestEmergencyHome();return;}
         if(s.damage.Disabled){Stop("차량 고장 · 견인/수리");if(taxi.body.velocity.magnitude<.56f){jobs.ResolveVehicleFailure();if(!jobs.Active){if(s.damage.AtRepairBay)s.damage.Repair();else s.damage.Tow();}}return;}
+        if(!passengerResponses)passengerResponses=gameObject.AddComponent<PvpBotPassengerResponses>();
+        if(passengerResponses.Tick(s)){Stop("승객 응대 · 안전 정차/작업");return;}
         RefreshTerminalCalls();
         if(!services)services=gameObject.AddComponent<PvpSimulationBotServices>();
         if(services.Tick(s)){Status=services.Status;return;}
         taxi.autoServiceBrake=0;
+        if(!jobs.Active&&roadsideGoal>=0){var waiting=s.simulationMatch.SharedCalls.RoadsideAt(roadsideGoal);if(waiting!=null&&jobs.AcceptanceRejection(waiting)==""){DriveTo(roadsideGoal,true);return;}roadsideGoal=-1;curbPath=null;jobs.nav.Clear();s.assisted.SetActive(false);}
         if(!jobs.Active) {
             curbPath=null;
             Stop("호출 선택 중");if(Time.time<nextOffer)return;nextOffer=Time.time+2;
@@ -153,15 +155,21 @@ public sealed class PvpSimulationBot : MonoBehaviour {
                 SelectionDiagnostics+="["+i+":"+offer.pickup+">"+offer.drop+" edge="+edge+" goal="+stop.laneEdge+" route="+pickupDistance.ToString("0")+"]";
                 if(pickupDistance<distance){distance=pickupDistance;best=i;}
             }
+            int roadside=-1;var board=s.simulationMatch.SharedCalls;
+            if(board!=null)foreach(var offer in board.Roadside){if(offer==null||jobs.AcceptanceRejection(offer)!="")continue;float d=PickupDistance(jobs.nav.hd,taxi.transform.position,taxi.transform.forward,jobs.stops[offer.pickup]);if(d<distance){distance=d;roadside=offer.pickup;}}
+            if(roadside>=0){roadsideGoal=roadside;jobs.nav.SetDestination(jobs.stops[roadside]);Status="길가 승객 접근 · 도착 전 선점 없음";return;}
             if(best>=0&&jobs.Accept(best)){s.assisted.SetActive(true);Status="승객 픽업 주행";}else jobs.Generate();
             return;
         }
-        int goal=jobs.trip.State==TripState.ToPickup?jobs.current.pickup:jobs.PassengerViaPending?jobs.PassengerViaStop:jobs.current.drop;
+        DriveTo(jobs.trip.State==TripState.ToPickup?jobs.current.pickup:jobs.PassengerViaPending?jobs.PassengerViaStop:jobs.current.drop,false);
+    }
+    void DriveTo(int goal,bool roadside){
+        var s=Session;var taxi=s.taxi;var jobs=s.jobs;
         if(curbPath!=null&&(curbGoal!=goal||curbState!=jobs.trip.State))curbPath=null;
         if(jobs.At(goal)) {
             curbPath=null;
             Stop("안전 정차 · 승하차");s.assisted.SetActive(false);
-            jobs.Interact();
+            if(roadside){if(jobs.AcceptRoadside(goal)){roadsideGoal=-1;jobs.Interact();}else{roadsideGoal=-1;jobs.nav.Clear();}}else jobs.Interact();
             if(jobs.Active&&jobs.trip.State==TripState.OnTrip&&!jobs.trip.ArrivalLocked)s.assisted.SetActive(true);
             return;
         }
@@ -172,6 +180,7 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         if(curbPath!=null){FollowCurb();return;}
         if(routePath==null){
             Stop("연결 경로 확인 중");nav.Refresh();routeLostSeconds+=Time.fixedDeltaTime;
+            if(roadside&&routeLostSeconds>20){roadsideGoal=-1;curbPath=null;nav.Clear();return;}
             if(routeLostSeconds>20&&jobs.CancelUnboardedCall("픽업 연결 불가 · 공용 호출 다시 선택")){routeLostSeconds=0;RouteRecoveries++;}
             return;
         }

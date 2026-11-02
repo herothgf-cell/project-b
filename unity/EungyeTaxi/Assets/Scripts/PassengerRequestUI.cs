@@ -64,6 +64,8 @@ public class PassengerRequestUI : MonoBehaviour {
   }return true;
  }
  public bool PresentationAvailable {get{return (legacy||!ResponseBlockedThisFrame)&&!session.jobs.BehaviorAsleep&&!session.paused&&!session.FullMapOpen&&!session.ChoiceOpen&&string.IsNullOrEmpty(session.jobs.VisibleCareDialogue);}}
+ public bool SafeStationarySpace {get{return ClearSpace();}}
+ public float ProposalExtraSeconds {get{return Current?Current.ProposalExtraSeconds:float.PositiveInfinity;}}
  public bool SafeToRespond(){return ClearSpace()&&(legacy||stopSeconds>=2);}
  public bool Respond(bool accept){if(!PresentationAvailable||!Current||!SafeToRespond()&&!legacy)return false;bool ok=Current.Respond(accept);AfterResponse(ok);return ok;}
  public bool RespondEta(int option){bool ok=PresentationAvailable&&Current&&Current.RespondEta(option);AfterResponse(ok);return ok;}
