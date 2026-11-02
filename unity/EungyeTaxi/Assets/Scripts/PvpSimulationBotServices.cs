@@ -100,8 +100,10 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
             Status="시설 출구 합류";
             if(Follow(s)) {
                 s.services.CancelQueue();stage=0;manoeuvre=null;s.jobs.nav.Clear();s.jobs.ResetOffers();
-                retryAt=Time.time+10;s.taxi.autoSteer=0;s.taxi.autoServiceBrake=0;
-                return false;
+                bool critical=Critical(s);retryAt=critical?0:Time.time+10;s.taxi.autoSteer=0;s.taxi.autoServiceBrake=0;
+                // Departure closes this paid visit. A different critical need
+                // keeps caller control and receives a fresh plan next Tick.
+                return critical&&HoldCritical(s);
             }
         }
         return true;
