@@ -45,3 +45,5 @@
 1280 PVP 지도 캡처에서 선택 경로 끝의 핀이 위쪽 경계에서 일부 잘리는 것을 발견해, FitRoutes의 고정160m 여유를 화면100px 총 여유로 변경했다. 확대 최소값1은 기존대로 유지한다. 핀 라벨은 흰 카드/진한 글자로 대비를 보정했다. 독립 재리뷰에서 추가 결함 없음. 이 최종 표시 보정의 빌드/실행과 manifest/게시 결과는 완료 후 덧붙인다.
 
 게시용 최종 publication-build.log Unity exit0, publication.log Player exit0 /52체크·22캡처. 1280 PVP 지도 끝점 핀 여백과 1920 은계 지도/싱글·PVP 두 카드를 실제 캡처로 확인했다. 저장14파일 불변. 최종 확인8화면을 docs/ui/2026-11-02-map-style에 보관했다. 모델28묶음·Strict issues0 결과와 함께 이번 검증 범위다. 배포 실행 폴더139파일115,118,797바이트.
+
+소스/기획/실제 화면 커밋은 `git log -1 --oneline -- docs/work-history/2026-11-02-map-style-two-cards.md`로 확인한8aa382c이다. 실제40자리8aa382c73b39951956b839e29a70ceb8301b0d44를 SourceCommit으로 manifest를 생성했다. 통합/PVP VerifyOnly 모두 exit0: DISTRIBUTION_OK files139 bytes115118797. 공유 main 게시 뒤 실제 게시 결과를 덧붙인다.
