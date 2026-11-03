@@ -58,6 +58,19 @@ public static class PvpTrafficMergeLayout {
             foreach(int tail in graph.edges[i].next)group.Add(tail,0,Mathf.Min(8,graph.paths[tail].length),false,true);
             groups[group.id]=group;
         }
+        // Native NPC reservations excluded physical taxi pilots. On A3's oblique
+        // uncontrolled junctions that let both enter the same curved crossing.
+        // Share one geometry-aware admission queue before either reaches it.
+        for(int i=0;i<graph.edges.Length;i++){
+            var edge=graph.edges[i];if(!edge.id.StartsWith("join:",StringComparison.Ordinal)||string.IsNullOrEmpty(edge.ruleId))continue;
+            var rule=Array.Find(map.junctionRules,r=>r.id==edge.ruleId);
+            if(rule==null||rule.signalMode!=0)continue;
+            string key="junction:"+edge.ruleId;Builder group;
+            if(!groups.TryGetValue(key,out group)){group=new Builder{id=key,direction=graph.paths[i].Tangent(0)};groups[key]=group;}
+            foreach(int head in previous[i])group.Add(head,Mathf.Max(0,graph.paths[head].length-8),graph.paths[head].length);
+            group.Add(i,0,graph.paths[i].length);
+            foreach(int tail in edge.next)group.Add(tail,0,Mathf.Min(8,graph.paths[tail].length),false,true);
+        }
         var result=new List<NativeTrafficMergeZone>();
         foreach(var group in groups.Values){
             bool initialized=false;var bounds=new Bounds();Vector3 exit=Vector3.zero;float furthest=float.NegativeInfinity;

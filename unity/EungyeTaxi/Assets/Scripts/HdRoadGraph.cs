@@ -37,6 +37,28 @@ public sealed class HdRoadGraph {
    best=i;score=error;at=d;
   }return best;
  }
+ // One distance search for the PVP bot's many candidate pickups. Existing
+ // Route/Compose still determine geometry, tie order and same-lane legal loops.
+ public sealed class DistanceSearch {
+  readonly HdRoadGraph graph;readonly int[] previous;public readonly int start;readonly float at;
+  internal DistanceSearch(HdRoadGraph graph,int start,float at,int[] previous){this.graph=graph;this.start=start;this.at=at;this.previous=previous;}
+  public RoutePath RouteTo(int goal,float goalAt){
+   if(previous==null||goal<0||goal>=previous.Length||graph.edges[goal].disabled)return null;
+   if(start==goal&&at>goalAt+.1f)return graph.Route(start,at,goal,goalAt);
+   if(goal!=start&&previous[goal]<0)return null;
+   var chain=new List<int>();for(int i=goal;i>=0;i=previous[i])chain.Add(i);chain.Reverse();return graph.Compose(chain,at,goalAt);
+  }
+ }
+ public DistanceSearch SearchDistances(int start,float at){
+  if(start<0||start>=edges.Length||edges[start].disabled||float.IsNaN(at)||at<0||at>paths[start].length)return new DistanceSearch(this,start,at,null);
+  var costs=new float[edges.Length];var previous=new int[edges.Length];var used=new bool[edges.Length];for(int i=0;i<costs.Length;i++){costs[i]=float.PositiveInfinity;previous[i]=-1;}
+  costs[start]=0;var queue=new SortedSet<Tuple<float,int>>();queue.Add(Tuple.Create(0f,start));
+  while(queue.Count>0){var item=queue.Min;queue.Remove(item);int cur=item.Item2;float value=item.Item1;if(used[cur]||value>costs[cur])continue;used[cur]=true;
+   foreach(int next in edges[cur].next){float fraction=1-(cur==start?at/Mathf.Max(.01f,paths[cur].length):0);float cost=value+paths[cur].length*fraction+(edges[next].change!=0?12:0);
+    if(cost<costs[next]){costs[next]=cost;previous[next]=cur;queue.Add(Tuple.Create(cost,next));}
+   }
+  }return new DistanceSearch(this,start,at,previous);
+ }
  public RoutePath Route(int start,float startAt,int goal,float goalAt,float[] weights=null){
   if(start<0||goal<0||start>=edges.Length||goal>=edges.Length||edges[start].disabled||edges[goal].disabled)return null;
   if(start==goal&&startAt>goalAt+.1f){RoutePath best=null;float score=float.MaxValue;foreach(int next in edges[start].next){if(next==start)continue;var rest=Route(next,0,goal,goalAt,weights);if(rest==null)continue;var chain=new List<int>{start};chain.AddRange(rest.edges);var candidate=Compose(chain,startAt,goalAt);float loopCost=0;foreach(int e in rest.edges)loopCost+=weights==null?paths[e].length:weights[e];if(candidate!=null&&loopCost<score){score=loopCost;best=candidate;}}return best;}

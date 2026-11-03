@@ -281,10 +281,17 @@ public class TrafficSystem : MonoBehaviour {
     }
     public bool MayEnter(TrafficCar car,TrafficStop stop){
         var j=stop.junction;
+        // The PvP shared queue already gates both NPCs and bot taxis upstream.
+        // Keep real signal/pedestrian/exit checks; avoid a second NPC-only owner
+        // that can wait for a taxi while the taxi waits for that owner.
+        bool shared=authoredMerges!=null&&authoredMerges.ControlsJunction(j);
+        if(!shared){
         Request(car,stop);float mine=j.requests[car];
         if(!CanEnter(car,stop))return false;
         foreach(var reserved in j.reservations)if(reserved!=car&&Conflicts(car,stop,reserved))return false;
         if(!j.reservations.Contains(car))foreach(var pair in j.requests){var other=pair.Key;if(other==car||!other||!other.enabled||other.entryBlocked||!Conflicts(car,stop,other))continue;foreach(var approach in other.route.stops)if(approach.junction==j&&approach.distance-other.distance>=-.05f&&approach.distance-other.distance<=ReservationDistance(other)&&CanEnter(other,approach)&&ExitClear(other,approach)){if(pair.Value<mine||(pair.Value==mine&&other.GetInstanceID()<car.GetInstanceID()))return false;}}
+
+        }else if(!CanEnter(car,stop))return false;
 
         // A moving same-lane leader is protected by the car-following gap check. All other
         // occupied movements stay exclusive, including stopped leaders and conflicting turns.
@@ -298,7 +305,7 @@ public class TrafficSystem : MonoBehaviour {
             if(OccupiesMovement(car,stop,hit))return false;
         }
         if(!ExitClear(car,stop))return false;
-        j.reservations.Add(car);if(!j.owner)j.owner=car;return true;
+        if(!shared){j.reservations.Add(car);if(!j.owner)j.owner=car;}return true;
     }
     public Bounds ReservedMovementBounds(TrafficCar car,TrafficStop stop){
         MovementEnvelope cached;
@@ -347,7 +354,7 @@ public class TrafficSystem : MonoBehaviour {
         float end=Mathf.Min(car.route.length,stop.exitDistance+2.25f);
         for(float at=Mathf.Max(car.distance,stop.distance)-2.25f;at<=end+.5f;at+=.5f){
             var point=car.route.Position(Mathf.Clamp(at,0,end))+Vector3.up*.85f;
-            if((blocker.ClosestPoint(point)-point).sqrMagnitude<1.15f*1.15f)return true;
+            if(TrafficColliderGeometry.WithinRadius(blocker,point,1.15f))return true;
         }
         return false;
     }

@@ -31,7 +31,7 @@ public sealed class UpstreamUturnObserver {
    for(float at=Mathf.Max(0,from-2);at<=path.length+8;at+=1.5f){
     var point=at<=path.length?path.Position(at):path.Position(path.length)+outgoing*(at-path.length);
     var offset=point-root.transform.position;float along=Vector3.Dot(offset,heading),side=Mathf.Abs(Vector3.Dot(offset,TrafficSystem.Right(heading)));
-    if((hit.ClosestPoint(point+Vector3.up*.85f)-point-Vector3.up*.85f).sqrMagnitude<1.15f*1.15f||side<3.2f&&along>=-3&&along<Mathf.Max(8,speed*6+5))return false;
+    if(TrafficColliderGeometry.WithinRadius(hit,point+Vector3.up*.85f,1.15f)||side<3.2f&&along>=-3&&along<Mathf.Max(8,speed*6+5))return false;
    }
   }
   return true;

@@ -17,7 +17,7 @@ public sealed class TrafficPerformanceProbe : MonoBehaviour {
  static readonly Dictionary<string,long> intervalTicks=new Dictionary<string,long>();
  // A value scope avoids allocating a managed object for every car/pedestrian tick
  // in the very run that is meant to measure collection-related frame hitches.
- public struct Scope:IDisposable {readonly string name;readonly long start;public Scope(string n){name=n;start=Enabled?Stopwatch.GetTimestamp():0;}public void Dispose(){if(!Enabled)return;long elapsed=Stopwatch.GetTimestamp()-start,value;ticks.TryGetValue(name,out value);ticks[name]=value+elapsed;intervalTicks.TryGetValue(name,out value);intervalTicks[name]=value+elapsed;}}
+ public struct Scope:IDisposable {readonly string name;readonly long start;readonly bool native;public Scope(string n){name=n;native=PvpNativePerf.Moving;start=Enabled||native?Stopwatch.GetTimestamp():0;}public void Dispose(){if(start==0)return;long elapsed=Stopwatch.GetTimestamp()-start,value;if(native)PvpNativePerf.Sample(name,elapsed*1000.0/Stopwatch.Frequency);if(!Enabled)return;ticks.TryGetValue(name,out value);ticks[name]=value+elapsed;intervalTicks.TryGetValue(name,out value);intervalTicks[name]=value+elapsed;}}
  public static Scope Measure(string name){return new Scope(name);}
  readonly List<float> frames=new List<float>();bool measuring;float begin;int gc,focusedFrames;string diagnostics="";
  struct FrameSample {public float elapsed,ms,x,z;public int collections;public double car,pedestrian,start,navigation,readability,signal,raster;}

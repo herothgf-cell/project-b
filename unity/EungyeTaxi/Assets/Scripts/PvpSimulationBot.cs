@@ -110,13 +110,22 @@ public sealed class PvpSimulationBot : MonoBehaviour {
         if(stop.CanStop(position,direction,0))return 0;
         return PassengerJobs.DirectedDistance(graph,position,direction,stop);
     }
+    sealed class PickupBatch {
+        public readonly HdRoadGraph graph;public readonly HdRoadGraph.DistanceSearch search;public readonly Vector3 position,heading;
+        readonly System.Collections.Generic.Dictionary<MapStop,float> distances=new System.Collections.Generic.Dictionary<MapStop,float>();
+        public PickupBatch(DriveSession s){graph=s.jobs.nav.hd;position=s.taxi.transform.position;heading=s.taxi.transform.forward;float at;int edge=graph.Nearest(position,heading,out at);search=graph.SearchDistances(edge,at);}
+        public float Distance(MapStop stop){if(stop.CanStop(position,heading,0))return 0;float value;if(distances.TryGetValue(stop,out value))return value;var route=search.RouteTo(stop.laneEdge,stop.laneAt);value=route==null?float.PositiveInfinity:route.path.length;distances[stop]=value;return value;}
+    }
+    PickupBatch pickupBatch;float pickupBatchTick=-1;
+    static PickupBatch BatchFor(DriveSession s){var pilot=s.GetComponent<PvpSimulationBot>();if(!pilot)return new PickupBatch(s);if(pilot.pickupBatch==null||pilot.pickupBatchTick!=Time.fixedTime||pilot.pickupBatch.graph!=s.jobs.nav.hd){pilot.pickupBatch=new PickupBatch(s);pilot.pickupBatchTick=Time.fixedTime;}return pilot.pickupBatch;}
+    public static bool HasTimeViableOffer(DriveSession s){foreach(var offer in s.jobs.offers)if(offer!=null&&PvpPassengerPolicy.OfferSeconds(0,offer)<s.simulationMatch.Remaining)return true;var board=s.simulationMatch.SharedCalls;if(board!=null)foreach(var offer in board.Roadside)if(offer!=null&&PvpPassengerPolicy.OfferSeconds(0,offer)<s.simulationMatch.Remaining)return true;return false;}
     // Match the complete pickup-plus-transport estimate used for offer selection.
-    // Keep unsafe estimates here: the service planner must know why rest is needed.
+    // Keep condition-unsafe estimates; omit fares impossible even with zero pickup time.
     public static double UpcomingTripSeconds(DriveSession s){
         double best=double.PositiveInfinity;var jobs=s.jobs;
         for(int i=0;i<jobs.offers.Length;i++){
-            var offer=jobs.offers[i];if(offer==null||jobs.AcceptanceRejection(i)!="")continue;
-            float pickup=PickupDistance(jobs.nav.hd,s.taxi.transform.position,s.taxi.transform.forward,jobs.stops[offer.pickup]);
+            var offer=jobs.offers[i];if(offer==null||jobs.AcceptanceRejection(i)!=""||PvpPassengerPolicy.OfferSeconds(0,offer)>=s.simulationMatch.Remaining)continue;
+            float pickup=BatchFor(s).Distance(jobs.stops[offer.pickup]);
             best=System.Math.Min(best,PvpPassengerPolicy.OfferSeconds(pickup,offer));
         }return double.IsInfinity(best)?0:best;
     }
@@ -147,16 +156,17 @@ public sealed class PvpSimulationBot : MonoBehaviour {
             int best=-1;float distance=float.PositiveInfinity;
             SelectionDiagnostics="accept="+s.business.CanAccept+" state="+jobs.trip.State+" ";
             // Shared claims are checked at selection and atomically at acceptance.
-            float selectionAt;int selectionEdge=jobs.nav.hd.Nearest(taxi.transform.position,taxi.transform.forward,out selectionAt);
+            int selectionEdge=-1;
             using(TrafficPerformanceProbe.Measure("PvpBot.SelectOffer"))for(int i=0;i<jobs.offers.Length;i++) {
                 var offer=jobs.offers[i];string rejection=jobs.AcceptanceRejection(i);if(offer==null||rejection!=""){SelectionDiagnostics+="["+i+":"+rejection+"]";continue;}
-                var stop=jobs.stops[offer.pickup];int edge=selectionEdge;
-                float pickupDistance=PickupDistance(jobs.nav.hd,taxi.transform.position,taxi.transform.forward,stop);
+                if(PvpPassengerPolicy.OfferSeconds(0,offer)>=s.simulationMatch.Remaining){SelectionDiagnostics+="["+i+":경기 시간 부족]";continue;}
+                var stop=jobs.stops[offer.pickup];var batch=BatchFor(s);selectionEdge=batch.search.start;int edge=selectionEdge;
+                float pickupDistance=batch.Distance(stop);
                 SelectionDiagnostics+="["+i+":"+offer.pickup+">"+offer.drop+" edge="+edge+" goal="+stop.laneEdge+" route="+pickupDistance.ToString("0")+"]";
                 float rank=(float)PvpPassengerPolicy.OfferRank(pickupDistance,offer,s.business.ledger.Driver,s.simulationMatch.Remaining);if(rank<distance){distance=rank;best=i;}
             }
             int roadside=-1;var board=s.simulationMatch.SharedCalls;
-            if(board!=null)foreach(var offer in board.Roadside){if(offer==null||jobs.AcceptanceRejection(offer)!="")continue;float d=PickupDistance(jobs.nav.hd,taxi.transform.position,taxi.transform.forward,jobs.stops[offer.pickup]);float rank=(float)PvpPassengerPolicy.OfferRank(d,offer,s.business.ledger.Driver,s.simulationMatch.Remaining);if(PvpPassengerPolicy.PursueRoadside(d)&&rank<distance){distance=rank;roadside=offer.pickup;}}
+            if(board!=null)foreach(var offer in board.Roadside){if(offer==null||jobs.AcceptanceRejection(offer)!="")continue;var stop=jobs.stops[offer.pickup];var delta=taxi.transform.position-stop.Kerb;delta.y=0;if(delta.sqrMagnitude>250*250)continue;float d=BatchFor(s).Distance(stop);float rank=(float)PvpPassengerPolicy.OfferRank(d,offer,s.business.ledger.Driver,s.simulationMatch.Remaining);if(PvpPassengerPolicy.PursueRoadside(d)&&rank<distance){distance=rank;roadside=offer.pickup;}}
             if(roadside>=0){roadsideGoal=roadside;jobs.nav.SetDestination(jobs.stops[roadside]);Status="길가 승객 접근 · 도착 전 선점 없음";return;}
             if(best>=0&&jobs.Accept(best)){s.assisted.SetActive(true);Status="승객 픽업 주행";}else jobs.Generate();
             return;
