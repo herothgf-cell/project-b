@@ -19,3 +19,7 @@ PvpNativeWheelView는 차체와 같은 playback 시각으로 바퀴 로컬 자�
 ## 재현·배포
 Editor: `-batchmode -nographics -quit -projectPath <루트>/unity/EungyeTaxi -executeMethod PvpNativeWheelTests.Build -logFile <루트>/artifacts/pvp/wheel-fix-build.log`. 일반 배포 기준은 기존 PrototypeBuild.BuildHybrid이며 helper도 같은 BuildAt(eungye)와 ProjectMapBuild.Prepare를 사용한다.
 실행은 builds/EungyeTaxi/EungyeTaxi.exe 통합 메뉴. 양쪽 기존 창을 닫고 전체 실행 폴더를 갱신해 같은 실행본으로 접속한다. 다른 체크아웃/사용자 별도 배포 폴더는 자동 교체하지 않는다. 실제 파일/manifest/게시 결과는 후속 영수증을 따른다.
+
+
+## 실행 폴더 반영
+실제 소스 `5f6b9f33dcf88d8b3a3a399d10d622e0d88a9e8e` 확인. 기존139파일115,321,622바이트 manifest검증후 기존canonical실행중없음을확인했다. 기존폴더전체를artifacts에보관하고최종wheel-fix-candidate139파일115,322,814바이트를새복사해후보/배포 상대경로·크기·SHA256전수일치를확인했다. DoNotShip디버그는별도보관했다. 다른체크아웃/사용자배포복사본은바꾸지않았다. manifest와게시영수증은아래를따른다.
