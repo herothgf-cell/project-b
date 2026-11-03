@@ -1,6 +1,8 @@
 using UnityEngine;
 public class TrafficCar : MonoBehaviour {
     public bool respawn=true;
+    public Vector3 PhysicsPosition {get{return body?body.position:transform.position;}}
+    public Quaternion PhysicsRotation {get{return body?body.rotation:transform.rotation;}}
     public TrafficDriverProfile Profile {get;private set;}
     public string ProfileLabel {get{return Profile==null?"보통":Profile.Label;}}
     double lastLaneChangeCompleted=-100000;int observedLaneEdge=-1;

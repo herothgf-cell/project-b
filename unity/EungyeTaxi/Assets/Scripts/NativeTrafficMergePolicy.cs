@@ -32,6 +32,7 @@ public sealed class NativeTrafficMergePolicy {
     }
     readonly TrafficSystem traffic;readonly HdRoadGraph graph;
     readonly List<Zone> zones=new List<Zone>();
+    readonly HashSet<string> controlledJunctions=new HashSet<string>();
     readonly Dictionary<int,List<KeyValuePair<Zone,NativeTrafficMergeInterval>>> byEdge=new Dictionary<int,List<KeyValuePair<Zone,NativeTrafficMergeInterval>>>();
     readonly List<Vehicle> fleet=new List<Vehicle>();
     readonly List<Vehicle> eligible=new List<Vehicle>(),stale=new List<Vehicle>();
@@ -46,11 +47,13 @@ public sealed class NativeTrafficMergePolicy {
     readonly Dictionary<Rigidbody,Vehicle> bodies=new Dictionary<Rigidbody,Vehicle>();
     readonly Dictionary<DriveSession,Vehicle> drivers=new Dictionary<DriveSession,Vehicle>();
     public int Count {get{return zones.Count;}}
+    public bool ControlsJunction(TrafficJunction junction){return !junction.signalized&&!junction.scenarioSignal&&controlledJunctions.Contains(junction.name);}
     public static bool Supports(MapData map){return map!=null&&map.mapId=="pvp-city-a"&&map.pvpTrafficMerges!=null&&map.pvpTrafficMerges.Length>0;}
     public NativeTrafficMergePolicy(TrafficSystem traffic,MapData map,HdRoadGraph graph){
         this.traffic=traffic;this.graph=graph;
         foreach(var data in map.pvpTrafficMerges){
             var zone=new Zone{data=data};zones.Add(zone);
+            if(data.id.StartsWith("junction:",StringComparison.Ordinal))controlledJunctions.Add(data.id.Substring(9));
             foreach(var interval in data.intervals){
                 List<KeyValuePair<Zone,NativeTrafficMergeInterval>> list;
                 if(!byEdge.TryGetValue(interval.edge,out list)){list=new List<KeyValuePair<Zone,NativeTrafficMergeInterval>>();byEdge[interval.edge]=list;}
@@ -189,7 +192,7 @@ public sealed class NativeTrafficMergePolicy {
                 Vehicle leader;if(hit.attachedRigidbody&&bodies.TryGetValue(hit.attachedRigidbody,out leader)&&MovingStreamLeader(vehicle,target,leader))continue;
                 for(float at=low+.5f;at<=gate+.5f;at+=1){
                     var point=path.Position(Mathf.Min(at,gate))+Vector3.up*.85f;
-                    if((hit.ClosestPoint(point)-point).sqrMagnitude<1.15f*1.15f){reason="physical approach:"+hit.name;return false;}
+                    if(TrafficColliderGeometry.WithinRadius(hit,point,1.15f)){reason="physical approach:"+hit.name;return false;}
                 }
             }
         }

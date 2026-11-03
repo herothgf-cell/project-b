@@ -2,11 +2,16 @@ param(
  [ValidateRange(1024,65000)][int]$Port=17971,
  [string]$Executable,
  [switch]$Reconnect,
+ [switch]$MotionOnly,
+ [ValidateRange(0,60)][int]$MotionSeconds=0,
  [switch]$Rendered,
+ [ValidateRange(800,3840)][int]$RenderWidth=1280,
+ [ValidateRange(600,2160)][int]$RenderHeight=720,
  [switch]$LegacyRouting,
  [ValidateRange(60,600)][int]$TimeoutSeconds=300
 )
 $ErrorActionPreference='Stop'
+if($MotionOnly -and ($MotionSeconds -lt 10 -or $Reconnect)){throw 'MotionOnly requires at least10 seconds and runs separately from Reconnect'}
 $root=Split-Path -Parent $PSScriptRoot
 if(-not $Executable){$Executable=Join-Path $root 'builds/EungyeTaxi/EungyeTaxi.exe'}
 $Executable=(Resolve-Path -LiteralPath $Executable).Path
@@ -17,7 +22,9 @@ $owned=[System.Collections.Generic.List[System.Diagnostics.Process]]::new()
 function Start-NativeProbe([string]$Role){
  $log=Join-Path $output ($Role+'.log')
  $arguments=@('-batchmode','-nographics','-pvpNativeLanCheck','-pvpNativeLanRole',$Role,'-pvpNativeLanAddress','127.0.0.1','-pvpNativeLanPort',"$Port",'-pvpNativeLanOutput',('"'+$output+'"'),'-logFile',('"'+$log+'"'))
- if($Rendered){$arguments=@($arguments | Where-Object {$_ -ne '-batchmode' -and $_ -ne '-nographics'});$arguments+=@('-noaudio','-pvpNativeRenderCheck','-screen-fullscreen','0','-screen-width','1280','-screen-height','720')}
+ if($Rendered){$arguments=@($arguments | Where-Object {$_ -ne '-batchmode' -and $_ -ne '-nographics'});$arguments+=@('-noaudio','-pvpNativeRenderCheck','-screen-fullscreen','0','-screen-width',"$RenderWidth",'-screen-height',"$RenderHeight")}
+ if($MotionOnly){$arguments+='-pvpNativeMotionOnly'}
+ if($MotionSeconds -gt 0){$arguments+=@('-pvpNativeMotionSeconds',"$MotionSeconds")}
  if($LegacyRouting){$arguments+='-pvpNativeLegacyRouting'}
  if($Reconnect){$arguments+='-pvpNativeLanReconnect'}
  $style=if($Rendered -and $Role -eq "client"){"Normal"}else{"Hidden"}
@@ -40,6 +47,7 @@ try {
   if(-not (Test-Path -LiteralPath $run.Metrics)){throw ($run.Role+' missing JSON metrics: '+$run.Metrics)}
   $metrics=Get-Content -LiteralPath $run.Metrics -Raw | ConvertFrom-Json
   if(-not $metrics.passed -or $metrics.failed -ne 0 -or $metrics.checks -lt 10){throw ($run.Role+' metrics failed: '+$run.Metrics)}
+  if($MotionOnly -and $run.Role -eq 'client'){if($metrics.maxFreezeMs -gt 100 -or $metrics.frozenFrames -gt $metrics.movingFrames*.01){throw ('Moving pose pacing failed: frozen='+$metrics.frozenFrames+'/'+$metrics.movingFrames+' longest='+$metrics.maxFreezeMs+'ms; '+$run.Metrics)}; Write-Output ('MOVING_POSE_PACING_OK movingSeconds='+$metrics.movingSeconds+' metres='+$metrics.movingMetres+' maxSpeed='+$metrics.movingMaxSpeed+' longestFreezeMs='+$metrics.maxFreezeMs)}
   if(-not (Select-String -LiteralPath $run.Log -SimpleMatch ('PVP_NATIVE_LAN_OK '+$run.Role) -Quiet)){throw ($run.Role+' missing completion marker')}
   Write-Output ($run.Role+' PASS checks='+$metrics.checks+' native-map='+$metrics.map+' guest-metres='+$metrics.metres);if($metrics.performance){$metrics.performance | Format-Table name,count,averageMs,p95Ms,maxMs | Out-String | Write-Output}
  }

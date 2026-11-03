@@ -88,7 +88,7 @@ public static class PvpNativeReplica {
         for(int slot=0;slot<4;slot++){
             var driver=match.Drivers[slot];var taxi=driver.taxi;
             frame.scores[slot]=match.Score(slot);
-            var actor=new PvpNativeActor{slot=slot,position=taxi.transform.position,rotation=taxi.transform.rotation,velocity=taxi.body.velocity,
+            var actor=new PvpNativeActor{slot=slot,position=taxi.body.position,rotation=taxi.body.rotation,velocity=taxi.body.velocity,
                 angularVelocity=taxi.body.angularVelocity,steering=taxi.SteeringInput,status=match.DriverStatus(slot),
                 signal=driver.signals.direction,hazards=driver.signals.Hazards,assisted=driver.assisted.Active,
                 conditionKind=match.ConditionServiceKind(driver),conditionRemaining=match.ServiceRemaining(driver),
@@ -96,14 +96,15 @@ public static class PvpNativeReplica {
                 wheelPositions=new Vector3[4],wheelRotations=new Quaternion[4]};
             for(int wheel=0;wheel<4;wheel++){
                 Vector3 position;Quaternion rotation;taxi.wheels[wheel].GetWorldPose(out position,out rotation);
-                actor.wheelPositions[wheel]=taxi.transform.InverseTransformPoint(position);
-                actor.wheelRotations[wheel]=Quaternion.Inverse(taxi.transform.rotation)*rotation*Quaternion.Euler(0,0,90);
+                actor.wheelPositions[wheel]=Quaternion.Inverse(actor.rotation)*(position-actor.position);
+                actor.wheelRotations[wheel]=Quaternion.Inverse(actor.rotation)*rotation*Quaternion.Euler(0,0,90);
             }
+            if(PvpNativePerf.Moving&&slot==recipient&&taxi.body.velocity.magnitude>2)PvpNativePerf.Sample("source-render-age-ms",Vector3.Distance(taxi.transform.position,taxi.body.position)/taxi.body.velocity.magnitude*1000);
             frame.actors[slot]=actor;
         }
         for(int index=0;index<frame.npcs.Length;index++){
             var car=human.traffic.cars[index];
-            frame.npcs[index]=new PvpNativeNpc{index=index,position=car.transform.position,rotation=car.transform.rotation,
+            frame.npcs[index]=new PvpNativeNpc{index=index,position=car.PhysicsPosition,rotation=car.PhysicsRotation,
                 speed=car.speed,visible=car.Visible,turn=car.CurrentTurn,brake=car.speed<.2f||car.followingTarget<car.speed};
         }
         if(full){
@@ -160,6 +161,7 @@ public static class PvpNativeReplica {
             throw new ArgumentException("Invalid native match frame");
         BindClient(lan);
         var match=lan.Match;var view=State(lan);bool first=view.received<=0;
+        if(!first&&PvpNativePerf.Moving)PvpNativePerf.Sample("moving-packet-gap-ms",(Time.realtimeSinceStartupAsDouble-view.received)*1000);
         var scores=new int[4];var conditions=new int[4];var remaining=new float[4];var claims=new int[frame.claims.Length];
         for(int i=0;i<4;i++)conditions[i]=-1;
         for(int server=0;server<4;server++)scores[lan.ServerToLocal(server)]=frame.scores[server];
@@ -241,13 +243,19 @@ public static class PvpNativeReplica {
         if(events!=null)foreach(var entry in events)ledger.RecordIncident(entry);
     }
 
+    public static void TraceMotion(PvpNativeLan lan){
+        if(!PvpNativePerf.Moving||lan==null||lan.IsHost||!lan.Match)return;var view=State(lan);var taxi=lan.Match.Human.taxi;var camera=Camera.main;
+        PvpNativePerf.Motion(Time.realtimeSinceStartupAsDouble,view.serverTime,view.renderTime,taxi.transform.position,taxi.ObservedVelocity.magnitude,camera?camera.transform.position:Vector3.zero);
+    }
+
     public static void Tick(PvpNativeLan lan){
         if(lan==null||lan.IsHost||!lan.InMatch||lan.Match==null)return;
         var view=State(lan);if(!view.bound||view.received<=0)return;
-        double now=Time.realtimeSinceStartupAsDouble,age=System.Math.Max(0,now-view.received),desired=view.serverTime+System.Math.Min(.2,age)-.1;double dt=System.Math.Max(0,now-view.lastDraw);view.lastDraw=now;if(System.Math.Abs(desired-view.renderTime)>1)view.renderTime=desired;else view.renderTime+=dt*System.Math.Max(.9,System.Math.Min(1.1,1+(desired-view.renderTime)*2));double playback=lan.Match.Finished?view.serverTime:view.renderTime;
+        double now=Time.realtimeSinceStartupAsDouble,age=System.Math.Max(0,now-view.received),dt=System.Math.Max(0,now-view.lastDraw);view.lastDraw=now;view.renderTime=PvpNativePlaybackClock.Advance(view.renderTime,view.serverTime,age,dt);double playback=lan.Match.Finished?view.serverTime:view.renderTime;
         var match=lan.Match;
         for(int i=0;i<match.Drivers.Count;i++)view.taxis[i].Draw(match.Drivers[i].taxi.transform,playback);
         for(int i=0;i<view.npcs.Length;i++)view.npcs[i].Draw(match.Human.traffic.cars[i].transform,playback);
+
         // Cap extrapolated signal time if the connection stops delivering snapshots.
         match.Human.traffic.manualTime=view.clock+(match.Finished?0:(float)System.Math.Min(.25,age));
     }

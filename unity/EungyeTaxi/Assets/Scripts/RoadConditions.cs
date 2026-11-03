@@ -26,6 +26,9 @@ public sealed class RoadConditions : MonoBehaviour {
  public string Notice {get;private set;}
  struct Sample {public Vector3 position,direction;public float delay;}
  readonly List<Sample> samples=new List<Sample>();
+ readonly Dictionary<Vector2Int,List<Sample>> sampleCells=new Dictionary<Vector2Int,List<Sample>>();int sampleVersion,indexVersion=-1;
+ const float SampleCell=100;
+ void IndexSamples(){if(indexVersion==sampleVersion)return;sampleCells.Clear();foreach(var sample in samples){var key=new Vector2Int(Mathf.FloorToInt(sample.position.x/SampleCell),Mathf.FloorToInt(sample.position.z/SampleCell));List<Sample> bucket;if(!sampleCells.TryGetValue(key,out bucket)){bucket=new List<Sample>();sampleCells.Add(key,bucket);}bucket.Add(sample);}indexVersion=sampleVersion;}
  bool automatic,networkView;float nextEvent,nextSample;int sequence,networkSequence;
  public void Initialize(DriveSession owner){
   session=owner;automatic=!RoadRulesTrial.Enabled&&!PvpNativeLan.IsReplica(owner);
@@ -75,7 +78,7 @@ public sealed class RoadConditions : MonoBehaviour {
   }
   foreach(var item in incidents)if(!keep.Contains(item))Remove(item);
   incidents.Clear();incidents.AddRange(keep);
-  samples.Clear();foreach(var value in snapshot.samples)samples.Add(new Sample{position=value.position,direction=value.direction,delay=value.delay});
+  sampleVersion++;samples.Clear();foreach(var value in snapshot.samples)samples.Add(new Sample{position=value.position,direction=value.direction,delay=value.delay});
   Revision=snapshot.revision;Notice=snapshot.notice??"";
  }
  static bool Finite(float value){return !float.IsNaN(value)&&!float.IsInfinity(value);}
@@ -91,14 +94,19 @@ public sealed class RoadConditions : MonoBehaviour {
   foreach(var item in incidents){float remaining=networkView?item.networkRemaining:item.expiresAt-Time.time;if(remaining<=0||!OnSegment(item.position,item.direction,a,b,direction,roadWidth))continue;
    delay+=roadWidth>=12?Mathf.Min(remaining,item.queue?12:8):Mathf.Min(remaining,90);
   }
-  foreach(var sample in samples)if(OnSegment(sample.position,sample.direction,a,b,direction,roadWidth))delay+=sample.delay;
+  if(networkView||session&&session.simulationMatch){
+   IndexSamples();float pad=roadWidth*.5f+.3f;int x0=Mathf.FloorToInt((Mathf.Min(a.x,b.x)-pad)/SampleCell),x1=Mathf.FloorToInt((Mathf.Max(a.x,b.x)+pad)/SampleCell),z0=Mathf.FloorToInt((Mathf.Min(a.z,b.z)-pad)/SampleCell),z1=Mathf.FloorToInt((Mathf.Max(a.z,b.z)+pad)/SampleCell);
+   long nx=(long)x1-x0+1,nz=(long)z1-z0+1;
+   if(nx>0&&nz>0&&nx<=samples.Count&&nz<=samples.Count&&nx*nz<=samples.Count){for(long x=x0;x<=x1;x++)for(long z=z0;z<=z1;z++){List<Sample> bucket;if(sampleCells.TryGetValue(new Vector2Int((int)x,(int)z),out bucket))foreach(var sample in bucket)if(OnSegment(sample.position,sample.direction,a,b,direction,roadWidth))delay+=sample.delay;}}
+   else foreach(var sample in samples)if(OnSegment(sample.position,sample.direction,a,b,direction,roadWidth))delay+=sample.delay;
+  }else foreach(var sample in samples)if(OnSegment(sample.position,sample.direction,a,b,direction,roadWidth))delay+=sample.delay;
   return delay;
  }
  void Update(){
   if(PvpNativeLan.IsReplica(session))return;
   for(int i=incidents.Count-1;i>=0;i--)if(incidents[i].expiresAt<=Time.time){Remove(incidents[i]);incidents.RemoveAt(i);Revision++;Notice="정차 구간 해소 · 경로를 다시 비교합니다";}
   if(!automatic||session==null||session.paused||session.business.ShowingSummary)return;
-  if(Time.time>=nextSample){nextSample=Time.time+1;samples.Clear();
+  if(Time.time>=nextSample){nextSample=Time.time+1;sampleVersion++;samples.Clear();
    foreach(var car in session.traffic.cars)if(car&&car.gameObject.activeInHierarchy&&car.transform.position.y>=0&&car.speed<3)
     samples.Add(new Sample{position=car.transform.position,direction=car.transform.forward,delay=2+(3-car.speed)*1.5f});
   }
@@ -149,6 +157,6 @@ public sealed class RoadConditions : MonoBehaviour {
   if(text.font)label.GetComponent<Renderer>().sharedMaterial=text.font.material;label.AddComponent<FaceCamera>();item.visuals.Add(label);
  }
  void Remove(RoadIncident item){foreach(var obj in item.visuals)if(obj){obj.SetActive(false);Destroy(obj);}item.visuals.Clear();}
- public void ResetForDay(){foreach(var item in incidents)Remove(item);incidents.Clear();samples.Clear();Revision++;nextEvent=Time.time+15;}
+ public void ResetForDay(){foreach(var item in incidents)Remove(item);incidents.Clear();samples.Clear();sampleVersion++;Revision++;nextEvent=Time.time+15;}
  void OnDestroy(){foreach(var item in incidents)Remove(item);}
 }

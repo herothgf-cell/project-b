@@ -13,14 +13,20 @@ public static class PvpCityMap {
  static string Key(int x,int z){return x+":"+z;}
  public static MapData Create(){
   var streets=new PvpCityRoadBuilder();var roads=streets.roads;
-  var map=new MapData{mapId="pvp-city-a",source="확장 A2 · 가상 경쟁 도시",coordinateStatus="fictional metres",width=3600,depth=2800,hybrid=true,supplementApplied=true,roads=roads.ToArray(),hdEdges=streets.edges.ToArray(),junctionRules=streets.rules.ToArray(),hdMarks=streets.marks.ToArray(),hdSignals=new MapPoint[0],hdTrials=new HdTrialCase[0],osmCrossings=new OsmCrossing[0],buildings=new MapBuilding[0],areas=new MapArea[0],stops=new MapStop[0],targets=new MapTarget[0],landmarks=new MapLandmark[0]};
+  var map=new MapData{mapId="pvp-city-a",source="A3 · 비정형 골목 경쟁 도시",coordinateStatus="fictional metres",width=3600,depth=2800,hybrid=true,supplementApplied=true,roads=roads.ToArray(),hdEdges=streets.edges.ToArray(),junctionRules=streets.rules.ToArray(),hdMarks=streets.marks.ToArray(),hdSignals=new MapPoint[0],hdTrials=new HdTrialCase[0],osmCrossings=new OsmCrossing[0],buildings=new MapBuilding[0],areas=new MapArea[0],stops=new MapStop[0],targets=new MapTarget[0],landmarks=new MapLandmark[0]};
   var graph=new HdRoadGraph(map);var stops=new List<MapStop>();var areas=new List<MapArea>();var objects=new List<ProjectMapObject>();var landmarks=new List<MapLandmark>();
   for(int dz=0;dz<3;dz++)for(int dx=0;dx<3;dx++){
    int cx=dx*2+1,cz=dz*2+1,index=dz*3+dx;string name=Districts[index];
    landmarks.Add(new MapLandmark{name=name,kind="district",status="fictional",x=X[cx]+85,z=Z[cz]+85});
+   // Select two separate long local frontages in this district. The stable
+   // 18 slots retain their demand classification while positions follow A3.
+   string districtPrefix="city:alley:a3:"+index+":";
+   var candidates=map.hdEdges.Select((e,i)=>new{e,i}).Where(v=>v.e.id.StartsWith(districtPrefix)&&v.e.turn==0&&v.e.change==0&&graph.paths[v.i].length>155&&v.e.sourceId.StartsWith("city-road:"))
+    .GroupBy(v=>v.e.sourceId).Select(g=>g.OrderBy(v=>v.e.id,StringComparer.Ordinal).First()).OrderByDescending(v=>graph.paths[v.i].length).ThenBy(v=>v.e.id,StringComparer.Ordinal).Take(2).ToArray();
+   if(candidates.Length!=2)throw new InvalidOperationException("A3 district needs two safe passenger frontages: "+name);
    for(int side=0;side<2;side++){
-    string lane="city:"+Key(cx-1+side,cz)+">"+Key(cx+side,cz);int edge=Array.FindIndex(map.hdEdges,e=>e.id==lane);float at=graph.paths[edge].length*.5f;
-    var stop=AddPassengerBay(map,edge,at,name+(side==0?" 서문":" 동문"),roads);graph=new HdRoadGraph(map);stops.Add(stop);
+    int edge=candidates[side].i;float at=graph.paths[edge].length*.5f;
+    var stop=AddPassengerBay(map,edge,at,name+(side==0?" 북측 접근":" 남측 복귀"),roads);graph=new HdRoadGraph(map);stops.Add(stop);
     var center=stop.Passenger;areas.Add(new MapArea{kind="sidewalk",name=stop.name+" 승객 보도",height=.14f,points=ProjectMapScene.Rectangle(center,stop.Direction,3,24),triangles=new[]{0,1,2,0,2,3}});
    }
   }
@@ -64,7 +70,7 @@ public static class PvpCityMap {
   map.areas=areas.ToArray();map.buildings=buildings.ToArray();
   // Preserve DriveSession's normal 23m-back / 2.5m-right placement while
   // deriving the target frame from this map's actual curved native lane.
-  var launch=graph.paths[Array.FindIndex(map.hdEdges,e=>e.id=="city:0:1>1:1")];var launchPosition=launch.Position(65);var launchDirection=launch.Tangent(65);
+  var launch=graph.paths[Array.FindIndex(map.hdEdges,e=>e.id=="city:0:2>h:0:2:head")];var launchPosition=launch.Position(5);var launchDirection=launch.Tangent(5);
   var target=launchPosition+launchDirection*23-TrafficSystem.Right(launchDirection)*2.5f;var ahead=target+launchDirection*200;
   map.targets=new[]{new MapTarget{name="출발 도로",x=target.x,z=target.z},new MapTarget{name="진행 방향",x=ahead.x,z=ahead.z}};
   streets.AttachDocument(map);map.pvpTrafficMerges=PvpTrafficMergeLayout.Create(map);
@@ -121,7 +127,10 @@ public static class PvpCityMap {
  static MapPoint[] Curve(Vector3 a,Vector3 b,Vector3 c,Vector3 d,int count){var points=new MapPoint[count+1];for(int i=0;i<=count;i++){float t=(float)i/count,u=1-t;points[i]=P(u*u*u*a+3*u*u*t*b+3*u*t*t*c+t*t*t*d);}return points;}
  static MapRoad Surface(string id,float width,Vector3[] points){return new MapRoad{id=id,name="시설 진입·주차",width=width,lanes=1,sourceLanes=1,oneWay=1,suppressPaint=true,points=Array.ConvertAll(points,P)};}
  static FuelStationLayout.FuelStation Facility(MapData map,HdRoadGraph graph,MapStop reference,int number,List<MapRoad> roads){
-  int edge=map.hdEdges[reference.laneEdge].next[0];var approachPath=graph.paths[edge];float at=approachPath.length*.5f;if(at<45||at+40>approachPath.length)throw new InvalidOperationException("City service access unavailable");var center=approachPath.Position(at);var d=approachPath.Tangent(at);var right=TrafficSystem.Right(d);var pump=center+right*24;
+  // Services choose a nearby unsplit native frontage with enough room for
+  // the actual entrance and exit curves; a short post-pocket tail is unsafe.
+  int edge=Enumerable.Range(0,map.hdEdges.Length).Where(i=>map.hdEdges[i].sourceId.StartsWith("city-road:alley:")&&map.hdEdges[i].turn==0&&map.hdEdges[i].change==0&&graph.paths[i].length>=110)
+   .OrderBy(i=>Vector3.SqrMagnitude(graph.paths[i].Position(graph.paths[i].length*.5f)-reference.Kerb)).ThenBy(i=>i).First();var approachPath=graph.paths[edge];float at=approachPath.length*.5f;if(at<45||at+40>approachPath.length)throw new InvalidOperationException("City service access unavailable");var center=approachPath.Position(at);var d=approachPath.Tangent(at);var right=TrafficSystem.Right(d);var pump=center+right*24;
   var entry=approachPath.Position(at-40);var exit=approachPath.Position(at+40);var enter=Curve(entry,entry+approachPath.Tangent(at-40)*20,pump-d*22,pump-d*6,24);var leave=Curve(pump+d*6,pump+d*22,exit-approachPath.Tangent(at+40)*20,exit,24);
   string id="city-fuel:"+number;string name=new[]{"북서 주유·정비·세차","중앙 주유·정비·세차","동부 주유"}[number];
   var paving=new[]{Surface(id+":court",24,new[]{pump-d*22,pump+d*22}),Surface(id+":entrance",7,Array.ConvertAll(enter,p=>p.V())),Surface(id+":exit",7,Array.ConvertAll(leave,p=>p.V()))};roads.AddRange(paving);

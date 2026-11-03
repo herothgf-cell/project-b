@@ -6,13 +6,17 @@ using UnityEngine;
 
 // Explicit acceptance fixture: two real player processes, native WheelColliders,
 // input messages and authoritative snapshots. Phase files coordinate assertions only.
+[DefaultExecutionOrder(20000)]
 public sealed class PvpNativeLanProbe : MonoBehaviour {
  [Serializable] public sealed class Metrics {
+  public int movingFrames,frozenFrames;public float movingMaxSpeed;public double movingSeconds,movingMetres,maxFreezeMs;
   public string product;public string graphics;public int width,height;public PvpNativePerfView[] performance;public string role,map,error;public bool passed;public int slot,checks,failed,driverCount,wheels,score,cash,durability,claim=-1;
   public float elapsed,metres,maxSpeed;public string trip,offer;public List<string> evidence=new List<string>();
  }
  [Serializable] public sealed class Model {public string offer,trip;public int pickup,score,cash,durability,npcs,manner;public float clock;}
- Metrics metrics=new Metrics();string directory,address;ushort port;bool host,reconnect,completed;float end;PvpNativeLan lan;
+ float motionSeconds;
+ void LateUpdate(){if(lan)PvpNativeReplica.TraceMotion(lan);}
+ Metrics metrics=new Metrics();string directory,address;ushort port;bool host,reconnect,completed,motionOnly;float end;PvpNativeLan lan;
  static string Arg(string key,string fallback){var args=Environment.GetCommandLineArgs();int at=Array.IndexOf(args,key);return at>=0&&at+1<args.Length?args[at+1]:fallback;}
  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Attach(){if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeLanCheck")>=0&&!FindObjectOfType<PvpNativeLanProbe>()){var root=new GameObject("Native LAN acceptance probe");DontDestroyOnLoad(root);root.AddComponent<PvpNativeLanProbe>();}}
  void Check(bool value,string text){metrics.checks++;if(!value)metrics.failed++;metrics.evidence.Add((value?"PASS ":"FAIL ")+text);Debug.Log("PVP_NATIVE_PROBE "+metrics.role+" "+(value?"PASS ":"FAIL ")+text);if(!value)throw new InvalidOperationException(text);}
@@ -23,14 +27,16 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
  IEnumerator Bootstrap(){
   if(!FindObjectOfType<Pvp.PvpBootstrap>()){var unified=FindObjectOfType<UnifiedModeBootstrap>();if(unified)unified.StartPvp();}
   yield return Until(()=>FindObjectOfType<Pvp.PvpBootstrap>()!=null,"PVP bootstrap available");
-  FindObjectOfType<Pvp.PvpBootstrap>().StartNativeLan(host,address,port,300);
+  FindObjectOfType<Pvp.PvpBootstrap>().StartNativeLan(host,address,port,motionOnly?1200:300);
   yield return Until(()=>PvpNativeLan.Instance!=null,"native transport created");lan=PvpNativeLan.Instance;
  }
  IEnumerator Start(){
   host=Arg("-pvpNativeLanRole","client")=="host";metrics.role=host?"host":"client";
   directory=Path.GetFullPath(Arg("-pvpNativeLanOutput",Path.Combine(Application.persistentDataPath,"native-lan-check")));Directory.CreateDirectory(directory);
   address=Arg("-pvpNativeLanAddress","127.0.0.1");port=ushort.Parse(Arg("-pvpNativeLanPort","17971"));reconnect=Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeLanReconnect")>=0;
-  end=Time.realtimeSinceStartup+240;Application.runInBackground=true;
+  motionOnly=Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeMotionOnly")>=0;
+  motionSeconds=Mathf.Clamp(float.Parse(Arg("-pvpNativeMotionSeconds","0"),System.Globalization.CultureInfo.InvariantCulture),0,60);
+  end=Time.realtimeSinceStartup+300;Application.runInBackground=true;
   // Drive a nested coroutine explicitly so an exception always produces JSON and a nonzero exit.
   var stack=new Stack<IEnumerator>();stack.Push(Run());
   while(stack.Count>0){object current=null;Exception failure=null;bool advanced=false;try{advanced=stack.Peek().MoveNext();if(advanced)current=stack.Peek().Current;}catch(Exception e){failure=e;}
@@ -47,7 +53,7 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   Check(metrics.map=="pvp-city-a"&&metrics.driverCount==4&&metrics.wheels==4,"native city and four original physical taxis");
   foreach(var d in match.Drivers)Check(d.business.SimulationSession&&d.business.SavePath==""&&d.taxi.wheels.Length==4,"native sessions retain campaign save isolation");
   metrics.product=Application.productName;Check(metrics.product=="택시 시뮬레이션","latest main product name retained");metrics.graphics=SystemInfo.graphicsDeviceType.ToString();metrics.width=Screen.width;metrics.height=Screen.height;
-  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeRenderCheck")>=0){Check(SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null,"graphics device is active");bool captured=false;StartCoroutine(CaptureFrame(()=>captured=true));yield return Until(()=>captured,"actual rendered frame captured",8);}
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeRenderCheck")>=0){Check(SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null,"graphics device is active");bool captured=false;StartCoroutine(CaptureFrame(()=>captured=true));yield return Until(()=>captured,"actual rendered frame captured",8);if(!host){var map=own.GetComponent<FullMapOverlay>();Check(map&&map.Open(),"A3 native full map opens");yield return null;yield return null;captured=false;StartCoroutine(CaptureFrame(()=>captured=true,"client-a3-map.png"));yield return Until(()=>captured,"actual A3 map render captured",8);map.Close();}}
   if(host)yield return Host();else yield return Client();
   yield return Cleanup();
  }
@@ -58,6 +64,17 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   Vector3 before=car.transform.position;float startTime=Time.realtimeSinceStartup,maxSpeed=0;
   while(!Has("drive-done")&&Time.realtimeSinceStartup<end){maxSpeed=Mathf.Max(maxSpeed,car.body.velocity.magnitude);yield return null;}
   metrics.metres=Vector3.Distance(before,car.transform.position);metrics.maxSpeed=maxSpeed;Check(Has("drive-done")&&metrics.metres>2&&maxSpeed>.5f,"guest pedal messages move host WheelCollider taxi; metres="+metrics.metres+" speed="+maxSpeed);
+  if(motionSeconds>0){
+   guest.assisted.allowAutomated=true;Check(guest.assisted.SetActive(true),"motion run arms original lane assistance without pose control");PvpNativePerf.Moving=true;Mark("motion-ready");
+   bool captureChecked=false;float maxOffset=0;
+   while(!Has("motion-done")&&Time.realtimeSinceStartup<end){
+    if(car.body.velocity.magnitude>2){maxOffset=Mathf.Max(maxOffset,Vector3.Distance(car.transform.position,car.body.position));if(!captureChecked||Time.frameCount%60==0){var captured=PvpNativeReplica.Capture(lan,1,false).actors[1];if(Vector3.Distance(captured.position,car.body.position)>.0001f||Quaternion.Angle(captured.rotation,car.body.rotation)>.01f)throw new Exception("Physics pose and snapshot timestamp source diverged");captureChecked=true;}}
+    yield return null;
+   }
+   var npcFrame=PvpNativeReplica.Capture(lan,1,false);bool npcPhysics=true;foreach(var npc in npcFrame.npcs)npcPhysics&=Vector3.Distance(npc.position,match.Human.traffic.cars[npc.index].PhysicsPosition)<.0001f;Check(npcPhysics,"shared NPC snapshots use the same physics pose clock");
+   PvpNativePerf.Moving=false;Check(captureChecked,"moving capture uses physics pose consistently; maximum render/body offset="+maxOffset);guest.assisted.SetActive(false);guest.assisted.allowAutomated=false;Mark("motion-host-done");
+  }
+  if(motionOnly){yield return Until(()=>lan.ConnectedGuests==0&&Has("client-clean"),"motion-only guest exits to menu",20);yield break;}
   yield return Until(()=>Has("accepted"),"client native acceptance completes",35);
   Check(guest.jobs.Active&&guest.jobs.current!=null,"accepted guest native trip exists on host");
   Check(lan.ProbeRejectedTripCommands>=2&&lan.ProbeRejectedClaimCommands>=2,"host rejects stale trip/situation and invalid/duplicate claim at validation gates");
@@ -83,6 +100,16 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   lan.ProbeInput=()=>new PvpNativeDrive{throttle=Time.realtimeSinceStartup<driveUntil?.35f:0,steer=0,brake=Time.realtimeSinceStartup>=driveUntil,blocked=false};
   while(Time.realtimeSinceStartup<driveUntil+2)yield return null;
   metrics.metres=Vector3.Distance(before,own.taxi.transform.position);Check(metrics.metres>2,"client receives moving native taxi pose");Mark("drive-done");
+  if(motionSeconds>0){
+   yield return Until(()=>Has("motion-ready")&&own.assisted.Active,"host lane assistance ready for sustained native drive",10);
+   float motionUntil=Time.realtimeSinceStartup+motionSeconds;PvpNativePerf.Moving=true;
+   lan.ProbeInput=()=>new PvpNativeDrive{throttle=Time.realtimeSinceStartup<motionUntil?1:0,steer=0,brake=Time.realtimeSinceStartup>=motionUntil,blocked=false};
+   while(Time.realtimeSinceStartup<motionUntil)yield return null;
+   PvpNativePerf.Moving=false;metrics.movingMaxSpeed=PvpNativePerf.MovingMaxSpeed;metrics.movingFrames=PvpNativePerf.MovingFrames;metrics.frozenFrames=PvpNativePerf.FrozenFrames;metrics.movingSeconds=PvpNativePerf.MovingSeconds;metrics.movingMetres=PvpNativePerf.MovingMetres;metrics.maxFreezeMs=PvpNativePerf.MaxFreezeMs;
+   Check(metrics.movingSeconds>=8&&metrics.movingMetres>=50,"sustained moving render trace rather than parked FPS; seconds="+metrics.movingSeconds+" metres="+metrics.movingMetres+" maxFreezeMs="+metrics.maxFreezeMs);
+   Mark("motion-done");yield return Until(()=>Has("motion-host-done"),"host confirms physical motion capture consistency",10);yield return new WaitForSecondsRealtime(2);
+  }
+  if(motionOnly){lan.ProbeInput=null;lan.LeaveToMenu();yield break;}
   own.signals.Toggle(1);yield return Until(()=>own.signals.direction==1&&!own.signals.Hazards,"manual indicator command returns authoritative host state",10);
   own.signals.ToggleHazards();yield return Until(()=>own.signals.Hazards&&own.signals.direction==0,"host hazards override replica cancellation",10);own.signals.ToggleHazards();
   Check(!own.jobs.Active,"guest starts without fabricated accepted contract");
@@ -120,5 +147,5 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   var unified=FindObjectOfType<UnifiedModeBootstrap>();Check(!unified||UnifiedModeBootstrap.Selected==UnifiedModeBootstrap.Mode.Menu,"unified mode selection restored");
   if(!host)Mark("client-clean");
  }
- void Finish(){if(completed)return;completed=true;metrics.passed=metrics.failed==0;metrics.performance=PvpNativePerf.Capture();File.WriteAllText(Path.Combine(directory,metrics.role+"-metrics.json"),JsonUtility.ToJson(metrics,true));Debug.Log("PVP_NATIVE_LAN_"+(metrics.passed?"OK ":"FAIL ")+metrics.role);Application.Quit(metrics.passed?0:1);}
+ void Finish(){if(completed)return;completed=true;metrics.passed=metrics.failed==0;metrics.performance=PvpNativePerf.Capture();PvpNativePerf.WriteMotion(Path.Combine(directory,metrics.role+"-motion.csv"));File.WriteAllText(Path.Combine(directory,metrics.role+"-metrics.json"),JsonUtility.ToJson(metrics,true));Debug.Log("PVP_NATIVE_LAN_"+(metrics.passed?"OK ":"FAIL ")+metrics.role);Application.Quit(metrics.passed?0:1);}
 }

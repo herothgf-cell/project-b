@@ -10,7 +10,7 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
     public bool Active {get{return stage!=0;}}
     public int DecisionCount {get;private set;}
     int stage,kind;
-    int conditionTripCount=-1,conditionMealsBefore,conditionRestsBefore;
+    int conditionTripCount=-1,conditionLastKind=-1,conditionMealsBefore,conditionRestsBefore;
     float progress,retryAt,routeWait,offPathSeconds,nextDecisionAt;
     MapStop approach;
     Vector3 bay,direction;
@@ -41,12 +41,23 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
             var arrival=AdvanceCopy(driver,mealDetour);
             var fed=PvpConditionRules.PreviewMeal(arrival);
             var after=PvpConditionRules.Forecast(fed,Math.Max(0,horizon-mealDetour-PvpConditionRules.MealSeconds));
-            mealUseful=continued.satiety<25&&after.fatigue<100&&after.fatigue+1<continued.fatigue;
+            // A meal can precede complementary rest; fatigue100 clamping hides its benefit.
+            bool moreSafeTime=PvpConditionRules.SecondsToFatigue100(fed)>PvpConditionRules.SecondsToFatigue100(arrival)+60;
+            mealUseful=continued.satiety<25&&arrival.fatigue<100&&((after.fatigue<100&&after.fatigue+1<continued.fatigue)||arrival.satiety<25&&moreSafeTime);
         }
         if(mealUseful&&(!risk||!restFits||mealDetour+PvpConditionRules.MealSeconds<restDetour+PvpConditionRules.RestSeconds))return 1;
         if(risk&&restFits)return 3;
         return -1;
     }
+    public static bool ReconsiderCondition(int lastKind,DriverCondition driver){return driver!=null&&(lastKind==3&&driver.satiety<=100-PvpConditionRules.MealSatiety||lastKind==1&&driver.fatigue>=PvpConditionRules.RestFatigue);}
+    // A human can take another native action while already parked. Recover here
+    // rather than driving a legal loop whose fatigue cancels the preceding rest.
+    public static int RecoveryAtBay(DriverCondition driver,bool meal,bool rest){
+        if(rest&&driver.fatigue>=PvpConditionRules.RestFatigue)return 3;
+        if(meal&&driver.satiety<80)return 1;
+        return -1;
+    }
+    public static bool AllowConditionDetour(int lastKind,int candidate,bool critical){return critical||lastKind!=candidate;}
     static bool Finite(double value){return !double.IsNaN(value)&&!double.IsInfinity(value)&&value>=0;}
     static DriverCondition AdvanceCopy(DriverCondition driver,double seconds){
         var value=PvpConditionRules.Forecast(driver,seconds);var copy=driver.Copy();
@@ -85,11 +96,17 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
             if(Time.time<retryAt||Time.time<nextDecisionAt)return HoldCritical(s);
             nextDecisionAt=Time.time+5;DecisionCount++;
             var e=s.business.ledger;
+            if(e.PvpProfile&&!Critical(s)&&!PvpSimulationBot.HasTimeViableOffer(s))return false;
             if(e.PvpProfile){
                 double mealDetour=double.PositiveInfinity,restDetour=double.PositiveInfinity;
-                if(conditionTripCount!=s.jobs.completed+s.jobs.failed||Critical(s)){
+                bool sameTrip=conditionTripCount==s.jobs.completed+s.jobs.failed;
+                if(!sameTrip||Critical(s)||ReconsiderCondition(conditionLastKind,e.Driver)){
                     kind=1;if(e.Account.Cash>=PvpConditionRules.MealCost&&Select(s,true))mealDetour=selectedTravelSeconds;
                     kind=3;if(Select(s,true))restDetour=selectedTravelSeconds;
+                }
+                if(sameTrip&&!Critical(s)){
+                    if(!AllowConditionDetour(conditionLastKind,3,false))restDetour=double.PositiveInfinity;
+                    if(!AllowConditionDetour(conditionLastKind,1,false))mealDetour=double.PositiveInfinity;
                 }
                 kind=NeededService(e.Account.Fuel,e.Driver,e.Care.Cleanliness,e.Care.NeedsWash,e.Care.Damage.Durability,PvpSimulationBot.UpcomingTripSeconds(s),s.simulationMatch.Remaining,mealDetour,restDetour);
             }else kind=BotServiceDecision.Needed(e.Account.Fuel,e.Driver.fatigue,e.Driver.satiety,e.Care.Cleanliness,e.Care.NeedsWash,e.Care.Damage.Durability);
@@ -134,13 +151,14 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
         if(stage==3) {
             Stop(s,"시설 이용 · "+approach.name);
             // Each purchase retains its native cash/condition/time validation.
-            // Exactly the native action whose price/time was planned. Further
-            // recovery needs get a new decision after actual physical departure.
-            int action=purchaseComplete?-1:kind;
+            // Each additional action passes the same native bay/cash/time gates.
             var e=s.business.ledger;
             if(conditionPurchased&&ConditionServiceCompleted(e,conditionMealsBefore,conditionRestsBefore)){
-                conditionTripCount=s.jobs.completed+s.jobs.failed;conditionPurchased=false;
+                conditionTripCount=s.jobs.completed+s.jobs.failed;conditionLastKind=kind;conditionPurchased=false;
+                int recovery=RecoveryAtBay(e.Driver,s.services.CanUse(1),s.services.CanUse(3));
+                if(recovery>=0){kind=recovery;purchaseComplete=false;}
             }
+            int action=purchaseComplete?-1:kind;
             if(action>=0&&s.services.CanUse(action)) {
                 float scale=Time.timeScale;bool paused=s.paused;
                 // The bot has no modal. Buy's native Close is not allowed to

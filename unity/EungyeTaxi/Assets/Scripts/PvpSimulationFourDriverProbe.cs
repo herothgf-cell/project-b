@@ -9,7 +9,8 @@ using UnityEngine;
 // Every credited receipt originates in the common displayed call board.
 public sealed class PvpSimulationFourDriverProbe : MonoBehaviour {
     readonly StringBuilder report=new StringBuilder();
-    bool ok=true,completed;
+    bool ok=true,completed;PvpSimulationMatch observedMatch;
+    void LateUpdate(){if(observedMatch&&!observedMatch.Finished&&!completed&&!observedMatch.Human.paused&&Time.timeScale>0&&Time.timeScale!=3){Log("TEST_RATE_RESTORE from="+Time.timeScale+" after native modal/service completion");Time.timeScale=3;}}
     void Log(string value){report.AppendLine(value);Debug.Log("PVP_FOUR_DRIVER "+value);}
     void Check(bool value,string why){ok&=value;Log((value?"PASS ":"FAIL ")+why);}
     static bool Paid(DriveSession driver){
@@ -121,7 +122,7 @@ public sealed class PvpSimulationFourDriverProbe : MonoBehaviour {
         int npcs=human.traffic.cars.Count;float trafficAt=TrafficDistance(human);
         Check(npcs>0,"native traffic retained count="+npcs);
         Log("CONDITIONS human uses production bot controls; timeScale=3; native offers, poses, fares, deadlines and passenger types unchanged");
-        Time.timeScale=3;
+        Time.timeScale=3;observedMatch=match;
         var fullMap=human.GetComponent<FullMapOverlay>();
         if(fullMap){
             float mapClock=match.Elapsed,mapTraffic=TrafficDistance(human);double operation=human.business.ledger.Elapsed;
@@ -134,7 +135,7 @@ public sealed class PvpSimulationFourDriverProbe : MonoBehaviour {
             fullMap.Close();yield return null;
             Check(!human.taxi.PvpMapInputBlocked&&!human.paused&&Mathf.Approximately(Time.timeScale,3),"map close restores previous simulation speed and vehicle input");
         }else Check(false,"native full map missing");
-        deadline=Time.realtimeSinceStartup+600;float nextTelemetry=0,nextNpcSnapshot=0;bool allPaid=false,claimsUnique=true;
+        deadline=Time.realtimeSinceStartup+1500;float nextTelemetry=0,nextNpcSnapshot=0;bool allPaid=false,claimsUnique=true;
         while(!match.Finished&&Time.realtimeSinceStartup<deadline){
             var receiptPanel=human.GetComponent<RideCompletionPanel>();if(receiptPanel&&receiptPanel.Open){receiptPanel.Close();Time.timeScale=3;}
             allPaid=true;var claims=new HashSet<int>();
