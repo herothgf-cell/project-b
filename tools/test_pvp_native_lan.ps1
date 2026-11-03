@@ -2,6 +2,8 @@ param(
  [ValidateRange(1024,65000)][int]$Port=17971,
  [string]$Executable,
  [switch]$Reconnect,
+ [switch]$Rendered,
+ [switch]$LegacyRouting,
  [ValidateRange(60,600)][int]$TimeoutSeconds=300
 )
 $ErrorActionPreference='Stop'
@@ -15,8 +17,11 @@ $owned=[System.Collections.Generic.List[System.Diagnostics.Process]]::new()
 function Start-NativeProbe([string]$Role){
  $log=Join-Path $output ($Role+'.log')
  $arguments=@('-batchmode','-nographics','-pvpNativeLanCheck','-pvpNativeLanRole',$Role,'-pvpNativeLanAddress','127.0.0.1','-pvpNativeLanPort',"$Port",'-pvpNativeLanOutput',('"'+$output+'"'),'-logFile',('"'+$log+'"'))
+ if($Rendered){$arguments=@($arguments | Where-Object {$_ -ne '-batchmode' -and $_ -ne '-nographics'});$arguments+=@('-noaudio','-pvpNativeRenderCheck','-screen-fullscreen','0','-screen-width','1280','-screen-height','720')}
+ if($LegacyRouting){$arguments+='-pvpNativeLegacyRouting'}
  if($Reconnect){$arguments+='-pvpNativeLanReconnect'}
- $process=Start-Process -FilePath $Executable -ArgumentList $arguments -WindowStyle Hidden -PassThru
+ $style=if($Rendered -and $Role -eq "client"){"Normal"}else{"Hidden"}
+ $process=Start-Process -FilePath $Executable -ArgumentList $arguments -WindowStyle $style -PassThru
  $owned.Add($process)
  return [pscustomobject]@{Role=$Role;Process=$process;Log=$log;Metrics=(Join-Path $output ($Role+'-metrics.json'))}
 }
@@ -36,7 +41,7 @@ try {
   $metrics=Get-Content -LiteralPath $run.Metrics -Raw | ConvertFrom-Json
   if(-not $metrics.passed -or $metrics.failed -ne 0 -or $metrics.checks -lt 10){throw ($run.Role+' metrics failed: '+$run.Metrics)}
   if(-not (Select-String -LiteralPath $run.Log -SimpleMatch ('PVP_NATIVE_LAN_OK '+$run.Role) -Quiet)){throw ($run.Role+' missing completion marker')}
-  Write-Output ($run.Role+' PASS checks='+$metrics.checks+' native-map='+$metrics.map+' guest-metres='+$metrics.metres)
+  Write-Output ($run.Role+' PASS checks='+$metrics.checks+' native-map='+$metrics.map+' guest-metres='+$metrics.metres);if($metrics.performance){$metrics.performance | Format-Table name,count,averageMs,p95Ms,maxMs | Out-String | Write-Output}
  }
  Write-Output ('PVP_NATIVE_LAN_TWO_PROCESS_OK reconnect='+[bool]$Reconnect+' evidence='+$output)
  Write-Output 'Scope: two loopback player processes using native input and WheelCollider authority; remote-PC LAN behavior requires separate verification.'

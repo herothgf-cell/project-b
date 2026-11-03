@@ -114,7 +114,7 @@ public class PassengerRequestUI : MonoBehaviour {
    for(int i=0;i<slots.Length;i++){if(!slots[i].presented){observations.Add(null);continue;}var o=NewObservation();o.RestoreLive(s.observations[i]);observations.Add(o);}active=s.active;
   }else throw new ArgumentException("Unknown request version");
   SyncBehaviorContext();session.manners.ComfortAccepted=!finished&&observations.Exists(o=>o&&o.request.Kind==RequestKind.Comfort&&o.request.Accepted);
-  if(session.jobs.trip.State==TripState.OnTrip&&!session.jobs.trip.ArrivalLocked&&(s.preferLarge||!s.preferFast))session.jobs.nav.SetPassengerPreference(s.preferLarge,s.preferFast);
+  if(session.jobs.trip.State==TripState.OnTrip&&!session.jobs.trip.ArrivalLocked&&(PvpNativeLan.IsReplica(session)?session.jobs.nav.PreferLargeRoad!=s.preferLarge||session.jobs.nav.PreferFastest!=s.preferFast:s.preferLarge||!s.preferFast))session.jobs.nav.SetPassengerPreference(s.preferLarge,s.preferFast);
  }
  public static void ValidateSnapshot(PassengerRequestUISnapshot s){
   if(s==null)throw new ArgumentException("Missing request snapshot");new PassengerRequest().Restore(s.request);

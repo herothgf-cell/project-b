@@ -3,7 +3,7 @@ using UnityEngine;
 public static class PvpNativeLanTests {
  static int checks;static void Check(bool value,string name){checks++;if(!value)throw new Exception("Native LAN contract: "+name);}
  public static void Run(){
-  PvpPassengerParityTests.Run();checks=0;
+  PvpNativePoseTests.Run();PvpPassengerParityTests.Run();checks=0;
   var ledger=new EconomyLedger(PrototypeSettings.ForOneDay());Check(ledger.EnablePvpProfile(),"host PVP profile");
   var full=new PvpNativeFrame{full=true,own=new PvpNativeOwn{economy=ledger.Snapshot(),account=ledger.Account.Snapshot(),pvpMeals=2,pvpRests=1}};
   var restored=JsonUtility.FromJson<PvpNativeFrame>(JsonUtility.ToJson(full));
@@ -19,6 +19,7 @@ public static class PvpNativeLanTests {
   var board=new PvpSimulationCallBoard(new PvpSimulationLedger(),i=>null,18,3);board.ApplyNetworkView(frame.offers,frame.roadside);
   foreach(var offer in board.Offers)Check(offer==null,"empty call slot remains empty");foreach(var offer in board.Roadside)Check(offer==null,"empty roadside slot remains empty");
   Check(!PvpNativeLan.IsReplica(null)&&!PvpNativeLan.UiBlocked(null),"offline null-safe hooks");
+  var law=new LawLedger();var incident=LawEvaluator.StopLine("network-notice",1,new RoadObservation{known=true,forward=SignalColor.Red});PvpNativeReplica.ApplyLawEvents(law,new[]{incident});int revision=law.Revision;PvpNativeReplica.ApplyLawEvents(law,new[]{incident});Check(law.Revision==revision&&law.Count==1&&law.TotalScore==99,"repeated law snapshot preserves observer revision");var severe=new LawEvent{id=incident.id,day=1,action="직진"};severe.Add("L01",LawVerdict.Violation,20);PvpNativeReplica.ApplyLawEvents(law,new[]{severe});Check(law.Revision==revision+1&&law.Count==1&&law.TotalScore==80,"same incident escalation survives network sync exactly once");PvpNativeReplica.ApplyLawEvents(law,new[]{severe});Check(law.Revision==revision+1,"repeated escalation does not duplicate notification");
   Debug.Log("PVP_NATIVE_LAN_EDITOR_OK checks="+checks);
  }
  public static void BuildValidated(){BrightUIThemeTests.Run();NavigationCueTests.Run();Run();PrototypeBuild.BuildHybrid();}

@@ -4,6 +4,7 @@ using UnityEngine;
 public class DriveNotifications : MonoBehaviour {
  public DriveSession session;
  class Notice {public string text;public bool positive,passenger;public float since;}
+ const float NoticeSeconds=4;
  readonly List<Notice> visible=new List<Notice>();LawLedger ledger;int score,lawCount,lawRevision;bool ready;string observedTrip;PassengerScoreView passenger;
  public bool FuelLow {get{return session.business.enabledCampaign&&session.business.ledger.Account!=null&&session.business.ledger.Account.Fuel<=15;}}
  public string VisibleText {get{return visible.Count==0?"":visible[0].text;}}
@@ -15,7 +16,7 @@ public class DriveNotifications : MonoBehaviour {
  }
  // Values are observed only. Every new notice is immediately visible, without a FIFO delay.
  public void RefreshScores(){
-  visible.RemoveAll(n=>Time.unscaledTime-n.since>=3);
+  visible.RemoveAll(n=>Time.unscaledTime-n.since>=NoticeSeconds);
   var jobs=session.jobs;var view=jobs.ScoreView;string trip=jobs.HasPassengerScore?session.law.tripId:null;
   if(!ready||ledger!=session.law.ledger){ledger=session.law.ledger;score=ledger.TotalScore;lawCount=ledger.Count;lawRevision=ledger.Revision;observedTrip=trip;passenger=view;visible.Clear();ready=true;return;}
   if(trip!=observedTrip){visible.RemoveAll(n=>n.passenger);observedTrip=trip;passenger=view;}
@@ -29,18 +30,33 @@ public class DriveNotifications : MonoBehaviour {
  }
  void Push(string text,bool good,bool passenger=false){visible.Insert(0,new Notice{text=text,positive=good,passenger=passenger,since=Time.unscaledTime});if(visible.Count>4)visible.RemoveAt(visible.Count-1);}
  void OnGUI(){
-  if(!ready||session.FullMapOpen||session.ChoiceOpen||session.PracticeMenuOpen||session.law.HistoryOpen||session.business.preparing||session.business.ShowingSummary)return;
-  float width=Mathf.Min(460,Screen.width*.38f),x=(Screen.width-width)/2,y=140*CockpitUI.Scale;
-  var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true,alignment=TextAnchor.MiddleLeft};GUI.depth=-80;
-  if(FuelLow){Panel(new Rect(x,y,width,50),new Color(1,.94f,.77f,1));GUI.color=session.business.ledger.Account.Fuel<=5?Color.red:Color.yellow;
-   // Pump icon uses geometry so missing font glyphs cannot hide the warning.
-   GUI.DrawTexture(new Rect(x+12,y+10,17,29),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x+29,y+16,7,4),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x+33,y+16,4,21),Texture2D.whiteTexture);GUI.color=Color.black;GUI.DrawTexture(new Rect(x+15,y+13,11,9),Texture2D.whiteTexture);GUI.color=Color.white;
-   GUI.Label(new Rect(x+47,y+3,width-55,44),"연료 부족 "+session.business.ledger.Account.Fuel.ToString("0")+"% · M 주유소 안내 · 정차 후 F7",style);y+=56;
-  }
-  foreach(var notice in visible){float age=Time.unscaledTime-notice.since,alpha=Mathf.Clamp01((3-age)/.35f);float height=Mathf.Max(38,style.CalcHeight(new GUIContent(notice.text),width-94)+10);
-   Panel(new Rect(x,y,width,height),new Color(1,1,1,alpha));GUI.color=new Color(1,1,1,alpha);style.normal.textColor=notice.passenger?CasualUI.Green:CasualUI.Blue;GUI.Label(new Rect(x+10,y+5,65,height-5),notice.passenger?"만족도":"운전",style);
-   GUI.color=new Color(1,1,1,alpha);style.normal.textColor=notice.positive?CasualUI.Green:CasualUI.Danger;GUI.Label(new Rect(x+82,y+5,width-94,height-5),notice.text,style);GUI.color=Color.white;y+=height+5;
-  }
+  if(!ready||!session||session.FullMapOpen||session.ChoiceOpen||session.PracticeMenuOpen||session.law.HistoryOpen||session.business.preparing||session.business.ShowingSummary)return;
+  var matrix=GUI.matrix;var color=GUI.color;var background=GUI.backgroundColor;var content=GUI.contentColor;int depth=GUI.depth;bool enabled=GUI.enabled;
+  try {
+   // Draw in the cockpit reference space and isolate every inherited IMGUI tint.
+   float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));GUI.color=GUI.backgroundColor=GUI.contentColor=Color.white;GUI.enabled=true;GUI.depth=-80;
+   float width=460,x=(Screen.width/scale-width)/2,y=124;
+   var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true,alignment=TextAnchor.MiddleLeft};style.normal.textColor=CasualUI.Ink;
+   var category=new GUIStyle(style){fontSize=14,fontStyle=FontStyle.Bold,alignment=TextAnchor.MiddleCenter};category.normal.textColor=Color.white;
+   if(FuelLow){Panel(new Rect(x,y,width,62),new Color(1,.95f,.81f,1));GUI.color=session.business.ledger.Account.Fuel<=5?CasualUI.Danger:CasualUI.Amber;
+    // Pump icon uses geometry so missing font glyphs cannot hide the warning.
+    GUI.DrawTexture(new Rect(x+12,y+16,17,29),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x+29,y+22,7,4),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x+33,y+22,4,21),Texture2D.whiteTexture);GUI.color=CasualUI.Ink;GUI.DrawTexture(new Rect(x+15,y+19,11,9),Texture2D.whiteTexture);GUI.color=Color.white;
+    GUI.Label(new Rect(x+49,y+7,width-61,48),"연료 부족 "+session.business.ledger.Account.Fuel.ToString("0")+"% · M 주유소 안내 · 정차 후 F7",style);y+=70;
+   }
+   foreach(var notice in visible){
+    if(Time.unscaledTime-notice.since>=NoticeSeconds)continue;
+    float height=Mathf.Max(58,style.CalcHeight(new GUIContent(notice.text),width-116)+20);Color accent=notice.passenger?CasualUI.Green:CasualUI.Blue;
+    Panel(new Rect(x,y,width,height),Color.white);
+    GUI.color=accent;GUI.DrawTexture(new Rect(x,y,5,height),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x+15,y+12,76,30),Texture2D.whiteTexture);GUI.color=Color.white;
+    GUI.Label(new Rect(x+15,y+12,76,30),notice.passenger?"만족도":"운전",category);
+    style.normal.textColor=notice.positive?CasualUI.Green:CasualUI.Danger;
+    GUI.Label(new Rect(x+104,y+10,width-116,height-20),notice.text,style);y+=height+8;
+   }
+  } finally {GUI.matrix=matrix;GUI.color=color;GUI.backgroundColor=background;GUI.contentColor=content;GUI.depth=depth;GUI.enabled=enabled;}
  }
- static void Panel(Rect r,Color c){CasualUI.Panel(r,c);}
+ // Explicit solid textures keep transient notices opaque regardless of skin backgrounds.
+ static void Panel(Rect r,Color c){
+  GUI.color=new Color(.15f,.23f,.34f,1);GUI.DrawTexture(new Rect(r.x-1,r.y-1,r.width+2,r.height+3),Texture2D.whiteTexture);
+  GUI.color=c;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;
+ }
 }

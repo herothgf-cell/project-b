@@ -8,7 +8,14 @@ public sealed class PvpPassengerWorld:MonoBehaviour {
  public int BlockedStop {get{return policy.Blocking?index:-1;}}
  public StopOccupancySnapshot State {get{return policy.Capture();}}
  public void Initialize(PvpSimulationMatch owner){match=owner;}
- public void ApplyNetworkView(StopOccupancySnapshot state,int pickup){RemoveCar();policy=StopOccupancyPolicy.Restore(state);index=pickup;if(state!=null&&state.active&&pickup>=0&&pickup<match.Human.jobs.stops.Length){stop=match.Human.jobs.stops[pickup];car=GameObject.CreatePrimitive(PrimitiveType.Cube);car.transform.SetParent(transform);car.transform.SetPositionAndRotation(stop.Kerb+stop.Direction*state.exitMetres+Vector3.up*.8f,Quaternion.LookRotation(stop.Direction));car.transform.localScale=new Vector3(1.8f,1.35f,4.3f);car.GetComponent<Renderer>().sharedMaterial=WorldBuilder.Mat("PVP bay obstruction",new Color(.32f,.39f,.46f));}}
+ public void ApplyNetworkView(StopOccupancySnapshot state,int pickup){
+  policy=StopOccupancyPolicy.Restore(state);bool active=state!=null&&state.active&&pickup>=0&&pickup<match.Human.jobs.stops.Length;
+  if(!active){RemoveCar();index=pickup;return;}
+  if(index!=pickup)RemoveCar();index=pickup;stop=match.Human.jobs.stops[pickup];
+  if(!car){car=GameObject.CreatePrimitive(PrimitiveType.Cube);car.transform.SetParent(transform);car.transform.localScale=new Vector3(1.8f,1.35f,4.3f);car.GetComponent<Renderer>().sharedMaterial=WorldBuilder.Mat("PVP bay obstruction",new Color(.32f,.39f,.46f));}
+  car.transform.SetPositionAndRotation(stop.Kerb+stop.Direction*state.exitMetres+Vector3.up*.8f,Quaternion.LookRotation(stop.Direction));
+ }
+
  public bool IsOccupied(int pickup){return policy.Blocking&&pickup==index;}
  public string Status(DriveSession driver){return Affects(driver)?"공유 승하차 공간 점유 · "+Mathf.CeilToInt(policy.Capture().remaining)+"초 대기 후 출차 · 기한 보호1회":"";}
  bool Affects(DriveSession d){return d&&d.jobs.Active&&d.jobs.current!=null&&IsOccupied(d.jobs.trip.State==TripState.ToPickup?d.jobs.current.pickup:d.jobs.PassengerViaPending?d.jobs.PassengerViaStop:d.jobs.current.drop);}
