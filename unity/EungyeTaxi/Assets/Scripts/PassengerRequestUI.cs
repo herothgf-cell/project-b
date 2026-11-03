@@ -64,14 +64,16 @@ public class PassengerRequestUI : MonoBehaviour {
   }return true;
  }
  public bool PresentationAvailable {get{return !PvpNativeLan.UiBlocked(session)&&(legacy||!ResponseBlockedThisFrame)&&!session.jobs.BehaviorAsleep&&!session.paused&&!session.FullMapOpen&&!session.ChoiceOpen&&string.IsNullOrEmpty(session.jobs.VisibleCareDialogue);}}
+ // Dialogue input is independent of physical work safety.
+ public bool CanTalk {get{return PresentationAvailable&&Time.timeScale>0&&session.jobs.Active&&!session.jobs.trip.ArrivalLocked;}}
  public bool SafeStationarySpace {get{return ClearSpace();}}
  public float ProposalExtraSeconds {get{return Current?Current.ProposalExtraSeconds:float.PositiveInfinity;}}
  public bool SafeToRespond(){return ClearSpace()&&(legacy||stopSeconds>=2);}
- public bool Respond(bool accept){if(PvpNativeLan.Route(session,"response",accept?1:0))return true;if(!PresentationAvailable||!Current||!SafeToRespond()&&!legacy)return false;bool ok=Current.Respond(accept);AfterResponse(ok);return ok;}
+ public bool Respond(bool accept){if(PvpNativeLan.Route(session,"response",accept?1:0))return true;if(!PresentationAvailable||!Current||!CanTalk)return false;bool ok=Current.Respond(accept);AfterResponse(ok);return ok;}
  public bool RespondEta(int option){if(PvpNativeLan.Route(session,"eta",option))return true;bool ok=PresentationAvailable&&Current&&Current.RespondEta(option);AfterResponse(ok);return ok;}
  public bool RespondAlternative(){if(PvpNativeLan.Route(session,"alternative"))return true;bool ok=PresentationAvailable&&Current&&Current.RespondAlternative();AfterResponse(ok);return ok;}
  public bool PrepareProposal(){return Current&&Current.PrepareProposal();}
- public bool CanChoose(PassengerReply reply){return PresentationAvailable&&Current&&SafeToRespond()&&Current.CanChoose(reply);}
+ public bool CanChoose(PassengerReply reply){return CanTalk&&Current&&Current.CanChoose(reply);}
  public bool Choose(PassengerReply reply){if(PvpNativeLan.Route(session,"reply",(int)reply))return true;bool ok=CanChoose(reply)&&Current.Choose(reply);AfterResponse(ok);return ok;}
  void AfterResponse(bool ok){if(!ok)return;if(!legacy)BlockResponseThisFrame();if(schedule!=null)schedule.Responded();SyncBehaviorContext();session.business.SaveCheckpoint();}
  public string DialogueReply {get{return Current?Current.DialogueReply:"";}}

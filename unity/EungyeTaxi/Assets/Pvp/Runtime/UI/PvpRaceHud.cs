@@ -39,7 +39,7 @@ public sealed class PvpRaceHud:MonoBehaviour {
    DrawScores(match,new Rect(w-366,80,342,220));
    DrawServices(new Rect(w-366,316,342,224),tick);
    DrawMap(new Rect(w-366,h-340,342,264),trip,false);
-   Panel(new Rect(365,h-96,w-755,72),mint);Label(new Rect(379,h-87,w-783,25),"WASD / 방향키 주행 · Space 제동 · 정차 후 Q 전후진",small);Label(new Rect(379,h-59,w-783,25),"E 승하차 · C/V 시점 · M 전체 지도 · "+practice.CameraModeName,small);
+   Panel(new Rect(365,h-96,w-755,72),mint);Label(new Rect(379,h-87,w-783,25),"방향키 ↑↓←→ 주행 · Space 제동 · 정차 후 Q 전후진",small);Label(new Rect(379,h-59,w-783,25),"E 승하차 · C/V 시점 · M 전체 지도 · "+practice.CameraModeName,small);
    string status=string.IsNullOrEmpty(message)?bridge.ActionMessage:message;Label(new Rect(365,119,w-755,48),status+(bridge.PendingAction?" · 서버 응답 대기":""),small);
    if(match==null||match.Phase==PvpRoundPhase.Lobby)DrawLobby(new Rect((w-500)/2,200,500,332));
    else if(match.Phase==PvpRoundPhase.Results||match.Phase==PvpRoundPhase.Aborted){Panel(new Rect((w-500)/2,190,500,216),mint);Label(new Rect((w-464)/2,204,464,38),Phase(match.Phase),title);Label(new Rect((w-464)/2,251,464,86),Result(match),text);if(Button(new Rect((w-464)/2,350,464,40),"초기 화면으로 돌아가기"))session.Stop();}

@@ -170,7 +170,7 @@ public class HdRouteTrial : MonoBehaviour {
   float y=Screen.height-205;GUI.Box(new Rect(16,y,790,140),GUIContent.none);
   GUI.Label(new Rect(28,y+5,760,25),"국도 42호선 실제 차로 · "+session.world.map.hdTrials[selection].name+(finished?" · 정차 완료":""),style);
   for(int i=0;i<5;i++)if(GUI.Button(new Rect(28+i*151,y+36,145,30),"F"+(6+i)+" "+(i==4?"차로 변경":(i<2?"A ":"B ")+(i%2==0?"좌회전":"우회전"))))Select(i);
-  GUI.Label(new Rect(28,y+72,760,55),"H: 내비 경로 보조 조향 · W/S/Space: 직접 가감속 · R: 현재 시험 재시작\n초록 도착점에 직접 정차하세요. 곁도로 자료는 회전 직후 끝납니다. 신호·일반 차량 운영은 이 시험에서 제외됩니다.",style);
+  GUI.Label(new Rect(28,y+72,760,55),"H: 내비 경로 보조 조향 · ↑/↓/Space: 직접 가감속 · R: 현재 시험 재시작\n초록 도착점에 직접 정차하세요. 곁도로 자료는 회전 직후 끝납니다. 신호·일반 차량 운영은 이 시험에서 제외됩니다.",style);
  }
  public static void DrawMarkings(MapData map,Transform parent){
   var white=WorldBuilder.Mat("HD white",new Color(.95f,.94f,.87f));var yellow=WorldBuilder.Mat("HD yellow",new Color(1,.72f,.1f));var blue=WorldBuilder.Mat("HD blue",new Color(.12f,.4f,1));

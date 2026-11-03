@@ -28,7 +28,7 @@ public static class OneDayHUD {
    GUI.Label(new Rect(x+375,y+139,295,87),"포만감  "+d.satiety.ToString("0")+"\n피로  "+d.fatigue.ToString("0"),text);
    GUI.Label(new Rect(x+25,y+263,670,32),"이용 비용",text);
    GUI.Label(new Rect(x+25,y+305,670,90),"식사  3,000원 · 50초\n수면  무료 · 100초\n영업 마감  500원",text);
-   GUI.Label(new Rect(x+25,y+414,670,60),"WASD 운전 · Space 제동 · F 승하차\nM 지도 · H 조향 보조 · 자세한 조작은 도움말",small);
+   GUI.Label(new Rect(x+25,y+414,670,60),"방향키 ↑↓ 가감속 · ←→ 조향 · Space 제동 · F 승하차\nM 지도 · H 조향 보조 · 자세한 조작은 도움말",small);
    if(GUI.Button(new Rect(x+25,y+485,670,40),"운전 연습",button))s.GetComponent<PracticeSession>().OpenPicker();
    GUI.Label(new Rect(x+25,y+537,670,30),"다음 날 피로 -"+b.settings.nightlyFatigueRecovery+" · 현금·연료·포만감·점수 유지",small);
    if(GUI.Button(new Rect(x+370,y+590,325,55),"영업 시작",CasualUI.Action(18)))b.Depart();

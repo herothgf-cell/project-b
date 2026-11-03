@@ -25,7 +25,7 @@ public sealed class PassengerActivitiesProbe : MonoBehaviour {
   Check(j.Behavior.Choice==-1&&!j.BehaviorChoicesOpen&&!j.SituationPending&&!j.Behavior.Sleeping,"neararrival unchosen initial panel is closed and cooldown suppresses new question");j.AdvanceBehavior(14);string trip=s.law.tripId;RoundTrip();Check(j.Behavior.Choice==-1&&!j.BehaviorChoicesOpen&&j.Behavior.JoltCalmRemaining==1&&s.law.tripId==trip,"actual complete jobs snapshot restore retains neararrival unanswerable choice and calm time");j.AdvanceBehavior(1);Check(j.Behavior.Sleeping&&!j.SituationPending&&j.Behavior.Choice==-1&&!j.trip.ArrivalLocked,"restored actual jobs adapter resumes rest without answering expired initial choice or inventing arrival");
  }
  void MainChecks(){
-  TypedChecks();LateInitialRestChecks();
+  MovingDialogueChecks();TypedChecks();LateInitialRestChecks();
   Begin();var j=s.jobs;int clean=j.Cleanliness,score=s.manners.ledger.Score;
   s.requests.Begin();NextFrame();s.manners.necessaryBrakeEvents++;j.AdvancePassengerActivities(1);Check(j.Situation.Pending==PassengerSituationKind.NecessaryBrake,"observed necessary braking creates neutral reaction");
   RoundTrip();Check(j.SituationPending&&j.Situation.Reactions==1,"pending reaction and budget survive live JSON restore");
@@ -39,11 +39,30 @@ public sealed class PassengerActivitiesProbe : MonoBehaviour {
   j.AdvancePassengerActivities(30);Check(j.trip.Fare==fare&&j.Errand.Completed,"repeat advancement cannot restart or change fare");Stop(original);Check(j.Interact()&&!j.Active&&s.business.passengers.Count==1,"one original-trip settlement after errand");
   Begin();Agree();Stop(j.PassengerViaStop);NextFrame();Check(j.Interact(),"start saved errand fixture");j.AdvancePassengerActivities(7);Check(s.business.SavePath.Contains("artifacts")&&s.business.SaveCheckpoint(),"actual checkpoint writes only artifacts");
  }
+ void MovingDialogueChecks(){
+  Begin();s.requests.BeginKind(RequestKind.Comfort);s.taxi.body.isKinematic=false;s.taxi.body.velocity=Vector3.forward*4;s.requests.AdvanceSafeStop(0);
+  Check(!s.requests.SafeToRespond()&&s.requests.CanChoose(PassengerReply.Accept)&&s.requests.Choose(PassengerReply.Accept),"moving request answer works without granting physical stop safety");
+  s.paused=true;Check(!s.requests.CanTalk,"pause blocks dialogue input");s.paused=false;s.taxi.body.velocity=Vector3.zero;s.taxi.body.isKinematic=true;
+  Begin(PassengerType.Food);s.requests.BeginKind(RequestKind.Quiet);s.requests.request.DeferSafety();NextFrame();s.taxi.body.isKinematic=false;s.taxi.body.velocity=Vector3.forward*4;s.requests.AdvanceSafeStop(0);
+  Check(s.jobs.RespondBehavior(1)&&s.jobs.Behavior.SatisfactionDelta==5,"moving food permission keeps actual satisfaction gain");Check(!s.jobs.RespondBehavior(0),"same frame cannot answer another passenger choice");
+  s.taxi.body.velocity=Vector3.zero;s.taxi.body.isKinematic=true;
+  Begin();var j=s.jobs;s.requests.BeginKind(RequestKind.Quiet);s.requests.request.DeferSafety();NextFrame();j.Behavior.Type=PassengerType.Luggage;j.Behavior.Choice=0;j.Situation.Type=PassengerType.Luggage;j.Situation.LuggageLoaded=true;j.Situation.Pending=PassengerSituationKind.Jolt;j.Situation.Reactions=1;
+  s.taxi.body.isKinematic=false;s.taxi.body.velocity=Vector3.forward*4;s.requests.AdvanceSafeStop(0);Check(j.CanRespondSituation&&j.RespondSituation(0)&&j.Situation.ReSecureRemaining==5,"moving response queues luggage work");j.AdvancePassengerActivities(10);Check(j.Situation.ReSecureRemaining==5,"moving dialogue does not advance physical luggage work");s.taxi.body.velocity=Vector3.zero;s.taxi.body.isKinematic=true;Stop(0);j.AdvancePassengerActivities(5);Check(j.Situation.ReSecureRemaining==0,"queued luggage work completes only after safe stop");
+ }
+ IEnumerator CaptureDialogueCases(){
+  Screen.SetResolution(1600,900,false);yield return new WaitForSecondsRealtime(.3f);
+  Begin();s.requests.BeginKind(RequestKind.LargeRoad);if(s.requests.request.Resolved)s.requests.BeginKind(RequestKind.Comfort);yield return CaptureDialogue("request");
+  Begin(PassengerType.Food);s.requests.BeginKind(RequestKind.Quiet);s.requests.request.DeferSafety();NextFrame();yield return CaptureDialogue("food");
+  Begin();s.requests.BeginKind(RequestKind.Quiet);s.requests.request.DeferSafety();NextFrame();s.jobs.Situation.Pending=PassengerSituationKind.SignalWait;s.jobs.Situation.Reactions=1;yield return CaptureDialogue("signal");Check(s.jobs.RespondSituation(0),"visible signal response uses actual dialogue handler");NextFrame();yield return CaptureDialogue("reply");
+ }
+ IEnumerator CaptureDialogue(string name){yield return new WaitForEndOfFrame();string path=Path.GetFullPath("artifacts/dialogue-"+name+".png");ScreenCapture.CaptureScreenshot(path);yield return new WaitForSecondsRealtime(.4f);Check(File.Exists(path),"dialogue capture "+name);}
  void ReloadChecks(){var j=s.jobs;Check(j.Active&&j.Errand!=null&&j.Errand.Waiting&&j.Errand.Remaining<=13&&j.Errand.Remaining>0,"fresh-process restore keeps remaining errand time without reroll");Check(j.Errand.TripId==s.law.tripId&&j.Errand.OriginalDestinationId==j.current.dropStopId,"fresh-process original destination/trip identity retained");float remaining=j.Errand.Remaining;Check(s.paused&&Time.timeScale==0,"restored campaign waits for continue");j.AdvancePassengerActivities(10);Check(j.Errand.Remaining==remaining,"paused restored errand does not consume time");s.paused=false;Time.timeScale=1;Stop(j.PassengerViaStop);j.AdvancePassengerActivities(remaining);Check(j.Errand.Completed&&!j.PassengerViaPending,"restored wait finishes exactly once after continue");}
  IEnumerator Start(){
   yield return new WaitForSecondsRealtime(2);s=FindObjectOfType<DriveSession>();while(s&&!s.StartupReady)yield return null;yield return null;yield return null;yield return null;
   bool reload=Array.IndexOf(Environment.GetCommandLineArgs(),"-passengerActivitiesReloadTest")>=0;bool ok=false;
-  try{Check(s!=null&&string.Equals(Path.GetFullPath(s.business.SavePath),Path.GetFullPath("artifacts/passenger-activities-test.json"),StringComparison.OrdinalIgnoreCase)&&s.business.enabledCampaign&&!s.business.ResumeBlocked,"test session uses dedicated activities save and active campaign");Freeze();if(reload)ReloadChecks();else MainChecks();ok=true;}catch(Exception e){report.AppendLine(e.ToString());Debug.LogException(e);}
+  try{Check(s!=null&&string.Equals(Path.GetFullPath(s.business.SavePath),Path.GetFullPath("artifacts/passenger-activities-test.json"),StringComparison.OrdinalIgnoreCase)&&s.business.enabledCampaign&&!s.business.ResumeBlocked,"test session uses dedicated activities save and active campaign");Freeze();}catch(Exception e){report.AppendLine(e.ToString());Debug.LogException(e);Application.Quit(1);yield break;}
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-dialogueCapture")>=0)yield return CaptureDialogueCases();
+  try{if(reload)ReloadChecks();else MainChecks();ok=true;}catch(Exception e){report.AppendLine(e.ToString());Debug.LogException(e);}
   Directory.CreateDirectory("artifacts");File.WriteAllText("artifacts/passenger-activities-"+(reload?"reload":"player")+".txt",(ok?"PASS":"FAIL")+" checks="+checks+"\n"+report);Debug.Log("PASSENGER_ACTIVITIES_"+(ok?"OK":"FAILED")+" checks="+checks);Application.Quit(ok?0:1);
  }
 }
