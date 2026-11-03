@@ -45,3 +45,7 @@ H 경로 복제 추가 뒤 native-lan-20261103-152844-be27ca5f는 Unity가 null 
 ## 배포·다른 작업 보존
 
 검사된 candidate를 통합 `builds/EungyeTaxi/`에 새 복사하고 파일 크기/SHA256 전수 대조·manifest 검증 뒤 게시한다. C:/git/project-b의 미커밋 마인드맵/목차 및 미추적2파일은 사전 크기/SHA256, 미추적5디렉터리는 존재 상태를 기록했다. stash/reset/다른 작업 커밋 없이 fast-forward하며 실제 게시·배포 해시는 후속 영수증에 기록한다. 현재 다른 원격 변경은 fetch 결과7e1a7f7로 baseline과 같았다.
+
+## 실행 폴더 갱신
+
+실제 소스 `f13f8fb136712ff28f91c2fd65d60655e487affc` 확인. 기존139파일115,316,158바이트 manifest 검증0과 canonical 게임 미실행 확인 후 기존 폴더를 artifacts에 보관하고 최종 owner-prediction-ready를 새 복사했다. 후보/배포 **139파일115,329,118바이트** 상대경로·크기·SHA256 전수 일치. DoNotShip은 별도 보관하고 배포하지 않는다. 최종95검사/17+5/wheel8/pose11과 미검증 범위를 실제 validation JSON으로 기록한다.
