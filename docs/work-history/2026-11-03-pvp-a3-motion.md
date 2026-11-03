@@ -120,3 +120,10 @@ PVP 봇이 이미 이용 가능한 실제 bay에 정차했을 때 native CanUse�
 ## 실행 폴더 교체
 
 실제 소스 커밋 `2807ccec9d0dbbbf8f632982e07d2b9766160f8b` (`git log -1 --oneline -- docs/work-history/2026-11-03-pvp-a3-motion.md` 확인). 기존 통합 manifest140파일115,434,078바이트 VerifyOnly exit0 후 사용자 실행 중인 canonical player가 없음을 확인했다. 기존 폴더 전체를 확인된 artifacts 경로에 보관하고, 최종candidate11에서DoNotShip 디버그만 별도보관 후 새 통합 폴더를 복사했다. 후보/배포139파일115,321,622바이트의상대경로·크기·SHA256 전수일치. 이전빌드의남는level0.resS를 덮어쓰기잔재로남기지않았다. 원래 다른 체크아웃/별도 사용자 실행 폴더는수정하지않았다. manifest 및 원격 게시 결과는 아래 영수증을 따른다.
+
+
+## 게시 영수증
+
+배포 커밋 `fc123ec75e2236d4e8169c9646df30542e53e140`를 실제git log로 확인했다. 마지막fetch 후origin/main과origin/feature/pvp-prototype 모두HEAD의조상임을검사하고 `git push --atomic origin HEAD:refs/heads/feature/pvp-prototype HEAD:refs/heads/main` exit0. ls-remote 두브랜치가모두위배포해시와동일함을확인했고working tree clean이었다. 새 main은기존대화337ab94·카운트다운5a5df15와기존PVP f2f0a37을포함한다. 강제push나 다른체크아웃의reset/미커밋변경삭제는없다.
+
+최종manifest sourceCommit은실제소스2807cce이며139파일115,321,622바이트·후보/배포전수대조·통합/PVP VerifyOnly 각각exit0. Strict최종issues0. 이영수증과plan체크후속은같은실행본/manifest를유지한다. 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 호스트/참가자기존창을닫고실행폴더전체를갱신해같은A3실행본으로접속한다. 다른PC는main pull후통합폴더를사용한다. 이PC다른체크아웃/별도사용자배포복사본은자동교체하지않았다.
