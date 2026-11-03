@@ -1,5 +1,9 @@
 # 최신 작업 상태
 
+## 2026-11-03 A2 복원·끊김 미해결
+
+[복원 기준·최소 검사·배포](2026-11-03-pvp-a2-rollback.md). 사용자지시로PVP지도를A3직전A2(5a5df15기하)로복원했다. 바퀴표시/기존버그수정·싱글은유지한다. A2연결/차선/출발·wheel8/pose11·Windows·숨김두Player37검사통과. 참가자끊김은사용자재보고에따라미해결이며짧은loopback통과를해결판정으로사용하지않는다. 현재host도서버이며전용server분리만으로해결을보장할수없다. 후속은실사용조건계측과자기차예측/서버보정설계다. 실행은builds/EungyeTaxi/EungyeTaxi.exe / 은계싱글·A2 PVP·LAN. C:/git/project-b반영/게시영수증은위기록을따른다. 아래A3현재표기는이전단계기록이다.
+
 ## 2026-11-03 PVP 참가자 바퀴 표시
 
 [구현·최소 검사·배포](2026-11-03-pvp-wheel-view.md). 바퀴 크기는 고정하고 차체와 동일한 시각으로 로컬 바퀴 자세를 보간한다. 장착 X/Z 고정·서스펜션 외삽 금지. 맵·골목·물리·싱글·다른 시스템은 유지한다. wheel8/pose11·Unity Windows exit0, 두Player43/실제250m·pacing 통과. 사용자 요청대로 다른 전체 검사는 반복하지 않았다. 실행은 기존 builds/EungyeTaxi/EungyeTaxi.exe이며 소스5f6b9f3·배포6f8d6e9/139파일115,322,814바이트·후보/배포SHA전수일치·통합/PVP manifest검증0. main·feature/pvp-prototype atomic게시/동일해시·clean확인. 문서영수증후속도동일실행본이며 자세한결과는위기록을따른다.

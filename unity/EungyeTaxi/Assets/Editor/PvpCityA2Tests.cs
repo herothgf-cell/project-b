@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using UnityEngine;
 public static class PvpCityA2Tests {
@@ -15,7 +15,7 @@ public static class PvpCityA2Tests {
   }
   var changes=map.hdEdges.Where(e=>e.change!=0).ToArray();Check(changes.Length>=24,"lane changes provide passing routes");
   foreach(var e in changes){Check(e.points.Length>=12,"smooth lane change");Check(e.next.Length>0&&map.hdEdges[e.next[0]].number==e.number,"lane change arrives at intended lane");var head=Array.FindIndex(map.hdEdges,x=>x.next.Contains(Array.IndexOf(map.hdEdges,e)));var route=graph.Route(head,graph.paths[head].length-1,e.next[0],1);Check(route!=null&&route.path.length<70&&route.edges.Any(x=>map.hdEdges[x].change!=0),"adjacent lane is reachable by a local passing manoeuvre");}
-  Check(map.roads.Count(r=>r.id.StartsWith("city-road:")&&r.points.Any(p=>Distance(p.V(),r.points[0].V(),r.points.Last().V())>8))>=8,"curved residential links");
+  Check(map.roads.Count(r=>r.id.StartsWith("city-road:")&&r.points.Any(p=>Distance(p.V(),r.points[0].V(),r.points.Last().V())>8))>=12,"curved residential links");
   Check(map.roads.Count(r=>r.id.StartsWith("city-road:alley"))>=90,"interior alley routes");
   Check(map.junctionRules.Any(r=>r.id.Contains("alley")&&r.approaches.Length==3),"interior T junction");
   Check(map.junctionRules.Any(r=>r.signalMode==1)&&map.junctionRules.Any(r=>r.signalMode==2),"permissive and protected signal choices");
@@ -42,8 +42,8 @@ public static class PvpCityA2Tests {
    int strokes=0;LaneDirectionPaint.Paint(arrow,"test",(name,centre,direction,width,length,yellow)=>{strokes++;foreach(float along in new[]{-.5f,0,.5f})foreach(float side in new[]{-.5f,.5f})Check(surface.OnRoad(centre+direction*(length*along)+TrafficSystem.Right(direction)*(width*side)),"visible paint lies on asphalt "+edge.id);});
    Check(strokes>=3,"physical arrow strokes generated "+edge.id);
   }
-  var six=map.roads.Where(r=>r.id.StartsWith("city-road:")&&r.DisplayLanes==6).ToArray();Check(six.Length>=8,"six-lane north/south collector remains connected");
-  Check(map.roads.Any(r=>r.id.Contains("alley:a3:")),"district-specific A3 native alley graph");
+  var six=map.roads.Where(r=>r.id.StartsWith("city-road:")&&r.DisplayLanes==6).ToArray();Check(six.Length==9,"nine six-lane north/south connector segments");
+  Check(map.roads.Count(r=>r.id.Contains(":inner-east"))>=18,"nine additional connected inner alley loops");
   foreach(var edge in map.hdEdges){
    foreach(int next in edge.next)Check(Vector3.Distance(edge.points.Last().V(),map.hdEdges[next].points[0].V())<.05f,"continuous road position "+edge.id);
    if(!edge.sourceId.StartsWith("city-road:")||edge.change!=0)continue;
