@@ -38,3 +38,7 @@
 - `pwsh -File tools/check_workspace.ps1 -Strict` 종료0/Input issues0. 프로젝트 지도hash35d1bc43… 유효. 옛 재수입 입력2개 미배치/기존 규칙상 선택 사항.
 - `tools/update_distribution_manifest.ps1 -VerifyOnly` 종료0:140파일115,464,894바이트. `git diff --exit-code -- builds/EungyeTaxi config/maps distribution/EungyeTaxi-build-manifest.json` 종료0, 실행파일/지도/manifest 미변경.
 
+
+## 게시·원래 폴더 반영
+
+기획 최신화2b89d9ad5de479c9c3ec18c16954aa394036549e를 origin/main에 게시하고 원격 동일 해시를 확인했다. 원래 C:/git/project-b도 fast-forward해 최신 마인드맵/목차·인계 문서를 반영했다. 동시 마인드맵 수정 없음 확인 후 적용했으며 기존 미추적 실험·문서·EungyeTaxi.zip은 보존했고 ZIP의 전후SHA256도 일치한다. 원래 폴더의 추가 ZIP은 정식 배포 목록에 없으므로 원래 폴더 전체 VerifyOnly 통과로 기록하지 않는다. 다른PC의 Git 배포 폴더와 작업 worktree의140파일 manifest 검사는 정상이다. 이 영수증 후속은 같은 실행본과 기획을 유지한다.
