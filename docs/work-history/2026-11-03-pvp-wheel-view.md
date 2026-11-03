@@ -23,3 +23,7 @@ Editor: `-batchmode -nographics -quit -projectPath <루트>/unity/EungyeTaxi -ex
 
 ## 실행 폴더 반영
 실제 소스 `5f6b9f33dcf88d8b3a3a399d10d622e0d88a9e8e` 확인. 기존139파일115,321,622바이트 manifest검증후 기존canonical실행중없음을확인했다. 기존폴더전체를artifacts에보관하고최종wheel-fix-candidate139파일115,322,814바이트를새복사해후보/배포 상대경로·크기·SHA256전수일치를확인했다. DoNotShip디버그는별도보관했다. 다른체크아웃/사용자배포복사본은바꾸지않았다. manifest와게시영수증은아래를따른다.
+
+
+## 게시 영수증
+배포커밋 `6f8d6e90a093d1c71c8ac9543441894491dd137d`를 실제git log로확인했다. 최신main이HEAD조상임을확인후 main·feature/pvp-prototype atomic push exit0, ls-remote 두브랜치가해당해시와동일·working tree clean확인. 139파일115,322,814바이트·통합/PVP VerifyOnly각exit0. 이문서후속은동일실행본/manifest를유지한다. 추가게임검사는하지않았다.

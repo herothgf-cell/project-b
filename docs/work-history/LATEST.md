@@ -2,7 +2,7 @@
 
 ## 2026-11-03 PVP 참가자 바퀴 표시
 
-[구현·최소 검사·배포](2026-11-03-pvp-wheel-view.md). 바퀴 크기는 고정하고 차체와 동일한 시각으로 로컬 바퀴 자세를 보간한다. 장착 X/Z 고정·서스펜션 외삽 금지. 맵·골목·물리·싱글·다른 시스템은 유지한다. wheel8/pose11·Unity Windows exit0, 두Player43/실제250m·pacing 통과. 사용자 요청대로 다른 전체 검사는 반복하지 않았다. 실행은 기존 builds/EungyeTaxi/EungyeTaxi.exe이며 실제 배포/게시 영수증은 위 기록을 따른다.
+[구현·최소 검사·배포](2026-11-03-pvp-wheel-view.md). 바퀴 크기는 고정하고 차체와 동일한 시각으로 로컬 바퀴 자세를 보간한다. 장착 X/Z 고정·서스펜션 외삽 금지. 맵·골목·물리·싱글·다른 시스템은 유지한다. wheel8/pose11·Unity Windows exit0, 두Player43/실제250m·pacing 통과. 사용자 요청대로 다른 전체 검사는 반복하지 않았다. 실행은 기존 builds/EungyeTaxi/EungyeTaxi.exe이며 소스5f6b9f3·배포6f8d6e9/139파일115,322,814바이트·후보/배포SHA전수일치·통합/PVP manifest검증0. main·feature/pvp-prototype atomic게시/동일해시·clean확인. 문서영수증후속도동일실행본이며 자세한결과는위기록을따른다.
 
 ## 2026-11-03 A3 적용·참가자 주행 후속
 
