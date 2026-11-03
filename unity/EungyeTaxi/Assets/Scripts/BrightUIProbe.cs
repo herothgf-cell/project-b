@@ -21,6 +21,15 @@ public sealed class BrightUIProbe:MonoBehaviour {
   Check(s.business.SavePath==UnifiedModeProbe.CampaignPath,"single isolated temporary campaign");
   yield return Capture("02-single-preparation");s.business.Depart();s.taxi.automated=true;s.taxi.autoBrake=true;
   var map=s.GetComponent<FullMapOverlay>();
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-signalCountdownOnly")>=0){
+   foreach(var car in s.traffic.cars){car.Recycle();car.enabled=false;}
+   var junction=s.traffic.junctions.Find(j=>j.signalized&&!j.scenarioSignal&&j.editorProgram==null);if(junction==null)throw new Exception("No timed signal fixture");
+   var direction=s.traffic.AxisDirection(junction,0);var position=junction.center-direction*(junction.halfWidth[1]+22)+Vector3.up*.65f;
+   s.taxi.body.velocity=s.taxi.body.angularVelocity=Vector3.zero;s.taxi.body.position=position;s.taxi.body.rotation=Quaternion.LookRotation(direction);s.taxi.transform.SetPositionAndRotation(position,s.taxi.body.rotation);Physics.SyncTransforms();s.law.ResetObservation();s.manners.Suppress(5);
+   s.traffic.manualClock=true;s.traffic.manualTime=0;var readability=s.GetComponent<DrivingReadability>();readability.SelectSignal();Check(readability.SignalCountdownText.StartsWith("신호 변경까지 "),"native signal provides countdown text");
+   foreach(int width in new[]{1280,1920}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);readability.SelectSignal();Check(readability.SignalCountdownText.EndsWith("초"),"countdown still available "+width);yield return Capture("signal-countdown-"+width);}
+   done=true;Debug.Log("SIGNAL_COUNTDOWN_PLAYER_RESULT "+(ok?"PASS":"FAIL")+" checks="+checks);Application.Quit(ok?0:1);yield break;
+  }
   foreach(int width in new[]{1280,1920}){
    Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);
    Check(CockpitUI.LayoutFits(Screen.width,Screen.height),"HUD reference fits "+width);

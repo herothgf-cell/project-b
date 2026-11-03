@@ -94,7 +94,7 @@ public class DrivingReadability : MonoBehaviour {
    Panel(new Rect(x-5,y,width,height));
    GUI.Label(new Rect(x+8,y+5,Size-16,44),nav.HasDestination?nav.instruction:"어디로 갈까요?",new GUIStyle(label){fontSize=16});
    GUI.Label(new Rect(x+8,y+54,Size-16,28),nav.HasDestination?NavigationSummary:"M 지도에서 호출을 선택하세요",new GUIStyle(label){fontSize=13});
-   DrawCompactSignal(x,y+142,false);
+   DrawCompactSignal(x,y+138,false);
    GUI.enabled=nav.HasDestination&&!session.paused;
    if(GUI.Button(new Rect(x+8,y+96,Size-16,27),(nav.PreferFastest?"짧은 길":"빠른 길")+"  Tab",KoreanText.Button(13)))nav.TogglePreference();GUI.enabled=true;return;
   }
@@ -110,7 +110,7 @@ public class DrivingReadability : MonoBehaviour {
   if(cue.HasNext){NavigationArrow.Draw(new Rect(x+79,y+76,22,22),cue.NextMove,Color.white);GUI.Label(new Rect(x+107,y+74,167,26),"이후 "+NavigationCue.FormatDistance(cue.NextDistance)+" · "+NavigationCue.Label(cue.NextMove),new GUIStyle(ink){fontSize=12});}
   else GUI.Label(new Rect(x+79,y+76,195,23),cue.Move==NavigationMove.Arrival?(session.world.map.hybrid?"오른쪽 승하차 지점":"목적지에서 정차"):cue.Move==NavigationMove.Straight?"목적지까지 직진":"회전 후 경로를 따르세요",new GUIStyle(ink){fontSize=12});
   GUI.Label(new Rect(x+8,y+107,182,23),string.IsNullOrEmpty(nav.rerouteNotice)?"남은 "+NavigationCue.FormatDistance(nav.remaining)+" · 약 "+RoadNavigation.FormatEta(nav.estimatedSeconds):"경로 다시 안내",new GUIStyle(ink){fontSize=11});
-  DrawCompactSignal(x,y+142,true);
+  DrawCompactSignal(x,y+138,true);
   GUI.enabled=!session.paused;
   if(GUI.Button(new Rect(x+196,y+104,76,26),new GUIContent(nav.PreferFastest?"짧은 길":"빠른 길","Tab · 경로 변경"),KoreanText.Button(12)))nav.TogglePreference();GUI.enabled=true;
  }
@@ -160,6 +160,11 @@ public class DrivingReadability : MonoBehaviour {
   MapPresentation.Pin(p,color,clamp?26:20);
   if(clamp&&Facilities){var r=MarkerTextBounds(world);CasualUI.RoundedFill(r,CasualUI.Card);GUI.Label(new Rect(r.x+2,r.y,r.width-2,r.height),text,label);}
  }
+ public string SignalCountdownText {get{
+  if(!session||!session.traffic||SignalTarget==null)return "";
+  float seconds=session.traffic.SecondsToSignalChange(SignalTarget,SignalAxis,SignalSign);
+  return seconds>=0&&!float.IsNaN(seconds)&&!float.IsInfinity(seconds)?"신호 변경까지 "+Mathf.CeilToInt(seconds)+"초":"";
+ }}
  void DrawCompactSignal(float x,float y,bool blue){
   if(SignalTarget==null)return;var j=SignalTarget;var dir=session.traffic.AxisDirection(j,SignalAxis)*SignalSign;
   var o=session.traffic.Observe(j,SignalAxis,SignalSign,dir,session.taxi.gameObject);
@@ -170,7 +175,9 @@ public class DrivingReadability : MonoBehaviour {
   string second=left&&j.leftTurnMode==LeftTurnMode.Permissive?"비보호 · 녹색에서 대향차 양보":o.dedicated?"우회전 전용 "+State(o.right):"우회전 · 정지·보행자 확인";
   if(training&&training.Owns(j)){first="가상 교육 · "+(training.State.Flashing?(training.State.Variant==8?"적색":"황색")+" 점멸":State(o.forward));second="현장 규제 아님 · "+(training.State.Left?"비보호 · 녹색에서 대향차 양보":"주변·출구 확인");}
   else if(DrivingLaw.SlowTurnZoneEnabled(session.world.map.mapId,j.name))second="우회전 "+(o.dedicated?State(o.right):"정지·보행 확인")+" · 게임 10km/h";
-  GUI.Label(new Rect(x+8,y,286,24),first,style);GUI.Label(new Rect(x+8,y+23,286,25),second,style);
+  string countdown=SignalCountdownText;
+  GUI.Label(new Rect(x+8,y,286,18),first,style);GUI.Label(new Rect(x+8,y+18,286,countdown.Length==0?36:18),second,style);
+  if(countdown.Length>0)GUI.Label(new Rect(x+8,y+36,286,18),countdown,style);
  }
  static string State(SignalColor signal){return signal==SignalColor.Green?"녹색":signal==SignalColor.Red?"적색 · 정지":"황색";}
  static void Panel(Rect r){CasualUI.Panel(r);}
