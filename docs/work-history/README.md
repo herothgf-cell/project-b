@@ -1,6 +1,6 @@
 # PC 간 작업 이력과 인계
 
-현재 실행 통합 작업은 [11월2일 수용 기록](2026-11-02-pvp-flow-release.md)을 따른다. 통합본 게시 이후 `builds/EungyeTaxi/EungyeTaxi.exe` 메뉴에서 은계 싱글 또는 자체 도시 PVP를 선택한다. 이전 날짜의 별도 PvpPrototype.exe 안내는 당시 배포 기록이다. 통합 실행 폴더 전체를 유지하고 `tools/update_distribution_manifest.ps1 -VerifyOnly`로 검증한다.
+현재 실행·지도·구현 범위는 [현재 구현·PC 인계](../CURRENT-STATE.md)를 먼저 읽는다. 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`의 은계 싱글/A2 PvP·LAN이며 A3는 현재 배포 지도가 아니다. 날짜별 과거 실행본 안내는 당시 기록이다. 통합 실행 폴더 전체를 유지하고 `tools/update_distribution_manifest.ps1 -VerifyOnly`로 검증한다.
 
 작업을 이어가기 전 [최신 인계](LATEST.md)를 읽는다. 이후 각 작업은 날짜·주제별 파일에 계속 누적하고 최신 인계를 갱신한다. 과거의 검증 범위를 새 완료 결과로 덮어쓰지 않는다. [루트 작업 규칙](../../AGENTS.md)이 이후 작업에도 이 절차를 적용한다.
 

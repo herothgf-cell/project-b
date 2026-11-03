@@ -1,34 +1,28 @@
-# 새 PC에서 빌드 없이 테스트
+# 다른 PC에서 바로 실행하기
 
-Windows 64비트 PC에서 저장소 main을 clone하거나 기존 작업을 보존한 뒤 `git pull --ff-only`한다. Unity Editor 설치와 지도 압축 해제 없이 **`builds/EungyeTaxi/EungyeTaxi.exe`**를 실행한다. 기본 맵은 시흥 은계지구다.
+Windows 64비트 PC에서 main을 clone하거나 로컬 변경을 보존한 뒤 `git pull --ff-only`한다. **Unity 설치·지도 ZIP 해제 없이 `builds/EungyeTaxi/EungyeTaxi.exe`를 바로 실행**한다. 제품명은 택시 시뮬레이션이다.
 
-실행에 필요한 `EungyeTaxi_Data`, `MonoBleedingEdge`, `UnityPlayer.dll` 등은 같은 실행 폴더에 포함돼 있다. exe만 따로 이동하면 안 된다. GitHub Download ZIP을 사용했다면 저장소 ZIP 전체를 먼저 압축 해제한다. Git LFS는 사용하지 않는다.
+실행 폴더의 `EungyeTaxi_Data`, `MonoBleedingEdge`, `UnityPlayer.dll` 등을 함께 유지한다. exe만 이동하면 실행되지 않는다. GitHub Download ZIP을 받았다면 저장소 전체를 압축 해제한다. Git LFS는 사용하지 않는다.
 
-- 조작: WASD 운전, Space 제동, 1/2/3 호출, F 승하차, Q/E 깜빡이, C 시점, H 조향 보조, M 전체지도, +/- 미니맵 확대·축소, Esc 일시정지. H의 가감속·신호 판단은 직접 한다.
-- 3일×12분·순수익30,000원. 탑승 중 N 마감은 막고 목적지 하차 후 정산한다. 새 캠페인 연료60%, 소모는 1km당4%포인트+1분당0.1%포인트다. 기존 저장 잔량은 유지한다.
-- F7: 북부/남부/동부 주유소 게임시설 선택 → 입구까지 길 안내 → H 해제 후 수동 진입 → 같은 방향 주유 구역 정차 → F7 결제 → 별도 출구. 노란1·2·3 표시가 미니맵/전체지도에 있다.
-- 게임 진행 저장은 PC별로 유지되며 Git으로 옮겨지지 않는다.
-- 수동 가속·저속 회전·일반 제동을 쉽게 조정했다. M 전체지도는 시간을 멈추고 M/Esc로 닫는다. 시설·교통·법규 필터를 지원한다. 매너는 승객별이며 운행 점수는 날짜·재실행에 유지하고 새 캠페인에서만 초기화한다. 보험료·세금은 프로토에서 제외했고 구 저장 비용을 이관한다.
-- 빌드 파일 목록·크기·SHA256은 `distribution/EungyeTaxi-build-manifest.json`에서 확인한다. 실제 빌드 소스 커밋은 manifest의 `sourceCommit`을 따른다. Unity2022.3.62f2·은계 기본 빌드다.
-- 현재 PC의 실행 폴더 복사본으로 기본 은계·7개 법규 구역·9개 운송 코스·승객 요청·지도 필터를 검사한다. 최신 결과는 docs/work-history/LATEST.md를 따른다. 새 PC 하드웨어에서의 실제 구동은 별도 확인이 필요하다.
+## 현재 모드와 조작
 
-## 개발도 이어가려면
+| 항목 | 동작 |
+|---|---|
+| 은계 영업 | 3일×예정20분 캠페인, 초과 영업 가능. 고정3만원 목표가 아니라 일별/누적 순수익 비교 |
+| PvP | 현재 A2 도시, 봇3 또는 LAN 최대4명. 닉네임·경기시간 입력. 양쪽 PC 모두 최신 실행본 사용 |
+| 운전 | ↑ 가속, ↓ 감속/정차 후 후진, ←/→ 조향, Space 제동. WASD도 유지 |
+| 호출/승하차 | M 지도에서 선택·수락, 승차지에 정차 후 F. 탑승 후 하차 목표로 전환 |
+| 보조/시점 | H 조향만 보조, Q/E 방향지시등, G 비상등, C 시점/B 후방/Z·X 좌우 |
+| 시설/기록 | 현장 안전 정차 후 F7, F8 기록, 도움말 버튼 |
+| 승객 대화 | 클릭 또는 Y/I/O/U, 운행 중 답변 가능. 적재/정리/재고정·용무는 안전 정차 중 진행 |
+| 지도/메뉴 | M·+/−·휠/드래그. 싱글은 일시정지 조건을 따르며 PvP는 지도를 열어도 공통 경기가 계속 진행 |
 
-정식 프로젝트 지도는 **`config/maps/project/eungye.project.json`**이다. pull 후 `pwsh -File tools/check_workspace.ps1 -Strict`를 실행하고 Unity의 **Taxi > Build Eungye Hybrid**로 빌드한다. 이 경로에는 원본 지도 ZIP이 필요하지 않다. 건물·보도·생활 부지 수정은 [프로젝트 편집 사용법](../docs/road-map-editor-guide.md)을 따른다.
+신호 요약은 변경까지 남은 시간, 네비는 승차/경유/하차까지 잔여 거리와 다음 회전을 구분한다. 현재 대사·효과는 [대화 스크립트](../docs/content-design/07-passenger-dialogue.md)를 따른다. 실제 음악·에어컨·창문 조작은 보류다.
 
-기존 지도 재수입 작업에만 아래 ZIP 입력을 준비한다. ZIP은 **`distribution/maps/Eungye-map-inputs-2026-10-20.zip`**에 있다.
+## 파일 검사·개발·저장 이전
 
-```powershell
-Expand-Archive -LiteralPath distribution/maps/Eungye-map-inputs-2026-10-20.zip -DestinationPath .
-pwsh -File tools/check_workspace.ps1 -Strict
-```
+저장소 루트에서 `pwsh -File tools/update_distribution_manifest.ps1 -VerifyOnly`로 실행 폴더 전체를 검사한다. 파일 수·크기·SHA256과 실제 빌드 소스는 `EungyeTaxi-build-manifest.json`이 기준이다. 임의 실행 ZIP을 실행 폴더 안에 더 넣으면 정식 파일 수 검사에 실패할 수 있다.
 
-기존 지도를 수정한 경우 먼저 백업한다. 검사에서 `Input issues: 0`을 확인한 뒤 [Unity 준비·개발 안내](../docs/work-history/map-transfer-guide.md)를 따른다. ZIP 안의 안내는 최초 묶음 생성 당시 문서 사본이며, 최신 배포 방식은 이 문서를 우선한다. 원본 NGII/OSM 자료는 Git에 포함하지 않는다.
+현재 구현/검증 범위, 새 PC 개발 준비와 개인 캠페인·편집 지도 이전은 [현재 구현·PC 인계](../docs/CURRENT-STATE.md)를 따른다. 개발 프로젝트는 `unity/EungyeTaxi`, Unity2022.3.62f2, 빌드는 `PrototypeBuild.BuildHybrid`다. 원본 지도 재수입 때만 `maps/`의 입력 ZIP이 필요하다.
 
-승차하러 가는 동안에는 별도 대기 시간이 흐른다. 연료15% 이하 경고와 점수 변화는 화면 상단에 표시한다. R/패드 복귀 단축키는 제거했으며 새 캠페인은 메뉴의 확인 버튼을 사용한다. 메뉴·로딩 화면·창 제목은 ‘택시 시뮬레이션’이다. 기존 저장 폴더명은 호환을 위해 유지한다.
-
-전체지도: M으로 열고 +/- 버튼·키·마우스 휠로 확대/축소, 드래그로 이동. 내 위치/전체 보기 버튼 지원. 일반 차량48대. 직접 플레이 확인 목록: docs/prototype-playtest-guide.md.
-
-추가: F7 주유 확인에서 가득 주유 선택, 호출 카드 연료 예측, 손님 말풍선(Y/I/U 안전 정차 응답), 탑승 후 교통 체험 미완료도 목적지 하차 가능. 실제로 수락한 승객 경유 정차는 유지. MIT 앞차 추종 ON/OFF도 함께 포함.
-
-미니맵: 기본 아이콘 표시, 상세 표시 버튼으로 상황 이름/시설 정보를 확인. 호출에는 승객 요청이 나오지 않으며 탑승 후 손님 대화로 제공됩니다.
+캠페인 저장과 PvP 닉네임은 Git으로 동기화되지 않는다. 기존 저장 폴더명은 제품명 변경 후에도 호환을 위해 유지한다. 새 PC 하드웨어/다른PC LAN·장시간 플레이는 해당 PC에서 확인해야 한다. 과거 배포·시험 수치는 [작업 이력](../docs/work-history/LATEST.md)에서 날짜별로 확인한다.

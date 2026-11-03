@@ -2,9 +2,11 @@
 
 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 개발 프로젝트는 `unity/EungyeTaxi`, 빌드는 `PrototypeBuild.BuildHybrid`다. 현재 콘텐츠의 기준은 [기획 목록](content-design/README.md), 개발·검증 상태는 [체크리스트](prototype-development-checklist.md), 날짜별 증거는 [작업 이력](work-history/LATEST.md)을 따른다. 이전 범위는 [보존 기록](design-history/prototype-scope-history.md)에 둔다.
 
+[현재 구현·PC 인계](CURRENT-STATE.md)가 최근 대화/신호/네비/조향·A2/PvP/검증 범위의 요약이다. 아래 과거 확장 표와 충돌하면 현재 요약·담당 기획·실제 코드를 우선한다.
+
 ## 경험 목표
 
-현재 구현은 P11 요청 다양화·P12 수요/공차·P13 점유 대기와 후속 운전/시설/피로 수정, P14 승객 유형을 포함하며 P15 충돌 내구도·수리/견인의 구현·자동 검증을 완료했다. 안전 대체 이동은 미구현이며 사람의 조작감·경제 체감은 별도다. [현재 플레이 기획](content-design/README.md), [가지별 마인드맵 검토](content-design/06-mindmap-review.md), [변경 이력](design-history/content-design/2026-10-27-design-decisions.md)을 구분해 읽는다.
+현재 구현은 P11 요청 다양화·P12 수요/공차·P13 점유 대기와 후속 운전/시설/피로 수정, P14 승객 유형을 포함하며 P15 충돌 내구도·수리/견인의 구현·자동 검증을 완료했다. 작성된 게임용 안전 대체 승하차 쌍과 경유 용무 대기도 구현했으며 사람의 조작감·경제 체감은 별도다. [현재 플레이 기획](content-design/README.md), [가지별 마인드맵 검토](content-design/06-mindmap-review.md), [변경 이력](design-history/content-design/2026-10-27-design-decisions.md)을 구분해 읽는다.
 
 | 질문 | 확인할 경험 |
 |---|---|
@@ -17,7 +19,7 @@
 
 아래 표는 현재 채택·구현 범위다. 사용자는 Proto 확장 방향으로 **충돌에 따른 수리비·시간 손실과 내구도0 운행 불가**를 승인했다. 기존 사고 수리 제외 결정을 부분 변경하며 구현·자동 검증을 완료했다. 성능 저하·보험·과실 판정은 제외한다. [차량 기준](content-design/03-life-and-economy.md#추가-기획-충돌-내구도와-수리)에 승인된 초기 시험값을 두며 최종 Player·배포·수동 검증은 [P15](prototype-development-checklist.md#p15-충돌-내구도수리견인)와 작업 이력에서 판정한다.
 
-승객11유형·34변주, 일반 승객, 적재/하역·오염 짐·음식 섭취/흘림을 구현했다. [승객 기준](content-design/02-passengers-and-fares.md#추가-기획-승객-유형과-상호작용)과 [검증 기록](work-history/2026-10-29-passenger-types-implementation.md)을 따른다. 내구도·수리는 P15로 별도 관리한다. 새 P13 대체 지점·별도 용무 대기는 추가하지 않는다.
+승객11유형·34변주, 일반 승객, 적재/하역·오염 짐·음식 섭취/흘림을 구현했다. [승객 기준](content-design/02-passengers-and-fares.md#추가-기획-승객-유형과-상호작용)과 [검증 기록](work-history/2026-10-29-passenger-types-implementation.md)을 따른다. 내구도·수리는 P15로 별도 관리한다. 후속 P1/P2에서 작성된 게임용 대체 쌍과 합의한20초 용무 대기를 추가했다. 상세 현재 범위는 [인계 요약](CURRENT-STATE.md)을 따른다.
 
 ## 포함·제외 범위
 
@@ -29,7 +31,7 @@
 | 기록 | 사건 카드·일일/누적 결과·동일 조건 연습 | 영상 리플레이·장기 숙련 레벨 | [03](content-design/04-campaign-and-feedback.md) |
 | 승객 | 호출·길가 승객·24정차 후보·17종 요청·11유형/34변주·일반 승객·만족도·보너스 | 복잡한 대화·실제 음악·음성 연기·분실물 반환 퀘스트 | [04](content-design/02-passengers-and-fares.md),[11](content-design/02-passengers-and-fares.md),[14](content-design/02-passengers-and-fares.md) |
 | 요청 배정 | 무작위0~2건·승차 또는 운행 중 안전 정차 발생·개별 평가/저장 | P11 구현·자동 검사 완료, 수동 빈도/답변 여유 별도 | [04 요청 배정](content-design/02-passengers-and-fares.md) |
-| 영업 전략·제한 구현 | 지역/영업 단계별 수요·공차 성과 비교 → 일반 승하차 공간 일시 점유/안전 대안 | P12/P13 대기 경로 구현. 안전 대체 쌍 없음으로 대체 이동 제외; 수요 할증·전역 도로 공사 제외 | [17 확장](content-design/03-life-and-economy.md) |
+| 영업 전략·제한 구현 | 지역/영업 단계별 수요·공차 성과 비교 → 일반 승하차 공간 일시 점유/안전 대안 | P12/P13 및 작성된 게임용 대체 쌍 구현. 장소 확대·수요 할증·전역 도로 공사 제외 | [17 확장](content-design/03-life-and-economy.md) |
 | 취객·청결 | 취객 특성·평소 대사·구토 예고/발생·기상 지연·청결·세차 전 호출 잠금·길가 거부 | 의학적 대응·강제 하차 | [15](content-design/03-life-and-economy.md) |
 | 차량 내구도·복귀 | 충돌 강도별 손상·D0 운행/호출/승차 차단·전용 정비 공간 견인·수리·장부/저장 | 성능 저하·외형/부품 손상·보험·과실 판정 | [차량 기준](content-design/03-life-and-economy.md#추가-기획-충돌-내구도와-수리) |
 | 생활 거점·경제 | 주유소3곳·식당·주차/휴식·세차, 개인택시 현금/미납/비용 | 실내 보행·시설 미니게임·보험·세금·법인 운영·차량매매 | [05](content-design/03-life-and-economy.md) |
