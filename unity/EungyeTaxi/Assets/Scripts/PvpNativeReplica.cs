@@ -64,6 +64,7 @@ public static class PvpNativeReplica {
         public Pose[] npcs=new Pose[0];
         public PvpNativeNpc[] latestNpcs;
         public Transform[][] wheels=new Transform[4][];
+        public readonly PvpNativeWheelView[,] wheelPoses=new PvpNativeWheelView[4,4];
     }
     static readonly ConditionalWeakTable<PvpNativeLan,View> views=new ConditionalWeakTable<PvpNativeLan,View>();
     static View State(PvpNativeLan lan){return views.GetValue(lan,key=>new View());}
@@ -96,8 +97,8 @@ public static class PvpNativeReplica {
                 wheelPositions=new Vector3[4],wheelRotations=new Quaternion[4]};
             for(int wheel=0;wheel<4;wheel++){
                 Vector3 position;Quaternion rotation;taxi.wheels[wheel].GetWorldPose(out position,out rotation);
-                actor.wheelPositions[wheel]=Quaternion.Inverse(actor.rotation)*(position-actor.position);
-                actor.wheelRotations[wheel]=Quaternion.Inverse(actor.rotation)*rotation*Quaternion.Euler(0,0,90);
+                actor.wheelPositions[wheel]=PvpNativeWheelView.MountPosition(taxi.transform.InverseTransformPoint(position),taxi.wheels[wheel].transform.localPosition);
+                actor.wheelRotations[wheel]=Quaternion.Inverse(taxi.transform.rotation)*rotation*Quaternion.Euler(0,0,90);
             }
             if(PvpNativePerf.Moving&&slot==recipient&&taxi.body.velocity.magnitude>2)PvpNativePerf.Sample("source-render-age-ms",Vector3.Distance(taxi.transform.position,taxi.body.position)/taxi.body.velocity.magnitude*1000);
             frame.actors[slot]=actor;
@@ -139,6 +140,7 @@ public static class PvpNativeReplica {
             var list=new System.Collections.Generic.List<Transform>();
             foreach(var child in taxi.GetComponentsInChildren<Transform>())if(child.name=="Tyre visual")list.Add(child);
             view.wheels[local]=list.ToArray();
+            for(int i=0;i<4;i++)view.wheelPoses[local,i]=new PvpNativeWheelView();
         }
         if(match.PassengerWorld)match.PassengerWorld.enabled=false;
         foreach(var driver in match.Drivers){driver.roadConditions=match.Human.roadConditions;driver.jobs.nav.conditions=match.Human.roadConditions;}
@@ -184,7 +186,8 @@ public static class PvpNativeReplica {
                 var wheels=view.wheels[local];
                 if(wheels!=null&&actor.wheelPositions!=null&&actor.wheelRotations!=null)
                     for(int i=0;i<Math.Min(wheels.Length,Math.Min(actor.wheelPositions.Length,actor.wheelRotations.Length));i++){
-                        wheels[i].localPosition=actor.wheelPositions[i];wheels[i].localRotation=actor.wheelRotations[i];
+                        view.wheelPoses[local,i].Push(frame.elapsed,actor.wheelPositions[i],actor.wheelRotations[i],first||frame.finished);
+                        if(first||frame.finished)view.wheelPoses[local,i].Draw(wheels[i],frame.elapsed);
                     }
             }
             match.ApplyNetworkView(frame.elapsed,frame.finished,scores,claims,conditions,remaining);
@@ -253,7 +256,10 @@ public static class PvpNativeReplica {
         var view=State(lan);if(!view.bound||view.received<=0)return;
         double now=Time.realtimeSinceStartupAsDouble,age=System.Math.Max(0,now-view.received),dt=System.Math.Max(0,now-view.lastDraw);view.lastDraw=now;view.renderTime=PvpNativePlaybackClock.Advance(view.renderTime,view.serverTime,age,dt);double playback=lan.Match.Finished?view.serverTime:view.renderTime;
         var match=lan.Match;
-        for(int i=0;i<match.Drivers.Count;i++)view.taxis[i].Draw(match.Drivers[i].taxi.transform,playback);
+        for(int i=0;i<match.Drivers.Count;i++){
+            view.taxis[i].Draw(match.Drivers[i].taxi.transform,playback);
+            var wheels=view.wheels[i];if(wheels!=null)for(int j=0;j<Math.Min(4,wheels.Length);j++)view.wheelPoses[i,j].Draw(wheels[j],playback);
+        }
         for(int i=0;i<view.npcs.Length;i++)view.npcs[i].Draw(match.Human.traffic.cars[i].transform,playback);
 
         // Cap extrapolated signal time if the connection stops delivering snapshots.
