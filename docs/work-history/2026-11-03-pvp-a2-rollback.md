@@ -18,3 +18,9 @@
 
 ## 실행 폴더 반영
 실제소스 `b87424f9cc7547d7bd0186b62642bd512d70739f` 확인. 기존139파일115,322,814바이트 검증후 canonical미실행확인·기존폴더를artifacts에보관하고A2후보전체를새복사했다. 후보/배포139파일115,316,158바이트 상대경로·크기·SHA256전수일치. DoNotShip은별도보관. 맵복원과끊김미해결을분리한validation으로manifest를갱신한다.
+
+
+## 게시·원래 작업 폴더 영수증
+실제배포커밋 `c37ad00c94a2ec6f03b4eca396395dbb3b114dcf`, main/feature atomic push exit0·ls-remote동일해시확인. 소스b87424f, A2파일두개는5a5df15와바이트일치하며바퀴/공통후속수정은유지했다. 통합/PVP manifest각exit0(139파일115,316,158바이트).
+
+사용자추가지시에따라 C:/git/project-b의main을5a5df15→c37ad00으로 `git merge --ff-only origin/main` exit0 반영했다. 별도stash/reset/사용자변경커밋없이성공했으며그폴더 manifest VerifyOnly도exit0이다. 사전상태의2개미커밋마인드맵/목차와2개미추적파일은크기/SHA256일치,5개미추적디렉터리는존재유지했다. 원래변경상태가그대로남아있다. 이영수증후속도동일실행본이며최종main을원래폴더에같이fast-forward한다. 참가자끊김은미해결로명시한다.
