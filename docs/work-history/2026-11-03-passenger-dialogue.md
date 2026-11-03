@@ -29,3 +29,17 @@
 
 
 최종 통합 d4da20e의 BuildHybrid 종료0/실제 응답60·새 프로세스 복원6 종료0/사용자 저장6파일 SHA256 불변을 확인했다. 캡처 fixture의 Freeze가 PassengerRequestUI 컴포넌트를 비활성화해 요청창 첫 이미지가 누락된 것을 열람 중 발견했다. 캡처 동안만 해당 컴포넌트를 켜도록 수정하고, 일반/유형별 상황 답변의 효과를 말풍선 밖에 분리했다. 이 보완 이후의 최종 결과는 아래에 추가한다.
+
+
+## 최종 실행본 검증
+
+- 소스 `101abf74a88ca318fd2e495d5dcdad97c147be7f`, `PrototypeBuild.BuildHybrid` 실제 종료0 (`artifacts/dialogue-delivery-build.log`/`.exit`).
+- 최종 exe `-oneDayMode -hybridV2 -passengerActivitiesTest -dialogueCapture`: 실제 종료0/60검사. 같은 exe의 `-passengerActivitiesReloadTest -batchmode -nographics`: 종료0/6검사. 전용 artifacts 저장만 사용했다. 로그는 `artifacts/dialogue-delivery-passengerActivitiesTest.log`와 `dialogue-delivery-passengerActivitiesReloadTest.log`다.
+- 네 대화 화면의 실제1600×900 렌더를 [요청](../ui/2026-11-03-dialogue/request.png)/[음식](../ui/2026-11-03-dialogue/food.png)/[상황](../ui/2026-11-03-dialogue/signal.png)/[기사 답변](../ui/2026-11-03-dialogue/reply.png)에 보존했다. 요청창 활성화 후 재캡처한 최종 요청/답변 이미지에서 대사·선택키·효과의 영역과 줄바꿈을 열람 확인했다. 위치/상태 제어 장면이며 전 HUD·수동 주행 수용으로 확대하지 않는다.
+- 사용자 저장6파일 SHA256 불변. `git diff --check` 종료0. 지도/OSM/ZIP·제품명/저장 위치·사용자 마인드맵은 변경하지 않았다.
+- 배포 실행폴더 **140파일/115,432,830바이트**. `tools/update_distribution_manifest.ps1 -VerifyOnly` 종료0, 파일 크기·SHA256 전수 일치. 새 `level0.resS`도 실행 폴더에 포함한다. 생성 DoNotShip 폴더는 경로 확인 후 artifacts로 옮겼다. 초기 자체 빌드만 별도 Git stash로 보존했으며 통합본으로 되돌려 적용하지 않았다.
+- 추가 리뷰·LAN/다른PC/장시간/성능/전체 캠페인 검사는 반복하지 않았다. 원격 main의 해당 기능 수정과 이전 검증 이력은 그대로 보존한다.
+
+재현: 통합 `builds/EungyeTaxi/EungyeTaxi.exe` → 은계 영업 또는 통합PVP → 승객 대화 표시 → Y/I/O/U 또는 클릭으로 선택. 운행 중에도 대답할 수 있으나, 짐/음식 정리/재고정은 안전한 정차 상태에서만 시간이 진행된다. 도움말은 방향키 기준이다. 실제 음악·에어컨·창문 조작은 계속 보류한다.
+
+자동 승인 검토가 생성 장면 파일의 복원을 미커밋 폐기 위험으로 거부했다(명령 미실행). diff를 확인해 빌드가 재생성한 Mode Selection 오브젝트 fileID만 변경됨을 확인했으며, 복원하지 않고 해당 파일도 배포 커밋에 보존한다.
