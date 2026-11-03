@@ -49,3 +49,11 @@ H 경로 복제 추가 뒤 native-lan-20261103-152844-be27ca5f는 Unity가 null 
 ## 실행 폴더 갱신
 
 실제 소스 `f13f8fb136712ff28f91c2fd65d60655e487affc` 확인. 기존139파일115,316,158바이트 manifest 검증0과 canonical 게임 미실행 확인 후 기존 폴더를 artifacts에 보관하고 최종 owner-prediction-ready를 새 복사했다. 후보/배포 **139파일115,329,118바이트** 상대경로·크기·SHA256 전수 일치. DoNotShip은 별도 보관하고 배포하지 않는다. 최종95검사/17+5/wheel8/pose11과 미검증 범위를 실제 validation JSON으로 기록한다.
+
+## 게시·C:/git/project-b 반영 영수증
+
+실제 소스 `f13f8fb136712ff28f91c2fd65d60655e487affc`, 배포 `9b92b1bae785ca6bd8f89ca61d9fb0c7f54ede0e`. fetch로 최신 main/feature가 기존7e1a7f7의 후손 범위임을 확인하고 `git push --atomic origin HEAD:refs/heads/feature/pvp-prototype HEAD:refs/heads/main` 종료0·ls-remote 두 원격 동일 배포 해시를 확인했다. 별도 충돌/다른 원격 신규 작업은 없었다.
+
+C:/git/project-b의 main은7e1a7f7→9b92b1b으로 `git merge --ff-only origin/main` 종료0. 해당 폴더 manifest VerifyOnly도139파일115,329,118바이트/종료0. 사전 기록한 미커밋 문서2+미추적파일2의 크기/SHA256 동일·미추적5디렉터리 존재·dirty status 전체 일치를 확인했다. stash/reset/다른 작업 커밋/사용자 게임 강제 종료를 하지 않았다.
+
+이 문서 영수증 후속도 같은 실행본을 유지하고 main/feature에 함께 게시한 뒤 원래 Cgit main에 문서만 fast-forward한다. 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`; 양쪽 모두 이 실행 폴더로 새로 시작해야 한다. 모든 참가자 끊김의 장시간 해결 판정은 미완료이며 위 최소 수용 범위를 유지한다.

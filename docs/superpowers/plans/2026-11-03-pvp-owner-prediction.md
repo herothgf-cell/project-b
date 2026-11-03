@@ -19,4 +19,4 @@ PvpNativePrediction.cs: bounded 입력큐·과거상태/점진보정·자기차�
 ## Tasks
 - [x] local owner prediction + bounded numbered inputs + ack/historical reconciliation.
 - [x] final relevant Editor/Windows/two Player acceptance, actual results and limitations.
-- [ ] canonical EXE/manifest/docs commit + atomic push + Cgit ff preserving user changes.
+- [x] canonical EXE/manifest/docs commit + atomic push + Cgit ff preserving user changes.
