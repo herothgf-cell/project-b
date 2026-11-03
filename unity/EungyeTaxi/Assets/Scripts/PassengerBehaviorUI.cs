@@ -1,5 +1,5 @@
 using UnityEngine;
-// Shared request stop gate and priority; one response surface handles the keyboard each frame.
+// Shared dialogue priority; physical work keeps its separate stop gate; one response surface handles the keyboard each frame.
 public sealed class PassengerBehaviorUI : MonoBehaviour {
  public DriveSession session;
  float noticeUntil,responseUntil;
@@ -15,6 +15,7 @@ public sealed class PassengerBehaviorUI : MonoBehaviour {
  void OnGUI(){if(session.IsSimulationBot)return;if(session.jobs.SituationVisible&&session.jobs.SituationPresentationAvailable){DrawSituation();return;}if(!Showing){if(session.requests.CanTalk&&!session.requests.HasVisiblePanel&&session.jobs.Active&&session.law.tripId==situationTrip&&Time.time<situationReplyUntil)PassengerDialogueUI.Draw("기사 답변",situationReply,new PassengerDialogueUI.Option[0]);return;}var b=session.jobs.Behavior;
   var labels=session.jobs.BehaviorChoicesOpen?b.ChoiceLabels:new string[0];var effects=b.ChoiceEffects;var options=new PassengerDialogueUI.Option[labels.Length];for(int i=0;i<labels.Length;i++)options[i]=new PassengerDialogueUI.Option(new[]{"Y","I","O"}[i],labels[i],effects[i],CanRespond);
   string note=responseOwner==b&&Time.time<responseUntil?responseNotice:b.WorkRemaining>0?"안전 정차 중 작업 "+Mathf.CeilToInt(b.WorkRemaining)+"초":"";
+  if(b.Type==PassengerType.Food&&b.ConsumptionOccurred)note+=(note.Length>0?"\n":"")+"발생 효과 · 섭취 청결도 -2"+(b.SpillOccurred?" · 흘림 청결도 -6":"");
   int selected=PassengerDialogueUI.Draw("승객 요청 · "+b.TypeLabel,b.Dialogue,options,note);if(selected>=0)session.jobs.RespondBehavior(selected);
  }
  void DrawSituation(){var j=session.jobs;var situation=j.Situation;var options=j.SituationWorkActive?new PassengerDialogueUI.Option[0]:new[]{new PassengerDialogueUI.Option("Y",situation.ReplyLine(0),situation.ReplyEffect(0),j.CanRespondSituation),new PassengerDialogueUI.Option("I",situation.ReplyLine(1),situation.ReplyEffect(1),j.CanRespondSituation)};
