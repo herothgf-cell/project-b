@@ -1,38 +1,83 @@
 {
-  "sourceCommit": "ba1b7e88948b4b346d4a7c36adcf5fd9ea59aa7a",
+  "sourceCommit": "2807ccec9d0dbbbf8f632982e07d2b9766160f8b",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-03",
-  "totalBytes": 115434078.0,
+  "totalBytes": 115321622.0,
   "validation": {
-    "sourceCommit": "ba1b7e88948b4b346d4a7c36adcf5fd9ea59aa7a",
-    "preservedRemoteMain": "337ab94",
-    "build": "SignalCountdownTests.Build / PrototypeBuild.BuildHybrid exit 0",
+    "build": "Unity 2022.3.62f2 PvpNativePerfBuild.BuildRecoveryFinal -> PrototypeBuild.BuildAt(eungye) exit 0",
+    "sourceCommit": "2807ccec9d0dbbbf8f632982e07d2b9766160f8b",
+    "pvpMap": "A3 pvp-city-a 3600x2800m; 236 streets; 18 stops; 8 calls",
     "editor": {
-      "signalPhaseCountdown": true,
-      "ceilSeconds": true,
-      "unknownTimingHidden": true,
-      "trafficClockUnchanged": true,
-      "theme": true,
-      "navigationCueAssertions": 15
+      "a3GraphAssertions": 6289,
+      "directedStopPairs": 306,
+      "facilityAssertions": 2609,
+      "pickupRouteComparisons": 342,
+      "roadCostComparisons": 1501,
+      "colliderAssertions": 15,
+      "uncontrolledConnectors": 1029,
+      "obliquePhysicalPairs": 2,
+      "manualOccupiedMovementGuard": true,
+      "recoveryAssertions": 14,
+      "conditionGroups": 5,
+      "scope": "Targeted suites by actual changes; earlier passing unchanged suites were retained, not all rerun on last build"
     },
-    "player": {
-      "signalUiAssertions": 8,
-      "capturedResolutions": [
-        "1280x720",
-        "1920x1080"
+    "nativeFourDrivers": {
+      "candidate": "candidate11",
+      "exit": 0,
+      "checks": 26,
+      "metres": [
+        6506.75,
+        6765.74,
+        3895.772,
+        6501.071
       ],
-      "temporaryCampaignVerified": true,
-      "userSaveComparisonFiles": 14,
-      "userSaveComparisonDiffRows": 0,
-      "fallbackCardCaptured": true,
-      "activeBlueRouteCaptured": false,
-      "controlledSignalFixture": true,
-      "manualDriving": false
+      "nativeFares": [
+        19490,
+        14680,
+        12570,
+        18460
+      ],
+      "npcs": 72,
+      "roomSeconds": 7200,
+      "timeScale": 3,
+      "positionControlled": false,
+      "resultsAndRestart": true
     },
-    "localInputs": "Strict exit 0 / issues 0",
-    "worldAndTrafficRulesUnchanged": true
+    "nativeLan": {
+      "candidate": "candidate9",
+      "exit": 0,
+      "hostChecks": 30,
+      "clientChecks": 38,
+      "reconnect": true,
+      "lawNotifications": "server model fixture, not physical red light crossing"
+    },
+    "renderedClient": {
+      "candidate": "candidate9; final subsequent changes only bot recovery and probe deadline",
+      "graphics": "Direct3D11",
+      "width": 1600,
+      "height": 900,
+      "movingSeconds": 16.1843844,
+      "movingMetres": 248.78825378790498,
+      "movingFrames": 971,
+      "frozenFrames": 0,
+      "maxFreezeMs": 0.0,
+      "overallAverageFrameMs": 16.67,
+      "overallMaxFrameMs": 20.84,
+      "scope": "One visible guest/hidden host on this PC; actual NPC contact stopped motion during part of 30s observation"
+    },
+    "singleSaveIsolation": "candidate4 UNIFIED_MODE_RESULT PASS active_seconds=111.1655; later single logic unchanged",
+    "userSaves": "latest final baseline four files bytes/SHA256 unchanged; original session-start baseline changed by external user game and was preserved",
+    "strictInputIssues": 0,
+    "freshCandidateHashMatch": true,
+    "manualDriving": false,
+    "notVerified": [
+      "other PC four humans",
+      "long sessions and two visible FullHD windows",
+      "20 minute economy/condition and conservative bot idle balance",
+      "initial map/first route one-off hitches"
+    ]
   },
   "files": [
     {
@@ -43,17 +88,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "60ae2d15aad7b53a3678aaa0ef9caf0cc688d5f0f8779ad0f6584f74f573aad0"
+      "sha256": "f18158f1e4e14759db1f93ed120a7e0ba138857b3316a219182850b4471e55d1"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 55076,
-      "sha256": "9254f3f4c6b6499f47648137c930721aa9f3eafe4059f66d9ecb23931731b0c8"
+      "bytes": 55164,
+      "sha256": "e4906c13f8fd015439a0f3f98ea52223829cd658251348d78823940effd3093c"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 106824,
-      "sha256": "6e0d761371069eb67227e6ae09e99c0f05c44b560287e2aea5c5baae9079678f"
+      "bytes": 107080,
+      "sha256": "549642ab4bcbf90376a03e95569b6657113ed52dd18ef9d2ddd472226af67278"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -66,14 +111,9 @@
       "sha256": "d71d3f2e7aeb0df5b35c563ab9b3defd0cb5fa7c052b38d14bd7de7ba26fc695"
     },
     {
-      "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0.resS",
-      "bytes": 131232,
-      "sha256": "e406dbca582a01e45cca79a3abe7b310919d6155d9ce9664c832a18ca630abd8"
-    },
-    {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2177024,
-      "sha256": "c1f9f6587fcc27408fa981ea143ce2aa25ceb6f450683689b7ec417173c0471f"
+      "bytes": 2195456,
+      "sha256": "471c53bc827944f36bdf765b76abe702f92fa4c80905c61e31fb28a32b08c7a4"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -568,12 +608,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Plugins/x86_64/lib_burst_generated.dll",
       "bytes": 394240,
-      "sha256": "d5ad21e9c9ecdf6531126e65704b2401835cb02a12e88dbe6ccbf29b40146c31"
+      "sha256": "47c5eb12ed1640aea5fa2c2a8121595737e9dab3de77b69f7da994d4050a6f24"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
       "bytes": 40439342,
-      "sha256": "e45227272e5528e8df85b81dff350e9e339f348ab61c96616e49a81b03b0da05"
+      "sha256": "bb697333f4f905bf71abe49dea659f40383273765e5d0364e0c89c57da9f9cd6"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Resources/unity default resources",

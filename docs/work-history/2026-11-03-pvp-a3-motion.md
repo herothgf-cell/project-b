@@ -115,3 +115,8 @@ PVP 봇이 이미 이용 가능한 실제 bay에 정차했을 때 native CanUse�
 - 위 실제 물리 운송 전의 candidate9 단독 화면 주행은249m/약90km/h·반복멈춤0/평균16.67ms를 확인했고 일반LAN68·알림/재접속도exit0이다. 이후 candidate10/11은 PVP 회복 판단·진단 시간한도만 변경했으며 표시/전송/지도 기하는 같다. 최종 운송 검사에서는FPS를 주장하지 않는다.
 - 격리 싱글 임시저장/복원·PVP→메뉴→싱글 수용은candidate4 UNIFIED_MODE_RESULT PASS/exit0이다. 이후 싱글 플레이/저장 로직 변경 없음. 사용자 실제 저장은 초기스냅샷과달리 외부실행으로수정된것을보존했고, 마지막재기준4파일은최종Native/LAN/4대검사후전부크기/SHA256 불변이다.
 - 필수 지도/ZIP·캠페인 저장경로·다른 체크아웃·main 승객 대화/신호 카운트다운을 보존했다. 최종 실행 폴더/manifest와 원격 게시 영수증은 아래에 추가한다.
+
+
+## 실행 폴더 교체
+
+실제 소스 커밋 `2807ccec9d0dbbbf8f632982e07d2b9766160f8b` (`git log -1 --oneline -- docs/work-history/2026-11-03-pvp-a3-motion.md` 확인). 기존 통합 manifest140파일115,434,078바이트 VerifyOnly exit0 후 사용자 실행 중인 canonical player가 없음을 확인했다. 기존 폴더 전체를 확인된 artifacts 경로에 보관하고, 최종candidate11에서DoNotShip 디버그만 별도보관 후 새 통합 폴더를 복사했다. 후보/배포139파일115,321,622바이트의상대경로·크기·SHA256 전수일치. 이전빌드의남는level0.resS를 덮어쓰기잔재로남기지않았다. 원래 다른 체크아웃/별도 사용자 실행 폴더는수정하지않았다. manifest 및 원격 게시 결과는 아래 영수증을 따른다.
