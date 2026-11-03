@@ -1,28 +1,31 @@
 {
-  "sourceCommit": "5f6b9f33dcf88d8b3a3a399d10d622e0d88a9e8e",
+  "sourceCommit": "b87424f9cc7547d7bd0186b62642bd512d70739f",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-03",
-  "totalBytes": 115322814.0,
+  "totalBytes": 115316158.0,
   "validation": {
-    "build": "Unity2022.3.62f2 PvpNativeWheelTests.Build -> PrototypeBuild.BuildAt(eungye) exit0",
-    "scope": "participant wheel display only; maps/physics/single rules unchanged",
-    "wheelAssertions": 8,
-    "existingPoseAssertions": 11,
-    "nativeLan": {
-      "hostChecks": 21,
-      "clientChecks": 22,
+    "sourceCommit": "b87424f9cc7547d7bd0186b62642bd512d70739f",
+    "build": "Unity2022.3.62f2 PvpMapRollbackBuild.Build exit0",
+    "pvpMap": "A2 restored from 5a5df15; map factory and road builder byte-identical",
+    "mapChecks": 71646,
+    "laneChoices": 37,
+    "spawnChecks": 10,
+    "wheelChecks": 8,
+    "poseChecks": 11,
+    "twoPlayers": {
+      "hostChecks": 19,
+      "clientChecks": 18,
       "exit": 0,
-      "actualMovingMetres": 249.902278,
-      "actualMovingSeconds": 16.186335,
-      "frozenFrames": 0,
-      "graphics": "D3D11 1600x900",
-      "manualVisualBeforeAfterVideo": false
+      "movingMetres": 85.8624,
+      "positionControlled": false,
+      "visualAcceptance": false
     },
-    "fullMapPassengerFourDriverCampaignSuitesRerun": false,
-    "candidateFilesHashMatch": true,
-    "sourceCommit": "5f6b9f33dcf88d8b3a3a399d10d622e0d88a9e8e"
+    "stutterResolved": false,
+    "acceptanceScope": "map rollback/connectivity only; user reports persistent stutter; no prediction or dedicated server implemented",
+    "candidateFilesHashMatched": true,
+    "otherSystems": "wheel/runtime/single fixes retained; no full campaign/passenger/four-driver suite rerun"
   },
   "files": [
     {
@@ -33,7 +36,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "6e9b9e0054874a533a0054d67ed43250e2ffd97a034df4248cf8b72b28d6a347"
+      "sha256": "ce830bffd0b4c9e6b361daec5453ae4fccd0e02e6abb7072010bf836b5a6600e"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -57,8 +60,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2196480,
-      "sha256": "aee2906d4123a087763200d43a4ef5bc215cbaf92a8e84e29130c02742ef6c9a"
+      "bytes": 2189824,
+      "sha256": "f4f894f80d9d0a0f1f7bfa42d49b2c2085dc1591df8d62b534914d0975d56ed8"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
