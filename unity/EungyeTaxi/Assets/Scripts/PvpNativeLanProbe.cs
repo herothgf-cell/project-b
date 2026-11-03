@@ -43,7 +43,7 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   yield return Bootstrap();
   if(host){yield return Until(()=>lan.ConnectedGuests==1,"one LAN guest connected");lan.StartMatch();}
   yield return Until(()=>lan&&lan.Match&&lan.Racing,"all participants pass world-ready barrier",120);
-  var match=lan.Match;var own=match.Human;metrics.slot=lan.LocalSlot;metrics.map=own.world.map.mapId;metrics.driverCount=match.Drivers.Count;metrics.wheels=own.taxi.wheels.Length;
+  var match=lan.Match;Check(lan.Label(0).Contains(lan.IsHost?"검증_host":"검증_client")&&lan.Label(1).Contains(lan.IsHost?"검증_client":"검증_host"),"host retains and broadcasts both nicknames");var own=match.Human;metrics.slot=lan.LocalSlot;metrics.map=own.world.map.mapId;metrics.driverCount=match.Drivers.Count;metrics.wheels=own.taxi.wheels.Length;
   Check(metrics.map=="pvp-city-a"&&metrics.driverCount==4&&metrics.wheels==4,"native city and four original physical taxis");
   foreach(var d in match.Drivers)Check(d.business.SimulationSession&&d.business.SavePath==""&&d.taxi.wheels.Length==4,"native sessions retain campaign save isolation");
   metrics.product=Application.productName;Check(metrics.product=="택시 시뮬레이션","latest main product name retained");metrics.graphics=SystemInfo.graphicsDeviceType.ToString();metrics.width=Screen.width;metrics.height=Screen.height;
@@ -52,7 +52,9 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   yield return Cleanup();
  }
  IEnumerator Host(){
-  var match=lan.Match;var guest=match.Drivers[1];var car=guest.taxi;int carId=car.GetInstanceID();
+  var match=lan.Match;
+  int listed=0;float shortest=0,longest=0;foreach(var offer in match.SharedCalls.Offers){if(offer==null)continue;listed++;int nearer=0;for(int d=0;d<match.Human.jobs.stops.Length;d++){if(d==offer.pickup)continue;float distance=match.Human.jobs.nav.Distance(match.Human.jobs.stops[offer.pickup],match.Human.jobs.stops[d]);if(distance>=80&&distance<offer.distance-.1f)nearer++;}Check(nearer<3,"short-match offer uses one of three nearest reachable drops");shortest=shortest==0?offer.distance:Mathf.Min(shortest,offer.distance);longest=Mathf.Max(longest,offer.distance);}Check(listed>=6,"short match keeps a populated shared call list");Debug.Log("PVP_SHORT_CALLS count="+listed+" shortest="+shortest+" longest="+longest);
+  var guest=match.Drivers[1];var car=guest.taxi;int carId=car.GetInstanceID();
   Check(guest.GetComponent<PvpSimulationBot>()&&!guest.GetComponent<PvpSimulationBot>().enabled,"guest seat disables native bot while connected");
   float menuElapsed=match.Elapsed;lan.ToggleMenu();yield return new WaitForSecondsRealtime(.5f);Check(!match.Human.paused&&Time.timeScale==1&&match.Elapsed>menuElapsed&&PvpNativeLan.UiBlocked(match.Human),"shared clock continues while own keyboard/pad menu brakes only local taxi");lan.ToggleMenu();
   Vector3 before=car.transform.position;float startTime=Time.realtimeSinceStartup,maxSpeed=0;
@@ -77,7 +79,7 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
  }
  IEnumerator Client(){
   yield return Until(()=>lan.HasOwnFrame,"first own native snapshot applied");
-  var own=lan.Match.Human;Check(own.taxi.body.isKinematic,"client own taxi is a server pose replica");
+  var own=lan.Match.Human;Check(lan.Label(0).Contains("검증_client")&&lan.Label(1).Contains("검증_host"),"guest receives host-authoritative nicknames in local slot order");Check(own.taxi.body.isKinematic,"client own taxi is a server pose replica");
   var facilities=own.services.FacilityOptions(0);Check(facilities.Count>0&&facilities.TrueForAll(o=>o.QueueKnown),"guest facility comparison receives host queue and physical occupancy facts");
   Vector3 before=own.taxi.transform.position;float driveUntil=Time.realtimeSinceStartup+6;
   lan.ProbeInput=()=>new PvpNativeDrive{throttle=Time.realtimeSinceStartup<driveUntil?.35f:0,steer=0,brake=Time.realtimeSinceStartup>=driveUntil,blocked=false};

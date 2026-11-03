@@ -8,15 +8,15 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Collections;
 
-[Serializable] public sealed class PvpNativeHello {public string protocol,map,ticket;}
-[Serializable] public sealed class PvpNativeRoom {public int slot,seconds;public string ticket,session;public bool started,racing;public bool[] humans;}
+[Serializable] public sealed class PvpNativeHello {public string protocol,map,ticket,nickname;}
+[Serializable] public sealed class PvpNativeRoom {public int slot,seconds;public string ticket,session;public bool started,racing;public bool[] humans;public string[] names;}
 [Serializable] public sealed class PvpNativeDrive {public int sequence;public float throttle,steer;public bool brake,blocked;}
 [Serializable] public sealed class PvpNativeCommand {public int sequence,value;public string action,token,trip,request;}
 
 // Trusted LAN, host-authoritative native WheelCollider simulation. No client pose/fare authority.
 [DefaultExecutionOrder(-110)]
 public sealed class PvpNativeLan:MonoBehaviour {
- public const string Protocol="native-city-lan-v1";
+ public const string Protocol="native-city-lan-v2";
  public static PvpNativeLan Instance {get;private set;}
  public static bool ApplyingReplica;
  public PvpSimulationMatch Match {get;private set;}
@@ -33,8 +33,8 @@ public sealed class PvpNativeLan:MonoBehaviour {
  public static string LastNotice="";static string savedAddress,savedTicket;static ushort savedPort;
  static string fingerprint;
  NetworkManager manager;GameObject networkRoot;Pvp.PvpBootstrap bootstrap;bool stopping,disconnectPending,previousBackground;
- int inputSeq,commandSeq;bool receivedOwn;float nextInput,nextFrame,nextFull,worldDeadline,lastFrameAt;string session;bool[] humans=new bool[4];
- sealed class Seat {public int slot,lastInput,lastCommand,commandCount;public ulong id;public string ticket;public bool connected,ready,blocked;public float lastAt,graceUntil,rateAt;public PvpNativeDrive input;}
+ int inputSeq,commandSeq;bool receivedOwn;float nextInput,nextFrame,nextFull,worldDeadline,lastFrameAt;string session;string[] names=new string[4];bool[] humans=new bool[4];
+ sealed class Seat {public int slot,lastInput,lastCommand,commandCount;public ulong id;public string ticket,nickname;public bool connected,ready,blocked;public float lastAt,graceUntil,rateAt;public PvpNativeDrive input;}
  readonly Dictionary<ulong,Seat> peers=new Dictionary<ulong,Seat>();readonly Seat[] seats=new Seat[4];
  public static bool RunningOnline {get{return Instance&&Instance.InMatch&&!Instance.stopping;}}
  public static bool WaitingForWorld {get{return Instance&&!Instance.stopping&&Instance.Started&&!Instance.Racing;}}
@@ -50,17 +50,17 @@ public sealed class PvpNativeLan:MonoBehaviour {
  public void ToggleMenu(){MenuOpen=!MenuOpen;}
  public int ServerToLocal(int server){if(IsHost)return server;if(server==LocalSlot)return 0;int at=1;for(int i=0;i<4;i++)if(i!=LocalSlot){if(i==server)return at;at++;}return -1;}
  public int LocalToServer(int local){if(IsHost)return local;if(local==0)return LocalSlot;int at=1;for(int i=0;i<4;i++)if(i!=LocalSlot){if(at==local)return i;at++;}return -1;}
- public string Label(int local){int slot=LocalToServer(local);if(local==0)return "나";return slot>=0&&humans[slot]?"플레이어 "+(slot+1):"봇 "+(slot+1);}
+ public string Label(int local){int slot=LocalToServer(local);if(slot>=0&&humans[slot]){string name=names[slot];return string.IsNullOrEmpty(name)?(local==0?"나":"플레이어 "+(slot+1)):name+(local==0?" (나)":"");}return "봇 "+(slot+1);}
  public static string MapFingerprint {get{if(fingerprint==null){var map=PvpCityMap.Create();using(var sha=SHA256.Create())fingerprint=BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(JsonUtility.ToJson(map)))).Replace("-","").ToLowerInvariant();}return fingerprint;}}
  public static string LocalAddress(){try{foreach(var a in Dns.GetHostAddresses(Dns.GetHostName()))if(a.AddressFamily==System.Net.Sockets.AddressFamily.InterNetwork&&!IPAddress.IsLoopback(a))return a.ToString();}catch{}return "127.0.0.1";}
  public void Begin(Pvp.PvpBootstrap owner,bool host,string address,ushort port,int seconds){
   if(Instance||NetworkManager.Singleton)throw new InvalidOperationException("이미 접속 중입니다");
   IPAddress parsed;if(!IPAddress.TryParse(address,out parsed)||parsed.AddressFamily!=System.Net.Sockets.AddressFamily.InterNetwork||port==0||seconds<30||seconds>7200)throw new ArgumentException("IPv4 주소·포트·경기 시간을 확인하세요");
   Instance=this;bootstrap=owner;IsHost=host;Address=address;Port=port;Seconds=seconds;LocalSlot=host?0:-1;session=Guid.NewGuid().ToString("N");previousBackground=Application.runInBackground;Application.runInBackground=true;
-  if(host){seats[0]=new Seat{slot=0,id=0,ticket="",connected=true};humans[0]=true;}
+  if(host){seats[0]=new Seat{slot=0,id=0,ticket="",connected=true};humans[0]=true;names[0]=DriveFlowPolicy.LocalName;seats[0].nickname=names[0];}
   networkRoot=new GameObject("Native LAN transport");manager=networkRoot.AddComponent<NetworkManager>();var transport=networkRoot.AddComponent<UnityTransport>();transport.SetConnectionData(address,port,host?"0.0.0.0":null);transport.DisconnectTimeoutMS=120000;transport.ConnectTimeoutMS=1000;transport.MaxConnectAttempts=3;
   transport.MaxPayloadSize=1024*1024;transport.MaxSendQueueSize=4*1024*1024;
-  manager.NetworkConfig=new NetworkConfig{NetworkTransport=transport,EnableSceneManagement=false,ConnectionApproval=true,TickRate=30,ForceSamePrefabs=false};manager.NetworkConfig.ConnectionData=Encoding.UTF8.GetBytes(JsonUtility.ToJson(new PvpNativeHello{protocol=Protocol,map=MapFingerprint,ticket=!host&&savedAddress==address&&savedPort==port?savedTicket:""}));
+  manager.NetworkConfig=new NetworkConfig{NetworkTransport=transport,EnableSceneManagement=false,ConnectionApproval=true,TickRate=30,ForceSamePrefabs=false};manager.NetworkConfig.ConnectionData=Encoding.UTF8.GetBytes(JsonUtility.ToJson(new PvpNativeHello{nickname=DriveFlowPolicy.LocalName,protocol=Protocol,map=MapFingerprint,ticket=!host&&savedAddress==address&&savedPort==port?savedTicket:""}));
   manager.ConnectionApprovalCallback=Approve;manager.OnClientConnectedCallback+=Connected;manager.OnClientDisconnectCallback+=Disconnected;
   if(!(host?manager.StartHost():manager.StartClient()))throw new InvalidOperationException("접속을 시작하지 못했습니다");
   foreach(var name in new[]{"room","ready","input","cmd","frame","closed"})manager.CustomMessagingManager.RegisterNamedMessageHandler("native-"+name,(sender,reader)=>Receive(name,sender,reader));
@@ -74,6 +74,7 @@ public sealed class PvpNativeLan:MonoBehaviour {
    else{var hello=JsonUtility.FromJson<PvpNativeHello>(Encoding.UTF8.GetString(req.Payload));if(hello==null||hello.protocol!=Protocol)reason="실행본 버전이 다릅니다";else if(hello.map!=MapFingerprint)reason="PVP 지도가 다릅니다";else{
     for(int i=1;i<4;i++)if(seats[i]!=null&&!seats[i].connected&&seats[i].ticket==hello.ticket&&seats[i].graceUntil>=Time.realtimeSinceStartup){seat=seats[i];break;}
     if(seat==null&&!Started)for(int i=1;i<4;i++)if(seats[i]==null||!seats[i].connected&&seats[i].graceUntil<Time.realtimeSinceStartup){seat=new Seat{slot=i,ticket=Guid.NewGuid().ToString("N")};seats[i]=seat;break;}
+    if(seat!=null){string nick=DriveFlowPolicy.Nickname(hello.nickname);if(nick.Length>0)seat.nickname=nick;names[seat.slot]=seat.nickname;}
     if(seat==null)reason=Started?"시작한 방에는 재접속만 가능합니다":"방이 가득 찼습니다";
    }}
    if(reason==null){seat.id=req.ClientNetworkId;seat.connected=true;seat.ready=false;seat.lastAt=Time.realtimeSinceStartup;seat.lastCommand=seat.lastInput=0;seat.input=null;seat.blocked=true;peers[req.ClientNetworkId]=seat;humans[seat.slot]=true;}
@@ -82,7 +83,7 @@ public sealed class PvpNativeLan:MonoBehaviour {
  }
  void Connected(ulong id){if(!IsHost){Status="연결 완료 · 방 정보를 기다리는 중";return;}if(id==0)return;Seat seat;if(!peers.TryGetValue(id,out seat))return;SendRoom();}
  void Disconnected(ulong id){if(stopping)return;if(!IsHost){LastNotice=manager==null?"접속 종료":string.IsNullOrEmpty(manager.DisconnectReason)?"호스트 연결이 종료되었습니다":manager.DisconnectReason;disconnectPending=true;return;}Seat seat;if(peers.TryGetValue(id,out seat)){Debug.Log("PVP_NATIVE_DISCONNECTED slot="+seat.slot);seat.connected=false;seat.ready=false;seat.blocked=false;seat.graceUntil=Time.realtimeSinceStartup+30;humans[seat.slot]=false;peers.Remove(id);if(Match)ControlSeat(seat.slot,false);SendRoom();}}
- void SendRoom(){if(!IsHost||!manager)return;foreach(var pair in peers)if(pair.Value.connected)Send("room",pair.Key,new PvpNativeRoom{slot=pair.Value.slot,seconds=Seconds,ticket=pair.Value.ticket,session=session,started=Started,racing=Racing,humans=humans});}
+ void SendRoom(){if(!IsHost||!manager)return;foreach(var pair in peers)if(pair.Value.connected)Send("room",pair.Key,new PvpNativeRoom{slot=pair.Value.slot,seconds=Seconds,ticket=pair.Value.ticket,session=session,started=Started,racing=Racing,humans=humans,names=names});}
  public void StartMatch(){if(!IsHost||Started)return;Started=true;Racing=false;worldDeadline=Time.realtimeSinceStartup+120;Status="모든 참가자의 지도를 불러오는 중";SendRoom();bootstrap.StartSimulation(true,Seconds);}
  public void Bind(PvpSimulationMatch match){if(Match==match)return;Match=match;MenuOpen=false;foreach(var d in Match.Drivers){d.roadConditions=Match.Human.roadConditions;d.jobs.nav.conditions=d.roadConditions;foreach(var behaviour in d.GetComponents<MonoBehaviour>())if(behaviour is RightTurnSituation||behaviour is ExitQueueSituation||behaviour is PracticeSession||behaviour is PracticeCoach||behaviour is ConfusionPractice||behaviour is ScenarioChoiceSituation)behaviour.enabled=false;}if(IsHost){seats[0].ready=true;for(int i=1;i<4;i++)ControlSeat(i,seats[i]!=null&&seats[i].connected&&seats[i].ready);}else{lastFrameAt=Time.realtimeSinceStartup;PvpNativeReplica.BindClient(this);Send("ready",0,new PvpNativeCommand{token=session});}Debug.Log("PVP_NATIVE_BOUND role="+(IsHost?"host":"client")+" slot="+LocalSlot);}
  void ControlSeat(int slot,bool human){if(!Match||slot<=0||slot>=4)return;var d=Match.Drivers[slot];var pilot=d.GetComponent<PvpSimulationBot>();if(pilot)pilot.enabled=!human;d.services.enabled=human;d.assisted.SetActive(false);d.taxi.autoThrottle=0;d.taxi.autoSteer=0;d.taxi.autoBrake=true;}
@@ -93,7 +94,7 @@ public sealed class PvpNativeLan:MonoBehaviour {
    else if(kind=="input"){var input=Read<PvpNativeDrive>(reader,1024);if(!seat.ready||input.sequence<=seat.lastInput||float.IsNaN(input.throttle)||float.IsNaN(input.steer)||float.IsInfinity(input.throttle)||float.IsInfinity(input.steer))return;seat.lastInput=input.sequence;seat.lastAt=Time.realtimeSinceStartup;input.throttle=Mathf.Clamp(input.throttle,-1,1);input.steer=Mathf.Clamp(input.steer,-1,1);seat.input=input;seat.blocked=input.blocked;}
    else if(kind=="cmd"){var cmd=Read<PvpNativeCommand>(reader,4096);if(!Racing||!Match||Match.Finished||!seat.ready||cmd.sequence<=seat.lastCommand)return;seat.lastCommand=cmd.sequence;if(Time.realtimeSinceStartup-seat.rateAt>1){seat.rateAt=Time.realtimeSinceStartup;seat.commandCount=0;}if(++seat.commandCount<=40)Execute(seat,cmd);}
   }else if(sender==0){
-   if(kind=="room"){var room=Read<PvpNativeRoom>(reader,4096);if(room==null||room.slot<1||room.slot>3||room.seconds<30||room.seconds>7200||room.humans==null||room.humans.Length!=4)throw new ArgumentException("invalid room");LocalSlot=room.slot;Seconds=room.seconds;session=room.session;humans=room.humans;Started=room.started;Racing=room.racing;savedAddress=Address;savedPort=Port;savedTicket=room.ticket;Status=Started?"경기 준비/진행 중":"호스트의 시작을 기다리는 중";if(Started&&!Match)bootstrap.StartSimulation(true,Seconds);}
+   if(kind=="room"){var room=Read<PvpNativeRoom>(reader,4096);if(room==null||room.slot<1||room.slot>3||room.seconds<30||room.seconds>7200||room.humans==null||room.humans.Length!=4)throw new ArgumentException("invalid room");LocalSlot=room.slot;Seconds=room.seconds;session=room.session;humans=room.humans;if(room.names!=null&&room.names.Length==4){for(int n=0;n<4;n++)names[n]=DriveFlowPolicy.Nickname(room.names[n]);}Started=room.started;Racing=room.racing;savedAddress=Address;savedPort=Port;savedTicket=room.ticket;Status=Started?"경기 준비/진행 중":"호스트의 시작을 기다리는 중";if(Started&&!Match)bootstrap.StartSimulation(true,Seconds);}
    else if(kind=="frame"){long perf=PvpNativePerf.Start();var frame=Read<PvpNativeFrame>(reader,1024*1024);if(Match&&frame.recipient==LocalSlot){PvpNativeReplica.Apply(this,frame);lastFrameAt=Time.realtimeSinceStartup;receivedOwn|=frame.full;}PvpNativePerf.End("receive",perf);}
    else if(kind=="closed"){LastNotice="호스트가 방을 종료했습니다";disconnectPending=true;}
   }
@@ -125,7 +126,7 @@ public sealed class PvpNativeLan:MonoBehaviour {
   if(IsHost){if(Time.unscaledTime>=nextFrame){nextFrame=Mathf.Max(nextFrame+.1f,Time.unscaledTime);bool full=Time.unscaledTime>=nextFull;if(full)nextFull=Time.unscaledTime+.5f;foreach(var pair in peers)if(pair.Value.connected&&pair.Value.ready)Send("frame",pair.Key,PvpNativeReplica.Capture(this,pair.Value.slot,full));}}
   else{PvpNativeReplica.Tick(this);if(Racing&&receivedOwn&&!UiBlocked(Match.Human)){float lateral=(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0);float pad=Input.GetAxisRaw("TaxiSteer");Match.Human.assisted.ReadInput(Mathf.Abs(pad)>.15f?pad:lateral);}if(Racing&&manager&&manager.IsConnectedClient&&Time.unscaledTime>=nextInput){nextInput=Time.unscaledTime+.05f;var s=Match.Human;bool blocked=!receivedOwn||UiBlocked(s)||!Application.isFocused;float throttle=0,steer=0;if(!blocked){throttle=(Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow)||Input.GetKey(KeyCode.JoystickButton0)?1:0)-(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)||Input.GetKey(KeyCode.JoystickButton1)?1:0);steer=(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0);float pad=Input.GetAxisRaw("TaxiSteer");if(Mathf.Abs(pad)>.15f)steer=pad;}var packet=new PvpNativeDrive{throttle=throttle,steer=steer,brake=blocked||Input.GetKey(KeyCode.Space)||Input.GetKey(KeyCode.JoystickButton2),blocked=blocked};if(ProbeMode&&ProbeInput!=null&&receivedOwn)packet=ProbeInput();packet.sequence=++inputSeq;Send("input",0,packet);}}
  }
- void FixedUpdate(){if(!IsHost||!Match||!Racing||Match.Finished)return;foreach(var pair in peers){var seat=pair.Value;if(!seat.connected||!seat.ready)continue;var d=Match.Drivers[seat.slot];bool safe=seat.input==null||Time.realtimeSinceStartup-seat.lastAt>.5f||seat.blocked;d.taxi.automated=true;d.taxi.autoThrottle=safe?0:seat.input.throttle;d.taxi.autoSteer=safe?0:Mathf.MoveTowards(d.taxi.autoSteer,seat.input.steer,Time.fixedDeltaTime*Mathf.Lerp(4.5f,2.2f,Mathf.Clamp01(Mathf.Abs(d.taxi.Speed)/14)));d.taxi.autoBrake=safe||seat.input.brake;d.taxi.autoServiceBrake=0;}}
+ void FixedUpdate(){if(!IsHost||!Match||!Racing||Match.Finished)return;foreach(var pair in peers){var seat=pair.Value;if(!seat.connected||!seat.ready)continue;var d=Match.Drivers[seat.slot];bool safe=seat.input==null||Time.realtimeSinceStartup-seat.lastAt>.5f||seat.blocked;d.taxi.automated=true;d.taxi.autoThrottle=safe?0:seat.input.throttle;d.taxi.autoSteer=safe?0:Mathf.MoveTowards(d.taxi.autoSteer,seat.input.steer,Time.fixedDeltaTime*DriveFlowPolicy.SteeringRate(d.taxi.Speed));d.taxi.autoBrake=safe||seat.input.brake;d.taxi.autoServiceBrake=0;}}
  void LateUpdate(){if(Match&&!Match.Finished&&Time.timeScale!=1)Time.timeScale=1;}
  public void LeaveToMenu(){if(stopping)return;StopTransport();var unified=FindObjectOfType<UnifiedModeBootstrap>();if(unified)unified.ReturnToMenu();else{PvpSimulationMode.Reset();UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);}}
  public void StopTransport(){if(stopping)return;stopping=true;if(IsHost&&manager&&manager.IsListening)foreach(var pair in peers)if(pair.Value.connected)try{Send("closed",pair.Key,new PvpNativeCommand());}catch{}if(manager){manager.OnClientConnectedCallback-=Connected;manager.OnClientDisconnectCallback-=Disconnected;manager.Shutdown();}if(networkRoot)Destroy(networkRoot);networkRoot=null;manager=null;Application.runInBackground=previousBackground;if(Instance==this)Instance=null;}

@@ -1,5 +1,7 @@
 using UnityEngine;
 public partial class PassengerJobs {
+ readonly System.Collections.Generic.Dictionary<int,int[]> shortDrops=new System.Collections.Generic.Dictionary<int,int[]>();
+ int ShortSharedDrop(int pickup,int serial,int fallback){int[] options;if(!shortDrops.TryGetValue(pickup,out options)){var candidates=new System.Collections.Generic.List<int>();var distances=new System.Collections.Generic.Dictionary<int,float>();for(int d=0;d<stops.Length;d++){if(d==pickup)continue;float distance=nav.Distance(stops[pickup],stops[d]);if(!float.IsNaN(distance)&&!float.IsInfinity(distance)&&distance>=80){candidates.Add(d);distances[d]=distance;}}candidates.Sort((a,b)=>distances[a].CompareTo(distances[b]));int count=Mathf.Min(3,candidates.Count);options=candidates.GetRange(0,count).ToArray();shortDrops[pickup]=options;}return options.Length==0?fallback:options[(serial&int.MaxValue)%options.Length];}
  int generationDemandPhase=3;string[] nativeDemandRegions;
  string DemandRegion(int index){
   string region=index>=0&&index<runtimeStopIds.Count?PassengerDemandPolicy.Region(runtimeStopIds[index]):"neutral";if(region!="neutral")return region;

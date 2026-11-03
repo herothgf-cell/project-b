@@ -193,6 +193,7 @@ public partial class PassengerJobs : MonoBehaviour {
   if(stops.Length<2)return null;
   int pickup,drop;SharedDemandEndpoints(serial,out pickup,out drop);
   if(pickup<0||drop<0)return null;
+  if(session.simulationMatch&&PvpSimulationMode.DurationSeconds<=600)drop=ShortSharedDrop(pickup,serial,drop);
   return Make(pickup,drop);
  }
  static int Gcd(int a,int b){while(b!=0){int c=a%b;a=b;b=c;}return a;}

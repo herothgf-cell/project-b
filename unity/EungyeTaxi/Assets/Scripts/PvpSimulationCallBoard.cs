@@ -48,6 +48,6 @@ public sealed class PvpSimulationCallBoard {
     }
     public void Release(int pickup,int driver){
         if(!ledger.IsClaimed(pickup)||!ledger.Available(pickup,driver))return;
-        ledger.Release(pickup,driver);retryAt=0;resting[pickup]=Time.time+60;Replenish();
+        ledger.Release(pickup,driver);retryAt=0;resting[pickup]=Time.time+(PvpSimulationMode.DurationSeconds<=600?30:60);Replenish();
     }
 }
