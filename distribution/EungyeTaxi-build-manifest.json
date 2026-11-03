@@ -1,24 +1,38 @@
 {
-  "sourceCommit": "101abf74a88ca318fd2e495d5dcdad97c147be7f",
+  "sourceCommit": "ba1b7e88948b4b346d4a7c36adcf5fd9ea59aa7a",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-03",
-  "totalBytes": 115432830.0,
+  "totalBytes": 115434078.0,
   "validation": {
-    "build": "PrototypeBuild.BuildHybrid exit0",
-    "sourceCommit": "101abf74a88ca318fd2e495d5dcdad97c147be7f",
-    "mergedMain": "f2f0a37",
-    "nativeDialogueAssertions": 60,
-    "nativeFreshProcessRestoreAssertions": 6,
-    "actualDialogueRenderedScreens": 4,
-    "resolution": "1600x900",
-    "userSaveFilesUnchanged": 6,
-    "minimalVerification": true,
-    "physicalDriving": false,
-    "fullCampaign": false,
-    "lanRerun": false,
-    "performanceRerun": false
+    "sourceCommit": "ba1b7e88948b4b346d4a7c36adcf5fd9ea59aa7a",
+    "preservedRemoteMain": "337ab94",
+    "build": "SignalCountdownTests.Build / PrototypeBuild.BuildHybrid exit 0",
+    "editor": {
+      "signalPhaseCountdown": true,
+      "ceilSeconds": true,
+      "unknownTimingHidden": true,
+      "trafficClockUnchanged": true,
+      "theme": true,
+      "navigationCueAssertions": 15
+    },
+    "player": {
+      "signalUiAssertions": 8,
+      "capturedResolutions": [
+        "1280x720",
+        "1920x1080"
+      ],
+      "temporaryCampaignVerified": true,
+      "userSaveComparisonFiles": 14,
+      "userSaveComparisonDiffRows": 0,
+      "fallbackCardCaptured": true,
+      "activeBlueRouteCaptured": false,
+      "controlledSignalFixture": true,
+      "manualDriving": false
+    },
+    "localInputs": "Strict exit 0 / issues 0",
+    "worldAndTrafficRulesUnchanged": true
   },
   "files": [
     {
@@ -29,7 +43,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "1d835379ad6c078b9a6d127ae08678039a1a98c2159796a3bcb9f330930525b0"
+      "sha256": "60ae2d15aad7b53a3678aaa0ef9caf0cc688d5f0f8779ad0f6584f74f573aad0"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -48,8 +62,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
-      "bytes": 1396,
-      "sha256": "fdf8b188a9607260a51882322568b31440a1197904a5f6ce45336e466dc7f692"
+      "bytes": 1140,
+      "sha256": "d71d3f2e7aeb0df5b35c563ab9b3defd0cb5fa7c052b38d14bd7de7ba26fc695"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0.resS",
@@ -58,8 +72,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2175488,
-      "sha256": "f2cb64193d40d92f909d8962ed3f988da4f4ab6ae4579329b2069252949fc3a0"
+      "bytes": 2177024,
+      "sha256": "c1f9f6587fcc27408fa981ea143ce2aa25ceb6f450683689b7ec417173c0471f"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -554,12 +568,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Plugins/x86_64/lib_burst_generated.dll",
       "bytes": 394240,
-      "sha256": "1547383fe0e4893196ba2e00cf0f8788679530f54d82c24e4a9943630e0757e0"
+      "sha256": "d5ad21e9c9ecdf6531126e65704b2401835cb02a12e88dbe6ccbf29b40146c31"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 40439374,
-      "sha256": "8f3e254f890df3489e47b25543633f8ca74366672146761e50a29e6503a9a783"
+      "bytes": 40439342,
+      "sha256": "e45227272e5528e8df85b81dff350e9e339f348ab61c96616e49a81b03b0da05"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Resources/unity default resources",

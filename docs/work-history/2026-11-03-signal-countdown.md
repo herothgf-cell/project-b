@@ -23,7 +23,7 @@ SignalCountdownTests의 실제 신호 시계를 사용한 녹색/황색/적색·
 
 `Unity.exe -batchmode -nographics -quit -buildTarget Win64 -projectPath <repo>/unity/EungyeTaxi -executeMethod SignalCountdownTests.Build -logFile <repo>/artifacts/signal-countdown/final-build.log`
 
-`builds/EungyeTaxi/EungyeTaxi.exe -brightUiCheck -signalCountdownOnly -brightUiOutput <repo>/artifacts/signal-countdown/player -screen-fullscreen 0 -screen-width 1600 -screen-height 900 -logFile <repo>/artifacts/signal-countdown/player.log`
+`builds/EungyeTaxi/EungyeTaxi.exe -oneDayTest -brightUiCheck -signalCountdownOnly -brightUiOutput <repo>/artifacts/signal-countdown/player -screen-fullscreen 0 -screen-width 1600 -screen-height 900 -logFile <repo>/artifacts/signal-countdown/player.log`
 
 이번 화면 검사는 제어된 신호/위치 fixture이며 사람의 직접 운전·전체 캠페인·실제 현장 신호 주기 확인이 아니다. 계산할 수 없는 개별 신호 프로그램의 남은 초를 새로 개발하는 범위도 아니다.
 
@@ -34,3 +34,5 @@ SignalCountdownTests의 실제 신호 시계를 사용한 녹색/황색/적색·
 ## 최종 검증
 
 accepted-build.log Unity exit0: SIGNAL_COUNTDOWN_OK·테마·내비15·BuildHybrid 통과. accepted.log Player exit0 / SIGNAL_COUNTDOWN_PLAYER_RESULT PASS checks8: 임시 SavePath·실제 신호 잔여 초·1280/1920 캡처4개(신호 화면2개) 확인. 해당 신호 화면2개를 docs/ui/2026-11-03-signal-countdown에 보관했다. 마지막 실행 전후 사용자 저장14파일 SHA 비교0차이. 별도 게임의 자동 저장과 겹친 최초 비교 실패와 구분한다. Strict exit0 / issues0, 프로젝트 지도 hash35d1bc43… 유지. UI 변경 파일 외 최신 승객/PVP/대화 소스는 보존했다. 배포140파일115,434,078바이트이며 manifest/게시 결과는 후속 기록을 따른다.
+
+소스 커밋은 git log -1 --oneline -- <이력 파일>로 확인한 ba1b7e88948b4b346d4a7c36adcf5fd9ea59aa7a. 이 실제 해시로 validation.json의 신호/화면/격리 결과를 반영해 manifest를 재생성했다. 통합/PVP VerifyOnly 각각 exit0:140파일115,434,078바이트 크기·SHA256 전수 일치. main 게시 결과는 후속 절에 기록한다.
