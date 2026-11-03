@@ -5,12 +5,14 @@ param(
  [switch]$MotionOnly,
  [ValidateRange(0,60)][int]$MotionSeconds=0,
  [switch]$Rendered,
+ [switch]$RenderBoth,
  [ValidateRange(800,3840)][int]$RenderWidth=1280,
  [ValidateRange(600,2160)][int]$RenderHeight=720,
  [switch]$LegacyRouting,
  [ValidateRange(60,600)][int]$TimeoutSeconds=300
 )
 $ErrorActionPreference='Stop'
+if($RenderBoth -and -not $Rendered){throw 'RenderBoth requires Rendered'}
 if($MotionOnly -and ($MotionSeconds -lt 10 -or $Reconnect)){throw 'MotionOnly requires at least10 seconds and runs separately from Reconnect'}
 $root=Split-Path -Parent $PSScriptRoot
 if(-not $Executable){$Executable=Join-Path $root 'builds/EungyeTaxi/EungyeTaxi.exe'}
@@ -27,7 +29,7 @@ function Start-NativeProbe([string]$Role){
  if($MotionSeconds -gt 0){$arguments+=@('-pvpNativeMotionSeconds',"$MotionSeconds")}
  if($LegacyRouting){$arguments+='-pvpNativeLegacyRouting'}
  if($Reconnect){$arguments+='-pvpNativeLanReconnect'}
- $style=if($Rendered -and $Role -eq "client"){"Normal"}else{"Hidden"}
+ $style=if($Rendered -and ($Role -eq "client" -or $RenderBoth)){"Normal"}else{"Hidden"}
  $process=Start-Process -FilePath $Executable -ArgumentList $arguments -WindowStyle $style -PassThru
  $owned.Add($process)
  return [pscustomobject]@{Role=$Role;Process=$process;Log=$log;Metrics=(Join-Path $output ($Role+'-metrics.json'))}

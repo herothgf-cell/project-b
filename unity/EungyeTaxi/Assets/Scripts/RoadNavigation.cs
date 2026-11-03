@@ -146,11 +146,21 @@ public partial class RoadNavigation : MonoBehaviour {
  public void SetDestination(MapStop stop){avoidEdge=-1;if(hd!=null&&stop.graphStop){SetHdDestination(stop.laneEdge,stop.laneAt);goal=stop;return;}goal=stop;destination=stop.Kerb;active=true;selected=null;Refresh();}
  public void SetDestination(Vector3 point){avoidEdge=-1;if(hd!=null){float at;int id=hd.Nearest(point,Vector3.zero,out at);SetHdDestination(id,at);return;}goal=null;destination=point;active=true;selected=null;Refresh();}
  public void SetHdDestination(int edge,float at){avoidEdge=-1;PassedRequiredVia=RequiredVia=-1;freeGuidance=false;hdGoal=edge;hdGoalAt=at;hdRoute=null;goal=null;active=true;if(edge>=0)destination=hd.paths[edge].Position(at);Refresh();}
+ internal void ApplyNetworkFreeRoute(PvpNativeFreeRoute source){if(!PvpNativeLan.IsReplica(NetworkSession)||source==null)return;var next=source.Restore(hd,freeGuidance?hdRoute:null);freeGuidance=true;goal=null;active=true;UseFreeRoute(next);}
  public bool StartFreeGuidance(){avoidEdge=-1;if(!hybrid||hd==null||vehicle==null)return false;float at;int start=hd.Nearest(vehicle.position,vehicle.forward,out at);var route=hd.Forward(start,at);if(route==null)return false;freeGuidance=true;goal=null;active=true;UseFreeRoute(route);RefreshHd();return true;}
  void UseFreeRoute(HdRoadGraph.RoutePath route){hdRoute=route;hdGoal=route.edges[route.edges.Count-1];hdGoalAt=hd.paths[hdGoal].length;destination=route.path.Position(route.path.length);}
  public void TogglePreference(){if(PvpNativeLan.Route(NetworkSession,"nav-preference"))return;PreferLargeRoad=false;PreferFastest=!PreferFastest;selected=null;if(hd!=null)hdRoute=null;rerouteNotice=PreferenceLabel+" 경로 선택";noticeUntil=Time.time+5;if(active)Refresh();}
  public void Clear(){avoidEdge=-1;PreferLargeRoad=false;PassedRequiredVia=RequiredVia=-1;freeGuidance=false;active=false;selected=null;hdRoute=null;path.Clear();alternativePath.Clear();if(line!=null)line.positionCount=0;remaining=estimatedSeconds=alternativeSeconds=alternativeDistance=0;rerouteNotice="";instruction="호출을 선택하거나 길가 손님을 찾아보세요";}
- void Update(){if(active&&Time.time>=nextUpdate){using(TrafficPerformanceProbe.Measure("Navigation.Refresh"))Refresh();nextUpdate=Time.time+1;}}
+ void Update(){if(active&&Time.time>=nextUpdate){
+  if(freeGuidance&&hdRoute!=null&&PvpNativeLan.IsReplica(NetworkSession)&&NetworkSession.taxi.NetworkPredicted){
+   // Host already selected this exact chain. Project it for HUD/steering without
+   // repeating traffic-cost scans and Dijkstra searches on the owner replica.
+   float error;float at=ProjectVehicle(out error);remaining=Mathf.Max(0,hdRoute.path.length-at);estimatedSeconds=remaining/8;
+   path.Clear();path.Add(hdRoute.path.Position(at));float distance=0;for(int i=1;i<hdRoute.path.points.Length;i++){distance+=Vector3.Distance(hdRoute.path.points[i-1],hdRoute.path.points[i]);if(distance>at)path.Add(hdRoute.path.points[i]);}
+   alternativePath.Clear();alternativeSeconds=alternativeDistance=0;instruction="자유 주행 · "+hd.Instruction(hdRoute,at);if(line!=null)line.positionCount=0;nextUpdate=Time.time+.1f;return;
+  }
+  using(TrafficPerformanceProbe.Measure("Navigation.Refresh"))Refresh();nextUpdate=Time.time+1;
+ }}
  static bool SameRoute(RouteResult a,RouteResult b){if(a==null||b==null||a.chain.Count!=b.chain.Count)return false;for(int i=0;i<a.chain.Count;i++)if(a.chain[i]!=b.chain[i])return false;return true;}
  RouteResult RemainingSelection(Vector3 start,Vector3 heading){
   if(selected==null)return null;float progress;int initial=InitialEdge(start,heading,out progress),at=selected.chain.IndexOf(initial);if(at<0)return null;

@@ -80,9 +80,9 @@ public class AssistedDriveController : MonoBehaviour {
         PendingTurn=wanted;signals.Clear();if(wanted!=0)signals.Toggle(wanted);Notify(wanted<0?"다음 교차로 좌회전 예약":wanted>0?"다음 교차로 우회전 예약":"다음 교차로 직진 선택");return true;
     }
     public void Apply(ref float steering,ref DriveMath.Demand demand){
-        if(PvpNativeLan.IsReplica(Session))return;
+        if(PvpNativeLan.IsReplica(Session)&&!taxi.NetworkPredicted)return;
         if(!Active||taxi.automated&&!allowAutomated)return;
-        if(hd!=null){bool keep=hd.Apply(taxi,ref steering);if(!keep){Active=false;steering=0;if(signals)signals.Clear();}else if(signals&&signals.direction!=hd.indicator){signals.Clear();if(hd.indicator!=0)signals.Toggle(hd.indicator);}Status=hd.status;PendingTurn=hd.turn;return;}
+        if(hd!=null){bool keep=hd.Apply(taxi,ref steering);if(!keep){Active=false;steering=0;if(signals&&!PvpNativeLan.IsReplica(Session))signals.Clear();}else if(signals&&!PvpNativeLan.IsReplica(Session)&&signals.direction!=hd.indicator){signals.Clear();if(hd.indicator!=0)signals.Toggle(hd.indicator);}Status=hd.status;PendingTurn=hd.turn;return;}
         if(taxi.Speed<-.15f||taxi.ReverseRequested&&taxi.Speed<.2f){SetActive(false);Notify("후진 · 수동 운전으로 전환");return;}
         var path=manoeuvre??CurrentLane.path;float error;
         progress=path.Project(taxi.transform.position,out error);

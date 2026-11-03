@@ -18,12 +18,13 @@ using UnityEngine;
     public RoadConditionsSnapshot roadConditions;
 }
 [Serializable] public sealed class PvpNativeActor {
-    public int slot,signal,conditionKind=-1,completed,failed,balance;
+    public int slot,signal,conditionKind=-1,completed,failed,balance,inputAck;
     public Vector3 position,velocity,angularVelocity;
     public Quaternion rotation;
     public float steering,conditionRemaining;
     public string status;
-    public bool hazards,assisted;
+    public bool hazards,assisted,hasFreeRoute;
+    public PvpNativeFreeRoute freeRoute;
     public Vector3[] wheelPositions;
     public Quaternion[] wheelRotations;
 }
@@ -41,7 +42,7 @@ using UnityEngine;
     public LawEvent[] lawEvents;
     public DrivingMannersSnapshot manners;
     public PassengerResult[] passengers;
-    public bool hasDestination;
+    public bool hasDestination,freeGuidance;
     public Vector3 destination;
     public string tripId,mannersLastEvent;
     public bool serviceOpen,serviceQueueWaiting;
@@ -89,7 +90,7 @@ public static class PvpNativeReplica {
         for(int slot=0;slot<4;slot++){
             var driver=match.Drivers[slot];var taxi=driver.taxi;
             frame.scores[slot]=match.Score(slot);
-            var actor=new PvpNativeActor{slot=slot,position=taxi.body.position,rotation=taxi.body.rotation,velocity=taxi.body.velocity,
+            var actor=new PvpNativeActor{slot=slot,inputAck=lan.ProcessedInput(slot),hasFreeRoute=slot==recipient&&driver.jobs.nav.freeGuidance&&driver.jobs.nav.hdRoute!=null,freeRoute=slot==recipient&&driver.jobs.nav.freeGuidance?PvpNativeFreeRoute.Capture(driver.jobs.nav.hd,driver.jobs.nav.hdRoute):null,position=taxi.body.position,rotation=taxi.body.rotation,velocity=taxi.body.velocity,
                 angularVelocity=taxi.body.angularVelocity,steering=taxi.SteeringInput,status=match.DriverStatus(slot),
                 signal=driver.signals.direction,hazards=driver.signals.Hazards,assisted=driver.assisted.Active,
                 conditionKind=match.ConditionServiceKind(driver),conditionRemaining=match.ServiceRemaining(driver),
@@ -114,7 +115,7 @@ public static class PvpNativeReplica {
             jobs.hasServiceZones=false;jobs.serviceZones=null;jobs.hasChoice=false;jobs.choice=null;
             frame.own=new PvpNativeOwn{economy=driver.business.ledger.Snapshot(),account=driver.business.ledger.Account.Snapshot(),jobs=jobs,
                 lawEvents=driver.law.ledger.Events,manners=driver.manners.CaptureLive(),passengers=driver.business.passengers.ToArray(),tripId=driver.law.tripId,mannersLastEvent=driver.manners.lastEvent,
-                hasDestination=driver.jobs.nav.HasDestination,destination=driver.jobs.nav.destination,serviceOpen=driver.services.open,servicePending=driver.services.pending,
+                hasDestination=driver.jobs.nav.HasDestination,freeGuidance=driver.jobs.nav.freeGuidance,destination=driver.jobs.nav.destination,serviceOpen=driver.services.open,servicePending=driver.services.pending,
                 serviceNotice=driver.services.notice,serviceDestination=driver.services.destination,serviceMeal=driver.services.SelectedMeal,serviceQueueStatus=driver.services.QueueStatus,serviceQueueWaiting=driver.services.QueueWaiting,serviceFacilities=driver.services.CaptureFacilityQueues(),
                 serviceFuel=driver.services.FuelAtPump,conditionKind=match.ConditionServiceKind(driver),conditionRemaining=match.ServiceRemaining(driver),
                 pvpMeals=driver.business.ledger.PvpMeals,pvpRests=driver.business.ledger.PvpRests};
@@ -132,11 +133,12 @@ public static class PvpNativeReplica {
             var driver=match.Drivers[local];var taxi=driver.taxi;
             taxi.NetworkReplica=true;taxi.ReplicaVelocity=Vector3.zero;
             taxi.autoThrottle=0;taxi.autoSteer=0;taxi.autoBrake=true;
-            foreach(var wheel in taxi.wheels){wheel.motorTorque=0;wheel.brakeTorque=0;wheel.enabled=false;}
+            foreach(var wheel in taxi.wheels){wheel.motorTorque=0;wheel.brakeTorque=0;wheel.enabled=local==0;}
             taxi.body.velocity=Vector3.zero;taxi.body.angularVelocity=Vector3.zero;
-            taxi.body.isKinematic=true;taxi.body.interpolation=RigidbodyInterpolation.None;taxi.body.detectCollisions=false;
+            taxi.NetworkPredicted=local==0;taxi.body.isKinematic=local!=0;taxi.body.interpolation=local==0?RigidbodyInterpolation.Interpolate:RigidbodyInterpolation.None;taxi.body.detectCollisions=true;
+            if(local==0)lan.Prediction=new PvpNativePrediction(taxi);
             var pilot=driver.GetComponent<PvpSimulationBot>();if(pilot)pilot.enabled=false;
-            driver.assisted.enabled=false;
+            driver.assisted.enabled=local==0;driver.assisted.allowAutomated=local==0;
             var list=new System.Collections.Generic.List<Transform>();
             foreach(var child in taxi.GetComponentsInChildren<Transform>())if(child.name=="Tyre visual")list.Add(child);
             view.wheels[local]=list.ToArray();
@@ -149,7 +151,7 @@ public static class PvpNativeReplica {
         view.npcs=new Pose[traffic.cars.Count];
         for(int index=0;index<traffic.cars.Count;index++){
             var car=traffic.cars[index];car.enabled=false;
-            var body=car.GetComponent<Rigidbody>();if(body){body.isKinematic=true;body.detectCollisions=false;}
+            var body=car.GetComponent<Rigidbody>();if(body){body.isKinematic=true;body.detectCollisions=true;}
             view.npcs[index]=new Pose();
         }
         var pedestrians=match.Human.ambientPedestrians;
@@ -176,15 +178,17 @@ public static class PvpNativeReplica {
                 if(actor==null||actor.slot<0||actor.slot>=4)throw new ArgumentException("Invalid native actor slot");
                 int local=lan.ServerToLocal(actor.slot);var driver=match.Drivers[local];var taxi=driver.taxi;
                 conditions[local]=actor.conditionKind;remaining[local]=actor.conditionRemaining;
-                view.taxis[local].Target(taxi.transform,actor.position,actor.rotation,frame.elapsed,first||frame.finished);
+                if(local==0&&lan.Prediction!=null)lan.Prediction.Receive(actor.inputAck,new PvpPredictedMotion{position=actor.position,rotation=actor.rotation,velocity=actor.velocity,angularVelocity=actor.angularVelocity},first||frame.finished,actor.conditionRemaining>0||frame.finished);
+                else view.taxis[local].Target(taxi.transform,actor.position,actor.rotation,frame.elapsed,first||frame.finished);
                 taxi.ReplicaVelocity=actor.velocity;taxi.ReplicaSteering=actor.steering;
                 // Read-only UI and navigation use Rigidbody velocity even on the kinematic view.
                 // Kinematic view velocity is exposed through TaxiController.ObservedVelocity.
                 driver.jobs.completed=actor.completed;driver.jobs.failed=actor.failed;driver.jobs.balance=actor.balance;
                 driver.signals.ApplyNetworkView(actor.signal,actor.hazards);
+                if(local==0&&actor.hasFreeRoute&&actor.freeRoute!=null)driver.jobs.nav.ApplyNetworkFreeRoute(actor.freeRoute);
                 driver.assisted.ApplyNetworkView(actor.assisted,actor.status);
                 var wheels=view.wheels[local];
-                if(wheels!=null&&actor.wheelPositions!=null&&actor.wheelRotations!=null)
+                if(local!=0&&wheels!=null&&actor.wheelPositions!=null&&actor.wheelRotations!=null)
                     for(int i=0;i<Math.Min(wheels.Length,Math.Min(actor.wheelPositions.Length,actor.wheelRotations.Length));i++){
                         view.wheelPoses[local,i].Push(frame.elapsed,actor.wheelPositions[i],actor.wheelRotations[i],first||frame.finished);
                         if(first||frame.finished)view.wheelPoses[local,i].Draw(wheels[i],frame.elapsed);
@@ -230,7 +234,7 @@ public static class PvpNativeReplica {
         ApplyLawEvents(driver.law.ledger,own.lawEvents);view.ownApplied=true;
         if(own.manners!=null)driver.manners.RestoreLive(own.manners);
         own.jobs.hasServiceZones=false;own.jobs.serviceZones=null;own.jobs.hasChoice=false;own.jobs.choice=null;
-        PvpNativePerf.End("law",stage);stage=PvpNativePerf.Start();driver.jobs.RestoreNetworkView(own.jobs,own.hasDestination,own.destination);
+        PvpNativePerf.End("law",stage);stage=PvpNativePerf.Start();driver.jobs.RestoreNetworkView(own.jobs,own.hasDestination,own.destination,own.freeGuidance);
         // RestoreNetworkView also restores manners; apply its authoritative feedback afterwards.
         driver.manners.lastEvent=own.mannersLastEvent??"운전 상태 변화";
         PvpNativePerf.End("jobs",stage);stage=PvpNativePerf.Start();if(own.hasDestination&&(!driver.jobs.nav.HasDestination||(driver.jobs.nav.destination-own.destination).sqrMagnitude>.01f))driver.jobs.nav.SetDestination(own.destination);
@@ -257,6 +261,7 @@ public static class PvpNativeReplica {
         double now=Time.realtimeSinceStartupAsDouble,age=System.Math.Max(0,now-view.received),dt=System.Math.Max(0,now-view.lastDraw);view.lastDraw=now;view.renderTime=PvpNativePlaybackClock.Advance(view.renderTime,view.serverTime,age,dt);double playback=lan.Match.Finished?view.serverTime:view.renderTime;
         var match=lan.Match;
         for(int i=0;i<match.Drivers.Count;i++){
+            if(i==0&&lan.Prediction!=null)continue;
             view.taxis[i].Draw(match.Drivers[i].taxi.transform,playback);
             var wheels=view.wheels[i];if(wheels!=null)for(int j=0;j<Math.Min(4,wheels.Length);j++)view.wheelPoses[i,j].Draw(wheels[j],playback);
         }

@@ -53,7 +53,7 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   Check(metrics.map=="pvp-city-a"&&metrics.driverCount==4&&metrics.wheels==4,"native city and four original physical taxis");
   foreach(var d in match.Drivers)Check(d.business.SimulationSession&&d.business.SavePath==""&&d.taxi.wheels.Length==4,"native sessions retain campaign save isolation");
   metrics.product=Application.productName;Check(metrics.product=="택시 시뮬레이션","latest main product name retained");metrics.graphics=SystemInfo.graphicsDeviceType.ToString();metrics.width=Screen.width;metrics.height=Screen.height;
-  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeRenderCheck")>=0){Check(SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null,"graphics device is active");bool captured=false;StartCoroutine(CaptureFrame(()=>captured=true));yield return Until(()=>captured,"actual rendered frame captured",8);if(!host){var map=own.GetComponent<FullMapOverlay>();Check(map&&map.Open(),"A3 native full map opens");yield return null;yield return null;captured=false;StartCoroutine(CaptureFrame(()=>captured=true,"client-a3-map.png"));yield return Until(()=>captured,"actual A3 map render captured",8);map.Close();}}
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeRenderCheck")>=0){Check(SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null,"graphics device is active");bool captured=false;StartCoroutine(CaptureFrame(()=>captured=true));yield return Until(()=>captured,"actual rendered frame captured",8);if(!host){var map=own.GetComponent<FullMapOverlay>();Check(map&&map.Open(),"native A2 full map opens");yield return null;yield return null;captured=false;StartCoroutine(CaptureFrame(()=>captured=true,"client-a3-map.png"));yield return Until(()=>captured,"actual A2 map render captured",8);map.Close();}}
   if(host)yield return Host();else yield return Client();
   yield return Cleanup();
  }
@@ -65,7 +65,8 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   while(!Has("drive-done")&&Time.realtimeSinceStartup<end){maxSpeed=Mathf.Max(maxSpeed,car.body.velocity.magnitude);yield return null;}
   metrics.metres=Vector3.Distance(before,car.transform.position);metrics.maxSpeed=maxSpeed;Check(Has("drive-done")&&metrics.metres>2&&maxSpeed>.5f,"guest pedal messages move host WheelCollider taxi; metres="+metrics.metres+" speed="+maxSpeed);
   if(motionSeconds>0){
-   guest.assisted.allowAutomated=true;Check(guest.assisted.SetActive(true),"motion run arms original lane assistance without pose control");PvpNativePerf.Moving=true;Mark("motion-ready");
+   float stopping=Time.realtimeSinceStartup+5;while(car.body.velocity.magnitude>.4f&&Time.realtimeSinceStartup<stopping)yield return null;
+   guest.assisted.allowAutomated=true;Check(guest.assisted.SetActive(true),"motion run arms original lane assistance without pose control; "+guest.assisted.Status+" speed="+car.Speed+" pos="+car.body.position);PvpNativePerf.Moving=true;Mark("motion-ready");
    bool captureChecked=false;float maxOffset=0;
    while(!Has("motion-done")&&Time.realtimeSinceStartup<end){
     if(car.body.velocity.magnitude>2){maxOffset=Mathf.Max(maxOffset,Vector3.Distance(car.transform.position,car.body.position));if(!captureChecked||Time.frameCount%60==0){var captured=PvpNativeReplica.Capture(lan,1,false).actors[1];if(Vector3.Distance(captured.position,car.body.position)>.0001f||Quaternion.Angle(captured.rotation,car.body.rotation)>.01f)throw new Exception("Physics pose and snapshot timestamp source diverged");captureChecked=true;}}
@@ -94,14 +95,35 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
  }
  IEnumerator Client(){
   yield return Until(()=>lan.HasOwnFrame,"first own native snapshot applied");
-  var own=lan.Match.Human;Check(own.taxi.body.isKinematic,"client own taxi is a server pose replica");
+  var own=lan.Match.Human;Check(!own.taxi.body.isKinematic&&own.taxi.NetworkPredicted&&lan.Prediction!=null,"only local owner runs native predicted WheelCollider physics");
+  for(int i=1;i<lan.Match.Drivers.Count;i++)Check(lan.Match.Drivers[i].taxi.body.isKinematic&&!lan.Match.Drivers[i].taxi.NetworkPredicted,"other taxis remain server interpolated replicas "+i);
+  yield return Until(()=>lan.Racing,"owner prediction starts on shared race clock",10);
+  yield return Until(()=>lan.Prediction.LastAck>0,"numbered control stream acknowledged before loss probes",10);
+  lan.ProbeHoldInputs=true;int sentBefore=lan.ProbeInputCount;Vector3 predictionStart=own.taxi.body.position;
+  lan.ProbeInput=()=>new PvpNativeDrive{throttle=1,steer=.25f,blocked=false};yield return new WaitForSecondsRealtime(.35f);
+  var localTravel=own.taxi.body.position-predictionStart;localTravel.y=0;
+  Check(lan.ProbeInputCount==sentBefore&&lan.Prediction.Steps>=5&&localTravel.magnitude>.002f,"native owner moves before throttle reaches host; distance="+localTravel.magnitude);
+  Check(own.taxi.autoSteer>.1f&&Mathf.Abs(own.taxi.wheels[0].steerAngle)>.1f,"steering responds locally while input transmission withheld; auto="+own.taxi.autoSteer+" wheel="+own.taxi.wheels[0].steerAngle+" "+lan.Prediction.Diagnostics);
+  lan.ProbeHoldInputs=false;lan.ProbeInput=()=>new PvpNativeDrive{throttle=.35f,steer=0,blocked=false};
+  yield return Until(()=>lan.Prediction.LastAck>0,"input acknowledgement resumes before snapshot-gap probe",10);
+  yield return new WaitForSecondsRealtime(.15f);
+  int beforeGapResets=lan.Prediction.HardResets;lan.ProbeHoldFrames=true;Vector3 gapStart=own.taxi.body.position;
+  yield return new WaitForSecondsRealtime(.3f);Check(Vector3.Distance(gapStart,own.taxi.body.position)>.005f,"native owner keeps simulating through brief snapshot delivery gap");
+  lan.ProbeHoldFrames=false;yield return new WaitForSecondsRealtime(.8f);
+  Check(lan.Prediction.HardResets==beforeGapResets,"snapshot recovery reconciles without snapping owner to old server pose");
   var facilities=own.services.FacilityOptions(0);Check(facilities.Count>0&&facilities.TrueForAll(o=>o.QueueKnown),"guest facility comparison receives host queue and physical occupancy facts");
   Vector3 before=own.taxi.transform.position;float driveUntil=Time.realtimeSinceStartup+6;
   lan.ProbeInput=()=>new PvpNativeDrive{throttle=Time.realtimeSinceStartup<driveUntil?.35f:0,steer=0,brake=Time.realtimeSinceStartup>=driveUntil,blocked=false};
   while(Time.realtimeSinceStartup<driveUntil+2)yield return null;
-  metrics.metres=Vector3.Distance(before,own.taxi.transform.position);Check(metrics.metres>2,"client receives moving native taxi pose");Mark("drive-done");
+  metrics.metres=Vector3.Distance(before,own.taxi.transform.position);Check(metrics.metres>2,"predicted native taxi continues under acknowledged server controls");
+  Check(lan.Prediction.LastAck>0&&lan.Prediction.Corrections>0,"host input acknowledgements reconcile historical native owner states");
+  Check(lan.Prediction.HardResets==1,"normal acknowledged driving does not repeatedly snap the owner");
+  lan.ProbeInput=()=>new PvpNativeDrive{throttle=-.35f,blocked=false};yield return new WaitForSecondsRealtime(1.3f);
+  Check(own.taxi.Speed<-.05f,"native predicted reverse accepts local pedal and host authority");
+  lan.ProbeInput=()=>new PvpNativeDrive{brake=true,blocked=false};yield return new WaitForSecondsRealtime(1);
+  Check(own.taxi.body.velocity.magnitude<.6f,"native predicted brake stops physical owner");Mark("drive-done");
   if(motionSeconds>0){
-   yield return Until(()=>Has("motion-ready")&&own.assisted.Active,"host lane assistance ready for sustained native drive",10);
+   yield return Until(()=>Has("motion-ready")&&own.assisted.Active&&own.jobs.nav.freeGuidance&&own.jobs.nav.hdRoute!=null,"host authoritative free guide ready for native predicted steering",10);
    float motionUntil=Time.realtimeSinceStartup+motionSeconds;PvpNativePerf.Moving=true;
    lan.ProbeInput=()=>new PvpNativeDrive{throttle=Time.realtimeSinceStartup<motionUntil?1:0,steer=0,brake=Time.realtimeSinceStartup>=motionUntil,blocked=false};
    while(Time.realtimeSinceStartup<motionUntil)yield return null;
