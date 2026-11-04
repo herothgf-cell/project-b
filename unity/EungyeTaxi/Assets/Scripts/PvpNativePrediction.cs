@@ -13,14 +13,15 @@ public sealed class PvpNativeInputQueue {
  public PvpNativeDrive Take(){if(queued.Count==0)return null;var value=queued.Dequeue();Applied=value.sequence;return value;}
  public void Clear(){queued.Clear();Received=Applied=0;}
  public static void Apply(TaxiController taxi,PvpNativeDrive input,bool safe,float seconds){
-  taxi.automated=true;taxi.autoThrottle=safe?0:input.throttle;
-  taxi.autoSteer=safe?0:Mathf.MoveTowards(taxi.autoSteer,input.steer,seconds*DriveFlowPolicy.SteeringRate(taxi.Speed));
+  taxi.automated=true;taxi.AutomatedHumanInput=true;taxi.autoThrottle=safe?0:input.throttle;
+  taxi.autoSteer=safe?0:DriveFlowPolicy.AdvanceSteering(taxi.autoSteer,input.steer,taxi.Speed,seconds);
   taxi.autoBrake=safe||input.brake;taxi.autoServiceBrake=0;
  }
 }
 public struct PvpPredictedMotion {
+ public int pedalDirection,resetEpoch;
  public Vector3 position,velocity,angularVelocity;public Quaternion rotation;
- public static PvpPredictedMotion Read(Rigidbody body){return new PvpPredictedMotion{position=body.position,rotation=body.rotation,velocity=body.velocity,angularVelocity=body.angularVelocity};}
+ public static PvpPredictedMotion Read(Rigidbody body){var taxi=body.GetComponent<TaxiController>();return new PvpPredictedMotion{pedalDirection=taxi?taxi.PedalBrakingDirection:0,resetEpoch=taxi?taxi.ResetEpoch:0,position=body.position,rotation=body.rotation,velocity=body.velocity,angularVelocity=body.angularVelocity};}
 }
 // Compare a snapshot with its acknowledged historical step, not today's moving car.
 // Error is transferred to the current simulation gradually; PhysX world replay is not used.
@@ -42,7 +43,7 @@ public sealed class PvpNativePredictionHistory {
 }
 public sealed class PvpNativePrediction {
  readonly TaxiController taxi;readonly PvpNativePredictionHistory history=new PvpNativePredictionHistory();
- int sequence;bool initialized,locked;double lastServer,lastAckTime;int lastSeenAck;Vector3 error,velocityError,angularError;Quaternion rotationError=Quaternion.identity;
+ int sequence,authorityEpoch;bool initialized,locked;double lastServer,lastAckTime;int lastSeenAck;Vector3 error,velocityError,angularError;Quaternion rotationError=Quaternion.identity;
  public int Steps {get;private set;}public int Corrections {get;private set;}public int HardResets {get;private set;}
  public float LargestError {get;private set;}public int LastAck {get{return history.LastAck;}}public bool Initialized {get{return initialized;}}
  public string Diagnostics {get{return "sequence="+sequence+" ack="+lastSeenAck+" historyAck="+history.LastAck+" serverAge="+(Time.realtimeSinceStartupAsDouble-lastServer)+" ackAge="+(Time.realtimeSinceStartupAsDouble-lastAckTime)+" locked="+locked+" error="+error.magnitude;}}
@@ -50,7 +51,7 @@ public sealed class PvpNativePrediction {
  public void Receive(int ack,PvpPredictedMotion authority,bool reset,bool stop){
   lastServer=Time.realtimeSinceStartupAsDouble;locked=stop;
   if(ack>lastSeenAck){lastAckTime=lastServer;lastSeenAck=ack;}
-  if(!initialized||reset||stop){Seed(authority);return;}
+  if(!initialized||reset||stop||authority.resetEpoch!=authorityEpoch){Seed(authority);return;}
   if(sequence>0)history.Remember(sequence,PvpPredictedMotion.Read(taxi.body));
   Vector3 p,v,a;Quaternion q;if(!history.Error(ack,authority,out p,out q,out v,out a))return;
   LargestError=Mathf.Max(LargestError,p.magnitude);
@@ -60,7 +61,7 @@ public sealed class PvpNativePrediction {
  }
  void Seed(PvpPredictedMotion state){
   taxi.body.position=state.position;taxi.body.rotation=state.rotation;taxi.body.velocity=state.velocity;taxi.body.angularVelocity=state.angularVelocity;
-  taxi.transform.SetPositionAndRotation(state.position,state.rotation);taxi.ClearPredictedPedals();history.Clear();error=velocityError=angularError=Vector3.zero;rotationError=Quaternion.identity;initialized=true;lastAckTime=Time.realtimeSinceStartupAsDouble;HardResets++;
+  taxi.transform.SetPositionAndRotation(state.position,state.rotation);taxi.ClearPredictedPedals();taxi.RestorePedalIntent(state.pedalDirection);authorityEpoch=state.resetEpoch;history.Clear();error=velocityError=angularError=Vector3.zero;rotationError=Quaternion.identity;initialized=true;lastAckTime=Time.realtimeSinceStartupAsDouble;HardResets++;
  }
  public void Step(PvpNativeDrive input,float seconds){
   if(!initialized)return;

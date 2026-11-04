@@ -2,9 +2,10 @@ using UnityEngine;
 public class TaxiController : MonoBehaviour {
     public Rigidbody body; public WheelCollider[] wheels=new WheelCollider[4]; Transform[] visuals=new Transform[4];
     public bool NetworkReplica,NetworkPredicted; public Vector3 ReplicaVelocity; public float ReplicaSteering;
-    public bool automated; public float autoThrottle,autoSteer,autoServiceBrake; public bool autoBrake;
+    public bool automated,AutomatedHumanInput; public float autoThrottle,autoSteer,autoServiceBrake; public bool autoBrake;
     public AssistedDriveController assistance;public BusinessProgress business;
     float throttle,steer,motorDemand; bool brake; Vector3 spawn; Quaternion spawnRotation;
+    readonly DriverPedalIntent pedalIntent=new DriverPedalIntent();
     public bool PvpMapInputBlocked {get{return business&&business.session&&(PvpNativeLan.UiBlocked(business.session)||business.session.simulationMatch&&(business.session.FullMapOpen||business.session.services&&business.session.services.open));}}
     public Vector3 ObservedVelocity {get{return NetworkReplica&&!NetworkPredicted?ReplicaVelocity:body.velocity;}}
     public float SteeringInput {get{return NetworkReplica&&!NetworkPredicted?ReplicaSteering:steer;}}
@@ -38,7 +39,7 @@ public class TaxiController : MonoBehaviour {
             float keyboard=(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0);
             float pad=Input.GetAxisRaw("TaxiSteer");float lateral=Mathf.Abs(pad)>.15f?pad:keyboard;
             if(assistance)assistance.ReadInput(lateral);
-            if(!assistance||!assistance.Active)steer=Mathf.MoveTowards(steer,lateral,Time.deltaTime*DriveFlowPolicy.SteeringRate(Speed));
+            if(!assistance||!assistance.Active)steer=DriveFlowPolicy.AdvanceSteering(steer,lateral,Speed,Time.deltaTime);
             brake=Input.GetKey(KeyCode.Space)||Input.GetKey(KeyCode.JoystickButton2);
         }
         for(int i=0;i<4;i++) {Vector3 p; Quaternion q; wheels[i].GetWorldPose(out p,out q); visuals[i].SetPositionAndRotation(p,q*Quaternion.Euler(0,0,90));}
@@ -48,7 +49,7 @@ public class TaxiController : MonoBehaviour {
         if(NetworkReplica&&!NetworkPredicted)return;
         // Automated validation commands are produced per physics tick, including accelerated runs.
         if(automated){throttle=autoThrottle;steer=autoSteer;brake=autoBrake;}
-        var manual=DriveMath.Resolve(throttle,Speed,brake);
+        var manual=!automated||NetworkPredicted||AutomatedHumanInput?pedalIntent.Resolve(throttle,Speed,brake):DriveMath.Resolve(throttle,Speed,brake);
         // Physics-time pedal ramp is identical for keyboard/pad and automated validation.
         // Braking and releasing the accelerator remain prompt, including a direction change.
         if(manual.brake>0||manual.motor*motorDemand<0)motorDemand=0;
@@ -79,6 +80,10 @@ public class TaxiController : MonoBehaviour {
         }
     }
     public void ClearPredictedPedals(){steer=throttle=motorDemand=autoSteer=autoThrottle=autoServiceBrake=0;brake=autoBrake=true;}
+    public int ResetEpoch {get;private set;}
+    public void ResetPedalIntent(){pedalIntent.Clear();ResetEpoch++;}
+    public int PedalBrakingDirection {get{return pedalIntent.BrakingDirection;}}
+    public void RestorePedalIntent(int direction){pedalIntent.Restore(direction);}
     public void SetSpawn(Vector3 position,Quaternion rotation){spawn=position;spawnRotation=rotation;}
     public void RequestReset() {
         if(PvpNativeLan.Route(business?business.session:null,"reset"))return;
@@ -96,7 +101,7 @@ public class TaxiController : MonoBehaviour {
         body.position=spawn; body.rotation=spawnRotation;
         transform.SetPositionAndRotation(spawn,spawnRotation); Physics.SyncTransforms();
         foreach(var w in wheels){w.motorTorque=0;w.brakeTorque=0;w.steerAngle=0;}
-        steer=0; throttle=0; motorDemand=0; brake=false;
+        steer=0; throttle=0; motorDemand=0; brake=false;ResetPedalIntent();
         var indicators=GetComponent<TaxiSignals>();if(indicators)indicators.Clear();
         var manners=GetComponent<DrivingManners>();if(manners)manners.Suppress(.8f);
         var damage=GetComponent<VehicleDamageController>();if(damage)damage.TechnicalRecovery();

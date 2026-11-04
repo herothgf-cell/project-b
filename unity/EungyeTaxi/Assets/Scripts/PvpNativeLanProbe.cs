@@ -153,6 +153,7 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   yield return Until(()=>own.jobs.current!=null&&own.jobs.current.candidateSeed==model.offer&&own.business.ledger.Account.Cash==model.cash&&own.damage.Damage.Durability==model.durability,"economy damage and passenger model replicated",10);
   Check(lan.Match.Score(0)==model.score&&lan.Match.Ledger.Available(model.pickup,0)&&!lan.Match.Ledger.Available(model.pickup,1),"score and exclusive claim mapped into client local seat");
   Check(own.traffic.cars.Count==model.npcs&&model.npcs==72&&Mathf.Abs(own.traffic.Clock-model.clock)<10,"shared 72 NPC population and signal clock mirrored");
+  Check(own.traffic.ReplicaSignalRuntime&&own.traffic.AdaptiveSignalCount>0,"host demand-signal phases replicated, no client-side scheduling");
   Check(own.manners.ledger.Score==model.manner,"native driving manner ledger mirrored");
   metrics.trip=own.law.tripId;metrics.offer=accepted;metrics.score=model.score;metrics.cash=model.cash;metrics.durability=model.durability;metrics.claim=model.pickup;Mark("replica-checked");
   yield return Until(()=>Has("notice-baseline")&&own.jobs.HasPassengerScore,"onboard model notification baseline arrives",10);

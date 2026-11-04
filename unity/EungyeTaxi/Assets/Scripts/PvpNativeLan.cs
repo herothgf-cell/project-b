@@ -16,7 +16,7 @@ using Unity.Collections;
 // Trusted LAN, host-authoritative native WheelCollider simulation. No client pose/fare authority.
 [DefaultExecutionOrder(-110)]
 public sealed class PvpNativeLan:MonoBehaviour {
- public const string Protocol="native-city-lan-v2";
+ public const string Protocol="native-city-lan-v3";
  public static PvpNativeLan Instance {get;private set;}
  public static bool ApplyingReplica;
  public PvpSimulationMatch Match {get;private set;}
@@ -89,7 +89,7 @@ public sealed class PvpNativeLan:MonoBehaviour {
  void SendRoom(){if(!IsHost||!manager)return;foreach(var pair in peers)if(pair.Value.connected)Send("room",pair.Key,new PvpNativeRoom{slot=pair.Value.slot,seconds=Seconds,ticket=pair.Value.ticket,session=session,started=Started,racing=Racing,humans=humans,names=names});}
  public void StartMatch(){if(!IsHost||Started)return;Started=true;Racing=false;worldDeadline=Time.realtimeSinceStartup+120;Status="모든 참가자의 지도를 불러오는 중";SendRoom();bootstrap.StartSimulation(true,Seconds);}
  public void Bind(PvpSimulationMatch match){if(Match==match)return;Match=match;MenuOpen=false;foreach(var d in Match.Drivers){d.roadConditions=Match.Human.roadConditions;d.jobs.nav.conditions=d.roadConditions;foreach(var behaviour in d.GetComponents<MonoBehaviour>())if(behaviour is RightTurnSituation||behaviour is ExitQueueSituation||behaviour is PracticeSession||behaviour is PracticeCoach||behaviour is ConfusionPractice||behaviour is ScenarioChoiceSituation)behaviour.enabled=false;}if(IsHost){seats[0].ready=true;for(int i=1;i<4;i++)ControlSeat(i,seats[i]!=null&&seats[i].connected&&seats[i].ready);}else{lastFrameAt=Time.realtimeSinceStartup;PvpNativeReplica.BindClient(this);Send("ready",0,new PvpNativeCommand{token=session});}Debug.Log("PVP_NATIVE_BOUND role="+(IsHost?"host":"client")+" slot="+LocalSlot);}
- void ControlSeat(int slot,bool human){if(!Match||slot<=0||slot>=4)return;var d=Match.Drivers[slot];var pilot=d.GetComponent<PvpSimulationBot>();if(pilot)pilot.enabled=!human;d.services.enabled=human;d.assisted.SetActive(false);d.taxi.autoThrottle=0;d.taxi.autoSteer=0;d.taxi.autoBrake=true;}
+ void ControlSeat(int slot,bool human){if(!Match||slot<=0||slot>=4)return;var d=Match.Drivers[slot];var pilot=d.GetComponent<PvpSimulationBot>();if(pilot)pilot.enabled=!human;d.services.enabled=human;d.assisted.SetActive(false);d.taxi.AutomatedHumanInput=human;d.taxi.ResetPedalIntent();d.taxi.autoThrottle=0;d.taxi.autoSteer=0;d.taxi.autoBrake=true;}
  static T Read<T>(FastBufferReader reader,int bytes){if(reader.Length>bytes)throw new ArgumentException("oversized message");reader.ReadValueSafe(out string json);return JsonUtility.FromJson<T>(json);}
  void Receive(string kind,ulong sender,FastBufferReader reader){if(stopping)return;try{
   if(IsHost){Seat seat;if(!peers.TryGetValue(sender,out seat)||!seat.connected)return;

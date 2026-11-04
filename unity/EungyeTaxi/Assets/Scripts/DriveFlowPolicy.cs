@@ -2,7 +2,11 @@ using System;
 using System.Text;
 using UnityEngine;
 public static class DriveFlowPolicy {
- public static float SteeringRate(float speed){return Mathf.Lerp(9,6,Mathf.Clamp01(Mathf.Abs(speed)/14));}
+ public static float SteeringRate(float speed){return Mathf.Lerp(12,7,Mathf.Clamp01(Mathf.Abs(speed)/14));}
+ public static float AdvanceSteering(float current,float target,float speed,float seconds){
+  float rate=SteeringRate(speed);if(Mathf.Abs(target)<.01f)rate*=.65f;else if(current*target<0)rate*=1.4f;
+  return Mathf.MoveTowards(current,target,Mathf.Max(0,seconds)*rate);
+ }
  public static string Nickname(string value){var b=new StringBuilder();foreach(char c in value??""){if(b.Length>=12)break;if(char.IsLetterOrDigit(c)||c==' '||c=='_'||c=='-')b.Append(c);}return b.ToString().Trim();}
  public static string LocalName {get{if(PvpNativeLan.ProbeMode){var a=Environment.GetCommandLineArgs();int i=Array.IndexOf(a,"-pvpNativeLanRole");return i>=0&&i+1<a.Length?"검증_"+a[i+1]:"검증";}return Nickname(PlayerPrefs.GetString("pvp.nickname",""));}}
  public static bool SaveName(string value){string name=Nickname(value);if(name.Length==0)return false;PlayerPrefs.SetString("pvp.nickname",name);PlayerPrefs.Save();return true;}

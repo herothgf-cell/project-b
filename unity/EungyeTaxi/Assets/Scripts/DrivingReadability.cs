@@ -166,6 +166,14 @@ public class DrivingReadability : MonoBehaviour {
   float seconds=session.traffic.SecondsToSignalChange(SignalTarget,SignalAxis,SignalSign);
   return seconds>=0&&!float.IsNaN(seconds)&&!float.IsInfinity(seconds)?"신호 변경까지 "+Mathf.CeilToInt(seconds)+"초":"";
  }}
+ public string MovementWaitText {get{
+  if(!session||SignalTarget==null)return "";var signals=session.taxi.GetComponent<TaxiSignals>();
+  int turn=signals?signals.direction:0;var cue=TurnCue;
+  if(turn==0&&cue.Valid&&cue.Distance<80)turn=cue.Move==NavigationMove.Left?-1:cue.Move==NavigationMove.Right?1:0;
+  if(turn>0)return "우회전 · 보행·신호 확인";
+  float wait=session.traffic.EstimatedGreenWait(SignalTarget,SignalAxis,SignalSign,turn);
+  return wait<0?"현장 신호 확인":wait==0?(turn<0?"좌회전":"직진")+" · 녹색 신호 확인":(turn<0?"좌회전":"직진")+"까지 예상 "+Mathf.CeilToInt(wait)+"초";
+ }}
  void DrawCompactSignal(float x,float y,bool blue){
   if(SignalTarget==null)return;var j=SignalTarget;var dir=session.traffic.AxisDirection(j,SignalAxis)*SignalSign;
   var o=session.traffic.Observe(j,SignalAxis,SignalSign,dir,session.taxi.gameObject);
@@ -173,6 +181,7 @@ public class DrivingReadability : MonoBehaviour {
   var training=GetComponent<ConfusionPractice>();var zones=GetComponent<ServiceLawZones>();if(zones&&zones.Owns(j))training=zones.Live;
   float seconds=session.traffic.SecondsToSignalChange(j,SignalAxis,SignalSign);
   GUI.Label(new Rect(x+8,y,286,28),seconds<0?"신호 변경 시간 미정":"신호 변경까지 "+Mathf.CeilToInt(seconds)+"초",style);
+  GUI.Label(new Rect(x+8,y+27,296,29),MovementWaitText,style);
  }
  static string State(SignalColor signal){return signal==SignalColor.Green?"녹색":signal==SignalColor.Red?"적색 · 정지":"황색";}
  static void Panel(Rect r){CasualUI.Panel(r);}

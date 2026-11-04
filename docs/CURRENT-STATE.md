@@ -4,7 +4,7 @@
 
 ## 실행·개발 기준
 
-2026-11-04 [내비/승하차・지도/글자 개선](work-history/2026-11-04-arrival-readability.md)을 싱글/PVP 공통 적용했다. 이전 경로 표시 보존·실제 정차 기반 큰 F안내·M 내 위치 강조·반응형 주요 글자를 추가했다. 조향/제동·사고 확장·신호 변경은 [조사 제안](future-design/2026-11-04-playtest-feedback-review.md)으로 남겨 두며 이번에 바꾸지 않았다.
+2026-11-04 [내비/승하차・지도/글자 개선](work-history/2026-11-04-arrival-readability.md)에 이어 [캐주얼 조작·신호 수요](work-history/2026-11-04-casual-controls-signals.md)를 싱글/PVP 공통 적용한다. S 일반제동·정차 유지/의도적 후진·중속 회전과 기본 신호의 수요 제어/예상 녹색 대기를 추가한다. 사고 확장과 사람의 장시간 체감·완전한 간선 연동은 별도다.
 
 | 항목 | 현재 기준 |
 |---|---|
@@ -14,7 +14,7 @@
 | 런타임 배포 | 11/04 내비/승하차/가독성 통합 개선. 실제 소스·배포 해시는 위 작업 이력과 manifest 기준 |
 | 파일 검사 | **140파일**, 현재 총 크기·SHA256은 `distribution/EungyeTaxi-build-manifest.json` 기준 |
 | Unity | **2022.3.62f2**, 프로젝트 `unity/EungyeTaxi`, `PrototypeBuild.BuildHybrid` |
-| 통신 | 기존 차량·물리·승객·법규·시설 재사용, 예측 입력 프로토콜v2. 양쪽 PC 모두 최신 main 사용 |
+| 통신 | 기존 차량·물리·승객·법규·시설 재사용, 예측 입력+권한 신호/제동 상태 프로토콜v3. 양쪽 PC 모두 최신 main 사용 |
 | 지도 입력 | 정식 `config/maps/project/eungye.project.json`이 Git 기준. 원본 재수입 때만 지도 ZIP/원시 자료 추가 준비 |
 
 ## 실제 구현과 남은 확인

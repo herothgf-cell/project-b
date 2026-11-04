@@ -53,7 +53,7 @@ public class DriveHUD : MonoBehaviour {
    if(GUI.Button(new Rect(x+20,y+434,440,28),session.traffic.mitOptions.Label+" · 클릭하여 변경",KoreanText.Button(14)))session.traffic.mitOptions.SetEnabled(!session.traffic.mitOptions.Enabled);
   }
  }
- public string DrivingHelpText {get{return "수동: ↑ 가속 · ↓ 감속 / 정차 후 후진 · ←/→ 조향 · Space 제동\nQ/E 방향지시등 · G 비상등 · H 조향 보조 켜기/끄기\n보조: ←/→ 차로 변경 · Q/E 다음 교차로 회전 예약\n보조 중에도 가속·감속·제동과 신호 판단은 직접 합니다.\nC 시점 · B 뒤보기 · Z/X 좌우 보기 · V 코너 시선\nF 승하차 · M 전체 지도 · Tab 경로 변경 · +/- 미니맵 확대/축소\nF7 거점 · F8 기록 · F10 안내 · Esc 정지 · F11 전체화면";}}
+ public string DrivingHelpText {get{return "수동: W/↑ 가속 · S/↓ 감속 · A/D 또는 ←/→ 조향\n멈춘 뒤 S를 놓았다 다시 누르면 후진 · Space 긴급제동\nQ/E 방향지시등 · G 비상등 · H 조향 보조 켜기/끄기\n보조: ←/→ 차로 변경 · Q/E 다음 교차로 회전 예약\n보조 중에도 가속·감속·제동과 신호 판단은 직접 합니다.\nC 시점 · B 뒤보기 · Z/X 좌우 보기 · V 코너 시선\nF 승하차 · M 전체 지도 · Tab 경로 변경 · +/- 미니맵 확대/축소\nF7 거점 · F8 기록 · F10 안내 · Esc 정지 · F11 전체화면";}}
  public static Rect HelpBounds(float width,float height){float scale=UiReadability.HudScale(width,height);return new Rect(width/2-360*scale,height/2-195*scale,720*scale,390*scale);}
  void DrawHelp(){
   int depth=GUI.depth;GUI.depth=-20;var matrix=GUI.matrix;float scale=CockpitUI.Scale;

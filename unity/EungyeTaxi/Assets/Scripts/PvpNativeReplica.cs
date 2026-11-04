@@ -5,6 +5,7 @@ using UnityEngine;
 // These are native-simulation views, deliberately independent of the old flat motor protocol.
 [Serializable] public sealed class PvpNativeFrame {
     public float elapsed,trafficClock;
+    public DemandSignalState[] signals;
     public bool finished,full;
     public int recipient;
     public int[] scores,claims;
@@ -18,7 +19,7 @@ using UnityEngine;
     public RoadConditionsSnapshot roadConditions;
 }
 [Serializable] public sealed class PvpNativeActor {
-    public int slot,signal,conditionKind=-1,completed,failed,balance,inputAck;
+    public int slot,signal,conditionKind=-1,completed,failed,balance,inputAck,pedalDirection,resetEpoch;
     public Vector3 position,velocity,angularVelocity;
     public Quaternion rotation;
     public float steering,conditionRemaining;
@@ -75,7 +76,7 @@ public static class PvpNativeReplica {
         var match=lan.Match;
         if(recipient<0||recipient>=match.Drivers.Count)throw new ArgumentOutOfRangeException("recipient");
         var human=match.Human;
-        var frame=new PvpNativeFrame{elapsed=match.Elapsed,trafficClock=human.traffic.Clock,finished=match.Finished,full=full,recipient=recipient,
+        var frame=new PvpNativeFrame{elapsed=match.Elapsed,trafficClock=human.traffic.Clock,signals=human.traffic.CaptureSignalRuntime(),finished=match.Finished,full=full,recipient=recipient,
             scores=new int[4],claims=new int[human.jobs.stops.Length],offers=match.SharedCalls.Offers,roadside=match.SharedCalls.Roadside,
             actors=new PvpNativeActor[4],npcs=new PvpNativeNpc[human.traffic.cars.Count],
             occupancy=match.PassengerWorld?match.PassengerWorld.State:null,occupancyStop=match.PassengerWorld?match.PassengerWorld.BlockedStop:-1};
@@ -90,7 +91,7 @@ public static class PvpNativeReplica {
         for(int slot=0;slot<4;slot++){
             var driver=match.Drivers[slot];var taxi=driver.taxi;
             frame.scores[slot]=match.Score(slot);
-            var actor=new PvpNativeActor{slot=slot,inputAck=lan.ProcessedInput(slot),hasFreeRoute=slot==recipient&&driver.jobs.nav.freeGuidance&&driver.jobs.nav.hdRoute!=null,freeRoute=slot==recipient&&driver.jobs.nav.freeGuidance?PvpNativeFreeRoute.Capture(driver.jobs.nav.hd,driver.jobs.nav.hdRoute):null,position=taxi.body.position,rotation=taxi.body.rotation,velocity=taxi.body.velocity,
+            var actor=new PvpNativeActor{slot=slot,inputAck=lan.ProcessedInput(slot),pedalDirection=taxi.PedalBrakingDirection,resetEpoch=taxi.ResetEpoch,hasFreeRoute=slot==recipient&&driver.jobs.nav.freeGuidance&&driver.jobs.nav.hdRoute!=null,freeRoute=slot==recipient&&driver.jobs.nav.freeGuidance?PvpNativeFreeRoute.Capture(driver.jobs.nav.hd,driver.jobs.nav.hdRoute):null,position=taxi.body.position,rotation=taxi.body.rotation,velocity=taxi.body.velocity,
                 angularVelocity=taxi.body.angularVelocity,steering=taxi.SteeringInput,status=match.DriverStatus(slot),
                 signal=driver.signals.direction,hazards=driver.signals.Hazards,assisted=driver.assisted.Active,
                 conditionKind=match.ConditionServiceKind(driver),conditionRemaining=match.ServiceRemaining(driver),
@@ -178,7 +179,7 @@ public static class PvpNativeReplica {
                 if(actor==null||actor.slot<0||actor.slot>=4)throw new ArgumentException("Invalid native actor slot");
                 int local=lan.ServerToLocal(actor.slot);var driver=match.Drivers[local];var taxi=driver.taxi;
                 conditions[local]=actor.conditionKind;remaining[local]=actor.conditionRemaining;
-                if(local==0&&lan.Prediction!=null)lan.Prediction.Receive(actor.inputAck,new PvpPredictedMotion{position=actor.position,rotation=actor.rotation,velocity=actor.velocity,angularVelocity=actor.angularVelocity},first||frame.finished,actor.conditionRemaining>0||frame.finished);
+                if(local==0&&lan.Prediction!=null)lan.Prediction.Receive(actor.inputAck,new PvpPredictedMotion{pedalDirection=actor.pedalDirection,resetEpoch=actor.resetEpoch,position=actor.position,rotation=actor.rotation,velocity=actor.velocity,angularVelocity=actor.angularVelocity},first||frame.finished,actor.conditionRemaining>0||frame.finished);
                 else view.taxis[local].Target(taxi.transform,actor.position,actor.rotation,frame.elapsed,first||frame.finished);
                 taxi.ReplicaVelocity=actor.velocity;taxi.ReplicaSteering=actor.steering;
                 // Read-only UI and navigation use Rigidbody velocity even on the kinematic view.
@@ -216,7 +217,7 @@ public static class PvpNativeReplica {
                 match.Human.ambientPedestrians.ReconcileVisibility();
             }
             view.clock=frame.trafficClock;view.serverTime=frame.elapsed;view.received=Time.realtimeSinceStartupAsDouble;if(first){view.renderTime=frame.elapsed-.1;view.lastDraw=view.received;}
-            match.Human.traffic.manualTime=frame.trafficClock;
+            match.Human.traffic.manualTime=frame.trafficClock;match.Human.traffic.RestoreSignalRuntime(frame.signals);
         }finally{PvpNativeLan.ApplyingReplica=wasApplying;}
     }
 

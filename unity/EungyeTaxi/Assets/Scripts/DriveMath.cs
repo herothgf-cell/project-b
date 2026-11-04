@@ -2,10 +2,15 @@ using System;
 public static class DriveMath {
     public const float ParkingSteerAngle=42f;
     // Manual parking turns are tighter; H retains its calibrated bicycle geometry.
-    // Fade out the extra steering by 30kph to preserve the high-speed grip limit.
+    // Fade out the city allowance by50kph; H keeps its calibrated geometry.
     public static float ManualSteerAngle(float speedKph) {
-        float blend=Math.Max(0,Math.Min(1,(30-Math.Abs(speedKph))/16));
-        return Math.Min(52,SteerAngle(speedKph)*(1+.55f*blend));
+        float speed=Math.Abs(speedKph);
+        float blend=Math.Max(0,Math.Min(1,(30-speed)/16));
+        float parking=Math.Min(52,SteerAngle(speedKph)*(1+.55f*blend));
+        // A gradual city-speed curve; H keeps the original bicycle limit.
+        float city=speed<=20?52-speed:speed<=35?32-(speed-20)*1.3f:12.5f+(SteerAngle(50)-12.5f)*Math.Min(1,(speed-35)/15);
+        if(speed>=50)return parking;
+        return Math.Max(parking,city);
     }
     public struct Demand { public float motor, brake; }
     public static float SteerAngle(float speedKph) {
@@ -44,7 +49,7 @@ public static class DriveMath {
     public static Demand Resolve(float throttle, float speedMs, bool handbrake) {
         if (handbrake) return new Demand { brake = 1f };
         // Digital S is an ordinary service stop; Space remains the full emergency brake.
-        if (throttle * speedMs < -0.5f) return new Demand { brake = Math.Min(1,Math.Abs(throttle))*.18f };
+        if (throttle * speedMs < -0.5f) return new Demand { brake = Math.Min(1,Math.Abs(throttle))*.30f };
         if ((throttle > 0 && speedMs >= 25) || (throttle < 0 && speedMs <= -8)) return new Demand();
         if (Math.Abs(throttle) < .01f) return new Demand { brake = Math.Abs(speedMs) < .3f ? .25f : .015f };
         // 550Nm per rear wheel gives about 2.3m/s2 before drag, leaving time to read city corners.

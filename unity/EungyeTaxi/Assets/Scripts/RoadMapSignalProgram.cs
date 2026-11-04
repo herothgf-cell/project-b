@@ -12,6 +12,12 @@ using System.Linq;
  public SignalColor Movement(int axis,int sign,int turn,float time,string laneId=null){SignalColor result=SignalColor.Red;foreach(var g in groups){if(g.pedestrian||g.axis!=axis||g.sign!=sign||g.turn!=turn||laneId!=null&&g.laneIds.Length>0&&Array.IndexOf(g.laneIds,laneId)<0)continue;var color=Color(g.id,time);if(color==SignalColor.Green)return color;if(color==SignalColor.Yellow)result=color;}return result;}
  public bool Walk(int axis,int sign,float time){foreach(var g in groups)if(g.pedestrian&&g.axis==axis&&g.sign==sign&&Color(g.id,time)==SignalColor.Green)return true;return false;}
  public float SecondsToHeadChange(int axis,int sign,float time){float best=float.PositiveInfinity;foreach(int turn in new[]{0,-1,1}){float seconds=SecondsToChange(axis,sign,turn,time);if(seconds>0)best=Math.Min(best,seconds);}return float.IsInfinity(best)?-1:best;}
+ public float SecondsToGreen(int axis,int sign,int turn,float time){
+  if(Movement(axis,sign,turn,time)==SignalColor.Green)return 0;float cycle=Cycle;if(cycle<=0)return -1;
+  float phase=(time%cycle+cycle)%cycle,edge=0,best=float.PositiveInfinity;
+  foreach(var stage in stages){float delta=(edge-phase+cycle)%cycle;if(delta<.0001f)delta=cycle;if(Movement(axis,sign,turn,time+delta+.001f)==SignalColor.Green)best=Math.Min(best,delta);edge+=stage.green+stage.yellow+stage.clearance;}
+  return float.IsInfinity(best)?-1:best;
+ }
  public float SecondsToChange(int axis,int sign,int turn,float time,bool pedestrian=false){
   float cycle=Cycle;if(cycle<=0)return -1;SignalColor current=pedestrian?(Walk(axis,sign,time)?SignalColor.Green:SignalColor.Red):Movement(axis,sign,turn,time);
   float phase=(time%cycle+cycle)%cycle,edge=0,best=float.PositiveInfinity;

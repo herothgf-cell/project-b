@@ -41,8 +41,9 @@ public static class TrafficReservedCorridorTests {
             }
             Check(owner.distance>ownerRoute.stops[0].exitDistance&&!junction.reservations.Contains(owner),"reserved owner physically clears and releases normally");
             // Still red: approach can now reach the real line and establish native stop evidence.
-            for(int i=0;i<240;i++)Step(approach);
-            Check(Mathf.Abs(approach.distance-approachRoute.stops[0].distance)<.1f&&approach.stoppedAt==junction,"after owner clears, red approach reaches its real stop line and records full stop");
+            // Headway-controlled creep needs enough time to establish <.05m/s evidence.
+            for(int i=0;i<600&&(Mathf.Abs(approach.distance-approachRoute.stops[0].distance)>=.1f||approach.stoppedAt!=junction);i++)Step(approach);
+            Check(Mathf.Abs(approach.distance-approachRoute.stops[0].distance)<.1f&&approach.stoppedAt==junction,"after owner clears, red approach reaches its real stop line and records full stop: at="+approach.distance+" line="+approachRoute.stops[0].distance+" speed="+approach.speed+" blocker="+approach.blockedName+" owner="+owner.distance);
             traffic.manualTime=53;Check(traffic.CanEnter(approach,approachRoute.stops[0]),"fixture approach turns green");
             for(int i=0;i<500&&approach.distance<=approachRoute.stops[0].exitDistance+.1f;i++)Step(approach);
             Check(approach.distance>approachRoute.stops[0].exitDistance,"approach physically resumes after green without teleport or reservation deletion");
