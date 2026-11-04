@@ -62,4 +62,5 @@
 
 - 실제 소스 커밋 `8871fcc4fa0b0390d1f16635dbb7887d0e37f876`. `git log -1 --oneline -- docs/work-history/2026-11-04-casual-controls-signals.md`로 확인했다.
 - 위 소스와 `artifacts/casual-validation.json`으로 통합 manifest를 갱신했다. 실행 폴더140파일/122,952,126바이트, 통합/PVP VerifyOnly 종료0·전수 SHA256/크기 일치. 생성된 Burst DoNotShip 폴더는 경로를 확인한 뒤 artifacts에 보존해 배포에서 제외했다.
-- 최신 원격 main은 a8b4c0d이며 해당 변경과 기존 미추적 사용자 자료를 보존한다. 배포 커밋/실제 main 푸시·원격 대조는 게시 후 영수증으로 기록한다.
+- 시작 원격 main a8b4c0d를 보존하고 fast-forward 통합했다. 배포 커밋 `3a7f7ae5bc768222294b44573fe0881a28642e12`, `git push origin main` 종료0·`git ls-remote origin refs/heads/main`과 HEAD 일치를 확인했다. main의 실행 폴더도 manifest140파일 전수 일치다.
+- 후속 게시 영수증 문서 커밋은 실행 파일을 바꾸지 않는다. 실제 이력 커밋은 `git log -1 --oneline -- docs/work-history/2026-11-04-casual-controls-signals.md`로 확인한다. 기존 사용자 미추적 자료만 남기고 이번 tracked 소스/문서/배포는 커밋했다.

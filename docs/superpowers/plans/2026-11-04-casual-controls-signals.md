@@ -48,4 +48,4 @@ Files: PvpNativeReplica.cs/프로토콜, DrivingReadability.cs, 검사 파일.
 
 - [x] 관련 기존 Editor/모델 회귀·실제 싱글/PVP/LAN 검사. 사용자 저장 해시 보존 확인.
 - [x] 담당 기획01/체크리스트/작업 이력/LATEST 갱신·소스 커밋.
-- [ ] BuildHybrid/실행 폴더 manifest 재생성·검증. 실제 배포/미검증 범위를 기록.
+- [x] BuildHybrid/실행 폴더 manifest 재생성·검증. 소스8871fcc·배포3a7f7ae main 푸시/원격 일치. 실제 배포/미검증 범위를 기록.
