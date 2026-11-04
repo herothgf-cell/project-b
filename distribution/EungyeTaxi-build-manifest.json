@@ -1,65 +1,58 @@
 {
-  "sourceCommit": "8871fcc4fa0b0390d1f16635dbb7887d0e37f876",
+  "sourceCommit": "bb0165f66fdd2ff22e644e8e369ec96990ea2e7d",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-04",
-  "totalBytes": 122952126.0,
+  "totalBytes": 122952638.0,
   "validation": {
     "build": "CasualIntegrationBuild.Build -> PrototypeBuild.BuildHybrid exit 0",
-    "buildLog": "artifacts/casual-shipping-build.log",
-    "editor": {
-      "controls": 14,
-      "reviewRegressions": 6,
-      "signalDemand": 1810,
-      "queuePhysicalAssertions": 1004,
-      "driveFlow": 1161,
-      "arrival": 30,
-      "navigationCue": 15,
-      "nativePrediction": 17,
-      "nativeFreeRoute": 5,
-      "nativeWheels": 8,
-      "nativePose": 11
-    },
+    "buildLog": "artifacts/steering-final-build.log",
+    "focusedControlAssertions": 27,
+    "inheritedIntegration": "signal1810 queue1004 flow1161 arrival30 navigation15 nativePrediction17 freeRoute5 wheels8 pose11 and review guards",
     "physicalFixture": {
-      "brakeSpeedsKph": [
-        20,
-        30,
-        40
-      ],
-      "poweredCornerEntryKph": [
-        20,
-        30,
-        60
-      ],
       "samples": 9,
-      "evidence": "artifacts/casual-physics-powered.json",
-      "manualDriving": false
+      "evidence": "artifacts/casual-physics-steering-final.json",
+      "cityTurnEntryKph": [
+        20,
+        30
+      ],
+      "previous90DegreeDisplacementM": [
+        4.5,
+        5.39
+      ],
+      "current90DegreeDisplacementM": [
+        4.13,
+        5.04
+      ],
+      "current90DegreeSeconds": [
+        1.48,
+        1.48
+      ],
+      "steadySpeedRadius": false,
+      "highSpeedAndBrakeUnchanged": true
     },
     "singlePlayerAssertions": 226,
     "pvpPlayerAssertions": 213,
-    "playerValidation": "pose-controlled native runtime demand and host/replica lamp comparisons",
+    "playerValidation": "native pose-controlled world objects, not whole-road manual driving",
     "nativeLan": {
       "hostAssertions": 40,
       "clientAssertions": 55,
       "reconnect": true,
       "loopbackOnly": true,
-      "evidence": "artifacts/pvp/native-lan-20261104-173142-01c1116e"
+      "evidence": "artifacts/pvp/native-lan-20261104-201536-533a9388"
     },
-    "renderedResolutions": [
-      "1280x720"
-    ],
-    "renderNotes": "visible single/PVP screenshots inspected; hidden black captures excluded; first visible PVP startup timeout excluded, isolated retry exit0",
-    "userSaveFilesUnchanged": 4,
-    "localDocLinks": 135,
+    "review": "microsleep torque bypass fixed, guard regression passed, re-review no important findings",
+    "fullPhysicalMicrosleepEvent": false,
+    "userSaveFilesUnchangedAfterUserExit": 4,
+    "localDocLinks": 139,
     "missingDocLinks": 0,
-    "workspaceStrict": "exit 0, input issues 0",
+    "workspaceStrict": "exit0 input issues0",
     "manualDriving": false,
     "fullCampaign": false,
     "otherPc": false,
     "actualPad": false,
     "mapInputsChanged": false,
-    "fullCorridorCoordination": false,
     "protocol": "native-city-lan-v3"
   },
   "files": [
@@ -71,7 +64,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "a7740b8f7e82eda413d0a64a327ff85ad190222e357333dd610d65450c668c13"
+      "sha256": "e79981285dc1b91fab1a0f92d9461522db812a663a5dcf5ab0d93afcaf9d21b8"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -100,8 +93,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2241536,
-      "sha256": "4bb524d25a2ca540847e9fdb950770800413ce9520c1c3a07727f01d93baea28"
+      "bytes": 2242048,
+      "sha256": "c6cf0356f5e6adc2c2c0fc3ebe3dfbfe91268cc6a01e301f2d999c3bb631754e"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",

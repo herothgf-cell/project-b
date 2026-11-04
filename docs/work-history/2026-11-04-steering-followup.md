@@ -37,3 +37,9 @@ Ruling: 사용자의 “더 완화”를 조향 제한/응답과 작은 수동 �
 - 사용자 게임 종료 후 기준4파일과 최종 재대조해 변경0. 원래 실행 중이던 게임의 사용자 종료 저장을 덮어쓰거나 과거 해시로 되돌리지 않았다.
 - 실제 두 Player LAN: `pwsh -File tools/test_pvp_native_lan.ps1 -Port 18517 -Reconnect -TimeoutSeconds 240` 종료0, host40/client55·재접속 통과. 증거 `artifacts/pvp/native-lan-20261104-201536-533a9388`. 실제 입력/바퀴 물리/로컬 예측·호스트 권한/기존 운송 보존을 확인했다. 같은PC loopback이며 다른PC는 별도다.
 - 관련10문서 로컬 링크139개 누락0, workspace Strict 종료0/input issues0, `git diff --check` 통과. 생성된 Burst 디버그 폴더는 실제 경로를 확인한 뒤 artifacts에 보존해 배포에서 제외한다. 지도/필수 입력/ZIP은 바꾸지 않았다.
+
+## 배포 확정
+
+- 실제 소스 `bb0165f66fdd2ff22e644e8e369ec96990ea2e7d`, 이 기록의 `git log -1 --oneline --` 결과로 확인했다. 빌드 이후 코드 변경 없음.
+- `artifacts/steering-validation.json`과 위 소스로 manifest를 갱신했다. 기본 실행 폴더140파일/122,952,638바이트, 통합/PVP VerifyOnly 모두 종료0·전수 크기/SHA256 일치.
+- 실제 main 게시 해시는 push/원격 대조 후 아래에 기록한다. 작업 도중 실행 중이던 사용자 게임을 강제 종료하지 않았으며 사용자 종료 확인 후 기본 실행 파일을 교체했다.
