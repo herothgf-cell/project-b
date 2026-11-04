@@ -42,4 +42,5 @@ Ruling: 사용자의 “더 완화”를 조향 제한/응답과 작은 수동 �
 
 - 실제 소스 `bb0165f66fdd2ff22e644e8e369ec96990ea2e7d`, 이 기록의 `git log -1 --oneline --` 결과로 확인했다. 빌드 이후 코드 변경 없음.
 - `artifacts/steering-validation.json`과 위 소스로 manifest를 갱신했다. 기본 실행 폴더140파일/122,952,638바이트, 통합/PVP VerifyOnly 모두 종료0·전수 크기/SHA256 일치.
-- 실제 main 게시 해시는 push/원격 대조 후 아래에 기록한다. 작업 도중 실행 중이던 사용자 게임을 강제 종료하지 않았으며 사용자 종료 확인 후 기본 실행 파일을 교체했다.
+- 배포 `0806937454cc521e5e0a59ac6e8a5ac311b43e53`를 main에 fast-forward 통합하고 push 종료0·원격 main/HEAD 동일 해시를 확인했다. main의140파일 manifest 전수 검사도 종료0. 작업 도중 사용자 게임을 강제 종료하지 않았으며 사용자 종료 확인 후 기본 실행 파일을 교체했다.
+- 후속 게시 영수증 문서 커밋은 같은 실행 파일을 유지한다. 이력의 실제 커밋은 `git log -1 --oneline -- docs/work-history/2026-11-04-steering-followup.md`로 확인한다. 기존 미추적 사용자 자료는 별도로 보존했다.
