@@ -11,7 +11,7 @@
 | 제품/실행 | **택시 시뮬레이션**, `builds/EungyeTaxi/EungyeTaxi.exe` |
 | 모드/지도 | 은계 싱글 3일 캠페인 / **A2 자체 도시 PvP**, 봇3 또는 LAN 최대4명 |
 | A3 | 적용 이력 후 사용자 지시로 A2 복귀. 코드/시안 보존, 현재 배포 지도가 아님 |
-| 런타임 배포 | 11/04 내비/승하차/가독성 통합 개선. 실제 소스·배포 해시는 위 작업 이력과 manifest 기준 |
+| 런타임 배포 | 11/04 내비/승하차/가독성 + 캐주얼 조작/기본 신호 수요 개선. 소스8871fcc·실제 배포 해시는 위 작업 이력과 manifest 기준 |
 | 파일 검사 | **140파일**, 현재 총 크기·SHA256은 `distribution/EungyeTaxi-build-manifest.json` 기준 |
 | Unity | **2022.3.62f2**, 프로젝트 `unity/EungyeTaxi`, `PrototypeBuild.BuildHybrid` |
 | 통신 | 기존 차량·물리·승객·법규·시설 재사용, 예측 입력+권한 신호/제동 상태 프로토콜v3. 양쪽 PC 모두 최신 main 사용 |

@@ -57,3 +57,9 @@
 - 사용자 실제 저장4개를 `casual-user-saves-before.json`과 재대조해 변경0. workspace Strict 종료0/input issues0·관련9문서 로컬 링크135개 누락0·`git diff --check` 통과.
 - 리뷰에서 지적한 권한 제동 상태와 황색 ETA를 수정했다. 근거리 복귀도0.5m/reset=false의 명시 epoch 회귀로 확인했다(`casual-nearby-reset-red.log`→최종 GREEN). 후속 읽기 전용 리뷰에서 남은 중요 문제 없음.
 - 빌드 이후 production 코드는 바꾸지 않았다. 소스/배포 실제 커밋·manifest·main 게시 영수증은 아래에 추가한다.
+
+## 배포 확정
+
+- 실제 소스 커밋 `8871fcc4fa0b0390d1f16635dbb7887d0e37f876`. `git log -1 --oneline -- docs/work-history/2026-11-04-casual-controls-signals.md`로 확인했다.
+- 위 소스와 `artifacts/casual-validation.json`으로 통합 manifest를 갱신했다. 실행 폴더140파일/122,952,126바이트, 통합/PVP VerifyOnly 종료0·전수 SHA256/크기 일치. 생성된 Burst DoNotShip 폴더는 경로를 확인한 뒤 artifacts에 보존해 배포에서 제외했다.
+- 최신 원격 main은 a8b4c0d이며 해당 변경과 기존 미추적 사용자 자료를 보존한다. 배포 커밋/실제 main 푸시·원격 대조는 게시 후 영수증으로 기록한다.
