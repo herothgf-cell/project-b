@@ -58,4 +58,6 @@
 - 실제 소스 커밋: `6b7f054177a95f44846f14505f3bcd9a8b2883c4` (`git log -1 --oneline -- 이 기록`으로 확인). 빌드 후 코드는 바꾸지 않았고 커밋 전30개 Editor 검사를 다시 통과했다.
 - 통합 실행 폴더140파일,122,934,612바이트. 실제 위 소스 해시와 이번 `artifacts/arrival-validation.json`으로 manifest를 갱신했다. 통합/PVP VerifyOnly 모두 종료0, 전파일 크기/SHA256 일치.
 - 배포에는 Unity 생성 `FirstDrive.unity`의 Mode Selection/eungye 장면과 실행 폴더 전체를 포함한다. 생성된 Burst DoNotShip 디버그 자료는 배포 밖 artifacts에 보존했다. 지도 원본/프로젝트 지도/ZIP 변경 없음.
-- main 원격 게시 해시는 실제 push·원격 대조 후 아래 게시 영수증으로 추가한다.
+- main 배포 커밋: `6da93192ccd56575c523c51a3d48b42fecd40aae`. `git push origin main` 종료0, `git ls-remote origin refs/heads/main`과 실제 HEAD 일치. 최신 원격 main을 보존하고 fast-forward 병합했다.
+- 첫 main 전환에서 이전에 실패한 자체 `-mapClickTest` 프로세스가 Burst DLL을 잠근 것을 확인했다. 해당 명령/실행 경로의 자체 테스트 프로세스만 종료했고, 이미 소스/빌드 커밋에 보존된 파일로 전환을 마무리했다. main에서 통합/PVP manifest 검증 종료0으로 전파일 일치를 다시 확인했다. 사용자 실행 프로세스/미추적 파일은 건드리지 않았다.
+- 이 게시 영수증의 후속 문서 커밋은 실행 파일을 바꾸지 않는다. 실제 이력 커밋은 `git log -1 --oneline -- docs/work-history/2026-11-04-arrival-readability.md`로 확인한다.
