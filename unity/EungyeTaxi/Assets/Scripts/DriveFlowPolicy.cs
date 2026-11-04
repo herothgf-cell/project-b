@@ -2,9 +2,10 @@ using System;
 using System.Text;
 using UnityEngine;
 public static class DriveFlowPolicy {
- public static float SteeringRate(float speed){return Mathf.Lerp(12,7,Mathf.Clamp01(Mathf.Abs(speed)/14));}
+ public static float SteeringRate(float speed){return Mathf.Lerp(15,7,Mathf.Clamp01(Mathf.Abs(speed)/14));}
  public static float AdvanceSteering(float current,float target,float speed,float seconds){
-  float rate=SteeringRate(speed);if(Mathf.Abs(target)<.01f)rate*=.65f;else if(current*target<0)rate*=1.4f;
+  float blend=Mathf.Clamp01(Mathf.Abs(speed)/14);float rate=SteeringRate(speed);
+  if(Mathf.Abs(target)<.01f)rate=Mathf.Lerp(12,7,blend)*.65f;else if(current*target<0)rate*=Mathf.Lerp(1.6f,1.4f,blend);
   return Mathf.MoveTowards(current,target,Mathf.Max(0,seconds)*rate);
  }
  public static string Nickname(string value){var b=new StringBuilder();foreach(char c in value??""){if(b.Length>=12)break;if(char.IsLetterOrDigit(c)||c==' '||c=='_'||c=='-')b.Append(c);}return b.ToString().Trim();}

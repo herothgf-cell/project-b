@@ -5,4 +5,5 @@ public static class CasualIntegrationBuild {
   Debug.Log("CASUAL_INTEGRATION_OK");
  }
  public static void Build(){Run();PrototypeBuild.BuildHybrid();}
+ public static void SteeringCandidate(){Run();ProjectMapBuild.Prepare();typeof(PrototypeBuild).GetMethod("BuildAt",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic).Invoke(null,new object[]{"../../artifacts/steering-candidate/EungyeTaxi.exe","eungye"});}
 }

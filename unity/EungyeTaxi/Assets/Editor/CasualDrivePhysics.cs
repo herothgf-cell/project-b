@@ -20,6 +20,14 @@ public static class CasualDrivePhysics {
   }finally{UnityEngine.Object.DestroyImmediate(root);Physics.autoSimulation=auto;}
  }
  public static void PoweredCorners(){powered=true;try{Run();}finally{powered=false;}}
+ public static void FollowupCorners(){
+  PoweredCorners();string[] args=Environment.GetCommandLineArgs();int at=Array.IndexOf(args,"-handlingLabel");string label=at>=0?args[at+1]:"current";
+  var result=JsonUtility.FromJson<Report>(File.ReadAllText("../../artifacts/casual-physics-"+label+".json"));
+  foreach(var s in result.samples)if(s.test=="left"||s.test=="right"){
+   if(s.peakRoll>12)throw new Exception("STEERING_FOLLOWUP excessive roll");
+   if(s.speed<=30&&(Math.Abs(s.yaw)<90||s.distance>(s.speed==20?4.5f:5.39f)*.95f))throw new Exception("STEERING_FOLLOWUP actual city turn must tighten, not just increase wheel angle");
+  }Debug.Log("STEERING_FOLLOWUP_PHYSICS_OK");
+ }
  static bool powered;
  static TaxiController Taxi(GameObject root){var go=new GameObject("actual wheel taxi");go.transform.SetParent(root.transform);var taxi=go.AddComponent<TaxiController>();taxi.Create(new Vector3(20000,.5f,20000),Quaternion.identity);taxi.automated=true;taxi.AutomatedHumanInput=true;taxi.autoBrake=true;Physics.SyncTransforms();for(int i=0;i<80;i++)Step(taxi);taxi.autoBrake=false;return taxi;}
  static void Step(TaxiController taxi){tick.Invoke(taxi,null);Physics.Simulate(.02f);Physics.SyncTransforms();}

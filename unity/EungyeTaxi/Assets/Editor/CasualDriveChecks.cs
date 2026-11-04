@@ -6,11 +6,26 @@ public static class CasualDriveChecks {
  public static void Controls(){
   Check(DriveMath.Resolve(-1,8,false).brake>=.27f&&DriveMath.Resolve(-1,8,false).brake<=.36f,"ordinary S brake strengthened within approved1.5-2x range");
   Check(DriveMath.Resolve(-1,8,true).brake==1,"emergency remains full strength");
-  Check(DriveMath.ManualSteerAngle(30)>=15&&DriveMath.ManualSteerAngle(30)<=20,"city30kph has usable steering");
+  Check(DriveMath.ManualSteerAngle(20)>=39&&DriveMath.ManualSteerAngle(20)<=41,"followup20kph steering is more forgiving");
+  Check(DriveMath.ManualSteerAngle(30)>=24&&DriveMath.ManualSteerAngle(30)<=26,"followup30kph steering is more forgiving");
+  Check(DriveMath.ManualSteerAngle(35)>=16&&DriveMath.ManualSteerAngle(35)<=18,"followup35kph avoids sharp loss of turning authority");
   Check(Math.Abs(DriveMath.ManualSteerAngle(60)-DriveMath.SteerAngle(60))<.001,"high speed/H geometry preserved");
   var method=typeof(DriveFlowPolicy).GetMethod("AdvanceSteering");Check(method!=null,"single and LAN use directional steering policy");
   Func<float,float,float> step=(current,target)=>(float)method.Invoke(null,new object[]{current,target,5f,.1f});
-  Check(step(-1,1)>.1f,"countersteer crosses centre promptly");Check(step(1,0)>0&&step(1,0)<.5f,"release centres smoothly without instant snap");
+  Check(step(-1,1)>.75f,"followup countersteer changes direction promptly");Check(step(1,0)>0&&step(1,0)<.5f,"release centres smoothly without instant snap");
+  Check(Math.Abs(step(-1,1)+step(1,-1))<.001,"countersteer remains left-right symmetric");
+  Check(DriveMath.ManualSteerAngle(0)<=52&&Math.Abs(DriveMath.ManualSteerAngle(-30)-DriveMath.ManualSteerAngle(30))<.001,"parking maximum and reverse symmetry preserved");
+  Check(Math.Abs(DriveMath.ManualSteerAngle(49.99f)-DriveMath.ManualSteerAngle(50))<.05,"city allowance blends smoothly into unchanged high-speed limit");
+  var yaw=typeof(DriveMath).GetMethod("ManualYawAcceleration");Check(yaw!=null,"manual city turn has bounded yaw response assistance");
+  Func<float,float,float,float> yawAt=(speed,angle,rate)=>(float)yaw.Invoke(null,new object[]{speed,angle,rate});
+  Check(yawAt(5,25,0)>0&&Math.Abs(yawAt(5,25,0)+yawAt(5,-25,0))<.001,"yaw assistance is symmetric");
+  Check(yawAt(0,25,0)==0&&yawAt(15,25,0)==0,"no stationary spin or high-speed yaw assistance");
+  Check(yawAt(5,25,3)==0&&yawAt(-5,25,0)<0,"no excess same-direction spin and reverse remains correct");
+  var gateMethod=typeof(DriveMath).GetMethod("MayAssistManualYaw");Check(gateMethod!=null,"yaw guard includes held-wheel states");
+  Func<int,float,bool,bool,bool,bool> allowed=(grounded,up,assisted,human,frozen)=>(bool)gateMethod.Invoke(null,new object[]{grounded,up,assisted,human,frozen});
+  Check(allowed(4,1,false,true,false)&&!allowed(4,1,false,true,true),"microsleep cannot steer body while wheel steering is frozen");
+  Check(!allowed(4,1,true,true,false)&&!allowed(4,1,false,false,false),"H and bots keep their original steering dynamics");
+  Check(!allowed(1,1,false,true,false)&&!allowed(2,.5f,false,true,false),"airborne or excessive tilt cannot receive yaw aid");
   var t=typeof(DriveMath).Assembly.GetType("DriverPedalIntent");Check(t!=null,"stateful service stop exists");var gate=Activator.CreateInstance(t);var resolve=t.GetMethod("Resolve");
   Func<float,float,DriveMath.Demand> pedal=(raw,speed)=>(DriveMath.Demand)resolve.Invoke(gate,new object[]{raw,speed,false});
   Check(pedal(-1,8).brake>0,"S brakes while moving forward");Check(pedal(-1,0).motor==0,"held S cannot automatically reverse");pedal(0,0);Check(pedal(-1,0).motor<0,"release/repress S allows intentional reverse");

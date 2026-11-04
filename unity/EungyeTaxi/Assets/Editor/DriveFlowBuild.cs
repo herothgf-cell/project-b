@@ -16,7 +16,7 @@ public static class DriveFlowBuild {
    j.leftMovements.Clear();for(int i=0;i<4;i++)j.leftMovements.Add(false);Check(DriveFlowPolicy.Signals(traffic,j).Cycle==40,"no left phases at straight-only junction");
    Check(DriveFlowPolicy.Nickname("  홍길동<>\n_기사  ")=="홍길동_기사","nickname trims and removes controls/tags");Check(DriveFlowPolicy.Nickname("<>").Length==0,"empty nickname rejected by save gate");Check(DriveFlowPolicy.Nickname(new string('가',30)).Length==12,"nickname cap");
    var room=JsonUtility.FromJson<PvpNativeRoom>(JsonUtility.ToJson(new PvpNativeRoom{names=new[]{"기사하나","기사둘","",""}}));Check(room.names[1]=="기사둘","nickname wire JSON");
-   Check(DriveFlowPolicy.SteeringRate(0)==12&&DriveFlowPolicy.SteeringRate(30)==7,"prompt low/high input response");Check(DriveMath.ManualSteerAngle(60)==DriveMath.SteerAngle(60)&&DriveMath.ManualSteerAngle(0)<=52,"retain high-speed and low-speed wheel limits");
+   Check(DriveFlowPolicy.SteeringRate(0)==15&&DriveFlowPolicy.SteeringRate(30)==7,"prompt low/high input response");Check(DriveMath.ManualSteerAngle(60)==DriveMath.SteerAngle(60)&&DriveMath.ManualSteerAngle(0)<=52,"retain high-speed and low-speed wheel limits");
    Debug.Log("DRIVE_FLOW_OK checks="+checks);
   }finally{UnityEngine.Object.DestroyImmediate(root);}
  }

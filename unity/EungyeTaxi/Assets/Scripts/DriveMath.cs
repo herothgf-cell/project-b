@@ -8,11 +8,21 @@ public static class DriveMath {
         float blend=Math.Max(0,Math.Min(1,(30-speed)/16));
         float parking=Math.Min(52,SteerAngle(speedKph)*(1+.55f*blend));
         // A gradual city-speed curve; H keeps the original bicycle limit.
-        float city=speed<=20?52-speed:speed<=35?32-(speed-20)*1.3f:12.5f+(SteerAngle(50)-12.5f)*Math.Min(1,(speed-35)/15);
+        float city=speed<=20?52-speed*.6f:speed<=35?40-(speed-20)*(23f/15):17+(SteerAngle(50)-17)*Math.Min(1,(speed-35)/15);
         if(speed>=50)return parking;
         return Math.Max(parking,city);
     }
     public struct Demand { public float motor, brake; }
+    public static bool MayAssistManualYaw(int grounded,float upright,bool assisted,bool human,bool frozenSteering){return grounded>=2&&upright>.8f&&!assisted&&human&&!frozenSteering;}
+    public static float ManualYawAcceleration(float speedMs,float centerAngle,float yawRate) {
+        float speed=Math.Abs(speedMs),kph=speed*3.6f;
+        if(speed<.5f||kph>=40||Math.Abs(centerAngle)<.1f)return 0;
+        float target=Math.Max(-1.4f,Math.Min(1.4f,(float)(speedMs/2.6f*Math.Tan(centerAngle*Math.PI/180))));
+        float sign=Math.Sign(target),deficit=Math.Abs(target)-yawRate*sign;
+        if(deficit<=0)return 0;
+        float gain=4.5f*Math.Max(0,Math.Min(1,(40-kph)/20));
+        return sign*Math.Min(5.2f,deficit*gain);
+    }
     public static float SteerAngle(float speedKph) {
         float speed=Math.Abs(speedKph)/3.6f;
         return Math.Min(ParkingSteerAngle,(float)(Math.Atan(5f*2.6f/Math.Max(.1f,speed*speed))*180/Math.PI));

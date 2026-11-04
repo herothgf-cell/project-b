@@ -78,6 +78,10 @@ public class TaxiController : MonoBehaviour {
             var rollPitch=body.angularVelocity-Vector3.up*Vector3.Dot(body.angularVelocity,Vector3.up);
             body.AddTorque(tilt*35-rollPitch*8,ForceMode.Acceleration);
         }
+        // Only help a human's city turn catch up to their wheel input. Do not
+        // steer a route, spin a parked car, override H, or push airborne wheels.
+        if(DriveMath.MayAssistManualYaw(grounded,Vector3.Dot(transform.up,Vector3.up),assistedSteering,!automated||AutomatedHumanInput||NetworkPredicted,microsleep))
+            body.AddTorque(Vector3.up*DriveMath.ManualYawAcceleration(Speed,centerAngle,body.angularVelocity.y),ForceMode.Acceleration);
     }
     public void ClearPredictedPedals(){steer=throttle=motorDemand=autoSteer=autoThrottle=autoServiceBrake=0;brake=autoBrake=true;}
     public int ResetEpoch {get;private set;}
