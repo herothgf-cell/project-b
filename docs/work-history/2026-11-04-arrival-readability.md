@@ -52,3 +52,10 @@
 - 실제 지도 형상·필수 입력·OSM 대조·지도 ZIP·운임/신호/주행 물리·회사/제품/캠페인 경로는 유지한다. Unity가 생성한 DoNotShip 디버그 폴더는 artifacts로 보관해 실행 배포에서 제외한다.
 - 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`. 은계 영업/PVP 메뉴, M지도·F승하차 방식은 동일하다. 새 소스/배포 실제 해시와 manifest·main 게시 확인은 아래 후속 절에 남긴다.
 - 소스 기록은 `git log -1 --oneline -- docs/work-history/2026-11-04-arrival-readability.md`와 배포 manifest를 기준으로 확인한다.
+
+## 소스·배포 확정
+
+- 실제 소스 커밋: `6b7f054177a95f44846f14505f3bcd9a8b2883c4` (`git log -1 --oneline -- 이 기록`으로 확인). 빌드 후 코드는 바꾸지 않았고 커밋 전30개 Editor 검사를 다시 통과했다.
+- 통합 실행 폴더140파일,122,934,612바이트. 실제 위 소스 해시와 이번 `artifacts/arrival-validation.json`으로 manifest를 갱신했다. 통합/PVP VerifyOnly 모두 종료0, 전파일 크기/SHA256 일치.
+- 배포에는 Unity 생성 `FirstDrive.unity`의 Mode Selection/eungye 장면과 실행 폴더 전체를 포함한다. 생성된 Burst DoNotShip 디버그 자료는 배포 밖 artifacts에 보존했다. 지도 원본/프로젝트 지도/ZIP 변경 없음.
+- main 원격 게시 해시는 실제 push·원격 대조 후 아래 게시 영수증으로 추가한다.
