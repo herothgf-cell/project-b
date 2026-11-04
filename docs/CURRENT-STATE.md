@@ -1,8 +1,10 @@
 # 현재 구현·다른 PC 인계
 
-갱신일: **2026-11-03**. 이 문서는 현재 상태만 요약한다. 날짜별 결정·검증 증거는 [작업 이력](work-history/LATEST.md), 상세 규칙은 [콘텐츠 기획](content-design/README.md), 아이디어 전체는 [마인드맵](content-design/택시%20시뮬레이션.mmst)과 [목차](content-design/택시%20시뮬레이션-목차.md)를 따른다.
+갱신일: **2026-11-04**. 이 문서는 현재 상태만 요약한다. 날짜별 결정·검증 증거는 [작업 이력](work-history/LATEST.md), 상세 규칙은 [콘텐츠 기획](content-design/README.md), 아이디어 전체는 [마인드맵](content-design/택시%20시뮬레이션.mmst)과 [목차](content-design/택시%20시뮬레이션-목차.md)를 따른다.
 
 ## 실행·개발 기준
+
+2026-11-04 [플레이 피드백/구현 대조](future-design/2026-11-04-playtest-feedback-review.md)를 추가했다. 싱글/PVP 공통의 조작·충돌·내비/승하차·가독성·신호 개선 후보이며 아직 적용하지 않았다. 이번에는 코드·현재 실행본을 변경하지 않았다.
 
 | 항목 | 현재 기준 |
 |---|---|
