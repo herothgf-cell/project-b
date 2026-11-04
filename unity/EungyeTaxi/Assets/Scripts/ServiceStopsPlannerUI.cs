@@ -39,7 +39,7 @@ public partial class FullMapOverlay {
   return travel+"\n"+wait+"\n"+price+"\n"+effects;
  }
  void DrawFacilityPlannerSidebar(float x,float w,Rect viewport){
-  var detail=new GUIStyle(text){fontSize=14,wordWrap=true};
+  var detail=new GUIStyle(text){fontSize=MapFont(14),wordWrap=true};
   GUI.Label(new Rect(x,90,w,34),"생활시설 비교",heading);float top=132,cell=(w-12)/3;
   for(int i=0;i<plannerKinds.Length;i++){
    var old=GUI.backgroundColor;if(facilityPlannerKind==plannerKinds[i])GUI.backgroundColor=new Color(.35f,1,.8f);

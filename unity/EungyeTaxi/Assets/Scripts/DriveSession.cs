@@ -58,7 +58,7 @@ public class DriveSession : MonoBehaviour {
         var sun=new GameObject("Sun").AddComponent<Light>(); sun.type=LightType.Directional; sun.intensity=1.15f; sun.transform.rotation=Quaternion.Euler(45,-35,0); sun.shadows=LightShadows.Soft;
         gameObject.AddComponent<RoadMapEditor>().session=this;gameObject.AddComponent<RoadMapTrialSession>();gameObject.AddComponent<DriveHUD>().session=this;gameObject.AddComponent<DrivingReadability>().session=this;gameObject.AddComponent<FullMapOverlay>().session=this;
         manners=taxi.gameObject.AddComponent<DrivingManners>();manners.session=this;
-        jobs=gameObject.AddComponent<PassengerJobs>();jobs.Initialize(this);
+        jobs=gameObject.AddComponent<PassengerJobs>();jobs.Initialize(this);gameObject.AddComponent<StopArrivalPresentation>().session=this;
         if(world.map.HasHd){jobs.enabled=world.map.hybrid;assisted.hd.nav=jobs.nav;}
         paused=false;Time.timeScale=1;
         business=gameObject.AddComponent<BusinessProgress>();business.Initialize(this);gameObject.AddComponent<BusinessHUD>().session=this;

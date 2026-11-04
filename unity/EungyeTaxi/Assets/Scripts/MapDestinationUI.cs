@@ -3,7 +3,7 @@ using UnityEngine;
 
 public partial class FullMapOverlay {
  public sealed class Place {public string name,description,capabilityLabel;public Vector3 position;public MapStop approach;public int glyph;public bool roadPoint;}
- public sealed class PaintedSegment {public Vector3 a,b;public Color color;public bool passenger;}
+ public sealed class PaintedSegment {public Vector3 a,b;public Color color;public bool passenger,retained;}
  public readonly List<PaintedSegment> RoutePaint=new List<PaintedSegment>();
  List<Place> cachedPlaces;MapData placesMap;float nextPlaces;
  public JobOffer PreviewOffer {get{return selectedOffer;}}
@@ -14,7 +14,7 @@ public partial class FullMapOverlay {
  public int PreviewPointCount {get{return previewPath.Count;}}
  public string SelectedPlaceName {get{return selectedPlace==null?"":selectedPlace.name;}}
  public int[] ActiveStopPins {get{var jobs=session.jobs;if(!jobs.Active||jobs.current==null)return new int[0];return jobs.PassengerViaPending?new[]{jobs.current.pickup,jobs.current.drop,jobs.PassengerViaStop}:new[]{jobs.current.pickup,jobs.current.drop};}}
- public bool RestoreTripRoute(bool resumePickup=true){var jobs=session.jobs;if(!IsOpen||!jobs.Active||jobs.current==null)return false;if(resumePickup&&jobs.trip.State==TripState.ToPickup){jobs.ResumePickupNavigation();session.services.destination="";}selectedPlace=null;selectedOffer=null;SelectedOffer=-1;acceptFeedback="";previewPath.Clear();RefreshRoutePaint(true);if(jobs.trip.State==TripState.ToPickup)FitRoutes(jobs.nav.path,ridePath);else FitRoutes(jobs.nav.path);return true;}
+ public bool RestoreTripRoute(bool resumePickup=true){var jobs=session.jobs;if(!IsOpen||!jobs.Active||jobs.current==null)return false;if(resumePickup&&jobs.trip.State==TripState.ToPickup){jobs.ResumePickupNavigation();session.services.destination="";}selectedPlace=null;selectedOffer=null;SelectedOffer=-1;acceptFeedback="";previewPath.Clear();RefreshRoutePaint(true);if(jobs.trip.State==TripState.ToPickup)FitRoutes(jobs.nav.DisplayPath,ridePath);else FitRoutes(jobs.nav.DisplayPath);return true;}
  public List<Place> Places(){
   var map=session.world.map;if(cachedPlaces!=null&&placesMap==map&&Time.unscaledTime<nextPlaces)return cachedPlaces;placesMap=map;nextPlaces=Time.unscaledTime+1;var result=new List<Place>();
   foreach(var station in session.services.Stations)result.Add(new Place{name=station.name+" · "+station.ServiceLabel,capabilityLabel=station.ServiceLabel,position=station.pump,approach=station.approach,glyph=8,description=station.ServiceLabel+"\n입구로 진입해 주유 구역에 정차 후 F7\n연료를 최대 10%씩 추가합니다.\n"+session.services.Quote(0)+(station.SupportsWash?"\n\n"+session.services.Quote(4):"")});
@@ -36,18 +36,19 @@ public partial class FullMapOverlay {
  public void RefreshRoutePaint(bool force=false){if(session==null||session.jobs==null||!force&&Time.unscaledTime<nextPaint)return;nextPaint=Time.unscaledTime+1;var jobs=session.jobs;if(selectedOffer!=null&&(jobs.Active||SelectedOffer<0||SelectedOffer>=jobs.offers.Length||jobs.offers[SelectedOffer]!=selectedOffer)){if(!jobs.Active)acceptFeedback="호출이 갱신됐습니다 · 목록에서 다시 선택하세요";selectedOffer=null;SelectedOffer=-1;}RoutePaint.Clear();
   if(IsOpen&&selectedPlace!=null){PaintPath(previewPath,false);return;}
   if(!jobs.Active&&selectedOffer!=null){PaintPath(pickupPath,false);PaintPath(previewPath,true);return;}
-  PaintPath(jobs.nav.path,jobs.trip.State==TripState.OnTrip);
+  int firstSegment=RoutePaint.Count;PaintPath(jobs.nav.DisplayPath,jobs.trip.State==TripState.OnTrip);
+  if(jobs.nav.RetainingPreviousRoute)for(int i=firstSegment;i<RoutePaint.Count;i++)RoutePaint[i].retained=true;
   if(jobs.trip.State==TripState.ToPickup&&jobs.current!=null){if(cachedRide!=jobs.current){cachedRide=jobs.current;ridePath=jobs.nav.Find(jobs.stops[jobs.current.pickup],jobs.stops[jobs.current.drop]);}PaintPath(ridePath,true);}else cachedRide=null;
  }
 
- public string ApproachSummary {get{var jobs=session.jobs;var p=jobs.Active?jobs.nav.path:pickupPath;float d=0;for(int i=1;i<p.Count;i++)d+=Vector3.Distance(p[i-1],p[i]);return p.Count<2?"승차 경로를 찾지 못했습니다":"내 차 → 승차 · "+d.ToString("0")+"m · 하늘색 실선";}}
+ public string ApproachSummary {get{if(session.jobs.Active&&session.jobs.trip.State==TripState.ToPickup&&StopArrivalGuidance.For(session).Ready)return "승차 지점 도착 · 지도 닫고 F";if(session.jobs.nav.RetainingPreviousRoute&&session.jobs.Active)return "경로 재탐색 중 · 흐린 선은 이전 경로입니다";var jobs=session.jobs;var p=jobs.Active?jobs.nav.DisplayPath:pickupPath;float d=0;for(int i=1;i<p.Count;i++)d+=Vector3.Distance(p[i-1],p[i]);return p.Count<2?"승차 경로를 찾지 못했습니다":"내 차 → 승차 · "+d.ToString("0")+"m · 하늘색 실선";}}
  void DrawSidebar(float x,float w,Rect viewport){if(FacilityPlannerVisible){DrawFacilityPlannerSidebar(x,w,viewport);return;}var jobs=session.jobs;GUI.Label(new Rect(x,90,w,34),session.simulationMatch?"공용 호출 · 최대 8개":"주변 호출 보기 (M)",heading);float top=132;
   string demand=session.simulationMatch?"4대가 함께 선택하는 호출입니다.\n먼저 수락한 차량이 운송합니다.":PassengerDemandPolicy.Description(session.business.ledger.Elapsed);float demandHeight=text.CalcHeight(new GUIContent(demand),w);GUI.Label(new Rect(x,top,w,demandHeight),demand,text);top+=demandHeight+8;
   bool placeFacility=selectedPlace!=null&&!selectedPlace.roadPoint;int plannerKind=placeFacility?(selectedPlace.glyph==9?1:selectedPlace.glyph==10||selectedPlace.glyph==11?3:0):0;
   if(GUI.Button(new Rect(x,top,w,36),placeFacility?"이 시설·대체 시설 견적 비교":"생활시설 · 이동·대기·견적 비교",button))ShowFacilityPlanner(plannerKind);top+=44;
-  if(selectedPlace!=null){float nameHeight=text.CalcHeight(new GUIContent(selectedPlace.name),w-16);float height=nameHeight+100;KoreanText.Panel(new Rect(x,top,w,height));GUI.Label(new Rect(x+8,top+8,w-16,nameHeight),selectedPlace.name,text);float length=0;for(int i=1;i<previewPath.Count;i++)length+=Vector3.Distance(previewPath[i-1],previewPath[i]);GUI.Label(new Rect(x+8,top+nameHeight+14,w-16,30),previewPath.Count<2?"연결 경로 없음 · 차로/출구로 이동하세요":"입구까지 약 "+length.ToString("0")+"m",new GUIStyle(text){fontSize=14});bool restore=jobs.Active&&!SelectedPickupFuel;GUI.enabled=!locationOpen&&(restore||!previousPause&&previewPath.Count>1);if(GUI.Button(new Rect(x+8,top+height-48,w-16,40),restore?"운송 경로로 돌아가기":SelectedPickupFuel?"호출 유지 · 주유소 길안내":"시설 길안내 시작",button)){if(restore)RestoreTripRoute();else StartPlaceGuidance();}GUI.enabled=!locationOpen;top+=height+12;}
-  else {GUI.Label(new Rect(x,top,w,50),selectedOffer!=null||jobs.trip.State==TripState.ToPickup?ApproachSummary:"호출을 선택하세요",text);top+=54;}
-  GUI.Label(new Rect(x,top,w,28),"호출 목록",new GUIStyle(text){font=KoreanText.BoldFont,fontSize=14});top+=32;
+  if(selectedPlace!=null){float nameHeight=text.CalcHeight(new GUIContent(selectedPlace.name),w-16);float height=nameHeight+100;KoreanText.Panel(new Rect(x,top,w,height));GUI.Label(new Rect(x+8,top+8,w-16,nameHeight),selectedPlace.name,text);float length=0;for(int i=1;i<previewPath.Count;i++)length+=Vector3.Distance(previewPath[i-1],previewPath[i]);GUI.Label(new Rect(x+8,top+nameHeight+14,w-16,30),previewPath.Count<2?"연결 경로 없음 · 차로/출구로 이동하세요":"입구까지 약 "+length.ToString("0")+"m",new GUIStyle(text){fontSize=MapFont(14)});bool restore=jobs.Active&&!SelectedPickupFuel;GUI.enabled=!locationOpen&&(restore||!previousPause&&previewPath.Count>1);if(GUI.Button(new Rect(x+8,top+height-48,w-16,40),restore?"운송 경로로 돌아가기":SelectedPickupFuel?"호출 유지 · 주유소 길안내":"시설 길안내 시작",button)){if(restore)RestoreTripRoute();else StartPlaceGuidance();}GUI.enabled=!locationOpen;top+=height+12;}
+  else {GUI.Label(new Rect(x,top,w,50),selectedOffer!=null||jobs.trip.State==TripState.ToPickup?ApproachSummary:jobs.Active?"승객 운송 중 · 하차 위치 확인":"호출을 선택하세요",text);top+=54;}
+  GUI.Label(new Rect(x,top,w,28),"호출 목록",new GUIStyle(text){font=KoreanText.BoldFont,fontSize=MapFont(14)});top+=32;
   float listHeight=Mathf.Max(72,viewport.yMax-top-154),rw=w-24;string forecast=SelectedOfferForecastText;float forecastHeight=forecast.Length==0?0:text.CalcHeight(new GUIContent(forecast),rw-16)+20;float content=forecastHeight>0?forecastHeight+10:0;var rows=new System.Collections.Generic.List<string>();var indices=new System.Collections.Generic.List<int>();var heights=new System.Collections.Generic.List<float>();
   if(!jobs.Active)for(int i=0;i<jobs.offers.Length;i++){var o=jobs.offers[i];if(o==null)continue;var caption=(i+1)+"  "+KoreanText.Stop(jobs.stops[o.pickup].name)+"\n→ "+KoreanText.Stop(jobs.stops[o.drop].name)+"\n예상 운임 "+PassengerReward.AdjustedFare(o.fare,session.law.ledger.TotalScore).ToString("N0")+"원";float height=Mathf.Max(84,button.CalcHeight(new GUIContent(caption),rw-20)+24);rows.Add(caption);indices.Add(i);heights.Add(height);content+=height+10;}
   var chosen=jobs.Active?jobs.current:selectedOffer;float foot=content;if(chosen!=null)content+=100;if(jobs.Active)content+=jobs.PassengerViaPending?94:44;
@@ -57,8 +58,8 @@ public partial class FullMapOverlay {
   if(chosen!=null){if(GUI.Button(new Rect(0,foot,rw,42),"승차 · "+KoreanText.Stop(jobs.stops[chosen.pickup].name),button))FocusStop(chosen.pickup);if(GUI.Button(new Rect(0,foot+50,rw,42),"하차 · "+KoreanText.Stop(jobs.stops[chosen.drop].name),button))FocusStop(chosen.drop);}
   if(jobs.Active){if(jobs.PassengerViaPending&&GUI.Button(new Rect(0,foot+100,rw,42),"경유 · "+KoreanText.Stop(jobs.stops[jobs.PassengerViaStop].name),button))FocusStop(jobs.PassengerViaStop);GUI.Label(new Rect(0,foot+(jobs.PassengerViaPending?150:100),rw,44),"운송 완료 후 새 호출 가능",text);}GUI.EndScrollView();
   string reason=AcceptBlockedReason;string status=!string.IsNullOrEmpty(acceptFeedback)?acceptFeedback:!string.IsNullOrEmpty(reason)?reason:"선택 "+(SelectedOffer+1)+" · "+KoreanText.Stop(jobs.stops[selectedOffer.pickup].name)+"\n→ "+KoreanText.Stop(jobs.stops[selectedOffer.drop].name);
-  KoreanText.Panel(new Rect(x,viewport.yMax-150,w,94));GUI.Label(new Rect(x+8,viewport.yMax-147,w-16,88),status,new GUIStyle(text){fontSize=14,normal={textColor=string.IsNullOrEmpty(reason)?CasualUI.Ink:CasualUI.Amber}});
+  KoreanText.Panel(new Rect(x,viewport.yMax-150,w,94));GUI.Label(new Rect(x+8,viewport.yMax-147,w-16,88),status,new GUIStyle(text){fontSize=MapFont(14),normal={textColor=string.IsNullOrEmpty(reason)?CasualUI.Ink:CasualUI.Amber}});
   // Keep a blocked action clickable so its rejection is visible instead of silently disabled.
-  GUI.enabled=!locationOpen;if(GUI.Button(AcceptButtonBounds,string.IsNullOrEmpty(reason)?"호출 수락":"호출 수락",CasualUI.Action(14))){AcceptButtonClickCount++;AcceptSelected();}GUI.enabled=true;
+  GUI.enabled=!locationOpen;if(GUI.Button(LogicalAcceptButtonBounds,"호출 수락",CasualUI.Action(MapFont(15)))){AcceptButtonClickCount++;AcceptSelected();}GUI.enabled=true;
  }
 }

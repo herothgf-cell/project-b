@@ -6,6 +6,7 @@ using UnityEngine;
 public static class MapPresentation {
  public static readonly Color Land=new Color(.91f,.93f,.88f),Water=new Color(.60f,.82f,.94f),Park=new Color(.70f,.85f,.65f),Building=new Color(.82f,.84f,.87f),Road=new Color(.995f,.995f,.98f),RoadEdge=new Color(.81f,.84f,.80f);
  public static readonly Color Pickup=new Color(.04f,.40f,.94f),Passenger=new Color(.90f,.17f,.46f);
+ public static readonly Color PreviousRoute=new Color(.45f,.60f,.66f);
  public static Color RouteColor(bool passenger){return passenger?Passenger:Pickup;}
  public static Texture2D Create(MapData map,int size){
   if(map==null||map.width<=0||map.depth<=0||size<2)throw new ArgumentException("Invalid map atlas dimensions");
@@ -47,6 +48,20 @@ public static class MapPresentation {
   GUI.color=old;
  }
  static readonly Texture2D[] players=new Texture2D[72];
+ static Texture2D locationDisc;
+ public static Vector2 PlayerAnchor(Rect viewport,Vector2 point){return new Vector2(Mathf.Clamp(point.x,viewport.xMin+38,viewport.xMax-38),Mathf.Clamp(point.y,viewport.yMin+82,viewport.yMax-38));}
+ static void Disc(Vector2 p,float size,Color color){
+  if(!locationDisc){locationDisc=new Texture2D(64,64,TextureFormat.RGBA32,false){filterMode=FilterMode.Bilinear};for(int y=0;y<64;y++)for(int x=0;x<64;x++)locationDisc.SetPixel(x,y,new Color(1,1,1,Mathf.Clamp01(32-Vector2.Distance(new Vector2(x+.5f,y+.5f),Vector2.one*32))));locationDisc.Apply();}
+  var old=GUI.color;GUI.color=color;GUI.DrawTexture(new Rect(p.x-size/2,p.y-size/2,size,size),locationDisc);GUI.color=old;
+ }
+ public static void EmphasizedPlayer(Vector2 point,Vector2 forward,Rect viewport,bool pulse){
+  if(Event.current.type!=EventType.Repaint)return;var p=PlayerAnchor(viewport,point);bool outside=!viewport.Contains(point);
+  float halo=pulse?76+8*Mathf.Sin(Time.unscaledTime*6):64;
+  Disc(p,halo,new Color(.10f,.48f,1,.25f));Disc(p,56,Color.white);Disc(p,50,Pickup);Disc(p,43,Color.white);
+  Player(p,outside?(point-p).normalized:forward,38);
+  var label=new Rect(Mathf.Clamp(p.x-74,viewport.xMin,viewport.xMax-148),Mathf.Clamp(p.y+31,viewport.yMin,viewport.yMax-31),148,28);
+  CasualUI.Panel(label);GUI.Label(label,outside?"내 차 · 지도 밖":"내 위치",new GUIStyle(GUI.skin.label){font=KoreanText.BoldFont,fontSize=17,alignment=TextAnchor.MiddleCenter,normal={textColor=CasualUI.Blue}});
+ }
  public static void Player(Vector2 center,Vector2 forward,float size=30){
   if(Event.current.type!=EventType.Repaint)return;
   int index=Mathf.RoundToInt(Mathf.Repeat(Mathf.Atan2(forward.x,-forward.y)*Mathf.Rad2Deg,360)/5)%72;
