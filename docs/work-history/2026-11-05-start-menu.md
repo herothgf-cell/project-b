@@ -40,3 +40,15 @@ tracked 변경 없이 시작해 기존 Unity 캐시와 미추적 자료를 보�
 ## 재현
 
 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 싱글·A2 PVP/LAN v3. 새 저장과 기존 저장의 화면은 임시 저장을 사용하는 `-unifiedModeCheck -unifiedModeCaptureOutput <캡처 폴더>`로 검사한다. 개발 Unity 2022.3.62f2에서 `-executeMethod UnifiedModeTests.Build`는 집중 메뉴/저장 회귀 후 `PrototypeBuild.BuildHybrid`를 호출한다. 일반 실행은 사용자의 기존 캠페인을 복원하므로 최초 화면 확인을 위해 실제 사용자 저장을 삭제하지 않는다.
+
+## 최종 실행·배포 확정
+
+- 실제 소스 `618c504e2e7e9458063d59032c286de3ef985d8a`. `git log -1 --oneline -- docs/work-history/2026-11-05-start-menu.md`에서 실제 커밋을 확인했다. 제품 소스 구현은3230317, 후속618c504는 검증 fixture 수정과 빌드 생성 scene/기록이다.
+- 최종 명령: `builds/EungyeTaxi/EungyeTaxi.exe -unifiedModeCheck -unifiedModeCaptureOutput C:/git/project-b/artifacts/start-menu-captures-final -screen-width 1280 -screen-height 720 -screen-fullscreen 0 -force-d3d11 -logFile C:/git/project-b/artifacts/start-menu-player-final.log`. 각 PC의 절대 경로는 로컬 환경 정보다.
+- 실제 Player exit0·UNIFIED_MODE_RESULT PASS, **38 assertions/실패0**. 최초 시작 한 번으로 운행, 실제 운행 저장/정지 상태 복원·계속하기, 초기화 취소·같은 캠페인 유지, 잘못된 원본/백업 보존, PVP4대·재시작/모드 복귀를 확인했다. 준비 상태 복원 분기는 집중 Editor에서 별도 확인했으며 최종 Player는 실제 운행 저장 복원이다.
+- [모드 선택](../ui/2026-11-05-start-menu/01-mode-selection.png), [최초 시작](../ui/2026-11-05-start-menu/04-single-preparation.png), [복원 메뉴](../ui/2026-11-05-start-menu/05-single-restored-menu.png), [일시정지](../ui/2026-11-05-start-menu/06-single-paused-menu.png)의 실제1280×720 PNG를 직접 열어 확인했다. 앞선 실패 캡처와 다른 최종 폴더다. 자동 호출은 실제 버튼에 연결된 production 메서드이며 물리 마우스 클릭/수동 도로 주행 검사는 아니다.
+- 사용자 종료 후 기준4파일 SHA256과 최종 전수 비교 변경0·새 사용자 저장 생성0. 사용자 플레이 중 저장과 종료 저장을 되돌리지 않았다.
+- `artifacts/start-menu-validation.json`과 실제 소스로 manifest 갱신. `pwsh -File tools/update_distribution_manifest.ps1 -VerifyOnly` 및 `pwsh -File tools/update_pvp_distribution_manifest.ps1 -VerifyOnly` 각각 **exit0·140파일/115,500,849바이트**, 크기/SHA256 전수 일치. 최종 빌드가 다시 생성한 DoNotShip 폴더도 절대 경로 확인 후 `artifacts/start-menu-burst-debug-final`로 보존했다.
+- 별도 LAN 프로세스·다른PC/실물 패드·장시간/전체 캠페인 검사는 이번에 반복하지 않았다. 지도·조향·운송·프로토콜·저장 경로의 변경은 없다.
+- 최종 관련5문서 로컬 링크135개 누락0, `git diff --check` 통과·사용자 종료 저장4파일 최종 SHA256 재대조 변경0.
+- 소스·기획·체크리스트·이력과 실행 폴더/manifest·선별 화면은 로컬 `codex/simplify-start-menu`에 커밋한다. 원격 push/통합은 이번 요청에 포함하지 않았다. 이 기록의 최신 실제 커밋은 위 `git log` 명령으로 확인한다.

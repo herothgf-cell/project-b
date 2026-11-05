@@ -15,10 +15,10 @@
 
 ## 작업
 
-- [ ] 기존 UnifiedModeTests에 새 캠페인/저장 복원/운행 중 메뉴 구분 검사 추가, 실제 실패 확인.
-- [ ] BusinessProgress에 메뉴 상태와 시작/복귀 행동 연결. DriveHUD의 공통 싱글 메뉴를 준비 상태에서도 사용, OneDayHUD 중복 준비 화면 제거. 모드 문구/설명 변경.
-- [ ] 집중 Editor·저장/통합 모드 회귀, BuildHybrid 실행. 임시 저장을 사용하는 UnifiedModeProbe에서 최초 시작·복원·취소를 확인하고 화면 캡처.
-- [ ] 사용자 저장 보존, 정식 실행 폴더/manifest 검증, 기획·체크리스트·이력/LATEST와 실제 소스 커밋 기록.
+- [x] 기존 UnifiedModeTests에 새 캠페인/저장 복원/운행 중 메뉴 구분 검사 추가, 실제 실패 확인.
+- [x] BusinessProgress에 메뉴 상태와 시작/복귀 행동 연결. DriveHUD의 공통 싱글 메뉴를 준비 상태에서도 사용, OneDayHUD 중복 준비 화면 제거. 모드 문구/설명 변경.
+- [x] 집중 Editor·저장/통합 모드 회귀, BuildHybrid 실행. 임시 저장을 사용하는 UnifiedModeProbe에서 최초 시작·복원·취소를 확인하고 화면 캡처.
+- [x] 사용자 저장 보존, 정식 실행 폴더/manifest 검증, 기획·체크리스트·이력/LATEST와 실제 소스 커밋 기록.
 
 ## 점검 초점
 
