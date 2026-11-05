@@ -16,7 +16,7 @@ using Unity.Collections;
 // Trusted LAN, host-authoritative native WheelCollider simulation. No client pose/fare authority.
 [DefaultExecutionOrder(-110)]
 public sealed class PvpNativeLan:MonoBehaviour {
- public const string Protocol="native-city-lan-v3";
+ public const string Protocol="native-city-lan-v4";
  public static PvpNativeLan Instance {get;private set;}
  public static bool ApplyingReplica;
  public PvpSimulationMatch Match {get;private set;}
@@ -43,7 +43,7 @@ public sealed class PvpNativeLan:MonoBehaviour {
  public static bool WaitingForWorld {get{return Instance&&!Instance.stopping&&Instance.Started&&!Instance.Racing;}}
  public static bool IsReplica(DriveSession s){return s&&Instance&&!Instance.IsHost&&!Instance.stopping&&s.business&&s.business.SimulationSession;}
  public static bool IsRemoteHuman(DriveSession s){if(!s||!Instance||!Instance.IsHost||!Instance.Match)return false;int slot=Instance.Match.DriverIndex(s);return slot>0&&Instance.seats[slot]!=null&&Instance.seats[slot].connected&&Instance.seats[slot].ready;}
- public static bool UiBlocked(DriveSession s){if(!s||!Instance||s.simulationMatch!=Instance.Match)return false;if(WaitingForWorld)return true;if(s==Instance.Match.Human)return Instance.MenuOpen||s.RideResultOpen||s.FullMapOpen||s.services.open||s.law.HistoryOpen;if(Instance.IsHost){int slot=Instance.Match.DriverIndex(s);return slot>=0&&Instance.seats[slot]!=null&&Instance.seats[slot].connected&&Instance.seats[slot].blocked;}return false;}
+ public static bool UiBlocked(DriveSession s){if(s&&s.accident&&s.accident.Locked)return true;if(!s||!Instance||s.simulationMatch!=Instance.Match)return false;if(WaitingForWorld)return true;if(s==Instance.Match.Human)return Instance.MenuOpen||s.RideResultOpen||s.FullMapOpen||s.services.open||s.law.HistoryOpen;if(Instance.IsHost){int slot=Instance.Match.DriverIndex(s);return slot>=0&&Instance.seats[slot]!=null&&Instance.seats[slot].connected&&Instance.seats[slot].blocked;}return false;}
  public static bool HandleEscape(DriveSession s){if(!RunningOnline||s!=Instance.Match.Human||!(Input.GetKeyDown(KeyCode.Escape)||Input.GetKeyDown(KeyCode.JoystickButton7)))return false;Instance.ToggleMenu();return true;}
  public static bool Route(DriveSession s,string action,int value=0,string token=""){
   if(ApplyingReplica||!IsReplica(s))return false;

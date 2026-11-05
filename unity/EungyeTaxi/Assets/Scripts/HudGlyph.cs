@@ -1,7 +1,7 @@
 using UnityEngine;
 // Small geometric glyphs: no emoji/font dependency. IDs: facility, traffic, law, location, wallet, profit.
 public static class HudGlyph {
- static readonly Texture2D[] cache=new Texture2D[12];static Texture2D drawing;
+ static readonly Texture2D[] cache=new Texture2D[13];static Texture2D drawing;
  public static void Draw(Rect r,int kind,Color c){if(cache[kind]==null){drawing=new Texture2D(24,24,TextureFormat.RGBA32,false);drawing.SetPixels(new Color[24*24]);
   if(kind==0){Box(3,10,18,12);Line(2,10,12,2);Line(12,2,22,10);Box(10,15,4,7,true);}
   else if(kind==1){Box(3,6,18,12);Box(5,3,14,5);Box(4,18,4,4);Box(16,18,4,4);Box(6,8,12,5,true);}
@@ -14,6 +14,7 @@ public static class HudGlyph {
   else if(kind==8){Box(4,3,12,18);Box(6,5,8,6,true);Line(16,9,21,12);Line(21,12,21,20);Line(21,20,17,20);Line(2,22,19,22);}
   else if(kind==9){Line(5,2,5,22);Line(2,2,2,8);Line(8,2,8,8);Line(2,8,8,8);Line(18,2,18,22);Line(18,2,14,8);Line(14,8,18,11);}
   else if(kind==10){Line(7,21,7,3);Line(7,3,16,3);Line(16,3,19,6);Line(19,6,19,11);Line(19,11,7,11);}
+  else if(kind==12){Line(3,21,15,9);Line(5,23,17,11);Line(15,9,12,5);Line(12,5,14,1);Line(14,1,17,5);Line(17,5,20,2);Line(20,2,23,7);Line(23,7,20,11);Line(20,11,17,11);}
   else {Line(2,6,2,22);Line(22,10,22,22);Line(2,17,22,17);Box(4,8,5,6);Box(10,11,10,4);}
   drawing.Apply();cache[kind]=drawing;drawing=null;}
   var old=GUI.color;GUI.color=c;GUI.DrawTexture(r,cache[kind]);GUI.color=old;

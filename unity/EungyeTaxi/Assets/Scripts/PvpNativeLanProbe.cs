@@ -92,7 +92,7 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   yield return Until(()=>lan.ConnectedGuests==0,"guest disconnect observed",40);
   Check(match.Drivers[1]==guest&&guest.taxi==car&&car.GetInstanceID()==carId&&guest.GetComponent<PvpSimulationBot>().enabled,"disconnect hands same original taxi to native bot");
   Check(guest.jobs.current!=null&&guest.jobs.current.candidateSeed==model.offer&&match.Ledger.Available(pickup,1),"disconnect preserves accepted passenger and exclusive claim");Mark("takeover");
-  if(reconnect){yield return Until(()=>lan.ConnectedGuests==1&&Has("reconnected"),"same-process ticket reconnect completes",80);Check(match.Drivers[1]==guest&&guest.taxi==car&&!guest.GetComponent<PvpSimulationBot>().enabled,"ticket reconnect reclaims same host taxi");Mark("reconnect-checked");yield return Until(()=>lan.ConnectedGuests==0,"reconnected guest exits cleanly",40);}
+  if(reconnect){yield return Until(()=>lan.ConnectedGuests==1&&Has("reconnected"),"same-process ticket reconnect completes",80);Check(match.Drivers[1]==guest&&guest.taxi==car&&!guest.GetComponent<PvpSimulationBot>().enabled,"ticket reconnect reclaims same host taxi");Mark("reconnect-checked");yield return HostAccident(guest);yield return Until(()=>lan.ConnectedGuests==0,"reconnected guest exits cleanly",40);}
   yield return Until(()=>Has("client-clean"),"client returns to clean mode menu",40);metrics.elapsed=match.Elapsed;
  }
  IEnumerator Client(){
@@ -163,7 +163,28 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeRenderCheck")>=0){bool captured=false;StartCoroutine(CaptureFrame(()=>captured=true,"client-notices.png"));yield return Until(()=>captured,"notification card render captured",8);}
   Mark("notice-checked");
   int slot=lan.LocalSlot;lan.ProbeInput=null;lan.LeaveToMenu();yield return Until(()=>Has("takeover"),"host confirms same-car bot takeover",40);
-  if(reconnect){yield return Bootstrap();yield return Until(()=>lan.Racing&&lan.Match&&lan.HasOwnFrame,"reconnect world ready",100);Check(lan.LocalSlot==slot,"same-process reconnect retains ticket seat");Mark("reconnected");yield return Until(()=>Has("reconnect-checked"),"host confirms reconnect identity");lan.LeaveToMenu();}
+  if(reconnect){yield return Bootstrap();yield return Until(()=>lan.Racing&&lan.Match&&lan.HasOwnFrame,"reconnect world ready",100);Check(lan.LocalSlot==slot,"same-process reconnect retains ticket seat");Mark("reconnected");yield return Until(()=>Has("reconnect-checked"),"host confirms reconnect identity");yield return ClientAccident();lan.LeaveToMenu();}
+ }
+ IEnumerator HostAccident(DriveSession guest){
+  guest.taxi.body.velocity=Vector3.zero;guest.taxi.body.angularVelocity=Vector3.zero;guest.accident.Suppress(0);
+  int prior=guest.business.ledger.Account.Expense(1,"accident");float start=lan.Match.Elapsed;
+  Check(guest.accident.ReportContact("ambient:lan-fixture"),"host creates guest accident once");
+  yield return Until(()=>guest.accident.State.chargeApplied,"host settles accident cost",10);
+  Mark("accident-cost",new Model{cash=prior,trip=guest.accident.State.eventId});
+  yield return Until(()=>Has("accident-view"),"guest sees accident lock and fee",12);
+  Check(guest.accident.Locked&&guest.business.ledger.Account.Expense(1,"accident")==prior+3000,"guest reset commands do not evade accident");
+  yield return Until(()=>!guest.accident.Locked,"host releases only after actual45 second treatment",55);
+  Check(lan.Match.Elapsed-start>=44.9f&&guest.business.ledger.Account.Expense(1,"accident")==prior+3000,"shared clock and exactly one accident expense");
+  Mark("accident-complete");yield return Until(()=>Has("accident-view-complete"),"guest receives completed event",12);
+ }
+ IEnumerator ClientAccident(){
+  yield return Until(()=>Has("accident-cost")&&lan.Match.Human.accident.Locked,"replicated accident modal",15);
+  var model=JsonUtility.FromJson<Model>(File.ReadAllText(FileFor("accident-cost")));var own=lan.Match.Human;
+  yield return Until(()=>own.business.ledger.Account.Expense(1,"accident")==model.cash+3000,"replicated3000 fee",10);
+  Check(own.accident.State.eventId==model.trip&&PvpNativeLan.UiBlocked(own),"same event identity and local predicted controls blocked");
+  own.taxi.RequestReset();Check(!own.jobs.Interact(),"cannot board while processing");Mark("accident-view");
+  yield return Until(()=>Has("accident-complete")&&!own.accident.Locked,"replicated treatment completion",60);
+  Check(own.business.ledger.Account.Expense(1,"accident")==model.cash+3000,"repeated snapshots never duplicate fee");Mark("accident-view-complete");
  }
  IEnumerator CaptureFrame(Action done,string name=null){yield return new WaitForEndOfFrame();var texture=ScreenCapture.CaptureScreenshotAsTexture();File.WriteAllBytes(Path.Combine(directory,name??metrics.role+"-render.png"),texture.EncodeToPNG());Destroy(texture);done();}
  IEnumerator Cleanup(){

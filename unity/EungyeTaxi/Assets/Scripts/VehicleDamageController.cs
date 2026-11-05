@@ -18,7 +18,7 @@ public sealed class VehicleImpactMotion : MonoBehaviour {
 
 public sealed class VehicleDamageController : MonoBehaviour {
     public DriveSession session;
-    public sealed class Bay {public string id;public Vector3 position,direction;}
+    public sealed class Bay {public string id;public Vector3 position,direction;public bool legacy;}
     public readonly List<Bay> Bays=new List<Bay>();
     readonly HashSet<Collider> contacts=new HashSet<Collider>();
     public int ContactCount {get{return contacts.Count;}}
@@ -26,6 +26,42 @@ public sealed class VehicleDamageController : MonoBehaviour {
     public string Notice {get;private set;}
     float noticeUntil,disabledSince=-1,fadeUntil;
     bool baysBuilt;
+    int pendingWorkshopKind;float pendingWorkshopSeconds;string pendingWorkshopId;Bay pendingWorkshopBay;Vector3 pendingWorkshopPosition;float repairedAt=-1;WorkshopLayout.Site repairedSite;
+    public float PendingServiceRemaining {get{return pendingWorkshopKind==0?0:Mathf.Max(.001f,pendingWorkshopSeconds);}}
+    public void CancelPendingService(){if(pendingWorkshopKind==2)Reservations.Release(GetInstanceID());pendingWorkshopKind=0;pendingWorkshopSeconds=0;pendingWorkshopId=null;pendingWorkshopBay=null;}
+    bool BeginWorkshopService(int kind,float seconds,Bay bay=null){pendingWorkshopKind=kind;pendingWorkshopSeconds=seconds;pendingWorkshopBay=bay;pendingWorkshopPosition=transform.position;pendingWorkshopId=session.law.ids.Next(kind==1?"repair":"tow");session.assisted.SetActive(false);session.taxi.body.velocity=Vector3.zero;session.taxi.body.angularVelocity=Vector3.zero;session.taxi.autoThrottle=0;session.taxi.autoBrake=true;Notice=(kind==1?"공업사 수리":"공업사 견인")+" 진행 중 · 완료 시 결제";return true;}
+    public bool AdvancePendingService(float seconds){
+        if(pendingWorkshopKind==0)return false;
+        if(!session.simulationMatch||session.simulationMatch.Finished||session.simulationMatch.Remaining<=0||session.business.ShowingSummary){CancelPendingService();return false;}
+        if(session.accident&&session.accident.Locked){CancelPendingService();return false;}
+        if(Vector3.Distance(transform.position,pendingWorkshopPosition)>2){CancelPendingService();Notice="서비스 중단 · 결제 없음";return false;}
+        if(float.IsNaN(seconds)||float.IsInfinity(seconds)||seconds<=0)return true;
+        float step=Mathf.Min(seconds,session.simulationMatch.Remaining);if(pendingWorkshopSeconds>0)step=Mathf.Min(step,pendingWorkshopSeconds);session.business.ledger.AdvanceAccidentProcessing(step);pendingWorkshopSeconds=Mathf.Max(0,pendingWorkshopSeconds-step);
+        if(pendingWorkshopSeconds>0)return true;
+        if(pendingWorkshopKind==2&&!BayClear(pendingWorkshopBay)){Notice="예약한 견인칸이 점유 중입니다 · 빈 공간 확인 후 완료 · 아직 결제 없음";return true;}
+        int kind=pendingWorkshopKind;var bay=pendingWorkshopBay;string id=pendingWorkshopId;
+        bool done=kind==1?session.business.ledger.CompletePvpRepair(id):session.business.ledger.CompletePvpTow(id,bay.id);
+        if(!done){CancelPendingService();Notice="서비스 중단 · 결제 없음";return true;}
+        pendingWorkshopKind=0;pendingWorkshopSeconds=0;pendingWorkshopBay=null;pendingWorkshopId=null;
+        if(kind==1){NotifyWorkshopRepairCompleted();TechnicalRecovery();Notice="공업사 수리 완료 · 내구도 100 · 출차해 주세요";}
+        else {PlaceTow(bay);Notice="공업사 견인 완료 · 수리는 별도입니다";}
+        noticeUntil=Time.unscaledTime+6;session.business.SaveCheckpoint();return true;
+    }
+    void PlaceTow(Bay bay){session.taxi.SetSpawn(bay.position+Vector3.up*.15f,Quaternion.LookRotation(bay.direction));session.taxi.ResetTaxi();session.jobs.nav.Clear();fadeUntil=Time.unscaledTime+.4f;}
+    public void NotifyWorkshopRepairCompleted(){
+        Reservations.Release(GetInstanceID());repairedAt=Time.time;repairedSite=null;
+        foreach(var site in session.services.Workshops)if(Vector3.Distance(transform.position,site.repair)<16){repairedSite=site;break;}
+        if(session.IsSimulationBot&&repairedSite!=null){var bot=session.GetComponent<PvpSimulationBotServices>()??session.gameObject.AddComponent<PvpSimulationBotServices>();bot.LeaveWorkshop(session,repairedSite);}
+    }
+    void ClearRepairedBay(){
+        if(!session.simulationMatch||session.IsSimulationBot||repairedAt<0||Time.time-repairedAt<10||repairedSite==null||PendingServiceRemaining>0)return;
+        if(Vector3.Distance(transform.position,repairedSite.repair)>16||session.taxi.body.velocity.magnitude>.56f){repairedAt=-1;return;}
+        var exit=new Bay{id=repairedSite.id+":departure",position=repairedSite.repair+repairedSite.direction*13+TrafficSystem.Right(repairedSite.direction)*5,direction=repairedSite.direction};
+        if(!BayClear(exit))return;session.taxi.SetSpawn(exit.position+Vector3.up*.15f,Quaternion.LookRotation(exit.direction));session.taxi.ResetTaxi();repairedAt=-1;Notice="정비칸을 비웠습니다 · 같은 공업사 출차 공간에서 운행을 재개하세요";noticeUntil=Time.unscaledTime+6;
+    }
+    static readonly System.Runtime.CompilerServices.ConditionalWeakTable<MapData,WorkshopReservations> reservations=new System.Runtime.CompilerServices.ConditionalWeakTable<MapData,WorkshopReservations>();
+    WorkshopReservations Reservations {get{return reservations.GetOrCreateValue(session.world.map);}}
+    void OnDestroy(){if(session&&session.world&&session.world.map!=null)Reservations.Release(GetInstanceID());}
     public bool RestoringReservedBay {get;private set;}
     float nextRestoreAttempt;
     public VehicleDamage Damage {get{return session.business.ledger.Care.Damage;}}
@@ -67,16 +103,18 @@ public sealed class VehicleDamageController : MonoBehaviour {
         if(!Disabled){disabledSince=-1;return;}
         if(disabledSince<0)disabledSince=Time.time;
         if(session.paused||Time.timeScale<=0)return;
-        if(session.taxi.body.velocity.magnitude<.56f)session.jobs.ResolveVehicleFailure();
+        if(!(session.accident&&session.accident.Locked)&&session.taxi.body.velocity.magnitude<.56f)session.jobs.ResolveVehicleFailure();
     }
     public void BuildBays(){
         if(baysBuilt||!session||!session.services)return;baysBuilt=true;
+        var workshops=session.services.Workshops;WorkshopLayout.Draw(session.world.map,session.world.transform);
+        foreach(var workshop in workshops)for(int i=0;i<workshop.tow.Length;i++)Bays.Add(new Bay{id=workshop.id+":tow:"+i,position=workshop.tow[i],direction=workshop.direction});
         foreach(var station in session.services.Stations){if(!station.SupportsRepair)continue;
             var position=station.pump+station.direction*13+TrafficSystem.Right(station.direction)*4;
             // A dedicated space entirely inside the existing service forecourt.
             bool inside=true;foreach(float x in new[]{-1.5f,1.5f})foreach(float z in new[]{-2.8f,2.8f})if(!Inside(position+TrafficSystem.Right(station.direction)*x+station.direction*z,station.plot))inside=false;
             foreach(var stop in session.jobs.stops)if(Vector3.Distance(position,stop.Kerb)<6)inside=false;
-            if(!inside)continue;var bay=new Bay{id="repair:"+station.id,position=position,direction=station.direction};Bays.Add(bay);
+            if(!inside)continue;var bay=new Bay{id="repair:"+station.id,position=position,direction=station.direction,legacy=workshops.Count>0};Bays.Add(bay);if(bay.legacy)continue;
             var root=new GameObject("견인 전용 정비 공간 "+bay.id);root.transform.position=position;root.transform.rotation=Quaternion.LookRotation(bay.direction);
             var paint=WorldBuilder.Mat("Repair bay orange",new Color(1,.55f,.1f));
             foreach(float x in new[]{-1.5f,1.5f})WorldBuilder.Box("정비 전용선",new Vector3(x,.06f,0),new Vector3(.12f,.02f,5.6f),paint,root.transform,false);
@@ -85,6 +123,10 @@ public sealed class VehicleDamageController : MonoBehaviour {
     }
     static bool Inside(Vector3 p,Vector3[] ring){bool inside=false;for(int i=0,j=ring.Length-1;i<ring.Length;j=i++){var a=ring[i];var b=ring[j];if((a.z>p.z)!=(b.z>p.z)&&p.x<(b.x-a.x)*(p.z-a.z)/(b.z-a.z)+a.x)inside=!inside;}return inside;}
     public bool BayClear(Bay bay){
+        if(!Reservations.Available(bay.id,GetInstanceID()))return false;
+        // Paid reservations survive temporary displacement; other drivers cannot
+        // claim that empty-looking bay. Shared map identity also scopes LAN hosts.
+        foreach(var other in FindObjectsOfType<VehicleDamageController>())if(other!=this&&other.session&&other.session.world&&ReferenceEquals(other.session.world.map,session.world.map)&&other.session.business&&other.session.business.ledger!=null&&other.Damage.RepairBayId==bay.id)return false;
         foreach(var collider in Physics.OverlapBox(bay.position+Vector3.up*.65f,new Vector3(1.3f,.5f,2.5f),Quaternion.LookRotation(bay.direction),~0,QueryTriggerInteraction.Ignore)){
             if(collider.attachedRigidbody==session.taxi.body||collider.bounds.max.y<=bay.position.y+.16f)continue;
             return false;
@@ -96,7 +138,7 @@ public sealed class VehicleDamageController : MonoBehaviour {
     public bool RestoreReservedBay(bool checkpoint=true){
         BuildBays();if(!Damage.Disabled||string.IsNullOrEmpty(Damage.RepairBayId)){RestoringReservedBay=false;return false;}
         var bay=CurrentBay;
-        if(bay==null){Damage.LeaveRepairBay();RestoringReservedBay=false;Notice="저장된 정비 공간이 현재 지도에 없습니다 · 견인 지원을 확인해 주세요";return false;}
+        if(bay==null){RestoringReservedBay=true;Notice="저장된 정비 공간이 현재 지도에 없습니다 · 견인 지원을 확인해 주세요";return false;}
         if(AtRepairBay){RestoringReservedBay=false;return true;}
         RestoringReservedBay=true;
         if(!BayClear(bay)){Notice="이미 지불한 정비 공간 복원 대기 · 공간이 비면 복귀 · 추가 요금 없음";return false;}
@@ -104,26 +146,30 @@ public sealed class VehicleDamageController : MonoBehaviour {
         session.taxi.SetSpawn(bay.position+Vector3.up*.15f,Quaternion.LookRotation(bay.direction));session.taxi.ResetTaxi();RestoringReservedBay=false;
         Notice="이미 지불한 정비 공간 복원 완료 · 추가 견인비/시간 없음";noticeUntil=Time.unscaledTime+6;if(checkpoint)session.business.SaveCheckpoint();return true;
     }
-    void Update(){if(PvpNativeLan.IsReplica(session))return;if(!session||!session.business||session.business.ledger==null)return;if(!Damage.Disabled||string.IsNullOrEmpty(Damage.RepairBayId)){RestoringReservedBay=false;return;}if(Campaign&&!AtRepairBay&&Time.unscaledTime>=nextRestoreAttempt){nextRestoreAttempt=Time.unscaledTime+.5f;RestoreReservedBay();}}
-    public bool CanRepair {get{return !(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))&&Campaign&&session.business.ledger.Operating&&Damage.Durability<100&&session.jobs.trip.State!=TripState.OnTrip&&(PvpNativeLan.IsReplica(session)?Mathf.Abs(session.taxi.Speed):session.taxi.body.velocity.magnitude)<.56f&&(AtRepairBay||session.services.AtRepairPump());}}
+    void Update(){if(PvpNativeLan.IsReplica(session))return;if(session&&session.simulationMatch&&session.simulationMatch.Finished)CancelPendingService();if(session)ClearRepairedBay();if(!session||!session.business||session.business.ledger==null)return;if(!Damage.Disabled||string.IsNullOrEmpty(Damage.RepairBayId)){if(PendingServiceRemaining<=0)Reservations.Release(GetInstanceID());RestoringReservedBay=false;return;}if(Campaign&&!AtRepairBay&&Time.unscaledTime>=nextRestoreAttempt){nextRestoreAttempt=Time.unscaledTime+.5f;RestoreReservedBay();}}
+    public bool CanRepair {get{return !(session.accident&&session.accident.Locked)&&PendingServiceRemaining<=0&&!(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))&&Campaign&&session.business.ledger.Operating&&Damage.Durability<100&&session.jobs.trip.State!=TripState.OnTrip&&(PvpNativeLan.IsReplica(session)?Mathf.Abs(session.taxi.Speed):session.taxi.body.velocity.magnitude)<.56f&&(AtRepairBay||session.services.AtRepairPump());}}
     public string RepairQuote {get{return "내구도 "+Damage.Durability+" → 100\n수리 "+Damage.RepairCost.ToString("N0")+"원 · "+Damage.RepairSeconds.ToString("0.#")+"초 (부족분 미납)\n청결·연료 유지 · 엔진 정지";}}
     public bool Repair(){
         if(PvpNativeLan.Route(session,"repair"))return true;
-        if(!CanRepair)return false;double seconds=Damage.RepairSeconds;int cost=Damage.RepairCost;
+        if(!CanRepair||!AtRepairBay&&!session.services.AdmitRepair())return false;double seconds=Damage.RepairSeconds;int cost=Damage.RepairCost;
+        if(session.simulationMatch)return BeginWorkshopService(1,(float)seconds);
         if(!session.business.ledger.UseRepair(session.law.ids.Next("repair")))return false;
+        NotifyWorkshopRepairCompleted();
         session.jobs.AdvancePickupWait((float)seconds);TechnicalRecovery();Notice="수리 완료 · 내구도 100 · "+cost.ToString("N0")+"원 / "+seconds.ToString("0.#")+"초";noticeUntil=Time.unscaledTime+6;session.business.SaveCheckpoint();return true;
     }
-    public bool Tow(){if(PvpNativeLan.Route(session,"tow"))return true;if(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))return false;
+    public bool Tow(){if(PvpNativeLan.Route(session,"tow"))return true;if(session.accident&&session.accident.Locked||PendingServiceRemaining>0)return false;if(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))return false;
         if(!Campaign||!Disabled||!session.business.ledger.Operating||session.business.ShowingSummary||AtRepairBay||RestoringReservedBay||session.FullMapOpen)return false;
         if(session.taxi.body.velocity.magnitude>=.56f&&Time.time-disabledSince<5){Notice="제동 후 정차하면 견인할 수 있습니다";return false;}
-        Bay free=null;float distance=float.MaxValue;foreach(var bay in Bays)if(BayClear(bay)){float d=(bay.position-transform.position).sqrMagnitude;if(d<distance){free=bay;distance=d;}}
+        Bay free=null;float distance=float.MaxValue;foreach(var bay in Bays)if(!bay.legacy&&BayClear(bay)){float d=(bay.position-transform.position).sqrMagnitude;if(d<distance){free=bay;distance=d;}}
         if(free==null){Notice="견인 전용 공간이 사용 중입니다 · 비면 다시 신청해 주세요";return false;}
         // No yields between reservation, accounting, placement and durable checkpoint.
         session.taxi.body.velocity=Vector3.zero;session.taxi.body.angularVelocity=Vector3.zero;
         bool fixedArrival=session.jobs.trip.State==TripState.OnTrip&&session.jobs.trip.ArrivalLocked;
         if(!fixedArrival)session.jobs.ResolveVehicleFailure();
         if(session.jobs.Active&&!fixedArrival){Notice="승객의 안전 하차를 확인하고 다시 신청해 주세요";return false;}
-        if(!session.business.ledger.UseTow(session.law.ids.Next("tow"),free.id))return false;
+        if(!Reservations.TryReserve(free.id,GetInstanceID(),BayClear(free)))return false;
+        if(session.simulationMatch)return BeginWorkshopService(2,30,free);
+        if(!session.business.ledger.UseTow(session.law.ids.Next("tow"),free.id)){Reservations.Release(GetInstanceID());return false;}
         session.taxi.SetSpawn(free.position+Vector3.up*.15f,Quaternion.LookRotation(free.direction));session.taxi.ResetTaxi();session.jobs.nav.Clear();fadeUntil=Time.unscaledTime+.4f;
         if(fixedArrival)session.jobs.ResolveVehicleFailure();
         Notice="견인 완료 · 3,000원 / 30초 · "+(session.jobs.Active?"확정 운임 유지 · 안전 하역 후 수리":"수리는 별도입니다");noticeUntil=Time.unscaledTime+6;session.business.SaveCheckpoint();return true;
@@ -141,7 +187,11 @@ public sealed class VehicleDamageController : MonoBehaviour {
         if(!Campaign||session.business.preparing||session.business.ShowingSummary||session.RideResultOpen||session.FullMapOpen||session.PracticeMenuOpen)return;
         var style=new GUIStyle(GUI.skin.label){fontSize=16,wordWrap=true};style.normal.textColor=CasualUI.Ink;GUI.depth=-140;
         if(Time.unscaledTime<noticeUntil&&!Disabled)GUI.Label(new Rect(Screen.width/2-230,165,460,65),Notice,style);
-        if(Disabled&&!session.services.open&&!session.paused){
+        if(!Disabled&&Damage.Durability<=50&&!session.jobs.Active&&!session.paused&&!session.services.open&&!(session.accident&&session.accident.Locked)&&PendingServiceRemaining<=0){
+            if(GUI.Button(new Rect(Screen.width/2-145,226,290,34),"내구도 "+Damage.Durability+" · 공업사 비교/길안내"))session.services.OpenFacilityPlanner(5);
+        }
+        if(PendingServiceRemaining>0){GUI.depth=-151;CasualUI.Panel(new Rect(Screen.width/2-260,160,520,90));GUI.Label(new Rect(Screen.width/2-245,172,490,65),Notice+"\n남은 "+PendingServiceRemaining.ToString("0.0")+"초 · 경기는 계속 진행됩니다",style);return;}
+        if(Disabled&&!(session.accident&&session.accident.Locked)&&!session.services.open&&!session.paused){
             float w=Mathf.Min(580,Screen.width-30),x=(Screen.width-w)/2,y=(Screen.height-290)/2;GUI.depth=-150;CasualUI.Panel(new Rect(x,y,w,290));
             GUI.Label(new Rect(x+18,y+12,w-36,110),"차량 내구도 0 · 운행 불가\n"+(AtRepairBay?RepairQuote:"정차 후 견인 3,000원 · 30초 (부족분 미납)\n전용 정비 공간으로 이동 · 수리비/시간 별도\n정차 불가 5초 후에는 화면 전환으로 안전 복구"),style);
             GUI.Label(new Rect(x+18,y+128,w-36,55),Notice??"승객은 안전 정차 후 하차합니다. 운송 중 고장은 요금 0원 취소입니다.",style);

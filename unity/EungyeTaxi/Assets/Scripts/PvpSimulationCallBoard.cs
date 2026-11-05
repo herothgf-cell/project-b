@@ -50,4 +50,5 @@ public sealed class PvpSimulationCallBoard {
         if(!ledger.IsClaimed(pickup)||!ledger.Available(pickup,driver))return;
         ledger.Release(pickup,driver);retryAt=0;resting[pickup]=Time.time+(PvpSimulationMode.DurationSeconds<=600?30:60);Replenish();
     }
+    public void SuspendPickup(int pickup,float seconds){resting[pickup]=Time.time+Mathf.Max(seconds,60);foreach(var pool in new[]{Offers,Roadside})for(int i=0;i<pool.Length;i++)if(pool[i]!=null&&pool[i].pickup==pickup)pool[i]=null;}
 }

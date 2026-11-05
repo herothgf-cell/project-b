@@ -5,7 +5,7 @@ public class DriveSession : MonoBehaviour {
     public PvpSimulationMatch simulationMatch;
     public int SimulationDriver {get{return simulationMatch?simulationMatch.DriverIndex(this):IsSimulationBot?1:0;}}
     public string startupRegion="";
-    public VehicleDamageController damage;
+    public VehicleDamageController damage; public AccidentController accident;
     public TaxiController taxi; public WorldBuilder world; public TrafficSystem traffic; public DrivingCamera drivingCamera; public TaxiSignals signals;
     public CockpitMirrors mirrors;public PassengerJobs jobs;public AssistCamera assist;public RoadEnvironment roadEnvironment;public DrivingManners manners;
     public BusinessProgress business; public DrivingLaw law; public ServiceStops services; public PassengerRequestUI requests;
@@ -63,7 +63,7 @@ public class DriveSession : MonoBehaviour {
         paused=false;Time.timeScale=1;
         business=gameObject.AddComponent<BusinessProgress>();business.Initialize(this);gameObject.AddComponent<BusinessHUD>().session=this;
         law=taxi.gameObject.AddComponent<DrivingLaw>();law.session=this;services=gameObject.AddComponent<ServiceStops>();services.session=this;requests=gameObject.AddComponent<PassengerRequestUI>();requests.session=this;gameObject.AddComponent<PassengerBehaviorUI>().session=this;gameObject.AddComponent<RightTurnSituation>().session=this;gameObject.AddComponent<ExitQueueObserver>().session=this;gameObject.AddComponent<ExitQueueSituation>().session=this;gameObject.AddComponent<PracticeSession>().session=this;gameObject.AddComponent<PracticeCoach>().session=this;gameObject.AddComponent<ConfusionPractice>().session=this;gameObject.AddComponent<ServiceLawZones>().session=this;
-        gameObject.AddComponent<RoadSignage>().session=this;gameObject.AddComponent<DriveNotifications>().session=this;gameObject.AddComponent<DrivingScoreJournal>().session=this;damage=taxi.gameObject.AddComponent<VehicleDamageController>();damage.session=this;
+        gameObject.AddComponent<RoadSignage>().session=this;gameObject.AddComponent<DriveNotifications>().session=this;gameObject.AddComponent<DrivingScoreJournal>().session=this;damage=taxi.gameObject.AddComponent<VehicleDamageController>();damage.session=this;accident=taxi.gameObject.AddComponent<AccidentController>();accident.session=this;
         gameObject.AddComponent<RideCompletionPanel>().session=this;gameObject.AddComponent<StopOccupancySystem>().session=this;
         roadConditions=gameObject.AddComponent<RoadConditions>();roadConditions.Initialize(this);jobs.nav.conditions=roadConditions;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-districtTrafficTest")>=0)gameObject.AddComponent<DistrictTrafficSmokeTest>().session=this;

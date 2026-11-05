@@ -30,6 +30,7 @@ public class RoadEnvironment : MonoBehaviour {
   }
  }
  public bool OnRoad(Vector3 point,float margin=0){
+  if(WorkshopLayout.Contains(map,point))return true;
   if(ReviewedPavement.Contains(map,point))return false;if(ProjectMapScene.OnArea(map,point,false))return true;if(roadCells.Count==0)return false;point.y=0;
   if(queryId==int.MaxValue){System.Array.Clear(checkedSegments,0,checkedSegments.Length);queryId=0;}queryId++;
   // Index the original road envelope, then expand the query by abs(margin).

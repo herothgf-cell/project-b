@@ -46,6 +46,9 @@ public class CampaignAccount {
  public bool Wash(string id,int day){if(day<1||string.IsNullOrEmpty(id)||Has(id))return false;Mandatory(id,"wash",day,2000);return true;}
  public bool Repair(string id,int day,int lost){if(day<1||lost<1||lost>100||string.IsNullOrEmpty(id)||Has(id))return false;Mandatory(id,"repair",day,lost*200);return true;}
  public bool Tow(string id,int day){if(day<1||string.IsNullOrEmpty(id)||Has(id))return false;Mandatory(id,"tow",day,3000);return true;}
+ public bool Accident(string id,int day){if(day<1||string.IsNullOrWhiteSpace(id)||Has("accident:"+id))return false;Mandatory("accident:"+id,"accident",day,3000);return true;}
+ // Completion persists independently of per-day service identities, including across day changes.
+ public bool CompleteAccident(string id,int day){return !string.IsNullOrWhiteSpace(id)&&entries.Exists(e=>e.id=="accident:"+id&&e.kind=="accident"&&e.day==day)&&Post("accident-complete:"+id,"accident-completion",day,0,0);}
  // Compatibility entry points cannot reactivate excluded prototype features.
  public bool Renew(string id,int day=1){return false;}
  public bool PayTax(string id,int day=1){return false;}

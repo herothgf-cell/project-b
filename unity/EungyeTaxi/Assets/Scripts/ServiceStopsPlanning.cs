@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public sealed class FacilityOption {
- public string Id,Name;public int Kind;public MapStop Approach;public Vector3 Bay,Direction;public Vector3[] Entry,Departure;
+ public string Id,Name;public int Kind;public MapStop Approach;public Vector3 Bay,Direction;public Vector3[] Entry,Departure,WaitingEntry,WaitingToBay;public Vector3 WaitingBay;
  public float TravelMetres,TravelSeconds,RoadSeconds,EntrySeconds,DepartureSeconds;public int Waiting;public bool PhysicallyOccupied;public bool QueueKnown=true;public OperationServiceQuote Quote;
  public bool Reachable {get{return !float.IsInfinity(TravelSeconds)&&!float.IsNaN(TravelSeconds);}}
  public string Text {get{return Name+" · "+(!Reachable?"경로/예상시간 없음":"이동 약 "+Mathf.CeilToInt(TravelSeconds)+"초 / "+Mathf.CeilToInt(TravelMetres)+"m")+" · "+(!QueueKnown?"대기 정보 수신 중":Waiting>0?"대기 "+Waiting+"대 (시간 미정)":PhysicallyOccupied?"정차 공간 점유 · 대기시간 미정":"대기 차량 없음")+(Quote!=null&&Quote.Available?" · 이용 "+Quote.UseSeconds.ToString("0")+"초 / "+Quote.Price.ToString("N0")+"원"+(Quote.NewDebt>0?" (미납 "+Quote.NewDebt.ToString("N0")+"원)":""):" · 현재 견적 불가");}}
@@ -29,6 +29,7 @@ public partial class ServiceStops {
   var map=session.world.map;if(!ReferenceEquals(queueCatalogMap,map)){
    queueCatalogMap=map;queueCatalog.Clear();Action<Vector3> add=bay=>queueCatalog[SiteId(bay)]=bay;
    foreach(var station in Stations)add(station.pump);
+   foreach(var workshop in Workshops)add(workshop.repair);
    if(Stations.Count==0&&map.mapId!="eungye")add(StopFor(0).Kerb);
    if(ProjectMapScene.Active(map)){foreach(string kind in new[]{"restaurant","rest","parking"})foreach(var obj in ProjectMapScene.Services(map,kind))add(obj.Position);}
    else {var restaurant=Restaurant;add(restaurant!=null?restaurant.parking:MealStop.Kerb);var rest=RestArea;if(rest!=null)add(rest.pump);add(ParkingStop.Kerb);}
@@ -39,6 +40,11 @@ public partial class ServiceStops {
  Registry SharedRegistry(){if(registry==null){object key=session.simulationMatch?(object)session.simulationMatch:this;registry=registries.GetOrCreateValue(key);registry.members[GetInstanceID()]=this;}return registry;}
  static string SiteId(Vector3 bay){return bay.x.ToString("F1",System.Globalization.CultureInfo.InvariantCulture)+":"+bay.z.ToString("F1",System.Globalization.CultureInfo.InvariantCulture);}
  bool BayClear(Vector3 bay){int count=Physics.OverlapBoxNonAlloc(bay+Vector3.up*.8f,new Vector3(2.3f,.8f,4.2f),facilityColliders,Quaternion.identity,(1<<8)|(1<<9),QueryTriggerInteraction.Ignore);if(count>=facilityColliders.Length)return false;for(int i=0;i<count;i++)if(facilityColliders[i]&&!facilityColliders[i].transform.IsChildOf(session.taxi.transform))return false;return true;}
+ public bool CanWaitAtWorkshop(FacilityOption option){
+  if(option==null||option.WaitingEntry==null||!QueueWaiting||!BayClear(option.WaitingBay))return false;
+  var r=SharedRegistry();int first=1;foreach(var member in r.members.Values)if(member&&member.queuedSite==option.Id&&r.queue.IsAdmitted(member.GetInstanceID())){first=2;break;}
+  return r.queue.Position(option.Id,GetInstanceID())==first;
+ }
  public bool CanEnterFacility(FacilityOption option){
   if(option==null||!option.Reachable)return false;suppressedSite=null;var r=SharedRegistry();if(queuedSite!=option.Id){ReleaseQueue();queuedSite=option.Id;queuedBay=option.Bay;queuedApproach=option.Approach.V();observedBay=false;grantedAt=Time.time;}
   r.queue.Request(queuedSite,GetInstanceID(),Time.time);bool already=r.queue.IsAdmitted(GetInstanceID());bool admitted=r.queue.TryAdmit(queuedSite,GetInstanceID(),BayClear(queuedBay));if(admitted&&!already)grantedAt=Time.time;return admitted;
@@ -70,8 +76,9 @@ public partial class ServiceStops {
   foreach(var station in Stations)if((position-station.approach.V()).sqrMagnitude<35*35||(position-station.pump).sqrMagnitude<35*35){nearby=true;break;}
   if(!nearby&&ProjectMapScene.Active(session.world.map)){foreach(string type in new[]{"restaurant","rest","parking"})foreach(var obj in ProjectMapScene.Services(session.world.map,type))if((position-obj.Position).sqrMagnitude<45*45){nearby=true;break;}}
   else if(!nearby){nearby=(position-MealPosition).sqrMagnitude<45*45||(position-ParkingStop.Kerb).sqrMagnitude<35*35;var rest=RestArea;if(rest!=null)nearby|=(position-rest.pump).sqrMagnitude<35*35;}
+  if(!nearby)foreach(var workshop in Workshops)if((position-workshop.repair).sqrMagnitude<60*60)nearby=true;
   if(!nearby)return;
-  foreach(int kind in new[]{0,1,3})foreach(var site in FacilityOptions(kind)){
+  foreach(int kind in new[]{0,1,3,5})foreach(var site in FacilityOptions(kind)){
    if(!site.Reachable||site.Id==suppressedSite)continue;
    // Only the explicitly selected facility route queues on the public road.
    // Passing a driveway, or waiting at a nearby signal, creates no ticket.
@@ -80,7 +87,9 @@ public partial class ServiceStops {
    if(guided||driveway){CanEnterFacility(site);return;}
   }
  }
+ public bool AdmitRepair(){return AdmitPurchase(5);}
  bool AdmitPurchase(int action){
+  if(action==5&&session.damage&&session.damage.AtRepairBay)return true;
   var options=FacilityOptions(action);FacilityOption here=null;foreach(var option in options)if(Vector3.Distance(session.taxi.transform.position,option.Bay)<5&&(here==null||Vector3.Distance(session.taxi.transform.position,option.Bay)<Vector3.Distance(session.taxi.transform.position,here.Bay)))here=option;
   if(here==null)return false;if(CanEnterFacility(here))return true;
   if(HumanFacilityUser){queuedAction=action;notice="시설이 사용 중입니다 · "+QueueStatus;noticeUntil=Time.unscaledTime+8;Close(false);}return false;
@@ -103,7 +112,8 @@ public partial class ServiceStops {
  public List<FacilityOption> FacilityOptions(int kind){
   OptionCache cached;if(optionCaches.TryGetValue(kind,out cached)&&Time.unscaledTime<cached.until&&ReferenceEquals(cached.route,session.jobs.nav.hdRoute))return cached.options;
   var list=new List<FacilityOption>();var map=session.world.map;
-  if(kind==0||kind==4||kind==5){foreach(var site in Stations){if(kind==4&&!site.SupportsWash||kind==5&&!site.SupportsRepair)continue;AddDrive(list,kind,site.name,site.approach,site.pump,site.direction,site.drivePath);}if(Stations.Count==0&&map.mapId!="eungye"){var stop=StopFor(0);list.Add(Option(kind,stop.name,stop,stop.Kerb,stop.Direction,new[]{stop.V(),stop.Kerb},new[]{stop.Kerb,stop.Kerb+stop.Direction*12}));}}
+  if(kind==5&&Workshops.Count>0){foreach(var site in Workshops){var option=Option(kind,site.name,site.approach,site.repair,site.direction,site.entry,site.departure);option.WaitingBay=site.waiting;option.WaitingEntry=site.waitingEntry;option.WaitingToBay=site.waitingToRepair;list.Add(option);}}
+  else if(kind==0||kind==4||kind==5){foreach(var site in Stations){if(kind==4&&!site.SupportsWash||kind==5&&!site.SupportsRepair)continue;AddDrive(list,kind,site.name,site.approach,site.pump,site.direction,site.drivePath);}if(Stations.Count==0&&map.mapId!="eungye"){var stop=StopFor(0);list.Add(Option(kind,stop.name,stop,stop.Kerb,stop.Direction,new[]{stop.V(),stop.Kerb},new[]{stop.Kerb,stop.Kerb+stop.Direction*12}));}}
   else if(kind==1){if(ProjectMapScene.Active(map)){foreach(var obj in ProjectMapScene.Services(map,"restaurant")){if(obj.id.StartsWith("city:meal:")){AddParkingAccess(list,kind,map,obj,"city:start:"+obj.id.Substring("city:meal:".Length)+":access");continue;}var site=RestaurantSiteLayout.FromObject(map,obj);list.Add(Option(kind,obj.name,site.approach,site.parking,site.direction,site.enter,site.leave));}}else if(Restaurant!=null){var site=Restaurant;list.Add(Option(kind,MealStop.name,site.approach,site.parking,site.direction,site.enter,site.leave));}else {var stop=MealStop;list.Add(Option(kind,stop.name,stop,stop.Kerb,stop.Direction,new[]{stop.V(),stop.Kerb},new[]{stop.Kerb,stop.Kerb+stop.Direction*12}));}}
   else if(kind==3||kind==2){if(ProjectMapScene.Active(map)){foreach(string type in new[]{"rest","parking"})foreach(var obj in ProjectMapScene.Services(map,type)){if(type=="rest"){var site=FuelStationLayout.FromObject(map,obj);AddDrive(list,kind,obj.name,site.approach,site.pump,site.direction,site.drivePath);continue;}AddParkingAccess(list,kind,map,obj,obj.id+":access");}}
    else {var rest=RestArea;if(rest!=null)AddDrive(list,kind,"휴식 주차장",rest.approach,rest.pump,rest.direction,rest.drivePath);var stop=ParkingStop;list.Add(Option(kind,stop.name,stop,stop.Kerb,stop.Direction,new[]{stop.V(),stop.Kerb},new[]{stop.Kerb,stop.Kerb+stop.Direction*12}));}}

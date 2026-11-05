@@ -63,7 +63,7 @@ public class PassengerRequestUI : MonoBehaviour {
    }
   }return true;
  }
- public bool PresentationAvailable {get{return !PvpNativeLan.UiBlocked(session)&&(legacy||!ResponseBlockedThisFrame)&&!session.jobs.BehaviorAsleep&&!session.paused&&!session.FullMapOpen&&!session.ChoiceOpen&&string.IsNullOrEmpty(session.jobs.VisibleCareDialogue);}}
+ public bool PresentationAvailable {get{return !(session.accident&&session.accident.Locked)&&!PvpNativeLan.UiBlocked(session)&&(legacy||!ResponseBlockedThisFrame)&&!session.jobs.BehaviorAsleep&&!session.paused&&!session.FullMapOpen&&!session.ChoiceOpen&&string.IsNullOrEmpty(session.jobs.VisibleCareDialogue);}}
  // Dialogue input is independent of physical work safety.
  public bool CanTalk {get{return PresentationAvailable&&Time.timeScale>0&&session.jobs.Active&&!session.jobs.trip.ArrivalLocked;}}
  public bool SafeStationarySpace {get{return ClearSpace();}}

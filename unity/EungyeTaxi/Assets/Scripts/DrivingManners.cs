@@ -96,7 +96,7 @@ public class DrivingManners : MonoBehaviour {
    }
   }
  }
- void OnCollisionEnter(Collision collision){if(PvpNativeLan.IsReplica(session)||PvpNativeLan.WaitingForWorld)return;collisionDiagnostic=collision.collider.name+" prior="+previousVelocity.magnitude+" relative="+collision.relativeVelocity.magnitude+" normal="+(collision.contactCount>0?collision.GetContact(0).normal.ToString():"none")+" grace="+(suppressed-Time.time);if(Time.time<suppressed||previousVelocity.magnitude<1.5f||collision.relativeVelocity.magnitude<1.5f)return;
+ void OnCollisionEnter(Collision collision){if(session.accident&&session.accident.Locked)return;if(PvpNativeLan.IsReplica(session)||PvpNativeLan.WaitingForWorld)return;collisionDiagnostic=collision.collider.name+" prior="+previousVelocity.magnitude+" relative="+collision.relativeVelocity.magnitude+" normal="+(collision.contactCount>0?collision.GetContact(0).normal.ToString():"none")+" grace="+(suppressed-Time.time);if(Time.time<suppressed||previousVelocity.magnitude<1.5f||collision.relativeVelocity.magnitude<1.5f)return;
   if(collision.contactCount>0&&collision.GetContact(0).normal.y>.65f)return;
   Deduct("collision",10,"충돌",3);suppressed=Time.time+.8f;filtered=0;
  }

@@ -127,6 +127,7 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
             if((here||remaining<4)&&s.taxi.body.velocity.magnitude<.6f) {
                 Stop(s,"시설 진입 대기");
                 if(!s.services.CanEnterFacility(selectedSite)){
+                    if(s.services.CanWaitAtWorkshop(selectedSite)){BeginManoeuvre(s,selectedSite.WaitingEntry);stage=5;return true;}
                     if(queueWaitStarted<=0)queueWaitStarted=Time.time;Status=s.services.QueueStatus;
                     if(Time.time-queueWaitStarted>45){Retry(s,"시설 혼잡 · 다른 시설 확인");}return true;
                 }
@@ -142,6 +143,11 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
                 DrivePedals(s,Mathf.Min(target,SafeSpeed(s,true)));
                 return true;
             }
+        }
+        if(stage==5){
+            Status="공업사 대기칸 · 결제 없음";if(!Follow(s))return true;
+            Stop(s,Status);if(!s.services.CanEnterFacility(selectedSite))return true;
+            BeginManoeuvre(s,selectedSite.WaitingToBay);stage=2;
         }
         if(stage==2) {
             Status="시설 진입 · "+approach.name;
@@ -187,6 +193,15 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
             }
         }
         return true;
+    }
+    public void LeaveWorkshop(DriveSession s,WorkshopLayout.Site site){
+        // Towed taxis begin in a parallel bay. Clear its nose before merging
+        // into the ordinary driveway; never cross another parked tow bay.
+        approach=site.approach;direction=site.direction;departure=site.departure;
+        var points=new List<Vector3>{s.taxi.transform.position,s.taxi.transform.position+direction*9};
+        for(int i=12;i<site.departure.Length;i++)points.Add(site.departure[i]);
+        float at;int edge=s.jobs.nav.hd.Nearest(points[points.Count-1],direction,out at);if(edge>=0)points.Add(s.jobs.nav.hd.paths[edge].Position(Mathf.Min(s.jobs.nav.hd.paths[edge].length,at+12)));
+        BeginManoeuvre(s,points.ToArray());stage=4;purchaseComplete=true;
     }
     bool Select(DriveSession s,bool measureOnly=false) {
         var e=s.business.ledger;var options=s.services.FacilityOptions(kind);FacilityOption best=null;float bestTime=float.PositiveInfinity;

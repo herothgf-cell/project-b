@@ -1,5 +1,9 @@
 # 최신 작업 상태
 
+## 2026-11-05 사고·공업사 구현 진행
+
+[구현·검증 진행 기록](2026-11-05-accident-workshop-implementation.md). 사용자 승인으로 사고 처리/공업사를 싱글·PVP에 구현 중. 모델77/기존 손상191·공업사42·후보 Build2 exit0, 최종 Player/물리/LAN·최신 HUD 통합·배포는 미완료. 기본 실행본은 기존 배포 유지, worktree Strict issues0·지도 입력/ZIP 미변경. 다음은 최종 실제검사와 통합 실행본/manifest 갱신.
+
 ## 2026-11-05 사고 처리·공업사 상세 기획
 
 [상세안](../content-design/08-accident-and-workshop-proposal.md) · [작업 이력](2026-11-05-accident-workshop-design.md). 보행자 사고 운송 중단·3,000원/45초·추가 피로0+통상 시간 경과, 공업사 각 맵2곳/기존 수리·견인 비용 유지와 저장·LAN 경계를 제안했다. 수치/배치는 미승인 시험안·런타임 미구현. 차량 구매·물품/보험·과실·구급차는 후속. 다음은 상세안 검토 후 구현/배치·물리·저장/LAN 수용. 실행본/은계 싱글·A2 PVP/LAN v3·BuildHybrid 유지, 필수 지도 입력은 직전 Strict issues0 인용·이번 미변경/미재검사. 다른 작업의 미추적 소스/문서 보존.

@@ -65,7 +65,7 @@ public class TaxiController : MonoBehaviour {
         // Braking remains available; neither manual nor assisted steering bypasses it.
         if(microsleep){demand.motor=0;motorDemand=0;}
         var damage=GetComponent<VehicleDamageController>();
-        if(damage&&damage.Disabled){demand.motor=0;motorDemand=0;demand.brake=1;}
+        if(business&&business.session.accident&&business.session.accident.Locked){demand.motor=0;motorDemand=0;demand.brake=1;steer=0;}if(damage&&damage.Disabled){demand.motor=0;motorDemand=0;demand.brake=1;}
         CornerAssisting=demand.motor<manual.motor||demand.brake>manual.brake;
         if(business&&business.session.simulationMatch&&business.session.simulationMatch.ServiceLocked(business.session)){demand.motor=0;demand.brake=1;motorDemand=0;}
         if(PvpMapInputBlocked){demand.motor=0;demand.brake=1;motorDemand=0;steer=0;}
@@ -89,13 +89,13 @@ public class TaxiController : MonoBehaviour {
     public int PedalBrakingDirection {get{return pedalIntent.BrakingDirection;}}
     public void RestorePedalIntent(int direction){pedalIntent.Restore(direction);}
     public void SetSpawn(Vector3 position,Quaternion rotation){spawn=position;spawnRotation=rotation;}
-    public void RequestReset() {
+    public void RequestReset() {if(business&&business.session.accident&&business.session.accident.Locked)return;
         if(PvpNativeLan.Route(business?business.session:null,"reset"))return;
         var coach=PracticeSession.Enabled?FindObjectOfType<PracticeCoach>():null;
         if(coach&&coach.Active&&coach.GetComponent<PracticeSession>().RetryCurrent())return;
         ResetTaxi();
     }
-    public void ResetTaxi() {
+    public void ResetTaxi() {var accident=GetComponent<AccidentController>();if(accident)accident.Suppress(1);
         if(assistance)assistance.SetActive(false);
         // A reset must not teleport the player inside an occupied traffic lane.
         foreach(var obstacle in Physics.OverlapBox(spawn+Vector3.up*.4f,new Vector3(1.2f,1,2.5f),spawnRotation,1<<9)) {

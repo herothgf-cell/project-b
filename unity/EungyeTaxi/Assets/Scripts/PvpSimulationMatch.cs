@@ -26,7 +26,7 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
     public string DriverStatus(int driver){
         if(networkStatuses!=null&&driver>=0&&driver<networkStatuses.Length)return networkStatuses[driver]??"";
         if(driver<0||driver>=drivers.Count)return "";
-        var session=drivers[driver];if(ConditionServiceActive(session))return (ConditionServiceKind(session)==1?"식사":"짧은 휴식")+" · "+ServiceRemaining(session).ToString("0.0")+"초";var pilot=session.GetComponent<PvpSimulationBot>();
+        var session=drivers[driver];if(session.accident&&session.accident.Locked)return "사고 처리 · "+System.Math.Ceiling(session.accident.State.remaining)+"초";if(ConditionServiceActive(session))return (ConditionServiceKind(session)==1?"식사":"짧은 휴식")+" · "+ServiceRemaining(session).ToString("0.0")+"초";var pilot=session.GetComponent<PvpSimulationBot>();
         if(pilot&&pilot.enabled)return pilot.Status??"출발 준비";
         return session.jobs.trip.State==TripState.ToPickup?"승객 픽업":session.jobs.trip.State==TripState.OnTrip?"승객 운송":"호출 선택";
     }
@@ -68,8 +68,9 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
         return true;
     }
     readonly float[] serviceUntil=new float[PvpSimulationLedger.DriverCount];
-    public float ServiceRemaining(DriveSession driver){int index=DriverIndex(driver);return index<0?0:Mathf.Max(conditionRemaining[index],Mathf.Max(0,serviceUntil[index]-Elapsed));}
-    public bool ServiceLocked(DriveSession driver){return Finished||ServiceRemaining(driver)>0;}
+    public float ServiceRemaining(DriveSession driver){int index=DriverIndex(driver);return index<0?0:Mathf.Max(driver.damage?driver.damage.PendingServiceRemaining:0,Mathf.Max(conditionRemaining[index],Mathf.Max(0,serviceUntil[index]-Elapsed)));}
+    public bool ServiceLocked(DriveSession driver){return Finished||driver.accident&&driver.accident.Locked||ServiceRemaining(driver)>0;}
+    public void ObserveAccidentClock(DriveSession driver){int i=DriverIndex(driver);if(i<0)return;observedServiceSeconds[i]=driver.business.ledger.Elapsed-driver.business.SimulationOperationSeconds;Ledger.SyncExpenses(i,driver.business.ledger.Account.Expense(driver.business.ledger.Day,null));}
     public void ObserveServiceTime(DriveSession driver){
         if(Finished||!driver||!driver.business)return;
         int index=DriverIndex(driver);if(index<0)return;
@@ -122,7 +123,7 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
         bot.services=root.AddComponent<ServiceStops>();bot.services.session=bot;bot.services.enabled=false;
         bot.requests=root.AddComponent<PassengerRequestUI>();bot.requests.session=bot;
         root.AddComponent<PassengerBehaviorUI>().session=bot;
-        bot.damage=bot.taxi.gameObject.AddComponent<VehicleDamageController>();bot.damage.session=bot;
+        bot.damage=bot.taxi.gameObject.AddComponent<VehicleDamageController>();bot.damage.session=bot;bot.accident=bot.taxi.gameObject.AddComponent<AccidentController>();bot.accident.session=bot;
         root.AddComponent<PvpSimulationBot>().Initialize(bot);
         bot.MarkSharedSimulationReady();root.SetActive(true);
     }
@@ -142,7 +143,7 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
     public void Finish() {
         if(Finished)return;
         foreach(var driver in drivers)ObserveServiceTime(driver);
-        foreach(var driver in drivers)CancelConditionService(driver);
+        foreach(var driver in drivers){CancelConditionService(driver);if(driver.damage)driver.damage.CancelPendingService();}
         Ledger.Finish();
         foreach(var driver in drivers){driver.paused=true;driver.taxi.autoThrottle=0;driver.taxi.autoBrake=true;}
         Time.timeScale=0;
