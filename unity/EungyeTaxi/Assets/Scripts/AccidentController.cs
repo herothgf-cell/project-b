@@ -47,6 +47,7 @@ public sealed class AccidentController : MonoBehaviour {
   if(Locked){var list=new List<string>(State.targets??new string[0]);if(!list.Contains(targetId)){list.Add(targetId);State.targets=list.ToArray();session.business.SaveCheckpoint();}return false;}
   if(!State.Begin(session.law.ids.Next("pedestrian-accident"),targetId))return false;
   session.assisted.SetActive(false);session.services.Close();session.taxi.ClearPredictedPedals();
+  if(session.damage)session.damage.CancelPendingService();
   if(session.simulationMatch)session.simulationMatch.CancelConditionService(session);
   session.manners.Deduct("collision",10,"보행자 사고 · 안전 정차",0);
   session.business.SaveCheckpoint();return true;
