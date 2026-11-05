@@ -30,6 +30,9 @@ public class BusinessProgress : MonoBehaviour {
  public string SavePath {get;private set;}
  bool testMode;float noticeUntil; CampaignCheckpoint loaded; public bool useV2; public bool taxPrompt,preparing; public PrototypeSettings settings=new PrototypeSettings();
  public bool SaveFailed {get;private set;}public bool ResumeBlocked {get{return resumeBlocked;}}public bool IsRestoring {get{return restoring;}}
+ public bool HasCampaignToContinue {get{return loaded!=null||!preparing||ledger!=null&&ledger.Day>1;}}
+ public string MenuPrimaryLabel {get{return HasCampaignToContinue?"영업 계속하기":"영업 시작";}}
+ public void ContinueFromMenu(){if(restoring)return;if(preparing||resumeBlocked){Depart();return;}session.paused=false;Time.timeScale=1;}
  public string LoadFailureDetail {get;private set;}="";
  public string RecoveryArchivePath {get;private set;}="";
  public int pendingPayment=-1; public bool restartPrompt;

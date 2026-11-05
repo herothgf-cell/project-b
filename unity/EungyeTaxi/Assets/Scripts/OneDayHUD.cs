@@ -15,25 +15,11 @@ public static class OneDayHUD {
    return; // Live operation is composed by CockpitUI.
 
   }
+  if(b.preparing&&!b.restartPrompt&&!b.ResumeBlocked){showDayDetails=false;s.GetComponent<DriveHUD>().DrawSingleMenu();return;}
   var saved=GUI.matrix;float scale=Mathf.Min(1,Screen.width/800f,Screen.height/730f);GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,Vector3.one*scale);float x=(Screen.width/scale-720)/2,y=(Screen.height/scale-680)/2;GUI.depth=-150;Panel(new Rect(x,y,720,680));
   if(b.restartPrompt&&b.ResumeBlocked){GUI.Label(new Rect(x+25,y+25,670,65),"원본 보관 후 새로 시작할까요?",title);GUI.Label(new Rect(x+25,y+115,670,210),"현재 저장을 이어갈 수 없어 영업을 멈췄습니다.\n새로 시작하면 현재 진행 대신 현금 10,000원 · 연료 60%의 1일차로 시작합니다.\n\n기존 원본과 백업은 저장 폴더 안에 별도로 보관합니다. 보관하지 못하면 새로 시작하지 않습니다.\n취소하면 기존 파일과 현재 상태를 유지합니다.",text);GUI.Label(new Rect(x+25,y+360,670,75),b.saveStatus,small);if(GUI.Button(new Rect(x+25,y+590,325,55),"원본 보관 후 새로 시작",button))b.ConfirmRestart(true);if(GUI.Button(new Rect(x+370,y+590,325,55),"돌아가기",button))b.ConfirmRestart(false);}
   else if(b.restartPrompt){GUI.Label(new Rect(x+25,y+25,670,55),multi?"새 캠페인을 시작할까요?":"새 하루를 시작할까요?",title);GUI.Label(new Rect(x+25,y+100,670,210),"현금 10,000원 · 연료 60% · 포만감 80 · 피로 10\n1일차와 운전 점수 100점부터 시작합니다.\n이전 완료 결과는 보존합니다. 취소하면 현재 진행을 유지합니다.",text);GUI.Label(new Rect(x+25,y+360,670,65),b.saveStatus,small);if(GUI.Button(new Rect(x+25,y+590,325,55),multi?"새 3일 시작":"새 하루 시작",button))b.ConfirmRestart(true);if(GUI.Button(new Rect(x+370,y+590,325,55),"취소",button))b.ConfirmRestart(false);}
   else if(b.ResumeBlocked){GUI.Label(new Rect(x+25,y+25,670,65),"저장 파일을 읽지 못했어요",title);GUI.Label(new Rect(x+25,y+110,670,160),"기존 진행은 파일에 보존되어 있으며 영업은 멈춰 있습니다.\n저장과 맞는 지도·버전에서 이어가거나, 원본을 별도 보관한 뒤 새 캠페인을 선택할 수 있습니다.\n새 캠페인은 다음 화면에서 확인한 뒤 시작합니다.",text);GUI.Label(new Rect(x+25,y+290,670,60),b.saveStatus,small);GUI.Label(new Rect(x+25,y+365,670,180),"복원 오류\n"+b.LoadFailureDetail,small);if(GUI.Button(new Rect(x+25,y+590,670,55),"복구 방법 보기",button))b.RequestRestart();}
-  else if(b.preparing){
-   showDayDetails=false;
-   GUI.Label(new Rect(x+25,y+25,670,45),e.Day+"일차 · 영업 준비",title);
-   GUI.Label(new Rect(x+25,y+76,670,28),multi?"3일 캠페인 · 하루 20분 + 초과 영업":"하루 20분 + 초과 영업",small);
-   CasualUI.Panel(new Rect(x+25,y+125,670,116),CasualUI.Soft);
-   GUI.Label(new Rect(x+45,y+139,310,87),"잔액  "+Money(e.Account.Cash)+"\n연료  "+e.Account.Fuel.ToString("0")+"%",text);
-   GUI.Label(new Rect(x+375,y+139,295,87),"포만감  "+d.satiety.ToString("0")+"\n피로  "+d.fatigue.ToString("0"),text);
-   GUI.Label(new Rect(x+25,y+263,670,32),"이용 비용",text);
-   GUI.Label(new Rect(x+25,y+305,670,90),"식사  3,000원 · 50초\n수면  무료 · 100초\n영업 마감  500원",text);
-   GUI.Label(new Rect(x+25,y+414,670,60),"방향키 ↑↓ 가감속 · ←→ 조향 · Space 제동 · F 승하차\nM 지도 · H 조향 보조 · 자세한 조작은 도움말",small);
-   if(GUI.Button(new Rect(x+25,y+485,670,40),"운전 연습",button))s.GetComponent<PracticeSession>().OpenPicker();
-   GUI.Label(new Rect(x+25,y+537,670,30),"다음 날 피로 -"+b.settings.nightlyFatigueRecovery+" · 현금·연료·포만감·점수 유지",small);
-   if(GUI.Button(new Rect(x+370,y+590,325,55),"영업 시작",CasualUI.Action(18)))b.Depart();
-   if(GUI.Button(new Rect(x+25,y+590,325,55),multi?"새 캠페인":"새 하루",button))b.RequestRestart();
-  }
   else {
    var r=e.Last;bool complete=e.State==BusinessState.Completed;
    GUI.Label(new Rect(x+25,y+20,670,45),complete&&multi?"캠페인 완료!":e.Day+"일차 · 영업 결과",title);

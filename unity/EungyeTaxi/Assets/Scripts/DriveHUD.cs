@@ -34,24 +34,21 @@ public class DriveHUD : MonoBehaviour {
     if(GUI.Button(new Rect(px+20,py+115,440,45),"경기 나가기"))session.simulationMatch.ReturnToMenu();
     return;
    }
-   float x=Screen.width/2f-240,y=Screen.height/2f-235;
-   GUI.Box(new Rect(x,y,480,470),"일시정지");
-   GUI.Label(new Rect(x+20,y+34,440,26),"현재: "+MapCatalog.Name(session.world.map.mapId),body);
-   for(int i=0;i<MapCatalog.Ids.Length;i++){
-    string id=MapCatalog.Ids[i];bool available=MapCatalog.Available(id);GUI.enabled=available;
-    if(GUI.Button(new Rect(x+20,y+70+i*42,440,35),MapCatalog.Name(id)+(available?(MapCatalog.NextRegion==id?" · 다음 실행 지역":" · 다음 실행 시 선택"):" · 지도 자료·현장 검토 대기")))MapCatalog.SelectNext(id);
-   }
-   GUI.enabled=true;
-   GUI.Label(new Rect(x+20,y+164,440,55),string.IsNullOrEmpty(MapCatalog.LockedRegion)?"지역 변경은 게임을 다시 실행할 때 적용됩니다.\n영업 마감(N) 후 종료하면 정산 결과가 저장됩니다.":"은계 전용 빌드 · 현재 지역으로 시작합니다.\n영업 마감(N) 후 종료하면 정산 결과가 저장됩니다.",small);
-   GUI.enabled=!session.PracticeBusy;
-   if(GUI.Button(new Rect(x+20,y+230,440,40),"계속하기")){session.paused=false;Time.timeScale=1;}
-   if(session.business.useV2&&GUI.Button(new Rect(x+20,y+282,440,40),session.business.ledger.Settings.days>1?"1일차부터 다시 시작":"새 하루 시작"))session.business.RequestRestart();
-   if(GUI.Button(new Rect(x+20,y+334,215,40),"지도 편집"))session.GetComponent<RoadMapEditor>().Open();
-   if(GUI.Button(new Rect(x+245,y+334,215,40),"운전 연습 선택"))session.GetComponent<PracticeSession>().OpenPicker();
-   GUI.enabled=true;
-   if(GUI.Button(new Rect(x+20,y+386,440,40),"게임 종료"))Application.Quit();
-   if(GUI.Button(new Rect(x+20,y+434,440,28),session.traffic.mitOptions.Label+" · 클릭하여 변경",KoreanText.Button(14)))session.traffic.mitOptions.SetEnabled(!session.traffic.mitOptions.Enabled);
+   DrawSingleMenu();
   }
+ }
+ public void DrawSingleMenu(){
+  var b=session.business;bool restart=b.useV2&&b.HasCampaignToContinue;
+  float height=restart?308:256,x=Screen.width/2f-240,y=(Screen.height-height)/2;
+  GUI.depth=-150;GUI.Box(new Rect(x,y,480,height),b.preparing?"영업 준비":"일시정지");
+  bool enabled=GUI.enabled;GUI.enabled=enabled&&!session.PracticeBusy&&!b.IsRestoring;
+  if(GUI.Button(new Rect(x+20,y+52,440,44),b.MenuPrimaryLabel,KoreanText.Button(18)))b.ContinueFromMenu();
+  float row=y+104;
+  if(restart){if(GUI.Button(new Rect(x+20,row,440,40),"처음부터 시작",KoreanText.Button(16)))b.RequestRestart();row+=52;}
+  if(GUI.Button(new Rect(x+20,row,440,40),"운전 연습 선택",KoreanText.Button(16)))session.GetComponent<PracticeSession>().OpenPicker();row+=52;
+  GUI.enabled=enabled;
+  if(GUI.Button(new Rect(x+20,row,440,40),"게임 종료",KoreanText.Button(16)))Application.Quit();row+=52;
+  if(GUI.Button(new Rect(x+20,row,440,28),session.traffic.mitOptions.Label+" · 클릭하여 변경",KoreanText.Button(14)))session.traffic.mitOptions.SetEnabled(!session.traffic.mitOptions.Enabled);
  }
  public string DrivingHelpText {get{return "수동: W/↑ 가속 · S/↓ 감속 · A/D 또는 ←/→ 조향\n멈춘 뒤 S를 놓았다 다시 누르면 후진 · Space 긴급제동\nQ/E 방향지시등 · G 비상등 · H 조향 보조 켜기/끄기\n보조: ←/→ 차로 변경 · Q/E 다음 교차로 회전 예약\n보조 중에도 가속·감속·제동과 신호 판단은 직접 합니다.\nC 시점 · B 뒤보기 · Z/X 좌우 보기 · V 코너 시선\nF 승하차 · M 전체 지도 · Tab 경로 변경 · +/- 미니맵 확대/축소\nF7 거점 · F8 기록 · F10 안내 · Esc 정지 · F11 전체화면";}}
  public static Rect HelpBounds(float width,float height){float scale=UiReadability.HudScale(width,height);return new Rect(width/2-360*scale,height/2-195*scale,720*scale,390*scale);}

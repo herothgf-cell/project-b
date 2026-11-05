@@ -76,13 +76,28 @@ public sealed class UnifiedModeProbe : MonoBehaviour {
         FindObjectOfType<UnifiedModeBootstrap>().StartSingle();yield return Ready();
         human=Human();
         Check(!human.business.SimulationSession&&human.business.preparing&&!human.business.ResumeBlocked,"single starts normal three-day preparation");
+        Check(human.business.MenuPrimaryLabel=="영업 시작"&&!human.business.HasCampaignToContinue,"fresh single shows start without restart");
         yield return Capture("04-single-preparation");
+        human.business.ContinueFromMenu();
+        Check(!human.business.preparing&&!human.paused&&Time.timeScale==1&&human.business.ledger.Operating,"fresh start enters driving with one action");
+        yield return Capture("04b-single-driving");
+        // Also exercise an existing save made before the first departure.
+        human.business.preparing=true;Time.timeScale=0;
         Check(human.business.SavePath==CampaignPath&&human.business.SaveCheckpoint(),"single saves to isolated real checkpoint pipeline");
         string id=human.law.ids.campaign;
         Check(FindObjectOfType<UnifiedModeBootstrap>().ReturnToMenu(),"single saves before returning to mode menu");
         yield return null;yield return Menu();
         FindObjectOfType<UnifiedModeBootstrap>().StartSingle();yield return Ready();human=Human();
         Check(!human.business.ResumeBlocked&&human.law.ids.campaign==id&&human.business.preparing,"single re-entry restores existing campaign and preparation");
+        Check(human.business.MenuPrimaryLabel=="영업 계속하기"&&human.business.HasCampaignToContinue,"restored preparation exposes continue and restart");
+        yield return Capture("05-single-restored-menu");
+        human.business.ContinueFromMenu();
+        Check(!human.business.preparing&&!human.paused&&Time.timeScale==1&&human.business.ledger.Operating,"one menu action directly starts driving");
+        human.paused=true;Time.timeScale=0;
+        yield return Capture("06-single-paused-menu");
+        Check(human.business.RequestRestart()&&!human.business.ConfirmRestart(false)&&human.law.ids.campaign==id,"restart cancellation preserves campaign");
+        human.business.ContinueFromMenu();
+        Check(!human.paused&&Time.timeScale==1&&human.law.ids.campaign==id,"continue resumes same campaign");
         FindObjectOfType<UnifiedModeBootstrap>().ReturnToMenu();yield return null;yield return Menu();
         // Invalid primary+backup must be preserved even when returning to menu.
         File.WriteAllText(CampaignPath,"invalid-unified-probe");File.WriteAllText(CampaignPath+".bak","invalid-unified-probe-backup");

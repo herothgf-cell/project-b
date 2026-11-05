@@ -57,13 +57,13 @@ public sealed class UnifiedModeBootstrap : MonoBehaviour {
         GUI.skin.font=KoreanText.Font;
         if(Selected==Mode.Menu){
             float width=Mathf.Min(580,Screen.width-32);
-            GUILayout.BeginArea(new Rect((Screen.width-width)/2,Screen.height*.28f,width,310),GUI.skin.box);
+            GUILayout.BeginArea(new Rect((Screen.width-width)/2,Screen.height*.28f,width,275),GUI.skin.box);
             GUILayout.Label("택시 시뮬레이션",new GUIStyle(GUI.skin.label){fontSize=28,font=KoreanText.BoldFont});GUILayout.Space(20);
-            if(GUILayout.Button("은계 영업",GUILayout.Height(55)))StartSingle();
-            GUILayout.Label("3일 캠페인 · 저장한 영업 이어하기");GUILayout.Space(12);
-            if(GUILayout.Button("PVP 대전",GUILayout.Height(55)))StartPvp();
-            GUILayout.Label("봇 대전 / LAN 사람 대전 · 경기 시간 직접 설정");GUILayout.Space(12);
-            if(GUILayout.Button("게임 종료"))Application.Quit();GUILayout.EndArea();return;
+            if(GUILayout.Button("싱글 (체험판)",GUILayout.Height(55)))StartSingle();
+            GUILayout.Space(12);
+            if(GUILayout.Button("PVP",GUILayout.Height(55)))StartPvp();
+            GUILayout.Space(12);
+            if(GUILayout.Button("게임 종료",GUILayout.Height(45)))Application.Quit();GUILayout.EndArea();return;
         }
         if(!human)foreach(var item in FindObjectsOfType<DriveSession>())if(!item.IsSimulationBot){human=item;break;}
         if(human&&human.StartupReady&&(human.paused||human.business.preparing)&&!human.business.IsRestoring){
