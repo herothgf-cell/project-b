@@ -91,7 +91,8 @@ public class BusinessProgress : MonoBehaviour {
   if(UnifiedModeProbe.Enabled)SavePath=UnifiedModeProbe.CampaignPath;
   bool accidentCheck=Array.IndexOf(args,"-accidentWorkshopCheck")>=0||Array.IndexOf(args,"-accidentWorkshopReloadCheck")>=0;
   if(accidentCheck){testMode=true;enabledCampaign=true;useV2=true;settings=PrototypeSettings.ForThreeDays();SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/accident-workshop-test.json"));}
-  if(!testMode&&!UnifiedModeProbe.Enabled)try{SavePath=CampaignSaveLocation.Resolve(Path.GetDirectoryName(Application.persistentDataPath),Path.GetFileName(SavePath));}catch(Exception e){Debug.LogWarning("이전 캠페인 저장 복사 실패: "+e.Message);}
+  if(HudRevisionProbe.Enabled)SavePath=HudRevisionProbe.CampaignPath;
+  if(!testMode&&!UnifiedModeProbe.Enabled&&!HudRevisionProbe.Enabled)try{SavePath=CampaignSaveLocation.Resolve(Path.GetDirectoryName(Application.persistentDataPath),Path.GetFileName(SavePath));}catch(Exception e){Debug.LogWarning("이전 캠페인 저장 복사 실패: "+e.Message);}
   ledger=useV2?new EconomyLedger(settings):new EconomyLedger(new EconomySettings());
   if((Array.IndexOf(args,"-passengerBehaviorReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilitySummaryReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0)))||protoTest&&Array.IndexOf(args,"-protoExpansionReloadTest")>=0||!testMode||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0)||startupReloadTest||activitiesReloadTest||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-oneDayReloadTest")>=0||Array.IndexOf(args,"-threeDayReloadTest")>=0||Array.IndexOf(args,"-ambientPedestrianReloadTest")>=0){
    foreach(var path in new[]{SavePath,SavePath+".bak"}){
