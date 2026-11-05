@@ -66,3 +66,20 @@ Unity2022.3.62f2 `-executeMethod AccidentWorkshopBuild.Build`. 실행 검사 `to
 - `artifacts/accident-build6-reload/result.json`: 새 프로세스8개/종료0. 유료 pending 사고 복원,3,000원 한 번,45초 한 번,재확인 멱등.
 - 최종 사용자 파일14개 SHA256 변경0. `docs/ui/2026-11-05-accident-workshop/`에 네 공업사 실제 물리 캡처 보관. 소스/기획을 커밋한 뒤 이 실제 커밋으로 manifest를 재생성하고 기본 폴더를 갱신한다.
 후보 소스1c50958111e6de4cb2b6a210476a47e82c5d653d(실제 git log 확인)로 manifest 갱신, 통합/PVP VerifyOnly exit0:140파일115,580,745바이트. 원래 폴더에서 콘텐츠 설정 도구의 새 미커밋 변경을 발견해 덮어쓰지 않고 해당 작업 완료 후 통합한다. 아직 기본 폴더 배포 완료가 아니다.
+
+## 사용자 승인 공동 통합
+
+사용자가 다른 채팅과 조율해 두 기능을 함께 배포하도록 명시 승인했다. 설정 도구 소스304faeef4e0c96f976c0f66f9eea060bd85024b1을 병합(1fd6b8e), 최신 HUD·콘텐츠 프로필 저장/복원과 사고 상태/Atomic 보호를 함께 유지했다. 독립 중간본이 모두v4였으므로 공동본은LAN v5로 구분한다. 충돌 감점은 관리 도구 설정(기본10)을 따르되 사고 처리비3,000원/45초는 유지한다.
+
+통합 후 사고77/차량손상191/콘텐츠636·C#/Node UTF8hash·시설 어댑터 전체 exit0. 새 사고 모델 컴파일에 ContentJson/ContentTuning 의존성을 추가했다. 기존 설정 작업의 어댑터 stub 실패는 사고 작업의 개선 fixture와 합쳐 통과했다.
+
+경기 종료 직전 정차 중 사고의 처리비가 누락되는 경계 사례를 실제 `-pvpAccidentWorkshopCheck -accidentEndOnly`에서 RED/exit1로 재현했다(`artifacts/accident-end-red/result.json`). Match.Finish가 정차/처리 중 사건의 비용·운송 결과를 종료 전에 한 번 확정하도록 보완했다. 선택 서비스는 취소하고, 시계/45초 처리 시간을 추가하지 않는다. 최종 공동본에서 GREEN을 확인한다.
+## 최종 공동본 검증 확정
+
+- 콘텐츠 문서/실제 화면 후속1098c506a0c29fd9421290cb127c909e1263c84a까지 병합. 관리창 source는304faee 이후 변경되지 않았다.
+- 공동 Build8: 사고/설정/기존 HUD Editor 검사와 BuildHybrid 종료0. 실제 싱글51·재개8·콘텐츠 Player17, 호스트/참가자 상이 프로필+사고/재접속 LAN48+62 종료0. LAN 증거 `artifacts/pvp/native-lan-20261105-190221-3c0ed3fa`.
+- Build8 PVP의 종료 직전 비용 청구/시간 불변은 통과했으나 최종 점수 동기화 순서가 실패했다. 종료 정산 후 SyncExpenses, 그 뒤 Ledger.Finish 순서로 수정했다. 독립 최종 리뷰에서 추가 중요 결함 없음.
+- 최종 공동 Build9(`artifacts/accident-content-build-9.log`) 종료0. PVP55개(`artifacts/combined-final-pvp/result.json`) 종료0: 실제45초·수리25초·4대견인30초·중단무결제·종료직전 비용/점수/시계·반복Finish 멱등. Build8 이후 유일한 생산 변경은 종료 비용 동기화 순서다. 영향받지 않는 저장/콘텐츠/LAN 검사를 무의미하게 반복하지 않았다.
+- 공동 모델 사고77/손상191/설정636·C#/Node hash/시설어댑터 통과, Node18/exit0. Editor 사고7/공업사51·설정26/사본3·기존HUD·Live22/checkpoint500 통과. 시설 실제물리 은계15/A2 17 및 네 시설 캡처는 형상 변경 없이 계승한다.
+- 사용자 저장/호환 백업/지도autosave14파일 SHA256 변경0. 원래 단독 후보141파일은 `artifacts/accident-content-predeploy-20261105-191050/EungyeTaxi`에 복사 후 전수hash 확인. 원래 생성Scene도 보관. 사용자 active-profile 및 sample-request-11은 보존하며 콘텐츠 도구 서버/브라우저는 종료하지 않는다.
+- 현재 작업 소스와 이 기록을 커밋한 후 실제 sourceCommit으로 최종 배포 manifest를 갱신한다. 기본 폴더 반영/VerifyOnly 영수증은 아래에 추가한다.

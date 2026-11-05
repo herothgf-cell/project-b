@@ -142,8 +142,8 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
     }
     public void Finish() {
         if(Finished)return;
+        foreach(var driver in drivers){CancelConditionService(driver);if(driver.damage)driver.damage.CancelPendingService();if(driver.accident)driver.accident.SettleForMatchEnd();}
         foreach(var driver in drivers)ObserveServiceTime(driver);
-        foreach(var driver in drivers){CancelConditionService(driver);if(driver.damage)driver.damage.CancelPendingService();}
         Ledger.Finish();
         foreach(var driver in drivers){driver.paused=true;driver.taxi.autoThrottle=0;driver.taxi.autoBrake=true;}
         Time.timeScale=0;

@@ -66,8 +66,7 @@ public sealed class AccidentController : MonoBehaviour {
    if(State.recoveryRequired||State.stopSeconds>=5&&!safelyStopped){State.recoveryRequired=true;if(!TrySafetyRecovery()){SyncClock();return;}}
    if(session.taxi.body.velocity.magnitude>=.56f){SyncClock();return;}
    session.taxi.body.velocity=Vector3.zero;session.taxi.body.angularVelocity=Vector3.zero;
-   if(!State.chargeApplied){ledger.ChargeAccident(State.eventId);State.chargeApplied=true;}
-   if(!State.outcomeApplied){Atomic=true;try{State.outcome=session.jobs.ResolveAccident();State.outcomeApplied=true;ResolveVictims();}finally{Atomic=false;}}
+   SettleOutcome();
    State.MarkStopped(session.simulationMatch!=null);SyncClock();session.business.SaveCheckpoint();
    if(!session.simulationMatch){Time.timeScale=0;return;}
    return;
@@ -77,6 +76,17 @@ public sealed class AccidentController : MonoBehaviour {
    ledger.AdvanceAccidentProcessing(step);SyncClock();
    if(State.remaining<=0){ledger.CompleteAccident(State.eventId);FinishProcessing();}
   }
+ }
+ void SettleOutcome(){
+  if(!State.chargeApplied){session.business.ledger.ChargeAccident(State.eventId);State.chargeApplied=true;}
+  if(!State.outcomeApplied){Atomic=true;try{State.outcome=session.jobs.ResolveAccident();State.outcomeApplied=true;ResolveVictims();}finally{Atomic=false;}}
+ }
+ // Mandatory liability survives match expiry; optional services are cancelled.
+ // Freeze before transport resolution, without advancing either clock.
+ public void SettleForMatchEnd(){
+  if(!session||!session.simulationMatch||PvpNativeLan.IsReplica(session)||!Locked)return;
+  session.taxi.body.velocity=Vector3.zero;session.taxi.body.angularVelocity=Vector3.zero;
+  SettleOutcome();
  }
  void SyncClock(){if(session.simulationMatch)session.simulationMatch.ObserveAccidentClock(session);}
  public bool Confirm(){
