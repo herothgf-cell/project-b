@@ -8,6 +8,17 @@ public static class WorkshopLayoutTests {
   var reservations=new WorkshopReservations();for(int i=0;i<4;i++)Check(reservations.TryReserve("tow:"+i,i+1,true),"four D0 reservations");
   Check(!reservations.TryReserve("tow:0",5,true),"no double allocation");Check(!reservations.TryReserve("blocked",6,false),"physical occupancy checked before charge");
   Check(reservations.TryReserve("tow:0",1,true),"same reservation restoration");reservations.Release(1);Check(reservations.TryReserve("tow:0",5,true),"repair releases reservation");
+  var wire=JsonUtility.FromJson<PvpNativeOwn>(JsonUtility.ToJson(new PvpNativeOwn{workshopKind=2,workshopRemaining=17.5f,workshopNotice="예약칸 확인 중"}));
+  Check(wire.workshopKind==2&&Mathf.Abs(wire.workshopRemaining-17.5f)<.001f&&wire.workshopNotice=="예약칸 확인 중","replica workshop progress round trip");
+  var obj=new GameObject("Workshop view test");obj.SetActive(false);var damage=obj.AddComponent<VehicleDamageController>();
+  try{
+   damage.ApplyWorkshopNetworkView(wire.workshopKind,wire.workshopRemaining,wire.workshopNotice);
+   Check(damage.PendingServiceKind==0&&damage.PendingServiceRemaining==0&&damage.Bays.Count==0,"network view cannot start authoritative service or reservation");
+   var field=typeof(VehicleDamageController).GetField("networkWorkshopRemaining",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+   Check(Mathf.Abs((float)field.GetValue(damage)-17.5f)<.001f,"network presentation retains remaining time");
+   damage.ApplyWorkshopNetworkView(1,float.NaN,null);Check((float)field.GetValue(damage)==0,"malformed network time cannot poison UI");
+   damage.ApplyWorkshopNetworkView(0,100,"완료");Check((float)field.GetValue(damage)==0&&damage.PendingServiceRemaining==0,"completed snapshot clears progress without starting service");
+  }finally{UnityEngine.Object.DestroyImmediate(obj);}
   Debug.Log("WORKSHOP_LAYOUT_TESTS_OK checks="+checks);
  }
  static void CheckMap(MapData map){

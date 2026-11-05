@@ -104,7 +104,8 @@ public sealed class AccidentController : MonoBehaviour {
   session.taxi.SetSpawn(best.Kerb+Vector3.up*.65f,Quaternion.LookRotation(best.Direction));session.taxi.ResetTaxi();State.recoveryRequired=false;fadeUntil=Time.unscaledTime+.4f;return true;
  }
  void OnGUI(){
-  if(!session||session.IsSimulationBot||PvpNativeLan.IsRemoteHuman(session)||!Locked||session.simulationMatch&&session.simulationMatch.Finished)return;
+  if(!session||session.IsSimulationBot||PvpNativeLan.IsRemoteHuman(session)||session.simulationMatch&&session.simulationMatch.Finished)return;
+  if(!Locked){DrawFade();return;}
   float w=Mathf.Min(580,Screen.width-24),h=310,x=(Screen.width-w)/2,y=(Screen.height-h)/2;GUI.depth=-600;
   CasualUI.Panel(new Rect(x,y,w,h));var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=18,wordWrap=true};style.normal.textColor=CasualUI.Ink;
   string text=State.phase==AccidentPhase.Stopping?"보행자 접촉 · 안전 정차 중":"보행자 사고 처리";
@@ -112,6 +113,7 @@ public sealed class AccidentController : MonoBehaviour {
   if(State.recoveryRequired)text+="\n안전 복구 공간 대기 · 추가 청구 없음";
   GUI.Label(new Rect(x+20,y+18,w-40,220),text,style);
   if(Waiting&&!session.simulationMatch&&GUI.Button(new Rect(x+20,y+254,w-40,40),"사고 처리 확인 · 45초 경과",CasualUI.Action(18)))Confirm();
-  if(Time.unscaledTime<fadeUntil){GUI.depth=-2000;GUI.color=Color.black;GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=Color.white;}
+  DrawFade();
  }
+ void DrawFade(){if(Time.unscaledTime<fadeUntil){GUI.depth=-2000;GUI.color=Color.black;GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=Color.white;}}
 }

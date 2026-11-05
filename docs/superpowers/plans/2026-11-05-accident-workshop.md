@@ -20,23 +20,25 @@
 - 기존 주유소 유료 정비 예약 유지, 공업사 모든 칸 점유시 겹쳐 이동 금지.
 
 ## Task 1: 사고 모델·장부
-- [ ] tests/AccidentTests.cs + tools/test_accidents.ps1에 비용·미납·멱등·45초·공복경계·연료/청결 불변 RED 검사.
-- [ ] AccidentState.cs, CampaignAccount.cs, EconomyLedger.cs에 ChargeAccident/CompleteAccident/AdvanceAccidentProcessing 구현 및 GREEN.
+- [x] tests/AccidentTests.cs + tools/test_accidents.ps1에 비용·미납·멱등·45초·공복경계·연료/청결 불변 RED 검사.
+- [x] AccidentState.cs, CampaignAccount.cs, EconomyLedger.cs에 ChargeAccident/CompleteAccident/AdvanceAccidentProcessing 구현 및 GREEN.
 
 ## Task 2: 공업사
-- [ ] Workshop Editor 검사를 먼저 작성해 시설수/칸/접근/예약 계약 실패 확인.
-- [ ] Workshop layout/controller와 ServiceStops·VehicleDamageController·지도·봇 시설 연결. 기존 유료 bay 유지.
-- [ ] Editor 배치/기하 검사 및 Player 실제 입출차/4칸 점유 검증.
+- [x] Workshop Editor 검사를 먼저 작성해 시설수/칸/접근/예약 계약 실패 확인.
+- [x] Workshop layout/controller와 ServiceStops·VehicleDamageController·지도·봇 시설 연결. 기존 유료 bay 유지.
+- [x] Editor 배치/기하 검사 및 Player 실제 입출차/4칸 점유 검증.
 
 ## Task 3: 사건·운송·복제 통합
-- [ ] AccidentIntegrationChecks/Player probe로 보행자·대기승객·운송 중단/확정운임·단계별 저장 RED.
-- [ ] AccidentController, DriveSession/TaxiController, AmbientPedestrianSystem/PassengerJobs, BusinessProgress Live, PvpSimulationMatch/NativeLan을 연결. root가 소유.
-- [ ] PVP45초는 기존 operation 대신 ledger service 경과로 적용, 호스트 권한·replica 상태/입력 잠금·봇 승계 검증.
+- [x] AccidentIntegrationChecks/Player probe로 보행자·대기승객·운송 중단/확정운임·단계별 저장 RED.
+- [x] AccidentController, DriveSession/TaxiController, AmbientPedestrianSystem/PassengerJobs, BusinessProgress Live, PvpSimulationMatch/NativeLan을 연결. root가 소유.
+- [x] PVP45초는 기존 operation 대신 ledger service 경과로 적용, 호스트 권한·replica 상태/입력 잠금·봇 승계 검증.
 
 ## Task 4: 검증·배포
-- [ ] Editor/독립 모델/기존 저장·P15·LAN 회귀, BuildHybrid 후보 빌드.
-- [ ] 격리 저장 Player 싱글/PVP/새 프로세스 재개·두 Player LAN·실제 화면 및 물리/시설 검사. 사용자 저장 해시 비교.
-- [ ] 별도 읽기전용 리뷰 후 필요한 수정·검증, 소스/기획/체크리스트/이력 커밋.
+- [x] Editor/독립 모델/기존 저장·P15·LAN 회귀, BuildHybrid 후보 빌드.
+- [x] 격리 저장 Player 싱글/PVP/새 프로세스 재개·두 Player LAN·실제 화면 및 물리/시설 검사. 사용자 저장 해시 비교.
+- [x] 별도 읽기전용 리뷰 후 필요한 수정·검증, 소스/기획/체크리스트/이력 커밋.
 - [ ] 사용자 실행 프로세스/동시 빌드 확인 후 기본 exe에 후보 반영, 배포 manifest 재생성·VerifyOnly·Strict, 실제 결과 기록.
 
 원래 C:/git/project-b의 HUD 작업은 진행 중이므로 덮어쓰지 않는다. 원래 실행본 갱신 전 소스 통합/동시 변경을 다시 확인한다. 신규 지도 입력을 변경하지 않는 런타임 시설 생성이면 지도 hash 유지.
+
+수용 한계: 사고 UI ScreenCapture 검은 출력으로 시각 수용 미완료. 공업사 RenderTexture 캡처 확인. 수동/다른PC/전체 캠페인은 별도.

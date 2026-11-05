@@ -37,6 +37,7 @@ using UnityEngine;
     public bool visible,brake;
 }
 [Serializable] public sealed class PvpNativeOwn {public AccidentState accident;
+    public int workshopKind;public float workshopRemaining;public string workshopNotice;
     public EconomySnapshot economy;
     public AccountSnapshot account;
     public PassengerJobsSnapshot jobs;
@@ -114,7 +115,7 @@ public static class PvpNativeReplica {
             var driver=match.Drivers[recipient];var jobs=driver.jobs.CaptureLive();
             // Bot sessions intentionally have no campaign-only scenario registry.
             jobs.hasServiceZones=false;jobs.serviceZones=null;jobs.hasChoice=false;jobs.choice=null;
-            frame.own=new PvpNativeOwn{accident=driver.accident?driver.accident.Capture():null,economy=driver.business.ledger.Snapshot(),account=driver.business.ledger.Account.Snapshot(),jobs=jobs,
+            frame.own=new PvpNativeOwn{workshopKind=driver.damage?driver.damage.PendingServiceKind:0,workshopRemaining=driver.damage?driver.damage.PendingServiceRemaining:0,workshopNotice=driver.damage?driver.damage.Notice:"",accident=driver.accident?driver.accident.Capture():null,economy=driver.business.ledger.Snapshot(),account=driver.business.ledger.Account.Snapshot(),jobs=jobs,
                 lawEvents=driver.law.ledger.Events,manners=driver.manners.CaptureLive(),passengers=driver.business.passengers.ToArray(),tripId=driver.law.tripId,mannersLastEvent=driver.manners.lastEvent,
                 hasDestination=driver.jobs.nav.HasDestination,freeGuidance=driver.jobs.nav.freeGuidance,destination=driver.jobs.nav.destination,serviceOpen=driver.services.open,servicePending=driver.services.pending,
                 serviceNotice=driver.services.notice,serviceDestination=driver.services.destination,serviceMeal=driver.services.SelectedMeal,serviceQueueStatus=driver.services.QueueStatus,serviceQueueWaiting=driver.services.QueueWaiting,serviceFacilities=driver.services.CaptureFacilityQueues(),
@@ -240,6 +241,7 @@ public static class PvpNativeReplica {
         driver.manners.lastEvent=own.mannersLastEvent??"운전 상태 변화";
         PvpNativePerf.End("jobs",stage);stage=PvpNativePerf.Start();if(own.hasDestination&&(!driver.jobs.nav.HasDestination||(driver.jobs.nav.destination-own.destination).sqrMagnitude>.01f))driver.jobs.nav.SetDestination(own.destination);
         PvpNativePerf.End("destination",stage);driver.business.passengers.Clear();if(own.passengers!=null)driver.business.passengers.AddRange(own.passengers);
+        if(driver.damage)driver.damage.ApplyWorkshopNetworkView(own.workshopKind,own.workshopRemaining,own.workshopNotice);
         driver.services.ApplyNetworkView(own.serviceOpen,own.servicePending,own.serviceNotice,own.serviceDestination,own.serviceMeal,own.serviceFuel);
         PvpNativePerf.End("own",perf);
         driver.services.ApplyNetworkQueue(own.serviceQueueStatus,own.serviceQueueWaiting);

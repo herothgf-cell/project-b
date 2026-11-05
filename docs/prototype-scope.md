@@ -1,6 +1,6 @@
 # 프로토타입 통합 범위
 
-2026-11-05 범위 검토: [보행자 사고 처리·공업사 상세 기획안](content-design/08-accident-and-workshop-proposal.md)을 작성했다. 사용자가 요청한 기획 대상은 사고 비용·시간·피로·공업사이며 차량 구매·물품/보험·과실·구급차는 후속이다. 상세 수치·시설 배치는 제안이고 아직 미구현이다. 아래 포함 표는 기존 실행본 기준이다.
+2026-11-05 승인 범위: [보행자 사고 처리·공업사 상세 기획](content-design/08-accident-and-workshop-proposal.md)대로 싱글/PVP 구현 중이다. 사건3,000원·45초·추가 피로0(통상 경과 적용), 맵별 공업사2곳·수리/견인을 포함한다. 차량 구매·물품/보험·과실·구급차는 후속이다. 실제 검증과 배포 완료 여부는 [구현 이력](work-history/2026-11-05-accident-workshop-implementation.md)을 따른다.
 
 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 개발 프로젝트는 `unity/EungyeTaxi`, 빌드는 `PrototypeBuild.BuildHybrid`다. 현재 콘텐츠의 기준은 [기획 목록](content-design/README.md), 개발·검증 상태는 [체크리스트](prototype-development-checklist.md), 날짜별 증거는 [작업 이력](work-history/LATEST.md)을 따른다. 이전 범위는 [보존 기록](design-history/prototype-scope-history.md)에 둔다.
 

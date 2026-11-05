@@ -30,3 +30,38 @@ Unity2022.3.62f2 `-executeMethod AccidentWorkshopBuild.Build`. 실행 검사 `to
 실제 Player 싱글/재개/PVP·물리 시설 입출차·두 Player LAN·화면·사용자 저장 보존·최신 UI 통합 빌드·배포 manifest는 진행 중이다. 사람 수동20분/3일·다른PC4명 수용은 자동검사와 별도다.
 
 기본 배포는 기존 `builds/EungyeTaxi/EungyeTaxi.exe`/은계 싱글·A2 PVP 유지, 최종 실행본 갱신 아직 미확정. 이번 worktree 필수 입력 Strict exit0/issues0, 원본 입력·ZIP 변경 없음. PC별 작업 경로는 로컬 환경 정보다.
+
+## 통합 검사 진행 (Build4)
+
+- HUD 소스3338612와 배포e29a0cb 병합 완료. 사용자 수정 소스/미추적 자료와 저장 경로 유지.
+- Build4: `AccidentWorkshopBuild.Build` → `PrototypeBuild.BuildHybrid`, 종료0. Editor 사고7/공업사51/Live22/checkpoint500 통과.
+- PVP Player50개 통과: 실제45초 사고·사람/봇 동일 청구,25초 수리 완료 결제·중단 무결제,4대 동시30초 견인·중복 예약 방지, 수리 중 사고 취소 및 봇 출차 컴포넌트.
+- 두 loopback Player LAN `tools/test_pvp_native_lan.ps1 -Reconnect`: 호스트47/클라이언트61, 종료0. 재접속·호스트 물리 입력/공유 호출·사고 이벤트/3,000원/입력 잠금/45초 동기화. 증거 `artifacts/pvp/native-lan-20261105-181038-19bec553`.
+- 은계 공업사 실제 WheelCollider 입출차15개/종료0: 두 시설 진입·정차 방향·속도·출차·도로 합류. 실제 사람이 운전한 검사는 아니다. `artifacts/workshop-physical-eungye.txt`, 시설별 PNG.
+- 싱글 접촉 fixture는 FreezeAll이 속도 대입을 막는 원인 확인, 이동 시 FreezeRotation으로 수정하고 속도 검사 추가. PVP 물리 probe가 봇을 선택한 원인도 Human 명시로 수정했다. 생산 판정 기준을 완화하지 않았다.
+- Build4 ScreenCapture 결과가 검은 프레임이어서 UI 확인 완료로 처리하지 않았다. 백그라운드 렌더와 Splash 완료 대기 후 재검사한다.
+- 사용자 저장/호환 백업·지도 autosave14파일 SHA256은 검사 전과 동일(변경0). 최종 빌드/재검사 뒤 다시 비교한다.
+## Build5 수용과 한계
+
+- 최종 생산 코드 Build5 종료0, Editor 사고7/공업사51/Live22/checkpoint500 통과.
+- 싱글50/PVP50 Player assertions 각각 종료0. 싱글은 실제 보행자 역방향2m/s·대기 승객2m/s 공통 detector,0/1m/s 제외, 운송 취소·확정 운임·장부·공업사 수리 계약을 위치 제어로 검증했다. PVP는 실제 호스트 타이머를 사용했다.
+- A2 실제 물리17개/종료0: Human 차량·4개 WheelCollider 확인, 두 공업사 진입/출차. 은계15개와 함께 네 시설의 실제 물리 경로를 확인했다. 시설 캡처 확인, 사고 UI ScreenCapture는 숨김 창에서 검게 나와 시각 검증 미완료로 남긴다.
+- 저장 재개 검사기가 StartupReady 직후 비동기 RestoreLive 이전에 조회한 실패를 확인했다. Build6은 검사기만 수정(생산 기능은 Build5와 동일)하며 복원 완료 후 재개/중복 방지를 확인한다.
+- `tools/check_workspace.ps1 -Strict`: 종료0/Input issues0. 프로젝트 지도·관련 입력/ZIP 변경 없음.
+- 모델 전체 runner는 기존 ManualHandlingTests의 S제동 기대값 불일치(actual8.823529)에서 중단하는 기존 한계가 있다. 이번 사고77/손상191/예약·시설 어댑터 및 별도 주요 회귀 결과와 구분한다. 무관한 조작 수치를 바꾸지 않았다.
+- 다른PC LAN, 사람이 직접 조작하는 장시간/전체3일 캠페인, 실제 패드, 사고 UI 시각 수용은 별도다. 자동 위치 제어·물리 경로·loopback 검사를 수동 플레이 완료로 표현하지 않는다.
+
+## 재현
+
+- 기본 실행: `builds/EungyeTaxi/EungyeTaxi.exe`, 은계 싱글/A2 PVP. LAN v4 양쪽 실행본을 함께 갱신한다.
+- 빌드: Unity2022.3.62f2 `-batchmode -nographics -quit -projectPath unity/EungyeTaxi -executeMethod AccidentWorkshopBuild.Build -logFile <log>` (검사 뒤 PrototypeBuild.BuildHybrid).
+- 모델: `pwsh -File tools/test_accidents.ps1`, `pwsh -File tools/test_vehicle_damage.ps1`, `pwsh -File tools/test_operation_planning_adapters.ps1`.
+- Player: `pwsh -File tools/test_accident_workshop_player.ps1`, 이어 `-Reload`, 별도 `-Pvp`. 기본 격리 저장은 artifacts/accident-workshop-test.json, 사용자 저장과 분리된다.
+- 물리: exe `-workshopPhysicalCheck -workshopPhysicalTest -singlePlayer`, PVP는 `-pvpWorkshopPhysicalCheck`. 작업 디렉터리를 저장소 루트로 지정. 출력 artifacts/workshop-physical-{map}.txt/PNG. watchdog은 외부180초.
+- LAN: `pwsh -File tools/test_pvp_native_lan.ps1 -Reconnect -TimeoutSeconds 300`.
+- 배포/지도: `pwsh -File tools/update_distribution_manifest.ps1 -VerifyOnly`, `pwsh -File tools/update_pvp_distribution_manifest.ps1 -VerifyOnly`, `pwsh -File tools/check_workspace.ps1 -Strict`.
+## 최종 빌드·재개 수용
+
+- Build6 `artifacts/accident-build-6.log`: 종료0, Editor 사고7/공업사51/Live22/checkpoint500. Build5 이후 생산 기능 변경 없이 검사기 복원 대기만 수정했다.
+- `artifacts/accident-build6-reload/result.json`: 새 프로세스8개/종료0. 유료 pending 사고 복원,3,000원 한 번,45초 한 번,재확인 멱등.
+- 최종 사용자 파일14개 SHA256 변경0. `docs/ui/2026-11-05-accident-workshop/`에 네 공업사 실제 물리 캡처 보관. 소스/기획을 커밋한 뒤 이 실제 커밋으로 manifest를 재생성하고 기본 폴더를 갱신한다.
