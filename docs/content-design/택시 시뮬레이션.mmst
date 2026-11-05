@@ -2480,7 +2480,7 @@
               },
               {
                 "id": "11c805a1-8e63-5842-a52e-8f4a29888713",
-                "topic": "기본 신호: 양방향 직진·방향별 보호 좌회전",
+                "topic": "기본 신호: 수요 반응·빈 단계 생략·대기열 연장 (11/04 갱신)",
                 "children": [],
                 "collapsed": true,
                 "task": {
@@ -2497,7 +2497,7 @@
               },
               {
                 "id": "904ec152-ecb7-5e8b-b7ba-3ff111c2a3d4",
-                "topic": "방향키·패드·LAN 공통 조향 입력 반응 개선",
+                "topic": "공통 조향·중속 회전 완화·S제동/정차 유지 개선 (11/04 갱신)",
                 "children": [],
                 "collapsed": true,
                 "task": {
@@ -2858,7 +2858,7 @@
               },
               {
                 "id": "b0d007ea-f451-52c2-b7c1-19d40a38970c",
-                "topic": "네비: 승차·경유·하차 잔여 거리와 신호 변경 시간",
+                "topic": "네비: 목표 거리·신호 시간·재탐색 중 이전 경로 표시 보존",
                 "children": [],
                 "collapsed": true,
                 "task": {
@@ -5168,7 +5168,7 @@
                       },
                       {
                         "id": "8affb820-317d-403a-b442-d9f1a5a7f46f",
-                        "topic": "내 차가 사고 나면 어떻게 연출할 것인가?",
+                        "topic": "사고 결과 전달·보행자 공통 처리 검토 (11/05 제안·미구현)",
                         "createdAt": 1792733200135,
                         "children": [],
                         "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/README.md",
