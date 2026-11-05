@@ -59,7 +59,7 @@ public sealed class UnifiedModeBootstrap : MonoBehaviour {
             float width=Mathf.Min(580,Screen.width-32);
             GUILayout.BeginArea(new Rect((Screen.width-width)/2,Screen.height*.28f,width,275),GUI.skin.box);
             GUILayout.Label("택시 시뮬레이션",new GUIStyle(GUI.skin.label){fontSize=28,font=KoreanText.BoldFont});GUILayout.Space(20);
-            if(GUILayout.Button("싱글 (체험판)",GUILayout.Height(55)))StartSingle();
+            if(GUILayout.Button("싱글",GUILayout.Height(55)))StartSingle();
             GUILayout.Space(12);
             if(GUILayout.Button("PVP",GUILayout.Height(55)))StartPvp();
             GUILayout.Space(12);

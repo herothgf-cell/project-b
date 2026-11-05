@@ -2,7 +2,7 @@ using UnityEngine;
 
 // Modern daily operation UI, shared by the one-day fixture and the three-day prototype.
 public static class OneDayHUD {
- static GUIStyle text,small,title,button;
+ static GUIStyle text,small,title,button,preparationNumber,preparationCaption,preparationDelta,preparationAmount,preparationAction;
  static bool showDayDetails;static Vector2 detailScroll;
  public static bool DayDetailsOpen {get{return showDayDetails;}}
  public static void ToggleDayDetails(){showDayDetails=!showDayDetails;}
@@ -10,12 +10,46 @@ public static class OneDayHUD {
  static string Money(int n){return n.ToString("N0")+"원";}
  static string Clock(double value){int n=Mathf.CeilToInt((float)System.Math.Max(0,value));return n/60+":"+(n%60).ToString("00");}
  static void Panel(Rect r){CasualUI.Panel(r);}
+ static void PreparationStyles(){
+  if(preparationNumber!=null)return;
+  preparationNumber=new GUIStyle(title){fontSize=26,alignment=TextAnchor.MiddleCenter,wordWrap=false};
+  preparationCaption=new GUIStyle(text){fontSize=17,alignment=TextAnchor.MiddleCenter,wordWrap=false};
+  preparationDelta=new GUIStyle(small){fontSize=15,alignment=TextAnchor.MiddleCenter,wordWrap=false};
+  preparationAmount=new GUIStyle(text){fontSize=17,alignment=TextAnchor.MiddleRight,wordWrap=false};
+  preparationAction=CasualUI.Action(20);
+ }
+ static void DrawPreparation(DriveSession session){
+  PreparationStyles();var view=DayPreparationPresentation.Create(session.business.ledger);var bounds=DayPreparationPresentation.PanelBounds(Screen.width,Screen.height);float scale=bounds.width/760f;
+  var saved=GUI.matrix;var oldColor=GUI.color;GUI.depth=-150;GUI.color=new Color(0,0,0,.30f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=oldColor;
+  GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,Vector3.one*scale);float x=bounds.x/scale,y=bounds.y/scale;Panel(new Rect(x,y,760,590));
+  GUI.Label(new Rect(x+30,y+24,700,42),view.title,title);
+  GUI.Label(new Rect(x+30,y+72,700,26),"현재 상태",text);
+  for(int i=0;i<view.stats.Length;i++){
+   var stat=view.stats[i];var card=new Rect(x+30+i*178,y+108,166,135);CasualUI.RoundedFill(card,CasualUI.Soft);
+   HudGlyph.Draw(new Rect(card.center.x-12,card.y+12,24,24),stat.glyph,CasualUI.Blue);
+   GUI.Label(new Rect(card.x+6,card.y+39,card.width-12,26),stat.label,preparationCaption);
+   preparationNumber.fontSize=26;while(preparationNumber.fontSize>18&&preparationNumber.CalcSize(new GUIContent(stat.valueText)).x>card.width-12)preparationNumber.fontSize--;
+   GUI.Label(new Rect(card.x+6,card.y+65,card.width-12,34),stat.valueText,preparationNumber);
+   Color delta=CasualUI.Muted;if(stat.hasDelta&&stat.delta!=0)delta=(stat.id=="fatigue"?stat.delta<0:stat.delta>0)?CasualUI.Green:CasualUI.Danger;
+   preparationDelta.normal.textColor=delta;GUI.Label(new Rect(card.x+6,card.y+103,card.width-12,25),stat.deltaText,preparationDelta);
+  }
+  GUI.Label(new Rect(x+30,y+252,700,25),view.comparisonSource,small);
+  GUI.Label(new Rect(x+30,y+296,350,32),"이용 비용",text);preparationAmount.normal.textColor=CasualUI.Muted;GUI.Label(new Rect(x+380,y+296,350,30),view.expenseSource,preparationAmount);
+  CasualUI.RoundedFill(new Rect(x+30,y+338,700,126),CasualUI.Soft);
+  for(int i=0;i<view.expenses.Length;i++){
+   var row=view.expenses[i];int column=i<4?0:1,index=i<4?i:i-4;float rowX=x+44+column*350,rowY=y+347+index*28;
+   GUI.Label(new Rect(rowX,rowY,180,27),row.label,text);preparationAmount.normal.textColor=CasualUI.Ink;GUI.Label(new Rect(rowX+172,rowY,144,27),Money(row.amount),preparationAmount);
+  }
+  GUI.Label(new Rect(x+30,y+478,340,32),"합계",text);preparationAmount.normal.textColor=CasualUI.Ink;GUI.Label(new Rect(x+390,y+478,340,32),Money(view.totalExpense),preparationAmount);
+  if(GUI.Button(new Rect(x+30,y+520,700,50),"영업 시작",preparationAction))session.business.Depart();
+  GUI.matrix=saved;
+ }
  public static void Draw(DriveSession s){if(s.RideResultOpen)return;Styles();var b=s.business;var e=b.ledger;var d=e.Driver;if(d==null)return;bool multi=e.Settings.days>1;GUI.depth=-35;
   if(!b.preparing&&!b.ShowingSummary&&!b.restartPrompt&&!b.ResumeBlocked){
    return; // Live operation is composed by CockpitUI.
 
   }
-  if(b.preparing&&!b.restartPrompt&&!b.ResumeBlocked){showDayDetails=false;s.GetComponent<DriveHUD>().DrawSingleMenu();return;}
+  if(b.preparing&&!b.restartPrompt&&!b.ResumeBlocked){showDayDetails=false;if(DayPreparationPresentation.ShouldShow(e.Day,b.preparing,b.restartPrompt,b.ResumeBlocked))DrawPreparation(s);else s.GetComponent<DriveHUD>().DrawSingleMenu();return;}
   var saved=GUI.matrix;float scale=Mathf.Min(1,Screen.width/800f,Screen.height/730f);GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,Vector3.one*scale);float x=(Screen.width/scale-720)/2,y=(Screen.height/scale-680)/2;GUI.depth=-150;Panel(new Rect(x,y,720,680));
   if(b.restartPrompt&&b.ResumeBlocked){GUI.Label(new Rect(x+25,y+25,670,65),"원본 보관 후 새로 시작할까요?",title);GUI.Label(new Rect(x+25,y+115,670,210),"현재 저장을 이어갈 수 없어 영업을 멈췄습니다.\n새로 시작하면 현재 진행 대신 현금 10,000원 · 연료 60%의 1일차로 시작합니다.\n\n기존 원본과 백업은 저장 폴더 안에 별도로 보관합니다. 보관하지 못하면 새로 시작하지 않습니다.\n취소하면 기존 파일과 현재 상태를 유지합니다.",text);GUI.Label(new Rect(x+25,y+360,670,75),b.saveStatus,small);if(GUI.Button(new Rect(x+25,y+590,325,55),"원본 보관 후 새로 시작",button))b.ConfirmRestart(true);if(GUI.Button(new Rect(x+370,y+590,325,55),"돌아가기",button))b.ConfirmRestart(false);}
   else if(b.restartPrompt){GUI.Label(new Rect(x+25,y+25,670,55),multi?"새 캠페인을 시작할까요?":"새 하루를 시작할까요?",title);GUI.Label(new Rect(x+25,y+100,670,210),"현금 10,000원 · 연료 60% · 포만감 80 · 피로 10\n1일차와 운전 점수 100점부터 시작합니다.\n이전 완료 결과는 보존합니다. 취소하면 현재 진행을 유지합니다.",text);GUI.Label(new Rect(x+25,y+360,670,65),b.saveStatus,small);if(GUI.Button(new Rect(x+25,y+590,325,55),multi?"새 3일 시작":"새 하루 시작",button))b.ConfirmRestart(true);if(GUI.Button(new Rect(x+370,y+590,325,55),"취소",button))b.ConfirmRestart(false);}

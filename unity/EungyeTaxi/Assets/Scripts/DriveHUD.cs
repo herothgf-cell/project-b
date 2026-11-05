@@ -60,6 +60,8 @@ public class DriveHUD : MonoBehaviour {
   if(GUI.Button(new Rect(r.x+618,r.y+10,84,36),"닫기",KoreanText.Button(14)))HelpOpen=false;
   GUI.Label(new Rect(r.x+18,r.y+52,684,54),session.assisted.Status,new GUIStyle(small){wordWrap=true});
   GUI.Label(new Rect(r.x+18,r.y+112,684,254),DrivingHelpText,new GUIStyle(body){wordWrap=true});
+  GUI.Label(new Rect(r.x+18,r.y+366,464,23),"지도 자료: © OpenStreetMap contributors · ODbL",new GUIStyle(small){fontSize=12});
+  if(GUI.Button(new Rect(r.x+492,r.y+365,210,24),"지도 출처·라이선스",KoreanText.Button(12)))Application.OpenURL("https://www.openstreetmap.org/copyright");
   GUI.matrix=matrix;GUI.depth=depth;
  }
 

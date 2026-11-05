@@ -7,6 +7,8 @@ public partial class ServiceStops : MonoBehaviour {
  public bool CanContinueConditionService(int kind){return Pvp&&session.business.ledger.State==BusinessState.Open&&!session.jobs.Active&&(PvpNativeLan.IsReplica(session)?Mathf.Abs(session.taxi.Speed):session.taxi.body.velocity.magnitude)<.56f&&(kind==1?AtRestaurant():kind==3&&(AtRestArea()||AtParking()));}
  public void FinishConditionService(int kind,bool completed){notice=completed?(kind==1?"식사 완료 · 1,000원 · 포만 +60":"짧은 휴식 완료 · 피로 −40 · 졸음 해제"):"이용 중단 · 비용/회복 없음";noticeUntil=Time.unscaledTime+5;if(completed)CompleteServiceNavigation();Close();session.business.SaveCheckpoint();}
  public bool PostTripVisible {get{return postTrip;}}
+ public bool CanOpenLifeHub {get{return session&&session.business&&session.jobs&&!session.jobs.Active&&!session.paused&&!session.PracticeBusy&&!session.PracticeMenuOpen&&!session.FullMapOpen&&!session.ChoiceOpen&&!session.business.preparing&&!session.business.ShowingSummary&&!session.business.restartPrompt&&!session.business.ResumeBlocked&&!session.law.HistoryOpen;}}
+ public bool ToggleLifeHub(){if(postTrip){DismissPostTrip();return true;}if(!CanOpenLifeHub)return false;postTrip=true;RefreshPostTrip();nextPostTripRefresh=Time.unscaledTime+2;return true;}
  public DriveSession session;public bool open;public string notice="";public int pending=-1;public string destination="";
  float noticeUntil;int pendingFuel=-1;public float FuelAmount {get{return Mathf.Min(10,100-session.business.ledger.Account.Fuel);}}
  static readonly string[] mealMenu={"제육백반","된장찌개 정식","소고기국밥"};
@@ -82,8 +84,8 @@ public partial class ServiceStops : MonoBehaviour {
  }
  public void DismissPostTrip(){postTrip=false;}
  public bool GuideAfterTrip(int kind){
-  if(PvpNativeLan.Route(session,"guide-after-trip",kind))return true;
-  if(!postTrip||kind<0||kind>3||session.jobs.Active||session.paused||session.business.ledger.State!=BusinessState.Open)return false;
+  if(PvpNativeLan.Route(session,"guide-after-trip",kind)){DismissPostTrip();return true;}
+  if(kind<0||kind>3||session.jobs.Active||session.paused||session.business.ledger.State!=BusinessState.Open)return false;
   RefreshPostTrip();if(float.IsInfinity(postTripDistances[kind]))return false;
   ResetFacilityQueueIntent();
   // Explicit route choice only; no popup, payment, rest or shift closing is performed here.
@@ -98,7 +100,7 @@ public partial class ServiceStops : MonoBehaviour {
   GUI.depth=-20;CasualUI.Panel(new Rect(x,y,width,80));
   string[] labels={session.jobs.NeedsWash?"주유소(세차 필요)":"주유","식사","귀가 주차장","수면"};
   string reason=recommended==0?(session.jobs.NeedsWash?"청결 30 미만 · 세차 필요":"연료 15% 이하"):recommended==1?"포만감 25 미만":recommended==3?"피로 70 이상":recommended==2?"마감까지 3분 이내":"현재 컨디션 양호";
-  GUI.Label(new Rect(x+10,y+2,width-20,28),"운송 후 생활 거점 · "+(recommended<0?"계속 영업 가능":labels[recommended]+" 권장"),new GUIStyle(style){fontSize=14});
+  GUI.Label(new Rect(x+10,y+2,width-20,28),"생활 거점",new GUIStyle(style){fontSize=14});
   float cell=(width-20)/5;
   for(int i=0;i<4;i++){
    GUI.enabled=!session.jobs.Active&&!float.IsInfinity(postTripDistances[i]);
