@@ -44,3 +44,17 @@
 사용 방법: `docs/content-tuning-tool-guide.md`. 루트 `설정 관리.cmd`를 더블클릭한다. 기본 게임은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드는 `PrototypeBuild.BuildHybrid`, 은계 싱글/A2 PVP다. 관리창 예시 프로필은 사용자 로컬 영역에 보관하며 정식 active는 기본값으로 원복해 공동 통합에 전달한다.
 
 사고 작업이 이 소스 커밋과 기획/검증 기록을 가져가 LAN v5·사고 상태·Content snapshot·저장·모델 의존성을 병합하고 공동 빌드/최종 manifest·실행 폴더를 검증·갱신한다. 현재 작업의 단독 후보 실행본을 최종 공동 배포로 커밋하지 않는다. 실제 이력 커밋 확인: `git log -1 --oneline -- docs/work-history/2026-11-05-content-tuning-tool-implementation.md`.
+
+## 최종 브라우저·인계 영수증
+
+소스 커밋은 실제 `304faeef4e0c96f976c0f66f9eea060bd85024b1`이며 사고 작업에 전달했고, 해당 작업이 별도 폴더에서 병합·공동 v5 빌드를 담당한다고 회신했다. 이후 게임 C#·실행본·manifest는 이 작업에서 추가로 덮어쓰지 않는다.
+
+최종 Node 관리창/manifest 전체18테스트 **exit0**, 단일 새로고침 뒤 토큰 유지와 화면 내 프로필 생성/저장 확인창, 실제 대사 검색·관련 항목과 입력 확인. 실제 IAB에서 `sample-request-11`을 생성하고 이행8→11 저장/적용, 빌드된 C# 미리보기 **requestDelta11**을 확인했다. 결과는 JSON 내부 필드 대신 한글 만족도·지급·요청 점수·법규 감점으로 표시한다. `preview.jpg`는 실제 출력이다.
+
+실제 브라우저1280×720과800×720에서 렌더·편집 필드 접근을 확인했다. 800창의 documentWidth785≤innerWidth800, 편집값11·저장 버튼 존재 확인. 별도 전체 페이지 캡처는 IAB에서 지원되지 않아 실패했으며 정상 viewport 캡처로 대체했다. 이미지: `docs/ui/2026-11-05-content-tuning/editor-1280.jpg`, `editor-800.jpg`, `preview.jpg`. 마지막에 임시 viewport를 해제하고 사용자 편집 창을 유지했다.
+
+적용 파일을 UI에서 **default / 1d7fc834d91295e14f15ef90a29f1cd4a5d992ad5f8952c2d8d79d354785ac1c**로 복구하고 디스크 기본값과 hash 동일 확인. 예시 프로필은 Git 제외 로컬 영역에 보관했다. 사용자 원래 저장4파일의 최종 SHA256 재대조도 **변경0**. 전체 프로토 모델 수집기는 출력 줄 수 대신 묶음 수로 다시 집계해 **27통과/1기존실패**를 확인했다.
+
+소스/기획 경로는 저장소 상대 경로, 임시 테스트 폴더와 Unity/Node 설치는 로컬 환경 정보다. 최종 공동 실행본·manifest 검증은 사고/공업사 공동 배포 이력에서 확인하며, 위 단독 결과와 사람 수동/전체 캠페인 검증을 혼동하지 않는다.
+
+최종 문서6개·저장소 로컬 링크164개 존재 검사 exit0, `git diff --check` exit0. 미검증인 법률 감수·사람 전체 캠페인 등을 문서 통과로 대체하지 않는다.
