@@ -1,5 +1,7 @@
 # 승객·대화·효과·법규 설정 관리
 
+실제 화면: [관리창](ui/2026-11-05-content-tuning/editor-1280.jpg) · [좁은 창](ui/2026-11-05-content-tuning/editor-800.jpg) · [게임 코어 미리보기](ui/2026-11-05-content-tuning/preview.jpg).
+
 ## 실행
 
 저장소 루트의 **`설정 관리.cmd`를 더블클릭**한다. 브라우저에 로컬 관리창이 열린다. 이 PC에는 Node.js가 설치되어 있다. 다른 PC에서는 Node.js를 설치하고 다시 실행한다. 게임만 실행할 때는 Node.js가 필요 없다.
