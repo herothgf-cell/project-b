@@ -22,12 +22,16 @@
 - `UnifiedModeTests.Build`: `artifacts/start-menu-build.log` Unity exit0. 메뉴4/기존 모드9·기존 캠페인 시작10·checkpoint500회/잠금/복구·live campaign22 검사 후 `PROTOTYPE_BUILD_OK` 확인. 기본 `PrototypeBuild.BuildHybrid` 실행 폴더를 갱신했다.
 - 별도 읽기 전용 리뷰에서 중요/치명적 발견0. 실제 운송 중 저장/정산 재진입을 이번 Probe에서 추가 재현하지 않은 한계는 기존 live 모델/저장 회귀와 구분한다.
 - Strict exit0/input issues0, `git diff --check` 통과. 이후 실제 실행·manifest·저장 보존 결과는 아래에 실제 명령 종료 후 기록한다.
+- 첫 Player 검사 `artifacts/start-menu-player.log`는 exit1. 새 시작/실제 출발은 통과했으나 테스트가 출발 후 시간을 진행시킨 캠페인을 인위적으로 `preparing=true`로 되돌려 저장했다. 기존 저장 계약은 경과 시간이 있는 운행에 live snapshot을 요구하므로 `Missing active session`으로 정상 거부됐다. 제품 저장 조건은 완화하지 않고 테스트의 인위적 준비 복귀를 제거해 실제 운행 저장→정지 상태 복원→계속하기를 검사하도록 수정했다. 이 실행의 사용자4파일 비교 실패는 동시 실행 중 사용자 게임의 정상 저장 변경이며 보존 통과로 계산하지 않는다. 초기 오류 캡처는 합격 증거에서 제외한다.
+- fixture 수정 후 `UnifiedModeTests.Build`를 다시 실행한 `artifacts/start-menu-build-final.log`도 Unity exit0. 메뉴4/기존 모드9·시작10·checkpoint500회/잠금/복구·live22와 기본 `PROTOTYPE_BUILD_OK` 재확인. 최종 빌드 이후 제품 코드는 변경하지 않았다.
 
 ## 환경·남은 범위
 
 tracked 변경 없이 시작해 기존 Unity 캐시와 미추적 자료를 보존하고 `codex/simplify-start-menu`에서 작업했다. 시작 시 있던 `builds/EungyeTaxi/EungyeTaxi.zip`은 빌드 시작 전 재조회에서 이미 부재였다. 이번 작업에서 ZIP을 이동/삭제하지 않았다. 다른 미추적 자료를 커밋에 포함하지 않는다.
 
 일반 권한 프로세스 조회에는 게임이 보이지 않았으나, 빌드 후 사용자 저장 변경을 감지하고 권한 있는 조회에서 기존 `EungyeTaxi.exe` PID26832를 확인했다. 게임을 강제 종료하거나 변경된 사용자 저장을 과거 값으로 되돌리지 않는다. 사용자에게 저장·종료 후 알림을 요청했으며 종료 후의 저장을 테스트 보존 기준으로 다시 잡는다. 이 초기 해시 차이는 저장 불변 통과로 계산하지 않는다.
+
+사용자가 종료를 알린 뒤 권한 있는 조회에서 게임 프로세스 부재를 확인했다. 사용자 종료 저장4파일의 SHA256을 `artifacts/start-menu-user-saves-after-user-exit.json`에 새로 기록했다. 이 기준으로 최종 임시 저장 실행 전후를 비교한다.
 
 새 빌드의 `택시 시뮬레이션_BurstDebugInformation_DoNotShip` 폴더는 실행 폴더 내 절대 경로를 확인한 뒤 `artifacts/start-menu-burst-debug`로 보존해 정식 배포에서 제외했다. NotoSansKR 공지 파일은 BuildHybrid가 저장소 라이선스 원본에서 복사한 결과다.
 

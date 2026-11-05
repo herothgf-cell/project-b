@@ -81,15 +81,13 @@ public sealed class UnifiedModeProbe : MonoBehaviour {
         human.business.ContinueFromMenu();
         Check(!human.business.preparing&&!human.paused&&Time.timeScale==1&&human.business.ledger.Operating,"fresh start enters driving with one action");
         yield return Capture("04b-single-driving");
-        // Also exercise an existing save made before the first departure.
-        human.business.preparing=true;Time.timeScale=0;
         Check(human.business.SavePath==CampaignPath&&human.business.SaveCheckpoint(),"single saves to isolated real checkpoint pipeline");
         string id=human.law.ids.campaign;
         Check(FindObjectOfType<UnifiedModeBootstrap>().ReturnToMenu(),"single saves before returning to mode menu");
         yield return null;yield return Menu();
         FindObjectOfType<UnifiedModeBootstrap>().StartSingle();yield return Ready();human=Human();
-        Check(!human.business.ResumeBlocked&&human.law.ids.campaign==id&&human.business.preparing,"single re-entry restores existing campaign and preparation");
-        Check(human.business.MenuPrimaryLabel=="영업 계속하기"&&human.business.HasCampaignToContinue,"restored preparation exposes continue and restart");
+        Check(!human.business.ResumeBlocked&&human.law.ids.campaign==id&&!human.business.preparing&&human.paused,"single re-entry restores existing active campaign paused");
+        Check(human.business.MenuPrimaryLabel=="영업 계속하기"&&human.business.HasCampaignToContinue,"restored driving exposes continue and restart");
         yield return Capture("05-single-restored-menu");
         human.business.ContinueFromMenu();
         Check(!human.business.preparing&&!human.paused&&Time.timeScale==1&&human.business.ledger.Operating,"one menu action directly starts driving");
