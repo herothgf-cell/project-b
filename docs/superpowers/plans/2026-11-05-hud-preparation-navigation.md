@@ -15,10 +15,10 @@
 
 ## 작업·검증
 
-- [ ] DayPreparationChecks/CockpitPresentationChecks/NavigationHudChecks RED 확인.
-- [ ] 독립 준비 UI와 내비/신호 UI를 병렬 구현하고 root에서 기본HUD·생활거점 통합.
-- [ ] 집중/기존 메뉴·내비·저장 회귀, 실제 지도 경로 시간/거리 차이·신호 권한 불변 검사.
-- [ ] BuildHybrid 또는 실행중이면 별도 후보 빌드, 임시 저장의 실제2일차·빈차/예약/탑승·내비·생활거점 렌더 확인.
-- [ ] 사용자 종료 저장 보호·배포 manifest·기획/체크리스트·이력/LATEST와 로컬 커밋.
+- [x] DayPreparationChecks/CockpitPresentationChecks/NavigationHudChecks RED 확인.
+- [x] 독립 준비 UI와 내비/신호 UI를 병렬 구현하고 root에서 기본HUD·생활거점 통합.
+- [x] 집중/기존 메뉴·내비·저장 회귀, 실제 지도 경로 시간/거리 차이·신호 권한 불변 검사.
+- [x] BuildHybrid 또는 실행중이면 별도 후보 빌드, 임시 저장의 실제2일차·빈차/예약/탑승·내비·생활거점 렌더 확인.
+- [x] 사용자 종료 저장 보호·배포 manifest·기획/체크리스트·이력/LATEST와 로컬 커밋.
 
 파일 소유: day_preparation은 OneDayHUD/새 준비 표시·검사, navigation_hud는 DrivingReadability/새 신호 표시·검사, root는 CockpitUI/ServiceStops/모드·도움말/통합 검증·문서. Unity·빌드·Git은 root에서 직렬 실행한다.

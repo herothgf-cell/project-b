@@ -44,6 +44,14 @@ RoadNavigation은 빠른길에 시간/교통 비용, 짧은길에 실제 거리 
 - Strict **exit0/Input issues0**, `git diff --check` 통과. 사용자 종료 기준4파일 SHA256을 Player 종료 후 전수 비교해 **변경0**. 생성한 DoNotShip 폴더는 실행 폴더 안 절대 경로를 확인한 뒤 각 빌드별 `artifacts/hud-revision-burst-debug*`로 보존했다.
 - 작업 중 다른 작업의 문서 커밋 ad19d7d/b0b5245/e25fd5d가 같은 브랜치에 추가된 것을 확인해 보존했다. 그 기획 제안을 이번 런타임에 구현하거나 사용자 미추적 자료를 포함하지 않았다. 최종 소스/배포 manifest 실제 커밋·전수 검사 결과는 다음 절에 기록한다.
 
+## 배포 확정
+
+- 실제 소스 커밋은 `3338612f589892983306881e3413d453a169cbf8`이다. 소스 커밋 후 `git log -1 --oneline -- docs/work-history/2026-11-05-hud-preparation-navigation.md`로3338612를 확인했다. 빌드 이후 제품 소스 변경은 없다.
+- `artifacts/hud-revision-validation.json`과 위 실제 소스로 `distribution/EungyeTaxi-build-manifest.json`을 갱신했다. `pwsh -File tools/update_distribution_manifest.ps1 -VerifyOnly`와 `pwsh -File tools/update_pvp_distribution_manifest.ps1 -VerifyOnly` 각각 **exit0/DISTRIBUTION_OK files=140 bytes=115519571**, 크기/SHA256 전수 일치.
+- 기본 배포 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 싱글·A2 PVP/LAN v3. 지도/ZIP·물리·운임/경제/신호 주기·회사/제품/저장 위치와 기존7개 미추적 항목을 보존했다.
+- 실행 폴더·manifest·선별 화면·최종 기획/체크리스트/이력은 로컬 `codex/hud-preparation-navigation`에 커밋한다. 원격 push/통합은 이번 요청에 포함하지 않았다. 이 기록의 최신 실제 커밋은 위 `git log` 명령으로 확인한다.
+- 최종 관련5문서 로컬 링크153개 누락0·`git diff --check` 통과, 사용자 종료 저장4파일 SHA256 재대조 변경0.
+
 ## 재현·미검증 범위
 
 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 싱글·A2 PVP/LAN v3, 개발 빌드는 `PrototypeBuild.BuildHybrid`다. `HudRevisionBuild.Build`는 관련 통합 검사 후 기본 빌드를 호출한다. 새 exe의 `-hudRevisionCheck -hudCaptureOutput <캡처 폴더>`는 사용자 저장과 다른 임시 캠페인을 사용한다. GUI 실행은 실제 프로세스 종료 코드를 기다려 판정한다.
