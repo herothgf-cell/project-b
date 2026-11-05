@@ -83,3 +83,12 @@ Unity2022.3.62f2 `-executeMethod AccidentWorkshopBuild.Build`. 실행 검사 `to
 - 공동 모델 사고77/손상191/설정636·C#/Node hash/시설어댑터 통과, Node18/exit0. Editor 사고7/공업사51·설정26/사본3·기존HUD·Live22/checkpoint500 통과. 시설 실제물리 은계15/A2 17 및 네 시설 캡처는 형상 변경 없이 계승한다.
 - 사용자 저장/호환 백업/지도autosave14파일 SHA256 변경0. 원래 단독 후보141파일은 `artifacts/accident-content-predeploy-20261105-191050/EungyeTaxi`에 복사 후 전수hash 확인. 원래 생성Scene도 보관. 사용자 active-profile 및 sample-request-11은 보존하며 콘텐츠 도구 서버/브라우저는 종료하지 않는다.
 - 현재 작업 소스와 이 기록을 커밋한 후 실제 sourceCommit으로 최종 배포 manifest를 갱신한다. 기본 폴더 반영/VerifyOnly 영수증은 아래에 추가한다.
+## 공동 배포 영수증 — 기본 경로 반영 완료
+
+- 실제 최종 소스 `55560dbc75046cc9f6e89160b919b430febe7c90`, 배포 `a7c49ade921959fa21b7cfba523d1c5b9dced2f9`. 소스/기획 이력의 실제 커밋은 git log로 확인했다.
+- 원래 `C:/git/project-b`를1098c50→a7c49ad fast-forward했다. 원래 단독 빌드/생성Scene는 사전141파일 hash 검증 백업 후 교체했다. 실행 게임/Unity 프로세스 없음 확인, 미추적 사용자 자료 보존. 별도 로컬 예시 프로필·active 기본 프로필과 사용자 저장/호환 백업/지도autosave는 각각2/14파일 SHA256 변경0.
+- 기본 실행 `builds/EungyeTaxi/EungyeTaxi.exe`, 은계 싱글/A2 PVP·LAN v5. 양쪽 PC 모두 공동 실행본으로 갱신한다. 설정 관리창은 루트 `설정 관리.cmd`로 실행하며 기존 사용자용 서버/브라우저는 유지했다.
+- 배포 manifest는 실제 최종 소스로 재생성. worktree 통합/PVP VerifyOnly 각exit0: 출하140파일115,908,969바이트. 원래 폴더 통합/PVP VerifyOnly 각exit0: 출하140파일 동일 + 유효한 사용자 active-profile1개(총141파일115,933,693바이트). 크기/SHA256 전수 일치, optional 프로필 contentHash1d7fc834d91295e14f15ef90a29f1cd4a5d992ad5f8952c2d8d79d354785ac1c 확인.
+- 원래 폴더 `tools/check_workspace.ps1 -Strict` exit0/Input issues0. 지도 입력·프로젝트 JSON·OSM 설정·지도 ZIP 미변경. 선택 재수입 JSON 두 개 부재는 기존과 같고 정식 프로젝트 지도를 사용한다.
+- 최종 검증 JSON/Player 결과/공동 Build8·9 로그/LAN 원본을 원래 artifacts에도 복사했다. 장시간 수동·전체 캠페인·다른PC LAN·사고 UI 시각 확인의 미검증 범위는 위와 같다. 관리창 실제 화면과 공업사 배치는 확인했다.
+- 로컬 커밋 완료, 원격 push는 수행하지 않았다. 이 영수증 자체의 실제 커밋은 `git log -1 --oneline -- docs/work-history/2026-11-05-accident-workshop-implementation.md`로 확인한다.

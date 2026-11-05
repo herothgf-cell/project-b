@@ -4,7 +4,7 @@
 
 - [x] 사용자 상세 기획 구현 승인, 사건 모델·장부77/기존 손상191·공업사51 검사 통과.
 - [x] BuildHybrid/Editor 사고7·공업사51·싱글51/PVP55/재개8·LAN48+62·물리 은계15/A2 17 통과. [검증·한계](work-history/2026-11-05-accident-workshop-implementation.md).
-- [ ] 배포 manifest 최종 반영. 사람 장시간/다른PC·사고 UI 시각 수용은 별도.
+- [x] 공동 배포a7c49ad/소스55560db·출하140파일 전수hash·원래 폴더 통합/PVP VerifyOnly 및 Strict exit0. 사람 장시간/다른PC·사고 UI 시각 수용은 별도.
 
 ## 2026-11-05 준비 결산·운행 HUD·내비 정리
 
@@ -19,7 +19,7 @@
 
 - [x] 현재 요청/선택지/효과/발생·법규/점수/운임 코드 대조, 사용자 별도 표·검색 관리창 선택, [검토용 설계안](superpowers/specs/2026-11-05-content-tuning-tool-design.md) 작성·구현 관점 검토. [조사 이력](work-history/2026-11-05-content-tuning-tool.md).
 - [x] 사용자 설계 승인·구현 계획, 관리창/실제 설정 소비·snapshot/호스트 LAN·분리 테스트·실제 C# 미리보기 구현. 단독BuildHybrid·Player17·상충 프로필 LAN41+56/재접속·실제 브라우저 편집/저장/적용 확인. [구현·기존 실패·검증 범위](work-history/2026-11-05-content-tuning-tool-implementation.md).
-- [ ] 사용자 공동 배포 승인에 따른 사고/공업사 통합본 v5·저장/프로필·최종 BuildHybrid/manifest 검증. 단독 통과를 공동본/사람 장시간 검증으로 확대하지 않는다.
+- [x] 사용자 공동 배포 승인에 따른 사고/공업사 통합본 v5·저장/프로필·최종 BuildHybrid/manifest 검증 완료. 단독 통과를 공동본/사람 장시간 검증으로 확대하지 않는다.
 
 ## 2026-11-05 마인드맵·사고 범위 검토
 
