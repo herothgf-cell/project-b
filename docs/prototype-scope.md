@@ -1,5 +1,7 @@
 # 프로토타입 통합 범위
 
+2026-11-05 콘텐츠 관리 도구: 승객 요청·대화·효과·구현된 게임 법규/공통 영향 요소를 로컬 별도 관리창으로 조정한다. 신규 법규 감지기·임의 행동 스크립트·실제 장치 조작을 추가하지 않는다. 기본값/이어하기 snapshot·호스트 권한을 유지하며 [실행 안내](content-tuning-tool-guide.md)와 [검증·공동 배포 인계](work-history/2026-11-05-content-tuning-tool-implementation.md)를 따른다.
+
 2026-11-05 범위 검토: [보행자 사고 처리·공업사 상세 기획안](content-design/08-accident-and-workshop-proposal.md)을 작성했다. 사용자가 요청한 기획 대상은 사고 비용·시간·피로·공업사이며 차량 구매·물품/보험·과실·구급차는 후속이다. 상세 수치·시설 배치는 제안이고 아직 미구현이다. 아래 포함 표는 기존 실행본 기준이다.
 
 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 개발 프로젝트는 `unity/EungyeTaxi`, 빌드는 `PrototypeBuild.BuildHybrid`다. 현재 콘텐츠의 기준은 [기획 목록](content-design/README.md), 개발·검증 상태는 [체크리스트](prototype-development-checklist.md), 날짜별 증거는 [작업 이력](work-history/LATEST.md)을 따른다. 이전 범위는 [보존 기록](design-history/prototype-scope-history.md)에 둔다.

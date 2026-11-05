@@ -14,7 +14,7 @@ using System.Collections.Generic;
  public float daySeconds=720,initialFuel=60,fuelPerKm=4,idlePerMinute=.1f,fuelUnitPrice=40;
  public PrototypeSettings WithCurrentOperationBalance(){var copy=(PrototypeSettings)MemberwiseClone();var current=new PrototypeSettings();copy.daySeconds=oneDay?1200:current.daySeconds;copy.initialFuel=current.initialFuel;copy.fuelPerKm=current.fuelPerKm;copy.idlePerMinute=current.idlePerMinute;return copy;}
  public int insuranceExpiryDay=2,taxDueDay=3;
- public int redStraightPenalty=20,redRightPenalty=5,dedicatedRedPenalty=20,pedestrianPenalty=25,insertionPenalty=15,interferencePenalty=15;
+ public int redStraightPenalty=ContentTuning.Int("law.redStraight.penalty",20),redRightPenalty=ContentTuning.Int("law.redRight.penalty",5),dedicatedRedPenalty=ContentTuning.Int("law.dedicatedRed.penalty",20),pedestrianPenalty=ContentTuning.Int("law.pedestrian.penalty",25),insertionPenalty=ContentTuning.Int("law.insertion.penalty",15),interferencePenalty=ContentTuning.Int("law.interference.penalty",15);
  public const int SaveVersion=2;
  public const string SaveFile="campaign-v2.json";
 }
@@ -47,13 +47,15 @@ public enum PedestrianState { None, Intending, Crossing, Unknown }
  public LawFinding Copy(){return (LawFinding)MemberwiseClone();}
 }
 [Serializable] public class LawEvent {
+ public bool contentRecoveryCaptured;public int contentRecoveryPoints;
  public int recoveryPolicyVersion; public PracticeRoute practice;
  public string id,tripId,family,scenario,junction,reason,action;
  public int day;public float seconds,speed;public bool assisted,occupied;
  public RoadObservation observation;
  public List<LawFinding> rules=new List<LawFinding>();
- public void Add(string rule,LawVerdict verdict,int penalty){foreach(var r in rules)if(r.rule==rule)return;rules.Add(new LawFinding{rule=rule,verdict=verdict,penalty=penalty});}
+ public void Add(string rule,LawVerdict verdict,int penalty){if(!contentRecoveryCaptured){contentRecoveryCaptured=true;contentRecoveryPoints=ContentTuning.Int("law.recovery.points",3);}foreach(var r in rules)if(r.rule==rule)return;rules.Add(new LawFinding{rule=rule,verdict=verdict,penalty=penalty});}
  public int Deduction {get{int max=0;foreach(var r in rules)if(r.verdict==LawVerdict.Violation)max=Math.Max(max,r.penalty);return max;}}
+ public bool HasViolation {get{return rules.Exists(r=>r.verdict==LawVerdict.Violation);}}
  public LawEvent Copy(){var c=(LawEvent)MemberwiseClone();c.rules=rules.ConvertAll(r=>r.Copy());c.observation=observation==null?null:observation.Copy();c.practice=practice==null?null:practice.Copy();return c;}
 }
 [Serializable] public class PracticeRoute {
@@ -77,8 +79,9 @@ public class LawLedger {
  public int Revision {get;private set;}
  public LawEvent LastChanged {get;private set;}
  public int Count {get{return events.Count;}}
+ public static int ViolationCount(LawEvent[] observed,int since){int count=0;for(int i=Math.Max(0,since);i<observed.Length;i++)if(observed[i].HasViolation)count++;return count;}
  // Campaign score follows event order; only observed compliance uses the recovery policy recorded with each event.
- public static int ScoreAfter(int score,LawEvent e){bool good=false,bad=false;foreach(var r in e.rules){good|=r.verdict==LawVerdict.Compliant;bad|=r.verdict==LawVerdict.Violation;}return Math.Max(0,Math.Min(100,score-e.Deduction+(good&&!bad?(e.recoveryPolicyVersion>=1?3:1):0)));}
+ public static int ScoreAfter(int score,LawEvent e){if(e.contentRecoveryCaptured&&(e.contentRecoveryPoints<0||e.contentRecoveryPoints>20))throw new ArgumentException("Invalid captured law recovery");bool good=e.rules.Exists(r=>r.verdict==LawVerdict.Compliant);return Math.Max(0,Math.Min(100,score-e.Deduction+(good&&!e.HasViolation?(e.recoveryPolicyVersion>=1?(e.contentRecoveryCaptured?e.contentRecoveryPoints:3):1):0)));}
  public int TotalScore {get{int score=100;foreach(var e in events)score=ScoreAfter(score,e);return score;}}
  public LawEvent[] Events {get{return events.ConvertAll(e=>e.Copy()).ToArray();}}
  public bool Record(LawEvent e){
@@ -90,7 +93,7 @@ public class LawLedger {
  // Merge its findings so the existing maximum-per-incident rule remains effective.
  public bool RecordIncident(LawEvent e){
   if(e==null||string.IsNullOrEmpty(e.id)||e.day<1)throw new ArgumentException("Invalid law incident");
-  for(int i=0;i<events.Count;i++)if(events[i].id==e.id){var old=events[i];var merged=e.Copy();foreach(var r in old.rules){var present=merged.rules.Find(x=>x.rule==r.rule);if(present==null)merged.rules.Add(r.Copy());else if(r.verdict==LawVerdict.Violation){present.verdict=r.verdict;present.penalty=Math.Max(present.penalty,r.penalty);}else if(r.verdict==LawVerdict.Compliant&&present.verdict!=LawVerdict.Violation)present.verdict=r.verdict;}
+  for(int i=0;i<events.Count;i++)if(events[i].id==e.id){var old=events[i];var merged=e.Copy();merged.contentRecoveryCaptured=old.contentRecoveryCaptured;merged.contentRecoveryPoints=old.contentRecoveryPoints;foreach(var r in old.rules){var present=merged.rules.Find(x=>x.rule==r.rule);if(present==null)merged.rules.Add(r.Copy());else if(r.verdict==LawVerdict.Violation){present.verdict=r.verdict;present.penalty=Math.Max(present.penalty,r.penalty);}else if(r.verdict==LawVerdict.Compliant&&present.verdict!=LawVerdict.Violation)present.verdict=r.verdict;}
    // Replayed frames and older partial observations cannot replace a completed
    // incident or repeatedly invalidate the score view/journal.
    if(old.rules.Count==merged.rules.Count&&old.rules.TrueForAll(r=>merged.rules.Exists(x=>x.rule==r.rule&&x.verdict==r.verdict&&x.penalty==r.penalty)))return false;
@@ -111,21 +114,21 @@ public static class LawEvaluator {
  public static LawEvent Signal(string id,int day,RoadObservation observed,bool left,SignalColor leftSignal,PrototypeSettings settings=null){
   var s=settings??new PrototypeSettings();var signal=left?leftSignal:observed.forward;
   var e=new LawEvent{recoveryPolicyVersion=1,id=id,day=day,family="signal",observation=observed.Copy(),action=left?"좌회전":"직진",reason="진입 시점 진행 방향 신호"};
-  e.Add("L01",!observed.known||signal==SignalColor.Yellow?LawVerdict.Deferred:signal==SignalColor.Red?LawVerdict.Violation:LawVerdict.Compliant,s.redStraightPenalty);return e;
+  e.Add("L01",!observed.known||signal==SignalColor.Yellow?LawVerdict.Deferred:signal==SignalColor.Red?LawVerdict.Violation:LawVerdict.Compliant,ContentTuning.Int("law.redStraight.penalty",s.redStraightPenalty));return e;
  }
- public static LawEvent StopLine(string id,int day,RoadObservation o){var e=new LawEvent{recoveryPolicyVersion=1,id=id,day=day,family="signal",action="정지선 침범",observation=o.Copy(),reason="정지 의무 신호에서 정지선을 넘은 정차"};e.Add("L09",o.known&&o.forward==SignalColor.Red?LawVerdict.Violation:LawVerdict.NoOpportunity,1);return e;}
+ public static LawEvent StopLine(string id,int day,RoadObservation o){var e=new LawEvent{recoveryPolicyVersion=1,id=id,day=day,family="signal",action="정지선 침범",observation=o.Copy(),reason="정지 의무 신호에서 정지선을 넘은 정차"};e.Add("L09",o.known&&o.forward==SignalColor.Red?LawVerdict.Violation:LawVerdict.NoOpportunity,ContentTuning.Int("law.stopLine.penalty",1));return e;}
  public static LawEvent Exit(string id,int day,bool knownSignalQueue,bool changedLane,bool insertedAhead,bool obstructed,PrototypeSettings settings=null){
   var s=settings??new PrototypeSettings();var e=new LawEvent{recoveryPolicyVersion=1,id=id,day=day,family="exit",action=insertedAhead?"앞부분 진입":changedLane?"뒤 합류":"직진·우회",reason="신호 대기열 "+(knownSignalQueue?"확인":"불명확")+" · 차로 진입 "+(changedLane?"있음":"없음")+" · 앞부분 진입 "+(insertedAhead?"있음":"없음")+" · 상대 진행 방해 "+(obstructed?"관찰":"미관찰")};
-  e.Add("L06",!knownSignalQueue?LawVerdict.Deferred:!changedLane?LawVerdict.NoOpportunity:insertedAhead?LawVerdict.Violation:LawVerdict.Compliant,s.insertionPenalty);
-  e.Add("L07",!knownSignalQueue?LawVerdict.Deferred:!changedLane?LawVerdict.NoOpportunity:obstructed?LawVerdict.Violation:LawVerdict.Compliant,s.interferencePenalty);return e;
+  e.Add("L06",!knownSignalQueue?LawVerdict.Deferred:!changedLane?LawVerdict.NoOpportunity:insertedAhead?LawVerdict.Violation:LawVerdict.Compliant,ContentTuning.Int("law.insertion.penalty",s.insertionPenalty));
+  e.Add("L07",!knownSignalQueue?LawVerdict.Deferred:!changedLane?LawVerdict.NoOpportunity:obstructed?LawVerdict.Violation:LawVerdict.Compliant,ContentTuning.Int("law.interference.penalty",s.interferencePenalty));return e;
  }
  public static LawEvent RightTurn(string id,int day,RoadObservation o,bool stopped,PrototypeSettings settings=null,bool yielded=false){
   var s=settings??new PrototypeSettings();var e=new LawEvent{recoveryPolicyVersion=1,id=id,day=day,family="right",observation=o.Copy(),action="우회전",reason="관찰한 신호·보행 상태와 정지 여부"};
   if(!o.known||o.pedestrian==PedestrianState.Unknown){e.Add("L02",LawVerdict.Deferred,0);e.reason="관찰 불명확 · 판정 보류";return e;}
-  if(o.dedicated)e.Add("L03",o.right==SignalColor.Green?LawVerdict.Compliant:o.right==SignalColor.Red?LawVerdict.Violation:LawVerdict.Deferred,s.dedicatedRedPenalty);
-  else e.Add("L02",o.forward==SignalColor.Red?(stopped?LawVerdict.Compliant:LawVerdict.Violation):LawVerdict.NoOpportunity,s.redRightPenalty);
+  if(o.dedicated)e.Add("L03",o.right==SignalColor.Green?LawVerdict.Compliant:o.right==SignalColor.Red?LawVerdict.Violation:LawVerdict.Deferred,ContentTuning.Int("law.dedicatedRed.penalty",s.dedicatedRedPenalty));
+  else e.Add("L02",o.forward==SignalColor.Red?(stopped?LawVerdict.Compliant:LawVerdict.Violation):LawVerdict.NoOpportunity,ContentTuning.Int("law.redRight.penalty",s.redRightPenalty));
   // Evaluate at passage: stopping earlier does not grant permission to drive through a pedestrian.
-  e.Add("L04",o.pedestrian==PedestrianState.None?(yielded?LawVerdict.Compliant:LawVerdict.NoOpportunity):LawVerdict.Violation,s.pedestrianPenalty);
+  e.Add("L04",o.pedestrian==PedestrianState.None?(yielded?LawVerdict.Compliant:LawVerdict.NoOpportunity):LawVerdict.Violation,ContentTuning.Int("law.pedestrian.penalty",s.pedestrianPenalty));
   e.Add("L08",LawVerdict.Deferred,0);return e;
  }
 }

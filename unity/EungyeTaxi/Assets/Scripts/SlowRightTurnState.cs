@@ -2,7 +2,9 @@ using System;
 public enum SlowRightTurnVerdict { NoOpportunity, Compliant, Violation, Deferred }
 // A configured GAME observation threshold, not a universal legal definition of slow driving.
 [Serializable] public sealed class SlowRightTurnState {
- public const float GameLimitKmh=10,ToleranceKmh=2,RequiredSeconds=.75f;
+ public static float GameLimitKmh {get{return (float)ContentTuning.Number("law.slowTurn.limitKmh",10);}}
+ public static float ToleranceKmh {get{return (float)ContentTuning.Number("law.slowTurn.toleranceKmh",2);}}
+ public static float RequiredSeconds {get{return (float)ContentTuning.Number("law.slowTurn.seconds",.75);}}
  public int version=1;public float observedSeconds,continuousExcess;public bool violated,necessary;
  public void Observe(float seconds,float kmh,bool rightTurning,bool known,bool safetyAvoidance){
   if(!rightTurning||!known||float.IsNaN(seconds)||float.IsInfinity(seconds)||seconds<=0||float.IsNaN(kmh)||float.IsInfinity(kmh)||kmh<0){continuousExcess=0;return;}

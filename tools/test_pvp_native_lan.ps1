@@ -9,7 +9,10 @@ param(
  [ValidateRange(800,3840)][int]$RenderWidth=1280,
  [ValidateRange(600,2160)][int]$RenderHeight=720,
  [switch]$LegacyRouting,
- [ValidateRange(60,600)][int]$TimeoutSeconds=300
+ [ValidateRange(60,600)][int]$TimeoutSeconds=300,
+ [string]$ContentHostProfile,
+ [string]$ContentClientProfile,
+ [ValidatePattern('^$|^[a-f0-9]{64}$')][string]$ExpectedContentHash=''
 )
 $ErrorActionPreference='Stop'
 if($RenderBoth -and -not $Rendered){throw 'RenderBoth requires Rendered'}
@@ -24,6 +27,9 @@ $owned=[System.Collections.Generic.List[System.Diagnostics.Process]]::new()
 function Start-NativeProbe([string]$Role){
  $log=Join-Path $output ($Role+'.log')
  $arguments=@('-batchmode','-nographics','-pvpNativeLanCheck','-pvpNativeLanRole',$Role,'-pvpNativeLanAddress','127.0.0.1','-pvpNativeLanPort',"$Port",'-pvpNativeLanOutput',('"'+$output+'"'),'-logFile',('"'+$log+'"'))
+ $contentProfile=if($Role -eq 'host'){$ContentHostProfile}else{$ContentClientProfile}
+ if($contentProfile){$contentProfile=(Resolve-Path -LiteralPath $contentProfile).Path;$arguments+=@('-contentTest','-contentProfile',('"'+$contentProfile+'"'))}
+ if($ExpectedContentHash){$arguments+=@('-contentExpectedHash',$ExpectedContentHash)}
  if($Rendered){$arguments=@($arguments | Where-Object {$_ -ne '-batchmode' -and $_ -ne '-nographics'});$arguments+=@('-noaudio','-pvpNativeRenderCheck','-screen-fullscreen','0','-screen-width',"$RenderWidth",'-screen-height',"$RenderHeight")}
  if($MotionOnly){$arguments+='-pvpNativeMotionOnly'}
  if($MotionSeconds -gt 0){$arguments+=@('-pvpNativeMotionSeconds',"$MotionSeconds")}

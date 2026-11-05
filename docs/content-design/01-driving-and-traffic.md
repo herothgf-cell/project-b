@@ -1,5 +1,7 @@
 # 주행·교통·운전 평가
 
+게임 평가 수치 표는 출하 기본 프로필 기준이다. 구현된 법규 감점·M·관찰 수치는 [설정 관리 도구](../content-tuning-tool-guide.md)에서 조정하며, 위반 사실·예외·중복 방지와 실제 법률 자료는 점수 조정과 구분한다. 감점0이어도 위반 사실은 유지한다. [설정 도구 구현·검증/제한](../work-history/2026-11-05-content-tuning-tool-implementation.md).
+
 ## 2026-11-04 캐주얼 조작·신호 수요 제어
 
 사용자 승인으로 싱글/PVP 공통 제동·조향과 기본 게임 신호의 수요 제어를 구현한다. [설계/범위](../superpowers/specs/2026-11-04-casual-controls-signals-design.md), [구현·검증 이력](../work-history/2026-11-04-casual-controls-signals.md)을 따른다. 아래 값은 게임 시험값이며 실제 도로 신호를 복원한 값이 아니다.

@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 $source = Join-Path $PSScriptRoot '../unity/EungyeTaxi/Assets/Scripts/MannerLedger.cs'
-Add-Type -Path $source
+Add-Type -Path @($source,(Join-Path $PSScriptRoot '../unity/EungyeTaxi/Assets/Scripts/ContentTuning.cs'),(Join-Path $PSScriptRoot '../unity/EungyeTaxi/Assets/Scripts/ContentJson.cs'))
 $ledger = [MannerLedger]::new()
 $now = 1.0
 function Check([bool]$condition, [string]$name) {

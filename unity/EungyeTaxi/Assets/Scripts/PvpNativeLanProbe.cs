@@ -49,6 +49,7 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   yield return Bootstrap();
   if(host){yield return Until(()=>lan.ConnectedGuests==1,"one LAN guest connected");lan.StartMatch();}
   yield return Until(()=>lan&&lan.Match&&lan.Racing,"all participants pass world-ready barrier",120);
+  string expectedContent=Arg("-contentExpectedHash","");if(expectedContent.Length>0)Check((string)ContentJson.Object(ContentJson.Parse(ContentTuningRuntime.Snapshot()))["contentHash"]==expectedContent,"host content profile controls actual evaluation after world-ready");
   var match=lan.Match;Check(lan.Label(0).Contains(lan.IsHost?"검증_host":"검증_client")&&lan.Label(1).Contains(lan.IsHost?"검증_client":"검증_host"),"host retains and broadcasts both nicknames");var own=match.Human;metrics.slot=lan.LocalSlot;metrics.map=own.world.map.mapId;metrics.driverCount=match.Drivers.Count;metrics.wheels=own.taxi.wheels.Length;
   Check(metrics.map=="pvp-city-a"&&metrics.driverCount==4&&metrics.wheels==4,"native city and four original physical taxis");
   foreach(var d in match.Drivers)Check(d.business.SimulationSession&&d.business.SavePath==""&&d.taxi.wheels.Length==4,"native sessions retain campaign save isolation");
