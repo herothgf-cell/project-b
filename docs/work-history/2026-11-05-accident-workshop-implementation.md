@@ -65,3 +65,4 @@ Unity2022.3.62f2 `-executeMethod AccidentWorkshopBuild.Build`. 실행 검사 `to
 - Build6 `artifacts/accident-build-6.log`: 종료0, Editor 사고7/공업사51/Live22/checkpoint500. Build5 이후 생산 기능 변경 없이 검사기 복원 대기만 수정했다.
 - `artifacts/accident-build6-reload/result.json`: 새 프로세스8개/종료0. 유료 pending 사고 복원,3,000원 한 번,45초 한 번,재확인 멱등.
 - 최종 사용자 파일14개 SHA256 변경0. `docs/ui/2026-11-05-accident-workshop/`에 네 공업사 실제 물리 캡처 보관. 소스/기획을 커밋한 뒤 이 실제 커밋으로 manifest를 재생성하고 기본 폴더를 갱신한다.
+후보 소스1c50958111e6de4cb2b6a210476a47e82c5d653d(실제 git log 확인)로 manifest 갱신, 통합/PVP VerifyOnly exit0:140파일115,580,745바이트. 원래 폴더에서 콘텐츠 설정 도구의 새 미커밋 변경을 발견해 덮어쓰지 않고 해당 작업 완료 후 통합한다. 아직 기본 폴더 배포 완료가 아니다.
