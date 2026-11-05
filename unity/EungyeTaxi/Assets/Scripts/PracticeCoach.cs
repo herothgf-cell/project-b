@@ -61,7 +61,7 @@ public class PracticeCoach : MonoBehaviour {
   bool cleared=AttemptEvent!=null&&(AttemptEvent.family=="right"?side>junction.CrossingNearEdge(0)+12&&Vector3.Dot(session.taxi.transform.forward,right)>.6f:along>junction.StopDistance(0)+12||side< -junction.CrossingNearEdge(0)-12);
   if(cleared&&!automaticShown){Finished=true;automaticShown=true;ShowResult();}
  }
- public PracticeFeedback SnapshotFeedback(){if(ConfusionMode)return GetComponent<ConfusionPractice>().State.Feedback();var result=ExitMode?PracticeFeedback.BuildExit(AttemptEvent):PracticeFeedback.Build(AttemptEvent);if(AttemptEvent!=null&&!Finished){result.outcome="회전 미완료 · "+(AttemptEvent.Deduction>0?"위반 기록 있음":"통과 조건 기록됨");result.next="오른쪽 도로까지 회전을 마무리한 뒤 최종 결과를 확인하세요.\n"+result.next;}return result;}
+ public PracticeFeedback SnapshotFeedback(){if(ConfusionMode)return GetComponent<ConfusionPractice>().State.Feedback();var result=ExitMode?PracticeFeedback.BuildExit(AttemptEvent):PracticeFeedback.Build(AttemptEvent);if(AttemptEvent!=null&&!Finished){result.outcome="회전 미완료 · "+(AttemptEvent.HasViolation?"위반 기록 있음":"통과 조건 기록됨");result.next="오른쪽 도로까지 회전을 마무리한 뒤 최종 결과를 확인하세요.\n"+result.next;}return result;}
  public bool ShowResult(){if(!Active||ResultOpen||session.GetComponent<PracticeSession>().PickerOpen||session.law.HistoryOpen)return false;Report=SnapshotFeedback();ResultOpen=true;priorPaused=session.paused;priorTime=Time.timeScale;session.paused=true;Time.timeScale=0;return true;}
  public void CloseResult(){if(!ResultOpen)return;ResultOpen=false;session.paused=priorPaused;Time.timeScale=priorTime;}
  void OnGUI(){

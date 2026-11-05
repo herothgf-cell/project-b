@@ -6,6 +6,9 @@ unity/**/UserSettings/
 /builds/*
 !/builds/EungyeTaxi/
 artifacts/
+config/content/profiles/
+config/content/backups/
+config/content/locks/
 __pycache__/
 # Locally acquired map data and derived geometry are managed separately.
 data/raw/

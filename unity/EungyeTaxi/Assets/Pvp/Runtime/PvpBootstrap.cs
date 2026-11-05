@@ -17,7 +17,7 @@ namespace Pvp {
             var camera=cameraObject.AddComponent<Camera>();camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.035f,.05f,.08f);camera.cullingMask=0;
             gameObject.AddComponent<PvpPrototypePanel>();
             try {
-                var stream=new PvpLocalStore().CreateDiagnostic(Guid.NewGuid().ToString("N"));DiagnosticPath=stream.Name;
+                var store=ContentTuningRuntime.TestMode?new PvpLocalStore(ContentTuningRuntime.TestDirectory):new PvpLocalStore();var stream=store.CreateDiagnostic(Guid.NewGuid().ToString("N"));DiagnosticPath=stream.Name;
                 diagnostic=new StreamWriter(stream);diagnostic.AutoFlush=true;
                 diagnostic.WriteLine("PVP_STARTUP utc="+DateTime.UtcNow.ToString("O")+" unity="+Application.unityVersion+" diagnostic="+DiagnosticPath);
             } catch(Exception e) { StartupError="Diagnostic storage unavailable: "+e.Message;Debug.LogError(StartupError); }
@@ -36,7 +36,7 @@ namespace Pvp {
             else if(Array.IndexOf(args,"-pvpCityPerformanceTest")>=0&&!simulationCommandConsumed){simulationCommandConsumed=true;StartSimulation(true,7200);}
             else if(PvpSimulationMode.Active)StartSimulation(PvpSimulationMode.Expanded,PvpSimulationMode.DurationSeconds);
         }
-        public void StartSimulation(bool expanded,int seconds) { if(FindObjectOfType<DriveSession>())return; PvpSimulationMode.Configure(expanded,seconds);var panel=GetComponent<PvpPrototypePanel>();if(panel)panel.enabled=false;foreach(var camera in GetComponentsInChildren<Camera>())camera.gameObject.SetActive(false);var root=new GameObject("PVP simulation · existing DriveSession");root.SetActive(false);root.AddComponent<DriveSession>().startupRegion="eungye";root.SetActive(true); } public void StartNetwork(bool host,string address,ushort port) {
+        public void StartSimulation(bool expanded,int seconds) { if(FindObjectOfType<DriveSession>())return; if(!PvpNativeLan.Instance)ContentTuningRuntime.LoadActive();PvpSimulationMode.Configure(expanded,seconds);var panel=GetComponent<PvpPrototypePanel>();if(panel)panel.enabled=false;foreach(var camera in GetComponentsInChildren<Camera>())camera.gameObject.SetActive(false);var root=new GameObject("PVP simulation · existing DriveSession");root.SetActive(false);root.AddComponent<DriveSession>().startupRegion="eungye";root.SetActive(true); } public void StartNetwork(bool host,string address,ushort port) {
             if(GetComponent<Pvp.Network.PvpNetworkSession>()!=null)return;
             var session=gameObject.AddComponent<Pvp.Network.PvpNetworkSession>();
             try { session.Begin(host,address,port);StartupError=null; }

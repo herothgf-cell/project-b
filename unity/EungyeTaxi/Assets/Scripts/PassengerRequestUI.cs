@@ -18,9 +18,9 @@ public class PassengerRequestUI : MonoBehaviour {
  PassengerRequestObservation Current {get{return active>=0&&active<observations.Count?observations[active]:null;}}
  public PassengerRequest request {get{return Current?Current.request:empty;}}
  public bool SuppressFollowupDialogue {get{return observations.Exists(o=>o&&o.SuppressFollowupDialogue);}}
- public int TotalSatisfactionDelta {get{int value=0;foreach(var o in observations)if(o)value+=o.request.SatisfactionDelta;return Mathf.Clamp(value,-10,10);}}
+ public int TotalSatisfactionDelta {get{int value=0;foreach(var o in observations)if(o)value+=o.request.SatisfactionDelta;return Mathf.Clamp(value,-ContentTuning.Int("common.requestCap",10),ContentTuning.Int("common.requestCap",10));}}
  public string Summary {get{var text=new List<string>();for(int i=0;i<observations.Count;i++)if(observations[i])text.Add((i+1)+". "+observations[i].request.ResponseText()+" ["+observations[i].request.SatisfactionDelta.ToString("+0;-0;0")+"]");if(schedule!=null)foreach(var slot in schedule.Capture().slots)if(!slot.presented)text.Add(slot.kind+" · 미발생 중립");if(text.Count==0)text.Add("요청 없음");if(lostItem&&finished)text.Add("하차 후 사건 "+session.law.tripId+":lost-item · 지갑 발견 → 보관·신고 절차 안내 (텍스트 사건)");return string.Join("\n",text.ToArray())+"\n요청 합계 "+TotalSatisfactionDelta.ToString("+0;-0;0");}}
- public bool LawClear {get{var events=session.law.ledger.Events;for(int i=boardingLawCount;i<events.Length;i++)if(events[i].Deduction>0)return false;return true;}}
+ public bool LawClear {get{return LawLedger.ViolationCount(session.law.ledger.Events,boardingLawCount)==0;}}
  public void ExemptSystemRoute(string reason){foreach(var o in observations)if(o)o.SystemRouteReason=reason;}
  void Clear(){foreach(var o in observations)if(o){if(Application.isPlaying)Destroy(o);else DestroyImmediate(o);}observations.Clear();active=-1;schedule=null;stopSeconds=0;finished=lostItem=legacy=false;empty.Restore(new PassengerRequestSnapshot{resolved=true,response="요청 없음"});}
  PassengerRequestObservation NewObservation(){var o=gameObject.AddComponent<PassengerRequestObservation>();o.enabled=false;o.session=session;return o;}
@@ -30,7 +30,7 @@ public class PassengerRequestUI : MonoBehaviour {
   if(!(session.jobs.trip.State==TripState.ToPickup&&session.jobs.current!=null?session.jobs.nav.HasLargeRoadAlternativeTo(session.jobs.stops[session.jobs.current.drop]):session.jobs.nav.HasLargeRoadAlternative()))eligible.Remove(RequestKind.LargeRoad);
   if(session.jobs.nav.hd==null){eligible.Remove(RequestKind.Eta);eligible.RemoveAll(PassengerRequestSchedule.Route);}
   var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.Live&&zones.Live.Active||!HasSafeAlternative()){eligible.Remove(RequestKind.SafeStop);eligible.Remove(RequestKind.DestinationChange);eligible.Remove(RequestKind.ViaStop);}
-  return eligible.ToArray();
+  eligible.RemoveAll(k=>!ContentTuning.Flag("request."+k+".enabled",true)||ContentTuning.Int("request."+k+".weight",1)<=0);return eligible.ToArray();
  }
  bool HasSafeAlternative(){var j=session.jobs;if(j.current==null||j.nav.hd==null)return false;var from=j.stops[j.current.pickup];var to=j.stops[j.current.drop];for(int i=0;i<j.stops.Length;i++){if(i==j.current.pickup||i==j.current.drop||j.StopOccupied(i))continue;var stop=j.stops[i];if(j.nav.hd.Route(from.laneEdge,from.laneAt,stop.laneEdge,stop.laneAt)!=null&&j.nav.hd.Route(stop.laneEdge,stop.laneAt,to.laneEdge,to.laneAt)!=null)return true;}return false;}
  public PassengerType[] EligiblePassengerTypes(){var kinds=EligibleRequests();int count=PassengerRequestSchedule.Create(session.jobs.current.candidateSeed,kinds).Capture().slots.Length;var result=new List<PassengerType>();foreach(PassengerType type in Enum.GetValues(typeof(PassengerType))){if(type==PassengerType.General||type==PassengerType.Drunk)continue;var representative=Representative(type,PassengerBehaviorState.Create(session.jobs.current.candidateSeed,type).Variant);if(!representative.HasValue||count>0&&Array.IndexOf(kinds,representative.Value)>=0)result.Add(type);}return result.ToArray();}
@@ -44,7 +44,7 @@ public class PassengerRequestUI : MonoBehaviour {
   var eligible=EligibleRequests();schedule=PassengerRequestSchedule.Create(session.jobs.current.candidateSeed,eligible);
   var behavior=session.jobs.Behavior;if(behavior!=null){var bound=Representative(behavior.Type,behavior.Variant);if(bound.HasValue)schedule.BindRepresentative(bound.Value,eligible,behavior.Type==PassengerType.Errand?(behavior.Variant==0?0:behavior.Variant==1?.25f:.5f):-1);}
   foreach(var slot in schedule.Capture().slots)observations.Add(null);
-  SyncBehaviorContext();lostItem=DrunkRideState.Hash(session.jobs.current.candidateSeed+":postride-lost")%10==0;
+  SyncBehaviorContext();lostItem=ContentTuning.Flag("request.LostItem.enabled",true)&&DrunkRideState.Hash(session.jobs.current.candidateSeed+":postride-lost")%10==0;
  }
  // Explicit fixture/legacy path retains one selected request, without a random draw.
  public void BeginKind(RequestKind kind){Clear();legacy=true;boardingLawCount=session.law.ledger.Events.Length;var o=NewObservation();observations.Add(o);active=0;o.BeginKind(kind);}

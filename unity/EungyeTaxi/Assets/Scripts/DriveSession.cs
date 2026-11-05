@@ -27,6 +27,8 @@ public class DriveSession : MonoBehaviour {
     GUIStyle loadingTitle,loadingDetail;
     void Awake() {
         if(IsSimulationBot)return;
+        if(ContentTuningProbe.PreviewMode){enabled=false;return;}
+        if(!PvpSimulationMode.Active)ContentTuningRuntime.LoadActive();
         MapCatalog.LockedRegion=startupRegion;
         foreach(var arg in System.Environment.GetCommandLineArgs())if(arg.EndsWith("Test"))Application.runInBackground=true;
         Application.targetFrameRate=60; QualitySettings.vSyncCount=0;

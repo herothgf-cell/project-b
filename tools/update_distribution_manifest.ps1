@@ -1,20 +1,38 @@
-param([string]$SourceCommit, [string]$ValidatedOn = '2026-10-22', [switch]$VerifyOnly, [string]$ValidationReport)
+param([string]$SourceCommit, [string]$ValidatedOn = '2026-10-22', [switch]$VerifyOnly, [string]$ValidationReport, [string]$Root = (Split-Path $PSScriptRoot -Parent))
 $ErrorActionPreference='Stop'
-$taskRoot=Split-Path $PSScriptRoot -Parent
+$taskRoot=[IO.Path]::GetFullPath($Root)
 $taskManifestPath=Join-Path $taskRoot 'distribution/EungyeTaxi-build-manifest.json'
+$taskMutable='builds/EungyeTaxi/content/active-profile.json'
+function Test-UserContentProfile([string]$Path) {
+    $taskNode=Get-Command node -ErrorAction SilentlyContinue
+    if(!$taskNode){throw 'Node.js is required to verify a user content profile'}
+    & $taskNode.Source (Join-Path $taskRoot 'tools/content-editor/verify-profile.mjs') (Join-Path $taskRoot 'config/content/catalog.json') $Path
+    if($LASTEXITCODE -ne 0){throw 'Invalid user content profile'}
+}
 if ($VerifyOnly) {
     $taskManifest=Get-Content -LiteralPath $taskManifestPath -Raw | ConvertFrom-Json
-    $taskActual=@(Get-ChildItem -LiteralPath (Join-Path $taskRoot 'builds/EungyeTaxi') -File -Recurse)
-    if ($taskActual.Count -ne $taskManifest.files.Count) {throw 'Distribution file count mismatch'}
-    [long]$taskTotal=0
+    $taskBuild=[IO.Path]::GetFullPath((Join-Path $taskRoot 'builds/EungyeTaxi'))
+    $taskActual=@(Get-ChildItem -LiteralPath $taskBuild -File -Recurse)
+    $taskSeen=[Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+    [long]$taskTotal=0;[long]$taskShippedTotal=0
     foreach ($taskFile in $taskManifest.files) {
-        $taskPath=Join-Path $taskRoot $taskFile.path
+        if(!$taskFile.path.StartsWith('builds/EungyeTaxi/',[StringComparison]::Ordinal) -or !$taskSeen.Add($taskFile.path)){throw 'Invalid or duplicate distribution manifest path'}
+        $taskPath=[IO.Path]::GetFullPath((Join-Path $taskRoot $taskFile.path))
+        if(!$taskPath.StartsWith($taskBuild+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase) -or [IO.Path]::GetRelativePath($taskRoot,$taskPath).Replace('\','/') -cne $taskFile.path){throw 'Distribution manifest path escapes runtime directory'}
+        $taskShippedTotal+=$taskFile.bytes
+        if($taskFile.path -ceq $taskMutable -and !(Test-Path -LiteralPath $taskPath)){Write-Output 'CONTENT_PROFILE_DEFAULTS active file absent';continue}
         $taskItem=Get-Item -LiteralPath $taskPath
-        if ($taskItem.Length -ne $taskFile.bytes -or (Get-FileHash -LiteralPath $taskPath -Algorithm SHA256).Hash -ne $taskFile.sha256) {throw "Distribution hash mismatch: $($taskFile.path)"}
+        if($taskItem.Attributes -band [IO.FileAttributes]::ReparsePoint){throw 'Distribution file cannot be a symbolic link'}
+        if ($taskItem.Length -ne $taskFile.bytes -or (Get-FileHash -LiteralPath $taskPath -Algorithm SHA256).Hash -ne $taskFile.sha256) {
+            if($taskFile.path -cne $taskMutable){throw "Distribution hash mismatch: $($taskFile.path)"}
+            Test-UserContentProfile $taskPath
+            Write-Output 'CONTENT_PROFILE_USER_OVERRIDE validated separately from shipped runtime'
+        }
         $taskTotal+=$taskItem.Length
     }
-    if ($taskTotal -ne $taskManifest.totalBytes) {throw 'Distribution byte count mismatch'}
-    Write-Output "DISTRIBUTION_OK files=$($taskActual.Count) bytes=$taskTotal"
+    if($taskShippedTotal -ne $taskManifest.totalBytes){throw 'Distribution byte count mismatch'}
+    foreach($taskItem in $taskActual){$taskRelative=[IO.Path]::GetRelativePath($taskRoot,$taskItem.FullName).Replace('\','/');if(!$taskSeen.Contains($taskRelative)){if($taskRelative -ceq $taskMutable){Test-UserContentProfile $taskItem.FullName;$taskTotal+=$taskItem.Length;Write-Output 'CONTENT_PROFILE_USER_OVERRIDE validated optional user file'}else{throw "Unexpected distribution file: $taskRelative"}}}
+    Write-Output "DISTRIBUTION_OK files=$($taskActual.Count) bytes=$taskTotal shippedBytes=$taskShippedTotal"
     exit 0
 }
 if ($SourceCommit -notmatch '^[0-9a-fA-F]{40}$') {throw 'Pass the actual 40-character source commit hash after committing source changes'}

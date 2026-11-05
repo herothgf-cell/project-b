@@ -17,7 +17,7 @@ public partial class DrivingLaw {
  void AddSlowTurnFinding(LawEvent incident){
   if(entry==null||entry.slow==null)return;
   var v=entry.slow.Verdict;var verdict=v==SlowRightTurnVerdict.Violation?LawVerdict.Violation:v==SlowRightTurnVerdict.Compliant?LawVerdict.Compliant:v==SlowRightTurnVerdict.Deferred?LawVerdict.Deferred:LawVerdict.NoOpportunity;
-  incident.Add("게임 우회전 서행",verdict,verdict==LawVerdict.Violation?5:0);
-  incident.reason+=" · 게임 서행 관찰 "+SlowRightTurnState.GameLimitKmh+"km/h, 여유2km/h 초과0.75초. 법정 서행속도 재현 아님";
+  incident.Add("게임 우회전 서행",verdict,verdict==LawVerdict.Violation?ContentTuning.Int("law.slowTurn.penalty",5):0);
+  incident.reason+=" · 게임 서행 관찰 "+SlowRightTurnState.GameLimitKmh+"km/h, 여유"+SlowRightTurnState.ToleranceKmh+"km/h 초과"+SlowRightTurnState.RequiredSeconds+"초. 법정 서행속도 재현 아님";
  }
 }

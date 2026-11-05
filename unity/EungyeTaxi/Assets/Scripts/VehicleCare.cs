@@ -22,7 +22,8 @@ public sealed class VehicleCare {
  public bool AcceptanceLocked {get;private set;}
  public bool VomitUnwashed {get;private set;}
  public bool NeedsWash {get{return Cleanliness<30||VomitUnwashed;}}
- public int BoardingBonus {get{return Cleanliness>=80?3:0;}}
+ public int BoardingBonus {get{return (int)Math.Round(RawBoardingBonus*ContentTuning.Number("common.cleanBonusMultiplier",1));}}
+ int RawBoardingBonus {get{return Cleanliness>=80?3:0;}}
  readonly HashSet<string> settled=new HashSet<string>(),refused=new HashSet<string>();
  double dirtSeconds;
  int encounterDrunks,encounterMisses,encounterOrdinal;
@@ -38,7 +39,7 @@ public sealed class VehicleCare {
   uint roll=DrunkRideState.Hash((seed??"")+":encounter:"+encounterOrdinal);
   encounterType=PassengerType.General;
   if(!encounterRest){if(encounterDrunks<2&&(encounterMisses>=3||roll%100<30))encounterType=PassengerType.Drunk;
-   else if(roll/100%100<30){var choices=new List<PassengerType>();foreach(var t in eligible??new PassengerType[0])if(t>PassengerType.Drunk&&Enum.IsDefined(typeof(PassengerType),t)&&!choices.Contains(t))choices.Add(t);if(choices.Count>0)encounterType=choices[(int)(roll/10000%(uint)choices.Count)];}}
+   else if(roll/100%100<30){var choices=new List<PassengerType>();foreach(var t in eligible??new PassengerType[0])if(t>PassengerType.Drunk&&Enum.IsDefined(typeof(PassengerType),t)&&!choices.Contains(t))choices.Add(t);int total=0;foreach(var t in choices)total+=ContentTuning.Int("type."+t+".weight",1);if(total>0){int pick=(int)(roll/10000%(uint)total);foreach(var t in choices){pick-=ContentTuning.Int("type."+t+".weight",1);if(pick<0){encounterType=t;break;}}}}}
   encounterReserved=true;return encounterType;
  }
  public bool CommitPassenger(string trip,PassengerType type){

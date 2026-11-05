@@ -1,4 +1,4 @@
-﻿$ErrorActionPreference = 'Stop'
+$ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path $PSScriptRoot -Parent
 $taskCompiler = Join-Path $env:WINDIR 'Microsoft.NET/Framework64/v4.0.30319/csc.exe'
 $taskSources = @('VehicleCare','PassengerBehavior', 'PostTripServicePolicy', 'OneDayOfferPolicy', 'PvpConditionRules','DriverCondition', 'MitTrafficFollowing', 'RoadGeometry', 'TrafficRules', 'PrototypeState', 'CampaignAccount', 'EconomyLedger', 'OperationMetrics', 'PassengerRequest', 'RightPracticeState', 'PracticeFeedback', 'ConfusionPracticeState', 'DriveMath', 'MannerLedger', 'FareTrip', 'AssistedDrivingPolicy', 'KoreanSignalRules') | ForEach-Object { Join-Path $taskRoot "unity/EungyeTaxi/Assets/Scripts/$_.cs" }
@@ -7,7 +7,8 @@ New-Item -ItemType Directory -Force -Path $taskOutput | Out-Null
 $taskResults = @()
 foreach ($taskName in @('DrowsyInputTests', 'DrowsyBlinkTests', 'SevereHungerTests', 'ProgressiveFatigueTests', 'FatigueOvertimeTests', 'PostTripServicePolicyTests', 'OneDayCampaignTests', 'ThreeDayCampaignTests', 'MitTrafficFollowingTests', 'RoadGeometryTests', 'ConfusionPracticeTests', 'PracticeFeedbackTests', 'PracticeConditionsTests', 'PrototypeStateTests', 'PrototypeCompletionTests', 'CampaignAccountTests', 'CampaignLifecycleTests', 'PassengerRequestTests', 'EconomyTests', 'DriveMathTests', 'ManualHandlingTests', 'CornerAssistTests', 'MannerTests', 'FareTripTests', 'AssistedDrivingPolicyTests', 'KoreanSignalTests', 'ProtectedSignalTests', 'TrafficRulesTests')) {
     $taskExe = Join-Path $taskOutput "$taskName.exe"
-    & $taskCompiler /nologo "/out:$taskExe" (Join-Path $taskRoot "tests/$taskName.cs") @taskSources
+    $taskCoreSources=@('ContentJson','ContentTuning') | ForEach-Object {Join-Path $taskRoot "unity/EungyeTaxi/Assets/Scripts/$_.cs"}
+& $taskCompiler /nologo "/out:$taskExe" (Join-Path $taskRoot "tests/$taskName.cs") @taskSources @taskCoreSources
     if ($LASTEXITCODE -ne 0) { throw "$taskName compilation failed" }
     $taskResult = & $taskExe
     if ($LASTEXITCODE -ne 0) { throw "$taskName failed: $taskResult" }
