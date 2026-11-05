@@ -1,39 +1,53 @@
 {
-  "sourceCommit": "618c504e2e7e9458063d59032c286de3ef985d8a",
+  "sourceCommit": "3338612f589892983306881e3413d453a169cbf8",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-05",
-  "totalBytes": 115500849.0,
+  "totalBytes": 115519571.0,
   "validation": {
-    "build": "UnifiedModeTests.Build -> PrototypeBuild.BuildHybrid exit 0",
-    "buildLog": "artifacts/start-menu-build-final.log",
-    "menuStateAssertions": 4,
-    "unifiedModeEditorAssertions": 9,
-    "campaignStartupAssertions": 10,
-    "checkpointWriter": "500 writes, transient/permanent lock, pending recovery passed",
-    "liveCampaignAssertions": 22,
-    "playerLog": "artifacts/start-menu-player-final.log",
+    "build": "HudRevisionBuild.Build -> PrototypeBuild.BuildHybrid exit 0",
+    "buildLog": "artifacts/hud-revision-build-rendered.log",
+    "focusedAssertions": {
+      "cockpit": 9,
+      "dayPreparation": 150,
+      "navigation": 86
+    },
+    "inheritedSuites": [
+      "UnifiedMode",
+      "SignalCountdown",
+      "NavigationCue",
+      "ArrivalReadability",
+      "CampaignStartup",
+      "CampaignCheckpointWriter",
+      "LiveCampaign"
+    ],
     "playerExit": 0,
-    "playerAssertions": 38,
-    "playerFailures": 0,
-    "freshSingleOneAction": true,
-    "restoredActiveCampaignContinues": true,
-    "restartCancelPreservesCampaign": true,
-    "invalidSavePreserved": true,
-    "nativePvpFourDriversAndRestart": true,
-    "captureResolution": "1280x720 D3D11",
-    "captures": "docs/ui/2026-11-05-start-menu/",
+    "playerAssertions": 21,
+    "playerLog": "artifacts/hud-revision-player-rendered.log",
+    "captures": "docs/ui/2026-11-05-hud-preparation-navigation/",
+    "renderedResolutions": [
+      "1280x720",
+      "1920x1080"
+    ],
+    "nativePvpDrivers": 4,
+    "actualTimeVsDistanceRouteDifference": true,
+    "passengerRouteRequestsRetained": true,
+    "readOnlySignalForecast": true,
+    "dayTwoUsesActualDayOneSettlement": true,
+    "initialOneClickStartPreserved": true,
     "userSaveFilesUnchangedAfterUserExit": 4,
     "workspaceStrict": "exit0 input issues0",
-    "review": "separate read-only review: no important/critical findings",
+    "review": "separate read-only review: no important/critical findings; popup/cue overlap removed",
     "protocol": "native-city-lan-v3",
     "mapInputsChanged": false,
     "manualDriving": false,
+    "physicalRoadDriving": false,
+    "physicalMouseClicks": false,
     "fullCampaign": false,
     "otherPc": false,
     "actualPad": false,
-    "notes": "Player invokes production actions and captures real rendering; not physical mouse clicks or whole-road driving. Initial fixture failure and concurrent user play excluded; see history."
+    "notes": "Real rendering and production action/state/position fixtures. Day2 is created via actual ledger settlement, not a full20minute manual day. Prior fixture failures are recorded separately."
   },
   "files": [
     {
@@ -44,17 +58,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "5386531d6e0f2c4247cc87159a58fb92067df967d6f206baa6371afaecbdeef5"
+      "sha256": "7890bbf61ed3f061ac3212229a9312829cd088b9d0450a78947dd3ab43e6b788"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 55604,
-      "sha256": "67b3cbfdd5f6d42315063c014e8a4282ec7f652908faf031b8690a53431c66f7"
+      "bytes": 55780,
+      "sha256": "893781e0311836fa6f8c107d6fd7d6822ad7c2bc3eb47956c953e66acaabb1d5"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 108272,
-      "sha256": "9d1a3af2e9c9a0d3051e96b2ad09176889c529791cae3cd66123650b87557d01"
+      "bytes": 108760,
+      "sha256": "9c0d9dc32c6af7350ceb76322599b281d4df9360001fc452ae659d99a8b4c458"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -64,7 +78,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
       "bytes": 1140,
-      "sha256": "7c53137f322b54df8f0304a43ec56c0099d8b54fe1c2f9ad2df65e3aff458eab"
+      "sha256": "ce1f94149b0b621cfa85b6fcc1e7e7a3f367663659f125ed5485e8afd8e55ccf"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0.resS",
@@ -73,8 +87,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2241536,
-      "sha256": "0a9199c4a8049a4c2cb054fbc5394e5009d13d3ebcdf3701b16b86920a69a702"
+      "bytes": 2259456,
+      "sha256": "0553e2afab94a5acdc3396309d68853d3c8c1d71ffaa87d8fd66d29b5ff30ebe"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -588,8 +602,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/RuntimeInitializeOnLoads.json",
-      "bytes": 8474,
-      "sha256": "55e5d0fd3a9719c482e10f799c89970f1be894bdd8fe332f2a44e37f1aea301a"
+      "bytes": 8612,
+      "sha256": "18a4e8330156a33228f8b0d8175c9304fadda35f5184a6022e689e1fbb1b37f2"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/ScriptingAssemblies.json",
@@ -599,7 +613,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/sharedassets0.assets",
       "bytes": 7624,
-      "sha256": "2267b831c37412419cba4a065bb9ed99fd0478155d4c0d9b3a1181cdb506c379"
+      "sha256": "b92d303362bb3b4ee11681f3679532ae3604cd65e059add72141c415b2dd0f0e"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi.exe",
