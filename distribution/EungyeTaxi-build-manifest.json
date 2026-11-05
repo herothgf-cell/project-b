@@ -1,38 +1,45 @@
 {
-  "sourceCommit": "1c50958111e6de4cb2b6a210476a47e82c5d653d",
+  "sourceCommit": "55560dbc75046cc9f6e89160b919b430febe7c90",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-05",
-  "totalBytes": 115580745.0,
+  "totalBytes": 115908969.0,
   "validation": {
-    "build": "AccidentWorkshopBuild.Build -> PrototypeBuild.BuildHybrid exit 0",
-    "buildLog": "artifacts/accident-build-6.log",
-    "runtimeSameAsBuild5": true,
+    "build": "AccidentWorkshopBuild.Build -> ContentTuningBuild.Build -> PrototypeBuild.BuildHybrid exit 0",
+    "buildLog": "artifacts/accident-content-build-9.log",
     "accidentModelChecks": 77,
     "vehicleDamageChecks": 191,
+    "contentModelChecks": 636,
+    "nodeTests": 18,
     "editorAccidentChecks": 7,
     "editorWorkshopChecks": 51,
+    "editorContentChecks": 26,
+    "contentCopyChecks": 3,
+    "hudIntegration": true,
     "liveCampaignChecks": 22,
     "checkpointWrites": 500,
-    "singlePlayerChecks": 50,
-    "pvpPlayerChecks": 50,
+    "singlePlayerChecks": 51,
+    "pvpPlayerChecks": 55,
     "reloadPlayerChecks": 8,
+    "contentPlayerChecks": 17,
     "singlePhysicalChecks": 15,
     "pvpPhysicalChecks": 17,
-    "lanHostChecks": 47,
-    "lanClientChecks": 61,
+    "lanHostChecks": 48,
+    "lanClientChecks": 62,
     "lanReconnect": true,
-    "protocol": 4,
+    "hostProfileReplicated": true,
+    "protocol": 5,
     "userSaveFilesUnchanged": 14,
+    "finalBuildChange": "Match expiry synchronizes mandatory accident expense before final scoreboard; full PVP55 passed on Build9, single/content/LAN passed on Build8",
     "manualDriving": false,
     "remotePcLan": false,
     "accidentModalVisualVerified": false,
     "workshopPlacementCapturesVerified": true,
     "limitations": [
-      "Hidden-window ScreenCapture is blank; accident modal visual acceptance pending",
+      "Hidden-window ScreenCapture blank; accident modal visual acceptance pending",
       "Full campaign and real-device driving not performed",
-      "Pre-existing ManualHandlingTests S-brake expectation mismatch"
+      "Pre-existing ManualHandlingTests and two passenger wording expectations fail; unrelated to this change"
     ]
   },
   "files": [
@@ -44,17 +51,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "6c09716810d0ef9620f6deb52d8608f84acf1e61160e76540610c7fa18407e3c"
+      "sha256": "19a9382cd3062a29958127abe0a651779155764c71fde245deebed05853d682c"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 56044,
-      "sha256": "9f7213abce09d460e8089669a37f789d467c8b9848d9cd496d457ff5161c5635"
+      "bytes": 56332,
+      "sha256": "2afef5bd0f60934b6d0633a0ff56afe176be7fbaa1e9467840936f431f5b869b"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 109480,
-      "sha256": "dc53785b6f30166c0672bd78d647bbcac31e540d0f2981605bd1e44852928051"
+      "bytes": 110072,
+      "sha256": "5242a8af4df7f9f25413cdd2c2fd06209ee365840d0d36c19b120e50910c3aa4"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -64,7 +71,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
       "bytes": 1140,
-      "sha256": "faabcebcd02d2dcdb3a950be37de9e8cbeba47d24e9a12a417d5e99a7af30393"
+      "sha256": "b52c67651189a6962c078eca6600736aa58af298f0dbe07e70b01d65d4a830bb"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0.resS",
@@ -73,8 +80,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2319360,
-      "sha256": "ab224770921e351f34c0c374ae005e4e29af2fba20d56a6f329800986af01389"
+      "bytes": 2357248,
+      "sha256": "335e236e18633ac79a0f0d73a333d119949d85bbb319ccac154a12390ca49ea8"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -573,8 +580,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 40439342,
-      "sha256": "e45227272e5528e8df85b81dff350e9e339f348ab61c96616e49a81b03b0da05"
+      "bytes": 40728222,
+      "sha256": "5bf99464694f519261a92c2928311161aba8d1f240ea18b44bbb3b973677d2e3"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Resources/unity default resources",
@@ -588,8 +595,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/RuntimeInitializeOnLoads.json",
-      "bytes": 8898,
-      "sha256": "6a0c4dca8e1b1ebfc6fefee3ec82ad0b6561caf43e493fb4d669d96345158c30"
+      "bytes": 9474,
+      "sha256": "3f08927f5b259c359527f16ef85b946887a4100305a62eb24643961850365f56"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/ScriptingAssemblies.json",
@@ -599,7 +606,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/sharedassets0.assets",
       "bytes": 7624,
-      "sha256": "c4f3b61b4eab4228b1c3f9ec1d5682d49fd302d0c57a50a7a28c587b144c1d3e"
+      "sha256": "207071a1b4b2e01e6484a2212994d25ce4698e4afeff7f9b9cff340f2899a18c"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi.exe",
