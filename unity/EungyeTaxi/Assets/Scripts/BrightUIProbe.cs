@@ -48,9 +48,10 @@ public sealed partial class BrightUIProbe:MonoBehaviour {
    var scroll=typeof(PassengerDialogueUI).GetField("scroll",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);scroll.SetValue(null,new Vector2(0,100000));yield return Capture("dialogue-long-bottom-"+width);
    var position=(Vector2)scroll.GetValue(null);Check(position.y>0&&position.y<100000,"long dialogue scroll reaches and clamps to last choice "+width);scroll.SetValue(null,Vector2.zero);
   }
-  longDialoguePreview=false;carePreview=true;
+  // The isolated long-care fixture owns the shared card scroll; do not render a second real card into that state.
+  longDialoguePreview=false;carePreview=true;var careHud=s.GetComponent<DriveHUD>();bool careHudEnabled=careHud.enabled;careHud.enabled=false;
   foreach(int width in new[]{1280,1920}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);yield return Capture("care-long-"+width);var field=typeof(CockpitUI).GetField("careScroll",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);field.SetValue(null,new Vector2(0,100000));yield return Capture("care-long-bottom-"+width);var position=(Vector2)field.GetValue(null);Check(position.y>0&&position.y<100000,"care instructions scroll to safe-stop footer "+width);field.SetValue(null,Vector2.zero);}
-  carePreview=false;Time.timeScale=timeScale;
+  carePreview=false;careHud.enabled=careHudEnabled;Time.timeScale=timeScale;
  }
  IEnumerator Ready(){s=null;while(!s||!s.StartupReady||s.business.IsRestoring){foreach(var item in FindObjectsOfType<DriveSession>())if(!item.IsSimulationBot)s=item;yield return null;}yield return null;}
  void Pose(MapStop stop){var t=s.taxi;t.body.velocity=t.body.angularVelocity=Vector3.zero;t.body.position=stop.Kerb+Vector3.up*.65f;t.body.rotation=Quaternion.LookRotation(stop.Direction);t.transform.SetPositionAndRotation(t.body.position,t.body.rotation);Physics.SyncTransforms();s.law.ResetObservation();s.manners.Suppress(2);}
