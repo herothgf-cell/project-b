@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "values": [
+    {
+      "id": "request.Quiet.unanswered",
+      "value": "2"
+    },
+    {
+      "id": "request.Quiet.reply.Accept",
+      "value": "조용히 모시겠습니다."
+    },
+    {
+      "id": "request.Quiet.reply.Defer",
+      "value": "지금 켜져있는 음악만 튼 채로 운행하겠습니다."
+    },
+    {
+      "id": "request.Eta.reply.EtaFaster",
+      "value": "네비 시간 보다는 조금 빠르게 도착할 것 같아요."
+    },
+    {
+      "id": "request.Eta.reply.EtaNormal",
+      "value": "네비 시간만큼 걸릴 것 같아요."
+    },
+    {
+      "id": "request.Eta.reply.EtaRelaxed",
+      "value": "길이 막혀서 조금 늦겠는데요."
+    },
+    {
+      "id": "request.Eta.reply.Defer",
+      "value": "지금은 안내가 어렵겠네요."
+    },
+    {
+      "id": "request.Empathy.unanswered",
+      "value": "-2"
+    },
+    {
+      "id": "request.Interview.unanswered",
+      "value": "-2"
+    },
+    {
+      "id": "request.LocalChat.unanswered",
+      "value": "-2"
+    },
+    {
+      "id": "choice.request.Quiet.Accept.end.success.satisfaction",
+      "value": "3"
+    },
+    {
+      "id": "choice.request.Eta.EtaFaster.immediate.satisfaction",
+      "value": "1"
+    },
+    {
+      "id": "choice.request.Eta.EtaNormal.immediate.satisfaction",
+      "value": "1"
+    },
+    {
+      "id": "choice.request.Eta.EtaRelaxed.immediate.satisfaction",
+      "value": "1"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.during.motionPenaltyDelta",
+      "value": "1"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.end.success.satisfaction",
+      "value": "6"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.end.failure.satisfaction",
+      "value": "-4"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.end.success.satisfaction",
+      "value": "6"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.end.failure.satisfaction",
+      "value": "-3"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.end.success.satisfaction",
+      "value": "5"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.end.success.satisfaction",
+      "value": "5"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.end.success.satisfaction",
+      "value": "4"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.end.failure.satisfaction",
+      "value": "-4"
+    },
+    {
+      "id": "choice.request.Empathy.Accept.immediate.satisfaction",
+      "value": "3"
+    },
+    {
+      "id": "choice.request.Empathy.Accept.immediate.fatigue",
+      "value": "1"
+    },
+    {
+      "id": "choice.request.Empathy.Accept.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Alternative.immediate.satisfaction",
+      "value": "2"
+    },
+    {
+      "id": "choice.request.Empathy.Alternative.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.end.success.satisfaction",
+      "value": "4"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.end.success.satisfaction",
+      "value": "4"
+    },
+    {
+      "id": "choice.request.Interview.Accept.immediate.satisfaction",
+      "value": "3"
+    },
+    {
+      "id": "choice.request.Interview.Accept.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Alternative.immediate.satisfaction",
+      "value": "2"
+    },
+    {
+      "id": "choice.request.Interview.Alternative.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Accept.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Accept.immediate.satisfaction",
+      "value": "2"
+    },
+    {
+      "id": "choice.request.FareHelp.Accept.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Alternative.immediate.satisfaction",
+      "value": "1"
+    },
+    {
+      "id": "choice.request.FareHelp.Alternative.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Accept.immediate.satisfaction",
+      "value": "3"
+    },
+    {
+      "id": "choice.request.LocalChat.Accept.immediate.fatigue",
+      "value": "1"
+    },
+    {
+      "id": "choice.request.LocalChat.Accept.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Alternative.immediate.satisfaction",
+      "value": "2"
+    },
+    {
+      "id": "choice.request.LocalChat.Alternative.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.end.success.satisfaction",
+      "value": "4"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.end.failure.satisfaction",
+      "value": "-4"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.end.success.satisfaction",
+      "value": "5"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.end.failure.satisfaction",
+      "value": "-4"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.immediate.satisfaction",
+      "value": "1"
+    },
+    {
+      "id": "choice.type.Food.1.immediate.satisfaction",
+      "value": "3"
+    }
+  ]
+}

@@ -39,21 +39,21 @@ test('unanswered M deduction uses signed input while preserving the game magnitu
  const h=setup();vm.runInContext(actualModel,h.context);h.context.fixtureCatalog=actualCatalog;h.context.fixtureProfile=actualProfile;
  vm.runInContext(`catalog=fixtureCatalog;profile=structuredClone(fixtureProfile);defaults=structuredClone(profile);saved=structuredClone(profile);group='승객 요청';selected='request.Quiet';render()`,h.context);
  const input=vm.runInContext("editors.find(e=>e.id==='request.Quiet.unanswered').input",h.context);
- assert.equal(input.value,'-5');assert.equal(input.min,-100);assert.equal(input.max,0);
- const nodes=descendants(h.el('detail'));assert.ok(nodes.some(n=>n.textContent==='기본값: -5 점'));assert.ok(nodes.some(n=>n.textContent==='입력 가능한 값: -100 ~ 0 점'));assert.ok(nodes.some(n=>n.textContent.includes('-2')&&n.textContent.includes('M')));
+ assert.equal(input.value,'-2');assert.equal(input.min,-100);assert.equal(input.max,0);
+ const nodes=descendants(h.el('detail'));assert.ok(nodes.some(n=>n.textContent==='기본값: -2 점'));assert.ok(nodes.some(n=>n.textContent==='입력 가능한 값: -100 ~ 0 점'));assert.ok(nodes.some(n=>n.textContent.includes('-2')&&n.textContent.includes('M')));
  for(const [visible,stored] of [['-2','2'],['0','0'],['-100','100']]){input.value=visible;input.oninput();assert.equal(vm.runInContext("val(profile,'request.Quiet.unanswered')",h.context),stored);assert.equal(input.value,visible);}
  vm.runInContext('render()',h.context);assert.equal(vm.runInContext("editors.find(e=>e.id==='request.Quiet.unanswered').input.value",h.context),'-100');
  const changedField=descendants(h.el('detail')).find(n=>n.className==='context-field'&&descendants(n).some(c=>c.value==='-100'));
- descendants(changedField).find(n=>n.textContent==='기본값').onclick();assert.equal(vm.runInContext("editors.find(e=>e.id==='request.Quiet.unanswered').input.value",h.context),'-5');
- vm.runInContext("updateShared('request.Quiet.unanswered','9')",h.context);descendants(changedField).find(n=>n.textContent==='저장값 복원').onclick();assert.equal(vm.runInContext("val(profile,'request.Quiet.unanswered')",h.context),'5');
+ descendants(changedField).find(n=>n.textContent==='기본값').onclick();assert.equal(vm.runInContext("editors.find(e=>e.id==='request.Quiet.unanswered').input.value",h.context),'-2');
+ vm.runInContext("updateShared('request.Quiet.unanswered','9')",h.context);descendants(changedField).find(n=>n.textContent==='저장값 복원').onclick();assert.equal(vm.runInContext("val(profile,'request.Quiet.unanswered')",h.context),'2');
  const restored=vm.runInContext("editors.find(e=>e.id==='request.Quiet.unanswered').input",h.context);restored.value='2';restored.oninput();assert.ok(validateProfile(JSON.parse(vm.runInContext('JSON.stringify(profile)',h.context)),actualCatalog,{checkHash:false}).length>0,'positive display input cannot silently become a reward');
 });
 
 test('signed unanswered deduction is consistent in fallback and does not invert signed S effects',()=>{
  const h=setup();vm.runInContext(actualModel,h.context);h.context.fixtureCatalog=actualCatalog;h.context.fixtureProfile=actualProfile;
  vm.runInContext(`catalog=fixtureCatalog;profile=structuredClone(fixtureProfile);defaults=structuredClone(profile);saved=structuredClone(profile);renderDetail(catalog.entries.find(e=>e.id==='request.Quiet.unanswered'))`,h.context);
- let input=descendants(h.el('detail')).find(n=>n.type==='number');assert.equal(input.value,'-5');assert.equal(input.min,-100);assert.equal(input.max,0);input.value='-2';input.oninput();assert.equal(vm.runInContext("val(profile,'request.Quiet.unanswered')",h.context),'2');
- vm.runInContext("group='승객 요청';selected='request.Empathy';render()",h.context);input=vm.runInContext("editors.find(e=>e.id==='request.Empathy.unanswered').input",h.context);assert.equal(input.value,'-5');assert.equal(input.min,-100);assert.equal(input.max,100);input.value='-2';input.oninput();assert.equal(vm.runInContext("val(profile,'request.Empathy.unanswered')",h.context),'-2');
+ let input=descendants(h.el('detail')).find(n=>n.type==='number');assert.equal(input.value,'-2');assert.equal(input.min,-100);assert.equal(input.max,0);input.value='-2';input.oninput();assert.equal(vm.runInContext("val(profile,'request.Quiet.unanswered')",h.context),'2');
+ vm.runInContext("group='승객 요청';selected='request.Empathy';render()",h.context);input=vm.runInContext("editors.find(e=>e.id==='request.Empathy.unanswered').input",h.context);assert.equal(input.value,'-2');assert.equal(input.min,-100);assert.equal(input.max,100);input.value='-2';input.oninput();assert.equal(vm.runInContext("val(profile,'request.Empathy.unanswered')",h.context),'-2');
 });
 
 test('law, driving, cleanliness and extra motion penalties use signed display without changing saved effects',()=>{
@@ -90,7 +90,7 @@ test('end effects expose failure editors for real failure outcomes and explain u
  vm.runInContext(`catalog=fixtureCatalog;profile=structuredClone(fixtureProfile);defaults=structuredClone(profile);saved=structuredClone(profile);group='승객 요청';selected='request.Comfort';render()`,h.context);
  let nodes=descendants(h.el('detail'));assert.ok(nodes.some(n=>n.textContent==='운송 종료 후'));
  assert.ok(nodes.some(n=>n.textContent.startsWith('이행 실패 (미이행)')));
- const input=vm.runInContext("editors.find(e=>e.id==='choice.request.Comfort.Accept.end.failure.satisfaction').input",h.context);assert.equal(input.value,'-10');input.value='-17';input.oninput();assert.equal(vm.runInContext("val(profile,'choice.request.Comfort.Accept.end.failure.satisfaction')",h.context),'-17');assert.equal(vm.runInContext("val(profile,'choice.request.Comfort.Accept.end.success.satisfaction')",h.context),'8');
+ const input=vm.runInContext("editors.find(e=>e.id==='choice.request.Comfort.Accept.end.failure.satisfaction').input",h.context);assert.equal(input.value,'-4');input.value='-17';input.oninput();assert.equal(vm.runInContext("val(profile,'choice.request.Comfort.Accept.end.failure.satisfaction')",h.context),'-17');assert.equal(vm.runInContext("val(profile,'choice.request.Comfort.Accept.end.success.satisfaction')",h.context),'6');
  vm.runInContext("selected='request.Quiet';render()",h.context);nodes=descendants(h.el('detail'));assert.ok(nodes.some(n=>n.className==='outcome-unavailable'&&n.textContent.includes('이행 실패')&&n.textContent.includes('미응답')));assert.equal(vm.runInContext("editors.filter(e=>e.id.startsWith('choice.request.Quiet.Accept.end.failure.')).length",h.context),0);
  const reply=nodes.find(n=>n.className==='choice-description');assert.ok(reply);assert.ok(!reply.open);
 });
