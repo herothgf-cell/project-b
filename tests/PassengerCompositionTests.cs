@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Collections.Generic;
 class PassengerCompositionTests {
@@ -14,7 +14,8 @@ class PassengerCompositionTests {
   Reject(()=>PassengerPresetCatalog.Parse(Preset("","Food").Replace("조합 승객","   ")),"blank preset name rejected");
   ContentTuning.ConfigureCatalog(File.ReadAllText(args[0]));
   var baseline=ContentTuning.CaptureJson();
-  foreach(PassengerType type in Enum.GetValues(typeof(PassengerType))){var a=PassengerBehaviorState.Create("default",type);var b=PassengerBehaviorState.CreateConfigured("default",type,null,null);Check(a.Type==b.Type&&a.Variant==b.Variant&&a.Dialogue==b.Dialogue&&a.Quiet==b.Quiet,"twelve defaults preserve legacy "+type);}
+  Install(File.ReadAllText(args[2]));
+  foreach(PassengerType type in Enum.GetValues(typeof(PassengerType))){var a=PassengerBehaviorState.Create("default",type);var b=PassengerBehaviorState.CreateConfigured("default",type,null,null);Check(a.Type==b.Type&&a.Variant==b.Variant&&a.Dialogue==b.Dialogue&&a.Quiet==b.Quiet,"preserved legacy twelve fixture matches old behavior "+type);}
   var care=new VehicleCare();care.ReservePassenger("first-offer",new PassengerType[0]);care=VehicleCare.Restore(care.Snapshot());care.ReservePassenger("different-offer",new PassengerType[0]);Check(care.PassengerSelectionSeed=="first-offer","cancel/resume preserves selection seed");
   // Removing a newly optional key preserves a legacy profile's exact canonical snapshot.
   var old=ContentJson.Object(ContentJson.Parse(baseline));ContentJson.Array(old["values"]).RemoveAll(o=>(string)ContentJson.Object(o)["id"]=="passenger.presets");old["contentHash"]=ContentTuning.ComputeHash(old);string legacy=ContentJson.Stringify(old);ContentTuning.UseJson(legacy);Check(ContentTuning.CaptureJson()==legacy,"legacy snapshot has no injected defaults");

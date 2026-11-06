@@ -1,0 +1,5396 @@
+{
+  "schemaVersion": 2,
+  "id": "passenger-roster-v1",
+  "revision": 1,
+  "contentHash": "8191049b9bb60e470e8f79ff8d0d9e7e60aea447810961059182c029d15df86a",
+  "values": [
+    {
+      "id": "request.Quiet.enabled",
+      "value": "true"
+    },
+    {
+      "id": "request.Quiet.weight",
+      "value": "3"
+    },
+    {
+      "id": "request.Quiet.success",
+      "value": "5"
+    },
+    {
+      "id": "request.Quiet.unanswered",
+      "value": "2"
+    },
+    {
+      "id": "request.Quiet.prompt",
+      "value": "조용히 운행해 주세요."
+    },
+    {
+      "id": "request.Quiet.reply.Accept",
+      "value": "조용히 모시겠습니다."
+    },
+    {
+      "id": "request.Quiet.reply.Defer",
+      "value": "지금 켜져있는 음악만 튼 채로 운행하겠습니다."
+    },
+    {
+      "id": "request.Eta.enabled",
+      "value": "true"
+    },
+    {
+      "id": "request.Eta.weight",
+      "value": "2"
+    },
+    {
+      "id": "request.Eta.prompt",
+      "value": "도착까지 얼마나 걸릴까요?"
+    },
+    {
+      "id": "request.Eta.reply.EtaFaster",
+      "value": "네비 시간 보다는 조금 빠르게 도착할 것 같아요."
+    },
+    {
+      "id": "request.Eta.reply.EtaNormal",
+      "value": "네비 시간만큼 걸릴 것 같아요."
+    },
+    {
+      "id": "request.Eta.reply.EtaRelaxed",
+      "value": "길이 막혀서 조금 늦겠는데요."
+    },
+    {
+      "id": "request.Eta.reply.Defer",
+      "value": "지금은 안내가 어렵겠네요."
+    },
+    {
+      "id": "request.Comfort.enabled",
+      "value": "true"
+    },
+    {
+      "id": "request.Comfort.weight",
+      "value": "3"
+    },
+    {
+      "id": "request.Comfort.success",
+      "value": "8"
+    },
+    {
+      "id": "request.Comfort.failure",
+      "value": "-10"
+    },
+    {
+      "id": "request.Comfort.prompt",
+      "value": "차멀미가 심해요. 부드럽게 운전해 주세요."
+    },
+    {
+      "id": "request.Comfort.reply.Accept",
+      "value": "부드럽게 모시겠습니다"
+    },
+    {
+      "id": "request.Comfort.reply.Defer",
+      "value": "지금은 요청대로 해 드리기 어려워요"
+    },
+    {
+      "id": "request.OnTime.enabled",
+      "value": "true"
+    },
+    {
+      "id": "request.OnTime.weight",
+      "value": "2"
+    },
+    {
+      "id": "request.OnTime.success",
+      "value": "8"
+    },
+    {
+      "id": "request.OnTime.failure",
+      "value": "-10"
+    },
+    {
+      "id": "request.OnTime.prompt",
+      "value": "급해요. 규칙을 지키며 제시간에 도착해 주세요."
+    },
+    {
+      "id": "request.OnTime.reply.Accept",
+      "value": "규칙을 지키며 가겠습니다"
+    },
+    {
+      "id": "request.OnTime.reply.Defer",
+      "value": "지금은 요청대로 해 드리기 어려워요"
+    },
+    {
+      "id": "request.LargeRoad.enabled",
+      "value": "true"
+    },
+    {
+      "id": "request.LargeRoad.weight",
+      "value": "1"
+    },
+    {
+      "id": "request.LargeRoad.success",
+      "value": "8"
+    },
+    {
+      "id": "request.LargeRoad.prompt",
+      "value": "골목 대신 큰길로 가 주세요."
+    },
+    {
+      "id": "request.LargeRoad.reply.Accept",
+      "value": "가능한 큰길로 안내할게요"
+    },
+    {
+      "id": "request.LargeRoad.reply.Defer",
+      "value": "지금은 요청대로 해 드리기 어려워요"
+    },
+    {
+      "id": "request.ShortRoad.enabled",
+      "value": "false"
+    },
+    {
+      "id": "request.ShortRoad.weight",
+      "value": "0"
+    },
+    {
+      "id": "request.ShortRoad.success",
+      "value": "8"
+    },
+    {
+      "id": "request.ShortRoad.prompt",
+      "value": "가능한 짧은 길로 가 주세요."
+    },
+    {
+      "id": "request.ShortRoad.reply.Accept",
+      "value": "짧은 길로 안내할게요"
+    },
+    {
+      "id": "request.ShortRoad.reply.Defer",
+      "value": "지금은 요청대로 해 드리기 어려워요"
+    },
+    {
+      "id": "request.SafeStop.enabled",
+      "value": "true"
+    },
+    {
+      "id": "request.SafeStop.weight",
+      "value": "2"
+    },
+    {
+      "id": "request.SafeStop.success",
+      "value": "8"
+    },
+    {
+      "id": "request.SafeStop.failure",
+      "value": "-10"
+    },
+    {
+      "id": "request.SafeStop.prompt",
+      "value": "가까운 안전한 승하차 지점에 내려 주세요."
+    },
+    {
+      "id": "request.SafeStop.reply.Accept",
+      "value": "안전한 하차 지점으로 모실게요"
+    },
+    {
+      "id": "request.SafeStop.reply.Defer",
+      "value": "원래 목적지로 모실게요"
+    },
+    {
+      "id": "request.Empathy.enabled",
+      "value": "true"
+    },
+    {
+      "id": "request.Empathy.weight",
+      "value": "2"
+    },
+    {
+      "id": "request.Empathy.success",
+      "value": "5"
+    },
+    {
+      "id": "request.Empathy.unanswered",
+      "value": "-2"
+    },
+    {
+      "id": "request.Empathy.prompt",
+      "value": "오늘 속상한 일이 있었어요."
+    },
+    {
+      "id": "request.Empathy.reply.Accept",
+      "value": "이야기 들어드릴게요"
+    },
+    {
+      "id": "request.Empathy.reply.Alternative",
+      "value": "조용히 가실까요?"
+    },
+    {
+      "id": "request.Empathy.reply.Defer",
+      "value": "지금은 요청대로 해 드리기 어려워요"
+    },
+    {
+      "id": "request.RouteAdvice.enabled",
+      "value": "false"
+    },
+    {
+      "id": "request.RouteAdvice.weight",
+      "value": "0"
+    },
+    {
+      "id": "request.RouteAdvice.success",
+      "value": "5"
+    },
+    {
+      "id": "request.RouteAdvice.prompt",
+      "value": "어느 길이 좋을까요? 빠른 길을 추천해 주세요."
+    },
+    {
+      "id": "request.RouteAdvice.reply.Accept",
+      "value": "빠른 길을 추천할게요"
+    },
+    {
+      "id": "request.RouteAdvice.reply.Alternative",
+      "value": "짧은 길을 추천할게요"
+    },
+    {
+      "id": "request.RouteAdvice.reply.Defer",
+      "value": "지금은 요청대로 해 드리기 어려워요"
+    },
+    {
+      "id": "request.Interview.enabled",
+      "value": "true"
+    },
+    {
+      "id": "request.Interview.weight",
+      "value": "2"
+    },
+    {
+      "id": "request.Interview.success",
+      "value": "5"
+    },
+    {
+      "id": "request.Interview.unanswered",
+      "value": "-2"
+    },
+    {
+      "id": "request.Interview.prompt",
+      "value": "오늘 면접인데 잘할 수 있을까요?"
+    },
+    {
+      "id": "request.Interview.reply.Accept",
+      "value": "응원할게요!"
+    },
+    {
+      "id": "request.Interview.reply.Alternative",
+      "value": "조용히 준비하시게 할게요"
+    },
+    {
+      "id": "request.Interview.reply.Defer",
+      "value": "지금은 요청대로 해 드리기 어려워요"
+    },
+    {
+      "id": "request.Music.enabled",
+      "value": "true"
+    },
+    {
+      "id": "request.Music.weight",
+      "value": "1"
+    },
+    {
+      "id": "request.Music.success",
+      "value": "5"
+    },
+    {
+      "id": "request.Music.prompt",
+      "value": "라디오 음악을 바꿔 주세요. (텍스트 연출)"
+    },
+    {
+      "id": "request.Music.reply.Accept",
+      "value": "지금은 음악을 바꾸기 어려워요"
+    },
+    {
+      "id": "request.Music.reply.Defer",
+      "value": "지금은 요청대로 해 드리기 어려워요"
+    },
+    {
+      "id": "request.FareHelp.enabled",
+      "value": "true"
+    },
+    {
+      "id": "request.FareHelp.weight",
+      "value": "2"
+    },
+    {
+      "id": "request.FareHelp.success",
+      "value": "5"
+    },
+    {
+      "id": "request.FareHelp.prompt",
+      "value": "택시비가 부족한데 요금을 알려 주세요."
+    },
+    {
+      "id": "request.FareHelp.reply.Accept",
+      "value": "약정 요금을 안내할게요"
+    },
+    {
+      "id": "request.FareHelp.reply.Alternative",
+      "value": "결제는 하차 때 확인할게요"
+    },
+    {
+      "id": "request.FareHelp.reply.Defer",
+      "value": "지금은 요청대로 해 드리기 어려워요"
+    },
+    {
+      "id": "request.LocalChat.enabled",
+      "value": "true"
+    },
+    {
+      "id": "request.LocalChat.weight",
+      "value": "2"
+    },
+    {
+      "id": "request.LocalChat.success",
+      "value": "5"
+    },
+    {
+      "id": "request.LocalChat.unanswered",
+      "value": "-2"
+    },
+    {
+      "id": "request.LocalChat.prompt",
+      "value": "이 동네에서 오래 일하셨어요?"
+    },
+    {
+      "id": "request.LocalChat.reply.Accept",
+      "value": "은계 주변을 다니고 있어요"
+    },
+    {
+      "id": "request.LocalChat.reply.Alternative",
+      "value": "안전하게 모셔다드릴게요"
+    },
+    {
+      "id": "request.LocalChat.reply.Defer",
+      "value": "지금은 요청대로 해 드리기 어려워요"
+    },
+    {
+      "id": "request.DestinationChange.enabled",
+      "value": "true"
+    },
+    {
+      "id": "request.DestinationChange.weight",
+      "value": "1"
+    },
+    {
+      "id": "request.DestinationChange.success",
+      "value": "6"
+    },
+    {
+      "id": "request.DestinationChange.failure",
+      "value": "-8"
+    },
+    {
+      "id": "request.DestinationChange.prompt",
+      "value": "다른 승하차 지점으로 목적지를 바꿔 주세요."
+    },
+    {
+      "id": "request.DestinationChange.reply.Accept",
+      "value": "새 목적지로 변경할게요"
+    },
+    {
+      "id": "request.DestinationChange.reply.Defer",
+      "value": "원래 목적지로 모실게요"
+    },
+    {
+      "id": "request.ViaStop.enabled",
+      "value": "true"
+    },
+    {
+      "id": "request.ViaStop.weight",
+      "value": "1"
+    },
+    {
+      "id": "request.ViaStop.success",
+      "value": "6"
+    },
+    {
+      "id": "request.ViaStop.failure",
+      "value": "-8"
+    },
+    {
+      "id": "request.ViaStop.prompt",
+      "value": "안전한 경유지에서 용무{errandSeconds}초를 무료로 기다린 뒤 원래 목적지로 부탁해요."
+    },
+    {
+      "id": "request.ViaStop.reply.Accept",
+      "value": "안전한 지점에 들를게요"
+    },
+    {
+      "id": "request.ViaStop.reply.Defer",
+      "value": "이번에는 경유가 어려워요"
+    },
+    {
+      "id": "request.LostItem.enabled",
+      "value": "true"
+    },
+    {
+      "id": "request.RejectIllegal.enabled",
+      "value": "true"
+    },
+    {
+      "id": "request.RejectIllegal.weight",
+      "value": "1"
+    },
+    {
+      "id": "request.RejectIllegal.prompt",
+      "value": "빨간불이어도 그냥 가 주세요."
+    },
+    {
+      "id": "request.RejectIllegal.reply.Accept",
+      "value": "신호는 지켜야 해요"
+    },
+    {
+      "id": "request.RejectIllegal.reply.Defer",
+      "value": "지금은 요청대로 해 드리기 어려워요"
+    },
+    {
+      "id": "schedule.count0",
+      "value": "25"
+    },
+    {
+      "id": "schedule.count1",
+      "value": "60"
+    },
+    {
+      "id": "schedule.count2",
+      "value": "15"
+    },
+    {
+      "id": "schedule.progressMin",
+      "value": "0.25"
+    },
+    {
+      "id": "schedule.progressMax",
+      "value": "0.65"
+    },
+    {
+      "id": "schedule.cutoff",
+      "value": "0.85"
+    },
+    {
+      "id": "schedule.movingSeconds",
+      "value": "20"
+    },
+    {
+      "id": "type.General.intro.0",
+      "value": "안녕하세요. 목적지까지 부탁해요."
+    },
+    {
+      "id": "type.General.intro.1",
+      "value": "창밖을 보며 갈게요."
+    },
+    {
+      "id": "type.General.intro.2",
+      "value": "반갑습니다. 출발할까요?"
+    },
+    {
+      "id": "type.General.followup.0",
+      "value": ""
+    },
+    {
+      "id": "type.General.followup.1",
+      "value": ""
+    },
+    {
+      "id": "type.General.followup.2",
+      "value": ""
+    },
+    {
+      "id": "type.Drunk.intro.0",
+      "value": "오늘 이야기가 자꾸 나오네요."
+    },
+    {
+      "id": "type.Drunk.intro.1",
+      "value": "조금 취했네요. 폐를 끼치면 미안해요."
+    },
+    {
+      "id": "type.Drunk.intro.2",
+      "value": "조용히 집까지 부탁해요."
+    },
+    {
+      "id": "type.Drunk.choice.0",
+      "value": ""
+    },
+    {
+      "id": "type.Drunk.choice.1",
+      "value": ""
+    },
+    {
+      "id": "type.Drunk.followup.0",
+      "value": ""
+    },
+    {
+      "id": "type.Drunk.followup.1",
+      "value": ""
+    },
+    {
+      "id": "type.Drunk.followup.2",
+      "value": ""
+    },
+    {
+      "id": "type.Sleeping.weight",
+      "value": "1"
+    },
+    {
+      "id": "type.Sleeping.intro.0",
+      "value": "잠깐 눈 붙일게요. 도착하면 깨워 주세요."
+    },
+    {
+      "id": "type.Sleeping.intro.1",
+      "value": "오늘 하루가 길었어요… 졸리네요."
+    },
+    {
+      "id": "type.Sleeping.intro.2",
+      "value": "잠깐 잘게요. 중간에 위치를 물어볼 수도 있어요."
+    },
+    {
+      "id": "type.Sleeping.intro.3",
+      "value": "깊이 잠들면 도착해서 한 번 더 불러 주세요."
+    },
+    {
+      "id": "type.Sleeping.choice.0",
+      "value": ""
+    },
+    {
+      "id": "type.Sleeping.choice.1",
+      "value": ""
+    },
+    {
+      "id": "type.Sleeping.followup.0",
+      "value": ""
+    },
+    {
+      "id": "type.Sleeping.followup.1",
+      "value": ""
+    },
+    {
+      "id": "type.Sleeping.followup.2",
+      "value": ""
+    },
+    {
+      "id": "type.Sleeping.followup.3",
+      "value": ""
+    },
+    {
+      "id": "type.Comfort.weight",
+      "value": "3"
+    },
+    {
+      "id": "type.Comfort.intro.0",
+      "value": "부드럽게 운전해 주실 수 있나요?"
+    },
+    {
+      "id": "type.Comfort.intro.1",
+      "value": "차가 흔들리면 힘들어요."
+    },
+    {
+      "id": "type.Comfort.intro.2",
+      "value": "편안하게 갈 수 있을까요?"
+    },
+    {
+      "id": "type.Comfort.choice.0",
+      "value": ""
+    },
+    {
+      "id": "type.Comfort.choice.1",
+      "value": ""
+    },
+    {
+      "id": "type.Comfort.followup.0",
+      "value": ""
+    },
+    {
+      "id": "type.Comfort.followup.1",
+      "value": ""
+    },
+    {
+      "id": "type.Comfort.followup.2",
+      "value": ""
+    },
+    {
+      "id": "type.Hurried.weight",
+      "value": "2"
+    },
+    {
+      "id": "type.Hurried.intro.0",
+      "value": "도착 예상 시간을 알고 싶어요."
+    },
+    {
+      "id": "type.Hurried.intro.1",
+      "value": "중간에 시간을 다시 확인할게요."
+    },
+    {
+      "id": "type.Hurried.intro.2",
+      "value": "신호가 길어 보여도 안전하게 부탁해요."
+    },
+    {
+      "id": "type.Hurried.choice.0",
+      "value": ""
+    },
+    {
+      "id": "type.Hurried.choice.1",
+      "value": ""
+    },
+    {
+      "id": "type.Hurried.followup.0",
+      "value": ""
+    },
+    {
+      "id": "type.Hurried.followup.1",
+      "value": ""
+    },
+    {
+      "id": "type.Hurried.followup.2",
+      "value": ""
+    },
+    {
+      "id": "type.RouteChecking.weight",
+      "value": "0"
+    },
+    {
+      "id": "type.RouteChecking.intro.0",
+      "value": "큰길로 가는 이유가 궁금해요."
+    },
+    {
+      "id": "type.RouteChecking.intro.1",
+      "value": "짧은 길도 가능한가요?"
+    },
+    {
+      "id": "type.RouteChecking.intro.2",
+      "value": "제가 알던 길과 다른가 봐요."
+    },
+    {
+      "id": "type.RouteChecking.choice.0",
+      "value": ""
+    },
+    {
+      "id": "type.RouteChecking.choice.1",
+      "value": ""
+    },
+    {
+      "id": "type.RouteChecking.followup.0",
+      "value": ""
+    },
+    {
+      "id": "type.RouteChecking.followup.1",
+      "value": ""
+    },
+    {
+      "id": "type.RouteChecking.followup.2",
+      "value": ""
+    },
+    {
+      "id": "type.Errand.weight",
+      "value": "1"
+    },
+    {
+      "id": "type.Errand.intro.0",
+      "value": "중간에 들를 곳을 먼저 확인하고 싶어요."
+    },
+    {
+      "id": "type.Errand.intro.1",
+      "value": "가능한 경유지가 있으면 알려 주세요."
+    },
+    {
+      "id": "type.Errand.intro.2",
+      "value": "용무 후 원래 목적지로 가는 거죠?"
+    },
+    {
+      "id": "type.Errand.choice.0",
+      "value": ""
+    },
+    {
+      "id": "type.Errand.choice.1",
+      "value": ""
+    },
+    {
+      "id": "type.Errand.followup.0",
+      "value": ""
+    },
+    {
+      "id": "type.Errand.followup.1",
+      "value": ""
+    },
+    {
+      "id": "type.Errand.followup.2",
+      "value": ""
+    },
+    {
+      "id": "type.Luggage.weight",
+      "value": "2"
+    },
+    {
+      "id": "type.Luggage.intro.0",
+      "value": "큰 가방을 싣고 내려야 해요."
+    },
+    {
+      "id": "type.Luggage.intro.1",
+      "value": "상자를 여러 개 실어야 해요."
+    },
+    {
+      "id": "type.Luggage.intro.2",
+      "value": "짐이 흔들리지 않게 싣고 싶어요."
+    },
+    {
+      "id": "type.Luggage.choice.0",
+      "value": ""
+    },
+    {
+      "id": "type.Luggage.choice.1",
+      "value": ""
+    },
+    {
+      "id": "type.Luggage.followup.0",
+      "value": ""
+    },
+    {
+      "id": "type.Luggage.followup.1",
+      "value": ""
+    },
+    {
+      "id": "type.Luggage.followup.2",
+      "value": ""
+    },
+    {
+      "id": "type.MuddyLuggage.weight",
+      "value": "1"
+    },
+    {
+      "id": "type.MuddyLuggage.intro.0",
+      "value": "가방 밑에 흙이 묻었어요."
+    },
+    {
+      "id": "type.MuddyLuggage.intro.1",
+      "value": "화분 받침에 흙이 남았네요."
+    },
+    {
+      "id": "type.MuddyLuggage.intro.2",
+      "value": "밖에서 쓰던 짐이라 바닥이 더러워요."
+    },
+    {
+      "id": "type.MuddyLuggage.choice.0",
+      "value": ""
+    },
+    {
+      "id": "type.MuddyLuggage.choice.1",
+      "value": ""
+    },
+    {
+      "id": "type.MuddyLuggage.choice.2",
+      "value": ""
+    },
+    {
+      "id": "type.MuddyLuggage.followup.0",
+      "value": ""
+    },
+    {
+      "id": "type.MuddyLuggage.followup.1",
+      "value": ""
+    },
+    {
+      "id": "type.MuddyLuggage.followup.2",
+      "value": ""
+    },
+    {
+      "id": "type.Food.weight",
+      "value": "1"
+    },
+    {
+      "id": "type.Food.intro.0",
+      "value": "간식을 먹어도 될까요?"
+    },
+    {
+      "id": "type.Food.intro.1",
+      "value": "음료와 간식을 먹어도 될까요?"
+    },
+    {
+      "id": "type.Food.intro.2",
+      "value": "도시락을 먹어도 될까요?"
+    },
+    {
+      "id": "type.Food.choice.0",
+      "value": ""
+    },
+    {
+      "id": "type.Food.choice.1",
+      "value": ""
+    },
+    {
+      "id": "type.Food.choice.2",
+      "value": ""
+    },
+    {
+      "id": "type.Food.followup.0",
+      "value": ""
+    },
+    {
+      "id": "type.Food.followup.1",
+      "value": ""
+    },
+    {
+      "id": "type.Food.followup.2",
+      "value": ""
+    },
+    {
+      "id": "type.PrecisionStop.weight",
+      "value": "2"
+    },
+    {
+      "id": "type.PrecisionStop.intro.0",
+      "value": "입구 가까운 안전한 장소가 있나요?"
+    },
+    {
+      "id": "type.PrecisionStop.intro.1",
+      "value": "내린 뒤 걸어갈 길을 확인하고 싶어요."
+    },
+    {
+      "id": "type.PrecisionStop.intro.2",
+      "value": "안전한 하차 지점인지 확인할게요."
+    },
+    {
+      "id": "type.PrecisionStop.choice.0",
+      "value": ""
+    },
+    {
+      "id": "type.PrecisionStop.choice.1",
+      "value": ""
+    },
+    {
+      "id": "type.PrecisionStop.followup.0",
+      "value": ""
+    },
+    {
+      "id": "type.PrecisionStop.followup.1",
+      "value": ""
+    },
+    {
+      "id": "type.PrecisionStop.followup.2",
+      "value": ""
+    },
+    {
+      "id": "type.Talkative.weight",
+      "value": "2"
+    },
+    {
+      "id": "type.Talkative.intro.0",
+      "value": "잠깐 제 이야기를 해도 될까요?"
+    },
+    {
+      "id": "type.Talkative.intro.1",
+      "value": "이 동네 이야기가 궁금해요."
+    },
+    {
+      "id": "type.Talkative.intro.2",
+      "value": "앞서 물었던 걸 다시 확인해도 될까요?"
+    },
+    {
+      "id": "type.Talkative.choice.0",
+      "value": ""
+    },
+    {
+      "id": "type.Talkative.choice.1",
+      "value": ""
+    },
+    {
+      "id": "type.Talkative.followup.0",
+      "value": ""
+    },
+    {
+      "id": "type.Talkative.followup.1",
+      "value": ""
+    },
+    {
+      "id": "type.Talkative.followup.2",
+      "value": ""
+    },
+    {
+      "id": "effect.food.satisfaction",
+      "value": "5"
+    },
+    {
+      "id": "effect.food.crumbs",
+      "value": "2"
+    },
+    {
+      "id": "effect.food.spill",
+      "value": "6"
+    },
+    {
+      "id": "effect.food.spillPercent",
+      "value": "25"
+    },
+    {
+      "id": "effect.food.spillDelaySeconds",
+      "value": "5"
+    },
+    {
+      "id": "effect.food.consumeMovingSeconds",
+      "value": "20"
+    },
+    {
+      "id": "effect.food.consumeProgress",
+      "value": "0.5"
+    },
+    {
+      "id": "effect.luggage.prepareSeconds",
+      "value": "10"
+    },
+    {
+      "id": "effect.luggage.unloadSeconds",
+      "value": "10"
+    },
+    {
+      "id": "effect.muddy.prepareSeconds",
+      "value": "10"
+    },
+    {
+      "id": "effect.muddy.dirt",
+      "value": "5"
+    },
+    {
+      "id": "effect.food.cleanupSeconds",
+      "value": "10"
+    },
+    {
+      "id": "effect.sleep.calmSeconds",
+      "value": "15"
+    },
+    {
+      "id": "effect.resecure.seconds",
+      "value": "5"
+    },
+    {
+      "id": "effect.errand.seconds",
+      "value": "20"
+    },
+    {
+      "id": "situation.SignalWait.reply.0",
+      "value": ""
+    },
+    {
+      "id": "situation.SignalWait.reply.1",
+      "value": ""
+    },
+    {
+      "id": "situation.Jolt.reply.0",
+      "value": ""
+    },
+    {
+      "id": "situation.Jolt.reply.1",
+      "value": ""
+    },
+    {
+      "id": "situation.NecessaryBrake.reply.0",
+      "value": ""
+    },
+    {
+      "id": "situation.NecessaryBrake.reply.1",
+      "value": ""
+    },
+    {
+      "id": "common.requestCap",
+      "value": "10"
+    },
+    {
+      "id": "common.timeCap",
+      "value": "12"
+    },
+    {
+      "id": "common.timeFactor",
+      "value": "60"
+    },
+    {
+      "id": "common.comfortStep",
+      "value": "2"
+    },
+    {
+      "id": "common.comfortCap",
+      "value": "4"
+    },
+    {
+      "id": "common.fareMultiplier",
+      "value": "1.0"
+    },
+    {
+      "id": "common.bonusMultiplier",
+      "value": "1.0"
+    },
+    {
+      "id": "common.deadlineMultiplier",
+      "value": "1.0"
+    },
+    {
+      "id": "common.deadlineSlack",
+      "value": "0"
+    },
+    {
+      "id": "common.startDeficitMultiplier",
+      "value": "1.0"
+    },
+    {
+      "id": "common.cleanBonusMultiplier",
+      "value": "1.0"
+    },
+    {
+      "id": "law.redStraight.penalty",
+      "value": "20"
+    },
+    {
+      "id": "law.redRight.penalty",
+      "value": "5"
+    },
+    {
+      "id": "law.dedicatedRed.penalty",
+      "value": "20"
+    },
+    {
+      "id": "law.pedestrian.penalty",
+      "value": "25"
+    },
+    {
+      "id": "law.insertion.penalty",
+      "value": "15"
+    },
+    {
+      "id": "law.interference.penalty",
+      "value": "15"
+    },
+    {
+      "id": "law.stopLine.penalty",
+      "value": "1"
+    },
+    {
+      "id": "law.wrongWay.penalty",
+      "value": "10"
+    },
+    {
+      "id": "law.editorSpeed.penalty",
+      "value": "5"
+    },
+    {
+      "id": "manner.motion.penalty",
+      "value": "2"
+    },
+    {
+      "id": "manner.comfortMotion.penalty",
+      "value": "4"
+    },
+    {
+      "id": "manner.collision.penalty",
+      "value": "10"
+    },
+    {
+      "id": "manner.sidewalk.penalty",
+      "value": "5"
+    },
+    {
+      "id": "manner.yield.penalty",
+      "value": "8"
+    },
+    {
+      "id": "manner.redMovement.penalty",
+      "value": "12"
+    },
+    {
+      "id": "manner.rightStop.penalty",
+      "value": "4"
+    },
+    {
+      "id": "manner.wrongWay.penalty",
+      "value": "10"
+    },
+    {
+      "id": "manner.recovery.cap",
+      "value": "6"
+    },
+    {
+      "id": "manner.recovery.points",
+      "value": "2"
+    },
+    {
+      "id": "manner.recovery.distance",
+      "value": "350"
+    },
+    {
+      "id": "manner.recovery.seconds",
+      "value": "45"
+    },
+    {
+      "id": "common.required.easy",
+      "value": "60"
+    },
+    {
+      "id": "common.required.normal",
+      "value": "70"
+    },
+    {
+      "id": "common.required.hard",
+      "value": "85"
+    },
+    {
+      "id": "law.recovery.points",
+      "value": "3"
+    },
+    {
+      "id": "law.slowTurn.limitKmh",
+      "value": "10"
+    },
+    {
+      "id": "law.slowTurn.toleranceKmh",
+      "value": "2"
+    },
+    {
+      "id": "law.slowTurn.seconds",
+      "value": "0.75"
+    },
+    {
+      "id": "law.slowTurn.penalty",
+      "value": "5"
+    },
+    {
+      "id": "law.editorSpeed.toleranceKmh",
+      "value": "3"
+    },
+    {
+      "id": "law.editorSpeed.seconds",
+      "value": "2"
+    },
+    {
+      "id": "type.Drunk.spawnPercent",
+      "value": "30"
+    },
+    {
+      "id": "type.Drunk.dailyMax",
+      "value": "2"
+    },
+    {
+      "id": "type.Drunk.forceEnabled",
+      "value": "true"
+    },
+    {
+      "id": "type.Drunk.forceAfterMisses",
+      "value": "3"
+    },
+    {
+      "id": "type.Drunk.sleepPercent",
+      "value": "30"
+    },
+    {
+      "id": "type.Drunk.vomitPercent",
+      "value": "25"
+    },
+    {
+      "id": "passenger.presets",
+      "value": "{\"version\":2,\"presets\":[{\"id\":\"general\",\"name\":\"일반\",\"enabled\":true,\"weight\":1,\"pool\":\"General\",\"traits\":[],\"intro\":\"\",\"overrides\":[]},{\"id\":\"drunk\",\"name\":\"취객\",\"enabled\":true,\"weight\":1,\"pool\":\"Drunk\",\"traits\":[\"body.drunk\"],\"intro\":\"\",\"overrides\":[]},{\"id\":\"sleeping\",\"name\":\"수면\",\"enabled\":true,\"weight\":1,\"pool\":\"Sleeping\",\"traits\":[\"body.sleepy\"],\"intro\":\"\",\"overrides\":[]},{\"id\":\"comfort\",\"name\":\"편안한 운행\",\"enabled\":true,\"weight\":1,\"pool\":\"Comfort\",\"traits\":[\"body.sensitive\"],\"intro\":\"\",\"overrides\":[]},{\"id\":\"hurried\",\"name\":\"급한 승객\",\"enabled\":true,\"weight\":1,\"pool\":\"Hurried\",\"traits\":[\"purpose.hurried\"],\"intro\":\"\",\"overrides\":[]},{\"id\":\"routechecking\",\"name\":\"경로 확인\",\"enabled\":false,\"weight\":0,\"pool\":\"RouteChecking\",\"traits\":[\"purpose.route\"],\"intro\":\"\",\"overrides\":[]},{\"id\":\"errand\",\"name\":\"경유 용무\",\"enabled\":true,\"weight\":1,\"pool\":\"Errand\",\"traits\":[\"purpose.errand\"],\"intro\":\"\",\"overrides\":[]},{\"id\":\"luggage\",\"name\":\"짐\",\"enabled\":true,\"weight\":1,\"pool\":\"Luggage\",\"traits\":[\"item.luggage\"],\"intro\":\"\",\"overrides\":[]},{\"id\":\"muddyluggage\",\"name\":\"흙 묻은 짐\",\"enabled\":true,\"weight\":1,\"pool\":\"MuddyLuggage\",\"traits\":[\"item.muddy\"],\"intro\":\"\",\"overrides\":[]},{\"id\":\"food\",\"name\":\"음식\",\"enabled\":true,\"weight\":1,\"pool\":\"Food\",\"traits\":[\"item.food\"],\"intro\":\"\",\"overrides\":[]},{\"id\":\"precisionstop\",\"name\":\"정확한 정차\",\"enabled\":true,\"weight\":1,\"pool\":\"PrecisionStop\",\"traits\":[\"purpose.precise\"],\"intro\":\"\",\"overrides\":[]},{\"id\":\"talkative\",\"name\":\"수다\",\"enabled\":true,\"weight\":1,\"pool\":\"Talkative\",\"traits\":[\"speech.talkative\"],\"intro\":\"\",\"overrides\":[]},{\"id\":\"quiet-commuter\",\"name\":\"조용한 출근 손님\",\"enabled\":true,\"weight\":2,\"pool\":\"General\",\"traits\":[\"speech.quiet\"],\"intro\":\"출근 전에 잠깐 생각을 정리하고 싶어요. 조용히 부탁드려요.\",\"overrides\":[{\"id\":\"request.Quiet.prompt\",\"value\":\"잠깐 생각할 일이 있어서 조용히 가고 싶어요.\"},{\"id\":\"request.Quiet.reply.Accept\",\"value\":\"네, 필요한 안내만 드릴게요.\"},{\"id\":\"choice.request.Quiet.Accept.end.success.satisfaction\",\"value\":\"3\"}]},{\"id\":\"night-shift-rest\",\"name\":\"야간근무를 마친 손님\",\"enabled\":true,\"weight\":2,\"pool\":\"Sleeping\",\"traits\":[\"speech.quiet\",\"body.sleepy\"],\"intro\":\"야간근무를 마쳤어요. 도착하면 알려 주세요.\",\"overrides\":[{\"id\":\"effect.sleep.calmSeconds\",\"value\":\"6\"},{\"id\":\"type.Sleeping.intro.0\",\"value\":\"조금 쉬고 싶어요. 도착하면 천천히 깨워 주세요.\"},{\"id\":\"type.Sleeping.intro.1\",\"value\":\"조금 쉬고 싶어요. 도착하면 천천히 깨워 주세요.\"},{\"id\":\"type.Sleeping.intro.2\",\"value\":\"조금 쉬고 싶어요. 도착하면 천천히 깨워 주세요.\"},{\"id\":\"type.Sleeping.intro.3\",\"value\":\"조금 쉬고 싶어요. 도착하면 천천히 깨워 주세요.\"},{\"id\":\"type.Sleeping.choice.0\",\"value\":\"편히 쉬세요. 도착하면 알려 드릴게요.\"},{\"id\":\"type.Sleeping.choice.1\",\"value\":\"필요한 안내만 드리고 조용히 모실게요.\"},{\"id\":\"type.Sleeping.followup.0\",\"value\":\"배려해 주셔서 고마워요.\"},{\"id\":\"type.Sleeping.followup.1\",\"value\":\"배려해 주셔서 고마워요.\"},{\"id\":\"type.Sleeping.followup.2\",\"value\":\"배려해 주셔서 고마워요.\"},{\"id\":\"choice.type.Sleeping.0.immediate.satisfaction\",\"value\":\"1\"},{\"id\":\"choice.type.Sleeping.0.immediate.fatigue\",\"value\":\"0\"},{\"id\":\"choice.type.Sleeping.1.immediate.satisfaction\",\"value\":\"1\"},{\"id\":\"choice.type.Sleeping.1.immediate.fatigue\",\"value\":\"0\"}]},{\"id\":\"interview-appointment\",\"name\":\"면접을 앞둔 손님\",\"enabled\":true,\"weight\":2,\"pool\":\"Hurried\",\"traits\":[\"speech.quiet\",\"purpose.hurried\"],\"intro\":\"면접 시간이 가까워서 조금 긴장돼요. 안전하게 부탁드려요.\",\"overrides\":[{\"id\":\"type.Hurried.intro.0\",\"value\":\"약속 시간에 늦을까 봐 걱정돼요. 도착 안내를 부탁드려요.\"},{\"id\":\"type.Hurried.intro.1\",\"value\":\"약속 시간에 늦을까 봐 걱정돼요. 도착 안내를 부탁드려요.\"},{\"id\":\"type.Hurried.intro.2\",\"value\":\"약속 시간에 늦을까 봐 걱정돼요. 도착 안내를 부탁드려요.\"},{\"id\":\"type.Hurried.choice.0\",\"value\":\"도착 예상 시간을 확인해 드릴게요.\"},{\"id\":\"type.Hurried.choice.1\",\"value\":\"신호를 지키며 안전하게 모실게요.\"},{\"id\":\"type.Hurried.followup.0\",\"value\":\"안내해 주셔서 조금 마음이 놓이네요.\"},{\"id\":\"type.Hurried.followup.1\",\"value\":\"안내해 주셔서 조금 마음이 놓이네요.\"},{\"id\":\"type.Hurried.followup.2\",\"value\":\"안내해 주셔서 조금 마음이 놓이네요.\"},{\"id\":\"request.OnTime.prompt\",\"value\":\"약속 시간에 맞출 수 있을까요? 안전은 지켜 주세요.\"},{\"id\":\"request.OnTime.reply.Accept\",\"value\":\"기한을 확인하고 안전하게 운행할게요.\"},{\"id\":\"choice.request.OnTime.Accept.end.success.satisfaction\",\"value\":\"6\"},{\"id\":\"choice.request.OnTime.Accept.end.failure.satisfaction\",\"value\":\"-3\"},{\"id\":\"request.Interview.prompt\",\"value\":\"면접 전에 긴장되네요. 한마디만 응원해 주실래요?\"},{\"id\":\"request.Interview.reply.Accept\",\"value\":\"준비한 이야기를 차분히 전하시면 좋겠어요.\"}]},{\"id\":\"gentle-ride\",\"name\":\"부드러운 운행을 원하는 손님\",\"enabled\":true,\"weight\":2,\"pool\":\"Comfort\",\"traits\":[\"speech.quiet\",\"body.sensitive\"],\"intro\":\"급하게 출발하거나 멈추면 불편해요. 부드럽게 부탁드려요.\",\"overrides\":[{\"id\":\"type.Comfort.intro.0\",\"value\":\"차가 많이 흔들리지 않았으면 좋겠어요.\"},{\"id\":\"type.Comfort.intro.1\",\"value\":\"차가 많이 흔들리지 않았으면 좋겠어요.\"},{\"id\":\"type.Comfort.intro.2\",\"value\":\"차가 많이 흔들리지 않았으면 좋겠어요.\"},{\"id\":\"type.Comfort.choice.0\",\"value\":\"부드럽게 출발하고 여유 있게 멈출게요.\"},{\"id\":\"type.Comfort.choice.1\",\"value\":\"필요한 제동은 미리 안내드릴게요.\"},{\"id\":\"type.Comfort.followup.0\",\"value\":\"편안하게 갈 수 있도록 부탁드려요.\"},{\"id\":\"type.Comfort.followup.1\",\"value\":\"편안하게 갈 수 있도록 부탁드려요.\"},{\"id\":\"type.Comfort.followup.2\",\"value\":\"편안하게 갈 수 있도록 부탁드려요.\"},{\"id\":\"request.Comfort.prompt\",\"value\":\"급가속과 급제동을 줄여 주실 수 있을까요?\"},{\"id\":\"request.Comfort.reply.Accept\",\"value\":\"안전을 지키면서 부드럽게 모실게요.\"},{\"id\":\"choice.request.Comfort.Accept.end.success.satisfaction\",\"value\":\"6\"},{\"id\":\"choice.request.Comfort.Accept.end.failure.satisfaction\",\"value\":\"-4\"}]},{\"id\":\"neighborhood-story\",\"name\":\"동네 이야기를 좋아하는 손님\",\"enabled\":true,\"weight\":2,\"pool\":\"Talkative\",\"traits\":[\"speech.talkative\"],\"intro\":\"이 동네가 오랜만이라 반갑네요. 잠깐 이야기해도 될까요?\",\"overrides\":[{\"id\":\"type.Talkative.intro.0\",\"value\":\"익숙한 가게들이 아직 있는지 궁금하네요.\"},{\"id\":\"type.Talkative.intro.1\",\"value\":\"익숙한 가게들이 아직 있는지 궁금하네요.\"},{\"id\":\"type.Talkative.intro.2\",\"value\":\"익숙한 가게들이 아직 있는지 궁금하네요.\"},{\"id\":\"type.Talkative.choice.0\",\"value\":\"운전에 지장이 없는 선에서 이야기 나눌게요.\"},{\"id\":\"type.Talkative.choice.1\",\"value\":\"필요한 안내만 드리며 안전하게 모실게요.\"},{\"id\":\"type.Talkative.followup.0\",\"value\":\"이야기 들어주셔서 고마워요.\"},{\"id\":\"type.Talkative.followup.1\",\"value\":\"이야기 들어주셔서 고마워요.\"},{\"id\":\"type.Talkative.followup.2\",\"value\":\"이야기 들어주셔서 고마워요.\"},{\"id\":\"choice.type.Talkative.0.immediate.satisfaction\",\"value\":\"2\"},{\"id\":\"choice.type.Talkative.0.immediate.fatigue\",\"value\":\"1\"},{\"id\":\"choice.type.Talkative.1.immediate.satisfaction\",\"value\":\"1\"},{\"id\":\"choice.type.Talkative.1.immediate.fatigue\",\"value\":\"0\"},{\"id\":\"request.LocalChat.prompt\",\"value\":\"이 동네는 요즘도 조용한 편인가요?\"},{\"id\":\"request.LocalChat.reply.Accept\",\"value\":\"제가 다니며 본 동네 이야기를 짧게 들려드릴게요.\"}]},{\"id\":\"quiet-night-home\",\"name\":\"조용히 귀가하는 음주 손님\",\"enabled\":true,\"weight\":3,\"pool\":\"Drunk\",\"traits\":[\"speech.quiet\",\"body.drunk\"],\"intro\":\"조금 취했어요. 말없이 쉬면서 가고 싶어요.\",\"overrides\":[{\"id\":\"type.Drunk.vomitPercent\",\"value\":\"15\"},{\"id\":\"type.Drunk.sleepPercent\",\"value\":\"40\"},{\"id\":\"type.Drunk.intro.0\",\"value\":\"조용히 집까지 부탁드려요. 불편하면 말씀드릴게요.\"},{\"id\":\"type.Drunk.intro.1\",\"value\":\"조용히 집까지 부탁드려요. 불편하면 말씀드릴게요.\"},{\"id\":\"type.Drunk.intro.2\",\"value\":\"조용히 집까지 부탁드려요. 불편하면 말씀드릴게요.\"},{\"id\":\"type.Drunk.choice.0\",\"value\":\"편히 쉬세요. 필요한 안내만 드릴게요.\"},{\"id\":\"type.Drunk.choice.1\",\"value\":\"불편하시면 말씀해 주세요. 안전하게 모실게요.\"},{\"id\":\"type.Drunk.followup.0\",\"value\":\"집에 가면 바로 쉬어야겠어요.\"},{\"id\":\"type.Drunk.followup.1\",\"value\":\"집에 가면 바로 쉬어야겠어요.\"},{\"id\":\"type.Drunk.followup.2\",\"value\":\"집에 가면 바로 쉬어야겠어요.\"},{\"id\":\"choice.type.Drunk.0.immediate.satisfaction\",\"value\":\"1\"},{\"id\":\"choice.type.Drunk.0.immediate.fatigue\",\"value\":\"0\"},{\"id\":\"choice.type.Drunk.1.immediate.satisfaction\",\"value\":\"1\"},{\"id\":\"choice.type.Drunk.1.immediate.fatigue\",\"value\":\"0\"}]},{\"id\":\"after-gathering\",\"name\":\"모임을 마친 수다 손님\",\"enabled\":true,\"weight\":1,\"pool\":\"Drunk\",\"traits\":[\"speech.talkative\",\"body.drunk\"],\"intro\":\"친구들을 오랜만에 만나 기분이 좋네요. 조금 이야기해도 될까요?\",\"overrides\":[{\"id\":\"type.Drunk.vomitPercent\",\"value\":\"30\"},{\"id\":\"type.Drunk.sleepPercent\",\"value\":\"15\"},{\"id\":\"type.Talkative.intro.0\",\"value\":\"오늘 모임에서 즐거운 일이 있었어요.\"},{\"id\":\"type.Talkative.intro.1\",\"value\":\"오늘 모임에서 즐거운 일이 있었어요.\"},{\"id\":\"type.Talkative.intro.2\",\"value\":\"오늘 모임에서 즐거운 일이 있었어요.\"},{\"id\":\"type.Talkative.choice.0\",\"value\":\"짧게 들으면서 안전하게 운전할게요.\"},{\"id\":\"type.Talkative.choice.1\",\"value\":\"즐거우셨겠네요. 편히 쉬시도록 모실게요.\"},{\"id\":\"type.Talkative.followup.0\",\"value\":\"이야기하다 보니 벌써 여기까지 왔네요.\"},{\"id\":\"type.Talkative.followup.1\",\"value\":\"이야기하다 보니 벌써 여기까지 왔네요.\"},{\"id\":\"type.Talkative.followup.2\",\"value\":\"이야기하다 보니 벌써 여기까지 왔네요.\"},{\"id\":\"choice.type.Talkative.0.immediate.satisfaction\",\"value\":\"2\"},{\"id\":\"choice.type.Talkative.0.immediate.fatigue\",\"value\":\"1\"},{\"id\":\"choice.type.Talkative.1.immediate.satisfaction\",\"value\":\"1\"},{\"id\":\"choice.type.Talkative.1.immediate.fatigue\",\"value\":\"0\"}]},{\"id\":\"travel-suitcase\",\"name\":\"여행 가방을 든 손님\",\"enabled\":true,\"weight\":2,\"pool\":\"Luggage\",\"traits\":[\"speech.quiet\",\"item.luggage\"],\"intro\":\"여행 가방이 하나 있어요. 안전하게 싣고 가고 싶어요.\",\"overrides\":[{\"id\":\"effect.luggage.prepareSeconds\",\"value\":\"8\"},{\"id\":\"effect.luggage.unloadSeconds\",\"value\":\"8\"},{\"id\":\"effect.resecure.seconds\",\"value\":\"5\"},{\"id\":\"type.Luggage.intro.0\",\"value\":\"가방이 움직이지 않도록 고정해 주세요.\"},{\"id\":\"type.Luggage.intro.1\",\"value\":\"가방이 움직이지 않도록 고정해 주세요.\"},{\"id\":\"type.Luggage.intro.2\",\"value\":\"가방이 움직이지 않도록 고정해 주세요.\"},{\"id\":\"type.Luggage.choice.0\",\"value\":\"안전하게 싣고 도착하면 내려 드릴게요.\"},{\"id\":\"type.Luggage.choice.1\",\"value\":\"이번에는 짐 적재가 어려워요.\"},{\"id\":\"type.Luggage.followup.0\",\"value\":\"안내해 주셔서 고마워요. 편히 가고 싶어요.\"},{\"id\":\"type.Luggage.followup.1\",\"value\":\"안내해 주셔서 고마워요. 편히 가고 싶어요.\"},{\"id\":\"type.Luggage.followup.2\",\"value\":\"안내해 주셔서 고마워요. 편히 가고 싶어요.\"},{\"id\":\"choice.type.Luggage.0.immediate.satisfaction\",\"value\":\"2\"},{\"id\":\"choice.type.Luggage.0.immediate.fatigue\",\"value\":\"0\"},{\"id\":\"choice.type.Luggage.1.immediate.satisfaction\",\"value\":\"0\"},{\"id\":\"choice.type.Luggage.1.immediate.fatigue\",\"value\":\"0\"}]},{\"id\":\"plant-visit\",\"name\":\"화분을 들고 경유하는 손님\",\"enabled\":true,\"weight\":1,\"pool\":\"MuddyLuggage\",\"traits\":[\"item.muddy\",\"purpose.errand\"],\"intro\":\"화분을 전해 드리고 잠깐 들를 곳이 있어요.\",\"overrides\":[{\"id\":\"effect.muddy.prepareSeconds\",\"value\":\"8\"},{\"id\":\"effect.muddy.dirt\",\"value\":\"4\"},{\"id\":\"effect.resecure.seconds\",\"value\":\"5\"},{\"id\":\"effect.errand.seconds\",\"value\":\"15\"},{\"id\":\"type.MuddyLuggage.intro.0\",\"value\":\"화분에 흙이 조금 묻었어요. 바닥을 보호할까요?\"},{\"id\":\"type.MuddyLuggage.intro.1\",\"value\":\"화분에 흙이 조금 묻었어요. 바닥을 보호할까요?\"},{\"id\":\"type.MuddyLuggage.intro.2\",\"value\":\"화분에 흙이 조금 묻었어요. 바닥을 보호할까요?\"},{\"id\":\"type.MuddyLuggage.choice.0\",\"value\":\"흙이 떨어지지 않도록 보호하고 실을게요.\"},{\"id\":\"type.MuddyLuggage.choice.1\",\"value\":\"그대로 싣되 흔들리지 않게 부탁드려요.\"},{\"id\":\"type.MuddyLuggage.choice.2\",\"value\":\"이번에는 짐을 싣지 않고 이동할게요.\"},{\"id\":\"type.MuddyLuggage.followup.0\",\"value\":\"안내해 주셔서 고마워요. 안전하게 부탁드려요.\"},{\"id\":\"type.MuddyLuggage.followup.1\",\"value\":\"안내해 주셔서 고마워요. 안전하게 부탁드려요.\"},{\"id\":\"type.MuddyLuggage.followup.2\",\"value\":\"안내해 주셔서 고마워요. 안전하게 부탁드려요.\"},{\"id\":\"choice.type.MuddyLuggage.0.immediate.satisfaction\",\"value\":\"1\"},{\"id\":\"choice.type.MuddyLuggage.0.immediate.fatigue\",\"value\":\"0\"},{\"id\":\"choice.type.MuddyLuggage.1.immediate.satisfaction\",\"value\":\"0\"},{\"id\":\"choice.type.MuddyLuggage.1.immediate.fatigue\",\"value\":\"0\"},{\"id\":\"choice.type.MuddyLuggage.2.immediate.satisfaction\",\"value\":\"0\"},{\"id\":\"choice.type.MuddyLuggage.2.immediate.fatigue\",\"value\":\"0\"},{\"id\":\"request.ViaStop.prompt\",\"value\":\"가는 길에 정해진 장소에서 잠깐 용무를 볼 수 있을까요?\"},{\"id\":\"request.ViaStop.reply.Accept\",\"value\":\"확인한 경유지에서 15초 기다릴게요.\"},{\"id\":\"choice.request.ViaStop.Accept.end.success.satisfaction\",\"value\":\"5\"},{\"id\":\"choice.request.ViaStop.Accept.end.failure.satisfaction\",\"value\":\"-4\"}]},{\"id\":\"snack-commuter\",\"name\":\"간식을 든 출근 손님\",\"enabled\":true,\"weight\":1,\"pool\":\"Food\",\"traits\":[\"item.food\",\"body.sensitive\"],\"intro\":\"간식을 가져왔어요. 차가 흔들리지 않으면 좋겠어요.\",\"overrides\":[{\"id\":\"effect.food.crumbs\",\"value\":\"1\"},{\"id\":\"effect.food.spill\",\"value\":\"4\"},{\"id\":\"effect.food.spillPercent\",\"value\":\"15\"},{\"id\":\"effect.food.cleanupSeconds\",\"value\":\"6\"},{\"id\":\"type.Food.intro.0\",\"value\":\"간식을 조금 먹어도 될까요? 흘리지 않게 조심할게요.\"},{\"id\":\"type.Food.intro.1\",\"value\":\"간식을 조금 먹어도 될까요? 흘리지 않게 조심할게요.\"},{\"id\":\"type.Food.intro.2\",\"value\":\"간식을 조금 먹어도 될까요? 흘리지 않게 조심할게요.\"},{\"id\":\"type.Food.choice.0\",\"value\":\"지금은 밀봉해서 보관해 주세요.\"},{\"id\":\"type.Food.choice.1\",\"value\":\"조심히 드셔도 괜찮아요.\"},{\"id\":\"type.Food.choice.2\",\"value\":\"안전하게 멈췄을 때 정리하고 출발할게요.\"},{\"id\":\"type.Food.followup.0\",\"value\":\"포장이 흔들리지 않게 잘 잡고 있을게요.\"},{\"id\":\"type.Food.followup.1\",\"value\":\"포장이 흔들리지 않게 잘 잡고 있을게요.\"},{\"id\":\"type.Food.followup.2\",\"value\":\"포장이 흔들리지 않게 잘 잡고 있을게요.\"},{\"id\":\"choice.type.Food.0.immediate.satisfaction\",\"value\":\"1\"},{\"id\":\"choice.type.Food.0.immediate.fatigue\",\"value\":\"0\"},{\"id\":\"choice.type.Food.1.immediate.satisfaction\",\"value\":\"2\"},{\"id\":\"choice.type.Food.1.immediate.fatigue\",\"value\":\"0\"},{\"id\":\"choice.type.Food.2.immediate.satisfaction\",\"value\":\"0\"},{\"id\":\"choice.type.Food.2.immediate.fatigue\",\"value\":\"0\"},{\"id\":\"request.Comfort.prompt\",\"value\":\"음식이 흔들리지 않도록 부드럽게 부탁드려요.\"},{\"id\":\"request.Comfort.reply.Accept\",\"value\":\"급한 조작을 줄이고 안전하게 모실게요.\"},{\"id\":\"choice.request.Comfort.Accept.end.success.satisfaction\",\"value\":\"5\"},{\"id\":\"choice.request.Comfort.Accept.end.failure.satisfaction\",\"value\":\"-3\"}]},{\"id\":\"luggage-errand\",\"name\":\"짐을 싣고 용무를 보는 손님\",\"enabled\":true,\"weight\":1,\"pool\":\"Errand\",\"traits\":[\"item.luggage\",\"purpose.errand\"],\"intro\":\"작은 짐을 싣고 가는 길에 잠깐 용무를 보고 싶어요.\",\"overrides\":[{\"id\":\"effect.luggage.prepareSeconds\",\"value\":\"6\"},{\"id\":\"effect.luggage.unloadSeconds\",\"value\":\"6\"},{\"id\":\"effect.resecure.seconds\",\"value\":\"5\"},{\"id\":\"effect.errand.seconds\",\"value\":\"15\"},{\"id\":\"type.Luggage.intro.0\",\"value\":\"짐을 안전하게 싣고 경유 가능 여부를 확인해 주세요.\"},{\"id\":\"type.Luggage.intro.1\",\"value\":\"짐을 안전하게 싣고 경유 가능 여부를 확인해 주세요.\"},{\"id\":\"type.Luggage.intro.2\",\"value\":\"짐을 안전하게 싣고 경유 가능 여부를 확인해 주세요.\"},{\"id\":\"type.Luggage.choice.0\",\"value\":\"짐을 고정하고 요청을 확인해 드릴게요.\"},{\"id\":\"type.Luggage.choice.1\",\"value\":\"이번에는 짐을 싣기 어려워요.\"},{\"id\":\"type.Luggage.followup.0\",\"value\":\"확인된 안내에 따라 안전하게 부탁드려요.\"},{\"id\":\"type.Luggage.followup.1\",\"value\":\"확인된 안내에 따라 안전하게 부탁드려요.\"},{\"id\":\"type.Luggage.followup.2\",\"value\":\"확인된 안내에 따라 안전하게 부탁드려요.\"},{\"id\":\"choice.type.Luggage.0.immediate.satisfaction\",\"value\":\"2\"},{\"id\":\"choice.type.Luggage.0.immediate.fatigue\",\"value\":\"0\"},{\"id\":\"choice.type.Luggage.1.immediate.satisfaction\",\"value\":\"0\"},{\"id\":\"choice.type.Luggage.1.immediate.fatigue\",\"value\":\"0\"},{\"id\":\"request.ViaStop.prompt\",\"value\":\"확인 가능한 장소에 잠깐 들를 수 있을까요?\"},{\"id\":\"request.ViaStop.reply.Accept\",\"value\":\"경유지에서 15초 기다린 뒤 출발할게요.\"},{\"id\":\"choice.request.ViaStop.Accept.end.success.satisfaction\",\"value\":\"5\"},{\"id\":\"choice.request.ViaStop.Accept.end.failure.satisfaction\",\"value\":\"-4\"}]},{\"id\":\"careful-dropoff\",\"name\":\"안전한 하차를 부탁하는 손님\",\"enabled\":true,\"weight\":2,\"pool\":\"PrecisionStop\",\"traits\":[\"speech.quiet\",\"purpose.precise\"],\"intro\":\"내릴 때 서두르지 않으려고 해요. 안전한 장소로 부탁드려요.\",\"overrides\":[{\"id\":\"type.PrecisionStop.intro.0\",\"value\":\"안전한 쪽으로 내릴 수 있는 곳을 확인해 주세요.\"},{\"id\":\"type.PrecisionStop.intro.1\",\"value\":\"안전한 쪽으로 내릴 수 있는 곳을 확인해 주세요.\"},{\"id\":\"type.PrecisionStop.intro.2\",\"value\":\"안전한 쪽으로 내릴 수 있는 곳을 확인해 주세요.\"},{\"id\":\"type.PrecisionStop.choice.0\",\"value\":\"가능한 하차 장소와 변경 내용을 먼저 안내할게요.\"},{\"id\":\"type.PrecisionStop.choice.1\",\"value\":\"원래 목적지에서도 안전하게 내리시도록 안내할게요.\"},{\"id\":\"type.PrecisionStop.followup.0\",\"value\":\"안전한 곳에 세워 주시면 천천히 내릴게요.\"},{\"id\":\"type.PrecisionStop.followup.1\",\"value\":\"안전한 곳에 세워 주시면 천천히 내릴게요.\"},{\"id\":\"type.PrecisionStop.followup.2\",\"value\":\"안전한 곳에 세워 주시면 천천히 내릴게요.\"},{\"id\":\"request.SafeStop.prompt\",\"value\":\"확인된 안전한 하차 장소로 바꿀 수 있을까요?\"},{\"id\":\"request.SafeStop.reply.Accept\",\"value\":\"장소와 요금 안내를 확인한 뒤 변경할게요.\"},{\"id\":\"choice.request.SafeStop.Accept.end.success.satisfaction\",\"value\":\"5\"},{\"id\":\"choice.request.SafeStop.Accept.end.failure.satisfaction\",\"value\":\"-3\"}]}]}"
+    },
+    {
+      "id": "choice.effects.version",
+      "value": "1"
+    },
+    {
+      "id": "choice.request.Quiet.Accept.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Accept.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Accept.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Accept.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Accept.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Accept.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Accept.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Accept.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Accept.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Accept.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Accept.end.success.satisfaction",
+      "value": "3"
+    },
+    {
+      "id": "choice.request.Quiet.Accept.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Accept.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Accept.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Defer.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Defer.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Defer.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Defer.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Defer.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Defer.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Defer.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Defer.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Defer.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Defer.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Defer.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Defer.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Defer.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Quiet.Defer.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaFaster.immediate.satisfaction",
+      "value": "1"
+    },
+    {
+      "id": "choice.request.Eta.EtaFaster.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaFaster.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaFaster.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaFaster.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaFaster.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaFaster.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaFaster.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaFaster.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaFaster.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaFaster.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaFaster.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaFaster.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaFaster.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaNormal.immediate.satisfaction",
+      "value": "1"
+    },
+    {
+      "id": "choice.request.Eta.EtaNormal.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaNormal.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaNormal.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaNormal.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaNormal.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaNormal.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaNormal.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaNormal.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaNormal.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaNormal.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaNormal.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaNormal.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaNormal.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaRelaxed.immediate.satisfaction",
+      "value": "1"
+    },
+    {
+      "id": "choice.request.Eta.EtaRelaxed.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaRelaxed.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaRelaxed.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaRelaxed.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaRelaxed.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaRelaxed.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaRelaxed.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaRelaxed.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaRelaxed.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaRelaxed.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaRelaxed.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaRelaxed.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.EtaRelaxed.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.Defer.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.Defer.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.Defer.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.Defer.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.Defer.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.Defer.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.Defer.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.Defer.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.Defer.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.Defer.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.Defer.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.Defer.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.Defer.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Eta.Defer.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.during.motionPenaltyDelta",
+      "value": "1"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.end.success.satisfaction",
+      "value": "6"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.end.failure.satisfaction",
+      "value": "-4"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.end.failure.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.end.failure.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Accept.end.failure.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Defer.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Defer.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Defer.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Defer.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Defer.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Defer.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Defer.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Defer.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Defer.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Defer.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Defer.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Defer.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Defer.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Comfort.Defer.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.end.success.satisfaction",
+      "value": "6"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.end.failure.satisfaction",
+      "value": "-3"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.end.failure.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.end.failure.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.end.failure.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Accept.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Defer.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Defer.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Defer.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Defer.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Defer.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Defer.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Defer.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Defer.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Defer.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Defer.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Defer.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Defer.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Defer.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.OnTime.Defer.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.end.success.satisfaction",
+      "value": "5"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Accept.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Defer.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Defer.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Defer.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Defer.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Defer.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Defer.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Defer.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Defer.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Defer.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Defer.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Defer.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Defer.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Defer.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LargeRoad.Defer.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.end.success.satisfaction",
+      "value": "5"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Accept.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Defer.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Defer.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Defer.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Defer.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Defer.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Defer.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Defer.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Defer.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Defer.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Defer.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Defer.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Defer.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Defer.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ShortRoad.Defer.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.end.success.satisfaction",
+      "value": "4"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.end.failure.satisfaction",
+      "value": "-4"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.end.failure.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.end.failure.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.end.failure.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Accept.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Defer.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Defer.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Defer.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Defer.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Defer.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Defer.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Defer.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Defer.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Defer.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Defer.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Defer.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Defer.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Defer.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.SafeStop.Defer.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Accept.immediate.satisfaction",
+      "value": "3"
+    },
+    {
+      "id": "choice.request.Empathy.Accept.immediate.fatigue",
+      "value": "1"
+    },
+    {
+      "id": "choice.request.Empathy.Accept.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Accept.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Accept.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Accept.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Accept.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Accept.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Accept.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Accept.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Accept.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Accept.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Accept.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Accept.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Alternative.immediate.satisfaction",
+      "value": "2"
+    },
+    {
+      "id": "choice.request.Empathy.Alternative.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Alternative.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Alternative.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Alternative.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Alternative.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Alternative.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Alternative.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Alternative.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Alternative.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Alternative.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Alternative.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Alternative.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Alternative.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Defer.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Defer.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Defer.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Defer.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Defer.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Defer.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Defer.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Defer.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Defer.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Defer.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Defer.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Defer.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Defer.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Empathy.Defer.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.end.success.satisfaction",
+      "value": "4"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Accept.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.end.success.satisfaction",
+      "value": "4"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Alternative.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Defer.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Defer.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Defer.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Defer.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Defer.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Defer.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Defer.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Defer.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Defer.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Defer.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Defer.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Defer.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Defer.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RouteAdvice.Defer.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Accept.immediate.satisfaction",
+      "value": "3"
+    },
+    {
+      "id": "choice.request.Interview.Accept.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Accept.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Accept.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Accept.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Accept.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Accept.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Accept.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Accept.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Accept.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Accept.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Accept.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Accept.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Accept.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Alternative.immediate.satisfaction",
+      "value": "2"
+    },
+    {
+      "id": "choice.request.Interview.Alternative.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Alternative.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Alternative.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Alternative.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Alternative.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Alternative.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Alternative.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Alternative.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Alternative.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Alternative.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Alternative.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Alternative.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Alternative.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Defer.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Defer.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Defer.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Defer.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Defer.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Defer.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Defer.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Defer.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Defer.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Defer.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Defer.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Defer.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Defer.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Interview.Defer.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Accept.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Accept.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Accept.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Accept.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Accept.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Accept.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Accept.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Accept.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Accept.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Accept.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Accept.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Accept.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Accept.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Accept.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Defer.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Defer.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Defer.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Defer.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Defer.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Defer.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Defer.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Defer.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Defer.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Defer.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Defer.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Defer.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Defer.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.Music.Defer.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Accept.immediate.satisfaction",
+      "value": "2"
+    },
+    {
+      "id": "choice.request.FareHelp.Accept.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Accept.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Accept.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Accept.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Accept.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Accept.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Accept.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Accept.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Accept.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Accept.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Accept.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Accept.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Accept.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Alternative.immediate.satisfaction",
+      "value": "1"
+    },
+    {
+      "id": "choice.request.FareHelp.Alternative.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Alternative.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Alternative.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Alternative.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Alternative.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Alternative.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Alternative.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Alternative.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Alternative.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Alternative.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Alternative.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Alternative.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Alternative.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Defer.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Defer.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Defer.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Defer.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Defer.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Defer.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Defer.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Defer.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Defer.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Defer.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Defer.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Defer.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Defer.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.FareHelp.Defer.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Accept.immediate.satisfaction",
+      "value": "3"
+    },
+    {
+      "id": "choice.request.LocalChat.Accept.immediate.fatigue",
+      "value": "1"
+    },
+    {
+      "id": "choice.request.LocalChat.Accept.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Accept.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Accept.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Accept.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Accept.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Accept.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Accept.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Accept.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Accept.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Accept.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Accept.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Accept.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Alternative.immediate.satisfaction",
+      "value": "2"
+    },
+    {
+      "id": "choice.request.LocalChat.Alternative.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Alternative.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Alternative.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Alternative.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Alternative.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Alternative.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Alternative.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Alternative.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Alternative.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Alternative.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Alternative.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Alternative.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Alternative.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Defer.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Defer.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Defer.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Defer.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Defer.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Defer.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Defer.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Defer.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Defer.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Defer.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Defer.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Defer.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Defer.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.LocalChat.Defer.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.end.success.satisfaction",
+      "value": "4"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.end.failure.satisfaction",
+      "value": "-4"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.end.failure.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.end.failure.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.end.failure.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Accept.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Defer.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Defer.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Defer.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Defer.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Defer.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Defer.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Defer.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Defer.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Defer.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Defer.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Defer.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Defer.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Defer.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.DestinationChange.Defer.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.end.success.satisfaction",
+      "value": "5"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.end.failure.satisfaction",
+      "value": "-4"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.end.failure.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.end.failure.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.end.failure.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Accept.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Defer.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Defer.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Defer.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Defer.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Defer.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Defer.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Defer.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Defer.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Defer.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Defer.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Defer.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Defer.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Defer.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.ViaStop.Defer.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.immediate.satisfaction",
+      "value": "1"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Accept.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Defer.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Defer.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Defer.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Defer.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Defer.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Defer.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Defer.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Defer.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Defer.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Defer.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Defer.end.neutral.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Defer.end.neutral.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Defer.end.neutral.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.request.RejectIllegal.Defer.end.neutral.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.0.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.0.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.0.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.0.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.0.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.0.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.0.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.0.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.0.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.0.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.0.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.0.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.0.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.0.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.1.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.1.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.1.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.1.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.1.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.1.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.1.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.1.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.1.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.1.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.1.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.1.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.1.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Drunk.1.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.0.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.0.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.0.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.0.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.0.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.0.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.0.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.0.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.0.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.0.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.0.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.0.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.0.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.0.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.1.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.1.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.1.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.1.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.1.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.1.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.1.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.1.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.1.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.1.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.1.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.1.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.1.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Sleeping.1.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.0.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.0.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.0.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.0.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.0.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.0.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.0.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.0.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.0.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.0.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.0.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.0.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.0.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.0.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.1.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.1.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.1.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.1.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.1.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.1.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.1.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.1.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.1.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.1.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.1.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.1.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.1.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Comfort.1.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.0.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.0.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.0.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.0.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.0.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.0.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.0.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.0.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.0.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.0.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.0.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.0.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.0.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.0.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.1.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.1.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.1.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.1.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.1.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.1.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.1.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.1.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.1.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.1.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.1.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.1.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.1.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Hurried.1.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.0.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.0.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.0.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.0.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.0.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.0.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.0.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.0.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.0.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.0.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.0.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.0.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.0.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.0.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.1.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.1.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.1.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.1.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.1.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.1.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.1.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.1.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.1.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.1.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.1.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.1.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.1.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.RouteChecking.1.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.0.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.0.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.0.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.0.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.0.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.0.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.0.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.0.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.0.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.0.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.0.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.0.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.0.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.0.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.1.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.1.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.1.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.1.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.1.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.1.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.1.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.1.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.1.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.1.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.1.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.1.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.1.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Errand.1.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.0.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.0.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.0.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.0.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.0.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.0.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.0.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.0.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.0.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.0.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.0.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.0.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.0.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.0.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.1.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.1.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.1.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.1.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.1.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.1.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.1.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.1.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.1.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.1.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.1.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.1.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.1.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Luggage.1.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.0.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.0.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.0.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.0.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.0.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.0.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.0.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.0.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.0.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.0.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.0.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.0.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.0.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.0.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.1.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.1.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.1.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.1.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.1.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.1.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.1.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.1.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.1.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.1.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.1.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.1.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.1.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.1.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.2.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.2.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.2.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.2.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.2.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.2.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.2.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.2.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.2.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.2.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.2.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.2.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.2.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.MuddyLuggage.2.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.0.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.0.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.0.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.0.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.0.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.0.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.0.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.0.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.0.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.0.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.0.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.0.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.0.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.0.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.1.immediate.satisfaction",
+      "value": "3"
+    },
+    {
+      "id": "choice.type.Food.1.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.1.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.1.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.1.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.1.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.1.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.1.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.1.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.1.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.1.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.1.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.1.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.1.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.2.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.2.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.2.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.2.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.2.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.2.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.2.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.2.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.2.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.2.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.2.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.2.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.2.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Food.2.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.0.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.0.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.0.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.0.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.0.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.0.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.0.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.0.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.0.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.0.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.0.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.0.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.0.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.0.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.1.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.1.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.1.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.1.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.1.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.1.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.1.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.1.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.1.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.1.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.1.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.1.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.1.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.PrecisionStop.1.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.0.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.0.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.0.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.0.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.0.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.0.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.0.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.0.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.0.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.0.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.0.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.0.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.0.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.0.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.1.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.1.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.1.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.1.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.1.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.1.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.1.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.1.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.1.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.1.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.1.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.1.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.1.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.Talkative.1.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.0.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.0.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.0.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.0.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.0.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.0.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.0.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.0.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.0.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.0.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.0.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.0.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.0.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.0.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.1.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.1.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.1.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.1.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.1.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.1.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.1.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.1.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.1.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.1.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.1.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.1.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.1.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.type.SleepingFollowup.1.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.0.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.0.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.0.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.0.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.0.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.0.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.0.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.0.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.0.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.0.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.0.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.0.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.0.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.0.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.1.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.1.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.1.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.1.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.1.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.1.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.1.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.1.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.1.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.1.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.1.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.1.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.1.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.SignalWait.1.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.0.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.0.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.0.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.0.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.0.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.0.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.0.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.0.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.0.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.0.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.0.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.0.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.0.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.0.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.1.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.1.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.1.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.1.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.1.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.1.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.1.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.1.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.1.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.1.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.1.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.1.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.1.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.Jolt.1.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.0.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.0.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.0.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.0.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.0.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.0.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.0.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.0.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.0.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.0.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.0.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.0.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.0.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.0.end.success.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.1.immediate.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.1.immediate.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.1.immediate.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.1.immediate.fatiguePercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.1.during.satisfactionPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.1.during.fatiguePerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.1.during.satisfactionPercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.1.during.fatiguePercentPerMinute",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.1.during.fatigueGrowthPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.1.during.motionPenaltyDelta",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.1.end.success.satisfaction",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.1.end.success.fatigue",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.1.end.success.satisfactionPercent",
+      "value": "0"
+    },
+    {
+      "id": "choice.situation.NecessaryBrake.1.end.success.fatiguePercent",
+      "value": "0"
+    }
+  ]
+}

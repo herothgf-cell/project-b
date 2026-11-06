@@ -6,5 +6,5 @@ New-Item -ItemType Directory -Force (Join-Path $taskRoot 'artifacts/passenger-co
 $taskExe=Join-Path $taskRoot 'artifacts/passenger-composition/PassengerCompositionTests.exe'
 & $taskCompiler /nologo "/out:$taskExe" (Join-Path $taskRoot 'tests/PassengerCompositionTests.cs') @taskSources
 if($LASTEXITCODE -ne 0){throw 'PassengerCompositionTests compile failed'}
-& $taskExe (Join-Path $taskRoot 'config/content/catalog.json') (Join-Path $taskRoot 'tests/content-editor/fixtures/passenger-presets.json')
+& $taskExe (Join-Path $taskRoot 'config/content/catalog.json') (Join-Path $taskRoot 'tests/content-editor/fixtures/passenger-presets.json') (Join-Path $taskRoot 'tests/content-editor/fixtures/passenger-legacy-twelve.json')
 if($LASTEXITCODE -ne 0){throw 'PassengerCompositionTests failed'}

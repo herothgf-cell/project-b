@@ -200,6 +200,130 @@
     {
       "id": "choice.type.Food.1.immediate.satisfaction",
       "value": "3"
+    },
+    {
+      "id": "request.ShortRoad.enabled",
+      "value": "false"
+    },
+    {
+      "id": "request.ShortRoad.weight",
+      "value": "0"
+    },
+    {
+      "id": "request.RouteAdvice.enabled",
+      "value": "false"
+    },
+    {
+      "id": "request.RouteAdvice.weight",
+      "value": "0"
+    },
+    {
+      "id": "type.RouteChecking.weight",
+      "value": "0"
+    },
+    {
+      "id": "request.Quiet.weight",
+      "value": "3"
+    },
+    {
+      "id": "request.Eta.weight",
+      "value": "2"
+    },
+    {
+      "id": "request.Comfort.weight",
+      "value": "3"
+    },
+    {
+      "id": "request.OnTime.weight",
+      "value": "2"
+    },
+    {
+      "id": "request.LargeRoad.weight",
+      "value": "1"
+    },
+    {
+      "id": "request.SafeStop.weight",
+      "value": "2"
+    },
+    {
+      "id": "request.Empathy.weight",
+      "value": "2"
+    },
+    {
+      "id": "request.Interview.weight",
+      "value": "2"
+    },
+    {
+      "id": "request.Music.weight",
+      "value": "1"
+    },
+    {
+      "id": "request.FareHelp.weight",
+      "value": "2"
+    },
+    {
+      "id": "request.LocalChat.weight",
+      "value": "2"
+    },
+    {
+      "id": "request.DestinationChange.weight",
+      "value": "1"
+    },
+    {
+      "id": "request.ViaStop.weight",
+      "value": "1"
+    },
+    {
+      "id": "request.RejectIllegal.weight",
+      "value": "1"
+    },
+    {
+      "id": "type.Sleeping.weight",
+      "value": "1"
+    },
+    {
+      "id": "type.Comfort.weight",
+      "value": "3"
+    },
+    {
+      "id": "type.Hurried.weight",
+      "value": "2"
+    },
+    {
+      "id": "type.Errand.weight",
+      "value": "1"
+    },
+    {
+      "id": "type.Luggage.weight",
+      "value": "2"
+    },
+    {
+      "id": "type.MuddyLuggage.weight",
+      "value": "1"
+    },
+    {
+      "id": "type.Food.weight",
+      "value": "1"
+    },
+    {
+      "id": "type.PrecisionStop.weight",
+      "value": "2"
+    },
+    {
+      "id": "type.Talkative.weight",
+      "value": "2"
+    },
+    {
+      "id": "schedule.count0",
+      "value": "25"
+    },
+    {
+      "id": "schedule.count1",
+      "value": "60"
+    },
+    {
+      "id": "schedule.count2",
+      "value": "15"
     }
   ]
 }

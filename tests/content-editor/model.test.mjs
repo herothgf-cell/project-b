@@ -1,4 +1,4 @@
-import test from 'node:test';
+﻿import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
@@ -80,6 +80,7 @@ test('blank override choices still show the actual built-in player reply',()=>{
 test('equal eligible weights show exact baseline and disabled candidates leave denominator',()=>{
  const all=entities();const quiet=all.find(e=>e.id==='request.Quiet');
  const profile={values:catalog.entries.map(e=>({id:e.id,value:e.defaultValue}))};
+ const legacySchedule=JSON.parse(fs.readFileSync('tests/content-editor/fixtures/passenger-legacy-schedule.json'));for(const v of profile.values)if(Object.hasOwn(legacySchedule,v.id))v.value=legacySchedule[v.id];
  assert.match(model.weightInfo(quiet,profile,catalog).text,/6\.25% \(1 \/ 16\)/);
  profile.values.find(v=>v.id==='request.Eta.enabled').value='false';
  assert.match(model.weightInfo(quiet,profile,catalog).text,/6\.67% \(1 \/ 15\)/);

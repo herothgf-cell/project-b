@@ -1,0 +1,1025 @@
+{
+  "version": 2,
+  "presets": [
+    {
+      "id": "general",
+      "name": "일반",
+      "enabled": true,
+      "weight": 1,
+      "pool": "General",
+      "traits": [],
+      "intro": "",
+      "overrides": []
+    },
+    {
+      "id": "drunk",
+      "name": "취객",
+      "enabled": true,
+      "weight": 1,
+      "pool": "Drunk",
+      "traits": [
+        "body.drunk"
+      ],
+      "intro": "",
+      "overrides": []
+    },
+    {
+      "id": "sleeping",
+      "name": "수면",
+      "enabled": true,
+      "weight": 1,
+      "pool": "Sleeping",
+      "traits": [
+        "body.sleepy"
+      ],
+      "intro": "",
+      "overrides": []
+    },
+    {
+      "id": "comfort",
+      "name": "편안한 운행",
+      "enabled": true,
+      "weight": 1,
+      "pool": "Comfort",
+      "traits": [
+        "body.sensitive"
+      ],
+      "intro": "",
+      "overrides": []
+    },
+    {
+      "id": "hurried",
+      "name": "급한 승객",
+      "enabled": true,
+      "weight": 1,
+      "pool": "Hurried",
+      "traits": [
+        "purpose.hurried"
+      ],
+      "intro": "",
+      "overrides": []
+    },
+    {
+      "id": "routechecking",
+      "name": "경로 확인",
+      "enabled": false,
+      "weight": 0,
+      "pool": "RouteChecking",
+      "traits": [
+        "purpose.route"
+      ],
+      "intro": "",
+      "overrides": []
+    },
+    {
+      "id": "errand",
+      "name": "경유 용무",
+      "enabled": true,
+      "weight": 1,
+      "pool": "Errand",
+      "traits": [
+        "purpose.errand"
+      ],
+      "intro": "",
+      "overrides": []
+    },
+    {
+      "id": "luggage",
+      "name": "짐",
+      "enabled": true,
+      "weight": 1,
+      "pool": "Luggage",
+      "traits": [
+        "item.luggage"
+      ],
+      "intro": "",
+      "overrides": []
+    },
+    {
+      "id": "muddyluggage",
+      "name": "흙 묻은 짐",
+      "enabled": true,
+      "weight": 1,
+      "pool": "MuddyLuggage",
+      "traits": [
+        "item.muddy"
+      ],
+      "intro": "",
+      "overrides": []
+    },
+    {
+      "id": "food",
+      "name": "음식",
+      "enabled": true,
+      "weight": 1,
+      "pool": "Food",
+      "traits": [
+        "item.food"
+      ],
+      "intro": "",
+      "overrides": []
+    },
+    {
+      "id": "precisionstop",
+      "name": "정확한 정차",
+      "enabled": true,
+      "weight": 1,
+      "pool": "PrecisionStop",
+      "traits": [
+        "purpose.precise"
+      ],
+      "intro": "",
+      "overrides": []
+    },
+    {
+      "id": "talkative",
+      "name": "수다",
+      "enabled": true,
+      "weight": 1,
+      "pool": "Talkative",
+      "traits": [
+        "speech.talkative"
+      ],
+      "intro": "",
+      "overrides": []
+    },
+    {
+      "id": "quiet-commuter",
+      "name": "조용한 출근 손님",
+      "enabled": true,
+      "weight": 2,
+      "pool": "General",
+      "traits": [
+        "speech.quiet"
+      ],
+      "intro": "출근 전에 잠깐 생각을 정리하고 싶어요. 조용히 부탁드려요.",
+      "overrides": [
+        {
+          "id": "request.Quiet.prompt",
+          "value": "잠깐 생각할 일이 있어서 조용히 가고 싶어요."
+        },
+        {
+          "id": "request.Quiet.reply.Accept",
+          "value": "네, 필요한 안내만 드릴게요."
+        },
+        {
+          "id": "choice.request.Quiet.Accept.end.success.satisfaction",
+          "value": "3"
+        }
+      ]
+    },
+    {
+      "id": "night-shift-rest",
+      "name": "야간근무를 마친 손님",
+      "enabled": true,
+      "weight": 2,
+      "pool": "Sleeping",
+      "traits": [
+        "speech.quiet",
+        "body.sleepy"
+      ],
+      "intro": "야간근무를 마쳤어요. 도착하면 알려 주세요.",
+      "overrides": [
+        {
+          "id": "effect.sleep.calmSeconds",
+          "value": "6"
+        },
+        {
+          "id": "type.Sleeping.intro.0",
+          "value": "조금 쉬고 싶어요. 도착하면 천천히 깨워 주세요."
+        },
+        {
+          "id": "type.Sleeping.intro.1",
+          "value": "조금 쉬고 싶어요. 도착하면 천천히 깨워 주세요."
+        },
+        {
+          "id": "type.Sleeping.intro.2",
+          "value": "조금 쉬고 싶어요. 도착하면 천천히 깨워 주세요."
+        },
+        {
+          "id": "type.Sleeping.intro.3",
+          "value": "조금 쉬고 싶어요. 도착하면 천천히 깨워 주세요."
+        },
+        {
+          "id": "type.Sleeping.choice.0",
+          "value": "편히 쉬세요. 도착하면 알려 드릴게요."
+        },
+        {
+          "id": "type.Sleeping.choice.1",
+          "value": "필요한 안내만 드리고 조용히 모실게요."
+        },
+        {
+          "id": "type.Sleeping.followup.0",
+          "value": "배려해 주셔서 고마워요."
+        },
+        {
+          "id": "type.Sleeping.followup.1",
+          "value": "배려해 주셔서 고마워요."
+        },
+        {
+          "id": "type.Sleeping.followup.2",
+          "value": "배려해 주셔서 고마워요."
+        },
+        {
+          "id": "choice.type.Sleeping.0.immediate.satisfaction",
+          "value": "1"
+        },
+        {
+          "id": "choice.type.Sleeping.0.immediate.fatigue",
+          "value": "0"
+        },
+        {
+          "id": "choice.type.Sleeping.1.immediate.satisfaction",
+          "value": "1"
+        },
+        {
+          "id": "choice.type.Sleeping.1.immediate.fatigue",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "id": "interview-appointment",
+      "name": "면접을 앞둔 손님",
+      "enabled": true,
+      "weight": 2,
+      "pool": "Hurried",
+      "traits": [
+        "speech.quiet",
+        "purpose.hurried"
+      ],
+      "intro": "면접 시간이 가까워서 조금 긴장돼요. 안전하게 부탁드려요.",
+      "overrides": [
+        {
+          "id": "type.Hurried.intro.0",
+          "value": "약속 시간에 늦을까 봐 걱정돼요. 도착 안내를 부탁드려요."
+        },
+        {
+          "id": "type.Hurried.intro.1",
+          "value": "약속 시간에 늦을까 봐 걱정돼요. 도착 안내를 부탁드려요."
+        },
+        {
+          "id": "type.Hurried.intro.2",
+          "value": "약속 시간에 늦을까 봐 걱정돼요. 도착 안내를 부탁드려요."
+        },
+        {
+          "id": "type.Hurried.choice.0",
+          "value": "도착 예상 시간을 확인해 드릴게요."
+        },
+        {
+          "id": "type.Hurried.choice.1",
+          "value": "신호를 지키며 안전하게 모실게요."
+        },
+        {
+          "id": "type.Hurried.followup.0",
+          "value": "안내해 주셔서 조금 마음이 놓이네요."
+        },
+        {
+          "id": "type.Hurried.followup.1",
+          "value": "안내해 주셔서 조금 마음이 놓이네요."
+        },
+        {
+          "id": "type.Hurried.followup.2",
+          "value": "안내해 주셔서 조금 마음이 놓이네요."
+        },
+        {
+          "id": "request.OnTime.prompt",
+          "value": "약속 시간에 맞출 수 있을까요? 안전은 지켜 주세요."
+        },
+        {
+          "id": "request.OnTime.reply.Accept",
+          "value": "기한을 확인하고 안전하게 운행할게요."
+        },
+        {
+          "id": "choice.request.OnTime.Accept.end.success.satisfaction",
+          "value": "6"
+        },
+        {
+          "id": "choice.request.OnTime.Accept.end.failure.satisfaction",
+          "value": "-3"
+        },
+        {
+          "id": "request.Interview.prompt",
+          "value": "면접 전에 긴장되네요. 한마디만 응원해 주실래요?"
+        },
+        {
+          "id": "request.Interview.reply.Accept",
+          "value": "준비한 이야기를 차분히 전하시면 좋겠어요."
+        }
+      ]
+    },
+    {
+      "id": "gentle-ride",
+      "name": "부드러운 운행을 원하는 손님",
+      "enabled": true,
+      "weight": 2,
+      "pool": "Comfort",
+      "traits": [
+        "speech.quiet",
+        "body.sensitive"
+      ],
+      "intro": "급하게 출발하거나 멈추면 불편해요. 부드럽게 부탁드려요.",
+      "overrides": [
+        {
+          "id": "type.Comfort.intro.0",
+          "value": "차가 많이 흔들리지 않았으면 좋겠어요."
+        },
+        {
+          "id": "type.Comfort.intro.1",
+          "value": "차가 많이 흔들리지 않았으면 좋겠어요."
+        },
+        {
+          "id": "type.Comfort.intro.2",
+          "value": "차가 많이 흔들리지 않았으면 좋겠어요."
+        },
+        {
+          "id": "type.Comfort.choice.0",
+          "value": "부드럽게 출발하고 여유 있게 멈출게요."
+        },
+        {
+          "id": "type.Comfort.choice.1",
+          "value": "필요한 제동은 미리 안내드릴게요."
+        },
+        {
+          "id": "type.Comfort.followup.0",
+          "value": "편안하게 갈 수 있도록 부탁드려요."
+        },
+        {
+          "id": "type.Comfort.followup.1",
+          "value": "편안하게 갈 수 있도록 부탁드려요."
+        },
+        {
+          "id": "type.Comfort.followup.2",
+          "value": "편안하게 갈 수 있도록 부탁드려요."
+        },
+        {
+          "id": "request.Comfort.prompt",
+          "value": "급가속과 급제동을 줄여 주실 수 있을까요?"
+        },
+        {
+          "id": "request.Comfort.reply.Accept",
+          "value": "안전을 지키면서 부드럽게 모실게요."
+        },
+        {
+          "id": "choice.request.Comfort.Accept.end.success.satisfaction",
+          "value": "6"
+        },
+        {
+          "id": "choice.request.Comfort.Accept.end.failure.satisfaction",
+          "value": "-4"
+        }
+      ]
+    },
+    {
+      "id": "neighborhood-story",
+      "name": "동네 이야기를 좋아하는 손님",
+      "enabled": true,
+      "weight": 2,
+      "pool": "Talkative",
+      "traits": [
+        "speech.talkative"
+      ],
+      "intro": "이 동네가 오랜만이라 반갑네요. 잠깐 이야기해도 될까요?",
+      "overrides": [
+        {
+          "id": "type.Talkative.intro.0",
+          "value": "익숙한 가게들이 아직 있는지 궁금하네요."
+        },
+        {
+          "id": "type.Talkative.intro.1",
+          "value": "익숙한 가게들이 아직 있는지 궁금하네요."
+        },
+        {
+          "id": "type.Talkative.intro.2",
+          "value": "익숙한 가게들이 아직 있는지 궁금하네요."
+        },
+        {
+          "id": "type.Talkative.choice.0",
+          "value": "운전에 지장이 없는 선에서 이야기 나눌게요."
+        },
+        {
+          "id": "type.Talkative.choice.1",
+          "value": "필요한 안내만 드리며 안전하게 모실게요."
+        },
+        {
+          "id": "type.Talkative.followup.0",
+          "value": "이야기 들어주셔서 고마워요."
+        },
+        {
+          "id": "type.Talkative.followup.1",
+          "value": "이야기 들어주셔서 고마워요."
+        },
+        {
+          "id": "type.Talkative.followup.2",
+          "value": "이야기 들어주셔서 고마워요."
+        },
+        {
+          "id": "choice.type.Talkative.0.immediate.satisfaction",
+          "value": "2"
+        },
+        {
+          "id": "choice.type.Talkative.0.immediate.fatigue",
+          "value": "1"
+        },
+        {
+          "id": "choice.type.Talkative.1.immediate.satisfaction",
+          "value": "1"
+        },
+        {
+          "id": "choice.type.Talkative.1.immediate.fatigue",
+          "value": "0"
+        },
+        {
+          "id": "request.LocalChat.prompt",
+          "value": "이 동네는 요즘도 조용한 편인가요?"
+        },
+        {
+          "id": "request.LocalChat.reply.Accept",
+          "value": "제가 다니며 본 동네 이야기를 짧게 들려드릴게요."
+        }
+      ]
+    },
+    {
+      "id": "quiet-night-home",
+      "name": "조용히 귀가하는 음주 손님",
+      "enabled": true,
+      "weight": 3,
+      "pool": "Drunk",
+      "traits": [
+        "speech.quiet",
+        "body.drunk"
+      ],
+      "intro": "조금 취했어요. 말없이 쉬면서 가고 싶어요.",
+      "overrides": [
+        {
+          "id": "type.Drunk.vomitPercent",
+          "value": "15"
+        },
+        {
+          "id": "type.Drunk.sleepPercent",
+          "value": "40"
+        },
+        {
+          "id": "type.Drunk.intro.0",
+          "value": "조용히 집까지 부탁드려요. 불편하면 말씀드릴게요."
+        },
+        {
+          "id": "type.Drunk.intro.1",
+          "value": "조용히 집까지 부탁드려요. 불편하면 말씀드릴게요."
+        },
+        {
+          "id": "type.Drunk.intro.2",
+          "value": "조용히 집까지 부탁드려요. 불편하면 말씀드릴게요."
+        },
+        {
+          "id": "type.Drunk.choice.0",
+          "value": "편히 쉬세요. 필요한 안내만 드릴게요."
+        },
+        {
+          "id": "type.Drunk.choice.1",
+          "value": "불편하시면 말씀해 주세요. 안전하게 모실게요."
+        },
+        {
+          "id": "type.Drunk.followup.0",
+          "value": "집에 가면 바로 쉬어야겠어요."
+        },
+        {
+          "id": "type.Drunk.followup.1",
+          "value": "집에 가면 바로 쉬어야겠어요."
+        },
+        {
+          "id": "type.Drunk.followup.2",
+          "value": "집에 가면 바로 쉬어야겠어요."
+        },
+        {
+          "id": "choice.type.Drunk.0.immediate.satisfaction",
+          "value": "1"
+        },
+        {
+          "id": "choice.type.Drunk.0.immediate.fatigue",
+          "value": "0"
+        },
+        {
+          "id": "choice.type.Drunk.1.immediate.satisfaction",
+          "value": "1"
+        },
+        {
+          "id": "choice.type.Drunk.1.immediate.fatigue",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "id": "after-gathering",
+      "name": "모임을 마친 수다 손님",
+      "enabled": true,
+      "weight": 1,
+      "pool": "Drunk",
+      "traits": [
+        "speech.talkative",
+        "body.drunk"
+      ],
+      "intro": "친구들을 오랜만에 만나 기분이 좋네요. 조금 이야기해도 될까요?",
+      "overrides": [
+        {
+          "id": "type.Drunk.vomitPercent",
+          "value": "30"
+        },
+        {
+          "id": "type.Drunk.sleepPercent",
+          "value": "15"
+        },
+        {
+          "id": "type.Talkative.intro.0",
+          "value": "오늘 모임에서 즐거운 일이 있었어요."
+        },
+        {
+          "id": "type.Talkative.intro.1",
+          "value": "오늘 모임에서 즐거운 일이 있었어요."
+        },
+        {
+          "id": "type.Talkative.intro.2",
+          "value": "오늘 모임에서 즐거운 일이 있었어요."
+        },
+        {
+          "id": "type.Talkative.choice.0",
+          "value": "짧게 들으면서 안전하게 운전할게요."
+        },
+        {
+          "id": "type.Talkative.choice.1",
+          "value": "즐거우셨겠네요. 편히 쉬시도록 모실게요."
+        },
+        {
+          "id": "type.Talkative.followup.0",
+          "value": "이야기하다 보니 벌써 여기까지 왔네요."
+        },
+        {
+          "id": "type.Talkative.followup.1",
+          "value": "이야기하다 보니 벌써 여기까지 왔네요."
+        },
+        {
+          "id": "type.Talkative.followup.2",
+          "value": "이야기하다 보니 벌써 여기까지 왔네요."
+        },
+        {
+          "id": "choice.type.Talkative.0.immediate.satisfaction",
+          "value": "2"
+        },
+        {
+          "id": "choice.type.Talkative.0.immediate.fatigue",
+          "value": "1"
+        },
+        {
+          "id": "choice.type.Talkative.1.immediate.satisfaction",
+          "value": "1"
+        },
+        {
+          "id": "choice.type.Talkative.1.immediate.fatigue",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "id": "travel-suitcase",
+      "name": "여행 가방을 든 손님",
+      "enabled": true,
+      "weight": 2,
+      "pool": "Luggage",
+      "traits": [
+        "speech.quiet",
+        "item.luggage"
+      ],
+      "intro": "여행 가방이 하나 있어요. 안전하게 싣고 가고 싶어요.",
+      "overrides": [
+        {
+          "id": "effect.luggage.prepareSeconds",
+          "value": "8"
+        },
+        {
+          "id": "effect.luggage.unloadSeconds",
+          "value": "8"
+        },
+        {
+          "id": "effect.resecure.seconds",
+          "value": "5"
+        },
+        {
+          "id": "type.Luggage.intro.0",
+          "value": "가방이 움직이지 않도록 고정해 주세요."
+        },
+        {
+          "id": "type.Luggage.intro.1",
+          "value": "가방이 움직이지 않도록 고정해 주세요."
+        },
+        {
+          "id": "type.Luggage.intro.2",
+          "value": "가방이 움직이지 않도록 고정해 주세요."
+        },
+        {
+          "id": "type.Luggage.choice.0",
+          "value": "안전하게 싣고 도착하면 내려 드릴게요."
+        },
+        {
+          "id": "type.Luggage.choice.1",
+          "value": "이번에는 짐 적재가 어려워요."
+        },
+        {
+          "id": "type.Luggage.followup.0",
+          "value": "안내해 주셔서 고마워요. 편히 가고 싶어요."
+        },
+        {
+          "id": "type.Luggage.followup.1",
+          "value": "안내해 주셔서 고마워요. 편히 가고 싶어요."
+        },
+        {
+          "id": "type.Luggage.followup.2",
+          "value": "안내해 주셔서 고마워요. 편히 가고 싶어요."
+        },
+        {
+          "id": "choice.type.Luggage.0.immediate.satisfaction",
+          "value": "2"
+        },
+        {
+          "id": "choice.type.Luggage.0.immediate.fatigue",
+          "value": "0"
+        },
+        {
+          "id": "choice.type.Luggage.1.immediate.satisfaction",
+          "value": "0"
+        },
+        {
+          "id": "choice.type.Luggage.1.immediate.fatigue",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "id": "plant-visit",
+      "name": "화분을 들고 경유하는 손님",
+      "enabled": true,
+      "weight": 1,
+      "pool": "MuddyLuggage",
+      "traits": [
+        "item.muddy",
+        "purpose.errand"
+      ],
+      "intro": "화분을 전해 드리고 잠깐 들를 곳이 있어요.",
+      "overrides": [
+        {
+          "id": "effect.muddy.prepareSeconds",
+          "value": "8"
+        },
+        {
+          "id": "effect.muddy.dirt",
+          "value": "4"
+        },
+        {
+          "id": "effect.resecure.seconds",
+          "value": "5"
+        },
+        {
+          "id": "effect.errand.seconds",
+          "value": "15"
+        },
+        {
+          "id": "type.MuddyLuggage.intro.0",
+          "value": "화분에 흙이 조금 묻었어요. 바닥을 보호할까요?"
+        },
+        {
+          "id": "type.MuddyLuggage.intro.1",
+          "value": "화분에 흙이 조금 묻었어요. 바닥을 보호할까요?"
+        },
+        {
+          "id": "type.MuddyLuggage.intro.2",
+          "value": "화분에 흙이 조금 묻었어요. 바닥을 보호할까요?"
+        },
+        {
+          "id": "type.MuddyLuggage.choice.0",
+          "value": "흙이 떨어지지 않도록 보호하고 실을게요."
+        },
+        {
+          "id": "type.MuddyLuggage.choice.1",
+          "value": "그대로 싣되 흔들리지 않게 부탁드려요."
+        },
+        {
+          "id": "type.MuddyLuggage.choice.2",
+          "value": "이번에는 짐을 싣지 않고 이동할게요."
+        },
+        {
+          "id": "type.MuddyLuggage.followup.0",
+          "value": "안내해 주셔서 고마워요. 안전하게 부탁드려요."
+        },
+        {
+          "id": "type.MuddyLuggage.followup.1",
+          "value": "안내해 주셔서 고마워요. 안전하게 부탁드려요."
+        },
+        {
+          "id": "type.MuddyLuggage.followup.2",
+          "value": "안내해 주셔서 고마워요. 안전하게 부탁드려요."
+        },
+        {
+          "id": "choice.type.MuddyLuggage.0.immediate.satisfaction",
+          "value": "1"
+        },
+        {
+          "id": "choice.type.MuddyLuggage.0.immediate.fatigue",
+          "value": "0"
+        },
+        {
+          "id": "choice.type.MuddyLuggage.1.immediate.satisfaction",
+          "value": "0"
+        },
+        {
+          "id": "choice.type.MuddyLuggage.1.immediate.fatigue",
+          "value": "0"
+        },
+        {
+          "id": "choice.type.MuddyLuggage.2.immediate.satisfaction",
+          "value": "0"
+        },
+        {
+          "id": "choice.type.MuddyLuggage.2.immediate.fatigue",
+          "value": "0"
+        },
+        {
+          "id": "request.ViaStop.prompt",
+          "value": "가는 길에 정해진 장소에서 잠깐 용무를 볼 수 있을까요?"
+        },
+        {
+          "id": "request.ViaStop.reply.Accept",
+          "value": "확인한 경유지에서 15초 기다릴게요."
+        },
+        {
+          "id": "choice.request.ViaStop.Accept.end.success.satisfaction",
+          "value": "5"
+        },
+        {
+          "id": "choice.request.ViaStop.Accept.end.failure.satisfaction",
+          "value": "-4"
+        }
+      ]
+    },
+    {
+      "id": "snack-commuter",
+      "name": "간식을 든 출근 손님",
+      "enabled": true,
+      "weight": 1,
+      "pool": "Food",
+      "traits": [
+        "item.food",
+        "body.sensitive"
+      ],
+      "intro": "간식을 가져왔어요. 차가 흔들리지 않으면 좋겠어요.",
+      "overrides": [
+        {
+          "id": "effect.food.crumbs",
+          "value": "1"
+        },
+        {
+          "id": "effect.food.spill",
+          "value": "4"
+        },
+        {
+          "id": "effect.food.spillPercent",
+          "value": "15"
+        },
+        {
+          "id": "effect.food.cleanupSeconds",
+          "value": "6"
+        },
+        {
+          "id": "type.Food.intro.0",
+          "value": "간식을 조금 먹어도 될까요? 흘리지 않게 조심할게요."
+        },
+        {
+          "id": "type.Food.intro.1",
+          "value": "간식을 조금 먹어도 될까요? 흘리지 않게 조심할게요."
+        },
+        {
+          "id": "type.Food.intro.2",
+          "value": "간식을 조금 먹어도 될까요? 흘리지 않게 조심할게요."
+        },
+        {
+          "id": "type.Food.choice.0",
+          "value": "지금은 밀봉해서 보관해 주세요."
+        },
+        {
+          "id": "type.Food.choice.1",
+          "value": "조심히 드셔도 괜찮아요."
+        },
+        {
+          "id": "type.Food.choice.2",
+          "value": "안전하게 멈췄을 때 정리하고 출발할게요."
+        },
+        {
+          "id": "type.Food.followup.0",
+          "value": "포장이 흔들리지 않게 잘 잡고 있을게요."
+        },
+        {
+          "id": "type.Food.followup.1",
+          "value": "포장이 흔들리지 않게 잘 잡고 있을게요."
+        },
+        {
+          "id": "type.Food.followup.2",
+          "value": "포장이 흔들리지 않게 잘 잡고 있을게요."
+        },
+        {
+          "id": "choice.type.Food.0.immediate.satisfaction",
+          "value": "1"
+        },
+        {
+          "id": "choice.type.Food.0.immediate.fatigue",
+          "value": "0"
+        },
+        {
+          "id": "choice.type.Food.1.immediate.satisfaction",
+          "value": "2"
+        },
+        {
+          "id": "choice.type.Food.1.immediate.fatigue",
+          "value": "0"
+        },
+        {
+          "id": "choice.type.Food.2.immediate.satisfaction",
+          "value": "0"
+        },
+        {
+          "id": "choice.type.Food.2.immediate.fatigue",
+          "value": "0"
+        },
+        {
+          "id": "request.Comfort.prompt",
+          "value": "음식이 흔들리지 않도록 부드럽게 부탁드려요."
+        },
+        {
+          "id": "request.Comfort.reply.Accept",
+          "value": "급한 조작을 줄이고 안전하게 모실게요."
+        },
+        {
+          "id": "choice.request.Comfort.Accept.end.success.satisfaction",
+          "value": "5"
+        },
+        {
+          "id": "choice.request.Comfort.Accept.end.failure.satisfaction",
+          "value": "-3"
+        }
+      ]
+    },
+    {
+      "id": "luggage-errand",
+      "name": "짐을 싣고 용무를 보는 손님",
+      "enabled": true,
+      "weight": 1,
+      "pool": "Errand",
+      "traits": [
+        "item.luggage",
+        "purpose.errand"
+      ],
+      "intro": "작은 짐을 싣고 가는 길에 잠깐 용무를 보고 싶어요.",
+      "overrides": [
+        {
+          "id": "effect.luggage.prepareSeconds",
+          "value": "6"
+        },
+        {
+          "id": "effect.luggage.unloadSeconds",
+          "value": "6"
+        },
+        {
+          "id": "effect.resecure.seconds",
+          "value": "5"
+        },
+        {
+          "id": "effect.errand.seconds",
+          "value": "15"
+        },
+        {
+          "id": "type.Luggage.intro.0",
+          "value": "짐을 안전하게 싣고 경유 가능 여부를 확인해 주세요."
+        },
+        {
+          "id": "type.Luggage.intro.1",
+          "value": "짐을 안전하게 싣고 경유 가능 여부를 확인해 주세요."
+        },
+        {
+          "id": "type.Luggage.intro.2",
+          "value": "짐을 안전하게 싣고 경유 가능 여부를 확인해 주세요."
+        },
+        {
+          "id": "type.Luggage.choice.0",
+          "value": "짐을 고정하고 요청을 확인해 드릴게요."
+        },
+        {
+          "id": "type.Luggage.choice.1",
+          "value": "이번에는 짐을 싣기 어려워요."
+        },
+        {
+          "id": "type.Luggage.followup.0",
+          "value": "확인된 안내에 따라 안전하게 부탁드려요."
+        },
+        {
+          "id": "type.Luggage.followup.1",
+          "value": "확인된 안내에 따라 안전하게 부탁드려요."
+        },
+        {
+          "id": "type.Luggage.followup.2",
+          "value": "확인된 안내에 따라 안전하게 부탁드려요."
+        },
+        {
+          "id": "choice.type.Luggage.0.immediate.satisfaction",
+          "value": "2"
+        },
+        {
+          "id": "choice.type.Luggage.0.immediate.fatigue",
+          "value": "0"
+        },
+        {
+          "id": "choice.type.Luggage.1.immediate.satisfaction",
+          "value": "0"
+        },
+        {
+          "id": "choice.type.Luggage.1.immediate.fatigue",
+          "value": "0"
+        },
+        {
+          "id": "request.ViaStop.prompt",
+          "value": "확인 가능한 장소에 잠깐 들를 수 있을까요?"
+        },
+        {
+          "id": "request.ViaStop.reply.Accept",
+          "value": "경유지에서 15초 기다린 뒤 출발할게요."
+        },
+        {
+          "id": "choice.request.ViaStop.Accept.end.success.satisfaction",
+          "value": "5"
+        },
+        {
+          "id": "choice.request.ViaStop.Accept.end.failure.satisfaction",
+          "value": "-4"
+        }
+      ]
+    },
+    {
+      "id": "careful-dropoff",
+      "name": "안전한 하차를 부탁하는 손님",
+      "enabled": true,
+      "weight": 2,
+      "pool": "PrecisionStop",
+      "traits": [
+        "speech.quiet",
+        "purpose.precise"
+      ],
+      "intro": "내릴 때 서두르지 않으려고 해요. 안전한 장소로 부탁드려요.",
+      "overrides": [
+        {
+          "id": "type.PrecisionStop.intro.0",
+          "value": "안전한 쪽으로 내릴 수 있는 곳을 확인해 주세요."
+        },
+        {
+          "id": "type.PrecisionStop.intro.1",
+          "value": "안전한 쪽으로 내릴 수 있는 곳을 확인해 주세요."
+        },
+        {
+          "id": "type.PrecisionStop.intro.2",
+          "value": "안전한 쪽으로 내릴 수 있는 곳을 확인해 주세요."
+        },
+        {
+          "id": "type.PrecisionStop.choice.0",
+          "value": "가능한 하차 장소와 변경 내용을 먼저 안내할게요."
+        },
+        {
+          "id": "type.PrecisionStop.choice.1",
+          "value": "원래 목적지에서도 안전하게 내리시도록 안내할게요."
+        },
+        {
+          "id": "type.PrecisionStop.followup.0",
+          "value": "안전한 곳에 세워 주시면 천천히 내릴게요."
+        },
+        {
+          "id": "type.PrecisionStop.followup.1",
+          "value": "안전한 곳에 세워 주시면 천천히 내릴게요."
+        },
+        {
+          "id": "type.PrecisionStop.followup.2",
+          "value": "안전한 곳에 세워 주시면 천천히 내릴게요."
+        },
+        {
+          "id": "request.SafeStop.prompt",
+          "value": "확인된 안전한 하차 장소로 바꿀 수 있을까요?"
+        },
+        {
+          "id": "request.SafeStop.reply.Accept",
+          "value": "장소와 요금 안내를 확인한 뒤 변경할게요."
+        },
+        {
+          "id": "choice.request.SafeStop.Accept.end.success.satisfaction",
+          "value": "5"
+        },
+        {
+          "id": "choice.request.SafeStop.Accept.end.failure.satisfaction",
+          "value": "-3"
+        }
+      ]
+    }
+  ]
+}
