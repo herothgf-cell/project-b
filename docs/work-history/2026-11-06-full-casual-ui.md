@@ -42,4 +42,4 @@
 - 소스/이력 최초 커밋은 `686d90fce0053e37e09d79284353a284123b9cd5`다. `git log -1 --oneline -- docs/work-history/2026-11-06-full-casual-ui.md`로 확인했다.
 - 출하 실행 폴더141파일·124,544,801바이트, 통합/PVP VerifyOnly 모두 exit0. manifest는 위 실제 소스 커밋과 이번 검증 보고서를 참조한다. 기존 추적 Burst 디버그txt도 그대로 포함한다. 사용자 active-profile·지도 ZIP/입력은 미변경이다.
 - 원본 `C:/git/project-b`는 현재 `codex/driving-settings`이고 기존 기획2파일 변경과 untracked 자료가 있으므로 브랜치/작업 폴더는 건드리지 않는다. 이 관리 작업 트리의 실행본과 원격 main으로 배포한다.
-- 원격 게시 해시는 실제 push 확인 후 별도 영수증으로 추가한다.
+- 실행본 게시 커밋 `f825e0879af1e22ac1a71854e24d66bf80e86e35`: `git push origin HEAD:main` 성공(`d292508..f825e08`), 직후 `git ls-remote origin refs/heads/main` 같은 해시 확인. 이 영수증 후속 커밋은 문서만 변경한다.
