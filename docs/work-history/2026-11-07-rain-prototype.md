@@ -46,3 +46,7 @@ RainPolicy/RainPresentation/RainPlayerCheck, RainBuild, TaxiController/Passenger
 ## 협업 보존
 
 시작 시 LATEST의 별도 Higgsfield 문구와 미추적 문서/라이선스/지도편집 자료를 보존했다. 작업 중 다른 작업의 f6f17f2 기획 검토 커밋이 추가됐으며 유지한다. 사용자 활성 프로필/개인 저장을 덮어쓰지 않았다. 빌드/검증 완료 후 이 작업 파일만 커밋하며 원격 push는 이번 요청에 없어 수행하지 않는다.
+
+## 출하 영수증
+
+실제 소스 커밋 `bbc85b9f42eda5d262920d2a9534f09623a20072`. 최종 통합 실행폴더 manifest 142파일 / 132,267,902.0bytes 생성 및 통합/PVP VerifyOnly 모두 exit0. 실행 대상 `builds/EungyeTaxi/EungyeTaxi.exe`, 은계/A2·LANv14. 원격 push 미실행.
