@@ -7472,6 +7472,213 @@
       "editable": true
     },
     {
+      "id": "law.flashStop.penalty",
+      "group": "법규",
+      "section": "적색 점멸 정지",
+      "title": "적색 점멸 정지 · 운전 점수 감점",
+      "type": "integer",
+      "defaultValue": "15",
+      "min": 0,
+      "max": 100,
+      "unit": "점",
+      "description": "기존 상황 판정의 감점 수치입니다. 0이어도 위반 사실은 유지합니다. 사고는 발생 때 값을 확정합니다.",
+      "affects": [
+        "캠페인 법규 점수",
+        "승차 운전 점수 → 운임 보정"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "ConfusionPracticeState.Event",
+      "editable": true
+    },
+    {
+      "id": "law.permissiveTurn.penalty",
+      "group": "법규",
+      "section": "비보호 좌회전 상황",
+      "title": "비보호 좌회전 상황 · 운전 점수 감점",
+      "type": "integer",
+      "defaultValue": "15",
+      "min": 0,
+      "max": 100,
+      "unit": "점",
+      "description": "기존 상황 판정의 감점 수치입니다. 0이어도 위반 사실은 유지합니다. 사고는 발생 때 값을 확정합니다.",
+      "affects": [
+        "캠페인 법규 점수",
+        "승차 운전 점수 → 운임 보정"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "ConfusionPracticeState.Event",
+      "editable": true
+    },
+    {
+      "id": "law.blockedExit.penalty",
+      "group": "법규",
+      "section": "출구 막힘 진입",
+      "title": "출구 막힘 진입 · 운전 점수 감점",
+      "type": "integer",
+      "defaultValue": "15",
+      "min": 0,
+      "max": 100,
+      "unit": "점",
+      "description": "기존 상황 판정의 감점 수치입니다. 0이어도 위반 사실은 유지합니다. 사고는 발생 때 값을 확정합니다.",
+      "affects": [
+        "캠페인 법규 점수",
+        "승차 운전 점수 → 운임 보정"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "ConfusionPracticeState.Event",
+      "editable": true
+    },
+    {
+      "id": "law.personMinor.penalty",
+      "group": "법규",
+      "section": "보행자 사고 경미",
+      "title": "보행자 사고 경미 · 운전 점수 감점",
+      "type": "integer",
+      "defaultValue": "10",
+      "min": 0,
+      "max": 100,
+      "unit": "점",
+      "description": "기존 상황 판정의 감점 수치입니다. 0이어도 위반 사실은 유지합니다. 사고는 발생 때 값을 확정합니다.",
+      "affects": [
+        "캠페인 법규 점수",
+        "승차 운전 점수 → 운임 보정"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "AccidentSeverityPolicy.Resolve",
+      "editable": true
+    },
+    {
+      "id": "law.personModerate.penalty",
+      "group": "법규",
+      "section": "보행자 사고 중간",
+      "title": "보행자 사고 중간 · 운전 점수 감점",
+      "type": "integer",
+      "defaultValue": "25",
+      "min": 0,
+      "max": 100,
+      "unit": "점",
+      "description": "기존 상황 판정의 감점 수치입니다. 0이어도 위반 사실은 유지합니다. 사고는 발생 때 값을 확정합니다.",
+      "affects": [
+        "캠페인 법규 점수",
+        "승차 운전 점수 → 운임 보정"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "AccidentSeverityPolicy.Resolve",
+      "editable": true
+    },
+    {
+      "id": "law.personMajor.penalty",
+      "group": "법규",
+      "section": "보행자 사고 중대",
+      "title": "보행자 사고 중대 · 운전 점수 감점",
+      "type": "integer",
+      "defaultValue": "40",
+      "min": 0,
+      "max": 100,
+      "unit": "점",
+      "description": "기존 상황 판정의 감점 수치입니다. 0이어도 위반 사실은 유지합니다. 사고는 발생 때 값을 확정합니다.",
+      "affects": [
+        "캠페인 법규 점수",
+        "승차 운전 점수 → 운임 보정"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "AccidentSeverityPolicy.Resolve",
+      "editable": true
+    },
+    {
+      "id": "law.vehicleMinor.penalty",
+      "group": "법규",
+      "section": "차량·시설 사고 경미",
+      "title": "차량·시설 사고 경미 · 운전 점수 감점",
+      "type": "integer",
+      "defaultValue": "3",
+      "min": 0,
+      "max": 100,
+      "unit": "점",
+      "description": "기존 상황 판정의 감점 수치입니다. 0이어도 위반 사실은 유지합니다. 사고는 발생 때 값을 확정합니다.",
+      "affects": [
+        "캠페인 법규 점수",
+        "승차 운전 점수 → 운임 보정"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "AccidentSeverityPolicy.Resolve",
+      "editable": true
+    },
+    {
+      "id": "law.vehicleModerate.penalty",
+      "group": "법규",
+      "section": "차량·시설 사고 중간",
+      "title": "차량·시설 사고 중간 · 운전 점수 감점",
+      "type": "integer",
+      "defaultValue": "8",
+      "min": 0,
+      "max": 100,
+      "unit": "점",
+      "description": "기존 상황 판정의 감점 수치입니다. 0이어도 위반 사실은 유지합니다. 사고는 발생 때 값을 확정합니다.",
+      "affects": [
+        "캠페인 법규 점수",
+        "승차 운전 점수 → 운임 보정"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "AccidentSeverityPolicy.Resolve",
+      "editable": true
+    },
+    {
+      "id": "law.vehicleMajor.penalty",
+      "group": "법규",
+      "section": "차량·시설 사고 중대",
+      "title": "차량·시설 사고 중대 · 운전 점수 감점",
+      "type": "integer",
+      "defaultValue": "15",
+      "min": 0,
+      "max": 100,
+      "unit": "점",
+      "description": "기존 상황 판정의 감점 수치입니다. 0이어도 위반 사실은 유지합니다. 사고는 발생 때 값을 확정합니다.",
+      "affects": [
+        "캠페인 법규 점수",
+        "승차 운전 점수 → 운임 보정"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "AccidentSeverityPolicy.Resolve",
+      "editable": true
+    },
+    {
       "id": "type.Drunk.spawnPercent",
       "group": "대화 선택지",
       "section": "취객",

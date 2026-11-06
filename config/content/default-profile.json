@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "e73d21a4b7099c5817545c3c0c7d130a85078be16c64e5c080b0d29e6e137055",
+  "contentHash": "055b6f93e8a013e18852b1b5c3ae4926ea5cac1a4ecfda2af622852dfb500f69",
   "values": [
     {
       "id": "request.Quiet.enabled",
@@ -1183,6 +1183,42 @@
     {
       "id": "weather.rain.trafficSpeedMultiplier",
       "value": "0.85"
+    },
+    {
+      "id": "law.flashStop.penalty",
+      "value": "15"
+    },
+    {
+      "id": "law.permissiveTurn.penalty",
+      "value": "15"
+    },
+    {
+      "id": "law.blockedExit.penalty",
+      "value": "15"
+    },
+    {
+      "id": "law.personMinor.penalty",
+      "value": "10"
+    },
+    {
+      "id": "law.personModerate.penalty",
+      "value": "25"
+    },
+    {
+      "id": "law.personMajor.penalty",
+      "value": "40"
+    },
+    {
+      "id": "law.vehicleMinor.penalty",
+      "value": "3"
+    },
+    {
+      "id": "law.vehicleModerate.penalty",
+      "value": "8"
+    },
+    {
+      "id": "law.vehicleMajor.penalty",
+      "value": "15"
     },
     {
       "id": "type.Drunk.spawnPercent",
