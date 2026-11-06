@@ -1,3 +1,7 @@
+## 2026-11-06 회사 제안서 6차 검토·보완
+
+[23장 PPT](../proposals/project-b-game-proposal-v6.pptx) · [필수항목 검토](../proposals/proposal-v6-review.md) · [별도 매뉴얼](../proposals/project-b-prototype-manual-v6.md) · [이력](2026-11-06-game-proposal-v6.md). V5 보존, 최신 실제 UI·방 화면과 현재 구현, 단계 통과 조건·검증KPI를 보완했다. 참여자는 사용자 확인에 따라 미정·역할 배정안.23장 렌더/구조·레이아웃/재가져오기 통과. 게임/빌드·지도/ZIP/저장 미변경·새 플레이/Strict 없음. 은계/A2·LANv11·실행본0bba941, 필수 입력은 직전 Strict issues0 기록 유지. 다음은 제출 전 참여자·인력/예산·일정 확정, 게임은 특수승객 실제주행·사람3일/다른PC 점검 유지.
+
 ## 2026-11-06 주행 HUD·승객 대화창 시안
 
 [시안·제작/검증 범위](2026-11-06-hud-dialogue-preview.md). 기존 컨셉 유지·중앙 시야/대사와 효과 계층을 개선한 검토용 PNG2장 생성/표시. 게임 적용 전 사용자 검토 대기, 코드/빌드/규칙 변경 없음. 은계/A2·LANv11·실행본0bba941/BuildHybrid 유지, 필수 입력은 직전 Strict exit0/issues0 인용·지도/ZIP 미변경. 다음은 시안 피드백 후 상세화/적용 범위 결정. 기존 미추적10항목 보존.
