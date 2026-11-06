@@ -129,6 +129,7 @@
    ['start','시작 만족도와 청결','시작 부족분과 청결 가산의 배수입니다. 시작 만족도에는 청결이 포함되며 하차 때 다시 더하지 않습니다.',['common.startDeficitMultiplier','common.cleanBonusMultiplier']]
   ];
   for(const [key,title,description,fields]of common)add('common.'+key,'공통 영향 요소',title,description,'common',[section(title,description,fields,'shared')],[],[]);
+  add('weather.rain','날씨','비 운행','맑음/비 시험 · 확률 미끄러짐 잠금','weather',[section('비 설정','기존 저장은 당시 설정 유지. 확률 미끄러짐은 검증 후 별도 개발/활성화합니다.',ids('weather.'),'shared')],[],[]);
   for(const e of entries.filter(e=>e.id.startsWith('constraint.')))add(e.id,'공통 영향 요소',e.title,e.defaultValue,'common',[section('현재 게임의 고정 조건',e.defaultValue,[e.id],'condition')],[e.description||''],[]);
   const covered=new Set(out.flatMap(e=>e.fieldIds));for(const e of entries)if(!covered.has(e.id)&&!e.id.startsWith('choice.'))add('field.'+e.id,e.group,e.title,e.description,'field',[section(e.section,e.description,[e.id])],[],[]);
   for(const ref of catalog.references||[])add(ref.id,'법규',ref.title,ref.description,'reference',[section('자료의 범위',ref.description,[],'reference')],[ref.status||'',ref.basis||'',ref.source?'출처: '+ref.source:'',ref.sourceDate?'자료 기준일: '+ref.sourceDate:''].filter(Boolean),[]);

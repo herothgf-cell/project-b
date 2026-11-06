@@ -7334,6 +7334,144 @@
       "editable": false
     },
     {
+      "id": "weather.rain.enabled",
+      "group": "날씨",
+      "section": "비 운행",
+      "title": "비 사용",
+      "type": "boolean",
+      "defaultValue": "false",
+      "min": 0,
+      "max": 1,
+      "unit": "사용",
+      "description": "맑음/비 고정 시험. 기존 저장은 당시 설정을 유지합니다. 다음 새 세션부터 적용.",
+      "affects": [
+        "날씨",
+        "운행"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "RainPolicy / RainPresentation / PassengerJobs / TaxiController",
+      "editable": true
+    },
+    {
+      "id": "weather.rain.intensity",
+      "group": "날씨",
+      "section": "비 운행",
+      "title": "빗줄기 표현 강도",
+      "type": "number",
+      "defaultValue": "0.65",
+      "min": 0,
+      "max": 1,
+      "unit": "배",
+      "description": "시각 효과만 조절합니다. 0에서도 비의 운행 영향은 유지됩니다. 다음 새 세션부터 적용.",
+      "affects": [
+        "날씨",
+        "운행"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "RainPolicy / RainPresentation / PassengerJobs / TaxiController",
+      "editable": true
+    },
+    {
+      "id": "weather.rain.wiperSeconds",
+      "group": "날씨",
+      "section": "비 운행",
+      "title": "자동 와이퍼 주기",
+      "type": "number",
+      "defaultValue": "1.2",
+      "min": 0.5,
+      "max": 3,
+      "unit": "초",
+      "description": "1인칭 전방 자동 왕복 주기입니다. 다음 새 세션부터 적용.",
+      "affects": [
+        "날씨",
+        "운행"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "RainPolicy / RainPresentation / PassengerJobs / TaxiController",
+      "editable": true
+    },
+    {
+      "id": "weather.rain.boardingDirt",
+      "group": "날씨",
+      "section": "비 운행",
+      "title": "승차 추가 청결 감소",
+      "type": "integer",
+      "defaultValue": "2",
+      "min": 0,
+      "max": 10,
+      "unit": "점",
+      "description": "성공한 승차마다 한 번 차감. 현재 승객의 탑승을 취소하지 않습니다. 다음 새 세션부터 적용.",
+      "affects": [
+        "날씨",
+        "청결도"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "RainPolicy / RainPresentation / PassengerJobs / TaxiController",
+      "editable": true
+    },
+    {
+      "id": "weather.rain.brakeMultiplier",
+      "group": "날씨",
+      "section": "비 운행",
+      "title": "비 제동 계수",
+      "type": "number",
+      "defaultValue": "0.9",
+      "min": 0.75,
+      "max": 1,
+      "unit": "배",
+      "description": "이동 중 제동 토크. 작을수록 제동거리가 늘어납니다. 정차 유지 보존. 다음 새 세션부터 적용.",
+      "affects": [
+        "날씨",
+        "운행"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "RainPolicy / RainPresentation / PassengerJobs / TaxiController",
+      "editable": true
+    },
+    {
+      "id": "weather.rain.trafficSpeedMultiplier",
+      "group": "날씨",
+      "section": "비 운행",
+      "title": "일반 차량 속도 계수",
+      "type": "number",
+      "defaultValue": "0.85",
+      "min": 0.6,
+      "max": 1,
+      "unit": "배",
+      "description": "비가 오면 일반 차량 목표 속도를 낮춥니다. 다음 새 세션부터 적용.",
+      "affects": [
+        "날씨",
+        "운행"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "RainPolicy / RainPresentation / PassengerJobs / TaxiController",
+      "editable": true
+    },
+    {
       "id": "type.Drunk.spawnPercent",
       "group": "대화 선택지",
       "section": "취객",

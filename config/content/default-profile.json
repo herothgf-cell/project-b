@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "918497d58d177cff27a7a59e0514a47345f22764e6912e7416976c6f3ff82616",
+  "contentHash": "e73d21a4b7099c5817545c3c0c7d130a85078be16c64e5c080b0d29e6e137055",
   "values": [
     {
       "id": "request.Quiet.enabled",
@@ -1159,6 +1159,30 @@
     {
       "id": "law.editorSpeed.seconds",
       "value": "2"
+    },
+    {
+      "id": "weather.rain.enabled",
+      "value": "false"
+    },
+    {
+      "id": "weather.rain.intensity",
+      "value": "0.65"
+    },
+    {
+      "id": "weather.rain.wiperSeconds",
+      "value": "1.2"
+    },
+    {
+      "id": "weather.rain.boardingDirt",
+      "value": "2"
+    },
+    {
+      "id": "weather.rain.brakeMultiplier",
+      "value": "0.9"
+    },
+    {
+      "id": "weather.rain.trafficSpeedMultiplier",
+      "value": "0.85"
     },
     {
       "id": "type.Drunk.spawnPercent",

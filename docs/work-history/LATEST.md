@@ -1,3 +1,7 @@
+## 2026-11-07 비 프로토·설정 툴
+
+[기획18](../content-design/18-rain-prototype.md) · [구현/검증/재현](2026-11-07-rain-prototype.md). 비 표현/자동 와이퍼·승차 추가오염·제동/교통/내비 영향, 날씨 툴6값·구저장 맑음 보존·확률 미끄러짐 잠금. 모델11/C#751/Node89/실제Player20·LAN41+52 통과,20km/h 제동2.55→2.83m. 은계/A2 통합exe·LANv14·BuildHybrid, Strict issues0·지도/ZIP불변. 다음은 사람 수동/20분·3일/다른PC 수용 후 확률 미끄러짐 별도 검증. 기존 다른 작업 변경 보존. 출하 manifest는 본 이력의 영수증 참조.
+
 ## 2026-11-07 교통법규·운전 점수 적용 검토
 
 [구조 도식·현재/웹 GPT 비교](../future-design/2026-11-07-driving-score-application-review.md) · [검증·재현·이력](2026-11-07-driving-score-application-review.md). 법규/M/S 분리·사건 최대감점·공통준수+3는 기존 구현, 난이도별 획득·단계과속·안전배려B·운송/일일 상한·중대위반 운송획득취소는 미적용. 관련 순수모델5종/서행21통과, 전체prototype은 기존 일반제동 기대값 불일치 exit1. 이번 게임/설정/빌드/지도/ZIP/저장 변경 없음·은계/A2·LANv13/BuildHybrid 기준, 필수입력 직전 Strict issues0 인용·새 검사 없음. 다음은 첨부 정책 채택 범위 결정 또는 기존 사람3일/다른PC 수용. 동시 비 프로토타입 소스/빌드와 기존 미커밋 자료 보존.

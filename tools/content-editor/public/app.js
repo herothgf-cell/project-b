@@ -1,6 +1,6 @@
 'use strict';
 const $=id=>document.getElementById(id), token=location.hash.slice(1)||sessionStorage.getItem('content-editor-token'); if(location.hash.slice(1))sessionStorage.setItem('content-editor-token',token); history.replaceState(null,'',location.pathname);let catalog,defaults,profile,saved,selected,group='승객 요청',profileIds=[],storedIds=[],saving=false; window.addEventListener('beforeunload',e=>{if(profile&&saved&&unsaved()){e.preventDefault();e.returnValue='';}});
-const groups=['승객 프리셋','승객 요청','대화 선택지','효과','법규','공통 영향 요소'];
+const groups=['승객 프리셋','승객 요청','대화 선택지','효과','법규','공통 영향 요소','날씨'];
 const text=(el,value)=>{el.textContent=value??'';return el;};const make=(tag,value,cls)=>{const el=document.createElement(tag);if(value!=null)text(el,value);if(cls)el.className=cls;return el;};
 function message(s,error=false){text($('status'),s);$('status').className='notice'+(error?' error':'');}
 async function api(url,body){const options={headers:{'X-Content-Token':token}};if(body!==undefined){options.method='POST';options.headers['Content-Type']='application/json';options.body=JSON.stringify(body);}const r=await fetch('/api/'+url,options);const data=await r.json();if(!r.ok)throw Error(data.error||'요청 실패');return data;}
