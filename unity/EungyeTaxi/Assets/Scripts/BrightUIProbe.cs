@@ -13,7 +13,37 @@ public sealed class BrightUIProbe:MonoBehaviour {
  void Awake(){started=Time.realtimeSinceStartup;var args=Environment.GetCommandLineArgs();int at=Array.IndexOf(args,"-brightUiOutput");output=at>=0&&at+1<args.Length?args[at+1]:Path.GetFullPath("artifacts/ui-bright/player");Directory.CreateDirectory(output);Application.runInBackground=true;}
  void Update(){if(!done&&Time.realtimeSinceStartup-started>(FullUiReview?420:240)){done=true;Debug.LogError("BRIGHT_UI_TIMEOUT");Application.Quit(2);}}
  IEnumerator Start(){var run=Run();while(!done){object next;try{if(!run.MoveNext())yield break;next=run.Current;}catch(Exception e){done=true;Debug.LogError("BRIGHT_UI_EXCEPTION "+e);Application.Quit(2);yield break;}yield return next;}}
- IEnumerator Capture(string name){yield return new WaitForSecondsRealtime(.4f);yield return new WaitForEndOfFrame();var path=Path.Combine(output,name+".png");ScreenCapture.CaptureScreenshot(path);yield return new WaitForSecondsRealtime(.3f);Check(File.Exists(path),"capture "+name);}
+ IEnumerator Capture(string name){
+  var path=Path.Combine(output,name+".png");bool rendered=false;
+  for(int attempt=0;attempt<3&&!rendered;attempt++){
+   yield return new WaitForSecondsRealtime(.5f);yield return new WaitForEndOfFrame();var frame=ScreenCapture.CaptureScreenshotAsTexture();
+   try{int bright=0;for(int y=0;y<frame.height;y+=Mathf.Max(1,frame.height/20))for(int x=0;x<frame.width;x+=Mathf.Max(1,frame.width/20)){var p=frame.GetPixel(x,y);if(p.maxColorComponent>.15f)bright++;}rendered=bright>20;if(rendered)File.WriteAllBytes(path,frame.EncodeToPNG());}finally{Destroy(frame);}
+  }
+  Check(rendered&&File.Exists(path),"capture rendered frame "+name);
+ }
+ bool longDialoguePreview;
+ void OnGUI(){
+  if(!longDialoguePreview)return;GUI.depth=-50;
+  string line="긴 장소명과 사용자 대사가 줄바꿈되어도 모든 내용을 읽을 수 있어야 합니다. ";
+  int selected=PassengerDialogueUI.Draw("가독성 검사 · 긴 대화",line+line+line+line,new[]{
+   new PassengerDialogueUI.Option("Y","지금은 선택할 수 없는 응답",line+line,false),
+   new PassengerDialogueUI.Option("I","긴 효과와 조건을 확인하는 응답",line+line),
+   new PassengerDialogueUI.Option("O","아래쪽 선택지도 스크롤로 확인",line),
+   new PassengerDialogueUI.Option("U","기존 운행 유지","추가 효과 없음")},"검사 전용 · 게임 진행에 반영하지 않음");
+  if(selected==0)Check(false,"disabled long dialogue choice cannot be clicked");
+ }
+ IEnumerator ReviewDialogue(){
+  foreach(int width in new[]{1280,1920}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);yield return Capture("dialogue-single-"+width);}
+ }
+ IEnumerator ReviewLongDialogue(){
+  float timeScale=Time.timeScale;Time.timeScale=0;longDialoguePreview=true;
+  foreach(int width in new[]{1280,1920}){
+   Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);yield return Capture("dialogue-long-"+width);
+   var scroll=typeof(PassengerDialogueUI).GetField("scroll",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);scroll.SetValue(null,new Vector2(0,100000));yield return Capture("dialogue-long-bottom-"+width);
+   var position=(Vector2)scroll.GetValue(null);Check(position.y>0&&position.y<100000,"long dialogue scroll reaches and clamps to last choice "+width);scroll.SetValue(null,Vector2.zero);
+  }
+  longDialoguePreview=false;Time.timeScale=timeScale;
+ }
  IEnumerator Ready(){s=null;while(!s||!s.StartupReady||s.business.IsRestoring){foreach(var item in FindObjectsOfType<DriveSession>())if(!item.IsSimulationBot)s=item;yield return null;}yield return null;}
  void Pose(MapStop stop){var t=s.taxi;t.body.velocity=t.body.angularVelocity=Vector3.zero;t.body.position=stop.Kerb+Vector3.up*.65f;t.body.rotation=Quaternion.LookRotation(stop.Direction);t.transform.SetPositionAndRotation(t.body.position,t.body.rotation);Physics.SyncTransforms();s.law.ResetObservation();s.manners.Suppress(2);}
  IEnumerator ReviewSingleMenus(){
@@ -116,7 +146,10 @@ public sealed class BrightUIProbe:MonoBehaviour {
   var selectedRoute=jobs.nav.hdRoute;var cue=s.GetComponent<DrivingReadability>().TurnCue;Check(cue.Valid&&cue.Distance>=0,"single turn card reads live directed route");Check(jobs.nav.hdRoute==selectedRoute,"turn card never replaces selected route");yield return Capture("05a-single-navigation");
   Check(map.Open(),"active single map opens");yield return Capture("05b-single-active-map");map.Close();
   s.requests.BeginKind(RequestKind.Comfort);s.requests.AdvanceSafeStop(3);yield return Capture("05-single-passenger-request");
-  Check(PassengerDialogueUI.PortraitIdentity(s)==passengerIdentity,"request preserves portrait identity");s.requests.request.DeferSafety();Pose(jobs.stops[jobs.current.drop]);Check(jobs.Interact(),"fixture native arrival and one settlement");
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-hudDialogueReview")>=0)yield return ReviewDialogue();
+  Check(PassengerDialogueUI.PortraitIdentity(s)==passengerIdentity,"request preserves portrait identity");s.requests.request.DeferSafety();
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-hudDialogueReview")>=0)yield return ReviewLongDialogue();
+  Pose(jobs.stops[jobs.current.drop]);Check(jobs.Interact(),"fixture native arrival and one settlement");
   var receipt=s.GetComponent<RideCompletionPanel>();if(!receipt.Open)receipt.ShowLast();int income=s.business.ledger.Income;
   Check(receipt.Open&&receipt.Receipt.Contains("실수령"),"real receipt fields available");Check(receipt.PortraitIndex==passengerPortrait,"settled receipt preserves passenger portrait");yield return Capture("06-single-receipt");
   int facilitiesCash=s.business.ledger.Account.Cash;var facilitiesRoute=jobs.nav.hdRoute;

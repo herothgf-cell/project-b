@@ -78,7 +78,6 @@ public class DrivingReadability : MonoBehaviour {
   GUI.EndGroup();
   if(GUI.Button(new Rect(x,328,Size,32),"지도 (M)",KoreanText.Button(UiReadability.Font(13))))overlay.Open();
   if(Facilities){var status=GetComponent<HybridMapStatus>();Panel(new Rect(x-310,42,300,145));GUI.Label(new Rect(x-300,50,280,130),"시설 □ 주황: 임시 / 초록: 확인\n"+(status?status.current:"시설 정보 없음"),label);}
-  var matrix=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.TRS(new Vector3(0,-285*scale),Quaternion.identity,new Vector3(scale,scale,1));
   DrawNavigation(29);GUI.matrix=originalMatrix;
  }
  public string GoalDistance {get{var j=session.jobs;if(j.nav.RetainingPreviousRoute)return "경로 재탐색 중";return (j.trip.State==TripState.ToPickup?"승차까지":j.trip.State==TripState.OnTrip?(j.PassengerViaPending?"경유까지":"하차까지"):"도착까지")+" "+NavigationCue.FormatDistance(j.nav.remaining);}}
@@ -89,12 +88,12 @@ public class DrivingReadability : MonoBehaviour {
  }}
  public static Rect FollowingManeuverBounds(float x,float y){return new Rect(x+222,y+10,80,64);}
  void DrawNavigation(float x){
-  var nav=session.jobs.nav;const float y=411;const float width=320;float height=SignalTarget!=null?196:140;var cue=TurnCue;
+  var nav=session.jobs.nav;const float y=96;const float width=320;float height=SignalTarget!=null?188:140;var cue=TurnCue;
   if(!cue.Valid){
    Panel(new Rect(x-5,y,width,height));
    GUI.Label(new Rect(x+8,y+5,Size-16,44),nav.RetainingPreviousRoute?"경로 재탐색 중\n흐린 선은 이전 경로":nav.HasDestination?nav.instruction:"어디로 갈까요?",new GUIStyle(label){fontSize=UiReadability.Font(16)});
    GUI.Label(new Rect(x+8,y+54,Size-16,28),nav.HasDestination?NavigationSummary:"M 지도에서 호출을 선택하세요",new GUIStyle(label){fontSize=UiReadability.Font(13)});
-   DrawCompactSignal(x,y+138,false);
+   DrawCompactSignal(x,y+134,false);
    GUI.enabled=nav.HasDestination&&!session.paused;
    if(GUI.Button(new Rect(x+8,y+96,Size-16,27),(nav.PreferFastest?"짧은 길":"빠른 길")+"  Tab",KoreanText.Button(UiReadability.Font(13))))nav.TogglePreference();GUI.enabled=true;return;
   }
@@ -107,10 +106,10 @@ public class DrivingReadability : MonoBehaviour {
   var roadStyle=new GUIStyle(ink){fontSize=UiReadability.Font(15),wordWrap=false};
   GUI.Label(new Rect(x+78,y+46,135,27),new GUIContent(UiReadability.Ellipsis(road,roadStyle,135),road),roadStyle);
 
-  if(cue.HasNext&&!session.services.PostTripVisible){var next=FollowingManeuverBounds(x,y);NavigationArrow.Draw(new Rect(next.x+24,next.y,32,32),cue.NextMove,Color.white);GUI.Label(new Rect(next.x,next.y+35,next.width,26),NavigationCue.FormatDistance(cue.NextDistance),new GUIStyle(ink){fontSize=UiReadability.Font(14),alignment=TextAnchor.MiddleCenter,wordWrap=false});}
+  if(cue.HasNext&&!session.services.PostTripVisible){var next=FollowingManeuverBounds(x,y);NavigationArrow.Draw(new Rect(next.x+24,next.y,32,32),cue.NextMove,Color.white);GUI.Label(new Rect(next.x-12,next.y+35,next.width+24,26),"이후 "+NavigationCue.FormatDistance(cue.NextDistance),new GUIStyle(ink){fontSize=UiReadability.Font(12),alignment=TextAnchor.MiddleCenter,wordWrap=false});}
   if(cue.Move==NavigationMove.Arrival||cue.Move==NavigationMove.Straight)GUI.Label(new Rect(x+79,y+76,195,23),cue.Move==NavigationMove.Arrival?(session.world.map.hybrid?"오른쪽 승하차 지점":"목적지에서 정차"):"목적지까지 직진",new GUIStyle(ink){fontSize=UiReadability.Font(12)});
   GUI.Label(new Rect(x+8,y+107,182,23),GoalDistance,new GUIStyle(ink){fontSize=UiReadability.Font(11)});
-  DrawCompactSignal(x,y+138,true);
+  DrawCompactSignal(x,y+134,true);
   GUI.enabled=!session.paused;
   if(GUI.Button(new Rect(x+196,y+104,76,26),new GUIContent(nav.PreferFastest?"짧은 길":"빠른 길","Tab · 경로 변경"),KoreanText.Button(UiReadability.Font(12))))nav.TogglePreference();GUI.enabled=true;
  }
@@ -166,20 +165,23 @@ public class DrivingReadability : MonoBehaviour {
   return seconds>=0&&!float.IsNaN(seconds)&&!float.IsInfinity(seconds)?"신호 변경까지 "+Mathf.CeilToInt(seconds)+"초":"";
  }}
  public NextSignalPreview NextSignalPreview {get{return !session||!session.traffic||SignalTarget==null?global::NextSignalPreview.Unknown:session.traffic.PreviewNextSignal(SignalTarget,SignalAxis,SignalSign);}}
+ public SignalHeadPresentation.Head SignalHead {get{return SignalHeadPresentation.Resolve(session.world.map,SignalTarget,SignalAxis,SignalSign);}}
  void DrawCompactSignal(float x,float y,bool blue){
-  if(SignalTarget==null)return;var next=NextSignalPreview;
-  var style=new GUIStyle(label){fontSize=UiReadability.Font(22),normal={textColor=blue?Color.white:CasualUI.Ink}};
-  var housing=new Rect(x+10,y+2,110,32);CasualUI.RoundedFill(housing,new Color(.10f,.14f,.19f));
-  var dim=new Color(.24f,.29f,.34f);float cy=y+18;
-  for(int i=0;i<4;i++)Circle(new Vector2(x+24+i*27,cy),dim,19);
+  if(SignalTarget==null)return;var next=NextSignalPreview;var head=SignalHead;Color ink=blue?Color.white:CasualUI.Ink;
+  var caption=new GUIStyle(label){fontSize=UiReadability.Font(11),wordWrap=false,normal={textColor=ink}};
+  GUI.Label(new Rect(x+8,y-5,294,25),head.lamps==0?"신호 형식 미확인":"다음 · "+head.Caption,caption);
+  if(head.lamps==0)return;
+  float lampX=x+24,cy=y+34;CasualUI.RoundedFill(new Rect(x+10,y+18,head.lamps*27+4,30),new Color(.10f,.14f,.19f));
+  for(int i=0;i<head.lamps;i++)Circle(new Vector2(lampX+i*27,cy),new Color(.24f,.29f,.34f),18);
+  bool left=head.left&&session.traffic.HasLeftMovement(SignalTarget,SignalAxis,SignalSign);
   if(next.Known){
-   if(next.Straight==SignalColor.Red)Circle(new Vector2(x+24,cy),new Color(1,.23f,.20f),19);
-   if(next.Straight==SignalColor.Yellow||next.Left==SignalColor.Yellow||next.Right==SignalColor.Yellow)Circle(new Vector2(x+51,cy),new Color(1,.79f,.12f),19);
-   if(next.Left==SignalColor.Green)NavigationArrow.Draw(new Rect(x+68,y+8,20,20),NavigationMove.Left,new Color(.22f,1,.46f));
-   if(next.Straight==SignalColor.Green)Circle(new Vector2(x+105,cy),new Color(.22f,1,.46f),19);
-   else if(next.Right==SignalColor.Green)NavigationArrow.Draw(new Rect(x+95,y+8,20,20),NavigationMove.Right,new Color(.22f,1,.46f));
+   var forward=head.turn<0?next.Left:head.turn>0?next.Right:next.Straight;
+   if(forward==SignalColor.Red)Circle(new Vector2(lampX,cy),new Color(1,.23f,.20f),18);
+   if(forward==SignalColor.Yellow||left&&next.Left==SignalColor.Yellow)Circle(new Vector2(lampX+27,cy),new Color(1,.79f,.12f),18);
+   if(left&&next.Left==SignalColor.Green)NavigationArrow.Draw(new Rect(lampX+44,cy-10,20,20),NavigationMove.Left,new Color(.22f,1,.46f));
+   if(forward==SignalColor.Green)Circle(new Vector2(lampX+(head.lamps-1)*27,cy),new Color(.22f,1,.46f),18);
   }
-  GUI.Label(new Rect(x+135,y-1,154,36),next.Known?next.CountdownText:"—",style);
+  GUI.Label(new Rect(x+135,y+14,154,36),next.Known?next.CountdownText:"—",new GUIStyle(label){fontSize=UiReadability.Font(22),normal={textColor=ink}});
  }
  static void Panel(Rect r){CasualUI.Panel(r);}
  static Texture2D circleTexture;

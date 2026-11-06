@@ -31,9 +31,9 @@ public static class ChoiceEffectsRuntimeChecks {
    foreach(var viewport in new[]{new Vector3(1280,720,1),new Vector3(1920,1080,1),new Vector3(1280,720,1.5f),new Vector3(1920,1080,2)}){
     Rect panel=PassengerDialogueUI.PanelBounds(viewport.x,viewport.y,viewport.z,12000);
     Check(panel.xMin>=0&&panel.yMin>=0&&panel.xMax<=viewport.x/viewport.z&&panel.yMax<=viewport.y/viewport.z,"long dialogue panel stays inside scaled viewport "+viewport);
-    Near(panel.height,viewport.y/viewport.z-40,"long dialogue leaves vertical screen margins");
-    Rect shortPanel=PassengerDialogueUI.PanelBounds(viewport.x,viewport.y,viewport.z,240);Near(shortPanel.height,240,"short dialogue retains natural height");
-    Check(panel.width<=600&&panel.width<=viewport.x/viewport.z-40,"dialogue width fits scaled viewport");
+    Near(panel.height,Math.Min(420,viewport.y/viewport.z*.48f),"long dialogue scrolls below the road horizon");
+    Rect shortPanel=PassengerDialogueUI.PanelBounds(viewport.x,viewport.y,viewport.z,240);Near(shortPanel.height,Math.Min(240,viewport.y/viewport.z*.48f),"short dialogue retains natural height within road clearance");
+    Check(panel.width<=860&&panel.width<=viewport.x/viewport.z-40,"dialogue width fits scaled viewport");
    }
    Check(PassengerRequestChoices.SatisfactionEffect(RequestKind.Empathy,PassengerReply.Accept).Contains("즉시 만족도 +3점"),"request description uses independent immediate value");
    Check(PassengerRequestChoices.SatisfactionEffect(RequestKind.Empathy,PassengerReply.Accept).Contains("운행 중 만족도 +6점/분"),"request description exposes per-minute unit");
