@@ -52,3 +52,4 @@ Quiet 수락 후 실제 운전자 선택적 잡담 입력만 새 위반으로 �
 - 보호 저장22 불변. 자동 생성 장면은 백업/해시 확인 후 ID만 바뀐 소스를 복원했다. 빌드 및 초기화 메타데이터는 출하에 포함한다.
 - 원격 main4d79da3까지 통합. 정상 fast-forward push로 배포하며 원본 D 작업폴더의 다른 작업 변경은 건드리지 않는다. 이력의 실제 커밋은 git log -1 --oneline -- docs/work-history/2026-11-07-passenger-trait-expansion.md로 확인한다.
 - 출하 141파일 / 124778132바이트. 통합 manifest와 기존 PVP VerifyOnly 모두 종료0.
+- 원격 반영 확인: git push origin HEAD:main 종료0, d9fdc8c9410c07ca0fbeae9ceff72ca1ba168cd2와 git ls-remote origin refs/heads/main 일치. 이 영수증 후속 커밋은 문서만 변경한다.

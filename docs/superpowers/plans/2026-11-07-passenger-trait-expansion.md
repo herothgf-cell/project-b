@@ -24,7 +24,7 @@
 - [x] Requests: Quiet 위반 감지/근거/복원/중복감점 방지·모델/Player 검사.
 - [x] Editor/content: 특성·허용조합·설정카탈로그·프로필이관·기본승객 예제·UI 테스트. 기존24를 보존하고 신규 예제는 최대32 내 추가.
 - [x] Integration/docs: 요소별 표·대사/선택/효과·흐름·관리방법·체크리스트/범위/이력.
-- [ ] Independent review, 전체 관련 테스트, 실제Player, 통합빌드·LAN·manifest 검증; main 병합 후 push 및 원격HEAD 확인.
+- [x] Independent review, 전체 관련 테스트, 실제Player, 통합빌드·LAN·manifest 검증; main 병합 후 push 및 원격HEAD 확인.
 
 ## 검토 초점
 
