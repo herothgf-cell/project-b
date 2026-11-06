@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 // One host-owned ledger for a passenger's choices. Business time also accounts for
@@ -8,6 +8,7 @@ public partial class PassengerJobs {
  double choiceEffectsElapsed;
  string choiceEffectsTrip="",choiceEffectsOwner="";
  bool choiceEffectsLegacyTransport;
+ public PassengerContent PassengerContent {get{return Behavior==null?global::PassengerContent.Shared:Behavior.Content;}}
  public ChoiceEffectLedger ChoiceEffects {get{return choiceEffects;}}
  public bool ChoiceEffectsActive {get{return ChoiceEffectDefinition.Enabled&&choiceEffects!=null&&!choiceEffects.cancelled;}}
  double ChoiceSatisfaction {get{return Math.Max(0,Math.Min(100,StartSatisfaction+session.manners.ledger.Score-100+(session.requests?session.requests.TotalSatisfactionDelta:0)+ComfortRecovered+(choiceEffects==null?0:choiceEffects.satisfactionContribution)));}}
@@ -42,7 +43,7 @@ public partial class PassengerJobs {
  }
  public void SelectChoiceEffect(string eventId,string choiceId,bool activate=true){
   if(!PrepareChoiceEffects())return;TickChoiceEffects();
-  ApplyChoiceDelta(choiceEffects.Select(eventId,choiceId,ChoiceSatisfaction,ChoiceFatigue,activate&&trip.State==TripState.OnTrip));
+  ApplyChoiceDelta(choiceEffects.Select(eventId,ChoiceEffectDefinition.Read(choiceId,PassengerContent),ChoiceSatisfaction,ChoiceFatigue,activate&&trip.State==TripState.OnTrip));
  }
  public void RecordRequestChoice(RequestKind kind,PassengerReply reply){if(kind==RequestKind.LostItem)return;SelectChoiceEffect(ChoiceTrip+":request:"+kind,"request."+kind+"."+reply);}
  void RecordBehaviorChoice(int index,bool followup){
@@ -81,7 +82,7 @@ public partial class PassengerJobs {
   if(snapshot.choiceEffectsVersion!=1||snapshot.choiceEffectsPresent!=(snapshot.choiceEffects!=null)||double.IsNaN(snapshot.choiceEffectsElapsed)||double.IsInfinity(snapshot.choiceEffectsElapsed)||snapshot.choiceEffectsElapsed<0)throw new ArgumentException("Invalid choice effect snapshot");
   if(snapshot.choiceEffectsLegacyTransport&&(snapshot.choiceEffects!=null||snapshot.current==null||snapshot.trip==null||(snapshot.trip.state!=TripState.ToPickup&&snapshot.trip.state!=TripState.OnTrip)))throw new ArgumentException("Invalid legacy transport marker");
   if(snapshot.choiceEffects==null){if(snapshot.choiceEffectsElapsed!=0||!string.IsNullOrEmpty(snapshot.choiceEffectsTrip)||!string.IsNullOrEmpty(snapshot.choiceEffectsOwner))throw new ArgumentException("Missing choice ledger");return;}
-  if(!ChoiceEffectDefinition.Enabled)throw new ArgumentException("Choice ledger requires its session profile");snapshot.choiceEffects.Validate();
+  if(!ChoiceEffectDefinition.Enabled)throw new ArgumentException("Choice ledger requires its session profile");snapshot.choiceEffects.Validate(snapshot.behavior==null?null:snapshot.behavior.Content);
   if(snapshot.current!=null&&snapshot.choiceEffectsOwner!=(snapshot.current.candidateSeed??snapshot.offerId??""))throw new ArgumentException("Choice owner mismatch");
   if(snapshot.trip!=null&&snapshot.trip.state==TripState.ToPickup){if(!string.IsNullOrEmpty(snapshot.choiceEffectsTrip))throw new ArgumentException("Pickup choice already has trip");foreach(var entry in snapshot.choiceEffects.entries)if(entry.active||entry.completed)throw new ArgumentException("Pickup effects already applied");}
   string prefix=string.IsNullOrEmpty(snapshot.choiceEffectsTrip)?"pickup:"+snapshot.choiceEffectsOwner:snapshot.choiceEffectsTrip;

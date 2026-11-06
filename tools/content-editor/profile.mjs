@@ -21,10 +21,11 @@ export function validateProfile(p,catalog,{checkHash=true}={}) {
  const entries=new Map(catalog.entries.filter(e=>e.editable&&(p.schemaVersion===2||!e.id.startsWith('choice.'))).map(e=>[e.id,e])); const seen=new Set();
  for(const v of p.values){if(!exact(v,['id','value'])||typeof v.id!=='string'||typeof v.value!=='string'){err('값 형식 오류');continue;}const e=entries.get(v.id);if(!e||seen.has(v.id)){err(`알 수 없거나 중복된 ID: ${v.id}`);continue;}seen.add(v.id);
  if(!v.value.isWellFormed())err(`${v.id}: 올바르지 않은 유니코드입니다.`);
- if(v.id==='passenger.presets'){try{errors.push(...PassengerPresets.validate(parseJson(v.value)));}catch{err('승객 프리셋 JSON 형식 오류');}}
+ if(v.id==='passenger.presets'){try{errors.push(...PassengerPresets.validate(parseJson(v.value),catalog));}catch{err('승객 프리셋 JSON 형식 오류');}}
  if(e.type==='text'&&v.value.length>(v.id==='passenger.presets'?32000:4000))err(`${v.id}: 텍스트가 너무 깁니다.`);
  if(e.type==='boolean'&&!['true','false'].includes(v.value))err(`${v.id}: 참/거짓 값 오류`);
  if(e.type==='number'||e.type==='integer'){const n=Number(v.value);if(!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(v.value)||!Number.isFinite(n)||(e.type==='integer'&&!Number.isSafeInteger(n))||(e.min!=null&&n<e.min)||(e.max!=null&&n>e.max))err(`${v.id}: 허용 범위 오류`);}}
+ if(p.schemaVersion===1){try{const d=parseJson(p.values.find(v=>v.id==='passenger.presets')?.value||'{}');if(d.version===2&&d.presets.some(x=>x.overrides?.some(o=>o.id.startsWith('choice.'))))err('개별 선택 효과는 최신 프로필 형식으로 이관한 뒤 사용하세요.');}catch{}}
  const oldDrunk=DRUNK_SETTINGS.every(e=>!seen.has(e.id));
  for(const id of entries.keys())if(!seen.has(id)&&id!=='passenger.presets'&&!(oldDrunk&&DRUNK_SETTINGS.some(e=>e.id===id)))err(`누락된 ID: ${id}`);
  const vals=new Map(p.values.filter(v=>v&&typeof v.id==='string'&&typeof v.value==='string').map(v=>[v.id,v.value]));

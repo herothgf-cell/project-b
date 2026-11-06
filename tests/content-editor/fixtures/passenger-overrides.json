@@ -1,0 +1,698 @@
+{
+  "cases": [
+    {
+      "name": "empty overrides inherit",
+      "valid": true,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": []
+          }
+        ]
+      }
+    },
+    {
+      "name": "zero probability and timed action",
+      "valid": true,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "type.Drunk.vomitPercent",
+                "value": "0"
+              },
+              {
+                "id": "effect.luggage.prepareSeconds",
+                "value": "17"
+              },
+              {
+                "id": "choice.type.Luggage.0.immediate.satisfaction",
+                "value": "7"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "actual action dialogue",
+      "valid": true,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "type.Luggage.intro.0",
+                "value": "조심히 부탁해요."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "random request and situation effects",
+      "valid": true,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "request.Comfort.prompt",
+                "value": "부드럽게 부탁해요."
+              },
+              {
+                "id": "choice.request.Comfort.Accept.end.success.satisfaction",
+                "value": "9"
+              },
+              {
+                "id": "situation.Jolt.reply.0",
+                "value": "확인했어요."
+              },
+              {
+                "id": "choice.situation.Jolt.0.immediate.fatigue",
+                "value": "2"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "global quota",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "type.Drunk.dailyMax",
+                "value": "3"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "global spawn",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "type.Drunk.spawnPercent",
+                "value": "50"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "global cap",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "common.requestCap",
+                "value": "20"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "wrong trait",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "effect.food.spillPercent",
+                "value": "100"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "non primary drunk dialogue",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "type.Drunk.intro.0",
+                "value": "hello"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "legacy request effect",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "request.Comfort.success",
+                "value": "10"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "reference only unanswered",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "request.Comfort.unanswered",
+                "value": "-4"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "over probability",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "type.Drunk.vomitPercent",
+                "value": "101"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "fraction probability",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "type.Drunk.vomitPercent",
+                "value": ".5"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "infinite",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "effect.luggage.prepareSeconds",
+                "value": "Infinity"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "whitespace number",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "effect.luggage.prepareSeconds",
+                "value": " 5"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "empty text",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "type.Luggage.intro.0",
+                "value": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "blank text",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "type.Luggage.intro.0",
+                "value": "  "
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "long text",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "type.Luggage.intro.0",
+                "value": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "non string",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "type.Drunk.vomitPercent",
+                "value": 10
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "duplicate key",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "type.Drunk.vomitPercent",
+                "value": "0"
+              },
+              {
+                "id": "type.Drunk.vomitPercent",
+                "value": "100"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "unknown row field",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "type.Drunk.vomitPercent",
+                "value": "0",
+                "other": 1
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "food zero consumption threshold and full spill",
+      "valid": true,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Food",
+            "traits": [
+              "item.food"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "effect.food.consumeProgress",
+                "value": "0"
+              },
+              {
+                "id": "effect.food.spillPercent",
+                "value": "100"
+              },
+              {
+                "id": "effect.food.spill",
+                "value": "9"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "legacy food satisfaction",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Food",
+            "traits": [
+              "item.food"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "effect.food.satisfaction",
+                "value": "9"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "sleep followup",
+      "valid": true,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Sleeping",
+            "traits": [
+              "body.sleepy"
+            ],
+            "intro": "",
+            "overrides": [
+              {
+                "id": "choice.type.SleepingFollowup.0.immediate.satisfaction",
+                "value": "6"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "missing required overrides",
+      "valid": false,
+      "data": {
+        "version": 2,
+        "presets": [
+          {
+            "id": "sample",
+            "name": "짐과 음주",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "item.luggage"
+            ],
+            "intro": ""
+          }
+        ]
+      }
+    }
+  ]
+}

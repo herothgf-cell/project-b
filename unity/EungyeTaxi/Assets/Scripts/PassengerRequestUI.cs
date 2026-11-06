@@ -28,7 +28,7 @@ public class PassengerRequestUI : MonoBehaviour {
  public bool LawClear {get{return LawLedger.ViolationCount(session.law.ledger.Events,boardingLawCount)==0;}}
  public void ExemptSystemRoute(string reason){foreach(var o in observations)if(o)o.SystemRouteReason=reason;}
  void Clear(){foreach(var o in observations)if(o){if(Application.isPlaying)Destroy(o);else DestroyImmediate(o);}observations.Clear();active=-1;schedule=null;stopSeconds=0;finished=lostItem=legacy=false;empty.Restore(new PassengerRequestSnapshot{resolved=true,response="요청 없음"});}
- PassengerRequestObservation NewObservation(){var o=gameObject.AddComponent<PassengerRequestObservation>();o.enabled=false;o.session=session;return o;}
+ PassengerRequestObservation NewObservation(){var o=gameObject.AddComponent<PassengerRequestObservation>();o.enabled=false;o.session=session;o.request.Content=session.jobs.PassengerContent;return o;}
  public static RequestKind? Representative(PassengerType type,int variant){switch(type){case PassengerType.Comfort:return RequestKind.Comfort;case PassengerType.Hurried:return variant==0?RequestKind.Eta:RequestKind.OnTime;case PassengerType.RouteChecking:return variant==0?RequestKind.LargeRoad:variant==1?RequestKind.ShortRoad:RequestKind.RouteAdvice;case PassengerType.Errand:return RequestKind.ViaStop;case PassengerType.PrecisionStop:return RequestKind.SafeStop;default:return null;}}
  public RequestKind[] EligibleRequests(){
   var eligible=new List<RequestKind>((RequestKind[])Enum.GetValues(typeof(RequestKind)));eligible.Remove(RequestKind.LostItem);
