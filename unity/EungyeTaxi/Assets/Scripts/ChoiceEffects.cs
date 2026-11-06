@@ -1,0 +1,66 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+
+[Serializable] public sealed class ChoiceEffectPhase {
+ public double satisfaction,fatigue,satisfactionPercent,fatiguePercent;
+ public ChoiceEffectPhase Copy(){return (ChoiceEffectPhase)MemberwiseClone();}
+ public void Validate(){ChoiceEffectDefinition.Finite(satisfaction,fatigue,satisfactionPercent,fatiguePercent);}
+}
+[Serializable] public sealed class ChoiceEffectDuring {
+ public double satisfactionPerMinute,fatiguePerMinute,satisfactionPercentPerMinute,fatiguePercentPerMinute,fatigueGrowthPercent,motionPenaltyDelta;
+ public ChoiceEffectDuring Copy(){return (ChoiceEffectDuring)MemberwiseClone();}
+ public void Validate(){ChoiceEffectDefinition.Finite(satisfactionPerMinute,fatiguePerMinute,satisfactionPercentPerMinute,fatiguePercentPerMinute,fatigueGrowthPercent,motionPenaltyDelta);}
+}
+[Serializable] public sealed class ChoiceEffectDefinition {
+ public string choiceId;
+ public ChoiceEffectPhase immediate=new ChoiceEffectPhase(),success=new ChoiceEffectPhase(),failure=new ChoiceEffectPhase(),neutral=new ChoiceEffectPhase();
+ public ChoiceEffectDuring during=new ChoiceEffectDuring();
+ public bool supportsSuccess,supportsFailure,supportsNeutral;
+ public static bool Enabled {get{return ContentTuning.Int("choice.effects.version",0)==1;}}
+ internal static void Finite(params double[] values){foreach(double x in values)if(double.IsNaN(x)||double.IsInfinity(x))throw new ArgumentException("Nonfinite choice effect");}
+ static double Value(string id){double x=ContentTuning.Number(id,double.NaN);Finite(x);return x;}
+ static ChoiceEffectPhase Phase(string prefix){return new ChoiceEffectPhase{satisfaction=Value(prefix+".satisfaction"),fatigue=Value(prefix+".fatigue"),satisfactionPercent=Value(prefix+".satisfactionPercent"),fatiguePercent=Value(prefix+".fatiguePercent")};}
+ public static ChoiceEffectDefinition Read(string choiceId){
+ if(string.IsNullOrEmpty(choiceId))throw new ArgumentException("Missing choice ID");string p="choice."+choiceId;var d=new ChoiceEffectDefinition{choiceId=choiceId,immediate=Phase(p+".immediate")};
+ d.during=new ChoiceEffectDuring{satisfactionPerMinute=Value(p+".during.satisfactionPerMinute"),fatiguePerMinute=Value(p+".during.fatiguePerMinute"),satisfactionPercentPerMinute=Value(p+".during.satisfactionPercentPerMinute"),fatiguePercentPerMinute=Value(p+".during.fatiguePercentPerMinute"),fatigueGrowthPercent=Value(p+".during.fatigueGrowthPercent"),motionPenaltyDelta=Value(p+".during.motionPenaltyDelta")};
+ d.supportsSuccess=!double.IsNaN(ContentTuning.Number(p+".end.success.satisfaction",double.NaN));d.supportsFailure=!double.IsNaN(ContentTuning.Number(p+".end.failure.satisfaction",double.NaN));d.supportsNeutral=!double.IsNaN(ContentTuning.Number(p+".end.neutral.satisfaction",double.NaN));
+ if(d.supportsSuccess)d.success=Phase(p+".end.success");if(d.supportsFailure)d.failure=Phase(p+".end.failure");if(d.supportsNeutral)d.neutral=Phase(p+".end.neutral");d.Validate();return d;
+ }
+ public ChoiceEffectDefinition Copy(){var c=(ChoiceEffectDefinition)MemberwiseClone();c.immediate=immediate.Copy();c.during=during.Copy();c.success=success.Copy();c.failure=failure.Copy();c.neutral=neutral.Copy();return c;}
+ public void Validate(){if(string.IsNullOrEmpty(choiceId)||!(choiceId.StartsWith("request.",StringComparison.Ordinal)||choiceId.StartsWith("type.",StringComparison.Ordinal)||choiceId.StartsWith("situation.",StringComparison.Ordinal)))throw new ArgumentException("Invalid choice ID");if(immediate==null||during==null||success==null||failure==null||neutral==null)throw new ArgumentException("Missing choice phase");immediate.Validate();during.Validate();success.Validate();failure.Validate();neutral.Validate();}
+ public static string Describe(string choiceId){var d=Read(choiceId);var parts=new List<string>();DescribePhase(parts,"즉시",d.immediate);Add(parts,"운행 중 만족도",d.during.satisfactionPerMinute,"점/분");Add(parts,"운행 중 피로",d.during.fatiguePerMinute,"점/분");Add(parts,"운행 중 만족도 기준값",d.during.satisfactionPercentPerMinute,"%/분");Add(parts,"운행 중 피로 기준값",d.during.fatiguePercentPerMinute,"%/분");Add(parts,"자연 피로 증가율",d.during.fatigueGrowthPercent,"%");Add(parts,"급가감속 감점",d.during.motionPenaltyDelta,"점");if(d.supportsSuccess)DescribePhase(parts,"성공 종료",d.success);if(d.supportsFailure)DescribePhase(parts,"실패 종료",d.failure);if(d.supportsNeutral)DescribePhase(parts,"판정 없음 종료",d.neutral);return parts.Count==0?"추가 효과 없음":string.Join(", ",parts.ToArray());}
+ static void Add(List<string> p,string label,double v,string unit){if(v!=0)p.Add(label+" "+v.ToString("+0.###;-0.###",CultureInfo.InvariantCulture)+unit);}
+ static void DescribePhase(List<string> p,string label,ChoiceEffectPhase x){Add(p,label+" 만족도",x.satisfaction,"점");Add(p,label+" 피로",x.fatigue,"점");Add(p,label+" 현재 만족도",x.satisfactionPercent,"%");Add(p,label+" 현재 피로",x.fatiguePercent,"%");}
+}
+[Serializable] public struct ChoiceEffectDelta {public double satisfaction,fatigue;public ChoiceEffectDelta(double s,double f){satisfaction=s;fatigue=f;}}
+[Serializable] public sealed class ChoiceEffectState {
+ public string eventId;public ChoiceEffectDefinition definition;public bool active,completed;public int outcome;public double baselineSatisfaction,baselineFatigue,elapsedSeconds,requestEnd;
+ public ChoiceEffectState Copy(){var c=(ChoiceEffectState)MemberwiseClone();c.definition=definition.Copy();return c;}
+}
+[Serializable] public sealed class ChoiceEffectLedger {
+ public List<ChoiceEffectState> entries=new List<ChoiceEffectState>();public bool cancelled;public double satisfactionContribution,requestEndContribution;
+ static double Clamp(double x,double min,double max){return Math.Max(min,Math.Min(max,x));}
+ static int Rounded(double x){return (int)Math.Round(Clamp(x,int.MinValue,int.MaxValue),MidpointRounding.AwayFromZero);}
+ public int SatisfactionDelta {get{return Rounded(satisfactionContribution);}}
+ public int RequestEndDelta {get{return Rounded(requestEndContribution);}}
+ public int MotionPenaltyDelta {get{double x=0;if(!cancelled)foreach(var e in entries)if(e.active&&!e.completed)x+=e.definition.during.motionPenaltyDelta;return Rounded(Clamp(x,-100,100));}}
+ public double FatigueGrowthPercent {get{double x=0;if(!cancelled)foreach(var e in entries)if(e.active&&!e.completed)x+=e.definition.during.fatigueGrowthPercent;return Clamp(x,-100,1000);}}
+ public bool HasEvent(string eventId){return Find(eventId)!=null;}
+ ChoiceEffectState Find(string id){foreach(var e in entries)if(e.eventId==id)return e;return null;}
+ public double RawRequestEndFor(string eventId){var e=Find(eventId);return e==null?0:Clamp(e.requestEnd,-100,100);}
+ public int RequestEndFor(string eventId){return Rounded(RawRequestEndFor(eventId));}
+ static void Stats(double s,double f){ChoiceEffectDefinition.Finite(s,f);if(s<0||s>100||f<0||f>100)throw new ArgumentException("Stats outside 0..100");}
+ ChoiceEffectDelta Apply(ChoiceEffectPhase p,double s,double f,bool request,ChoiceEffectState e){double ds=Clamp(s+p.satisfaction+s*p.satisfactionPercent/100,0,100)-s,df=Clamp(f+p.fatigue+f*p.fatiguePercent/100,0,100)-f;if(request){ds=Clamp(p.satisfaction+s*p.satisfactionPercent/100,-100,100);e.requestEnd=ds;requestEndContribution+=ds;}else satisfactionContribution+=ds;return new ChoiceEffectDelta(ds,df);}
+ ChoiceEffectDelta Activate(ChoiceEffectState e,double s,double f){var d=Apply(e.definition.immediate,s,f,false,e);e.baselineSatisfaction=Clamp(s+d.satisfaction,0,100);e.baselineFatigue=Clamp(f+d.fatigue,0,100);e.active=true;return d;}
+ public ChoiceEffectDelta Select(string eventId,string choiceId,double satisfaction,double fatigue,bool activate=true){return Select(eventId,ChoiceEffectDefinition.Read(choiceId),satisfaction,fatigue,activate);}
+ public ChoiceEffectDelta Select(string eventId,ChoiceEffectDefinition definition,double satisfaction,double fatigue,bool activate=true){Stats(satisfaction,fatigue);if(string.IsNullOrEmpty(eventId)||definition==null)throw new ArgumentException("Invalid selection");definition.Validate();var old=Find(eventId);if(old!=null){if(old.definition.choiceId!=definition.choiceId)throw new ArgumentException("Event choice mismatch");return new ChoiceEffectDelta();}if(cancelled)return new ChoiceEffectDelta();var e=new ChoiceEffectState{eventId=eventId,definition=definition.Copy()};entries.Add(e);return activate?Activate(e,satisfaction,fatigue):new ChoiceEffectDelta();}
+ public ChoiceEffectDelta ActivatePending(double satisfaction,double fatigue){Stats(satisfaction,fatigue);var total=new ChoiceEffectDelta();if(cancelled)return total;foreach(var e in entries)if(!e.active&&!e.completed){var d=Activate(e,satisfaction,fatigue);satisfaction=Clamp(satisfaction+d.satisfaction,0,100);fatigue=Clamp(fatigue+d.fatigue,0,100);total.satisfaction+=d.satisfaction;total.fatigue+=d.fatigue;}return total;}
+ public ChoiceEffectDelta Advance(double seconds,double satisfaction,double fatigue){Stats(satisfaction,fatigue);ChoiceEffectDefinition.Finite(seconds);if(seconds<0)throw new ArgumentException("Negative elapsed time");var total=new ChoiceEffectDelta();if(cancelled||seconds==0)return total;double sr=0,fr=0;foreach(var e in entries)if(e.active&&!e.completed){var p=e.definition.during;sr+=p.satisfactionPerMinute+e.baselineSatisfaction*p.satisfactionPercentPerMinute/100;fr+=p.fatiguePerMinute+e.baselineFatigue*p.fatiguePercentPerMinute/100;e.elapsedSeconds+=seconds;}total.satisfaction=Clamp(satisfaction+sr*seconds/60,0,100)-satisfaction;total.fatigue=Clamp(fatigue+fr*seconds/60,0,100)-fatigue;satisfactionContribution+=total.satisfaction;return total;}
+ public ChoiceEffectDelta Complete(string eventId,int outcome,double satisfaction,double fatigue){Stats(satisfaction,fatigue);if(outcome < -1||outcome>1)throw new ArgumentException("Invalid outcome");var e=Find(eventId);if(e==null)throw new ArgumentException("Unknown event");if(e.completed){if(e.outcome!=outcome)throw new ArgumentException("Outcome mismatch");return new ChoiceEffectDelta();}if(cancelled||!e.active)return new ChoiceEffectDelta();if(outcome==1&&!e.definition.supportsSuccess||outcome==-1&&!e.definition.supportsFailure||outcome==0&&!e.definition.supportsNeutral)throw new ArgumentException("Unsupported choice outcome");var p=outcome==1?e.definition.success:outcome==-1?e.definition.failure:e.definition.neutral;var d=Apply(p,satisfaction,fatigue,e.definition.choiceId.StartsWith("request.",StringComparison.Ordinal),e);e.completed=true;e.outcome=outcome;e.active=false;return d;}
+ public ChoiceEffectDelta CompleteNonRequests(double satisfaction,double fatigue){Stats(satisfaction,fatigue);var total=new ChoiceEffectDelta();foreach(var e in entries)if(e.active&&!e.completed&&!e.definition.choiceId.StartsWith("request.",StringComparison.Ordinal)){var d=Complete(e.eventId,1,satisfaction,fatigue);satisfaction=Clamp(satisfaction+d.satisfaction,0,100);fatigue=Clamp(fatigue+d.fatigue,0,100);total.satisfaction+=d.satisfaction;total.fatigue+=d.fatigue;}return total;}
+ public void Cancel(){cancelled=true;foreach(var e in entries)e.active=false;}
+ public ChoiceEffectLedger Copy(){var c=(ChoiceEffectLedger)MemberwiseClone();c.entries=new List<ChoiceEffectState>();foreach(var e in entries)c.entries.Add(e.Copy());return c;}
+ static bool Equivalent(ChoiceEffectDefinition a,ChoiceEffectDefinition b){if(a.supportsSuccess!=b.supportsSuccess||a.supportsFailure!=b.supportsFailure||a.supportsNeutral!=b.supportsNeutral)return false;foreach(var field in typeof(ChoiceEffectDuring).GetFields())if(!field.GetValue(a.during).Equals(field.GetValue(b.during)))return false;var aa=new[]{a.immediate,a.success,a.failure,a.neutral};var bb=new[]{b.immediate,b.success,b.failure,b.neutral};for(int i=0;i<aa.Length;i++)foreach(var field in typeof(ChoiceEffectPhase).GetFields())if(!field.GetValue(aa[i]).Equals(field.GetValue(bb[i])))return false;return true;}
+ public void Validate(){ChoiceEffectDefinition.Finite(satisfactionContribution,requestEndContribution);if(entries==null||entries.Count>256)throw new ArgumentException("Invalid choice ledger");var ids=new HashSet<string>(StringComparer.Ordinal);double requestSum=0;foreach(var e in entries){if(e==null||string.IsNullOrEmpty(e.eventId)||e.eventId.Length>256||!ids.Add(e.eventId)||e.definition==null)throw new ArgumentException("Invalid event");e.definition.Validate();var expected=ChoiceEffectDefinition.Read(e.definition.choiceId);if(!Equivalent(e.definition,expected))throw new ArgumentException("Choice definition does not match session profile");Stats(e.baselineSatisfaction,e.baselineFatigue);ChoiceEffectDefinition.Finite(e.elapsedSeconds,e.requestEnd);if(e.completed&&(e.outcome==1&&!e.definition.supportsSuccess||e.outcome==-1&&!e.definition.supportsFailure||e.outcome==0&&!e.definition.supportsNeutral)||e.elapsedSeconds<0||e.requestEnd < -100||e.requestEnd>100||e.outcome < -1||e.outcome>1||e.completed&&e.active||cancelled&&e.active||!e.completed&&e.outcome!=0||e.requestEnd!=0&&(!e.completed||!e.definition.choiceId.StartsWith("request.",StringComparison.Ordinal)))throw new ArgumentException("Invalid choice state");requestSum+=e.requestEnd;}if(Math.Abs(requestSum-requestEndContribution)>1e-7)throw new ArgumentException("Inconsistent request contribution");}
+}

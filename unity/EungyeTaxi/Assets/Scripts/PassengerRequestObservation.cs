@@ -26,7 +26,7 @@ public class PassengerRequestObservation : MonoBehaviour {
  int MotionCount(){var m=session.manners;return m.accelEvents+m.brakeEvents+m.collisionEvents;}
  int Violations(){return LawLedger.ViolationCount(session.law.ledger.Events,lawBefore);}
  public bool LawClear {get{return Violations()==0;}}
- public bool RespondEta(int option){if(request.Kind!=RequestKind.Eta||request.Resolved||!SafeToRespond()||session.jobs.nav.path.Count<2)return false;float eta=session.jobs.nav.estimatedSeconds;float predicted=PassengerRequest.EtaSeconds(eta,option);if(float.IsNaN(predicted))return false;etaNav=eta;etaPredicted=predicted;etaAt=Time.time;etaSelected=true;request.Accept("내비 예상 "+EtaChoice(eta)+" / 안내 예상 "+EtaChoice(predicted)+" 뒤 도착 · 교통에 따라 달라질 수 있는 예상",option<0?PassengerReply.EtaFaster:option>0?PassengerReply.EtaRelaxed:PassengerReply.EtaNormal);resultUntil=Time.time+8;return true;}
+ public bool RespondEta(int option){if(request.Kind!=RequestKind.Eta||request.Resolved||!SafeToRespond()||session.jobs.nav.path.Count<2)return false;float eta=session.jobs.nav.estimatedSeconds;float predicted=PassengerRequest.EtaSeconds(eta,option);if(float.IsNaN(predicted))return false;etaNav=eta;etaPredicted=predicted;etaAt=Time.time;etaSelected=true;request.Accept("내비 예상 "+EtaChoice(eta)+" / 안내 예상 "+EtaChoice(predicted)+" 뒤 도착 · 교통에 따라 달라질 수 있는 예상",option<0?PassengerReply.EtaFaster:option>0?PassengerReply.EtaRelaxed:PassengerReply.EtaNormal);resultUntil=Time.time+8;ChoiceResponded();return true;}
  public bool SafeToRespond(){return session.requests.CanTalk;}
  bool ChangesRoute {get{return request.Kind==RequestKind.SafeStop||request.Kind==RequestKind.DestinationChange||request.Kind==RequestKind.ViaStop;}}
  public float ProposalExtraSeconds {get{return Mathf.Max(0,addedDistance)/4;}}
@@ -39,7 +39,7 @@ public class PassengerRequestObservation : MonoBehaviour {
    if(rank>=best)continue;best=rank;proposal=i;addedDistance=d;newFare=f;newRemaining=t;
   }return proposal>=0;
  }
- public bool Respond(bool accept){if(request.Resolved)return false;if(!accept){request.DeferSafety();request.ApplyReply(PassengerReply.Defer);resultUntil=Time.time+6;return true;}if(!SafeToRespond())return false;
+ public bool Respond(bool accept){if(request.Resolved)return false;if(!accept){request.DeferSafety();request.ApplyReply(PassengerReply.Defer);resultUntil=Time.time+6;ChoiceResponded();return true;}if(!SafeToRespond())return false;
   if(request.Kind==RequestKind.Eta)return RespondEta(0);
   var nav=session.jobs.nav;var kind=request.Kind;string response;
   float beforeDistance=nav.remaining,beforeEta=nav.estimatedSeconds;
@@ -61,13 +61,13 @@ public class PassengerRequestObservation : MonoBehaviour {
    default:response="죄송하지만 신호는 지켜야 해요. 안전하게 모셔다드릴게요.";break;
   }
   if(kind==RequestKind.LargeRoad||kind==RequestKind.ShortRoad||kind==RequestKind.RouteAdvice)response+=" · 거리 "+beforeDistance.ToString("0")+"→"+nav.remaining.ToString("0")+"m / ETA "+Mathf.CeilToInt(beforeEta)+"→"+RoadNavigation.FormatEta(nav.estimatedSeconds)+"";
-  request.Accept(response);acceptedAt=Time.time;if(kind==RequestKind.Comfort){session.manners.ComfortAccepted=true;motionBefore=MotionCount();accelBefore=session.manners.accelEvents;brakeBefore=session.manners.brakeEvents;necessaryBefore=session.manners.necessaryBrakeEvents;}quietReply=kind==RequestKind.Quiet;travelled=broadTravel=0;sample=false;resultUntil=Time.time+6;return true;
+  request.Accept(response);acceptedAt=Time.time;if(kind==RequestKind.Comfort){session.manners.ComfortAccepted=true;motionBefore=MotionCount();accelBefore=session.manners.accelEvents;brakeBefore=session.manners.brakeEvents;necessaryBefore=session.manners.necessaryBrakeEvents;}quietReply=kind==RequestKind.Quiet;travelled=broadTravel=0;sample=false;resultUntil=Time.time+6;ChoiceResponded();return true;
  }
  public string AlternativeLabel {get{switch(request.Kind){case RequestKind.Empathy:case RequestKind.Interview:return "조용히 배려";case RequestKind.RouteAdvice:return "짧은 길";case RequestKind.LocalChat:return "안전 운행 안내";case RequestKind.LostItem:return "안전한 전달 절차 안내";case RequestKind.FareHelp:return "결제 방법은 하차 때 확인";default:return "";}}}
  public bool RespondAlternative(){if(request.Resolved||!SafeToRespond()||AlternativeLabel.Length==0)return false;string text;
   if(request.Kind==RequestKind.RouteAdvice){if(!session.jobs.nav.SetPassengerPreference(false,false))return false;adviceFastest=false;expectedDistance=session.jobs.nav.remaining;text="짧은 길 적용 · "+Mathf.CeilToInt(session.jobs.nav.remaining)+"m / "+RoadNavigation.FormatEta(session.jobs.nav.estimatedSeconds)+" 예상";}
   else text=request.Kind==RequestKind.LocalChat?"안전하게 모셔다드리겠습니다":request.Kind==RequestKind.LostItem?"분실물은 보관하고 안전한 전달·신고 절차를 안내하겠습니다":request.Kind==RequestKind.FareHelp?"하차 때 결제 방법을 확인하겠습니다. "+session.jobs.FareAgreementText(session.jobs.current.fare)+" · 승객 만족도 요구 미달 시 만족도/요구치 비율 지급 / 늦은 도착0원":"편하게 쉬시거나 준비하실 수 있도록 조용히 운행하겠습니다";
-  quietReply=request.Kind==RequestKind.Empathy||request.Kind==RequestKind.Interview;request.Accept(text,PassengerReply.Alternative);acceptedAt=Time.time;travelled=broadTravel=0;sample=false;resultUntil=Time.time+6;return true;
+  quietReply=request.Kind==RequestKind.Empathy||request.Kind==RequestKind.Interview;request.Accept(text,PassengerReply.Alternative);acceptedAt=Time.time;travelled=broadTravel=0;sample=false;resultUntil=Time.time+6;ChoiceResponded();return true;
  }
  public void Finish(){if(!session.business.useV2)return;
   if(request.Accepted){bool success=true;string reason="";
@@ -88,8 +88,10 @@ public class PassengerRequestObservation : MonoBehaviour {
    if(!success&&(request.Kind==RequestKind.LargeRoad||request.Kind==RequestKind.ShortRoad||request.Kind==RequestKind.OnTime&&Violations()==0))request.CompleteUnknown(reason+" · 합법적 대기·우회와 불필요한 이탈을 구분할 관찰 부족");
    else request.CompleteGoal(success,reason);
   }
+  if(session.jobs.ChoiceEffectsActive&&request.ReplyCaptured&&request.Kind!=RequestKind.LostItem){request.OverrideChoiceSatisfaction(0);request.OverrideChoiceSatisfaction(session.jobs.CompleteChoiceRequest(request.Kind,request.SelectedReply,request.Accepted?request.GoalOutcome:0));}
   int deduction=request.Finish();var notices=session.GetComponent<DriveNotifications>();if(notices)notices.RefreshScores();if(deduction>0)session.manners.Deduct("request:"+observedTrip,deduction,"조용한 운행 요청 미응답",0);
  }
+ void ChoiceResponded(){if(session.jobs)session.jobs.RecordRequestChoice(request.Kind,request.SelectedReply);}
  public void Observe(bool input){if(!session.business.useV2||session.jobs.trip.State!=TripState.OnTrip||session.jobs.trip.ArrivalLocked||session.paused)return;
   bool safe=(input||PvpNativeLan.IsRemoteHuman(session)&&session.requests.HasPendingChoice&&session.requests.request==request&&session.requests.PresentationAvailable)&&session.requests.SafeToRespond();if(safe){stoppedSeconds+=Time.deltaTime;request.ObserveOpportunity(stoppedSeconds>=2);}else stoppedSeconds=0;
   Vector3 p=session.taxi.transform.position;if(request.Accepted&&sample){float d=Vector3.Distance(previous,p);if(d<Mathf.Max(2,session.taxi.ObservedVelocity.magnitude*Time.deltaTime+1)){travelled+=d;if(session.jobs.nav.CurrentRoadWidth()>=12)broadTravel+=d;}}previous=p;sample=true;

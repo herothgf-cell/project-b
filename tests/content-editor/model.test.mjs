@@ -19,23 +19,23 @@ test('all settings and all references are browseable semantic entities',()=>{
  assert.equal(entityIds.size,all.length);
  for(const e of all){for(const id of e.links) assert.ok(entityIds.has(id),`${e.id} -> ${id}`); for(const id of e.fieldIds) assert.ok(valid.has(id),id);}
 });
-test('request cards bind real reply text to shared result settings and neutral defer',()=>{
+test('request cards bind real reply text to independent staged effects and neutral defer',()=>{
  const all=entities(); const quiet=all.find(e=>e.id==='request.Quiet');
  const choices=quiet.sections.find(s=>s.kind==='choices').cards;
  assert.ok(choices[0].fieldIds.includes('request.Quiet.reply.Accept'));
- assert.ok(choices[0].resultIds.includes('request.Quiet.success'));
+ assert.ok(choices[0].effectGroups.flatMap(g=>g.fieldIds).includes('choice.request.Quiet.Accept.end.success.satisfaction'));assert.equal(choices[0].resultIds.length,0);
  const defer=choices.find(c=>c.fieldIds.includes('request.Quiet.reply.Defer'));
  assert.ok(!defer.fieldIds.includes('request.Quiet.failure'));
  const empathy=all.find(e=>e.id==='request.Empathy');
  const cards=empathy.sections.find(s=>s.kind==='choices').cards;
- for(const reply of ['Accept','Alternative']) assert.ok(cards.find(c=>c.fieldIds.includes(`request.Empathy.reply.${reply}`)).resultIds.includes('request.Empathy.success'));
+ for(const reply of ['Accept','Alternative']) assert.ok(cards.find(c=>c.fieldIds.includes(`request.Empathy.reply.${reply}`)).effectGroups.flatMap(g=>g.fieldIds).includes(`choice.request.Empathy.${reply}.end.success.satisfaction`));
  assert.ok(quiet.fieldIds.includes('common.requestCap'));
- assert.ok(all.find(e=>e.id==='request.Comfort').fieldIds.includes('manner.comfortMotion.penalty'));
+ assert.ok(all.find(e=>e.id==='request.Comfort').fieldIds.includes('choice.request.Comfort.Accept.during.motionPenaltyDelta'));
 });
 test('food choices expose actual permission, dirt, consumption timing and cleanup',()=>{
  const food=entities().find(e=>e.id==='type.Food');
  const cards=food.sections.find(s=>s.kind==='choices').cards;
- assert.ok(cards.find(c=>c.fieldIds.includes('type.Food.choice.1')).fieldIds.includes('effect.food.satisfaction'));
+ assert.ok(cards.find(c=>c.fieldIds.includes('type.Food.choice.1')).effectGroups.flatMap(g=>g.fieldIds).includes('choice.type.Food.1.immediate.satisfaction'));
  assert.ok(cards.find(c=>c.fieldIds.includes('type.Food.choice.2')).fieldIds.includes('effect.food.cleanupSeconds'));
  assert.ok(food.fieldIds.includes('effect.food.consumeMovingSeconds'));
  assert.ok(food.links.includes('situation.Jolt'));
@@ -70,7 +70,7 @@ test('condition explanations preserve food AND gate, stable recovery OR gate and
  assert.match(all.find(e=>e.id==='law.stopLine').summary,/넘.*정차/);
  const quiet=all.find(e=>e.id==='request.Quiet');
  assert.match(quiet.sections.find(s=>s.kind==='unanswered').description,/미응답.*M/);
- assert.match(all.find(e=>e.id==='request.Eta').sections.find(s=>s.kind==='outcomes').description,/읽기 전용 0점/);
+ assert.match(all.find(e=>e.id==='request.Eta').sections.find(s=>s.kind==='outcomes').description,/현재 선택지 효과에서 편집/);
 });
 test('blank override choices still show the actual built-in player reply',()=>{
  const all=entities();const food=all.find(e=>e.id==='type.Food');
@@ -102,9 +102,9 @@ test('shared effect and common influence entities link back to actual consumers'
 });
 test('illegal request refusal preserves fixed zero and separate violation observation',()=>{
  const request=entities().find(e=>e.id==='request.RejectIllegal');
- assert.match(request.sections.find(s=>s.kind==='outcomes').description,/읽기 전용 0점/);
+ assert.match(request.sections.find(s=>s.kind==='outcomes').description,/현재 선택지 효과에서 편집/);
  assert.equal(catalog.entries.find(e=>e.id==='request.RejectIllegal.success').editable,false);
- assert.match(request.sections.find(s=>s.kind==='outcomes').description,/위반.*판정 불가 0/);
+ assert.match(request.sections.find(s=>s.kind==='outcomes').description,/위반.*판정 불가/);
 });
 test('context links are bidirectional and independent postride event has no request schedule settings',()=>{
  const all=entities();const get=id=>all.find(e=>e.id===id);

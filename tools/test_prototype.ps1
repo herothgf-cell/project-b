@@ -7,7 +7,7 @@ New-Item -ItemType Directory -Force -Path $taskOutput | Out-Null
 $taskResults = @()
 foreach ($taskName in @('DrowsyInputTests', 'DrowsyBlinkTests', 'SevereHungerTests', 'ProgressiveFatigueTests', 'FatigueOvertimeTests', 'PostTripServicePolicyTests', 'OneDayCampaignTests', 'ThreeDayCampaignTests', 'MitTrafficFollowingTests', 'RoadGeometryTests', 'ConfusionPracticeTests', 'PracticeFeedbackTests', 'PracticeConditionsTests', 'PrototypeStateTests', 'PrototypeCompletionTests', 'CampaignAccountTests', 'CampaignLifecycleTests', 'PassengerRequestTests', 'EconomyTests', 'DriveMathTests', 'ManualHandlingTests', 'CornerAssistTests', 'MannerTests', 'FareTripTests', 'AssistedDrivingPolicyTests', 'KoreanSignalTests', 'ProtectedSignalTests', 'TrafficRulesTests')) {
     $taskExe = Join-Path $taskOutput "$taskName.exe"
-    $taskCoreSources=@('ContentJson','ContentTuning') | ForEach-Object {Join-Path $taskRoot "unity/EungyeTaxi/Assets/Scripts/$_.cs"}
+    $taskCoreSources=@('ContentJson','ContentTuning','ChoiceEffects') | ForEach-Object {Join-Path $taskRoot "unity/EungyeTaxi/Assets/Scripts/$_.cs"}
 & $taskCompiler /nologo "/out:$taskExe" (Join-Path $taskRoot "tests/$taskName.cs") @taskSources @taskCoreSources
     if ($LASTEXITCODE -ne 0) { throw "$taskName compilation failed" }
     $taskResult = & $taskExe

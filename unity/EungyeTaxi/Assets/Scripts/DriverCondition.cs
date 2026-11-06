@@ -3,6 +3,7 @@ using System;
 // Game balance only. No dependency on driving physics, law scores or manners.
 [Serializable] public class DriverCondition {
  public double satiety=80,fatigue=10,mealSeconds,sleepSeconds;
+ public double choiceFatigueGrowthPercent;
  public int meals,sleeps;
  public Drowsiness drowsiness=new Drowsiness();
  public bool CanAccept {get{return drowsiness==null||!drowsiness.PassengerMustLeave;}}
@@ -12,13 +13,13 @@ using System;
   // Integrate exactly across the hunger threshold, independent of frame size.
   double normal=Math.Min(seconds,Math.Max(0,(satiety-25)*12));
   double hungry=Math.Min(seconds-normal,Math.Max(0,(Math.Min(satiety,25)-10)*12));
-  if(!sleeping)fatigue=Math.Min(100,fatigue+(normal/15+hungry/10+(seconds-normal-hungry)*2/15)*fatigueMultiplier);
+  if(!sleeping)fatigue=Math.Min(100,fatigue+(normal/15+hungry/10+(seconds-normal-hungry)*2/15)*fatigueMultiplier*(1+Math.Max(-100,Math.Min(1000,choiceFatigueGrowthPercent))/100));
   satiety=Math.Max(0,satiety-seconds/12);
  }
  public void Meal(){Advance(50);satiety=Math.Min(100,satiety+70);meals++;mealSeconds+=50;}
  public void Sleep(){Advance(100,true);fatigue=Math.Max(0,fatigue-40);if(drowsiness!=null)drowsiness.Recover();sleeps++;sleepSeconds+=100;}
  public void EmergencySleep(){Advance(100,true);fatigue=Math.Max(0,fatigue-20);if(drowsiness!=null)drowsiness.Recover();sleeps++;sleepSeconds+=100;}
- public void Validate(){if(drowsiness==null)drowsiness=new Drowsiness();drowsiness.Validate();if(double.IsNaN(satiety)||double.IsNaN(fatigue)||satiety<0||satiety>100||fatigue<0||fatigue>100||meals<0||sleeps<0||mealSeconds!=meals*50||sleepSeconds!=sleeps*100)throw new ArgumentException("Invalid driver checkpoint");}
+ public void Validate(){if(double.IsNaN(choiceFatigueGrowthPercent)||double.IsInfinity(choiceFatigueGrowthPercent)||choiceFatigueGrowthPercent< -100||choiceFatigueGrowthPercent>1000)throw new ArgumentException("Invalid choice fatigue modifier");if(drowsiness==null)drowsiness=new Drowsiness();drowsiness.Validate();if(double.IsNaN(satiety)||double.IsNaN(fatigue)||satiety<0||satiety>100||fatigue<0||fatigue>100||meals<0||sleeps<0||mealSeconds!=meals*50||sleepSeconds!=sleeps*100)throw new ArgumentException("Invalid driver checkpoint");}
 }
 
 

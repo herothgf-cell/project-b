@@ -5,7 +5,7 @@ $taskOutput = Join-Path $taskRoot 'artifacts'
 New-Item -ItemType Directory -Force -Path $taskOutput | Out-Null
 $taskSources = @('PvpConditionRules','DriverCondition','PrototypeState','CampaignAccount','EconomyLedger','OperationMetrics','PassengerRequest','MannerLedger','FareTrip','VehicleCare','PassengerBehavior','TrafficRules','PassengerWaitingPolicy','ScoreFeedback','RideReceiptSummary') | ForEach-Object { Join-Path $taskRoot "unity/EungyeTaxi/Assets/Scripts/$_.cs" }
 $taskExe=Join-Path $taskOutput 'PassengerCareTests.exe'
-$taskCoreSources=@('ContentJson','ContentTuning') | ForEach-Object {Join-Path $taskRoot "unity/EungyeTaxi/Assets/Scripts/$_.cs"}
+$taskCoreSources=@('ContentJson','ContentTuning','ChoiceEffects') | ForEach-Object {Join-Path $taskRoot "unity/EungyeTaxi/Assets/Scripts/$_.cs"}
 & $taskCompiler /nologo "/out:$taskExe" (Join-Path $taskRoot 'tests/PassengerCareTests.cs') @taskSources @taskCoreSources
 if($LASTEXITCODE -ne 0){throw 'PassengerCareTests compile failed'}
 & $taskExe

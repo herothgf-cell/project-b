@@ -24,7 +24,7 @@ $taskSources = @('Runtime/Core/PvpSessionConfig.cs', 'Runtime/Core/PvpBuildTrans
 $taskOutput = Join-Path $taskRoot 'artifacts/pvp-tests'
 New-Item -ItemType Directory -Force -Path $taskOutput | Out-Null
 $taskExe = Join-Path $taskOutput 'PvpIsolationTests.exe'
-$taskCoreSources=@('ContentJson','ContentTuning') | ForEach-Object {Join-Path $taskRoot "unity/EungyeTaxi/Assets/Scripts/$_.cs"}
+$taskCoreSources=@('ContentJson','ContentTuning','ChoiceEffects') | ForEach-Object {Join-Path $taskRoot "unity/EungyeTaxi/Assets/Scripts/$_.cs"}
 & $taskCompiler /nologo "/out:$taskExe" (Join-Path $taskRoot 'tests/PvpIsolationTests.cs') @taskSources @taskCoreSources
 if ($LASTEXITCODE -ne 0) { throw 'PVP test compilation failed' }
 & $taskExe

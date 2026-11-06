@@ -129,7 +129,7 @@
   ];
   for(const [key,title,description,fields]of common)add('common.'+key,'공통 영향 요소',title,description,'common',[section(title,description,fields,'shared')],[],[]);
   for(const e of entries.filter(e=>e.id.startsWith('constraint.')))add(e.id,'공통 영향 요소',e.title,e.defaultValue,'common',[section('현재 게임의 고정 조건',e.defaultValue,[e.id],'condition')],[e.description||''],[]);
-  const covered=new Set(out.flatMap(e=>e.fieldIds));for(const e of entries)if(!covered.has(e.id))add('field.'+e.id,e.group,e.title,e.description,'field',[section(e.section,e.description,[e.id])],[],[]);
+  const covered=new Set(out.flatMap(e=>e.fieldIds));for(const e of entries)if(!covered.has(e.id)&&!e.id.startsWith('choice.'))add('field.'+e.id,e.group,e.title,e.description,'field',[section(e.section,e.description,[e.id])],[],[]);
   for(const ref of catalog.references||[])add(ref.id,'법규',ref.title,ref.description,'reference',[section('자료의 범위',ref.description,[],'reference')],[ref.status||'',ref.basis||'',ref.source?'출처: '+ref.source:'',ref.sourceDate?'자료 기준일: '+ref.sourceDate:''].filter(Boolean),[]);
   const consumers={
    'effect.resecure':['type.Luggage','type.MuddyLuggage','situation.Jolt','situation.NecessaryBrake'],
@@ -149,6 +149,35 @@
   const validIds=new Set(out.map(e=>e.id));for(const e of out)e.links=e.links.filter(id=>validIds.has(id));
   const entityById=new Map(out.map(e=>[e.id,e]));
   for(const e of out)for(const id of [...e.links]){const target=entityById.get(id);if(!target.links.includes(e.id))target.links.push(e.id);}
+  if(entries.some(e=>e.id.startsWith('choice.'))){
+   const currentWording=text=>String(text||'').replace(/두 응대 모두 같은 (?:요청 )?이행 만족도를 사용합니다\./g,'각 응답의 이행 만족도는 해당 선택지의 운송 종료 효과에서 독립적으로 설정합니다.').replace('두 응대는 같은 이행 만족도를 사용하며','각 응답의 이행 만족도를 독립적으로 설정하며').replace('두 추천 모두 같은 요청 결과를 사용합니다.','각 추천 응답의 종료 효과를 독립적으로 설정합니다.').replace(/일반 응대와 같은 이행 만족도 설정을 사용합니다\.|빠른 길 선택과 같은 요청 결과 설정을 사용합니다\./g,'각 응답의 종료 효과를 독립적으로 설정합니다.').replace('판정 불가 0입니다.','판정 불가 종료 효과를 적용합니다.').replace('현재 거절 응대의 이행·미이행 점수는 읽기 전용 0점입니다.','거절 응대의 이행·판정 불가 종료 효과를 독립적으로 설정합니다.').replace('응대 결과만 하차 때 반영합니다.','선택 응답의 즉시·운행 중·종료 효과는 아래에서 독립적으로 설정합니다.').replace('만족도 자체는 바뀌지 않습니다.','만족도·피로 효과는 각 선택지에서 설정합니다.').replace('만족도 가산은 없습니다.','만족도·피로 효과는 각 선택지에서 설정합니다.').replace('비용과 만족도 변화는 0입니다.','추가 비용은 없으며 만족도·피로 효과는 각 선택지에서 설정합니다.').replace('상황 응대 자체는 만족도를 추가하지 않습니다.','각 상황 응답의 만족도·피로 효과를 독립적으로 설정합니다.').replace('추가 효과는 없습니다.','만족도·피로 효과는 이 선택지에서 설정합니다.').replace('판정 불가 0이며','판정 불가 종료 효과를 적용하며').replace('판정 불가로 0입니다.','판정 불가 종료 효과를 적용합니다.');
+
+   const sleeping=out.find(e=>e.id==='type.Sleeping');if(sleeping)sleeping.sections.push(section('수면 중 위치 질문 응답','실제 위치 질문 뒤의 두 응답입니다.',[],'choices',[{title:'남은 위치는 내비 안내로 확인해 주세요',description:'남은 위치는 내비 안내로 확인하도록 안내하고 다시 수면합니다.',choiceId:'type.SleepingFollowup.0',fieldIds:[]},{title:'운전에 집중하겠습니다. 편히 쉬세요',description:'다시 수면하고 후속 질문을 줄입니다.',choiceId:'type.SleepingFollowup.1',fieldIds:[]}]));
+   const foodEffect=out.find(e=>e.id==='effect.food');if(foodEffect){for(const block of foodEffect.sections)block.fieldIds=block.fieldIds.filter(id=>id!=='effect.food.satisfaction');foodEffect.sections.push(section('음식 허용 선택의 즉시 효과','음식 허용 응답의 현재 효과입니다.',['choice.type.Food.1.immediate.satisfaction','choice.type.Food.1.immediate.fatigue','choice.type.Food.1.immediate.satisfactionPercent','choice.type.Food.1.immediate.fatiguePercent'],'effects'),section('이관 원본 (참조)','현재 선택지 효과에서 편집합니다.',['effect.food.satisfaction'],'shared'));foodEffect.fieldIds=keep(foodEffect.sections.flatMap(s=>s.fieldIds));}
+   const common=out.find(e=>e.id==='common.request');if(common){common.sections.push(section('선택 효과 버전','현재 선택 효과 정의 버전입니다.',['choice.effects.version'],'shared'));common.fieldIds=keep([...common.fieldIds,'choice.effects.version']);}
+   for(const entity of out){
+    for(const block of entity.sections){
+     if(block.kind==='outcomes'&&entity.kind==='request'){block.legacy=true;block.title='이관 원본 (참조)';block.description='이전 프로필 이관에 사용한 값입니다. 현재 선택지 효과에서 편집합니다. '+currentWording(requestFacts[entity.requestKind]?.[1]);}
+     for(const card of block.cards||[]){
+      const textId=card.fieldIds.find(id=>/\.(reply|choice)\./.test(id));if(!textId&&!card.choiceId)continue;
+      const choiceId=card.choiceId||textId.replace('.reply.','.').replace('.choice.','.');
+      const prefix='choice.'+choiceId+'.',effectIds=ids(prefix);if(!effectIds.length)continue;
+      card.choiceId=choiceId;card.resultIds=[];card.description=currentWording(card.description);if(choiceId.endsWith('.Defer'))card.description='요청을 수락하지 않고 원래 운행을 유지합니다. 안전상 보류입니다. 즉시·운행 중·판정 불가/보류 종료 효과는 이 선택지에서 독립적으로 설정합니다. 미이행 종료 분기는 적용하지 않습니다.';
+      card.notes=(card.notes||[]).filter(note=>!note.includes('같은 점수'));
+      card.description=card.description.replace(/일반 응대와 같은 이행 만족도 설정을 사용합니다\./g,'이 응답의 독립 효과를 적용합니다.').replace(/빠른 길 선택과 같은 요청 결과 설정을 사용합니다\./g,'이 응답의 독립 효과를 적용합니다.');
+      card.description=card.description.replace(/[^.]*만족도 변화[^.]*[.]/g,'만족도·피로 효과는 아래 설정을 적용합니다.').replace('추가 만족도·청결도 변화가 없습니다.','추가 청결도 변화가 없습니다.').replace(/\.([가-힣])/g,'. $1');if(!card.description.includes('독립'))card.description+=' 이 선택지의 즉시·운행 중·종료 효과는 아래에서 독립적으로 설정합니다.';
+      card.fieldIds=card.fieldIds.filter(id=>!isLegacyField(id));
+      const stages=[['immediate','즉시','선택 확정 때 한 번 적용합니다. 승차 전 응답은 승차 확정 때 적용합니다. 변화량은 점 증감 + 적용 직전 현재값 × 변화율/100이며 적용 후 0~100으로 제한합니다.'],['during','운행 중','선택 활성화부터 정상 하차·취소·운송 중단까지 게임 영업 경과 시간으로 누적합니다. %/분은 선택 활성화 때 고정한 기준값을 사용합니다. 메뉴 일시정지 중에는 진행하지 않습니다. 0은 이 선택지의 추가 효과가 없다는 뜻이며 자연 피로와 기본 진행은 유지합니다.'],['end.success','운송 종료 · 이행','실제 이행 판정 때 한 번 적용합니다. 유형·상황은 정상 하차 때 적용합니다.'],['end.failure','운송 종료 · 미이행','실제 요청 미이행 판정 때 한 번 적용합니다.'],['end.neutral','운송 종료 · 판정 불가/보류','실제 중립 판정 때 한 번 적용합니다.']];
+      card.effectGroups=stages.map(([stage,title,description])=>({stage,title,description:description+(choiceId.startsWith('request.')&&stage.startsWith('end.')?' 요청 종료 만족도는 점+변화율 결과를 선택지마다 −100~100점으로 제한하고, 원시 소수값을 합산해 한 번 반올림한 뒤 요청 종료 합계 상한을 적용합니다.':''),fieldIds:effectIds.filter(id=>id.startsWith(prefix+stage+'.'))})).filter(g=>g.fieldIds.length);
+      entity.fieldIds=keep([...entity.fieldIds,...effectIds]);
+     }
+    }
+    entity.notes=entity.notes.map(note=>note.replace('유형 대화 자체에는 별도 요청 이행 점수가 없습니다.','유형 응답 효과는 각 선택지에서 독립적으로 편집합니다.').replace(/두 응대 모두 같은 요청 이행 만족도를 사용합니다\./g,'각 응답의 독립 효과를 사용합니다.').replace(/두 응대는 같은 이행 만족도를 사용하며/g,'각 응답의 독립 효과를 사용하며').replace(/두 추천 모두 같은 요청 결과를 사용합니다\./g,'각 추천의 독립 효과를 사용합니다.'));
+    entity.summary=currentWording(entity.summary);entity.notes=entity.notes.map(currentWording);
+    for(const block of entity.sections)block.description=currentWording(block.description).replace('유형 대화 자체에는 별도 요청 이행 점수가 없습니다.','유형 응답 효과는 각 선택지에서 독립적으로 편집합니다.');
+    if(entity.id==='type.Food')for(const block of entity.sections)block.fieldIds=block.fieldIds.filter(id=>id!=='effect.food.satisfaction');
+   }
+  }
   return out;
  }
  function weightInfo(entity,profile,catalog){
@@ -165,7 +194,14 @@
   const example='같은 후보군에서 가중치가 모두 1이면 같은 비중입니다. 1·1·2이면 25%·25%·50%이며, 0은 제외됩니다. ';
   return {text:`기본 후보 비중 ${percent}% (${weight} / ${total})`,explanation:example+(request?'사용 중인 양수 가중치 요청을 모두 후보로 놓은 기준 비중입니다. 실제 전체 등장 확률이 아닙니다. 지도·안전 대안, 요청 개수 0~2, 조합 제외, 등장 시점·정차 기회, 대표 유형 첫 요청 연결로 실제 후보와 결과가 달라집니다.':'특수 유형 후보를 모두 놓은 기준 비중입니다. 일반·취객의 배정 보장과 연속 특수 승객 제한, 대표 요청 자격 조건이 있어 실제 전체 승객 등장 확률과 다릅니다.')};
  }
+ function isLegacyField(id){return /^request\.[^.]+\.(success|failure)$/.test(id)||id==='effect.food.satisfaction'||id==='manner.comfortMotion.penalty';}
  function fieldInfo(id,catalog){
+  if(id.startsWith('choice.')){
+   const field=id.split('.').at(-1),during=id.includes('.during.'),end=id.includes('.end.');
+   const percent=field.includes('Percent'),unit=field.endsWith('PerMinute')?(percent?'%/분':'점/분'):percent?'%':'점';
+   return {when:during?'선택 활성화부터 운송 종료/중단까지':end?'정상 운송 종료의 실제 결과 판정 때 한 번':'선택 확정 또는 승차 확정 때 한 번',affects:field.startsWith('satisfaction')?'이 응답을 선택한 승객의 만족도 S':field==='motionPenaltyDelta'?'활성 중 불필요한 급가감속 M 감점':'이 응답을 선택한 운송의 기사 피로',detail:unit+' · 0 = 이 선택지의 추가 효과 없음. '+(field==='fatigueGrowthPercent'?'자연 피로 증가율에 추가합니다. −100%는 자연 증가를 억제합니다.':field==='motionPenaltyDelta'?'기본 M 감점에 더하며 최종 감점은 0 이상입니다.':during&&percent?'선택 활성화 때 고정한 기준값 대비 %/분입니다.':percent?'적용 직전 현재값 대비 %입니다.':'증감량입니다.')+(end?' 취소·사고·견인 등 운송 중단에는 종료 효과를 주지 않습니다.':'')};
+  }
+  if(isLegacyField(id)&&(catalog.entries||[]).some(e=>e.id.startsWith('choice.')))return {when:'이전 프로필 이관 시',affects:'이관 원본 (참조)',detail:'현재 선택지 효과에서 편집합니다. 새 효과는 이 값과 독립적입니다.',legacy:true};
   const entry=(catalog.entries||[]).find(e=>e.id===id)||{};
   const [domain,name,field]=id.split('.');
   const requestTitle=kind=>(catalog.entries||[]).find(e=>e.id===`request.${kind}.enabled`)?.section||kind;
@@ -225,5 +261,5 @@
   if(domain==='manner')return info(name==='recovery'?'새 구간에서 안정 주행의 거리 또는 시간 조건에 도달할 때':'해당 운전 사건을 관찰할 때',name==='comfortMotion'?'편안한 운행 요청 수락 뒤의 M':name==='recovery'?'모든 승객 운송의 M 회복':'모든 승객 운송의 운전 만족도 M','M 변화는 하차 만족도의 주행 변화량에 반영합니다. 요청 이행 점수와 별도입니다.');
   return info('설명된 상황·조건을 확인할 때',entry.section||entry.title||'현재 게임의 고정 조건',entry.editable?'':'현재 구현의 고정 조건이며 값을 편집하지 않습니다.');
  }
- globalThis.ContentModel={build,weightInfo,fieldInfo};
+ globalThis.ContentModel={build,weightInfo,fieldInfo,isLegacyField};
 })();

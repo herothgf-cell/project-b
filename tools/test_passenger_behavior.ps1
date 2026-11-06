@@ -5,7 +5,7 @@ $taskSources=@(@('VehicleCare') | ForEach-Object {Join-Path $taskRoot "unity/Eun
 $taskBehavior=Join-Path $taskRoot 'unity/EungyeTaxi/Assets/Scripts/PassengerBehavior.cs'
 if(Test-Path $taskBehavior){$taskSources+= $taskBehavior}
 $taskExe=Join-Path $taskRoot 'artifacts/PassengerBehaviorTests.exe'
-$taskCoreSources=@('ContentJson','ContentTuning') | ForEach-Object {Join-Path $taskRoot "unity/EungyeTaxi/Assets/Scripts/$_.cs"}
+$taskCoreSources=@('ContentJson','ContentTuning','ChoiceEffects') | ForEach-Object {Join-Path $taskRoot "unity/EungyeTaxi/Assets/Scripts/$_.cs"}
 & $taskCompiler /nologo "/out:$taskExe" (Join-Path $taskRoot 'tests/PassengerBehaviorTests.cs') @taskSources @taskCoreSources
 if($LASTEXITCODE -ne 0){throw 'PassengerBehaviorTests compile failed'}
 & $taskExe

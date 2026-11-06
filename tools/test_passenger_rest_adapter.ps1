@@ -22,7 +22,7 @@ $taskExtracted=Join-Path $taskOut 'PassengerJobs.RestAdapter.production.cs'
 $taskCompiler=Join-Path $env:WINDIR 'Microsoft.NET/Framework64/v4.0.30319/csc.exe'
 $taskExe=Join-Path $taskOut 'PassengerRestAdapterTests.exe'
 $taskModels=@('PassengerBehavior','PassengerSituations','VehicleCare','FareTrip') | ForEach-Object {Join-Path $taskRoot "unity/EungyeTaxi/Assets/Scripts/$_.cs"}
-$taskCoreSources=@('ContentJson','ContentTuning') | ForEach-Object {Join-Path $taskRoot "unity/EungyeTaxi/Assets/Scripts/$_.cs"}
+$taskCoreSources=@('ContentJson','ContentTuning','ChoiceEffects') | ForEach-Object {Join-Path $taskRoot "unity/EungyeTaxi/Assets/Scripts/$_.cs"}
 & $taskCompiler /nologo /langversion:5 "/out:$taskExe" (Join-Path $taskRoot 'tests/PassengerRestAdapterTests.cs') $taskExtracted @taskModels @taskCoreSources
 if($LASTEXITCODE -ne 0){throw 'Passenger rest adapter compile failed'}
 & $taskExe

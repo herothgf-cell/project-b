@@ -1,6 +1,7 @@
 import {createHash} from 'node:crypto';
+import {defaultChoiceValue} from './choice-catalog.mjs';
 export function hashProfile(p) {
- let data=`content-profile-v1\n${p.id}\n${p.revision}\n`;
+ let data=`content-profile-v${p.schemaVersion}\n${p.id}\n${p.revision}\n`;
  for (const item of [...p.values].sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0)) data+=`${item.id}\t${Buffer.byteLength(item.value,'utf8')}:${item.value}\n`;
  return createHash('sha256').update(data,'utf8').digest('hex');
 }
@@ -14,8 +15,8 @@ export function parseJson(text) {
 export function validateProfile(p,catalog,{checkHash=true}={}) {
  const errors=[]; const err=x=>errors.push(x); const exact=(o,keys)=>o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
  if(!exact(p,['schemaVersion','id','revision','contentHash','values']))return ['프로필 필드가 올바르지 않습니다.'];
- if(p.schemaVersion!==1||typeof p.id!=='string'||!/^[A-Za-z0-9_-]{1,64}$/.test(p.id)||!Number.isSafeInteger(p.revision)||p.revision<1||p.revision>2147483647||!Array.isArray(p.values))return ['프로필 형식이 올바르지 않습니다.'];
- const entries=new Map(catalog.entries.filter(e=>e.editable).map(e=>[e.id,e])); const seen=new Set();
+ if(![1,2].includes(p.schemaVersion)||typeof p.id!=='string'||!/^[A-Za-z0-9_-]{1,64}$/.test(p.id)||!Number.isSafeInteger(p.revision)||p.revision<1||p.revision>2147483647||!Array.isArray(p.values))return ['프로필 형식이 올바르지 않습니다.'];
+ const entries=new Map(catalog.entries.filter(e=>e.editable&&(p.schemaVersion===2||!e.id.startsWith('choice.'))).map(e=>[e.id,e])); const seen=new Set();
  for(const v of p.values){if(!exact(v,['id','value'])||typeof v.id!=='string'||typeof v.value!=='string'){err('값 형식 오류');continue;}const e=entries.get(v.id);if(!e||seen.has(v.id)){err(`알 수 없거나 중복된 ID: ${v.id}`);continue;}seen.add(v.id);
  if(!v.value.isWellFormed())err(`${v.id}: 올바르지 않은 유니코드입니다.`);
  if(e.type==='text'&&v.value.length>4000)err(`${v.id}: 텍스트가 너무 깁니다.`);
@@ -29,4 +30,11 @@ export function validateProfile(p,catalog,{checkHash=true}={}) {
  if(Buffer.byteLength(JSON.stringify(p,null,2)+'\n','utf8')>240*1024)err('프로필이 게임의 240 KiB 제한을 초과합니다.');
  for(const prefix of ['request.','type.']){const weights=[...vals.keys()].filter(k=>k.startsWith(prefix)&&k.endsWith('.weight'));if(weights.length&&weights.reduce((sum,k)=>sum+(vals.get(k.slice(0,-6)+'enabled')==='false'?0:Number(vals.get(k))),0)<=0)err(prefix+' 사용 가능한 가중치 합계는 양수여야 합니다.');}
  if(checkHash&&(!/^[0-9a-f]{64}$/.test(p.contentHash)||p.contentHash!==hashProfile(p)))err('프로필 해시가 일치하지 않습니다.'); return errors;
+}
+
+export function migrateProfile(profile,catalog){
+ const errors=validateProfile(profile,catalog);if(errors.length)throw Error(errors.join('\n'));
+ const copy=structuredClone(profile);if(copy.schemaVersion===1&&catalog.entries.some(e=>e.id==='choice.effects.version'&&e.editable)){
+ const legacy=new Map(copy.values.map(v=>[v.id,v.value]));for(const entry of catalog.entries.filter(e=>e.editable&&e.id.startsWith('choice.')))copy.values.push({id:entry.id,value:defaultChoiceValue(entry.id,legacy)});
+ copy.schemaVersion=2;copy.contentHash=hashProfile(copy);const errors=validateProfile(copy,catalog);if(errors.length)throw Error(errors.join('\n'));}return copy;
 }

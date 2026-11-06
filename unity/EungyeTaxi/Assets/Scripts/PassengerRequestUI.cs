@@ -18,8 +18,13 @@ public class PassengerRequestUI : MonoBehaviour {
  PassengerRequestObservation Current {get{return active>=0&&active<observations.Count?observations[active]:null;}}
  public PassengerRequest request {get{return Current?Current.request:empty;}}
  public bool SuppressFollowupDialogue {get{return observations.Exists(o=>o&&o.SuppressFollowupDialogue);}}
- public int TotalSatisfactionDelta {get{int value=0;foreach(var o in observations)if(o)value+=o.request.SatisfactionDelta;return Mathf.Clamp(value,-ContentTuning.Int("common.requestCap",10),ContentTuning.Int("common.requestCap",10));}}
- public string Summary {get{var text=new List<string>();for(int i=0;i<observations.Count;i++)if(observations[i])text.Add((i+1)+". "+observations[i].request.ResponseText()+" ["+observations[i].request.SatisfactionDelta.ToString("+0;-0;0")+"]");if(schedule!=null)foreach(var slot in schedule.Capture().slots)if(!slot.presented)text.Add(slot.kind+" · 미발생 중립");if(text.Count==0)text.Add("요청 없음");if(lostItem&&finished)text.Add("하차 후 사건 "+session.law.tripId+":lost-item · 지갑 발견 → 보관·신고 절차 안내 (텍스트 사건)");return string.Join("\n",text.ToArray())+"\n요청 합계 "+TotalSatisfactionDelta.ToString("+0;-0;0");}}
+ double RequestEffectValue(PassengerRequestObservation observation){var ledger=session&&session.jobs&&session.jobs.ChoiceEffectsActive?session.jobs.ChoiceEffects:null;string id=observation.request.Trip+":request:"+observation.request.Kind;return ledger!=null&&ledger.HasEvent(id)?ledger.RawRequestEndFor(id):observation.request.SatisfactionDelta;}
+ public int TotalSatisfactionDelta {get{
+  double value=0;
+  foreach(var o in observations)if(o)value+=RequestEffectValue(o);
+  int cap=ContentTuning.Int("common.requestCap",10);return (int)Math.Max(-cap,Math.Min(cap,Math.Round(value,MidpointRounding.AwayFromZero)));
+ }}
+ public string Summary {get{var text=new List<string>();for(int i=0;i<observations.Count;i++)if(observations[i])text.Add((i+1)+". "+observations[i].request.ResponseText()+" ["+RequestEffectValue(observations[i]).ToString("+0.###;-0.###;0",System.Globalization.CultureInfo.InvariantCulture)+"]");if(schedule!=null)foreach(var slot in schedule.Capture().slots)if(!slot.presented)text.Add(slot.kind+" · 미발생 중립");if(text.Count==0)text.Add("요청 없음");if(lostItem&&finished)text.Add("하차 후 사건 "+session.law.tripId+":lost-item · 지갑 발견 → 보관·신고 절차 안내 (텍스트 사건)");return string.Join("\n",text.ToArray())+"\n요청 합계 "+TotalSatisfactionDelta.ToString("+0;-0;0");}}
  public bool LawClear {get{return LawLedger.ViolationCount(session.law.ledger.Events,boardingLawCount)==0;}}
  public void ExemptSystemRoute(string reason){foreach(var o in observations)if(o)o.SystemRouteReason=reason;}
  void Clear(){foreach(var o in observations)if(o){if(Application.isPlaying)Destroy(o);else DestroyImmediate(o);}observations.Clear();active=-1;schedule=null;stopSeconds=0;finished=lostItem=legacy=false;empty.Restore(new PassengerRequestSnapshot{resolved=true,response="요청 없음"});}

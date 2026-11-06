@@ -2,6 +2,7 @@ param(
  [ValidateRange(1024,65000)][int]$Port=17971,
  [string]$Executable,
  [switch]$Reconnect,
+ [switch]$ChoiceEffects,
  [switch]$MotionOnly,
  [ValidateRange(0,60)][int]$MotionSeconds=0,
  [switch]$Rendered,
@@ -17,6 +18,7 @@ param(
 $ErrorActionPreference='Stop'
 if($RenderBoth -and -not $Rendered){throw 'RenderBoth requires Rendered'}
 if($MotionOnly -and ($MotionSeconds -lt 10 -or $Reconnect)){throw 'MotionOnly requires at least10 seconds and runs separately from Reconnect'}
+if($ChoiceEffects -and ($MotionOnly -or !$ContentHostProfile)){throw 'ChoiceEffects requires a custom ContentHostProfile and the full model route'}
 $root=Split-Path -Parent $PSScriptRoot
 if(-not $Executable){$Executable=Join-Path $root 'builds/EungyeTaxi/EungyeTaxi.exe'}
 $Executable=(Resolve-Path -LiteralPath $Executable).Path
@@ -35,6 +37,7 @@ function Start-NativeProbe([string]$Role){
  if($MotionSeconds -gt 0){$arguments+=@('-pvpNativeMotionSeconds',"$MotionSeconds")}
  if($LegacyRouting){$arguments+='-pvpNativeLegacyRouting'}
  if($Reconnect){$arguments+='-pvpNativeLanReconnect'}
+ if($ChoiceEffects){$arguments+='-choiceEffectsLanCheck'}
  $style=if($Rendered -and ($Role -eq "client" -or $RenderBoth)){"Normal"}else{"Hidden"}
  $process=Start-Process -FilePath $Executable -ArgumentList $arguments -WindowStyle $style -PassThru
  $owned.Add($process)

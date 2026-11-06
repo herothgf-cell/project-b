@@ -8,9 +8,14 @@ using UnityEngine;
  public int manner=100,required=70,fare=10000,delta,start=70,clean,boardingScore=100,comfort,etaOption;
  public bool onTime=true,unsafeDriving,requestSuccess=true;
  public float reference=120,actual=120,eta=120;
- public string requestKind="OnTime",lawCode="red-straight";
+ public string requestKind="OnTime",lawCode="red-straight",choiceId="";
+ public float fatigue,seconds;public int outcome=1;
+}
+[Serializable] public sealed class ContentChoicePreviewResult {
+ public string choiceId;public ChoiceEffectDelta immediate,during,end;public double satisfaction,fatigue,fatigueGrowthPercent;public int satisfactionDelta,requestEndDelta,requestEndAppliedDelta,requestEndCap,motionPenaltyDelta;
 }
 [Serializable] public sealed class ContentPreviewResult {
+ public ContentChoicePreviewResult choice;
  public bool success;public string profileHash,error;public PassengerReward reward;public int total,requestDelta,lawPenalty;public float etaSeconds;public string lawReason;
 }
 
@@ -36,8 +41,8 @@ public sealed class ContentTuningProbe:MonoBehaviour {
  public static ContentPreviewResult ParseAndCalculate(string input){
   var root=ContentJson.Object(ContentJson.Parse(input));foreach(string k in root.Keys)if(!Known(k,"profile","sample"))throw new ArgumentException("Unknown preview member "+k);
   if(!root.ContainsKey("profile")||!root.ContainsKey("sample"))throw new ArgumentException("Full profile and sample are required");var sample=ContentJson.Object(root["sample"]);
-  foreach(string k in sample.Keys)if(!Known(k,"manner","required","fare","delta","onTime","start","clean","reference","actual","unsafeDriving","boardingScore","comfort","requestKind","requestSuccess","eta","etaOption","lawCode"))throw new ArgumentException("Unknown sample member "+k);
-  var s=new ContentPreviewSample{manner=Int(sample,"manner",100,0,100),required=Int(sample,"required",70,1,100),fare=Int(sample,"fare",10000,0,10000000),delta=Int(sample,"delta",0,-100,100),onTime=Flag(sample,"onTime",true),start=Int(sample,"start",70,0,100),clean=Int(sample,"clean",0,0,100),reference=Number(sample,"reference",120,0,86400),actual=Number(sample,"actual",120,0,86400),unsafeDriving=Flag(sample,"unsafeDriving",false),boardingScore=Int(sample,"boardingScore",100,0,100),comfort=Int(sample,"comfort",0,0,100),requestKind=Text(sample,"requestKind","OnTime"),requestSuccess=Flag(sample,"requestSuccess",true),eta=Number(sample,"eta",120,0,86400),etaOption=Int(sample,"etaOption",0,-1,1),lawCode=Text(sample,"lawCode","red-straight")};
+  foreach(string k in sample.Keys)if(!Known(k,"manner","required","fare","delta","onTime","start","clean","reference","actual","unsafeDriving","boardingScore","comfort","requestKind","requestSuccess","eta","etaOption","lawCode","choiceId","fatigue","seconds","outcome"))throw new ArgumentException("Unknown sample member "+k);
+  var s=new ContentPreviewSample{manner=Int(sample,"manner",100,0,100),required=Int(sample,"required",70,1,100),fare=Int(sample,"fare",10000,0,10000000),delta=Int(sample,"delta",0,-100,100),onTime=Flag(sample,"onTime",true),start=Int(sample,"start",70,0,100),clean=Int(sample,"clean",0,0,100),reference=Number(sample,"reference",120,0,86400),actual=Number(sample,"actual",120,0,86400),unsafeDriving=Flag(sample,"unsafeDriving",false),boardingScore=Int(sample,"boardingScore",100,0,100),comfort=Int(sample,"comfort",0,0,100),requestKind=Text(sample,"requestKind","OnTime"),requestSuccess=Flag(sample,"requestSuccess",true),eta=Number(sample,"eta",120,0,86400),etaOption=Int(sample,"etaOption",0,-1,1),lawCode=Text(sample,"lawCode","red-straight"),choiceId=Text(sample,"choiceId",""),fatigue=Number(sample,"fatigue",0,0,100),seconds=Number(sample,"seconds",0,0,86400),outcome=Int(sample,"outcome",1,-1,1)};
   return Calculate(ContentJson.Stringify(root["profile"]),s);
  }
  static int Int(Dictionary<string,object> d,string k,int fallback,int min,int max){object value;if(!d.TryGetValue(k,out value))return fallback;if(!(value is double))throw new ArgumentException("Expected integer sample "+k);double n=(double)value;if(double.IsNaN(n)||double.IsInfinity(n)||n<min||n>max||n!=Math.Truncate(n))throw new ArgumentException("Expected integer/range sample "+k);return (int)n;}
@@ -49,8 +54,21 @@ public sealed class ContentTuningProbe:MonoBehaviour {
   try{
    ContentTuningRuntime.Restore(profile);RequestKind kind;if(!Enum.TryParse(sample.requestKind,false,out kind)||!Enum.IsDefined(typeof(RequestKind),kind))throw new ArgumentException("Unsupported request kind");
    var reward=PassengerReward.CalculateCurrentFare(sample.manner,sample.required,sample.fare,sample.delta,sample.onTime,sample.start,sample.clean,sample.reference,sample.actual,sample.unsafeDriving,sample.boardingScore,sample.comfort);
-   var law=LawSample(sample.lawCode);return new ContentPreviewResult{success=true,profileHash=(string)ContentJson.Object(ContentJson.Parse(ContentTuningRuntime.Snapshot()))["contentHash"],reward=reward,total=reward.Total,requestDelta=PassengerRequest.Delta(kind,sample.requestSuccess),etaSeconds=PassengerRequest.EtaSeconds(sample.eta,sample.etaOption),lawPenalty=law==null?0:law.Deduction,lawReason=law==null?"사건 없음":law.reason};
+   var choice=CalculateChoice(sample);var law=LawSample(sample.lawCode);return new ContentPreviewResult{choice=choice,success=true,profileHash=(string)ContentJson.Object(ContentJson.Parse(ContentTuningRuntime.Snapshot()))["contentHash"],reward=reward,total=reward.Total,requestDelta=PassengerRequest.Delta(kind,sample.requestSuccess),etaSeconds=PassengerRequest.EtaSeconds(sample.eta,sample.etaOption),lawPenalty=law==null?0:law.Deduction,lawReason=law==null?"사건 없음":law.reason};
   }finally{ContentTuningRuntime.Restore(previous);}
+ }
+ static double ClampStat(double x){return Math.Max(0,Math.Min(100,x));}
+ static ContentChoicePreviewResult CalculateChoice(ContentPreviewSample sample){
+  if(string.IsNullOrEmpty(sample.choiceId))return null;
+  if(!ChoiceEffectDefinition.Enabled)throw new ArgumentException("Choice effects require a version 2 profile");
+  if(sample.choiceId.Length>100||float.IsNaN(sample.fatigue)||float.IsInfinity(sample.fatigue)||sample.fatigue<0||sample.fatigue>100||float.IsNaN(sample.seconds)||float.IsInfinity(sample.seconds)||sample.seconds<0||sample.seconds>86400||sample.outcome< -1||sample.outcome>1)throw new ArgumentException("Invalid choice preview sample");
+  var ledger=new ChoiceEffectLedger();double satisfaction=sample.start,fatigue=sample.fatigue;
+  var immediate=ledger.Select("preview:choice",sample.choiceId,satisfaction,fatigue);satisfaction=ClampStat(satisfaction+immediate.satisfaction);fatigue=ClampStat(fatigue+immediate.fatigue);
+  var during=ledger.Advance(sample.seconds,satisfaction,fatigue);satisfaction=ClampStat(satisfaction+during.satisfaction);fatigue=ClampStat(fatigue+during.fatigue);
+  int motion=ledger.MotionPenaltyDelta;double growth=ledger.FatigueGrowthPercent;
+  var end=ledger.Complete("preview:choice",sample.outcome,satisfaction,fatigue);satisfaction=ClampStat(satisfaction+end.satisfaction);fatigue=ClampStat(fatigue+end.fatigue);ledger.Validate();
+  int cap=ContentTuning.Int("common.requestCap",10),applied=Math.Max(-cap,Math.Min(cap,ledger.RequestEndDelta));satisfaction=ClampStat(sample.start+ledger.SatisfactionDelta+applied);
+  return new ContentChoicePreviewResult{choiceId=sample.choiceId,immediate=immediate,during=during,end=end,satisfaction=satisfaction,fatigue=fatigue,satisfactionDelta=ledger.SatisfactionDelta,requestEndDelta=ledger.RequestEndDelta,requestEndAppliedDelta=applied,requestEndCap=cap,motionPenaltyDelta=motion,fatigueGrowthPercent=growth};
  }
  static LawEvent LawSample(string code){
   var o=new RoadObservation{known=true,trafficClear=true,forward=SignalColor.Red,right=SignalColor.Red,pedestrian=PedestrianState.None};

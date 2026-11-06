@@ -31,7 +31,7 @@ public static class ContentTuningRuntime {
   try{
    if(!File.Exists(path)){ContentTuning.UseDefaults();HasOverride=false;status="기본 콘텐츠 설정";return;}
    var info=new FileInfo(path);if(info.Length>MaximumProfileBytes)throw new ArgumentException("프로필 크기 제한 초과");
-   string json=File.ReadAllText(path,new UTF8Encoding(false,true));ValidateSize(json);ContentTuning.UseJson(json);HasOverride=true;status="사용자 콘텐츠 설정 적용 · 실행 중 변경은 다음 새 세션부터";
+   string json=File.ReadAllText(path,new UTF8Encoding(false,true));ValidateSize(json);string upgraded=ContentTuning.UpgradeJson(json);ValidateSize(upgraded);ContentTuning.UseJson(upgraded);HasOverride=true;status="사용자 콘텐츠 설정 적용 · 실행 중 변경은 다음 새 세션부터";
   }catch(Exception e){ContentTuning.UseDefaults();HasOverride=false;status="콘텐츠 설정 오류 · 기본값 사용: "+e.Message;Debug.LogWarning(status);}
  }
  public static string Snapshot(){Initialize();return ContentTuning.CaptureJson();}

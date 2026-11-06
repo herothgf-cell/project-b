@@ -10,7 +10,7 @@ const model=context.ContentModel;
 
 test('request evaluation, no answer and shared settings are separate and score editors have one home',()=>{
  for(const e of model.build(catalog).filter(e=>e.kind==='request')){
-  assert.ok(e.sections.some(s=>s.title==='운송 종료 평가'),e.id);
+  assert.ok(e.sections.some(s=>s.title==='이관 원본 (참조)'),e.id);
   assert.ok(e.sections.some(s=>s.title==='답하지 않았을 때'),e.id);
   const editorIds=e.sections.flatMap(s=>[...(s.fieldIds||[]),...(s.cards||[]).flatMap(c=>c.fieldIds||[])]);
   for(const suffix of ['success','failure','unanswered'])assert.equal(editorIds.filter(id=>id===`${e.id}.${suffix}`).length,1,`${e.id}.${suffix}`);
@@ -38,10 +38,10 @@ test('followup restriction describes blocked dialogue and preserved requests ins
  assert.match(quiet.notes.join(' '),/필수.*안내/);
 });
 
-test('ETA fixed zero and empathy dormant failure are labelled as unsupported values',()=>{
+test('legacy ETA and empathy results are migration references while reply effects edit independently',()=>{
  const eta=model.build(catalog).find(e=>e.id==='request.Eta');
- assert.match(eta.sections.find(s=>s.kind==='outcomes').description,/읽기 전용 0점/);
+ assert.match(eta.sections.find(s=>s.kind==='outcomes').description,/현재 선택지 효과에서 편집/);
  for(const suffix of ['success','failure','unanswered'])assert.equal(catalog.entries.find(e=>e.id===`request.Eta.${suffix}`).editable,false);
- assert.equal(model.fieldInfo('request.Empathy.failure',catalog).unused,true);
- assert.match(model.fieldInfo('request.Empathy.failure',catalog).detail,/실패 판정 경로가 없/);
+ assert.equal(model.fieldInfo('request.Empathy.failure',catalog).legacy,true);
+ assert.match(model.fieldInfo('request.Empathy.failure',catalog).detail,/현재 선택지 효과에서 편집/);
 });

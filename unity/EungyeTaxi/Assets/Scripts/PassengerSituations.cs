@@ -14,7 +14,13 @@ public enum PassengerSituationKind { None, SignalWait, Jolt, NecessaryBrake }
   if(Type==PassengerType.Food)return FoodSpilled?"쏟은 음식은 안전한 곳에 멈춘 뒤 확인해 주세요.":"음료와 음식이 쏟아지지 않게 잡아 주세요. 부드럽게 가겠습니다.";
   return "차가 흔들려 불편하셨죠? 부드럽게 운전하겠습니다.";
  }
- public string ReplyEffect(int answer){return Type==PassengerType.Sleeping&&SleepWoken?"만족도 변화 0 · 다시 수면"+(answer==1?" · 후속 질문 줄임":""):answer==1?"만족도 변화 0 · 후속 질문 줄임":OffersReSecure?"만족도 변화 0 · 안전 정차 중 재고정 "+ContentTuning.Number("effect.resecure.seconds",5)+"초 · 연료 소모 · 비용 0원":"효과 없음";}
+ string LegacyReplyEffect(int answer){return Type==PassengerType.Sleeping&&SleepWoken?"만족도 변화 0 · 다시 수면"+(answer==1?" · 후속 질문 줄임":""):answer==1?"만족도 변화 0 · 후속 질문 줄임":OffersReSecure?"만족도 변화 0 · 안전 정차 중 재고정 "+ContentTuning.Number("effect.resecure.seconds",5)+"초 · 연료 소모 · 비용 0원":"효과 없음";}
+ public string ReplyEffect(int answer){
+  string physical=LegacyReplyEffect(answer);if(!ChoiceEffectDefinition.Enabled||Pending==PassengerSituationKind.None)return physical;
+  if(answer<0||answer>1)throw new ArgumentOutOfRangeException("answer");
+  int separator=physical.IndexOf(" · ",StringComparison.Ordinal);
+  return ChoiceEffectDefinition.Describe("situation."+Pending+"."+answer)+(separator>=0?physical.Substring(separator):"");
+ }
  public bool ApplyPhysicalObservation(PassengerBehaviorState behavior,int brake,int accel,int necessary){
   bool observed=PhysicalCaptured&&(brake>PhysicalBrake||accel>PhysicalAccel||necessary>PhysicalNecessary);PhysicalCaptured=true;PhysicalBrake=brake;PhysicalAccel=accel;PhysicalNecessary=necessary;
   if(behavior==null)return false;Type=behavior.Type;LuggageLoaded=behavior.Boarded&&(Type==PassengerType.Luggage&&behavior.Choice==0||Type==PassengerType.MuddyLuggage&&(behavior.Choice==0||behavior.Choice==1));bool changed=observed&&behavior.ObserveJolt();FoodConsumed=Type==PassengerType.Food&&behavior.ConsumptionOccurred;FoodSpilled=Type==PassengerType.Food&&behavior.SpillOccurred;SleepWoken=Type==PassengerType.Sleeping&&behavior.JoltWoken;return changed;
