@@ -39,4 +39,7 @@
 
 - 최종 재빌드 `artifacts/full-ui/build-final.log`: exit0, 위 계약 모두 재통과. 프로덕션 소스는 첫112검사와 동일하며 메뉴 전용 probe 분기만 추가했다.
 - `-brightUiCheck -fullUiMenuOnly`: exit0, `FULL_UI_MENU_RESULT PASS checks=4`. 두 해상도 모두 정상 메뉴/초상/버튼을 실제 PNG로 확인했다. 캠페인 DriveSession0, 저장/설정 미접근. 첫 검은 캡처 대신 유효한2장을 보관했다.
-- 소스/manifest/원격 게시 해시는 실제 커밋과 전수 검증 후 아래 추가한다.
+- 소스/이력 최초 커밋은 `686d90fce0053e37e09d79284353a284123b9cd5`다. `git log -1 --oneline -- docs/work-history/2026-11-06-full-casual-ui.md`로 확인했다.
+- 출하 실행 폴더141파일·124,544,801바이트, 통합/PVP VerifyOnly 모두 exit0. manifest는 위 실제 소스 커밋과 이번 검증 보고서를 참조한다. 기존 추적 Burst 디버그txt도 그대로 포함한다. 사용자 active-profile·지도 ZIP/입력은 미변경이다.
+- 원본 `C:/git/project-b`는 현재 `codex/driving-settings`이고 기존 기획2파일 변경과 untracked 자료가 있으므로 브랜치/작업 폴더는 건드리지 않는다. 이 관리 작업 트리의 실행본과 원격 main으로 배포한다.
+- 원격 게시 해시는 실제 push 확인 후 별도 영수증으로 추가한다.
