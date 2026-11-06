@@ -30,3 +30,5 @@
 소스 커밋 후 실제 SHA로 통합 manifest 생성·검증하고 main에 게시한다. 실제 기록 커밋은 git log -1 --oneline -- docs/work-history/2026-11-07-taxi-blender-quality.md로 확인한다.
 
 출하 검증: 소스11223cad7011db0e736005b96f92a3a9cdf1cc17 기준 통합 manifest 생성. 통합/PVP VerifyOnly 모두 exit0, 141파일/126,501,464바이트. 실제 main 게시·원본 작업폴더 보존 영수증은 후속 기록 참조.
+
+최종 게시: 실행본ceb0512 원격 main push 성공, 원본 D:/Git/project-b main도 fast-forward. 원본 통합141파일/126,501,464바이트 VerifyOnly exit0. 사용자 Package manifest/lock·미추적 자료 포함58파일 SHA256 불변, LATEST Higgsfield 문단 복원. MCP 작업42파일과 추적소스2개의 배포 blob 일치 확인 후 이번 임시 stash2개만 제거. 원격 heads는 main만 존재하며 새로운 브랜치는 만들지 않음. 기본 실행 D:/Git/project-b/builds/EungyeTaxi/EungyeTaxi.exe, HUD 작업폴더도 동일 검증본.
