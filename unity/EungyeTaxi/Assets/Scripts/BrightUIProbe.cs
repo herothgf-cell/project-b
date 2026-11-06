@@ -49,6 +49,28 @@ public sealed class BrightUIProbe:MonoBehaviour {
   } finally {b.RoomOpen=false;if(b.restartPrompt)b.ConfirmRestart(false);s.paused=paused;Time.timeScale=timeScale;}
   Check(s.paused==paused&&Time.timeScale==timeScale,"summary review restores pause and clock");
  }
+ IEnumerator ReviewRepairAttention(string mode){
+  var services=s.services;var damage=s.business.ledger.Care.Damage;var ledger=s.business.ledger;var map=s.GetComponent<FullMapOverlay>();
+  int cash=ledger.Account.Cash,debt=ledger.Account.Debt,expense=ledger.Account.Expense(ledger.Day,null);float timeScale=Time.timeScale;var route=s.jobs.nav.hdRoute;
+  Check(damage.Durability==100,"repair fixture starts undamaged "+mode);Time.timeScale=0;
+  try {
+   damage.ApplyAccidentLoss("ui-attention-51",49);Check(!services.RepairAttention,"no red dot at 51 "+mode);
+   damage.ApplyAccidentLoss("ui-attention-50",1);Check(services.RepairAttention,"red dot starts at 50 "+mode);
+   damage.ApplyAccidentLoss("ui-attention-21",29);Check(services.RepairAttention,"red dot at 21 "+mode);
+   damage.ApplyAccidentLoss("ui-attention-0",21);Check(services.RepairAttention&&s.damage.Disabled,"zero retains attention and disabled handling "+mode);
+   damage.Repair();Check(!services.RepairAttention,"completed repair clears red dot "+mode);damage.ApplyAccidentLoss("ui-attention-display",79);
+   foreach(int width in new[]{1280,1920}){
+    Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);
+    Check(CockpitUI.LayoutFits(Screen.width,Screen.height),"attention HUD fits "+mode+width);yield return Capture("attention-"+mode+"-"+width);
+    Check(services.ToggleLifeHub()&&services.PostTripVisible,"life hub opens "+mode+width);yield return Capture("life-hub-"+mode+"-"+width);
+    Check(services.RepairAttention,"reading hub does not acknowledge repair "+mode+width);
+    Check(services.OpenWorkshopFromHub()&&map.FacilityPlannerVisible&&!services.PostTripVisible,"workshop enters existing planner "+mode+width);Time.timeScale=0;yield return Capture("workshop-"+mode+"-"+width);map.Close();Time.timeScale=0;
+    Check(services.RepairAttention&&s.jobs.nav.hdRoute==route,"browsing retains dot and selected route "+mode+width);
+   }
+   Check(ledger.Account.Cash==cash&&ledger.Account.Debt==debt&&ledger.Account.Expense(ledger.Day,null)==expense,"attention and browsing never purchase "+mode);
+  } finally {if(map.IsOpen)map.Close();services.DismissPostTrip();damage.Repair();Time.timeScale=timeScale;}
+  Check(!services.RepairAttention,"dot follows repaired state without reopen "+mode);
+ }
  IEnumerator Run(){
   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-fullUiMenuOnly")>=0){
    yield return new WaitForSecondsRealtime(2);
@@ -69,6 +91,7 @@ public sealed class BrightUIProbe:MonoBehaviour {
    foreach(int width in new[]{1280,1920}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);readability.SelectSignal();Check(readability.SignalCountdownText.EndsWith("초"),"countdown still available "+width);yield return Capture("signal-countdown-"+width);}
    done=true;Debug.Log("SIGNAL_COUNTDOWN_PLAYER_RESULT "+(ok?"PASS":"FAIL")+" checks="+checks);Application.Quit(ok?0:1);yield break;
   }
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-lifeHubUiReview")>=0)yield return ReviewRepairAttention("single");
   if(FullUiReview)yield return ReviewSingleMenus();
   foreach(int width in new[]{1280,1920}){
    Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);
@@ -100,6 +123,7 @@ public sealed class BrightUIProbe:MonoBehaviour {
   FindObjectOfType<UnifiedModeBootstrap>().StartPvp();yield return new WaitForSecondsRealtime(1);yield return Capture("08-pvp-setup");
   if(FullUiReview)foreach(int width in new[]{1280,1920}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);yield return Capture("08a-pvp-setup-"+width);}
   FindObjectOfType<Pvp.PvpBootstrap>().StartSimulation(true,180);yield return Ready();
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-lifeHubUiReview")>=0)yield return ReviewRepairAttention("pvp");
   Check(s.simulationMatch&&s.simulationMatch.Drivers.Count==4,"PVP four native sessions");Check(s.business.SavePath=="","PVP has no campaign save");
   map=s.GetComponent<FullMapOverlay>();
   foreach(int width in new[]{1280,1920}){

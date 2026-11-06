@@ -49,6 +49,7 @@ public static class CasualUI {
   else HudGlyph.Draw(new Rect(r.center.x-16,r.center.y-16,32,32),6,Green);
  }
  public static int PortraitVariant(string identity){unchecked{uint hash=0;foreach(char c in identity??"")hash=hash*31+c;return (int)(hash%4);}}
+ public static void AttentionDot(Rect r){HudGlyph.Draw(new Rect(r.x-2,r.y-2,r.width+4,r.height+4),15,Card);HudGlyph.Draw(r,15,Danger);}
  public static void Divider(Rect r){var old=GUI.color;GUI.color=Border;GUI.DrawTexture(new Rect(r.x,r.y,r.width,1),Texture2D.whiteTexture);GUI.color=old;}
  public static void Backdrop(){
   if(!backdrop){backdrop=new Texture2D(1,64,TextureFormat.RGB24,false);for(int y=0;y<64;y++)backdrop.SetPixel(0,y,Color.Lerp(Canvas,new Color(1,.99f,.95f),y/63f));backdrop.Apply();backdrop.wrapMode=TextureWrapMode.Clamp;}

@@ -7,8 +7,11 @@ public partial class ServiceStops : MonoBehaviour {
  public bool CanContinueConditionService(int kind){return Pvp&&session.business.ledger.State==BusinessState.Open&&!session.jobs.Active&&(PvpNativeLan.IsReplica(session)?Mathf.Abs(session.taxi.Speed):session.taxi.body.velocity.magnitude)<.56f&&(kind==1?AtRestaurant():kind==3&&(AtRestArea()||AtParking()));}
  public void FinishConditionService(int kind,bool completed){notice=completed?(kind==1?"식사 완료 · 1,000원 · 포만 +60":"짧은 휴식 완료 · 피로 −40 · 졸음 해제"):"이용 중단 · 비용/회복 없음";noticeUntil=Time.unscaledTime+5;if(completed)CompleteServiceNavigation();Close();session.business.SaveCheckpoint();}
  public bool PostTripVisible {get{return postTrip;}}
+ // Presentation follows the replicated/current care state; reading/opening does not acknowledge it.
+ public bool RepairAttention {get{return session&&session.business&&session.business.ledger!=null&&session.business.ledger.Care.Damage.Durability<=50;}}
  public bool CanOpenLifeHub {get{return session&&session.business&&session.jobs&&!session.jobs.Active&&!session.paused&&!session.PracticeBusy&&!session.PracticeMenuOpen&&!session.FullMapOpen&&!session.ChoiceOpen&&!session.business.preparing&&!session.business.ShowingSummary&&!session.business.restartPrompt&&!session.business.ResumeBlocked&&!session.law.HistoryOpen;}}
  public bool ToggleLifeHub(){if(postTrip){DismissPostTrip();return true;}if(!CanOpenLifeHub)return false;postTrip=true;RefreshPostTrip();nextPostTripRefresh=Time.unscaledTime+2;return true;}
+ public bool OpenWorkshopFromHub(){if(!postTrip||!CanOpenLifeHub||!OpenFacilityPlanner(5))return false;DismissPostTrip();return true;}
  public DriveSession session;public bool open;public string notice="";public int pending=-1;public string destination="";
  float noticeUntil;int pendingFuel=-1;public float FuelAmount {get{return Mathf.Min(10,100-session.business.ledger.Account.Fuel);}}
  static readonly string[] mealMenu={"제육백반","된장찌개 정식","소고기국밥"};
@@ -98,18 +101,23 @@ public partial class ServiceStops : MonoBehaviour {
  }
  void DrawPostTrip(GUIStyle style,GUIStyle button){
   if(!postTrip||session.paused||session.FullMapOpen||session.PracticeMenuOpen||session.PracticeBusy||session.ChoiceOpen||session.business.restartPrompt||session.business.taxPrompt||session.business.ShowingSummary||session.business.preparing||session.law.HistoryOpen)return;
-  float scale=CockpitUI.Scale,width=610*scale,x=365*scale,y=110*scale;
-  GUI.depth=-20;CasualUI.Panel(new Rect(x,y,width,80));
-  string[] labels={session.jobs.NeedsWash?"주유소(세차 필요)":"주유","식사","귀가 주차장","수면"};
-  string reason=recommended==0?(session.jobs.NeedsWash?"청결 30 미만 · 세차 필요":"연료 15% 이하"):recommended==1?"포만감 25 미만":recommended==3?"피로 70 이상":recommended==2?"마감까지 3분 이내":"현재 컨디션 양호";
-  CasualUI.RoundedFill(new Rect(x+8,y+4,width-16,24),CasualUI.Blue);var titleStyle=new GUIStyle(style){fontSize=14};titleStyle.normal.textColor=Color.white;GUI.Label(new Rect(x+16,y+2,width-32,28),"생활 거점 · "+reason,titleStyle);
-  float cell=(width-20)/5;
-  for(int i=0;i<4;i++){
-   GUI.enabled=!session.jobs.Active&&!float.IsInfinity(postTripDistances[i]);
-   string distance=float.IsInfinity(postTripDistances[i])?"경로 없음":postTripDistances[i]>=1000?(postTripDistances[i]/1000).ToString("0.0")+"km":postTripDistances[i].ToString("0")+"m";
-   if(GUI.Button(new Rect(x+10+i*cell,y+30,cell-5,32),(recommended==i?"★ ":"")+labels[i]+" · "+distance,button))GuideAfterTrip(i);
-  }
-  GUI.enabled=true;if(GUI.Button(new Rect(x+10+4*cell,y+30,cell-5,32),"계속 영업 · 닫기",button))DismissPostTrip();
+  var previous=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);
+  try {
+   const float x=365,y=110,width=610;GUI.depth=-20;CasualUI.Panel(new Rect(x,y,width,174));
+   string reason=RepairAttention?"내구도 "+session.business.ledger.Care.Damage.Durability+" · 수리 권장":recommended==0?(session.jobs.NeedsWash?"세차 필요":"주유 권장"):recommended==1?"식사 권장":recommended==3?"수면 권장":recommended==2?"마감 준비":"현재 컨디션 양호";
+   CasualUI.Header(new Rect(x+8,y+6,width-16,34),"생활거점 · "+reason,0);
+   string[] labels={session.jobs.NeedsWash?"주유·세차":"주유","식사","귀가 주차장","수면","공업사","닫기"};int[] glyphs={8,9,10,11,12,19};float cell=(width-20)/3;
+   for(int i=0;i<6;i++){
+    var rect=new Rect(x+10+(i%3)*cell,y+48+(i/3)*61,cell-6,54);
+    GUI.enabled=i<4?!session.jobs.Active&&!float.IsInfinity(postTripDistances[i]):true;
+    string label=labels[i];if(i<4){float d=postTripDistances[i];label+="\n"+(float.IsInfinity(d)?"경로 없음":d>=1000?(d/1000).ToString("0.0")+"km":d.ToString("0")+"m");}
+    var rowButton=KoreanText.Button(UiReadability.Font(15));rowButton.padding=new RectOffset(36,10,0,0);
+    if(GUI.Button(rect,label,rowButton)){if(i<4)GuideAfterTrip(i);else if(i==4){OpenWorkshopFromHub();}else DismissPostTrip();}
+    HudGlyph.Draw(new Rect(rect.x+8,rect.y+17,20,20),glyphs[i],CasualUI.Blue);
+    if(i==4&&RepairAttention)CasualUI.AttentionDot(new Rect(rect.xMax-12,rect.y-3,12,12));
+   }
+   GUI.enabled=true;
+  } finally {GUI.matrix=previous;GUI.enabled=true;}
  }
  public void Toggle(){if(session.SettingsOpen)return;
   if(session.accident&&session.accident.Locked||session.damage&&session.damage.PendingServiceRemaining>0)return;

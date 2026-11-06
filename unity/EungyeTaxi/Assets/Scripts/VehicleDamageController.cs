@@ -223,9 +223,6 @@ public sealed class VehicleDamageController : MonoBehaviour {
         if(!Campaign||session.business.preparing||session.business.ShowingSummary||session.RideResultOpen||session.FullMapOpen||session.PracticeMenuOpen)return;
         var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true};style.normal.textColor=CasualUI.Ink;GUI.depth=-140;
         if(Time.unscaledTime<(PvpNativeLan.IsReplica(session)?networkWorkshopNoticeUntil:noticeUntil)&&!Disabled&&DisplayedServiceRemaining<=0){CasualUI.Panel(new Rect(Screen.width/2-240,157,480,76));GUI.Label(new Rect(Screen.width/2-230,165,460,65),DisplayedServiceNotice,style);}
-        if(!Disabled&&Damage.Durability<=50&&!session.jobs.Active&&!session.paused&&!session.services.open&&!(session.accident&&session.accident.Locked)&&PendingServiceRemaining<=0){
-            if(GUI.Button(new Rect(Screen.width/2-145,226,290,34),"내구도 "+Damage.Durability+" · 공업사 비교/길안내",CasualUI.Action(14)))session.services.OpenFacilityPlanner(5);
-        }
         if(DisplayedServiceRemaining>0){
             if(session.accident&&session.accident.Locked)return;
             var matrix=GUI.matrix;float scale=WorkshopPresentation.Scale(Screen.width,Screen.height);GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));GUI.depth=-650;
