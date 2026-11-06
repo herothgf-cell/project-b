@@ -1,13 +1,13 @@
 {
-  "sourceCommit": "9632ffbc3a1aa0542ab01653a272440a4fe1aa81",
+  "sourceCommit": "04e2e878c3c9505fffbf12c39eb475f2a47e8f67",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-06",
-  "totalBytes": 124555553.0,
+  "totalBytes": 124559137.0,
   "validation": {
     "build": "PrototypeBuild.BuildHybrid via FullUIBuild.Build exit 0",
-    "buildLog": "artifacts/icons-lifehub/build-integrated.log",
+    "buildLog": "artifacts/filled-icons-trip-flow/build.log",
     "protocol": "native-city-lan-v11",
     "themeContract": "PASS",
     "drivingSettingsAssertions": 171,
@@ -21,27 +21,22 @@
     "contentCopies": "PASS",
     "hudFocused": "PASS",
     "hudIntegration": "PASS",
-    "uiPlayerAssertions": 160,
-    "drivingSinglePlayerAssertions": 17,
-    "drivingPvpPlayerAssertions": 15,
+    "phasePresentationAssertions": 11,
+    "arrivalReadabilityAssertions": 30,
+    "uiPlayerAssertions": 174,
     "playerExitCodes": [
-      0,
-      0,
       0
     ],
-    "capturedImages": 58,
+    "capturedImages": 60,
     "resolutions": [
       "1280x720",
       "1920x1080"
     ],
-    "repairAttention": "current durability <=50; no acknowledgement; clears after repair",
-    "icons": "shared rounded 96px cache",
     "userSaveFilesCompared": 10,
     "userSaveChanged": 0,
     "mapInputStrictIssues": 0,
     "mapAndVehicleArtChanged": false,
     "balanceDefaultsChanged": false,
-    "mergedMain": "4202dac5011339154294cdb88ced90ed7c92ab5c",
     "manualDriving": false,
     "fullCampaign": false,
     "twoPcLanRepeated": false
@@ -60,7 +55,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "45a21083fb73ecaa102a56c84e118ca77bfb2ac1e7d1ab8171c162895dcf8100"
+      "sha256": "f644d78f1b9ec1457af3e89190222bdcfaaa9c47f6f7b25f0e7db0716fdc3b87"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -84,8 +79,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2510336,
-      "sha256": "64ff3fafa3654ec15f96e547b3905c25df6df2c94ed2b28bf826305c131f9321"
+      "bytes": 2513920,
+      "sha256": "0b256aadb4a39a324feaf302a9914d6a712cad65b4b4212db5ff482a7f34cd88"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
