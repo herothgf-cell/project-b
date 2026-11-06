@@ -40,4 +40,6 @@
 - 통합 최신 운전 설정 Player: `tools/test_driving_settings_player.ps1` 싱글17/PVP15 모두 exit0, 임시 contentTest 캠페인과 독립 PreferenceKey 사용. 사후 사용자 저장10파일 hash 변화0. 이전 main의 LAN51/64·재접속은 보존된 기준 증거이며 이번에 재실행한 것으로 세지 않는다.
 - 병합 후 독립 재검토에서도 중요한 회귀 없음. TaxiController/TrafficSystem/DrivingSettings/PvpNativeLan 구현은 원격4202dac와 동일하다. 새 물리/신호 코드는 이번 UI 작성물이 아니라 통합 보존분이다.
 - 실제 화면8장은 `docs/ui/2026-11-06-icons-lifehub/`에 보관한다. 후속 HUD 점검에서 두 줄 거리/최소글자·선택 탭 대비를 반영했고 가운데/속도 카드 중복 수리 버튼은 없다.
-- 최종 소스/manifest/게시 해시는 실제 커밋 후 추가한다.
+- 최종 소스/실제 화면·이력 커밋은 `9632ffbc3a1aa0542ab01653a272440a4fe1aa81`이다. `git log -1 --format=%H -- docs/work-history/2026-11-06-icons-lifehub.md`로 확인했다. 병합 커밋은 `71240fd`이고 origin/main4202dac가 조상임을 확인했다.
+- 출하141파일·124,555,553바이트, 통합/PVP VerifyOnly 각각exit0. 통합manifest가 위 실제 소스와 `artifacts/icons-lifehub/validation.json`을 참조한다. 기존 추적 Burst txt 포함·active-profile/지도ZIP/필수 입력 미변경.
+- 원본 다른 작업 폴더는 수정하지 않았다. 이번 관리 작업 트리의 기본exe와 원격 main으로 배포한다. 원격 게시 영수증은 실제 push 후 추가한다.

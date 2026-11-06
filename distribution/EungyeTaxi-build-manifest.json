@@ -1,26 +1,56 @@
 {
-  "sourceCommit": "0af3938caa7508345b07d51d787c94396f8c094c",
+  "sourceCommit": "9632ffbc3a1aa0542ab01653a272440a4fe1aa81",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-06",
-  "totalBytes": 124548631.0,
+  "totalBytes": 124555553.0,
   "validation": {
-    "feature": "merge-main-casual-ui-and-driving-fixes",
-    "source": "0af3938caa7508345b07d51d787c94396f8c094c",
-    "mainParent": "df3e693d0f46e993a67e26179fbe80acd80e8a23",
-    "drivingParent": "ecd6a658088097e12f4e0476d3793471147afbbd",
-    "unityBuild": "FullUIBuild.Build exit0; full UI/theme/brake22/PhysX8/native left and HUD/content contracts",
-    "runtime": "full UI112/menu4/driving single17/PVP15 exit0; themed5sliders/compactworkshop render reviewed",
-    "lan": "native-lan-20261106-174652-a14f56dc host51/client64/reconnect exit0; v11",
-    "protection": "17 files unchanged; main content/theme/portraits unchanged; map inputs/ZIP unchanged Strict0",
-    "limitations": "loopback and controlled UI/PhysX fixtures; long human/full3day/physicalgamepad/otherPC not newly accepted"
+    "build": "PrototypeBuild.BuildHybrid via FullUIBuild.Build exit 0",
+    "buildLog": "artifacts/icons-lifehub/build-integrated.log",
+    "protocol": "native-city-lan-v11",
+    "themeContract": "PASS",
+    "drivingSettingsAssertions": 171,
+    "drivingSettingsMenuAssertions": 183,
+    "drivingSettingsModal": "PASS",
+    "brakingSettingsAssertions": 22,
+    "nativeBrakingPhysicsSamples": 8,
+    "nativeLeftSignalRegression": "PASS",
+    "contentRuntimeAssertions": 32,
+    "contentBuildAssertions": 3,
+    "contentCopies": "PASS",
+    "hudFocused": "PASS",
+    "hudIntegration": "PASS",
+    "uiPlayerAssertions": 160,
+    "drivingSinglePlayerAssertions": 17,
+    "drivingPvpPlayerAssertions": 15,
+    "playerExitCodes": [
+      0,
+      0,
+      0
+    ],
+    "capturedImages": 58,
+    "resolutions": [
+      "1280x720",
+      "1920x1080"
+    ],
+    "repairAttention": "current durability <=50; no acknowledgement; clears after repair",
+    "icons": "shared rounded 96px cache",
+    "userSaveFilesCompared": 10,
+    "userSaveChanged": 0,
+    "mapInputStrictIssues": 0,
+    "mapAndVehicleArtChanged": false,
+    "balanceDefaultsChanged": false,
+    "mergedMain": "4202dac5011339154294cdb88ced90ed7c92ab5c",
+    "manualDriving": false,
+    "fullCampaign": false,
+    "twoPcLanRepeated": false
   },
   "files": [
     {
       "path": "builds/EungyeTaxi/택시 시뮬레이션_BurstDebugInformation_DoNotShip/Data/Plugins/x86_64/lib_burst_generated.txt",
-      "bytes": 110703,
-      "sha256": "766fda32026d177c9cfdd473bfd74fc274df303a7f4a1cb54a585f910aa14233"
+      "bytes": 110969,
+      "sha256": "aabd0b944704792ddb6ab3be35e2aabddf2608000c540b70d96730642cd93287"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/app.info",
@@ -30,7 +60,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "1b3cbbc096fbc4889faca24cea5b33702a702dd70681806ad7fd2730fbafc091"
+      "sha256": "45a21083fb73ecaa102a56c84e118ca77bfb2ac1e7d1ab8171c162895dcf8100"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -54,8 +84,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2503680,
-      "sha256": "8754e8b6589a829bf424030ff0d6362cde4d8c9faef773e90c2ed204f6b474f2"
+      "bytes": 2510336,
+      "sha256": "64ff3fafa3654ec15f96e547b3905c25df6df2c94ed2b28bf826305c131f9321"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
