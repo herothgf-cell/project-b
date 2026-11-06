@@ -32400,5 +32400,13 @@
       "editable": false,
       "status": "자료 색인 · 구현은 08-game-rule-mapping.md 확인; 번호만으로 코드 연결하지 않음"
     }
+  ],
+  "literalReplyIds": [
+    "request.Quiet.reply.Accept",
+    "request.Quiet.reply.Defer",
+    "request.Eta.reply.EtaFaster",
+    "request.Eta.reply.EtaNormal",
+    "request.Eta.reply.EtaRelaxed",
+    "request.Eta.reply.Defer"
   ]
 }
