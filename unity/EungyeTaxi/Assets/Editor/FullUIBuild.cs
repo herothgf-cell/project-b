@@ -11,7 +11,7 @@ public static class FullUIBuild {
   Debug.Log("FULL_UI_ART_OK "+atlas.width+"x"+atlas.height);
  }
  public static void Build(){
-  PrepareArt();BrightUIThemeTests.Run();DrivingSettingsChecks.Run();DrivingSettingsChecks.Menus();DrivingSettingsChecks.Modal();
+  PrepareArt();BrightUIThemeTests.Run();BrakingSettingsChecks.All();
   // Includes existing HUD, save/restore, settings and content-copy contracts.
   ContentTuningBuild.Build();
  }

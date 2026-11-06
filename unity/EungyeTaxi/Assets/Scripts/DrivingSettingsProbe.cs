@@ -21,11 +21,11 @@ public sealed class DrivingSettingsProbe : MonoBehaviour {
   while(!(session=FindObjectsOfType<DriveSession>().FirstOrDefault(x=>!x.IsSimulationBot))||!session.StartupReady){if(!pvp&&!FindObjectOfType<DriveSession>()){var mode=FindObjectOfType<UnifiedModeBootstrap>();if(mode)mode.StartSingle();}if(Time.realtimeSinceStartup>until)throw new TimeoutException("startup");yield return null;}
   session.business.preparing=false;session.paused=true;Time.timeScale=0;session.GetComponent<DriveHUD>().enabled=true;
   var panel=DrivingSettingsPanel.For(session);panel.PreferenceKey=key;
-  new DrivingSettings{sensitivity=.7f,response=.6f,centering=1.8f,deadzone=.08f}.Save(key);
+  new DrivingSettings{sensitivity=.7f,response=.6f,centering=1.8f,deadzone=.08f,braking=.65f}.Save(key);
   panel.Open();panel.Draft.sensitivity=1.4f;Check(DrivingSettings.Load(key).sensitivity==.7f,"editing leaves persisted profile unchanged");
   Check(DrivingSettingsPanel.Back(session)&&session.paused&&Time.timeScale==0,"back cancels without resuming driving");
-  panel.Open();Check(panel.Draft.sensitivity==.7f,"reopen restores persisted value");panel.ResetDefaults();Check(panel.Draft.sensitivity==1&&panel.Draft.deadzone==.15f,"restore all four defaults");panel.Cancel();
-  panel.Open();panel.Draft.sensitivity=1.2f;panel.Apply();Check(DrivingSettings.Load(key).sensitivity==1.2f&&!panel.IsOpen,"apply saves then returns to pause");
+  panel.Open();Check(panel.Draft.sensitivity==.7f&&panel.Draft.braking==.65f,"reopen restores persisted steering and braking");panel.ResetDefaults();Check(panel.Draft.sensitivity==1&&panel.Draft.deadzone==.15f&&panel.Draft.braking==1,"restore all five defaults");panel.Cancel();
+  panel.Open();panel.Draft.sensitivity=1.2f;panel.Draft.braking=.75f;panel.Apply();Check(DrivingSettings.Load(key).sensitivity==1.2f&&DrivingSettings.Load(key).braking==.75f&&!panel.IsOpen,"apply saves then returns to pause");
   if(capture){yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(output,"pause.png"));yield return new WaitForSecondsRealtime(.3f);}
   panel.Open();Check(panel.Draft.sensitivity==1.2f,"saved settings survive panel reopen");
   session.law.OpenHistory();Check(!session.law.HistoryOpen&&panel.IsOpen,"history cannot replace settings");
@@ -37,6 +37,16 @@ public sealed class DrivingSettingsProbe : MonoBehaviour {
   yield return new WaitForFixedUpdate();yield return new WaitForFixedUpdate();float low=Mathf.Abs(taxi.wheels[0].steerAngle);taxi.ManualSteeringGain=1;yield return new WaitForFixedUpdate();yield return new WaitForFixedUpdate();float high=Mathf.Abs(taxi.wheels[0].steerAngle);
   Check(high>low*1.5f&&low>1,"sensitivity changes actual WheelCollider steering angle");
   taxi.ManualSteeringGain=1.5f;taxi.AutomatedHumanInput=false;yield return new WaitForFixedUpdate();yield return new WaitForFixedUpdate();Check(Mathf.Abs(Mathf.Abs(taxi.wheels[0].steerAngle)-high)<.01f,"bot wheel angle ignores human sensitivity");
+  taxi.AutomatedHumanInput=true;taxi.autoSteer=0;taxi.body.velocity=Vector3.zero;taxi.RestorePedalIntent(-1);taxi.autoThrottle=-1;taxi.autoBrake=false;taxi.ManualBrakeGain=.5f;yield return new WaitForFixedUpdate();yield return new WaitForFixedUpdate();float weak=taxi.wheels[0].brakeTorque;
+  taxi.ManualBrakeGain=1.5f;yield return new WaitForFixedUpdate();yield return new WaitForFixedUpdate();Check(weak>0&&taxi.wheels[0].brakeTorque>weak*2.9f,"held service brake scales actual WheelCollider torque: low="+weak+" high="+taxi.wheels[0].brakeTorque);
+  taxi.autoBrake=true;yield return new WaitForFixedUpdate();yield return new WaitForFixedUpdate();Check(taxi.wheels[0].brakeTorque==3500,"emergency remains full wheel braking torque");
+  if(!pvp){
+   session.jobs.ClearForDay();taxi.body.velocity=Vector3.zero;taxi.autoThrottle=0;session.damage.Damage.ApplyAccidentLoss("repair-shortcut-render",49);
+   Check(!session.damage.ShowWorkshopShortcut,"healthy durability51 keeps workshop action hidden");session.damage.Damage.ApplyAccidentLoss("repair-shortcut-warning",28);
+   Check(session.damage.ShowWorkshopShortcut,"durability23 exposes compact cockpit workshop action");
+   if(capture){bool oldReplica=taxi.NetworkReplica,oldPredicted=taxi.NetworkPredicted;taxi.NetworkReplica=true;taxi.NetworkPredicted=false;taxi.ReplicaVelocity=taxi.transform.forward*(100/3.6f);session.signals.ToggleHazards();yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(output,"repair-shortcut-speed100.png"));yield return new WaitForSecondsRealtime(.3f);taxi.ReplicaVelocity=Vector3.zero;yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(output,"repair-shortcut-stopped.png"));yield return new WaitForSecondsRealtime(.3f);taxi.NetworkReplica=oldReplica;taxi.NetworkPredicted=oldPredicted;}
+   session.services.OpenFacilityPlanner(5);Check(session.FullMapOpen,"compact workshop action retains comparison/navigation planner");session.GetComponent<FullMapOverlay>().Close();
+  }
   if(pvp){panel.Open();session.simulationMatch.Finish();yield return null;yield return null;Check(!panel.IsOpen&&session.simulationMatch.Finished,"match completion discards settings and reveals results");}
  }
 }
