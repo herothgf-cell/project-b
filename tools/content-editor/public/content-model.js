@@ -99,7 +99,7 @@
    if(['Luggage','MuddyLuggage'].includes(type))links.push('effect.resecure');
    const binding=bindings[type]||'유형 대화 자체에는 별도 요청 이행 점수가 없습니다.';
    add('type.'+type,'대화 선택지',byId.get(own[0]).section,binding,'dialogue',[
-    section('배정과 연결 요청',type==='General'||type==='Drunk'?'기존 일반·취객 배정 보장 규칙으로 결정하며 특수 유형 가중치 추첨과 구분합니다.':'특수 유형 후보 안에서 상대 가중치를 사용합니다. 대표 요청을 사용할 수 없거나 요청 수가 0이면 대표 유형 배정이 제한됩니다.',own.filter(id=>id.endsWith('.weight')),'appearance'),
+    section('배정과 연결 요청',type==='General'||type==='Drunk'?'기존 일반·취객 배정 보장 규칙으로 결정하며 특수 유형 가중치 추첨과 구분합니다.':'특수 유형 후보 안에서 상대 가중치를 사용합니다. 대표 요청을 사용할 수 없거나 요청 수가 0이면 대표 유형 배정이 제한됩니다.',own.filter(id=>id.endsWith('.weight')||type==='Drunk'&&!['intro','choice','followup'].some(k=>id.includes('.'+k+'.'))),'appearance'),
     section('승차 때 대사','후보 식별자로 변형이 정해집니다. 같은 번호의 도입·후속 대사가 한 변형입니다.',own.filter(id=>id.includes('.intro.')),'prompt'),
     section('선택지와 실제 결과','아래 문구와 처리 조건은 같은 유형 행동에 연결됩니다.',[],'choices',cards),
     section('운행 중 후속 대사','빈 문구는 행동·실제 관찰 결과에 맞는 내장 대사를 사용합니다. 조용한 배려·수면·작업 중에는 표시가 억제됩니다.',own.filter(id=>id.includes('.followup.')),'dialogue'),
@@ -186,7 +186,8 @@
   const defaults=new Map((catalog.entries||[]).map(e=>[e.id,e.defaultValue]));const values=new Map((profile?.values||[]).map(e=>[e.id,e.value]));
   const value=id=>values.has(id)?values.get(id):defaults.get(id);const enabled=id=>!id||String(value(id)).toLowerCase()==='true';
   if(entity.requestKind==='LostItem')return {text:enabled(entity.enabledId)?'하차 후 조건부 10%':'사용 안함 · 하차 후 사건 제외',explanation:'하차 후 후보 식별자로 정하는 별도 10% 텍스트 사건입니다. 일반 요청 추첨에서 제외하며 가중치로 10%를 바꾸지 않습니다.'};
-  if(!entity.weightId)return entity.id==='type.Drunk'?{text:'취객 별도 배정 · 하루 최대 2명',explanation:'연속 특수 승객을 피하는 일반 승객 차례를 제외하고, 하루 취객이 2명 미만이면 30% 기준 추첨합니다. 취객 없이 3회 탑승하면 다음 추첨 가능 차례에 취객을 배정합니다. 실제 빈도는 하루 진행과 일반 승객 차례에 따라 달라집니다. 취객의 잠듦은 별도 30% 조건입니다.'}:{text:'',explanation:''};
+  if(entity.id==='type.Drunk')return {text:'등장 '+value('type.Drunk.spawnPercent')+'% · 하루 최대 '+value('type.Drunk.dailyMax')+'명',explanation:'배정 가능 차례의 확률이며 전체 승객 비율이 아닙니다. 특수 승객 뒤 다음 탑승은 일반 승객입니다. 하루 최대 0은 취객 없음입니다. 강제 등장 '+(value('type.Drunk.forceEnabled')==='true'?'사용 · 취객 없이 '+value('type.Drunk.forceAfterMisses')+'회 탑승 후 다음 가능한 차례':'사용 안함')+'. 잠듦 '+value('type.Drunk.sleepPercent')+'%, 구토 예정 '+value('type.Drunk.vomitPercent')+'%는 각각 독립 추첨합니다.'};
+  if(!entity.weightId)return {text:'',explanation:''};
   if(!enabled(entity.enabledId))return {text:'사용 안함 · 후보 제외',explanation:'사용하지 않는 요청은 가중치와 관계없이 후보에서 제외합니다.'};
   const weight=Math.max(0,Number(value(entity.weightId))||0);if(!weight)return {text:'가중치 0 · 후보 제외',explanation:'양수 가중치를 가진 사용 중 후보만 추첨합니다.'};
   const request=entity.kind==='request';const prefix=request?'request.':'type.';
@@ -222,7 +223,8 @@
    return info(entry.editable?'요청을 수락한 뒤 하차 때 이행 여부를 평가할 때':'현행 운송의 고정 결과를 설명할 때',target+'의 수락 답변 전체','현재는 요청 종류별 평가 점수입니다. 선택지별 독립 점수는 지원하지 않으며, 버튼을 누를 때와 하차 때 두 번 더하지 않습니다.');
   }
   if(domain==='schedule')return info(name.startsWith('count')?'새 운송의 요청 개수를 배정할 때':'새 운송의 등장 시점을 정하고 운행 중 표시 기회를 확인할 때',allRequests,name.startsWith('count')?'0·1·2건 비중 합계는 100입니다. 개수 배정 뒤 각 요청의 가중치를 사용합니다.':name==='movingSeconds'?'운행 중 요청을 표시하기 전 필요한 실제 주행 시간입니다. 안전 정차 기회도 필요합니다.':'진행률은 0~1 값입니다. 예: 0.25는 25%. 주행 시간과 안전 정차 기회도 함께 충족해야 합니다.');
-  if(domain==='type'&&name==='Sleeping'&&field==='weight')return info('일반 승객 차례·취객 우선 추첨 뒤 특수 유형을 배정할 때','잠자는 승객 유형의 등장 빈도','취객이 배정되지 않은 차례의 특수 유형 추첨(30% 기준)에서 후보 간 상대 가중치를 사용합니다. 가중치 1은 전체 승객의 1%가 아닙니다. 특수 승객 뒤 다음 탑승은 일반 승객이며, 취객의 잠듦 30%는 이 값과 별개입니다.');
+  if(domain==='type'&&name==='Drunk'&&['spawnPercent','dailyMax','forceEnabled','forceAfterMisses','sleepPercent','vomitPercent'].includes(field))return info(['sleepPercent','vomitPercent'].includes(field)?'새 취객의 상태를 생성할 때':'새 승객 유형을 배정할 때','취객 등장·잠듦·구토 상태',entry.description+' 다음 새 캠페인/새 PVP 방부터 적용하며 이미 배정된 상태는 다시 추첨하지 않습니다.');
+  if(domain==='type'&&name==='Sleeping'&&field==='weight')return info('일반 승객 차례·취객 우선 추첨 뒤 특수 유형을 배정할 때','잠자는 승객 유형의 등장 빈도','취객이 배정되지 않은 차례의 특수 유형 추첨(30% 기준)에서 후보 간 상대 가중치를 사용합니다. 가중치 1은 전체 승객의 1%가 아닙니다. 특수 승객 뒤 다음 탑승은 일반 승객이며, 취객의 잠듦 확률은 취객 배정 설정에서 별도로 편집합니다.');
   if(domain==='type')return info(field==='weight'?'새 승객의 유형을 배정할 때':field==='intro'?'해당 유형의 첫 대화를 보여줄 때':field==='choice'?'기사 응답 선택지를 보여줄 때':'해당 유형의 운행 중 후속 대화를 보여줄 때',typeTitle(name)+' 승객만',field==='weight'?'특수 유형 후보 사이의 상대 비중입니다. 일반·취객 보장과 대표 요청 자격은 별도입니다.':'빈 답변·후속 문구는 현재 상태에 맞는 내장 대사를 사용합니다.');
   if(domain==='situation')return info('해당 상황에 대한 기사 답변을 보여줄 때',({SignalWait:'신호 대기',Jolt:'차량 흔들림',NecessaryBrake:'필요한 제동'})[name]+' 상황 대화만','후속 질문 제한 선택은 이 운송의 새로운 추가 상황 대화를 막습니다. 별도 예약 요청은 취소하지 않습니다.');
   if(domain==='effect'){

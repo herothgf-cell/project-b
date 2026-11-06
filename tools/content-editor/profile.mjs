@@ -1,3 +1,4 @@
+import {DRUNK_SETTINGS} from './drunk-settings.mjs';
 import {createHash} from 'node:crypto';
 import {defaultChoiceValue} from './choice-catalog.mjs';
 export function hashProfile(p) {
@@ -22,7 +23,8 @@ export function validateProfile(p,catalog,{checkHash=true}={}) {
  if(e.type==='text'&&v.value.length>4000)err(`${v.id}: 텍스트가 너무 깁니다.`);
  if(e.type==='boolean'&&!['true','false'].includes(v.value))err(`${v.id}: 참/거짓 값 오류`);
  if(e.type==='number'||e.type==='integer'){const n=Number(v.value);if(!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(v.value)||!Number.isFinite(n)||(e.type==='integer'&&!Number.isSafeInteger(n))||(e.min!=null&&n<e.min)||(e.max!=null&&n>e.max))err(`${v.id}: 허용 범위 오류`);}}
- for(const id of entries.keys())if(!seen.has(id))err(`누락된 ID: ${id}`);
+ const oldDrunk=DRUNK_SETTINGS.every(e=>!seen.has(e.id));
+ for(const id of entries.keys())if(!seen.has(id)&&!(oldDrunk&&DRUNK_SETTINGS.some(e=>e.id===id)))err(`누락된 ID: ${id}`);
  const vals=new Map(p.values.filter(v=>v&&typeof v.id==='string'&&typeof v.value==='string').map(v=>[v.id,v.value]));
  if(['schedule.count0','schedule.count1','schedule.count2'].every(k=>vals.has(k))&&['schedule.count0','schedule.count1','schedule.count2'].reduce((a,k)=>a+Number(vals.get(k)),0)!==100)err('요청 개수 비중의 합은 100이어야 합니다.');
  if(['schedule.progressMin','schedule.progressMax','schedule.cutoff'].every(k=>vals.has(k))&&(Number(vals.get('schedule.progressMin'))>Number(vals.get('schedule.progressMax'))||Number(vals.get('schedule.progressMax'))>=Number(vals.get('schedule.cutoff'))))err('요청 발생 진행률 범위가 올바르지 않습니다.');
@@ -36,5 +38,5 @@ export function migrateProfile(profile,catalog){
  const errors=validateProfile(profile,catalog);if(errors.length)throw Error(errors.join('\n'));
  const copy=structuredClone(profile);if(copy.schemaVersion===1&&catalog.entries.some(e=>e.id==='choice.effects.version'&&e.editable)){
  const legacy=new Map(copy.values.map(v=>[v.id,v.value]));for(const entry of catalog.entries.filter(e=>e.editable&&e.id.startsWith('choice.')))copy.values.push({id:entry.id,value:defaultChoiceValue(entry.id,legacy)});
- copy.schemaVersion=2;copy.contentHash=hashProfile(copy);const errors=validateProfile(copy,catalog);if(errors.length)throw Error(errors.join('\n'));}return copy;
+ copy.schemaVersion=2;copy.contentHash=hashProfile(copy);const errors=validateProfile(copy,catalog);if(errors.length)throw Error(errors.join('\n'));}if(DRUNK_SETTINGS.every(e=>!copy.values.some(v=>v.id===e.id))){for(const e of DRUNK_SETTINGS)if(catalog.entries.some(c=>c.id===e.id))copy.values.push({id:e.id,value:e.defaultValue});copy.contentHash=hashProfile(copy);}return copy;
 }

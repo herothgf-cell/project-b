@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "5b13d17b332d0c60ac81a7b25e9d921293febaf62cb5e44da5a905f3c1fdb5b4",
+  "contentHash": "9ae4b1adc74306795c8b8a6eedb08732c30a50d5ffc1f51064b60c1423ad2ab9",
   "values": [
     {
       "id": "request.Quiet.enabled",
@@ -1159,6 +1159,30 @@
     {
       "id": "law.editorSpeed.seconds",
       "value": "2"
+    },
+    {
+      "id": "type.Drunk.spawnPercent",
+      "value": "30"
+    },
+    {
+      "id": "type.Drunk.dailyMax",
+      "value": "2"
+    },
+    {
+      "id": "type.Drunk.forceEnabled",
+      "value": "true"
+    },
+    {
+      "id": "type.Drunk.forceAfterMisses",
+      "value": "3"
+    },
+    {
+      "id": "type.Drunk.sleepPercent",
+      "value": "30"
+    },
+    {
+      "id": "type.Drunk.vomitPercent",
+      "value": "25"
     },
     {
       "id": "choice.effects.version",

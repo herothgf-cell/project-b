@@ -1,3 +1,4 @@
+import {DRUNK_SETTINGS} from './drunk-settings.mjs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -27,7 +28,7 @@ export function generateChoiceEntries(legacyEntries){
  return entries;
 }
 export async function generate(root,{verify=false}={}){
- const file=path.join(root,'config/content/catalog.json');const catalog=JSON.parse(await fs.readFile(file,'utf8'));const legacy=catalog.entries.filter(e=>!e.id.startsWith('choice.'));for(const e of legacy)if(/^request\.[^.]+\.(success|failure)$/.test(e.id)||['effect.food.satisfaction','manner.comfortMotion.penalty'].includes(e.id))e.description='이관 원본/호환 참조. 새 선택 효과는 이 값과 독립적으로 편집합니다.';catalog.entries=[...legacy,...generateChoiceEntries(legacy)];
+ const file=path.join(root,'config/content/catalog.json');const catalog=JSON.parse(await fs.readFile(file,'utf8'));const legacy=[...catalog.entries.filter(e=>!e.id.startsWith('choice.')&&!DRUNK_SETTINGS.some(d=>d.id===e.id)),...DRUNK_SETTINGS];for(const e of legacy)if(/^request\.[^.]+\.(success|failure)$/.test(e.id)||['effect.food.satisfaction','manner.comfortMotion.penalty'].includes(e.id))e.description='이관 원본/호환 참조. 새 선택 효과는 이 값과 독립적으로 편집합니다.';catalog.entries=[...legacy,...generateChoiceEntries(legacy)];
  const profile={schemaVersion:2,id:'default',revision:1,contentHash:'',values:catalog.entries.filter(e=>e.editable).map(e=>({id:e.id,value:e.defaultValue}))};profile.contentHash=hashProfile(profile);const errors=validateProfile(profile,catalog);if(errors.length)throw Error(errors.join('\n'));
  for(const dir of ['config/content','unity/EungyeTaxi/Assets/Resources/Content'])for(const [name,data] of [['catalog.json',catalog],['default-profile.json',profile]]){const target=path.join(root,dir,name),text=JSON.stringify(data,null,2)+'\n';if(verify){if(await fs.readFile(target,'utf8')!==text)throw Error('Generated content differs: '+target);}else await fs.writeFile(target,text);}
  return {choices:CHOICE_DEFINITIONS.length,entries:catalog.entries.length,bytes:Buffer.byteLength(JSON.stringify(profile,null,2)+'\n')};
