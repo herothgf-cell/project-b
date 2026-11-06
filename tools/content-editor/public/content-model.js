@@ -169,6 +169,8 @@
       card.fieldIds=card.fieldIds.filter(id=>!isLegacyField(id));
       const stages=[['immediate','즉시','선택 확정 때 한 번 적용합니다. 승차 전 응답은 승차 확정 때 적용합니다. 변화량은 점 증감 + 적용 직전 현재값 × 변화율/100이며 적용 후 0~100으로 제한합니다.'],['during','운행 중','선택 활성화부터 정상 하차·취소·운송 중단까지 게임 영업 경과 시간으로 누적합니다. %/분은 선택 활성화 때 고정한 기준값을 사용합니다. 메뉴 일시정지 중에는 진행하지 않습니다. 0은 이 선택지의 추가 효과가 없다는 뜻이며 자연 피로와 기본 진행은 유지합니다.'],['end.success','운송 종료 · 이행','실제 이행 판정 때 한 번 적용합니다. 유형·상황은 정상 하차 때 적용합니다.'],['end.failure','운송 종료 · 미이행','실제 요청 미이행 판정 때 한 번 적용합니다.'],['end.neutral','운송 종료 · 판정 불가/보류','실제 중립 판정 때 한 번 적용합니다.']];
       card.effectGroups=stages.map(([stage,title,description])=>({stage,title,description:description+(choiceId.startsWith('request.')&&stage.startsWith('end.')?' 요청 종료 만족도는 점+변화율 결과를 선택지마다 −100~100점으로 제한하고, 원시 소수값을 합산해 한 번 반올림한 뒤 요청 종료 합계 상한을 적용합니다.':''),fieldIds:effectIds.filter(id=>id.startsWith(prefix+stage+'.'))})).filter(g=>g.fieldIds.length);
+      for(const stage of card.effectGroups){if(stage.stage==='end.success')stage.title='운송 종료 · 이행 성공';if(stage.stage==='end.failure')stage.title='운송 종료 · 이행 실패 (미이행)';}
+      if(!card.effectGroups.some(stage=>stage.stage==='end.failure'))card.failureUnavailable=choiceId.endsWith('.Defer')?'이행 실패 · 보류 선택은 판정 불가로 처리합니다. 미응답과는 별개입니다.':choiceId.startsWith('request.')?'이행 실패 · 이 요청은 수락 후 별도 실패 판정이 없습니다. 미응답 결과는 아래의 답하지 않았을 때에서 확인합니다.':'이행 실패 · 이 응대는 정상 하차 때 종료 효과를 적용하며 별도 실패 판정이 없습니다.';
       entity.fieldIds=keep([...entity.fieldIds,...effectIds]);
      }
     }

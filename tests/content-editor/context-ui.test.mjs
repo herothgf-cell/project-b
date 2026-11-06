@@ -74,3 +74,23 @@ test('rate guidance separates current value, activation baseline and natural gro
  for(const fragment of ['4점/분','6점/분','8점/분','5점/분','7.5점/분','10점/분','포만감','복리','20점','70점','+50%','-100%'])assert.ok(nodes.some(n=>n.textContent.includes(fragment)),fragment);
  for(const [id,fragment] of [['choice.request.Comfort.Accept.during.fatiguePercentPerMinute','20'],['choice.request.Comfort.Accept.during.fatigueGrowthPercent','4'],['choice.request.Comfort.Accept.immediate.satisfactionPercent','70']]){h.context.testId=id;assert.ok(vm.runInContext('ContentModel.fieldInfo(testId,catalog).detail',h.context).includes(fragment),id);}
 });
+
+test('repeated appearance context is shown once and per-field prose is collapsed without losing editing help',()=>{
+ const h=setup();vm.runInContext(actualModel,h.context);h.context.fixtureCatalog=actualCatalog;h.context.fixtureProfile=actualProfile;
+ vm.runInContext(`catalog=fixtureCatalog;profile=structuredClone(fixtureProfile);defaults=structuredClone(profile);saved=structuredClone(profile);group='승객 요청';selected='request.Quiet';render()`,h.context);
+ const appearance=h.el('detail').children.find(n=>n.className==='context-section appearance'),nodes=descendants(appearance);
+ assert.equal(nodes.filter(n=>n.textContent==='적용 시점 · 새 운송에서 요청 후보를 배정할 때').length,1);
+ const fields=nodes.filter(n=>n.className==='context-field');assert.equal(fields.length,2);
+ for(const field of fields){const help=field.children.find(n=>n.className==='field-explanation');assert.ok(help);assert.ok(!help.open);assert.equal(field.children.filter(n=>n.className==='field-context').length,0);assert.ok(descendants(help).some(n=>n.className==='field-default'));}
+ const input=vm.runInContext("editors.find(e=>e.id==='request.Quiet.weight').input",h.context);input.value='2';input.oninput();assert.equal(vm.runInContext("val(profile,'request.Quiet.weight')",h.context),'2');
+});
+
+test('end effects expose failure editors for real failure outcomes and explain unsupported branches',()=>{
+ const h=setup();vm.runInContext(actualModel,h.context);h.context.fixtureCatalog=actualCatalog;h.context.fixtureProfile=actualProfile;
+ vm.runInContext(`catalog=fixtureCatalog;profile=structuredClone(fixtureProfile);defaults=structuredClone(profile);saved=structuredClone(profile);group='승객 요청';selected='request.Comfort';render()`,h.context);
+ let nodes=descendants(h.el('detail'));assert.ok(nodes.some(n=>n.textContent==='운송 종료 후'));
+ assert.ok(nodes.some(n=>n.textContent.startsWith('이행 실패 (미이행)')));
+ const input=vm.runInContext("editors.find(e=>e.id==='choice.request.Comfort.Accept.end.failure.satisfaction').input",h.context);assert.equal(input.value,'-10');input.value='-17';input.oninput();assert.equal(vm.runInContext("val(profile,'choice.request.Comfort.Accept.end.failure.satisfaction')",h.context),'-17');assert.equal(vm.runInContext("val(profile,'choice.request.Comfort.Accept.end.success.satisfaction')",h.context),'8');
+ vm.runInContext("selected='request.Quiet';render()",h.context);nodes=descendants(h.el('detail'));assert.ok(nodes.some(n=>n.className==='outcome-unavailable'&&n.textContent.includes('이행 실패')&&n.textContent.includes('미응답')));assert.equal(vm.runInContext("editors.filter(e=>e.id.startsWith('choice.request.Quiet.Accept.end.failure.')).length",h.context),0);
+ const reply=nodes.find(n=>n.className==='choice-description');assert.ok(reply);assert.ok(!reply.open);
+});
