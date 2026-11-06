@@ -7,7 +7,7 @@ public partial class ServiceStops : MonoBehaviour {
  public bool CanContinueConditionService(int kind){return Pvp&&session.business.ledger.State==BusinessState.Open&&!session.jobs.Active&&(PvpNativeLan.IsReplica(session)?Mathf.Abs(session.taxi.Speed):session.taxi.body.velocity.magnitude)<.56f&&(kind==1?AtRestaurant():kind==3&&(AtRestArea()||AtParking()));}
  public void FinishConditionService(int kind,bool completed){notice=completed?(kind==1?"식사 완료 · 1,000원 · 포만 +60":"짧은 휴식 완료 · 피로 −40 · 졸음 해제"):"이용 중단 · 비용/회복 없음";noticeUntil=Time.unscaledTime+5;if(completed)CompleteServiceNavigation();Close();session.business.SaveCheckpoint();}
  public bool PostTripVisible {get{return postTrip;}}
- public static Rect PostTripBounds(float width,float height,bool pvp){float scale=UiReadability.HudScale(width,height);return new Rect(width/2-310*scale,(pvp?300:200)*scale,620*scale,174*scale);}
+ public static Rect PostTripBounds(float width,float height,bool pvp){float scale=UiReadability.HudScale(width,height);return new Rect(width/2-310*scale,(pvp?374:200)*scale,620*scale,174*scale);}
  // Presentation follows the replicated/current care state; reading/opening does not acknowledge it.
  public bool RepairAttention {get{return session&&session.business&&session.business.ledger!=null&&session.business.ledger.Care.Damage.Durability<=50;}}
  public bool CanOpenLifeHub {get{return session&&session.business&&session.jobs&&!session.jobs.Active&&!session.paused&&!session.PracticeBusy&&!session.PracticeMenuOpen&&!session.FullMapOpen&&!session.ChoiceOpen&&!session.business.preparing&&!session.business.ShowingSummary&&!session.business.restartPrompt&&!session.business.ResumeBlocked&&!session.law.HistoryOpen;}}

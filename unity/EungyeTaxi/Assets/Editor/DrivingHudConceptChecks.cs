@@ -12,7 +12,7 @@ public static class DrivingHudConceptChecks {
    var conditionMethod=typeof(PvpConditionHUD).GetMethod("PanelBounds");var hubMethod=typeof(ServiceStops).GetMethod("PostTripBounds");
    if(conditionMethod==null||hubMethod==null)throw new Exception("HUD_CONCEPT: auxiliary HUD surfaces need shared measured bounds");
    var condition=(Rect)conditionMethod.Invoke(null,new object[]{size.x,size.y});
-   var nav=new Rect(size.x/2-310*scale,20*scale,620*scale,164*scale);var standings=new Rect(size.x/2-310*scale,196*scale,620*scale,92*scale);
+   var nav=new Rect(size.x/2-310*scale,20*scale,620*scale,164*scale);var standings=new Rect(size.x/2-310*scale,196*scale,620*scale,164*scale);
    foreach(bool pvp in new[]{false,true}){var hub=(Rect)hubMethod.Invoke(null,new object[]{size.x,size.y,pvp});if(hub.Overlaps(nav)||hub.Overlaps(dial)||pvp&&hub.Overlaps(standings))throw new Exception("HUD_CONCEPT: life hub covers guidance or standings "+size);checks++;}
    if(condition.Overlaps(dial)||condition.Overlaps(standings))throw new Exception("HUD_CONCEPT: fatigue advice covers driving controls "+size);checks++;
   }

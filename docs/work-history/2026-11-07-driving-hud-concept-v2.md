@@ -29,3 +29,15 @@
 코드: CockpitUI, DrivingHudArt(신규), DrivingReadability, PassengerDialogueUI, PvpConditionHUD, ServiceStops. 검사: DrivingHudConceptChecks(신규), BrightUIProbe, MapInteractionProbe. 계획/기획05/체크리스트/이력과 대표 캡처·배포 manifest를 함께 남긴다.
 
 실행 `builds/EungyeTaxi/EungyeTaxi.exe`, 은계 싱글/A2 PVP, 빌드 `PrototypeBuild.BuildHybrid`. 로컬 Unity `D:/Program Files/Unity Hub/Editor/2022.3.62f2/Editor/Unity.exe`에 `-batchmode -nographics -quit -projectPath <root>/unity/EungyeTaxi -executeMethod DrivingHudConceptChecks.Build -logFile <log>`를 사용한다. Player는 `-brightUiCheck -fullUiReview -lifeHubUiReview -hudDialogueReview -brightUiOutput <folder> -screen-fullscreen 0 -logFile <log>`다. 신호 화면은 `-brightUiCheck -signalCountdownOnly`로 별도 확인한다.
+
+## 최종 검증 영수증
+
+- 중간 소스/후보 실행본21deb9f에 모두 보존 후 승객 조합df7ef19를 a36db13으로 병합. 문서 양쪽 항목을 보존했고 실행 바이너리는 통합 소스에서 재생성했다. 자동 승인 검토가 미커밋 빌드 복원/미해결 충돌 상태 빌드를 거부해, 변경 폐기 없이 보존 커밋→명시적 충돌 해결→병합 커밋 순서로 진행했다.
+- integrated-build.log exit0, integrated-player.log **188검사 PASS/exit0**. 처음 실패한 care 스크롤은 마지막 안전 정차 문구까지 실제 캡처로 확인했다.
+- PVP4열 상태 글자가 좁아 2열로 개선. pvp-layout-red.log에서 확대 현황과 생활거점 겹침을 재현한 뒤 생활거점 간격을 수정. release-build.log **exit0**, 배치12/대화·신호16/선택효과72와 기존 회귀 통과.
+- 최종 release-player.log **144검사 PASS/exit0**:1280×720/1920×1080, 싱글/PVP·거점·대화/긴 대화/긴 care 안내. 앞선 전체 메뉴 검증188과 구분한다. 마지막 PVP 수정에 영향 없는 신호 화면은 signals.log **8검사 PASS/exit0**;4구/게임 배치·다음 등화·잔여초 육안 확인.3구 계약은 기존 Editor fixture 통과이며 실제 현장 조사로 표시하지 않는다.
+- `pwsh -File tools/test_passenger_composition.ps1` **73 PASS/exit0**, `pwsh -File tools/check_workspace.ps1 -Strict` **issues0/exit0**, 지도 contentHash `35d1bc43d92c996d431acd0464bfc7a175b926cd1e35adb995e99dd7ab91cbac`. 지도/ZIP/게임 수치 불변. 통합 승객 기능의 LANv12 유지.
+- 보호 사용자 저장16파일 SHA256 변화0. 배포 NotoSansKR 라이선스를 저장소 원본과 동일하게 복사·해시 대조했다.
+- 대표 [주행](../ui/2026-11-07-hud-concept-v2/05a-single-navigation.png), [대화](../ui/2026-11-07-hud-concept-v2/dialogue-single-1280.png), [긴 안내 끝](../ui/2026-11-07-hud-concept-v2/care-long-bottom-1280.png), [PVP](../ui/2026-11-07-hud-concept-v2/09-pvp-hud-1280.png), [PVP 거점](../ui/2026-11-07-hud-concept-v2/life-hub-pvp-1280.png), [신호](../ui/2026-11-07-hud-concept-v2/signal-countdown-1280.png). 캡처는 실제 Player의 격리 위치/상태 제어 검사이며 수동 주행 증거가 아니다.
+
+출하 대상은 **현재 작업공간의** `builds/EungyeTaxi/`다. 원래 로컬 `D:/Git/project-b`에는 승객 override 소스/설정/바이너리 미커밋 작업이 진행 중이므로 이 작업에서 덮어쓰거나 병합하지 않는다. 완료된 승객 조합df7ef19까지만 현재 HUD 작업공간에 통합했다. 원격 push 없음. 원래 폴더의 후속 작업이 끝난 뒤 소스 통합과 재빌드가 필요하다.
