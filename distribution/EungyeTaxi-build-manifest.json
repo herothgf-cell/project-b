@@ -1,36 +1,33 @@
 {
-  "sourceCommit": "de877ec9de5cfb51177671eea2053810cda1053d",
+  "sourceCommit": "51260ff87d6cbd973281655ec0035cfbe166335b",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-07",
-  "totalBytes": 124778132.0,
+  "totalBytes": 124795870.0,
   "validation": {
-    "build": "ContentTuningBuild.Build -> PrototypeBuild.BuildHybrid exit0",
-    "buildLog": "artifacts/passenger-traits/build-weather-final.log",
+    "legacyBehavior": "existing food satisfaction expectation failure reproduced on pre-change main checks92",
+    "lanClientAssertions": 54,
+    "rainPlayerAssertions": 31,
+    "build": "PassengerActionChecks.Build -> PrototypeBuild.BuildHybrid exit0",
+    "fullCampaign": false,
     "protocol": "native-city-lan-v16",
-    "nodeTests": 100,
-    "traitsAssertions": 46,
-    "rosterAssertions": 1933,
-    "contentAssertions": 781,
-    "rainSettingsAssertions": 2780,
-    "traitsPlayerAssertions": 86,
+    "actionEditorAssertions": 77,
+    "remotePc": false,
+    "fullUiAssertions": 213,
+    "lanHostAssertions": 43,
+    "traitPlayerAssertions": 86,
     "requestPlayerAssertions": 49,
-    "lanHostAssertions": 44,
-    "lanClientAssertions": 55,
-    "lanEvidence": "artifacts/pvp/native-lan-20261107-020600-e837f89d",
-    "protectedFilesUnchanged": 22,
-    "inputIssues": 0,
+    "protectedChanged": 0,
+    "actionPlayerAssertions": 77,
     "manualDriving": false,
-    "fullThreeDayCampaign": false,
-    "remotePcLan": false,
-    "knownBroadSuiteFailure": "ManualHandling ordinary S brake expected value mismatch (actual8.823529)"
+    "protectedFiles": 16
   },
   "files": [
     {
       "path": "builds/EungyeTaxi/택시 시뮬레이션_BurstDebugInformation_DoNotShip/Data/Plugins/x86_64/lib_burst_generated.txt",
-      "bytes": 111060,
-      "sha256": "d11ac9a5a92de8b5813248a473e75c9506c282903b5df1ba60c02af4644116aa"
+      "bytes": 111046,
+      "sha256": "afeaa8db97f52be93dd45ef33f6b2b5a2db21ef2143966938291c6c148c09bb4"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/app.info",
@@ -40,17 +37,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "b0f4380e01b34eb9edd08331ff54ae9acb47d538afc09576333efc4ad6d5dba7"
+      "sha256": "4eb40ec944bcd184d4f26380f1025d79dfd8a91f7ae658cf77646a282debbba4"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 57564,
-      "sha256": "dc5ea78e861c01f53b47872e917c5add8d96471a77e4d402dd812173125301db"
+      "bytes": 57652,
+      "sha256": "fcb6d7963fe7f3f7ff236f9847194c117f74d50ef0b48654d2c63a1d1c38c8fe"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 112792,
-      "sha256": "47ba2ffaf0ce1d81d400534032c461a0d64a8dfab2bf3fefab26d0644ac20ff7"
+      "bytes": 113048,
+      "sha256": "364688fe78df34f1e7f2ec29da506804b76c1ec3b9300d53b0acf4eec13bc4cf"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -60,12 +57,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
       "bytes": 1140,
-      "sha256": "8bf081727b5fbacd669284fd7db9dd738f2a71c2e3decafa5ec9e32ec55a510c"
+      "sha256": "7737513f84e217e11d19de8287896f1669df3345c624f51b91e7e90b94663eca"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2626048,
-      "sha256": "8d32ff3e9d8cdd2798c94135df4dcbd272f7901b97e8fce02ef260fbb1c6079a"
+      "bytes": 2643456,
+      "sha256": "701eb2ad3fbea0c205710e90a42902906f74c90d22f33f9c9b68eb3335a77b0c"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -560,12 +557,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Plugins/x86_64/lib_burst_generated.dll",
       "bytes": 394240,
-      "sha256": "4d5250bc71b27aeb290e7ffda417158b04958d2047b5dff4e355730ccbe0b85d"
+      "sha256": "9a25cb3c97cc2ec41c504585c3f6d440184da20d015af1ae2ce95f4e9363196c"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
       "bytes": 41655598,
-      "sha256": "5f4aa88278d2d175a21eb4231cf5d11ed4c149c2b875f2c3a241a8efb65e5d30"
+      "sha256": "63a20218481eef1c92d9984d4e7e09a05621449c6b8ed2afd5a559b0a9b9249c"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
@@ -595,7 +592,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/sharedassets0.assets",
       "bytes": 7624,
-      "sha256": "9b973300216cc873d9210901b051d45a08658401eb58befd4753157c17926045"
+      "sha256": "845a244aceb31a0ce4088189ae7cd682139b3cec8f83a1a35c60b68f1e62fdc0"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi.exe",
