@@ -84,6 +84,7 @@ public partial class FullMapOverlay : MonoBehaviour {
  void Draw(int id){
   if(Event.current.type==EventType.Repaint)RepaintCount++;
   Fill(new Rect(0,0,CanvasWidth,CanvasHeight),CasualUI.Canvas);
+  CasualUI.Panel(new Rect(12,10,CanvasWidth-24,66));
   GUI.enabled=!locationOpen;
   GUI.Label(new Rect(24,20,CanvasWidth-420,38),MapCatalog.Name(session.world.map.mapId)+" 지도 · 북 ↑"+(session.simulationMatch?(session.LivePvpMapOpen?" · 경기 진행 중 · 내 차 정지":" · 일시정지"):""),heading);
   if(GUI.Button(new Rect(CanvasWidth-330,20,150,38),"위치 정보",button))ShowLocation();

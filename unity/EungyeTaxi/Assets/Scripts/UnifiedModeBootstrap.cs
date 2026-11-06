@@ -56,14 +56,7 @@ public sealed class UnifiedModeBootstrap : MonoBehaviour {
     void OnGUI(){
         GUI.skin.font=KoreanText.Font;
         if(Selected==Mode.Menu){
-            float width=Mathf.Min(580,Screen.width-32);
-            GUILayout.BeginArea(new Rect((Screen.width-width)/2,Screen.height*.28f,width,275),GUI.skin.box);
-            GUILayout.Label("택시 시뮬레이션",new GUIStyle(GUI.skin.label){fontSize=28,font=KoreanText.BoldFont});GUILayout.Space(20);
-            if(GUILayout.Button("싱글",GUILayout.Height(55)))StartSingle();
-            GUILayout.Space(12);
-            if(GUILayout.Button("PVP",GUILayout.Height(55)))StartPvp();
-            GUILayout.Space(12);
-            if(GUILayout.Button("게임 종료",GUILayout.Height(45)))Application.Quit();GUILayout.EndArea();return;
+            int choice=CasualMenuUI.Main();if(choice==1)StartSingle();else if(choice==2)StartPvp();else if(choice==3)Application.Quit();return;
         }
         if(!human)foreach(var item in FindObjectsOfType<DriveSession>())if(!item.IsSimulationBot){human=item;break;}
         if(human&&human.StartupReady&&(human.paused||human.business.preparing)&&!human.business.IsRestoring){

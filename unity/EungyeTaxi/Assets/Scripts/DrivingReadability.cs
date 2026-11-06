@@ -52,7 +52,8 @@ public class DrivingReadability : MonoBehaviour {
   if(label==null){label=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=UiReadability.Font(14),wordWrap=true};label.normal.textColor=CasualUI.Ink;}
   label.fontSize=UiReadability.Font(14);var originalMatrix=GUI.matrix;float uiScale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(uiScale,uiScale,1));float x=Screen.width/uiScale-Size-16;SetBounds();PrepareMarkers();var jobs=session.jobs;var map=session.world.map;
   Panel(new Rect(x-5,10,Size+10,358));
-  GUI.Label(new Rect(x+5,14,145,24),ZoomSpan.ToString("0")+"m · 북 ↑",label);
+  CasualUI.RoundedFill(new Rect(x-5,10,Size+10,28),CasualUI.Blue);
+  GUI.Label(new Rect(x+5,14,145,24),ZoomSpan.ToString("0")+"m · 북 ↑",new GUIStyle(label){normal={textColor=Color.white}});
   GUI.enabled=zoomIndex>0;if(GUI.Button(new Rect(x+146,12,64,28),new GUIContent("+","미니맵 확대"),KoreanText.Button(UiReadability.Font(12))))Zoom(1);
   GUI.enabled=zoomIndex<ZoomSpans.Length-1;if(GUI.Button(new Rect(x+216,12,64,28),new GUIContent("−","미니맵 축소"),KoreanText.Button(UiReadability.Font(12))))Zoom(-1);GUI.enabled=true;
   GUI.BeginGroup(new Rect(x,42,Size,Size));

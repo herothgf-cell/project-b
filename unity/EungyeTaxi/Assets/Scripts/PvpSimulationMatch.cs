@@ -153,16 +153,24 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
     public void Restart() { if(PvpNativeLan.RunningOnline){PvpNativeLan.Instance.LeaveToMenu();return;} bool expanded=PvpSimulationMode.Expanded;int seconds=PvpSimulationMode.DurationSeconds;PvpSimulationMode.Configure(expanded,seconds);Time.timeScale=1;SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
     void OnGUI() {
         if(!Human||Ledger==null||!Finished)return;
-        if(style==null){style=new GUIStyle(GUI.skin.box){font=KoreanText.Font,fontSize=16,alignment=TextAnchor.MiddleCenter,wordWrap=true};button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=16};}
+        if(style==null){style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=18,alignment=TextAnchor.MiddleLeft,wordWrap=true};style.normal.textColor=CasualUI.Ink;button=KoreanText.Button(18);}
         GUI.depth=-250;
         int best=int.MinValue,winners=0;string winner="";
         for(int i=0;i<drivers.Count;i++){int score=Score(i);if(score>best){best=score;winners=1;winner=PvpDriverPresentation.Name(i);}else if(score==best)winners++;}
-        string summary="경기 종료 · "+(winners>1?"공동 1위":winner+" 승리");
-        for(int i=0;i<drivers.Count;i++)summary+="\n"+(i==0?"나":"봇 "+i)+" · "+Score(i).ToString("N0")+"원 / "+drivers[i].jobs.completed+"회";
-        summary+="\n운송 수입 − 시설 지출";
-        float x=Screen.width/2-250,y=Screen.height/2-160;
-        GUI.Box(new Rect(x,y,500,320),summary,style);
-        if(GUI.Button(new Rect(x+30,y+260,210,40),"다시 경기",CasualUI.Action(16)))Restart();
-        if(GUI.Button(new Rect(x+260,y+260,210,40),UnifiedModeBootstrap.IsUnified?"모드 선택":"경기 설정",button))ReturnToMenu();
+        var saved=GUI.matrix;float scale=Mathf.Min(1,Screen.width/720f,Screen.height/640f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);float x=(Screen.width/scale-660)/2,y=(Screen.height/scale-570)/2;
+        CasualUI.Panel(new Rect(x,y,660,570));CasualUI.Header(new Rect(x+20,y+18,620,58),"경기 종료 · "+(winners>1?"공동 1위":winner+" 승리"),6,CasualUI.Green);
+        CasualUI.Portrait(new Rect(x+26,y+94,100,100),0);
+        GUI.Label(new Rect(x+148,y+94,475,28),"나의 경기 순수입",style);
+        var amount=new GUIStyle(style){fontSize=36,fontStyle=FontStyle.Bold};amount.normal.textColor=CasualUI.Green;
+        GUI.Label(new Rect(x+148,y+125,475,52),Score(0).ToString("N0")+"원",amount);
+        GUI.Label(new Rect(x+148,y+180,475,28),"운송 수입 − 시설 지출",new GUIStyle(style){fontSize=15});
+        for(int i=0;i<drivers.Count;i++){
+            float row=y+230+i*52;CasualUI.RoundedFill(new Rect(x+25,row,610,46),i==0?new Color(.91f,.98f,.94f):CasualUI.Soft);
+            var nameStyle=new GUIStyle(style){wordWrap=false};string name=PvpDriverPresentation.Name(i);GUI.Label(new Rect(x+40,row+7,200,32),new GUIContent(UiReadability.Ellipsis(name,nameStyle,200),name),nameStyle);
+            GUI.Label(new Rect(x+240,row+7,375,32),Score(i).ToString("N0")+"원  ·  운송 "+drivers[i].jobs.completed+"회",new GUIStyle(style){alignment=TextAnchor.MiddleRight});
+        }
+        if(GUI.Button(new Rect(x+335,y+495,300,50),"다시 경기",CasualUI.Action(18)))Restart();
+        if(GUI.Button(new Rect(x+25,y+495,290,50),UnifiedModeBootstrap.IsUnified?"모드 선택":"경기 설정",button))ReturnToMenu();
+        GUI.matrix=saved;
     }
 }

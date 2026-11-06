@@ -13,6 +13,8 @@ public static class CasualUI {
  public static readonly Color Green=new Color(.015f,.43f,.23f);
  public static readonly Color Danger=new Color(.76f,.12f,.17f);
  public static readonly Color Amber=new Color(.62f,.34f,.025f);
+ public static readonly Color Border=new Color(.77f,.85f,.94f);
+ public static readonly Color Warm=new Color(1,.97f,.85f);
  static Texture2D mask;static GUIStyle shape;
  public static Texture2D Rounded {
   get {if(mask)return mask;const int size=48;const float radius=12;
@@ -30,8 +32,27 @@ public static class CasualUI {
  }
  public static void Panel(Rect r){Panel(r,Card);}
  public static void Panel(Rect r,Color color){
-  RoundedFill(new Rect(r.x,r.y+3,r.width,r.height),new Color(.10f,.22f,.40f,.13f));
+  RoundedFill(new Rect(r.x,r.y+4,r.width,r.height),new Color(.10f,.22f,.40f,.15f));
+  RoundedFill(new Rect(r.x-1,r.y-1,r.width+2,r.height+2),Border);
   RoundedFill(r,color);
+ }
+ public static void Header(Rect r,string title,int glyph=1,Color? accent=null){
+  RoundedFill(r,accent??Blue);HudGlyph.Draw(new Rect(r.x+14,r.y+(r.height-28)/2,28,28),glyph,Color.white);
+  var style=new GUIStyle(GUI.skin.label){font=KoreanText.BoldFont,fontSize=22,alignment=TextAnchor.MiddleLeft,wordWrap=false};style.normal.textColor=Color.white;
+  while(style.fontSize>16&&style.CalcSize(new GUIContent(title)).x>r.width-70)style.fontSize--;
+  GUI.Label(new Rect(r.x+54,r.y,r.width-68,r.height),new GUIContent(title,title),style);
+ }
+ static Texture2D portraits,backdrop;
+ public static void Portrait(Rect r,int variant=0){
+  if(!portraits)portraits=Resources.Load<Texture2D>("UI/passenger-portraits");RoundedFill(r,Soft);
+  if(portraits){variant=((variant%4)+4)%4;var old=GUI.color;GUI.color=Color.white;GUI.DrawTextureWithTexCoords(r,portraits,new Rect((variant%2)*.5f,variant<2?.5f:0,.5f,.5f));GUI.color=old;}
+  else HudGlyph.Draw(new Rect(r.center.x-16,r.center.y-16,32,32),6,Green);
+ }
+ public static int PortraitVariant(string identity){unchecked{uint hash=0;foreach(char c in identity??"")hash=hash*31+c;return (int)(hash%4);}}
+ public static void Divider(Rect r){var old=GUI.color;GUI.color=Border;GUI.DrawTexture(new Rect(r.x,r.y,r.width,1),Texture2D.whiteTexture);GUI.color=old;}
+ public static void Backdrop(){
+  if(!backdrop){backdrop=new Texture2D(1,64,TextureFormat.RGB24,false);for(int y=0;y<64;y++)backdrop.SetPixel(0,y,Color.Lerp(Canvas,new Color(1,.99f,.95f),y/63f));backdrop.Apply();backdrop.wrapMode=TextureWrapMode.Clamp;}
+  var old=GUI.color;GUI.color=Color.white;GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),backdrop);GUI.color=old;
  }
  public static void Bar(Rect r,float fraction,Color color){RoundedFill(r,Track);if(fraction>0)RoundedFill(new Rect(r.x,r.y,r.width*Mathf.Clamp01(fraction),r.height),color);}
  public static GUIStyle Action(int size){var s=KoreanText.Button(size);PaintButton(s,Green,new Color(.02f,.51f,.28f),new Color(.01f,.34f,.18f),Color.white);return s;}

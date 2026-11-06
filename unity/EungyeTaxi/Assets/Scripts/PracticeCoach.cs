@@ -73,7 +73,7 @@ public class PracticeCoach : MonoBehaviour {
    if(GUI.Button(new Rect(30,y+115,402,35),"현재 판정 보기 · 미통과는 미완료",button))ShowResult();return;
   }
   float w=Mathf.Min(780,Screen.width-32),h=Mathf.Min(560,Screen.height-32),x=(Screen.width-w)/2,y0=(Screen.height-h)/2;Box(new Rect(x,y0,w,h));
-  GUI.Label(new Rect(x+22,y0+16,w-44,28),AttemptTitle+" · 이번 시도 결과",text);
+  CasualUI.Header(new Rect(x+6,y0+6,w-12,38),AttemptTitle+" · 연습 결과",7);
   GUI.Label(new Rect(x+22,y0+52,w-44,55),Report.outcome,new GUIStyle(text){fontSize=21,fontStyle=FontStyle.Bold});
   var details=Report.Details();float contentHeight=Mathf.Max(290,text.CalcHeight(new GUIContent(details),w-75));scroll=GUI.BeginScrollView(new Rect(x+22,y0+115,w-44,h-225),scroll,new Rect(0,0,w-65,contentHeight));GUI.Label(new Rect(0,0,w-75,contentHeight),details,text);GUI.EndScrollView();
   GUI.Label(new Rect(x+22,y0+h-103,w-44,37),ConfusionMode?"가상 교육 구간의 관찰 결과입니다. 시선 확인은 평가하지 않습니다. 운전 점수와 승객 만족도·요금은 별도입니다.":ExitMode?"대기열 진입·진행 방해 관찰 결과입니다. 교차로 신호 등 다른 법규는 F8에서 별도로 확인하세요.":"이번 시도의 신호·정지·보행 통과 조건 평가입니다. 시선 확인·전체 운전 능력은 평가하지 않습니다.",new GUIStyle(text){fontSize=13});

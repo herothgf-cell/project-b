@@ -31,7 +31,7 @@ public class DriveHUD : MonoBehaviour {
    if(session.simulationMatch){
     if(session.simulationMatch.Finished)return;
     float px=Screen.width/2f-240,py=Screen.height/2f-130;
-    GUI.depth=-150;GUI.Box(new Rect(px,py,480,260),"일시정지 · 경기와 차량이 멈췄습니다");
+    GUI.depth=-150;CasualUI.Panel(new Rect(px,py,480,260));CasualUI.Header(new Rect(px+4,py+4,472,42),"일시정지",3);
     if(GUI.Button(new Rect(px+20,py+55,440,45),"계속하기")){session.paused=false;Time.timeScale=1;}
     if(GUI.Button(new Rect(px+20,py+115,440,45),"설정",KoreanText.Button(18)))settings.Open();
     if(GUI.Button(new Rect(px+20,py+175,440,45),"경기 나가기"))session.simulationMatch.ReturnToMenu();
@@ -44,9 +44,9 @@ public class DriveHUD : MonoBehaviour {
   var settings=DrivingSettingsPanel.For(session);if(settings.IsOpen){settings.Draw();return;}
   var b=session.business;bool restart=b.useV2&&b.HasCampaignToContinue;
   float height=restart?360:308,x=Screen.width/2f-240,y=(Screen.height-height)/2;
-  GUI.depth=-150;GUI.Box(new Rect(x,y,480,height),b.preparing?"영업 준비":"일시정지");
+  GUI.depth=-150;CasualUI.Panel(new Rect(x,y,480,height));CasualUI.Header(new Rect(x+4,y+4,472,40),b.preparing?"영업 준비":"일시정지",3);
   bool enabled=GUI.enabled;GUI.enabled=enabled&&!session.PracticeBusy&&!b.IsRestoring;
-  if(GUI.Button(new Rect(x+20,y+52,440,44),b.MenuPrimaryLabel,KoreanText.Button(18)))b.ContinueFromMenu();
+  if(GUI.Button(new Rect(x+20,y+52,440,44),b.MenuPrimaryLabel,CasualUI.Action(18)))b.ContinueFromMenu();
   float row=y+104;
   if(restart){if(GUI.Button(new Rect(x+20,row,440,40),"처음부터 시작",KoreanText.Button(16)))b.RequestRestart();row+=52;}
   if(GUI.Button(new Rect(x+20,row,440,40),"운전 연습 선택",KoreanText.Button(16)))session.GetComponent<PracticeSession>().OpenPicker();row+=52;
@@ -61,7 +61,7 @@ public class DriveHUD : MonoBehaviour {
   int depth=GUI.depth;GUI.depth=-20;var matrix=GUI.matrix;float scale=CockpitUI.Scale;
   GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));var r=HelpBounds(Screen.width,Screen.height);r=new Rect(r.x/scale,r.y/scale,r.width/scale,r.height/scale);
   KoreanText.Panel(r);
-  GUI.Label(new Rect(r.x+18,r.y+12,584,32),session.assisted.Active?"조향 보조 · H로 수동 전환":"수동 운전 · H로 조향 보조",body);
+  CasualUI.Header(new Rect(r.x+6,r.y+6,600,38),session.assisted.Active?"조향 보조 · H로 수동 전환":"수동 운전 · H로 조향 보조",3);
   if(GUI.Button(new Rect(r.x+618,r.y+10,84,36),"닫기",KoreanText.Button(14)))HelpOpen=false;
   GUI.Label(new Rect(r.x+18,r.y+52,684,54),session.assisted.Status,new GUIStyle(small){wordWrap=true});
   GUI.Label(new Rect(r.x+18,r.y+112,684,254),DrivingHelpText,new GUIStyle(body){wordWrap=true});

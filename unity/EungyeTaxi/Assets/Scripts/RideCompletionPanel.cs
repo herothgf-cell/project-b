@@ -17,16 +17,18 @@ public sealed class RideCompletionPanel:MonoBehaviour {
  public string Receipt {get{return Result==null?"":RideReceiptSummary.Money(Result);}}
  void OnGUI(){if(!Open||Result==null)return;
   var before=GUI.matrix;float scale=Mathf.Min(1,Screen.width/780f,Screen.height/740f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);float sw=Screen.width/scale,sh=Screen.height/scale,x=(sw-650)/2,y=(sh-650)/2;GUI.depth=-180;
-  Fill(new Rect(0,0,sw,sh),new Color(0,0,0,.65f));CasualUI.Panel(new Rect(x,y,650,650));
+  Fill(new Rect(0,0,sw,sh),new Color(.07f,.15f,.29f,.42f));CasualUI.Panel(new Rect(x,y,650,650));
   var label=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=18,wordWrap=true};var title=new GUIStyle(label){fontSize=34,fontStyle=FontStyle.Bold,alignment=TextAnchor.MiddleCenter};var large=new GUIStyle(label){fontSize=26,fontStyle=FontStyle.Bold};var button=KoreanText.Button(18);var r=Result;bool success=r.paid>0,modern=!string.IsNullOrEmpty(r.bonusReason);int satisfaction=modern?r.satisfaction:r.score;
-  GUI.Label(new Rect(x+25,y+20,600,52),success?"운송 완료!":"운송 종료",title);
-  GUI.Label(new Rect(x+25,y+84,600,50),KoreanText.Stop(r.pickup)+"  →  "+KoreanText.Stop(r.destination),label);
-  GUI.Label(new Rect(x+25,y+139,600,30),"승객 만족도  "+satisfaction+" / 100 · 요구 "+r.required+"점",label);
-  Fill(new Rect(x+25,y+174,600,12),CasualUI.Track);Fill(new Rect(x+25,y+174,600*Mathf.Clamp01(satisfaction/100f),12),new Color(1,.64f,.17f));
-  GUI.Label(new Rect(x+25,y+200,600,30),"운송  "+Duration(r.elapsed)+"     운전 점수  "+(r.hasDrivingScore?r.drivingScore:session.law.ledger.TotalScore)+"점",label);
-  string factors=modern?RideReceiptSummary.Factors(r):"만족도 기록 없음";var factorStyle=new GUIStyle(label);while(factorStyle.fontSize>14&&factorStyle.CalcHeight(new GUIContent(factors),600)>95)factorStyle.fontSize--;GUI.Label(new Rect(x+25,y+241,600,95),factors,factorStyle);
-  var receiptStyle=new GUIStyle(large);while(receiptStyle.fontSize>18&&receiptStyle.CalcHeight(new GUIContent(Receipt),566)>138)receiptStyle.fontSize--;
-  CasualUI.Panel(new Rect(x+25,y+347,600,155),new Color(.91f,.98f,.94f));GUI.Label(new Rect(x+42,y+358,566,138),Receipt.Replace("최초 예상 운임","최초 예상"),receiptStyle);
+  CasualUI.Header(new Rect(x+20,y+18,610,58),success?"운송 완료!":"운송 종료",6,success?CasualUI.Green:CasualUI.Blue);
+  CasualUI.Portrait(new Rect(x+25,y+92,108,108),CasualUI.PortraitVariant(r.pickup+r.destination));
+  string route=KoreanText.Stop(r.pickup)+"  →  "+KoreanText.Stop(r.destination);var routeStyle=new GUIStyle(label);while(routeStyle.fontSize>13&&routeStyle.CalcHeight(new GUIContent(route),474)>50)routeStyle.fontSize--;
+  GUI.Label(new Rect(x+151,y+92,474,50),route,routeStyle);
+  GUI.Label(new Rect(x+151,y+150,474,30),"만족도 "+satisfaction+" / 100 · 요구 "+r.required+"점",label);
+  CasualUI.Bar(new Rect(x+151,y+188,474,12),satisfaction/100f,CasualUI.Green);
+  GUI.Label(new Rect(x+25,y+214,600,30),"운송 "+Duration(r.elapsed)+"  ·  운전 점수 "+(r.hasDrivingScore?r.drivingScore:session.law.ledger.TotalScore)+"점",label);
+  string factors=modern?RideReceiptSummary.Factors(r):"만족도 기록 없음";var factorStyle=new GUIStyle(label);while(factorStyle.fontSize>14&&factorStyle.CalcHeight(new GUIContent(factors),600)>95)factorStyle.fontSize--;GUI.Label(new Rect(x+25,y+244,600,95),factors,factorStyle);
+  CasualUI.Panel(new Rect(x+25,y+347,600,155),new Color(.91f,.98f,.94f));var receiptRows=Receipt.Split('\n');
+  for(int i=0;i<receiptRows.Length;i++){var receiptStyle=new GUIStyle(large){fontSize=i==2?34:21};receiptStyle.normal.textColor=i==2?CasualUI.Green:CasualUI.Ink;while(receiptStyle.fontSize>18&&receiptStyle.CalcSize(new GUIContent(receiptRows[i])).x>566)receiptStyle.fontSize--;GUI.Label(new Rect(x+42,y+356+i*42,566,i==2?52:38),receiptRows[i],receiptStyle);}
   GUI.Label(new Rect(x+25,y+514,600,25),RideReceiptSummary.PaymentStatus(r)+(r.wakeDelayed?" · 기상 대기":""),new GUIStyle(label){fontSize=16});
   if(GUI.Button(new Rect(x+335,y+580,290,46),(session.business.ShowingSummary||session.business.ledger.State==BusinessState.Closing)?"영업 정산":"계속 영업",CasualUI.Action(18)))Close();
   GUI.enabled=!session.business.ShowingSummary&&session.business.ledger.State==BusinessState.Open;if(GUI.Button(new Rect(x+25,y+580,290,46),"시설 찾기",button)){Close();session.services.Toggle();}GUI.enabled=true;GUI.matrix=before;

@@ -222,20 +222,22 @@ public sealed class VehicleDamageController : MonoBehaviour {
     void OnGUI(){if(session.IsSimulationBot||PvpNativeLan.IsRemoteHuman(session))return;
         if(!Campaign||session.business.preparing||session.business.ShowingSummary||session.RideResultOpen||session.FullMapOpen||session.PracticeMenuOpen)return;
         var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true};style.normal.textColor=CasualUI.Ink;GUI.depth=-140;
-        if(Time.unscaledTime<(PvpNativeLan.IsReplica(session)?networkWorkshopNoticeUntil:noticeUntil)&&!Disabled&&DisplayedServiceRemaining<=0)GUI.Label(new Rect(Screen.width/2-230,165,460,65),DisplayedServiceNotice,style);
+        if(Time.unscaledTime<(PvpNativeLan.IsReplica(session)?networkWorkshopNoticeUntil:noticeUntil)&&!Disabled&&DisplayedServiceRemaining<=0){CasualUI.Panel(new Rect(Screen.width/2-240,157,480,76));GUI.Label(new Rect(Screen.width/2-230,165,460,65),DisplayedServiceNotice,style);}
         if(!Disabled&&Damage.Durability<=50&&!session.jobs.Active&&!session.paused&&!session.services.open&&!(session.accident&&session.accident.Locked)&&PendingServiceRemaining<=0){
-            if(GUI.Button(new Rect(Screen.width/2-145,226,290,34),"내구도 "+Damage.Durability+" · 공업사 비교/길안내"))session.services.OpenFacilityPlanner(5);
+            if(GUI.Button(new Rect(Screen.width/2-145,226,290,34),"내구도 "+Damage.Durability+" · 공업사 비교/길안내",CasualUI.Action(14)))session.services.OpenFacilityPlanner(5);
         }
         if(DisplayedServiceRemaining>0){
             if(session.accident&&session.accident.Locked)return;
             var matrix=GUI.matrix;float scale=WorkshopPresentation.Scale(Screen.width,Screen.height);GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));GUI.depth=-650;
             try {bool repair=(PvpNativeLan.IsReplica(session)?networkWorkshopKind:pendingWorkshopKind)==1;float x=(Screen.width/scale-WorkshopPresentation.Width)/2,y=(Screen.height/scale-238)/2;
+                CasualUI.Backdrop();
                 WorkshopPresentation.Card(new Rect(x,y,WorkshopPresentation.Width,238),repair?"공업사 수리":"공업사 견인","작업 진행 중 · 경기는 계속됩니다",new[]{"예상 비용","남은 시간","완료 후"},new[]{(repair?Damage.RepairCost:3000).ToString("N0")+"원",DisplayedServiceRemaining.ToString("0.0")+"초",repair?"내구도 100":"공업사 · 수리 별도"},DisplayedServiceNotice);
             } finally {GUI.matrix=matrix;}return;
         }
         if(Disabled&&!(session.accident&&session.accident.Locked)&&!session.services.open&&!session.paused){
             var matrix=GUI.matrix;bool enabled=GUI.enabled;float scale=WorkshopPresentation.Scale(Screen.width,Screen.height);GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));GUI.depth=-650;
             try {bool atBay=AtRepairBay,restoring=!AtRepairBay&&RestoringReservedBay;float height=atBay?328:294,x=(Screen.width/scale-WorkshopPresentation.Width)/2,y=(Screen.height/scale-height)/2;
+                CasualUI.Backdrop();
                 string notice=DisplayedServiceNotice??(atBay?"정비 후 운행을 다시 시작할 수 있습니다":"정차 후 견인을 신청하세요 · 수리는 별도입니다");
                 WorkshopPresentation.Card(new Rect(x,y,WorkshopPresentation.Width,height),"차량 고장","내구도 0 · 운행 불가",new[]{atBay?"수리비":"견인비","소요 시간",atBay?"수리 후":"도착 후"},new[]{restoring?"추가 비용 없음":(atBay?Damage.RepairCost:3000).ToString("N0")+"원",restoring?"공간 확인 후":(atBay?Damage.RepairSeconds:30).ToString("0.#")+"초",atBay?"내구도 100":restoring?"예약한 정비 공간":"공업사 · 수리 별도"},notice);
                 if(atBay){GUI.enabled=CanRepair;if(GUI.Button(new Rect(x+20,y+230,480,40),new GUIContent(session.jobs.Active?"안전 하역 중":"수리 확정",RepairQuote),CasualUI.Action(18)))Repair();GUI.enabled=!session.jobs.Active;if(GUI.Button(new Rect(x+20,y+278,480,30),new GUIContent("정비 보류 · 휴식 100초 후 종료","정비를 미루고 휴식 후 오늘 영업 종료 · 100초"),WorkshopPresentation.Secondary))EndDisabledDay();}

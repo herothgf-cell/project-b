@@ -151,6 +151,6 @@ public sealed class PvpNativeLan:MonoBehaviour {
  void OnDestroy(){StopTransport();}
  void OnGUI(){if(!Match||Match.Finished)return;GUI.skin.font=KoreanText.Font;
   if(!Racing&&!Match.Finished)GUI.Box(new Rect(Screen.width/2-200,110,400,70),"다른 참가자의 지도 준비를 기다리는 중");
-  if(MenuOpen){var settings=DrivingSettingsPanel.For(Match.Human);if(settings.IsOpen){settings.Draw();return;}GUI.depth=-150;KoreanText.PrepareSkin();GUILayout.BeginArea(new Rect(Screen.width/2-170,Screen.height/2-130,340,260),GUI.skin.box);GUILayout.Label("LAN PVP · 경기는 계속 진행됩니다");if(GUILayout.Button("운전으로 돌아가기",KoreanText.Button(18),GUILayout.Height(44)))MenuOpen=false;if(GUILayout.Button("설정",KoreanText.Button(18),GUILayout.Height(44)))settings.Open();if(GUILayout.Button(IsHost?"방 종료 · 모드 선택":"나가기 · 빈자리는 봇으로",KoreanText.Button(16),GUILayout.Height(44)))LeaveToMenu();GUILayout.EndArea();}
+  if(MenuOpen){var settings=DrivingSettingsPanel.For(Match.Human);if(settings.IsOpen){settings.Draw();return;}GUI.depth=-150;KoreanText.PrepareSkin();float x=Screen.width/2f-230,y=Screen.height/2f-150;CasualUI.Panel(new Rect(x,y,460,300));CasualUI.Header(new Rect(x+6,y+6,448,46),"LAN 운행 메뉴",1);GUI.Label(new Rect(x+20,y+59,420,30),"경기는 계속 진행됩니다. 내 차는 정지합니다.");if(GUI.Button(new Rect(x+20,y+100,420,48),"운전으로 돌아가기",CasualUI.Action(18)))MenuOpen=false;if(GUI.Button(new Rect(x+20,y+160,420,44),"운전 설정",KoreanText.Button(18)))settings.Open();if(GUI.Button(new Rect(x+20,y+220,420,44),IsHost?"방 종료 · 모드 선택":"나가기 · 빈자리는 봇으로",KoreanText.Button(16)))LeaveToMenu();}
  }
 }

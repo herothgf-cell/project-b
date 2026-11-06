@@ -40,9 +40,9 @@ public partial class FullMapOverlay {
  }
  void DrawFacilityPlannerSidebar(float x,float w,Rect viewport){
   var detail=new GUIStyle(text){fontSize=MapFont(14),wordWrap=true};
-  GUI.Label(new Rect(x,90,w,34),"생활시설 비교",heading);float top=132,cell=(w-12)/3;
+  CasualUI.Header(new Rect(x,86,w,38),"생활시설 비교",3);float top=132,cell=(w-12)/3;
   for(int i=0;i<plannerKinds.Length;i++){
-   var old=GUI.backgroundColor;if(facilityPlannerKind==plannerKinds[i])GUI.backgroundColor=new Color(.35f,1,.8f);
+   var old=GUI.backgroundColor;if(facilityPlannerKind==plannerKinds[i])GUI.backgroundColor=CasualUI.Green;
    if(GUI.Button(new Rect(x+(i%3)*(cell+6),top+(i/3)*40,cell,34),plannerLabels[i],button)){facilityPlannerKind=plannerKinds[i];facilityPlannerScroll=Vector2.zero;}
    GUI.backgroundColor=old;
   }
@@ -51,14 +51,15 @@ public partial class FullMapOverlay {
   else if(session.jobs.trip.State==TripState.ToPickup)note+="\n주유·세차·수리는 수락한 호출을 유지합니다.";
   float noteHeight=detail.CalcHeight(new GUIContent(note),w);GUI.Label(new Rect(x,top,w,noteHeight),note,detail);top+=noteHeight+10;
   var options=session.services.FacilityOptions(facilityPlannerKind);float inner=w-24,total=0;var heights=new float[options.Count];
-  for(int i=0;i<options.Count;i++){var option=options[i];string blocked=FacilityGuideBlocked(option);float actionHeight=Mathf.Max(36,button.CalcHeight(new GUIContent(blocked.Length==0?"이 시설로 길안내 · 결제 없음":blocked),inner-16));heights[i]=text.CalcHeight(new GUIContent(option.Name),inner-16)+detail.CalcHeight(new GUIContent(FacilityPlannerDetails(option)),inner-16)+actionHeight+40;total+=heights[i]+10;}
+  for(int i=0;i<options.Count;i++){var option=options[i];string blocked=FacilityGuideBlocked(option);float actionHeight=Mathf.Max(36,button.CalcHeight(new GUIContent(blocked.Length==0?"이 시설로 길안내 · 결제 없음":blocked),inner-16));heights[i]=text.CalcHeight(new GUIContent(option.Name),inner-16)+detail.CalcHeight(new GUIContent(FacilityPlannerDetails(option)),inner-16)+actionHeight+46;total+=heights[i]+10;}
   float visible=Mathf.Max(72,viewport.yMax-top-54);facilityPlannerScroll=GUI.BeginScrollView(new Rect(x,top,w,visible),facilityPlannerScroll,new Rect(0,0,w-20,Mathf.Max(visible,total)));
   if(options.Count==0)GUI.Label(new Rect(0,0,inner,80),"지원하는 시설이 없습니다.\n다른 서비스를 선택해 주세요.",detail);
   float y=0;for(int i=0;i<options.Count;i++){
-   var option=options[i];float height=heights[i],nameHeight=text.CalcHeight(new GUIContent(option.Name),inner-16);KoreanText.Panel(new Rect(0,y,inner,height));
-   GUI.Label(new Rect(8,y+8,inner-16,nameHeight),option.Name,text);
+   var option=options[i];float height=heights[i],nameHeight=text.CalcHeight(new GUIContent(option.Name),inner-16);CasualUI.Panel(new Rect(0,y,inner,height));
+   CasualUI.RoundedFill(new Rect(4,y+4,inner-8,nameHeight+10),CasualUI.Blue);
+   var nameStyle=new GUIStyle(text);nameStyle.normal.textColor=Color.white;GUI.Label(new Rect(8,y+8,inner-16,nameHeight),option.Name,nameStyle);
    string reason=FacilityGuideBlocked(option),caption=reason.Length==0?"이 시설로 길안내 · 결제 없음":reason;float actionHeight=Mathf.Max(36,button.CalcHeight(new GUIContent(caption),inner-16));
-   GUI.Label(new Rect(8,y+nameHeight+12,inner-16,height-nameHeight-actionHeight-26),FacilityPlannerDetails(option),detail);
+   GUI.Label(new Rect(8,y+nameHeight+18,inner-16,height-nameHeight-actionHeight-32),FacilityPlannerDetails(option),detail);
    GUI.enabled=!locationOpen&&reason.Length==0;
    if(GUI.Button(new Rect(8,y+height-actionHeight-8,inner-16,actionHeight),caption,button))GuidePlannerFacility(option);
    GUI.enabled=!locationOpen;y+=height+10;

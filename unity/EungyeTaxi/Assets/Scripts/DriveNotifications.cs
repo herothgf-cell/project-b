@@ -47,7 +47,7 @@ public class DriveNotifications : MonoBehaviour {
     if(Time.unscaledTime-notice.since>=NoticeSeconds)continue;
     float height=Mathf.Max(58,style.CalcHeight(new GUIContent(notice.text),width-116)+20);Color accent=notice.passenger?CasualUI.Green:CasualUI.Blue;
     Panel(new Rect(x,y,width,height),Color.white);
-    GUI.color=accent;GUI.DrawTexture(new Rect(x,y,5,height),Texture2D.whiteTexture);GUI.DrawTexture(new Rect(x+15,y+12,76,30),Texture2D.whiteTexture);GUI.color=Color.white;
+    CasualUI.RoundedFill(new Rect(x+8,y+8,88,height-16),accent);
     GUI.Label(new Rect(x+15,y+12,76,30),notice.passenger?"만족도":"운전",category);
     style.normal.textColor=notice.positive?CasualUI.Green:CasualUI.Danger;
     GUI.Label(new Rect(x+104,y+10,width-116,height-20),notice.text,style);y+=height+8;
@@ -56,7 +56,7 @@ public class DriveNotifications : MonoBehaviour {
  }
  // Explicit solid textures keep transient notices opaque regardless of skin backgrounds.
  static void Panel(Rect r,Color c){
-  GUI.color=new Color(.15f,.23f,.34f,1);GUI.DrawTexture(new Rect(r.x-1,r.y-1,r.width+2,r.height+3),Texture2D.whiteTexture);
-  GUI.color=c;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;
+  GUI.color=Color.white;CasualUI.RoundedFill(new Rect(r.x,r.y+3,r.width,r.height),new Color(.15f,.23f,.34f,.20f));
+  CasualUI.RoundedFill(r,c);
  }
 }

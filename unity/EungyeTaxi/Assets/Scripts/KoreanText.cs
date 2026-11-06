@@ -12,13 +12,18 @@ public static class KoreanText {
   if(!control){control=Tinted(CasualUI.Soft);hover=Tinted(new Color(.80f,.90f,1));pressed=Tinted(new Color(.66f,.82f,.97f));}
   prepared.label.font=Font;prepared.label.fontSize=16;prepared.label.padding=new RectOffset(0,0,0,0);prepared.label.contentOffset=Vector2.zero;prepared.label.alignment=TextAnchor.MiddleLeft;prepared.label.normal.textColor=CasualUI.Ink;
   foreach(var s in new[]{prepared.box,prepared.window}){s.normal.background=Surface;s.onNormal.background=Surface;s.normal.textColor=CasualUI.Ink;s.font=Font;s.border=new RectOffset(12,12,12,12);s.padding=new RectOffset(12,12,12,12);}
-  prepared.button.font=BoldFont;prepared.button.padding=new RectOffset(6,6,0,0);prepared.button.alignment=TextAnchor.MiddleCenter;
+  prepared.button.font=BoldFont;prepared.button.fontSize=18;prepared.button.padding=new RectOffset(10,10,3,3);prepared.button.alignment=TextAnchor.MiddleCenter;
   prepared.button.normal.background=control;prepared.button.hover.background=hover;prepared.button.active.background=pressed;prepared.button.focused.background=hover;prepared.button.onNormal.background=pressed;
   prepared.button.border=new RectOffset(12,12,12,12);
   foreach(var state in new[]{prepared.button.normal,prepared.button.hover,prepared.button.active,prepared.button.focused,prepared.button.onNormal,prepared.button.onHover,prepared.button.onActive,prepared.button.onFocused}){state.textColor=CasualUI.Ink;}
   prepared.button.onHover.background=hover;prepared.button.onActive.background=pressed;prepared.button.onFocused.background=hover;
   foreach(var s in new[]{prepared.textField,prepared.textArea}){s.font=Font;s.fontSize=16;s.normal.background=control;s.focused.background=hover;s.border=new RectOffset(12,12,12,12);s.padding=new RectOffset(8,8,3,3);s.normal.textColor=s.focused.textColor=CasualUI.Ink;}
   foreach(var state in new[]{prepared.toggle.normal,prepared.toggle.hover,prepared.toggle.active,prepared.toggle.focused,prepared.toggle.onNormal,prepared.toggle.onHover,prepared.toggle.onActive,prepared.toggle.onFocused})state.textColor=CasualUI.Ink;
+  prepared.toggle.font=Font;prepared.toggle.fontSize=16;
+  prepared.horizontalSlider.normal.background=Tinted(CasualUI.Track);prepared.horizontalSlider.border=new RectOffset(8,8,3,3);prepared.horizontalSlider.fixedHeight=7;
+  prepared.horizontalSliderThumb.normal.background=prepared.horizontalSliderThumb.hover.background=prepared.horizontalSliderThumb.active.background=Tinted(CasualUI.Blue);prepared.horizontalSliderThumb.border=new RectOffset(8,8,8,8);prepared.horizontalSliderThumb.fixedWidth=18;prepared.horizontalSliderThumb.fixedHeight=18;
+  prepared.verticalScrollbar.normal.background=control;prepared.verticalScrollbar.fixedWidth=16;prepared.verticalScrollbar.border=new RectOffset(6,6,6,6);
+  prepared.verticalScrollbarThumb.normal.background=prepared.verticalScrollbarThumb.hover.background=prepared.verticalScrollbarThumb.active.background=Tinted(CasualUI.Blue);prepared.verticalScrollbarThumb.border=new RectOffset(7,7,7,7);
  }
  static Texture2D Tinted(Color color){var t=new Texture2D(48,48,TextureFormat.RGBA32,false);var p=CasualUI.Rounded.GetPixels();for(int i=0;i<p.Length;i++)p[i]=new Color(color.r,color.g,color.b,p[i].a);t.SetPixels(p);t.Apply();t.wrapMode=TextureWrapMode.Clamp;return t;}
  public static void Apply(TextMesh text){text.font=Font;text.GetComponent<Renderer>().sharedMaterial=Font.material;}

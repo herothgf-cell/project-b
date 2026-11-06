@@ -16,6 +16,7 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
  public static Rect Bounds(float width,float height){float scale=Mathf.Min(1,Mathf.Min((width-24)/620,(height-24)/520));return new Rect((width-620*scale)/2,(height-520*scale)/2,620*scale,520*scale);}
  GUIStyle Label(int size,bool bold=false){var style=new GUIStyle(GUI.skin.label){font=bold?KoreanText.BoldFont:KoreanText.Font,fontSize=size,fontStyle=bold?FontStyle.Bold:FontStyle.Normal,alignment=TextAnchor.MiddleLeft};style.normal.textColor=CasualUI.Ink;return style;}
  float Row(float y,string title,string hint,float value,float min,float max){
+  CasualUI.RoundedFill(new Rect(18,y-3,584,81),CasualUI.Soft);
   GUI.Label(new Rect(28,y,400,28),title,Label(19,true));
   var valueStyle=Label(20,true);valueStyle.alignment=TextAnchor.MiddleRight;
   GUI.Label(new Rect(474,y,116,28),Mathf.RoundToInt(value*100)+"%",valueStyle);
@@ -26,8 +27,8 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
   ValidateOwner();if(!IsOpen)return;GUI.depth=-700;KoreanText.PrepareSkin();var old=GUI.matrix;var bounds=Bounds(Screen.width,Screen.height);float scale=bounds.width/620;
   GUI.matrix=Matrix4x4.TRS(new Vector3(bounds.x,bounds.y,0),Quaternion.identity,new Vector3(scale,scale,1));
   CasualUI.Panel(new Rect(0,0,620,520));
-  GUI.Label(new Rect(28,16,540,40),"운전 설정",Label(27,true));
-  GUI.Label(new Rect(28,57,562,24),"내 조작에 맞게 조절하고 적용하세요",Label(14));
+  CasualUI.Header(new Rect(18,14,584,48),"운전 설정 · 내 손에 맞게",13);
+  GUI.Label(new Rect(28,65,562,24),"조절 후 적용 · 취소하면 현재 설정을 유지해요",Label(14));
   Draft.sensitivity=Row(91,"조향 민감도","같은 좌우 입력으로 꺾이는 회전량",Draft.sensitivity,.5f,1.5f);
   Draft.response=Row(176,"조향 반응 속도","누르거나 반대 방향으로 바꿀 때의 반응",Draft.response,.25f,2);
   Draft.centering=Row(261,"핸들 복원 속도","조향 입력을 놓았을 때 중앙으로 돌아오는 속도",Draft.centering,.25f,2);

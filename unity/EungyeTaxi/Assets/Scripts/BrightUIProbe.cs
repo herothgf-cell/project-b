@@ -8,14 +8,53 @@ using UnityEngine;
 public sealed class BrightUIProbe:MonoBehaviour {
  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]static void Install(){if(Array.IndexOf(Environment.GetCommandLineArgs(),"-brightUiCheck")>=0&&!FindObjectOfType<BrightUIProbe>()){var root=new GameObject("Bright UI acceptance");DontDestroyOnLoad(root);root.AddComponent<BrightUIProbe>();}}
  bool ok=true,done;int checks;float started;string output;DriveSession s;
+ bool FullUiReview {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-fullUiReview")>=0;}}
  void Check(bool value,string text){checks++;ok&=value;Debug.Log("BRIGHT_UI "+(value?"PASS ":"FAIL ")+text);}
  void Awake(){started=Time.realtimeSinceStartup;var args=Environment.GetCommandLineArgs();int at=Array.IndexOf(args,"-brightUiOutput");output=at>=0&&at+1<args.Length?args[at+1]:Path.GetFullPath("artifacts/ui-bright/player");Directory.CreateDirectory(output);Application.runInBackground=true;}
- void Update(){if(!done&&Time.realtimeSinceStartup-started>240){done=true;Debug.LogError("BRIGHT_UI_TIMEOUT");Application.Quit(2);}}
+ void Update(){if(!done&&Time.realtimeSinceStartup-started>(FullUiReview?420:240)){done=true;Debug.LogError("BRIGHT_UI_TIMEOUT");Application.Quit(2);}}
  IEnumerator Start(){var run=Run();while(!done){object next;try{if(!run.MoveNext())yield break;next=run.Current;}catch(Exception e){done=true;Debug.LogError("BRIGHT_UI_EXCEPTION "+e);Application.Quit(2);yield break;}yield return next;}}
  IEnumerator Capture(string name){yield return new WaitForSecondsRealtime(.4f);yield return new WaitForEndOfFrame();var path=Path.Combine(output,name+".png");ScreenCapture.CaptureScreenshot(path);yield return new WaitForSecondsRealtime(.3f);Check(File.Exists(path),"capture "+name);}
  IEnumerator Ready(){s=null;while(!s||!s.StartupReady||s.business.IsRestoring){foreach(var item in FindObjectsOfType<DriveSession>())if(!item.IsSimulationBot)s=item;yield return null;}yield return null;}
  void Pose(MapStop stop){var t=s.taxi;t.body.velocity=t.body.angularVelocity=Vector3.zero;t.body.position=stop.Kerb+Vector3.up*.65f;t.body.rotation=Quaternion.LookRotation(stop.Direction);t.transform.SetPositionAndRotation(t.body.position,t.body.rotation);Physics.SyncTransforms();s.law.ResetObservation();s.manners.Suppress(2);}
+ IEnumerator ReviewSingleMenus(){
+  bool paused=s.paused;float timeScale=Time.timeScale;var hud=s.GetComponent<DriveHUD>();var practice=s.GetComponent<PracticeSession>();var settings=DrivingSettingsPanel.For(s);string preferenceKey=settings.PreferenceKey,tempKey="BrightUIReview."+Guid.NewGuid().ToString("N");
+  int cash=s.business.ledger.Account.Cash,debt=s.business.ledger.Account.Debt,expense=s.business.ledger.Account.Expense(s.business.ledger.Day,null);double elapsed=s.business.ledger.Elapsed;
+  try {
+   foreach(int width in new[]{1280,1920}){
+    Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);s.paused=true;Time.timeScale=0;yield return new WaitForSecondsRealtime(.5f);
+    yield return Capture("02a-single-pause-"+width);
+    settings.PreferenceKey=tempKey;settings.Open();Check(settings.IsOpen,"settings draft opens "+width);yield return Capture("02b-single-settings-"+width);settings.Cancel();settings.PreferenceKey=preferenceKey;Check(!settings.IsOpen&&!PlayerPrefs.HasKey(tempKey),"settings cancel writes no preferences "+width);
+    // Help draws over the active cockpit; freeze only the clock for the capture.
+    s.paused=false;hud.ToggleHelp();Check(hud.HelpOpen,"help opens "+width);yield return Capture("02c-single-help-"+width);hud.ToggleHelp();Check(!hud.HelpOpen,"help closes "+width);
+    s.law.OpenHistory();Check(s.law.HistoryOpen,"history opens "+width);yield return Capture("02d-single-history-"+width);s.law.CloseHistory();s.paused=true;Time.timeScale=0;
+    Check(practice.OpenPicker(),"practice picker opens without launching "+width);yield return Capture("02e-single-practice-picker-"+width);practice.CancelPicker();Check(!practice.PickerOpen&&!practice.Busy&&s.paused&&Time.timeScale==0,"practice cancel restores paused owner "+width);
+    s.paused=false;Check(s.services.ToggleLifeHub(),"life hub opens "+width);yield return Capture("02f-single-life-hub-"+width);s.services.DismissPostTrip();Check(!s.services.PostTripVisible,"life hub dismisses "+width);
+   }
+   Check(s.business.ledger.Account.Cash==cash&&s.business.ledger.Account.Debt==debt&&s.business.ledger.Account.Expense(s.business.ledger.Day,null)==expense&&s.business.ledger.Elapsed==elapsed,"full menu browsing changes no payment or campaign time");
+  } finally {
+   settings.Cancel();settings.PreferenceKey=preferenceKey;if(hud.HelpOpen)hud.ToggleHelp();if(s.law.HistoryOpen)s.law.CloseHistory();practice.CancelPicker();s.services.DismissPostTrip();s.paused=paused;Time.timeScale=timeScale;
+  }
+  Check(s.paused==paused&&Time.timeScale==timeScale,"full menu review restores pause and clock");
+ }
+ IEnumerator ReviewSummaryMenus(){
+  var b=s.business;bool paused=s.paused;float timeScale=Time.timeScale;int cash=b.ledger.Account.Cash,debt=b.ledger.Account.Debt,net=b.ledger.TotalNet;double elapsed=b.ledger.Elapsed;
+  try {
+   foreach(int width in new[]{1280,1920}){
+    Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);
+    if(b.RoomAvailable){b.RoomOpen=true;yield return Capture("07b-single-room-"+width);b.RoomOpen=false;}
+    else Debug.Log("BRIGHT_UI_SKIP room unavailable for native campaign "+width);
+    Check(b.RequestRestart(),"restart confirmation opens "+width);yield return Capture("07c-single-restart-"+width);b.ConfirmRestart(false);Check(!b.restartPrompt,"restart cancel retains campaign "+width);
+   }
+   Check(b.ledger.Account.Cash==cash&&b.ledger.Account.Debt==debt&&b.ledger.TotalNet==net&&b.ledger.Elapsed==elapsed&&b.ShowingSummary,"room/restart browsing preserves closed-day totals");
+  } finally {b.RoomOpen=false;if(b.restartPrompt)b.ConfirmRestart(false);s.paused=paused;Time.timeScale=timeScale;}
+  Check(s.paused==paused&&Time.timeScale==timeScale,"summary review restores pause and clock");
+ }
  IEnumerator Run(){
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-fullUiMenuOnly")>=0){
+   yield return new WaitForSecondsRealtime(2);
+   foreach(int width in new[]{1280,1920}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(1);Check(UnifiedModeBootstrap.Selected==UnifiedModeBootstrap.Mode.Menu&&!FindObjectOfType<DriveSession>(),"menu has no campaign session "+width);yield return Capture("mode-menu-"+width);}
+   done=true;Debug.Log("FULL_UI_MENU_RESULT "+(ok?"PASS":"FAIL")+" checks="+checks);Application.Quit(ok?0:1);yield break;
+  }
   yield return new WaitForSecondsRealtime(1);yield return Capture("01-mode-menu");
   FindObjectOfType<UnifiedModeBootstrap>().StartSingle();yield return Ready();
   Check(s.business.SavePath==UnifiedModeProbe.CampaignPath,"single isolated temporary campaign");
@@ -30,6 +69,7 @@ public sealed class BrightUIProbe:MonoBehaviour {
    foreach(int width in new[]{1280,1920}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);readability.SelectSignal();Check(readability.SignalCountdownText.EndsWith("초"),"countdown still available "+width);yield return Capture("signal-countdown-"+width);}
    done=true;Debug.Log("SIGNAL_COUNTDOWN_PLAYER_RESULT "+(ok?"PASS":"FAIL")+" checks="+checks);Application.Quit(ok?0:1);yield break;
   }
+  if(FullUiReview)yield return ReviewSingleMenus();
   foreach(int width in new[]{1280,1920}){
    Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);
    Check(CockpitUI.LayoutFits(Screen.width,Screen.height),"HUD reference fits "+width);
@@ -55,8 +95,10 @@ public sealed class BrightUIProbe:MonoBehaviour {
   int cash=s.business.ledger.Account.Cash;int net=s.business.ledger.TotalNet;
   Check(!OneDayHUD.DayDetailsOpen,"day summary starts compact");OneDayHUD.ToggleDayDetails();yield return Capture("07a-single-day-details");
   Check(OneDayHUD.DayDetailsOpen&&s.business.ledger.Account.Cash==cash&&s.business.ledger.TotalNet==net,"expanding full day details changes no transactions");OneDayHUD.ToggleDayDetails();
+  if(FullUiReview)yield return ReviewSummaryMenus();
   FindObjectOfType<UnifiedModeBootstrap>().ReturnToMenu();yield return new WaitForSecondsRealtime(1);
   FindObjectOfType<UnifiedModeBootstrap>().StartPvp();yield return new WaitForSecondsRealtime(1);yield return Capture("08-pvp-setup");
+  if(FullUiReview)foreach(int width in new[]{1280,1920}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);yield return Capture("08a-pvp-setup-"+width);}
   FindObjectOfType<Pvp.PvpBootstrap>().StartSimulation(true,180);yield return Ready();
   Check(s.simulationMatch&&s.simulationMatch.Drivers.Count==4,"PVP four native sessions");Check(s.business.SavePath=="","PVP has no campaign save");
   map=s.GetComponent<FullMapOverlay>();

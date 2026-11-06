@@ -102,7 +102,7 @@ public partial class ServiceStops : MonoBehaviour {
   GUI.depth=-20;CasualUI.Panel(new Rect(x,y,width,80));
   string[] labels={session.jobs.NeedsWash?"주유소(세차 필요)":"주유","식사","귀가 주차장","수면"};
   string reason=recommended==0?(session.jobs.NeedsWash?"청결 30 미만 · 세차 필요":"연료 15% 이하"):recommended==1?"포만감 25 미만":recommended==3?"피로 70 이상":recommended==2?"마감까지 3분 이내":"현재 컨디션 양호";
-  GUI.Label(new Rect(x+10,y+2,width-20,28),"생활 거점",new GUIStyle(style){fontSize=14});
+  CasualUI.RoundedFill(new Rect(x+8,y+4,width-16,24),CasualUI.Blue);var titleStyle=new GUIStyle(style){fontSize=14};titleStyle.normal.textColor=Color.white;GUI.Label(new Rect(x+16,y+2,width-32,28),"생활 거점 · "+reason,titleStyle);
   float cell=(width-20)/5;
   for(int i=0;i<4;i++){
    GUI.enabled=!session.jobs.Active&&!float.IsInfinity(postTripDistances[i]);
@@ -161,6 +161,7 @@ public partial class ServiceStops : MonoBehaviour {
   if(ok){b.ledger.AdvanceService(10);session.jobs.AdvancePickupWait(10);CompleteServiceNavigation();b.SaveCheckpoint();notice="이용 완료 · 영업시간 10초 경과";noticeUntil=Time.unscaledTime+4;if(kind!=0||PvpSimulationMode.Active)Close();}else notice="현금·연료 잔량 또는 오늘 이용 여부를 확인하세요";return ok;
  }
  void Row(float x,float y,string label,int kind,int station,GUIStyle style,GUIStyle button){
+  CasualUI.RoundedFill(new Rect(x+12,y-4,696,56),CasualUI.Soft);
   GUI.Label(new Rect(x+20,y,420,51),label,style);
   GUI.enabled=CanUse(kind)&&(station<0||FuelAtPump==station)&&(kind!=0||FuelAmount>.001f);
   if(GUI.Button(new Rect(x+480,y,220,42),kind==0?"+"+FuelAmount.ToString("0.#")+"% 주유 · "+Mathf.CeilToInt(FuelAmount*session.business.settings.fuelUnitPrice)+"원":kind==5?"전량 수리":kind==4?"세차·실내 청소 · 2,000원":kind==1?"식사하기":kind==3?(Pvp?"휴식 · 45초":"수면 · 100초"):"휴식·영업 종료",button)){if(kind==0)Buy(0);else RequestAction(kind);}GUI.enabled=true;
@@ -168,22 +169,24 @@ public partial class ServiceStops : MonoBehaviour {
  void OnGUI(){
   if(session.IsSimulationBot||PvpNativeLan.IsRemoteHuman(session))return;
   if(session.business.ledger.Account==null||PracticeSession.Enabled)return;
-  var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true};var button=new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=14,wordWrap=true};
+  var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true};var button=CasualUI.Action(14);
   style.normal.textColor=CasualUI.Ink;
   if(!open){if(!session.paused&&!session.business.restartPrompt&&!session.GetComponent<DriveHUD>().HelpOpen&&!session.FullMapOpen&&!session.ChoiceOpen&&!session.RideResultOpen&&!session.PracticeMenuOpen&&!session.business.ShowingSummary&&!session.business.preparing&&!session.law.HistoryOpen)DrawPostTrip(style,button);return;}
 
   int pump=FuelAtPump;var actions=LocalActions;bool fuelOnly=FuelMenuOnly,restaurant=System.Array.IndexOf(actions,1)>=0;GUI.depth=-110;float height=pending==1?525:pending>=0?430:350+Mathf.Max(0,actions.Length-1)*62,x=(Screen.width-720)/2f,y=(Screen.height-height)/2f;
-  CasualUI.Panel(new Rect(x,y,720,height));
-  var b=session.business;var a=b.ledger.Account;GUI.Label(new Rect(x+20,y+15,680,65),(fuelOnly?(pump>=0?Stations[pump].ServiceLabel:"주유·세차"):restaurant?"기사 식당":"주차·휴식")+(Pvp?" · 경기 진행 중":" · 일시정지")+"\n현금 "+a.Cash.ToString("N0")+"원 · 미납 "+a.Debt.ToString("N0")+"원 · 연료 "+a.Fuel.ToString("0.0")+"% · 청결 "+b.ledger.Care.Cleanliness.ToString("0"),style);
+  CasualUI.Backdrop();CasualUI.Panel(new Rect(x,y,720,height));
+  CasualUI.Header(new Rect(x+8,y+8,704,40),(fuelOnly?(pump>=0?Stations[pump].ServiceLabel:"주유·세차"):restaurant?"기사 식당":"주차·휴식")+(Pvp?" · 경기 진행 중":" · 일시정지"),3);
+  var b=session.business;var a=b.ledger.Account;GUI.Label(new Rect(x+20,y+55,680,28),"현금 "+a.Cash.ToString("N0")+"원 · 미납 "+a.Debt.ToString("N0")+"원 · 연료 "+a.Fuel.ToString("0.0")+"% · 청결 "+b.ledger.Care.Cleanliness.ToString("0"),style);
   if(Pvp&&session.simulationMatch&&session.simulationMatch.ConditionServiceActive(session)){GUI.Label(new Rect(x+30,y+100,660,130),(session.simulationMatch.ConditionServiceKind(session)==1?"식사":"짧은 휴식")+" · 남은 "+session.simulationMatch.ServiceRemaining(session).ToString("0.0")+"초\n경기는 계속 진행됩니다.\n중단 시 결제·회복 없음 (경과 시간 유지)",style);if(GUI.Button(new Rect(x+20,y+height-45,680,35),"이용 중단 F7",button))Close();return;}
-  if(pending>=0){GUI.Label(new Rect(x+30,y+110,660,160),(pending==1?MealName+" · ":"")+Quote(pending)+(Pvp?"\n\n이용 완료 후 결제·회복됩니다.":"\n\n확정 후 결제됩니다.")+(session.jobs.trip.State==TripState.ToPickup?" 이용 시간만큼 승객 대기시간이 줄어듭니다.":""),style);
+  if(pending>=0){CasualUI.RoundedFill(new Rect(x+20,y+98,680,176),CasualUI.Soft);GUI.Label(new Rect(x+30,y+110,660,160),(pending==1?MealName+" · ":"")+Quote(pending)+(Pvp?"\n\n이용 완료 후 결제·회복됩니다.":"\n\n확정 후 결제됩니다.")+(session.jobs.trip.State==TripState.ToPickup?" 이용 시간만큼 승객 대기시간이 줄어듭니다.":""),style);
    if(pending==1){for(int i=0;i<mealMenu.Length;i++)if(GUI.Button(new Rect(x+30+i*220,y+285,210,48),(SelectedMeal==i?"✓ ":"")+mealMenu[i],button))SelectMeal(i);GUI.Label(new Rect(x+30,y+340,660,50),Pvp?"모든 메뉴 1,000원 · 15초 · 포만감 +60 (최대 100)":"모든 메뉴 3,000원 · 50초 · 포만감 +70 (최대 100)",style);}
-   if(GUI.Button(new Rect(x+30,y+height-130,310,50),"확정",button))ConfirmAction(true);if(GUI.Button(new Rect(x+380,y+height-130,310,50),"취소",button))ConfirmAction(false);return;}
+   if(GUI.Button(new Rect(x+30,y+height-130,310,50),"이 견적으로 이용",button))ConfirmAction(true);if(GUI.Button(new Rect(x+380,y+height-130,310,50),"취소",KoreanText.Button(14)))ConfirmAction(false);return;}
   int row=0;
   foreach(int kind in actions){string label=kind==0?(pump>=0?Stations[pump].name:names[0]):kind==4?"세차·실내 청소\n청결 100 회복 / 30초":kind==5?"자동차 공업사 · 전량 수리":kind==1?"식당 · "+MealStop.name:kind==3?(Pvp?"무료 휴식 · 45초 / 피로 −40":"무료 수면 · 100초 / 피로 −40"):"현재 거점에서 휴식·영업 종료";Row(x,y+85+row++*62,label,kind,pump,style,button);}
   string pickupWarning=session.jobs.trip.State==TripState.ToPickup?(fuelOnly?"호출 유지 · 남은 대기 "+session.jobs.trip.PickupRemaining.ToString("0")+"초 · 이용 시간 차감":"식사·수면 확정 시 미탑승 호출 취소")+"\n":"";
+  CasualUI.RoundedFill(new Rect(x+12,y+height-158,696,112),new Color(1,.95f,.83f));
   GUI.Label(new Rect(x+20,y+height-155,680,108),pickupWarning+notice+"\n"+(fuelOnly?"이용 후 출구로 나가세요.":restaurant?"다른 시설 찾기: M 지도":"다른 시설 찾기: M 지도"),new GUIStyle(style){fontSize=14});
-  if(GUI.Button(new Rect(x+20,y+height-45,430,35),"닫기  F7",button))Close();
+  if(GUI.Button(new Rect(x+20,y+height-45,430,35),"닫기  F7",KoreanText.Button(14)))Close();
   if(GUI.Button(new Rect(x+460,y+height-45,240,35),"다른 시설·견적 비교",button))OpenFacilityPlanner(restaurant?1:fuelOnly?0:3);
  }
 }

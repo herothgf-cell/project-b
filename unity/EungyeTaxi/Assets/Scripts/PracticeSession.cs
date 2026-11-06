@@ -101,7 +101,7 @@ public class PracticeSession : MonoBehaviour {
    float width=Mathf.Min(900,Screen.width-32),height=Mathf.Min(800,Screen.height-32),x=(Screen.width-width)/2,y=(Screen.height-height)/2;
    CasualUI.Panel(new Rect(x,y,width,height));
    var text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true};
-   GUI.Label(new Rect(x+22,y+14,width-44,40),"운전 연습 선택 · 영업 기록 없이 시작 / 목록 스크롤",text);
+   CasualUI.Header(new Rect(x+8,y+8,width-16,42),"운전 연습 · 영업 기록과 분리",7);
    float col=(width-70)/2,listHeight=Mathf.Max(120,height-440);
    pickerScroll=GUI.BeginScrollView(new Rect(x+22,y+60,width-44,listHeight),pickerScroll,new Rect(0,0,width-65,7*48));
    for(int i=1;i<=14;i++){string title=ConfusionPracticeState.Contains(i)?ConfusionPracticeState.Title(i):i==7?"출구 정체 · 대기 / 우회":RightPracticeState.Title(i);if(GUI.Button(new Rect((i-1)%2*(col+10),(i-1)/2*48,col,42),(SelectedVariant==i?"● ":"")+title,style))SelectedVariant=i;}

@@ -154,6 +154,7 @@ public sealed class AccidentController : MonoBehaviour {
   // The shared presentation restores its caller's depth; retain a modal depth
   // on this component so cockpit panels and score notices stay behind it.
   GUI.depth=-600;
+  CasualUI.Backdrop();
   if(AccidentPresentation.Draw(State,session.damage&&session.damage.Disabled,session.simulationMatch!=null))Confirm();
   DrawFade();
  }
