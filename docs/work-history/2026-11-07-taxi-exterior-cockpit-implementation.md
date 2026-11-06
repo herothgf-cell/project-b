@@ -28,3 +28,5 @@
 
 ## 출하
 소스와 통합 실행본 커밋 후 실제 해시로 manifest 갱신·검증하고 main에 게시한다. 실제 기록 커밋은 git log -1 --oneline -- docs/work-history/2026-11-07-taxi-exterior-cockpit-implementation.md로 확인. 다른 작업의 미커밋 문서/미추적 파일은 보존한다.
+
+출하 검증: 소스 da1667d3033d16dfc8e45c93839d8ccb367b3deb 기준 통합 manifest 생성. 통합/PVP VerifyOnly 모두 exit0, 141파일/124,809,838바이트. 원격 main 및 원본 작업폴더 반영 영수증은 후속 기록 참조.
