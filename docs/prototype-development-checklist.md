@@ -27,6 +27,8 @@
 
 ## 2026-11-06 선택지별 독립 단계 효과
 
+- [x] 미응답 M 감점을 -100~0 입력으로 통일, 기존 프로필/게임 감점 보존·기본값/복원 일치. Node58/C#649·실제 브라우저 -2/0 검증 통과. [작업 이력](work-history/2026-11-06-signed-unanswered-input.md).
+
 - [x] 요청·유형·상황71선택지의 즉시/운행 중/종료 S·피로 점/%·점/분/%/분, 자연 피로 증가율 추가·M 감점 추가와0추가효과 의미를 구현. ETA/공감 독립, 승차 전 활성화·중복/재개 보호·Food/Comfort 중복 제거.
 - [x] schema2 엄격 검증·구프로필 메모리 이관/백업·기존schema1 운송 보존, 호스트 장부/snapshot·LANv9 연결. [구현 기준](superpowers/specs/2026-11-06-independent-choice-effects.md), [사용 안내](content-tuning-tool-guide.md).
 - [x] 최종 BuildHybrid/Editor72+32+3·순수50/6/643·Node56·실제 Player54/LAN60+76·재접속 exit0. 출하140파일116,826,789바이트·사용자 active 포함141파일 manifest 통합/PVP alias exit0·사용자16파일 불변·Strict issues0. [실제 증거와 별도 기존 실패](work-history/2026-11-06-independent-choice-effects.md).

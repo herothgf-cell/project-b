@@ -215,7 +215,7 @@
    if(field==='prompt')return info('이 요청을 승객에게서 제시할 때',target+'의 승객 대사만');
    if(field==='reply')return info('해당 선택지를 보여주고 기사 답변을 기록할 때',target+'의 해당 답변 문구만','문구를 바꿔도 선택 행동과 점수 판정 방식은 유지합니다.');
    if(field==='failure'&&!entry.editable)return {...info('정상 운송에서는 적용하지 않는 참고값',target+'의 미사용 실패 항목','이 요청은 실제 실패 판정 경로가 없습니다. 답하지 않았을 때의 감점은 별도 미응답 설정을 사용합니다.'),unused:true};
-   if(field==='unanswered')return info('답하지 않은 채 하차·운송 종료할 때',target+'만',name==='Quiet'?'안전한 응답 기회 후 미응답이면 M 감점량입니다. 요청 합계 상한에는 들어가지 않습니다.':['Empathy','Interview','LocalChat'].includes(name)?'안전한 응답 기회 후 미응답일 때 요청 만족도에 한 번 반영합니다. 기회가 없으면 0입니다.':'현재 이 요청에서는 사용하지 않는 고정/중립 값입니다.');
+   if(field==='unanswered')return info('답하지 않은 채 하차·운송 종료할 때',target+'만',name==='Quiet'?'안전한 응답 기회 후 미응답일 때 M 변화량입니다. -2를 입력하면 M 2점 감점, 0이면 감점 없음입니다. 입력 범위는 -100~0점이며 요청 합계 상한에는 들어가지 않습니다.':['Empathy','Interview','LocalChat'].includes(name)?'안전한 응답 기회 후 미응답일 때 요청 만족도에 한 번 반영합니다. 기회가 없으면 0입니다.':'현재 이 요청에서는 사용하지 않는 고정/중립 값입니다.');
    return info(entry.editable?'요청을 수락한 뒤 하차 때 이행 여부를 평가할 때':'현행 운송의 고정 결과를 설명할 때',target+'의 수락 답변 전체','현재는 요청 종류별 평가 점수입니다. 선택지별 독립 점수는 지원하지 않으며, 버튼을 누를 때와 하차 때 두 번 더하지 않습니다.');
   }
   if(domain==='schedule')return info(name.startsWith('count')?'새 운송의 요청 개수를 배정할 때':'새 운송의 등장 시점을 정하고 운행 중 표시 기회를 확인할 때',allRequests,name.startsWith('count')?'0·1·2건 비중 합계는 100입니다. 개수 배정 뒤 각 요청의 가중치를 사용합니다.':name==='movingSeconds'?'운행 중 요청을 표시하기 전 필요한 실제 주행 시간입니다. 안전 정차 기회도 필요합니다.':'진행률은 0~1 값입니다. 예: 0.25는 25%. 주행 시간과 안전 정차 기회도 함께 충족해야 합니다.');
