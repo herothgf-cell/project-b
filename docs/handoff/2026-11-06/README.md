@@ -31,7 +31,7 @@
 - 제작 스크립트는 당시 원본 보존본이다. C:/git 경로 및 Codex artifact-tool 설치 위치가 들어 있으므로 다른 PC에서 재생성할 때 환경에 맞춰 조정한다. 일반 편집은 PPTX를 직접 연다. 캐시 런타임 자체는 배포하지 않는다.
 - `historical-copies/`: 원본 PC에 남아 있던 마인드맵 복사본/목차·10월26일 점검. 현재 구현 기준으로 쓰지 않는다.
 - `historical-content-tuning-workspace.zip`, `historical-steering-workspace.zip`: 오래된 작업 트리의 미커밋 소스 patch와 미추적 제작 파일. 기준 commit은 ZIP의 BASE_COMMIT.txt에 있다. 이미 후속 main으로 통합된 과거 후보이므로 통째로 적용하지 않는다. 별도 복구/차이 조사용이다. 오래된 바이너리·Library·임시 캐시는 제외했다.
-- [files.json](files.json): 새로 보존한117파일, 총69,520,845바이트의 출처·크기·SHA256 목록. 첨부 누락0.
+- [files.json](files.json): 새로 보존한117파일, 총69,520,539바이트의 출처·크기·SHA256 목록. 첨부 누락0.
 
 ## 검증과 미검증
 

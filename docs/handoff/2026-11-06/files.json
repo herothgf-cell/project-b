@@ -9,22 +9,26 @@
     {
       "path": "docs/handoff/2026-11-06/proposal-v3/build.mjs",
       "source": "proposal-v3-20261106/build.mjs",
-      "bytes": 28879,
-      "sha256": "fe59db54490a0c13f89541b7993f71acf68c3c3defee274f85040104df213e15",
+      "bytes": 28715,
+      "sha256": "e51144988a7eba23a18ce5561dc675eaff3444ca50daf630deb8b9de4d320d74",
       "originalSha256": "7840bbc463f16a4586bca55c5a89341e6dcc7a146c7b05dd1e3b6b8fbf69a206",
-      "normalization": "Trailing blank lines removed"
+      "normalization": "UTF-8 LF and trailing whitespace normalization"
     },
     {
       "path": "docs/handoff/2026-11-06/proposal-v3/candidate.pptx.inspect.ndjson",
       "source": "proposal-v3-20261106/candidate.pptx.inspect.ndjson",
-      "bytes": 83585,
-      "sha256": "dc6c61580e8176d025cd03fe05ee48280ff35c227de793fcc8ad298366548b0c"
+      "bytes": 83586,
+      "sha256": "11fa5b7821d03f67824fbe2ae962b611f1c83d723d77c664265ff4b6efff0040",
+      "originalSha256": "dc6c61580e8176d025cd03fe05ee48280ff35c227de793fcc8ad298366548b0c",
+      "normalization": "UTF-8 LF and trailing whitespace normalization"
     },
     {
       "path": "docs/handoff/2026-11-06/proposal-v3/outline.json",
       "source": "proposal-v3-20261106/outline.json",
-      "bytes": 103134,
-      "sha256": "a77e67eaa1acd42bfcae263c3be64b7864116857bbc98620fbba3340e8a9f1b9"
+      "bytes": 103135,
+      "sha256": "9b5d5b32d276be78e24b1f3df832bf34569cbaa39281cea4bcdbd3305c7069f3",
+      "originalSha256": "a77e67eaa1acd42bfcae263c3be64b7864116857bbc98620fbba3340e8a9f1b9",
+      "normalization": "UTF-8 LF and trailing whitespace normalization"
     },
     {
       "path": "docs/handoff/2026-11-06/proposal-v3/revise.py",
@@ -239,14 +243,18 @@
     {
       "path": "docs/handoff/2026-11-06/proposal-v4/candidate.pptx.inspect.ndjson",
       "source": "proposal-v4-20261106/candidate.pptx.inspect.ndjson",
-      "bytes": 58865,
-      "sha256": "1c07c3c5156ee7b54412cf47b36cac3f9d9ee6c38e838856b0f0848b25ad724b"
+      "bytes": 58866,
+      "sha256": "62cd9a39b5634ce2a830ebb9f51034efadb27cc542280eaa236d0926d095f4d2",
+      "originalSha256": "1c07c3c5156ee7b54412cf47b36cac3f9d9ee6c38e838856b0f0848b25ad724b",
+      "normalization": "UTF-8 LF and trailing whitespace normalization"
     },
     {
       "path": "docs/handoff/2026-11-06/proposal-v4/outline.json",
       "source": "proposal-v4-20261106/outline.json",
-      "bytes": 67623,
-      "sha256": "793a20dea9d23f3a7565bbb25f2f0cfbfd926b62a20c39d1742cd2f48e225656"
+      "bytes": 67624,
+      "sha256": "d54e61f978d6ef2cf0968879aac9efe87c4e9b66d0486f6701a1fd28aef9d0e7",
+      "originalSha256": "793a20dea9d23f3a7565bbb25f2f0cfbfd926b62a20c39d1742cd2f48e225656",
+      "normalization": "UTF-8 LF and trailing whitespace normalization"
     },
     {
       "path": "docs/handoff/2026-11-06/proposal-v4/validation.json",
@@ -377,20 +385,26 @@
     {
       "path": "docs/handoff/2026-11-06/proposal-v5/build.mjs",
       "source": "proposal-v5-20261106/build.mjs",
-      "bytes": 23451,
-      "sha256": "29702a1c3016b3f87f7749feac466fcde3d3cb2b78611975d3ab31d54a2d2211"
+      "bytes": 23303,
+      "sha256": "6d1c4512311c5591518af8d0b6525c0a8c8607b474c2d6abddde31a1748a488b",
+      "originalSha256": "29702a1c3016b3f87f7749feac466fcde3d3cb2b78611975d3ab31d54a2d2211",
+      "normalization": "UTF-8 LF and trailing whitespace normalization"
     },
     {
       "path": "docs/handoff/2026-11-06/proposal-v5/candidate.pptx.inspect.ndjson",
       "source": "proposal-v5-20261106/candidate.pptx.inspect.ndjson",
-      "bytes": 69590,
-      "sha256": "d36904f00343393bf1c0b45ae3711fb0d872ea0dbd1e78fc2382d0f31f5e2c27"
+      "bytes": 69591,
+      "sha256": "6dd8db651b5f11417bc1be0068f5e3b05f69c63b1f7dabfb3f5d2d9f6e8c2338",
+      "originalSha256": "d36904f00343393bf1c0b45ae3711fb0d872ea0dbd1e78fc2382d0f31f5e2c27",
+      "normalization": "UTF-8 LF and trailing whitespace normalization"
     },
     {
       "path": "docs/handoff/2026-11-06/proposal-v5/outline.json",
       "source": "proposal-v5-20261106/outline.json",
-      "bytes": 79172,
-      "sha256": "a0a2237ddb9fb124f240fd4a0b73bcd1980bd622f23be46be3ef6eda46b83037"
+      "bytes": 79173,
+      "sha256": "50360eb776f6c588da83ad6583e16b0405677185fe7982960046c690aab5322d",
+      "originalSha256": "a0a2237ddb9fb124f240fd4a0b73bcd1980bd622f23be46be3ef6eda46b83037",
+      "normalization": "UTF-8 LF and trailing whitespace normalization"
     },
     {
       "path": "docs/handoff/2026-11-06/proposal-v5/revise.py",
