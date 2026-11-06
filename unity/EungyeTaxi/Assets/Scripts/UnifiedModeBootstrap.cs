@@ -9,8 +9,8 @@ public sealed class UnifiedModeBootstrap : MonoBehaviour {
     static bool commandConsumed;
     public string startupRegion="eungye";
     Camera menuCamera;
-    DriveSession human;
     string message="";
+    public string Message {get{return message;}}
     public static bool IsUnified { get { return FindObjectOfType<UnifiedModeBootstrap>()!=null; } }
     public static bool IsSingleCommand(string[] args) {
         foreach(var arg in args)if(arg.StartsWith("-pvp",StringComparison.OrdinalIgnoreCase)||arg=="-unifiedModeCheck")return false;
@@ -57,12 +57,6 @@ public sealed class UnifiedModeBootstrap : MonoBehaviour {
         GUI.skin.font=KoreanText.Font;
         if(Selected==Mode.Menu){
             int choice=CasualMenuUI.Main();if(choice==1)StartSingle();else if(choice==2)StartPvp();else if(choice==3)Application.Quit();return;
-        }
-        if(!human)foreach(var item in FindObjectsOfType<DriveSession>())if(!item.IsSimulationBot){human=item;break;}
-        if(human&&human.StartupReady&&(human.paused||human.business.preparing)&&!human.business.IsRestoring){
-            GUI.depth=-300;
-            if(GUI.Button(new Rect(Screen.width-200,12,188,38),"모드 선택"))ReturnToMenu();
-            if(message.Length>0)GUI.Box(new Rect(Screen.width-420,56,408,65),message);
         }
     }
 }

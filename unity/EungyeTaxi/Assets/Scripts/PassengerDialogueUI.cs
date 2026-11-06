@@ -54,7 +54,7 @@ public static class PassengerDialogueUI {
   float contentHeight=bubble+12+noteHeight+total-(options.Length>0?gap:0);
   float header=Mathf.Max(36,heading.CalcHeight(new GUIContent(title),Mathf.Max(1,inner-24))+12);
   bounds=PanelBounds(Screen.width,Screen.height,scale,header+contentHeight+pad);int chosen=-1;
-  CasualUI.Panel(bounds);DrivingHudArt.Glass(new Rect(bounds.x,bounds.y,bounds.width,header));GUI.Label(new Rect(bounds.x+pad,bounds.y+6,inner,header-6),title,new GUIStyle(heading){normal={textColor=Color.white}});
+  CasualUI.Panel(bounds);DrivingHudArt.Glass(new Rect(bounds.x,bounds.y,bounds.width,header));GUI.Label(new Rect(bounds.x+pad,bounds.y+6,inner,header-6),title,new GUIStyle(heading){normal={textColor=CasualUI.Ink}});
   Rect viewport=new Rect(bounds.x+pad,bounds.y+header,inner,Mathf.Max(1,bounds.height-header-pad));
   scroll.y=Mathf.Clamp(scroll.y,0,Mathf.Max(0,contentHeight-viewport.height));
   scroll=GUI.BeginScrollView(viewport,scroll,new Rect(0,0,contentWidth,contentHeight),false,contentHeight>viewport.height);
@@ -67,9 +67,9 @@ public static class PassengerDialogueUI {
    bool hover=r.Contains(Event.current.mousePosition)&&o.enabled;Color accent=i==0?CasualUI.Green:CasualUI.Blue;
    CasualUI.RoundedFill(r,o.enabled?accent:CasualUI.Track);
    CasualUI.RoundedFill(new Rect(r.x+1,r.y+1,r.width-2,r.height-2),o.enabled?(hover?new Color(.82f,.92f,1):i==0?new Color(.94f,.99f,.95f):CasualUI.Soft):new Color(.91f,.92f,.94f));
-   if(GUI.Button(r,new GUIContent("",o.line),button))chosen=i;
+   if(GUI.Button(r,new GUIContent("",o.line),button)&&NumericChoiceInput.TryConsume(Time.frameCount))chosen=i;
    CasualUI.RoundedFill(new Rect(r.x+10,r.y+12,34,30),o.enabled?accent:CasualUI.Muted);
-   var keyStyle=new GUIStyle(heading){alignment=TextAnchor.MiddleCenter};keyStyle.normal.textColor=Color.white;GUI.Label(new Rect(r.x+10,r.y+12,34,30),o.key,keyStyle);
+   var keyStyle=new GUIStyle(heading){alignment=TextAnchor.MiddleCenter};keyStyle.normal.textColor=Color.white;GUI.Label(new Rect(r.x+10,r.y+12,34,30),NumericChoiceInput.Label(i),keyStyle);
    float lineHeight=body.CalcHeight(new GUIContent(o.line),inner-70);GUI.Label(new Rect(r.x+54,r.y+9,inner-70,lineHeight),o.line,body);
    Effects(new Rect(r.x+54,r.y+15+lineHeight,inner-70,r.height-lineHeight-21),effects[i]);GUI.enabled=enabled;row+=heights[i]+gap;
   }

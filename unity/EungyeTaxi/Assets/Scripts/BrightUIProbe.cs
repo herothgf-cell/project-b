@@ -33,6 +33,11 @@ public sealed class BrightUIProbe:MonoBehaviour {
    new PassengerDialogueUI.Option("U","기존 운행 유지","추가 효과 없음")},"검사 전용 · 게임 진행에 반영하지 않음");
   if(selected==0)Check(false,"disabled long dialogue choice cannot be clicked");
  }
+ IEnumerator ReviewSpeed(){
+  var velocity=s.taxi.body.velocity;float timeScale=Time.timeScale;Time.timeScale=0;
+  foreach(int width in new[]{1280,1920}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);foreach(float kmh in new[]{0f,35f,70f,140f,-35f}){s.taxi.body.velocity=s.taxi.transform.forward*(kmh/3.6f);Check(Mathf.Abs(s.taxi.Speed*3.6f-kmh)<.01f,"speed fixture "+kmh);yield return Capture("speed-"+width+"-"+kmh);}}
+  s.taxi.body.velocity=velocity;Time.timeScale=timeScale;
+ }
  IEnumerator ReviewDialogue(){
   foreach(int width in new[]{1280,1920}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);yield return Capture("dialogue-single-"+width);}
  }
@@ -135,6 +140,7 @@ public sealed class BrightUIProbe:MonoBehaviour {
    int selected=Array.FindIndex(s.jobs.offers,o=>o!=null);Check(selected>=0,"forecast call available "+width);map.SelectOffer(selected);Check(map.SelectedOfferForecastText.Length>0,"selected forecast visible "+width);yield return Capture("04c-single-forecast-"+width);
    int expense=s.business.ledger.Account.Expense(s.business.ledger.Day,null);Check(map.ShowFacilityPlanner(0),"facility chooser opens "+width);yield return Capture("04d-single-facilities-"+width);Check(s.business.ledger.Account.Expense(s.business.ledger.Day,null)==expense&&s.business.ledger.Elapsed==elapsed,"facility browsing changes no payment/time "+width);map.Close();
   }
+  if(FullUiReview)yield return ReviewSpeed();
   s.drivingCamera.SetFirstPerson(true);yield return Capture("04a-single-cockpit");s.drivingCamera.SetFirstPerson(false);
   var editor=s.GetComponent<RoadMapEditor>();editor.Open();yield return Capture("04b-editor-colors");editor.Close();
   // Normal native methods with controlled location, as in the existing receipt probe.
@@ -148,12 +154,12 @@ public sealed class BrightUIProbe:MonoBehaviour {
   Check(PassengerDialogueUI.PortraitIdentity(s)==passengerIdentity,"boarding preserves portrait identity");
   var selectedRoute=jobs.nav.hdRoute;var cue=s.GetComponent<DrivingReadability>().TurnCue;Check(cue.Valid&&cue.Distance>=0,"single turn card reads live directed route");Check(jobs.nav.hdRoute==selectedRoute,"turn card never replaces selected route");yield return Capture("05a-single-navigation");
   Check(map.Open(),"active single map opens");yield return Capture("05b-single-active-map");map.Close();
-  s.requests.BeginKind(RequestKind.Comfort);s.requests.AdvanceSafeStop(3);yield return Capture("05-single-passenger-request");
+  s.requests.BeginKind(RequestKind.Comfort);s.requests.AdvanceSafeStop(3);Check(!s.business.RequestEndDay()&&!string.IsNullOrEmpty(s.business.notice),"end shift refusal has visible feedback");yield return Capture("05-single-passenger-request");
   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-hudDialogueReview")>=0)yield return ReviewDialogue();
   Check(PassengerDialogueUI.PortraitIdentity(s)==passengerIdentity,"request preserves portrait identity");s.requests.request.DeferSafety();
   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-hudDialogueReview")>=0)yield return ReviewLongDialogue();
   Pose(jobs.stops[jobs.current.drop]);Check(jobs.Interact(),"fixture native arrival and one settlement");
-  var receipt=s.GetComponent<RideCompletionPanel>();if(!receipt.Open)receipt.ShowLast();int income=s.business.ledger.Income;
+  s.services.ObserveCompletedTrip();Check(!s.services.PostTripVisible,"completion never automatically opens life hub");var receipt=s.GetComponent<RideCompletionPanel>();if(!receipt.Open)receipt.ShowLast();int income=s.business.ledger.Income;
   Check(receipt.Open&&receipt.Receipt.Contains("실수령"),"real receipt fields available");Check(receipt.PortraitIndex==passengerPortrait,"settled receipt preserves passenger portrait");yield return Capture("06-single-receipt");
   int facilitiesCash=s.business.ledger.Account.Cash;var facilitiesRoute=jobs.nav.hdRoute;
   Check(receipt.TryOpenFacilities()&&s.services.PostTripVisible&&!receipt.Open,"receipt opens life hub");yield return Capture("06a-receipt-lifehub");
@@ -170,7 +176,7 @@ public sealed class BrightUIProbe:MonoBehaviour {
   if(FullUiReview)yield return ReviewSummaryMenus();
   FindObjectOfType<UnifiedModeBootstrap>().ReturnToMenu();yield return new WaitForSecondsRealtime(1);
   FindObjectOfType<UnifiedModeBootstrap>().StartPvp();yield return new WaitForSecondsRealtime(1);yield return Capture("08-pvp-setup");
-  if(FullUiReview)foreach(int width in new[]{1280,1920}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);yield return Capture("08a-pvp-setup-"+width);}
+  if(FullUiReview)foreach(int width in new[]{1280,1920}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);yield return Capture("08a-pvp-setup-"+width);var setup=FindObjectOfType<Pvp.PvpPrototypePanel>();setup.ConditionSettingsOpen=true;yield return Capture("08b-pvp-settings-"+width);setup.ConditionSettingsOpen=false;}
   FindObjectOfType<Pvp.PvpBootstrap>().StartSimulation(true,180);yield return Ready();
   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-lifeHubUiReview")>=0)yield return ReviewRepairAttention("pvp");
   Check(s.simulationMatch&&s.simulationMatch.Drivers.Count==4,"PVP four native sessions");Check(s.business.SavePath=="","PVP has no campaign save");
@@ -181,6 +187,7 @@ public sealed class BrightUIProbe:MonoBehaviour {
   }
   int available=Array.FindIndex(s.jobs.offers,o=>o!=null);Check(available>=0&&s.jobs.Accept(available),"PVP human accepts real shared call for navigation");yield return new WaitForSecondsRealtime(.2f);Check(s.GetComponent<DrivingReadability>().TurnCue.Valid,"PVP turn card reads live pickup route");yield return Capture("10a-pvp-navigation");
   Check(map.Open(),"active PVP map opens");yield return Capture("10b-pvp-active-map");map.Close();
+  if(FullUiReview){longDialoguePreview=true;yield return Capture("10c-pvp-dialogue-standings");longDialoguePreview=false;}
   s.simulationMatch.Finish();yield return Capture("11-pvp-results");Check(Time.timeScale==0,"PVP final result pauses match");
   done=true;Debug.Log("BRIGHT_UI_RESULT "+(ok?"PASS":"FAIL")+" checks="+checks);Application.Quit(ok?0:1);
  }

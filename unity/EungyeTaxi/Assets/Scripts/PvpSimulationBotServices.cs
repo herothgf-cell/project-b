@@ -102,7 +102,7 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
                 bool sameTrip=conditionTripCount==s.jobs.completed+s.jobs.failed;
                 if(!sameTrip||Critical(s)||ReconsiderCondition(conditionLastKind,e.Driver)){
                     kind=1;if(e.Account.Cash>=PvpConditionRules.MealCost&&Select(s,true))mealDetour=selectedTravelSeconds;
-                    kind=3;if(Select(s,true))restDetour=selectedTravelSeconds;
+                    kind=3;if(e.Account.Cash>=PvpConditionRules.RestCost&&Select(s,true))restDetour=selectedTravelSeconds;
                 }
                 if(sameTrip&&!Critical(s)){
                     if(!AllowConditionDetour(conditionLastKind,3,false))restDetour=double.PositiveInfinity;

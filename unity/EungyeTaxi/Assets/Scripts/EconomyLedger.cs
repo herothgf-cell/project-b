@@ -101,7 +101,8 @@ public class EconomyLedger {
   services.Add(id);Driver.satiety=Math.Min(100,Driver.satiety+PvpConditionRules.MealSatiety);PvpMeals++;return true;
  }
  public bool CompletePvpRest(string id){
-  if(!PvpProfile||State!=BusinessState.Open||string.IsNullOrEmpty(id)||!services.Add(id))return false;
+  if(!PvpProfile||State!=BusinessState.Open||string.IsNullOrEmpty(id)||services.Contains(id)||!Account.PvpRest(id,Day))return false;
+  services.Add(id);
   Driver.fatigue=Math.Max(0,Driver.fatigue-PvpConditionRules.RestFatigue);
   if(Driver.drowsiness!=null)Driver.drowsiness.Recover();PvpRests++;return true;
  }
