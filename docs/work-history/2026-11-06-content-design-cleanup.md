@@ -59,3 +59,7 @@
 ## 읽기·재개
 
 `docs/content-design/README.md` → 담당 문서. 게임은 기존 `builds/EungyeTaxi/EungyeTaxi.exe`로 실행한다. 수치 편집은 `설정 관리.cmd`와 안내를 따르며 문서에 적힌 예시만으로 프로필을 바꾸지 않는다.
+
+## main 게시 확인
+
+사용자 후속 요청으로 main 게시를 확인했다. 기획 정리 커밋은 실제 git log의 b40d30767f46bdbfbab9d2e9eb202bea441691cc이며, git push origin main 종료0 및 git ls-remote origin refs/heads/main에서 같은 해시를 확인했다. 동시 제안서 게시 기록의 후속 커밋은 보존한다. 이번은 문서 게시이며 게임 재빌드/지도/사용자 저장 변경 없음.
