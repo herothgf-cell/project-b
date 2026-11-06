@@ -3,6 +3,7 @@ import {PassengerPresets,PRESET_ENTRY} from './passenger-presets.mjs';
 import {DRUNK_SETTINGS} from './drunk-settings.mjs';
 import {createHash} from 'node:crypto';
 import {defaultChoiceValue} from './choice-catalog.mjs';
+const DRIVING_IDS=['flashStop','permissiveTurn','blockedExit','personMinor','personModerate','personMajor','vehicleMinor','vehicleModerate','vehicleMajor'].map(key=>'law.'+key+'.penalty');
 export function hashProfile(p) {
  let data=`content-profile-v${p.schemaVersion}\n${p.id}\n${p.revision}\n`;
  for (const item of [...p.values].sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0)) data+=`${item.id}\t${Buffer.byteLength(item.value,'utf8')}:${item.value}\n`;
@@ -27,9 +28,10 @@ export function validateProfile(p,catalog,{checkHash=true}={}) {
  if(e.type==='boolean'&&!['true','false'].includes(v.value))err(`${v.id}: 참/거짓 값 오류`);
  if(e.type==='number'||e.type==='integer'){const n=Number(v.value);if(!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(v.value)||!Number.isFinite(n)||(e.type==='integer'&&!Number.isSafeInteger(n))||(e.min!=null&&n<e.min)||(e.max!=null&&n>e.max))err(`${v.id}: 허용 범위 오류`);}}
  if(p.schemaVersion===1){try{const d=parseJson(p.values.find(v=>v.id==='passenger.presets')?.value||'{}');if(d.version===2&&d.presets.some(x=>x.overrides?.some(o=>o.id.startsWith('choice.'))))err('개별 선택 효과는 최신 프로필 형식으로 이관한 뒤 사용하세요.');}catch{}}
+ const oldDriving=DRIVING_IDS.every(id=>!seen.has(id)),oldWeather=![...seen].some(id=>id.startsWith('weather.'));
  const oldTraits=TRAIT_SETTINGS.every(e=>!seen.has(e.id)),oldQuiet=QUIET_EXTENSION_IDS.every(id=>!seen.has(id));
  const oldDrunk=DRUNK_SETTINGS.every(e=>!seen.has(e.id));
- for(const id of entries.keys())if(!seen.has(id)&&id!=='passenger.presets'&&!(oldTraits&&TRAIT_SETTINGS.some(e=>e.id===id))&&!(oldQuiet&&QUIET_EXTENSION_IDS.includes(id))&&!(oldDrunk&&DRUNK_SETTINGS.some(e=>e.id===id)))err(`누락된 ID: ${id}`);
+ for(const id of entries.keys())if(!seen.has(id)&&!(oldDriving&&DRIVING_IDS.includes(id))&&!(oldWeather&&id.startsWith('weather.'))&&id!=='passenger.presets'&&!(oldTraits&&TRAIT_SETTINGS.some(e=>e.id===id))&&!(oldQuiet&&QUIET_EXTENSION_IDS.includes(id))&&!(oldDrunk&&DRUNK_SETTINGS.some(e=>e.id===id)))err(`누락된 ID: ${id}`);
  const vals=new Map(p.values.filter(v=>v&&typeof v.id==='string'&&typeof v.value==='string').map(v=>[v.id,v.value]));
  if(vals.has('effect.nausea.warning')&&vals.has('effect.nausea.threshold')&&Number(vals.get('effect.nausea.warning'))>=Number(vals.get('effect.nausea.threshold')))err('메스꺼움 안내 기준은 사건 기준보다 작아야 합니다.');
  try{const data=JSON.parse(vals.get('passenger.presets')||'{"presets":[]}');for(const preset of data.presets||[])if(preset.traits?.includes('body.nausea')){const value=id=>Number(preset.overrides?.find(o=>o.id===id)?.value??vals.get(id)??catalog.entries.find(e=>e.id===id)?.defaultValue);if(value('effect.nausea.warning')>=value('effect.nausea.threshold'))err(preset.id+': 메스꺼움 안내 기준은 사건 기준보다 작아야 합니다.');}}catch{}
@@ -51,7 +53,7 @@ export function migrateProfile(profile,catalog){
  }
  // The source is validated before filling: partial extension blocks remain errors.
  // Fill after schema1 choice conversion, then validate only the completed migration.
- for(const id of [...DRUNK_SETTINGS.map(e=>e.id),PRESET_ENTRY.id,...TRAIT_SETTINGS.map(e=>e.id),...QUIET_EXTENSION_IDS]){
+ for(const id of [...DRUNK_SETTINGS.map(e=>e.id),PRESET_ENTRY.id,...TRAIT_SETTINGS.map(e=>e.id),...QUIET_EXTENSION_IDS,...DRIVING_IDS,...catalog.entries.filter(e=>e.editable&&e.id.startsWith('weather.')).map(e=>e.id)]){
   const entry=catalog.entries.find(e=>e.id===id&&e.editable);
   if(entry&&!copy.values.some(v=>v.id===id)&&(copy.schemaVersion===2||!id.startsWith('choice.')))copy.values.push({id,value:entry.defaultValue});
  }

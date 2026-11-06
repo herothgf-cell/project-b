@@ -55,3 +55,8 @@
 <a id="uiux타이틀"></a>
 <a id="이벤트-요소pvp-모드개발-검증"></a>
 <a id="중복을-없앤-대표-가지-제안"></a>
+
+
+## 2026-11-07 비 프로토 승인 후 반영
+
+[기획18](18-rain-prototype.md)과 날씨 가지를 연결했다. 비 관련 구현은50%, 조건부 확률 미끄러짐/눈·결빙/낮밤은 후속으로 구분한다. 이전 메모를 보존하고 현재 태그/목차를 갱신했다. 변경 전 원본은 `docs/design-history/content-design/2026-11-07-mindmap-before-rain.mmst`, 보존 검사는 `python tools/update_rain_mindmap.py --check`다.

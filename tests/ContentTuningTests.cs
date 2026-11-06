@@ -15,6 +15,19 @@ public static class ContentTuningTests {
   var seeds=new string[300];for(int i=0;i<seeds.Length;i++)seeds[i]=Schedule("seed"+i);
   var fallbackReward=PassengerReward.CalculateCurrentFare(93,85,11300,5,true,76,3,100,85,false,83,0);
   ContentTuning.ConfigureCatalog(File.ReadAllText(args[0]));ContentTuning.UseDefaults();
+  foreach(string key in new[]{"flashStop","permissiveTurn","blockedExit"}){
+   ContentTuning.UseDefaults();ContentTuning.UseJson(Change("law."+key+".penalty","37"));
+   var scene=new ConfusionPracticeState(key=="flashStop"?8:key=="permissiveTurn"?12:10){Entered=true,Finished=true,CorrectRoute=true,EntryRed=true,EntryBlocked=true};
+   Check(scene.Event("edited",1).Deduction==37,"edited scenario penalty "+key);
+  }
+  foreach(AccidentKind kind in Enum.GetValues(typeof(AccidentKind)))foreach(AccidentSeverity severity in Enum.GetValues(typeof(AccidentSeverity))){
+   ContentTuning.UseDefaults();ContentTuning.UseJson(Change("law."+(kind==AccidentKind.Person?"person":"vehicle")+severity+".penalty","38"));
+   var resolution=AccidentSeverityPolicy.Resolve(kind,severity);Check(resolution.ScorePenalty==38,"edited accident penalty "+kind+severity);
+   var stored=new AccidentState();stored.BeginResolved("configured","target",resolution);
+   ContentTuning.UseDefaults();stored.Copy().Validate();Check(stored.ScorePenalty==38,"captured accident penalty retained after profile change and restore");
+   stored.selectedScorePenalty=101;bool invalidStoredPenalty=false;try{stored.Validate();}catch(ArgumentException){invalidStoredPenalty=true;}Check(invalidStoredPenalty,"out of range stored penalty rejected");
+  }
+  ContentTuning.UseDefaults();
   string baseline=ContentTuning.CaptureJson();ContentTuning.ValidateJson(baseline);
   ContentTuning.UseJson(Change("request.Quiet.unanswered","2"));var unansweredSigned=new PassengerRequest();unansweredSigned.Begin("signed-unanswered",RequestKind.Quiet);unansweredSigned.ObserveOpportunity(true);Check(unansweredSigned.Finish()==2,"signed editor minus two retains actual M deduction magnitude two");Check(unansweredSigned.Finish()==0,"unanswered M deduction cannot apply twice");ContentTuning.UseJson(Change("request.Quiet.unanswered","0"));unansweredSigned=new PassengerRequest();unansweredSigned.Begin("zero-unanswered",RequestKind.Quiet);unansweredSigned.ObserveOpportunity(true);Check(unansweredSigned.Finish()==0,"zero unanswered input has no M deduction");Reject(Change("request.Quiet.unanswered","-2"));ContentTuning.UseDefaults();ContentTuning.UseJson(Change("request.Empathy.unanswered","-2"));unansweredSigned=new PassengerRequest();unansweredSigned.Begin("signed-empathy",RequestKind.Empathy);unansweredSigned.ObserveOpportunity(true);Check(unansweredSigned.Finish()==0&&unansweredSigned.SatisfactionDelta==-2,"already signed unanswered satisfaction remains minus two");ContentTuning.UseDefaults();
   Check(ContentTuning.SchemaVersion==2,"default choice profile schema2");

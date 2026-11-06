@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "d4d2cbb8cd15181f3b51e6ad24ab890725d77148ce5c5818c64e3a2054ea5dda",
+  "contentHash": "5a60a43de2193274f47683e83f1ad77db1d3915d7e2ea81b197258ac7c0d3adb",
   "values": [
     {
       "id": "request.Quiet.enabled",
@@ -1159,6 +1159,66 @@
     {
       "id": "law.editorSpeed.seconds",
       "value": "2"
+    },
+    {
+      "id": "weather.rain.enabled",
+      "value": "false"
+    },
+    {
+      "id": "weather.rain.intensity",
+      "value": "0.65"
+    },
+    {
+      "id": "weather.rain.wiperSeconds",
+      "value": "1.2"
+    },
+    {
+      "id": "weather.rain.boardingDirt",
+      "value": "2"
+    },
+    {
+      "id": "weather.rain.brakeMultiplier",
+      "value": "0.9"
+    },
+    {
+      "id": "weather.rain.trafficSpeedMultiplier",
+      "value": "0.85"
+    },
+    {
+      "id": "law.flashStop.penalty",
+      "value": "15"
+    },
+    {
+      "id": "law.permissiveTurn.penalty",
+      "value": "15"
+    },
+    {
+      "id": "law.blockedExit.penalty",
+      "value": "15"
+    },
+    {
+      "id": "law.personMinor.penalty",
+      "value": "10"
+    },
+    {
+      "id": "law.personModerate.penalty",
+      "value": "25"
+    },
+    {
+      "id": "law.personMajor.penalty",
+      "value": "40"
+    },
+    {
+      "id": "law.vehicleMinor.penalty",
+      "value": "3"
+    },
+    {
+      "id": "law.vehicleModerate.penalty",
+      "value": "8"
+    },
+    {
+      "id": "law.vehicleMajor.penalty",
+      "value": "15"
     },
     {
       "id": "type.Drunk.spawnPercent",
