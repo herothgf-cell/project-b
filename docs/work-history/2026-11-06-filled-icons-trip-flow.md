@@ -41,3 +41,7 @@
 ### 배포 검증
 
 실제 소스 커밋 `04e2e878c3c9505fffbf12c39eb475f2a47e8f67`을 `git log -1 --format=%H -- <본 기록>`으로 확인했다. 이 hash로 manifest를 재생성했으며 통합/PVP `VerifyOnly` 모두 exit0: **141파일 / 124,559,137바이트** SHA256/크기 전수 일치. 실행본은 위 최종 빌드 결과다.
+
+### main 게시 영수증
+
+실행본 커밋 `0bba941b86865fe028f7d39cca45a62739a7a8bf`. `git push origin HEAD:main` exit0, 원격 `430e864..0bba941` 전진. `git ls-remote origin refs/heads/main`과 로컬 HEAD가 위 전체 hash로 일치했다. main 동시 추가 커밋은 없었으며 force push를 사용하지 않았다. 게시 확인을 남기는 이 문서 후속 커밋은 실행본/소스를 변경하지 않는다.
