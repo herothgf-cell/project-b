@@ -5,9 +5,16 @@ using System.Collections.Generic;
  public string id,kind;public int day,cash,debt;
  public AccountEntry Copy(){return (AccountEntry)MemberwiseClone();}
 }
+[Serializable] public class PersonalRoomState {
+ public bool lampOwned,rugOwned,lampPlaced,rugPlaced,lampOn,finalized;
+ public int lampStyle,rugStyle;
+ public string wished="";
+ public PersonalRoomState Copy(){return (PersonalRoomState)MemberwiseClone();}
+}
 [Serializable] public class AccountSnapshot {
  public int version=3;public PrototypeSettings settings;public float fuel;
  public AccountEntry[] entries;
+ public PersonalRoomState Room;
 }
 // Actual cash movements and accrued debt are separate. Payment of debt never creates a second cost.
 public class CampaignAccount {
@@ -16,12 +23,22 @@ public class CampaignAccount {
  public int Cash {get;private set;}
  public int Debt {get;private set;}
  public float Fuel {get;private set;}
- public int Net {get{return Cash-settings.startCash-Debt;}}
+ public PersonalRoomState Room {get;private set;}
+ public int PersonalSpent {get{int total=0;foreach(var e in entries)if(e.kind=="personal-purchase")total-=e.cash;return total;}}
+ public int PersonalExpense(int day){int total=0;foreach(var e in entries)if(e.kind=="personal-purchase"&&e.day==day)total-=e.cash;return total;}
+ public int Net {get{return Cash-settings.startCash-Debt+PersonalSpent;}}
+ public static int RoomPrice(string item){return item=="lamp"?5000:item=="rug"?8000:0;}
+ public bool BuyRoomItem(string item,int style,int day){
+  int price=RoomPrice(item);if(price==0||day<1||day>settings.days||style<0||style>1||Debt!=0||Room.finalized||Cash<price||item=="lamp"&&Room.lampOwned||item=="rug"&&Room.rugOwned)return false;
+  if(!Post("room:"+item,"personal-purchase",day,-price,0))return false;
+  if(item=="lamp"){Room.lampOwned=true;Room.lampPlaced=true;Room.lampOn=true;Room.lampStyle=style;}else{Room.rugOwned=true;Room.rugPlaced=true;Room.rugStyle=style;}
+  if(Room.wished==item)Room.wished="";return true;
+ }
  public bool Renewed {get{return HasKind("insurance");}}
  public bool TaxPaid {get{return HasKind("tax-payment");}}
  public bool GoalMet {get{return Net>=settings.target;}}
  public int PendingDayCost(int day){return (settings.oneDay||Ate(day)?0:settings.meal)+(!Has("parking:"+day)?settings.parking:0);}
- public CampaignAccount(PrototypeSettings s){settings=s;Cash=s.startCash;Fuel=s.initialFuel;}
+ public CampaignAccount(PrototypeSettings s){settings=s;Cash=s.startCash;Fuel=s.initialFuel;Room=new PersonalRoomState();}
  bool Has(string id){return entries.Exists(e=>e.id==id);}
  bool HasKind(string kind){return entries.Exists(e=>e.kind==kind);}
  public bool Ate(int day){return entries.Exists(e=>e.kind=="meal"&&e.day==day);}
@@ -64,9 +81,9 @@ public class CampaignAccount {
   Mandatory("parking:"+day,"parking",day,settings.parking);
   return Post(id,"settlement",day,0,0);
  }
- public int Expense(int day,string kind){int cost=0;foreach(var e in entries)if(e.day==day&&(kind==null||e.kind==kind)&&e.kind!="fare")cost+=e.debt-e.cash;return cost;}
+ public int Expense(int day,string kind){int cost=0;foreach(var e in entries)if(e.day==day&&(kind==null||e.kind==kind)&&e.kind!="fare"&&e.kind!="personal-purchase")cost+=e.debt-e.cash;return cost;}
  public AccountEntry[] Entries {get{return entries.ConvertAll(e=>e.Copy()).ToArray();}}
- public AccountSnapshot Snapshot(){return new AccountSnapshot{settings=settings,fuel=Fuel,entries=Entries};}
+ public AccountSnapshot Snapshot(){return new AccountSnapshot{settings=settings,fuel=Fuel,entries=Entries,Room=Room.Copy()};}
  static bool ExcludedCost(string kind){return kind=="insurance"||kind=="tax-due"||kind=="tax-payment";}
  public static CampaignAccount Restore(AccountSnapshot snapshot){
   if(snapshot==null||(snapshot.version!=2&&snapshot.version!=3)||snapshot.settings==null||snapshot.entries==null||float.IsNaN(snapshot.fuel)||snapshot.fuel<0||snapshot.fuel>100)throw new ArgumentException("Invalid account checkpoint");
@@ -78,6 +95,17 @@ public class CampaignAccount {
   foreach(var e in snapshot.entries)if(!ExcludedCost(e.kind)&&!a.Post(e.id,e.kind,e.day,e.cash,e.debt))throw new ArgumentException("Invalid migrated transaction");
   // No refund transaction is added. Normalized snapshots no longer contain the
   // removed costs, so later loads cannot refund or forgive them again.
+  a.Room=snapshot.Room==null?new PersonalRoomState():snapshot.Room.Copy();
+  if(a.Room.wished==null)a.Room.wished="";
+  if(a.Room.lampStyle<0||a.Room.lampStyle>1||a.Room.rugStyle<0||a.Room.rugStyle>1||a.Room.wished!=""&&a.Room.wished!="lamp"&&a.Room.wished!="rug"||a.Room.lampPlaced&&!a.Room.lampOwned||a.Room.rugPlaced&&!a.Room.rugOwned||a.Room.lampOn&&!a.Room.lampOwned)throw new ArgumentException("Invalid room placement");
+  bool lamp=false,rug=false;
+  foreach(var e in a.entries)if(e.kind=="personal-purchase"){
+   if(e.debt!=0||e.day>a.settings.days)throw new ArgumentException("Invalid personal transaction");
+   if(e.id=="room:lamp"&&e.cash==-5000&&!lamp)lamp=true;
+   else if(e.id=="room:rug"&&e.cash==-8000&&!rug)rug=true;
+   else throw new ArgumentException("Invalid personal purchase");
+  }
+  if(a.Room.lampOwned!=lamp||a.Room.rugOwned!=rug)throw new ArgumentException("Room ownership does not match purchases");
   a.Fuel=snapshot.fuel;return a;
  }
 }

@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using UnityEngine;
 
-[Serializable] public class CompletedDay {public string id,configuration;public DayRecord result;public float fuel;public int cash,debt,score;public int days=1,totalIncome,totalExpenses,totalNet;}
+[Serializable] public class CompletedDay {public string id,configuration;public PersonalRoomState room;public DayRecord result;public float fuel;public int cash,debt,score;public int days=1,totalIncome,totalExpenses,totalNet;}
 [Serializable] public class CampaignCheckpoint { public int version=3; public string contentProfileJson; public bool hasLive;public LiveCampaignCheckpoint live; public string comparisonVersion; public EconomySnapshot days; public AccountSnapshot account; public LawEvent[] law; public PrototypeIds ids; public PassengerResult[] passengers; public PracticeResult[] practices; public CompletedDay[] completedDays; }
 
 [Serializable] public class LiveCampaignCheckpoint {public AccidentState accident;public int operationVersion;public bool signalsPresent,lawObservationPresent;public TaxiSignalsSnapshot signals;public DrivingLawSnapshot lawObservation;public string mapRevision,tripId;public Vector3 position;public Quaternion rotation;public PassengerJobsSnapshot jobs;public AmbientPedestrianSnapshot ambientPedestrians;public StopOccupancySnapshot occupancy;public bool preparing,preferFastest,hasDestination;public Vector3 destination;public double realSeconds;}
@@ -53,6 +53,7 @@ public class BusinessProgress : MonoBehaviour {
   // an actual object (including malformed/empty actors) must still validate.
   const string field=@"(?<!\\)""ambientPedestrians""\s*:\s*";
   if(checkpoint!=null&&checkpoint.live!=null&&(!System.Text.RegularExpressions.Regex.IsMatch(json,field)||System.Text.RegularExpressions.Regex.IsMatch(json,field+@"null(?=\s*[,}])")))checkpoint.live.ambientPedestrians=null;
+  if(checkpoint!=null&&checkpoint.account!=null&&(!System.Text.RegularExpressions.Regex.IsMatch(json,@"(?<!\\)""Room""\s*:")||System.Text.RegularExpressions.Regex.IsMatch(json,@"(?<!\\)""Room""\s*:\s*null(?=\s*[,}])")))checkpoint.account.Room=null;
   return checkpoint;
  }
  public bool CanAccept {get{return !(session.accident&&session.accident.Locked)&&!(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))&&!resumeBlocked&&!restoring&&!PracticeSession.Enabled&&!preparing&&(!enabledCampaign||ledger.CanAccept);}}
@@ -92,17 +93,20 @@ public class BusinessProgress : MonoBehaviour {
   bool accidentCheck=Array.IndexOf(args,"-accidentWorkshopCheck")>=0||Array.IndexOf(args,"-accidentWorkshopReloadCheck")>=0;
   if(accidentCheck){testMode=true;enabledCampaign=true;useV2=true;settings=PrototypeSettings.ForThreeDays();SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/accident-workshop-test.json"));}
   if(HudRevisionProbe.Enabled)SavePath=HudRevisionProbe.CampaignPath;
+  bool roomCheck=Array.IndexOf(args,"-personalRoomCheck")>=0||Array.IndexOf(args,"-personalRoomReloadCheck")>=0;
+  if(roomCheck){testMode=true;enabledCampaign=true;useV2=true;settings=PrototypeSettings.ForThreeDays();}
   if(ContentTuningRuntime.TestMode)SavePath=ContentTuningRuntime.CampaignPath(Path.GetFileName(SavePath));
+  if(roomCheck)SavePath=Path.GetFullPath("artifacts/personal-room-player/campaign.json");
   if(!testMode&&!UnifiedModeProbe.Enabled&&!HudRevisionProbe.Enabled&&!ContentTuningRuntime.TestMode)try{SavePath=CampaignSaveLocation.Resolve(Path.GetDirectoryName(Application.persistentDataPath),Path.GetFileName(SavePath));}catch(Exception e){Debug.LogWarning("이전 캠페인 저장 복사 실패: "+e.Message);}
   ledger=useV2?new EconomyLedger(settings):new EconomyLedger(new EconomySettings());
-  if((Array.IndexOf(args,"-passengerBehaviorReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilitySummaryReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0)))||protoTest&&Array.IndexOf(args,"-protoExpansionReloadTest")>=0||!testMode||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0)||startupReloadTest||activitiesReloadTest||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-oneDayReloadTest")>=0||Array.IndexOf(args,"-threeDayReloadTest")>=0||Array.IndexOf(args,"-ambientPedestrianReloadTest")>=0){
+  if((Array.IndexOf(args,"-passengerBehaviorReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilitySummaryReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0)))||protoTest&&Array.IndexOf(args,"-protoExpansionReloadTest")>=0||!testMode||Array.IndexOf(args,"-personalRoomReloadCheck")>=0||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0)||startupReloadTest||activitiesReloadTest||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-oneDayReloadTest")>=0||Array.IndexOf(args,"-threeDayReloadTest")>=0||Array.IndexOf(args,"-ambientPedestrianReloadTest")>=0){
    foreach(var path in new[]{SavePath,SavePath+".bak"}){
     if(!File.Exists(path))continue;
-    try{var candidate=ParseCheckpoint(File.ReadAllText(path));if(candidate==null||(candidate.version!=2&&candidate.version!=3)||candidate.law==null||candidate.ids==null||string.IsNullOrEmpty(candidate.ids.campaign)||candidate.ids.sequence<0)throw new Exception("Invalid v2 checkpoint");if(settings.oneDay&&(candidate.account==null||candidate.account.settings==null||!candidate.account.settings.oneDay||candidate.account.settings.days!=settings.days))throw new Exception("Different campaign mode");if(!candidate.hasLive)candidate.live=null;if(candidate.version==3&&candidate.days!=null&&candidate.days.hasActive&&candidate.days.active!=null&&candidate.days.active.elapsed>0&&candidate.live==null)throw new Exception("Missing active session");EconomyLedger restored=null;ContentTuningRuntime.RestoreAndValidate(candidate.contentProfileJson,()=>{ValidateLivePayload(candidate.live,owner);restored=EconomyLedger.RestoreCampaign(candidate.days,candidate.account);var checkedLaw=new LawLedger();foreach(var e in candidate.law)checkedLaw.Record(e);});ledger=restored;loaded=candidate;saveStatus=path==SavePath?"저장된 정산 결과를 불러왔습니다":"백업에서 정산 결과를 복구했습니다";break;}
+    try{var candidate=ParseCheckpoint(File.ReadAllText(path));if(candidate==null||(candidate.version!=2&&candidate.version!=3)||candidate.law==null||candidate.ids==null||string.IsNullOrEmpty(candidate.ids.campaign)||candidate.ids.sequence<0)throw new Exception("Invalid v2 checkpoint");if(settings.oneDay&&(candidate.account==null||candidate.account.settings==null||!candidate.account.settings.oneDay||candidate.account.settings.days!=settings.days))throw new Exception("Different campaign mode");if(!candidate.hasLive)candidate.live=null;if(candidate.version==3&&candidate.days!=null&&candidate.days.hasActive&&candidate.days.active!=null&&candidate.days.active.elapsed>0&&candidate.live==null)throw new Exception("Missing active session");EconomyLedger restored=null;ContentTuningRuntime.RestoreAndValidate(candidate.contentProfileJson,()=>{ValidateLivePayload(candidate.live,owner);restored=EconomyLedger.RestoreCampaign(candidate.days,candidate.account);if(candidate.account.Room==null&&restored.State==BusinessState.Completed){restored.Account.Room.finalized=true;candidate.account.Room=restored.Account.Room.Copy();}var checkedLaw=new LawLedger();foreach(var e in candidate.law)checkedLaw.Record(e);});ledger=restored;loaded=candidate;saveStatus=path==SavePath?"저장된 정산 결과를 불러왔습니다":"백업에서 정산 결과를 복구했습니다";break;}
     catch(Exception ex){LoadFailureDetail+=(LoadFailureDetail.Length>0?"\n":"")+Path.GetFileName(path)+": "+ex.Message;saveStatus="저장 읽기 실패 · 기존 파일 확인 중";Debug.LogWarning("Campaign load failed ["+path+"]: "+ex.Message);}
    }
   }
-  if(loaded==null&&(File.Exists(SavePath)||File.Exists(SavePath+".bak"))&&((Array.IndexOf(args,"-passengerBehaviorReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilitySummaryReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0)))||protoTest&&Array.IndexOf(args,"-protoExpansionReloadTest")>=0||startupReloadTest||activitiesReloadTest||!testMode||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0))){resumeBlocked=true;SaveFailed=true;saveStatus="저장 복원 실패 · 기존 파일 보존 중 · 지도/저장 확인 또는 새 캠페인 선택";}
+  if(loaded==null&&(File.Exists(SavePath)||File.Exists(SavePath+".bak"))&&((Array.IndexOf(args,"-passengerBehaviorReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilitySummaryReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0)))||protoTest&&Array.IndexOf(args,"-protoExpansionReloadTest")>=0||startupReloadTest||activitiesReloadTest||!testMode||Array.IndexOf(args,"-personalRoomReloadCheck")>=0||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0))){resumeBlocked=true;SaveFailed=true;saveStatus="저장 복원 실패 · 기존 파일 보존 중 · 지도/저장 확인 또는 새 캠페인 선택";}
   if(loaded!=null){if(loaded.passengers!=null)passengers.AddRange(loaded.passengers);if(loaded.practices!=null)practices.AddRange(loaded.practices);if(loaded.completedDays!=null)completedDays.AddRange(loaded.completedDays);}
   if(loaded!=null&&!string.IsNullOrEmpty(loaded.comparisonVersion)){mixedFollowing=loaded.comparisonVersion.EndsWith("mixed");initialFollowing=loaded.comparisonVersion.EndsWith("on");mixedFollowing|=initialFollowing!=owner.traffic.mitOptions.Enabled;}
   CaptureDayStart();
@@ -232,12 +236,26 @@ public class BusinessProgress : MonoBehaviour {
  public void RecordDamageCancellation(){RecordPassenger(0,"차량 내구도 0 · 안전 하차/운송 취소");foreach(var result in passengers)if(result.tripId==session.law.tripId){result.baseFare=result.bonus=result.paid=0;result.bonusReason="차량 고장 운송 취소";}}
  public void RecordFare(int amount){if(!enabledCampaign)return;if(ledger.Account!=null)ledger.RecordFare(session.law.tripId,amount);else ledger.RecordFare(amount);}
  public void RecordFailure(){if(enabledCampaign)ledger.RecordFailure();}
+ public bool RoomOpen; public PersonalRoomState ArchivedRoom;
+ public bool RoomAvailable {get{return !SimulationSession&&!PracticeSession.Enabled&&ledger!=null&&ledger.Account!=null&&ledger.Settings.days==3&&ShowingSummary&&!restartPrompt&&!ResumeBlocked;}}
+ public bool ChangeRoom(string action,string item="",int style=0){
+  if(!RoomAvailable||ledger.Account.Room.finalized||style<0||style>1)return false;
+  if(action=="finish"){if(ledger.State!=BusinessState.Completed)return false;}else if(item!="lamp"&&item!="rug")return false;
+  var previous=ledger;var candidate=EconomyLedger.RestoreCampaign(ledger.Snapshot(),ledger.Account.Snapshot());var room=candidate.Account.Room;
+  if(action=="buy"){if(!candidate.Account.BuyRoomItem(item,style,ledger.Day))return false;}
+  else if(action=="wish")room.wished=room.wished==item?"":item;
+  else if(action=="finish")room.finalized=true;
+  else if(item=="lamp"&&room.lampOwned){if(action=="style")room.lampStyle=style;else if(action=="place")room.lampPlaced=!room.lampPlaced;else if(action=="light")room.lampOn=!room.lampOn;else return false;}
+  else if(item=="rug"&&room.rugOwned){if(action=="style")room.rugStyle=style;else if(action=="place")room.rugPlaced=!room.rugPlaced;else return false;}
+  else return false;
+  ledger=candidate;if(!SaveCheckpoint()){ledger=previous;return false;}return true;
+ }
  public bool NextDay(){
   if(session.FullMapOpen||restartPrompt||pendingPayment>=0||!enabledCampaign||ledger.State!=BusinessState.Summary||session.GetComponent<PracticeSession>().Busy)return false;
   if(!SaveCheckpoint())return false;
   if(ledger.Account==null){if(!ledger.NextDay())return false;realSeconds=0;PrepareDay();return true;}
   var previous=ledger;var next=EconomyLedger.RestoreCampaign(ledger.Snapshot(),ledger.Account.Snapshot());if(!next.NextDay())return false;
-  if(!WriteCheckpoint(next,session.law.ids))return false;ledger=next;CaptureDayStart();
+  if(!WriteCheckpoint(next,session.law.ids))return false;ledger=next;RoomOpen=false;ArchivedRoom=null;CaptureDayStart();
   realSeconds=0;PrepareDay();return true;
  }
  public bool BeginNextCampaignDay(){return NextDay();}
@@ -247,13 +265,14 @@ public class BusinessProgress : MonoBehaviour {
   ResetCampaign(false);
  }
  bool ResetCampaign(bool showPreparation){
+  if(!SimulationSession&&ledger!=null&&ledger.Account!=null&&ledger.Settings.days==3&&ledger.State==BusinessState.Completed&&!ledger.Account.Room.finalized){bool prompt=restartPrompt;restartPrompt=false;bool finished=ChangeRoom("finish");restartPrompt=prompt;if(!finished)return false;}
   if(SimulationSession)return false;
   if(resumeBlocked&&!PreserveRejectedFiles())return false;
   string previousProfile=ContentTuningRuntime.Snapshot();ContentTuningRuntime.LoadActive();
   var next=useV2?new EconomyLedger(settings):new EconomyLedger(new EconomySettings());
   var nextIds=new PrototypeIds(Guid.NewGuid().ToString("N"));
   if(!WriteCheckpoint(next,nextIds)){ContentTuningRuntime.Restore(previousProfile);return false;}
-  ledger=next;CaptureDayStart();loaded=null;resumeBlocked=false;realSeconds=0;initialFollowing=session.traffic.mitOptions.Enabled;mixedFollowing=false;passengers.Clear();practices.Clear();pendingPayment=-1;restartPrompt=false;noticeUntil=0;
+  ledger=next;RoomOpen=false;ArchivedRoom=null;CaptureDayStart();loaded=null;resumeBlocked=false;realSeconds=0;initialFollowing=session.traffic.mitOptions.Enabled;mixedFollowing=false;passengers.Clear();practices.Clear();pendingPayment=-1;restartPrompt=false;noticeUntil=0;
   if(session.law){session.law.ledger=new LawLedger();session.law.ids=nextIds;}
   session.jobs.balance=session.jobs.completed=session.jobs.failed=0;session.services.notice=session.services.destination="";session.services.pending=-1;
   session.GetComponent<PracticeSession>().notice="";session.visits=0;PrepareDay();
@@ -288,6 +307,10 @@ public class BusinessProgress : MonoBehaviour {
    Directory.CreateDirectory(Path.GetDirectoryName(SavePath));
    var archive=new System.Collections.Generic.List<CompletedDay>(completedDays);
    if(ledger.OneDay&&ledger.State==BusinessState.Completed&&session.law&&!archive.Exists(r=>r.id==session.law.ids.campaign))archive.Add(new CompletedDay{id=session.law.ids.campaign,configuration=ComparisonVersion,result=ledger.Last.Copy(),days=ledger.Settings.days,totalIncome=ledger.TotalIncome,totalExpenses=ledger.TotalExpenses,totalNet=ledger.TotalNet,fuel=ledger.Account.Fuel,cash=ledger.Account.Cash,debt=ledger.Account.Debt,score=session.law.ledger.TotalScore});
+   if(ledger.OneDay&&ledger.State==BusinessState.Completed&&session.law&&ledger.Account!=null){
+    int ri=archive.FindIndex(r=>r.id==session.law.ids.campaign);
+    if(ri>=0){var old=archive[ri];archive[ri]=new CompletedDay{id=old.id,configuration=old.configuration,result=old.result,fuel=old.fuel,cash=ledger.Account.Cash,debt=ledger.Account.Debt,score=old.score,days=old.days,totalIncome=old.totalIncome,totalExpenses=old.totalExpenses,totalNet=old.totalNet,room=JsonUtility.FromJson<PersonalRoomState>(JsonUtility.ToJson(ledger.Account.Room))};}
+   }
    // Version 3 saves the same live boundary for time, account and passenger state.
    bool current=value==ledger||resetIds!=null&&session.law&&resetIds.campaign==session.law.ids.campaign;
    var boundaryDays=value.Snapshot();var boundaryAccount=value.Account==null?null:value.Account.Snapshot();
