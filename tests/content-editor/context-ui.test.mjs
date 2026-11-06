@@ -11,3 +11,18 @@ test('known errand duration token resolves only in preview and refreshes when ed
 test('detail scroll resets only when selected entity changes',()=>{const h=setup();h.el('detail').parentElement={scrollTop:400};vm.runInContext('render()',h.context);assert.equal(h.el('detail').parentElement.scrollTop,400);vm.runInContext("updateShared('shared.effect','8')",h.context);assert.equal(h.el('detail').parentElement.scrollTop,400);vm.runInContext(`const first=ContentModel.build(catalog)[0];renderEntity({...first,id:'B'},[{...first,id:'B'}])`,h.context);assert.equal(h.el('detail').parentElement.scrollTop,0);h.el('detail').parentElement.scrollTop=230;vm.runInContext(`renderEntity({...ContentModel.build(catalog)[0],id:'B'},[])`,h.context);assert.equal(h.el('detail').parentElement.scrollTop,230)});
 test('related link clears filters so destination entity remains selected',()=>{const h=setup();vm.runInContext(actualModel,h.context);h.context.fixtureCatalog=actualCatalog;h.context.fixtureProfile=actualProfile;vm.runInContext(`catalog=fixtureCatalog;profile=structuredClone(fixtureProfile);defaults=structuredClone(profile);saved=structuredClone(profile);group='승객 요청';selected='request.Comfort';`,h.context);h.el('search').value='차멀미';h.el('enabled').value='true';vm.runInContext('render()',h.context);const target=vm.runInContext("ContentModel.build(catalog).find(e=>e.id==='request.Comfort').links.map(id=>ContentModel.build(catalog).find(e=>e.id===id)).find(e=>e.group==='공통 영향 요소')",h.context);assert.ok(target);const related=h.el('detail').children.find(n=>n.className==='related'),button=related.children.find(n=>n.textContent===target.title);assert.ok(button);button.onclick();assert.equal(vm.runInContext('selected',h.context),target.id);assert.equal(vm.runInContext('group',h.context),'공통 영향 요소');assert.equal(h.el('search').value,'');for(const id of ['filter','mode','impl','enabled','effect'])assert.equal(h.el(id).value,'all')});
 test('reference IDs remain searchable when a gameplay mode filter is active',()=>{const h=setup();vm.runInContext(actualModel,h.context);h.context.fixtureCatalog=actualCatalog;h.context.fixtureProfile=actualProfile;vm.runInContext(`catalog=fixtureCatalog;profile=structuredClone(fixtureProfile);defaults=structuredClone(profile);saved=structuredClone(profile);group='법규';`,h.context);h.el('search').value='F01';h.el('mode').value='single';vm.runInContext('render()',h.context);assert.ok(h.el('items').children.length>0);assert.match(vm.runInContext('selected',h.context),/F01/)});
+
+test('real request score is edited once and explains timing and affected passengers',()=>{
+ const h=setup();vm.runInContext(actualModel,h.context);h.context.fixtureCatalog=actualCatalog;h.context.fixtureProfile=actualProfile;
+ vm.runInContext(`catalog=fixtureCatalog;profile=structuredClone(fixtureProfile);defaults=structuredClone(profile);saved=structuredClone(profile);group='승객 요청';selected='request.Empathy';render()`,h.context);
+ assert.equal(vm.runInContext("editors.filter(e=>e.id==='request.Empathy.success').length",h.context),1);
+ const nodes=descendants(h.el('detail'));
+ for(const name of ['운송 종료 평가','답하지 않았을 때','모든 요청에 적용되는 공통 설정'])assert.ok(nodes.some(n=>n.textContent===name),name);
+ assert.ok(nodes.some(n=>n.textContent.startsWith('적용 시점 · ')));
+ assert.ok(nodes.some(n=>n.textContent.startsWith('영향 대상 · ')));
+ assert.ok(nodes.some(n=>n.textContent==='운송 종료 평가에서 점수 편집'));
+ vm.runInContext("updateShared('request.Empathy.success','11')",h.context);
+ const flow=h.el('detail').children.find(n=>n.className==='flow-preview');
+ assert.equal(descendants(flow).filter(n=>n.textContent.includes('11')).length,2);
+ assert.ok(!descendants(flow).some(n=>n.textContent.includes('미이행')));
+});

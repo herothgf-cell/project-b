@@ -23,12 +23,12 @@ test('request cards bind real reply text to shared result settings and neutral d
  const all=entities(); const quiet=all.find(e=>e.id==='request.Quiet');
  const choices=quiet.sections.find(s=>s.kind==='choices').cards;
  assert.ok(choices[0].fieldIds.includes('request.Quiet.reply.Accept'));
- assert.ok(choices[0].fieldIds.includes('request.Quiet.success'));
+ assert.ok(choices[0].resultIds.includes('request.Quiet.success'));
  const defer=choices.find(c=>c.fieldIds.includes('request.Quiet.reply.Defer'));
  assert.ok(!defer.fieldIds.includes('request.Quiet.failure'));
  const empathy=all.find(e=>e.id==='request.Empathy');
  const cards=empathy.sections.find(s=>s.kind==='choices').cards;
- for(const reply of ['Accept','Alternative']) assert.ok(cards.find(c=>c.fieldIds.includes(`request.Empathy.reply.${reply}`)).fieldIds.includes('request.Empathy.success'));
+ for(const reply of ['Accept','Alternative']) assert.ok(cards.find(c=>c.fieldIds.includes(`request.Empathy.reply.${reply}`)).resultIds.includes('request.Empathy.success'));
  assert.ok(quiet.fieldIds.includes('common.requestCap'));
  assert.ok(all.find(e=>e.id==='request.Comfort').fieldIds.includes('manner.comfortMotion.penalty'));
 });
@@ -69,8 +69,8 @@ test('condition explanations preserve food AND gate, stable recovery OR gate and
  assert.match(all.find(e=>e.id==='law.interference').summary,/대기열.*차로/);
  assert.match(all.find(e=>e.id==='law.stopLine').summary,/넘.*정차/);
  const quiet=all.find(e=>e.id==='request.Quiet');
- assert.match(quiet.sections.find(s=>s.kind==='outcomes').description,/미응답.*M/);
- assert.match(all.find(e=>e.id==='request.Eta').sections.find(s=>s.kind==='outcomes').description,/이행.*설정/);
+ assert.match(quiet.sections.find(s=>s.kind==='unanswered').description,/미응답.*M/);
+ assert.match(all.find(e=>e.id==='request.Eta').sections.find(s=>s.kind==='outcomes').description,/읽기 전용 0점/);
 });
 test('blank override choices still show the actual built-in player reply',()=>{
  const all=entities();const food=all.find(e=>e.id==='type.Food');
@@ -100,9 +100,10 @@ test('shared effect and common influence entities link back to actual consumers'
  assert.ok(get('common.fare').links.includes('request.FareHelp'));
  for(const id of ['request.OnTime','request.SafeStop','request.DestinationChange','request.ViaStop'])assert.ok(get('common.deadline').links.includes(id),id);
 });
-test('illegal request refusal distinguishes zero default from editable success',()=>{
+test('illegal request refusal preserves fixed zero and separate violation observation',()=>{
  const request=entities().find(e=>e.id==='request.RejectIllegal');
- assert.match(request.sections.find(s=>s.kind==='outcomes').description,/기본.*0.*이행.*설정/);
+ assert.match(request.sections.find(s=>s.kind==='outcomes').description,/읽기 전용 0점/);
+ assert.equal(catalog.entries.find(e=>e.id==='request.RejectIllegal.success').editable,false);
  assert.match(request.sections.find(s=>s.kind==='outcomes').description,/위반.*판정 불가 0/);
 });
 test('context links are bidirectional and independent postride event has no request schedule settings',()=>{

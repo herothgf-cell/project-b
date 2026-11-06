@@ -1,8 +1,9 @@
 /* Semantic view over existing profile IDs. No gameplay settings are copied here. */
 (function () {
  'use strict';
+ const quietRequestEffect='후속 제한은 확률을 낮추는 설정이 아닙니다. 이 운송에서 신호 대기·흔들림 등 추가 상황 대화와 취객의 일반 수다를 표시하지 않습니다. 별도로 배정된 다음 요청과 필수 안전·승하차 안내는 유지합니다.';
  const requestFacts={
- Quiet:['수락하면 후속 대사를 억제합니다. 운임과 기한은 유지합니다.','후속 대사 억제 후 하차 때 이행 만족도를 반영합니다. 안전한 정차 응답 기회 뒤 미응답이면 별도 운전 점수 감점이 적용됩니다.'],
+ Quiet:['수락하면 추가 상황 대화와 취객의 일반 수다를 제한합니다. 운임과 기한은 유지합니다.','수락하면 후속 제한을 적용하고 하차 때 이행 만족도를 한 번 반영합니다.'],
  Eta:['현재 내비 ETA를 안내합니다. 빠르게/보통/여유롭게 중 하나를 고릅니다.','빠르게와 여유롭게는 ETA의 10%, 최대 30초를 빼거나 더합니다. 실제 도착과 차이를 안내하며 ETA 차이 자체 감점은 없습니다.'],
  Comfort:['수락 이후 불필요한 급가속·급제동과 충돌을 관찰합니다.','하차 때 수락 뒤 급가감속·충돌이 없으면 이행, 있으면 미이행입니다. 필요한 제동은 제외합니다. 급가감속 M 감점은 요청 결과와 별도입니다.'],
  OnTime:['원래 도착 기한을 지키는지 관찰하며 기한을 늘리지 않습니다.','기한 안에 도착하고 운전 위반이 없으면 이행합니다. 위반 동반 미이행은 실패, 위반 없는 합법적 지연은 판정 불가로 0입니다.'],
@@ -18,7 +19,7 @@
  DestinationChange:['실제로 연결되는 안전한 대체 승하차 지점이 필요합니다. 법규 연습 구역 활성 중에는 제외됩니다.','제안 목적지·운임·기한 확인 뒤 수락하면 같은 운송의 목적지를 변경합니다. 지정 목적지 하차로 판정합니다.'],
  ViaStop:['안전한 경유지와 원래 목적지까지 연결 경로가 필요합니다. 법규 연습 구역 활성 중에는 제외됩니다.','제안 약정 수락 뒤 경유지에서 F로 안전 정차하고 정해진 용무 시간을 무료로 기다린 뒤 원래 목적지로 갑니다. 경유 미완료는 실패입니다. {errandSeconds}는 용무 시간으로 치환됩니다.'],
  LostItem:['운송 중 요청 추첨과 분리된 하차 후 텍스트 사건입니다.','사용 시 후보 식별자에 따라 하차 후 10%로 지갑 발견·보관·신고 안내를 기록합니다. 가중치와 응답 필드는 일반 운송 중 추첨에 사용하지 않습니다. 물품 생성·반환 경로·반환 퀘스트가 없습니다.'],
- RejectIllegal:['불법 신호 요구를 안전하게 거절합니다.','기본 이행 만족도는 0입니다. 실제 확정 위반 없이 거절하고 운송을 마치면 편집한 이행 만족도 설정을 하차 때 적용합니다. 실제 위반은 독립 법규·M 기록으로 평가하며 위반이 있으면 요청 결과는 판정 불가 0입니다.']
+ RejectIllegal:['불법 신호 요구를 안전하게 거절합니다.','현재 거절 응대의 이행·미이행 점수는 읽기 전용 0점입니다. 실제 위반은 독립 법규·M 기록으로 평가하며 위반이 있으면 요청 결과는 판정 불가 0입니다.']
  };
  const representative={Comfort:['Comfort'],Hurried:['Eta','OnTime'],RouteChecking:['LargeRoad','ShortRoad','RouteAdvice'],Errand:['ViaStop'],PrecisionStop:['SafeStop']};
  const bindings={Comfort:'편안한 운행 요청을 첫 요청에 연결합니다.',Hurried:'변형 0은 ETA, 변형 1·2는 제시간 도착 요청을 첫 요청에 연결합니다.',RouteChecking:'변형 0·1·2는 각각 큰길·짧은 길·경로 추천 요청에 연결합니다.',Errand:'경유 요청을 첫 요청에 연결하며 변형 0·1·2의 진행 기준은 0·25·50%입니다. 설정된 최대 진행도를 넘지 않습니다.',PrecisionStop:'안전 하차 요청을 첫 요청에 연결합니다.'};
@@ -56,7 +57,7 @@
   const ids=prefix=>entries.filter(e=>e.id.startsWith(prefix)).map(e=>e.id);
   const keep=a=>[...new Set(a.filter(id=>byId.has(id)))];
   const section=(title,description,fieldIds,kind,cards)=>({title,description,fieldIds:keep(fieldIds),...(kind?{kind}:{}),...(cards?{cards}: {})});
-  function add(id,group,title,summary,kind,sections,notes=[],links=[],extra={}){const fieldIds=keep(sections.flatMap(s=>[...s.fieldIds,...(s.cards||[]).flatMap(c=>c.fieldIds)]));const entity={id,group,title,summary,kind,fieldIds,sections,notes,links,...extra};out.push(entity);return entity;}
+  function add(id,group,title,summary,kind,sections,notes=[],links=[],extra={}){const seen=new Set();const unique=values=>values.filter(value=>{if(seen.has(value))return false;seen.add(value);return true});for(const s of sections){s.fieldIds=unique(s.fieldIds);for(const c of s.cards||[])c.fieldIds=unique(c.fieldIds)}const fieldIds=keep(sections.flatMap(s=>[...s.fieldIds,...(s.cards||[]).flatMap(c=>c.fieldIds)]));const entity={id,group,title,summary,kind,fieldIds,sections,notes,links,...extra};out.push(entity);return entity;}
   const schedule=ids('schedule.');
   for(const [kind,facts]of Object.entries(requestFacts)){
    const prefix=`request.${kind}.`;const own=ids(prefix);if(!own.length)continue;
@@ -67,18 +68,21 @@
     if(reply==='Alternative'&&['Empathy','Interview'].includes(kind))description='조용히 배려하며 후속 대사를 억제합니다. 일반 응대와 같은 이행 만족도 설정을 사용합니다.';
     if(reply==='Alternative'&&kind==='RouteAdvice')description='합법 최단 경로를 적용합니다. 빠른 길 선택과 같은 요청 결과 설정을 사용합니다.';
     const resultFields=reply==='Defer'?[]:[prefix+'success',prefix+'failure'];
-    return {title:reply==='Defer'?'안전상 보류':reply==='Alternative'?'다른 응대':reply==='EtaFaster'?'빠른 예상':reply==='EtaNormal'?'내비 예상':reply==='EtaRelaxed'?'여유 있는 예상':'요청 수락',description,fieldIds:keep([id,...resultFields,...(kind==='Comfort'&&reply!=='Defer'?['manner.comfortMotion.penalty']:[]),...(kind==='ViaStop'&&reply!=='Defer'?['effect.errand.seconds']:[])]),notes:reply==='Defer'?[]:['결과 점수는 이 요청의 모든 수락 응대가 공유합니다. 선택지마다 독립 점수를 만들지 않습니다.']};
+    if(kind==='Quiet'&&reply==='Accept'||['Empathy','Interview'].includes(kind)&&reply==='Alternative')description+=' '+quietRequestEffect;
+    return {title:reply==='Defer'?'안전상 보류':reply==='Alternative'?'다른 응대':reply==='EtaFaster'?'빠른 예상':reply==='EtaNormal'?'내비 예상':reply==='EtaRelaxed'?'여유 있는 예상':'요청 수락',description,fieldIds:keep([id,...(kind==='Comfort'&&reply!=='Defer'?['manner.comfortMotion.penalty']:[]),...(kind==='ViaStop'&&reply!=='Defer'?['effect.errand.seconds']:[])]),resultIds:keep(resultFields),notes:reply==='Defer'?[]:['이행·미이행 점수는 아래 운송 종료 평가에서 한 번만 편집합니다. 여러 수락 답변이 같은 점수를 공유하며, 선택지마다 추가로 더하지 않습니다.']};
    });
    const links=[...(kind==='LostItem'?[]:['common.request','common.schedule']),...Object.entries(representative).filter(([,k])=>k.includes(kind)).map(([t])=>'type.'+t)];
    if(kind==='Comfort')links.push('manner.comfortMotion');if(kind==='ViaStop')links.push('effect.errand');
    const notes=[facts[0],facts[1]];
+   if(['Quiet','Empathy','Interview'].includes(kind))notes.push(quietRequestEffect);
    if(kind!=='LostItem')notes.push('실제 지도 경로가 없으면 ETA와 경로 요청을 제외합니다. 시스템 강제 대기·우회는 경로 요청 미이행에서 제외합니다. 같은 요청 중복·경로 요청끼리·조용함과 대화 요청의 동시 조합을 제외합니다. 대표 승객 유형은 첫 요청을 해당 요청으로 바꿀 수 있습니다.');
    add('request.'+kind,'승객 요청',byId.get(prefix+'enabled')?.section||kind,facts[0],'request',[
     section('등장 설정',kind==='LostItem'?'사용 여부만 하차 후 사건 발생에 적용합니다. 가중치는 이 사건의 10%를 바꾸지 않습니다.':'가중치는 같은 후보 추첨 안의 상대 비중입니다. 실제 운송 전체 등장 확률이 아닙니다.',[prefix+'enabled',prefix+'weight'],'appearance'),
     section('승객 말풍선','현재 한국어 문구를 직접 편집합니다.',[prefix+'prompt'],'prompt'),
     section('선택지와 실제 결과',kind==='LostItem'?'아래 문구는 진단용 단일 요청 경로에도 사용합니다. 일반 운송은 하차 후 요약 사건만 기록합니다.':'대답을 고르면 표시 문구와 실제 처리 결과를 함께 확인합니다.',[],'choices',cards),
-    section('하차 판정과 미응답',facts[1]+(kind==='Quiet'?' 미응답 값은 요청 만족도 대신 M 감점량입니다.':kind==='Eta'?' ETA 오차에 따른 실패는 없지만 안내 수락 뒤 하차 시 이행 만족도 설정을 읽습니다.':!['Comfort','OnTime','SafeStop','DestinationChange','ViaStop'].includes(kind)?' 이 경로에서는 실패값을 사용하지 않습니다.':'')+(!['Quiet','Empathy','Interview','LocalChat'].includes(kind)?' 이 요청의 미응답 값은 현재 운송 판정에서 사용하지 않습니다.':''),[prefix+'success',prefix+'failure',prefix+'unanswered'],'outcomes'),
-    section('함께 쓰는 설정',kind==='LostItem'?'하차 후 사건은 운송 중 요청 합계 상한과 등장 시점 설정을 사용하지 않습니다.':'요청 합계 상한은 모든 운송 중 요청이 공유합니다. 등장 시점 설정은 운송 전체가 공유합니다.',kind==='LostItem'?[]:['common.requestCap',...schedule],'shared')
+    section('운송 종료 평가','수락한 요청의 실제 이행 여부를 확인해 하차 때 한 번 반영합니다. 선택지 미리보기와 같은 점수이며 추가 보상이 아닙니다. '+facts[1]+(kind==='Eta'?' 현재 예상 도착 안내의 이행·미이행·미응답 점수는 모두 읽기 전용 0점입니다. 선택지별 점수 편집은 아직 지원하지 않습니다.':!['Comfort','OnTime','SafeStop','DestinationChange','ViaStop'].includes(kind)?' 현재 실패값은 고정/중립입니다.':''),[prefix+'success',prefix+'failure'],'outcomes'),
+    section('답하지 않았을 때',kind==='Quiet'?'안전한 응답 기회 후 끝까지 미응답이면 하차 때 M(운전 만족도)을 감점합니다. 요청 이행 점수와 별도이며, 답할 기회가 없으면 감점하지 않습니다.':['Empathy','Interview','LocalChat'].includes(kind)?'안전하게 답할 기회가 있었는데 끝까지 답하지 않으면 하차 때 아래 요청 만족도를 반영합니다. 답할 기회가 없으면 감점하지 않습니다.':'현재 이 요청은 답하지 않아도 추가 감점이 없습니다. 아래 값은 고정/미사용 결과입니다.',[prefix+'unanswered'],'unanswered'),
+    section(kind==='LostItem'?'공통 설정 적용 여부':'모든 요청에 적용되는 공통 설정',kind==='LostItem'?'하차 후 사건은 운송 중 요청 합계 상한과 등장 시점 설정을 사용하지 않습니다.':'이 요청 전용 값이 아닙니다. 운송 중 일반 요청 전체(분실물 제외)에 영향을 줍니다. 요청 합계 상한은 하차 점수 합산 때, 개수·시점은 새 운송의 요청 배정과 표시 때 사용합니다.',kind==='LostItem'?[]:['common.requestCap',...schedule],'shared')
    ],notes,links,{requestKind:kind,enabledId:prefix+'enabled',weightId:prefix+'weight',promptId:prefix+'prompt'});
   }
   for(const type of Object.keys(typeChoices)){
@@ -161,5 +165,65 @@
   const example='같은 후보군에서 가중치가 모두 1이면 같은 비중입니다. 1·1·2이면 25%·25%·50%이며, 0은 제외됩니다. ';
   return {text:`기본 후보 비중 ${percent}% (${weight} / ${total})`,explanation:example+(request?'사용 중인 양수 가중치 요청을 모두 후보로 놓은 기준 비중입니다. 실제 전체 등장 확률이 아닙니다. 지도·안전 대안, 요청 개수 0~2, 조합 제외, 등장 시점·정차 기회, 대표 유형 첫 요청 연결로 실제 후보와 결과가 달라집니다.':'특수 유형 후보를 모두 놓은 기준 비중입니다. 일반·취객의 배정 보장과 연속 특수 승객 제한, 대표 요청 자격 조건이 있어 실제 전체 승객 등장 확률과 다릅니다.')};
  }
- globalThis.ContentModel={build,weightInfo};
+ function fieldInfo(id,catalog){
+  const entry=(catalog.entries||[]).find(e=>e.id===id)||{};
+  const [domain,name,field]=id.split('.');
+  const requestTitle=kind=>(catalog.entries||[]).find(e=>e.id===`request.${kind}.enabled`)?.section||kind;
+  const typeTitle=kind=>(catalog.entries||[]).find(e=>e.id.startsWith(`type.${kind}.`))?.section||kind;
+  const info=(when,affects,detail='')=>({when,affects,detail});
+  const allRequests='운송 중 일반 요청 전체 16종(분실물 제외)';
+  if(domain==='request'){
+   const target=requestTitle(name)+' 요청';
+   if(name==='LostItem')return info('하차 후 별도 사건을 기록할 때','분실물 텍스트 사건만',field==='enabled'?'사용 여부만 조건부 10% 사건을 켜거나 끕니다.':'일반 운송 중에는 사용하지 않는 고정/진단용 값입니다.');
+   if(field==='enabled'||field==='weight')return info('새 운송에서 요청 후보를 배정할 때',target+'의 후보 포함·추첨 비중','가중치는 조건이 같은 후보 사이의 상대 비중입니다. 별도로 배정되는 대표 요청과 실제 표시 기회도 영향을 줍니다.');
+   if(field==='prompt')return info('이 요청을 승객에게서 제시할 때',target+'의 승객 대사만');
+   if(field==='reply')return info('해당 선택지를 보여주고 기사 답변을 기록할 때',target+'의 해당 답변 문구만','문구를 바꿔도 선택 행동과 점수 판정 방식은 유지합니다.');
+   if(field==='failure'&&!entry.editable)return {...info('정상 운송에서는 적용하지 않는 참고값',target+'의 미사용 실패 항목','이 요청은 실제 실패 판정 경로가 없습니다. 답하지 않았을 때의 감점은 별도 미응답 설정을 사용합니다.'),unused:true};
+   if(field==='unanswered')return info('답하지 않은 채 하차·운송 종료할 때',target+'만',name==='Quiet'?'안전한 응답 기회 후 미응답이면 M 감점량입니다. 요청 합계 상한에는 들어가지 않습니다.':['Empathy','Interview','LocalChat'].includes(name)?'안전한 응답 기회 후 미응답일 때 요청 만족도에 한 번 반영합니다. 기회가 없으면 0입니다.':'현재 이 요청에서는 사용하지 않는 고정/중립 값입니다.');
+   return info(entry.editable?'요청을 수락한 뒤 하차 때 이행 여부를 평가할 때':'현행 운송의 고정 결과를 설명할 때',target+'의 수락 답변 전체','현재는 요청 종류별 평가 점수입니다. 선택지별 독립 점수는 지원하지 않으며, 버튼을 누를 때와 하차 때 두 번 더하지 않습니다.');
+  }
+  if(domain==='schedule')return info(name.startsWith('count')?'새 운송의 요청 개수를 배정할 때':'새 운송의 등장 시점을 정하고 운행 중 표시 기회를 확인할 때',allRequests,name.startsWith('count')?'0·1·2건 비중 합계는 100입니다. 개수 배정 뒤 각 요청의 가중치를 사용합니다.':name==='movingSeconds'?'운행 중 요청을 표시하기 전 필요한 실제 주행 시간입니다. 안전 정차 기회도 필요합니다.':'진행률은 0~1 값입니다. 예: 0.25는 25%. 주행 시간과 안전 정차 기회도 함께 충족해야 합니다.');
+  if(domain==='type')return info(field==='weight'?'새 승객의 유형을 배정할 때':field==='intro'?'해당 유형의 첫 대화를 보여줄 때':field==='choice'?'기사 응답 선택지를 보여줄 때':'해당 유형의 운행 중 후속 대화를 보여줄 때',typeTitle(name)+' 승객만',field==='weight'?'특수 유형 후보 사이의 상대 비중입니다. 일반·취객 보장과 대표 요청 자격은 별도입니다.':'빈 답변·후속 문구는 현재 상태에 맞는 내장 대사를 사용합니다.');
+  if(domain==='situation')return info('해당 상황에 대한 기사 답변을 보여줄 때',({SignalWait:'신호 대기',Jolt:'차량 흔들림',NecessaryBrake:'필요한 제동'})[name]+' 상황 대화만','후속 질문 제한 선택은 이 운송의 새로운 추가 상황 대화를 막습니다. 별도 예약 요청은 취소하지 않습니다.');
+  if(domain==='effect'){
+   const effects={
+    'food.satisfaction':['음식 허용을 선택하고 승차한 뒤','음식 승객의 섭취 허용 선택','요청 합계와 별도의 승객 유형 효과입니다.'],
+    'food.crumbs':['운행 중 실제로 음식을 섭취했을 때','음식 승객의 섭취 허용 선택','청결에서 빼는 양입니다. 허락만 하고 아직 먹지 않았다면 적용하지 않습니다.'],
+    'food.spill':['실제 섭취 후 흘림이 발생했을 때','음식 승객의 섭취 허용 선택','섭취 청결 감소에 추가로 빼는 양입니다.'],
+    'food.spillPercent':['새 음식 승객의 흘림 예정 여부를 정할 때','음식 승객의 섭취 허용 선택','실제 섭취와 흘림 조건이 충족될 때 청결에 반영합니다.'],
+    'food.spillDelaySeconds':['섭취 뒤 흘림까지 주행 시간을 셀 때','음식 승객의 섭취 허용 선택','물리 흔들림이 먼저 오면 예정된 흘림이 더 일찍 발생할 수 있습니다.'],
+    'food.consumeMovingSeconds':['섭취 시작 조건을 확인할 때','음식 승객의 섭취 허용 선택','주행 시간과 진행률을 모두 충족하고 진행률 85% 전이어야 합니다.'],
+    'food.consumeProgress':['섭취 시작 조건을 확인할 때','음식 승객의 섭취 허용 선택','주행 시간과 진행률을 모두 충족합니다. 예: 0.5는 50%.'],
+    'food.cleanupSeconds':['정리 선택 뒤 안전 정차 중','음식 승객의 정리 선택','정리 후 먹지 않고 보관합니다.'],
+    'luggage.prepareSeconds':['적재 허용 뒤 안전 정차 중','큰 짐 승객의 적재 허용 선택'],
+    'luggage.unloadSeconds':['목적지 도착 뒤 안전 정차 중','큰 짐 승객의 적재 허용 선택'],
+    'muddy.prepareSeconds':['깔개 보호 선택 뒤 안전 정차 중','오염 짐 승객의 깔개 보호 선택'],
+    'muddy.dirt':['보호 없이 실은 짐을 내리거나 운송을 중도 종료할 때','오염 짐 승객의 보호 없이 적재 선택','청결에서 한 번 빼는 양입니다.'],
+    'sleep.calmSeconds':['흔들림으로 깨어난 뒤 다시 잠들 때까지','수면 승객','응답 대기 중에는 시간이 끝나도 바로 잠들지 않습니다.'],
+    'resecure.seconds':['짐 재고정 응답 뒤 안전 정차 중','큰 짐·오염 짐을 실제로 실은 승객','흔들림·필요한 제동 상황의 재고정 선택이 공유합니다.'],
+    'errand.seconds':['경유 약정 수락 후 경유지에서 F로 안전 정차했을 때','경유 용무 요청','그 자리에서 무료 대기하며, 원래 목적지까지 같은 운송을 계속합니다.']
+   };
+   const value=effects[name+'.'+field];if(value)return info(...value);
+  }
+  if(domain==='common'){
+   const common={
+    requestCap:['하차 때 요청 점수를 합산한 뒤',allRequests,'상한이 10일 때 +8점과 +5점은 합계 +13점 대신 +10점으로 반영합니다. M·청결·시간 가산은 이 상한과 별도입니다.'],
+    timeCap:['하차 때 안전한 조기 도착 가산을 계산할 때','유효한 기준 ETA가 있는 모든 운송'],
+    timeFactor:['하차 때 안전한 조기 도착 가산을 계산할 때','유효한 기준 ETA가 있는 모든 운송'],
+    comfortStep:['안정 주행 관찰 후 M 회복량이 없고 만족도가 요구치보다 낮을 때','운송 중 안심 회복','요청 하나의 이행 보상이 아닌 별도 회복입니다.'],
+    comfortCap:['안정 주행 관찰 후 안심 회복을 누적할 때','운송 중 안심 회복','한 운송의 누적 상한입니다.'],
+    fareMultiplier:['하차 정산 때 기본 지급을 계산할 때','모든 운송의 기본 운임','특정 요청 전용 값이 아닙니다.'],
+    bonusMultiplier:['하차 정산 때 보너스를 계산할 때','모든 운송의 보너스'],
+    deadlineMultiplier:['새 호출·목적지 변경·경유 약정을 만들 때','모든 신규 운송 약정; 제시간 도착·안전 하차·목적지 변경·경유 용무 요청'],
+    deadlineSlack:['새 호출·목적지 변경·경유 약정을 만들 때','모든 신규 운송 약정; 제시간 도착·안전 하차·목적지 변경·경유 용무 요청'],
+    startDeficitMultiplier:['새 운송의 시작 만족도를 정할 때','모든 승객의 시작 만족도'],
+    cleanBonusMultiplier:['승차 때 청결 가산을 계산할 때','모든 승객의 시작 만족도','청결은 시작값에 포함되며 하차 때 다시 더하지 않습니다.'],
+    required:['새 일반 호출의 요구 만족도를 정할 때','해당 난도의 신규 일반 호출','현재 운송 중인 약정을 소급해서 바꾸지 않습니다.']
+   };if(common[name])return info(...common[name]);
+  }
+  if(domain==='law')return info(name==='recovery'?'위반 없이 준수한 법규 사건을 기록할 때':'해당 위반 상황을 관찰·확정할 때',name==='recovery'?'모든 운전의 법규 점수 회복':'해당 상황의 법규 점수; 제시간 도착 요청은 실제 위반 유무도 확인','법규 점수와 운전 만족도 M은 서로 다른 지표입니다.');
+  if(domain==='manner')return info(name==='recovery'?'새 구간에서 안정 주행의 거리 또는 시간 조건에 도달할 때':'해당 운전 사건을 관찰할 때',name==='comfortMotion'?'편안한 운행 요청 수락 뒤의 M':name==='recovery'?'모든 승객 운송의 M 회복':'모든 승객 운송의 운전 만족도 M','M 변화는 하차 만족도의 주행 변화량에 반영합니다. 요청 이행 점수와 별도입니다.');
+  return info('설명된 상황·조건을 확인할 때',entry.section||entry.title||'현재 게임의 고정 조건',entry.editable?'':'현재 구현의 고정 조건이며 값을 편집하지 않습니다.');
+ }
+ globalThis.ContentModel={build,weightInfo,fieldInfo};
 })();
