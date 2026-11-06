@@ -1,3 +1,5 @@
+2026-11-07 추가 승인: Blender MCP 제작 모델을 Unity MCP로 반입하여 택시 외형을 개선한다. 기존 1인칭/UI·물리 수치는 유지. [원본·실제 검증](work-history/2026-11-07-taxi-blender-quality.md).
+
 2026-11-07 시안 승인 반영: 택시 곡면 외형·운전석 디지털 HUD·거울/승객 카드 배치. 물리/경제 수치 유지, 생성 시안의 정밀 재질/도시 아트는 미포함. [구현·검증](work-history/2026-11-07-taxi-exterior-cockpit-implementation.md).
 
 2026-11-07 사용자 승인 HUD 후속: 밝은 카드, 빈차 호출 위치/생활거점 레드닷, PVP4행 현황, 숫자 선택키, 메뉴 설정 이동과 퇴근 사유 표시. PVP 방의 조건 설정5개를 LANv14 호스트 규칙으로 연결하며 기존 기본값 유지. [구현·검증](work-history/2026-11-07-hud-usability-followup.md).

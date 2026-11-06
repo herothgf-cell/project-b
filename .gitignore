@@ -41,3 +41,6 @@ config/maps/project/*.lock
 
 # Local sparse Unity map-editor recovery drafts, never project data.
 /Library/ProjectMapEditor/
+
+# Local Blender backup of the versioned taxi source.
+/art-source/taxi/*.blend1

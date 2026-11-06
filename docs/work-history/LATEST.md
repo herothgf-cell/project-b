@@ -1,3 +1,7 @@
+## 2026-11-07 Blender·Unity MCP 택시 모델 개선
+
+[실제 제작·검증·출하](2026-11-07-taxi-blender-quality.md). Blender 곡면 차체/지붕·유리/도어·램프/그릴/휠 원본 제작, Unity prefab 연결·실제 렌더 확인. 기존 물리/UI 유지. Editor36510/실제 시점35/운전설정17/LAN43+54 통과, 보호16불변·Strict issues0. 은계/A2·LANv16·BuildHybrid·지도/ZIP불변. 원본/재생성은 art-source/taxi/README.md. 다음: 사람 장기/패드/전체3일/다른PC, 실내·월드/승객 표정·정산 연출 및 저사양LOD 검토.
+
 ## 2026-11-07 택시 외형·1인칭 운전석 적용
 
 [실제 구현·검증·배포](2026-11-07-taxi-exterior-cockpit-implementation.md). 승인 시안 기반 둥근 노란 택시/휠/등·운전석 핸들/디지털 계기판·승객/거울 배치 적용. 물리·경제 수치 유지. Editor1283/실제 시점35/전체UI213/설정17/비31/LAN43+54 통과, 보호16불변·Strict issues0. 은계/A2·LANv16·BuildHybrid, 지도/ZIP불변. 다음: 사람 장기/패드/전체3일/다른PC 수용, 세밀한 재질·월드/승객 표정·정산 연출.

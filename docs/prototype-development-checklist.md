@@ -1,3 +1,9 @@
+## 2026-11-07 Blender·Unity MCP 택시
+
+- [x] Blender 원본/FBX·공유 Unity prefab, 곡면/등화/휠 개선 및 기존 물리/UI 유지.
+- [x] Editor36510·실제 시점35·설정17·LAN43+54·Strict issues0·보호16불변. [검증 범위](work-history/2026-11-07-taxi-blender-quality.md).
+- [ ] 사람 장기/전체3일/다른PC·저사양LOD, 실내/월드/승객 표정.
+
 ## 2026-11-07 택시 외형·1인칭
 
 - [x] 승인 시안의 둥근 노란 외형·등/휠·남색 운전석/디지털 속도·승객/거울 배치. 물리·경제 유지.

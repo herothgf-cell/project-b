@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Visual geometry only. Never adds colliders or changes the vehicle's physical dimensions.
-public static class TaxiArt {
+public static partial class TaxiArt {
  static readonly Dictionary<string,Mesh> meshes=new Dictionary<string,Mesh>();
  static Material yellow,glass,rubber,silver,red,white,trim;
  static Material Material(string name,Color color,float gloss){var m=WorldBuilder.Mat(name,color);m.SetFloat("_Glossiness",gloss);return m;}
@@ -35,7 +35,7 @@ public static class TaxiArt {
   Window(parent,"Rear window",new Vector3(-.6f,.85f,-1.48f),new Vector3(.6f,.85f,-1.48f),new Vector3(.6f,1.28f,-1.11f),new Vector3(-.6f,1.28f,-1.11f),Vector3.back);
   for(int side=-1;side<=1;side+=2){float x=side*.757f;Window(parent,"Front side window",new Vector3(x,.82f,-.15f),new Vector3(x,.82f,.89f),new Vector3(x,1.23f,.46f),new Vector3(x,1.29f,-.15f),Vector3.right*side);Window(parent,"Rear side window",new Vector3(x,.82f,-1.36f),new Vector3(x,.82f,-.24f),new Vector3(x,1.29f,-.24f),new Vector3(x,1.24f,-1.01f),Vector3.right*side);}
  }
- public static void Exterior(Transform parent){
+ static void ProceduralExterior(Transform parent){
   Materials();var root=new GameObject("Taxi exterior");root.transform.SetParent(parent,false);var t=root.transform;
   Part(t,"Rounded body",new Vector3(0,.43f,0),new Vector3(1.79f,.69f,3.96f),.25f,yellow);
   Cabin(t);
@@ -60,7 +60,7 @@ public static class TaxiArt {
   Part(t,"Rear plate",new Vector3(0,.49f,-1.998f),new Vector3(.6f,.18f,.035f),.015f,yellow);Text(t,"Rear registration","서울 1234",new Vector3(0,.49f,-2.021f),.035f,Color.black,false);
   Part(t,"Front plate",new Vector3(0,.27f,2.012f),new Vector3(.56f,.15f,.035f),.015f,yellow);Text(t,"Front registration","서울 1234",new Vector3(0,.27f,2.034f),.032f,Color.black,true);
  }
- public static Transform Wheel(Transform parent){Materials();var g=new GameObject("Tyre visual");g.transform.SetParent(parent,false);var tyre=GameObject.CreatePrimitive(PrimitiveType.Cylinder);tyre.transform.SetParent(g.transform,false);tyre.transform.localScale=new Vector3(.68f,.12f,.68f);tyre.GetComponent<Renderer>().sharedMaterial=rubber;RemoveCollider(tyre);for(int side=-1;side<=1;side+=2){var hub=GameObject.CreatePrimitive(PrimitiveType.Cylinder);hub.name="Alloy wheel";hub.transform.SetParent(g.transform,false);hub.transform.localPosition=new Vector3(0,side*.124f,0);hub.transform.localScale=new Vector3(.43f,.012f,.43f);hub.GetComponent<Renderer>().sharedMaterial=silver;RemoveCollider(hub);Lens(g.transform,"Wheel recess",new Vector3(0,side*.143f,0),new Vector3(.35f,.02f,.35f),rubber);for(int spoke=0;spoke<5;spoke++){float a=spoke*Mathf.PI*2/5;var bar=Part(g.transform,"Alloy spoke",new Vector3(Mathf.Sin(a)*.11f,side*.16f,Mathf.Cos(a)*.11f),new Vector3(.045f,.018f,.18f),.008f,silver);bar.transform.localRotation=Quaternion.Euler(0,a*Mathf.Rad2Deg,0);}Part(g.transform,"Hub cap",new Vector3(0,side*.17f,0),new Vector3(.1f,.025f,.1f),.012f,silver);}return g.transform;}
+ static Transform ProceduralWheel(Transform parent){Materials();var g=new GameObject("Tyre visual");g.transform.SetParent(parent,false);var tyre=GameObject.CreatePrimitive(PrimitiveType.Cylinder);tyre.transform.SetParent(g.transform,false);tyre.transform.localScale=new Vector3(.68f,.12f,.68f);tyre.GetComponent<Renderer>().sharedMaterial=rubber;RemoveCollider(tyre);for(int side=-1;side<=1;side+=2){var hub=GameObject.CreatePrimitive(PrimitiveType.Cylinder);hub.name="Alloy wheel";hub.transform.SetParent(g.transform,false);hub.transform.localPosition=new Vector3(0,side*.124f,0);hub.transform.localScale=new Vector3(.43f,.012f,.43f);hub.GetComponent<Renderer>().sharedMaterial=silver;RemoveCollider(hub);Lens(g.transform,"Wheel recess",new Vector3(0,side*.143f,0),new Vector3(.35f,.02f,.35f),rubber);for(int spoke=0;spoke<5;spoke++){float a=spoke*Mathf.PI*2/5;var bar=Part(g.transform,"Alloy spoke",new Vector3(Mathf.Sin(a)*.11f,side*.16f,Mathf.Cos(a)*.11f),new Vector3(.045f,.018f,.18f),.008f,silver);bar.transform.localRotation=Quaternion.Euler(0,a*Mathf.Rad2Deg,0);}Part(g.transform,"Hub cap",new Vector3(0,side*.17f,0),new Vector3(.1f,.025f,.1f),.012f,silver);}return g.transform;}
  public static GameObject Cockpit(Transform parent,out Transform steering){
   Materials();var root=new GameObject("Taxi cockpit");root.transform.SetParent(parent,false);root.transform.localPosition=new Vector3(-.43f,1.07f,.6f);var t=root.transform;
   Part(t,"Soft dashboard",new Vector3(.35f,-.62f,.68f),new Vector3(1.84f,.32f,.65f),.14f,trim);
