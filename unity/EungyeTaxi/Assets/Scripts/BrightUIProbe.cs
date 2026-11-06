@@ -5,7 +5,7 @@ using UnityEngine;
 
 // Explicit command-line fixture only. Uses UnifiedModeProbe's temporary save route.
 // Poses verify UI/state integration, not automatic driving or manual play.
-public sealed class BrightUIProbe:MonoBehaviour {
+public sealed partial class BrightUIProbe:MonoBehaviour {
  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]static void Install(){if(Array.IndexOf(Environment.GetCommandLineArgs(),"-brightUiCheck")>=0&&!FindObjectOfType<BrightUIProbe>()){var root=new GameObject("Bright UI acceptance");DontDestroyOnLoad(root);root.AddComponent<BrightUIProbe>();}}
  bool ok=true,done;int checks;float started;string output;DriveSession s;
  bool FullUiReview {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-fullUiReview")>=0;}}
@@ -118,7 +118,7 @@ public sealed class BrightUIProbe:MonoBehaviour {
   yield return new WaitForSecondsRealtime(1);yield return Capture("01-mode-menu");
   FindObjectOfType<UnifiedModeBootstrap>().StartSingle();yield return Ready();
   Check(s.business.SavePath==UnifiedModeProbe.CampaignPath,"single isolated temporary campaign");
-  yield return Capture("02-single-preparation");s.business.Depart();s.taxi.automated=true;s.taxi.autoBrake=true;
+  yield return Capture("02-single-preparation");s.business.Depart();s.taxi.automated=true;s.taxi.autoBrake=true;if(Array.IndexOf(Environment.GetCommandLineArgs(),"-passengerActionReview")>=0){yield return ReviewPassengerActions();done=true;Debug.Log("PASSENGER_ACTION_PLAYER_RESULT "+(ok?"PASS":"FAIL")+" checks="+checks);Application.Quit(ok?0:2);yield break;}
   var map=s.GetComponent<FullMapOverlay>();
   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-signalCountdownOnly")>=0){
    foreach(var car in s.traffic.cars){car.Recycle();car.enabled=false;}

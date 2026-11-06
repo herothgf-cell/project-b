@@ -1,0 +1,33 @@
+using UnityEngine;
+// A view over existing passenger work. Timing and host commands remain in PassengerJobs.
+public sealed class PassengerActionUI:MonoBehaviour {
+ public DriveSession session;
+ readonly PassengerActionVisibility visibility=new PassengerActionVisibility();
+ public PassengerActionPresentation State {get;private set;}=new PassengerActionPresentation();
+ int openedFrame=-1;Vector2 scroll;
+ public bool Available {get{return session&&session.StartupReady&&session.jobs&&!session.IsSimulationBot&&!PvpNativeLan.IsRemoteHuman(session)&&!session.paused&&!session.SettingsOpen&&!session.FullMapOpen&&!session.ChoiceOpen&&!session.PracticeMenuOpen&&!session.business.preparing&&!session.business.ShowingSummary&&!session.business.restartPrompt&&!session.business.taxPrompt&&!session.services.open&&!session.law.HistoryOpen&&!(session.accident&&session.accident.Locked)&&!PvpNativeLan.UiBlocked(session)&&!(session.simulationMatch&&session.simulationMatch.Finished)&&!(session.jobs.trip.State==TripState.OnTrip&&!session.jobs.trip.ArrivalLocked&&(session.requests.HasVisiblePanel||session.requests.HasPendingChoice))&&!session.jobs.BehaviorChoicesOpen&&!(session.jobs.SituationPending&&!session.jobs.SituationWorkActive);}}
+ public bool Showing {get{return State.Active&&visibility.Expanded&&Available;}}
+ public static PassengerActionPresentation Read(DriveSession s){
+  var v=new PassengerActionPresentation();if(!s||!s.jobs||!s.jobs.Active||s.jobs.current==null)return v;var j=s.jobs;var b=j.Behavior;var d=j.DrunkRide;
+  string id=PassengerDialogueUI.PortraitIdentity(s)+"|"+(s.law?s.law.tripId:"");
+  if(d!=null&&d.Waiting&&j.trip.State==TripState.OnTrip){v.kind=PassengerActionKind.Wake;v.title="도착 · 승객 깨우기";v.message="목적지에 도착했어요. 손님이 아직 잠들어 있습니다.";v.remaining=d.WaitUntilWake;v.total=15;v.ready=d.WaitUntilWake<=0;v.safe=j.At(j.current.drop);v.footer="30초 안전 정차 대기 시 자동 하차 · F로도 깨울 수 있어요";}
+  else if(b!=null&&b.WorkRemaining>0){v.kind=b.UnloadRemaining>0?PassengerActionKind.Unload:b.Type==PassengerType.Food?PassengerActionKind.Food:b.Type==PassengerType.MuddyLuggage?PassengerActionKind.Protect:PassengerActionKind.Load;v.title=v.kind==PassengerActionKind.Unload?"도착 · 짐 하역":v.kind==PassengerActionKind.Food?"음식 정리":v.kind==PassengerActionKind.Protect?"오염된 짐 · 보호 준비":"승차 · 짐 적재";v.message=b.Dialogue;v.remaining=b.WorkRemaining;v.total=(float)b.Content.Number(v.kind==PassengerActionKind.Unload?"effect.luggage.unloadSeconds":v.kind==PassengerActionKind.Food?"effect.food.cleanupSeconds":v.kind==PassengerActionKind.Protect?"effect.muddy.prepareSeconds":"effect.luggage.prepareSeconds",10);v.safe=s.requests.SafeToRespond()&&s.taxi.ObservedVelocity.magnitude<=.1f&&(j.trip.State!=TripState.ToPickup||j.At(j.current.pickup));v.footer="정차 중에만 작업 진행 · 완료 후 기존 운송 흐름으로 이어집니다";}
+  else if(j.SituationWorkActive){v.kind=PassengerActionKind.Secure;v.title="짐 다시 고정";v.message=j.Situation.Dialogue;v.remaining=j.Situation.ReSecureRemaining;v.total=(float)j.PassengerContent.Number("effect.resecure.seconds",5);v.safe=s.requests.SafeToRespond();v.footer="안전하게 정차하면 작업을 이어갑니다";id+="|"+j.Situation.Reactions;}
+  else if(j.Errand!=null&&j.Errand.Waiting){v.kind=PassengerActionKind.Errand;v.title="경유지 · 승객 용무 대기";v.message="손님이 용무를 보고 있습니다. 약속한 경유 장소에서 기다려 주세요.";v.remaining=j.Errand.Remaining;v.total=(float)j.PassengerContent.Number("effect.errand.seconds",20);v.safe=j.PassengerViaPending&&j.At(j.PassengerViaStop)&&s.requests.SafeToRespond();v.footer="영업시간·연료는 계속 소모 · 완료하면 목적지 안내가 이어집니다";}
+  if(v.Active){v.identity=id+"|"+v.kind;v.condition=v.safe?"안전 정차 중":"지정 장소에 안전하게 정차해 주세요";}return v;
+ }
+ public void Refresh(){State=Read(session);if(visibility.Observe(State.Active?State.identity:"",State.safe,Available)){openedFrame=Time.frameCount;scroll=Vector2.zero;}}
+ public void Open(){Refresh();if(!State.Active||!Available)return;visibility.Open();openedFrame=Time.frameCount;scroll=Vector2.zero;}
+ public void Fold(){visibility.Fold();}
+ public bool Select(int index){Refresh();if(!Showing||Time.frameCount==openedFrame||!State.Enabled(index))return false;if(State.HasAction&&index==0){if(Input.GetKeyDown(KeyCode.F)||Input.GetKeyDown(KeyCode.JoystickButton8))return false;return session.jobs.Interact();}Fold();return true;}
+ void Update(){if(!session||!session.StartupReady)return;Refresh();if(!Showing||openedFrame==Time.frameCount||Input.GetKeyDown(KeyCode.F)||Input.GetKeyDown(KeyCode.JoystickButton8))return;int index=NumericChoiceInput.Read(State.OptionCount,State.Enabled);if(index>=0)Select(index);}
+ public static Rect Bounds(float width,float height){float scale=UiReadability.HudScale(width,height);return PassengerDialogueUI.PanelBounds(width,height,scale,390);}
+ void OnGUI(){if(!session||!session.StartupReady)return;Refresh();if(!Showing)return;var prior=GUI.matrix;int depth=GUI.depth;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));GUI.depth=-30;var r=Bounds(Screen.width,Screen.height);var v=State;
+  try{CasualUI.Panel(r);CasualUI.Header(new Rect(r.x+5,r.y+5,r.width-10,43),v.title,v.kind==PassengerActionKind.Wake?11:6);
+   var body=new Rect(r.x+18,r.y+60,r.width-36,r.height-150);float textWidth=body.width-150;var text=new GUIStyle(DrivingHudArt.Text(20,null,true)){wordWrap=true};float messageHeight=Mathf.Max(86,text.CalcHeight(new GUIContent(v.message),textWidth));float contentHeight=messageHeight+119;
+   scroll=GUI.BeginScrollView(body,scroll,new Rect(0,0,body.width-22,Mathf.Max(body.height,contentHeight)));CasualUI.Portrait(new Rect(0,0,108,108),PassengerDialogueUI.PortraitIndex(session.jobs.OfferId,session.law.tripId));GUI.Label(new Rect(124,0,textWidth,messageHeight),v.message,text);GUI.Label(new Rect(124,messageHeight+4,textWidth,30),v.condition,DrivingHudArt.Text(15,v.safe?CasualUI.Blue:CasualUI.Danger,true));GUI.Label(new Rect(0,messageHeight+43,body.width-24,34),v.Countdown,DrivingHudArt.Text(24,null,true));CasualUI.Bar(new Rect(0,messageHeight+89,body.width-26,12),v.Progress,CasualUI.Blue);GUI.EndScrollView();
+   float y=r.yMax-83,w=v.HasAction?(r.width-46)/2:r.width-36;if(v.HasAction){GUI.enabled=v.Enabled(0);if(GUI.Button(new Rect(r.x+18,y,w,44),"[1] 다시 깨우기",CasualUI.Action(19))&&NumericChoiceInput.TryConsume(Time.frameCount))Select(0);GUI.enabled=true;}if(GUI.Button(new Rect(r.x+18+(v.HasAction?w+10:0),y,w,44),v.HasAction?"[2] 접어두기":"[1] 접어두기",KoreanText.Button(UiReadability.Font(17)))&&NumericChoiceInput.TryConsume(Time.frameCount))Select(v.HasAction?1:0);
+   GUI.Label(new Rect(r.x+18,r.yMax-34,r.width-36,28),v.footer,DrivingHudArt.Text(12,DrivingHudArt.Light));
+  }finally{GUI.enabled=true;GUI.matrix=prior;GUI.depth=depth;}
+ }
+}

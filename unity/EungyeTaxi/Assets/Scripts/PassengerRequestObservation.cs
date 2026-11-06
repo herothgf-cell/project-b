@@ -138,8 +138,9 @@ public class PassengerRequestObservation : MonoBehaviour {
  }
  const float ReplyRowHeight=90;
  public static Rect ReplyButtonRect(Rect area,int index){float w=(area.width-8)/2;return new Rect(area.x+(index%2)*(w+8),area.y+(index/2)*ReplyRowHeight,w,ReplyRowHeight-4);}
- public bool PanelVisible {get{return !request.Resolved||Time.time<=resultUntil||etaSelected;}}
- public void Draw(){if(!session.business.useV2||session.jobs.trip.State!=TripState.OnTrip||session.jobs.trip.ArrivalLocked||session.paused)return;if(request.Resolved&&Time.time>resultUntil&&!etaSelected)return;
+ public bool PanelVisible {get{return !request.Resolved;}}
+ public string CardReply {get{return request.Resolved&&(Time.time<=resultUntil||etaSelected)?SpokenReply+(selectedEffect.Length>0?"\n적용 효과 · "+selectedEffect:""):"";}}
+ public void Draw(){if(request.Resolved)return;if(!session.business.useV2||session.jobs.trip.State!=TripState.OnTrip||session.jobs.trip.ArrivalLocked||session.paused)return;if(request.Resolved&&Time.time>resultUntil&&!etaSelected)return;
   string dialogue=request.Resolved?SpokenReply:Prompt(request.Kind,request.Content),note="";
   if(etaSelected)note="현재 남은 "+RoadNavigation.FormatEta(session.jobs.nav.estimatedSeconds)+" · 교통에 따라 변동";
   if(!request.Resolved&&ChangesRoute){if(!PrepareProposal())note="변경 가능한 곳 없음 · 원래 목적지 유지";else note=KoreanText.Stop(session.jobs.stops[proposal].name)+" · 추가 "+addedDistance.ToString("0")+"m · "+session.jobs.FareAgreementText(newFare)+" · 남은 "+Mathf.CeilToInt(newRemaining)+"초"+(request.Kind==RequestKind.ViaStop?" · 정차 용무"+request.Content.Number("effect.errand.seconds",20)+"초 무료":"");}
