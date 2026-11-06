@@ -60,3 +60,14 @@ test('new passenger preset saves reloads exports imports and rejects invalid com
  data.presets.at(-1).traits.push('item.food');row.value=JSON.stringify(data);assert.equal((await post('validate',{profile})).status,400);
  const exported=await post('export',{profile:saved});assert.equal(exported.status,200);const exportedProfile=(await exported.json()).profile;const imported=await post('import',{raw:JSON.stringify(exportedProfile)});assert.equal(imported.status,200);assert.deepEqual((await imported.json()).profile,saved);
 });
+
+test('passenger local overrides survive save import and apply without altering shared values',async t=>{
+ const root=await mkdtemp(path.join(tmpdir(),'editor-overrides-'));t.after(()=>rm(root,{recursive:true,force:true}));await mkdir(path.join(root,'config/content'),{recursive:true});for(const file of ['catalog.json','default-profile.json'])await writeFile(path.join(root,'config/content',file),await readFile(new URL('../../config/content/'+file,import.meta.url)));
+ const app=await startServer({root,port:0});t.after(()=>app.close());const base=app.url.split('#')[0].replace(/\/$/,''),headers={'X-Content-Token':app.token,Origin:base,'Content-Type':'application/json'},post=(action,body)=>fetch(base+'/api/'+action,{method:'POST',headers,body:JSON.stringify(body)});
+ const profile=JSON.parse(await readFile(path.join(root,'config/content/default-profile.json'),'utf8'));profile.id='local-effects';const row=profile.values.find(v=>v.id==='passenger.presets'),data=JSON.parse(row.value);data.version=2;for(const p of data.presets)p.overrides=[];data.presets.find(p=>p.pool==='Drunk').overrides=[{id:'type.Drunk.vomitPercent',value:'0'},{id:'type.Drunk.intro.0',value:'오늘은 조용히 갈게요.'}];row.value=JSON.stringify(data);
+ const response=await post('save',{profile,expectedRevision:0});assert.equal(response.status,200);const saved=(await response.json()).profile;assert.equal(saved.values.find(v=>v.id==='type.Drunk.vomitPercent').value,'25');
+ const loaded=(await(await fetch(base+'/api/profiles/local-effects',{headers})).json()).profile;assert.deepEqual(loaded,saved);
+ const imported=await post('import',{raw:JSON.stringify(saved)});assert.equal(imported.status,200);assert.deepEqual((await imported.json()).profile,saved);
+ assert.equal((await post('apply',{profile:saved})).status,200);
+ data.presets.find(p=>p.pool==='Drunk').overrides[0].id='type.Drunk.dailyMax';row.value=JSON.stringify(data);assert.equal((await post('validate',{profile})).status,400);
+});

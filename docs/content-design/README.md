@@ -61,3 +61,7 @@
 - 날짜별 이전 결정은 [기획 변경 이력](../design-history/content-design/README.md), 개발 결과는 작업 이력에 보존한다. [이번 중복/충돌 정리표](../work-history/2026-11-06-content-design-cleanup.md)를 참고한다.
 
 [후속 구상](../future-design/README.md) · [개발/제작 참고](../technical-reference/README.md)
+
+## 2026-11-07 승객별 개별 설정
+
+[16. 승객별 대사·확률·효과](16-passenger-preset-overrides.md): 공통값 상속 + 명시값 교체, 제작/복원 절차·같은 특성의4예시·현재 지원 범위·저장/LANv13.
