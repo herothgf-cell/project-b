@@ -5,10 +5,10 @@ class AccidentTests {
  static void Near(double a,double b,string name){Check(Math.Abs(a-b)<1e-8,name+": "+a+" != "+b);}
  static EconomyLedger Ledger(int cash=1000,double seconds=1200){return new EconomyLedger(new PrototypeSettings{startCash=cash,oneDay=true,days=3,daySeconds=(float)seconds,parking=0,initialFuel=50});}
  static void Main(){
-  Check(typeof(EconomyLedger).GetMethod("ChargeAccident")!=null,"accident charge API missing");
+  Check(typeof(EconomyLedger).GetMethod("ChargeAccident",new[]{typeof(string)})!=null,"accident charge API missing");
   Run();Console.WriteLine("AccidentTests PASS "+checks+" checks");
  }
- static object Call(object target,string name,params object[] args){return target.GetType().GetMethod(name).Invoke(target,args);}
+ static object Call(object target,string name,params object[] args){var types=Array.ConvertAll(args,arg=>arg.GetType());return target.GetType().GetMethod(name,types).Invoke(target,args);}
  static bool Charge(EconomyLedger l,string id){return (bool)Call(l,"ChargeAccident",id);}
  static bool Complete(EconomyLedger l,string id){return (bool)Call(l,"CompleteAccident",id);}
  static void Run(){

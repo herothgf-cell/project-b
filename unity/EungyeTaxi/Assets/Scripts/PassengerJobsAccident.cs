@@ -1,6 +1,8 @@
 using UnityEngine;
 public partial class PassengerJobs {
- public string ResolveAccident(){
+ public string ResolveAccident(){return ResolveAccident("보행자 사고");}
+ public string ResolveAccident(string cause){
+  if(string.IsNullOrWhiteSpace(cause))cause="사고";
   if(!Active)return "공차 · 운임 손실 없음";
   bool occupied=trip.State==TripState.OnTrip;
   if(occupied&&trip.ArrivalLocked&&RequestReward!=null){
@@ -12,11 +14,11 @@ public partial class PassengerJobs {
    if(Behavior!=null){Behavior.ExitCancelled();ApplyBehaviorDirt();}
    if(session.requests)session.requests.CancelForFatigue();
    session.business.ledger.Care.Finish(session.law.tripId,DrunkRide!=null&&DrunkRide.Vomited);
-   failed++;session.business.RecordPassenger(0,"보행자 사고 · 안전 하차/운송 취소");session.business.RecordFailure();
+   failed++;session.business.RecordPassenger(0,cause+" · 안전 하차/운송 취소");session.business.RecordFailure();
   }
   if(current!=null)cooldown[current.pickup]=Mathf.Max(cooldown[current.pickup],Time.time+60);
   trip.Clear();DrunkRide=null;Behavior=null;RequestReward=null;Finish();if(session.law)session.law.tripId="";
-  message=occupied?"보행자 사고 · 운송 중단 · 실수령 0원":"보행자 사고 · 픽업 취소 · 운임 손실 없음";CareStatus=message;return message;
+  message=occupied?cause+" · 운송 중단 · 실수령 0원":cause+" · 픽업 취소 · 운임 손실 없음";CareStatus=message;return message;
  }
  public void SuspendAccidentPickup(int index){
   if(index<0||index>=stops.Length)return;

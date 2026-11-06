@@ -96,7 +96,11 @@ public sealed class VehicleDamageController : MonoBehaviour {
             if(other)relative-=other.At(point.point);else if(collision.rigidbody)relative=-collision.relativeVelocity;
             speed=Mathf.Max(speed,ClosingSpeed(relative,point.normal));
         }
-        if(!contact)return;contacts.Add(collision.collider);ApplyImpact(speed);
+        if(!contact)return;contacts.Add(collision.collider);
+        if(ApplyImpact(speed)>0&&session.accident){
+            bool vehicle=collision.collider.GetComponentInParent<TaxiController>()||collision.collider.GetComponentInParent<TrafficCar>();
+            session.accident.ReportCollision(vehicle?AccidentKind.Vehicle:AccidentKind.Property,"collision:"+collision.collider.GetInstanceID());
+        }
     }
     public int ApplyImpact(float closingSpeed){
         if(!Campaign)return 0;int loss=Damage.Impact(closingSpeed);if(loss<=0)return 0;
@@ -145,6 +149,27 @@ public sealed class VehicleDamageController : MonoBehaviour {
         return true;
     }
     Bay CurrentBay {get{return Bays.Find(b=>b.id==Damage.RepairBayId);}}
+    // Mandatory accident transfer is included in its selected fee and duration.
+    // It never starts the separately priced breakdown tow service.
+    public bool TryAccidentTransfer(){
+        if(!Campaign||PvpNativeLan.IsReplica(session)||!session.accident||!session.accident.Locked)return false;
+        BuildBays();Bay free=null;float distance=float.MaxValue;
+        foreach(var bay in Bays)if(!bay.legacy&&BayClear(bay)){float d=(bay.position-transform.position).sqrMagnitude;if(d<distance){free=bay;distance=d;}}
+        if(free==null){Notice="공업사 빈 공간 대기";return false;}
+        if(!Reservations.TryReserve(free.id,GetInstanceID(),BayClear(free)))return false;
+        session.taxi.body.velocity=Vector3.zero;session.taxi.body.angularVelocity=Vector3.zero;
+        if(Damage.Disabled)Damage.EnterRepairBay(free.id);
+        PlaceTow(free);Physics.SyncTransforms();TechnicalRecovery();session.accident.Suppress(1);
+        if(session.drivingCamera)session.drivingCamera.SetFirstPerson(session.drivingCamera.FirstPerson);
+        if(!Damage.Disabled)Reservations.Release(GetInstanceID());
+        Notice="공업사 이동 완료 · 수리는 별도";noticeUntil=Time.unscaledTime+6;return true;
+    }
+    public void ResumeAfterAccident(){
+        if(!session.simulationMatch||!session.IsSimulationBot||PvpNativeLan.IsRemoteHuman(session)||Disabled||!session.accident.State.workshopTransferred)return;
+        foreach(var site in session.services.Workshops)foreach(var point in site.tow)if(Vector3.Distance(transform.position,point)<3){
+            var bot=session.GetComponent<PvpSimulationBotServices>()??session.gameObject.AddComponent<PvpSimulationBotServices>();bot.LeaveWorkshop(session,site);return;
+        }
+    }
     public bool AtRepairBay {get{var b=CurrentBay;return b!=null&&Vector3.Distance(transform.position,b.position)<3&&Vector3.Dot(transform.forward,b.direction)>.85f;}}
     public bool RestoreReservedBay(bool checkpoint=true){
         BuildBays();if(!Damage.Disabled||string.IsNullOrEmpty(Damage.RepairBayId)){RestoringReservedBay=false;return false;}
@@ -196,18 +221,26 @@ public sealed class VehicleDamageController : MonoBehaviour {
     }
     void OnGUI(){if(session.IsSimulationBot||PvpNativeLan.IsRemoteHuman(session))return;
         if(!Campaign||session.business.preparing||session.business.ShowingSummary||session.RideResultOpen||session.FullMapOpen||session.PracticeMenuOpen)return;
-        var style=new GUIStyle(GUI.skin.label){fontSize=16,wordWrap=true};style.normal.textColor=CasualUI.Ink;GUI.depth=-140;
-        if(Time.unscaledTime<(PvpNativeLan.IsReplica(session)?networkWorkshopNoticeUntil:noticeUntil)&&!Disabled)GUI.Label(new Rect(Screen.width/2-230,165,460,65),DisplayedServiceNotice,style);
+        var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true};style.normal.textColor=CasualUI.Ink;GUI.depth=-140;
+        if(Time.unscaledTime<(PvpNativeLan.IsReplica(session)?networkWorkshopNoticeUntil:noticeUntil)&&!Disabled&&DisplayedServiceRemaining<=0)GUI.Label(new Rect(Screen.width/2-230,165,460,65),DisplayedServiceNotice,style);
         if(!Disabled&&Damage.Durability<=50&&!session.jobs.Active&&!session.paused&&!session.services.open&&!(session.accident&&session.accident.Locked)&&PendingServiceRemaining<=0){
             if(GUI.Button(new Rect(Screen.width/2-145,226,290,34),"내구도 "+Damage.Durability+" · 공업사 비교/길안내"))session.services.OpenFacilityPlanner(5);
         }
-        if(DisplayedServiceRemaining>0){GUI.depth=-151;CasualUI.Panel(new Rect(Screen.width/2-260,160,520,90));GUI.Label(new Rect(Screen.width/2-245,172,490,65),DisplayedServiceNotice+"\n남은 "+DisplayedServiceRemaining.ToString("0.0")+"초 · 경기는 계속 진행됩니다",style);return;}
+        if(DisplayedServiceRemaining>0){
+            if(session.accident&&session.accident.Locked)return;
+            var matrix=GUI.matrix;float scale=WorkshopPresentation.Scale(Screen.width,Screen.height);GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));GUI.depth=-650;
+            try {bool repair=(PvpNativeLan.IsReplica(session)?networkWorkshopKind:pendingWorkshopKind)==1;float x=(Screen.width/scale-WorkshopPresentation.Width)/2,y=(Screen.height/scale-238)/2;
+                WorkshopPresentation.Card(new Rect(x,y,WorkshopPresentation.Width,238),repair?"공업사 수리":"공업사 견인","작업 진행 중 · 경기는 계속됩니다",new[]{"예상 비용","남은 시간","완료 후"},new[]{(repair?Damage.RepairCost:3000).ToString("N0")+"원",DisplayedServiceRemaining.ToString("0.0")+"초",repair?"내구도 100":"공업사 · 수리 별도"},DisplayedServiceNotice);
+            } finally {GUI.matrix=matrix;}return;
+        }
         if(Disabled&&!(session.accident&&session.accident.Locked)&&!session.services.open&&!session.paused){
-            float w=Mathf.Min(580,Screen.width-30),x=(Screen.width-w)/2,y=(Screen.height-290)/2;GUI.depth=-150;CasualUI.Panel(new Rect(x,y,w,290));
-            GUI.Label(new Rect(x+18,y+12,w-36,110),"차량 내구도 0 · 운행 불가\n"+(AtRepairBay?RepairQuote:"정차 후 견인 3,000원 · 30초 (부족분 미납)\n전용 정비 공간으로 이동 · 수리비/시간 별도\n정차 불가 5초 후에는 화면 전환으로 안전 복구"),style);
-            GUI.Label(new Rect(x+18,y+128,w-36,55),DisplayedServiceNotice??"승객은 안전 정차 후 하차합니다. 운송 중 고장은 요금 0원 취소입니다.",style);
-            if(AtRepairBay){GUI.enabled=CanRepair;if(GUI.Button(new Rect(x+18,y+192,w-36,36),session.jobs.Active?"안전 하역 중 · 잠시 기다려 주세요":"전량 수리 확정"))Repair();GUI.enabled=!session.jobs.Active;if(GUI.Button(new Rect(x+18,y+237,w-36,34),"정비를 미루고 휴식 후 오늘 영업 종료 · 100초"))EndDisabledDay();GUI.enabled=true;}
-            else {GUI.enabled=!RestoringReservedBay;if(GUI.Button(new Rect(x+18,y+215,w-36,45),RestoringReservedBay?"지불한 정비 공간 복원 대기 · 추가 요금 없음":"견인 신청 · 3,000원 / 30초"))Tow();GUI.enabled=true;}
+            var matrix=GUI.matrix;bool enabled=GUI.enabled;float scale=WorkshopPresentation.Scale(Screen.width,Screen.height);GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));GUI.depth=-650;
+            try {bool atBay=AtRepairBay,restoring=!AtRepairBay&&RestoringReservedBay;float height=atBay?328:294,x=(Screen.width/scale-WorkshopPresentation.Width)/2,y=(Screen.height/scale-height)/2;
+                string notice=DisplayedServiceNotice??(atBay?"정비 후 운행을 다시 시작할 수 있습니다":"정차 후 견인을 신청하세요 · 수리는 별도입니다");
+                WorkshopPresentation.Card(new Rect(x,y,WorkshopPresentation.Width,height),"차량 고장","내구도 0 · 운행 불가",new[]{atBay?"수리비":"견인비","소요 시간",atBay?"수리 후":"도착 후"},new[]{restoring?"추가 비용 없음":(atBay?Damage.RepairCost:3000).ToString("N0")+"원",restoring?"공간 확인 후":(atBay?Damage.RepairSeconds:30).ToString("0.#")+"초",atBay?"내구도 100":restoring?"예약한 정비 공간":"공업사 · 수리 별도"},notice);
+                if(atBay){GUI.enabled=CanRepair;if(GUI.Button(new Rect(x+20,y+230,480,40),new GUIContent(session.jobs.Active?"안전 하역 중":"수리 확정",RepairQuote),CasualUI.Action(18)))Repair();GUI.enabled=!session.jobs.Active;if(GUI.Button(new Rect(x+20,y+278,480,30),new GUIContent("정비 보류 · 휴식 100초 후 종료","정비를 미루고 휴식 후 오늘 영업 종료 · 100초"),WorkshopPresentation.Secondary))EndDisabledDay();}
+                else {GUI.enabled=!RestoringReservedBay;if(GUI.Button(new Rect(x+20,y+234,480,40),new GUIContent(RestoringReservedBay?"정비 공간 복원 대기":"견인 신청",restoring?"이미 지불한 정비 공간 복원 · 추가 요금 없음":"3,000원 / 30초 · 부족분 미납 · 수리비/시간 별도"),CasualUI.Action(18)))Tow();}
+            } finally {GUI.matrix=matrix;GUI.enabled=enabled;}
         }
         if(Time.unscaledTime<fadeUntil){GUI.depth=-2000;GUI.color=Color.black;GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=Color.white;}
     }

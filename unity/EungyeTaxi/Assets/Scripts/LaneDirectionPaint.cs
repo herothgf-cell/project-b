@@ -59,7 +59,7 @@ public static class LaneDirectionPaint {
   add(0,-2,0,.6f);
   if((arrow.turns&Straight)!=0){add(0,.6f,0,2);add(0,2,-.6f,1.15f);add(0,2,.6f,1.15f);}
   foreach(int side in new[]{-1,1})if((arrow.turns&(side<0?Left:Right))!=0){add(0,.6f,side*1.2f,.6f);add(side*1.2f,.6f,side*.6f,1.2f);add(side*1.2f,.6f,side*.6f,0);}
-  if((arrow.turns&Uturn)!=0){add(0,.6f,0,1.4f);add(0,1.4f,-.3f,1.8f);add(-.3f,1.8f,-.9f,1.8f);add(-.9f,1.8f,-1.2f,1.4f);add(-1.2f,1.4f,-1.2f,-.3f);add(-1.2f,-.3f,-1.65f,.3f);add(-1.2f,-.3f,-.75f,.3f);}const float width=.16f;float min=float.MaxValue,max=float.MinValue;
+  if((arrow.turns&Uturn)!=0){add(0,.6f,0,1.4f);add(0,1.4f,-.3f,1.8f);add(-.3f,1.8f,-.9f,1.8f);add(-.9f,1.8f,-1.2f,1.4f);add(-1.2f,1.4f,-1.2f,-.3f);add(-1.2f,-.3f,-1.65f,.3f);add(-1.2f,-.3f,-.75f,.3f);}float width=arrow.turns==Uturn?.22f:.16f;float min=float.MaxValue,max=float.MinValue;
   foreach(var line in lines){var d=(line.b-line.a).normalized;float half=Mathf.Abs(d.y)*width*.5f;min=Mathf.Min(min,Mathf.Min(line.a.x,line.b.x)-half);max=Mathf.Max(max,Mathf.Max(line.a.x,line.b.x)+half);}
   // Centre the entire painted footprint, including arrowheads and stroke width.
   // A left-only arrow otherwise has its stem on centre and its body off centre.

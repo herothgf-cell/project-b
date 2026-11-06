@@ -169,23 +169,27 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
  IEnumerator HostAccident(DriveSession guest){
   guest.taxi.body.velocity=Vector3.zero;guest.taxi.body.angularVelocity=Vector3.zero;guest.accident.Suppress(0);
   int prior=guest.business.ledger.Account.Expense(1,"accident");float start=lan.Match.Elapsed;
-  Check(guest.accident.ReportContact("ambient:lan-fixture"),"host creates guest accident once");
+  Check(guest.accident.ReportScenarioContact(AccidentKind.Property,"collision:lan-fixture",999),"host selects major property accident once");
   yield return Until(()=>guest.accident.State.chargeApplied,"host settles accident cost",10);
-  Mark("accident-cost",new Model{cash=prior,trip=guest.accident.State.eventId});
+  Check(guest.accident.State.workshopTransferred&&guest.accident.State.ScorePenalty==15,"host completes mandatory major transfer and selected score");
+  Mark("accident-cost",new Model{cash=prior,trip=guest.accident.State.eventId,score=guest.law.ledger.TotalScore});
   yield return Until(()=>Has("accident-view"),"guest sees accident lock and fee",12);
-  Check(guest.accident.Locked&&guest.business.ledger.Account.Expense(1,"accident")==prior+3000,"guest reset commands do not evade accident");
-  yield return Until(()=>!guest.accident.Locked,"host releases only after actual45 second treatment",55);
-  Check(lan.Match.Elapsed-start>=44.9f&&guest.business.ledger.Account.Expense(1,"accident")==prior+3000,"shared clock and exactly one accident expense");
+  Check(guest.accident.Locked&&guest.business.ledger.Account.Expense(1,"accident")==prior+6000,"guest reset commands do not evade accident");
+  yield return Until(()=>!guest.accident.Locked,"host releases only after actual90 second treatment",100);
+  Check(lan.Match.Elapsed-start>=89.9f&&guest.business.ledger.Account.Expense(1,"accident")==prior+6000,"shared clock and exactly one selected accident expense");
   Mark("accident-complete");yield return Until(()=>Has("accident-view-complete"),"guest receives completed event",12);
  }
  IEnumerator ClientAccident(){
   yield return Until(()=>Has("accident-cost")&&lan.Match.Human.accident.Locked,"replicated accident modal",15);
   var model=JsonUtility.FromJson<Model>(File.ReadAllText(FileFor("accident-cost")));var own=lan.Match.Human;
-  yield return Until(()=>own.business.ledger.Account.Expense(1,"accident")==model.cash+3000,"replicated3000 fee",10);
+  yield return Until(()=>own.business.ledger.Account.Expense(1,"accident")==model.cash+6000,"replicated6000 fee",10);
   Check(own.accident.State.eventId==model.trip&&PvpNativeLan.UiBlocked(own),"same event identity and local predicted controls blocked");
+  var selected=own.accident.State;
+  Check(selected.resolutionVersion==1&&selected.Kind==AccidentKind.Property&&selected.Severity==AccidentSeverity.Major&&selected.Fee==6000&&selected.ProcessingDuration==90&&selected.ScorePenalty==15&&selected.TowRequired&&selected.workshopTransferred,"replica receives selected major policy tuple and completed transfer");
+  Check(own.law.ledger.TotalScore==model.score,"replica receives authoritative accident driving score");
   own.taxi.RequestReset();Check(!own.jobs.Interact(),"cannot board while processing");Mark("accident-view");
-  yield return Until(()=>Has("accident-complete")&&!own.accident.Locked,"replicated treatment completion",60);
-  Check(own.business.ledger.Account.Expense(1,"accident")==model.cash+3000,"repeated snapshots never duplicate fee");Mark("accident-view-complete");
+  yield return Until(()=>Has("accident-complete")&&!own.accident.Locked,"replicated treatment completion",105);
+  Check(own.business.ledger.Account.Expense(1,"accident")==model.cash+6000&&own.law.ledger.TotalScore==model.score,"repeated snapshots never duplicate fee or score");Mark("accident-view-complete");
  }
  IEnumerator CaptureFrame(Action done,string name=null){yield return new WaitForEndOfFrame();var texture=ScreenCapture.CaptureScreenshotAsTexture();File.WriteAllBytes(Path.Combine(directory,name??metrics.role+"-render.png"),texture.EncodeToPNG());Destroy(texture);done();}
  IEnumerator Cleanup(){

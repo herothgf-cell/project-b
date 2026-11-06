@@ -136,8 +136,9 @@ public static class ImportedMarkingRendererTests {
  }
  static void UturnMedianRegressions(){
   var head=new RoadMapLane{id="uturn-head",points=new[]{new MapPoint{x=0,z=-20},new MapPoint{x=0,z=0}},next=new[]{"uturn-join"}};
-  var join=new RoadMapLane{id="uturn-join",turn=-2,points=new[]{new MapPoint{x=0,z=0},new MapPoint{x=-6,z=6},new MapPoint{x=-12,z=0}}};
-  var map=new MapData{editorDocument=new RoadMapDocument{lanes=new[]{head,join}},hdMarks=new[]{new HdMark{id="uturn-median",kind="501",type="111",points=new[]{new MapPoint{x=-6,z=-8},new MapPoint{x=-6,z=16}}}}};
+  var join=new RoadMapLane{id="uturn-join",turn=-2,points=new[]{new MapPoint{x=0,z=0},new MapPoint{x=-6,z=6},new MapPoint{x=-12,z=0}},next=new[]{"uturn-exit"}};
+  var exit=new RoadMapLane{id="uturn-exit",points=new[]{new MapPoint{x=-12,z=0},new MapPoint{x=-12,z=-20}}};
+  var map=new MapData{editorDocument=new RoadMapDocument{lanes=new[]{head,join,exit}},hdMarks=new[]{new HdMark{id="uturn-median",kind="501",type="111",points=new[]{new MapPoint{x=-6,z=-8},new MapPoint{x=-6,z=16}}}}};
   var zones=UturnRoadMarkings.Build(map);Check(zones.Count==1&&Mathf.Abs(zones[0].width-12)<.001f&&Mathf.Abs(zones[0].length-8)<.001f,"U-turn median dimensions use across heading and furthest join station plus2m");
   Check(UturnRoadMarkings.Covers(zones,new Vector3(-6,0,4))&&!UturnRoadMarkings.Covers(zones,new Vector3(-3,0,4))&&!UturnRoadMarkings.Covers(zones,new Vector3(-6,0,-3)),"U-turn replacement masks only the bounded median strip");
   var strokes=new List<Vector3>();UturnRoadMarkings.Paint(map,(name,p,dir,width,length,yellow)=>{Check(!yellow&&length<=1.5f&&Vector3.Dot(dir,Vector3.forward)>.99f,"U-turn median is a white broken line along incoming heading");strokes.Add(p);});Check(strokes.Count==3,"U-turn allowed interval paints three separated strokes");
@@ -155,14 +156,15 @@ public static class ImportedMarkingRendererTests {
  static void UturnArrowFallbackRegressions(){
   var predecessor=new RoadMapLane{id="split:previous",sourceId="split",points=new[]{new MapPoint{x=0,z=-23},new MapPoint{x=0,z=-3}},next=new[]{"split:head"}};
   var incoming=new RoadMapLane{id="split:head",sourceId="split",points=new[]{new MapPoint{x=0,z=-3},new MapPoint{x=0,z=0}},next=new[]{"join:split:uturn","split:ordinary"}};
-  var join=new RoadMapLane{id="join:split:uturn",turn=-2,points=new[]{new MapPoint{x=0,z=0},new MapPoint{x=-6,z=6},new MapPoint{x=-12,z=0}}};
+  var join=new RoadMapLane{id="join:split:uturn",turn=-2,points=new[]{new MapPoint{x=0,z=0},new MapPoint{x=-6,z=6},new MapPoint{x=-12,z=0}},next=new[]{"split:exit"}};
+  var exit=new RoadMapLane{id="split:exit",points=new[]{new MapPoint{x=-12,z=0},new MapPoint{x=-12,z=-20}}};
   var ordinary=new RoadMapLane{id="split:ordinary",sourceId="split",points=new[]{new MapPoint{x=0,z=0},new MapPoint{x=0,z=20}}};
-  var lanes=new[]{predecessor,incoming,join,ordinary};var edges=lanes.Select(l=>new HdEdge{id=l.id,sourceId=l.sourceId??"",status="provisional",turn=l.turn,points=l.points,next=l.next.Select(id=>Array.FindIndex(lanes,x=>x.id==id)).ToArray()}).ToArray();
+  var lanes=new[]{predecessor,incoming,join,ordinary,exit};var edges=lanes.Select(l=>new HdEdge{id=l.id,sourceId=l.sourceId??"",status="provisional",turn=l.turn,points=l.points,next=l.next.Select(id=>Array.FindIndex(lanes,x=>x.id==id)).ToArray()}).ToArray();
   var map=new MapData{hybrid=true,hdEdges=edges,editorDocument=new RoadMapDocument{lanes=lanes}};
   Check(LaneDirectionPaint.Layout(map).Count==0,"short same-source split does not receive regular lane glyph");
   var fallback=UturnRoadMarkings.FallbackArrows(map);Check(fallback.Count==1&&fallback[0].turns==LaneDirectionPaint.Uturn&&fallback[0].edgeIndex==1&&fallback[0].centre.z<=-6&&fallback[0].centre.z>=-15,"short U-turn head receives dedicated glyph on contiguous ordinary predecessor");
   Check(incoming.next.Length==2&&edges[1].next.Length==2,"fallback paint preserves legal continuation and U-turn connections");
-  predecessor.disabled=true;Check(UturnRoadMarkings.FallbackArrows(map).Count==0,"short head cannot borrow disabled predecessor for glyph footprint");
+  predecessor.disabled=true;edges[0].disabled=true;Check(UturnRoadMarkings.FallbackArrows(map).Count==0,"short head cannot borrow disabled predecessor for glyph footprint");
   var actual=ProjectMapStore.Load(ProjectMapBuild.Root).Compose();var arrows=LaneDirectionPaint.Layout(actual);arrows.AddRange(UturnRoadMarkings.FallbackArrows(actual));
   foreach(var zone in UturnRoadMarkings.Build(actual))Check(arrows.Any(a=>actual.hdEdges[a.edgeIndex].id==zone.incomingId&&(a.turns&LaneDirectionPaint.Uturn)!=0),"actual U-turn has a regular or dedicated fallback arrow "+zone.joinId);
  }

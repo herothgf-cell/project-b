@@ -195,6 +195,7 @@ public sealed class PvpSimulationBotServices : MonoBehaviour {
         return true;
     }
     public void LeaveWorkshop(DriveSession s,WorkshopLayout.Site site){
+        s.services.CancelQueue();routeWait=offPathSeconds=0;conditionPurchased=false;queueWaitStarted=0;selectedSite=null;
         // Towed taxis begin in a parallel bay. Clear its nose before merging
         // into the ordinary driveway; never cross another parked tow bay.
         approach=site.approach;direction=site.direction;departure=site.departure;

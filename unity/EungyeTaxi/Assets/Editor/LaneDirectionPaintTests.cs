@@ -5,7 +5,7 @@ using UnityEngine;
 public static class LaneDirectionPaintTests {
  static void Check(bool condition,string text){if(!condition)throw new Exception("LANE_DIRECTION_PAINT: "+text);}
  public static void Run(){
-  GeometryRegressions();
+  GeometryRegressions();ConnectedMovementRegressions();
   int glyphs=0;
   foreach(float angle in new[]{0f,17f,90f,135f,217f,270f,359f})foreach(int turns in Enumerable.Range(1,7)){
    var heading=Quaternion.Euler(0,angle,0)*Vector3.forward;var right=TrafficSystem.Right(heading);var centre=new Vector3(41,0,83);
@@ -23,12 +23,24 @@ public static class LaneDirectionPaintTests {
    Check(arrows.Count>100,"arrows cover all generated junction approaches, not just T1");
    Check(arrows.Select(a=>a.edgeIndex).Distinct().Count()==arrows.Count,"one glyph per terminal lane");
    foreach(var arrow in arrows){var e=map.hdEdges[arrow.edgeIndex];int flags=0;
-    foreach(int i in e.next){var j=map.hdEdges[i];if(j.disabled||!j.id.StartsWith("join:"))continue;flags|=UturnMovement.PaintMask(j.turn);}
+    foreach(int i in e.next){var j=map.hdEdges[i];if(j.disabled||!j.id.StartsWith("join:")||!(j.next??new int[0]).Any(n=>!map.hdEdges[n].disabled))continue;flags|=UturnMovement.PaintMask(j.turn);}
     Check(arrow.turns==flags,"paint uses current shared route movements "+e.id);
    }
+   var detachedLeft=arrows.Single(a=>map.hdEdges[a.edgeIndex].id=="local:14385:13336:10603:1539:part:2");
+   Check(detachedLeft.turns==LaneDirectionPaint.Straight,"actual approach paints only straight when its authored left connector has no exit");
    int junctions=arrows.Select(a=>map.hdEdges[a.edgeIndex].ruleId).Distinct().Count();
    Debug.Log("LANE_DIRECTION_PAINT_TEST_OK glyphCases="+glyphs+" lanes="+arrows.Count+" junctions="+junctions);
   }finally{MapCatalog.LockedRegion=previous;}
+ }
+ static void ConnectedMovementRegressions(){
+  var incoming=new HdEdge{id="approach",sourceId="approach",status="provisional",points=new[]{new MapPoint{x=0,z=0},new MapPoint{x=0,z=30}},next=new[]{1,2}};
+  var left=new HdEdge{id="join:left",turn=-1,next=new int[0]};
+  var straight=new HdEdge{id="join:straight",turn=0,next=new[]{3}};
+  var exit=new HdEdge{id="exit",points=new[]{new MapPoint{x=0,z=30},new MapPoint{x=0,z=60}},next=new int[0]};
+  var map=new MapData{hybrid=true,hdEdges=new[]{incoming,left,straight,exit}};
+  var arrows=LaneDirectionPaint.Layout(map);Check(arrows.Count==1&&arrows[0].turns==LaneDirectionPaint.Straight,"detached left connector never creates a painted left permission");
+  left.next=new[]{3};arrows=LaneDirectionPaint.Layout(map);Check(arrows.Count==1&&arrows[0].turns==(LaneDirectionPaint.Left|LaneDirectionPaint.Straight),"connecting the existing left exit restores its declared glyph");
+  exit.disabled=true;Check(LaneDirectionPaint.Layout(map).Count==0,"disabled shared exit removes both movement glyphs");
  }
  static void GeometryRegressions(){
   var wide=new HybridJunctionRule{id="wide",dx=0,dz=1,crosswalk=true,stopLine=true,approaches=new[]{new HybridApproach{dx=0,dz=1,width=42.6f},new HybridApproach{dx=1,dz=0,width=14}}};

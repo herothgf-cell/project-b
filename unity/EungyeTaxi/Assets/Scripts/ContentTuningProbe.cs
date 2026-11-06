@@ -66,11 +66,4 @@ public sealed class ContentTuningProbe:MonoBehaviour {
    default:throw new ArgumentException("Unsupported lawCode; use none, red-straight, stop-line, right-no-stop, dedicated-red, pedestrian, insertion, interference");
   }
  }
- bool expanded;
- void OnGUI(){
-  string status=ContentTuningRuntime.Status;if(!ContentTuningRuntime.HasOverride&&!ContentTuningRuntime.TestMode&&!status.Contains("오류"))return;
-  GUI.depth=-1000;GUI.skin.font=KoreanText.Font;float width=Mathf.Min(520,Screen.width-24);
-  if(GUI.Button(new Rect(12,Screen.height-36,width,26),ContentTuningRuntime.TestMode?"콘텐츠 테스트 · 저장 분리"+(status.Contains("오류")?" · 설정 오류":" · 설정 상태 보기"):"콘텐츠 설정 · "+status))expanded=!expanded;
-  if(expanded){GUILayout.BeginArea(new Rect(12,Mathf.Max(12,Screen.height-192),width,150),GUI.skin.box);var wrap=new GUIStyle(GUI.skin.label){wordWrap=true};GUILayout.Label(status,wrap);if(ContentTuningRuntime.TestMode)GUILayout.Label("테스트 저장: "+ContentTuningRuntime.TestDirectory,wrap);GUILayout.Label("관리창의 변경은 다음 새 캠페인/새 PVP 방에 적용됩니다.",wrap);GUILayout.EndArea();}
- }
 }

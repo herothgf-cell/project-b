@@ -93,11 +93,10 @@ public partial class FullMapOverlay : MonoBehaviour {
   GUI.BeginGroup(viewport);var map=new Rect(0,0,viewport.width,viewport.height);Fill(map,MapPresentation.Land);var data=session.world.map;var tile=GetComponent<DriveHUD>().LightTile;
   if(tile){var a=Project(new Vector3(0,0,data.depth),map);float span=Mathf.Max(data.width,data.depth),pixels=Mathf.Min(map.width,map.height);GUI.DrawTexture(new Rect(a.x,a.y,data.width/span*pixels*ZoomLevel,data.depth/span*pixels*ZoomLevel),tile);}
   for(int pass=0;pass<2;pass++)foreach(var segment in RoutePaint)HudGlyph.MapLine(Project(segment.a,map),Project(segment.b,map),segment.retained?(pass==0?Color.white:MapPresentation.PreviousRoute):pass==0?Color.white:ShowTraffic?segment.color:MapPresentation.RouteColor(segment.passenger),pass==0?(segment.passenger?7:11):4,new Rect(0,0,MapRect.width,MapRect.height));
-  if(ShowFacilities)foreach(var place in Places()){var p=Project(place.position,map);if(!map.Contains(p))continue;if(HudGlyph.Button(new Rect(p.x-15,p.y-15,30,30),place.glyph,place.name,true))SelectPlace(place);if(!string.IsNullOrEmpty(place.capabilityLabel)){var badge=new Rect(Mathf.Clamp(p.x-42,0,map.width-84),Mathf.Clamp(p.y-39,0,map.height-22),84,22);CasualUI.Panel(badge);GUI.Label(badge,place.capabilityLabel,new GUIStyle(text){fontSize=MapFont(12),alignment=TextAnchor.MiddleCenter});}}
+  var occupied=FacilityLabelObstacles(map);
+  if(ShowFacilities){var labelStyle=FacilityLabelStyle();var labels=LayoutFacilityLabels(map,labelStyle,occupied);int labelIndex=0;foreach(var place in Places()){var p=Project(place.position,map);if(!map.Contains(p))continue;if(HudGlyph.Button(new Rect(p.x-15,p.y-15,30,30),place.glyph,place.name,true))SelectPlace(place);if(!string.IsNullOrEmpty(place.capabilityLabel)){var badge=labels[labelIndex++];if(badge.width>0){CasualUI.Panel(badge);GUI.Label(new Rect(badge.x+6,badge.y+4,badge.width-12,badge.height-8),place.capabilityLabel,labelStyle);}}}}
   if(selectedPlace!=null){var p=Project(selectedPlace.position,map);Dot(p,Color.magenta,10);}
 
-  var occupied=new List<Rect>();
-  if(jobs.Active&&jobs.current!=null)foreach(int index in ActiveStopPins){var pin=Project(jobs.EffectiveStop(index).V(),map);if(map.Contains(pin)){occupied.Add(StopPinLabel(pin,map));occupied.Add(MapPresentation.PinHitBounds(pin,26));}}
   foreach(var marker in VisibleMarkers()){if(marker.named&&marker.label!="정체·정차"&&marker.label!="일시 점유")continue;
    var p=Project(marker.position,map);if(!map.Contains(p))continue;Dot(p,Color.black,marker.named?13:7);Dot(p,marker.color,marker.named?9:4);
    if(marker.named){var box=LawZoneMapLayout.Place(p,new Vector2(82,26),map,occupied);occupied.Add(box);CasualUI.Panel(box);GUI.Label(box,marker.label,text);}
@@ -106,7 +105,7 @@ public partial class FullMapOverlay : MonoBehaviour {
   // Active pickup, drop and via pins remain visible while browsing facilities.
   if(jobs.Active&&jobs.current!=null){StopPin(jobs.current.pickup,"승차",MapPresentation.Pickup,map);StopPin(jobs.current.drop,"하차",MapPresentation.Passenger,map);if(jobs.PassengerViaPending)StopPin(jobs.PassengerViaStop,"경유",new Color(1,.8f,.2f),map);}
   else if(!jobs.Active){
-   for(int i=0;i<jobs.offers.Length;i++){var o=jobs.offers[i];if(o==null)continue;var p=CallPinPosition(i,map);if(session.simulationMatch){var anchor=Project(jobs.stops[o.pickup].V(),map);if((p-anchor).sqrMagnitude>1){Line(anchor,p,new Color(.06f,.2f,.23f),2);if(map.Contains(anchor))Dot(anchor,new Color(.06f,.2f,.23f),7);}}MapPresentation.Pin(p,MapPresentation.Pickup,26,(i+1).ToString());if(GUI.Button(MapPresentation.PinHitBounds(p,26),new GUIContent("",KoreanText.Stop(jobs.stops[o.pickup].name)+" · 호출 "+(i+1)),GUIStyle.none))SelectOffer(i);}
+   for(int i=0;i<jobs.offers.Length;i++){var o=jobs.offers[i];if(o==null)continue;var p=CallPinPosition(i,map);var anchor=Project(jobs.stops[o.pickup].V(),map);if((p-anchor).sqrMagnitude>1){Line(anchor,p,new Color(.06f,.2f,.23f),2);if(map.Contains(anchor))Dot(anchor,new Color(.06f,.2f,.23f),7);}MapPresentation.Pin(p,MapPresentation.Pickup,26,(i+1).ToString());if(GUI.Button(MapPresentation.PinHitBounds(p,26),new GUIContent("",KoreanText.Stop(jobs.stops[o.pickup].name)+" · 호출 "+(i+1)),GUIStyle.none))SelectOffer(i);}
    if(selectedOffer!=null){StopPin(selectedOffer.pickup,"승차",MapPresentation.Pickup,map);StopPin(selectedOffer.drop,"하차",MapPresentation.Passenger,map);}
   }
   if(session.simulationMatch)foreach(var bot in session.simulationMatch.Bots){int driver=bot.SimulationDriver;var rival=Project(bot.taxi.transform.position,map);if(map.Contains(rival)){Dot(rival,Color.black,22);Dot(rival,PvpDriverPresentation.Color(driver),15);GUI.Label(new Rect(rival.x+12,rival.y-12,100,24),PvpDriverPresentation.Name(driver),text);}} var player=Project(session.taxi.transform.position,map);var forward=new Vector2(session.taxi.transform.forward.x,-session.taxi.transform.forward.z).normalized;MapPresentation.EmphasizedPlayer(player,forward,map,Time.unscaledTime<highlightUntil);
@@ -132,18 +131,17 @@ public partial class FullMapOverlay : MonoBehaviour {
  public void HideLocation(){locationOpen=false;}
  void LocationPopup(int id){GUI.Label(new Rect(20,8,440,34),"현재 위치",heading);GUI.TextArea(new Rect(20,48,440,165),LocationText,new GUIStyle(GUI.skin.textArea){font=KoreanText.Font,fontSize=MapFont(16),wordWrap=true,normal={textColor=CasualUI.Ink}});if(GUI.Button(new Rect(20,230,210,42),locationCopied?"복사됨":"좌표 복사",button)){GUIUtility.systemCopyBuffer=LocationText;locationCopied=true;}if(GUI.Button(new Rect(250,230,210,42),"닫기",button))locationOpen=false;}
  public Vector2 CallPinPosition(int index,Rect map){
-  if(session.simulationMatch){var placed=PvpPinObstacles(map);Vector2 result=Vector2.zero;for(int i=0;i<=index;i++){if(session.jobs.offers[i]==null)continue;var anchor=Project(session.jobs.stops[session.jobs.offers[i].pickup].V(),map);result=PlacePvpCallPin(anchor,map,placed);placed.Add(new Rect(result.x-16,result.y-38,32,42));}return result;}
-  var raw=Project(session.jobs.stops[session.jobs.offers[index].pickup].V(),map);var p=new Vector2(Mathf.Clamp(raw.x,20,map.width-20),Mathf.Clamp(raw.y,80,map.height-20));p.x=Mathf.Clamp(p.x+(index-1)*36,20,map.width-20);if(p.x>map.width-80&&p.y>map.height-185)p.x=map.width-94;return p;}
+  var placed=PvpPinObstacles(map);Vector2 result=Vector2.zero;for(int i=0;i<=index;i++){if(session.jobs.offers[i]==null)continue;var anchor=Project(session.jobs.stops[session.jobs.offers[i].pickup].V(),map);result=PlacePvpCallPin(anchor,map,placed);placed.Add(MapPresentation.PinHitBounds(result,26));}return result;}
  List<Rect> PvpPinObstacles(Rect map){
   var occupied=new List<Rect>();
   if(session.taxi){var p=Project(session.taxi.transform.position,map);occupied.Add(new Rect(p.x-16,p.y-16,32,32));}
-  foreach(var bot in session.simulationMatch.Bots)if(bot&&bot.taxi){var p=Project(bot.taxi.transform.position,map);occupied.Add(new Rect(p.x-13,p.y-13,26,26));occupied.Add(new Rect(p.x+12,p.y-12,100,24));}
-  if(ShowFacilities&&session.services)foreach(var place in Places()){var p=Project(place.position,map);if(!map.Contains(p))continue;occupied.Add(new Rect(p.x-16,p.y-16,32,32));if(!string.IsNullOrEmpty(place.capabilityLabel))occupied.Add(new Rect(Mathf.Clamp(p.x-42,0,map.width-84),Mathf.Clamp(p.y-39,0,map.height-22),84,22));}
+  if(session.simulationMatch)foreach(var bot in session.simulationMatch.Bots)if(bot&&bot.taxi){var p=Project(bot.taxi.transform.position,map);occupied.Add(new Rect(p.x-13,p.y-13,26,26));occupied.Add(new Rect(p.x+12,p.y-12,100,24));}
+  if(ShowFacilities&&session.services)foreach(var place in Places()){var p=Project(place.position,map);if(!map.Contains(p))continue;occupied.Add(new Rect(p.x-16,p.y-16,32,32));}
   return occupied;
  }
  static Vector2 PlacePvpCallPin(Vector2 anchor,Rect map,List<Rect> occupied){
   var best=new Vector2(Mathf.Clamp(anchor.x,20,map.width-20),Mathf.Clamp(anchor.y,80,map.height-20));float score=float.PositiveInfinity;
-  for(int y=-3;y<=3;y++)for(int x=-3;x<=3;x++){var p=new Vector2(Mathf.Clamp(anchor.x+x*36,20,map.width-20),Mathf.Clamp(anchor.y+y*36,80,map.height-20));if(p.x>map.width-80&&p.y>map.height-185)continue;bool clear=true;foreach(var other in occupied)if(new Rect(p.x-16,p.y-38,32,42).Overlaps(other)){clear=false;break;}float distance=(p-anchor).sqrMagnitude;if(clear&&distance<score){best=p;score=distance;}}
+  for(int y=-3;y<=3;y++)for(int x=-3;x<=3;x++){var p=new Vector2(Mathf.Clamp(anchor.x+x*36,20,map.width-20),Mathf.Clamp(anchor.y+y*36,80,map.height-20));if(p.x>map.width-80&&p.y>map.height-185)continue;bool clear=true;foreach(var other in occupied)if(MapPresentation.PinHitBounds(p,26).Overlaps(other)){clear=false;break;}float distance=(p-anchor).sqrMagnitude;if(clear&&distance<score){best=p;score=distance;}}
   return best;
  }
  public int AvailableCallCount {get{if(session.jobs.Active)return 0;int count=0;foreach(var o in session.jobs.offers)if(o!=null)count++;return count;}}

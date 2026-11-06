@@ -108,10 +108,12 @@ public class EconomyLedger {
  public bool UseEmergencySleep(string id){return EmergencySleepCore(id,true);}
  public bool UseEmergencySleepInMatch(string id){return EmergencySleepCore(id,false);}
  bool EmergencySleepCore(string id,bool closeDay){if(PvpProfile&&closeDay)return false;if(!OneDay||State!=BusinessState.Open||Driver.drowsiness==null||!Driver.drowsiness.Blackout||string.IsNullOrEmpty(id)||!services.Add(id))return false;var next=Driver.Copy();if(!PvpProfile&&Elapsed<Settings.daySeconds&&Elapsed+100>=Settings.daySeconds)next.fatigue=100;next.EmergencySleep();ServiceTime(100);Driver=next;if(closeDay)RequestClose("졸음 운전 위험 · 당일 영업 종료");return true;}
- public bool ChargeAccident(string id){return Operating&&Account!=null&&Account.Accident(id,Day);}
- public bool CompleteAccident(string id){
-  if(!Operating||Account==null||!Account.CompleteAccident(id,Day))return false;
-  if(!PvpProfile){AdvanceAccidentCondition(45);ServiceTime(45);}return true;
+ public bool ChargeAccident(string id){return ChargeAccident(id,3000);}
+ public bool ChargeAccident(string id,int fee){return Operating&&Account!=null&&Account.Accident(id,Day,fee);}
+ public bool CompleteAccident(string id){return CompleteAccident(id,45);}
+ public bool CompleteAccident(string id,double duration){
+  if(!Finite(duration)||duration<=0||!Operating||Account==null||!Account.CompleteAccident(id,Day))return false;
+  if(!PvpProfile){AdvanceAccidentCondition(duration);ServiceTime(duration);}return true;
  }
  // Replace normal operation advancement for each host processing frame; the caller
  // clamps seconds to remaining processing/match time. No fuel or natural dirt accrues.

@@ -86,7 +86,7 @@ public class DrivingReadability : MonoBehaviour {
   var nav=session.jobs.nav;if(!nav.HasDestination||nav.hd==null||nav.hdRoute==null||nav.path.Count<2)return new NavigationCue();
   float error;float at=nav.ProjectVehicle(out error);return error>4.5f?new NavigationCue():NavigationCue.FromRoute(nav.hd,nav.hdRoute,at);
  }}
- public static Rect FollowingManeuverBounds(float x,float y){return new Rect(x+326,y+4,132,64);}
+ public static Rect FollowingManeuverBounds(float x,float y){return new Rect(x+222,y+10,80,64);}
  void DrawNavigation(float x){
   var nav=session.jobs.nav;const float y=411;const float width=320;float height=SignalTarget!=null?196:140;var cue=TurnCue;
   if(!cue.Valid){
@@ -101,13 +101,13 @@ public class DrivingReadability : MonoBehaviour {
   CasualUI.Panel(new Rect(x-5,y,width,height),CasualUI.Blue);
   NavigationArrow.Draw(new Rect(x+5,y+10,64,58),cue.Move,Color.white);
   var ink=new GUIStyle(label){normal={textColor=Color.white}};
-  GUI.Label(new Rect(x+78,y+2,195,44),NavigationCue.FormatDistance(cue.Distance),new GUIStyle(ink){font=KoreanText.BoldFont,fontSize=32});
+  GUI.Label(new Rect(x+78,y+2,135,44),NavigationCue.FormatDistance(cue.Distance),new GUIStyle(ink){font=KoreanText.BoldFont,fontSize=32});
   string road=string.IsNullOrEmpty(cue.Road)?NavigationCue.Label(cue.Move):cue.Road;
   var roadStyle=new GUIStyle(ink){fontSize=UiReadability.Font(15),wordWrap=false};
-  GUI.Label(new Rect(x+78,y+46,195,27),new GUIContent(UiReadability.Ellipsis(road,roadStyle,195),road),roadStyle);
-  GUI.Label(new Rect(x,y+69,76,24),cue.LaneHint,new GUIStyle(ink){fontSize=UiReadability.Font(11),alignment=TextAnchor.MiddleCenter});
-  if(cue.HasNext&&!session.services.PostTripVisible){var next=FollowingManeuverBounds(x,y);CasualUI.Panel(next);NavigationArrow.Draw(new Rect(next.x+6,next.y+8,32,32),cue.NextMove,CasualUI.Blue);GUI.Label(new Rect(next.x+44,next.y+4,84,28),NavigationCue.FormatDistance(cue.NextDistance),new GUIStyle(label){fontSize=UiReadability.Font(15)});GUI.Label(new Rect(next.x+8,next.y+37,118,23),NavigationCue.Label(cue.NextMove),new GUIStyle(label){fontSize=UiReadability.Font(12)});}
-  GUI.Label(new Rect(x+79,y+76,195,23),cue.Move==NavigationMove.Arrival?(session.world.map.hybrid?"오른쪽 승하차 지점":"목적지에서 정차"):cue.Move==NavigationMove.Straight?"목적지까지 직진":"회전 후 경로 유지",new GUIStyle(ink){fontSize=UiReadability.Font(12)});
+  GUI.Label(new Rect(x+78,y+46,135,27),new GUIContent(UiReadability.Ellipsis(road,roadStyle,135),road),roadStyle);
+
+  if(cue.HasNext&&!session.services.PostTripVisible){var next=FollowingManeuverBounds(x,y);NavigationArrow.Draw(new Rect(next.x+24,next.y,32,32),cue.NextMove,Color.white);GUI.Label(new Rect(next.x,next.y+35,next.width,26),NavigationCue.FormatDistance(cue.NextDistance),new GUIStyle(ink){fontSize=UiReadability.Font(14),alignment=TextAnchor.MiddleCenter,wordWrap=false});}
+  if(cue.Move==NavigationMove.Arrival||cue.Move==NavigationMove.Straight)GUI.Label(new Rect(x+79,y+76,195,23),cue.Move==NavigationMove.Arrival?(session.world.map.hybrid?"오른쪽 승하차 지점":"목적지에서 정차"):"목적지까지 직진",new GUIStyle(ink){fontSize=UiReadability.Font(12)});
   GUI.Label(new Rect(x+8,y+107,182,23),GoalDistance,new GUIStyle(ink){fontSize=UiReadability.Font(11)});
   DrawCompactSignal(x,y+138,true);
   GUI.enabled=!session.paused;
