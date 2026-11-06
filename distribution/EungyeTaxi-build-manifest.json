@@ -1,30 +1,28 @@
 {
-  "sourceCommit": "11223cad7011db0e736005b96f92a3a9cdf1cc17",
+  "sourceCommit": "95fa0b0af562a5fc66bc80e8cbaaaf5045a3b0ad",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-07",
-  "totalBytes": 126501464.0,
+  "totalBytes": 126543288.0,
   "validation": {
     "build": "TaxiArtChecks.Build -> PrototypeBuild.BuildHybrid exit 0",
-    "blender": "5.2 MCP",
-    "unityMcpPreview": true,
-    "taxiArtEditorAssertions": 36510,
-    "taxiArtPlayerAssertions": 35,
+    "taxiArtEditorAssertions": 37342,
+    "hudLayoutAssertions": 15,
+    "taxiArtPlayerAssertions": 36,
+    "signalPlayerAssertions": 8,
+    "fullUiAssertions": 165,
     "drivingSettingsAssertions": 17,
-    "lanHostAssertions": 43,
-    "lanClientAssertions": 54,
-    "lanEvidence": "artifacts/pvp/native-lan-20261107-035042-35efe5b5",
     "screenWidths": [
       1280,
       1920
     ],
-    "protectedFilesUnchanged": 16,
     "strictInputIssues": 0,
+    "protectedFilesUnchanged": 14,
+    "protectedFilesChangedByConcurrentUserGame": 2,
     "manualDriving": false,
     "fullCampaign": false,
-    "remotePcLan": false,
-    "report": "docs/work-history/2026-11-07-taxi-blender-quality.md"
+    "report": "docs/work-history/2026-11-07-taxi-hud-corrections.md"
   },
   "files": [
     {
@@ -40,7 +38,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "5eded71541bf43236c48ae3b9e23281e492d8ff4d86db23af03fca8f39182ac1"
+      "sha256": "380c2ee19ab4cfd17803f328380ca266cd680198d7c9903f16852e36995edac3"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -64,8 +62,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2657792,
-      "sha256": "e6a8b8e2380a013399ee1bd72564b410cb3fad277562b5b4eb8e2210248a4ca2"
+      "bytes": 2657280,
+      "sha256": "abb336e7b19f63f9c85b7b988508a1cec9df8930f8b5f05f00f6e18d693a5ffc"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -564,8 +562,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 43343888,
-      "sha256": "2a3d59d14b023df391b3fe74fdc3e272f22f890b049c6a8b4eb77699e9db9821"
+      "bytes": 43386224,
+      "sha256": "19fce644828311f172d4973927102ccc9482b53d3ff58daf4655d1ff0fd4aab9"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
