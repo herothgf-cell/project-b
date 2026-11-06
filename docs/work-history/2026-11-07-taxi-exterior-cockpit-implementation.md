@@ -30,3 +30,6 @@
 소스와 통합 실행본 커밋 후 실제 해시로 manifest 갱신·검증하고 main에 게시한다. 실제 기록 커밋은 git log -1 --oneline -- docs/work-history/2026-11-07-taxi-exterior-cockpit-implementation.md로 확인. 다른 작업의 미커밋 문서/미추적 파일은 보존한다.
 
 출하 검증: 소스 da1667d3033d16dfc8e45c93839d8ccb367b3deb 기준 통합 manifest 생성. 통합/PVP VerifyOnly 모두 exit0, 141파일/124,809,838바이트. 원격 main 및 원본 작업폴더 반영 영수증은 후속 기록 참조.
+
+최종 main 영수증: 실행본 커밋106bf21 원격 push 성공, 원격 heads는 main만 존재. D:/Git/project-b의 로컬 main도106bf21로 fast-forward하고 동일141파일/124,809,838바이트 VerifyOnly exit0 확인. 사용자 LATEST Higgsfield 문단 복원, 사전 미추적56파일 SHA256 불변, 이번 임시 stash만 제거. 갱신 도중 별도 Unity Package manifest/lock·PackageManagerSettings 변경이 생긴 것은 손대지 않고 보존했다. 신규 작업 브랜치는 만들지 않았으며 기존 detached 작업폴더는 유지.
+현재 기본 실행: D:/Git/project-b/builds/EungyeTaxi/EungyeTaxi.exe. HUD 작업폴더 실행본도 동일하다.
