@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 class PassengerRequestTests {
  static void Check(bool ok,string reason){if(!ok)throw new Exception(reason);}
  static void Main(){
@@ -12,6 +12,16 @@ class PassengerRequestTests {
   Check(PassengerRequestChoices.For(RequestKind.Comfort)[0].effect.Contains("-4"),"comfort warns actual stronger penalty");
   Check(PassengerRequestChoices.For(RequestKind.Music)[0].effect.Contains("변경 없음"),"music must not claim audio changed");
   Check(PassengerRequestChoices.For(RequestKind.RejectIllegal)[0].label.Contains("지켜"),"illegal request has no accept violation action");
+  var quiet=new PassengerRequest();quiet.Begin("quiet-evidence",RequestKind.Quiet);
+  Check(!quiet.ObserveDriverSmallTalk(),"chat before promise is neutral");quiet.Accept();
+  Check(quiet.ObserveDriverSmallTalk()&&quiet.QuietViolationCount==1,"deliberate chat breaches accepted quiet");
+  var restoredQuiet=new PassengerRequest();restoredQuiet.Restore(quiet.Snapshot());
+  Check(restoredQuiet.QuietViolationCount==1&&restoredQuiet.QuietEvidence.Contains("운전자가 먼저 잡담"),"persist quiet evidence");
+  restoredQuiet.CompleteQuietGoal();restoredQuiet.Finish();
+  Check(restoredQuiet.GoalOutcome==-1&&restoredQuiet.SatisfactionDelta==-5,"observed quiet failure");
+  Check(!restoredQuiet.ObserveDriverSmallTalk(),"finished observation immutable");restoredQuiet.CompleteQuietGoal();Check(restoredQuiet.Finish()==0&&restoredQuiet.SatisfactionDelta==-5,"no duplicate quiet penalty");
+  var validQuiet=new PassengerRequest();validQuiet.Begin("quiet-safe",RequestKind.Quiet);validQuiet.Accept();validQuiet.CompleteQuietGoal();Check(validQuiet.GoalOutcome==1,"no explicit breach means quiet success");
+  var corrupt=quiet.Snapshot();corrupt.quietViolationCount=-1;bool rejected=false;try{new PassengerRequest().Restore(corrupt);}catch(ArgumentException){rejected=true;}Check(rejected,"negative count rejected");
   var r=new PassengerRequest();r.Begin("trip1",RequestKind.Quiet);
   Check(PassengerRequest.EtaSeconds(240,-1)==216&&PassengerRequest.EtaSeconds(240,0)==240&&PassengerRequest.EtaSeconds(240,1)==264,"three ETA estimates");
   Check(PassengerRequest.EtaComparison(216,232).Contains("늦어짐")&&PassengerRequest.EtaComparison(216,201).Contains("예상 범위"),"ETA tolerance");

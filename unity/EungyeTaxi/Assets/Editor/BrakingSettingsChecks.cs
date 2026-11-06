@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 public static class BrakingSettingsChecks {
  static int checks;
@@ -23,7 +23,7 @@ public static class BrakingSettingsChecks {
    taxi.AutomatedHumanInput=false;Check(taxi.ApplyBrakePreference(normal,false,true).brake==.3f,"bot unaffected");taxi.NetworkPredicted=true;Check(taxi.ApplyBrakePreference(normal,false,true).brake==.15f,"owner prediction uses same gain");
    Check(taxi.ApplyBrakePreference(new DriveMath.Demand{brake=1},true,true).brake==1,"menu/emergency full stop cannot weaken");
   }finally{UnityEngine.Object.DestroyImmediate(root);}
-  Check(PvpNativeLan.Protocol=="native-city-lan-v13","both peers require brake-aware contract");Debug.Log("BRAKING_SETTINGS_OK checks="+checks);
+  Check(PvpNativeLan.Protocol=="native-city-lan-v15","both peers require brake-aware contract");Debug.Log("BRAKING_SETTINGS_OK checks="+checks);
  }
  public static void ModelsAndPhysics(){Run();DrivingSettingsChecks.All();BrakingPhysicsChecks.Run();}
  public static void All(){ModelsAndPhysics();NativeLeftSignalRegressionTests.Run();}

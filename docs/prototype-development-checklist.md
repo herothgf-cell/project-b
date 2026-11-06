@@ -8,7 +8,8 @@
 
 - [x] 기존12프리셋·특성 분해, 효과/확장 후보·제작 예시·화면 도식, 관리창 CRUD·조합 오류·공유 효과·저장/재로드. [상세 기획15](content-design/15-passenger-presets-and-traits.md).
 - [x] 지원 조합의 게임 연결·고정 선택/구프로필 호환·작업 복원·음주 한도 분리, Node73/모델73·선택50·미리보기29 및 최종 Player42·LAN41/52·BuildHybrid exit0. 기존 저장29파일 불변. [검증/기존 실패·최종 출하](work-history/2026-11-06-passenger-composition-implementation.md).
-- [ ] 수면+소지품 등 독립 행동 진행기 확장, 새 장치·메스꺼움·단골 기능, 사람 장시간/전체3일·다른PC LAN 수용.
+- [x] 수면+음식/짐/오염짐·메스꺼움·차내 온도·젖은 우산 및 Quiet 위반 감지 구현. [기획19](content-design/19-passenger-trait-expansion.md)와 최신 작업 이력의 검증 범위를 따른다.
+- [ ] 단골·관계 기억, 실제 냉난방 물리, 사람 장시간/전체3일·다른PC LAN 수용.
 
 ## 2026-11-06 HUD·승객 대화 시안 적용
 

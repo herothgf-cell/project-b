@@ -16,7 +16,7 @@ using Unity.Collections;
 // Trusted LAN, host-authoritative native WheelCollider simulation. No client pose/fare authority.
 [DefaultExecutionOrder(-110)]
 public sealed class PvpNativeLan:MonoBehaviour {
- public const string Protocol="native-city-lan-v13";
+ public const string Protocol="native-city-lan-v15";
  public static PvpNativeLan Instance {get;private set;}
  public static bool ApplyingReplica;
  public PvpSimulationMatch Match {get;private set;}
@@ -105,12 +105,13 @@ public sealed class PvpNativeLan:MonoBehaviour {
   }
  }catch(Exception e){Debug.LogWarning("PVP_NATIVE_MESSAGE_REJECT "+kind+" "+e.Message);if(!IsHost){LastNotice="동기화 정보/콘텐츠 설정 오류 · 양쪽 실행본을 갱신하세요: "+e.Message;disconnectPending=true;}}}
  void Execute(Seat seat,PvpNativeCommand c){var d=Match.Drivers[seat.slot];if(c==null||string.IsNullOrEmpty(c.action)||c.action.Length>40)return;
-  bool tripAction=c.action=="interact"||c.action=="behavior"||c.action=="reply"||c.action=="response"||c.action=="eta"||c.action=="alternative"||c.action=="situation";
+  bool tripAction=c.action=="interact"||c.action=="behavior"||c.action=="reply"||c.action=="response"||c.action=="eta"||c.action=="alternative"||c.action=="situation"||c.action=="smalltalk";
   if(tripAction&&(c.trip??"")!=(d.law.tripId??"")){ProbeRejectedTripCommands++;return;}
   if((c.action=="reply"||c.action=="response"||c.action=="eta"||c.action=="alternative")&&(c.request??"")!=(d.requests.request.Id??""))return;
   switch(c.action){
    case "accept":bool matched=false;for(int i=0;i<d.jobs.offers.Length;i++)if(d.jobs.offers[i]!=null&&d.jobs.offers[i].candidateSeed==c.token){matched=true;if(!d.jobs.Accept(i))ProbeRejectedClaimCommands++;break;}if(!matched)ProbeRejectedClaimCommands++;break;
    case "roadside":d.jobs.AcceptRoadside(c.value);break;case "interact":d.jobs.Interact();break;case "behavior":d.jobs.RespondBehavior(c.value);break;case "situation":if(d.jobs.SituationPending&&d.jobs.Situation.Pending.ToString()==c.token)d.jobs.RespondSituation(c.value);break;
+   case "smalltalk":d.requests.TryDriverSmallTalk();break;
    case "reply":if(Enum.IsDefined(typeof(PassengerReply),c.value))d.requests.Choose((PassengerReply)c.value);break;case "response":d.requests.Respond(c.value==1);break;case "eta":if(c.value>=-1&&c.value<=1)d.requests.RespondEta(c.value);break;case "alternative":d.requests.RespondAlternative();break;
    case "toggle-service":d.services.Toggle();break;case "close-service":d.services.Close(c.value==1);break;case "service-request":if(c.value>=0&&c.value<=5)d.services.RequestAction(c.value);break;case "service-confirm":d.services.ConfirmAction(c.value==1);break;case "service-buy":if(c.value>=0&&c.value<=5)d.services.Buy(c.value);break;case "service-meal":d.services.SelectMeal(c.value);break;
    case "guide":d.services.Guide(c.value);break;case "guide-fuel":d.services.GuideFuel(c.value);break;case "guide-after-trip":d.services.GuideAfterTrip(c.value);break;case "guide-facility":d.services.GuideFacilityById(c.value,c.token);break;

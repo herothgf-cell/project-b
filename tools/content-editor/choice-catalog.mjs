@@ -1,3 +1,4 @@
+import {TRAIT_SETTINGS,QUIET_DIALOGUE_SETTINGS} from './trait-settings.mjs';
 import {PRESET_ENTRY} from './passenger-presets.mjs';
 import {DRUNK_SETTINGS} from './drunk-settings.mjs';
 import fs from 'node:fs/promises';
@@ -7,7 +8,7 @@ import {hashProfile,validateProfile} from './profile.mjs';
 export const IMMEDIATE_FIELDS=['satisfaction','fatigue','satisfactionPercent','fatiguePercent'];
 export const DURING_FIELDS=['satisfactionPerMinute','fatiguePerMinute','satisfactionPercentPerMinute','fatiguePercentPerMinute','fatigueGrowthPercent','motionPenaltyDelta'];
 export const END_FIELDS=IMMEDIATE_FIELDS;
-export const FAILURE_KINDS=['Comfort','OnTime','SafeStop','DestinationChange','ViaStop'];
+export const FAILURE_KINDS=['Quiet','Comfort','OnTime','SafeStop','DestinationChange','ViaStop'];
 export const NEUTRAL_KINDS=['LargeRoad','ShortRoad','OnTime','RouteAdvice','RejectIllegal','SafeStop','DestinationChange','ViaStop'];
 const alternatives=['Empathy','RouteAdvice','Interview','FareHelp','LocalChat'];
 const kinds=['Quiet','Eta','Comfort','OnTime','LargeRoad','ShortRoad','SafeStop','Empathy','RouteAdvice','Interview','Music','FareHelp','LocalChat','DestinationChange','ViaStop','RejectIllegal'];
@@ -29,9 +30,9 @@ export function generateChoiceEntries(legacyEntries){
  return entries;
 }
 export async function generate(root,{verify=false}={}){
- const roster=JSON.parse(await fs.readFile(path.join(root,'config/content/passenger-roster-v1.json'),'utf8'));
+ const roster=JSON.parse(await fs.readFile(path.join(root,'config/content/passenger-roster-v2.json'),'utf8'));
  const presetEntry={...PRESET_ENTRY,defaultValue:JSON.stringify(roster)};
- const file=path.join(root,'config/content/catalog.json');const catalog=JSON.parse(await fs.readFile(file,'utf8'));const legacy=[...catalog.entries.filter(e=>e.id!==PRESET_ENTRY.id&&!e.id.startsWith('choice.')&&!DRUNK_SETTINGS.some(d=>d.id===e.id)),...DRUNK_SETTINGS,presetEntry];for(const e of legacy)if(/^request\.[^.]+\.(success|failure)$/.test(e.id)||['effect.food.satisfaction','manner.comfortMotion.penalty'].includes(e.id))e.description='이관 원본/호환 참조. 새 선택 효과는 이 값과 독립적으로 편집합니다.';catalog.entries=[...legacy,...generateChoiceEntries(legacy)];
+ const file=path.join(root,'config/content/catalog.json');const catalog=JSON.parse(await fs.readFile(file,'utf8'));const legacy=[...catalog.entries.filter(e=>e.id!==PRESET_ENTRY.id&&!e.id.startsWith('choice.')&&!QUIET_DIALOGUE_SETTINGS.some(d=>d.id===e.id)&&!TRAIT_SETTINGS.some(d=>d.id===e.id)&&!DRUNK_SETTINGS.some(d=>d.id===e.id)),...DRUNK_SETTINGS,...TRAIT_SETTINGS,...QUIET_DIALOGUE_SETTINGS,presetEntry];for(const e of legacy)if(/^request\.[^.]+\.(success|failure)$/.test(e.id)||['effect.food.satisfaction','manner.comfortMotion.penalty'].includes(e.id))e.description='이관 원본/호환 참조. 새 선택 효과는 이 값과 독립적으로 편집합니다.';catalog.entries=[...legacy,...generateChoiceEntries(legacy)];
  // Approved release defaults are separate from schema1 migration semantics.
  const overrideFile=path.join(root,'config/content/default-overrides.json');let overrides;try{overrides=JSON.parse(await fs.readFile(overrideFile,'utf8'));}catch(e){if(e.code!=='ENOENT')throw e;}
  if(overrides){if(overrides.schemaVersion!==1||!Array.isArray(overrides.values)||Object.keys(overrides).length!==2)throw Error('Invalid release defaults');const seen=new Set();for(const row of overrides.values){const entry=catalog.entries.find(e=>e.editable&&e.id===row.id);if(!entry||seen.has(row.id)||typeof row.value!=='string'||Object.keys(row).length!==2)throw Error('Invalid release default '+row.id);seen.add(row.id);entry.defaultValue=row.value;}}

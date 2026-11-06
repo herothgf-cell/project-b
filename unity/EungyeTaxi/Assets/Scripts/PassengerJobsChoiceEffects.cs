@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 // One host-owned ledger for a passenger's choices. Business time also accounts for
@@ -11,7 +11,7 @@ public partial class PassengerJobs {
  public PassengerContent PassengerContent {get{return Behavior==null?global::PassengerContent.Shared:Behavior.Content;}}
  public ChoiceEffectLedger ChoiceEffects {get{return choiceEffects;}}
  public bool ChoiceEffectsActive {get{return ChoiceEffectDefinition.Enabled&&choiceEffects!=null&&!choiceEffects.cancelled;}}
- double ChoiceSatisfaction {get{return Math.Max(0,Math.Min(100,StartSatisfaction+session.manners.ledger.Score-100+(session.requests?session.requests.TotalSatisfactionDelta:0)+ComfortRecovered+(choiceEffects==null?0:choiceEffects.satisfactionContribution)));}}
+ double ChoiceSatisfaction {get{return Math.Max(0,Math.Min(100,StartSatisfaction+session.manners.ledger.Score-100+(session.requests?session.requests.TotalSatisfactionDelta:0)+ComfortRecovered+(Behavior==null?0:Behavior.TraitSatisfactionDelta)+(choiceEffects==null?0:choiceEffects.satisfactionContribution)));}}
  double ChoiceFatigue {get{return session&&session.business&&session.business.ledger!=null&&session.business.ledger.Driver!=null?session.business.ledger.Driver.fatigue:0;}}
  string ChoiceTrip {get{return session&&session.law?session.law.tripId??"":"";}}
  string ChoiceOwner {get{return current==null?"":current.candidateSeed??OfferId??"";}}
@@ -96,8 +96,8 @@ public partial class PassengerJobs {
      if(observed&&(response==null||!response.replyCaptured||response.reply.ToString()!=choice[2]))throw new ArgumentException("Choice does not match saved request reply");
     }
    }else if(choice[0]=="type"){
-    bool followup=choice[1]=="SleepingFollowup";string type=followup?"Sleeping":choice[1];if(suffix!=":type:"+type+(followup?":followup":":initial"))throw new ArgumentException("Type choice event mismatch");
-    if(snapshot.behaviorVersion==1&&snapshot.behaviorPresent&&snapshot.behavior!=null&&snapshot.behavior.Type.ToString()!=type)throw new ArgumentException("Choice does not match passenger type");
+    bool followup=choice[1]=="SleepingFollowup";string type=followup&&snapshot.behavior!=null?snapshot.behavior.Type.ToString():followup?"Sleeping":choice[1];if(suffix!=":type:"+type+(followup?":followup":":initial"))throw new ArgumentException("Type choice event mismatch");
+    if(snapshot.behaviorVersion==1&&snapshot.behaviorPresent&&snapshot.behavior!=null&&(snapshot.behavior.Type.ToString()!=type||followup&&!snapshot.behavior.HasSleep))throw new ArgumentException("Choice does not match passenger type");
    }else if(choice[0]=="situation"){
     string number=suffix.StartsWith(":situation:",StringComparison.Ordinal)?suffix.Substring(11):"";
     if(!int.TryParse(number,System.Globalization.NumberStyles.None,System.Globalization.CultureInfo.InvariantCulture,out index)||index<0||index>2||number!=index.ToString(System.Globalization.CultureInfo.InvariantCulture))throw new ArgumentException("Situation choice event mismatch");
