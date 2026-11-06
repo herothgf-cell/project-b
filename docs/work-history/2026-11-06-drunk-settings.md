@@ -36,3 +36,11 @@ VehicleCare의 일일 카운트/미등장 카운트 저장·복원 경계도 설
 관리창 대화 선택지→취객에서 편집→저장→게임에 적용. 다음 새 싱글 캠페인/새 PVP방에 적용, 이어하기는 저장 당시 설정. 예: 취객 없이 연습은 최대0명; 자주 시험하려면 등장100%/최대10명/강제 사용 안함(일반 승객 차례는 유지); 구토만 시험하려면 구토100%/잠듦0%.
 
 최종 소스/배포 hash·LAN/manifest 검증은 아래 영수증에 기록한다.
+
+## 최종 배포 영수증
+
+소스 0922f8b (실제 git log 확인). 현재 공유 운전 설정 소스는 별도 1d5e6e6에서 커밋되었으며 이번 빌드에도 당시 공유 상태가 포함된다. 통합/PVP manifest VerifyOnly 각각 exit0: 출하141파일118,239,935바이트, 사용자active 포함142파일118,372,827바이트. 새 활성 default revision4/hash dc5f0ac0f2435735db5ab192f8a5bfc5b6e41c8200a1b7ddecc7cd1a3996f186. 기존 수치/대사 유지, 취객6개 기본값 추가. config/content/backups 원본 보존.
+
+LAN 추가 전체 검사(-Reconnect -TimeoutSeconds240)는 호스트44/클라이언트60개 PASS까지 진행하고 완주 마커 없이 시간 초과(exit1). 이 검사를 통과로 세지 않는다. 새 필드 단독 실패/예외는 관찰되지 않았으나 전체 LAN 완료는 미검증이며 관련 증거 artifacts/pvp/native-lan-20261106-160204-4bebc72b. 자동 실행기는 자기 진단 프로세스를 정리했고 사용자 다른 경로 게임은 종료하지 않았다. 이 범위를 manifest.validation에도 기록했다. 기존 통합/PVP 파일 SHA256 전수 검증 성공과 네트워크 전체 완주 여부를 구분한다.
+
+재현: node --test tests/content-editor/*.test.mjs (새2개 포함62개), pwsh -File tools/test_content_tuning.ps1 (758검사), pwsh -File tools/test_passenger_care.ps1, pwsh -File tools/test_content_preview.ps1, Unity -executeMethod ContentTuningBuild.Build, 통합/PVP VerifyOnly. 이전 사용자의 열린 탭은 보존하고 새 관리창 취객 화면에 저장/적용된 상태를 남겼다. 이번 필수 지도 입력/ZIP 미변경·Strict 미재실행. 사람 주행/다른PC·전체 캠페인은 후속.
