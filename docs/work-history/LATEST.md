@@ -1,5 +1,9 @@
 # 최신 작업 상태
 
+## 2026-11-06 프로젝트 전체 점검
+
+[장르 비교·차별화·공백·우선순위](../future-design/2026-11-06-project-wide-review.md) · [검증/인계](2026-11-06-project-wide-review.md). TAXI LIFE/ETS2 공식 자료와 현행 기획·코드·340노드 마인드맵을 대조했다. 사고/공업사·P1/P2는 구현, 단골/장기 성장·환경은 후속, 실제 차내 장치 조작은 보류다. 구 사고/LAN 표기는 정합성 항목으로 기록했다. 다음은 기존 유턴 observer/수하물 견인 fixture 실패 원인 → 사람20분/3일·다른PC PVP10분/4인 수용 → 결과에 따른 개선/확장 방향 선택이다. 기본 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 싱글·A2 PVP·LAN v6 / BuildHybrid 유지. 이번 Strict exit0/input issues0·통합 VerifyOnly exit0(사용자 active 포함141파일), 입력/ZIP/배포/설정·저장 미변경. 새 빌드·기능/물리/수동 플레이 검사 없음. 기존 미추적9항목 보존·신규 기능 구현/원격게시 없음.
+
 ## 2026-11-06 선택지 효과 구조 조사·평가 안내 정리
 
 [실제 구조·후속 UI·검증](2026-11-06-choice-effects-audit.md) · [현재와 미구현 확장안](../future-design/2026-11-06-choice-effects-structure-review.md). 현재는 요청 종류별 공유 점수이며 ETA0·공감 두 응대 하차+5·미사용 failure−5와 실제 미응답−5를 구분했다. 선택지별 즉시/운행 중/종료 후 만족도·피로 효과 엔진은 미구현이다. 관리창 평가/미응답/공통 설정 분리·중복 점수 편집 제거·적용 시점/영향 대상·후속 제한 범위를 표시했다. Node42·실제 순수 C#16 검사 통과. 실행은 `설정 관리.cmd`; 기본 게임 경로 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계·A2, 이번 Unity 재빌드 없음. 동시 사고/지도 빌드 상태는 해당 이력을 따르며 사용자 프로필·필수 지도 입력은 이번 미변경. 다음은 선택지별 독립 효과의 세부 설계 수용과 구현이다.
