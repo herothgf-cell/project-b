@@ -7,7 +7,10 @@ public static class CockpitPresentationChecks {
   checks=0;var type=typeof(FareTrip).Assembly.GetType("CockpitPresentation");Check(type!=null,"trip status and deadline presentation exists");
   var status=type.GetMethod("TaxiStatus");Check((string)status.Invoke(null,new object[]{TripState.Idle})=="빈차","idle taxi is vacant");Check((string)status.Invoke(null,new object[]{TripState.ToPickup})=="예약","pickup taxi is reserved");Check((string)status.Invoke(null,new object[]{TripState.OnTrip})=="","occupied taxi has no status label");Check((string)status.Invoke(null,new object[]{TripState.Complete})=="빈차","completed trip is vacant");
   var timer=type.GetMethod("Deadline");Check((string)timer.Invoke(null,new object[]{446f})=="7:26","deadline is remaining minutes and seconds");Check((string)timer.Invoke(null,new object[]{0f})=="0:00","expired countdown stays zero");Check((string)timer.Invoke(null,new object[]{float.PositiveInfinity})=="—","unbounded time is not an invented deadline");
-  Check((string)type.GetMethod("Destination").Invoke(null,new object[]{"은계 승하차 10"})=="목적지 (은계 승하차 10)","destination removes pickup/dropoff prefix");
+  Check((string)type.GetMethod("Destination",new[]{typeof(string)}).Invoke(null,new object[]{"은계 승하차 10"})=="목적지 (은계 승하차 10)","destination removes pickup/dropoff prefix");
+  var phase=type.GetMethod("Destination",new[]{typeof(string),typeof(TripState)});
+  Check(((string)phase.Invoke(null,new object[]{"은계",TripState.ToPickup})).StartsWith("승차 장소"),"pickup identifies boarding location");
+  Check(((string)phase.Invoke(null,new object[]{"은계",TripState.OnTrip})).StartsWith("도착지"),"onboard identifies dropoff location");
   Debug.Log("COCKPIT_PRESENTATION_OK checks="+checks);
  }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 public static class CockpitPresentation {
  public static string TaxiStatus(TripState state){return state==TripState.OnTrip?"":state==TripState.ToPickup?"예약":"빈차";}
  public static string Destination(string stop){return "목적지 ("+(stop??"")+")";}
+ public static string Destination(string stop,TripState state){return (state==TripState.ToPickup?"승차 장소":"도착지")+" ("+(stop??"")+")";}
  public static string Deadline(float remaining){return float.IsNaN(remaining)||float.IsInfinity(remaining)?"—":CockpitUI.Clock(Mathf.Max(0,remaining));}
  static void Indicator(Rect r,bool left,Color color){
   HudGlyph.Draw(r,left?16:17,color);

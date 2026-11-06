@@ -107,13 +107,26 @@ public sealed class BrightUIProbe:MonoBehaviour {
   // Normal native methods with controlled location, as in the existing receipt probe.
   foreach(var c in s.traffic.cars){c.Recycle();c.enabled=false;}
   var jobs=s.jobs;jobs.ClearForDay();jobs.ForcedPassengerType=PassengerType.General;jobs.ForcedRideCase=DrunkRideCase.Normal;var forecastRoute=jobs.nav.hd.Route(jobs.stops[0].laneEdge,jobs.stops[0].laneAt,jobs.stops[3].laneEdge,jobs.stops[3].laneAt);jobs.offers[0]=new JobOffer{candidateSeed="bright-ui-general",pickup=0,drop=3,fare=5000,seconds=2000,requiredScore=70,distance=jobs.nav.Distance(jobs.stops[0],jobs.stops[3]),pickupSeconds=600,timingPolicyVersion=1,safeRouteSeconds=OperationForecastAdapter.RouteSeconds(s,forecastRoute)};
-  Pose(jobs.stops[0]);Check(jobs.Accept(0)&&jobs.Interact(),"fixture native call acceptance and boarding");
+  Pose(jobs.stops[0]);Check(jobs.Accept(0),"fixture native call acceptance");
+  Check(CockpitPresentation.Destination("테스트",jobs.trip.State).Contains("승차 장소"),"pickup destination label identifies boarding stop");
+  string passengerIdentity=PassengerDialogueUI.PortraitIdentity(s);int passengerPortrait=PassengerDialogueUI.PortraitIndex(passengerIdentity,null);
+  yield return Capture("05c-single-pickup-ready");Check(jobs.Interact(),"fixture native boarding");
+  Check(CockpitPresentation.Destination("테스트",jobs.trip.State).Contains("도착지"),"onboard destination label identifies dropoff");
+  Check(PassengerDialogueUI.PortraitIdentity(s)==passengerIdentity,"boarding preserves portrait identity");
   var selectedRoute=jobs.nav.hdRoute;var cue=s.GetComponent<DrivingReadability>().TurnCue;Check(cue.Valid&&cue.Distance>=0,"single turn card reads live directed route");Check(jobs.nav.hdRoute==selectedRoute,"turn card never replaces selected route");yield return Capture("05a-single-navigation");
   Check(map.Open(),"active single map opens");yield return Capture("05b-single-active-map");map.Close();
   s.requests.BeginKind(RequestKind.Comfort);s.requests.AdvanceSafeStop(3);yield return Capture("05-single-passenger-request");
-  s.requests.request.DeferSafety();Pose(jobs.stops[jobs.current.drop]);Check(jobs.Interact(),"fixture native arrival and one settlement");
+  Check(PassengerDialogueUI.PortraitIdentity(s)==passengerIdentity,"request preserves portrait identity");s.requests.request.DeferSafety();Pose(jobs.stops[jobs.current.drop]);Check(jobs.Interact(),"fixture native arrival and one settlement");
   var receipt=s.GetComponent<RideCompletionPanel>();if(!receipt.Open)receipt.ShowLast();int income=s.business.ledger.Income;
-  Check(receipt.Open&&receipt.Receipt.Contains("실수령"),"real receipt fields available");yield return Capture("06-single-receipt");receipt.Close();Check(s.business.ledger.Income==income,"closing receipt does not pay twice");
+  Check(receipt.Open&&receipt.Receipt.Contains("실수령"),"real receipt fields available");Check(receipt.PortraitIndex==passengerPortrait,"settled receipt preserves passenger portrait");yield return Capture("06-single-receipt");
+  int facilitiesCash=s.business.ledger.Account.Cash;var facilitiesRoute=jobs.nav.hdRoute;
+  Check(receipt.TryOpenFacilities()&&s.services.PostTripVisible&&!receipt.Open,"receipt opens life hub");yield return Capture("06a-receipt-lifehub");
+  Check(receipt.ShowLast()&&receipt.TryOpenFacilities()&&s.services.PostTripVisible,"receipt keeps existing life hub open");
+  s.services.DismissPostTrip();Check(receipt.ShowLast()&&receipt.TryOpenFacilities()&&s.services.PostTripVisible,"receipt opens closed life hub");
+  Check(s.business.ledger.Account.Cash==facilitiesCash&&jobs.nav.hdRoute==facilitiesRoute,"facility browsing changes neither cash nor route");s.services.DismissPostTrip();
+  Check(receipt.ShowLast(),"receipt can reopen without payment");
+  s.business.ledger.Care.Damage.ApplyAccidentLoss("receipt-disabled-fixture",100);
+  Check(!receipt.CanOpenFacilities&&!receipt.TryOpenFacilities()&&receipt.Open,"disabled vehicle preserves receipt and repair flow");s.business.ledger.Care.Damage.Repair();receipt.Close();Check(s.business.ledger.Income==income,"closing receipt does not pay twice");
   s.business.ledger.RequestClose("UI screenshot fixture");yield return new WaitForSecondsRealtime(.5f);yield return Capture("07-single-day-summary");
   int cash=s.business.ledger.Account.Cash;int net=s.business.ledger.TotalNet;
   Check(!OneDayHUD.DayDetailsOpen,"day summary starts compact");OneDayHUD.ToggleDayDetails();yield return Capture("07a-single-day-details");

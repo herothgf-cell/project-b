@@ -147,6 +147,6 @@ public class PassengerRequestObservation : MonoBehaviour {
   if(request.Resolved&&selectedEffect.Length>0)note="적용 효과 · "+selectedEffect;
   var choices=request.Resolved?new PassengerRequestChoice[0]:ReplyChoices;var options=new PassengerDialogueUI.Option[choices.Length];
   for(int i=0;i<choices.Length;i++){var c=choices[i];string key=c.reply==PassengerReply.Defer?"U":c.reply==PassengerReply.Alternative||c.reply==PassengerReply.EtaNormal?"I":c.reply==PassengerReply.EtaRelaxed?"O":"Y";string line=ChoiceText(c).Split('\n')[0];options[i]=new PassengerDialogueUI.Option(key,line,c.effect.Replace("\n"," · "),CanChoose(c.reply));}
-  int selected=PassengerDialogueUI.Draw(request.Resolved?"기사 답변":"승객 요청",dialogue,options,note);if(selected>=0)session.requests.Choose(choices[selected].reply);
+  int selected=PassengerDialogueUI.Draw(request.Resolved?"기사 답변":"승객 요청",dialogue,options,note,PassengerDialogueUI.PortraitIdentity(session));if(selected>=0)session.requests.Choose(choices[selected].reply);
  }
 }

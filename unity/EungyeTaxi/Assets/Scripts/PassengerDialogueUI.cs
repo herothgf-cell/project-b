@@ -7,6 +7,10 @@ public static class PassengerDialogueUI {
   public Option(string key,string line,string effect,bool enabled=true){this.key=key;this.line=line;this.effect=string.IsNullOrEmpty(effect)?"효과 없음":effect;this.enabled=enabled;}
  }
  public static string EffectText(string effect){return string.IsNullOrEmpty(effect)||effect=="효과 없음"?"효과 없음":"효과 · "+effect;}
+ // Existing offer identity survives boarding, route changes, save/restore and LAN replication.
+ public static string PortraitIdentity(string offerId,string tripId){return !string.IsNullOrEmpty(offerId)?offerId:!string.IsNullOrEmpty(tripId)?tripId:"passenger";}
+ public static string PortraitIdentity(DriveSession session){return PortraitIdentity(session&&session.jobs?session.jobs.OfferId:null,session&&session.law?session.law.tripId:null);}
+ public static int PortraitIndex(string offerId,string tripId){return CasualUI.PortraitVariant(PortraitIdentity(offerId,tripId));}
  static GUIStyle heading,body,small,button;
  static Vector2 scroll;static string scrollDialogue="";static int lastDialogueFrame=-2;
  // All coordinates returned here use the same scaled GUI space as Draw.
@@ -16,7 +20,7 @@ public static class PassengerDialogueUI {
   return new Rect((viewportWidth-width)/2,Mathf.Max(0,viewportHeight-height-20),width,height);
  }
  static void Styles(){if(heading!=null)return;heading=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=20};heading.fontStyle=FontStyle.Bold;body=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=17};small=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14};foreach(var s in new[]{heading,body,small}){s.wordWrap=true;s.normal.textColor=CasualUI.Ink;}button=new GUIStyle(GUI.skin.button){normal={background=Texture2D.whiteTexture,textColor=Color.clear},hover={background=Texture2D.whiteTexture,textColor=Color.clear},active={background=Texture2D.whiteTexture,textColor=Color.clear}};}
- public static int Draw(string title,string dialogue,Option[] options,string note=""){
+ public static int Draw(string title,string dialogue,Option[] options,string note="",string passengerIdentity=null){
   Styles();var matrix=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
   const float pad=16,gap=10;Rect bounds=PanelBounds(Screen.width,Screen.height,scale,1);float inner=bounds.width-pad*2;
   float contentWidth=Mathf.Max(1,inner-Mathf.Max(18,GUI.skin.verticalScrollbar.fixedWidth));
@@ -34,7 +38,7 @@ public static class PassengerDialogueUI {
   scroll.y=Mathf.Clamp(scroll.y,0,Mathf.Max(0,contentHeight-viewport.height));
   scroll=GUI.BeginScrollView(viewport,scroll,new Rect(0,0,contentWidth,contentHeight),false,contentHeight>viewport.height);
   float x=0,row=0;inner=contentWidth;
-  CasualUI.Portrait(new Rect(x,row,portraitSize,portraitSize),CasualUI.PortraitVariant(title));
+  CasualUI.Portrait(new Rect(x,row,portraitSize,portraitSize),PortraitIndex(passengerIdentity,null));
   CasualUI.RoundedFill(new Rect(x+speechX,row,speechWidth,bubble),new Color(.87f,.95f,1));GUI.Label(new Rect(x+speechX+12,row+12,speechWidth-24,bubble-20),dialogue,body);row+=bubble+12;
   if(noteHeight>0){GUI.Label(new Rect(x,row,inner,noteHeight),note,small);row+=noteHeight;}
   if(options.Length>0){GUI.Label(new Rect(x,row,inner,25),"답변 선택 · 버튼 또는 단축키",small);row+=27;}

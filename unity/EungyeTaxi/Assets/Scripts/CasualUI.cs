@@ -46,7 +46,7 @@ public static class CasualUI {
  public static void Portrait(Rect r,int variant=0){
   if(!portraits)portraits=Resources.Load<Texture2D>("UI/passenger-portraits");RoundedFill(r,Soft);
   if(portraits){variant=((variant%4)+4)%4;var old=GUI.color;GUI.color=Color.white;GUI.DrawTextureWithTexCoords(r,portraits,new Rect((variant%2)*.5f,variant<2?.5f:0,.5f,.5f));GUI.color=old;}
-  else HudGlyph.Draw(new Rect(r.center.x-16,r.center.y-16,32,32),6,Green);
+  else HudGlyph.DrawBadge(new Rect(r.center.x-20,r.center.y-20,40,40),6);
  }
  public static int PortraitVariant(string identity){unchecked{uint hash=0;foreach(char c in identity??"")hash=hash*31+c;return (int)(hash%4);}}
  public static void AttentionDot(Rect r){HudGlyph.Draw(new Rect(r.x-2,r.y-2,r.width+4,r.height+4),15,Card);HudGlyph.Draw(r,15,Danger);}
