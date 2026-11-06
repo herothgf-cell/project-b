@@ -82,7 +82,7 @@ public class PassengerRequestUI : MonoBehaviour {
  public bool RespondAlternative(){if(PvpNativeLan.Route(session,"alternative"))return true;bool ok=PresentationAvailable&&Current&&Current.RespondAlternative();AfterResponse(ok);return ok;}
  public bool QuietPromiseActive {get{return !finished&&observations.Exists(o=>o&&o.request.Kind==RequestKind.Quiet&&o.request.Accepted);}}
  public string SmallTalkReply {get{return smallTalkVisible>0?smallTalkReply:"";}}
- public bool CanDriverSmallTalk {get{return session&&session.business.useV2&&!finished&&CanTalk&&session.jobs.trip.State==TripState.OnTrip&&!HasPendingChoice&&!session.jobs.BehaviorChoicesOpen&&!session.jobs.SituationPending&&!session.jobs.SituationWorkActive&&(session.jobs.Behavior==null||session.jobs.Behavior.WorkRemaining<=0)&&smallTalkCooldown<=0;}}
+ public bool CanDriverSmallTalk {get{return session&&session.business.useV2&&!finished&&CanTalk&&session.jobs.trip.State==TripState.OnTrip&&!HasPendingChoice&&!session.jobs.BehaviorChoicesOpen&&!session.jobs.SituationPending&&!session.jobs.SituationWorkActive&&(session.jobs.Behavior==null||!session.jobs.Behavior.HasChoice&&session.jobs.Behavior.WorkRemaining<=0)&&smallTalkCooldown<=0;}}
  public bool TryDriverSmallTalk(){
   if(!CanDriverSmallTalk)return false;
   if(PvpNativeLan.Route(session,"smalltalk"))return true;

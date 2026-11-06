@@ -32,7 +32,7 @@ public sealed class PassengerRequestFailureProbe:MonoBehaviour {
   s.requests.Finish();Check(s.requests.request.GoalOutcome==-1&&s.requests.Summary.Contains(evidence),"observation creates failed outcome with evidence");int delta=s.requests.TotalSatisfactionDelta;Check(delta<0,"failed choice applies actual negative satisfaction");s.requests.Finish();Check(s.requests.TotalSatisfactionDelta==delta,"repeated finish does not duplicate effect");RoundTrip();s.requests.Finish();Check(s.requests.TotalSatisfactionDelta==delta,"settled restore does not duplicate effect");
   Stop(s.jobs.current.drop);Check(s.jobs.Interact()&&!s.jobs.Active&&s.business.passengers.Count==1,"actual dropoff settles once");Check(s.business.passengers[0].request.Contains(evidence),"receipt retains observed failure reason");
   Begin(PassengerType.General);s.requests.Finish();Check(s.requests.request.GoalOutcome==1&&s.requests.request.QuietViolationCount==0,"Quiet with no deliberate input succeeds");
-  Begin(PassengerType.Food);Check(s.jobs.BehaviorChoicesOpen&&!s.requests.TryDriverSmallTalk(),"pending passenger choice blocks remote-compatible chat action");
+  Begin(PassengerType.Food);Check(s.jobs.Behavior.Type==PassengerType.Food&&s.jobs.Behavior.HasChoice,"forced Food fixture retains unresolved consent");s.jobs.nav.remaining=0;Check(!s.requests.TryDriverSmallTalk()&&s.requests.request.QuietViolationCount==0,"unresolved passenger choice blocks chat even when destination proximity hides choice panel");
   LongReplyChecks();
   Begin(PassengerType.Sleeping);s.jobs.Behavior.Advance(40,false,true,.4f,100);Check(s.jobs.BehaviorAsleep&&!s.requests.TryDriverSmallTalk()&&s.requests.request.QuietViolationCount==0,"sleeping passenger blocks voluntary chat without breach");
  }
