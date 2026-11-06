@@ -1,33 +1,40 @@
 {
-  "sourceCommit": "a11c52850773b5889c5ca47b1bbc94e8a890b348",
+  "sourceCommit": "34cc845c1018f89c48ea8cadb3a2efb427871cae",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-07",
-  "totalBytes": 124605158.0,
+  "totalBytes": 124667406.0,
   "validation": {
     "build": "PrototypeBuild.BuildHybrid exit 0",
+    "source": "34cc845",
     "hudLayoutAssertions": 12,
-    "hudDialogueSignalAssertions": 16,
+    "numericChoiceAssertions": 137,
+    "menuConditionAssertions": 16,
     "choiceEffectAssertions": 72,
-    "passengerCompositionAssertions": 73,
-    "playerAssertions": 144,
-    "priorFullUiAssertions": 188,
+    "playerUiAssertions": 213,
     "signalPlayerAssertions": 8,
-    "buttonResolutions": [
-      1280,
-      1920
+    "passengerRosterAssertions": 1821,
+    "conditionSettingsAssertions": 26,
+    "lanHostAssertions": 40,
+    "lanClientAssertions": 51,
+    "lanScope": "two loopback processes before final roster merge; final roster model 1821 and full Player 213 passed",
+    "protectedFiles": 16,
+    "protectedFilesChanged": 0,
+    "resolutions": [
+      "1280x720",
+      "1920x1080"
     ],
-    "nativeLanVersion": 12,
-    "isolatedSave": true,
+    "speedKmh": [
+      0,
+      35,
+      70,
+      140,
+      -35
+    ],
     "manualDriving": false,
     "fullCampaign": false,
-    "otherPc": false,
-    "fieldReviewComplete": false,
-    "protectedSaveFiles": 16,
-    "protectedSaveChanges": 0,
-    "currentWorkspaceOnly": true,
-    "report": "docs/work-history/2026-11-07-driving-hud-concept-v2.md"
+    "remotePc": false
   },
   "files": [
     {
@@ -43,17 +50,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "d62b3636676163031b573389c7017dfd8978c0fa65a91baa091cc10050bcef97"
+      "sha256": "476b4d4957a9265689ba791b8318b763fd5f090de5eb4995c6f90cd25fc60fc5"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 57108,
-      "sha256": "e544c24da07507ec48534d26b27bc8e4d88a57ba7c03c7ac1f77c173889ea44b"
+      "bytes": 57156,
+      "sha256": "a22440e17775fea0721b2517b90dfb2658b60b500f4e56edc8e2b3c0f1d4a6f6"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 111992,
-      "sha256": "8e03431ed441f57ef3102babadac93d32ffd3443a5230ba1f8512ce046f1dc53"
+      "bytes": 112104,
+      "sha256": "1d35bce7895ea1a26040fead391b893186eab81e39f0f4b8b45871f7ec1291e0"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -63,12 +70,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
       "bytes": 1140,
-      "sha256": "c4a5ad80faa3028a7608e2a6a04a5357e959b5b3d3feaec22cacdeabb1d1db88"
+      "sha256": "6ee591f46f5c1e9a277914f43c0cdf0f42682d9227c0b3798fde53ff080a33ae"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2555392,
-      "sha256": "6daceb865cc7a86a06dad52ea841d8bcd5d4a6f2b51fb679bfaffd8d06fc6364"
+      "bytes": 2577408,
+      "sha256": "86eafcc456fd93d0863cc3e6c373d8dce5ee429695bd7e895cf15d361b617493"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -567,8 +574,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 41554838,
-      "sha256": "c3fabb4a96a559693e8e1c36b44fe9be43eaf28b91b8f091de716f5c0fdc6598"
+      "bytes": 41594910,
+      "sha256": "0c5bbf6aa5b547649af0bc580fa2b735f33cbbe2f1055cb288822c8bc756ec4f"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
@@ -598,7 +605,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/sharedassets0.assets",
       "bytes": 7624,
-      "sha256": "69b486b0234fd316562cba1a89b975c07963432bdb6f5a58254868fb2de08968"
+      "sha256": "ca37814d9762a4d388185c00f5ae74e207cace8ade28037aece13c5567cb00f4"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi.exe",

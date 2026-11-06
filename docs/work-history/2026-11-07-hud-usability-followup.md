@@ -14,3 +14,13 @@ CockpitUI/DrivingHudArt/DrivingReadability/ServiceStops/DriveHUD/DrivingSettings
 ## 제한·다음 작업
 고정 상태/위치 제어 UI 검사와 LAN 물리 입력 검사이며, 사람 수동 운전·전체3일·다른PC LAN은 미검증. 남은 디자인: 월드 건물/도로·차량 아트, 캐릭터 표정과 반응, 경고/정산 연출, 실제 주행 중 장시간 정보 밀도·접근성 수용. 지도/수치 기본값/사용자 저장을 유지한다.
 실행: builds/EungyeTaxi/EungyeTaxi.exe (은계/A2, PrototypeBuild.BuildHybrid). 검사: DrivingHudConceptChecks.Build; -brightUiCheck -fullUiReview -lifeHubUiReview -hudDialogueReview. 산출물 artifacts/hud-usability/. 필수 입력 Strict issues0, 지도/ZIP 변경 없음.
+
+## 최종 검증·출하 영수증
+
+- 구현004b892, main 승객 다양화 보존 병합34cc845(실제 배포 소스). 최신 은계/A2·LANv14·BuildHybrid exit0. 지도/ZIP 변경 없음.
+- 최종 Editor: 배치12·숫자선택137·메뉴/호스트설정16·기존 신호/길안내/효과72 등 통합 통과.
+- 최종 Player213 PASS, 별도 신호8 PASS. 두 해상도, 속도0/35/70/140km/h 및 후진35, 긴 대화/PVP현황/퇴근 사유/설정 펼침·접힘의 실제 캡처 확인. 위치 제어/정지 상태 검사이며 사람 물리 주행이나 전체 캠페인 검사는 아님.
+- 승객 다양화1821·방 설정26 통과. LAN host40/client51은 최종 승객 다양화 병합 전 UI/설정 동일 소스의 두 로컬 프로세스 검사. 다른PC LAN 미검증.
+- 보호 저장16개 SHA256 변경0. Strict issues0. 통합/PVP manifest 전수141파일·124,667,406바이트 검증 exit0.
+- 화면: [밝은 HUD](../ui/2026-11-07-hud-usability/attention-single-1280.png), [PVP 주행](../ui/2026-11-07-hud-usability/10a-pvp-navigation.png), [대화와 현황](../ui/2026-11-07-hud-usability/10c-pvp-dialogue-standings.png), [방 설정](../ui/2026-11-07-hud-usability/08b-pvp-settings-1280.png).
+- 이력 실제 커밋은 git log -1 --oneline -- docs/work-history/2026-11-07-hud-usability-followup.md로 확인. 원격 main 게시 결과는 후속 영수증 참조.
