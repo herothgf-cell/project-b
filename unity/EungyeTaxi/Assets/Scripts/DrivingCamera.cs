@@ -5,16 +5,9 @@ public class DrivingCamera : MonoBehaviour {
     public bool RearView { get; private set; }
     public bool testRearView;public float testLook;public float LookYaw {get;private set;}public bool cornerLook=false;TaxiController taxi;
     float stableYaw;
-    Camera view; GameObject cockpit; bool snap=true;
+    Camera view; GameObject cockpit; Transform steeringWheel; bool snap=true;
     void Start() {
-        view=GetComponent<Camera>();taxi=target.GetComponent<TaxiController>();cockpit=new GameObject("Temporary cockpit");cockpit.transform.SetParent(target,false);cockpit.transform.localPosition=new Vector3(-.43f,1.07f,.6f);
-        var trim=WorldBuilder.Mat("Dashboard",new Color(.055f,.065f,.075f));
-        WorldBuilder.Box("Dashboard",new Vector3(.25f,-.6f,.65f),new Vector3(1.9f,.28f,.65f),trim,cockpit.transform,false);
-        WorldBuilder.Box("Instrument top",new Vector3(0,-.4f,.57f),new Vector3(.48f,.14f,.15f),trim,cockpit.transform,false);
-        var ring=new GameObject("Steering wheel");ring.transform.SetParent(cockpit.transform,false);ring.transform.localPosition=new Vector3(0,-.36f,.46f);
-        for(int i=0;i<16;i++){float angle=i*Mathf.PI/8;var bar=WorldBuilder.Box("Wheel rim",new Vector3(Mathf.Sin(angle)*.16f,Mathf.Cos(angle)*.16f,0),new Vector3(.065f,.045f,.035f),trim,ring.transform,false);bar.transform.localRotation=Quaternion.Euler(0,0,-angle*Mathf.Rad2Deg);}
-        WorldBuilder.Box("Wheel hub",Vector3.zero,new Vector3(.25f,.035f,.04f),trim,ring.transform,false);
-        foreach(var child in cockpit.GetComponentsInChildren<Transform>())child.gameObject.layer=10;
+        view=GetComponent<Camera>();taxi=target.GetComponent<TaxiController>();cockpit=TaxiArt.Cockpit(target,out steeringWheel);
         ApplyMode();
     }
     // Camera selection never changes the driver's explicit H assistance choice.
@@ -28,6 +21,7 @@ public class DrivingCamera : MonoBehaviour {
     }
     void LateUpdate() {
         if(!target)return;
+        if(steeringWheel)steeringWheel.localRotation=Quaternion.Euler(0,0,-taxi.SteeringInput*100);
         if(FirstPerson){
             float yaw=target.eulerAngles.y;
             stableYaw=snap?yaw:Mathf.LerpAngle(stableYaw,yaw,1-Mathf.Exp(-14*Time.deltaTime));

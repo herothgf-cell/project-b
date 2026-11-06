@@ -147,7 +147,7 @@ public sealed class ServiceLawZones : MonoBehaviour {
   if(!string.IsNullOrEmpty(session.services.notice))tip=session.services.notice+(tip==null?"":"\n\n"+tip);
   var occupancy=GetComponent<StopOccupancySystem>();bool occupied=occupancy&&occupancy.AffectsActive;
   if(occupied)tip=occupancy.Status+"\n안전한 곳에서 대기 · 영업/연료 시간은 계속 흐름"+(tip==null?"":"\n\n"+tip);
-  if(tip!=null){float scale=CockpitUI.Scale;var r=CockpitUI.SlidingTipBounds(Screen.width,Screen.height,result&&!occupied,session.jobs.Active,tipSlide,session.simulationMatch!=null);Panel(r);
+  if(tip!=null){float scale=CockpitUI.Scale;var r=CockpitUI.SlidingTipBounds(Screen.width,Screen.height,result&&!occupied,session.jobs.Active,tipSlide,session.simulationMatch!=null,session.drivingCamera&&session.drivingCamera.FirstPerson);Panel(r);
    GUI.Label(new Rect(r.x+10*scale,r.y+3*scale,120*scale,30*scale),"TIP",new GUIStyle(text){font=KoreanText.BoldFont,fontSize=Mathf.RoundToInt(17*scale)});
    if(GUI.Button(new Rect(r.xMax-104*scale,r.y+5*scale,94*scale,28*scale),"◀ 숨기기",KoreanText.Button(Mathf.RoundToInt(13*scale))))ToggleTip();
    if(!TipExpanded&&GUI.Button(new Rect(Mathf.Max(0,r.xMax),r.y,54*scale,36*scale),"TIP ▶",KoreanText.Button(Mathf.RoundToInt(13*scale))))ToggleTip();

@@ -29,7 +29,7 @@ public class TaxiSignals : MonoBehaviour {
         on=WorldBuilder.Mat("Indicator amber",new Color(1,.48f,.015f));on.EnableKeyword("_EMISSION");on.SetColor("_EmissionColor",new Color(1,.35f,0)*3);
         off=WorldBuilder.Mat("Indicator dark",new Color(.25f,.1f,.015f));
         for(int side=-1;side<=1;side+=2)for(int end=0;end<2;end++) {
-            var lamp=WorldBuilder.Box("Taxi indicator",new Vector3(side*.84f,.47f,end==0?2.03f:-2.03f),new Vector3(.18f,.2f,.06f),off,transform,false);lamp.layer=gameObject.layer;
+            var lamp=TaxiArt.Part(transform,"Taxi indicator",new Vector3(side*.67f,end==0?.43f:.34f,end==0?2.03f:-2.03f),new Vector3(.22f,.08f,.04f),.019f,off);lamp.layer=gameObject.layer;
             (side<0?left:right)[end]=lamp.GetComponent<Renderer>();
         }
     }

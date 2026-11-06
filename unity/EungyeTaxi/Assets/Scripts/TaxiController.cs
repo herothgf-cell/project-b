@@ -17,18 +17,12 @@ public class TaxiController : MonoBehaviour {
         spawn=position; spawnRotation=rotation; transform.SetPositionAndRotation(position,rotation);
         body=gameObject.AddComponent<Rigidbody>(); body.mass=1400; body.drag=.04f; body.angularDrag=1.5f; body.interpolation=RigidbodyInterpolation.Interpolate; body.collisionDetectionMode=CollisionDetectionMode.ContinuousDynamic; body.centerOfMass=new Vector3(0,-.18f,0);body.maxDepenetrationVelocity=3;body.maxAngularVelocity=4;body.solverIterations=12;
         var hit=gameObject.AddComponent<BoxCollider>(); hit.center=new Vector3(0,.42f,0); hit.size=new Vector3(1.8f,.7f,4f);
-        var yellow=WorldBuilder.Mat("Taxi yellow",new Color(1f,.65f,.04f)); var glass=WorldBuilder.Mat("Glass",new Color(.08f,.22f,.29f)); var black=WorldBuilder.Mat("Tyres",new Color(.035f,.04f,.05f));
-        WorldBuilder.Box("Body",new Vector3(0,.42f,0),new Vector3(1.8f,.7f,4),yellow,transform,false);
-        WorldBuilder.Box("Cabin",new Vector3(0,1.02f,-.2f),new Vector3(1.5f,.62f,1.95f),glass,transform,false);
-        WorldBuilder.Box("Roof",new Vector3(0,1.35f,-.2f),new Vector3(1.55f,.1f,2),yellow,transform,false);
-        WorldBuilder.Box("Taxi sign",new Vector3(0,1.54f,-.2f),new Vector3(.6f,.23f,.3f),yellow,transform,false);
-        var light=WorldBuilder.Mat("Headlights",new Color(1,1,.8f));
-        for(int i=-1;i<=1;i+=2) WorldBuilder.Box("Headlamp",new Vector3(i*.62f,.47f,2.01f),new Vector3(.4f,.2f,.04f),light,transform,false);
+        TaxiArt.Exterior(transform);
         for(int i=0;i<4;i++) {
             var w=new GameObject("Wheel "+i); w.transform.SetParent(transform,false); w.transform.localPosition=new Vector3(i%2==0?-.85f:.85f,0,i<2?1.3f:-1.3f);
             var c=w.AddComponent<WheelCollider>(); c.radius=.34f; c.mass=25; c.suspensionDistance=.25f; var spring=c.suspensionSpring; spring.spring=35000; spring.damper=4500; spring.targetPosition=.5f; c.suspensionSpring=spring;
             var f=c.sidewaysFriction; f.stiffness=1.35f; c.sidewaysFriction=f; wheels[i]=c;dryForwardStiffness[i]=c.forwardFriction.stiffness;
-            var v=GameObject.CreatePrimitive(PrimitiveType.Cylinder); v.name="Tyre visual"; v.transform.SetParent(transform,false); v.transform.localScale=new Vector3(.68f,.12f,.68f); v.GetComponent<Renderer>().sharedMaterial=black; var visualCollider=v.GetComponent<Collider>();if(Application.isPlaying)Destroy(visualCollider);else DestroyImmediate(visualCollider); visuals[i]=v.transform;
+            visuals[i]=TaxiArt.Wheel(transform);
         }
         foreach(var tr in GetComponentsInChildren<Transform>()) tr.gameObject.layer=8;
     }

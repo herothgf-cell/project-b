@@ -130,6 +130,7 @@ public sealed partial class BrightUIProbe:MonoBehaviour {
    foreach(int width in new[]{1280,1920}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);readability.SelectSignal();Check(readability.SignalCountdownText.EndsWith("초"),"countdown still available "+width);yield return Capture("signal-countdown-"+width);}
    done=true;Debug.Log("SIGNAL_COUNTDOWN_PLAYER_RESULT "+(ok?"PASS":"FAIL")+" checks="+checks);Application.Quit(ok?0:1);yield break;
   }
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-taxiArtReview")>=0){yield return ReviewTaxiArt();done=true;Debug.Log("TAXI_ART_PLAYER_RESULT "+(ok?"PASS":"FAIL")+" checks="+checks);Application.Quit(ok?0:2);yield break;}
   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-lifeHubUiReview")>=0)yield return ReviewRepairAttention("single");
   if(FullUiReview)yield return ReviewSingleMenus();
   foreach(int width in new[]{1280,1920}){
