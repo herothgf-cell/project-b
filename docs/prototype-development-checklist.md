@@ -1,5 +1,9 @@
 # 프로토타입 개발 체크리스트
 
+## 2026-11-06 요청 성공·실패 조건 조사
+
+- [x] [17종 실제 판정표](content-tuning-request-outcomes.md) 작성: Quiet 관찰 공백, 실패5종/하차 강제3종, ETA/경로 판정 불가와 응답 완료·미응답 구분. Node5개 및17종/71선택·실패5종 대조 통과. 문서만 변경·새 판정/빌드/물리·수동 플레이 검사 없음. [작업 기록](work-history/2026-11-06-request-outcomes-audit.md).
+
 ## 2026-11-06 3일 작은 방·첫 구매 기획
 
 - [x] [최초3일 검증안](content-design/13-three-day-room-and-first-purchase.md): 방1개/2종×2스타일, 첫날 선택·둘째 날 유지/구매·셋째 날 기록, 기존 구현 재사용/최소 추가, 회계/저장·관찰 기준 작성. [작업 이력](work-history/2026-11-06-three-day-room-first-purchase.md).
