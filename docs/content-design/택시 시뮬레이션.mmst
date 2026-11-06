@@ -191,7 +191,7 @@
             "collapsed": false,
             "tags": [
               "현재 플레이 기획",
-              "단계:하위 집계: 50% 30 / 25% 0 / 0% 2"
+              "단계:하위 집계: 50% 31 / 25% 0 / 0% 2"
             ],
             "children": [
               {
@@ -318,7 +318,7 @@
                 "collapsed": false,
                 "tags": [
                   "현재 플레이 기획",
-                  "단계:하위 집계: 50% 13 / 25% 0 / 0% 0"
+                  "단계:하위 집계: 50% 14 / 25% 0 / 0% 0"
                 ],
                 "children": [
                   {
@@ -637,11 +637,28 @@
                     "task": {
                       "progress": 0.5
                     }
+                  },
+                  {
+                    "id": "published-20261106-workshops",
+                    "topic": "은계·A2 공업사 각2곳: 수리·견인·대기·지도 길안내",
+                    "children": [],
+                    "collapsed": true,
+                    "tags": [
+                      "단계:50% 구현"
+                    ],
+                    "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/08-accident-and-workshop-proposal.md",
+                    "note": "\n\n<!-- published-2026-11-06 -->\n수리 내구도1점당200원·10+0.5×손실초, 일반 견인3,000원/30초. PVP 실제 타이머·칸 예약, 취소 서비스 미청구. 중대 사고 이동은 사고비에 포함.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/content-design/08-accident-and-workshop-proposal.md",
+                    "hyperlinks": [
+                      "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/08-accident-and-workshop-proposal.md"
+                    ],
+                    "task": {
+                      "progress": 0.5
+                    }
                   }
                 ],
                 "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/03-life-and-economy.md",
                 "hyperlinks": [],
-                "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 13 / 25% 0 / 0% 0\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/05-interface-and-navigation.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n주요 시설\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
+                "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 14 / 25% 0 / 0% 0\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/05-interface-and-navigation.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n주요 시설\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
                 "modifiedAt": 1793599686837
               },
               {
@@ -984,7 +1001,7 @@
             ],
             "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/05-interface-and-navigation.md",
             "hyperlinks": [],
-            "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 30 / 25% 0 / 0% 2\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/05-interface-and-navigation.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n맵\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
+            "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 31 / 25% 0 / 0% 2\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/05-interface-and-navigation.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n맵\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
             "modifiedAt": 1793599686837
           },
           {
@@ -1575,15 +1592,49 @@
                   "현재 플레이 기획",
                   "단계:하위 집계: 50% 11 / 25% 0 / 0% 0"
                 ]
+              },
+              {
+                "id": "published-20261106-accidents",
+                "topic": "보행자·차량·시설 사고: 3등급·운송 중단·비용/시간/감점",
+                "children": [],
+                "collapsed": true,
+                "tags": [
+                  "단계:50% 구현"
+                ],
+                "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/08-accident-and-workshop-proposal.md",
+                "note": "\n\n<!-- published-2026-11-06 -->\n싱글/PVP 공통. 보행자 3,000/8,000/15,000원·45/120/240초, 차량·시설 1,000/3,000/6,000원·15/45/90초. 확정 운임 보호, 중대 공업사 이동 포함, 추가 피로0+통상 경과. 사건당 결제/저장·호스트 복제.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/content-design/08-accident-and-workshop-proposal.md",
+                "hyperlinks": [
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/08-accident-and-workshop-proposal.md"
+                ],
+                "task": {
+                  "progress": 0.5
+                }
+              },
+              {
+                "id": "published-20261106-person-damage",
+                "topic": "보행자 사고 내구도 손상: 경미0~2·중간0~5·중대0~10",
+                "children": [],
+                "collapsed": true,
+                "tags": [
+                  "단계:50% 구현"
+                ],
+                "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-06-pedestrian-durability.md",
+                "note": "\n\n<!-- published-2026-11-06 -->\n호스트에서 사건당 한 번 선택·적용·저장. 기존 진행 사고 소급 없음. D0 유료 수리 필요.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-06-pedestrian-durability.md",
+                "hyperlinks": [
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-06-pedestrian-durability.md"
+                ],
+                "task": {
+                  "progress": 0.5
+                }
               }
             ],
             "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/03-life-and-economy.md",
             "hyperlinks": [],
-            "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 11 / 25% 0 / 0% 0\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/03-life-and-economy.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n차량\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
+            "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 13 / 25% 0 / 0% 0\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/03-life-and-economy.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n차량\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
             "modifiedAt": 1793599686837,
             "tags": [
               "현재 플레이 기획",
-              "단계:하위 집계: 50% 11 / 25% 0 / 0% 0"
+              "단계:하위 집계: 50% 13 / 25% 0 / 0% 0"
             ]
           },
           {
@@ -1775,7 +1826,7 @@
                           },
                           {
                             "id": "d11cdd1c-069e-5285-b552-3e381224d181",
-                            "topic": "수동 주행 회전 후 방향지시등 자동 해제 (기획 필요)",
+                            "topic": "수동 주행 회전 후 방향지시등 자동 해제 (구현)",
                             "children": [],
                             "task": {
                               "progress": 0.5
@@ -2407,12 +2458,14 @@
                   },
                   {
                     "id": "18c1c9aa-86eb-4adb-9d51-40fa1d9f581f",
-                    "topic": "공간 일시 점유→해소 대기·기한 보호1회 (대체 이동은 후속)",
+                    "topic": "승하차 점유 대기·기한 보호·작성된 안전 대체 쌍",
                     "children": [],
                     "createdAt": 1793085718127,
                     "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/02-passengers-and-fares.md",
-                    "hyperlinks": [],
-                    "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 50% 구현\n\n현재 기획과 기존 구현/작업 이력에 존재하는 해당 동작. 새 확장·새 UI 스타일·전체 검증 완료를 포함하지 않음\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/01-driving-and-traffic.md\n구현 근거: unity/EungyeTaxi/Assets/Scripts/TrafficSystem.cs\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n공간 일시 점유→해소 대기·기한 보호1회 (대체 이동은 후속)\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
+                    "hyperlinks": [
+                      "https://github.com/herothgf-cell/project-b/blob/main/docs/CURRENT-STATE.md"
+                    ],
+                    "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 50% 구현\n\n현재 기획과 기존 구현/작업 이력에 존재하는 해당 동작. 새 확장·새 UI 스타일·전체 검증 완료를 포함하지 않음\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/01-driving-and-traffic.md\n구현 근거: unity/EungyeTaxi/Assets/Scripts/TrafficSystem.cs\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n공간 일시 점유→해소 대기·기한 보호1회 (대체 이동은 후속)\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.\n\n<!-- published-2026-11-06 -->\n게임용으로 작성한 안전 대체 쌍 구현. 전체 지도 임의 장소 자동 생성은 아님.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/CURRENT-STATE.md",
                     "modifiedAt": 1793599686837,
                     "tags": [
                       "현재 플레이 기획",
@@ -2617,14 +2670,15 @@
               },
               {
                 "id": "3693287f-e2c9-4439-9dcd-8bb60215ed04",
-                "topic": "설정",
+                "topic": "게임 내 일반 설정 확장 (별도 콘텐츠 관리창과 구분)",
                 "createdAt": 1792740866204,
                 "children": [],
                 "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/README.md",
                 "hyperlinks": [
-                  "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md"
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md",
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/content-tuning-tool-guide.md"
                 ],
-                "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 0% 기획 필요 · P3\n\n현재 모드/조작 전환과 구분한 별도 설정 메뉴의 항목·저장·초기화 범위 기획 필요\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n설정\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
+                "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 0% 기획 필요 · P3\n\n현재 모드/조작 전환과 구분한 별도 설정 메뉴의 항목·저장·초기화 범위 기획 필요\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n설정\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.\n\n<!-- published-2026-11-06 -->\n별도 콘텐츠 관리창은 구현됐으며 UI/UX 가지 참조. 현재 main에 게시되지 않은 동시 운전 설정 작업은 이 맵의 구현 근거에 포함하지 않는다.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/content-tuning-tool-guide.md",
                 "modifiedAt": 1793599686837,
                 "tags": [
                   "현재 플레이 기획",
@@ -2651,7 +2705,7 @@
             "createdAt": 1792732887343,
             "tags": [
               "현재 플레이 기획",
-              "단계:하위 집계: 50% 12 / 25% 0 / 0% 0"
+              "단계:하위 집계: 50% 13 / 25% 0 / 0% 0"
             ],
             "children": [
               {
@@ -2872,11 +2926,28 @@
                 "hyperlinks": [
                   "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/05-interface-and-navigation.md"
                 ]
+              },
+              {
+                "id": "published-20261106-editor",
+                "topic": "별도 설정 관리창: 대사·선택지71개·단계별 효과·법규 편집",
+                "children": [],
+                "collapsed": true,
+                "tags": [
+                  "단계:50% 구현"
+                ],
+                "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-tuning-tool-guide.md",
+                "note": "\n\n<!-- published-2026-11-06 -->\n설정 관리.cmd. 즉시/운행 중/운송 종료 후 효과, 성공/실패/판정 불가 구분, 프로필/복원·실제 C# 미리보기. 기존 운송 snapshot 및 LAN 호스트 권한. 새 행동/법규 감지기 생성 아님.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/content-tuning-tool-guide.md",
+                "hyperlinks": [
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/content-tuning-tool-guide.md"
+                ],
+                "task": {
+                  "progress": 0.5
+                }
               }
             ],
             "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/05-interface-and-navigation.md",
             "hyperlinks": [],
-            "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 12 / 25% 0 / 0% 0\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/05-interface-and-navigation.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\nUI/UX\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
+            "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 13 / 25% 0 / 0% 0\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/05-interface-and-navigation.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\nUI/UX\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
             "modifiedAt": 1793599686837,
             "collapsed": false
           },
@@ -2887,7 +2958,7 @@
             "collapsed": false,
             "tags": [
               "현재 플레이 기획",
-              "단계:하위 집계: 50% 7 / 25% 0 / 0% 0"
+              "단계:하위 집계: 50% 8 / 25% 0 / 0% 0"
             ],
             "children": [
               {
@@ -3039,11 +3110,28 @@
                 "hyperlinks": [],
                 "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 3 / 25% 0 / 0% 0\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/04-campaign-and-feedback.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n저장·이어하기\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
                 "modifiedAt": 1793599686837
+              },
+              {
+                "id": "published-20261106-room",
+                "topic": "싱글 정산→내 공간: 조명·러그 구매와 소유 저장",
+                "children": [],
+                "collapsed": true,
+                "tags": [
+                  "단계:50% 구현"
+                ],
+                "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-06-personal-room-implementation.md",
+                "note": "\n\n<!-- published-2026-11-06 -->\n조명5,000/러그8,000원·각2스타일, 미리보기/찜/보관/조명조작. 개인 지출과 영업 수익 분리, 다음 날/재실행 소유 유지·최종 방 읽기 전용. 처음방 비교·전체 과거방 탐색은 후속.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-06-personal-room-implementation.md",
+                "hyperlinks": [
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-06-personal-room-implementation.md"
+                ],
+                "task": {
+                  "progress": 0.5
+                }
               }
             ],
             "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/04-campaign-and-feedback.md",
             "hyperlinks": [],
-            "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 7 / 25% 0 / 0% 0\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/04-campaign-and-feedback.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n캠페인\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
+            "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 8 / 25% 0 / 0% 0\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/04-campaign-and-feedback.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n캠페인\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
             "modifiedAt": 1793599686837
           },
           {
@@ -3667,14 +3755,16 @@
                   },
                   {
                     "id": "a4579c31-e8de-5074-9bf6-9f985e0d85dc",
-                    "topic": "용무·경유형 (별도 용무 대기는 후속)",
+                    "topic": "용무·경유형: 합의한 용무 대기 구현",
                     "children": [],
                     "createdAt": 1793597387559,
                     "modifiedAt": 1793599686837,
                     "collapsed": true,
-                    "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 50% 구현\n\n현재 기획과 기존 구현/작업 이력에 존재하는 해당 동작. 새 확장·새 UI 스타일·전체 검증 완료를 포함하지 않음\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/02-passengers-and-fares.md\n구현 근거: unity/EungyeTaxi/Assets/Scripts/PassengerBehavior.cs\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n용무·경유형 (별도 용무 대기는 후속)\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
+                    "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 50% 구현\n\n현재 기획과 기존 구현/작업 이력에 존재하는 해당 동작. 새 확장·새 UI 스타일·전체 검증 완료를 포함하지 않음\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/02-passengers-and-fares.md\n구현 근거: unity/EungyeTaxi/Assets/Scripts/PassengerBehavior.cs\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n용무·경유형 (별도 용무 대기는 후속)\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.\n\n<!-- published-2026-11-06 -->\n합의한20초 용무 대기와 경유 처리. 모든 임의 용무 확장이 아님.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/CURRENT-STATE.md",
                     "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/02-passengers-and-fares.md",
-                    "hyperlinks": [],
+                    "hyperlinks": [
+                      "https://github.com/herothgf-cell/project-b/blob/main/docs/CURRENT-STATE.md"
+                    ],
                     "tags": [
                       "현재 플레이 기획",
                       "단계:50% 구현"
@@ -4267,12 +4357,12 @@
         "createdAt": 1793597387559,
         "modifiedAt": 1793599686837,
         "collapsed": false,
-        "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 170 / 25% 0 / 0% 5\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/README.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n현재 플레이 기획\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
+        "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 175 / 25% 0 / 0% 5\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/README.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 현재 플레이 기획\n\n현재 플레이 기획\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
         "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/README.md",
         "hyperlinks": [],
         "tags": [
           "현재 플레이 기획",
-          "단계:하위 집계: 50% 170 / 25% 0 / 0% 5"
+          "단계:하위 집계: 50% 175 / 25% 0 / 0% 5"
         ]
       },
       {
@@ -5080,14 +5170,15 @@
               },
               {
                 "id": "a9743d4c-325d-4cd3-9d56-2cc308c4201e",
-                "topic": "보행자 사고 패널티 (보험, 치료비 등 지불됨)",
+                "topic": "보행자 사고의 보험·치료비 산정 (후속)",
                 "createdAt": 1792733299619,
                 "children": [],
                 "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/README.md",
                 "hyperlinks": [
-                  "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md"
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md",
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/08-accident-and-workshop-proposal.md"
                 ],
-                "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 0% 기획 필요 · P4\n\n아이디어/검토는 있으나 실제 구현을 위한 조건·효과·예외 또는 지도/통합 계약의 추가 기획이 필요함\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 기존 아이디어·후속 구상 (미구현/추가 결정)\n\n보행자 사고 패널티 (보험, 치료비 등 지불됨)\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
+                "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 0% 기획 필요 · P4\n\n아이디어/검토는 있으나 실제 구현을 위한 조건·효과·예외 또는 지도/통합 계약의 추가 기획이 필요함\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 기존 아이디어·후속 구상 (미구현/추가 결정)\n\n보행자 사고 패널티 (보험, 치료비 등 지불됨)\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.\n\n<!-- published-2026-11-06 -->\n현재 게임 처리비와 보험/치료비 산정은 별개다. 보험·과실·구급차는 미구현.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/content-design/08-accident-and-workshop-proposal.md",
                 "modifiedAt": 1793599686837,
                 "tags": [
                   "기존 아이디어·후속 구상 (미구현/추가 결정)",
@@ -5168,14 +5259,15 @@
                       },
                       {
                         "id": "8affb820-317d-403a-b442-d9f1a5a7f46f",
-                        "topic": "사고 처리비·시간·피로·공업사 상세안 검토 (11/05 미구현)",
+                        "topic": "사고 처리 구현 참조 · 보험·과실·현장 구조는 후속",
                         "createdAt": 1792733200135,
                         "children": [],
                         "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/README.md",
                         "hyperlinks": [
-                          "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md"
+                          "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md",
+                          "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/08-accident-and-workshop-proposal.md"
                         ],
-                        "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 0% 기획 필요 · P4\n\n아이디어/검토는 있으나 실제 구현을 위한 조건·효과·예외 또는 지도/통합 계약의 추가 기획이 필요함\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 기존 아이디어·후속 구상 (미구현/추가 결정)\n\n내 차가 사고 나면 어떻게 연출할 것인가?\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
+                        "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 0% 기획 필요 · P4\n\n아이디어/검토는 있으나 실제 구현을 위한 조건·효과·예외 또는 지도/통합 계약의 추가 기획이 필요함\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 기존 아이디어·후속 구상 (미구현/추가 결정)\n\n내 차가 사고 나면 어떻게 연출할 것인가?\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.\n\n<!-- published-2026-11-06 -->\n사고 처리는 현재 플레이의 사고·공업사 가지를 따른다. 이 기존 가지의 보험·과실·현장 구조 확장은 미구현이다.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/content-design/08-accident-and-workshop-proposal.md",
                         "modifiedAt": 1793599686837,
                         "tags": [
                           "기존 아이디어·후속 구상 (미구현/추가 결정)",
@@ -5618,15 +5710,32 @@
               "기존 아이디어·후속 구상 (미구현/추가 결정)",
               "단계:하위 집계: 50% 0 / 25% 0 / 0% 2"
             ]
+          },
+          {
+            "id": "published-20261106-growth",
+            "topic": "개인 생활 확장: 차량 구매·꾸미기·이사·장기 재출발",
+            "children": [],
+            "collapsed": true,
+            "tags": [
+              "단계:0% 기획 필요"
+            ],
+            "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/14-personal-life-design-guide.md",
+            "note": "\n\n<!-- published-2026-11-06 -->\n10~14 기획 문서/시안은 작성됨. 현재 구현은 싱글 작은 방·조명/러그 범위. 차량 구매·차량 물품·이사·장기 경제는 미구현이며 가격/진행 검증과 구현 범위 결정이 남아0%로 유지.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/content-design/14-personal-life-design-guide.md",
+            "hyperlinks": [
+              "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/14-personal-life-design-guide.md"
+            ],
+            "task": {
+              "progress": 0
+            }
           }
         ],
         "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/README.md",
         "hyperlinks": [],
-        "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 1 / 25% 0 / 0% 45\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/README.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 기존 아이디어·후속 구상 (미구현/추가 결정)\n\n기존 아이디어·후속 구상\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
+        "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 1 / 25% 0 / 0% 46\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/README.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 기존 아이디어·후속 구상 (미구현/추가 결정)\n\n기존 아이디어·후속 구상\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
         "modifiedAt": 1793599686837,
         "tags": [
           "기존 아이디어·후속 구상 (미구현/추가 결정)",
-          "단계:하위 집계: 50% 1 / 25% 0 / 0% 45"
+          "단계:하위 집계: 50% 1 / 25% 0 / 0% 46"
         ],
         "collapsed": true
       },
@@ -5859,11 +5968,11 @@
     ],
     "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/README.md",
     "hyperlinks": [],
-    "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 178 / 25% 0 / 0% 53\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/README.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 기획 읽기: 현재 / 기존 후속 / 추가 제안 / 제작 참고\n\n택시 시뮬레이션\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
+    "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 183 / 25% 0 / 0% 54\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/README.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 기획 읽기: 현재 / 기존 후속 / 추가 제안 / 제작 참고\n\n택시 시뮬레이션\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.",
     "modifiedAt": 1793599686837,
     "tags": [
       "기획 읽기: 현재 / 기존 후속 / 추가 제안 / 제작 참고",
-      "단계:하위 집계: 50% 178 / 25% 0 / 0% 53"
+      "단계:하위 집계: 50% 183 / 25% 0 / 0% 54"
     ]
   },
   "meta": {
@@ -5872,6 +5981,7 @@
     "updatedAt": 1793600082237,
     "organizationVersion": "2026-11-02",
     "progressReviewVersion": "2026-11-02-progress",
-    "handoffReviewDate": "2026-11-03"
+    "handoffReviewDate": "2026-11-03",
+    "publishedReviewDate": "2026-11-06"
   }
 }

@@ -1,3 +1,5 @@
+[개인 생활 기획 안내와 화면 시안](14-personal-life-design-guide.md): 실직 후 재출발, 택시/이사 성장, 최초3일 방·첫 구매. 신규 기능은 미구현 제안입니다.
+
 # 택시 시뮬레이션 기획서
 
 [13 작은 방과 첫 구매](13-three-day-room-and-first-purchase.md)는 현재3일에서 먼저 검증할 방1개·조명/러그2종, 날짜별 경험, 첫 시험 가격, 정산/개인 지출·저장/완료 경계를 담당한다. 최초 범위는 이 문서를 우선하며11의5종과3컷 인트로는 후속 후보로 축소했다. 미구현 기획이다.
@@ -49,4 +51,3 @@ PVP 피로·포만감 개선안은 [기존 생활·경제 기획의 PVP 전용 �
 [후속 구상](../future-design/README.md) · [기획 변경 이력/정리 전 원문](../design-history/content-design/README.md) · [개발·제작 참고](../technical-reference/README.md) · [작업/검증 이력](../work-history/LATEST.md).
 
 플레이 중 사건을 보는 ‘운전 기록’은04의 콘텐츠다. 문서 변경/개발 히스토리와 혼동하지 않는다.
-
