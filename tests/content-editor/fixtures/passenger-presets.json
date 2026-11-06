@@ -1,0 +1,800 @@
+{
+  "cases": [
+    {
+      "name": "drunk_quiet_luggage",
+      "valid": true,
+      "data": {
+        "version": 1,
+        "presets": [
+          {
+            "id": "custom",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          }
+        ]
+      }
+    },
+    {
+      "name": "drunk_luggage_errand",
+      "valid": true,
+      "data": {
+        "version": 1,
+        "presets": [
+          {
+            "id": "custom",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage",
+              "purpose.errand"
+            ],
+            "intro": "안녕하세요"
+          }
+        ]
+      }
+    },
+    {
+      "name": "sensitive_food",
+      "valid": true,
+      "data": {
+        "version": 1,
+        "presets": [
+          {
+            "id": "custom",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Food",
+            "traits": [
+              "body.sensitive",
+              "item.food"
+            ],
+            "intro": "안녕하세요"
+          }
+        ]
+      }
+    },
+    {
+      "name": "general_quiet",
+      "valid": true,
+      "data": {
+        "version": 1,
+        "presets": [
+          {
+            "id": "custom",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "General",
+            "traits": [
+              "speech.quiet"
+            ],
+            "intro": "안녕하세요"
+          }
+        ]
+      }
+    },
+    {
+      "name": "bad_id",
+      "valid": false,
+      "data": {
+        "version": 1,
+        "presets": [
+          {
+            "id": "Bad ID",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          }
+        ]
+      }
+    },
+    {
+      "name": "unknown_trait",
+      "valid": false,
+      "data": {
+        "version": 1,
+        "presets": [
+          {
+            "id": "custom",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "unknown"
+            ],
+            "intro": "안녕하세요"
+          }
+        ]
+      }
+    },
+    {
+      "name": "speech_conflict",
+      "valid": false,
+      "data": {
+        "version": 1,
+        "presets": [
+          {
+            "id": "custom",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "speech.talkative"
+            ],
+            "intro": "안녕하세요"
+          }
+        ]
+      }
+    },
+    {
+      "name": "double_primary",
+      "valid": false,
+      "data": {
+        "version": 1,
+        "presets": [
+          {
+            "id": "custom",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.talkative",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          }
+        ]
+      }
+    },
+    {
+      "name": "double_request",
+      "valid": false,
+      "data": {
+        "version": 1,
+        "presets": [
+          {
+            "id": "custom",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "body.sensitive",
+              "purpose.hurried"
+            ],
+            "intro": "안녕하세요"
+          }
+        ]
+      }
+    },
+    {
+      "name": "drunk_sleepy",
+      "valid": false,
+      "data": {
+        "version": 1,
+        "presets": [
+          {
+            "id": "custom",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "body.sleepy"
+            ],
+            "intro": "안녕하세요"
+          }
+        ]
+      }
+    },
+    {
+      "name": "wrong_pool",
+      "valid": false,
+      "data": {
+        "version": 1,
+        "presets": [
+          {
+            "id": "custom",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Food",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          }
+        ]
+      }
+    },
+    {
+      "name": "general_action",
+      "valid": false,
+      "data": {
+        "version": 1,
+        "presets": [
+          {
+            "id": "custom",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "General",
+            "traits": [
+              "item.food"
+            ],
+            "intro": "안녕하세요"
+          }
+        ]
+      }
+    },
+    {
+      "name": "long_intro",
+      "valid": false,
+      "data": {
+        "version": 1,
+        "presets": [
+          {
+            "id": "custom",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          }
+        ]
+      }
+    },
+    {
+      "name": "fraction_weight",
+      "valid": false,
+      "data": {
+        "version": 1,
+        "presets": [
+          {
+            "id": "custom",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 0.5,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          }
+        ]
+      }
+    },
+    {
+      "name": "negative_weight",
+      "valid": false,
+      "data": {
+        "version": 1,
+        "presets": [
+          {
+            "id": "custom",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": -1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          }
+        ]
+      }
+    },
+    {
+      "name": "duplicate_id",
+      "valid": false,
+      "data": {
+        "version": 1,
+        "presets": [
+          {
+            "id": "custom",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "custom",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          }
+        ]
+      }
+    },
+    {
+      "name": "too_many",
+      "valid": false,
+      "data": {
+        "version": 1,
+        "presets": [
+          {
+            "id": "p0",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p1",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p2",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p3",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p4",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p5",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p6",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p7",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p8",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p9",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p10",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p11",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p12",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p13",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p14",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p15",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p16",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p17",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p18",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p19",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p20",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p21",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p22",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p23",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p24",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p25",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p26",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p27",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p28",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p29",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p30",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p31",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          },
+          {
+            "id": "p32",
+            "name": "시험 승객",
+            "enabled": true,
+            "weight": 1,
+            "pool": "Drunk",
+            "traits": [
+              "body.drunk",
+              "speech.quiet",
+              "item.luggage"
+            ],
+            "intro": "안녕하세요"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,3 +1,9 @@
+## 2026-11-06 승객 프리셋·특성 조합
+
+- [x] 기존12프리셋·특성 분해, 효과/확장 후보·제작 예시·화면 도식, 관리창 CRUD·조합 오류·공유 효과·저장/재로드. [상세 기획15](content-design/15-passenger-presets-and-traits.md).
+- [x] 지원 조합의 게임 연결·고정 선택/구프로필 호환·작업 복원·음주 한도 분리, Node73/모델73·선택50·미리보기29 및 최종 Player42·LAN41/52·BuildHybrid exit0. 기존 저장29파일 불변. [검증/기존 실패·최종 출하](work-history/2026-11-06-passenger-composition-implementation.md).
+- [ ] 수면+소지품 등 독립 행동 진행기 확장, 새 장치·메스꺼움·단골 기능, 사람 장시간/전체3일·다른PC LAN 수용.
+
 ## 2026-11-06 HUD·승객 대화 시안 적용
 
 - [x] 승인 시안의 상단/내비·운송/상태계 배치와 큰 대사·효과 배지, 긴 대화 스크롤 구현. 기존 수치/응답/저장·LAN 유지. [실제 검사/출하 영수증](work-history/2026-11-06-hud-dialogue-implementation.md).

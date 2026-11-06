@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "3f53d742e3d7d7acb1e0a443c954e066f30f6704dbd441368cfb3131ad0e6195",
+  "contentHash": "609eca522d6e3817f148fd6e425a416146ef920ca1d0fc5514cf1d19f7f52768",
   "values": [
     {
       "id": "request.Quiet.enabled",
@@ -1183,6 +1183,10 @@
     {
       "id": "type.Drunk.vomitPercent",
       "value": "25"
+    },
+    {
+      "id": "passenger.presets",
+      "value": "{\"version\":1,\"presets\":[{\"id\":\"general\",\"name\":\"일반\",\"enabled\":true,\"weight\":1,\"pool\":\"General\",\"traits\":[],\"intro\":\"\"},{\"id\":\"drunk\",\"name\":\"취객\",\"enabled\":true,\"weight\":1,\"pool\":\"Drunk\",\"traits\":[\"body.drunk\"],\"intro\":\"\"},{\"id\":\"sleeping\",\"name\":\"수면\",\"enabled\":true,\"weight\":1,\"pool\":\"Sleeping\",\"traits\":[\"body.sleepy\"],\"intro\":\"\"},{\"id\":\"comfort\",\"name\":\"편안한 운행\",\"enabled\":true,\"weight\":1,\"pool\":\"Comfort\",\"traits\":[\"body.sensitive\"],\"intro\":\"\"},{\"id\":\"hurried\",\"name\":\"급한 승객\",\"enabled\":true,\"weight\":1,\"pool\":\"Hurried\",\"traits\":[\"purpose.hurried\"],\"intro\":\"\"},{\"id\":\"routechecking\",\"name\":\"경로 확인\",\"enabled\":true,\"weight\":1,\"pool\":\"RouteChecking\",\"traits\":[\"purpose.route\"],\"intro\":\"\"},{\"id\":\"errand\",\"name\":\"경유 용무\",\"enabled\":true,\"weight\":1,\"pool\":\"Errand\",\"traits\":[\"purpose.errand\"],\"intro\":\"\"},{\"id\":\"luggage\",\"name\":\"짐\",\"enabled\":true,\"weight\":1,\"pool\":\"Luggage\",\"traits\":[\"item.luggage\"],\"intro\":\"\"},{\"id\":\"muddyluggage\",\"name\":\"흙 묻은 짐\",\"enabled\":true,\"weight\":1,\"pool\":\"MuddyLuggage\",\"traits\":[\"item.muddy\"],\"intro\":\"\"},{\"id\":\"food\",\"name\":\"음식\",\"enabled\":true,\"weight\":1,\"pool\":\"Food\",\"traits\":[\"item.food\"],\"intro\":\"\"},{\"id\":\"precisionstop\",\"name\":\"정확한 정차\",\"enabled\":true,\"weight\":1,\"pool\":\"PrecisionStop\",\"traits\":[\"purpose.precise\"],\"intro\":\"\"},{\"id\":\"talkative\",\"name\":\"수다\",\"enabled\":true,\"weight\":1,\"pool\":\"Talkative\",\"traits\":[\"speech.talkative\"],\"intro\":\"\"}]}"
     },
     {
       "id": "choice.effects.version",
