@@ -186,7 +186,7 @@
   const defaults=new Map((catalog.entries||[]).map(e=>[e.id,e.defaultValue]));const values=new Map((profile?.values||[]).map(e=>[e.id,e.value]));
   const value=id=>values.has(id)?values.get(id):defaults.get(id);const enabled=id=>!id||String(value(id)).toLowerCase()==='true';
   if(entity.requestKind==='LostItem')return {text:enabled(entity.enabledId)?'하차 후 조건부 10%':'사용 안함 · 하차 후 사건 제외',explanation:'하차 후 후보 식별자로 정하는 별도 10% 텍스트 사건입니다. 일반 요청 추첨에서 제외하며 가중치로 10%를 바꾸지 않습니다.'};
-  if(!entity.weightId)return {text:'',explanation:''};
+  if(!entity.weightId)return entity.id==='type.Drunk'?{text:'취객 별도 배정 · 하루 최대 2명',explanation:'연속 특수 승객을 피하는 일반 승객 차례를 제외하고, 하루 취객이 2명 미만이면 30% 기준 추첨합니다. 취객 없이 3회 탑승하면 다음 추첨 가능 차례에 취객을 배정합니다. 실제 빈도는 하루 진행과 일반 승객 차례에 따라 달라집니다. 취객의 잠듦은 별도 30% 조건입니다.'}:{text:'',explanation:''};
   if(!enabled(entity.enabledId))return {text:'사용 안함 · 후보 제외',explanation:'사용하지 않는 요청은 가중치와 관계없이 후보에서 제외합니다.'};
   const weight=Math.max(0,Number(value(entity.weightId))||0);if(!weight)return {text:'가중치 0 · 후보 제외',explanation:'양수 가중치를 가진 사용 중 후보만 추첨합니다.'};
   const request=entity.kind==='request';const prefix=request?'request.':'type.';
@@ -222,6 +222,7 @@
    return info(entry.editable?'요청을 수락한 뒤 하차 때 이행 여부를 평가할 때':'현행 운송의 고정 결과를 설명할 때',target+'의 수락 답변 전체','현재는 요청 종류별 평가 점수입니다. 선택지별 독립 점수는 지원하지 않으며, 버튼을 누를 때와 하차 때 두 번 더하지 않습니다.');
   }
   if(domain==='schedule')return info(name.startsWith('count')?'새 운송의 요청 개수를 배정할 때':'새 운송의 등장 시점을 정하고 운행 중 표시 기회를 확인할 때',allRequests,name.startsWith('count')?'0·1·2건 비중 합계는 100입니다. 개수 배정 뒤 각 요청의 가중치를 사용합니다.':name==='movingSeconds'?'운행 중 요청을 표시하기 전 필요한 실제 주행 시간입니다. 안전 정차 기회도 필요합니다.':'진행률은 0~1 값입니다. 예: 0.25는 25%. 주행 시간과 안전 정차 기회도 함께 충족해야 합니다.');
+  if(domain==='type'&&name==='Sleeping'&&field==='weight')return info('일반 승객 차례·취객 우선 추첨 뒤 특수 유형을 배정할 때','잠자는 승객 유형의 등장 빈도','취객이 배정되지 않은 차례의 특수 유형 추첨(30% 기준)에서 후보 간 상대 가중치를 사용합니다. 가중치 1은 전체 승객의 1%가 아닙니다. 특수 승객 뒤 다음 탑승은 일반 승객이며, 취객의 잠듦 30%는 이 값과 별개입니다.');
   if(domain==='type')return info(field==='weight'?'새 승객의 유형을 배정할 때':field==='intro'?'해당 유형의 첫 대화를 보여줄 때':field==='choice'?'기사 응답 선택지를 보여줄 때':'해당 유형의 운행 중 후속 대화를 보여줄 때',typeTitle(name)+' 승객만',field==='weight'?'특수 유형 후보 사이의 상대 비중입니다. 일반·취객 보장과 대표 요청 자격은 별도입니다.':'빈 답변·후속 문구는 현재 상태에 맞는 내장 대사를 사용합니다.');
   if(domain==='situation')return info('해당 상황에 대한 기사 답변을 보여줄 때',({SignalWait:'신호 대기',Jolt:'차량 흔들림',NecessaryBrake:'필요한 제동'})[name]+' 상황 대화만','후속 질문 제한 선택은 이 운송의 새로운 추가 상황 대화를 막습니다. 별도 예약 요청은 취소하지 않습니다.');
   if(domain==='effect'){
@@ -237,7 +238,7 @@
     'luggage.prepareSeconds':['적재 허용 뒤 안전 정차 중','큰 짐 승객의 적재 허용 선택'],
     'luggage.unloadSeconds':['목적지 도착 뒤 안전 정차 중','큰 짐 승객의 적재 허용 선택'],
     'muddy.prepareSeconds':['깔개 보호 선택 뒤 안전 정차 중','오염 짐 승객의 깔개 보호 선택'],
-    'muddy.dirt':['보호 없이 실은 짐을 내리거나 운송을 중도 종료할 때','오염 짐 승객의 보호 없이 적재 선택','청결 변화량을 한 번 적용합니다. -2는 청결 2점 감소, 0은 감소 없음입니다.'],
+    'muddy.dirt':['보호 없이 실은 짐을 내리거나 운송을 중도 종료할 때','차량 청결도 · 보호 없이 적재한 오염 짐','차량 청결도(0~100)에 한 번 적용합니다. -5이면 100→95, 0이면 추가 감소 없음입니다. 승객 만족도·기사 피로도는 직접 바뀌지 않습니다. 청결도 80 이상은 승차 만족도 기본 +3, 30 미만은 세차가 필요합니다.'],
     'sleep.calmSeconds':['흔들림으로 깨어난 뒤 다시 잠들 때까지','수면 승객','응답 대기 중에는 시간이 끝나도 바로 잠들지 않습니다.'],
     'resecure.seconds':['짐 재고정 응답 뒤 안전 정차 중','큰 짐·오염 짐을 실제로 실은 승객','흔들림·필요한 제동 상황의 재고정 선택이 공유합니다.'],
     'errand.seconds':['경유 약정 수락 후 경유지에서 F로 안전 정차했을 때','경유 용무 요청','그 자리에서 무료 대기하며, 원래 목적지까지 같은 운송을 계속합니다.']
@@ -264,5 +265,10 @@
   if(domain==='manner')return info(name==='recovery'?'새 구간에서 안정 주행의 거리 또는 시간 조건에 도달할 때':'해당 운전 사건을 관찰할 때',name==='comfortMotion'?'편안한 운행 요청 수락 뒤의 M':name==='recovery'?'모든 승객 운송의 M 회복':'모든 승객 운송의 운전 만족도 M',(field==='penalty'?'-2는 M 2점 감점, 0은 감점 없음입니다. ':'')+'M 변화는 하차 만족도의 주행 변화량에 반영합니다. 요청 이행 점수와 별도입니다.');
   return info('설명된 상황·조건을 확인할 때',entry.section||entry.title||'현재 게임의 고정 조건',entry.editable?'':'현재 구현의 고정 조건이며 값을 편집하지 않습니다.');
  }
- globalThis.ContentModel={build,weightInfo,fieldInfo,isLegacyField};
+ function displayCatalog(catalog){
+  const titles={'effect.muddy.dirt':'오염 짐 · 차량 청결도 변화','effect.food.crumbs':'음식 부스러기 · 차량 청결도 변화','effect.food.spill':'음식 흘림 · 차량 청결도 추가 변화'};
+  for(const e of catalog.entries||[])if(titles[e.id])e.title=titles[e.id];
+  return catalog;
+ }
+ globalThis.ContentModel={build,weightInfo,fieldInfo,isLegacyField,displayCatalog};
 })();

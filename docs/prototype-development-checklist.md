@@ -1,3 +1,7 @@
+## 2026-11-06 배포 검증·게임 지표 안내
+
+- [x] 통합/PVP 배포142파일 전수 검증 exit0, 새 밸런스 관리창 적용 및 분리 테스트 실행. 차량 청결도/기사 피로도 명시·취객/수면 빈도 설명, UI23통과. [검증 기록](work-history/2026-11-06-distribution-and-stat-labels.md).
+
 ## 2026-11-06 승객 효과 밸런스 적용
 
 - [x] [밸런스 v1](passenger-balance-v1.md): default/preset 저장·새 게임 적용, 49값 조정·대사 보존·원본 백업. 실제 코어11개 및 프로필3개/요청조합1420개 검증 통과. [작업 이력](work-history/2026-11-06-passenger-balance-v1.md).
