@@ -13,6 +13,12 @@ PassengerActionPresentation/UI를 추가하여 깨우기/적재/보호/하역/�
 
 ## 통합·남은 작업
 
+### main 출하·브랜치 정리 영수증
+- 최종 소스51260ff, 통합 실행본48638de를 origin/main에 일반 push 완료(73de2bb→48638de). manifest141파일124,795,870바이트, 통합/PVP 및 D 원래 실행폴더 전수 해시 검증 통과.
+- 모든 로컬15개/원격2개 작업 브랜치의 main 미반영 커밋0과 ancestor를 확인하고 삭제. [삭제 직전 ref/원래 SHA/미반영 수](2026-11-07-passenger-actions-branch-audit.json). 로컬 refs/heads와 원격 heads는 main만 남음.
+- 다른 작업 완료 후 정리했으며 worktree 디렉터리는 삭제하지 않고 기존 커밋에 detach했다. 원래 D:/Git/project-b main은 최종 실행본으로 fast-forward. 사용자 LATEST의 Higgsfield 문단은 충돌 시 양쪽을 유지해 미커밋으로 복원, 미추적55파일 SHA256 불변. 이번 임시 stash만 제거, 기존 stash는 보존.
+- 현재 기본 실행은 D:/Git/project-b/builds/EungyeTaxi/EungyeTaxi.exe. HUD 작업공간에도 동일 검증 실행본이 있음. 실행/브랜치 영수증 문서는 별도 마지막 커밋으로 main에 기록하며 이 문서의 실제 커밋은 git log -1 --oneline -- docs/work-history/2026-11-07-passenger-actions-implementation.md로 확인한다.
+
 ### 최종 실행본 검증 결과
 - Unity PassengerActionChecks.Build → PrototypeBuild.BuildHybrid exit0, 행동 표시 Editor77.
 - 실제 렌더링/위치 제어 fixture: 행동77(1280/1920), 전체HUD/메뉴/생활거점/긴 대화213 모두 exit0. artifacts/passenger-actions/all-actions.log 및 full-ui-final.log.

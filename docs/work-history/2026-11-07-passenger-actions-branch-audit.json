@@ -1,0 +1,87 @@
+[
+  {
+    "ref": "refs/heads/codex/casual-controls-signals",
+    "commit": "3a7f7ae5bc768222294b44573fe0881a28642e12",
+    "uniqueCommits": 0
+  },
+  {
+    "ref": "refs/heads/codex/easy-road-editor",
+    "commit": "037b06670e2e96ebb1719067ba243f75e6668f52",
+    "uniqueCommits": 0
+  },
+  {
+    "ref": "refs/heads/codex/eungye-only",
+    "commit": "bb5c50a6e139085b31cc54b805e89226a3ec8a07",
+    "uniqueCommits": 0
+  },
+  {
+    "ref": "refs/heads/codex/hud-dialogue-readability",
+    "commit": "48638de735f08232ebca3447557cd1367ea1d260",
+    "uniqueCommits": 0
+  },
+  {
+    "ref": "refs/heads/codex/nav-stop-readability",
+    "commit": "6da93192ccd56575c523c51a3d48b42fecd40aae",
+    "uniqueCommits": 0
+  },
+  {
+    "ref": "refs/heads/codex/passenger-composition",
+    "commit": "309e49ebef3be87520af560cd52a545cc030e4d3",
+    "uniqueCommits": 0
+  },
+  {
+    "ref": "refs/heads/codex/passenger-traits-expansion",
+    "commit": "73de2bb00e023ec0fb40fbd557200082c9272aee",
+    "uniqueCommits": 0
+  },
+  {
+    "ref": "refs/heads/codex/project-map-editor",
+    "commit": "ea5fb1c131797786bb86a01d0001437cfe5455fb",
+    "uniqueCommits": 0
+  },
+  {
+    "ref": "refs/heads/codex/prototype-content",
+    "commit": "1e9790ca06bd70e048f16f80280debdcb1ab06fa",
+    "uniqueCommits": 0
+  },
+  {
+    "ref": "refs/heads/codex/push-driving-score",
+    "commit": "341c7bbebae7c0bd0c12fcd2e3e6a17d842e544b",
+    "uniqueCommits": 0
+  },
+  {
+    "ref": "refs/heads/codex/road-map-editor",
+    "commit": "73d57a5c7dff7a07f555da2cf9def51164bbe95b",
+    "uniqueCommits": 0
+  },
+  {
+    "ref": "refs/heads/codex/steering-ease-followup",
+    "commit": "0806937454cc521e5e0a59ac6e8a5ac311b43e53",
+    "uniqueCommits": 0
+  },
+  {
+    "ref": "refs/heads/codex/unity-full-map-editor",
+    "commit": "88895e6c95ed72c2047a9d9fa34acdcd87ecbabb",
+    "uniqueCommits": 0
+  },
+  {
+    "ref": "refs/heads/codex/unity-scene-map-editor",
+    "commit": "6d5123b66ae02ccbb09822d0e1c27743a52d51b6",
+    "uniqueCommits": 0
+  },
+  {
+    "ref": "refs/heads/feature/assisted-route-driving",
+    "commit": "2de9a539b0c611a5e13b8de9b5e65449c3ff8bec",
+    "uniqueCommits": 0
+  },
+  {
+    "ref": "refs/remotes/origin/codex/balance-default-release",
+    "commit": "d2925086d2859331fd060bb4518804018c9c4633",
+    "uniqueCommits": 0
+  },
+  {
+    "ref": "refs/remotes/origin/feature/pvp-prototype",
+    "commit": "2de2ac5a307cdc37f1ee778506e28fe3834bdb03",
+    "uniqueCommits": 0
+  }
+]

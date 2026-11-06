@@ -17,8 +17,8 @@
 - [x] Editor 검사로 표시 모델/접기 계약의 누락 실패 확인. PassengerActionPresentation.cs와 PassengerActionUI.cs 구현, 메타 생성. 상태종류/안전조건/기존 Interact와 숫자 입력 연결.
 - [x] DriveSession 부착·CockpitUI 요약/행동 보기·PassengerBehaviorUI의 일반 발언을 카드에 연결, 작업팝업 중 중복 숨김. 조건/기존 요청은 그대로 유지. Editor 상태/배치검사 통과.
 - [x] BrightUIProbe에 실제 깨우기/작업 상태 캡처와 접기·자리이탈/입력/정산 검사. BuildHybrid 및 실제1280/1920, 모델·LAN 회귀, 사용자저장/manifest 검증. 신선한 독립 코드 검토 후 확정.
-- [ ] 이력/기획05·07/체크리스트 갱신, main의 새 완료 변경 보존 통합·소스/배포 커밋·push.
-- [ ] 최종 fetch와 모든 브랜치 포함 관계·worktree dirty 검사. 커밋 포함된 worktree는 detach로 파일 보존, main 외 로컬/원격 브랜치 제거, 결과 이력 main push. 미반영 작업은 조사/보존 통합 없이 삭제 금지.
+- [x] 이력/기획05·07/체크리스트 갱신, main의 새 완료 변경 보존 통합·소스/배포 커밋·push.
+- [x] 최종 fetch와 모든 브랜치 포함 관계·worktree dirty 검사. 커밋 포함된 worktree는 detach로 파일 보존, main 외 로컬/원격 브랜치 제거, 결과 이력 main push. 미반영 작업은 조사/보존 통합 없이 삭제 금지.
 
 ## Ledger
 승인된 기존 자동승하차 보존이 설계보다 우선한다. 구현은 부모가 순차 수행, 최종 전체 검토만 독립 agent 사용(executing-plans 규칙).
