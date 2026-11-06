@@ -35,4 +35,9 @@
 
 - 초기/탭 대비 후보 실제 Player 각각160검사 PASS/exit0. 독립 소스 검토에서9개 파일의 알림/가드/배율/기존ID·클리핑/대비에 실행을 막는 문제 없음.
 - 게시 직전 원격 main이 `4202dac5011339154294cdb88ced90ed7c92ab5c`로 전진했다. 브레이크5항목·NGII 좌회전·LANv11과 관련 검증/문서를 병합한다. 장면 충돌은 최신 main 생성 ID를 유지한다. 원격에서 추가한 속도 카드 공업사 버튼은 이번 승인된 생활거점 단일 진입으로 대체하고 관련 DrivingSettingsProbe의2개 UI 기대값을 레드닷으로 갱신한다. 물리/신호/설정/네트워크 구현은 최신 main 그대로 보존한다.
-- 통합 최종 실행·manifest·게시 결과는 아래 추가한다.
+- 통합 최종 `build-integrated.log`: Unity exit0, 테마/설정171·메뉴183·모달/콘텐츠32·빌드3/HUD focused/integration/제동모델22·실제PhysX8·NGII좌회전회귀/BuildHybrid 통과.
+- 통합 최종 `integrated-player.log`: exit0, `BRIGHT_UI_RESULT PASS checks=160`, PNG58. 실제 두 해상도 싱글/PVP·알림/시설/내비/정산/설정/개인공간 확인. 기존 첫 메뉴 초기 캡처는 이번 시각 증거에서 제외했다.
+- 통합 최신 운전 설정 Player: `tools/test_driving_settings_player.ps1` 싱글17/PVP15 모두 exit0, 임시 contentTest 캠페인과 독립 PreferenceKey 사용. 사후 사용자 저장10파일 hash 변화0. 이전 main의 LAN51/64·재접속은 보존된 기준 증거이며 이번에 재실행한 것으로 세지 않는다.
+- 병합 후 독립 재검토에서도 중요한 회귀 없음. TaxiController/TrafficSystem/DrivingSettings/PvpNativeLan 구현은 원격4202dac와 동일하다. 새 물리/신호 코드는 이번 UI 작성물이 아니라 통합 보존분이다.
+- 실제 화면8장은 `docs/ui/2026-11-06-icons-lifehub/`에 보관한다. 후속 HUD 점검에서 두 줄 거리/최소글자·선택 탭 대비를 반영했고 가운데/속도 카드 중복 수리 버튼은 없다.
+- 최종 소스/manifest/게시 해시는 실제 커밋 후 추가한다.
