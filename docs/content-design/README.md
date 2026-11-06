@@ -1,3 +1,5 @@
+[개인 생활 기획 안내와 화면 시안](14-personal-life-design-guide.md): 실직 후 재출발, 택시/이사 성장, 최초3일 방·첫 구매. 신규 기능은 미구현 제안입니다.
+
 # 택시 시뮬레이션 기획서
 
 PVP 피로·포만감 개선안은 [기존 생활·경제 기획의 PVP 전용 항목](03-life-and-economy.md#pvp-driver-condition)에서 관리한다. 현재 피로1.25배·간편식15초·무료휴식45초를 실제 적용했으며 싱글 캠페인 규칙과 구분한다.
@@ -43,4 +45,3 @@ PVP 피로·포만감 개선안은 [기존 생활·경제 기획의 PVP 전용 �
 [후속 구상](../future-design/README.md) · [기획 변경 이력/정리 전 원문](../design-history/content-design/README.md) · [개발·제작 참고](../technical-reference/README.md) · [작업/검증 이력](../work-history/LATEST.md).
 
 플레이 중 사건을 보는 ‘운전 기록’은04의 콘텐츠다. 문서 변경/개발 히스토리와 혼동하지 않는다.
-

@@ -1,3 +1,5 @@
+2026-11-06 기획 게시: [개인 생활 안내/시안](content-design/14-personal-life-design-guide.md). 최초3일 방1개·2종 구매 검증안이며 미구현이다. 현재 코드/배포 범위는 변경하지 않는다.
+
 # 프로토타입 통합 범위
 
 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 개발 프로젝트는 `unity/EungyeTaxi`, 빌드는 `PrototypeBuild.BuildHybrid`다. 현재 콘텐츠의 기준은 [기획 목록](content-design/README.md), 개발·검증 상태는 [체크리스트](prototype-development-checklist.md), 날짜별 증거는 [작업 이력](work-history/LATEST.md)을 따른다. 이전 범위는 [보존 기록](design-history/prototype-scope-history.md)에 둔다.
