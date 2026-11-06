@@ -43,3 +43,12 @@ Quiet 수락 후 실제 운전자 선택적 잡담 입력만 새 위반으로 �
 - 관리 툴 실제 브라우저에서 신규 특성·30프리셋·대사/수치·검증 표시 확인. 사용자 활성프로필을 적용하거나 덮어쓰지 않았다. 보호 저장22파일 SHA256 불변, Strict issues0, 지도/ZIP 변경 없음.
 - LAN 실행 중 출하 파일 갱신을 시도해 파일 잠금으로 실패한 한 회차는 결과에서 제외했다. 해당 본 작업 검사만 중단했고 마지막 빌드에서 재검사한다.
 - 자동 Player의 상태/위치 제어 검증과 동일PC LAN 검증을 사람 운전·다른PC 수용으로 해석하지 않는다. 사람 수동 운전/장기 밸런스/전체3일 캠페인/다른PC LAN은 미검증이다. 전체 prototype 기존 일반제동 기대값 실패는 위에 기록한 대로 남아 있다.
+
+## 최종 출하 영수증
+
+- 소스 기준: de877ec9de5cfb51177671eea2053810cda1053d (실제 git rev-parse 확인). 마지막 코드 통합437d692; 독립 읽기 검토 승인, 차단 문제 없음.
+- 최종 빈 출력 빌드: ContentTuningBuild.Build → PrototypeBuild.BuildHybrid 종료0, build-weather-final.log. 초기화 파일에 새 요청 probe 등록 확인.
+- 최종 실행본 요청49·특성86 통과. 동일PC 실제 두 프로세스 LAN 호스트44/클라이언트55 통과, 날씨/콘텐츠 동기화 포함. 증거 artifacts/pvp/native-lan-20261107-020600-e837f89d, request-weather-final.log, player.txt. LAN의 실제 입력·WheelCollider 경로와 승객 상태/위치 제어 검사는 서로 다른 검증이다.
+- 보호 저장22 불변. 자동 생성 장면은 백업/해시 확인 후 ID만 바뀐 소스를 복원했다. 빌드 및 초기화 메타데이터는 출하에 포함한다.
+- 원격 main4d79da3까지 통합. 정상 fast-forward push로 배포하며 원본 D 작업폴더의 다른 작업 변경은 건드리지 않는다. 이력의 실제 커밋은 git log -1 --oneline -- docs/work-history/2026-11-07-passenger-trait-expansion.md로 확인한다.
+- 출하 141파일 / 124778132바이트. 통합 manifest와 기존 PVP VerifyOnly 모두 종료0.
