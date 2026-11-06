@@ -40,3 +40,5 @@
 소스 커밋 이후 실제 해시를 읽어 배포 manifest를 생성하고 기본 폴더 반영 결과를 아래에 덧붙인다. 원격 push는 요청되지 않아 수행하지 않는다.
 
 실제 소스 커밋 `c8f5d89`를 `git log -1 --oneline -- <본 기록>`으로 확인했다. 해당 전체40자리 해시로 통합 manifest 생성, 통합/PVP위임 VerifyOnly 모두 exit0:141파일/124,579,862바이트 전수 SHA256/크기 일치. 이 빌드/manifest를 로컬 main 기본 실행폴더에 통합한다.
+
+배포 커밋 `7dc84b6`, 동시 승객 기획 `854f397`을 보존한 병합 `63efe2a`를 실제 Git 결과로 확인했다. LATEST의 충돌은 두 작업 항목을 모두 남겨 해소했고 게임 코드 충돌은 없었다. 로컬 main을63efe2a로 fast-forward하여 **원래 `D:/Git/project-b/builds/EungyeTaxi/EungyeTaxi.exe` 실행폴더에 반영 완료**. 원래 폴더에서 통합/PVP VerifyOnly 모두 exit0,141파일124,579,862바이트. 원격 게시와 사용자 수동 플레이는 수행하지 않았다. 이 영수증의 최종 커밋은 `git log -1 --oneline -- <본 기록>`으로 확인한다.
