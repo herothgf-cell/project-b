@@ -22,9 +22,11 @@
 - [x] 카탈로그/codec: choice-catalog.mjs, profile.mjs/server, ContentTuning.cs, config+Resources, 이관/보안/크기/동등성검사.
 - [x] 관리창: content-model/app/CSS, 각선택지3단계+유효결과+명시단위+0안내, livepreview/프로필기능/DOM검사.
 - [x] 런타임: PassengerJobsChoiceEffects.cs, 선택성공hook, 실제판정/DriverCondition/M/snapshot검증/구운송/LANv9/실제코어미리보기.
-- [ ] 전체모델·Node·UnityEditor·Player·LAN/이어하기/독립설정상충 검사, BuildHybrid/기본사용자파일보존·manifest갱신/검증, 브라우저QA/문서·이력/선택커밋/최종실행.
+- [x] 전체모델·Node·UnityEditor·Player·LAN/이어하기/독립설정상충 검사, BuildHybrid/기본사용자파일보존·manifest갱신/검증, 브라우저QA/문서·이력/선택커밋/최종실행.
 
 ## Workspace ledger
 canonicalC:/git/project-b e34f60e에는미추적로컬자료만있음. 현재외부관리worktree는이전미커밋구현이많아건드리지않는다. 승인기능은artifacts/choice-effects-system에git archive한최신source로개발후지정파일만canonical에통합한다. UnityLibrary/map검증은현재canonical에서최종수행한다. 프로필sample/active시작SHA는이전과같음. 작업중예외/검증은여기에계속추가한다.
 
 Integration progress: 최신 보행자 소스9275f2a/출하6e73f0f를 보존해 canonical에80개 지정 소스/문서를 통합했다. 후보 Editor72/32/3·BuildHybrid0·Player54·LAN60+76/재접속·Node56·Strict issues0 통과. Canonical 최종 빌드/실행/배포 영수증은 아래 후속으로 남긴다.
+
+Final verification: canonical source c116ce4, BuildHybrid exit0, Editor72/32/3, Player54, LAN60+76/재접속/상충프로필 exit0, Node56, Strict issues0, 사용자16파일 변경0. 출하140파일116826789바이트·통합/PVP alias VerifyOnly 각각exit0. 숨김 대화 fixture는 HWND 미반환으로 실제 마우스/렌더 검증 미완료. 사람/다른PC 수용 및 기준 소스에서도 재현한 기존 회귀3건은 작업 이력에 구분했다.

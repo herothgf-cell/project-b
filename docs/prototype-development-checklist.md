@@ -1,5 +1,10 @@
 # 프로토타입 개발 체크리스트
 
+## 2026-11-06 일과 개인 생활 최소 기획
+
+- [x] 현재 거점/시간/마감/저장 대조와 [친구1명·현장2장면·개인 기록 기획](content-design/09-work-and-personal-life-proposal.md) 작성. 선택 자유·무감점·1회 사건·읽기시간 무소모, 미구현/수용 기준 구분. [이번 이력](work-history/2026-11-06-personal-life-design.md).
+- [ ] 기획 방향 수용·안전 장소2곳 확인 후 구현 계획. 실제 코드/Player·사람3일 검증은 아직이며20/45초는 시험 제안값.
+
 ## 2026-11-06 보행자 사고 내구도 후속
 
 - [x] 사용자 승인 경미0~2/중간0~5/중대0~10 손상, 호스트1회 선택/실제 감소·차량 사건 ID 저장, 구 진행 사고의 분류 변경에도 소급 없음, 팝업 실제 감소량.
@@ -24,7 +29,8 @@
 
 - [x] 요청·유형·상황71선택지의 즉시/운행 중/종료 S·피로 점/%·점/분/%/분, 자연 피로 증가율 추가·M 감점 추가와0추가효과 의미를 구현. ETA/공감 독립, 승차 전 활성화·중복/재개 보호·Food/Comfort 중복 제거.
 - [x] schema2 엄격 검증·구프로필 메모리 이관/백업·기존schema1 운송 보존, 호스트 장부/snapshot·LANv9 연결. [구현 기준](superpowers/specs/2026-11-06-independent-choice-effects.md), [사용 안내](content-tuning-tool-guide.md).
-- [ ] 최종 통합 BuildHybrid/실제 Player·LAN 결과와 출하 manifest 검증은 실제 명령 결과를 확인한 뒤 작업 이력에 기록한다. 소스 구현 표시가 사람 장시간·전체 캠페인·다른PC 수용 완료를 뜻하지 않는다.
+- [x] 최종 BuildHybrid/Editor72+32+3·순수50/6/643·Node56·실제 Player54/LAN60+76·재접속 exit0. 출하140파일116,826,789바이트·사용자 active 포함141파일 manifest 통합/PVP alias exit0·사용자16파일 불변·Strict issues0. [실제 증거와 별도 기존 실패](work-history/2026-11-06-independent-choice-effects.md).
+- [ ] 사람 장시간·전체 캠페인·다른PC/실물패드·게임 대화의 실제 마우스 스크롤 수용은 별도다.
 
 ## 2026-11-06 콘텐츠 관리창 연결 편집 개선
 

@@ -1,8 +1,12 @@
 # 최신 작업 상태
 
+## 2026-11-06 일과 개인 생활 최소 기획
+
+[검토용 기획안](../content-design/09-work-and-personal-life-proposal.md) · [근거/검토/인계](2026-11-06-personal-life-design.md). 친구1명·기존 거점2곳의 풍경 남기기/짧은 만남·마감 개인 기록을 제안했다. 실제 우회/활동시간과 다음 날 기억을 연결하며 의무 일정·관계 점수·회복 보상을 두지 않는다. 세부 수치/인물은 제안, 게임 미구현. 다음은 기획 방향 수용과 실제 안전 장소 확인 후 구현 계획이다. 현재 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 싱글·A2 PVP·LAN v9 / BuildHybrid는 동시 선택지 효과 작업의 배포 이력을 따른다. 이번은 문서만 변경, 필수 입력/ZIP 미변경·Strict 정상은 해당 작업 기록 인용이며 새 빌드/기능·물리/수동 검사 없음. 동시 빌드/씬/manifest·기존 사용자 자료 보존.
+
 ## 2026-11-06 선택지별 독립 단계 효과
 
-[구현·실제 검증·실행](2026-11-06-independent-choice-effects.md) · [관리창 사용 안내](../content-tuning-tool-guide.md). 실제71선택지의 즉시/운행 중/종료 S·기사 피로 점/%·분당 변화와 자연 피로 증가율·M 감점 추가를 독립 편집한다. 0은 추가 효과 없음, ETA/공감 독립·Food/Comfort 중복 제거·기존 프로필 원본 보존 이관/이어하기 무중복을 구현했다. 기본 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 싱글·A2 PVP·통합 LAN v9(보행자 내구도 후속 포함, 양쪽 갱신). 소스 통합/최종 빌드·배포 검증은 진행 중이며 완료 영수증은 해당 이력에 후속 기록한다. 원래 외부 관리 worktree의 미커밋 자료와 사용자 저장·active·지도 입력/ZIP을 보존한다.
+[구현·실제 검증·실행](2026-11-06-independent-choice-effects.md) · [관리창 사용 안내](../content-tuning-tool-guide.md). 실제71선택지의 즉시/운행 중/종료 S·기사 피로 점/%·분당 변화와 자연 피로 증가율·M 감점 추가를 독립 편집한다. 0은 추가 효과 없음, ETA/공감 독립·Food/Comfort 중복 제거·기존 프로필 원본 보존 이관/이어하기 무중복을 구현했다. 기본 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 싱글·A2 PVP·통합 LAN v9(보행자 내구도 후속 포함, 양쪽 갱신). 소스c116ce4·최종 BuildHybrid/Editor72+32+3·순수50/6/643·Node56·실제 싱글54/LAN60+76·재접속 exit0. 출하140파일116,826,789바이트·active 포함141파일 통합/PVP VerifyOnly exit0·사용자16파일 불변·Strict issues0. 다음은 사용자 직접 조정과 사람 장시간/전체 캠페인·다른PC 수용이다. 원래 외부 관리 worktree의 미커밋 자료와 사용자 저장·active·지도 입력/ZIP을 보존한다.
 
 ## 2026-11-06 보행자 사고 내구도 후속
 
