@@ -5,6 +5,7 @@ using UnityEngine;
 // These are native-simulation views, deliberately independent of the old flat motor protocol.
 [Serializable] public sealed class PvpNativeFrame {
     public float elapsed,trafficClock;
+    public RainSettings weather;
     public DemandSignalState[] signals;
     public bool finished,full;
     public int recipient;
@@ -77,7 +78,7 @@ public static class PvpNativeReplica {
         var match=lan.Match;
         if(recipient<0||recipient>=match.Drivers.Count)throw new ArgumentOutOfRangeException("recipient");
         var human=match.Human;
-        var frame=new PvpNativeFrame{elapsed=match.Elapsed,trafficClock=human.traffic.Clock,signals=human.traffic.CaptureSignalRuntime(),finished=match.Finished,full=full,recipient=recipient,
+        var frame=new PvpNativeFrame{weather=RainSettings.Capture(),elapsed=match.Elapsed,trafficClock=human.traffic.Clock,signals=human.traffic.CaptureSignalRuntime(),finished=match.Finished,full=full,recipient=recipient,
             scores=new int[4],claims=new int[human.jobs.stops.Length],offers=match.SharedCalls.Offers,roadside=match.SharedCalls.Roadside,
             actors=new PvpNativeActor[4],npcs=new PvpNativeNpc[human.traffic.cars.Count],
             occupancy=match.PassengerWorld?match.PassengerWorld.State:null,occupancyStop=match.PassengerWorld?match.PassengerWorld.BlockedStop:-1};
@@ -165,6 +166,7 @@ public static class PvpNativeReplica {
         if(lan==null||lan.IsHost||lan.Match==null||frame==null)return;
         if(frame.recipient!=lan.LocalSlot||frame.actors==null||frame.actors.Length!=4||frame.scores==null||frame.scores.Length!=4||frame.claims==null)
             throw new ArgumentException("Invalid native match frame");
+        if(frame.weather==null)throw new ArgumentException("Missing host weather");frame.weather.Install();
         BindClient(lan);
         var match=lan.Match;var view=State(lan);bool first=view.received<=0;
         if(!first&&PvpNativePerf.Moving)PvpNativePerf.Sample("moving-packet-gap-ms",(Time.realtimeSinceStartupAsDouble-view.received)*1000);

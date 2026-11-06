@@ -5812,7 +5812,7 @@
                   },
                   {
                     "id": "rain-20261107-tool",
-                    "topic": "툴 날씨 탭 · 비/강도/와이퍼/오염/제동/교통 계수",
+                    "topic": "툴 + 일시정지 날씨 탭 · 6값 즉시 시험/저장·호스트 공유",
                     "children": [],
                     "task": {
                       "progress": 0.5
@@ -5820,7 +5820,7 @@
                     "tags": [
                       "단계:50% 구현"
                     ],
-                    "note": "비 프로토 승인 범위. 상세는 기획18을 따른다.",
+                    "note": "비 프로토 승인 범위. 상세는 기획18을 따른다.\n2026-11-07 후속: 운전/날씨 두 탭, 적용/취소/현재탭 기본값, 툴 원본 보존. 자세한 기준은 기획18.",
                     "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/18-rain-prototype.md"
                   },
                   {
