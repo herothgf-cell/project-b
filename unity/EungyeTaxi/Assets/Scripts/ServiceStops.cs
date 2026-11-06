@@ -7,6 +7,7 @@ public partial class ServiceStops : MonoBehaviour {
  public bool CanContinueConditionService(int kind){return Pvp&&session.business.ledger.State==BusinessState.Open&&!session.jobs.Active&&(PvpNativeLan.IsReplica(session)?Mathf.Abs(session.taxi.Speed):session.taxi.body.velocity.magnitude)<.56f&&(kind==1?AtRestaurant():kind==3&&(AtRestArea()||AtParking()));}
  public void FinishConditionService(int kind,bool completed){notice=completed?(kind==1?"식사 완료 · 1,000원 · 포만 +60":"짧은 휴식 완료 · 피로 −40 · 졸음 해제"):"이용 중단 · 비용/회복 없음";noticeUntil=Time.unscaledTime+5;if(completed)CompleteServiceNavigation();Close();session.business.SaveCheckpoint();}
  public bool PostTripVisible {get{return postTrip;}}
+ public static Rect PostTripBounds(float width,float height,bool pvp){float scale=UiReadability.HudScale(width,height);return new Rect(width/2-310*scale,(pvp?300:200)*scale,620*scale,174*scale);}
  // Presentation follows the replicated/current care state; reading/opening does not acknowledge it.
  public bool RepairAttention {get{return session&&session.business&&session.business.ledger!=null&&session.business.ledger.Care.Damage.Durability<=50;}}
  public bool CanOpenLifeHub {get{return session&&session.business&&session.jobs&&!session.jobs.Active&&!session.paused&&!session.PracticeBusy&&!session.PracticeMenuOpen&&!session.FullMapOpen&&!session.ChoiceOpen&&!session.business.preparing&&!session.business.ShowingSummary&&!session.business.restartPrompt&&!session.business.ResumeBlocked&&!session.law.HistoryOpen;}}
@@ -103,7 +104,7 @@ public partial class ServiceStops : MonoBehaviour {
   if(!postTrip||session.paused||session.FullMapOpen||session.PracticeMenuOpen||session.PracticeBusy||session.ChoiceOpen||session.business.restartPrompt||session.business.taxPrompt||session.business.ShowingSummary||session.business.preparing||session.law.HistoryOpen)return;
   var previous=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);
   try {
-   const float x=365,y=110,width=610;GUI.depth=-20;CasualUI.Panel(new Rect(x,y,width,174));
+   var bounds=PostTripBounds(Screen.width,Screen.height,Pvp);float x=bounds.x/scale,y=bounds.y/scale,width=bounds.width/scale;GUI.depth=-20;CasualUI.Panel(new Rect(x,y,width,174));
    string reason=RepairAttention?"내구도 "+session.business.ledger.Care.Damage.Durability+" · 수리 권장":recommended==0?(session.jobs.NeedsWash?"세차 필요":"주유 권장"):recommended==1?"식사 권장":recommended==3?"수면 권장":recommended==2?"마감 준비":"현재 컨디션 양호";
    CasualUI.Header(new Rect(x+8,y+6,width-16,34),"생활거점 · "+reason,0);
    string[] labels={session.jobs.NeedsWash?"주유·세차":"주유","식사","귀가 주차장","수면","공업사","닫기"};int[] glyphs={8,9,10,11,12,19};float cell=(width-20)/3;

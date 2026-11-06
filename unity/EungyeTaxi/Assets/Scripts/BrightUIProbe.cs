@@ -21,8 +21,9 @@ public sealed class BrightUIProbe:MonoBehaviour {
   }
   Check(rendered&&File.Exists(path),"capture rendered frame "+name);
  }
- bool longDialoguePreview;
+ bool longDialoguePreview,carePreview;
  void OnGUI(){
+  if(carePreview){var matrix=GUI.matrix;GUI.depth=-50;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));float y=Screen.height/scale-238;CasualUI.Panel(new Rect(198,y+48,274,72));CockpitUI.DrawCareMessage(new Rect(210,y+55,250,58),"도착 완료 · 손님이 일어나지 않습니다 · 10초 대기 · 5초 뒤 F 다시 깨우기 / 30초 자동 하차 · 안전 정차 유지");GUI.matrix=matrix;return;}
   if(!longDialoguePreview)return;GUI.depth=-50;
   string line="긴 장소명과 사용자 대사가 줄바꿈되어도 모든 내용을 읽을 수 있어야 합니다. ";
   int selected=PassengerDialogueUI.Draw("가독성 검사 · 긴 대화",line+line+line+line,new[]{
@@ -42,7 +43,9 @@ public sealed class BrightUIProbe:MonoBehaviour {
    var scroll=typeof(PassengerDialogueUI).GetField("scroll",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);scroll.SetValue(null,new Vector2(0,100000));yield return Capture("dialogue-long-bottom-"+width);
    var position=(Vector2)scroll.GetValue(null);Check(position.y>0&&position.y<100000,"long dialogue scroll reaches and clamps to last choice "+width);scroll.SetValue(null,Vector2.zero);
   }
-  longDialoguePreview=false;Time.timeScale=timeScale;
+  longDialoguePreview=false;carePreview=true;
+  foreach(int width in new[]{1280,1920}){Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);yield return Capture("care-long-"+width);var field=typeof(CockpitUI).GetField("careScroll",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);field.SetValue(null,new Vector2(0,100000));yield return Capture("care-long-bottom-"+width);var position=(Vector2)field.GetValue(null);Check(position.y>0&&position.y<100000,"care instructions scroll to safe-stop footer "+width);field.SetValue(null,Vector2.zero);}
+  carePreview=false;Time.timeScale=timeScale;
  }
  IEnumerator Ready(){s=null;while(!s||!s.StartupReady||s.business.IsRestoring){foreach(var item in FindObjectsOfType<DriveSession>())if(!item.IsSimulationBot)s=item;yield return null;}yield return null;}
  void Pose(MapStop stop){var t=s.taxi;t.body.velocity=t.body.angularVelocity=Vector3.zero;t.body.position=stop.Kerb+Vector3.up*.65f;t.body.rotation=Quaternion.LookRotation(stop.Direction);t.transform.SetPositionAndRotation(t.body.position,t.body.rotation);Physics.SyncTransforms();s.law.ResetObservation();s.manners.Suppress(2);}
