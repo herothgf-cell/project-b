@@ -31,7 +31,7 @@
 - [x] 보호17파일 hash·Strict/문서 링크/공백 검사.
 
 ### Task 3: source/배포/main 게시
-- [ ] 실제 merge source 커밋, 두 부모·실제 hash 기록.
-- [ ] 통합 runtime의 manifest 크기/SHA256 재생성·통합/PVP VerifyOnly·배포 커밋.
+- [x] 실제 merge source 커밋, 두 부모·실제 hash 기록.
+- [x] 통합 runtime의 manifest 크기/SHA256 재생성·통합/PVP VerifyOnly·배포 커밋.
 - [ ] 원격 main 최신 여부 확인·로컬 main fast-forward·일반 push·원격 hash/운전 커밋 조상 여부 확인.
 - [ ] 문서 게시 영수증도 push하고 최종 로컬/원격 hash 일치 확인.

@@ -1,48 +1,26 @@
 {
-  "sourceCommit": "686d90fce0053e37e09d79284353a284123b9cd5",
+  "sourceCommit": "0af3938caa7508345b07d51d787c94396f8c094c",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-06",
-  "totalBytes": 124544801.0,
+  "totalBytes": 124548631.0,
   "validation": {
-    "build": "PrototypeBuild.BuildHybrid via FullUIBuild.Build exit 0",
-    "buildLog": "artifacts/full-ui/build-final.log",
-    "themeContract": "PASS",
-    "drivingSettingsAssertions": 171,
-    "drivingSettingsMenuAssertions": 183,
-    "drivingSettingsModal": "PASS",
-    "contentRuntimeAssertions": 32,
-    "contentBuildAssertions": 3,
-    "contentCopies": "PASS",
-    "hudFocused": "PASS",
-    "hudIntegration": "PASS",
-    "fullUiPlayerAssertions": 112,
-    "fullUiMenuAssertions": 4,
-    "playerExitCodes": [
-      0,
-      0
-    ],
-    "capturedImages": 48,
-    "resolutions": [
-      "1280x720",
-      "1920x1080"
-    ],
-    "saveIsolation": "temporary campaign and settings cancel-only",
-    "userSaveFilesCompared": 16,
-    "userSaveChanged": 0,
-    "mapInputStrictIssues": 0,
-    "mapAndVehicleArtChanged": false,
-    "balanceDefaultsChanged": false,
-    "manualDriving": false,
-    "fullCampaign": false,
-    "twoPcLan": false
+    "feature": "merge-main-casual-ui-and-driving-fixes",
+    "source": "0af3938caa7508345b07d51d787c94396f8c094c",
+    "mainParent": "df3e693d0f46e993a67e26179fbe80acd80e8a23",
+    "drivingParent": "ecd6a658088097e12f4e0476d3793471147afbbd",
+    "unityBuild": "FullUIBuild.Build exit0; full UI/theme/brake22/PhysX8/native left and HUD/content contracts",
+    "runtime": "full UI112/menu4/driving single17/PVP15 exit0; themed5sliders/compactworkshop render reviewed",
+    "lan": "native-lan-20261106-174652-a14f56dc host51/client64/reconnect exit0; v11",
+    "protection": "17 files unchanged; main content/theme/portraits unchanged; map inputs/ZIP unchanged Strict0",
+    "limitations": "loopback and controlled UI/PhysX fixtures; long human/full3day/physicalgamepad/otherPC not newly accepted"
   },
   "files": [
     {
       "path": "builds/EungyeTaxi/택시 시뮬레이션_BurstDebugInformation_DoNotShip/Data/Plugins/x86_64/lib_burst_generated.txt",
-      "bytes": 110969,
-      "sha256": "aabd0b944704792ddb6ab3be35e2aabddf2608000c540b70d96730642cd93287"
+      "bytes": 110703,
+      "sha256": "766fda32026d177c9cfdd473bfd74fc274df303a7f4a1cb54a585f910aa14233"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/app.info",
@@ -52,17 +30,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "6a95609fadfbe607ee5b3e6be21e8b1139c9c455fc700cf5e265761d48fd2c0e"
+      "sha256": "1b3cbbc096fbc4889faca24cea5b33702a702dd70681806ad7fd2730fbafc091"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
       "bytes": 57020,
-      "sha256": "ff181a36eb832ce674d00bf48b842c5aff07c6dca2c879e2b961163504cdcb38"
+      "sha256": "932485380848ee02fa1504412b02434007293174cf78b850bf31974efb3a379b"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
       "bytes": 111752,
-      "sha256": "20c8a9e08beefed0068f993c8bddd07d95bdfe205a0caddf0e39900af7e0fa87"
+      "sha256": "4006672e432bd80e24f48cc144d13a71d7572d927b346886de3664e035af54e7"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -76,8 +54,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2499584,
-      "sha256": "e03ae2c1e51d3908ac57938a504eb3603914b57e27152b4d0bf0732a717e29d8"
+      "bytes": 2503680,
+      "sha256": "8754e8b6589a829bf424030ff0d6362cde4d8c9faef773e90c2ed204f6b474f2"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
