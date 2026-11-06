@@ -201,7 +201,7 @@ public partial class RoadNavigation : MonoBehaviour {
     // Ignore small fluctuations; a substantial new obstruction overrides cooldown.
     if(improvement<Mathf.Max(3,incumbent.seconds*.1f)||(Time.time-lastRouteChange<6&&improvement<15))candidate=incumbent;
    }
-   if(selected!=null&&candidate!=null&&(incumbent==null||!SameRoute(incumbent,candidate))){recalculationCount++;lastRouteChange=Time.time;rerouteNotice=incumbent==null?"현재 위치에서 경로 재탐색":"교통 상황 반영 · 빠른 길 재탐색";noticeUntil=Time.time+6;}
+   if(selected!=null&&candidate!=null&&(incumbent==null||!SameRoute(incumbent,candidate))){recalculationCount++;lastRouteChange=Time.time;rerouteNotice=incumbent==null?"현재 위치에서 경로 재탐색":"교통 상황 반영 · 경로 재탐색";noticeUntil=Time.time+6;}
    selected=candidate;
    // Compare graph costs before appending the final curb approach.
    Approach(candidate);if(alternate!=candidate)Approach(alternate);

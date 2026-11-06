@@ -218,13 +218,18 @@ public class BusinessProgress : MonoBehaviour {
   session.jobs.CancelForFatigue();if(session.jobs.Active||!ledger.UseEmergencySleep(session.law.ids.Next("emergency-home")))return false;
   session.jobs.ClearForDay();session.assisted.SetActive(false);if(!(session.damage&&session.damage.Disabled&&session.damage.AtRepairBay)){var stop=session.services.ParkingStop;session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();}session.law.ResetObservation();var district=session.traffic.GetComponent<DistrictTraffic>();if(district)district.ClearPlayerOverlap();notice="졸음 운전으로 위험합니다. 오늘 영업을 종료합니다. · 피로 −20";noticeUntil=Time.unscaledTime+10;SaveCheckpoint();return true;
  }
- public bool RequestEndDay(){if(session.accident&&session.accident.Locked)return false;
-  if(SimulationSession)return false;
-  if(session.FullMapOpen||!enabledCampaign||ledger.State!=BusinessState.Open||session.paused||Time.timeScale==0)return false;
-  if(session.jobs.trip.State==TripState.OnTrip){notice="승객 탑승 중에는 영업을 마칠 수 없습니다 · 목적지 하차 후 N";noticeUntil=Time.unscaledTime+4;return false;}
-  if(session.taxi.body.velocity.magnitude>=.56f){notice="안전한 곳에 정차한 뒤 N으로 영업을 마치세요";noticeUntil=Time.unscaledTime+4;return false;}
-  if(ledger.OneDay&&!session.services.AtEndDayHub()){notice="주차장·휴식 거점에서 쉬며 영업을 마치세요 · F7 길 안내";noticeUntil=Time.unscaledTime+4;return false;}
-  if(ledger.OneDay&&!ledger.UseSleep(session.law.ids.Next("end-rest")))return false;ledger.RequestClose("생활 거점 휴식·영업 종료");return true;
+ bool EndDayNotice(string message){notice=message;noticeUntil=Time.unscaledTime+8;return false;}
+ public bool RequestEndDay(){
+  if(session.accident&&session.accident.Locked)return EndDayNotice("사고 처리를 마친 뒤 퇴근할 수 있습니다.");
+  if(SimulationSession)return EndDayNotice("PVP 경기는 제한 시간이 끝나면 정산합니다.");
+  if(session.FullMapOpen)return EndDayNotice("전체 지도를 닫고 퇴근을 눌러 주세요.");
+  if(!enabledCampaign||ledger==null||ledger.State!=BusinessState.Open)return EndDayNotice("현재 영업 중이 아닙니다. 영업 상태를 확인해 주세요.");
+  if(session.paused||Time.timeScale==0)return EndDayNotice("일시정지를 해제한 뒤 퇴근을 눌러 주세요.");
+  if(session.jobs.trip.State==TripState.OnTrip)return EndDayNotice("승객을 목적지에 내려드린 뒤 퇴근할 수 있습니다.");
+  if(session.taxi.body.velocity.magnitude>=.56f)return EndDayNotice("안전한 곳에 정차한 뒤 퇴근을 다시 눌러 주세요.");
+  if(ledger.OneDay&&!session.services.AtEndDayHub())return EndDayNotice("주차장 또는 휴식 거점에 정차해야 퇴근할 수 있습니다. 생활거점(F7)에서 길 안내를 받으세요.");
+  if(ledger.OneDay&&!ledger.UseSleep(session.law.ids.Next("end-rest")))return EndDayNotice("휴식을 시작할 수 없습니다. 영업 상태와 거점 위치를 확인해 주세요.");
+  ledger.RequestClose("생활 거점 휴식·영업 종료");notice="오늘 영업을 마칩니다. 정산을 준비하고 있습니다.";noticeUntil=Time.unscaledTime+8;return true;
  }
  public void RecordPassenger(int paid,string outcome){
   if(!useV2||PracticeSession.Enabled||session.jobs.current==null||string.IsNullOrEmpty(session.law.tripId))return;

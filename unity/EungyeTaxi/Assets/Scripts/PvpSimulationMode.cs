@@ -10,7 +10,7 @@ public static class PvpSimulationMode {
         Expanded=expanded; DurationSeconds=seconds; Active=true;
     }
     public static void Clear() { Active=false; Expanded=false; }
-    public static void Reset() { Clear(); }
+    public static void Reset() { Clear(); PvpConditionRules.Reset(); }
 }
 
 // Match-local ownership and native income. Each participant has its own ledger.

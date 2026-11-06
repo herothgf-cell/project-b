@@ -41,7 +41,7 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
     public int ConditionServiceKind(DriveSession driver){int i=DriverIndex(driver);return i<0?-1:conditionKinds[i];}
     public bool BeginConditionService(DriveSession driver,int kind){
         int i=DriverIndex(driver);
-        if(i<0||Finished||ServiceLocked(driver)||(kind!=1&&kind!=3)||!driver.business.ledger.PvpProfile||!driver.services.open||!driver.services.CanContinueConditionService(kind)||(kind==1&&driver.business.ledger.Account.Cash<PvpConditionRules.MealCost))return false;
+        if(i<0||Finished||ServiceLocked(driver)||(kind!=1&&kind!=3)||!driver.business.ledger.PvpProfile||!driver.services.open||!driver.services.CanContinueConditionService(kind)||(driver.business.ledger.Account.Cash<(kind==1?PvpConditionRules.MealCost:PvpConditionRules.RestCost)))return false;
         conditionKinds[i]=kind;conditionRemaining[i]=(float)(kind==1?PvpConditionRules.MealSeconds:PvpConditionRules.RestSeconds);
         conditionIds[i]=driver.law.ids.Next(kind==1?"pvp-meal":"pvp-rest");conditionSites[i]=driver.taxi.transform.position;
         driver.assisted.SetActive(false);driver.taxi.autoThrottle=0;driver.taxi.autoBrake=true;
