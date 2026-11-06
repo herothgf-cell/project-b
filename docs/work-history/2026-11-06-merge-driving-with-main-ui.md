@@ -32,3 +32,9 @@
 통합 출하141파일124,548,631바이트·사용자 active 포함142파일: 통합/PVP VerifyOnly 각각exit0, 파일 크기/SHA256 전수 일치. main에서 이미 추적하던 생성 Burst txt도 이번 통합에서는 유지한다. 최신 UI의 초상/리소스/기존 콘텐츠를 그대로 두고 재빌드한 실행본이며, 사용자의 active 프로필은 출하 사본에 포함하지 않고 원래 폴더에서 별도 유효성 검증했다. 실제 보고서 `artifacts/merge-driving-main/validation.json`과 위40자리 소스로 manifest를 갱신했다.
 
 게시 직전 원격 main은 여전히 df3e693임을 `git ls-remote`로 확인했다. 실제 푸시/최종 원격 해시 영수증은 성공 확인 후 추가한다.
+
+## 실제 main 게시 영수증
+
+실행본 커밋 `a18b73b97db8f366ee4282b88e6999a7a32ef066`을 로컬 main에 fast-forward하고 `git push origin main` exit0(`df3e693..a18b73b`)으로 게시했다. 직후 로컬 HEAD/origin/main/`git ls-remote --heads origin main` 모두 같은40자리 해시를 확인했다. `git merge-base --is-ancestor ecd6a65 origin/main` exit0으로 이번 운전 브랜치 전체가 실제 원격 main의 조상임도 확인했다. 기존 main도 병합의 첫 부모로 보존한다. 강제 푸시/리셋을 사용하지 않았다.
+
+이 영수증 후속은 문서만 변경하며 동일한 검증 실행본/manifest를 유지한다. 최종 문서 커밋은 `git log -1 --oneline -- docs/work-history/2026-11-06-merge-driving-with-main-ui.md`로 확인한다. 다른 PC는 main pull 후 통합 실행 폴더의 새 exe를 사용하며 PVP 참가 PC도 LANv11 실행본으로 함께 갱신한다.

@@ -3,7 +3,7 @@
 ## 2026-11-06 main UI·운전 수정 통합
 
 - [x] 실제 merge에서 main UI/콘텐츠 보존, 테마·제동/물리/지도/HUD/콘텐츠 BuildHybrid와 전체UI112/메뉴4·싱글17/PVP15 통과.
-- [ ] 최종 LAN/manifest·main 푸시 및 원격 조상/hash 검증. [영수증](work-history/2026-11-06-merge-driving-with-main-ui.md).
+- [x] 최종 LAN51+64/재접속·manifest141파일·main a18b73b push 및 원격 조상/hash 검증. [영수증](work-history/2026-11-06-merge-driving-with-main-ui.md).
 
 - [x] 기존 전체 게임 화면에 공통 카드·헤더·명료한 문구/행동·캐주얼3D 초상 적용. 싱글/PVP/개인 공간 포함, 월드/차량 아트·게임 수치 유지.
 - [x] Unity 테마/설정171·메뉴183·모달/콘텐츠32·빌드3/HUD 계약·BuildHybrid, 실제 UI112+메뉴4검사·두 해상도, 사용자 저장16파일 변화0. [구현·검증·게시 영수증](work-history/2026-11-06-full-casual-ui.md).
