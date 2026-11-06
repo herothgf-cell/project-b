@@ -1,5 +1,7 @@
 # PVP 확장 시험장·은계형 화면 Implementation Plan
 
+> **보존 자료: 초기 독립 PVP/단계별 기록.** 아래 “현재/미구현/최신”은 작성 당시 표현이다. 현재 A2·통합 실행·순수익 경쟁·LAN은 [PVP 기준](README.md)을 따른다. 초기 독립 총점/보너스·Fusion 후보·별도 실행 경로는 현행 규칙이 아니다.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 기존 PVP 자체 시험장을 확장하고 은계형3D/UI·승객 거점·서비스 시설을 한 번에 구현한 뒤 통합 검증한다.

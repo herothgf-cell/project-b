@@ -1,14 +1,14 @@
 # PVP 네트워크·빌드·기존 코드 분리
 
+> **보존 자료: 초기 독립 PVP/단계별 기록.** 아래 “현재/미구현/최신”은 작성 당시 표현이다. 현재 A2·통합 실행·순수익 경쟁·LAN은 [PVP 기준](README.md)을 따른다. 초기 독립 총점/보너스·Fusion 후보·별도 실행 경로는 현행 규칙이 아니다.
+
 ## 2026-11-02 현재 native LAN 프로토 기준
 
 현재 사용자가 선택한 사람 대전은 **같은 공유기·직접 IPv4 / 최대4인·빈자리봇**이다. 기존 NGO1.12/UnityTransport로 현재 시뮬레이션 물리·승객을 호스트 권한으로 연결했다. 접속·기능·한계는 [30](30-native-lan.md), 실제 통과/미검증은 [이번 이력](../../work-history/2026-11-02-pvp-native-lan.md)을 따른다. 아래 Fusion2/외부 서비스·구형 평면모터 기록은 당시 후보/개발 이력이며 현재 native LAN 배포의 필수 SDK/App ID가 아니다. 인터넷 중계 SDK의 최종 선택이나 원격4명 수용까지 확정한 것은 아니다.
 
 ## 실행 파일 배포와 싱글 실행
 
-2026-10-29 사용자 요청으로 `builds/PvpPrototype/` 전체도 PvP 브랜치에서 Git 배포한다. 싱글 시뮬레이션은 `builds/EungyeTaxi/EungyeTaxi.exe`, PvP는 `builds/PvpPrototype/PvpPrototype.exe`다. 두 실행 경로를 유지하며 기본 싱글의 BuildHybrid·지도·배포 manifest는 보존한다.
-
-PvP는 `distribution/PvpPrototype-build-manifest.json`과 `pwsh -File tools/update_pvp_distribution_manifest.ps1 -VerifyOnly`로 전체 파일을 검증한다. 배포를 갱신할 때 실제 빌드 소스 커밋과 검사 날짜를 명시해 manifest를 생성하고 실행 폴더와 함께 커밋한다. exe만 옮기지 않고 Data/Mono/UnityPlayer/DLL/고지를 함께 유지한다. [배포 이력](../../work-history/2026-10-29-pvp-git-playable-distribution.md)에 실제 검증과 다른PC 미검증을 구분한다. 아래 내용의 로컬 전용 배포 설명은 당시 상태다.
+현재는 `builds/EungyeTaxi/EungyeTaxi.exe` 하나에서 싱글/PVP를 선택한다. 통합 폴더 전체와 `distribution/EungyeTaxi-build-manifest.json`을 배포/검증하고 PVP VerifyOnly도 같은 폴더를 확인한다. 별도 `builds/PvpPrototype/`는 이전 진단/배포 경로이며 현재 실행 대상으로 안내하지 않는다. [현재 접속/배포](README.md)·[배포 안내](../../../distribution/README.md)를 따른다.
 
 
 상태: P1 화면·자동 검증 및 NGO 직접 IP 실험 추가 / 원격PC·사람 조작감·P2 전체 수용 미완료

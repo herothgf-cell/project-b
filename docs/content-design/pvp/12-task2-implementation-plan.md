@@ -1,5 +1,7 @@
 # Task 2 자체 시험장·차량 후보 Implementation Plan
 
+> **보존 자료: 초기 독립 PVP/단계별 기록.** 아래 “현재/미구현/최신”은 작성 당시 표현이다. 현재 A2·통합 실행·순수익 경쟁·LAN은 [PVP 기준](README.md)을 따른다. 초기 독립 총점/보너스·Fusion 후보·별도 실행 경로는 현행 규칙이 아니다.
+
 > REQUIRED SUB-SKILL: superpowers:subagent-driven-development. 지도/차량은 독립 파일로 구현하고 통합은 주 에이전트가 수행한다.
 
 Goal: Task 1 검증된 별도 Player에서 자체 회색 상자 경기장을 실제 조작하고 방향 경로·후방 복구·빠른 조작 후보를 검증한다.

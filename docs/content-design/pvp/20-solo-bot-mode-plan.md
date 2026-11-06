@@ -1,5 +1,7 @@
 # 한 창 1인 봇 경기 Implementation Plan
 
+> **보존 자료: 초기 독립 PVP/단계별 기록.** 아래 “현재/미구현/최신”은 작성 당시 표현이다. 현재 A2·통합 실행·순수익 경쟁·LAN은 [PVP 기준](README.md)을 따른다. 초기 독립 총점/보너스·Fusion 후보·별도 실행 경로는 현행 규칙이 아니다.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 한 실행 창에서 사람이 직접 운전하며 승객·NPC·법규·정산을 시험한다.

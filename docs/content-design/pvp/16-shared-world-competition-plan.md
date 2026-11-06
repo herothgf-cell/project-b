@@ -1,5 +1,7 @@
 # 공유 교통·승객 경쟁·정산 구현 계획
 
+> **보존 자료: 초기 독립 PVP/단계별 기록.** 아래 “현재/미구현/최신”은 작성 당시 표현이다. 현재 A2·통합 실행·순수익 경쟁·LAN은 [PVP 기준](README.md)을 따른다. 초기 독립 총점/보너스·Fusion 후보·별도 실행 경로는 현행 규칙이 아니다.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: superpowers:executing-plans. 구현은 현재 worktree에서 직접 실행하고 마지막에 독립 리뷰1회.
 
 **Goal:** 공유 신호/이동 장애물 검증 후 두 Player가 실제 서버 승객 소유권·운송·원장·결과를 공유한다.
