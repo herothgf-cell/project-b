@@ -4,12 +4,13 @@ using UnityEngine;
 // Device preferences, independent of campaign saves and host content profiles.
 [Serializable] public sealed class DrivingSettings {
  public const string Key="driving.controls.v1";
- public float sensitivity=1,response=1,centering=1,deadzone=.15f;
+ public float sensitivity=1,response=1,centering=1,deadzone=.15f,braking=1;
  static DrivingSettings current;
  public static DrivingSettings Current {get{return current??(current=Load(Key));}}
- public DrivingSettings Copy(){return new DrivingSettings{sensitivity=sensitivity,response=response,centering=centering,deadzone=deadzone};}
+ public DrivingSettings Copy(){return new DrivingSettings{sensitivity=sensitivity,response=response,centering=centering,deadzone=deadzone,braking=braking};}
  public static float Bound(float value,float min,float max,float fallback){return float.IsNaN(value)||float.IsInfinity(value)?fallback:Mathf.Clamp(value,min,max);}
- public DrivingSettings Normalize(){sensitivity=Bound(sensitivity,.5f,1.5f,1);response=Bound(response,.25f,2,1);centering=Bound(centering,.25f,2,1);deadzone=Bound(deadzone,0,.4f,.15f);return this;}
+ public DrivingSettings Normalize(){sensitivity=Bound(sensitivity,.5f,1.5f,1);response=Bound(response,.25f,2,1);centering=Bound(centering,.25f,2,1);deadzone=Bound(deadzone,0,.4f,.15f);braking=Bound(braking,.5f,1.5f,1);return this;}
+ public static float BrakeForce(float force,float gain,bool emergency,bool serviceInput){return emergency||!serviceInput?force:Mathf.Clamp01(force*Bound(gain,.5f,1.5f,1));}
  public float Input(float keyboard,float pad){return Mathf.Abs(pad)>deadzone?Mathf.Clamp(pad,-1,1):Mathf.Clamp(keyboard,-1,1);}
  public float Advance(float previous,float target,float speed,float seconds){return DriveFlowPolicy.AdvanceSteering(previous,target,speed,seconds*(Mathf.Abs(target)<.01f?centering:response));}
  public static float Angle(float input,float kph,float gain){return Mathf.Clamp(input*DriveMath.ManualSteerAngle(kph)*Bound(gain,.5f,1.5f,1),-52,52);}

@@ -3,7 +3,7 @@ public class TaxiController : MonoBehaviour {
     public Rigidbody body; public WheelCollider[] wheels=new WheelCollider[4]; Transform[] visuals=new Transform[4];
     public bool NetworkReplica,NetworkPredicted; public Vector3 ReplicaVelocity; public float ReplicaSteering;
     public bool automated,AutomatedHumanInput; public float autoThrottle,autoSteer,autoServiceBrake; public bool autoBrake;
-    public float ManualSteeringGain=1;
+    public float ManualSteeringGain=1,ManualBrakeGain=1;
     public AssistedDriveController assistance;public BusinessProgress business;
     float throttle,steer,motorDemand; bool brake; Vector3 spawn; Quaternion spawnRotation;
     readonly DriverPedalIntent pedalIntent=new DriverPedalIntent();
@@ -51,6 +51,7 @@ public class TaxiController : MonoBehaviour {
         // Automated validation commands are produced per physics tick, including accelerated runs.
         if(automated){throttle=autoThrottle;steer=autoSteer;brake=autoBrake;}
         var manual=!automated||NetworkPredicted||AutomatedHumanInput?pedalIntent.Resolve(throttle,Speed,brake):DriveMath.Resolve(throttle,Speed,brake);
+        manual=ApplyBrakePreference(manual,brake,Mathf.Abs(throttle)>.01f);
         // Physics-time pedal ramp is identical for keyboard/pad and automated validation.
         // Braking and releasing the accelerator remain prompt, including a direction change.
         if(manual.brake>0||manual.motor*motorDemand<0)motorDemand=0;
@@ -83,6 +84,10 @@ public class TaxiController : MonoBehaviour {
         // steer a route, spin a parked car, override H, or push airborne wheels.
         if(DriveMath.MayAssistManualYaw(grounded,Vector3.Dot(transform.up,Vector3.up),assistedSteering,!automated||AutomatedHumanInput||NetworkPredicted,microsleep))
             body.AddTorque(Vector3.up*DriveMath.ManualYawAcceleration(Speed,centerAngle,body.angularVelocity.y),ForceMode.Acceleration);
+    }
+    public DriveMath.Demand ApplyBrakePreference(DriveMath.Demand command,bool emergency,bool pedalPressed){
+        if(!automated||AutomatedHumanInput||NetworkPredicted)command.brake=DrivingSettings.BrakeForce(command.brake,automated?ManualBrakeGain:DrivingSettings.Current.braking,emergency,pedalPressed);
+        return command;
     }
     public float WheelCenterAngle(float input,float kph,bool assisted){
         if(assisted)return input*DriveMath.SteerAngle(kph);

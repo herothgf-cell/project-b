@@ -489,8 +489,30 @@ public partial class TrafficSystem : MonoBehaviour {
                 foreach(int exit in left.next)if(exit>=0&&exit<edges.Length&&!edges[exit].disabled)return true;
             }
         }
+        // Native NGII connectors have per-edge rule IDs. Match their directed
+        // incoming approach and the same local junction association as traffic.
+        if(NativeLeftMovement(j,axis,sign))return true;
         // Missing approach data does not establish a new prohibition.
         return !known;
+    }
+    bool NativeLeftMovement(TrafficJunction j,int axis,int sign) {
+        var edges=roadMap==null?null:roadMap.hdEdges;if(edges==null)return false;
+        foreach(var incoming in edges) {
+            if(incoming.disabled||incoming.status!="ngii"||incoming.turn!=0||incoming.change!=0||incoming.next==null||incoming.points==null||incoming.points.Length<2)continue;
+            var heading=(incoming.points[incoming.points.Length-1].V()-incoming.points[incoming.points.Length-2].V()).normalized;
+            int incomingAxis=Mathf.Abs(Vector3.Dot(heading,AxisDirection(j,0)))>.7f?0:1;
+            if(incomingAxis!=axis||Sign(heading,incomingAxis,j)!=sign)continue;
+            foreach(int next in incoming.next) {
+                if(next<0||next>=edges.Length)continue;var left=edges[next];
+                if(left.disabled||left.status!="ngii"||left.turn!=-1||left.next==null||left.points==null||left.points.Length<2)continue;
+                var points=new Vector3[left.points.Length];for(int i=0;i<points.Length;i++)points[i]=left.points[i].V();
+                var path=new AssistedRoadNetwork.Path(points);var mid=path.Position(path.length*.5f);TrafficJunction nearest=null;float distance=32;
+                foreach(var candidate in junctions){float d=Vector3.Distance(mid,candidate.center);if(d<distance){nearest=candidate;distance=d;}}
+                if(nearest!=j)continue;
+                foreach(int exit in left.next)if(exit>=0&&exit<edges.Length&&!edges[exit].disabled)return true;
+            }
+        }
+        return false;
     }
     void AddApproach(TrafficJunction j,Vector3 direction,float halfWidth,float conflictHalfWidth) {
         var right=Right(direction);
