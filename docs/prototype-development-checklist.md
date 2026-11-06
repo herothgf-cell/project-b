@@ -1,5 +1,9 @@
 # 프로토타입 개발 체크리스트
 
+## 2026-11-06 감점 음수 입력과 변화율 안내
+
+- [x] 법규/M/청결·선택지 급가감속 추가 효과를 음수 감점 입력으로 통일하고 기존 설정의 실제 감점·기본값/복원 보존. 단계별 %·%/분 계산 예시와 포만감별 싱글/PVP 자연 피로 수치 안내. Node60/C#663·실제 브라우저 -2 검증/표 확인·manifest/hash 보존 통과. [작업 이력](work-history/2026-11-06-signed-penalties-and-rate-help.md).
+
 ## 2026-11-06 재출발 시놉시스와 생활 성장
 
 - [x] 사용자 선택 배경/목표를 [시놉시스](content-design/10-restarting-driver-synopsis.md)·[생활 성장안](content-design/11-personal-life-and-growth.md)으로 구체화. 반복 인물 제외, 구09초안 보존/대체 표시, 현재3일·장기 경력/개인 거래와 영업 순수익 구분. [작업 기록](work-history/2026-11-06-restarting-life-synopsis.md).

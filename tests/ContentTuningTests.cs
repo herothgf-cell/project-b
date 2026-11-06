@@ -48,5 +48,17 @@ public static class ContentTuningTests {
   ContentTuning.UseJson(Change("request.Quiet.prompt","한글\n\"é😀"));Check(ContentTuning.Text("request.Quiet.prompt","")=="한글\n\"é😀","Unicode text");string snap=ContentTuning.CaptureJson();ContentTuning.UseDefaults();ContentTuning.UseJson(snap);Check(ContentTuning.CaptureJson()==snap,"snapshot independent");
   File.WriteAllText(args[1],snap,new System.Text.UTF8Encoding(false));Console.WriteLine("ContentTuningTests passed "+count);
  }
- public static int Main(string[] args){try{MainTests(args);return 0;}catch(Exception e){Console.Error.WriteLine(e.Message);return 1;}}
+ static void NaturalFatigueGuidanceTests(){
+  double[] satieties={80,20,5},singleRates={4,6,8},pvpRates={5,7.5,10};
+  for(int i=0;i<satieties.Length;i++){
+   var single=new DriverCondition{satiety=satieties[i],fatigue=20};single.Advance(60);Check(Math.Abs(single.fatigue-20-singleRates[i])<.000001,"documented single natural fatigue rate "+i);
+   var pvp=new DriverCondition{satiety=satieties[i],fatigue=20};pvp.Advance(60,false,PvpConditionRules.FatigueMultiplier);Check(Math.Abs(pvp.fatigue-20-pvpRates[i])<.000001&&PvpConditionRules.FatiguePerMinute(satieties[i])==pvpRates[i],"documented PVP natural fatigue rate "+i);
+  }
+  foreach(double percent in new double[]{-100,-50,0,50}){var driver=new DriverCondition{satiety=80,fatigue=20,choiceFatigueGrowthPercent=percent};driver.Advance(60);Check(Math.Abs(driver.fatigue-20-4*(1+percent/100))<.000001,"documented natural fatigue percent example "+percent);}
+  var boundary=new DriverCondition{satiety=27,fatigue=20};boundary.Advance(60);Check(Math.Abs(boundary.fatigue-25.2)<.000001,"natural fatigue changes at hunger boundary within a minute");
+  var resting=new DriverCondition{satiety=80,fatigue=20};resting.Advance(60,true);Check(resting.fatigue==20,"rest skips natural fatigue in guidance");
+  ContentTuning.UseDefaults();ContentTuning.UseJson(Change("law.redStraight.penalty","2"));var law=LawEvaluator.Signal("signed-law",1,new RoadObservation{known=true,forward=SignalColor.Red},false,SignalColor.Red);Check(law.Deduction==2&&LawLedger.ScoreAfter(70,law)==68,"signed UI minus two retains actual law deduction two");
+  ContentTuning.UseDefaults();ContentTuning.UseJson(Change("manner.collision.penalty","2"));var manner=new MannerLedger();manner.Penalize("collision",10,0,0);Check(manner.Score==98,"signed UI minus two retains actual driving deduction two");ContentTuning.UseDefaults();
+ }
+ public static int Main(string[] args){try{MainTests(args);NaturalFatigueGuidanceTests();Console.WriteLine("Signed penalties and fatigue guidance total "+count);return 0;}catch(Exception e){Console.Error.WriteLine(e.Message);return 1;}}
 }

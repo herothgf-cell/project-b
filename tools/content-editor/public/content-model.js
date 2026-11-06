@@ -199,7 +199,8 @@
   if(id.startsWith('choice.')){
    const field=id.split('.').at(-1),during=id.includes('.during.'),end=id.includes('.end.');
    const percent=field.includes('Percent'),unit=field.endsWith('PerMinute')?(percent?'%/분':'점/분'):percent?'%':'점';
-   return {when:during?'선택 활성화부터 운송 종료/중단까지':end?'정상 운송 종료의 실제 결과 판정 때 한 번':'선택 확정 또는 승차 확정 때 한 번',affects:field.startsWith('satisfaction')?'이 응답을 선택한 승객의 만족도 S':field==='motionPenaltyDelta'?'활성 중 불필요한 급가감속 M 감점':'이 응답을 선택한 운송의 기사 피로',detail:unit+' · 0 = 이 선택지의 추가 효과 없음. '+(field==='fatigueGrowthPercent'?'자연 피로 증가율에 추가합니다. −100%는 자연 증가를 억제합니다.':field==='motionPenaltyDelta'?'기본 M 감점에 더하며 최종 감점은 0 이상입니다.':during&&percent?'선택 활성화 때 고정한 기준값 대비 %/분입니다.':percent?'적용 직전 현재값 대비 %입니다.':'증감량입니다.')+(end?' 취소·사고·견인 등 운송 중단에는 종료 효과를 주지 않습니다.':'')};
+   const stat=field.startsWith('satisfaction')?'만족도 S':'기사 피로',base=field.startsWith('satisfaction')?70:20,delta=base/10;
+   return {when:during?'선택 활성화부터 운송 종료/중단까지':end?'정상 운송 종료의 실제 결과 판정 때 한 번':'선택 확정 또는 승차 확정 때 한 번',affects:field.startsWith('satisfaction')?'이 응답을 선택한 승객의 만족도 S':field==='motionPenaltyDelta'?'활성 중 불필요한 급가감속 M 감점':'이 응답을 선택한 운송의 기사 피로',detail:unit+' · 0 = 이 선택지의 추가 효과 없음. '+(field==='fatigueGrowthPercent'?'기본 자연 피로 증가 × (1 + 추가율/100)입니다. 싱글 포만감 25 초과의 기본 +4점/분에 +50%는 +6점/분, -50%는 +2점/분, -100%는 자연 증가 0입니다. 0%는 원래 증가율 유지입니다. 현재 기사 피로의 %가 아닙니다. 아래 기본 자연 피로 표에서 허기·모드별 수치를 확인하세요.':field==='motionPenaltyDelta'?'M의 추가 변화량입니다. -2는 기본 감점에 2점 추가 감점, +2는 감점 2점 완화입니다. 0은 기본 감점 유지이며 최종 감점은 0 아래로 내려가 보상이 되지 않습니다.':during&&percent?`즉시 효과 뒤 선택 활성화 때 고정한 ${stat} 기준값 × 변화율/100을 매분 더합니다. 기준 ${base}점에 +10%/분은 +${delta}점/분이며 30초는 +${delta/2}점입니다. 복리가 아니며 음수는 감소입니다. 고정 점/분 효과와 기존 자연 피로는 별도로 더합니다.`:percent?`적용 직전 현재 ${stat} × 변화율/100을 한 번 더합니다. 현재 ${base}점에 +10%는 +${delta}점, -10%는 -${delta}점입니다. 고정 증감(점)도 함께 더하며 0~100점으로 제한합니다.`:'양수는 증가, 음수는 감소하는 증감량입니다.')+(end?' 취소·사고·견인 등 운송 중단에는 종료 효과를 주지 않습니다.':'')};
   }
   if(isLegacyField(id)&&(catalog.entries||[]).some(e=>e.id.startsWith('choice.')))return {when:'이전 프로필 이관 시',affects:'이관 원본 (참조)',detail:'현재 선택지 효과에서 편집합니다. 새 효과는 이 값과 독립적입니다.',legacy:true};
   const entry=(catalog.entries||[]).find(e=>e.id===id)||{};
@@ -224,8 +225,8 @@
   if(domain==='effect'){
    const effects={
     'food.satisfaction':['음식 허용을 선택하고 승차한 뒤','음식 승객의 섭취 허용 선택','요청 합계와 별도의 승객 유형 효과입니다.'],
-    'food.crumbs':['운행 중 실제로 음식을 섭취했을 때','음식 승객의 섭취 허용 선택','청결에서 빼는 양입니다. 허락만 하고 아직 먹지 않았다면 적용하지 않습니다.'],
-    'food.spill':['실제 섭취 후 흘림이 발생했을 때','음식 승객의 섭취 허용 선택','섭취 청결 감소에 추가로 빼는 양입니다.'],
+    'food.crumbs':['운행 중 실제로 음식을 섭취했을 때','음식 승객의 섭취 허용 선택','청결 변화량입니다. -2는 청결 2점 감소, 0은 감소 없음입니다. 허락만 하고 아직 먹지 않았다면 적용하지 않습니다.'],
+    'food.spill':['실제 섭취 후 흘림이 발생했을 때','음식 승객의 섭취 허용 선택','섭취 효과에 추가되는 청결 변화량입니다. -2는 2점 추가 감소, 0은 추가 감소 없음입니다.'],
     'food.spillPercent':['새 음식 승객의 흘림 예정 여부를 정할 때','음식 승객의 섭취 허용 선택','실제 섭취와 흘림 조건이 충족될 때 청결에 반영합니다.'],
     'food.spillDelaySeconds':['섭취 뒤 흘림까지 주행 시간을 셀 때','음식 승객의 섭취 허용 선택','물리 흔들림이 먼저 오면 예정된 흘림이 더 일찍 발생할 수 있습니다.'],
     'food.consumeMovingSeconds':['섭취 시작 조건을 확인할 때','음식 승객의 섭취 허용 선택','주행 시간과 진행률을 모두 충족하고 진행률 85% 전이어야 합니다.'],
@@ -234,7 +235,7 @@
     'luggage.prepareSeconds':['적재 허용 뒤 안전 정차 중','큰 짐 승객의 적재 허용 선택'],
     'luggage.unloadSeconds':['목적지 도착 뒤 안전 정차 중','큰 짐 승객의 적재 허용 선택'],
     'muddy.prepareSeconds':['깔개 보호 선택 뒤 안전 정차 중','오염 짐 승객의 깔개 보호 선택'],
-    'muddy.dirt':['보호 없이 실은 짐을 내리거나 운송을 중도 종료할 때','오염 짐 승객의 보호 없이 적재 선택','청결에서 한 번 빼는 양입니다.'],
+    'muddy.dirt':['보호 없이 실은 짐을 내리거나 운송을 중도 종료할 때','오염 짐 승객의 보호 없이 적재 선택','청결 변화량을 한 번 적용합니다. -2는 청결 2점 감소, 0은 감소 없음입니다.'],
     'sleep.calmSeconds':['흔들림으로 깨어난 뒤 다시 잠들 때까지','수면 승객','응답 대기 중에는 시간이 끝나도 바로 잠들지 않습니다.'],
     'resecure.seconds':['짐 재고정 응답 뒤 안전 정차 중','큰 짐·오염 짐을 실제로 실은 승객','흔들림·필요한 제동 상황의 재고정 선택이 공유합니다.'],
     'errand.seconds':['경유 약정 수락 후 경유지에서 F로 안전 정차했을 때','경유 용무 요청','그 자리에서 무료 대기하며, 원래 목적지까지 같은 운송을 계속합니다.']
@@ -257,8 +258,8 @@
     required:['새 일반 호출의 요구 만족도를 정할 때','해당 난도의 신규 일반 호출','현재 운송 중인 약정을 소급해서 바꾸지 않습니다.']
    };if(common[name])return info(...common[name]);
   }
-  if(domain==='law')return info(name==='recovery'?'위반 없이 준수한 법규 사건을 기록할 때':'해당 위반 상황을 관찰·확정할 때',name==='recovery'?'모든 운전의 법규 점수 회복':'해당 상황의 법규 점수; 제시간 도착 요청은 실제 위반 유무도 확인','법규 점수와 운전 만족도 M은 서로 다른 지표입니다.');
-  if(domain==='manner')return info(name==='recovery'?'새 구간에서 안정 주행의 거리 또는 시간 조건에 도달할 때':'해당 운전 사건을 관찰할 때',name==='comfortMotion'?'편안한 운행 요청 수락 뒤의 M':name==='recovery'?'모든 승객 운송의 M 회복':'모든 승객 운송의 운전 만족도 M','M 변화는 하차 만족도의 주행 변화량에 반영합니다. 요청 이행 점수와 별도입니다.');
+  if(domain==='law')return info(name==='recovery'?'위반 없이 준수한 법규 사건을 기록할 때':'해당 위반 상황을 관찰·확정할 때',name==='recovery'?'모든 운전의 법규 점수 회복':'해당 상황의 법규 점수; 제시간 도착 요청은 실제 위반 유무도 확인',(field==='penalty'?'-2는 법규 점수 2점 감점, 0은 감점 없음입니다. ':'')+'법규 점수와 운전 만족도 M은 서로 다른 지표입니다.');
+  if(domain==='manner')return info(name==='recovery'?'새 구간에서 안정 주행의 거리 또는 시간 조건에 도달할 때':'해당 운전 사건을 관찰할 때',name==='comfortMotion'?'편안한 운행 요청 수락 뒤의 M':name==='recovery'?'모든 승객 운송의 M 회복':'모든 승객 운송의 운전 만족도 M',(field==='penalty'?'-2는 M 2점 감점, 0은 감점 없음입니다. ':'')+'M 변화는 하차 만족도의 주행 변화량에 반영합니다. 요청 이행 점수와 별도입니다.');
   return info('설명된 상황·조건을 확인할 때',entry.section||entry.title||'현재 게임의 고정 조건',entry.editable?'':'현재 구현의 고정 조건이며 값을 편집하지 않습니다.');
  }
  globalThis.ContentModel={build,weightInfo,fieldInfo,isLegacyField};

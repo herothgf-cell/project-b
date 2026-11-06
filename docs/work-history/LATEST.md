@@ -1,5 +1,9 @@
 # 최신 작업 상태
 
+## 2026-11-06 감점 음수 입력과 변화율 안내
+
+[구현·검증·실행](2026-11-06-signed-penalties-and-rate-help.md). 법규/M/청결·선택지 M 추가 효과를 음수 감점 입력으로 통일하고 기존 실제 감점을 보존했다. 각 %·%/분 계산 예시와 싱글4/6/8·PVP5/7.5/10점/분 자연 피로 표를 관리창에 추가했다. Node60/C#663·hash 일치·실제 브라우저 -2/API 검증·표 확인, 사용자 active/sample·Assembly/manifest4파일 불변·통합 VerifyOnly exit0. 실행은 `설정 관리.cmd`; 기존 은계 싱글/A2 PVP·LANv9/BuildHybrid 유지·Unity 재빌드/새 물리·전체 캠페인 검사 없음. 필수 지도 입력/ZIP·동시 기획/외부 worktree 보존. 다음은 사용자 직접 조정 수용이다.
+
 ## 2026-11-06 재출발 시놉시스와 생활 성장 기획
 
 [시놉시스](../content-design/10-restarting-driver-synopsis.md) · [생활/성장안](../content-design/11-personal-life-and-growth.md) · [검토/인계](2026-11-06-restarting-life-synopsis.md). 실직 후 재기·원하는 택시 구매/꾸미기·더 좋은 집 이사를 연결했다. 반복 인물 제외, 중단했던 친구/사진09안은 보존된 이전 초안으로 표시했다. 현재3일은 작은 구매 도입 검증, 장기 경력/차량교체/이사는 별도 확장 제안이다. 영업 순수익과 개인 지출·현금 흐름을 구분한다. 이번은 문서만 변경·신규 게임 기능/빌드/플레이 검증 없음. 현재 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 싱글·A2 PVP·LANv9 / BuildHybrid 유지. 필수 입력/ZIP 미변경·입력 정상은 기존 이력 인용이며 이번 Strict/manifest 재실행 없음. 다음은 기획 검토 후 자산/가격/거래·저장 세부 계약과 구현 계획이다.
