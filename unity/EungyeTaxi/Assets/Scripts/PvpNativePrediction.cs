@@ -6,7 +6,7 @@ public sealed class PvpNativeInputQueue {
  public int Count {get{return queued.Count;}}
  public bool Enqueue(PvpNativeDrive input){
   if(input==null||input.sequence<=Received||input.sequence-Received>256||!Finite(input.throttle)||!Finite(input.steer))return false;
-  var copy=new PvpNativeDrive{sequence=input.sequence,throttle=Mathf.Clamp(input.throttle,-1,1),steer=Mathf.Clamp(input.steer,-1,1),brake=input.brake,blocked=input.blocked};
+  var copy=new PvpNativeDrive{sequence=input.sequence,throttle=Mathf.Clamp(input.throttle,-1,1),steer=Mathf.Clamp(input.steer,-1,1),brake=input.brake,blocked=input.blocked,steeringGain=DrivingSettings.Bound(input.steeringGain,.5f,1.5f,1),steeringResponse=DrivingSettings.Bound(input.steeringResponse,.25f,2,1),steeringReturn=DrivingSettings.Bound(input.steeringReturn,.25f,2,1)};
   Received=copy.sequence;if(queued.Count==32)queued.Dequeue();queued.Enqueue(copy);return true;
  }
  static bool Finite(float v){return !float.IsNaN(v)&&!float.IsInfinity(v);}
@@ -14,7 +14,9 @@ public sealed class PvpNativeInputQueue {
  public void Clear(){queued.Clear();Received=Applied=0;}
  public static void Apply(TaxiController taxi,PvpNativeDrive input,bool safe,float seconds){
   taxi.automated=true;taxi.AutomatedHumanInput=true;taxi.autoThrottle=safe?0:input.throttle;
-  taxi.autoSteer=safe?0:DriveFlowPolicy.AdvanceSteering(taxi.autoSteer,input.steer,taxi.Speed,seconds);
+  taxi.ManualSteeringGain=input==null?1:DrivingSettings.Bound(input.steeringGain,.5f,1.5f,1);
+  float rate=input==null?1:DrivingSettings.Bound(Mathf.Abs(input.steer)<.01f?input.steeringReturn:input.steeringResponse,.25f,2,1);
+  taxi.autoSteer=safe?0:DriveFlowPolicy.AdvanceSteering(taxi.autoSteer,input.steer,taxi.Speed,seconds*rate);
   taxi.autoBrake=safe||input.brake;taxi.autoServiceBrake=0;
  }
 }

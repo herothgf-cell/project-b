@@ -14,7 +14,7 @@ public class PracticeSession : MonoBehaviour {
  public string SelectedConditions {get{return ConfusionPracticeState.Contains(SelectedVariant)?ConfusionPracticeState.Conditions(SelectedVariant):SelectedVariant==7?"신호를 기다리는 차량 8대가 출구 차로에 줄 서 있습니다. 영업 기록 없이 준비된 은계 구간으로 이동합니다.":RightPracticeState.Conditions(SelectedVariant);}}
  public string SelectedGuidance {get{return ConfusionPracticeState.Contains(SelectedVariant)?ConfusionPracticeState.Guidance(SelectedVariant):SelectedVariant==7?"줄 맨 뒤에서 간격을 확보해 합류하거나 직진 후 우회하세요. 앞부분 진입과 상대 진행 방해는 결과에서 구분합니다. 완료 후 같은 조건으로 재시도할 수 있습니다.":RightPracticeState.Guidance(SelectedVariant);}}
  bool pickerPaused,changedConditions,ready;float pickerTime;
- public bool OpenPicker(){if(PvpSimulationMode.Active)return false;
+ public bool OpenPicker(){if(session.SettingsOpen||PvpSimulationMode.Active)return false;
   if(session.FullMapOpen||session.ChoiceOpen)return false;
   if(Enabled&&!ready||Busy||PickerOpen||session.business.restartPrompt||session.business.pendingPayment>=0||session.business.taxPrompt||session.services.open||session.law.HistoryOpen)return false;
   if(!Enabled&&!session.business.preparing&&!session.business.ShowingSummary&&!session.paused)return false;
@@ -66,7 +66,7 @@ public class PracticeSession : MonoBehaviour {
    child=System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo{FileName=System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName,Arguments=arguments,UseShellExecute=false});notice="연습 창 진행 중 · 원래 정산은 정지 상태입니다";return true;
   }catch(Exception e){notice="연습 실행 실패: "+e.Message;child=null;return false;}
  }
- void Update(){if(Enabled&&Input.GetKeyDown(KeyCode.F6)){if(PickerOpen)CancelPicker();else OpenPicker();}if(child==null||!child.HasExited)return;
+ void Update(){if(!session.SettingsOpen&&Enabled&&Input.GetKeyDown(KeyCode.F6)){if(PickerOpen)CancelPicker();else OpenPicker();}if(child==null||!child.HasExited)return;
   try{if(System.IO.File.Exists(resultPath)){var result=JsonUtility.FromJson<PracticeResult>(System.IO.File.ReadAllText(resultPath));if(result!=null&&result.sourceId==eventId){session.business.practices.Add(result);if(session.business.ShowingSummary)session.business.SaveCheckpoint();notice="연습 결과: "+result.action+" · "+result.EvaluationText();}else notice="연습 결과를 확인하지 못했습니다";}else notice="연습 창 종료 · 결과 파일 없음";}
   catch(Exception e){notice="연습 결과 읽기 실패: "+e.Message;}
   finally{child.Dispose();child=null;foreach(var path in new[]{inputPath,resultPath})if(!string.IsNullOrEmpty(path)&&System.IO.File.Exists(path))System.IO.File.Delete(path);inputPath=resultPath="";}

@@ -3,6 +3,7 @@ public class TaxiController : MonoBehaviour {
     public Rigidbody body; public WheelCollider[] wheels=new WheelCollider[4]; Transform[] visuals=new Transform[4];
     public bool NetworkReplica,NetworkPredicted; public Vector3 ReplicaVelocity; public float ReplicaSteering;
     public bool automated,AutomatedHumanInput; public float autoThrottle,autoSteer,autoServiceBrake; public bool autoBrake;
+    public float ManualSteeringGain=1;
     public AssistedDriveController assistance;public BusinessProgress business;
     float throttle,steer,motorDemand; bool brake; Vector3 spawn; Quaternion spawnRotation;
     readonly DriverPedalIntent pedalIntent=new DriverPedalIntent();
@@ -37,9 +38,9 @@ public class TaxiController : MonoBehaviour {
         if(automated) {throttle=autoThrottle; steer=autoSteer; brake=autoBrake;} else {
             throttle=(Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow)||Input.GetKey(KeyCode.JoystickButton0)?1:0)-(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)||Input.GetKey(KeyCode.JoystickButton1)?1:0);
             float keyboard=(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0);
-            float pad=Input.GetAxisRaw("TaxiSteer");float lateral=Mathf.Abs(pad)>.15f?pad:keyboard;
-            if(assistance)assistance.ReadInput(lateral);
-            if(!assistance||!assistance.Active)steer=DriveFlowPolicy.AdvanceSteering(steer,lateral,Speed,Time.deltaTime);
+            var controls=DrivingSettings.Current;float pad=Input.GetAxisRaw("TaxiSteer"),lateral=controls.Input(keyboard,pad);
+            if(assistance)assistance.ReadInput(Mathf.Abs(pad)>.15f?pad:keyboard);
+            if(!assistance||!assistance.Active)steer=controls.Advance(steer,lateral,Speed,Time.deltaTime);
             brake=Input.GetKey(KeyCode.Space)||Input.GetKey(KeyCode.JoystickButton2);
         }
         for(int i=0;i<4;i++) {Vector3 p; Quaternion q; wheels[i].GetWorldPose(out p,out q); visuals[i].SetPositionAndRotation(p,q*Quaternion.Euler(0,0,90));}
@@ -69,7 +70,7 @@ public class TaxiController : MonoBehaviour {
         CornerAssisting=demand.motor<manual.motor||demand.brake>manual.brake;
         if(business&&business.session.simulationMatch&&business.session.simulationMatch.ServiceLocked(business.session)){demand.motor=0;demand.brake=1;motorDemand=0;}
         if(PvpMapInputBlocked){demand.motor=0;demand.brake=1;motorDemand=0;steer=0;}
-        float centerAngle=steer*(assistedSteering?DriveMath.SteerAngle(Speed*3.6f):DriveMath.ManualSteerAngle(Speed*3.6f));
+        float centerAngle=WheelCenterAngle(steer,Speed*3.6f,assistedSteering);
         for(int i=0;i<4;i++) { if(!microsleep)wheels[i].steerAngle=i<2?DriveMath.WheelSteerAngle(centerAngle,i==0):0; wheels[i].motorTorque=i>=2?demand.motor*1100:0; wheels[i].brakeTorque=demand.brake*3500; }
         body.AddForce(Vector3.down*body.velocity.sqrMagnitude*6);
         int grounded=0;foreach(var wheel in wheels)if(wheel.isGrounded)grounded++;
@@ -82,6 +83,11 @@ public class TaxiController : MonoBehaviour {
         // steer a route, spin a parked car, override H, or push airborne wheels.
         if(DriveMath.MayAssistManualYaw(grounded,Vector3.Dot(transform.up,Vector3.up),assistedSteering,!automated||AutomatedHumanInput||NetworkPredicted,microsleep))
             body.AddTorque(Vector3.up*DriveMath.ManualYawAcceleration(Speed,centerAngle,body.angularVelocity.y),ForceMode.Acceleration);
+    }
+    public float WheelCenterAngle(float input,float kph,bool assisted){
+        if(assisted)return input*DriveMath.SteerAngle(kph);
+        float gain=!automated?DrivingSettings.Current.sensitivity:AutomatedHumanInput||NetworkPredicted?ManualSteeringGain:1;
+        return DrivingSettings.Angle(input,kph,gain);
     }
     public void ClearPredictedPedals(){steer=throttle=motorDemand=autoSteer=autoThrottle=autoServiceBrake=0;brake=autoBrake=true;}
     public int ResetEpoch {get;private set;}

@@ -111,7 +111,7 @@ public partial class ServiceStops : MonoBehaviour {
   }
   GUI.enabled=true;if(GUI.Button(new Rect(x+10+4*cell,y+30,cell-5,32),"계속 영업 · 닫기",button))DismissPostTrip();
  }
- public void Toggle(){
+ public void Toggle(){if(session.SettingsOpen)return;
   if(session.accident&&session.accident.Locked||session.damage&&session.damage.PendingServiceRemaining>0)return;
   if(PvpNativeLan.Route(session,"toggle-service"))return;
   if(QueueWaiting){CancelQueue();notice="시설 대기 취소 · 결제/서비스 시간 변화 없음";noticeUntil=Time.unscaledTime+5;return;}

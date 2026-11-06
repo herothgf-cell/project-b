@@ -26,20 +26,24 @@ public class DriveHUD : MonoBehaviour {
   body.fontSize=UiReadability.Font(16);small.fontSize=UiReadability.Font(13);CockpitUI.Draw(this);
   if(HelpOpen)DrawHelp();
   if(session.paused){
+   if(session.simulationMatch&&session.simulationMatch.Finished||PvpNativeLan.RunningOnline)return;
+   var settings=DrivingSettingsPanel.For(session);if(settings.IsOpen){settings.Draw();return;}
    if(session.simulationMatch){
     if(session.simulationMatch.Finished)return;
-    float px=Screen.width/2f-240,py=Screen.height/2f-100;
-    GUI.Box(new Rect(px,py,480,200),"일시정지 · 경기와 차량이 멈췄습니다");
+    float px=Screen.width/2f-240,py=Screen.height/2f-130;
+    GUI.depth=-150;GUI.Box(new Rect(px,py,480,260),"일시정지 · 경기와 차량이 멈췄습니다");
     if(GUI.Button(new Rect(px+20,py+55,440,45),"계속하기")){session.paused=false;Time.timeScale=1;}
-    if(GUI.Button(new Rect(px+20,py+115,440,45),"경기 나가기"))session.simulationMatch.ReturnToMenu();
+    if(GUI.Button(new Rect(px+20,py+115,440,45),"설정",KoreanText.Button(18)))settings.Open();
+    if(GUI.Button(new Rect(px+20,py+175,440,45),"경기 나가기"))session.simulationMatch.ReturnToMenu();
     return;
    }
    DrawSingleMenu();
   }
  }
  public void DrawSingleMenu(){
+  var settings=DrivingSettingsPanel.For(session);if(settings.IsOpen){settings.Draw();return;}
   var b=session.business;bool restart=b.useV2&&b.HasCampaignToContinue;
-  float height=restart?308:256,x=Screen.width/2f-240,y=(Screen.height-height)/2;
+  float height=restart?360:308,x=Screen.width/2f-240,y=(Screen.height-height)/2;
   GUI.depth=-150;GUI.Box(new Rect(x,y,480,height),b.preparing?"영업 준비":"일시정지");
   bool enabled=GUI.enabled;GUI.enabled=enabled&&!session.PracticeBusy&&!b.IsRestoring;
   if(GUI.Button(new Rect(x+20,y+52,440,44),b.MenuPrimaryLabel,KoreanText.Button(18)))b.ContinueFromMenu();
@@ -47,6 +51,7 @@ public class DriveHUD : MonoBehaviour {
   if(restart){if(GUI.Button(new Rect(x+20,row,440,40),"처음부터 시작",KoreanText.Button(16)))b.RequestRestart();row+=52;}
   if(GUI.Button(new Rect(x+20,row,440,40),"운전 연습 선택",KoreanText.Button(16)))session.GetComponent<PracticeSession>().OpenPicker();row+=52;
   GUI.enabled=enabled;
+  if(GUI.Button(new Rect(x+20,row,440,40),"설정",KoreanText.Button(16)))settings.Open();row+=52;
   if(GUI.Button(new Rect(x+20,row,440,40),"게임 종료",KoreanText.Button(16)))Application.Quit();row+=52;
   if(GUI.Button(new Rect(x+20,row,440,28),session.traffic.mitOptions.Label+" · 클릭하여 변경",KoreanText.Button(14)))session.traffic.mitOptions.SetEnabled(!session.traffic.mitOptions.Enabled);
  }

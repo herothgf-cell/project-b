@@ -10,13 +10,13 @@ using Unity.Collections;
 
 [Serializable] public sealed class PvpNativeHello {public string protocol,map,ticket,nickname;}
 [Serializable] public sealed class PvpNativeRoom {public int slot,seconds;public string ticket,session,contentProfileJson;public bool started,racing;public bool[] humans;public string[] names;}
-[Serializable] public sealed class PvpNativeDrive {public int sequence;public float throttle,steer;public bool brake,blocked;}
+[Serializable] public sealed class PvpNativeDrive {public int sequence;public float throttle,steer;public bool brake,blocked;public float steeringGain=1,steeringResponse=1,steeringReturn=1;}
 [Serializable] public sealed class PvpNativeCommand {public int sequence,value;public string action,token,trip,request;}
 
 // Trusted LAN, host-authoritative native WheelCollider simulation. No client pose/fare authority.
 [DefaultExecutionOrder(-110)]
 public sealed class PvpNativeLan:MonoBehaviour {
- public const string Protocol="native-city-lan-v9";
+ public const string Protocol="native-city-lan-v10";
  public static PvpNativeLan Instance {get;private set;}
  public static bool ApplyingReplica;
  public PvpSimulationMatch Match {get;private set;}
@@ -50,7 +50,7 @@ public sealed class PvpNativeLan:MonoBehaviour {
   if(Instance.Match&&s==Instance.Match.Human&&Instance.manager&&Instance.manager.IsConnectedClient&&Instance.Racing){var cmd=new PvpNativeCommand{sequence=++Instance.commandSeq,action=action,value=value,token=token??"",trip=s.law.tripId??"",request=s.requests.request.Id??""};Instance.Send("cmd",0,cmd);}
   return true;
  }
- public void ToggleMenu(){MenuOpen=!MenuOpen;}
+ public void ToggleMenu(){if(Match&&DrivingSettingsPanel.Back(Match.Human))return;MenuOpen=!MenuOpen;}
  public int ServerToLocal(int server){if(IsHost)return server;if(server==LocalSlot)return 0;int at=1;for(int i=0;i<4;i++)if(i!=LocalSlot){if(i==server)return at;at++;}return -1;}
  public int LocalToServer(int local){if(IsHost)return local;if(local==0)return LocalSlot;int at=1;for(int i=0;i<4;i++)if(i!=LocalSlot){if(at==local)return i;at++;}return -1;}
  public string Label(int local){int slot=LocalToServer(local);if(slot>=0&&humans[slot]){string name=names[slot];return string.IsNullOrEmpty(name)?(local==0?"나":"플레이어 "+(slot+1)):name+(local==0?" (나)":"");}return "봇 "+(slot+1);}
@@ -135,8 +135,9 @@ public sealed class PvpNativeLan:MonoBehaviour {
  }
  PvpNativeDrive ReadDrive(){
   var own=Match.Human;bool blocked=!receivedOwn||UiBlocked(own)||!Application.isFocused;float throttle=0,steer=0;
-  if(!blocked){throttle=(Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow)||Input.GetKey(KeyCode.JoystickButton0)?1:0)-(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)||Input.GetKey(KeyCode.JoystickButton1)?1:0);steer=(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0);float pad=Input.GetAxisRaw("TaxiSteer");if(Mathf.Abs(pad)>.15f)steer=pad;}
-  var packet=new PvpNativeDrive{throttle=throttle,steer=steer,brake=blocked||Input.GetKey(KeyCode.Space)||Input.GetKey(KeyCode.JoystickButton2),blocked=blocked};
+  var controls=DrivingSettings.Current;
+  if(!blocked){throttle=(Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow)||Input.GetKey(KeyCode.JoystickButton0)?1:0)-(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)||Input.GetKey(KeyCode.JoystickButton1)?1:0);float keyboard=(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0);steer=controls.Input(keyboard,Input.GetAxisRaw("TaxiSteer"));}
+  var packet=new PvpNativeDrive{throttle=throttle,steer=steer,brake=blocked||Input.GetKey(KeyCode.Space)||Input.GetKey(KeyCode.JoystickButton2),blocked=blocked,steeringGain=controls.sensitivity,steeringResponse=controls.response,steeringReturn=controls.centering};
   if(ProbeMode&&ProbeInput!=null&&receivedOwn)packet=ProbeInput();return packet;
  }
  void FixedUpdate(){
@@ -148,8 +149,8 @@ public sealed class PvpNativeLan:MonoBehaviour {
  public void LeaveToMenu(){if(stopping)return;StopTransport();var unified=FindObjectOfType<UnifiedModeBootstrap>();if(unified)unified.ReturnToMenu();else{PvpSimulationMode.Reset();UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);}}
  public void StopTransport(){if(stopping)return;stopping=true;if(IsHost&&manager&&manager.IsListening)foreach(var pair in peers)if(pair.Value.connected)try{Send("closed",pair.Key,new PvpNativeCommand());}catch{}if(manager){manager.OnClientConnectedCallback-=Connected;manager.OnClientDisconnectCallback-=Disconnected;manager.Shutdown();}if(networkRoot)Destroy(networkRoot);networkRoot=null;manager=null;Application.runInBackground=previousBackground;if(Instance==this)Instance=null;}
  void OnDestroy(){StopTransport();}
- void OnGUI(){if(!Match)return;GUI.skin.font=KoreanText.Font;
+ void OnGUI(){if(!Match||Match.Finished)return;GUI.skin.font=KoreanText.Font;
   if(!Racing&&!Match.Finished)GUI.Box(new Rect(Screen.width/2-200,110,400,70),"다른 참가자의 지도 준비를 기다리는 중");
-  if(MenuOpen){GUILayout.BeginArea(new Rect(Screen.width/2-170,Screen.height/2-110,340,220),GUI.skin.box);GUILayout.Label("LAN PVP · 경기는 계속 진행됩니다");if(GUILayout.Button("운전으로 돌아가기"))MenuOpen=false;if(GUILayout.Button(IsHost?"방 종료 · 모드 선택":"나가기 · 빈자리는 봇으로"))LeaveToMenu();GUILayout.EndArea();}
+  if(MenuOpen){var settings=DrivingSettingsPanel.For(Match.Human);if(settings.IsOpen){settings.Draw();return;}GUI.depth=-150;KoreanText.PrepareSkin();GUILayout.BeginArea(new Rect(Screen.width/2-170,Screen.height/2-130,340,260),GUI.skin.box);GUILayout.Label("LAN PVP · 경기는 계속 진행됩니다");if(GUILayout.Button("운전으로 돌아가기",KoreanText.Button(18),GUILayout.Height(44)))MenuOpen=false;if(GUILayout.Button("설정",KoreanText.Button(18),GUILayout.Height(44)))settings.Open();if(GUILayout.Button(IsHost?"방 종료 · 모드 선택":"나가기 · 빈자리는 봇으로",KoreanText.Button(16),GUILayout.Height(44)))LeaveToMenu();GUILayout.EndArea();}
  }
 }

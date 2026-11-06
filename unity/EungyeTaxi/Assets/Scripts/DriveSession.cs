@@ -16,6 +16,7 @@ public class DriveSession : MonoBehaviour {
     public bool ChoiceOpen {get{var c=GetComponent<ScenarioChoiceSituation>();return c&&(c.Open||c.ClosedThisFrame);}}
     public AmbientPedestrianSystem ambientPedestrians;
     public bool paused;public bool ShowHints; public int visits; bool inside;
+    public bool SettingsOpen {get{var panel=GetComponent<DrivingSettingsPanel>();return panel&&panel.IsOpen;}}
     public bool RideResultOpen {get{var result=GetComponent<RideCompletionPanel>();return result&&result.Open;}}
     public bool EditorOpen {get{var e=GetComponent<RoadMapEditor>();return e&&(e.IsOpen||e.ClosedThisFrame);}}
     public bool LivePvpMapOpen {get{var map=GetComponent<FullMapOverlay>();return simulationMatch&&map&&map.IsOpen&&!paused&&Time.timeScale>0;}}
@@ -137,6 +138,7 @@ public class DriveSession : MonoBehaviour {
     void Update() {
         if(IsSimulationBot||simulationMatch&&simulationMatch.Finished)return;
         if(!StartupReady)return;
+        if((Input.GetKeyDown(KeyCode.Escape)||Input.GetKeyDown(KeyCode.JoystickButton7))&&DrivingSettingsPanel.Back(this))return;
         var choice=GetComponent<ScenarioChoiceSituation>();if(choice&&(choice.Open||choice.ClosedThisFrame))return;
         if(FullMapOpen||GetComponent<FullMapOverlay>().ClosedThisFrame)return;
         if(PvpNativeLan.HandleEscape(this))return;

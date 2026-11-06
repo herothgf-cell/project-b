@@ -65,13 +65,13 @@ public partial class FullMapOverlay : MonoBehaviour {
  public bool ClosedThisFrame {get{return closedFrame==Time.frameCount;}}
  public Rect MapRect {get{return new Rect(20,86,Mathf.Max(280,CanvasWidth-370),Mathf.Max(250,CanvasHeight-112));}}
  public bool Open(){
-  if(IsOpen)return false;
+  if(session.SettingsOpen||IsOpen)return false;
   var b=session.business;
   if(session.ChoiceOpen||session.RideResultOpen||session.PracticeMenuOpen||session.PracticeBusy||b.preparing||b.ShowingSummary||b.restartPrompt||b.pendingPayment>=0||b.taxPrompt||session.services.open||session.law.HistoryOpen)return false;
   previousPause=session.paused;previousScale=Time.timeScale;if(!session.simulationMatch||previousPause||previousScale<=0){session.paused=true;Time.timeScale=0;}locationCopied=false;locationOpen=false;if(SelectedOffer>=0&&session.jobs.offers[SelectedOffer]!=selectedOffer){SelectedOffer=-1;selectedOffer=null;}IsOpen=true;highlightUntil=Time.unscaledTime+3;if(session.jobs.Active)RestoreTripRoute(false);else if(selectedOffer!=null)SelectOffer(SelectedOffer);return true;
  }
  public void Close(){if(!IsOpen)return;HideFacilityPlanner();IsOpen=false;dragging=false;closedFrame=Time.frameCount;if(session.simulationMatch&&session.simulationMatch.Finished){session.paused=true;Time.timeScale=0;}else {session.paused=previousPause;Time.timeScale=previousPause?0:previousScale>0?previousScale:1;}}
- void Update(){RefreshRoutePaint();if(IsOpen){if(Input.GetKeyDown(KeyCode.M)||Input.GetKeyDown(KeyCode.Escape)){if(locationOpen)locationOpen=false;else Close();}}else if(Input.GetKeyDown(KeyCode.M))Open();}
+ void Update(){if(session.SettingsOpen)return;RefreshRoutePaint();if(IsOpen){if(Input.GetKeyDown(KeyCode.M)||Input.GetKeyDown(KeyCode.Escape)){if(locationOpen)locationOpen=false;else Close();}}else if(Input.GetKeyDown(KeyCode.M))Open();}
  void OnDisable(){if(IsOpen)Close();}
  Vector2 Project(Vector3 p,Rect map){float span=Mathf.Max(session.world.map.width,session.world.map.depth);var unit=new Vector2(.5f+(p.x-session.world.map.width/2)/span,.5f-(p.z-session.world.map.depth/2)/span);return map.center+(unit-center)*Mathf.Min(map.width,map.height)*ZoomLevel;}
  void OnGUI(){if(!IsOpen)return;if(text==null){text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,wordWrap=true};heading=new GUIStyle(text){font=KoreanText.BoldFont};button=KoreanText.Button(17);text.normal.textColor=heading.normal.textColor=CasualUI.Ink;}text.fontSize=MapFont(16);heading.fontSize=MapFont(22);button.fontSize=MapFont(15);GUI.depth=-220;
