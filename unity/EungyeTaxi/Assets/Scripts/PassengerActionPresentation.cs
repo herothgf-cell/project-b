@@ -1,5 +1,5 @@
 using System;
-public enum PassengerActionKind { None, Wake, Load, Protect, Unload, Food, Secure, Errand }
+public enum PassengerActionKind { None, Wake, Load, Protect, Unload, Food, Secure, Errand, Umbrella, Rest }
 // UI-only state. Never advances work, changes money, or acknowledges a model event.
 public sealed class PassengerActionPresentation {
  public PassengerActionKind kind;public string identity="",title="",message="",condition="",footer="";

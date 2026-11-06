@@ -13,6 +13,20 @@ PassengerActionPresentation/UI를 추가하여 깨우기/적재/보호/하역/�
 
 ## 통합·남은 작업
 
+### 최종 실행본 검증 결과
+- Unity PassengerActionChecks.Build → PrototypeBuild.BuildHybrid exit0, 행동 표시 Editor77.
+- 실제 렌더링/위치 제어 fixture: 행동77(1280/1920), 전체HUD/메뉴/생활거점/긴 대화213 모두 exit0. artifacts/passenger-actions/all-actions.log 및 full-ui-final.log.
+- 실제 특성 선택/저장복원 Player86, 요청 실패 Player49, 비/인게임 설정 Player31. 통합 LANv16 두 프로세스 물리 주행 호스트43/클라이언트54, artifacts/pvp/native-lan-20261107-021351-70f2e41d.
+- 보호 저장16파일 SHA256 변화0, 필수 지도 Strict issues0. 지도/ZIP 미변경. 사람 수동/장기/전체3일/다른PC 검증은 미수행.
+- 수정 파일: PassengerActionPresentation/UI, BrightUIActionReview/Probe, PassengerBehaviorUI, PassengerRequestObservation/UI, CockpitUI, DriveSession, Editor PassengerActionChecks와 메타; 관련 기획05/07·체크리스트·승인설계/계획·실제 화면 및 통합 실행폴더/manifest.
+- 다음 디자인: 승객 표정/포즈, 월드·차량 아트, 정산/경고 연출. 동시 신규 특성의 실제 선택지는 보존했으며 우산/멀미 작업시간만 공통 행동 표시로 연결.
+
+### 동시 작업 완료 후 최종 통합
+- 사용자 지정대로 두 작업 완료를 기다린 뒤 원격73de2bb(승객 특성/요청 실패·날씨 설정·운전점수 툴)를 d85a59f로 병합. 새 특성의 안전정차 응답 조건·LANv16을 보존.
+- 추가된 TraitWorkRemaining을 일반 짐 적재로 오인하지 않도록 우산 감싸기/멀미 휴식 표시를 각각 연결. 선택/타이머/효과는 기존 모델 유지. 독립 재검토에서 추가 확정 문제 없음.
+- 전체UI 검사 중 검사 전용 긴 안내와 실제 카드가 같은 스크롤 상태를 사용한2건 실패 확인. 검사 동안만 실제 HUD를 숨겨 격리했으며 제품 동작 변경 없음.
+- 출력 폴더는 artifacts/passenger-actions/pre-final-runtime에 보존하고 빈 출력에 통합 빌드. Editor77/BuildHybrid exit0, 실제행동77·실제특성86·요청49 통과. 전체UI/LAN 최종 결과와 출하 영수증은 아래에 추가.
+
 ### 1차 통합 검증 완료 / 동시 작업 대기
 - 소스 cce12ee, 비 프로토 보존 병합6ba7cb1. 통합 Editor69·BuildHybrid exit0.
 - 실제1280/1920 행동 Player67 통과. 첫 숨김 실행은 초기 캡처3장 빈 화면으로 exit2였으며 표시 창으로 재실행해 모든 캡처/상태 검사 통과.
