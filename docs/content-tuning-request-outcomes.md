@@ -57,3 +57,5 @@ OnTime의 법규 관찰 기준은 요청 시작 때 캡처한 사건 수다. Com
 - `docs/content-design/02-passengers-and-fares.md`, `07-passenger-dialogue.md`: 현행 기획과 텍스트/경로·예상시간 예외 대조.
 
 이번은 소스·기획·카탈로그 대조이며 새 물리 주행·수동 플레이·전체 캠페인/Player 실험으로 판정 도달성을 검증한 작업은 아니다. 특히 목적지/경유 실패 도달성은 일반 상호작용 코드 경로에서의 추론이다. 사용자 효과값·판정 로직·빌드·설정은 그대로다.
+
+2026-11-07 기본 구성에서는 ShortRoad/RouteAdvice를 비활성화한다. 아래 해당 항목의 판정 설명은 구 저장/사용자 프로필 호환용이며 새 기본 배정 후보가 아니다. 현재 요청표는 [07](content-design/07-passenger-dialogue.md)을 따른다.
