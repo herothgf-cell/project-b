@@ -18,7 +18,7 @@ public static class PassengerDialogueUI {
   scale=Mathf.Max(.01f,scale);float viewportWidth=screenWidth/scale,viewportHeight=screenHeight/scale;
   float left=viewportWidth>=1400?420:20,right=viewportWidth>=1400?viewportWidth-332:viewportWidth-20;
   float width=Mathf.Min(860,Mathf.Max(1,right-left)),height=Mathf.Min(Mathf.Max(1,requestedHeight),Mathf.Max(1,Mathf.Min(420,viewportHeight*.48f)));
-  return new Rect(left+(right-left-width)/2,Mathf.Max(0,viewportHeight-height-20),width,height);
+  return new Rect(left+(right-left-width)/2,Mathf.Max(0,viewportHeight-height-(viewportHeight>=800?252:20)),width,height);
  }
  // Keep every authored term and number verbatim; only separate outcome clauses visually.
  public static string[] EffectParts(string effect){
@@ -44,17 +44,17 @@ public static class PassengerDialogueUI {
   Styles();var matrix=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
   const float pad=16,gap=10;Rect bounds=PanelBounds(Screen.width,Screen.height,scale,1);float inner=bounds.width-pad*2;
   float contentWidth=Mathf.Max(1,inner-Mathf.Max(18,GUI.skin.verticalScrollbar.fixedWidth));
-  float portraitSize=Mathf.Min(76,contentWidth*.19f),speechX=portraitSize+12,speechWidth=Mathf.Max(1,contentWidth-speechX);
+  float portraitSize=Mathf.Min(112,contentWidth*.25f),speechX=portraitSize+12,speechWidth=Mathf.Max(1,contentWidth-speechX);
   float bubble=Mathf.Max(portraitSize,speech.CalcHeight(new GUIContent(dialogue),Mathf.Max(1,speechWidth-24))+24);
   float noteHeight=string.IsNullOrEmpty(note)?0:small.CalcHeight(new GUIContent(note),contentWidth)+10;
   float[] heights=new float[options.Length];var effects=new string[options.Length][];float total=0;
   string identity=title+"\n"+dialogue;
   for(int i=0;i<options.Length;i++){identity+="\n"+options[i].key+"\t"+options[i].line;effects[i]=EffectParts(options[i].effect);heights[i]=Mathf.Max(70,body.CalcHeight(new GUIContent(options[i].line),Mathf.Max(1,contentWidth-70))+EffectsHeight(effects[i],Mathf.Max(1,contentWidth-70))+26);total+=heights[i]+gap;}
   if(scrollDialogue!=identity||Time.frameCount>lastDialogueFrame+1){scrollDialogue=identity;scroll=Vector2.zero;}lastDialogueFrame=Time.frameCount;
-  float contentHeight=bubble+12+noteHeight+total;
+  float contentHeight=bubble+12+noteHeight+total-(options.Length>0?gap:0);
   float header=Mathf.Max(36,heading.CalcHeight(new GUIContent(title),Mathf.Max(1,inner-24))+12);
   bounds=PanelBounds(Screen.width,Screen.height,scale,header+contentHeight+pad);int chosen=-1;
-  CasualUI.Panel(bounds);CasualUI.RoundedFill(new Rect(bounds.x+pad,bounds.y+12,5,22),CasualUI.Blue);GUI.Label(new Rect(bounds.x+pad+16,bounds.y+6,inner-24,header-6),title,new GUIStyle(heading){normal={textColor=CasualUI.Blue}});
+  CasualUI.Panel(bounds);DrivingHudArt.Glass(new Rect(bounds.x,bounds.y,bounds.width,header));GUI.Label(new Rect(bounds.x+pad,bounds.y+6,inner,header-6),title,new GUIStyle(heading){normal={textColor=CasualUI.Ink}});
   Rect viewport=new Rect(bounds.x+pad,bounds.y+header,inner,Mathf.Max(1,bounds.height-header-pad));
   scroll.y=Mathf.Clamp(scroll.y,0,Mathf.Max(0,contentHeight-viewport.height));
   scroll=GUI.BeginScrollView(viewport,scroll,new Rect(0,0,contentWidth,contentHeight),false,contentHeight>viewport.height);
@@ -67,9 +67,9 @@ public static class PassengerDialogueUI {
    bool hover=r.Contains(Event.current.mousePosition)&&o.enabled;Color accent=i==0?CasualUI.Green:CasualUI.Blue;
    CasualUI.RoundedFill(r,o.enabled?accent:CasualUI.Track);
    CasualUI.RoundedFill(new Rect(r.x+1,r.y+1,r.width-2,r.height-2),o.enabled?(hover?new Color(.82f,.92f,1):i==0?new Color(.94f,.99f,.95f):CasualUI.Soft):new Color(.91f,.92f,.94f));
-   if(GUI.Button(r,new GUIContent("",o.line),button))chosen=i;
+   if(GUI.Button(r,new GUIContent("",o.line),button)&&NumericChoiceInput.TryConsume(Time.frameCount))chosen=i;
    CasualUI.RoundedFill(new Rect(r.x+10,r.y+12,34,30),o.enabled?accent:CasualUI.Muted);
-   var keyStyle=new GUIStyle(heading){alignment=TextAnchor.MiddleCenter};keyStyle.normal.textColor=Color.white;GUI.Label(new Rect(r.x+10,r.y+12,34,30),o.key,keyStyle);
+   var keyStyle=new GUIStyle(heading){alignment=TextAnchor.MiddleCenter};keyStyle.normal.textColor=Color.white;GUI.Label(new Rect(r.x+10,r.y+12,34,30),NumericChoiceInput.Label(i),keyStyle);
    float lineHeight=body.CalcHeight(new GUIContent(o.line),inner-70);GUI.Label(new Rect(r.x+54,r.y+9,inner-70,lineHeight),o.line,body);
    Effects(new Rect(r.x+54,r.y+15+lineHeight,inner-70,r.height-lineHeight-21),effects[i]);GUI.enabled=enabled;row+=heights[i]+gap;
   }

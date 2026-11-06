@@ -78,7 +78,7 @@ public class DrivingReadability : MonoBehaviour {
   GUI.EndGroup();
   if(GUI.Button(new Rect(x,328,Size,32),"지도 (M)",KoreanText.Button(UiReadability.Font(13))))overlay.Open();
   if(Facilities){var status=GetComponent<HybridMapStatus>();Panel(new Rect(x-310,42,300,145));GUI.Label(new Rect(x-300,50,280,130),"시설 □ 주황: 임시 / 초록: 확인\n"+(status?status.current:"시설 정보 없음"),label);}
-  DrawNavigation(29);GUI.matrix=originalMatrix;
+  DrawNavigation((Screen.width/uiScale-620)/2+5);GUI.matrix=originalMatrix;
  }
  public string GoalDistance {get{var j=session.jobs;if(j.nav.RetainingPreviousRoute)return "경로 재탐색 중";return (j.trip.State==TripState.ToPickup?"승차까지":j.trip.State==TripState.OnTrip?(j.PassengerViaPending?"경유까지":"하차까지"):"도착까지")+" "+NavigationCue.FormatDistance(j.nav.remaining);}}
  public string NavigationSummary {get{var nav=session.jobs.nav;if(nav.RetainingPreviousRoute)return "도로로 복귀하면 새 길을 안내합니다";return nav.HasDestination?GoalDistance+" · 약 "+RoadNavigation.FormatEta(nav.estimatedSeconds):"목적지를 선택하세요";}}
@@ -88,30 +88,24 @@ public class DrivingReadability : MonoBehaviour {
  }}
  public static Rect FollowingManeuverBounds(float x,float y){return new Rect(x+222,y+10,80,64);}
  void DrawNavigation(float x){
-  var nav=session.jobs.nav;const float y=96;const float width=320;float height=SignalTarget!=null?188:140;var cue=TurnCue;
-  if(!cue.Valid){
-   Panel(new Rect(x-5,y,width,height));
-   GUI.Label(new Rect(x+8,y+5,Size-16,44),nav.RetainingPreviousRoute?"경로 재탐색 중\n흐린 선은 이전 경로":nav.HasDestination?nav.instruction:"어디로 갈까요?",new GUIStyle(label){fontSize=UiReadability.Font(16)});
-   GUI.Label(new Rect(x+8,y+54,Size-16,28),nav.HasDestination?NavigationSummary:"M 지도에서 호출을 선택하세요",new GUIStyle(label){fontSize=UiReadability.Font(13)});
-   DrawCompactSignal(x,y+134,false);
-   GUI.enabled=nav.HasDestination&&!session.paused;
-   if(GUI.Button(new Rect(x+8,y+96,Size-16,27),(nav.PreferFastest?"짧은 길":"빠른 길")+"  Tab",KoreanText.Button(UiReadability.Font(13))))nav.TogglePreference();GUI.enabled=true;return;
+  var nav=session.jobs.nav;if(!nav.HasDestination){if(SignalTarget!=null){DrivingHudArt.Glass(new Rect(x+310,20,300,90));DrawCompactSignal(x+310,42,false);}return;}const float y=20;var cue=TurnCue;DrivingHudArt.Glass(new Rect(x-5,y,620,164));
+  var white=new GUIStyle(label){normal={textColor=CasualUI.Ink}};
+  GUI.Label(new Rect(x+16,y+8,580,26),nav.RetainingPreviousRoute?"경로 재탐색 중":nav.HasDestination?"안내 경로를 따라 이동하세요":"어디로 갈까요?",DrivingHudArt.Text(16,DrivingHudArt.Light,true));
+  if(cue.Valid&&nav.remaining<18){cue.Move=NavigationMove.Arrival;cue.Distance=nav.remaining;cue.Road="목적지 주변";cue.LaneHint="도착";cue.HasNext=false;}
+  if(cue.Valid){
+   NavigationArrow.Draw(new Rect(x+12,y+48,64,58),cue.Move,DrivingHudArt.Cyan);
+   GUI.Label(new Rect(x+88,y+35,135,46),NavigationCue.FormatDistance(cue.Distance),DrivingHudArt.Text(32,null,true));
+   string road=string.IsNullOrEmpty(cue.Road)?NavigationCue.Label(cue.Move):cue.Road;var roadStyle=DrivingHudArt.Text(15);
+   GUI.Label(new Rect(x+88,y+83,135,27),new GUIContent(UiReadability.Ellipsis(road,roadStyle,135),road),roadStyle);
+   if(cue.HasNext&&!session.services.PostTripVisible){var next=FollowingManeuverBounds(x,y+30);NavigationArrow.Draw(new Rect(next.x+24,next.y,32,32),cue.NextMove,DrivingHudArt.Cyan);GUI.Label(new Rect(next.x-12,next.y+35,next.width+24,26),"이후 "+NavigationCue.FormatDistance(cue.NextDistance),new GUIStyle(white){fontSize=UiReadability.Font(12),alignment=TextAnchor.MiddleCenter,wordWrap=false});}
+   if(cue.Move==NavigationMove.Arrival||cue.Move==NavigationMove.Straight)GUI.Label(new Rect(x+16,y+119,284,25),cue.Move==NavigationMove.Arrival?(session.world.map.hybrid?"오른쪽 승하차 지점":"목적지에서 정차"):"목적지까지 직진",DrivingHudArt.Text(13,DrivingHudArt.Light));
+  }else{
+   GUI.Label(new Rect(x+16,y+44,290,106),nav.RetainingPreviousRoute?"도로로 복귀하면 새 길을 안내합니다\n흐린 선은 이전 경로":nav.HasDestination?nav.instruction:"M 지도에서 호출을 선택하세요",new GUIStyle(DrivingHudArt.Text(16,null,true)){wordWrap=true});
   }
-  if(nav.remaining<18){cue.Move=NavigationMove.Arrival;cue.Distance=nav.remaining;cue.Road="목적지 주변";cue.LaneHint="도착";cue.HasNext=false;}
-  CasualUI.Panel(new Rect(x-5,y,width,height),CasualUI.Blue);
-  NavigationArrow.Draw(new Rect(x+5,y+10,64,58),cue.Move,Color.white);
-  var ink=new GUIStyle(label){normal={textColor=Color.white}};
-  GUI.Label(new Rect(x+78,y+2,135,44),NavigationCue.FormatDistance(cue.Distance),new GUIStyle(ink){font=KoreanText.BoldFont,fontSize=32});
-  string road=string.IsNullOrEmpty(cue.Road)?NavigationCue.Label(cue.Move):cue.Road;
-  var roadStyle=new GUIStyle(ink){fontSize=UiReadability.Font(15),wordWrap=false};
-  GUI.Label(new Rect(x+78,y+46,135,27),new GUIContent(UiReadability.Ellipsis(road,roadStyle,135),road),roadStyle);
+  GUI.Label(new Rect(x+330,y+35,268,29),nav.HasDestination?GoalDistance:"길안내 대기",DrivingHudArt.Text(16,null,true));
+  if(SignalTarget!=null)DrawCompactSignal(x+310,y+80,false);
+  else GUI.Label(new Rect(x+330,y+72,268,28),nav.HasDestination?"예상 "+RoadNavigation.FormatEta(nav.estimatedSeconds):"새로운 운행을 시작하세요",DrivingHudArt.Text(14,DrivingHudArt.Light));
 
-  if(cue.HasNext&&!session.services.PostTripVisible){var next=FollowingManeuverBounds(x,y);NavigationArrow.Draw(new Rect(next.x+24,next.y,32,32),cue.NextMove,Color.white);GUI.Label(new Rect(next.x-12,next.y+35,next.width+24,26),"이후 "+NavigationCue.FormatDistance(cue.NextDistance),new GUIStyle(ink){fontSize=UiReadability.Font(12),alignment=TextAnchor.MiddleCenter,wordWrap=false});}
-  if(cue.Move==NavigationMove.Arrival||cue.Move==NavigationMove.Straight)GUI.Label(new Rect(x+79,y+76,195,23),cue.Move==NavigationMove.Arrival?(session.world.map.hybrid?"오른쪽 승하차 지점":"목적지에서 정차"):"목적지까지 직진",new GUIStyle(ink){fontSize=UiReadability.Font(12)});
-  GUI.Label(new Rect(x+8,y+107,182,23),GoalDistance,new GUIStyle(ink){fontSize=UiReadability.Font(11)});
-  DrawCompactSignal(x,y+134,true);
-  GUI.enabled=!session.paused;
-  if(GUI.Button(new Rect(x+196,y+104,76,26),new GUIContent(nav.PreferFastest?"짧은 길":"빠른 길","Tab · 경로 변경"),KoreanText.Button(UiReadability.Font(12))))nav.TogglePreference();GUI.enabled=true;
  }
  void DrawFuelStations(){
   var stations=FuelStationLayout.For(session.world.map);var style=new GUIStyle(label){fontSize=UiReadability.Font(11),alignment=TextAnchor.MiddleCenter};
@@ -171,7 +165,7 @@ public class DrivingReadability : MonoBehaviour {
   var caption=new GUIStyle(label){fontSize=UiReadability.Font(11),wordWrap=false,normal={textColor=ink}};
   GUI.Label(new Rect(x+8,y-5,294,25),head.lamps==0?"신호 형식 미확인":"다음 · "+head.Caption,caption);
   if(head.lamps==0)return;
-  float lampX=x+24,cy=y+34;CasualUI.RoundedFill(new Rect(x+10,y+18,head.lamps*27+4,30),new Color(.10f,.14f,.19f));
+  float lampX=x+24,cy=y+29;CasualUI.RoundedFill(new Rect(x+10,y+14,head.lamps*27+4,26),new Color(.10f,.14f,.19f));
   for(int i=0;i<head.lamps;i++)Circle(new Vector2(lampX+i*27,cy),new Color(.24f,.29f,.34f),18);
   bool left=head.left&&session.traffic.HasLeftMovement(SignalTarget,SignalAxis,SignalSign);
   if(next.Known){
@@ -181,7 +175,7 @@ public class DrivingReadability : MonoBehaviour {
    if(left&&next.Left==SignalColor.Green)NavigationArrow.Draw(new Rect(lampX+44,cy-10,20,20),NavigationMove.Left,new Color(.22f,1,.46f));
    if(forward==SignalColor.Green)Circle(new Vector2(lampX+(head.lamps-1)*27,cy),new Color(.22f,1,.46f),18);
   }
-  GUI.Label(new Rect(x+135,y+14,154,36),next.Known?next.CountdownText:"—",new GUIStyle(label){fontSize=UiReadability.Font(22),normal={textColor=ink}});
+  GUI.Label(new Rect(x+135,y+12,154,30),next.Known?next.CountdownText:"—",new GUIStyle(label){fontSize=UiReadability.Font(22),normal={textColor=ink}});
  }
  static void Panel(Rect r){CasualUI.Panel(r);}
  static Texture2D circleTexture;

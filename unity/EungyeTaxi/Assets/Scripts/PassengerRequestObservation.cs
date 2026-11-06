@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 [System.Serializable] public class PassengerRequestObservationSnapshot {
  public string systemRouteReason;
  public PassengerRequestSnapshot request;public string observedTrip,selectedEffect;public float stoppedSeconds,travelled,broadTravel,expectedDistance,expectedBroad,etaAge,etaPredicted,etaNav,acceptedAge,addedDistance,newRemaining;public int motionBefore,lawBefore,accelBefore,brakeBefore,necessaryBefore,proposal,newFare;public bool etaSelected,quietReply,adviceFastest,preferLarge,preferFast;
@@ -98,11 +98,10 @@ public class PassengerRequestObservation : MonoBehaviour {
   if(input)ObserveInputOnly();
  }
  public void ObserveInputOnly(){
-  if(PvpNativeLan.UiBlocked(session)||PvpNativeLan.IsRemoteHuman(session))return;
-  if(Input.GetKeyDown(KeyCode.Y))session.requests.Choose(request.Kind==RequestKind.Eta?PassengerReply.EtaFaster:PassengerReply.Accept);
-  if(Input.GetKeyDown(KeyCode.I))session.requests.Choose(request.Kind==RequestKind.Eta?PassengerReply.EtaNormal:PassengerReply.Alternative);
-  if(Input.GetKeyDown(KeyCode.O)&&request.Kind==RequestKind.Eta)session.requests.Choose(PassengerReply.EtaRelaxed);
-  if(Input.GetKeyDown(KeyCode.U))session.requests.Choose(PassengerReply.Defer);
+  if(request.Resolved||!session.requests.CanTalk||session.requests.ResponseBlockedThisFrame||PvpNativeLan.IsRemoteHuman(session))return;
+  var choices=ReplyChoices;
+  int selected=NumericChoiceInput.Read(choices.Length,i=>session.requests.CanChoose(choices[i].reply));
+  if(selected>=0)session.requests.Choose(choices[selected].reply);
  }
  public string DialogueReply {get{if(request.SafetyDeferred)return ChangesRoute?"이번에는 원래 목적지로 안전하게 모시겠습니다.":"지금은 요청대로 해 드리기 어렵습니다. 원래대로 모시겠습니다.";string value=request.ResponseText();string prefix=request.Id+" · ";return value.StartsWith(prefix)?value.Substring(prefix.Length):value;}}
  public string SpokenReply {get{return request.SpokenLine(RawSpokenReply);}}
@@ -146,7 +145,7 @@ public class PassengerRequestObservation : MonoBehaviour {
   if(!request.Resolved&&ChangesRoute){if(!PrepareProposal())note="변경 가능한 곳 없음 · 원래 목적지 유지";else note=KoreanText.Stop(session.jobs.stops[proposal].name)+" · 추가 "+addedDistance.ToString("0")+"m · "+session.jobs.FareAgreementText(newFare)+" · 남은 "+Mathf.CeilToInt(newRemaining)+"초"+(request.Kind==RequestKind.ViaStop?" · 정차 용무"+request.Content.Number("effect.errand.seconds",20)+"초 무료":"");}
   if(request.Resolved&&selectedEffect.Length>0)note="적용 효과 · "+selectedEffect;
   var choices=request.Resolved?new PassengerRequestChoice[0]:ReplyChoices;var options=new PassengerDialogueUI.Option[choices.Length];
-  for(int i=0;i<choices.Length;i++){var c=choices[i];string key=c.reply==PassengerReply.Defer?"U":c.reply==PassengerReply.Alternative||c.reply==PassengerReply.EtaNormal?"I":c.reply==PassengerReply.EtaRelaxed?"O":"Y";string line=ChoiceText(c).Split('\n')[0];options[i]=new PassengerDialogueUI.Option(key,line,c.effect.Replace("\n"," · "),CanChoose(c.reply));}
+  for(int i=0;i<choices.Length;i++){var c=choices[i];string key=NumericChoiceInput.Label(i);string line=ChoiceText(c).Split('\n')[0];options[i]=new PassengerDialogueUI.Option(key,line,c.effect.Replace("\n"," · "),!session.requests.ResponseBlockedThisFrame&&CanChoose(c.reply));}
   int selected=PassengerDialogueUI.Draw(request.Resolved?"기사 답변":"승객 요청",dialogue,options,note,PassengerDialogueUI.PortraitIdentity(session));if(selected>=0)session.requests.Choose(choices[selected].reply);
  }
 }
