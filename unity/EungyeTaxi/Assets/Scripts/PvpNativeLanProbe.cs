@@ -58,6 +58,13 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   foreach(var d in match.Drivers)Check(d.business.SimulationSession&&d.business.SavePath==""&&d.taxi.wheels.Length==4,"native sessions retain campaign save isolation");
   metrics.product=Application.productName;Check(metrics.product=="택시 시뮬레이션","latest main product name retained");metrics.graphics=SystemInfo.graphicsDeviceType.ToString();metrics.width=Screen.width;metrics.height=Screen.height;
   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeRenderCheck")>=0){Check(SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null,"graphics device is active");bool captured=false;StartCoroutine(CaptureFrame(()=>captured=true));yield return Until(()=>captured,"actual rendered frame captured",8);if(!host){var map=own.GetComponent<FullMapOverlay>();Check(map&&map.Open(),"native A2 full map opens");yield return null;yield return null;captured=false;StartCoroutine(CaptureFrame(()=>captured=true,"client-a3-map.png"));yield return Until(()=>captured,"actual A2 map render captured",8);map.Close();}}
+  if(host){
+   yield return Until(()=>Has("weather-client-ready"),"guest ready for live weather");
+   var weather=RainSettings.Capture();weather.enabled=!weather.enabled;weather.intensity=.4f;weather.wiperSeconds=2.1f;weather.boardingDirt=4;weather.brakeMultiplier=.88f;string weatherError;
+   Check(RainSettingsRuntime.Apply(own,weather,out weatherError),"host applies live weather "+weatherError);Mark("weather-live",weather);yield return Until(()=>Has("weather-client-checked"),"guest receives live weather");
+  }else{
+   Mark("weather-client-ready");yield return Until(()=>Has("weather-live"),"host weather changed");var weather=JsonUtility.FromJson<RainSettings>(File.ReadAllText(FileFor("weather-live")));yield return Until(()=>RainSettings.Capture().Same(weather),"host weather reaches replica");string weatherError;var rejected=weather.Copy();rejected.enabled=!weather.enabled;Check(!RainSettingsRuntime.Apply(own,rejected,out weatherError)&&RainSettings.Capture().Same(weather),"guest cannot override host weather");Mark("weather-client-checked");
+  }
   if(host)yield return Host();else yield return Client();
   yield return Cleanup();
  }

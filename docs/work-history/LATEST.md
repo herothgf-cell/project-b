@@ -1,3 +1,7 @@
+## 2026-11-07 인게임 날씨 탭 통합
+
+[구현·검증·남은 항목](2026-11-07-ingame-weather-settings.md). 운전/날씨 탭, 비6값 즉시 적용·저장 실패 복구·LAN 호스트 공유(v15). 최신 HUD·운전점수 툴·안전 추종 옵션 통합. 은계/A2 BuildHybrid·지도/ZIP불변, 직전 Strict issues0. 다음은 사람 수동·장기 운전·다른PC 검증. 확률 미끄러짐은 잠금.
+
 ## 2026-11-07 운전 점수 설정·원격 HUD 병합 게시
 
 [병합·검증·화면검사 제한](2026-11-07-driving-score-main-push.md). 최신 HUD와 비/점수설정 병합, BuildHybrid·C#781·Node90·사고77·rain Player20·Strict issues0·배포142파일 검증. HUD 캡처 실패는 미해결로 기록. 은계/A2·LANv14·지도/ZIP 유지. 원래 폴더 미커밋 작업 보존, 다음은 화면 검사 및 후속 작업 통합.
