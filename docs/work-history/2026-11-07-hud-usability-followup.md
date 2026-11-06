@@ -24,3 +24,7 @@ CockpitUI/DrivingHudArt/DrivingReadability/ServiceStops/DriveHUD/DrivingSettings
 - 보호 저장16개 SHA256 변경0. Strict issues0. 통합/PVP manifest 전수141파일·124,667,406바이트 검증 exit0.
 - 화면: [밝은 HUD](../ui/2026-11-07-hud-usability/attention-single-1280.png), [PVP 주행](../ui/2026-11-07-hud-usability/10a-pvp-navigation.png), [대화와 현황](../ui/2026-11-07-hud-usability/10c-pvp-dialogue-standings.png), [방 설정](../ui/2026-11-07-hud-usability/08b-pvp-settings-1280.png).
 - 이력 실제 커밋은 git log -1 --oneline -- docs/work-history/2026-11-07-hud-usability-followup.md로 확인. 원격 main 게시 결과는 후속 영수증 참조.
+
+## main 게시 확인
+
+검증 실행본497406d, 최신 기획 문서2b53563 보존 병합2621aa6. git push origin HEAD:main 성공(15da711→2621aa6), git ls-remote 원격 main=2621aa65df744a6612883e000dafa5fee324ae1e 일치 확인. 원래 D:/Git/project-b에는 LATEST 미커밋 및 기존 미추적 자료/다른 작업이 있어 작업폴더는 변경하지 않았다. 이 HUD 작업공간의 builds/EungyeTaxi/EungyeTaxi.exe 또는 원격 main을 받은 깨끗한 작업폴더에서 실행한다.
