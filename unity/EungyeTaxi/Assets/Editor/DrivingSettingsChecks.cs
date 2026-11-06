@@ -40,7 +40,7 @@ public static class DrivingSettingsChecks {
    Check(a.WheelCenterAngle(.5f,20,true)==.5f*DriveMath.SteerAngle(20),"H ignores personal gain");
    PvpNativeInputQueue.Apply(a,null,true,.02f);Check(a.autoSteer==0&&a.autoBrake,"missing controls safely brake");
   }finally{UnityEngine.Object.DestroyImmediate(root);}
-  Check(PvpNativeLan.Protocol=="native-city-lan-v10","incompatible authority contracts rejected");
+  Check(PvpNativeLan.Protocol=="native-city-lan-v11","incompatible authority contracts rejected");
   Debug.Log("DRIVING_SETTINGS_OK checks="+checks);
  }
  public static void Menus(){

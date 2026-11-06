@@ -69,8 +69,8 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   float menuElapsed=match.Elapsed;lan.ToggleMenu();yield return new WaitForSecondsRealtime(.5f);Check(!match.Human.paused&&Time.timeScale==1&&match.Elapsed>menuElapsed&&PvpNativeLan.UiBlocked(match.Human),"shared clock continues while own keyboard/pad menu brakes only local taxi");lan.ToggleMenu();
   lan.ToggleMenu();var settings=DrivingSettingsPanel.For(match.Human);settings.Open();float settingsElapsed=match.Elapsed;yield return new WaitForSecondsRealtime(.15f);Check(settings.IsOpen&&PvpNativeLan.UiBlocked(match.Human)&&match.Elapsed>settingsElapsed,"LAN settings block only own car while match clock advances");lan.ToggleMenu();Check(!settings.IsOpen&&lan.MenuOpen,"LAN back closes settings before pause menu");lan.ToggleMenu();
   Vector3 before=car.transform.position;float startTime=Time.realtimeSinceStartup,maxSpeed=0;bool settingsReceived=false;
-  while(!Has("drive-done")&&Time.realtimeSinceStartup<end){settingsReceived|=Mathf.Abs(car.ManualSteeringGain-.7f)<.001f;maxSpeed=Mathf.Max(maxSpeed,car.body.velocity.magnitude);yield return null;}
-  Check(settingsReceived,"server applies guest steering preferences independently of host preferences");
+  while(!Has("drive-done")&&Time.realtimeSinceStartup<end){settingsReceived|=Mathf.Abs(car.ManualSteeringGain-.7f)<.001f&&Mathf.Abs(car.ManualBrakeGain-.65f)<.001f;maxSpeed=Mathf.Max(maxSpeed,car.body.velocity.magnitude);yield return null;}
+  Check(settingsReceived,"server applies guest steering/brake preferences independently of host preferences");
   metrics.metres=Vector3.Distance(before,car.transform.position);metrics.maxSpeed=maxSpeed;Check(Has("drive-done")&&metrics.metres>2&&maxSpeed>.5f,"guest pedal messages move host WheelCollider taxi; metres="+metrics.metres+" speed="+maxSpeed);
   if(motionSeconds>0){
    float stopping=Time.realtimeSinceStartup+5;while(car.body.velocity.magnitude>.4f&&Time.realtimeSinceStartup<stopping)yield return null;
@@ -108,12 +108,12 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   yield return Until(()=>lan.Racing,"owner prediction starts on shared race clock",10);
   yield return Until(()=>lan.Prediction.LastAck>0,"numbered control stream acknowledged before loss probes",10);
   lan.ProbeHoldInputs=true;int sentBefore=lan.ProbeInputCount;Vector3 predictionStart=own.taxi.body.position;
-  lan.ProbeInput=()=>new PvpNativeDrive{throttle=1,steer=.25f,blocked=false,steeringGain=.7f,steeringResponse=.6f,steeringReturn=1.8f};yield return new WaitForSecondsRealtime(.35f);
+  lan.ProbeInput=()=>new PvpNativeDrive{throttle=1,steer=.25f,blocked=false,steeringGain=.7f,steeringResponse=.6f,steeringReturn=1.8f,brakeSensitivity=.65f};yield return new WaitForSecondsRealtime(.35f);
   var localTravel=own.taxi.body.position-predictionStart;localTravel.y=0;
   Check(lan.ProbeInputCount==sentBefore&&lan.Prediction.Steps>=5&&localTravel.magnitude>.002f,"native owner moves before throttle reaches host; distance="+localTravel.magnitude);
   Check(own.taxi.autoSteer>.1f&&Mathf.Abs(own.taxi.wheels[0].steerAngle)>.1f,"steering responds locally while input transmission withheld; auto="+own.taxi.autoSteer+" wheel="+own.taxi.wheels[0].steerAngle+" "+lan.Prediction.Diagnostics);
-  Check(Mathf.Abs(own.taxi.ManualSteeringGain-.7f)<.001f,"owner prediction immediately uses personal steering gain");
-  lan.ProbeHoldInputs=false;lan.ProbeInput=()=>new PvpNativeDrive{throttle=.35f,steer=0,blocked=false,steeringGain=.7f,steeringResponse=.6f,steeringReturn=1.8f};
+  Check(Mathf.Abs(own.taxi.ManualSteeringGain-.7f)<.001f&&Mathf.Abs(own.taxi.ManualBrakeGain-.65f)<.001f,"owner prediction immediately uses personal steering and brake gain");
+  lan.ProbeHoldInputs=false;lan.ProbeInput=()=>new PvpNativeDrive{throttle=.35f,steer=0,blocked=false,steeringGain=.7f,steeringResponse=.6f,steeringReturn=1.8f,brakeSensitivity=.65f};
   yield return Until(()=>lan.Prediction.LastAck>0,"input acknowledgement resumes before snapshot-gap probe",10);
   yield return new WaitForSecondsRealtime(.15f);
   int beforeGapResets=lan.Prediction.HardResets;lan.ProbeHoldFrames=true;Vector3 gapStart=own.taxi.body.position;

@@ -10,13 +10,13 @@ using Unity.Collections;
 
 [Serializable] public sealed class PvpNativeHello {public string protocol,map,ticket,nickname;}
 [Serializable] public sealed class PvpNativeRoom {public int slot,seconds;public string ticket,session,contentProfileJson;public bool started,racing;public bool[] humans;public string[] names;}
-[Serializable] public sealed class PvpNativeDrive {public int sequence;public float throttle,steer;public bool brake,blocked;public float steeringGain=1,steeringResponse=1,steeringReturn=1;}
+[Serializable] public sealed class PvpNativeDrive {public int sequence;public float throttle,steer;public bool brake,blocked;public float steeringGain=1,steeringResponse=1,steeringReturn=1,brakeSensitivity=1;}
 [Serializable] public sealed class PvpNativeCommand {public int sequence,value;public string action,token,trip,request;}
 
 // Trusted LAN, host-authoritative native WheelCollider simulation. No client pose/fare authority.
 [DefaultExecutionOrder(-110)]
 public sealed class PvpNativeLan:MonoBehaviour {
- public const string Protocol="native-city-lan-v10";
+ public const string Protocol="native-city-lan-v11";
  public static PvpNativeLan Instance {get;private set;}
  public static bool ApplyingReplica;
  public PvpSimulationMatch Match {get;private set;}
@@ -137,7 +137,7 @@ public sealed class PvpNativeLan:MonoBehaviour {
   var own=Match.Human;bool blocked=!receivedOwn||UiBlocked(own)||!Application.isFocused;float throttle=0,steer=0;
   var controls=DrivingSettings.Current;
   if(!blocked){throttle=(Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.UpArrow)||Input.GetKey(KeyCode.JoystickButton0)?1:0)-(Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.DownArrow)||Input.GetKey(KeyCode.JoystickButton1)?1:0);float keyboard=(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0);steer=controls.Input(keyboard,Input.GetAxisRaw("TaxiSteer"));}
-  var packet=new PvpNativeDrive{throttle=throttle,steer=steer,brake=blocked||Input.GetKey(KeyCode.Space)||Input.GetKey(KeyCode.JoystickButton2),blocked=blocked,steeringGain=controls.sensitivity,steeringResponse=controls.response,steeringReturn=controls.centering};
+  var packet=new PvpNativeDrive{throttle=throttle,steer=steer,brake=blocked||Input.GetKey(KeyCode.Space)||Input.GetKey(KeyCode.JoystickButton2),blocked=blocked,steeringGain=controls.sensitivity,steeringResponse=controls.response,steeringReturn=controls.centering,brakeSensitivity=controls.braking};
   if(ProbeMode&&ProbeInput!=null&&receivedOwn)packet=ProbeInput();return packet;
  }
  void FixedUpdate(){
