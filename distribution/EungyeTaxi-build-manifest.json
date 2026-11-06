@@ -1,27 +1,28 @@
 {
-  "sourceCommit": "c3016aaf1e73a26503228f41769e77b404d01400",
+  "sourceCommit": "c1ffc293b60f8fdade32d504fe9630e3c2a7f4ae",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
-  "validatedOn": "2026-11-06",
-  "totalBytes": 132049788.0,
+  "validatedOn": "2026-11-07",
+  "totalBytes": 132060084.0,
   "validation": {
     "build": "ContentTuningBuild.Build -> PrototypeBuild.BuildHybrid exit 0",
-    "buildLog": "artifacts/passenger-composition/build-acceptance.log",
-    "nodeAssertions": 73,
-    "compositionModelAssertions": 73,
+    "buildLog": "artifacts/passenger-overrides/build-final.log",
+    "nodeAssertions": 80,
+    "passengerOverrideAssertions": 42,
+    "compositionAssertions": 73,
     "contentAssertions": 760,
     "careAssertions": 13301,
     "restAssertions": 40,
     "choiceAssertions": 50,
-    "previewAssertions": 29,
-    "playerCompositionAssertions": 42,
-    "playerLog": "artifacts/passenger-composition/player-final.log",
-    "nativeLanProtocol": "native-city-lan-v12",
+    "choiceDriverAssertions": 6,
+    "playerOverrideAssertions": 57,
+    "playerLog": "artifacts/passenger-overrides/player-final.log",
+    "nativeLanProtocol": "native-city-lan-v13",
     "nativeLanHostAssertions": 41,
     "nativeLanClientAssertions": 52,
-    "nativeLanScope": "same-PC loopback, actual WheelCollider input, no reconnect",
-    "nativeLanReport": "artifacts/pvp/native-lan-20261106-235138-fd9aef25",
+    "nativeLanScope": "same-PC loopback before final resolver cache and errand display fixes; actual WheelCollider input; no reconnect",
+    "nativeLanReport": "artifacts/pvp/native-lan-20261107-001652-aaf32a89",
     "protectedSaveFiles": 29,
     "protectedSaveChanges": 0,
     "strictWorkspaceIssues": 0,
@@ -29,8 +30,10 @@
     "fullCampaign": false,
     "otherPcLan": false,
     "baselineFailures": [
-      "test_passenger_behavior: followup remembers actual request response Comfort",
-      "test_passenger_situations: awake passenger receives typed neutral reassurance"
+      "PassengerBehaviorTests followup remembers actual request response Comfort",
+      "PassengerSituationTests awake passenger receives typed neutral reassurance",
+      "ChoiceStructureAudit Empathy unanswered expected -5 actual -2",
+      "ManualHandlingTests ordinary S braking actual 8.823529"
     ],
     "uiResolutions": [
       "1280x900",
@@ -51,7 +54,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "41fab19ebe77bbd0576e081ba0e2c7b1287d16a6069a48096c296bda3995cd1f"
+      "sha256": "2cb5ca3f0bfe8ad74eb503975019217a7a64b2215d5b328601d5520f2b164b0e"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -75,8 +78,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2549248,
-      "sha256": "fe542bdc42c2c1ed07fa861e0c3ef9359c1dc24b80f1ae78980d8173605d2836"
+      "bytes": 2559488,
+      "sha256": "d30150181f3c114bb4753af256bf153683f1c7e99459dcbafa03ec8ae35b001e"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -575,8 +578,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 49005966,
-      "sha256": "b4eeb760025879c6cf6f0173bf34d528a1f3a7ba851691260f6047572583b937"
+      "bytes": 49006022,
+      "sha256": "5824b2a9899fe21265aa2b724a00e2ba7e38873be8e6acb9a5581b001b09753a"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",

@@ -41,3 +41,8 @@ C#: ContentTuning, PassengerBehavior/Probe/UI, ChoiceEffects, PassengerRequest/O
 
 ## 출하 기록
 실제 소스 커밋 후 manifest를 해당 해시로 생성하고 전수 검증을 아래에 기록한다. 자기 포함 커밋을 추측하지 않고 git log로 조회한다.
+
+- 실제 소스 commit `c1ffc293b60f8fdade32d504fe9630e3c2a7f4ae` 확인. 코드·기획·테스트·화면46파일.
+- 해당 해시와 실제 검사 JSON으로 통합 manifest 재생성. 통합/PVP VerifyOnly 모두 exit0: **141파일 / 132,060,084바이트**, 크기·SHA256 전수 일치.
+- 빌드가 생성한 FirstDrive 장면의 fileID 변경만 원복. 새 테스트/runner의 EOF 공백 정리, staged diff --check exit0. 기존 사용자 미추적 파일은 스테이징하지 않음.
+- 브랜치 codex/passenger-composition에 로컬 소스/실행본 기록. 이 기록을 포함한 실제 커밋은 `git log -1 --oneline -- docs/work-history/2026-11-07-passenger-overrides.md`로 조회한다. 원격 push 없음.
