@@ -22,3 +22,5 @@
 - 마인드맵364노드·기존 구조 보존 검사 통과.
 - 배포 영수증: `distribution/EungyeTaxi-build-manifest.json`의 실제 sourceCommit/파일별 SHA256 참조. 사람 수동·전체 캠페인·다른PC는 미검증.
 - 통합 전 임시 빌드와 사용자 LATEST 변경은 `rain-settings-pre-integration` stash에 보존. 사용자 Higgsfield 섹션은 최종 작업폴더에 복원하며 이번 커밋에 제외.
+
+배포 완료: 소스 기준 d16c82b, 실행본 b40d1cd. 통합/PVP manifest142파일132,298,342바이트 검증 exit0. `git push origin main` 성공, 원격 main과 로컬 b40d1cde8a0e28ba80169012bc8e64793db37f3a 일치 확인.
