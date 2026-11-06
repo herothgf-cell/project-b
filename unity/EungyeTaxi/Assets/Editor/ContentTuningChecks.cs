@@ -29,7 +29,7 @@ public static class ContentTuningChecks {
    if(ContentTuningRuntime.TestMode)Check(Path.GetDirectoryName(ContentTuningRuntime.CampaignPath("campaign.json"))==ContentTuningRuntime.TestDirectory,"test campaign and sidecar journals share isolated directory");
 #if UNITY_EDITOR
    var c=BusinessProgress.ParseCheckpoint(JsonUtility.ToJson(new CampaignCheckpoint{contentProfileJson=variant}));Check(c.contentProfileJson==variant,"checkpoint carries complete standalone profile");Check(BusinessProgress.ParseCheckpoint("{\"version\":3}").contentProfileJson==null,"legacy absent checkpoint profile remains null");
-   var room=JsonUtility.FromJson<PvpNativeRoom>(JsonUtility.ToJson(new PvpNativeRoom{contentProfileJson=variant}));Check(room.contentProfileJson==variant&&PvpNativeLan.Protocol=="native-city-lan-v6","LAN full snapshot and incompatible protocol");
+   var room=JsonUtility.FromJson<PvpNativeRoom>(JsonUtility.ToJson(new PvpNativeRoom{contentProfileJson=variant}));Check(room.contentProfileJson==variant&&PvpNativeLan.Protocol=="native-city-lan-v8","LAN full snapshot and incompatible protocol");
 #endif
 #if UNITY_EDITOR || CONTENT_RUNTIME_PREVIEW_CHECKS
    var sample=new ContentPreviewSample{manner=96,required=70,fare=10000,delta=5,onTime=true,start=74,clean=4,reference=120,actual=100,boardingScore=90,comfort=2,requestKind="OnTime",requestSuccess=true,eta=120,etaOption=1,lawCode="red-straight"};

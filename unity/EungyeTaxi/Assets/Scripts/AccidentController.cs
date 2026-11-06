@@ -60,6 +60,7 @@ public sealed class AccidentController : MonoBehaviour {
    // event. Keep its chosen severity and account for the person before charging.
    if(kind==AccidentKind.Person&&State.Kind!=AccidentKind.Person&&State.resolutionVersion==1&&State.phase==AccidentPhase.Stopping&&!State.chargeApplied&&!State.outcomeApplied){
     var person=AccidentSeverityPolicy.Resolve(AccidentKind.Person,State.Severity);State.accidentKind=person.Kind;State.selectedFee=person.Fee;State.selectedSeconds=person.Seconds;State.selectedScorePenalty=person.ScorePenalty;State.selectedTowRequired=person.TowRequired;State.remaining=person.Seconds;
+    SelectPedestrianDamage();
     session.manners.Deduct("collision",10,"보행자 사고 · 안전 정차",0);changed=true;
    }
    if(changed)session.business.SaveCheckpoint();return false;
@@ -68,6 +69,7 @@ public sealed class AccidentController : MonoBehaviour {
   string id=session.law.ids.Next(kind==AccidentKind.Person?"pedestrian-accident":"collision-accident");
   var resolution=AccidentSeverityPolicy.Sample(kind,roll??(int)(DrunkRideState.Hash(id)%1000));
   if(!State.BeginResolved(id,targetId,resolution))return false;
+  if(kind==AccidentKind.Person)SelectPedestrianDamage();
   session.assisted.SetActive(false);session.services.Close();session.taxi.ClearPredictedPedals();
   if(session.damage)session.damage.CancelPendingService();
   if(session.simulationMatch)session.simulationMatch.CancelConditionService(session);
@@ -106,7 +108,9 @@ public sealed class AccidentController : MonoBehaviour {
    if(State.remaining<=0){ledger.CompleteAccident(State.eventId,State.ProcessingDuration);FinishProcessing();}
   }
  }
+ void SelectPedestrianDamage(){State.SelectPedestrianDamage((int)(DrunkRideState.Hash(State.eventId+":pedestrian-damage")%1000));}
  void SettleOutcome(){
+  State.ApplyVehicleDamage(session.business.ledger.Care.Damage);
   if(!State.chargeApplied){session.business.ledger.ChargeAccident(State.eventId,State.Fee);State.chargeApplied=true;}
   AccidentScore.Apply(session.law.ledger,State,session.business.ledger.Day);
   string cause=State.Kind==AccidentKind.Person?"보행자 사고":State.Kind==AccidentKind.Vehicle?"차량 사고":"시설 사고";

@@ -15,6 +15,11 @@ public enum AccidentPhase { None, Stopping, Waiting, Processing, Completed }
  public AccidentKind accidentKind;
  public AccidentSeverity accidentSeverity;
  public bool selectedTowRequired,scoreApplied,workshopTransferred;
+ // Absent in old saves: never sample or apply damage retroactively on restore.
+ public int pedestrianDamageVersion,selectedDamage,appliedDamage;
+ public bool damageApplied;
+ public bool pedestrianDamageEligible;
+ public int DurabilityLoss {get{return pedestrianDamageVersion==1?selectedDamage:0;}}
  public double elapsed,remaining,contactClearSeconds;
  public double ProcessingDuration {get{return resolutionVersion==0?ProcessingSeconds:selectedSeconds;}}
  public int Fee {get{return resolutionVersion==0?3000:selectedFee;}}
@@ -34,7 +39,19 @@ public enum AccidentPhase { None, Stopping, Waiting, Processing, Completed }
   if(Locked||contactLatched||string.IsNullOrWhiteSpace(id)||string.IsNullOrWhiteSpace(target)||id==eventId)return false;
   resolutionVersion=resolution==null?0:1;accidentKind=resolution==null?AccidentKind.Person:resolution.Kind;accidentSeverity=resolution==null?AccidentSeverity.Minor:resolution.Severity;
   selectedFee=resolution==null?0:resolution.Fee;selectedSeconds=resolution==null?0:resolution.Seconds;selectedScorePenalty=resolution==null?0:resolution.ScorePenalty;selectedTowRequired=resolution!=null&&resolution.TowRequired;scoreApplied=workshopTransferred=false;
+  pedestrianDamageVersion=selectedDamage=appliedDamage=0;damageApplied=false;
+  pedestrianDamageEligible=resolution!=null;
   eventId=id;targetId=target;stopSeconds=0;recoveryRequired=false;outcome="";targets=new[]{target};phase=AccidentPhase.Stopping;chargeApplied=outcomeApplied=false;elapsed=0;remaining=ProcessingDuration;contactLatched=true;contactClearSeconds=0;return true;
+ }
+ public bool SelectPedestrianDamage(int roll){
+  if(roll<0||roll>=1000)throw new ArgumentException("Invalid pedestrian damage roll");
+  if(!pedestrianDamageEligible||resolutionVersion!=1||Kind!=AccidentKind.Person||phase!=AccidentPhase.Stopping||pedestrianDamageVersion!=0||chargeApplied||outcomeApplied)return false;
+  selectedDamage=AccidentSeverityPolicy.SamplePedestrianDamage(Severity,roll);pedestrianDamageVersion=1;return true;
+ }
+ public int ApplyVehicleDamage(VehicleDamage vehicle){
+  if(vehicle==null)throw new ArgumentNullException("vehicle");
+  if(pedestrianDamageVersion!=1||damageApplied)return 0;
+  appliedDamage=vehicle.ApplyAccidentLoss(eventId,selectedDamage);damageApplied=true;return appliedDamage;
  }
  public bool MarkStopped(bool pvp){if(phase!=AccidentPhase.Stopping)return false;phase=pvp?AccidentPhase.Processing:AccidentPhase.Waiting;return true;}
  public double AdvanceProcessing(double seconds){
@@ -42,7 +59,7 @@ public enum AccidentPhase { None, Stopping, Waiting, Processing, Completed }
   double actual=Math.Min(remaining,seconds);elapsed=Math.Min(ProcessingDuration,elapsed+actual);remaining=ProcessingDuration-elapsed;
   if(remaining<1e-9){remaining=0;elapsed=ProcessingDuration;}return actual;
  }
- public bool Complete(){if(recoveryRequired||TowRequired&&!workshopTransferred)return false;if(phase!=AccidentPhase.Waiting&&(phase!=AccidentPhase.Processing||remaining>0)||!chargeApplied||!outcomeApplied)return false;elapsed=ProcessingDuration;remaining=0;phase=AccidentPhase.Completed;contactClearSeconds=0;return true;}
+ public bool Complete(){if(recoveryRequired||TowRequired&&!workshopTransferred||pedestrianDamageVersion==1&&!damageApplied)return false;if(phase!=AccidentPhase.Waiting&&(phase!=AccidentPhase.Processing||remaining>0)||!chargeApplied||!outcomeApplied)return false;elapsed=ProcessingDuration;remaining=0;phase=AccidentPhase.Completed;contactClearSeconds=0;return true;}
  public void ObserveContact(bool touching,double seconds){
   if(!Finite(seconds)||seconds<0)return;
   if(touching){contactClearSeconds=0;return;}
@@ -53,6 +70,10 @@ public enum AccidentPhase { None, Stopping, Waiting, Processing, Completed }
  }
  static bool Finite(double n){return !double.IsNaN(n)&&!double.IsInfinity(n);}
  public void Validate(){
+  if(pedestrianDamageEligible&&(resolutionVersion!=1||phase==AccidentPhase.None)||pedestrianDamageVersion==1&&!pedestrianDamageEligible)throw new ArgumentException("Invalid pedestrian damage eligibility");
+  if(pedestrianDamageVersion!=0&&pedestrianDamageVersion!=1||selectedDamage<0||appliedDamage<0||appliedDamage>selectedDamage||!damageApplied&&appliedDamage!=0)throw new ArgumentException("Invalid pedestrian damage");
+  if(pedestrianDamageVersion==0){if(selectedDamage!=0||appliedDamage!=0||damageApplied)throw new ArgumentException("Invalid legacy pedestrian damage");}
+  else if(resolutionVersion!=1||Kind!=AccidentKind.Person||selectedDamage>AccidentSeverityPolicy.PedestrianDamageMaximum(Severity)||phase==AccidentPhase.None||phase==AccidentPhase.Completed&&!damageApplied)throw new ArgumentException("Inconsistent pedestrian damage");
   if(resolutionVersion!=0&&resolutionVersion!=1||!Enum.IsDefined(typeof(AccidentKind),accidentKind)||!Enum.IsDefined(typeof(AccidentSeverity),accidentSeverity))throw new ArgumentException("Invalid accident resolution");
   if(resolutionVersion==0){if(selectedFee!=0||selectedSeconds!=0||selectedScorePenalty!=0||selectedTowRequired||accidentKind!=AccidentKind.Person||accidentSeverity!=AccidentSeverity.Minor)throw new ArgumentException("Invalid legacy accident resolution");}
   else {var chosen=AccidentSeverityPolicy.Resolve(accidentKind,accidentSeverity);if(selectedFee!=chosen.Fee||selectedSeconds!=chosen.Seconds||selectedScorePenalty!=chosen.ScorePenalty||selectedTowRequired!=chosen.TowRequired)throw new ArgumentException("Inconsistent accident resolution");}

@@ -29,8 +29,9 @@ public sealed class AccidentSeverityUiProbe : MonoBehaviour {
   Check(s.law.ledger.TotalScore==score,label+" score awaits safe stopping settlement");string id=s.accident.State.eventId;
   Check(!s.accident.ReportScenarioContact(kind,"scenario:duplicate",999)&&s.accident.State.eventId==id&&s.law.ledger.TotalScore==score,label+" repeated contact cannot reroll or rededuct score");
   s.accident.Tick(.1f);Check(s.accident.Locked&&(pvp?s.accident.State.phase==AccidentPhase.Processing:s.accident.Waiting),label+" safe stop enters correct native processing phase");Check(s.law.ledger.TotalScore==score-penalty,label+" applies selected driving score exactly once at settlement");
+  int selectedLoss=kind==AccidentKind.Person?AccidentSeverityPolicy.SamplePedestrianDamage(severity,(int)(DrunkRideState.Hash(id+":pedestrian-damage")%1000)):0;Check(s.accident.State.DurabilityLoss==selectedLoss&&s.damage.Damage.Durability==durability-selectedLoss,label+" selected pedestrian damage applies once; physical damage channel stays separate");
   Check(ledger.Account.Expense(ledger.Day,"accident")==fee&&ledger.Account.Cash==Mathf.Max(0,cash-fee),label+" charges selected fee exactly once");
-  if(severity==AccidentSeverity.Major){Check(s.accident.State.workshopTransferred,label+" completes mandatory workshop transfer before waiting");Check(s.damage.Bays.Any(b=>!b.legacy&&Vector3.Distance(s.taxi.transform.position,b.position)<3),label+" physically occupies a dedicated workshop bay");Check(s.damage.Damage.Durability==durability&&ledger.Account.Expense(ledger.Day,"tow")==0,label+" transfer preserves physical durability and adds no separate tow fee");}
+  if(severity==AccidentSeverity.Major){Check(s.accident.State.workshopTransferred,label+" completes mandatory workshop transfer before waiting");Check(s.damage.Bays.Any(b=>!b.legacy&&Vector3.Distance(s.taxi.transform.position,b.position)<3),label+" physically occupies a dedicated workshop bay");Check(s.damage.Damage.Durability==durability-s.accident.State.appliedDamage&&ledger.Account.Expense(ledger.Day,"tow")==0,label+" transfer preserves physical durability and adds no separate tow fee");}
   var copy=s.accident.Capture();copy.targets[0]="mutated-copy";Check(s.accident.State.targets[0]!="mutated-copy",label+" capture owns its target array");
   AccidentState restored;
   if(pvp){Check(s.business.SavePath=="",label+" PVP has no campaign save");restored=JsonUtility.FromJson<AccidentState>(JsonUtility.ToJson(s.accident.Capture()));}
@@ -93,7 +94,37 @@ public sealed class AccidentSeverityUiProbe : MonoBehaviour {
   Check(s.accident.ReportScenarioContact(AccidentKind.Property,"scenario:solver-stop-property",800),"property collision callback creates moderate pre-sweep incident");Check(s.accident.State.Kind==AccidentKind.Property&&s.business.ledger.Account.Expense(s.business.ledger.Day,"accident")==0,"pre-sweep property event remains uncharged");
   s.accident.Tick(.1f);
   Check(s.accident.State.Kind==AccidentKind.Person&&s.accident.State.Severity==AccidentSeverity.Moderate&&Array.IndexOf(s.accident.State.targets,"waiting:"+index)>=0,"controller Tick itself sweeps previous motion and promotes person without reroll");
-  Check(s.accident.State.Fee==8000&&s.accident.State.ProcessingDuration==120&&s.business.ledger.Account.Expense(s.business.ledger.Day,"accident")==8000&&s.law.ledger.TotalScore==score-25,"late person sweep selects person fee/time/score before first charge");Check(s.accident.Confirm()&&!s.accident.Locked,"promoted event completes through native confirmation");
+  Check(s.accident.State.Fee==8000&&s.accident.State.ProcessingDuration==120&&s.business.ledger.Account.Expense(s.business.ledger.Day,"accident")==8000&&s.law.ledger.TotalScore==score-25,"late person sweep selects person fee/time/score before first charge");Check(s.accident.State.pedestrianDamageVersion==1&&s.accident.State.damageApplied&&s.damage.Damage.Durability==100-s.accident.State.appliedDamage,"new physical-to-person promotion applies selected damage");Check(s.accident.Confirm()&&!s.accident.Locked,"promoted event completes through native confirmation");
+ }
+ void AdvanceWorkshopFrames(){
+  // Match the production BusinessProgress wrapper: each physics step is
+  // observed before the next service step. A single 30s jump would make the
+  // completion checkpoint misclassify that unobserved jump as a second lock.
+  for(int n=0;n<10000&&s.damage.PendingServiceRemaining>0;n++){s.damage.AdvancePendingService(Mathf.Min(.02f,s.damage.PendingServiceRemaining));match.ObserveAccidentClock(s);}
+  Check(s.damage.PendingServiceRemaining<=0,"explicit native workshop frames complete pending service");
+ }
+ IEnumerator DisabledPedestrianContracts(){
+  foreach(var level in new[]{AccidentSeverity.Minor,AccidentSeverity.Major}){
+   Fresh();s.damage.Damage.ApplyAccidentLoss("prior-wear",99);int maximum=AccidentSeverityPolicy.PedestrianDamageMaximum(level);string prefix="";
+   for(int n=0;n<1000;n++){prefix="pedestrian-d0-"+level+"-"+n;string eventId=prefix+":pedestrian-accident:1";if(AccidentSeverityPolicy.SamplePedestrianDamage(level,(int)(DrunkRideState.Hash(eventId+":pedestrian-damage")%1000))==maximum)break;}
+   s.law.ids=new PrototypeIds(prefix);Check(s.accident.ReportScenarioContact(AccidentKind.Person,"scenario:low-durability",level==AccidentSeverity.Minor?0:999),level+" low durability person event starts");s.accident.Tick(.1f);
+   Check(s.damage.Disabled&&s.accident.State.selectedDamage==maximum&&s.accident.State.appliedDamage==1&&s.accident.State.damageApplied,level+" person loss clamps to actual last durability point");
+   if(level==AccidentSeverity.Major)Check(s.accident.State.workshopTransferred&&s.damage.AtRepairBay,"major person D0 keeps workshop repair reservation");
+   bool shown=s.accident.enabled;s.accident.enabled=true;yield return Capture("popup",level.ToString().ToLowerInvariant()+"-d0");s.accident.enabled=shown;
+   if(pvp)s.accident.Tick((float)s.accident.State.ProcessingDuration);else Check(s.accident.Confirm(),level+" D0 event completes safely");
+   Check(!s.accident.Locked&&s.damage.Disabled,level+" completed accident never repairs car for free");
+   if(level==AccidentSeverity.Minor){Check(s.damage.Tow(),"minor person D0 uses normal tow");if(pvp)AdvanceWorkshopFrames();Check(s.damage.AtRepairBay,"minor person D0 reaches repair bay");}
+   Debug.Log("PEDESTRIAN_REPAIR_DIAG level="+level+" can="+s.damage.CanRepair+" operating="+s.business.ledger.Operating+" restoring="+s.business.IsRestoring+" startup="+s.StartupReady+" phase="+s.accident.State.phase+" recovery="+s.accident.State.recoveryRequired+" pending="+s.damage.PendingServiceRemaining+" matchLock="+(pvp?match.ServiceRemaining(s):0)+" atBay="+s.damage.AtRepairBay+" speed="+s.taxi.body.velocity.magnitude+" trip="+s.jobs.trip.State+" durability="+s.damage.Damage.Durability);Check(s.damage.Repair(),level+" native repair accepted after person D0");if(pvp)AdvanceWorkshopFrames();
+   Check(!s.damage.Disabled&&s.damage.Damage.Durability==100,level+" native paid repair completes");
+   var replay=new AccidentState();replay.BeginResolved(s.accident.State.eventId,"scenario:replay",AccidentSeverityPolicy.Resolve(AccidentKind.Person,level));replay.SelectPedestrianDamage(999);
+   Check(replay.ApplyVehicleDamage(s.damage.Damage)==0&&s.damage.Damage.Durability==100,level+" vehicle event ledger blocks damage replay after repair");
+  }
+ }
+ void LegacyPendingPromotion(){
+  Fresh();s.jobs.RefreshWaitingPassengers();int index=Array.FindIndex(s.jobs.people,p=>p&&p.activeInHierarchy);Check(index>=0,"legacy promotion uses actual waiting person");var point=s.jobs.people[index].transform.position;
+  var legacy=new AccidentState();legacy.BeginResolved("legacy-physical","wall",AccidentSeverityPolicy.Resolve(AccidentKind.Property,AccidentSeverity.Moderate));legacy.pedestrianDamageEligible=false;
+  s.accident.Restore(legacy);s.accident.Suppress(0);Pose(point-Vector3.forward*10,Vector3.forward);s.accident.ScanContacts();Pose(point+Vector3.forward*10,Vector3.forward);s.accident.Tick(.1f);
+  Check(s.accident.State.Kind==AccidentKind.Person&&!s.accident.State.pedestrianDamageEligible&&s.accident.State.pedestrianDamageVersion==0&&s.damage.Damage.Durability==100,"restored old physical incident promotion adds no retroactive durability loss");Check(s.accident.Confirm(),"legacy promoted incident completes normally");
  }
  IEnumerator Run(){
   pvp=Has("-pvpAccidentSeverityUiCheck");result.scope=(pvp?"PVP explicit host-tick":"Single-player")+" deterministic native-controller pose fixtures; selected liability/score/time idempotency, JSON+state restore, workshop placement; optional native screenshots. Not physical impact, process reload, wall-clock timer, manual play or LAN.";
@@ -103,11 +134,11 @@ public sealed class AccidentSeverityUiProbe : MonoBehaviour {
   yield return null;while(s.business.IsRestoring)yield return null;result.savePath=s.business.SavePath;
   if(pvp)Check(result.savePath=="","PVP never writes a campaign");else Check(Path.GetFullPath(result.savePath).StartsWith(Path.GetFullPath(ContentTuningRuntime.TestDirectory)+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase),"campaign uses private contentTest directory");Check(!s.business.ResumeBlocked,"private campaign startup is not blocked");
   foreach(var driver in pvp?match.Drivers:new[]{s}){driver.business.enabled=false;driver.jobs.enabled=false;driver.requests.enabled=false;driver.law.enabled=false;driver.manners.enabled=false;driver.assisted.SetActive(false);driver.assisted.enabled=false;driver.taxi.enabled=false;driver.taxi.body.useGravity=false;driver.taxi.body.constraints=RigidbodyConstraints.FreezeAll;driver.damage.enabled=false;driver.accident.enabled=false;var brain=driver.GetComponent<PvpSimulationBot>();if(brain)brain.enabled=false;var service=driver.GetComponent<PvpSimulationBotServices>();if(service)service.enabled=false;}s.damage.BuildBays();
-  if(!pvp)SolverStoppedSweepPromotion();
+  if(!pvp){SolverStoppedSweepPromotion();LegacyPendingPromotion();}
   foreach(AccidentKind kind in new[]{AccidentKind.Person,AccidentKind.Vehicle,AccidentKind.Property})for(int severity=0;severity<3;severity++){
    int roll=severity==0?0:severity==1?800:999;int fee=kind==AccidentKind.Person?new[]{3000,8000,15000}[severity]:new[]{1000,3000,6000}[severity];double seconds=kind==AccidentKind.Person?new[]{45,120,240}[severity]:new[]{15,45,90}[severity];int penalty=kind==AccidentKind.Person?new[]{10,25,40}[severity]:new[]{3,8,15}[severity];
    yield return Contract(kind,(AccidentSeverity)severity,roll,fee,seconds,penalty);
   }
-  if(pvp)yield return HealthyBotDeparture();if(Has("-accidentSeverityCapture"))yield return Views();
+  yield return DisabledPedestrianContracts();if(pvp)yield return HealthyBotDeparture();if(Has("-accidentSeverityCapture"))yield return Views();
  }
 }

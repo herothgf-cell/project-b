@@ -89,8 +89,10 @@ public enum DrunkRideCase { Random, Normal, Vomit, Sleepy, Both }
  public int durability=100,incidentTier;
  public double detachedSeconds,graceSeconds;
  public string repairBayId="";
+ public string[] accidentEvents;
 }
 public sealed class VehicleDamage {
+ readonly HashSet<string> accidentEvents=new HashSet<string>();
  public int Durability {get;private set;}
  public bool Disabled {get{return Durability==0;}}
  public string RepairBayId {get;private set;}
@@ -116,13 +118,18 @@ public sealed class VehicleDamage {
  }
  public void Suppress(double seconds){if(Finite(seconds)&&seconds>0)graceSeconds=Math.Max(graceSeconds,seconds);}
  public void LeaveRepairBay(){RepairBayId="";}
+ public int ApplyAccidentLoss(string id,int points){
+  if(string.IsNullOrWhiteSpace(id)||points<0||points>100)throw new ArgumentException("Invalid accident damage");
+  if(!accidentEvents.Add(id))return 0;int loss=Math.Min(Durability,points);Durability-=loss;return loss;
+ }
  internal void Repair(){Durability=100;incidentTier=0;detachedSeconds=0;LeaveRepairBay();}
  internal void EnterRepairBay(string bayId){RepairBayId=bayId;}
- public VehicleDamageSnapshot Snapshot(){return new VehicleDamageSnapshot{version=1,durability=Durability,incidentTier=incidentTier,detachedSeconds=detachedSeconds,graceSeconds=graceSeconds,repairBayId=RepairBayId};}
+ public VehicleDamageSnapshot Snapshot(){var ids=new string[accidentEvents.Count];accidentEvents.CopyTo(ids);return new VehicleDamageSnapshot{version=1,durability=Durability,incidentTier=incidentTier,detachedSeconds=detachedSeconds,graceSeconds=graceSeconds,repairBayId=RepairBayId,accidentEvents=ids};}
  public static VehicleDamage Restore(VehicleDamageSnapshot value){
   if(value==null)return new VehicleDamage();
   bool validTier=value.incidentTier==0||value.incidentTier==2||value.incidentTier==6||value.incidentTier==15||value.incidentTier==30||value.incidentTier==50;
   if(value.version!=1||value.durability<0||value.durability>100||value.incidentTier>100-value.durability||!validTier||!Finite(value.detachedSeconds)||value.detachedSeconds<0||value.detachedSeconds>=.8||value.incidentTier==0&&value.detachedSeconds!=0||!Finite(value.graceSeconds)||value.graceSeconds<0||value.repairBayId!=null&&value.repairBayId.Length>0&&(value.durability!=0||string.IsNullOrWhiteSpace(value.repairBayId)))throw new ArgumentException("Invalid vehicle damage");
-  return new VehicleDamage{Durability=value.durability,incidentTier=value.incidentTier,detachedSeconds=value.detachedSeconds,graceSeconds=value.graceSeconds,RepairBayId=value.repairBayId??""};
+  var result=new VehicleDamage{Durability=value.durability,incidentTier=value.incidentTier,detachedSeconds=value.detachedSeconds,graceSeconds=value.graceSeconds,RepairBayId=value.repairBayId??""};
+  if(value.accidentEvents!=null)foreach(var id in value.accidentEvents)if(string.IsNullOrWhiteSpace(id)||!result.accidentEvents.Add(id))throw new ArgumentException("Invalid accident damage event ids");return result;
  }
 }

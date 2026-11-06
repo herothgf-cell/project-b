@@ -16,6 +16,14 @@ public sealed class AccidentResolution {
 }
 
 public static class AccidentSeverityPolicy {
+ public static int PedestrianDamageMaximum(AccidentSeverity severity){
+  if(!Enum.IsDefined(typeof(AccidentSeverity),severity))throw new ArgumentException("Invalid accident severity");
+  return new[]{2,5,10}[(int)severity];
+ }
+ public static int SamplePedestrianDamage(AccidentSeverity severity,int roll){
+  if(roll<0||roll>=1000)throw new ArgumentException("Invalid pedestrian damage roll");
+  return roll*(PedestrianDamageMaximum(severity)+1)/1000;
+ }
  public static AccidentResolution Resolve(AccidentKind kind,AccidentSeverity severity){
   if(!Enum.IsDefined(typeof(AccidentKind),kind)||!Enum.IsDefined(typeof(AccidentSeverity),severity))throw new ArgumentException("Invalid accident classification");
   int index=(int)severity;
