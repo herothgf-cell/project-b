@@ -1,5 +1,9 @@
 # 최신 작업 상태
 
+## 2026-11-06 택시 구매·이사 성장 단계 기획
+
+[성장 단계](../content-design/12-career-growth-stages.md) · [검토/인계](2026-11-06-career-growth-stages.md). 첫 정산부터 택시·아파트까지 6단계, 구매 순서 자유, 영업 숙련과 소유 보상 구분, 날짜별 수요3구성·회고·후보 체험 제안, 첫12~18회 영업의 페이스/가격 가설을 기록했다. 현재 고정 수요 코드 대조로03의 초과 영업 표기만 정정했다. 이번은 문서만 변경이며 현재3일·게임 코드·빌드 미변경. 현재 실행 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 싱글·A2 PVP·LANv9 / `PrototypeBuild.BuildHybrid` 유지. 필수 입력/ZIP 미변경, 이번 Strict/manifest 재검증 없음. 다음은 기획 검토 후 실제 수익·소유 만족 검증 및 연속 경력/개인 거래/수요 안내의 구현 계획이다.
+
 ## 2026-11-06 감점 음수 입력과 변화율 안내
 
 [구현·검증·실행](2026-11-06-signed-penalties-and-rate-help.md). 법규/M/청결·선택지 M 추가 효과를 음수 감점 입력으로 통일하고 기존 실제 감점을 보존했다. 각 %·%/분 계산 예시와 싱글4/6/8·PVP5/7.5/10점/분 자연 피로 표를 관리창에 추가했다. Node60/C#663·hash 일치·실제 브라우저 -2/API 검증·표 확인, 사용자 active/sample·Assembly/manifest4파일 불변·통합 VerifyOnly exit0. 실행은 `설정 관리.cmd`; 기존 은계 싱글/A2 PVP·LANv9/BuildHybrid 유지·Unity 재빌드/새 물리·전체 캠페인 검사 없음. 필수 지도 입력/ZIP·동시 기획/외부 worktree 보존. 다음은 사용자 직접 조정 수용이다.
