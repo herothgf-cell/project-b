@@ -19,3 +19,9 @@
 ## 기본 대사 검증 보완
 
 기존 OverrideText는 카탈로그 기본값과 같은 문자열이면 동적 내장 답변을 사용했다. 사용자 대사6개를 기본값으로 승격한 뒤에도 실제 게임의 기사 답변에 그대로 표시되도록, 생성 카탈로그의 literalReplyIds에 승인된 사용자 답변 ID를 기록했다. C# 파서는 해당 목록의 ID/텍스트 타입/중복을 검증하고 해당 답변에만 기본 문자열을 그대로 사용한다. 나머지 동적 경로 안내는 유지한다. 새 프로필 항목이나 snapshot 형식 변경은 없다. C#760검사(추가2개 기본 대사/동적 안내 보존)·Node63검사 통과. 이 보완을 포함한 최종 통합 빌드 로그는 artifacts/default-promotion/unity-final-build.log.
+
+## 最終 빌드·관리창 확인
+
+기본 승격 소스 b2f3cb4와 대사 보완 f7bcf9b를 실제 커밋에서 확인했다. 최종 ContentTuningBuild.Build/BuildHybrid exit0, 콘텐츠 runtime32/build3·복사 동등성 통과. C#760/Node63 및 --verify 통과. 새 관리창13에서 기본값과 다른 항목0개와 목록의 변경됨 배지 없음 확인, 게임에 적용 클릭 후 다음 새 세션 적용 완료 문구 확인. 이전 탭의 미저장 편집은 덮지 않았다. 화면 artifacts/default-promotion/balance-defaults-zero.png, 주소 artifacts/default-promotion/editor-url.log. 저장 revision4/active값과 새 기본값은 ID/revision/hash 제외 전항목 동일하다.
+
+원격 main의 개인 방 배포/기획·마인드맵 기록은 artifacts/balance-default-release의 별도 브랜치에서 merge하여 보존한다. 원격의 과거 바이너리와 섞지 않고 최종 검증된 실행 폴더 전체/manifest로 교체한다. 필수 지도 입력/ZIP, 사용자 기존 scene의 생성 ID 변경과 작업 폴더 자료는 보존한다. 최종 원격 게시 결과는 후속 영수증을 따른다.
