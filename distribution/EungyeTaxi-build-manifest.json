@@ -1,47 +1,39 @@
 {
-  "sourceCommit": "c3016aaf1e73a26503228f41769e77b404d01400",
+  "sourceCommit": "a11c52850773b5889c5ca47b1bbc94e8a890b348",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
-  "validatedOn": "2026-11-06",
-  "totalBytes": 132049788.0,
+  "validatedOn": "2026-11-07",
+  "totalBytes": 124605158.0,
   "validation": {
-    "build": "ContentTuningBuild.Build -> PrototypeBuild.BuildHybrid exit 0",
-    "buildLog": "artifacts/passenger-composition/build-acceptance.log",
-    "nodeAssertions": 73,
-    "compositionModelAssertions": 73,
-    "contentAssertions": 760,
-    "careAssertions": 13301,
-    "restAssertions": 40,
-    "choiceAssertions": 50,
-    "previewAssertions": 29,
-    "playerCompositionAssertions": 42,
-    "playerLog": "artifacts/passenger-composition/player-final.log",
-    "nativeLanProtocol": "native-city-lan-v12",
-    "nativeLanHostAssertions": 41,
-    "nativeLanClientAssertions": 52,
-    "nativeLanScope": "same-PC loopback, actual WheelCollider input, no reconnect",
-    "nativeLanReport": "artifacts/pvp/native-lan-20261106-235138-fd9aef25",
-    "protectedSaveFiles": 29,
-    "protectedSaveChanges": 0,
-    "strictWorkspaceIssues": 0,
+    "build": "PrototypeBuild.BuildHybrid exit 0",
+    "hudLayoutAssertions": 12,
+    "hudDialogueSignalAssertions": 16,
+    "choiceEffectAssertions": 72,
+    "passengerCompositionAssertions": 73,
+    "playerAssertions": 144,
+    "priorFullUiAssertions": 188,
+    "signalPlayerAssertions": 8,
+    "buttonResolutions": [
+      1280,
+      1920
+    ],
+    "nativeLanVersion": 12,
+    "isolatedSave": true,
     "manualDriving": false,
     "fullCampaign": false,
-    "otherPcLan": false,
-    "baselineFailures": [
-      "test_passenger_behavior: followup remembers actual request response Comfort",
-      "test_passenger_situations: awake passenger receives typed neutral reassurance"
-    ],
-    "uiResolutions": [
-      "1280x900",
-      "800x900"
-    ]
+    "otherPc": false,
+    "fieldReviewComplete": false,
+    "protectedSaveFiles": 16,
+    "protectedSaveChanges": 0,
+    "currentWorkspaceOnly": true,
+    "report": "docs/work-history/2026-11-07-driving-hud-concept-v2.md"
   },
   "files": [
     {
       "path": "builds/EungyeTaxi/택시 시뮬레이션_BurstDebugInformation_DoNotShip/Data/Plugins/x86_64/lib_burst_generated.txt",
-      "bytes": 110703,
-      "sha256": "3dd3b3c4b01763460efae2029cd084b4b1eb834aefb6562eb0cec0de1cb232a8"
+      "bytes": 111046,
+      "sha256": "afeaa8db97f52be93dd45ef33f6b2b5a2db21ef2143966938291c6c148c09bb4"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/app.info",
@@ -51,17 +43,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "41fab19ebe77bbd0576e081ba0e2c7b1287d16a6069a48096c296bda3995cd1f"
+      "sha256": "d62b3636676163031b573389c7017dfd8978c0fa65a91baa091cc10050bcef97"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 57124,
-      "sha256": "40f7b6e7103af88f8f331935dcc2129fccf7ae0b62f061da1516c6722b876f55"
+      "bytes": 57108,
+      "sha256": "e544c24da07507ec48534d26b27bc8e4d88a57ba7c03c7ac1f77c173889ea44b"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 111872,
-      "sha256": "08c79a9c838d6812d63f845ffa100943b7a677dfd8cff9992ce7603e3f3e4806"
+      "bytes": 111992,
+      "sha256": "8e03431ed441f57ef3102babadac93d32ffd3443a5230ba1f8512ce046f1dc53"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -71,12 +63,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
       "bytes": 1140,
-      "sha256": "9569708a0a123c0de50925070a5ed08153c68e7c3a5c5a1a10c62c58fed05e2c"
+      "sha256": "c4a5ad80faa3028a7608e2a6a04a5357e959b5b3d3feaec22cacdeabb1d1db88"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2549248,
-      "sha256": "fe542bdc42c2c1ed07fa861e0c3ef9359c1dc24b80f1ae78980d8173605d2836"
+      "bytes": 2555392,
+      "sha256": "6daceb865cc7a86a06dad52ea841d8bcd5d4a6f2b51fb679bfaffd8d06fc6364"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -571,12 +563,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Plugins/x86_64/lib_burst_generated.dll",
       "bytes": 394240,
-      "sha256": "60eef1978c6f5901d09e31fd980b1ceac94eae497e833c63f0dc4faaa50e6505"
+      "sha256": "9a25cb3c97cc2ec41c504585c3f6d440184da20d015af1ae2ce95f4e9363196c"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 49005966,
-      "sha256": "b4eeb760025879c6cf6f0173bf34d528a1f3a7ba851691260f6047572583b937"
+      "bytes": 41554838,
+      "sha256": "c3fabb4a96a559693e8e1c36b44fe9be43eaf28b91b8f091de716f5c0fdc6598"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
@@ -606,7 +598,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/sharedassets0.assets",
       "bytes": 7624,
-      "sha256": "731727fa06605e9ff790882b39122147f0a6caeb5b4640d2c6b1d80794f2f9d4"
+      "sha256": "69b486b0234fd316562cba1a89b975c07963432bdb6f5a58254868fb2de08968"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi.exe",
@@ -730,8 +722,8 @@
     },
     {
       "path": "builds/EungyeTaxi/ThirdPartyNotices/NotoSansKR-OFL.txt",
-      "bytes": 4480,
-      "sha256": "7accca2f29220c9ab44e4950799b821f36ebf5bbe6b5fb5342724b32228a8daf"
+      "bytes": 4387,
+      "sha256": "babcfe66c8a098b2fa279bc724a3a342f8124f77ce18941fbcc1bbb39823cded"
     },
     {
       "path": "builds/EungyeTaxi/UnityCrashHandler64.exe",

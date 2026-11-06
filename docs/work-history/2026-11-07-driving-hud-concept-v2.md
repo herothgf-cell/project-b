@@ -41,3 +41,7 @@
 - 대표 [주행](../ui/2026-11-07-hud-concept-v2/05a-single-navigation.png), [대화](../ui/2026-11-07-hud-concept-v2/dialogue-single-1280.png), [긴 안내 끝](../ui/2026-11-07-hud-concept-v2/care-long-bottom-1280.png), [PVP](../ui/2026-11-07-hud-concept-v2/09-pvp-hud-1280.png), [PVP 거점](../ui/2026-11-07-hud-concept-v2/life-hub-pvp-1280.png), [신호](../ui/2026-11-07-hud-concept-v2/signal-countdown-1280.png). 캡처는 실제 Player의 격리 위치/상태 제어 검사이며 수동 주행 증거가 아니다.
 
 출하 대상은 **현재 작업공간의** `builds/EungyeTaxi/`다. 원래 로컬 `D:/Git/project-b`에는 승객 override 소스/설정/바이너리 미커밋 작업이 진행 중이므로 이 작업에서 덮어쓰거나 병합하지 않는다. 완료된 승객 조합df7ef19까지만 현재 HUD 작업공간에 통합했다. 원격 push 없음. 원래 폴더의 후속 작업이 끝난 뒤 소스 통합과 재빌드가 필요하다.
+
+## 배포 영수증
+
+실제 최종 소스 커밋 `a11c528`을 `git log -1 --oneline -- docs/work-history/2026-11-07-driving-hud-concept-v2.md`로 확인했다. 해당 전체 해시와 `artifacts/hud-concept-v2/validation.json`을 사용해 통합 manifest를 생성했다. 통합/PVP위임 VerifyOnly 모두 **exit0,141파일/124,605,158바이트** 크기·SHA256 전수 일치. 배포 실행폴더와 생성 FirstDrive 장면의 fileID 변경을 함께 기록한다. 이 영수증이 포함된 실제 배포 커밋은 같은 git log 명령으로 조회한다.

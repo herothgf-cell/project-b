@@ -16,7 +16,7 @@ Review focus: active long dialogue must leave speed/turn indicators visible; lon
 - [x] Add `DrivingHudArt.cs` (dark glass surfaces, semicircle gauge); update `CockpitUI.cs` (clock/cash/conditions left, passenger bottom-left, dial bottom-center, actions bottom-right, job below map).
 - [x] Update `DrivingReadability.cs` for centered top navigation and `PassengerDialogueUI.cs` for larger portrait and dialogue above dial. Keep next-cue geometry and signal resolver unchanged.
 - [x] Run HUD/layout, effect, navigation, signal regression and BuildHybrid; render actual single/PVP, dialogue/long-scroll and signal captures at both sizes. Inspect images and fix visual defects.
-- [ ] Fresh code review; record limits/results, update content05/checklist/LATEST, commit source then regenerate and verify distribution manifest, commit build. No remote push.
+- [x] Fresh code review; record limits/results, update content05/checklist/LATEST, commit source then regenerate and verify distribution manifest, commit build. No remote push.
 
 Design decision: use actual game captures as the second design deliverable, so the approved visual direction is directly reviewable in the playable build. Current passenger art is enlarged rather than replacing passenger identities with a single concept character.
 
