@@ -1,43 +1,47 @@
 {
-  "sourceCommit": "cab0924413f0d532c12e257a0a1777f1565c0ce5",
+  "sourceCommit": "9275f2afbf8601bee32c36ff43c33f8918281db3",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-06",
-  "totalBytes": 115966642.0,
+  "totalBytes": 115975346.0,
   "validation": {
-    "build": "PrototypeBuild.BuildHybrid exit 0; accident-severity-presentation-build.log",
-    "editorRevision": "AccidentSeverityUiBuild.Build exit0 before presentation-only follow-up",
+    "sourceCommit": "9275f2afbf8601bee32c36ff43c33f8918281db3",
+    "build": "PrototypeBuild.BuildHybrid exit0 / pedestrian-damage-v8-final-build.log",
+    "editor13": true,
     "modelAssertions": {
-      "accidentSeverity": 3158,
-      "mapLabels": 288,
       "legacyAccident": 77,
-      "vehicleDamage": 191
+      "severity": 3158,
+      "vehicleDamage": 191,
+      "pedestrianDamage": 3073
     },
-    "nativePlayerAssertions": {
-      "pvp": 155,
-      "legacyPvp": 55,
-      "realPhysx": 31,
-      "lanHost": 48,
-      "lanClient": 63,
+    "playerAssertions": {
+      "pvp": 182,
       "legacySingle": 51,
-      "newProcessResume": 8,
-      "singleAndRendered": 171
+      "reload": 8,
+      "single": 201
     },
-    "renderedResolutions": [
+    "renderedPopupWidth": 1280,
+    "layoutWidths": [
       1280,
       1600,
       1920
     ],
-    "userFilesUnchanged": 15,
-    "lanProtocol": "native-city-lan-v6",
+    "lanProtocol": "native-city-lan-v8",
+    "lanFullFinalPending": false,
     "manualDriving": false,
     "fullCampaign": false,
-    "remotePcLan": false,
-    "knownLegacyFailures": [
-      "UturnTests observer emits no event (original source fixture; separate clean baseline not run)",
-      "VehicleDurabilityProbe arrival locked luggage tow from unsafe crossing; runner stops before reload cases"
-    ]
+    "differentPhysicalPC": false,
+    "userFilesUnchanged": 15,
+    "notes": "Final v8 full reconnect and actual120s pedestrian treatment passed; no unrelated legacy fixture repairs.",
+    "lanChecks": {
+      "host": 48,
+      "reconnect": true,
+      "client": 63,
+      "processingSeconds": 120,
+      "durabilityLoss": 3
+    },
+    "lanEvidence": "artifacts/pvp/native-lan-20261106-130516-610fb496"
   },
   "files": [
     {
@@ -48,17 +52,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "508f9e786cc81b9e59f845015d4e88ad684f056bef5ab6155ec6e8da2dec3e22"
+      "sha256": "70b5a0c154df11794572da6942fc87432a658c9a3375e99f26040a060f9d652b"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
       "bytes": 56596,
-      "sha256": "b8c1cf13fc2abb8a1830cbe1028061f70eaeee4a4d6f02a648a7fa4a68803591"
+      "sha256": "dc29290df7a6dc2ca42f758f8c0b93874a8af9910d1b062037d109d5f0a0df11"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
       "bytes": 110824,
-      "sha256": "060d60edd123f3116293f2f4d1a7a32de5c57fe0fbe99307b627b6b968a30ef8"
+      "sha256": "92c3f17d3b5f4f0ae00e127f88ff46de40aded5f5afdf37b6242b86273f14d98"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -77,8 +81,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2404352,
-      "sha256": "3725e716bc9a77d3c919ef6ca4950fb7556c1021d2d28700dc85535d2c430b00"
+      "bytes": 2413056,
+      "sha256": "3bdd24e3a3a07a80237ac6804b49c951967cd89999380fa0de21740287e47b62"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",

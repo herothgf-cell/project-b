@@ -10,5 +10,5 @@
 - [x] 순수 C# 실패 검사: 손상 범위/0/상한, 재선택 차단, 중복 적용/수리 후 재생, legacy 호환·복사/직렬화·D0 하한.
 - [x] AccidentSeverityPolicy/AccidentState/VehicleCare에 선택·적용 ID 보존 구현, Controller 신규/사람 우선 분류·정산 연결.
 - [x] 사고 팝업 실제 감소량, LANv7/기존 probe의 새 손상 기대값과 전용 실제 제어기 검사.
-- [ ] 순수 검사/Editor·실제 싱글/PVP/저장·LAN/렌더 확인, 기본 BuildHybrid와 manifest 전수 검증.
-- [ ] 사용자 저장/프로필 보존, 기획·체크리스트·작업 이력/LATEST, 명시 파일 로컬 커밋. 기존 유턴/수하물 fixture 미해결은 별도 유지.
+- [x] 순수 검사/Editor·실제 싱글/PVP/저장·LAN/렌더 확인, 기본 BuildHybrid와 manifest 전수 검증.
+- [x] 사용자 저장/프로필 보존, 기획·체크리스트·작업 이력/LATEST, 명시 파일 로컬 커밋. 기존 유턴/수하물 fixture 미해결은 별도 유지.

@@ -33,6 +33,15 @@
 
 ## 실행과 남은 수용
 
+### 최종 배포 영수증
+
+- 실제 소스 `9275f2afbf8601bee32c36ff43c33f8918281db3`(코드/기획/체크리스트/이력 포함), `git log -1 --oneline -- docs/work-history/2026-11-06-pedestrian-durability.md`로 확인했다. 로컬 브랜치 `codex/pedestrian-durability`이며 원격 게시하지 않았다.
+- 최종v8 정식 재접속 LAN도 호스트48/참가자63 exit0(`artifacts/pvp/native-lan-20261106-130516-610fb496`). 실제120초·손상3점/반복 snapshot 불변을 최종 계약으로 확인했다. 앞의 MotionOnly 실패와 구분한다.
+- 현재 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 은계 싱글/A2 PVP·LANv8(양쪽 갱신). BuildHybrid 최종 exit0·최종v8 싱글201 및 실제 팝업 PASS, 게임/Unity 검사 프로세스 종료. 별도 선택지 효과 작업과 통합할 때는 이 소스를 보존하고 **v9 이상 새 계약**으로 갱신한다.
+- 사용자 active 파일을 이동/포함하지 않고 출하140파일만 별도 `artifacts/pedestrian-damage-shipped-runtime`으로 복사해 원본/사본 SHA256 전수 일치 후 공식 도구로 manifest를 생성했다. 출하140파일 **115,975,346바이트**, active 포함 실제141파일 **116,000,070바이트**. 통합/PVP alias VerifyOnly 각각exit0, 전수 크기/SHA256 일치·optional 사용자 프로필 contentHash 정상.
+- 사용자 저장/백업14+active1은 시작 기준15파일 모두 바이트/SHA256 불변. Burst 디버그 출력은 `artifacts/pedestrian-damage-burst-debug`로 보관하고 출하에서 제외했다. 필수 지도 입력 Strict issues0, 지도/ZIP/OSM 설정·사용자 콘텐츠 설정 미변경. 기존 미추적 자료와 동시 관리창 작업은 보존했다.
+- 배포 커밋의 실제 해시는 `git log -1 --oneline -- distribution/EungyeTaxi-build-manifest.json`으로 확인한다. 수동 장시간/전체 캠페인/다른PC 수용은 이 영수증의 자동·위치 제어·loopback 검사와 별도다.
+
 기본 `builds/EungyeTaxi/EungyeTaxi.exe`, 은계 싱글/A2 PVP, `PrototypeBuild.BuildHybrid`. 로컬 Unity2022.3.62f2에서 `-executeMethod PedestrianDamageChecks.Build`는 새 Editor/기존 정책/UI/콘텐츠·HUD 검사 후 기본 통합 빌드를 수행한다.
 
 재현: `pwsh -File tools/test_pedestrian_damage.ps1`, `pwsh -File tools/test_accident_severity_ui_player.ps1 -Capture -Visible -View popup -OutputDirectory artifacts/pedestrian-damage-single`, 동일 명령의 `-Pvp`, `tools/test_pvp_native_lan.ps1 -Reconnect`. 실제 제어기 probe는 위치 제어/명시적 tick이며, 건강한 봇 출차만 별도 실제 바퀴/조향·페달 검사다. LAN은 두 loopback 프로세스이고 다른PC는 아니다. 임시 contentTest/기존 명시적 artifact 저장을 사용한다.
