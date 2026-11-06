@@ -7,7 +7,7 @@
 ## 2026-11-06 운전 설정
 
 - [x] 일시정지 설정4항목·개인 저장/적용·취소/Esc·기본값, 모달/경기 종료 guard, H/봇 보존·LANv10 계수 제한/공통 계산 구현.
-- [ ] 최종 기본 BuildHybrid·Player/LAN·사용자 저장/manifest 배포 영수증 확정. [검증/후속 수용](work-history/2026-11-06-driving-settings.md).
+- [x] 최종 기본 BuildHybrid·Player 싱글12/PVP13·LAN51+64/재접속·manifest140파일 검증. 사용자 별도 게임의 후속 저장 갱신은 그대로 보존. [검증/후속 수용](work-history/2026-11-06-driving-settings.md).
 
 - [x] 통합/PVP 배포142파일 전수 검증 exit0, 새 밸런스 관리창 적용 및 분리 테스트 실행. 차량 청결도/기사 피로도 명시·취객/수면 빈도 설명, UI23통과. [검증 기록](work-history/2026-11-06-distribution-and-stat-labels.md).
 

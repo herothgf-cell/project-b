@@ -1,36 +1,21 @@
 {
-  "sourceCommit": "0922f8befbe4db438f84fc87fda613a734e865f0",
+  "sourceCommit": "1d5e6e6ec52c457d51e79d602d829e9963d54647",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-06",
-  "totalBytes": 118239935.0,
+  "totalBytes": 118129232.0,
   "validation": {
-    "feature": "editable-drunk-settings",
-    "unityBuild": "ContentTuningBuild.Build / PrototypeBuild.BuildHybrid exit0",
-    "contentChecks": 758,
-    "passengerCareChecks": 13301,
-    "nodeChecks": 62,
-    "runtimeChecks": 32,
-    "buildChecks": 3,
-    "playerChecks": 17,
-    "sharedWorkingTree": true,
-    "manualDriving": false,
-    "fullHumanCampaign": false,
-    "lan": {
-      "fullRunPassed": false,
-      "timeoutSeconds": 240,
-      "hostPassedBeforeTimeout": 44,
-      "clientPassedBeforeTimeout": 60,
-      "evidence": "artifacts/pvp/native-lan-20261106-160204-4bebc72b"
-    }
+    "feature": "personal-driving-settings-integrated-with-room-and-drunk-settings",
+    "source": "1d5e6e6ec52c457d51e79d602d829e9963d54647",
+    "unityBuild": "DrivingSettingsChecks.Build exit0; latest ContentTuningBuild.Build exit0",
+    "editor": "settings171+menus12+modal4; CasualIntegration; content32/build copies",
+    "player": "latest shipped single12/PVP13 exit0, 1280x720 and800x600 renders; personal room36 plus process reload",
+    "lan": "native-lan-20261106-155448-dbe700d6 host51/client64 reconnect exit0; latest integrated followup recorded in history",
+    "save": "test paths and preference keys isolated; concurrent external user game saves preserved without restore",
+    "limitations": "loopback only; physical road corners/human full campaign/gamepad hardware/remote PC not retested"
   },
   "files": [
-    {
-      "path": "builds/EungyeTaxi/택시 시뮬레이션_BurstDebugInformation_DoNotShip/Data/Plugins/x86_64/lib_burst_generated.txt",
-      "bytes": 110703,
-      "sha256": "766fda32026d177c9cfdd473bfd74fc274df303a7f4a1cb54a585f910aa14233"
-    },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/app.info",
       "bytes": 37,

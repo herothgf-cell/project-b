@@ -34,7 +34,7 @@
 - [x] 저장·재시작/취소/기본값·화면 렌더·실제 바퀴 검사.
 
 ### Task 3: 통합 검증·배포
-- [ ] 현재 코드 리뷰, 중요 문제 수정 및 회귀.
-- [ ] 통합 BuildHybrid·싱글/PVP 실제 Player·LAN·Strict·사용자 저장 보존 확인.
-- [ ] 관련 기획/체크리스트/LATEST/작업 이력과 소스 커밋.
-- [ ] 실제 소스 해시로 통합 manifest 갱신·VerifyOnly 후 실행 폴더·기록 커밋.
+- [x] 현재 코드 리뷰, 중요 문제 수정 및 회귀.
+- [x] 통합 BuildHybrid·싱글/PVP 실제 Player·LAN·Strict·사용자 저장 보존 확인.
+- [x] 관련 기획/체크리스트/LATEST/작업 이력과 소스 커밋.
+- [x] 실제 소스 해시로 통합 manifest 갱신·VerifyOnly 후 실행 폴더·기록 커밋.
