@@ -42,3 +42,7 @@
 - 기본 Player `braking-signal-repair-final-single`17개·`braking-signal-repair-final-pvp`15개 exit0. 5항목 기본값/저장/취소·일반 제동525→1575Nm/긴급3500Nm·봇 격리·PVP 종료 시 닫힘, 내구도51 숨김/23 표시·공업사 플래너 열기 확인. 1280×720/800×600 설정 및 속도100/정차·양측 지시등 상태 렌더 확인. 작은 창의 기존 상단 HUD 글자 잘림은 이번 수리 버튼 이동과 별개이며 전체 HUD 재설계를 했다고 표시하지 않는다.
 - 실제2 Player: `pwsh -File tools/test_pvp_native_lan.ps1 -Port 18937 -Reconnect -TimeoutSeconds 360` exit0, `native-lan-20261106-164653-c3cdf21f` host51/client64·재접속. 개인 조향/브레이크 값의 서버 독립 적용·로컬 예측·권한·설정 중 경기 진행·사고/재개까지 통과. 같은PC loopback이며 다른PC는 미검증.
 - `tools/check_workspace.ps1 -Strict` exit0/input issues0. 지도/필수 입력/ZIP 미변경. 문서/소스 선택 커밋과 실제40자리 소스 해시/통합 manifest 검증을 이어 확정한다.
+
+실제 소스 `d4326a34d47cc5b94cd8dda01e8cf78060b79410`은 `git log -1 --format`으로 확인했다. 최신 승인된 기본값/취객/개인 생활을 포함한 원래 폴더의 기본 실행본을 배포한다. 출하140파일118,133,672바이트·사용자 active 포함141파일 통합/PVP VerifyOnly 각각exit0. 사용자 활성 프로필은 제외한 출하 사본으로 실제 크기/SHA256 manifest를 생성하고 원래 폴더의 사용자 프로필을 별도 검증했다. 이전에 배포에 들어간 생성 Burst `DoNotShip` 텍스트도 확인한 경로의 artifacts로 보존하고 실행 배포에서는 제거했다. 근거 `artifacts/braking-signal-repair/validation.json`.
+
+새 작업 시작 보호 기준(사용자 외부 게임 종료 이후)의 저장/백업/active17개를 테스트 후 전수 대조해 변경0. 이전 플레이 저장으로 덮거나 되돌리지 않았다. 다른 작업의 마인드맵/기존 미추적 로컬 입력·캐시는 보존한다. 최종 작업 커밋은 이 파일의 `git log -1 --oneline --`으로 확인한다. 원격 게시/다른PC 실제 플레이는 이번에 수행하지 않았다.

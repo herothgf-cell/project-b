@@ -1,29 +1,22 @@
 {
-  "sourceCommit": "f7bcf9b339e310ccdb15d5041e064423b29fc882",
+  "sourceCommit": "d4326a34d47cc5b94cd8dda01e8cf78060b79410",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-06",
-  "totalBytes": 118240279.0,
+  "totalBytes": 118133672.0,
   "validation": {
-    "feature": "approved-balance-defaults",
-    "unityBuild": "ContentTuningBuild.Build / PrototypeBuild.BuildHybrid exit0 (unity-final-build.log)",
-    "contentTests": 760,
-    "nodeTests": 63,
-    "contentRuntimeChecks": 32,
-    "buildChecks": 3,
-    "uiChangedFields": 0,
-    "manualDriving": false,
-    "fullHumanCampaign": false,
-    "priorLanTimeoutUnchanged": true,
-    "literalReplyTests": 2
+    "feature": "braking-native-left-signals-repair-shortcut",
+    "source": "d4326a34d47cc5b94cd8dda01e8cf78060b79410",
+    "unityBuild": "BrakingSettingsChecks.Build and probe refresh PrototypeBuild.BuildHybrid exit0",
+    "editor": "brake22; steering171/menu12/modal4; CasualIntegration; content32; actual J7973 native left plus guards",
+    "physics": "8 native PhysX samples with powered rolling warmup; lower ordinary pressure changes stopping distance; emergency/bot unchanged",
+    "player": "default single17/PVP15 exit0; five sliders; brake torque; workshop action/visibility/planner and rendered repair speed100",
+    "lan": "native-lan-20261106-164653-c3cdf21f host51/client64/reconnect exit0, native-city-lan-v11",
+    "protectedFiles": "17 saved/backup/profile files unchanged against latest closed-game baseline",
+    "limitations": "loopback only; human same-junction long play, full campaign, physical gamepad and remotePC not newly accepted"
   },
   "files": [
-    {
-      "path": "builds/EungyeTaxi/택시 시뮬레이션_BurstDebugInformation_DoNotShip/Data/Plugins/x86_64/lib_burst_generated.txt",
-      "bytes": 110703,
-      "sha256": "766fda32026d177c9cfdd473bfd74fc274df303a7f4a1cb54a585f910aa14233"
-    },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/app.info",
       "bytes": 37,
@@ -32,17 +25,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "f3a84c2b560be7af7372ed65b11589c376b83d523e2d979503cdd37d8b0d69b7"
+      "sha256": "a2e761a3163c975a6768394f475dea2445ef8ca46a8a09ec89bc9c3e3004410b"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
       "bytes": 56940,
-      "sha256": "3ff3a7264a196296a917d1ff4b934aefae21c68651a0e4ab08b3c96800f81494"
+      "sha256": "e344a357a3e4ea21615d095bbcd0625854ec6a07dff04bee17aa7779c33baac8"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
       "bytes": 111640,
-      "sha256": "93067e26441d15d26383d0c2a62560d2edd8a62231f6e45063668443e806a48f"
+      "sha256": "a09577db5a73942bebc42ff5365bf5f027d0a734a2aad6c0cf77a220c775194c"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -56,8 +49,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2485760,
-      "sha256": "5d91aa3e6ff3b6824f42581501c747e55e3855bf0ea4cf876b773a40cbf34c78"
+      "bytes": 2489856,
+      "sha256": "c7a3e4ea7c513216e0d3046b25d9365b5604568471e8c6c123be0df1a72858d4"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",

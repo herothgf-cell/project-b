@@ -3,7 +3,7 @@
 ## 2026-11-06 감속·좌회전·수리 안내 후속
 
 - [x] 일반 브레이크50~150%·개인 이관/저장·안전/봇 보존·LANv11, 실제 물리8샘플·모델22·지도 좌회전 RED→GREEN·방향/폐쇄 guard·수리 안내 속도 카드 이동.
-- [ ] 최종 기본 Player·렌더·LAN·manifest 영수증 확정. [검증과 실패 구분](work-history/2026-11-06-braking-left-signal-repair-ui.md).
+- [x] 최종 기본 Player 싱글17/PVP15·렌더·LAN51+64/재접속·140파일 manifest·보호17파일 불변 확인. [검증과 실패 구분](work-history/2026-11-06-braking-left-signal-repair-ui.md).
 
 - [x] 저장된1차 밸런스50개를 출하 기본값으로 승격, 생성기 재실행·기본값 복원 보존 및 기존 프로필 이관 독립. C#758/Node63검사 통과. [빌드/관리창0/적용/게시 기록](work-history/2026-11-06-promote-balance-defaults.md).
 
