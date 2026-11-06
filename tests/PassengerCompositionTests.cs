@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 class PassengerCompositionTests {
@@ -26,7 +26,7 @@ class PassengerCompositionTests {
   Install(Preset("\"purpose.errand\",\"item.muddy\"","Errand"));p=PassengerBehaviorState.CreateConfigured("errand",PassengerType.Errand,null,null);Check(p.Type==PassengerType.MuddyLuggage&&p.RepresentativeType==PassengerType.Errand,"mud retains via request");p.Respond(1,true);p.Board();p.BindEffectTrip("mud-trip");p.Arrive();p.Finish(true);Check(p.DirtEvents.Length==1&&p.Copy().DirtEvents[0].Id=="mud-trip:mud","mud applies exactly once on actual exit");
   var copy=p.Copy();copy.PresetTraits[0]="purpose.hurried";Check(p.PresetTraits[0]=="purpose.errand","snapshot does not alias traits");Reject(()=>copy.Validate(),"snapshot rejects altered module association");
   Reject(()=>PassengerPresetCatalog.Parse(Preset("\"body.drunk\",\"body.sleepy\"")),"double wake rejected");
-  Reject(()=>PassengerPresetCatalog.Parse(Preset("\"item.food\",\"body.sleepy\"","Food")),"unimplemented two primary modules rejected");
+  Check(PassengerPresetCatalog.Parse(Preset("\"item.food\",\"body.sleepy\"","Food"))[0].ActionModule=="Food","sleeping food is executable");
   Reject(()=>PassengerPresetCatalog.Parse(Preset("\"purpose.errand\",\"body.sensitive\"","Errand")),"two representative requests rejected");
   Reject(()=>PassengerPresetCatalog.Parse(Preset("\"item.luggage\"","General")),"required rest cannot contain work");
   Reject(()=>PassengerPresetCatalog.Parse(Preset("\"body.drunk\"","Food")),"drunk cannot bypass its pool");

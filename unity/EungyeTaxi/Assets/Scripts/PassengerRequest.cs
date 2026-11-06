@@ -1,18 +1,23 @@
 ﻿public enum RequestKind { Quiet, Eta, Comfort, OnTime, LargeRoad, ShortRoad, SafeStop, Empathy, RouteAdvice, Interview, Music, FareHelp, LocalChat, DestinationChange, ViaStop, LostItem, RejectIllegal }
-[System.Serializable] public sealed class PassengerRequestSnapshot {public string trip,response;public RequestKind kind;public bool resolved,accepted,opportunity,finished,safety,goalRecorded;public int satisfactionDelta;public bool replyCaptured;public PassengerReply reply;public int outcomeVersion,outcome;}
+[System.Serializable] public sealed class PassengerRequestSnapshot {public string trip,response;public RequestKind kind;public bool resolved,accepted,opportunity,finished,safety,goalRecorded;public int satisfactionDelta;public bool replyCaptured;public PassengerReply reply;public int outcomeVersion,outcome;public int quietViolationCount;public string quietEvidence;}
 public class PassengerRequest {
  public PassengerContent Content=PassengerContent.Shared;
  public string Trip {get;private set;} public RequestKind Kind {get;private set;}
  public bool Resolved {get;private set;} public bool Accepted {get;private set;} public bool SafetyDeferred {get{return safety;}}
  public int SatisfactionDelta {get;private set;}
  public int GoalOutcome {get;private set;}
+ public int QuietViolationCount {get;private set;}
+ public string QuietEvidence {get;private set;}
+ // Only explicit, voluntary driver chat calls this. Safety/care/navigation dialogue never does.
+ public bool ObserveDriverSmallTalk(){if(Kind!=RequestKind.Quiet||!Accepted||finished||goalRecorded)return false;if(QuietViolationCount<int.MaxValue)QuietViolationCount++;QuietEvidence="조용한 운행 약속 후 운전자가 먼저 잡담";return true;}
+ public void CompleteQuietGoal(){if(Kind==RequestKind.Quiet)CompleteGoal(QuietViolationCount==0,QuietViolationCount==0?"수락 후 불필요한 운전자 잡담 0회 · 안전 안내 제외":QuietEvidence+" "+QuietViolationCount+"회 · 안전 안내 제외");}
  public bool ReplyCaptured {get{return replyCaptured;}}public PassengerReply SelectedReply {get{return selectedReply;}}
  public void OverrideChoiceSatisfaction(int value){if(value< -100||value>100)throw new System.ArgumentException("Invalid choice evaluation");SatisfactionDelta=value;}
  bool opportunity,finished,safety,goalRecorded,replyCaptured;PassengerReply selectedReply;string response="";
- public PassengerRequestSnapshot Snapshot(){return new PassengerRequestSnapshot{trip=Trip,kind=Kind,response=response,resolved=Resolved,accepted=Accepted,opportunity=opportunity,finished=finished,safety=safety,goalRecorded=goalRecorded,satisfactionDelta=SatisfactionDelta,replyCaptured=replyCaptured,reply=selectedReply,outcomeVersion=1,outcome=GoalOutcome};}
- public void Restore(PassengerRequestSnapshot s){if(s==null||!System.Enum.IsDefined(typeof(RequestKind),s.kind)||s.satisfactionDelta< -100||s.satisfactionDelta>100||s.replyCaptured&&!System.Enum.IsDefined(typeof(PassengerReply),s.reply))throw new System.ArgumentException("Invalid passenger request");if(s.outcomeVersion!=0&&s.outcomeVersion!=1||s.outcomeVersion==1&&(s.outcome < -1||s.outcome>1||!s.goalRecorded&&s.outcome!=0))throw new System.ArgumentException("Invalid request outcome");GoalOutcome=s.outcomeVersion==1?s.outcome:0;Trip=s.trip;Kind=s.kind;response=s.response??"";Resolved=s.resolved;Accepted=s.accepted;opportunity=s.opportunity;finished=s.finished;safety=s.safety;goalRecorded=s.goalRecorded;SatisfactionDelta=s.satisfactionDelta;replyCaptured=s.replyCaptured;selectedReply=s.reply;}
+ public PassengerRequestSnapshot Snapshot(){return new PassengerRequestSnapshot{trip=Trip,kind=Kind,response=response,resolved=Resolved,accepted=Accepted,opportunity=opportunity,finished=finished,safety=safety,goalRecorded=goalRecorded,satisfactionDelta=SatisfactionDelta,replyCaptured=replyCaptured,reply=selectedReply,outcomeVersion=1,outcome=GoalOutcome,quietViolationCount=QuietViolationCount,quietEvidence=QuietEvidence};}
+ public void Restore(PassengerRequestSnapshot s){if(s==null||!System.Enum.IsDefined(typeof(RequestKind),s.kind)||s.satisfactionDelta< -100||s.satisfactionDelta>100||s.replyCaptured&&!System.Enum.IsDefined(typeof(PassengerReply),s.reply))throw new System.ArgumentException("Invalid passenger request");if(s.outcomeVersion!=0&&s.outcomeVersion!=1||s.outcomeVersion==1&&(s.outcome < -1||s.outcome>1||!s.goalRecorded&&s.outcome!=0))throw new System.ArgumentException("Invalid request outcome");if(s.quietViolationCount<0||s.quietViolationCount>0&&(s.kind!=RequestKind.Quiet||!s.accepted||string.IsNullOrEmpty(s.quietEvidence))||(s.quietEvidence??"").Length>200)throw new System.ArgumentException("Invalid quiet evidence");QuietViolationCount=s.quietViolationCount;QuietEvidence=s.quietEvidence??"";GoalOutcome=s.outcomeVersion==1?s.outcome:0;Trip=s.trip;Kind=s.kind;response=s.response??"";Resolved=s.resolved;Accepted=s.accepted;opportunity=s.opportunity;finished=s.finished;safety=s.safety;goalRecorded=s.goalRecorded;SatisfactionDelta=s.satisfactionDelta;replyCaptured=s.replyCaptured;selectedReply=s.reply;}
  public string Id {get{return Kind<=RequestKind.Eta?Kind.ToString():Kind<=RequestKind.SafeStop?"DR0"+((int)Kind-1):Kind<=RequestKind.LocalChat?"CH0"+((int)Kind-6):"EV0"+((int)Kind-12);}}
- public bool Begin(string trip,RequestKind kind){if(Trip==trip)return false;Trip=trip;Kind=kind;Resolved=Accepted=opportunity=finished=safety=goalRecorded=false;SatisfactionDelta=0;GoalOutcome=0;response="";replyCaptured=false;selectedReply=PassengerReply.Accept;return true;}
+ public bool Begin(string trip,RequestKind kind){if(Trip==trip)return false;Trip=trip;Kind=kind;Resolved=Accepted=opportunity=finished=safety=goalRecorded=false;SatisfactionDelta=0;GoalOutcome=0;QuietViolationCount=0;QuietEvidence="";response="";replyCaptured=false;selectedReply=PassengerReply.Accept;return true;}
  public void ObserveOpportunity(bool stopped){opportunity|=stopped;}
  public void Accept(){Accept(Kind==RequestKind.Quiet?"조용히 운행하겠습니다":Kind==RequestKind.Eta?"예상 도착 시간을 안내했습니다":"응답 완료");}
  public void Accept(string text){Accept(text,PassengerReply.Accept);}
@@ -22,7 +27,7 @@ public class PassengerRequest {
  public void DeferSafety(){if(Resolved||finished)return;Resolved=true;safety=true;response="안전상 보류 · 감점 없음";}
  public void CompleteGoal(bool success,string reason){if(!Accepted||finished||goalRecorded)return;goalRecorded=true;GoalOutcome=success?1:-1;SatisfactionDelta=Delta(Kind,success);response+=(success?" · 달성: ":" · 미달: ")+reason;}
  public void CompleteUnknown(string reason){if(!Accepted||finished||goalRecorded)return;goalRecorded=true;GoalOutcome=0;response+=" · 판정 불가: "+reason+" · 만족도 변화 없음";}
- public static int Delta(RequestKind kind,bool success){return ContentTuning.Int("request."+kind+"."+(success?"success":"failure"),kind==RequestKind.Quiet?(success?5:0):kind==RequestKind.Eta||kind==RequestKind.LostItem||kind==RequestKind.RejectIllegal?0:kind<=RequestKind.SafeStop?(success?8:-10):kind<=RequestKind.LocalChat?(success?5:-5):(success?6:-8));}
+ public static int Delta(RequestKind kind,bool success){return ContentTuning.Int("request."+kind+"."+(success?"success":"failure"),kind==RequestKind.Quiet?(success?5:-5):kind==RequestKind.Eta||kind==RequestKind.LostItem||kind==RequestKind.RejectIllegal?0:kind<=RequestKind.SafeStop?(success?8:-10):kind<=RequestKind.LocalChat?(success?5:-5):(success?6:-8));}
  public static float EtaSeconds(float eta,int option){if(float.IsNaN(eta)||float.IsInfinity(eta)||eta<0)return float.NaN;return eta+System.Math.Max(-1,System.Math.Min(1,option))*System.Math.Min(30,eta*.1f);}
  public static string EtaComparison(float predicted,float actual){float difference=actual-predicted;return difference< -15?"예상보다 빠름":difference>15?"늦어짐":"예상 범위";}
  public string ResponseText(){return (Kind<=RequestKind.Eta?"":Id+" · ")+(response.Length>0?response:Resolved?"응답 완료":"응답 대기");}
@@ -92,6 +97,7 @@ public static class PassengerRequestChoices {
   int gain=PassengerRequest.Delta(kind,true),loss=PassengerRequest.Delta(kind,false);
   if(gain==0)return "만족도 변화 0";
   if(kind==RequestKind.LargeRoad||kind==RequestKind.ShortRoad)return "하차 시 이행 만족도 +"+gain+" · 합법 우회/판정 불가 0";
+  if(kind==RequestKind.Quiet)return "하차 시 조용한 운행 +"+gain+" / 약속 후 운전자 잡담 "+loss+" · 안전 안내 제외";
   if(kind==RequestKind.Comfort)return "하차 시 이행 만족도 +"+gain+" / 미이행 "+loss;
   if(kind==RequestKind.OnTime)return "하차 시 이행 +"+gain+" / 위반 동반 미이행 "+loss+" · 합법적 지연 0";
   if(kind==RequestKind.SafeStop||kind==RequestKind.DestinationChange||kind==RequestKind.ViaStop)return "하차 시 이행 만족도 +"+gain+" / 미이행 "+loss;
@@ -102,7 +108,7 @@ public static class PassengerRequestChoices {
   content=content??PassengerContent.Shared;
   var choices=new System.Collections.Generic.List<PassengerRequestChoice>();
   switch(kind){
-   case RequestKind.Quiet:choices.Add(C(PassengerReply.Accept,"조용히 모시겠습니다","후속 대사 억제 · 운임/기한 유지"));break;
+   case RequestKind.Quiet:choices.Add(C(PassengerReply.Accept,"조용히 모시겠습니다","후속 대사 억제 · 운전자 잡담 시 미이행 · 안전 안내 제외 · 운임/기한 유지"));break;
    case RequestKind.Eta:choices.Add(C(PassengerReply.EtaFaster,"조금 빠르게 예상해요","내비보다 최대30초 빠른 예상 안내"));choices.Add(C(PassengerReply.EtaNormal,"내비 예상에 맞춰 안내","현재 내비 ETA로 안내"));choices.Add(C(PassengerReply.EtaRelaxed,"조금 여유롭게 예상해요","내비보다 최대30초 여유 있는 예상 안내"));break;
    case RequestKind.Comfort:choices.Add(C(PassengerReply.Accept,"부드럽게 모시겠습니다",ChoiceEffectDefinition.Enabled?"불필요한 급가감속 판정 유지":"수락 뒤 불필요한 급가감속 각 -"+MannerLedger.MotionPenalty(true)+"점"));break;
    case RequestKind.OnTime:choices.Add(C(PassengerReply.Accept,"규칙을 지키며 가겠습니다","기존 기한과 위반 여부 관찰 · 기한 유지"));break;

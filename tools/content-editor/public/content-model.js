@@ -3,7 +3,7 @@
  'use strict';
  const quietRequestEffect='후속 제한은 확률을 낮추는 설정이 아닙니다. 이 운송에서 신호 대기·흔들림 등 추가 상황 대화와 취객의 일반 수다를 표시하지 않습니다. 별도로 배정된 다음 요청과 필수 안전·승하차 안내는 유지합니다.';
  const requestFacts={
- Quiet:['수락하면 추가 상황 대화와 취객의 일반 수다를 제한합니다. 운임과 기한은 유지합니다.','수락하면 후속 제한을 적용하고 하차 때 이행 만족도를 한 번 반영합니다.'],
+ Quiet:['수락하면 추가 상황 대화와 취객의 일반 수다를 제한합니다. 운임과 기한은 유지합니다.','수락 이후 기사가 불필요한 잡담을 시작하면 실패 근거를 기록하고 하차 때 실패 효과를 한 번 반영합니다. 필수 안전 안내는 위반이 아닙니다.'],
  Eta:['현재 내비 ETA를 안내합니다. 빠르게/보통/여유롭게 중 하나를 고릅니다.','빠르게와 여유롭게는 ETA의 10%, 최대 30초를 빼거나 더합니다. 실제 도착과 차이를 안내하며 ETA 차이 자체 감점은 없습니다.'],
  Comfort:['수락 이후 불필요한 급가속·급제동과 충돌을 관찰합니다.','하차 때 수락 뒤 급가감속·충돌이 없으면 이행, 있으면 미이행입니다. 필요한 제동은 제외합니다. 급가감속 M 감점은 요청 결과와 별도입니다.'],
  OnTime:['원래 도착 기한을 지키는지 관찰하며 기한을 늘리지 않습니다.','기한 안에 도착하고 운전 위반이 없으면 이행합니다. 위반 동반 미이행은 실패, 위반 없는 합법적 지연은 판정 불가로 0입니다.'],
@@ -40,6 +40,16 @@
  const typeEffects={Food:['food'],Luggage:['luggage'],MuddyLuggage:['muddy'],Sleeping:['sleep'],Errand:['errand']};
  const effectFacts={food:['음식 허락·섭취·흘림·정리','허락 선택의 만족도는 승차 후 반영합니다. 이동 시간과 진행도 조건을 둘 다 충족하고 운송 진행 85% 전이어야 실제 섭취·부스러기 오염이 생깁니다. 흘림 예정은 승객 식별자로 정하며, 섭취 뒤 이동 지연 또는 물리 흔들림에서 추가 오염을 한 번 반영합니다.'],luggage:['큰 짐 적재·하역','적재 허용 시 안전 정차 동안 준비하고, 도착 후 안전 정차 동안 하역합니다. 만족도 자체는 바뀌지 않습니다.'],muddy:['흙 묻은 짐 보호·오염','깔개를 고르면 준비 시간만 사용합니다. 보호 없이 실으면 하차 때 오염을 한 번 반영합니다.'],sleep:['흔들림 뒤 다시 수면','물리 흔들림으로 깨어난 뒤 진정 시간이 지나고 응답 대기가 끝나면 다시 잠듭니다. 만족도 가산은 없습니다.'],resecure:['흔들린 짐 재고정','짐이 실린 상태에서 흔들림·필요 제동 반응의 첫 답변을 고르면 안전 정차 동안 재고정합니다. 연료·영업시간은 소모하고 비용과 만족도 변화는 0입니다.'],errand:['경유 용무 대기','경유 요청을 수락한 뒤 경유지 F 안전 정차로 시작합니다. 안전 정차 중에만 무료 용무 대기 시간이 줄어듭니다.']};
  const lawFacts={
+ flashStop:['적색 점멸 정지','기존 관찰 사건의 운전 점수 감점입니다. 기본값 15점. 실제 법정 벌점과 별도입니다.'],
+ permissiveTurn:['비보호 좌회전 상황','기존 관찰 사건의 운전 점수 감점입니다. 기본값 15점. 실제 법정 벌점과 별도입니다.'],
+ blockedExit:['출구 막힘 진입','기존 관찰 사건의 운전 점수 감점입니다. 기본값 15점. 실제 법정 벌점과 별도입니다.'],
+ personMinor:['보행자 사고 경미','기존 관찰 사건의 운전 점수 감점입니다. 기본값 10점. 실제 법정 벌점과 별도입니다.'],
+ personModerate:['보행자 사고 중간','기존 관찰 사건의 운전 점수 감점입니다. 기본값 25점. 실제 법정 벌점과 별도입니다.'],
+ personMajor:['보행자 사고 중대','기존 관찰 사건의 운전 점수 감점입니다. 기본값 40점. 실제 법정 벌점과 별도입니다.'],
+ vehicleMinor:['차량·시설 사고 경미','기존 관찰 사건의 운전 점수 감점입니다. 기본값 3점. 실제 법정 벌점과 별도입니다.'],
+ vehicleModerate:['차량·시설 사고 중간','기존 관찰 사건의 운전 점수 감점입니다. 기본값 8점. 실제 법정 벌점과 별도입니다.'],
+ vehicleMajor:['차량·시설 사고 중대','기존 관찰 사건의 운전 점수 감점입니다. 기본값 15점. 실제 법정 벌점과 별도입니다.'],
+
  redStraight:['적색 직진·좌회전·유턴 조건','진입 때 관측한 진행 방향 신호와 유턴 보조 조건으로 판단합니다. 불명확한 관찰은 확정 위반으로 만들지 않습니다.'],
  redRight:['적색 우회전 전 일시정지','우회전 전용 신호가 없는 적색 전방에서 일시정지 의무를 판단합니다. 보행자 보호·전용 신호는 별도 조건입니다.'],
  dedicatedRed:['우회전 전용 신호','우회전 전용 신호가 있을 때 해당 신호의 허용 여부를 판단합니다.'],
@@ -62,7 +72,7 @@
   const schedule=ids('schedule.');
   for(const [kind,facts]of Object.entries(requestFacts)){
    const prefix=`request.${kind}.`;const own=ids(prefix);if(!own.length)continue;
-   const cards=own.filter(id=>id.includes('.reply.')).map(id=>{
+   const cards=own.filter(id=>id.includes('.reply.')&&!/\.SmallTalk(?:Violation)?$/.test(id)).map(id=>{
     const reply=id.split('.').at(-1);let description=facts[1];
     if(reply==='Defer')description='요청을 수락하지 않고 원래 운행을 유지합니다. 안전상 보류이며 만족도 변화는 0입니다. 실패 점수를 적용하지 않습니다.';
     if(reply.startsWith('Eta'))description=reply==='EtaFaster'?'현재 내비 ETA보다 10%, 최대 30초 빠르게 예상합니다. 운행 기한은 바꾸지 않습니다.':reply==='EtaRelaxed'?'현재 내비 ETA보다 10%, 최대 30초 여유롭게 예상합니다. 운행 기한은 바꾸지 않습니다.':'현재 내비 ETA로 안내합니다. 예상 차이 자체 감점은 없습니다.';
@@ -79,9 +89,10 @@
    if(kind!=='LostItem')notes.push('실제 지도 경로가 없으면 ETA와 경로 요청을 제외합니다. 시스템 강제 대기·우회는 경로 요청 미이행에서 제외합니다. 같은 요청 중복·경로 요청끼리·조용함과 대화 요청의 동시 조합을 제외합니다. 대표 승객 유형은 첫 요청을 해당 요청으로 바꿀 수 있습니다.');
    add('request.'+kind,'승객 요청',byId.get(prefix+'enabled')?.section||kind,facts[0],'request',[
     section('등장 설정',kind==='LostItem'?'사용 여부만 하차 후 사건 발생에 적용합니다. 가중치는 이 사건의 10%를 바꾸지 않습니다.':'가중치는 같은 후보 추첨 안의 상대 비중입니다. 실제 운송 전체 등장 확률이 아닙니다.',[prefix+'enabled',prefix+'weight'],'appearance'),
+    ...(['Quiet','LocalChat'].includes(kind)?[section('기사 잡담 사건 대사','기사가 불필요한 잡담을 직접 시작했을 때 표시합니다. 안전 안내는 제외하며 조용히 요청 수락 뒤에는 실패 근거로 남습니다.',own.filter(id=>/\.SmallTalk(?:Violation)?$/.test(id)),'dialogue')]:[]),
     section('승객 말풍선','현재 한국어 문구를 직접 편집합니다.',[prefix+'prompt'],'prompt'),
     section('선택지와 실제 결과',kind==='LostItem'?'아래 문구는 진단용 단일 요청 경로에도 사용합니다. 일반 운송은 하차 후 요약 사건만 기록합니다.':'대답을 고르면 표시 문구와 실제 처리 결과를 함께 확인합니다.',[],'choices',cards),
-    section('운송 종료 평가','수락한 요청의 실제 이행 여부를 확인해 하차 때 한 번 반영합니다. 선택지 미리보기와 같은 점수이며 추가 보상이 아닙니다. '+facts[1]+(kind==='Eta'?' 현재 예상 도착 안내의 이행·미이행·미응답 점수는 모두 읽기 전용 0점입니다. 선택지별 점수 편집은 아직 지원하지 않습니다.':!['Comfort','OnTime','SafeStop','DestinationChange','ViaStop'].includes(kind)?' 현재 실패값은 고정/중립입니다.':''),[prefix+'success',prefix+'failure'],'outcomes'),
+    section('운송 종료 평가','수락한 요청의 실제 이행 여부를 확인해 하차 때 한 번 반영합니다. 선택지 미리보기와 같은 점수이며 추가 보상이 아닙니다. '+facts[1]+(kind==='Eta'?' 현재 예상 도착 안내의 이행·미이행·미응답 점수는 모두 읽기 전용 0점입니다. 선택지별 점수 편집은 아직 지원하지 않습니다.':!['Quiet','Comfort','OnTime','SafeStop','DestinationChange','ViaStop'].includes(kind)?' 현재 실패값은 고정/중립입니다.':''),[prefix+'success',prefix+'failure'],'outcomes'),
     section('답하지 않았을 때',kind==='Quiet'?'안전한 응답 기회 후 끝까지 미응답이면 하차 때 M(운전 만족도)을 감점합니다. 요청 이행 점수와 별도이며, 답할 기회가 없으면 감점하지 않습니다.':['Empathy','Interview','LocalChat'].includes(kind)?'안전하게 답할 기회가 있었는데 끝까지 답하지 않으면 하차 때 아래 요청 만족도를 반영합니다. 답할 기회가 없으면 감점하지 않습니다.':'현재 이 요청은 답하지 않아도 추가 감점이 없습니다. 아래 값은 고정/미사용 결과입니다.',[prefix+'unanswered'],'unanswered'),
     section(kind==='LostItem'?'공통 설정 적용 여부':'모든 요청에 적용되는 공통 설정',kind==='LostItem'?'하차 후 사건은 운송 중 요청 합계 상한과 등장 시점 설정을 사용하지 않습니다.':'이 요청 전용 값이 아닙니다. 운송 중 일반 요청 전체(분실물 제외)에 영향을 줍니다. 요청 합계 상한은 하차 점수 합산 때, 개수·시점은 새 운송의 요청 배정과 표시 때 사용합니다.',kind==='LostItem'?[]:['common.requestCap',...schedule],'shared')
    ],notes,links,{requestKind:kind,enabledId:prefix+'enabled',weightId:prefix+'weight',promptId:prefix+'prompt'});
@@ -108,6 +119,7 @@
    ],[binding,'적재·정리·하역 등 물리 작업은 안전 정차 중에만 진행합니다. 대화 가능 여부와 별도입니다.'],links,{...(own.includes('type.'+type+'.weight')?{weightId:'type.'+type+'.weight'}:{})});
   }
   for(const [key,facts]of Object.entries(effectFacts))add('effect.'+key,'효과',facts[0],facts[1],'effect',[section('발생 조건과 결과',facts[1],ids('effect.'+key+'.'),'effects')],['같은 설정을 유형·요청·상황 화면에서 편집해도 하나의 프로필 값으로 반영합니다.'],Object.entries(typeEffects).filter(([,v])=>v.includes(key)).map(([t])=>'type.'+t));
+  for(const [key,title,description]of [['nausea','메스꺼움 배려','배정 때 사건 확률을 한 번 추첨합니다. 운행·흔들림으로 불편이 쌓이고 안전 정차 휴식이나 봉투가 이후 오염에 영향을 줍니다.'],['temperature','차내 온도 배려','따뜻하게·시원하게·유지 선택을 실제 차내 상태로 기록합니다. 선호와 유지 시간으로 평가하고 조정 후 결과를 교체합니다. 외부 날씨와 별개입니다.'],['umbrella','젖은 우산 보호','안전 정차 중 감싸기를 완료하면 오염을 예방합니다. 보호 없이 둔 우산은 청결 손실을 한 번 반영합니다.']])add('effect.'+key,'승객 특성',title,description,'effect',[section('공통 확률·효과',description,ids('effect.'+key+'.'),'effects'),section('공통 응대 대사','승객별 개별 설정으로 덮어쓸 수 있습니다.',ids('trait.'+key+'.'),'dialogue')],[],[]);
   const situations={SignalWait:['신호 대기','정지한 신호 대기가 18초 이어지면 반응할 수 있습니다. 신호가 바뀌면 출발한다고 안내합니다.'],Jolt:['차량 흔들림','급가속·급제동 관찰 뒤 반응합니다. 유형에 따라 수면 깨기·음식 흘림·짐 상태 설명이 달라집니다.'],NecessaryBrake:['필요한 제동','위험 회피를 위한 제동은 불필요한 급제동 감점에서 제외하며 안전 조작을 설명합니다.']};
   for(const [key,facts]of Object.entries(situations))add('situation.'+key,'대화 선택지',facts[0],facts[1],'dialogue',[
    section('관찰 조건',facts[1],[],'condition'),
@@ -229,6 +241,7 @@
   if(domain==='type'&&name==='Sleeping'&&field==='weight')return info('일반 승객 차례·취객 우선 추첨 뒤 특수 유형을 배정할 때','잠자는 승객 유형의 등장 빈도','취객이 배정되지 않은 차례의 특수 유형 추첨(30% 기준)에서 후보 간 상대 가중치를 사용합니다. 가중치 1은 전체 승객의 1%가 아닙니다. 특수 승객 뒤 다음 탑승은 일반 승객이며, 취객의 잠듦 확률은 취객 배정 설정에서 별도로 편집합니다.');
   if(domain==='type')return info(field==='weight'?'새 승객의 유형을 배정할 때':field==='intro'?'해당 유형의 첫 대화를 보여줄 때':field==='choice'?'기사 응답 선택지를 보여줄 때':'해당 유형의 운행 중 후속 대화를 보여줄 때',typeTitle(name)+' 승객만',field==='weight'?'특수 유형 후보 사이의 상대 비중입니다. 일반·취객 보장과 대표 요청 자격은 별도입니다.':'빈 답변·후속 문구는 현재 상태에 맞는 내장 대사를 사용합니다.');
   if(domain==='situation')return info('해당 상황에 대한 기사 답변을 보여줄 때',({SignalWait:'신호 대기',Jolt:'차량 흔들림',NecessaryBrake:'필요한 제동'})[name]+' 상황 대화만','후속 질문 제한 선택은 이 운송의 새로운 추가 상황 대화를 막습니다. 별도 예약 요청은 취소하지 않습니다.');
+  if(domain==='trait'||domain==='effect'&&['nausea','temperature','umbrella'].includes(name))return info('해당 특성이 있는 승객의 상태·응대를 처리할 때',({nausea:'메스꺼움',temperature:'온도 민감',umbrella:'젖은 우산'})[name],entry.description);
   if(domain==='effect'){
    const effects={
     'food.satisfaction':['음식 허용을 선택하고 승차한 뒤','음식 승객의 섭취 허용 선택','요청 합계와 별도의 승객 유형 효과입니다.'],

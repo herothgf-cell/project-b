@@ -17,7 +17,8 @@ public sealed class TestManners {public TestScore ledger=new TestScore();}
 public sealed class TestScore {public int Score=100;}
 public sealed class TestRequests:UnityEngine.Object {public bool HasPendingChoice;public int ScheduledChoiceCount;public bool SafeToRespond(){return true;}public void SuspendUnansweredForSleep(){}}
 public sealed class TestBusiness {public int Saves;public void SaveCheckpoint(){Saves++;}}
-public sealed class TestSession {public bool paused;public TestRequests requests=new TestRequests();public TestTaxi taxi=new TestTaxi();public TestManners manners=new TestManners();public TestBusiness business=new TestBusiness();}
+public static class PvpNativeLan {public static bool IsReplica(TestSession session){return session.replica;}}
+public sealed class TestSession {public bool paused,replica;public TestRequests requests=new TestRequests();public TestTaxi taxi=new TestTaxi();public TestManners manners=new TestManners();public TestBusiness business=new TestBusiness();}
 public sealed class TestNavigation {public float remaining;}
 public sealed class TestOffer {public int pickup,drop;}
 public sealed class TestDrunk {public bool Waiting;}
@@ -51,6 +52,7 @@ public static class PassengerRestAdapterTests {
   var valid=Fixture("quiet",16);Check(valid.BehaviorChoicesOpen,"initial choice remains valid before last15percent");valid.AdvanceBehavior(30);Check(!valid.Behavior.Sleeping&&valid.Behavior.Choice==-1,"actual jobs adapter preserves valid pending initial choice");
   var pending=Fixture("quiet",15);pending.Situation.Pending=PassengerSituationKind.Jolt;pending.Situation.Reactions=1;pending.AdvanceBehavior(30);Check(!pending.Behavior.Sleeping&&pending.SituationPending,"real situation reply remains pending even near arrival");
   var request=Fixture("quiet",15);request.session.requests.HasPendingChoice=true;request.AdvanceBehavior(30);Check(!request.Behavior.Sleeping&&request.session.requests.HasPendingChoice,"real existing request is not automatically answered or retired");
+  var replica=Fixture("quiet",15);replica.session.replica=true;float before=replica.Behavior.JoltCalmRemaining;replica.AdvanceBehavior(30);Check(replica.Behavior.JoltCalmRemaining==before&&!replica.Behavior.Sleeping,"replica cannot independently advance passenger state");
   Console.WriteLine("PASS PassengerRestAdapterTests "+checks);
  }
 }

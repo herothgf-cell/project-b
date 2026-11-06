@@ -33,7 +33,7 @@ public sealed class ConfusionPracticeState {
   string rule=Variant==8?"F02":Variant==9?"F03":Left?"F05":"F06";
   bool violation=Variant==8?!Stopped:Left?EntryRed||FailedYield:EntryBlocked;
   var verdict=!Known||!Entered?LawVerdict.Deferred:violation?LawVerdict.Violation:!Finished||!CorrectRoute?LawVerdict.Deferred:Variant==9?LawVerdict.Deferred:Variant==11?LawVerdict.NoOpportunity:LawVerdict.Compliant;
-  e.Add(rule,verdict,15);return e;
+  e.Add(rule,verdict,ContentTuning.Int(Variant==8?"law.flashStop.penalty":Left?"law.permissiveTurn.penalty":"law.blockedExit.penalty",15));return e;
  }
  public PracticeFeedback Feedback(){
   var f=new PracticeFeedback{outcome="연습 미완료 · 아직 구간을 벗어나지 않음",good="아직 완료한 통과 기록이 없습니다.",issues="① 정지선과 ② 통과 경로를 지나야 최종 결과를 표시합니다.",next=Guidance(Variant)};

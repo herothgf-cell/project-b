@@ -91,6 +91,6 @@ test('end effects expose failure editors for real failure outcomes and explain u
  let nodes=descendants(h.el('detail'));assert.ok(nodes.some(n=>n.textContent==='운송 종료 후'));
  assert.ok(nodes.some(n=>n.textContent.startsWith('이행 실패 (미이행)')));
  const input=vm.runInContext("editors.find(e=>e.id==='choice.request.Comfort.Accept.end.failure.satisfaction').input",h.context);assert.equal(input.value,'-4');input.value='-17';input.oninput();assert.equal(vm.runInContext("val(profile,'choice.request.Comfort.Accept.end.failure.satisfaction')",h.context),'-17');assert.equal(vm.runInContext("val(profile,'choice.request.Comfort.Accept.end.success.satisfaction')",h.context),'6');
- vm.runInContext("selected='request.Quiet';render()",h.context);nodes=descendants(h.el('detail'));assert.ok(nodes.some(n=>n.className==='outcome-unavailable'&&n.textContent.includes('이행 실패')&&n.textContent.includes('미응답')));assert.equal(vm.runInContext("editors.filter(e=>e.id.startsWith('choice.request.Quiet.Accept.end.failure.')).length",h.context),0);
+ vm.runInContext("selected='request.Quiet';render()",h.context);nodes=descendants(h.el('detail'));assert.ok(nodes.some(n=>n.className==='outcome-unavailable'&&n.textContent.includes('이행 실패')&&n.textContent.includes('미응답')));assert.equal(vm.runInContext("editors.filter(e=>e.id.startsWith('choice.request.Quiet.Accept.end.failure.')).length",h.context),4);
  const reply=nodes.find(n=>n.className==='choice-description');assert.ok(reply);assert.ok(!reply.open);
 });

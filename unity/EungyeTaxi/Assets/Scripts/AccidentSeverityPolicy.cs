@@ -27,8 +27,8 @@ public static class AccidentSeverityPolicy {
  public static AccidentResolution Resolve(AccidentKind kind,AccidentSeverity severity){
   if(!Enum.IsDefined(typeof(AccidentKind),kind)||!Enum.IsDefined(typeof(AccidentSeverity),severity))throw new ArgumentException("Invalid accident classification");
   int index=(int)severity;
-  if(kind==AccidentKind.Person)return new AccidentResolution(kind,severity,new[]{3000,8000,15000}[index],new[]{45,120,240}[index],new[]{10,25,40}[index]);
-  return new AccidentResolution(kind,severity,new[]{1000,3000,6000}[index],new[]{15,45,90}[index],new[]{3,8,15}[index]);
+  if(kind==AccidentKind.Person)return new AccidentResolution(kind,severity,new[]{3000,8000,15000}[index],new[]{45,120,240}[index],ContentTuning.Int("law.person"+severity+".penalty",new[]{10,25,40}[index]));
+  return new AccidentResolution(kind,severity,new[]{1000,3000,6000}[index],new[]{15,45,90}[index],ContentTuning.Int("law.vehicle"+severity+".penalty",new[]{3,8,15}[index]));
  }
  public static AccidentResolution Sample(AccidentKind kind,int roll){
   if(roll<0||roll>=1000)throw new ArgumentException("Accident roll must be between 0 and 999");

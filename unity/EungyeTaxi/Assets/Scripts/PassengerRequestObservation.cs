@@ -73,6 +73,7 @@ public class PassengerRequestObservation : MonoBehaviour {
   if(request.Accepted){bool success=true;string reason="";
    if(!string.IsNullOrEmpty(SystemRouteReason)&&PassengerRequestSchedule.Route(request.Kind))request.CompleteUnknown(SystemRouteReason+" · 시스템 강제 대기/우회는 요청 미이행에서 제외");
    switch(request.Kind){
+    case RequestKind.Quiet:request.CompleteQuietGoal();reason=request.QuietEvidence??"";break;
     case RequestKind.Eta:if(etaSelected)reason="최초 내비 "+EtaChoice(etaNav)+" / 안내 "+RoadNavigation.FormatEta(etaPredicted)+" / 실제 "+Mathf.CeilToInt(Time.time-etaAt)+"초 · "+PassengerRequest.EtaComparison(etaPredicted,Time.time-etaAt)+" · 신호·교통 대기와 우회로 달라질 수 있음 (ETA 차이 감점 없음)";break;
     case RequestKind.Comfort:success=MotionCount()==motionBefore;reason="수락 뒤 급가속 "+(session.manners.accelEvents-accelBefore)+"회 / 급제동 "+(session.manners.brakeEvents-brakeBefore)+"회 (각 -"+MannerLedger.MotionPenalty(true)+"점) / 필요한 제동 제외 "+(session.manners.necessaryBrakeEvents-necessaryBefore)+"회 · "+(success?"편안한 운행":"급가감속·충돌 "+(MotionCount()-motionBefore)+"회 · "+session.manners.RideReasons);break;
     case RequestKind.OnTime:success=session.jobs.trip.Remaining>0;int violations=Violations();success&=violations==0;reason="도착 시 남은 시간 "+Mathf.CeilToInt(session.jobs.trip.Remaining)+"초 · 운전 위반 "+violations+"건";break;

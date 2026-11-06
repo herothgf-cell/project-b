@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 public static class ContentTuningTests {
@@ -15,6 +15,19 @@ public static class ContentTuningTests {
   var seeds=new string[300];for(int i=0;i<seeds.Length;i++)seeds[i]=Schedule("seed"+i);
   var fallbackReward=PassengerReward.CalculateCurrentFare(93,85,11300,5,true,76,3,100,85,false,83,0);
   ContentTuning.ConfigureCatalog(File.ReadAllText(args[0]));ContentTuning.UseDefaults();
+  foreach(string key in new[]{"flashStop","permissiveTurn","blockedExit"}){
+   ContentTuning.UseDefaults();ContentTuning.UseJson(Change("law."+key+".penalty","37"));
+   var scene=new ConfusionPracticeState(key=="flashStop"?8:key=="permissiveTurn"?12:10){Entered=true,Finished=true,CorrectRoute=true,EntryRed=true,EntryBlocked=true};
+   Check(scene.Event("edited",1).Deduction==37,"edited scenario penalty "+key);
+  }
+  foreach(AccidentKind kind in Enum.GetValues(typeof(AccidentKind)))foreach(AccidentSeverity severity in Enum.GetValues(typeof(AccidentSeverity))){
+   ContentTuning.UseDefaults();ContentTuning.UseJson(Change("law."+(kind==AccidentKind.Person?"person":"vehicle")+severity+".penalty","38"));
+   var resolution=AccidentSeverityPolicy.Resolve(kind,severity);Check(resolution.ScorePenalty==38,"edited accident penalty "+kind+severity);
+   var stored=new AccidentState();stored.BeginResolved("configured","target",resolution);
+   ContentTuning.UseDefaults();stored.Copy().Validate();Check(stored.ScorePenalty==38,"captured accident penalty retained after profile change and restore");
+   stored.selectedScorePenalty=101;bool invalidStoredPenalty=false;try{stored.Validate();}catch(ArgumentException){invalidStoredPenalty=true;}Check(invalidStoredPenalty,"out of range stored penalty rejected");
+  }
+  ContentTuning.UseDefaults();
   string baseline=ContentTuning.CaptureJson();ContentTuning.ValidateJson(baseline);
   ContentTuning.UseJson(Change("request.Quiet.unanswered","2"));var unansweredSigned=new PassengerRequest();unansweredSigned.Begin("signed-unanswered",RequestKind.Quiet);unansweredSigned.ObserveOpportunity(true);Check(unansweredSigned.Finish()==2,"signed editor minus two retains actual M deduction magnitude two");Check(unansweredSigned.Finish()==0,"unanswered M deduction cannot apply twice");ContentTuning.UseJson(Change("request.Quiet.unanswered","0"));unansweredSigned=new PassengerRequest();unansweredSigned.Begin("zero-unanswered",RequestKind.Quiet);unansweredSigned.ObserveOpportunity(true);Check(unansweredSigned.Finish()==0,"zero unanswered input has no M deduction");Reject(Change("request.Quiet.unanswered","-2"));ContentTuning.UseDefaults();ContentTuning.UseJson(Change("request.Empathy.unanswered","-2"));unansweredSigned=new PassengerRequest();unansweredSigned.Begin("signed-empathy",RequestKind.Empathy);unansweredSigned.ObserveOpportunity(true);Check(unansweredSigned.Finish()==0&&unansweredSigned.SatisfactionDelta==-2,"already signed unanswered satisfaction remains minus two");ContentTuning.UseDefaults();
   Check(ContentTuning.SchemaVersion==2,"default choice profile schema2");
@@ -72,5 +85,5 @@ public static class ContentTuningTests {
  ContentTuning.UseDefaults();ContentTuning.UseJson(Changes(new Dictionary<string,string>{{"type.Drunk.spawnPercent","0"},{"type.Drunk.forceAfterMisses","5"},{"type.Drunk.sleepPercent","0"},{"type.Drunk.vomitPercent","100"}}));care=new VehicleCare();for(int i=0;i<5;i++){var t=care.ReservePassenger("five"+i,new PassengerType[0]);Check(t==PassengerType.General&&care.CommitPassenger("five"+i,t),"no forced before five");care=VehicleCare.Restore(care.Snapshot());}Check(care.ReservePassenger("forced",new PassengerType[0])==PassengerType.Drunk,"force after configurable five");var planned=DrunkRideState.CreateAssignedDrunk("planned");Check(!planned.SleepPlanned&&planned.VomitPlanned,"sleep0 vomit100");ContentTuning.UseJson(baseline);Check(!planned.SleepPlanned&&planned.VomitPlanned,"existing ride not rerolled");
  var old=Profile();ContentJson.Array(old["values"]).RemoveAll(o=>((string)ContentJson.Object(o)["id"]).StartsWith("type.Drunk.")&&!((string)ContentJson.Object(o)["id"]).Contains(".intro.")&&!((string)ContentJson.Object(o)["id"]).Contains(".choice.")&&!((string)ContentJson.Object(o)["id"]).Contains(".followup."));string legacy=Seal(old);ContentTuning.UseJson(legacy);Check(ContentTuning.CaptureJson()==legacy,"old snapshot remains exact");string upgraded=ContentTuning.UpgradeJson(legacy);ContentTuning.UseJson(upgraded);Check(ContentTuning.Int("type.Drunk.dailyMax",-1)==2,"old profile upgrades default without reward changes");Reject(Change("type.Drunk.spawnPercent","101"));Reject(Change("type.Drunk.forceAfterMisses","0"));ContentTuning.UseDefaults();
  }
- public static int Main(string[] args){try{MainTests(args);NaturalFatigueGuidanceTests();DrunkSettingsTests();Check(ContentTuning.OverrideText("request.Quiet.reply.Accept","dynamic fallback")=="조용히 모시겠습니다.","promoted authored reply is spoken even at release default");Check(ContentTuning.OverrideText("request.OnTime.reply.Accept","dynamic route details")=="dynamic route details","unchanged dynamic replies retain details");Console.WriteLine("Signed penalties and fatigue guidance total "+count);return 0;}catch(Exception e){Console.Error.WriteLine(e.Message);return 1;}}
+ public static int Main(string[] args){try{MainTests(args);NaturalFatigueGuidanceTests();DrunkSettingsTests();Check(ContentTuning.OverrideText("request.Quiet.reply.Accept","dynamic fallback")=="조용히 모시겠습니다.","promoted authored reply is spoken even at release default");Check(ContentTuning.OverrideText("request.OnTime.reply.Accept","dynamic route details")=="dynamic route details","unchanged dynamic replies retain details");Console.WriteLine("Signed penalties and fatigue guidance total "+count);return 0;}catch(Exception e){Console.Error.WriteLine(e.ToString());return 1;}}
 }
