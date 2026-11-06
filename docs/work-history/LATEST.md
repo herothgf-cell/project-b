@@ -1,5 +1,9 @@
 # 최신 작업 상태
 
+## 2026-11-06 3일 작은 방과 첫 구매 기획
+
+[3일 검증안](../content-design/13-three-day-room-and-first-purchase.md) · [검토/인계](2026-11-06-three-day-room-first-purchase.md). 방1개·조명/러그2종×2스타일로 축소, 첫날 선택/둘째 날 유지·구매/셋째 날 기록과 선택적 진입을 설계했다.5,000/8,000원은 측정 전 시험값이며 개인 구매와 영업 순수익·완료 저장을 분리한다. 이번은 문서만 변경, 게임/빌드/사용자 저장·지도 입력/ZIP/manifest 미변경, 새 기능/사람 플레이·Strict/manifest 검사 없음. 현재 실행 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 싱글·A2 PVP·LANv9 / `PrototypeBuild.BuildHybrid` 유지. 다음은 가격 측정·기획 검토 후 최소 기능 구현 계획과 사람 동기 관찰이다.
+
 ## 2026-11-06 종료 실패 효과 구분과 설명 간소화
 
 [구현·구조 확인·검증](2026-11-06-end-outcomes-and-compact-editor.md). 선택지의 운송 종료 후 영역에 이행 성공/이행 실패/판정 불가를 구분하고, 실패5종 실제 편집과 비지원 응답 안내를 명확히 했다. 반복 설명은 설정 설명/등장 설정 안내/선택 행동·단계 적용 방식으로 접었다. Node63·C#50/663·브라우저 실패-17 실제 계산 후-10복원·설명 펼침 확인·manifest exit0·사용자 프로필/실행5파일 hash 불변. 실행 `설정 관리.cmd`; 기존 은계 싱글/A2 PVP·LANv9/BuildHybrid 유지·Unity 재빌드/새 물리·전체 캠페인 검사 없음. 필수 입력/ZIP·외부 worktree/기존 자료 보존. 다음은 사용자 직접 편집 수용이다.
