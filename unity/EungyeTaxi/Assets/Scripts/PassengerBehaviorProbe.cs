@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.IO;
 using System.Text;
@@ -17,6 +17,42 @@ public sealed class PassengerBehaviorProbe:MonoBehaviour {
  void Answer(int choice){NextInputFrame();if(s.requests.HasPendingChoice)s.requests.Choose(PassengerReply.Defer);NextInputFrame();s.requests.AdvanceSafeStop(2.1f);Check(s.jobs.RespondBehavior(choice),"answer "+s.jobs.Behavior.Type+"/"+choice);}
  PassengerJobsSnapshot RoundTrip(){var state=JsonUtility.FromJson<PassengerJobsSnapshot>(JsonUtility.ToJson(s.jobs.CaptureLive()));s.jobs.RestoreLive(state);s.requests.AdvanceSafeStop(2.1f);return state;}
  void Deliver(){Stop(s.jobs.current.drop);Check(s.jobs.Interact(),"first valid arrival");if(s.jobs.Active&&s.jobs.Behavior.WorkRemaining>0)s.jobs.AdvanceBehavior(10);if(s.jobs.Active&&s.jobs.DrunkRide.Waiting){s.jobs.DrunkRide.Advance(30,1);Check(s.jobs.Interact(),"wake after safe wait");}Check(!s.jobs.Active&&s.business.passengers.Count==1,"one completed passenger result");Check(s.business.passengers[0].request.Contains(s.jobs.Behavior.TypeLabel),"type and variant in detailed result");}
+ void CompositionChecks(){
+  Check(s.business.SavePath.Contains("artifacts"),"composition fixture uses isolated campaign save");
+  string profile=ContentTuning.CaptureJson();try{
+   var payload=ContentJson.Object(ContentJson.Parse(profile));bool found=false;
+   foreach(object item in ContentJson.Array(payload["values"])){var row=ContentJson.Object(item);if((string)row["id"]=="passenger.presets"){row["value"]="{\"version\":1,\"presets\":[{\"id\":\"drunk-quiet-luggage\",\"name\":\"조용한 귀가와 짐\",\"enabled\":true,\"weight\":1,\"pool\":\"Drunk\",\"traits\":[\"body.drunk\",\"speech.quiet\",\"item.luggage\"],\"intro\":\"집까지 부탁해요\"}]}";found=true;}}
+   Check(found,"runtime catalog exposes preset key");payload["contentHash"]=ContentTuning.ComputeHash(payload);ContentTuning.UseJson(ContentJson.Stringify(payload));
+   Fresh();s.jobs.ForcedPassengerType=null;
+   var care=s.business.ledger.Care.Snapshot();care.encounterReserved=true;care.encounterType=PassengerType.Drunk;care.encounterSelectionSeed="composition-fixed";typeof(EconomyLedger).GetProperty("Care").SetValue(s.business.ledger,VehicleCare.Restore(care),null);
+   s.jobs.offers[0]=new JobOffer{pickup=0,drop=3,fare=5000,seconds=300,requiredScore=70,distance=s.jobs.nav.Distance(s.jobs.stops[0],s.jobs.stops[3]),candidateSeed="composition-fixed"};Stop(0);
+   Check(s.jobs.Accept(0)&&s.jobs.Interact(),"configured passenger selected through actual boarding path");
+   Check(s.jobs.Behavior.PresetId=="drunk-quiet-luggage"&&s.jobs.Behavior.Type==PassengerType.Luggage&&s.jobs.Behavior.Pool==PassengerType.Drunk,"preset identity pool and action remain independent");
+   Check(s.jobs.trip.State==TripState.ToPickup&&!s.jobs.Behavior.Boarded,"composed luggage blocks boarding until prepared");Answer(0);s.jobs.AdvanceBehavior(4);RoundTrip();
+   Check(s.jobs.Behavior.PreparationRemaining==6&&s.jobs.Behavior.Quiet,"JSON live restore preserves partial work and explicit quiet");s.jobs.AdvanceBehavior(6);
+   Check(s.jobs.trip.State==TripState.OnTrip&&s.jobs.DrunkRide.IsDrunk,"luggage boarding starts actual drunk state");Check(s.business.ledger.Care.Snapshot().encounterDrunks==1,"drunk cap consumes pool rather than luggage module");
+   RoundTrip();Check(s.jobs.DrunkRide.IsDrunk&&s.jobs.Behavior.PresetId=="drunk-quiet-luggage"&&s.jobs.Behavior.Quiet,"composed onboard state survives real restore");
+   s.jobs.DrunkRide.SleepPlanned=false;s.jobs.DrunkRide.VomitPlanned=true;s.jobs.nav.remaining=0;
+   var updateCare=typeof(PassengerJobs).GetMethod("UpdateCare",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);updateCare.Invoke(s.jobs,null);
+   Check(s.jobs.DrunkRide.Warned&&!string.IsNullOrEmpty(s.jobs.VisibleCareDialogue),"explicit quiet keeps critical vomit warning visible");s.jobs.DrunkRide.Elapsed+=3.1f;updateCare.Invoke(s.jobs,null);
+   Check(s.jobs.DrunkRide.Vomited&&s.business.ledger.Care.NeedsWash&&s.business.ledger.Care.AcceptanceLocked,"actual care update locks new boarding immediately on vomit");int cleanBeforeExit=s.jobs.Cleanliness;RoundTrip();updateCare.Invoke(s.jobs,null);Check(s.jobs.Cleanliness==cleanBeforeExit&&s.business.ledger.Care.NeedsWash,"vomit restore preserves lock without applying exit dirt early");
+   Stop(s.jobs.current.drop);Check(s.jobs.Interact()&&s.jobs.Active&&s.jobs.Behavior.UnloadRemaining>0,"arrival still requires unloading");RoundTrip();s.jobs.AdvanceBehavior(10);Check(!s.jobs.Active&&s.business.passengers.Count==1,"unload settles composed passenger once");
+   Check(s.business.ledger.Care.Snapshot().encounterDrunks==1,"restore and settlement never double count drunk");
+   Check(s.jobs.Cleanliness<=10&&!s.business.ledger.Care.Finish(s.law.tripId,true),"vomit exit caps cleanliness and rejects duplicate settlement");int finalClean=s.jobs.Cleanliness;RoundTrip();s.jobs.ApplyBehaviorDirt();Check(s.jobs.Cleanliness==finalClean,"settled composition restore cannot apply dirt twice");
+   CompositionRepresentativeChecks(PassengerType.Comfort,PassengerType.Food,RequestKind.Comfort,new[]{"body.sensitive","item.food"});
+   CompositionRepresentativeChecks(PassengerType.Errand,PassengerType.MuddyLuggage,RequestKind.ViaStop,new[]{"purpose.errand","item.muddy"});
+  }finally{ContentTuning.UseJson(profile);}
+ }
+ void CompositionRepresentativeChecks(PassengerType pool,PassengerType action,RequestKind request,string[] traits){
+  var profile=ContentJson.Object(ContentJson.Parse(ContentTuning.CaptureJson()));var preset=new System.Collections.Generic.Dictionary<string,object>{{"id","composed-"+pool.ToString().ToLowerInvariant()},{"name","요청과 소지품"},{"enabled",true},{"weight",1},{"pool",pool.ToString()},{"traits",traits},{"intro","함께 부탁해요"}};string json=ContentJson.Stringify(new System.Collections.Generic.Dictionary<string,object>{{"version",1},{"presets",new[]{preset}}});foreach(object item in ContentJson.Array(profile["values"])){var row=ContentJson.Object(item);if((string)row["id"]=="passenger.presets")row["value"]=json;}profile["contentHash"]=ContentTuning.ComputeHash(profile);ContentTuning.UseJson(ContentJson.Stringify(profile));
+  Fresh();s.jobs.ForcedPassengerType=null;string seed="";for(int i=0;i<100;i++){string candidate="composition-request-"+i;if(PassengerRequestSchedule.Create(candidate,(RequestKind[])Enum.GetValues(typeof(RequestKind))).Capture().slots.Length>0){seed=candidate;break;}}Check(seed.Length>0,"representative fixture has an existing request slot");
+  var care=s.business.ledger.Care.Snapshot();care.encounterReserved=true;care.encounterType=pool;care.encounterSelectionSeed=seed;typeof(EconomyLedger).GetProperty("Care").SetValue(s.business.ledger,VehicleCare.Restore(care),null);
+  s.jobs.offers[0]=new JobOffer{pickup=0,drop=3,fare=5000,seconds=300,requiredScore=70,distance=s.jobs.nav.Distance(s.jobs.stops[0],s.jobs.stops[3]),candidateSeed=seed};Stop(0);Check(s.jobs.Accept(0)&&s.jobs.Interact(),"composed representative enters actual boarding "+pool);Check(s.jobs.Behavior.Type==action&&s.jobs.Behavior.RepresentativeType==pool,"composed action and representative selected "+pool);
+  Answer(1);if(s.jobs.trip.State==TripState.ToPickup)Check(s.jobs.Interact(),"unprotected muddy item boards after response");
+  var slots=s.requests.CaptureLive().schedule.slots;Check(slots.Length>0&&slots[0].kind==request,"actual Begin binds representative slot "+request);RoundTrip();Check(s.requests.CaptureLive().schedule.slots[0].kind==request&&s.jobs.Behavior.Type==action,"JSON restore preserves representative and item "+request);
+  if(action==PassengerType.Food){s.jobs.Behavior.SpillPlanned=false;s.jobs.Behavior.Advance(25,false,true,.6f,100);s.jobs.ApplyBehaviorDirt();Check(s.jobs.Behavior.ConsumptionOccurred&&s.jobs.Cleanliness==100-ContentTuning.Int("effect.food.crumbs",2),"composed food actually consumes and soils");int clean=s.jobs.Cleanliness;RoundTrip();s.jobs.ApplyBehaviorDirt();Check(s.jobs.Cleanliness==clean,"composed food restore does not soil twice");}
+  Deliver();if(action==PassengerType.MuddyLuggage){Check(s.jobs.Behavior.MudOccurred&&s.jobs.Cleanliness==98-ContentTuning.Int("effect.muddy.dirt",5),"composed muddy item soils only on real exit");int clean=s.jobs.Cleanliness;s.jobs.ApplyBehaviorDirt();Check(s.jobs.Cleanliness==clean,"composed muddy exit dirt is replay safe");}
+ }
  void MainChecks(){
   Fresh();Begin(PassengerType.Luggage);Answer(0);s.jobs.AdvanceBehavior(9);int ordinal=s.business.ledger.Care.Snapshot().encounterOrdinal;s.business.ledger.RequestClose();s.jobs.AdvanceBehavior(1);Check(s.jobs.trip.State==TripState.ToPickup&&!s.jobs.Behavior.Boarded&&s.business.ledger.Care.Snapshot().encounterOrdinal==ordinal,"closing during last load second cannot board or consume encounter");
   Fresh();Begin(PassengerType.General);Stop(0);bool any=false;for(int i=1;i<Mathf.Min(12,s.jobs.stops.Length);i++){s.jobs.nav.SetDestination(s.jobs.stops[0]);int goal=s.jobs.nav.hdGoal;bool destination=s.jobs.nav.HasLargeRoadAlternativeTo(s.jobs.stops[i]);Check(s.jobs.nav.hdGoal==goal,"candidate query preserves pickup destination");s.jobs.nav.SetDestination(s.jobs.stops[i]);bool actual=s.jobs.nav.HasLargeRoadAlternative();Check(destination==actual,"candidate broad-road eligibility matches actual trip destination");any|=destination;}Check(any,"actual map offers a broad-road destination");
@@ -38,6 +74,7 @@ public sealed class PassengerBehaviorProbe:MonoBehaviour {
   // Business.Start restores its live snapshot in a separate next-frame coroutine. Never disable it before that boundary.
   var restoringField=typeof(BusinessProgress).GetField("restoring",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);float restoreDeadline=Time.realtimeSinceStartup+10;while(s&&(bool)restoringField.GetValue(s.business)&&Time.realtimeSinceStartup<restoreDeadline)yield return null;
   reload=Array.IndexOf(Environment.GetCommandLineArgs(),"-passengerBehaviorReloadTest")>=0;
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-passengerCompositionTest")>=0){bool compositionOk=Guard(()=>{Check(s!=null,"session initialized");FreezeSystems();CompositionChecks();});Directory.CreateDirectory("artifacts/passenger-composition");File.WriteAllText("artifacts/passenger-composition/player.txt",(compositionOk?"PASS":"FAIL")+" checks="+checks+"\n"+report);Debug.Log("PASSENGER_COMPOSITION_PLAYER_"+(compositionOk?"OK":"FAILED")+" checks="+checks);Application.Quit(compositionOk?0:1);yield break;}
   bool ok=Guard(()=>{Check(s!=null,"session initialized");Check(!(bool)restoringField.GetValue(s.business),"startup restore completed within10seconds");FreezeSystems();if(reload)ReloadChecks();else MainChecks();});
   if(ok&&!reload){
    ok=Guard(()=>{Fresh();Begin(PassengerType.Food);s.requests.BeginKind(RequestKind.LocalChat);typeof(PassengerRequestUI).GetField("legacy",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(s.requests,false);});

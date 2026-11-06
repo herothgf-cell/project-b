@@ -58,6 +58,7 @@
   const keep=a=>[...new Set(a.filter(id=>byId.has(id)))];
   const section=(title,description,fieldIds,kind,cards)=>({title,description,fieldIds:keep(fieldIds),...(kind?{kind}:{}),...(cards?{cards}: {})});
   function add(id,group,title,summary,kind,sections,notes=[],links=[],extra={}){const seen=new Set();const unique=values=>values.filter(value=>{if(seen.has(value))return false;seen.add(value);return true});for(const s of sections){s.fieldIds=unique(s.fieldIds);for(const c of s.cards||[])c.fieldIds=unique(c.fieldIds)}const fieldIds=keep(sections.flatMap(s=>[...s.fieldIds,...(s.cards||[]).flatMap(c=>c.fieldIds)]));const entity={id,group,title,summary,kind,fieldIds,sections,notes,links,...extra};out.push(entity);return entity;}
+  if(byId.has('passenger.presets'))add('passenger.presets','승객 프리셋','승객 프리셋','승객의 특성과 공유 행동을 조합합니다.','presets',[section('승객 프리셋','전용 편집 화면을 사용합니다.',['passenger.presets'])]);
   const schedule=ids('schedule.');
   for(const [kind,facts]of Object.entries(requestFacts)){
    const prefix=`request.${kind}.`;const own=ids(prefix);if(!own.length)continue;

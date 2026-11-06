@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 public enum PassengerSituationKind { None, SignalWait, Jolt, NecessaryBrake }
 [Serializable] public sealed class PassengerSituationState {
+ public bool PresetSafety;
  public PassengerType Type;public bool LuggageLoaded,PhysicalCaptured,FoodConsumed,FoodSpilled,SleepWoken;public int PhysicalBrake,PhysicalAccel,PhysicalNecessary;
  public float ReSecureRemaining;
  public bool OffersReSecure {get{return LuggageLoaded&&(Pending==PassengerSituationKind.Jolt||Pending==PassengerSituationKind.NecessaryBrake);}}
@@ -23,7 +24,7 @@ public enum PassengerSituationKind { None, SignalWait, Jolt, NecessaryBrake }
  }
  public bool ApplyPhysicalObservation(PassengerBehaviorState behavior,int brake,int accel,int necessary){
   bool observed=PhysicalCaptured&&(brake>PhysicalBrake||accel>PhysicalAccel||necessary>PhysicalNecessary);PhysicalCaptured=true;PhysicalBrake=brake;PhysicalAccel=accel;PhysicalNecessary=necessary;
-  if(behavior==null)return false;Type=behavior.Type;LuggageLoaded=behavior.Boarded&&(Type==PassengerType.Luggage&&behavior.Choice==0||Type==PassengerType.MuddyLuggage&&(behavior.Choice==0||behavior.Choice==1));bool changed=observed&&behavior.ObserveJolt();FoodConsumed=Type==PassengerType.Food&&behavior.ConsumptionOccurred;FoodSpilled=Type==PassengerType.Food&&behavior.SpillOccurred;SleepWoken=Type==PassengerType.Sleeping&&behavior.JoltWoken;return changed;
+  if(behavior==null)return false;PresetSafety=behavior.PresetQuiet;Type=behavior.Type;LuggageLoaded=behavior.Boarded&&(Type==PassengerType.Luggage&&behavior.Choice==0||Type==PassengerType.MuddyLuggage&&(behavior.Choice==0||behavior.Choice==1));bool changed=observed&&behavior.ObserveJolt();FoodConsumed=Type==PassengerType.Food&&behavior.ConsumptionOccurred;FoodSpilled=Type==PassengerType.Food&&behavior.SpillOccurred;SleepWoken=Type==PassengerType.Sleeping&&behavior.JoltWoken;return changed;
  }
  public bool AdvanceReSecure(float seconds,bool safe,bool paused){if(paused||!safe||!Finite(seconds)||seconds<=0||ReSecureRemaining<=0)return false;ReSecureRemaining=Math.Max(0,ReSecureRemaining-seconds);return ReSecureRemaining<=0;}
  public int Version=1,Reactions,LastBrake,LastAccel,LastNecessary,Answer=-1;
@@ -39,7 +40,7 @@ public enum PassengerSituationKind { None, SignalWait, Jolt, NecessaryBrake }
   Elapsed+=seconds;bool jolt=brake>LastBrake||accel>LastAccel,required=necessary>LastNecessary;
   LastBrake=Math.Max(LastBrake,brake);LastAccel=Math.Max(LastAccel,accel);LastNecessary=Math.Max(LastNecessary,necessary);
   if(signalWait&&!moving)SignalSeconds+=seconds;else{SignalSeconds=0;SignalReacted=false;}
-  if(Pending!=PassengerSituationKind.None||Quiet||quiet||!available||ReSecureRemaining>0||Reactions>=2||reserved+Reactions>=3||Elapsed-LastReactionAt<20)return false;
+  if(Pending!=PassengerSituationKind.None||(Quiet||quiet)&&!(PresetSafety&&(jolt||required))||!available||ReSecureRemaining>0||Reactions>=2||reserved+Reactions>=3||Elapsed-LastReactionAt<20)return false;
   var kind=required?PassengerSituationKind.NecessaryBrake:jolt?PassengerSituationKind.Jolt:SignalSeconds>=18&&!SignalReacted?PassengerSituationKind.SignalWait:PassengerSituationKind.None;
   if(kind==PassengerSituationKind.None)return false;
   Pending=kind;Answer=-1;Reactions++;LastReactionAt=Elapsed;if(kind==PassengerSituationKind.SignalWait)SignalReacted=true;return true;
