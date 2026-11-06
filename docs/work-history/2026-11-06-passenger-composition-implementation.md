@@ -64,3 +64,11 @@
 - 생성기 `node tools/content-editor/choice-catalog.mjs D:/Git/project-b --verify` exit0(선택71/항목1385/프로필134694바이트). 최초 root 인자 없이 `--verify`를 전달한 검사는 경로 ENOENT로 실패해 올바른 인자로 재검증했다. 예제15프리셋 hash 검증/새 문서 상대링크/diff 검사 exit0.
 - 독립 최종 리뷰의4개 P2 수정 및 구그룹/실제 대표 요청·quiet 안전 안내·확률/청결 설명 재대조 완료. 남은 신규 P1/P2 없음; 위 기존 검사 실패2건 유지.
 - 소스 및 배포의 실제 commit·manifest 전수검증은 아래 출하 영수증에 기록한다.
+
+### 출하 영수증
+
+- 실제 소스 commit `c3016aaf1e73a26503228f41769e77b404d01400` (`git rev-parse HEAD` 확인). 소스·기획·관리창·공통 fixture·실제 화면47파일 포함.
+- 통합 manifest는 위 소스 commit과 실제 검사 JSON으로 재생성. `update_distribution_manifest.ps1 -VerifyOnly`, `update_pvp_distribution_manifest.ps1 -VerifyOnly` 모두 exit0: **141파일 / 132,049,788바이트**, 파일 크기·SHA256 전수 일치.
+- 최종 빌드가 생성한 FirstDrive 장면의 fileID만 바뀐 차이는 원복. 출하 NotoSansKR 라이선스는 저장소 원본과 SHA256 일치. 기존 활성 프로필 변경 없음.
+- 스테이징 검사에서 새 테스트 파일 EOF 빈 줄1개를 정리한 뒤 `git diff --cached --check` exit0. 기능 변경 없음.
+- 브랜치 `codex/passenger-composition`에 로컬 소스/실행본 기록. 원격 push 미수행. 이 기록을 포함한 실제 커밋은 `git log -1 --oneline -- docs/work-history/2026-11-06-passenger-composition-implementation.md`로 조회한다.
