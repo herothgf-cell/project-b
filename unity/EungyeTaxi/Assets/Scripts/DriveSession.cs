@@ -59,7 +59,7 @@ public class DriveSession : MonoBehaviour {
         var cam=new GameObject("Driving Camera"); cam.tag="MainCamera"; var c=cam.AddComponent<Camera>(); c.fieldOfView=62; c.nearClipPlane=.08f; c.farClipPlane=700; c.backgroundColor=new Color(.57f,.74f,.84f); c.clearFlags=CameraClearFlags.Skybox; cam.AddComponent<AudioListener>(); drivingCamera=cam.AddComponent<DrivingCamera>();drivingCamera.target=taxi.transform;
         RenderSettings.ambientLight=new Color(.65f,.69f,.75f); RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Flat;
         var sun=new GameObject("Sun").AddComponent<Light>(); sun.type=LightType.Directional; sun.intensity=1.15f; sun.transform.rotation=Quaternion.Euler(45,-35,0); sun.shadows=LightShadows.Soft;
-        gameObject.AddComponent<RoadMapEditor>().session=this;gameObject.AddComponent<RoadMapTrialSession>();gameObject.AddComponent<DriveHUD>().session=this;gameObject.AddComponent<DrivingReadability>().session=this;gameObject.AddComponent<FullMapOverlay>().session=this;
+        gameObject.AddComponent<RainPresentation>().session=this;gameObject.AddComponent<RoadMapEditor>().session=this;gameObject.AddComponent<RoadMapTrialSession>();gameObject.AddComponent<DriveHUD>().session=this;gameObject.AddComponent<DrivingReadability>().session=this;gameObject.AddComponent<FullMapOverlay>().session=this;
         manners=taxi.gameObject.AddComponent<DrivingManners>();manners.session=this;
         jobs=gameObject.AddComponent<PassengerJobs>();jobs.Initialize(this);gameObject.AddComponent<StopArrivalPresentation>().session=this;
         if(world.map.HasHd){jobs.enabled=world.map.hybrid;assisted.hd.nav=jobs.nav;}

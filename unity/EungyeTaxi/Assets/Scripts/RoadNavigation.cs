@@ -98,7 +98,7 @@ public partial class RoadNavigation : MonoBehaviour {
   if(initial>=0&&heading.sqrMagnitude>.1f&&Vector3.Dot(heading,edges[initial].direction)<-.25f)return -1;
   return initial;
  }
- static float CruiseSpeed(Edge edge){return edge.width>=12?12.5f:9f;}
+ static float CruiseSpeed(Edge edge){return (edge.width>=12?12.5f:9f)*RainPolicy.TrafficSpeedMultiplier;}
  float TurnSeconds(int a,int b){float angle=Vector3.Angle(edges[a].direction,edges[b].direction);return angle>150?10:angle/90f*2.5f;}
  void ObserveConditions(){for(int i=0;i<edges.Count;i++){var e=edges[i];delays[i]=conditions==null?0:Mathf.Max(0,conditions.ExtraSeconds(nodes[e.from].p,nodes[e.to].p,e.direction,e.width));}}
  float EdgeSeconds(int index,float progress,bool live){var e=edges[index];float delay=0;
@@ -245,7 +245,7 @@ public partial class RoadNavigation : MonoBehaviour {
   float roadAt;List<Vector3> departure;
   if(!freeGuidance&&hd.Nearest(vehicle.position,vehicle.forward,out roadAt)<0&&ServiceDeparture(hdGoal,hdGoalAt,out departure)){hdRoute=null;path.Clear();path.AddRange(departure);alternativePath.Clear();remaining=Length(path);estimatedSeconds=remaining/5;alternativeDistance=alternativeSeconds=0;instruction="시설 출구까지 수동 이동 · 도로 합류 후 안내 계속";line.positionCount=path.Count;for(int i=0;i<path.Count;i++)line.SetPosition(i,path[i]+Vector3.up*.19f);return;}
   bool observe=Time.time>=nextHdCosts||hdRoute==null;
-  if(observe){nextHdCosts=Time.time+6;for(int i=0;i<hd.paths.Length;i++){var p=hd.paths[i];float delay=0;if(conditions!=null)for(int k=1;k<p.points.Length;k++)delay+=conditions.ExtraSeconds(p.points[k-1],p.points[k],(p.points[k]-p.points[k-1]).normalized,3.2f);hdSeconds[i]=RoadMapRules.TravelSeconds(editorMap,hd.edges[i].id,p.length,8)+delay;}}
+  if(observe){nextHdCosts=Time.time+6;for(int i=0;i<hd.paths.Length;i++){var p=hd.paths[i];float delay=0;if(conditions!=null)for(int k=1;k<p.points.Length;k++)delay+=conditions.ExtraSeconds(p.points[k-1],p.points[k],(p.points[k]-p.points[k-1]).normalized,3.2f);hdSeconds[i]=RoadMapRules.TravelSeconds(editorMap,hd.edges[i].id,p.length,8)/RainPolicy.TrafficSpeedMultiplier+delay;}}
   float progress=0,error=float.MaxValue;
   if(hdRoute!=null)progress=ProjectVehicle(out error);
   bool crossing=CrossingPlannedLaneChange(progress,error);

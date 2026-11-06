@@ -1,6 +1,6 @@
 using UnityEngine;
 public class TaxiController : MonoBehaviour {
-    public Rigidbody body; public WheelCollider[] wheels=new WheelCollider[4]; Transform[] visuals=new Transform[4];
+    public Rigidbody body; public WheelCollider[] wheels=new WheelCollider[4]; Transform[] visuals=new Transform[4]; float[] dryForwardStiffness=new float[4];
     public bool NetworkReplica,NetworkPredicted; public Vector3 ReplicaVelocity; public float ReplicaSteering;
     public bool automated,AutomatedHumanInput; public float autoThrottle,autoSteer,autoServiceBrake; public bool autoBrake;
     public float ManualSteeringGain=1,ManualBrakeGain=1;
@@ -27,7 +27,7 @@ public class TaxiController : MonoBehaviour {
         for(int i=0;i<4;i++) {
             var w=new GameObject("Wheel "+i); w.transform.SetParent(transform,false); w.transform.localPosition=new Vector3(i%2==0?-.85f:.85f,0,i<2?1.3f:-1.3f);
             var c=w.AddComponent<WheelCollider>(); c.radius=.34f; c.mass=25; c.suspensionDistance=.25f; var spring=c.suspensionSpring; spring.spring=35000; spring.damper=4500; spring.targetPosition=.5f; c.suspensionSpring=spring;
-            var f=c.sidewaysFriction; f.stiffness=1.35f; c.sidewaysFriction=f; wheels[i]=c;
+            var f=c.sidewaysFriction; f.stiffness=1.35f; c.sidewaysFriction=f; wheels[i]=c;dryForwardStiffness[i]=c.forwardFriction.stiffness;
             var v=GameObject.CreatePrimitive(PrimitiveType.Cylinder); v.name="Tyre visual"; v.transform.SetParent(transform,false); v.transform.localScale=new Vector3(.68f,.12f,.68f); v.GetComponent<Renderer>().sharedMaterial=black; var visualCollider=v.GetComponent<Collider>();if(Application.isPlaying)Destroy(visualCollider);else DestroyImmediate(visualCollider); visuals[i]=v.transform;
         }
         foreach(var tr in GetComponentsInChildren<Transform>()) tr.gameObject.layer=8;
@@ -72,7 +72,7 @@ public class TaxiController : MonoBehaviour {
         if(business&&business.session.simulationMatch&&business.session.simulationMatch.ServiceLocked(business.session)){demand.motor=0;demand.brake=1;motorDemand=0;}
         if(PvpMapInputBlocked){demand.motor=0;demand.brake=1;motorDemand=0;steer=0;}
         float centerAngle=WheelCenterAngle(steer,Speed*3.6f,assistedSteering);
-        for(int i=0;i<4;i++) { if(!microsleep)wheels[i].steerAngle=i<2?DriveMath.WheelSteerAngle(centerAngle,i==0):0; wheels[i].motorTorque=i>=2?demand.motor*1100:0; wheels[i].brakeTorque=demand.brake*3500; }
+        for(int i=0;i<4;i++) { var grip=wheels[i].forwardFriction;grip.stiffness=dryForwardStiffness[i]*(demand.brake>0?RainPolicy.BrakeMultiplier(Speed):1);wheels[i].forwardFriction=grip; if(!microsleep)wheels[i].steerAngle=i<2?DriveMath.WheelSteerAngle(centerAngle,i==0):0; wheels[i].motorTorque=i>=2?demand.motor*1100:0; wheels[i].brakeTorque=demand.brake*3500*RainPolicy.BrakeMultiplier(Speed); }
         body.AddForce(Vector3.down*body.velocity.sqrMagnitude*6);
         int grounded=0;foreach(var wheel in wheels)if(wheel.isGrounded)grounded++;
         if(grounded>0) {
