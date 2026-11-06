@@ -1,44 +1,27 @@
 {
-  "sourceCommit": "c1ffc293b60f8fdade32d504fe9630e3c2a7f4ae",
+  "sourceCommit": "6ef7d8345860a1746953e2ab27461e4455b53729",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-07",
-  "totalBytes": 132060084.0,
+  "totalBytes": 132103684.0,
   "validation": {
-    "build": "ContentTuningBuild.Build -> PrototypeBuild.BuildHybrid exit 0",
-    "buildLog": "artifacts/passenger-overrides/build-final.log",
-    "nodeAssertions": 80,
-    "passengerOverrideAssertions": 42,
-    "compositionAssertions": 73,
-    "contentAssertions": 760,
-    "careAssertions": 13301,
-    "restAssertions": 40,
-    "choiceAssertions": 50,
-    "choiceDriverAssertions": 6,
-    "playerOverrideAssertions": 57,
-    "playerLog": "artifacts/passenger-overrides/player-final.log",
-    "nativeLanProtocol": "native-city-lan-v13",
-    "nativeLanHostAssertions": 41,
-    "nativeLanClientAssertions": 52,
-    "nativeLanScope": "same-PC loopback before final resolver cache and errand display fixes; actual WheelCollider input; no reconnect",
-    "nativeLanReport": "artifacts/pvp/native-lan-20261107-001652-aaf32a89",
-    "protectedSaveFiles": 29,
-    "protectedSaveChanges": 0,
-    "strictWorkspaceIssues": 0,
+    "saveHashChanged": 2,
+    "contentHash": "8191049b9bb60e470e8f79ff8d0d9e7e60aea447810961059182c029d15df86a",
+    "saveHashMatched": 20,
+    "saveChangesAttribution": "unconfirmed; concurrent player observed; test isolation asserted",
     "manualDriving": false,
-    "fullCampaign": false,
-    "otherPcLan": false,
-    "baselineFailures": [
-      "PassengerBehaviorTests followup remembers actual request response Comfort",
-      "PassengerSituationTests awake passenger receives typed neutral reassurance",
-      "ChoiceStructureAudit Empathy unanswered expected -5 actual -2",
-      "ManualHandlingTests ordinary S braking actual 8.823529"
-    ],
-    "uiResolutions": [
-      "1280x900",
-      "800x900"
-    ]
+    "build": "ContentTuningBuild.Build / PrototypeBuild.BuildHybrid exit0",
+    "contentAssertions": 751,
+    "rosterAssertions": 1821,
+    "compositionAssertions": 73,
+    "lanHostAssertions": 41,
+    "lanClientAssertions": 52,
+    "campaign3day": false,
+    "playerAssertions": 131,
+    "remotePc": false,
+    "overridesAssertions": 42,
+    "nodeTests": 87
   },
   "files": [
     {
@@ -54,7 +37,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "2cb5ca3f0bfe8ad74eb503975019217a7a64b2215d5b328601d5520f2b164b0e"
+      "sha256": "a7f4dce0ed7670fca2173b0a0ab243942cf5c4dad0fde2ccccfe956d01a18845"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -78,8 +61,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2559488,
-      "sha256": "d30150181f3c114bb4753af256bf153683f1c7e99459dcbafa03ec8ae35b001e"
+      "bytes": 2563072,
+      "sha256": "9594c77d9401ee9de3348fdd6d216cf8380da3ca6f95353555f840118e36622c"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -578,8 +561,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 49006022,
-      "sha256": "5824b2a9899fe21265aa2b724a00e2ba7e38873be8e6acb9a5581b001b09753a"
+      "bytes": 49046038,
+      "sha256": "9a97c0a14f9cc892a98865aebd8365843c44130e037fa754ce5b83320fea4e50"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",

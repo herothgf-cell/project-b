@@ -38,3 +38,7 @@ node --test tests/content-editor/*.test.mjs
 builds/EungyeTaxi/EungyeTaxi.exe -oneDayMode -hybridV2 -passengerBehaviorTest -passengerRosterTest -batchmode -nographics -logFile D:/Git/project-b/artifacts/passenger-roster-v1/player.log
 
 기본 실행은 builds/EungyeTaxi/EungyeTaxi.exe, 은계싱글/A2·LANv13. 로컬 Unity2022.3.62f2. 상세 실행 증거 artifacts/passenger-roster-v1/ 및 artifacts/pvp/native-lan-20261107-004531-ad269195/. 다음은 사람 운전으로 복합작업 피로도와 만족도 누적을 확인해2차 조정한다.
+
+## 출하 영수증
+
+소스 커밋6ef7d8345860a1746953e2ab27461e4455b53729. 통합 manifest 생성 후 통합/PVP VerifyOnly 모두 exit0:141파일132,103,684bytes. 기본 실행본을 새 데이터로 갱신했다. 최종 staged whitespace 검사는 EOF공백3곳 정리 후 통과. 출하 커밋은 `git log -1 --oneline -- docs/work-history/2026-11-07-passenger-roster-v1.md`로 확인하며 자기 해시를 추측하지 않는다. 원격 push 없음.
