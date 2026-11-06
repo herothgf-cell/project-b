@@ -33,3 +33,13 @@ Quiet 수락 후 실제 운전자 선택적 잡담 입력만 새 위반으로 �
 이 소스 기록 시점 실제 Player/최종 main 통합 빌드·LAN·배포 전수검증은 진행 중이며 아래에 실제 결과를 덧붙인다. 사람 운전/장기 밸런스/전체3일/다른PC LAN은 별도 후속. 필수 지도 Strict issues0, 지도·ZIP 변경 없음. 기본 실행 은계/A2 통합exe, PrototypeBuild.BuildHybrid.
 
 재현: tools/test_passenger_traits.ps1, test_passenger_roster.ps1, test_content_tuning.ps1, node --test tests/content-editor/*.test.mjs. Player는 -passengerBehaviorTest -passengerTraitsTest 또는 -passengerRequestFailureTest -contentTest로 각각 분리 실행. 증거 artifacts/passenger-traits/, artifacts/passenger-request-failure/. Unity 설치 경로는 로컬 환경 정보이며2022.3.62f2.
+
+## 최종 통합·검증 보충
+
+- 원격 HUD341c7bb와 게임 내 날씨 설정4d79da3까지 보존 병합했다. 양 작업이 각각 v15를 사용했으므로 통합 계약은 LANv16으로 올려 구버전 혼접을 막는다.
+- 최종 순수검사: Node100/100, traits46, roster1933, ContentTuning781, RainSettings2780, RainPolicy11, Accident77 통과. C#/Node 구프로필 이관 해시 일치. 이전 상세 회귀 결과는 위 기록 참조.
+- 실제 Player에서 우산 오염의 탑승 반영 누락과 선택적 잡담의 잠긴 선택 우회 가능성을 발견해 수정했다. 실제 생성 조건을 쓰도록 요청 probe도 보정했다.
+- Unity가 성공을 보고한 기존 출력에 RuntimeInitializeOnLoads.json이 남아 새 요청 probe가 시작하지 않은 문제를 확인했다. 출력 폴더를 artifacts에 보관하고 빈 출력에서 재빌드해 해결했다. 이후 traits86/요청49 통과. 마지막 날씨 병합 뒤에도 같은 빈 출력 빌드 및 실행 검사를 반복한다.
+- 관리 툴 실제 브라우저에서 신규 특성·30프리셋·대사/수치·검증 표시 확인. 사용자 활성프로필을 적용하거나 덮어쓰지 않았다. 보호 저장22파일 SHA256 불변, Strict issues0, 지도/ZIP 변경 없음.
+- LAN 실행 중 출하 파일 갱신을 시도해 파일 잠금으로 실패한 한 회차는 결과에서 제외했다. 해당 본 작업 검사만 중단했고 마지막 빌드에서 재검사한다.
+- 자동 Player의 상태/위치 제어 검증과 동일PC LAN 검증을 사람 운전·다른PC 수용으로 해석하지 않는다. 사람 수동 운전/장기 밸런스/전체3일 캠페인/다른PC LAN은 미검증이다. 전체 prototype 기존 일반제동 기대값 실패는 위에 기록한 대로 남아 있다.
