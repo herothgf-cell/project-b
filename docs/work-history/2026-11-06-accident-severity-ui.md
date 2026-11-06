@@ -47,6 +47,15 @@
 
 실제 sourceCommit으로 manifest를 생성한 배포 영수증은 아래 후속 기록을 따른다.
 
+## 배포 영수증
+
+- 실제 소스 커밋 `cab0924413f0d532c12e257a0a1777f1565c0ce5`(기획/체크리스트/이력 포함)를 `git log -1 --oneline -- docs/work-history/2026-11-06-accident-severity-ui.md`로 확인했다. 동시 관리창 de32883은 조상으로 보존했다.
+- 현재 기본 실행본 `builds/EungyeTaxi/EungyeTaxi.exe`, 은계 싱글/A2 PVP·LAN v6. 최종 빌드는 `PrototypeBuild.BuildHybrid` exit0, 실제 최종 화면/동작171검사도 exit0이다.
+- 사용자 active 프로필을 옮기거나 출하하지 않고, 별도 `artifacts/accident-severity-shipped-runtime`에 출하140파일만 복사해 원본/사본 SHA256 전수 일치를 확인한 뒤 공식 manifest 생성 도구를 실행했다. 출하140파일 **115,966,642바이트**, 실제 원래 폴더는 유효한 active 프로필 포함141파일 **115,991,366바이트**다.
+- 통합/PVP alias `-VerifyOnly` 각각 exit0, 파일 크기/SHA256 전수 일치. mutable active 프로필은 별도 contentHash 검증을 통과했고 원래 사용자 파일 그대로다.
+- 최종 Strict 필수 입력 issues0. 생성 지도 JSON·필수 입력 manifest·OSM 대조 설정·지도 ZIP은 변경하지 않았다. 사용자 저장/백업14+active1 모두 종료 후 기준과 바이트/SHA256 변경0이다.
+- 실행 검증용 게임/Unity는 종료했다. 기존 미추적 자료와 관리창은 보존했다. 로컬 소스/배포 커밋이며 원격 push는 하지 않았다. 배포 커밋의 실제 값은 `git log -1 --oneline -- distribution/EungyeTaxi-build-manifest.json`으로 확인한다.
+
 ## 실행·재현과 수용 범위
 
 Unity는 로컬 Unity2022.3.62f2 Editor로 `-batchmode -nographics -quit -projectPath unity/EungyeTaxi -executeMethod AccidentSeverityUiBuild.Build -logFile <별도 로그>`를 실행한다. 기본 빌드는 내부 `PrototypeBuild.BuildHybrid`, 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`다.
