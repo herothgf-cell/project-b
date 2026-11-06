@@ -8,6 +8,10 @@
 
 # 최신 작업 상태
 
+## 2026-11-06 회사 제안서 3차 수정
+
+[PPT 및 자료](../proposals/README.md) · [수정/검증 이력](2026-11-06-game-proposal-v3.md). 단골·예약을 제외하고 최신10~13 기획의 재출발·작은 방/첫 구매·차량 교체/이사를32장에 반영했다. 현재 구현과 신규 생활 기획을 구분하고 시연 매뉴얼을 갱신했다. PPT 구조/레이아웃·재가져오기 통과,32장 렌더 확인·슬라이드/노트 제외어0건. 다음은 회사 제출 전 실제 참여자·범위·예산·일정 확인이다. 게임/빌드·저장·지도입력/ZIP·manifest 미변경, 새 플레이/Strict 검사 없음. 현재 실행 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 싱글·A2 PVP·LANv9 / `PrototypeBuild.BuildHybrid` 유지. 필수 입력 상태와 남은 사람 장시간·전체3일·다른PC 수용은 기존 게임 이력을 따른다.
+
 ## 2026-11-06 3일 작은 방과 첫 구매 기획
 
 [3일 검증안](../content-design/13-three-day-room-and-first-purchase.md) · [검토/인계](2026-11-06-three-day-room-first-purchase.md). 방1개·조명/러그2종×2스타일로 축소, 첫날 선택/둘째 날 유지·구매/셋째 날 기록과 선택적 진입을 설계했다.5,000/8,000원은 측정 전 시험값이며 개인 구매와 영업 순수익·완료 저장을 분리한다. 이번은 문서만 변경, 게임/빌드/사용자 저장·지도 입력/ZIP/manifest 미변경, 새 기능/사람 플레이·Strict/manifest 검사 없음. 현재 실행 `builds/EungyeTaxi/EungyeTaxi.exe` / 은계 싱글·A2 PVP·LANv9 / `PrototypeBuild.BuildHybrid` 유지. 다음은 가격 측정·기획 검토 후 최소 기능 구현 계획과 사람 동기 관찰이다.
