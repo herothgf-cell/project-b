@@ -1,3 +1,7 @@
+## 2026-11-06 승인 기본값 main 게시 확정
+
+[실제 푸시·검증 영수증](2026-11-06-promote-balance-defaults.md). 원격 main/게시 브랜치2e32067 동일 확인, 관리창변경0/게임적용·최종BuildHybrid/Player17/C#760/Node63·통합/PVP manifest 통과. 새 기본값을 게임과 복원에 채택, 기존 저장/다른 작업 보존. 실행은 기본 EungyeTaxi.exe, 새 캠페인/새 방부터.
+
 ## 2026-11-06 1차 밸런스 기본값 승격
 
 [승격·검증·배포/게시](2026-11-06-promote-balance-defaults.md). 저장된 밸런스50개를 출하/Resources 기본값과 생성기 override로 승격, 기본값 복원도 같은 값. 기존 이관/이어하기 보존. C#758/Node63/재생성 검증 통과, 최종 빌드·게임적용·관리창변경0·푸시는 해당 영수증. 은계/A2·LANv10/BuildHybrid·필수 지도/ZIP 유지.
