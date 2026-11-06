@@ -19,3 +19,9 @@
 최종 실제 검증: BuildHybrid 로그 artifacts/personal-room-verified-build.log exit0. 검사용 문자열 문법 오류1건(CS8997)을 수정한 뒤 다시 빌드했다. tools/test_personal_room_player.ps1의 실제 Player36검사와 새 프로세스 재실행 검사 exit0. 구매/순수익 유지·중복/미납·원자 저장 실패 롤백·둘째/셋째 날·JSON 누락 필드·최종 읽기 전용 복원을 검증했다. 숨김 창 캡처는 검은 화면으로 시각 검증에 사용하지 않으며 표시 창으로 다시 확인한다.
 
 동시 운전 설정 소스(DriveSession/TaxiController/PVP/PrototypeBuild 등)가 작업 폴더에서 변경 중이다. 이번 소스 선택 커밋에서는 제외한다. 로컬 BuildHybrid는 현재 공유 작업 폴더의 통합 소스로 빌드하므로 이 별도 운전 변경이 실행본에 포함될 수 있으며 그 기능 완료를 이번 방 검증으로 주장하지 않는다. 게임 사용자 저장은 fixture 경로 밖에 쓰지 않았다.
+
+최종 소스 선택 커밋은 cb582a7 (실제 git log로 확인). 표시 창으로 검사 재실행도 exit0: Player36·fresh-process7검사. artifacts/personal-room-player/03-second-day-room.png를 직접 열어 한글/버튼/소유 조명·러그 배치를 확인했다. 캡처는 실제 게임 렌더이며 fixture 수입은 사람 영업 결과가 아니다. 가격/사람3일·직접 마우스 전체 조작은 미검증이다.
+
+통합/PVP alias manifest VerifyOnly 각각 exit0, 출하141파일118,253,104바이트(사용자active 포함142파일118,385,564바이트). 새 resources.assets.resS를 함께 배포한다. 사용자 active의 SHA256은 전후 동일0C1ED4AE...53BF. manifest 첫 생성은 ValidationReport에 Markdown을 주어 JSON 파싱 실패했고 전용 JSON 보고서를 사용해 정상 생성/검증했다. 지도 입력/ZIP은 변경하지 않았다.
+
+재현: pwsh -File tools/test_personal_room.ps1; pwsh -File tools/test_personal_room_player.ps1 -Visible. 사용자 실행은 기본 exe→싱글→주차/휴식 거점 정상 마감→내 공간→물건 구매→다음 날 준비. 조명/러그는5,000/8,000원이며 미납이 있으면 상환 후 구매한다. 실행 파일은 현재 공유 작업 폴더 통합 빌드로 위 동시 운전 설정 변경 포함 가능성을 유지한다. 코드 main 푸시는 이번 요청에 포함하지 않아 로컬 커밋/빌드로 남긴다.
