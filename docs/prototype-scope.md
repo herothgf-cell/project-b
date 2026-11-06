@@ -1,3 +1,5 @@
+2026-11-07 추가 피드백: 택시 하단/휠 일체감과 HUD 신호·속도/기어 겹침 교정. 물리·규칙 유지. [구현/검증](work-history/2026-11-07-taxi-hud-corrections.md).
+
 2026-11-07 추가 승인: Blender MCP 제작 모델을 Unity MCP로 반입하여 택시 외형을 개선한다. 기존 1인칭/UI·물리 수치는 유지. [원본·실제 검증](work-history/2026-11-07-taxi-blender-quality.md).
 
 2026-11-07 시안 승인 반영: 택시 곡면 외형·운전석 디지털 HUD·거울/승객 카드 배치. 물리/경제 수치 유지, 생성 시안의 정밀 재질/도시 아트는 미포함. [구현·검증](work-history/2026-11-07-taxi-exterior-cockpit-implementation.md).

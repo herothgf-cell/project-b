@@ -2,10 +2,10 @@
 
 사용자 승인된 노란 소형 택시 시안을 참고해 이번 작업에서 직접 제작한 모델. 외부 모델·텍스처 구매/다운로드 없음.
 
-- TaxiConcept.blend: 편집 가능한 Blender 원본. 현재 최종 씬 TaxiConcept_Blender.005, 이전 반복 씬과 최초 기본 씬은 보존.
+- TaxiConcept.blend: 편집 가능한 Blender 원본. 현재 최종 씬 TaxiConcept_Blender.008, 이전 반복 씬과 최초 기본 씬은 보존.
 - TaxiConcept.fbx: 현재 최종 씬 차량만 내보낸 교환용 모델(바퀴4개 포함).
 - unity-meshes.json: Blender 평가 메시/코너 노멀을 Unity 좌표로 변환한 버전1 입력. 차체와 바퀴1개 템플릿. Unity 게임에서는 이 JSON을 읽지 않는다.
-- Unity Assets/Resources/TaxiConcept: 고정 GUID의 Mesh/Material/Body·Wheel prefab. 7개 공유 재질, 차체6+바퀴3개 렌더 그룹. 차체55,456tri, 바퀴13,584tri/개, 한 차량109,792tri. 별도 LOD/저사양 성능 튜닝은 후속.
+- Unity Assets/Resources/TaxiConcept: 고정 GUID의 Mesh/Material/Body·Wheel prefab. 7개 공유 재질, 차체6+바퀴3개 렌더 그룹. 차체54,440tri, 바퀴16,464tri/개, 한 차량120,296tri. 별도 LOD/저사양 성능 튜닝은 후속.
 - TAXI·한글 번호판 글씨와 방향지시등은 기존 Unity 표현을 유지한다. Blender 스튜디오에 글씨가 없는 것은 런타임 결합과 구분한다.
 
 ## 재생성

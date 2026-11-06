@@ -1,3 +1,9 @@
+## 2026-11-07 외형·HUD 겹침 교정
+
+- [x] 하단 떠 있는 몰딩 제거·휠 안쪽 스포크/열린 림, 신호 제목 분리·속도계 축소/D 독립.
+- [x] Editor/Player 화면 검증. [실제 결과·미검증 범위](work-history/2026-11-07-taxi-hud-corrections.md).
+- [ ] 사람 주행 체감/전체3일/다른PC/저사양LOD.
+
 ## 2026-11-07 Blender·Unity MCP 택시
 
 - [x] Blender 원본/FBX·공유 Unity prefab, 곡면/등화/휠 개선 및 기존 물리/UI 유지.

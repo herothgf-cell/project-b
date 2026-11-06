@@ -7,6 +7,7 @@ public static class DrivingHudConceptChecks {
   int checks=0;
   foreach(var size in new[]{new Vector2(1280,720),new Vector2(1920,1080),new Vector2(2560,1080)}){
    float scale=UiReadability.HudScale(size.x,size.y);var dial=(Rect)method.Invoke(null,new object[]{size.x,size.y});
+   if(dial.height>100*scale||dial.yMin<size.y-120*scale)throw new Exception("HUD_CONCEPT: speed display intrudes into road view");checks++;
    var d=PassengerDialogueUI.PanelBounds(size.x,size.y,scale,12000);var dialogue=new Rect(d.x*scale,d.y*scale,d.width*scale,d.height*scale);
    if(dial.Overlaps(dialogue)||Mathf.Abs(dial.center.x-size.x/2)>1||dial.yMax>size.y||dial.yMin<size.y*.65f)throw new Exception("HUD_CONCEPT: long choices obscure speed/indicators "+size);checks++;
    var conditionMethod=typeof(PvpConditionHUD).GetMethod("PanelBounds");var hubMethod=typeof(ServiceStops).GetMethod("PostTripBounds");

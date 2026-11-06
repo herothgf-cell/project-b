@@ -11,6 +11,7 @@ public sealed partial class BrightUIProbe {
   var floor=WorldBuilder.Box("Review platform",stage+Vector3.down*.39f,new Vector3(30,.1f,30),WorldBuilder.Mat("Review ivory",new Color(.84f,.9f,.97f)),null,false);
   Screen.SetResolution(1920,1080,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);view.fieldOfView=38;
   foreach(var item in new[]{new Vector3(4,2,5.7f),new Vector3(6,1.7f,0),new Vector3(-4,2,-5.7f)}){camera.transform.position=stage+item;camera.transform.LookAt(stage+Vector3.up*.7f);yield return Capture(item.z>1?"taxi-front":item.z< -1?"taxi-rear":"taxi-side");}
+  camera.transform.position=stage+new Vector3(-2.1f,.4f,-2.0f);camera.transform.LookAt(stage+new Vector3(-.85f,.05f,-1.3f));yield return Capture("taxi-wheel-closeup");
   Destroy(floor);taxi.transform.SetPositionAndRotation(savedPosition,savedRotation);taxi.body.position=savedPosition;taxi.body.rotation=savedRotation;hud.enabled=readability.enabled=camera.enabled=true;camera.SetFirstPerson(false);yield return null;yield return BeginAction(PassengerType.General);s.requests.enabled=false; // Freeze request presentation during controlled cockpit screenshots.
   foreach(int width in new[]{1280,1920}){
    Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.4f);yield return Capture("taxi-chase-"+width);

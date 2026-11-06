@@ -1,3 +1,7 @@
+## 2026-11-07 택시 하단·휠과 주행 HUD 겹침 수정
+
+[구현·검증](2026-11-07-taxi-hud-corrections.md). 떠 있던 장식 제거/곡면 문 경계·열린 림/안쪽 스포크, 신호 제목 분리·낮은 가로형 속도계/D 분리. 은계/A2·LANv16·BuildHybrid, 지도/ZIP불변·Strict issues0. 상세 검증·출하 결과는 연결 이력 참조. 다음은 사람 주행 체감·월드/차량 세부 아트.
+
 ## 2026-11-07 Blender·Unity MCP 택시 모델 개선
 
 [실제 제작·검증·출하](2026-11-07-taxi-blender-quality.md). Blender 곡면 차체/지붕·유리/도어·램프/그릴/휠 원본 제작, Unity prefab 연결·실제 렌더 확인. 기존 물리/UI 유지. Editor36510/실제 시점35/운전설정17/LAN43+54 통과, 보호16불변·Strict issues0. 은계/A2·LANv16·BuildHybrid·지도/ZIP불변. 원본/재생성은 art-source/taxi/README.md. 다음: 사람 장기/패드/전체3일/다른PC, 실내·월드/승객 표정·정산 연출 및 저사양LOD 검토.

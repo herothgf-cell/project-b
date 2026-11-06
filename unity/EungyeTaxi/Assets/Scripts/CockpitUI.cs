@@ -3,7 +3,7 @@ using UnityEngine;
 public static class CockpitUI {
  public static float Scale {get{return UiReadability.HudScale(Screen.width,Screen.height);}}
  public static bool LayoutFits(float w,float h){float s=UiReadability.HudScale(w,h);return w/s>=1599.99f&&h/s>=899.99f;}
- public static Rect SpeedBounds(float w,float h){float s=UiReadability.HudScale(w,h);return new Rect(w/2-200*s,h-238*s,400*s,224*s);}
+ public static Rect SpeedBounds(float w,float h){float s=UiReadability.HudScale(w,h);return new Rect(w/2-160*s,h-116*s,320*s,92*s);}
  public static Rect JobBounds(float w,float h,bool active){float s=UiReadability.HudScale(w,h);return new Rect(w-312*s,382*s,288*s,(active?150:58)*s);}
  public static Rect SituationBounds(float w,float h,bool result=false,bool activeJob=true,bool pvp=false){float s=UiReadability.HudScale(w,h);if(pvp)return new Rect(w-312*s,552*s,288*s,140*s);return new Rect(24*s,414*s,300*s,Mathf.Min((result?118:220)*s,h-260*s-414*s));}
  public static Rect ServiceHintBounds(float w,float h){float s=UiReadability.HudScale(w,h);return new Rect(365*s,210*s,410*s,110*s);}

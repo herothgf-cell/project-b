@@ -20,7 +20,7 @@ def mat(name,color,metal=0,rough=.3):
  if name=='Paint': p.inputs['Coat Weight'].default_value=.45;p.inputs['Coat Roughness'].default_value=.18
  return m
 paint=mat('Paint',(1,.48,.006),.08,.3);glass=mat('Glass',(.023,.055,.095),.35,.16)
-rubber=mat('Rubber',(.018,.023,.031),0,.72);chrome=mat('Chrome',(.65,.72,.78),.85,.22)
+rubber=mat('Rubber',(.018,.023,.031),0,.72);chrome=mat('Chrome',(.65,.72,.78),.35,.3)
 lamp=mat('Lamp',(.85,.94,1),.2,.19);red=mat('Red',(.65,.012,.018),.2,.22)
 amber=mat('Amber',(1,.28,.008),.1,.24);dark=mat('Trim',(.035,.047,.061),.1,.42)
 def finish(o,name,m,group='body'):
@@ -95,10 +95,12 @@ for side in [-1,1]:
  a0,a1=(.055,.70) if side==1 else (pi-.70,pi-.055)
  patch('Front door glass',-.13,.77,a0,a1);patch('Rear door glass',-1.5,-.23,a0,a1)
  tube('Window beltline',[(side*.77,.81,z) for z in [-1.34,-.8,-.2,.4,.82]],.009,dark)
- for z in [-1.3,1.3]:tube('Painted wheel arch lip',[(side*.903,.433*sin(a),z+.433*cos(a)) for a in [(.08+.84*i/40)*pi for i in range(41)]],.012,paint)
- tube('Door split',[(side*.903,.24,-.19),(side*.905,.5,-.19),(side*.89,.77,-.19)],.004,dark)
- tube('Door lower seam',[(side*.884,.23,z) for z in [-.83,-.3,.3,.83]],.004,dark)
- box('Rocker sill',(side*.887,.15,0),(.035,.055,1.55),.018,paint)
+ # The monocoque itself forms the sill and wheel openings. No detached trim.
+ def skin_x(y,z):
+  top=interp(z,bodyprofile,2);s=abs((y-.43)/(top-.43 if y>.43 else .34))**(1/.55)
+  return interp(z,bodyprofile,1)*max(0,1-s*s)**.24
+ tube('Door split',[(side*(skin_x(y,-.19)+.002),y,-.19) for y in [.24+i*.53/32 for i in range(33)]],.0025,dark)
+ tube('Door lower seam',[(side*(skin_x(.23,z)+.002),.23,z) for z in [-.8+i*1.6/40 for i in range(41)]],.0025,dark)
  for z in [-.58,.39]:
   ellipsoid('Handle inset',(side*.898,.70,z),(.02,.055,.19),dark)
   box('Painted door handle',(side*.917,.715,z),(.035,.035,.16),.015,paint)
@@ -138,14 +140,26 @@ for i in range(4):
  bpy.ops.mesh.primitive_torus_add(major_segments=48,minor_segments=12,location=xyz((x,0,z)),major_radius=.255,minor_radius=.085,rotation=(0,pi/2,0))
  finish(bpy.context.object,'Rounded tyre',rubber,'wheel'+str(i))
  for side in [-1,1]:
-  xx=x+side*.085
-  bpy.ops.mesh.primitive_cylinder_add(vertices=48,radius=.225,depth=.022,location=xyz((xx,0,z)),rotation=(0,pi/2,0));finish(bpy.context.object,'Alloy barrel',chrome,'wheel'+str(i))
-  bpy.ops.mesh.primitive_cylinder_add(vertices=48,radius=.191,depth=.025,location=xyz((xx+side*.014,0,z)),rotation=(0,pi/2,0));finish(bpy.context.object,'Wheel cavity',dark,'wheel'+str(i))
+  group='wheel'+str(i)
+  # Open annulus, with spokes recessed behind the rolled outer rim.
+  rim=[(.025,.185),(.066,.185),(.078,.194),(.078,.208),(.058,.225),(.025,.225)]
+  rv=[(x+side*depth,r*cos(a),z+r*sin(a)) for depth,r in rim for a in [k*2*pi/64 for k in range(64)]]
+  rf=[]
+  for j in range(len(rim)):
+   for k in range(64):
+    face=(j*64+k,j*64+(k+1)%64,((j+1)%len(rim))*64+(k+1)%64,((j+1)%len(rim))*64+k)
+    rf.append(tuple(reversed(face)) if side==1 else face)
+  mesh('Open rolled alloy rim',rv,rf,chrome,group)
+  bpy.ops.mesh.primitive_cylinder_add(vertices=48,radius=.16,depth=.008,location=xyz((x+side*.012,0,z)),rotation=(0,pi/2,0));finish(bpy.context.object,'Recessed brake disc',dark,group)
   for k in range(5):
-   a=k*2*pi/5;points=[(xx+side*.031,.04*cos(a),z+.04*sin(a)),(xx+side*.031,.19*cos(a+.13),z+.19*sin(a+.13))];tube('Sculpted alloy spoke',points,.027,chrome,'wheel'+str(i))
-  ellipsoid('Hub cap',(xx+side*.04,0,z),(.035,.10,.10),chrome,'wheel'+str(i))
+   a=k*2*pi/5;outline=[(.035,-.021),(.19,-.018),(.198,.018),(.035,.027)]
+   sv=[(x+side*depth,r*cos(a)-t*sin(a),z+r*sin(a)+t*cos(a)) for depth in [.036,.055] for r,t in outline]
+   sf=[(3,2,1,0),(4,5,6,7),(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7)]
+   o=mesh('Inset flat alloy spoke',sv,[tuple(reversed(f)) for f in sf] if side==-1 else sf,chrome,group)
+   bevel=o.modifiers.new('Spoke edge roll','BEVEL');bevel.width=.004;bevel.segments=3;o.modifiers.new('Spoke normals','WEIGHTED_NORMAL')
+  ellipsoid('Hub cap',(x+side*.048,0,z),(.024,.10,.10),chrome,group)
   for k in range(5):
-   a=k*2*pi/5;ellipsoid('Lug',(xx+side*.063,.033*cos(a),z+.033*sin(a)),(.012,.012,.012),dark,'wheel'+str(i))
+   a=k*2*pi/5;ellipsoid('Lug',(x+side*.060,.033*cos(a),z+.033*sin(a)),(.008,.012,.012),dark,group)
  wheelparts.extend(parts[start:])
 # Studio belongs to this new scene only.
 floor=box('Studio floor',(0,-.42,0),(200,.08,200),.01,mat('Studio',(.49,.60,.73),0,.65),'studio')
