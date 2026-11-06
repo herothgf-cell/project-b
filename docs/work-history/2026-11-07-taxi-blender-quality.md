@@ -28,3 +28,5 @@
 
 ## 출하 영수증
 소스 커밋 후 실제 SHA로 통합 manifest 생성·검증하고 main에 게시한다. 실제 기록 커밋은 git log -1 --oneline -- docs/work-history/2026-11-07-taxi-blender-quality.md로 확인한다.
+
+출하 검증: 소스11223cad7011db0e736005b96f92a3a9cdf1cc17 기준 통합 manifest 생성. 통합/PVP VerifyOnly 모두 exit0, 141파일/126,501,464바이트. 실제 main 게시·원본 작업폴더 보존 영수증은 후속 기록 참조.
