@@ -1,0 +1,709 @@
+{
+  "files": [
+    {
+      "path": "docs/handoff/2026-11-06/content-profile-revision6.json",
+      "source": "main checkout config/content/profiles/default.json",
+      "bytes": 132782,
+      "sha256": "14b76c9e2ab951cd4fe9906cdc94623d7d1fdf1a86d5e1c179a263ed5482eeeb"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/build.mjs",
+      "source": "proposal-v3-20261106/build.mjs",
+      "bytes": 28879,
+      "sha256": "fe59db54490a0c13f89541b7993f71acf68c3c3defee274f85040104df213e15",
+      "originalSha256": "7840bbc463f16a4586bca55c5a89341e6dcc7a146c7b05dd1e3b6b8fbf69a206",
+      "normalization": "Trailing blank lines removed"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/candidate.pptx.inspect.ndjson",
+      "source": "proposal-v3-20261106/candidate.pptx.inspect.ndjson",
+      "bytes": 83585,
+      "sha256": "dc6c61580e8176d025cd03fe05ee48280ff35c227de793fcc8ad298366548b0c"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/outline.json",
+      "source": "proposal-v3-20261106/outline.json",
+      "bytes": 103134,
+      "sha256": "a77e67eaa1acd42bfcae263c3be64b7864116857bbc98620fbba3340e8a9f1b9"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/revise.py",
+      "source": "proposal-v3-20261106/revise.py",
+      "bytes": 16207,
+      "sha256": "4579ee4ed862fa277f3da978332cbdacb3935338ea43b54a4c6961805de530b7"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/validation.json",
+      "source": "proposal-v3-20261106/validation.json",
+      "bytes": 5320,
+      "sha256": "e7dcf27ba3557b77f465eace9b5de48c9b6bd17ac8e6931b06f44bd2970ef1a9"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/01.png",
+      "source": "proposal-v3-20261106/renders/01.png",
+      "bytes": 514040,
+      "sha256": "d2418e95288de639795ce5d7f4c86efd22c1611a362a763447d2a3f44f3ffade"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/02.png",
+      "source": "proposal-v3-20261106/renders/02.png",
+      "bytes": 61325,
+      "sha256": "e4e1ba104b3252ea62d2c6be9c8f4ee18b72926af0ce62c8ddcb12ff381ea1d2"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/03.png",
+      "source": "proposal-v3-20261106/renders/03.png",
+      "bytes": 59118,
+      "sha256": "16256b52ab67f24252d79d96e59570a726e5604f55504dcf516658c0deb1186c"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/04.png",
+      "source": "proposal-v3-20261106/renders/04.png",
+      "bytes": 55427,
+      "sha256": "6dae68a325e50bfc2a0493e83c7c8001602b1748682cda361dd5bab2684132cb"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/05.png",
+      "source": "proposal-v3-20261106/renders/05.png",
+      "bytes": 68093,
+      "sha256": "206bbd52db345e75b84e0034cca1321d3a93a9db8d6cfe1731665bcc759ecaa6"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/06.png",
+      "source": "proposal-v3-20261106/renders/06.png",
+      "bytes": 66754,
+      "sha256": "bf00d316d77484c3efc3ea0cfba0214b92e940d3a3baf3f7896aaafddc4ae6da"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/07.png",
+      "source": "proposal-v3-20261106/renders/07.png",
+      "bytes": 44467,
+      "sha256": "19861c089c5a19450d6bdcc4783a224ea724c905a1f6bb7e2ff1527961264da4"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/08.png",
+      "source": "proposal-v3-20261106/renders/08.png",
+      "bytes": 65038,
+      "sha256": "3c7c19dfe44d21596bec3aa945dd2af8d7e36d04eeb5b507782e619d111920fe"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/09.png",
+      "source": "proposal-v3-20261106/renders/09.png",
+      "bytes": 63868,
+      "sha256": "4f54111cdc04c226830a80a7539656ec23b8547d02ed1dad6259702423d7206d"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/10.png",
+      "source": "proposal-v3-20261106/renders/10.png",
+      "bytes": 63001,
+      "sha256": "ee41f3088624ac6681c65210e6854ca0e5deda7c1d3d6febf5bafc97ac5a6c2f"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/11.png",
+      "source": "proposal-v3-20261106/renders/11.png",
+      "bytes": 68465,
+      "sha256": "69d4fa153d51b615a97c7a0e5a9dbd3f8a2ff2728623b140d709661f32d9bc49"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/12.png",
+      "source": "proposal-v3-20261106/renders/12.png",
+      "bytes": 68659,
+      "sha256": "ed60d5abf5a8f7c026fde8f7f4a2671b61482f2d3a91e1c688c55a65b3478b1a"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/13.png",
+      "source": "proposal-v3-20261106/renders/13.png",
+      "bytes": 58311,
+      "sha256": "a23dd3145c93a1ff1d0b8565d18a0f92acee309e069124b8503220d440a3cfc6"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/14.png",
+      "source": "proposal-v3-20261106/renders/14.png",
+      "bytes": 71510,
+      "sha256": "622450ad8c5c71213a42e1dec91eb4bea22958eef507fa4e5d858d5f5148e163"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/15.png",
+      "source": "proposal-v3-20261106/renders/15.png",
+      "bytes": 70607,
+      "sha256": "8d5c337a42998e72ef2b203e744bf23daa671a881a0b55742e33b68badecce70"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/16.png",
+      "source": "proposal-v3-20261106/renders/16.png",
+      "bytes": 62787,
+      "sha256": "22174fe7c4105919f8dd07e2a21feef1c81f4f325d48cb6eed73e7ef6bf47784"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/17.png",
+      "source": "proposal-v3-20261106/renders/17.png",
+      "bytes": 66378,
+      "sha256": "3eedba80b5b9bfb70add060b002e7efd21e70e5ae6fe6e780e20eb8037f37a5b"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/18.png",
+      "source": "proposal-v3-20261106/renders/18.png",
+      "bytes": 714694,
+      "sha256": "2eb50319148d1558d52b3925a684fe39790c44547a01d786849208c21abc1199"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/19.png",
+      "source": "proposal-v3-20261106/renders/19.png",
+      "bytes": 842177,
+      "sha256": "6e125a5f29865146b971e4d8a19c3ac704c284a8ae9174d6606a39d2e2b1e213"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/20.png",
+      "source": "proposal-v3-20261106/renders/20.png",
+      "bytes": 757259,
+      "sha256": "c6fe6b070117686532febe534e8b0848963ae6d64dac478ccef9e00369d65052"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/21.png",
+      "source": "proposal-v3-20261106/renders/21.png",
+      "bytes": 61637,
+      "sha256": "6f0a546dd4daa2b0ce1540084ed6dce79c2a35433a949d7f42d1df42223ee58a"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/22.png",
+      "source": "proposal-v3-20261106/renders/22.png",
+      "bytes": 69579,
+      "sha256": "7d7d2756c45b1b8983b6cded960b2a8be42a400eb684f3b246aaa9ba9246db1d"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/23.png",
+      "source": "proposal-v3-20261106/renders/23.png",
+      "bytes": 67077,
+      "sha256": "d5b4eb7fac5fa4c0f53bffe0638d8bd0b5a8e83c1cf400742f9c05c3cfb973d8"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/24.png",
+      "source": "proposal-v3-20261106/renders/24.png",
+      "bytes": 65647,
+      "sha256": "66c7755c0c060cbf41773e5190abdb6a7f30da1cf169874e8e2dcb735f93b9f5"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/25.png",
+      "source": "proposal-v3-20261106/renders/25.png",
+      "bytes": 58676,
+      "sha256": "f12064a9625055e355bc87521b1abcf1156cac33f632da76c12db3f7462ec008"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/26.png",
+      "source": "proposal-v3-20261106/renders/26.png",
+      "bytes": 63228,
+      "sha256": "ed62917322449daeeb882ecc4f2bee4a5c787008e677bf078867ad6833d2d9e1"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/27.png",
+      "source": "proposal-v3-20261106/renders/27.png",
+      "bytes": 60653,
+      "sha256": "d642eca81fad688839b03923f43bf8b9b60a59f3ff3318ff175fe28e6622989a"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/28.png",
+      "source": "proposal-v3-20261106/renders/28.png",
+      "bytes": 57823,
+      "sha256": "78c186dbbcb38e77d33c3540d0b217f2f52af7eb537a9603f26a0f79a907160d"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/29.png",
+      "source": "proposal-v3-20261106/renders/29.png",
+      "bytes": 211916,
+      "sha256": "daa55404c0a836cca406fd6d827f6fb53df31d86ed534e3aacfd23567d137540"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/30.png",
+      "source": "proposal-v3-20261106/renders/30.png",
+      "bytes": 72167,
+      "sha256": "598bbad7c6f25e97a0f2df601e6ec2f408704be99cf1e58c23cd70f757466626"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/31.png",
+      "source": "proposal-v3-20261106/renders/31.png",
+      "bytes": 55802,
+      "sha256": "ce400ac27d98aa5e69ca8e8436641fe840f4a57afa7bc9bdd238676c07c842b7"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v3/renders/32.png",
+      "source": "proposal-v3-20261106/renders/32.png",
+      "bytes": 52138,
+      "sha256": "fd7b1b1beebb78290383262dc26484abb0aadbc6f8460e7b7f0b9e2cd752b5bd"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/build.mjs",
+      "source": "proposal-v4-20261106/build.mjs",
+      "bytes": 19450,
+      "sha256": "b7486f7edc7d215cf1d7975226818c3fd1837b4f2a00304f101339ccced5607f"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/candidate.pptx.inspect.ndjson",
+      "source": "proposal-v4-20261106/candidate.pptx.inspect.ndjson",
+      "bytes": 58865,
+      "sha256": "1c07c3c5156ee7b54412cf47b36cac3f9d9ee6c38e838856b0f0848b25ad724b"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/outline.json",
+      "source": "proposal-v4-20261106/outline.json",
+      "bytes": 67623,
+      "sha256": "793a20dea9d23f3a7565bbb25f2f0cfbfd926b62a20c39d1742cd2f48e225656"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/validation.json",
+      "source": "proposal-v4-20261106/validation.json",
+      "bytes": 4467,
+      "sha256": "0b786475421f48bed4707a31c39be05ce43016b96d78431c9cce6d4d358ef55c"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/01.png",
+      "source": "proposal-v4-20261106/renders/01.png",
+      "bytes": 700680,
+      "sha256": "5014e8126d3dce47002c34d36578a49d07327bc5ba5e54edaa826618982ba1bf"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/02.png",
+      "source": "proposal-v4-20261106/renders/02.png",
+      "bytes": 717407,
+      "sha256": "6a11dacf9c502295370c2a9a375ac23cb3885823e57136acc5e5cd0b690a095a"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/03.png",
+      "source": "proposal-v4-20261106/renders/03.png",
+      "bytes": 723609,
+      "sha256": "6f8769356d3127bfeb8bdfefa37052adaeb654ba17726527010a8bdfd17c8c12"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/04.png",
+      "source": "proposal-v4-20261106/renders/04.png",
+      "bytes": 42950,
+      "sha256": "0ffccadfc8ae631185be169747931a51ac36d93ea09e89feeba555049489eccd"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/05.png",
+      "source": "proposal-v4-20261106/renders/05.png",
+      "bytes": 801966,
+      "sha256": "7ad2f232b882013e99ec122683e160072b1458a4ecd87d4bb4005ef226292d14"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/06.png",
+      "source": "proposal-v4-20261106/renders/06.png",
+      "bytes": 562821,
+      "sha256": "2a6a78bf62ff2885bd691cd494fc525159356c65df902fc5a73cba8671d42b62"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/07.png",
+      "source": "proposal-v4-20261106/renders/07.png",
+      "bytes": 381131,
+      "sha256": "ab697f6026f61b6896f6274225622c0420e76bff19ef265440841e5d631d0321"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/08.png",
+      "source": "proposal-v4-20261106/renders/08.png",
+      "bytes": 668907,
+      "sha256": "72e23c9df832f1864ff142c47cb617c76887e28294be49133b527f3afa9d12f8"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/09.png",
+      "source": "proposal-v4-20261106/renders/09.png",
+      "bytes": 681273,
+      "sha256": "34318e978e480c70fa9c0a04f25fc3685990c960712a0a0b74175e2c8b25d497"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/10.png",
+      "source": "proposal-v4-20261106/renders/10.png",
+      "bytes": 50708,
+      "sha256": "755df2ae008cbef590b3e59d25162c4c1163b36437f6d1b89b5756497f69d9a3"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/11.png",
+      "source": "proposal-v4-20261106/renders/11.png",
+      "bytes": 160972,
+      "sha256": "c02efda5d85f4dc98d6e60b6ad49cdaada2ed595c019ad71b67ea6f08710be59"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/12.png",
+      "source": "proposal-v4-20261106/renders/12.png",
+      "bytes": 164401,
+      "sha256": "21a424ad6b3ba981033ae39e6193dfc1c2a28ead5be97055b55dbcba2e0540a0"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/13.png",
+      "source": "proposal-v4-20261106/renders/13.png",
+      "bytes": 48507,
+      "sha256": "a300b7607bcf0f305640fae6358de7f600255e14e8e2b467a49c6ee7e03d3084"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/14.png",
+      "source": "proposal-v4-20261106/renders/14.png",
+      "bytes": 61856,
+      "sha256": "1b00efb8bcfbca0c9f221c3fcf4ce73cd89434baebb6c3d0f9001a10d97c56c0"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/15.png",
+      "source": "proposal-v4-20261106/renders/15.png",
+      "bytes": 45344,
+      "sha256": "0970ef7b2e45627db752fe9ca40c939c9a74fc98f09feb9145c66205318bb03b"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/16.png",
+      "source": "proposal-v4-20261106/renders/16.png",
+      "bytes": 51970,
+      "sha256": "10f9cf2f993d8efa9f397b8be085c18519250601fa075f8afca39f621338dc7e"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/17.png",
+      "source": "proposal-v4-20261106/renders/17.png",
+      "bytes": 49202,
+      "sha256": "fe30513f7800d7858d7e0a629418b58bb02517881c23018c4a08bc86709ec89c"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/18.png",
+      "source": "proposal-v4-20261106/renders/18.png",
+      "bytes": 53787,
+      "sha256": "2c48fc7bf049da58c841062935ccffbe34b3bfb2dbc0d14f3e489ef2ad987d6e"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/19.png",
+      "source": "proposal-v4-20261106/renders/19.png",
+      "bytes": 47546,
+      "sha256": "49b5e7edf18696b37ffa05b690be39678dba2a9af945ef83261d546f931661d0"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v4/renders/20.png",
+      "source": "proposal-v4-20261106/renders/20.png",
+      "bytes": 192739,
+      "sha256": "207a920cea2246e4a93f3d961c6484a7fbe2a26e950cef22d65612a3feade19a"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/build.mjs",
+      "source": "proposal-v5-20261106/build.mjs",
+      "bytes": 23451,
+      "sha256": "29702a1c3016b3f87f7749feac466fcde3d3cb2b78611975d3ab31d54a2d2211"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/candidate.pptx.inspect.ndjson",
+      "source": "proposal-v5-20261106/candidate.pptx.inspect.ndjson",
+      "bytes": 69590,
+      "sha256": "d36904f00343393bf1c0b45ae3711fb0d872ea0dbd1e78fc2382d0f31f5e2c27"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/outline.json",
+      "source": "proposal-v5-20261106/outline.json",
+      "bytes": 79172,
+      "sha256": "a0a2237ddb9fb124f240fd4a0b73bcd1980bd622f23be46be3ef6eda46b83037"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/revise.py",
+      "source": "proposal-v5-20261106/revise.py",
+      "bytes": 7630,
+      "sha256": "cc5009e16ce8690b15c80e3fbb6d42eeb1f4fad82044408d5ca9080cf9176fe5"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/validation.json",
+      "source": "proposal-v5-20261106/validation.json",
+      "bytes": 4608,
+      "sha256": "3e6e1145a1d4757db2bed27caacf84c2c717cc8905b96e2d9033dd8af2d0f907"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/01.png",
+      "source": "proposal-v5-20261106/renders/01.png",
+      "bytes": 700699,
+      "sha256": "09648689ca214550a1b34d5a98972226ec088707aff3eace3ef59d4024beafe0"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/02.png",
+      "source": "proposal-v5-20261106/renders/02.png",
+      "bytes": 717407,
+      "sha256": "6a11dacf9c502295370c2a9a375ac23cb3885823e57136acc5e5cd0b690a095a"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/03.png",
+      "source": "proposal-v5-20261106/renders/03.png",
+      "bytes": 727245,
+      "sha256": "d85e7486b3db21eff743da6962b811d3b1be769a05f282450768903aef42aaf7"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/04.png",
+      "source": "proposal-v5-20261106/renders/04.png",
+      "bytes": 44489,
+      "sha256": "1bb9de33d7f94e5344ab6c682c41a108bd9b8987ca41fea3e0b14ce93250bed5"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/05.png",
+      "source": "proposal-v5-20261106/renders/05.png",
+      "bytes": 69102,
+      "sha256": "7dfac302a791d9001685eafbdeaeda245779bcdbf56d85e9c457c9a63618c58a"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/06.png",
+      "source": "proposal-v5-20261106/renders/06.png",
+      "bytes": 758832,
+      "sha256": "b68abbe48a0b115876366b5b49f6f4d65723547e7e630ebc0fde49e5802df786"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/07.png",
+      "source": "proposal-v5-20261106/renders/07.png",
+      "bytes": 732274,
+      "sha256": "56e9def06351bd1fc83f0e9c0fbb69957c079af20e0c344ee8fc17da0048053b"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/08.png",
+      "source": "proposal-v5-20261106/renders/08.png",
+      "bytes": 802049,
+      "sha256": "b360b7667c9698fdada62abd8302f4c98107219e77b157fe905bf455d60c7d46"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/09.png",
+      "source": "proposal-v5-20261106/renders/09.png",
+      "bytes": 563004,
+      "sha256": "ce327a30cdcb05fb4d5097ce61b92351bcdc5014e15aae226fedfcf3e4c72042"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/10.png",
+      "source": "proposal-v5-20261106/renders/10.png",
+      "bytes": 381701,
+      "sha256": "5ac8203917ad45db0bb9d7849d17134fd7dc93a33183cbaa1987dd740b536d7e"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/11.png",
+      "source": "proposal-v5-20261106/renders/11.png",
+      "bytes": 668476,
+      "sha256": "dfc249d1deaab01788f09ede8f8089323a867a77b553d258ef8c22028ef3d6f8"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/12.png",
+      "source": "proposal-v5-20261106/renders/12.png",
+      "bytes": 681077,
+      "sha256": "2140b93c6b7174a2aa16e5e83b77477738c9bb5633b9f986468b22303647f977"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/13.png",
+      "source": "proposal-v5-20261106/renders/13.png",
+      "bytes": 50900,
+      "sha256": "6dcb993a7ef31b803e033d8f44b393b1d0efd0ff942bc10de62d744268906eb0"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/14.png",
+      "source": "proposal-v5-20261106/renders/14.png",
+      "bytes": 161152,
+      "sha256": "28c7a58cd4c52cee4b3f24043260e6e34533975a5ad361dce666c7c33ee43c98"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/15.png",
+      "source": "proposal-v5-20261106/renders/15.png",
+      "bytes": 164376,
+      "sha256": "223f3eae110c96755d47ba2e9220136b837365742b6f5d96602876d61bc6acc5"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/16.png",
+      "source": "proposal-v5-20261106/renders/16.png",
+      "bytes": 48291,
+      "sha256": "9690f664953ef7aa9fce0c55c1c2a523f6caf53ff46f956e1c475960d4bcb1cf"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/17.png",
+      "source": "proposal-v5-20261106/renders/17.png",
+      "bytes": 73077,
+      "sha256": "a64bdb9bac27a57d9e4a2784ad6344415803c08d984103af309c3aa3ca8ce2a2"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/18.png",
+      "source": "proposal-v5-20261106/renders/18.png",
+      "bytes": 45460,
+      "sha256": "a946d5b6e98ff8208cabef695970b43b2ca8abd0555d13fb130ea60050012295"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/19.png",
+      "source": "proposal-v5-20261106/renders/19.png",
+      "bytes": 51973,
+      "sha256": "59812bb1f52315133e3a4ed5ef4809bd43dffdeede551f0e0795a3eb6816e759"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/20.png",
+      "source": "proposal-v5-20261106/renders/20.png",
+      "bytes": 49457,
+      "sha256": "f77df355a55d0112d36b29c0f615bb9c734a944ad3417469ad2fb4bfb8257509"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/21.png",
+      "source": "proposal-v5-20261106/renders/21.png",
+      "bytes": 53701,
+      "sha256": "f850beee0528c8194d9a2d5a35cdbad0e7ccce2b1a51aef52827467655633a1e"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/22.png",
+      "source": "proposal-v5-20261106/renders/22.png",
+      "bytes": 47430,
+      "sha256": "2734ea547d2779e5be0e4bb5beceb69f981525065a02d7e0b25a51c3c07ebede"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/proposal-v5/renders/23.png",
+      "source": "proposal-v5-20261106/renders/23.png",
+      "bytes": 193475,
+      "sha256": "f6795a1335e074d6a1ef903eff3e22aec742e499440d13df1f29ee0aba541b52"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/01-32228df4-1a19-427c-8f0f-de3aeba7f930.png",
+      "source": "codex-clipboard-32228df4-1a19-427c-8f0f-de3aeba7f930.png",
+      "bytes": 2699808,
+      "sha256": "602468c166ca29bd1d98fa13e7b0962994abca8540eae94f69b99c4ff70b8e0b"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/02-c6d9c8d9-11ba-4065-83c8-709680878295.png",
+      "source": "codex-clipboard-c6d9c8d9-11ba-4065-83c8-709680878295.png",
+      "bytes": 2467148,
+      "sha256": "2abb3a83ad5a5403d4af624690be196e49195ab2cf9725b15a6400e2f0267275"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/03-17f6ab7d-089a-4703-8996-c619595f2aa2.png",
+      "source": "codex-clipboard-17f6ab7d-089a-4703-8996-c619595f2aa2.png",
+      "bytes": 2790807,
+      "sha256": "89b819ee68313b44e5b844f44e2e680bdd7e1646200358b57e397fec0534c959"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/04-724f9c3b-52a2-44ab-a7c4-78f734cd412b.png",
+      "source": "codex-clipboard-724f9c3b-52a2-44ab-a7c4-78f734cd412b.png",
+      "bytes": 2572656,
+      "sha256": "e3ceee4fefc1277b5e91bc2cafb9d7939a5e3ca8eacb84281d52c5fbabc19343"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/05-ea320a4d-7b16-400a-8e8c-65964d731566.png",
+      "source": "codex-clipboard-ea320a4d-7b16-400a-8e8c-65964d731566.png",
+      "bytes": 2497605,
+      "sha256": "964d8863b669a1b2ac8db04483845a41ffb4732af27c9706b95078b108e0acd7"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/06-616dd9f3-e2c2-46cb-8b45-aac506d02242.png",
+      "source": "codex-clipboard-616dd9f3-e2c2-46cb-8b45-aac506d02242.png",
+      "bytes": 2684679,
+      "sha256": "3b69e734ad29ff19f7175b1bc62610e0e0b811024181f190675e678d7df30f89"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/07-20037fad-9df0-411d-b903-578ed7674e5e.png",
+      "source": "codex-clipboard-20037fad-9df0-411d-b903-578ed7674e5e.png",
+      "bytes": 2681910,
+      "sha256": "fbdd160a0bec1bc6b01bc188edff5c0c5b5fa02e90de4200eab7a4b925f00a79"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/08-9704625e-0477-4464-afbb-a45f5cc6cd50.png",
+      "source": "codex-clipboard-9704625e-0477-4464-afbb-a45f5cc6cd50.png",
+      "bytes": 2694830,
+      "sha256": "e526fa3c572cfc9c94af524edefc97351b81ccc43f81e11ca83a7cad05064973"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/09-37a6317f-12dc-4c1a-a212-f610d6e05c86.png",
+      "source": "codex-clipboard-37a6317f-12dc-4c1a-a212-f610d6e05c86.png",
+      "bytes": 2785365,
+      "sha256": "3fabe5197bbd02e1ab1ec38d1e86455276977403819f41900d76e3b85c737d9e"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/10-3a30e7e6-8cbb-4fe5-849b-f749f033680a.png",
+      "source": "codex-clipboard-3a30e7e6-8cbb-4fe5-849b-f749f033680a.png",
+      "bytes": 2785365,
+      "sha256": "3fabe5197bbd02e1ab1ec38d1e86455276977403819f41900d76e3b85c737d9e"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/11-45eb8804-71be-4f2f-9d7a-ec7c90ab89b3.png",
+      "source": "codex-clipboard-45eb8804-71be-4f2f-9d7a-ec7c90ab89b3.png",
+      "bytes": 2755950,
+      "sha256": "cba6e98f0c3eb0ff0dc861982802d1b2d06133a77e39791464a1e76a94692b32"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/12-6ad90026-1ad0-4603-a6e3-29237dfbc340.png",
+      "source": "codex-clipboard-6ad90026-1ad0-4603-a6e3-29237dfbc340.png",
+      "bytes": 2808202,
+      "sha256": "9a755eea42d5a1b51779edd8eae9d555dcbbceb1dd74f20814866bb9a2cdd579"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/13-13622c4a-783f-4004-9380-359c180e91be.png",
+      "source": "codex-clipboard-13622c4a-783f-4004-9380-359c180e91be.png",
+      "bytes": 2696429,
+      "sha256": "f8f5e8ac54d196766b1e5e4831f4fef9111c840267696d4ebad2c7bb5ff28bd7"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/14-ee39f3a1-5ff4-4bdd-b37e-779879a83074.png",
+      "source": "codex-clipboard-ee39f3a1-5ff4-4bdd-b37e-779879a83074.png",
+      "bytes": 13269,
+      "sha256": "059139a11371bd85ceee5222a3a77ecc09f774be527e7f8f0a6fab0cf6a43c18"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/15-4a6b36f9-ea6c-48e8-9d7c-5fbdd4b905d7.png",
+      "source": "codex-clipboard-4a6b36f9-ea6c-48e8-9d7c-5fbdd4b905d7.png",
+      "bytes": 243310,
+      "sha256": "7ba8fc762375b47cf2a40937a00f2b8737a99c945d844331a80dd20447251387"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/16-463b3e2b-d565-4642-b1be-38d1fae47a26.png",
+      "source": "codex-clipboard-463b3e2b-d565-4642-b1be-38d1fae47a26.png",
+      "bytes": 18372,
+      "sha256": "8ec958517884c05de309b1fac350697a3e79e4c596e030b695ced8ba136284b3"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/17-ef79c37e-c599-4de8-a41d-b0f75d9196db.png",
+      "source": "codex-clipboard-ef79c37e-c599-4de8-a41d-b0f75d9196db.png",
+      "bytes": 452410,
+      "sha256": "e057354395f086b9fcb1173b9f916b37158b5bb355ba4742f4c2c9bf1e9384d7"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/18-e9528c2b-2fad-4e0e-8306-142f9136a3ed.png",
+      "source": "codex-clipboard-e9528c2b-2fad-4e0e-8306-142f9136a3ed.png",
+      "bytes": 2681910,
+      "sha256": "fbdd160a0bec1bc6b01bc188edff5c0c5b5fa02e90de4200eab7a4b925f00a79"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/19-1270847f-632a-44de-a76e-e48fd378bf89.png",
+      "source": "codex-clipboard-1270847f-632a-44de-a76e-e48fd378bf89.png",
+      "bytes": 2684679,
+      "sha256": "3b69e734ad29ff19f7175b1bc62610e0e0b811024181f190675e678d7df30f89"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/20-7493d006-fa28-4d7c-9343-18f4dba50a0c.png",
+      "source": "codex-clipboard-7493d006-fa28-4d7c-9343-18f4dba50a0c.png",
+      "bytes": 2694830,
+      "sha256": "e526fa3c572cfc9c94af524edefc97351b81ccc43f81e11ca83a7cad05064973"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/21-35e41e43-afce-47aa-9531-1251cb78e3e6.png",
+      "source": "codex-clipboard-35e41e43-afce-47aa-9531-1251cb78e3e6.png",
+      "bytes": 2785365,
+      "sha256": "3fabe5197bbd02e1ab1ec38d1e86455276977403819f41900d76e3b85c737d9e"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/ui-reference/22-a2a89bd9-d952-4ede-8dad-66ce9f3b8b26.png",
+      "source": "codex-clipboard-a2a89bd9-d952-4ede-8dad-66ce9f3b8b26.png",
+      "bytes": 2808202,
+      "sha256": "9a755eea42d5a1b51779edd8eae9d555dcbbceb1dd74f20814866bb9a2cdd579"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/historical-copies/택시 시뮬레이션 - 복사본.mmst",
+      "source": "main checkout docs/content-design/택시 시뮬레이션 - 복사본.mmst",
+      "bytes": 589815,
+      "sha256": "7adb4ea95aea69facc052678ef9b36bbb0ace8e71fb6b7ca1c30d7fa8446bd36"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/historical-copies/택시 시뮬레이션-목차 - 복사본.md",
+      "source": "main checkout docs/content-design/택시 시뮬레이션-목차 - 복사본.md",
+      "bytes": 25753,
+      "sha256": "8a82868e05ce2a3f6959c34f6e3f425b9ebd7e64237cfe788b7f5ec399d71192"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/historical-copies/2026-10-26-status-review.md",
+      "source": "unpublished historical review",
+      "bytes": 2935,
+      "sha256": "760c67d9459cddbca72eaeb77cf6acb1b654597982925b27f1230f30331311e4"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/historical-content-tuning-workspace.zip",
+      "source": "content-tuning workspace deltas; base e25fd5d3faf6dc09fd1aba7c8648a96abf891bed",
+      "bytes": 144217,
+      "sha256": "6044a35659768be10ce3dcf88158560d779ee06b2e2aa4c76e895f8178ac1307"
+    },
+    {
+      "path": "docs/handoff/2026-11-06/historical-steering-workspace.zip",
+      "source": "steering workspace deltas; base 5baced5881d75bf2761638f795b31297487399f2",
+      "bytes": 18517,
+      "sha256": "313eaae2b7631892bda0432e26ac35a61a1a6c79a16b9df29778b464ed8d40f2"
+    }
+  ],
+  "missingAttachments": []
+}

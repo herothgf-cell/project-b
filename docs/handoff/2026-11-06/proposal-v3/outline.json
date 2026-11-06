@@ -1,0 +1,4345 @@
+{
+  "recordCount": 228,
+  "records": [
+    {
+      "kind": "slide",
+      "id": "sl/8hiate",
+      "slideIndex": 0,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "오늘도 택시",
+      "textShapes": 5,
+      "backgroundColor": "rgba(20,45,70,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/lkv2x83e",
+      "slideIndex": 0,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "오늘도 택시",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#FFFFFF",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/yhkjmtk3",
+      "slideIndex": 0,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "01",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#BDD0DD",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/zitkvyl8",
+      "slideIndex": 0,
+      "position": {
+        "left": 64,
+        "top": 160,
+        "width": 540,
+        "height": 170
+      },
+      "text": "한국의 동네를 달리는\n택시 생활 시뮬레이션",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 42,
+        "typeface": "Malgun Gothic",
+        "color": "#FFFFFF",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/cf21kj2x",
+      "slideIndex": 0,
+      "position": {
+        "left": 64,
+        "top": 430,
+        "width": 540,
+        "height": 100
+      },
+      "text": "PROJECT-B  |  게임 개발 착수 제안\n회사 내부 검토용 3차안 · 2026.11.06",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 24,
+        "typeface": "Malgun Gothic",
+        "color": "#D1E2ED",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/qdkji9kr",
+      "slideIndex": 0,
+      "position": {
+        "left": 660,
+        "top": 580,
+        "width": 555,
+        "height": 35
+      },
+      "text": "아트 방향 참고 · 현재 구현 화면 아님",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#D1E2ED",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/i11zct",
+      "slideIndex": 1,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "프로젝트 개요",
+      "textShapes": 3,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/c7ql4rqh",
+      "slideIndex": 1,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "프로젝트 개요",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/bmh4vm9w",
+      "slideIndex": 1,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "02",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/al83218b",
+      "slideIndex": 1,
+      "position": {
+        "left": 64,
+        "top": 150,
+        "width": 1140,
+        "height": 105
+      },
+      "text": "실직 후 시작한 택시 영업으로 생활을 다시 꾸리고,\n내가 고른 차와 돌아가고 싶은 집을 마련하는 시뮬레이션.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 36,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "table",
+      "id": "tb/4fqdkfyd",
+      "slideIndex": 1,
+      "position": {
+        "left": 64,
+        "top": 295,
+        "width": 1152,
+        "height": 280
+      },
+      "name": "",
+      "rows": 5,
+      "cols": 2,
+      "preview": "항목 | 개발 제안"
+    },
+    {
+      "kind": "slide",
+      "id": "sl/rzp1c9",
+      "slideIndex": 2,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "제안 참여 인원 및 기여 역할",
+      "textShapes": 3,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/7up4fqpo",
+      "slideIndex": 2,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "제안 참여 인원 및 기여 역할",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/8vy58v6t",
+      "slideIndex": 2,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "03",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/uxgna5oz",
+      "slideIndex": 2,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "실제 제안 참여 인원과 향후 필요 개발 인력 6명은 별개. 총 참여 인원도 회사 제출 전 확인 필요",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "table",
+      "id": "tb/8j65gryh",
+      "slideIndex": 2,
+      "position": {
+        "left": 64,
+        "top": 155,
+        "width": 1152,
+        "height": 360
+      },
+      "name": "",
+      "rows": 5,
+      "cols": 3,
+      "preview": "참여 구분 | 이름 / 인원 | 제안 단계 기여 확인 항목"
+    },
+    {
+      "kind": "slide",
+      "id": "sl/utb7py",
+      "slideIndex": 3,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "핵심 재미",
+      "textShapes": 8,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/p8je50rm",
+      "slideIndex": 3,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "핵심 재미",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/25sval8b",
+      "slideIndex": 3,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "04",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/361w3q9w",
+      "slideIndex": 3,
+      "position": {
+        "left": 64,
+        "top": 158,
+        "width": 325,
+        "height": 70
+      },
+      "text": "운전 판단의 성취",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/cbadgvqd",
+      "slideIndex": 3,
+      "position": {
+        "left": 410,
+        "top": 158,
+        "width": 800,
+        "height": 112
+      },
+      "text": "신호·보행자·정체를 읽고 안전한 경로를 선택한다.\n동네에 익숙해지면서 내 방식의 영업을 찾는다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/dc3e90ry",
+      "slideIndex": 3,
+      "position": {
+        "left": 64,
+        "top": 295,
+        "width": 325,
+        "height": 70
+      },
+      "text": "승객마다 다른 운행",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/q9sve587",
+      "slideIndex": 3,
+      "position": {
+        "left": 410,
+        "top": 295,
+        "width": 800,
+        "height": 112
+      },
+      "text": "차멀미, 정시 도착, 경유 등 요청에 대응한다.\n짧은 만남 속 선택이 실제 주행과 하차 결과로 이어진다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ba1w7q9s",
+      "slideIndex": 3,
+      "position": {
+        "left": 64,
+        "top": 432,
+        "width": 325,
+        "height": 70
+      },
+      "text": "내 선택이 남는 생활",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/sfqd4bqt",
+      "slideIndex": 3,
+      "position": {
+        "left": 410,
+        "top": 432,
+        "width": 800,
+        "height": 112
+      },
+      "text": "번 돈을 남겨두거나 원하는 물건과 차, 집에 쓴다.\n직접 고른 공간과 운전석을 다음 날에도 사용한다. [제안]",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/znhbv6",
+      "slideIndex": 4,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "핵심 셀링 포인트",
+      "textShapes": 9,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/wjehczyl",
+      "slideIndex": 4,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "핵심 셀링 포인트",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/vil0juhg",
+      "slideIndex": 4,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "05",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/uhczapgv",
+      "slideIndex": 4,
+      "position": {
+        "left": 64,
+        "top": 158,
+        "width": 325,
+        "height": 70
+      },
+      "text": "한국 동네의 일상성",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/9g3ihkza",
+      "slideIndex": 4,
+      "position": {
+        "left": 410,
+        "top": 158,
+        "width": 800,
+        "height": 112
+      },
+      "text": "Taxi Life 대비, 바르셀로나 관광 도시 경험 대신\n은계 기반 도로·한글 표지·생활시설에 집중하는 방향.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/8fuh8fyp",
+      "slideIndex": 4,
+      "position": {
+        "left": 64,
+        "top": 295,
+        "width": 325,
+        "height": 70
+      },
+      "text": "안전 운전과 승객 응대",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/nel0fuh4",
+      "slideIndex": 4,
+      "position": {
+        "left": 410,
+        "top": 295,
+        "width": 800,
+        "height": 112
+      },
+      "text": "Crazy Taxi 대비, 과격한 시간 경쟁보다\n안전한 운송과 약속 이행을 재미의 중심에 둔다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/mtcz6pgj",
+      "slideIndex": 4,
+      "position": {
+        "left": 64,
+        "top": 432,
+        "width": 325,
+        "height": 70
+      },
+      "text": "짧은 영업의 생활 전략",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ls3idkzy",
+      "slideIndex": 4,
+      "position": {
+        "left": 410,
+        "top": 432,
+        "width": 800,
+        "height": 112
+      },
+      "text": "Euro Truck Simulator 2 대비, 장거리 화물 운송보다\n동네 안의 짧은 운송·식사·휴식·청결 판단에 집중한다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/0rah4fyt",
+      "slideIndex": 4,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "차별화 방향에 대한 제안이며, 경쟁 우위의 이용자 검증은 8주 단계에서 수행",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/0aj9t6",
+      "slideIndex": 5,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "완성될 게임: 나만의 택시 생활",
+      "textShapes": 9,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/a1sneh4b",
+      "slideIndex": 5,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "완성될 게임: 나만의 택시 생활",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/xojm9wnm",
+      "slideIndex": 5,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "06",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/w3a5grm1",
+      "slideIndex": 5,
+      "position": {
+        "left": 64,
+        "top": 158,
+        "width": 325,
+        "height": 70
+      },
+      "text": "동네에서 일하기",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/jq14b6ls",
+      "slideIndex": 5,
+      "position": {
+        "left": 410,
+        "top": 158,
+        "width": 800,
+        "height": 112
+      },
+      "text": "호출 위치·공차·승객 요청을 읽으며 하루를 운영한다.\n영업 숙련은 더 편하게 일할 수 있는 판단으로 쌓인다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ipsni147",
+      "slideIndex": 5,
+      "position": {
+        "left": 64,
+        "top": 295,
+        "width": 325,
+        "height": 70
+      },
+      "text": "돌아온 공간 바꾸기",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/5sjmdw3y",
+      "slideIndex": 5,
+      "position": {
+        "left": 410,
+        "top": 295,
+        "width": 800,
+        "height": 112
+      },
+      "text": "정산 후 작은 방에서 물건을 미리 보고 구매하거나 저축한다.\n내가 고른 조명과 러그가 다음 귀가에도 남는다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/kra5krmd",
+      "slideIndex": 5,
+      "position": {
+        "left": 64,
+        "top": 432,
+        "width": 325,
+        "height": 70
+      },
+      "text": "차와 집 직접 고르기",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/zuh4z25o",
+      "slideIndex": 5,
+      "position": {
+        "left": 410,
+        "top": 432,
+        "width": 800,
+        "height": 112
+      },
+      "text": "원하는 택시로 교체하거나 작은 아파트로 이사한다.\n순서는 자유이며 한 가지 큰 목표만 이뤄도 성취로 남긴다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/yto36x43",
+      "slideIndex": 5,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "현재 운송·관리 기반에 생활 성장을 추가하는 제안. 상품 구매·차량 교체·주거는 아직 미구현",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/sr4wn9",
+      "slideIndex": 6,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "코어 루프",
+      "textShapes": 6,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/d036tsbu",
+      "slideIndex": 6,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "코어 루프",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/qdc7yxc3",
+      "slideIndex": 6,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "07",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/belor2to",
+      "slideIndex": 6,
+      "position": {
+        "left": 64,
+        "top": 165,
+        "width": 1152,
+        "height": 75
+      },
+      "text": "호출 선택  →  승차  →  운전·응대  →  하차·운임",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 37,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/4bu5wnux",
+      "slideIndex": 6,
+      "position": {
+        "left": 64,
+        "top": 285,
+        "width": 1152,
+        "height": 75
+      },
+      "text": "다음 운송 / 시설 관리  →  마감·정산  →  다음 날",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 37,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/pc36psbi",
+      "slideIndex": 6,
+      "position": {
+        "left": 64,
+        "top": 420,
+        "width": 1152,
+        "height": 110
+      },
+      "text": "생활 확장: 정산 후 선택적으로 내 공간 방문\n물건 미리보기·구매 또는 저축 → 달라진 공간 사용",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 31,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/29snudc7",
+      "slideIndex": 6,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "생활 화면은 선택 사항. 영업 순수익과 개인 지출을 분리하고, 방 방문·구매를 다음 날의 필수 조건으로 두지 않음",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/r3r7lk",
+      "slideIndex": 7,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "플레이 예시: 오늘 하루의 선택",
+      "textShapes": 3,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/h0r69wz2",
+      "slideIndex": 7,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "플레이 예시: 오늘 하루의 선택",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ud0ne10b",
+      "slideIndex": 7,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "08",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/432pkbid",
+      "slideIndex": 7,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "목표 금액·필수 구매·출석 과제 없이 자신의 선택을 이어가는 경험",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "table",
+      "id": "tb/y5gruh83",
+      "slideIndex": 7,
+      "position": {
+        "left": 64,
+        "top": 155,
+        "width": 1152,
+        "height": 420
+      },
+      "name": "",
+      "rows": 6,
+      "cols": 3,
+      "preview": "상황 | 내 선택 | 다음 플레이에 생기는 변화"
+    },
+    {
+      "kind": "slide",
+      "id": "sl/ckge4u",
+      "slideIndex": 8,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "조작과 플레이 시점",
+      "textShapes": 9,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/x0bu1o7m",
+      "slideIndex": 8,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "조작과 플레이 시점",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/axkbq9ov",
+      "slideIndex": 8,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "09",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/bytczepg",
+      "slideIndex": 8,
+      "position": {
+        "left": 64,
+        "top": 158,
+        "width": 325,
+        "height": 70
+      },
+      "text": "직접 운전",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/knmdwj6x",
+      "slideIndex": 8,
+      "position": {
+        "left": 410,
+        "top": 158,
+        "width": 800,
+        "height": 112
+      },
+      "text": "W/S 또는 ↑/↓: 전진·후진 입력, A/D 또는 ←/→: 조향\nSpace: 제동 · Q/E: 방향지시등 · C: 1/3인칭 전환",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/lovu5o7i",
+      "slideIndex": 8,
+      "position": {
+        "left": 64,
+        "top": 295,
+        "width": 325,
+        "height": 70
+      },
+      "text": "보조와 상호작용",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/y1kbu9o7",
+      "slideIndex": 8,
+      "position": {
+        "left": 410,
+        "top": 295,
+        "width": 800,
+        "height": 112
+      },
+      "text": "H: 조향 보조 · F: 승차·경유·하차\n보조 중에도 가감속·정지·양보는 플레이어가 수행.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/jmdc3eps",
+      "slideIndex": 8,
+      "position": {
+        "left": 64,
+        "top": 432,
+        "width": 325,
+        "height": 70
+      },
+      "text": "지도와 기록",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/8rmd0369",
+      "slideIndex": 8,
+      "position": {
+        "left": 410,
+        "top": 432,
+        "width": 800,
+        "height": 112
+      },
+      "text": "M: 전체지도·호출 · F7: 정차 시설 메뉴 · F8: 상세 기록\n키보드/패드 입력 구현. 실물 패드 검증은 별도 필요.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/tsvu987u",
+      "slideIndex": 8,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "첨부 이미지의 터치 페달은 아트 참고 요소이며, 모바일 개발은 이번 착수 범위에 포함하지 않음",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/dh3tgm",
+      "slideIndex": 9,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "주요 시스템: 운송과 교통",
+      "textShapes": 8,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/f6ls3i9k",
+      "slideIndex": 9,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "주요 시스템: 운송과 교통",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/07u9w3q5",
+      "slideIndex": 9,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "10",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/1sna587q",
+      "slideIndex": 9,
+      "position": {
+        "left": 64,
+        "top": 158,
+        "width": 325,
+        "height": 70
+      },
+      "text": "호출·수요·공차",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/q1crqt83",
+      "slideIndex": 9,
+      "position": {
+        "left": 410,
+        "top": 158,
+        "width": 800,
+        "height": 112
+      },
+      "text": "현재 제공되는 호출 정보와 승차 위치를 보고 수락.\n지역 상대 수요와 공차/탑승 성과로 영업 위치를 판단.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/r2lszy9o",
+      "slideIndex": 9,
+      "position": {
+        "left": 64,
+        "top": 295,
+        "width": 325,
+        "height": 70
+      },
+      "text": "요청과 만족도",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/s3u9s3qt",
+      "slideIndex": 9,
+      "position": {
+        "left": 410,
+        "top": 295,
+        "width": 800,
+        "height": 112
+      },
+      "text": "요청 콘텐츠 17종, 운송당 0~2건 무작위 배정.\n주행 결과와 응대 이행을 반영해 실제 운임을 정산.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/d43a18re",
+      "slideIndex": 9,
+      "position": {
+        "left": 64,
+        "top": 432,
+        "width": 325,
+        "height": 70
+      },
+      "text": "도로와 상황",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/axwb2x87",
+      "slideIndex": 9,
+      "position": {
+        "left": 410,
+        "top": 432,
+        "width": 800,
+        "height": 112
+      },
+      "text": "신호·보행자·회전 조건, 정체·우회, 승하차 공간 점유.\n상황 안내에 따라 대기하거나 안전 대체 승하차를 진행한다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/vj4lub",
+      "slideIndex": 10,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "주요 시스템: 생활과 하루 운영",
+      "textShapes": 9,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/32p8zu1c",
+      "slideIndex": 10,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "주요 시스템: 생활과 하루 운영",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/43yp8f2x",
+      "slideIndex": 10,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "11",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/p47q1kji",
+      "slideIndex": 10,
+      "position": {
+        "left": 64,
+        "top": 158,
+        "width": 325,
+        "height": 70
+      },
+      "text": "일하는 동안의 관리",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/q507apkn",
+      "slideIndex": 10,
+      "position": {
+        "left": 410,
+        "top": 158,
+        "width": 800,
+        "height": 112
+      },
+      "text": "연료·청결·포만감·피로를 보며 주유·세차·식사·수면.\n사고와 차량 손상은 처리비·수리·견인으로 연결된다. [현재]",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/rq983u18",
+      "slideIndex": 10,
+      "position": {
+        "left": 64,
+        "top": 295,
+        "width": 325,
+        "height": 70
+      },
+      "text": "일을 마친 뒤의 생활",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/cripcz2t",
+      "slideIndex": 10,
+      "position": {
+        "left": 410,
+        "top": 295,
+        "width": 800,
+        "height": 112
+      },
+      "text": "정산에서 다음 날 또는 내 공간을 선택한다.\n방에서 물건을 살펴보고 구매·배치·보관한다. [제안]",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/dsrq54je",
+      "slideIndex": 10,
+      "position": {
+        "left": 64,
+        "top": 432,
+        "width": 325,
+        "height": 70
+      },
+      "text": "내 생활의 기록",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/et07e9kz",
+      "slideIndex": 10,
+      "position": {
+        "left": 410,
+        "top": 432,
+        "width": 800,
+        "height": 112
+      },
+      "text": "영업 수입·비용·순수익과 개인 소비·남은 현금을 구분한다.\n물건을 샀어도 이미 끝난 영업 성적은 바뀌지 않는다. [제안]",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/zu987e1k",
+      "slideIndex": 10,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "생활 화면에서는 영업시간·허기·피로가 진행하지 않으며, 추가 회복 보너스도 제공하지 않음",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/6a8i7b",
+      "slideIndex": 11,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "차량 성장: 내가 고른 운전석",
+      "textShapes": 9,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/fi1sn69o",
+      "slideIndex": 11,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "차량 성장: 내가 고른 운전석",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/0ja9gba9",
+      "slideIndex": 11,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "12",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/14japgru",
+      "slideIndex": 11,
+      "position": {
+        "left": 64,
+        "top": 158,
+        "width": 325,
+        "height": 70
+      },
+      "text": "원하는 차 비교",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/qd8ra1s7",
+      "slideIndex": 11,
+      "position": {
+        "left": 410,
+        "top": 158,
+        "width": 800,
+        "height": 112
+      },
+      "text": "첫 장기 범위는 큰 차량 교체 1회, 외관·실내 취향 후보 2개.\n실제 운전 시점의 미리보기로 매일 타고 싶은 차를 고른다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/re18j69s",
+      "slideIndex": 11,
+      "position": {
+        "left": 64,
+        "top": 295,
+        "width": 325,
+        "height": 70
+      },
+      "text": "견적 확인과 교체",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/sfa9cbad",
+      "slideIndex": 11,
+      "position": {
+        "left": 410,
+        "top": 295,
+        "width": 800,
+        "height": 112
+      },
+      "text": "새 차 가격·현재 차 매도액·최종 지출·남는 현금을 확인한다.\n하루 사이에 교체하고 다음 영업에서 직접 운전한다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/dgjalgri",
+      "slideIndex": 11,
+      "position": {
+        "left": 64,
+        "top": 432,
+        "width": 325,
+        "height": 70
+      },
+      "text": "소유의 만족",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/a9crmlsb",
+      "slideIndex": 11,
+      "position": {
+        "left": 410,
+        "top": 432,
+        "width": 800,
+        "height": 112
+      },
+      "text": "기본 주행·요금 체계를 공유하고 외형과 실내로 차이를 준다.\n호환 장식은 옮기고 나머지는 보관한다. 영업 차량은 한 대다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/balsvq9w",
+      "slideIndex": 11,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "장기 미구현 제안. 차종 성능 등급·추가 수익 배율·할부·다중 차고는 첫 범위에 포함하지 않음",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/aeqntq",
+      "slideIndex": 12,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "첫 3일 생활 체험: 작은 방과 첫 구매",
+      "textShapes": 3,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/wjulgz61",
+      "slideIndex": 12,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "첫 3일 생활 체험: 작은 방과 첫 구매",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/vil4nu5g",
+      "slideIndex": 12,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "13",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/5onmt4ni",
+      "slideIndex": 12,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "미구현 검증안. 구매 없이 끝내도 정상이며 차량 교체·이사는 3일 안에 압축하지 않음",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "table",
+      "id": "tb/nq9cvql0",
+      "slideIndex": 12,
+      "position": {
+        "left": 64,
+        "top": 155,
+        "width": 1152,
+        "height": 380
+      },
+      "name": "",
+      "rows": 5,
+      "cols": 3,
+      "preview": "시점 | 플레이 경험 | 선택이 남기는 것"
+    },
+    {
+      "kind": "slide",
+      "id": "sl/v359mx",
+      "slideIndex": 13,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "도시의 변화: 같은 길에서도 다른 판단",
+      "textShapes": 9,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/yxov6hcz",
+      "slideIndex": 13,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "도시의 변화: 같은 길에서도 다른 판단",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/l0fuhwbq",
+      "slideIndex": 13,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "14",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/0z6d8ru5",
+      "slideIndex": 13,
+      "position": {
+        "left": 64,
+        "top": 158,
+        "width": 325,
+        "height": 70
+      },
+      "text": "현재의 운송 상황",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/buxcb2to",
+      "slideIndex": 13,
+      "position": {
+        "left": 410,
+        "top": 158,
+        "width": 800,
+        "height": 112
+      },
+      "text": "시간대 수요·신호·정체·승객 요청에 맞춰 운행한다.\n사고 처리와 공업사 복귀까지 하루 운영에 포함한다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/qt4v2xc3",
+      "slideIndex": 13,
+      "position": {
+        "left": 64,
+        "top": 295,
+        "width": 325,
+        "height": 70
+      },
+      "text": "장기 영업의 변주",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/dwfudcbe",
+      "slideIndex": 13,
+      "position": {
+        "left": 410,
+        "top": 295,
+        "width": 800,
+        "height": 112
+      },
+      "text": "날짜별 수요 구성을 달리하는 확장안을 검토한다.\n공차 이동·현 위치 대기·시설 동선을 매일 비교하게 한다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/cv6d47u9",
+      "slideIndex": 13,
+      "position": {
+        "left": 64,
+        "top": 432,
+        "width": 325,
+        "height": 70
+      },
+      "text": "개인 목표와의 연결",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/36dc72tc",
+      "slideIndex": 13,
+      "position": {
+        "left": 410,
+        "top": 432,
+        "width": 800,
+        "height": 112
+      },
+      "text": "차 또는 집을 목표로 정해도 운임·요청을 특별 보정하지 않는다.\n운전의 재미를 유지하면서 원하는 것에 쓸 돈을 남긴다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/254vyxcr",
+      "slideIndex": 13,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "날짜별 수요 변주는 신규 제안. 날씨·보험·차내 장치 조작은 별도 검토이며 생활 검증 범위 밖",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/dhlrg1",
+      "slideIndex": 14,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "경제와 생활: 번 돈을 어디에 쓸 것인가",
+      "textShapes": 9,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/0bq14f61",
+      "slideIndex": 14,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "경제와 생활: 번 돈을 어디에 쓸 것인가",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/zahkvu5g",
+      "slideIndex": 14,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "15",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/e98j2pov",
+      "slideIndex": 14,
+      "position": {
+        "left": 64,
+        "top": 158,
+        "width": 325,
+        "height": 70
+      },
+      "text": "영업과 개인 소비",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/90j214ni",
+      "slideIndex": 14,
+      "position": {
+        "left": 410,
+        "top": 158,
+        "width": 800,
+        "height": 112
+      },
+      "text": "주유·식사·세차·수리 등의 영업 비용을 정산한다.\n그 후 물건을 사면 현금은 줄지만 영업 순수익은 유지한다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/oza18z6x",
+      "slideIndex": 14,
+      "position": {
+        "left": 64,
+        "top": 295,
+        "width": 325,
+        "height": 70
+      },
+      "text": "지금 구매 또는 저축",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ny1kzu5c",
+      "slideIndex": 14,
+      "position": {
+        "left": 410,
+        "top": 295,
+        "width": 800,
+        "height": 112
+      },
+      "text": "물건을 미리 보고 살지, 차량·이사를 위해 남길지 선택한다.\n개인 구매는 정산 후만 가능하며 미납은 먼저 상환한다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/mdsj6por",
+      "slideIndex": 14,
+      "position": {
+        "left": 64,
+        "top": 432,
+        "width": 325,
+        "height": 70
+      },
+      "text": "부담 없는 개인 생활",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/x43254ne",
+      "slideIndex": 14,
+      "position": {
+        "left": 410,
+        "top": 432,
+        "width": 800,
+        "height": 112
+      },
+      "text": "집 방문·꾸미기·구매는 건너뛸 수 있고 물건은 계속 판매한다.\n청소·요리·매일 월세·퇴거 위협·회복 보너스는 넣지 않는다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/w3a1cz6t",
+      "slideIndex": 14,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "가격은 실제 영업 수익 관찰 후 조정. 개인 소비에 자동 대출·할부를 붙이지 않음",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/hnnavv",
+      "slideIndex": 15,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "콘텐츠 라인업과 플레이 방식",
+      "textShapes": 3,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/v65g3m5w",
+      "slideIndex": 15,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "콘텐츠 라인업과 플레이 방식",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/w7exwrm1",
+      "slideIndex": 15,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "16",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/i9wfyh47",
+      "slideIndex": 15,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "생활·주거 성장안은 싱글 대상. PVP에 개인 소비와 방 상태를 적용하지 않음",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "table",
+      "id": "tb/wfu54ni1",
+      "slideIndex": 15,
+      "position": {
+        "left": 64,
+        "top": 155,
+        "width": 1152,
+        "height": 420
+      },
+      "name": "",
+      "rows": 6,
+      "cols": 3,
+      "preview": "콘텐츠 | 플레이 경험 | 현재 / 개발 제안"
+    },
+    {
+      "kind": "slide",
+      "id": "sl/xmcn53",
+      "slideIndex": 16,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "세계관과 시놉시스: 다시 시작하는 기사",
+      "textShapes": 8,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/gny1w76t",
+      "slideIndex": 16,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "세계관과 시놉시스: 다시 시작하는 기사",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/vmpk3mpo",
+      "slideIndex": 16,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "17",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ulwjuho3",
+      "slideIndex": 16,
+      "position": {
+        "left": 64,
+        "top": 145,
+        "width": 1152,
+        "height": 110
+      },
+      "text": "남의 목적지로 운전하는 일을 통해,\n자신의 생활을 다시 선택하게 되는 사람의 이야기.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 35,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/5s729wnq",
+      "slideIndex": 16,
+      "position": {
+        "left": 64,
+        "top": 300,
+        "width": 300,
+        "height": 45
+      },
+      "text": "출발",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/4ryl0r65",
+      "slideIndex": 16,
+      "position": {
+        "left": 410,
+        "top": 300,
+        "width": 800,
+        "height": 110
+      },
+      "text": "경영 악화로 실직한 주인공이 준비를 거쳐 택시 일을 시작한다.\n정상 운행 가능한 중고 택시와 작은 임대 방에서 첫날을 맞는다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/3qpk7mpk",
+      "slideIndex": 16,
+      "position": {
+        "left": 64,
+        "top": 455,
+        "width": 300,
+        "height": 45
+      },
+      "text": "변화와 성취",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ipg3yhoz",
+      "slideIndex": 16,
+      "position": {
+        "left": 410,
+        "top": 455,
+        "width": 800,
+        "height": 110
+      },
+      "text": "짧게 만나는 손님들을 모시며 내 방식의 영업을 익힌다.\n원하는 차나 집을 고르고, 처음 산 물건을 새 공간으로 가져간다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/dgr2dwnm",
+      "slideIndex": 16,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "현대 한국의 은계 기반 생활권. 주인공 나이·성별·가족은 고정하지 않으며 반복 인물·관계 성장 축은 제외",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/uyt4os",
+      "slideIndex": 17,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "아트 콘셉트: 밝고 친근한 한국 도시",
+      "textShapes": 5,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/6947upkn",
+      "slideIndex": 17,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "아트 콘셉트: 밝고 친근한 한국 도시",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/twfq5k3e",
+      "slideIndex": 17,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "18",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/j6d8zalw",
+      "slideIndex": 17,
+      "position": {
+        "left": 840,
+        "top": 160,
+        "width": 360,
+        "height": 48
+      },
+      "text": "채택할 방향",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 31,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/y547q5kr",
+      "slideIndex": 17,
+      "position": {
+        "left": 840,
+        "top": 236,
+        "width": 360,
+        "height": 235
+      },
+      "text": "스타일라이즈드 3D 카툰\n둥근 차량·표정이 읽히는 인물\n따뜻한 햇빛·녹색 가로수\n한글 상점·생활감 있는 거리\n고대비 내비·짧은 결과 피드백",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 26,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/l8vq1k32",
+      "slideIndex": 17,
+      "position": {
+        "left": 840,
+        "top": 505,
+        "width": 360,
+        "height": 105
+      },
+      "text": "개발 목표 이미지\n현재 빌드와 시각 품질 차이 존재\n서울 랜드마크 도입은 미확정",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 22,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/k6qptj",
+      "slideIndex": 18,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "생활 거점 시안: 운행 사이의 기사 생활",
+      "textShapes": 3,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/cby5gr2d",
+      "slideIndex": 18,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "생활 거점 시안: 운행 사이의 기사 생활",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/rap47m1s",
+      "slideIndex": 18,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "19",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/1g76dwju",
+      "slideIndex": 18,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "개발 목표 시안 · 기사 식당에서 식사 → 주유·세차 → 그늘진 거점에서 휴식. 실제 지도 배치와는 다름",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/b9dtia",
+      "slideIndex": 19,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "차량 아트 시안: 내 취향으로 고르는 한 대",
+      "textShapes": 3,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/3q1w3yls",
+      "slideIndex": 19,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "차량 아트 시안: 내 취향으로 고르는 한 대",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/4raxc32d",
+      "slideIndex": 19,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "20",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/qtsfedkj",
+      "slideIndex": 19,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "외형 후보 참고 시안 · 초기 차량 교체는 취향 비교 중심. 이미지의 다중 차고·차종별 성능은 개발 범위가 아님",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/riuyar",
+      "slideIndex": 20,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "UI/UX 방향",
+      "textShapes": 8,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/2p0ny18b",
+      "slideIndex": 20,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "UI/UX 방향",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/psbm9wr2",
+      "slideIndex": 20,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "21",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/or250rqh",
+      "slideIndex": 20,
+      "position": {
+        "left": 64,
+        "top": 158,
+        "width": 325,
+        "height": 70
+      },
+      "text": "운전 중에는 도로 우선",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/fm943m90",
+      "slideIndex": 20,
+      "position": {
+        "left": 410,
+        "top": 158,
+        "width": 800,
+        "height": 112
+      },
+      "text": "속도·다음 회전·주요 위험만 빠르게 읽는다.\n상태 게이지는 구분하고 요청 응답은 안전 정차에서 제공.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/e103uh8f",
+      "slideIndex": 20,
+      "position": {
+        "left": 64,
+        "top": 295,
+        "width": 325,
+        "height": 70
+      },
+      "text": "탐색과 결정을 분리",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/1orm5wrq",
+      "slideIndex": 20,
+      "position": {
+        "left": 410,
+        "top": 295,
+        "width": 800,
+        "height": 112
+      },
+      "text": "지도에서 호출·경로·시설을 비교한 뒤 명시적으로 확정.\n주행 화면에 긴 계산식과 여러 팝업을 동시에 노출하지 않는다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/0ni5wrql",
+      "slideIndex": 20,
+      "position": {
+        "left": 64,
+        "top": 432,
+        "width": 325,
+        "height": 70
+      },
+      "text": "결과는 이유까지 표시",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/zit4fq94",
+      "slideIndex": 20,
+      "position": {
+        "left": 410,
+        "top": 432,
+        "width": 800,
+        "height": 112
+      },
+      "text": "하차 직후 예상 운임·조정·실수령을 짧게 보여 준다.\n왜 감점·변동했는지는 상세 기록에서 확인한다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/3t90h3",
+      "slideIndex": 21,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "경쟁작과 벤치마킹",
+      "textShapes": 3,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/vidoza1w",
+      "slideIndex": 21,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "경쟁작과 벤치마킹",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/gjm58fih",
+      "slideIndex": 21,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "22",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/6tkn250f",
+      "slideIndex": 21,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "공식 제품 설명 기반 기획적 비교. 경쟁작 기능 부재·시장점유율·판매량을 주장하는 자료가 아님",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "table",
+      "id": "tb/gzyxobqh",
+      "slideIndex": 21,
+      "position": {
+        "left": 64,
+        "top": 155,
+        "width": 1152,
+        "height": 380
+      },
+      "name": "",
+      "rows": 4,
+      "cols": 3,
+      "preview": "레퍼런스 | 강점 / 한계 (기획 관점) | 벤치마킹 포인트"
+    },
+    {
+      "kind": "slide",
+      "id": "sl/vu82n2",
+      "slideIndex": 22,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "시장 진입 가설과 사업 모델",
+      "textShapes": 9,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/vy1kjq9k",
+      "slideIndex": 22,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "시장 진입 가설과 사업 모델",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/gza1cvq5",
+      "slideIndex": 22,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "23",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/hkj2lgrq",
+      "slideIndex": 22,
+      "position": {
+        "left": 64,
+        "top": 158,
+        "width": 325,
+        "height": 70
+      },
+      "text": "고객 가설",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/6t8j6183",
+      "slideIndex": 22,
+      "position": {
+        "left": 410,
+        "top": 158,
+        "width": 800,
+        "height": 112
+      },
+      "text": "PC 운전·생활 시뮬레이션 이용자 중, 한국 동네의 일상과\n짧은 영업 단위에 흥미를 느끼는 층을 우선 검증한다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/7uhkf69o",
+      "slideIndex": 22,
+      "position": {
+        "left": 64,
+        "top": 295,
+        "width": 325,
+        "height": 70
+      },
+      "text": "수익 모델 제안",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/8vq18bq9",
+      "slideIndex": 22,
+      "position": {
+        "left": 410,
+        "top": 295,
+        "width": 800,
+        "height": 112
+      },
+      "text": "PC 유료 패키지 우선. 데모 반응과 제작비를 보고 가격 결정.\n지역·시나리오 확장은 본편 반복 재미 확인 후 검토한다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/twz2hgre",
+      "slideIndex": 22,
+      "position": {
+        "left": 64,
+        "top": 432,
+        "width": 325,
+        "height": 70
+      },
+      "text": "유입 전략 제안",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/qpc3i587",
+      "slideIndex": 22,
+      "position": {
+        "left": 410,
+        "top": 432,
+        "width": 800,
+        "height": 112
+      },
+      "text": "짧은 운행 영상과 체험 데모 → 타겟 플레이테스트 →\n커뮤니티 피드백·위시리스트 전환 측정으로 수요 확인.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/rqlkra9s",
+      "slideIndex": 22,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "시장 규모·판매량·매출 목표는 근거 확보 전 미기재. 매출 전망은 가격·비용·전환 실측 후 산정",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/sohu8r",
+      "slideIndex": 23,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "8주 검증 개발과 착수 판단 기준",
+      "textShapes": 3,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/nqd87ehk",
+      "slideIndex": 23,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "8주 검증 개발과 착수 판단 기준",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ormpgji5",
+      "slideIndex": 23,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "24",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/elk7a903",
+      "slideIndex": 23,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "작은 구매의 동기와 큰 차·집의 매력은 별도 검증. 차량 운전석·주거 미리보기 평가 후 장기 제작 판단",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "table",
+      "id": "tb/876po3ex",
+      "slideIndex": 23,
+      "position": {
+        "left": 64,
+        "top": 155,
+        "width": 1152,
+        "height": 380
+      },
+      "name": "",
+      "rows": 5,
+      "cols": 3,
+      "preview": "검증 질문 | 측정 설계 | 다음 단계 판단안"
+    },
+    {
+      "kind": "slide",
+      "id": "sl/lu265x",
+      "slideIndex": 24,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "기능 우선순위와 확장 경계",
+      "textShapes": 3,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/cjihknyx",
+      "slideIndex": 24,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "기능 우선순위와 확장 경계",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/bi9gbihc",
+      "slideIndex": 24,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "25",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/pwry98z6",
+      "slideIndex": 24,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "차량/집 구매 순서 자유. 날씨·보험·금융·실제 차내 장치 조작은 이번 생활 검증과 분리",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "table",
+      "id": "tb/3q9cr698",
+      "slideIndex": 24,
+      "position": {
+        "left": 64,
+        "top": 155,
+        "width": 1152,
+        "height": 380
+      },
+      "name": "",
+      "rows": 5,
+      "cols": 3,
+      "preview": "단계 | 우선 기능 | 범위·판단 기준"
+    },
+    {
+      "kind": "slide",
+      "id": "sl/a4ql4h",
+      "slideIndex": 25,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "개발 로드맵 — 착수 승인 후 12개월 가정",
+      "textShapes": 3,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/6l0baxg3",
+      "slideIndex": 25,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "개발 로드맵 — 착수 승인 후 12개월 가정",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/tobulczu",
+      "slideIndex": 25,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "26",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/jy9sf2hc",
+      "slideIndex": 25,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "확장 범위는 M2 심의에서 확정하고 일정·인월 재산정. 글로벌 동시 출시는 현지화·지원 조건 확정 후 결정",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "table",
+      "id": "tb/x0zilsr2",
+      "slideIndex": 25,
+      "position": {
+        "left": 64,
+        "top": 155,
+        "width": 1152,
+        "height": 380
+      },
+      "name": "",
+      "rows": 5,
+      "cols": 3,
+      "preview": "단계 | 일정 가정 | 산출물 / 다음 단계 조건"
+    },
+    {
+      "kind": "slide",
+      "id": "sl/15xdnf",
+      "slideIndex": 26,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "개발 조직과 비용 산정 방식",
+      "textShapes": 4,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/czalwvat",
+      "slideIndex": 26,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "개발 조직과 비용 산정 방식",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/by1knq98",
+      "slideIndex": 26,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "27",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/pwz2lgr2",
+      "slideIndex": 26,
+      "position": {
+        "left": 64,
+        "top": 520,
+        "width": 1130,
+        "height": 85
+      },
+      "text": "8주: 핵심 6명 × 2개월 ≈ 12인월\n12개월: 핵심 6명 유지 시 72인월 + 공유·외주 비용",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 28,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ovqlsbax",
+      "slideIndex": 26,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "승인 예산 = 직무별 투입 인월 × 회사 표준 단가 + 외주·장비·유통비 + 회사 기준 예비비",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "table",
+      "id": "tb/7qt8vytk",
+      "slideIndex": 26,
+      "position": {
+        "left": 64,
+        "top": 150,
+        "width": 1152,
+        "height": 340
+      },
+      "name": "",
+      "rows": 5,
+      "cols": 3,
+      "preview": "직무 | 필요 인원안 | 주요 책임"
+    },
+    {
+      "kind": "slide",
+      "id": "sl/eku9pd",
+      "slideIndex": 27,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "주요 리스크와 대응",
+      "textShapes": 2,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/wz2d8nqd",
+      "slideIndex": 27,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "주요 리스크와 대응",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/by9czi9s",
+      "slideIndex": 27,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "28",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "table",
+      "id": "tb/nm9wbu1o",
+      "slideIndex": 27,
+      "position": {
+        "left": 64,
+        "top": 155,
+        "width": 1152,
+        "height": 420
+      },
+      "name": "",
+      "rows": 6,
+      "cols": 3,
+      "preview": "리스크 | 개발 대응 | 판단 시점"
+    },
+    {
+      "kind": "slide",
+      "id": "sl/n6ugz0",
+      "slideIndex": 28,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "프로토타입 화면 예시와 아트 제작 과제",
+      "textShapes": 6,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/wn6tsn2d",
+      "slideIndex": 28,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "프로토타입 화면 예시와 아트 제작 과제",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/vmxszi1s",
+      "slideIndex": 28,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "29",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/5cza5sju",
+      "slideIndex": 28,
+      "position": {
+        "left": 925,
+        "top": 165,
+        "width": 290,
+        "height": 50
+      },
+      "text": "기반 기능",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/4bqtw729",
+      "slideIndex": 28,
+      "position": {
+        "left": 925,
+        "top": 225,
+        "width": 290,
+        "height": 145
+      },
+      "text": "실제 도로 연결\n교통·신호·내비\n영업 HUD",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 25,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/jaxs321o",
+      "slideIndex": 28,
+      "position": {
+        "left": 925,
+        "top": 400,
+        "width": 290,
+        "height": 50
+      },
+      "text": "추가 제작",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/i9obuxkj",
+      "slideIndex": 28,
+      "position": {
+        "left": 925,
+        "top": 460,
+        "width": 290,
+        "height": 145
+      },
+      "text": "환경·차량·인물 아트\n조명·애니메이션\nUI 정리와 최적화",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 25,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/2byndl",
+      "slideIndex": 29,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "프로토타입 구현 범위와 개발 과제",
+      "textShapes": 9,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ful0ba5g",
+      "slideIndex": 29,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "프로토타입 구현 범위와 개발 과제",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/gvuhkf61",
+      "slideIndex": 29,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "30",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/1w3idknm",
+      "slideIndex": 29,
+      "position": {
+        "left": 64,
+        "top": 158,
+        "width": 325,
+        "height": 70
+      },
+      "text": "현재 구현 기반",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/65sze5oz",
+      "slideIndex": 29,
+      "position": {
+        "left": 410,
+        "top": 158,
+        "width": 800,
+        "height": 112
+      },
+      "text": "은계 싱글 3일 영업·승객 요청·시설·피로·사고·수리·저장.\n통합 메뉴에서 자체 도시 PVP와 LAN 경쟁도 제공한다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/76107apk",
+      "slideIndex": 29,
+      "position": {
+        "left": 64,
+        "top": 295,
+        "width": 325,
+        "height": 70
+      },
+      "text": "새로 개발할 생활",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/sruhgf65",
+      "slideIndex": 29,
+      "position": {
+        "left": 410,
+        "top": 295,
+        "width": 800,
+        "height": 112
+      },
+      "text": "작은 방·상품 구매/배치·개인 소비 회계·완료 공간 기록.\n장기 차량 교체·이사는 연속 경력과 소유 저장까지 추가한다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/ts3i90nq",
+      "slideIndex": 29,
+      "position": {
+        "left": 64,
+        "top": 432,
+        "width": 325,
+        "height": 70
+      },
+      "text": "출시 판단 전 확인",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/i1szalo3",
+      "slideIndex": 29,
+      "position": {
+        "left": 410,
+        "top": 432,
+        "width": 800,
+        "height": 112
+      },
+      "text": "자동·물리 검사의 기존 기록과 사람의 재미 평가는 구분한다.\n전체 3일 생활 체감·장기 소유 동기·다른 PC 수용을 확인한다.",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 27,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/j21g3qp8",
+      "slideIndex": 29,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "실행: builds/EungyeTaxi/EungyeTaxi.exe / PrototypeBuild.BuildHybrid / 본 PPT에는 실행 파일 미포함",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/d70ksc",
+      "slideIndex": 30,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "시연 순서와 조작 요약",
+      "textShapes": 6,
+      "backgroundColor": "rgba(249,250,246,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/czytove9",
+      "slideIndex": 30,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "시연 순서와 조작 요약",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/be5cvqxo",
+      "slideIndex": 30,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "31",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/adwbmlw3",
+      "slideIndex": 30,
+      "position": {
+        "left": 64,
+        "top": 165,
+        "width": 1150,
+        "height": 75
+      },
+      "text": "① 시작·호출 비교  →  ② 승차·운행  →  ③ 요청 대응",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 34,
+        "typeface": "Malgun Gothic",
+        "color": "#147CB2",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/l47u10fq",
+      "slideIndex": 30,
+      "position": {
+        "left": 64,
+        "top": 275,
+        "width": 1150,
+        "height": 75
+      },
+      "text": "④ 하차·운임 확인  →  ⑤ 시설 관리  →  ⑥ 마감·회고",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 34,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/k3ytsve5",
+      "slideIndex": 30,
+      "position": {
+        "left": 64,
+        "top": 415,
+        "width": 1150,
+        "height": 150
+      },
+      "text": "WASD / 방향키: 운전     Space: 제동     C: 시점\nM: 지도·호출     F: 승하차     F7: 시설     F8: 기록\nEsc: 일시정지     H: 조향 보조",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 29,
+        "typeface": "Malgun Gothic",
+        "color": "#183247",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/z2pczaxk",
+      "slideIndex": 30,
+      "position": {
+        "left": 64,
+        "top": 620,
+        "width": 1120,
+        "height": 40
+      },
+      "text": "정차 후 상호작용. 별도 Manual 문서에 실행 준비·실수하기 쉬운 조건·전체 조작을 수록",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 18,
+        "typeface": "Malgun Gothic",
+        "color": "#526A7B",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "slide",
+      "id": "sl/x15uzv",
+      "slideIndex": 31,
+      "layout": {
+        "id": "ly/gf2hwrap",
+        "name": "Blank"
+      },
+      "title": "의사결정 요청",
+      "textShapes": 5,
+      "backgroundColor": "rgba(20,45,70,1)"
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/x87exo3y",
+      "slideIndex": 31,
+      "position": {
+        "left": 64,
+        "top": 48,
+        "width": 1152,
+        "height": 76
+      },
+      "text": "의사결정 요청",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 43,
+        "typeface": "Malgun Gothic",
+        "color": "#FFFFFF",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/algv2tkn",
+      "slideIndex": 31,
+      "position": {
+        "left": 1170,
+        "top": 665,
+        "width": 55,
+        "height": 28
+      },
+      "text": "32",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 17,
+        "typeface": "Malgun Gothic",
+        "color": "#BDD0DD",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/vmpwvyl8",
+      "slideIndex": 31,
+      "position": {
+        "left": 64,
+        "top": 165,
+        "width": 1150,
+        "height": 70
+      },
+      "text": "8주 동안 검증할 것",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 38,
+        "typeface": "Malgun Gothic",
+        "color": "#F4BD32",
+        "bold": true,
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/8jed0j2h",
+      "slideIndex": 31,
+      "position": {
+        "left": 64,
+        "top": 265,
+        "width": 1150,
+        "height": 205
+      },
+      "text": "운전이 재미있는가\n내 공간·원하는 차와 집이 다음 영업의 동기가 되는가\n목표 아트를 감당 가능한 공수로 제작할 수 있는가",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 36,
+        "typeface": "Malgun Gothic",
+        "color": "#FFFFFF",
+        "alignment": "left"
+      }
+    },
+    {
+      "kind": "textbox",
+      "id": "sh/9kneto32",
+      "slideIndex": 31,
+      "position": {
+        "left": 64,
+        "top": 540,
+        "width": 1150,
+        "height": 95
+      },
+      "text": "요청: 책임자 지정 · 핵심 인력 6명 배정 · 8주 예산 한도 승인\n결과: 이용자 테스트와 대표 빌드로 본개발 투자 여부 재심의",
+      "geometry": "rect",
+      "lineWidth": 0,
+      "style": {
+        "fontSize": 26,
+        "typeface": "Malgun Gothic",
+        "color": "#D1E2ED",
+        "alignment": "left"
+      }
+    }
+  ],
+  "truncated": false,
+  "metadata": {
+    "target": {
+      "id": "pr/0fa4qf"
+    },
+    "omittedRecords": 0,
+    "abbreviatedRecords": 0,
+    "notices": []
+  }
+}

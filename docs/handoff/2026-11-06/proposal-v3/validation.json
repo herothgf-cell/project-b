@@ -1,0 +1,210 @@
+{
+  "schemaVersion": "presentation-finalization.v1",
+  "finalSha256": "861516f5fcc50ff6ec9270baea28b6ac2188cc0fe0b7153e0e794c7607fe8752",
+  "byteCount": 11593586,
+  "packageIntegrity": {
+    "chart_count": 0,
+    "claim_boundary": "Structural package checks only; no slide text, notes, formulas, chart values, or native PowerPoint execution were inspected.",
+    "finding_count": 0,
+    "findings": [],
+    "notes_parts_skipped": 32,
+    "relationship_part_count": 74,
+    "slide_count": 32,
+    "status": "pass",
+    "exitCode": 0,
+    "findingCount": 0,
+    "warnings": []
+  },
+  "presentationLayout": {
+    "finding_count": 0,
+    "findings": [],
+    "font_policy": {
+      "checked_text_script_count": 609,
+      "native_font_rendering_verified": false,
+      "observed_font_families": [
+        "Malgun Gothic"
+      ],
+      "observed_font_use_counts": {
+        "Malgun Gothic": 609
+      },
+      "passed": true,
+      "performed": true
+    },
+    "slide_count": 32,
+    "slide_size_in": [
+      13.3333,
+      7.5
+    ],
+    "warning_count": 0,
+    "warnings": [],
+    "exitCode": 0,
+    "findingCount": 0,
+    "fontPolicy": {
+      "checked_text_script_count": 609,
+      "native_font_rendering_verified": false,
+      "observed_font_families": [
+        "Malgun Gothic"
+      ],
+      "observed_font_use_counts": {
+        "Malgun Gothic": 609
+      },
+      "passed": true,
+      "performed": true
+    }
+  },
+  "fontSelection": {
+    "basis": "design",
+    "approvedFamilies": [
+      "Malgun Gothic"
+    ],
+    "scriptFonts": {},
+    "referenceSha256": null,
+    "referenceFontsVerifiedInEncodedText": false,
+    "checked_text_script_count": 609,
+    "native_font_rendering_verified": false,
+    "observed_font_families": [
+      "Malgun Gothic"
+    ],
+    "observed_font_use_counts": {
+      "Malgun Gothic": 609
+    },
+    "passed": true,
+    "performed": true
+  },
+  "firstPartyImport": {
+    "performed": true,
+    "passed": true,
+    "slideCount": 32,
+    "sha256": "861516f5fcc50ff6ec9270baea28b6ac2188cc0fe0b7153e0e794c7607fe8752",
+    "runtimeNodeModules": "C:/Users/DRI/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules",
+    "nodeExecutable": "C:\\Users\\DRI\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe"
+  },
+  "nativeTableArithmetic": {
+    "performed": true,
+    "checked_column_count": 0,
+    "checks": [],
+    "claim_boundary": "Displayed-value arithmetic with rounding tolerance; not source-data verification.",
+    "eligible_table_count": 0,
+    "finding_count": 0,
+    "findings": [],
+    "native_table_count": 11,
+    "passed": true,
+    "schema_version": "presentation-native-table-arithmetic.v1",
+    "skipped_tables": [
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 2,
+        "table": 1
+      },
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 3,
+        "table": 1
+      },
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 8,
+        "table": 1
+      },
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 13,
+        "table": 1
+      },
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 16,
+        "table": 1
+      },
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 22,
+        "table": 1
+      },
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 24,
+        "table": 1
+      },
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 25,
+        "table": 1
+      },
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 26,
+        "table": 1
+      },
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 27,
+        "table": 1
+      },
+      {
+        "reason": "no_numeric_amounts",
+        "slide": 28,
+        "table": 1
+      }
+    ],
+    "slide_count": 32,
+    "warning_count": 0,
+    "warnings": []
+  },
+  "nativeChartTitles": {
+    "performed": true,
+    "checks": [],
+    "finding_count": 0,
+    "findings": [],
+    "native_chart_count": 0,
+    "native_powerpoint_verified": false,
+    "passed": true,
+    "presentation_sha256": "861516f5fcc50ff6ec9270baea28b6ac2188cc0fe0b7153e0e794c7607fe8752",
+    "schema_version": "presentation-native-chart-titles.v1",
+    "slide_count": 32,
+    "source_text_emitted": false,
+    "unresolved_linked_title_count": 0
+  },
+  "sourceDerivedPolicyFlags": [
+    "--expected-slide-size-emu",
+    "12192000,6858000",
+    "--validate-bullet-geometry",
+    "--validate-heading-fit",
+    "--require-native-table-slide",
+    "2",
+    "--require-native-table-slide",
+    "3",
+    "--require-native-table-slide",
+    "8",
+    "--require-native-table-slide",
+    "13",
+    "--require-native-table-slide",
+    "16",
+    "--require-native-table-slide",
+    "22",
+    "--require-native-table-slide",
+    "24",
+    "--require-native-table-slide",
+    "25",
+    "--require-native-table-slide",
+    "26",
+    "--require-native-table-slide",
+    "27",
+    "--require-native-table-slide",
+    "28",
+    "--cover-role",
+    "none",
+    "--expected-slide-count",
+    "32",
+    "--approved-font-family",
+    "Malgun Gothic"
+  ],
+  "nativeChartValidation": {
+    "detectedOwnerSlides": [],
+    "detectedChartCount": 0,
+    "targetApplication": null,
+    "sourceChartOwnersExplicitlyDeclared": false,
+    "validatorRan": false,
+    "passed": true
+  }
+}
