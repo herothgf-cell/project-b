@@ -1,24 +1,38 @@
 {
-  "sourceCommit": "39a084b269acc19703cb5f27b70d929ba1d26734",
+  "sourceCommit": "d16c82b4fd65e5c73c914cfac616e724d869af24",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-07",
-  "totalBytes": 132290979.0,
+  "totalBytes": 132298342.0,
   "validation": {
-    "build": "PrototypeBuild.BuildHybrid exit 0",
-    "manualDriving": false,
+    "build": "RainBuild.Build -> PrototypeBuild.BuildHybrid exit0",
+    "rainSettingsAssertions": 2718,
     "nodeTests": 90,
-    "strictInputIssues": 0,
-    "contentAssertions": 781,
-    "report": "docs/work-history/2026-11-07-driving-score-main-push.md",
-    "accidentAssertions": 77
+    "playerAssertions": 31,
+    "drivingSettingsAssertions": 171,
+    "drivingMenuAssertions": 183,
+    "contentAssertions": 32,
+    "menuConditionAssertions": 16,
+    "pvpConditionAssertions": 26,
+    "lanHostAssertions": 43,
+    "lanClientAssertions": 54,
+    "protocol": "native-city-lan-v15",
+    "manualDriving": false,
+    "fullCampaign": false,
+    "remotePcLan": false,
+    "probabilisticSlip": false,
+    "physicalBrake": {
+      "speedKph": 20,
+      "dryMetres": 2.552734,
+      "rainMetres": 2.833984
+    }
   },
   "files": [
     {
       "path": "builds/EungyeTaxi/택시 시뮬레이션_BurstDebugInformation_DoNotShip/Data/Plugins/x86_64/lib_burst_generated.txt",
-      "bytes": 110913,
-      "sha256": "6a166f4ec33d81e6ddac39566c4fe623f38d4b088925783b7573d88b739bdcd7"
+      "bytes": 110703,
+      "sha256": "3dd3b3c4b01763460efae2029cd084b4b1eb834aefb6562eb0cec0de1cb232a8"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/app.info",
@@ -28,17 +42,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "6b68d620e6b7ab4bde533e790164afdd6325cd607361b55dbc46ef7c8ce12cf3"
+      "sha256": "afc0d055488ae6c316cb5b2bd3282709397b3c15fe8008073bf36f7e78392665"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 57484,
-      "sha256": "06dbbf15460af48058d6a08595eb450b4975ef5941611eaeee7296e32c1a505b"
+      "bytes": 57572,
+      "sha256": "780938e5d17cdecff9aeef55b18abd6b82fb2ee0164a716ee7469af8f02a49a5"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 112440,
-      "sha256": "40f066f82d96bea858015e9ab10319e485ed5b8749abd686a4c157b1e0c07dd0"
+      "bytes": 112664,
+      "sha256": "d8441d466cd2236de729a7f9f2c6d7075716962c6dce3db4e9d34f4f13100c64"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -57,8 +71,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2589696,
-      "sha256": "64f63f5c1fc255c838409ffe90f2dca13dbf57701f654a003d1edebba0fa7269"
+      "bytes": 2596864,
+      "sha256": "1c7a6bc029c43a1c622700847452f2c86e220ef2c7cd8bde3e4d1bc0b405564b"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Mono.Security.dll",
@@ -553,12 +567,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Plugins/x86_64/lib_burst_generated.dll",
       "bytes": 394240,
-      "sha256": "2ae05172ef834e038d660bb108fd2ea0df6950d84133add2f0e57f091b2b71ad"
+      "sha256": "60eef1978c6f5901d09e31fd980b1ceac94eae497e833c63f0dc4faaa50e6505"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
       "bytes": 49074038,
-      "sha256": "dbf4bdd3d917d56482010356b0b6a505ce8bc66b9b54716838dd1ed28a15c717"
+      "sha256": "699de7a3d56d688988067f5ce84bcd25760eb9559fe703b79643903a847b0edb"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
@@ -712,8 +726,8 @@
     },
     {
       "path": "builds/EungyeTaxi/ThirdPartyNotices/NotoSansKR-OFL.txt",
-      "bytes": 4387,
-      "sha256": "babcfe66c8a098b2fa279bc724a3a342f8124f77ce18941fbcc1bbb39823cded"
+      "bytes": 4480,
+      "sha256": "7accca2f29220c9ab44e4950799b821f36ebf5bbe6b5fb5342724b32228a8daf"
     },
     {
       "path": "builds/EungyeTaxi/UnityCrashHandler64.exe",
