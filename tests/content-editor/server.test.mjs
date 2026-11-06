@@ -14,6 +14,9 @@ test('loopback API enforces token and origin and saves with conflict detection',
  const headers={'X-Content-Token':app.token,Origin:base,'Content-Type':'application/json'};
  assert.equal((await fetch(base+'/api/bootstrap',{headers})).status,200);
  assert.equal((await fetch(base+'/api/bootstrap',{headers:{...headers,Origin:'http://evil.test'}})).status,403);
+ const model=await fetch(base+'/content-model.js');assert.equal(model.status,200);assert.match(model.headers.get('content-type'),/javascript/);assert.match(await model.text(),/ContentModel/);
+ const page=await (await fetch(base+'/')).text();assert.ok(page.indexOf('src="/content-model.js"')<page.indexOf('src="/app.js"'));
+ assert.equal((await fetch(base+'/profile.mjs')).status,404);
  let r=await fetch(base+'/api/save',{method:'POST',headers,body:JSON.stringify({profile,expectedRevision:0})}); assert.equal(r.status,200);
  r=await fetch(base+'/api/save',{method:'POST',headers,body:JSON.stringify({profile,expectedRevision:0})}); assert.equal(r.status,409);
 });
