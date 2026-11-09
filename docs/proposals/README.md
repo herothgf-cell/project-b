@@ -1,6 +1,12 @@
 # 회사 내부 개발 착수 제안
 
-## 최신 7차 자료 — 2026-11-09
+## 최신 8차 자료 — 2026-11-09
+
+- [제안서 PPTX](project-b-game-proposal-v8.pptx): 26장. USP·재미 연결, 시스템6영역, 싱글/PvP 모드별 설명, 실제 화면 최신화.
+- [반영 검토](proposal-v8-review.md), [별도 Manual](project-b-prototype-manual-v8.md).
+- [이미지 근거](assets/v8/README.md), [생성 프롬프트](assets/v8/prompts.md), [이력](../work-history/2026-11-09-game-proposal-v8.md).
+
+## 이전 7차 자료 — 2026-11-09
 
 - [제안서 PPTX](project-b-game-proposal-v7.pptx): 25장. 사용자 편집 V6를 기준으로 요청 순서 재구성, 공통 제목 장식·표지 시안 갱신.
 - [양식과 페이지 위치](proposal-v7-review.md), [별도 조작 매뉴얼](project-b-prototype-manual-v7.md).
