@@ -38,7 +38,11 @@
 
 정식 저장 및 입력 Strict exit0/issues0. 프로젝트 지도 contentHash `8fb257ed383a25782514bdcf7c203282d63ad3a65c17e5ef73cde147cc522d7b`,21655462바이트/SHA256 `4d47913df4c140e5c324c08d0868a1d0cae8aac6cdf760a08e2bead4af5567a6`. 원본 지도 ZIP은 SHA256 `50a2e4d92ccc42a39927490060d884be46505dd917c6a46bf9fa45883a3d3d51`로 불변이며 원본 재수입 입력2개는 선택 입력 부재다. OSM/교통 override/원본 corridor 설정은 불변이다.
 
-최종 BuildHybrid·실제 화면·좌회전·LAN 검증 완료, manifest/게시 진행 중. 사용자 게임이 없는 상태를 확인한 뒤 현재 저장/백업/복구 파일18개+로컬 사용자 프로필1개를 새로 byte backup했다(`protected-current.json`,19파일). 프로필 변경은 이번 범위에 없다. 최종 실행본 테스트 후19파일 SHA256 불변을 재확인했다.
+최종 BuildHybrid·실제 화면·좌회전·LAN 검증 완료. 사용자 게임이 없는 상태를 확인한 뒤 현재 저장/백업/복구 파일18개+로컬 사용자 프로필1개를 새로 byte backup했다(`protected-current.json`,19파일). 프로필 변경은 이번 범위에 없다. 최종 실행본 테스트 후19파일 SHA256 불변을 재확인했다.
+
+## 배포 검증
+
+실제 `git log -1 --oneline -- <이력>` 확인 소스는 `548fe8bf539dfcc125c4783c6184fa83d383f051`이다. `distribution/EungyeTaxi-build-manifest.json`을 이 소스와 실제 최종 검증 보고서로 재생성했다. 통합 및 PVP VerifyOnly 모두 exit0: 출하143파일127378253바이트, 유효한 선택 사용자프로필 포함144파일127511035바이트. 사용자 프로필은 배포/커밋에서 제외하며 실제 SHA256 불변을 확인했다. 원격 main 병합·일반 push 영수증은 후속 기록한다.
 
 ## 변경 파일·재현
 

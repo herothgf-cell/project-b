@@ -4,7 +4,8 @@
 - [x] 로드뷰2026-05 녹색 편도1·노란색 편도3 확인. 녹색14노면/중복6개 정리·원본 주행망/24정류장/552방향 경로/6유턴/3시설 보존.
 - [x] 실제 주차장 안내의 서비스 목표 분할 오류 재현·수정, Player34검사 RED18실패→GREEN0.
 - [x] 내비4구/게임 배치/현장 확인 캡션 제거, 원래 램프/초 유지.
-- [ ] 최종 BuildHybrid·화면·배포/저장 보존 검증·기존 main 병합 게시. [근거/검사 이력](work-history/2026-11-09-lane-movement-roadview-followup.md).
+- [x] 최종 BuildHybrid·차로렌더31/좌회전34/전체UI169·LAN54/67·보호19파일 불변·출하143파일 manifest 검증.
+- [ ] 기존 main 작업을 보존해 병합·일반 push. [근거/검사 이력](work-history/2026-11-09-lane-movement-roadview-followup.md).
 
 ## 2026-11-09 거리뷰 신호·승객 응대
 
