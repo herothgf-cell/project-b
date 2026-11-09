@@ -42,3 +42,10 @@
 사람 장기 수동 운전·전체3일·다른PC LAN·현장 실측·상가 서향 전면 별도 확인은 미검증이다. 로드뷰 촬영일은2024-03/2026-05이며 확인일2026-11-09와 구분한다. 재수입용 기존 지도ZIP의 원본 JSON2개는 이번 시설 메타데이터 수정 대상이 아니며 Git 프로젝트 지도를 우선한다.
 
 재현: Unity2022.3.62f2 `-batchmode -nographics -quit -projectPath unity/EungyeTaxi -executeMethod RoadviewRevisionBuild.Build`; 순수 검사는 `pwsh -File tools/test_passenger_reactions.ps1`, `node --test tests/content-editor/*.test.mjs`. 실제 Player는 위 CLI/결과와 `-brightUiCheck -roadviewSignalReview` 또는 `-brightUiCheck -fullUiReview -brightUiOutput <출력폴더>`로 재현한다.
+
+## 출하 파일 확인
+
+- 소스·지도·기획/이력 최초 커밋은 `dfdea9687129268e1149ac9b5a4981a4be9f9aa5`이며 커밋 직후 `git log -1 --oneline -- 본 이력`으로 확인했다.
+- 이40자 소스로 통합 manifest를 다시 생성했다. 출하143파일/127,323,898바이트, 로컬 선택 프로필을 포함한 전수 검사는144파일/127,456,680바이트다. 통합 및 PVP 위임 VerifyOnly 모두 exit0. 빌드 재생성으로 이전 level0.resS는 없어졌고 현재 전체 폴더를 기준으로 배포한다.
+- 최종 보호17파일 SHA256 전부 테스트 기준과 동일하다. 캠페인 등16개는 사용자 종료 직후 백업과도 동일하며, 사용자 프로필만 승인된6대상 중5값/revision/contentHash의 의도된 변경이다. 기본 게임은 강제 종료하지 않았다.
+- 원격 main4245255가 현재 작업의 조상임을 fetch 후 확인했다. 기존 main91709c1과 동시 제안서09a195f를 보존하며 일반 fast-forward/main push 영수증은 실제 명령 후 추가한다.

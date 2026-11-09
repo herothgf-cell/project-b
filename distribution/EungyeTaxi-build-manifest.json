@@ -1,39 +1,63 @@
 {
-  "sourceCommit": "35b85a9455774370f4876521cc4a6b3575e0e183",
+  "sourceCommit": "dfdea9687129268e1149ac9b5a4981a4be9f9aa5",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-09",
-  "totalBytes": 127416554.0,
+  "totalBytes": 127323898.0,
   "validation": {
-    "build": "PrototypeBuild.BuildHybrid exit0",
-    "editorGate": "FullUIBuild.Build exit0",
-    "uiPlayerAssertions": 161,
-    "requestRestorePlayerAssertions": 79,
-    "offerPolicyAssertions": 593,
-    "passengerPresentationAssertions": 16,
-    "trafficDemandAssertions": 38,
-    "offerPlayerAssertions": 968,
-    "offerGenerations": 96,
-    "offerPhaseCoverage": [
-      15,
-      14,
-      15,
-      16
+    "build": "PrototypeBuild.BuildHybrid exit 0",
+    "releaseMethod": "RoadviewRevisionBuild.Release",
+    "candidateBroadChecks": "RoadviewRevisionBuild.Candidate exit 0",
+    "signalDemandAssertions": 69,
+    "nativeGlyphCases": 49,
+    "directedPassengerRoutes": 552,
+    "passengerStopCount": 24,
+    "playerRoadviewAssertions": 48,
+    "playerUiAssertions": 169,
+    "playerActivitiesAssertions": 66,
+    "playerReloadAssertions": 6,
+    "nodeTests": 100,
+    "reactionModelAssertions": 158,
+    "noticeBoundsResolutions": [
+      1280,
+      1600,
+      1920
     ],
-    "offerPreviousBoardRepeats": 0,
-    "lanHostAssertions": 54,
-    "lanClientAssertions": 67,
-    "lanReconnect": true,
-    "lanScope": "two loopback player processes",
-    "protectedFiles": 17,
-    "protectedChanged": 0,
-    "strictInputIssues": 0,
+    "capturedUiResolutions": [
+      1280,
+      1920
+    ],
+    "nativeLan": {
+      "hostAssertions": 54,
+      "clientAssertions": 67,
+      "reconnect": true,
+      "loopbackOnly": true
+    },
+    "userData": {
+      "backupFiles": 17,
+      "unchangedSaveFiles": 16,
+      "authorizedProfileTargetIds": 6,
+      "profileValuesChanged": 5,
+      "otherProfileValuesPreserved": true,
+      "postChangeProtectedFilesUnchanged": 17
+    },
+    "projectMap": {
+      "baselinePreserved": true,
+      "allLanesPreserved": true,
+      "scenePreserved": true,
+      "authoredProgramsPreserved": true,
+      "addedMetadataFacilities": 6,
+      "changedMidblockHeads": 2,
+      "strictInputIssues": 0
+    },
+    "fieldReviewComplete": false,
+    "requestedRoadviewApproachesReviewed": 4,
+    "fieldWorkStoppedByUser": false,
     "manualDriving": false,
-    "fullCampaign": false,
+    "fullThreeDayCampaign": false,
     "remotePcLan": false,
-    "knownUnrelatedPrototypeFailure": "ManualHandlingTests ordinary S braking actual8.823529; source unchanged from07ea5b8",
-    "evidence": "docs/work-history/2026-11-09-passenger-cards-call-variety.md"
+    "knownPreExistingPrototypeFailure": "ManualHandlingTests ordinary S brake expected-value mismatch; physics sources unchanged by this task"
   },
   "files": [
     {
@@ -49,17 +73,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "d4eef003145f50afb03cf4951239882b95eee184e94ed9cd1910840d21d9797f"
+      "sha256": "6b1604b8c67b7ac58232e9bd4d77358962c77e4bffe70d16290b4d7cd7612347"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 60900,
-      "sha256": "06c11fc304a5a3fb3da537a5001ea9f201a5d49f5f5a8dd82548cfd4c065e917"
+      "bytes": 60940,
+      "sha256": "9f7c95647d2ee359567dea632a0d0ecab67935069a9024ccbcec9290f69a9f05"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 114688,
-      "sha256": "11049ad46ee383f00487965fb58824a921beafaba497cd6284d398918c3fdfb0"
+      "bytes": 114840,
+      "sha256": "41c921c50e6dd9d08e7bc9d8eaf3d6fc2da577c250ef2b6e876551fba3404297"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -68,18 +92,13 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
-      "bytes": 1396,
-      "sha256": "9935d40fc8e6c76aa56fb12fb18309d90b02e7fc74a7295c7f6c14175ec41c07"
-    },
-    {
-      "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0.resS",
-      "bytes": 131232,
-      "sha256": "e406dbca582a01e45cca79a3abe7b310919d6155d9ce9664c832a18ca630abd8"
+      "bytes": 1140,
+      "sha256": "4864ce37f46df59613d5ca355305222a004313d5bc65432fe32ee5b5673c0bb6"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2672128,
-      "sha256": "f7ab6e3c52550d7d1006117418e66c3bf226cd170115d9f637ce8a227e650ce2"
+      "bytes": 2705408,
+      "sha256": "0cc65a73430de6749fe2932d7484d5df8e1ae5c435d08c1d29c6479db36fe754"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
@@ -588,8 +607,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 43386904,
-      "sha256": "e720d0b2d3a0dcdb0a31da4efe4350ee6bcc579ba3bc29c39bb09ecddee23497"
+      "bytes": 43392264,
+      "sha256": "fe2a1ad45db1fae86d1ae1bbe8c862ce100419b5710b6f1b0ff3903259958ad7"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
@@ -729,7 +748,7 @@
     {
       "path": "builds/EungyeTaxi/project-map-build.json",
       "bytes": 177,
-      "sha256": "311961f36776acc5c890d569fe0f870127d68cd412afa7a57f80226b7419d3b9"
+      "sha256": "8fc1949652c9972b9b16f9a1dd9567340dc7628bb5dc02b7f1d80dac7fc007a3"
     },
     {
       "path": "builds/EungyeTaxi/ThirdPartyNotices/mchrbn-unity-traffic-simulation-MIT.txt",
@@ -759,8 +778,8 @@
   ],
   "projectMap": {
     "path": "config/maps/project/eungye.project.json",
-    "contentHash": "35d1bc43d92c996d431acd0464bfc7a175b926cd1e35adb995e99dd7ab91cbac",
-    "bytes": 21617420,
-    "sha256": "49da6e7728458308921bbefa68daf00508ca2afeb91de8d9684acf515506193a"
+    "contentHash": "b36ac96bb5aa8d9ade794916b00c607fb0aed6cdcb3a2d537e46a69dc7a4a6b7",
+    "bytes": 21622773,
+    "sha256": "5bee977ca763578698e27f3e4458563ce62cedd5b90336434713495ea1cce180"
   }
 }

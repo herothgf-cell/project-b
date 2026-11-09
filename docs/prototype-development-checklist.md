@@ -3,7 +3,8 @@
 - [x] 접근별 로드뷰 검토·좌회전 수요/3·4구 외형/원본 차선 표시·NPC 반응/주행 요청 구현.
 - [x] 수요69·원본 표시 fixture·24정차지552방향 경로·반응158·Node100 통과.
 - [x] 최종 BuildHybrid·실제 신호48/전체UI169/요청66·복원6/LAN54·67·Strict issues0·보호17불변 확인.
-- [ ] 출하 manifest 검증·기존 main 보존 게시. [검증 이력](work-history/2026-11-09-roadview-signals-passenger-feedback.md).
+- [x] 출하143파일·통합/PVP manifest 검증 통과.
+- [ ] 기존 main 보존 게시. [검증 이력](work-history/2026-11-09-roadview-signals-passenger-feedback.md).
 
 ## 2026-11-09 승객 카드·호출 후속
 
