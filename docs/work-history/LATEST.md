@@ -1,6 +1,6 @@
 ## 2026-11-09 거리뷰 신호·차선·승객 응대
 
-[구현·근거·최종 검사](2026-11-09-roadview-signals-passenger-feedback.md) · [접근별 기획20](../content-design/20-roadview-signals-passenger-feedback.md). 좌회전 수요69·접근별4/4/3/3·NGII 좌1/직2 표시/중복선 교정, 점수 알림 내비 아래 배치·NPC 반응/바깥 따옴표 제거·주행 요청/가중치 상향. 기본 BuildHybrid exit0·실제 신호48/전체UI169/요청·복원66+6/LAN54+67·552방향 경로·Node100·모델158 통과. 사용자 종료 후16저장 불변·프로필6대상5실제값만 변경, 변경 후17보호파일 불변. 은계/A2·LANv16·기존 지도 baseline/graph/scene/신호 프로그램/ZIP 보존, 프로젝트 시설 메타데이터만 갱신·필수입력 Strict issues0. 출하143파일/127,323,898바이트·통합/PVP manifest 전수 검증0·소스dfdea96. main 게시 영수증은 연결 이력에 추가한다. 다음은 사람 장기/전체3일/다른PC·상가 서향 전면 별도 확인. 기존 캠페인 설정/계약은 보존하며 새 가중치는 새 캠페인/새PVP방 기준.
+[구현·근거·최종 검사](2026-11-09-roadview-signals-passenger-feedback.md) · [접근별 기획20](../content-design/20-roadview-signals-passenger-feedback.md). 좌회전 수요69·접근별4/4/3/3·NGII 좌1/직2 표시/중복선 교정, 점수 알림 내비 아래 배치·NPC 반응/바깥 따옴표 제거·주행 요청/가중치 상향. 기본 BuildHybrid exit0·실제 신호48/전체UI169/요청·복원66+6/LAN54+67·552방향 경로·Node100·모델158 통과. 사용자 종료 후16저장 불변·프로필6대상5실제값만 변경, 변경 후17보호파일 불변. 은계/A2·LANv16·기존 지도 baseline/graph/scene/신호 프로그램/ZIP 보존, 프로젝트 시설 메타데이터만 갱신·필수입력 Strict issues0. 출하143파일/127,323,898바이트·통합/PVP manifest 전수 검증0·소스dfdea96. 기존 main/제안서 작업 보존·출하906a89a 일반 push/원격동일해시 확인, 영수증은 연결 이력 참조. 다음은 사람 장기/전체3일/다른PC·상가 서향 전면 별도 확인. 기존 캠페인 설정/계약은 보존하며 새 가중치는 새 캠페인/새PVP방 기준.
 
 ## 2026-11-09 제안서 V8·시스템과 최신 화면
 

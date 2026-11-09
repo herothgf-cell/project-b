@@ -4,7 +4,7 @@
 - [x] 수요69·원본 표시 fixture·24정차지552방향 경로·반응158·Node100 통과.
 - [x] 최종 BuildHybrid·실제 신호48/전체UI169/요청66·복원6/LAN54·67·Strict issues0·보호17불변 확인.
 - [x] 출하143파일·통합/PVP manifest 검증 통과.
-- [ ] 기존 main 보존 게시. [검증 이력](work-history/2026-11-09-roadview-signals-passenger-feedback.md).
+- [x] 기존 main/제안서 작업을 보존해 출하906a89a 일반 push·원격 동일 해시 확인. [검증 이력](work-history/2026-11-09-roadview-signals-passenger-feedback.md).
 
 ## 2026-11-09 승객 카드·호출 후속
 

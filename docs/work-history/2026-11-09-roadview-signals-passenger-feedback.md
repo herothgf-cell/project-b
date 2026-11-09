@@ -49,3 +49,11 @@
 - 이40자 소스로 통합 manifest를 다시 생성했다. 출하143파일/127,323,898바이트, 로컬 선택 프로필을 포함한 전수 검사는144파일/127,456,680바이트다. 통합 및 PVP 위임 VerifyOnly 모두 exit0. 빌드 재생성으로 이전 level0.resS는 없어졌고 현재 전체 폴더를 기준으로 배포한다.
 - 최종 보호17파일 SHA256 전부 테스트 기준과 동일하다. 캠페인 등16개는 사용자 종료 직후 백업과도 동일하며, 사용자 프로필만 승인된6대상 중5값/revision/contentHash의 의도된 변경이다. 기본 게임은 강제 종료하지 않았다.
 - 원격 main4245255가 현재 작업의 조상임을 fetch 후 확인했다. 기존 main91709c1과 동시 제안서09a195f를 보존하며 일반 fast-forward/main push 영수증은 실제 명령 후 추가한다.
+
+## 실제 main 게시 영수증
+
+- 출하 커밋 `906a89aab9ab21990c12c134b007b187dc27fa22`, 검증 소스 `dfdea9687129268e1149ac9b5a4981a4be9f9aa5`. 각 단계에서 이력 파일의 실제 git log를 확인했다.
+- 기존 로컬 main91709c1에서906a89a로 fast-forward하여 제안서 V8 커밋09a195f도 보존했다. 원격4245255 →906a89a 일반 push 성공, `git ls-remote origin refs/heads/main`이 동일40자 해시임을 확인했다. force/reset 없음.
+- 열린 V8 PPTX 때문에 첫 switch에서 unlink가 거절되어 main에서 untracked로 남았고 병합이 중단됐다. 실제 파일 blob6216fbea507b5adbfd0272f6e090b73dcbe5f6b9이 병합 대상과 동일함을 확인하고 그 파일만 추적 상태에 반영한 뒤 fast-forward했다. 열린 파일의 내용은 변경·이동·삭제하지 않았다.
+- 사용자 편집 V6 PPTX·열린 V8 잠금 파일 및 기존 미추적 자료를 보존했다. V6 변경과 로컬 사용자 프로필은 소스/출하 커밋에 포함하지 않았다.
+- main 전환 후 통합 manifest 전수 검증 exit0, 필수 입력 Strict exit0/issues0, 보호17파일 불변을 재확인했다. 이 영수증 후속은 게임·지도·배포 manifest의 sourceCommit을 변경하지 않는다. 최종 원격 head는 문서 영수증 커밋일 수 있다.
