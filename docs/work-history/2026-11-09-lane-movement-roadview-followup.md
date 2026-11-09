@@ -42,7 +42,9 @@
 
 ## 배포 검증
 
-실제 `git log -1 --oneline -- <이력>` 확인 소스는 `548fe8bf539dfcc125c4783c6184fa83d383f051`이다. `distribution/EungyeTaxi-build-manifest.json`을 이 소스와 실제 최종 검증 보고서로 재생성했다. 통합 및 PVP VerifyOnly 모두 exit0: 출하143파일127378253바이트, 유효한 선택 사용자프로필 포함144파일127511035바이트. 사용자 프로필은 배포/커밋에서 제외하며 실제 SHA256 불변을 확인했다. 원격 main 병합·일반 push 영수증은 후속 기록한다.
+실제 `git log -1 --oneline -- <이력>` 확인 소스는 `548fe8bf539dfcc125c4783c6184fa83d383f051`이다. `distribution/EungyeTaxi-build-manifest.json`을 이 소스와 실제 최종 검증 보고서로 재생성했다. 통합 및 PVP VerifyOnly 모두 exit0: 출하143파일127378253바이트, 유효한 선택 사용자프로필 포함144파일127511035바이트. 사용자 프로필은 배포/커밋에서 제외하며 실제 SHA256 불변을 확인했다.
+
+출하/이력 커밋은 실제 `git log`로 확인한 `a978b3bd411496e60b1a17f3057475b0e4d09fa4`. 최신 원격 main이 시작점45b9a30 그대로임을 fetch/조상 검사 후 확인하고 main으로 fast-forward 병합했다. `git push origin main` exit0, `git ls-remote origin refs/heads/main`이 로컬과 동일한 a978b3b40자리 해시임을 확인했다. 강제 push·원격 이력 재작성은 없다. 병합 후 Strict exit0, 배포 VerifyOnly exit0, 보호19파일 불변을 다시 확인했다. 사용자 V6·mmst 변경2개와 기존 미추적 파일은 별도로 남겨 보존했다. 이 영수증 문서 커밋 자체의 해시는 추측해 쓰지 않으며 `git log -1 --oneline -- docs/work-history/2026-11-09-lane-movement-roadview-followup.md`로 확인한다.
 
 ## 변경 파일·재현
 

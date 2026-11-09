@@ -5,7 +5,7 @@
 - [x] 실제 주차장 안내의 서비스 목표 분할 오류 재현·수정, Player34검사 RED18실패→GREEN0.
 - [x] 내비4구/게임 배치/현장 확인 캡션 제거, 원래 램프/초 유지.
 - [x] 최종 BuildHybrid·차로렌더31/좌회전34/전체UI169·LAN54/67·보호19파일 불변·출하143파일 manifest 검증.
-- [ ] 기존 main 작업을 보존해 병합·일반 push. [근거/검사 이력](work-history/2026-11-09-lane-movement-roadview-followup.md).
+- [x] 기존 main 작업 보존·fast-forward 병합·출하a978b3b 일반 push·원격 동일 해시 확인. [근거/검사 이력](work-history/2026-11-09-lane-movement-roadview-followup.md).
 
 ## 2026-11-09 거리뷰 신호·승객 응대
 

@@ -1,6 +1,6 @@
 ## 2026-11-09 차로별 표시·주차장 안내 좌회전 후속
 
-[요구·로드뷰·실제 검사·배포 인계](2026-11-09-lane-movement-roadview-followup.md) · [기획21](../content-design/21-lane-movement-roadview-followup.md). J866서향/J5057양방향32조각·12역할, 녹색 편도1/노란색 편도3 확인·겹친 노면/경계 교정, 내비 외형 캡션 제거. 실제 M지도 주차장 목표 분할 오류 RED34중18실패→GREEN34중0실패. 정식 지도8fb257ed·원본/주행망/신호/기존시설 보존·24정류장552경로/6유턴/3생활시설·Strict issues0. 최종 BuildHybrid exit0·차로렌더31/좌회전34/전체UI169/LAN54·67 통과·보호19파일 불변. 소스548fe8b·출하143파일127378253바이트·통합/PVP manifest 전수 검증0, main 게시 대기. 은계/A2 통합exe·LANv16·원본 지도ZIP 유지. 다음은 사람 장기/전체3일/다른PC 수용이며 정확한 게시 영수증은 연결 이력 참조.
+[요구·로드뷰·실제 검사·배포 인계](2026-11-09-lane-movement-roadview-followup.md) · [기획21](../content-design/21-lane-movement-roadview-followup.md). J866서향/J5057양방향32조각·12역할, 녹색 편도1/노란색 편도3 확인·겹친 노면/경계 교정, 내비 외형 캡션 제거. 실제 M지도 주차장 목표 분할 오류 RED34중18실패→GREEN34중0실패. 정식 지도8fb257ed·원본/주행망/신호/기존시설 보존·24정류장552경로/6유턴/3생활시설·Strict issues0. 최종 BuildHybrid exit0·차로렌더31/좌회전34/전체UI169/LAN54·67 통과·보호19파일 불변. 소스548fe8b·출하143파일127378253바이트·통합/PVP manifest 전수 검증0. 출하a978b3b를 기존 main 보존 fast-forward·일반 push하고 원격 동일 해시 확인, 영수증 문서는 연결 이력 참조. 은계/A2 통합exe·LANv16·원본 지도ZIP 유지. 다음은 사람 장기/전체3일/다른PC 수용이다.
 
 ## 2026-11-09 거리뷰 신호·차선·승객 응대
 
