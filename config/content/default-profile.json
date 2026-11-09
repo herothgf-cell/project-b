@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "5a60a43de2193274f47683e83f1ad77db1d3915d7e2ea81b197258ac7c0d3adb",
+  "contentHash": "8c19316be185f733e7457eb1473b5ae093bcd34f8edd897a9a55e488ea591f56",
   "values": [
     {
       "id": "request.Quiet.enabled",
@@ -170,7 +170,7 @@
     },
     {
       "id": "request.SafeStop.weight",
-      "value": "2"
+      "value": "3"
     },
     {
       "id": "request.SafeStop.success",
@@ -374,7 +374,7 @@
     },
     {
       "id": "request.DestinationChange.weight",
-      "value": "1"
+      "value": "2"
     },
     {
       "id": "request.DestinationChange.success",
@@ -402,7 +402,7 @@
     },
     {
       "id": "request.ViaStop.weight",
-      "value": "1"
+      "value": "2"
     },
     {
       "id": "request.ViaStop.success",
@@ -450,7 +450,7 @@
     },
     {
       "id": "schedule.count0",
-      "value": "25"
+      "value": "15"
     },
     {
       "id": "schedule.count1",
@@ -458,7 +458,7 @@
     },
     {
       "id": "schedule.count2",
-      "value": "15"
+      "value": "25"
     },
     {
       "id": "schedule.progressMin",

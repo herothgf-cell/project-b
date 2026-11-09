@@ -132,7 +132,7 @@
   }
   for(const [key,facts]of Object.entries(mannerFacts))add('manner.'+key,'법규',facts[0]+' · M',facts[1],'law',[section('운전 만족도 관찰과 결과',facts[1],ids('manner.'+key+'.'),'outcomes'),...(key==='recovery'?[section('M 회복 뒤 안심 회복','M 회복량이 없을 때 시작 만족도 부족분을 단계·상한 안에서 회복합니다.',['common.comfortStep','common.comfortCap'],'shared')]:[])],[lawNote,'승차 때 M은 100으로 시작하며 하차 만족도에는 M−100이 주행 변화량으로 합산됩니다.'],key==='comfortMotion'?['request.Comfort']:[]);
   const common=[
-   ['schedule','요청 개수와 등장 시점','운송별 요청 0·1·2개를 정합니다. count0 경계, count0+count1 경계로 분기하며 나머지가 2개입니다. count2는 프로필 합계 검증에 사용합니다. 첫 요청 일부는 승차 때, 나머지는 진행도·이동시간·새 안전 정차 조건을 충족해야 등장합니다. 마감 진행도 이후 미발생 요청은 중립입니다.',schedule],
+   ['schedule','요청 개수와 등장 시점','운송별 요청 0·1·2개를 정합니다. count0 경계, count0+count1 경계로 분기하며 나머지가 2개입니다. count2는 프로필 합계 검증에 사용합니다. 첫 요청 일부는 승차 때, 나머지는 진행도·이동시간·대화 가능 조건을 충족하면 주행 중에도 등장합니다. 기존 선택이나 작업 중에는 새 요청을 기다립니다. 마감 진행도 이후 미발생 요청은 중립입니다.',schedule],
    ['request','요청 만족도 합계','모든 요청 결과를 합산한 뒤 양·음 방향 모두 이 상한으로 제한합니다.',['common.requestCap']],
    ['time','안전한 조기 도착','유효한 기준 ETA와 실제 시간을 비교합니다. 위험 운전이 없을 때만 시간 계수 × (기준−실제)/기준을 반올림하고 0부터 상한까지 가산합니다.',['common.timeCap','common.timeFactor']],
    ['comfort','안정 주행 안심 회복','M 회복이 더 없고 만족도가 요구치보다 낮을 때 단계·누적 상한·부족분 중 작은 값만 회복합니다.',['common.comfortStep','common.comfortCap']],
@@ -209,7 +209,7 @@
   const total=fields.reduce((sum,e)=>{const flag=e.id.replace(/\.weight$/,'.enabled');return sum+(!request||enabled(flag)?Math.max(0,Number(value(e.id))||0):0);},0);
   const percent=total?Math.round(weight/total*10000)/100:0;
   const example='같은 후보군에서 가중치가 모두 1이면 같은 비중입니다. 1·1·2이면 25%·25%·50%이며, 0은 제외됩니다. ';
-  return {text:`기본 후보 비중 ${percent}% (${weight} / ${total})`,explanation:example+(request?'사용 중인 양수 가중치 요청을 모두 후보로 놓은 기준 비중입니다. 실제 전체 등장 확률이 아닙니다. 지도·안전 대안, 요청 개수 0~2, 조합 제외, 등장 시점·정차 기회, 대표 유형 첫 요청 연결로 실제 후보와 결과가 달라집니다.':'특수 유형 후보를 모두 놓은 기준 비중입니다. 일반·취객의 배정 보장과 연속 특수 승객 제한, 대표 요청 자격 조건이 있어 실제 전체 승객 등장 확률과 다릅니다.')};
+  return {text:`기본 후보 비중 ${percent}% (${weight} / ${total})`,explanation:example+(request?'사용 중인 양수 가중치 요청을 모두 후보로 놓은 기준 비중입니다. 실제 전체 등장 확률이 아닙니다. 지도·안전 대안, 요청 개수 0~2, 조합 제외, 등장 시점·대화 가능 조건, 대표 유형 첫 요청 연결로 실제 후보와 결과가 달라집니다.':'특수 유형 후보를 모두 놓은 기준 비중입니다. 일반·취객의 배정 보장과 연속 특수 승객 제한, 대표 요청 자격 조건이 있어 실제 전체 승객 등장 확률과 다릅니다.')};
  }
  function isLegacyField(id){return /^request\.[^.]+\.(success|failure)$/.test(id)||id==='effect.food.satisfaction'||id==='manner.comfortMotion.penalty';}
  function fieldInfo(id,catalog){
@@ -236,7 +236,7 @@
    if(field==='unanswered')return info('답하지 않은 채 하차·운송 종료할 때',target+'만',name==='Quiet'?'안전한 응답 기회 후 미응답일 때 M 변화량입니다. -2를 입력하면 M 2점 감점, 0이면 감점 없음입니다. 입력 범위는 -100~0점이며 요청 합계 상한에는 들어가지 않습니다.':['Empathy','Interview','LocalChat'].includes(name)?'안전한 응답 기회 후 미응답일 때 요청 만족도에 한 번 반영합니다. 기회가 없으면 0입니다.':'현재 이 요청에서는 사용하지 않는 고정/중립 값입니다.');
    return info(entry.editable?'요청을 수락한 뒤 하차 때 이행 여부를 평가할 때':'현행 운송의 고정 결과를 설명할 때',target+'의 수락 답변 전체','현재는 요청 종류별 평가 점수입니다. 선택지별 독립 점수는 지원하지 않으며, 버튼을 누를 때와 하차 때 두 번 더하지 않습니다.');
   }
-  if(domain==='schedule')return info(name.startsWith('count')?'새 운송의 요청 개수를 배정할 때':'새 운송의 등장 시점을 정하고 운행 중 표시 기회를 확인할 때',allRequests,name.startsWith('count')?'0·1·2건 비중 합계는 100입니다. 개수 배정 뒤 각 요청의 가중치를 사용합니다.':name==='movingSeconds'?'운행 중 요청을 표시하기 전 필요한 실제 주행 시간입니다. 안전 정차 기회도 필요합니다.':'진행률은 0~1 값입니다. 예: 0.25는 25%. 주행 시간과 안전 정차 기회도 함께 충족해야 합니다.');
+  if(domain==='schedule')return info(name.startsWith('count')?'새 운송의 요청 개수를 배정할 때':'새 운송의 등장 시점을 정하고 운행 중 표시 기회를 확인할 때',allRequests,name.startsWith('count')?'0·1·2건 비중 합계는 100입니다. 개수 배정 뒤 각 요청의 가중치를 사용합니다.':name==='movingSeconds'?'운행 중 요청을 표시하기 전 필요한 실제 주행 시간입니다. 주행 중에도 대화가 가능하면 등장하며 다른 선택·작업 중에는 기다립니다.':'진행률은 0~1 값입니다. 예: 0.25는 25%. 주행 시간과 대화 가능 조건도 함께 충족해야 합니다. 적재·휴식 등 실제 작업은 안전 정차가 필요합니다.');
   if(domain==='type'&&name==='Drunk'&&['spawnPercent','dailyMax','forceEnabled','forceAfterMisses','sleepPercent','vomitPercent'].includes(field))return info(['sleepPercent','vomitPercent'].includes(field)?'새 취객의 상태를 생성할 때':'새 승객 유형을 배정할 때','취객 등장·잠듦·구토 상태',entry.description+' 다음 새 캠페인/새 PVP 방부터 적용하며 이미 배정된 상태는 다시 추첨하지 않습니다.');
   if(domain==='type'&&name==='Sleeping'&&field==='weight')return info('일반 승객 차례·취객 우선 추첨 뒤 특수 유형을 배정할 때','잠자는 승객 유형의 등장 빈도','취객이 배정되지 않은 차례의 특수 유형 추첨(30% 기준)에서 후보 간 상대 가중치를 사용합니다. 가중치 1은 전체 승객의 1%가 아닙니다. 특수 승객 뒤 다음 탑승은 일반 승객이며, 취객의 잠듦 확률은 취객 배정 설정에서 별도로 편집합니다.');
   if(domain==='type')return info(field==='weight'?'새 승객의 유형을 배정할 때':field==='intro'?'해당 유형의 첫 대화를 보여줄 때':field==='choice'?'기사 응답 선택지를 보여줄 때':'해당 유형의 운행 중 후속 대화를 보여줄 때',typeTitle(name)+' 승객만',field==='weight'?'특수 유형 후보 사이의 상대 비중입니다. 일반·취객 보장과 대표 요청 자격은 별도입니다.':'빈 답변·후속 문구는 현재 상태에 맞는 내장 대사를 사용합니다.');

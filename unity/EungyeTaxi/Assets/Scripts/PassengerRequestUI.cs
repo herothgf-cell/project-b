@@ -79,6 +79,7 @@ public class PassengerRequestUI : MonoBehaviour {
  public bool PresentationAvailable {get{return !(session.accident&&session.accident.Locked)&&!PvpNativeLan.UiBlocked(session)&&(legacy||!ResponseBlockedThisFrame)&&!session.jobs.BehaviorAsleep&&!session.paused&&!session.FullMapOpen&&!session.ChoiceOpen&&string.IsNullOrEmpty(session.jobs.VisibleCareDialogue);}}
  // Dialogue input is independent of physical work safety.
  public bool CanTalk {get{return PresentationAvailable&&Time.timeScale>0&&session.jobs.Active&&!session.jobs.trip.ArrivalLocked;}}
+ public bool SchedulePresentationAvailable {get{var j=session.jobs;return CanTalk&&!HasPendingChoice&&!j.BehaviorChoicesOpen&&!j.SituationPending&&!j.SituationWorkActive&&(j.Errand==null||!j.Errand.Waiting)&&(j.Behavior==null||j.Behavior.WorkRemaining<=0);}}
  public bool SafeStationarySpace {get{return ClearSpace();}}
  public float ProposalExtraSeconds {get{return Current?Current.ProposalExtraSeconds:float.PositiveInfinity;}}
  public bool SafeToRespond(){return ClearSpace()&&(legacy||stopSeconds>=2);}
@@ -119,8 +120,7 @@ public class PassengerRequestUI : MonoBehaviour {
   if(schedule!=null){
    if(Current&&Current.request.Resolved)schedule.Responded();
    float moving=session.taxi.ObservedVelocity.magnitude>.1f?Time.deltaTime:0;
-   bool dialogue=PresentationAvailable;
-   int slot=schedule.Tick(moving,1-session.jobs.nav.remaining/initialDistance,SafeToRespond()&&dialogue,false);
+   int slot=schedule.Tick(moving,1-session.jobs.nav.remaining/initialDistance,SchedulePresentationAvailable,false);
    if(slot>=0){var state=schedule.Capture().slots[slot];var o=NewObservation();observations[slot]=o;active=slot;o.BeginKind(state.kind);BlockResponseThisFrame();SyncBehaviorContext();session.business.SaveCheckpoint();}
   }
   foreach(var o in observations)if(o)o.Observe(!session.IsSimulationBot&&!PvpNativeLan.IsRemoteHuman(session)&&o==Current&&PresentationAvailable);

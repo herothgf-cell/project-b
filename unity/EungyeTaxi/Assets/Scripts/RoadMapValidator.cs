@@ -30,7 +30,9 @@ public static class RoadMapValidator {
    if(l.evidence==null||l.evidence.state!="observed"||string.IsNullOrWhiteSpace(l.evidence.month)){} // Existing unedited lanes retain their source status; selected edits show evidence warnings in the panel.
   }
   Debug.Log("STARTUP_VALIDATE lanes_ms="+watch.ElapsedMilliseconds);watch.Restart();
-  var ids=new HashSet<string>(lanes.Keys);foreach(var f in d.facilities){if(f==null||string.IsNullOrWhiteSpace(f.id)||!ids.Add(f.id)){add("시설","없는/중복 ID",true,Vector3.zero);continue;}var p=f.Position;if(!new[]{"sign","stopLine","crosswalk","line","centreLine","vehicleSignal","pedestrianSignal"}.Contains(f.kind)||f.x<0||f.z<0||f.x>baseline.width||f.z>baseline.depth)add(f.id,"미지원 시설 종류 또는 지도 밖 위치",true,p);
+  issues.AddRange(SignalHeadPresentation.ValidateAssignments(baseline,d));
+  issues.AddRange(ReviewedNativeLanePresentation.ValidateAssignments(baseline,d));
+  var ids=new HashSet<string>(lanes.Keys);foreach(var f in d.facilities){if(f==null||string.IsNullOrWhiteSpace(f.id)||!ids.Add(f.id)){add("시설","없는/중복 ID",true,Vector3.zero);continue;}var p=f.Position;if(!new[]{"sign","stopLine","crosswalk","line","centreLine","vehicleSignal","pedestrianSignal","signalHead","lanePresentation"}.Contains(f.kind)||f.x<0||f.z<0||f.x>baseline.width||f.z>baseline.depth)add(f.id,"미지원 시설 종류 또는 지도 밖 위치",true,p);
    if(!Finite(f.x)||!Finite(f.z)||!Finite(f.height)||!Finite(f.width)||!Finite(f.length)||!Finite(f.scale)||!Finite(f.yaw)||f.width<=0||f.width>40||f.length<=0||f.length>40||f.scale<.1f||f.scale>5||f.height<0||f.height>12)add(f.id,"위치/폭/길이/높이/크기 범위를 확인하세요",true,p);
    if(f.axis<0||f.axis>1||Math.Abs(f.sign)!=1)add(f.id,"축0/1 · 방향±1 필요",true,p);
    if(!string.IsNullOrEmpty(f.laneId)&&(!lanes.ContainsKey(f.laneId)||lanes[f.laneId].disabled))add(f.id,"없는 차로 · 대상을 다시 지정하세요",true,p);

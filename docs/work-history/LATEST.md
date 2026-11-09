@@ -1,3 +1,7 @@
+## 2026-11-09 거리뷰 신호·차선·승객 응대
+
+[구현·근거·최종 검사](2026-11-09-roadview-signals-passenger-feedback.md) · [접근별 기획20](../content-design/20-roadview-signals-passenger-feedback.md). 좌회전 수요69·접근별4/4/3/3·NGII 좌1/직2 표시/중복선 교정, 점수 알림 내비 아래 배치·NPC 반응/바깥 따옴표 제거·주행 요청/가중치 상향. 기본 BuildHybrid exit0·실제 신호48/전체UI169/요청·복원66+6/LAN54+67·552방향 경로·Node100·모델158 통과. 사용자 종료 후16저장 불변·프로필6대상5실제값만 변경, 변경 후17보호파일 불변. 은계/A2·LANv16·기존 지도 baseline/graph/scene/신호 프로그램/ZIP 보존, 프로젝트 시설 메타데이터만 갱신·필수입력 Strict issues0. 배포 manifest/main 영수증은 연결 이력에 추가한다. 다음은 사람 장기/전체3일/다른PC·상가 서향 전면 별도 확인. 기존 캠페인 설정/계약은 보존하며 새 가중치는 새 캠페인/새PVP방 기준.
+
 ## 2026-11-09 제안서 V8·시스템과 최신 화면
 
 [26장 PPT](../proposals/project-b-game-proposal-v8.pptx) · [반영 검토](../proposals/proposal-v8-review.md) · [이력](2026-11-09-game-proposal-v8.md). USP와 재미 연결·경쟁작 한곳/유로트럭2 성장참고 설명, 시스템6영역·싱글/PvP 각페이지·11.09 실제UI와 새 둥근택시 시안2장.26장 렌더/구조·레이아웃/재가져오기 통과. 게임/빌드/지도/ZIP/저장 미변경·새플레이/Strict 없음. 은계/A2·LANv16·BuildHybrid와 필수입력 상태는 아래 게임 이력 인용. 참여자 미정·인력/일정 가정 유지. 다음은 회사 제출 전 실제 참여자·확정 범위/예산 검토.

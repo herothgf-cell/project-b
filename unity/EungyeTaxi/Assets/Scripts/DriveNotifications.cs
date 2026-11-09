@@ -9,6 +9,7 @@ public class DriveNotifications : MonoBehaviour {
  public bool FuelLow {get{return session.business.enabledCampaign&&session.business.ledger.Account!=null&&session.business.ledger.Account.Fuel<=15;}}
  public string VisibleText {get{return visible.Count==0?"":visible[0].text;}}
  public string[] VisibleTexts {get{return visible.ConvertAll(n=>(n.passenger?"만족도":"운전")+" | "+n.text).ToArray();}}
+ public static Rect NoticeBounds(float width,float height,bool firstPerson){float scale=UiReadability.HudScale(width,height);var nav=DrivingReadability.NavigationBounds(width,height,firstPerson);return new Rect((width-460*scale)/2,nav.yMax+12*scale,460*scale,58*scale);}
  void LateUpdate(){
   if(!session||!session.law||!session.business)return;
   var journal=session.GetComponent<DrivingScoreJournal>();if(journal&&!journal.Loaded)return;
@@ -35,7 +36,7 @@ public class DriveNotifications : MonoBehaviour {
   try {
    // Draw in the cockpit reference space and isolate every inherited IMGUI tint.
    float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));GUI.color=GUI.backgroundColor=GUI.contentColor=Color.white;GUI.enabled=true;GUI.depth=-80;
-   float width=460,x=(Screen.width/scale-width)/2,y=124;
+   var anchor=NoticeBounds(Screen.width,Screen.height,session.drivingCamera&&session.drivingCamera.FirstPerson);float width=anchor.width/scale,x=anchor.x/scale,y=anchor.y/scale;
    var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=16,wordWrap=true,alignment=TextAnchor.MiddleLeft};style.normal.textColor=CasualUI.Ink;
    var category=new GUIStyle(style){fontSize=14,fontStyle=FontStyle.Bold,alignment=TextAnchor.MiddleCenter};category.normal.textColor=Color.white;
    if(FuelLow){Panel(new Rect(x,y,width,62),new Color(1,.95f,.81f,1));GUI.color=session.business.ledger.Account.Fuel<=5?CasualUI.Danger:CasualUI.Amber;

@@ -140,7 +140,7 @@ public class PassengerRequestObservation : MonoBehaviour {
  const float ReplyRowHeight=90;
  public static Rect ReplyButtonRect(Rect area,int index){float w=(area.width-8)/2;return new Rect(area.x+(index%2)*(w+8),area.y+(index/2)*ReplyRowHeight,w,ReplyRowHeight-4);}
  public bool PanelVisible {get{return !request.Resolved;}}
- public string CardReply {get{return request.Resolved&&(Time.time<=resultUntil||etaSelected)?SpokenReply+(selectedEffect.Length>0?"\n적용 효과 · "+selectedEffect:""):"";}}
+ public string CardReply {get{return request.Resolved&&(Time.time<=resultUntil||etaSelected)?request.ReactionLine():"";}}
  public void Draw(){if(request.Resolved)return;if(!session.business.useV2||session.jobs.trip.State!=TripState.OnTrip||session.jobs.trip.ArrivalLocked||session.paused)return;if(request.Resolved&&Time.time>resultUntil&&!etaSelected)return;
   string dialogue=request.Resolved?SpokenReply:Prompt(request.Kind,request.Content),note="";
   if(etaSelected)note="현재 남은 "+RoadNavigation.FormatEta(session.jobs.nav.estimatedSeconds)+" · 교통에 따라 변동";

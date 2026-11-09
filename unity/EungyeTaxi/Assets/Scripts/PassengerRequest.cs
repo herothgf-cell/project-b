@@ -24,6 +24,38 @@ public class PassengerRequest {
  public void Accept(string text,PassengerReply reply){if(Resolved||finished)return;Resolved=Accepted=true;selectedReply=reply;replyCaptured=true;response=Content.OverrideText("request."+Kind+".reply."+reply,text);}
  public void ApplyReply(PassengerReply reply){if(!Resolved)return;selectedReply=reply;replyCaptured=true;response=Content.OverrideText("request."+Kind+".reply."+reply,response);}
  public string SpokenLine(string fallback){return replyCaptured?Content.OverrideText("request."+Kind+".reply."+selectedReply,fallback):fallback;}
+ // Driver replies stay in ResponseText/SpokenLine and their editable content keys.
+ // A passenger card acknowledges the known choice without repeating those driver lines.
+ public string ReactionLine(){
+  if(!Resolved)return "";
+  if(SafetyDeferred)return Kind==RequestKind.SafeStop||Kind==RequestKind.DestinationChange||Kind==RequestKind.ViaStop?"알겠어요. 이번에는 원래 목적지로 가 주세요.":"알겠어요. 이번에는 원래대로 가 주세요.";
+  if(!Accepted)return "안내를 확인했어요. 안전하게 부탁해요.";
+  if(selectedReply==PassengerReply.Alternative)switch(Kind){
+   case RequestKind.Empathy:case RequestKind.Interview:return "배려해 주셔서 고마워요. 조용히 마음을 정리할게요.";
+   case RequestKind.RouteAdvice:return "네, 이동 거리가 짧은 길로 부탁해요.";
+   case RequestKind.LocalChat:return "네, 안전하게 부탁해요. 편히 쉬고 갈게요.";
+   case RequestKind.FareHelp:return "알겠어요. 내릴 때 결제 방법을 확인할게요.";
+   case RequestKind.LostItem:return "네, 혹시 물건이 남으면 안전한 전달 절차를 부탁해요.";
+  }
+  switch(Kind){
+   case RequestKind.Quiet:return "고마워요. 조용히 쉬면서 갈게요.";
+   case RequestKind.Eta:return selectedReply==PassengerReply.EtaFaster?"알겠어요. 조금 빠르게 도착할 수도 있겠네요.":selectedReply==PassengerReply.EtaRelaxed?"알겠어요. 안내해 주신 만큼 여유를 두고 기다릴게요.":"예상 시간을 알려 주셔서 고마워요.";
+   case RequestKind.Comfort:return "고마워요. 부드럽게 가 주시면 한결 편하겠어요.";
+   case RequestKind.OnTime:return "알겠어요. 급해도 안전하게 가 주세요.";
+   case RequestKind.LargeRoad:return "네, 큰길로 가 주시면 좋겠어요.";
+   case RequestKind.ShortRoad:return "네, 이동 거리가 짧은 길로 부탁해요.";
+   case RequestKind.RouteAdvice:return "좋아요. 안내해 주신 빠른 길로 가 주세요.";
+   case RequestKind.SafeStop:case RequestKind.DestinationChange:return "네, 확인한 안전한 장소에서 내릴게요.";
+   case RequestKind.ViaStop:return "고마워요. 약속한 시간 안에 용무를 보고 돌아올게요.";
+   case RequestKind.Empathy:return "이야기를 들어 주셔서 고마워요. 조금 마음이 놓여요.";
+   case RequestKind.Interview:return "응원해 주셔서 고마워요. 가는 동안 준비해 볼게요.";
+   case RequestKind.Music:return "알겠어요. 음악은 그대로 듣고 갈게요.";
+   case RequestKind.FareHelp:return "요금을 알려 주셔서 고마워요. 결제할 때 확인할게요.";
+   case RequestKind.LocalChat:return "이 주변을 다니시는군요. 목적지까지 잘 부탁해요.";
+   case RequestKind.LostItem:return "네, 물건을 두고 내리지 않도록 잘 챙길게요.";
+   default:return "알겠어요. 신호를 지키면서 안전하게 가 주세요.";
+  }
+ }
  public void DeferSafety(){if(Resolved||finished)return;Resolved=true;safety=true;response="안전상 보류 · 감점 없음";}
  public void CompleteGoal(bool success,string reason){if(!Accepted||finished||goalRecorded)return;goalRecorded=true;GoalOutcome=success?1:-1;SatisfactionDelta=Delta(Kind,success);response+=(success?" · 달성: ":" · 미달: ")+reason;}
  public void CompleteUnknown(string reason){if(!Accepted||finished||goalRecorded)return;goalRecorded=true;GoalOutcome=0;response+=" · 판정 불가: "+reason+" · 만족도 변화 없음";}

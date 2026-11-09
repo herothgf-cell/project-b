@@ -10,6 +10,16 @@ public enum PassengerSituationKind { None, SignalWait, Jolt, NecessaryBrake }
  public float ReSecureRemaining;
  public bool OffersReSecure {get{return LuggageLoaded&&(Pending==PassengerSituationKind.Jolt||Pending==PassengerSituationKind.NecessaryBrake);}}
  public string ReplyLine(int answer){return Content.Text("situation."+Pending+".reply."+answer,RawReplyLine(answer));}
+ // Capture before Respond clears Pending. Driver option wording remains separate.
+ public string ReactionForChoice(int answer){
+  if(answer<0||answer>1||Pending==PassengerSituationKind.None)return "";
+  if(answer==1)return "알겠어요. 필요한 안내만 듣고 편히 쉴게요.";
+  if(OffersReSecure)return "그럼 안전하게 멈췄을 때 짐을 다시 확인할게요. 고마워요.";
+  if(Pending==PassengerSituationKind.SignalWait)return "신호를 기다리는 거였군요. 알겠어요, 안전하게 가 주세요.";
+  if(Type==PassengerType.Sleeping||HasSleep)return "무슨 일인지 알겠어요. 다시 눈을 붙일게요.";
+  if(Type==PassengerType.Food)return FoodSpilled?"네, 안전하게 멈추면 흘린 음식을 확인할게요.":"네, 음식이 쏟아지지 않게 잘 잡고 갈게요.";
+  return Pending==PassengerSituationKind.NecessaryBrake?"안전을 위한 거였군요. 설명해 주셔서 안심이 돼요.":"알겠어요. 조금 놀랐네요. 부드럽게 부탁해요.";
+ }
  string RawReplyLine(int answer){
   if(answer==1)return "편히 쉬세요. 운전에 집중하고 꼭 필요한 안내만 드릴게요.";
   if(OffersReSecure)return "안전한 곳에 멈추면 짐을 다시 고정하겠습니다.";

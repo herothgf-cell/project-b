@@ -1,3 +1,5 @@
+2026-11-09 사용자 후속: [거리뷰 접근별 신호·차선 표시/좌회전 수요·승객 반응/주행 요청](content-design/20-roadview-signals-passenger-feedback.md). 기존 통행 권한·진행 운송 계약/작업 정차 조건 보존. [실제 검증·출하 상태](work-history/2026-11-09-roadview-signals-passenger-feedback.md).
+
 2026-11-09 사용자 후속: 말 걸기 숨김·승객 이름/화자 표기·작은 내비/지도 정리, 기존 후보 안의 연속 호출판 승차지 반복 회피. [실제 구현/검증·배포](work-history/2026-11-09-passenger-cards-call-variety.md). 새로운 지도/요금/운전 물리 범위는 추가하지 않는다.
 2026-11-07 추가 피드백: 택시 하단/휠 일체감과 HUD 신호·속도/기어 겹침 교정. 물리·규칙 유지. [구현/검증](work-history/2026-11-07-taxi-hud-corrections.md).
 

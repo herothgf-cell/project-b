@@ -4,14 +4,14 @@ public sealed class PassengerBehaviorUI : MonoBehaviour {
  public DriveSession session;
  float noticeUntil,responseUntil;
  string responseNotice="";PassengerBehaviorState responseOwner;
- string situationReply="",situationEffect="",situationTrip="";float situationReplyUntil;
- public void NotifySituationReply(string line,string effect){situationReply=line;situationEffect=PassengerDialogueUI.EffectText(effect);situationTrip=session.law.tripId;situationReplyUntil=Time.time+7;}
- public void NotifyResponse(int before,int after,string line){responseOwner=session.jobs.Behavior;responseNotice="기사 · "+line+"\n효과 · "+responseOwner.SelectedEffect;responseUntil=noticeUntil=Time.time+8;}
+ string situationReply="",situationTrip="";float situationReplyUntil;
+ public void NotifySituationReply(string reaction,string effect){situationReply=reaction;situationTrip=session.law.tripId;situationReplyUntil=Time.time+7;}
+ public void NotifyResponse(int before,int after,string reaction){responseOwner=session.jobs.Behavior;responseNotice=reaction;responseUntil=noticeUntil=Time.time+8;}
  public void NotifyStateChanged(){var b=session.jobs.Behavior;if(b==null)return;if(b.FollowupPending)session.requests.BlockResponseThisFrame();if(!b.Quiet||b.Sleeping||b.Type==PassengerType.Food)noticeUntil=Time.time+6;}
 
  public bool Showing {get{if(!session||!session.jobs||session.requests.ResponseBlockedThisFrame||session.jobs.Behavior==null||!session.jobs.Active||session.paused||session.FullMapOpen||session.ChoiceOpen||!string.IsNullOrEmpty(session.jobs.VisibleCareDialogue))return false;var b=session.jobs.Behavior;return (b.Type!=PassengerType.General||b.TraitAction.Length>0||b.TraitWorkRemaining>0||!string.IsNullOrEmpty(b.PresetIntro))&&!session.requests.HasPendingChoice&&(Time.time<noticeUntil||!session.jobs.BehaviorAsleep&&(session.jobs.BehaviorChoicesOpen||b.WorkRemaining>0||!string.IsNullOrEmpty(b.PresetIntro)&&b.Elapsed<8||!b.Quiet&&(b.Elapsed<8||b.MovingSeconds>=30&&b.MovingSeconds<38)));}}
  public bool CanRespond {get{return Showing&&session.jobs.BehaviorChoicesOpen&&session.requests.CanTalk&&(session.jobs.Behavior.TraitAction.Length==0||session.requests.SafeToRespond())&&(session.jobs.trip.State!=TripState.ToPickup||session.jobs.At(session.jobs.current.pickup));}}
- public string CardMessage {get{if(!session||!session.jobs||!session.jobs.Active||session.paused||session.FullMapOpen)return "";if(session.law.tripId==situationTrip&&Time.time<situationReplyUntil)return situationReply+"\n"+situationEffect;if(responseOwner==session.jobs.Behavior&&Time.time<responseUntil)return responseNotice;if(Showing&&!session.jobs.BehaviorChoicesOpen&&session.jobs.Behavior!=null&&session.jobs.Behavior.WorkRemaining<=0)return session.jobs.Behavior.Dialogue;return "";}}
+ public string CardMessage {get{if(!session||!session.jobs||!session.jobs.Active||session.paused||session.FullMapOpen)return "";if(session.law.tripId==situationTrip&&Time.time<situationReplyUntil)return situationReply;if(responseOwner==session.jobs.Behavior&&Time.time<responseUntil)return responseNotice;if(Showing&&!session.jobs.BehaviorChoicesOpen&&session.jobs.Behavior!=null&&session.jobs.Behavior.WorkRemaining<=0)return session.jobs.Behavior.Dialogue;return "";}}
  void Update(){
   if(session.IsSimulationBot||PvpNativeLan.IsRemoteHuman(session)||session.requests.ResponseBlockedThisFrame)return;
   if(session.jobs.CanRespondSituation){int selected=NumericChoiceInput.Read(2,i=>session.jobs.CanRespondSituation);if(selected>=0)session.jobs.RespondSituation(selected);return;}

@@ -114,9 +114,9 @@ public sealed class RoadPaintGeometry {
   List<LanePath> group;return corridors.TryGetValue(edge.sourceId,out group)?Sample(group,point,direction,float.MaxValue):new List<RoadGeometry.Lane>();
  }
  public static void Paint(MapData map,List<TrafficJunction> junctions,System.Action<string,Vector3,Vector3,float,float,bool> mark){
-  var layout=new RoadPaintGeometry(map);var openings=RoadJunctionGeometry.Build(map);var authored=ReviewedCrosswalkGeometry.Build(map);var clearances=RoadJunctionGeometry.PaintClearances(map,junctions);var uturns=UturnRoadMarkings.Build(map);mark=UniquePaint(mark);
+  var layout=new RoadPaintGeometry(map);var openings=RoadJunctionGeometry.Build(map);var authored=ReviewedCrosswalkGeometry.Build(map);var clearances=RoadJunctionGeometry.PaintClearances(map,junctions);var uturns=UturnRoadMarkings.Build(map);var reviewed=new ReviewedNativeLanePresentation(map);var output=UniquePaint(mark);mark=(name,p,d,w,l,y)=>{if(reviewed.SuppressesSynthetic(name,p,d))return;output(name,p,d,w,l,y);};
   openings.RemoveAll(opening=>clearances.Exists(zone=>zone.kind=="core"&&(zone.center-opening.center).sqrMagnitude<4));
-  if(layout.corridors.Count>0){layout.PaintCompiled(clearances,openings,authored,uturns,mark);return;}
+  if(layout.corridors.Count>0){layout.PaintCompiled(clearances,openings,authored,uturns,mark);reviewed.PaintDividers(clearances,output);return;}
   foreach(var road in map.roads){if(road.suppressPaint||road.id!=null&&road.id.StartsWith("fuel:"))continue;
    float distance=0;
    for(int i=1;i<road.points.Length;i++){
@@ -135,6 +135,7 @@ public sealed class RoadPaintGeometry {
     }distance+=length;
    }
   }
+  reviewed.PaintDividers(clearances,output);
  }
  void PaintCompiled(List<RoadJunctionGeometry.Clearance> clearances,List<RoadJunctionGeometry.Opening> openings,List<ReviewedCrosswalkGeometry.Zone> authored,List<UturnRoadMarkings.Zone> uturns,System.Action<string,Vector3,Vector3,float,float,bool> mark){
   foreach(var corridor in corridors){

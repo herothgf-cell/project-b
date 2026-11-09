@@ -528,15 +528,16 @@ public partial class TrafficSystem : MonoBehaviour {
         float reach=halfWidth-2.5f+.6f;
         var head=new Vector3(-reach,0,0);var span=head-support;
         var arm=WorldBuilder.Box("Signal arm",(head+support)*.5f+Vector3.up*4.9f,new Vector3(.12f,.12f,span.magnitude),pole,root.transform,false);arm.transform.localRotation=Quaternion.LookRotation(span);
-        bool permissive=j.leftTurnMode==LeftTurnMode.Permissive,hasLeft=HasLeftMovement(j,editAxis,editSign),protectedArrow=!permissive&&hasLeft;
-        // Four physical apertures always match the HUD. An unused left slot is
-        // an unlit lens, never evidence of a legal or protected movement.
-        WorldBuilder.Box("Signal housing",new Vector3(-reach,4.55f,0),new Vector3(2.9f,.85f,.35f),dark,root.transform,false);
+        bool four=SignalHeadPresentation.Generated(roadMap,j,editAxis,editSign).lamps!=3;
+        bool permissive=j.leftTurnMode==LeftTurnMode.Permissive,hasLeft=HasLeftMovement(j,editAxis,editSign),protectedArrow=four&&!permissive&&hasLeft;
+        // Physical format is explicit per approach. Unreviewed heads retain
+        // four apertures; an unused left lens never grants a movement right.
+        WorldBuilder.Box("Signal housing",new Vector3(-reach,4.55f,0),new Vector3(four?2.9f:2.3f,.85f,.35f),dark,root.transform,false);
         var lamps=new Renderer[3];
         for(int i=0;i<3;i++) {
-            var ball=GameObject.CreatePrimitive(PrimitiveType.Sphere); ball.name="Signal lamp "+(SignalColor)i; ball.transform.SetParent(root.transform,false);ball.transform.localPosition=new Vector3(-reach+(i==0?-.9f:i==1?-.3f:.9f),4.55f,-.22f);ball.transform.localScale=new Vector3(.56f,.56f,.18f); if(Application.isPlaying)Destroy(ball.GetComponent<Collider>());else DestroyImmediate(ball.GetComponent<Collider>());lamps[i]=ball.GetComponent<Renderer>();
+            var ball=GameObject.CreatePrimitive(PrimitiveType.Sphere); ball.name="Signal lamp "+(SignalColor)i; ball.transform.SetParent(root.transform,false);ball.transform.localPosition=new Vector3(-reach+(four?(i==0?-.9f:i==1?-.3f:.9f):(i-1)*.6f),4.55f,-.22f);ball.transform.localScale=new Vector3(.56f,.56f,.18f); if(Application.isPlaying)Destroy(ball.GetComponent<Collider>());else DestroyImmediate(ball.GetComponent<Collider>());lamps[i]=ball.GetComponent<Renderer>();
         }
-        var leftLens=GameObject.CreatePrimitive(PrimitiveType.Sphere);leftLens.name="Signal lamp Left";leftLens.transform.SetParent(root.transform,false);leftLens.transform.localPosition=new Vector3(-reach+.3f,4.55f,-.22f);leftLens.transform.localScale=new Vector3(.56f,.56f,.18f);leftLens.GetComponent<Renderer>().sharedMaterial=unlit[2];if(Application.isPlaying)Destroy(leftLens.GetComponent<Collider>());else DestroyImmediate(leftLens.GetComponent<Collider>());
+        if(four){var leftLens=GameObject.CreatePrimitive(PrimitiveType.Sphere);leftLens.name="Signal lamp Left";leftLens.transform.SetParent(root.transform,false);leftLens.transform.localPosition=new Vector3(-reach+.3f,4.55f,-.22f);leftLens.transform.localScale=new Vector3(.56f,.56f,.18f);leftLens.GetComponent<Renderer>().sharedMaterial=unlit[2];if(Application.isPlaying)Destroy(leftLens.GetComponent<Collider>());else DestroyImmediate(leftLens.GetComponent<Collider>());}
         j.lamps.Add(lamps);j.lampStates.Add(-1);j.lampAxes.Add(editAxis);j.lampSigns.Add(editSign);j.leftMovements.Add(hasLeft);
         if(j.facility!=null){var label=new GameObject("Facility provenance "+j.name);label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(-reach,2.8f,-.1f);var text=label.AddComponent<TextMesh>();text.text=j.facility.facilityStatus=="verified"?"현장 확인 시설":"임시 교통시설";text.fontSize=40;text.characterSize=.065f;text.anchor=TextAnchor.MiddleCenter;text.color=j.facility.facilityStatus=="verified"?Color.green:new Color(1,.75f,.2f);KoreanText.Apply(text);label.AddComponent<RoadSignLabel>();}
 

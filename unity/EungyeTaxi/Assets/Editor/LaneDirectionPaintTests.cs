@@ -23,7 +23,7 @@ public static class LaneDirectionPaintTests {
    Check(arrows.Count>100,"arrows cover all generated junction approaches, not just T1");
    Check(arrows.Select(a=>a.edgeIndex).Distinct().Count()==arrows.Count,"one glyph per terminal lane");
    foreach(var arrow in arrows){var e=map.hdEdges[arrow.edgeIndex];int flags=0;
-    foreach(int i in e.next){var j=map.hdEdges[i];if(j.disabled||!j.id.StartsWith("join:")||!(j.next??new int[0]).Any(n=>!map.hdEdges[n].disabled))continue;flags|=UturnMovement.PaintMask(j.turn);}
+    foreach(int i in e.next){var j=map.hdEdges[i];if(j.disabled||!(j.id.StartsWith("join:")||e.status=="ngii"&&j.status=="ngii")||!(j.next??new int[0]).Any(n=>!map.hdEdges[n].disabled))continue;flags|=UturnMovement.PaintMask(j.turn);}
     Check(arrow.turns==flags,"paint uses current shared route movements "+e.id);
    }
    var detachedLeft=arrows.Single(a=>map.hdEdges[a.edgeIndex].id=="local:14385:13336:10603:1539:part:2");

@@ -10,7 +10,7 @@ using System.Collections.Generic;
  public float movingSinceResponse,progress;public bool wasStopped,awaitingResponse;
  public PassengerRequestSlot[] slots=new PassengerRequestSlot[0];
 }
-// Candidate identity fixes the draw; time and stop opportunities only release it.
+// Candidate identity fixes the draw; progress and available dialogue release it.
 public sealed class PassengerRequestSchedule {
  PassengerRequestScheduleSnapshot state=new PassengerRequestScheduleSnapshot();
  public static bool Route(RequestKind k){return k==RequestKind.LargeRoad||k==RequestKind.ShortRoad||k==RequestKind.RouteAdvice||k==RequestKind.SafeStop||k==RequestKind.DestinationChange||k==RequestKind.ViaStop;}
@@ -37,15 +37,16 @@ public sealed class PassengerRequestSchedule {
    if(!found){Array.Resize(ref state.slots,i);break;}
   }return true;
  }
- public int Tick(float movingSeconds,float progress,bool safeStop,bool arrivalLocked){
+ public int Tick(float movingSeconds,float progress,bool dialogueAvailable,bool arrivalLocked){
   if(float.IsNaN(movingSeconds)||float.IsInfinity(movingSeconds)||movingSeconds<0||float.IsNaN(progress)||float.IsInfinity(progress))throw new ArgumentException("Invalid request clock");
   state.movingSinceResponse+=movingSeconds;state.progress=Math.Max(state.progress,Math.Min(1,Math.Max(0,progress)));
-  if(safeStop&&!state.wasStopped)state.stopSerial++;state.wasStopped=safeStop;
+  // Retain the legacy stop fields in snapshots for old saves and LAN payloads.
+  if(dialogueAvailable&&!state.wasStopped)state.stopSerial++;state.wasStopped=dialogueAvailable;
   if(arrivalLocked||state.progress>=ContentTuning.Number("schedule.cutoff",.85)){foreach(var s in state.slots)if(!s.presented)s.closed=true;return -1;}
-  if(!safeStop||state.awaitingResponse)return -1;
+  if(!dialogueAvailable||state.awaitingResponse)return -1;
   for(int i=0;i<state.slots.Length;i++){
    var s=state.slots[i];if(s.presented||s.closed)continue;
-   if(state.progress<s.threshold||s.threshold>0&&(state.movingSinceResponse<ContentTuning.Number("schedule.movingSeconds",20)||state.stopSerial==state.lastResponseStop))return -1;
+   if(state.progress<s.threshold||s.threshold>0&&state.movingSinceResponse<ContentTuning.Number("schedule.movingSeconds",20))return -1;
    s.presented=true;state.active=i;state.awaitingResponse=true;return i;
   }return -1;
  }

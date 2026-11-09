@@ -92,6 +92,28 @@ public enum PassengerRepresentativeStatus { None, NotPresented, Pending, Accepte
  public static int FoodPermissionSatisfaction {get{return ContentTuning.Int("effect.food.satisfaction",5);}}
  public int SatisfactionDelta {get{return Type==PassengerType.Food&&Boarded&&Choice==1?FoodPermissionSatisfaction:0;}}
  public string[] ChoiceLabels {get{if(TraitAction.Length>0)return TraitChoiceLabels;var rows=RawChoiceLabels;if(FollowupPending)return rows;for(int i=0;i<rows.Length;i++)rows[i]=Content.Text("type."+Type+".choice."+i,rows[i]);return rows;}}
+ // NPC acknowledgement of the selected action; never reuse an edited driver option as speech.
+ public string ReactionForChoice(int choice){
+  if(choice<0||choice>=ChoiceLabels.Length)return "";
+  string trait=TraitAction;
+  if(trait=="umbrella")return choice==0?"우산을 감싸면 차가 젖지 않겠네요. 고마워요.":"네, 우산은 그대로 조심해서 보관할게요.";
+  if(trait=="nausea")return choice==0?"고마워요. 잠시 쉬면서 속을 가라앉힐게요.":"봉투를 준비해 주셔서 고마워요. 잘 들고 있을게요.";
+  if(trait=="temperature")return choice==TemperaturePreference?"네, 제가 부탁한 온도예요. 고마워요.":choice==2?"알겠어요. 지금 온도로 조금 더 가 볼게요.":"제가 부탁한 온도와는 달라요. 불편하면 다시 말씀드릴게요.";
+  if(FollowupPending)return choice==0?"위치를 확인했어요. 조금 더 잘게요.":"네, 다시 편히 쉴게요.";
+  switch(Type){
+   case PassengerType.Food:return choice==0?"네, 밀봉해서 보관할게요.":choice==1?"먹어도 된다니 고마워요. 흘리지 않게 조심할게요.":"그럼 안전하게 멈춘 동안 정리하고 보관할게요.";
+   case PassengerType.Luggage:return choice==0?"짐을 도와주셔서 고마워요. 안전하게 준비할게요.":"알겠어요. 이번에는 짐을 싣지 않을게요.";
+   case PassengerType.MuddyLuggage:return choice==0?"깔개를 준비해 주셔서 고마워요. 짐을 조심해서 놓을게요.":choice==1?"네, 그대로 싣되 흙이 묻지 않게 조심할게요.":"알겠어요. 오염된 짐은 이번에 싣지 않을게요.";
+   case PassengerType.Sleeping:return choice==0?"고마워요. 도착하면 깨워 주세요.":"네, 조용히 눈을 붙일게요.";
+   case PassengerType.Comfort:return choice==0?"부드럽게 가 주신다니 마음이 놓여요.":"네, 운전에 집중해 주세요. 편히 쉬고 갈게요.";
+   case PassengerType.Hurried:return choice==0?"네, 도착 예상 시간을 확인해 주시면 좋겠어요.":"알겠어요. 급해도 신호는 지켜야죠.";
+   case PassengerType.RouteChecking:return choice==0?"네, 안내하는 경로를 함께 확인할게요.":"알겠어요. 길이 달라지면 알려 주세요.";
+   case PassengerType.Errand:return "네, 가능한 경유 장소와 약속을 먼저 확인할게요.";
+   case PassengerType.PrecisionStop:return choice==0?"네, 안전한 하차 장소를 확인해 주세요.":"좋아요. 보행자에게 방해되지 않는 곳에서 내릴게요.";
+   case PassengerType.Drunk:return choice==0?"배려해 주셔서 고마워요. 불편하면 말씀드릴게요.":"고마워요. 조용히 쉬면서 갈게요.";
+   default:return choice==1?"네, 편히 쉬고 갈게요.":Variant==0?"이야기를 들어 주셔서 고마워요.":Variant==1?"이 동네를 잘 아시는군요. 궁금한 게 생기면 여쭤볼게요.":"네, 남은 경로를 확인할게요. 고마워요.";
+  }
+ }
  string[] RawChoiceLabels {get{if(FollowupPending)return new[]{"남은 위치는 내비 안내로 확인해 주세요","운전에 집중하겠습니다. 편히 쉬세요"};switch(Type){case PassengerType.General:return new string[0];case PassengerType.Luggage:return new[]{"안전하게 짐을 싣고 내려드릴게요","이번에는 짐 적재가 어려워요"};case PassengerType.MuddyLuggage:return new[]{"보호 깔개를 준비할게요","그대로 실어드릴게요","이번에는 짐 적재가 어려워요"};case PassengerType.Food:return new[]{"밀봉해서 보관해 주세요","드셔도 괜찮아요","안전하게 정차한 동안 정리할게요"};case PassengerType.Sleeping:return new[]{"편히 주무세요. 도착하면 깨워 드릴게요","편히 쉬세요. 조용히 모시겠습니다"};case PassengerType.Drunk:return new[]{"불편하시면 말씀해 주세요. 천천히 가겠습니다","편히 쉬세요. 조용히 모시겠습니다"};case PassengerType.Comfort:return new[]{"급하게 조작하지 않고 부드럽게 가겠습니다","말씀 감사합니다. 운전에 집중하겠습니다"};case PassengerType.Hurried:return new[]{"내비 도착 예상 시간을 확인해 드릴게요","신호를 지키며 서둘러 가겠습니다"};case PassengerType.RouteChecking:return new[]{"내비 경로를 확인하며 모시겠습니다","길이 달라지면 다시 안내해 드릴게요"};case PassengerType.Errand:return new[]{"경유 요청을 확인하고 안내해 드릴게요","경유 약속은 별도 요청에서 확인할게요"};case PassengerType.PrecisionStop:return new[]{"안전한 승하차 장소를 확인해 드릴게요","보행자 통행을 막지 않는 곳에 세울게요"};default:return new[]{Variant==0?"속상하셨겠어요. 편하게 말씀하세요":Variant==1?"이 주변을 다니고 있어요. 편하게 물어보세요":"내비에서 남은 경로를 확인해 드릴게요","편히 쉬세요. 조용히 모시겠습니다"};}}}
  string[] LegacyChoiceEffects {get{if(FollowupPending)return new[]{"만족도 변화 0 · 위치 안내 후 다시 수면","만족도 변화 0 · 다시 수면 · 후속 질문 줄임"};switch(Type){
   case PassengerType.General:return new string[0];

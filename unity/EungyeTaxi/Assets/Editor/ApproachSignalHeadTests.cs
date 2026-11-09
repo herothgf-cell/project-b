@@ -22,7 +22,7 @@ public static class ApproachSignalHeadTests {
   system.SendMessage("Update");
   for(int i=0;i<3;i++)Check(junction.lamps[approach][i].sharedMaterial.name=="Signal "+(i==(int)expected?"lit ":"off ")+i,"closed approach RGB index "+i+" follows forward "+expected);
   var unused=junction.lamps[approach][0].transform.parent.Find("Signal lamp Left");
-  Check(unused!=null&&unused.GetComponent<Renderer>().sharedMaterial.name=="Signal off 2","closed approach unused left aperture stays off during "+expected);
+  Check(unused==null,"reviewed three-lamp approach has no left aperture during "+expected);
  }
  public static void Run(){
   var map=ProjectMapStore.Load(ProjectMapBuild.Root).Compose();var host=new GameObject("approach signal head regression");
@@ -37,7 +37,8 @@ public static class ApproachSignalHeadTests {
    Check(at>=0,"reported westbound signal approach exists");
    Check(j.leftTurnMode==LeftTurnMode.ProtectedShared&&j.facility.allowLeft,"junction-wide protected configuration retained");
    Check(j.leftLamps[at].Length==0,"closed westbound approach displays no left arrow");
-   Check(Mathf.Abs(j.lamps[at][0].transform.parent.Find("Signal housing").localScale.x-2.9f)<.001f,"closed westbound retains four physical apertures");
+   Check(Mathf.Abs(j.lamps[at][0].transform.parent.Find("Signal housing").localScale.x-2.3f)<.001f,"reviewed closed westbound has three physical apertures");
+   Check(SignalHeadPresentation.Resolve(map,j,axis,sign).lamps==3,"reviewed westbound HUD matches three physical apertures");
    Check(!system.HasLeftMovement(j,axis,sign),"closed westbound capability available independently of lamps");
    // The live game uses a stage program, not the older 17-second approach clock.
    // Select the existing straight group without rewriting the program or rights.

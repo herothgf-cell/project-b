@@ -16,7 +16,7 @@ class PassengerChatHistoryTests {
   Console.WriteLine("PASSENGER_CHAT_HISTORY_OK checks="+checks);
   Check(PassengerPresentation.Name("offer-123")==PassengerPresentation.Name("offer-123"),"name survives the same saved offer identity");
   var names=new System.Collections.Generic.HashSet<string>();for(int i=0;i<100;i++)names.Add(PassengerPresentation.Name("offer-"+i));Check(names.Count>=20,"offer identities produce varied names");
-  Check(PassengerPresentation.Speech("손님  “고맙습니다.”")=="“고맙습니다.”","quoted customer label removed");
+  Check(PassengerPresentation.Speech("손님  “고맙습니다.”")=="고맙습니다.","customer label and wrapping quotes removed");
   Check(PassengerPresentation.Speech("승객: 안녕하세요\n손님 · 반갑습니다")=="안녕하세요\n반갑습니다","line speaker labels removed");
   Check(PassengerPresentation.Speech("손님이 잠들었습니다 · 승객 만족도 70")=="손님이 잠들었습니다 · 승객 만족도 70","meaningful customer references preserved");
   Check(PassengerPresentation.Speech(longLine)==longLine,"custom long speech remains verbatim");

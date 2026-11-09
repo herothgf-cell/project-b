@@ -25,7 +25,7 @@ public sealed class PassengerActivitiesProbe : MonoBehaviour {
   Check(j.Behavior.Choice==-1&&!j.BehaviorChoicesOpen&&!j.SituationPending&&!j.Behavior.Sleeping,"neararrival unchosen initial panel is closed and cooldown suppresses new question");j.AdvanceBehavior(14);string trip=s.law.tripId;RoundTrip();Check(j.Behavior.Choice==-1&&!j.BehaviorChoicesOpen&&j.Behavior.JoltCalmRemaining==1&&s.law.tripId==trip,"actual complete jobs snapshot restore retains neararrival unanswerable choice and calm time");j.AdvanceBehavior(1);Check(j.Behavior.Sleeping&&!j.SituationPending&&j.Behavior.Choice==-1&&!j.trip.ArrivalLocked,"restored actual jobs adapter resumes rest without answering expired initial choice or inventing arrival");
  }
  void MainChecks(){
-  MovingDialogueChecks();TypedChecks();LateInitialRestChecks();
+  MovingScheduleChecks();MovingDialogueChecks();TypedChecks();LateInitialRestChecks();
   Begin();var j=s.jobs;int clean=j.Cleanliness,score=s.manners.ledger.Score;
   s.requests.Begin();NextFrame();s.manners.necessaryBrakeEvents++;j.AdvancePassengerActivities(1);Check(j.Situation.Pending==PassengerSituationKind.NecessaryBrake,"observed necessary braking creates neutral reaction");
   RoundTrip();Check(j.SituationPending&&j.Situation.Reactions==1,"pending reaction and budget survive live JSON restore");
@@ -39,13 +39,28 @@ public sealed class PassengerActivitiesProbe : MonoBehaviour {
   j.AdvancePassengerActivities(30);Check(j.trip.Fare==fare&&j.Errand.Completed,"repeat advancement cannot restart or change fare");Stop(original);Check(j.Interact()&&!j.Active&&s.business.passengers.Count==1,"one original-trip settlement after errand");
   Begin();Agree();Stop(j.PassengerViaStop);NextFrame();Check(j.Interact(),"start saved errand fixture");j.AdvancePassengerActivities(7);Check(s.business.SavePath.Contains("artifacts")&&s.business.SaveCheckpoint(),"actual checkpoint writes only artifacts");
  }
+ void ArrangeMovingSchedule(){
+  s.requests.Begin();var snapshot=s.requests.CaptureLive();snapshot.schedule=new PassengerRequestScheduleSnapshot{movingSinceResponse=20,progress=.4f,slots=new[]{new PassengerRequestSlot{kind=RequestKind.Comfort,threshold=.25f}}};snapshot.active=-1;snapshot.observations=new PassengerRequestObservationSnapshot[1];s.requests.RestoreLive(snapshot);NextFrame();s.jobs.nav.remaining=snapshot.initialDistance*.6f;s.taxi.body.isKinematic=false;s.taxi.body.velocity=Vector3.forward*4;s.requests.AdvanceSafeStop(0);
+ }
+ void TickRequests(){typeof(PassengerRequestUI).GetMethod("Update",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(s.requests,null);}
+ void MovingScheduleChecks(){
+  Begin();ArrangeMovingSchedule();Check(s.requests.CanTalk&&!s.requests.SafeToRespond()&&s.requests.SchedulePresentationAvailable,"moving dialogue can release scheduled requests without physical safety");TickRequests();NextFrame();Check(s.requests.HasPendingChoice&&s.requests.request.Kind==RequestKind.Comfort&&s.requests.CanChoose(PassengerReply.Accept),"actual Update presents scheduled request while moving");RoundTrip();Check(s.requests.HasPendingChoice&&s.requests.request.Kind==RequestKind.Comfort&&s.requests.Choose(PassengerReply.Accept),"pending moving request restores and accepts one actual response");
+  s.taxi.body.velocity=Vector3.zero;s.taxi.body.isKinematic=true;
+  Begin(PassengerType.Food);ArrangeMovingSchedule();TickRequests();Check(!s.requests.HasPendingChoice&&!s.requests.SchedulePresentationAvailable,"existing behavior choice blocks new scheduled popup while moving");
+  NextFrame();Check(s.jobs.RespondBehavior(2)&&s.jobs.Behavior.WorkRemaining>0,"food cleanup starts its real work state");NextFrame();TickRequests();Check(!s.requests.HasPendingChoice&&!s.requests.SchedulePresentationAvailable,"active physical work blocks new scheduled popup while moving");float work=s.jobs.Behavior.WorkRemaining;s.jobs.AdvanceBehavior(5);Check(s.jobs.Behavior.WorkRemaining==work,"moving dialogue never advances physical cleanup work");
+  s.taxi.body.velocity=Vector3.zero;s.taxi.body.isKinematic=true;
+ }
  void MovingDialogueChecks(){
   Begin();s.requests.BeginKind(RequestKind.Comfort);s.taxi.body.isKinematic=false;s.taxi.body.velocity=Vector3.forward*4;s.requests.AdvanceSafeStop(0);
   Check(!s.requests.SafeToRespond()&&s.requests.CanChoose(PassengerReply.Accept)&&s.requests.Choose(PassengerReply.Accept),"moving request answer works without granting physical stop safety");
+  Check(s.requests.CardReply==s.requests.request.ReactionLine()&&!s.requests.CardReply.Contains("모시겠습니다")&&!s.requests.CardReply.Contains("효과"),"actual moving request card presents passenger reaction only");
   s.paused=true;Check(!s.requests.CanTalk,"pause blocks dialogue input");s.paused=false;s.taxi.body.velocity=Vector3.zero;s.taxi.body.isKinematic=true;
   Begin(PassengerType.Food);s.requests.BeginKind(RequestKind.Quiet);s.requests.request.DeferSafety();NextFrame();s.taxi.body.isKinematic=false;s.taxi.body.velocity=Vector3.forward*4;s.requests.AdvanceSafeStop(0);
   Check(s.jobs.RespondBehavior(1)&&s.jobs.Behavior.SatisfactionDelta==5,"moving food permission keeps actual satisfaction gain");Check(!s.jobs.RespondBehavior(0),"same frame cannot answer another passenger choice");
+  Check(s.GetComponent<PassengerBehaviorUI>().CardMessage=="먹어도 된다니 고마워요. 흘리지 않게 조심할게요.","actual behavior choice card presents food passenger reaction");
   s.taxi.body.velocity=Vector3.zero;s.taxi.body.isKinematic=true;
+  Begin();s.requests.BeginKind(RequestKind.Quiet);s.requests.request.DeferSafety();NextFrame();s.jobs.Situation.Pending=PassengerSituationKind.NecessaryBrake;s.jobs.Situation.Reactions=1;
+  string expectedReaction=s.jobs.Situation.ReactionForChoice(0);Check(s.jobs.RespondSituation(0),"actual necessary brake response consumed");Check(s.GetComponent<PassengerBehaviorUI>().CardMessage==expectedReaction&&!expectedReaction.Contains("속도를 줄였습니다"),"actual safety explanation card uses passenger acknowledgement");
   Begin();var j=s.jobs;s.requests.BeginKind(RequestKind.Quiet);s.requests.request.DeferSafety();NextFrame();j.Behavior.Type=PassengerType.Luggage;j.Behavior.Choice=0;j.Situation.Type=PassengerType.Luggage;j.Situation.LuggageLoaded=true;j.Situation.Pending=PassengerSituationKind.Jolt;j.Situation.Reactions=1;
   s.taxi.body.isKinematic=false;s.taxi.body.velocity=Vector3.forward*4;s.requests.AdvanceSafeStop(0);Check(j.CanRespondSituation&&j.RespondSituation(0)&&j.Situation.ReSecureRemaining==5,"moving response queues luggage work");j.AdvancePassengerActivities(10);Check(j.Situation.ReSecureRemaining==5,"moving dialogue does not advance physical luggage work");s.taxi.body.velocity=Vector3.zero;s.taxi.body.isKinematic=true;Stop(0);j.AdvancePassengerActivities(5);Check(j.Situation.ReSecureRemaining==0,"queued luggage work completes only after safe stop");
  }

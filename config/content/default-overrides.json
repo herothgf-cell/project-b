@@ -243,7 +243,7 @@
     },
     {
       "id": "request.SafeStop.weight",
-      "value": "2"
+      "value": "3"
     },
     {
       "id": "request.Empathy.weight",
@@ -267,11 +267,11 @@
     },
     {
       "id": "request.DestinationChange.weight",
-      "value": "1"
+      "value": "2"
     },
     {
       "id": "request.ViaStop.weight",
-      "value": "1"
+      "value": "2"
     },
     {
       "id": "request.RejectIllegal.weight",
@@ -315,7 +315,7 @@
     },
     {
       "id": "schedule.count0",
-      "value": "25"
+      "value": "15"
     },
     {
       "id": "schedule.count1",
@@ -323,7 +323,7 @@
     },
     {
       "id": "schedule.count2",
-      "value": "15"
+      "value": "25"
     },
     {
       "id": "choice.request.Quiet.Accept.end.failure.satisfaction",

@@ -33,7 +33,7 @@ public static class LaneDirectionPaint {
  }
  struct Stroke {public Vector2 a,b;public Stroke(Vector2 a,Vector2 b){this.a=a;this.b=b;}}
  public static List<Arrow> Layout(MapData map){
-  var result=new List<Arrow>();if(!map.hybrid||!map.HasHd)return result;var clearances=RoadJunctionGeometry.PaintClearances(map);
+  var result=new List<Arrow>();if(!map.hybrid||!map.HasHd)return result;var clearances=RoadJunctionGeometry.PaintClearances(map);var reviewed=new ReviewedNativeLanePresentation(map);result.AddRange(reviewed.Arrows(clearances));
   for(int i=0;i<map.hdEdges.Length;i++){
    var e=map.hdEdges[i];if(e.disabled||!(e.status=="provisional"||(map.mapId=="pvp-city-a"&&e.status=="authored-fictional"))||e.change!=0||e.turn!=0||e.id.StartsWith("join:")||e.id.StartsWith("fuel:"))continue;
    if((e.next??new int[0]).Any(n=>!map.hdEdges[n].disabled&&map.hdEdges[n].sourceId==e.sourceId&&map.hdEdges[n].turn==0&&map.hdEdges[n].change==0&&!map.hdEdges[n].id.StartsWith("join:")))continue;
@@ -45,7 +45,7 @@ public static class LaneDirectionPaint {
    if(p.length<Mathf.Max(9,minimum+2.2f))continue;float at=Mathf.Max(minimum,p.length-10);
    // Different legal masks on coincident taper candidates cannot be ORed.
    // Give them separate, clear stations along their own approach instead.
-   for(;at>=minimum;at-=1){var arrow=new Arrow{edgeIndex=i,turns=turns,centre=p.Position(at),forward=p.Tangent(at)};if(!Clear(arrow,clearances)||ConflictingFootprint(arrow,result))continue;result.Add(arrow);break;}
+   for(;at>=minimum;at-=1){var arrow=new Arrow{edgeIndex=i,turns=turns,centre=p.Position(at),forward=p.Tangent(at)};if(reviewed.SuppressesArrow(e,arrow.centre,arrow.forward))break;if(!Clear(arrow,clearances)||ConflictingFootprint(arrow,result))continue;result.Add(arrow);break;}
   }return Deduplicate(result);
  }
  public static void Paint(MapData map,Action<string,Vector3,Vector3,float,float,bool> mark){
