@@ -56,3 +56,10 @@
 소스·기획·검사 이력 실제 커밋은 `35b85a9455774370f4876521cc4a6b3575e0e183` (`git log -1 --oneline -- 본 이력`으로 확인)이다. 통합 manifest를 이40자 소스로 생성했다. 출하144파일/127,416,554바이트이며 선택 사용자 프로필1개를 포함한 로컬 검사는145파일/127,549,336바이트다. 사용자 프로필은 변경하지 않았고 출하 커밋에서 제외한다. 통합 및 PVP 위임 VerifyOnly는 모두 exit0, 크기·SHA256 전수 일치/선택 프로필 유효성 확인을 마쳤다. 검증 명세는 artifacts/compact-nav-chat/validation-final.json 및 distribution/EungyeTaxi-build-manifest.json에 기록한다.
 
 최종 main 게시와 원격 동일 해시 영수증은 실제 push 후 추가한다.
+
+## 실제 main 게시 영수증
+
+- 출하 실행본/manifest 커밋 `5dcaf3ad41687e91fb9a394497b69c34def0f465`, 검증 소스 `35b85a9455774370f4876521cc4a6b3575e0e183`.
+- 기존 로컬 main07ea5b8을 출하 커밋으로 fast-forward하고 일반 push 성공: 원격6936a4e →5dcaf3a. `git ls-remote origin refs/heads/main`이 동일40자 해시5dcaf3ad41687e91fb9a394497b69c34def0f465임을 확인했다. force/reset 없음.
+- 사용자 작업 중인 `docs/proposals/project-b-game-proposal-v6.pptx` 미커밋 변경과 잠금 파일을 보존했으며 이번 source/runtime/main 게시에 포함하지 않았다. 기존 기타 미추적 자료도 보존했다.
+- 이번 영수증 문서 후속은 실행 파일·지도·manifest 소스를 바꾸지 않는다. 최종 원격 head는 후속 문서 커밋일 수 있으며 실제 실행본 소스는 위35b85a9다.
