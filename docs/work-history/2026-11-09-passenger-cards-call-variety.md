@@ -50,3 +50,9 @@
 - 필수 입력 Strict 재검사 exit0/issues0, 지도/ZIP diff 없음. 종료 후 기준 사용자17파일 SHA256 변경0. 기존 미추적 자료와 작업 중 나타난 PowerPoint 잠금 파일은 포함/삭제하지 않는다.
 - 새 로컬 빌드는 기존 main6936a4e의 Unity MCP 패키지 변경도 반영하므로 새 런타임 의존 DLL/scene 리소스를 실행 폴더 전체와 manifest에 함께 배포한다. 선택 사용자 `content/active-profile.json`은 출하 커밋에서 제외하고 유효성만 검사한다.
 - 독립 코드 검토: 최종 제품 코드 추가 문제 없음. 검사 코드의 과도한 대표 코스 단정은 제거했으며 실제 결과 통계는 유지한다. 수동 장기 운전/전체3일/다른PC/저사양 성능은 미검증이다.
+
+## 출하 파일 검증
+
+소스·기획·검사 이력 실제 커밋은 `35b85a9455774370f4876521cc4a6b3575e0e183` (`git log -1 --oneline -- 본 이력`으로 확인)이다. 통합 manifest를 이40자 소스로 생성했다. 출하144파일/127,416,554바이트이며 선택 사용자 프로필1개를 포함한 로컬 검사는145파일/127,549,336바이트다. 사용자 프로필은 변경하지 않았고 출하 커밋에서 제외한다. 통합 및 PVP 위임 VerifyOnly는 모두 exit0, 크기·SHA256 전수 일치/선택 프로필 유효성 확인을 마쳤다. 검증 명세는 artifacts/compact-nav-chat/validation-final.json 및 distribution/EungyeTaxi-build-manifest.json에 기록한다.
+
+최종 main 게시와 원격 동일 해시 영수증은 실제 push 후 추가한다.
