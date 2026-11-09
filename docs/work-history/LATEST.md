@@ -1,3 +1,7 @@
+## 2026-11-09 Unity MCP 읽기 전용 상태 확인
+
+[실제 연결·활성 씬·계층](2026-11-09-unity-mcp-readonly-check.md). 로컬 MCP3.4.11·EungyeTaxi/Unity2022.3.62f2 인스턴스1개 응답, idle/ready·Play/컴파일 아님. 활성 씬은 이름/경로 없는 Untitled, Main Camera·Directional Light 두 루트/자식0. 씬/오브젝트/스크립트 미변경·기존 미추적 PackageManagerSettings 보존. 배포 은계/A2·LANv16·BuildHybrid·548fe8b/a978b3b 및 직전 Strict issues0 유지(이번 재검사 없음). 다음은 요청 시 게임 씬 열기/조회, 기존 사람 장기/전체3일·다른PC LAN 수용.
+
 ## 2026-11-09 프로젝트 진행 상황 재점검
 
 [현황·이번 검사·우선순위](2026-11-09-progress-check.md). 시작 main c22fe6c·작업 트리 깨끗함. 이번 Strict exit0/issues0·통합/PVP VerifyOnly 각각 exit0, 출하143파일127378253바이트 확인. 은계/A2·LANv16·BuildHybrid·소스548fe8b/출하a978b3b 유지. 정식 지도8fb257ed 준비됨·재수입 JSON2개는 선택 입력 부재. 게임/빌드/지도/저장 변경 및 새 플레이 없음. 다음은 사람 장시간/패드·전체3일과 첫 구매 동기, 실제 다른PC LAN, 저사양 성능·아트 수용. 장기 경력/차량 구매·이사는 후속 범위다.
