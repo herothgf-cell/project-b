@@ -1,6 +1,14 @@
 # 회사 내부 개발 착수 제안
 
-## 최신 6차 자료 — 2026-11-06
+## 최신 7차 자료 — 2026-11-09
+
+- [제안서 PPTX](project-b-game-proposal-v7.pptx): 25장. 사용자 편집 V6를 기준으로 요청 순서 재구성, 공통 제목 장식·표지 시안 갱신.
+- [양식과 페이지 위치](proposal-v7-review.md), [별도 조작 매뉴얼](project-b-prototype-manual-v7.md).
+- [표지 이미지·프롬프트](assets/v7/prompts.md), [작업 이력](../work-history/2026-11-09-game-proposal-v7.md).
+
+참여자는 미정, 인력·12개월 일정·KPI는 심의용 가정이다. 수정 중인 V6 원본을 보존했다.
+
+## 이전 6차 자료 — 2026-11-06
 
 - [개발 착수 제안서 PPTX](project-b-game-proposal-v6.pptx): 23장. 최신 실제 UI·구현 범위, 단계별 통과 조건과 검증 목표 보완.
 - [필수 항목과 변경 검토](proposal-v6-review.md): 참여자는 사용자 확인에 따라 미정, 제출 전 확정 필요.
