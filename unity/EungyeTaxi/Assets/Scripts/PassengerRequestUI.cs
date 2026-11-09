@@ -4,7 +4,7 @@ using UnityEngine;
 
 [Serializable] public sealed class PassengerRequestUISnapshot : PassengerRequestObservationSnapshot {
  public int version,active=-1,boardingLawCount;public float initialDistance;public bool finished,lostItem;
- public float smallTalkCooldown,smallTalkVisible;public string smallTalkReply;
+ public float smallTalkCooldown,smallTalkVisible;public string smallTalkReply;public string[] smallTalkSeen;
  public PassengerRequestScheduleSnapshot schedule;
  public PassengerRequestObservationSnapshot[] observations;
 }
@@ -13,6 +13,10 @@ public class PassengerRequestUI : MonoBehaviour {
  readonly List<PassengerRequestObservation> observations=new List<PassengerRequestObservation>();
  readonly PassengerRequest empty=new PassengerRequest();
  float smallTalkCooldown,smallTalkVisible;string smallTalkReply="";
+ readonly PassengerChatHistory chatHistory=new PassengerChatHistory();
+ [Serializable] sealed class ChatLibrary {public string[] lines;}
+ static string[] extraChatLines;
+ static string[] ExtraChatLines {get{if(extraChatLines==null){var asset=Resources.Load<TextAsset>("Content/passenger-chat-lines");extraChatLines=asset?JsonUtility.FromJson<ChatLibrary>(asset.text).lines:new string[0];}return extraChatLines;}}
  int responseBlockedFrame=-1;
  public bool ResponseBlockedThisFrame {get{return responseBlockedFrame==Time.frameCount;}}
  public void BlockResponseThisFrame(){responseBlockedFrame=Time.frameCount;}
@@ -29,7 +33,7 @@ public class PassengerRequestUI : MonoBehaviour {
  public string Summary {get{var text=new List<string>();for(int i=0;i<observations.Count;i++)if(observations[i])text.Add((i+1)+". "+observations[i].request.ResponseText()+" ["+RequestEffectValue(observations[i]).ToString("+0.###;-0.###;0",System.Globalization.CultureInfo.InvariantCulture)+"]");if(schedule!=null)foreach(var slot in schedule.Capture().slots)if(!slot.presented)text.Add(slot.kind+" · 미발생 중립");if(text.Count==0)text.Add("요청 없음");if(lostItem&&finished)text.Add("하차 후 사건 "+session.law.tripId+":lost-item · 지갑 발견 → 보관·신고 절차 안내 (텍스트 사건)");return string.Join("\n",text.ToArray())+"\n요청 합계 "+TotalSatisfactionDelta.ToString("+0;-0;0");}}
  public bool LawClear {get{return LawLedger.ViolationCount(session.law.ledger.Events,boardingLawCount)==0;}}
  public void ExemptSystemRoute(string reason){foreach(var o in observations)if(o)o.SystemRouteReason=reason;}
- void Clear(){foreach(var o in observations)if(o){if(Application.isPlaying)Destroy(o);else DestroyImmediate(o);}observations.Clear();active=-1;schedule=null;stopSeconds=0;finished=lostItem=legacy=false;smallTalkCooldown=smallTalkVisible=0;smallTalkReply="";empty.Restore(new PassengerRequestSnapshot{resolved=true,response="요청 없음"});}
+ void Clear(){foreach(var o in observations)if(o){if(Application.isPlaying)Destroy(o);else DestroyImmediate(o);}observations.Clear();active=-1;schedule=null;stopSeconds=0;finished=lostItem=legacy=false;smallTalkCooldown=smallTalkVisible=0;smallTalkReply="";chatHistory.Restore(null,null);empty.Restore(new PassengerRequestSnapshot{resolved=true,response="요청 없음"});}
  PassengerRequestObservation NewObservation(){var o=gameObject.AddComponent<PassengerRequestObservation>();o.enabled=false;o.session=session;o.request.Content=session.jobs.PassengerContent;return o;}
  public static RequestKind? Representative(PassengerType type,int variant){switch(type){case PassengerType.Comfort:return RequestKind.Comfort;case PassengerType.Hurried:return variant==0?RequestKind.Eta:RequestKind.OnTime;case PassengerType.RouteChecking:return variant==0?RequestKind.LargeRoad:variant==1?RequestKind.ShortRoad:RequestKind.RouteAdvice;case PassengerType.Errand:return RequestKind.ViaStop;case PassengerType.PrecisionStop:return RequestKind.SafeStop;default:return null;}}
  public RequestKind[] EligibleRequests(){
@@ -43,7 +47,7 @@ public class PassengerRequestUI : MonoBehaviour {
  public PassengerType[] EligiblePassengerModules(){var kinds=EligibleRequests();int count=PassengerRequestSchedule.Create(session.jobs.current.candidateSeed,kinds).Capture().slots.Length;var result=new List<PassengerType>();foreach(PassengerType type in Enum.GetValues(typeof(PassengerType))){if(type==PassengerType.General||type==PassengerType.Drunk)continue;var representative=Representative(type,PassengerBehaviorState.Create(session.jobs.current.candidateSeed,type).Variant);if(!representative.HasValue||count>0&&Array.IndexOf(kinds,representative.Value)>=0)result.Add(type);}return result.ToArray();}
  public PassengerType[] EligiblePassengerTypes(){var modules=EligiblePassengerModules();if(ContentTuning.Text("passenger.presets","").Length==0)return modules;var pools=new List<PassengerType>();string seed=session.jobs.current.candidateSeed;string selectionSeed=session.business.ledger.Care.PassengerSelectionSeed;foreach(PassengerType pool in Enum.GetValues(typeof(PassengerType))){if(pool==PassengerType.General||pool==PassengerType.Drunk)continue;var selected=PassengerBehaviorState.CreateConfigured(seed,pool,modules,selectionSeed);if(selected.Pool==pool)pools.Add(pool);}return pools.ToArray();}
  public int ScheduledChoiceCount {get{return schedule==null?observations.Count:schedule.Capture().slots.Length;}}
- public string CardReply {get{return Current?Current.CardReply:"";}}
+ public string CardReply {get{return SmallTalkReply.Length>0?PassengerChatHistory.Speech(SmallTalkReply):Current?Current.CardReply:"";}}
  public bool HasPendingChoice {get{return Current&&!Current.request.Resolved;}}
  public bool HasVisiblePanel {get{return Current&&Current.PanelVisible&&PresentationAvailable;}}
  public void SyncBehaviorContext(){var b=session.jobs.Behavior;if(b==null)return;var kind=Representative(b.RepresentativeType,b.RepresentativeVariant);if(!kind.HasValue){b.SetRepresentativeContext(PassengerRepresentativeStatus.None,"");return;}PassengerRequestObservation found=null;foreach(var o in observations)if(o&&o.request.Kind==kind.Value){found=o;break;}if(!found){b.SetRepresentativeContext(PassengerRepresentativeStatus.NotPresented,"");return;}var state=found.request.Snapshot();var status=state.safety?PassengerRepresentativeStatus.Deferred:!state.accepted?(state.finished?PassengerRepresentativeStatus.Neutral:PassengerRepresentativeStatus.Pending):state.goalRecorded?(state.satisfactionDelta>0?PassengerRepresentativeStatus.Succeeded:state.satisfactionDelta<0?PassengerRepresentativeStatus.Failed:PassengerRepresentativeStatus.Neutral):PassengerRepresentativeStatus.Accepted;b.SetRepresentativeContext(status,found.request.ResponseText());}
@@ -83,13 +87,18 @@ public class PassengerRequestUI : MonoBehaviour {
  public bool RespondAlternative(){if(PvpNativeLan.Route(session,"alternative"))return true;bool ok=PresentationAvailable&&Current&&Current.RespondAlternative();AfterResponse(ok);return ok;}
  public bool QuietPromiseActive {get{return !finished&&observations.Exists(o=>o&&o.request.Kind==RequestKind.Quiet&&o.request.Accepted);}}
  public string SmallTalkReply {get{return smallTalkVisible>0?smallTalkReply:"";}}
- public bool CanDriverSmallTalk {get{return session&&session.business.useV2&&!finished&&CanTalk&&session.jobs.trip.State==TripState.OnTrip&&!HasPendingChoice&&!session.jobs.BehaviorChoicesOpen&&!session.jobs.SituationPending&&!session.jobs.SituationWorkActive&&(session.jobs.Behavior==null||!session.jobs.Behavior.HasChoice&&session.jobs.Behavior.WorkRemaining<=0)&&smallTalkCooldown<=0;}}
+ IEnumerable<string> ChatCandidates(){
+  if(QuietPromiseActive){yield return session.jobs.PassengerContent.Text("request.Quiet.reply.SmallTalkViolation","기사: 오늘은 어떤 하루를 보내셨나요?\n승객: 조용히 가 달라고 부탁드렸는데요. 쉬고 싶어요.");yield break;}
+  yield return session.jobs.PassengerContent.Text("request.LocalChat.reply.SmallTalk","기사: 오늘은 어떤 하루를 보내셨나요?\n승객: 이런저런 일이 있었네요. 목적지까지 잘 부탁드려요.");
+  foreach(string line in ExtraChatLines)yield return line;
+ }
+ public bool CanDriverSmallTalk {get{return session&&session.business.useV2&&!finished&&CanTalk&&session.jobs.trip.State==TripState.OnTrip&&!HasPendingChoice&&!session.jobs.BehaviorChoicesOpen&&!session.jobs.SituationPending&&!session.jobs.SituationWorkActive&&(session.jobs.Behavior==null||!session.jobs.Behavior.HasChoice&&session.jobs.Behavior.WorkRemaining<=0)&&smallTalkCooldown<=0&&chatHistory.Next(ChatCandidates())!=null;}}
  public bool TryDriverSmallTalk(){
   if(!CanDriverSmallTalk)return false;
   if(PvpNativeLan.Route(session,"smalltalk"))return true;
   if(PvpNativeLan.IsReplica(session))return false;
-  bool breach=false;foreach(var o in observations)if(o)breach|=o.request.ObserveDriverSmallTalk();
-  smallTalkReply=breach?session.jobs.PassengerContent.Text("request.Quiet.reply.SmallTalkViolation","기사: 오늘은 어떤 하루를 보내셨나요?\n승객: 조용히 가 달라고 부탁드렸는데요. 쉬고 싶어요."):session.jobs.PassengerContent.Text("request.LocalChat.reply.SmallTalk","기사: 오늘은 어떤 하루를 보내셨나요?\n승객: 이런저런 일이 있었네요. 목적지까지 잘 부탁드려요.");
+  smallTalkReply=chatHistory.Next(ChatCandidates());chatHistory.Remember(smallTalkReply);
+  foreach(var o in observations)if(o)o.request.ObserveDriverSmallTalk();
   smallTalkCooldown=12;smallTalkVisible=6;session.business.SaveCheckpoint();return true;
  }
  public bool PrepareProposal(){return Current&&Current.PrepareProposal();}
@@ -119,19 +128,17 @@ public class PassengerRequestUI : MonoBehaviour {
  public void CancelForFatigue(){Clear();finished=true;session.manners.ComfortAccepted=false;}
  public void Finish(){if(finished)return;finished=true;if(schedule!=null)schedule.Tick(0,1,false,true);foreach(var o in observations)if(o)o.Finish();SyncBehaviorContext();session.manners.ComfortAccepted=false;}
  void OnGUI(){if(!session||session.jobs.trip.State!=TripState.OnTrip||session.jobs.trip.ArrivalLocked||session.IsSimulationBot||PvpNativeLan.IsRemoteHuman(session))return;var behavior=GetComponent<PassengerBehaviorUI>();if(!PresentationAvailable||behavior&&behavior.Showing)return;
-  if(SmallTalkReply.Length>0){PassengerDialogueUI.Draw("승객과 대화",SmallTalkReply,new PassengerDialogueUI.Option[0],QuietPromiseActive?"조용한 운행 약속 후 운전자가 먼저 잡담 · 하차 시 요청 결과 반영":"선택한 잡담 · 추가 만족도 효과 없음",PassengerDialogueUI.PortraitIdentity(session));return;}
   if(Current&&HasVisiblePanel){Current.Draw();return;}
-  if(CanDriverSmallTalk){var matrix=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));var area=PassengerDialogueUI.PanelBounds(Screen.width,Screen.height,scale,64);if(GUI.Button(area,QuietPromiseActive?"승객에게 말 걸기 (선택 · 조용한 운행 약속 위반)":"승객에게 말 걸기 (선택 · 잡담)",new GUIStyle(GUI.skin.button){font=KoreanText.Font,fontSize=UiReadability.Font(16),wordWrap=true}))TryDriverSmallTalk();GUI.matrix=matrix;}
  }
  public PassengerRequestUISnapshot CaptureLive(){
   var s=Current?JsonUtility.FromJson<PassengerRequestUISnapshot>(JsonUtility.ToJson(Current.CaptureLive())):new PassengerRequestUISnapshot{request=empty.Snapshot()};
   s.version=legacy||schedule==null?0:2;s.active=active;s.boardingLawCount=boardingLawCount;s.initialDistance=initialDistance;s.finished=finished;s.lostItem=lostItem;
-  s.smallTalkCooldown=smallTalkCooldown;s.smallTalkVisible=smallTalkVisible;s.smallTalkReply=smallTalkReply;
+  s.smallTalkCooldown=smallTalkCooldown;s.smallTalkVisible=smallTalkVisible;s.smallTalkReply=smallTalkReply;s.smallTalkSeen=chatHistory.Capture();
   s.preferLarge=session.jobs.nav.PreferLargeRoad;s.preferFast=session.jobs.nav.PreferFastest;
   if(!legacy){s.schedule=schedule==null?null:schedule.Capture();s.observations=observations.ConvertAll(o=>o?o.CaptureLive():new PassengerRequestObservationSnapshot()).ToArray();}return s;
  }
  public void RestoreLive(PassengerRequestUISnapshot s){
-  if(s==null)throw new ArgumentException("Missing request snapshot");ValidateSmallTalk(s);float replicaStopSeconds=stopSeconds;Clear();if(PvpNativeLan.IsReplica(session))stopSeconds=replicaStopSeconds;boardingLawCount=s.version==2?s.boardingLawCount:s.lawBefore;initialDistance=s.initialDistance;finished=s.finished;lostItem=s.lostItem;smallTalkCooldown=s.smallTalkCooldown;smallTalkVisible=s.smallTalkVisible;smallTalkReply=s.smallTalkReply??"";
+  if(s==null)throw new ArgumentException("Missing request snapshot");ValidateSmallTalk(s);float replicaStopSeconds=stopSeconds;Clear();if(PvpNativeLan.IsReplica(session))stopSeconds=replicaStopSeconds;boardingLawCount=s.version==2?s.boardingLawCount:s.lawBefore;initialDistance=s.initialDistance;finished=s.finished;lostItem=s.lostItem;smallTalkCooldown=s.smallTalkCooldown;smallTalkVisible=s.smallTalkVisible;smallTalkReply=s.smallTalkReply??"";chatHistory.Restore(s.smallTalkSeen,smallTalkReply);
   if(s.version==0){legacy=true;var o=NewObservation();observations.Add(o);active=0;o.RestoreLive(s);}
   else if(s.version==2){
    schedule=PassengerRequestSchedule.Restore(s.schedule);var slots=schedule.Capture().slots;
@@ -141,7 +148,7 @@ public class PassengerRequestUI : MonoBehaviour {
   SyncBehaviorContext();session.manners.ComfortAccepted=!finished&&observations.Exists(o=>o&&o.request.Kind==RequestKind.Comfort&&o.request.Accepted);
   if(session.jobs.trip.State==TripState.OnTrip&&!session.jobs.trip.ArrivalLocked&&(PvpNativeLan.IsReplica(session)?session.jobs.nav.PreferLargeRoad!=s.preferLarge||session.jobs.nav.PreferFastest!=s.preferFast:s.preferLarge||!s.preferFast))session.jobs.nav.SetPassengerPreference(s.preferLarge,s.preferFast);
  }
- static void ValidateSmallTalk(PassengerRequestUISnapshot s){if(float.IsNaN(s.smallTalkCooldown)||float.IsInfinity(s.smallTalkCooldown)||s.smallTalkCooldown<0||s.smallTalkCooldown>12||float.IsNaN(s.smallTalkVisible)||float.IsInfinity(s.smallTalkVisible)||s.smallTalkVisible<0||s.smallTalkVisible>6||(s.smallTalkReply??"").Length>4000||s.smallTalkVisible>s.smallTalkCooldown)throw new ArgumentException("Invalid passenger chat observation");}
+ static void ValidateSmallTalk(PassengerRequestUISnapshot s){if(float.IsNaN(s.smallTalkCooldown)||float.IsInfinity(s.smallTalkCooldown)||s.smallTalkCooldown<0||s.smallTalkCooldown>12||float.IsNaN(s.smallTalkVisible)||float.IsInfinity(s.smallTalkVisible)||s.smallTalkVisible<0||s.smallTalkVisible>6||(s.smallTalkReply??"").Length>4000||s.smallTalkVisible>s.smallTalkCooldown)throw new ArgumentException("Invalid passenger chat observation");new PassengerChatHistory().Restore(s.smallTalkSeen,s.smallTalkReply);}
  public static void ValidateSnapshot(PassengerRequestUISnapshot s){
   if(s==null)throw new ArgumentException("Missing request snapshot");ValidateSmallTalk(s);new PassengerRequest().Restore(s.request);
   if(s.version==0)return;if(s.version!=2)throw new ArgumentException("Unknown request version");

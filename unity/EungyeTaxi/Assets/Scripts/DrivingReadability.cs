@@ -78,8 +78,13 @@ public class DrivingReadability : MonoBehaviour {
   GUI.EndGroup();
   if(GUI.Button(new Rect(x,328,Size,32),"지도 (M)",KoreanText.Button(UiReadability.Font(13))))overlay.Open();
   if(Facilities){var status=GetComponent<HybridMapStatus>();Panel(new Rect(x-310,42,300,145));GUI.Label(new Rect(x-300,50,280,130),"시설 □ 주황: 임시 / 초록: 확인\n"+(status?status.current:"시설 정보 없음"),label);}
-  DrawNavigation((Screen.width/uiScale-620)/2+5);GUI.matrix=originalMatrix;
+  var navigationMatrix=GUI.matrix;
+  try{var pivot=new Vector3(Screen.width/uiScale/2,20,0);GUI.matrix=navigationMatrix*Matrix4x4.Translate(pivot)*Matrix4x4.Scale(new Vector3(NavigationScale,NavigationScale,1))*Matrix4x4.Translate(-pivot);DrawNavigation((Screen.width/uiScale-620)/2+5);}
+  finally{GUI.matrix=navigationMatrix;}
+  GUI.matrix=originalMatrix;
  }
+ public const float NavigationScale=.85f;
+ public static Rect NavigationBounds(float width,float height,bool firstPerson){float scale=UiReadability.HudScale(width,height);return new Rect((width-620*NavigationScale*scale)/2,20*scale,620*NavigationScale*scale,(firstPerson?114:164)*NavigationScale*scale);}
  public string GoalDistance {get{var j=session.jobs;if(j.nav.RetainingPreviousRoute)return "경로 재탐색 중";return (j.trip.State==TripState.ToPickup?"승차까지":j.trip.State==TripState.OnTrip?(j.PassengerViaPending?"경유까지":"하차까지"):"도착까지")+" "+NavigationCue.FormatDistance(j.nav.remaining);}}
  public string NavigationSummary {get{var nav=session.jobs.nav;if(nav.RetainingPreviousRoute)return "도로로 복귀하면 새 길을 안내합니다";return nav.HasDestination?GoalDistance+" · 약 "+RoadNavigation.FormatEta(nav.estimatedSeconds):"목적지를 선택하세요";}}
  public NavigationCue TurnCue {get{
