@@ -41,6 +41,7 @@ public static class PassengerDialogueUI {
   float width=(r.width-8)/2;for(int i=1;i<=2;i++){if(parts[i].Length==0)continue;float height=TextHeight(parts[i],width-16,small)+12;var badge=new Rect(r.x+(i-1)*(width+8),r.y+main+6,width,height);CasualUI.RoundedFill(badge,i==1?new Color(.88f,.97f,.90f):new Color(1,.93f,.93f));GUI.Label(new Rect(badge.x+8,badge.y+6,badge.width-16,height-12),parts[i],new GUIStyle(small){normal={textColor=i==1?CasualUI.Green:CasualUI.Danger}});}
  }
  public static int Draw(string title,string dialogue,Option[] options,string note="",string passengerIdentity=null){
+  dialogue=PassengerPresentation.Speech(dialogue);
   Styles();var matrix=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
   const float pad=16,gap=10;Rect bounds=PanelBounds(Screen.width,Screen.height,scale,1);float inner=bounds.width-pad*2;
   float contentWidth=Mathf.Max(1,inner-Mathf.Max(18,GUI.skin.verticalScrollbar.fixedWidth));

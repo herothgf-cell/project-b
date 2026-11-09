@@ -1,3 +1,4 @@
+2026-11-09 사용자 후속: 말 걸기 숨김·승객 이름/화자 표기·작은 내비/지도 정리, 기존 후보 안의 연속 호출판 승차지 반복 회피. [실제 구현/검증·배포](work-history/2026-11-09-passenger-cards-call-variety.md). 새로운 지도/요금/운전 물리 범위는 추가하지 않는다.
 2026-11-07 추가 피드백: 택시 하단/휠 일체감과 HUD 신호·속도/기어 겹침 교정. 물리·규칙 유지. [구현/검증](work-history/2026-11-07-taxi-hud-corrections.md).
 
 2026-11-07 추가 승인: Blender MCP 제작 모델을 Unity MCP로 반입하여 택시 외형을 개선한다. 기존 1인칭/UI·물리 수치는 유지. [원본·실제 검증](work-history/2026-11-07-taxi-blender-quality.md).

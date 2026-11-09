@@ -11,8 +11,10 @@
 
 기존 main/사용자 자료·지도·저장 식별자를 보존한다. Quiet 위반, 긴 사용자 대사, 진행 중 새 요청 우선순위, 구저장, LAN의 권한 있는 명령을 확인한다.
 
-- [ ] 순수 모델 회귀 검사에서 같은 대사·구저장·중복 문구·소진 후 재표시를 실패/통과로 확인한다.
-- [ ] PassengerChatHistory.cs와 Content/passenger-chat-lines.json을 추가하고 PassengerRequestUI.cs의 snapshot/선택/카드 표시에 연결한다. 대사 7개를 추가한다.
-- [ ] CockpitUI.cs의 기존 승객 카드에 작은 말 걸기 입력을 두고 DrivingReadability.cs 내비를 85%로 축소한다.
-- [ ] 실제 Player 회귀와 화면 검사, BuildHybrid·manifest/Strict·사용자 저장 보존을 확인한다.
-- [ ] 독립 검토를 반영하고 기획/체크리스트/작업 이력/LATEST와 실행본을 함께 기록한다.
+- [x] 순수 모델 회귀 검사에서 같은 대사·구저장·중복 문구·소진 후 재표시를 실패/통과로 확인한다.
+- [x] PassengerChatHistory.cs와 Content/passenger-chat-lines.json을 추가하고 PassengerRequestUI.cs의 snapshot/선택/카드 표시에 연결한다. 대사 7개를 추가한다.
+- [x] CockpitUI.cs의 기존 승객 카드에 작은 말 걸기 입력을 두고 DrivingReadability.cs 내비를 85%로 축소한다.
+- [ ] 실제 Player 회귀와 화면 검사, BuildHybrid·manifest/Strict·사용자 저장 보존을 확인한다. (후속 계획에서 최종 완료)
+- [x] 독립 검토를 반영하고 기획/체크리스트/작업 이력/LATEST와 실행본을 함께 기록한다.
+
+후속 사용자 요청으로 말 걸기 UI/답변 표시는 숨김으로 대체했다. 최종 배포/검증은 2026-11-09-passenger-cards-call-variety.md 계획·이력을 따른다.

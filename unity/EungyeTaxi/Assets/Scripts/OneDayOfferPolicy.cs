@@ -1,3 +1,7 @@
+public struct OneDayPickup {
+ public int Index,Cell;public float X,Z;
+ public OneDayPickup(int index,int cell,float x,float z){Index=index;Cell=cell;X=x;Z=z;}
+}
 public static class OneDayOfferPolicy {
  // Bound route work independently of catalog size; rank only within geographic strata.
  public const int OrdinaryPickupLimit=12;
@@ -6,6 +10,24 @@ public static class OneDayOfferPolicy {
   int col=System.Math.Max(0,System.Math.Min(2,(int)(x/System.Math.Max(1,width)*3)));
   int row=System.Math.Max(0,System.Math.Min(2,(int)(z/System.Math.Max(1,depth)*3)));
   return row*3+col;
+ }
+ // Pool order already includes demand, travel cost and the last completed trip.
+ // Prefer a new pickup within the same spatial pass; if legal alternatives are
+ // scarce, retain the existing distance/cell relaxation and ranked fallback.
+ public static int SpreadPickup(OneDayPickup[] pool,OneDayPickup[] selected,int[] previous,bool rotate,int generation){
+  for(int pass=0;pass<3;pass++){
+   int best=-1,bestCell=10;bool bestRecent=false;
+   for(int i=0;i<pool.Length;i++){
+    var item=pool[i];bool same=false,near=false,cellUsed=false;
+    foreach(var prior in selected){same|=prior.Index==item.Index;float dx=prior.X-item.X,dz=prior.Z-item.Z;near|=dx*dx+dz*dz<PickupSeparation*PickupSeparation;cellUsed|=prior.Cell==item.Cell;}
+    if(same||pass<2&&near||pass==0&&cellUsed)continue;
+    bool recent=previous!=null&&System.Array.IndexOf(previous,item.Index)>=0;
+    int cell=(item.Cell-generation%9+9)%9;
+    if(best<0||bestRecent&&!recent||bestRecent==recent&&rotate&&cell<bestCell){best=i;bestCell=cell;bestRecent=recent;}
+   }
+   if(best>=0)return best;
+  }
+  return -1;
  }
  // Directed road distances; no forced situation waypoints.
  public static float PickupSeconds(float distance){return System.Math.Max(150,distance/3+150);}

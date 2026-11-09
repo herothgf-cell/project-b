@@ -71,6 +71,7 @@ public partial class PassengerJobs : MonoBehaviour {
  public string TimeComparison(JobOffer offer){float pickup=DirectedDistance(nav.hd,session.taxi.transform.position,session.taxi.transform.forward,stops[offer.pickup]);if(float.IsInfinity(pickup)||float.IsNaN(pickup))return "현재 위치에서 픽업 경로 없음";float a=pickup/4,b=(offer.timingPolicyVersion>=1?offer.safeRouteSeconds:offer.distance/8)+offer.waitSeconds;return "픽업 "+pickup.ToString("0")+"m / 약 "+RoadNavigation.FormatEta(a)+" · 탑승 "+offer.distance.ToString("0")+"m / 약 "+RoadNavigation.FormatEta(b)+"\n총 예상 "+RoadNavigation.FormatEta(a+b)+" · "+(offer.timingPolicyVersion>=1?"시간 성향 "+OneDayOfferPolicy.UrgencyLabel(offer.urgency):"기존 약정")+" (신호·교통에 따라 변동, 운임은 순이익 아님)"+(session.business.SimulationSession?"\n"+PvpConditionHUD.ForecastText(session.business.ledger.Driver,a+b):"");}
  void Stamp(JobOffer offer){if(string.IsNullOrEmpty(offer.candidateSeed))offer.candidateSeed=(session.law?session.law.ids.campaign:"initial")+":"+(session.business==null?1:session.business.ledger.Day)+":"+generation+":"+offer.pickup+":"+offer.drop+":"+offer.scenarioId;var p=Catalog.Entry(offer.pickup);var d=Catalog.Entry(offer.drop);offer.pickupStopId=p==null?runtimeStopIds[offer.pickup]:p.StopId;offer.dropStopId=d==null?runtimeStopIds[offer.drop]:d.StopId;offer.mapRevision=session.world.map.editorRevision;offer.catalogRevision=Catalog.Revision;offer.stopEvidence=(p==null?"saved-active-stop":p.EvidenceStatus)+" / "+(d==null?"saved-active-stop":d.EvidenceStatus);}
  System.Collections.Generic.Dictionary<int,float> generationPickupDistances;
+ int[] generationPreviousPickups;
  float PickupDistance(int pickup){float distance;if(generationPickupDistances!=null&&generationPickupDistances.TryGetValue(pickup,out distance))return distance;distance=DirectedDistance(nav.hd,session.taxi.transform.position,session.taxi.transform.forward,stops[pickup]);if(generationPickupDistances!=null)generationPickupDistances[pickup]=distance;return distance;}
  int PickupCell(int pickup){return OneDayOfferPolicy.PickupCell(stops[pickup].x,stops[pickup].z,session.world.map.width,session.world.map.depth);}
  static bool Finite(float value){return !float.IsInfinity(value)&&!float.IsNaN(value);}
@@ -101,15 +102,9 @@ public partial class PassengerJobs : MonoBehaviour {
   }return result.ToArray();
  }
  JobOffer SpreadOffer(System.Collections.Generic.List<JobOffer> pool,System.Collections.Generic.List<JobOffer> selected,bool rotate){
-  for(int pass=0;pass<3;pass++){
-   JobOffer best=null;int bestCell=10;
-   foreach(var o in pool){
-    bool same=false,near=false,cellUsed=false;foreach(var prior in selected){same|=prior.pickup==o.pickup;var delta=stops[prior.pickup].Kerb-stops[o.pickup].Kerb;delta.y=0;near|=delta.sqrMagnitude<OneDayOfferPolicy.PickupSeparation*OneDayOfferPolicy.PickupSeparation;cellUsed|=PickupCell(prior.pickup)==PickupCell(o.pickup);}
-    if(same||pass<2&&near||pass==0&&cellUsed)continue;
-    int cell=(PickupCell(o.pickup)-generation%9+9)%9;
-    if(best==null||rotate&&cell<bestCell){best=o;bestCell=cell;}
-   }if(best!=null)return best;
-  }return null;
+  System.Converter<JobOffer,OneDayPickup> point=o=>new OneDayPickup(o.pickup,PickupCell(o.pickup),stops[o.pickup].Kerb.x,stops[o.pickup].Kerb.z);
+  int index=OneDayOfferPolicy.SpreadPickup(System.Array.ConvertAll(pool.ToArray(),point),System.Array.ConvertAll(selected.ToArray(),point),generationPreviousPickups,rotate,generation);
+  return index<0?null:pool[index];
  }
  void MixOrdinaryOffers(){
   var normal=OrdinaryCandidates();float target=new[]{400f,900f,1600f}[generation%3];
@@ -163,7 +158,7 @@ public partial class PassengerJobs : MonoBehaviour {
   return result;
  }
  public void ResetOffers(){generation=0;Generate();}
- public void Generate(){generationDemandPhase=SimulationDemandClock.Phase(session);if(session&&session.simulationMatch&&session.simulationMatch.SharedCalls!=null){session.simulationMatch.SharedCalls.Replenish();offers=session.simulationMatch.SharedCalls.Offers;return;}generationPickupDistances=new System.Collections.Generic.Dictionary<int,float>();try{GenerateOffers();}finally{generationPickupDistances=null;}}
+ public void Generate(){generationDemandPhase=SimulationDemandClock.Phase(session);if(session&&session.simulationMatch&&session.simulationMatch.SharedCalls!=null){session.simulationMatch.SharedCalls.Replenish();offers=session.simulationMatch.SharedCalls.Offers;return;}generationPickupDistances=new System.Collections.Generic.Dictionary<int,float>();var previous=new System.Collections.Generic.List<int>();foreach(var offer in offers)if(offer!=null)previous.Add(offer.pickup);generationPreviousPickups=previous.ToArray();try{GenerateOffers();}finally{generationPickupDistances=null;generationPreviousPickups=null;}}
  void GenerateOffers(){nextOfferRetry=Time.time+3;if(session.business!=null&&session.business.ledger!=null&&session.business.ledger.OneDay){offerPhase=generationDemandPhase;}if(stops.Length<2)return;var zones=GetComponent<ServiceLawZones>();if(session.business!=null&&session.business.ledger!=null&&session.business.ledger.OneDay&&zones&&zones.Ready){var candidates=new System.Collections.Generic.List<JobOffer>();foreach(var course in zones.scenarios){var offer=Make(course.pickup,course.drop,course);if(offer!=null)candidates.Add(offer);}double elapsed=session.business.ledger.Elapsed;offerPhase=generationDemandPhase;var ranks=new System.Collections.Generic.Dictionary<JobOffer,float>();foreach(var candidate in candidates)ranks[candidate]=OfferRank(candidate,elapsed);candidates.RemoveAll(o=>!Finite(ranks[o]));candidates.Sort((a,b)=>{int rank=ranks[a].CompareTo(ranks[b]);return rank!=0?rank:string.CompareOrdinal(a.candidateSeed,b.candidateSeed);});var selected=new System.Collections.Generic.List<JobOffer>();for(int i=0;i<3;i++){offers[i]=SpreadOffer(candidates,selected,i==0);if(offers[i]!=null)selected.Add(offers[i]);}MixOrdinaryOffers();generation++;return;}for(int i=0;i<3;i++){offers[i]=null;
   if(zones&&zones.Ready&&zones.scenarios.Count>0)for(int k=0;k<zones.scenarios.Count;k++){var scenario=zones.scenarios[(generation+i+k)%zones.scenarios.Count];bool duplicate=false;for(int j=0;j<i;j++)if(offers[j]!=null&&offers[j].scenarioId==scenario.id)duplicate=true;if(duplicate)continue;var candidate=Make(scenario.pickup,scenario.drop,scenario);if(candidate!=null){offers[i]=candidate;break;}}
   if(offers[i]==null){int p=(generation+i*2)%stops.Length,d=(p+3+i)%stops.Length;if(p==d)d=(d+1)%stops.Length;offers[i]=Make(p,d);}

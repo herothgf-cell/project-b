@@ -89,7 +89,6 @@ public partial class FullMapOverlay : MonoBehaviour {
   GUI.Label(new Rect(24,20,CanvasWidth-420,38),MapCatalog.Name(session.world.map.mapId)+" 지도 · 북 ↑"+(session.simulationMatch?(session.LivePvpMapOpen?" · 경기 진행 중 · 내 차 정지":" · 일시정지"):""),heading);
   if(GUI.Button(new Rect(CanvasWidth-330,20,150,38),"위치 정보",button))ShowLocation();
   if(GUI.Button(new Rect(CanvasWidth-166,20,142,38),"닫기 M",button)){Close();return;}
-  GUI.Label(new Rect(24,58,CanvasWidth-48,24),"파란 실선 · 승차     분홍 점선 · 운송     노란 화살표 · 내 차",new GUIStyle(text){fontSize=MapFont(13)});
   var viewport=MapRect;var ev=Event.current;var jobs=session.jobs;
   GUI.BeginGroup(viewport);var map=new Rect(0,0,viewport.width,viewport.height);Fill(map,MapPresentation.Land);var data=session.world.map;var tile=GetComponent<DriveHUD>().LightTile;
   if(tile){var a=Project(new Vector3(0,0,data.depth),map);float span=Mathf.Max(data.width,data.depth),pixels=Mathf.Min(map.width,map.height);GUI.DrawTexture(new Rect(a.x,a.y,data.width/span*pixels*ZoomLevel,data.depth/span*pixels*ZoomLevel),tile);}

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -47,7 +47,7 @@ public class PassengerRequestUI : MonoBehaviour {
  public PassengerType[] EligiblePassengerModules(){var kinds=EligibleRequests();int count=PassengerRequestSchedule.Create(session.jobs.current.candidateSeed,kinds).Capture().slots.Length;var result=new List<PassengerType>();foreach(PassengerType type in Enum.GetValues(typeof(PassengerType))){if(type==PassengerType.General||type==PassengerType.Drunk)continue;var representative=Representative(type,PassengerBehaviorState.Create(session.jobs.current.candidateSeed,type).Variant);if(!representative.HasValue||count>0&&Array.IndexOf(kinds,representative.Value)>=0)result.Add(type);}return result.ToArray();}
  public PassengerType[] EligiblePassengerTypes(){var modules=EligiblePassengerModules();if(ContentTuning.Text("passenger.presets","").Length==0)return modules;var pools=new List<PassengerType>();string seed=session.jobs.current.candidateSeed;string selectionSeed=session.business.ledger.Care.PassengerSelectionSeed;foreach(PassengerType pool in Enum.GetValues(typeof(PassengerType))){if(pool==PassengerType.General||pool==PassengerType.Drunk)continue;var selected=PassengerBehaviorState.CreateConfigured(seed,pool,modules,selectionSeed);if(selected.Pool==pool)pools.Add(pool);}return pools.ToArray();}
  public int ScheduledChoiceCount {get{return schedule==null?observations.Count:schedule.Capture().slots.Length;}}
- public string CardReply {get{return SmallTalkReply.Length>0?PassengerChatHistory.Speech(SmallTalkReply):Current?Current.CardReply:"";}}
+ public string CardReply {get{return Current?Current.CardReply:"";}}
  public bool HasPendingChoice {get{return Current&&!Current.request.Resolved;}}
  public bool HasVisiblePanel {get{return Current&&Current.PanelVisible&&PresentationAvailable;}}
  public void SyncBehaviorContext(){var b=session.jobs.Behavior;if(b==null)return;var kind=Representative(b.RepresentativeType,b.RepresentativeVariant);if(!kind.HasValue){b.SetRepresentativeContext(PassengerRepresentativeStatus.None,"");return;}PassengerRequestObservation found=null;foreach(var o in observations)if(o&&o.request.Kind==kind.Value){found=o;break;}if(!found){b.SetRepresentativeContext(PassengerRepresentativeStatus.NotPresented,"");return;}var state=found.request.Snapshot();var status=state.safety?PassengerRepresentativeStatus.Deferred:!state.accepted?(state.finished?PassengerRepresentativeStatus.Neutral:PassengerRepresentativeStatus.Pending):state.goalRecorded?(state.satisfactionDelta>0?PassengerRepresentativeStatus.Succeeded:state.satisfactionDelta<0?PassengerRepresentativeStatus.Failed:PassengerRepresentativeStatus.Neutral):PassengerRepresentativeStatus.Accepted;b.SetRepresentativeContext(status,found.request.ResponseText());}
