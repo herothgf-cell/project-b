@@ -1,3 +1,7 @@
+## 2026-11-09 Blender·Unity MCP 직접 호출 검사
+
+[도구·실제 응답·오브젝트 목록](2026-11-09-blender-unity-mcp-test.md). Blender get_objects_summary status=ok/isError=false, Scene의 Camera/Cube/Light3개. Unity manage_scene get_active/get_hierarchy success=true/isError=false, EungyeTaxi 인스턴스1개·이름/경로 없는 씬의 Main Camera/Directional Light2개. 연결 실패 없음·기존 파일/씬/코드 미변경·기존 미추적 설정 보존. 배포 은계/A2·LANv16·BuildHybrid·548fe8b/a978b3b와 직전 Strict issues0 유지(이번 빌드/입력 재검사 없음). 다음은 요청 시 게임 씬 조회·기존 사람 장기/전체3일·다른PC LAN 수용.
+
 ## 2026-11-09 Unity MCP 읽기 전용 상태 확인
 
 [실제 연결·활성 씬·계층](2026-11-09-unity-mcp-readonly-check.md). 로컬 MCP3.4.11·EungyeTaxi/Unity2022.3.62f2 인스턴스1개 응답, idle/ready·Play/컴파일 아님. 활성 씬은 이름/경로 없는 Untitled, Main Camera·Directional Light 두 루트/자식0. 씬/오브젝트/스크립트 미변경·기존 미추적 PackageManagerSettings 보존. 배포 은계/A2·LANv16·BuildHybrid·548fe8b/a978b3b 및 직전 Strict issues0 유지(이번 재검사 없음). 다음은 요청 시 게임 씬 열기/조회, 기존 사람 장기/전체3일·다른PC LAN 수용.
