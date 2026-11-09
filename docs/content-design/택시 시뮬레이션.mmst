@@ -1387,7 +1387,7 @@
             "id": "3dc16dc7-8870-4115-9350-a10c5591eb7b",
             "topic": "차량",
             "createdAt": 1792731714146,
-            "collapsed": true,
+            "collapsed": false,
             "children": [
               {
                 "id": "463f2d7d-5c30-4517-b5ca-2b65e08fe90b",
@@ -1695,7 +1695,7 @@
             "id": "cdf84a46-1b3b-4c36-9f73-866e25d4eb84",
             "topic": "주행 & 운송",
             "createdAt": 1792732046912,
-            "collapsed": true,
+            "collapsed": false,
             "tags": [
               "현재 플레이 기획",
               "단계:하위 구현 37 / 기획 0 / 미정 1"
@@ -2227,7 +2227,8 @@
                     "modifiedAt": 1793599686837,
                     "task": {
                       "progress": 0.5
-                    }
+                    },
+                    "collapsed": false
                   }
                 ],
                 "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/01-driving-and-traffic.md",
@@ -6045,7 +6046,7 @@
             ],
             "createdAt": 1793597387559,
             "modifiedAt": 1793599686837,
-            "collapsed": true,
+            "collapsed": false,
             "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 1 / 25% 0 / 0% 16\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/README.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 기존 아이디어·후속 구상 (미구현/추가 결정)\n\n날씨·교통·사고·법규\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.\n\n<!-- status-review-2026-11-07:start -->\n## 2026-11-07 현재 판정\n\n하위 집계: 50% 1 / 25% 0 / 0% 20\n현재 말단 단계의 집계다. 아래 이전 작성 메모의 수치는 당시 기록이며 최신 집계가 아니다. 제품 완료율·독립 기능 개수와 구분한다.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-07-planning-gaps-and-weather.md\n<!-- status-review-2026-11-07:end -->",
             "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/README.md",
             "hyperlinks": [
@@ -6242,7 +6243,7 @@
           "기존 아이디어·후속 구상 (미구현/추가 결정)",
           "단계:하위 구현 8 / 기획 2 / 미정 47"
         ],
-        "collapsed": true
+        "collapsed": false
       },
       {
         "id": "45aa7402-c9e7-5611-b743-fb6d212708ae",
@@ -6440,7 +6441,7 @@
         ],
         "createdAt": 1793597387559,
         "modifiedAt": 1793599686837,
-        "collapsed": true,
+        "collapsed": false,
         "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 하위 집계: 50% 7 / 25% 0 / 0% 3\n\n분류/부모 가지는 평균이나 완료율로 표시하지 않음. 실제 작업 체크는 하위 기능 항목에 적용\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/README.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 추가 제안 (미채택·출처 구분)\n\n추가 제안 (2026-11-02·미채택)\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.\n\n<!-- handoff-2026-11-03:start -->\n## 2026-11-03 현재 기준\n\nP1/P2 다수는 후속 승인으로 구현50%. 음악·에어컨·창문 실제 조작은0% 보류. 추천 문구는 최초 출처이며 현재 채택 여부는 개별 단계로 확인한다.\n\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n<!-- handoff-2026-11-03:end -->\n\n\n<!-- status-review-2026-11-07:start -->\n## 2026-11-07 현재 판정\n\n설명·참조 (단계 집계 제외)\n현재 말단 단계의 집계다. 아래 이전 작성 메모의 수치는 당시 기록이며 최신 집계가 아니다. 제품 완료율·독립 기능 개수와 구분한다.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-07-planning-gaps-and-weather.md\n<!-- status-review-2026-11-07:end -->",
         "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-review.md",
         "hyperlinks": [
@@ -6467,7 +6468,7 @@
   "meta": {
     "source": "new",
     "connectorStyle": "elbow",
-    "updatedAt": 1793600082237,
+    "updatedAt": 1794200956789,
     "organizationVersion": "2026-11-02",
     "progressReviewVersion": "2026-11-02-progress",
     "handoffReviewDate": "2026-11-03",
