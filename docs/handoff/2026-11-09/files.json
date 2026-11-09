@@ -1,0 +1,114 @@
+{
+  "createdOn": "2026-11-09",
+  "baseCommit": "0c490bad39c9f55428f1f9c672201b7c6dc4add4",
+  "files": [
+    {
+      "path": "docs/handoff/2026-11-09/content-profile-revision7.json",
+      "bytes": 132782,
+      "sha256": "b60a4c30e90158e0d9519a12fd3ef53db2e06dd1ad6bf92f8a74d3f8ddd2bfb3"
+    },
+    {
+      "path": "docs/handoff/2026-11-09/README.md",
+      "bytes": 5146,
+      "sha256": "4b1709238218bf55671fa955ca93b4660f878f1399e4c6383d5d16439310b3ca"
+    },
+    {
+      "path": "docs/handoff/2026-11-09/release-validation.json",
+      "bytes": 1714,
+      "sha256": "0586698a335f98474f5a88a19d3396ebec0da66f62b1c55b378a12521373b336"
+    },
+    {
+      "path": "docs/handoff/2026-11-09/request-notes.md",
+      "bytes": 1891,
+      "sha256": "d1235f861eadedcab8faca5fabfffd0935a0492813daa33bfe5a1744deda2e31"
+    },
+    {
+      "path": "docs/handoff/2026-11-09/review-evidence.zip",
+      "bytes": 6448078,
+      "sha256": "1dbefc672792066375ef8a4f28a3a91e71320e4fcbea81ff1b2296e3db0c1477"
+    },
+    {
+      "path": "docs/handoff/2026-11-09/test-results.txt",
+      "bytes": 1010,
+      "sha256": "4ec5646cd6b61846c689d2c230c7e931bb3a841159bce1ee16a6b88dd14ab78c"
+    }
+  ],
+  "evidenceZipEntries": [
+    {
+      "path": "render/corridor-01-overhead.png",
+      "bytes": 427108,
+      "sha256": "00320f237d4ecbced7f9c789d6875c0dd714e85b55c4351c508ae9e317af7746"
+    },
+    {
+      "path": "render/corridor-02-overhead.png",
+      "bytes": 876847,
+      "sha256": "d037b67a217286a97631e4e0b888345e077a12855cb10c2f90ea90dfdf23098f"
+    },
+    {
+      "path": "render/lane-01-J866_5285--1.png",
+      "bytes": 640586,
+      "sha256": "a81701fa8bb3fd3acce1948222d55a453694d8edff0526d9ca5328a1b06ebbd3"
+    },
+    {
+      "path": "render/lane-01-paint-overhead.png",
+      "bytes": 705824,
+      "sha256": "e768960c125e2eea3ad0276ed7c039b3d8057b3644dc542d7b75703a5efefb3f"
+    },
+    {
+      "path": "render/lane-02-J5057_4449-1.png",
+      "bytes": 648140,
+      "sha256": "ac8652169f18e96e8b2cdb1eb761b5d694e47eb3696cc333c1f05e566a6bbc6f"
+    },
+    {
+      "path": "render/lane-02-paint-overhead.png",
+      "bytes": 607088,
+      "sha256": "a777ee42e3b5ac01853ad15dfa009d20e2d2dc4cc44cdd1dfce3b3ebe3edbc14"
+    },
+    {
+      "path": "render/lane-03-J5057_4449--1.png",
+      "bytes": 644490,
+      "sha256": "8c5e6114aa9e8c7bf4b07bafdc91c9305f5d48ac2d5c9b2110f579af6879a1b1"
+    },
+    {
+      "path": "render/lane-03-paint-overhead.png",
+      "bytes": 663926,
+      "sha256": "5d4124cf82e72b2bf1a69bb3adff03ec0562ef70e04628ce167ede40f781621d"
+    },
+    {
+      "path": "roadview/eungye-jungang-arc-2026-05.png",
+      "bytes": 183434,
+      "sha256": "fbbc135d62a2baf3192987e289518869e903f17daab564588bc974e4653a1168"
+    },
+    {
+      "path": "roadview/eungye-jungang-north-2026-05.png",
+      "bytes": 161326,
+      "sha256": "acc0b9701c81f67bdc102396bfbadd34aa43ec98868db9d967a665dba4467714"
+    },
+    {
+      "path": "roadview/eungye-ro-stem-2026-05.png",
+      "bytes": 210448,
+      "sha256": "2aeb0681807900b1765de1133b154768a875beaf6ee32e32c022aa8938db8f43"
+    },
+    {
+      "path": "roadview/j5057-eastbound-2026-05.png",
+      "bytes": 190737,
+      "sha256": "6e7c80f0573101c916c57288fd2995e57e7a6d1ab0818c245063bae678cd9692"
+    },
+    {
+      "path": "roadview/j5057-westbound-2026-05.png",
+      "bytes": 189024,
+      "sha256": "92f9a3c451902f635b78ab8c66d856ea25e038d95c42bd4b66284d1e97b108ac"
+    },
+    {
+      "path": "roadview/j866-westbound-front-2026-05.png",
+      "bytes": 175835,
+      "sha256": "4aefddecd98c255f46852714aa55f207ec6de6403ea3449bc39a9df6b90f5e0a"
+    },
+    {
+      "path": "roadview/j866-westbound-rear-2026-05.png",
+      "bytes": 176376,
+      "sha256": "163444f200e0e5055e4a30b29a2db0ccf26a5ff74d70186f8279f32d41088030"
+    }
+  ],
+  "requestOriginalImages": "7 Temp files unavailable; request-notes.md and prior chat preserve requirements"
+}

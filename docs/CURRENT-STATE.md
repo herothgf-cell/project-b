@@ -1,3 +1,7 @@
+## 2026-11-09 PC 이동·현재 기준
+
+[다른 PC 시작·최신 설정·검증 자료](handoff/2026-11-09/README.md)를 먼저 읽는다. 현재 은계/A2 통합exe·LANv16·BuildHybrid, 소스548fe8b/출하a978b3b/게시a0ecc05, 사용자 마인드맵23646cc·제안서V6 0c490ba를 포함한다. 최근 차로별 표시·서비스 목표/좌회전 수정은 [이력](work-history/2026-11-09-lane-movement-roadview-followup.md), 현재 작업은 [LATEST](work-history/LATEST.md)를 따른다. 아래 날짜별 내용과 수치 표는 당시 기록이며 최신 안내가 우선한다.
+
 ## 2026-11-09 승객 카드·호출 후속
 
 최신 변경은 [승객 카드/호출 다양성 이력](work-history/2026-11-09-passenger-cards-call-variety.md)을 따른다. 작은 내비85%, 말 걸기 숨김·승객 이름/화자 정리·지도 보조/예측 카드 제거·기존 합법 후보 안의 직전 호출판 반복 회피를 적용한다. 은계/A2 통합exe·LANv16·BuildHybrid·지도/ZIP불변. 실제 검증/배포 영수증·미검증 범위는 연결 이력을 우선한다.
@@ -30,7 +34,7 @@
 
 일시정지→설정에서 조향 민감도/반응/복원·게임패드 데드존4항목을 PC별 저장한다. 기본100/100/100/15%로 기존 조작감 유지, H/봇·가속/제동·개인 구매 보존. LANv10으로 드라이버별 계수를 서버에서 제한하고 예측과 공통 적용하므로 양쪽 실행본 갱신이 필요하다. [최종 검증·배포 영수증/후속 수용](work-history/2026-11-06-driving-settings.md).
 
-갱신일: **2026-11-06**. 이 문서는 현재 상태만 요약한다. 날짜별 결정·검증 증거는 [작업 이력](work-history/LATEST.md), 상세 규칙은 [콘텐츠 기획](content-design/README.md), 아이디어 전체는 [마인드맵](content-design/택시%20시뮬레이션.mmst)과 [목차](content-design/택시%20시뮬레이션-목차.md)를 따른다.
+갱신일: **2026-11-09**. 실행 기준은 문서 상단과 아래 표를 따르며 날짜별 본문은 당시 기록이다. 결정·검증 증거는 [작업 이력](work-history/LATEST.md), 상세 규칙은 [콘텐츠 기획](content-design/README.md), 아이디어 전체는 [마인드맵](content-design/택시%20시뮬레이션.mmst)과 [목차](content-design/택시%20시뮬레이션-목차.md)를 따른다.
 
 ## 실행·개발 기준
 
@@ -53,10 +57,10 @@
 | 제품/실행 | **택시 시뮬레이션**, `builds/EungyeTaxi/EungyeTaxi.exe` |
 | 모드/지도 | 은계 싱글 3일 캠페인 / **A2 자체 도시 PvP**, 봇3 또는 LAN 최대4명 |
 | A3 | 적용 이력 후 사용자 지시로 A2 복귀. 코드/시안 보존, 현재 배포 지도가 아님 |
-| 런타임 배포 | 11/05 모드·싱글 시작 메뉴 간소화, 11/04 내비/승하차/가독성·조향/기본 신호 수요 개선 유지. 소스3338612·실제 배포 해시는 위 작업 이력과 manifest 기준 |
-| 파일 검사 | **140파일**, 현재 총 크기·SHA256은 `distribution/EungyeTaxi-build-manifest.json` 기준 |
+| 런타임 배포 | 11/09 차로별 표시·동부 노면/경계·주차장 목표 분할/좌회전 교정. 소스548fe8b·출하a978b3b, 이전 UI/승객/물리 유지 |
+| 파일 검사 | **출하143파일127378253바이트**·선택 사용자프로필 별도. 크기·SHA256은 `distribution/EungyeTaxi-build-manifest.json` 기준 |
 | Unity | **2022.3.62f2**, 프로젝트 `unity/EungyeTaxi`, `PrototypeBuild.BuildHybrid` |
-| 통신 | 기존 차량·물리·승객·법규·시설 재사용, 예측 입력+권한 신호/제동 상태 프로토콜v3. 양쪽 PC 모두 최신 main 사용 |
+| 통신 | **LANv16**. 기존 차량·물리·승객·법규·시설·권위 신호/설정 공유, 양쪽 PC 모두 최신 main 사용 |
 | 지도 입력 | 정식 `config/maps/project/eungye.project.json`이 Git 기준. 원본 재수입 때만 지도 ZIP/원시 자료 추가 준비 |
 
 ## 실제 구현과 남은 확인

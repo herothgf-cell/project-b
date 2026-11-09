@@ -1,3 +1,5 @@
 * text=auto eol=lf
 /builds/EungyeTaxi/** -text -diff
 /builds/PvpPrototype/** -text -diff
+# Preserve the checksummed transfer snapshot bytes on every PC.
+/docs/handoff/2026-11-09/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

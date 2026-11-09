@@ -1,0 +1,13 @@
+REVIEWED_LANE_MOVEMENT_TRACE_OK checks=37
+LANE_DIRECTION_PAINT_TEST_OK glyphCases=49 lanes=313 junctions=88
+ROADVIEW_CORRIDOR_OK green=1+1 yellow=3+3 sources=14 stops=24 directedRoutes=552 uturnConditions=6 services=3 vehicleFootprintSamples=7272 greenPaintStrokes=3649 yellowPaintStrokes=1082 graph=byte-identical source=immutable centresAndWidths=game-estimate
+RUNTIME_SERVICE_ANCHOR_RESULT checks=40 failures=0
+LEFT_DEMAND_REGRESSION_OK checks=69
+LANE_FOLLOWUP_FINAL_BUILD_OK
+LANE_MOVEMENT_PLAYER_RESULT PASS checks=31
+PERSISTENT_GREEN_PLAYER_RESULT checks=34 failures=0
+BRIGHT_UI_RESULT PASS checks=169
+host PASS checks=54 native-map=pvp-city-a guest-metres=19.8257579803467
+client PASS checks=67 native-map=pvp-city-a guest-metres=19.9301490783691
+PVP_NATIVE_LAN_TWO_PROCESS_OK reconnect=True evidence=artifacts/pvp/native-lan-20261109-151310-cdce2c35
+Scope: two loopback player processes using native input and WheelCollider authority; remote-PC LAN behavior requires separate verification.
