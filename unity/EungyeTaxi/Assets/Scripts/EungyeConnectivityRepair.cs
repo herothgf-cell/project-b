@@ -65,6 +65,15 @@ public static class EungyeConnectivityRepair {
    for(int k=0;k+1<all.Count;k++){int index=k==0?item.Key:edges.Count;string from=k==0?original.fromNode:Prefix+original.id+":split:"+Number(all[k]),to=k+2==all.Count?oldTo:Prefix+original.id+":split:"+Number(all[k+1]);var part=new HdEdge{id=k==0?original.id:Prefix+original.id+":part:"+Number(all[k]),sourceId=original.sourceId,fromNode=from,toNode=to,points=Slice(path,all[k],all[k+1]),number=original.number,turn=original.turn,change=original.change,status=original.status,ruleId=original.ruleId,roadName=original.roadName,evidence=original.evidence,updated=original.updated,sourceOffset=original.sourceOffset+all[k],next=k+2==all.Count?oldNext:new int[0]};if(k==0)edges[index]=part;else edges.Add(part);list.Add(new Part{index=index,from=all[k],to=all[k+1]});}
    for(int k=0;k+1<list.Count;k++)edges[list[k].index].next=new[]{list[k+1].index};parts[item.Key]=list;
    foreach(var stop in map.stops)if(stop.laneEdge==item.Key){var target=list.FirstOrDefault(p=>stop.laneAt<p.to-.001f)??list.Last();stop.laneEdge=target.index;stop.laneAt-=target.from;}
+   // Scene service anchors use the same edge-local offsets as stops. The
+   // composed runtime scene is a separate copy of the authored document;
+   // retain the service's world approach when its lane is split at runtime.
+   if(map.projectScene!=null&&map.projectScene.objects!=null)foreach(var service in map.projectScene.objects)if(service.IsService&&service.laneId==original.id){
+    var target=list.FirstOrDefault(p=>service.laneAt<p.to-.001f)??list.Last();service.laneId=edges[target.index].id;
+    // The shared boundary tolerance may choose the following part less than
+    // 1 mm early; its valid local origin is zero, never a negative goal.
+    service.laneAt=Mathf.Max(0,service.laneAt-target.from);
+   }
   }
   Func<Family,float,bool,int> locate=(family,at,ending)=>{int original=family.edges.Last(i=>map.hdEdges[i].sourceOffset<at+.001f);float distance=at-map.hdEdges[original].sourceOffset;List<Part> split;if(!parts.TryGetValue(original,out split))return original;return ending?(split.FirstOrDefault(p=>Mathf.Abs(p.to-distance)<.01f)??split.First(p=>distance>=p.from-.01f&&distance<=p.to+.01f)).index:(split.FirstOrDefault(p=>Mathf.Abs(p.from-distance)<.01f)??split.First(p=>distance>=p.from-.01f&&distance<=p.to+.01f)).index;};
   foreach(var change in changes){int from=locate(change.from,change.at,true),to=locate(change.to,change.end,false);var edge=Extra("change:"+change.from.id+":"+change.to.id+":"+Number(change.at),change.from.id+","+change.to.id,edges[from].toNode,edges[to].fromNode,change.points,edges[to].number,Evidence+" / "+change.mark,change.side);edge.next=new[]{to};edges[from].next=edges[from].next.Concat(new[]{edges.Count}).ToArray();edges.Add(edge);}

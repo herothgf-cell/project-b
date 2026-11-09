@@ -176,8 +176,6 @@ public class DrivingReadability : MonoBehaviour {
  public SignalHeadPresentation.Head SignalHead {get{return SignalHeadPresentation.Resolve(session.world.map,SignalTarget,SignalAxis,SignalSign);}}
  void DrawCompactSignal(float x,float y,bool blue){
   if(SignalTarget==null)return;var next=NextSignalPreview;var head=SignalHead;Color ink=blue?Color.white:CasualUI.Ink;
-  var caption=new GUIStyle(label){fontSize=UiReadability.Font(11),wordWrap=false,normal={textColor=ink}};
-  GUI.Label(new Rect(x+8,y-10,284,22),head.lamps==0?"신호 형식 미확인":"다음 · "+head.Caption,caption);
   if(head.lamps==0)return;
   float lampX=x+24,cy=y+29;CasualUI.RoundedFill(new Rect(x+10,y+14,head.lamps*27+4,26),new Color(.10f,.14f,.19f));
   for(int i=0;i<head.lamps;i++)Circle(new Vector2(lampX+i*27,cy),new Color(.24f,.29f,.34f),18);

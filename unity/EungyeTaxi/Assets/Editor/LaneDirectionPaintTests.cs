@@ -23,7 +23,17 @@ public static class LaneDirectionPaintTests {
    Check(arrows.Count>100,"arrows cover all generated junction approaches, not just T1");
    Check(arrows.Select(a=>a.edgeIndex).Distinct().Count()==arrows.Count,"one glyph per terminal lane");
    foreach(var arrow in arrows){var e=map.hdEdges[arrow.edgeIndex];int flags=0;
-    foreach(int i in e.next){var j=map.hdEdges[i];if(j.disabled||!(j.id.StartsWith("join:")||e.status=="ngii"&&j.status=="ngii")||!(j.next??new int[0]).Any(n=>!map.hdEdges[n].disabled))continue;flags|=UturnMovement.PaintMask(j.turn);}
+    if(e.status=="ngii"){
+     var assignment=map.editorDocument.facilities.SingleOrDefault(f=>f.kind=="lanePresentation"&&f.laneId==e.id);
+     Check(assignment!=null,"native glyph requires an explicitly selected approach "+e.id);
+     var junction=map.junctionRules.Single(j=>j.id==assignment.junctionId);
+     flags=ReviewedNativeLanePresentation.MovementMask(map,e,junction);
+     // Independent site expectations catch the source turn=0 return curves
+     // being mistaken for straight movement by the old one-hop assertion.
+     if(new[]{"A2218G611780:0","A2218G611350:2","A2218G611401:0"}.Contains(e.id))Check(flags==(LaneDirectionPaint.Left|LaneDirectionPaint.Uturn),"reviewed median lane retains existing left and return paths "+e.id);
+     else if(e.id=="A2218G611305:0")Check(flags==(LaneDirectionPaint.Straight|LaneDirectionPaint.Right),"reviewed outer lane retains straight and right paths");
+     else if(new[]{"A2218G611284:0","A2218G611282:0","A222BC004202:4","A222BC004204:3","A222BC004206:4","A2218G611404:0","A2218G611403:0","A2218G611402:0"}.Contains(e.id))Check(flags==LaneDirectionPaint.Straight,"reviewed native through lane keeps only its existing through role "+e.id);
+    }else foreach(int i in e.next){var j=map.hdEdges[i];if(j.disabled||!j.id.StartsWith("join:")||!(j.next??new int[0]).Any(n=>!map.hdEdges[n].disabled))continue;flags|=UturnMovement.PaintMask(j.turn);}
     Check(arrow.turns==flags,"paint uses current shared route movements "+e.id);
    }
    var detachedLeft=arrows.Single(a=>map.hdEdges[a.edgeIndex].id=="local:14385:13336:10603:1539:part:2");

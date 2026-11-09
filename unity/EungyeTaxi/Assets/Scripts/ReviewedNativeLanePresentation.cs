@@ -47,9 +47,34 @@ public sealed class ReviewedNativeLanePresentation {
    mask|=UturnMovement.PaintMask(connector.turn);
   }return mask;
  }
+ public static int MovementMask(MapData map,HdEdge edge,HybridJunctionRule junction){return ReviewedLaneMovementTrace.Mask(map,edge,junction);}
+ bool SelectedUpstream(Group group,Lane lane){
+  foreach(var prior in group.lanes){
+   if(prior.index==lane.index)continue;
+   var heading=prior.path.Tangent(prior.path.length);
+   if(Continues(prior.index,lane.index,heading,new HashSet<int>(),0,0))return true;
+  }return false;
+ }
+ bool Continues(int from,int target,Vector3 heading,HashSet<int> visited,int hops,float distance){
+  if(hops>=32||!visited.Add(from))return false;var edge=map.hdEdges[from];
+  foreach(int index in edge.next??new int[0]){
+   if(index<0||index>=map.hdEdges.Length||visited.Contains(index))continue;var next=map.hdEdges[index];
+   if(next.disabled||next.status!="ngii"||next.turn!=0||next.change!=0||next.points==null||next.points.Length<2)continue;
+   var start=next.points[0].V();
+   if((edge.points[edge.points.Length-1].V()-start).sqrMagnitude>.25f*.25f)continue;
+   var path=new AssistedRoadNetwork.Path(next.points.Select(p=>p.V()).ToArray());
+   if(Vector3.Dot(path.Tangent(0),heading)<.85f||Vector3.Dot(path.Tangent(path.length),heading)<.85f)continue;
+   float total=distance+path.length;if(total>120)continue;
+   if(index==target||Continues(index,target,heading,visited,hops+1,total))return true;
+  }return false;
+ }
  public List<LaneDirectionPaint.Arrow> Arrows(List<RoadJunctionGeometry.Clearance> clearances){
   var result=new List<LaneDirectionPaint.Arrow>();foreach(var group in groups)foreach(var lane in group.lanes){
-   int mask=MovementMask(map,lane.edge);if(mask==0)continue;float begin=lane.metadata.startAt,end=Mathf.Min(lane.metadata.endAt,lane.path.length);
+   // A selected terminal piece extends paint cleanup to the stop line. Its
+   // selected upstream continuation already owns the full approach role glyph.
+   if(SelectedUpstream(group,lane))continue;
+   var junction=(map.junctionRules??new HybridJunctionRule[0]).FirstOrDefault(j=>j.id==group.junction);
+   int mask=MovementMask(map,lane.edge,junction);if(mask==0)continue;float begin=lane.metadata.startAt,end=Mathf.Min(lane.metadata.endAt,lane.path.length);
    float minimum=(mask&LaneDirectionPaint.Uturn)!=0&&(mask&~LaneDirectionPaint.Uturn)!=0?LaneDirectionPaint.GlyphSpacing+2.2f:4;
    if(end-begin<Mathf.Max(9,minimum+2.2f))continue;
    for(float at=Mathf.Max(begin+minimum,end-10);at>=begin+minimum;at-=1){var arrow=new LaneDirectionPaint.Arrow{edgeIndex=lane.index,turns=mask,centre=lane.path.Position(at),forward=lane.path.Tangent(at)};if(at+2.2f>end||!LaneDirectionPaint.Clear(arrow,clearances))continue;result.Add(arrow);break;}

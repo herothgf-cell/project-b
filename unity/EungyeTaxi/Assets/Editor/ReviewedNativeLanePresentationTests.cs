@@ -15,6 +15,10 @@ public static class ReviewedNativeLanePresentationTests {
   var middle=Edge("native-middle","ngii",3.5f,0,new[]{4});var outer=Edge("native-outer","ngii",7,0,new[]{5});outer.number=2;
   var connectors=new[]{Edge("native-left-connector","ngii",0,-1,new[]{6}),Edge("native-middle-connector","ngii",3.5f,0,new[]{6}),Edge("native-outer-connector","ngii",7,0,new[]{6})};
   var exit=Edge("native-exit","ngii",0);
+  // Connected source geometry crosses the fixture junction before its exit.
+  // Source turn labels remain authoritative for its dedicated left connector.
+  foreach(var connector in connectors)connector.points=new[]{P(connector.points[0].x,30),P(0,70)};
+  exit.points=new[]{P(0,70),P(0,90)};
   var synthetic=Edge("local-provisional","provisional",3.5f,0,new[]{8});var syntheticJoin=Edge("join:local-provisional","provisional",3.5f,0,new[]{6});
   var reverse=Edge("local-opposite","provisional",-3.5f,0,new[]{10});reverse.points=new[]{P(-3.5f,30),P(-3.5f,0)};var reverseJoin=Edge("join:local-opposite","provisional",-3.5f,0,new[]{6});
   var unknown=Edge("unreviewed-native","ngii",14,0,new[]{4});
@@ -44,9 +48,13 @@ public static class ReviewedNativeLanePresentationTests {
   Check(!paint.Any(p=>Mathf.Abs(p.x-1.75f)<.05f)&&paint.Any(p=>Mathf.Abs(p.x-5.25f)<.05f),"matching original503 divider is kept once while uncovered boundary still gets fallback paint");
   var original=new GameObject("original reviewed paint preservation");try{HdRouteTrial.DrawMarkings(map,original.transform);var mesh=original.transform.Find("원본 노면선 1").GetComponent<MeshFilter>().sharedMesh;Check(mesh.vertices.Any(v=>Mathf.Abs(v.x+1.75f)<.2f&&v.z>12&&v.z<18),"original median source paint survives the generated-paint filter");}finally{UnityEngine.Object.DestroyImmediate(original);}map.hdMarks=null;
   connectors[0].next=new int[0];Check(!LaneDirectionPaint.Layout(map).Any(a=>a.edgeIndex==0),"detached native connector cannot paint a left permission");connectors[0].next=new[]{6};
+  // Both alternatives must start at this incoming lane's endpoint. The
+  // middle lane's normal connector starts 3.5m away and is not its branch.
+  var middleConnectorPoints=connectors[1].points;connectors[1].points=new[]{P(0,30),P(0,70)};
   connectors[0].turn=UturnMovement.Turn;left.next=new[]{3,4};selected.endAt=10;
+  Check(ReviewedNativeLanePresentation.MovementMask(map,left,map.junctionRules[0])==(LaneDirectionPaint.Uturn|LaneDirectionPaint.Straight),"short-interval fixture has two connected U-turn and through alternatives");
   Check(!LaneDirectionPaint.Layout(map).Any(a=>a.edgeIndex==0),"short reviewed interval cannot fit the rear glyph of a combined U-turn indication");
-  connectors[0].turn=-1;left.next=new[]{3};selected.endAt=30;
+  connectors[0].turn=-1;left.next=new[]{3};selected.endAt=30;connectors[1].points=middleConnectorPoints;
   exit.disabled=true;Check(!LaneDirectionPaint.Layout(map).Any(a=>a.edgeIndex<3),"disabled native exits remove reviewed movement arrows");
   Debug.Log("REVIEWED_NATIVE_LANE_PRESENTATION_OK");
  }

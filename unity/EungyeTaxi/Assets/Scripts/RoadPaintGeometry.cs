@@ -157,6 +157,7 @@ public sealed class RoadPaintGeometry {
      float laneWidth=lanes.Count>1?float.MaxValue:width;
      for(int i=1;i<lanes.Count;i++)laneWidth=Mathf.Min(laneWidth,lanes[i].offset-lanes[i-1].offset);
      float outerHalf=polished.Contains(corridor.Key)?Mathf.Min(laneWidth*.5f,CorridorPolish.HalfLane):laneWidth*.5f;
+     outerHalf=RoadviewCorridorPresentation.OuterHalf(corridor.Key,lanes,outerHalf);
      foreach(float edge in new[]{lanes[0].offset-outerHalf+.15f,lanes[lanes.Count-1].offset+outerHalf-.15f}){
       var q=p+TrafficSystem.Right(dir)*edge;if(!InOpening(q,clearances,openings,authored,piece*.5f))mark("Road edge",q,dir,.12f,piece,false);
      }
