@@ -78,3 +78,18 @@
 - 게임: `builds/EungyeTaxi/EungyeTaxi.exe` → 은계 싱글 → 하루 정산 → "내 공간 · 방/차고" → 차고. PvP는 입장 화면 "내 차".
 - 개발 검사: 위 표의 명령. Player 검사는 실행본을 쓰며 `artifacts/vehicle-garage-player/`만 초기화한다(개인 저장·해금 파일 미사용).
 - 관리창: `설정 관리.cmd`(Node.js 필요) → 차량 → 차량 구매·꾸미기.
+
+## 후속: 차량 아이콘·PvP 입장 화면 (2026-11-10, 사용자 피드백)
+
+요청: 차량 아이콘을 다른 UI 크기에 맞춰 다시 그리기, PvP "내 이름"→"닉네임"과 자동 입력, 내 차 선택을 같은 아이콘·크기로, 화분 올리기 제거, PvP 기본 시간 15분.
+
+| 구현 | 파일 |
+|---|---|
+| 둥근 사각형 조합 대신 안티앨리어싱 측면 아이콘(320×160 캐시 텍스처, 차종 비율·도색·창·바퀴·등·지붕 표시등) 차고·PvP 공용 | `Assets/Scripts/VehicleIcon.cs`, `VehicleGarageHUD.cs` |
+| "닉네임" 표기, 저장된 이름이 없으면 처음 열 때 "기사"+4자리 자동 입력·저장(수정 가능) | `PvpPrototypePanel.cs`, `DriveFlowPolicy.cs`(`EnsureName`) |
+| 내 차: 차고와 같은 아이콘 카드 3개(선택 테두리·잠김 흐리게), 색 칩 버튼 2개, 화분 토글 제거(싱글에서 샀으면 자동 표시) | `PvpPrototypePanel.cs`, `VehicleCatalog.cs`(`PvpVehicleLook.Owned`) |
+| 경기 시간 기본 900초(15분), 30~7200 편집 가능 | `PvpPrototypePanel.cs` |
+
+검증: `test_vehicle_garage.ps1` 55 PASS, BuildHybrid exit0, `test_vehicle_garage_player.ps1 -Visible` 3모드 PASS(캡처 갱신), `test_pvp_native_lan.ps1` exit0, 통합/PVP manifest VerifyOnly exit0(143파일 127,430,378바이트). 커밋 `c3fd1d1`(코드)·`30bce76`(실행본).
+
+**작업 사고와 처리:** 같은 폴더에서 거리뷰 점검 세션이 유턴 수정을 진행 중이었는데, 첫 시도에서 Scripts 폴더 단위로 스테이징해 그 세션의 미완료 파일 4개가 커밋에 섞였고 빌드에도 그 수정과 바뀐 지도 JSON이 들어갔다. push 전이었으므로 두 커밋을 `git reset --mixed d84e1b8`로 되돌리고(작업 트리·그 세션 파일 보존, 참고용 `backup/ui-contaminated-20261110`), 분리 git worktree에서 내 파일만으로 다시 빌드·검사했다. 이후 스테이징은 파일 경로를 명시한다.

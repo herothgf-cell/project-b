@@ -7,9 +7,9 @@
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
-| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid`. **브랜치 `feature/vehicle-purchase-3day`**: 게임 소스 e254c55 · 출하 484c9bc (11/10, main 미병합). main 기준은 소스 548fe8b · 출하 a978b3b (11/09) |
+| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid`. **브랜치 `feature/vehicle-purchase-3day`**: 게임 소스 c3fd1d1 · 출하 30bce76 (11/10, main 미병합). main 기준은 소스 548fe8b · 출하 a978b3b (11/09) |
 | 통신 | 브랜치 LAN **v17**(내 차 외형) / main LAN v16. 양쪽 PC 같은 실행본 필요, v16↔v17 접속 거부 |
-| 배포 검사 | 브랜치 출하 143파일 127,423,944바이트, 통합/PvP manifest VerifyOnly 통과(11/10 kimhs-NW2). main은 127,378,253바이트 |
+| 배포 검사 | 브랜치 출하 143파일 127,430,378바이트, 통합/PvP manifest VerifyOnly 통과(11/10 kimhs-NW2). main은 127,378,253바이트 |
 | 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json`(Git) 준비됨, 11/10 Strict issues 0(PowerShell 7 필요, 5.1에서는 검사 스크립트 실패). 재수입용 JSON 2개는 선택 입력이며 없음 |
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **구현(사람 검증 전, 브랜치)** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V9 28장](../proposals/project-b-game-proposal-v9.pptx) · [반영 검토](../proposals/proposal-v9-review.md) |
