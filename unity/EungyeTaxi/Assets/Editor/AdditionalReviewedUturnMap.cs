@@ -4,25 +4,31 @@ using UnityEditor;
 using UnityEngine;
 // Reproducible, explicitly surveyed additions. Source data and the original baseline stay unchanged.
 public static class AdditionalReviewedUturnMap {
- public static readonly string[] Incoming={"local:5897:14274:7063:14681:part:2","local:8017:3985:8089:6162:part:2","A2218G611877:0","A222BC004208:0","A2218G611401:0"};
- public static readonly string[] Outgoing={"local:7023:14796:5857:14389","local:7975:6165:7904:3992","A222BC004187:0","A2218G611375:0","A2218G611417:0"};
- public static readonly string[] Names={"J7254-SW","J8066-S","J7973-E","J5057-E","J5057-W"};
- public static readonly string[] Junctions={"J7254_14780","J8066_6364","J7973_3744","J5057_4449","J5057_4449"};
- public static readonly string[] Views={"https://map.naver.com/p/entry/coordinates/3zalzU,2AH30z?c=16,0,0,0,adh&p=h1v2mf8APsK03Fozf__QSw,70,5,60,Float","https://map.naver.com/p/entry/coordinates/3zao1h,2AGJhI?c=15,0,0,0,adh&p=VzXWr0yZ-kjmidpHNnS74w,30,6,20,Float","https://map.naver.com/p/entry/coordinates/3zanLi,2AGD8X?c=15,0,0,0,adh&p=vXxTsGf5QJ9PZl94AFingQ,-64,8,25,Float","https://map.naver.com/p?c=19.00,0,0,0,adh&p=4lVm7HmiiXmWi7mbrwLPsA,105,-18,70,Float","https://map.naver.com/p?c=19.00,0,0,0,adh&p=H8kJAUid-f2UdktwCnF3wA,285,-18,70,Float"};
+ public static readonly string[] Incoming={"local:5897:14274:7063:14681:part:2","local:8017:3985:8089:6162:part:2","A2218G611877:0","A222BC004208:0","A2218G611401:0","A2218G611780:0"};
+ public static readonly string[] Outgoing={"local:7023:14796:5857:14389","local:7975:6165:7904:3992","A222BC004187:0","A2218G611375:0","A2218G611417:0","A222BC004223:0"};
+ public static readonly string[] Names={"J7254-SW","J8066-S","J7973-E","J5057-E","J5057-W","J866-W"};
+ public static readonly string[] Junctions={"J7254_14780","J8066_6364","J7973_3744","J5057_4449","J5057_4449","J866_5285"};
+ public static readonly string[] Views={"https://map.naver.com/p/entry/coordinates/3zalzU,2AH30z?c=16,0,0,0,adh&p=h1v2mf8APsK03Fozf__QSw,70,5,60,Float","https://map.naver.com/p/entry/coordinates/3zao1h,2AGJhI?c=15,0,0,0,adh&p=VzXWr0yZ-kjmidpHNnS74w,30,6,20,Float","https://map.naver.com/p/entry/coordinates/3zanLi,2AGD8X?c=15,0,0,0,adh&p=vXxTsGf5QJ9PZl94AFingQ,-64,8,25,Float","https://map.naver.com/p?c=19.00,0,0,0,adh&p=4lVm7HmiiXmWi7mbrwLPsA,105,-18,70,Float","https://map.naver.com/p?c=19.00,0,0,0,adh&p=H8kJAUid-f2UdktwCnF3wA,285,-18,70,Float","https://map.naver.com/p?c=19.00,0,0,0,adh&p=U_JkvVOycY0upzQZK5OK6w,276,-20,75,Float"};
  // 2026-11-10: J5057 replaces native turn=0 reversals that painted a U-turn role
  // without a sign condition (every player U-turn was a violation). The native
  // curves stay in the document but are disabled; the authored movement keeps
  // the same entry and exit lanes. J7973 A222BC004191 is an 11m reversal with no
  // street-view evidence and is disabled without a replacement.
- public static readonly string[] CheckedAt={"2026-10-26","2026-10-26","2026-10-26","2026-11-10","2026-11-10"};
- public static readonly bool[] Stops={true,true,true,false,false};
- public static readonly string[] ReplacedNative={"A2218G611358:0","A2218G611107:0","A222BC004191:0"};
+ public static readonly string[] CheckedAt={"2026-10-26","2026-10-26","2026-10-26","2026-11-10","2026-11-10","2026-11-10"};
+ // J866-W: the user confirmed this is a U-turn site (2026-11-10; also reported
+ // 2026-10-27). The auxiliary plate was not legible, so the J5057 condition is a
+ // game assumption and the evidence is recorded as user, not observed.
+ public static readonly bool[] UserConfirmed={false,false,false,false,false,true};
+ public static readonly bool[] Stops={true,true,true,false,false,false};
+ public static readonly string[] ReplacedNative={"A2218G611358:0","A2218G611107:0","A222BC004191:0","A2218G611778:0"};
  [MenuItem("Taxi/Project Map/Apply Additional Reviewed U-turns")]
  // Historical 2026-10-26 additions only. Later edits (StopUturnMapEdits) changed
  // those movements, so do not rerun this on the current map.
  public static void Apply(){Author(new[]{0,1,2},false);}
  // 2026-11-10: author only the J5057 replacements and disable unsigned native reversals.
  public static void ApplyReplacedNative(){Author(new[]{3,4},true);}
+ // 2026-11-10 follow-up: J866 westbound after the user confirmed the site.
+ public static void ApplyJ866(){Author(new[]{5},true);}
  static void Author(int[] indices,bool replaceNative){
   var root=ProjectMapBuild.Root;var token=ProjectMapStore.Fingerprint(root);var package=ProjectMapStore.Load(root);var document=package.document.Copy();
   foreach(int i in indices){
@@ -34,7 +40,7 @@ public static class AdditionalReviewedUturnMap {
    from.ruleId=Junctions[i];
    var created=RoadMapAuthoringOperations.Connect(document,from.id,target.id,UturnMovement.Turn);var lane=document.lanes.First(l=>l.id==created);
    lane.id=movementId;foreach(var l in document.lanes)l.next=l.next.Select(n=>n==created?movementId:n).ToArray();
-   var evidence=new RoadMapEvidence{state="observed",url=Views[i],month="2026-05",checkedAt=CheckedAt[i],appearanceConfirmed=true,ruleConfirmed=true,note=CheckedAt[i]=="2026-10-26"?"유턴 표지: 좌회전시 / 보행신호시 직접 확인. 촬영 당시 조건; 곡선·출구 차로·신호 주기는 게임 추정치.":"유턴 표지와 2줄 보조표지(좌회전시 / 보행신호시로 판독, 파노라마 해상도 한계) 확인. 원본 회차 곡선과 같은 진입·출구 차로; 곡선·신호 주기는 게임 추정치."};
+   var evidence=UserConfirmed[i]?new RoadMapEvidence{state="user",url=Views[i],month="2026-05",checkedAt=CheckedAt[i],appearanceConfirmed=false,ruleConfirmed=false,note="사용자 확인: 유턴 허용 지점(2026-11-10, 2026-10-27 보고). 보조표지 문구 미판독 - 좌회전·보행 신호시 조건은 J5057과 같은 게임 가정. 곡선·출구 차로·신호 주기는 게임 추정치."}:new RoadMapEvidence{state="observed",url=Views[i],month="2026-05",checkedAt=CheckedAt[i],appearanceConfirmed=true,ruleConfirmed=true,note=CheckedAt[i]=="2026-10-26"?"유턴 표지: 좌회전시 / 보행신호시 직접 확인. 촬영 당시 조건; 곡선·출구 차로·신호 주기는 게임 추정치.":"유턴 표지와 2줄 보조표지(좌회전시 / 보행신호시로 판독, 파노라마 해상도 한계) 확인. 원본 회차 곡선과 같은 진입·출구 차로; 곡선·신호 주기는 게임 추정치."};
    lane.evidence=evidence;lane.status="provisional";
    var a=from.points.Last().V();var heading=(a-from.points[from.points.Length-2].V()).normalized;var rule=package.baseline.junctionRules.First(r=>r.id==from.ruleId);var axisDir=new Vector3(rule.dx,0,rule.dz).normalized;int axis=Mathf.Abs(Vector3.Dot(heading,axisDir))>.7f?0:1;int sign=Vector3.Dot(heading,axis==0?axisDir:TrafficSystem.Right(axisDir))>=0?1:-1;
    var position=a-heading*7-TrafficSystem.Right(heading)*2.3f;

@@ -18,14 +18,20 @@ public static class EungyeConnectivityRepair {
  static MapPoint[] Slice(AssistedRoadNetwork.Path p,float a,float b){var points=new List<MapPoint>{P(p.Position(a))};float at=0;for(int i=1;i<p.points.Length;i++){at+=Vector3.Distance(p.points[i-1],p.points[i]);if(at>a+.001f&&at<b-.001f)points.Add(P(p.points[i]));}points.Add(P(p.Position(b)));return points.ToArray();}
  static string Number(float value){return value.ToString("F3",System.Globalization.CultureInfo.InvariantCulture);}
  static bool SamePoints(MapPoint[] a,MapPoint[] b){if(a==null||b==null||a.Length!=b.Length)return false;for(int i=0;i<a.Length;i++)if(Vector3.Distance(a[i].V(),b[i].V())>.001f)return false;return true;}
- static bool Unedited(MapData map,MapData baseline,IEnumerable<int> indices){
+ static bool Unedited(MapData map,MapData baseline,IEnumerable<int> indices){return Unedited(map,baseline,indices,false);}
+ // allowUturnCondition: only for a lane that the repair targets without splitting;
+ // a lane-bound U-turn condition sign keeps its lane id there.
+ static bool Unedited(MapData map,MapData baseline,IEnumerable<int> indices,bool allowUturnCondition){
   if(map.editorDocument==null||baseline==null)return true;
   foreach(int i in indices){var current=map.hdEdges[i];
    // Explicit authoring rules keep their lane identity and distance intervals.
    // Automatic repair must not split a lane under a speed sign or bound signal.
-   if(map.editorDocument.facilities.Any(f=>f.rule&&f.laneId==current.id)||map.editorDocument.signals.Any(p=>p.groups.Any(g=>g.laneIds.Contains(current.id))))return false;
+   if(map.editorDocument.facilities.Any(f=>f.rule&&f.laneId==current.id&&!(allowUturnCondition&&UturnMovement.IsCondition(f.type)))||map.editorDocument.signals.Any(p=>p.groups.Any(g=>g.laneIds.Contains(current.id))))return false;
    var original=Array.Find(baseline.hdEdges,e=>e.id==current.id);if(original==null||current.disabled!=original.disabled||current.turn!=original.turn||current.change!=original.change||!SamePoints(current.points,original.points))return false;
-   var actual=current.next.Select(n=>map.hdEdges[n].id).OrderBy(x=>x);var expected=original.next.Select(n=>baseline.hdEdges[n].id).OrderBy(x=>x);if(!actual.SequenceEqual(expected))return false;
+   // With allowUturnCondition, a native reversal that was disabled and replaced by
+   // an authored turn=-2 U-turn from this lane counts as the same connection set.
+   var actual=current.next.Where(n=>!(allowUturnCondition&&map.hdEdges[n].turn==UturnMovement.Turn)).Select(n=>map.hdEdges[n].id).OrderBy(x=>x);
+   var expected=original.next.Select(n=>baseline.hdEdges[n].id).Where(id=>!(allowUturnCondition&&map.hdEdges.Any(e=>e.id==id&&e.disabled))).OrderBy(x=>x);if(!actual.SequenceEqual(expected))return false;
   }return true;
  }
  static Family GetFamily(MapData map,MapData baseline,string id){var edges=Enumerable.Range(0,map.hdEdges.Length).Where(i=>map.hdEdges[i].sourceId==id&&map.hdEdges[i].change==0&&map.hdEdges[i].turn==0&&!map.hdEdges[i].disabled&&map.hdEdges[i].id.StartsWith(id+":")).OrderBy(i=>map.hdEdges[i].sourceOffset).ToList();if(edges.Count==0||!Unedited(map,baseline,edges))return null;
@@ -87,11 +93,12 @@ public static class EungyeConnectivityRepair {
   // Pin this inference to those exact captured endpoint locations and headings.
   bool capturedArrow=third>=0&&west>=0&&Vector3.Distance(map.hdEdges[third].points.Last().V(),new Vector3(222.11833f,0,518.43613f))<.2f&&Vector3.Distance(edges[west].points[0].V(),new Vector3(173.34722f,0,528.71651f))<.2f;
   if(third>=0&&west>=0&&capturedArrow){int originalThird=Array.FindIndex(map.hdEdges,e=>e.id=="A2218G611366:3");int originalWest=Array.FindIndex(map.hdEdges,e=>e.id=="A2218G611305:0");if(Unedited(map,baseline,new[]{originalThird,originalWest})){List<Part> split;if(parts.TryGetValue(third,out split))third=split.Last().index;var a=Path(edges[third]);var b=Path(edges[west]);if(edges[third].next.Length==0&&Vector3.Dot(a.Tangent(a.length),b.Tangent(0))>.97f&&Vector3.Distance(a.Position(a.length),b.Position(0))<60){var points=Curve(a.Position(a.length),a.Tangent(a.length),b.Position(0),b.Tangent(0));if(geometry.Clear(points,a.Tangent(a.length))){var edge=Extra("straight-third", "A2218G611366 + A2218G611305",edges[third].toNode,edges[west].fromNode,points,4,Evidence+" / missing straight connector; not a left-turn permission");edge.next=new[]{west};edges[third].next=new[]{edges.Count};edges.Add(edge);}else Debug.Log("EUNGYE_CONNECTIVITY_STRAIGHT_SKIPPED "+geometry.Reason);}}}
-  // The captured west-side reversal already exists (A2218G611778). Restore
+  // The west-side reversal (native A2218G611778, replaced 2026-11-10 by the
+  // signed join:reviewed:J866-W:uturn from A2218G611780) stays reachable. Restore
   // its straight approach and the captured right-turn's downstream landing;
   // never replace the prohibited west-approach left with a new turn.
   int innerOriginal=Array.FindIndex(map.hdEdges,e=>e.id=="A2218G611364:2"&&!e.disabled),innerExit=edges.FindIndex(e=>e.id=="A2218G611780:0"&&!e.disabled);
-  if(innerOriginal>=0&&innerExit>=0&&Unedited(map,baseline,new[]{innerOriginal,innerExit})){
+  if(innerOriginal>=0&&innerExit>=0&&Unedited(map,baseline,new[]{innerOriginal})&&Unedited(map,baseline,new[]{innerExit},true)){
    List<Part> split;int inner=parts.TryGetValue(innerOriginal,out split)?split.Last().index:innerOriginal;
    var a=Path(edges[inner]);var b=Path(edges[innerExit]);var points=Curve(a.Position(a.length),a.Tangent(a.length),b.Position(0),b.Tangent(0));
    if(Vector3.Distance(points[0].V(),points.Last().V())<60&&Vector3.Dot(a.Tangent(a.length),b.Tangent(0))>.97f&&geometry.Clear(points,a.Tangent(a.length))){var edge=Extra("west-inner-straight","A2218G611364 + A2218G611780",edges[inner].toNode,edges[innerExit].fromNode,points,1,Evidence+" / straight continuity to existing captured reversal; user-reported west U-turn2026-10-27, signal conditions not field certified");edge.next=new[]{innerExit};edges[inner].next=edges[inner].next.Concat(new[]{edges.Count}).ToArray();edges.Add(edge);}
