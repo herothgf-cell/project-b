@@ -179,7 +179,7 @@ public class HdRouteTrial : MonoBehaviour {
   var drawn=new HashSet<string>();
   foreach(var mark in map.hdMarks??new HdMark[0]){
    if(mark.points==null||mark.points.Length<2)continue;
-   if(stopMask.Replaces(mark))continue;
+   if(stopMask.Replaces(mark)||ReviewedMarkSuppression.Hides(map,mark))continue;
    string forward=MarkKey(mark,false),reverse=MarkKey(mark,true);if(!drawn.Add(string.CompareOrdinal(forward,reverse)<0?forward:reverse))continue;
    int color=mark.type.StartsWith("1")?1:mark.type.StartsWith("3")?2:0;
    var ps=new Vector3[mark.points.Length];for(int i=0;i<ps.Length;i++)ps[i]=mark.points[i].V(.075f);

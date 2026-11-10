@@ -121,6 +121,7 @@ public sealed partial class BrightUIProbe:MonoBehaviour {
   Check(s.business.SavePath==UnifiedModeProbe.CampaignPath,"single isolated temporary campaign");
   yield return Capture("02-single-preparation");s.business.Depart();s.taxi.automated=true;s.taxi.autoBrake=true;if(Array.IndexOf(Environment.GetCommandLineArgs(),"-passengerActionReview")>=0){yield return ReviewPassengerActions();done=true;Debug.Log("PASSENGER_ACTION_PLAYER_RESULT "+(ok?"PASS":"FAIL")+" checks="+checks);Application.Quit(ok?0:2);yield break;}
   var map=s.GetComponent<FullMapOverlay>();
+  if(PoseReviewArgument()!=null){yield return ReviewPoses(PoseReviewArgument());done=true;Debug.Log("POSE_REVIEW_PLAYER_RESULT "+(ok?"PASS":"FAIL")+" checks="+checks);Application.Quit(ok?0:2);yield break;}
   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-laneMovementReview")>=0){yield return ReviewLaneMovement();done=true;Debug.Log("LANE_MOVEMENT_PLAYER_RESULT "+(ok?"PASS":"FAIL")+" checks="+checks);Application.Quit(ok?0:2);yield break;}
   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-roadviewSignalReview")>=0){yield return ReviewRoadview();done=true;Debug.Log("ROADVIEW_SIGNAL_PLAYER_RESULT "+(ok?"PASS":"FAIL")+" checks="+checks);Application.Quit(ok?0:2);yield break;}
   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-signalCountdownOnly")>=0){
