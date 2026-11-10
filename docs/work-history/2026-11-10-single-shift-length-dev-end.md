@@ -70,10 +70,11 @@
 
 - 다른 세션(은계지구 교차로 차선 정리)이 J7973 노면 소스 9302097을 main에 커밋하고, 3933628을 포함한 상태로 BuildHybrid·`builds/EungyeTaxi`·배포 manifest 갱신·커밋·push를 맡겠다고 알려 와 중복 빌드·커밋을 하지 않았다. worktree 빌드를 main `builds/`로 복사하던 robocopy는 도중에 중단했고(일부 파일만 덮였을 수 있음), 그쪽에 새 BuildHybrid 결과로 manifest를 만들도록 전달했다.
 - 따라서 출하 exe·manifest의 실제 해시와 검증 결과는 그 세션의 커밋/작업 이력을 따른다.
+- 결과(이 세션에서 재확인): 출하 커밋 89e72a6(BuildHybrid, 소스 3933628·9302097 포함), 문서 6307e04·6ad8ad0, origin/main=6ad8ad0. 출하 `builds/EungyeTaxi/EungyeTaxi.exe -shiftDevEndCheck` → exit 0, `SHIFT_PLAYER_OK checks=13`. `tools/update_distribution_manifest.ps1 -VerifyOnly` → `DISTRIBUTION_OK files=143 bytes=127464690`.
 
 ## 미검증 / 남은 항목
 
-- 출하 빌드·manifest는 다른 세션 담당(위 인계). 그 커밋 뒤 출하 exe로 `-shiftDevEndCheck` 재확인 권장.
+- 출하 빌드·manifest는 다른 세션이 89e72a6으로 갱신했고 위와 같이 재확인했다.
 - 사람 수동 플레이(마우스 클릭, 10·60분 하루 체감), 자동 물리 주행, 전체 캠페인 검사는 하지 않았다.
 - 개발용 버튼은 정식 빌드에서도 보인다. 출시 전 숨길지(빌드 플래그 등)는 미결정.
 - 10·60분 하루의 난도·수익·피로 균형은 조정하지 않았다.
