@@ -10,6 +10,7 @@ public static class PersonalRoomHUD {
   if(text==null){text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=18,wordWrap=true};small=new GUIStyle(text){fontSize=14};title=new GUIStyle(text){fontSize=28,fontStyle=FontStyle.Bold};button=KoreanText.Button(16);}
   GUI.depth=-170;var saved=GUI.matrix;float scale=Mathf.Min(Screen.width/1200f,Screen.height/720f);GUI.matrix=Matrix4x4.TRS(new Vector3((Screen.width-1200*scale)/2,(Screen.height-720*scale)/2),Quaternion.identity,Vector3.one*scale);
   Box(new Rect(0,0,1200,720),CasualUI.Canvas);
+  if(b.ArchivedRoom==null&&b.GarageTab){VehicleGarageHUD.Draw(session);preview=confirmation="";Tabs(b);GUI.matrix=saved;return;}
   if(!backdrop)backdrop=Resources.Load<Texture2D>("personal-room-base");
   var view=new Rect(0,85,850,478);if(backdrop)GUI.DrawTexture(view,backdrop,ScaleMode.StretchToFill);else Box(view,new Color(.65f,.60f,.53f));
   bool lamp=preview=="lamp"||r.lampOwned&&r.lampPlaced;bool rug=preview=="rug"||r.rugOwned&&r.rugPlaced;
@@ -28,10 +29,16 @@ public static class PersonalRoomHUD {
   if(GUI.Button(new Rect(885,595,280,40),"정산으로 돌아가기",button)){b.RoomOpen=false;b.ArchivedRoom=null;preview=confirmation="";}
   if(!read&&GUI.Button(new Rect(885,647,280,40),b.ledger.State==BusinessState.Completed?"이번 회차 마무리":"다음 날 준비",CasualUI.Action(18))){preview=confirmation="";if(b.ledger.State==BusinessState.Completed)b.ChangeRoom("finish");else b.BeginNextCampaignDay();}
   GUI.enabled=incomingEnabled;
+  if(b.ArchivedRoom==null&&confirmation.Length==0)Tabs(b);
   if(confirmation.Length>0&&!read){Box(new Rect(0,0,1200,720),new Color(.07f,.15f,.29f,.42f));CasualUI.Panel(new Rect(280,200,640,310));int price=confirmation=="lamp"?5000:8000;CasualUI.Header(new Rect(295,215,610,50),"내 공간에 들일까요?",5);GUI.Label(new Rect(305,278,590,105),(confirmation=="lamp"?"탁상 조명":"작은 러그")+"  "+Money(price)+"\n남는 현금 "+Money(a.Cash-price)+" · 환불 불가\n미납 "+Money(a.Debt),new GUIStyle(title){fontSize=24});GUI.enabled=a.Debt==0&&a.Cash>=price;
    if(GUI.Button(new Rect(305,410,280,50),"구매 확인",CasualUI.Action(18))){if(b.ChangeRoom("buy",confirmation,style)){preview=confirmation="";}}
    GUI.enabled=true;if(GUI.Button(new Rect(605,410,280,50),"취소",button))confirmation="";}
   GUI.matrix=saved;
+ }
+ // 방 / 차고 tabs share the personal space; drawn on top of the header strip.
+ static void Tabs(BusinessProgress b){
+  if(GUI.Button(new Rect(560,22,135,41),b.GarageTab?"방":"방 · 보는 중",b.GarageTab?button:CasualUI.Action(15)))b.GarageTab=false;
+  if(GUI.Button(new Rect(705,22,135,41),b.GarageTab?"차고 · 보는 중":"차고",b.GarageTab?CasualUI.Action(15):button))b.GarageTab=true;
  }
  static void Card(BusinessProgress b,string item,string name,int price,bool owned,bool placed,float y,bool read){
   CasualUI.RoundedFill(new Rect(877,y-8,296,153),owned?CasualUI.Soft:CasualUI.Warm);

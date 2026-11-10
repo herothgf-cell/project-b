@@ -103,7 +103,8 @@ public sealed class VehicleDamageController : MonoBehaviour {
         }
     }
     public int ApplyImpact(float closingSpeed){
-        if(!Campaign)return 0;int loss=Damage.Impact(closingSpeed);if(loss<=0)return 0;
+        // Wear trait of the owned car (plan 22): sturdier bodies register a gentler impact tier.
+        if(!Campaign)return 0;int loss=Damage.Impact(VehicleCatalog.WearSpeed(session.business?session.business.ActiveVehicle:null,closingSpeed));if(loss<=0)return 0;
         Notice="충돌 내구도 −"+loss+" · "+Damage.Durability+"/100"+(Disabled?" · 운행 불가":" · 수리비/시간 발생");noticeUntil=Time.unscaledTime+6;
         Debug.Log("VEHICLE_IMPACT closing="+closingSpeed.ToString("0.000")+" loss="+loss+" durability="+Damage.Durability);
         if(Disabled){disabledSince=Time.time;session.assisted.SetActive(false);session.services.open=false;session.services.pending=-1;}

@@ -141,6 +141,15 @@ public class EconomyLedger {
   if(Driver.drowsiness!=null&&seconds>reachesAt)Driver.drowsiness.Advance(seconds-reachesAt,true,100,false);
  }
  public bool UseWash(string id){if(Account==null||State!=BusinessState.Open||string.IsNullOrEmpty(id)||services.Contains(id)||!Account.Wash(id,Day))return false;services.Add(id);Care.Wash();if(Driver!=null)Driver.Advance(30,false,PvpProfile?PvpConditionRules.FatigueMultiplier:1);ServiceTime(30);return true;}
+ // Only after a settlement (summary/completed). Trade-in uses the current durability; the
+ // replacement car starts repaired and clean. The caller persists the whole ledger once.
+ public VehicleQuote QuoteVehicle(string model){return Account==null?null:VehicleCatalog.Quote(Account.Vehicle,model,Account.Cash,Account.Debt,Care.Damage.Durability);}
+ public bool PurchaseVehicle(string model){
+  if(Account==null||Settings.days!=3||PvpProfile||Operating||Last==null)return false;
+  if(!Account.BuyVehicle(model,Day,Care.Damage.Durability))return false;Care.Damage.Repair();Care.Wash();return true;
+ }
+ public bool BuyVehicleColor(){return Account!=null&&!PvpProfile&&!Operating&&Last!=null&&Account.BuyVehicleColor(Day);}
+ public bool BuyVehicleOrnament(){return Account!=null&&!PvpProfile&&!Operating&&Last!=null&&Account.BuyVehicleOrnament(Day);}
  public int RepairCost {get{return Care.Damage.RepairCost;}}
  public double RepairSeconds {get{return Care.Damage.RepairSeconds;}}
  // Host scheduler owns elapsed time and cancellation; incomplete optional services

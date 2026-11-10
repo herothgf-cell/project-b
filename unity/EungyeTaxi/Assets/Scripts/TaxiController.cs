@@ -4,6 +4,8 @@ public class TaxiController : MonoBehaviour {
     public bool NetworkReplica,NetworkPredicted; public Vector3 ReplicaVelocity; public float ReplicaSteering;
     public bool automated,AutomatedHumanInput; public float autoThrottle,autoSteer,autoServiceBrake; public bool autoBrake;
     public float ManualSteeringGain=1,ManualBrakeGain=1;
+    // Owned-vehicle turning trait (plan 22). 1 = standard taxi (starter and all PVP cars).
+    public float VehicleSteerFactor=1;
     public AssistedDriveController assistance;public BusinessProgress business;
     float throttle,steer,motorDemand; bool brake; Vector3 spawn; Quaternion spawnRotation;
     readonly DriverPedalIntent pedalIntent=new DriverPedalIntent();
@@ -84,9 +86,10 @@ public class TaxiController : MonoBehaviour {
         return command;
     }
     public float WheelCenterAngle(float input,float kph,bool assisted){
-        if(assisted)return input*DriveMath.SteerAngle(kph);
+        // A larger turning radius is a smaller maximum wheel angle; factor 1 is exactly the old value.
+        if(assisted)return input*DriveMath.SteerAngle(kph)*VehicleSteerFactor;
         float gain=!automated?DrivingSettings.Current.sensitivity:AutomatedHumanInput||NetworkPredicted?ManualSteeringGain:1;
-        return DrivingSettings.Angle(input,kph,gain);
+        return DrivingSettings.Angle(input,kph,gain)*VehicleSteerFactor;
     }
     public void ClearPredictedPedals(){steer=throttle=motorDemand=autoSteer=autoThrottle=autoServiceBrake=0;brake=autoBrake=true;}
     public int ResetEpoch {get;private set;}

@@ -15,6 +15,8 @@ using System.Collections.Generic;
  public int version=3;public PrototypeSettings settings;public float fuel;
  public AccountEntry[] entries;
  public PersonalRoomState Room;
+ // Absent/null in pre-garage saves: migrated to the starter taxi.
+ public VehicleState Vehicle;
 }
 // Actual cash movements and accrued debt are separate. Payment of debt never creates a second cost.
 public class CampaignAccount {
@@ -24,6 +26,25 @@ public class CampaignAccount {
  public int Debt {get;private set;}
  public float Fuel {get;private set;}
  public PersonalRoomState Room {get;private set;}
+ public VehicleState Vehicle {get;private set;}
+ public VehicleSpec VehicleSpec {get{return VehicleCatalog.Of(Vehicle);}}
+ // Vehicle trade: one replacement per campaign, cash only, shares the personal-expense ledger.
+ public bool BuyVehicle(string model,int day,int durability){
+  if(day<1||day>settings.days||Room.finalized)return false;var q=VehicleCatalog.Quote(Vehicle,model,Cash,Debt,durability);if(!q.allowed)return false;
+  if(!Post("vehicle:"+model,"personal-purchase",day,-q.spend,0))return false;
+  // The dashboard ornament moves to the new car; a colour bought for the traded car stays on record.
+  var old=Vehicle;Vehicle=new VehicleState{modelId=model,purchasedDay=day,paidVehicle=q.spend,ornamentOwned=old.ornamentOwned,ornamentPlaced=old.ornamentPlaced,paidOrnament=old.paidOrnament,tradedColorModel=old.altColorOwned?old.modelId:"",paidTradedColor=old.altColorOwned?old.paidColor:0};return true;
+ }
+ public bool BuyVehicleColor(int day){
+  int price=VehicleCatalog.ColorPrice;if(day<1||day>settings.days||Room.finalized||Debt!=0||Vehicle.altColorOwned||Cash<price||price<=0)return false;
+  if(!Post("vehicle-color:"+Vehicle.modelId,"personal-purchase",day,-price,0))return false;Vehicle.altColorOwned=true;Vehicle.color=1;Vehicle.paidColor=price;return true;
+ }
+ public bool BuyVehicleOrnament(int day){
+  int price=VehicleCatalog.OrnamentPrice;if(day<1||day>settings.days||Room.finalized||Debt!=0||Vehicle.ornamentOwned||Cash<price||price<=0)return false;
+  if(!Post("vehicle-ornament","personal-purchase",day,-price,0))return false;Vehicle.ornamentOwned=true;Vehicle.ornamentPlaced=true;Vehicle.paidOrnament=price;return true;
+ }
+ public bool SelectVehicleColor(int color){if(Room.finalized||color<0||color>1||color==1&&!Vehicle.altColorOwned)return false;Vehicle.color=color;return true;}
+ public bool ToggleOrnament(){if(Room.finalized||!Vehicle.ornamentOwned)return false;Vehicle.ornamentPlaced=!Vehicle.ornamentPlaced;return true;}
  public int PersonalSpent {get{int total=0;foreach(var e in entries)if(e.kind=="personal-purchase")total-=e.cash;return total;}}
  public int PersonalExpense(int day){int total=0;foreach(var e in entries)if(e.kind=="personal-purchase"&&e.day==day)total-=e.cash;return total;}
  public int Net {get{return Cash-settings.startCash-Debt+PersonalSpent;}}
@@ -38,7 +59,7 @@ public class CampaignAccount {
  public bool TaxPaid {get{return HasKind("tax-payment");}}
  public bool GoalMet {get{return Net>=settings.target;}}
  public int PendingDayCost(int day){return (settings.oneDay||Ate(day)?0:settings.meal)+(!Has("parking:"+day)?settings.parking:0);}
- public CampaignAccount(PrototypeSettings s){settings=s;Cash=s.startCash;Fuel=s.initialFuel;Room=new PersonalRoomState();}
+ public CampaignAccount(PrototypeSettings s){settings=s;Cash=s.startCash;Fuel=s.initialFuel;Room=new PersonalRoomState();Vehicle=new VehicleState();}
  bool Has(string id){return entries.Exists(e=>e.id==id);}
  bool HasKind(string kind){return entries.Exists(e=>e.kind==kind);}
  public bool Ate(int day){return entries.Exists(e=>e.kind=="meal"&&e.day==day);}
@@ -55,7 +76,9 @@ public class CampaignAccount {
  }
  public void Consume(double seconds,double metres){
   if(double.IsNaN(seconds)||double.IsInfinity(seconds)||double.IsNaN(metres)||double.IsInfinity(metres)||seconds<0||metres<0)return;
-  Fuel=Math.Max(0,Fuel-(float)(metres/1000*settings.fuelPerKm+seconds/60*settings.idlePerMinute));
+  // Starter factor is exactly 1, preserving the pre-vehicle consumption.
+  double factor=VehicleSpec.fuelFactor;
+  Fuel=Math.Max(0,Fuel-(float)((metres/1000*settings.fuelPerKm+seconds/60*settings.idlePerMinute)*factor));
  }
  public bool Meal(string id,int day){if(settings.oneDay){if(string.IsNullOrEmpty(id)||Has(id))return false;Mandatory(id,"meal",day,settings.meal);return true;}return !Ate(day)&&Post(id,"meal",day,-settings.meal,0);}
  // PVP purchases keep the native meal expense kind and require actual cash.
@@ -84,7 +107,7 @@ public class CampaignAccount {
  }
  public int Expense(int day,string kind){int cost=0;foreach(var e in entries)if(e.day==day&&(kind==null||e.kind==kind)&&e.kind!="fare"&&e.kind!="personal-purchase")cost+=e.debt-e.cash;return cost;}
  public AccountEntry[] Entries {get{return entries.ConvertAll(e=>e.Copy()).ToArray();}}
- public AccountSnapshot Snapshot(){return new AccountSnapshot{settings=settings,fuel=Fuel,entries=Entries,Room=Room.Copy()};}
+ public AccountSnapshot Snapshot(){return new AccountSnapshot{settings=settings,fuel=Fuel,entries=Entries,Room=Room.Copy(),Vehicle=Vehicle.Copy()};}
  static bool ExcludedCost(string kind){return kind=="insurance"||kind=="tax-due"||kind=="tax-payment";}
  public static CampaignAccount Restore(AccountSnapshot snapshot){
   if(snapshot==null||(snapshot.version!=2&&snapshot.version!=3)||snapshot.settings==null||snapshot.entries==null||float.IsNaN(snapshot.fuel)||snapshot.fuel<0||snapshot.fuel>100)throw new ArgumentException("Invalid account checkpoint");
@@ -99,14 +122,24 @@ public class CampaignAccount {
   a.Room=snapshot.Room==null?new PersonalRoomState():snapshot.Room.Copy();
   if(a.Room.wished==null)a.Room.wished="";
   if(a.Room.lampStyle<0||a.Room.lampStyle>1||a.Room.rugStyle<0||a.Room.rugStyle>1||a.Room.wished!=""&&a.Room.wished!="lamp"&&a.Room.wished!="rug"||a.Room.lampPlaced&&!a.Room.lampOwned||a.Room.rugPlaced&&!a.Room.rugOwned||a.Room.lampOn&&!a.Room.lampOwned)throw new ArgumentException("Invalid room placement");
-  bool lamp=false,rug=false;
+  // Old saves (no vehicle member, or JsonUtility's materialized blank) migrate to the starter taxi.
+  var v=snapshot.Vehicle==null?new VehicleState():snapshot.Vehicle.Copy();if(string.IsNullOrEmpty(v.modelId))v.modelId=VehicleCatalog.Starter;a.Vehicle=v;
+  if(VehicleCatalog.Get(v.modelId)==null||v.color<0||v.color>1||v.color==1&&!v.altColorOwned||v.ornamentPlaced&&!v.ornamentOwned||v.paidVehicle<0||v.paidColor<0||v.paidOrnament<0)throw new ArgumentException("Invalid vehicle state");
+  if(v.tradedColorModel==null)v.tradedColorModel="";
+  if(v.tradedColorModel.Length>0&&(v.tradedColorModel!=VehicleCatalog.Starter||v.modelId==VehicleCatalog.Starter||v.paidTradedColor<=0)||v.tradedColorModel.Length==0&&v.paidTradedColor!=0)throw new ArgumentException("Invalid traded vehicle colour");
+  bool lamp=false,rug=false,vehicle=false,color=false,ornament=false,traded=false;
   foreach(var e in a.entries)if(e.kind=="personal-purchase"){
    if(e.debt!=0||e.day>a.settings.days)throw new ArgumentException("Invalid personal transaction");
    if(e.id=="room:lamp"&&e.cash==-5000&&!lamp)lamp=true;
    else if(e.id=="room:rug"&&e.cash==-8000&&!rug)rug=true;
+   else if(e.id=="vehicle:"+v.modelId&&VehicleCatalog.Purchasable(v.modelId)&&e.cash==-v.paidVehicle&&e.day==v.purchasedDay&&!vehicle)vehicle=true;
+   else if(e.id=="vehicle-color:"+v.modelId&&e.cash==-v.paidColor&&e.cash<0&&!color)color=true;
+   else if(v.tradedColorModel.Length>0&&e.id=="vehicle-color:"+v.tradedColorModel&&e.cash==-v.paidTradedColor&&!traded)traded=true;
+   else if(e.id=="vehicle-ornament"&&e.cash==-v.paidOrnament&&e.cash<0&&!ornament)ornament=true;
    else throw new ArgumentException("Invalid personal purchase");
   }
   if(a.Room.lampOwned!=lamp||a.Room.rugOwned!=rug)throw new ArgumentException("Room ownership does not match purchases");
+  if(vehicle!=(v.modelId!=VehicleCatalog.Starter)||color!=v.altColorOwned||ornament!=v.ornamentOwned||traded!=(v.tradedColorModel.Length>0))throw new ArgumentException("Vehicle ownership does not match purchases");
   a.Fuel=snapshot.fuel;return a;
  }
 }

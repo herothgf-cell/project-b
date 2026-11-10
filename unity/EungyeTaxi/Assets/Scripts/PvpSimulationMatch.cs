@@ -87,7 +87,9 @@ public sealed class PvpSimulationMatch : MonoBehaviour {
         SharedCalls=new PvpSimulationCallBoard(Ledger,human.jobs.CreateSharedCandidate,human.jobs.stops.Length,3);
         PassengerWorld=gameObject.AddComponent<PvpPassengerWorld>();PassengerWorld.Initialize(this);
         foreach(var driver in drivers){driver.jobs.offers=SharedCalls.Offers;driver.jobs.message="M 지도에서 공용 호출 선택·수락 · 정차 후 F 승하차";}
+        // Appearance only (plan 22 §6): my car from the unlock list, bots from the fixed catalog.
         if(PvpNativeLan.Instance)PvpNativeLan.Instance.Bind(this);
+        else{string seed=System.Guid.NewGuid().ToString("N");for(int i=0;i<drivers.Count;i++)VehicleAppearance.Apply(drivers[i].taxi,i==0?VehicleUnlockStore.Selected:PvpVehicleLook.Bot(seed,i));}
     }
     void CreateBot(DriveSession human,int index){
         var root=new GameObject("경쟁 택시 세션 "+index);root.SetActive(false);

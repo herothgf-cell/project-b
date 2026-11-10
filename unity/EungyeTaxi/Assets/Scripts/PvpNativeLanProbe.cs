@@ -73,6 +73,9 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   int listed=0;float shortest=0,longest=0;foreach(var offer in match.SharedCalls.Offers){if(offer==null)continue;listed++;int nearer=0;for(int d=0;d<match.Human.jobs.stops.Length;d++){if(d==offer.pickup)continue;float distance=match.Human.jobs.nav.Distance(match.Human.jobs.stops[offer.pickup],match.Human.jobs.stops[d]);if(distance>=80&&distance<offer.distance-.1f)nearer++;}Check(nearer<3,"short-match offer uses one of three nearest reachable drops");shortest=shortest==0?offer.distance:Mathf.Min(shortest,offer.distance);longest=Mathf.Max(longest,offer.distance);}Check(listed>=6,"short match keeps a populated shared call list");Debug.Log("PVP_SHORT_CALLS count="+listed+" shortest="+shortest+" longest="+longest);
   var guest=match.Drivers[1];var car=guest.taxi;int carId=car.GetInstanceID();
   Check(guest.GetComponent<PvpSimulationBot>()&&!guest.GetComponent<PvpSimulationBot>().enabled,"guest seat disables native bot while connected");
+  // LAN v17 (plan 22): appearance IDs only; every taxi keeps PVP standard performance.
+  var guestLook=lan.Look(1);Check(lan.Look(0).model=="starter"&&guestLook.model=="lpg"&&guestLook.color==1&&guestLook.ornament,"v17 host receives guest vehicle look");
+  for(int d=0;d<match.Drivers.Count;d++){var look=match.Drivers[d].taxi.GetComponent<VehicleAppearance>();Check(look&&look.Model==lan.Look(d).model&&look.Color==lan.Look(d).color&&match.Drivers[d].taxi.VehicleSteerFactor==1&&match.Drivers[d].business.ActiveVehicle.id=="starter","host renders slot "+d+" look with standard performance");}
   float menuElapsed=match.Elapsed;lan.ToggleMenu();yield return new WaitForSecondsRealtime(.5f);Check(!match.Human.paused&&Time.timeScale==1&&match.Elapsed>menuElapsed&&PvpNativeLan.UiBlocked(match.Human),"shared clock continues while own keyboard/pad menu brakes only local taxi");lan.ToggleMenu();
   lan.ToggleMenu();var settings=DrivingSettingsPanel.For(match.Human);settings.Open();float settingsElapsed=match.Elapsed;yield return new WaitForSecondsRealtime(.15f);Check(settings.IsOpen&&PvpNativeLan.UiBlocked(match.Human)&&match.Elapsed>settingsElapsed,"LAN settings block only own car while match clock advances");lan.ToggleMenu();Check(!settings.IsOpen&&lan.MenuOpen,"LAN back closes settings before pause menu");lan.ToggleMenu();
   Vector3 before=car.transform.position;float startTime=Time.realtimeSinceStartup,maxSpeed=0;bool settingsReceived=false;
@@ -112,6 +115,10 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   yield return Until(()=>lan.HasOwnFrame,"first own native snapshot applied");
   var own=lan.Match.Human;Check(lan.Label(0).Contains("검증_client")&&lan.Label(1).Contains("검증_host"),"guest receives host-authoritative nicknames in local slot order");Check(!own.taxi.body.isKinematic&&own.taxi.NetworkPredicted&&lan.Prediction!=null,"only local owner runs native predicted WheelCollider physics");
   for(int i=1;i<lan.Match.Drivers.Count;i++)Check(lan.Match.Drivers[i].taxi.body.isKinematic&&!lan.Match.Drivers[i].taxi.NetworkPredicted,"other taxis remain server interpolated replicas "+i);
+  // LAN v17: the guest sees host-distributed looks in local slot order; own car keeps standard turning.
+  var mine=own.taxi.GetComponent<VehicleAppearance>();Check(mine&&mine.Model=="lpg"&&mine.Color==1&&mine.Ornament&&own.taxi.VehicleSteerFactor==1,"guest own look from unlocks, standard performance");
+  for(int i=0;i<lan.Match.Drivers.Count;i++){var look=lan.Match.Drivers[i].taxi.GetComponent<VehicleAppearance>();var wire=lan.Look(lan.LocalToServer(i));Check(look&&look.Model==wire.model&&look.Color==wire.color,"guest renders host-distributed look local "+i);}
+  Check(lan.Look(0).model=="starter","guest sees host default taxi");
   yield return Until(()=>lan.Racing,"owner prediction starts on shared race clock",10);
   yield return Until(()=>lan.Prediction.LastAck>0,"numbered control stream acknowledged before loss probes",10);
   lan.ProbeHoldInputs=true;int sentBefore=lan.ProbeInputCount;Vector3 predictionStart=own.taxi.body.position;
