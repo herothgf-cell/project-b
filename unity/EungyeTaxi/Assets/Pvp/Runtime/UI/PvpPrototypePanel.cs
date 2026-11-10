@@ -2,9 +2,10 @@ using System;
 using UnityEngine;
 namespace Pvp {
  public sealed class PvpPrototypePanel : MonoBehaviour {
-  string duration="",message="경기 시간을 입력하세요 (30~7200초).";
+  // Default match length 15 minutes (900s); still editable 30~7200.
+  string duration="900",message="경기 시간은 기본 15분(900초)입니다. 30~7200초로 바꿀 수 있습니다.";
   string networkAddress="127.0.0.1",networkPort="7777";
-  string nickname="";void Awake(){nickname=DriveFlowPolicy.LocalName;}
+  string nickname="";void Awake(){nickname=DriveFlowPolicy.EnsureName();}
   bool NameReady(){if(DriveFlowPolicy.SaveName(nickname)){nickname=DriveFlowPolicy.LocalName;return true;}message="닉네임을 입력하세요 (한글/영문/숫자, 최대12자).";return false;}
   bool legacy,showControls;Vector2 scroll;
   PvpConditionSettings condition=new PvpConditionSettings();
@@ -15,12 +16,12 @@ namespace Pvp {
    CasualUI.Backdrop();float width=Mathf.Min(760,Screen.width-32),height=Mathf.Min(680,Screen.height-32),x=(Screen.width-width)/2,y=(Screen.height-height)/2;
    CasualUI.Panel(new Rect(x,y,width,height));CasualUI.Header(new Rect(x+8,y+8,width-16,52),"PVP · 함께 달리는 택시",1);
    GUILayout.BeginArea(new Rect(x+18,y+76,width-36,height-92));scroll=GUILayout.BeginScrollView(scroll);
-   GUILayout.Label("내 이름",new GUIStyle(GUI.skin.label){font=KoreanText.BoldFont,fontSize=20});nickname=GUILayout.TextField(nickname,12);GUILayout.Label("한글·영문·숫자, 최대 12자");GUILayout.Space(12);
+   GUILayout.Label("닉네임",new GUIStyle(GUI.skin.label){font=KoreanText.BoldFont,fontSize=20});nickname=GUILayout.TextField(nickname,12);GUILayout.Label("자동으로 정해진 이름입니다. 바꾸면 경기 시작 때 저장됩니다 · 한글·영문·숫자, 최대 12자");GUILayout.Space(12);
    DrawMyCar();
    DrawConditionSettings();
    GUILayout.BeginVertical(GUI.skin.box);
    GUILayout.Label("나 + 봇 3대 · 공용 호출 8개 · 오프라인");
-   GUILayout.BeginHorizontal();GUILayout.Label("경기 시간(초, 30~7200)");duration=GUILayout.TextField(duration,5);GUILayout.EndHorizontal();
+   GUILayout.BeginHorizontal();GUILayout.Label("경기 시간(초, 기본 900 = 15분)");duration=GUILayout.TextField(duration,5);GUILayout.EndHorizontal();
    GUILayout.Label("전용 도시 · 다차로·골목·신호·유턴");
    if(GUILayout.Button("봇 3대와 경기 시작",CasualUI.Action(18),GUILayout.Height(48))){int seconds;if(!int.TryParse(duration,out seconds)||seconds<30||seconds>7200)message="30~7200초로 입력하세요.";else if(NameReady()){PvpConditionRules.Configure(condition);GetComponent<PvpBootstrap>().StartSimulation(true,seconds);}}
    GUILayout.EndVertical();GUILayout.Space(10);GUILayout.BeginVertical(GUI.skin.box);GUILayout.Label("LAN 대전 · 최대 4명",new GUIStyle(GUI.skin.label){font=KoreanText.BoldFont,fontSize=20});GUILayout.Label("같은 네트워크에서 접속 · 빈자리는 봇");
@@ -42,20 +43,26 @@ namespace Pvp {
   public static string LookName(PvpVehicleLook l){var v=VehicleCatalog.Get(l.model)??VehicleCatalog.Standard;return v.name+" · "+v.colorNames[l.color==1?1:0]+(l.ornament?" · 화분":"");}
   void DrawMyCar(){
    if(unlocks==null){unlocks=VehicleUnlockStore.Load();look=VehicleUnlockStore.Selected;}
-   GUILayout.BeginVertical(GUI.skin.box);GUILayout.Label("내 차 (외형만 · 성능은 모두 PVP 표준)",new GUIStyle(GUI.skin.label){font=KoreanText.BoldFont,fontSize=18});
-   var rect=GUILayoutUtility.GetRect(240,90,GUILayout.ExpandWidth(false));VehicleGarageHUD.Silhouette(rect,VehicleCatalog.Get(look.model)??VehicleCatalog.Standard,look.color,look.ornament);
-   GUILayout.Label(LookName(look));
-   GUILayout.BeginHorizontal();
-   foreach(var spec in VehicleCatalog.All){bool have=unlocks.HasModel(spec.id);GUI.enabled=have;if(GUILayout.Button(spec.name+(have?"":" (잠김)"),look.model==spec.id?CasualUI.Action(15):KoreanText.Button(15),GUILayout.Height(36))){look=new PvpVehicleLook{model=spec.id,color=0,ornament=look.ornament};VehicleUnlockStore.Selected=look;}GUI.enabled=true;}
-   GUILayout.EndHorizontal();GUILayout.BeginHorizontal();
-   GUI.enabled=unlocks.HasColor(look.model,1);if(GUILayout.Button("색 바꾸기",KoreanText.Button(15),GUILayout.Height(32))){look=new PvpVehicleLook{model=look.model,color=1-look.color,ornament=look.ornament};VehicleUnlockStore.Selected=look;}
-   GUI.enabled=unlocks.ornament;if(GUILayout.Button(look.ornament?"화분 내리기":"화분 올리기",KoreanText.Button(15),GUILayout.Height(32))){look=new PvpVehicleLook{model=look.model,color=look.color,ornament=!look.ornament};VehicleUnlockStore.Selected=look;}
-   GUI.enabled=true;GUILayout.EndHorizontal();
-   GUILayout.Label(unlocks.models.Length==0&&!unlocks.ornament&&unlocks.colors.Length==0?"싱글 3일 영업에서 차를 사거나 꾸미면 여기에서 고를 수 있습니다.":"싱글에서 한 번이라도 산 외형은 계속 남습니다. 봇은 정해진 외형 중 무작위입니다.");
+   GUILayout.Label("내 차",new GUIStyle(GUI.skin.label){font=KoreanText.BoldFont,fontSize=20});
+   GUILayout.Label("외형만 바뀝니다 · 성능은 모두 PVP 표준 · 싱글에서 산 차만 고를 수 있어요",new GUIStyle(GUI.skin.label){fontSize=14});
+   // Same icon and 2:1 proportions as the single-player garage cards.
+   var row=GUILayoutUtility.GetRect(10,170,GUILayout.ExpandWidth(true));float gap=10,w=(row.width-gap*2)/3;
+   var name=new GUIStyle(GUI.skin.label){font=KoreanText.BoldFont,fontSize=16,alignment=TextAnchor.MiddleCenter};var note=new GUIStyle(GUI.skin.label){fontSize=13,alignment=TextAnchor.MiddleCenter};
+   for(int i=0;i<VehicleCatalog.All.Length;i++){
+    var spec=VehicleCatalog.All[i];bool have=unlocks.HasModel(spec.id),chosen=look.model==spec.id;var card=new Rect(row.x+i*(w+gap),row.y,w,row.height);
+    if(chosen)CasualUI.RoundedFill(card,CasualUI.Blue);CasualUI.RoundedFill(chosen?new Rect(card.x+3,card.y+3,card.width-6,card.height-6):card,chosen?CasualUI.Soft:CasualUI.Card);
+    VehicleIcon.Draw(new Rect(card.x+12,card.y+8,card.width-24,(card.width-24)/2),spec,chosen?look.color:0,chosen&&look.ornament,!have);
+    GUI.Label(new Rect(card.x,card.yMax-58,card.width,26),spec.name,name);GUI.Label(new Rect(card.x,card.yMax-32,card.width,22),chosen?"선택됨":have?"선택하기":"잠김 · 싱글에서 구매",note);
+    bool enabled=GUI.enabled;GUI.enabled=enabled&&have&&!chosen;if(GUI.Button(card,GUIContent.none,GUIStyle.none)){look=new PvpVehicleLook{model=spec.id,color=0,ornament=unlocks.ornament};VehicleUnlockStore.Selected=look;}GUI.enabled=enabled;
+   }
+   GUILayout.Space(8);GUILayout.BeginHorizontal();var current=VehicleCatalog.Get(look.model)??VehicleCatalog.Standard;
+   for(int c=0;c<2;c++){bool have=unlocks.HasColor(current.id,c),chosen=look.color==c;var rgb=current.colors[c];
+    bool enabled=GUI.enabled;GUI.enabled=enabled&&have;if(GUILayout.Button("      "+current.colorNames[c]+(chosen?" · 사용 중":have?"":" · 잠김"),chosen?CasualUI.Action(15):KoreanText.Button(15),GUILayout.Height(38))&&!chosen){look=new PvpVehicleLook{model=look.model,color=c,ornament=unlocks.ornament};VehicleUnlockStore.Selected=look;}GUI.enabled=enabled;
+    var b=GUILayoutUtility.GetLastRect();CasualUI.RoundedFill(new Rect(b.x+10,b.y+8,22,b.height-16),new Color(rgb[0],rgb[1],rgb[2]));}
+   GUILayout.EndHorizontal();
    if(VehicleUnlockStore.LastError.Length>0)GUILayout.Label(VehicleUnlockStore.LastError);
-   GUILayout.EndVertical();GUILayout.Space(10);
-  }
-  static string ConditionSummary(PvpConditionSettings c){return "식사 "+c.mealCost.ToString("N0")+"원 / "+c.mealSeconds.ToString("0")+"초 · 휴식 "+(c.restCost==0?"무료":c.restCost.ToString("N0")+"원")+" / "+c.restSeconds.ToString("0")+"초\n피로 증가 "+(4*c.fatigueMultiplier).ToString("0.##")+"점/분 (배고픔에 따라 증가) · 피로 최대 100";}
+   GUILayout.Space(12);
+  }  static string ConditionSummary(PvpConditionSettings c){return "식사 "+c.mealCost.ToString("N0")+"원 / "+c.mealSeconds.ToString("0")+"초 · 휴식 "+(c.restCost==0?"무료":c.restCost.ToString("N0")+"원")+" / "+c.restSeconds.ToString("0")+"초\n피로 증가 "+(4*c.fatigueMultiplier).ToString("0.##")+"점/분 (배고픔에 따라 증가) · 피로 최대 100";}
   double Setting(string label,double value,double min,double max,double step,string format,string unit){
    GUILayout.BeginHorizontal();
    GUILayout.Label(label,new GUIStyle(GUI.skin.label){fontSize=17,alignment=TextAnchor.MiddleLeft},GUILayout.MinWidth(170),GUILayout.Height(36));

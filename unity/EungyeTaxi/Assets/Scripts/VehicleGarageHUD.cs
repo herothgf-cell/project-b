@@ -15,14 +15,7 @@ public static class VehicleGarageHUD {
   };
  }
  // Side profile: proportions and paint follow the same spec as the 3D variant.
- public static void Silhouette(Rect r,VehicleSpec v,int color,bool ornament){
-  var c=v.colors[color==1?1:0];var paint=new Color(c[0],c[1],c[2]);float w=r.width*.86f*v.scaleZ,h=r.height*.36f*v.scaleY,x=r.center.x-w/2,y=r.yMax-h-r.height*.16f;
-  CasualUI.RoundedFill(new Rect(x,y,w,h),paint);CasualUI.RoundedFill(new Rect(x+w*.2f,y-h*.62f,w*.55f,h*.72f),paint);
-  CasualUI.RoundedFill(new Rect(x+w*.25f,y-h*.48f,w*.2f,h*.42f),new Color(.12f,.22f,.33f));CasualUI.RoundedFill(new Rect(x+w*.5f,y-h*.48f,w*.2f,h*.42f),new Color(.12f,.22f,.33f));
-  CasualUI.RoundedFill(new Rect(x+w*.4f,y-h*.88f,w*.16f,h*.26f),new Color(1,.86f,.3f));
-  float d=r.height*.25f;foreach(float at in new[]{.2f,.8f})CasualUI.RoundedFill(new Rect(x+w*at-d/2,y+h-d*.55f,d,d),new Color(.08f,.09f,.11f));
-  if(ornament)CasualUI.RoundedFill(new Rect(x+w*.66f,y-h*.38f,h*.18f,h*.22f),new Color(.3f,.62f,.3f));
- }
+ public static void Silhouette(Rect r,VehicleSpec v,int color,bool ornament){VehicleIcon.Draw(r,v,color,ornament);}
  public static void Draw(DriveSession session){
   Init();var b=session.business;var a=b.ledger.Account;var owned=a.Vehicle;bool read=a.Room.finalized;
   CasualUI.Header(new Rect(15,15,830,55),read?"차고 · 완료 기록":"차고 · 내 택시",5);

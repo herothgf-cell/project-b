@@ -10,6 +10,8 @@ public static class DriveFlowPolicy {
  }
  public static string Nickname(string value){var b=new StringBuilder();foreach(char c in value??""){if(b.Length>=12)break;if(char.IsLetterOrDigit(c)||c==' '||c=='_'||c=='-')b.Append(c);}return b.ToString().Trim();}
  public static string LocalName {get{if(PvpNativeLan.ProbeMode){var a=Environment.GetCommandLineArgs();int i=Array.IndexOf(a,"-pvpNativeLanRole");return i>=0&&i+1<a.Length?"검증_"+a[i+1]:"검증";}return Nickname(PlayerPrefs.GetString("pvp.nickname",""));}}
+ // PVP nickname is filled automatically ("기사" + 4 digits) the first time; the player can edit it.
+ public static string EnsureName(){string name=LocalName;if(name.Length>0||PvpNativeLan.ProbeMode)return name;SaveName("기사"+UnityEngine.Random.Range(1000,10000));return LocalName;}
  public static bool SaveName(string value){string name=Nickname(value);if(name.Length==0)return false;PlayerPrefs.SetString("pvp.nickname",name);PlayerPrefs.Save();return true;}
  public static RoadMapSignalProgram Signals(TrafficSystem system,TrafficJunction j){
   var groups=new System.Collections.Generic.List<RoadMapSignalGroup>();var stages=new System.Collections.Generic.List<RoadMapStage>();

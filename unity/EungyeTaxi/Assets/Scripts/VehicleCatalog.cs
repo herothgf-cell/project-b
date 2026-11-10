@@ -76,10 +76,11 @@ public static class VehicleCatalog {
  public static PvpVehicleLook Default {get{return new PvpVehicleLook();}}
  public bool Valid {get{return VehicleCatalog.Get(model)!=null&&(color==0||color==1);}}
  public PvpVehicleLook Copy(){return new PvpVehicleLook{model=model,color=color,ornament=ornament};}
- // Selections not owned locally fall back to the default taxi (never an error).
+ // Selections not owned locally fall back to the default taxi (never an error). The dashboard
+ // ornament has no PVP toggle: it shows whenever it was bought in single player.
  public static PvpVehicleLook Owned(PvpVehicleLook wanted,VehicleUnlocks unlocks){
   if(wanted==null||!wanted.Valid||unlocks==null||!unlocks.HasModel(wanted.model))return Default;
-  return new PvpVehicleLook{model=wanted.model,color=unlocks.HasColor(wanted.model,wanted.color)?wanted.color:0,ornament=wanted.ornament&&unlocks.ornament};
+  return new PvpVehicleLook{model=wanted.model,color=unlocks.HasColor(wanted.model,wanted.color)?wanted.color:0,ornament=unlocks.ornament};
  }
  // Host-side sanitising of a guest's look: unknown values become the default taxi.
  public static PvpVehicleLook Sanitize(PvpVehicleLook look){return look!=null&&look.Valid?look.Copy():Default;}
