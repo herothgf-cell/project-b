@@ -1,6 +1,6 @@
 # 현재 상태 한 장 요약
 
-갱신: **2026-11-10**(기획22 차량 구매 구현, 브랜치 `feature/vehicle-purchase-3day`). 새로 합류한 사람이나 다른 PC에서 이어갈 때 이 문서부터 읽는다. 날짜별 상세 기록은 [최신 작업 이력](work-history/LATEST.md), 이전 판 전문은 [보관본](design-history/CURRENT-STATE-until-2026-11-09.md)에 있다.
+갱신: **2026-11-10**(기획22 차량 구매·J5057·J866 유턴, main 병합). 새로 합류한 사람이나 다른 PC에서 이어갈 때 이 문서부터 읽는다. 날짜별 상세 기록은 [최신 작업 이력](work-history/LATEST.md), 이전 판 전문은 [보관본](design-history/CURRENT-STATE-until-2026-11-09.md)에 있다.
 
 ## 한 줄 요약
 
@@ -13,8 +13,8 @@
 | 게임 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` (또는 `Play-Eungye.cmd`). 실행 폴더 전체가 필요 |
 | 모드 | 은계 싱글 3일(하루 예정 20분) / A2 자체 도시 PvP(봇 3 또는 LAN 최대 4명) |
 | 개발 | Unity **2022.3.62f2**, 프로젝트 `unity/EungyeTaxi`, 빌드 `PrototypeBuild.BuildHybrid` |
-| 최신 배포 | main: 게임 소스 548fe8b · 출하 a978b3b (2026-11-09). 브랜치 `feature/vehicle-purchase-3day`: 소스 0c4ca86 · 출하 b436706 (2026-11-10, LAN v17, J5057·J866 정식 유턴 포함, 미병합) |
-| 통신 | 브랜치 LAN **v17**(내 차 외형) / main LAN v16. 양쪽 PC가 같은 실행본이어야 하며 v16↔v17은 접속 거부 |
+| 최신 배포 | main: 게임 소스 0c4ca86 · 출하 b436706 (2026-11-10, `feature/vehicle-purchase-3day` fast-forward 병합, LAN v17, 기획22 차량 구매·J5057·J866 정식 유턴 포함). 이전 main은 소스 548fe8b · 출하 a978b3b |
+| 통신 | LAN **v17**(내 차 외형). 양쪽 PC가 같은 실행본이어야 하며 이전 v16 실행본과는 접속 거부 |
 | 지도 | 정식 지도 `config/maps/project/eungye.project.json`(Git 포함). 원본 재수입할 때만 지도 ZIP 필요 |
 | 설정 도구 | 루트 `설정 관리.cmd` — 승객·대사·효과·법규·밸런스·차량 가격 조정. **Node.js 필요**(`winget install --id OpenJS.NodeJS.LTS`) |
 
@@ -43,7 +43,7 @@
 
 ## 다음 작업 순서
 
-1. 기획22 브랜치 검토·병합 결정 후 사람 플레이로 차고 사용·차종 차이 체감·가격 확인(기획22 §7)
+1. 사람 플레이로 차고 사용·차종 차이 체감·가격 확인(기획22 §7), J5057·J866 유턴 직접 확인
 2. 사람 플레이 검증(싱글 3일, PvP 10분, 다른 PC)
 3. 장기 방향(이사·면허 경로)은 본편 기획 때 결정
 4. 아트 전환은 본개발 승인 후(지금은 목표 시안으로 충분)

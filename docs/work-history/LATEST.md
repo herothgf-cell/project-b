@@ -7,19 +7,23 @@
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
-| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid`. **브랜치 `feature/vehicle-purchase-3day`**: 게임 소스 0c4ca86 · 출하 b436706 (11/10, main 미병합). main 기준은 소스 548fe8b · 출하 a978b3b (11/09) |
-| 통신 | 브랜치 LAN **v17**(내 차 외형) / main LAN v16. 양쪽 PC 같은 실행본 필요, v16↔v17 접속 거부 |
-| 배포 검사 | 브랜치 출하 143파일 127,445,792바이트, 통합/PvP manifest VerifyOnly 통과(11/10 kimhs-NW2). main은 127,378,253바이트 |
+| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid`. **main**(= `feature/vehicle-purchase-3day`, 11/10 fast-forward 병합): 게임 소스 0c4ca86 · 출하 b436706. 이전 main은 소스 548fe8b · 출하 a978b3b (11/09) |
+| 통신 | LAN **v17**(내 차 외형, main 병합됨). 양쪽 PC 같은 실행본 필요, 이전 v16 실행본과는 접속 거부 |
+| 배포 검사 | 출하 143파일 127,445,792바이트, 통합/PvP manifest VerifyOnly 통과(11/10 kimhs-NW2) |
 | 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json`(Git, revision 14·SHA256 c9aa1e76…) 준비됨, 11/10 Strict issues 0(PowerShell 7 필요, 5.1에서는 검사 스크립트 실패). 재수입용 JSON 2개는 선택 입력이며 없음 |
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **구현(사람 검증 전, 브랜치)** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V9 28장](../proposals/project-b-game-proposal-v9.pptx) · [반영 검토](../proposals/proposal-v9-review.md) |
 
 ## 다음 작업
 
-1. `feature/vehicle-purchase-3day` 검토 후 main 병합 여부 결정(병합하면 LAN v17, 모든 PC 실행본 갱신).
+1. main 병합 완료(11/10). 모든 PC에서 main pull 후 v17 실행본으로 맞춘다. 기획22 차고·차종과 J5057·J866 유턴은 사람 플레이 확인 전.
 2. [거리뷰 대조 수정 후보](2026-11-10-roadview-lane-audit.md#수정-후보와-우선순위-사용자-확인-전-미적용) 남은 것: 스쿨존 제한속도, 미확인 교차로. [유턴 수정 남은 항목](2026-11-10-uturn-sign-fix.md#남은-항목).
 3. 다른 PC LAN v17, 첫 이용자 안내.
 5. 보류: 기사 평점(기획22 §3-1), 개인택시 면허 경로([기획23](../content-design/23-license-career-path.md)), Blender 아트 파이프라인 2단계 이후([문서](../proposals/art-blender-pipeline.md)).
+
+## 2026-11-10 main 병합
+
+사용자 요청으로 `feature/vehicle-purchase-3day`(기획22 차량 구매·차고·PvP 내 차 LAN v17, 차량 UI 후속, 거리뷰 점검, J5057·J866 정식 유턴)를 main에 fast-forward 병합하고 push했다. 병합 전 main fb5b16d가 브랜치의 조상임을 확인했고, 강제 push·이력 재작성은 없다. 병합 후 main과 브랜치는 같은 커밋이다(`git log -1 --oneline -- docs/work-history/LATEST.md`로 확인). 출하 실행본은 b436706 그대로이며 이번에 다시 빌드하지 않았다.
 
 ## 2026-11-10 J866 서향 정식 유턴 (사용자 확인)
 
