@@ -1,10 +1,10 @@
 {
-  "sourceCommit": "9302097eda4f827b43d6cea660769d7899c44e8f",
+  "sourceCommit": "575ca467394747678c64d7342686656367082ae3",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-10",
-  "totalBytes": 127464690.0,
+  "totalBytes": 127469810.0,
   "validation": {
     "build": "PrototypeBuild.BuildEasyRoadMapEditor exit 0",
     "modelSuites": 23,
@@ -38,17 +38,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "6199018dadfac73265da9a6935b2e6dcf767cbf8b05628bc33892c8bcc59a959"
+      "sha256": "67a64d3f26cc479be592db31bfeeff65c8064dcb0b185f67c147d83bc485bbf7"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
       "bytes": 61428,
-      "sha256": "bb6bfea799cc26738cbd1850bc24812339573c79514eb3088e4d446e10e40790"
+      "sha256": "27971083460943e6fd80a577b798e4b4d4458f8c24379b699b85f4f5e6e85c3e"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
       "bytes": 116160,
-      "sha256": "0a3bc6a58ab1b40d0bd8a658bab3a7dbce70175b8100f586bba038bcfca030a1"
+      "sha256": "031a07202007199abd4c5ffdabe24606a63df487cda3776cd5213ea1a917cf53"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -62,8 +62,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2792448,
-      "sha256": "d3b6aa0baa8f2614f8a0bf2e5923b5fe2664b62ec548fcd8cf788abc891449d6"
+      "bytes": 2797568,
+      "sha256": "d82db97f9d70e707379841fa4522fbeb51aad3b7438c822b37f63d7e8e5d3c67"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
@@ -573,7 +573,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
       "bytes": 43443640,
-      "sha256": "be6ef4866e4aee1a862839664c1636174ce2d8b7cb99e4c006405f823309ddd9"
+      "sha256": "460e9ff05dc992df3039a471dbec415adb72308f7ed2e86d46a90ce3ba8d3f64"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
