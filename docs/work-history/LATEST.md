@@ -1,6 +1,6 @@
 ## 2026-11-10 진행 상황 확인 (PC kimhs-NW2)
 
-[결과·환경 문제](2026-11-10-progress-check.md). 11-09 이후 MCP 읽기 기록 2건 외 게임/빌드/지도 변경 없음, 배포 은계/A2·LANv16·BuildHybrid·548fe8b/a978b3b·지도8fb257ed 유지. 이 PC는 PowerShell 7(pwsh) 미설치라 Strict/VerifyOnly를 PS5.1로 돌려 exit1(-Depth 미지원·GetFullPath 예외, 도구 환경 차이). 유효한 마지막 검사는 11-09 issues0/143파일. 다음: pwsh 설치 후 재검사, 사람 장기/전체3일·다른PC LAN 수용. 로컬 3커밋 미push.
+[결과](2026-11-10-progress-check.md). 11-09 이후 MCP 읽기 기록 2건 외 게임/빌드/지도 변경 없음, 배포 은계/A2·LANv16·BuildHybrid·548fe8b/a978b3b·지도8fb257ed 유지. 이 PC에 PowerShell 7.6.9를 winget으로 설치(PS5.1에서는 검사 스크립트 실패) 후 Strict exit0/issues0, 통합·PVP VerifyOnly exit0(143파일127378253바이트). 다음: 사람 장기/전체3일·다른PC LAN 수용. 로컬 문서 커밋 미push.
 
 ## 2026-11-09 Blender·Unity MCP 직접 호출 검사
 
