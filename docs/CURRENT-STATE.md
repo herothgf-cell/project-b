@@ -13,7 +13,7 @@
 | 게임 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` (또는 `Play-Eungye.cmd`). 실행 폴더 전체가 필요 |
 | 모드 | 은계 싱글 3일(하루 예정 20분) / A2 자체 도시 PvP(봇 3 또는 LAN 최대 4명) |
 | 개발 | Unity **2022.3.62f2**, 프로젝트 `unity/EungyeTaxi`, 빌드 `PrototypeBuild.BuildHybrid` |
-| 최신 배포 | main: 게임 소스 0c4ca86 · 출하 b436706 (2026-11-10, `feature/vehicle-purchase-3day` fast-forward 병합, LAN v17, 기획22 차량 구매·J5057·J866 정식 유턴 포함). 이전 main은 소스 548fe8b · 출하 a978b3b |
+| 최신 배포 | main: 게임 소스 9302097 · 출하 89e72a6 (2026-11-10, J7973 북쪽 노면선 정리·싱글 영업 시간 선택 포함, LAN v17). 이전 출하 b436706(소스 0c4ca86, 기획22 차량 구매·J5057·J866 정식 유턴) |
 | 통신 | LAN **v17**(내 차 외형). 양쪽 PC가 같은 실행본이어야 하며 이전 v16 실행본과는 접속 거부 |
 | 지도 | 정식 지도 `config/maps/project/eungye.project.json`(Git 포함). 원본 재수입할 때만 지도 ZIP 필요 |
 | 설정 도구 | 루트 `설정 관리.cmd` — 승객·대사·효과·법규·밸런스·차량 가격 조정. **Node.js 필요**(`winget install --id OpenJS.NodeJS.LTS`) |
