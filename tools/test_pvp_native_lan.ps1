@@ -29,6 +29,8 @@ $owned=[System.Collections.Generic.List[System.Diagnostics.Process]]::new()
 function Start-NativeProbe([string]$Role){
  $log=Join-Path $output ($Role+'.log')
  $arguments=@('-batchmode','-nographics','-pvpNativeLanCheck','-pvpNativeLanRole',$Role,'-pvpNativeLanAddress','127.0.0.1','-pvpNativeLanPort',"$Port",'-pvpNativeLanOutput',('"'+$output+'"'),'-logFile',('"'+$log+'"'))
+ # LAN v17 vehicle looks: host pins the default taxi; the guest owns and selects the wide LPG look.
+ if($Role -eq 'host'){$arguments+=@('-pvpVehicleLook','starter:0:0')}else{$unlocks=Join-Path $output 'client-vehicle-unlocks.json';'{"version":1,"models":["lpg"],"colors":["lpg:1"],"ornament":true}' | Set-Content -LiteralPath $unlocks -Encoding utf8NoBOM;$arguments+=@('-vehicleUnlocks',('"'+$unlocks+'"'),'-pvpVehicleLook','lpg:1:1')}
  $contentProfile=if($Role -eq 'host'){$ContentHostProfile}else{$ContentClientProfile}
  if($contentProfile){$contentProfile=(Resolve-Path -LiteralPath $contentProfile).Path;$arguments+=@('-contentTest','-contentProfile',('"'+$contentProfile+'"'))}
  if($ExpectedContentHash){$arguments+=@('-contentExpectedHash',$ExpectedContentHash)}
