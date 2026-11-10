@@ -7,19 +7,23 @@
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
-| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid`. **브랜치 `feature/vehicle-purchase-3day`**: 게임 소스 1d85fa3 · 출하 f318d84 (11/10, main 미병합). main 기준은 소스 548fe8b · 출하 a978b3b (11/09) |
+| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid`. **브랜치 `feature/vehicle-purchase-3day`**: 게임 소스 0c4ca86 · 출하 b436706 (11/10, main 미병합). main 기준은 소스 548fe8b · 출하 a978b3b (11/09) |
 | 통신 | 브랜치 LAN **v17**(내 차 외형) / main LAN v16. 양쪽 PC 같은 실행본 필요, v16↔v17 접속 거부 |
-| 배포 검사 | 브랜치 출하 143파일 127,440,384바이트, 통합/PvP manifest VerifyOnly 통과(11/10 kimhs-NW2). main은 127,378,253바이트 |
-| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json`(Git, revision 13·SHA256 fe00e8e1…) 준비됨, 11/10 Strict issues 0(PowerShell 7 필요, 5.1에서는 검사 스크립트 실패). 재수입용 JSON 2개는 선택 입력이며 없음 |
+| 배포 검사 | 브랜치 출하 143파일 127,445,792바이트, 통합/PvP manifest VerifyOnly 통과(11/10 kimhs-NW2). main은 127,378,253바이트 |
+| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json`(Git, revision 14·SHA256 c9aa1e76…) 준비됨, 11/10 Strict issues 0(PowerShell 7 필요, 5.1에서는 검사 스크립트 실패). 재수입용 JSON 2개는 선택 입력이며 없음 |
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **구현(사람 검증 전, 브랜치)** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V9 28장](../proposals/project-b-game-proposal-v9.pptx) · [반영 검토](../proposals/proposal-v9-review.md) |
 
 ## 다음 작업
 
 1. `feature/vehicle-purchase-3day` 검토 후 main 병합 여부 결정(병합하면 LAN v17, 모든 PC 실행본 갱신).
-2. [거리뷰 대조 수정 후보](2026-11-10-roadview-lane-audit.md#수정-후보와-우선순위-사용자-확인-전-미적용) 남은 것: J866 유턴 보조표지 확인, 스쿨존 제한속도, 미확인 교차로. [유턴 수정 남은 항목](2026-11-10-uturn-sign-fix.md#남은-항목).
+2. [거리뷰 대조 수정 후보](2026-11-10-roadview-lane-audit.md#수정-후보와-우선순위-사용자-확인-전-미적용) 남은 것: 스쿨존 제한속도, 미확인 교차로. [유턴 수정 남은 항목](2026-11-10-uturn-sign-fix.md#남은-항목).
 3. 다른 PC LAN v17, 첫 이용자 안내.
 5. 보류: 기사 평점(기획22 §3-1), 개인택시 면허 경로([기획23](../content-design/23-license-career-path.md)), Blender 아트 파이프라인 2단계 이후([문서](../proposals/art-blender-pipeline.md)).
+
+## 2026-11-10 J866 서향 정식 유턴 (사용자 확인)
+
+[구현·검증](2026-11-10-uturn-sign-fix.md#후속-j866-서향-사용자-확인). 사용자가 "유턴하는 곳 맞아"로 확인. 원본 회차 곡선 A2218G611778을 비활성하고 A2218G611780에서 `유턴 (좌회전·보행 신호시)` 표지가 있는 정식 유턴을 추가했다. 보조표지 문구는 미판독이라 조건은 J5057과 같은 게임 가정이며 근거는 user로 기록. 연결 보완(west-inner-straight)이 빠지지 않게 해당 경로만 예외 처리(added=25 유지). 출하 유턴 프로브 J866-W 통과(23 PASS, 기존 J7973-E 1 FAIL), 차로 렌더 31·Strict 0·manifest 검증 통과. 지도 revision 14, 소스 0c4ca86·출하 b436706.
 
 ## 2026-11-10 J5057 유턴 표시↔판정 일치 (A안)
 
