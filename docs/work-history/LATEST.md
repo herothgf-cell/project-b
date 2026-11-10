@@ -21,6 +21,10 @@
 3. 다른 PC LAN v17, 첫 이용자 안내.
 5. 보류: 기사 평점(기획22 §3-1), 개인택시 면허 경로([기획23](../content-design/23-license-career-path.md)), Blender 아트 파이프라인 2단계 이후([문서](../proposals/art-blender-pipeline.md)).
 
+## 2026-11-10 싱글 영업 시간 선택 · 개발용 바로 퇴근·영업 시간 변경
+
+[구현·검증](2026-11-10-single-shift-length-dev-end.md). 소스 3933628. 싱글 영업 준비(1일차 메뉴·2/3일차 팝업)에서 하루 실제 10/20/30/60분 선택(기본 20분, 시작 전만, 저장·이어하기 유지). 설정 `개발용 테스트` 탭: 거점 조건 없이 정산으로 가는 `지금 바로 퇴근`, 영업 중에도 바꾸는 `영업 시간 (테스트)`. `ShiftLengthChecks.RunAll` exit0(19·150·171), 3933628 기준 깨끗한 worktree BuildHybrid 실행본 `-shiftDevEndCheck` exit0·13 PASS·캡처 8장 확인. 출하 `builds/EungyeTaxi`·manifest 갱신은 같은 시각 J7973 노면 작업 세션이 3933628 포함 재빌드로 맡음(그 커밋 기준).
+
 ## 2026-11-10 main 병합
 
 사용자 요청으로 `feature/vehicle-purchase-3day`(기획22 차량 구매·차고·PvP 내 차 LAN v17, 차량 UI 후속, 거리뷰 점검, J5057·J866 정식 유턴)를 main에 fast-forward 병합하고 push했다. 병합 전 main fb5b16d가 브랜치의 조상임을 확인했고, 강제 push·이력 재작성은 없다. 병합 후 main과 브랜치는 같은 커밋이다(`git log -1 --oneline -- docs/work-history/LATEST.md`로 확인). 출하 실행본은 b436706 그대로이며 이번에 다시 빌드하지 않았다.
