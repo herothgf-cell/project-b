@@ -119,3 +119,14 @@ test('context links are bidirectional and independent postride event has no requ
  assert.match(recovery.sections.find(s=>s.kind==='outcomes').description,/위반.*없는/);
  assert.match(recovery.sections.find(s=>s.kind==='outcomes').description,/0.*위반/);
 });
+test('request frequency overview gathers schedule and request weights with live per-ride average',()=>{
+ const all=entities();const overview=all.find(e=>e.id==='frequency.request');
+ assert.ok(overview&&overview.group==='승객 요청');
+ assert.equal(all.filter(e=>e.group==='승객 요청')[0].id,'frequency.request');
+ for(const id of ['schedule.count0','schedule.count1','schedule.count2','schedule.progressMin','schedule.progressMax','schedule.cutoff','schedule.movingSeconds','request.Quiet.weight','request.Quiet.enabled'])assert.ok(overview.fieldIds.includes(id),id);
+ assert.ok(!overview.fieldIds.includes('request.LostItem.weight'));
+ const profile={values:catalog.entries.map(e=>({id:e.id,value:e.defaultValue}))};
+ assert.match(model.weightInfo(overview,profile,catalog).text,/운송당 평균 요청 1\.5건 · 0건 5% \/ 1건 40% \/ 2건 55%/);
+ profile.values.find(v=>v.id==='schedule.count2').value='45';
+ assert.match(model.weightInfo(overview,profile,catalog).text,/합계 90/);
+});

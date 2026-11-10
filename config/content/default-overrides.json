@@ -315,15 +315,23 @@
     },
     {
       "id": "schedule.count0",
-      "value": "15"
+      "value": "5"
     },
     {
       "id": "schedule.count1",
-      "value": "60"
+      "value": "40"
     },
     {
       "id": "schedule.count2",
-      "value": "25"
+      "value": "55"
+    },
+    {
+      "id": "schedule.progressMin",
+      "value": "0.15"
+    },
+    {
+      "id": "schedule.movingSeconds",
+      "value": "12"
     },
     {
       "id": "choice.request.Quiet.Accept.end.failure.satisfaction",

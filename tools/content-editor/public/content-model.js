@@ -70,6 +70,14 @@
   function add(id,group,title,summary,kind,sections,notes=[],links=[],extra={}){const seen=new Set();const unique=values=>values.filter(value=>{if(seen.has(value))return false;seen.add(value);return true});for(const s of sections){s.fieldIds=unique(s.fieldIds);for(const c of s.cards||[])c.fieldIds=unique(c.fieldIds)}const fieldIds=keep(sections.flatMap(s=>[...s.fieldIds,...(s.cards||[]).flatMap(c=>c.fieldIds)]));const entity={id,group,title,summary,kind,fieldIds,sections,notes,links,...extra};out.push(entity);return entity;}
   if(byId.has('passenger.presets'))add('passenger.presets','승객 프리셋','승객 프리셋','승객의 특성과 공유 행동을 조합합니다.','presets',[section('승객 프리셋','전용 편집 화면을 사용합니다.',['passenger.presets'])]);
   const schedule=ids('schedule.');
+  // 2026-11-10: one place to read and tune how often passengers ask for
+  // something. The same profile IDs stay editable in each request and in
+  // 공통 영향 요소; this entity only gathers them (no copied settings).
+  if(schedule.length)add('frequency.request','승객 요청','요청 빈도 한눈에 보기','운송 1건마다 승객 요청이 몇 건 나오는지, 언제 나오는지, 요청별 가중치를 한 화면에서 확인·조정합니다. 싱글·PVP 공통입니다.','frequency',[
+   section('운송당 요청 개수','요청 0·1·2건 비중이며 합계는 100입니다. 2건 비중을 높이고 0건 비중을 낮추면 요청이 자주 나옵니다.',schedule.filter(id=>/^schedule\.count/.test(id)),'frequency'),
+   section('등장 시점','시작 진행률이 이르고 응답 사이 주행 시간이 짧을수록 짧은 운송에서도 요청이 모두 표시됩니다. 마감 진행률 이후 남은 요청은 나오지 않습니다.',schedule.filter(id=>!/^schedule\.count/.test(id)),'frequency'),
+   section('요청별 사용·가중치','같은 후보 안의 상대 비중입니다. 모두 같은 값이면 같은 비중이며, 전체 등장 횟수는 위 요청 개수가 정합니다. 0 또는 사용 안함은 제외합니다.',Object.keys(requestFacts).filter(k=>k!=='LostItem').flatMap(k=>['request.'+k+'.enabled','request.'+k+'.weight']),'frequency')
+  ],['저장한 사용자 프로필은 저장 당시 값을 유지합니다. 새 기본값을 쓰려면 기본값으로 되돌리거나 이 화면에서 직접 바꾼 뒤 저장·적용하세요.','이미 진행 중인 캠페인·PVP 방은 시작 때의 설정을 유지하고, 다음 새 운송부터 바뀐 값을 사용합니다.'],['common.schedule'],{frequency:true});
   for(const [kind,facts]of Object.entries(requestFacts)){
    const prefix=`request.${kind}.`;const own=ids(prefix);if(!own.length)continue;
    const cards=own.filter(id=>id.includes('.reply.')&&!/\.SmallTalk(?:Violation)?$/.test(id)).map(id=>{
@@ -200,6 +208,7 @@
  function weightInfo(entity,profile,catalog){
   const defaults=new Map((catalog.entries||[]).map(e=>[e.id,e.defaultValue]));const values=new Map((profile?.values||[]).map(e=>[e.id,e.value]));
   const value=id=>values.has(id)?values.get(id):defaults.get(id);const enabled=id=>!id||String(value(id)).toLowerCase()==='true';
+  if(entity.kind==='frequency')return frequencyInfo(value,enabled,catalog);
   if(entity.requestKind==='LostItem')return {text:enabled(entity.enabledId)?'하차 후 조건부 10%':'사용 안함 · 하차 후 사건 제외',explanation:'하차 후 후보 식별자로 정하는 별도 10% 텍스트 사건입니다. 일반 요청 추첨에서 제외하며 가중치로 10%를 바꾸지 않습니다.'};
   if(entity.id==='type.Drunk')return {text:'등장 '+value('type.Drunk.spawnPercent')+'% · 하루 최대 '+value('type.Drunk.dailyMax')+'명',explanation:'배정 가능 차례의 확률이며 전체 승객 비율이 아닙니다. 특수 승객 뒤 다음 탑승은 일반 승객입니다. 하루 최대 0은 취객 없음입니다. 강제 등장 '+(value('type.Drunk.forceEnabled')==='true'?'사용 · 취객 없이 '+value('type.Drunk.forceAfterMisses')+'회 탑승 후 다음 가능한 차례':'사용 안함')+'. 잠듦 '+value('type.Drunk.sleepPercent')+'%, 구토 예정 '+value('type.Drunk.vomitPercent')+'%는 각각 독립 추첨합니다.'};
   if(!entity.weightId)return {text:'',explanation:''};
@@ -211,6 +220,15 @@
   const percent=total?Math.round(weight/total*10000)/100:0;
   const example='같은 후보군에서 가중치가 모두 1이면 같은 비중입니다. 1·1·2이면 25%·25%·50%이며, 0은 제외됩니다. ';
   return {text:`기본 후보 비중 ${percent}% (${weight} / ${total})`,explanation:example+(request?'사용 중인 양수 가중치 요청을 모두 후보로 놓은 기준 비중입니다. 실제 전체 등장 확률이 아닙니다. 지도·안전 대안, 요청 개수 0~2, 조합 제외, 등장 시점·대화 가능 조건, 대표 유형 첫 요청 연결로 실제 후보와 결과가 달라집니다.':'특수 유형 후보를 모두 놓은 기준 비중입니다. 일반·취객의 배정 보장과 연속 특수 승객 제한, 대표 요청 자격 조건이 있어 실제 전체 승객 등장 확률과 다릅니다.')};
+ }
+ function frequencyInfo(value,enabled,catalog){
+  const n=id=>Number(value(id))||0;const c0=n('schedule.count0'),c1=n('schedule.count1'),c2=n('schedule.count2');const sum=c0+c1+c2;
+  const average=sum?Math.round((c1+2*c2)/sum*100)/100:0;const pct=x=>Math.round(x*1000)/10+'%';
+  const weights=(catalog.entries||[]).filter(e=>/^request\.[^.]+\.weight$/.test(e.id)&&e.id!=='request.LostItem.weight').map(e=>({id:e.section||e.id.split('.')[1],w:enabled(e.id.replace(/\.weight$/,'.enabled'))?Math.max(0,n(e.id)):0}));
+  const total=weights.reduce((a,x)=>a+x.w,0);const active=weights.filter(x=>x.w>0).sort((a,b)=>b.w-a.w);
+  const text=`운송당 평균 요청 ${average}건 · 0건 ${c0}% / 1건 ${c1}% / 2건 ${c2}%`+(sum!==100?` · 합계 ${sum} (100이어야 저장 가능)`:'');
+  const explanation=`요청은 운송 진행 ${pct(n('schedule.progressMin'))}~${pct(n('schedule.progressMax'))} 사이에 나오고, ${pct(n('schedule.cutoff'))} 이후에는 새로 나오지 않습니다. 첫 요청의 절반은 승차 때 바로 나오며, 응답 뒤 다음 요청까지 실제 주행 ${n('schedule.movingSeconds')}초가 필요합니다. 사용 중 요청 ${active.length}종 · 가중치 합 ${total}`+(active.length?': '+active.map(x=>`${x.id} ${x.w} (${total?Math.round(x.w/total*1000)/10:0}%)`).join(', '):'')+'. 지도 경로·안전 대안·조합 제외 때문에 실제 횟수는 이보다 조금 적을 수 있습니다.';
+  return {text,explanation};
  }
  function isLegacyField(id){return /^request\.[^.]+\.(success|failure)$/.test(id)||id==='effect.food.satisfaction'||id==='manner.comfortMotion.penalty';}
  function fieldInfo(id,catalog){

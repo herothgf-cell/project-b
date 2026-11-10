@@ -6,7 +6,7 @@ public static class PvpFlowUnifiedChecks {
  check("mode contracts",UnifiedModeTests.Run);
  check("traffic safety and natural flow",PvpNpcMergeTests.Run);
  check("road and arrow geometry",PvpCityA2Tests.Run);
- check("lane preparation",PvpCityA2Tests.LaneChoices);
+ check("lane preparation",PvpCityA2Tests.LaneChoices); check("signal waits and back lanes",PvpCityA2Tests.SignalWaits);
  check("bays and facilities",PvpCityMapTests.Run);
  check("four drivers and calls",PvpSimulationFourDriverTests.Run);
  check("live map controls",PvpLiveMapTests.Run);

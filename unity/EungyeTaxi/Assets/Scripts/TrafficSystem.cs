@@ -186,7 +186,7 @@ public partial class TrafficSystem : MonoBehaviour {
     }
     public void Request(TrafficCar car,TrafficStop stop){if(!stop.junction.requests.ContainsKey(car))stop.junction.requests[car]=Time.time;}
     public void Build(MapData map, bool spawnCars) {
-        roadMap=map;if(map.editorDocument!=null){editorGraph=new HdRoadGraph(map);editorSpeedRules=System.Array.Exists(map.editorDocument.facilities,f=>f.kind=="sign"&&f.rule&&f.type=="제한속도");}
+        roadMap=map;signalRecall=map.mapId=="pvp-city-a";if(map.editorDocument!=null){editorGraph=new HdRoadGraph(map);editorSpeedRules=System.Array.Exists(map.editorDocument.facilities,f=>f.kind=="sign"&&f.rule&&f.type=="제한속도");}
         authoredMerges=NativeTrafficMergePolicy.Supports(map)?new NativeTrafficMergePolicy(this,map,editorGraph??new HdRoadGraph(map)):null;
         mainDirection = (map.targets[1].V() - map.targets[0].V()).normalized;
         if(map.HasHd&&!map.hybrid)return;

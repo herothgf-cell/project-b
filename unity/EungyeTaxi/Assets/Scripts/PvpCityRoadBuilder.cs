@@ -20,12 +20,14 @@ public sealed class PvpCityRoadBuilder {
  static MapPoint P(Vector3 p){return new MapPoint{x=p.x,z=p.z};}
  Node Add(string id,Vector3 p,bool signal=false,bool permissive=false){var n=new Node{id=id,p=p,signal=signal,permissive=permissive};nodes.Add(id,n);return n;}
  public PvpCityRoadBuilder(){
-  for(int z=0;z<7;z++)for(int x=0;x<7;x++)Add(Key(x,z),new Vector3(X[x]+(z%2==1?32*(x%3-1):0),0,Z[z]+(x%2==1?25*(z%3-1):0)),x>0&&x<6&&z>0&&z<6&&(z==3||x%2==0||z%2==0),z!=3&&(x==2&&z==1||x==4&&z==5));
+  for(int z=0;z<7;z++)for(int x=0;x<7;x++)Add(Key(x,z),new Vector3(X[x]+(z%2==1?32*(x%3-1):0),0,Z[z]+(x%2==1?25*(z%3-1):0)),Signalized(x,z),z!=3&&(x==2&&z==1||x==4&&z==5));
   for(int z=0;z<7;z++)for(int x=0;x<6;x++)Street(nodes[Key(x,z)],nodes[Key(x+1,z)],z==3?8:z%2==0?4:2,Vector3.right,z%2==1&&z!=3?(x%2==0?28:-28):0);
   for(int x=0;x<7;x++)for(int z=0;z<6;z++){
    var a=nodes[Key(x,z)];var b=nodes[Key(x,z+1)];int count=x==3?6:x%2==0?4:2;
-   if(z%2==0&&x<6){
-    string block="alley:"+(x/2)+":"+(z/2);
+   if(z%2==0){
+    // 2026-11-10: the east perimeter is split like the other even avenues so
+    // each district's added back lane can reach it (plain T nodes, no alley).
+    string block=x<6?"alley:"+(x/2)+":"+(z/2):"edge:"+(z/2);
     if(x%2==0){var entry=Add(block+":entry",Vector3.Lerp(a.p,b.p,.25f));var exit=Add(block+":exit",Vector3.Lerp(a.p,b.p,.75f));Street(a,entry,count,Vector3.forward);Street(entry,exit,count,Vector3.forward);Street(exit,b,count,Vector3.forward);}
     else{var tee=Add(block+":east",Vector3.Lerp(a.p,b.p,.5f));Street(a,tee,count,Vector3.forward);Street(tee,b,count,Vector3.forward);}
    }else Street(a,b,count,Vector3.forward,x%2==1?(z%2==0?24:-24):0);
@@ -43,8 +45,21 @@ public sealed class PvpCityRoadBuilder {
    Street(tee,innerEast,2,Vector3.right);Street(innerEast,east,2,Vector3.right,(x+z)%2==0?15:-15);
    Street(lower,lowerEast,2,Vector3.right);Street(lowerEast,innerEast,2,Vector3.forward);Street(innerEast,upperEast,2,Vector3.forward);Street(upperEast,upper,2,Vector3.left);
   }
+  // 2026-11-10 user request: more back lanes. In the block east of each inner
+  // loop a short lane leaves the loop's tee, then forks north and south to
+  // the next avenue's split points, giving a ㅓ-shaped shortcut between blocks.
+  for(int z=0;z<3;z++)for(int x=0;x<3;x++){
+   string id="alley:"+x+":"+z,next=x<2?"alley:"+(x+1)+":"+z:"edge:"+z;var west=nodes[id+":east"];var south=nodes[next+":entry"];var north=nodes[next+":exit"];
+   var hub=Add(id+":back",new Vector3(west.p.x+190+(x+z)%2*20,0,west.p.z));
+   var backSouth=Add(id+":back-south",new Vector3(hub.p.x,0,south.p.z));var backNorth=Add(id+":back-north",new Vector3(hub.p.x,0,north.p.z));
+   Street(west,hub,2,Vector3.right);Street(backSouth,hub,2,Vector3.forward);Street(hub,backNorth,2,Vector3.forward);
+   Street(backSouth,south,2,Vector3.right,(x+z)%2==0?-12:12);Street(backNorth,north,2,Vector3.right,(x+z)%2==0?12:-12);
+  }
   foreach(var node in nodes.Values)Junction(node);
  }
+ // Every interior grid junction plus perimeter T junctions where an avenue
+ // (4+ lanes) meets the ring are signalized. Alley joins stay unsignalized.
+ static bool Signalized(int x,int z){bool edgeX=x==0||x==6,edgeZ=z==0||z==6;if(!edgeX&&!edgeZ)return true;if(edgeX&&edgeZ)return false;return edgeX?z%2==0||z==3:x%2==0||x==3;}
  static AssistedRoadNetwork.Path Path(MapPoint[] points){return new AssistedRoadNetwork.Path(points.Select(p=>p.V()).ToArray());}
  public static MapPoint[] Slice(AssistedRoadNetwork.Path path,float a,float b){var result=new List<MapPoint>{P(path.Position(a))};float at=0;for(int i=1;i<path.points.Length;i++){at+=Vector3.Distance(path.points[i-1],path.points[i]);if(at>a+.01f&&at<b-.01f)result.Add(P(path.points[i]));}result.Add(P(path.Position(b)));return result.ToArray();}
  static MapPoint[] Bezier(Vector3 a,Vector3 b,Vector3 c,Vector3 d,int count=24){var p=new MapPoint[count+1];for(int i=0;i<=count;i++){float t=(float)i/count,u=1-t;p[i]=P(u*u*u*a+3*u*u*t*b+3*u*t*t*c+t*t*t*d);}return p;}

@@ -29,6 +29,27 @@ public static class PvpCityA2Tests {
   }finally{UnityEngine.Object.DestroyImmediate(owner);}
   Debug.Log("PVP_CITY_A2_TESTS_OK checks="+checks+" lanes="+map.hdEdges.Length+" changes="+changes.Length+" uturns="+turns.Length);
  }
+ // 2026-11-10 user report: PvP had too few signals and almost no signal waits.
+ public static void SignalWaits(){
+  checks=0;var map=PvpCityMap.Create();
+  int signals=map.junctionRules.Count(r=>r.signalMode>0);Check(signals>=35,"denser signal grid "+signals);
+  Check(map.junctionRules.Count(r=>r.signalMode>0&&r.approaches.Length==3)>=10,"perimeter avenue T junctions are signalized");
+  Check(map.junctionRules.Where(r=>r.id.Contains("alley")).All(r=>r.signalMode==0),"alley joins stay unsignalized");
+  int back=map.roads.Count(r=>r.id.StartsWith("city-road:alley")&&r.id.Contains(":back"));Check(back>=45,"added back lanes "+back);
+  var owner=new GameObject("A2 signal recall test");int stages=0;float red=0;
+  try{var traffic=owner.AddComponent<TrafficSystem>();traffic.Build(map,false);Check(traffic.signalRecall,"PvP map enables signal recall");
+   var j=traffic.junctions.First(x=>x.gameProgram!=null&&x.facility!=null&&x.facility.approaches.Length==4);
+   foreach(bool recall in new[]{false,true}){
+    var clock=new DemandSignalClock(j.gameProgram);var counts=new int[j.gameProgram.stages.Length];
+    if(recall)for(int i=0;i<counts.Length;i++)if(TrafficSystem.RecallStage(j.gameProgram,i))counts[i]=1;
+    var seen=new System.Collections.Generic.HashSet<int>();float waiting=0;
+    for(int t=0;t<480;t++){clock.Step(.25f,counts,false);seen.Add(clock.Stage);if(j.gameProgram.Movement(0,1,0,clock.ProgramTime)!=SignalColor.Green)waiting+=.25f;}
+    if(recall){stages=seen.Count;red=waiting;Check(seen.Count>=3&&waiting>=30,"recall cycles straight and walk stages stages="+seen.Count+" red="+waiting);}
+    else Check(seen.Count==1&&waiting==0,"without recall the empty clock rests in green");
+   }
+  }finally{UnityEngine.Object.DestroyImmediate(owner);}
+  Debug.Log("PVP_CITY_A2_SIGNAL_WAITS_OK checks="+checks+" signals="+signals+" backLanes="+back+" recallStages="+stages+" redSecondsPer120="+red);
+ }
  public static void FlowGeometry(MapData map){
   // Run with the final A2 suite: every arrow must describe the live outgoing
   // graph and every painted stroke must remain on physical asphalt.

@@ -71,8 +71,15 @@ public partial class TrafficSystem {
   foreach(var candidate in junctions){float d=Vector3.Distance(middle,candidate.center);if(d<distance){nearest=candidate;distance=d;}}
   return nearest==j;
  }
+ // PvP A2 (2026-11-10 user report: almost no signal waits). With only a few
+ // bots and NPCs the demand clock rested in green for whoever arrived. Recall
+ // keeps both straight stages and the walk stage in every cycle, like a fixed
+ // urban signal, while protected left stages still appear only on demand.
+ public bool signalRecall;
+ public static bool RecallStage(RoadMapSignalProgram program,int stage){foreach(string id in program.stages[stage].groups)foreach(var g in program.groups)if(g.id==id&&(g.pedestrian||g.turn==0))return true;return false;}
  void ScanSignalDemand(){
   foreach(var j in junctions)if(Adaptive(j))DemandClock(j);foreach(var pair in signalDemand)Array.Clear(pair.Value,0,pair.Value.Length);
+  if(signalRecall)foreach(var pair in signalDemand)for(int i=0;i<pair.Value.Length;i++)if(RecallStage(pair.Key.gameProgram,i))pair.Value[i]++;
   foreach(var car in cars)if(car&&car.enabled&&car.Visible&&car.route!=null)foreach(var stop in car.route.stops){
    float gap=stop.distance-car.distance;if(gap<-.1f||gap>Mathf.Max(40,car.speed*7+12))continue;
    var dir=car.route.Tangent(Mathf.Max(0,stop.distance));AddDemand(stop.junction,stop.axis,Sign(dir,stop.axis,stop.junction),stop.Movement(car.route));

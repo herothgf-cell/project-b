@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "a10d5a3830efd0301713fc505b5a183fb89be7fc07229904db93717a4a326c92",
+  "contentHash": "a49e69fd1b527a1c4d653bd4cffeb6c7a8156827b3a4a43db9d911b3902a9c3f",
   "values": [
     {
       "id": "request.Quiet.enabled",
@@ -450,19 +450,19 @@
     },
     {
       "id": "schedule.count0",
-      "value": "15"
+      "value": "5"
     },
     {
       "id": "schedule.count1",
-      "value": "60"
+      "value": "40"
     },
     {
       "id": "schedule.count2",
-      "value": "25"
+      "value": "55"
     },
     {
       "id": "schedule.progressMin",
-      "value": "0.25"
+      "value": "0.15"
     },
     {
       "id": "schedule.progressMax",
@@ -474,7 +474,7 @@
     },
     {
       "id": "schedule.movingSeconds",
-      "value": "20"
+      "value": "12"
     },
     {
       "id": "type.General.intro.0",
