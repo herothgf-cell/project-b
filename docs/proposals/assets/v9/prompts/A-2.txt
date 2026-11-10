@@ -1,0 +1,4 @@
+Repaint this exact third-person chase-camera screenshot. Keep the road geometry,
+lanes, intersection and taxi position identical. Replace the simple taxi with the
+polished rounded yellow taxi, grey buildings with stylized Korean buildings of the
+same size, add trees, pedestrians on sidewalks and a few rounded NPC cars. 16:9.

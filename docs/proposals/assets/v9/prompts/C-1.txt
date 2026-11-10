@@ -1,0 +1,4 @@
+Clean asset reference sheet on a plain light background, orthographic three-quarter
+views, evenly spaced, consistent scale, no text labels.
+Assets: Korean apartment tower 15 floors, apartment tower 25 floors, 3-story shop row
+with awnings, 4-story multi-family house, small detached house, elementary school building.

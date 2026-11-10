@@ -1,0 +1,7 @@
+Game UI concept for choosing a new taxi in a small garage at evening after work.
+Two taxis side by side: (A) sleek rounded hybrid sedan taxi in yellow,
+(B) taller roomy rounded taxi in yellow with bigger trunk.
+Below each car, a clean white card with icon-only rows for fuel cost, trunk size,
+ride comfort (use simple bar icons, no readable numbers).
+One large confirm button, the current old taxi shown smaller at the side
+as trade-in. Clean white and navy UI, warm garage lighting. 16:9.

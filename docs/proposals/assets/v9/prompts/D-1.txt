@@ -1,0 +1,4 @@
+Clean asset reference sheet on a plain light background, orthographic three-quarter
+views, evenly spaced, consistent scale, no text labels.
+Assets: starting old rounded taxi, hybrid sedan taxi, roomy LPG taxi, compact car,
+SUV, small truck, city bus, delivery scooter.

@@ -1,0 +1,4 @@
+Repaint this top-down aerial view of a small Korean district. Keep every road,
+block shape and building footprint position identical. Render buildings as cute
+stylized 3D blocks by use: apartment complexes, shopping streets, houses, school.
+Add trees, parks, parking lots. Slight tilt allowed, 16:9.

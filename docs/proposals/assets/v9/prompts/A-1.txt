@@ -1,0 +1,9 @@
+Repaint this exact in-game first-person screenshot into the target art style.
+KEEP EXACTLY: road layout, lane count, lane markings positions, yellow center line,
+traffic signal positions, camera position and angle, steering wheel position,
+all HUD panels in the same place.
+CHANGE: grey box buildings become varied stylized Korean buildings that match
+their footprint and height (apartment towers, low shops with awnings, small offices);
+add roadside trees, flower beds, sidewalk paving, warm asphalt texture,
+soft blue sky with clouds, warm sunlight and soft shadows.
+HUD text may be simplified but keep layout. 16:9.

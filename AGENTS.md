@@ -20,3 +20,8 @@
 - `data/raw/`, 생성 지도 JSON, `artifacts/`, Unity `Library/`와 다른 빌드는 Git에서 제외된다. 사용자 요청으로 `builds/EungyeTaxi/` 실행 폴더 전체와 `distribution/maps/` 지도 ZIP은 Git으로 배포한다. 다른 PC는 pull 후 바로 exe를 실행할 수 있고, 개발할 때는 지도 ZIP을 저장소 루트에 푼다. 배포 실행 폴더가 바뀌면 `distribution/EungyeTaxi-build-manifest.json`의 파일 크기·SHA256도 다시 생성/검증한다. 준비 방법은 `docs/work-history/README.md`를 따른다.
 - 필수 생성 입력 지도를 변경한 작업에서는 `config/maps/local-input-manifest.json`의 파일 크기·SHA256과 관련 OSM 대조 설정도 실제 자료로 다시 갱신/검증한다. 해시 오류를 우회하지 않는다.
 - 사용자 요청(2026-10-30)에 따라 실행 파일을 `builds/EungyeTaxi/EungyeTaxi.exe`로 통합한다. 메뉴에서 은계 싱글 또는 자체 도시 PVP(나1+봇3)를 선택한다. `PrototypeBuild.BuildHybrid` 및 `distribution/EungyeTaxi-build-manifest.json`을 현재 배포 기준으로 사용한다. 기존 `PvpBuild.BuildClient`는 이전 독립 진단용이며 별도 폴더를 현재 배포하지 않는다. PvP manifest는 통합 manifest 안내로 유지하고 기존 VerifyOnly 명령도 통합 폴더를 검증한다. 캠페인 회사/제품명·저장 위치와 다른 작업의 미커밋 소스를 보존한다.
+
+## 문서 위치
+
+- 주요 기획 문서는 `docs/content-design/`(마인드맵 `택시 시뮬레이션.mmst` 포함), UI 관련 문서는 `docs/ui/`, 제안서와 관련 문서는 `docs/proposals/`에 둔다(사용자 지정 2026-11-10).
+- `docs/CURRENT-STATE.md`는 한 장 요약으로 유지하고, 날짜별 상세는 `docs/work-history/`에 남긴다. `LATEST.md`는 현재 기준과 최근 기록만 두고 오래된 기록은 보관본으로 옮긴다.
