@@ -7,9 +7,9 @@
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
-| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid`. **main**(= `feature/vehicle-purchase-3day`, 11/10 fast-forward 병합): 게임 소스 0c4ca86 · 출하 b436706. 이전 main은 소스 548fe8b · 출하 a978b3b (11/09) |
+| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid`. **main**: 게임 소스 9302097(J7973 북쪽 노면선 정리, 싱글 영업 시간 3933628 포함) · 출하 89e72a6 (11/10). 이전 출하 b436706(소스 0c4ca86) |
 | 통신 | LAN **v17**(내 차 외형, main 병합됨). 양쪽 PC 같은 실행본 필요, 이전 v16 실행본과는 접속 거부 |
-| 배포 검사 | 출하 143파일 127,445,792바이트, 통합/PvP manifest VerifyOnly 통과(11/10 kimhs-NW2) |
+| 배포 검사 | 출하 143파일 127,464,690바이트, 통합/PvP manifest VerifyOnly 통과(11/10 kimhs-NW2) |
 | 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json`(Git, revision 14·SHA256 c9aa1e76…) 준비됨, 11/10 Strict issues 0(PowerShell 7 필요, 5.1에서는 검사 스크립트 실패). 재수입용 JSON 2개는 선택 입력이며 없음 |
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **구현(사람 검증 전, 브랜치)** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V9 28장](../proposals/project-b-game-proposal-v9.pptx) · [반영 검토](../proposals/proposal-v9-review.md) |
@@ -20,6 +20,10 @@
 2. [거리뷰 대조 수정 후보](2026-11-10-roadview-lane-audit.md#수정-후보와-우선순위-사용자-확인-전-미적용) 남은 것: 스쿨존 제한속도, 미확인 교차로. [유턴 수정 남은 항목](2026-11-10-uturn-sign-fix.md#남은-항목).
 3. 다른 PC LAN v17, 첫 이용자 안내.
 5. 보류: 기사 평점(기획22 §3-1), 개인택시 면허 경로([기획23](../content-design/23-license-career-path.md)), Blender 아트 파이프라인 2단계 이후([문서](../proposals/art-blender-pipeline.md)).
+
+## 2026-11-10 J7973 북쪽 진입부 차선 정리
+
+[구현·검증](2026-11-10-j7973-north-lane-cleanup.md) · [수정 전후](../ui/2026-11-10-j7973-north-lanes/before-after-1.jpg). 사용자 보고 위치(J7973_3744 북쪽 51m)에서 NGII 원본 노면선(3.5m 간격 차선·어긋난 이중 황색선·모서리 노란 조각 21개)이 게임 편도3차로 노면선 위에 겹쳐 있었다. 명시 목록으로 그 원본 선만 그리지 않는다(지도·그래프·정지선 불변). 근거 거리뷰 2026-05 F3LdEIaemBy-g7GXluq28Q 편도3차로. Editor 회귀·출하 렌더(`-poseReview` 24, `-laneMovementReview` 31)·Strict 0·manifest 통과. 다른 세션의 싱글 영업 시간 변경과 함께 BuildHybrid 출하(소스 9302097·출하 89e72a6). 사람 주행 확인과 남행 좌회전 포켓 실측은 남음. 이후 작업은 사용자 지시로 main에서 바로 진행·push한다.
 
 ## 2026-11-10 싱글 영업 시간 선택 · 개발용 바로 퇴근·영업 시간 변경
 
