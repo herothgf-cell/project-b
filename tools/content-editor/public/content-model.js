@@ -141,6 +141,7 @@
    ['start','시작 만족도와 청결','시작 부족분과 청결 가산의 배수입니다. 시작 만족도에는 청결이 포함되며 하차 때 다시 더하지 않습니다.',['common.startDeficitMultiplier','common.cleanBonusMultiplier']]
   ];
   for(const [key,title,description,fields]of common)add('common.'+key,'공통 영향 요소',title,description,'common',[section(title,description,fields,'shared')],[],[]);
+  if(entries.some(e=>e.id.startsWith('vehicle.')))add('vehicle.purchase','차량','차량 구매·꾸미기','3일 회차 안 차량 교체 1회 · 시험 가격','vehicle',[section('가격(시험값)','보상 판매액을 뺀 금액이 실제 지출입니다. 사람 플레이 수익 중앙값 R 측정 전의 시험값입니다.',ids('vehicle.'),'shared')],['차종 특성(연료·트렁크·승차감·내구도·회전)은 코드 고정값이며 PVP에는 적용하지 않습니다.'],[]);
   add('weather.rain','날씨','비 운행','맑음/비 시험 · 확률 미끄러짐 잠금','weather',[section('비 설정','기존 저장은 당시 설정 유지. 확률 미끄러짐은 검증 후 별도 개발/활성화합니다.',ids('weather.'),'shared')],[],[]);
   for(const e of entries.filter(e=>e.id.startsWith('constraint.')))add(e.id,'공통 영향 요소',e.title,e.defaultValue,'common',[section('현재 게임의 고정 조건',e.defaultValue,[e.id],'condition')],[e.description||''],[]);
   const covered=new Set(out.flatMap(e=>e.fieldIds));for(const e of entries)if(!covered.has(e.id)&&!e.id.startsWith('choice.'))add('field.'+e.id,e.group,e.title,e.description,'field',[section(e.section,e.description,[e.id])],[],[]);

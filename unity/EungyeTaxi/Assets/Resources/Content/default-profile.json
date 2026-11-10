@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "8c19316be185f733e7457eb1473b5ae093bcd34f8edd897a9a55e488ea591f56",
+  "contentHash": "a10d5a3830efd0301713fc505b5a183fb89be7fc07229904db93717a4a326c92",
   "values": [
     {
       "id": "request.Quiet.enabled",
@@ -1243,6 +1243,26 @@
     {
       "id": "type.Drunk.vomitPercent",
       "value": "25"
+    },
+    {
+      "id": "vehicle.hybrid.price",
+      "value": "26000"
+    },
+    {
+      "id": "vehicle.lpg.price",
+      "value": "22000"
+    },
+    {
+      "id": "vehicle.tradeIn.base",
+      "value": "10000"
+    },
+    {
+      "id": "vehicle.color.price",
+      "value": "1500"
+    },
+    {
+      "id": "vehicle.ornament.price",
+      "value": "2000"
     },
     {
       "id": "effect.nausea.eventPercent",
