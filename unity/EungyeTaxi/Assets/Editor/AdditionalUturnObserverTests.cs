@@ -50,7 +50,8 @@ public static class AdditionalUturnObserverTests {
   UnityEngine.Object.DestroyImmediate(sessionObject);
  }
 
- public static void Run(){
+ public static void Run(){Run(Enumerable.Range(0,AdditionalReviewedUturnMap.Incoming.Length).ToArray());}
+ public static void Run(int[] indices){
   var package=ProjectMapStore.Load(ProjectMapBuild.Root);
   var selected=AdditionalReviewedUturnMap.Incoming.Concat(AdditionalReviewedUturnMap.Outgoing).Concat(AdditionalReviewedUturnMap.Names.Select(n=>"join:reviewed:"+n+":uturn")).ToArray();
   var selectedIds=new System.Collections.Generic.HashSet<string>(selected);
@@ -69,7 +70,7 @@ public static class AdditionalUturnObserverTests {
   var traffic=root.AddComponent<TrafficSystem>();
   traffic.Build(map,false);
   traffic.manualClock=true;
-  for(int i=0;i<AdditionalReviewedUturnMap.Incoming.Length;i++){
+  foreach(int i in indices){
    string name=AdditionalReviewedUturnMap.Names[i];var join=document.lanes.First(l=>l.id=="join:reviewed:"+name+":uturn");string incoming=document.lanes.Single(l=>!l.disabled&&l.next.Contains(join.id)).id,outgoing=join.next.Single();
    int start=Array.FindIndex(map.hdEdges,e=>e.id==incoming),end=Array.FindIndex(map.hdEdges,e=>e.id==outgoing);
    Check(start>=0&&end>=0,name+" map edges");
@@ -99,7 +100,7 @@ public static class AdditionalUturnObserverTests {
     if(traffic.UturnPermitted(j,axis,sign,incoming)){if(legal<0)legal=t;leftPhase|=traffic.LeftSignal(j,axis,sign)==SignalColor.Green;walkPhase|=traffic.PedestrianGreen(j,axis,sign);}
     else if(illegal<0&&traffic.Signal(j,axis,sign)!=SignalColor.Yellow&&traffic.LeftSignal(j,axis,sign)!=SignalColor.Yellow)illegal=t;
    }
-   Check(legal>=0&&illegal>=0&&leftPhase&&walkPhase,name+" left / pedestrian / prohibited condition phases");
+   Check(legal>=0&&illegal>=0&&leftPhase&&walkPhase,name+" left / pedestrian / prohibited condition phases legal="+legal+" illegal="+illegal+" left="+leftPhase+" walk="+walkPhase);
    traffic.manualTime=legal;Drive(traffic,map,path,true,name+" legal",upstream,illegal);
    traffic.manualTime=illegal;Drive(traffic,map,path,false,name+" illegal",upstream,legal);
   }

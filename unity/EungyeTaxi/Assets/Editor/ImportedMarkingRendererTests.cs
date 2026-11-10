@@ -150,8 +150,8 @@ public static class ImportedMarkingRendererTests {
   map.hdMarks[0].points=new[]{new MapPoint{x=-6,z=-8},new MapPoint{x=-6,z=16}};
   map.hdMarks[0].kind="506";map.hdMarks[0].type="211";Check(QuadsNear(WhiteVertices(map),new Vector3(-6,0,4),1.2f)>0,"white lane divider is not erased by U-turn median mask");
   head.disabled=true;Check(UturnRoadMarkings.Build(map).Count==0,"disabled incoming lane does not authorize median paint");
-  var actual=ProjectMapStore.Load(ProjectMapBuild.Root).Compose();var actualZones=UturnRoadMarkings.Build(actual);Check(actualZones.Count==6&&actualZones.Select(z=>z.incomingId).Distinct().Count()==6,"all six explicit U-turn approaches retain one unique median zone");
-  foreach(var zone in actualZones)Check(zone.width>=10&&zone.width<=40&&zone.length>2,"actual U-turn median spans the measured across gap and active join "+zone.joinId);
+  var actual=ProjectMapStore.Load(ProjectMapBuild.Root).Compose();var actualZones=UturnRoadMarkings.Build(actual);Check(actualZones.Count==8&&actualZones.Select(z=>z.incomingId).Distinct().Count()==8,"all eight explicit U-turn approaches retain one unique median zone");
+  foreach(var zone in actualZones)Check(zone.width>=UturnMovement.MinimumAcross&&zone.width<=40&&zone.length>2,"actual U-turn median spans the measured across gap and active join "+zone.joinId);
  }
  static void UturnArrowFallbackRegressions(){
   var predecessor=new RoadMapLane{id="split:previous",sourceId="split",points=new[]{new MapPoint{x=0,z=-23},new MapPoint{x=0,z=-3}},next=new[]{"split:head"}};

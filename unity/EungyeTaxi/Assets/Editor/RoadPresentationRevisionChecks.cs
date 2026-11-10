@@ -71,7 +71,7 @@ public static class RoadPresentationRevisionChecks {
  }
  public static void AuthorizedUturnVisibility(){
   var map=ProjectMapStore.Load(ProjectMapBuild.Root).Compose();string before=JsonUtility.ToJson(map);
-  var zones=UturnRoadMarkings.Build(map);Check(zones.Count==6,"six existing authored U-turn openings remain the only authored zones");
+  var zones=UturnRoadMarkings.Build(map);Check(zones.Count==8,"eight existing authored U-turn openings remain the only authored zones");
   int median=0;UturnRoadMarkings.Paint(map,(n,p,d,w,l,y)=>{if(!n.StartsWith("U-turn permitted median"))return;median++;Check(w>=.26f&&w<=.32f&&!y&&l<=1.5f,"actual authorized median opening has clearly visible white strokes, width="+w);});Check(median>=18,"actual six authorized openings emit separated median strokes");
   var arrows=LaneDirectionPaint.Layout(map);arrows.AddRange(UturnRoadMarkings.FallbackArrows(map));
   foreach(var zone in zones){var approach=arrows.FirstOrDefault(a=>map.hdEdges[a.edgeIndex].id==zone.incomingId&&(a.turns&LaneDirectionPaint.Uturn)!=0);Check(approach!=null,"existing authorized approach retains dedicated U-turn glyph "+zone.joinId);

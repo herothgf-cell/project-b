@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-// Focused executable gate for the three additional surveyed approaches. No campaign or physical driving assertion.
+// Focused executable gate for the additional surveyed approaches. No campaign or physical driving assertion.
 public sealed class AdditionalUturnIntegrationProbe : MonoBehaviour {
  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Attach(){if(Array.IndexOf(Environment.GetCommandLineArgs(),"-additionalUturnTest")>=0)new GameObject("U-turn integration probe").AddComponent<AdditionalUturnIntegrationProbe>();}
  readonly StringBuilder report=new StringBuilder();bool ok=true;
@@ -15,15 +15,15 @@ public sealed class AdditionalUturnIntegrationProbe : MonoBehaviour {
   foreach(var c in session.traffic.cars){c.respawn=false;c.Recycle();c.enabled=false;}
   var graph=session.jobs.nav.hd;var district=FindObjectOfType<DistrictTraffic>();var map=session.world.map;string folder=Path.GetFullPath("artifacts");Directory.CreateDirectory(folder);
   Check(ReferenceEquals(graph.edges,map.hdEdges)&&district&&ReferenceEquals(district.graph.edges,map.hdEdges),"shared player/NPC graph");
-  var turns=graph.edges.Select((edge,index)=>new{edge,index}).Where(x=>x.edge.turn==-2&&!x.edge.disabled&&x.edge.id.StartsWith("join:reviewed:J")).ToArray();Check(turns.Length==3,"three reviewed movements");
+  var turns=graph.edges.Select((edge,index)=>new{edge,index}).Where(x=>x.edge.turn==-2&&!x.edge.disabled&&x.edge.id.StartsWith("join:reviewed:J")).ToArray();Check(turns.Length==5,"five reviewed movements");
   Physics.SyncTransforms();int blocked=0,samples=0;var environment=FindObjectOfType<RoadEnvironment>();
   foreach(var item in turns){var path=graph.paths[item.index];for(float d=0;d<=path.length;d+=1){samples++;var p=path.Position(d);if(Physics.OverlapBox(p+Vector3.up,new Vector3(.95f,.6f,1.8f),Quaternion.LookRotation(path.Tangent(d)),1,QueryTriggerInteraction.Ignore).Any(c=>c.name.StartsWith("Building ")||c.name.Contains("중앙분리")||c.name.Contains("Median")))blocked++;}}
   Check(blocked==0,"U-turn static collider samples="+samples+" blocked="+blocked);
   Camera.main.enabled=false; session.traffic.manualClock=true;
   foreach(var item in turns){
    int from=Array.FindIndex(graph.edges,e=>e.next.Contains(item.index));int target=item.edge.next[0];var route=district.CreateRoute(from,Mathf.Max(0,graph.paths[from].length-12),target,Mathf.Min(8,graph.paths[target].length));
-   Check(route!=null&&route.stops.Any(s=>s.Movement(route)==-2),item.edge.id+" NPC route and movement");if(route==null)continue;
-   var stop=route.stops.First(s=>s.Movement(route)==-2);int sign=session.traffic.Sign(route.Tangent(stop.distance),stop.axis,stop.junction);bool phase=false;
+   Check(route!=null&&route.stops.Any(s=>s.Movement(route)==-2),item.edge.id+" NPC route and movement"+(route==null?" route=null":" stops="+string.Join(",",route.stops.Select(s=>s.junction.name+":"+s.Movement(route)))+" edges="+string.Join(">",route.graphPath.edges.Select(e=>graph.edges[e].id))));if(route==null)continue;
+   var stop=route.stops.FirstOrDefault(s=>s.Movement(route)==-2);if(stop==null)continue;int sign=session.traffic.Sign(route.Tangent(stop.distance),stop.axis,stop.junction);bool phase=false;
    for(int t=0;t<180;t++){session.traffic.manualTime=t+.25f;if(session.traffic.UturnPermitted(stop.junction,stop.axis,sign,graph.edges[from].id)){phase=true;break;}}
    Check(phase,item.edge.id+" allowed signal phase");var car=session.traffic.Spawn(route,0,0);Check(car!=null,item.edge.id+" spawned");if(!car)continue;car.respawn=false;
    Time.timeScale=2;float simStart=Time.time;float until=Time.realtimeSinceStartup+120;while(Time.realtimeSinceStartup<until&&Time.time-simStart<40&&car.completedRoutes==0){yield return null;}

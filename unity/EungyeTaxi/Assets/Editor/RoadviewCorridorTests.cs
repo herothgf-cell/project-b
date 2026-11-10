@@ -61,7 +61,7 @@ public static class RoadviewCorridorTests {
    bool green=mask.Reviewed(p,d),yellow=mask.Yellow(p,d);if((name!="Road edge"&&name!="Centre line"&&name!="Lane divider")||!green&&!yellow)return;
    foreach(float end in new[]{-l*.5f,0,l*.5f})Check(mask.Contains(p+d*end,w*.5f),"reviewed paint footprint stays on physical pavement: "+name+" "+p);if(green)paint++;if(yellow)yellowPaint++;
   });Check(paint>200&&yellowPaint>200,"actual green and yellow corridor paint inspected");
-  int uturns=candidate.facilities.Count(f=>f.rule&&UturnMovement.IsCondition(f.type));Check(uturns==6,"six existing U-turn conditions preserved");
+  int uturns=candidate.facilities.Count(f=>f.rule&&UturnMovement.IsCondition(f.type));Check(uturns==8,"eight existing U-turn conditions preserved");
   foreach(var prefix in new[]{"local:8017:","local:8074:","local:8131:","local:8032:","local:7975:","local:7918:"})Check(candidate.lanes.Any(l=>!l.disabled&&l.id.StartsWith(prefix)&&l.turn==0&&l.change==0),"yellow retains three lane families per direction: "+prefix);
   int services=candidate.scene.objects.Count(o=>o.enabled&&o.IsService);Check(services==original.document.scene.objects.Count(o=>o.enabled&&o.IsService),"all business service placements retained");
   Debug.Log("ROADVIEW_CORRIDOR_OK green=1+1 yellow=3+3 sources=14 stops=24 directedRoutes="+routes+" uturnConditions="+uturns+" services="+services+" vehicleFootprintSamples="+footprint+" greenPaintStrokes="+paint+" yellowPaintStrokes="+yellowPaint+" graph=byte-identical source=immutable centresAndWidths=game-estimate");

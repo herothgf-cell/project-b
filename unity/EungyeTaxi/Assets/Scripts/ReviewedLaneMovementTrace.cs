@@ -17,11 +17,14 @@ public static class ReviewedLaneMovementTrace {
  static bool Near(HdEdge e,HybridJunctionRule junction){foreach(var p in e.points)if((p.V()-junction.V()).sqrMagnitude>JunctionRadius*JunctionRadius)return false;return true;}
  static HdEdge Target(MapData map,int index){return index>=0&&index<map.hdEdges.Length?map.hdEdges[index]:null;}
  static bool Exit(HdEdge e){return e!=null&&!e.disabled&&e.change==0&&e.points!=null&&e.points.Length>=2&&(e.status=="ngii"||e.status=="provisional-portal");}
+ // An authored reviewed U-turn (turn=-2) that replaced a native turn=0 reversal
+ // keeps the same median role glyph; its sign condition governs the movement.
+ static bool ReviewedUturn(HdEdge from,HdEdge next){return next!=null&&!next.disabled&&next.turn==UturnMovement.Turn&&next.change==0&&next.points!=null&&next.points.Length>=2&&(next.next??new int[0]).Length>0&&Connected(from,next);}
  public static int Mask(MapData map,HdEdge incoming,HybridJunctionRule junction){
   if(map==null||map.hdEdges==null||junction==null||!Native(incoming)||incoming.turn!=0||(End(incoming)-junction.V()).sqrMagnitude>80*80)return 0;
   var heading=EndHeading(incoming);if(heading.sqrMagnitude<.5f)return 0;
   var visited=new HashSet<HdEdge>{incoming};int result=0;
-  foreach(int index in incoming.next??new int[0]){var next=Target(map,index);if(Connected(incoming,next))result|=Walk(map,next,junction,heading,visited,0,0);}
+  foreach(int index in incoming.next??new int[0]){var next=Target(map,index);if(ReviewedUturn(incoming,next))result|=LaneDirectionPaint.Uturn;else if(Connected(incoming,next))result|=Walk(map,next,junction,heading,visited,0,0);}
   return result;
  }
  static int Walk(MapData map,HdEdge edge,HybridJunctionRule junction,Vector3 incoming,HashSet<HdEdge> visited,int hops,float distance){
@@ -29,7 +32,8 @@ public static class ReviewedLaneMovementTrace {
   distance+=Length(edge);if(distance>MaximumDistance)return 0;
   visited.Add(edge);int result=0;
   foreach(int index in edge.next??new int[0]){
-   var next=Target(map,index);if(!Exit(next)||visited.Contains(next)||!Connected(edge,next))continue;
+   var next=Target(map,index);if(ReviewedUturn(edge,next)){result|=LaneDirectionPaint.Uturn;continue;}
+   if(!Exit(next)||visited.Contains(next)||!Connected(edge,next))continue;
    var outgoing=StartHeading(next);float alignment=Vector3.Dot(incoming,outgoing);
    // Source U-turn curves are sometimes encoded turn=0. Require the existing
    // curve to finish in the reverse direction and have a connected reverse exit.
