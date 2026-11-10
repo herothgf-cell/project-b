@@ -4750,17 +4750,18 @@
                             "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/README.md",
                             "hyperlinks": [
                               "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md",
-                              "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md"
+                              "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md",
+                              "https://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-10-vehicle-purchase-3day.md"
                             ],
-                            "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 0% 기획 필요 · P4\n\n아이디어/검토는 있으나 실제 구현을 위한 조건·효과·예외 또는 지도/통합 계약의 추가 기획이 필요함\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 기존 아이디어·후속 구상 (미구현/추가 결정)\n\n연료 타입 : 가솔린 / 하이브리드 / 전기차 / LPG 등 (연비에 영향)\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.\n\n## 2026-11-10 차종 특성 채택(기획22 §3-2)\n하이브리드·LPG 2종 연료 소모 차이. 전기 충전은 제외.\n운임 배율·속도 상승 없음. 구현 전.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md",
-                            "modifiedAt": 1793599686837,
+                            "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 0% 기획 필요 · P4\n\n아이디어/검토는 있으나 실제 구현을 위한 조건·효과·예외 또는 지도/통합 계약의 추가 기획이 필요함\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 기존 아이디어·후속 구상 (미구현/추가 결정)\n\n연료 타입 : 가솔린 / 하이브리드 / 전기차 / LPG 등 (연비에 영향)\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.\n\n## 2026-11-10 차종 특성 채택(기획22 §3-2)\n하이브리드·LPG 2종 연료 소모 차이. 전기 충전은 제외.\n운임 배율·속도 상승 없음. 구현 전.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md\n\n## 2026-11-10 구현(사람 검증 전, 기획22 §5·§6)\n연료 소모 계수(시작 1.0 / 하이브리드 0.65 / LPG 0.95)를 계정 연료 소모에 적용.\n위치 제어·자동 검사만 수행. 수동 플레이·다른 PC LAN 미검증.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-10-vehicle-purchase-3day.md",
+                            "modifiedAt": 1794287290742,
                             "tags": [
                               "기존 아이디어·후속 구상 (미구현/추가 결정)",
                               "우선:P4",
-                              "단계:25% 기획 완료·미구현"
+                              "단계:50% 구현"
                             ],
                             "task": {
-                              "progress": 0.25
+                              "progress": 0.5
                             }
                           }
                         ],
@@ -4772,7 +4773,7 @@
                         "modifiedAt": 1793599686837,
                         "tags": [
                           "기존 아이디어·후속 구상 (미구현/추가 결정)",
-                          "단계:하위 구현 0 / 기획 1 / 미정 0"
+                          "단계:하위 구현 1 / 기획 0 / 미정 0"
                         ]
                       },
                       {
@@ -4789,17 +4790,18 @@
                             "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/README.md",
                             "hyperlinks": [
                               "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md",
-                              "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md"
+                              "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md",
+                              "https://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-10-vehicle-purchase-3day.md"
                             ],
-                            "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 0% 기획 필요 · P4\n\n아이디어/검토는 있으나 실제 구현을 위한 조건·효과·예외 또는 지도/통합 계약의 추가 기획이 필요함\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 기존 아이디어·후속 구상 (미구현/추가 결정)\n\n손님을 받을 수 있는 케이스가 다양해\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.\n\n## 2026-11-10 차종 특성 채택(기획22 §3-2)\n트렁크 수용으로 짐 승객 수락 여부가 달라짐.\n운임 배율·속도 상승 없음. 구현 전.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md",
-                            "modifiedAt": 1793599686837,
+                            "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 0% 기획 필요 · P4\n\n아이디어/검토는 있으나 실제 구현을 위한 조건·효과·예외 또는 지도/통합 계약의 추가 기획이 필요함\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 기존 아이디어·후속 구상 (미구현/추가 결정)\n\n손님을 받을 수 있는 케이스가 다양해\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.\n\n## 2026-11-10 차종 특성 채택(기획22 §3-2)\n트렁크 수용으로 짐 승객 수락 여부가 달라짐.\n운임 배율·속도 상승 없음. 구현 전.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md\n\n## 2026-11-10 구현(사람 검증 전, 기획22 §5·§6)\n하이브리드는 짐 많은 승객·흙 묻은 짐 승객 호출을 받지 않음. 시작·LPG는 기존과 같음.\n위치 제어·자동 검사만 수행. 수동 플레이·다른 PC LAN 미검증.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-10-vehicle-purchase-3day.md",
+                            "modifiedAt": 1794287290742,
                             "tags": [
                               "기존 아이디어·후속 구상 (미구현/추가 결정)",
                               "우선:P4",
-                              "단계:25% 기획 완료·미구현"
+                              "단계:50% 구현"
                             ],
                             "task": {
-                              "progress": 0.25
+                              "progress": 0.5
                             }
                           }
                         ],
@@ -4811,7 +4813,7 @@
                         "modifiedAt": 1793599686837,
                         "tags": [
                           "기존 아이디어·후속 구상 (미구현/추가 결정)",
-                          "단계:하위 구현 0 / 기획 1 / 미정 0"
+                          "단계:하위 구현 1 / 기획 0 / 미정 0"
                         ]
                       },
                       {
@@ -4822,17 +4824,18 @@
                         "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/README.md",
                         "hyperlinks": [
                           "https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md",
-                          "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md"
+                          "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md",
+                          "https://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-10-vehicle-purchase-3day.md"
                         ],
-                        "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 0% 기획 필요 · P4\n\n아이디어/검토는 있으나 실제 구현을 위한 조건·효과·예외 또는 지도/통합 계약의 추가 기획이 필요함\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 기존 아이디어·후속 구상 (미구현/추가 결정)\n\n승차감\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.\n\n## 2026-11-10 차종 특성 채택(기획22 §3-2)\n승차감 계수로 \"부드럽게\" 요청 결과가 달라짐.\n운임 배율·속도 상승 없음. 구현 전.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md",
-                        "modifiedAt": 1793599686837,
+                        "note": "<!-- mindmap-progress:start -->\n## 사용자 지정 단계: 0% 기획 필요 · P4\n\n아이디어/검토는 있으나 실제 구현을 위한 조건·효과·예외 또는 지도/통합 계약의 추가 기획이 필요함\n\n판정/우선순위: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n기획 근거: https://github.com/herothgf-cell/project-b/blob/main/docs/future-design/2026-11-02-simulation-priorities.md\n50%는 구현 단계를 뜻하며 100% 검증/출시 완료가 아닙니다. 기획 완료와 채택 승인은 별개입니다.\n<!-- mindmap-progress:end -->\n## 기존 아이디어·후속 구상 (미구현/추가 결정)\n\n승차감\n\n상세 규칙은 Detail → Links의 담당 문서를 따릅니다. 기존 작업 체크/진척도는 보존했으며 구현 완료 판정은 개발 체크리스트를 확인합니다.\n\n## 2026-11-10 차종 특성 채택(기획22 §3-2)\n승차감 계수로 \"부드럽게\" 요청 결과가 달라짐.\n운임 배율·속도 상승 없음. 구현 전.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md\n\n## 2026-11-10 구현(사람 검증 전, 기획22 §5·§6)\nLPG 승차감 1.08: 급가감속 판정 기준을 넓혀 \"부드럽게\" 요청 감점이 덜 남.\n위치 제어·자동 검사만 수행. 수동 플레이·다른 PC LAN 미검증.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-10-vehicle-purchase-3day.md",
+                        "modifiedAt": 1794287290742,
                         "tags": [
                           "기존 아이디어·후속 구상 (미구현/추가 결정)",
                           "우선:P4",
-                          "단계:25% 기획 완료·미구현"
+                          "단계:50% 구현"
                         ],
                         "task": {
-                          "progress": 0.25
+                          "progress": 0.5
                         }
                       },
                       {
@@ -4864,7 +4867,7 @@
                     "modifiedAt": 1793599686837,
                     "tags": [
                       "기존 아이디어·후속 구상 (미구현/추가 결정)",
-                      "단계:하위 구현 0 / 기획 3 / 미정 1"
+                      "단계:하위 구현 3 / 기획 0 / 미정 1"
                     ]
                   },
                   {
@@ -4917,20 +4920,21 @@
                         "id": "growth-20261110-tradein",
                         "topic": "보상 판매 교체 1회·현금 구매 (3일 안, 기획22)",
                         "createdAt": 1794278596059,
-                        "modifiedAt": 1794278596059,
+                        "modifiedAt": 1794287290742,
                         "collapsed": false,
                         "children": [],
                         "tags": [
                           "기존 아이디어·후속 구상 (미구현/추가 결정)",
-                          "단계:25% 기획 완료·미구현"
+                          "단계:50% 구현"
                         ],
-                        "note": "2일차 정산 후 구매 → 3일차 새 차 운행이 목표. 할부·신차/중고 시장은 제외(기존 노드 0% 유지).",
+                        "note": "2일차 정산 후 구매 → 3일차 새 차 운행이 목표. 할부·신차/중고 시장은 제외(기존 노드 0% 유지).\n\n## 2026-11-10 구현(사람 검증 전, 기획22 §5·§6)\n차고에서 견적(새 차 가격·내구도 반영 보상 판매·최종 지출·남는 현금) 후 현금 구매 1회.\n위치 제어·자동 검사만 수행. 수동 플레이·다른 PC LAN 미검증.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-10-vehicle-purchase-3day.md",
                         "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md",
                         "hyperlinks": [
-                          "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md"
+                          "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md",
+                          "https://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-10-vehicle-purchase-3day.md"
                         ],
                         "task": {
-                          "progress": 0.25
+                          "progress": 0.5
                         }
                       }
                     ],
@@ -4942,7 +4946,7 @@
                     "modifiedAt": 1793599686837,
                     "tags": [
                       "기존 아이디어·후속 구상 (미구현/추가 결정)",
-                      "단계:하위 구현 0 / 기획 1 / 미정 2"
+                      "단계:하위 구현 1 / 기획 0 / 미정 2"
                     ]
                   }
                 ],
@@ -4954,7 +4958,7 @@
                 "modifiedAt": 1793599686837,
                 "tags": [
                   "기존 아이디어·후속 구상 (미구현/추가 결정)",
-                  "단계:하위 구현 0 / 기획 4 / 미정 3"
+                  "단계:하위 구현 4 / 기획 0 / 미정 3"
                 ]
               },
               {
@@ -5280,7 +5284,7 @@
             ],
             "tags": [
               "기존 아이디어·후속 구상 (미구현/추가 결정)",
-              "단계:하위 구현 0 / 기획 4 / 미정 14"
+              "단계:하위 구현 4 / 기획 0 / 미정 14"
             ]
           },
           {
@@ -6179,40 +6183,42 @@
                 "id": "growth-20261110-car-swap",
                 "topic": "3일 안 택시 교체 1회·차량 꾸미기 (기획22)",
                 "createdAt": 1794278596059,
-                "modifiedAt": 1794278596059,
+                "modifiedAt": 1794287290742,
                 "collapsed": false,
                 "children": [],
                 "tags": [
                   "기존 아이디어·후속 구상 (미구현/추가 결정)",
-                  "단계:25% 기획 완료·미구현"
+                  "단계:50% 구현"
                 ],
-                "note": "후보 2대(하이브리드 세단/넓은 LPG), 색 2종·대시보드 장식 1슬롯. 방 소품과 개인 지출 예산 공유.",
+                "note": "후보 2대(하이브리드 세단/넓은 LPG), 색 2종·대시보드 장식 1슬롯. 방 소품과 개인 지출 예산 공유.\n\n## 2026-11-10 구현(사람 검증 전, 기획22 §5·§6)\n내 공간 → 차고 탭. 후보 2대, 색 2종, 대시보드 화분. 방 소품과 같은 개인 지출.\n위치 제어·자동 검사만 수행. 수동 플레이·다른 PC LAN 미검증.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-10-vehicle-purchase-3day.md",
                 "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md",
                 "hyperlinks": [
-                  "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md"
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md",
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-10-vehicle-purchase-3day.md"
                 ],
                 "task": {
-                  "progress": 0.25
+                  "progress": 0.5
                 }
               },
               {
                 "id": "growth-20261110-pvp-skin",
                 "topic": "싱글 차량 외형 PvP 사용 (기획22, LAN v17)",
                 "createdAt": 1794278596059,
-                "modifiedAt": 1794278596059,
+                "modifiedAt": 1794287290742,
                 "collapsed": false,
                 "children": [],
                 "tags": [
                   "기존 아이디어·후속 구상 (미구현/추가 결정)",
-                  "단계:25% 기획 완료·미구현"
+                  "단계:50% 구현"
                 ],
-                "note": "외형·색·장식만. 성능은 PvP 표준. 한 번 구매한 외형은 PvP 목록에 영구 추가.",
+                "note": "외형·색·장식만. 성능은 PvP 표준. 한 번 구매한 외형은 PvP 목록에 영구 추가.\n\n## 2026-11-10 구현(사람 검증 전, 기획22 §5·§6)\n해금 목록 별도 파일(pvp-vehicle-unlocks.json), PvP \"내 차\" 선택, 봇 무작위 외형, LAN v17.\n위치 제어·자동 검사만 수행. 수동 플레이·다른 PC LAN 미검증.\nhttps://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-10-vehicle-purchase-3day.md",
                 "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md",
                 "hyperlinks": [
-                  "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md"
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md",
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/work-history/2026-11-10-vehicle-purchase-3day.md"
                 ],
                 "task": {
-                  "progress": 0.25
+                  "progress": 0.5
                 }
               }
             ],
@@ -6520,7 +6526,7 @@
         "modifiedAt": 1793599686837,
         "tags": [
           "기존 아이디어·후속 구상 (미구현/추가 결정)",
-          "단계:하위 구현 8 / 기획 8 / 미정 53"
+          "단계:하위 구현 14 / 기획 2 / 미정 53"
         ],
         "collapsed": false
       },
@@ -6741,7 +6747,7 @@
     "modifiedAt": 1793599686837,
     "tags": [
       "기획 읽기: 현재 / 기존 후속 / 추가 제안 / 제작 참고",
-      "단계:하위 구현 187 / 기획 8 / 미정 59"
+      "단계:하위 구현 193 / 기획 2 / 미정 59"
     ]
   },
   "meta": {

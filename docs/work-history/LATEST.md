@@ -7,20 +7,20 @@
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
-| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid`. 게임 소스 548fe8b · 출하 a978b3b (11/09) |
-| 통신 | LAN v16 (양쪽 PC 같은 실행본 필요) |
-| 배포 검사 | 출하 143파일 127,378,253바이트, 통합/PvP manifest VerifyOnly 통과(11/10 kimhs-NW2, PowerShell 7) |
+| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid`. **브랜치 `feature/vehicle-purchase-3day`**: 게임 소스 e254c55 · 출하 484c9bc (11/10, main 미병합). main 기준은 소스 548fe8b · 출하 a978b3b (11/09) |
+| 통신 | 브랜치 LAN **v17**(내 차 외형) / main LAN v16. 양쪽 PC 같은 실행본 필요, v16↔v17 접속 거부 |
+| 배포 검사 | 브랜치 출하 143파일 127,423,944바이트, 통합/PvP manifest VerifyOnly 통과(11/10 kimhs-NW2). main은 127,378,253바이트 |
 | 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json`(Git) 준비됨, 11/10 Strict issues 0(PowerShell 7 필요, 5.1에서는 검사 스크립트 실패). 재수입용 JSON 2개는 선택 입력이며 없음 |
-| 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) 결정 완료(차종 특성·3일 안 차량 교체·PvP 외형 확정, 평점 보류) · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 · 미구현 |
+| 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **구현(사람 검증 전, 브랜치)** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V9 28장](../proposals/project-b-game-proposal-v9.pptx) · [반영 검토](../proposals/proposal-v9-review.md) |
 
 ## 다음 작업
 
-1. Claude Code에서 [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) 구현: 3일 캠페인 안 차량 교체 1회(후보 2대·차종 특성)·차고 화면·싱글 차량 외형 PvP 사용(LAN v17).
-2. 사람 플레이 검증: 싱글 20분→전체 3일(차 vs 방 선택 포함), 다른 PC LAN, 첫 이용자 안내.
-3. 보류: 기사 평점(기획22 §3-1), 개인택시 면허 경로([기획23](../content-design/23-license-career-path.md)), Blender 아트 파이프라인 2단계 이후([문서](../proposals/art-blender-pipeline.md)).
+1. `feature/vehicle-purchase-3day` 검토 후 main 병합 여부 결정(병합하면 LAN v17, 모든 PC 실행본 갱신).
+3. 다른 PC LAN v17, 첫 이용자 안내.
+5. 보류: 기사 평점(기획22 §3-1), 개인택시 면허 경로([기획23](../content-design/23-license-career-path.md)), Blender 아트 파이프라인 2단계 이후([문서](../proposals/art-blender-pipeline.md)).
 
-## 2026-11-10 성장 결정 반영·마인드맵·아트 보류
+## 2026-11-10 기획22 구현: 차량 교체·차고·PvP 내 차 (브랜치)
 
 [작업 이력](2026-11-10-growth-decisions-mindmap.md). 사용자 결정 4건: 차종 특성 채택, 기사 평점 기획만·구현 보류, 캠페인 3일 유지(3일 안 차량 교체로 가격 조정), 면허 경로 본편 보류(기획23·마인드맵 할거리). 기획22 개정·기획23 신규, 마인드맵 14노드 추가·3노드 25% 전환(`tools/update_growth_mindmap.py --check` 통과, 원본 백업 `design-history/content-design/2026-11-10-mindmap-before-growth.mmst`), 제안서 V9 문구 갱신, Blender 파이프라인 2단계 이후 보류. 게임 코드·빌드 변경 없음. Git 커밋 안 함.
 

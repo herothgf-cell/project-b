@@ -108,3 +108,7 @@
 최소 방2종의 자산·시험 가격·회계·완료 저장은13으로 채택/구현됐다. 차량 장식과 범위 확대의 표현/가격·저장은 후속 구현 전에 별도 결정한다. 차량/이사 견적·연속 경력/이관은 장기 확장 전의 선행조건이다. 반복 인물·사진 취미를 전제로 했던 [09 초안](09-work-and-personal-life-proposal.md)은 이 방향의 현재 기획으로 사용하지 않는다.
 
 근거: [생활/경제](03-life-and-economy.md), [캠페인/정산](04-campaign-and-feedback.md), [화면](05-interface-and-navigation.md), [계정](../../unity/EungyeTaxi/Assets/Scripts/CampaignAccount.cs), [캠페인 저장](../../unity/EungyeTaxi/Assets/Scripts/BusinessProgress.cs).
+
+## 2026-11-10 구현 연결 (기획22)
+
+3일 안 차량 교체 1회·차종 특성·차량 꾸미기(색 2종·대시보드 장식 1슬롯)는 [기획22](22-growth-direction-and-vehicle-purchase.md) §11로 구현했다(사람 검증 전). 이 문서의 "정산 후 거래 분리·미납/잔액 부족·중복 클릭/저장 실패·구 저장·3일 종료/재시작/읽기 전용 기록·PVP 미적용" 계약을 차량 거래에 그대로 적용했다. 이사·연속 경력·차내 다른 물품은 계속 후속이다.

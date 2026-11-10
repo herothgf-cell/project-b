@@ -624,3 +624,11 @@
 - [x] LAN 호스트 실시간 날씨 공유와 게스트 편집 차단. loopback host43/client54 검증.
 - [ ] 사람 수동 화면 확인·20분/3일 운전·다른PC LAN 수용. 확률 미끄러짐은 별도 검증 전 잠금.
 - 통합 최신 검증은 [작업 이력](work-history/2026-11-07-ingame-weather-settings.md) 참조.
+
+### 2026-11-10 기획22 차량 구매·차고·PvP 내 차 (브랜치 feature/vehicle-purchase-3day)
+
+- [x] 차종 데이터 3종·특성 5종(연료·트렁크·승차감·내구도·회전), 시작 차 계수1 회귀 없음. 단위 검사 `test_vehicle_garage.ps1`.
+- [x] 차고 탭·견적·구매 확인, 색 2종·대시보드 장식, 개인 지출 장부 공유, 관리창 가격 5항목(시험값).
+- [x] 저장: 한 번 저장·실패 롤백·중복 클릭·재시작 복원·구 저장 이관·새 회차 초기화. 위치 제어 Player 검사 `test_vehicle_garage_player.ps1`.
+- [x] PvP 해금 파일·"내 차" 선택·봇 무작위 외형·표준 성능, LAN v17 외형 전달(같은 PC 두 실행본).
+- [ ] 사람 3일 플레이(차고 사용·차종 체감·가격), 다른 PC LAN v17, 실물 패드. 결과는 [작업 이력](work-history/2026-11-10-vehicle-purchase-3day.md).

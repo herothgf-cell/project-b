@@ -122,3 +122,7 @@
 필수 기능 검증은 개인 지출 후 일별/누적 순수익 유지와 재로딩, 미납/잔액 부족, 중복 클릭/저장 실패,3일 경계/구 저장/완료 방/새 시작, 방에서 시간·회복·위치 불변, PVP/연습 비적용이다. 이 자동 검증은 사람이 느끼는 동기를 대신하지 않는다. 다음 확장은 첫 구매와 다음 영업의 연결이 관찰된 뒤 차량 소품 또는 생활 소품 중 한 방향씩 판단한다.
 
 근거: [현재 생활/비용](03-life-and-economy.md), [정산/3일](04-campaign-and-feedback.md), [준비/화면](05-interface-and-navigation.md), [현금 계정](../../unity/EungyeTaxi/Assets/Scripts/CampaignAccount.cs), [영업 장부](../../unity/EungyeTaxi/Assets/Scripts/EconomyLedger.cs), [저장/하루 전환](../../unity/EungyeTaxi/Assets/Scripts/BusinessProgress.cs), [실제 싱글 HUD 분기](../../unity/EungyeTaxi/Assets/Scripts/BusinessHUD.cs).
+
+## 2026-11-10 차고 탭 (기획22)
+
+내 공간 화면에 **방 / 차고** 탭을 추가했다(같은 1200×720 고정 화면·버튼 규칙 재사용). 정산 화면 버튼 이름은 "내 공간 · 방/차고". 차고는 후보 비교(외형·특성 표·견적)와 구매 확인, 색 2종·대시보드 화분을 제공한다. 방 소품과 같은 개인 지출 장부·현금을 나눠 쓰므로 "차를 먼저 살지, 방을 꾸밀지"가 3일 안의 선택이 된다. 완료 방(마무리) 이후에는 차고도 읽기 전용이고, 새 회차는 시작 차로 돌아간다. 이전 회차 방 보기에서는 차고 탭을 표시하지 않는다. 상세 규칙은 [기획22](22-growth-direction-and-vehicle-purchase.md) §11.
