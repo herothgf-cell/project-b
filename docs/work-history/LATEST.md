@@ -7,19 +7,27 @@
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
-| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid`. **main**: 게임 소스 9302097(J7973 북쪽 노면선 정리, 싱글 영업 시간 3933628 포함) · 출하 89e72a6 (11/10). 이전 출하 b436706(소스 0c4ca86) |
-| 통신 | LAN **v17**(내 차 외형, main 병합됨). 양쪽 PC 같은 실행본 필요, 이전 v16 실행본과는 접속 거부 |
-| 배포 검사 | 출하 143파일 127,464,690바이트, 통합/PvP manifest VerifyOnly 통과(11/10 kimhs-NW2) |
+| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid`. **main**: 게임 소스 575ca46(PVP 신호 37곳·뒷골목·승객 요청 빈도) · 출하 9ae2297 (11/10). 이전 출하 89e72a6(소스 9302097) |
+| 통신 | LAN **v17**. 11/10 PVP 지도 변경으로 지도 지문이 바뀌어 **이전 v17 실행본과도 접속 거부**("PVP 지도가 다릅니다"). 양쪽 PC 같은 실행본 필요 |
+| 배포 검사 | 출하 143파일 127,469,810바이트, 통합/PvP manifest VerifyOnly 통과(11/10 kimhs-NW2) |
 | 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json`(Git, revision 14·SHA256 c9aa1e76…) 준비됨, 11/10 Strict issues 0(PowerShell 7 필요, 5.1에서는 검사 스크립트 실패). 재수입용 JSON 2개는 선택 입력이며 없음 |
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **구현(사람 검증 전, 브랜치)** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
-| 제안서 | [V9 28장](../proposals/project-b-game-proposal-v9.pptx) · [반영 검토](../proposals/proposal-v9-review.md) |
+| 제안서 | [V10 30장](../proposals/project-b-game-proposal-v10.pptx) · [반영 검토](../proposals/proposal-v10-review.md) · [Manual V10](../proposals/project-b-prototype-manual-v10.md) |
 
 ## 다음 작업
 
-1. main 병합 완료(11/10). 모든 PC에서 main pull 후 v17 실행본으로 맞춘다. 기획22 차고·차종과 J5057·J866 유턴은 사람 플레이 확인 전.
+1. 모든 PC에서 main pull 후 같은 실행본으로 맞춘다(11/10 PVP 지도 변경). PVP 신호 대기·뒷골목·승객 요청 빈도(평균 1.5건) 사람 플레이 체감 확인. 기획22 차고·차종과 J5057·J866 유턴은 사람 플레이 확인 전.
 2. [거리뷰 대조 수정 후보](2026-11-10-roadview-lane-audit.md#수정-후보와-우선순위-사용자-확인-전-미적용) 남은 것: 스쿨존 제한속도, 미확인 교차로. [유턴 수정 남은 항목](2026-11-10-uturn-sign-fix.md#남은-항목).
 3. 다른 PC LAN v17, 첫 이용자 안내.
 5. 보류: 기사 평점(기획22 §3-1), 개인택시 면허 경로([기획23](../content-design/23-license-career-path.md)), Blender 아트 파이프라인 2단계 이후([문서](../proposals/art-blender-pipeline.md)).
+
+## 2026-11-10 제안서 V10 (Neo4G 가이드 구성)
+
+[작업 이력](2026-11-10-proposal-v10.md). 첨부 Neo4G 제안서 가이드 vr.1.0의 구성·필수 항목에 맞춰 V9→V10(30장). 디자인은 프로젝트 디자인 유지. 운송→차량 구매→PvP 내 차 연결(20장 신규), 실제 차고·PvP 내 차 화면(15·19장), USP 경쟁작 대비(3장), 주요 캐릭터·배경 설정(22장 신규), 구현 스펙·Manual V10. 로드맵·참여자 유지. Cowork 문서 작업, 게임 변경 없음, Git 커밋 안 함.
+
+## 2026-11-10 PVP 신호 대기·신호 교차로·뒷골목, 승객 요청 빈도 상향
+
+[구현·검증](2026-11-10-pvp-signals-alleys-request-frequency.md) · [캡처](../ui/2026-11-10-pvp-signals-alleys/). PVP A2 신호 교차로 19→37, 구역마다 ㅓ자 뒷골목 5구간(45구간), PVP만 신호 recall(직진·보행 단계 매 주기, 출하 실행본 1:1 적색 32.0초 실측·위치 제어). 승객 요청 0/1/2건 비중 15/60/25→5/40/55(평균 1.5건), 시작 진행률 0.25→0.15, 응답 간 주행 20→12초(싱글·PVP). 관리창 `승객 요청 > 요청 빈도 한눈에 보기`. 저장된 사용자 프로필은 기존 값 유지. 지도 지문 변경으로 양쪽 PC 실행본 갱신 필요. 기존 실패(Editor NPC 합류 DriverIntent·turn sensing·은계 우회전 행렬 3건, 실행본 test_pvp_simulation 은계6·A2 5건)는 이전 빌드·HEAD에서도 같은 실패. 사람 플레이·다른 PC LAN 미검증.
 
 ## 2026-11-10 J7973 북쪽 진입부 차선 정리
 
