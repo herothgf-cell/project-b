@@ -1,3 +1,7 @@
+## 2026-11-10 진행 상황 확인 (PC kimhs-NW2)
+
+[결과·환경 문제](2026-11-10-progress-check.md). 11-09 이후 MCP 읽기 기록 2건 외 게임/빌드/지도 변경 없음, 배포 은계/A2·LANv16·BuildHybrid·548fe8b/a978b3b·지도8fb257ed 유지. 이 PC는 PowerShell 7(pwsh) 미설치라 Strict/VerifyOnly를 PS5.1로 돌려 exit1(-Depth 미지원·GetFullPath 예외, 도구 환경 차이). 유효한 마지막 검사는 11-09 issues0/143파일. 다음: pwsh 설치 후 재검사, 사람 장기/전체3일·다른PC LAN 수용. 로컬 3커밋 미push.
+
 ## 2026-11-09 Blender·Unity MCP 직접 호출 검사
 
 [도구·실제 응답·오브젝트 목록](2026-11-09-blender-unity-mcp-test.md). Blender get_objects_summary status=ok/isError=false, Scene의 Camera/Cube/Light3개. Unity manage_scene get_active/get_hierarchy success=true/isError=false, EungyeTaxi 인스턴스1개·이름/경로 없는 씬의 Main Camera/Directional Light2개. 연결 실패 없음·기존 파일/씬/코드 미변경·기존 미추적 설정 보존. 배포 은계/A2·LANv16·BuildHybrid·548fe8b/a978b3b와 직전 Strict issues0 유지(이번 빌드/입력 재검사 없음). 다음은 요청 시 게임 씬 조회·기존 사람 장기/전체3일·다른PC LAN 수용.
