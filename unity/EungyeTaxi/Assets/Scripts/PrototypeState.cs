@@ -9,10 +9,13 @@ using System.Collections.Generic;
  public const string ThreeDaySaveFile="campaign-3day20-v1.json";
  public double nightlyFatigueRecovery=60;
  public static PrototypeSettings ForThreeDays(){return new PrototypeSettings{oneDay=true,days=3,daySeconds=1200};}
+ // Single-mode shift length choices in real minutes. The in-game clock still spans 08:00-20:00.
+ public static readonly int[] ShiftMinuteChoices={10,20,30,60};
+ public static bool IsShiftChoice(float seconds){foreach(int m in ShiftMinuteChoices)if(seconds==m*60f)return true;return false;}
  public static PrototypeSettings ForOneDay(){return new PrototypeSettings{oneDay=true,days=1,daySeconds=1200};}
  public int days=3,target=30000,startCash=10000,meal=3000,parking=500,insurance=6000,tax=1500;
  public float daySeconds=720,initialFuel=60,fuelPerKm=4,idlePerMinute=.1f,fuelUnitPrice=40;
- public PrototypeSettings WithCurrentOperationBalance(){var copy=(PrototypeSettings)MemberwiseClone();var current=new PrototypeSettings();copy.daySeconds=oneDay?1200:current.daySeconds;copy.initialFuel=current.initialFuel;copy.fuelPerKm=current.fuelPerKm;copy.idlePerMinute=current.idlePerMinute;return copy;}
+ public PrototypeSettings WithCurrentOperationBalance(){var copy=(PrototypeSettings)MemberwiseClone();var current=new PrototypeSettings();copy.daySeconds=oneDay?(IsShiftChoice(daySeconds)?daySeconds:1200):current.daySeconds;copy.initialFuel=current.initialFuel;copy.fuelPerKm=current.fuelPerKm;copy.idlePerMinute=current.idlePerMinute;return copy;}
  public int insuranceExpiryDay=2,taxDueDay=3;
  public int redStraightPenalty=ContentTuning.Int("law.redStraight.penalty",20),redRightPenalty=ContentTuning.Int("law.redRight.penalty",5),dedicatedRedPenalty=ContentTuning.Int("law.dedicatedRed.penalty",20),pedestrianPenalty=ContentTuning.Int("law.pedestrian.penalty",25),insertionPenalty=ContentTuning.Int("law.insertion.penalty",15),interferencePenalty=ContentTuning.Int("law.interference.penalty",15);
  public const int SaveVersion=2;

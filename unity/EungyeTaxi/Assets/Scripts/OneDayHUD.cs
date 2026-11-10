@@ -18,10 +18,19 @@ public static class OneDayHUD {
   preparationAmount=new GUIStyle(text){fontSize=17,alignment=TextAnchor.MiddleRight,wordWrap=false};
   preparationAction=CasualUI.Action(20);
  }
+ // Single-mode shift length selector; locked once the day has started.
+ public static void DrawShiftLength(Rect r,BusinessProgress b){
+  var label=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=17,alignment=TextAnchor.MiddleLeft,wordWrap=false};label.normal.textColor=CasualUI.Ink;
+  GUI.Label(new Rect(r.x,r.y,110,r.height),"영업 시간",label);
+  var choices=PrototypeSettings.ShiftMinuteChoices;int current=b.ShiftMinutes;float w=(r.width-110-6*(choices.Length-1))/choices.Length;
+  bool old=GUI.enabled;GUI.enabled=old&&b.CanChangeShiftLength;
+  for(int i=0;i<choices.Length;i++){int m=choices[i];if(GUI.Button(new Rect(r.x+110+i*(w+6),r.y,w,r.height),m+"분",m==current?CasualUI.Action(16):KoreanText.Button(16))&&m!=current)b.SetShiftLength(m);}
+  GUI.enabled=old;
+ }
  static void DrawPreparation(DriveSession session){
   PreparationStyles();var view=DayPreparationPresentation.Create(session.business.ledger);var bounds=DayPreparationPresentation.PanelBounds(Screen.width,Screen.height);float scale=bounds.width/760f;
   var saved=GUI.matrix;var oldColor=GUI.color;GUI.depth=-150;GUI.color=new Color(0,0,0,.30f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=oldColor;
-  GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,Vector3.one*scale);float x=bounds.x/scale,y=bounds.y/scale;Panel(new Rect(x,y,760,590));
+  GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,Vector3.one*scale);float x=bounds.x/scale,y=bounds.y/scale;Panel(new Rect(x,y,760,640));
   CasualUI.Header(new Rect(x+20,y+16,720,54),view.title,4);
   GUI.Label(new Rect(x+30,y+72,700,26),"현재 상태",text);
   for(int i=0;i<view.stats.Length;i++){
@@ -43,7 +52,8 @@ public static class OneDayHUD {
   if(session.business.ledger.Settings.days==3){var room=session.business.ledger.Account.Room;string chosen=room.wished=="lamp"?"찜한 탁상 조명":room.wished=="rug"?"찜한 작은 러그":room.lampOwned||room.rugOwned?"내 공간의 물건이 기다리고 있어요":"";if(chosen.Length>0)GUI.Label(new Rect(x+30,y+278,700,24),chosen,small);}
   CasualUI.Divider(new Rect(x+30,y+472,700,1));
   GUI.Label(new Rect(x+30,y+478,340,32),"오늘의 이용 비용",text);preparationAmount.normal.textColor=CasualUI.Ink;GUI.Label(new Rect(x+390,y+476,340,36),Money(view.totalExpense),new GUIStyle(preparationAmount){fontSize=26,fontStyle=FontStyle.Bold});
-  if(GUI.Button(new Rect(x+30,y+520,700,50),"영업 시작",preparationAction))session.business.Depart();
+  DrawShiftLength(new Rect(x+30,y+522,700,40),session.business);
+  if(GUI.Button(new Rect(x+30,y+574,700,50),"영업 시작",preparationAction))session.business.Depart();
   GUI.matrix=saved;
  }
  public static void Draw(DriveSession s){if(s.RideResultOpen)return;Styles();var b=s.business;var e=b.ledger;var d=e.Driver;if(d==null)return;bool multi=e.Settings.days>1;GUI.depth=-35;if(b.RoomOpen&&b.RoomAvailable){PersonalRoomHUD.Draw(s);return;}

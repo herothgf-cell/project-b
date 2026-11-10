@@ -93,11 +93,12 @@ public class BusinessProgress : MonoBehaviour {
   bool accidentCheck=Array.IndexOf(args,"-accidentWorkshopCheck")>=0||Array.IndexOf(args,"-accidentWorkshopReloadCheck")>=0;
   if(accidentCheck){testMode=true;enabledCampaign=true;useV2=true;settings=PrototypeSettings.ForThreeDays();SavePath=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts/accident-workshop-test.json"));}
   if(HudRevisionProbe.Enabled)SavePath=HudRevisionProbe.CampaignPath;
+  if(ShiftDevEndProbe.Enabled)SavePath=ShiftDevEndProbe.CampaignPath;
   bool roomCheck=Array.IndexOf(args,"-personalRoomCheck")>=0||Array.IndexOf(args,"-personalRoomReloadCheck")>=0;bool garageCheck=VehicleGarageProbe.Enabled;roomCheck|=garageCheck;
   if(roomCheck){testMode=true;enabledCampaign=true;useV2=true;settings=PrototypeSettings.ForThreeDays();}
   if(ContentTuningRuntime.TestMode)SavePath=ContentTuningRuntime.CampaignPath(Path.GetFileName(SavePath));
   if(roomCheck)SavePath=Path.GetFullPath(garageCheck?"artifacts/vehicle-garage-player/campaign.json":"artifacts/personal-room-player/campaign.json");
-  if(!testMode&&!UnifiedModeProbe.Enabled&&!HudRevisionProbe.Enabled&&!ContentTuningRuntime.TestMode)try{SavePath=CampaignSaveLocation.Resolve(Path.GetDirectoryName(Application.persistentDataPath),Path.GetFileName(SavePath));}catch(Exception e){Debug.LogWarning("이전 캠페인 저장 복사 실패: "+e.Message);}
+  if(!testMode&&!UnifiedModeProbe.Enabled&&!HudRevisionProbe.Enabled&&!ShiftDevEndProbe.Enabled&&!ContentTuningRuntime.TestMode)try{SavePath=CampaignSaveLocation.Resolve(Path.GetDirectoryName(Application.persistentDataPath),Path.GetFileName(SavePath));}catch(Exception e){Debug.LogWarning("이전 캠페인 저장 복사 실패: "+e.Message);}
   ledger=useV2?new EconomyLedger(settings):new EconomyLedger(new EconomySettings());
   if((Array.IndexOf(args,"-passengerBehaviorReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilitySummaryReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0)))||protoTest&&Array.IndexOf(args,"-protoExpansionReloadTest")>=0||!testMode||Array.IndexOf(args,"-personalRoomReloadCheck")>=0||Array.IndexOf(args,"-vehicleGarageReloadCheck")>=0||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0)||startupReloadTest||activitiesReloadTest||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-oneDayReloadTest")>=0||Array.IndexOf(args,"-threeDayReloadTest")>=0||Array.IndexOf(args,"-ambientPedestrianReloadTest")>=0){
    foreach(var path in new[]{SavePath,SavePath+".bak"}){
@@ -217,6 +218,23 @@ public class BusinessProgress : MonoBehaviour {
   if(!DrowsinessRunning||!ledger.Driver.drowsiness.Blackout||session.taxi.body.velocity.magnitude>=.56f)return false;
   session.jobs.CancelForFatigue();if(session.jobs.Active||!ledger.UseEmergencySleep(session.law.ids.Next("emergency-home")))return false;
   session.jobs.ClearForDay();session.assisted.SetActive(false);if(!(session.damage&&session.damage.Disabled&&session.damage.AtRepairBay)){var stop=session.services.ParkingStop;session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();}session.law.ResetObservation();var district=session.traffic.GetComponent<DistrictTraffic>();if(district)district.ClearPlayerOverlap();notice="졸음 운전으로 위험합니다. 오늘 영업을 종료합니다. · 피로 −20";noticeUntil=Time.unscaledTime+10;SaveCheckpoint();return true;
+ }
+ public bool CanChangeShiftLength {get{return enabledCampaign&&!SimulationSession&&!PracticeSession.Enabled&&preparing&&!resumeBlocked&&!restoring&&!restartPrompt&&ledger!=null&&ledger.Account!=null&&ledger.OneDay&&ledger.State==BusinessState.Open&&ledger.Elapsed<=0;}}
+ public int ShiftMinutes {get{return ledger==null?0:Mathf.RoundToInt(ledger.Settings.daySeconds/60f);}}
+ // Applies to the day being prepared and persists in the campaign account for later days.
+ public bool SetShiftLength(int minutes){if(!CanChangeShiftLength||Array.IndexOf(PrototypeSettings.ShiftMinuteChoices,minutes)<0)return false;float seconds=minutes*60f;if(!ledger.SetDaySeconds(seconds))return false;settings.daySeconds=seconds;notice="영업 시간 "+minutes+"분으로 설정했습니다.";noticeUntil=Time.unscaledTime+5;SaveCheckpoint();return true;}
+ public bool CanDevChangeShiftLength {get{return enabledCampaign&&!SimulationSession&&!PracticeSession.Enabled&&!resumeBlocked&&!restoring&&ledger!=null&&ledger.Account!=null&&ledger.OneDay&&ledger.State==BusinessState.Open;}}
+ // Developer test: same choices as preparation, but also while operating.
+ public bool DevSetShiftLength(int minutes){if(!CanDevChangeShiftLength)return EndDayNotice("싱글 영업 중이나 영업 준비 중에만 바꿀 수 있습니다.");if(Array.IndexOf(PrototypeSettings.ShiftMinuteChoices,minutes)<0)return false;float seconds=minutes*60f;if(!ledger.DevSetDaySeconds(seconds))return EndDayNotice("영업 시간을 바꿀 수 없습니다.");settings.daySeconds=seconds;notice="(개발용) 영업 시간 "+minutes+"분으로 변경했습니다.";noticeUntil=Time.unscaledTime+5;SaveCheckpoint();return true;}
+ // Developer test shortcut: skips the hub/stop/rest conditions of RequestEndDay and settles the day.
+ public bool DevEndDayNow(){
+  if(SimulationSession)return EndDayNotice("PVP에서는 사용할 수 없습니다.");
+  if(!enabledCampaign||ledger==null||preparing||ledger.State!=BusinessState.Open)return EndDayNotice("영업 중일 때만 바로 퇴근할 수 있습니다.");
+  if(session.accident&&session.accident.Locked)return EndDayNotice("사고 처리를 마친 뒤 사용해 주세요.");
+  if(session.damage&&session.damage.Disabled&&!session.damage.AtRepairBay)return EndDayNotice("차량 고장 처리 중에는 사용할 수 없습니다.");
+  if(session.jobs.trip.State==TripState.OnTrip)return EndDayNotice("승객을 내려드린 뒤 사용해 주세요.");
+  if(session.jobs.Active)session.jobs.ClearForDay();
+  ledger.RequestClose("개발용 바로 퇴근");session.paused=false;Time.timeScale=1;notice="개발용 바로 퇴근 · 정산합니다.";noticeUntil=Time.unscaledTime+8;return true;
  }
  bool EndDayNotice(string message){notice=message;noticeUntil=Time.unscaledTime+8;return false;}
  public bool RequestEndDay(){

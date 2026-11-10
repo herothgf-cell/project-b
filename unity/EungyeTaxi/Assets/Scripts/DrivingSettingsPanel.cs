@@ -5,12 +5,12 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
  public bool IsOpen {get;private set;}
  public DrivingSettings Draft {get;private set;}
  public bool FollowingDraft {get;private set;}
- public RainSettings WeatherDraft {get;private set;} RainSettings openedWeather;public bool WeatherTab;public string Error {get;private set;}
+ public RainSettings WeatherDraft {get;private set;} RainSettings openedWeather;public bool WeatherTab,DevTab;public string Error {get;private set;}
  public string PreferenceKey=DrivingSettings.Key;
  public static DrivingSettingsPanel For(DriveSession session){var panel=session.GetComponent<DrivingSettingsPanel>();return panel?panel:session.gameObject.AddComponent<DrivingSettingsPanel>();}
- public void Open(){Draft=(PreferenceKey==DrivingSettings.Key?DrivingSettings.Current:DrivingSettings.Load(PreferenceKey)).Copy();var owner=GetComponent<DriveSession>();FollowingDraft=owner&&owner.traffic&&owner.traffic.mitOptions.Enabled;WeatherDraft=RainSettings.Capture();openedWeather=WeatherDraft.Copy();Error="";WeatherTab=false;IsOpen=true;}
+ public void Open(){Draft=(PreferenceKey==DrivingSettings.Key?DrivingSettings.Current:DrivingSettings.Load(PreferenceKey)).Copy();var owner=GetComponent<DriveSession>();FollowingDraft=owner&&owner.traffic&&owner.traffic.mitOptions.Enabled;WeatherDraft=RainSettings.Capture();openedWeather=WeatherDraft.Copy();Error="";WeatherTab=DevTab=false;IsOpen=true;}
  public void Cancel(){IsOpen=false;Draft=null;WeatherDraft=null;openedWeather=null;}
- public void ResetDefaults(){if(IsOpen){if(WeatherTab){if(RainSettingsRuntime.CanEdit(GetComponent<DriveSession>()))WeatherDraft=new RainSettings();}else {Draft=new DrivingSettings();FollowingDraft=true;}}}
+ public void ResetDefaults(){if(IsOpen&&!DevTab){if(WeatherTab){if(RainSettingsRuntime.CanEdit(GetComponent<DriveSession>()))WeatherDraft=new RainSettings();}else {Draft=new DrivingSettings();FollowingDraft=true;}}}
  public void Apply(){if(!IsOpen)return;if(!WeatherDraft.Same(openedWeather)){string error;if(!RainSettingsRuntime.Apply(GetComponent<DriveSession>(),WeatherDraft,out error)){Error=error;return;}}if(PreferenceKey==DrivingSettings.Key)DrivingSettings.Commit(Draft);else Draft.Save(PreferenceKey);var owner=GetComponent<DriveSession>();if(owner&&owner.traffic&&!owner.simulationMatch)owner.traffic.mitOptions.SetEnabled(FollowingDraft);Cancel();}
  public void ValidateOwner(){var owner=GetComponent<DriveSession>();if(IsOpen&&owner&&owner.simulationMatch&&owner.simulationMatch.Finished)Cancel();}
  void Update(){ValidateOwner();}
@@ -28,15 +28,37 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
  float WeatherRow(float y,string title,float value,float min,float max,string suffix){
   GUI.Label(new Rect(28,y,390,27),title,Label(17,true));var style=Label(18,true);style.alignment=TextAnchor.MiddleRight;GUI.Label(new Rect(440,y,150,27),value.ToString(suffix=="점"?"0":"0.##")+suffix,style);return Mathf.Round(GUI.HorizontalSlider(new Rect(30,y+35,558,20),value,min,max)*100)/100;
  }
+ void DrawDevTab(){
+  var owner=GetComponent<DriveSession>();var b=owner?owner.business:null;bool single=b&&!b.SimulationSession&&!owner.simulationMatch;
+  CasualUI.RoundedFill(new Rect(18,124,584,150),CasualUI.Soft);
+  GUI.Label(new Rect(28,130,562,28),"바로 퇴근",Label(19,true));
+  var note=Label(14);note.wordWrap=true;
+  GUI.Label(new Rect(28,160,562,44),"거점 정차·휴식 조건 없이 오늘 영업을 즉시 마치고 정산 화면으로 갑니다. 손님을 태우러 가는 중이면 호출을 취소합니다(태운 승객이 있으면 사용 불가).",note);
+  bool old=GUI.enabled;GUI.enabled=old&&single;
+  if(GUI.Button(new Rect(28,214,562,44),"지금 바로 퇴근 (개발용)",CasualUI.Action(18))){if(b.DevEndDayNow())Cancel();else Error=b.notice;}
+  GUI.enabled=old;
+  CasualUI.RoundedFill(new Rect(18,286,584,170),CasualUI.Soft);
+  GUI.Label(new Rect(28,292,562,28),"영업 시간 (테스트)",Label(19,true));
+  GUI.Label(new Rect(28,322,562,44),"영업 중에도 오늘 영업 시간을 바로 바꿉니다. 이미 지난 시간보다 짧게 하면 즉시 초과 영업(피로 100)이 됩니다. 다음 날에도 유지됩니다.",note);
+  bool canShift=single&&b.CanDevChangeShiftLength;GUI.enabled=old&&canShift;
+  var choices=PrototypeSettings.ShiftMinuteChoices;int current=b?b.ShiftMinutes:0;float w=(562-6*(choices.Length-1))/(float)choices.Length;
+  for(int i=0;i<choices.Length;i++){int m=choices[i];if(GUI.Button(new Rect(28+i*(w+6),376,w,40),m+"분",m==current?CasualUI.Action(17):KoreanText.Button(17))&&m!=current&&!b.DevSetShiftLength(m))Error=b.notice;}
+  GUI.enabled=old;
+  if(b&&canShift)GUI.Label(new Rect(28,422,562,24),"현재 "+current+"분 · 남은 영업 "+Mathf.CeilToInt((float)b.ledger.SecondsLeft/60f)+"분",Label(14));
+  if(!single)GUI.Label(new Rect(28,470,562,24),"PVP에서는 사용할 수 없습니다.",Label(14));
+ }
  public void Draw(){
   ValidateOwner();if(!IsOpen)return;GUI.depth=-700;KoreanText.PrepareSkin();var old=GUI.matrix;var bounds=Bounds(Screen.width,Screen.height);float scale=bounds.width/620;
   GUI.matrix=Matrix4x4.TRS(new Vector3(bounds.x,bounds.y,0),Quaternion.identity,new Vector3(scale,scale,1));
   CasualUI.Panel(new Rect(0,0,620,700));
   CasualUI.Header(new Rect(18,10,584,38),"설정",13);
-  if(GUI.Button(new Rect(28,54,274,36),"운전 관련 설정",WeatherTab?KoreanText.Button(17):CasualUI.Action(17)))WeatherTab=false;
-  if(GUI.Button(new Rect(310,54,282,36),"날씨 관련 설정",WeatherTab?CasualUI.Action(17):KoreanText.Button(17)))WeatherTab=true;
-  GUI.Label(new Rect(28,94,562,23),WeatherTab?"적용하면 현재 운행에 반영 · 확률 미끄러짐은 잠금":"조절 후 적용 · 취소하면 현재 설정을 유지해요",Label(14));
-  if(!WeatherTab){
+  bool driveTab=!WeatherTab&&!DevTab;
+  if(GUI.Button(new Rect(28,54,184,36),"운전 관련 설정",driveTab?CasualUI.Action(17):KoreanText.Button(17)))WeatherTab=DevTab=false;
+  if(GUI.Button(new Rect(218,54,184,36),"날씨 관련 설정",WeatherTab&&!DevTab?CasualUI.Action(17):KoreanText.Button(17))){WeatherTab=true;DevTab=false;}
+  if(GUI.Button(new Rect(408,54,184,36),"개발용 테스트",DevTab?CasualUI.Action(17):KoreanText.Button(17))){DevTab=true;WeatherTab=false;}
+  GUI.Label(new Rect(28,94,562,23),DevTab?"개발·테스트 전용 · 정식 플레이 규칙을 건너뜁니다":WeatherTab?"적용하면 현재 운행에 반영 · 확률 미끄러짐은 잠금":"조절 후 적용 · 취소하면 현재 설정을 유지해요",Label(14));
+  if(DevTab)DrawDevTab();
+  else if(!WeatherTab){
    Draft.sensitivity=Row(118,"조향 민감도","같은 좌우 입력으로 꺾이는 회전량",Draft.sensitivity,.5f,1.5f);
    Draft.response=Row(202,"조향 반응 속도","누르거나 반대 방향으로 바꿀 때의 반응",Draft.response,.25f,2);
    Draft.centering=Row(286,"핸들 복원 속도","조향 입력을 놓았을 때 중앙으로 돌아오는 속도",Draft.centering,.25f,2);

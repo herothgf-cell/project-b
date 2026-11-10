@@ -173,6 +173,9 @@ public class EconomyLedger {
  }
  void ServiceTime(double seconds){double before=Elapsed;Elapsed+=seconds;Metrics.Observe(0,seconds,false,true);BudgetCrossed(before);}
  void BudgetCrossed(double before){if(PvpProfile)return;if(before<Settings.daySeconds&&Elapsed>=Settings.daySeconds){if(OneDay)Driver.fatigue=100;else RequestClose("시간 종료");}}
+ public bool SetDaySeconds(float seconds){if(PvpProfile||!OneDay||Account==null||!PrototypeSettings.IsShiftChoice(seconds)||State!=BusinessState.Open||Elapsed>0)return false;Settings.daySeconds=seconds;Account.SetDaySeconds(seconds);return true;}
+ // Developer test: may change today's length mid-shift. Shortening past the elapsed time applies the normal end-of-shift fatigue.
+ public bool DevSetDaySeconds(float seconds){if(PvpProfile||!OneDay||Account==null||!PrototypeSettings.IsShiftChoice(seconds)||State!=BusinessState.Open)return false;double old=Settings.daySeconds;Settings.daySeconds=seconds;Account.SetDaySeconds(seconds);if(Driver!=null&&Elapsed<old&&Elapsed>=seconds)Driver.fatigue=100;return true;}
  public void RequestClose(){RequestClose("조기 퇴근");}
  public void RequestClose(string reason){if(State==BusinessState.Open){State=BusinessState.Closing;EndReason=reason;}}
  public bool Settle(){

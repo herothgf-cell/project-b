@@ -12,7 +12,7 @@ public sealed class DayPreparationView {
 }
 public static class DayPreparationPresentation {
  public static bool ShouldShow(int day,bool preparing,bool restart,bool blocked){return day>1&&preparing&&!restart&&!blocked;}
- public static Rect PanelBounds(float width,float height){float scale=Mathf.Min(1.25f,width/1280f,height/720f);return new Rect((width-760*scale)/2,(height-590*scale)/2,760*scale,590*scale);}
+ public static Rect PanelBounds(float width,float height){float scale=Mathf.Min(1.25f,width/1280f,height/720f);return new Rect((width-760*scale)/2,(height-640*scale)/2,760*scale,640*scale);}
  static DayPreparationStat Stat(string id,string label,int glyph,double value,double? delta,string suffix){
   string format=id=="cash"?"N0":"0.#";
   return new DayPreparationStat{id=id,label=label,glyph=glyph,value=value,valueText=value.ToString(format)+suffix,hasDelta=delta.HasValue,delta=delta.GetValueOrDefault(),deltaText=delta.HasValue?(delta.Value>=0?"+":"−")+Math.Abs(delta.Value).ToString(format)+suffix:"전일 기록 없음"};

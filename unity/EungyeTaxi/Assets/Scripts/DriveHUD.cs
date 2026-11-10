@@ -42,12 +42,13 @@ public class DriveHUD : MonoBehaviour {
  }
  public void DrawSingleMenu(){
   var settings=DrivingSettingsPanel.For(session);if(settings.IsOpen){settings.Draw();return;}
-  var b=session.business;bool restart=b.useV2&&b.HasCampaignToContinue;
-  float height=(restart?360:308)+(UnifiedModeBootstrap.IsUnified?52:0),x=Screen.width/2f-240,y=(Screen.height-height)/2;
+  var b=session.business;bool restart=b.useV2&&b.HasCampaignToContinue,shift=b.CanChangeShiftLength;
+  float height=(restart?360:308)+(UnifiedModeBootstrap.IsUnified?52:0)+(shift?52:0),x=Screen.width/2f-240,y=(Screen.height-height)/2;
   GUI.depth=-150;CasualUI.Panel(new Rect(x,y,480,height));CasualUI.Header(new Rect(x+4,y+4,472,40),b.preparing?"영업 준비":"일시정지",3);
   bool enabled=GUI.enabled;GUI.enabled=enabled&&!session.PracticeBusy&&!b.IsRestoring;
   if(GUI.Button(new Rect(x+20,y+52,440,44),b.MenuPrimaryLabel,CasualUI.Action(18)))b.ContinueFromMenu();
   float row=y+104;
+  if(shift){OneDayHUD.DrawShiftLength(new Rect(x+20,row,440,40),b);row+=52;}
   if(restart){if(GUI.Button(new Rect(x+20,row,440,40),"처음부터 시작",KoreanText.Button(16)))b.RequestRestart();row+=52;}
   if(GUI.Button(new Rect(x+20,row,440,40),"운전 연습 선택",KoreanText.Button(16)))session.GetComponent<PracticeSession>().OpenPicker();row+=52;
   GUI.enabled=enabled;

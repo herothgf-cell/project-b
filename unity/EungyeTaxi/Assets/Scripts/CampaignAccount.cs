@@ -59,6 +59,7 @@ public class CampaignAccount {
  public bool TaxPaid {get{return HasKind("tax-payment");}}
  public bool GoalMet {get{return Net>=settings.target;}}
  public int PendingDayCost(int day){return (settings.oneDay||Ate(day)?0:settings.meal)+(!Has("parking:"+day)?settings.parking:0);}
+ public void SetDaySeconds(float seconds){settings.daySeconds=seconds;}
  public CampaignAccount(PrototypeSettings s){settings=s;Cash=s.startCash;Fuel=s.initialFuel;Room=new PersonalRoomState();Vehicle=new VehicleState();}
  bool Has(string id){return entries.Exists(e=>e.id==id);}
  bool HasKind(string kind){return entries.Exists(e=>e.kind==kind);}
