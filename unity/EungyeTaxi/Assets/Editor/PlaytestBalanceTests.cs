@@ -14,7 +14,7 @@ public static class PlaytestBalanceTests {
   Check(LawEvaluator.RightTurn("dedicated",1,red,false).Deduction==20,"dedicated red remains severe");
   red.pedestrian=PedestrianState.Crossing;
   Check(LawEvaluator.RightTurn("ped",1,red,false).Deduction==25,"pedestrian danger remains severe and uses incident maximum");
-  Check(OneDayOfferPolicy.PickupSeconds(0)==150&&OneDayOfferPolicy.PickupSeconds(1732)>=700,"pickup reduced thirty seconds while retaining measured long route margin");
+  Check(OneDayOfferPolicy.PickupSeconds(0)==120&&Mathf.Abs(OneDayOfferPolicy.PickupSeconds(1732)-.8f*(1732f/3+150))<.001f,"pickup distance and slack scaled to eighty percent");
   var intrusion=typeof(LawEvaluator).GetMethod("StopLine");var incident=typeof(LawLedger).GetMethod("RecordIncident");
   Check(intrusion!=null&&incident!=null,"stop-line scoring and same-incident escalation exist");
   if(intrusion!=null&&incident!=null){
@@ -36,7 +36,7 @@ public static class PlaytestBalanceTests {
    float hurry=(float)transport.Invoke(null,new object[]{100f,20f,2});
    float normal=(float)transport.Invoke(null,new object[]{100f,20f,1});
    float relaxed=(float)transport.Invoke(null,new object[]{100f,20f,0});
-   Check(hurry==185&&normal==210&&relaxed==240,"same safe ETA keeps traffic margin and ordered passenger urgency");
+   Check(Mathf.Abs(hurry-148)<.001f&&Mathf.Abs(normal-168)<.001f&&Mathf.Abs(relaxed-192)<.001f,"eighty-percent deadlines preserve urgency: "+hurry+","+normal+","+relaxed);
   }
   var root=new GameObject("balance wrong-way regression");
   try{

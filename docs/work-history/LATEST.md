@@ -14,6 +14,10 @@
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **main 병합·배포, 사람 검증 전** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V10 30장](../proposals/project-b-game-proposal-v10.pptx) · [반영 검토](../proposals/proposal-v10-review.md) · [Manual V10](../proposals/project-b-prototype-manual-v10.md) |
 
+## 2026-11-12 좌회전 경로·시간 80%
+
+[구현·검증](2026-11-12-junction-route-timing.md). 지도 r18, J7917 인접 변경8개와 서향 목적지 전 변경3개. 사진 부근 실제 목적지 경로1432→1063m, 새 승하차 제한80%, 관련 회귀·r14~17 저장 이관4버전 통과. 통합 빌드·배포 확인 진행 중.
+
 ## 다음 작업
 
 J7917 출하 `2be32ed` main push 완료·원격 동일 해시 확인. [배포 영수증](2026-11-12-j7917-roadview-check.md#main-배포-확인).

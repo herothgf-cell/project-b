@@ -123,7 +123,7 @@ public class BusinessProgress : MonoBehaviour {
   try{if(snapshot.jobs==null||!Valid(snapshot.position.x)||!Valid(snapshot.position.y)||!Valid(snapshot.position.z)||snapshot.position.x<0||snapshot.position.z<0||snapshot.position.x>session.world.map.width||snapshot.position.z>session.world.map.depth)throw new Exception("Invalid live vehicle position");
    if(snapshot.mapRevision!=session.world.map.editorRevision)throw new Exception("Map revision changed; cannot restore active trip on edited geometry");
    if(session.ambientPedestrians)session.ambientPedestrians.Restore(snapshot.ambientPedestrians);
-   session.taxi.SetSpawn(snapshot.position,snapshot.rotation);session.taxi.ResetTaxi();var district=session.traffic.GetComponent<DistrictTraffic>();if(district)district.ClearPlayerOverlap();session.law.tripId=snapshot.tripId??"";session.law.ResetObservation();session.jobs.RestoreLive(snapshot.jobs);if(session.accident)session.accident.Restore(snapshot.accident);var occupancy=session.GetComponent<StopOccupancySystem>();if(occupancy)occupancy.Restore(snapshot.occupancy);if(session.ambientPedestrians)session.ambientPedestrians.ReconcileVisibility();realSeconds=snapshot.realSeconds;preparing=snapshot.preparing;
+   session.taxi.SetSpawn(snapshot.position,snapshot.rotation);session.taxi.ResetTaxi();var district=session.traffic.GetComponent<DistrictTraffic>();if(district)district.ClearPlayerOverlap();session.law.tripId=snapshot.tripId??"";session.law.ResetObservation();session.jobs.nav.PreferFastest=snapshot.preferFastest;session.jobs.RestoreLive(snapshot.jobs);if(session.accident)session.accident.Restore(snapshot.accident);var occupancy=session.GetComponent<StopOccupancySystem>();if(occupancy)occupancy.Restore(snapshot.occupancy);if(session.ambientPedestrians)session.ambientPedestrians.ReconcileVisibility();realSeconds=snapshot.realSeconds;preparing=snapshot.preparing;
    if(!session.jobs.Active&&snapshot.hasDestination)session.jobs.nav.SetDestination(snapshot.destination);
    session.jobs.nav.PreferFastest=snapshot.preferFastest;session.assisted.SetActive(false);if(snapshot.operationVersion==1){if(snapshot.signalsPresent)session.signals.RestoreLive(snapshot.signals);if(snapshot.lawObservationPresent)session.law.RestoreObservation(snapshot.lawObservation);}session.paused=!preparing;Time.timeScale=0;saveStatus="중단한 위치·운송·시간·장부 복원 완료 · 계속 운전";resumeBlocked=false;if(session.damage&&ledger.Care.Damage.Disabled&&!string.IsNullOrEmpty(ledger.Care.Damage.RepairBayId)&&!session.damage.AtRepairBay)session.damage.RestoreReservedBay(false);
   }catch(Exception ex){SaveFailed=true;LoadFailureDetail=ex.Message;preparing=false;session.paused=true;Time.timeScale=0;saveStatus="운송 복원 중단 · 지도/저장 상태 확인 필요: "+ex.Message;Debug.LogWarning(saveStatus);resumeBlocked=true;}
@@ -153,17 +153,27 @@ public class BusinessProgress : MonoBehaviour {
 
  }
  static void UpgradeEungyeApproachCheckpoint(LiveCampaignCheckpoint live,MapData map){
-  // Reviewed r16/r17 retain old stop bindings, edge order and taxi positions.
+  // Reviewed maps preserve stop bindings and taxi positions; navigation is rebuilt.
   bool fromR14=live.mapRevision=="은계 프로젝트 지도 · r14";
   bool fromR16=live.mapRevision=="은계 프로젝트 지도 · r16";
+  bool fromR17=live.mapRevision=="은계 프로젝트 지도 · r17";
+  bool toR18=map.editorRevision=="은계 프로젝트 지도 · r18";
   bool toR17=map.editorRevision=="은계 프로젝트 지도 · r17";
-  string reviewedHash=toR17?"cb8e0ec0ed3a48f7e9a33c4ff8dc3878bd9d59aafef13c0f0fe43c5616c9c808":"d9596da33d4efc0d4f862c714eb05bb70c94365bfc30ab6171a702e2b672e3df";
-  if(map.mapId!="eungye"||(!fromR14&&live.mapRevision!="은계 프로젝트 지도 · r15"&&!(fromR16&&toR17))||(!toR17&&map.editorRevision!="은계 프로젝트 지도 · r16")||
+  string reviewedHash=toR18?"bd8ad754a0510f0ee6fac7c54121433e1ba65bbd4b739e824500c081b446c474":toR17?"cb8e0ec0ed3a48f7e9a33c4ff8dc3878bd9d59aafef13c0f0fe43c5616c9c808":"d9596da33d4efc0d4f862c714eb05bb70c94365bfc30ab6171a702e2b672e3df";
+  if(map.mapId!="eungye"||(!fromR14&&live.mapRevision!="은계 프로젝트 지도 · r15"&&!(fromR16&&(toR17||toR18))&&!(fromR17&&toR18))||(!toR18&&!toR17&&map.editorRevision!="은계 프로젝트 지도 · r16")||
      map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||
      RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   live.mapRevision=map.editorRevision;
+  if(toR18&&live.jobs!=null){
+   // Appended runtime split indices move when lane-change windows are added.
+   // RestoreScenario rebuilds active scenario constraints against the new map;
+   // do not overwrite them with integers from the old graph. The enclosing
+   // checkpoint still restores the driver's fastest/shortest preference.
+   live.jobs.navigationCaptured=false;
+   live.jobs.navAvoidEdge=live.jobs.navObservedEdge=live.jobs.navPassedObservedEdge=-1;
+  }
   var entry=live.lawObservation==null?null:live.lawObservation.entry;
-  if(entry!=null&&(toR17&&entry.junction=="J7917_2565"||!fromR16&&entry.junction=="J7973_3744"&&entry.axis==1&&entry.sign==1||
+  if(entry!=null&&((toR17||toR18)&&entry.junction=="J7917_2565"||!fromR16&&entry.junction=="J7973_3744"&&entry.axis==1&&entry.sign==1||
       fromR14&&(entry.junction=="J8066_6364"||entry.junction=="J1927_5181"))){
    live.lawObservation.entry=null;
    live.lawObservation.entryPresent=false;

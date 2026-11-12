@@ -52,6 +52,11 @@ public static class EungyeConnectivityRepair {
     // windows in world space, rather than reusing each lane's numeric distance.
     var reference=GetFamily(map,baseline,"A2218G611368");
     if(inward&&reference!=null){float ignoredStart;float late=from.path.Project(reference.path.Position(114+14*corridor),out ignoredStart);windows.Add(new Vector2(late,12));}
+    // A left-turn arrival begins in lane 1. The original parallel windows
+    // finish the third outward change beyond the westbound pickup/dropoff.
+    // Stagger three adjacent moves inside these captured dashed separators,
+    // completing lane preparation before that stop (reference station ~113m).
+    if(!inward&&reference!=null){float ignoredStart;float early=from.path.Project(reference.path.Position(22+22*(2-corridor)),out ignoredStart);windows.Add(new Vector2(early,18));}
     foreach(var window in windows){float start=window.x,length=window.y,error;float targetStart=to.path.Project(from.path.Position(start),out error),end=targetStart+length;if(start<dashedStart+4||start+length>dashedEnd-4||end>to.path.length-12||error<2.5f||error>4.5f||Vector3.Dot(from.path.Tangent(start),to.path.Tangent(targetStart))<.98f)continue;
      var points=new MapPoint[49];for(int i=0;i<points.Length;i++){float t=i/(float)(points.Length-1),blend=t*t*t*(t*(t*6-15)+10);points[i]=P(Vector3.Lerp(from.path.Position(start+length*t),to.path.Position(targetStart+length*t),blend));}
      if(!geometry.Clear(points,from.path.Tangent(start)))continue;changes.Add(new Change{from=from,to=to,at=start,end=end,side=inward?-1:1,points=points,mark=pair[2]});

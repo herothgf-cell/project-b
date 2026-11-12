@@ -32,7 +32,7 @@ public static class PlaytestLaneChangeRepair {
   var points=new MapPoint[49];for(int k=0;k<points.Length;k++){float t=k/(float)(points.Length-1),blend=t*t*t*(t*(t*6-15)+10);points[k]=P(Vector3.Lerp(a.Position(start+distance*t),b.Position(targetStart+distance*t),blend));}
   // Imported HD capture slices already carry a nonzero sourceOffset. The
   // editor lineage API takes global source distance, while Path takes local.
-  return new Window{from=from.id,to=to.id,start=from.sourceOffset+start,end=to.sourceOffset+end,side=side,points=points,evidence=evidence};
+  return new Window{from=RoadMapAuthoringOperations.Origin(from),to=RoadMapAuthoringOperations.Origin(to),start=from.sourceOffset+start,end=to.sourceOffset+end,side=side,points=points,evidence=evidence};
  }
  public static RoadMapDocument Apply(ProjectMapPackage package,RoadMapEvidence northEvidence,RoadMapEvidence westEvidence){
   RequireEvidence(northEvidence);RequireEvidence(westEvidence);
@@ -62,6 +62,17 @@ public static class PlaytestLaneChangeRepair {
    if(family[0].Contains("7847")){windows.Add(Plan(lanes[0],lanes[1],164,1,20,evidence,24));windows.Add(Plan(lanes[1],lanes[2],194,1,20,evidence,24));}
   }
   return Materialize(package,doc,windows,prefix);
+ }
+ public static RoadMapDocument ApplyJunctionFeedback(ProjectMapPackage package){
+  var doc=package.document.Copy();var windows=new List<Window>();
+  var evidence=new RoadMapEvidence{state="provisional",checkedAt="2026-11-12",note="Restore adjacent lane preparation on reviewed J7917/J7973 approaches. Existing turn permissions retained; connector lengths are game geometry."};
+  // Newly inserted middle lanes must be able to reach either neighbour before
+  // the junction. These windows stay within the existing approach segments.
+  foreach(var pair in new[]{new[]{"local:7924:3503:7887:2749:part:1","local:7848:3507:7812:2752:part:1"},new[]{"local:7963:2745:8000:3499:part:1","local:8039:2741:8076:3496:part:1"}}){
+   var lanes=new[]{doc.lanes.Single(l=>l.id==pair[0]),doc.lanes.Single(l=>l.id=="reviewed:J7917:middle:"+pair[1]),doc.lanes.Single(l=>l.id==pair[1])};
+   for(int i=0;i<3;i++)foreach(int side in new[]{-1,1})if(i+side>=0&&i+side<3)windows.Add(Plan(lanes[i],lanes[i+side],3,side,5,evidence,18));
+  }
+  return Materialize(package,doc,windows,"reviewed:junction-feedback:change:");
  }
  static RoadMapDocument Materialize(ProjectMapPackage package,RoadMapDocument doc,List<Window> windows,string prefix){
   // Split all endpoints before wiring changes. Existing turns/signals/service
