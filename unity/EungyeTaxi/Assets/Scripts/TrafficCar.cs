@@ -18,13 +18,39 @@ public class TrafficCar : MonoBehaviour {
         for(int i=0;i<route.graphPath.edges.Count;i++){int next=route.graphPath.edges[i];if(begin>=distance&&district.graph.edges[next].change!=0)return Mathf.Max(0,begin-distance-2);begin=route.graphPath.ends[i];}
         return float.PositiveInfinity;
     }
+    // Single-map lane changes (PvP uses authored merge zones) wait at the change start while the
+    // target lane has a vehicle alongside or approaching from behind, including the player taxi.
+    public bool laneYielding;float laneYieldSince;int laneYieldEdge=-1;
+    float LaneChangeYieldGap(){
+        if(district==null||route.graphPath==null||system.AuthoredMergesActive)return float.PositiveInfinity;
+        float begin=0;
+        for(int i=0;i<route.graphPath.edges.Count;i++){int next=route.graphPath.edges[i];float end=route.graphPath.ends[i];
+            if(district.graph.edges[next].change!=0&&end>distance){
+                if(begin<distance-.5f)return float.PositiveInfinity; // already moving across: finish the change
+                if(begin-distance>Mathf.Max(12,speed*3))return float.PositiveInfinity;
+                // Bounded wait per change edge: forward body sensing on the change edge still prevents contact.
+                if(laneYieldEdge==i&&Time.time-laneYieldSince>6)return float.PositiveInfinity;
+                var target=route.Position(Mathf.Min(route.length,end));var facing=route.Tangent(Mathf.Min(route.length,end));facing.y=0;if(facing.sqrMagnitude<.001f)return float.PositiveInfinity;facing.Normalize();
+                float rear=Mathf.Max(8,speed*3+8);var center=target-facing*(rear-3)*.5f+Vector3.up*.85f;
+                int contacts=overlaps.Box(center,new Vector3(1.1f,.6f,(rear+3)*.5f),Quaternion.LookRotation(facing),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore);
+                for(int c=0;c<contacts;c++){var h=overlaps.hits[c];var rb=h.attachedRigidbody;if(rb==null||rb==body)continue;
+                    var other=h.GetComponentInParent<TrafficCar>();float otherSpeed=other?other.speed:rb.velocity.magnitude;
+                    // Two cars swapping lanes side by side: the lower instance id goes first.
+                    if(other&&other.laneYielding&&other.GetInstanceID()>GetInstanceID())continue;
+                    float along=Vector3.Dot(rb.position-target,facing);
+                    // Alongside the merge point, or behind and actually closing in.
+                    if(along>-6||otherSpeed>1f){if(laneYieldEdge!=i){laneYieldEdge=i;laneYieldSince=Time.time;}return Mathf.Max(0,begin-distance-.5f);}}
+                return float.PositiveInfinity;}
+            begin=end;}
+        return float.PositiveInfinity;
+    }
     public int mitFollowingTicks;public float baselineTarget,followingTarget;
     public DistrictTraffic district;
     readonly System.Collections.Generic.HashSet<TrafficStop> released=new System.Collections.Generic.HashSet<TrafficStop>();
     public bool Visible {get{return !recycling;}}
     bool networkView;int networkTurn;
     public int CurrentTurn {get{if(networkView)return networkTurn;if(route.graphPath==null)return route.turn;foreach(var stop in route.stops)if(distance<=stop.exitDistance&&stop.distance-distance<30)return stop.Movement(route);return 0;}}
-    public void Continue(TrafficRoute next){system.Release(this);released.Clear();stoppedAt=null;route=next;distance=0;observedLaneEdge=-1;completedRoutes++;}
+    public void Continue(TrafficRoute next){laneYieldEdge=-1;system.Release(this);released.Clear();stoppedAt=null;route=next;distance=0;observedLaneEdge=-1;completedRoutes++;}
 
     public TrafficJunction stoppedAt;
     public TrafficRoute route; public TrafficSystem system;
@@ -114,6 +140,7 @@ public class TrafficCar : MonoBehaviour {
             }
         }
         gap=Mathf.Min(gap,ProfileLaneChangeGap());
+        float laneYield=LaneChangeYieldGap();laneYielding=laneYield<gap;if(laneYielding){gap=laneYield;blockedName="lane change yield";}
         float mergeGap=system.MergeApproachGap(this,out mergeStatus);
         if(mergeGap<gap){gap=mergeGap;waitingForMerge=true;waitingForJunction=true;}
         obstacleCar=null;float detection=Mathf.Max(8,speed*speed/6+6);

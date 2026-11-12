@@ -59,6 +59,7 @@ public partial class TrafficSystem : MonoBehaviour {
     public readonly List<TrafficJunction> junctions = new List<TrafficJunction>();
     public readonly List<TrafficCar> cars = new List<TrafficCar>();
     NativeTrafficMergePolicy authoredMerges;
+    public bool AuthoredMergesActive {get{return authoredMerges!=null;}}
     public int MergeFleetObservations {get{return authoredMerges==null?0:authoredMerges.FleetObservations;}}
     public int MergePhysicsQueries {get{return authoredMerges==null?0:authoredMerges.PhysicsQueries;}}
     public int MergeGapCalls {get{return authoredMerges==null?0:authoredMerges.GapCalls;}}
@@ -109,6 +110,8 @@ public partial class TrafficSystem : MonoBehaviour {
         var direction=car.route.graphPath==null?car.route.direction:car.route.Tangent(Mathf.Max(0,stop.distance));int turn=stop.Movement(car.route);
         var j=stop.junction;int sign=Sign(direction,stop.axis,j);
         var observed=j.rightTurnObservation!=null&&j.observationAxis==stop.axis&&j.observationSign==sign?j.rightTurnObservation.Copy():new RoadObservation{known=true,pedestrian=PedestrianState.None};
+        // Turning NPCs must not commit while a street pedestrian is on the exit crosswalk: they would stop inside the box holding their reservation.
+        if(turn!=0&&turn!=UturnMovement.Turn&&ambientPedestrians!=null&&ambientPedestrians.PathCrossingOccupied(j,direction,turn<0?-1:1))observed.pedestrian=PedestrianState.Crossing;
         observed.forward=j.editorProgram!=null?j.editorProgram.Movement(stop.axis,sign,turn,Clock,car.route.graphPath!=null?editorGraph.edges[car.route.graphPath.EdgeAt(Mathf.Max(0,stop.distance))].id:null):MovementSignal(j,stop.axis,turn,sign);if(j.editorProgram!=null)return observed.forward==SignalColor.Green&&!EditorPedestrian(j)&&observed.PedestrianClear&&YieldClear(j,direction,turn,car.gameObject);observed.trafficClear=turn==0&&!j.scenarioFlashing||YieldClear(j,direction,turn,car.gameObject);
         if(stop.junction.scenarioFlashing)return (observed.forward!=SignalColor.Red||car.stoppedAt==stop.junction)&&observed.PedestrianClear&&YieldClear(stop.junction,direction,turn,car.gameObject);
         if(turn>0)return observed.MayTurnRight(car.stoppedAt==stop.junction);
@@ -289,7 +292,7 @@ public partial class TrafficSystem : MonoBehaviour {
         Request(car,stop);float mine=j.requests[car];
         if(!CanEnter(car,stop))return false;
         foreach(var reserved in j.reservations)if(reserved!=car&&Conflicts(car,stop,reserved))return false;
-        if(!j.reservations.Contains(car))foreach(var pair in j.requests){var other=pair.Key;if(other==car||!other||!other.enabled||other.entryBlocked||!Conflicts(car,stop,other))continue;foreach(var approach in other.route.stops)if(approach.junction==j&&approach.distance-other.distance>=-.05f&&approach.distance-other.distance<=ReservationDistance(other)&&CanEnter(other,approach)&&ExitClear(other,approach)){if(pair.Value<mine||(pair.Value==mine&&other.GetInstanceID()<car.GetInstanceID()))return false;}}
+        if(!j.reservations.Contains(car))foreach(var pair in j.requests){var other=pair.Key;if(other==car||!other||!other.enabled||other.entryBlocked||!Conflicts(car,stop,other))continue;foreach(var approach in other.route.stops)if(approach.junction==j&&approach.distance-other.distance>=-.05f&&approach.distance-other.distance<=ReservationDistance(other)&&CanEnter(other,approach)&&ExitClear(other,approach)&&!BodyBlocks(car,other,approach)){if(pair.Value<mine||(pair.Value==mine&&other.GetInstanceID()<car.GetInstanceID()))return false;}}
 
         }else if(!CanEnter(car,stop))return false;
 
@@ -348,6 +351,9 @@ public partial class TrafficSystem : MonoBehaviour {
         }
         return gap;
     }
+    // An older request yields priority when this car's own body already sits in its corridor
+    // (a stop line inside a curved movement): otherwise each waits for the other forever.
+    bool BodyBlocks(TrafficCar car,TrafficCar other,TrafficStop approach){var colliders=car.GetComponentsInChildren<Collider>();foreach(var c in colliders)if(!c.isTrigger&&OccupiesMovement(other,approach,c))return true;return false;}
     public bool OccupiesMovement(TrafficCar car,TrafficStop stop,Collider blocker){
         // Include the bumpers and a conservative body width. Reservations still
         // protect future crossing conflicts; this checks actual present occupancy.
