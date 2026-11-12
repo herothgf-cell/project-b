@@ -1,3 +1,7 @@
+## 2026-11-12 기록·도움말 단축키
+
+- [x] 주행 HUD `기록 (F8)`·`도움말 (F1)` 표기, F1 도움말 열기·닫기. 통합 빌드와 은계 싱글의 실제 키 입력 확인. [작업 기록](work-history/2026-11-12-hud-help-shortcuts.md).
+
 ## 2026-11-09 프로젝트 진행 상황 재점검
 
 - [x] 최신 이력·범위·콘텐츠 기획/코드 대조, Strict issues0·통합/PVP manifest143파일 검사 exit0. [현황·검증·남은 항목](work-history/2026-11-09-progress-check.md).

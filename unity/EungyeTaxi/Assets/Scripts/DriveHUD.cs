@@ -2,6 +2,11 @@ using UnityEngine;
 public class DriveHUD : MonoBehaviour {
  public DriveSession session;public Texture2D tile;public bool HelpOpen {get;private set;}GUIStyle title,body,small;const int W=1024,H=1024;
  public void ToggleHelp(){HelpOpen=!HelpOpen;}
+ bool CockpitVisible => (!PracticeSession.Enabled||session.paused)&&!session.FullMapOpen&&!session.RideResultOpen&&!session.ChoiceOpen&&!session.PracticeMenuOpen&&!session.business.restartPrompt&&session.jobs!=null&&!session.business.ShowingSummary&&!session.business.preparing&&!session.business.taxPrompt&&!session.services.open&&!session.law.HistoryOpen;
+ void Update(){
+  if(!Input.GetKeyDown(KeyCode.F1)||!session.StartupReady||session.SettingsOpen||session.PracticeBusy||session.simulationMatch&&session.simulationMatch.Finished)return;
+  if(CockpitVisible)ToggleHelp();
+ }
  Texture2D lightTile;public Texture2D LightTile {get{if(!lightTile&&session&&session.world&&session.world.map!=null)lightTile=MapPresentation.Create(session.world.map,2048);return lightTile;}}
  void OnDestroy(){if(tile)Destroy(tile);if(lightTile)Destroy(lightTile);}
  void Start(){tile=new Texture2D(W,H);var pixels=new Color[W*H];for(int i=0;i<pixels.Length;i++)pixels[i]=new Color(.10f,.15f,.17f);tile.SetPixels(pixels);
@@ -22,7 +27,7 @@ public class DriveHUD : MonoBehaviour {
  public string MannerCaption {get{return session.jobs.HasPassengerScore?session.jobs.ScoreView.Caption:session.jobs.trip.State==TripState.ToPickup?"승객 만족도 · 탑승 전 / 요구 "+session.jobs.current.requiredScore+"점":"승객 만족도 · 탑승 후 표시";}}
  public string LawCaption {get{int valid=0;foreach(var e in session.law.ledger.Events)foreach(var r in e.rules)if(r.verdict==LawVerdict.Compliant||r.verdict==LawVerdict.Violation)valid++;return "운전 점수 "+session.law.ledger.TotalScore+"점 · "+(valid==0?"아직 유효 평가 없음":"유효 "+valid+"건")+" · F8";}}
  void Gauge(Rect r,float value,Color color,int requirement=-1){GUI.color=new Color(.13f,.18f,.21f);GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=color;GUI.DrawTexture(new Rect(r.x,r.y,r.width*Mathf.Clamp01(value/100),r.height),Texture2D.whiteTexture);if(requirement>=0){GUI.color=Color.white;GUI.DrawTexture(new Rect(r.x+r.width*Mathf.Clamp01(requirement/100f)-1,r.y-2,2,r.height+4),Texture2D.whiteTexture);}GUI.color=Color.white;}
- void OnGUI(){if(session.ChoiceOpen&&session.simulationMatch&&!session.FullMapOpen)CockpitUI.DrawStandingsOverlay(session);if(PracticeSession.Enabled&&!session.paused)return;if(session.FullMapOpen||session.RideResultOpen||session.ChoiceOpen||session.PracticeMenuOpen||session.business.restartPrompt||session.jobs==null||session.business.ShowingSummary||session.business.preparing||session.business.taxPrompt||session.services.open||session.law.HistoryOpen)return;if(title==null){GUI.skin.font=KoreanText.Font;title=new GUIStyle(GUI.skin.label){fontSize=23,fontStyle=FontStyle.Bold};body=new GUIStyle(GUI.skin.label){fontSize=16};small=new GUIStyle(GUI.skin.label){fontSize=13};title.normal.textColor=body.normal.textColor=small.normal.textColor=CasualUI.Ink;}
+ void OnGUI(){if(session.ChoiceOpen&&session.simulationMatch&&!session.FullMapOpen)CockpitUI.DrawStandingsOverlay(session);if(!CockpitVisible)return;if(title==null){GUI.skin.font=KoreanText.Font;title=new GUIStyle(GUI.skin.label){fontSize=23,fontStyle=FontStyle.Bold};body=new GUIStyle(GUI.skin.label){fontSize=16};small=new GUIStyle(GUI.skin.label){fontSize=13};title.normal.textColor=body.normal.textColor=small.normal.textColor=CasualUI.Ink;}
   body.fontSize=UiReadability.Font(16);small.fontSize=UiReadability.Font(13);CockpitUI.Draw(this);
   if(HelpOpen)DrawHelp();
   if(session.paused){
@@ -57,7 +62,7 @@ public class DriveHUD : MonoBehaviour {
   if(GUI.Button(new Rect(x+20,row,440,40),"게임 종료",KoreanText.Button(16)))Application.Quit();row+=52;
   if(unified&&!string.IsNullOrEmpty(unified.Message))GUI.Label(new Rect(x+20,row,440,42),unified.Message,new GUIStyle(small){wordWrap=true});
  }
- public string DrivingHelpText {get{return "운전\nW / ↑ 가속 · S / ↓ 감속 · A,D / ←,→ 조향\n정차 후 S를 놓았다 다시 누르면 후진 · Space 긴급제동\nQ / E 방향지시등 · G 비상등\n\n시점과 지도\nC 시점 전환 · B 뒤보기 · Z / X 좌우 보기 · V 코너 시선\nM 전체 지도 · + / - 미니맵 확대 / 축소\n\n승객과 영업\nF 승하차 · 숫자 1~n 대화 선택 (화면의 선택지 번호)\nF7 생활거점 · F8 운행 기록 · N 퇴근 (거점에 정차 후)\n\n조향 보조와 메뉴\nH 조향 보조 켜기 / 끄기 · 보조 중 ← / → 차로 변경\n보조 중 Q / E 다음 교차로 회전 예약\n가속·감속·제동·신호 판단은 직접 합니다.\nF10 도움말 · Esc 일시정지 · F11 전체화면";}}
+ public string DrivingHelpText {get{return "운전\nW / ↑ 가속 · S / ↓ 감속 · A,D / ←,→ 조향\n정차 후 S를 놓았다 다시 누르면 후진 · Space 긴급제동\nQ / E 방향지시등 · G 비상등\n\n시점과 지도\nC 시점 전환 · B 뒤보기 · Z / X 좌우 보기 · V 코너 시선\nM 전체 지도 · + / - 미니맵 확대 / 축소\n\n승객과 영업\nF 승하차 · 숫자 1~n 대화 선택 (화면의 선택지 번호)\nF7 생활거점 · F8 운행 기록 · N 퇴근 (거점에 정차 후)\n\n조향 보조와 메뉴\nH 조향 보조 켜기 / 끄기 · 보조 중 ← / → 차로 변경\n보조 중 Q / E 다음 교차로 회전 예약\n가속·감속·제동·신호 판단은 직접 합니다.\nF1 도움말 · Esc 일시정지 · F11 전체화면";}}
  public static Rect HelpBounds(float width,float height){float scale=Mathf.Min(1,Mathf.Min((width-24)/760,(height-24)/660));return new Rect((width-760*scale)/2,(height-660*scale)/2,760*scale,660*scale);}
  void DrawHelp(){
   int depth=GUI.depth;GUI.depth=-20;var matrix=GUI.matrix;var r=HelpBounds(Screen.width,Screen.height);float scale=r.width/760;

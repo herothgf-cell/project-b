@@ -21,7 +21,7 @@ public class BusinessHUD : MonoBehaviour {
    GUI.Label(new Rect(px+20,py+20,580,45),e.Day+"일차 영업 준비 · 3일 × 12분 / 순수익 30,000원",new GUIStyle(text){fontSize=20});
    GUI.Label(new Rect(px+20,py+80,580,65),"현금 "+Won(account.Cash)+" · 미납 "+Won(account.Debt)+" · 연료 "+account.Fuel.ToString("0")+"%\n운송 수입에서 주유·식사·주차 비용을 뺀 순수익으로 도전합니다.",text);
    GUI.Label(new Rect(px+20,py+155,580,40),"식사 하루 3,000원 · 주차 하루 500원 · 주유는 보충량만큼 결제",small);
-   GUI.Label(new Rect(px+20,py+205,580,45),"방향키 ↑↓ 가감속 · ←→ 조향 · Space 제동 · F 승하차 · H 조향 보조 (가감속 직접)\nF7 거점 · F8 기록 · C 시점 · Q/E 깜빡이 · F10 안내 표시",small);
+   GUI.Label(new Rect(px+20,py+205,580,45),"방향키 ↑↓ 가감속 · ←→ 조향 · Space 제동 · F 승하차 · H 조향 보조 (가감속 직접)\nF7 거점 · F8 기록 · C 시점 · Q/E 깜빡이 · F1 도움말",small);
    var practice=session.GetComponent<PracticeSession>();GUI.enabled=!practice.Busy;
    if(GUI.Button(new Rect(px+20,py+265,580,40),"운전 연습 선택 · 출구 정체 / 우회전",button))practice.OpenPicker();
    GUI.Label(new Rect(px+20,py+315,580,115),practice.SelectedTitle+"\n"+practice.SelectedConditions+"\n"+practice.SelectedGuidance,new GUIStyle(small){wordWrap=true,fontSize=15});
