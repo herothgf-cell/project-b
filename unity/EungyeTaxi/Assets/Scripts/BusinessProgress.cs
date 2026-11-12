@@ -153,14 +153,15 @@ public class BusinessProgress : MonoBehaviour {
 
  }
  static void UpgradeEungyeApproachCheckpoint(LiveCampaignCheckpoint live,MapData map){
-  // r15 retains the r14 stop bindings, existing edge order, world surfaces and taxi positions.
-  // Only accept this reviewed transition on the packaged project map, never on a personal edit.
-  if(map.mapId!="eungye"||live.mapRevision!="은계 프로젝트 지도 · r14"||map.editorRevision!="은계 프로젝트 지도 · r15"||
-     map.editorDocument==null||map.editorDocument.projectRevision!="4dfb8e75ec93b8dc0f2749b51cfd5a8aba7a93f2d64d22e04ec299cf6d5bddac"||
+  // r16 retains r14/r15 stop bindings, existing edge order and taxi positions.
+  bool fromR14=live.mapRevision=="은계 프로젝트 지도 · r14";
+  if(map.mapId!="eungye"||(!fromR14&&live.mapRevision!="은계 프로젝트 지도 · r15")||map.editorRevision!="은계 프로젝트 지도 · r16"||
+     map.editorDocument==null||map.editorDocument.projectRevision!="d9596da33d4efc0d4f862c714eb05bb70c94365bfc30ab6171a702e2b672e3df"||
      RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   live.mapRevision=map.editorRevision;
   var entry=live.lawObservation==null?null:live.lawObservation.entry;
-  if(entry!=null&&(entry.junction=="J8066_6364"||entry.junction=="J1927_5181")){
+  if(entry!=null&&(entry.junction=="J7973_3744"&&entry.axis==1&&entry.sign==1||
+      fromR14&&(entry.junction=="J8066_6364"||entry.junction=="J1927_5181"))){
    live.lawObservation.entry=null;
    live.lawObservation.entryPresent=false;
   }
