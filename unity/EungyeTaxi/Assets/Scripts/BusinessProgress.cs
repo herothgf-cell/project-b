@@ -130,6 +130,7 @@ public class BusinessProgress : MonoBehaviour {
  }
  static void ValidateLivePayload(LiveCampaignCheckpoint live,DriveSession owner){
   if(live==null)return;if(live.accident!=null)live.accident.Validate();StopOccupancyPolicy.Restore(live.occupancy);ValidateOperationState(live);
+  UpgradeEungyeApproachCheckpoint(live,owner.world.map);
   if(live.mapRevision!=owner.world.map.editorRevision)throw new Exception("Map revision mismatch: saved='"+live.mapRevision+"', current='"+owner.world.map.editorRevision+"'");
   if(live.jobs==null)throw new Exception("Missing live passenger jobs");
   if(live.jobs.trip==null)throw new Exception("Missing live trip state");
@@ -151,6 +152,19 @@ public class BusinessProgress : MonoBehaviour {
   if(j.trip.state==TripState.OnTrip){var d=j.drunk;if(d!=null)d.Validate();if(d==null||j.manners==null||j.request==null||d.ArrivalLocked!=j.trip.arrivalLocked||d.ArrivalLocked&&j.reward==null)throw new Exception("Incomplete occupied session");foreach(float v in new[]{d.Elapsed,d.ArrivalElapsed,d.DisembarkElapsed,d.WaitElapsed,d.VomitProgress})if(!Valid(v)||v<0)throw new Exception("Invalid drunk ride time");if(d.Waiting&&(!d.ArrivalLocked||!d.SleepPlanned)||d.Settled)throw new Exception("Inconsistent drunk ride");}
 
  }
+ static void UpgradeEungyeApproachCheckpoint(LiveCampaignCheckpoint live,MapData map){
+  // r15 retains the r14 stop bindings, existing edge order, world surfaces and taxi positions.
+  // Only accept this reviewed transition on the packaged project map, never on a personal edit.
+  if(map.mapId!="eungye"||live.mapRevision!="은계 프로젝트 지도 · r14"||map.editorRevision!="은계 프로젝트 지도 · r15"||
+     map.editorDocument==null||map.editorDocument.projectRevision!="4dfb8e75ec93b8dc0f2749b51cfd5a8aba7a93f2d64d22e04ec299cf6d5bddac"||
+     RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
+  live.mapRevision=map.editorRevision;
+  var entry=live.lawObservation==null?null:live.lawObservation.entry;
+  if(entry!=null&&(entry.junction=="J8066_6364"||entry.junction=="J1927_5181")){
+   live.lawObservation.entry=null;
+   live.lawObservation.entryPresent=false;
+  }
+ }
  static void ValidateOffer(JobOffer o,int count){if(o!=null&&(o.pickup<0||o.pickup>=count||o.drop<0||o.drop>=count||o.fare<0))throw new Exception("Invalid live stop reference");}
  static bool Valid(float value){return !float.IsNaN(value)&&!float.IsInfinity(value);}
  public static void ValidateOperationState(LiveCampaignCheckpoint live){
@@ -164,7 +178,7 @@ public class BusinessProgress : MonoBehaviour {
 
  }
  static bool EmptyRoadObservation(RoadObservation o){return o==null||!o.known&&!o.trafficClear&&!o.dedicated&&!o.pedestrianGreen&&(int)o.forward==0&&(int)o.right==0&&(int)o.pedestrian==0;}
- static bool EmptyLawEntry(LawEntrySnapshot e){return e==null||string.IsNullOrEmpty(e.junction)&&string.IsNullOrEmpty(e.id)&&e.axis==0&&e.sign==0&&e.direction==Vector3.zero&&!e.edited&&!e.uturnSigned&&!e.uturnAllowed&&!e.stopped&&!e.pedestrianYield&&!e.encroached&&!e.entered&&(int)e.left==0&&e.necessaryBefore==0&&!e.slowPresent&&(e.slow==null||e.slow.version==1&&e.slow.observedSeconds==0&&e.slow.continuousExcess==0&&!e.slow.violated&&!e.slow.necessary)&&EmptyRoadObservation(e.observed);}
+ static bool EmptyLawEntry(LawEntrySnapshot e){return e==null||string.IsNullOrEmpty(e.junction)&&string.IsNullOrEmpty(e.id)&&e.axis==0&&e.sign==0&&e.direction==Vector3.zero&&!e.edited&&!e.uturnSigned&&!e.uturnAllowed&&!e.stopped&&!e.pedestrianYield&&!e.pedestrianConflict&&!e.encroached&&!e.entered&&(int)e.left==0&&e.necessaryBefore==0&&!e.slowPresent&&(e.slow==null||e.slow.version==1&&e.slow.observedSeconds==0&&e.slow.continuousExcess==0&&!e.slow.violated&&!e.slow.necessary)&&EmptyRoadObservation(e.observed);}
  static bool EmptyUpstream(UpstreamUturnSnapshot u){return u==null||string.IsNullOrEmpty(u.connector)&&string.IsNullOrEmpty(u.junction)&&string.IsNullOrEmpty(u.lane)&&string.IsNullOrEmpty(u.id)&&u.axis==0&&u.sign==0&&!u.allowed&&!u.confirmed&&!u.yieldViolated&&EmptyRoadObservation(u.observation);}
  public static void NormalizeLawObservation(DrivingLawSnapshot law){
   if(law==null)return;if(law.observationVersion<0||law.observationVersion>1)throw new ArgumentException("Unknown law observation version");

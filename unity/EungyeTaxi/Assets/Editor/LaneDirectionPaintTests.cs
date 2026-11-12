@@ -38,6 +38,14 @@ public static class LaneDirectionPaintTests {
    }
    var detachedLeft=arrows.Single(a=>map.hdEdges[a.edgeIndex].id=="local:14385:13336:10603:1539:part:2");
    Check(detachedLeft.turns==LaneDirectionPaint.Straight,"actual approach paints only straight when its authored left connector has no exit");
+   var approach=arrows.Where(a=>a.centre.z>585&&a.centre.z<619&&a.forward.z>.95f&&map.hdEdges[a.edgeIndex].ruleId=="J8066_6364").OrderBy(a=>a.centre.x).ToArray();
+   Check(approach.Select(a=>a.turns).SequenceEqual(new[]{LaneDirectionPaint.Left,LaneDirectionPaint.Straight,LaneDirectionPaint.Straight,LaneDirectionPaint.Straight,LaneDirectionPaint.Right}),"J8066 northbound arrows left / three straight / right");
+   Check(UturnRoadMarkings.FallbackArrows(map).Any(a=>a.centre.z>585&&a.centre.z<619&&a.forward.z>.95f&&map.hdEdges[a.edgeIndex].ruleId=="J8066_6364"),"J8066 northbound left lane also paints a U-turn");
+   int solid=0;UturnRoadMarkings.Paint(map,(name,p,d,w,l,y)=>{if(name=="U-turn permitted median"&&p.z>600&&p.z<619&&Mathf.Abs(p.x-805.9f)<.5f&&d.z>.95f&&l>2&&!y)solid++;});
+   Check(solid==1,"J8066 northbound median opening is continuous white");
+   bool yellowInOpening=false;
+   RoadPaintGeometry.Paint(map,null,(name,p,d,w,l,y)=>{if(y&&p.z>607&&p.z<611&&Mathf.Abs(p.x-805.9f)<.5f&&Mathf.Abs(d.z)>.95f)yellowInOpening=true;});
+   Check(!yellowInOpening,"J8066 replaces the yellow median at the U-turn opening");
    int junctions=arrows.Select(a=>map.hdEdges[a.edgeIndex].ruleId).Distinct().Count();
    Debug.Log("LANE_DIRECTION_PAINT_TEST_OK glyphCases="+glyphs+" lanes="+arrows.Count+" junctions="+junctions);
   }finally{MapCatalog.LockedRegion=previous;}

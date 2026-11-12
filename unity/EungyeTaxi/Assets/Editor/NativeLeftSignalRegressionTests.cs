@@ -50,6 +50,11 @@ public static class NativeLeftSignalRegressionTests {
    }
    var closed=system.junctions.Single(x=>x.name=="J1927_5181");
    Check(!system.HasLeftMovement(closed,1,1),"intentionally closed westbound approach remains without left permission");
+   var suinLeft=Array.FindIndex(map.hdEdges,e=>e.id=="A222BC004192:0");
+   Check(suinLeft>=0&&map.hdEdges[suinLeft].turn==-1&&map.hdEdges.Any(e=>e.status=="provisional-portal"&&!e.disabled&&e.next.Contains(suinLeft)),"J1927 northeast approach retains an active portal into its left connector");
+   Check(system.HasLeftMovement(closed,0,1),"J1927 southwestbound approach permits the mapped left");
+   var suinStage=closed.gameProgram.stages.Single(s=>s.groups.Any(id=>closed.gameProgram.groups.Any(g=>g.id==id&&g.axis==0&&g.sign==1&&g.turn==-1)));
+   Check(suinStage.green==8,"J1927 protected left has eight seconds of green");
    GuardFixtures(system);
    Debug.Log("NATIVE_LEFT_SIGNAL_REGRESSION_OK");
   }finally{UnityEngine.Object.DestroyImmediate(host);}

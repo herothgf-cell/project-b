@@ -6,8 +6,9 @@ public sealed class DemandSignalClock {
  public int Stage {get;private set;}public float Elapsed {get;private set;}public float GreenSeconds {get;private set;}
  public DemandSignalClock(RoadMapSignalProgram source){program=source;demand=new int[source.stages.Length];GreenSeconds=Minimum(0);}
  bool Pedestrian(int index){foreach(string id in program.stages[index].groups)foreach(var g in program.groups)if(g.id==id&&g.pedestrian)return true;return false;}
- float Minimum(int index){return Pedestrian(index)?program.stages[index].green:Math.Min(4,program.stages[index].green);}
- float Duration(int index){var s=program.stages[index];return Pedestrian(index)?s.green:demand[index]>=3?s.green+4:Math.Min(6,s.green);}
+ bool ProtectedLeft(int index){foreach(string id in program.stages[index].groups)foreach(var group in program.groups)if(group.id==id&&!group.pedestrian&&group.turn==-1)return true;return false;}
+ float Minimum(int index){var stage=program.stages[index];return Pedestrian(index)||ProtectedLeft(index)?stage.green:Math.Min(4,stage.green);}
+ float Duration(int index){var s=program.stages[index];return Pedestrian(index)?s.green:demand[index]>=3?s.green+4:Math.Max(Minimum(index),Math.Min(6,s.green));}
  bool OtherDemand(){for(int i=0;i<demand.Length;i++)if(i!=Stage&&demand[i]>0)return true;return false;}
  public float ProgramTime {get{float t=0;for(int i=0;i<Stage;i++){var s=program.stages[i];t+=s.green+s.yellow+s.clearance;}var current=program.stages[Stage];return t+(Elapsed<GreenSeconds?Math.Min(Elapsed,current.green-.001f):current.green+Math.Min(Elapsed-GreenSeconds,current.yellow+current.clearance-.001f));}}
  public void Step(float seconds,int[] counts,bool crossingOccupied){

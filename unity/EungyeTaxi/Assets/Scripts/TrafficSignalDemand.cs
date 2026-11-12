@@ -24,8 +24,8 @@ public partial class TrafficSystem {
  // enabled directed lane/connector can supply intent when no indicator is set.
  bool InferredLeftDemand(DriveSession driver,TrafficJunction j,int axis,int sign){
   if(j.gameProgram==null||j.facility!=null&&!j.facility.allowLeft||!HasLeftMovement(j,axis,sign))return false;
-  var taxi=driver.taxi;var direction=AxisDirection(j,axis)*sign;
-  float gap=Vector3.Dot(j.center-taxi.transform.position,direction)-j.StopDistance(axis,sign);
+  var taxi=driver.taxi;var direction=StopNormal(j,axis,sign);
+  float gap=Vector3.Dot(StopPosition(j,axis,sign)-taxi.transform.position,StopNormal(j,axis,sign));
   if(gap< -TrafficJunction.StopLineEntryTolerance||gap>40)return false;
   var nav=driver.jobs?driver.jobs.nav:null;var graph=editorGraph??(nav?nav.hd:null);
   if(graph==null||roadMap==null||!ReferenceEquals(graph.edges,roadMap.hdEdges))return false;
@@ -56,15 +56,21 @@ public partial class TrafficSystem {
   float progress=route.path.Project(taxi.transform.position,out error);
   if(error>width*.5f||Vector3.Dot(taxi.transform.forward,route.path.Tangent(progress))<.8f)return false;
   int index=0;while(index<route.ends.Count&&progress>=route.ends[index]-.01f)index++;
-  if(index>=route.edges.Count-1||route.edges[index]!=current||route.ends[index]-progress>40)return false;
-  return DemandLeftConnector(graph,current,route.edges[index+1],j);
+  if(index>=route.edges.Count-1||route.ends[index]-progress>40)return false;
+  int routed=route.edges[index];
+  if(routed!=current){
+   var other=graph.edges[routed];
+   // Parallel portal IDs can represent the same physical lane and endpoints.
+   if(lane.status!="provisional-portal"||other.status!=lane.status||other.fromNode!=lane.fromNode||other.toNode!=lane.toNode)return false;
+  }
+  return DemandLeftConnector(graph,routed,route.edges[index+1],j);
  }
  bool DemandLeftConnector(HdRoadGraph graph,int incoming,int connector,TrafficJunction j){
   if(connector<0||connector>=graph.edges.Length||Array.IndexOf(graph.edges[incoming].next,connector)<0)return false;
   var left=graph.edges[connector];if(left.disabled||left.turn!=-1||left.change!=0||left.next==null)return false;
   bool exit=false;foreach(int next in left.next)if(next>=0&&next<graph.edges.Length&&!graph.edges[next].disabled){exit=true;break;}if(!exit)return false;
   if(graph.edges[incoming].ruleId==j.name&&left.ruleId==j.name)return true;
-  if(graph.edges[incoming].status!="ngii"||left.status!="ngii")return false;
+  if((graph.edges[incoming].status!="ngii"&&graph.edges[incoming].status!="provisional-portal")||left.status!="ngii")return false;
   // Native NGII rule IDs belong to individual edges. Use the same bounded
   // nearest-junction association as native protected-movement discovery.
   var path=graph.paths[connector];var middle=path.Position(path.length*.5f);TrafficJunction nearest=null;float distance=32;
@@ -90,8 +96,8 @@ public partial class TrafficSystem {
    var taxi=driver.taxi;TrafficJunction best=null;int bestAxis=0,bestSign=1;float nearest=100;
    foreach(var j in junctions)if(Adaptive(j))for(int axis=0;axis<2;axis++){
     int sign=Sign(taxi.transform.forward,axis,j);var dir=AxisDirection(j,axis)*sign;if(Vector3.Dot(taxi.transform.forward,dir)<.8f)continue;
-    var delta=j.center-taxi.transform.position;float along=Vector3.Dot(delta,dir);float lateral=Mathf.Abs(Vector3.Dot(delta,Right(dir)));
-    if(along<j.StopDistance(axis,sign)-3||along>nearest||lateral>j.halfWidth[axis]+3)continue;
+    var normal=StopNormal(j,axis,sign);var delta=StopPosition(j,axis,sign)-taxi.transform.position;float along=Vector3.Dot(delta,normal);float lateral=Mathf.Abs(Vector3.Dot(delta,Right(normal)));
+    if(along< -3||along>nearest||lateral>j.halfWidth[axis]+3)continue;
     best=j;bestAxis=axis;bestSign=sign;nearest=along;
    }
    if(best!=null){var indicators=taxi.GetComponent<TaxiSignals>();int turn=indicators?indicators.direction:0;if(turn==0&&InferredLeftDemand(driver,best,bestAxis,bestSign))turn=-1;AddDemand(best,bestAxis,bestSign,turn);}

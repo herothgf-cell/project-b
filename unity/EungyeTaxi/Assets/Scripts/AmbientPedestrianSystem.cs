@@ -19,7 +19,22 @@ public sealed class AmbientPedestrianSystem : MonoBehaviour {
  public string PlacementReport {get{return placement==null?null:string.Join("\n",placement.report.ToArray());}}
  public int SidewalkCount {get{int n=0;foreach(var a in actors)if(!a.route.crossing)n++;return n;}}
  public int CrossingCount {get{int n=0;foreach(var a in actors)if(a.route.crossing)n++;return n;}}
- public void Initialize(DriveSession owner){session=owner;placement=new AmbientPedestrianPlacement(owner.world.map,owner.traffic,owner.roadEnvironment);int index=0;foreach(var route in placement.routes){var go=new GameObject("일반 보행자 · "+route.id);go.transform.SetParent(transform);var actor=go.AddComponent<AmbientPedestrian>();actor.Initialize(this,route,index++);actors.Add(actor);}Debug.Log("AMBIENT_PEDESTRIANS placed="+actors.Count+" sidewalks="+SidewalkCount+" crossings="+CrossingCount+"\n"+PlacementReport);}
+ public void Initialize(DriveSession owner){session=owner;placement=new AmbientPedestrianPlacement(owner.world.map,owner.traffic,owner.roadEnvironment);int index=0;foreach(var route in placement.routes){var go=new GameObject("일반 보행자 · "+route.id);go.transform.SetParent(transform);var actor=go.AddComponent<AmbientPedestrian>();actor.Initialize(this,route,index++);actors.Add(actor);if(route.crossing&&owner.traffic.EungyeSingle)EnsureWalkWindow(route,actor.CrossingSeconds);}Debug.Log("AMBIENT_PEDESTRIANS placed="+actors.Count+" sidewalks="+SidewalkCount+" crossings="+CrossingCount+"\n"+PlacementReport);}
+ static void EnsureWalkWindow(AmbientPedestrianRoute route,float crossingSeconds){
+  if(route.junction.editorProgram!=null)return;
+  var program=route.junction.gameProgram;if(program==null)return;
+  foreach(var group in program.groups){
+   if(!group.pedestrian||group.axis!=route.axis||group.sign!=route.sign)continue;
+   foreach(var stage in program.stages)if(Array.IndexOf(stage.groups,group.id)>=0)stage.green=Mathf.Max(stage.green,Mathf.Ceil(crossingSeconds+2));
+  }
+ }
+ public bool LawCrossingConflict(TrafficJunction junction,Vector3 from,Vector3 to){
+  foreach(var actor in actors){
+   if(!actor||!actor.isActiveAndEnabled||!actor.Crossing||actor.state.jaywalking||!actor.VisualActive||actor.route.junction!=junction)continue;
+   if(DistanceToSegment(actor.transform.position,from,to)<=3f)return true;
+  }
+  return false;
+ }
  public AmbientPedestrian At(string id){return actors.Find(a=>a.route.id==id);}
  public bool ScenarioOwns(TrafficJunction j){if(j==null)return false;var right=session.GetComponent<RightTurnSituation>();if(right&&right.Active&&right.junction==j)return true;var choice=session.GetComponent<ScenarioChoiceSituation>();return choice&&choice.ActiveJunction==j;}
  public bool CrossingOccupied(TrafficJunction j){foreach(var a in actors)if(a.route.junction==j&&a.Crossing)return true;return false;}
@@ -75,6 +90,7 @@ public sealed class AmbientPedestrian : MonoBehaviour {
  public AmbientPedestrianRoute route;
  public AmbientPedestrianState state;
  public bool Crossing {get{return route.crossing&&state.crossing;}}
+ public float CrossingSeconds {get{return route.Length/speed;}}
  GameObject leftLeg,rightLeg,leftArm,rightArm,visual;
  float speed,phase;
  public void Initialize(AmbientPedestrianSystem owner,AmbientPedestrianRoute assigned,int index){system=owner;route=assigned;state=new AmbientPedestrianState{id=route.id};speed=1.2f+(index%3)*.1f;BuildVisual(index);ResetSafe();}
@@ -93,8 +109,7 @@ public sealed class AmbientPedestrian : MonoBehaviour {
   state.redWait=green||state.deferredReveal||system.ScenarioOwns(route.junction)?0:Mathf.Min(120,state.redWait+dt);
   bool jaywalk=!green&&MayJaywalk(route.id,state.normalCrossings,state.redWait);
   float remaining=traffic.PedestrianGreenRemaining(route.junction,route.axis,route.sign);
-  // An authored program reports -1 when its countdown is unavailable; its green is still valid.
-  bool lateGreen=remaining>=0&&remaining<=2;
+  bool lateGreen=remaining>=0&&remaining<(traffic.EungyeSingle?CrossingSeconds+.25f:2);
   state.rest=Mathf.Max(0,state.rest-dt);if(state.rest>0||!jaywalk&&(!green||state.greenConsumed||lateGreen)||!system.MayStartCrossing(this)){return;}state.crossing=true;state.progress=.0001f;state.greenConsumed=true;state.jaywalking=jaywalk;state.redWait=0;if(jaywalk)state.normalCrossings=0;
  }
  public bool VisualActive {get{return visual&&visual.activeSelf;}}

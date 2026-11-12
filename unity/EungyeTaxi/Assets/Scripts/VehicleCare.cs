@@ -54,8 +54,8 @@ public sealed class VehicleCare {
  }
  public bool Refuse(string id){if(!NeedsWash||string.IsNullOrEmpty(id)||!refused.Add(id))return false;Refusals++;AcceptanceLocked=true;return true;}
  public bool BoardDrunk(){if(NeedsWash||DrunksBoarded>=1)return false;DrunksBoarded++;return true;}
- public void MarkVomit(){VomitUnwashed=true;AcceptanceLocked=true;}
- public bool Finish(string trip,bool vomited){if(string.IsNullOrEmpty(trip)||!settled.Add(trip))return false;if(vomited)MarkVomit();Cleanliness=vomited?Math.Min(Cleanliness,10):Math.Max(0,Cleanliness-2);return true;}
+ public int MarkVomit(){int before=Cleanliness;Cleanliness=Math.Min(Cleanliness,10);VomitUnwashed=true;AcceptanceLocked=true;return before-Cleanliness;}
+ public bool Finish(string trip,bool vomited){if(string.IsNullOrEmpty(trip)||!settled.Add(trip))return false;if(vomited)MarkVomit();else Cleanliness=Math.Max(0,Cleanliness-2);return true;}
  public void Advance(double seconds){if(double.IsNaN(seconds)||double.IsInfinity(seconds)||seconds<=0)return;double total=dirtSeconds+seconds;double points=Math.Floor(total/120);dirtSeconds=total%120;Cleanliness=(int)Math.Max(0,Cleanliness-Math.Min(100,points));}
  public void Wash(){Cleanliness=100;dirtSeconds=0;AcceptanceLocked=false;VomitUnwashed=false;}
  public VehicleCareSnapshot Snapshot(){return new VehicleCareSnapshot{damageVersion=1,damage=Damage.Snapshot(),encounterVersion=1,encounterDrunks=encounterDrunks,encounterMisses=encounterMisses,encounterOrdinal=encounterOrdinal,encounterRest=encounterRest,encounterReserved=encounterReserved,encounterType=encounterType,encounterSelectionSeed=encounterSelectionSeed,soiled=new List<string>(soiled).ToArray(),encounterTrips=new List<string>(encounterTrips).ToArray(),dirtSeconds=dirtSeconds,cleanliness=Cleanliness,day=Day,drunksBoarded=DrunksBoarded,refusals=Refusals,acceptanceLocked=AcceptanceLocked,vomitUnwashed=VomitUnwashed,settled=new List<string>(settled).ToArray(),refused=new List<string>(refused).ToArray()};}

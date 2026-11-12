@@ -83,7 +83,7 @@ public class EconomyLedger {
   if(Driver==null)return null;
   if(PvpProfile)return sleeping?PvpConditionRules.PreviewRest(Driver):PvpConditionRules.PreviewMeal(Driver);
   var next=Driver.Copy();bool crosses=Elapsed<Settings.daySeconds&&Elapsed+(sleeping?100:50)>=Settings.daySeconds;
-  if(sleeping){if(crosses)next.fatigue=100;next.Sleep();}
+  if(sleeping)next.Sleep();
   else {next.Meal();if(crosses)next.fatigue=100;}
   return next;
  }

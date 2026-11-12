@@ -39,8 +39,29 @@ public static class TrafficSignalLeftDemandRegressionTests {
     Guards(system,j,taxi,indicators,nav,incoming,left,exit,at,stage);
     Check(JsonUtility.ToJson(j.gameProgram)==program,"authored program and safety timings unchanged "+j.name);
    }
+   if(!baseline)CheckJ1927(system,nav,taxi,indicators);
    Debug.Log((baseline?"LEFT_DEMAND_BASELINE_OK":"LEFT_DEMAND_REGRESSION_OK")+" checks="+checks);
   }finally{UnityEngine.Object.DestroyImmediate(driverObject);UnityEngine.Object.DestroyImmediate(host);}
+ }
+ static void CheckJ1927(TrafficSystem system,RoadNavigation nav,TaxiController taxi,TaxiSignals indicators){
+  var j=system.junctions.Single(x=>x.name=="J1927_5181");
+  var graph=nav.hd;
+  int portal=Array.FindIndex(graph.edges,e=>e.id=="portal:A222BC004232:0:in");
+  int left=Array.FindIndex(graph.edges,e=>e.id=="A222BC004192:0");
+  var pose=new Vector3(201.78096f,0,545.7985f);
+  float error,at=graph.paths[portal].Project(pose,out error);
+  int exit=graph.edges[left].next.First();
+  nav.active=true;nav.freeGuidance=false;nav.hdGoal=exit;nav.hdGoalAt=graph.paths[exit].length;
+  nav.destination=graph.paths[exit].Position(nav.hdGoalAt);
+  nav.hdRoute=graph.Compose(new List<int>{portal,left,exit},Mathf.Max(0,at-4),nav.hdGoalAt);
+  nav.path.Clear();nav.path.AddRange(nav.hdRoute.path.points);
+  taxi.transform.SetPositionAndRotation(pose,Quaternion.Euler(0,212.90007f,0));
+  int stage=Array.FindIndex(j.gameProgram.stages,s=>s.groups.Any(id=>j.gameProgram.groups.Any(g=>g.id==id&&!g.pedestrian&&g.axis==0&&g.sign==1&&g.turn==-1)));
+  Check(stage>=0,"J1927 reported approach has a protected stage");
+  indicators.Clear();indicators.Toggle(-1);
+  Check(Scan(system,j)[stage]>0,"J1927 reported pose registers Q-on demand");
+  indicators.Clear();
+  Check(Scan(system,j)[stage]>0,"J1927 existing left route registers demand with Q off");
  }
  static void Guards(TrafficSystem system,TrafficJunction j,TaxiController taxi,TaxiSignals indicators,RoadNavigation nav,int incoming,int left,int exit,float at,int stage){
   var graph=nav.hd;var route=nav.hdRoute;var pose=taxi.transform.position;var rotation=taxi.transform.rotation;bool dedicated=graph.edges[incoming].next.Where(n=>!graph.edges[n].disabled).All(n=>graph.edges[n].turn==-1);

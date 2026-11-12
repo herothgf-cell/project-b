@@ -5,6 +5,7 @@ using UnityEngine;
 // Game approximation of the median opening used by each explicit U-turn.
 // Width is measured across the incoming heading, never from world X/Z.
 public static class UturnRoadMarkings {
+ const string EungyeNorthbound="join:reviewed:J8066-S:uturn";
  public sealed class Zone {
   public string incomingId,joinId;public Vector3 start,forward,across;public float width,length,sourceOffset;
   public bool Covers(Vector3 point,float extra=0){var delta=point-start;float along=Vector3.Dot(delta,forward),lateral=Vector3.Dot(delta,across);return along>=-extra&&along<=length+extra&&lateral>=Mathf.Min(0,-sourceOffset)-.45f-extra&&lateral<=Mathf.Max(0,-sourceOffset)+.45f+extra;}
@@ -29,7 +30,16 @@ public static class UturnRoadMarkings {
    var b=join.points[join.points.Length-1].V();float width=Vector3.Dot(b-a,across);if(width<=0)continue;
    float length=0;foreach(var point in join.points)length=Mathf.Max(length,Vector3.Dot(point.V()-a,forward));
    var zone=new Zone{incomingId=incoming.id,joinId=join.id,start=a+across*(width*.5f),forward=forward,across=across,width=width,length=length+2f};
-   SnapToSourceMedian(map,zone);result.Add(zone);
+   if(join.id==EungyeNorthbound){
+    // The turn joins the second opposing lane. The painted median is halfway
+    // to the first opposing lane, not halfway across the entire turn.
+    var opposing=System.Array.Find(lanes,l=>l.id=="local:8032:6164:7960:3988:part:1"&&Ordinary(l));
+    if(opposing!=null){
+     float separation=Vector3.Dot(opposing.points[0].V()-a,across);
+     zone.start=a+across*(separation*.5f);
+    }
+   }else SnapToSourceMedian(map,zone);
+   result.Add(zone);
   }return result;
  }
  // The source centreline can be slightly displaced from compiled lane-pair
@@ -76,7 +86,13 @@ public static class UturnRoadMarkings {
   }return result;
  }
  public static void Paint(MapData map,System.Action<string,Vector3,Vector3,float,float,bool> mark){
-  foreach(var zone in Build(map))for(float at=0;at<zone.length;at+=3f){float length=Mathf.Min(1.5f,zone.length-at);mark("U-turn permitted median",zone.start+zone.forward*(at+length*.5f),zone.forward,.28f,length,false);}
+  foreach(var zone in Build(map)){
+   if(zone.joinId==EungyeNorthbound){
+    mark("U-turn permitted median",zone.start+zone.forward*(zone.length*.5f),zone.forward,.18f,zone.length,false);
+    continue;
+   }
+   for(float at=0;at<zone.length;at+=3f){float length=Mathf.Min(1.5f,zone.length-at);mark("U-turn permitted median",zone.start+zone.forward*(at+length*.5f),zone.forward,.28f,length,false);}
+  }
   foreach(var arrow in FallbackArrows(map))LaneDirectionPaint.Paint(arrow,"U-turn approach arrow "+map.hdEdges[arrow.edgeIndex].id,mark);
  }
 }

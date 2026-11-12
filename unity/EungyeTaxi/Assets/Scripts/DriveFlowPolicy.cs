@@ -18,7 +18,7 @@ public static class DriveFlowPolicy {
   for(int axis=0;axis<2;axis++){
    var ids=new System.Collections.Generic.List<string>();foreach(int sign in new[]{1,-1})foreach(int turn in new[]{0,1}){var g=new RoadMapSignalGroup{axis=axis,sign=sign,turn=turn};groups.Add(g);ids.Add(g.id);}
    stages.Add(new RoadMapStage{name="양방향 직진",green=10,yellow=2,clearance=2,groups=ids.ToArray()});
-   foreach(int sign in new[]{1,-1})if(system.HasLeftMovement(j,axis,sign)){var g=new RoadMapSignalGroup{axis=axis,sign=sign,turn=-1};groups.Add(g);stages.Add(new RoadMapStage{name="보호 좌회전",green=4,yellow=2,clearance=2,groups=new[]{g.id}});}
+   foreach(int sign in new[]{1,-1})if(system.HasLeftMovement(j,axis,sign)){var g=new RoadMapSignalGroup{axis=axis,sign=sign,turn=-1};groups.Add(g);stages.Add(new RoadMapStage{name="보호 좌회전",green=system.EungyeSingle?8:4,yellow=2,clearance=2,groups=new[]{g.id}});}
   }
   if(system.HasPedestrianPhase(j)){var ids=new System.Collections.Generic.List<string>();for(int axis=0;axis<2;axis++)foreach(int sign in new[]{1,-1}){var g=new RoadMapSignalGroup{pedestrian=true,axis=axis,sign=sign};groups.Add(g);ids.Add(g.id);}stages.Add(new RoadMapStage{name="보행",green=10,yellow=0,clearance=2,groups=ids.ToArray()});}
   return new RoadMapSignalProgram{junctionId=j.name,groups=groups.ToArray(),stages=stages.ToArray()};

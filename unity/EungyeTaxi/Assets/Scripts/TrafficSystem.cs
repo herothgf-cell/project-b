@@ -51,6 +51,7 @@ public class TrafficStop { public TrafficJunction junction; public float distanc
 
 public partial class TrafficSystem : MonoBehaviour {
     public AmbientPedestrianSystem ambientPedestrians;
+    public bool EungyeSingle {get{return roadMap!=null&&roadMap.mapId=="eungye"&&!PvpSimulationMode.Active;}}
     DriveSession demandSession;
     void Start(){demandSession=FindObjectOfType<DriveSession>();}
     public int DemandPhase {get{return SimulationDemandClock.Phase(demandSession);}}
@@ -93,7 +94,7 @@ public partial class TrafficSystem : MonoBehaviour {
         // Right-turn observations describe the crossing AFTER the turn, not the taxi's incoming arm.
         int crossingAxis=1-j.observationAxis,crossingSign=j.observationAxis==0?-j.observationSign:j.observationSign;
         if(j.rightTurnObservation!=null&&crossingAxis==axis&&crossingSign==sign)return j.rightTurnObservation.pedestrianGreen;if(j.scenarioSignal||!HasPedestrianPhase(j))return false;float phase=PhaseTime(j);return phase>=VehicleCycle(j)&&phase<VehicleCycle(j)+10;}
-    public float PedestrianGreenRemaining(TrafficJunction j,int axis,int sign){if(!PedestrianGreen(j,axis,sign))return 0;if(j.gameProgram!=null&&!j.scenarioSignal)return (Adaptive(j)?DemandClock(j).WalkRemaining:j.gameProgram.SecondsToChange(axis,sign,0,Clock+j.offset,true));if(j.editorProgram!=null)return -1;return Mathf.Max(0,VehicleCycle(j)+10-PhaseTime(j));}
+    public float PedestrianGreenRemaining(TrafficJunction j,int axis,int sign){if(!PedestrianGreen(j,axis,sign))return 0;if(j.gameProgram!=null&&!j.scenarioSignal)return (Adaptive(j)?DemandClock(j).WalkRemaining:j.gameProgram.SecondsToChange(axis,sign,0,Clock+j.offset,true));if(j.editorProgram!=null)return j.editorProgram.SecondsToChange(axis,sign,0,Clock,true);return Mathf.Max(0,VehicleCycle(j)+10-PhaseTime(j));}
     public SignalColor Signal(TrafficJunction junction, int axis,int sign=1) { if(junction.gameProgram!=null&&!junction.scenarioSignal)return junction.gameProgram.Movement(axis,sign,0,GameSignalTime(junction)); if(junction.editorProgram!=null)return junction.editorProgram.Movement(axis,sign,0,Clock); return junction.scenarioSignal?(axis==junction.observationAxis&&(sign==junction.observationSign||junction.scenarioOpposingGreen)?junction.scenarioForward:SignalColor.Red):junction.signalized?(PhaseTime(junction)>=VehicleCycle(junction)?SignalColor.Red:KoreanSignalRules.Signal(PhaseTime(junction),junction.leftTurnMode,axis,sign)):SignalColor.Green; }
     public float SecondsToSignalChange(TrafficJunction j,int axis,int sign=1){if(j!=null&&j.gameProgram!=null&&!j.scenarioSignal)return (Adaptive(j)?DemandClock(j).SecondsToChange(axis,sign):j.gameProgram.SecondsToHeadChange(axis,sign,Clock+j.offset));if(j!=null&&j.editorProgram!=null)return j.editorProgram.SecondsToHeadChange(axis,sign,Clock);if(j==null||!j.signalized||j.scenarioSignal)return -1;float phase=PhaseTime(j),cycle=VehicleCycle(j);int approach=j.leftTurnMode==LeftTurnMode.Permissive?axis:axis*2+(sign>0?0:1);if(phase>=cycle)return cycle+12+approach*17-phase;float seconds=KoreanSignalRules.SecondsToChange(phase,j.leftTurnMode,axis,sign);return seconds+(HasPedestrianPhase(j)&&phase+seconds>=cycle-.001f?12:0);}
     public SignalColor LeftSignal(TrafficJunction junction,int axis,int sign=1){if(junction.gameProgram!=null&&!junction.scenarioSignal)return junction.gameProgram.Movement(axis,sign,-1,GameSignalTime(junction));if(junction.editorProgram!=null)return junction.editorProgram.Movement(axis,sign,-1,Clock);if(junction.scenarioSignal&&junction.leftTurnMode==LeftTurnMode.Permissive)return SignalColor.Red;return Signal(junction,axis,sign);}
@@ -504,7 +505,7 @@ public partial class TrafficSystem : MonoBehaviour {
     bool NativeLeftMovement(TrafficJunction j,int axis,int sign) {
         var edges=roadMap==null?null:roadMap.hdEdges;if(edges==null)return false;
         foreach(var incoming in edges) {
-            if(incoming.disabled||incoming.status!="ngii"||incoming.turn!=0||incoming.change!=0||incoming.next==null||incoming.points==null||incoming.points.Length<2)continue;
+            if(incoming.disabled||(incoming.status!="ngii"&&incoming.status!="provisional-portal")||incoming.turn!=0||incoming.change!=0||incoming.next==null||incoming.points==null||incoming.points.Length<2)continue;
             var heading=(incoming.points[incoming.points.Length-1].V()-incoming.points[incoming.points.Length-2].V()).normalized;
             int incomingAxis=Mathf.Abs(Vector3.Dot(heading,AxisDirection(j,0)))>.7f?0:1;
             if(incomingAxis!=axis||Sign(heading,incomingAxis,j)!=sign)continue;

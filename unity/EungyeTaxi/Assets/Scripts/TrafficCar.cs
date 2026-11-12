@@ -61,7 +61,7 @@ public class TrafficCar : MonoBehaviour {
     readonly TrafficOverlapQuery overlaps=new TrafficOverlapQuery();
     Material brakeOn, brakeOff,indicatorOn,indicatorOff;Renderer[] indicators;
     public void Initialize(TrafficSystem owner,TrafficRoute path,float initial,int index) {
-        system=owner;route=path;Profile=TrafficDriverProfile.ForIndex(index);gameObject.name+=" · "+ProfileLabel;
+        system=owner;route=path;Profile=TrafficDriverProfile.ForIndex(index,owner.EungyeSingle);gameObject.name+=" · "+ProfileLabel;
         body=gameObject.AddComponent<Rigidbody>(); body.isKinematic=true;body.interpolation=RigidbodyInterpolation.Interpolate;body.collisionDetectionMode=CollisionDetectionMode.ContinuousSpeculative;
         hit=gameObject.AddComponent<BoxCollider>();hit.center=new Vector3(0,.8f,0);hit.size=new Vector3(1.8f,1.25f,4.2f);
         Color[] colors={new Color(.15f,.34f,.62f),new Color(.72f,.16f,.13f),new Color(.75f,.77f,.77f),new Color(.18f,.4f,.33f)};
@@ -156,7 +156,7 @@ public class TrafficCar : MonoBehaviour {
             if(blocked||!system.MayEnter(this,stop)){system.CancelApproach(this,stop);gap=Mathf.Min(gap,Mathf.Max(0,remaining));waitingForJunction=true;}
         }}
         float cruise=route.turn!=0?4.5f:route.axis==0?9:7;
-        if(district!=null){float bend=Vector3.Angle(route.Tangent(distance),route.Tangent(Mathf.Min(route.length,distance+14)));cruise=bend>12||CurrentTurn!=0?4.5f:9;}
+        if(district!=null){float bend=Vector3.Angle(route.Tangent(distance),route.Tangent(Mathf.Min(route.length,distance+14)));cruise=bend>12||CurrentTurn!=0?4.5f:system.EungyeSingle?13:9;}
         float editorLimit=system.EditorSpeedLimit(this);if(editorLimit>0)cruise=Mathf.Min(cruise,editorLimit/3.6f);cruise*=RainPolicy.TrafficSpeedMultiplier;float followingGap=waitingForObstacle?Mathf.Max(0,gap-RainPolicy.ExtraFollowingGap(speed)):gap;float target=Profile.LimitSpeed(followingGap,cruise,waitingForObstacle&&obstacleCar!=null);baselineTarget=target;
         target=MitTrafficFollowing.Limit(system.mitOptions.Enabled,target,gap,
             obstacleCar?obstacleCar.speed:0,obstacleCar?Vector3.Dot(transform.forward,obstacleCar.transform.forward):0,
