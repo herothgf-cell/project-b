@@ -1,30 +1,30 @@
 {
-  "sourceCommit": "8cff8e1c51883cbce10b8e6e7db2690fc32203fa",
+  "sourceCommit": "e7d84a6cb38e040ae87265eb9949c0f9597826fc",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-12",
-  "totalBytes": 131589869.0,
+  "totalBytes": 131590858.0,
   "validation": {
-    "build": "PrototypeBuild.BuildHybrid exit 0 (clean worktree at source commit)",
-    "liveSaveFromPreviousBuild": 9,
-    "liveReloadAssertions": 23,
-    "pvpStabilityCore": true,
-    "lanTwoProcessLoopback": true,
-    "lanHostFrameP95MsBeforeAfter": [
-      35.7,
-      22.2
-    ],
+    "build": "PrototypeBuild.BuildHybrid exit 0",
+    "sourceCommit": "e7d84a6cb38e040ae87265eb9949c0f9597826fc",
+    "protocol": "native-city-lan-v19",
+    "priorCurvePhysics": "40/45/50 km/h passed",
     "manualDriving": false,
     "fullCampaign": false,
     "remotePcLan": false,
-    "evidence": "docs/work-history/2026-11-12-pvp-stability-performance.md"
+    "evidence": "docs/work-history/2026-11-12-pvp-default-release.md",
+    "drivingSettingsAssertions": 18,
+    "lanHostAssertions": 32,
+    "lanClientAssertions": 46,
+    "lanMovingMetres": 566.311378628016,
+    "lanProtocolBinaryVerified": true
   },
   "files": [
     {
       "path": "builds/EungyeTaxi/택시 시뮬레이션_BurstDebugInformation_DoNotShip/Data/Plugins/x86_64/lib_burst_generated.txt",
-      "bytes": 110738,
-      "sha256": "f436b57b4644e657b43d7f080575d450aed29aa6d3c6744775804f258bef58ef"
+      "bytes": 110703,
+      "sha256": "766fda32026d177c9cfdd473bfd74fc274df303a7f4a1cb54a585f910aa14233"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/app.info",
@@ -34,7 +34,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "ef0957be8596dcb016cf45e89499949fd575ea05810902b746eee683bc0aeb6c"
+      "sha256": "1494dffa82c33d5c188f68d9253d5dacadd262ac9052117f87d226449b8e6559"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -58,8 +58,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2820608,
-      "sha256": "308fbfbf2cceba7d95b6179f5f456dc7f4c174d65eb9c76d69c492079f2f77e9"
+      "bytes": 2821632,
+      "sha256": "e4a5245493980cb3ff8e0fed1c0099410db4c8fa71cca3950815e9ebe00a23dc"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",

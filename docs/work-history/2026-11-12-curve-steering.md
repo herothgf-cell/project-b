@@ -27,3 +27,6 @@
 - 실행: ZIP 전체 해제 → EungyeTaxi/EungyeTaxi.exe → PvP. Esc → 설정 → 운전 관련 설정에서 슬라이더/조향 빠른 선택 → 적용. 두 PC 모두 이 ZIP을 사용한다.
 - 재현: Unity batchmode `-executeMethod CurveSteeringChecks.Run`; `pwsh -File tools/test_driving_settings_player.ps1 -Executable <검증본exe> -Pvp`; `pwsh -File tools/test_pvp_native_lan.ps1 -Executable <검증본exe> -Discover -MotionOnly -MotionSeconds 30 -Port 17986`.
 - 빌드 당시 임시 실행 진입점은 조향 검사 후 기존 진단 빌더를 호출했다. 최종 테스트 소스에는 Run만 남겨 별도 최적화 작업의 미커밋 빌더에 의존하지 않게 했다. 제품 런타임 코드는 검증한 ZIP과 같다.
+
+
+후속: 사용자 요청으로 최적화와 조향을 LAN v19 기본 배포에 통합했다. [출하·ZIP·main 푸시 기록](2026-11-12-pvp-default-release.md). 위 v18 검증본은 과거 검사 대상이다.

@@ -1,21 +1,21 @@
 # 최신 작업 이력
 
-조향 개선 검증본: [중속 커브·조향 설정](2026-11-12-curve-steering.md). 별도 ZIP `artifacts/pvp-stability/EungyeTaxi-curve-steering-20261112.zip`, LAN v18(양쪽 갱신 필요). 아래 기본 배포 v17과 구분하며 필수 로컬 지도 입력은 변경하지 않았다. 다음은 실제 두 PC 수동 체감 확인이다.
+최적화·중속 조향·설정 프리셋을 기본 `builds/EungyeTaxi/`에 통합했다. LAN v19, 양쪽 PC 전체 폴더 갱신 필요. [기본 배포 기록](2026-11-12-pvp-default-release.md). 다음은 실제 두 PC 수동 체감 확인이다.
 
 이 파일은 **현재 기준 + 최근 기록**만 둔다. 2026-11-10 이전 전체 원문은 [보관본](LATEST-archive-until-2026-11-09.md)에 있다. 프로젝트 전체 상태는 [CURRENT-STATE](../CURRENT-STATE.md)를 먼저 읽는다.
 
 ## 현재 기준 (2026-11-12 점검)
 
-PvP 정차 끊김 최적화는 [별도 검증본 작업](2026-11-12-pvp-stability-performance.md) 참조. 법규 CPU/GC 개선·평지 물리·최근접2차로120·예측/보간 검사 통과. 기본 배포는 아래 교차로 작업 실행본을 유지하며 실제 제보한 호스트/참가 PC 수용은 미완료다.
+PvP 정차 끊김 최적화는 [별도 검증본 작업](2026-11-12-pvp-stability-performance.md) 참조. 법규 CPU/GC 개선·평지 물리·최근접2차로120·예측/보간 검사 통과. 최적화와 후속 조향 개선을 기본 배포에 통합했으며 실제 제보한 호스트/참가 PC 수용은 미완료다.
 
 PvP 호스트 렉 2차 최적화(같은 기록 후속 절): 내비 혼잡/제한속도 재계산·Dijkstra 할당·판정 할당 제거. 루프백 LAN 두 프로세스에서 호스트 frame p95 약35→22ms, 최대 123~271→57ms(2회씩). **배포 실행본에 반영**(소스 `8cff8e1`, 저장 이어받기23·manifest 143파일·배포본 LAN 호스트 p95 22.3ms). 다른 PC는 main pull 후 같은 실행본으로 맞춘다. 실제 다른 PC 체감은 미검증.
 
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
-| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 소스 `ec7aad9` · [좌회전 경로·시간80%](2026-11-12-junction-route-timing.md). 은계 r18, 기존 LAN 방 목록/HUD 포함 |
-| 통신 | LAN **v17**. 11/10 PVP 지도 변경으로 지도 지문이 바뀌어 **이전 v17 실행본과도 접속 거부**("PVP 지도가 다릅니다"). 양쪽 PC 같은 실행본 필요 |
-| 배포 검사 | 통합/PvP `VerifyOnly` 각각 종료0 · 143파일, 131,583,178바이트 · r17 저장 이어하기23 |
+| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 소스 `e7d84a6` · [좌회전 경로·시간80%](2026-11-12-junction-route-timing.md). 은계 r18, 기존 LAN 방 목록/HUD 포함 |
+| 통신 | LAN **v19**. 최적화·조향 통합 배포. 이전 v17/v18과 참가 불가, 양쪽 PC 같은 전체 실행 폴더 필요 |
+| 배포 검사 | 통합/PvP `VerifyOnly` 각각 종료0 · 143파일, 131,590,858바이트 · 이번 배포 설정/LAN 검사는 기본 배포 기록 참조 |
 | 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (Git, revision18·SHA256 496e1869…) · Strict 입력 문제0 · 선택 재수입 JSON2개 부재 |
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **main 병합·배포, 사람 검증 전** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V10 30장](../proposals/project-b-game-proposal-v10.pptx) · [반영 검토](../proposals/proposal-v10-review.md) · [Manual V10](../proposals/project-b-prototype-manual-v10.md) |

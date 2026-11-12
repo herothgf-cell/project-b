@@ -1,5 +1,7 @@
 # 다른 PC에서 바로 실행하기
 
+2026-11-12 기본 배포에는 PvP 최적화·40~50km/h 커브 조향·조향 설정 프리셋이 포함된다. **`builds/EungyeTaxi` 폴더 전체를 압축해서 전달**하면 된다. 받은 사람은 전체 압축을 풀고 `EungyeTaxi.exe`를 실행한다. LAN v19이므로 호스트와 참가자 모두 같은 새 폴더를 사용한다. 설정은 Esc → 설정 → 운전 관련 설정.
+
 Windows 64비트 PC에서 main을 clone하거나 로컬 변경을 보존한 뒤 `git pull --ff-only`한다. **Unity 설치·지도 ZIP 해제 없이 `builds/EungyeTaxi/EungyeTaxi.exe`를 바로 실행**한다. 제품명은 택시 시뮬레이션이다.
 
 실행 폴더의 `EungyeTaxi_Data`, `MonoBleedingEdge`, `UnityPlayer.dll` 등을 함께 유지한다. exe만 이동하면 실행되지 않는다. GitHub Download ZIP을 받았다면 저장소 전체를 압축 해제한다. Git LFS는 사용하지 않는다.
