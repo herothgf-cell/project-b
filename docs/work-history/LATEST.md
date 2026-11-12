@@ -7,10 +7,10 @@
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
-| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 소스 4589e18 · 11/12 은계 도로·교통·생활 제보 반영 ([기록](2026-11-12-eungye-driving-feedback.md)). 이전 출하 7cfe2ca (소스 ac04a11) |
+| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 소스 0c462e3 · J7973 남행 4차로 ([기록](2026-11-12-j7973-southbound-four-lanes.md)). 이전 출하 d59ba4b |
 | 통신 | LAN **v17**. 11/10 PVP 지도 변경으로 지도 지문이 바뀌어 **이전 v17 실행본과도 접속 거부**("PVP 지도가 다릅니다"). 양쪽 PC 같은 실행본 필요 |
-| 배포 검사 | 11/12 통합/PvP manifest 전수 검증은 [작업 기록](2026-11-12-eungye-driving-feedback.md) 참조 |
-| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (Git, revision 15·SHA256 e85ee656…) · Strict 입력 문제 0 · 선택 재수입 JSON 2개 부재 |
+| 배포 검사 | 통합/PvP manifest 검증은 [J7973 작업 기록](2026-11-12-j7973-southbound-four-lanes.md) 참조 |
+| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (Git, revision 16·SHA256 522368da…) · Strict 입력 문제 0 · 선택 재수입 JSON 2개 부재 |
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **main 병합·배포, 사람 검증 전** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V10 30장](../proposals/project-b-game-proposal-v10.pptx) · [반영 검토](../proposals/proposal-v10-review.md) · [Manual V10](../proposals/project-b-prototype-manual-v10.md) |
 
@@ -18,11 +18,15 @@
 
 기획 검토(11/12): [운전·생활 성장 연결](2026-11-12-driving-life-planning-review.md). 방 꾸미기는 선택적 성과 보상으로 적합, 이사는 지속 경력과 공간 변화가 필요한 장기 제안으로 판단. 기능 변경 없음. 다음은 사용자 논의와 3일 사람 플레이의 자발적 구매·다음 영업 동기 확인이며, 아래 빌드/지도 작업 순서는 유지한다.
 
-0. 은계 실행본에서 J8066 북행 차로 전환과 J1927 좌회전, 보행자·차량 체감, 수면·구토 알림을 사람 플레이로 확인한다. 전체 자동 물리 주행의 PS06 감점/경로 정체는 작업 기록 참조.
+0. 은계 실행본에서 J7973 남행 3→4차로 및 J8066 북행 차로 전환과 J1927 좌회전, 보행자·차량 체감, 수면·구토 알림을 사람 플레이로 확인한다. 전체 자동 물리 주행의 PS06 감점/경로 정체는 작업 기록 참조.
 1. 모든 PC에서 main pull 후 같은 실행본으로 맞춘다(11/10 PVP 지도 변경). PVP 신호 대기·뒷골목·승객 요청 빈도(평균 1.5건) 사람 플레이 체감 확인. 기획22 차고·차종과 J5057·J866 유턴은 사람 플레이 확인 전.
 2. [거리뷰 대조 수정 후보](2026-11-10-roadview-lane-audit.md#수정-후보와-우선순위-사용자-확인-전-미적용) 남은 것: 스쿨존 제한속도, 미확인 교차로. [유턴 수정 남은 항목](2026-11-10-uturn-sign-fix.md#남은-항목).
 3. 전체 3일 캠페인, 다른 PC LAN v17, 첫 이용자 안내. 기존 PvP 봇·운송 회귀 실패는 출하 기록 참고.
 4. 보류: 기사 평점(기획22 §3-1), 개인택시 면허 경로([기획23](../content-design/23-license-career-path.md)), Blender 아트 파이프라인 2단계 이후([문서](../proposals/art-blender-pipeline.md)).
+
+## 2026-11-12 수인로 J7973 남행 3→4차로
+
+[거리뷰·실행 화면·검증](2026-11-12-j7973-southbound-four-lanes.md). 북쪽 접근은 상류 3차로에서 좌회전 1·직진 2·우회전 1로 분기한다. 해당 남행 정지선을 연장하고 포켓을 막던 난간을 정리했다. 반대 방향은 기존 배치를 사용한다.
 
 ## 2026-11-12 은계 도로·교통·생활 제보 수정
 

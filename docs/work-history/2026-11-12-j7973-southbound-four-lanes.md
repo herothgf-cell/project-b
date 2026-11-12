@@ -25,3 +25,7 @@
 | `LaneDirectionPaintTests.Run` | 통과. 글리프 49조합, 316차로. 앞서 수정한 J8066 북행 차로도 확인. |
 | 실행본 저장 이어하기 | 이전 r15 `-liveSaveTest` 종료 0·9검사, r16 `-liveReloadTest` 종료 0·23검사. 운송·요금·다음 날 이월 확인. |
 | `RoadFollowupTests.Run` | 통과. 북·남쪽 중앙분리 난간 총 33조각, 교차로 이격과 모든 차로 중심에서 1.3m 초과 여유 확인. |
+| 최종 `PrototypeBuild.BuildHybrid` | Unity 2022.3.62f2 종료 0. 통합/PvP VerifyOnly 종료 0, 143파일 131,489,466바이트. |
+| 난간 조정 후 최종 실행본 | `-brightUiCheck -poseReview "796,423,183.68;798,470,183.68"` 종료 0·14검사. 차로 3→4 분기와 진입 공간을 `artifacts/j7973-southbound-final/` 캡처에서 확인. 동일 최종 실행본으로 r15 저장의 이어하기 23검사 재통과. |
+
+위치 제어 렌더와 그래프 검사 범위다. 사람 수동 주행, 자동 물리 주행, 전체 3일 캠페인, 다른 PC LAN은 이번에 실행하지 않았다.
