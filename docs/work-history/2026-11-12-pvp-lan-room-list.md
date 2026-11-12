@@ -9,6 +9,7 @@
 - `tools/check_workspace.ps1 -Strict` 종료 0, 필수 입력 문제 0. `PrototypeBuild.BuildHybrid` 종료 0, 기존 콘텐츠 대조 성공. 검증용 Unity 프로젝트를 복사해 빌드했다. 최초 스크립트 GUID 형식 문제와 Windows Player의 어댑터 조회 예외는 각각 수정했다. 최종 로그는 `artifacts/pvp-lan-discovery-verify/unity-build-release-candidate.log`이다.
 - 중간 Player 검사는 LAN IPv4로 방을 찾아 참가했다. 이후 기존의 일시적인 스냅샷 끊김 시 차량 이동 단언에서 종료했다. 로그는 `artifacts/pvp/native-lan-20261112-155612-7afd675b/`에 있다.
 - 최종 `tools/test_pvp_native_lan.ps1 -Discover -Reconnect`는 종료 0, 호스트 52개·참가자 69개 검사 통과. 같은 PC의 두 실행본에서 실제 LAN IPv4 방 발견, 호스트가 지정한 UDP 포트로 참가, WheelCollider 자동 주행 약 19.7m, 진행 중인 방 발견과 원래 좌석 재참가를 확인했다. 앞서 실패한 스냅샷 단언도 통과했다. 로그는 `artifacts/pvp/native-lan-20261112-155851-6c5dbf8a/`에 있다.
+- 소스 커밋 `829ff3a`의 검증용 빌드와 기본 배포 폴더에서 다른 8개 파일을 교체했다. `tools/update_distribution_manifest.ps1`로 크기와 SHA256을 생성한 뒤 통합/PvP `VerifyOnly` 모두 종료 0, 143개 파일·131,544,167바이트를 확인했다. 이번 배포는 로컬 Git 기준이다.
 
 ## 실행과 현장 확인
 
