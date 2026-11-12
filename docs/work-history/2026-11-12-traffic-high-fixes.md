@@ -55,3 +55,18 @@
 ```
 EungyeTaxi.exe -batchmode -nographics -oneDayMode -hybridV2 -oneDayTrafficTest   # 결과: <작업 폴더>/artifacts/one-day-traffic-drive.txt
 ```
+
+## 후속: BuildHybrid 출하 (사용자 요청 "출하 빌드")
+
+- 첫 출하 빌드에서 배포 크기가 127.5MB → 194.6MB로 늘었다. 원인은 방 조명/러그 그림 8장이다. 배경과 같은 1672×941 전체 크기이고 높이 941이 4의 배수가 아니라서 Unity가 DXT 압축을 하지 못하고 비압축 RGBA(밉맵 포함)로 저장했다(`resources.assets.resS` 74.8MB).
+- 수정(소스 ac04a11): 그림마다 물건이 있는 영역만 잘라 저장한다. 크기는 4의 배수다(러그 676×176, 조명 132×136, 빛 568×388). `PersonalRoomHUD`가 배경 좌표의 같은 영역에 그린다. 생성 도구는 자른 영역 밖에 그린 픽셀이 있으면 실패한다. 다시 빌드한 결과 `resources.assets.resS`는 11.7MB(이전 출하 7.7MB)다.
+
+| 검사 | 결과 |
+|---|---|
+| `pwsh -File tools/check_workspace.ps1 -Strict` | Input issues 0 |
+| `PrototypeBuild.BuildHybrid` (`artifacts/ship-2026-11-12-build.log`) | exit 0, PROTOTYPE_BUILD_OK |
+| 출하 실행본 `tools/test_personal_room_player.ps1 -Visible` | PERSONAL_ROOM_PLAYER_OK 36, RELOAD_OK 7. 캡처 02·03을 열어 자르기 전과 위치가 같은 것을 확인 |
+| `update_distribution_manifest.ps1 -SourceCommit ac04a11… -ValidatedOn 2026-11-12` → `-VerifyOnly`, `update_pvp_distribution_manifest.ps1 -VerifyOnly` | DISTRIBUTION_OK 143파일 131,475,770바이트 |
+
+- 출하 실행본의 교통 코드는 위 검증용 빌드(eb45976)와 같다. 출하 실행본으로 하루 주행을 다시 돌리지는 않았다.
+- 지도와 LAN 프로토콜은 바꾸지 않았다. 다만 NPC 동작이 바뀌었으므로 모든 PC를 이 실행본으로 맞추는 것을 권장한다.

@@ -1,10 +1,10 @@
 {
-  "sourceCommit": "575ca467394747678c64d7342686656367082ae3",
+  "sourceCommit": "ac04a11c782e1d7bc582fdce5d4f3d52146a12a7",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
-  "validatedOn": "2026-11-10",
-  "totalBytes": 127469810.0,
+  "validatedOn": "2026-11-12",
+  "totalBytes": 131475770.0,
   "validation": {
     "build": "PrototypeBuild.BuildEasyRoadMapEditor exit 0",
     "modelSuites": 23,
@@ -38,17 +38,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "67a64d3f26cc479be592db31bfeeff65c8064dcb0b185f67c147d83bc485bbf7"
+      "sha256": "bb228e1a4d824ec2653a23ae3064f7a6a5c7024c1599d492bbd023d044a645f6"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 61428,
-      "sha256": "27971083460943e6fd80a577b798e4b4d4458f8c24379b699b85f4f5e6e85c3e"
+      "bytes": 61676,
+      "sha256": "772bbc85eaeca8e40e2aea836c20a6097865dfc690c5b6afe3e888420008ae00"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
       "bytes": 116160,
-      "sha256": "031a07202007199abd4c5ffdabe24606a63df487cda3776cd5213ea1a917cf53"
+      "sha256": "fd964a3dd18ebd8bf61b15f8608395d0c8c556858ccbf7e7b9944298e0867768"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -62,8 +62,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2797568,
-      "sha256": "d82db97f9d70e707379841fa4522fbeb51aad3b7438c822b37f63d7e8e5d3c67"
+      "bytes": 2800128,
+      "sha256": "2918b3318cdd59f2c97ac7e307b93acde85a47d28f596bde1612a1fa9e4dd3d6"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
@@ -572,13 +572,13 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 43443640,
-      "sha256": "460e9ff05dc992df3039a471dbec415adb72308f7ed2e86d46a90ce3ba8d3f64"
+      "bytes": 43445096,
+      "sha256": "7165d4a369f8baac5fe160d9d9cc815642b91594ca433ae6bb5ecde62f2d4d79"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
-      "bytes": 7688192,
-      "sha256": "8b520c51fa252ab20050043038c3cd83368737d755ff063a152e5403fa5f09c8"
+      "bytes": 11689888,
+      "sha256": "6aeab0635bb35e606dcb0d3a8720920cebdae4e96a69a2fdb92935f227b9362e"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Resources/unity default resources",
