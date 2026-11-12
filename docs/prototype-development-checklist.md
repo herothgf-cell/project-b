@@ -9,7 +9,8 @@
 - [x] 최신 거리뷰 남행 3차로·북행 정지선 좌/직/직/우 확인, 지도 r17 반영.
 - [x] 수정 전 N2/S2 실패 재현 → 수정 후 단면 N4/S3·북쪽 연결 N3/S3, 북행 화살표 4개·552경로 통과.
 - [x] LaneDirectionPaint 49조합/320차로, J7973 552경로, PersistentGreenLeft 회귀 통과.
-- [ ] BuildHybrid, 실행본 위치 제어 렌더·r16 저장 이어하기, 배포 manifest 및 main push. [작업 이력](work-history/2026-11-12-j7917-roadview-check.md).
+- [x] BuildHybrid 종료0·r16 저장 이어하기23·위치 제어 렌더15장·통합/PvP manifest143파일 통과. 메뉴 캡처2개는 이전r16/현재r17 동일 실패로 별도 기록. [작업 이력](work-history/2026-11-12-j7917-roadview-check.md).
+- [ ] 사람 주행/전체3일/다른PC LAN 및 기존 메뉴 캡처 실패 원인 확인.
 
 - [x] 최신 이력·범위·콘텐츠 기획/코드 대조, Strict issues0·통합/PVP manifest143파일 검사 exit0. [현황·검증·남은 항목](work-history/2026-11-09-progress-check.md).
 - [ ] 사람 장시간/패드·전체3일/첫 구매 동기, 실제 다른PC LAN·저사양 성능 수용. 이번 새 빌드/플레이 없음.

@@ -24,6 +24,22 @@
 
 첫 빌드는 종료 0, r16→초기 r17 이어하기 23검사 통과. 첫 위치 제어 렌더의 15장 촬영은 성공했으나 sandbox 임시 저장 권한 문제로 전체 결과는 FAIL/종료 2였다. 최종 빌드는 권한 있는 실행으로 렌더를 다시 확인하며, 이 실패를 통과로 집계하지 않는다.
 
+### 최종 실행본
+
+- 최종 소스 `6f17ab5c56a3ddae698ca6cecb7c3fa5f19e3f45`, `PrototypeBuild.BuildHybrid` 종료 0. `final-build.log`의 `Build Finished, Result: Success.` 및 `PROTOTYPE_BUILD_OK` 확인. 실행본 지도 stamp도 최종 내용 해시와 일치한다.
+- 최종 지도 `tools/check_workspace.ps1 -Strict` 종료 0, 입력 문제 0. 선택 재수입 JSON 2개 부재는 기존 상태다.
+- 실제 r16 출하 커밋 `e89c165`의 실행본을 `artifacts/j7917-r16-snapshot`에 추출해 테스트 저장을 다시 생성했다(종료 0·9검사). Windows tar가 비실행용 한글 BurstDebugInformation 경로를 풀지 못했으나 실행에 쓰인 이전 런타임으로 저장 생성은 성공했다. 그 저장·expected 파일을 테스트 위치로 복사해 최종 실행본 `-singlePlayer -liveReloadTest -batchmode -nographics`로 복원: 종료 0·23검사 통과(`final-reload.log`). 실제 사용자 저장은 건드리지 않았다.
+- 렌더 재시도의 초기 메뉴 2검사 실패에 대해 `-singlePlayer` 옵션 충돌을 의심해 제거했으나 같은 실패가 남았다. 따라서 옵션 충돌이 원인이라고 확정하지 않는다. 권한 있는 실행에서도 이전 r16 실행본은 7/9, 최종 r17은 17/19로 같은 `01-mode-menu`, `02-single-preparation` 두 캡처 실패/종료 2다. 이번 변경의 신규 실패는 없다. 최종 위치 제어 장면 15장과 전용 저장/시간 보존 검사는 모두 통과했다. 재현 명령은 `-brightUiCheck -poseReview "785.2905,212.52565,182.5;790.7,215,2.5;785,308,182.75" -brightUiOutput <검사폴더>`이며 로그 `accepted-render.log`, 비교 `r16-render.log`에 실제 결과가 있다.
+- 자동 승인 검토가 `FirstDrive.unity` 원복 명령을 기존 사용자 변경 손실 우려로 거절했다. 원복을 재시도하지 않고 해당 작업 파일을 보존하며 배포 커밋에서 제외한다.
+
+검증 범위는 지도 연결/표시·위치 제어 렌더·저장 복원이다. 사람 주행, 자동 물리 주행, 전체 3일, 다른 PC LAN 검사는 이번에 실행하지 않았다. 포장색·난간 등 현장 외형 전체 재현도 이번 차로 수정 범위가 아니다.
+
+### 배포 파일 검증
+
+`tools/update_distribution_manifest.ps1 -SourceCommit 6f17ab5c56a3ddae698ca6cecb7c3fa5f19e3f45 -ValidatedOn 2026-11-12 -ValidationReport artifacts/j7917-lanes/validation.json`으로 최종 실제 크기·SHA256을 갱신했다. 통합 및 PvP `VerifyOnly` 모두 종료 0, 143파일·131,535,058바이트. manifest의 검사 결과에는 기존 메뉴 캡처 실패 2건도 명시한다. 배포 대상은 `builds/EungyeTaxi/EungyeTaxi.exe`와 실행 폴더 전체다.
+
+최종 실행 화면: [북행 좌/직/직/우](../ui/2026-11-12-j7917-lanes/northbound.png), [남행3차로](../ui/2026-11-12-j7917-lanes/southbound.png). 다른 PC는 main pull 후 실행 중인 게임을 종료하고 다시 실행한다. 현재 작업 폴더에서 실행할 때도 이전 프로세스는 재시작해야 한다.
+
 ## 요청과 확인
 
 사용자는 J7917 및 게임 좌표 x=785.2905, z=212.52565의 차로 수가 실제와 다르다고 보고했다. ‘편도 2차로’는 실제가 아니라 게임 화면을 설명한 것이라고 후속 확인했다.

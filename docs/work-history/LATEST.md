@@ -7,16 +7,16 @@
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
-| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 소스 dca65c7 · 주행 HUD F1 도움말 ([기록](2026-11-12-hud-help-shortcuts.md)). 은계 r16 · J7973 남행 4차로 |
+| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 소스 6f17ab5 · J7917 북행 좌/직/직/우·남행3차로 ([기록](2026-11-12-j7917-roadview-check.md)). 은계 r17 · J7973/HUD F1 포함 |
 | 통신 | LAN **v17**. 11/10 PVP 지도 변경으로 지도 지문이 바뀌어 **이전 v17 실행본과도 접속 거부**("PVP 지도가 다릅니다"). 양쪽 PC 같은 실행본 필요 |
-| 배포 검사 | 통합/PvP `VerifyOnly` 각각 종료 0 · 143파일, 131,489,978바이트 |
-| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (Git, revision 16·SHA256 522368da…) · Strict 입력 문제 0 · 선택 재수입 JSON 2개 부재 |
+| 배포 검사 | 통합/PvP `VerifyOnly` 각각 종료 0 · 143파일, 131,535,058바이트 |
+| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (Git, revision 17·SHA256 f508f1b9…) · Strict 입력 문제 0 · 선택 재수입 JSON 2개 부재 |
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **main 병합·배포, 사람 검증 전** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V10 30장](../proposals/project-b-game-proposal-v10.pptx) · [반영 검토](../proposals/proposal-v10-review.md) · [Manual V10](../proposals/project-b-prototype-manual-v10.md) |
 
 ## 다음 작업
 
-J7917 추가 제보: [남북 차로 수정과 검증](2026-11-12-j7917-roadview-check.md). 최신 거리뷰 남행 3차로·북행 좌/직/직/우 4차로를 지도 r17에 반영했다. 단면·화살표·552경로 및 기존 J7973·동향 좌회전 회귀, Strict 문제 0 통과. 통합 실행본 재빌드·저장 이어하기·렌더·배포 검사 진행 중으로 아래 출하 기준은 완료 후 갱신한다.
+J7917 추가 제보: [남북 차로 수정과 검증](2026-11-12-j7917-roadview-check.md). 최신 거리뷰 남행3·북행 좌/직/직/우4와 내비 차로번호를 r17에 반영했다. 단면·552경로·기존 좌회전 회귀·Strict·BuildHybrid·r16 저장 이어하기23·배포 manifest 통과. 최종 위치 제어 렌더15장 확인, 메뉴 캡처2개는 이전r16/현재r17 동일 실패. 다음은 사람 주행 확인이며 포장색/시설 전체 실측은 별도다.
 
 기획 검토(11/12): [운전·생활 성장 연결](2026-11-12-driving-life-planning-review.md). 방 꾸미기는 선택적 성과 보상으로 적합, 이사는 지속 경력과 공간 변화가 필요한 장기 제안으로 판단. 기능 변경 없음. 다음은 사용자 논의와 3일 사람 플레이의 자발적 구매·다음 영업 동기 확인이며, 아래 빌드/지도 작업 순서는 유지한다.
 
