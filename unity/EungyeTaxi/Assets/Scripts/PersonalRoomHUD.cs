@@ -5,7 +5,9 @@ public static class PersonalRoomHUD {
  static GUIStyle text,title,small,button;static Texture2D backdrop;static string preview="",confirmation="";static int style;
  static string Money(int n){return n.ToString("N0")+"원";}
  static readonly System.Collections.Generic.Dictionary<string,Texture2D> layers=new System.Collections.Generic.Dictionary<string,Texture2D>();
- static void Layer(Rect view,string name){Texture2D t;if(!layers.TryGetValue(name,out t)||!t){t=Resources.Load<Texture2D>(name);layers[name]=t;}if(t)GUI.DrawTexture(view,t,ScaleMode.StretchToFill,true);}
+ // Crops in backdrop pixels (1672x941); must match CROPS in tools/generate_room_items.py.
+ static Rect Crop(string name){return name.Contains("rug")?new Rect(500,744,676,176):name.Contains("glow")?new Rect(436,228,568,388):new Rect(660,384,132,136);}
+ static void Layer(Rect view,string name){Texture2D t;if(!layers.TryGetValue(name,out t)||!t){t=Resources.Load<Texture2D>(name);layers[name]=t;}if(!t)return;var c=Crop(name);float sx=view.width/1672f,sy=view.height/941f;GUI.DrawTexture(new Rect(view.x+c.x*sx,view.y+c.y*sy,c.width*sx,c.height*sy),t,ScaleMode.StretchToFill,true);}
  static string StyleName(string item,int s){return item=="lamp"?(s==0?"나무 받침·리넨 갓":"짙은 철제 스탠드"):(s==0?"회청색 테두리":"테라코타 줄무늬·술");}
  static void Box(Rect r,Color c){var old=GUI.color;GUI.color=c;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=old;}
  public static void Draw(DriveSession session){
@@ -17,7 +19,7 @@ public static class PersonalRoomHUD {
   if(!backdrop)backdrop=Resources.Load<Texture2D>("personal-room-base");
   var view=new Rect(0,85,850,478);if(backdrop)GUI.DrawTexture(view,backdrop,ScaleMode.StretchToFill);else Box(view,new Color(.65f,.60f,.53f));
   bool lamp=preview=="lamp"||r.lampOwned&&r.lampPlaced;bool rug=preview=="rug"||r.rugOwned&&r.rugPlaced;
-  // Item layers are full-frame transparent paintings aligned to the backdrop (tools/generate_room_items.py).
+  // Item layers are transparent paintings cropped from backdrop coordinates (tools/generate_room_items.py).
   if(rug){int rs=preview=="rug"?style:r.rugStyle;Layer(view,"room-rug-"+rs);}
   if(lamp){bool on=preview=="lamp"||r.lampOn;int ls=preview=="lamp"?style:r.lampStyle;if(on)Layer(view,"room-lamp-"+ls+"-glow");Layer(view,"room-lamp-"+ls+(on?"-on":"-off"));}
   CasualUI.Header(new Rect(15,15,830,55),read?"내 공간 · 완료 기록":"영업을 마치고, 내 공간",5);

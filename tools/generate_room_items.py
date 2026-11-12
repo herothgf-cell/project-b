@@ -1,7 +1,7 @@
 """내 공간(방 꾸미기) 탁상 조명·러그 오버레이 생성.
 
-배경 `personal-room-base.png`(1672x941)와 같은 크기의 투명 PNG를 만들어
-PersonalRoomHUD가 배경과 같은 사각형에 그대로 겹쳐 그린다(좌표 정렬 불필요).
+배경 `personal-room-base.png`(1672x941) 좌표로 그린 뒤 물건이 있는 영역(CROPS)만 잘라 저장하고,
+PersonalRoomHUD가 같은 배경 좌표 영역에 겹쳐 그린다.
 배경의 따뜻한 저녁 조명·낮은 채도·부드러운 음영에 맞춰 절차적으로 그린다.
 
   python tools/generate_room_items.py            # Resources에 생성
@@ -243,6 +243,19 @@ def lamp_glow(style):
 
 # ---------------------------------------------------------------- main
 
+# Saved crops in backdrop pixels (x, y, w, h). Sizes are multiples of 4 so Unity can DXT-compress
+# them; PersonalRoomHUD.Crops must use the same numbers.
+CROPS = {
+    "rug": (500, 744, 676, 176),
+    "lamp": (660, 384, 132, 136),
+    "glow": (436, 228, 568, 388),
+}
+
+
+def crop_kind(name):
+    return "rug" if "rug" in name else "glow" if "glow" in name else "lamp"
+
+
 def outputs():
     yield "room-rug-0.png", draw_rug(0)
     yield "room-rug-1.png", draw_rug(1)
@@ -258,7 +271,11 @@ def main():
     args = p.parse_args()
     made = {}
     for name, img in outputs():
-        img.save(RES / name, optimize=True)
+        x, y, w, h = CROPS[crop_kind(name)]
+        alpha = np.asarray(img)[..., 3].copy()
+        alpha[y:y + h, x:x + w] = 0
+        assert alpha.max() <= 2, f"{name} paints outside its crop"
+        img.crop((x, y, x + w, y + h)).save(RES / name, optimize=True)
         made[name] = img
         print("wrote", name)
     if args.preview:
