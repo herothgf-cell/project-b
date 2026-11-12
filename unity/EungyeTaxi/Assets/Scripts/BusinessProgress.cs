@@ -157,7 +157,7 @@ public class BusinessProgress : MonoBehaviour {
   bool fromR14=live.mapRevision=="은계 프로젝트 지도 · r14";
   bool fromR16=live.mapRevision=="은계 프로젝트 지도 · r16";
   bool toR17=map.editorRevision=="은계 프로젝트 지도 · r17";
-  string reviewedHash=toR17?"fe9c7b1057b10d433ef285b27e1223f8cd057272ed3fecde303b751a6484e4d1":"d9596da33d4efc0d4f862c714eb05bb70c94365bfc30ab6171a702e2b672e3df";
+  string reviewedHash=toR17?"cb8e0ec0ed3a48f7e9a33c4ff8dc3878bd9d59aafef13c0f0fe43c5616c9c808":"d9596da33d4efc0d4f862c714eb05bb70c94365bfc30ab6171a702e2b672e3df";
   if(map.mapId!="eungye"||(!fromR14&&live.mapRevision!="은계 프로젝트 지도 · r15"&&!(fromR16&&toR17))||(!toR17&&map.editorRevision!="은계 프로젝트 지도 · r16")||
      map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||
      RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;

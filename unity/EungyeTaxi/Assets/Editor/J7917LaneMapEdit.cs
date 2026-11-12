@@ -70,7 +70,7 @@ public static class J7917LaneMapEdit {
   // connector available to the new middle lane through the copied connector.
   original[NorthOuter].next=new[]{"join:"+NorthOuter+":1"};
   original["join:"+NorthOuter+":0"].disabled=true;
-  doc.lanes=doc.lanes.Concat(added).ToArray();doc.revision++;doc.savedAt=DateTime.UtcNow.ToString("o");doc.projectRevision="";
+  doc.lanes=doc.lanes.Concat(added).ToArray();NormalizeNumbers(doc);doc.revision++;doc.savedAt=DateTime.UtcNow.ToString("o");doc.projectRevision="";
   package.contentHash=ProjectMapPackage.Digest(JsonUtility.ToJson(doc));ProjectMapStore.Save(root,package,token);ProjectMapBuild.Prepare();
   Debug.Log("J7917_LANES_MAP_OK "+package.contentHash+" added="+added.Count);
  }
@@ -78,6 +78,22 @@ public static class J7917LaneMapEdit {
   var result=Copy(source);result.id=id;result.fromNode=from;result.toNode=to;result.next=new[]{exit};result.evidence=Evidence();
   var a=start-source.points[0].V();var b=end-source.points.Last().V();var path=Path(source);float at=0;
   result.points=source.points.Select((p,i)=>{if(i>0)at+=Vector3.Distance(source.points[i-1].V(),p.V());return Point(p.V()+Vector3.Lerp(a,b,Mathf.SmoothStep(0,1,at/path.length)));}).ToArray();return result;
+ }
+ static void NormalizeNumbers(RoadMapDocument doc){
+  var lanes=doc.lanes.ToDictionary(l=>l.id);
+  foreach(var lane in doc.lanes.Where(l=>l.id.StartsWith("reviewed:J7917:middle:"))){
+   var outer=lanes[lane.id.Substring("reviewed:J7917:middle:".Length)];
+   lane.number=outer.id==NorthOuter?3:2;outer.number=lane.number+1;
+  }
+  lanes[NorthInner].number=2;lanes[Pocket].number=1;
+ }
+ // Finalize the unpublished r17 after review without changing saved edge IDs.
+ public static void FinalizeReview(){
+  var root=ProjectMapBuild.Root;var token=ProjectMapStore.Fingerprint(root);var package=ProjectMapStore.Load(root);
+  Require(package.document.revision==17,"expected r17");NormalizeNumbers(package.document);
+  package.document.savedAt=DateTime.UtcNow.ToString("o");package.document.projectRevision="";
+  package.contentHash=ProjectMapPackage.Digest(JsonUtility.ToJson(package.document));ProjectMapStore.Save(root,package,token);ProjectMapBuild.Prepare();
+  Debug.Log("J7917_FINAL_MAP_OK "+package.contentHash);RunChecks();
  }
  static void Require(bool value,string message){if(!value)throw new InvalidOperationException("J7917_LANES: "+message);}
  public static void RunChecks(){Verify();LaneDirectionPaintTests.Run();J7973SouthboundMapEdit.Verify();PersistentGreenLeftTests.Run();Debug.Log("J7917_REGRESSION_SUITE_OK");}
@@ -90,6 +106,7 @@ public static class J7917LaneMapEdit {
   }
   var arrows=LaneDirectionPaint.Layout(map).Where(a=>a.centre.z>210&&a.centre.z<240&&a.forward.z>.95f&&map.hdEdges[a.edgeIndex].ruleId==Junction).OrderBy(a=>a.centre.x).ToArray();
   Require(arrows.Select(a=>a.turns).SequenceEqual(new[]{LaneDirectionPaint.Left,LaneDirectionPaint.Straight,LaneDirectionPaint.Straight,LaneDirectionPaint.Right}),"north arrows L/S/S/R: "+string.Join(",",arrows.Select(a=>a.turns)));
+  Require(arrows.Select(a=>map.hdEdges[a.edgeIndex].number).SequenceEqual(new[]{1,2,3,4}),"navigation lane numbers match median-to-curb order 1/2/3/4");
   var graph=new HdRoadGraph(map);
   foreach(var e in graph.edges.Where(e=>!e.disabled&&e.id.StartsWith("reviewed:J7917:"))){
    int index=Array.IndexOf(graph.edges,e);
