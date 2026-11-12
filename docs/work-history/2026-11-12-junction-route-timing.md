@@ -49,3 +49,7 @@ JunctionRouteFeedbackTests.VerifyMigration exit0, r14/r15/r16/r17 네 버전 모
 - 통합/PvP VerifyOnly exit0, 143파일. manifest는 실제 소스 커밋·현재 파일 SHA256·이번 검사 보고서로 갱신했다.
 - 작업 중 다른 작업이 추가한 `TrafficPerformanceProbe.cs` 변경은 컴파일 산출물 시각 이후에 생겼으며 소스/배포 커밋에서 제외했다. 원본 그대로 보존한다.
 - 전체 자동 모델 검사의 기존 제동 실패 및 사람 주행 미검증은 위 한계를 유지한다.
+
+## main 배포 확인
+
+배포 커밋 `78c5c1138f10917ba0dfbdf8f9adb67f792cdb6f`를 `git push origin main`으로 전송했다(exit0). 직후 `git rev-parse HEAD`와 `git ls-remote origin refs/heads/main`에서 같은 전체 해시를 확인했다. 다른 PC는 main pull 후 `builds/EungyeTaxi/EungyeTaxi.exe`를 실행한다.
