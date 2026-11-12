@@ -29,7 +29,28 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
  IEnumerator Bootstrap(){
   if(!FindObjectOfType<Pvp.PvpBootstrap>()){var unified=FindObjectOfType<UnifiedModeBootstrap>();if(unified)unified.StartPvp();}
   yield return Until(()=>FindObjectOfType<Pvp.PvpBootstrap>()!=null,"PVP bootstrap available");
-  FindObjectOfType<Pvp.PvpBootstrap>().StartNativeLan(host,address,port,motionOnly?1200:300);
+  var bootstrap=FindObjectOfType<Pvp.PvpBootstrap>();
+  int seconds=motionOnly?1200:300;
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeRelayCheck")>=0){
+   var relay=PvpRelayClient.Load();
+   PvpRelayRoom selection=null;
+   if(!host){
+    float deadline=Time.realtimeSinceStartup+35;
+    while(selection==null&&Time.realtimeSinceStartup<deadline){
+     using(var request=relay.List()){
+      yield return request.SendWebRequest();
+      Check(request.result==UnityEngine.Networking.UnityWebRequest.Result.Success,"relay room list responds");
+      var rooms=JsonUtility.FromJson<PvpRelayRoomList>(request.downloadHandler.text)?.rooms;
+      if(rooms!=null)selection=Array.Find(rooms,room=>room.name=="검증_host의 방"&&room.Valid&&room.Compatible);
+     }
+     if(selection==null)yield return new WaitForSecondsRealtime(.25f);
+    }
+    Check(selection!=null,"relay host room discovered by list");
+   }
+   yield return bootstrap.StartRelay(relay,selection,seconds);
+   Check(PvpNativeLan.Instance&&PvpNativeLan.Instance.RelayRoomName!=null,"relay room opened: "+bootstrap.RelayError);
+   Check(Unity.Netcode.NetworkManager.Singleton.MaximumFragmentedMessageSize==PvpRelayTransport.MaxBatchSize,"NGO relay batch fits in one relay packet");
+  }else bootstrap.StartNativeLan(host,address,port,seconds);
   yield return Until(()=>PvpNativeLan.Instance!=null,"native transport created");lan=PvpNativeLan.Instance;
  }
  IEnumerator Start(){
