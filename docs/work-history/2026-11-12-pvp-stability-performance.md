@@ -83,7 +83,7 @@
 
 ### 남은 항목
 
-- **배포 실행본(`builds/EungyeTaxi`) 재빌드·manifest 갱신 안 함.** 사용자 FirstDrive 씬 변경이 작업 트리에 있어 `BuildHybrid` 반영 여부는 사용자 확인 필요.
+- 배포 실행본 반영은 아래 출하 절 참조(사용자 승인 후 진행).
 - 남은 할당 대부분은 IMGUI(`DriveHUD.OnGUI` 5.9MB, `DrivingReadability.OnGUI` 3.6MB/300프레임). 호스트 전용 비용은 아니며 다음 후보.
 - `TrafficCar.FixedUpdate`(72대, tick당 약2.6ms)와 호스트 10Hz JSON 스냅샷(참가자마다 직렬화)은 이번에 변경하지 않음.
 - 실제 제보한 호스트 PC·Wi-Fi 참가 PC의 체감 재확인.
@@ -93,3 +93,11 @@
 - 개발 후보: `Unity.exe -batchmode -nographics -quit -projectPath unity/EungyeTaxi -executeMethod PvpStabilityBuild.Build -logFile <log>` → `artifacts/pvp-stability/candidate/`. `-stabilityRelease` 추가 시 `release/`.
 - 프로파일: `candidate/EungyeTaxi.exe -pvpCityPerformanceTest -trafficPerfProfiler -trafficPerfSeconds 10 -trafficPerfOutput <폴더> -screen-fullscreen 0 -screen-width 1280 -screen-height 720`, 집계 `Unity.exe -batchmode -quit -projectPath unity/EungyeTaxi -executeMethod PvpProfileReport.Run -profileInput <폴더>/frames.raw`.
 - LAN: `pwsh -File tools/test_pvp_native_lan.ps1 -Executable <exe> [-ParkedSeconds 30]`. 증거 `artifacts/pvp/native-lan-20261112-180943-544cd18f`(이전1), `-181143-b4460770`(이후1), `-181336-a533a8d2`(이전2), `-181523-c1d57539`(이후2), `-181715-b42bb7dd`(이후 정차).
+
+## 출하 (사용자 승인 "Yes, ship it")
+
+- 소스 커밋 `8cff8e1c51883cbce10b8e6e7db2690fc32203fa`. 같은 시각 다른 세션이 작업 중인 미커밋 조작 설정 변경(`DriveMath.cs`, `DrivingSettingsPanel.cs` 등)이 작업 트리에 있어, 이를 섞지 않도록 해당 커밋의 별도 git worktree(`../project-b-ship`, Library 복사)에서 `PrototypeBuild.BuildHybrid`를 실행했다. exit0, 컴파일 오류0, `Build Finished, Result: Success`. 변경 파일은 코드 DLL·burst·boot.config뿐이며 지도/리소스는 그대로다. 결과를 `builds/EungyeTaxi/`로 복사하고 diff 없음 확인.
+- 저장 호환: 이전 배포 실행본 `-singlePlayer -liveSaveTest` exit0 `LIVE_CAMPAIGN_SAVE_OK checks=9` → 새 실행본 `-liveReloadTest` exit0 `LIVE_CAMPAIGN_RELOAD_OK checks=23` (테스트 전용 `artifacts/live-campaign-test.json`).
+- `update_distribution_manifest.ps1 -SourceCommit 8cff8e1…` 작성 후 통합·PvP `-VerifyOnly` 모두 `DISTRIBUTION_OK files=143 bytes=131589869`.
+- 배포 실행본 LAN 두 프로세스 검사 `PVP_NATIVE_LAN_TWO_PROCESS_OK`(`artifacts/pvp/native-lan-20261112-184046-52c5c5e9`): 호스트 frame p95 22.3ms·최대59.9ms, 참가 p95 18.4ms. 실패0.
+- 미검증: 실제 다른 PC·Wi-Fi LAN, 사람 플레이, 전체 3일 캠페인. 통신 형식은 바뀌지 않았지만 양쪽 PC를 같은 실행본으로 맞추기를 권장한다.
