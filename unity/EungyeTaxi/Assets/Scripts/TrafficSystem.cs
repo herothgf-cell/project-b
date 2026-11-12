@@ -19,6 +19,13 @@ public class TrafficJunction { public RoadMapSignalProgram gameProgram,editorPro
     public readonly Dictionary<TrafficCar,float> requests=new Dictionary<TrafficCar,float>();
     public readonly List<Renderer[]> leftLamps=new List<Renderer[]>();
     public string name;
+    string keyName;readonly string[] approachKeys=new string[4];
+    // Stable keys avoid allocating boxed axis/sign strings on every physics tick.
+    public string ApproachKey(int axis,int sign){
+        if(keyName!=name){keyName=name;for(int i=0;i<4;i++)approachKeys[i]=null;}
+        int index=axis*2+(sign>0?1:0);
+        return approachKeys[index]??(approachKeys[index]=name+":"+axis+":"+sign);
+    }
     public float offset;
     public readonly List<Renderer[]> lamps = new List<Renderer[]>();
 }
@@ -78,7 +85,7 @@ public partial class TrafficSystem : MonoBehaviour {
     Material white, yellow, dark, pole;
     Material[] lit, unlit;
     readonly List<Vector3> whitePaint=new List<Vector3>(), yellowPaint=new List<Vector3>();
-    MapData roadMap;HdRoadGraph editorGraph;bool editorSpeedRules;public float EditorSpeedLimit(TrafficCar car){if(!editorSpeedRules||editorGraph==null||car.route.graphPath==null)return 0;int edge=car.route.graphPath.EdgeAt(car.distance);float error;float at=editorGraph.paths[edge].Project(car.transform.position,out error);return RoadMapRules.SpeedLimit(roadMap,editorGraph.edges[edge].id,at);}RoadMapWalker[] editorWalkers;bool EditorPedestrian(TrafficJunction j){return editorWalkers!=null&&System.Array.Exists(editorWalkers,w=>w&&w.crossing.junctionId==j.name&&w.Crossing);}public Vector3 StopPosition(TrafficJunction j,int axis,int sign){var f=roadMap.editorDocument==null?null:System.Array.Find(roadMap.editorDocument.facilities,x=>x.kind=="stopLine"&&x.junctionId==j.name&&x.axis==axis&&x.sign==sign);return f==null?j.center-AxisDirection(j,axis)*sign*j.StopDistance(axis,sign):f.Position;} public Vector3 StopNormal(TrafficJunction j,int axis,int sign){var f=roadMap.editorDocument==null?null:System.Array.Find(roadMap.editorDocument.facilities,x=>x.kind=="stopLine"&&x.junctionId==j.name&&x.axis==axis&&x.sign==sign);return f==null?AxisDirection(j,axis)*sign:Quaternion.Euler(0,f.yaw,0)*Vector3.forward;} public float EditorSpeedLimit(Vector3 position,Vector3 heading){if(editorGraph==null||!editorSpeedRules)return 0;float at;int edge=editorGraph.Nearest(position,heading,out at);return edge<0?0:RoadMapRules.SpeedLimit(roadMap,editorGraph.edges[edge].id,at);} public string EditorLaneId(Vector3 position,Vector3 heading){if(editorGraph==null)return null;float at;int edge=editorGraph.Nearest(position,heading,out at);return edge<0?null:editorGraph.edges[edge].id;}
+    MapData roadMap;HdRoadGraph editorGraph;bool editorSpeedRules;public float EditorSpeedLimit(TrafficCar car){if(!editorSpeedRules||editorGraph==null||car.route.graphPath==null)return 0;int edge=car.route.graphPath.EdgeAt(car.distance);float error;float at=editorGraph.paths[edge].Project(car.transform.position,out error);return RoadMapRules.SpeedLimit(roadMap,editorGraph.edges[edge].id,at);}RoadMapWalker[] editorWalkers;bool EditorPedestrian(TrafficJunction j){return editorWalkers!=null&&System.Array.Exists(editorWalkers,w=>w&&w.crossing.junctionId==j.name&&w.Crossing);}public Vector3 StopPosition(TrafficJunction j,int axis,int sign){var f=StopFacility(j,axis,sign);return f==null?j.center-AxisDirection(j,axis)*sign*j.StopDistance(axis,sign):f.Position;} public Vector3 StopNormal(TrafficJunction j,int axis,int sign){var f=StopFacility(j,axis,sign);return f==null?AxisDirection(j,axis)*sign:Quaternion.Euler(0,f.yaw,0)*Vector3.forward;} public float EditorSpeedLimit(Vector3 position,Vector3 heading){if(editorGraph==null||!editorSpeedRules)return 0;float at;int edge=editorGraph.Nearest(position,heading,out at);return edge<0?0:RoadMapRules.SpeedLimit(roadMap,editorGraph.edges[edge].id,at);} public string EditorLaneId(Vector3 position,Vector3 heading){if(editorGraph==null)return null;float at;int edge=editorGraph.Nearest(position,heading,out at);return edge<0?null:editorGraph.edges[edge].id;}
     readonly TrafficOverlapQuery overlaps=new TrafficOverlapQuery();
     sealed class MovementEnvelope {public TrafficRoute route;public Vector3[] points;public float from,to;public Bounds bounds;}
     readonly Dictionary<TrafficStop,MovementEnvelope> movementEnvelopes=new Dictionary<TrafficStop,MovementEnvelope>();
@@ -122,6 +129,13 @@ public partial class TrafficSystem : MonoBehaviour {
     public RoadMapFacility UturnCondition(string laneId){return UturnMovement.Condition(roadMap==null?null:roadMap.editorDocument,laneId);}
     // Authored lanes can cross a skewed junction axis outside its legacy lateral strip.
     // Keep the graph search local to the observed stop line, then require a directed connection.
+    RoadMapFacility StopFacility(TrafficJunction junction,int axis,int sign){
+        if(roadMap.editorDocument==null)return null;
+        // Read live editor data, preserving first-match and in-place editing semantics.
+        foreach(var facility in roadMap.editorDocument.facilities)
+            if(facility.kind=="stopLine"&&facility.junctionId==junction.name&&facility.axis==axis&&facility.sign==sign)return facility;
+        return null;
+    }
     int DirectedApproachEdge(TrafficJunction junction,int axis,int sign,Vector3 position,Vector3 heading){
         if(editorGraph==null||roadMap==null||roadMap.editorDocument==null)return -1;
         var direction=AxisDirection(junction,axis)*sign;if(Vector3.Dot(heading,direction)<.7f)return -1;

@@ -29,6 +29,9 @@ public partial class RoadNavigation : MonoBehaviour {
  public int AvoidEdge {get{return avoidEdge;}set{if(avoidEdge==value)return;avoidEdge=value;hdRoute=null;}}
  float[] WithAvoidance(float[] weights){if(hd==null||avoidEdge<0||avoidEdge>=hd.edges.Length)return weights;var result=weights==null?new float[hd.edges.Length]:(float[])weights.Clone();if(weights==null)for(int i=0;i<result.Length;i++)result[i]=hd.paths[i].length;result[avoidEdge]=float.PositiveInfinity;return result;}
  HdRoadGraph.RoutePath GoalRoute(int start,float at,float[] weights){weights=WithAvoidance(weights);var route=RequiredVia>=0?hd.Via(start,at,RequiredVia,hdGoal,hdGoalAt,weights):hd.Route(start,at,hdGoal,hdGoalAt,weights);return route!=null&&avoidEdge>=0&&route.edges.Contains(avoidEdge)?null:route;}
+ readonly RoadMapRules.SpeedSignIndex speedSigns=new RoadMapRules.SpeedSignIndex();readonly List<Vector3> conditionPoints=new List<Vector3>();
+ // OnSegment needs |lateral|<=width*.5+.3 (3.2m lanes => 1.9m) inside the segment span.
+ bool ConditionsNear(int edge){if(conditionPoints.Count==0)return false;var b=hd.PathBounds(edge);const float pad=1.95f;float x0=b.min.x-pad,x1=b.max.x+pad,z0=b.min.z-pad,z1=b.max.z+pad;foreach(var p in conditionPoints)if(p.x>=x0&&p.x<=x1&&p.z>=z0&&p.z<=z1)return true;return false;}
  public int hdGoal=-1; public float hdGoalAt; public bool freeGuidance; bool hybrid; float nextHdCosts; float[] hdSeconds;
  public readonly List<Vector3> path=new List<Vector3>(),alternativePath=new List<Vector3>();
  // Display memory is never a steering path or an ETA source.
@@ -245,7 +248,8 @@ public partial class RoadNavigation : MonoBehaviour {
   float roadAt;List<Vector3> departure;
   if(!freeGuidance&&hd.Nearest(vehicle.position,vehicle.forward,out roadAt)<0&&ServiceDeparture(hdGoal,hdGoalAt,out departure)){hdRoute=null;path.Clear();path.AddRange(departure);alternativePath.Clear();remaining=Length(path);estimatedSeconds=remaining/5;alternativeDistance=alternativeSeconds=0;instruction="시설 출구까지 수동 이동 · 도로 합류 후 안내 계속";line.positionCount=path.Count;for(int i=0;i<path.Count;i++)line.SetPosition(i,path[i]+Vector3.up*.19f);return;}
   bool observe=Time.time>=nextHdCosts||hdRoute==null;
-  if(observe){nextHdCosts=Time.time+6;for(int i=0;i<hd.paths.Length;i++){var p=hd.paths[i];float delay=0;if(conditions!=null)for(int k=1;k<p.points.Length;k++)delay+=conditions.ExtraSeconds(p.points[k-1],p.points[k],(p.points[k]-p.points[k-1]).normalized,3.2f);hdSeconds[i]=RoadMapRules.TravelSeconds(editorMap,hd.edges[i].id,p.length,8)/RainPolicy.TrafficSpeedMultiplier+delay;}}
+  if(observe){nextHdCosts=Time.time+6;speedSigns.Rebuild(editorMap);if(conditions!=null)conditions.CollectPoints(conditionPoints);else conditionPoints.Clear();
+   for(int i=0;i<hd.paths.Length;i++){var p=hd.paths[i];float delay=0;if(conditions!=null&&ConditionsNear(i))for(int k=1;k<p.points.Length;k++)delay+=conditions.ExtraSeconds(p.points[k-1],p.points[k],(p.points[k]-p.points[k-1]).normalized,3.2f);hdSeconds[i]=speedSigns.TravelSeconds(hd.edges[i].id,p.length,8)/RainPolicy.TrafficSpeedMultiplier+delay;}}
   float progress=0,error=float.MaxValue;
   if(hdRoute!=null)progress=ProjectVehicle(out error);
   bool crossing=CrossingPlannedLaneChange(progress,error);
@@ -267,6 +271,7 @@ public partial class RoadNavigation : MonoBehaviour {
   path.Add(hdRoute.path.Position(progress));float accumulated=0;
   for(int i=1;i<hdRoute.path.points.Length;i++){accumulated+=Vector3.Distance(hdRoute.path.points[i-1],hdRoute.path.points[i]);if(accumulated>progress)path.Add(hdRoute.path.points[i]);}
   remaining=Mathf.Max(0,hdRoute.path.length-progress);estimatedSeconds=HdSeconds(hdRoute,progress);
+  var owner=NetworkSession;if(owner&&owner.IsSimulationBot){instruction=freeGuidance?"자유 주행 · "+hd.Instruction(hdRoute,progress):remaining<18?(hybrid?"오른쪽 승하차 지점 · 정차 후 F":"시험 도착 지점 · 직접 감속하여 정차"):hd.Instruction(hdRoute,progress);line.positionCount=freeGuidance?0:path.Count;for(int i=0;i<line.positionCount;i++)line.SetPosition(i,path[i]+Vector3.up*.19f);return;}
   float altAt;int altStart=hd.Nearest(vehicle.position,vehicle.forward,out altAt);var alternate=GoalRoute(altStart,altAt,PreferFastest?null:hdSeconds);if(alternate!=null){alternativePath.AddRange(alternate.path.points);alternativeDistance=alternate.path.length;alternativeSeconds=HdSeconds(alternate,0);}
   instruction=freeGuidance?"자유 주행 · "+hd.Instruction(hdRoute,progress):remaining<18?(hybrid?"오른쪽 승하차 지점 · 정차 후 F":"시험 도착 지점 · 직접 감속하여 정차"):hd.Instruction(hdRoute,progress);
   line.positionCount=freeGuidance?0:path.Count;for(int i=0;i<line.positionCount;i++)line.SetPosition(i,path[i]+Vector3.up*.19f);

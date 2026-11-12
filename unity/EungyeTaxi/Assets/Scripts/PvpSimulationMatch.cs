@@ -7,8 +7,17 @@ using UnityEngine.SceneManagement;
 public sealed class PvpSimulationMatch : MonoBehaviour {
     readonly List<DriveSession> drivers=new List<DriveSession>();
     readonly List<DriveSession> bots=new List<DriveSession>();
-    public IReadOnlyList<DriveSession> Drivers {get{return drivers;}}
-    public IReadOnlyList<DriveSession> Bots {get{return bots;}}
+    // Struct view: foreach uses List's struct enumerator instead of allocating a
+    // boxed IEnumerator on every physics tick (host runs all four sessions).
+    public readonly struct DriverView:IReadOnlyList<DriveSession> {
+        readonly List<DriveSession> list;internal DriverView(List<DriveSession> list){this.list=list;}
+        public int Count {get{return list.Count;}}public DriveSession this[int index] {get{return list[index];}}
+        public List<DriveSession>.Enumerator GetEnumerator(){return list.GetEnumerator();}
+        IEnumerator<DriveSession> IEnumerable<DriveSession>.GetEnumerator(){return list.GetEnumerator();}
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator(){return list.GetEnumerator();}
+    }
+    public DriverView Drivers {get{return new DriverView(drivers);}}
+    public DriverView Bots {get{return new DriverView(bots);}}
     public DriveSession Human {get;private set;}
     public DriveSession Bot {get{return bots.Count>0?bots[0]:null;}}
     public PvpSimulationLedger Ledger {get;private set;}

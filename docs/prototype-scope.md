@@ -1,3 +1,5 @@
+2026-11-12 PvP 안정성: 정차 중 호스트 끊김의 법규/주행 판정 CPU·할당 비용을 줄인다. 실제 판정·차량 물리·LAN v17을 유지하고 최적화 검증본을 별도 빌드한다. 40~50km/h 코너 개선은 의견 단계다. [검증·한계](work-history/2026-11-12-pvp-stability-performance.md).
+
 2026-11-12 PvP LAN 방 목록: 참가 화면의 IP 입력을 자동 방 목록으로 바꾼다. 선택한 방으로 기존 LAN v17 연결을 열며 호스트 설정, 참가 승인, 경기와 재참가를 사용한다. [LAN 접속 기획](content-design/pvp/30-native-lan.md).
 
 2026-11-09 차로 후속: [J866/J5057 차로별 표시·은계중앙로 편도1/은계로 편도3 로드뷰·주차장 안내 좌회전](content-design/21-lane-movement-roadview-followup.md). 기존 주행망/통행 조건·사용자 저장을 보존하고 원본 차로 표시·노면 경계·런타임 서비스 목표 변환을 교정한다. [검증·출하 상태](work-history/2026-11-09-lane-movement-roadview-followup.md).

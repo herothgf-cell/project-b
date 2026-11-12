@@ -10,6 +10,7 @@ using UnityEngine;
 public sealed class PvpNativeLanProbe : MonoBehaviour {
  [Serializable] public sealed class Metrics {
   public int movingFrames,frozenFrames;public float movingMaxSpeed;public double movingSeconds,movingMetres,maxFreezeMs;
+  public float parkedHeightRange,parkedVerticalSpeed;
   public string product;public string graphics;public int width,height;public PvpNativePerfView[] performance;public string role,map,error;public bool passed;public int slot,checks,failed,driverCount,wheels,score,cash,durability,claim=-1;
   public float elapsed,metres,maxSpeed;public string trip,offer;public List<string> evidence=new List<string>();
  }
@@ -74,6 +75,20 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   Check(metrics.map=="pvp-city-a"&&metrics.driverCount==4&&metrics.wheels==4,"native city and four original physical taxis");
   foreach(var d in match.Drivers)Check(d.business.SimulationSession&&d.business.SavePath==""&&d.taxi.wheels.Length==4,"native sessions retain campaign save isolation");
   metrics.product=Application.productName;Check(metrics.product=="택시 시뮬레이션","latest main product name retained");metrics.graphics=SystemInfo.graphicsDeviceType.ToString();metrics.width=Screen.width;metrics.height=Screen.height;
+  float parked=float.Parse(Arg("-pvpNativeParkedSeconds","0"),System.Globalization.CultureInfo.InvariantCulture);
+  if(parked>0){
+   own.taxi.automated=true;own.taxi.autoBrake=true;own.taxi.autoThrottle=0;
+   if(!host)lan.ProbeInput=()=>new PvpNativeDrive{brake=true,blocked=false};
+   yield return new WaitForSecondsRealtime(3);Mark(metrics.role+"-parked-ready");
+   yield return Until(()=>Has((host?"client":"host")+"-parked-ready"),"both humans parked with two live bots");
+   float lowest=own.taxi.body.position.y,highest=lowest,parkedUntil=Time.realtimeSinceStartup+Mathf.Clamp(parked,10,60);
+   PvpNativePerf.Moving=true;while(Time.realtimeSinceStartup<parkedUntil){lowest=Mathf.Min(lowest,own.taxi.body.position.y);highest=Mathf.Max(highest,own.taxi.body.position.y);metrics.parkedVerticalSpeed=Mathf.Max(metrics.parkedVerticalSpeed,Mathf.Abs(own.taxi.body.velocity.y));yield return null;}PvpNativePerf.Moving=false;
+   metrics.parkedHeightRange=highest-lowest;Check(metrics.parkedHeightRange<.15f&&metrics.parkedVerticalSpeed<.5f,"parked native taxi remains vertically stable");
+   Check(lan.Racing&&lan.Match&&!lan.Match.Finished,"parked two-human LAN remains live");
+   Mark(metrics.role+"-parked-done");yield return Until(()=>Has((host?"client":"host")+"-parked-done"),"both parked measurements completed");
+   if(host)yield return Until(()=>Has("client-clean"),"parked client cleaned up",20);
+   yield return Cleanup();yield break;
+  }
   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeRenderCheck")>=0){Check(SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null,"graphics device is active");bool captured=false;StartCoroutine(CaptureFrame(()=>captured=true));yield return Until(()=>captured,"actual rendered frame captured",8);if(!host){var map=own.GetComponent<FullMapOverlay>();Check(map&&map.Open(),"native A2 full map opens");yield return null;yield return null;captured=false;StartCoroutine(CaptureFrame(()=>captured=true,"client-a3-map.png"));yield return Until(()=>captured,"actual A2 map render captured",8);map.Close();}}
   if(host){
    yield return Until(()=>Has("weather-client-ready"),"guest ready for live weather");
@@ -87,7 +102,9 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
  }
  IEnumerator Host(){
   var match=lan.Match;
-  int listed=0;float shortest=0,longest=0;foreach(var offer in match.SharedCalls.Offers){if(offer==null)continue;listed++;int nearer=0;for(int d=0;d<match.Human.jobs.stops.Length;d++){if(d==offer.pickup)continue;float distance=match.Human.jobs.nav.Distance(match.Human.jobs.stops[offer.pickup],match.Human.jobs.stops[d]);if(distance>=80&&distance<offer.distance-.1f)nearer++;}Check(nearer<3,"short-match offer uses one of three nearest reachable drops");shortest=shortest==0?offer.distance:Mathf.Min(shortest,offer.distance);longest=Mathf.Max(longest,offer.distance);}Check(listed>=6,"short match keeps a populated shared call list");Debug.Log("PVP_SHORT_CALLS count="+listed+" shortest="+shortest+" longest="+longest);
+  // Motion-only uses a 1200-second room; the nearest-three rule belongs to the
+  // separate 300-second acceptance fixture, not the long-room performance run.
+  if(!motionOnly){int listed=0;float shortest=0,longest=0;foreach(var offer in match.SharedCalls.Offers){if(offer==null)continue;listed++;int nearer=0;for(int d=0;d<match.Human.jobs.stops.Length;d++){if(d==offer.pickup)continue;float distance=match.Human.jobs.nav.Distance(match.Human.jobs.stops[offer.pickup],match.Human.jobs.stops[d]);if(distance>=80&&distance<offer.distance-.1f)nearer++;}Check(nearer<3,"short-match offer uses one of three nearest reachable drops");shortest=shortest==0?offer.distance:Mathf.Min(shortest,offer.distance);longest=Mathf.Max(longest,offer.distance);}Check(listed>=6,"short match keeps a populated shared call list");Debug.Log("PVP_SHORT_CALLS count="+listed+" shortest="+shortest+" longest="+longest);}
   var guest=match.Drivers[1];var car=guest.taxi;int carId=car.GetInstanceID();
   Check(guest.GetComponent<PvpSimulationBot>()&&!guest.GetComponent<PvpSimulationBot>().enabled,"guest seat disables native bot while connected");
   // LAN v17 (plan 22): appearance IDs only; every taxi keeps PVP standard performance.

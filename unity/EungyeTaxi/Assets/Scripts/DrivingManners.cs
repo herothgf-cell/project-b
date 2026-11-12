@@ -26,20 +26,24 @@ public class DrivingManners : MonoBehaviour {
    bool required=filtered<0&&NecessaryBraking();bool excluded=required&&VehicleCatalog.HarshMotion(comfort,filtered,session.taxi.Speed,false);if(excluded&&!necessaryLatched)necessaryBrakeEvents++;necessaryLatched=excluded;
    bool harsh=VehicleCatalog.HarshMotion(comfort,filtered,session.taxi.Speed,required);
    if(harsh){harshTime+=Time.fixedDeltaTime;if(harshTime>.45f&&!harshLatched){Deduct(filtered>0?"accel":"brake",(session.jobs?session.jobs.ChoiceMotionPenalty:MannerLedger.MotionPenalty(ComfortAccepted)),(ComfortAccepted?"차멀미 배려 요청 중 ":"")+(filtered>0?"급가속":"급제동"),6);harshLatched=true;}}else{harshTime=0;harshLatched=false;}
-   if(++sample%5==0){int outside=0;foreach(float side in new[]{-.8f,.8f})foreach(float end in new[]{-1.25f,1.25f})if(!session.roadEnvironment.OnRoad(transform.TransformPoint(new Vector3(side,0,end)),.1f))outside++;
+   if(++sample%5==0){int outside=0;foreach(float side in cornerSides)foreach(float end in cornerEnds)if(!session.roadEnvironment.OnRoad(transform.TransformPoint(new Vector3(side,0,end)),.1f))outside++;
     if(outside>=2&&velocity.magnitude>1){offroadTime+=Time.fixedDeltaTime*5;if(offroadTime>.7f&&!offroadLatched){Deduct("sidewalk",5,"도로 경계·인도 침범",4);offroadLatched=true;}}else if(outside==0){offroadTime=0;offroadLatched=false;}
    }
    ObserveStable(transform.position.x,transform.position.z,velocity.magnitude,Time.fixedDeltaTime,!harsh);
   }
   previousVelocity=velocity;previousFront=front;
  }
+ // Shared buffer: NecessaryBraking runs every decelerating physics tick per driver.
+ static readonly RaycastHit[] brakeHits=new RaycastHit[64];
+ static readonly float[] cornerSides={-.8f,.8f},cornerEnds={-1.25f,1.25f};
  public bool NecessaryBraking(){
   if(session.business&&session.business.SystemFatigueBraking)return true;
   var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.RequiredBraking())return true;
   // Observation only: assistance never takes over accelerator/brake input.
   float distance=Mathf.Max(5,session.taxi.body.velocity.magnitude*2+4);
-  foreach(var hit in Physics.SphereCastAll(transform.position+Vector3.up*.65f,.8f,transform.forward,distance,(1<<8)|(1<<9),QueryTriggerInteraction.Ignore))if(hit.rigidbody!=session.taxi.body)return true;
-  foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)foreach(int sign in new[]{-1,1}){
+  int hitCount=Physics.SphereCastNonAlloc(transform.position+Vector3.up*.65f,.8f,transform.forward,brakeHits,distance,(1<<8)|(1<<9),QueryTriggerInteraction.Ignore);
+  for(int h=0;h<hitCount;h++)if(brakeHits[h].rigidbody!=session.taxi.body)return true;
+  foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)for(int sign=-1;sign<=1;sign+=2){
    var dir=session.traffic.AxisDirection(j,axis)*sign;
    // The right-side pedestrian crossing is beyond the entry stop line. Keep
    // recognizing required braking there after the vehicle turns into the exit.
@@ -85,10 +89,11 @@ public class DrivingManners : MonoBehaviour {
    if(uturn||left&&!holdLeft||right||through){bool allowed=uturn?crossing.uturnAllowed:left?crossing.left:right?crossing.right:crossing.through;// Yellow exempts only the movement whose own signal is yellow (protected-left yellow keeps straight red).
    bool movementUncertain=uturn||left?crossing.uncertainLeft:right?crossing.uncertainRight:crossing.uncertainThrough;if(!movementUncertain&&!crossing.penalized&&!allowed)Deduct("redmovement"+crossing.junction.name,right&&crossing.simpleRightStop?4:12,uturn?"유턴 조건 위반":left?"좌회전 신호 위반":right?crossing.simpleRightStop?"우회전 전 일시정지 위반":"우회전 신호 위반":"진행 방향 신호 위반",5);crossing=null;}
   }
-  foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)foreach(int sign in new[]{-1,1}){
-   var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.Owns(j))continue;
+  var zones=session.GetComponent<ServiceLawZones>();
+  foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)for(int sign=-1;sign<=1;sign+=2){
+   if(zones&&zones.Owns(j))continue;
    if(!j.signalized&&!j.scenarioSignal)continue;
-   var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(transform.forward,dir)<.7f)continue;var stop=session.traffic.StopPosition(j,axis,sign);var planeNormal=session.traffic.StopNormal(j,axis,sign);float a=Vector3.Dot(before-stop,planeNormal),b=Vector3.Dot(after-stop,planeNormal);float lane=Vector3.Dot(after-j.center,TrafficSystem.Right(dir));bool validLane=lane>.15f&&lane<j.halfWidth[axis]||session.traffic.DirectedApproach(j,axis,sign,transform.position,transform.forward);string key=j.name+axis+sign;
+   var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(transform.forward,dir)<.7f)continue;var stop=session.traffic.StopPosition(j,axis,sign);var planeNormal=session.traffic.StopNormal(j,axis,sign);float a=Vector3.Dot(before-stop,planeNormal),b=Vector3.Dot(after-stop,planeNormal);if(!(b>=-3&&b<=TrafficJunction.StopLineEntryTolerance)&&!(a<TrafficJunction.StopLineEntryTolerance&&b>=TrafficJunction.StopLineEntryTolerance))continue;float lane=Vector3.Dot(after-j.center,TrafficSystem.Right(dir));bool validLane=lane>.15f&&lane<j.halfWidth[axis]||session.traffic.DirectedApproach(j,axis,sign,transform.position,transform.forward);string key=j.ApproachKey(axis,sign);
    if(b>=-3&&b<=TrafficJunction.StopLineEntryTolerance&&validLane&&session.taxi.body.velocity.magnitude<.05f)stops[key]=Time.time;
    if(a<TrafficJunction.StopLineEntryTolerance&&b>=TrafficJunction.StopLineEntryTolerance&&validLane){
     float last;bool stopped=stops.TryGetValue(key,out last)&&Time.time-last<8;stops.Remove(key);

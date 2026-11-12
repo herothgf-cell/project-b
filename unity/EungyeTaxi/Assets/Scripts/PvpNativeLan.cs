@@ -17,7 +17,7 @@ using Unity.Collections;
 // Trusted LAN, host-authoritative native WheelCollider simulation. No client pose/fare authority.
 [DefaultExecutionOrder(-110)]
 public sealed class PvpNativeLan:MonoBehaviour {
- public const string Protocol="native-city-lan-v17";
+ public const string Protocol="native-city-lan-v18";
  public static PvpNativeLan Instance {get;private set;}
  public static bool ApplyingReplica;
  public PvpSimulationMatch Match {get;private set;}
@@ -25,7 +25,8 @@ public sealed class PvpNativeLan:MonoBehaviour {
  public int LocalSlot {get;private set;}public int Seconds {get;private set;}=1200;
  public string Status {get;private set;}="";public string Address {get;private set;}public ushort Port {get;private set;}
  public bool Started {get;private set;}public bool Racing {get;private set;}public bool MenuOpen {get;private set;}
- public static bool ProbeMode {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeLanCheck")>=0;}}
+ static readonly bool probeMode=Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeLanCheck")>=0;
+ public static bool ProbeMode {get{return probeMode;}}
  public Func<PvpNativeDrive> ProbeInput;
  public PvpNativePrediction Prediction {get;internal set;}
  public bool ProbeHoldInputs,ProbeHoldFrames;public int ProbeInputCount {get;private set;}

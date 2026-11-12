@@ -21,9 +21,10 @@ public partial class PassengerJobs : MonoBehaviour {
  public int balance,completed,failed;public string message="1·2·3으로 호출 선택 / 길가 손님 옆에 정차 후 F";
  public RoadNavigation nav;public MapStop[] stops;public GameObject[] people;public float[] cooldown;GameObject marker;float resultUntil,nextOfferRetry;int generation;int offerPhase=-1;bool deadlineNotice,passengerChangeApplied;int passengerVia=-1;public int PassengerViaStop {get{return passengerVia;}}public bool PassengerViaPending {get{return passengerVia>=0;}}public string OfferId {get;private set;}
  bool[] roadsideWaiting;string waitingSeed="";int waitingGeneration;double nextWaitingRefresh;
- string WaitingSeed {get{return (session.law?session.law.ids.campaign:"initial")+":"+(session.business==null?1:session.business.ledger.Day);}}
+ string seedCampaign;int seedDay=int.MinValue;string seedCache;
+ string WaitingSeed {get{string campaign=session.law?session.law.ids.campaign:"initial";int day=session.business==null?1:session.business.ledger.Day;if(seedCache==null||day!=seedDay||!ReferenceEquals(campaign,seedCampaign)&&campaign!=seedCampaign){seedCampaign=campaign;seedDay=day;seedCache=campaign+":"+day;}return seedCache;}}
  public bool HasWaitingPassenger(int index){
-  if(index<0||index>=stops.Length||!PickupClaimAvailable(index)||AccidentController.PersonHeld(session,"waiting:"+index))return false;
+  if(index<0||index>=stops.Length||!PickupClaimAvailable(index)||AccidentController.PersonHeld(session,AccidentController.WaitingId(index)))return false;
   if(current!=null&&trip.State==TripState.ToPickup&&current.pickup==index)return true;
   if(StopOccupied(index))return false;
   if(current!=null&&trip.State==TripState.OnTrip&&current.pickup==index||Time.time<cooldown[index])return false;

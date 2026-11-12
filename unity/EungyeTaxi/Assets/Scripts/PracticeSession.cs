@@ -80,7 +80,8 @@ public class PracticeSession : MonoBehaviour {
  }
  IEnumerator AutoFinish(){yield return new WaitForSecondsRealtime(3);FinishPractice();}
 
- public static bool Enabled {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-practice")>=0;}}
+ static readonly bool practiceEnabled=Array.IndexOf(Environment.GetCommandLineArgs(),"-practice")>=0;
+ public static bool Enabled {get{return practiceEnabled;}}
  IEnumerator Start(){
   if(!Enabled)yield break;
   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-practiceAutoFinish")>=0)StartCoroutine(AutoFinish());

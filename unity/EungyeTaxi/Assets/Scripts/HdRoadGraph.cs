@@ -15,6 +15,29 @@ public sealed class HdRoadGraph {
  public readonly AssistedRoadNetwork.Path[] paths;
  readonly Bounds[] pathBounds;
  public readonly HashSet<string> signalizedRules=new HashSet<string>();
+ public Bounds PathBounds(int edge){return pathBounds[edge];}
+ // Reused Dijkstra scratch. Route() runs several times per second for each of the
+ // four PVP sessions on the host; per-search arrays and SortedSet<Tuple> nodes were
+ // the main navigation GC source. The heap orders by (cost, edge) exactly like the
+ // former SortedSet<Tuple<float,int>>, so pop order and tie handling are unchanged.
+ float[] scratchCost;int[] scratchPrev;bool[] scratchUsed;
+ struct QueueItem {public float cost;public int edge;}
+ sealed class MinQueue {
+  QueueItem[] items=new QueueItem[64];public int Count;
+  static bool Less(QueueItem a,QueueItem b){return a.cost<b.cost||a.cost==b.cost&&a.edge<b.edge;}
+  public void Clear(){Count=0;}
+  public void Add(float cost,int edge){
+   if(Count==items.Length)Array.Resize(ref items,items.Length*2);
+   int i=Count++;var item=new QueueItem{cost=cost,edge=edge};
+   while(i>0){int parent=(i-1)>>1;if(!Less(item,items[parent]))break;items[i]=items[parent];i=parent;}items[i]=item;
+  }
+  public QueueItem Pop(){
+   var top=items[0];var last=items[--Count];int i=0;
+   while(true){int child=i*2+1;if(child>=Count)break;if(child+1<Count&&Less(items[child+1],items[child]))child++;if(!Less(items[child],last))break;items[i]=items[child];i=child;}
+   if(Count>0)items[i]=last;return top;
+  }
+ }
+ readonly MinQueue scratchQueue=new MinQueue();
  public HdRoadGraph(MapData map){
   if(map.junctionRules!=null)foreach(var rule in map.junctionRules)if(rule.signalMode>0)signalizedRules.Add(rule.id);
   edges=map.hdEdges;paths=new AssistedRoadNetwork.Path[edges.Length];pathBounds=new Bounds[edges.Length];
@@ -37,6 +60,17 @@ public sealed class HdRoadGraph {
    best=i;score=error;at=d;
   }return best;
  }
+ // Direction-independent nearest two lanes for ambiguity-sensitive wrong-way
+ // detection. Preserve disabled filtering, edge order and exact tie semantics.
+ public int NearestPair(Vector3 position,out float at,out float nearest,out float runner){
+  int best=-1;at=0;nearest=runner=float.MaxValue;var ground=position;ground.y=0;
+  for(int i=0;i<edges.Length;i++){
+   if(edges[i].disabled||pathBounds[i].SqrDistance(ground)>runner*runner+.0001f)continue;
+   float error;float distance=paths[i].Project(position,out error);
+   if(error<nearest){runner=nearest;nearest=error;best=i;at=distance;}else runner=Mathf.Min(runner,error);
+  }
+  return best;
+ }
  // One distance search for the PVP bot's many candidate pickups. Existing
  // Route/Compose still determine geometry, tie order and same-lane legal loops.
  public sealed class DistanceSearch {
@@ -51,28 +85,32 @@ public sealed class HdRoadGraph {
  }
  public DistanceSearch SearchDistances(int start,float at){
   if(start<0||start>=edges.Length||edges[start].disabled||float.IsNaN(at)||at<0||at>paths[start].length)return new DistanceSearch(this,start,at,null);
-  var costs=new float[edges.Length];var previous=new int[edges.Length];var used=new bool[edges.Length];for(int i=0;i<costs.Length;i++){costs[i]=float.PositiveInfinity;previous[i]=-1;}
-  costs[start]=0;var queue=new SortedSet<Tuple<float,int>>();queue.Add(Tuple.Create(0f,start));
-  while(queue.Count>0){var item=queue.Min;queue.Remove(item);int cur=item.Item2;float value=item.Item1;if(used[cur]||value>costs[cur])continue;used[cur]=true;
+  var previous=new int[edges.Length];bool[] used;var costs=Scratch(out used);for(int i=0;i<costs.Length;i++){costs[i]=float.PositiveInfinity;previous[i]=-1;used[i]=false;}
+  costs[start]=0;var queue=scratchQueue;queue.Clear();queue.Add(0f,start);
+  while(queue.Count>0){var item=queue.Pop();int cur=item.edge;float value=item.cost;if(used[cur]||value>costs[cur])continue;used[cur]=true;
    foreach(int next in edges[cur].next){float fraction=1-(cur==start?at/Mathf.Max(.01f,paths[cur].length):0);float cost=value+paths[cur].length*fraction+(edges[next].change!=0?12:0);
-    if(cost<costs[next]){costs[next]=cost;previous[next]=cur;queue.Add(Tuple.Create(cost,next));}
+    if(cost<costs[next]){costs[next]=cost;previous[next]=cur;queue.Add(cost,next);}
    }
   }return new DistanceSearch(this,start,at,previous);
  }
  public RoutePath Route(int start,float startAt,int goal,float goalAt,float[] weights=null){
   if(start<0||goal<0||start>=edges.Length||goal>=edges.Length||edges[start].disabled||edges[goal].disabled)return null;
   if(start==goal&&startAt>goalAt+.1f){RoutePath best=null;float score=float.MaxValue;foreach(int next in edges[start].next){if(next==start)continue;var rest=Route(next,0,goal,goalAt,weights);if(rest==null)continue;var chain=new List<int>{start};chain.AddRange(rest.edges);var candidate=Compose(chain,startAt,goalAt);float loopCost=0;foreach(int e in rest.edges)loopCost+=weights==null?paths[e].length:weights[e];if(candidate!=null&&loopCost<score){score=loopCost;best=candidate;}}return best;}
-  var cost=new float[edges.Length];var prev=new int[edges.Length];var used=new bool[edges.Length];
-  for(int i=0;i<cost.Length;i++){cost[i]=float.PositiveInfinity;prev[i]=-1;}
-  cost[start]=0;var queue=new SortedSet<Tuple<float,int>>();queue.Add(Tuple.Create(0f,start));
+  bool[] used;var cost=Scratch(out used);var prev=scratchPrev;
+  for(int i=0;i<cost.Length;i++){cost[i]=float.PositiveInfinity;prev[i]=-1;used[i]=false;}
+  cost[start]=0;var queue=scratchQueue;queue.Clear();queue.Add(0f,start);
   while(queue.Count>0){
-   var item=queue.Min;queue.Remove(item);int cur=item.Item2;float value=item.Item1;if(used[cur]||value>cost[cur])continue;
+   var item=queue.Pop();int cur=item.edge;float value=item.cost;if(used[cur]||value>cost[cur])continue;
    if(cur==goal){var chain=new List<int>();for(int i=cur;i>=0;i=prev[i])chain.Add(i);chain.Reverse();return Compose(chain,startAt,goalAt);}
    used[cur]=true;
    foreach(int next in edges[cur].next){float fraction=1-(cur==start?startAt/Mathf.Max(.01f,paths[cur].length):0);float c=value+(weights==null?paths[cur].length:weights[cur])*fraction+(edges[next].change!=0?(weights==null?12:1.5f):0);
-    if(c<cost[next]){cost[next]=c;prev[next]=cur;queue.Add(Tuple.Create(c,next));}
+    if(c<cost[next]){cost[next]=c;prev[next]=cur;queue.Add(c,next);}
    }
   }return null;
+ }
+ float[] Scratch(out bool[] used){
+  if(scratchCost==null||scratchCost.Length!=edges.Length){scratchCost=new float[edges.Length];scratchPrev=new int[edges.Length];scratchUsed=new bool[edges.Length];}
+  used=scratchUsed;return scratchCost;
  }
  public RoutePath Compose(List<int> chain,float startAt,float goalAt){
   var result=new RoutePath();var points=new List<Vector3>();float total=0;

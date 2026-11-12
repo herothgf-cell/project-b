@@ -6,6 +6,7 @@ param(
  [switch]$ChoiceEffects,
  [switch]$MotionOnly,
  [ValidateRange(0,60)][int]$MotionSeconds=0,
+ [ValidateRange(0,60)][int]$ParkedSeconds=0,
  [switch]$Rendered,
  [switch]$RenderBoth,
  [ValidateRange(800,3840)][int]$RenderWidth=1280,
@@ -19,6 +20,7 @@ param(
 $ErrorActionPreference='Stop'
 if($RenderBoth -and -not $Rendered){throw 'RenderBoth requires Rendered'}
 if($MotionOnly -and ($MotionSeconds -lt 10 -or $Reconnect)){throw 'MotionOnly requires at least10 seconds and runs separately from Reconnect'}
+if($ParkedSeconds -gt 0 -and ($ParkedSeconds -lt 10 -or $MotionOnly -or $MotionSeconds -gt 0 -or $Reconnect -or $ChoiceEffects)){throw 'ParkedSeconds requires 10-60 seconds and runs separately from motion/reconnect/choice fixtures'}
 if($ChoiceEffects -and ($MotionOnly -or !$ContentHostProfile)){throw 'ChoiceEffects requires a custom ContentHostProfile and the full model route'}
 $root=Split-Path -Parent $PSScriptRoot
 if(-not $Executable){$Executable=Join-Path $root 'builds/EungyeTaxi/EungyeTaxi.exe'}
@@ -38,6 +40,7 @@ function Start-NativeProbe([string]$Role){
  if($Rendered){$arguments=@($arguments | Where-Object {$_ -ne '-batchmode' -and $_ -ne '-nographics'});$arguments+=@('-noaudio','-pvpNativeRenderCheck','-screen-fullscreen','0','-screen-width',"$RenderWidth",'-screen-height',"$RenderHeight")}
  if($MotionOnly){$arguments+='-pvpNativeMotionOnly'}
  if($MotionSeconds -gt 0){$arguments+=@('-pvpNativeMotionSeconds',"$MotionSeconds")}
+ if($ParkedSeconds -gt 0){$arguments+=@('-pvpNativeParkedSeconds',"$ParkedSeconds")}
  if($LegacyRouting){$arguments+='-pvpNativeLegacyRouting'}
  if($Reconnect){$arguments+='-pvpNativeLanReconnect'}
  if($Discover){$arguments+='-pvpNativeLanDiscover'}

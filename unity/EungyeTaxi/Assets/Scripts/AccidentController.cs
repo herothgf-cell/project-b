@@ -10,6 +10,9 @@ public sealed class AccidentController : MonoBehaviour {
  public bool Locked {get{return State!=null&&(State.Locked||State.recoveryRequired);}}
  public bool Waiting {get{return State.phase==AccidentPhase.Waiting;}}
  public bool Atomic {get;private set;}
+ static string[] waitingIds=new string[0];
+ // "waiting:"+index is checked for every stop on every frame/tick per driver; reuse the strings.
+ public static string WaitingId(int index){if(index<0)return "waiting:"+index;if(index>=waitingIds.Length)System.Array.Resize(ref waitingIds,Mathf.Max(index+1,waitingIds.Length*2));return waitingIds[index]??(waitingIds[index]="waiting:"+index);}
  public static bool PersonHeld(DriveSession world,string id){if(!world)return false;if(world.simulationMatch){foreach(var d in world.simulationMatch.Drivers)if(d.accident&&d.accident.HoldsPerson(id))return true;return false;}return world.accident&&world.accident.HoldsPerson(id);}
  float suppressedUntil,fadeUntil;Vector3 previous;Quaternion previousRotation;bool sampled;
  bool Ready {get{return session&&session.StartupReady&&session.business&&session.business.enabledCampaign&&session.business.ledger.Account!=null&&session.business.ledger.Operating&&!session.business.preparing&&!session.business.IsRestoring&&!session.PracticeBusy&&!PracticeSession.Enabled&&!RoadMapRuntime.Trial;}}
@@ -29,18 +32,19 @@ public sealed class AccidentController : MonoBehaviour {
  public void ScanContacts(){
   if(!Ready||PvpNativeLan.IsReplica(session)||PvpNativeLan.WaitingForWorld||session.paused||Time.timeScale<=0)return;
   bool grace=Time.time<suppressedUntil;bool fast=session.taxi.ObservedVelocity.magnitude>=1.5f;bool sweep=fast||State.phase==AccidentPhase.Stopping;
-  var contacts=new List<string>();var world=session.simulationMatch?session.simulationMatch.Human:session;
+  var contacts=contactScratch;contacts.Clear();var world=session.simulationMatch?session.simulationMatch.Human:session;
   if(world.ambientPedestrians)foreach(var a in world.ambientPedestrians.actors)if(a&&a.VisualActive&&Touches(a.transform.position+Vector3.up*.85f,sweep&&!grace))contacts.Add("ambient:"+a.route.id);
   var jobs=world.jobs;
   for(int i=0;i<jobs.people.Length;i++){
    bool waiting=jobs.HasWaitingPassenger(i);
    if(session.simulationMatch)foreach(var driver in session.simulationMatch.Drivers)waiting|=driver.jobs.current!=null&&driver.jobs.trip.State==TripState.ToPickup&&driver.jobs.current.pickup==i;
-   if(waiting&&jobs.people[i]&&Touches(jobs.people[i].transform.position+Vector3.up*.85f,sweep&&!grace))contacts.Add("waiting:"+i);
+   if(waiting&&jobs.people[i]&&Touches(jobs.people[i].transform.position+Vector3.up*.85f,sweep&&!grace))contacts.Add(WaitingId(i));
   }
   foreach(var id in contacts)if(!grace&&(fast||Locked))ReportContact(id);
   State.ObserveContact(contacts.Count>0||session.damage&&session.damage.ContactCount>0,Time.fixedDeltaTime);
   var body=session.taxi.GetComponent<BoxCollider>();previous=body?body.transform.TransformPoint(body.center):transform.position;previousRotation=transform.rotation;sampled=true;
  }
+ readonly List<string> contactScratch=new List<string>();
  void FixedUpdate(){ScanContacts();}
  public bool ReportContact(string targetId){
   return ReportIncident(AccidentKind.Person,targetId,null);

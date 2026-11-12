@@ -5,7 +5,8 @@ using System.Security.Cryptography;
 using UnityEngine;
 public static class RoadMapRuntime {
  public static MapData Baseline;public static string Notice="기본 지도";public static RoadMapDocument Active,ProjectDefault;public static string ProjectToken="";
- public static bool Trial {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-roadMapTrial")>=0;}}
+ static readonly bool trial=Array.IndexOf(Environment.GetCommandLineArgs(),"-roadMapTrial")>=0;
+ public static bool Trial {get{return trial;}}
  public static string Argument(string name){var args=Environment.GetCommandLineArgs();int i=Array.IndexOf(args,name);return i>=0&&i+1<args.Length?args[i+1]:null;}
  public static string Hash(MapData map){if(!string.IsNullOrEmpty(map.editorBaseHash))return map.editorBaseHash;using(var hash=SHA256.Create())return BitConverter.ToString(hash.ComputeHash(Encoding.UTF8.GetBytes(JsonUtility.ToJson(map)))).Replace("-","").ToLowerInvariant();}
  public static MapData Apply(MapData baseline){return Apply(baseline,null,"");}

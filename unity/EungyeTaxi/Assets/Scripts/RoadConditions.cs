@@ -89,6 +89,9 @@ public sealed class RoadConditions : MonoBehaviour {
   var offset=point-a;offset.y=0;float along=Vector3.Dot(offset,delta/length);
   return along>=0&&along<length&&Mathf.Abs(Vector3.Dot(offset,TrafficSystem.Right(delta/length)))<=width*.5f+.3f;
  }
+ // Every incident/sample that ExtraSeconds could count. A segment whose padded
+ // bounds contain none of these has exactly zero delay, so bulk scans may skip it.
+ public void CollectPoints(List<Vector3> into){into.Clear();foreach(var item in incidents)into.Add(item.position);foreach(var sample in samples)into.Add(sample.position);}
  public float ExtraSeconds(Vector3 a,Vector3 b,Vector3 direction,float roadWidth){
   float delay=0;
   foreach(var item in incidents){float remaining=networkView?item.networkRemaining:item.expiresAt-Time.time;if(remaining<=0||!OnSegment(item.position,item.direction,a,b,direction,roadWidth))continue;

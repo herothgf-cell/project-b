@@ -38,7 +38,7 @@ public partial class DrivingLaw : MonoBehaviour {
   if(speed<2||Vector3.Dot(velocity.normalized,taxi.transform.forward)<=.85f){wrongSeconds=wrongDistance=clearSeconds=wrongSampleSeconds=0;return;}
   wrongSampleSeconds+=seconds;if(wrongSampleSeconds<.2f)return;seconds=wrongSampleSeconds;wrongSampleSeconds=0;
   int best=-1;float nearest=float.MaxValue,runner=float.MaxValue,at=0;Vector3 tangent=Vector3.zero;
-  if(graph!=null)for(int i=0;i<graph.edges.Length;i++){if(graph.edges[i].disabled)continue;float error;float d=graph.paths[i].Project(pos,out error);if(error<nearest){runner=nearest;nearest=error;best=i;at=d;tangent=graph.paths[i].Tangent(d);}else runner=Mathf.Min(runner,error);}
+  if(graph!=null){best=graph.NearestPair(pos,out at,out nearest,out runner);if(best>=0)tangent=graph.paths[best].Tangent(at);}
   bool road=best>=0&&nearest<=1.2f&&runner-nearest>.35f&&!graph.edges[best].id.StartsWith("join:")&&graph.edges[best].change==0&&graph.edges[best].turn==0&&at>=10&&at<=graph.paths[best].length-10;
   if(road&&session.traffic)foreach(var j in session.traffic.junctions)if(Vector3.Distance(pos,j.center)<Mathf.Max(j.halfWidth[0],j.halfWidth[1])+12){road=false;break;}
   bool forward=speed>=2&&Vector3.Dot(velocity.normalized,taxi.transform.forward)>.85f;
@@ -86,12 +86,14 @@ public partial class DrivingLaw : MonoBehaviour {
     if(right)AddSlowTurnFinding(e);if(entry.encroached)e.Add("L09",LawVerdict.Violation,1);ledger.RecordIncident(e);entry=null;
    }
   }
-  if(entry==null)foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)foreach(int sign in new[]{-1,1}){
-   var training=session.GetComponent<ConfusionPractice>();var zones=session.GetComponent<ServiceLawZones>();if(training&&training.Owns(j)||zones&&zones.Owns(j))continue;
+  var training=session.GetComponent<ConfusionPractice>();var zones=session.GetComponent<ServiceLawZones>();
+  if(entry==null)foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)for(int sign=-1;sign<=1;sign+=2){
+   if(training&&training.Owns(j)||zones&&zones.Owns(j))continue;
    if(!j.signalized&&!j.scenarioSignal)continue;
    var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(taxi.transform.forward,dir)<.7f)continue;var stop=session.traffic.StopPosition(j,axis,sign);var planeNormal=session.traffic.StopNormal(j,axis,sign);
-   float before=Vector3.Dot(previous-stop,planeNormal),after=Vector3.Dot(front-stop,planeNormal),lane=Vector3.Dot(front-j.center,TrafficSystem.Right(dir));string key=j.name+":"+axis+":"+sign;
+   float before=Vector3.Dot(previous-stop,planeNormal),after=Vector3.Dot(front-stop,planeNormal),lane=Vector3.Dot(front-j.center,TrafficSystem.Right(dir));string key=j.ApproachKey(axis,sign);
    if(after< -8||after>8)stops.Remove(key);
+   if(!(after>=-3&&after<=TrafficJunction.StopLineEntryTolerance)&&!(before<TrafficJunction.StopLineEntryTolerance&&after>=TrafficJunction.StopLineEntryTolerance))continue;
    if((lane<=.15f||lane>=j.halfWidth[axis])&&!session.traffic.DirectedApproach(j,axis,sign,taxi.transform.position,taxi.transform.forward))continue;
    if(after>=-3&&after<=TrafficJunction.StopLineEntryTolerance&&taxi.body.velocity.magnitude<.05f)stops[key]=true;
    if(before<TrafficJunction.StopLineEntryTolerance&&after>=TrafficJunction.StopLineEntryTolerance){string laneId=session.traffic.EditorLaneId(taxi.transform.position,taxi.transform.forward);var observed=session.traffic.Observe(j,axis,sign,dir,taxi.gameObject);bool uturnSigned=session.traffic.UturnCondition(laneId)!=null;entry=new Entry{edited=j.editorProgram!=null,left=j.editorProgram!=null?j.editorProgram.Movement(axis,sign,-1,session.traffic.Clock,laneId):session.traffic.LeftSignal(j,axis,sign),junction=j,direction=dir,axis=axis,sign=sign,stopped=stops.ContainsKey(key),observed=observed,uturnSigned=uturnSigned,uturnLane=uturnSigned?laneId:null,uturnAllowed=uturnSigned&&observed.PedestrianClear&&session.traffic.UturnPermitted(j,axis,sign,laneId),id=ids.Next("event"),necessaryBefore=session.manners?session.manners.necessaryBrakeEvents:0};stops.Remove(key);break;}

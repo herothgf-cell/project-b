@@ -46,7 +46,10 @@ public sealed class TrafficPerformanceProbe : MonoBehaviour {
   frames.Capacity=samples.Capacity=Mathf.CeilToInt(duration*120)+120;
   ticks.Clear();intervalTicks.Clear();gc=GC.CollectionCount(0);begin=Time.realtimeSinceStartup;measuredSession=s;measuring=true;
   long memoryBefore=GC.GetTotalMemory(false);float travelBefore=0;foreach(var car in s.traffic.cars)travelBefore+=car.totalTravel;
+  bool profile=Array.IndexOf(Environment.GetCommandLineArgs(),"-trafficPerfProfiler")>=0;
+  if(profile){UnityEngine.Profiling.Profiler.logFile=Output("frames.raw");UnityEngine.Profiling.Profiler.enableBinaryLog=true;UnityEngine.Profiling.Profiler.enabled=true;}
   yield return new WaitForSecondsRealtime(duration);measuring=false;frames.Sort();float elapsed=Time.realtimeSinceStartup-begin;
+  if(profile){UnityEngine.Profiling.Profiler.enabled=false;UnityEngine.Profiling.Profiler.enableBinaryLog=false;}
   var report="stationary "+(PvpSite?"PVP city-junction:2:4 requested1271.5697,1777.091 north358.478821":commercial?"commercial J6480_2573 eastbound":t2?"T2 J6199_11987":"J5057_4449")+", ambient cars="+s.traffic.cars.Count+" seconds="+elapsed+" frames="+frames.Count+" avgFPS="+(frames.Count/elapsed)+" p50ms="+Percentile(.5f)+" p95ms="+Percentile(.95f)+" p99ms="+Percentile(.99f)+" maxMs="+maxFrame+" over50ms="+over50+" over100ms="+over100+" gc0="+(GC.CollectionCount(0)-gc)+" graphics="+SystemInfo.graphicsDeviceType+"\n";
   float travelAfter=0;foreach(var car in s.traffic.cars)travelAfter+=car.totalTravel;report+=diagnostics+"focusedFrames="+focusedFrames+"/"+frames.Count+"\n";report+="ambientMetres="+(travelAfter-travelBefore)+" managedBytesBefore="+memoryBefore+" managedBytesAfter="+GC.GetTotalMemory(false)+"\n";
   if(PvpSite)report+="mergeFleetObservations="+s.traffic.MergeFleetObservations+" mergePhysicsQueries="+s.traffic.MergePhysicsQueries+" mergeGapCalls="+s.traffic.MergeGapCalls+" peakConcurrentGrants="+s.traffic.MergePeakConcurrentGrants+"\n";
