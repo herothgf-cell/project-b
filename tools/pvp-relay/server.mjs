@@ -60,7 +60,9 @@ export async function startRelay({ access, port = 8080, bind = '127.0.0.1' } = {
   const rooms = new Map();
   let probes = 0;
   const server = createServer((request, response) => {
-    if (request.method !== 'GET' || request.url !== '/rooms') return response.writeHead(404).end();
+    if (request.method !== 'GET') return response.writeHead(404).end();
+    if (request.url === '/healthz') return response.writeHead(204, { 'Cache-Control': 'no-store' }).end();
+    if (request.url !== '/rooms') return response.writeHead(404).end();
     if (!authorized(request)) return response.writeHead(401).end();
     response.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
     response.end(JSON.stringify({ rooms: [...rooms.values()].map(descriptor) }));

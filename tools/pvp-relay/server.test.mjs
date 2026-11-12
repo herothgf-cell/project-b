@@ -36,6 +36,7 @@ test('lists an authorized room and relays only between host and selected guest',
   const http = `http://127.0.0.1:${relay.port}`;
   const ws = `ws://127.0.0.1:${relay.port}`;
   const list = async () => (await fetch(`${http}/rooms`, { headers: authorization })).json();
+  assert.equal((await fetch(`${http}/healthz`)).status, 204);
   assert.equal((await fetch(`${http}/rooms`)).status, 401);
   assert.deepEqual((await list()).rooms, []);
 

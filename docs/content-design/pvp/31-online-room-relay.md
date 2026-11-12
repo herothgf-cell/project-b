@@ -20,9 +20,15 @@
 }
 ```
 
+### Northflank Sandbox를 사용하는 경우
+
+1. Northflank Cloud의 무료 Sandbox 프로젝트에서 배포용 Git 저장소를 연결하고 Combined Service를 만든다. 서비스 인스턴스는 하나만 실행한다. [Sandbox 요금제](https://northflank.com/pricing)
+2. Dockerfile 경로는 `tools/pvp-relay/Dockerfile`, 빌드 컨텍스트는 `tools/pvp-relay`로 설정한다. 운영용으로 생성한 무작위 토큰을 런타임 시크릿 `PVP_RELAY_ACCESS_TOKEN`에 넣는다. [소스 빌드와 배포](https://northflank.com/docs/v1/application/getting-started/build-and-deploy-your-code)
+3. 컨테이너 포트 `8080`을 공개 HTTP/1.1로 설정하고, 자동 TLS가 적용된 `https://…code.run` 주소를 사용한다. 상태 확인은 `GET /healthz`의 204 응답으로 한다. 인증이 필요한 `/rooms`와 인증이 필요 없는 `/probe`도 실제 주소에서 확인한다. [공개 포트와 TLS](https://northflank.com/docs/v1/application/network/configure-ports)
+
 ## 검증
 
 - 서버 통합 테스트는 `npm --prefix tools/pvp-relay test`로 실행한다.
-- 배포 주소의 어댑터별 왕복은 `pwsh -File tools/test_pvp_relay_network.ps1 -Endpoint wss://relay.example.com/probe`로 확인한다. 스크립트는 Windows IPv4 소켓을 각 어댑터에 지정하며 프록시를 사용하지 않는다. 양쪽 어댑터가 연결된 PC에서는 둘 다 성공해야 종료 코드 0을 반환한다.
+- 배포 주소의 어댑터별 왕복은 `pwsh -File tools/test_pvp_relay_network.ps1 -Endpoint wss://relay.example.com/probe`로 확인한다. 스크립트는 Windows IPv4 소켓을 각 어댑터에 지정하며 프록시를 사용하지 않는다. 유선 PC는 `-Network Wired`, Wi-Fi PC는 `-Network WiFi`를 붙인다. 기본값 `Both`에서는 유선과 Wi-Fi 양쪽 모두 성공해야 종료 코드 0을 반환한다.
 - 두 Unity Player 자동 검사는 `pwsh -File tools/test_pvp_native_lan.ps1 -Relay -Reconnect -Executable <통합 실행 파일>`로 실행한다. 검사 프로세스에 같은 중계 URL과 토큰을 설정한다. 개발용 중계를 로컬로 띄울 때는 `http://127.0.0.1:8080`도 사용할 수 있다.
-- 최종 현장 검증은 각 PC가 실제 유선·Wi-Fi에 연결된 상태에서 방 만들기, 목록 참가, 경기 시작과 주행, 역할 교대를 확인한다.
+- 현장에서는 유선 PC와 Wi-Fi PC 각각에서 해당 연결만 사용한다. 두 PC에 같은 중계 주소·토큰을 설정하고 같은 검증용 빌드의 `EungyeTaxi.exe`를 실행한다. 유선에서 PvP 방을 만들고 Wi-Fi에서 목록을 열어 그 방에 참가한다. 대기실에 두 닉네임이 보이는지, 경기 시작과 상대 차량의 움직임이 두 화면에서 보이는지 확인한다. 방을 닫고 두 PC의 역할을 바꿔 같은 절차를 진행한다. 운영 주소, 빌드 커밋, 두 방향의 결과를 기록한 뒤 기본 배포본과 manifest를 갱신한다.

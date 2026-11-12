@@ -2,6 +2,7 @@
 [CmdletBinding()]
 param(
     [uri]$Endpoint = 'wss://ws.postman-echo.com/raw',
+    [ValidateSet('Both', 'Wired', 'WiFi')] [string]$Network = 'Both',
     [ValidateRange(1, 60)] [int]$TimeoutSeconds = 10
 )
 
@@ -77,7 +78,8 @@ $adapters = [System.Net.NetworkInformation.NetworkInterface]::GetAllNetworkInter
     Where-Object {
         $_.OperationalStatus -eq 'Up' -and
         $_.NetworkInterfaceType -in @('Ethernet', 'GigabitEthernet', 'FastEthernetT', 'Wireless80211') -and
-        ($_.GetIPProperties().GatewayAddresses.Address.AddressFamily -contains 'InterNetwork')
+        ($_.GetIPProperties().GatewayAddresses.Address.AddressFamily -contains 'InterNetwork') -and
+        ($Network -eq 'Both' -or (($_.NetworkInterfaceType -eq 'Wireless80211') -eq ($Network -eq 'WiFi')))
     }
 
 $checks = foreach ($adapter in $adapters) {
@@ -98,7 +100,8 @@ $results = foreach ($check in $checks) {
 
 $passedWireless = $results | Where-Object { $_.IsWireless -and $_.Passed }
 $passedWired = $results | Where-Object { -not $_.IsWireless -and $_.Passed }
-if (-not $passedWireless -or -not $passedWired) {
+if (($Network -ne 'Wired' -and -not $passedWireless) -or ($Network -ne 'WiFi' -and -not $passedWired)) {
+    Write-Output "Required network check did not pass: $Network. Check that the selected adapter is connected."
     exit 1
 }
 exit 0
