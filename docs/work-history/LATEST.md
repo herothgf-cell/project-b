@@ -7,20 +7,24 @@
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
-| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid`. **main**: 게임 소스 ac04a11(교통·법규 높음 수정 eb45976 + 방 조명/러그 그림) · 출하 11/12 ([기록](2026-11-12-traffic-high-fixes.md#후속-buildhybrid-출하-사용자-요청-출하-빌드)). 이전 출하 9ae2297(소스 575ca46) |
+| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 소스 4589e18 · 11/12 은계 도로·교통·생활 제보 반영 ([기록](2026-11-12-eungye-driving-feedback.md)). 이전 출하 7cfe2ca (소스 ac04a11) |
 | 통신 | LAN **v17**. 11/10 PVP 지도 변경으로 지도 지문이 바뀌어 **이전 v17 실행본과도 접속 거부**("PVP 지도가 다릅니다"). 양쪽 PC 같은 실행본 필요 |
-| 배포 검사 | 출하 143파일 131,475,770바이트, 통합/PvP manifest VerifyOnly 통과(11/12) |
-| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json`(Git, revision 14·SHA256 c9aa1e76…) 준비됨, 11/12 Strict issues 0(PowerShell 7 필요). 재수입용 JSON 2개는 선택 입력이며 없음 |
+| 배포 검사 | 11/12 통합/PvP manifest 전수 검증은 [작업 기록](2026-11-12-eungye-driving-feedback.md) 참조 |
+| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (Git, revision 15·SHA256 e85ee656…) · Strict 입력 문제 0 · 선택 재수입 JSON 2개 부재 |
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **main 병합·배포, 사람 검증 전** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V10 30장](../proposals/project-b-game-proposal-v10.pptx) · [반영 검토](../proposals/proposal-v10-review.md) · [Manual V10](../proposals/project-b-prototype-manual-v10.md) |
 
 ## 다음 작업
 
-0. 11/12 출하 실행본으로 모든 PC를 맞추고, 사람 플레이로 교통 높음 수정(황색 감점·유턴·보행자 보호·NPC 대기/정체)과 방 조명/러그 확인. 남은 점검 후보(황색 3초, 편집기 신호 우회전 전용 판정, 법규 H3 등) 사용자 결정.
+0. 은계 실행본에서 J8066 북행 차로 전환과 J1927 좌회전, 보행자·차량 체감, 수면·구토 알림을 사람 플레이로 확인한다. 전체 자동 물리 주행의 PS06 감점/경로 정체는 작업 기록 참조.
 1. 모든 PC에서 main pull 후 같은 실행본으로 맞춘다(11/10 PVP 지도 변경). PVP 신호 대기·뒷골목·승객 요청 빈도(평균 1.5건) 사람 플레이 체감 확인. 기획22 차고·차종과 J5057·J866 유턴은 사람 플레이 확인 전.
 2. [거리뷰 대조 수정 후보](2026-11-10-roadview-lane-audit.md#수정-후보와-우선순위-사용자-확인-전-미적용) 남은 것: 스쿨존 제한속도, 미확인 교차로. [유턴 수정 남은 항목](2026-11-10-uturn-sign-fix.md#남은-항목).
 3. 전체 3일 캠페인, 다른 PC LAN v17, 첫 이용자 안내. 기존 PvP 봇·운송 회귀 실패는 출하 기록 참고.
 4. 보류: 기사 평점(기획22 §3-1), 개인택시 면허 경로([기획23](../content-design/23-license-career-path.md)), Blender 아트 파이프라인 2단계 이후([문서](../proposals/art-blender-pipeline.md)).
+
+## 2026-11-12 은계 도로·교통·생활 제보 수정
+
+[구현·거리뷰·검증·재현](2026-11-12-eungye-driving-feedback.md). J8066 북행 5차로·흰 유턴선, J1927 남서향 보호좌회전과 녹색 8초, 싱글 교통 차량 순항·보행 보호 개선, 구토 즉시 청결 감소·알림, 수면 100초 피로 회복. 기본 지도 r14 저장을 r15에서 이어받기 검증.
 
 ## 2026-11-12 진행 상황 점검
 
