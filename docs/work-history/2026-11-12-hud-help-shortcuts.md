@@ -20,5 +20,6 @@
 | `pwsh -NoProfile -File tools/check_workspace.ps1 -Strict` | 종료 0, 필수 입력 문제 0. 정식 은계 r16, 선택 재수입 입력 2개 부재. |
 | Unity 2022.3.62f2 `PrototypeBuild.BuildHybrid` | 종료 0, `Build Finished, Result: Success.`. 로그 `artifacts/hud-shortcuts-build-native.log`. 최초 제한 환경 실행은 라이선스 IPC 연결 시간 초과로 끝나 로컬 권한 실행에서 재시도했다. |
 | Windows Player 실제 키 입력 | 새 통합 실행본의 복사본에 `-singlePlayer -contentTest -screen-fullscreen 0 -screen-width 1280 -screen-height 720`을 전달했다. 영업 시작 후 정차 상태에서 두 버튼 표기, F1 도움말 열기·닫기, F8 기록 열기·닫기, F7 시설 창 열기·닫기를 확인했다. 시설 창에서 F1을 누른 뒤 닫아도 도움말이 열리지 않았다. |
+| 배포 파일 검증 | 소스 `dca65c7`에서 만든 `builds/EungyeTaxi/`의 `Assembly-CSharp.dll`, `boot.config`, `distribution/EungyeTaxi-build-manifest.json`을 갱신했다. `tools/update_distribution_manifest.ps1 -VerifyOnly` 및 `tools/update_pvp_distribution_manifest.ps1 -VerifyOnly` 각각 종료 0, 143파일·131,489,978바이트. 테스트 복사본의 실행 파일과 변경된 배포 파일 2개의 해시도 일치했다. |
 
 검증은 은계 1일차 시작 위치의 UI와 실제 키 입력 범위다. 수동 운전, 자동 물리 주행, 전체 캠페인 및 PvP/LAN 재검증은 이번에 실행하지 않았다.
