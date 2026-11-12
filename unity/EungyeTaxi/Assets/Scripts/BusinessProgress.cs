@@ -153,14 +153,17 @@ public class BusinessProgress : MonoBehaviour {
 
  }
  static void UpgradeEungyeApproachCheckpoint(LiveCampaignCheckpoint live,MapData map){
-  // r16 retains r14/r15 stop bindings, existing edge order and taxi positions.
+  // Reviewed r16/r17 retain old stop bindings, edge order and taxi positions.
   bool fromR14=live.mapRevision=="은계 프로젝트 지도 · r14";
-  if(map.mapId!="eungye"||(!fromR14&&live.mapRevision!="은계 프로젝트 지도 · r15")||map.editorRevision!="은계 프로젝트 지도 · r16"||
-     map.editorDocument==null||map.editorDocument.projectRevision!="d9596da33d4efc0d4f862c714eb05bb70c94365bfc30ab6171a702e2b672e3df"||
+  bool fromR16=live.mapRevision=="은계 프로젝트 지도 · r16";
+  bool toR17=map.editorRevision=="은계 프로젝트 지도 · r17";
+  string reviewedHash=toR17?"fe9c7b1057b10d433ef285b27e1223f8cd057272ed3fecde303b751a6484e4d1":"d9596da33d4efc0d4f862c714eb05bb70c94365bfc30ab6171a702e2b672e3df";
+  if(map.mapId!="eungye"||(!fromR14&&live.mapRevision!="은계 프로젝트 지도 · r15"&&!(fromR16&&toR17))||(!toR17&&map.editorRevision!="은계 프로젝트 지도 · r16")||
+     map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||
      RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   live.mapRevision=map.editorRevision;
   var entry=live.lawObservation==null?null:live.lawObservation.entry;
-  if(entry!=null&&(entry.junction=="J7973_3744"&&entry.axis==1&&entry.sign==1||
+  if(entry!=null&&(toR17&&entry.junction=="J7917_2565"||!fromR16&&entry.junction=="J7973_3744"&&entry.axis==1&&entry.sign==1||
       fromR14&&(entry.junction=="J8066_6364"||entry.junction=="J1927_5181"))){
    live.lawObservation.entry=null;
    live.lawObservation.entryPresent=false;
