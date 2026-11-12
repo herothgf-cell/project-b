@@ -26,6 +26,11 @@
       "path": "config/maps/eungye-corridor-polish.json",
       "bytes": 13134,
       "sha256": "c068a49060903c9621f520b1b08ab6fd2a7b42768f5ffeef0b54fd306d5520ab"
+    },
+    {
+      "path": "config/maps/eungye-road-facilities.json",
+      "bytes": 4244,
+      "sha256": "f520843bd410f6bb7f9933e54815b675c70c98a25d305847fd2a712cc3b4da4c"
     }
   ]
 }

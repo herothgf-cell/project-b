@@ -9,6 +9,7 @@
 ## 구현
 
 - `config/maps/project/eungye.project.json` r16에 남행 중앙선 쪽 좌회전 포켓과 수인로 동향 기존 출구로 연결되는 좌회전 곡선을 추가했다. 남행 바깥 차로의 직진 분기만 비활성화했다. 두 기존 직진 차로와 우회전 연결, 북행 차로, 기존 지형 및 지도 기준 해시는 유지했다.
+- 첫 수정 실행 화면에서 남행 포켓 안에 기존 중앙분리 난간이 남아 있는 것을 확인했다. `config/maps/eungye-road-facilities.json` 및 Unity 빌드 입력의 북쪽 난간을 양방향 차로 사이로 옮겼다. 차로 사이가 좁은 구간에서는 난간을 상류에서 끝냈다.
 - 남행 정지선의 횡단 방향 길이를 2.5m 늘렸다. 동일 정지 평면에서 좌회전 포켓까지 덮으며 보호좌회전, 내비, NPC와 운전 판정은 같은 그래프를 사용한다.
 - 이전 기본 프로젝트 지도 r14/r15 저장을 r16에서 불러올 수 있게 했다. 이번 변경으로 영향받은 J7973 남행의 진행 중 신호 관찰은 다시 시작한다. r14에는 J8066/J1927의 기존 전환 처리도 적용한다.
 - 지도 생성 및 차로·연결 회귀는 `Editor/J7973SouthboundMapEdit.cs`, 저장 전환은 `Scripts/BusinessProgress.cs`에 있다. 관련 기획·범위·체크리스트와 입력 manifest를 갱신했다.
@@ -20,4 +21,7 @@
 | 이전 출하본 `-brightUiCheck -poseReview "796,404,183.68"` | 위치 제어 렌더 9검사 통과, 첨부 화면과 교차로 확인 |
 | `J7973SouthboundMapEdit.Apply` | Editor 종료 0. 정식 지도 r16 내용 해시 `d9596da33d4efc0d4f862c714eb05bb70c94365bfc30ab6171a702e2b672e3df` |
 | `J7973SouthboundMapEdit.Verify` | 남행 화살표 4개 순서, 포켓 분기·좌회전 출구, 우회전 전용 연결, 보호좌회전과 정지선 접근 판정, 승하차 24곳·552경로 확인 |
-| `pwsh -File tools/check_workspace.ps1 -Strict` | 입력 문제 0. 정식 지도 파일 SHA256 `522368dabe6be69293a0b1bd66f1febf98168b4db7c7af9526bdcdeef9afd7b2`. OSM 대조 입력과 지도 ZIP은 동일 자료. |
+| `pwsh -File tools/check_workspace.ps1 -Strict` | 입력 문제 0. 정식 지도 파일 SHA256 `522368dabe6be69293a0b1bd66f1febf98168b4db7c7af9526bdcdeef9afd7b2`. OSM 대조 입력과 지도 ZIP은 동일 자료. 난간 원본 설정도 필수 입력 manifest에 추가했다. |
+| `LaneDirectionPaintTests.Run` | 통과. 글리프 49조합, 316차로. 앞서 수정한 J8066 북행 차로도 확인. |
+| 실행본 저장 이어하기 | 이전 r15 `-liveSaveTest` 종료 0·9검사, r16 `-liveReloadTest` 종료 0·23검사. 운송·요금·다음 날 이월 확인. |
+| `RoadFollowupTests.Run` | 통과. 북·남쪽 중앙분리 난간 총 33조각, 교차로 이격과 모든 차로 중심에서 1.3m 초과 여유 확인. |
