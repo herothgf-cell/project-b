@@ -1,6 +1,7 @@
 param(
  [ValidateRange(1024,65000)][int]$Port=17971,
  [string]$Executable,
+ [switch]$Discover,
  [switch]$Reconnect,
  [switch]$ChoiceEffects,
  [switch]$MotionOnly,
@@ -39,6 +40,7 @@ function Start-NativeProbe([string]$Role){
  if($MotionSeconds -gt 0){$arguments+=@('-pvpNativeMotionSeconds',"$MotionSeconds")}
  if($LegacyRouting){$arguments+='-pvpNativeLegacyRouting'}
  if($Reconnect){$arguments+='-pvpNativeLanReconnect'}
+ if($Discover){$arguments+='-pvpNativeLanDiscover'}
  if($ChoiceEffects){$arguments+='-choiceEffectsLanCheck'}
  $style=if($Rendered -and ($Role -eq "client" -or $RenderBoth)){"Normal"}else{"Hidden"}
  $process=Start-Process -FilePath $Executable -ArgumentList $arguments -WindowStyle $style -PassThru
@@ -62,10 +64,12 @@ try {
   if(-not $metrics.passed -or $metrics.failed -ne 0 -or $metrics.checks -lt 10){throw ($run.Role+' metrics failed: '+$run.Metrics)}
   if($MotionOnly -and $run.Role -eq 'client'){if($metrics.maxFreezeMs -gt 100 -or $metrics.frozenFrames -gt $metrics.movingFrames*.01){throw ('Moving pose pacing failed: frozen='+$metrics.frozenFrames+'/'+$metrics.movingFrames+' longest='+$metrics.maxFreezeMs+'ms; '+$run.Metrics)}; Write-Output ('MOVING_POSE_PACING_OK movingSeconds='+$metrics.movingSeconds+' metres='+$metrics.movingMetres+' maxSpeed='+$metrics.movingMaxSpeed+' longestFreezeMs='+$metrics.maxFreezeMs)}
   if(-not (Select-String -LiteralPath $run.Log -SimpleMatch ('PVP_NATIVE_LAN_OK '+$run.Role) -Quiet)){throw ($run.Role+' missing completion marker')}
+  if($Discover -and $run.Role -eq 'client' -and -not (Select-String -LiteralPath $run.Log -SimpleMatch 'PASS native room discovered over LAN UDP' -Quiet)){throw 'Client did not join by LAN discovery'}
   Write-Output ($run.Role+' PASS checks='+$metrics.checks+' native-map='+$metrics.map+' guest-metres='+$metrics.metres);if($metrics.performance){$metrics.performance | Format-Table name,count,averageMs,p95Ms,maxMs | Out-String | Write-Output}
  }
  Write-Output ('PVP_NATIVE_LAN_TWO_PROCESS_OK reconnect='+[bool]$Reconnect+' evidence='+$output)
- Write-Output 'Scope: two loopback player processes using native input and WheelCollider authority; remote-PC LAN behavior requires separate verification.'
+ if($Discover){Write-Output 'Scope: two local players discover and join the room over UDP and exercise WheelCollider authority. Discovery reconnect skips the unrelated accident fixture. Remote PCs require separate verification.'}
+ else{Write-Output 'Scope: two loopback player processes using native input and WheelCollider authority; remote-PC LAN behavior requires separate verification.'}
 } finally {
  foreach($process in $owned){if(-not $process.HasExited){Stop-Process -Id $process.Id -ErrorAction SilentlyContinue}}
 }

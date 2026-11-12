@@ -18,7 +18,7 @@
 
 J7917 출하 `2be32ed` main push 완료·원격 동일 해시 확인. [배포 영수증](2026-11-12-j7917-roadview-check.md#main-배포-확인).
 
-PvP는 사내망 LAN 직접 접속을 사용한다. 현재 PC의 유선과 Wi-Fi는 같은 IPv4 `/22` 대역이다. 서로 다른 PC 사이의 직접 참가와 방 탐색 트래픽은 현장 확인이 필요하다. [사내망 방 목록 사전 점검](2026-11-12-pvp-intranet-discovery-check.md) · [외부 중계 변경 철회](2026-11-12-pvp-external-relay-rollback.md)
+PvP는 LAN 방 목록에서 선택하면 호스트에 직접 참가한다. 현재 PC의 유선과 Wi-Fi는 같은 IPv4 `/22` 대역이며 서로 다른 PC의 방 검색과 참가를 현장에서 확인해야 한다. [LAN 방 목록 구현](2026-11-12-pvp-lan-room-list.md) · [사내망 사전 점검](2026-11-12-pvp-intranet-discovery-check.md)
 
 J7917 추가 제보: [남북 차로 수정과 검증](2026-11-12-j7917-roadview-check.md). 최신 거리뷰 남행3·북행 좌/직/직/우4와 내비 차로번호를 r17에 반영했다. 단면·552경로·기존 좌회전 회귀·Strict·BuildHybrid·r16 저장 이어하기23·배포 manifest 통과. 최종 위치 제어 렌더15장 확인, 메뉴 캡처2개는 이전r16/현재r17 동일 실패. 다음은 사람 주행 확인이며 포장색/시설 전체 실측은 별도다.
 

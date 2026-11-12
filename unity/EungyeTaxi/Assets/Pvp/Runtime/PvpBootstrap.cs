@@ -42,7 +42,8 @@ namespace Pvp {
             try { session.Begin(host,address,port);StartupError=null; }
             catch(Exception e){StartupError="네트워크 시작 실패: "+e.Message;session.Stop();}
         }
-        public void StartNativeLan(bool host,string address,ushort port,int seconds){if(PvpNativeLan.Instance)return;var lan=gameObject.AddComponent<PvpNativeLan>();try{lan.Begin(this,host,address,port,seconds);StartupError=null;}catch(Exception e){StartupError="LAN 접속 실패: "+e.Message;lan.StopTransport();Destroy(lan);}}
+        public void StartNativeLan(bool host,string address,ushort port,int seconds,string roomId=null){if(PvpNativeLan.Instance)return;var lan=gameObject.AddComponent<PvpNativeLan>();try{lan.Begin(this,host,address,port,seconds,roomId);StartupError=null;}catch(Exception e){StartupError="LAN 접속 실패: "+e.Message;lan.StopTransport();Destroy(lan);}}
+        public void JoinNativeLanRoom(PvpLanDiscovery.Room room){StartNativeLan(false,room.Address,(ushort)room.port,room.seconds,room.id);}
         public void StartSolo(int seconds,int finishGrace) {
             if(GetComponent<Pvp.Network.PvpNetworkSession>()!=null)return;
             var session=gameObject.AddComponent<Pvp.Network.PvpNetworkSession>();

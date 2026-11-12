@@ -18,7 +18,7 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
  bool choiceEffectsCheck;ChoiceModel choiceModel;
  float motionSeconds;
  void LateUpdate(){if(lan)PvpNativeReplica.TraceMotion(lan);}
- Metrics metrics=new Metrics();string directory,address;ushort port;bool host,reconnect,completed,motionOnly;float end;PvpNativeLan lan;
+ Metrics metrics=new Metrics();string directory,address;ushort port;bool host,reconnect,completed,motionOnly,discover;float end;PvpNativeLan lan;
  static string Arg(string key,string fallback){var args=Environment.GetCommandLineArgs();int at=Array.IndexOf(args,key);return at>=0&&at+1<args.Length?args[at+1]:fallback;}
  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Attach(){if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeLanCheck")>=0&&!FindObjectOfType<PvpNativeLanProbe>()){var root=new GameObject("Native LAN acceptance probe");DontDestroyOnLoad(root);root.AddComponent<PvpNativeLanProbe>();}}
  void Check(bool value,string text){metrics.checks++;if(!value)metrics.failed++;metrics.evidence.Add((value?"PASS ":"FAIL ")+text);Debug.Log("PVP_NATIVE_PROBE "+metrics.role+" "+(value?"PASS ":"FAIL ")+text);if(!value)throw new InvalidOperationException(text);}
@@ -29,13 +29,30 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
  IEnumerator Bootstrap(){
   if(!FindObjectOfType<Pvp.PvpBootstrap>()){var unified=FindObjectOfType<UnifiedModeBootstrap>();if(unified)unified.StartPvp();}
   yield return Until(()=>FindObjectOfType<Pvp.PvpBootstrap>()!=null,"PVP bootstrap available");
-  FindObjectOfType<Pvp.PvpBootstrap>().StartNativeLan(host,address,port,motionOnly?1200:300);
+  var bootstrap=FindObjectOfType<Pvp.PvpBootstrap>();
+  if(discover&&!host){
+   PvpLanDiscovery.Room found=null;
+   float deadline=Time.realtimeSinceStartup+20;
+   while(found==null&&Time.realtimeSinceStartup<deadline){
+    using(var search=new PvpLanDiscovery.Search()){
+     yield return new WaitForSecondsRealtime(.75f);
+     found=search.ReadRooms().Find(room=>room.port==port&&room.name=="검증_host"&&room.Compatible);
+    }
+   }
+   Check(found!=null,"native room discovered over LAN UDP");
+   Debug.Log("PVP_LAN_DISCOVERY_ADDRESS_TYPE "+(found.Address=="127.0.0.1"?"loopback":"LAN IPv4"));
+   if(Has("takeover"))Check(found.started&&found.CanRejoin,"running room remains selectable for the original guest");
+   else Check(!found.started&&found.open&&found.players==1,"new room advertises its available seat and one host");
+   bootstrap.JoinNativeLanRoom(found);
+  }else bootstrap.StartNativeLan(host,address,port,motionOnly?1200:300);
   yield return Until(()=>PvpNativeLan.Instance!=null,"native transport created");lan=PvpNativeLan.Instance;
+  if(discover&&host)Check(lan.AdvertisingRoom,"native host advertises the room");
  }
  IEnumerator Start(){
   host=Arg("-pvpNativeLanRole","client")=="host";metrics.role=host?"host":"client";
   directory=Path.GetFullPath(Arg("-pvpNativeLanOutput",Path.Combine(Application.persistentDataPath,"native-lan-check")));Directory.CreateDirectory(directory);
   address=Arg("-pvpNativeLanAddress","127.0.0.1");port=ushort.Parse(Arg("-pvpNativeLanPort","17971"));reconnect=Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeLanReconnect")>=0;
+  discover=Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeLanDiscover")>=0;
   choiceEffectsCheck=Array.IndexOf(Environment.GetCommandLineArgs(),"-choiceEffectsLanCheck")>=0;
   motionOnly=Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeMotionOnly")>=0;
   motionSeconds=Mathf.Clamp(float.Parse(Arg("-pvpNativeMotionSeconds","0"),System.Globalization.CultureInfo.InvariantCulture),0,60);
@@ -108,7 +125,7 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   yield return Until(()=>lan.ConnectedGuests==0,"guest disconnect observed",40);
   Check(match.Drivers[1]==guest&&guest.taxi==car&&car.GetInstanceID()==carId&&guest.GetComponent<PvpSimulationBot>().enabled,"disconnect hands same original taxi to native bot");
   Check(guest.jobs.current!=null&&guest.jobs.current.candidateSeed==model.offer&&match.Ledger.Available(pickup,1),"disconnect preserves accepted passenger and exclusive claim");Mark("takeover");
-  if(reconnect){yield return Until(()=>lan.ConnectedGuests==1&&Has("reconnected"),"same-process ticket reconnect completes",80);Check(match.Drivers[1]==guest&&guest.taxi==car&&!guest.GetComponent<PvpSimulationBot>().enabled,"ticket reconnect reclaims same host taxi");if(choiceEffectsCheck)CheckChoice(guest,"host reconnect");Mark("reconnect-checked");yield return HostAccident(guest);yield return Until(()=>lan.ConnectedGuests==0,"reconnected guest exits cleanly",40);}
+  if(reconnect){yield return Until(()=>lan.ConnectedGuests==1&&Has("reconnected"),"same-process ticket reconnect completes",80);Check(match.Drivers[1]==guest&&guest.taxi==car&&!guest.GetComponent<PvpSimulationBot>().enabled,"ticket reconnect reclaims same host taxi");if(choiceEffectsCheck)CheckChoice(guest,"host reconnect");Mark("reconnect-checked");if(!discover)yield return HostAccident(guest);yield return Until(()=>lan.ConnectedGuests==0,"reconnected guest exits cleanly",40);}
   yield return Until(()=>Has("client-clean"),"client returns to clean mode menu",40);metrics.elapsed=match.Elapsed;
  }
  IEnumerator Client(){
@@ -185,7 +202,7 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-pvpNativeRenderCheck")>=0){bool captured=false;StartCoroutine(CaptureFrame(()=>captured=true,"client-notices.png"));yield return Until(()=>captured,"notification card render captured",8);}
   Mark("notice-checked");
   int slot=lan.LocalSlot;lan.ProbeInput=null;lan.LeaveToMenu();yield return Until(()=>Has("takeover"),"host confirms same-car bot takeover",40);
-  if(reconnect){yield return Bootstrap();yield return Until(()=>lan.Racing&&lan.Match&&lan.HasOwnFrame,"reconnect world ready",100);Check(lan.LocalSlot==slot,"same-process reconnect retains ticket seat");if(choiceEffectsCheck){yield return Until(()=>lan.Match.Human.jobs.ChoiceEffects!=null&&lan.Match.Human.jobs.ChoiceEffects.HasEvent(choiceModel.eventId),"reconnected choice ledger arrives",12);CheckChoice(lan.Match.Human,"guest reconnect");}Mark("reconnected");yield return Until(()=>Has("reconnect-checked"),"host confirms reconnect identity");yield return ClientAccident();lan.LeaveToMenu();}
+  if(reconnect){yield return Bootstrap();yield return Until(()=>lan.Racing&&lan.Match&&lan.HasOwnFrame,"reconnect world ready",100);Check(lan.LocalSlot==slot,"same-process reconnect retains ticket seat");if(choiceEffectsCheck){yield return Until(()=>lan.Match.Human.jobs.ChoiceEffects!=null&&lan.Match.Human.jobs.ChoiceEffects.HasEvent(choiceModel.eventId),"reconnected choice ledger arrives",12);CheckChoice(lan.Match.Human,"guest reconnect");}Mark("reconnected");yield return Until(()=>Has("reconnect-checked"),"host confirms reconnect identity");if(!discover)yield return ClientAccident();lan.LeaveToMenu();}
  }
  void HostChoice(DriveSession guest){
   Check(ChoiceEffectDefinition.Enabled,"choice effects profile enabled on host");var definition=ChoiceEffectDefinition.Read("request.Empathy.Accept");

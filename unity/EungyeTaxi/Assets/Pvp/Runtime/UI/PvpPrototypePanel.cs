@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 namespace Pvp {
  public sealed class PvpPrototypePanel : MonoBehaviour {
@@ -8,6 +9,10 @@ namespace Pvp {
   string nickname="";void Awake(){nickname=DriveFlowPolicy.EnsureName();}
   bool NameReady(){if(DriveFlowPolicy.SaveName(nickname)){nickname=DriveFlowPolicy.LocalName;return true;}message="닉네임을 입력하세요 (한글/영문/숫자, 최대12자).";return false;}
   bool legacy,showControls;Vector2 scroll;
+  PvpLanDiscovery.Search lanSearch;
+  List<PvpLanDiscovery.Room> lanRooms=new List<PvpLanDiscovery.Room>();
+  float nextSearchAt,searchEndsAt;
+  bool searched;
   PvpConditionSettings condition=new PvpConditionSettings();
   public bool ConditionSettingsOpen {get;set;}
   void OnGUI(){
@@ -25,8 +30,9 @@ namespace Pvp {
    GUILayout.Label("전용 도시 · 다차로·골목·신호·유턴");
    if(GUILayout.Button("봇 3대와 경기 시작",CasualUI.Action(18),GUILayout.Height(48))){int seconds;if(!int.TryParse(duration,out seconds)||seconds<30||seconds>7200)message="30~7200초로 입력하세요.";else if(NameReady()){PvpConditionRules.Configure(condition);GetComponent<PvpBootstrap>().StartSimulation(true,seconds);}}
    GUILayout.EndVertical();GUILayout.Space(10);GUILayout.BeginVertical(GUI.skin.box);GUILayout.Label("LAN 대전 · 최대 4명",new GUIStyle(GUI.skin.label){font=KoreanText.BoldFont,fontSize=20});GUILayout.Label("같은 네트워크에서 접속 · 빈자리는 봇");
-   GUILayout.BeginHorizontal();GUILayout.Label("호스트 IP",GUILayout.Width(75));networkAddress=GUILayout.TextField(networkAddress,45);GUILayout.Label("포트",GUILayout.Width(40));networkPort=GUILayout.TextField(networkPort,5,GUILayout.Width(75));GUILayout.EndHorizontal();
-   GUILayout.BeginHorizontal();if(GUILayout.Button("방 만들기",CasualUI.Action(18),GUILayout.Height(44)))Native(true);if(GUILayout.Button("IP로 참가",KoreanText.Button(18),GUILayout.Height(44)))Native(false);GUILayout.EndHorizontal();GUILayout.EndVertical();
+   GUILayout.BeginHorizontal();GUILayout.Label("방 포트",GUILayout.Width(75));networkPort=GUILayout.TextField(networkPort,5,GUILayout.Width(75));
+   if(GUILayout.Button("방 만들기",CasualUI.Action(18),GUILayout.Height(44)))HostNative();GUILayout.EndHorizontal();
+   DrawLanRooms();GUILayout.EndVertical();
    GUILayout.Label(PvpNativeLan.LastNotice);
    var boot=GetComponent<PvpBootstrap>();if(!string.IsNullOrEmpty(boot.StartupError))GUILayout.Label(boot.StartupError);
    GUILayout.Label(message);GUILayout.Space(12);
@@ -34,9 +40,44 @@ namespace Pvp {
    if(showControls)GUILayout.Label("운전  W/↑ 가속 · S/↓ 감속·후진 · A/D/←→ 조향 · Space 제동\n호출  M 지도에서 선택·수락 → 승차 지점 정차 → F 승하차\n시점  C 전환 · B 누르는 동안 후방 · Z/X 좌우 확인\n보조  H 조향 보조 · Q/E 방향지시(보조 중 방향 요청) · G 비상등\n시설  정차 후 F7 · Esc 메뉴 (LAN 경기는 계속 진행)");
    GUILayout.Label("지도를 열어도 경기는 계속됩니다. 내 차는 멈춥니다.");
    legacy=GUILayout.Toggle(legacy,"이전 시험장 (개발용)");
-   if(legacy){GUILayout.Label("이전 평면 모터 개발 검사입니다. 현재 도시 LAN 대전은 위의 방 만들기/IP 참가를 사용하세요.");if(GUILayout.Button("이전 오프라인 시험장"))GetComponent<PvpBootstrap>().StartPractice();GUILayout.BeginHorizontal();networkAddress=GUILayout.TextField(networkAddress,45);networkPort=GUILayout.TextField(networkPort,5);GUILayout.EndHorizontal();GUILayout.BeginHorizontal();if(GUILayout.Button("이전 IP 호스트"))Network(true);if(GUILayout.Button("이전 IP 참가"))Network(false);GUILayout.EndHorizontal();}
+   if(legacy){GUILayout.Label("이전 평면 모터 개발 검사입니다.");if(GUILayout.Button("이전 오프라인 시험장"))GetComponent<PvpBootstrap>().StartPractice();GUILayout.BeginHorizontal();networkAddress=GUILayout.TextField(networkAddress,45);networkPort=GUILayout.TextField(networkPort,5);GUILayout.EndHorizontal();GUILayout.BeginHorizontal();if(GUILayout.Button("이전 IP 호스트"))Network(true);if(GUILayout.Button("이전 IP 참가"))Network(false);GUILayout.EndHorizontal();}
    var unified=FindObjectOfType<UnifiedModeBootstrap>();if(unified&&GUILayout.Button("모드 선택"))unified.ReturnToMenu();
    if(GUILayout.Button("나가기"))Application.Quit();GUILayout.EndScrollView();GUILayout.EndArea();
+  }
+  void Update(){
+   if(PvpNativeLan.Instance){StopLanSearch();return;}
+   float now=Time.realtimeSinceStartup;
+   if(lanSearch!=null&&now>=searchEndsAt){
+    lanRooms=lanSearch.ReadRooms();
+    searched=true;
+    StopLanSearch();
+   }
+   if(lanSearch==null&&now>=nextSearchAt){
+    lanSearch=new PvpLanDiscovery.Search();
+    searchEndsAt=now+.75f;
+    nextSearchAt=now+2;
+   }
+  }
+  void StopLanSearch(){lanSearch?.Dispose();lanSearch=null;}
+  void OnDisable(){StopLanSearch();}
+
+  void DrawLanRooms(){
+   GUILayout.Label("LAN 방 목록",new GUIStyle(GUI.skin.label){font=KoreanText.BoldFont,fontSize=17});
+   if(lanRooms.Count==0){GUILayout.Label(searched?"발견된 LAN 방이 없습니다.":"LAN 방을 찾는 중…");return;}
+   foreach(var room in lanRooms){
+    bool compatible=room.Compatible;
+    bool rejoin=room.CanRejoin;
+    bool available=compatible&&(rejoin||room.open);
+    GUILayout.BeginHorizontal();
+    GUILayout.Label(room.name+"의 방  ·  "+room.players+"/4  ·  "+room.seconds+"초");
+    bool enabled=GUI.enabled;
+    GUI.enabled=enabled&&available;
+    string action=!compatible?"실행본 확인":rejoin?"재참가":room.started?"경기 중":room.open?"참가":room.players==4?"가득 참":"자리 대기";
+    if(GUILayout.Button(action,KoreanText.Button(16),GUILayout.Width(125),GUILayout.Height(32))&&NameReady())
+     GetComponent<PvpBootstrap>().JoinNativeLanRoom(room);
+    GUI.enabled=enabled;
+    GUILayout.EndHorizontal();
+   }
   }
   // 내 차: appearance unlocked by single-player purchases. Performance is PVP standard for all.
   VehicleUnlocks unlocks;PvpVehicleLook look;
@@ -88,7 +129,13 @@ namespace Pvp {
    GUILayout.Label(ConditionSummary(condition));double toMax=PvpConditionRules.SecondsToFatigue100(new DriverCondition(),condition.fatigueMultiplier);GUILayout.Label("기본 시작 상태 → 피로100 약 "+Math.Ceiling(toMax/60).ToString("0")+"분 (식사·휴식·승객 효과 전)");GUILayout.Label("식사 포만감 +60 · 휴식 피로 -40 · 참가자는 호스트 규칙을 따릅니다.");
    if(GUILayout.Button("방 규칙 기본값 복원",KoreanText.Button(15),GUILayout.Height(32)))condition=new PvpConditionSettings();GUILayout.EndVertical();GUILayout.Space(10);
   }
-  void Native(bool host){if(!NameReady())return;ushort port;int seconds=1200;if(!ushort.TryParse(networkPort,out port)||port==0){message="포트를 확인하세요";return;}if(host&&(!int.TryParse(duration,out seconds)||seconds<30||seconds>7200)){message="경기 시간을 입력하세요";return;}if(host)PvpConditionRules.Configure(condition);GetComponent<PvpBootstrap>().StartNativeLan(host,host?"127.0.0.1":networkAddress,port,seconds);}
+  void HostNative(){
+   if(!NameReady())return;
+   if(!ushort.TryParse(networkPort,out ushort port)||port==0||port==PvpLanDiscovery.Port){message="다른 방 포트를 입력하세요.";return;}
+   if(!int.TryParse(duration,out int seconds)||seconds<30||seconds>7200){message="경기 시간을 입력하세요.";return;}
+   PvpConditionRules.Configure(condition);
+   GetComponent<PvpBootstrap>().StartNativeLan(true,"127.0.0.1",port,seconds);
+  }
   void DrawNativeLobby(){var lan=PvpNativeLan.Instance;if(!lan||lan.InMatch)return;CasualUI.Backdrop();float w=Mathf.Min(640,Screen.width-32),h=Mathf.Min(500,Screen.height-32),x=(Screen.width-w)/2,y=(Screen.height-h)/2;CasualUI.Panel(new Rect(x,y,w,h));CasualUI.Header(new Rect(x+8,y+8,w-16,52),"LAN 대기실",1);GUILayout.BeginArea(new Rect(x+22,y+78,w-44,h-96));scroll=GUILayout.BeginScrollView(scroll);GUILayout.Label(lan.Status);GUILayout.Label("호스트 "+(lan.IsHost?PvpNativeLan.LocalAddress():lan.Address)+" : "+lan.Port);GUILayout.Label("경기 "+lan.Seconds+"초");GUILayout.Space(12);for(int i=0;i<4;i++){GUILayout.BeginVertical(GUI.skin.box);GUILayout.Label(lan.Label(i),new GUIStyle(GUI.skin.label){font=KoreanText.BoldFont,fontSize=18});GUILayout.Label("차량 "+LookName(lan.Look(lan.LocalToServer(i))));GUILayout.EndVertical();}if(lan.IsHost&&!lan.Started&&GUILayout.Button("현재 인원으로 경기 시작",CasualUI.Action(18),GUILayout.Height(48)))lan.StartMatch();if(GUILayout.Button("방에서 나가기",KoreanText.Button(17),GUILayout.Height(40)))lan.LeaveToMenu();GUILayout.EndScrollView();GUILayout.EndArea();}
 
   void Network(bool host){ushort port;if(!ushort.TryParse(networkPort,out port)||port==0){message="유효한 포트를 입력하세요.";return;}GetComponent<PvpBootstrap>().StartNetwork(host,networkAddress,port);}
