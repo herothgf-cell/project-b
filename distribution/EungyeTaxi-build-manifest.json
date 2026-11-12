@@ -1,27 +1,44 @@
 {
-  "sourceCommit": "829ff3a2f44b7fb41f6eca980aad45c31ed5f2dd",
+  "sourceCommit": "ec7aad92cb1447927fb0ae2aed3104217a0ab1a4",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-12",
-  "totalBytes": 131544167.0,
+  "totalBytes": 131583178.0,
   "validation": {
     "build": "PrototypeBuild.BuildHybrid exit 0",
     "workspaceInputIssues": 0,
-    "lanDiscoveryPort": 47777,
-    "gamePortDefault": 7777,
-    "automatedLanHostAssertions": 52,
-    "automatedLanClientAssertions": 69,
-    "automatedLanUsesLanIpv4": true,
-    "automatedLanReconnect": true,
+    "junctionMiddleLeftRoutesMeters": [
+      100.9074,
+      109.4663
+    ],
+    "reportedDestinationRoutesMeters": [
+      1063.201,
+      1109.963
+    ],
+    "passengerStopPairs": 552,
+    "laneDirectionAndProtectedLeftRegression": true,
+    "deadlineScale": 0.8,
+    "contentTuningAssertions": 729,
+    "signedPenaltyAssertions": 840,
+    "oneDayCampaignModel": true,
+    "mapMigrationVersions": [
+      14,
+      15,
+      16,
+      17
+    ],
+    "liveReloadAssertions": 23,
     "manualDriving": false,
-    "crossPcTested": false
+    "fullCampaign": false,
+    "knownUnrelatedFailure": "tools/test_prototype.ps1 ManualHandlingTests ordinary S braking actual=8.823529",
+    "evidence": "docs/work-history/2026-11-12-junction-route-timing.md"
   },
   "files": [
     {
       "path": "builds/EungyeTaxi/택시 시뮬레이션_BurstDebugInformation_DoNotShip/Data/Plugins/x86_64/lib_burst_generated.txt",
-      "bytes": 110948,
-      "sha256": "dd6f4a23889db9384f937b1a4480722467118357ee5439825290197c97613d64"
+      "bytes": 110703,
+      "sha256": "766fda32026d177c9cfdd473bfd74fc274df303a7f4a1cb54a585f910aa14233"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/app.info",
@@ -31,7 +48,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "c0f851bb7eb3b11e191be2cc1ba35c848d3cc661aceb2711bb4749b02a750fe6"
+      "sha256": "2a01befc7de2b2db2e91a682aa5750428d8c00c6890f647b4f07b279c1a8b994"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -55,8 +72,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2813440,
-      "sha256": "c51b037ce9acc6b7e8b3d4b9721cb91efb6debd36c43ad6f7c9879e3b817b78d"
+      "bytes": 2813952,
+      "sha256": "5871fe224f31ba33aa31471bd201089a515530c9915e4be42c6b3195af8c195a"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
@@ -565,8 +582,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 43499776,
-      "sha256": "02594639c3dd88b84402a99e0667e8b3f3a6ccb1b52ff527304d6c61b80eac4a"
+      "bytes": 43538520,
+      "sha256": "ecec9f0aecc54c9d640ccd8cb745c391d331b02537629139ccf8dd080f663354"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
@@ -706,7 +723,7 @@
     {
       "path": "builds/EungyeTaxi/project-map-build.json",
       "bytes": 177,
-      "sha256": "01bdff5fc16ea054402416b969ce7f1e7095a381d87034f240bbfd10f976f186"
+      "sha256": "bc47bafc76d845cf3c80b8696c8b50b63c5d57b9c9c8d866fbfe01e5b6cebb91"
     },
     {
       "path": "builds/EungyeTaxi/ThirdPartyNotices/mchrbn-unity-traffic-simulation-MIT.txt",
@@ -736,8 +753,8 @@
   ],
   "projectMap": {
     "path": "config/maps/project/eungye.project.json",
-    "contentHash": "cb8e0ec0ed3a48f7e9a33c4ff8dc3878bd9d59aafef13c0f0fe43c5616c9c808",
-    "bytes": 21724570,
-    "sha256": "f508f1b9fbbc70bc7f0d24304b78736fd3eba655923de4717ae9026c8b8a0d63"
+    "contentHash": "bd8ad754a0510f0ee6fac7c54121433e1ba65bbd4b739e824500c081b446c474",
+    "bytes": 21763314,
+    "sha256": "496e1869f20c92986592178f9cab0d730ae102e354f7a045c1fcdb039c5eaba0"
   }
 }

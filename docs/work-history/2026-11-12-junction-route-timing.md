@@ -39,4 +39,13 @@
 
 ## 저장 이관 검사
 
-JunctionRouteFeedbackTests.VerifyMigration exit0, r14/r15/r16/r17 네 버전 모두 r18 이관과 낡은 내비 참조 제거 확인. rtifacts/junction-route-feedback/migration.log.
+JunctionRouteFeedbackTests.VerifyMigration exit0, r14/r15/r16/r17 네 버전 모두 r18 이관과 낡은 내비 참조 제거 확인. artifacts/junction-route-feedback/migration.log.
+
+## 출하 검증
+
+- 소스 커밋 `ec7aad92cb1447927fb0ae2aed3104217a0ab1a4` (`git log -1 --oneline -- docs/work-history/2026-11-12-junction-route-timing.md`로 확인).
+- `PrototypeBuild.BuildHybrid` 실제 exit0. `artifacts/junction-route-feedback/build.log`.
+- 수정 전 배포 r17 `-singlePlayer -liveSaveTest` exit0 → 새 r18 `-singlePlayer -liveReloadTest` exit0, 23검사. 운송·구토/수면 대기·장부·다음날 거래 보존. 사용자 저장 대신 테스트 전용 파일 사용.
+- 통합/PvP VerifyOnly exit0, 143파일. manifest는 실제 소스 커밋·현재 파일 SHA256·이번 검사 보고서로 갱신했다.
+- 작업 중 다른 작업이 추가한 `TrafficPerformanceProbe.cs` 변경은 컴파일 산출물 시각 이후에 생겼으며 소스/배포 커밋에서 제외했다. 원본 그대로 보존한다.
+- 전체 자동 모델 검사의 기존 제동 실패 및 사람 주행 미검증은 위 한계를 유지한다.
