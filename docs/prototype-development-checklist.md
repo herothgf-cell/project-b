@@ -1,10 +1,3 @@
-## 2026-11-12 PvP 온라인 방과 TCP 443 중계
-
-- [x] 이더넷·Wi-Fi별 소켓을 지정해 공개 진단 주소와 임시 실제 중계 주소에서 WSS 왕복 확인.
-- [x] 방 생성·목록·정원·종료 테스트, BuildHybrid, 실제 임시 TCP 443 중계의 Unity Player 두 개로 방 목록 참가·물리 주행·동일 좌석 재참가 확인. [검증 기록](work-history/2026-11-12-pvp-online-room-relay.md).
-- [x] 무료 호스팅 컨테이너 준비, 유선·Wi-Fi 단일 어댑터 검사와 한 PC의 두 Player 재검증. [운영 준비 기록](work-history/2026-11-12-pvp-relay-hosting.md).
-- [ ] 상시 중계 주소·토큰 배포, 사내 유선·Wi-Fi의 서로 다른 PC에서 사람 플레이, 통합 배포 실행본 갱신.
-
 ## 2026-11-12 PvP LAN 대기실 문구 정리
 
 - [x] LAN 대기실 경기 시간에서 `빈자리는 봇`을 제거하고 식사·휴식·피로 요약을 숨김. [작업 이력](work-history/2026-11-12-pvp-lobby-copy.md).

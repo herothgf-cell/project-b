@@ -1,7 +1,6 @@
 param(
  [ValidateRange(1024,65000)][int]$Port=17971,
  [string]$Executable,
- [switch]$Relay,
  [switch]$Reconnect,
  [switch]$ChoiceEffects,
  [switch]$MotionOnly,
@@ -23,8 +22,7 @@ if($ChoiceEffects -and ($MotionOnly -or !$ContentHostProfile)){throw 'ChoiceEffe
 $root=Split-Path -Parent $PSScriptRoot
 if(-not $Executable){$Executable=Join-Path $root 'builds/EungyeTaxi/EungyeTaxi.exe'}
 $Executable=(Resolve-Path -LiteralPath $Executable).Path
-$transport=if($Relay){'relay'}else{'lan'}
-$runName='native-'+$transport+'-'+(Get-Date -Format 'yyyyMMdd-HHmmss')+'-'+[Guid]::NewGuid().ToString('N').Substring(0,8)
+$runName='native-lan-'+(Get-Date -Format 'yyyyMMdd-HHmmss')+'-'+[Guid]::NewGuid().ToString('N').Substring(0,8)
 $output=Join-Path (Join-Path $root 'artifacts/pvp') $runName
 New-Item -ItemType Directory -Path $output -Force | Out-Null
 $owned=[System.Collections.Generic.List[System.Diagnostics.Process]]::new()
@@ -37,7 +35,6 @@ function Start-NativeProbe([string]$Role){
  if($contentProfile){$contentProfile=(Resolve-Path -LiteralPath $contentProfile).Path;$arguments+=@('-contentTest','-contentProfile',('"'+$contentProfile+'"'))}
  if($ExpectedContentHash){$arguments+=@('-contentExpectedHash',$ExpectedContentHash)}
  if($Rendered){$arguments=@($arguments | Where-Object {$_ -ne '-batchmode' -and $_ -ne '-nographics'});$arguments+=@('-noaudio','-pvpNativeRenderCheck','-screen-fullscreen','0','-screen-width',"$RenderWidth",'-screen-height',"$RenderHeight")}
- if($Relay){$arguments+='-pvpNativeRelayCheck'}
  if($MotionOnly){$arguments+='-pvpNativeMotionOnly'}
  if($MotionSeconds -gt 0){$arguments+=@('-pvpNativeMotionSeconds',"$MotionSeconds")}
  if($LegacyRouting){$arguments+='-pvpNativeLegacyRouting'}
@@ -68,8 +65,7 @@ try {
   Write-Output ($run.Role+' PASS checks='+$metrics.checks+' native-map='+$metrics.map+' guest-metres='+$metrics.metres);if($metrics.performance){$metrics.performance | Format-Table name,count,averageMs,p95Ms,maxMs | Out-String | Write-Output}
  }
  Write-Output ('PVP_NATIVE_LAN_TWO_PROCESS_OK reconnect='+[bool]$Reconnect+' evidence='+$output)
- if($Relay){Write-Output 'Scope: two local player processes using the configured relay, native input and WheelCollider authority; cross-network play requires separate verification.'}
- else{Write-Output 'Scope: two loopback player processes using native input and WheelCollider authority; remote-PC LAN behavior requires separate verification.'}
+ Write-Output 'Scope: two loopback player processes using native input and WheelCollider authority; remote-PC LAN behavior requires separate verification.'
 } finally {
  foreach($process in $owned){if(-not $process.HasExited){Stop-Process -Id $process.Id -ErrorAction SilentlyContinue}}
 }

@@ -1,5 +1,3 @@
-2026-11-12 PvP 온라인 방: IP 입력 없이 방을 만들고 목록으로 참가한다. 최대 4명의 기존 호스트 판정 경기와 봇 자리를 사용한다. HTTPS 방 목록과 WSS 경기 연결을 외부 TCP 443 주소에서 제공하며 서비스 주소와 그룹 접속 설정은 PC에 한 번 배치한다. [온라인 방과 배포 조건](content-design/pvp/31-online-room-relay.md).
-
 2026-11-09 차로 후속: [J866/J5057 차로별 표시·은계중앙로 편도1/은계로 편도3 로드뷰·주차장 안내 좌회전](content-design/21-lane-movement-roadview-followup.md). 기존 주행망/통행 조건·사용자 저장을 보존하고 원본 차로 표시·노면 경계·런타임 서비스 목표 변환을 교정한다. [검증·출하 상태](work-history/2026-11-09-lane-movement-roadview-followup.md).
 
 2026-11-09 이전 후속: [거리뷰 접근별 신호·차선 표시/좌회전 수요·승객 반응/주행 요청](content-design/20-roadview-signals-passenger-feedback.md). 기존 통행 권한·진행 운송 계약/작업 정차 조건 보존. [실제 검증·출하 상태](work-history/2026-11-09-roadview-signals-passenger-feedback.md).

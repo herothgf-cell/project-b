@@ -18,7 +18,7 @@
 
 J7917 출하 `2be32ed` main push 완료·원격 동일 해시 확인. [배포 영수증](2026-11-12-j7917-roadview-check.md#main-배포-확인).
 
-PvP 온라인 방: [TCP 443 중계 구현·검증](2026-11-12-pvp-online-room-relay.md) · [무료 운영 준비와 한 PC 재검증](2026-11-12-pvp-relay-hosting.md). Northflank Sandbox용 컨테이너와 두 PC에서 쓸 검증 ZIP을 준비했다. 다음은 무료 계정 연결·운영 주소 검증, 서로 다른 유선·Wi-Fi PC의 방 만들기/목록 참가, 통합 배포본 갱신이다.
+PvP는 사내망 LAN 직접 접속을 사용한다. [IPv4와 사내 유선·Wi-Fi 접속 점검](2026-11-12-pvp-office-network.md) · [외부 중계 변경 철회](2026-11-12-pvp-external-relay-rollback.md)
 
 J7917 추가 제보: [남북 차로 수정과 검증](2026-11-12-j7917-roadview-check.md). 최신 거리뷰 남행3·북행 좌/직/직/우4와 내비 차로번호를 r17에 반영했다. 단면·552경로·기존 좌회전 회귀·Strict·BuildHybrid·r16 저장 이어하기23·배포 manifest 통과. 최종 위치 제어 렌더15장 확인, 메뉴 캡처2개는 이전r16/현재r17 동일 실패. 다음은 사람 주행 확인이며 포장색/시설 전체 실측은 별도다.
 

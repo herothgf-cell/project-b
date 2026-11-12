@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Pvp {
@@ -14,11 +11,6 @@ namespace Pvp {
         public PvpMatchSettings CurrentSettings { get; private set; }
         public string DiagnosticPath { get; private set; }
         public string StartupError { get; private set; }
-        public string RelayError { get; private set; }
-        CancellationTokenSource relayCancellation;
-        Task<PvpRelaySocket> relayOpening;
-        public bool RelayConnecting => relayOpening != null;
-        public void ClearRelayError() => RelayError = null;
         void Awake() {
             if(PracticeMap==null||PracticeMap.MapId=="pvp_circuit_01") {ownedMap=Pvp.Map.PvpMapDefinition.CreateExpanded();PracticeMap=ownedMap;}
             var cameraObject=new GameObject("PVP startup camera");cameraObject.transform.SetParent(transform,false);
@@ -51,41 +43,6 @@ namespace Pvp {
             catch(Exception e){StartupError="네트워크 시작 실패: "+e.Message;session.Stop();}
         }
         public void StartNativeLan(bool host,string address,ushort port,int seconds){if(PvpNativeLan.Instance)return;var lan=gameObject.AddComponent<PvpNativeLan>();try{lan.Begin(this,host,address,port,seconds);StartupError=null;}catch(Exception e){StartupError="LAN 접속 실패: "+e.Message;lan.StopTransport();Destroy(lan);}}
-        public IEnumerator StartRelay(PvpRelayClient client, PvpRelayRoom selection, int seconds)
-        {
-            if (PvpNativeLan.Instance || RelayConnecting) yield break;
-            bool host = selection == null;
-            ClearRelayError();
-            relayCancellation = new CancellationTokenSource();
-            relayOpening = client.Open(selection?.id, DriveFlowPolicy.LocalName + "의 방", seconds,
-                PvpNativeLan.MapFingerprint, relayCancellation.Token);
-            while (!relayOpening.IsCompleted) yield return null;
-
-            Task<PvpRelaySocket> completed = relayOpening;
-            relayOpening = null;
-            relayCancellation.Dispose();
-            relayCancellation = null;
-            PvpRelaySocket socket = null;
-            PvpNativeLan lan = null;
-            try
-            {
-                socket = completed.GetAwaiter().GetResult();
-                var room = JsonUtility.FromJson<PvpRelayRoom>(socket.Greeting);
-                if (room == null || !room.Valid || (!host && room.id != selection.id))
-                    throw new InvalidDataException("방 정보가 올바르지 않습니다.");
-                if (!room.Compatible) throw new InvalidOperationException("실행본 또는 PvP 지도가 다릅니다.");
-                lan = gameObject.AddComponent<PvpNativeLan>();
-                lan.BeginRelay(this, host, client, room, socket);
-            }
-            catch (Exception error)
-            {
-                socket?.Dispose();
-                if (lan) { lan.StopTransport(); Destroy(lan); }
-                Debug.LogWarning("PVP_RELAY_CONNECT " + error.GetType().Name + " " + error.Message);
-                RelayError = host ? "방을 만들지 못했습니다. 중계 서버 연결을 확인해 주세요."
-                                  : "방에 참가하지 못했습니다. 방 목록을 새로고침해 주세요.";
-            }
-        }
         public void StartSolo(int seconds,int finishGrace) {
             if(GetComponent<Pvp.Network.PvpNetworkSession>()!=null)return;
             var session=gameObject.AddComponent<Pvp.Network.PvpNetworkSession>();
@@ -113,17 +70,6 @@ namespace Pvp {
             CurrentSettings=settings;
             if(diagnostic!=null) diagnostic.WriteLine("PVP_SETTINGS match="+settings.MatchId+" map="+settings.MapHash+" settings="+settings.SettingsHash);
         }
-        void OnDestroy() {
-            if (relayOpening != null)
-            {
-                relayCancellation.Cancel();
-                relayCancellation.Dispose();
-                _ = relayOpening.ContinueWith(task => {
-                    if (task.Status == TaskStatus.RanToCompletion) task.Result.Dispose();
-                    else _ = task.Exception;
-                }, TaskScheduler.Default);
-            }
-            if(diagnostic!=null) { diagnostic.Dispose();diagnostic=null; }if(ownedMap!=null){if(Application.isPlaying)Destroy(ownedMap);else DestroyImmediate(ownedMap);}
-        }
+        void OnDestroy() { if(diagnostic!=null) { diagnostic.Dispose();diagnostic=null; }if(ownedMap!=null){if(Application.isPlaying)Destroy(ownedMap);else DestroyImmediate(ownedMap);} }
     }
 }
