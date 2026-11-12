@@ -15,3 +15,8 @@
 - `builds/EungyeTaxi/EungyeTaxi.exe`에서 PvP를 선택하고 **방 만들기**로 LAN 대기실을 열면 확인할 수 있다.
 
 검증 범위는 호스트 대기실 화면이다. 다른 PC 참가, 경기 진행, 물리 주행, 전체 캠페인은 이번에 검증하지 않았다.
+
+## main 배포 확인
+
+- 2026-11-12 사용자 요청에 따라 통합 실행본 커밋 `53707670c0b6ce4877a3fdb6e91036dff7cae3f6`까지 `origin/main`에 fast-forward로 푸시했다. `git ls-remote --exit-code origin refs/heads/main`의 해시가 배포 커밋과 일치했다.
+- 푸시 전 통합/PvP `VerifyOnly`를 다시 실행해 두 명령 모두 종료 0, 143파일·131,535,058바이트를 확인했다. 다른 PC에서는 `git pull --ff-only origin main` 후 `builds/EungyeTaxi/EungyeTaxi.exe`를 실행한다.
