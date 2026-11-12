@@ -2,24 +2,28 @@
 
 이 파일은 **현재 기준 + 최근 기록**만 둔다. 2026-11-10 이전 전체 원문은 [보관본](LATEST-archive-until-2026-11-09.md)에 있다. 프로젝트 전체 상태는 [CURRENT-STATE](../CURRENT-STATE.md)를 먼저 읽는다.
 
-## 현재 기준 (2026-11-10)
+## 현재 기준 (2026-11-12 점검)
 
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
 | 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid`. **main**: 게임 소스 575ca46(PVP 신호 37곳·뒷골목·승객 요청 빈도) · 출하 9ae2297 (11/10). 이전 출하 89e72a6(소스 9302097) |
 | 통신 | LAN **v17**. 11/10 PVP 지도 변경으로 지도 지문이 바뀌어 **이전 v17 실행본과도 접속 거부**("PVP 지도가 다릅니다"). 양쪽 PC 같은 실행본 필요 |
-| 배포 검사 | 출하 143파일 127,469,810바이트, 통합/PvP manifest VerifyOnly 통과(11/10 kimhs-NW2) |
-| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json`(Git, revision 14·SHA256 c9aa1e76…) 준비됨, 11/10 Strict issues 0(PowerShell 7 필요, 5.1에서는 검사 스크립트 실패). 재수입용 JSON 2개는 선택 입력이며 없음 |
-| 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **구현(사람 검증 전, 브랜치)** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
+| 배포 검사 | 출하 143파일 127,469,810바이트, 통합/PvP manifest VerifyOnly 재검사 통과(11/12) |
+| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json`(Git, revision 14·SHA256 c9aa1e76…) 준비됨, 11/12 Strict issues 0(PowerShell 7 필요). 재수입용 JSON 2개는 선택 입력이며 없음 |
+| 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **main 병합·배포, 사람 검증 전** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V10 30장](../proposals/project-b-game-proposal-v10.pptx) · [반영 검토](../proposals/proposal-v10-review.md) · [Manual V10](../proposals/project-b-prototype-manual-v10.md) |
 
 ## 다음 작업
 
 1. 모든 PC에서 main pull 후 같은 실행본으로 맞춘다(11/10 PVP 지도 변경). PVP 신호 대기·뒷골목·승객 요청 빈도(평균 1.5건) 사람 플레이 체감 확인. 기획22 차고·차종과 J5057·J866 유턴은 사람 플레이 확인 전.
 2. [거리뷰 대조 수정 후보](2026-11-10-roadview-lane-audit.md#수정-후보와-우선순위-사용자-확인-전-미적용) 남은 것: 스쿨존 제한속도, 미확인 교차로. [유턴 수정 남은 항목](2026-11-10-uturn-sign-fix.md#남은-항목).
-3. 다른 PC LAN v17, 첫 이용자 안내.
-5. 보류: 기사 평점(기획22 §3-1), 개인택시 면허 경로([기획23](../content-design/23-license-career-path.md)), Blender 아트 파이프라인 2단계 이후([문서](../proposals/art-blender-pipeline.md)).
+3. 전체 3일 캠페인, 다른 PC LAN v17, 첫 이용자 안내. 기존 PvP 봇·운송 회귀 실패는 출하 기록 참고.
+4. 보류: 기사 평점(기획22 §3-1), 개인택시 면허 경로([기획23](../content-design/23-license-career-path.md)), Blender 아트 파이프라인 2단계 이후([문서](../proposals/art-blender-pipeline.md)).
+
+## 2026-11-12 진행 상황 점검
+
+[실제 검사와 잔여 항목](2026-11-12-progress-check.md). 시작 main `6e0152a`. 지도 Strict와 통합/PvP VerifyOnly 재검사 통과. 기획22 병합 상태를 정정했다. 제안서 V10과 방 이미지 등 로컬 작업은 분리 보존했다. 게임 빌드와 플레이 검사는 이번에 실행하지 않았다.
 
 ## 2026-11-10 제안서 V10 (Neo4G 가이드 구성)
 
