@@ -4,6 +4,9 @@ using UnityEngine;
 public static class PersonalRoomHUD {
  static GUIStyle text,title,small,button;static Texture2D backdrop;static string preview="",confirmation="";static int style;
  static string Money(int n){return n.ToString("N0")+"원";}
+ static readonly System.Collections.Generic.Dictionary<string,Texture2D> layers=new System.Collections.Generic.Dictionary<string,Texture2D>();
+ static void Layer(Rect view,string name){Texture2D t;if(!layers.TryGetValue(name,out t)||!t){t=Resources.Load<Texture2D>(name);layers[name]=t;}if(t)GUI.DrawTexture(view,t,ScaleMode.StretchToFill,true);}
+ static string StyleName(string item,int s){return item=="lamp"?(s==0?"나무 받침·리넨 갓":"짙은 철제 스탠드"):(s==0?"회청색 테두리":"테라코타 줄무늬·술");}
  static void Box(Rect r,Color c){var old=GUI.color;GUI.color=c;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=old;}
  public static void Draw(DriveSession session){
   var b=session.business;var a=b.ledger.Account;var r=b.ArchivedRoom??a.Room;bool read=b.ArchivedRoom!=null||r.finalized;
@@ -14,10 +17,11 @@ public static class PersonalRoomHUD {
   if(!backdrop)backdrop=Resources.Load<Texture2D>("personal-room-base");
   var view=new Rect(0,85,850,478);if(backdrop)GUI.DrawTexture(view,backdrop,ScaleMode.StretchToFill);else Box(view,new Color(.65f,.60f,.53f));
   bool lamp=preview=="lamp"||r.lampOwned&&r.lampPlaced;bool rug=preview=="rug"||r.rugOwned&&r.rugPlaced;
-  if(rug){int rs=preview=="rug"?style:r.rugStyle;var rc=rs==0?new Color(.44f,.54f,.57f):new Color(.72f,.50f,.35f);CasualUI.RoundedFill(new Rect(280,482,315,50),rc);if(rs==1)for(int i=0;i<7;i++)Box(new Rect(295+i*42,485,10,43),new Color(.88f,.77f,.60f));}
-  if(lamp){bool on=preview=="lamp"||r.lampOn;int ls=preview=="lamp"?style:r.lampStyle;if(on)CasualUI.RoundedFill(new Rect(465,290,115,67),new Color(1,.76f,.26f,.20f));Box(new Rect(510,310,7,43),new Color(.30f,.27f,.23f));CasualUI.RoundedFill(new Rect(492,348,45,8),new Color(.46f,.39f,.28f));CasualUI.RoundedFill(new Rect(486,285,55,33),on?new Color(1,.87f,.59f):new Color(.65f,.60f,.49f));if(ls==1)Box(new Rect(486,285,55,5),new Color(.28f,.33f,.36f));}
+  // Item layers are full-frame transparent paintings aligned to the backdrop (tools/generate_room_items.py).
+  if(rug){int rs=preview=="rug"?style:r.rugStyle;Layer(view,"room-rug-"+rs);}
+  if(lamp){bool on=preview=="lamp"||r.lampOn;int ls=preview=="lamp"?style:r.lampStyle;if(on)Layer(view,"room-lamp-"+ls+"-glow");Layer(view,"room-lamp-"+ls+(on?"-on":"-off"));}
   CasualUI.Header(new Rect(15,15,830,55),read?"내 공간 · 완료 기록":"영업을 마치고, 내 공간",5);
-  GUI.Label(new Rect(25,578,790,48),preview.Length>0?"미리보기 · 닫으면 현재 배치로 돌아갑니다":"작은 방에서, 내가 고른 생활을 하나씩.",text);
+  GUI.Label(new Rect(25,578,790,48),preview.Length>0?"미리보기 · "+StyleName(preview,style)+" · 미리보기를 다시 누르면 스타일 전환":"작은 방에서, 내가 고른 생활을 하나씩.",text);
   GUI.Label(new Rect(25,635,790,50),b.ArchivedRoom!=null?"이전 회차의 방 · 읽기 전용":"개인 지출 "+Money(a.PersonalSpent)+"  ·  영업 순수익 "+Money(b.ledger.TotalNet),small);
   CasualUI.Panel(new Rect(865,15,320,690));CasualUI.Header(new Rect(875,25,300,48),"나의 물건",5);
   GUI.Label(new Rect(885,82,280,34),b.ArchivedRoom!=null?"이전 회차 기록":"현금 "+Money(a.Cash),new GUIStyle(title){fontSize=23});
@@ -45,7 +49,7 @@ public static class PersonalRoomHUD {
   HudGlyph.Draw(new Rect(889,y+1,23,23),5,owned?CasualUI.Green:CasualUI.Amber);
   GUI.Label(new Rect(918,y,247,30),name+" · "+(owned?"보유 중":Money(price)),new GUIStyle(text){fontSize=16,fontStyle=FontStyle.Bold});
   if(read)return;
-  if(owned){if(GUI.Button(new Rect(885,y+40,135,35),placed?"보관":"놓기",button))b.ChangeRoom("place",item);if(GUI.Button(new Rect(1030,y+40,135,35),"스타일 변경",button)){var r=b.ledger.Account.Room;b.ChangeRoom("style",item,1-(item=="lamp"?r.lampStyle:r.rugStyle));}}
+  if(owned){if(GUI.Button(new Rect(885,y+40,135,35),placed?"보관":"놓기",button))b.ChangeRoom("place",item);if(GUI.Button(new Rect(1030,y+40,135,35),"스타일 변경",button)){var r=b.ledger.Account.Room;b.ChangeRoom("style",item,1-(item=="lamp"?r.lampStyle:r.rugStyle));}var cur=b.ledger.Account.Room;GUI.Label(new Rect(889,y+86,276,26),"스타일 · "+StyleName(item,item=="lamp"?cur.lampStyle:cur.rugStyle),small);}
   else{
    if(GUI.Button(new Rect(885,y+40,135,35),"미리보기",button)){if(preview==item)style=1-style;else{preview=item;style=0;}}
    if(GUI.Button(new Rect(1030,y+40,135,35),b.ledger.Account.Room.wished==item?"찜 해제":"찜",button))b.ChangeRoom("wish",item);
