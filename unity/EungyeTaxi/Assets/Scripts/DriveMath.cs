@@ -2,25 +2,32 @@ using System;
 public static class DriveMath {
     public const float ParkingSteerAngle=42f;
     // Manual parking turns are tighter; H retains its calibrated bicycle geometry.
-    // Fade out the city allowance by50kph; H keeps its calibrated geometry.
+    // Fade out the gentle-curve allowance by60kph; H keeps its calibrated geometry.
     public static float ManualSteerAngle(float speedKph) {
         float speed=Math.Abs(speedKph);
         float blend=Math.Max(0,Math.Min(1,(30-speed)/16));
         float parking=Math.Min(52,SteerAngle(speedKph)*(1+.55f*blend));
         // A gradual city-speed curve; H keeps the original bicycle limit.
         float city=speed<=20?52-speed*.6f:speed<=35?40-(speed-20)*(23f/15):17+(SteerAngle(50)-17)*Math.Min(1,(speed-35)/15);
-        if(speed>=50)return parking;
-        return Math.Max(parking,city);
+        float original=speed>=50?parking:Math.Max(parking,city);
+        // Smooth 20% allowance at 47.5km/h, zero below35 and above60.
+        float t=Math.Max(0,Math.Min(1,(speed-35)/25));
+        float wave=(float)Math.Sin(Math.PI*t);
+        return original*(1+.2f*wave*wave);
     }
     public struct Demand { public float motor, brake; }
     public static bool MayAssistManualYaw(int grounded,float upright,bool assisted,bool human,bool frozenSteering){return grounded>=2&&upright>.8f&&!assisted&&human&&!frozenSteering;}
     public static float ManualYawAcceleration(float speedMs,float centerAngle,float yawRate) {
         float speed=Math.Abs(speedMs),kph=speed*3.6f;
-        if(speed<.5f||kph>=40||Math.Abs(centerAngle)<.1f)return 0;
-        float target=Math.Max(-1.4f,Math.Min(1.4f,(float)(speedMs/2.6f*Math.Tan(centerAngle*Math.PI/180))));
+        if(speed<.5f||kph>=60||Math.Abs(centerAngle)<.1f)return 0;
+        // At city cruising speeds, assist gentle bends without forcing a tight
+        // intersection turn: cap the target lateral acceleration at5m/s2.
+        float limit=1.4f+(Math.Min(1.4f,5f/speed)-1.4f)*Math.Max(0,Math.Min(1,(kph-30)/10));
+        float target=Math.Max(-limit,Math.Min(limit,(float)(speedMs/2.6f*Math.Tan(centerAngle*Math.PI/180))));
         float sign=Math.Sign(target),deficit=Math.Abs(target)-yawRate*sign;
         if(deficit<=0)return 0;
-        float gain=4.5f*Math.Max(0,Math.Min(1,(40-kph)/20));
+        float gain=kph<=30?4.5f*Math.Max(0,Math.Min(1,(40-kph)/20)):
+            kph<=50?2.25f-(kph-30)*(1.45f/20):.8f*(60-kph)/10;
         return sign*Math.Min(5.2f,deficit*gain);
     }
     public static float SteerAngle(float speedKph) {

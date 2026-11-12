@@ -10,6 +10,7 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
  public static DrivingSettingsPanel For(DriveSession session){var panel=session.GetComponent<DrivingSettingsPanel>();return panel?panel:session.gameObject.AddComponent<DrivingSettingsPanel>();}
  public void Open(){Draft=(PreferenceKey==DrivingSettings.Key?DrivingSettings.Current:DrivingSettings.Load(PreferenceKey)).Copy();var owner=GetComponent<DriveSession>();FollowingDraft=owner&&owner.traffic&&owner.traffic.mitOptions.Enabled;WeatherDraft=RainSettings.Capture();openedWeather=WeatherDraft.Copy();Error="";WeatherTab=DevTab=false;IsOpen=true;}
  public void Cancel(){IsOpen=false;Draft=null;WeatherDraft=null;openedWeather=null;}
+ public void SteeringPreset(int preset){if(!IsOpen||Draft==null)return;Draft.sensitivity=preset<0?.9f:preset>0?1.15f:1;Draft.response=preset<0?.8f:preset>0?1.35f:1;Draft.centering=preset<0?1.1f:preset>0?1.25f:1;}
  public void ResetDefaults(){if(IsOpen&&!DevTab){if(WeatherTab){if(RainSettingsRuntime.CanEdit(GetComponent<DriveSession>()))WeatherDraft=new RainSettings();}else {Draft=new DrivingSettings();FollowingDraft=true;}}}
  public void Apply(){if(!IsOpen)return;if(!WeatherDraft.Same(openedWeather)){string error;if(!RainSettingsRuntime.Apply(GetComponent<DriveSession>(),WeatherDraft,out error)){Error=error;return;}}if(PreferenceKey==DrivingSettings.Key)DrivingSettings.Commit(Draft);else Draft.Save(PreferenceKey);var owner=GetComponent<DriveSession>();if(owner&&owner.traffic&&!owner.simulationMatch)owner.traffic.mitOptions.SetEnabled(FollowingDraft);Cancel();}
  public void ValidateOwner(){var owner=GetComponent<DriveSession>();if(IsOpen&&owner&&owner.simulationMatch&&owner.simulationMatch.Finished)Cancel();}
@@ -59,7 +60,7 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
   GUI.Label(new Rect(28,94,562,23),DevTab?"개발·테스트 전용 · 정식 플레이 규칙을 건너뜁니다":WeatherTab?"적용하면 현재 운행에 반영 · 확률 미끄러짐은 잠금":"조절 후 적용 · 취소하면 현재 설정을 유지해요",Label(14));
   if(DevTab)DrawDevTab();
   else if(!WeatherTab){
-   Draft.sensitivity=Row(118,"조향 민감도","같은 좌우 입력으로 꺾이는 회전량",Draft.sensitivity,.5f,1.5f);
+   Draft.sensitivity=Row(118,"조향 민감도 · 회전량","50~150% · 높이면 더 꺾여요. 좁은 코너는 감속하세요",Draft.sensitivity,.5f,1.5f);
    Draft.response=Row(202,"조향 반응 속도","누르거나 반대 방향으로 바꿀 때의 반응",Draft.response,.25f,2);
    Draft.centering=Row(286,"핸들 복원 속도","조향 입력을 놓았을 때 중앙으로 돌아오는 속도",Draft.centering,.25f,2);
    Draft.braking=Row(370,"브레이크 감속 민감도","S/↓/패드 일반 감속의 세기 · 긴급제동은 그대로",Draft.braking,.5f,1.5f);
@@ -67,6 +68,9 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
    var owner=GetComponent<DriveSession>();bool oldEnabled=GUI.enabled;GUI.enabled=oldEnabled&&owner&&!owner.simulationMatch;
    FollowingDraft=GUI.Toggle(new Rect(28,540,562,30),FollowingDraft,"앞차 안전 추종 보완 · "+(FollowingDraft?"켜짐":"꺼짐"),KoreanText.Button(17));GUI.enabled=oldEnabled;
    GUI.Label(new Rect(28,574,562,24),owner&&owner.simulationMatch?"PVP에서는 공통 안전 규칙을 유지합니다":"주변 차량의 앞차 안전거리 보완",Label(14));
+   if(GUI.Button(new Rect(28,604,180,32),"조향: 부드럽게",KoreanText.Button(15)))SteeringPreset(-1);
+   if(GUI.Button(new Rect(218,604,180,32),"조향: 표준",KoreanText.Button(15)))SteeringPreset(0);
+   if(GUI.Button(new Rect(408,604,180,32),"조향: 빠르게",KoreanText.Button(15)))SteeringPreset(1);
   }else{
    bool editable=RainSettingsRuntime.CanEdit(GetComponent<DriveSession>()),wasEnabled=GUI.enabled;if(!editable){WeatherDraft=RainSettings.Capture();openedWeather=WeatherDraft.Copy();}GUI.enabled=wasEnabled&&editable;
    WeatherDraft.enabled=GUI.Toggle(new Rect(30,122,560,32),WeatherDraft.enabled,WeatherDraft.enabled?"비 켜짐 · 자동 와이퍼":"비 꺼짐 · 맑음",KoreanText.Button(18));
@@ -78,7 +82,7 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
    GUI.enabled=wasEnabled;
    var note=Label(14);note.wordWrap=true;GUI.Label(new Rect(28,490,562,45),editable?"현재 승객 오염은 소급하지 않아요. 이어하기에는 저장되며, 툴의 원본 프로필은 바꾸지 않아요.":"LAN 날씨는 호스트가 변경합니다. 현재 공유된 값만 확인할 수 있어요.",note);
   }
-  if(!string.IsNullOrEmpty(Error))GUI.Label(new Rect(28,610,562,30),Error,Label(13));
+  if(!string.IsNullOrEmpty(Error))GUI.Label(new Rect(28,636,562,14),Error,Label(12));
   if(GUI.Button(new Rect(28,650,164,40),"기본값",KoreanText.Button(17)))ResetDefaults();
   if(GUI.Button(new Rect(208,650,164,40),"취소",KoreanText.Button(17)))Cancel();
   if(GUI.Button(new Rect(388,650,204,40),"적용",CasualUI.Action(18)))Apply();

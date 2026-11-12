@@ -28,6 +28,8 @@ public sealed class DrivingSettingsProbe : MonoBehaviour {
   panel.Open();panel.Draft.sensitivity=1.2f;panel.Draft.braking=.75f;panel.Apply();Check(DrivingSettings.Load(key).sensitivity==1.2f&&DrivingSettings.Load(key).braking==.75f&&!panel.IsOpen,"apply saves then returns to pause");
   if(capture){yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(output,"pause.png"));yield return new WaitForSecondsRealtime(.3f);}
   panel.Open();Check(panel.Draft.sensitivity==1.2f,"saved settings survive panel reopen");
+  panel.SteeringPreset(1);Check(panel.Draft.sensitivity==1.15f&&panel.Draft.response==1.35f&&panel.Draft.braking==.75f,"quick steering preset preserves brake setting");panel.Apply();
+  panel.Open();Check(panel.Draft.sensitivity==1.15f,"steering preset persists");panel.SteeringPreset(-1);panel.Cancel();panel.Open();Check(panel.Draft.sensitivity==1.15f,"cancel discards steering preset");
   session.law.OpenHistory();Check(!session.law.HistoryOpen&&panel.IsOpen,"history cannot replace settings");
   Check(!session.GetComponent<FullMapOverlay>().Open(),"map cannot replace settings");
   Check(!session.GetComponent<PracticeSession>().OpenPicker(),"practice cannot replace settings");

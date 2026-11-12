@@ -1,5 +1,7 @@
 # 최신 작업 이력
 
+조향 개선 검증본: [중속 커브·조향 설정](2026-11-12-curve-steering.md). 별도 ZIP `artifacts/pvp-stability/EungyeTaxi-curve-steering-20261112.zip`, LAN v18(양쪽 갱신 필요). 아래 기본 배포 v17과 구분하며 필수 로컬 지도 입력은 변경하지 않았다. 다음은 실제 두 PC 수동 체감 확인이다.
+
 이 파일은 **현재 기준 + 최근 기록**만 둔다. 2026-11-10 이전 전체 원문은 [보관본](LATEST-archive-until-2026-11-09.md)에 있다. 프로젝트 전체 상태는 [CURRENT-STATE](../CURRENT-STATE.md)를 먼저 읽는다.
 
 ## 현재 기준 (2026-11-12 점검)

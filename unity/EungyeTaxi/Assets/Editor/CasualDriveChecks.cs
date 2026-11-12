@@ -19,7 +19,7 @@ public static class CasualDriveChecks {
   var yaw=typeof(DriveMath).GetMethod("ManualYawAcceleration");Check(yaw!=null,"manual city turn has bounded yaw response assistance");
   Func<float,float,float,float> yawAt=(speed,angle,rate)=>(float)yaw.Invoke(null,new object[]{speed,angle,rate});
   Check(yawAt(5,25,0)>0&&Math.Abs(yawAt(5,25,0)+yawAt(5,-25,0))<.001,"yaw assistance is symmetric");
-  Check(yawAt(0,25,0)==0&&yawAt(15,25,0)==0,"no stationary spin or high-speed yaw assistance");
+  Check(yawAt(0,25,0)==0&&yawAt(60/3.6f,25,0)==0,"no stationary spin or high-speed yaw assistance");
   Check(yawAt(5,25,3)==0&&yawAt(-5,25,0)<0,"no excess same-direction spin and reverse remains correct");
   var gateMethod=typeof(DriveMath).GetMethod("MayAssistManualYaw");Check(gateMethod!=null,"yaw guard includes held-wheel states");
   Func<int,float,bool,bool,bool,bool> allowed=(grounded,up,assisted,human,frozen)=>(bool)gateMethod.Invoke(null,new object[]{grounded,up,assisted,human,frozen});

@@ -1,6 +1,6 @@
 # 기존 시뮬레이션 기반 LAN 사람 대전
 
-현재 호환 계약은 **`native-city-lan-v17`**이다. 개인 조향/브레이크 설정과 승객 프리셋/특성 snapshot, 호스트 권한·로컬 예측을 함께 사용하므로 양쪽 실행 폴더를 갱신한다. 승객 제작 범위는 [프리셋 기획15](../15-passenger-presets-and-traits.md)와 [개별 설정16](../16-passenger-preset-overrides.md)을 따른다.
+조향 개선 검증본의 호환 계약은 **`native-city-lan-v18`**이다. 기존 기본 배포본은 v17이며, 물리 계산이 달라 두 버전은 함께 참가할 수 없다. 개인 조향/브레이크 설정과 승객 프리셋/특성 snapshot, 호스트 권한·로컬 예측을 함께 사용하므로 양쪽 실행 폴더를 갱신한다. 승객 제작 범위는 [프리셋 기획15](../15-passenger-presets-and-traits.md)와 [개별 설정16](../16-passenger-preset-overrides.md)을 따른다.
 
 호스트는 선택지의 즉시/운행 중/종료 S·피로, 사고 종류/등급·비용/시간/운전 점수·손상/공업사 복귀, 신호 상태를 확정·복제한다. 재접속으로 효과/손상/청구를 재지급하지 않는다. [선택 효과](../02-passengers-and-fares.md)·[사고](../08-accident-and-workshop-proposal.md)·[개인 운전 설정](../01-driving-and-traffic.md#개인-운전-설정)을 따른다.
 
