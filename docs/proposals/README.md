@@ -1,6 +1,11 @@
 # 회사 내부 개발 착수 제안
 
-## 최신 9차 자료 — 2026-11-10
+## 최신 10차 자료 — 2026-11-10
+
+- [제안서 PPTX](project-b-game-proposal-v10.pptx): 30장. Neo4G 제안서 가이드 vr.1.0의 구성·필수 항목에 맞춤. 운송 → 차량 구매(실제 차고 화면) → PvP 내 차 흐름(20장 신규), 주요 캐릭터·배경 설정(22장 신규).
+- [반영 검토](proposal-v10-review.md), [별도 조작 매뉴얼 V10](project-b-prototype-manual-v10.md).
+
+## 이전 9차 자료 — 2026-11-10
 
 - [제안서 PPTX](project-b-game-proposal-v9.pptx): 28장. 차량 구매(15장)·목표 구조(16장 신규)·PvP 내 차(19장)·아트 전환(22장 신규). 로드맵·참여자는 V8 유지.
 - [반영 검토](proposal-v9-review.md), [아트 전환 가이드·시안 프롬프트·이미지 생성 도구 설치](art-conversion-guide.md), [V9 시안 폴더](assets/v9/README.md).
