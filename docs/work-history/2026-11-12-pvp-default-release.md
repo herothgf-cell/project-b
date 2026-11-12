@@ -18,3 +18,7 @@
 
 ## 미검증
 실제 사내 유선·Wi-Fi 두 PC, 수동 장시간 주행, 전체 3일 캠페인. 같은 PC 두 실행본 검증과 구분한다. 지도 입력 변경 없음.
+
+## main 배포 확인
+- 배포 커밋 `3b6ee2f4d81a867106aa63651951eaa567016bcb`를 `git push origin main`으로 전송, 종료0.
+- 직후 `git rev-parse HEAD`와 `git ls-remote origin refs/heads/main` 모두 같은 위 해시로 확인했다. 이 확인 기록은 후속 문서 커밋으로 남긴다.
