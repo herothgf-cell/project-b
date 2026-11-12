@@ -40,6 +40,10 @@
 
 최종 실행 화면: [북행 좌/직/직/우](../ui/2026-11-12-j7917-lanes/northbound.png), [남행3차로](../ui/2026-11-12-j7917-lanes/southbound.png). 다른 PC는 main pull 후 실행 중인 게임을 종료하고 다시 실행한다. 현재 작업 폴더에서 실행할 때도 이전 프로세스는 재시작해야 한다.
 
+### main 배포 확인
+
+출하 커밋 `2be32edab56394cf520a4596c1b424c5f6c1a602`를 일반 `git push origin main`으로 푸시했다(종료 0). 직후 `git ls-remote origin refs/heads/main`과 로컬 HEAD가 같은 해시인 것을 확인했다. 이력 파일의 실제 커밋도 `git log -1 --oneline -- docs/work-history/2026-11-12-j7917-roadview-check.md`로 확인했다. 기존 미추적 파일과 보존한 `FirstDrive.unity` 작업 변경은 배포 커밋에 넣지 않았다.
+
 ## 요청과 확인
 
 사용자는 J7917 및 게임 좌표 x=785.2905, z=212.52565의 차로 수가 실제와 다르다고 보고했다. ‘편도 2차로’는 실제가 아니라 게임 화면을 설명한 것이라고 후속 확인했다.
