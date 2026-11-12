@@ -1,5 +1,5 @@
 {
-  "sourceCommit": "6f17ab5c56a3ddae698ca6cecb7c3fa5f19e3f45",
+  "sourceCommit": "d8de977fe58f6a828699b4be4776fd74d0d20c38",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
@@ -7,26 +7,12 @@
   "totalBytes": 131535058.0,
   "validation": {
     "build": "PrototypeBuild.BuildHybrid exit 0",
-    "junction": "J7917_2565",
     "mapRevision": 17,
-    "modelRegression": "J7917LaneMapEdit.RunChecks exit 0",
-    "passengerRoutePairs": 552,
-    "laneGlyphCases": 49,
-    "laneArrows": 320,
-    "persistentGreenLeftChecks": 30,
-    "liveSaveR16Checks": 9,
-    "liveReloadR17Checks": 23,
-    "positionControlledFrames": 15,
-    "poseReviewPassed": 17,
-    "poseReviewChecks": 19,
-    "poseReviewExit": 2,
-    "knownFailures": [
-      "01-mode-menu and 02-single-preparation captures also fail on previous r16 runtime"
-    ],
-    "manualDriving": false,
-    "automaticPhysicsDriving": false,
-    "fullCampaign": false,
-    "fieldReviewComplete": false
+    "strictInputIssues": 0,
+    "sourceLobbyCopyCheck": "PASS",
+    "pvpHostLobbyRender": "1280x720, displayed status, host, match duration and participants; selected copy absent",
+    "pvpGuestConnectionTested": false,
+    "manualDriving": false
   },
   "files": [
     {
@@ -42,7 +28,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "10c44755256ecfde9b832e68633488514b5aa7a958e86d32e4f57212b535f467"
+      "sha256": "4b6ff2150a1af7b7c0c3ffabd5a886bdef8bde1b18d19b70cca0feed44a70568"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -67,7 +53,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
       "bytes": 2804736,
-      "sha256": "39059b434a69485abf9ec9754c6abb54e3464dab99607687d84a5f5fdc97af9a"
+      "sha256": "96f013dcff33d5037afcc189c4cb6cea3bf27ce4cccaec1ee03787649382981a"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
