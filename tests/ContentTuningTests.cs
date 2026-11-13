@@ -27,6 +27,13 @@ public static class ContentTuningTests {
   var seeds=new string[300];for(int i=0;i<seeds.Length;i++)seeds[i]=Schedule("seed"+i);
   var fallbackReward=PassengerReward.CalculateCurrentFare(93,85,11300,5,true,76,3,100,85,false,83,0);
   ContentTuning.ConfigureCatalog(File.ReadAllText(args[0]));ContentTuning.UseDefaults();
+  Check(ContentTuning.Int("law.centreLine.penalty",-1)==1,"centreline default is independently one law point");
+  ContentTuning.UseJson(Change("law.centreLine.penalty","7"));
+  Check(ContentTuning.Int("law.centreLine.penalty",-1)==7&&ContentTuning.Int("law.wrongWay.penalty",-1)==10&&ContentTuning.Int("manner.wrongWay.penalty",-1)==10,"centreline tuning preserves wrong-way and manner penalties");
+  var beforeCentreLine=Profile();ContentJson.Array(beforeCentreLine["values"]).RemoveAll(o=>(string)ContentJson.Object(o)["id"]=="law.centreLine.penalty");
+  ContentTuning.UseJson(ContentTuning.UpgradeJson(Seal(beforeCentreLine)));
+  Check(ContentTuning.Int("law.centreLine.penalty",-1)==1,"legacy profile gains centreline default");
+  ContentTuning.UseDefaults();
   foreach(string key in new[]{"flashStop","permissiveTurn","blockedExit"}){
    ContentTuning.UseDefaults();ContentTuning.UseJson(Change("law."+key+".penalty","37"));
    var scene=new ConfusionPracticeState(key=="flashStop"?8:key=="permissiveTurn"?12:10){Entered=true,Finished=true,CorrectRoute=true,EntryRed=true,EntryBlocked=true};

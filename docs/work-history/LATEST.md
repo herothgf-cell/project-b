@@ -1,5 +1,7 @@
 # 최신 작업 이력
 
+2026-11-13 J8066 동쪽을 왕복3차로(서행2/동행1 ↔ 서행1/동행2)로 정정하고, 제보 좌표의 좌회전 감응을 복구했다. 대표 요청 승객 말풍선의 기사 응답을 분리하고 중앙선 법규 감점을 도구에서 독립 편집하도록 기본1점으로 변경했다. 지도r19·BuildHybrid 종료0·39곳1,482경로·저장r14~18 이관·Player 저장9/이어하기23 검사 통과. [근거·한계·배포 기록](2026-11-13-j8066-three-lanes-and-passenger-voice.md). 기존 음식 Player 검사의 옛 기대값 실패는 이전 배포본에서도 재현되어 별도 기록했다.
+
 은계 주행 중 안전 하차·목적지 변경·경유 요청 응답, 황색 실선 중앙선 침범·비허용 유턴 감점, 지정 8곳 반대 방향 정차 공간을 기본 통합 실행본에 반영했다. 은계 정차 지점은 총 39곳이다. [후속 작업 및 검증](2026-11-13-moving-route-requests-and-road-feedback.md) · [승하차 위치 지도](../content-design/images/eungye-pickup-map-2026-11-13.png).
 
 은계 게임 코드·통합 실행본과 승객 현황 문서를 콘텐츠 관리 툴 표기 변경과 합쳤다. 통합/PvP 배포 해시와 지도 입력을 재검증했다. [병합 기록](2026-11-13-eungye-release-integration.md).
@@ -29,10 +31,10 @@ PvP 호스트 렉 2차 최적화(같은 기록 후속 절): 내비 혼잡/제한
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
-| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 은계 r18 · [현재 배포 기록](2026-11-13-moving-route-requests-and-road-feedback.md) |
+| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 은계 r19 · [현재 배포 기록](2026-11-13-j8066-three-lanes-and-passenger-voice.md) |
 | 통신 | LAN **v19**. 최적화·조향 통합 배포. 이전 v17/v18과 참가 불가, 양쪽 PC 같은 전체 실행 폴더 필요 |
 | 배포 검사 | [통합/PvP 검증과 manifest](2026-11-13-moving-route-requests-and-road-feedback.md#검증-및-재현) |
-| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (Git, revision18·SHA256 496e1869…) · Strict 입력 문제0 · 선택 재수입 JSON2개 부재 |
+| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (Git, revision19·SHA256 68703da2…) · Strict 입력 문제0 · 선택 재수입 JSON2개 부재 |
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **main 병합·배포, 사람 검증 전** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V10 30장](../proposals/project-b-game-proposal-v10.pptx) · [반영 검토](../proposals/proposal-v10-review.md) · [Manual V10](../proposals/project-b-prototype-manual-v10.md) |
 

@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "a49e69fd1b527a1c4d653bd4cffeb6c7a8156827b3a4a43db9d911b3902a9c3f",
+  "contentHash": "7a3206e595bcbc28296aa851d6661c6ed0a938c27ad991c15d6d2157f436d2ce",
   "values": [
     {
       "id": "request.Quiet.enabled",
@@ -1062,6 +1062,10 @@
     },
     {
       "id": "law.stopLine.penalty",
+      "value": "1"
+    },
+    {
+      "id": "law.centreLine.penalty",
       "value": "1"
     },
     {

@@ -6,12 +6,12 @@ public static class JunctionRouteFeedbackTests {
  public static void VerifyMigration(){
   MapCatalog.LockedRegion="eungye";var map=MapCatalog.Load();
   var method=typeof(BusinessProgress).GetMethod("UpgradeEungyeApproachCheckpoint",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
-  foreach(int revision in new[]{14,15,16,17}){
+  foreach(int revision in new[]{14,15,16,17,18}){
    var saved=new LiveCampaignCheckpoint{mapRevision="은계 프로젝트 지도 · r"+revision,preferFastest=false,jobs=new PassengerJobsSnapshot{navigationCaptured=true,navAvoidEdge=2000,navObservedEdge=2001,navPassedObservedEdge=2002}};
    method.Invoke(null,new object[]{saved,map});
-   if(saved.mapRevision!=map.editorRevision||saved.jobs.navigationCaptured||saved.jobs.navAvoidEdge!=-1||saved.jobs.navObservedEdge!=-1||saved.jobs.navPassedObservedEdge!=-1||saved.preferFastest)throw new Exception("r18 navigation migration failed from "+revision);
+   if(saved.mapRevision!=map.editorRevision||saved.jobs.navigationCaptured||saved.jobs.navAvoidEdge!=-1||saved.jobs.navObservedEdge!=-1||saved.jobs.navPassedObservedEdge!=-1||saved.preferFastest)throw new Exception("reviewed map navigation migration failed from "+revision);
   }
-  Debug.Log("JUNCTION_MIGRATION_OK versions=4");
+  Debug.Log("JUNCTION_MIGRATION_OK versions=5");
  }
  public static void Run(){Verify();VerifyDestination();J7917LaneMapEdit.RunChecks();PlaytestBalanceTests.Run();Debug.Log("JUNCTION_FEEDBACK_REGRESSION_OK");}
  public static void Verify(){Verify(ProjectMapStore.Load(ProjectMapBuild.Root));}

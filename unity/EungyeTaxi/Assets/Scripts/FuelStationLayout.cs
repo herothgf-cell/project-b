@@ -33,22 +33,32 @@ public static class FuelStationLayout {
  public static void Reset(MapData map){layouts.Remove(map);}
  public static FuelStation FromObject(MapData map,ProjectMapObject o){var stop=ProjectMapScene.ServiceStop(map,o);var drive=new Vector3[51];for(int i=0;i<drive.Length;i++)drive[i]=Vector3.Lerp(stop.V(),o.Position,i/50f);var entry=stop.V();var leave=stop.V();var entryRoad=Array.Find(map.roads,r=>r.id=="fuel:rest-east:entrance");var exitRoad=Array.Find(map.roads,r=>r.id=="fuel:rest-east:exit");if(o.id=="service:rest-east"&&entryRoad!=null&&exitRoad!=null&&Vector3.Distance(entryRoad.points[entryRoad.points.Length-1].V()+o.Direction*6,o.Position)<.1f){var path=new List<Vector3>();foreach(var p in entryRoad.points)path.Add(p.V());path.Add(o.Position);foreach(var p in exitRoad.points)path.Add(p.V());drive=path.ToArray();entry=entryRoad.points[0].V();leave=exitRoad.points[exitRoad.points.Length-1].V();}return new FuelStation(o.name,o.id,stop,entry,leave,o.Position,o.Direction,drive,Array.ConvertAll(o.points,p=>p.V()),new MapRoad[0]);}
  public static FuelStation Rest(MapData map){if(ProjectMapScene.Active(map)){foreach(var o in ProjectMapScene.Services(map,"rest"))return FromObject(map,o);return null;}Layout layout;return map!=null&&layouts.TryGetValue(map,out layout)?layout.rest:null;}
+ // Reviewed distances are measured on the original directed lane. Authoring
+ // splits retain that lineage and a global sourceOffset; never clamp a station
+ // onto the shortened head or relocate its entrance to a nearby lane.
+ static int ReviewedStation(HdRoadGraph graph,string origin,float sourceAt,out float localAt){
+  int found=-1;localAt=sourceAt;
+  for(int i=0;i<graph.edges.Length;i++){var edge=graph.edges[i];if(edge.disabled||edge.turn!=0||edge.change!=0||RoadMapAuthoringOperations.Origin(new RoadMapLane{id=edge.id})!=origin)continue;
+   float at=sourceAt-edge.sourceOffset;if(at<0||at>graph.paths[i].length)continue;
+   if(found<0||edge.sourceOffset>graph.edges[found].sourceOffset){found=i;localAt=at;}
+  }return found;
+ }
  public static void Apply(MapData map){
   if(map==null)return;Layout existing;if(layouts.TryGetValue(map,out existing))return;
   var entries=new List<FuelStation>();
   if(map.mapId!="eungye"||!map.hybrid||!map.HasHd){layouts.Add(map,new Layout(entries));return;}
   var graph=new HdRoadGraph(map);
   for(int site=0;site<keys.Length;site++){
-   int edge=Array.FindIndex(map.hdEdges,e=>e.id==laneIds[site]&&!e.disabled);
-   if(edge<0){Debug.LogWarning("FUEL_LAYOUT_MISSING reviewed Eungye lane "+laneIds[site]);continue;}
-   var path=graph.paths[edge];float at=laneAts[site];
+   float at;int edge=ReviewedStation(graph,laneIds[site],laneAts[site],out at);
+   if(edge<0){if(Array.Exists(map.hdEdges,e=>!e.disabled&&RoadMapAuthoringOperations.Origin(new RoadMapLane{id=e.id})==laneIds[site]))throw new InvalidOperationException("Fuel station reviewed lane changed: "+keys[site]);Debug.LogWarning("FUEL_LAYOUT_MISSING reviewed Eungye lane "+laneIds[site]);continue;}
+   var path=graph.paths[edge];
    if(at<32||at+32>path.length)throw new InvalidOperationException("Fuel station reviewed lane changed: "+keys[site]);
    entries.Add(CreateFacility(map,graph,edge,at,depths[site],keys[site],labels[site]));
   }
   // Never leave a partly populated set of facilities if an input changed.
   if(entries.Count!=3){Debug.LogWarning("FUEL_LAYOUT_UNAVAILABLE expected three reviewed Eungye sites; no facilities appended");entries.Clear();}
-  FuelStation rest=null;int restEdge=Array.FindIndex(map.hdEdges,e=>e.id==laneIds[2]&&!e.disabled);
-  if(!ProjectMapScene.Active(map)&&entries.Count==3&&restEdge>=0){for(float at=laneAts[2]+80;at+32<graph.paths[restEdge].length;at+=20){try{rest=CreateFacility(map,graph,restEdge,at,17,"rest-east","은계 동부 휴식 주차구역 (게임시설)");break;}catch(InvalidOperationException){}}
+  float restStart;FuelStation rest=null;int restEdge=ReviewedStation(graph,laneIds[2],laneAts[2]+80,out restStart);
+  if(!ProjectMapScene.Active(map)&&entries.Count==3&&restEdge>=0){for(float at=restStart;at+32<graph.paths[restEdge].length;at+=20){try{rest=CreateFacility(map,graph,restEdge,at,17,"rest-east","은계 동부 휴식 주차구역 (게임시설)");break;}catch(InvalidOperationException){}}
    if(rest==null)throw new InvalidOperationException("No clear rest parking plot along east service corridor");}
   if(!ProjectMapScene.Active(map)){var roads=new List<MapRoad>(map.roads);foreach(var station in entries)foreach(var surface in station.surfaces)if(!roads.Exists(r=>r.id==surface.id))roads.Add(surface);if(rest!=null)foreach(var surface in rest.surfaces)if(!roads.Exists(r=>r.id==surface.id))roads.Add(surface);map.roads=roads.ToArray();}
   layouts.Add(map,new Layout(entries,rest));

@@ -157,14 +157,16 @@ public class BusinessProgress : MonoBehaviour {
   bool fromR14=live.mapRevision=="은계 프로젝트 지도 · r14";
   bool fromR16=live.mapRevision=="은계 프로젝트 지도 · r16";
   bool fromR17=live.mapRevision=="은계 프로젝트 지도 · r17";
+  bool fromR18=live.mapRevision=="은계 프로젝트 지도 · r18";
+  bool toR19=map.editorRevision=="은계 프로젝트 지도 · r19";
   bool toR18=map.editorRevision=="은계 프로젝트 지도 · r18";
   bool toR17=map.editorRevision=="은계 프로젝트 지도 · r17";
-  string reviewedHash=toR18?"bd8ad754a0510f0ee6fac7c54121433e1ba65bbd4b739e824500c081b446c474":toR17?"cb8e0ec0ed3a48f7e9a33c4ff8dc3878bd9d59aafef13c0f0fe43c5616c9c808":"d9596da33d4efc0d4f862c714eb05bb70c94365bfc30ab6171a702e2b672e3df";
-  if(map.mapId!="eungye"||(!fromR14&&live.mapRevision!="은계 프로젝트 지도 · r15"&&!(fromR16&&(toR17||toR18))&&!(fromR17&&toR18))||(!toR18&&!toR17&&map.editorRevision!="은계 프로젝트 지도 · r16")||
+  string reviewedHash=toR19?"345d93f5499e5dbf52da3a8d831935c1447980492055f192a3280f64b7fd4ef4":toR18?"bd8ad754a0510f0ee6fac7c54121433e1ba65bbd4b739e824500c081b446c474":toR17?"cb8e0ec0ed3a48f7e9a33c4ff8dc3878bd9d59aafef13c0f0fe43c5616c9c808":"d9596da33d4efc0d4f862c714eb05bb70c94365bfc30ab6171a702e2b672e3df";
+  if(map.mapId!="eungye"||(!fromR14&&live.mapRevision!="은계 프로젝트 지도 · r15"&&!(fromR16&&(toR17||toR18||toR19))&&!(fromR17&&(toR18||toR19))&&!(fromR18&&toR19))||(!toR19&&!toR18&&!toR17&&map.editorRevision!="은계 프로젝트 지도 · r16")||
      map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||
      RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   live.mapRevision=map.editorRevision;
-  if(toR18&&live.jobs!=null){
+  if((toR18||toR19)&&live.jobs!=null){
    // Appended runtime split indices move when lane-change windows are added.
    // RestoreScenario rebuilds active scenario constraints against the new map;
    // do not overwrite them with integers from the old graph. The enclosing
@@ -173,7 +175,7 @@ public class BusinessProgress : MonoBehaviour {
    live.jobs.navAvoidEdge=live.jobs.navObservedEdge=live.jobs.navPassedObservedEdge=-1;
   }
   var entry=live.lawObservation==null?null:live.lawObservation.entry;
-  if(entry!=null&&((toR17||toR18)&&entry.junction=="J7917_2565"||!fromR16&&entry.junction=="J7973_3744"&&entry.axis==1&&entry.sign==1||
+  if(entry!=null&&(toR19&&entry.junction=="J8066_6364"||(toR17||toR18||toR19)&&entry.junction=="J7917_2565"||!fromR16&&entry.junction=="J7973_3744"&&entry.axis==1&&entry.sign==1||
       fromR14&&(entry.junction=="J8066_6364"||entry.junction=="J1927_5181"))){
    live.lawObservation.entry=null;
    live.lawObservation.entryPresent=false;

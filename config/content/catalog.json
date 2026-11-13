@@ -6655,6 +6655,29 @@
       "editable": true
     },
     {
+      "id": "law.centreLine.penalty",
+      "group": "법규",
+      "section": "law",
+      "title": "중앙선 침범 · 법규 감점",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 100,
+      "unit": "점",
+      "description": "황색 실선 중앙선 침범의 법규 감점. 역주행과 별도이며 비허용 유턴은 기존 신호·유턴 감점을 사용합니다.",
+      "affects": [
+        "캠페인 법규 점수",
+        "승차 운전 점수 → 운임 보정"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "DrivingLaw.ObserveCentreLine",
+      "editable": true
+    },
+    {
       "id": "law.wrongWay.penalty",
       "group": "법규",
       "section": "law",

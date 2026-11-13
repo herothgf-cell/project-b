@@ -3,7 +3,23 @@ class PassengerBehaviorTests {
  static int n;
  static void Check(bool ok,string message){n++;if(!ok){Console.WriteLine("FAIL "+message);Environment.Exit(1);}}
  static void Reject(Action action,string name){bool rejected=false;try{action();}catch(ArgumentException){rejected=true;}Check(rejected,name);}
+ static void RepresentativeSpeakerTests(){
+  foreach(var type in new[]{PassengerType.Comfort,PassengerType.Hurried,PassengerType.RouteChecking,PassengerType.Errand,PassengerType.PrecisionStop}){
+   foreach(PassengerRepresentativeStatus status in Enum.GetValues(typeof(PassengerRepresentativeStatus))){
+    var p=PassengerBehaviorState.Create("speaker",type);p.Variant=1;p.Respond(0,true);p.Board();p.Advance(35,false,true,.5f,100);
+    const string driver="제가 약속 시간에 맞춰 운전할게요.";p.SetRepresentativeContext(status,driver);
+    string dialogue=p.Dialogue;
+    Check(!dialogue.Contains(driver),"passenger card must not echo driver promise "+type+" "+status);
+    Check(!dialogue.Contains("기본 운행으로 도착할게요")&&!dialogue.Contains("원래 운행대로 갈게요")&&!dialogue.Contains("추가 평가 없이"),"passenger card must not speak as driver or evaluation system "+type+" "+status);
+    p.Arrive();p.Finish(true);var restored=p.Copy();
+    Check(!restored.Dialogue.Contains(driver)&&restored.Dialogue==restored.CompletionReaction,"settled passenger reaction stays passenger speech "+type+" "+status);
+    Check(restored.RepresentativeStatus==status&&restored.RepresentativeResponse==driver,"speaker fix preserves request context "+type+" "+status);
+    if(status==PassengerRepresentativeStatus.None||status==PassengerRepresentativeStatus.NotPresented)Check(restored.CompletionReaction.Contains("데려다주셔서"),"unrequested arrival thanks driver without promising to drive "+type);
+   }
+  }
+ }
  static void Main(){
+  RepresentativeSpeakerTests();
   var bonusProperty=typeof(PassengerBehaviorState).GetProperty("SatisfactionDelta");
   Check(bonusProperty!=null,"food permission must reward satisfaction");
   Func<PassengerBehaviorState,int> bonus=p=>(int)bonusProperty.GetValue(p,null);
@@ -35,7 +51,7 @@ class PassengerBehaviorTests {
   var repeatedCare=new VehicleCare();string firstEffect=null;
   for(int trip=0;trip<2;trip++){var food=PassengerBehaviorState.Create("same-candidate",PassengerType.Food);food.BindEffectTrip("actual-trip-"+trip);food.Board();food.Respond(1,true);food.Advance(25,false,true,.6f,100);if(trip==0)firstEffect=food.DirtEvents[0].Id;else Check(firstEffect!=food.DirtEvents[0].Id,"same candidate different actual trip gets different soil event");foreach(var e in food.DirtEvents)repeatedCare.Soil(e.Id,e.Amount);int dirty=repeatedCare.Cleanliness;Check(dirty==(food.SpillPlanned?92:98),"each actual trip soils even after wash");foreach(var e in food.Copy().DirtEvents)repeatedCare.Soil(e.Id,e.Amount);Check(repeatedCare.Cleanliness==dirty,"same actual trip reload is idempotent");Reject(()=>food.BindEffectTrip("other-trip"),"effect identity cannot rebind");repeatedCare.Wash();}
   var oldEffect=PassengerBehaviorState.Create("legacy-food",PassengerType.Food);oldEffect.Board();oldEffect.Respond(1,true);oldEffect.Advance(25,false,true,.6f,100);Check(oldEffect.Copy().DirtEvents[0].Id=="legacy-food:crumbs","legacy typed save keeps original soil identity");
-  foreach(var type in new[]{PassengerType.Comfort,PassengerType.Hurried,PassengerType.RouteChecking,PassengerType.Errand,PassengerType.PrecisionStop}){var p=PassengerBehaviorState.Create("representative",type);p.Respond(0,true);p.Board();p.Advance(35,false,true,.5f,100);p.SetRepresentativeContext(PassengerRepresentativeStatus.NotPresented,"");string unseen=p.Dialogue;Check(unseen.Contains("따로 정하지"),"type answer cannot invent representative agreement "+type);p.SetRepresentativeContext(PassengerRepresentativeStatus.Accepted,"실제 선택한 요청 안내");string accepted=p.Dialogue;Check(accepted.Contains("실제 선택한 요청 안내")&&accepted!=unseen,"followup remembers actual request response "+type);p.SetRepresentativeContext(PassengerRepresentativeStatus.Deferred,"안전상 보류");Check(p.Dialogue.Contains("보류")&&p.Dialogue!=accepted,"deferred request yields truthful different followup "+type);p.Arrive();p.SetRepresentativeContext(PassengerRepresentativeStatus.Succeeded,"달성");string success=p.CompletionReaction;p.SetRepresentativeContext(PassengerRepresentativeStatus.Failed,"미달");Check(success!=p.CompletionReaction,"actual completion result changes reaction "+type);p.SetRepresentativeContext(PassengerRepresentativeStatus.Neutral,"판정 불가");Check(p.Copy().CompletionReaction.Contains("추가 평가 없이")&&p.Copy().RepresentativeResponse=="판정 불가","neutral outcome context persists "+type);p.Validate();}
+  foreach(var type in new[]{PassengerType.Comfort,PassengerType.Hurried,PassengerType.RouteChecking,PassengerType.Errand,PassengerType.PrecisionStop}){var p=PassengerBehaviorState.Create("representative",type);p.Respond(0,true);p.Board();p.Advance(35,false,true,.5f,100);p.SetRepresentativeContext(PassengerRepresentativeStatus.NotPresented,"");string unseen=p.Dialogue;Check(unseen.Contains("따로 부탁드린 건 없어요"),"type answer cannot invent representative agreement "+type);p.SetRepresentativeContext(PassengerRepresentativeStatus.Accepted,"실제 선택한 요청 안내");string accepted=p.Dialogue;Check(!accepted.Contains("실제 선택한 요청 안내")&&accepted.Contains("고마워요")&&accepted!=unseen,"followup remembers actual request response "+type);p.SetRepresentativeContext(PassengerRepresentativeStatus.Deferred,"안전상 보류");Check(p.Dialogue.Contains("보류")&&p.Dialogue!=accepted,"deferred request yields truthful different followup "+type);p.Arrive();p.SetRepresentativeContext(PassengerRepresentativeStatus.Succeeded,"달성");string success=p.CompletionReaction;p.SetRepresentativeContext(PassengerRepresentativeStatus.Failed,"미달");Check(success!=p.CompletionReaction,"actual completion result changes reaction "+type);p.SetRepresentativeContext(PassengerRepresentativeStatus.Neutral,"판정 불가");Check(p.Copy().CompletionReaction.Contains("안내해 주셔서 고마워요")&&p.Copy().RepresentativeResponse=="판정 불가","neutral outcome context persists "+type);p.Validate();}
   Console.WriteLine("PASS PassengerBehaviorTests "+n);
  }
 }

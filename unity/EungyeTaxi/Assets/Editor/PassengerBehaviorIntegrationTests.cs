@@ -23,6 +23,7 @@ public static class PassengerBehaviorIntegrationTests {
  }
  static void SafeChoiceAndSleep(){var root=new GameObject("behavior live fixture");try{
   var s=root.AddComponent<DriveSession>();s.business=root.AddComponent<BusinessProgress>();s.business.useV2=true;typeof(BusinessProgress).GetField("restoring",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(s.business,true);s.business.ledger=new EconomyLedger(PrototypeSettings.ForThreeDays());
+  s.business.session=s;
   s.jobs=root.AddComponent<PassengerJobs>();s.jobs.session=s;s.jobs.nav=root.AddComponent<RoadNavigation>();s.jobs.trip.Accept(5000,100,60);s.jobs.trip.Board();
   s.taxi=root.AddComponent<TaxiController>();s.taxi.body=root.AddComponent<Rigidbody>();s.taxi.body.useGravity=false;s.traffic=root.AddComponent<TrafficSystem>();s.law=root.AddComponent<DrivingLaw>();s.law.tripId="fixture";s.manners=root.AddComponent<DrivingManners>();s.manners.session=s;s.requests=root.AddComponent<PassengerRequestUI>();s.requests.session=s;
   s.requests.AdvanceSafeStop(1.9f);Check(!s.requests.SafeToRespond(),"new choice requires full two second stop");s.requests.AdvanceSafeStop(.1f);Check(s.requests.SafeToRespond(),"two second safe stop opens response");s.taxi.body.velocity=Vector3.forward;Check(!s.requests.SafeToRespond(),"moving rejects response immediately");s.taxi.body.velocity=Vector3.zero;

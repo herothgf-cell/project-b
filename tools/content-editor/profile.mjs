@@ -32,7 +32,7 @@ export function validateProfile(p,catalog,{checkHash=true}={}) {
  const oldDriving=DRIVING_IDS.every(id=>!seen.has(id)),oldWeather=![...seen].some(id=>id.startsWith('weather.'));
  const oldTraits=TRAIT_SETTINGS.every(e=>!seen.has(e.id)),oldQuiet=QUIET_EXTENSION_IDS.every(id=>!seen.has(id));
  const oldDrunk=DRUNK_SETTINGS.every(e=>!seen.has(e.id)),oldVehicle=VEHICLE_SETTINGS.every(e=>!seen.has(e.id));
- for(const id of entries.keys())if(!seen.has(id)&&!(oldDriving&&DRIVING_IDS.includes(id))&&!(oldWeather&&id.startsWith('weather.'))&&id!=='passenger.presets'&&!(oldTraits&&TRAIT_SETTINGS.some(e=>e.id===id))&&!(oldQuiet&&QUIET_EXTENSION_IDS.includes(id))&&!(oldDrunk&&DRUNK_SETTINGS.some(e=>e.id===id))&&!(oldVehicle&&VEHICLE_SETTINGS.some(e=>e.id===id)))err(`누락된 ID: ${id}`);
+ for(const id of entries.keys())if(!seen.has(id)&&!(oldDriving&&DRIVING_IDS.includes(id))&&!(oldWeather&&id.startsWith('weather.'))&&id!=='passenger.presets'&&id!=='law.centreLine.penalty'&&!(oldTraits&&TRAIT_SETTINGS.some(e=>e.id===id))&&!(oldQuiet&&QUIET_EXTENSION_IDS.includes(id))&&!(oldDrunk&&DRUNK_SETTINGS.some(e=>e.id===id))&&!(oldVehicle&&VEHICLE_SETTINGS.some(e=>e.id===id)))err(`누락된 ID: ${id}`);
  const vals=new Map(p.values.filter(v=>v&&typeof v.id==='string'&&typeof v.value==='string').map(v=>[v.id,v.value]));
  if(vals.has('effect.nausea.warning')&&vals.has('effect.nausea.threshold')&&Number(vals.get('effect.nausea.warning'))>=Number(vals.get('effect.nausea.threshold')))err('메스꺼움 안내 기준은 사건 기준보다 작아야 합니다.');
  try{const data=JSON.parse(vals.get('passenger.presets')||'{"presets":[]}');for(const preset of data.presets||[])if(preset.traits?.includes('body.nausea')){const value=id=>Number(preset.overrides?.find(o=>o.id===id)?.value??vals.get(id)??catalog.entries.find(e=>e.id===id)?.defaultValue);if(value('effect.nausea.warning')>=value('effect.nausea.threshold'))err(preset.id+': 메스꺼움 안내 기준은 사건 기준보다 작아야 합니다.');}}catch{}
@@ -54,7 +54,7 @@ export function migrateProfile(profile,catalog){
  }
  // The source is validated before filling: partial extension blocks remain errors.
  // Fill after schema1 choice conversion, then validate only the completed migration.
- for(const id of [...DRUNK_SETTINGS.map(e=>e.id),...VEHICLE_SETTINGS.map(e=>e.id),PRESET_ENTRY.id,...TRAIT_SETTINGS.map(e=>e.id),...QUIET_EXTENSION_IDS,...DRIVING_IDS,...catalog.entries.filter(e=>e.editable&&e.id.startsWith('weather.')).map(e=>e.id)]){
+ for(const id of ['law.centreLine.penalty',...DRUNK_SETTINGS.map(e=>e.id),...VEHICLE_SETTINGS.map(e=>e.id),PRESET_ENTRY.id,...TRAIT_SETTINGS.map(e=>e.id),...QUIET_EXTENSION_IDS,...DRIVING_IDS,...catalog.entries.filter(e=>e.editable&&e.id.startsWith('weather.')).map(e=>e.id)]){
   const entry=catalog.entries.find(e=>e.id===id&&e.editable);
   if(entry&&!copy.values.some(v=>v.id===id)&&(copy.schemaVersion===2||!id.startsWith('choice.')))copy.values.push({id,value:entry.defaultValue});
  }

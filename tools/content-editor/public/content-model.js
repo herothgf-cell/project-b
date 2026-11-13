@@ -57,6 +57,7 @@
  insertion:['정지 대기열 끼어들기','신호 대기열이 확인되고 차로를 바꾸어 앞부분에 진입하면 위반입니다. 대기열 불명확은 보류, 차로 변경이 없으면 기회 없음입니다.'],
  interference:['신호 대기열 합류 방해','신호 대기열이 확인되고 차로를 바꾸어 합류했을 때 상대 진행 방해를 관찰합니다. 대기열 불명확은 보류, 차로 변경이 없으면 기회 없음입니다.'],
  stopLine:['정지선 침범','알려진 적색 정지 의무 신호에서 정지선을 넘어 정차했을 때 판정합니다. 선 통과만으로 직진 신호 위반과 우회전을 구분하지 않습니다.'],
+ centreLine:['중앙선 침범','황색 실선 중앙선을 차체 중심이 전진해 넘으면 법규 감점을 기록합니다. 역주행 감점과 별도이며 비허용 유턴은 기존 신호·유턴 감점을 사용합니다. 운전 만족도 감점은 역주행과 공유합니다.'],
  wrongWay:['방향 차로 역주행','방향이 정해진 차로 안에서 반대 방향 전진 2초·8m를 관찰합니다. 같은 역주행 사건의 반복 기록을 억제합니다.'],
  editorSpeed:['지도 제한속도 초과','현재 지도 차로의 제한속도에 허용 여유를 더한 속도를 설정 시간 넘겨 계속 초과하면 위반입니다.'],
  slowTurn:['우회전 서행','우회전 중 기준속도와 허용 여유를 초과한 지속 시간을 관찰합니다. 위험 회피에 필요한 조작은 보류합니다.'],
@@ -135,7 +136,7 @@
   ],['한 운송에서 반응 최대 2회, 예약 대화 포함 최대 3회이며 반응 사이 20초가 필요합니다. 조용함·수면·다른 대화·재고정 중에는 새 반응을 억제합니다.'],key==='SignalWait'?[]:['effect.resecure','type.Sleeping','type.Food','type.Luggage','type.MuddyLuggage']);
   const lawNote='법규 점수와 운전 만족도는 별도입니다. 같은 사건의 중복 방지와 사건 내 최대 감점을 적용하며 보행자 보호·위험 회피 보류는 고정 의미입니다.';
   for(const [key,facts]of Object.entries(lawFacts)){
-   const linked=key==='wrongWay'?['manner.wrongWay.penalty']:key==='redRight'?['manner.rightStop.penalty']:['redStraight','dedicatedRed'].includes(key)?['manner.redMovement.penalty']:[];
+   const linked=['wrongWay','centreLine'].includes(key)?['manner.wrongWay.penalty']:key==='redRight'?['manner.rightStop.penalty']:['redStraight','dedicatedRed'].includes(key)?['manner.redMovement.penalty']:[];
    add('law.'+key,'법규',facts[0],facts[1],'law',[section('판정 상황과 입력 가능한 조건',facts[1],ids('law.'+key+'.').filter(id=>!id.endsWith('.penalty')&&!id.endsWith('.points')),'condition'),section(key==='recovery'?'법규 점수 회복':'법규 점수 감점',key==='recovery'?'준수 관찰 중 위반이 없는 사건만 법규 점수를 회복합니다. 실제 위반은 감점값이 0이어도 위반이므로 회복하지 않습니다.':'기록되는 법규 점수의 양입니다. 실제 사건에서는 함께 발생한 판정의 최대 감점 규칙을 적용합니다.',ids('law.'+key+'.').filter(id=>id.endsWith('.penalty')||id.endsWith('.points')),'outcomes'),section('함께 기록되는 운전 만족도','같은 사건의 법규 점수 감점과 운전 만족도 감점을 각각 설정합니다.',linked,'shared')],[lawNote],linked.map(id=>id.replace('.penalty','')));
   }
   for(const [key,facts]of Object.entries(mannerFacts))add('manner.'+key,'법규',facts[0]+' · 운전 만족도',facts[1],'law',[section('운전 만족도 관찰과 결과',facts[1],ids('manner.'+key+'.'),'outcomes'),...(key==='recovery'?[section('운전 만족도 회복 뒤 안심 회복','운전 만족도 회복량이 없을 때 시작 만족도 부족분을 단계·상한 안에서 회복합니다.',['common.comfortStep','common.comfortCap'],'shared')]:[])],[lawNote,'운전 만족도는 승차 때 100점으로 시작합니다. 주행 중 변화량을 하차 만족도에 반영합니다.'],key==='comfortMotion'?['request.Comfort']:[]);

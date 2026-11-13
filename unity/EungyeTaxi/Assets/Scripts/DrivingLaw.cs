@@ -47,7 +47,7 @@ public partial class DrivingLaw : MonoBehaviour {
      var e=new LawEvent{recoveryPolicyVersion=1,id=ids.Next("centre-line"),day=Day,tripId=tripId,family="direction",
       action=uturn?"비허용 유턴":"중앙선 침범",reason="지도에 표시된 황색 실선 중앙선을 차체 중심이 통과",
       speed=taxi.body.velocity.magnitude,seconds=(float)session.business.ledger.Elapsed,occupied=session.jobs.trip.State==TripState.OnTrip};
-     e.Add(uturn?"L01":"L11",LawVerdict.Violation,uturn?ContentTuning.Int("law.redStraight.penalty",settings.redStraightPenalty):ContentTuning.Int("law.wrongWay.penalty",10));
+     e.Add(uturn?"L01":"L11",LawVerdict.Violation,uturn?ContentTuning.Int("law.redStraight.penalty",settings.redStraightPenalty):ContentTuning.Int("law.centreLine.penalty",1));
      ledger.Record(e);
      if(session.manners)session.manners.Deduct(uturn?"redmovement:"+e.id:"wrong-way:"+e.id,uturn?12:10,e.action,0);
      wrongLatched=true;

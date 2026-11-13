@@ -78,7 +78,14 @@ public static class PlaytestBalanceTests {
     typeof(WorldBuilder).GetProperty("CentreLines").SetValue(s.world,lines);
     var observeCentre=typeof(DrivingLaw).GetMethod("ObserveCentreLine",BindingFlags.Instance|BindingFlags.NonPublic);
     var initialized=typeof(DrivingLaw).GetField("initialized",BindingFlags.Instance|BindingFlags.NonPublic);
-    foreach(bool turn in new[]{false,true}){
+    ContentTuning.ConfigureCatalog(Resources.Load<TextAsset>("Content/catalog").text);
+    foreach(int centrePenalty in new[]{1,7,0})foreach(bool turn in new[]{false,true}){
+     ContentTuning.UseDefaults();
+     var profile=ContentJson.Object(ContentJson.Parse(ContentTuning.CaptureJson()));
+     foreach(object row in ContentJson.Array(profile["values"])){
+      var value=ContentJson.Object(row);if((string)value["id"]=="law.centreLine.penalty")value["value"]=centrePenalty.ToString();
+     }
+     profile["contentHash"]=ContentTuning.ComputeHash(profile);ContentTuning.UseJson(ContentJson.Stringify(profile));
      law.ResetObservation();law.ledger=new LawLedger();s.manners.BeginRide();
      root.transform.position=new Vector3(1,0,4);root.transform.forward=Vector3.left;
      observeCentre.Invoke(law,new object[]{s.taxi,1f});initialized.SetValue(law,true);
@@ -87,8 +94,9 @@ public static class PlaytestBalanceTests {
      if(turn)root.transform.forward=Vector3.right;
      observeCentre.Invoke(law,new object[]{s.taxi,turn?1.2f:3f});
      observeCentre.Invoke(law,new object[]{s.taxi,5f});
-     Check(law.ledger.Count==1&&law.ledger.TotalScore==(turn?80:90)&&s.manners.ledger.Score==(turn?88:90),turn?"actual marked-line U-turn deducts driving and manner once":"actual centreline crossing deducts driving and manner once");
+     Check(law.ledger.Count==1&&law.ledger.TotalScore==(turn?80:100-centrePenalty)&&s.manners.ledger.Score==(turn?88:90),turn?"centreline tuning preserves marked-line U-turn driving and manner deductions":"actual centreline crossing uses configured law deduction "+centrePenalty+" and preserves manner deduction");
     }
+    ContentTuning.UseDefaults();
     law.ResetObservation();typeof(WorldBuilder).GetProperty("CentreLines").SetValue(s.world,null);root.transform.position=new Vector3(0,0,100);root.transform.forward=Vector3.forward;
     s.jobs.stops=new[]{new MapStop{laneEdge=0,laneAt=50,dx=0,dz=1},new MapStop{laneEdge=0,laneAt=150,dx=0,dz=1},new MapStop{laneEdge=0,laneAt=150,dx=0,dz=1}};s.jobs.current=new JobOffer{pickup=0,drop=1,timingPolicyVersion=1,urgency=2};s.jobs.trip.Accept(5000,300);s.jobs.trip.Board();float extra,remaining;int fare;
     Check(s.jobs.PreviewPassengerChange(2,false,out extra,out fare,out remaining)&&extra==0&&remaining==330,"equal-distance destination change grants only thirty-second stop margin without minimum deadline windfall");
