@@ -679,3 +679,7 @@
 - [x] J7917 중간 차로 양방향 좌회전 준비, 실제 서향 목적지 경로1063m 및552경로 회귀.
 - [x] 새 승차/하차 제한 시간80%, Unity/모델 검사.
 - [ ] 사람 주행·전체3일. [검증 기록](work-history/2026-11-12-junction-route-timing.md).
+
+## 2026-11-13 콘텐츠 관리 툴
+
+- [x] 콘텐츠 관리 툴의 M 표기를 ‘운전 만족도’로 변경했다. [검증 기록](work-history/2026-11-13-content-tool-driving-satisfaction.md).

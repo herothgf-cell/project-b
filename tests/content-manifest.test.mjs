@@ -16,9 +16,7 @@ async function fixture(){
  await put('config/content/catalog.json',JSON.stringify(catalog));
  await put('builds/EungyeTaxi/app.dll','original-runtime');
  await put('builds/EungyeTaxi/content/active-profile.json',JSON.stringify(profile));
- await put('tools/content-editor/choice-catalog.mjs',await fs.readFile(path.join(root,'tools/content-editor/choice-catalog.mjs')));
- await put('tools/content-editor/profile.mjs',await fs.readFile(path.join(root,'tools/content-editor/profile.mjs')));
- try{await put('tools/content-editor/verify-profile.mjs',await fs.readFile(path.join(root,'tools/content-editor/verify-profile.mjs')));}catch{}
+ await fs.cp(path.join(root,'tools/content-editor'),path.join(dir,'tools/content-editor'),{recursive:true});
  const files=[];for(const name of ['builds/EungyeTaxi/app.dll','builds/EungyeTaxi/content/active-profile.json']){const b=await fs.readFile(path.join(dir,name));files.push({path:name,bytes:b.length,sha256:digest(b)});}
  const manifest={totalBytes:files.reduce((n,f)=>n+f.bytes,0),files};await put('distribution/EungyeTaxi-build-manifest.json',JSON.stringify(manifest));
  return {dir,put,profile,manifest};
