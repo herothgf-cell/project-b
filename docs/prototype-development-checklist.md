@@ -684,3 +684,4 @@
 - [x] 왕복 2차선 7쌍의 방향별 정차 칸, 일반 호출에서 접근 경로 비교, 반대편 하차, [31곳 위치 지도](content-design/images/eungye-pickup-map-2026-11-13.png).
 - [x] 3인칭 보조 카메라, 교통차 충돌 속도, 적색 대기 10초 요청 기회, 보행 속도와 보행 신호 조정 구현. [검증·남은 항목](work-history/2026-11-13-eungye-drive-feedback.md).
 - [ ] 실제 사용자 주행에서 승하차 우회 감소, 교통차 차선 변경 접촉, 보행 신호 체감 확인.
+- [x] 콘텐츠 관리 툴의 M 표기를 ‘운전 만족도’로 변경했다. [검증 기록](work-history/2026-11-13-content-tool-driving-satisfaction.md).

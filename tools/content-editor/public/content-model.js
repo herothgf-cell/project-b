@@ -5,7 +5,7 @@
  const requestFacts={
  Quiet:['수락하면 추가 상황 대화와 취객의 일반 수다를 제한합니다. 운임과 기한은 유지합니다.','수락 이후 기사가 불필요한 잡담을 시작하면 실패 근거를 기록하고 하차 때 실패 효과를 한 번 반영합니다. 필수 안전 안내는 위반이 아닙니다.'],
  Eta:['현재 내비 ETA를 안내합니다. 빠르게/보통/여유롭게 중 하나를 고릅니다.','빠르게와 여유롭게는 ETA의 10%, 최대 30초를 빼거나 더합니다. 실제 도착과 차이를 안내하며 ETA 차이 자체 감점은 없습니다.'],
- Comfort:['수락 이후 불필요한 급가속·급제동과 충돌을 관찰합니다.','하차 때 수락 뒤 급가감속·충돌이 없으면 이행, 있으면 미이행입니다. 필요한 제동은 제외합니다. 급가감속 M 감점은 요청 결과와 별도입니다.'],
+ Comfort:['수락 이후 불필요한 급가속·급제동과 충돌을 관찰합니다.','하차 때 수락 뒤 급가감속·충돌이 없으면 이행, 있으면 미이행입니다. 필요한 제동은 제외합니다. 급가감속에 따른 운전 만족도 감점은 요청 결과와 별도입니다.'],
  OnTime:['원래 도착 기한을 지키는지 관찰하며 기한을 늘리지 않습니다.','기한 안에 도착하고 운전 위반이 없으면 이행합니다. 위반 동반 미이행은 실패, 위반 없는 합법적 지연은 판정 불가로 0입니다.'],
  LargeRoad:['큰길 대안이 실제로 있는 경우만 후보가 됩니다. 큰길 경로를 적용합니다.','폭 12m 이상 도로의 실제 주행 비율이 안내 비율에서 15%p 이내이면 이행합니다. 이동 1m 이하나 비율 미달은 관찰 부족으로 0이며 실패값을 적용하지 않습니다.'],
  ShortRoad:['합법 최단 경로를 적용합니다. 운임과 기한은 유지합니다.','실제 이동이 안내 거리 × 1.25 + 30m 이내이고 1m 초과이면 이행합니다. 미달은 합법 우회와 구분할 수 없어 판정 불가 0입니다.'],
@@ -19,7 +19,7 @@
  DestinationChange:['실제로 연결되는 안전한 대체 승하차 지점이 필요합니다. 법규 연습 구역 활성 중에는 제외됩니다.','제안 목적지·운임·기한 확인 뒤 수락하면 같은 운송의 목적지를 변경합니다. 지정 목적지 하차로 판정합니다.'],
  ViaStop:['안전한 경유지와 원래 목적지까지 연결 경로가 필요합니다. 법규 연습 구역 활성 중에는 제외됩니다.','제안 약정 수락 뒤 경유지에서 F로 안전 정차하고 정해진 용무 시간을 무료로 기다린 뒤 원래 목적지로 갑니다. 경유 미완료는 실패입니다. {errandSeconds}는 용무 시간으로 치환됩니다.'],
  LostItem:['운송 중 요청 추첨과 분리된 하차 후 텍스트 사건입니다.','사용 시 후보 식별자에 따라 하차 후 10%로 지갑 발견·보관·신고 안내를 기록합니다. 가중치와 응답 필드는 일반 운송 중 추첨에 사용하지 않습니다. 물품 생성·반환 경로·반환 퀘스트가 없습니다.'],
- RejectIllegal:['불법 신호 요구를 안전하게 거절합니다.','현재 거절 응대의 이행·미이행 점수는 읽기 전용 0점입니다. 실제 위반은 독립 법규·M 기록으로 평가하며 위반이 있으면 요청 결과는 판정 불가 0입니다.']
+ RejectIllegal:['불법 신호 요구를 안전하게 거절합니다.','현재 거절 응대의 이행·미이행 점수는 읽기 전용 0점입니다. 실제 위반은 법규 점수와 운전 만족도에 기록합니다. 위반이 있으면 요청 결과는 판정 불가 0점입니다.']
  };
  const representative={Comfort:['Comfort'],Hurried:['Eta','OnTime'],RouteChecking:['LargeRoad','ShortRoad','RouteAdvice'],Errand:['ViaStop'],PrecisionStop:['SafeStop']};
  const bindings={Comfort:'편안한 운행 요청을 첫 요청에 연결합니다.',Hurried:'변형 0은 ETA, 변형 1·2는 제시간 도착 요청을 첫 요청에 연결합니다.',RouteChecking:'변형 0·1·2는 각각 큰길·짧은 길·경로 추천 요청에 연결합니다.',Errand:'경유 요청을 첫 요청에 연결하며 변형 0·1·2의 진행 기준은 0·25·50%입니다. 설정된 최대 진행도를 넘지 않습니다.',PrecisionStop:'안전 하차 요청을 첫 요청에 연결합니다.'};
@@ -60,8 +60,8 @@
  wrongWay:['방향 차로 역주행','방향이 정해진 차로 안에서 반대 방향 전진 2초·8m를 관찰합니다. 같은 역주행 사건의 반복 기록을 억제합니다.'],
  editorSpeed:['지도 제한속도 초과','현재 지도 차로의 제한속도에 허용 여유를 더한 속도를 설정 시간 넘겨 계속 초과하면 위반입니다.'],
  slowTurn:['우회전 서행','우회전 중 기준속도와 허용 여유를 초과한 지속 시간을 관찰합니다. 위험 회피에 필요한 조작은 보류합니다.'],
- recovery:['법규 준수 회복','준수 판정의 회복량입니다. 법규 점수 회복은 운전 만족도 M 회복과 별도입니다.']};
- const mannerFacts={motion:['불필요한 급가속·급제동','필요한 제동을 제외한 급가감속을 관찰합니다. 편안한 운행 수락 중에는 별도 강화 감점을 사용합니다.'],comfortMotion:['편안한 운행 중 급가감속','편안한 운행 요청을 수락한 뒤 불필요한 급가속·급제동에 적용합니다. 요청의 하차 이행 결과와 별도입니다.'],collision:['충돌','이동 속도·상대 충돌 속도와 접촉 방향을 확인하고 중복 충돌 감점을 억제합니다.'],sidewalk:['도로 경계·인도 침범','차량 표본 중 둘 이상이 도로 밖인 상태로 이동하며 지속될 때 관찰합니다.'],yield:['회전 양보 위반','비보호 좌회전·우회전·유턴의 실제 회전 때 상대 통행 양보를 관찰합니다.'],redMovement:['진행 방향 신호·유턴 조건','실제 교차로 이탈 방향에 맞는 신호·유턴 허용 조건을 판정합니다. 황색 등 불확실한 상태는 제외합니다.'],rightStop:['우회전 전 일시정지','전용 신호 없는 적색 우회전에서 보행이 비어 있어도 필요한 사전 정지를 생략한 경우입니다.'],wrongWay:['역주행 M 감점','방향 차로 역주행 확정 때 법규 사건과 별도로 M을 감점합니다.'],recovery:['안정 주행 회복','새 구간을 안정 주행하여 정해진 거리 또는 시간에 도달하면 급가감속 손실 범위 안에서 회복합니다. 영구 손실을 지우지 않으며 회복 상한을 적용합니다. M 회복이 없으면 요구 만족도까지 안심 회복을 별도로 계산합니다.']};
+ recovery:['법규 준수 회복','준수 판정의 회복량입니다. 법규 점수 회복은 운전 만족도 회복과 별도입니다.']};
+ const mannerFacts={motion:['불필요한 급가속·급제동','필요한 제동을 제외한 급가감속을 관찰합니다. 편안한 운행 수락 중에는 별도 강화 감점을 사용합니다.'],comfortMotion:['편안한 운행 중 급가감속','편안한 운행 요청을 수락한 뒤 불필요한 급가속·급제동에 적용합니다. 요청의 하차 이행 결과와 별도입니다.'],collision:['충돌','이동 속도·상대 충돌 속도와 접촉 방향을 확인하고 중복 충돌 감점을 억제합니다.'],sidewalk:['도로 경계·인도 침범','차량 표본 중 둘 이상이 도로 밖인 상태로 이동하며 지속될 때 관찰합니다.'],yield:['회전 양보 위반','비보호 좌회전·우회전·유턴의 실제 회전 때 상대 통행 양보를 관찰합니다.'],redMovement:['진행 방향 신호·유턴 조건','실제 교차로 이탈 방향에 맞는 신호·유턴 허용 조건을 판정합니다. 황색 등 불확실한 상태는 제외합니다.'],rightStop:['우회전 전 일시정지','전용 신호 없는 적색 우회전에서 보행이 비어 있어도 필요한 사전 정지를 생략한 경우입니다.'],wrongWay:['역주행','방향 차로 역주행 확정 때 법규 사건과 별도로 운전 만족도를 감점합니다.'],recovery:['안정 주행 회복','새 구간을 안정 주행하여 정해진 거리 또는 시간에 도달하면 급가감속 손실 범위 안에서 회복합니다. 영구 손실을 지우지 않으며 회복 상한을 적용합니다. 운전 만족도 회복이 없으면 요구 만족도까지 안심 회복을 별도로 계산합니다.']};
  function build(catalog){
   const entries=catalog.entries||[];const byId=new Map(entries.map(e=>[e.id,e]));const out=[];
   const ids=prefix=>entries.filter(e=>e.id.startsWith(prefix)).map(e=>e.id);
@@ -101,7 +101,7 @@
     section('승객 말풍선','현재 한국어 문구를 직접 편집합니다.',[prefix+'prompt'],'prompt'),
     section('선택지와 실제 결과',kind==='LostItem'?'아래 문구는 진단용 단일 요청 경로에도 사용합니다. 일반 운송은 하차 후 요약 사건만 기록합니다.':'대답을 고르면 표시 문구와 실제 처리 결과를 함께 확인합니다.',[],'choices',cards),
     section('운송 종료 평가','수락한 요청의 실제 이행 여부를 확인해 하차 때 한 번 반영합니다. 선택지 미리보기와 같은 점수이며 추가 보상이 아닙니다. '+facts[1]+(kind==='Eta'?' 현재 예상 도착 안내의 이행·미이행·미응답 점수는 모두 읽기 전용 0점입니다. 선택지별 점수 편집은 아직 지원하지 않습니다.':!['Quiet','Comfort','OnTime','SafeStop','DestinationChange','ViaStop'].includes(kind)?' 현재 실패값은 고정/중립입니다.':''),[prefix+'success',prefix+'failure'],'outcomes'),
-    section('답하지 않았을 때',kind==='Quiet'?'안전한 응답 기회 후 끝까지 미응답이면 하차 때 M(운전 만족도)을 감점합니다. 요청 이행 점수와 별도이며, 답할 기회가 없으면 감점하지 않습니다.':['Empathy','Interview','LocalChat'].includes(kind)?'안전하게 답할 기회가 있었는데 끝까지 답하지 않으면 하차 때 아래 요청 만족도를 반영합니다. 답할 기회가 없으면 감점하지 않습니다.':'현재 이 요청은 답하지 않아도 추가 감점이 없습니다. 아래 값은 고정/미사용 결과입니다.',[prefix+'unanswered'],'unanswered'),
+    section('답하지 않았을 때',kind==='Quiet'?'안전한 응답 기회 후 끝까지 미응답이면 하차 때 운전 만족도를 감점합니다. 요청 이행 점수와 별도이며, 답할 기회가 없으면 감점하지 않습니다.':['Empathy','Interview','LocalChat'].includes(kind)?'안전하게 답할 기회가 있었는데 끝까지 답하지 않으면 하차 때 아래 요청 만족도를 반영합니다. 답할 기회가 없으면 감점하지 않습니다.':'현재 이 요청은 답하지 않아도 추가 감점이 없습니다. 아래 값은 고정/미사용 결과입니다.',[prefix+'unanswered'],'unanswered'),
     section(kind==='LostItem'?'공통 설정 적용 여부':'모든 요청에 적용되는 공통 설정',kind==='LostItem'?'하차 후 사건은 운송 중 요청 합계 상한과 등장 시점 설정을 사용하지 않습니다.':'이 요청 전용 값이 아닙니다. 운송 중 일반 요청 전체(분실물 제외)에 영향을 줍니다. 요청 합계 상한은 하차 점수 합산 때, 개수·시점은 새 운송의 요청 배정과 표시 때 사용합니다.',kind==='LostItem'?[]:['common.requestCap',...schedule],'shared')
    ],notes,links,{requestKind:kind,enabledId:prefix+'enabled',weightId:prefix+'weight',promptId:prefix+'prompt'});
   }
@@ -133,17 +133,17 @@
    section('관찰 조건',facts[1],[],'condition'),
    section('답변과 실제 효과','상황 응대 자체는 만족도를 추가하지 않습니다.',[],'choices',[{title:'상황 설명 또는 짐 재고정',description:key==='SignalWait'?'신호 대기를 설명합니다. 추가 효과는 없습니다.':'수면 승객은 다시 수면, 실은 짐이 있으면 안전 정차 재고정, 그 외에는 상황만 설명합니다.',fieldIds:keep(['situation.'+key+'.reply.0',...(key==='SignalWait'?[]:['effect.resecure.seconds'])])},{title:'편히 쉬도록 배려',description:'만족도 변화 0 · 후속 질문을 줄입니다. 깨어난 수면 승객은 다시 잠듭니다.',fieldIds:keep(['situation.'+key+'.reply.1'])}])
   ],['한 운송에서 반응 최대 2회, 예약 대화 포함 최대 3회이며 반응 사이 20초가 필요합니다. 조용함·수면·다른 대화·재고정 중에는 새 반응을 억제합니다.'],key==='SignalWait'?[]:['effect.resecure','type.Sleeping','type.Food','type.Luggage','type.MuddyLuggage']);
-  const lawNote='법규 점수와 운전 만족도 M은 별도입니다. 같은 사건의 중복 방지와 사건 내 최대 감점을 적용하며 보행자 보호·위험 회피 보류는 고정 의미입니다.';
+  const lawNote='법규 점수와 운전 만족도는 별도입니다. 같은 사건의 중복 방지와 사건 내 최대 감점을 적용하며 보행자 보호·위험 회피 보류는 고정 의미입니다.';
   for(const [key,facts]of Object.entries(lawFacts)){
    const linked=key==='wrongWay'?['manner.wrongWay.penalty']:key==='redRight'?['manner.rightStop.penalty']:['redStraight','dedicatedRed'].includes(key)?['manner.redMovement.penalty']:[];
-   add('law.'+key,'법규',facts[0],facts[1],'law',[section('판정 상황과 입력 가능한 조건',facts[1],ids('law.'+key+'.').filter(id=>!id.endsWith('.penalty')&&!id.endsWith('.points')),'condition'),section(key==='recovery'?'법규 점수 회복':'법규 점수 감점',key==='recovery'?'준수 관찰 중 위반이 없는 사건만 법규 점수를 회복합니다. 실제 위반은 감점값이 0이어도 위반이므로 회복하지 않습니다.':'기록되는 법규 점수의 양입니다. 실제 사건에서는 함께 발생한 판정의 최대 감점 규칙을 적용합니다.',ids('law.'+key+'.').filter(id=>id.endsWith('.penalty')||id.endsWith('.points')),'outcomes'),section('같이 관찰하는 M','동일 사건이라도 법규 감점값과 M 감점값은 서로 다른 설정입니다.',linked,'shared')],[lawNote],linked.map(id=>id.replace('.penalty','')));
+   add('law.'+key,'법규',facts[0],facts[1],'law',[section('판정 상황과 입력 가능한 조건',facts[1],ids('law.'+key+'.').filter(id=>!id.endsWith('.penalty')&&!id.endsWith('.points')),'condition'),section(key==='recovery'?'법규 점수 회복':'법규 점수 감점',key==='recovery'?'준수 관찰 중 위반이 없는 사건만 법규 점수를 회복합니다. 실제 위반은 감점값이 0이어도 위반이므로 회복하지 않습니다.':'기록되는 법규 점수의 양입니다. 실제 사건에서는 함께 발생한 판정의 최대 감점 규칙을 적용합니다.',ids('law.'+key+'.').filter(id=>id.endsWith('.penalty')||id.endsWith('.points')),'outcomes'),section('함께 기록되는 운전 만족도','같은 사건의 법규 점수 감점과 운전 만족도 감점을 각각 설정합니다.',linked,'shared')],[lawNote],linked.map(id=>id.replace('.penalty','')));
   }
-  for(const [key,facts]of Object.entries(mannerFacts))add('manner.'+key,'법규',facts[0]+' · M',facts[1],'law',[section('운전 만족도 관찰과 결과',facts[1],ids('manner.'+key+'.'),'outcomes'),...(key==='recovery'?[section('M 회복 뒤 안심 회복','M 회복량이 없을 때 시작 만족도 부족분을 단계·상한 안에서 회복합니다.',['common.comfortStep','common.comfortCap'],'shared')]:[])],[lawNote,'승차 때 M은 100으로 시작하며 하차 만족도에는 M−100이 주행 변화량으로 합산됩니다.'],key==='comfortMotion'?['request.Comfort']:[]);
+  for(const [key,facts]of Object.entries(mannerFacts))add('manner.'+key,'법규',facts[0]+' · 운전 만족도',facts[1],'law',[section('운전 만족도 관찰과 결과',facts[1],ids('manner.'+key+'.'),'outcomes'),...(key==='recovery'?[section('운전 만족도 회복 뒤 안심 회복','운전 만족도 회복량이 없을 때 시작 만족도 부족분을 단계·상한 안에서 회복합니다.',['common.comfortStep','common.comfortCap'],'shared')]:[])],[lawNote,'운전 만족도는 승차 때 100점으로 시작합니다. 주행 중 변화량을 하차 만족도에 반영합니다.'],key==='comfortMotion'?['request.Comfort']:[]);
   const common=[
    ['schedule','요청 개수와 등장 시점','운송별 요청 0·1·2개를 정합니다. count0 경계, count0+count1 경계로 분기하며 나머지가 2개입니다. count2는 프로필 합계 검증에 사용합니다. 첫 요청 일부는 승차 때, 나머지는 진행도·이동시간·대화 가능 조건을 충족하면 주행 중에도 등장합니다. 기존 선택이나 작업 중에는 새 요청을 기다립니다. 마감 진행도 이후 미발생 요청은 중립입니다.',schedule],
    ['request','요청 만족도 합계','모든 요청 결과를 합산한 뒤 양·음 방향 모두 이 상한으로 제한합니다.',['common.requestCap']],
    ['time','안전한 조기 도착','유효한 기준 ETA와 실제 시간을 비교합니다. 위험 운전이 없을 때만 시간 계수 × (기준−실제)/기준을 반올림하고 0부터 상한까지 가산합니다.',['common.timeCap','common.timeFactor']],
-   ['comfort','안정 주행 안심 회복','M 회복이 더 없고 만족도가 요구치보다 낮을 때 단계·누적 상한·부족분 중 작은 값만 회복합니다.',['common.comfortStep','common.comfortCap']],
+   ['comfort','안정 주행 안심 회복','운전 만족도 회복이 더 없고 만족도가 요구치보다 낮을 때 단계·누적 상한·부족분 중 작은 값만 회복합니다.',['common.comfortStep','common.comfortCap']],
    ['fare','운임과 보너스','최종 정산 운임·보너스에 각각 배수를 적용하고 10원 단위로 내립니다. 도착 기한 초과는 운임 0, 요구 만족도 미달은 만족도/요구치 비율 지급입니다.',['common.fareMultiplier','common.bonusMultiplier',...ids('common.required.')]],
    ['deadline','약정 도착 기한','새 약정의 기준 시간에 기한 배수와 여유 시간을 적용합니다. 제시간 도착 요청을 수락하는 것만으로 기한을 연장하지 않습니다.',['common.deadlineMultiplier','common.deadlineSlack']],
    ['start','시작 만족도와 청결','시작 부족분과 청결 가산의 배수입니다. 시작 만족도에는 청결이 포함되며 하차 때 다시 더하지 않습니다.',['common.startDeficitMultiplier','common.cleanBonusMultiplier']]
@@ -236,7 +236,7 @@
    const field=id.split('.').at(-1),during=id.includes('.during.'),end=id.includes('.end.');
    const percent=field.includes('Percent'),unit=field.endsWith('PerMinute')?(percent?'%/분':'점/분'):percent?'%':'점';
    const stat=field.startsWith('satisfaction')?'만족도 S':'기사 피로',base=field.startsWith('satisfaction')?70:20,delta=base/10;
-   return {when:during?'선택 활성화부터 운송 종료/중단까지':end?'정상 운송 종료의 실제 결과 판정 때 한 번':'선택 확정 또는 승차 확정 때 한 번',affects:field.startsWith('satisfaction')?'이 응답을 선택한 승객의 만족도 S':field==='motionPenaltyDelta'?'활성 중 불필요한 급가감속 M 감점':'이 응답을 선택한 운송의 기사 피로',detail:unit+' · 0 = 이 선택지의 추가 효과 없음. '+(field==='fatigueGrowthPercent'?'기본 자연 피로 증가 × (1 + 추가율/100)입니다. 싱글 포만감 25 초과의 기본 +4점/분에 +50%는 +6점/분, -50%는 +2점/분, -100%는 자연 증가 0입니다. 0%는 원래 증가율 유지입니다. 현재 기사 피로의 %가 아닙니다. 아래 기본 자연 피로 표에서 허기·모드별 수치를 확인하세요.':field==='motionPenaltyDelta'?'M의 추가 변화량입니다. -2는 기본 감점에 2점 추가 감점, +2는 감점 2점 완화입니다. 0은 기본 감점 유지이며 최종 감점은 0 아래로 내려가 보상이 되지 않습니다.':during&&percent?`즉시 효과 뒤 선택 활성화 때 고정한 ${stat} 기준값 × 변화율/100을 매분 더합니다. 기준 ${base}점에 +10%/분은 +${delta}점/분이며 30초는 +${delta/2}점입니다. 복리가 아니며 음수는 감소입니다. 고정 점/분 효과와 기존 자연 피로는 별도로 더합니다.`:percent?`적용 직전 현재 ${stat} × 변화율/100을 한 번 더합니다. 현재 ${base}점에 +10%는 +${delta}점, -10%는 -${delta}점입니다. 고정 증감(점)도 함께 더하며 0~100점으로 제한합니다.`:'양수는 증가, 음수는 감소하는 증감량입니다.')+(end?' 취소·사고·견인 등 운송 중단에는 종료 효과를 주지 않습니다.':'')};
+   return {when:during?'선택 활성화부터 운송 종료/중단까지':end?'정상 운송 종료의 실제 결과 판정 때 한 번':'선택 확정 또는 승차 확정 때 한 번',affects:field.startsWith('satisfaction')?'이 응답을 선택한 승객의 만족도 S':field==='motionPenaltyDelta'?'활성 중 불필요한 급가감속에 따른 운전 만족도 감점':'이 응답을 선택한 운송의 기사 피로',detail:unit+' · 0 = 이 선택지의 추가 효과 없음. '+(field==='fatigueGrowthPercent'?'기본 자연 피로 증가 × (1 + 추가율/100)입니다. 싱글 포만감 25 초과의 기본 +4점/분에 +50%는 +6점/분, -50%는 +2점/분, -100%는 자연 증가 0입니다. 0%는 원래 증가율 유지입니다. 현재 기사 피로의 %가 아닙니다. 아래 기본 자연 피로 표에서 허기·모드별 수치를 확인하세요.':field==='motionPenaltyDelta'?'운전 만족도의 추가 변화량입니다. -2는 기본 감점에 2점 추가 감점, +2는 감점 2점 완화입니다. 0은 기본 감점 유지이며 최종 감점은 0 아래로 내려가 보상이 되지 않습니다.':during&&percent?`즉시 효과 뒤 선택 활성화 때 고정한 ${stat} 기준값 × 변화율/100을 매분 더합니다. 기준 ${base}점에 +10%/분은 +${delta}점/분이며 30초는 +${delta/2}점입니다. 복리가 아니며 음수는 감소입니다. 고정 점/분 효과와 기존 자연 피로는 별도로 더합니다.`:percent?`적용 직전 현재 ${stat} × 변화율/100을 한 번 더합니다. 현재 ${base}점에 +10%는 +${delta}점, -10%는 -${delta}점입니다. 고정 증감(점)도 함께 더하며 0~100점으로 제한합니다.`:'양수는 증가, 음수는 감소하는 증감량입니다.')+(end?' 취소·사고·견인 등 운송 중단에는 종료 효과를 주지 않습니다.':'')};
   }
   if(isLegacyField(id)&&(catalog.entries||[]).some(e=>e.id.startsWith('choice.')))return {when:'이전 프로필 이관 시',affects:'이관 원본 (참조)',detail:'현재 선택지 효과에서 편집합니다. 새 효과는 이 값과 독립적입니다.',legacy:true};
   const entry=(catalog.entries||[]).find(e=>e.id===id)||{};
@@ -252,7 +252,7 @@
    if(field==='prompt')return info('이 요청을 승객에게서 제시할 때',target+'의 승객 대사만');
    if(field==='reply')return info('해당 선택지를 보여주고 기사 답변을 기록할 때',target+'의 해당 답변 문구만','문구를 바꿔도 선택 행동과 점수 판정 방식은 유지합니다.');
    if(field==='failure'&&!entry.editable)return {...info('정상 운송에서는 적용하지 않는 참고값',target+'의 미사용 실패 항목','이 요청은 실제 실패 판정 경로가 없습니다. 답하지 않았을 때의 감점은 별도 미응답 설정을 사용합니다.'),unused:true};
-   if(field==='unanswered')return info('답하지 않은 채 하차·운송 종료할 때',target+'만',name==='Quiet'?'안전한 응답 기회 후 미응답일 때 M 변화량입니다. -2를 입력하면 M 2점 감점, 0이면 감점 없음입니다. 입력 범위는 -100~0점이며 요청 합계 상한에는 들어가지 않습니다.':['Empathy','Interview','LocalChat'].includes(name)?'안전한 응답 기회 후 미응답일 때 요청 만족도에 한 번 반영합니다. 기회가 없으면 0입니다.':'현재 이 요청에서는 사용하지 않는 고정/중립 값입니다.');
+   if(field==='unanswered')return info('답하지 않은 채 하차·운송 종료할 때',target+'만',name==='Quiet'?'안전한 응답 기회 후 미응답일 때 운전 만족도 변화량입니다. -2를 입력하면 운전 만족도 2점 감점, 0이면 감점 없음입니다. 입력 범위는 -100~0점이며 요청 합계 상한에는 들어가지 않습니다.':['Empathy','Interview','LocalChat'].includes(name)?'안전한 응답 기회 후 미응답일 때 요청 만족도에 한 번 반영합니다. 기회가 없으면 0입니다.':'현재 이 요청에서는 사용하지 않는 고정/중립 값입니다.');
    return info(entry.editable?'요청을 수락한 뒤 하차 때 이행 여부를 평가할 때':'현행 운송의 고정 결과를 설명할 때',target+'의 수락 답변 전체','현재는 요청 종류별 평가 점수입니다. 선택지별 독립 점수는 지원하지 않으며, 버튼을 누를 때와 하차 때 두 번 더하지 않습니다.');
   }
   if(domain==='schedule')return info(name.startsWith('count')?'새 운송의 요청 개수를 배정할 때':'새 운송의 등장 시점을 정하고 운행 중 표시 기회를 확인할 때',allRequests,name.startsWith('count')?'0·1·2건 비중 합계는 100입니다. 개수 배정 뒤 각 요청의 가중치를 사용합니다.':name==='movingSeconds'?'운행 중 요청을 표시하기 전 필요한 실제 주행 시간입니다. 주행 중에도 대화가 가능하면 등장하며 다른 선택·작업 중에는 기다립니다.':'진행률은 0~1 값입니다. 예: 0.25는 25%. 주행 시간과 대화 가능 조건도 함께 충족해야 합니다. 적재·휴식 등 실제 작업은 안전 정차가 필요합니다.');
@@ -283,10 +283,10 @@
   }
   if(domain==='common'){
    const common={
-    requestCap:['하차 때 요청 점수를 합산한 뒤',allRequests,'상한이 10일 때 +8점과 +5점은 합계 +13점 대신 +10점으로 반영합니다. M·청결·시간 가산은 이 상한과 별도입니다.'],
+    requestCap:['하차 때 요청 점수를 합산한 뒤',allRequests,'상한이 10일 때 +8점과 +5점은 합계 +13점 대신 +10점으로 반영합니다. 운전 만족도·청결·시간 가산은 이 상한과 별도입니다.'],
     timeCap:['하차 때 안전한 조기 도착 가산을 계산할 때','유효한 기준 ETA가 있는 모든 운송'],
     timeFactor:['하차 때 안전한 조기 도착 가산을 계산할 때','유효한 기준 ETA가 있는 모든 운송'],
-    comfortStep:['안정 주행 관찰 후 M 회복량이 없고 만족도가 요구치보다 낮을 때','운송 중 안심 회복','요청 하나의 이행 보상이 아닌 별도 회복입니다.'],
+    comfortStep:['안정 주행 관찰 후 운전 만족도 회복량이 없고 만족도가 요구치보다 낮을 때','운송 중 안심 회복','요청 하나의 이행 보상이 아닌 별도 회복입니다.'],
     comfortCap:['안정 주행 관찰 후 안심 회복을 누적할 때','운송 중 안심 회복','한 운송의 누적 상한입니다.'],
     fareMultiplier:['하차 정산 때 기본 지급을 계산할 때','모든 운송의 기본 운임','특정 요청 전용 값이 아닙니다.'],
     bonusMultiplier:['하차 정산 때 보너스를 계산할 때','모든 운송의 보너스'],
@@ -297,8 +297,8 @@
     required:['새 일반 호출의 요구 만족도를 정할 때','해당 난도의 신규 일반 호출','현재 운송 중인 약정을 소급해서 바꾸지 않습니다.']
    };if(common[name])return info(...common[name]);
   }
-  if(domain==='law')return info(name==='recovery'?'위반 없이 준수한 법규 사건을 기록할 때':'해당 위반 상황을 관찰·확정할 때',name==='recovery'?'모든 운전의 법규 점수 회복':'해당 상황의 법규 점수; 제시간 도착 요청은 실제 위반 유무도 확인',(field==='penalty'?'-2는 법규 점수 2점 감점, 0은 감점 없음입니다. ':'')+'법규 점수와 운전 만족도 M은 서로 다른 지표입니다.');
-  if(domain==='manner')return info(name==='recovery'?'새 구간에서 안정 주행의 거리 또는 시간 조건에 도달할 때':'해당 운전 사건을 관찰할 때',name==='comfortMotion'?'편안한 운행 요청 수락 뒤의 M':name==='recovery'?'모든 승객 운송의 M 회복':'모든 승객 운송의 운전 만족도 M',(field==='penalty'?'-2는 M 2점 감점, 0은 감점 없음입니다. ':'')+'M 변화는 하차 만족도의 주행 변화량에 반영합니다. 요청 이행 점수와 별도입니다.');
+  if(domain==='law')return info(name==='recovery'?'위반 없이 준수한 법규 사건을 기록할 때':'해당 위반 상황을 관찰·확정할 때',name==='recovery'?'모든 운전의 법규 점수 회복':'해당 상황의 법규 점수; 제시간 도착 요청은 실제 위반 유무도 확인',(field==='penalty'?'-2는 법규 점수 2점 감점, 0은 감점 없음입니다. ':'')+'법규 점수와 운전 만족도는 서로 다른 지표입니다.');
+  if(domain==='manner')return info(name==='recovery'?'새 구간에서 안정 주행의 거리 또는 시간 조건에 도달할 때':'해당 운전 사건을 관찰할 때',name==='comfortMotion'?'편안한 운행 요청 수락 뒤의 운전 만족도':name==='recovery'?'모든 승객 운송의 운전 만족도 회복':'모든 승객 운송의 운전 만족도',(field==='penalty'?'-2는 운전 만족도 2점 감점, 0은 감점 없음입니다. ':'')+'운전 만족도 변화는 하차 만족도의 주행 변화량에 반영합니다. 요청 이행 점수와 별도입니다.');
   return info('설명된 상황·조건을 확인할 때',entry.section||entry.title||'현재 게임의 고정 조건',entry.editable?'':'현재 구현의 고정 조건이며 값을 편집하지 않습니다.');
  }
  function displayCatalog(catalog){

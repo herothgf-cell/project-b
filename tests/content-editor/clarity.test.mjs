@@ -23,7 +23,7 @@ test('every setting explains when and who it affects without exposing method nam
  assert.equal(typeof model.fieldInfo,'function');
  for(const e of catalog.entries){const info=model.fieldInfo(e.id,catalog);assert.ok(info.when?.length,e.id);assert.ok(info.affects?.length,e.id);assert.ok(!/PassengerRequestUI|ContentTuning\./.test(info.when+' '+info.affects),e.id);}
  const quiet=model.fieldInfo('request.Quiet.unanswered',catalog);
- assert.match(quiet.when,/하차|운송 종료/);assert.match(quiet.affects,/조용한 운행/);assert.match(quiet.detail,/M/);
+ assert.match(quiet.when,/하차|운송 종료/);assert.match(quiet.affects,/조용한 운행/);assert.match(quiet.detail,/운전 만족도/);
  const cap=model.fieldInfo('common.requestCap',catalog);
  assert.match(cap.when,/합산|하차/);assert.match(cap.affects,/모든|전체/);assert.match(cap.detail,/8.*5.*10/);
  assert.match(model.fieldInfo('effect.food.spill',catalog).affects,/음식/);

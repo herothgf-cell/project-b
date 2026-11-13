@@ -40,12 +40,16 @@ test('food choices expose actual permission, dirt, consumption timing and cleanu
  assert.ok(food.fieldIds.includes('effect.food.consumeMovingSeconds'));
  assert.ok(food.links.includes('situation.Jolt'));
 });
-test('law condition settings and penalties stay together, distinct from M',()=>{
+test('law condition settings show the linked driving satisfaction by name',()=>{
  const all=entities(); const law=all.find(e=>e.id==='law.editorSpeed');
  assert.ok(law.fieldIds.includes('law.editorSpeed.toleranceKmh'));
  assert.ok(law.fieldIds.includes('law.editorSpeed.seconds'));
  assert.ok(law.fieldIds.includes('law.editorSpeed.penalty'));
- assert.match(law.notes.join(' '),/법규.*M|M.*법규/);
+ assert.match(law.notes.join(' '),/법규.*운전 만족도/);
+ const rightTurn=all.find(e=>e.id==='law.redRight');
+ const linked=rightTurn.sections.find(s=>s.fieldIds.includes('manner.rightStop.penalty'));
+ assert.equal(linked.title,'함께 기록되는 운전 만족도');
+ assert.match(linked.description,/운전 만족도 감점/);
 });
 test('weights 1, 1, 2 show a conditional 25%, 25%, 50% baseline',()=>{
  const all=entities(); const values=catalog.entries.map(e=>({id:e.id,value:e.defaultValue}));
@@ -69,7 +73,7 @@ test('condition explanations preserve food AND gate, stable recovery OR gate and
  assert.match(all.find(e=>e.id==='law.interference').summary,/대기열.*차로/);
  assert.match(all.find(e=>e.id==='law.stopLine').summary,/넘.*정차/);
  const quiet=all.find(e=>e.id==='request.Quiet');
- assert.match(quiet.sections.find(s=>s.kind==='unanswered').description,/미응답.*M/);
+ assert.match(quiet.sections.find(s=>s.kind==='unanswered').description,/미응답.*운전 만족도/);
  assert.match(all.find(e=>e.id==='request.Eta').sections.find(s=>s.kind==='outcomes').description,/현재 선택지 효과에서 편집/);
 });
 test('blank override choices still show the actual built-in player reply',()=>{
