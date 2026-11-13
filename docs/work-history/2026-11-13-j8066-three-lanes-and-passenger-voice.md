@@ -48,3 +48,7 @@
 - 격리 복사본 liveSaveTest 종료0/9검사, 새 프로세스 liveReloadTest 종료0/23검사. 실제 저장·운송·정산·다음날 이어받기 검사이며 사람 주행은 아니다.
 - 추가 passengerBehaviorTest는 food choice actual live satisfaction1에서 종료1. 이전 main 배포본679200b도 같은 실패를 재현했다. 시험은 음식 허락 만족도5를 고정 기대하지만 현재 기본 콘텐츠 값은3이다. 이번 변경으로 인한 회귀로 판단하지 않으며 전체 승객 Player 검사가 통과했다고 표시하지 않는다. 해당 검사 후속 정비는 남은 항목이다.
 - 배포 manifest의 SourceCommit과 main 푸시 영수증은 실제 커밋 확인 뒤 추가한다.
+
+## 배포 해시
+
+소스 커밋938cc3937c9ee9e2f2a6abc60fc6e3135f45d1d0 확인 후 통합 manifest를 생성했다. 격리된 Git 배포143파일·131,627,450바이트에 통합/PvP VerifyOnly 각각 종료0. manifest 각항목과 기본 실행 폴더의 실제 SHA256도 전부 일치했다. 사용자 로컬 ZIP은 배포 목록에 포함하지 않았으며 원위치에 남겼다. 로컬 활성프로필은 새 카탈로그 검증을 별도로 통과했다.
