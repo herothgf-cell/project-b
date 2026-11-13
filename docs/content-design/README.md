@@ -1,5 +1,11 @@
 # 택시 시뮬레이션 콘텐츠 기획
 
+## 빠르게 찾기 · 2026-11-13 마인드맵 정리
+
+[마인드맵 목차](택시%20시뮬레이션-목차.md)는 핵심 구조만 표시한다. 개별 항목은 [승객·대화·요청](24-passenger-detail-index.md), [주행·법규·기록](25-driving-rule-detail-index.md), [모드·지도·생활·차량·화면](26-system-detail-index.md), [성장·후속 구상](27-future-detail-index.md)에서 담당 기획과 함께 찾는다. 기존 세부 항목은 이관했으며 메모·진척도 원본은 [보존본](../design-history/content-design/2026-11-13-mindmap-before-simplify.mmst)에 남겼다.
+
+최신 승객 구성은 [11/13 현황표](2026-11-13-passenger-current-inventory.md), 차량 구매·PvP 외형의 현재 구현 상태는 [기획22](22-growth-direction-and-vehicle-purchase.md)를 우선한다. 아래 날짜가 있는 초기 설명은 당시 상태다.
+
 정리 기준: **2026-11-06**, `main`의 코드·체크리스트·작업 이력 대조. 이 폴더는 플레이어의 선택과 결과를 정의한다. 구현 완료 여부는 아래 상태표와 [개발 체크리스트](../prototype-development-checklist.md), 실제 검증·실행본은 [최신 작업 이력](../work-history/LATEST.md)에서 확인한다.
 
 ## 현재 제공하는 경험
@@ -63,7 +69,7 @@
 
 - 현재 규칙과 후속 제안을 구분하고, 변경은 담당 문서와 체크리스트·작업 이력에 함께 남긴다.
 - 게임 배점·비용·시간은 밸런스 값이다. 현실 법적 벌점·실측 신호·영업 수익을 보장하지 않는다.
-- [마인드맵 원본](택시%20시뮬레이션.mmst)과 [글 목차](택시%20시뮬레이션-목차.md)는 탐색용이다. 사용자 노드/메모·접힘을 정리 명목으로 재작성하지 않는다.
+- [마인드맵 원본](택시%20시뮬레이션.mmst)과 [글 목차](택시%20시뮬레이션-목차.md)는 탐색용이다. 11/13 사용자 요청에 따라 개요로 축소했으며 이후에는 세부 항목을 담당 기획에서 관리한다. 원본 메모·속성은 보존본을 유지한다.
 - 날짜별 이전 결정은 [기획 변경 이력](../design-history/content-design/README.md), 개발 결과는 작업 이력에 보존한다. [이번 중복/충돌 정리표](../work-history/2026-11-06-content-design-cleanup.md)를 참고한다.
 
 [후속 구상](../future-design/README.md) · [개발/제작 참고](../technical-reference/README.md)
