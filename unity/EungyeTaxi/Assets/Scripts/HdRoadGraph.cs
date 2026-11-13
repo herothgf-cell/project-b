@@ -14,6 +14,7 @@ public sealed class HdRoadGraph {
  public readonly HdEdge[] edges;
  public readonly AssistedRoadNetwork.Path[] paths;
  readonly Bounds[] pathBounds;
+ readonly MapStop[] wideBays;
  public readonly HashSet<string> signalizedRules=new HashSet<string>();
  public Bounds PathBounds(int edge){return pathBounds[edge];}
  // Reused Dijkstra scratch. Route() runs several times per second for each of the
@@ -39,6 +40,7 @@ public sealed class HdRoadGraph {
  }
  readonly MinQueue scratchQueue=new MinQueue();
  public HdRoadGraph(MapData map){
+  wideBays=PassengerStopCatalog.WideBays(map);
   if(map.junctionRules!=null)foreach(var rule in map.junctionRules)if(rule.signalMode>0)signalizedRules.Add(rule.id);
   edges=map.hdEdges;paths=new AssistedRoadNetwork.Path[edges.Length];pathBounds=new Bounds[edges.Length];
   for(int i=0;i<edges.Length;i++){
@@ -58,7 +60,17 @@ public sealed class HdRoadGraph {
    if(edges[i].disabled||edges[i].change!=0||pathBounds[i].SqrDistance(ground)>score*score+.0001f)continue;float error;float d=paths[i].Project(position,out error);
    if(error>=score||heading.sqrMagnitude>.1f&&Vector3.Dot(heading.normalized,paths[i].Tangent(d))<.6f)continue;
    best=i;score=error;at=d;
-  }return best;
+  }
+  if(best>=0)return best;
+  foreach(var bay in wideBays){
+   var delta=ground-bay.V();delta.y=0;
+   float across=Vector3.Dot(delta,TrafficSystem.Right(bay.Direction));
+   if(across<0||across>bay.width*.5f-.35f||Mathf.Abs(Vector3.Dot(delta,bay.Direction))>7||
+      heading.sqrMagnitude>.1f&&Vector3.Dot(heading.normalized,bay.Direction)<.85f)continue;
+   var lane=paths[bay.laneEdge];at=lane.Project(ground,out _);
+   return bay.laneEdge;
+  }
+  return -1;
  }
  // Direction-independent nearest two lanes for ambiguity-sensitive wrong-way
  // detection. Preserve disabled filtering, edge order and exact tie semantics.

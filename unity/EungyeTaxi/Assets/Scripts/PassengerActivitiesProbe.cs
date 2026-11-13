@@ -25,7 +25,7 @@ public sealed class PassengerActivitiesProbe : MonoBehaviour {
   Check(j.Behavior.Choice==-1&&!j.BehaviorChoicesOpen&&!j.SituationPending&&!j.Behavior.Sleeping,"neararrival unchosen initial panel is closed and cooldown suppresses new question");j.AdvanceBehavior(14);string trip=s.law.tripId;RoundTrip();Check(j.Behavior.Choice==-1&&!j.BehaviorChoicesOpen&&j.Behavior.JoltCalmRemaining==1&&s.law.tripId==trip,"actual complete jobs snapshot restore retains neararrival unanswerable choice and calm time");j.AdvanceBehavior(1);Check(j.Behavior.Sleeping&&!j.SituationPending&&j.Behavior.Choice==-1&&!j.trip.ArrivalLocked,"restored actual jobs adapter resumes rest without answering expired initial choice or inventing arrival");
  }
  void MainChecks(){
-  MovingScheduleChecks();MovingDialogueChecks();TypedChecks();LateInitialRestChecks();
+  MovingRouteRequestChecks();MovingScheduleChecks();MovingDialogueChecks();TypedChecks();LateInitialRestChecks();
   Begin();var j=s.jobs;int clean=j.Cleanliness,score=s.manners.ledger.Score;
   s.requests.Begin();NextFrame();s.manners.necessaryBrakeEvents++;j.AdvancePassengerActivities(1);Check(j.Situation.Pending==PassengerSituationKind.NecessaryBrake,"observed necessary braking creates neutral reaction");
   RoundTrip();Check(j.SituationPending&&j.Situation.Reactions==1,"pending reaction and budget survive live JSON restore");
@@ -39,8 +39,34 @@ public sealed class PassengerActivitiesProbe : MonoBehaviour {
   j.AdvancePassengerActivities(30);Check(j.trip.Fare==fare&&j.Errand.Completed,"repeat advancement cannot restart or change fare");Stop(original);Check(j.Interact()&&!j.Active&&s.business.passengers.Count==1,"one original-trip settlement after errand");
   Begin();Agree();Stop(j.PassengerViaStop);NextFrame();Check(j.Interact(),"start saved errand fixture");j.AdvancePassengerActivities(7);Check(s.business.SavePath.Contains("artifacts")&&s.business.SaveCheckpoint(),"actual checkpoint writes only artifacts");
  }
- void ArrangeMovingSchedule(){
-  s.requests.Begin();var snapshot=s.requests.CaptureLive();snapshot.schedule=new PassengerRequestScheduleSnapshot{movingSinceResponse=20,progress=.4f,slots=new[]{new PassengerRequestSlot{kind=RequestKind.Comfort,threshold=.25f}}};snapshot.active=-1;snapshot.observations=new PassengerRequestObservationSnapshot[1];s.requests.RestoreLive(snapshot);NextFrame();s.jobs.nav.remaining=snapshot.initialDistance*.6f;s.taxi.body.isKinematic=false;s.taxi.body.velocity=Vector3.forward*4;s.requests.AdvanceSafeStop(0);
+ void MovingRouteRequestChecks(){
+  foreach(var kind in new[]{RequestKind.SafeStop,RequestKind.DestinationChange,RequestKind.ViaStop}){
+   Begin();ArrangeMovingSchedule(kind);TickRequests();NextFrame();
+   var j=s.jobs;int original=j.current.drop;string trip=s.law.tripId;float remaining=j.trip.Remaining;
+   Check(s.requests.HasPendingChoice&&s.requests.request.Kind==kind&&!s.requests.SafeToRespond(),"moving route request presents while physical stop safety is false "+kind);
+   Check(s.requests.CanChoose(PassengerReply.Accept),"moving route proposal can be selected "+kind);
+   var pending=RoundTrip();
+   int proposed=pending.request.observations[pending.request.active].proposal;
+   Check(proposed>=0&&proposed!=original&&j.current.drop==original,"pending route proposal does not change the contract "+kind);
+   Check(s.requests.Choose(PassengerReply.Accept)&&j.trip.Remaining>remaining&&s.law.tripId==trip,"moving agreement updates the same trip once "+kind);
+   Check(!s.requests.Choose(PassengerReply.Accept),"duplicate route response cannot apply "+kind);
+   if(kind==RequestKind.ViaStop){
+    Check(j.current.drop==original&&j.PassengerViaStop==proposed&&!j.Errand.Waiting,"via agreement queues the proposed stop with original destination retained");
+    Check(!j.Interact(),"moving agreement does not start errand work");
+    float wait=j.Errand.Remaining;j.AdvancePassengerActivities(5);
+    Check(j.Errand.Remaining==wait&&!j.Errand.Waiting,"moving agreement cannot consume errand time");
+    s.taxi.body.velocity=Vector3.zero;s.taxi.body.isKinematic=true;Stop(proposed);NextFrame();
+    Check(j.Interact()&&j.Errand.Waiting,"actual via stop and F still start errand work");
+   }else{
+    Check(j.current.drop==proposed&&!j.trip.ArrivalLocked&&!j.Interact(),"moving agreement changes guidance while requiring a physical stop "+kind);
+    s.taxi.body.velocity=Vector3.zero;s.taxi.body.isKinematic=true;Stop(proposed);
+    Check(j.Interact()&&j.trip.State==TripState.Complete,"new destination requires directional stop before settling "+kind);
+   }
+   s.taxi.body.isKinematic=true;
+  }
+ }
+ void ArrangeMovingSchedule(RequestKind kind=RequestKind.Comfort){
+  s.requests.Begin();var snapshot=s.requests.CaptureLive();snapshot.schedule=new PassengerRequestScheduleSnapshot{movingSinceResponse=20,progress=.4f,slots=new[]{new PassengerRequestSlot{kind=kind,threshold=.25f}}};snapshot.active=-1;snapshot.observations=new PassengerRequestObservationSnapshot[1];s.requests.RestoreLive(snapshot);NextFrame();s.jobs.nav.remaining=snapshot.initialDistance*.6f;s.taxi.body.isKinematic=false;s.taxi.body.velocity=s.taxi.transform.forward*4;s.requests.AdvanceSafeStop(0);
  }
  void TickRequests(){typeof(PassengerRequestUI).GetMethod("Update",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(s.requests,null);}
  void MovingScheduleChecks(){

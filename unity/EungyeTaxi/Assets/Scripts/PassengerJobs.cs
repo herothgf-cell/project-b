@@ -245,14 +245,16 @@ public partial class PassengerJobs : MonoBehaviour {
  }
  public bool PreviewPassengerChange(int stop,bool via,out float extraDistance,out int newFare,out float newRemaining){
   extraDistance=0;newFare=trip.Fare;newRemaining=trip.Remaining;
-  if(trip.State!=TripState.OnTrip||trip.ArrivalLocked||current==null||passengerChangeApplied||PassengerViaPending||trip.Remaining<=0||stop<0||stop>=stops.Length||stop==current.drop||nav.hd==null||session.taxi.ObservedVelocity.magnitude>=.56f)return false;
+  if(trip.State!=TripState.OnTrip||trip.ArrivalLocked||current==null||passengerChangeApplied||PassengerViaPending||trip.Remaining<=0||stop<0||stop>=stops.Length||stop==current.drop||stop==current.pickup||nav.hd==null||StopOccupied(stop))return false;
   var zones=GetComponent<ServiceLawZones>();var course=GetComponent<ScenarioChoiceSituation>();if(zones&&zones.Live&&zones.Live.Active||course&&(course.Open||course.ActiveObservation))return false;
   float at;int start=nav.hd.Nearest(session.taxi.transform.position,session.taxi.transform.forward,out at);var goal=stops[current.drop];var target=stops[stop];
   var old=nav.hd.Route(start,at,goal.laneEdge,goal.laneAt);var changed=nav.hd.Route(start,at,target.laneEdge,target.laneAt);if(old==null||changed==null)return false;
-  float distance=changed.path.length;if(via){var onward=nav.hd.Route(target.laneEdge,target.laneAt,goal.laneEdge,goal.laneAt);if(onward==null)return false;distance+=onward.path.length;}
+  var onward=via?nav.hd.Route(target.laneEdge,target.laneAt,goal.laneEdge,goal.laneAt):null;
+  if(via&&onward==null)return false;
+  float distance=changed.path.length+(via?onward.path.length:0);
   extraDistance=Mathf.Max(0,distance-old.path.length);newFare=trip.Fare+Mathf.CeilToInt(extraDistance*4/100)*100;
   float extraSeconds=extraDistance/4;
-  if(current.timingPolicyVersion>=1){float changedEta=SafeRouteSeconds(changed,changed.path.length);if(via){var onward=nav.hd.Route(target.laneEdge,target.laneAt,goal.laneEdge,goal.laneAt);changedEta+=SafeRouteSeconds(onward,onward.path.length);}extraSeconds=Mathf.Max(0,OneDayOfferPolicy.TransportSeconds(changedEta,0,current.urgency)-OneDayOfferPolicy.TransportSeconds(SafeRouteSeconds(old,old.path.length),0,current.urgency));}
+  if(current.timingPolicyVersion>=1){float changedEta=SafeRouteSeconds(changed,changed.path.length);if(via)changedEta+=SafeRouteSeconds(onward,onward.path.length);extraSeconds=Mathf.Max(0,OneDayOfferPolicy.TransportSeconds(changedEta,0,current.urgency)-OneDayOfferPolicy.TransportSeconds(SafeRouteSeconds(old,old.path.length),0,current.urgency));}
   newRemaining=trip.Remaining+extraSeconds+30+(via?(float)PassengerContent.Number("effect.errand.seconds",20):0);return true;
  }
  public bool TryChangeDestination(int stop){return ApplyPassengerChange(stop,false);}

@@ -682,10 +682,17 @@
 
 ## 2026-11-13 은계 영업 피드백
 
-- [x] 왕복 2차선 7쌍의 방향별 정차 칸, 일반 호출에서 접근 경로 비교, 반대편 하차, [31곳 위치 지도](content-design/images/eungye-pickup-map-2026-11-13.png).
+- [x] 왕복 2차선 7쌍의 방향별 정차 칸, 일반 호출에서 접근 경로 비교, 반대편 하차, [위치 지도](content-design/images/eungye-pickup-map-2026-11-13.png).
 - [x] 3인칭 보조 카메라, 교통차 충돌 속도, 적색 대기 10초 요청 기회, 보행 속도와 보행 신호 조정 구현. [검증·남은 항목](work-history/2026-11-13-eungye-drive-feedback.md).
 - [ ] 실제 사용자 주행에서 승하차 우회 감소, 교통차 차선 변경 접촉, 보행 신호 체감 확인.
 
 ## 2026-11-13 콘텐츠 관리 툴
 
 - [x] 콘텐츠 관리 툴의 M 표기를 ‘운전 만족도’로 변경했다. [검증 기록](work-history/2026-11-13-content-tool-driving-satisfaction.md).
+
+## 2026-11-13 운행 중 경로 변경과 은계 법규·정차 공간
+
+- [x] 주행 중 안전 하차·목적지 변경·경유 수락과 경로 갱신. 실제 하차와 경유 용무는 정차 후 F로 진행.
+- [x] 은계 황색 실선 중앙선 침범 및 비허용 유턴의 운전 점수·운전 만족도 감점.
+- [x] S01·S02·S03·S06·S07·S09·G09·G10 반대 방향 공간과 [39곳 위치 지도](content-design/images/eungye-pickup-map-2026-11-13.png).
+- [ ] 사람 직접 주행, 전체 3일 캠페인, 다른 PC LAN. [검증 범위](work-history/2026-11-13-moving-route-requests-and-road-feedback.md).

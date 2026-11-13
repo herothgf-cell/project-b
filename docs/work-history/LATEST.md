@@ -1,5 +1,7 @@
 # 최신 작업 이력
 
+은계 주행 중 안전 하차·목적지 변경·경유 요청 응답, 황색 실선 중앙선 침범·비허용 유턴 감점, 지정 8곳 반대 방향 정차 공간을 기본 통합 실행본에 반영했다. 은계 정차 지점은 총 39곳이다. [후속 작업 및 검증](2026-11-13-moving-route-requests-and-road-feedback.md) · [승하차 위치 지도](../content-design/images/eungye-pickup-map-2026-11-13.png).
+
 은계 게임 코드·통합 실행본과 승객 현황 문서를 콘텐츠 관리 툴 표기 변경과 합쳤다. 통합/PvP 배포 해시와 지도 입력을 재검증했다. [병합 기록](2026-11-13-eungye-release-integration.md).
 
 ## 2026-11-13 콘텐츠 관리 툴 운전 만족도 표기
@@ -8,7 +10,7 @@
 
 ## 2026-11-13 은계 영업 피드백
 
-[구현·검증·재현](2026-11-13-eungye-drive-feedback.md) · [승하차 지도 31곳](../content-design/images/eungye-pickup-map-2026-11-13.png). 왕복 2차선 정차 지점 7쌍, 3인칭 보조 영상 숨김, 교통차 충돌 속도 수정, 적색 대기 10초 요청 기회, 보행 시간 단축을 기본 통합 실행본에 반영했다. 정식 지도 r18·Strict 입력 문제 0, 선택 재수입 지도 2개 부재. 다음은 실제 은계 주행에서 승차 우회·반대편 하차와 보행 신호 체감 확인이다.
+[구현·검증·재현](2026-11-13-eungye-drive-feedback.md) · [승하차 지도](../content-design/images/eungye-pickup-map-2026-11-13.png). 왕복 2차선 정차 지점 7쌍, 3인칭 보조 영상 숨김, 교통차 충돌 속도 수정, 적색 대기 10초 요청 기회, 보행 시간 단축을 기본 통합 실행본에 반영했다. 정식 지도 r18·Strict 입력 문제 0, 선택 재수입 지도 2개 부재. 다음은 실제 은계 주행에서 승차 우회·반대편 하차와 보행 신호 체감 확인이다.
 
 ## 2026-11-13 승객 다양화 기획 준비
 
@@ -27,9 +29,9 @@ PvP 호스트 렉 2차 최적화(같은 기록 후속 절): 내비 혼잡/제한
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
-| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 소스 `2f91166` · 은계 r18 · [11-13 영업 피드백](2026-11-13-eungye-drive-feedback.md) |
+| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 은계 r18 · [현재 배포 기록](2026-11-13-moving-route-requests-and-road-feedback.md) |
 | 통신 | LAN **v19**. 최적화·조향 통합 배포. 이전 v17/v18과 참가 불가, 양쪽 PC 같은 전체 실행 폴더 필요 |
-| 배포 검사 | 통합/PvP `VerifyOnly` 각각 종료 0 · 배포 143파일, 131,600,169바이트 · 선택 로컬 프로필 1개 별도 검증 |
+| 배포 검사 | [통합/PvP 검증과 manifest](2026-11-13-moving-route-requests-and-road-feedback.md#검증-및-재현) |
 | 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (Git, revision18·SHA256 496e1869…) · Strict 입력 문제0 · 선택 재수입 JSON2개 부재 |
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **main 병합·배포, 사람 검증 전** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V10 30장](../proposals/project-b-game-proposal-v10.pptx) · [반영 검토](../proposals/proposal-v10-review.md) · [Manual V10](../proposals/project-b-prototype-manual-v10.md) |
@@ -39,6 +41,8 @@ PvP 호스트 렉 2차 최적화(같은 기록 후속 절): 내비 혼잡/제한
 [구현·검증](2026-11-12-junction-route-timing.md). 지도 r18, J7917 인접 변경8개와 서향 목적지 전 변경3개. 사진 부근 실제 목적지 경로1432→1063m, 새 승하차 제한80%, 관련 회귀·r14~17 저장 이관4버전 통과. BuildHybrid exit0·r17 저장 이어하기23·143파일 배포 검증 통과. main 푸시 확인은 작업 기록 참조.
 
 ## 다음 작업
+
+은계에서 주행 중 경로 변경 수락, 중앙선 위반 감점 및 지정 8곳의 정차·재출발을 사람 플레이로 확인한다.
 
 J7917 출하 `2be32ed` main push 완료·원격 동일 해시 확인. [배포 영수증](2026-11-12-j7917-roadview-check.md#main-배포-확인).
 

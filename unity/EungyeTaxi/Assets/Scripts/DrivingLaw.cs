@@ -25,12 +25,40 @@ public partial class DrivingLaw : MonoBehaviour {
  float speedingSeconds;bool speedRecorded;void CheckEditorSpeed(){float limit=session.traffic.EditorSpeedLimit(session.taxi.transform.position,session.taxi.transform.forward);if(limit<=0||session.taxi.body.velocity.magnitude*3.6f<=limit+ContentTuning.Number("law.editorSpeed.toleranceKmh",3)){speedingSeconds=0;speedRecorded=false;return;}speedingSeconds+=Time.fixedDeltaTime;if(speedingSeconds<ContentTuning.Number("law.editorSpeed.seconds",2)||speedRecorded)return;speedRecorded=true;var e=new LawEvent{recoveryPolicyVersion=1,id=ids.Next("editor-speed"),day=Day,family="사용자 제한속도",action="제한속도 초과",reason="게임 설정 "+limit+"km/h · "+ContentTuning.Number("law.editorSpeed.toleranceKmh",3)+"km/h 여유 초과 "+ContentTuning.Number("law.editorSpeed.seconds",2)+"초",speed=session.taxi.body.velocity.magnitude,seconds=(float)session.business.ledger.Elapsed};e.Add("editor-speed",LawVerdict.Violation,ContentTuning.Int("law.editorSpeed.penalty",5));ledger.Record(e);} class Entry {public SlowRightTurnState slow;public int necessaryBefore;public bool edited,uturnSigned,uturnAllowed;public string uturnLane;public SignalColor left;public TrafficJunction junction;public Vector3 direction;public int axis,sign;public bool stopped,pedestrianYield,pedestrianConflict,encroached,entered;public RoadObservation observed;public string id;}
  Entry entry;
  readonly UpstreamUturnObserver upstreamUturn=new UpstreamUturnObserver();
+ Vector3 previousCentre,previousHeading,centreEntryHeading;
+ float centreReviewUntil,centreCooldown;
  public int Day {get{return session.business.ledger.Day;}}
  public bool StopRecorded(TrafficJunction junction){return entry!=null&&entry.junction==junction&&entry.stopped||stops.ContainsKey(junction.name+":0:1");}
  float wrongSeconds,wrongDistance,clearSeconds,wrongSampleSeconds;bool wrongLatched;
  public DrivingLawSnapshot CaptureObservation(){return new DrivingLawSnapshot{observationVersion=1,entryPresent=entry!=null,upstreamPresent=upstreamUturn.Capture()!=null,wrongSeconds=wrongSeconds,wrongDistance=wrongDistance,clearSeconds=clearSeconds,wrongLatched=wrongLatched,upstreamUturn=upstreamUturn.Capture(),entry=entry==null?null:new LawEntrySnapshot{slowPresent=entry.slow!=null,slow=entry.slow==null?null:entry.slow.Copy(),necessaryBefore=entry.necessaryBefore,junction=entry.junction.name,id=entry.id,axis=entry.axis,sign=entry.sign,direction=entry.direction,edited=entry.edited,uturnSigned=entry.uturnSigned,uturnAllowed=entry.uturnAllowed,stopped=entry.stopped,pedestrianYield=entry.pedestrianYield,pedestrianConflict=entry.pedestrianConflict,encroached=entry.encroached,entered=entry.entered,left=entry.left,observed=entry.observed.Copy()}};}
- public void RestoreObservation(DrivingLawSnapshot s){ResetObservation();if(s==null)return;BusinessProgress.NormalizeLawObservation(s);wrongSeconds=Mathf.Clamp(s.wrongSeconds,0,2);wrongDistance=Mathf.Clamp(s.wrongDistance,0,100);clearSeconds=Mathf.Clamp(s.clearSeconds,0,2);wrongLatched=s.wrongLatched;var e=s.entry;if(e!=null&&session.traffic&&e.axis>=0&&e.axis<2&&e.observed!=null){var j=session.traffic.junctions.Find(x=>x.name==e.junction);if(j!=null)entry=new Entry{slow=RestoreSlowTurn(e),necessaryBefore=e.necessaryBefore,junction=j,id=e.id,axis=e.axis,sign=e.sign,direction=e.direction,edited=e.edited,uturnSigned=e.uturnSigned,uturnAllowed=e.uturnAllowed,stopped=e.stopped,pedestrianYield=e.pedestrianYield,pedestrianConflict=e.pedestrianConflict,encroached=e.encroached,entered=e.entered,left=e.left,observed=e.observed.Copy()};}upstreamUturn.Restore(s.upstreamUturn);previous=session.taxi.transform.position+session.taxi.transform.forward*2;initialized=true;}
- public void ResetObservation(){initialized=false;entry=null;upstreamUturn.Reset();stops.Clear();wrongSeconds=wrongDistance=clearSeconds=wrongSampleSeconds=0;wrongLatched=false;}
+ public void RestoreObservation(DrivingLawSnapshot s){ResetObservation();if(s==null)return;BusinessProgress.NormalizeLawObservation(s);wrongSeconds=Mathf.Clamp(s.wrongSeconds,0,2);wrongDistance=Mathf.Clamp(s.wrongDistance,0,100);clearSeconds=Mathf.Clamp(s.clearSeconds,0,2);wrongLatched=s.wrongLatched;var e=s.entry;if(e!=null&&session.traffic&&e.axis>=0&&e.axis<2&&e.observed!=null){var j=session.traffic.junctions.Find(x=>x.name==e.junction);if(j!=null)entry=new Entry{slow=RestoreSlowTurn(e),necessaryBefore=e.necessaryBefore,junction=j,id=e.id,axis=e.axis,sign=e.sign,direction=e.direction,edited=e.edited,uturnSigned=e.uturnSigned,uturnAllowed=e.uturnAllowed,stopped=e.stopped,pedestrianYield=e.pedestrianYield,pedestrianConflict=e.pedestrianConflict,encroached=e.encroached,entered=e.entered,left=e.left,observed=e.observed.Copy()};}upstreamUturn.Restore(s.upstreamUturn);previousCentre=session.taxi.transform.position;previousHeading=session.taxi.transform.forward;previous=previousCentre+previousHeading*2;initialized=true;}
+ public void ResetObservation(){initialized=false;entry=null;upstreamUturn.Reset();stops.Clear();wrongSeconds=wrongDistance=clearSeconds=wrongSampleSeconds=0;wrongLatched=false;centreReviewUntil=centreCooldown=0;}
+ void ObserveCentreLine(TaxiController taxi,float now){
+  var lines=session.world?session.world.CentreLines:null;
+  var position=taxi.transform.position;var heading=taxi.transform.forward;
+  var movement=position-previousCentre;
+  if(lines==null||!initialized||movement.sqrMagnitude>9)centreReviewUntil=0;
+  else if(centreReviewUntil>0){
+   if(entry!=null){centreReviewUntil=0;previousCentre=position;previousHeading=heading;return;}
+   bool uturn=Vector3.Dot(centreEntryHeading,heading)<-.55f;
+   if(uturn||now>=centreReviewUntil){
+    centreReviewUntil=0;centreCooldown=now+3;
+    if(!wrongLatched){
+     var e=new LawEvent{recoveryPolicyVersion=1,id=ids.Next("centre-line"),day=Day,tripId=tripId,family="direction",
+      action=uturn?"비허용 유턴":"중앙선 침범",reason="지도에 표시된 황색 실선 중앙선을 차체 중심이 통과",
+      speed=taxi.body.velocity.magnitude,seconds=(float)session.business.ledger.Elapsed,occupied=session.jobs.trip.State==TripState.OnTrip};
+     e.Add(uturn?"L01":"L11",LawVerdict.Violation,uturn?ContentTuning.Int("law.redStraight.penalty",settings.redStraightPenalty):ContentTuning.Int("law.wrongWay.penalty",10));
+     ledger.Record(e);
+     if(session.manners)session.manners.Deduct(uturn?"redmovement:"+e.id:"wrong-way:"+e.id,uturn?12:10,e.action,0);
+     wrongLatched=true;
+    }
+   }
+  }else if(now>=centreCooldown&&entry==null&&Vector3.Dot(movement,heading)>0&&lines.Crossed(previousCentre,position)){
+   centreEntryHeading=previousHeading;
+   centreReviewUntil=now+1.5f;
+  }
+  previousCentre=position;previousHeading=heading;
+ }
  public void ObserveWrongWay(float seconds){
   if(PvpNativeLan.IsReplica(session)||PvpNativeLan.WaitingForWorld)return;
   if(seconds<=0||seconds>.5f||!session||!session.jobs||!session.jobs.nav||!session.taxi)return;
@@ -44,17 +72,18 @@ public partial class DrivingLaw : MonoBehaviour {
   bool forward=speed>=2&&Vector3.Dot(velocity.normalized,taxi.transform.forward)>.85f;
   float dot=Vector3.Dot(velocity.normalized,tangent);
   if(road&&forward&&dot>.8f){clearSeconds+=seconds;if(clearSeconds>=2)wrongLatched=false;}else clearSeconds=0;
-  if(!road||!forward||dot>=-.8f){wrongSeconds=wrongDistance=0;return;}
+  if(centreReviewUntil>0||!road||!forward||dot>=-.8f){wrongSeconds=wrongDistance=0;return;}
   wrongSeconds+=seconds;wrongDistance+=speed*seconds;if(wrongLatched||wrongSeconds<2||wrongDistance<8)return;
   wrongLatched=true;var e=new LawEvent{recoveryPolicyVersion=1,id=ids.Next("wrong-way"),day=Day,tripId=tripId,family="direction",action="역주행",junction=graph.edges[best].id,reason="방향이 정해진 차로 안에서 반대 방향 전진 2초·8m",speed=speed,seconds=(float)session.business.ledger.Elapsed,occupied=session.jobs.trip.State==TripState.OnTrip};e.Add("L10",LawVerdict.Violation,ContentTuning.Int("law.wrongWay.penalty",10));ledger.Record(e);if(session.manners)session.manners.Deduct("wrong-way:"+e.id,10,"역주행",0);
  }
  void FixedUpdate(){
   if(PvpNativeLan.IsReplica(session)||PvpNativeLan.WaitingForWorld)return;
   if(!session||session.paused||session.business.ShowingSummary)return;
-  CheckEditorSpeed();ObserveWrongWay(Time.fixedDeltaTime);var taxi=session.taxi;var front=taxi.transform.position+taxi.transform.forward*2;
+  CheckEditorSpeed();var taxi=session.taxi;ObserveCentreLine(taxi,Time.time);ObserveWrongWay(Time.fixedDeltaTime);var front=taxi.transform.position+taxi.transform.forward*2;
   if(!initialized||Vector3.Distance(previous,front)>10){previous=front;initialized=true;entry=null;upstreamUturn.Reset();stops.Clear();return;}
   var upstream=upstreamUturn.Observe(session.world&&session.world.map!=null?session.world.map.editorDocument:null,session.traffic,previous,front,taxi.transform.forward,taxi.gameObject,()=>ids.Next("event"));
   if(upstream!=null){
+   centreReviewUntil=0;
    var incident=UturnEvent(upstream.id,upstream.observation,upstream.allowed);incident.junction=upstream.junction;incident.tripId=tripId;incident.occupied=session.jobs.trip.State==TripState.OnTrip;incident.assisted=session.assisted&&session.assisted.Active;incident.speed=taxi.body.velocity.magnitude;incident.seconds=(float)session.business.ledger.Elapsed;ledger.RecordIncident(incident);
    if(!upstream.allowed&&session.manners)session.manners.Deduct("redmovement"+upstream.junction,12,"유턴 조건 위반",5);
    if(upstream.yieldViolated&&session.manners)session.manners.Deduct("yield"+upstream.junction,8,"유턴 양보 위반",5);
@@ -79,7 +108,7 @@ public partial class DrivingLaw : MonoBehaviour {
    if(right||uturn||left&&!holdLeft||through){
     LawEvent e;
     if(right){var now=session.traffic.Observe(entry.junction,entry.axis,entry.sign,entry.direction,taxi.gameObject);now.forward=entry.observed.forward;now.dedicated=entry.observed.dedicated;now.right=entry.observed.right;if(ambientLaw)now.pedestrian=entry.pedestrianConflict||walkers.LawCrossingConflict(entry.junction,front,front+taxi.transform.forward*2)?PedestrianState.Crossing:PedestrianState.None;e=LawEvaluator.RightTurn(entry.id,Day,now,entry.stopped,settings,entry.pedestrianYield||(entry.stopped&&entry.observed.pedestrian!=PedestrianState.None&&entry.observed.pedestrian!=PedestrianState.Unknown));}
-    else if(uturn){e=UturnEvent(entry.id,entry.observed,entry.uturnAllowed);}
+    else if(uturn){e=UturnEvent(entry.id,entry.observed,entry.uturnAllowed);if(!entry.uturnAllowed&&session.manners)session.manners.Deduct("redmovement"+entry.junction.name,12,"유턴 조건 위반",5);}
     else {e=LawEvaluator.Signal(entry.id,Day,entry.observed,left,entry.left,settings);if(left&&!entry.edited&&entry.junction.leftTurnMode==LeftTurnMode.Permissive)e.rules[0].verdict=!entry.observed.known||entry.observed.forward!=SignalColor.Red?LawVerdict.Deferred:LawVerdict.Violation;}
     var situation=session.GetComponent<RightTurnSituation>();if(right&&situation&&situation.Active&&situation.junction==entry.junction)e.scenario="R"+situation.variant;
     e.junction=entry.junction.name;e.tripId=tripId;e.occupied=session.jobs.trip.State==TripState.OnTrip;e.assisted=session.assisted.Active;e.speed=taxi.body.velocity.magnitude;e.seconds=(float)session.business.ledger.Elapsed;

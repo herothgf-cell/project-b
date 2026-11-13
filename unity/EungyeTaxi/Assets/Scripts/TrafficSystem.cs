@@ -203,7 +203,7 @@ public partial class TrafficSystem : MonoBehaviour {
         return false;
     }
     public void Request(TrafficCar car,TrafficStop stop){if(!stop.junction.requests.ContainsKey(car))stop.junction.requests[car]=Time.time;}
-    public void Build(MapData map, bool spawnCars) {
+    public void Build(MapData map, bool spawnCars,CentreLineCrossing centreLines=null) {
         roadMap=map;signalRecall=map.mapId=="pvp-city-a";if(map.editorDocument!=null){editorGraph=new HdRoadGraph(map);editorSpeedRules=System.Array.Exists(map.editorDocument.facilities,f=>f.kind=="sign"&&f.rule&&f.type=="제한속도");}
         authoredMerges=NativeTrafficMergePolicy.Supports(map)?new NativeTrafficMergePolicy(this,map,editorGraph??new HdRoadGraph(map)):null;
         mainDirection = (map.targets[1].V() - map.targets[0].V()).normalized;
@@ -226,7 +226,7 @@ public partial class TrafficSystem : MonoBehaviour {
             if(map.hybrid){j.facility=configured[i];j.signalized=j.facility.signalMode>0;if(j.facility.approaches.Length>0){j.halfWidth=new[]{0f,0f};foreach(var a in j.facility.approaches){var d=new Vector3(a.dx,0,a.dz).normalized;int axis=Mathf.Abs(Vector3.Dot(d,AxisDirection(j,0)))>.7f?0:1;j.halfWidth[axis]=Mathf.Max(j.halfWidth[axis],a.width*.5f);}for(int axis=0;axis<2;axis++){j.halfWidth[axis]=Mathf.Max(3,j.halfWidth[axis]);j.laneCount[axis]=Mathf.Max(1,Mathf.RoundToInt(j.halfWidth[axis]/3.5f));}}}
             if(map.editorDocument!=null){j.editorProgram=System.Array.Find(map.editorDocument.signals,p=>p.junctionId==j.name);foreach(var f in map.editorDocument.facilities){if(f.junctionId!=j.name)continue;int k=f.axis*2+(f.sign>0?0:1);var dir=AxisDirection(j,f.axis)*f.sign;float distance=Vector3.Dot(j.center-f.Position,dir);if(f.kind=="stopLine")j.editorStops[k]=distance;if(f.kind=="crosswalk")j.editorCrossings[k]=distance;}}junctions.Add(j);
         }
-        PaintRoads(map);
+        PaintRoads(map,centreLines);
         foreach(var junction in junctions) {
             if(junction.facility!=null&&junction.facility.approaches.Length>0){foreach(var a in junction.facility.approaches){var d=new Vector3(a.dx,0,a.dz).normalized;int axis=Mathf.Abs(Vector3.Dot(d,AxisDirection(junction,0)))>.7f?0:1;AddApproach(junction,d,a.width*.5f,junction.halfWidth[1-axis]);}continue;}
             for(int axis=0;axis<2;axis++) for(int sign=-1;sign<=1;sign+=2) {
@@ -483,8 +483,11 @@ public partial class TrafficSystem : MonoBehaviour {
         var car=new GameObject("Traffic car " + index).AddComponent<TrafficCar>(); car.transform.SetParent(transform);
         car.Initialize(this,route,distance,index); cars.Add(car);return car;
     }
-    void PaintRoads(MapData map) {
-        RoadPaintGeometry.Paint(map,junctions,(name,p,dir,width,length,isYellow)=>Mark(name,p,dir,width,length,isYellow?yellow:white));
+    void PaintRoads(MapData map,CentreLineCrossing centreLines) {
+        RoadPaintGeometry.Paint(map,junctions,(name,p,dir,width,length,isYellow)=>{
+            if(isYellow&&name=="Centre line")centreLines?.Add(p-dir*(length*.5f+.04f),p+dir*(length*.5f+.04f));
+            Mark(name,p,dir,width,length,isYellow?yellow:white);
+        });
         ReviewedLaneLayout.Paint(map,(name,p,dir,width,length,isYellow)=>Mark(name,p,dir,width,length,isYellow?yellow:white));
         UturnRoadMarkings.Paint(map,(name,p,dir,width,length,isYellow)=>Mark(name,p,dir,width,length,isYellow?yellow:white));
     }

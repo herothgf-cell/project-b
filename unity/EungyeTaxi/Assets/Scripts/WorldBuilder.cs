@@ -3,6 +3,7 @@ using UnityEngine;
 [System.Serializable] public class SceneOverrides {public string[] hiddenBuildings;}
 public class WorldBuilder : MonoBehaviour {
     public MapData map;
+    public CentreLineCrossing CentreLines {get;private set;}
     public static System.Action<Material> MaterialCreated;
     public static Material Mat(string name, Color c) {
         var m = new Material(Shader.Find("Standard")); m.name=name; m.color=c; m.SetFloat("_Glossiness",.12f); if(MaterialCreated!=null)MaterialCreated(m); return m;
@@ -47,7 +48,8 @@ public class WorldBuilder : MonoBehaviour {
             AppendRoad(road,roadBatches);
         }
         RenderBatches(roadBatches,"도로 표면",asphalt);if(collisions&&map.editorDocument!=null)foreach(var r in map.roads){if(!r.id.StartsWith("editor:")||!System.Array.Exists(r.points,p=>p.elevation>.001f))continue;var vertices=new List<Vector3>();var faces=new List<int>();for(int i=1;i<r.points.Length;i++){var a=r.points[i-1].V(.045f);var b=r.points[i].V(.045f);var side=TrafficSystem.Right((b-a).normalized)*r.width*.5f;int n=vertices.Count;vertices.AddRange(new[]{a-side,b-side,b+side,a+side});faces.AddRange(new[]{n,n+1,n+2,n,n+2,n+3});}var mesh=new Mesh();mesh.SetVertices(vertices);mesh.SetTriangles(faces,0);mesh.RecalculateNormals();var collider=new GameObject("사용자 높이 차로 충돌 "+r.id);collider.transform.SetParent(transform);collider.AddComponent<MeshCollider>().sharedMesh=mesh;}
-        if(decorations&&map.HasHd)HdRouteTrial.DrawMarkings(map,transform);
+        CentreLines=decorations&&map.mapId=="eungye"?new CentreLineCrossing():null;
+        if(decorations&&map.HasHd)HdRouteTrial.DrawMarkings(map,transform,CentreLines);
         if(decorations)ReviewedRoadFacilities.Draw(map,transform,collisions);
         if(includeGeometry)foreach(var b in map.buildings) {
             if(SceneBuildingVisibility.Hidden(map,b.id)){Debug.Log("PROVISIONAL_BUILDING_HIDDEN "+b.id+" · 원본 보존 / 생성 차로 겹침 검토 대기");continue;}

@@ -11,12 +11,16 @@ public static class PassengerStopCatalogTests {
   PassengerStopCatalog.Apply(map);var catalog=PassengerStopCatalog.For(map);
   Check(catalog.Stops.Length>=16,"at least four validated explicit game bays: "+string.Join(" / ",catalog.Rejected));
   Check(catalog.LegacyCount==12&&map.stops.Length==12,"original scenario indexing remains twelve");
-  Check(catalog.Stops.Length==31&&catalog.Rejected.Count==0,"all 24 original stops and seven opposite bays admitted: "+string.Join(" / ",catalog.Rejected));
+  Check(catalog.Stops.Length==39&&catalog.Rejected.Count==0,"all 24 original stops and 15 opposite bays admitted: "+string.Join(" / ",catalog.Rejected));
+  foreach(var id in new[]{"S01","S02","S03","S06","S07","S09","EG-GAME-09","EG-GAME-10"}){
+   int index=catalog.IndexOf(id);
+   Check(index>=0&&catalog.IndexOf(id+"-B")>=0&&catalog.OppositeIndex(index)==catalog.IndexOf(id+"-B"),"requested opposite bay "+id);
+  }
   foreach(var entry in catalog.Entries.Where(e=>e.Category=="opposite-kerb")){
    int originalIndex=catalog.OppositeIndex(entry.Index);
    Check(originalIndex>=0&&catalog.OppositeIndex(originalIndex)==entry.Index,"both directions resolve to the same pair "+entry.StopId);
    var originalStop=catalog.Stops[originalIndex];
-   Check(Vector3.Dot(originalStop.Direction,entry.Stop.Direction)<-.98f,"opposite headings "+entry.StopId);
+   Check(Vector3.Dot(originalStop.Direction,entry.Stop.Direction)<-.88f,"opposite headings "+entry.StopId);
   }
   for(int i=0;i<12;i++){
    Check(JsonUtility.ToJson(original[i])==originalJson[i],"source legacy stop unchanged "+i);

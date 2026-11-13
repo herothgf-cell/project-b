@@ -172,7 +172,7 @@ public class HdRouteTrial : MonoBehaviour {
   for(int i=0;i<5;i++)if(GUI.Button(new Rect(28+i*151,y+36,145,30),"F"+(6+i)+" "+(i==4?"차로 변경":(i<2?"A ":"B ")+(i%2==0?"좌회전":"우회전"))))Select(i);
   GUI.Label(new Rect(28,y+72,760,55),"H: 내비 경로 보조 조향 · ↑/↓/Space: 직접 가감속 · R: 현재 시험 재시작\n초록 도착점에 직접 정차하세요. 곁도로 자료는 회전 직후 끝납니다. 신호·일반 차량 운영은 이 시험에서 제외됩니다.",style);
  }
- public static void DrawMarkings(MapData map,Transform parent){
+ public static void DrawMarkings(MapData map,Transform parent,CentreLineCrossing centreLines=null){
   var white=WorldBuilder.Mat("HD white",new Color(.95f,.94f,.87f));var yellow=WorldBuilder.Mat("HD yellow",new Color(1,.72f,.1f));var blue=WorldBuilder.Mat("HD blue",new Color(.12f,.4f,1));
   var vertices=new[]{new List<Vector3>(),new List<Vector3>(),new List<Vector3>()};var triangles=new[]{new List<int>(),new List<int>(),new List<int>()};
   var roadsideMask=new LocalRoadSurfaceMask(map);var authoredMask=new AuthoredJunctionPaintMask(map);var longitudinalMask=new LongitudinalJunctionPaintMask(map);var stopMask=new ReplacedStopLineMask(map);var uturns=UturnRoadMarkings.Build(map);
@@ -199,6 +199,7 @@ public class HdRouteTrial : MonoBehaviour {
     if(crossingLine&&authoredMask.CrossingBand((a+b)*.5f,Vector3.Distance(a,b)*.5f+.19f))continue;
     if(editedYellow&&authoredMask.Covers((a+b)*.5f))continue;
     if(roadside&&roadsideMask.CoversTransverse((a+b)*.5f,(b-a).normalized))continue;
+    if(color==1&&mark.kind=="501"&&!dashed)centreLines?.Add(a,b);
     var right=TrafficSystem.Right((b-a).normalized);int strokes=mark.type=="121"?2:1;
     for(int stroke=0;stroke<strokes;stroke++){float offset=strokes==2?(stroke==0?-.11f:.11f):0;float half=strokes==2?.055f:.075f;var shift=right*offset;var side=right*half;int k=vertices[color].Count;
      vertices[color].AddRange(new[]{a+shift-side,b+shift-side,b+shift+side,a+shift+side});triangles[color].AddRange(new[]{k,k+1,k+2,k,k+2,k+3});

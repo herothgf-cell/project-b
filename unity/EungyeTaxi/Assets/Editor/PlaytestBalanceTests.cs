@@ -41,6 +41,13 @@ public static class PlaytestBalanceTests {
   var root=new GameObject("balance wrong-way regression");
   try{
    var law=root.AddComponent<DrivingLaw>();var observe=typeof(DrivingLaw).GetMethod("ObserveWrongWay");
+   var lines=new CentreLineCrossing();
+   lines.Add(new Vector3(0,0,0),new Vector3(0,0,8));
+   lines.Add(new Vector3(0,0,12),new Vector3(0,0,20));
+   Check(lines.Crossed(new Vector3(1,0,4),new Vector3(-1,0,4)),"short movement across a painted centreline is detected without wrong-way duration");
+   Check(!lines.Crossed(new Vector3(1,0,10),new Vector3(-1,0,10)),"unpainted U-turn opening does not count as centreline crossing");
+   Check(!lines.Crossed(new Vector3(1,0,4),new Vector3(1,0,6)),"normal parallel driving does not cross");
+   Check(!lines.Crossed(new Vector3(4,0,4),new Vector3(-4,0,4)),"technical reposition does not count as centreline crossing");
    Check(observe!=null,"directed-road wrong-way observer exists");
    if(observe!=null){
     var s=root.AddComponent<DriveSession>();s.taxi=root.AddComponent<TaxiController>();s.taxi.body=root.AddComponent<Rigidbody>();s.jobs=root.AddComponent<PassengerJobs>();s.jobs.nav=root.AddComponent<RoadNavigation>();s.business=root.AddComponent<BusinessProgress>();s.business.ledger=new EconomyLedger(PrototypeSettings.ForThreeDays());s.manners=root.AddComponent<DrivingManners>();s.manners.session=s;s.law=law;law.session=s;
@@ -68,6 +75,21 @@ public static class PlaytestBalanceTests {
     s.jobs.nav.hd=new HdRoadGraph(new MapData{hdEdges=new[]{new HdEdge{id="join:uturn",turn=-2,next=new int[0],points=new[]{new MapPoint{x=0,z=0},new MapPoint{x=0,z=200}}}}});for(int i=0;i<8;i++)observe.Invoke(law,new object[]{.5f});
     Check(law.ledger.Count==0,"authored U-turn connector never classified as wrong-way lane");
     var map=new MapData{hdEdges=new[]{new HdEdge{id="road",next=new int[0],points=new[]{new MapPoint{x=0,z=0},new MapPoint{x=0,z=200}}}}};s.jobs.nav.hd=new HdRoadGraph(map);s.world=root.AddComponent<WorldBuilder>();s.world.map=map;s.jobs.session=s;s.taxi.body.velocity=Vector3.zero;root.transform.forward=Vector3.forward;
+    typeof(WorldBuilder).GetProperty("CentreLines").SetValue(s.world,lines);
+    var observeCentre=typeof(DrivingLaw).GetMethod("ObserveCentreLine",BindingFlags.Instance|BindingFlags.NonPublic);
+    var initialized=typeof(DrivingLaw).GetField("initialized",BindingFlags.Instance|BindingFlags.NonPublic);
+    foreach(bool turn in new[]{false,true}){
+     law.ResetObservation();law.ledger=new LawLedger();s.manners.BeginRide();
+     root.transform.position=new Vector3(1,0,4);root.transform.forward=Vector3.left;
+     observeCentre.Invoke(law,new object[]{s.taxi,1f});initialized.SetValue(law,true);
+     root.transform.position=new Vector3(-1,0,4);
+     observeCentre.Invoke(law,new object[]{s.taxi,1.1f});
+     if(turn)root.transform.forward=Vector3.right;
+     observeCentre.Invoke(law,new object[]{s.taxi,turn?1.2f:3f});
+     observeCentre.Invoke(law,new object[]{s.taxi,5f});
+     Check(law.ledger.Count==1&&law.ledger.TotalScore==(turn?80:90)&&s.manners.ledger.Score==(turn?88:90),turn?"actual marked-line U-turn deducts driving and manner once":"actual centreline crossing deducts driving and manner once");
+    }
+    law.ResetObservation();typeof(WorldBuilder).GetProperty("CentreLines").SetValue(s.world,null);root.transform.position=new Vector3(0,0,100);root.transform.forward=Vector3.forward;
     s.jobs.stops=new[]{new MapStop{laneEdge=0,laneAt=50,dx=0,dz=1},new MapStop{laneEdge=0,laneAt=150,dx=0,dz=1},new MapStop{laneEdge=0,laneAt=150,dx=0,dz=1}};s.jobs.current=new JobOffer{pickup=0,drop=1,timingPolicyVersion=1,urgency=2};s.jobs.trip.Accept(5000,300);s.jobs.trip.Board();float extra,remaining;int fare;
     Check(s.jobs.PreviewPassengerChange(2,false,out extra,out fare,out remaining)&&extra==0&&remaining==330,"equal-distance destination change grants only thirty-second stop margin without minimum deadline windfall");
    }

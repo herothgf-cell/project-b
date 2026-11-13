@@ -51,7 +51,7 @@ public class DriveSession : MonoBehaviour {
         signals=taxi.gameObject.AddComponent<TaxiSignals>();
         assisted=taxi.gameObject.AddComponent<AssistedDriveController>();assisted.Initialize(taxi,world.map);taxi.assistance=assisted;
         bool driveTest=System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-smokeTest")>=0;
-        traffic=new GameObject("Traffic simulation").AddComponent<TrafficSystem>();traffic.Build(world.map,!driveTest);
+        traffic=new GameObject("Traffic simulation").AddComponent<TrafficSystem>();traffic.Build(world.map,!driveTest,world.CentreLines);
         Debug.Log("STARTUP_TIMING roads_taxi_traffic_ms="+stageTimer.ElapsedMilliseconds);loadingStage="보행자와 영업 상태를 준비하고 있습니다";
         yield return null;stageTimer.Restart();
         if(world.map.hybrid){ambientPedestrians=new GameObject("일반 보행자").AddComponent<AmbientPedestrianSystem>();ambientPedestrians.Initialize(this);traffic.ambientPedestrians=ambientPedestrians;}

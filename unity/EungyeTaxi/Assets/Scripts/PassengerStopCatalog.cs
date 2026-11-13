@@ -7,6 +7,7 @@ using UnityEngine;
 [Serializable] public sealed class PassengerStopCandidate {
  public string stopId,name,category,evidenceStatus,evidence,laneId,sidewalkId,pairWith;
  public float laneAt,x,z,dx,dz,bayOffset,passengerX,passengerZ;
+ public bool reviewedOpposite,compactBay;
 }
 [Serializable] public sealed class PassengerStopCatalogData {
  public int schema;public string mapId,mapRevision,revision;public PassengerStopCandidate[] candidates;
@@ -52,8 +53,8 @@ public sealed partial class PassengerStopCatalog {
    if(!Validate(map,graph,geometry,c,out stop,out reason)){result.Rejected.Add(c.stopId+": "+reason);continue;}
    int opposite=string.IsNullOrEmpty(c.pairWith)?-1:result.IndexOf(c.pairWith);
    if(!string.IsNullOrEmpty(c.pairWith)){
-    if(opposite<0||!ValidOpposite(map,combined[opposite],stop)){result.Rejected.Add(c.stopId+": invalid opposite approach");continue;}
-    if(result.Entries.Any(e=>e.Category=="opposite-kerb"&&FlatDistance(e.Stop.Kerb,stop.Kerb)<8)){result.Rejected.Add(c.stopId+": overlapping opposite bays");continue;}
+    if(opposite<0||!ValidOpposite(map,combined[opposite],stop,c.reviewedOpposite)){result.Rejected.Add(c.stopId+": invalid opposite approach");continue;}
+    if(result.admitted.Any(a=>a.pairWith==c.pairWith||Vector3.Dot(Dir(a),stop.Direction)>.85f&&FlatDistance(Pos(a)+TrafficSystem.Right(Dir(a))*a.bayOffset,stop.Kerb)<22)){result.Rejected.Add(c.stopId+": overlapping opposite bays");continue;}
    }else if(combined.Any(s=>FlatDistance(s.Kerb,stop.Kerb)<50)){result.Rejected.Add(c.stopId+": nearby stop");continue;}
    bool routes=true;foreach(var legacy in map.stops){if(graph.Route(legacy.laneEdge,legacy.laneAt,stop.laneEdge,stop.laneAt)==null||graph.Route(stop.laneEdge,stop.laneAt,legacy.laneEdge,legacy.laneAt)==null){routes=false;break;}}
    if(!routes){result.Rejected.Add(c.stopId+": disconnected directed approach/exit");continue;}
@@ -69,9 +70,15 @@ public sealed partial class PassengerStopCatalog {
   }
   result.Stops=combined.ToArray();result.RepairLegacyS09Sidewalk(map);result.InstallAlternatives(map,graph);ProjectMapScene.InvalidateAreaIndex(map);
  }
+ // Wide bays extend past the normal four-metre lane snapping radius.
+ internal static MapStop[] WideBays(MapData map){
+  if(!cache.TryGetValue(map,out var catalog))return Array.Empty<MapStop>();
+  return catalog.Entries.Where(e=>e.Category=="opposite-kerb"&&e.Stop.width>11).Select(e=>e.Stop).ToArray();
+ }
  public int OppositeIndex(int index){return oppositeStops.TryGetValue(index,out int opposite)?opposite:-1;}
- static bool ValidOpposite(MapData map,MapStop original,MapStop opposite){
+ static bool ValidOpposite(MapData map,MapStop original,MapStop opposite,bool reviewed){
   var offset=opposite.V()-original.V();
+  if(reviewed)return Vector3.Dot(original.Direction,opposite.Direction)<-.88f&&FlatDistance(original.V(),opposite.V())<=175;
   if(Vector3.Dot(original.Direction,opposite.Direction)>-.98f||FlatDistance(original.V(),opposite.V())>30)return false;
   if(Vector3.Dot(offset,TrafficSystem.Right(original.Direction))>=-2)return false;
   foreach(var road in map.roads){
@@ -107,37 +114,40 @@ public sealed partial class PassengerStopCatalog {
    }
   }
   var pos=path.Position(c.laneAt);var dir=path.Tangent(c.laneAt);var right=TrafficSystem.Right(dir);
-  if(c.laneAt<15||c.laneAt>path.length-15||FlatDistance(pos,Pos(c))>.3f||Vector3.Dot(dir,Dir(c))<.995f){reason="approach geometry changed";return false;}
+  float bayHalf=c.compactBay?6:10,walkHalf=c.compactBay?9:14,connectorAt=c.compactBay?8:13;
+  float clearance=c.compactBay?10:15;
+  if(c.laneAt<clearance||c.laneAt>path.length-clearance||FlatDistance(pos,Pos(c))>.3f||Vector3.Dot(dir,Dir(c))<.995f){reason="approach geometry changed";return false;}
   var bay=pos+right*c.bayOffset;var passenger=new Vector3(c.passengerX,.14f,c.passengerZ);
-  if(c.bayOffset<3.1f||c.bayOffset>3.9f||FlatDistance(passenger,bay+right*2.4f)>.1f){reason="invalid bay/sidewalk dimensions";return false;}
-  if(g.FootprintBlocked(ProjectMapScene.Rectangle(bay,dir,2.8f,20))||g.FootprintBlocked(ProjectMapScene.Rectangle(passenger,dir,1.9f,28))||g.FootprintBlocked(ProjectMapScene.Rectangle(pos+right*c.bayOffset*.5f,dir,c.bayOffset+3,22))){reason="polygon obstacle overlap";return false;}
-  float lo=2,hi=c.bayOffset+3.35f;foreach(float along in new[]{-13f,13})if(g.FootprintBlocked(ProjectMapScene.Rectangle(pos+dir*along+right*(lo+hi)*.5f,dir,hi-lo,2))){reason="connector polygon overlap";return false;}
+  if(c.bayOffset<3.1f||c.bayOffset>(c.reviewedOpposite?12f:3.9f)||FlatDistance(passenger,bay+right*2.4f)>.1f){reason="invalid bay/sidewalk dimensions";return false;}
+  if(g.FootprintBlocked(ProjectMapScene.Rectangle(bay,dir,2.8f,2*bayHalf))||g.FootprintBlocked(ProjectMapScene.Rectangle(passenger,dir,1.9f,2*walkHalf))||g.FootprintBlocked(ProjectMapScene.Rectangle(pos+right*c.bayOffset*.5f,dir,c.bayOffset+3,2*(bayHalf+1)))){reason="polygon obstacle overlap";return false;}
+  float lo=c.bayOffset>4?c.bayOffset-1.45f:2,hi=c.bayOffset+3.35f;foreach(float along in new[]{-connectorAt,connectorAt})if(g.FootprintBlocked(ProjectMapScene.Rectangle(pos+dir*along+right*(lo+hi)*.5f,dir,hi-lo,2))){reason="connector polygon overlap";return false;}
   foreach(var j in map.junctionRules??new HybridJunctionRule[0])if(FlatDistance(bay,j.V())<38){reason="junction clearance";return false;}
   foreach(var crossing in map.osmCrossings??new OsmCrossing[0])if(FlatDistance(bay,new Vector3(crossing.x,0,crossing.z))<25){reason="crosswalk clearance";return false;}
   if(map.editorDocument!=null)foreach(var f in map.editorDocument.facilities)if((f.kind=="crosswalk"||f.kind=="stopLine")&&FlatDistance(bay,f.Position)<25){reason="edited crossing/stop line";return false;}
-  foreach(float along in new[]{-10f,-8,-6,-4,-2,0,2,4,6,8,10}){
+  for(float along=-bayHalf;along<=bayHalf;along+=2){
    if(Vector3.Dot(path.Tangent(c.laneAt+along),dir)<.995f){reason="bend";return false;}
    foreach(float across in new[]{-1.35f,0,1.35f}){var p=bay+dir*along+right*across;if(g.OnRoad(p,-.03f)||g.Blocked(p)){reason="bay obstructed";return false;}}
   }
   Func<Vector3,bool> bounds=p=>p.x>3&&p.z>3&&p.x<map.width-3&&p.z<map.depth-3;
-  foreach(float along in new[]{-14f,-12,-10,-8,-4,0,4,8,10,12,14})foreach(float across in new[]{-.9f,0,.9f}){var p=passenger+dir*along+right*across;if(!bounds(p)||g.OnRoad(p,-.03f)||g.Blocked(p)){reason="sidewalk extension obstructed";return false;}}
-  bool connects=false;foreach(float along in new[]{-12f,12})foreach(float across in new[]{2f,3,4,5})if(ProjectMapScene.OnArea(map,pos+dir*along+right*across,true))connects=true;
+  foreach(float along in c.compactBay?new[]{-9f,-8,-6,-3,0,3,6,8,9}:new[]{-14f,-12,-10,-8,-4,0,4,8,10,12,14})foreach(float across in new[]{-.9f,0,.9f}){var p=passenger+dir*along+right*across;if(!bounds(p)||g.OnRoad(p,-.03f)||g.Blocked(p)){reason="sidewalk extension obstructed";return false;}}
+  bool connects=false;foreach(float along in new[]{1-connectorAt,connectorAt-1})foreach(float across in (c.bayOffset<=4?new[]{2f,3,4,5,c.bayOffset+1,c.bayOffset+2}:new[]{lo,(lo+hi)*.5f,c.bayOffset+1,c.bayOffset+2}))if(ProjectMapScene.OnArea(map,pos+dir*along+right*across,true))connects=true;
   if(!connects){reason="existing sidewalk removed";return false;}
-  foreach(float along in new[]{-11f,-8,0,8,11})foreach(float across in new[]{-1.5f,0,.5f,1,1.5f,2,2.5f,c.bayOffset,c.bayOffset+1.5f}){var p=pos+dir*along+right*across;if(!bounds(p)||g.Blocked(p)){reason="entry obstruction";return false;}}
-  foreach(float along in new[]{-14f,-13,-12,12,13,14})foreach(float across in new[]{2f,3,4,5,c.bayOffset+3.35f}){var p=pos+dir*along+right*across;if(!bounds(p)||g.OnRoad(p,-.03f)||g.Blocked(p)){reason="sidewalk connector obstructed";return false;}}
+  foreach(float along in new[]{-bayHalf-1,2-bayHalf,0,bayHalf-2,bayHalf+1})foreach(float across in new[]{-1.5f,0,.5f,1,1.5f,2,2.5f,c.bayOffset,c.bayOffset+1.5f}){var p=pos+dir*along+right*across;if(!bounds(p)||g.Blocked(p)){reason="entry obstruction";return false;}}
+  foreach(float along in new[]{-connectorAt-1,-connectorAt,1-connectorAt,connectorAt-1,connectorAt,connectorAt+1})foreach(float across in (c.bayOffset<=4?new[]{2f,3,4,5,hi}:new[]{lo,Mathf.Lerp(lo,hi,.25f),Mathf.Lerp(lo,hi,.5f),Mathf.Lerp(lo,hi,.75f),hi})){var p=pos+dir*along+right*across;if(!bounds(p)||g.OnRoad(p,-.03f)||g.Blocked(p)){reason="sidewalk connector obstructed";return false;}}
   stop=new MapStop{name=c.name,x=pos.x,z=pos.z,elevation=pos.y,dx=dir.x,dz=dir.z,width=3+2*c.bayOffset,laneEdge=edge,laneAt=localAt,graphStop=true,hasPassengerAnchor=true,passengerAnchor=passenger};return true;
  }
  static MapPoint P(Vector3 p){return new MapPoint{x=p.x,z=p.z,elevation=p.y};}
  static MapArea Walk(Vector3 p,Vector3 dir,float width,float length,string id){var ring=ProjectMapScene.Rectangle(p,dir,width,length);return new MapArea{kind="sidewalk",name="게임 승하차 보도",evidence=id,height=.14f,points=ring,triangles=ProjectMapScene.Triangulate(ring)};}
  static void InstallBay(MapData map,PassengerStopCandidate c){
   var pos=Pos(c);var dir=Dir(c);var right=TrafficSystem.Right(dir);var roads=new List<MapRoad>(map.roads);
+  float cut=c.compactBay?7:11,walk=c.compactBay?18:28,connectorAt=c.compactBay?8:13;
   // This asphalt extension is fictional, painted and labelled in-game. The
   // outer lane remains the directed route anchor; stopping is in the pocket.
   roads.Add(new MapRoad{id="game-stop:"+c.stopId,name="게임 전용 승하차 포켓",width=c.bayOffset+3,lanes=1,oneWay=1,suppressPaint=true,points=new[]{P(pos+right*c.bayOffset*.5f-dir*7),P(pos+right*c.bayOffset*.5f+dir*7)}});
-  var areas=new List<MapArea>();foreach(var area in map.areas){if(area.kind!="sidewalk"){areas.Add(area);continue;}var pieces=Subtract(area.points,pos,dir,right,-11,11,-1.6f,c.bayOffset+1.45f);if(pieces.Count==1&&ReferenceEquals(pieces[0],area.points)){areas.Add(area);continue;}foreach(var ring in pieces){if(ring.Length<3)continue;try{areas.Add(new MapArea{kind=area.kind,name=area.name,evidence=area.evidence,height=area.height,points=ring,triangles=ProjectMapScene.Triangulate(ring)});}catch(ArgumentException){throw new InvalidOperationException("Game stop sidewalk cut failed: "+c.stopId);}}}
+  var areas=new List<MapArea>();foreach(var area in map.areas){if(area.kind!="sidewalk"){areas.Add(area);continue;}var pieces=Subtract(area.points,pos,dir,right,-cut,cut,-1.6f,c.bayOffset+1.45f);if(pieces.Count==1&&ReferenceEquals(pieces[0],area.points)){areas.Add(area);continue;}foreach(var ring in pieces){if(ring.Length<3)continue;try{areas.Add(new MapArea{kind=area.kind,name=area.name,evidence=area.evidence,height=area.height,points=ring,triangles=ProjectMapScene.Triangulate(ring)});}catch(ArgumentException){throw new InvalidOperationException("Game stop sidewalk cut failed: "+c.stopId);}}}
   // 1.9m continuous pedestrian strip, with 2m end connections outside asphalt.
-  areas.Add(Walk(pos+right*(c.bayOffset+2.4f),dir,1.9f,28,"game-stop:"+c.stopId));
-  float lo=2,hi=c.bayOffset+3.35f;foreach(float along in new[]{-13f,13})areas.Add(Walk(pos+dir*along+right*((lo+hi)*.5f),dir,hi-lo,2,"game-stop:"+c.stopId+":connector"));
+  areas.Add(Walk(pos+right*(c.bayOffset+2.4f),dir,1.9f,walk,"game-stop:"+c.stopId));
+  float lo=c.bayOffset>4?c.bayOffset-1.45f:2,hi=c.bayOffset+3.35f;foreach(float along in new[]{-connectorAt,connectorAt})areas.Add(Walk(pos+dir*along+right*((lo+hi)*.5f),dir,hi-lo,2,"game-stop:"+c.stopId+":connector"));
   map.roads=roads.ToArray();map.areas=areas.ToArray();
  }
  // Polygon difference from a convex rectangle, expressed as four disjoint
