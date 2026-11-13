@@ -3,6 +3,8 @@ public class TrafficCar : MonoBehaviour {
     public bool respawn=true;
     public Vector3 PhysicsPosition {get{return body?body.position:transform.position;}}
     public Quaternion PhysicsRotation {get{return body?body.rotation:transform.rotation;}}
+    public Vector3 StepVelocity {get;private set;}
+    public Vector3 StepAngularVelocity {get;private set;}
     public TrafficDriverProfile Profile {get;private set;}
     public string ProfileLabel {get{return Profile==null?"보통":Profile.Label;}}
     double lastLaneChangeCompleted=-100000;int observedLaneEdge=-1;
@@ -78,6 +80,7 @@ public class TrafficCar : MonoBehaviour {
         renderers=GetComponentsInChildren<Renderer>(); Place(initial);
     }
     public void Place(float position) {
+        StepVelocity=StepAngularVelocity=Vector3.zero;
         system.Release(this);released.Clear();stoppedAt=null;distance=position;speed=0;observedLaneEdge=-1;recycling=false;SetVisible(true);
         body.position=route.Position(distance);body.rotation=Quaternion.LookRotation(route.Tangent(distance));transform.SetPositionAndRotation(body.position,body.rotation);Physics.SyncTransforms();
     }
@@ -96,9 +99,12 @@ public class TrafficCar : MonoBehaviour {
         if(indicators!=null)for(int i=0;i<indicators.Length;i++)if(indicators[i])indicators[i].sharedMaterial=blinking&&(i%2==0?turn<0:turn>0)?indicatorOn:indicatorOff;
     }
     void SetVisible(bool value){if(hit)hit.enabled=value;if(renderers!=null)foreach(var r in renderers)if(r)r.enabled=value;}
-    public void Recycle(){if(distance>=route.length-.01f)completedRoutes++;system.Release(this);recycling=true;speed=0;SetVisible(false);body.position=new Vector3(-100,-100,-100);}
+    public void Recycle(){if(distance>=route.length-.01f)completedRoutes++;system.Release(this);recycling=true;speed=0;StepVelocity=StepAngularVelocity=Vector3.zero;SetVisible(false);body.position=new Vector3(-100,-100,-100);}
     void OnDisable(){if(system)system.Release(this);}
-    void FixedUpdate() {using(TrafficPerformanceProbe.Measure("TrafficCar.FixedUpdate"))Tick();}
+    void FixedUpdate() {
+        StepVelocity=StepAngularVelocity=Vector3.zero;
+        using(TrafficPerformanceProbe.Measure("TrafficCar.FixedUpdate"))Tick();
+    }
     // One conservative broad query skips dozens of narrow probes only when the
     // entire original swept sampling envelope contains no other body. Dense or
     // curved traffic still uses the unchanged per-pose collision checks below.
@@ -169,7 +175,16 @@ public class TrafficCar : MonoBehaviour {
         if(stopped&&!previouslyStopped)redStops++;
         if(previouslyStopped&&speed>.1f){departures++;previouslyStopped=false;}
         if(stopped)previouslyStopped=true;
-        body.MovePosition(route.Position(distance));body.MoveRotation(Quaternion.LookRotation(route.Tangent(distance)));
+        var nextPosition=route.Position(distance);
+        var nextRotation=Quaternion.LookRotation(route.Tangent(distance));
+        StepVelocity=(nextPosition-body.position)/Time.fixedDeltaTime;
+        var rotationDelta=nextRotation*Quaternion.Inverse(body.rotation);
+        var rotationVector=new Vector3(rotationDelta.x,rotationDelta.y,rotationDelta.z);
+        if(rotationDelta.w<0)rotationVector=-rotationVector;
+        float halfSine=rotationVector.magnitude;
+        if(halfSine>.00001f)
+            StepAngularVelocity=rotationVector*(2*Mathf.Atan2(halfSine,Mathf.Abs(rotationDelta.w))/(halfSine*Time.fixedDeltaTime));
+        body.MovePosition(nextPosition);body.MoveRotation(nextRotation);
         foreach(var lamp in brakeLights)lamp.sharedMaterial=speed<.2f||speed<previous?brakeOn:brakeOff;
         int currentTurn=CurrentTurn;bool blinking=currentTurn!=0&&Time.time%.8f<.4f;
         for(int i=0;i<indicators.Length;i++)indicators[i].sharedMaterial=blinking&&(i%2==0?currentTurn<0:currentTurn>0)?indicatorOn:indicatorOff;

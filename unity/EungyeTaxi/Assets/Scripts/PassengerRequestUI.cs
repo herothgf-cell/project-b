@@ -21,6 +21,8 @@ public class PassengerRequestUI : MonoBehaviour {
  public bool ResponseBlockedThisFrame {get{return responseBlockedFrame==Time.frameCount;}}
  public void BlockResponseThisFrame(){responseBlockedFrame=Time.frameCount;}
  PassengerRequestSchedule schedule;int active=-1,boardingLawCount;float initialDistance,stopSeconds;bool finished,lostItem,legacy;
+ float signalWaitSeconds;
+ bool signalWaitUsed;
  PassengerRequestObservation Current {get{return active>=0&&active<observations.Count?observations[active]:null;}}
  public PassengerRequest request {get{return Current?Current.request:empty;}}
  public bool SuppressFollowupDialogue {get{return observations.Exists(o=>o&&o.SuppressFollowupDialogue);}}
@@ -33,7 +35,7 @@ public class PassengerRequestUI : MonoBehaviour {
  public string Summary {get{var text=new List<string>();for(int i=0;i<observations.Count;i++)if(observations[i])text.Add((i+1)+". "+observations[i].request.ResponseText()+" ["+RequestEffectValue(observations[i]).ToString("+0.###;-0.###;0",System.Globalization.CultureInfo.InvariantCulture)+"]");if(schedule!=null)foreach(var slot in schedule.Capture().slots)if(!slot.presented)text.Add(slot.kind+" · 미발생 중립");if(text.Count==0)text.Add("요청 없음");if(lostItem&&finished)text.Add("하차 후 사건 "+session.law.tripId+":lost-item · 지갑 발견 → 보관·신고 절차 안내 (텍스트 사건)");return string.Join("\n",text.ToArray())+"\n요청 합계 "+TotalSatisfactionDelta.ToString("+0;-0;0");}}
  public bool LawClear {get{return LawLedger.ViolationCount(session.law.ledger.Events,boardingLawCount)==0;}}
  public void ExemptSystemRoute(string reason){foreach(var o in observations)if(o)o.SystemRouteReason=reason;}
- void Clear(){foreach(var o in observations)if(o){if(Application.isPlaying)Destroy(o);else DestroyImmediate(o);}observations.Clear();active=-1;schedule=null;stopSeconds=0;finished=lostItem=legacy=false;smallTalkCooldown=smallTalkVisible=0;smallTalkReply="";chatHistory.Restore(null,null);empty.Restore(new PassengerRequestSnapshot{resolved=true,response="요청 없음"});}
+ void Clear(){foreach(var o in observations)if(o){if(Application.isPlaying)Destroy(o);else DestroyImmediate(o);}observations.Clear();active=-1;schedule=null;stopSeconds=signalWaitSeconds=0;signalWaitUsed=false;finished=lostItem=legacy=false;smallTalkCooldown=smallTalkVisible=0;smallTalkReply="";chatHistory.Restore(null,null);empty.Restore(new PassengerRequestSnapshot{resolved=true,response="요청 없음"});}
  PassengerRequestObservation NewObservation(){var o=gameObject.AddComponent<PassengerRequestObservation>();o.enabled=false;o.session=session;o.request.Content=session.jobs.PassengerContent;return o;}
  public static RequestKind? Representative(PassengerType type,int variant){switch(type){case PassengerType.Comfort:return RequestKind.Comfort;case PassengerType.Hurried:return variant==0?RequestKind.Eta:RequestKind.OnTime;case PassengerType.RouteChecking:return variant==0?RequestKind.LargeRoad:variant==1?RequestKind.ShortRoad:RequestKind.RouteAdvice;case PassengerType.Errand:return RequestKind.ViaStop;case PassengerType.PrecisionStop:return RequestKind.SafeStop;default:return null;}}
  public RequestKind[] EligibleRequests(){
@@ -120,8 +122,11 @@ public class PassengerRequestUI : MonoBehaviour {
   if(schedule!=null){
    if(Current&&Current.request.Resolved)schedule.Responded();
    float moving=session.taxi.ObservedVelocity.magnitude>.1f?Time.deltaTime:0;
-   int slot=schedule.Tick(moving,1-session.jobs.nav.remaining/initialDistance,SchedulePresentationAvailable,false);
-   if(slot>=0){var state=schedule.Capture().slots[slot];var o=NewObservation();observations[slot]=o;active=slot;o.BeginKind(state.kind);BlockResponseThisFrame();SyncBehaviorContext();session.business.SaveCheckpoint();}
+   if(stopSeconds>0&&session.jobs.ObservedSignalWait())signalWaitSeconds+=Time.deltaTime;
+   else {signalWaitSeconds=0;signalWaitUsed=false;}
+   bool longSignalWait=signalWaitSeconds>=10&&!signalWaitUsed;
+   int slot=schedule.Tick(moving,1-session.jobs.nav.remaining/initialDistance,SchedulePresentationAvailable,false,longSignalWait);
+   if(slot>=0){signalWaitUsed|=longSignalWait;var state=schedule.Capture().slots[slot];var o=NewObservation();observations[slot]=o;active=slot;o.BeginKind(state.kind);BlockResponseThisFrame();SyncBehaviorContext();session.business.SaveCheckpoint();}
   }
   foreach(var o in observations)if(o)o.Observe(!session.IsSimulationBot&&!PvpNativeLan.IsRemoteHuman(session)&&o==Current&&PresentationAvailable);
  }

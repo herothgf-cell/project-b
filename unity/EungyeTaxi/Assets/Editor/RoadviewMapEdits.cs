@@ -40,8 +40,8 @@ public static class RoadviewMapEdits {
   Check(map.editorDocument.facilities.Count(f=>f.id.StartsWith(Prefix)&&f.kind=="signalHead")==3,"three explicit generated head assignments");
   var paint=LaneDirectionPaint.Layout(map);foreach(string id in new[]{"A2218G610050:0","A2218G610051:0","A2218G610052:0"}){int edge=Array.FindIndex(map.hdEdges,e=>e.id==id);Check(paint.Any(a=>a.edgeIndex==edge&&a.turns==(id=="A2218G610050:0"?LaneDirectionPaint.Left:LaneDirectionPaint.Straight)),"actual native lane role painted "+id);}
   var midblock=map.editorDocument.facilities.Where(f=>f.junctionId=="J6480_2573"&&f.kind=="vehicleSignal").ToArray();Check(midblock.Length==2&&midblock.All(f=>f.type=="3구")&&midblock.Any(f=>f.id=="observed:commercial-midblock:east-signal")&&midblock.Any(f=>f.id=="observed:commercial-midblock:west-signal"),"both known midblock physical heads explicitly three");
-  var catalog=PassengerStopCatalog.For(map);Check(catalog.Stops.Length==24&&catalog.Rejected.Count==0,"all24 passenger stops preserved");
+  var catalog=PassengerStopCatalog.For(map);Check(catalog.Stops.Length>=24&&catalog.Rejected.Count==0,"all passenger stops admitted");
   var graph=new HdRoadGraph(map);int routes=0;foreach(var a in catalog.Stops)foreach(var b in catalog.Stops){if(a==b)continue;float distance;Check(PassengerStopCatalog.Reachable(graph,a,b,out distance),"directed route "+a.name+" to "+b.name);routes++;}
-  Debug.Log("ROADVIEW_MAP_OK nativeRoles=3 stops=24 directedRoutes="+routes+" content="+p.contentHash);
+  Debug.Log("ROADVIEW_MAP_OK nativeRoles=3 stops="+catalog.Stops.Length+" directedRoutes="+routes+" content="+p.contentHash);
  }
 }

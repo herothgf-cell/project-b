@@ -1,14 +1,24 @@
 # 최신 작업 이력
 
+은계 게임 코드·통합 실행본과 승객 현황 문서를 콘텐츠 관리 툴 표기 변경과 합쳤다. 통합/PvP 배포 해시와 지도 입력을 재검증했다. [병합 기록](2026-11-13-eungye-release-integration.md).
+
 ## 2026-11-13 콘텐츠 관리 툴 운전 만족도 표기
 
 법규·요청·선택지·미리보기의 M을 ‘운전 만족도’로 표시한다. 우회전 항목은 ‘함께 기록되는 운전 만족도’에서 감점을 편집한다. 툴·배포 검증 104개와 C# 설정 검증 통과. [변경·검증 기록](2026-11-13-content-tool-driving-satisfaction.md).
+
+## 2026-11-13 은계 영업 피드백
+
+[구현·검증·재현](2026-11-13-eungye-drive-feedback.md) · [승하차 지도 31곳](../content-design/images/eungye-pickup-map-2026-11-13.png). 왕복 2차선 정차 지점 7쌍, 3인칭 보조 영상 숨김, 교통차 충돌 속도 수정, 적색 대기 10초 요청 기회, 보행 시간 단축을 기본 통합 실행본에 반영했다. 정식 지도 r18·Strict 입력 문제 0, 선택 재수입 지도 2개 부재. 다음은 실제 은계 주행에서 승차 우회·반대편 하차와 보행 신호 체감 확인이다.
+
+## 2026-11-13 승객 다양화 기획 준비
+
+[현재 승객·요청·선택·효과 표](../content-design/2026-11-13-passenger-current-inventory.md) · [조사 기록](2026-11-13-passenger-inventory.md). 기본 프리셋30종 중29종 활성, 운행 요청14종과 선택 원문34행을 현재 기본 프로필로 대조했다. 공통/개별 효과와 비활성·텍스트 전용 기능을 구분. 다음은 이 표를 바탕으로 다양화 방향 논의. 게임/빌드/지도 변경 및 실행 검증 없음, 아래 배포·지역·필수 입력 상태 유지.
 
 최적화·중속 조향·설정 프리셋을 기본 `builds/EungyeTaxi/`에 통합했다. LAN v19, 양쪽 PC 전체 폴더 갱신 필요. [기본 배포 기록](2026-11-12-pvp-default-release.md). 다음은 실제 두 PC 수동 체감 확인이다.
 
 이 파일은 **현재 기준 + 최근 기록**만 둔다. 2026-11-10 이전 전체 원문은 [보관본](LATEST-archive-until-2026-11-09.md)에 있다. 프로젝트 전체 상태는 [CURRENT-STATE](../CURRENT-STATE.md)를 먼저 읽는다.
 
-## 현재 기준 (2026-11-12 점검)
+## 현재 기준 (2026-11-13 점검)
 
 PvP 정차 끊김 최적화는 [별도 검증본 작업](2026-11-12-pvp-stability-performance.md) 참조. 법규 CPU/GC 개선·평지 물리·최근접2차로120·예측/보간 검사 통과. 최적화와 후속 조향 개선을 기본 배포에 통합했으며 실제 제보한 호스트/참가 PC 수용은 미완료다.
 
@@ -17,9 +27,9 @@ PvP 호스트 렉 2차 최적화(같은 기록 후속 절): 내비 혼잡/제한
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
-| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 소스 `e7d84a6` · [좌회전 경로·시간80%](2026-11-12-junction-route-timing.md). 은계 r18, 기존 LAN 방 목록/HUD 포함 |
+| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 소스 `2f91166` · 은계 r18 · [11-13 영업 피드백](2026-11-13-eungye-drive-feedback.md) |
 | 통신 | LAN **v19**. 최적화·조향 통합 배포. 이전 v17/v18과 참가 불가, 양쪽 PC 같은 전체 실행 폴더 필요 |
-| 배포 검사 | 통합/PvP `VerifyOnly` 각각 종료0 · 143파일, 131,590,858바이트 · 이번 배포 설정/LAN 검사는 기본 배포 기록 참조 |
+| 배포 검사 | 통합/PvP `VerifyOnly` 각각 종료 0 · 배포 143파일, 131,600,169바이트 · 선택 로컬 프로필 1개 별도 검증 |
 | 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (Git, revision18·SHA256 496e1869…) · Strict 입력 문제0 · 선택 재수입 JSON2개 부재 |
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **main 병합·배포, 사람 검증 전** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V10 30장](../proposals/project-b-game-proposal-v10.pptx) · [반영 검토](../proposals/proposal-v10-review.md) · [Manual V10](../proposals/project-b-prototype-manual-v10.md) |

@@ -41,7 +41,7 @@ public static class RoadviewCorridorTests {
   Check(white>50&&dividers>100,"yellow keeps three physical lanes per direction and two internal dividers");Debug.Log("ROADVIEW_YELLOW_GEOMETRY_OK edges="+white+" dividers="+dividers);
  }
  static void SameStops(PassengerStopCatalog before,PassengerStopCatalog after){
-  Check(before.Stops.Length==24&&after.Stops.Length==24&&before.Rejected.Count==0&&after.Rejected.Count==0,"all24 admitted passenger stops");
+  Check(before.Stops.Length>=24&&before.Stops.Length==after.Stops.Length&&before.Rejected.Count==0&&after.Rejected.Count==0,"all admitted passenger stops preserved");
   for(int i=0;i<before.Stops.Length;i++)Check(JsonUtility.ToJson(before.Stops[i])==JsonUtility.ToJson(after.Stops[i]),"stop world position/direction/binding preserved: "+before.Stops[i].name);
  }
  public static void Validate(ProjectMapPackage original,RoadMapDocument candidate){
@@ -64,7 +64,7 @@ public static class RoadviewCorridorTests {
   int uturns=candidate.facilities.Count(f=>f.rule&&UturnMovement.IsCondition(f.type));Check(uturns==9,"nine existing U-turn conditions preserved");
   foreach(var prefix in new[]{"local:8017:","local:8074:","local:8131:","local:8032:","local:7975:","local:7918:"})Check(candidate.lanes.Any(l=>!l.disabled&&l.id.StartsWith(prefix)&&l.turn==0&&l.change==0),"yellow retains three lane families per direction: "+prefix);
   int services=candidate.scene.objects.Count(o=>o.enabled&&o.IsService);Check(services==original.document.scene.objects.Count(o=>o.enabled&&o.IsService),"all business service placements retained");
-  Debug.Log("ROADVIEW_CORRIDOR_OK green=1+1 yellow=3+3 sources=14 stops=24 directedRoutes="+routes+" uturnConditions="+uturns+" services="+services+" vehicleFootprintSamples="+footprint+" greenPaintStrokes="+paint+" yellowPaintStrokes="+yellowPaint+" graph=byte-identical source=immutable centresAndWidths=game-estimate");
+  Debug.Log("ROADVIEW_CORRIDOR_OK green=1+1 yellow=3+3 sources=14 stops="+stops.Stops.Length+" directedRoutes="+routes+" uturnConditions="+uturns+" services="+services+" vehicleFootprintSamples="+footprint+" greenPaintStrokes="+paint+" yellowPaintStrokes="+yellowPaint+" graph=byte-identical source=immutable centresAndWidths=game-estimate");
  }
  public static void Run(){var p=ProjectMapStore.Load(ProjectMapBuild.Root);Validate(p,RoadviewCorridorMapEdits.Preview(p));}
 }
