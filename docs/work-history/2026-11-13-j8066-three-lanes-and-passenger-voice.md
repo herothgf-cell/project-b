@@ -52,3 +52,7 @@
 ## 배포 해시
 
 소스 커밋938cc3937c9ee9e2f2a6abc60fc6e3135f45d1d0 확인 후 통합 manifest를 생성했다. 격리된 Git 배포143파일·131,627,450바이트에 통합/PvP VerifyOnly 각각 종료0. manifest 각항목과 기본 실행 폴더의 실제 SHA256도 전부 일치했다. 사용자 로컬 ZIP은 배포 목록에 포함하지 않았으며 원위치에 남겼다. 로컬 활성프로필은 새 카탈로그 검증을 별도로 통과했다.
+
+## main 푸시 확인
+
+배포 커밋6270978bfe3b2fd73277795688c403f5c818f77d를 origin/main에 푸시했다. git ls-remote origin refs/heads/main이 같은40자리 해시를 반환했다. 소스 이력의 실제 커밋은 git log -1 --oneline -- 기록파일로938cc39임을 확인한 후 배포 기록을 추가했다. 작업 종료 시 남은 변경은 시작 시 존재하던 사용자 씬·ZIP·프로필·제안서/별도 이력·PackageManagerSettings이며 이번 수정은 모두 커밋했다.
