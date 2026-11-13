@@ -20,7 +20,7 @@ public static class AlternativePassengerStopTests {
  }
  public static void Run(){
   checks=0;string fingerprint=ProjectMapStore.Fingerprint(ProjectMapBuild.Root);var map=Load();int originalRoads=map.roads.Length;var catalog=PassengerStopCatalog.For(map);
-  Check(catalog.LegacyCount==12&&map.stops.Length==12&&catalog.Stops.Length==24,"ordinary24 indices unchanged");
+  Check(catalog.LegacyCount==12&&map.stops.Length==12&&catalog.Stops.Length>=24,"original indices retained");
   var alternative=catalog.AlternativeFor("EG-GAME-02");
   Check(alternative!=null,"at least one validated physical bay+walking pair admitted; "+string.Join(" / ",catalog.AlternativeRejected.ToArray()));
   Check(catalog.Alternatives.Count()==1&&catalog.AlternativeRejected.Count==0,"one explicitly authored pair only");
@@ -28,7 +28,7 @@ public static class AlternativePassengerStopTests {
   Check(catalog.IndexOf(alternative.Id)<0,"alternatives never become new offers or change stop indices");
   Check(alternative.EvidenceStatus=="game-only-field-unverified","no real roadside legality claim");
   Check(catalog.AlternativeFor(null)==null&&catalog.AlternativeFor("S01")==null,"unreviewed originals have no invented alternative");
-  Check(map.roads.Length==originalRoads+12+1,"separate visible asphalt pocket installed");
+  Check(map.roads.Length==originalRoads+catalog.Stops.Length-12+1,"separate visible asphalt pocket installed");
   Check(alternative.Stop.CanStop(alternative.Stop.Kerb,alternative.Stop.Direction,0)&&!alternative.Stop.CanStop(alternative.Stop.Kerb,-alternative.Stop.Direction,0),"actual directional bay interaction");
   Check(!ProjectMapScene.OnArea(map,alternative.Stop.Kerb,true),"alternative car footprint stays off raised sidewalk");
   var graph=new HdRoadGraph(map);foreach(var target in catalog.Stops){float distance;Check(PassengerStopCatalog.Reachable(graph,target,alternative.Stop,out distance),"directed inward route from ordinary stop");Check(PassengerStopCatalog.Reachable(graph,alternative.Stop,target,out distance),"directed outward route to ordinary stop");}

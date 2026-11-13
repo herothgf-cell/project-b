@@ -6,11 +6,15 @@ using UnityEngine;
 [DefaultExecutionOrder(10000)]
 public sealed class VehicleImpactMotion : MonoBehaviour {
     public Vector3 linear,angular,centre;
+    Rigidbody body;
+    TrafficCar traffic;
+    void Awake(){body=GetComponent<Rigidbody>();traffic=GetComponent<TrafficCar>();}
     public void Sample() {
-        var body=GetComponent<Rigidbody>();if(!body)return;
-        var traffic=GetComponent<TrafficCar>();
-        linear=traffic?transform.forward*traffic.speed:body.velocity;
-        angular=body.angularVelocity;centre=body.worldCenterOfMass;
+        if(!body)body=GetComponent<Rigidbody>();
+        if(!body)return;
+        angular=traffic?traffic.StepAngularVelocity:body.angularVelocity;
+        centre=body.worldCenterOfMass;
+        linear=traffic?traffic.StepVelocity+Vector3.Cross(angular,centre-body.position):body.velocity;
     }
     void FixedUpdate(){Sample();}
     public Vector3 At(Vector3 point){return linear+Vector3.Cross(angular,point-centre);}

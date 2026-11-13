@@ -37,7 +37,7 @@ public sealed class PassengerRequestSchedule {
    if(!found){Array.Resize(ref state.slots,i);break;}
   }return true;
  }
- public int Tick(float movingSeconds,float progress,bool dialogueAvailable,bool arrivalLocked){
+ public int Tick(float movingSeconds,float progress,bool dialogueAvailable,bool arrivalLocked,bool longSignalWait=false){
   if(float.IsNaN(movingSeconds)||float.IsInfinity(movingSeconds)||movingSeconds<0||float.IsNaN(progress)||float.IsInfinity(progress))throw new ArgumentException("Invalid request clock");
   state.movingSinceResponse+=movingSeconds;state.progress=Math.Max(state.progress,Math.Min(1,Math.Max(0,progress)));
   // Retain the legacy stop fields in snapshots for old saves and LAN payloads.
@@ -46,7 +46,7 @@ public sealed class PassengerRequestSchedule {
   if(!dialogueAvailable||state.awaitingResponse)return -1;
   for(int i=0;i<state.slots.Length;i++){
    var s=state.slots[i];if(s.presented||s.closed)continue;
-   if(state.progress<s.threshold||s.threshold>0&&state.movingSinceResponse<ContentTuning.Number("schedule.movingSeconds",20))return -1;
+   if(!longSignalWait&&(state.progress<s.threshold||s.threshold>0&&state.movingSinceResponse<ContentTuning.Number("schedule.movingSeconds",20)))return -1;
    s.presented=true;state.active=i;state.awaitingResponse=true;return i;
   }return -1;
  }

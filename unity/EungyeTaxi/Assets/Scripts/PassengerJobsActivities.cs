@@ -27,10 +27,10 @@ public partial class PassengerJobs {
  }
  void RestorePassengerActivities(PassengerJobsSnapshot s){Situation=s.situation==null?null:s.situation.Copy();Errand=s.errand==null?null:s.errand.Copy();reactionSignal=null;nextReactionSignalSearch=0;}
  // Search authored junction data at1Hz, then observe only the chosen approach each frame.
- bool ObservedSignalWait(){
+ public bool ObservedSignalWait(){
   if(session.taxi.body.velocity.magnitude>.1f||session.taxi.body.angularVelocity.magnitude>.1f)return false;
   if(Time.time>=nextReactionSignalSearch){nextReactionSignalSearch=Time.time+1;reactionSignal=null;float nearest=45;var front=session.taxi.transform.position+session.taxi.transform.forward*2;
-   foreach(var j in session.traffic.junctions){if(!j.signalized&&!j.scenarioSignal)continue;for(int axis=0;axis<2;axis++)for(int sign=-1;sign<=1;sign+=2){var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(dir,session.taxi.transform.forward)<.85f)continue;var offset=j.center-dir*j.StopDistance(axis)-front;float ahead=Vector3.Dot(offset,dir),side=Mathf.Abs(Vector3.Dot(offset,TrafficSystem.Right(dir)));if(ahead< -1||ahead>nearest||side>j.halfWidth[axis]||Vector3.Dot(front-j.center,TrafficSystem.Right(dir))<.15f)continue;nearest=ahead;reactionSignal=j;reactionAxis=axis;reactionSign=sign;}}
+   foreach(var j in session.traffic.junctions){if(!j.signalized&&!j.scenarioSignal)continue;for(int axis=0;axis<2;axis++)for(int sign=-1;sign<=1;sign+=2){var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(dir,session.taxi.transform.forward)<.85f)continue;var offset=session.traffic.StopPosition(j,axis,sign)-front;float ahead=Vector3.Dot(offset,dir),side=Mathf.Abs(Vector3.Dot(front-j.center,TrafficSystem.Right(dir)));if(ahead< -1||ahead>nearest||side>j.halfWidth[axis]||Vector3.Dot(front-j.center,TrafficSystem.Right(dir))<.15f)continue;nearest=ahead;reactionSignal=j;reactionAxis=axis;reactionSign=sign;}}
   }
   if(reactionSignal==null)return false;var heading=session.traffic.AxisDirection(reactionSignal,reactionAxis)*reactionSign;var o=session.traffic.Observe(reactionSignal,reactionAxis,reactionSign,heading,session.taxi.gameObject);
   return o.known&&o.forward==SignalColor.Red&&session.traffic.LeftSignal(reactionSignal,reactionAxis,reactionSign)!=SignalColor.Green&&!(o.dedicated&&o.right==SignalColor.Green);

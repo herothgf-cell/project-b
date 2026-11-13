@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 
 [Serializable] public sealed class PassengerStopCandidate {
- public string stopId,name,category,evidenceStatus,evidence,laneId,sidewalkId;
+ public string stopId,name,category,evidenceStatus,evidence,laneId,sidewalkId,pairWith;
  public float laneAt,x,z,dx,dz,bayOffset,passengerX,passengerZ;
 }
 [Serializable] public sealed class PassengerStopCatalogData {
@@ -25,6 +25,7 @@ public sealed partial class PassengerStopCatalog {
  public int LegacyCount {get;private set;}
  public string Revision {get;private set;}
  readonly List<PassengerStopCandidate> admitted=new List<PassengerStopCandidate>();
+ readonly Dictionary<int,int> oppositeStops=new Dictionary<int,int>();
  static readonly ConditionalWeakTable<MapData,PassengerStopCatalog> cache=new ConditionalWeakTable<MapData,PassengerStopCatalog>();
  public static PassengerStopCatalog For(MapData map){PassengerStopCatalog result;if(!cache.TryGetValue(map,out result)){Apply(map);cache.TryGetValue(map,out result);}return result;}
  public static void Apply(MapData map){
@@ -49,7 +50,11 @@ public sealed partial class PassengerStopCatalog {
    string reason;MapStop stop;
    if(c==null||string.IsNullOrEmpty(c.stopId)||!used.Add(c.stopId)){result.Rejected.Add("duplicate/missing stopId");continue;}
    if(!Validate(map,graph,geometry,c,out stop,out reason)){result.Rejected.Add(c.stopId+": "+reason);continue;}
-   if(combined.Any(s=>FlatDistance(s.Kerb,stop.Kerb)<50)){result.Rejected.Add(c.stopId+": nearby stop");continue;}
+   int opposite=string.IsNullOrEmpty(c.pairWith)?-1:result.IndexOf(c.pairWith);
+   if(!string.IsNullOrEmpty(c.pairWith)){
+    if(opposite<0||!ValidOpposite(map,combined[opposite],stop)){result.Rejected.Add(c.stopId+": invalid opposite approach");continue;}
+    if(result.Entries.Any(e=>e.Category=="opposite-kerb"&&FlatDistance(e.Stop.Kerb,stop.Kerb)<8)){result.Rejected.Add(c.stopId+": overlapping opposite bays");continue;}
+   }else if(combined.Any(s=>FlatDistance(s.Kerb,stop.Kerb)<50)){result.Rejected.Add(c.stopId+": nearby stop");continue;}
    bool routes=true;foreach(var legacy in map.stops){if(graph.Route(legacy.laneEdge,legacy.laneAt,stop.laneEdge,stop.laneAt)==null||graph.Route(stop.laneEdge,stop.laneAt,legacy.laneEdge,legacy.laneAt)==null){routes=false;break;}}
    if(!routes){result.Rejected.Add(c.stopId+": disconnected directed approach/exit");continue;}
    result.Entries.Add(new PassengerStopEntry{StopId=c.stopId,Index=combined.Count,Stop=stop,LaneId=c.laneId,MapRevision=data.mapRevision,CatalogRevision=data.revision,Category=c.category,EvidenceStatus=c.evidenceStatus,Evidence=c.evidence});
@@ -58,7 +63,24 @@ public sealed partial class PassengerStopCatalog {
   // Validate every candidate against the unchanged scene before making cutouts.
   foreach(var c in result.admitted.ToArray())try{InstallBay(map,c);}catch(InvalidOperationException error){var entry=result.Entries.First(e=>e.StopId==c.stopId);combined.Remove(entry.Stop);result.Entries.Remove(entry);result.admitted.Remove(c);result.Rejected.Add(c.stopId+": "+error.Message);}
   for(int i=0;i<result.Entries.Count;i++)result.Entries[i].Index=i;
+  foreach(var c in result.admitted.Where(c=>!string.IsNullOrEmpty(c.pairWith))){
+   int a=result.IndexOf(c.pairWith),b=result.IndexOf(c.stopId);
+   if(a>=0){result.oppositeStops[a]=b;result.oppositeStops[b]=a;}
+  }
   result.Stops=combined.ToArray();result.RepairLegacyS09Sidewalk(map);result.InstallAlternatives(map,graph);ProjectMapScene.InvalidateAreaIndex(map);
+ }
+ public int OppositeIndex(int index){return oppositeStops.TryGetValue(index,out int opposite)?opposite:-1;}
+ static bool ValidOpposite(MapData map,MapStop original,MapStop opposite){
+  var offset=opposite.V()-original.V();
+  if(Vector3.Dot(original.Direction,opposite.Direction)>-.98f||FlatDistance(original.V(),opposite.V())>30)return false;
+  if(Vector3.Dot(offset,TrafficSystem.Right(original.Direction))>=-2)return false;
+  foreach(var road in map.roads){
+   if(road.DisplayLanes!=2||road.oneWay!=0||road.width>14||road.points.Length<2)continue;
+   var path=new AssistedRoadNetwork.Path(road.points.Select(p=>p.V()).ToArray());
+   path.Project(original.V(),out float a);path.Project(opposite.V(),out float b);
+   if(a<road.width*.5f&&b<road.width*.5f)return true;
+  }
+  return false;
  }
  public PassengerStopEntry Entry(int index){return index>=0&&index<Entries.Count?Entries[index]:null;}
  public int IndexOf(string id){var e=Entries.FirstOrDefault(x=>x.StopId==id);return e==null?-1:e.Index;}

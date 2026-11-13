@@ -103,7 +103,7 @@ public partial class FullMapOverlay : MonoBehaviour {
   }
   foreach(var zone in VisibleLawZones()){var p=Project(zone.junction.center,map);if(!map.Contains(p))continue;Dot(p,new Color(1,.55f,.1f),14);var box=LawZoneMapLayout.Place(p,new Vector2(146,42),map,occupied);occupied.Add(box);CasualUI.Panel(box);GUI.Label(box,zone.MapTitle,text);}
   // Active pickup, drop and via pins remain visible while browsing facilities.
-  if(jobs.Active&&jobs.current!=null){StopPin(jobs.current.pickup,"승차",MapPresentation.Pickup,map);StopPin(jobs.current.drop,"하차",MapPresentation.Passenger,map);if(jobs.PassengerViaPending)StopPin(jobs.PassengerViaStop,"경유",new Color(1,.8f,.2f),map);}
+  if(jobs.Active&&jobs.current!=null){StopPin(jobs.current.pickup,"승차",MapPresentation.Pickup,map);StopPin(jobs.current.drop,"하차",MapPresentation.Passenger,map);if(jobs.PassengerViaPending)StopPin(jobs.PassengerViaStop,"경유",new Color(1,.8f,.2f),map);DrawOppositeDrop(jobs.OppositeDropIndex,map);}
   else if(!jobs.Active){
    for(int i=0;i<jobs.offers.Length;i++){var o=jobs.offers[i];if(o==null)continue;var p=CallPinPosition(i,map);var anchor=Project(jobs.stops[o.pickup].V(),map);if((p-anchor).sqrMagnitude>1){Line(anchor,p,new Color(.06f,.2f,.23f),2);if(map.Contains(anchor))Dot(anchor,new Color(.06f,.2f,.23f),7);}MapPresentation.Pin(p,MapPresentation.Pickup,26,(i+1).ToString());if(GUI.Button(MapPresentation.PinHitBounds(p,26),new GUIContent("",KoreanText.Stop(jobs.stops[o.pickup].name)+" · 호출 "+(i+1)),GUIStyle.none))SelectOffer(i);}
    if(selectedOffer!=null){StopPin(selectedOffer.pickup,"승차",MapPresentation.Pickup,map);StopPin(selectedOffer.drop,"하차",MapPresentation.Passenger,map);}
@@ -150,6 +150,15 @@ public partial class FullMapOverlay : MonoBehaviour {
   // Map north points up: the stop's lane heading, never its lateral kerb offset.
   var forward=new Vector2(target.dx,-target.dz).normalized;if(forward.sqrMagnitude<.1f)return;var side=new Vector2(-forward.y,forward.x);var tip=p+forward*28;var a=tip-forward*10+side*7;var b=tip-forward*10-side*7;
   foreach(float width in new[]{8f,4f}){var paint=width>4?Color.black:color;Line(p,tip,paint,width);Line(a,tip,paint,width);Line(tip,b,paint,width);}
+ }
+ void DrawOppositeDrop(int stop,Rect map){
+  if(stop<0||session.jobs.StopOccupied(stop))return;
+  var target=session.jobs.stops[stop];var p=Project(target.Kerb,map);
+  if(!map.Contains(p))return;
+  var color=MapPresentation.Passenger;
+  var heading=new Vector2(target.dx,-target.dz).normalized;
+  Dot(p,Color.black,10);Dot(p,color,6);Line(p,p+heading*15,color,3);
+  if(GUI.Button(new Rect(p.x-10,p.y-10,20,20),new GUIContent("","반대편 하차 · 이 방향으로 정차 후 F"),GUIStyle.none))FocusStop(stop);
  }
  static void Fill(Rect r,Color c){GUI.color=c;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
  static void Dot(Vector2 p,Color c,float size){Fill(new Rect(p.x-size/2,p.y-size/2,size,size),c);}

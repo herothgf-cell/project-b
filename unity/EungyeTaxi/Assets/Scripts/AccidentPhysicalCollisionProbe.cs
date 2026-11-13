@@ -64,6 +64,31 @@ public sealed class AccidentPhysicalCollisionProbe : MonoBehaviour {
   if(!state.TowRequired){yield return PhysicsSeconds(1.2f);Check(session.damage.ContactCount>0&&state.contactLatched&&state.eventId==id&&ledger.Account.Expense(ledger.Day,"accident")==fee,kind+" retained contact after completion cannot rearm a second incident");}
   Check(session.business.SaveCheckpoint()&&!session.business.SaveFailed,kind+" writes only isolated contentTest checkpoint");
  }
+ IEnumerator TrafficSideImpact(){
+  Setup(AccidentKind.Vehicle);
+  yield return PhysicsSeconds(2);
+  var taxi=session.taxi.body;
+  var route=new TrafficRoute();
+  route.SetPoints(new[]{origin+new Vector3(3.6f,0,-8),origin+new Vector3(3.6f,0,-3),origin+new Vector3(1.3f,0,2),origin+new Vector3(0,0,8)});
+  target=new GameObject("PhysX lane-changing traffic");
+  var traffic=target.AddComponent<TrafficCar>();
+  traffic.Initialize(session.traffic,route,0,0);
+  traffic.respawn=false;
+  traffic.speed=9;
+  target.AddComponent<VehicleImpactMotion>();
+  // The probe disables avoidance queries on the test taxi only. Its collider
+  // still participates in PhysX, so traffic approaches and strikes its side.
+  var constraints=taxi.constraints;
+  taxi.constraints=constraints|RigidbodyConstraints.FreezePositionZ;
+  session.taxi.gameObject.layer=11;
+  Physics.SyncTransforms();
+  float until=Time.realtimeSinceStartup+5;
+  while(!session.accident.Locked&&Time.realtimeSinceStartup<until)yield return null;
+  session.taxi.gameObject.layer=8;
+  taxi.constraints=constraints;
+  Check(traffic.distance>3&&session.damage.Damage.Durability<100&&session.accident.Locked&&session.accident.State.Kind==AccidentKind.Vehicle,
+   "kinematic traffic crossing laterally into the stationary taxi causes vehicle damage and an accident");
+ }
  IEnumerator Run(){
   result.scope="Real PhysX Rigidbody collisions on isolated elevated support floor; setup pose once per case, actual travel into static wall and kinematic full taxi; automatic VDC/controller, normal sampled severity, fee/score/time and continuous contact. Not human driving, wheel driving, full campaign or LAN.";
   Check(ContentTuningRuntime.TestMode,"contentTest isolation required before campaign startup");
@@ -75,5 +100,6 @@ public sealed class AccidentPhysicalCollisionProbe : MonoBehaviour {
   floor=new GameObject("PhysX isolated support floor");floor.transform.position=origin-Vector3.up*.5f+Vector3.forward*8;var support=floor.AddComponent<BoxCollider>();support.size=new Vector3(30,1,50);
   support.material=new PhysicMaterial("Collision probe frictionless support"){dynamicFriction=0,staticFriction=0,frictionCombine=PhysicMaterialCombine.Minimum};Physics.SyncTransforms();
   yield return CollisionCase(AccidentKind.Property);yield return CollisionCase(AccidentKind.Vehicle);Check(continuousCases>0,"at least one normally sampled case exercises retained real contact");
+  yield return TrafficSideImpact();
  }
 }

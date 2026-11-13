@@ -12,15 +12,16 @@ public class JobsSmokeTest : MonoBehaviour {
   int earned=j.balance;j.trip.Tick(10000);yield return null;bool retained=j.trip.State==TripState.OnTrip&&j.trip.Remaining==0;Move(j.current.drop);yield return new WaitForSeconds(.6f);bool failure=retained&&j.Interact()&&j.trip.State==TripState.Failed&&j.balance==earned;
   yield return new WaitForSeconds(4.1f);j.Accept(1);Move(j.current.pickup);yield return new WaitForSeconds(.6f);j.Interact();
   Time.timeScale=0;float remaining=j.trip.Remaining;yield return new WaitForSecondsRealtime(.3f);bool pause=j.trip.Remaining==remaining;Time.timeScale=1;
-  session.signals.Clear();session.signals.Toggle(-1);yield return null;yield return null;bool left=session.assist.Mode=="LEFT CAMERA";
-  session.signals.Toggle(1);yield return null;yield return null;bool right=session.assist.Mode=="RIGHT CAMERA";
-  t.body.velocity=-t.transform.forward;yield return null;yield return null;bool rear=session.assist.Mode=="REAR CAMERA";
-  t.body.velocity=Vector3.zero;session.signals.Clear();yield return null;yield return null;bool off=session.assist.Mode=="";
+  session.drivingCamera.SetFirstPerson(false);session.signals.Clear();session.signals.Toggle(-1);yield return null;yield return null;bool left=!session.assist.Visible;
+  session.signals.Toggle(1);yield return null;yield return null;bool right=!session.assist.Visible;
+  t.body.velocity=-t.transform.forward;yield return null;yield return null;bool rear=!session.assist.Visible;
+  session.drivingCamera.SetFirstPerson(true);t.body.velocity=-t.transform.forward;yield return null;bool firstPersonRear=session.assist.Visible;
+  t.body.velocity=Vector3.zero;session.signals.Clear();yield return null;yield return null;bool off=!session.assist.Visible;
   session.drivingCamera.SetFirstPerson(false);session.signals.Toggle(-1);yield return new WaitForSeconds(.5f);
   string folder=Path.GetFullPath(Path.Combine(Application.dataPath,"../../..","artifacts"));Directory.CreateDirectory(folder);
   yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(folder,"jobs-navigation.png"));yield return new WaitForSeconds(.6f);
   session.drivingCamera.SetFirstPerson(true);session.signals.Toggle(1);yield return new WaitForSeconds(.5f);yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(folder,"jobs-side-camera.png"));yield return new WaitForSeconds(.6f);
-  bool ok=connected&&longest>450&&accept&&reject&&board&&reroute&&paid&&once&&street&&failure&&pause&&left&&right&&rear&&off;
+  bool ok=connected&&longest>450&&accept&&reject&&board&&reroute&&paid&&once&&street&&failure&&pause&&left&&right&&rear&&firstPersonRear&&off;
   string result="success="+ok+" connected="+connected+" longestRoute="+longest+" accept="+accept+" singleJob="+reject+" board="+board+" reroute="+reroute+" paid="+paid+" noDuplicate="+once+" street="+street+" timeout="+failure+" pause="+pause+" autoCameras="+(left&&right&&rear&&off)+" cameras="+left+","+right+","+rear+","+off;
   File.WriteAllText(Path.Combine(folder,"jobs-smoke.txt"),result);Debug.Log(result);Application.Quit(ok?0:1);
  }

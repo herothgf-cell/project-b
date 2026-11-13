@@ -10,6 +10,18 @@ public static class ContentTuningTests {
  static Dictionary<string,object> Profile(){return ContentJson.Object(ContentJson.Parse(ContentTuning.CaptureJson()));}
  static string Seal(Dictionary<string,object> p){p["contentHash"]=ContentTuning.ComputeHash(p);return ContentJson.Stringify(p);}
  static string Schedule(string seed){var s=PassengerRequestSchedule.Create(seed,(RequestKind[])Enum.GetValues(typeof(RequestKind))).Capture();string result="";foreach(var row in s.slots)result+=row.kind+":"+row.threshold.ToString("R",System.Globalization.CultureInfo.InvariantCulture)+";";return result;}
+ static void SignalWaitSchedule(){
+  var schedule=PassengerRequestSchedule.Restore(new PassengerRequestScheduleSnapshot{slots=new[]{
+   new PassengerRequestSlot{kind=RequestKind.Comfort,threshold=.25f},
+   new PassengerRequestSlot{kind=RequestKind.Empathy,threshold=.5f}}});
+  Check(schedule.Tick(0,.1f,true,false)==-1,"ordinary short stop keeps progress and movement gates");
+  Check(schedule.Tick(0,.1f,false,false,true)==-1,"long signal wait respects dialogue availability");
+  Check(schedule.Tick(0,.1f,true,false,true)==0,"long signal wait releases an already assigned request");
+  Check(schedule.Tick(0,.1f,true,false,true)==-1,"pending request prevents overlap at signal");
+  schedule.Responded();
+  Check(schedule.Tick(0,.1f,true,false)==-1,"normal movement gap still applies after the wait");
+  Check(schedule.Tick(0,1,true,false,true)==-1,"long signal wait respects arrival cutoff");
+ }
  static void MainTests(string[] args){
   // Capture the existing pure fallback calculations before a catalog is configured.
   var seeds=new string[300];for(int i=0;i<seeds.Length;i++)seeds[i]=Schedule("seed"+i);
@@ -85,5 +97,5 @@ public static class ContentTuningTests {
  ContentTuning.UseDefaults();ContentTuning.UseJson(Changes(new Dictionary<string,string>{{"type.Drunk.spawnPercent","0"},{"type.Drunk.forceAfterMisses","5"},{"type.Drunk.sleepPercent","0"},{"type.Drunk.vomitPercent","100"}}));care=new VehicleCare();for(int i=0;i<5;i++){var t=care.ReservePassenger("five"+i,new PassengerType[0]);Check(t==PassengerType.General&&care.CommitPassenger("five"+i,t),"no forced before five");care=VehicleCare.Restore(care.Snapshot());}Check(care.ReservePassenger("forced",new PassengerType[0])==PassengerType.Drunk,"force after configurable five");var planned=DrunkRideState.CreateAssignedDrunk("planned");Check(!planned.SleepPlanned&&planned.VomitPlanned,"sleep0 vomit100");ContentTuning.UseJson(baseline);Check(!planned.SleepPlanned&&planned.VomitPlanned,"existing ride not rerolled");
  var old=Profile();ContentJson.Array(old["values"]).RemoveAll(o=>((string)ContentJson.Object(o)["id"]).StartsWith("type.Drunk.")&&!((string)ContentJson.Object(o)["id"]).Contains(".intro.")&&!((string)ContentJson.Object(o)["id"]).Contains(".choice.")&&!((string)ContentJson.Object(o)["id"]).Contains(".followup."));string legacy=Seal(old);ContentTuning.UseJson(legacy);Check(ContentTuning.CaptureJson()==legacy,"old snapshot remains exact");string upgraded=ContentTuning.UpgradeJson(legacy);ContentTuning.UseJson(upgraded);Check(ContentTuning.Int("type.Drunk.dailyMax",-1)==2,"old profile upgrades default without reward changes");Reject(Change("type.Drunk.spawnPercent","101"));Reject(Change("type.Drunk.forceAfterMisses","0"));ContentTuning.UseDefaults();
  }
- public static int Main(string[] args){try{MainTests(args);NaturalFatigueGuidanceTests();DrunkSettingsTests();Check(ContentTuning.OverrideText("request.Quiet.reply.Accept","dynamic fallback")=="조용히 모시겠습니다.","promoted authored reply is spoken even at release default");Check(ContentTuning.OverrideText("request.OnTime.reply.Accept","dynamic route details")=="dynamic route details","unchanged dynamic replies retain details");Console.WriteLine("Signed penalties and fatigue guidance total "+count);return 0;}catch(Exception e){Console.Error.WriteLine(e.ToString());return 1;}}
+ public static int Main(string[] args){try{MainTests(args);SignalWaitSchedule();NaturalFatigueGuidanceTests();DrunkSettingsTests();Check(ContentTuning.OverrideText("request.Quiet.reply.Accept","dynamic fallback")=="조용히 모시겠습니다.","promoted authored reply is spoken even at release default");Check(ContentTuning.OverrideText("request.OnTime.reply.Accept","dynamic route details")=="dynamic route details","unchanged dynamic replies retain details");Console.WriteLine("Signed penalties and fatigue guidance total "+count);return 0;}catch(Exception e){Console.Error.WriteLine(e.ToString());return 1;}}
 }

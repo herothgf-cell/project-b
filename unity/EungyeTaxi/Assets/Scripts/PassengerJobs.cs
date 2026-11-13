@@ -81,7 +81,14 @@ public partial class PassengerJobs : MonoBehaviour {
   if(session.business==null||session.business.ledger==null||session.services==null||Catalog==null||nav.hd==null)return result.ToArray();
   var cells=new System.Collections.Generic.List<int>[9];for(int c=0;c<cells.Length;c++)cells[c]=new System.Collections.Generic.List<int>();
   var distances=new float[stops.Length];
-  for(int i=0;i<stops.Length;i++){distances[i]=PickupDistance(i);if(!StopOccupied(i)&&Finite(distances[i])&&Time.time>=cooldown[i])cells[PickupCell(i)].Add(i);}
+  for(int i=0;i<stops.Length;i++)distances[i]=PickupDistance(i);
+  for(int i=0;i<stops.Length;i++){
+   if(!PickupAvailable(i,distances[i]))continue;
+   int opposite=Catalog.OppositeIndex(i);
+   if(opposite>=0&&PickupAvailable(opposite,distances[opposite])&&
+      (distances[opposite]<distances[i]||distances[opposite]==distances[i]&&opposite<i))continue;
+   cells[PickupCell(i)].Add(i);
+  }
   foreach(var cell in cells)cell.Sort((a,b)=>{int rank=distances[a].CompareTo(distances[b]);return rank!=0?rank:a.CompareTo(b);});
   var pickups=new System.Collections.Generic.List<int>();
   // One pickup per occupied map cell before adding a second. Rotate within each
@@ -93,7 +100,9 @@ public partial class PassengerJobs : MonoBehaviour {
    }if(!added)break;
   }
   foreach(int p in pickups)for(int step=0;step<4;step++){
-   int d=(p+3+generation*5+step*7)%stops.Length;if(d==p)d=(d+1)%stops.Length;
+   int d=(p+3+generation*5+step*7)%stops.Length;
+   while(d==p||d==Catalog.OppositeIndex(p))d=(d+1)%stops.Length;
+   d=PreferredDrop(p,d);
    var o=Make(p,d);if(o==null||!Finite(o.distance))continue;
    float expected=distances[p]/4+o.distance/8+o.waitSeconds;var ledger=session.business.ledger;
    // OneDay deliberately permits overtime. SecondsLeft becomes zero there;
@@ -102,6 +111,25 @@ public partial class PassengerJobs : MonoBehaviour {
    o.pickupSeconds=OneDayOfferPolicy.PickupSeconds(distances[p]);result.Add(o);
   }return result.ToArray();
  }
+ bool PickupAvailable(int index,float distance){return Finite(distance)&&Time.time>=cooldown[index]&&!StopOccupied(index);}
+ int PreferredDrop(int pickup,int drop){
+  int opposite=Catalog.OppositeIndex(drop);
+  if(opposite<0||opposite==pickup||StopOccupied(opposite))return drop;
+  float alternate=nav.Distance(stops[pickup],stops[opposite]);
+  return Finite(alternate)&&(StopOccupied(drop)||alternate<nav.Distance(stops[pickup],stops[drop]))?opposite:drop;
+ }
+ bool TryOppositeDrop(){
+  int opposite=OppositeDropIndex;
+  if(opposite<0||!At(opposite))return false;
+  current.drop=opposite;Stamp(current);SetGoal(opposite);
+  return true;
+ }
+ public int OppositeDropIndex {get{
+  if(current==null||trip.State!=TripState.OnTrip||trip.ArrivalLocked||PassengerViaPending||
+     !string.IsNullOrEmpty(current.scenarioId)||Errand!=null||passengerChangeApplied)return -1;
+  int opposite=Catalog.OppositeIndex(current.drop);
+  return opposite==current.pickup?-1:opposite;
+ }}
  JobOffer SpreadOffer(System.Collections.Generic.List<JobOffer> pool,System.Collections.Generic.List<JobOffer> selected,bool rotate){
   System.Converter<JobOffer,OneDayPickup> point=o=>new OneDayPickup(o.pickup,PickupCell(o.pickup),stops[o.pickup].Kerb.x,stops[o.pickup].Kerb.z);
   int index=OneDayOfferPolicy.SpreadPickup(System.Array.ConvertAll(pool.ToArray(),point),System.Array.ConvertAll(selected.ToArray(),point),generationPreviousPickups,rotate,generation);
@@ -241,10 +269,10 @@ System.Collections.Generic.Dictionary<JobOffer,float> fuelCache=new System.Colle
    if(closest<0){message="손님이 있는 오른쪽 연석에 같은 방향으로 정차하세요 (시속 2km 미만)";return false;}
    if(session.simulationMatch){for(int i=0;i<offers.Length;i++)if(offers[i]!=null&&offers[i].pickup==closest)return Accept(i)&&Board();return AcceptRoadside(closest)&&Board();}
 
-   ClearPassengerActivities();ResetChoiceEffectsForCall();Behavior=null;current=null;var roadsideZones=GetComponent<ServiceLawZones>();if(roadsideZones&&roadsideZones.Ready)foreach(var course in roadsideZones.scenarios)if(!course.beforePickup&&course.pickup==closest){current=Make(course.pickup,course.drop,course);if(current!=null)break;}if(current==null)current=Make(closest,(closest+3+completed*7)%stops.Length==closest?(closest+1)%stops.Length:(closest+3+completed*7)%stops.Length);if(float.IsInfinity(current.distance))return false;trip.Accept(current.fare,current.seconds);InitialFare=current.fare;OfferId="";return Board();
+   ClearPassengerActivities();ResetChoiceEffectsForCall();Behavior=null;current=null;var roadsideZones=GetComponent<ServiceLawZones>();if(roadsideZones&&roadsideZones.Ready)foreach(var course in roadsideZones.scenarios)if(!course.beforePickup&&course.pickup==closest){current=Make(course.pickup,course.drop,course);if(current!=null)break;}if(current==null){int drop=(closest+3+completed*7)%stops.Length;while(drop==closest||drop==Catalog.OppositeIndex(closest))drop=(drop+1)%stops.Length;current=Make(closest,PreferredDrop(closest,drop));}if(float.IsInfinity(current.distance))return false;trip.Accept(current.fare,current.seconds);InitialFare=current.fare;OfferId="";return Board();
   }
   if(trip.State==TripState.ToPickup){if(!session.business.CanAccept)return false;if(!At(current.pickup)){message="승차 지점 오른쪽 연석에 화살표 방향으로 정차 후 F";return false;}return Board();}
-  if(trip.State==TripState.OnTrip){if(SituationWorkActive){message=Situation.Dialogue;return false;}if(PassengerViaPending)return InteractPassengerVia();if(!At(current.drop)){message="목적지 오른쪽 연석에 화살표 방향으로 정차 후 F";return false;}
+  if(trip.State==TripState.OnTrip){if(SituationWorkActive){message=Situation.Dialogue;return false;}if(PassengerViaPending)return InteractPassengerVia();if(!At(current.drop)&&!TryOppositeDrop()){message="목적지 오른쪽 연석에 화살표 방향으로 정차 후 F";return false;}
    if(!trip.ArrivalLocked){TickChoiceEffects();if(DrunkRide.Vomited)session.business.ledger.Care.MarkVomit();trip.LockArrival();if(Behavior!=null){Behavior.Arrive();ApplyBehaviorDirt();if(Behavior.HasSleep){DrunkRide.NonDrunkSleep=true;DrunkRide.SleepPlanned=Behavior.Sleeping;}}DrunkRide.Arrive(trip.ArrivedOnTime);var zones=GetComponent<ServiceLawZones>();if(zones)zones.RecordSkippedDelivery();session.signals.BeginPassengerStop();if(session.requests)session.requests.Finish();CompleteOtherChoiceEffects();bool unsafeDriving=session.manners.collisionEvents>boardingCollisionEvents||session.manners.redEvents>boardingRedEvents||session.requests&&!session.requests.LawClear;
     RequestReward=DrivingFareCaptured&&SettlementPolicyVersion>=4?PassengerReward.CalculateCurrentFare(session.manners.ledger.Score,current.requiredScore,trip.Fare,InteractionSatisfactionDelta,trip.ArrivedOnTime,StartSatisfaction,CleanBonus,ReferenceSeconds,DrunkRide.ArrivalElapsed,unsafeDriving,BoardingDrivingScore,ComfortRecovered):DrivingFareCaptured?PassengerReward.CalculateWithDrivingScore(session.manners.ledger.Score,current.requiredScore,trip.Fare,InteractionSatisfactionDelta,trip.ArrivedOnTime,StartSatisfaction,CleanBonus,ReferenceSeconds,DrunkRide.ArrivalElapsed,unsafeDriving,BoardingDrivingScore,ComfortRecovered):PassengerReward.CalculateDetailed(session.manners.ledger.Score,current.requiredScore,trip.Fare,0,InteractionSatisfactionDelta,trip.ArrivedOnTime,StartSatisfaction,CleanBonus,ReferenceSeconds,DrunkRide.ArrivalElapsed,unsafeDriving,ComfortRecovered);RequestReward.startDeficit=StartDeficit;
     if(DrunkRide.Waiting){ShowWakeWait();session.business.SaveCheckpoint();return true;}}

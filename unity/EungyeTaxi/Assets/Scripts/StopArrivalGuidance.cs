@@ -25,6 +25,8 @@ public static class StopArrivalGuidance {
   if(!j.Active||j.current==null)return new StopArrivalHint();
   bool pickup=j.trip.State==TripState.ToPickup;int index=pickup?j.current.pickup:j.PassengerViaPending?j.PassengerViaStop:j.current.drop;
   float speed=PvpNativeLan.IsReplica(session)?Mathf.Abs(session.taxi.Speed):session.taxi.ObservedVelocity.magnitude;
+  int opposite=j.OppositeDropIndex;
+  if(opposite>=0&&j.At(opposite))index=opposite;
   var hint=Evaluate(j.EffectiveStop(index),session.taxi.transform.position,session.taxi.transform.forward,speed,pickup);
   if(hint.Ready&&!j.At(index)){hint.Ready=false;hint.Action="정차 공간 확인";hint.Detail="공간 점유·승객 보행 대기 · 정차 유지";}
   if(!hint.Near)return hint;
