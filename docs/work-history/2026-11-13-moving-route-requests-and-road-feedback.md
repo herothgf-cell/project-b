@@ -20,5 +20,7 @@
 - `pwsh -NoProfile -File tools/test_content_tuning.ps1` 종료 0. 846 검사 및 Node/C# 설정 해시 일치.
 - Unity Editor `PlaytestBalanceTests.Run` 통과. 실제 점수 장부에서 중앙선 침범 −10/−10, 비허용 유턴 −20/−12 한 번씩 확인. `PassengerStopCatalogTests.Run` 2,755 검사 및 방향별 경로 2,052건 통과, 후보 거절 0. `AlternativePassengerStopTests.Run` 402 검사 통과. 도로 배치와 점수 판정은 위치 제어 검사 범위다.
 - Unity 2022.3.62f2 `PrototypeBuild.BuildHybrid` 종료 0. `tools/test_passenger_activities_player.ps1`의 Player 인수를 격리된 배포본과 테스트 저장 위치에 적용했다. `-passengerActivitiesTest` 92 검사와 `-passengerActivitiesReloadTest` 6 검사 종료 0. 4m/s 주행 중 제시·수락, 중복 차단, 실제 정차 후 F, 새 프로세스에서 같은 운송·남은 경유 시간 복원까지 포함한다.
+- `tools/test_pvp_native_lan.ps1` 종료 0. 같은 PC에서 통합 실행본으로 호스트 48 검사·클라이언트 60 검사 통과. LAN v19.
+- 소스 커밋 `fccff24` 확인 뒤 통합 실행 폴더와 SHA256 manifest를 갱신했다. 통합/PvP `VerifyOnly` 각각 종료 0. 배포 143파일·131,612,745바이트. 선택 로컬 프로필은 별도 검증됐고 사용자 씬과 함께 작업 전 SHA256을 유지했다.
 - 은계 통합본에서 일반 운송 중 경로 변경 요청이 나타나면 마우스나 Y 등 카드에 표시된 키로 수락하고, 새 내비 목적지에 정차해 F를 누른다. 지도(M)의 정차 방향 화살표를 참고한다. 황색 실선이 있는 구간에서 중앙선 통과와 방향 전환을 각각 하면 법규 이력과 운전 만족도에 감점이 표시된다.
 - 사람 직접 주행, 전체 3일 캠페인, 다른 PC LAN과 실제 도로의 정차 적합성은 미검증.
