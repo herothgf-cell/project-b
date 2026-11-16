@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -48,5 +49,37 @@ public static class FlexibleBollardTests {
    }finally{UnityEngine.Object.DestroyImmediate(root);}
   }}finally{WorldBuilder.MaterialCreated-=capture;foreach(var material in materials)UnityEngine.Object.DestroyImmediate(material);}
   Debug.Log("FLEXIBLE_BOLLARD_TEST_OK posts="+posts.Count+" preview/live geometry and individual collision checked");
+ }
+
+ public static void BuildCommercialMap(){
+  Run();
+  var package=ProjectMapStore.Load(ProjectMapBuild.Root);
+  var map=package.Compose();
+  EungyeConnectivityRepair.Apply(map,package.baseline);
+  var graph=new HdRoadGraph(map);
+  string catalogPath=Path.Combine(ProjectMapBuild.Root,"config/maps/eungye-road-facilities.json");
+  var catalog=JsonUtility.FromJson<ReviewedRoadFacilities.Catalog>(File.ReadAllText(catalogPath));
+  var layout=ReviewedRoadFacilities.Plan(map,catalog);
+  string commerceId="eungye-beonyeong-gil-P13-bollards";
+  string parkingId="eungye-public-parking-P20-P26-bollards";
+  var commerce=layout.bollards.Where(p=>p.facilityId==commerceId).ToArray();
+  var parking=layout.bollards.Where(p=>p.facilityId==parkingId).ToArray();
+  Check(commerce.Count(p=>p.a.x<643.5f)==3&&commerce.Count(p=>p.a.x>652.5f)==3&&commerce.Length==6,
+   "P13 has three posts on each side of the signal crossing with both stop lines clear");
+  Check(parking.Count(p=>p.a.x<642)==4&&parking.Count(p=>p.a.x>660)==7&&parking.Length==11,
+   "parking has two rows with a clear crossing and driveway opening");
+  Check(!layout.barriers.Concat(layout.hatches).Any(p=>p.facilityId==commerceId||p.facilityId==parkingId),
+   "new post groups have discrete collision footprints");
+  float minimum=float.MaxValue;
+  foreach(var post in commerce.Concat(parking)){
+   for(int i=0;i<graph.edges.Length;i++){
+    if(graph.edges[i].disabled)continue;
+    graph.paths[i].Project(post.a,out float distance);
+    if(distance<minimum)minimum=distance;
+    Check(distance>=1.4f,"post must clear an active lane or connector: "+post.a+" / "+graph.edges[i].id+" at "+distance);
+   }
+  }
+  Debug.Log("COMMERCIAL_BOLLARDS_OK P13="+commerce.Length+" parking="+parking.Length+" laneClearance="+minimum.ToString("F2")+"m");
+  PrototypeBuild.BuildHybrid();
  }
 }

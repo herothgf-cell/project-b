@@ -88,7 +88,7 @@ public static class G05NorthWestMapEdit {
   AddUturn(package,d,tails[0],lanes,prefix,junction,opposite,evidence);
  }
 
- static void AddUturn(ProjectMapPackage package,RoadMapDocument d,RoadMapLane entry,Dictionary<string,RoadMapLane> lanes,string prefix,string junction,string[] opposite,RoadMapEvidence evidence){
+ internal static void AddUturn(ProjectMapPackage package,RoadMapDocument d,RoadMapLane entry,Dictionary<string,RoadMapLane> lanes,string prefix,string junction,string[] opposite,RoadMapEvidence evidence){
   RoadMapLane target=null;Vector3[] curve=null;
   var rejected=new List<string>();
   foreach(string id in opposite){

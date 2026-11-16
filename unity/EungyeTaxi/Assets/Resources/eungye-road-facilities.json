@@ -108,6 +108,32 @@
           "height": 0.9
         }
       ]
+    },
+    {
+      "id": "eungye-beonyeong-gil-P13-bollards",
+      "kind": "flexible-bollard",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=i7qori-dtj0W3l_zrXdqrg,87,-30,80,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-16",
+      "observed": "Orange flexible posts stand in separate groups along the yellow centre line on both sides of the signalized crossing. The stop lines and marked pedestrian path are clear. The reverse view is i7qori-dtj0W3l_zrXdqrg at 270 degrees.",
+      "estimated": "The post groups are centred between the opposing through lanes outside the existing stop lines. Endpoints, count, nominal spacing, 0.10 m diameter and 0.78 m height are game estimates.",
+      "segments": [
+        {"kind":"flexible-bollard","points":[{"x":636,"z":259.38},{"x":639.97,"z":259.02}],"width":0.10,"height":0.78},
+        {"kind":"flexible-bollard","points":[{"x":656,"z":258.30},{"x":659.97,"z":258.28}],"width":0.10,"height":0.78}
+      ]
+    },
+    {
+      "id": "eungye-public-parking-P20-P26-bollards",
+      "kind": "flexible-bollard",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=RHKYG5qaPX6x-WSGz07_qw,95,-20,80,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-16",
+      "observed": "Orange posts run along the painted yellow median on both sides of the zebra crossing by the public car park. The posts end before the crossing and the adjoining driveway stays open. Nearby eastbound left- and right-only arrows are also visible in TRAthhhUgcTIuGnTLvRPLQ and 3-4lBKIdgA5S2Eafze1p3w (October 2024).",
+      "estimated": "Two short groups follow the game median. Keep x=642..660 m open around the crossing and driveway reference near x654.1/z332.8. Stations, count and post dimensions are game estimates. Hatching and driveway permissions are tracked separately.",
+      "segments": [
+        {"kind":"flexible-bollard","points":[{"x":636,"z":336.92},{"x":641.8,"z":335.80}],"width":0.10,"height":0.78},
+        {"kind":"flexible-bollard","points":[{"x":661,"z":331.05},{"x":668,"z":330.64},{"x":672.8,"z":330.02}],"width":0.10,"height":0.78}
+      ]
     }
   ]
 }
