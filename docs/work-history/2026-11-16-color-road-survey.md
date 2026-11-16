@@ -83,4 +83,12 @@
 - `r33-workspace-strict.log` 종료0·입력 문제0. 로컬 입력 크기 및 해시 갱신. `r33-migration-build.log` 종료0, r14~32 저장 이관 19개 버전 441검사와 BuildHybrid 성공. 지도 및 실행본 내용 지문 `575ca884e867d4d3eecd0ee2c2488fce2d4aee7d24d370413391ddb3c84fb791`.
 - 주차장 횡단보도 옆 황색 빗금·분리봉, P13 분리봉과 주차장 진출입로는 추가 정렬해야 한다. [36번](../content-design/images/eungye-g05-question.png)은 사용자가 바깥 차로의 우회전 전용을 확인했다. [P05 은행고길 인접 남단](../content-design/road-survey/2026-11-13-pink-orange-observations.md)의 1+1·중앙선·난간 후보 근거도 기록했다.
 - r33 Player 위치 제어 저장9·이어하기23 및 런타임 사본 143파일·132608530바이트 VerifyOnly 종료0. `distribution/EungyeTaxi-build-manifest.json`은 실제 로컬 소스 커밋 `69f3eb9`와 입력을 가리킨다. 사용자 FirstDrive 씬 SHA256 복원을 확인했다. 자동 물리 주행과 수동 플레이, 전체 캠페인은 아직 확인하지 않았다.
+
+## 은계로 G05 ⑭ 접근과 사용자 36번 (r34)
+
+- 사용자가 [36번](../content-design/images/eungye-g05-question.png)의 바깥 차로를 우회전 전용으로 확인했다. [최신 확대](https://map.naver.com/p?c=19,0,0,0,adh&p=Ix6rbIKQdDKEt2ehapts1A,318,5,50,Float)에서 유턴 보조표지 ‘좌회전시 / 보행신호시’를 판독했다. 최신·2024년 3월의 정지선 영상에서 중간 직진 3개를 대조했다. 안쪽 화살표는 차량에 가렸으며 종전 좌회전 연결을 사용했다.
+- `G05NorthWestMapEdit.cs`는 ⑮→⑭ 북서행이 기존 3차로에서 좌회전·조건부 유턴 / 직진 / 직진 / 직진 / 우회전 5차로로 갈라지게 한다. 기존 세 직진 차로가 각각 별도 출구로 연결된다. 70m 접근·24m 테이퍼, 차로 중심·유턴 진입 곡선은 게임 근사값이다. 반대 ⑮ 접근에는 추가 거리뷰 근거를 기록했다.
+- Unity `G05NorthWestMapEdit.PreviewChecks`와 `G05NorthWestMapEdit.Apply` 종료0. 저장 전후 5차로의 화살표와 이동 연결, 유턴 조건, 차량 외곽, 기존 은계 승하차 6번 좌표, 전체 39곳·1,482개 방향별 경로를 확인했다. r34 지문 `12cb90de24c98418e2d8bb628ffd8f7eb7d51d79f7211f867b32f11cf8aa0ea5`.
+- `r34-workspace-strict.log` 종료0·입력 문제0, 선택 입력 JSON 두 개 부재. `ColorSurveyPreviewTests.BuildReviewedCurrent` 종료0. r14~33 저장 이관20버전·484검사, BuildHybrid 성공 및 실행 파일 지문 일치. 사용자 FirstDrive 씬 SHA256 원본 복원을 확인했다.
+- 조사 중인 대은로 Y04 서남행 ④ 앞은 비보호 좌회전 전용 / 직진 / 직진·우회전 겸용이다. ⑤ 쪽 보행섬 우회전과 P13 횡단보도 양쪽의 분리봉도 재대조했다. 해당 위치의 형상·시설 적용과 58그룹의 남은 방향이 후속이다.
 - 다음 조사에서 은계번영길 P13/P14/P20/P26의 차로 수와 중앙선 전환을 적용하고, G04 은계로142번길 남쪽 접근의 최신 외측 화살표 및 은행사거리 P02 포켓과 은계남로 P03 서행 화살표를 대조한다. 내부 브라우저 조사 탭은 P03의 마지막 서향 촬영점에 유지했다. 5색 58그룹 전체 검토는 진행 중이다.

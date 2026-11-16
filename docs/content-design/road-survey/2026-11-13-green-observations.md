@@ -168,6 +168,7 @@
 
 - [중간 상가 앞](https://map.naver.com/p?c=19,0,0,0,adh&p=gtLHCW5XmUPTKhLc1KUb5w,-35,-18,80,Float)은 북서행 3차로다. [⑭ 접근](https://map.naver.com/p?c=19,0,0,0,adh&p=QYjRifnmQCJRPdP1wmqPlQ,-35,-18,80,Float)에서는 중앙 빗금과 난간이 끝나는 쪽에서 차로가 늘고, 보도 쪽도 정지선 전에 넓어진다.
 - [2026년 5월 정지선](https://map.naver.com/p?c=19,0,0,0,adh&p=Ix6rbIKQdDKEt2ehapts1A,-35,-18,80,Float)과 [2024년 3월](https://map.naver.com/p?c=19,0,0,0,adh&p=SEQVolKnkY2t6-yPlOS-rg,-35,-18,80,Float) 모두 다섯 차로와 유턴 표지가 보인다. 중간 세 차로는 직진이다. 가장 안쪽 화살표는 차량에 가렸다. [최신 확대](https://map.naver.com/p?c=19,0,0,0,adh&p=Ix6rbIKQdDKEt2ehapts1A,318,5,50,Float)에서 유턴 조건은 ‘좌회전시 / 보행신호시’로 읽혔다. 사용자가 [36번 전체 지도](../images/eungye-g05-question.png)의 가장 바깥 차로를 우회전 전용으로 확인했다. 기존 안쪽 좌회전 연결을 이 자료와 대조했다.
+- r34는 ⑭ 정지선의 다섯 차로와 기존 좌회전, 확인한 조건부 유턴, 직진 3개, 우회전 전용을 지도에 적용했다. ⑮ 쪽은 [2024년 3월 역방향](https://map.naver.com/p?c=19,0,0,0,adh&p=HiJr1_u4gQNhthaCxeaKFw,-21,-27,80,Float)에서도 남동행이 정지선 앞에서 넓어진다. 최신과 과거 모두 버스가 바깥 차로 일부를 가린다. 반대쪽 ⑮의 포켓 위치와 회전 연결은 별도로 정렬해야 한다.
 
 ## 현재 작성 지도 표본 단면 (현장 증거 아님)
 

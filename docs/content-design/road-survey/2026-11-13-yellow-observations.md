@@ -121,6 +121,8 @@ Y01~04의 원본5와 현재 번호1,2는 별도 좌회전 포켓을 포함하는
 
 - ⑤ 남서쪽 [2026년 5월 북동향](https://map.naver.com/p?c=19,0,0,0,adh&p=qvjlwz61ePpF-SZKPsIW5g,57,-16,78,Float)은 반대편 서남행 두 차로와 황색 복선을 보여 준다. 북동행은 대기 차량과 시야 바깥쪽 가림 때문에 화살표와 최종 차로 수를 재대조한다.
 - [같은 지점 서남향](https://map.naver.com/p?c=19,0,0,0,adh&p=qvjlwz61ePpF-SZKPsIW5g,237,-17,78,Float)에서는 ④에 가까워지며 중앙선이 휘고 서남행에서 차로 구분선 두 줄이 나타난다. 오른쪽 보도 난간과 ④ 횡단보도를 확인했다. [④ 횡단보도](https://map.naver.com/p?c=19,0,0,0,adh&p=MCFFm8WsNBfXL1vuNMFKlw,237,-17,78,Float) 촬영과 대조했다. 시점 정렬, 양방향 최종 차로 역할 및 시설 적용은 남았다.
+- ④ 바로 앞 [2026년 5월](https://map.naver.com/p?c=19,0,0,0,adh&p=gNajogryB_II7kPBO9wyGQ,-123,-32,80,Float)과 [2024년 3월](https://map.naver.com/p?c=19,0,0,0,adh&p=T0GZBh0-z_rn-MCngF7-Ng,-123,-32,80,Float)에서 서남행 3차로를 대조했다. 안쪽은 비보호 좌회전, 중간은 직진, 바깥은 직진·우회전 겸용이다. 겸용 화살표는 2024년 영상에서 선명하다.
+- ⑤ 북동행 [최신](https://map.naver.com/p?c=19,0,0,0,adh&p=I8f5uWuSVYaR8BJ1KOvTWg,91,-24,77,Float)과 [2024년 3월](https://map.naver.com/p?c=19,0,0,0,adh&p=IDS5xztNjTJq43Ea12EPmg,60,-16,80,Float)에서 보행섬 옆 우회전 갈래를 확인했다. 대기 차량에 가린 중앙측 화살표와 전체 차로 수는 다시 맞춰야 한다.
 
 ## r20 코드 회귀 검사 추가 확인
 
