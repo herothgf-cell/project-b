@@ -171,6 +171,7 @@ public class BusinessProgress : MonoBehaviour {
   const string reviewedR38Hash="56b01ecd46c68cb164410622d5a340c37f7e105e44b92cac03b73e10a8e3468f";
   const string reviewedR39Hash="20c2236cae3f3e11fb7d6f2435fc41d8c2ce0e4c5331f42f779c21b4d6d14595";
   const string reviewedR40Hash="b91b46e9051e5c1427a1ecd7ff40ca7fde370a0120efabe4e4918c63bb6a3634";
+  const string reviewedR41Hash="57ecdb77d3b473ac1e86e83c02a45219babce1118c3f36ea4d68919a771f12fe";
   string[] hashes={
    "d9596da33d4efc0d4f862c714eb05bb70c94365bfc30ab6171a702e2b672e3df",
    "cb8e0ec0ed3a48f7e9a33c4ff8dc3878bd9d59aafef13c0f0fe43c5616c9c808",
@@ -181,13 +182,13 @@ public class BusinessProgress : MonoBehaviour {
    "8c9a5e7f386aeeac9114b7a9c7da0c938fb8019c5456bd20bf6e6b956de388f6",
    "1233c5ca6b88d5de3c75d7542ebc294409750bd1d2daa5041658149457f7e42d",
    "38bad072a26d23185eb9f902ea347eb84dbe34c7e554b22637916ee52645f8af",
-   reviewedR25Hash,reviewedR26Hash,reviewedR27Hash,reviewedR28Hash,reviewedR29Hash,reviewedR30Hash,reviewedR31Hash,reviewedR32Hash,reviewedR33Hash,reviewedR34Hash,reviewedR35Hash,reviewedR36Hash,reviewedR37Hash,reviewedR38Hash,reviewedR39Hash,reviewedR40Hash};
-  int from=0,to=0;for(int revision=14;revision<=40;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>40)return;
+   reviewedR25Hash,reviewedR26Hash,reviewedR27Hash,reviewedR28Hash,reviewedR29Hash,reviewedR30Hash,reviewedR31Hash,reviewedR32Hash,reviewedR33Hash,reviewedR34Hash,reviewedR35Hash,reviewedR36Hash,reviewedR37Hash,reviewedR38Hash,reviewedR39Hash,reviewedR40Hash,reviewedR41Hash};
+  int from=0,to=0;for(int revision=14;revision<=41;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>41)return;
   string reviewedHash=hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   live.mapRevision=map.editorRevision;
-  // r26 and r32 change paint only. Revisions 27–31 and 33–40 rebuild graph indices.
+  // r26 and r32 change paint only. Revisions 27–31 and 33–41 rebuild graph indices.
   if(to>=18&&(from<25||to>=27&&from<31||to>=33)&&live.jobs!=null){live.jobs.navigationCaptured=false;live.jobs.navAvoidEdge=live.jobs.navObservedEdge=live.jobs.navPassedObservedEdge=-1;}
   var entry=live.lawObservation==null?null:live.lawObservation.entry;if(entry==null)return;
   string junction=entry.junction;
@@ -209,8 +210,9 @@ public class BusinessProgress : MonoBehaviour {
   bool southbound=from<38&&to>=38&&(junction=="J1927_5181"||junction=="J7841_867");
   bool parkingDaeun=from<39&&to>=39&&(junction=="J6481_3341"||junction=="J3516_12881");
   bool eungyeCrossroad=from<40&&to>=40&&junction=="J4396_13458";
+  bool gyesuApproaches=from<41&&to>=41&&(junction=="J4396_13458"||junction=="J5692_14220");
   bool legacy=from<20&&(to>=19&&junction=="J8066_6364"||to>=17&&junction=="J7917_2565"||from!=16&&junction=="J7973_3744"&&entry.axis==1&&entry.sign==1||from==14&&(junction=="J8066_6364"||junction=="J1927_5181"));
-  if(cyan||gap||y07||pink||roundabout||green31||p29||y06||p10||commerce||parking||g05||approaches||g04||p03||southbound||parkingDaeun||eungyeCrossroad||legacy){live.lawObservation.entry=null;live.lawObservation.entryPresent=false;}
+  if(cyan||gap||y07||pink||roundabout||green31||p29||y06||p10||commerce||parking||g05||approaches||g04||p03||southbound||parkingDaeun||eungyeCrossroad||gyesuApproaches||legacy){live.lawObservation.entry=null;live.lawObservation.entryPresent=false;}
  }
  static void ValidateOffer(JobOffer o,int count){if(o!=null&&(o.pickup<0||o.pickup>=count||o.drop<0||o.drop>=count||o.fare<0))throw new Exception("Invalid live stop reference");}
  static bool Valid(float value){return !float.IsNaN(value)&&!float.IsInfinity(value);}

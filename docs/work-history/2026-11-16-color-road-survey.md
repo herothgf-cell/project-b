@@ -167,3 +167,12 @@
 - Unity `ParkingEntranceAndEungyeMapEdit.BuildReviewed`의 `artifacts/color-road-survey/r40-build-final.log` 종료0. `PrototypeBuild.BuildHybrid`로 통합 Windows 실행본을 만들었다. r14~r39 저장 이관 26버전·758검사와 기존 분리봉 17개를 확인했다. 실행본 내용·기준 지문이 작성 지도와 일치하고, 사용자 FirstDrive 씬 SHA256 `1494FF1D97725151FE4E3EA3AF312A5019E68DD94D67A9F207C2BE42567D9B64` 복원을 확인했다.
 - 격리 실행본으로 r39 운행 중 저장의 이어하기 23건, r40 저장 9건과 이어하기 23건을 모두 종료0으로 확인했다. `-batchmode -nographics -liveSaveTest`와 `-liveReloadTest`를 사용했다. `-batchmode -force-d3d11 -presentationTest` 신호·표지 319건도 종료0이다. 위치 제어와 화면 구성 검증이며 수동 주행·자동 물리 주행·전체 캠페인은 후속이다.
 - `distribution/EungyeTaxi-build-manifest.json`에 실제 소스 `848eb69`, 작성 지도와 143개 실행 파일의 크기·SHA256을 갱신했다. 사용자 별도 ZIP·content를 제외한 `artifacts/color-road-survey/r40-distribution-verify`에서 `pwsh -File tools/update_distribution_manifest.ps1 -Root <사본> -VerifyOnly` 종료0, 총 132865810바이트다. 로컬 확인은 `builds/EungyeTaxi/EungyeTaxi.exe`에서 은계 싱글을 선택한다.
+
+## 계수로 44·45번과 58개 색상 구간 대조 (r41)
+
+- 요청 범위는 [44번](../content-design/images/eungye-y05-44-question.png) 동행 아파트 정문 좌회전 전용·직진 세 개·직진과 우회전, [45번](../content-design/images/eungye-y05-45-question.png) 서행 좌회전과 유턴·직진 두 개·보행섬 우회전, 나머지 58그룹의 연속 조사와 로컬 Windows 빌드다. 원격 푸시 없음.
+- `Y05CorridorMapEdit.cs` 및 `config/maps/project/eungye.project.json`에서 44번 동행을 다섯 차로로 구성했다. 아파트 좌회전은 시흥은계우미린레이크 정문 진입로에 연결하고, 최신 횡단보도 동쪽의 네 차로에 게임 직진 경로를 맞췄다. ⑦ 접근 전 새 동행 경로는 기존 차로와 합류한다. 정확한 합류 종점과 정문 출차·단지 내부 동선은 후속이다. 정지선·보행 횡단과 보호 좌회전 신호를 추가했다. 49m 접근·22m 테이퍼와 신호 시간 및 보행 시설의 치수는 게임 근사값이다.
+- 45번의 안쪽 직진을 없애고 기존 좌회전과 조건부 유턴을 보존했다. 가운데와 바깥 직진은 서로 다른 차로로 연결하고 우회전 곡선을 별도로 뒀다. 기존 노면 기준 최대 1.8m 우회전 곡선 이동, 게임 높이 0.14m 섬과 황색 횡단 도색을 적용했다.
+- Unity 2022.3.62f2 `-batchmode -nographics -quit -executeMethod Y05CorridorMapEdit.Apply`를 실행했다. 변경 전 `r41-y05-before.log`는 44번 다섯 차로와 정문 연결이 빠진 것을 검출해 종료1이었다. 첫 시안은 보행섬이 직진 경로와 겹쳤고, 두 번째 시안은 우회전 진입 테이퍼가 보도에 닿아 저장 전에 탈락했다. 섬 외곽과 테이퍼를 조정한 `artifacts/color-road-survey/r41-y05-slip.log`가 종료0이었다. 저장 전후 방향 화살표, 실제 연결, 차량 외곽, 승하차 39곳과 1,482 경로를 통과했다.
+- 작성 지도 내용 지문 `57ecdb77d3b473ac1e86e83c02a45219babce1118c3f36ea4d68919a771f12fe`. 원본 기준 지문·OSM 입력은 바뀌지 않았다. 입력 manifest 크기와 SHA256을 갱신하고 `tools/check_workspace.ps1 -Strict` 종료0·입력 문제 0을 확인했다. 선택 재수입 JSON 두 개 부재. r41 이전 저장에서 바뀐 경로 번호와 두 교차로의 진입 관측을 이관하도록 `BusinessProgress.cs`와 `JunctionRouteFeedbackTests.cs`를 변경했다.
+- 58그룹을 색상별로 다시 대조했다. 구간별 표에 최신·과거 거리뷰, 차로와 분리시설, 실제 지도와 다른 점을 기록했다. 대표 촬영점에 나온 구간별 근거와 미판독 범위를 명시했다. 판독이 어려운 9개 접근은 [46–54번 전체 지도](../content-design/images/eungye-r41-survey-questions.png)에서 사용자에게 확인을 요청했다. [58그룹 근거·잔여 항목](../content-design/road-survey/2026-11-16-coverage.md)
