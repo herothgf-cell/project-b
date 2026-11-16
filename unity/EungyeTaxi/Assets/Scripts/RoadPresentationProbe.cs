@@ -19,7 +19,7 @@ public class RoadPresentationProbe : MonoBehaviour {
    int approaches=0,protectedCount=0,permissiveCount=0;
    foreach(var j in session.traffic.junctions)for(int i=0;i<j.lamps.Count;i++){
     var lamps=j.lamps[i];if(lamps==null||lamps.Length==0||!lamps[0])continue;approaches++;
-    var sign=lamps[0].transform.parent.Find("비보호 표지");bool expected=j.leftTurnMode==LeftTurnMode.Permissive&&(!j.scenarioSignal||j.lampAxes[i]==j.observationAxis&&j.lampSigns[i]==j.observationSign);
+    var sign=lamps[0].transform.parent.Find("비보호 표지");bool expected=session.traffic.PermissiveLeft(j,j.lampAxes[i],j.lampSigns[i])&&(!j.scenarioSignal||j.lampAxes[i]==j.observationAxis&&j.lampSigns[i]==j.observationSign);
     Check((sign&&sign.gameObject.activeInHierarchy)==expected,"matching actual signal condition "+j.name+"/"+i);
     if(expected)permissiveCount++;else protectedCount++;
     if(sign){var back=sign.Find("회색 뒷판");Check(back&&back.localScale.x<1&&back.localScale.y<1.2f,"compact condition plate");Check(sign.GetComponentsInChildren<TextMesh>(true).All(t=>t.text=="비보호"),"condition uses arrow plus short actual legend");}

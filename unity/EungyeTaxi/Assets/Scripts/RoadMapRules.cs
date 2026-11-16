@@ -2,6 +2,11 @@ using System;
 using System.Linq;
 using UnityEngine;
 public static class RoadMapRules {
+ public const string PermissiveLeftSign="비보호 좌회전";
+ public static bool PermissiveLeft(RoadMapDocument document,string junctionId,int axis,int sign){
+  return document!=null&&document.facilities!=null&&Array.Exists(document.facilities,
+   f=>f!=null&&f.rule&&f.kind=="sign"&&f.type==PermissiveLeftSign&&f.junctionId==junctionId&&f.axis==axis&&f.sign==sign);
+ }
  // Speed-sign facilities grouped by lane, rebuilt from live editor data by the
  // caller before each bulk scan. TravelSeconds(index,...) matches TravelSeconds(map,...)
  // term-for-term (same facilities, same order) without an O(edges*facilities) scan.

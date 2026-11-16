@@ -93,3 +93,12 @@
 - 조사 중인 대은로 Y04 서남행 ④ 앞은 비보호 좌회전 전용 / 직진 / 직진·우회전 겸용이다. ⑤ 쪽 보행섬 우회전과 P13 횡단보도 양쪽의 분리봉도 재대조했다. 해당 위치의 형상·시설 적용과 58그룹의 남은 방향이 후속이다.
 - r34 Player `-batchmode -nographics -liveSaveTest`·`-liveReloadTest` 종료0. 격리 위치 제어 검증 저장9·이어하기23 통과. `r34-distribution-verify`의 VerifyOnly 종료0, 143파일·132642354바이트. 통합 manifest에 소스 커밋 `6b5be76`를 기록했다. 자동 물리 주행, 수동 플레이, 전체 캠페인은 미검증이다. 원격 푸시 없음.
 - 다음 조사에서 은계번영길 P13/P14/P20/P26의 차로 수와 중앙선 전환을 적용하고, G04 은계로142번길 남쪽 접근의 최신 외측 화살표 및 은행사거리 P02 포켓과 은계남로 P03 서행 화살표를 대조한다. 내부 브라우저 조사 탭은 P03의 마지막 서향 촬영점에 유지했다. 5색 58그룹 전체 검토는 진행 중이다.
+
+## 은계로 ⑮·대은로 ④ 정지선 (r35)
+
+- G05 ⑭→⑮ 동남행은 마지막 70m에서 3→5로 넓어진다. 안쪽부터 좌회전·조건부 유턴 / 직진 / 직진 / 직진 / 우회전 전용이다. 사진에 가렸던 안쪽 좌회전은 기존 경로를 적용했다. 유턴은 좌회전 또는 보행 신호 시이며 각각의 직진 차로는 별도 출구로 이어진다. [거리뷰 근거](../content-design/road-survey/2026-11-13-green-observations.md#2026-11-16-g05-⑭⑮-정지선).
+- Y04 ⑤→④ 서남행은 마지막 43m에서 2→3으로 넓어지며 안쪽 비보호 좌회전 / 직진 / 직진·우회전으로 연결된다. 해당 방향에서 보호 좌회전 단계를 빼고 직진 녹색에서 마주 오는 교통에 양보하도록 했다. 나머지 방향의 신호는 기존 설정을 따른다. 차로 길이와 테이퍼, 유턴 곡선은 게임 추정이다. [2026년·2024년 근거](../content-design/road-survey/2026-11-13-yellow-observations.md#2026-11-16-y04-대은로-⑤④-정지선).
+- 지도는 `ColorSurveyR35MapEdit.cs`와 `G05NorthWestMapEdit.cs`로 작성했다. `RoadMapRules.cs`·`RoadMapValidator.cs`·편집기에서 신호 접근 방향과 좌회전 연결로를 지정하는 비보호 표지를 지원한다. `DriveFlowPolicy.cs`·`TrafficSystem.cs`·`TrafficSignalDemand.cs` 및 주행 평가/표시 경로에 연결했다. `BusinessProgress.cs`·`JunctionRouteFeedbackTests.cs`에서 이전 저장의 내비 인덱스와 두 교차로의 진행 중 관측을 새 지도에 맞춰 다시 계산한다.
+- Unity 2022.3.62f2 `-batchmode -nographics -quit -executeMethod ColorSurveyR35MapEdit.Apply` 종료0. 저장 전후 화살표, 실제 회전 연결·차량 외곽, 조건부 유턴, 승하차 39곳과 방향별 1,482개 경로를 검증했다. 지도 지문 `a528216cb878fa6fce9af1e2fc64c067416078a2c8e6c4874c8563792a829591`. `pwsh -File tools/check_workspace.ps1 -Strict` 종료0·입력 문제0, 선택 재수입 지도 두 개 부재.
+- `ColorSurveyR35MapEdit.BuildReviewed` 종료0. 직진·좌회전 등화 비교, 반대편 보호 좌회전, 맞은편 차 양보, r14~34 저장 이관 21개 버전 550검사와 BuildHybrid를 통과했다. 실행본 지도 지문 일치와 사용자 FirstDrive 씬 SHA256 복원을 확인했다. 로그는 `artifacts/color-road-survey/r35-build.log`에 있다.
+- P13 분리봉을 횡단보도 동서 양쪽에서 재확인했다. 작성 지도는 중앙 횡단보도 x648/z257.3과 양쪽 정지선을 갖고 있다. 짧은 분리봉 무리는 이 정지선 바깥으로 정렬하는 작업이 남았다. 공영주차장 분리봉·빗금·진출입로와 다른 색상 구간의 남은 방향은 [58그룹 현황](../content-design/road-survey/2026-11-16-coverage.md)에 기록했다.

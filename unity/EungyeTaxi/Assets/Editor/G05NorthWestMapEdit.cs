@@ -23,7 +23,7 @@ public static class G05NorthWestMapEdit {
   note="Map 36, 15 to 14: five approach lanes; user confirmed outer right only. Existing left turn and three public straight exits are retained. The U-turn supplementary sign reads 좌회전시 / 보행신호시. May 2026 and March 2024 compared. The 70m approach, 24m taper, lanes and U curve are game estimates."
  };
 
- static IEnumerable<Vector3> OriginalHead(AssistedRoadNetwork.Path path,float cut){
+ internal static IEnumerable<Vector3> OriginalHead(AssistedRoadNetwork.Path path,float cut){
   yield return path.points[0];float at=0;
   for(int i=1;i<path.points.Length;i++){
    at+=Vector3.Distance(path.points[i-1],path.points[i]);
@@ -36,17 +36,21 @@ public static class G05NorthWestMapEdit {
  static RoadMapDocument Preview(ProjectMapPackage package){
   Check(package.document.revision==33&&package.contentHash==RequiredHash,"exact r33 required");
   var d=package.document.Copy();
+  Patch(package,d,Prefix,Junction,Roots,Heads,Opposite,Evidence());
+  return d;
+ }
+
+ internal static void Patch(ProjectMapPackage package,RoadMapDocument d,string prefix,string junction,string[] roots,string[] headIds,string[] opposite,RoadMapEvidence evidence){
   var lanes=d.lanes.ToDictionary(l=>l.id);
-  var heads=Heads.Select(id=>lanes[id]).ToArray();
+  var heads=headIds.Select(id=>lanes[id]).ToArray();
   var paths=heads.Select(Path).ToArray();
   Check(paths.All(p=>p.length>Approach),"upstream lengths changed");
-  var baselineStops=package.baseline.stops.Where(s=>s.graphStop&&Heads.Contains(package.baseline.hdEdges[s.laneEdge].id));
+  var baselineStops=package.baseline.stops.Where(s=>s.graphStop&&headIds.Contains(package.baseline.hdEdges[s.laneEdge].id));
   foreach(var stop in baselineStops){
-   int i=Array.IndexOf(Heads,package.baseline.hdEdges[stop.laneEdge].id);
+   int i=Array.IndexOf(headIds,package.baseline.hdEdges[stop.laneEdge].id);
    Check(stop.laneAt<paths[i].length-Approach,"existing stop would move into taper");
   }
-  Check(!d.facilities.Any(f=>Heads.Contains(f.laneId))&&!d.signals.Any(p=>p.groups.Any(g=>g.laneIds.Any(Heads.Contains))),"lane-bound facility needs explicit assignment");
-  var evidence=Evidence();
+  Check(!d.facilities.Any(f=>headIds.Contains(f.laneId))&&!d.signals.Any(p=>p.groups.Any(g=>g.laneIds.Any(headIds.Contains))),"lane-bound facility needs explicit assignment");
   var origin=paths[0].Position(paths[0].length);
   var right=TrafficSystem.Right(paths[0].Tangent(paths[0].length));
   float span=Vector3.Dot(paths[2].Position(paths[2].length)-origin,right);
@@ -58,21 +62,21 @@ public static class G05NorthWestMapEdit {
    var path=paths[source];
    float shift=span*i/4-Vector3.Dot(path.Position(path.length)-origin,right);
    var tail=Copy(heads[source]);tails[i]=tail;
-   tail.id=Prefix+Labels[i];tail.number=i+1;tail.width=span/4;
+   tail.id=prefix+Labels[i];tail.number=i+1;tail.width=span/4;
    tail.sourceOffset=0;
    tail.fromNode=heads[source].toNode;
    tail.toNode=tail.id+":end";
    Y06EastApproachEdit.Assign(tail,Enumerable.Range(0,(int)Approach+1).Select(step=>
     path.Position(path.length-Approach+step)+right*shift*Mathf.SmoothStep(0,1,Mathf.Clamp01(step/Taper))),evidence);
   }
-  var left=lanes[Join(Roots[0],-1)];
-  var turnRight=lanes[Join(Roots[2],1)];
+  var left=lanes[Join(roots[0],-1)];
+  var turnRight=lanes[Join(roots[2],1)];
   Check(Vector3.Distance(tails[0].points.Last().V(),left.points[0].V())<.02f
    &&Vector3.Distance(tails[4].points.Last().V(),turnRight.points[0].V())<.02f,"existing left and right connector starts");
   left.fromNode=tails[0].toNode;turnRight.fromNode=tails[4].toNode;
   tails[0].next=new[]{left.id};tails[4].next=new[]{turnRight.id};
-  for(int i=0;i<Roots.Length;i++){
-   var join=lanes[Join(Roots[i],0)];
+  for(int i=0;i<roots.Length;i++){
+   var join=lanes[Join(roots[i],0)];
    Y06EastApproachEdit.Reconnect(join,tails[i+1],lanes[join.next.Single()],evidence);
    tails[i+1].next=new[]{join.id};
    var surface=d.scene.objects.SingleOrDefault(o=>o.id=="road:polish:"+join.id);
@@ -81,38 +85,37 @@ public static class G05NorthWestMapEdit {
    heads[i].next=tails.Where((_,j)=>sources[j]==i).Select(l=>l.id).ToArray();
   }
   d.lanes=d.lanes.Concat(tails).ToArray();
-  AddUturn(package,d,tails[0],lanes,evidence);
-  return d;
+  AddUturn(package,d,tails[0],lanes,prefix,junction,opposite,evidence);
  }
 
- static void AddUturn(ProjectMapPackage package,RoadMapDocument d,RoadMapLane entry,Dictionary<string,RoadMapLane> lanes,RoadMapEvidence evidence){
+ static void AddUturn(ProjectMapPackage package,RoadMapDocument d,RoadMapLane entry,Dictionary<string,RoadMapLane> lanes,string prefix,string junction,string[] opposite,RoadMapEvidence evidence){
   RoadMapLane target=null;Vector3[] curve=null;
   var rejected=new List<string>();
-  foreach(string id in Opposite){
+  foreach(string id in opposite){
    try{curve=UturnMovement.Geometry(entry,lanes[id]);target=lanes[id];break;}
    catch(ArgumentException e){rejected.Add(id+": "+e.Message);}
   }
   Check(target!=null,"observed U-turn geometry cannot connect: "+string.Join(", ",rejected));
   var turn=Copy(entry);
-  turn.id="join:"+Prefix+"uturn";turn.turn=UturnMovement.Turn;
+  turn.id="join:"+prefix+"uturn";turn.turn=UturnMovement.Turn;
   turn.fromNode=entry.toNode;turn.toNode=target.fromNode;turn.number=target.number;turn.next=new[]{target.id};
   Y06EastApproachEdit.Assign(turn,curve,evidence);
   entry.next=entry.next.Concat(new[]{turn.id}).ToArray();
   d.lanes=d.lanes.Concat(new[]{turn}).ToArray();
   var heading=(entry.points.Last().V()-entry.points[entry.points.Length-2].V()).normalized;
-  var rule=package.baseline.junctionRules.Single(j=>j.id==Junction);
+  var rule=package.baseline.junctionRules.Single(j=>j.id==junction);
   var axisDirection=new Vector3(rule.dx,0,rule.dz).normalized;
   int axis=Mathf.Abs(Vector3.Dot(heading,axisDirection))>.7f?0:1;
   int sign=Vector3.Dot(heading,axis==0?axisDirection:TrafficSystem.Right(axisDirection))>=0f?1:-1;
   var pos=entry.points.Last().V()-heading*7-TrafficSystem.Right(heading)*2.3f;
   d.facilities=d.facilities.Concat(new[]{new RoadMapFacility{
-   id=Prefix+"uturn-condition",kind="sign",type=UturnMovement.LeftOrPedestrianGreen,rule=true,
-   laneId=entry.id,junctionId=Junction,x=pos.x,z=pos.z,yaw=Quaternion.LookRotation(heading).eulerAngles.y,
+   id=prefix+"uturn-condition",kind="sign",type=UturnMovement.LeftOrPedestrianGreen,rule=true,
+   laneId=entry.id,junctionId=junction,x=pos.x,z=pos.z,yaw=Quaternion.LookRotation(heading).eulerAngles.y,
    axis=axis,sign=sign,height=3f,text="유턴 · 좌회전 또는 보행 신호 시",evidence=evidence
   }}).ToArray();
  }
 
- static void Validate(ProjectMapPackage before,RoadMapDocument d){
+ internal static void Validate(ProjectMapPackage before,RoadMapDocument d,string prefix){
   var issues=RoadMapValidator.Validate(before.baseline,d).Where(issue=>issue.error).ToArray();
   Check(issues.Length==0,string.Join(" / ",issues.Take(8)));
   var map=RoadMapComposer.Compose(before.baseline,d);
@@ -122,7 +125,7 @@ public static class G05NorthWestMapEdit {
   var masks=new[]{LaneDirectionPaint.Left|LaneDirectionPaint.Uturn,LaneDirectionPaint.Straight,LaneDirectionPaint.Straight,LaneDirectionPaint.Straight,LaneDirectionPaint.Right};
   var through=new HashSet<string>();
   for(int i=0;i<Labels.Length;i++){
-   var edge=graph.edges.Single(e=>e.id==Prefix+Labels[i]);
+   var edge=graph.edges.Single(e=>e.id==prefix+Labels[i]);
    Check(edge.number==i+1&&edge.next.Aggregate(0,(mask,n)=>mask|UturnMovement.PaintMask(graph.edges[n].turn))==masks[i],"incorrect turns "+edge.id);
    Check(arrows[edge.id].Any(a=>a.turns==masks[i]),"missing painted arrow "+edge.id);
    Y07MapTests.Footprint(map,edge);
@@ -133,7 +136,7 @@ public static class G05NorthWestMapEdit {
    }
   }
   Check(through.Count==3,"three distinct straight destinations");
-  Check(UturnMovement.Condition(d,Prefix+"left")?.type==UturnMovement.LeftOrPedestrianGreen,"incorrect conditional U-turn");
+  Check(UturnMovement.Condition(d,prefix+"left")?.type==UturnMovement.LeftOrPedestrianGreen,"incorrect conditional U-turn");
   var cars=PassengerStopCatalog.For(map);
   Check(cars.Stops.Length==39,"existing passenger stops: "+string.Join("; ",cars.Rejected));
   var stop=cars.Stops.Single(s=>s.name=="은계 승하차 6");
@@ -144,7 +147,7 @@ public static class G05NorthWestMapEdit {
    Check(graph.Route(from.laneEdge,from.laneAt,to.laneEdge,to.laneAt)!=null,"unreachable stop "+from.name+" → "+to.name);pairs++;
   }
   Check(pairs==1482,"all directed passenger routes");
-  Debug.Log("G05_NW_VALIDATED L+U/S/S/S/R, condition left or pedestrian green, 39 stops, 1482 routes");
+  Debug.Log(prefix+" G05_VALIDATED L+U/S/S/S/R, condition left or pedestrian green, 39 stops, 1482 routes");
  }
 
  public static void Apply(){
@@ -152,18 +155,18 @@ public static class G05NorthWestMapEdit {
   var before=ProjectMapStore.Load(root);
   var d=Preview(before);
   d.revision=34;d.projectRevision="";d.savedAt=DateTime.UtcNow.ToString("o");
-  Validate(before,d);
+  Validate(before,d,Prefix);
   var package=ProjectMapPackage.Create(before.baseline,d);
   ProjectMapStore.Save(root,package,token);
   var loaded=ProjectMapStore.Load(root);
   Check(loaded.contentHash==package.contentHash&&loaded.baselineHash==before.baselineHash,"saved identity");
-  Validate(before,loaded.document);
+  Validate(before,loaded.document,Prefix);
   ProjectMapBuild.Prepare();
   Debug.Log("G05_NW_APPLIED revision=34 contentHash="+loaded.contentHash);
  }
 
  public static void PreviewChecks(){
   var before=ProjectMapStore.Load(ProjectMapBuild.Root);
-  Validate(before,Preview(before));
+  Validate(before,Preview(before),Prefix);
  }
 }

@@ -12,12 +12,14 @@ public partial class TrafficSystem {
  float GameSignalTime(TrafficJunction j){return Adaptive(j)?DemandClock(j).ProgramTime:Clock+j.offset;}
  public float EstimatedGreenWait(TrafficJunction j,int axis,int sign,int turn){
   if(j==null||turn>0||turn==UturnMovement.Turn||j.scenarioSignal)return -1;
+  if(turn==-1&&AuthoredPermissiveLeft(j,axis,sign))turn=0;
   if(Adaptive(j))return DemandClock(j).EstimateGreen(axis,sign,turn);
   var p=j.editorProgram??j.gameProgram;if(p==null)return -1;float now=j.editorProgram!=null?Clock:Clock+j.offset;
   return p.SecondsToGreen(axis,sign,turn,now);
  }
  void AddDemand(TrafficJunction j,int axis,int sign,int turn){
   if(!Adaptive(j))return;DemandClock(j);var counts=signalDemand[j];
+  if(turn==-1&&AuthoredPermissiveLeft(j,axis,sign))turn=0;
   for(int i=0;i<counts.Length;i++)foreach(string id in j.gameProgram.stages[i].groups){bool found=false;foreach(var g in j.gameProgram.groups)if(g.id==id&&!g.pedestrian&&g.axis==axis&&g.sign==sign&&g.turn==turn){found=true;break;}if(found){counts[i]++;break;}}
  }
  // Demand does not grant a movement. Only an existing protected stage and an

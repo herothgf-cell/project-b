@@ -105,7 +105,15 @@ public partial class TrafficSystem : MonoBehaviour {
     public SignalColor Signal(TrafficJunction junction, int axis,int sign=1) { if(junction.gameProgram!=null&&!junction.scenarioSignal)return junction.gameProgram.Movement(axis,sign,0,GameSignalTime(junction)); if(junction.editorProgram!=null)return junction.editorProgram.Movement(axis,sign,0,Clock); return junction.scenarioSignal?(axis==junction.observationAxis&&(sign==junction.observationSign||junction.scenarioOpposingGreen)?junction.scenarioForward:SignalColor.Red):junction.signalized?(PhaseTime(junction)>=VehicleCycle(junction)?SignalColor.Red:KoreanSignalRules.Signal(PhaseTime(junction),junction.leftTurnMode,axis,sign)):SignalColor.Green; }
     public float SecondsToSignalChange(TrafficJunction j,int axis,int sign=1){if(j!=null&&j.gameProgram!=null&&!j.scenarioSignal)return (Adaptive(j)?DemandClock(j).SecondsToChange(axis,sign):j.gameProgram.SecondsToHeadChange(axis,sign,Clock+j.offset));if(j!=null&&j.editorProgram!=null)return j.editorProgram.SecondsToHeadChange(axis,sign,Clock);if(j==null||!j.signalized||j.scenarioSignal)return -1;float phase=PhaseTime(j),cycle=VehicleCycle(j);int approach=j.leftTurnMode==LeftTurnMode.Permissive?axis:axis*2+(sign>0?0:1);if(phase>=cycle)return cycle+12+approach*17-phase;float seconds=KoreanSignalRules.SecondsToChange(phase,j.leftTurnMode,axis,sign);return seconds+(HasPedestrianPhase(j)&&phase+seconds>=cycle-.001f?12:0);}
     public SignalColor LeftSignal(TrafficJunction junction,int axis,int sign=1){if(junction.gameProgram!=null&&!junction.scenarioSignal)return junction.gameProgram.Movement(axis,sign,-1,GameSignalTime(junction));if(junction.editorProgram!=null)return junction.editorProgram.Movement(axis,sign,-1,Clock);if(junction.scenarioSignal&&junction.leftTurnMode==LeftTurnMode.Permissive)return SignalColor.Red;return Signal(junction,axis,sign);}
-    public SignalColor MovementSignal(TrafficJunction junction,int axis,int turn,int sign=1){return turn==UturnMovement.Turn?SignalColor.Red:junction.gameProgram!=null&&!junction.scenarioSignal?junction.gameProgram.Movement(axis,sign,turn,GameSignalTime(junction)):junction.editorProgram!=null?junction.editorProgram.Movement(axis,sign,turn,Clock):Signal(junction,axis,sign);}
+    public bool AuthoredPermissiveLeft(TrafficJunction j,int axis,int sign){
+        return !j.scenarioSignal&&j.editorProgram==null&&roadMap!=null&&RoadMapRules.PermissiveLeft(roadMap.editorDocument,j.name,axis,sign);
+    }
+    public bool PermissiveLeft(TrafficJunction j,int axis,int sign){return j.leftTurnMode==LeftTurnMode.Permissive||AuthoredPermissiveLeft(j,axis,sign);}
+    public SignalColor LeftEntrySignal(TrafficJunction j,int axis,int sign,string laneId){
+        if(j.editorProgram!=null)return j.editorProgram.Movement(axis,sign,-1,Clock,laneId);
+        return AuthoredPermissiveLeft(j,axis,sign)?Signal(j,axis,sign):LeftSignal(j,axis,sign);
+    }
+    public SignalColor MovementSignal(TrafficJunction junction,int axis,int turn,int sign=1){return turn==UturnMovement.Turn?SignalColor.Red:turn==-1&&AuthoredPermissiveLeft(junction,axis,sign)?Signal(junction,axis,sign):junction.gameProgram!=null&&!junction.scenarioSignal?junction.gameProgram.Movement(axis,sign,turn,GameSignalTime(junction)):junction.editorProgram!=null?junction.editorProgram.Movement(axis,sign,turn,Clock):Signal(junction,axis,sign);}
     public RoadObservation Observe(TrafficJunction j,int axis,int sign,Vector3 direction,GameObject self){
         var o=j.rightTurnObservation!=null&&j.observationAxis==axis&&j.observationSign==sign?j.rightTurnObservation.Copy():new RoadObservation{known=true,pedestrian=PedestrianState.None};
         // Unbound programs cannot use a lane ID. Resolving it twice per GUI
@@ -154,7 +162,9 @@ public partial class TrafficSystem : MonoBehaviour {
     public bool UturnPermitted(TrafficJunction j,int axis,int sign,string laneId){var condition=UturnCondition(laneId);if(condition==null)return false;bool left=j.editorProgram!=null?j.editorProgram.Movement(axis,sign,-1,Clock,laneId)==SignalColor.Green:j.leftTurnMode!=LeftTurnMode.Permissive&&LeftSignal(j,axis,sign)==SignalColor.Green;bool walk=j.editorProgram!=null&&!string.IsNullOrEmpty(condition.groupId)?j.editorProgram.Color(condition.groupId,Clock)==SignalColor.Green:PedestrianGreen(j,axis,sign);return UturnMovement.Allows(condition.type,left,walk,true);}
     bool UturnClear(TrafficCar car,TrafficStop stop){int count=overlaps.Sphere(stop.junction.center,100,(1<<8)|(1<<9),QueryTriggerInteraction.Ignore);for(int i=0;i<count;i++){var hit=overlaps.hits[i];var root=hit.attachedRigidbody?hit.attachedRigidbody.gameObject:hit.gameObject;if(root==car.gameObject)continue;var other=root.GetComponent<TrafficCar>();float deviation;float followerAt=car.route.ProjectNear(root.transform.position,car.distance,out deviation);if(deviation<.8f&&followerAt<car.distance-4.5f&&Vector3.Dot(car.route.Tangent(followerAt),root.transform.forward)>.95f)continue;if(other&&MovingLeader(car,other))continue;float speed=other?other.speed:hit.attachedRigidbody?hit.attachedRigidbody.velocity.magnitude:0;for(float at=Mathf.Max(0,stop.distance);at<=Mathf.Min(car.route.length,stop.exitDistance+8);at+=1.5f){var point=car.route.Position(at);var offset=point-root.transform.position;float along=Vector3.Dot(offset,root.transform.forward);float side=Mathf.Abs(Vector3.Dot(offset,Right(root.transform.forward)));if(offset.sqrMagnitude<3.2f*3.2f||side<3.2f&&along>=-3&&along<Mathf.Max(8,speed*6+5))return false;}}return true;}
     public bool YieldClear(TrafficJunction j,Vector3 incoming,int turn,GameObject self){
-        if(turn==0||turn==-1&&j.leftTurnMode!=LeftTurnMode.Permissive)return true;
+        if(turn==0)return true;
+        int incomingAxis=Mathf.Abs(Vector3.Dot(incoming,AxisDirection(j,0)))>.7f?0:1;
+        if(turn==-1&&!PermissiveLeft(j,incomingAxis,Sign(incoming,incomingAxis,j)))return true;
         // A selected native route can differ from the nominal outer-lane curve
         // used below (offset/skewed approaches and multilane T junctions).
         // Disjoint planned corridors are not crossing traffic. Admission still
@@ -178,7 +188,7 @@ public partial class TrafficSystem : MonoBehaviour {
             bool inside=along<j.StopDistance(axis)+2;
             // Opposing permissive left must yield to this right turn. Once it has entered,
             // however, let it clear; protected left retains its signal priority.
-            if(turn>0&&facing<-.7f&&car&&car.CurrentTurn<0&&j.leftTurnMode==LeftTurnMode.Permissive&&!inside)continue;
+            if(turn>0&&facing<-.7f&&car&&car.CurrentTurn<0&&PermissiveLeft(j,axis,Sign(heading,axis,j))&&!inside)continue;
             if((inside||Signal(j,axis,Sign(heading,axis,j))==SignalColor.Green)&&along<Mathf.Max(12,speed*6+5)){
                 if(turn>0&&car&&!RightTurnConflict(j,incoming,car))continue;
                 // A manually driven opposing car travelling straight occupies the other half of the road.
@@ -554,7 +564,7 @@ public partial class TrafficSystem : MonoBehaviour {
         var head=new Vector3(-reach,0,0);var span=head-support;
         var arm=WorldBuilder.Box("Signal arm",(head+support)*.5f+Vector3.up*4.9f,new Vector3(.12f,.12f,span.magnitude),pole,root.transform,false);arm.transform.localRotation=Quaternion.LookRotation(span);
         bool four=SignalHeadPresentation.Generated(roadMap,j,editAxis,editSign).lamps!=3;
-        bool permissive=j.leftTurnMode==LeftTurnMode.Permissive,hasLeft=HasLeftMovement(j,editAxis,editSign),protectedArrow=four&&!permissive&&hasLeft;
+        bool permissive=PermissiveLeft(j,editAxis,editSign),hasLeft=HasLeftMovement(j,editAxis,editSign),protectedArrow=four&&!permissive&&hasLeft;
         // Physical format is explicit per approach. Unreviewed heads retain
         // four apertures; an unused left lens never grants a movement right.
         WorldBuilder.Box("Signal housing",new Vector3(-reach,4.55f,0),new Vector3(four?2.9f:2.3f,.85f,.35f),dark,root.transform,false);

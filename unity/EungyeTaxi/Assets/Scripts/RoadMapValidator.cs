@@ -38,7 +38,21 @@ public static class RoadMapValidator {
    if(f.axis<0||f.axis>1||Math.Abs(f.sign)!=1)add(f.id,"축0/1 · 방향±1 필요",true,p);
    if(!string.IsNullOrEmpty(f.laneId)&&(!lanes.ContainsKey(f.laneId)||lanes[f.laneId].disabled))add(f.id,"없는 차로 · 대상을 다시 지정하세요",true,p);
    if(f.kind=="vehicleSignal"||f.kind=="pedestrianSignal"){var program=d.signals.FirstOrDefault(s=>s.junctionId==f.junctionId);var group=program==null?null:program.groups.FirstOrDefault(g=>g.id==f.groupId);if(group==null||group.pedestrian!=(f.kind=="pedestrianSignal"))add(f.id,"신호 그룹/종류를 연결하세요",true,p);if(f.kind=="vehicleSignal"&&!d.facilities.Any(x=>x.id==f.targetId&&x.kind=="stopLine"))add(f.id,"제어 정지선을 연결하세요",true,p);if(f.kind=="pedestrianSignal"&&!d.facilities.Any(x=>x.id==f.targetId&&x.kind=="crosswalk"))add(f.id,"제어 횡단보도를 연결하세요",true,p);}
-   if(f.rule&&f.kind=="sign"){if(f.type!="진입 금지"&&f.type!="좌회전 금지"&&f.type!="우회전 금지"&&f.type!="제한속도"&&!UturnMovement.IsCondition(f.type))add(f.id,"이 표지는 안내용만 지원 · 규칙 적용 해제",true,p);if(string.IsNullOrEmpty(f.laneId))add(f.id,"규칙 적용 차로를 지정하세요",true,p);}
+   if(f.rule&&f.kind=="sign"){if(f.type!="진입 금지"&&f.type!="좌회전 금지"&&f.type!="우회전 금지"&&f.type!="제한속도"&&f.type!=RoadMapRules.PermissiveLeftSign&&!UturnMovement.IsCondition(f.type))add(f.id,"이 표지는 안내용만 지원 · 규칙 적용 해제",true,p);if(string.IsNullOrEmpty(f.laneId))add(f.id,"규칙 적용 차로를 지정하세요",true,p);}
+   if(f.rule&&f.kind=="sign"&&f.type==RoadMapRules.PermissiveLeftSign){
+    var junction=(baseline.junctionRules??new HybridJunctionRule[0]).FirstOrDefault(r=>r.id==f.junctionId);
+    RoadMapLane lane;
+    if(junction==null||junction.signalMode!=2||d.signals.Any(s=>s.junctionId==f.junctionId)
+      ||!lanes.TryGetValue(f.laneId??"",out lane)||lane.disabled||lane.ruleId!=f.junctionId
+      ||!lane.next.Any(n=>lanes.ContainsKey(n)&&!lanes[n].disabled&&lanes[n].turn==-1))
+     add(f.id,"비보호 좌회전은 자동 신호를 사용하는 해당 교차로의 좌회전 진입 차로에 지정하세요",true,p);
+    else {
+     var heading=RoadMapEasySelection.Heading(lane);var direction=new Vector3(junction.dx,0,junction.dz).normalized;
+     int axis=Mathf.Abs(Vector3.Dot(heading,direction))>.7f?0:1;
+     int sign=Vector3.Dot(heading,axis==0?direction:TrafficSystem.Right(direction))>=0?1:-1;
+     if(axis!=f.axis||sign!=f.sign)add(f.id,"비보호 좌회전 표지의 접근 축/방향을 진입 차로에 맞추세요",true,p);
+    }
+   }
    if(f.rule&&UturnMovement.IsCondition(f.type)){RoadMapLane lane;var rule=(baseline.junctionRules??new HybridJunctionRule[0]).FirstOrDefault(r=>r.id==f.junctionId);if(!lanes.TryGetValue(f.laneId,out lane)||!lane.next.Any(n=>lanes.ContainsKey(n)&&lanes[n].turn==UturnMovement.Turn)||rule==null||lane.ruleId!=f.junctionId)add(f.id,"유턴 조건은 해당 교차로 진입 차로와 유턴 출구에 연결하세요",true,p);else{var heading=RoadMapEasySelection.Heading(lane);var axisDirection=new Vector3(rule.dx,0,rule.dz).normalized;int axis=Mathf.Abs(Vector3.Dot(heading,axisDirection))>.7f?0:1;int sign=Vector3.Dot(heading,axis==0?axisDirection:TrafficSystem.Right(axisDirection))>=0?1:-1;if(axis!=f.axis||sign!=f.sign)add(f.id,"유턴 조건 표지의 접근 축/방향을 진입 차로에 맞추세요",true,p);var program=d.signals.FirstOrDefault(s=>s.junctionId==f.junctionId);bool left=f.type==UturnMovement.LeftGreen||f.type==UturnMovement.LeftOrPedestrianGreen,walk=f.type==UturnMovement.PedestrianGreen||f.type==UturnMovement.LeftOrPedestrianGreen;if((left||walk)&&rule.signalMode<=0&&program==null||walk&&!rule.crosswalk&&program==null||program!=null&&(left&&!program.groups.Any(g=>!g.pedestrian&&g.turn==-1&&g.axis==f.axis&&g.sign==f.sign&&(g.laneIds.Length==0||g.laneIds.Contains(f.laneId)))||walk&&!program.groups.Any(g=>g.pedestrian&&(string.IsNullOrEmpty(f.groupId)?g.axis==f.axis&&g.sign==f.sign:g.id==f.groupId))))add(f.id,"유턴 조건에 필요한 좌회전/보행 신호 그룹이 없습니다",true,p);}}
    if(f.rule&&f.type=="제한속도"){RoadMapLane target;if(!Finite(f.speed)||f.speed<5||f.speed>100||!Finite(f.startAt)||!Finite(f.endAt)||f.startAt<0||f.endAt<=f.startAt)add(f.id,"제한속도/적용 시작·끝 범위 오류",true,p);if(lanes.TryGetValue(f.laneId,out target)&&target.points!=null&&target.points.Length>1&&f.endAt>new AssistedRoadNetwork.Path(target.points.Select(q=>q.V()).ToArray()).length)add(f.id,"제한속도 끝이 차로 길이를 넘습니다",true,p);if(d.facilities.Any(g=>g!=f&&g.rule&&g.type=="제한속도"&&g.laneId==f.laneId&&g.startAt<f.endAt&&f.startAt<g.endAt&&g.speed!=f.speed))add(f.id,"겹치는 제한속도 상충",true,p);}if(f.evidence==null||f.evidence.state!="observed"||string.IsNullOrWhiteSpace(f.evidence.month))add(f.id,"현장/촬영월 미확인 · 게임 설정",false,p);
   }

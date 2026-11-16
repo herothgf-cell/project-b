@@ -25,7 +25,7 @@ public class LiveTrafficValidationTest : MonoBehaviour {
    var o=session.traffic.Observe(j,axis,sign,dir,taxi.gameObject);int turn=0;var nav=session.jobs.nav;
    if(nav.hdRoute!=null){float begin=0;for(int k=0;k<nav.hdRoute.edges.Count;k++){var edge=nav.hd.edges[nav.hdRoute.edges[k]];if(edge.ruleId==j.name&&begin-at<55&&nav.hdRoute.ends[k]>at){turn=edge.turn;break;}begin=nav.hdRoute.ends[k];}}
    string laneId=session.traffic.EditorLaneId(taxi.transform.position,taxi.transform.forward);
-   bool permitted=turn==UturnMovement.Turn?session.traffic.UturnPermitted(j,axis,sign,laneId)&&o.PedestrianClear:turn>0?o.MayTurnRight(stopped.Contains(key)):turn<0?(j.editorProgram!=null?j.editorProgram.Movement(axis,sign,turn,session.traffic.Clock,laneId):session.traffic.LeftSignal(j,axis,sign))==SignalColor.Green&&o.PedestrianClear&&session.traffic.YieldClear(j,dir,turn,taxi.gameObject):o.forward==SignalColor.Green;
+   bool permitted=turn==UturnMovement.Turn?session.traffic.UturnPermitted(j,axis,sign,laneId)&&o.PedestrianClear:turn>0?o.MayTurnRight(stopped.Contains(key)):turn<0?session.traffic.LeftEntrySignal(j,axis,sign,laneId)==SignalColor.Green&&o.PedestrianClear&&session.traffic.YieldClear(j,dir,turn,taxi.gameObject):o.forward==SignalColor.Green;
    var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.Owns(j)){var state=zones.Live.State;permitted=state.Flashing?(state.Variant==9||stopped.Contains(key)):state.Signal==SignalColor.Green;permitted&=!state.Blocked&&!state.Oncoming;}
    if(!permitted)limit=Mathf.Min(limit,Mathf.Sqrt(3*Mathf.Max(0,gap-1)));
   }}return limit;
