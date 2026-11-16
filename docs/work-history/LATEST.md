@@ -1,6 +1,10 @@
 # 최신 작업 이력
 
+2026-11-16 색상 도로 후속. 은계번영길 P13/P14 방향별 차로와 중앙선 전환, 35번 건물 입구 방향 화살표 생략과 기존 좌회전·직진 안내를 반영했다. 작성 지도·로컬 통합 실행본 r32. [실제 검증·남은 조사](2026-11-16-color-road-survey.md) · [58그룹 현황](../content-design/road-survey/2026-11-16-coverage.md). BuildHybrid 재실행 종료0, 저장 이관418검사·39곳1,482경로 통과. 공영주차장 P20/P26, 은계로 G05, 대은로 Y04 현장 추가 근거와 전수 조사가 남아 있다. 원격 푸시 없음.
+
 2026-11-13 마인드맵을 핵심 37노드·최대 3단계로 정리하고 세부 377항목을 4개 기획문서로 이관했다. [개요 목차](../content-design/택시%20시뮬레이션-목차.md) · [정리·검증 기록](2026-11-13-mindmap-simplification.md). 원본 메모·진척도 보존, 구조/링크 파일/항목 보존 검사 통과. 다음은 앱에서 개요 배치와 링크 클릭 확인이다. 게임·빌드·지도·필수 로컬 입력은 아래 은계 r19 / A2·LAN v19·BuildHybrid 기준을 유지하며 이번 재검사·플레이는 없다.
+
+2026-11-14 색상별 도로 재조사 계속. [당일 이어가기](2026-11-14-color-road-survey.md). **작성 지도 r23:** r20 하늘색 북쪽2+1·r21 대은로 짧은 본선 복구에 이어 Y07(⑦→⑧) 우회전 유입 합류4→3, 고가 아래 좌회전 포켓3→4와 합류/양보 노면 표시 적용. r23은 사용자 확인32번 보행통로 차량 연결 제거·분홍P12/P21 무차선 표시도 적용. 콘텐츠 지문 `1233c5ca6b88d5de3c75d7542ebc294409750bd1d2daa5041658149457f7e42d`. Y07 미리보기·적용/저장 후 검사 종료0, 직진3 유지·정차39/경로1482·도색1767·원본계보 보존. J5074 회전교차로 수정안 검증 및 분홍/주황 현장 조사 진행 중. [구현·검증·남은 작업](2026-11-13-color-road-survey.md) · [거리뷰 근거](../content-design/road-survey/2026-11-13-color-road-audit.md). 다섯 색 전수조사·남은 차로/분리시설·저장 이관/입력 manifest/Strict·BuildHybrid 미완료. **기본 실행본은 r19이며 사용자 지시에 따라 push 금지.** 작성 지도 적용과 배포 실행본 반영을 구분한다.
 
 2026-11-13 J8066 동쪽을 왕복3차로(서행2/동행1 ↔ 서행1/동행2)로 정정하고, 제보 좌표의 좌회전 감응을 복구했다. 대표 요청 승객 말풍선의 기사 응답을 분리하고 중앙선 법규 감점을 도구에서 독립 편집하도록 기본1점으로 변경했다. 지도r19·BuildHybrid 종료0·39곳1,482경로·저장r14~18 이관·Player 저장9/이어하기23 검사 통과. [근거·한계·배포 기록](2026-11-13-j8066-three-lanes-and-passenger-voice.md). 기존 음식 Player 검사의 옛 기대값 실패는 이전 배포본에서도 재현되어 별도 기록했다. 배포6270978 main 푸시 및 원격 동일 해시 확인.
 
@@ -24,7 +28,7 @@
 
 이 파일은 **현재 기준 + 최근 기록**만 둔다. 2026-11-10 이전 전체 원문은 [보관본](LATEST-archive-until-2026-11-09.md)에 있다. 프로젝트 전체 상태는 [CURRENT-STATE](../CURRENT-STATE.md)를 먼저 읽는다.
 
-## 현재 기준 (2026-11-13 점검)
+## 현재 기준 (2026-11-16 로컬 점검)
 
 PvP 정차 끊김 최적화는 [별도 검증본 작업](2026-11-12-pvp-stability-performance.md) 참조. 법규 CPU/GC 개선·평지 물리·최근접2차로120·예측/보간 검사 통과. 최적화와 후속 조향 개선을 기본 배포에 통합했으며 실제 제보한 호스트/참가 PC 수용은 미완료다.
 
@@ -33,10 +37,10 @@ PvP 호스트 렉 2차 최적화(같은 기록 후속 절): 내비 혼잡/제한
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
-| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 은계 r19 · [현재 배포 기록](2026-11-13-j8066-three-lanes-and-passenger-voice.md) |
+| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 로컬 은계 r32 · [현재 검증 기록](2026-11-16-color-road-survey.md) |
 | 통신 | LAN **v19**. 최적화·조향 통합 배포. 이전 v17/v18과 참가 불가, 양쪽 PC 같은 전체 실행 폴더 필요 |
 | 배포 검사 | [통합/PvP 검증과 manifest](2026-11-13-moving-route-requests-and-road-feedback.md#검증-및-재현) |
-| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (Git, revision19·SHA256 68703da2…) · Strict 입력 문제0 · 선택 재수입 JSON2개 부재 |
+| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (Git 대상, 로컬 revision32·contentHash a0591bde…) · Strict 입력 문제0 · 선택 재수입 JSON2개 부재 |
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **main 병합·배포, 사람 검증 전** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V10 30장](../proposals/project-b-game-proposal-v10.pptx) · [반영 검토](../proposals/proposal-v10-review.md) · [Manual V10](../proposals/project-b-prototype-manual-v10.md) |
 

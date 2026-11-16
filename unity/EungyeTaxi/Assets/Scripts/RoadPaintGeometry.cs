@@ -111,10 +111,14 @@ public sealed class RoadPaintGeometry {
   result.Sort((a,b)=>a.offset.CompareTo(b.offset));return result;
  }
  public List<RoadGeometry.Lane> Lanes(HdEdge edge,Vector3 point,Vector3 direction){
-  List<LanePath> group;return corridors.TryGetValue(edge.sourceId,out group)?Sample(group,point,direction,float.MaxValue):new List<RoadGeometry.Lane>();
+  List<LanePath> group;return corridors.TryGetValue(edge.sourceId,out group)?Sample(group,point,direction,SamplingWidth(edge.sourceId)):new List<RoadGeometry.Lane>();
+ }
+ float SamplingWidth(string source){
+  float widest=0;foreach(var id in source.Split(',')){float width;if(widths.TryGetValue(id,out width))widest=Mathf.Max(widest,width);}
+  return widest>0?widest:float.MaxValue;
  }
  public static void Paint(MapData map,List<TrafficJunction> junctions,System.Action<string,Vector3,Vector3,float,float,bool> mark){
-  var layout=new RoadPaintGeometry(map);var openings=RoadJunctionGeometry.Build(map);var authored=ReviewedCrosswalkGeometry.Build(map);var clearances=RoadJunctionGeometry.PaintClearances(map,junctions);var uturns=UturnRoadMarkings.Build(map);var reviewed=new ReviewedNativeLanePresentation(map);var output=UniquePaint(mark);mark=(name,p,d,w,l,y)=>{if(reviewed.SuppressesSynthetic(name,p,d))return;output(name,p,d,w,l,y);};
+  var layout=new RoadPaintGeometry(map);var openings=RoadJunctionGeometry.Build(map);var authored=ReviewedCrosswalkGeometry.Build(map);var clearances=RoadJunctionGeometry.PaintClearances(map,junctions);var uturns=UturnRoadMarkings.Build(map);var reviewed=new ReviewedNativeLanePresentation(map);var unmarked=new ReviewedUnmarkedRoadPaint(map);var output=UniquePaint(mark);mark=(name,p,d,w,l,y)=>{if(reviewed.SuppressesSynthetic(name,p,d)||unmarked.SuppressesSynthetic(name,p,d,w,l))return;output(name,p,d,w,l,y);};
   openings.RemoveAll(opening=>clearances.Exists(zone=>zone.kind=="core"&&(zone.center-opening.center).sqrMagnitude<4));
   if(layout.corridors.Count>0){layout.PaintCompiled(clearances,openings,authored,uturns,mark);reviewed.PaintDividers(clearances,output);return;}
   foreach(var road in map.roads){if(road.suppressPaint||road.id!=null&&road.id.StartsWith("fuel:"))continue;
@@ -141,13 +145,14 @@ public sealed class RoadPaintGeometry {
   foreach(var corridor in corridors){
    var first=corridor.Value.Find(x=>x.number==1);if(first==null)continue;string family=Family(first.id);float width=float.MaxValue;
    foreach(var id in corridor.Key.Split(',')){float value;if(widths.TryGetValue(id,out value))width=Mathf.Min(width,value);}if(width==float.MaxValue)continue;
-   float phase=0;
+   float phase=0,samplingWidth=SamplingWidth(corridor.Key);
    foreach(var reference in corridor.Value){if(Family(reference.id)!=family)continue;
     var path=reference.path;
     for(float at=.5f;at<path.length;at+=1){
-     // The exact compiled corridor limits membership. A source surface width
-     // must never discard a real outer lane of that corridor.
-     var p=path.Position(at);var dir=path.Tangent(at);float piece=Mathf.Min(.96f,2*(path.length-at));var lanes=Sample(corridor.Value,p,dir,float.MaxValue);
+     // Fused source families can turn back hundreds of metres away. Bound
+     // the LOCAL cross section by the widest authored ribbon in the family;
+     // its narrowest ribbon must not discard a real widened approach lane.
+     var p=path.Position(at);var dir=path.Tangent(at);float piece=Mathf.Min(.96f,2*(path.length-at));var lanes=Sample(corridor.Value,p,dir,samplingWidth);
      if(lanes.Count==0)continue;
      foreach(var line in RoadGeometry.Boundaries(lanes)){
       if(line.dashed&&(phase+at)%6>=3)continue;var q=p+TrafficSystem.Right(dir)*line.offset;if(line.yellow)q=ReviewedLaneLayout.Centreline(map,corridor.Key,q);

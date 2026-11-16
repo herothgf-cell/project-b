@@ -8,7 +8,7 @@ public static class ReviewedRoadFacilities {
  [Serializable] public sealed class Opening {public float fromX,toX;}
  [Serializable] public sealed class ExplicitSegment {public string kind;public MapPoint[] points;public float width,height;}
  public sealed class Line {public Vector3 a,b;public float width,height;public string facilityId,kind;}
- public sealed class Layout {public readonly List<Line> barriers=new List<Line>();public readonly List<Line> hatches=new List<Line>();public readonly List<Line> cushions=new List<Line>();}
+ public sealed class Layout {public readonly List<Line> barriers=new List<Line>();public readonly List<Line> hatches=new List<Line>();public readonly List<Line> cushions=new List<Line>();public readonly List<Line> bollards=new List<Line>();}
  static List<Vector2> ClearIntervals(float from,float to,Opening[] openings){
   var result=new List<Vector2>();if(to<=from)return result;
   var ordered=new List<Opening>(openings??new Opening[0]);ordered.Sort((a,b)=>a.fromX.CompareTo(b.fromX));float at=from;
@@ -28,6 +28,20 @@ public static class ReviewedRoadFacilities {
   if(Vector3.Distance(north,south)<.5f)throw new InvalidOperationException("Reviewed facility strip too narrow at x="+x+": "+facility.id);
  }
  static Line Segment(Vector3 a,Vector3 b,float width,float height,string id){return new Line{a=a,b=b,width=width,height=height,facilityId=id};}
+ // Flexible posts are discrete points, not continuous rail obstacles. Width is the post diameter.
+ // The nominal 2m spacing is a visual estimate; vertices do not restart it. Separate polylines preserve openings.
+ static void PlanBollards(Layout layout,ExplicitSegment segment,string id){
+  if(segment.width<=0||segment.height<=0||float.IsNaN(segment.width)||float.IsNaN(segment.height)||float.IsInfinity(segment.width)||float.IsInfinity(segment.height))throw new InvalidOperationException("Reviewed flexible bollard lacks dimensions: "+id);
+  float walked=0,next=0;Vector3 last=segment.points[0].V();bool placed=false;
+  for(int i=1;i<segment.points.Length;i++){
+   Vector3 a=segment.points[i-1].V(),b=segment.points[i].V();float length=Vector3.Distance(a,b);if(length<=.00001f)continue;
+   while(next<=walked+length){
+    Vector3 point=Vector3.Lerp(a,b,(next-walked)/length);var post=Segment(point,point,segment.width,segment.height,id);post.kind="flexible-bollard";layout.bollards.Add(post);last=point;placed=true;next+=2f;
+   }walked+=length;
+  }
+  Vector3 end=segment.points[segment.points.Length-1].V();
+  if(walked>0&&(!placed||Vector3.Distance(last,end)>.001f)){var post=Segment(end,end,segment.width,segment.height,id);post.kind="flexible-bollard";layout.bollards.Add(post);}
+ }
  public static Layout Plan(MapData map,Catalog catalog){
   var layout=new Layout();if(map==null||catalog==null||map.mapId!=catalog.mapId)return layout;
   foreach(var facility in catalog.facilities??new Facility[0]){
@@ -51,6 +65,7 @@ public static class ReviewedRoadFacilities {
    }
    foreach(var explicitSegment in facility.segments??new ExplicitSegment[0]){
     if(explicitSegment.points==null||explicitSegment.points.Length<2)continue;
+    if(explicitSegment.kind=="flexible-bollard"){PlanBollards(layout,explicitSegment,facility.id);continue;}
     for(int i=1;i<explicitSegment.points.Length;i++){var line=Segment(explicitSegment.points[i-1].V(),explicitSegment.points[i].V(),explicitSegment.width,explicitSegment.height,facility.id);
      if(explicitSegment.kind=="post-rail"){int count=Mathf.Max(1,Mathf.CeilToInt(Vector3.Distance(line.a,line.b)/2));for(int part=0;part<count;part++){var rail=Segment(Vector3.Lerp(line.a,line.b,(float)part/count),Vector3.Lerp(line.a,line.b,(float)(part+1)/count),line.width,line.height,line.facilityId);rail.kind="post-rail";layout.barriers.Add(rail);}}
      else if(explicitSegment.kind=="barrier")layout.barriers.Add(line);else if(explicitSegment.kind=="hatch")layout.hatches.Add(line);
@@ -66,7 +81,21 @@ public static class ReviewedRoadFacilities {
  }
  public static void Draw(MapData map,Transform parent,bool collisions){
   var asset=Resources.Load<TextAsset>("eungye-road-facilities");if(!asset)return;
-  var catalog=JsonUtility.FromJson<Catalog>(asset.text);var layout=Plan(map,catalog);if(layout.barriers.Count==0&&layout.hatches.Count==0)return;
+  var catalog=JsonUtility.FromJson<Catalog>(asset.text);Draw(Plan(map,catalog),parent,collisions);
+ }
+ static void BollardCylinder(string name,Vector3 position,float diameter,float height,Material material,Transform parent,bool solid){
+  var post=GameObject.CreatePrimitive(PrimitiveType.Cylinder);post.name=name;post.transform.SetParent(parent,false);post.transform.localPosition=position;post.transform.localScale=new Vector3(diameter,height*.5f,diameter);post.GetComponent<Renderer>().sharedMaterial=material;
+  if(!solid){var collider=post.GetComponent<Collider>();collider.enabled=false;if(Application.isPlaying)UnityEngine.Object.Destroy(collider);else UnityEngine.Object.DestroyImmediate(collider);}
+ }
+ public static void Draw(Layout layout,Transform parent,bool collisions){
+  if(layout==null||layout.barriers.Count==0&&layout.hatches.Count==0&&layout.cushions.Count==0&&layout.bollards.Count==0)return;
+  if(layout.bollards.Count>0){
+   var orange=WorldBuilder.Mat("Reviewed flexible bollard orange",new Color(1f,.27f,.035f));var white=WorldBuilder.Mat("Reviewed flexible bollard reflector",new Color(.96f,.96f,.91f));
+   foreach(var post in layout.bollards){
+    BollardCylinder("주황 탄성 분리봉 "+post.facilityId,post.a+Vector3.up*post.height*.5f,post.width,post.height,orange,parent,collisions);
+    foreach(float band in new[]{.60f,.81f})BollardCylinder("탄성 분리봉 흰 반사띠 "+post.facilityId,post.a+Vector3.up*post.height*band,post.width*1.025f,post.height*.12f,white,parent,false);
+   }
+  }
   var steel=WorldBuilder.Mat("Reviewed W-beam",new Color(.57f,.59f,.60f));var highlight=WorldBuilder.Mat("Reviewed W-beam flange",new Color(.75f,.76f,.72f));var yellow=WorldBuilder.Mat("Reviewed safety hatch",new Color(.96f,.7f,.09f));var cushion=WorldBuilder.Mat("Reviewed crash cushion",new Color(.94f,.62f,.10f));
   foreach(var line in layout.hatches)Beam("안전지대 빗금 "+line.facilityId,line,.085f,line.width,line.height,yellow,parent,false);
   var dark=WorldBuilder.Mat("Reviewed post rail",new Color(.08f,.08f,.07f));var posts=new HashSet<Vector2Int>();

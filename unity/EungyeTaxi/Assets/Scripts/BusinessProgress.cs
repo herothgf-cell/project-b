@@ -153,33 +153,48 @@ public class BusinessProgress : MonoBehaviour {
 
  }
  static void UpgradeEungyeApproachCheckpoint(LiveCampaignCheckpoint live,MapData map){
-  // Reviewed maps preserve stop bindings and taxi positions; navigation is rebuilt.
-  bool fromR14=live.mapRevision=="은계 프로젝트 지도 · r14";
-  bool fromR16=live.mapRevision=="은계 프로젝트 지도 · r16";
-  bool fromR17=live.mapRevision=="은계 프로젝트 지도 · r17";
-  bool fromR18=live.mapRevision=="은계 프로젝트 지도 · r18";
-  bool toR19=map.editorRevision=="은계 프로젝트 지도 · r19";
-  bool toR18=map.editorRevision=="은계 프로젝트 지도 · r18";
-  bool toR17=map.editorRevision=="은계 프로젝트 지도 · r17";
-  string reviewedHash=toR19?"345d93f5499e5dbf52da3a8d831935c1447980492055f192a3280f64b7fd4ef4":toR18?"bd8ad754a0510f0ee6fac7c54121433e1ba65bbd4b739e824500c081b446c474":toR17?"cb8e0ec0ed3a48f7e9a33c4ff8dc3878bd9d59aafef13c0f0fe43c5616c9c808":"d9596da33d4efc0d4f862c714eb05bb70c94365bfc30ab6171a702e2b672e3df";
-  if(map.mapId!="eungye"||(!fromR14&&live.mapRevision!="은계 프로젝트 지도 · r15"&&!(fromR16&&(toR17||toR18||toR19))&&!(fromR17&&(toR18||toR19))&&!(fromR18&&toR19))||(!toR19&&!toR18&&!toR17&&map.editorRevision!="은계 프로젝트 지도 · r16")||
-     map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||
-     RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
+  // Exact reviewed versions only; a new revision needs its actual Apply hash.
+  // Empty future pins deliberately reject until their saved result is verified.
+  const string reviewedR25Hash="970525154e204fdb578e57f1c63cb9c2b602ace906b8d56a0b68baf8bf4ec5fb";
+  const string reviewedR26Hash="f6f057397dfbf09070db6da001b1a69c0eed3a545b5e0b8ae824683c0c2c0d88";
+  const string reviewedR27Hash="33db5a0c7c12a1bfc40d8c7cba19033173c74d866c92528c8b1992f91fd660bf";
+  const string reviewedR28Hash="0b270a36e452439324eedb558a0f01c06f54d8aa11cdae6c666b5cc3a4ce784e";
+  const string reviewedR29Hash="0ac94059842e80819c2182dc84c2600937e512c535e323022ad92d9bc8d296da";
+  const string reviewedR30Hash="731caa156ccba7c85d261df3ed1f44eef6315b725e0a69ce55b5f831030e3c48";
+  const string reviewedR31Hash="c42ef1391c7bf32f72a528ce2fd40d8ac20dcd13d37fd738ec501c4b98f43e54";
+  const string reviewedR32Hash="a0591bde41c622c2dbee164aef373086226769e4c126611c9780d5607195eb70";
+  string[] hashes={
+   "d9596da33d4efc0d4f862c714eb05bb70c94365bfc30ab6171a702e2b672e3df",
+   "cb8e0ec0ed3a48f7e9a33c4ff8dc3878bd9d59aafef13c0f0fe43c5616c9c808",
+   "bd8ad754a0510f0ee6fac7c54121433e1ba65bbd4b739e824500c081b446c474",
+   "345d93f5499e5dbf52da3a8d831935c1447980492055f192a3280f64b7fd4ef4",
+   "7bf7fb04facef74f2c4027ac93cdbc24244a278a5980f805854c70611e2cc35b",
+   "aadeeb2f24c026a000b393aa938b9f625bd3f0d9db4a8a85d79a5ac13408aa45",
+   "8c9a5e7f386aeeac9114b7a9c7da0c938fb8019c5456bd20bf6e6b956de388f6",
+   "1233c5ca6b88d5de3c75d7542ebc294409750bd1d2daa5041658149457f7e42d",
+   "38bad072a26d23185eb9f902ea347eb84dbe34c7e554b22637916ee52645f8af",
+   reviewedR25Hash,reviewedR26Hash,reviewedR27Hash,reviewedR28Hash,reviewedR29Hash,reviewedR30Hash,reviewedR31Hash,reviewedR32Hash};
+  int from=0,to=0;for(int revision=14;revision<=32;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>32)return;
+  string reviewedHash=hashes[to-16];
+  if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   live.mapRevision=map.editorRevision;
-  if((toR18||toR19)&&live.jobs!=null){
-   // Appended runtime split indices move when lane-change windows are added.
-   // RestoreScenario rebuilds active scenario constraints against the new map;
-   // do not overwrite them with integers from the old graph. The enclosing
-   // checkpoint still restores the driver's fastest/shortest preference.
-   live.jobs.navigationCaptured=false;
-   live.jobs.navAvoidEdge=live.jobs.navObservedEdge=live.jobs.navPassedObservedEdge=-1;
-  }
-  var entry=live.lawObservation==null?null:live.lawObservation.entry;
-  if(entry!=null&&(toR19&&entry.junction=="J8066_6364"||(toR17||toR18||toR19)&&entry.junction=="J7917_2565"||!fromR16&&entry.junction=="J7973_3744"&&entry.axis==1&&entry.sign==1||
-      fromR14&&(entry.junction=="J8066_6364"||entry.junction=="J1927_5181"))){
-   live.lawObservation.entry=null;
-   live.lawObservation.entryPresent=false;
-  }
+  // r26 and r32 change paint only. Revisions 27–31 change topology and rebuild indices.
+  if(to>=18&&(from<25||to>=27&&from<31)&&live.jobs!=null){live.jobs.navigationCaptured=false;live.jobs.navAvoidEdge=live.jobs.navObservedEdge=live.jobs.navPassedObservedEdge=-1;}
+  var entry=live.lawObservation==null?null:live.lawObservation.entry;if(entry==null)return;
+  string junction=entry.junction;
+  bool cyan=from<20&&to>=20&&(junction=="J8921_10835"||junction=="J7355_12821"||junction=="J7292_13794"||junction=="J7254_14780");
+  bool gap=from<21&&to>=21&&(junction=="J1882_11791"||junction=="J2225_12001");
+  bool y07=from<22&&to>=22&&(junction=="J7254_14780"||junction=="J10587_15883");
+  bool pink=from<23&&to>=23&&(junction=="J7876_1656"||junction=="J8346_1658");
+  bool roundabout=from<24&&to>=24&&junction=="J5074_877";
+  bool green31=from<25&&to>=25&&junction=="J2145_15970";
+  bool p29=from<27&&to>=27&&(junction=="J7917_2565"||junction=="J7204_2569");
+  bool y06=from<28&&to>=28&&junction=="J7254_14780"||from<29&&to>=29&&junction=="J5692_14220";
+  bool p10=from<30&&to>=30&&(junction=="J6478_4105"||junction=="J6481_3341");
+  bool commerce=from<31&&to>=31&&(junction=="J5076_2580"||junction=="J5750_2576"||junction=="J6480_2573"||junction=="J7204_2569");
+  bool legacy=from<20&&(to>=19&&junction=="J8066_6364"||to>=17&&junction=="J7917_2565"||from!=16&&junction=="J7973_3744"&&entry.axis==1&&entry.sign==1||from==14&&(junction=="J8066_6364"||junction=="J1927_5181"));
+  if(cyan||gap||y07||pink||roundabout||green31||p29||y06||p10||commerce||legacy){live.lawObservation.entry=null;live.lawObservation.entryPresent=false;}
  }
  static void ValidateOffer(JobOffer o,int count){if(o!=null&&(o.pickup<0||o.pickup>=count||o.drop<0||o.drop>=count||o.fare<0))throw new Exception("Invalid live stop reference");}
  static bool Valid(float value){return !float.IsNaN(value)&&!float.IsInfinity(value);}

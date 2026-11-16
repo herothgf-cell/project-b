@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// May 2026 panoramas show one lane per direction on this loop. The existing
+// The initial loop survey recorded one lane per direction. The May 2026
+// north-leg follow-up corrects three source groups to north2/south1. Existing
 // compiled centres remain game geometry: their 9.7m separation includes the
 // median, and must not be reused as the width of either driving lane.
 public static class RoadviewCorridorPresentation {
@@ -13,6 +14,9 @@ public static class RoadviewCorridorPresentation {
   "37612023:A0020000:430:0","37612023:A0020000:641:0","37612023:A0020000:750:0","37612023:A0020000:895:0","37612023:A0020000:928:0","37612023:A0020000:1116:0","37612023:A0020000:1120:0","37612023:A0020000:1193:0","37612023:A0020000:1380:0","37612023:A0020000:1498:0","37612023:A0020000:1547:0","37612023:A0020000:2059:0","37612023:A0020000:2071:0","37612023:A0020000:2080:0"
  };
  static readonly HashSet<string> yellowSources=new HashSet<string>(StringComparer.Ordinal){"37612023:A0020000:294:0","37612023:A0020000:700:0","37612023:A0020000:1244:0"};
+ static readonly HashSet<string> cyanNorthSources=new HashSet<string>(StringComparer.Ordinal){"37612023:A0020000:1116:0","37612023:A0020000:430:0","37612023:A0020000:750:0","37612023:A0020000:1193:0","37612023:A0020000:1120:0","37612023:A0020000:1547:0","37612023:A0020000:1498:0","37612023:A0020000:895:0","37612023:A0020000:641:0"};
+ public static bool CyanNorthSource(string id){return id!=null&&cyanNorthSources.Contains(id);}
+ public static bool CyanNorthCorridor(string ids){return !string.IsNullOrEmpty(ids)&&Array.TrueForAll(ids.Split(','),CyanNorthSource);}
  public static bool GreenSource(string id){return id!=null&&sources.Contains(id);}
  public static bool YellowSource(string id){return id!=null&&yellowSources.Contains(id);}
  public static bool GreenCorridor(string ids){
@@ -23,6 +27,9 @@ public static class RoadviewCorridorPresentation {
  public static bool YellowCorridor(string ids){if(string.IsNullOrEmpty(ids))return false;foreach(var id in ids.Split(','))if(!YellowSource(id))return false;return true;}
  public static float OuterHalf(string source,List<RoadGeometry.Lane> lanes,float fallback){
   if(lanes==null||lanes.Count==0)return fallback;
+  // Bound curb paint to actual driving width after the reviewed 3-lane edit.
+  // Keep the old 1+1 presentation until that explicit document edit is applied.
+  if(CyanNorthCorridor(source)&&lanes.Count==3)return Mathf.Min(fallback,GreenLaneWidth*.5f);
   if(GreenCorridor(source)){
    if(lanes.Count>2||lanes.Count==2&&lanes[0].direction==lanes[1].direction)return fallback;
    return Mathf.Min(fallback,GreenLaneWidth*.5f);

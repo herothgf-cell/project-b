@@ -1,0 +1,3137 @@
+{
+  "schema": 1,
+  "revision": 21,
+  "source": "config/maps/project/eungye.project.json",
+  "coordinateSystem": "world x,z metres; EPSG5186 easting=181900+x northing=537200+z",
+  "scope": "Five colors from user map; membership is geometry matching, never field verification.",
+  "statusPolicy": "unreviewed or evidence-existing; existing evidence is partial and not a reviewed claim",
+  "evidenceDocuments": [
+    "docs/content-design/road-survey/2026-11-13-color-road-audit.md",
+    "docs/content-design/21-lane-movement-roadview-followup.md",
+    "docs/work-history/2026-11-10-roadview-lane-audit.md"
+  ],
+  "corridors": [
+    {
+      "color": "green",
+      "roadName": "은계로",
+      "sourceIds": [
+        "37612022:A0020000:10:0",
+        "37612022:A0020000:34:0",
+        "37612022:A0020000:181:0"
+      ],
+      "representativeLane": "local:967:17150:1989:16125",
+      "laneIds": [
+        "local:967:17150:1989:16125",
+        "local:929:17101:1939:16087",
+        "local:891:17051:1890:16049",
+        "local:2039:16162:1005:17200",
+        "local:2089:16200:1044:17249",
+        "local:2139:16238:1082:17299",
+        "join:local:967:17150:1989:16125:-1",
+        "join:local:967:17150:1989:16125:0",
+        "join:local:929:17101:1939:16087:0",
+        "join:local:891:17051:1890:16049:0",
+        "join:local:891:17051:1890:16049:1",
+        "local:967:17150:1989:16125:part:1",
+        "local:967:17150:1989:16125:part:2",
+        "local:929:17101:1939:16087:part:1",
+        "local:929:17101:1939:16087:part:2",
+        "local:929:17101:1939:16087:part:3",
+        "local:891:17051:1890:16049:part:1",
+        "local:891:17051:1890:16049:part:2",
+        "local:2039:16162:1005:17200:part:1",
+        "local:2039:16162:1005:17200:part:2",
+        "local:2089:16200:1044:17249:part:1",
+        "local:2089:16200:1044:17249:part:2",
+        "local:2089:16200:1044:17249:part:3",
+        "local:2139:16238:1082:17299:part:1",
+        "local:2139:16238:1082:17299:part:2"
+      ],
+      "localRootLaneIds": [
+        "local:967:17150:1989:16125",
+        "local:929:17101:1939:16087",
+        "local:891:17051:1890:16049",
+        "local:2039:16162:1005:17200",
+        "local:2089:16200:1044:17249",
+        "local:2139:16238:1082:17299",
+        "local:967:17150:1989:16125:part:1",
+        "local:967:17150:1989:16125:part:2",
+        "local:929:17101:1939:16087:part:1",
+        "local:929:17101:1939:16087:part:2",
+        "local:929:17101:1939:16087:part:3",
+        "local:891:17051:1890:16049:part:1",
+        "local:891:17051:1890:16049:part:2",
+        "local:2039:16162:1005:17200:part:1",
+        "local:2039:16162:1005:17200:part:2",
+        "local:2089:16200:1044:17249:part:1",
+        "local:2089:16200:1044:17249:part:2",
+        "local:2089:16200:1044:17249:part:3",
+        "local:2139:16238:1082:17299:part:1",
+        "local:2139:16238:1082:17299:part:2"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        89.08024597167969,
+        1569.71826171875,
+        235.10227966308594,
+        1729.86181640625
+      ],
+      "membership": "matched",
+      "status": "evidence-existing",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "yellow",
+      "roadName": "대은로",
+      "sourceIds": [
+        "37612022:A0020000:1096:0",
+        "37612022:A0020000:1169:0",
+        "37612022:A0020000:3014:0",
+        "37612022:A0020000:3177:0",
+        "37612022:A0020000:1101:0"
+      ],
+      "representativeLane": "local:1725:11732:1:10631",
+      "laneIds": [
+        "local:1725:11732:1:10631",
+        "local:1692:11785:-31:10685",
+        "local:33:10578:1758:11679",
+        "local:65:10524:1791:11626",
+        "join:local:33:10578:1758:11679:-1",
+        "join:local:65:10524:1791:11626:1",
+        "local:1725:11732:1:10631:part:1",
+        "local:1725:11732:1:10631:part:2",
+        "local:1692:11785:-31:10685:part:1",
+        "local:1692:11785:-31:10685:part:2",
+        "local:33:10578:1758:11679:part:1",
+        "local:33:10578:1758:11679:part:2",
+        "local:65:10524:1791:11626:part:1",
+        "local:65:10524:1791:11626:part:2"
+      ],
+      "localRootLaneIds": [
+        "local:1725:11732:1:10631",
+        "local:1692:11785:-31:10685",
+        "local:33:10578:1758:11679",
+        "local:65:10524:1791:11626",
+        "local:1725:11732:1:10631:part:1",
+        "local:1725:11732:1:10631:part:2",
+        "local:1692:11785:-31:10685:part:1",
+        "local:1692:11785:-31:10685:part:2",
+        "local:33:10578:1758:11679:part:1",
+        "local:33:10578:1758:11679:part:2",
+        "local:65:10524:1791:11626:part:1",
+        "local:65:10524:1791:11626:part:2"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        -3.0990195274353027,
+        1052.4141845703125,
+        194.7064971923828,
+        1194.24658203125
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "pink",
+      "roadName": "은행고길",
+      "sourceIds": [
+        "37612022:A0020000:1331:0",
+        "37612022:A0020000:2828:0",
+        "37612022:A0020000:2081:0"
+      ],
+      "representativeLane": "local:1844:1310:1885:1004",
+      "laneIds": [
+        "local:1844:1310:1885:1004",
+        "local:1919:1008:1879:1313",
+        "join:local:1844:1310:1885:1004:-1",
+        "join:local:1844:1310:1885:1004:0",
+        "join:local:1919:1008:1879:1313:-1",
+        "join:local:1919:1008:1879:1313:0"
+      ],
+      "localRootLaneIds": [
+        "local:1844:1310:1885:1004",
+        "local:1919:1008:1879:1313"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        177.97561645507812,
+        73.84415435791016,
+        204.99591064453125,
+        147.28688049316406
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "pink",
+      "roadName": "은행고길",
+      "sourceIds": [
+        "37612022:A0020000:1443:0",
+        "37612022:A0020000:3574:0",
+        "37612022:A0020000:1404:0",
+        "37612022:A0020000:2785:0",
+        "37612022:A0020000:2177:0",
+        "37612022:A0020000:4521:0"
+      ],
+      "representativeLane": "local:1957:2414:1950:4938",
+      "laneIds": [
+        "local:1957:2414:1950:4938",
+        "local:1903:4938:1912:2429",
+        "join:local:1957:2414:1950:4938:1",
+        "join:local:1903:4938:1912:2429:0",
+        "join:local:1903:4938:1912:2429:1"
+      ],
+      "localRootLaneIds": [
+        "local:1957:2414:1950:4938",
+        "local:1903:4938:1912:2429"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        183.1983642578125,
+        224.39797973632812,
+        212.338134765625,
+        497.3609313964844
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "pink",
+      "roadName": "은계남로",
+      "sourceIds": [
+        "37612022:A0020000:1702:0",
+        "37612022:A0020000:4634:0",
+        "37612023:A0020000:28:0",
+        "37612023:A0020000:1148:0"
+      ],
+      "representativeLane": "local:2050:827:4943:827",
+      "laneIds": [
+        "local:2050:827:4943:827",
+        "local:4944:928:2049:928",
+        "join:local:2050:827:4943:827:-1",
+        "join:local:2050:827:4943:827:0",
+        "join:local:2050:827:4943:827:1",
+        "join:local:4944:928:2049:928:-1",
+        "join:local:4944:928:2049:928:1"
+      ],
+      "localRootLaneIds": [
+        "local:2050:827:4943:827",
+        "local:4944:928:2049:928"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        191.27891540527344,
+        73.84415435791016,
+        520.4393310546875,
+        100.8236083984375
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "green",
+      "roadName": "은계로",
+      "sourceIds": [
+        "37612022:A0020000:221:0",
+        "37612022:A0020000:699:0",
+        "37612022:A0020000:3342:0",
+        "37612022:A0020000:3985:0",
+        "37612022:A0020000:4632:0",
+        "37612023:A0020000:31:0",
+        "37612023:A0020000:1668:0"
+      ],
+      "representativeLane": "local:2253:15777:4213:13601",
+      "laneIds": [
+        "local:2253:15777:4213:13601",
+        "local:2205:15737:4168:13557",
+        "local:2157:15697:4123:13513",
+        "local:4258:13644:2301:15817",
+        "local:4302:13688:2349:15857",
+        "local:4347:13732:2398:15897",
+        "join:local:2253:15777:4213:13601:0",
+        "join:local:2205:15737:4168:13557:0",
+        "join:local:2157:15697:4123:13513:0",
+        "join:local:4258:13644:2301:15817:-1",
+        "join:local:4258:13644:2301:15817:0",
+        "join:local:4302:13688:2349:15857:0",
+        "join:local:4347:13732:2398:15897:0",
+        "join:local:4347:13732:2398:15897:1",
+        "local:2253:15777:4213:13601:part:1",
+        "local:2253:15777:4213:13601:part:2",
+        "local:2205:15737:4168:13557:part:1",
+        "local:2205:15737:4168:13557:part:2",
+        "local:2205:15737:4168:13557:part:3",
+        "local:2157:15697:4123:13513:part:1",
+        "local:2157:15697:4123:13513:part:2",
+        "local:4258:13644:2301:15817:part:1",
+        "local:4258:13644:2301:15817:part:2",
+        "local:4302:13688:2349:15857:part:1",
+        "local:4302:13688:2349:15857:part:2",
+        "local:4302:13688:2349:15857:part:3",
+        "local:4347:13732:2398:15897:part:1",
+        "local:4347:13732:2398:15897:part:2",
+        "local:2253:15777:4213:13601:part:reviewed:T1-NW",
+        "local:2205:15737:4168:13557:part:reviewed:T1-NW",
+        "local:2157:15697:4123:13513:part:reviewed:T1-NW",
+        "reviewed:T1-NW:pocket",
+        "join:reviewed:T1-NW:left",
+        "local:2157:15697:4123:13513:part:reviewed:T1-NW:part:reviewed:T1-NW-right",
+        "reviewed:T1-NW-right:lane",
+        "join:reviewed:T1-NW-right:right",
+        "join:reviewed:T1-NW:uturn"
+      ],
+      "localRootLaneIds": [
+        "local:2253:15777:4213:13601",
+        "local:2205:15737:4168:13557",
+        "local:2157:15697:4123:13513",
+        "local:4258:13644:2301:15817",
+        "local:4302:13688:2349:15857",
+        "local:4347:13732:2398:15897",
+        "local:2253:15777:4213:13601:part:1",
+        "local:2253:15777:4213:13601:part:2",
+        "local:2205:15737:4168:13557:part:1",
+        "local:2205:15737:4168:13557:part:2",
+        "local:2205:15737:4168:13557:part:3",
+        "local:2157:15697:4123:13513:part:1",
+        "local:2157:15697:4123:13513:part:2",
+        "local:4258:13644:2301:15817:part:1",
+        "local:4258:13644:2301:15817:part:2",
+        "local:4302:13688:2349:15857:part:1",
+        "local:4302:13688:2349:15857:part:2",
+        "local:4302:13688:2349:15857:part:3",
+        "local:4347:13732:2398:15897:part:1",
+        "local:4347:13732:2398:15897:part:2",
+        "local:2253:15777:4213:13601:part:reviewed:T1-NW",
+        "local:2205:15737:4168:13557:part:reviewed:T1-NW",
+        "local:2157:15697:4123:13513:part:reviewed:T1-NW",
+        "local:2157:15697:4123:13513:part:reviewed:T1-NW:part:reviewed:T1-NW-right"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        195.32630920410156,
+        1318.079345703125,
+        460.7822265625,
+        1623.7625732421875
+      ],
+      "membership": "matched",
+      "status": "evidence-existing",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "pink",
+      "roadName": "은행고길",
+      "sourceIds": [
+        "37612022:A0020000:2428:0",
+        "37612022:A0020000:3641:0",
+        "37612022:A0020000:1948:0"
+      ],
+      "representativeLane": "local:1873:1982:1920:2232",
+      "laneIds": [
+        "local:1873:1982:1920:2232",
+        "local:1856:2244:1808:1989",
+        "join:local:1873:1982:1920:2232:-1",
+        "join:local:1873:1982:1920:2232:0",
+        "join:local:1856:2244:1808:1989:0",
+        "join:local:1856:2244:1808:1989:1"
+      ],
+      "localRootLaneIds": [
+        "local:1873:1982:1920:2232",
+        "local:1856:2244:1808:1989"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        174.2308807373047,
+        179.43148803710938,
+        195.71240234375,
+        241.388427734375
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "yellow",
+      "roadName": "대은로",
+      "sourceIds": [
+        "37612022:A0020000:2446:0",
+        "37612022:A0020000:3443:0",
+        "37612022:A0020000:2564:0",
+        "37612022:A0020000:2543:0",
+        "37612022:A0020000:2825:0",
+        "37612022:A0020000:2538:0"
+      ],
+      "representativeLane": "local:3361:12816:2684:12355",
+      "laneIds": [
+        "local:3361:12816:2684:12355",
+        "local:3323:12871:2647:12412",
+        "local:2721:12299:3399:12760",
+        "local:2757:12242:3437:12704",
+        "join:local:3361:12816:2684:12355:-1",
+        "join:local:3361:12816:2684:12355:0",
+        "join:local:3323:12871:2647:12412:0",
+        "join:local:3323:12871:2647:12412:1",
+        "join:local:2721:12299:3399:12760:-1",
+        "join:local:2721:12299:3399:12760:0",
+        "join:local:2757:12242:3437:12704:0",
+        "join:local:2757:12242:3437:12704:1",
+        "local:3361:12816:2684:12355:part:1",
+        "local:3361:12816:2684:12355:part:2",
+        "local:3323:12871:2647:12412:part:1",
+        "local:3323:12871:2647:12412:part:2",
+        "local:2721:12299:3399:12760:part:1",
+        "local:2721:12299:3399:12760:part:2",
+        "local:2757:12242:3437:12704:part:1",
+        "local:2757:12242:3437:12704:part:2"
+      ],
+      "localRootLaneIds": [
+        "local:3361:12816:2684:12355",
+        "local:3323:12871:2647:12412",
+        "local:2721:12299:3399:12760",
+        "local:2757:12242:3437:12704",
+        "local:3361:12816:2684:12355:part:1",
+        "local:3361:12816:2684:12355:part:2",
+        "local:3323:12871:2647:12412:part:1",
+        "local:3323:12871:2647:12412:part:2",
+        "local:2721:12299:3399:12760:part:1",
+        "local:2721:12299:3399:12760:part:2",
+        "local:2757:12242:3437:12704:part:1",
+        "local:2757:12242:3437:12704:part:2"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        237.16925048828125,
+        1207.671630859375,
+        370.25909423828125,
+        1303.0743408203125
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "pink",
+      "roadName": "은행고길",
+      "sourceIds": [
+        "37612022:A0020000:2671:0",
+        "37612022:A0020000:3380:0"
+      ],
+      "representativeLane": "local:1940:738:2373:9",
+      "laneIds": [
+        "local:1940:738:2373:9",
+        "local:2445:30:2004:778",
+        "join:local:2445:30:2004:778:0",
+        "join:local:2445:30:2004:778:1"
+      ],
+      "localRootLaneIds": [
+        "local:1940:738:2373:9",
+        "local:2445:30:2004:778"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        191.92214965820312,
+        0.8597157001495361,
+        244.45144653320312,
+        100.8236083984375
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "pink",
+      "roadName": "은행고길",
+      "sourceIds": [
+        "37612022:A0020000:2766:0",
+        "37612022:A0020000:2818:0",
+        "37612022:A0020000:2774:0"
+      ],
+      "representativeLane": "local:1874:1473:1852:1797",
+      "laneIds": [
+        "local:1874:1473:1852:1797",
+        "local:1802:1794:1824:1469",
+        "join:local:1874:1473:1852:1797:-1",
+        "join:local:1874:1473:1852:1797:0",
+        "join:local:1802:1794:1824:1469:0",
+        "join:local:1802:1794:1824:1469:1"
+      ],
+      "localRootLaneIds": [
+        "local:1874:1473:1852:1797",
+        "local:1802:1794:1824:1469"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        174.2308807373047,
+        130.98252868652344,
+        187.38690185546875,
+        198.16319274902344
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "yellow",
+      "roadName": "대은로",
+      "sourceIds": [
+        "37612022:A0020000:2891:0",
+        "37612022:A0020000:3906:0",
+        "37612022:A0020000:3455:0"
+      ],
+      "representativeLane": "local:2383:12059:2455:12108",
+      "laneIds": [
+        "local:2383:12059:2455:12108",
+        "local:2419:12002:2497:12055",
+        "local:2414:12161:2348:12117",
+        "local:2372:12214:2312:12174",
+        "join:local:2383:12059:2455:12108:-1",
+        "join:local:2383:12059:2455:12108:0",
+        "join:local:2419:12002:2497:12055:0",
+        "join:local:2419:12002:2497:12055:1",
+        "join:local:2414:12161:2348:12117:-1",
+        "join:local:2372:12214:2312:12174:1"
+      ],
+      "localRootLaneIds": [
+        "local:2383:12059:2455:12108",
+        "local:2419:12002:2497:12055",
+        "local:2414:12161:2348:12117",
+        "local:2372:12214:2312:12174"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        214.7653045654297,
+        1184.239013671875,
+        275.74267578125,
+        1238.4989013671875
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "yellow",
+      "roadName": "대은로",
+      "sourceIds": [
+        "37612022:A0020000:3613:0",
+        "37612022:A0020000:4627:0",
+        "37612023:A0020000:36:0",
+        "37612023:A0020000:441:0"
+      ],
+      "representativeLane": "local:3670:12947:4220:13307",
+      "laneIds": [
+        "local:3670:12947:4220:13307",
+        "local:3703:12897:4253:13257",
+        "local:4187:13357:3637:12998",
+        "local:4154:13408:3604:13048",
+        "join:local:3670:12947:4220:13307:-1",
+        "join:local:3670:12947:4220:13307:0",
+        "join:local:3703:12897:4253:13257:0",
+        "join:local:4187:13357:3637:12998:-1",
+        "join:local:4187:13357:3637:12998:0",
+        "join:local:4154:13408:3604:13048:0",
+        "join:local:4154:13408:3604:13048:1",
+        "local:3703:12897:4253:13257:part:reviewed:T1-SW-right",
+        "reviewed:T1-SW-right:lane",
+        "join:reviewed:T1-SW-right:right"
+      ],
+      "localRootLaneIds": [
+        "local:3670:12947:4220:13307",
+        "local:3703:12897:4253:13257",
+        "local:4187:13357:3637:12998",
+        "local:4154:13408:3604:13048",
+        "local:3703:12897:4253:13257:part:reviewed:T1-SW-right"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        332.251708984375,
+        1272.598876953125,
+        463.96722412109375,
+        1364.44189453125
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "green",
+      "roadName": "",
+      "sourceIds": [
+        "37612022:A0020000:4294:0",
+        "37612022:A0020000:4430:0"
+      ],
+      "representativeLane": "local:663:5325:21:5358",
+      "laneIds": [
+        "local:663:5325:21:5358",
+        "local:666:5383:24:5416",
+        "local:669:5441:28:5474",
+        "local:18:5300:660:5266",
+        "local:15:5241:657:5208",
+        "local:12:5183:654:5150",
+        "join:local:12:5183:654:5150:1"
+      ],
+      "localRootLaneIds": [
+        "local:663:5325:21:5358",
+        "local:666:5383:24:5416",
+        "local:669:5441:28:5474",
+        "local:18:5300:660:5266",
+        "local:15:5241:657:5208",
+        "local:12:5183:654:5150"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        1.2429660558700562,
+        510.0837707519531,
+        77.38150024414062,
+        547.4356079101562
+      ],
+      "membership": "matched",
+      "status": "evidence-existing",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "yellow",
+      "roadName": "계수로",
+      "sourceIds": [
+        "37612023:A0020000:100:0",
+        "37612023:A0020000:101:0",
+        "37612023:A0020000:131:0",
+        "37612023:A0020000:1234:0",
+        "37612023:A0020000:364:0",
+        "37612023:A0020000:1512:0",
+        "37612023:A0020000:774:0"
+      ],
+      "representativeLane": "local:10455:15872:7443:14880",
+      "laneIds": [
+        "local:10455:15872:7443:14880",
+        "local:10442:15920:7425:14927",
+        "local:7461:14834:10469:15824",
+        "local:7479:14787:10482:15776",
+        "join:local:10455:15872:7443:14880:-1",
+        "join:local:10455:15872:7443:14880:0",
+        "join:local:10442:15920:7425:14927:0",
+        "join:local:10442:15920:7425:14927:1",
+        "join:local:7461:14834:10469:15824:-1",
+        "join:local:7461:14834:10469:15824:0",
+        "join:local:7479:14787:10482:15776:0",
+        "local:10455:15872:7443:14880:part:1",
+        "local:10455:15872:7443:14880:part:2",
+        "local:10442:15920:7425:14927:part:1",
+        "local:10442:15920:7425:14927:part:2",
+        "local:7461:14834:10469:15824:part:1",
+        "local:7461:14834:10469:15824:part:2",
+        "local:7479:14787:10482:15776:part:1",
+        "local:7479:14787:10482:15776:part:2"
+      ],
+      "localRootLaneIds": [
+        "local:10455:15872:7443:14880",
+        "local:10442:15920:7425:14927",
+        "local:7461:14834:10469:15824",
+        "local:7479:14787:10482:15776",
+        "local:10455:15872:7443:14880:part:1",
+        "local:10455:15872:7443:14880:part:2",
+        "local:10442:15920:7425:14927:part:1",
+        "local:10442:15920:7425:14927:part:2",
+        "local:7461:14834:10469:15824:part:1",
+        "local:7461:14834:10469:15824:part:2",
+        "local:7479:14787:10482:15776:part:1",
+        "local:7479:14787:10482:15776:part:2"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        702.2794189453125,
+        1456.6488037109375,
+        1070.926513671875,
+        1600.4449462890625
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "green",
+      "roadName": "은계로",
+      "sourceIds": [
+        "37612023:A0020000:1031:0",
+        "37612023:A0020000:646:0"
+      ],
+      "representativeLane": "local:7798:686:7778:21",
+      "laneIds": [
+        "local:7798:686:7778:21",
+        "local:7722:689:7702:23",
+        "local:7854:19:7874:684",
+        "local:7930:17:7950:682",
+        "join:local:7854:19:7874:684:-1",
+        "join:local:7854:19:7874:684:0",
+        "join:local:7930:17:7950:682:0",
+        "join:local:7930:17:7950:682:1"
+      ],
+      "localRootLaneIds": [
+        "local:7798:686:7778:21",
+        "local:7722:689:7702:23",
+        "local:7854:19:7874:684",
+        "local:7930:17:7950:682"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        765.9506225585938,
+        1.6618353128433228,
+        802.277099609375,
+        104.71858215332031
+      ],
+      "membership": "matched",
+      "status": "evidence-existing",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "cyan",
+      "roadName": "은계중앙로",
+      "sourceIds": [
+        "37612023:A0020000:1116:0",
+        "37612023:A0020000:430:0",
+        "37612023:A0020000:750:0"
+      ],
+      "representativeLane": "local:7346:12686:8782:10837",
+      "laneIds": [
+        "local:7346:12686:8782:10837",
+        "local:8824:10924:7438:12714",
+        "join:local:7346:12686:8782:10837:0",
+        "join:local:7346:12686:8782:10837:1",
+        "join:local:8824:10924:7438:12714:-1",
+        "join:local:8824:10924:7438:12714:0",
+        "reviewed:cyan-north:inner:local:8824:10924:7438:12714",
+        "join:reviewed:cyan-north:inner:0:0"
+      ],
+      "localRootLaneIds": [
+        "local:7346:12686:8782:10837",
+        "local:8824:10924:7438:12714"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        722.1542358398438,
+        1073.806640625,
+        903.2109375,
+        1295.1820068359375
+      ],
+      "membership": "matched",
+      "status": "evidence-existing",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "cyan",
+      "roadName": "은계중앙로",
+      "sourceIds": [
+        "37612023:A0020000:1193:0",
+        "37612023:A0020000:1120:0",
+        "37612023:A0020000:1547:0"
+      ],
+      "representativeLane": "local:7388:12954:7347:13670",
+      "laneIds": [
+        "local:7388:12954:7347:13670",
+        "local:7250:13665:7291:12941",
+        "join:local:7388:12954:7347:13670:-1",
+        "join:local:7388:12954:7347:13670:0",
+        "join:local:7250:13665:7291:12941:0",
+        "join:local:7250:13665:7291:12941:1",
+        "reviewed:cyan-north:inner:local:7388:12954:7347:13670",
+        "join:reviewed:cyan-north:inner:1:0"
+      ],
+      "localRootLaneIds": [
+        "local:7388:12954:7347:13670",
+        "local:7250:13665:7291:12941"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        716.220458984375,
+        1268.9739990234375,
+        737.4293823242188,
+        1392.2525634765625
+      ],
+      "membership": "matched",
+      "status": "evidence-existing",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "pink",
+      "roadName": "",
+      "sourceIds": [
+        "37612023:A0020000:123:0",
+        "37612023:A0020000:124:0",
+        "37612023:A0020000:125:0"
+      ],
+      "representativeLane": "local:8268:1673:8058:1672",
+      "laneIds": [
+        "local:8268:1673:8058:1672",
+        "local:8058:1642:8268:1643",
+        "join:local:8268:1673:8058:1672:-1",
+        "join:local:8058:1642:8268:1643:-1",
+        "join:local:8058:1642:8268:1643:0",
+        "join:local:8058:1642:8268:1643:1"
+      ],
+      "localRootLaneIds": [
+        "local:8268:1673:8058:1672",
+        "local:8058:1642:8268:1643"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        783.0316162109375,
+        147.59434509277344,
+        842.3569946289062,
+        173.51284790039062
+      ],
+      "membership": "uncertain",
+      "status": "unreviewed",
+      "note": "Candidate: user stroke does not establish every small branch or exact endpoint. Confirm numbered junctions."
+    },
+    {
+      "color": "pink",
+      "roadName": "",
+      "sourceIds": [
+        "37612023:A0020000:1239:0",
+        "37612023:A0020000:541:0",
+        "37612023:A0020000:1321:0"
+      ],
+      "representativeLane": "local:8424:1634:8683:1632",
+      "laneIds": [
+        "local:8424:1634:8683:1632",
+        "local:8682:1680:8424:1682",
+        "join:local:8424:1634:8683:1632:-1",
+        "join:local:8424:1634:8683:1632:0",
+        "join:local:8424:1634:8683:1632:1",
+        "join:local:8682:1680:8424:1682:-1",
+        "join:local:8682:1680:8424:1682:0",
+        "join:local:8682:1680:8424:1682:1"
+      ],
+      "localRootLaneIds": [
+        "local:8424:1634:8683:1632",
+        "local:8682:1680:8424:1682"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        826.7691040039062,
+        157.8386993408203,
+        883.8546142578125,
+        173.51284790039062
+      ],
+      "membership": "uncertain",
+      "status": "unreviewed",
+      "note": "Candidate: user stroke does not establish every small branch or exact endpoint. Confirm numbered junctions."
+    },
+    {
+      "color": "yellow",
+      "roadName": "계수로",
+      "sourceIds": [
+        "37612023:A0020000:1335:0",
+        "37612023:A0020000:1158:0",
+        "37612023:A0020000:1323:0"
+      ],
+      "representativeLane": "local:7043:14739:5877:14332",
+      "laneIds": [
+        "local:7043:14739:5877:14332",
+        "local:7023:14796:5857:14389",
+        "local:7003:14854:5837:14446",
+        "local:5897:14274:7063:14681",
+        "local:5917:14217:7083:14624",
+        "local:5937:14159:7103:14567",
+        "join:local:7043:14739:5877:14332:-1",
+        "join:local:7043:14739:5877:14332:0",
+        "join:local:7023:14796:5857:14389:0",
+        "join:local:7003:14854:5837:14446:0",
+        "join:local:5897:14274:7063:14681:-1",
+        "join:local:5897:14274:7063:14681:0",
+        "join:local:5917:14217:7083:14624:0",
+        "join:local:5937:14159:7103:14567:0",
+        "join:local:5937:14159:7103:14567:1",
+        "local:7043:14739:5877:14332:part:1",
+        "local:7043:14739:5877:14332:part:2",
+        "local:7023:14796:5857:14389:part:1",
+        "local:7023:14796:5857:14389:part:2",
+        "local:7023:14796:5857:14389:part:3",
+        "local:7003:14854:5837:14446:part:1",
+        "local:7003:14854:5837:14446:part:2",
+        "local:5897:14274:7063:14681:part:1",
+        "local:5897:14274:7063:14681:part:2",
+        "local:5917:14217:7083:14624:part:1",
+        "local:5917:14217:7083:14624:part:2",
+        "local:5917:14217:7083:14624:part:3",
+        "local:5937:14159:7103:14567:part:1",
+        "local:5937:14159:7103:14567:part:2",
+        "join:reviewed:J7254-SW:uturn"
+      ],
+      "localRootLaneIds": [
+        "local:7043:14739:5877:14332",
+        "local:7023:14796:5857:14389",
+        "local:7003:14854:5837:14446",
+        "local:5897:14274:7063:14681",
+        "local:5917:14217:7083:14624",
+        "local:5937:14159:7103:14567",
+        "local:7043:14739:5877:14332:part:1",
+        "local:7043:14739:5877:14332:part:2",
+        "local:7023:14796:5857:14389:part:1",
+        "local:7023:14796:5857:14389:part:2",
+        "local:7023:14796:5857:14389:part:3",
+        "local:7003:14854:5837:14446:part:1",
+        "local:7003:14854:5837:14446:part:2",
+        "local:5897:14274:7063:14681:part:1",
+        "local:5897:14274:7063:14681:part:2",
+        "local:5917:14217:7083:14624:part:1",
+        "local:5917:14217:7083:14624:part:2",
+        "local:5917:14217:7083:14624:part:3",
+        "local:5937:14159:7103:14567:part:1",
+        "local:5937:14159:7103:14567:part:2"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        542.7216186523438,
+        1403.521728515625,
+        747.874267578125,
+        1499.4696044921875
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "cyan",
+      "roadName": "은계중앙로",
+      "sourceIds": [
+        "37612023:A0020000:1380:0",
+        "37612023:A0020000:2059:0",
+        "37612023:A0020000:2080:0",
+        "37612023:A0020000:2071:0",
+        "37612023:A0020000:928:0"
+      ],
+      "representativeLane": "local:9032:10757:8270:6402",
+      "laneIds": [
+        "local:9032:10757:8270:6402",
+        "local:8265:6305:9056:10851",
+        "join:local:9032:10757:8270:6402:-1",
+        "join:local:9032:10757:8270:6402:0",
+        "join:local:9032:10757:8270:6402:1",
+        "join:local:8265:6305:9056:10851:-1",
+        "join:local:8265:6305:9056:10851:0",
+        "editor:segment:bG9jYWw6OTAzMjoxMDc1Nzo4MjcwOjY0MDI:a5d2b7a31eb14d2f97dee81abac19fe9",
+        "reviewed:J8066:west-left",
+        "editor:segment:bG9jYWw6ODI2NTo2MzA1OjkwNTY6MTA4NTE:ed2c13ae72fd47778c56a1615168fbfa",
+        "editor:segment:bG9jYWw6ODI2NTo2MzA1OjkwNTY6MTA4NTE:c1b0d0a926574cd3992859201dc10032",
+        "reviewed:J8066:apartment-service-left",
+        "join:reviewed:J8066:apartment-service-left",
+        "reviewed:J8066:apartment-service-left:private-boundary",
+        "join:reviewed:cyan-north:entry:0:join:local:8265:6305:9056:10851:0"
+      ],
+      "localRootLaneIds": [
+        "local:9032:10757:8270:6402",
+        "local:8265:6305:9056:10851"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        786.8407592773438,
+        616.3710327148438,
+        1162.0635986328125,
+        1091.2139892578125
+      ],
+      "membership": "matched",
+      "status": "evidence-existing",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "yellow",
+      "roadName": "은계중앙1길",
+      "sourceIds": [
+        "37612023:A0020000:1420:0",
+        "37612023:A0020000:1419:0",
+        "37612023:A0020000:1240:0",
+        "37612023:A0020000:1034:0",
+        "37612023:A0020000:359:0",
+        "37612023:A0020000:1202:0",
+        "37612023:A0020000:1705:0",
+        "37612023:A0020000:2238:0",
+        "37612023:A0020000:2231:0",
+        "37612023:A0020000:2232:0",
+        "37612023:A0020000:2230:0",
+        "37612023:A0020000:2234:0",
+        "37612023:A0020000:2233:0",
+        "37612023:A0020000:2227:0"
+      ],
+      "representativeLane": "local:10539:16004:5952:17147",
+      "laneIds": [
+        "local:10539:16004:5952:17147",
+        "local:5978:17124:10508:15987",
+        "join:local:10539:16004:5952:17147:-1",
+        "join:local:10539:16004:5952:17147:1",
+        "join:local:5978:17124:10508:15987:-1",
+        "join:local:5978:17124:10508:15987:1"
+      ],
+      "localRootLaneIds": [
+        "local:10539:16004:5952:17147",
+        "local:5978:17124:10508:15987"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        572.0633544921875,
+        1583.2174072265625,
+        1070.926513671875,
+        1732.705078125
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "green",
+      "roadName": "은계로",
+      "sourceIds": [
+        "37612023:A0020000:1464:0",
+        "37612023:A0020000:935:0",
+        "37612023:A0020000:1574:0"
+      ],
+      "representativeLane": "local:6355:11817:7686:9830",
+      "laneIds": [
+        "local:6355:11817:7686:9830",
+        "local:6310:11767:7624:9804",
+        "local:6266:11718:7563:9778",
+        "local:7747:9855:6400:11866",
+        "local:7809:9881:6444:11916",
+        "local:7870:9907:6489:11965",
+        "join:local:6355:11817:7686:9830:-1",
+        "join:local:6355:11817:7686:9830:0",
+        "join:local:6310:11767:7624:9804:0",
+        "join:local:6266:11718:7563:9778:0",
+        "join:local:6266:11718:7563:9778:1",
+        "join:local:7747:9855:6400:11866:-1",
+        "join:local:7747:9855:6400:11866:0",
+        "join:local:7809:9881:6444:11916:0",
+        "join:local:7870:9907:6489:11965:0",
+        "join:local:7870:9907:6489:11965:1",
+        "local:6355:11817:7686:9830:part:1",
+        "local:6355:11817:7686:9830:part:2",
+        "local:6310:11767:7624:9804:part:1",
+        "local:6310:11767:7624:9804:part:2",
+        "local:6310:11767:7624:9804:part:3",
+        "local:6266:11718:7563:9778:part:1",
+        "local:6266:11718:7563:9778:part:2",
+        "local:7747:9855:6400:11866:part:1",
+        "local:7747:9855:6400:11866:part:2",
+        "local:7809:9881:6444:11916:part:1",
+        "local:7809:9881:6444:11916:part:2",
+        "local:7870:9907:6489:11965:part:1"
+      ],
+      "localRootLaneIds": [
+        "local:6355:11817:7686:9830",
+        "local:6310:11767:7624:9804",
+        "local:6266:11718:7563:9778",
+        "local:7747:9855:6400:11866",
+        "local:7809:9881:6444:11916",
+        "local:7870:9907:6489:11965",
+        "local:6355:11817:7686:9830:part:1",
+        "local:6355:11817:7686:9830:part:2",
+        "local:6310:11767:7624:9804:part:1",
+        "local:6310:11767:7624:9804:part:2",
+        "local:6310:11767:7624:9804:part:3",
+        "local:6266:11718:7563:9778:part:1",
+        "local:6266:11718:7563:9778:part:2",
+        "local:7747:9855:6400:11866:part:1",
+        "local:7747:9855:6400:11866:part:2",
+        "local:7809:9881:6444:11916:part:1",
+        "local:7809:9881:6444:11916:part:2",
+        "local:7870:9907:6489:11965:part:1"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        600.5347290039062,
+        937.427734375,
+        802.4810180664062,
+        1225.922607421875
+      ],
+      "membership": "matched",
+      "status": "evidence-existing",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "cyan",
+      "roadName": "은계중앙로",
+      "sourceIds": [
+        "37612023:A0020000:1498:0",
+        "37612023:A0020000:895:0",
+        "37612023:A0020000:641:0"
+      ],
+      "representativeLane": "local:7213:14566:7238:13919",
+      "laneIds": [
+        "local:7213:14566:7238:13919",
+        "local:7335:13923:7310:14570",
+        "join:local:7213:14566:7238:13919:0",
+        "join:local:7213:14566:7238:13919:1",
+        "join:local:7335:13923:7310:14570:-1",
+        "join:local:7335:13923:7310:14570:0",
+        "join:local:7335:13923:7310:14570:1",
+        "reviewed:cyan-north:inner:local:7335:13923:7310:14570"
+      ],
+      "localRootLaneIds": [
+        "local:7213:14566:7238:13919",
+        "local:7335:13923:7310:14570"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        704.2855834960938,
+        1366.5487060546875,
+        747.874267578125,
+        1499.4696044921875
+      ],
+      "membership": "matched",
+      "status": "evidence-existing",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "yellow",
+      "roadName": "계수로",
+      "sourceIds": [
+        "37612023:A0020000:1526:0",
+        "37612023:A0020000:1271:0",
+        "37612023:A0020000:1590:0"
+      ],
+      "representativeLane": "local:4608:13553:5519:14095",
+      "laneIds": [
+        "local:4608:13553:5519:14095",
+        "local:4640:13501:5550:14042",
+        "local:4672:13449:5581:13990",
+        "local:5489:14147:4576:13604",
+        "local:5458:14200:4544:13656",
+        "local:5427:14252:4512:13708",
+        "join:local:4608:13553:5519:14095:0",
+        "join:local:4640:13501:5550:14042:0",
+        "join:local:4672:13449:5581:13990:0",
+        "join:local:4672:13449:5581:13990:1",
+        "join:local:5489:14147:4576:13604:-1",
+        "join:local:5489:14147:4576:13604:0",
+        "join:local:5458:14200:4544:13656:0",
+        "join:local:5427:14252:4512:13708:0",
+        "local:4608:13553:5519:14095:part:1",
+        "local:4608:13553:5519:14095:part:2",
+        "local:4640:13501:5550:14042:part:1",
+        "local:4640:13501:5550:14042:part:2",
+        "local:4640:13501:5550:14042:part:3",
+        "local:4672:13449:5581:13990:part:1",
+        "local:4672:13449:5581:13990:part:2",
+        "local:5489:14147:4576:13604:part:1",
+        "local:5489:14147:4576:13604:part:2",
+        "local:5458:14200:4544:13656:part:1",
+        "local:5458:14200:4544:13656:part:2",
+        "local:5458:14200:4544:13656:part:3",
+        "local:5427:14252:4512:13708:part:1",
+        "local:5427:14252:4512:13708:part:2",
+        "local:5427:14252:4512:13708:part:2:part:reviewed:T1-NE-right",
+        "reviewed:T1-NE-right:lane",
+        "join:reviewed:T1-NE-right:right",
+        "join:reviewed:T1-NE:uturn"
+      ],
+      "localRootLaneIds": [
+        "local:4608:13553:5519:14095",
+        "local:4640:13501:5550:14042",
+        "local:4672:13449:5581:13990",
+        "local:5489:14147:4576:13604",
+        "local:5458:14200:4544:13656",
+        "local:5427:14252:4512:13708",
+        "local:4608:13553:5519:14095:part:1",
+        "local:4608:13553:5519:14095:part:2",
+        "local:4640:13501:5550:14042:part:1",
+        "local:4640:13501:5550:14042:part:2",
+        "local:4640:13501:5550:14042:part:3",
+        "local:4672:13449:5581:13990:part:1",
+        "local:4672:13449:5581:13990:part:2",
+        "local:5489:14147:4576:13604:part:1",
+        "local:5489:14147:4576:13604:part:2",
+        "local:5458:14200:4544:13656:part:1",
+        "local:5458:14200:4544:13656:part:2",
+        "local:5458:14200:4544:13656:part:3",
+        "local:5427:14252:4512:13708:part:1",
+        "local:5427:14252:4512:13708:part:2",
+        "local:5427:14252:4512:13708:part:2:part:reviewed:T1-NE-right"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        415.4187927246094,
+        1328.0531005859375,
+        593.73291015625,
+        1427.41650390625
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "pink",
+      "roadName": "",
+      "sourceIds": [
+        "37612023:A0020000:1538:0",
+        "37612023:A0020000:949:0",
+        "37612023:A0020000:930:0"
+      ],
+      "representativeLane": "local:8374:1735:8405:2479",
+      "laneIds": [
+        "local:8374:1735:8405:2479",
+        "local:8357:2481:8326:1737",
+        "join:local:8374:1735:8405:2479:-1",
+        "join:local:8374:1735:8405:2479:1",
+        "join:local:8357:2481:8326:1737:-1",
+        "join:local:8357:2481:8326:1737:0",
+        "join:local:8357:2481:8326:1737:1"
+      ],
+      "localRootLaneIds": [
+        "local:8374:1735:8405:2479",
+        "local:8357:2481:8326:1737"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        826.7691040039062,
+        158.1275634765625,
+        847.4378051757812,
+        259.75286865234375
+      ],
+      "membership": "uncertain",
+      "status": "unreviewed",
+      "note": "Candidate: user stroke does not establish every small branch or exact endpoint. Confirm numbered junctions."
+    },
+    {
+      "color": "green",
+      "roadName": "은계로",
+      "sourceIds": [
+        "37612023:A0020000:1571:0",
+        "37612023:A0020000:790:0",
+        "37612023:A0020000:607:0"
+      ],
+      "representativeLane": "local:4546:13281:5996:12100",
+      "laneIds": [
+        "local:4546:13281:5996:12100",
+        "local:4502:13231:5956:12047",
+        "local:4457:13181:5915:11994",
+        "local:6037:12153:4590:13330",
+        "local:6077:12206:4634:13380",
+        "local:6118:12259:4679:13430",
+        "join:local:4546:13281:5996:12100:-1",
+        "join:local:4546:13281:5996:12100:0",
+        "join:local:4502:13231:5956:12047:0",
+        "join:local:4457:13181:5915:11994:0",
+        "join:local:4457:13181:5915:11994:1",
+        "join:local:6037:12153:4590:13330:0",
+        "join:local:6077:12206:4634:13380:0",
+        "join:local:6118:12259:4679:13430:0",
+        "join:local:6118:12259:4679:13430:1",
+        "local:4546:13281:5996:12100:part:1",
+        "local:4546:13281:5996:12100:part:2",
+        "local:4502:13231:5956:12047:part:1",
+        "local:4502:13231:5956:12047:part:2",
+        "local:4502:13231:5956:12047:part:3",
+        "local:4457:13181:5915:11994:part:1",
+        "local:4457:13181:5915:11994:part:2",
+        "local:6037:12153:4590:13330:part:1",
+        "local:6037:12153:4590:13330:part:2",
+        "local:6077:12206:4634:13380:part:1",
+        "local:6077:12206:4634:13380:part:2",
+        "local:6077:12206:4634:13380:part:3",
+        "local:6118:12259:4679:13430:part:1",
+        "local:6118:12259:4679:13430:part:2",
+        "local:6037:12153:4590:13330:part:reviewed:T1-SE",
+        "local:6077:12206:4634:13380:part:reviewed:T1-SE",
+        "local:6118:12259:4679:13430:part:reviewed:T1-SE",
+        "reviewed:T1-SE:pocket",
+        "join:reviewed:T1-SE:left",
+        "join:reviewed:T1-SE:uturn"
+      ],
+      "localRootLaneIds": [
+        "local:4546:13281:5996:12100",
+        "local:4502:13231:5956:12047",
+        "local:4457:13181:5915:11994",
+        "local:6037:12153:4590:13330",
+        "local:6077:12206:4634:13380",
+        "local:6118:12259:4679:13430",
+        "local:4546:13281:5996:12100:part:1",
+        "local:4546:13281:5996:12100:part:2",
+        "local:4502:13231:5956:12047:part:1",
+        "local:4502:13231:5956:12047:part:2",
+        "local:4502:13231:5956:12047:part:3",
+        "local:4457:13181:5915:11994:part:1",
+        "local:4457:13181:5915:11994:part:2",
+        "local:6037:12153:4590:13330:part:1",
+        "local:6037:12153:4590:13330:part:2",
+        "local:6077:12206:4634:13380:part:1",
+        "local:6077:12206:4634:13380:part:2",
+        "local:6077:12206:4634:13380:part:3",
+        "local:6118:12259:4679:13430:part:1",
+        "local:6118:12259:4679:13430:part:2",
+        "local:6037:12153:4590:13330:part:reviewed:T1-SE",
+        "local:6077:12206:4634:13380:part:reviewed:T1-SE",
+        "local:6118:12259:4679:13430:part:reviewed:T1-SE"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        418.70245361328125,
+        1171.7618408203125,
+        639.4760131835938,
+        1373.18017578125
+      ],
+      "membership": "matched",
+      "status": "evidence-existing",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "green",
+      "roadName": "은계로",
+      "sourceIds": [
+        "37612023:A0020000:1753:0",
+        "37612023:A0020000:1543:0",
+        "37612023:A0020000:977:0",
+        "37612023:A0020000:1641:0"
+      ],
+      "representativeLane": "local:7847:9404:8047:6565",
+      "laneIds": [
+        "local:7847:9404:8047:6565",
+        "local:7792:9389:7990:6566",
+        "local:7737:9374:7933:6566",
+        "local:8104:6564:7902:9419",
+        "local:8161:6563:7957:9434",
+        "local:8218:6563:8012:9449",
+        "join:local:7847:9404:8047:6565:-1",
+        "join:local:7847:9404:8047:6565:0",
+        "join:local:7792:9389:7990:6566:0",
+        "join:local:7737:9374:7933:6566:0",
+        "join:local:7737:9374:7933:6566:1",
+        "join:local:8104:6564:7902:9419:-1",
+        "join:local:8104:6564:7902:9419:0",
+        "join:local:8161:6563:7957:9434:0",
+        "join:local:8218:6563:8012:9449:0",
+        "join:local:8218:6563:8012:9449:1",
+        "local:7847:9404:8047:6565:part:1",
+        "local:7847:9404:8047:6565:part:2",
+        "local:7792:9389:7990:6566:part:1",
+        "local:7792:9389:7990:6566:part:2",
+        "local:7792:9389:7990:6566:part:3",
+        "local:7737:9374:7933:6566:part:1",
+        "local:7737:9374:7933:6566:part:2",
+        "local:8104:6564:7902:9419:part:1",
+        "local:8104:6564:7902:9419:part:2",
+        "local:8161:6563:7957:9434:part:1",
+        "local:8161:6563:7957:9434:part:2",
+        "local:8161:6563:7957:9434:part:3",
+        "local:8218:6563:8012:9449:part:1",
+        "local:8218:6563:8012:9449:part:2",
+        "editor:segment:bG9jYWw6Nzg0Nzo5NDA0OjgwNDc6NjU2NTpwYXJ0OjI:8407b5ad5d36488a8262a599e494ccbc",
+        "editor:segment:bG9jYWw6Nzc5Mjo5Mzg5Ojc5OTA6NjU2NjpwYXJ0OjM:b9af865f92254f308c0a9ba84a74d1f5",
+        "editor:segment:bG9jYWw6Nzc5Mjo5Mzg5Ojc5OTA6NjU2NjpwYXJ0OjM:f6ae1efaec82493281ba216bbb71a6ff",
+        "editor:segment:bG9jYWw6NzczNzo5Mzc0Ojc5MzM6NjU2NjpwYXJ0OjI:ab601722c54f43cb830bd3cf9fe04dd6",
+        "editor:segment:bG9jYWw6Nzg0Nzo5NDA0OjgwNDc6NjU2NTpwYXJ0OjI:2b0fb04f237043acb48c5b8a3da5ad43",
+        "editor:segment:bG9jYWw6Nzc5Mjo5Mzg5Ojc5OTA6NjU2NjpwYXJ0OjM:b49393aeb70543d590b1bc3509a4113c",
+        "editor:segment:bG9jYWw6Nzc5Mjo5Mzg5Ojc5OTA6NjU2NjpwYXJ0OjM:df94f7ea04024b359a1f2aa462cb1ac9",
+        "editor:segment:bG9jYWw6NzczNzo5Mzc0Ojc5MzM6NjU2NjpwYXJ0OjI:594c4333080d4f8ab7da485c2867b174",
+        "editor:segment:bG9jYWw6Nzg0Nzo5NDA0OjgwNDc6NjU2NTpwYXJ0OjI:b1c9b420b2534649bf6662036d8cf544",
+        "editor:segment:bG9jYWw6Nzc5Mjo5Mzg5Ojc5OTA6NjU2NjpwYXJ0OjM:ee1c8a6d3d8245e98c65e93a45cdb265",
+        "editor:segment:bG9jYWw6Nzc5Mjo5Mzg5Ojc5OTA6NjU2NjpwYXJ0OjM:51c17be5b8594ad492bb9318dcc4c45a",
+        "editor:segment:bG9jYWw6NzczNzo5Mzc0Ojc5MzM6NjU2NjpwYXJ0OjI:d0d2012749724fd28fb6cf7e1b0bdff5",
+        "editor:segment:bG9jYWw6Nzg0Nzo5NDA0OjgwNDc6NjU2NTpwYXJ0OjI:33dc43f0d9854fd0bb82c3a797899e51",
+        "editor:segment:bG9jYWw6Nzc5Mjo5Mzg5Ojc5OTA6NjU2NjpwYXJ0OjM:96895d621d3c469e870f6ec373cdf6a4",
+        "editor:segment:bG9jYWw6Nzc5Mjo5Mzg5Ojc5OTA6NjU2NjpwYXJ0OjM:b17e613c6a5d4f10abfc131badd5b3c8",
+        "editor:segment:bG9jYWw6NzczNzo5Mzc0Ojc5MzM6NjU2NjpwYXJ0OjI:0e70970b167e48898435c7a6b0e29dc7"
+      ],
+      "localRootLaneIds": [
+        "local:7847:9404:8047:6565",
+        "local:7792:9389:7990:6566",
+        "local:7737:9374:7933:6566",
+        "local:8104:6564:7902:9419",
+        "local:8161:6563:7957:9434",
+        "local:8218:6563:8012:9449",
+        "local:7847:9404:8047:6565:part:1",
+        "local:7847:9404:8047:6565:part:2",
+        "local:7792:9389:7990:6566:part:1",
+        "local:7792:9389:7990:6566:part:2",
+        "local:7792:9389:7990:6566:part:3",
+        "local:7737:9374:7933:6566:part:1",
+        "local:7737:9374:7933:6566:part:2",
+        "local:8104:6564:7902:9419:part:1",
+        "local:8104:6564:7902:9419:part:2",
+        "local:8161:6563:7957:9434:part:1",
+        "local:8161:6563:7957:9434:part:2",
+        "local:8161:6563:7957:9434:part:3",
+        "local:8218:6563:8012:9449:part:1",
+        "local:8218:6563:8012:9449:part:2"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        756.841796875,
+        616.3710327148438,
+        826.4628295898438,
+        990.6774291992188
+      ],
+      "membership": "matched",
+      "status": "evidence-existing",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "yellow",
+      "roadName": "은계중앙로",
+      "sourceIds": [
+        "37612023:A0020000:2226:0",
+        "37612023:A0020000:2235:0"
+      ],
+      "representativeLane": "local:4974:17454:5645:17011",
+      "laneIds": [
+        "local:4974:17454:5645:17011",
+        "local:4914:17388:5607:16931",
+        "local:5683:17092:5033:17520",
+        "local:5721:17172:5092:17586",
+        "join:local:4974:17454:5645:17011:-1",
+        "join:local:4974:17454:5645:17011:0",
+        "join:local:4914:17388:5607:16931:0",
+        "local:4974:17454:5645:17011:part:1",
+        "local:4974:17454:5645:17011:part:2",
+        "local:4914:17388:5607:16931:part:1",
+        "local:4914:17388:5607:16931:part:2",
+        "local:5683:17092:5033:17520:part:1",
+        "local:5683:17092:5033:17520:part:2",
+        "local:5721:17172:5092:17586:part:1",
+        "local:5721:17172:5092:17586:part:2"
+      ],
+      "localRootLaneIds": [
+        "local:4974:17454:5645:17011",
+        "local:4914:17388:5607:16931",
+        "local:5683:17092:5033:17520",
+        "local:5721:17172:5092:17586",
+        "local:4974:17454:5645:17011:part:1",
+        "local:4974:17454:5645:17011:part:2",
+        "local:4914:17388:5607:16931:part:1",
+        "local:4914:17388:5607:16931:part:2",
+        "local:5683:17092:5033:17520:part:1",
+        "local:5683:17092:5033:17520:part:2",
+        "local:5721:17172:5092:17586:part:1",
+        "local:5721:17172:5092:17586:part:2"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        491.43927001953125,
+        1678.8934326171875,
+        602.1034545898438,
+        1758.5579833984375
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "pink",
+      "roadName": "",
+      "sourceIds": [
+        "37612023:A0020000:242:0",
+        "37612023:A0020000:697:0",
+        "37612023:A0020000:696:0"
+      ],
+      "representativeLane": "local:6450:3862:6452:3446",
+      "laneIds": [
+        "local:6450:3862:6452:3446",
+        "local:6509:3446:6507:3863",
+        "join:local:6450:3862:6452:3446:-1",
+        "join:local:6450:3862:6452:3446:1"
+      ],
+      "localRootLaneIds": [
+        "local:6450:3862:6452:3446",
+        "local:6509:3446:6507:3863"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        638.6907958984375,
+        328.1189880371094,
+        657.4651489257812,
+        386.2564697265625
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "pink",
+      "roadName": "은계중앙로",
+      "sourceIds": [
+        "37612023:A0020000:260:0",
+        "37612023:A0020000:1714:0",
+        "37612023:A0020000:821:0"
+      ],
+      "representativeLane": "local:5034:4203:5033:2698",
+      "laneIds": [
+        "local:5034:4203:5033:2698",
+        "local:5121:2697:5122:4210",
+        "join:local:5034:4203:5033:2698:0",
+        "join:local:5121:2697:5122:4210:0",
+        "join:local:5121:2697:5122:4210:1",
+        "editor:segment:bG9jYWw6NTAzNDo0MjAzOjUwMzM6MjY5OA:e95362da57f848b691efebf061483b33",
+        "reviewed:J5076-N:left",
+        "join:reviewed:J5076-N:left"
+      ],
+      "localRootLaneIds": [
+        "local:5034:4203:5033:2698",
+        "local:5121:2697:5122:4210"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        503.2373352050781,
+        246.11422729492188,
+        525.1521606445312,
+        469.0906677246094
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "green",
+      "roadName": "은계로",
+      "sourceIds": [
+        "37612023:A0020000:294:0",
+        "37612023:A0020000:700:0",
+        "37612023:A0020000:1244:0"
+      ],
+      "representativeLane": "local:8017:3985:8089:6162",
+      "laneIds": [
+        "local:8017:3985:8089:6162",
+        "local:8074:3981:8146:6160",
+        "local:8131:3977:8203:6159",
+        "local:8032:6164:7960:3988",
+        "local:7975:6165:7904:3992",
+        "local:7918:6167:7847:3996",
+        "join:local:8017:3985:8089:6162:-1",
+        "join:local:8017:3985:8089:6162:0",
+        "join:local:8074:3981:8146:6160:0",
+        "join:local:8131:3977:8203:6159:0",
+        "join:local:8131:3977:8203:6159:1",
+        "join:local:8032:6164:7960:3988:0",
+        "join:local:7975:6165:7904:3992:0",
+        "join:local:7918:6167:7847:3996:1",
+        "local:8017:3985:8089:6162:part:1",
+        "local:8017:3985:8089:6162:part:2",
+        "local:8074:3981:8146:6160:part:1",
+        "local:8074:3981:8146:6160:part:2",
+        "local:8131:3977:8203:6159:part:1",
+        "local:8131:3977:8203:6159:part:2",
+        "local:8032:6164:7960:3988:part:1",
+        "local:8032:6164:7960:3988:part:2",
+        "local:7975:6165:7904:3992:part:1",
+        "local:7975:6165:7904:3992:part:2",
+        "local:7975:6165:7904:3992:part:3",
+        "local:7918:6167:7847:3996:part:1",
+        "local:7918:6167:7847:3996:part:2",
+        "join:reviewed:J8066-S:uturn",
+        "editor:segment:bG9jYWw6ODAxNzozOTg1OjgwODk6NjE2MjpwYXJ0OjI:86249080ddef47a6b96e7f9663d80729",
+        "editor:segment:bG9jYWw6ODA3NDozOTgxOjgxNDY6NjE2MDpwYXJ0OjI:e9d57bfa7fa14e6fafd09f935e0b6356",
+        "editor:segment:bG9jYWw6ODAxNzozOTg1OjgwODk6NjE2MjpwYXJ0OjI:db420c02034f4b1098b43f012de78919",
+        "editor:segment:bG9jYWw6ODA3NDozOTgxOjgxNDY6NjE2MDpwYXJ0OjI:d9c48040813f4d3abd0abd0d2801e50b",
+        "editor:segment:bG9jYWw6ODAxNzozOTg1OjgwODk6NjE2MjpwYXJ0OjI:41498ec46fc345ac8d5485b89bb28430",
+        "editor:segment:bG9jYWw6ODA3NDozOTgxOjgxNDY6NjE2MDpwYXJ0OjI:a35fd0804f8941abb171a7d8b9bb3630",
+        "editor:segment:bG9jYWw6ODA3NDozOTgxOjgxNDY6NjE2MDpwYXJ0OjI:c5c8302232894f64b1549d0f56ab85d3",
+        "editor:segment:bG9jYWw6ODAxNzozOTg1OjgwODk6NjE2MjpwYXJ0OjI:d991f1fb73674f34b203588af0ba7048",
+        "editor:segment:bG9jYWw6ODA3NDozOTgxOjgxNDY6NjE2MDpwYXJ0OjI:63ee57571fdb4497a99801b5fb1ec75e",
+        "editor:segment:bG9jYWw6ODAxNzozOTg1OjgwODk6NjE2MjpwYXJ0OjI:b7554a13d686433faf2f79ec45a72e03",
+        "editor:segment:bG9jYWw6ODA3NDozOTgxOjgxNDY6NjE2MDpwYXJ0OjI:0e58c65d1afe4719aeb2ff6c31c1b7ac",
+        "editor:segment:bG9jYWw6ODAxNzozOTg1OjgwODk6NjE2MjpwYXJ0OjI:b2f9bc24706e4e44abf167cec1db3a0e",
+        "editor:segment:bG9jYWw6ODEzMTozOTc3OjgyMDM6NjE1OTpwYXJ0OjI:24840ba842164295ad45fd1985180b00",
+        "editor:segment:bG9jYWw6ODEzMTozOTc3OjgyMDM6NjE1OTpwYXJ0OjI:c04549360fe24575bc9013317d399e4e",
+        "editor:segment:bG9jYWw6ODEzMTozOTc3OjgyMDM6NjE1OTpwYXJ0OjI:6b782ce1cd034cccbe353b2edaebf042",
+        "editor:segment:bG9jYWw6ODEzMTozOTc3OjgyMDM6NjE1OTpwYXJ0OjI:423be14e0feb4ff3adf90b52632528d0",
+        "editor:segment:bG9jYWw6ODA3NDozOTgxOjgxNDY6NjE2MDpwYXJ0OjI:7b7e200d81b24a199751caaf5fcf6473",
+        "editor:segment:bG9jYWw6ODEzMTozOTc3OjgyMDM6NjE1OTpwYXJ0OjI:303d491817124973a125ec66f816e572",
+        "editor:segment:bG9jYWw6ODA3NDozOTgxOjgxNDY6NjE2MDpwYXJ0OjI:00dfcb0a54e94bbb917f8f4500f580b4",
+        "editor:segment:bG9jYWw6ODEzMTozOTc3OjgyMDM6NjE1OTpwYXJ0OjI:c6993f3176eb4531a1f571f8efb69a3c",
+        "editor:segment:bG9jYWw6ODA3NDozOTgxOjgxNDY6NjE2MDpwYXJ0OjI:cf16881da71a49feb9c7e1d74a18c5bd",
+        "editor:segment:bG9jYWw6ODAzMjo2MTY0Ojc5NjA6Mzk4ODpwYXJ0OjI:c6c1a66f20b047d7815def7d988f85da",
+        "editor:segment:bG9jYWw6Nzk3NTo2MTY1Ojc5MDQ6Mzk5MjpwYXJ0OjM:9f00b732deda4b87957f84eb2a2dd18b",
+        "editor:segment:bG9jYWw6Nzk3NTo2MTY1Ojc5MDQ6Mzk5MjpwYXJ0OjM:2938580e8b5a4e6ab3e7078e690733ae",
+        "editor:segment:bG9jYWw6NzkxODo2MTY3Ojc4NDc6Mzk5NjpwYXJ0OjI:678337422e484aaf987167751803da22",
+        "editor:segment:bG9jYWw6ODAzMjo2MTY0Ojc5NjA6Mzk4ODpwYXJ0OjI:1ca58ec215fd40a3b18e7f78285404ad",
+        "editor:segment:bG9jYWw6Nzk3NTo2MTY1Ojc5MDQ6Mzk5MjpwYXJ0OjM:06061fcae6ca4263b3e7a69ceaeee8ed",
+        "editor:segment:bG9jYWw6Nzk3NTo2MTY1Ojc5MDQ6Mzk5MjpwYXJ0OjM:da1c1ef4f05d47e59b11fe7ccc0b5a91",
+        "editor:segment:bG9jYWw6NzkxODo2MTY3Ojc4NDc6Mzk5NjpwYXJ0OjI:78ef0e6d00924d4fb76c5cd1b2752a89",
+        "editor:segment:bG9jYWw6ODAzMjo2MTY0Ojc5NjA6Mzk4ODpwYXJ0OjI:d3dd4746f874469bb9f2d73b6860323e",
+        "editor:segment:bG9jYWw6Nzk3NTo2MTY1Ojc5MDQ6Mzk5MjpwYXJ0OjM:c1e3a25effe140cdaafc2279b8694627",
+        "editor:segment:bG9jYWw6Nzk3NTo2MTY1Ojc5MDQ6Mzk5MjpwYXJ0OjM:c3f5f8426cad4481928cefc4af771ae3",
+        "editor:segment:bG9jYWw6NzkxODo2MTY3Ojc4NDc6Mzk5NjpwYXJ0OjI:0fab0e3ade034d179017302129eee331",
+        "editor:segment:bG9jYWw6ODAxNzozOTg1OjgwODk6NjE2MjpwYXJ0OjI:60c8ed8bd47a417f919b82406b8f64c6",
+        "reviewed:J8066-N:inner-through",
+        "reviewed:J8066-N:outer-through",
+        "reviewed:J7973:southbound-left",
+        "join:reviewed:J7973:southbound-left",
+        "join:reviewed:J7917:entry:16"
+      ],
+      "localRootLaneIds": [
+        "local:8017:3985:8089:6162",
+        "local:8074:3981:8146:6160",
+        "local:8131:3977:8203:6159",
+        "local:8032:6164:7960:3988",
+        "local:7975:6165:7904:3992",
+        "local:7918:6167:7847:3996",
+        "local:8017:3985:8089:6162:part:1",
+        "local:8017:3985:8089:6162:part:2",
+        "local:8074:3981:8146:6160:part:1",
+        "local:8074:3981:8146:6160:part:2",
+        "local:8131:3977:8203:6159:part:1",
+        "local:8131:3977:8203:6159:part:2",
+        "local:8032:6164:7960:3988:part:1",
+        "local:8032:6164:7960:3988:part:2",
+        "local:7975:6165:7904:3992:part:1",
+        "local:7975:6165:7904:3992:part:2",
+        "local:7975:6165:7904:3992:part:3",
+        "local:7918:6167:7847:3996:part:1",
+        "local:7918:6167:7847:3996:part:2"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        777.880859375,
+        350.3062744140625,
+        826.4628295898438,
+        656.4157104492188
+      ],
+      "membership": "matched",
+      "status": "evidence-existing",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "green",
+      "roadName": "은계로",
+      "sourceIds": [
+        "37612023:A0020000:298:0",
+        "37612023:A0020000:1607:0",
+        "37612023:A0020000:971:0"
+      ],
+      "representativeLane": "local:7924:3503:7887:2749",
+      "laneIds": [
+        "local:7924:3503:7887:2749",
+        "local:7848:3507:7812:2752",
+        "local:7963:2745:8000:3499",
+        "local:8039:2741:8076:3496",
+        "join:local:7924:3503:7887:2749:-1",
+        "join:local:7924:3503:7887:2749:0",
+        "join:local:7848:3507:7812:2752:0",
+        "join:local:7848:3507:7812:2752:1",
+        "join:local:7963:2745:8000:3499:0",
+        "join:local:8039:2741:8076:3496:0",
+        "local:7924:3503:7887:2749:part:1",
+        "local:7924:3503:7887:2749:part:2",
+        "local:7848:3507:7812:2752:part:1",
+        "local:7848:3507:7812:2752:part:2",
+        "local:7963:2745:8000:3499:part:1",
+        "local:7963:2745:8000:3499:part:2",
+        "local:8039:2741:8076:3496:part:1",
+        "local:8039:2741:8076:3496:part:2",
+        "reviewed:J7917:middle:local:7848:3507:7812:2752",
+        "reviewed:J7917:middle:local:7848:3507:7812:2752:part:1",
+        "reviewed:J7917:middle:local:7848:3507:7812:2752:part:2",
+        "reviewed:J7917:middle:local:8039:2741:8076:3496",
+        "reviewed:J7917:middle:local:8039:2741:8076:3496:part:1",
+        "reviewed:J7917:middle:local:8039:2741:8076:3496:part:2",
+        "join:reviewed:J7917:middle:local:7848:3507:7812:2752:part:2:10",
+        "join:reviewed:J7917:middle:local:8039:2741:8076:3496:part:2:11",
+        "join:reviewed:J7917:entry:13",
+        "editor:segment:bG9jYWw6NzkyNDozNTAzOjc4ODc6Mjc0OTpwYXJ0OjE:38440ff6201a40fc823b055a5ce3cc3b",
+        "editor:segment:cmV2aWV3ZWQ6Sjc5MTc6bWlkZGxlOmxvY2FsOjc4NDg6MzUwNzo3ODEyOjI3NTI6cGFydDox:adecbc30d9024083ae1d67787996a4c8",
+        "editor:segment:cmV2aWV3ZWQ6Sjc5MTc6bWlkZGxlOmxvY2FsOjc4NDg6MzUwNzo3ODEyOjI3NTI6cGFydDox:79564774043b4f198a47a5fd7741cb85",
+        "editor:segment:bG9jYWw6NzkyNDozNTAzOjc4ODc6Mjc0OTpwYXJ0OjE:7928d02c97634547ae16a477c4a94be9",
+        "editor:segment:bG9jYWw6Nzg0ODozNTA3Ojc4MTI6Mjc1MjpwYXJ0OjE:4d3a8760064a4d4ab8037ad41f91009c",
+        "editor:segment:bG9jYWw6Nzg0ODozNTA3Ojc4MTI6Mjc1MjpwYXJ0OjE:4fc75aa8708a4f7989f72a62d2e0dcb0",
+        "editor:segment:bG9jYWw6Nzk2MzoyNzQ1OjgwMDA6MzQ5OTpwYXJ0OjE:51db7472fd08423f941d56ca57bd97e3",
+        "editor:segment:cmV2aWV3ZWQ6Sjc5MTc6bWlkZGxlOmxvY2FsOjgwMzk6Mjc0MTo4MDc2OjM0OTY6cGFydDox:2b272d25e6a3494bb3e16b19bfd70838",
+        "editor:segment:cmV2aWV3ZWQ6Sjc5MTc6bWlkZGxlOmxvY2FsOjgwMzk6Mjc0MTo4MDc2OjM0OTY6cGFydDox:f40d5ddb266e47ef85f62c7d965a9eb0",
+        "editor:segment:bG9jYWw6Nzk2MzoyNzQ1OjgwMDA6MzQ5OTpwYXJ0OjE:209c0672ac7c4e4c9c6ffa437fa2c864",
+        "editor:segment:bG9jYWw6ODAzOToyNzQxOjgwNzY6MzQ5NjpwYXJ0OjE:38dc92b840d5499f8ffad449634a8d89",
+        "editor:segment:bG9jYWw6ODAzOToyNzQxOjgwNzY6MzQ5NjpwYXJ0OjE:431b5f8ddb3d4bebaa3c10d53ec886c2"
+      ],
+      "localRootLaneIds": [
+        "local:7924:3503:7887:2749",
+        "local:7848:3507:7812:2752",
+        "local:7963:2745:8000:3499",
+        "local:8039:2741:8076:3496",
+        "local:7924:3503:7887:2749:part:1",
+        "local:7924:3503:7887:2749:part:2",
+        "local:7848:3507:7812:2752:part:1",
+        "local:7848:3507:7812:2752:part:2",
+        "local:7963:2745:8000:3499:part:1",
+        "local:7963:2745:8000:3499:part:2",
+        "local:8039:2741:8076:3496:part:1",
+        "local:8039:2741:8076:3496:part:2"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        773.502685546875,
+        238.5013427734375,
+        809.890869140625,
+        398.46295166015625
+      ],
+      "membership": "matched",
+      "status": "evidence-existing",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "orange",
+      "roadName": "",
+      "sourceIds": [
+        "37612023:A0020000:339:0",
+        "37612023:A0020000:680:0",
+        "37612023:A0020000:1065:0"
+      ],
+      "representativeLane": "local:5126:4691:7863:6307",
+      "laneIds": [
+        "local:5126:4691:7863:6307",
+        "local:7868:6438:4994:4693",
+        "join:local:5126:4691:7863:6307:-1",
+        "join:local:5126:4691:7863:6307:0",
+        "join:local:5126:4691:7863:6307:1",
+        "editor:segment:bG9jYWw6Nzg2ODo2NDM4OjQ5OTQ6NDY5Mw:17bfeab69bf24f50afe4ded94519c8b1",
+        "reviewed:J5057-N:left",
+        "reviewed:J5057-N:right",
+        "join:reviewed:J5057-N:straight",
+        "join:reviewed:J5057-N:left",
+        "join:reviewed:J5057-N:right"
+      ],
+      "localRootLaneIds": [
+        "local:5126:4691:7863:6307",
+        "local:7868:6438:4994:4693"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        476.4696960449219,
+        420.2878723144531,
+        826.4628295898438,
+        656.4157104492188
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "pink",
+      "roadName": "",
+      "sourceIds": [
+        "37612023:A0020000:393:0",
+        "37612023:A0020000:454:0",
+        "37612023:A0020000:784:0"
+      ],
+      "representativeLane": "local:8785:940:8785:1578",
+      "laneIds": [
+        "local:8785:940:8785:1578",
+        "local:8737:1578:8737:940",
+        "join:local:8785:940:8785:1578:-1",
+        "join:local:8785:940:8785:1578:0",
+        "join:local:8785:940:8785:1578:1",
+        "join:local:8737:1578:8737:940:-1",
+        "join:local:8737:1578:8737:940:1"
+      ],
+      "localRootLaneIds": [
+        "local:8785:940:8785:1578",
+        "local:8737:1578:8737:940"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        867.4381713867188,
+        83.03074645996094,
+        884.7526245117188,
+        173.4387664794922
+      ],
+      "membership": "uncertain",
+      "status": "unreviewed",
+      "note": "Candidate: user stroke does not establish every small branch or exact endpoint. Confirm numbered junctions."
+    },
+    {
+      "color": "pink",
+      "roadName": "은계번영길",
+      "sourceIds": [
+        "37612023:A0020000:394:0",
+        "37612023:A0020000:1112:0",
+        "37612023:A0020000:1293:0"
+      ],
+      "representativeLane": "local:5868:2554:7086:2547",
+      "laneIds": [
+        "local:5868:2554:7086:2547",
+        "local:5868:2510:7086:2503",
+        "local:7086:2591:5868:2598",
+        "local:7087:2635:5869:2642",
+        "join:local:5868:2554:7086:2547:-1",
+        "join:local:5868:2554:7086:2547:0",
+        "join:local:5868:2510:7086:2503:0",
+        "join:local:7086:2591:5868:2598:0",
+        "join:local:7087:2635:5869:2642:0",
+        "join:local:7087:2635:5869:2642:1",
+        "local:5868:2554:7086:2547:part:1",
+        "local:5868:2554:7086:2547:part:2",
+        "local:5868:2510:7086:2503:part:1",
+        "local:5868:2510:7086:2503:part:2",
+        "local:7086:2591:5868:2598:part:1",
+        "local:7086:2591:5868:2598:part:2",
+        "local:7087:2635:5869:2642:part:1",
+        "local:7087:2635:5869:2642:part:2"
+      ],
+      "localRootLaneIds": [
+        "local:5868:2554:7086:2547",
+        "local:5868:2510:7086:2503",
+        "local:7086:2591:5868:2598",
+        "local:7087:2635:5869:2642",
+        "local:5868:2554:7086:2547:part:1",
+        "local:5868:2554:7086:2547:part:2",
+        "local:5868:2510:7086:2503:part:1",
+        "local:5868:2510:7086:2503:part:2",
+        "local:7086:2591:5868:2598:part:1",
+        "local:7086:2591:5868:2598:part:2",
+        "local:7087:2635:5869:2642:part:1",
+        "local:7087:2635:5869:2642:part:2"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        563.2293090820312,
+        250.21636962890625,
+        732.2067260742188,
+        269.4081115722656
+      ],
+      "membership": "uncertain",
+      "status": "unreviewed",
+      "note": "Candidate: user stroke does not establish every small branch or exact endpoint. Confirm numbered junctions."
+    },
+    {
+      "color": "pink",
+      "roadName": "은계번영길",
+      "sourceIds": [
+        "37612023:A0020000:413:0",
+        "37612023:A0020000:623:0",
+        "37612023:A0020000:586:0"
+      ],
+      "representativeLane": "local:5632:2599:5194:2601",
+      "laneIds": [
+        "local:5632:2599:5194:2601",
+        "local:5633:2643:5195:2645",
+        "local:5194:2557:5632:2555",
+        "local:5194:2513:5632:2511",
+        "join:local:5632:2599:5194:2601:-1",
+        "join:local:5633:2643:5195:2645:1",
+        "join:local:5194:2557:5632:2555:-1",
+        "join:local:5194:2557:5632:2555:0",
+        "join:local:5194:2513:5632:2511:0"
+      ],
+      "localRootLaneIds": [
+        "local:5632:2599:5194:2601",
+        "local:5633:2643:5195:2645",
+        "local:5194:2557:5632:2555",
+        "local:5194:2513:5632:2511"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        503.32440185546875,
+        246.11422729492188,
+        586.8067626953125,
+        269.71331787109375
+      ],
+      "membership": "uncertain",
+      "status": "unreviewed",
+      "note": "Candidate: user stroke does not establish every small branch or exact endpoint. Confirm numbered junctions."
+    },
+    {
+      "color": "pink",
+      "roadName": "은계남로",
+      "sourceIds": [
+        "37612023:A0020000:488:0",
+        "37612023:A0020000:1278:0",
+        "37612023:A0020000:1511:0"
+      ],
+      "representativeLane": "local:7660:918:5205:927",
+      "laneIds": [
+        "local:7660:918:5205:927",
+        "local:5204:826:7659:817",
+        "join:local:7660:918:5205:927:-1",
+        "join:local:7660:918:5205:927:0",
+        "join:local:7660:918:5205:927:1",
+        "join:local:5204:826:7659:817:-1",
+        "join:local:5204:826:7659:817:0",
+        "join:local:5204:826:7659:817:1"
+      ],
+      "localRootLaneIds": [
+        "local:7660:918:5205:927",
+        "local:5204:826:7659:817"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        494.38531494140625,
+        68.85043334960938,
+        802.277099609375,
+        104.71858215332031
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "pink",
+      "roadName": "",
+      "sourceIds": [
+        "37612023:A0020000:500:0",
+        "37612023:A0020000:1377:0",
+        "37612023:A0020000:1317:0"
+      ],
+      "representativeLane": "local:8023:835:8227:832",
+      "laneIds": [
+        "local:8023:835:8227:832",
+        "local:8228:888:8024:892",
+        "join:local:8023:835:8227:832:-1",
+        "join:local:8023:835:8227:832:0",
+        "join:local:8228:888:8024:892:-1",
+        "join:local:8228:888:8024:892:0",
+        "join:local:8228:888:8024:892:1"
+      ],
+      "localRootLaneIds": [
+        "local:8023:835:8227:832",
+        "local:8228:888:8024:892"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        765.9506225585938,
+        68.62545776367188,
+        839.9679565429688,
+        104.38158416748047
+      ],
+      "membership": "uncertain",
+      "status": "unreviewed",
+      "note": "Candidate: user stroke does not establish every small branch or exact endpoint. Confirm numbered junctions."
+    },
+    {
+      "color": "pink",
+      "roadName": "",
+      "sourceIds": [
+        "37612023:A0020000:544:0",
+        "37612023:A0020000:1004:0",
+        "37612023:A0020000:1508:0"
+      ],
+      "representativeLane": "local:8296:2598:8098:2596",
+      "laneIds": [
+        "local:8296:2598:8098:2596",
+        "local:8099:2537:8297:2539",
+        "join:local:8296:2598:8098:2596:-1",
+        "join:local:8296:2598:8098:2596:0",
+        "join:local:8296:2598:8098:2596:1",
+        "join:local:8099:2537:8297:2539:0",
+        "join:local:8099:2537:8297:2539:1",
+        "join:reviewed:J7917:entry:18"
+      ],
+      "localRootLaneIds": [
+        "local:8296:2598:8098:2596",
+        "local:8099:2537:8297:2539"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        773.4804077148438,
+        238.5013427734375,
+        847.4378051757812,
+        274.3294677734375
+      ],
+      "membership": "uncertain",
+      "status": "unreviewed",
+      "note": "Candidate: user stroke does not establish every small branch or exact endpoint. Confirm numbered junctions."
+    },
+    {
+      "color": "pink",
+      "roadName": "은계중앙로",
+      "sourceIds": [
+        "37612023:A0020000:564:0",
+        "37612023:A0020000:1486:0"
+      ],
+      "representativeLane": "local:5121:18:5124:746",
+      "laneIds": [
+        "local:5121:18:5124:746",
+        "local:5023:746:5021:22",
+        "join:local:5121:18:5124:746:-1",
+        "join:local:5121:18:5124:746:0",
+        "join:local:5121:18:5124:746:1"
+      ],
+      "localRootLaneIds": [
+        "local:5121:18:5124:746",
+        "local:5023:746:5021:22"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        494.38531494140625,
+        1.7543941736221313,
+        520.4393310546875,
+        100.69454193115234
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "yellow",
+      "roadName": "은계중앙로",
+      "sourceIds": [
+        "37612023:A0020000:578:0",
+        "37612023:A0020000:2228:0",
+        "37612023:A0020000:2236:0"
+      ],
+      "representativeLane": "local:7260:14995:6050:16894",
+      "laneIds": [
+        "local:7260:14995:6050:16894",
+        "local:7319:15001:6080:16946",
+        "local:6021:16841:7200:14988",
+        "local:5992:16789:7141:14981",
+        "join:local:7260:14995:6050:16894:0",
+        "join:local:7319:15001:6080:16946:0",
+        "join:local:7319:15001:6080:16946:1",
+        "join:local:6021:16841:7200:14988:-1",
+        "join:local:6021:16841:7200:14988:0",
+        "join:local:5992:16789:7141:14981:0",
+        "join:local:5992:16789:7141:14981:1",
+        "local:7260:14995:6050:16894:part:1",
+        "local:7260:14995:6050:16894:part:2",
+        "local:7319:15001:6080:16946:part:1",
+        "local:7319:15001:6080:16946:part:2",
+        "local:6021:16841:7200:14988:part:1",
+        "local:6021:16841:7200:14988:part:2",
+        "local:5992:16789:7141:14981:part:1",
+        "local:5992:16789:7141:14981:part:2"
+      ],
+      "localRootLaneIds": [
+        "local:7260:14995:6050:16894",
+        "local:7319:15001:6080:16946",
+        "local:6021:16841:7200:14988",
+        "local:5992:16789:7141:14981",
+        "local:7260:14995:6050:16894:part:1",
+        "local:7260:14995:6050:16894:part:2",
+        "local:7319:15001:6080:16946:part:1",
+        "local:7319:15001:6080:16946:part:2",
+        "local:6021:16841:7200:14988:part:1",
+        "local:6021:16841:7200:14988:part:2",
+        "local:5992:16789:7141:14981:part:1",
+        "local:5992:16789:7141:14981:part:2"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        568.2891235351562,
+        1456.6488037109375,
+        746.0703735351562,
+        1717.2093505859375
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "pink",
+      "roadName": "",
+      "sourceIds": [
+        "37612023:A0020000:582:0",
+        "37612023:A0020000:643:0",
+        "37612023:A0020000:493:0"
+      ],
+      "representativeLane": "local:8674:881:8401:884",
+      "laneIds": [
+        "local:8674:881:8401:884",
+        "local:8400:828:8675:825",
+        "join:local:8674:881:8401:884:0",
+        "join:local:8674:881:8401:884:1",
+        "join:local:8400:828:8675:825:-1",
+        "join:local:8400:828:8675:825:0"
+      ],
+      "localRootLaneIds": [
+        "local:8674:881:8401:884",
+        "local:8400:828:8675:825"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        822.78759765625,
+        82.46308135986328,
+        884.7526245117188,
+        94.35355377197266
+      ],
+      "membership": "uncertain",
+      "status": "unreviewed",
+      "note": "Candidate: user stroke does not establish every small branch or exact endpoint. Confirm numbered junctions."
+    },
+    {
+      "color": "pink",
+      "roadName": "은계번영길",
+      "sourceIds": [
+        "37612023:A0020000:585:0",
+        "37612023:A0020000:1123:0",
+        "37612023:A0020000:411:0",
+        "37612023:A0020000:1036:0",
+        "37612023:A0020000:902:0",
+        "37612023:A0020000:675:0"
+      ],
+      "representativeLane": "local:5788:2694:6370:3328",
+      "laneIds": [
+        "local:5788:2694:6370:3328",
+        "local:6387:3402:5713:2694",
+        "join:local:5788:2694:6370:3328:-1",
+        "join:local:5788:2694:6370:3328:0",
+        "join:local:6387:3402:5713:2694:-1",
+        "join:local:6387:3402:5713:2694:1"
+      ],
+      "localRootLaneIds": [
+        "local:5788:2694:6370:3328",
+        "local:6387:3402:5713:2694"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        563.2516479492188,
+        255.3526153564453,
+        657.4651489257812,
+        352.06463623046875
+      ],
+      "membership": "uncertain",
+      "status": "unreviewed",
+      "note": "Candidate: user stroke does not establish every small branch or exact endpoint. Confirm numbered junctions."
+    },
+    {
+      "color": "pink",
+      "roadName": "",
+      "sourceIds": [
+        "37612023:A0020000:593:0",
+        "37612023:A0020000:991:0",
+        "37612023:A0020000:1096:0"
+      ],
+      "representativeLane": "local:8785:1734:8786:2476",
+      "laneIds": [
+        "local:8785:1734:8786:2476",
+        "local:8738:2476:8737:1734",
+        "join:local:8785:1734:8786:2476:-1",
+        "join:local:8785:1734:8786:2476:1",
+        "join:local:8738:2476:8737:1734:-1",
+        "join:local:8738:2476:8737:1734:0",
+        "join:local:8738:2476:8737:1734:1"
+      ],
+      "localRootLaneIds": [
+        "local:8785:1734:8786:2476",
+        "local:8738:2476:8737:1734"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        867.3424682617188,
+        157.8386993408203,
+        885.0240478515625,
+        259.6502685546875
+      ],
+      "membership": "uncertain",
+      "status": "unreviewed",
+      "note": "Candidate: user stroke does not establish every small branch or exact endpoint. Confirm numbered junctions."
+    },
+    {
+      "color": "pink",
+      "roadName": "은계중앙로",
+      "sourceIds": [
+        "37612023:A0020000:624:0",
+        "37612023:A0020000:1561:0",
+        "37612023:A0020000:1453:0"
+      ],
+      "representativeLane": "local:5033:2461:5031:1007",
+      "laneIds": [
+        "local:5033:2461:5031:1007",
+        "local:5119:1007:5121:2462",
+        "join:local:5033:2461:5031:1007:-1",
+        "join:local:5033:2461:5031:1007:0",
+        "join:local:5033:2461:5031:1007:1",
+        "join:local:5119:1007:5121:2462:0",
+        "join:local:5119:1007:5121:2462:1"
+      ],
+      "localRootLaneIds": [
+        "local:5033:2461:5031:1007",
+        "local:5119:1007:5121:2462"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        494.38531494140625,
+        74.63478088378906,
+        520.4393310546875,
+        269.71331787109375
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "green",
+      "roadName": "은계로",
+      "sourceIds": [
+        "37612023:A0020000:672:0",
+        "37612023:A0020000:671:0",
+        "37612023:A0020000:1030:0"
+      ],
+      "representativeLane": "local:7922:1836:7947:2382",
+      "laneIds": [
+        "local:7922:1836:7947:2382",
+        "local:7998:1833:8023:2378",
+        "local:7871:2385:7846:1840",
+        "local:7795:2388:7771:1843",
+        "join:local:7922:1836:7947:2382:-1",
+        "join:local:7922:1836:7947:2382:0",
+        "join:local:7998:1833:8023:2378:1",
+        "join:local:7871:2385:7846:1840:-1",
+        "join:local:7871:2385:7846:1840:0",
+        "join:local:7795:2388:7771:1843:0",
+        "reviewed:J7917:middle:local:7998:1833:8023:2378",
+        "reviewed:J7917:middle:local:7795:2388:7771:1843",
+        "join:reviewed:J7917:middle:local:7998:1833:8023:2378:8",
+        "join:reviewed:J7917:middle:local:7795:2388:7771:1843:9",
+        "join:reviewed:J7917:entry:17",
+        "reviewed:J7917:north-left"
+      ],
+      "localRootLaneIds": [
+        "local:7922:1836:7947:2382",
+        "local:7998:1833:8023:2378",
+        "local:7871:2385:7846:1840",
+        "local:7795:2388:7771:1843"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        773.4804077148438,
+        147.59434509277344,
+        809.890869140625,
+        274.5117492675781
+      ],
+      "membership": "matched",
+      "status": "evidence-existing",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "green",
+      "roadName": "은계로",
+      "sourceIds": [
+        "37612023:A0020000:673:0",
+        "37612023:A0020000:674:0",
+        "37612023:A0020000:688:0"
+      ],
+      "representativeLane": "local:7830:1476:7811:1051",
+      "laneIds": [
+        "local:7830:1476:7811:1051",
+        "local:7754:1479:7736:1054",
+        "local:7887:1047:7906:1473",
+        "local:7963:1044:7982:1469",
+        "join:local:7830:1476:7811:1051:-1",
+        "join:local:7830:1476:7811:1051:0",
+        "join:local:7754:1479:7736:1054:0",
+        "join:local:7754:1479:7736:1054:1",
+        "join:local:7887:1047:7906:1473:0",
+        "join:local:7963:1044:7982:1469:0",
+        "join:local:7963:1044:7982:1469:1",
+        "join:reviewed:J7917:entry:12"
+      ],
+      "localRootLaneIds": [
+        "local:7830:1476:7811:1051",
+        "local:7754:1479:7736:1054",
+        "local:7887:1047:7906:1473",
+        "local:7963:1044:7982:1469"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        765.9506225585938,
+        68.62545776367188,
+        805.841796875,
+        183.62167358398438
+      ],
+      "membership": "matched",
+      "status": "evidence-existing",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "pink",
+      "roadName": "",
+      "sourceIds": [
+        "37612023:A0020000:686:0",
+        "37612023:A0020000:1328:0",
+        "37612023:A0020000:803:0",
+        "37612023:A0020000:434:0"
+      ],
+      "representativeLane": "local:8848:830:9173:1574",
+      "laneIds": [
+        "local:8848:830:9173:1574",
+        "local:9125:1575:8847:878",
+        "join:local:8848:830:9173:1574:-1",
+        "join:local:8848:830:9173:1574:0",
+        "join:local:9125:1575:8847:878:0",
+        "join:local:9125:1575:8847:878:1"
+      ],
+      "localRootLaneIds": [
+        "local:8848:830:9173:1574",
+        "local:9125:1575:8847:878"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        867.4381713867188,
+        82.95146179199219,
+        917.5209350585938,
+        173.0342559814453
+      ],
+      "membership": "uncertain",
+      "status": "unreviewed",
+      "note": "Candidate: user stroke does not establish every small branch or exact endpoint. Confirm numbered junctions."
+    },
+    {
+      "color": "pink",
+      "roadName": "",
+      "sourceIds": [
+        "37612023:A0020000:742:0",
+        "37612023:A0020000:913:0",
+        "37612023:A0020000:1402:0"
+      ],
+      "representativeLane": "local:8318:1581:8293:945",
+      "laneIds": [
+        "local:8318:1581:8293:945",
+        "local:8341:944:8366:1579",
+        "join:local:8318:1581:8293:945:-1",
+        "join:local:8318:1581:8293:945:1",
+        "join:local:8341:944:8366:1579:-1",
+        "join:local:8341:944:8366:1579:0",
+        "join:local:8341:944:8366:1579:1"
+      ],
+      "localRootLaneIds": [
+        "local:8318:1581:8293:945",
+        "local:8341:944:8366:1579"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        822.78759765625,
+        82.78636169433594,
+        842.3569946289062,
+        173.51284790039062
+      ],
+      "membership": "uncertain",
+      "status": "unreviewed",
+      "note": "Candidate: user stroke does not establish every small branch or exact endpoint. Confirm numbered junctions."
+    },
+    {
+      "color": "pink",
+      "roadName": "",
+      "sourceIds": [
+        "37612023:A0020000:813:0",
+        "37612023:A0020000:1153:0",
+        "37612023:A0020000:705:0"
+      ],
+      "representativeLane": "local:9072:1678:8839:1681",
+      "laneIds": [
+        "local:9072:1678:8839:1681",
+        "local:8839:1633:9072:1630",
+        "join:local:9072:1678:8839:1681:-1",
+        "join:local:9072:1678:8839:1681:0",
+        "join:local:9072:1678:8839:1681:1",
+        "join:local:8839:1633:9072:1630:-1",
+        "join:local:8839:1633:9072:1630:1"
+      ],
+      "localRootLaneIds": [
+        "local:9072:1678:8839:1681",
+        "local:8839:1633:9072:1630"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        868.2468872070312,
+        157.46234130859375,
+        917.4580688476562,
+        173.4387664794922
+      ],
+      "membership": "uncertain",
+      "status": "unreviewed",
+      "note": "Candidate: user stroke does not establish every small branch or exact endpoint. Confirm numbered junctions."
+    },
+    {
+      "color": "pink",
+      "roadName": "은계번영길",
+      "sourceIds": [
+        "37612023:A0020000:815:0",
+        "37612023:A0020000:998:0",
+        "37612023:A0020000:1241:0",
+        "37612023:A0020000:606:0",
+        "37612023:A0020000:965:0",
+        "37612023:A0020000:1092:0"
+      ],
+      "representativeLane": "local:6575:3281:7166:2686",
+      "laneIds": [
+        "local:6575:3281:7166:2686",
+        "local:7241:2687:6592:3354",
+        "join:local:6575:3281:7166:2686:-1",
+        "join:local:6575:3281:7166:2686:1",
+        "join:local:7241:2687:6592:3354:0",
+        "join:local:7241:2687:6592:3354:1"
+      ],
+      "localRootLaneIds": [
+        "local:6575:3281:7166:2686",
+        "local:7241:2687:6592:3354"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        638.6907958984375,
+        254.61631774902344,
+        732.2067260742188,
+        344.64715576171875
+      ],
+      "membership": "uncertain",
+      "status": "unreviewed",
+      "note": "Candidate: user stroke does not establish every small branch or exact endpoint. Confirm numbered junctions."
+    },
+    {
+      "color": "yellow",
+      "roadName": "계수로",
+      "sourceIds": [
+        "37612023:A0020000:84:0",
+        "37612023:A0020000:82:0",
+        "37612023:A0020000:81:0",
+        "37612023:A0020000:80:0",
+        "37612023:A0020000:2097:0",
+        "37612023:A0020000:2096:0",
+        "37612023:A0020000:2094:0",
+        "37612023:A0020000:2087:0",
+        "37612023:A0020000:2086:0",
+        "37612023:A0020000:2085:0",
+        "37612023:A0020000:2133:0",
+        "37612023:A0020000:2132:0",
+        "37612023:A0020000:2131:0",
+        "37612023:A0020000:2129:0",
+        "37612023:A0020000:2128:0",
+        "37612023:A0020000:2127:0",
+        "37612023:A0020000:2136:0"
+      ],
+      "representativeLane": "local:11841:16136:13366:17471",
+      "laneIds": [
+        "local:11841:16136:13366:17471",
+        "local:11859:16095:13404:17446",
+        "local:13329:17496:11823:16177",
+        "local:13291:17521:11806:16218",
+        "join:local:13329:17496:11823:16177:0",
+        "join:local:13291:17521:11806:16218:0",
+        "join:local:13291:17521:11806:16218:1",
+        "local:11841:16136:13366:17471:part:1",
+        "local:11841:16136:13366:17471:part:2",
+        "local:11859:16095:13404:17446:part:1",
+        "local:11859:16095:13404:17446:part:2",
+        "local:13329:17496:11823:16177:part:1",
+        "local:13329:17496:11823:16177:part:2",
+        "local:13291:17521:11806:16218:part:1",
+        "local:13291:17521:11806:16218:part:2"
+      ],
+      "localRootLaneIds": [
+        "local:11841:16136:13366:17471",
+        "local:11859:16095:13404:17446",
+        "local:13329:17496:11823:16177",
+        "local:13291:17521:11806:16218",
+        "local:11841:16136:13366:17471:part:1",
+        "local:11841:16136:13366:17471:part:2",
+        "local:11859:16095:13404:17446:part:1",
+        "local:11859:16095:13404:17446:part:2",
+        "local:13329:17496:11823:16177:part:1",
+        "local:13329:17496:11823:16177:part:2",
+        "local:13291:17521:11806:16218:part:1",
+        "local:13291:17521:11806:16218:part:2"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        1158.885009765625,
+        1608.114990234375,
+        1340.356201171875,
+        1752.07861328125
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "yellow",
+      "roadName": "",
+      "sourceIds": [
+        "37612023:A0020000:85:0",
+        "37612023:A0020000:86:0",
+        "37612023:A0020000:88:0",
+        "37612023:A0020000:89:0",
+        "37612023:A0020000:90:0",
+        "37612023:A0020000:91:0",
+        "37612023:A0020000:92:0",
+        "37612023:A0020000:94:0",
+        "37612023:A0020000:99:0"
+      ],
+      "representativeLane": "local:11605:16081:10719:15876",
+      "laneIds": [
+        "local:11605:16081:10719:15876",
+        "local:11589:16123:10729:15920",
+        "local:10709:15832:11621:16039",
+        "local:10699:15788:11637:15997",
+        "join:local:11605:16081:10719:15876:0",
+        "join:local:11589:16123:10729:15920:0",
+        "join:local:11589:16123:10729:15920:1",
+        "join:local:10709:15832:11621:16039:-1",
+        "join:local:10709:15832:11621:16039:0",
+        "join:local:10699:15788:11637:15997:0",
+        "local:11605:16081:10719:15876:part:1",
+        "local:11605:16081:10719:15876:part:2",
+        "local:11589:16123:10729:15920:part:1",
+        "local:11589:16123:10729:15920:part:2",
+        "local:10709:15832:11621:16039:part:1",
+        "local:10709:15832:11621:16039:part:2",
+        "local:10699:15788:11637:15997:part:1",
+        "local:10699:15788:11637:15997:part:2"
+      ],
+      "localRootLaneIds": [
+        "local:11605:16081:10719:15876",
+        "local:11589:16123:10729:15920",
+        "local:10709:15832:11621:16039",
+        "local:10699:15788:11637:15997",
+        "local:11605:16081:10719:15876:part:1",
+        "local:11605:16081:10719:15876:part:2",
+        "local:11589:16123:10729:15920:part:1",
+        "local:11589:16123:10729:15920:part:2",
+        "local:10709:15832:11621:16039:part:1",
+        "local:10709:15832:11621:16039:part:2",
+        "local:10699:15788:11637:15997:part:1",
+        "local:10699:15788:11637:15997:part:2"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        1044.210693359375,
+        1577.382568359375,
+        1185.93310546875,
+        1620.05859375
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "pink",
+      "roadName": "",
+      "sourceIds": [
+        "37612023:A0020000:851:0",
+        "37612023:A0020000:1542:0",
+        "37612023:A0020000:954:0"
+      ],
+      "representativeLane": "local:8474:2541:8672:2538",
+      "laneIds": [
+        "local:8474:2541:8672:2538",
+        "local:8673:2597:8474:2600",
+        "join:local:8474:2541:8672:2538:0",
+        "join:local:8474:2541:8672:2538:1",
+        "join:local:8673:2597:8474:2600:-1",
+        "join:local:8673:2597:8474:2600:0"
+      ],
+      "localRootLaneIds": [
+        "local:8474:2541:8672:2538",
+        "local:8673:2597:8474:2600"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        829.6054077148438,
+        247.61724853515625,
+        885.0240478515625,
+        260.0206298828125
+      ],
+      "membership": "uncertain",
+      "status": "unreviewed",
+      "note": "Candidate: user stroke does not establish every small branch or exact endpoint. Confirm numbered junctions."
+    },
+    {
+      "color": "pink",
+      "roadName": "",
+      "sourceIds": [
+        "37612023:A0020000:864:0",
+        "37612023:A0020000:1506:0",
+        "37612023:A0020000:618:0",
+        "37612023:A0020000:1154:0"
+      ],
+      "representativeLane": "local:9175:1730:8851:2587",
+      "laneIds": [
+        "local:9175:1730:8851:2587",
+        "local:8850:2539:9127:1731",
+        "join:local:9175:1730:8851:2587:-1",
+        "join:local:9175:1730:8851:2587:0",
+        "join:local:8850:2539:9127:1731:0",
+        "join:local:8850:2539:9127:1731:1"
+      ],
+      "localRootLaneIds": [
+        "local:9175:1730:8851:2587",
+        "local:8850:2539:9127:1731"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        867.3424682617188,
+        157.46234130859375,
+        917.4699096679688,
+        259.6502685546875
+      ],
+      "membership": "uncertain",
+      "status": "unreviewed",
+      "note": "Candidate: user stroke does not establish every small branch or exact endpoint. Confirm numbered junctions."
+    },
+    {
+      "color": "pink",
+      "roadName": "",
+      "sourceIds": [
+        "37612023:A0020000:873:0",
+        "37612023:A0020000:614:0",
+        "37612023:A0020000:996:0"
+      ],
+      "representativeLane": "local:7322:2546:7735:2544",
+      "laneIds": [
+        "local:7322:2546:7735:2544",
+        "local:7322:2502:7734:2500",
+        "local:7735:2588:7322:2590",
+        "local:7735:2632:7323:2634",
+        "join:local:7322:2546:7735:2544:-1",
+        "join:local:7322:2546:7735:2544:0",
+        "join:local:7322:2502:7734:2500:0",
+        "join:local:7322:2502:7734:2500:1",
+        "join:local:7735:2588:7322:2590:0",
+        "join:local:7735:2632:7323:2634:0",
+        "join:local:7735:2632:7323:2634:1",
+        "join:reviewed:J7917:entry:14"
+      ],
+      "localRootLaneIds": [
+        "local:7322:2546:7735:2544",
+        "local:7322:2502:7734:2500",
+        "local:7735:2588:7322:2590",
+        "local:7735:2632:7323:2634"
+      ],
+      "laneCountMeaning": "Active same-source segments including editor/reviewed/joins; not physical lane count",
+      "bounds": [
+        708.6292724609375,
+        238.66978454589844,
+        809.890869140625,
+        274.5117492675781
+      ],
+      "membership": "matched",
+      "status": "unreviewed",
+      "note": "Source-group geometry matched to annotated map; no new field review."
+    },
+    {
+      "color": "green",
+      "roadName": "수인로",
+      "sourceIds": [
+        "A2218G611312",
+        "A2218G611433",
+        "A2218G611381",
+        "A2218G611379",
+        "A2218G611376",
+        "A2218G611880",
+        "A2218G611881",
+        "A2218G611878",
+        "A2218G611877",
+        "A222BC004215",
+        "A222BC004224",
+        "A222BC004188",
+        "A222BC004185",
+        "A222BC004186",
+        "A222BC004223",
+        "A2218G611430",
+        "A2218G611313",
+        "A2218G611337",
+        "A2218G611332",
+        "A2218G611888",
+        "A2218G611442",
+        "A2218G611344",
+        "A2218G611457",
+        "A2218G611446",
+        "A2218G611444",
+        "A2218G611458",
+        "A2218G611412",
+        "A2218G611411",
+        "A2218G611410",
+        "A2218G611409",
+        "A2218G611417",
+        "A2218G611408",
+        "A2218G611441",
+        "A2218G611415",
+        "A2218G611423",
+        "A2218G611425",
+        "A2218G611346",
+        "A2218G611345",
+        "A2218G611343",
+        "A2218G611407",
+        "A2218G611342",
+        "A222BC004010",
+        "A2218G611404",
+        "A2218G611403",
+        "A2218G611402",
+        "A2218G611341",
+        "A2218G611339",
+        "A2218G611282",
+        "A2218G611318",
+        "A2218G611317",
+        "A2218G611773",
+        "A2218G611311",
+        "A2218G611284",
+        "A2218G611781",
+        "A2218G611374",
+        "A2218G611443",
+        "A2218G611445",
+        "A2218G611440",
+        "A2218G611530",
+        "A2218G611529",
+        "A2218G611885",
+        "A2218G611437",
+        "A2218G611884",
+        "A2218G611882",
+        "A2218G611883",
+        "A222BC004198",
+        "A222BC004179",
+        "A222BC004180",
+        "A222BC004205",
+        "A222BC004213",
+        "A222BC004187",
+        "A222BC004206",
+        "A222BC004207",
+        "A222BC004202",
+        "A222BC004203",
+        "A222BC004204",
+        "A222BC004197",
+        "A222BC004194",
+        "A222BC004195",
+        "A222BC004196",
+        "A222BC004216",
+        "A222BC004217",
+        "A222BC004218",
+        "A222BC004225",
+        "A2218G611744",
+        "A2218G611356",
+        "A2218G611373",
+        "A2218G611909",
+        "A2218G611474",
+        "A222BC004173",
+        "A2218G611383",
+        "A222BC004176",
+        "A2218G611366",
+        "A2218G611357",
+        "A2218G611365",
+        "A2218G611375",
+        "A2218G611519",
+        "A2218G611528",
+        "A2218G611470",
+        "A2218G611523",
+        "A2218G611522",
+        "A2218G611521",
+        "A2218G611520",
+        "A2218G611492",
+        "A2218G611481",
+        "A2218G611500",
+        "A2218G611482",
+        "A2218G611473",
+        "A2218G611486",
+        "A2218G611483",
+        "A2218G611489",
+        "A2218G611487",
+        "A2218G611428",
+        "A2218G611427",
+        "A2218G611422",
+        "A2218G611388",
+        "A2218G611386",
+        "A2218G611421",
+        "A2218G611333",
+        "A2218G611889",
+        "A2218G611334"
+      ],
+      "representativeLane": "A2218G611312:0",
+      "laneIds": [
+        "A2218G611312:0",
+        "A2218G611433:0",
+        "A2218G611381:0",
+        "A2218G611379:0",
+        "A2218G611376:0",
+        "A2218G611880:0",
+        "A2218G611881:0",
+        "A2218G611878:0",
+        "A2218G611877:0",
+        "A222BC004215:0",
+        "A222BC004224:0",
+        "A222BC004188:0",
+        "A222BC004185:0",
+        "A222BC004186:0",
+        "A222BC004223:0",
+        "A2218G611430:0",
+        "A2218G611313:0",
+        "A2218G611337:0",
+        "A2218G611332:0",
+        "A2218G611888:0",
+        "A2218G611442:0",
+        "A2218G611344:0",
+        "A2218G611457:0",
+        "A2218G611446:0",
+        "A2218G611444:0",
+        "A2218G611458:0",
+        "A2218G611412:0",
+        "A2218G611411:0",
+        "A2218G611410:0",
+        "A2218G611409:0",
+        "A2218G611417:0",
+        "A2218G611417:1",
+        "A2218G611417:2",
+        "A2218G611417:3",
+        "A2218G611408:0",
+        "A2218G611441:0",
+        "A2218G611415:0",
+        "A2218G611415:1",
+        "A2218G611415:2",
+        "A2218G611415:3",
+        "A2218G611423:0",
+        "A2218G611425:0",
+        "A2218G611346:0",
+        "A2218G611345:0",
+        "A2218G611343:0",
+        "A2218G611407:0",
+        "A2218G611342:0",
+        "A222BC004010:0",
+        "A2218G611404:0",
+        "A2218G611403:0",
+        "A2218G611402:0",
+        "A2218G611341:0",
+        "A2218G611339:0",
+        "A2218G611282:0",
+        "A2218G611318:0",
+        "A2218G611317:0",
+        "A2218G611773:0",
+        "A2218G611311:0",
+        "A2218G611284:0",
+        "A2218G611781:0",
+        "A2218G611374:0",
+        "A2218G611443:0",
+        "A2218G611445:0",
+        "A2218G611440:0",
+        "A2218G611530:0",
+        "A2218G611529:0",
+        "A2218G611529:1",
+        "A2218G611885:0",
+        "A2218G611437:0",
+        "A2218G611884:0",
+        "A2218G611882:0",
+        "A2218G611883:0",
+        "A222BC004198:0",
+        "A222BC004179:0",
+        "A222BC004179:1",
+        "A222BC004179:2",
+        "A222BC004179:3",
+        "A222BC004179:4",
+        "A222BC004180:0",
+        "A222BC004205:0",
+        "A222BC004213:0",
+        "A222BC004187:0",
+        "A222BC004206:0",
+        "A222BC004206:1",
+        "A222BC004206:2",
+        "A222BC004206:3",
+        "A222BC004206:4",
+        "A222BC004207:0",
+        "A222BC004202:0",
+        "A222BC004202:1",
+        "A222BC004202:2",
+        "A222BC004202:3",
+        "A222BC004202:4",
+        "A222BC004203:0",
+        "A222BC004204:0",
+        "A222BC004204:1",
+        "A222BC004204:2",
+        "A222BC004204:3",
+        "A222BC004197:0",
+        "A222BC004194:0",
+        "A222BC004194:1",
+        "A222BC004194:2",
+        "A222BC004194:3",
+        "A222BC004195:0",
+        "A222BC004195:1",
+        "A222BC004195:2",
+        "A222BC004196:0",
+        "A222BC004216:0",
+        "A222BC004217:0",
+        "A222BC004218:0",
+        "A222BC004225:0",
+        "A2218G611744:0",
+        "A2218G611356:0",
+        "A2218G611373:0",
+        "A2218G611909:0",
+        "A2218G611909:1",
+        "A2218G611909:2",
+        "A2218G611909:3",
+        "A2218G611474:0",
+        "A222BC004173:0",
+        "A2218G611383:0",
+        "A222BC004176:0",
+        "A222BC004176:1",
+        "A222BC004176:2",
+        "A2218G611366:0",
+        "A2218G611366:1",
+        "A2218G611366:2",
+        "A2218G611366:3",
+        "A2218G611357:0",
+        "A2218G611365:0",
+        "A2218G611365:1",
+        "A2218G611365:2",
+        "A2218G611365:3",
+        "A2218G611375:0",
+        "A2218G611519:0",
+        "A2218G611528:0",
+        "A2218G611470:0",
+        "A2218G611523:0",
+        "A2218G611523:1",
+        "A2218G611523:2",
+        "A2218G611522:0",
+        "A2218G611521:0",
+        "A2218G611520:0",
+        "A2218G611492:0",
+        "A2218G611481:0",
+        "A2218G611500:0",
+        "A2218G611500:1",
+        "A2218G611500:2",
+        "A2218G611500:3",
+        "A2218G611482:0",
+        "A2218G611473:0",
+        "A2218G611486:0",
+        "A2218G611486:1",
+        "A2218G611486:2",
+        "A2218G611483:0",
+        "A2218G611489:0",
+        "A2218G611487:0",
+        "A2218G611487:1",
+        "A2218G611487:2",
+        "A2218G611487:3",
+        "A2218G611428:0",
+        "A2218G611427:0",
+        "A2218G611422:0",
+        "A2218G611388:0",
+        "A2218G611386:0",
+        "A2218G611421:0",
+        "A2218G611333:0",
+        "A2218G611889:0",
+        "A2218G611334:0",
+        "editor:segment:QTIyMThHNjExMzc1OjA:e0b71b66c91f4af583c51ecc77451404",
+        "editor:segment:QTIyMThHNjExNDE3OjM:763e801e4820490ba8595b0e1fb8e4f0",
+        "editor:segment:QTIyMThHNjExNDE1OjM:4f0e8d86d5ff4b94bf69db628daf4101",
+        "editor:segment:QTIyMThHNjExNDE1OjM:84aff22675ce452fa6ca5b97a9a70e70",
+        "editor:segment:QTIyMkJDMDA0MTgwOjA:68a029ac511044cda906797cb889abc2",
+        "editor:segment:QTIyMkJDMDA0MTg3OjA:84ed491de5774024b891c5c6ac497e25"
+      ],
+      "bounds": [
+        45.04499816894531,
+        33.160400390625,
+        1141.862060546875,
+        540.5567016601562
+      ],
+      "membership": "matched",
+      "status": "evidence-existing",
+      "note": "NGII main corridor. Existing junction evidence is partial; not all sections reviewed."
+    }
+  ],
+  "junctions": [
+    {
+      "number": 1,
+      "id": "J0_10594",
+      "x": 0.0,
+      "z": 1059.430908203125,
+      "status": "unreviewed"
+    },
+    {
+      "number": 2,
+      "id": "J1882_11791",
+      "x": 188.2480010986328,
+      "z": 1179.10595703125,
+      "status": "unreviewed"
+    },
+    {
+      "number": 3,
+      "id": "J2564_12237",
+      "x": 256.3919982910156,
+      "z": 1223.6910400390625,
+      "status": "unreviewed"
+    },
+    {
+      "number": 4,
+      "id": "J3516_12881",
+      "x": 351.5840148925781,
+      "z": 1288.1300048828125,
+      "status": "unreviewed"
+    },
+    {
+      "number": 5,
+      "id": "J4396_13458",
+      "x": 439.593994140625,
+      "z": 1345.81103515625,
+      "status": "unreviewed"
+    },
+    {
+      "number": 6,
+      "id": "J5692_14220",
+      "x": 569.197021484375,
+      "z": 1421.970947265625,
+      "status": "unreviewed"
+    },
+    {
+      "number": 7,
+      "id": "J7254_14780",
+      "x": 725.3499755859375,
+      "z": 1478.0179443359375,
+      "status": "unreviewed"
+    },
+    {
+      "number": 8,
+      "id": "J10587_15883",
+      "x": 1058.739990234375,
+      "z": 1588.27197265625,
+      "status": "unreviewed"
+    },
+    {
+      "number": 9,
+      "id": "J11723_16107",
+      "x": 1172.31103515625,
+      "z": 1610.7120361328125,
+      "status": "unreviewed"
+    },
+    {
+      "number": 10,
+      "id": "J13358_17500",
+      "x": 1335.8480224609375,
+      "z": 1750.0,
+      "status": "unreviewed"
+    },
+    {
+      "number": 11,
+      "id": "J4989_17500",
+      "x": 498.8575134277344,
+      "z": 1750.0,
+      "status": "unreviewed"
+    },
+    {
+      "number": 12,
+      "id": "J5852_16963",
+      "x": 585.1640014648438,
+      "z": 1696.2979736328125,
+      "status": "unreviewed"
+    },
+    {
+      "number": 13,
+      "id": "J7292_13794",
+      "x": 729.1580200195312,
+      "z": 1379.427001953125,
+      "status": "unreviewed"
+    },
+    {
+      "number": 14,
+      "id": "J6199_11987",
+      "x": 619.9400024414062,
+      "z": 1198.7110595703125,
+      "status": "unreviewed"
+    },
+    {
+      "number": 15,
+      "id": "J7801_9629",
+      "x": 780.0560302734375,
+      "z": 962.85498046875,
+      "status": "unreviewed"
+    },
+    {
+      "number": 16,
+      "id": "J8066_6364",
+      "x": 806.64501953125,
+      "z": 636.3770141601562,
+      "status": "unreviewed"
+    },
+    {
+      "number": 17,
+      "id": "J7973_3744",
+      "x": 797.3309936523438,
+      "z": 374.39599609375,
+      "status": "unreviewed"
+    },
+    {
+      "number": 18,
+      "id": "J7917_2565",
+      "x": 791.6690063476562,
+      "z": 256.5150146484375,
+      "status": "unreviewed"
+    },
+    {
+      "number": 19,
+      "id": "J7841_867",
+      "x": 784.1329956054688,
+      "z": 86.70500183105469,
+      "status": "unreviewed"
+    },
+    {
+      "number": 20,
+      "id": "J5057_4449",
+      "x": 505.7019958496094,
+      "z": 444.8739929199219,
+      "status": "unreviewed"
+    },
+    {
+      "number": 21,
+      "id": "J1927_5181",
+      "x": 192.718994140625,
+      "z": 518.0750122070312,
+      "status": "unreviewed"
+    },
+    {
+      "number": 22,
+      "id": "J866_5285",
+      "x": 86.61000061035156,
+      "z": 528.489990234375,
+      "status": "unreviewed"
+    },
+    {
+      "number": 23,
+      "id": "J5074_877",
+      "x": 507.4070129394531,
+      "z": 87.66999816894531,
+      "status": "unreviewed"
+    },
+    {
+      "number": 24,
+      "id": "J8385_2569",
+      "x": 838.5269775390625,
+      "z": 256.91900634765625,
+      "status": "unreviewed",
+      "membership": "uncertain-pink"
+    },
+    {
+      "number": 25,
+      "id": "J8762_2565",
+      "x": 876.1729736328125,
+      "z": 256.5119934082031,
+      "status": "unreviewed",
+      "membership": "uncertain-pink"
+    },
+    {
+      "number": 26,
+      "id": "J8346_1658",
+      "x": 834.5759887695312,
+      "z": 165.8249969482422,
+      "status": "unreviewed",
+      "membership": "uncertain-pink"
+    },
+    {
+      "number": 27,
+      "id": "J8761_1656",
+      "x": 876.0579833984375,
+      "z": 165.63800048828125,
+      "status": "unreviewed",
+      "membership": "uncertain-pink"
+    },
+    {
+      "number": 28,
+      "id": "J9150_1653",
+      "x": 914.9970092773438,
+      "z": 165.25100708007812,
+      "status": "unreviewed",
+      "membership": "uncertain-pink"
+    },
+    {
+      "number": 29,
+      "id": "J8314_858",
+      "x": 831.3829956054688,
+      "z": 85.80400085449219,
+      "status": "unreviewed",
+      "membership": "uncertain-pink"
+    },
+    {
+      "number": 30,
+      "id": "J8761_854",
+      "x": 876.094970703125,
+      "z": 85.36100006103516,
+      "status": "unreviewed",
+      "membership": "uncertain-pink"
+    },
+    {
+      "number": 31,
+      "id": "J2145_15970",
+      "x": 214.53900146484375,
+      "z": 1596.989990234375,
+      "status": "partial-field-review"
+    }
+  ]
+}

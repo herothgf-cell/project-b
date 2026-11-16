@@ -5,14 +5,41 @@ using UnityEngine;
 public static class JunctionRouteFeedbackTests {
  public static void VerifyMigration(){
   MapCatalog.LockedRegion="eungye";var map=MapCatalog.Load();
+  int target=Enumerable.Range(25,8).SingleOrDefault(revision=>map.editorRevision=="은계 프로젝트 지도 · r"+revision);
+  if(target==0)throw new Exception("Migration regression requires a reviewed r25–r32 default map");
   var method=typeof(BusinessProgress).GetMethod("UpgradeEungyeApproachCheckpoint",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
-  foreach(int revision in new[]{14,15,16,17,18}){
-   var saved=new LiveCampaignCheckpoint{mapRevision="은계 프로젝트 지도 · r"+revision,preferFastest=false,jobs=new PassengerJobsSnapshot{navigationCaptured=true,navAvoidEdge=2000,navObservedEdge=2001,navPassedObservedEdge=2002}};
+  int checks=0;
+  var recentJunctions=new[]{"J5692_14220","J6478_4105","J6481_3341","J5076_2580","J5750_2576","J6480_2573"};
+  var previousJunctions=new[]{"J7204_2569","J5074_877","J2145_15970","J7876_1656","J8346_1658","J10587_15883","J1882_11791","J2225_12001","J8921_10835","J7355_12821","J7292_13794","J7254_14780","J8066_6364","J7917_2565","J7973_3744","J1927_5181","unrelated-junction"};
+  foreach(int revision in Enumerable.Range(14,target-14))foreach(string junction in previousJunctions.Concat(recentJunctions)){
+   var saved=MigrationFixture(revision,junction);var expected=JsonUtility.FromJson<LiveCampaignCheckpoint>(JsonUtility.ToJson(saved));
+   expected.mapRevision=map.editorRevision;if(revision<25||target>=27&&revision<31){expected.jobs.navigationCaptured=false;expected.jobs.navAvoidEdge=expected.jobs.navObservedEdge=expected.jobs.navPassedObservedEdge=-1;}
+   bool clear=target>=27&&revision<27&&(junction=="J7917_2565"||junction=="J7204_2569")||revision<25&&junction=="J2145_15970"||revision<24&&junction=="J5074_877"||revision<23&&(junction=="J7876_1656"||junction=="J8346_1658")||revision<22&&(junction=="J7254_14780"||junction=="J10587_15883")||revision<21&&(junction=="J1882_11791"||junction=="J2225_12001")||revision<20&&(new[]{"J8921_10835","J7355_12821","J7292_13794","J7254_14780","J8066_6364","J7917_2565"}.Contains(junction)||junction=="J7973_3744"&&revision!=16||junction=="J1927_5181"&&revision==14);
+   if(target>=28&&revision<28&&junction=="J7254_14780")clear=true;
+   if(target>=29&&revision<29&&junction=="J5692_14220")clear=true;
+   if(target>=30&&revision<30&&(junction=="J6478_4105"||junction=="J6481_3341"))clear=true;
+   if(target>=31&&revision<31&&(junction=="J5076_2580"||junction=="J5750_2576"||junction=="J6480_2573"||junction=="J7204_2569"))clear=true;
+   if(clear){expected.lawObservation.entry=null;expected.lawObservation.entryPresent=false;}
    method.Invoke(null,new object[]{saved,map});
-   if(saved.mapRevision!=map.editorRevision||saved.jobs.navigationCaptured||saved.jobs.navAvoidEdge!=-1||saved.jobs.navObservedEdge!=-1||saved.jobs.navPassedObservedEdge!=-1||saved.preferFastest)throw new Exception("reviewed map navigation migration failed from "+revision);
+   if(JsonUtility.ToJson(saved)!=JsonUtility.ToJson(expected))throw new Exception("reviewed migration changed protected metadata or missed invalidation from r"+revision+" at "+junction);
+   checks++;
   }
-  Debug.Log("JUNCTION_MIGRATION_OK versions=5");
+  var originalDocument=map.editorDocument;
+  try{
+   foreach(bool wrongHash in new[]{true,false}){
+    map.editorDocument=originalDocument.Copy();if(wrongHash)map.editorDocument.projectRevision="unreviewed-hash";else map.editorDocument.name+=" user edit";
+    var saved=MigrationFixture(target-1,"J2145_15970");string before=JsonUtility.ToJson(saved);method.Invoke(null,new object[]{saved,map});
+    if(JsonUtility.ToJson(saved)!=before)throw new Exception("migration accepted "+(wrongHash?"wrong content hash":"user-edited map"));checks++;
+   }
+  }finally{map.editorDocument=originalDocument;}
+  foreach(int revision in new[]{13,target}){var saved=MigrationFixture(revision,"J2225_12001");string before=JsonUtility.ToJson(saved);method.Invoke(null,new object[]{saved,map});if(JsonUtility.ToJson(saved)!=before)throw new Exception("migration accepted unsupported/same revision "+revision);checks++;}
+  Debug.Log("JUNCTION_MIGRATION_OK target=r"+target+" versions="+(target-14)+" checks="+checks+" metadata=preserved strict-default-hash=required");
  }
+ static LiveCampaignCheckpoint MigrationFixture(int revision,string junction){return new LiveCampaignCheckpoint{
+  mapRevision="은계 프로젝트 지도 · r"+revision,tripId="migration-trip",position=new Vector3(800,0,1200),rotation=Quaternion.Euler(0,17,0),preparing=revision%2==1,preferFastest=revision%2==0,hasDestination=true,destination=new Vector3(450,0,640),realSeconds=123.5,
+  jobs=new PassengerJobsSnapshot{navigationCaptured=true,navFastest=true,navAvoidEdge=2000,navObservedEdge=2001,navPassedObservedEdge=2002,balance=12345,completed=2,failed=1,generation=7,offerId="stable-offer",message="preserve",presenceCaptured=true,hasCurrent=true,changeApplied=true,deadlineNotice=true,waitingCaptured=true,roadsideWaiting=new[]{true,false},stopIds=new[]{"pickup-stable","drop-stable"},current=new JobOffer{pickup=2,drop=7,fare=6400,requiredScore=82,pickupSeconds=45,seconds=120,distance=850,waitSeconds=9,scenarioId="stable-scenario",pickupStopId="pickup-stable",dropStopId="drop-stable",mapRevision="original-offer-metadata",catalogRevision="stable-catalog",candidateSeed="stable-seed"}},
+  operationVersion=1,signalsPresent=true,signals=new TaxiSignalsSnapshot{direction=1,manualHazards=true,passengerStop=true},lawObservationPresent=true,lawObservation=new DrivingLawSnapshot{observationVersion=1,entryPresent=true,wrongSeconds=2,wrongDistance=4,clearSeconds=3,wrongLatched=true,entry=new LawEntrySnapshot{junction=junction,id="entry-id",axis=1,sign=1,entered=true,stopped=true,necessaryBefore=2}}
+ };}
  public static void Run(){Verify();VerifyDestination();J7917LaneMapEdit.RunChecks();PlaytestBalanceTests.Run();Debug.Log("JUNCTION_FEEDBACK_REGRESSION_OK");}
  public static void Verify(){Verify(ProjectMapStore.Load(ProjectMapBuild.Root));}
  static void Verify(ProjectMapPackage package){

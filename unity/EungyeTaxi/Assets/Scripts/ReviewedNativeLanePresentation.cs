@@ -12,6 +12,7 @@ public sealed class ReviewedNativeLanePresentation {
  public ReviewedNativeLanePresentation(MapData source){
   map=source;if(map==null||map.hdEdges==null||map.editorDocument==null||map.editorDocument.facilities==null)return;
   foreach(var f in map.editorDocument.facilities.Where(f=>f!=null&&f.kind=="lanePresentation")){
+   if(LaneDirectionPaint.IsArrowSuppression(f)||LaneMergePaint.IsFeature(f)||ReviewedUnmarkedRoadPaint.IsFeature(f)||LaneArrowAppearance.IsFeature(f))continue;
    int index=Array.FindIndex(map.hdEdges,e=>e.id==f.laneId);if(index<0)continue;var edge=map.hdEdges[index];
    if(edge.disabled||edge.status!="ngii"||edge.turn!=0||edge.change!=0||edge.points==null||edge.points.Length<2)continue;
    var group=groups.FirstOrDefault(g=>g.junction==f.junctionId&&g.axis==f.axis&&g.sign==f.sign);
@@ -22,10 +23,22 @@ public sealed class ReviewedNativeLanePresentation {
  }
  public static List<RoadMapIssue> ValidateAssignments(MapData map,RoadMapDocument document){
   var issues=new List<RoadMapIssue>();if(document==null||document.facilities==null)return issues;
-  var assignments=document.facilities.Where(f=>f!=null&&f.kind=="lanePresentation").ToArray();
+  issues.AddRange(LaneMergePaint.ValidateAssignments(map,document));
+  issues.AddRange(ReviewedUnmarkedRoadPaint.ValidateAssignments(map,document));
+  issues.AddRange(LaneArrowAppearance.ValidateAssignments(map,document));
+  var assignments=document.facilities.Where(f=>f!=null&&f.kind=="lanePresentation"&&!LaneMergePaint.IsFeature(f)&&!ReviewedUnmarkedRoadPaint.IsFeature(f)&&!LaneArrowAppearance.IsFeature(f)).ToArray();
   foreach(var f in assignments){
    var rule=map==null||map.junctionRules==null?null:map.junctionRules.FirstOrDefault(r=>r.id==f.junctionId);
    var edge=document.lanes==null?null:document.lanes.FirstOrDefault(e=>e!=null&&e.id==f.laneId);string error=null;
+   if(f.type==LaneDirectionPaint.NoArrowsType){
+    if(f.rule||!string.IsNullOrEmpty(f.groupId)||!string.IsNullOrEmpty(f.targetId)||edge==null||edge.disabled||edge.turn!=0||edge.change!=0||edge.id.StartsWith("join:")||edge.ruleId!=f.junctionId)error="방향 화살표 숨김은 활성 진입 차로의 외형 전용으로 지정하세요";
+    else if(f.evidence==null||string.IsNullOrWhiteSpace(f.evidence.url)||string.IsNullOrWhiteSpace(f.evidence.month)
+     ||(!f.evidence.appearanceConfirmed&&(f.evidence.state!="user"||string.IsNullOrWhiteSpace(f.evidence.note))))
+     error="방향 화살표 숨김의 현장 근거 또는 사용자 요청과 촬영월을 지정하세요";
+    else if(assignments.Count(g=>g.laneId==f.laneId)>1)error="같은 차로의 표시가 중복되었습니다";
+    if(error!=null)issues.Add(new RoadMapIssue{error=true,id=f.id,message=error,position=f.Position});
+    continue;
+   }
    if(rule==null||rule.signalMode<=0)error="원본 차로 표시는 기존 신호 교차로에 지정하세요";
    else if(f.axis<0||f.axis>1||Math.Abs(f.sign)!=1||f.type!="원본 차로"||f.rule||!string.IsNullOrEmpty(f.groupId)||!string.IsNullOrEmpty(f.targetId))error="원본 차로 표시의 접근 방향/형식을 지정하고 통행 규칙은 비워 두세요";
    else if(edge==null||edge.disabled||edge.status!="ngii"||edge.turn!=0||edge.change!=0||edge.points==null||edge.points.Length<2)error="활성 원본 진입 차로를 지정하세요";

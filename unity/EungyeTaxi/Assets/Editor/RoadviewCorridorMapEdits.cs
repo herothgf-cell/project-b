@@ -12,6 +12,7 @@ public static class RoadviewCorridorMapEdits {
  public static bool DuplicateMainRibbon(ProjectMapObject o){return GreenLanes.Any(id=>o.id=="road:polish:"+id);}
  public static RoadMapDocument Preview(ProjectMapPackage package){
   var d=package.document.Copy();Check(d.scene!=null,"authored project scene required");
+  Check(!d.lanes.Any(l=>l.id.StartsWith(CyanNorthLaneMapEdit.Prefix,StringComparison.Ordinal)),"superseded 1+1 operation cannot run after cyan north2/south1 authoring");
   foreach(var id in GreenLanes){var lane=d.lanes.Single(l=>l.id==id);Check(!lane.disabled&&lane.number==1&&lane.turn==0&&lane.change==0&&RoadviewCorridorPresentation.GreenCorridor(lane.sourceId),"reviewed one-lane family changed: "+id);}
   var roads=d.scene.objects.Where(SelectedRoad).ToArray();Check(roads.Length==14,"fourteen longitudinal green source ribbons required");
   bool changed=false;

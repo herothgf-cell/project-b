@@ -47,7 +47,8 @@ public sealed partial class PassengerStopCatalog {
   var data=JsonUtility.FromJson<PassengerStopCatalogData>(asset.text);
   if(data==null||data.schema!=1||data.mapId!=map.mapId||data.candidates==null)return;
   result.Revision=data.revision;var graph=new HdRoadGraph(map);var geometry=new Geometry(map);var used=new HashSet<string>();var combined=new List<MapStop>(legacyStops);
-  foreach(var c in data.candidates){
+  foreach(var configured in data.candidates){
+   var c=ReviewedY07Candidate(map,configured);
    string reason;MapStop stop;
    if(c==null||string.IsNullOrEmpty(c.stopId)||!used.Add(c.stopId)){result.Rejected.Add("duplicate/missing stopId");continue;}
    if(!Validate(map,graph,geometry,c,out stop,out reason)){result.Rejected.Add(c.stopId+": "+reason);continue;}
@@ -97,6 +98,20 @@ public sealed partial class PassengerStopCatalog {
  public static float DirectedPickup(HdRoadGraph graph,Vector3 position,Vector3 direction,MapStop stop){if(graph==null)return float.PositiveInfinity;float at;int edge=graph.Nearest(position,direction,out at);if(edge==stop.laneEdge&&Mathf.Abs(at-stop.laneAt)<.25f)return 0;var path=graph.Route(edge,at,stop.laneEdge,stop.laneAt);return path==null?float.PositiveInfinity:path.path.length;}
  static float FlatDistance(Vector3 a,Vector3 b){a.y=b.y=0;return Vector3.Distance(a,b);}
  static Vector3 Pos(PassengerStopCandidate c){return new Vector3(c.x,0,c.z);}
+ // The reviewed E3/W4 edit retains this bay's exact lane ID and station,
+ // but moves the outer lane. Rebase only the original packaged candidate;
+ // old maps and independently edited candidates retain their strict anchors.
+ static PassengerStopCandidate ReviewedY07Candidate(MapData map,PassengerStopCandidate c){
+  const string laneId="local:10442:15920:7425:14927:part:2";
+  if(c==null||map.mapId!="eungye"||map.editorDocument==null||c.stopId!="EG-GAME-09"||c.laneId!=laneId||Mathf.Abs(c.laneAt-40)>.001f||Mathf.Abs(c.x-965.5616575f)>.002f||Mathf.Abs(c.z-1569.6003014f)>.002f||Mathf.Abs(c.bayOffset-3.5f)>.001f||c.evidenceStatus!="game-only-field-unverified")return c;
+  foreach(string root in new[]{"reviewed:Y07:west:2","reviewed:Y07:west:3","reviewed:Y07:east:2"})foreach(string suffix in new[]{"",":part:1",":part:2"})if(!map.editorDocument.lanes.Any(l=>l.id==root+suffix&&!l.disabled&&l.evidence!=null&&l.evidence.note.StartsWith("Y07 reviewed")))return c;
+  var lane=map.editorDocument.lanes.SingleOrDefault(l=>l.id==laneId&&!l.disabled&&l.number==4&&Mathf.Abs(l.width-3.5f)<.001f&&l.evidence!=null&&l.evidence.note.StartsWith("Y07 reviewed"));if(lane==null)return c;
+  var path=new AssistedRoadNetwork.Path(lane.points.Select(p=>p.V()).ToArray());var position=path.Position(c.laneAt);var direction=path.Tangent(c.laneAt);
+  var result=JsonUtility.FromJson<PassengerStopCandidate>(JsonUtility.ToJson(c));result.x=position.x;result.z=position.z;result.dx=direction.x;result.dz=direction.z;
+  var passenger=position+TrafficSystem.Right(direction)*(result.bayOffset+2.4f);result.passengerX=passenger.x;result.passengerZ=passenger.z;
+  result.evidence+=" Y07 reviewed E3/W4 game geometry: same outer-lane ID and 40m station; fictional bay and passenger anchor follow the relocated curb. All original catalog geometry and reachability checks still apply.";
+  return result;
+ }
  static Vector3 Dir(PassengerStopCandidate c){return new Vector3(c.dx,0,c.dz).normalized;}
  static bool Validate(MapData map,HdRoadGraph graph,Geometry g,PassengerStopCandidate c,out MapStop stop,out string reason){
   stop=null;reason="";if(c.evidenceStatus!="game-only-field-unverified"){reason="not a reviewed fictional game bay";return false;}

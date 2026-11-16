@@ -6,10 +6,13 @@ using UnityEngine;
 // Paint describes the active shared graph. Provisional graph movements remain
 // provisional; drawing an arrow does not establish a surveyed traffic rule.
 public static class LaneDirectionPaint {
+ public const string NoArrowsType="방향 화살표 없음";
+ public static bool IsArrowSuppression(RoadMapFacility f){return f!=null&&f.kind=="lanePresentation"&&f.type==NoArrowsType&&!f.rule;}
  public const int Left=1,Straight=2,Right=4,Uturn=8;
  public sealed class Arrow {public int edgeIndex,turns;public Vector3 centre,forward;}
  public const float GlyphSpacing=6;
- // Keep the legal movement mask on Arrow; paint combined U-turn indications
+ // Arrow carries the rendered mask (legal mask unless explicitly surveyed);
+ // paint combined U-turn indications
  // as separate longitudinal glyphs rather than superimposed arrowheads.
  public static List<Arrow> Glyphs(Arrow arrow){
   var result=new List<Arrow>();int other=arrow.turns&~Uturn;
@@ -33,12 +36,15 @@ public static class LaneDirectionPaint {
  }
  struct Stroke {public Vector2 a,b;public Stroke(Vector2 a,Vector2 b){this.a=a;this.b=b;}}
  public static List<Arrow> Layout(MapData map){
-  var result=new List<Arrow>();if(!map.hybrid||!map.HasHd)return result;var clearances=RoadJunctionGeometry.PaintClearances(map);var reviewed=new ReviewedNativeLanePresentation(map);result.AddRange(reviewed.Arrows(clearances));
+  var result=new List<Arrow>();if(!map.hybrid||!map.HasHd)return result;
+  var suppressed=new HashSet<string>((map.editorDocument==null?new RoadMapFacility[0]:map.editorDocument.facilities??new RoadMapFacility[0]).Where(IsArrowSuppression).Select(f=>f.laneId));
+  var clearances=RoadJunctionGeometry.PaintClearances(map);var reviewed=new ReviewedNativeLanePresentation(map);foreach(var arrow in reviewed.Arrows(clearances).Where(a=>!suppressed.Contains(map.hdEdges[a.edgeIndex].id))){arrow.turns=LaneArrowAppearance.PaintedMask(map,map.hdEdges[arrow.edgeIndex].id,arrow.turns);result.Add(arrow);}
   for(int i=0;i<map.hdEdges.Length;i++){
-   var e=map.hdEdges[i];if(e.disabled||!(e.status=="provisional"||(map.mapId=="pvp-city-a"&&e.status=="authored-fictional"))||e.change!=0||e.turn!=0||e.id.StartsWith("join:")||e.id.StartsWith("fuel:"))continue;
+   var e=map.hdEdges[i];if(e.disabled||suppressed.Contains(e.id)||!(e.status=="provisional"||(map.mapId=="pvp-city-a"&&e.status=="authored-fictional"))||e.change!=0||e.turn!=0||e.id.StartsWith("join:")||e.id.StartsWith("fuel:"))continue;
    if((e.next??new int[0]).Any(n=>!map.hdEdges[n].disabled&&map.hdEdges[n].sourceId==e.sourceId&&map.hdEdges[n].turn==0&&map.hdEdges[n].change==0&&!map.hdEdges[n].id.StartsWith("join:")))continue;
    int turns=0;foreach(int n in e.next??new int[0]){var join=map.hdEdges[n];if(join.disabled||!join.id.StartsWith("join:")||!(join.next??new int[0]).Any(target=>!map.hdEdges[target].disabled))continue;turns|=UturnMovement.PaintMask(join.turn);}
    if(turns==0)continue;
+   turns=LaneArrowAppearance.PaintedMask(map,e.id,turns);
    var p=new AssistedRoadNetwork.Path(e.points.Select(x=>x.V()).ToArray());
    // A whole glyph must fit before the connector, without crossing a split.
    bool combined=(turns&Uturn)!=0&&(turns&~Uturn)!=0;float minimum=combined?GlyphSpacing+2.2f:4;
@@ -50,6 +56,7 @@ public static class LaneDirectionPaint {
  }
  public static void Paint(MapData map,Action<string,Vector3,Vector3,float,float,bool> mark){
   foreach(var arrow in Layout(map))Paint(arrow,"Lane arrow "+map.hdEdges[arrow.edgeIndex].id,mark);
+  LaneMergePaint.Paint(map,mark);
  }
  public static void Paint(Arrow arrow,string name,Action<string,Vector3,Vector3,float,float,bool> mark){
   foreach(var glyph in Glyphs(arrow))PaintGlyph(glyph,name,mark);

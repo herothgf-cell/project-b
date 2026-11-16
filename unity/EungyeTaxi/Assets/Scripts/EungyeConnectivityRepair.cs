@@ -114,6 +114,8 @@ public static class EungyeConnectivityRepair {
   map.hdEdges=edges.ToArray();new HdRoadGraph(map);Debug.Log("EUNGYE_CONNECTIVITY_REPAIR added="+map.hdEdges.Count(e=>e.id.StartsWith(Prefix)&&e.status=="provisional-connectivity-repair")+" laneChanges="+changes.Count+" southPortal="+(portal!=null)+" straightThird="+map.hdEdges.Any(e=>e.id==Prefix+"straight-third")+" / no prohibited west-approach left turn added");
  }
  public static bool FootprintClear(MapData map,HdEdge edge){var p=Path(edge);return new Clearance(map).Clear(edge.points,p.Tangent(0));}
+ // Diagnostic overload preserves the short-connector heading/footprint rules.
+ public static bool FootprintClear(MapData map,HdEdge edge,out string reason){var p=Path(edge);var clearance=new Clearance(map);bool clear=clearance.Clear(edge.points,p.Tangent(0));reason=clearance.Reason;return clear;}
  sealed class Clearance {
   public string Reason="";
   readonly MapData map;readonly Dictionary<Vector2Int,List<Tuple<Vector3,Vector3,float>>> roads=new Dictionary<Vector2Int,List<Tuple<Vector3,Vector3,float>>>();readonly Dictionary<Vector2Int,List<MapPoint[]>> blockers=new Dictionary<Vector2Int,List<MapPoint[]>>();
