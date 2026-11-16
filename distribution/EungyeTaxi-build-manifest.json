@@ -1,15 +1,15 @@
 {
-  "sourceCommit": "b30d92fa505341995e292d3f745c2021b46a432e",
+  "sourceCommit": "848eb696faa2efae61ffb2ef2e240bc4ea86e434",
   "sourceState": "local source commit; BuildHybrid generated runtime",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-16",
-  "totalBytes": 132830458,
+  "totalBytes": 132865810,
   "validation": {
     "build": "PrototypeBuild.BuildHybrid exit 0",
-    "projectMapRevision": 39,
-    "projectMapContentHash": "20c2236cae3f3e11fb7d6f2435fc41d8c2ce0e4c5331f42f779c21b4d6d14595",
+    "projectMapRevision": 40,
+    "projectMapContentHash": "b91b46e9051e5c1427a1ecd7ff40ca7fde370a0120efabe4e4918c63bb6a3634",
     "savedMapMigrationVersions": [
       14,
       15,
@@ -35,9 +35,10 @@
       35,
       36,
       37,
-      38
+      38,
+      39
     ],
-    "savedMapMigrationChecks": 704,
+    "savedMapMigrationChecks": 758,
     "strictInputIssues": 0,
     "directedStopRoutes": 1482,
     "ordinaryStops": 39,
@@ -45,7 +46,7 @@
     "fieldReviewComplete": false,
     "fullCampaign": false,
     "distributionVerification": "isolated runtime copy; existing local Taxi.zip and user content excluded and preserved",
-    "liveSaveAndReload": "r39 save9/reload23, plus r38 active-trip reload23; isolated position-controlled test",
+    "liveSaveAndReload": "r40 save9/reload23, plus r39 active-trip reload23; isolated position-controlled test",
     "reviewedFlexibleBollards": 17,
     "roadSignagePlayerChecks": 319
   },
@@ -63,7 +64,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "1aa4b478c52d62ac00a76cf45182d61d5b52c2cb19bdc36a26dc156be690506c"
+      "sha256": "cfcee9cdbd78fb1f84d2679e31d449d19db938d90fd7791fee70148eb73a75ed"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -87,8 +88,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2863616,
-      "sha256": "bcbaa4e30be2e7fb807183775102a6b895b7d1ee4088820818603608171af746"
+      "bytes": 2864128,
+      "sha256": "fb1c0b6aea013eec7c71aad8d97fc9620b23983a8c89393ec30bc6865e483317"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
@@ -597,8 +598,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 44735296,
-      "sha256": "8262d1da775c7a6c60f5bdd7e3c6a9a6759bfa4352daa45d85f97ce63dc20ac0"
+      "bytes": 44770136,
+      "sha256": "be88e6fb16cb0b9d8c9930b42a70b0869312feab9b40b86f6e133640f9a07832"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
@@ -738,7 +739,7 @@
     {
       "path": "builds/EungyeTaxi/project-map-build.json",
       "bytes": 177,
-      "sha256": "96561041550c35eae454352d6730d4022ef64f23e8a1fd48445b8a1a99f60351"
+      "sha256": "a920aae344476b297bf65588600229e0dca2630d6758e1f04d228ca640352563"
     },
     {
       "path": "builds/EungyeTaxi/ThirdPartyNotices/mchrbn-unity-traffic-simulation-MIT.txt",
@@ -768,9 +769,9 @@
   ],
   "projectMap": {
     "path": "config/maps/project/eungye.project.json",
-    "contentHash": "20c2236cae3f3e11fb7d6f2435fc41d8c2ce0e4c5331f42f779c21b4d6d14595",
-    "bytes": 22947333,
-    "sha256": "2612404f0cf1581e35d773921e61272386896e39a8c401611ae8a8fe392dd351"
+    "contentHash": "b91b46e9051e5c1427a1ecd7ff40ca7fde370a0120efabe4e4918c63bb6a3634",
+    "bytes": 22982177,
+    "sha256": "e1621a7110940d2821ee73f5ec061cd2e9f0f1a2cffdc851a49853e24cf9a820"
   },
   "reviewedRoadFacilities": {
     "path": "config/maps/eungye-road-facilities.json",
