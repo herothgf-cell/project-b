@@ -18,7 +18,8 @@ public class RoadSignage : MonoBehaviour {
  void LateUpdate(){foreach(var b in boards)Refresh(b);}
  void Refresh(Board b){
   if(!b.signal)return;
-  bool visible=b.junction.leftTurnMode==LeftTurnMode.Permissive&&(!b.junction.scenarioSignal||b.axis==b.junction.observationAxis&&b.sign==b.junction.observationSign);
+  bool visible=session.traffic.PermissiveLeft(b.junction,b.axis,b.sign)
+   &&(!b.junction.scenarioSignal||b.axis==b.junction.observationAxis&&b.sign==b.junction.observationSign);
   if(visible&&!b.panel){b.panel=CreatePermissive(b.signal,Vector3.zero);b.panel.transform.SetPositionAndRotation(b.centre+Vector3.up*1.15f,Quaternion.LookRotation(b.forward));}
   if(b.panel&&b.panel.activeSelf!=visible)b.panel.SetActive(visible);
  }
