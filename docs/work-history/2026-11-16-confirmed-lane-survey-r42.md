@@ -23,3 +23,10 @@
 - Unity 2022.3.62f2 `-batchmode -nographics -quit -executeMethod ConfirmedLaneSurveyR42.Verify`에서 변경 전 46번 차로가 없음을 확인했다(`r42-baseline-verify.log`, 종료 1). 첫 Apply 후보는 49번 바깥 차로가 보도에 닿아 저장 전 탈락했다(`r42-apply-first.log`, 종료 1). 기존 선형으로 돌린 바깥 차로와 안쪽 포켓을 사용한 `ConfirmedLaneSurveyR42.Apply`는 `artifacts/color-road-survey/r42-apply-curb.log`에서 종료 0. 저장 전후 실제 연결과 도색, 차량 외곽, 정문 진입, 50번의 중앙선 교차 판정과 정차 39곳 사이 1,482개 방향별 경로를 검증했다.
 - `config/maps/project/eungye.project.json`의 내용 지문은 `0d7c0353d3bf477d7ab1d3ea1c6c8dc35a7281e30c10ccafd6f3c3b343f5633b`다. 48번 인근의 차로·시설·장면 객체와 원본 지도 지문은 r41과 일치했다. `config/maps/local-input-manifest.json` 크기·SHA256을 갱신한 뒤 `pwsh -File tools/check_workspace.ps1 -Strict` 종료 0, 입력 문제 0. 선택 재수입 JSON 2개는 로컬에 없다.
 - `BusinessProgress.cs`와 `JunctionRouteFeedbackTests.cs`는 r14~r41 저장이 정확한 기본 r42 지도에 들어갈 때 기존 그래프 번호를 초기화한다. 코드 리뷰에서 확인한 별도 운전 만족도 판정의 교차로 진입 상태와 호환용 법규 관측도 변경된 교차로에 한해 초기화한다. 운전 점수·누적 감점·영업·승객 정보와 다른 교차로 관측을 보존한다.
+
+## 빌드와 재현
+
+- `ConfirmedLaneSurveyR42.BuildReviewed`가 현재 지도와 44·45번 회귀를 확인하고 `PrototypeBuild.BuildHybrid`를 실행했다. `artifacts/color-road-survey/r42-build-final.log` 종료 0. 저장 이관 28버전·845검사로 최상위 법규 관측이 없는 저장도 검사했다. 작성 지도 지문과 빌드의 `project-map-build.json`이 일치한다.
+- `artifacts/color-road-survey/check-r42-player.ps1` 종료 0. 격리한 Windows Player에서 r41 운행 중 저장 이어하기 23건, r42 새 저장 9건과 이어하기 23건, DX11 신호·표지 322건을 확인했다. 위치 제어와 고정 카메라 검사다.
+- 실제 소스 `7af5693`으로 `distribution/EungyeTaxi-build-manifest.json`을 갱신했다. 사용자 ZIP과 개인 콘텐츠를 제외한 `artifacts/color-road-survey/r42-distribution-verify`에 `pwsh -File tools/update_distribution_manifest.ps1 -Root <사본> -VerifyOnly`를 실행했다. 종료 0, 143파일·133067106바이트. 기존 사용자 FirstDrive 씬, PackageManager 설정과 별도 ZIP의 SHA256은 빌드 전후 일치했다.
+- `builds/EungyeTaxi/EungyeTaxi.exe`에서 은계 싱글을 선택한다. [46–54번 지도](../content-design/images/eungye-r41-survey-questions.png)의 화살표 방향으로 접근한다. 50·51·53번은 각각 아파트 진입 방향을 확인한다. 54번은 남행 좌/직/직/직/우, 반대편은 기존 조건부 유턴이다. 수동 주행·자동 물리 주행·전체 캠페인은 이번 검증에 포함하지 않았다.
