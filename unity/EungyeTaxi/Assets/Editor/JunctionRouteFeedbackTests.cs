@@ -5,11 +5,11 @@ using UnityEngine;
 public static class JunctionRouteFeedbackTests {
  public static void VerifyMigration(){
   MapCatalog.LockedRegion="eungye";var map=MapCatalog.Load();
-  int target=Enumerable.Range(25,12).SingleOrDefault(revision=>map.editorRevision=="은계 프로젝트 지도 · r"+revision);
-  if(target==0)throw new Exception("Migration regression requires a reviewed r25–r36 default map");
+  int target=Enumerable.Range(25,13).SingleOrDefault(revision=>map.editorRevision=="은계 프로젝트 지도 · r"+revision);
+  if(target==0)throw new Exception("Migration regression requires a reviewed r25–r37 default map");
   var method=typeof(BusinessProgress).GetMethod("UpgradeEungyeApproachCheckpoint",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
   int checks=0;
-  var recentJunctions=new[]{"J5692_14220","J6478_4105","J6481_3341","J5076_2580","J5750_2576","J6480_2573","J6199_11987","J3516_12881","J7801_9629","J7841_867"};
+  var recentJunctions=new[]{"J5692_14220","J6478_4105","J6481_3341","J5076_2580","J5750_2576","J6480_2573","J6199_11987","J3516_12881","J7801_9629","J7841_867","J1919_877"};
   var previousJunctions=new[]{"J7204_2569","J5074_877","J2145_15970","J7876_1656","J8346_1658","J10587_15883","J1882_11791","J2225_12001","J8921_10835","J7355_12821","J7292_13794","J7254_14780","J8066_6364","J7917_2565","J7973_3744","J1927_5181","unrelated-junction"};
   foreach(int revision in Enumerable.Range(14,target-14))foreach(string junction in previousJunctions.Concat(recentJunctions)){
    var saved=MigrationFixture(revision,junction);var expected=JsonUtility.FromJson<LiveCampaignCheckpoint>(JsonUtility.ToJson(saved));
@@ -23,6 +23,7 @@ public static class JunctionRouteFeedbackTests {
    if(target>=34&&revision<34&&junction=="J6199_11987")clear=true;
    if(target>=35&&revision<35&&(junction=="J3516_12881"||junction=="J7801_9629"))clear=true;
    if(target>=36&&revision<36&&junction=="J7841_867")clear=true;
+   if(target>=37&&revision<37&&junction=="J1919_877")clear=true;
    if(clear){expected.lawObservation.entry=null;expected.lawObservation.entryPresent=false;}
    method.Invoke(null,new object[]{saved,map});
    if(JsonUtility.ToJson(saved)!=JsonUtility.ToJson(expected))throw new Exception("reviewed migration changed protected metadata or missed invalidation from r"+revision+" at "+junction);

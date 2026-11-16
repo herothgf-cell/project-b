@@ -114,3 +114,14 @@
 - 남은 조사 중 P02 은행사거리 북행 확폭을 훈장골 앞 굴곡으로 좁혔다. P03 은계남로 [38번](../content-design/images/eungye-p03-question-overview.png) 서행은 사용자가 안쪽 좌회전·바깥 직진/우회전을 확인했다. `J1919_877` 서쪽 골목 구간이 원본 지도에서 끊겨 있어 도로 폭·연결점과 비보호 신호를 함께 복원해야 한다. [58그룹 점검표](../content-design/road-survey/2026-11-16-coverage.md).
 - r35 런타임 사본에 `-batchmode -nographics -liveSaveTest`를 실행해 운송 중 상태를 만들고 r36 `-liveReloadTest`로 이관했다. r36 자체 저장9·이어하기23 및 r35→r36 이어하기23 모두 종료0이다. 최초 재사용한 테스트 파일은 앞선 검사가 이미 운송을 정산한 상태였으므로 r35 실행본으로 올바른 테스트 저장을 다시 만들었다. 테스트는 사용자 세이브와 격리된 위치 제어 검사다.
 - `distribution/EungyeTaxi-build-manifest.json`에 소스 `2b90ba7`, 작성 지도와 분리봉 원본 SHA256, 실제 실행 폴더의 크기·SHA256을 기록했다. `artifacts/color-road-survey/r36-distribution-verify`의 VerifyOnly 종료0, 143파일·132714722바이트. 수동 주행·자동 물리 주행·전체 캠페인과 58그룹 전수 반영은 남았다. 원격 푸시 없음.
+
+## 38번 검바위1로와 비보호 좌회전 신호 (r37)
+
+- 요청 범위는 38번 서쪽 도로·신호와 안쪽 좌회전/바깥 직진·우회전 복원, 나머지 색상 구간 조사, 로컬 통합 빌드다. [38번 전체 지도](../content-design/images/eungye-p03-question-overview.png)와 [최신·과거 거리뷰](../content-design/road-survey/2026-11-13-pink-orange-observations.md#38번-검바위1로와-은행사거리-재확인)를 사용했다.
+- `P03WestRoadMapEdit.cs`는 은계남로 J1919_877과 검바위2로 J1516_974 사이 검바위1로를 중앙선 없는 왕복 도로로 연결한다. 서행 접근 48m와 테이퍼 21m는 게임 근사값이다. 안쪽 좌회전과 바깥 직진·우회전 노면 화살표를 각각 실제 내비 연결로에 맞췄다. 검바위2로 연결부에서 새 차량 진입 공간과 겹친 자동 보도 패널 5개를 정리했다. `RoadMapValidator.cs`는 옮기거나 넓히지 않고 짧아진 기존 차로 부분을 기존 형상으로 인식하며, 새 연결로와 변경 시설은 검증한다.
+- 모든 접근에 차량 3구 신호와 비보호 좌회전을 적용했다. 직진 녹색에서 마주 오는 차량에 양보하면 좌회전할 수 있다. `RoadMapFacilities.cs`에서 황색 횡단보도를 렌더한다. 황색 노면 도색이며 고원식 단차는 미구현이다. 신호 시간과 횡단보도·정지선 위치는 게임 근사값이다.
+- Unity `-batchmode -nographics -quit -executeMethod P03WestRoadMapEdit.Apply` 종료0. `r37-p03-stop-lineage.log`에서 저장 전후 네 가지 차로 출구/표시, 양방향 골목 경로, 차량 외곽 통과 거리, 신호 주기와 맞은편 차량 양보 조건을 검사했다. 기존 승하차 39곳 1,482개 유향 경로 및 EG-GAME-02-B의 기존 연석 위치도 확인했다. 초기 후보는 검바위2로 보도 겹침과 승하차 차로 계보 문제에서 탈락했으며 둘 다 저장 전에 수정했다. 지도 지문 `c37d14d6f34b192ca582a7d87c6630839787b30fcf3df1e7ef2d416ba3485ce3`.
+- 기본 지도에서 J1919_877의 기존 비신호 규칙을 바로잡아 기준 지문도 `db1fec0769e0a599bd770ea8c273a226714d1e3806f4851763e96f4d5af14e2f`로 바뀌었다. `BusinessProgress.cs`와 `JunctionRouteFeedbackTests.cs`에서 기존 저장의 내비 경로와 해당 교차로 진행 관측을 갱신한다. 별도로 보관한 사설 지도 초안은 이전 기준 지문에 묶여 있으며 이관을 검증하지 않았다.
+- 입력 지도 크기·SHA256을 `config/maps/local-input-manifest.json`에 갱신했다. `pwsh -File tools/check_workspace.ps1 -Strict` 종료0, 필수 입력 문제0, 선택 재수입 JSON 2개 부재.
+- `P03WestRoadMapEdit.BuildReviewed`에서 r14~r36 저장 이관 23버전 648검사와 기존 분리봉 17개 위치를 재검증했다. `PrototypeBuild.BuildHybrid` 종료0, `builds/EungyeTaxi/EungyeTaxi.exe`와 실행본 r37 메타데이터를 생성했다. 사용자 FirstDrive 씬의 SHA256 `1494FF1D97725151FE4E3EA3AF312A5019E68DD94D67A9F207C2BE42567D9B64` 보존을 확인했다.
+- 은행사거리 P02는 북행 안쪽 직진·좌회전/바깥 우회전과 은행고길로 이어지는 실제 직진 통행을 확인했다. 사용자가 [39번 전체 지도](../content-design/images/eungye-p02-question-overview.png)에서 남행 안쪽 직진·좌회전을 확인했다. P15 아파트 앞은 동행 안쪽 좌회전·바깥 직진 노면을 확인했다. 두 구간은 후속 반영이며 [58그룹 현황](../content-design/road-survey/2026-11-16-coverage.md)에 기록했다.
