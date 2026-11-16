@@ -1,6 +1,6 @@
 # 최신 작업 이력
 
-2026-11-16 색상 도로 후속. 39번 남행 직진·좌회전/우회전과 37번 남행 좌·유턴/직/직/우를 로컬 통합 실행본 r38에 반영했다. BuildHybrid·신호 회귀·저장 이관 676검사·승하차 39곳 1,482경로를 통과했다. 다음은 은행사거리 북행, 공영주차장 40번 출구와 노면, 대은로 41번 및 58그룹의 남은 조사다. [실제 검증·남은 조사](2026-11-16-color-road-survey.md) · [58그룹 현황](../content-design/road-survey/2026-11-16-coverage.md).
+2026-11-16 색상 도로 후속. 40번 공영주차장 좌우 출차 연결과 41번 대은로 북동행 비보호 좌/직/직·우를 로컬 통합 실행본 r39에 반영했다. BuildHybrid·저장 이관 704건·실행본 신호 및 표지 319건·승하차 39곳 1,482경로를 통과했다. 다음은 공영주차장 42번 입차, 대은로 43번 보행섬 갈래, 은행사거리 북행과 58그룹의 남은 조사다. [실제 검증·남은 조사](2026-11-16-color-road-survey.md) · [58그룹 현황](../content-design/road-survey/2026-11-16-coverage.md).
 
 2026-11-13 마인드맵을 핵심 37노드·최대 3단계로 정리하고 세부 377항목을 4개 기획문서로 이관했다. [개요 목차](../content-design/택시%20시뮬레이션-목차.md) · [정리·검증 기록](2026-11-13-mindmap-simplification.md). 원본 메모·진척도 보존, 구조/링크 파일/항목 보존 검사 통과. 다음은 앱에서 개요 배치와 링크 클릭 확인이다. 게임·빌드·지도·필수 로컬 입력은 아래 은계 r19 / A2·LAN v19·BuildHybrid 기준을 유지하며 이번 재검사·플레이는 없다.
 
@@ -37,10 +37,10 @@ PvP 호스트 렉 2차 최적화(같은 기록 후속 절): 내비 혼잡/제한
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
-| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 로컬 은계 r38 · [현재 검증 기록](2026-11-16-color-road-survey.md) |
+| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 로컬 은계 r39 · [현재 검증 기록](2026-11-16-color-road-survey.md) |
 | 통신 | LAN **v19**. 최적화·조향 통합 배포. 이전 v17/v18과 참가 불가, 양쪽 PC 같은 전체 실행 폴더 필요 |
 | 배포 검사 | [통합/PvP 검증과 manifest](2026-11-13-moving-route-requests-and-road-feedback.md#검증-및-재현) |
-| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (Git 대상, 로컬 revision38·contentHash 56b01ecd…)와 검토 도로시설 JSON · Strict 입력 문제0 · 선택 재수입 JSON2개 부재 |
+| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (Git 대상, 로컬 revision39·contentHash 20c2236c…)와 검토 도로시설 JSON · Strict 입력 문제0 · 선택 재수입 JSON2개 부재 |
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **main 병합·배포, 사람 검증 전** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V10 30장](../proposals/project-b-game-proposal-v10.pptx) · [반영 검토](../proposals/proposal-v10-review.md) · [Manual V10](../proposals/project-b-prototype-manual-v10.md) |
 
