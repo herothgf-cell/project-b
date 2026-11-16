@@ -209,6 +209,8 @@
 - 게임 남단 안쪽 `(785.62,34.05)` 부근 [2024-03 북행 ZRnloGTTjDnVloJGRmOe9w](https://map.naver.com/p?c=19,0,0,0,adh&p=ZRnloGTTjDnVloJGRmOe9w,3,-16,80,Float)과 정지선 직전 `Ldoo9EbXidjmRljefvoMwQ`는 어린이보호구역의 4차로 접근과 유턴 표시를 보여준다. 최신 `9twu9Qe-2EpFgySCfPrbOw` 남향은 3개 남행 차로와 북행 쪽 적색 포장·중앙 분리대 개구부를 보여준다. 북향 최신 `_wAObq86L2mzgkdxPyIoGQ`에서 북행 `좌회전시 / 보행신호시` 보조표지를 판독했다. 은계로142번길 표지로 위치 확인. 최신 북행 차량 가림 때문에 외측 화살표 역할은 구분해서 한 번 더 확인할 필요가 있다.
 - 같은 2024-03 북행 `ZRnloGTTjDnVloJGRmOe9w,12°/-13°/45` 확대에서 안쪽 좌회전+유턴, 가운데 직진 두 개, 바깥 우회전으로 판독했다. 최신 `_wAObq86L2mzgkdxPyIoGQ`의 표지가 유턴 조건을 지지하지만 최신 북행 외측 화살표는 재확인 대상이다.
 - [2026년 5월 정지선 인근 역방향](https://map.naver.com/p?c=19,0,0,0,adh&p=_wAObq86L2mzgkdxPyIoGQ,181,-25,75,Float)과 [다른 최신 촬영점](https://map.naver.com/p?c=19,0,0,0,adh&p=9twu9Qe-2EpFgySCfPrbOw,5,-25,64,Float)에서 북행 바깥 화살표가 차량 또는 화면 가장자리에 가렸다. 사용자가 [37번 전체 지도](../images/eungye-g04-question-overview.png) 기준 북행 바깥쪽 **우회전 전용**을 확인했다. r36에서 북행 정지선 좌·유턴 / 직 / 직 / 우, 조건부 유턴을 적용했다. 46m 접근과 24m 테이퍼는 게임 근사값이다. 최신 남행 3차로 배분 및 난간 시작·끝은 조사 중이다.
+- 북쪽에서 같은 37번으로 접근하는 남행은 정지선 전 4차로, 교차로 통과 후 3차로다. 최신 북측 촬영에서 안쪽 좌회전 표시와 좌회전·보행 신호 때 허용되는 유턴 보조표지, 남쪽 통과 구간의 중앙분리대와 보도 난간을 확인했다. [2026년 5월 북측](https://map.naver.com/p?c=18.00,0,0,0,adh&p=H4u2Vo_uwxpOa5AldTRoNA,-175,-17.61,80,Float) · [2026년 5월 남측](https://map.naver.com/p?c=19,0,0,0,adh&p=9twu9Qe-2EpFgySCfPrbOw,185,-15,80,Float).
+- 남행 바깥쪽 화살표는 최신에서 버스가 가리고 2024년에는 닳았다. [남행 접근 전체 지도](../images/eungye-g04-southbound-question.png)에 해당 지점을 표시해 바깥 차로의 허용 방향을 확인 요청했다. [2024년 3월](https://map.naver.com/p?c=18.00,0,0,0,adh&p=8NPXVn3sCqhhwd_tzbr1OA,-175,-17.61,80,Float) · [2024년 10월](https://map.naver.com/p?c=18.00,0,0,0,adh&p=d2aDrNXH9VN7y2nt5dlvFA,-175,-17.61,80,Float).
 
 ## 2026-11-16 G05 ⑭→⑮ 정지선
 

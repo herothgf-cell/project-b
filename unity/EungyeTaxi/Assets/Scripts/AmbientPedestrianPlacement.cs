@@ -33,6 +33,7 @@ public sealed class AmbientPedestrianPlacement {
  public readonly List<string> report=new List<string>();
  public AmbientPedestrianPlacement(MapData data,TrafficSystem simulation,RoadEnvironment pavement){map=data;traffic=simulation;roads=pavement;Build();}
  static readonly string[] Hubs={"J5057_4449","J5076_2580","J4396_13458","J6199_11987"};
+ static readonly string[] EstablishedEungyeHubs={"J866_5285","J8066_6364","J2145_15970","J7841_867"};
  static int Cell(float value){return Mathf.FloorToInt(value/8);}
  static bool Near(MapPoint[] points,Vector3 center,float radius){if(points==null||points.Length<3)return false;float minX=float.MaxValue,maxX=float.MinValue,minZ=float.MaxValue,maxZ=float.MinValue;foreach(var p in points){minX=Mathf.Min(minX,p.x);maxX=Mathf.Max(maxX,p.x);minZ=Mathf.Min(minZ,p.z);maxZ=Mathf.Max(maxZ,p.z);}return minX<=center.x+radius&&maxX>=center.x-radius&&minZ<=center.z+radius&&maxZ>=center.z-radius;}
  static void Index(Dictionary<Vector2Int,List<MapArea>> cells,MapArea area){float minX=float.MaxValue,maxX=float.MinValue,minZ=float.MaxValue,maxZ=float.MinValue;foreach(var p in area.points){minX=Mathf.Min(minX,p.x);maxX=Mathf.Max(maxX,p.x);minZ=Mathf.Min(minZ,p.z);maxZ=Mathf.Max(maxZ,p.z);}for(int x=Cell(minX);x<=Cell(maxX);x++)for(int z=Cell(minZ);z<=Cell(maxZ);z++){var key=new Vector2Int(x,z);List<MapArea> bucket;if(!cells.TryGetValue(key,out bucket)){bucket=new List<MapArea>();cells.Add(key,bucket);}bucket.Add(area);}}
@@ -40,9 +41,13 @@ public sealed class AmbientPedestrianPlacement {
  void Build(){
   var widths=new Dictionary<string,float>();if(map.editorDocument!=null)foreach(var lane in map.editorDocument.lanes??new RoadMapLane[0])if(lane!=null&&!string.IsNullOrEmpty(lane.id))widths[lane.id]=Mathf.Max(.5f,lane.width);
   var facilityAsset=Resources.Load<TextAsset>("eungye-road-facilities");var facilityLayout=facilityAsset?ReviewedRoadFacilities.Plan(map,JsonUtility.FromJson<ReviewedRoadFacilities.Catalog>(facilityAsset.text)):new ReviewedRoadFacilities.Layout();
-  // Keep established route IDs, then choose distant hubs to spread the finite
-  // population. All added slots use the same full-body sidewalk safety checks.
+  // Keep the hubs used by existing Eungye saves when new signals enter the map.
+  // Fill any remaining slots with distant hubs and certify every route below.
   var hubs=new List<string>(Hubs);
+  if(map.mapId=="eungye"&&!PvpSimulationMode.Active)foreach(string id in EstablishedEungyeHubs){
+   var established=traffic.junctions.Find(j=>j.name==id);
+   if(established!=null&&traffic.HasPedestrianPhase(established))hubs.Add(id);
+  }
   while(hubs.Count<HubCap){TrafficJunction best=null;float bestDistance=150*150;
    foreach(var candidate in traffic.junctions){if(hubs.Contains(candidate.name)||!traffic.HasPedestrianPhase(candidate))continue;float nearest=float.MaxValue;foreach(var id in hubs){var existing=traffic.junctions.Find(j=>j.name==id);if(existing!=null)nearest=Mathf.Min(nearest,(existing.center-candidate.center).sqrMagnitude);}if(nearest>bestDistance){bestDistance=nearest;best=candidate;}}
    if(best==null)break;hubs.Add(best.name);
