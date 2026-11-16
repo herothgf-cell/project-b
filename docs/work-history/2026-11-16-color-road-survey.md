@@ -91,4 +91,5 @@
 - Unity `G05NorthWestMapEdit.PreviewChecks`와 `G05NorthWestMapEdit.Apply` 종료0. 저장 전후 5차로의 화살표와 이동 연결, 유턴 조건, 차량 외곽, 기존 은계 승하차 6번 좌표, 전체 39곳·1,482개 방향별 경로를 확인했다. r34 지문 `12cb90de24c98418e2d8bb628ffd8f7eb7d51d79f7211f867b32f11cf8aa0ea5`.
 - `r34-workspace-strict.log` 종료0·입력 문제0, 선택 입력 JSON 두 개 부재. `ColorSurveyPreviewTests.BuildReviewedCurrent` 종료0. r14~33 저장 이관20버전·484검사, BuildHybrid 성공 및 실행 파일 지문 일치. 사용자 FirstDrive 씬 SHA256 원본 복원을 확인했다.
 - 조사 중인 대은로 Y04 서남행 ④ 앞은 비보호 좌회전 전용 / 직진 / 직진·우회전 겸용이다. ⑤ 쪽 보행섬 우회전과 P13 횡단보도 양쪽의 분리봉도 재대조했다. 해당 위치의 형상·시설 적용과 58그룹의 남은 방향이 후속이다.
+- r34 Player `-batchmode -nographics -liveSaveTest`·`-liveReloadTest` 종료0. 격리 위치 제어 검증 저장9·이어하기23 통과. `r34-distribution-verify`의 VerifyOnly 종료0, 143파일·132642354바이트. 통합 manifest에 소스 커밋 `6b5be76`를 기록했다. 자동 물리 주행, 수동 플레이, 전체 캠페인은 미검증이다. 원격 푸시 없음.
 - 다음 조사에서 은계번영길 P13/P14/P20/P26의 차로 수와 중앙선 전환을 적용하고, G04 은계로142번길 남쪽 접근의 최신 외측 화살표 및 은행사거리 P02 포켓과 은계남로 P03 서행 화살표를 대조한다. 내부 브라우저 조사 탭은 P03의 마지막 서향 촬영점에 유지했다. 5색 58그룹 전체 검토는 진행 중이다.
