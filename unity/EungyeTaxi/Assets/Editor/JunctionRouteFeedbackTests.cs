@@ -5,8 +5,8 @@ using UnityEngine;
 public static class JunctionRouteFeedbackTests {
  public static void VerifyMigration(){
   MapCatalog.LockedRegion="eungye";var map=MapCatalog.Load();
-  int target=Enumerable.Range(25,13).SingleOrDefault(revision=>map.editorRevision=="은계 프로젝트 지도 · r"+revision);
-  if(target==0)throw new Exception("Migration regression requires a reviewed r25–r37 default map");
+  int target=Enumerable.Range(25,14).SingleOrDefault(revision=>map.editorRevision=="은계 프로젝트 지도 · r"+revision);
+  if(target==0)throw new Exception("Migration regression requires a reviewed r25–r38 default map");
   var method=typeof(BusinessProgress).GetMethod("UpgradeEungyeApproachCheckpoint",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
   int checks=0;
   var recentJunctions=new[]{"J5692_14220","J6478_4105","J6481_3341","J5076_2580","J5750_2576","J6480_2573","J6199_11987","J3516_12881","J7801_9629","J7841_867","J1919_877"};
@@ -24,6 +24,7 @@ public static class JunctionRouteFeedbackTests {
    if(target>=35&&revision<35&&(junction=="J3516_12881"||junction=="J7801_9629"))clear=true;
    if(target>=36&&revision<36&&junction=="J7841_867")clear=true;
    if(target>=37&&revision<37&&junction=="J1919_877")clear=true;
+   if(target>=38&&revision<38&&(junction=="J1927_5181"||junction=="J7841_867"))clear=true;
    if(clear){expected.lawObservation.entry=null;expected.lawObservation.entryPresent=false;}
    method.Invoke(null,new object[]{saved,map});
    if(JsonUtility.ToJson(saved)!=JsonUtility.ToJson(expected))throw new Exception("reviewed migration changed protected metadata or missed invalidation from r"+revision+" at "+junction);

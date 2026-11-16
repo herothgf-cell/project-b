@@ -129,3 +129,12 @@
 - 37번 G04 남행은 정지선 앞 4차로, 교차로 통과 후 3차로와 좌회전 또는 보행 신호 때 유턴을 확인했다. 사용자가 [전체 지도](../content-design/images/eungye-g04-southbound-question.png)에서 남행 바깥 차로의 우회전 전용을 확인했다. 차로·분리대 배치는 후속이다.
 - 격리 Player에서 r36 운행 중 저장 이관 23검사, r37 저장 9검사와 이어하기 23검사 모두 종료0이며, r36·r37 보행자 ID 23개와 순서가 같다. 실행 인수는 `-batchmode -nographics -liveSaveTest`와 `-liveReloadTest`다. `-batchmode -force-d3d11 -presentationTest` 종료0, 315검사로 38번 네 접근의 실제 공급 신호와 비보호 표지를 포함한다. 수동 주행·자동 물리 주행·전체 캠페인은 미검증이다.
 - `distribution/EungyeTaxi-build-manifest.json`에 소스 `f7566c6`과 작성 지도, 143파일의 크기·SHA256을 갱신했다. 사용자 `Taxi.zip`·`content/`가 포함되지 않은 실행본 사본 `artifacts/color-road-survey/r37-distribution-verify`에서 `pwsh -File tools/update_distribution_manifest.ps1 -Root <사본> -VerifyOnly` 종료0, 총 132773050바이트. 실제 원본 지도 및 OSM 읽기 입력은 변경하지 않았다. 원격 푸시 없음.
+
+## 은행사거리 39번과 은계로142번길 37번 남행 (r38)
+
+- 사용자가 [39번](../content-design/images/eungye-p02-question-overview.png) 남행 안쪽 직진·좌회전과 [37번](../content-design/images/eungye-g04-southbound-question.png) 남행 바깥 우회전 전용을 확인했다. `SouthboundSurveyMapEdit.cs`에서 두 지점의 차로, 화살표, 실제 연결을 맞췄다.
+- 39번은 겹쳐 있던 두 진입로를 분리해 안쪽은 직진과 좌회전, 바깥은 우회전에 연결한다. 기존 골목 우회전, 세 차량 출구와 기존 접속 차로 분류를 보존한다. 정지선의 진행 방향과 종단 위치를 유지하면서 두 차로를 덮도록 정지선의 폭과 좌우 위치를 맞췄다. 진입 화살표와 점선은 인접 골목 교차부 및 정지선을 피해 상류에 배치했다. `LaneDirectionPaint.cs`는 명시적으로 같은 교차로에 연결된 기존 원본 연결로의 방향을 반영한다.
+- 37번은 남행 좌·유턴/직/직/우 4차로와 교차로 통과 후 남쪽 3차로를 구성했다. 두 직진 차로는 서로 다른 남쪽 차로로 이어지고 바깥은 우회전만 연결한다. 안쪽 유턴은 좌회전 또는 보행 녹색 시다. 분기 길이 36m와 테이퍼 21m, 차로 중심·폭, 유턴 곡선은 게임 근사값이다. 상류 본선과 중앙 난간의 전체 정렬은 후속이다.
+- Unity 2022.3.62f2 `-batchmode -nographics -quit -executeMethod SouthboundSurveyMapEdit.Apply` 로그 `artifacts/color-road-survey/r38-apply-spacing.log` 종료0. 저장 전후 두 접근의 회전 마스크와 화살표, 37번 차로 구분선 세 줄, 변경 차로·회전곡선의 차량 외곽, 39번 좌/직/우 실제 경로와 전체 승하차 39곳·유향 경로 1,482개를 확인했다. 초기 후보에서 37번 바깥 차로의 보도 겹침과 39번 화살표의 교차부 겹침을 발견해 배치를 교정했다.
+- 지도 지문 `56b01ecd46c68cb164410622d5a340c37f7e105e44b92cac03b73e10a8e3468f`. 원본 기준 지문과 OSM 입력에는 변경이 없다. 지도 크기·SHA256을 `config/maps/local-input-manifest.json`에 갱신했다. `tools/check_workspace.ps1 -Strict` 종료0, 필수 입력 문제0, 선택 재수입 입력 2개 부재.
+- 공영주차장 [40번 지도](../content-design/images/eungye-parking-exit-question.png)의 위치는 최신과 2025년 거리뷰에서 출차 차단기와 진입 금지 표시를 확인했다. 사용자 답변 ‘제한 표시 없이 진행’을 출구 설계에 기록했다. G11 남행 3→4와 중앙 난간, P19 학교 앞 횡단과 분리봉, G06 아파트 출입구 앞 네 직진 차로와 중앙 난간 개구부를 대조했다. 공영주차장 출구 연결, G11 상류, P19·G06 시설, 은행사거리 북행은 r38 미반영이며 [전수 현황](../content-design/road-survey/2026-11-16-coverage.md)을 따른다.

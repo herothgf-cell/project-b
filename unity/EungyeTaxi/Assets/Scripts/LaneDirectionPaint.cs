@@ -40,9 +40,15 @@ public static class LaneDirectionPaint {
   var suppressed=new HashSet<string>((map.editorDocument==null?new RoadMapFacility[0]:map.editorDocument.facilities??new RoadMapFacility[0]).Where(IsArrowSuppression).Select(f=>f.laneId));
   var clearances=RoadJunctionGeometry.PaintClearances(map);var reviewed=new ReviewedNativeLanePresentation(map);foreach(var arrow in reviewed.Arrows(clearances).Where(a=>!suppressed.Contains(map.hdEdges[a.edgeIndex].id))){arrow.turns=LaneArrowAppearance.PaintedMask(map,map.hdEdges[arrow.edgeIndex].id,arrow.turns);result.Add(arrow);}
   for(int i=0;i<map.hdEdges.Length;i++){
-   var e=map.hdEdges[i];if(e.disabled||suppressed.Contains(e.id)||!(e.status=="provisional"||(map.mapId=="pvp-city-a"&&e.status=="authored-fictional"))||e.change!=0||e.turn!=0||e.id.StartsWith("join:")||e.id.StartsWith("fuel:"))continue;
+   var e=map.hdEdges[i];if(e.disabled||suppressed.Contains(e.id)||!(e.status=="provisional"||e.status=="provisional-portal"||(map.mapId=="pvp-city-a"&&e.status=="authored-fictional"))||e.change!=0||e.turn!=0||e.id.StartsWith("join:")||e.id.StartsWith("fuel:"))continue;
    if((e.next??new int[0]).Any(n=>!map.hdEdges[n].disabled&&map.hdEdges[n].sourceId==e.sourceId&&map.hdEdges[n].turn==0&&map.hdEdges[n].change==0&&!map.hdEdges[n].id.StartsWith("join:")))continue;
-   int turns=0;foreach(int n in e.next??new int[0]){var join=map.hdEdges[n];if(join.disabled||!join.id.StartsWith("join:")||!(join.next??new int[0]).Any(target=>!map.hdEdges[target].disabled))continue;turns|=UturnMovement.PaintMask(join.turn);}
+   int turns=0;foreach(int n in e.next??new int[0]){
+    var join=map.hdEdges[n];
+    bool junctionConnector=(e.status!="provisional-portal"&&join.id.StartsWith("join:"))||
+     join.status=="ngii"&&!string.IsNullOrEmpty(e.ruleId)&&join.ruleId==e.ruleId;
+    if(join.disabled||!junctionConnector||!(join.next??new int[0]).Any(target=>!map.hdEdges[target].disabled))continue;
+    turns|=UturnMovement.PaintMask(join.turn);
+   }
    if(turns==0)continue;
    turns=LaneArrowAppearance.PaintedMask(map,e.id,turns);
    var p=new AssistedRoadNetwork.Path(e.points.Select(x=>x.V()).ToArray());

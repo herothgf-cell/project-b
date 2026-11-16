@@ -212,6 +212,15 @@
 - 북쪽에서 같은 37번으로 접근하는 남행은 정지선 전 4차로, 교차로 통과 후 3차로다. 최신 북측 촬영에서 안쪽 좌회전 표시와 좌회전·보행 신호 때 허용되는 유턴 보조표지, 남쪽 통과 구간의 중앙분리대와 보도 난간을 확인했다. [2026년 5월 북측](https://map.naver.com/p?c=18.00,0,0,0,adh&p=H4u2Vo_uwxpOa5AldTRoNA,-175,-17.61,80,Float) · [2026년 5월 남측](https://map.naver.com/p?c=19,0,0,0,adh&p=9twu9Qe-2EpFgySCfPrbOw,185,-15,80,Float).
 - 남행 바깥쪽 화살표는 최신에서 버스가 가리고 2024년에는 닳았다. 사용자가 [남행 접근 전체 지도](../images/eungye-g04-southbound-question.png)의 바깥 차로가 우회전 전용임을 확인했다. [2024년 3월](https://map.naver.com/p?c=18.00,0,0,0,adh&p=8NPXVn3sCqhhwd_tzbr1OA,-175,-17.61,80,Float) · [2024년 10월](https://map.naver.com/p?c=18.00,0,0,0,adh&p=d2aDrNXH9VN7y2nt5dlvFA,-175,-17.61,80,Float).
 
+### G11 은계로 버스정류장 부근
+
+- 2026년 5월 남행에서 ⑱ 직후 버스정류장 쪽 3차로와 남쪽 37번 접근 4차로를 확인했다. 중앙 황색 복선 위에 검정 기둥과 황색 띠의 난간이 이어지며, 37번 유턴 개구부 쪽에서 끝난다. 보도 난간도 보인다. [⑱ 남쪽](https://map.naver.com/p?c=16,0,0,0,adh&p=7uQDd2GU4oGvsPIZ9_2lUw,-174.16,2.41,80,Float) · [버스정류장 남쪽](https://map.naver.com/p?c=16.00,0,0,0,adh&p=boK3lZCbQ6zUKwmeyGFBCw,-174,10,80,Float).
+- 맞은편 북행 촬영선에서는 ⑱ 쪽을 향하는 어린이보호구역의 ‘30’ 네 개를 2024년 10월 영상에서 확인했다. 그 촬영점의 최신 제공 사진은 2024년 10월이고, 2026년 반대 차로 촬영은 원거리 역방향 사진이므로 북행 확폭의 시작점은 대조 대상이다. [북행 촬영점](https://map.naver.com/p?c=16.00,0,0,0,adh&p=ImOq5oBQ9sEuKrA1og0n5g,6,10,80,Float).
+
+### G06 ⑤→⑭ 중간 아파트 출입구
+
+- ⑤ 남동쪽을 따라가면 오른쪽에 아파트 차단기와 출입구 횡단보도가 있는 별도 신호 접속부가 나온다. 남동행 정지선의 네 차로에 직진 화살표가 보인다. 중앙 황색 복선 위 난간은 이 출입구의 교차부에서 끊겼다가 남쪽에서 다시 이어진다. 이 4차로 단면을 ⑤↔⑭ 전체 구간에 적용할 근거는 아직 없다. [정지선 앞](https://map.naver.com/p?c=18.00,0,0,0,adh&p=wCIixrRG1chm1eTVm_Gyvg,135,-20,80,Float) · [출입구 통과](https://map.naver.com/p?c=18.00,0,0,0,adh&p=PuVsOsIQNpce1tQWtUItfA,135,10,80,Float).
+
 ## 2026-11-16 G05 ⑭→⑮ 정지선
 
 - [2026년 5월 전방](https://map.naver.com/p?c=19,0,0,0,adh&p=NcZlmOmUnIe_TKerA0cRSQ,178,-29,64,Float)에서 3개 직진 차로와 좌우 추가 포켓을, [정지선 역방향](https://map.naver.com/p?c=19,0,0,0,adh&p=H4oPEaaEe-cUJTC6DF_O-w,337,-35,95,Float)에서 5개 구획을 확인했다. [바깥 차로 확대](https://map.naver.com/p?c=19,0,0,0,adh&p=H4oPEaaEe-cUJTC6DF_O-w,309,-29,63,Float)의 우회전 화살표와 분리 구획을 기준으로 우회전 전용으로 적용했다.
