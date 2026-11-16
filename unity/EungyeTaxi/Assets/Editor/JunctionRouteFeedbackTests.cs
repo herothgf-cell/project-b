@@ -5,20 +5,21 @@ using UnityEngine;
 public static class JunctionRouteFeedbackTests {
  public static void VerifyMigration(){
   MapCatalog.LockedRegion="eungye";var map=MapCatalog.Load();
-  int target=Enumerable.Range(25,8).SingleOrDefault(revision=>map.editorRevision=="은계 프로젝트 지도 · r"+revision);
-  if(target==0)throw new Exception("Migration regression requires a reviewed r25–r32 default map");
+  int target=Enumerable.Range(25,9).SingleOrDefault(revision=>map.editorRevision=="은계 프로젝트 지도 · r"+revision);
+  if(target==0)throw new Exception("Migration regression requires a reviewed r25–r33 default map");
   var method=typeof(BusinessProgress).GetMethod("UpgradeEungyeApproachCheckpoint",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
   int checks=0;
   var recentJunctions=new[]{"J5692_14220","J6478_4105","J6481_3341","J5076_2580","J5750_2576","J6480_2573"};
   var previousJunctions=new[]{"J7204_2569","J5074_877","J2145_15970","J7876_1656","J8346_1658","J10587_15883","J1882_11791","J2225_12001","J8921_10835","J7355_12821","J7292_13794","J7254_14780","J8066_6364","J7917_2565","J7973_3744","J1927_5181","unrelated-junction"};
   foreach(int revision in Enumerable.Range(14,target-14))foreach(string junction in previousJunctions.Concat(recentJunctions)){
    var saved=MigrationFixture(revision,junction);var expected=JsonUtility.FromJson<LiveCampaignCheckpoint>(JsonUtility.ToJson(saved));
-   expected.mapRevision=map.editorRevision;if(revision<25||target>=27&&revision<31){expected.jobs.navigationCaptured=false;expected.jobs.navAvoidEdge=expected.jobs.navObservedEdge=expected.jobs.navPassedObservedEdge=-1;}
+   expected.mapRevision=map.editorRevision;if(revision<25||target>=27&&revision<31||target>=33){expected.jobs.navigationCaptured=false;expected.jobs.navAvoidEdge=expected.jobs.navObservedEdge=expected.jobs.navPassedObservedEdge=-1;}
    bool clear=target>=27&&revision<27&&(junction=="J7917_2565"||junction=="J7204_2569")||revision<25&&junction=="J2145_15970"||revision<24&&junction=="J5074_877"||revision<23&&(junction=="J7876_1656"||junction=="J8346_1658")||revision<22&&(junction=="J7254_14780"||junction=="J10587_15883")||revision<21&&(junction=="J1882_11791"||junction=="J2225_12001")||revision<20&&(new[]{"J8921_10835","J7355_12821","J7292_13794","J7254_14780","J8066_6364","J7917_2565"}.Contains(junction)||junction=="J7973_3744"&&revision!=16||junction=="J1927_5181"&&revision==14);
    if(target>=28&&revision<28&&junction=="J7254_14780")clear=true;
    if(target>=29&&revision<29&&junction=="J5692_14220")clear=true;
    if(target>=30&&revision<30&&(junction=="J6478_4105"||junction=="J6481_3341"))clear=true;
    if(target>=31&&revision<31&&(junction=="J5076_2580"||junction=="J5750_2576"||junction=="J6480_2573"||junction=="J7204_2569"))clear=true;
+   if(target>=33&&revision<33&&(junction=="J6481_3341"||junction=="J5750_2576"||junction=="J7204_2569"))clear=true;
    if(clear){expected.lawObservation.entry=null;expected.lawObservation.entryPresent=false;}
    method.Invoke(null,new object[]{saved,map});
    if(JsonUtility.ToJson(saved)!=JsonUtility.ToJson(expected))throw new Exception("reviewed migration changed protected metadata or missed invalidation from r"+revision+" at "+junction);

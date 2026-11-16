@@ -74,4 +74,12 @@
 - `r32-migration-build.log`에서 r14~31 저장 이관 18개 버전·418검사가 통과했다. 같은 실행의 빌드는 Windows의 `resources.assets.resS` 매핑 잠금으로 종료1이었다. 파일을 단독 열 수 있음을 확인하고 Unity `-executeMethod PrototypeBuild.BuildHybrid`로 재실행했다. `r32-build-retry.log` 종료0·`PROTOTYPE_BUILD_OK`, 실행본의 `project-map-build.json`은 실제 r32 지문과 일치한다. 사용자 FirstDrive 씬 원본 SHA256 복원을 확인했다.
 - `builds/EungyeTaxi/EungyeTaxi.exe`를 `-batchmode -nographics -liveSaveTest`와 `-liveReloadTest`로 실행했다. 두 검사 종료0, 격리 파일 `artifacts/live-campaign-test.json`의 저장9·이어하기23을 확인했다. 수동 주행, 자동 물리 주행과 전체 캠페인은 미검증이다.
 - r32 소스 커밋 `8e90a74`와 작성 지도 크기·SHA256을 통합 manifest에 기록했다. 사용자 작업 파일을 포함하지 않은 런타임 사본 `artifacts/color-road-survey/r32-distribution-verify`에서 `tools/update_distribution_manifest.ps1 -VerifyOnly` 종료0, 143파일·132576210바이트. 기존 `Taxi.zip`, `content/`를 보존했다. 원격 푸시 없음.
+
+## 공영주차장 P20/P26 (r33)
+
+- 색칠한 58그룹의 실경 대조를 이어갔다. P20은 동1/서2와 북1/남2, P26은 동2/서1과 북1/남2를 적용했다. J5750은 2024년 10월 영상에서, J7204는 2026년 5월에서 중앙선 옆 좌회전 전용 및 바깥쪽 우회전 전용 표시를 확인했다. [거리뷰 근거와 미확인 시설](../content-design/road-survey/2026-11-13-pink-orange-observations.md).
+- `ParkingEastLaneEdit.cs`에서 기존 공영주차장 앞 직진 연결 뒤 방향별 차로를 분기하고 두 T자 교차로의 종전 회전 목적지를 전용 차로에 옮겼다. 3m 분기점, 10m 테이퍼, 3.15m 차간 중심 간격과 곡선 보간은 게임 근사값이다. 동쪽 식당의 진입 위치·진입 방향을 유지하고 식당 앞에서 나온 뒤 좌회전 차로로 옮길 수 있게 했다.
+- `r33-parking-final.log` 종료0. 저장 전후 6개 단면·4개 방향 화살표·회전 경로와 차량 외곽 통과 공간, 식당 바깥쪽 바인딩과 좌·우회전 경로, 승하차 39곳의 1,482개 방향별 경로를 확인했다. 서쪽 급커브에서 첫 Offset 시안의 자기 교차를 검출하고 위치 및 접선 보간을 수정했다.
+- `r33-workspace-strict.log` 종료0·입력 문제0. 로컬 입력 크기 및 해시 갱신. `r33-migration-build.log` 종료0, r14~32 저장 이관 19개 버전 441검사와 BuildHybrid 성공. 지도 및 실행본 내용 지문 `575ca884e867d4d3eecd0ee2c2488fce2d4aee7d24d370413391ddb3c84fb791`.
+- 주차장 횡단보도 옆 황색 빗금·분리봉, P13 분리봉과 주차장 진출입로는 추가 정렬해야 한다. [36번](../content-design/images/eungye-g05-question.png)은 사용자가 바깥 차로의 우회전 전용을 확인했다. [P05 은행고길 인접 남단](../content-design/road-survey/2026-11-13-pink-orange-observations.md)의 1+1·중앙선·난간 후보 근거도 기록했다.
 - 다음 조사에서 은계번영길 P13/P14/P20/P26의 차로 수와 중앙선 전환을 적용하고, G04 은계로142번길 남쪽 접근의 최신 외측 화살표 및 은행사거리 P02 포켓과 은계남로 P03 서행 화살표를 대조한다. 내부 브라우저 조사 탭은 P03의 마지막 서향 촬영점에 유지했다. 5색 58그룹 전체 검토는 진행 중이다.

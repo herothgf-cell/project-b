@@ -164,6 +164,11 @@
 - 같은 부근 [남동행 촬영](https://map.naver.com/p?c=19,0,0,0,adh&p=NcZlmOmUnIe_TKerA0cRSQ,151,-16,78,Float)은 ⑮ 앞 좌/직/직/직/우 5화살표를 보여 준다. `Rf6jd9bFk0hchJZlx9XT2w`에서 난간 끝과 주황 탄성봉 2개를 확인했고 [정지선 촬영](https://map.naver.com/p?c=19,0,0,0,adh&p=H4oPEaaEe-cUJTC6DF_O-w,151,-16,78,Float)의 보조 표지는 ‘좌회전시 / 보행신호시’다.
 - ⑭ 쪽 반대 접근과 포켓 시작점, 중앙 난간 개구부를 원본 좌표와 맞추고 수정해야 한다. 위 촬영은 ⑮ 남동행 접근 및 인접 북서행 단면의 근거다.
 
+### G05 ⑮→⑭ 북서행 연속 확인
+
+- [중간 상가 앞](https://map.naver.com/p?c=19,0,0,0,adh&p=gtLHCW5XmUPTKhLc1KUb5w,-35,-18,80,Float)은 북서행 3차로다. [⑭ 접근](https://map.naver.com/p?c=19,0,0,0,adh&p=QYjRifnmQCJRPdP1wmqPlQ,-35,-18,80,Float)에서는 중앙 빗금과 난간이 끝나는 쪽에서 차로가 늘고, 보도 쪽도 정지선 전에 넓어진다.
+- [2026년 5월 정지선](https://map.naver.com/p?c=19,0,0,0,adh&p=Ix6rbIKQdDKEt2ehapts1A,-35,-18,80,Float)과 [2024년 3월](https://map.naver.com/p?c=19,0,0,0,adh&p=SEQVolKnkY2t6-yPlOS-rg,-35,-18,80,Float) 모두 다섯 차로와 유턴 표지가 보인다. 중간 세 차로는 직진이다. 가장 안쪽 화살표는 차량에 가렸다. [최신 확대](https://map.naver.com/p?c=19,0,0,0,adh&p=Ix6rbIKQdDKEt2ehapts1A,318,5,50,Float)에서 유턴 조건은 ‘좌회전시 / 보행신호시’로 읽혔다. 사용자가 [36번 전체 지도](../images/eungye-g05-question.png)의 가장 바깥 차로를 우회전 전용으로 확인했다. 기존 안쪽 좌회전 연결을 이 자료와 대조했다.
+
 ## 현재 작성 지도 표본 단면 (현장 증거 아님)
 
 읽기 전용으로 document.lanes를 계산했다. 각 대표차로 양끝 중점의 직교선을 가로지르는 활성 조각을 ±35m에서 집계했다. join/change 제외. 정방향은 representativeLane 첫 점→끝 점, 역방향은 반대. 차로 번호는 런타임 재정렬 전 값이다. 굽은 도로/교차로 및 중첩 조각은 추가 검증 필요. 이 표가 끝단 포켓·전체 구간의 수를 뜻하지 않는다. G12 NGII 수인로 전체는 이 단면 방식으로 대표하지 않는다.
