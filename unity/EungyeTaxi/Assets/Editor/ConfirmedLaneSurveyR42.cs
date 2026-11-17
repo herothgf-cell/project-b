@@ -45,7 +45,7 @@ internal static partial class ConfirmedLaneSurveyR42
         Y05CorridorMapEdit.BuildReviewed();
     }
 
-    private static void VerifyPackage(ProjectMapPackage package)
+    internal static void VerifyPackage(ProjectMapPackage package)
     {
         VerifyYellow(package.document);
         VerifyGreen(package.document);

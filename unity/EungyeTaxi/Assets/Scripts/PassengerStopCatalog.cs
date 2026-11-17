@@ -48,7 +48,7 @@ public sealed partial class PassengerStopCatalog {
   if(data==null||data.schema!=1||data.mapId!=map.mapId||data.candidates==null)return;
   result.Revision=data.revision;var graph=new HdRoadGraph(map);var geometry=new Geometry(map);var used=new HashSet<string>();var combined=new List<MapStop>(legacyStops);
   foreach(var configured in data.candidates){
-   var c=ReviewedY07Candidate(map,configured);
+   var c=ReviewedP15Candidate(map,ReviewedY07Candidate(map,configured));
    string reason;MapStop stop;
    if(c==null||string.IsNullOrEmpty(c.stopId)||!used.Add(c.stopId)){result.Rejected.Add("duplicate/missing stopId");continue;}
    if(!Validate(map,graph,geometry,c,out stop,out reason)){result.Rejected.Add(c.stopId+": "+reason);continue;}
@@ -110,6 +110,20 @@ public sealed partial class PassengerStopCatalog {
   var result=JsonUtility.FromJson<PassengerStopCandidate>(JsonUtility.ToJson(c));result.x=position.x;result.z=position.z;result.dx=direction.x;result.dz=direction.z;
   var passenger=position+TrafficSystem.Right(direction)*(result.bayOffset+2.4f);result.passengerX=passenger.x;result.passengerZ=passenger.z;
   result.evidence+=" Y07 reviewed E3/W4 game geometry: same outer-lane ID and 40m station; fictional bay and passenger anchor follow the relocated curb. All original catalog geometry and reachability checks still apply.";
+  return result;
+ }
+ // The P15 driveway is a real break in the public lane lineage. The
+ // original bay stays at the same world position on the west departure.
+ static PassengerStopCandidate ReviewedP15Candidate(MapData map,PassengerStopCandidate c){
+  const string source="local:7660:918:5205:927";
+  const string departure="editor:segment:bG9jYWw6NzY2MDo5MTg6NTIwNTo5Mjc:p15-wb-departure";
+  if(c==null||c.stopId!="EG-GAME-12"||c.laneId!=source||Mathf.Abs(c.laneAt-208)>.001f||
+     Mathf.Abs(c.x-557.95189f)>.002f||Mathf.Abs(c.z-92.51942f)>.002f||map.editorDocument==null)return c;
+  var lane=map.editorDocument.lanes.SingleOrDefault(l=>l.id==departure&&!l.disabled&&
+    RoadMapAuthoringOperations.Origin(l)==source&&l.evidence!=null&&l.evidence.note.StartsWith("Latest and October 2024 corroborate westbound"));
+  if(lane==null)return c;
+  var result=JsonUtility.FromJson<PassengerStopCandidate>(JsonUtility.ToJson(c));
+  result.laneId=lane.id;result.laneAt-=lane.sourceOffset;result.sidewalkId="game-extension:"+lane.id;
   return result;
  }
  static Vector3 Dir(PassengerStopCandidate c){return new Vector3(c.dx,0,c.dz).normalized;}

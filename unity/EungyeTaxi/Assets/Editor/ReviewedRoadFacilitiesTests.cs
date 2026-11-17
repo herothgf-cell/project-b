@@ -6,6 +6,52 @@ using UnityEngine;
 public static class ReviewedRoadFacilitiesTests {
  static void Check(bool pass,string message){if(!pass)throw new Exception("REVIEWED_ROAD_FACILITIES: "+message);}
  static HdMark Mark(string id,float z){return new HdMark{id=id,type="111",kind="501",points=new[]{new MapPoint{x=0,z=z},new MapPoint{x=100,z=z}}};}
+ public static void RunTemporaryBarrier(){
+  var map=new MapData{mapId="temporary-barrier-fixture"};
+  var catalog=new ReviewedRoadFacilities.Catalog{mapId=map.mapId,facilities=new[]{new ReviewedRoadFacilities.Facility{
+   id="observed-roadworks",segments=new[]{new ReviewedRoadFacilities.ExplicitSegment{
+    kind="temporary-barrier",width=.62f,height=.78f,
+    points=new[]{new MapPoint{x=10,z=10},new MapPoint{x=13.5f,z=10},new MapPoint{x=13.5f,z=13.5f}}
+   }}
+  }}};
+  var layout=ReviewedRoadFacilities.Plan(map,catalog);
+  Check(layout.barriers.Count==4&&layout.barriers.All(l=>l.kind=="temporary-barrier"&&Vector3.Distance(l.a,l.b)<=2),
+   "temporary barrier follows the bend in short physical modules");
+  Check(layout.barriers.First().a==new Vector3(10,0,10)&&layout.barriers.Last().b==new Vector3(13.5f,0,13.5f),
+   "temporary barrier stays inside the two confirmed ends");
+  foreach(bool collision in new[]{false,true}){
+   var root=new GameObject("temporary barrier test");
+   try{
+    ReviewedRoadFacilities.Draw(layout,root.transform,collision);
+    var bodies=root.GetComponentsInChildren<MeshRenderer>().Where(r=>r.name.StartsWith("적백 임시 방호벽 몸체")).ToArray();
+    Check(bodies.Length==4,"one body for each roadwork module");
+    Check(bodies.Select(body=>body.sharedMaterial.name).SequenceEqual(new[]{"Reviewed temporary barrier red","Reviewed temporary barrier white","Reviewed temporary barrier red","Reviewed temporary barrier white"}),
+     "red and white stay alternating across a change of heading");
+    Check(root.GetComponentsInChildren<Collider>().Length==(collision?8:0),"physical modules use two colliders in play and none in preview");
+   }finally{UnityEngine.Object.DestroyImmediate(root);}
+  }
+  Debug.Log("REVIEWED_TEMPORARY_BARRIER_OK modules=4 alternating=true liveAndPreview=true");
+ }
+ public static void RunPedestrianRail(){
+  var map=new MapData{mapId="pedestrian-rail-fixture"};
+  var catalog=new ReviewedRoadFacilities.Catalog{mapId=map.mapId,facilities=new[]{new ReviewedRoadFacilities.Facility{
+   id="curbside-rail",segments=new[]{new ReviewedRoadFacilities.ExplicitSegment{
+    kind="pedestrian-rail",width=.12f,height=1,
+    points=new[]{new MapPoint{x=10,z=10},new MapPoint{x=14,z=10}}
+   }}
+  }}};
+  var layout=ReviewedRoadFacilities.Plan(map,catalog);
+  Check(layout.barriers.Count==2&&layout.barriers.All(l=>l.kind=="pedestrian-rail"),"roadside rail remains a separate layout from median posts");
+  var root=new GameObject("pedestrian rail test");
+  try{
+   ReviewedRoadFacilities.Draw(layout,root.transform,true);
+   var renderers=root.GetComponentsInChildren<MeshRenderer>();
+   Check(renderers.Count(r=>r.name.StartsWith("보도 난간 기둥"))==3&&renderers.All(r=>!r.name.Contains("반사띠")),
+    "pedestrian rail has narrow posts and no yellow median bands");
+   Check(root.GetComponentsInChildren<Collider>().Length==2,"pedestrian rail has a continuous physical barrier");
+  }finally{UnityEngine.Object.DestroyImmediate(root);}
+  Debug.Log("REVIEWED_PEDESTRIAN_RAIL_OK rails=2 posts=3");
+ }
  public static void Run(){
   var map=new MapData{mapId="fixture",hdMarks=new[]{Mark("north",2),Mark("south",-2)},hdEdges=new HdEdge[0],roads=new MapRoad[0]};
   var facility=new ReviewedRoadFacilities.Facility{id="median",kind="paired-median",sourceUrl="https://example.test/panorama",northMarkIds=new[]{"north"},southMarkIds=new[]{"south"},hatchFromX=10,hatchToX=90,barrierFromX=10,barrierToX=90,barrierWidth=.4f,barrierHeight=.75f,openings=new[]{new ReviewedRoadFacilities.Opening{fromX=40,toX=60}}};
@@ -57,6 +103,6 @@ public static class ReviewedRoadFacilitiesTests {
 
  // Reserve a 0.4m shoulder outside the entire authored lane, in addition to each physical half-width.
  static float RequiredClearance(float laneWidth,float railWidth){return laneWidth*.5f+railWidth*.5f+.4f;}
- static float PointDistance(Vector3 point,Vector3 a,Vector3 b){var delta=b-a;float t=Mathf.Clamp01(Vector3.Dot(point-a,delta)/Mathf.Max(.000001f,delta.sqrMagnitude));return Vector3.Distance(point,a+delta*t);}
+ internal static float PointDistance(Vector3 point,Vector3 a,Vector3 b){var delta=b-a;float t=Mathf.Clamp01(Vector3.Dot(point-a,delta)/Mathf.Max(.000001f,delta.sqrMagnitude));return Vector3.Distance(point,a+delta*t);}
  static float SegmentDistance(Vector3 a,Vector3 b,Vector3 c,Vector3 d){RoadGeometry.Point hit;if(RoadGeometry.TryCrossing(new RoadGeometry.Point(a.x,a.z),new RoadGeometry.Point(b.x,b.z),new RoadGeometry.Point(c.x,c.z),new RoadGeometry.Point(d.x,d.z),out hit))return 0;return Mathf.Min(Mathf.Min(PointDistance(a,c,d),PointDistance(b,c,d)),Mathf.Min(PointDistance(c,a,b),PointDistance(d,a,b)));}
 }

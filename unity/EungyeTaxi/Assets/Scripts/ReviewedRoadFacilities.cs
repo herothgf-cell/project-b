@@ -7,7 +7,7 @@ public static class ReviewedRoadFacilities {
  [Serializable] public sealed class Facility {public string id,kind,sourceUrl,captureMonth,checkedAt,observed,estimated;public string[] northMarkIds,southMarkIds;public float hatchFromX,hatchToX,barrierFromX,barrierToX,barrierWidth,barrierHeight,cushionLength,cushionWidth,cushionHeight;public Opening[] openings;public ExplicitSegment[] segments;}
  [Serializable] public sealed class Opening {public float fromX,toX;}
  [Serializable] public sealed class ExplicitSegment {public string kind;public MapPoint[] points;public float width,height;}
- public sealed class Line {public Vector3 a,b;public float width,height;public string facilityId,kind;}
+ public sealed class Line {public Vector3 a,b;public float width,height;public string facilityId,kind;public bool alternateColour;}
  public sealed class Layout {public readonly List<Line> barriers=new List<Line>();public readonly List<Line> hatches=new List<Line>();public readonly List<Line> cushions=new List<Line>();public readonly List<Line> bollards=new List<Line>();}
  static List<Vector2> ClearIntervals(float from,float to,Opening[] openings){
   var result=new List<Vector2>();if(to<=from)return result;
@@ -66,8 +66,18 @@ public static class ReviewedRoadFacilities {
    foreach(var explicitSegment in facility.segments??new ExplicitSegment[0]){
     if(explicitSegment.points==null||explicitSegment.points.Length<2)continue;
     if(explicitSegment.kind=="flexible-bollard"){PlanBollards(layout,explicitSegment,facility.id);continue;}
+    bool temporary=explicitSegment.kind=="temporary-barrier",alternateColour=false;
     for(int i=1;i<explicitSegment.points.Length;i++){var line=Segment(explicitSegment.points[i-1].V(),explicitSegment.points[i].V(),explicitSegment.width,explicitSegment.height,facility.id);
-     if(explicitSegment.kind=="post-rail"){int count=Mathf.Max(1,Mathf.CeilToInt(Vector3.Distance(line.a,line.b)/2));for(int part=0;part<count;part++){var rail=Segment(Vector3.Lerp(line.a,line.b,(float)part/count),Vector3.Lerp(line.a,line.b,(float)(part+1)/count),line.width,line.height,line.facilityId);rail.kind="post-rail";layout.barriers.Add(rail);}}
+     if(explicitSegment.kind=="post-rail"||explicitSegment.kind=="pedestrian-rail"||temporary){
+      float length=Vector3.Distance(line.a,line.b);if(length<.01f)continue;
+      int count=Mathf.CeilToInt(length/2);
+      for(int part=0;part<count;part++){
+       var module=Segment(Vector3.Lerp(line.a,line.b,(float)part/count),Vector3.Lerp(line.a,line.b,(float)(part+1)/count),line.width,line.height,line.facilityId);
+       module.kind=explicitSegment.kind;
+       if(temporary){module.alternateColour=alternateColour;alternateColour=!alternateColour;}
+       layout.barriers.Add(module);
+      }
+     }
      else if(explicitSegment.kind=="barrier")layout.barriers.Add(line);else if(explicitSegment.kind=="hatch")layout.hatches.Add(line);
     }
    }
@@ -99,14 +109,29 @@ public static class ReviewedRoadFacilities {
   var steel=WorldBuilder.Mat("Reviewed W-beam",new Color(.57f,.59f,.60f));var highlight=WorldBuilder.Mat("Reviewed W-beam flange",new Color(.75f,.76f,.72f));var yellow=WorldBuilder.Mat("Reviewed safety hatch",new Color(.96f,.7f,.09f));var cushion=WorldBuilder.Mat("Reviewed crash cushion",new Color(.94f,.62f,.10f));
   foreach(var line in layout.hatches)Beam("안전지대 빗금 "+line.facilityId,line,.085f,line.width,line.height,yellow,parent,false);
   var dark=WorldBuilder.Mat("Reviewed post rail",new Color(.08f,.08f,.07f));var posts=new HashSet<Vector2Int>();
+  Material temporaryRed=null,temporaryWhite=null;
+  if(layout.barriers.Exists(line=>line.kind=="temporary-barrier")){
+   temporaryRed=WorldBuilder.Mat("Reviewed temporary barrier red",new Color(.82f,.17f,.13f));
+   temporaryWhite=WorldBuilder.Mat("Reviewed temporary barrier white",new Color(.90f,.88f,.81f));
+  }
   foreach(var line in layout.barriers){
-   if(line.kind=="post-rail"){
-    if(collisions){var delta=line.b-line.a;var block=new GameObject("중앙분리 포스트 난간 충돌 "+line.facilityId);block.transform.SetParent(parent,false);block.transform.localPosition=(line.a+line.b)*.5f+Vector3.up*line.height*.5f;block.transform.localRotation=Quaternion.LookRotation(delta.normalized);block.AddComponent<BoxCollider>().size=new Vector3(line.width,line.height,delta.magnitude);}
-    Beam("중앙분리 포스트 난간 상단 "+line.facilityId,line,line.height*.88f,line.width*.45f,.055f,dark,parent,false);
-    Beam("중앙분리 포스트 난간 하단 "+line.facilityId,line,line.height*.45f,line.width*.45f,.045f,dark,parent,false);
+   if(line.kind=="temporary-barrier"){
+    var material=line.alternateColour?temporaryWhite:temporaryRed;
+    Beam("적백 임시 방호벽 받침 "+line.facilityId,line,line.height*.14f,line.width,line.height*.28f,material,parent,collisions);
+    Beam("적백 임시 방호벽 몸체 "+line.facilityId,line,line.height*.64f,line.width*.65f,line.height*.72f,material,parent,collisions);
+    continue;
+   }
+   if(line.kind=="post-rail"||line.kind=="pedestrian-rail"){
+    bool pedestrian=line.kind=="pedestrian-rail";
+    string name=pedestrian?"보도 난간":"중앙분리 포스트 난간";
+    if(collisions){var delta=line.b-line.a;var block=new GameObject(name+" 충돌 "+line.facilityId);block.transform.SetParent(parent,false);block.transform.localPosition=(line.a+line.b)*.5f+Vector3.up*line.height*.5f;block.transform.localRotation=Quaternion.LookRotation(delta.normalized);block.AddComponent<BoxCollider>().size=new Vector3(line.width,line.height,delta.magnitude);}
+    Beam(name+" 상단 "+line.facilityId,line,line.height*.88f,line.width*.45f,.055f,dark,parent,false);
+    Beam(name+" 하단 "+line.facilityId,line,line.height*.45f,line.width*.45f,.045f,dark,parent,false);
     foreach(var point in new[]{line.a,line.b}){var key=new Vector2Int(Mathf.RoundToInt(point.x*100),Mathf.RoundToInt(point.z*100));if(!posts.Add(key))continue;
-     WorldBuilder.Box("중앙분리 검정 기둥 "+line.facilityId,point+Vector3.up*line.height*.5f,new Vector3(.14f,line.height,.14f),dark,parent,false);
-     foreach(float band in new[]{.35f,.75f})WorldBuilder.Box("중앙분리 노랑 반사띠 "+line.facilityId,point+Vector3.up*line.height*band,new Vector3(.15f,line.height*.18f,.15f),yellow,parent,false);
+     float postWidth=pedestrian?.065f:.14f;
+     WorldBuilder.Box(pedestrian?"보도 난간 기둥 "+line.facilityId:"중앙분리 검정 기둥 "+line.facilityId,
+      point+Vector3.up*line.height*.5f,new Vector3(postWidth,line.height,postWidth),dark,parent,false);
+     if(!pedestrian)foreach(float band in new[]{.35f,.75f})WorldBuilder.Box("중앙분리 노랑 반사띠 "+line.facilityId,point+Vector3.up*line.height*band,new Vector3(.15f,line.height*.18f,.15f),yellow,parent,false);
     }continue;
    }
    Beam("중앙분리 난간 "+line.facilityId,line,line.height*.5f,line.width*.55f,line.height,steel,parent,collisions);

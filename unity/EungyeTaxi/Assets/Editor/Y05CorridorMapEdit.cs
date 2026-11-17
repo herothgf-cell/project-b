@@ -244,7 +244,7 @@ public static class Y05CorridorMapEdit {
   FlexibleBollardTests.BuildCommercialMap();
  }
 
- static void Validate(ProjectMapPackage package){
+ internal static void Validate(ProjectMapPackage package){
   var map=package.Compose();
   EungyeConnectivityRepair.Apply(map,package.baseline);
   var graph=new HdRoadGraph(map);

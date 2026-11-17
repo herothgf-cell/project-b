@@ -5,11 +5,12 @@ using UnityEngine;
 public static class JunctionRouteFeedbackTests {
  public static void VerifyMigration(){
   MapCatalog.LockedRegion="eungye";var map=MapCatalog.Load();
-  int target=Enumerable.Range(25,18).SingleOrDefault(revision=>map.editorRevision=="은계 프로젝트 지도 · r"+revision);
-  if(target==0)throw new Exception("Migration regression requires a reviewed r25–r42 default map");
+  int target=Enumerable.Range(25,19).SingleOrDefault(revision=>map.editorRevision=="은계 프로젝트 지도 · r"+revision);
+  if(target==0)throw new Exception("Migration regression requires a reviewed r25–r43 default map");
   var method=typeof(BusinessProgress).GetMethod("UpgradeEungyeApproachCheckpoint",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
+  var migrate=typeof(BusinessProgress).GetMethod("ApplyReviewedEungyeCheckpointMigration",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
   int checks=0;
-  var recentJunctions=new[]{"J5692_14220","J6478_4105","J6481_3341","J5076_2580","J5750_2576","J6480_2573","J6199_11987","J3516_12881","J7801_9629","J7841_867","J1919_877","J4396_13458","J2564_12237"};
+  var recentJunctions=new[]{"J5692_14220","J6478_4105","J6481_3341","J5076_2580","J5750_2576","J6480_2573","J6199_11987","J3516_12881","J7801_9629","J7841_867","J1919_877","J4396_13458","J2564_12237","J5852_16963"};
   var previousJunctions=new[]{"J7204_2569","J5074_877","J2145_15970","J7876_1656","J8346_1658","J10587_15883","J1882_11791","J2225_12001","J8921_10835","J7355_12821","J7292_13794","J7254_14780","J8066_6364","J7917_2565","J7973_3744","J1927_5181","unrelated-junction"};
   foreach(int revision in Enumerable.Range(14,target-14))foreach(string junction in previousJunctions.Concat(recentJunctions)){
    var saved=MigrationFixture(revision,junction);var expected=JsonUtility.FromJson<LiveCampaignCheckpoint>(JsonUtility.ToJson(saved));
@@ -28,12 +29,15 @@ public static class JunctionRouteFeedbackTests {
    if(target>=39&&revision<39&&(junction=="J6481_3341"||junction=="J3516_12881"))clear=true;
    if(target>=40&&revision<40&&junction=="J4396_13458")clear=true;
    if(target>=41&&revision<41&&(junction=="J4396_13458"||junction=="J5692_14220"))clear=true;
-   if(target>=42&&revision<42&&(junction=="J2564_12237"||junction=="J7254_14780"||junction=="J8921_10835"||junction=="J7841_867"||junction=="J5076_2580"||junction=="J8066_6364")){
+   if(target>=42&&revision<42&&(junction=="J2564_12237"||junction=="J7254_14780"||junction=="J8921_10835"||junction=="J7841_867"||junction=="J5076_2580"||junction=="J8066_6364")||
+    target>=43&&revision<43&&(junction=="J1927_5181"||junction=="J8066_6364"||junction=="J7841_867"||junction=="J7876_1656"||junction=="J5852_16963"||junction=="J7254_14780")){
     clear=true;expected.jobs.manners.crossing=null;
     expected.jobs.manners.lawObservation.entry=null;expected.jobs.manners.lawObservation.entryPresent=false;
    }
    if(clear){expected.lawObservation.entry=null;expected.lawObservation.entryPresent=false;}
-   method.Invoke(null,new object[]{saved,map});
+   // Exercise the version/junction matrix without serializing the entire map for each fixture.
+   // Separate cases below run the exact-default gate used by the actual game checkpoint.
+   migrate.Invoke(null,new object[]{saved,revision,target});
    if(JsonUtility.ToJson(saved)!=JsonUtility.ToJson(expected))throw new Exception("reviewed migration changed protected metadata or missed invalidation from r"+revision+" at "+junction);
    checks++;
   }
@@ -46,8 +50,14 @@ public static class JunctionRouteFeedbackTests {
    }
   }finally{map.editorDocument=originalDocument;}
   foreach(int revision in new[]{13,target}){var saved=MigrationFixture(revision,"J2225_12001");string before=JsonUtility.ToJson(saved);method.Invoke(null,new object[]{saved,map});if(JsonUtility.ToJson(saved)!=before)throw new Exception("migration accepted unsupported/same revision "+revision);checks++;}
+  foreach(int revision in new[]{14,target-1}){
+   var saved=MigrationFixture(revision,"J7841_867");var expected=JsonUtility.FromJson<LiveCampaignCheckpoint>(JsonUtility.ToJson(saved));
+   migrate.Invoke(null,new object[]{expected,revision,target});method.Invoke(null,new object[]{saved,map});
+   if(JsonUtility.ToJson(saved)!=JsonUtility.ToJson(expected))throw new Exception("exact default did not execute migration from r"+revision);
+   checks++;
+  }
   if(target>=42){
-   var legacy=MigrationFixture(41,"J2564_12237");legacy.lawObservation=null;legacy.lawObservationPresent=false;legacy.operationVersion=0;
+   var legacy=MigrationFixture(target-1,target>=43?"J5852_16963":"J2564_12237");legacy.lawObservation=null;legacy.lawObservationPresent=false;legacy.operationVersion=0;
    method.Invoke(null,new object[]{legacy,map});
    if(legacy.jobs.manners.crossing!=null||legacy.jobs.manners.lawObservation.entryPresent||legacy.jobs.manners.lawObservation.entry!=null||
     legacy.jobs.manners.score!=87||legacy.jobs.manners.events!=3)throw new Exception("migration did not preserve the score while clearing legacy crossing state");

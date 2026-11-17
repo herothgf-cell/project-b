@@ -245,7 +245,8 @@ internal static partial class ConfirmedLaneSurveyR42
     private static void VerifyGreen(RoadMapDocument document)
     {
         var lanes = document.lanes.ToDictionary(l => l.id);
-        var lane49 = lanes[Green49Head].next.Select(id => lanes[id]).OrderBy(l => l.number).ToArray();
+        var lastWestbound = lanes.Values.Single(lane => !lane.disabled && lane.next.Contains(Green49Left));
+        var lane49 = lastWestbound.next.Select(id => lanes[id]).OrderBy(l => l.number).ToArray();
         GreenCheck(lane49.Length == 2 && lane49.All(l => l.ruleId == Green49Junction), "49 missing two westbound lanes");
         GreenCheck(lane49[0].next.Select(id => lanes[id].turn).SequenceEqual(new[] { -1 }) &&
             lane49[1].next.All(id => lanes[id].turn == 0), "49 wrong westbound movements");
@@ -270,7 +271,9 @@ internal static partial class ConfirmedLaneSurveyR42
         var graph = new HdRoadGraph(map);
         var byId = graph.edges.Select((lane, index) => (lane, index)).ToDictionary(v => v.lane.id, v => v.index);
         var arrows = LaneDirectionPaint.Layout(map).ToLookup(a => a.edgeIndex);
-        var lanes49 = graph.edges[byId[Green49Head]].next.Select(i => graph.edges[i]).OrderBy(l => l.number).ToArray();
+        int left49 = byId[Green49Left];
+        var lanes49 = graph.edges.Single(lane => !lane.disabled && lane.next.Contains(left49)).next
+            .Select(i => graph.edges[i]).OrderBy(l => l.number).ToArray();
         var lanes54 = Enumerable.Range(0, Green54Labels.Length).Select(i => graph.edges[byId[Green54LaneId(i)]]).ToArray();
         int[] expected = { LaneDirectionPaint.Left, LaneDirectionPaint.Straight, LaneDirectionPaint.Left,
             LaneDirectionPaint.Straight, LaneDirectionPaint.Straight, LaneDirectionPaint.Straight, LaneDirectionPaint.Right };

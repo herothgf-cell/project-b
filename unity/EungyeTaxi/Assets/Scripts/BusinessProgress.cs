@@ -173,6 +173,7 @@ public class BusinessProgress : MonoBehaviour {
   const string reviewedR40Hash="b91b46e9051e5c1427a1ecd7ff40ca7fde370a0120efabe4e4918c63bb6a3634";
   const string reviewedR41Hash="57ecdb77d3b473ac1e86e83c02a45219babce1118c3f36ea4d68919a771f12fe";
   const string reviewedR42Hash="0d7c0353d3bf477d7ab1d3ea1c6c8dc35a7281e30c10ccafd6f3c3b343f5633b";
+  const string reviewedR43Hash="e0f8ce711e8c1b5dcd814d0bea2c9f7f454d63baa28be4b3d8cf86df37b4d6bb";
   string[] hashes={
    "d9596da33d4efc0d4f862c714eb05bb70c94365bfc30ab6171a702e2b672e3df",
    "cb8e0ec0ed3a48f7e9a33c4ff8dc3878bd9d59aafef13c0f0fe43c5616c9c808",
@@ -183,19 +184,21 @@ public class BusinessProgress : MonoBehaviour {
    "8c9a5e7f386aeeac9114b7a9c7da0c938fb8019c5456bd20bf6e6b956de388f6",
    "1233c5ca6b88d5de3c75d7542ebc294409750bd1d2daa5041658149457f7e42d",
    "38bad072a26d23185eb9f902ea347eb84dbe34c7e554b22637916ee52645f8af",
-   reviewedR25Hash,reviewedR26Hash,reviewedR27Hash,reviewedR28Hash,reviewedR29Hash,reviewedR30Hash,reviewedR31Hash,reviewedR32Hash,reviewedR33Hash,reviewedR34Hash,reviewedR35Hash,reviewedR36Hash,reviewedR37Hash,reviewedR38Hash,reviewedR39Hash,reviewedR40Hash,reviewedR41Hash,reviewedR42Hash};
-  int from=0,to=0;for(int revision=14;revision<=42;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>42)return;
+   reviewedR25Hash,reviewedR26Hash,reviewedR27Hash,reviewedR28Hash,reviewedR29Hash,reviewedR30Hash,reviewedR31Hash,reviewedR32Hash,reviewedR33Hash,reviewedR34Hash,reviewedR35Hash,reviewedR36Hash,reviewedR37Hash,reviewedR38Hash,reviewedR39Hash,reviewedR40Hash,reviewedR41Hash,reviewedR42Hash,reviewedR43Hash};
+  int from=0,to=0;for(int revision=14;revision<=43;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>43)return;
   string reviewedHash=hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
-  live.mapRevision=map.editorRevision;
-  // r26 and r32 change paint only. Revisions 27–31 and 33–42 rebuild graph indices.
+  ApplyReviewedEungyeCheckpointMigration(live,from,to);
+ }
+ static void ApplyReviewedEungyeCheckpointMigration(LiveCampaignCheckpoint live,int from,int to){
+  live.mapRevision="은계 프로젝트 지도 · r"+to;
+  // r26 and r32 change paint only. Revisions 27–31 and 33–43 rebuild graph indices.
   if(to>=18&&(from<25||to>=27&&from<31||to>=33)&&live.jobs!=null){live.jobs.navigationCaptured=false;live.jobs.navAvoidEdge=live.jobs.navObservedEdge=live.jobs.navPassedObservedEdge=-1;}
-  bool upgradingConfirmedApproaches=from<42&&to>=42;
   var manners=live.jobs?.manners;
-  if(upgradingConfirmedApproaches&&manners!=null){
-   if(ReviewedR42Junction(manners.crossing?.junction))manners.crossing=null;
-   if(ReviewedR42Junction(manners.lawObservation?.entry?.junction)){
+  if(manners!=null){
+   if(RecentlyChangedEungyeApproach(from,to,manners.crossing?.junction))manners.crossing=null;
+   if(RecentlyChangedEungyeApproach(from,to,manners.lawObservation?.entry?.junction)){
     manners.lawObservation.entry=null;manners.lawObservation.entryPresent=false;
    }
   }
@@ -220,13 +223,15 @@ public class BusinessProgress : MonoBehaviour {
   bool parkingDaeun=from<39&&to>=39&&(junction=="J6481_3341"||junction=="J3516_12881");
   bool eungyeCrossroad=from<40&&to>=40&&junction=="J4396_13458";
   bool gyesuApproaches=from<41&&to>=41&&(junction=="J4396_13458"||junction=="J5692_14220");
-  bool confirmedApproaches=upgradingConfirmedApproaches&&ReviewedR42Junction(junction);
+  bool confirmedApproaches=RecentlyChangedEungyeApproach(from,to,junction);
   bool legacy=from<20&&(to>=19&&junction=="J8066_6364"||to>=17&&junction=="J7917_2565"||from!=16&&junction=="J7973_3744"&&entry.axis==1&&entry.sign==1||from==14&&(junction=="J8066_6364"||junction=="J1927_5181"));
   if(cyan||gap||y07||pink||roundabout||green31||p29||y06||p10||commerce||parking||g05||approaches||g04||p03||southbound||parkingDaeun||eungyeCrossroad||gyesuApproaches||confirmedApproaches||legacy){live.lawObservation.entry=null;live.lawObservation.entryPresent=false;}
  }
- static bool ReviewedR42Junction(string junction){
-  return junction=="J2564_12237"||junction=="J7254_14780"||junction=="J8921_10835"||
-   junction=="J7841_867"||junction=="J5076_2580"||junction=="J8066_6364";
+ static bool RecentlyChangedEungyeApproach(int from,int to,string junction){
+  return from<42&&to>=42&&(junction=="J2564_12237"||junction=="J7254_14780"||junction=="J8921_10835"||
+   junction=="J7841_867"||junction=="J5076_2580"||junction=="J8066_6364")||
+   from<43&&to>=43&&(junction=="J1927_5181"||junction=="J8066_6364"||junction=="J7841_867"||
+   junction=="J7876_1656"||junction=="J5852_16963"||junction=="J7254_14780");
  }
  static void ValidateOffer(JobOffer o,int count){if(o!=null&&(o.pickup<0||o.pickup>=count||o.drop<0||o.drop>=count||o.fare<0))throw new Exception("Invalid live stop reference");}
  static bool Valid(float value){return !float.IsNaN(value)&&!float.IsInfinity(value);}

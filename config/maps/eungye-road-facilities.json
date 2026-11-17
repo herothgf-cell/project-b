@@ -134,6 +134,1989 @@
         {"kind":"flexible-bollard","points":[{"x":636,"z":336.92},{"x":641.8,"z":335.80}],"width":0.10,"height":0.78},
         {"kind":"flexible-bollard","points":[{"x":661,"z":331.05},{"x":668,"z":330.64},{"x":672.8,"z":330.02}],"width":0.10,"height":0.78}
       ]
+    },
+    {
+      "id": "survey-r43-g01-median",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=hmUQC7RsQvRpk8dL7jSjkw,308,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Yellow-banded black posts and metal rail along the northwest arm of marker 31 beyond its red approach; keep the intersection and edge side road clear.",
+      "estimated": "Only clear portions of the photographed median are included. Local endpoints follow the compiled opposing lane centres; model dimensions and stations are estimates.",
+      "segments": [
+        {
+          "kind": "post-rail",
+          "points": [
+            {
+              "x": 160.87,
+              "z": 1660
+            },
+            {
+              "x": 156.92,
+              "z": 1664
+            },
+            {
+              "x": 152.97,
+              "z": 1668
+            },
+            {
+              "x": 149.02,
+              "z": 1672
+            },
+            {
+              "x": 145.07,
+              "z": 1676
+            },
+            {
+              "x": 141.12,
+              "z": 1680
+            },
+            {
+              "x": 137.15,
+              "z": 1684
+            },
+            {
+              "x": 133.05,
+              "z": 1688
+            },
+            {
+              "x": 128.82,
+              "z": 1692
+            },
+            {
+              "x": 124.57,
+              "z": 1696
+            },
+            {
+              "x": 120.33,
+              "z": 1700
+            },
+            {
+              "x": 118.17,
+              "z": 1702
+            }
+          ],
+          "width": 0.25,
+          "height": 0.9
+        }
+      ]
+    },
+    {
+      "id": "survey-r43-g02-median",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=LnA7r4WhhbNgw_KRqUpIew,136,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Continuous median rail at the pedestrian overpass; brackets stop before the two intersection pockets.",
+      "estimated": "Only clear portions of the photographed median are included. Local endpoints follow the compiled opposing lane centres; model dimensions and stations are estimates.",
+      "segments": [
+        {
+          "kind": "post-rail",
+          "points": [
+            {
+              "x": 334.8,
+              "z": 1453
+            },
+            {
+              "x": 330.89,
+              "z": 1457
+            },
+            {
+              "x": 326.98,
+              "z": 1461
+            },
+            {
+              "x": 323.07,
+              "z": 1465
+            },
+            {
+              "x": 319.16,
+              "z": 1469
+            },
+            {
+              "x": 315.25,
+              "z": 1473
+            },
+            {
+              "x": 311.35,
+              "z": 1477
+            },
+            {
+              "x": 307.73,
+              "z": 1481
+            },
+            {
+              "x": 304.53,
+              "z": 1485
+            },
+            {
+              "x": 301.46,
+              "z": 1489
+            },
+            {
+              "x": 298.38,
+              "z": 1493
+            },
+            {
+              "x": 295.3,
+              "z": 1497
+            }
+          ],
+          "width": 0.25,
+          "height": 0.9
+        }
+      ]
+    },
+    {
+      "id": "survey-r43-g04-median",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=kDpik5bRQiK_QEHXI8S9HA,182,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Yellow-banded steel rail south of marker 37, away from the conditional U-turn opening.",
+      "estimated": "Only clear portions of the photographed median are included. Local endpoints follow the compiled opposing lane centres; model dimensions and stations are estimates.",
+      "segments": [
+        {
+          "kind": "post-rail",
+          "points": [
+            {
+              "x": 782.22,
+              "z": 22
+            },
+            {
+              "x": 782.23,
+              "z": 26
+            },
+            {
+              "x": 782.05,
+              "z": 30
+            },
+            {
+              "x": 781.77,
+              "z": 34
+            },
+            {
+              "x": 781.48,
+              "z": 38
+            },
+            {
+              "x": 781.36,
+              "z": 40
+            }
+          ],
+          "width": 0.25,
+          "height": 0.9
+        }
+      ]
+    },
+    {
+      "id": "survey-r43-g05-median",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=zJj85PPttXnWs_zMAAQ9FQ,151,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Two directions show a steel median rail opposite the apartment driveway. This conservative segment leaves other nearby openings for separate review.",
+      "estimated": "Only clear portions of the photographed median are included. Local endpoints follow the compiled opposing lane centres; model dimensions and stations are estimates.",
+      "segments": [
+        {
+          "kind": "post-rail",
+          "points": [
+            {
+              "x": 744.7,
+              "z": 1045
+            },
+            {
+              "x": 742.59,
+              "z": 1049
+            },
+            {
+              "x": 740.49,
+              "z": 1053
+            },
+            {
+              "x": 738.37,
+              "z": 1057
+            },
+            {
+              "x": 736.16,
+              "z": 1061
+            },
+            {
+              "x": 733.9,
+              "z": 1065
+            },
+            {
+              "x": 731.64,
+              "z": 1069
+            },
+            {
+              "x": 729.38,
+              "z": 1073
+            },
+            {
+              "x": 727.05,
+              "z": 1077
+            },
+            {
+              "x": 724.57,
+              "z": 1081
+            }
+          ],
+          "width": 0.25,
+          "height": 0.9
+        }
+      ]
+    },
+    {
+      "id": "survey-r43-g06-median",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=ZqtLsB_lP7FfZkZLDOtWmA,212,0,75,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Median railing southeast of the apartment interchange. This shorter piece keeps the marker 50 left-turn opening clear.",
+      "estimated": "Only clear portions of the photographed median are included. Local endpoints follow the compiled opposing lane centres; model dimensions and stations are estimates.",
+      "segments": [
+        {
+          "kind": "post-rail",
+          "points": [
+            {
+              "x": 561.78,
+              "z": 1244
+            },
+            {
+              "x": 556.71,
+              "z": 1248
+            },
+            {
+              "x": 551.64,
+              "z": 1252
+            },
+            {
+              "x": 546.57,
+              "z": 1256
+            },
+            {
+              "x": 541.5,
+              "z": 1260
+            },
+            {
+              "x": 536.43,
+              "z": 1264
+            },
+            {
+              "x": 533.9,
+              "z": 1266
+            }
+          ],
+          "width": 0.25,
+          "height": 0.9
+        }
+      ]
+    },
+    {
+      "id": "survey-r43-g07-median",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=Z9u3ENcevSFgsTpQpUirPg,354,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Long median guard fence near the local bus stop and apartment access, visibly continuous through the photographed central section.",
+      "estimated": "Only clear portions of the photographed median are included. Local endpoints follow the compiled opposing lane centres; model dimensions and stations are estimates.",
+      "segments": [
+        {
+          "kind": "post-rail",
+          "points": [
+            {
+              "x": 808.5,
+              "z": 728
+            },
+            {
+              "x": 808.55,
+              "z": 732
+            },
+            {
+              "x": 808.61,
+              "z": 736
+            },
+            {
+              "x": 808.66,
+              "z": 740
+            },
+            {
+              "x": 808.71,
+              "z": 744
+            },
+            {
+              "x": 808.76,
+              "z": 748
+            },
+            {
+              "x": 808.81,
+              "z": 752
+            },
+            {
+              "x": 808.87,
+              "z": 756
+            },
+            {
+              "x": 808.92,
+              "z": 760
+            },
+            {
+              "x": 808.97,
+              "z": 764
+            },
+            {
+              "x": 808.93,
+              "z": 768
+            },
+            {
+              "x": 808.89,
+              "z": 772
+            },
+            {
+              "x": 808.84,
+              "z": 776
+            },
+            {
+              "x": 808.8,
+              "z": 780
+            },
+            {
+              "x": 808.76,
+              "z": 784
+            },
+            {
+              "x": 808.72,
+              "z": 788
+            },
+            {
+              "x": 808.68,
+              "z": 792
+            },
+            {
+              "x": 808.63,
+              "z": 796
+            },
+            {
+              "x": 808.59,
+              "z": 800
+            },
+            {
+              "x": 808.49,
+              "z": 804
+            },
+            {
+              "x": 808.08,
+              "z": 808
+            },
+            {
+              "x": 807.68,
+              "z": 812
+            },
+            {
+              "x": 807.28,
+              "z": 816
+            },
+            {
+              "x": 806.88,
+              "z": 820
+            },
+            {
+              "x": 806.47,
+              "z": 824
+            },
+            {
+              "x": 806.07,
+              "z": 828
+            },
+            {
+              "x": 805.67,
+              "z": 832
+            },
+            {
+              "x": 805.27,
+              "z": 836
+            },
+            {
+              "x": 804.86,
+              "z": 840
+            },
+            {
+              "x": 804.46,
+              "z": 844
+            },
+            {
+              "x": 804.06,
+              "z": 848
+            },
+            {
+              "x": 803.66,
+              "z": 852
+            },
+            {
+              "x": 803.15,
+              "z": 856
+            }
+          ],
+          "width": 0.25,
+          "height": 0.9
+        }
+      ]
+    },
+    {
+      "id": "survey-r43-g08-median",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=Qs-7JPMJDw7FMc9QaVB4fQ,4,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Yellow-banded black posts and connecting rails along the central section between intersections 16 and 17. Keep opposing U-turn approach clear.",
+      "estimated": "Only clear portions of the photographed median are included. Local endpoints follow the compiled opposing lane centres; model dimensions and stations are estimates.",
+      "segments": [
+        {
+          "kind": "post-rail",
+          "points": [
+            {
+              "x": 800.93,
+              "z": 467
+            },
+            {
+              "x": 800.95,
+              "z": 471
+            },
+            {
+              "x": 800.96,
+              "z": 475
+            },
+            {
+              "x": 800.97,
+              "z": 479
+            },
+            {
+              "x": 800.99,
+              "z": 483
+            },
+            {
+              "x": 801.05,
+              "z": 487
+            },
+            {
+              "x": 801.3,
+              "z": 491
+            },
+            {
+              "x": 801.55,
+              "z": 495
+            },
+            {
+              "x": 801.8,
+              "z": 499
+            },
+            {
+              "x": 802.04,
+              "z": 503
+            },
+            {
+              "x": 802.29,
+              "z": 507
+            },
+            {
+              "x": 802.53,
+              "z": 511
+            },
+            {
+              "x": 802.7,
+              "z": 515
+            },
+            {
+              "x": 802.88,
+              "z": 519
+            },
+            {
+              "x": 803.06,
+              "z": 523
+            },
+            {
+              "x": 803.23,
+              "z": 527
+            },
+            {
+              "x": 803.41,
+              "z": 531
+            },
+            {
+              "x": 803.59,
+              "z": 535
+            },
+            {
+              "x": 803.74,
+              "z": 539
+            },
+            {
+              "x": 803.86,
+              "z": 543
+            },
+            {
+              "x": 803.98,
+              "z": 547
+            },
+            {
+              "x": 804.1,
+              "z": 551
+            },
+            {
+              "x": 804.22,
+              "z": 555
+            },
+            {
+              "x": 804.28,
+              "z": 557
+            }
+          ],
+          "width": 0.25,
+          "height": 0.9
+        }
+      ]
+    },
+    {
+      "id": "survey-r43-g10-g11-median",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=7ms6I-SeMdaSj2rgpyWWdg,183,-20,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Median posts and metal rails flank the photographed three-to-four lane transition and end before the marker 37 U-turn approach.",
+      "estimated": "Only clear portions of the photographed median are included. Local endpoints follow the compiled opposing lane centres; model dimensions and stations are estimates.",
+      "segments": [
+        {
+          "kind": "post-rail",
+          "points": [
+            {
+              "x": 787.24,
+              "z": 138
+            },
+            {
+              "x": 787.46,
+              "z": 142
+            },
+            {
+              "x": 787.67,
+              "z": 146
+            },
+            {
+              "x": 787.88,
+              "z": 150
+            },
+            {
+              "x": 788.07,
+              "z": 154
+            },
+            {
+              "x": 788.25,
+              "z": 158
+            },
+            {
+              "x": 788.41,
+              "z": 162
+            },
+            {
+              "x": 788.53,
+              "z": 166
+            },
+            {
+              "x": 788.54,
+              "z": 170
+            },
+            {
+              "x": 788.47,
+              "z": 174
+            },
+            {
+              "x": 788.4,
+              "z": 178
+            },
+            {
+              "x": 788.4,
+              "z": 182
+            },
+            {
+              "x": 788.45,
+              "z": 186
+            },
+            {
+              "x": 788.24,
+              "z": 190
+            },
+            {
+              "x": 787.89,
+              "z": 194
+            },
+            {
+              "x": 787.61,
+              "z": 198
+            },
+            {
+              "x": 787.6,
+              "z": 202
+            },
+            {
+              "x": 787.78,
+              "z": 206
+            },
+            {
+              "x": 787.95,
+              "z": 210
+            },
+            {
+              "x": 788.13,
+              "z": 214
+            },
+            {
+              "x": 788.31,
+              "z": 218
+            },
+            {
+              "x": 788.49,
+              "z": 222
+            },
+            {
+              "x": 788.66,
+              "z": 226
+            }
+          ],
+          "width": 0.25,
+          "height": 0.9
+        }
+      ]
+    },
+    {
+      "id": "survey-r43-g12-median",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=NvB5hhBRA6nTTCma4p4oNQ,103,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Black and yellow reflective median rail at the Suin-ro urban pedestrian overpass. East bridge barrier is separate and excluded.",
+      "estimated": "Only clear portions of the photographed median are included. Local endpoints follow the compiled opposing lane centres; model dimensions and stations are estimates.",
+      "segments": [
+        {
+          "kind": "post-rail",
+          "points": [
+            {
+              "x": 588,
+              "z": 422.92
+            },
+            {
+              "x": 592,
+              "z": 421.97
+            },
+            {
+              "x": 596,
+              "z": 421.03
+            },
+            {
+              "x": 600,
+              "z": 420.09
+            },
+            {
+              "x": 604,
+              "z": 419.14
+            },
+            {
+              "x": 608,
+              "z": 418.21
+            },
+            {
+              "x": 612,
+              "z": 417.28
+            },
+            {
+              "x": 616,
+              "z": 416.33
+            },
+            {
+              "x": 620,
+              "z": 415.38
+            },
+            {
+              "x": 624,
+              "z": 414.43
+            },
+            {
+              "x": 628,
+              "z": 413.62
+            },
+            {
+              "x": 632,
+              "z": 413.08
+            }
+          ],
+          "width": 0.25,
+          "height": 0.9
+        }
+      ]
+    },
+    {
+      "id": "survey-r43-g12-bridge-median",
+      "kind": "barrier",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=yjsIhnftAxg_A_jcXOk7aw,124,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Marker 59: continuous steel median guardrail on the Suin-ro mainline, confirmed by the user and the 2026-05 bridge approach views. This excludes the lower ramp and finishes within the photographed bridge reach.",
+      "estimated": "Only clear portions of the photographed median are included. Local endpoints follow the compiled opposing lane centres; model dimensions and stations are estimates.",
+      "segments": [
+        {
+          "kind": "barrier",
+          "points": [
+            {
+              "x": 848,
+              "z": 359.85
+            },
+            {
+              "x": 852,
+              "z": 358.5
+            },
+            {
+              "x": 856,
+              "z": 357.09
+            },
+            {
+              "x": 860,
+              "z": 355.61
+            },
+            {
+              "x": 864,
+              "z": 354.06
+            },
+            {
+              "x": 868,
+              "z": 352.41
+            },
+            {
+              "x": 872,
+              "z": 350.62
+            },
+            {
+              "x": 876,
+              "z": 348.73
+            },
+            {
+              "x": 880,
+              "z": 346.79
+            },
+            {
+              "x": 884,
+              "z": 344.78
+            },
+            {
+              "x": 888,
+              "z": 342.68
+            },
+            {
+              "x": 892,
+              "z": 340.48
+            },
+            {
+              "x": 896,
+              "z": 338.18
+            },
+            {
+              "x": 900,
+              "z": 335.73
+            },
+            {
+              "x": 904,
+              "z": 333.14
+            },
+            {
+              "x": 908,
+              "z": 330.47
+            },
+            {
+              "x": 912,
+              "z": 327.76
+            },
+            {
+              "x": 916,
+              "z": 325.44
+            },
+            {
+              "x": 920,
+              "z": 323.08
+            },
+            {
+              "x": 922,
+              "z": 321.87
+            }
+          ],
+          "width": 0.25,
+          "height": 0.9
+        },
+        {
+          "kind": "barrier",
+          "points": [
+            {
+              "x": 923,
+              "z": 321.25
+            },
+            {
+              "x": 927,
+              "z": 318.32
+            },
+            {
+              "x": 931,
+              "z": 315.74
+            },
+            {
+              "x": 935,
+              "z": 313.09
+            },
+            {
+              "x": 939,
+              "z": 310.05
+            },
+            {
+              "x": 943,
+              "z": 306.28
+            }
+          ],
+          "width": 0.25,
+          "height": 0.9
+        },
+        {
+          "kind": "barrier",
+          "points": [
+            {
+              "x": 963,
+              "z": 284.72
+            },
+            {
+              "x": 967,
+              "z": 279.67
+            },
+            {
+              "x": 971,
+              "z": 274.36
+            },
+            {
+              "x": 975,
+              "z": 268.85
+            },
+            {
+              "x": 979,
+              "z": 263.18
+            },
+            {
+              "x": 983,
+              "z": 257.45
+            },
+            {
+              "x": 985,
+              "z": 254.58
+            }
+          ],
+          "width": 0.25,
+          "height": 0.9
+        }
+      ]
+    },
+    {
+      "id": "survey-r43-c01-median",
+      "kind": "flexible-bollard",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=XwYcBxJT3-Wl6ns3anhJFA,317,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Flexible orange posts in distinct groups beside OUT gate and pedestrian approaches. Leave observed stop-line, doorway and crossing gaps.",
+      "estimated": "Only clear portions of the photographed median are included. Local endpoints follow the compiled opposing lane centres; model dimensions and stations are estimates.",
+      "segments": [
+        {
+          "kind": "flexible-bollard",
+          "points": [
+            {
+              "x": 815.92,
+              "z": 1127
+            },
+            {
+              "x": 811.65,
+              "z": 1131
+            },
+            {
+              "x": 807.78,
+              "z": 1135
+            },
+            {
+              "x": 805.93,
+              "z": 1137
+            }
+          ],
+          "width": 0.1,
+          "height": 0.78
+        },
+        {
+          "kind": "flexible-bollard",
+          "points": [
+            {
+              "x": 794.52,
+              "z": 1151
+            },
+            {
+              "x": 791.79,
+              "z": 1155
+            },
+            {
+              "x": 789.35,
+              "z": 1159
+            },
+            {
+              "x": 786.92,
+              "z": 1163
+            },
+            {
+              "x": 785.71,
+              "z": 1165
+            }
+          ],
+          "width": 0.1,
+          "height": 0.78
+        },
+        {
+          "kind": "flexible-bollard",
+          "points": [
+            {
+              "x": 773.86,
+              "z": 1188
+            },
+            {
+              "x": 771.84,
+              "z": 1192
+            },
+            {
+              "x": 769.82,
+              "z": 1196
+            },
+            {
+              "x": 767.82,
+              "z": 1200
+            },
+            {
+              "x": 765.82,
+              "z": 1204
+            },
+            {
+              "x": 763.82,
+              "z": 1208
+            },
+            {
+              "x": 761.82,
+              "z": 1212
+            },
+            {
+              "x": 759.82,
+              "z": 1216
+            },
+            {
+              "x": 758.82,
+              "z": 1218
+            }
+          ],
+          "width": 0.1,
+          "height": 0.78
+        },
+        {
+          "kind": "flexible-bollard",
+          "points": [
+            {
+              "x": 750.82,
+              "z": 1234
+            },
+            {
+              "x": 748.97,
+              "z": 1238
+            },
+            {
+              "x": 747.17,
+              "z": 1242
+            },
+            {
+              "x": 745.36,
+              "z": 1246
+            },
+            {
+              "x": 743.57,
+              "z": 1250
+            },
+            {
+              "x": 742.8,
+              "z": 1252
+            }
+          ],
+          "width": 0.1,
+          "height": 0.78
+        }
+      ]
+    },
+    {
+      "id": "survey-r43-c02-median",
+      "kind": "flexible-bollard",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=33X56P5EpWcrJP4ic86eMQ,358,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Orange flexible posts on the yellow median between red bicycle and pedestrian crossings.",
+      "estimated": "Only clear portions of the photographed median are included. Local endpoints follow the compiled opposing lane centres; model dimensions and stations are estimates.",
+      "segments": [
+        {
+          "kind": "flexible-bollard",
+          "points": [
+            {
+              "x": 731.31,
+              "z": 1304
+            },
+            {
+              "x": 730.99,
+              "z": 1308
+            },
+            {
+              "x": 730.73,
+              "z": 1312
+            },
+            {
+              "x": 730.57,
+              "z": 1316
+            },
+            {
+              "x": 730.46,
+              "z": 1320
+            },
+            {
+              "x": 730.36,
+              "z": 1324
+            },
+            {
+              "x": 730.25,
+              "z": 1328
+            },
+            {
+              "x": 730.1,
+              "z": 1332
+            },
+            {
+              "x": 729.87,
+              "z": 1336
+            },
+            {
+              "x": 729.65,
+              "z": 1340
+            },
+            {
+              "x": 729.42,
+              "z": 1344
+            }
+          ],
+          "width": 0.1,
+          "height": 0.78
+        }
+      ]
+    },
+    {
+      "id": "survey-r43-c03-median",
+      "kind": "flexible-bollard",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=-zYcDwI-wbOA5ujfVS-mLg,93,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Flexible orange posts east of J8066 toward the next apartment driveway. The marked crossing and later driveway transition are left clear.",
+      "estimated": "Only clear portions of the photographed median are included. Local endpoints follow the compiled opposing lane centres; model dimensions and stations are estimates.",
+      "segments": [
+        {
+          "kind": "flexible-bollard",
+          "points": [
+            {
+              "x": 841,
+              "z": 632.92
+            },
+            {
+              "x": 845,
+              "z": 632.71
+            },
+            {
+              "x": 849,
+              "z": 632.5
+            },
+            {
+              "x": 853,
+              "z": 632.29
+            },
+            {
+              "x": 857,
+              "z": 632.08
+            },
+            {
+              "x": 861,
+              "z": 631.87
+            },
+            {
+              "x": 865,
+              "z": 631.66
+            },
+            {
+              "x": 869,
+              "z": 631.45
+            },
+            {
+              "x": 873,
+              "z": 631.24
+            },
+            {
+              "x": 877,
+              "z": 631.03
+            },
+            {
+              "x": 881,
+              "z": 630.82
+            },
+            {
+              "x": 885,
+              "z": 630.61
+            },
+            {
+              "x": 887,
+              "z": 630.5
+            }
+          ],
+          "width": 0.1,
+          "height": 0.78
+        }
+      ]
+    },
+    {
+      "id": "survey-r43-c04-median",
+      "kind": "flexible-bollard",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=7eHRr7Qr7Q1_Ork9PUP4ag,358,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Orange flexible posts from the northern crossing toward J7254, before its stop area.",
+      "estimated": "Only clear portions of the photographed median are included. Local endpoints follow the compiled opposing lane centres; model dimensions and stations are estimates.",
+      "segments": [
+        {
+          "kind": "flexible-bollard",
+          "points": [
+            {
+              "x": 726.73,
+              "z": 1397
+            },
+            {
+              "x": 726.57,
+              "z": 1401
+            },
+            {
+              "x": 726.42,
+              "z": 1405
+            },
+            {
+              "x": 726.26,
+              "z": 1409
+            },
+            {
+              "x": 726.11,
+              "z": 1413
+            },
+            {
+              "x": 725.96,
+              "z": 1417
+            },
+            {
+              "x": 725.8,
+              "z": 1421
+            },
+            {
+              "x": 725.65,
+              "z": 1425
+            },
+            {
+              "x": 725.49,
+              "z": 1429
+            },
+            {
+              "x": 725.34,
+              "z": 1433
+            },
+            {
+              "x": 725.18,
+              "z": 1437
+            }
+          ],
+          "width": 0.1,
+          "height": 0.78
+        }
+      ]
+    },
+    {
+      "id": "survey-r43-o01-median",
+      "kind": "flexible-bollard",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=7FicJjaaPboSh9OnwrYR5g,92,-15,63,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Orange flexible posts on the reviewed 1-to-2 approach west of J8066. Leave stop line and pedestrian crossing clear.",
+      "estimated": "Only clear portions of the photographed median are included. Local endpoints follow the compiled opposing lane centres; model dimensions and stations are estimates.",
+      "segments": [
+        {
+          "kind": "flexible-bollard",
+          "points": [
+            {
+              "x": 746,
+              "z": 639.18
+            },
+            {
+              "x": 750,
+              "z": 639.52
+            },
+            {
+              "x": 754,
+              "z": 639.89
+            },
+            {
+              "x": 758,
+              "z": 640.05
+            },
+            {
+              "x": 762,
+              "z": 639.92
+            },
+            {
+              "x": 766,
+              "z": 639.75
+            },
+            {
+              "x": 768,
+              "z": 639.66
+            }
+          ],
+          "width": 0.1,
+          "height": 0.78
+        }
+      ]
+    },
+    {
+      "id": "eungyejungang-ro-P11-median-rail",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=xVb_3nz8Qiyi7EqyCZtqSg,1,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Black and yellow median rail runs north of the existing J5076 rail, including at 322, 342, 356 and 376m. View at 395m and the J5057 crossing show the already-open end.",
+      "estimated": "Connects to the reviewed rail endpoint and ends conservatively before the junction approach. Use the midpoint of the two directed game corridors, with the generated 2m post spacing and existing 0.25m / 0.9m rail dimensions.",
+      "segments": [
+        {
+          "kind": "post-rail",
+          "points": [
+            {
+              "x": 509.48,
+              "z": 299
+            },
+            {
+              "x": 509.16,
+              "z": 309
+            },
+            {
+              "x": 508.32,
+              "z": 326
+            },
+            {
+              "x": 508.47,
+              "z": 356
+            },
+            {
+              "x": 508.63,
+              "z": 378
+            }
+          ],
+          "width": 0.25,
+          "height": 0.9
+        }
+      ]
+    },
+    {
+      "id": "eungye-ro142beon-gil-P16-school-bollards",
+      "kind": "flexible-bollard",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=I_PrD_ZghEQbVLxkqG_B_A,271,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Orange flexible posts sit on the yellow line between the main-road zebra and the entrance opening west of the internal alley junction. The two driveway openings stay unblocked.",
+      "estimated": "Short straight portion only, with x808–816m and z86.15–86.05m approximate on the game centre line. The exact endpoints, nominal 2m spacing, diameter and height are game estimates.",
+      "segments": [
+        {
+          "kind": "flexible-bollard",
+          "points": [
+            {
+              "x": 808,
+              "z": 86.15
+            },
+            {
+              "x": 815.95,
+              "z": 86.05
+            }
+          ],
+          "width": 0.1,
+          "height": 0.78
+        }
+      ]
+    },
+    {
+      "id": "eungye-ro142beon-gil-P19-school-bollards",
+      "kind": "flexible-bollard",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=8BPWQwVQq7b14T8ZWGEU_A,91,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Orange flexible posts survive in the straight stretch between the red hump and the school access zebra. At approximately 863m the school entrance opening is unobstructed.",
+      "estimated": "Short portion well clear of the bicycle crossing, school access area and alley openings. Endpoints, spacing and game dimensions are approximations.",
+      "segments": [
+        {
+          "kind": "flexible-bollard",
+          "points": [
+            {
+              "x": 846.7,
+              "z": 85.57
+            },
+            {
+              "x": 850.65,
+              "z": 85.5
+            }
+          ],
+          "width": 0.1,
+          "height": 0.78
+        }
+      ]
+    },
+    {
+      "id": "eungye-ro142beon-gil-P16-sidewalk-rail",
+      "kind": "pedestrian-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=9c0ogAGr1f3R3W1MzFjSTA,91,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Dark curb rails on each edge of the school zone between the main-road crossing and the internal alley/parking mouth. The approach crosswalk and mouth are open.",
+      "estimated": "Game sidewalk alignment between x808 and x815m only. Size and length estimates leave both openings clear.",
+      "segments": [
+        {
+          "kind": "pedestrian-rail",
+          "points": [
+            {
+              "x": 808,
+              "z": 91.42
+            },
+            {
+              "x": 815,
+              "z": 91.29
+            }
+          ],
+          "width": 0.16,
+          "height": 0.82
+        },
+        {
+          "kind": "pedestrian-rail",
+          "points": [
+            {
+              "x": 808,
+              "z": 81.13
+            },
+            {
+              "x": 815,
+              "z": 81
+            }
+          ],
+          "width": 0.16,
+          "height": 0.82
+        }
+      ]
+    },
+    {
+      "id": "eungye-ro142beon-gil-P19-sidewalk-rail",
+      "kind": "pedestrian-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=8BPWQwVQq7b14T8ZWGEU_A,91,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Dark rails stand in front of the school fence and along the opposite shops. Those rails terminate before the two access areas and the crossing.",
+      "estimated": "Conservative x845–852m portions inside the sidewalk. Railway-like center barriers or access closures are not identified here.",
+      "segments": [
+        {
+          "kind": "pedestrian-rail",
+          "points": [
+            {
+              "x": 845,
+              "z": 90.61
+            },
+            {
+              "x": 852,
+              "z": 90.45
+            }
+          ],
+          "width": 0.16,
+          "height": 0.82
+        },
+        {
+          "kind": "pedestrian-rail",
+          "points": [
+            {
+              "x": 845,
+              "z": 80.33
+            },
+            {
+              "x": 852,
+              "z": 80.17
+            }
+          ],
+          "width": 0.16,
+          "height": 0.82
+        }
+      ]
+    },
+    {
+      "id": "suin-ro3247beon-gil-P05-sidewalk-rail",
+      "kind": "pedestrian-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=NlpniRi8Tb2MAhS7D--a6g,323,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Black roadside rails continue on both sides between the old apartment retaining wall and the school fence. Shorter bounds avoid the utilities and separate access near J1919.",
+      "estimated": "Rail follows each mapped shoulder between underlying road center station z33–46m. Actual road width and post spacing are approximate.",
+      "segments": [
+        {
+          "kind": "pedestrian-rail",
+          "points": [
+            {
+              "x": 219.82,
+              "z": 29
+            },
+            {
+              "x": 215.17,
+              "z": 35.31
+            },
+            {
+              "x": 210.69,
+              "z": 41.31
+            }
+          ],
+          "width": 0.16,
+          "height": 0.82
+        },
+        {
+          "kind": "pedestrian-rail",
+          "points": [
+            {
+              "x": 233.32,
+              "z": 37
+            },
+            {
+              "x": 227.75,
+              "z": 44.69
+            },
+            {
+              "x": 223.28,
+              "z": 50.69
+            }
+          ],
+          "width": 0.16,
+          "height": 0.82
+        }
+      ]
+    },
+    {
+      "id": "eungyenam-ro-P15-sidewalk-rail",
+      "kind": "pedestrian-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=pa_GcYpQOJrV3kQtOOy5ng,90,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Traffic-side dark rails on both sides west of the gate intersection. The 707m panorama confirms the dark rail beside the south block east of both gates.",
+      "estimated": "Short aligned midblock pieces, preserving the gate/crosswalk and bus stop gaps. Dimensions are game estimates.",
+      "segments": [
+        {
+          "kind": "pedestrian-rail",
+          "points": [
+            {
+              "x": 611.03,
+              "z": 94.58
+            },
+            {
+              "x": 623.03,
+              "z": 94.54
+            }
+          ],
+          "width": 0.16,
+          "height": 0.82
+        },
+        {
+          "kind": "pedestrian-rail",
+          "points": [
+            {
+              "x": 610.97,
+              "z": 80.03
+            },
+            {
+              "x": 622.97,
+              "z": 79.99
+            }
+          ],
+          "width": 0.16,
+          "height": 0.82
+        },
+        {
+          "kind": "pedestrian-rail",
+          "points": [
+            {
+              "x": 702.97,
+              "z": 79.71
+            },
+            {
+              "x": 712.97,
+              "z": 79.68
+            }
+          ],
+          "width": 0.16,
+          "height": 0.82
+        }
+      ]
+    },
+    {
+      "id": "eungyejungang-ro-P22-median-rail",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=OuwL5ySRUpY-4EOqXDW/SjA,0,-19,85,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Black and yellow centre rails are present south of the central raised zebra and north of the apartment-access junction, including at the 126m, 195m and 214m panoramas. The middle access and its pedestrian crossing have a clear opening.",
+      "estimated": "Conservative z119–145m and z190–231m lengths keep the open section and both mapped junctions clear. Width, height and alignment are approximate.",
+      "segments": [
+        {
+          "kind": "post-rail",
+          "points": [
+            {
+              "x": 507.62,
+              "z": 119
+            },
+            {
+              "x": 507.8,
+              "z": 145
+            }
+          ],
+          "width": 0.25,
+          "height": 0.9
+        },
+        {
+          "kind": "post-rail",
+          "points": [
+            {
+              "x": 508.06,
+              "z": 190
+            },
+            {
+              "x": 507.93,
+              "z": 216
+            },
+            {
+              "x": 507.81,
+              "z": 231
+            }
+          ],
+          "width": 0.25,
+          "height": 0.9
+        }
+      ]
+    },
+    {
+      "id": "gyesu-Y05-umi-median-post-rail",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=MlEGsgvMqyj2M7JYnOVUGA,235,-20,80,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Black and yellow median post rail visible both from the apartment-gate approach looking back (MlEGsgv...) and the approach farther west (dZRNgq9T1TrX2_d41CyAnQ). A median opening is visible at the apartment gate and no rail is drawn there.",
+      "estimated": "The photo verifies the observed subsection. Stations and dimensions are game estimates; unobserved continuations and junction clearances remain open.",
+      "segments": [
+        {
+          "kind": "post-rail",
+          "width": 0.25,
+          "height": 0.9,
+          "points": [
+            {
+              "x": 483,
+              "z": 1372.485
+            },
+            {
+              "x": 488.571,
+              "z": 1375.909
+            },
+            {
+              "x": 494.143,
+              "z": 1379.25
+            },
+            {
+              "x": 499.714,
+              "z": 1382.505
+            },
+            {
+              "x": 505.286,
+              "z": 1385.759
+            },
+            {
+              "x": 510.857,
+              "z": 1389.014
+            },
+            {
+              "x": 516.429,
+              "z": 1392.269
+            },
+            {
+              "x": 522,
+              "z": 1395.523
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gyesu-Y06-kepco-median-post-rail",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=DTzK3etFyazCcMDmR0GL7w,70,-20,80,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Black posts with yellow bands and connecting rails along the median opposite the KEPCO bus stop. KhhluSFI-JhOiJTWhDc8Ew and 1zkMkPr5YlH9MdvGMjx1Ow show the same rail on both sides of the stop.",
+      "estimated": "The photo verifies the observed subsection. Stations and dimensions are game estimates; unobserved continuations and junction clearances remain open.",
+      "segments": [
+        {
+          "kind": "post-rail",
+          "width": 0.25,
+          "height": 0.9,
+          "points": [
+            {
+              "x": 609,
+              "z": 1437.374
+            },
+            {
+              "x": 614.4,
+              "z": 1439.26
+            },
+            {
+              "x": 619.8,
+              "z": 1441.146
+            },
+            {
+              "x": 625.2,
+              "z": 1443.033
+            },
+            {
+              "x": 630.6,
+              "z": 1444.919
+            },
+            {
+              "x": 636,
+              "z": 1446.806
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gyesu-Y07-west-post-rail",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=Jauz6aLS4G57yoOgUkoEwQ,70,-20,80,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Black posts with yellow reflectors and connecting rails in the median east of J7254; select visible short span beyond the marked crossing.",
+      "estimated": "The photo verifies the observed subsection. Stations and dimensions are game estimates; unobserved continuations and junction clearances remain open.",
+      "segments": [
+        {
+          "kind": "post-rail",
+          "width": 0.25,
+          "height": 0.9,
+          "points": [
+            {
+              "x": 764,
+              "z": 1490.716
+            },
+            {
+              "x": 769.556,
+              "z": 1492.591
+            },
+            {
+              "x": 775.111,
+              "z": 1494.466
+            },
+            {
+              "x": 780.667,
+              "z": 1496.341
+            },
+            {
+              "x": 786.222,
+              "z": 1498.216
+            },
+            {
+              "x": 791.778,
+              "z": 1500.091
+            },
+            {
+              "x": 797.333,
+              "z": 1501.967
+            },
+            {
+              "x": 802.889,
+              "z": 1503.842
+            },
+            {
+              "x": 808.444,
+              "z": 1505.717
+            },
+            {
+              "x": 814,
+              "z": 1507.592
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gyesu-Y07-overpass-temporary-barrier",
+      "kind": "temporary-barrier",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=rgr44aiZkfzorjzqYdnmYw,74.79,1.52,80,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Alternating red-white modular temporary barriers continue under the overpass and are present at the east face (Eb6wguY5MNE42nfJatL_KA).",
+      "estimated": "The photo verifies the observed subsection. Stations and dimensions are game estimates; unobserved continuations and junction clearances remain open.",
+      "segments": [
+        {
+          "kind": "temporary-barrier",
+          "width": 0.37,
+          "height": 0.65,
+          "points": [
+            {
+              "x": 955,
+              "z": 1556.218
+            },
+            {
+              "x": 960.571,
+              "z": 1558.222
+            },
+            {
+              "x": 966.143,
+              "z": 1560.054
+            },
+            {
+              "x": 971.714,
+              "z": 1561.886
+            },
+            {
+              "x": 977.286,
+              "z": 1563.719
+            },
+            {
+              "x": 982.857,
+              "z": 1565.545
+            },
+            {
+              "x": 988.429,
+              "z": 1566.817
+            },
+            {
+              "x": 994,
+              "z": 1568.591
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gyesu-Y09-curve-temporary-barrier",
+      "kind": "temporary-barrier",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=HtQ5IHpXF-7vRq2lLe4Gyw,65,-20,80,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Alternating red-white temporary barrier on the confirmed curve median, corroborated by December 2025 and May 2026 views. Site opens are excluded.",
+      "estimated": "The photo verifies the observed subsection. Stations and dimensions are game estimates; unobserved continuations and junction clearances remain open.",
+      "segments": [
+        {
+          "kind": "temporary-barrier",
+          "width": 0.37,
+          "height": 0.65,
+          "points": [
+            {
+              "x": 1201,
+              "z": 1624.255
+            },
+            {
+              "x": 1206.846,
+              "z": 1627.264
+            },
+            {
+              "x": 1212.692,
+              "z": 1630.346
+            },
+            {
+              "x": 1218.538,
+              "z": 1634.129
+            },
+            {
+              "x": 1224.385,
+              "z": 1638.067
+            },
+            {
+              "x": 1230.231,
+              "z": 1642.089
+            },
+            {
+              "x": 1236.077,
+              "z": 1646.099
+            },
+            {
+              "x": 1241.923,
+              "z": 1650.192
+            },
+            {
+              "x": 1247.769,
+              "z": 1654.684
+            },
+            {
+              "x": 1253.615,
+              "z": 1660.045
+            },
+            {
+              "x": 1259.462,
+              "z": 1665.444
+            },
+            {
+              "x": 1265.308,
+              "z": 1670.842
+            },
+            {
+              "x": 1271.154,
+              "z": 1675.906
+            },
+            {
+              "x": 1277,
+              "z": 1680.877
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "eungyejungang-Y10-west-median-rail",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=cYECLYXazZW6WTOxtJUo-g,135,-20,80,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Black-and-yellow post rail on the yellow hatched median west of the Y10/Y11 junction, with both directions visible.",
+      "estimated": "The photo verifies the observed subsection. Stations and dimensions are game estimates; unobserved continuations and junction clearances remain open.",
+      "segments": [
+        {
+          "kind": "post-rail",
+          "width": 0.25,
+          "height": 0.9,
+          "points": [
+            {
+              "x": 528,
+              "z": 1725.701
+            },
+            {
+              "x": 533.75,
+              "z": 1721.55
+            },
+            {
+              "x": 539.5,
+              "z": 1717.879
+            },
+            {
+              "x": 545.25,
+              "z": 1715.1
+            },
+            {
+              "x": 551,
+              "z": 1712.398
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "eungyejungang-Y11-south-median-rail",
+      "kind": "post-rail",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=N7PjR0zf8DCG420DRWF3Qg,260,-20,80,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Black-and-yellow median rail beyond the J7254 north crossing and through the park approach. FkMkkKsHEJKz91gA2IfBDQ confirms continuous rail further north.",
+      "estimated": "The photo verifies the observed subsection. Stations and dimensions are game estimates; unobserved continuations and junction clearances remain open.",
+      "segments": [
+        {
+          "kind": "post-rail",
+          "width": 0.25,
+          "height": 0.9,
+          "points": [
+            {
+              "x": 718.545,
+              "z": 1522
+            },
+            {
+              "x": 717.186,
+              "z": 1527.625
+            },
+            {
+              "x": 715.826,
+              "z": 1533.25
+            },
+            {
+              "x": 714.467,
+              "z": 1538.875
+            },
+            {
+              "x": 713.082,
+              "z": 1544.5
+            },
+            {
+              "x": 711.346,
+              "z": 1550.125
+            },
+            {
+              "x": 709.554,
+              "z": 1555.75
+            },
+            {
+              "x": 707.763,
+              "z": 1561.375
+            },
+            {
+              "x": 705.971,
+              "z": 1567
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "eungyejungang1gil-Y12-north-shoulder",
+      "kind": "barrier",
+      "sourceUrl": "https://map.naver.com/p?c=19,0,0,0,adh&p=33Dla7gxZ15p83wrT7QiJw,100,-20,80,Float",
+      "captureMonth": "2026-05",
+      "checkedAt": "2026-11-17",
+      "observed": "Silver W-beam guardrail on the north shoulder along the park side of the first eastbound curve. y5O5YRcJ50isqDHbnsaC3Q confirms it in December 2025.",
+      "estimated": "The photo verifies the observed subsection. Stations and dimensions are game estimates; unobserved continuations and junction clearances remain open.",
+      "segments": [
+        {
+          "kind": "barrier",
+          "width": 0.32,
+          "height": 0.72,
+          "points": [
+            {
+              "x": 611,
+              "z": 1729.346
+            },
+            {
+              "x": 617,
+              "z": 1731.676
+            },
+            {
+              "x": 623,
+              "z": 1733.772
+            },
+            {
+              "x": 629,
+              "z": 1734.417
+            },
+            {
+              "x": 635,
+              "z": 1734.678
+            }
+          ]
+        }
+      ]
     }
   ]
 }
