@@ -41,3 +41,7 @@
 
 - 실제 소스 커밋: `006e1fc` (`git log -1 --oneline -- docs/work-history/2026-11-17-road-width-and-dev-overview.md` 확인).
 - 배포 manifest143파일·133,364,953바이트 SHA256 검증 종료0. 검증 실행 폴더에 사용자 content/저장 미포함. 로컬 빌드 반영, 이번 작업 원격 push 없음.
+
+## 사용자 요청에 따른 main 배포
+- 2026-11-17: `git push origin main` 종료0, 원격 main `f45da9e558f75ca31fe82091121d2a5123463498` 확인. 개발 기능 소스006e1fc와 통합 빌드f45da9e 포함.
+- 기존 사용자 미커밋 Scene·개인 content·제안서·PackageManager 설정은 커밋/푸시 대상에서 제외했다.
