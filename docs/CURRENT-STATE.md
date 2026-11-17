@@ -1,3 +1,5 @@
+2026-11-17: 개발용 도로 보기의 지점 좌표·교차로 복사, 캡처 위 펜/화살표/텍스트 및 이미지 복사 추가. 모델10·일반 사용자 창 Player12검사와 BuildHybrid 통과. [사용법·검증](work-history/2026-11-17-road-report-capture.md).
+
 2026-11-17: 설정 → 개발용 테스트 → 도로 전체 보기 추가. 지도 r45 유지·로컬 통합 빌드 및 모델6/Player7검사 완료. [차로 폭 점검·화면](work-history/2026-11-17-road-width-and-dev-overview.md).
 
 # 현재 상태 한 장 요약
