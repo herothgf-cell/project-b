@@ -30,6 +30,14 @@ public class RoadPresentationProbe : MonoBehaviour {
    Capture(camera,junc.center-forward*24+Vector3.up*5,junc.center+forward*7+Vector3.up*3.3f,Path.Combine(folder,"signage-junction-view.png"),1900,998);
    Capture(camera,junc.center+forward*24+Vector3.up*5,junc.center-forward*7+Vector3.up*3.3f,Path.Combine(folder,"signage-junction-opposite.png"),1900,998);
    if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadContinuityViews")>=0){
+    var bankPoint=new Vector3(209.792358f,0,548.4707f);var bankForward=Quaternion.Euler(0,33.986042f,0)*Vector3.forward;
+    Capture(camera,bankPoint-bankForward*8+Vector3.up*5,bankPoint+bankForward*24,Path.Combine(folder,"bank-approach-reported.png"),1600,1000);
+    Capture(camera,bankPoint+new Vector3(0,45,-15),bankPoint+Vector3.forward*8,Path.Combine(folder,"bank-approach-overview.png"),1600,1000);
+    foreach(var id in new[]{"portal:A222BC004230:0:out","local:2103:5502:4463:8575","portal:A2218G611310:0:in","reviewed:P02:SB:right-approach"}){
+     var edge=session.jobs.nav.hd.edges.Single(e=>e.id==id);var path=new AssistedRoadNetwork.Path(edge.points.Select(p=>p.V()).ToArray());bool crossed=false;
+     for(float at=.25f;at<=path.length;at+=.25f){var p=path.Position(at);if(p.z>=543&&p.z<=590&&session.world.CentreLines.Crossed(path.Position(at-.25f),p))crossed=true;}
+     Check(!crossed,"bank legal route avoids actual rendered centreline: "+id);
+    }
     foreach(var entry in new[]{new Vector3(590,0,1240),new Vector3(700,0,1100),new Vector3(800,0,640),new Vector3(1035,0,642),new Vector3(463,0,1381),new Vector3(616,0,83),new Vector3(570,0,1422),new Vector3(193,0,88),new Vector3(193,0,518),new Vector3(725,0,1478)}){
      Capture(camera,entry+new Vector3(0,85,-35),entry,Path.Combine(folder,"road-continuity-"+(int)entry.x+"-"+(int)entry.z+".png"),1600,1000);
     }

@@ -1,5 +1,7 @@
 # 최신 작업 이력
 
+2026-11-17 은행사거리 북동쪽 J1927 중앙선 침범 원인을 수정했다. 본선1+1에서 남행 차로가 북행으로 침범하던 경로를 복구하고 정지선 회전차로만 분기한다. r44·BuildHybrid 종료0, 저장 이관937건·실행본331검사 통과. [근거·검증·실제 화면](2026-11-17-bank-approach-centreline.md). 필수 입력 Strict 문제0, 다음은 사람의 실제 운행 체감 확인이다.
+
 2026-11-17 도로 도색 연결·횡단보도 끝점 수정 완료. 네이처포레 곡선 겹침과 짧은 접점, 수인로 J1927 및 작성 횡단보도 끝점을 보정했다. 최종 BuildHybrid 종료0, 도색25,967점 누락0, 곡선403검사·Player327검사·전체 지도99타일 촬영 통과. 고정 카메라 화면 검토이며 수동 주행·전체 캠페인 검증과 구분한다. 지도 r43·필수 로컬 입력 유지. [구현·실제 검증·배포](2026-11-17-road-paint-continuity.md). 다음은 기존 거리뷰 조사에서 남긴 현장 불확실 지점이며 이번 도색 수정과 별개다.
 
 2026-11-17 색칠한 58개 구간의 차로 전환과 시설을 대조하고, 확인된 부분을 은계 r43에 반영했다. 은계남로·네이처포레 단면과 은계중앙로 56번 좌회전 신호, 새 시설 31곳을 적용했다. 다음은 에메랄드빌딩 앞 상류 합류점, 시설 끝점의 현장 확인과 게임 경계 밖 계수교차로다. [r43 구현·검증](2026-11-17-road-transitions-and-facilities.md) · [58그룹 점검표](../content-design/road-survey/2026-11-17-transitions-and-facilities.md).
@@ -43,10 +45,10 @@ PvP 호스트 렉 2차 최적화(같은 기록 후속 절): 내비 혼잡/제한
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
-| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 은계 r43 · [현재 검증 기록](2026-11-17-road-transitions-and-facilities.md) |
+| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 은계 r44 · [현재 검증 기록](2026-11-17-road-transitions-and-facilities.md) |
 | 통신 | LAN **v19**. 최적화·조향 통합 배포. 이전 v17/v18과 참가 불가, 양쪽 PC 같은 전체 실행 폴더 필요 |
 | 배포 검사 | r43 manifest 143파일·133333026바이트, Player 신호·표지 325건 · [검증과 재현](2026-11-17-road-transitions-and-facilities.md) |
-| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (Git 대상, revision43·contentHash e0f8ce71…)와 검토 도로시설 JSON · Strict 입력 문제0 · 선택 재수입 JSON2개 부재 |
+| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (Git 대상, revision44·contentHash 4bc4690b…)와 검토 도로시설 JSON · Strict 입력 문제0 · 선택 재수입 JSON2개 부재 |
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **main 병합·배포, 사람 검증 전** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V10 30장](../proposals/project-b-game-proposal-v10.pptx) · [반영 검토](../proposals/proposal-v10-review.md) · [Manual V10](../proposals/project-b-prototype-manual-v10.md) |
 
