@@ -38,3 +38,6 @@
 - 전체/18배 상세/800×600 창에서 실제 화면 확인. 설정 Draft, 카메라 위치·방향·정사영 상태, 차 위치·일시정지 보존 및 재진입/취소 시 자원 해제를 검증했다. 자동 제어 검사이며 사람의 장기 사용/수동 드래그 체감과 구분한다.
 - 사용: Esc → 설정 → 개발용 테스트 → 도로 전체 보기 열기. 드래그/휠, 전체 보기/내 위치, Esc로 설정 복귀.
 - [설정 진입 화면](../content-design/images/eungye-dev-road-settings.png) · [자주색 도로 상세](../content-design/images/eungye-dev-road-overview.png)
+
+- 실제 소스 커밋: `006e1fc` (`git log -1 --oneline -- docs/work-history/2026-11-17-road-width-and-dev-overview.md` 확인).
+- 배포 manifest143파일·133,364,953바이트 SHA256 검증 종료0. 검증 실행 폴더에 사용자 content/저장 미포함. 로컬 빌드 반영, 이번 작업 원격 push 없음.
