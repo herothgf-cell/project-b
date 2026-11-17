@@ -1,11 +1,11 @@
 {
-  "sourceCommit": "006e1fce4cb3e876cdc0c89e2c9aaec7118980b1",
+  "sourceCommit": "e80e56c97db087eefec7ca7504d69f1fbf907832",
   "sourceState": "local source commit; BuildHybrid generated runtime",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-17",
-  "totalBytes": 133364953,
+  "totalBytes": 133379785,
   "validation": {
     "build": "PrototypeBuild.BuildHybrid exit 0",
     "projectMapRevision": 45,
@@ -82,9 +82,9 @@
     },
     "developerRoadOverview": {
       "modelChecks": 6,
-      "playerChecks": 7,
+      "playerChecks": 12,
       "result": "pass",
-      "screens": "1600x1000 whole/detail and 800x600; visible window; separate camera; settings draft and pause preserved"
+      "screens": "1600x1000 overview and annotated report; 800x600 overview; Explorer user window; camera, pause and settings draft preserved"
     },
     "roadWidthAudit": {
       "parallelLaneSamples": 1811,
@@ -94,6 +94,13 @@
       "unsupported": 0,
       "nativeHandoffWhiteQuadMetres": 1.645167,
       "limitation": "current map geometry and rendered views; not a new full street-view survey or physical driving acceptance"
+    },
+    "developerRoadReport": {
+      "modelChecks": 4,
+      "playerChecksIncludedInOverview": 12,
+      "result": "pass",
+      "clipboard": "Windows Unicode location readback matches; PNG and CF_DIB available after copy",
+      "limitation": "Direct tool-launched process denied clipboard access (Win32 error 5); final probe passed in Explorer user window. No manual chat paste acceptance."
     }
   },
   "files": [
@@ -110,17 +117,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "a696f20e1a1a2be85d9fcd9f97921348d36e898cca53f428387ed85970123d4b"
+      "sha256": "a377a214c92196b70e7ea518c7de1428ea6d45843b604a185715d4443f82f48d"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 62204,
-      "sha256": "9195234b510e0a868e5db6b480edc68f2ef82270cd72284a714186e6c1cf414f"
+      "bytes": 62332,
+      "sha256": "616859efbf0a92f7a853ad71c8792a9541864433af41915fa5c7a603fba6622f"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 117640,
-      "sha256": "d24ecdab6d01530f3e41ba9d0ccc6a17cf499ebcb0f95b50e14d63ad703b6488"
+      "bytes": 118008,
+      "sha256": "2f9b06e3d304581a092b921686f2aab5943fb39c7426fba463e1ccd44524fad0"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -130,12 +137,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
       "bytes": 1140,
-      "sha256": "8e325a2e1976f8e2175e804173d2c459b79577fe0b63dceb93b54338ad3982d8"
+      "sha256": "a7fee0914f8777534bb7476fd1f23116373d2d0c8a41c3b2cf26753bda12bd33"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 2898432,
-      "sha256": "4c07d0d19c9a42527fdc0c45c32842cbd2afb5b6f5c9188d1784a43c39fb7326"
+      "bytes": 2912768,
+      "sha256": "2dded5a7f7aa8d5f3cef649e278014979fc5325b765c091722562bd94527b6d0"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
@@ -675,7 +682,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/sharedassets0.assets",
       "bytes": 7624,
-      "sha256": "8b609067dc6c947529a22c6ce2541ae9603ddfd35dd517e46787d8ead165eea4"
+      "sha256": "f8e6aa96a7b0573cfd302dc572e6eab193081ab9e3ff1e48f44fe6dc286cf17b"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi.exe",

@@ -31,3 +31,8 @@
 - 지도 r45와 필수 로컬 입력 변경 없음. 주행·경제·3일 캠페인·다른 PC LAN 검사는 이번 범위가 아니다.
 - 사용자 Scene, PackageManagerSettings, 배포 content/ 및 기획 문서 변경을 보존한다. LATEST의 사용자 우선순위 검토 문단도 별도 변경으로 남긴다.
 - 클립보드 메모리 소유권은 [Microsoft SetClipboardData](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setclipboarddata) 규칙에 따라 성공 시 OS에 넘기고 실패한 핸들만 해제한다.
+
+## 로컬 빌드 정리
+- 소스 커밋 `e80e56c` 확인. 배포 manifest 143파일, 133,379,785바이트와 SHA256 검증 통과(`DISTRIBUTION_OK`). 사용자 content/는 배포 목록에 추가하지 않았다.
+- 소스/실행본은 로컬 main에 기록한다. 이번 요청에서 원격 push는 수행하지 않았다.
+- 실제 Windows 이미지 형식 등록과 위치 텍스트 readback은 검증했고, 채팅 앱에 사람이 직접 Ctrl+V하는 검사는 남아 있다.
