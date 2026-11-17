@@ -9,13 +9,15 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
  public string PreferenceKey=DrivingSettings.Key;
  public static DrivingSettingsPanel For(DriveSession session){var panel=session.GetComponent<DrivingSettingsPanel>();return panel?panel:session.gameObject.AddComponent<DrivingSettingsPanel>();}
  public void Open(){Draft=(PreferenceKey==DrivingSettings.Key?DrivingSettings.Current:DrivingSettings.Load(PreferenceKey)).Copy();var owner=GetComponent<DriveSession>();FollowingDraft=owner&&owner.traffic&&owner.traffic.mitOptions.Enabled;WeatherDraft=RainSettings.Capture();openedWeather=WeatherDraft.Copy();Error="";WeatherTab=DevTab=false;IsOpen=true;}
- public void Cancel(){IsOpen=false;Draft=null;WeatherDraft=null;openedWeather=null;}
+ public DevRoadOverview RoadOverview {get{return GetComponent<DevRoadOverview>();}}
+ public void OpenRoadOverview(){var owner=GetComponent<DriveSession>();if(!IsOpen||!owner||!owner.world)return;var view=RoadOverview;if(!view)view=gameObject.AddComponent<DevRoadOverview>();view.Open(owner);}
+ public void Cancel(){if(RoadOverview)RoadOverview.Close();IsOpen=false;Draft=null;WeatherDraft=null;openedWeather=null;}
  public void SteeringPreset(int preset){if(!IsOpen||Draft==null)return;Draft.sensitivity=preset<0?.9f:preset>0?1.15f:1;Draft.response=preset<0?.8f:preset>0?1.35f:1;Draft.centering=preset<0?1.1f:preset>0?1.25f:1;}
  public void ResetDefaults(){if(IsOpen&&!DevTab){if(WeatherTab){if(RainSettingsRuntime.CanEdit(GetComponent<DriveSession>()))WeatherDraft=new RainSettings();}else {Draft=new DrivingSettings();FollowingDraft=true;}}}
  public void Apply(){if(!IsOpen)return;if(!WeatherDraft.Same(openedWeather)){string error;if(!RainSettingsRuntime.Apply(GetComponent<DriveSession>(),WeatherDraft,out error)){Error=error;return;}}if(PreferenceKey==DrivingSettings.Key)DrivingSettings.Commit(Draft);else Draft.Save(PreferenceKey);var owner=GetComponent<DriveSession>();if(owner&&owner.traffic&&!owner.simulationMatch)owner.traffic.mitOptions.SetEnabled(FollowingDraft);Cancel();}
  public void ValidateOwner(){var owner=GetComponent<DriveSession>();if(IsOpen&&owner&&owner.simulationMatch&&owner.simulationMatch.Finished)Cancel();}
  void Update(){ValidateOwner();}
- public static bool Back(DriveSession session){var panel=session.GetComponent<DrivingSettingsPanel>();if(!panel||!panel.IsOpen)return false;panel.Cancel();return true;}
+ public static bool Back(DriveSession session){var panel=session.GetComponent<DrivingSettingsPanel>();if(!panel||!panel.IsOpen)return false;if(panel.RoadOverview&&panel.RoadOverview.IsOpen)panel.RoadOverview.Close();else panel.Cancel();return true;}
  public static Rect Bounds(float width,float height){float scale=Mathf.Min(1,Mathf.Min((width-24)/620,(height-24)/700));return new Rect((width-620*scale)/2,(height-700*scale)/2,620*scale,700*scale);}
  GUIStyle Label(int size,bool bold=false){var style=new GUIStyle(GUI.skin.label){font=bold?KoreanText.BoldFont:KoreanText.Font,fontSize=size,fontStyle=bold?FontStyle.Bold:FontStyle.Normal,alignment=TextAnchor.MiddleLeft};style.normal.textColor=CasualUI.Ink;return style;}
  float Row(float y,string title,string hint,float value,float min,float max){
@@ -47,9 +49,13 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
   GUI.enabled=old;
   if(b&&canShift)GUI.Label(new Rect(28,422,562,24),"현재 "+current+"분 · 남은 영업 "+Mathf.CeilToInt((float)b.ledger.SecondsLeft/60f)+"분",Label(14));
   if(!single)GUI.Label(new Rect(28,470,562,24),"PVP에서는 사용할 수 없습니다.",Label(14));
+  CasualUI.RoundedFill(new Rect(18,502,584,122),CasualUI.Soft);
+  GUI.Label(new Rect(28,508,562,28),"도로 전체 보기",Label(19,true));
+  GUI.Label(new Rect(28,537,562,24),"실제 차선·인도·도로 폭을 위에서 확인 · 드래그와 휠로 이동",Label(14));
+  if(GUI.Button(new Rect(28,572,562,40),"도로 전체 보기 열기 (개발용)",KoreanText.Button(18)))OpenRoadOverview();
  }
  public void Draw(){
-  ValidateOwner();if(!IsOpen)return;GUI.depth=-700;KoreanText.PrepareSkin();var old=GUI.matrix;var bounds=Bounds(Screen.width,Screen.height);float scale=bounds.width/620;
+  ValidateOwner();if(!IsOpen)return;GUI.depth=-700;KoreanText.PrepareSkin();if(RoadOverview&&RoadOverview.IsOpen){RoadOverview.Draw();return;}var old=GUI.matrix;var bounds=Bounds(Screen.width,Screen.height);float scale=bounds.width/620;
   GUI.matrix=Matrix4x4.TRS(new Vector3(bounds.x,bounds.y,0),Quaternion.identity,new Vector3(scale,scale,1));
   CasualUI.Panel(new Rect(0,0,620,700));
   CasualUI.Header(new Rect(18,10,584,38),"설정",13);
