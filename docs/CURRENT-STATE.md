@@ -1,6 +1,6 @@
 # 현재 상태 한 장 요약
 
-**2026-11-17** 은행사거리 북동쪽의 정상 차량 경로 중앙선 침범을 r44에서 수정했다([근거·실제 화면](work-history/2026-11-17-bank-approach-centreline.md)). 저장 이관937건·최종 실행본331검사 통과. 앞선 은계 r43에 거리뷰로 확인한 차로 전환·분리시설과 은계중앙로 남행 좌회전 신호를 반영했다. 추가로 네이처포레 곡선 도색과 수인로 횡단보도 끝점을 보정하고, 도색25,967점·실행본327검사 및 전체 지도99타일 화면을 확인했다([검증 범위](work-history/2026-11-17-road-paint-continuity.md)). 새로 합류한 사람이나 다른 PC에서 이어갈 때 이 문서부터 읽는다. 날짜별 상세 기록은 [최신 작업 이력](work-history/LATEST.md), 이전 판 전문은 [보관본](design-history/CURRENT-STATE-until-2026-11-09.md)에 있다.
+**2026-11-17** 회전교차로 신호 오생성·불필요한 진입 대기, 6번 횡단보도/보행 대기점, 유턴 흰색 실선을 r45에 반영했다([검증·배포](work-history/2026-11-17-roundabout-and-crosswalk.md)). 은행사거리 북동쪽의 정상 차량 경로 중앙선 침범을 r44에서 수정했다([근거·실제 화면](work-history/2026-11-17-bank-approach-centreline.md)). 저장 이관937건·최종 실행본331검사 통과. 앞선 은계 r43에 거리뷰로 확인한 차로 전환·분리시설과 은계중앙로 남행 좌회전 신호를 반영했다. 추가로 네이처포레 곡선 도색과 수인로 횡단보도 끝점을 보정하고, 도색25,967점·실행본327검사 및 전체 지도99타일 화면을 확인했다([검증 범위](work-history/2026-11-17-road-paint-continuity.md)). 새로 합류한 사람이나 다른 PC에서 이어갈 때 이 문서부터 읽는다. 날짜별 상세 기록은 [최신 작업 이력](work-history/LATEST.md), 이전 판 전문은 [보관본](design-history/CURRENT-STATE-until-2026-11-09.md)에 있다.
 
 ## 한 줄 요약
 
@@ -13,7 +13,7 @@
 | 게임 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` (또는 `Play-Eungye.cmd`). 실행 폴더 전체가 필요 |
 | 모드 | 은계 싱글 3일(하루 예정 20분) / A2 자체 도시 PvP(봇 3 또는 LAN 최대 4명) |
 | 개발 | Unity **2022.3.62f2**, 프로젝트 `unity/EungyeTaxi`, 빌드 `PrototypeBuild.BuildHybrid` |
-| 기본 배포 | 은계 지도 r44 · 승하차 39곳 ([검증과 남은 조사](work-history/2026-11-17-road-transitions-and-facilities.md)) |
+| 기본 배포 | 은계 지도 r45 · 승하차 39곳 ([검증과 남은 조사](work-history/2026-11-17-road-transitions-and-facilities.md)) |
 | 통신 | LAN **v19**(이전 v17/v18과 참가 불가). PvP 방 목록에서 호스트에 직접 참가한다. 방 검색은 UDP `47777`, 기본 게임 포트는 UDP `7777`이다. 방 목록은 양쪽 PC의 새 실행본이 필요하다. |
 | 지도 | 정식 지도 `config/maps/project/eungye.project.json`(Git 포함). 원본 재수입할 때만 지도 ZIP 필요 |
 | 설정 도구 | 루트 `설정 관리.cmd` — 승객·대사·효과·법규·밸런스·차량 가격 조정. **Node.js 필요**(`winget install --id OpenJS.NodeJS.LTS`) |

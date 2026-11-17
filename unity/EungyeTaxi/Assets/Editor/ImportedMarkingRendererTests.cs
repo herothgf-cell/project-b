@@ -141,7 +141,7 @@ public static class ImportedMarkingRendererTests {
   var map=new MapData{editorDocument=new RoadMapDocument{lanes=new[]{head,join,exit}},hdMarks=new[]{new HdMark{id="uturn-median",kind="501",type="111",points=new[]{new MapPoint{x=-6,z=-8},new MapPoint{x=-6,z=16}}}}};
   var zones=UturnRoadMarkings.Build(map);Check(zones.Count==1&&Mathf.Abs(zones[0].width-12)<.001f&&Mathf.Abs(zones[0].length-8)<.001f,"U-turn median dimensions use across heading and furthest join station plus2m");
   Check(UturnRoadMarkings.Covers(zones,new Vector3(-6,0,4))&&!UturnRoadMarkings.Covers(zones,new Vector3(-3,0,4))&&!UturnRoadMarkings.Covers(zones,new Vector3(-6,0,-3)),"U-turn replacement masks only the bounded median strip");
-  var strokes=new List<Vector3>();UturnRoadMarkings.Paint(map,(name,p,dir,width,length,yellow)=>{Check(!yellow&&length<=1.5f&&Vector3.Dot(dir,Vector3.forward)>.99f,"U-turn median is a white broken line along incoming heading");strokes.Add(p);});Check(strokes.Count==3,"U-turn allowed interval paints three separated strokes");
+  var strokes=new List<Vector3>();UturnRoadMarkings.Paint(map,(name,p,dir,width,length,yellow)=>{Check(!yellow&&Mathf.Abs(length-8)<.001f&&Vector3.Dot(dir,Vector3.forward)>.99f,"U-turn median is one solid white line along incoming heading");strokes.Add(p);});Check(strokes.Count==1,"U-turn allowed interval paints one continuous stroke");
   var yellow=YellowVertices(map);Check(QuadsNear(yellow,new Vector3(-6,0,4),.7f)==0&&QuadsNear(yellow,new Vector3(-6,0,-5),.7f)>0&&QuadsNear(yellow,new Vector3(-6,0,12),.7f)>0,"yellow501 ends only within U-turn interval and remains solid on both ends");
   map.hdMarks[0].points=new[]{new MapPoint{x=-7.3f,z=-8},new MapPoint{x=-7.3f,z=16}};zones=UturnRoadMarkings.Build(map);
   Check(Mathf.Abs(zones[0].sourceOffset-1.3f)<.001f&&Mathf.Abs(zones[0].start.x+7.3f)<.001f,"white U-turn median follows nearby aligned source501 axis");
@@ -150,7 +150,7 @@ public static class ImportedMarkingRendererTests {
   map.hdMarks[0].points=new[]{new MapPoint{x=-6,z=-8},new MapPoint{x=-6,z=16}};
   map.hdMarks[0].kind="506";map.hdMarks[0].type="211";Check(QuadsNear(WhiteVertices(map),new Vector3(-6,0,4),1.2f)>0,"white lane divider is not erased by U-turn median mask");
   head.disabled=true;Check(UturnRoadMarkings.Build(map).Count==0,"disabled incoming lane does not authorize median paint");
-  var actual=ProjectMapStore.Load(ProjectMapBuild.Root).Compose();var actualZones=UturnRoadMarkings.Build(actual);Check(actualZones.Count==9&&actualZones.Select(z=>z.incomingId).Distinct().Count()==9,"all nine explicit U-turn approaches retain one unique median zone");
+  var actual=ProjectMapStore.Load(ProjectMapBuild.Root).Compose();var actualZones=UturnRoadMarkings.Build(actual);var activeUturns=actual.hdEdges.Where(e=>!e.disabled&&e.turn==UturnMovement.Turn).Select(e=>e.id).OrderBy(id=>id).ToArray();Check(actualZones.Select(z=>z.joinId).OrderBy(id=>id).SequenceEqual(activeUturns)&&actualZones.Select(z=>z.incomingId).Distinct().Count()==activeUturns.Length,"every current explicit U-turn approach retains one unique median zone");Debug.Log("UTURN_SOLID_ZONES "+actualZones.Count);
   foreach(var zone in actualZones)Check(zone.width>=UturnMovement.MinimumAcross&&zone.width<=40&&zone.length>2,"actual U-turn median spans the measured across gap and active join "+zone.joinId);
  }
  static void UturnArrowFallbackRegressions(){

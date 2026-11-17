@@ -45,9 +45,8 @@ public static class ReviewedRoundaboutControl {
   var radial=position-centre;radial.y=0;float radius=radial.magnitude;if(radius<inner||radius>outer+1)return false;
   var tangent=new Vector3(-radial.z,0,radial.x).normalized;return Vector3.Dot(tangent,forward.normalized)>.55f;
  }
- // Narrow gate before unsignalized permission. Existing reservation, pedestrian,
- // obstacle and exit checks still run. Whole-ring yielding is conservative; this
- // is not a claim of traffic-capacity simulation or player-law scoring.
+ // Yield to traffic approaching this entry, not to the entire circular road.
+ // Reservations, swept-body, pedestrian and exit checks remain in TrafficSystem.
  public static bool EntryClear(MapData map,string junctionId,Vector3 position,Vector3 forward,GameObject self){
   Dictionary<string,Control> lookup;Control control;
   if(map==null||junctionId==null||!Controls.TryGetValue(map,out lookup)||!lookup.TryGetValue(junctionId,out control))return true;
@@ -61,9 +60,16 @@ public static class ReviewedRoundaboutControl {
    if(radius<inner-1||radius>outer+1)continue;
    var heading=hit.attachedRigidbody?hit.attachedRigidbody.transform.forward:hit.transform.forward;
    var tangent=new Vector3(-radial.z,0,radial.x).normalized;
-   // Tangential vehicles have ring priority; a deeply occupied ring also blocks
-   // an entering vehicle even if the occupant is stationary or badly oriented.
-   if(Mathf.Abs(Vector3.Dot(tangent,heading))>.55f||radius<outer-2)return false;
+   var entryRadial=position-centre;entryRadial.y=0;
+   float angle=Mathf.Atan2(entryRadial.z,entryRadial.x)-Mathf.Atan2(radial.z,radial.x);
+   float arc=Mathf.DeltaAngle(0,angle*Mathf.Rad2Deg)*Mathf.Deg2Rad*radius;
+   var car=hit.GetComponentInParent<TrafficCar>();
+   float speed=car?car.speed:hit.attachedRigidbody?hit.attachedRigidbody.velocity.magnitude:0;
+   // Keep a vehicle-length clearance just beyond the merge point and a 3s
+   // closing window upstream. Stopped vehicles elsewhere in the ring do not
+   // hold every entry; swept-path/exit checks still prevent entering their queue.
+   if(arc>=-6&&arc<=Mathf.Max(9,speed*3+5)&&
+      (Mathf.Abs(Vector3.Dot(tangent,heading))>.55f||radius<outer-2))return false;
   }
   return true;
  }

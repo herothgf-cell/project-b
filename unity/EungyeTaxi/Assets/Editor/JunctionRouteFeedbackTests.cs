@@ -5,13 +5,13 @@ using UnityEngine;
 public static class JunctionRouteFeedbackTests {
  public static void VerifyMigration(){
   MapCatalog.LockedRegion="eungye";var map=MapCatalog.Load();
-  int target=Enumerable.Range(25,20).SingleOrDefault(revision=>map.editorRevision=="은계 프로젝트 지도 · r"+revision);
-  if(target==0)throw new Exception("Migration regression requires a reviewed r25–r44 default map");
+  int target=Enumerable.Range(25,21).SingleOrDefault(revision=>map.editorRevision=="은계 프로젝트 지도 · r"+revision);
+  if(target==0)throw new Exception("Migration regression requires a reviewed r25–r45 default map");
   var method=typeof(BusinessProgress).GetMethod("UpgradeEungyeApproachCheckpoint",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
   var migrate=typeof(BusinessProgress).GetMethod("ApplyReviewedEungyeCheckpointMigration",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
   int checks=0;
   var recentJunctions=new[]{"J5692_14220","J6478_4105","J6481_3341","J5076_2580","J5750_2576","J6480_2573","J6199_11987","J3516_12881","J7801_9629","J7841_867","J1919_877","J4396_13458","J2564_12237","J5852_16963"};
-  var previousJunctions=new[]{"J7204_2569","J5074_877","J2145_15970","J7876_1656","J8346_1658","J10587_15883","J1882_11791","J2225_12001","J8921_10835","J7355_12821","J7292_13794","J7254_14780","J8066_6364","J7917_2565","J7973_3744","J1927_5181","unrelated-junction"};
+  var previousJunctions=new[]{"J7204_2569","J5074_877","J2145_15970","J7876_1656","J8346_1658","J10587_15883","J1882_11791","J2225_12001","J8921_10835","J7355_12821","J7292_13794","J7254_14780","J8066_6364","J7917_2565","J7973_3744","J1927_5181","J5692_14220","unrelated-junction"};
   foreach(int revision in Enumerable.Range(14,target-14))foreach(string junction in previousJunctions.Concat(recentJunctions)){
    var saved=MigrationFixture(revision,junction);var expected=JsonUtility.FromJson<LiveCampaignCheckpoint>(JsonUtility.ToJson(saved));
    expected.mapRevision=map.editorRevision;if(revision<25||target>=27&&revision<31||target>=33){expected.jobs.navigationCaptured=false;expected.jobs.navAvoidEdge=expected.jobs.navObservedEdge=expected.jobs.navPassedObservedEdge=-1;}
@@ -30,7 +30,7 @@ public static class JunctionRouteFeedbackTests {
    if(target>=40&&revision<40&&junction=="J4396_13458")clear=true;
    if(target>=41&&revision<41&&(junction=="J4396_13458"||junction=="J5692_14220"))clear=true;
    if(target>=42&&revision<42&&(junction=="J2564_12237"||junction=="J7254_14780"||junction=="J8921_10835"||junction=="J7841_867"||junction=="J5076_2580"||junction=="J8066_6364")||
-    target>=43&&revision<43&&(junction=="J1927_5181"||junction=="J8066_6364"||junction=="J7841_867"||junction=="J7876_1656"||junction=="J5852_16963"||junction=="J7254_14780")||target>=44&&revision<44&&junction=="J1927_5181"){
+    target>=43&&revision<43&&(junction=="J1927_5181"||junction=="J8066_6364"||junction=="J7841_867"||junction=="J7876_1656"||junction=="J5852_16963"||junction=="J7254_14780")||target>=44&&revision<44&&junction=="J1927_5181"||target>=45&&revision<45&&junction=="J5692_14220"){
     clear=true;expected.jobs.manners.crossing=null;
     expected.jobs.manners.lawObservation.entry=null;expected.jobs.manners.lawObservation.entryPresent=false;
    }
@@ -57,7 +57,7 @@ public static class JunctionRouteFeedbackTests {
    checks++;
   }
   if(target>=42){
-   var legacy=MigrationFixture(target-1,target>=44?"J1927_5181":target>=43?"J5852_16963":"J2564_12237");legacy.lawObservation=null;legacy.lawObservationPresent=false;legacy.operationVersion=0;
+   var legacy=MigrationFixture(target-1,target>=45?"J5692_14220":target>=44?"J1927_5181":target>=43?"J5852_16963":"J2564_12237");legacy.lawObservation=null;legacy.lawObservationPresent=false;legacy.operationVersion=0;
    method.Invoke(null,new object[]{legacy,map});
    if(legacy.jobs.manners.crossing!=null||legacy.jobs.manners.lawObservation.entryPresent||legacy.jobs.manners.lawObservation.entry!=null||
     legacy.jobs.manners.score!=87||legacy.jobs.manners.events!=3)throw new Exception("migration did not preserve the score while clearing legacy crossing state");

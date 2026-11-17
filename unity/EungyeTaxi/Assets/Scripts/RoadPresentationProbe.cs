@@ -30,6 +30,16 @@ public class RoadPresentationProbe : MonoBehaviour {
    Capture(camera,junc.center-forward*24+Vector3.up*5,junc.center+forward*7+Vector3.up*3.3f,Path.Combine(folder,"signage-junction-view.png"),1900,998);
    Capture(camera,junc.center+forward*24+Vector3.up*5,junc.center-forward*7+Vector3.up*3.3f,Path.Combine(folder,"signage-junction-opposite.png"),1900,998);
    if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadContinuityViews")>=0){
+    var ring=session.traffic.junctions.Single(j=>j.name=="J5074_877");
+    Check(!ring.signalized&&ring.lamps.Count==0,"roundabout has no signal control or generated heads");
+    Check(!session.traffic.GetComponentsInChildren<RoadMapLamp>().Any(l=>l.name.Contains("pink-roundabout:control")),"roundabout control metadata has no visible red lamp");
+    var ringPoint=new Vector3(481.4858f,0,85.9970856f);var ringForward=Quaternion.Euler(0,91.44385f,0)*Vector3.forward;
+    Capture(camera,ringPoint-ringForward*8+Vector3.up*5,ringPoint+ringForward*25,Path.Combine(folder,"roundabout-reported.png"),1600,1000);
+    foreach(var walker in session.traffic.GetComponentsInChildren<RoadMapWalker>()){
+     Vector3 a,b;Check(walker.hasLandings&&CrosswalkLanding.Try(session.world.map,walker.crossing,out a,out b),"authored pedestrian has two supported sidewalk waiting points "+walker.crossing.id);
+    }
+    var six=session.traffic.junctions.Single(j=>j.name=="J5692_14220");var sixForward=Quaternion.Euler(0,238.43283f,0)*Vector3.forward;
+    Capture(camera,six.center-sixForward*40+Vector3.up*5,six.center+sixForward*20,Path.Combine(folder,"junction-six-reported.png"),1600,1000);
     var bankPoint=new Vector3(209.792358f,0,548.4707f);var bankForward=Quaternion.Euler(0,33.986042f,0)*Vector3.forward;
     Capture(camera,bankPoint-bankForward*8+Vector3.up*5,bankPoint+bankForward*24,Path.Combine(folder,"bank-approach-reported.png"),1600,1000);
     Capture(camera,bankPoint+new Vector3(0,45,-15),bankPoint+Vector3.forward*8,Path.Combine(folder,"bank-approach-overview.png"),1600,1000);

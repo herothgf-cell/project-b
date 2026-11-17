@@ -38,7 +38,13 @@ public static class UturnRoadMarkings {
      float separation=Vector3.Dot(opposing.points[0].V()-a,across);
      zone.start=a+across*(separation*.5f);
     }
-   }else SnapToSourceMedian(map,zone);
+   }else {
+    // The turn connector starts beyond the approach arrow/stop. Include the
+    // final approach interval so the arrow is not beside a yellow barrier.
+    // This is a bounded game paint approximation, not a new turn permission.
+    if(map.hybrid&&map.HasHd){var path=IncomingPath(lanes,incoming);float lead=path==null?0:Mathf.Min(12,Mathf.Max(0,path.length-2));zone.start-=forward*lead;zone.length+=lead;}
+    SnapToSourceMedian(map,zone);
+   }
    result.Add(zone);
   }return result;
  }
@@ -87,11 +93,7 @@ public static class UturnRoadMarkings {
  }
  public static void Paint(MapData map,System.Action<string,Vector3,Vector3,float,float,bool> mark){
   foreach(var zone in Build(map)){
-   if(zone.joinId==EungyeNorthbound){
-    mark("U-turn permitted median",zone.start+zone.forward*(zone.length*.5f),zone.forward,.18f,zone.length,false);
-    continue;
-   }
-   for(float at=0;at<zone.length;at+=3f){float length=Mathf.Min(1.5f,zone.length-at);mark("U-turn permitted median",zone.start+zone.forward*(at+length*.5f),zone.forward,.28f,length,false);}
+   mark("U-turn permitted median",zone.start+zone.forward*(zone.length*.5f),zone.forward,.18f,zone.length,false);
   }
   foreach(var arrow in FallbackArrows(map))LaneDirectionPaint.Paint(arrow,"U-turn approach arrow "+map.hdEdges[arrow.edgeIndex].id,mark);
  }
