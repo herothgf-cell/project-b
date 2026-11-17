@@ -28,3 +28,5 @@
 - `RoadAnnotationEditTests.Build`: 모델14검사·`PrototypeBuild.BuildHybrid` 종료0 (`artifacts/color-road-survey/annotation-final-build.log`).
 - 일반 사용자 창 실행본 `DEV_OVERVIEW_PLAYER_OK checks=16` / `PASS checks=16` (`annotation-final-player.log`). 클립보드 PNG 재해독 파일에서 주석이 선명한 노랑이고 위치 설명이 정상 색상임을 직접 확인했다.
 - 사용자 Scene/PackageManagerSettings SHA256은 작업 전과 일치한다. 로컬 빌드 반영, 이번 후속 변경은 아직 원격 푸시하지 않는다.
+
+- 배포 manifest: 소스 c318e52, 143파일·133,382,345바이트 및 SHA256 검증 통과. 실행 경로 builds/EungyeTaxi/EungyeTaxi.exe.
