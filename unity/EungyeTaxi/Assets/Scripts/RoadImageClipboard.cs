@@ -30,9 +30,12 @@ public static class RoadImageClipboard {
  [DllImport("kernel32.dll")]static extern IntPtr GlobalFree(IntPtr handle);
  static IntPtr Allocate(byte[] bytes){var handle=GlobalAlloc(2,(UIntPtr)bytes.Length);if(handle==IntPtr.Zero)throw new OutOfMemoryException();var ptr=GlobalLock(handle);if(ptr==IntPtr.Zero){GlobalFree(handle);throw new InvalidOperationException("Clipboard memory lock failed");}try{Marshal.Copy(bytes,0,ptr,bytes.Length);}finally{GlobalUnlock(handle);}return handle;}
  public static bool HasImage {get{return IsClipboardFormatAvailable(8)&&IsClipboardFormatAvailable(RegisterClipboardFormat("PNG"));}}
+ [DllImport("kernel32.dll")]static extern UIntPtr GlobalSize(IntPtr handle);
+ public static byte[] ReadPng(){if(!OpenClipboard(IntPtr.Zero))return null;try{var h=GetClipboardData(RegisterClipboardFormat("PNG"));if(h==IntPtr.Zero)return null;int count=checked((int)GlobalSize(h).ToUInt64());var p=GlobalLock(h);if(p==IntPtr.Zero)return null;try{var bytes=new byte[count];Marshal.Copy(p,bytes,0,count);return bytes;}finally{GlobalUnlock(h);}}finally{CloseClipboard();}}
  public static string ReadText(){if(!OpenClipboard(IntPtr.Zero))return "";try{var h=GetClipboardData(13);if(h==IntPtr.Zero)return "";var p=GlobalLock(h);if(p==IntPtr.Zero)return "";try{return Marshal.PtrToStringUni(p);}finally{GlobalUnlock(h);}}finally{CloseClipboard();}}
 #else
  public static bool HasImage {get{return false;}}
+ public static byte[] ReadPng(){return null;}
  public static string ReadText(){return GUIUtility.systemCopyBuffer;}
 #endif
  public static bool CopyText(string value){
@@ -48,18 +51,19 @@ public static class RoadImageClipboard {
  public static bool Copy(Texture2D image,string description,out string error){
   error="";
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-  IntPtr dib=IntPtr.Zero,png=IntPtr.Zero,text=IntPtr.Zero;bool opened=false;
+  IntPtr dib=IntPtr.Zero,png=IntPtr.Zero;bool opened=false;
   try{
-   dib=Allocate(Dib(image.width,image.height,image.GetPixels32()));png=Allocate(image.EncodeToPNG());text=Allocate(Encoding.Unicode.GetBytes(description+"\0"));
+   dib=Allocate(Dib(image.width,image.height,image.GetPixels32()));png=Allocate(image.EncodeToPNG());
    var window=GetActiveWindow();if(window==IntPtr.Zero)window=System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
    if(window==IntPtr.Zero||!OpenClipboard(window)){error="클립보드를 사용할 수 없어요. 잠시 후 다시 복사해 주세요.";return false;}opened=true;
    if(!EmptyClipboard())throw new InvalidOperationException("Clipboard empty failed");
    if(SetClipboardData(8,dib)==IntPtr.Zero)throw new InvalidOperationException("DIB copy failed");dib=IntPtr.Zero;
    if(SetClipboardData(RegisterClipboardFormat("PNG"),png)==IntPtr.Zero)throw new InvalidOperationException("PNG copy failed");png=IntPtr.Zero;
-   if(SetClipboardData(13,text)!=IntPtr.Zero)text=IntPtr.Zero;
+   // Do not add CF_UNICODETEXT: chat paste handlers may choose it instead of PNG.
+   // The location is already painted into the screenshot; point-copy remains text.
    return true;
   }catch(Exception e){Debug.LogWarning("Road screenshot clipboard: "+e.Message);error="이미지 복사에 실패했어요. 다시 시도해 주세요.";return false;}
-  finally{if(opened)CloseClipboard();if(dib!=IntPtr.Zero)GlobalFree(dib);if(png!=IntPtr.Zero)GlobalFree(png);if(text!=IntPtr.Zero)GlobalFree(text);}
+  finally{if(opened)CloseClipboard();if(dib!=IntPtr.Zero)GlobalFree(dib);if(png!=IntPtr.Zero)GlobalFree(png);}
 #else
   error="이미지 클립보드는 Windows 실행본에서 지원합니다.";return false;
 #endif

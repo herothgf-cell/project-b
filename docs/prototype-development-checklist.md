@@ -756,3 +756,5 @@
 
 - [x] 클릭 좌표·교차로 복사와 드래그 구분, 현재 화면 캡처·펜/화살표/한글 텍스트 편집·이미지 클립보드.
 - [x] 모델10·실행본12검사·BuildHybrid. [사용법과 검증 경계](work-history/2026-11-17-road-report-capture.md).
+
+- [x] 2026-11-17 도로 주석 Ctrl+Z·텍스트 영역 수정/크기·이미지 전용 복사. 모델14/Player16 및 실제 클립보드 PNG 해독·화면 확인. [후속 검증](work-history/2026-11-17-road-annotation-edit-fix.md).
