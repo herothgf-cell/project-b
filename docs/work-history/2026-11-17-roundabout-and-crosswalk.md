@@ -38,3 +38,5 @@ Unity JunctionSixRepair.BuildVerified로 회귀와 BuildHybrid를 실행하고 t
 최종 유턴 접근부 보정 빌드: roundabout-j6-final-build.log 종료0/PROTOTYPE_BUILD_OK, 접근14곳 검사 및 기존 J8066 전용표시 유지, 전체 유턴15곳 원본/합성 중앙선 마스크 검사 통과. 지도 콘텐츠 지문과 차로 연결은 이 마지막 노면 수정에서 변하지 않았다.
 
 최종 실행본 ROAD_SIGNAGE_PLAYER_OK336검사 종료0. 전체99타일·4008도로/차로 영역 촬영 범위 검사 통과. [회전교차로 신호 제거](../content-design/images/eungye-roundabout-fixed.png), [6번 제보 방향](../content-design/images/eungye-junction-six-fixed.png), [6번 상공](../content-design/images/eungye-junction-six-overview.png), [유턴 접근부 흰 실선](../content-design/images/eungye-uturn-solid-approach.png)을 확인했다. 고정 카메라 화면으로 수동 운행을 대신했다고 주장하지 않는다.
+
+최종 배포 검증: r44 탑승 중 저장→r45 이어하기23검사, r45 새 저장9/새 프로세스 이어하기23검사 모두 종료0. 소스 커밋 c9a36d06dcb154cc87dbf9a557d8329d6905fab2. 기존 배포143파일만 해시/크기를 갱신하고 격리 실행 폴더 VerifyOnly 종료0: DISTRIBUTION_OK files=143 bytes=133354762. 기본 실행은 builds/EungyeTaxi/EungyeTaxi.exe. 이전 사용자 씬·개인 콘텐츠·제안서는 커밋하지 않았다.
