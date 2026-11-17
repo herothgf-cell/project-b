@@ -30,3 +30,8 @@
 - 사용자 Scene/PackageManagerSettings SHA256은 작업 전과 일치한다. 로컬 빌드 반영, 이번 후속 변경은 아직 원격 푸시하지 않는다.
 
 - 배포 manifest: 소스 c318e52, 143파일·133,382,345바이트 및 SHA256 검증 통과. 실행 경로 builds/EungyeTaxi/EungyeTaxi.exe.
+
+## 후속 main 배포
+- 사용자 푸시 요청에 따라 소스 c318e52와 빌드 669fef6을 origin/main에 푸시했다.
+- fetch 후 원격 단독0·로컬2, push 종료0. 원격 main과 로컬 HEAD가 669fef60dca5025f4eda460d205a54b0f00eda01로 일치함을 확인했다.
+- 이번에는 빌드 재생성 없이 앞서 검증한 실행본을 배포했다. 기존 사용자 미커밋 변경은 제외했다.
