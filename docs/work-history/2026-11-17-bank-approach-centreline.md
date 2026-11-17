@@ -35,3 +35,5 @@ BankApproachR44는 원본 남행 안쪽 연결선을 기준으로 공통 상류 
 
 
 재생성한 r43 탑승 중 저장 → r44 이어하기23검사, r44 새 저장9검사/새 프로세스 이어하기23검사 모두 종료0. 검사 실패는 완료된 fixture 사용으로 확인되었으며 게임 소스 변경 없이 해결했다. 실제 실행 로그: r43-fixture-save.log, r44-reload-r43.log, r44-live-save.log, r44-live-reload.log.
+
+배포: 소스 커밋 d2f52925869e1500819f4ac1e2f9d679016bc637. 통합 실행 폴더의 기존 배포143파일만 갱신, manifest SHA256/크기 재생성 후 격리 복사본 VerifyOnly 종료0: DISTRIBUTION_OK files=143 bytes=133351522. 개인 콘텐츠는 배포 대상에 포함하지 않았다. 실행은 builds/EungyeTaxi/EungyeTaxi.exe이며 기존 저장 이어하기도 검증했다.
