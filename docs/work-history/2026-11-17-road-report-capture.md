@@ -36,3 +36,8 @@
 - 소스 커밋 `e80e56c` 확인. 배포 manifest 143파일, 133,379,785바이트와 SHA256 검증 통과(`DISTRIBUTION_OK`). 사용자 content/는 배포 목록에 추가하지 않았다.
 - 소스/실행본은 로컬 main에 기록한다. 이번 요청에서 원격 push는 수행하지 않았다.
 - 실제 Windows 이미지 형식 등록과 위치 텍스트 readback은 검증했고, 채팅 앱에 사람이 직접 Ctrl+V하는 검사는 남아 있다.
+
+## 사용자 요청에 따른 main 푸시
+- 후속 요청으로 소스 `e80e56c`와 실행본 `18af09c`를 origin/main에 푸시했다. `git fetch origin main` 후 원격 대비 로컬 2개·원격 단독 0개를 확인했다.
+- `git push origin main` 종료0. `git ls-remote origin refs/heads/main`과 로컬 HEAD가 `18af09c115ed00eb65f99cf6d0323ba2a390504b`로 일치함을 확인했다.
+- 실행본 변경 없이 기존 검증 결과를 사용했다. 사용자 미커밋 Scene·기획 문서·content/는 포함하지 않았다.
