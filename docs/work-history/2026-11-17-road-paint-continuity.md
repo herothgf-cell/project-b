@@ -51,3 +51,7 @@ pwsh -File tools/check_road_continuity_player.ps1 최종 종료 0: 실행본 신
 - `PrototypeBuild.BuildHybrid` 종료 0(`road-continuity-final-build.log`). 지도 r43의 경로·신호 데이터는 변경하지 않았다. DX11 실제 Player 신호·표지 325검사 통과(`road-continuity-final-player.log`).
 - 고정 카메라 캡처는 `artifacts/color-road-survey/road-continuity-player/artifacts/road-continuity-*.png` 10장이다. 은계로 `(590,1240)`와 `(700,1100)` 차선 연속을 확인했다. `(1035,642)` 곡선에는 분기 도색 겹침이 여전히 보인다. `(193,518)` 수인로 교차로는 도로 면과 횡단보도 종점의 비대칭을 추가 확인해야 한다. 이 두 시각적 문제는 자동 누락 0건으로 해결됐다고 판정할 수 없다.
 - 현재 로컬 실행본은 검증 중 후보다. 최종 배포 manifest 갱신·커밋·푸시는 미완료이며 원격의 정식 실행본은 기존 r43이다. 다음은 위 10장 전체 검토, 횡단보도 종점과 곡선 중복선의 실제 메시 검증 및 수정이다.
+
+## 배포 기록
+
+소스와 이력의 실제 커밋: 833a67b (git log -1 --oneline -- 해당 이력으로 확인). 이 소스로 생성한 통합 실행본의 기존 배포 목록 143파일만 크기·SHA256을 갱신했다. 격리 실행 폴더에서 update_distribution_manifest.ps1 -VerifyOnly 종료 0: DISTRIBUTION_OK files=143 bytes=133348746. 사용자 Taxi.zip·content는 배포 목록에 추가하지 않았다. 사용자 요청에 따라 main에 소스·실행본을 함께 게시한다. 푸시 결과와 원격 HEAD는 명령 결과로 확인한다.
