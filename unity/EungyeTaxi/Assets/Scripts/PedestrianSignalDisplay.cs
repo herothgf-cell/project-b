@@ -51,10 +51,11 @@ public static class PedestrianSignalPlacement {
  public static bool TryPlace(MapData map,TrafficJunction junction,Vector3 incoming,int axis,int sign,int side,float halfWidth,float conflict,out Vector3 position,out Vector3 facing){
   position=Vector3.zero;incoming.y=0;if(incoming.sqrMagnitude<.1f){facing=Vector3.forward;return false;}incoming.Normalize();
   var across=TrafficSystem.Right(incoming);var center=junction.center-incoming*(conflict+TrafficJunction.CrosswalkCentreOffset);
+  GeneratedCrosswalkGeometry.Fit(map,ref center,incoming,ref halfWidth);
   if(map.editorDocument!=null&&map.editorDocument.facilities!=null){RoadMapFacility selected=null;float best=float.MaxValue;
    foreach(var facility in map.editorDocument.facilities){if(facility.kind!="crosswalk"||facility.junctionId!=junction.name||facility.axis!=axis||facility.sign!=sign)continue;
     float distance=(facility.Position-center).sqrMagnitude;if(distance<best){best=distance;selected=facility;}}
-   if(selected!=null){center=selected.Position;var direction=Quaternion.Euler(0,selected.yaw,0)*Vector3.forward;var explicitAcross=TrafficSystem.Right(direction);
+   selected=GeneratedCrosswalkGeometry.Effective(map,selected);if(selected!=null){center=selected.Position;var direction=Quaternion.Euler(0,selected.yaw,0)*Vector3.forward;var explicitAcross=TrafficSystem.Right(direction);
     if(Vector3.Dot(explicitAcross,across)<0)explicitAcross=-explicitAcross;across=explicitAcross;if(selected.width>0)halfWidth=selected.width*.5f;}
   }
   facing=across*side;var desired=center+facing*(halfWidth+1.1f);

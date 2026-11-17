@@ -22,13 +22,16 @@ public static class ReviewedCrosswalkGeometry {
   }
  }
  public static List<Zone> Build(MapData map){var result=new List<Zone>();
-  if(map.junctionRules==null)return result;
   var authored=new Dictionary<string,List<RoadMapFacility>>();
-  foreach(var facility in map.editorDocument==null?new RoadMapFacility[0]:map.editorDocument.facilities??new RoadMapFacility[0]){if(facility==null||facility.kind!="crosswalk"||string.IsNullOrEmpty(facility.junctionId)||facility.width<=0)continue;
+  foreach(var facility in map.editorDocument==null?new RoadMapFacility[0]:map.editorDocument.facilities??new RoadMapFacility[0]){if(facility==null||facility.kind!="crosswalk"||facility.width<=0)continue;
+   if(string.IsNullOrEmpty(facility.junctionId)||!System.Array.Exists(map.junctionRules??new HybridJunctionRule[0],j=>j.id==facility.junctionId)){
+    var effective=GeneratedCrosswalkGeometry.Effective(map,facility);var forward=Quaternion.Euler(0,effective.yaw,0)*Vector3.forward;
+    result.Add(new Zone{center=effective.Position,junction=effective.Position,toward=forward,across=TrafficSystem.Right(forward),halfWidth=effective.width*.5f,halfDepth=Mathf.Max(.2f,effective.length*.5f),reach=0,authored=true});continue;
+   }
    List<RoadMapFacility> list;if(!authored.TryGetValue(facility.junctionId,out list)){list=new List<RoadMapFacility>();authored.Add(facility.junctionId,list);}list.Add(facility);
   }
-  foreach(var junction in map.junctionRules){if(junction==null)continue;List<RoadMapFacility> facilities;if(!authored.TryGetValue(junction.id??"",out facilities))facilities=new List<RoadMapFacility>();
-   foreach(var facility in facilities){var forward=Quaternion.Euler(0,facility.yaw,0)*Vector3.forward;forward.y=0;forward.Normalize();
+  foreach(var junction in map.junctionRules??new HybridJunctionRule[0]){if(junction==null)continue;List<RoadMapFacility> facilities;if(!authored.TryGetValue(junction.id??"",out facilities))facilities=new List<RoadMapFacility>();
+   foreach(var source in facilities){var facility=GeneratedCrosswalkGeometry.Effective(map,source);var forward=Quaternion.Euler(0,facility.yaw,0)*Vector3.forward;forward.y=0;forward.Normalize();
     var toward=junction.V()-facility.Position;toward.y=0;if(Vector3.Dot(forward,toward)<0)forward=-forward;
     // A midblock crossing may be exactly on its rule anchor. Its stripe band
     // still exists; only the optional corridor toward a junction needs reach.
@@ -46,8 +49,10 @@ public static class ReviewedCrosswalkGeometry {
     int sign=Vector3.Dot(direction,axis==0?axis0:TrafficSystem.Right(axis0))>=0?1:-1;
     if(facilities.Exists(f=>f.axis==axis&&f.sign==sign))continue;
     float reach=halfWidths[1-axis]+TrafficJunction.CrosswalkCentreOffset;
-    result.Add(new Zone{center=junction.V()-direction*reach,junction=junction.V(),toward=direction,across=TrafficSystem.Right(direction),
-     halfWidth=approach.width*.5f,halfDepth=TrafficJunction.CrosswalkDepth*.5f,reach=reach,authored=false});
+    var center=junction.V()-direction*reach;float halfWidth=approach.width*.5f;
+    GeneratedCrosswalkGeometry.Fit(map,ref center,direction,ref halfWidth);
+    result.Add(new Zone{center=center,junction=junction.V(),toward=direction,across=TrafficSystem.Right(direction),
+     halfWidth=halfWidth,halfDepth=TrafficJunction.CrosswalkDepth*.5f,reach=reach,authored=false});
    }
   }return result;
  }
@@ -93,10 +98,14 @@ public sealed class RoadPaintGeometry {
   foreach(var lane in list){float error;float at=lane.path.Project(point,out error);if(error>width+1)continue;var p=lane.path.Position(at);var d=lane.path.Tangent(at);float along=Vector3.Dot(point-p,d),alignment=Vector3.Dot(d,direction);
    // Offset curves end at slightly different stations around a bend. Allow
    // one paint sample at the end; junction openings still clip the paint.
-   if(Mathf.Abs(along)>1f||Mathf.Abs(alignment)<.85f)continue;
-   if(lane.id.StartsWith("reviewed:")&&along<-.01f)continue;
+   if(Mathf.Abs(alignment)<.85f)continue;
+   if(at<=.01f&&along< -1f||at>=lane.path.length-.01f&&along>1f)continue;
+   if(lane.id.StartsWith("reviewed:")&&at<=.01f&&along<-.01f)continue;
    float offset=Vector3.Dot(p-point,TrafficSystem.Right(direction));int sign=alignment>0?1:-1;
-   if(!result.Exists(x=>x.direction==sign&&Mathf.Abs(x.offset-offset)<.5f))result.Add(new RoadGeometry.Lane(offset,sign));
+   // Preserve the inner envelope through a taper. Merging centres can be
+   // closer than half a metre; dropping one made the yellow boundary jump
+   // sideways whenever their separation crossed the old dedup threshold.
+   if(!result.Exists(x=>x.direction==sign&&Mathf.Abs(x.offset-offset)<.01f))result.Add(new RoadGeometry.Lane(offset,sign));
   }result.Sort((a,b)=>a.offset.CompareTo(b.offset));return result;
  }
  public List<RoadGeometry.Lane> Lanes(MapRoad road,Vector3 point,Vector3 direction){
@@ -120,7 +129,9 @@ public sealed class RoadPaintGeometry {
  public static void Paint(MapData map,List<TrafficJunction> junctions,System.Action<string,Vector3,Vector3,float,float,bool> mark){
   var layout=new RoadPaintGeometry(map);var openings=RoadJunctionGeometry.Build(map);var authored=ReviewedCrosswalkGeometry.Build(map);var clearances=RoadJunctionGeometry.PaintClearances(map,junctions);var uturns=UturnRoadMarkings.Build(map);var reviewed=new ReviewedNativeLanePresentation(map);var unmarked=new ReviewedUnmarkedRoadPaint(map);var output=UniquePaint(mark);mark=(name,p,d,w,l,y)=>{if(reviewed.SuppressesSynthetic(name,p,d)||unmarked.SuppressesSynthetic(name,p,d,w,l))return;output(name,p,d,w,l,y);};
   openings.RemoveAll(opening=>clearances.Exists(zone=>zone.kind=="core"&&(zone.center-opening.center).sqrMagnitude<4));
-  if(layout.corridors.Count>0){layout.PaintCompiled(clearances,openings,authored,uturns,mark);reviewed.PaintDividers(clearances,output);return;}
+  if(layout.corridors.Count>0){System.Action flush;
+   var connected=RoadPaintStrokeContinuity.Wrap(mark,out flush,(p,d,length)=>!InOpening(p,clearances,openings,authored,length*.5f)&&!UturnRoadMarkings.Covers(uturns,p,length*.5f));
+   layout.PaintCompiled(clearances,openings,authored,uturns,connected);flush();reviewed.PaintDividers(clearances,output);return;}
   foreach(var road in map.roads){if(road.suppressPaint||road.id!=null&&road.id.StartsWith("fuel:"))continue;
    float distance=0;
    for(int i=1;i<road.points.Length;i++){
@@ -143,32 +154,69 @@ public sealed class RoadPaintGeometry {
  }
  void PaintCompiled(List<RoadJunctionGeometry.Clearance> clearances,List<RoadJunctionGeometry.Opening> openings,List<ReviewedCrosswalkGeometry.Zone> authored,List<UturnRoadMarkings.Zone> uturns,System.Action<string,Vector3,Vector3,float,float,bool> mark){
   foreach(var corridor in corridors){
-   var first=corridor.Value.Find(x=>x.number==1);if(first==null)continue;string family=Family(first.id);float width=float.MaxValue;
+   var first=corridor.Value.Find(x=>x.number==1)??corridor.Value[0];string family=Family(first.id);float width=float.MaxValue;
    foreach(var id in corridor.Key.Split(',')){float value;if(widths.TryGetValue(id,out value))width=Mathf.Min(width,value);}if(width==float.MaxValue)continue;
    float phase=0,samplingWidth=SamplingWidth(corridor.Key);
-   foreach(var reference in corridor.Value){if(Family(reference.id)!=family)continue;
+   var references=new List<LanePath>();
+   references.AddRange(corridor.Value.FindAll(lane=>Family(lane.id)==family));
+   references.AddRange(corridor.Value.FindAll(lane=>Family(lane.id)!=family));
+   var paintedReferences=new List<AssistedRoadNetwork.Path>();
+   foreach(var reference in references){
     var path=reference.path;
     for(float at=.5f;at<path.length;at+=1){
      // Fused source families can turn back hundreds of metres away. Bound
      // the LOCAL cross section by the widest authored ribbon in the family;
      // its narrowest ribbon must not discard a real widened approach lane.
-     var p=path.Position(at);var dir=path.Tangent(at);float piece=Mathf.Min(.96f,2*(path.length-at));var lanes=Sample(corridor.Value,p,dir,samplingWidth);
+     var p=path.Position(at);var dir=PaintTangent(path,at);
+     if(Family(reference.id)!=family&&paintedReferences.Exists(previous=>CoversStation(previous,p,dir,samplingWidth)))continue;
+     float piece=Mathf.Min(.96f,2*(path.length-at));var lanes=Sample(corridor.Value,p,dir,samplingWidth);
      if(lanes.Count==0)continue;
+     float start=Mathf.Max(0,at-.5f),end=Mathf.Min(path.length,at+.5f);
+     var startPoint=path.Position(start);var endPoint=path.Position(end);var startDirection=PaintTangent(path,start);var endDirection=PaintTangent(path,end);
+     var startLines=RoadGeometry.Boundaries(Sample(corridor.Value,startPoint,startDirection,samplingWidth));
+     var endLines=RoadGeometry.Boundaries(Sample(corridor.Value,endPoint,endDirection,samplingWidth));
      foreach(var line in RoadGeometry.Boundaries(lanes)){
       if(line.dashed&&(phase+at)%6>=3)continue;var q=p+TrafficSystem.Right(dir)*line.offset;if(line.yellow)q=ReviewedLaneLayout.Centreline(map,corridor.Key,q);
+      // Offset boundaries have a different tangent and arc length from the
+      // reference lane, especially around bends and added turn pockets.
+      // Join their actual station endpoints instead of stamping reference-
+      // aligned rectangles, which overlap inside and leave gaps outside.
+      var a=BoundaryPoint(startLines,startPoint,startDirection,line,corridor.Key,q);
+      var b=BoundaryPoint(endLines,endPoint,endDirection,line,corridor.Key,q);
+      var stroke=b-a;float strokeLength=stroke.magnitude;
+      var strokeDirection=strokeLength>.01f?stroke/strokeLength:dir;
+      var strokeCenter=(a+b)*.5f;
       if(line.yellow&&UturnRoadMarkings.Covers(uturns,q,piece*.5f))continue;
-      if(!InOpening(q,clearances,openings,authored,piece*.5f))mark(line.yellow?"Centre line":"Lane divider",q,dir,line.yellow?.14f:.13f,piece,line.yellow);
+      if(strokeLength>.01f&&strokeLength<3&&!InOpening(strokeCenter,clearances,openings,authored,strokeLength*.5f))mark(line.yellow?"Centre line":"Lane divider",strokeCenter,strokeDirection,line.yellow?.14f:.13f,strokeLength+.02f,line.yellow);
      }
-     float laneWidth=lanes.Count>1?float.MaxValue:width;
-     for(int i=1;i<lanes.Count;i++)laneWidth=Mathf.Min(laneWidth,lanes[i].offset-lanes[i-1].offset);
+     float laneWidth=lanes.Count>1?Mathf.Min(3.5f,width/lanes.Count):width;
+     for(int i=1;i<lanes.Count;i++){float spacing=lanes[i].offset-lanes[i-1].offset;if(spacing>=2.6f)laneWidth=Mathf.Min(laneWidth,spacing);}
      float outerHalf=polished.Contains(corridor.Key)?Mathf.Min(laneWidth*.5f,CorridorPolish.HalfLane):laneWidth*.5f;
      outerHalf=RoadviewCorridorPresentation.OuterHalf(corridor.Key,lanes,outerHalf);
      foreach(float edge in new[]{lanes[0].offset-outerHalf+.15f,lanes[lanes.Count-1].offset+outerHalf-.15f}){
       var q=p+TrafficSystem.Right(dir)*edge;if(!InOpening(q,clearances,openings,authored,piece*.5f))mark("Road edge",q,dir,.12f,piece,false);
      }
-    }phase+=path.length;
+    }phase+=path.length;paintedReferences.Add(path);
    }
   }
+ }
+ // Source polylines can have a sharp vertex even on a smooth road. A short
+ // paint-only secant prevents the offset cross-section from swinging at that
+ // vertex. Navigation and vehicle path tangents are intentionally unchanged.
+ static Vector3 PaintTangent(AssistedRoadNetwork.Path path,float at){return (path.Position(Mathf.Min(path.length,at+2))-path.Position(Mathf.Max(0,at-2))).normalized;}
+ Vector3 BoundaryPoint(List<RoadGeometry.Boundary> boundaries,Vector3 p,Vector3 direction,RoadGeometry.Boundary target,string source,Vector3 fallback){
+  float nearest=float.MaxValue;Vector3 result=fallback;
+  foreach(var boundary in boundaries){
+   if(boundary.yellow!=target.yellow)continue;float delta=Mathf.Abs(boundary.offset-target.offset);
+   if(delta>=nearest||delta>1.8f)continue;nearest=delta;result=p+TrafficSystem.Right(direction)*boundary.offset;
+   if(boundary.yellow)result=ReviewedLaneLayout.Centreline(map,source,result);
+  }return result;
+ }
+ static bool CoversStation(AssistedRoadNetwork.Path path,Vector3 point,Vector3 direction,float width){
+  float error;float at=path.Project(point,out error);if(error>width+1)return false;
+  var tangent=path.Tangent(at);if(Mathf.Abs(Vector3.Dot(tangent,direction))<.85f)return false;
+  float along=Vector3.Dot(point-path.Position(at),tangent);
+  return at>.01f&&at<path.length-.01f||Mathf.Abs(along)<.5f;
  }
  public static bool InOpening(Vector3 point,List<RoadJunctionGeometry.Clearance> clearances,List<RoadJunctionGeometry.Opening> openings,List<ReviewedCrosswalkGeometry.Zone> authored,float extra){
   foreach(var crossing in authored)if(crossing.InBand(point,extra)||crossing.JunctionSide(point,extra))return true;

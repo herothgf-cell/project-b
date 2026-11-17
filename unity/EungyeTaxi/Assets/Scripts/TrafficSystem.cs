@@ -246,7 +246,7 @@ public partial class TrafficSystem : MonoBehaviour {
             }
         }
         foreach(var j in junctions)if(j.signalized&&j.editorProgram==null&&j.leftTurnMode==LeftTurnMode.ProtectedShared)j.gameProgram=DriveFlowPolicy.Signals(this,j);
-        PaintMesh(whitePaint,white);PaintMesh(yellowPaint,yellow);RoadMapFacilities.Build(map.editorDocument,transform,this);editorWalkers=GetComponentsInChildren<RoadMapWalker>();
+        PaintMesh(whitePaint,white);PaintMesh(yellowPaint,yellow);RoadMapFacilities.Build(map.editorDocument,transform,this,map);editorWalkers=GetComponentsInChildren<RoadMapWalker>();
         if(spawnCars&&map.hybrid){gameObject.AddComponent<DistrictTraffic>().Initialize(this,map,true);return;}
         if(spawnCars&&junctions.Count>0) {
             if(map.mapId=="eungye")Physics.SyncTransforms();
@@ -552,7 +552,7 @@ public partial class TrafficSystem : MonoBehaviour {
     void AddApproach(TrafficJunction j,Vector3 direction,float halfWidth,float conflictHalfWidth) {
         var right=Right(direction);
         int editAxis=Mathf.Abs(Vector3.Dot(direction,AxisDirection(j,0)))>.7f?0:1;int editSign=Sign(direction,editAxis,j);bool editedStop=roadMap.editorDocument!=null&&System.Array.Exists(roadMap.editorDocument.facilities,f=>f.junctionId==j.name&&f.kind=="stopLine"&&f.axis==editAxis&&f.sign==editSign);bool editedCross=roadMap.editorDocument!=null&&System.Array.Exists(roadMap.editorDocument.facilities,f=>f.junctionId==j.name&&f.kind=="crosswalk"&&f.axis==editAxis&&f.sign==editSign);float stop=j.StopDistance(editAxis,editSign);
-        if(!editedCross&&(j.facility==null||j.facility.crosswalk)){j.crosswalkApproaches++;for(float x=-halfWidth+.65f;x<halfWidth-.3f;x+=.95f) Mark("Crosswalk "+j.name,j.center-direction*(conflictHalfWidth+TrafficJunction.CrosswalkCentreOffset)+right*x,direction,.5f,TrafficJunction.CrosswalkDepth,white);}
+        if(!editedCross&&(j.facility==null||j.facility.crosswalk)){var crossingCenter=j.center-direction*(conflictHalfWidth+TrafficJunction.CrosswalkCentreOffset);float crossingHalfWidth=halfWidth;GeneratedCrosswalkGeometry.Fit(roadMap,ref crossingCenter,direction,ref crossingHalfWidth);j.crosswalkApproaches++;for(float x=-crossingHalfWidth+.65f;x<crossingHalfWidth-.3f;x+=.95f) Mark("Crosswalk "+j.name,crossingCenter+right*x,direction,.5f,TrafficJunction.CrosswalkDepth,white);}
         if(!editedStop&&(j.facility==null||j.facility.stopLine)){j.stopLineApproaches++;Mark("Stop line "+j.name,j.center-direction*stop+right*halfWidth*.5f,direction,halfWidth-.3f,.4f,white);}
         if(!j.signalized||j.editorProgram!=null)return;
         if(j.facility==null||j.facility.crosswalk)PedestrianSignalDisplay.Create(this,roadMap,j,direction,halfWidth,conflictHalfWidth,transform);
