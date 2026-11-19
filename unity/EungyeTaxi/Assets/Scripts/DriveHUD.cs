@@ -83,7 +83,7 @@ public class DriveHUD : MonoBehaviour {
   if(careerFirst+4<careerMenuSlots.Length&&GUI.Button(new Rect(x+250,y+258,210,38),"다음 목록",button))careerFirst+=4;
   if(GUI.Button(new Rect(x+20,y+307,440,38),"돌아가기",button))careerMenuSlots=null;
  }
- public string DrivingHelpText {get{return "운전\nW / ↑ 가속 · S / ↓ 감속 · A,D / ←,→ 조향\n정차 후 S를 놓았다 다시 누르면 후진 · Space 긴급제동\nQ / E 방향지시등 · G 비상등\n\n시점과 지도\nC 시점 전환 · B 뒤보기 · Z / X 좌우 보기 · V 코너 시선\nM 전체 지도 · + / - 미니맵 확대 / 축소\n\n승객과 영업\nF 승하차 · 숫자 1~n 대화 선택 (화면의 선택지 번호)\nF7 생활거점 · F8 운행 기록 · N 퇴근 (거점에 정차 후)\n\n조향 보조와 메뉴\nH 조향 보조 켜기 / 끄기 · 보조 중 ← / → 차로 변경\n보조 중 Q / E 다음 교차로 회전 예약\n가속·감속·제동·신호 판단은 직접 합니다.\nF1 도움말 · Esc 일시정지 · F11 전체화면";}}
+ public string DrivingHelpText {get{return "운전\nW / ↑ 가속 · S / ↓ 감속 · A,D / ←,→ 조향\n정차 후 S를 놓았다 다시 누르면 후진 · Space 긴급제동\nQ / E 방향지시등 · G 비상등\n\n시점과 지도\nC 시점 전환 · B 뒤보기 · Z / X 좌우 보기 · V 코너 시선\nM 전체 지도 · + / - 미니맵 확대 / 축소\n\n승객과 영업\nF 승하차 · 숫자 1~n 대화 선택 (화면의 선택지 번호)\nF7 생활거점 · F8 운행 기록 · N 퇴근 (거점에 정차 후)\nJ 미터기 · K 빈차등 · L 에어컨\n\n조향 보조와 메뉴\nH 조향 보조 켜기 / 끄기 · 보조 중 ← / → 차로 변경\n보조 중 Q / E 다음 교차로 회전 예약\n가속·감속·제동·신호 판단은 직접 합니다.\nF1 도움말 · Esc 일시정지 · F11 전체화면";}}
  public static Rect HelpBounds(float width,float height){float scale=Mathf.Min(1,Mathf.Min((width-24)/760,(height-24)/660));return new Rect((width-760*scale)/2,(height-660*scale)/2,760*scale,660*scale);}
  void DrawHelp(){
   int depth=GUI.depth;GUI.depth=-20;var matrix=GUI.matrix;var r=HelpBounds(Screen.width,Screen.height);float scale=r.width/760;

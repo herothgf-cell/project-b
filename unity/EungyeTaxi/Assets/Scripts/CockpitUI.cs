@@ -11,6 +11,33 @@ public static class CockpitUI {
  public static string Clock(double seconds){int n=Mathf.CeilToInt((float)System.Math.Max(0,seconds));return n/60+":"+(n%60).ToString("00");}
  static void Label(Rect r,string value,int size=18,Color? color=null,bool bold=false){GUI.Label(r,value,DrivingHudArt.Text(size,color,bold));}
  public static Rect FirstPersonSpeedRect(float w,float h){return new Rect(w*.40f-155,h-139,310,112);}
+ public static Rect CabinBounds(float w,float h,bool firstPerson){
+  float x=firstPerson?FirstPersonSpeedRect(w,h).xMax+12:w/2+174;
+  float right=firstPerson?w-488:w-324;
+  return new Rect(x,h-137,Mathf.Min(288,right-x-8),112);
+ }
+ static void DrawCabin(DriveSession session,float w,float h,bool firstPerson){
+  var business=session.business;if(!business.CabinEnabled)return;
+  var cabin=business.Cabin;var rect=CabinBounds(w,h,firstPerson);
+  int vacancy=session.jobs.Active?1:cabin.Vacancy;
+  string vacant=vacancy==2?"휴무":vacancy==1?"예약":"빈차";
+  string temperature=cabin.Temperature==CabinControlsState.Warm?"따뜻":cabin.Temperature==CabinControlsState.Cool?"시원":"끔";
+  CasualUI.Panel(rect);
+  float left=rect.width*.46f,right=rect.width-left-20;
+  Label(new Rect(rect.x+10,rect.y+8,left-10,20),"미터기 · J",13,CasualUI.Ink,true);
+  int fare=cabin.MeterOn&&session.jobs.Active&&session.jobs.current!=null?session.jobs.current.fare:0;
+  Label(new Rect(rect.x+10,rect.y+30,left-10,27),fare.ToString("N0")+"원",20,CasualUI.Green,true);
+  bool previous=GUI.enabled;GUI.enabled=previous&&!business.CabinAutomatic;
+  if(GUI.Button(new Rect(rect.x+10,rect.y+65,left-14,31),cabin.MeterOn?"켜짐":business.CabinAutomatic?"자동":"꺼짐",KoreanText.Button(13)))business.CabinInput(0);
+  GUI.enabled=previous;
+  if(GUI.Button(new Rect(rect.x+left,rect.y+12,right,38),"빈차등 · K  "+vacant,KoreanText.Button(12)))business.CabinInput(1);
+  if(GUI.Button(new Rect(rect.x+left,rect.y+58,right,38),"에어컨 · L  "+temperature,KoreanText.Button(12)))business.CabinInput(2);
+  if(firstPerson&&session.mirrors&&session.mirrors.Visible){
+   var mirror=session.mirrors.Frame(1);float scale=Scale;
+   var badge=new Rect(mirror.x/scale,(mirror.yMax+6)/scale,mirror.width/scale,28);
+   CasualUI.Header(badge,"지붕 표시등 · "+vacant,1,vacancy==2?CasualUI.Muted:vacancy==1?CasualUI.Danger:CasualUI.Green);
+  }
+ }
  static void DrawDigital(DriveSession s,float w,float h){
   var r=FirstPersonSpeedRect(w,h);CasualUI.RoundedFill(r,DrivingHudArt.Navy);
   GUI.Label(new Rect(r.x+67,r.y+3,150,65),Mathf.Abs(s.taxi.Speed*3.6f).ToString("0"),DrivingHudArt.Text(49,Color.white,true,TextAnchor.MiddleCenter));
@@ -23,12 +50,13 @@ public static class CockpitUI {
   var s=hud.session;var e=s.business.ledger;var jobs=s.jobs;var match=s.simulationMatch;var previous=GUI.matrix;float scale=Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));float w=Screen.width/scale,h=Screen.height/scale;
   DrivingHudArt.Glass(new Rect(24,20,300,92));string region=match?"PVP 도시":MapCatalog.Name(s.world.map.mapId);var regionStyle=DrivingHudArt.Text(14,DrivingHudArt.Light);GUI.Label(new Rect(42,27,264,25),new GUIContent(UiReadability.Ellipsis(region,regionStyle,264),region),regionStyle);
   int minute=480+(int)(e.Elapsed*720/e.Settings.daySeconds);HudGlyph.Draw(new Rect(42,60,28,28),18,DrivingHudArt.Cyan);
-  Label(new Rect(82,51,218,32),match?"남은 경기 "+Clock(match.Remaining):(minute/60%24)+":"+(minute%60).ToString("00")+"   "+e.Day+" / "+e.Settings.days+"일",23,null,true);
+  Label(new Rect(82,51,218,32),match?"남은 경기 "+Clock(match.Remaining):(minute/60%24)+":"+(minute%60).ToString("00")+"   "+(e.IsContinuousCareer?e.Day+"일차":e.Day+" / "+e.Settings.days+"일"),23,null,true);
   Label(new Rect(82,82,218,22),match?(match.ServiceRemaining(s)>0?"시설 이용 "+Clock(match.ServiceRemaining(s)):PvpNativeLan.RunningOnline?"LAN · "+(PvpNativeLan.Instance.IsHost?"호스트":"참가자"):"나 + 봇 3대 · 오프라인"):e.State==BusinessState.Closing?"퇴근 대기":e.Elapsed>=e.Settings.daySeconds?"초과 영업 +"+Clock(e.Elapsed-e.Settings.daySeconds):"남은 영업 "+Clock(e.SecondsLeft),13,DrivingHudArt.Light);
   DrivingHudArt.Glass(new Rect(24,122,300,70));HudGlyph.DrawBadge(new Rect(38,137,34,34),4);Label(new Rect(82,127,220,34),(e.Account==null?jobs.balance:e.Account.Cash).ToString("N0")+"원",25,null,true);Label(new Rect(84,160,218,23),"잔액 · 누적 순수익 "+e.TotalNet.ToString("+ #,0;- #,0;0"),12,DrivingHudArt.Light);
   bool firstPerson=s.drivingCamera&&s.drivingCamera.FirstPerson;
   DrawConditions(s);Rect speed=SpeedBounds(Screen.width,Screen.height);if(firstPerson)DrawDigital(s,w,h);else DrivingHudArt.Dial(new Rect(speed.x/scale,speed.y/scale,speed.width/scale,speed.height/scale),s);
   var hudMatrix=GUI.matrix;if(firstPerson)GUI.matrix=hudMatrix*Matrix4x4.Translate(new Vector3(w-512,0,0));DrawPassenger(s,h);GUI.matrix=hudMatrix;DrawJob(s,w);
+  DrawCabin(s,w,h,firstPerson);
   DrawStandings(s);
   if(firstPerson)GUI.matrix=hudMatrix*Matrix4x4.Translate(new Vector3(336-w,0,0));
   DrivingHudArt.Glass(new Rect(w-312,h-182,288,158));HudGlyph.Draw(new Rect(w-296,h-170,25,25),7,DrivingHudArt.Cyan);Label(new Rect(w-260,h-173,220,28),"운전 점수  "+s.law.ledger.TotalScore,18,null,true);DrivingHudArt.Meter(new Rect(w-296,h-135,256,7),s.law.ledger.TotalScore,DrivingHudArt.Cyan);

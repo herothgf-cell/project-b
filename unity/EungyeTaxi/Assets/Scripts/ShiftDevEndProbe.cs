@@ -8,9 +8,10 @@ using UnityEngine;
 // Uses a private temp campaign, never the player's save.
 public sealed class ShiftDevEndProbe : MonoBehaviour {
  public static bool HomeCheck {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-homeBaseCheck")>=0;}}
+ public static bool CabinCheck {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-cabinControlsCheck")>=0;}}
  public static bool CareerCheck {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-careerCheck")>=0;}}
  public static bool CareerReload {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-careerReload")>=0;}}
- public static bool Enabled {get{return CareerCheck||CareerReload||HomeCheck||Array.IndexOf(Environment.GetCommandLineArgs(),"-shiftDevEndCheck")>=0;}}
+ public static bool Enabled {get{return CabinCheck||CareerCheck||CareerReload||HomeCheck||Array.IndexOf(Environment.GetCommandLineArgs(),"-shiftDevEndCheck")>=0;}}
  public static readonly string CampaignPath=Path.Combine(Path.GetTempPath(),"taxi-shift-"+Guid.NewGuid().ToString("N"),"campaign.json");
  static bool attached;DriveSession s;int checks;bool done;float start;string output;
  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]static void Attach(){if(Enabled&&!attached){attached=true;new GameObject("Shift/dev end acceptance").AddComponent<ShiftDevEndProbe>();}}
@@ -25,6 +26,59 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   yield return null;yield return null;
   FindObjectOfType<UnifiedModeBootstrap>().StartSingle();yield return Ready();
   var b=s.business;
+  if(CabinCheck){
+   Check(b.CabinEnabled&&b.SavePath==CampaignPath,"isolated single-player cabin fixture");
+   DrivingSettings.Current.cabinAssist=true;
+   Check(b.CabinAutomatic,"first shift starts with automatic support");
+   DrivingSettings.Current.cabinAssist=false;
+   s.taxi.body.detectCollisions=false;s.taxi.body.useGravity=false;s.taxi.enabled=false;
+   foreach(var car in s.traffic.cars)if(car)car.gameObject.SetActive(false);
+   b.ContinueFromMenu();yield return Frames(3);
+   var jobs=s.jobs;jobs.ForcedRideCase=DrunkRideCase.Normal;
+   bool reserved=b.CabinInput(1);int firstVacancy=b.Cabin.Vacancy;
+   bool rested=b.CabinInput(1);
+   Check(reserved&&rested&&b.Cabin.OffDuty&&jobs.offers.All(o=>o==null),"off duty clears and suppresses call offers (input="+reserved+"/"+rested+", vacancy="+firstVacancy+"/"+b.Cabin.Vacancy+", active="+jobs.Active+", running="+b.DrowsinessRunning+", blocked="+s.FullMapOpen+"/"+s.SettingsOpen+"/"+(s.accident&&s.accident.Locked)+")");
+   Check(b.CabinInput(1)&&!b.Cabin.OffDuty,"vacancy restores calls");
+   for(int i=0;i<2;i++){
+    jobs.ClearForDay();s.GetComponent<RideCompletionPanel>().Close();
+    var pick=jobs.stops[0];var drop=jobs.stops[3];Pose(pick.Kerb,pick.Direction);
+    jobs.offers[0]=new JobOffer{pickup=0,drop=3,fare=6000,seconds=300,requiredScore=60,
+      distance=jobs.nav.Distance(pick,drop),candidateSeed="meter-check-"+i};
+    Check(jobs.Accept(0)&&jobs.Interact()&&jobs.trip.State==TripState.OnTrip,"boards trip "+i);
+    if(i==1){
+     Check(b.CabinInput(0)&&b.Cabin.MeterOn,"J enables meter on board");
+     PassengerBehaviorState behavior=null;
+     for(int n=0;n<200;n++){
+      var choice=PassengerBehaviorState.CreateConfigured("cabin-probe",PassengerType.Comfort,null,"cabin-"+n);
+      if(choice.HasTrait("body.temperatureSensitive")){behavior=choice;break;}
+     }
+     Check(behavior!=null&&behavior.Board(),"config contains boarded comfort trait");
+     if(behavior.Type!=PassengerType.General&&behavior.Choice<0)behavior.Respond(0,true);
+     typeof(PassengerJobs).GetProperty("Behavior").SetValue(jobs,behavior,null);
+     yield return Frames(2);
+     s.requests.AdvanceSafeStop(2.1f);
+     if(s.requests.HasPendingChoice){s.requests.Choose(PassengerReply.Defer);yield return Frames(2);}
+     Check(jobs.RespondBehavior(behavior.TemperaturePreference)&&behavior.TemperatureSetting==CabinControlsState.Off,"answer does not switch manual air conditioning");
+     jobs.AdvanceBehavior((float)behavior.Content.Number("effect.temperature.discomfortSeconds",20));
+     Check(behavior.TraitSatisfactionDelta==behavior.Content.Int("effect.temperature.mismatchSatisfaction",-2),"mismatched actual temperature penalizes the request");
+     for(int k=0;k<3&&b.Cabin.Temperature!=behavior.TemperaturePreference;k++)Check(b.CabinInput(2),"L changes physical air conditioning");
+     jobs.AdvanceBehavior((float)behavior.Content.Number("effect.temperature.comfortSeconds",15));
+     Check(behavior.TraitSatisfactionDelta==behavior.Content.Int("effect.temperature.matchSatisfaction",3),"maintained matching air conditioning satisfies the request");
+     var checkpoint=BusinessProgress.ParseCheckpoint(File.ReadAllText(b.SavePath));
+     Check(checkpoint.version==CampaignCheckpoint.CurrentVersion&&checkpoint.live.cabinCaptured&&checkpoint.live.cabin.MeterOn&&checkpoint.live.cabin.Temperature==behavior.TemperaturePreference,"active controls captured in the checkpoint");
+    }
+    Pose(drop.Kerb,drop.Direction);
+    Check(jobs.Interact()&&!jobs.Active,"successful alighting "+i);
+    var result=b.passengers.Last();
+    Check(i==0?result.meterDeduction>0&&result.paid>0:result.meterDeduction==0&&result.paid>0,"correct payment for meter state "+i);
+   }
+   Check(jobs.AcceptanceRejection(new JobOffer{pickup=0,drop=3}).Contains("미터기"),"stale meter blocks accepting another call");
+   s.GetComponent<RideCompletionPanel>().Close();
+   Check(b.CabinInput(0)&&!b.Cabin.MeterOn&&b.CabinCallBlock=="","J clears stale meter");
+   var cockpit=CockpitUI.CabinBounds(1600,900,true);
+   Check(cockpit.xMin>CockpitUI.FirstPersonSpeedRect(1600,900).xMax&&cockpit.xMax<1112,"cabin panel fits between speedometer and passenger");
+   done=true;Debug.Log("CABIN_PLAYER_OK checks="+checks);Application.Quit(0);yield break;
+  }
   if(CareerReload){
    Check(b.ledger.Day==5&&b.ledger.IsContinuousCareer&&b.preparing&&!b.ResumeBlocked,"same slot restores day 5");
    Check(b.ledger.Account.Room.lampOwned&&b.ledger.Account.Vehicle.modelId=="lpg"&&b.ledger.Account.Vehicle.altColorOwned&&b.ledger.Account.Vehicle.ornamentOwned,"career owns lamp and customized vehicle after process restart");
@@ -56,7 +110,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    b.ledger.RecordFare("career-fixture-4",12000);var bay=s.services.ParkingStop;Pose(bay.Kerb,bay.Direction);
    Check(b.RequestEndDay(),"career day 4 settles");while(!b.ShowingSummary)yield return null;
    Check(b.RoomAvailable&&b.BeginNextCampaignDay()&&b.ledger.Day==5,"room accessible and day 5 prepares");
-   Check(BusinessProgress.ParseCheckpoint(File.ReadAllText(slot)).version==4,"checkpoint format 4 written");
+   Check(BusinessProgress.ParseCheckpoint(File.ReadAllText(slot)).version==CampaignCheckpoint.CurrentVersion,"current checkpoint format written");
    done=true;Debug.Log("CAREER_PLAYER_OK checks="+checks);Application.Quit(0);yield break;
   }
   if(HomeCheck){

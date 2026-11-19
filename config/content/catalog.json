@@ -2,6 +2,27 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "id": "cabin.meter.missedFareRate",
+      "group": "차량",
+      "section": "차내 조작",
+      "title": "미터기 누락 시 지급 운임 비율",
+      "type": "number",
+      "defaultValue": "0.5",
+      "min": 0.01,
+      "max": 1,
+      "unit": "배",
+      "description": "기존 정산 운임에 적용하는 지급 비율입니다. 승객이 하차한 뒤 장부에 반영됩니다.",
+      "affects": [
+        "실수령 운임"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "CabinControlsState.Payable",
+      "editable": true
+    },
+    {
       "id": "home.upgrade.price",
       "group": "생활",
       "section": "숙소",

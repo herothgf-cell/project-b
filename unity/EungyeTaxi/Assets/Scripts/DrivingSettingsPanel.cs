@@ -73,7 +73,8 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
    Draft.deadzone=Row(454,"게임패드 데드존","스틱의 작은 흔들림 무시 · 키보드에는 영향 없음",Draft.deadzone,0,.4f);
    var owner=GetComponent<DriveSession>();bool oldEnabled=GUI.enabled;GUI.enabled=oldEnabled&&owner&&!owner.simulationMatch;
    FollowingDraft=GUI.Toggle(new Rect(28,540,562,30),FollowingDraft,"앞차 안전 추종 보완 · "+(FollowingDraft?"켜짐":"꺼짐"),KoreanText.Button(17));GUI.enabled=oldEnabled;
-   GUI.Label(new Rect(28,574,562,24),owner&&owner.simulationMatch?"PVP에서는 공통 안전 규칙을 유지합니다":"주변 차량의 앞차 안전거리 보완",Label(14));
+   GUI.enabled=oldEnabled&&owner&&!owner.simulationMatch;
+   Draft.cabinAssist=GUI.Toggle(new Rect(28,571,562,28),Draft.cabinAssist,"차내 조작 자동 보조 · 첫 3일",KoreanText.Button(15));GUI.enabled=oldEnabled;
    if(GUI.Button(new Rect(28,604,180,32),"조향: 부드럽게",KoreanText.Button(15)))SteeringPreset(-1);
    if(GUI.Button(new Rect(218,604,180,32),"조향: 표준",KoreanText.Button(15)))SteeringPreset(0);
    if(GUI.Button(new Rect(408,604,180,32),"조향: 빠르게",KoreanText.Button(15)))SteeringPreset(1);

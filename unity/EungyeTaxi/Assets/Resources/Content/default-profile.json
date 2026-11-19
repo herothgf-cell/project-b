@@ -2,8 +2,12 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "af589963dc971bfeca29517652fc61a874d9bca574562184a2fa5a43893f801f",
+  "contentHash": "7d01b92ecb7932e4cada3574e897875b25ef60c8ed956c47ed524f60b80c7b9f",
   "values": [
+    {
+      "id": "cabin.meter.missedFareRate",
+      "value": "0.5"
+    },
     {
       "id": "home.upgrade.price",
       "value": "160000"
