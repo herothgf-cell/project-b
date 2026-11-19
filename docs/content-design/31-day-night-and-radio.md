@@ -38,6 +38,8 @@ gantt
 
 성능 기준: PvP 호스트 frame p95 22ms를 넘기지 않는다. 밤 조명은 PvP에서 끌 수 있게 설정 분리.
 
+![낮밤·라디오 시안](images/motivation-day-night-radio.png)
+
 ## 3. 라디오 자막
 
 | 종류 | 시점 | 예시 | 연결 |

@@ -40,6 +40,8 @@ flowchart LR
 
 정답 경로·예상 수입을 직접 알려주지 않는다.
 
+![하루 조건 카드 시안](images/motivation-day-condition-card.png)
+
 ## 5. 설계 원칙
 
 | 할 것 | 하지 않을 것 |

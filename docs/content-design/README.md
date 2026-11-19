@@ -95,4 +95,7 @@
 | 3 | [30 손님 이야기·기사 수첩](30-passenger-stories-and-logbook.md) | 운전 결과로 결말이 갈리는 10편, 수집·동네 숙련도 |
 | 4 | [31 낮밤·라디오](31-day-night-and-radio.md) | 조명 4단계, 하단 라디오 자막 |
 | 5 | [32 보류 시스템 재검토](32-deferred-systems-review.md) | **결정:** 면허 경로 제외(처음부터 개인택시), 차내 조작 3종 추가 |
-| 6 | [33 배경 이야기 보여주기](33-backstory-presentation.md) | 3컷 인트로·이전 기사의 수첩·승객 질문·첫날 밤 목표 메모 |
+| 6 | [33 배경 이야기 보여주기](33-backstory-presentation.md) | 아버지가 남긴 개인택시로 생계, 3컷 인트로·아버지 수첩·승객 질문·벽 메모 |
+| 7 | [34 기사 숙소 거점](34-home-base.md) | 숙소 1곳(수인로 뒤 원룸)에서 시작·퇴근, 월세, 같은 건물 넓은 호실 |
+
+시안 이미지 `images/motivation-*.png`(재생성 `tools/render_motivation_mockups.py`) · [Codex 구현 프롬프트 P1~P7](codex-prompts-motivation.md)

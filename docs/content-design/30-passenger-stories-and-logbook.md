@@ -55,6 +55,10 @@ flowchart LR
 | ★★ | 10회 | 주변 대기 명당 표시 |
 | ★★★ | 25회 | 시간대별 수요 힌트 1줄 |
 
+![기사 수첩 시안](images/motivation-logbook.png)
+
+첫 탭은 아버지의 운행 수첩([33](33-backstory-presentation.md)).
+
 ## 5. 표현 원칙
 
 | 할 것 | 하지 않을 것 |
