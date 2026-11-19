@@ -558,7 +558,10 @@ public partial class TrafficSystem : MonoBehaviour {
         if(j.facility==null||j.facility.crosswalk)PedestrianSignalDisplay.Create(this,roadMap,j,direction,halfWidth,conflictHalfWidth,transform);
         // Far-side placement keeps the signal visible from a stopped driver's eye position.
         var root=new GameObject(j.name+" signal approach"); root.transform.SetParent(transform); root.transform.position=j.center+direction*stop+right*(halfWidth+.6f); root.transform.rotation=Quaternion.LookRotation(direction);
-        var support=roadMap.hybrid?root.transform.InverseTransformPoint(RoadsidePlacement.FindPole(roadMap,root.transform.position)):Vector3.zero;
+        var authoredPole=roadMap.editorDocument==null?null:System.Array.Find(roadMap.editorDocument.facilities,f=>
+            f.kind=="lanePresentation"&&f.type==ReviewedCorridorPaint.SignalPoleType&&f.junctionId==j.name&&f.axis==editAxis&&f.sign==editSign);
+        var support=authoredPole!=null?root.transform.InverseTransformPoint(authoredPole.Position):
+            roadMap.hybrid?root.transform.InverseTransformPoint(RoadsidePlacement.FindPole(roadMap,root.transform.position)):Vector3.zero;
         WorldBuilder.Box("Pole",support+new Vector3(0,2.5f,0),new Vector3(.15f,5,.15f),pole,root.transform,false);
         float reach=halfWidth-2.5f+.6f;
         var head=new Vector3(-reach,0,0);var span=head-support;

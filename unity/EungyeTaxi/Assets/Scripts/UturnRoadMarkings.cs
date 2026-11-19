@@ -39,6 +39,13 @@ public static class UturnRoadMarkings {
      zone.start=a+across*(separation*.5f);
     }
    }else {
+    // J7841's U-turn exits in the outer of three opposing lanes. Its
+    // connector midpoint is inside that carriageway, not on the median.
+    // Use the nearest opposing lane; keep the turn path/permission intact.
+    if(join.id=="join:reviewed:G04:NB:uturn"){
+     var opposing=System.Array.Find(lanes,l=>l.id=="local:7798:686:7778:21"&&Ordinary(l));
+     if(opposing!=null)zone.start=a+across*(Vector3.Dot(opposing.points[0].V()-a,across)*.5f);
+    }
     // The turn connector starts beyond the approach arrow/stop. Include the
     // final approach interval so the arrow is not beside a yellow barrier.
     // This is a bounded game paint approximation, not a new turn permission.
@@ -93,6 +100,14 @@ public static class UturnRoadMarkings {
  }
  public static void Paint(MapData map,System.Action<string,Vector3,Vector3,float,float,bool> mark){
   foreach(var zone in Build(map)){
+   if(zone.joinId=="join:reviewed:G04:SB:uturn"&&
+      map.editorDocument!=null&&map.editorDocument.facilities.Any(f=>f.id=="reviewed:r47:A:mask:0")){
+    for(float at=0;at<zone.length;at+=6){
+     float length=Mathf.Min(3,zone.length-at);
+     mark("U-turn permitted median",zone.start+zone.forward*(at+length*.5f),zone.forward,.18f,length,false);
+    }
+    continue;
+   }
    mark("U-turn permitted median",zone.start+zone.forward*(zone.length*.5f),zone.forward,.18f,zone.length,false);
   }
   foreach(var arrow in FallbackArrows(map))LaneDirectionPaint.Paint(arrow,"U-turn approach arrow "+map.hdEdges[arrow.edgeIndex].id,mark);

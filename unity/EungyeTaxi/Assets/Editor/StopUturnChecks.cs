@@ -13,11 +13,17 @@ public static class StopUturnChecks {
    for(int i=1;i<join.points.Length;i++){var q=join.points[i].V();var f=(q-join.points[i-1].V()).normalized;foreach(float along in new[]{-2.3f,0,2.3f})foreach(float side in new[]{-1.05f,1.05f})Check(!crossing.Any(z=>z.InBand(q+f*along+TrafficSystem.Right(f)*side,.15f)),name+" complete vehicle stays outside crossing "+i);}
    Debug.Log("STOP_UTURN_CLEAR "+name+" start="+from.points.Last().V()+" end="+to.points[0].V());
   }
-  Check(p.document.scene.objects.Count(o=>o.enabled&&o.id=="reviewed:2026-10-30:J7973-SE-island"&&o.kind=="sidewalk")==1,"single authored J7973 island");
-  var island=p.document.scene.objects.Single(o=>o.id=="reviewed:2026-10-30:J7973-SE-island");ProjectMapScene.Triangulate(island.points);
-  foreach(var l in p.document.lanes.Where(l=>!l.disabled)){
-   var path=new AssistedRoadNetwork.Path(l.points.Select(q=>q.V()).ToArray());float err;path.Project(new Vector3(813,0,356),out err);if(err>20)continue;
-   for(float at=0;at<path.length;at+=.5f){var q=path.Position(at);var f=path.Tangent(at);foreach(float along in new[]{-2.3f,2.3f})foreach(float side in new[]{-1.05f,1.05f})Check(!RoadMapRules.Polygon(island.points,q+f*along+TrafficSystem.Right(f)*side),"vehicle corridor avoids island "+l.id);}
+  var islands=p.document.scene.objects.Where(o=>o.enabled&&o.kind=="sidewalk"&&
+   (o.id=="reviewed:2026-10-30:J7973-SE-island"||
+    o.id.StartsWith(ApprovedEungyeRoads.Prefix+"J7973:",StringComparison.Ordinal)&&o.id.EndsWith(":island",StringComparison.Ordinal))).ToArray();
+  Check(islands.Length==(p.document.revision>=47?4:1),"authored J7973 refuges");
+  foreach(var island in islands){
+   ProjectMapScene.Triangulate(island.points);
+   var centre=island.points.Aggregate(Vector3.zero,(sum,pnt)=>sum+pnt.V())/island.points.Length;
+   foreach(var l in p.document.lanes.Where(l=>!l.disabled)){
+    var path=new AssistedRoadNetwork.Path(l.points.Select(q=>q.V()).ToArray());float err;path.Project(centre,out err);if(err>20)continue;
+    for(float at=0;at<path.length;at+=.5f){var q=path.Position(at);var f=path.Tangent(at);foreach(float along in new[]{-2.3f,2.3f})foreach(float side in new[]{-1.05f,1.05f})Check(!RoadMapRules.Polygon(island.points,q+f*along+TrafficSystem.Right(f)*side),"vehicle corridor avoids "+island.id+" via "+l.id);}
+   }
   }
   foreach(string id in new[]{"J1927_5181","J7973_3744","J8066_6364"})foreach(var group in p.document.facilities.Where(f=>f.junctionId==id&&f.kind=="stopLine").GroupBy(f=>f.axis+":"+f.sign))Check(group.Count()==1,"one canonical stop per approach "+id+" "+group.Key);
   AdditionalReviewedUturnMap.Validate();Debug.Log("STOP_UTURN_MAP_CHECKS_OK");

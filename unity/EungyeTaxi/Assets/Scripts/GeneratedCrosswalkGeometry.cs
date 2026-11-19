@@ -9,7 +9,7 @@ public static class GeneratedCrosswalkGeometry {
  // A short crossing serving one direction can end on a pedestrian island;
  // nearby lanes outside its painted span must not make it eligible.
  public static RoadMapFacility Effective(MapData map,RoadMapFacility source){
-  if(source==null||source.kind!="crosswalk"||map==null||!map.hybrid||map.hdEdges==null||source.scale!=1)return source;
+  if(source==null||source.kind!="crosswalk"||source.type=="보도 접점 지정"||map==null||!map.hybrid||map.hdEdges==null||source.scale!=1)return source;
   var center=source.Position;var direction=Quaternion.Euler(0,source.yaw,0)*Vector3.forward;var across=TrafficSystem.Right(direction);bool forward=false,backward=false;
   var widths=new Dictionary<string,float>();if(map.editorDocument!=null)foreach(var lane in map.editorDocument.lanes)widths[lane.id]=lane.width;
   foreach(var lane in map.hdEdges){if(lane.disabled||lane.change!=0||lane.points==null)continue;float width;if(!widths.TryGetValue(lane.id??"",out width))width=3.5f;

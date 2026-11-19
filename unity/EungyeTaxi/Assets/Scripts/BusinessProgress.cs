@@ -184,16 +184,17 @@ public class BusinessProgress : MonoBehaviour {
    "8c9a5e7f386aeeac9114b7a9c7da0c938fb8019c5456bd20bf6e6b956de388f6",
    "1233c5ca6b88d5de3c75d7542ebc294409750bd1d2daa5041658149457f7e42d",
    "38bad072a26d23185eb9f902ea347eb84dbe34c7e554b22637916ee52645f8af",
-   reviewedR25Hash,reviewedR26Hash,reviewedR27Hash,reviewedR28Hash,reviewedR29Hash,reviewedR30Hash,reviewedR31Hash,reviewedR32Hash,reviewedR33Hash,reviewedR34Hash,reviewedR35Hash,reviewedR36Hash,reviewedR37Hash,reviewedR38Hash,reviewedR39Hash,reviewedR40Hash,reviewedR41Hash,reviewedR42Hash,reviewedR43Hash,"4bc4690b4e3fd618571b4ed82a53e5bb1f49e5c3339a7a6af32fd5a403cb901f","be92b289b8c5243d653df405a689f5e032c34c6cda073b345b0aa2e0be314d26"};
-  int from=0,to=0;for(int revision=14;revision<=45;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>45)return;
-  string reviewedHash=hashes[to-16];
+   reviewedR25Hash,reviewedR26Hash,reviewedR27Hash,reviewedR28Hash,reviewedR29Hash,reviewedR30Hash,reviewedR31Hash,reviewedR32Hash,reviewedR33Hash,reviewedR34Hash,reviewedR35Hash,reviewedR36Hash,reviewedR37Hash,reviewedR38Hash,reviewedR39Hash,reviewedR40Hash,reviewedR41Hash,reviewedR42Hash,reviewedR43Hash,"4bc4690b4e3fd618571b4ed82a53e5bb1f49e5c3339a7a6af32fd5a403cb901f","be92b289b8c5243d653df405a689f5e032c34c6cda073b345b0aa2e0be314d26","ebb810cbd2214e829af890708cd565022f449fcbcbd51039487402df81597161"};
+  const string reviewedR47Hash="2ee1a3fd415b6391086ea167da864dea1db68b58fe101af9105f5be6d482cf3e";
+  int from=0,to=0;for(int revision=14;revision<=47;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>47)return;
+  string reviewedHash=to==47?reviewedR47Hash:hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   ApplyReviewedEungyeCheckpointMigration(live,from,to);
  }
  static void ApplyReviewedEungyeCheckpointMigration(LiveCampaignCheckpoint live,int from,int to){
   live.mapRevision="은계 프로젝트 지도 · r"+to;
-  // r26 and r32 change paint only. Revisions 27–31 and 33–45 rebuild graph indices.
+  // r26 and r32 change paint only. Revisions 27–31 and 33–47 rebuild graph indices.
   if(to>=18&&(from<25||to>=27&&from<31||to>=33)&&live.jobs!=null){live.jobs.navigationCaptured=false;live.jobs.navAvoidEdge=live.jobs.navObservedEdge=live.jobs.navPassedObservedEdge=-1;}
   var manners=live.jobs?.manners;
   if(manners!=null){
@@ -231,7 +232,8 @@ public class BusinessProgress : MonoBehaviour {
   return from<42&&to>=42&&(junction=="J2564_12237"||junction=="J7254_14780"||junction=="J8921_10835"||
    junction=="J7841_867"||junction=="J5076_2580"||junction=="J8066_6364")||
    from<43&&to>=43&&(junction=="J1927_5181"||junction=="J8066_6364"||junction=="J7841_867"||
-   junction=="J7876_1656"||junction=="J5852_16963"||junction=="J7254_14780")||from<44&&to>=44&&junction=="J1927_5181"||from<45&&to>=45&&junction=="J5692_14220";
+   junction=="J7876_1656"||junction=="J5852_16963"||junction=="J7254_14780")||from<44&&to>=44&&junction=="J1927_5181"||from<45&&to>=45&&junction=="J5692_14220"||from<46&&to>=46&&junction=="J7841_867"||
+   from<47&&to>=47&&(junction=="J7841_867"||junction=="J7876_1656"||junction=="J6481_3341"||junction=="J6480_2573"||junction=="J7973_3744");
  }
  static void ValidateOffer(JobOffer o,int count){if(o!=null&&(o.pickup<0||o.pickup>=count||o.drop<0||o.drop>=count||o.fare<0))throw new Exception("Invalid live stop reference");}
  static bool Valid(float value){return !float.IsNaN(value)&&!float.IsInfinity(value);}

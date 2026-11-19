@@ -29,7 +29,21 @@ public class RoadPresentationProbe : MonoBehaviour {
    var forward=session.traffic.AxisDirection(junc,junc.lampAxes[0])*junc.lampSigns[0];var camera=Camera.main;
    Capture(camera,junc.center-forward*24+Vector3.up*5,junc.center+forward*7+Vector3.up*3.3f,Path.Combine(folder,"signage-junction-view.png"),1900,998);
    Capture(camera,junc.center+forward*24+Vector3.up*5,junc.center-forward*7+Vector3.up*3.3f,Path.Combine(folder,"signage-junction-opposite.png"),1900,998);
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-approvedRoadViews")>=0)CaptureApprovedRoadViews(camera,folder);
    if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadContinuityViews")>=0){
+    var reportMap=session.world.map;
+    var reportLane=reportMap.hdEdges.Single(e=>e.id=="local:8228:888:8024:892");
+    Check(reportLane.next.Select(i=>reportMap.hdEdges[i].turn).OrderBy(t=>t).SequenceEqual(new[]{0,1}),"J7841 east approach straight/right only");
+    var reportArrows=LaneDirectionPaint.Layout(reportMap);
+    Check(reportArrows.Any(a=>reportMap.hdEdges[a.edgeIndex].id==reportLane.id&&a.turns==6),"J7841 straight/right glyph");
+    Check(!reportArrows.Any(a=>reportMap.hdEdges[a.edgeIndex].id=="local:8674:881:8401:884"),"J7841 upstream glyph removed without closing road");
+    var reportMedian=UturnRoadMarkings.Build(reportMap).Single(z=>z.joinId=="join:reviewed:G04:NB:uturn");
+    var reportInner=reportMap.hdEdges.Single(e=>e.id=="local:7798:686:7778:21").points.First().V();
+    var reportIncoming=reportMap.hdEdges.Single(e=>e.id=="reviewed:G04:NB:left").points.Last().V();
+    Check(Mathf.Abs(Vector3.Dot(reportMedian.start-(reportInner+reportIncoming)*.5f,reportMedian.across))<.15f,"J7841 white median no longer inside opposing lane");
+    bool priorOrtho=camera.orthographic;float priorSize=camera.orthographicSize;
+    try{camera.orthographic=true;camera.orthographicSize=46;Capture(camera,new Vector3(811,300,69),new Vector3(811,0,69),Path.Combine(folder,"j7841-report-fixed.png"),1728,900);}
+    finally{camera.orthographic=priorOrtho;camera.orthographicSize=priorSize;}
     var ring=session.traffic.junctions.Single(j=>j.name=="J5074_877");
     Check(!ring.signalized&&ring.lamps.Count==0,"roundabout has no signal control or generated heads");
     Check(!session.traffic.GetComponentsInChildren<RoadMapLamp>().Any(l=>l.name.Contains("pink-roundabout:control")),"roundabout control metadata has no visible red lamp");
@@ -61,6 +75,22 @@ public class RoadPresentationProbe : MonoBehaviour {
    if(fixture)Destroy(fixture);
   }catch(Exception e){ok=false;report.Add(e.ToString());Debug.LogException(e);}
   report.Add("device="+SystemInfo.graphicsDeviceName+" mode=fixed-camera-and-geometry manualDriving=false");File.WriteAllText(Path.Combine(folder,"road-signage-player.txt"),(ok?"PASS":"FAIL")+" checks="+checks+"\n"+string.Join("\n",report));Debug.Log("ROAD_SIGNAGE_PLAYER_"+(ok?"OK":"FAILED")+" checks="+checks);Application.Quit(ok?0:1);
+ }
+ void CaptureApprovedRoadViews(Camera camera,string folder){
+  const string prefix="reviewed:r47:";
+  var map=session.world.map;
+  var crossings=map.editorDocument.facilities.Where(f=>f.id.StartsWith(prefix)&&f.kind=="crosswalk").ToArray();
+  Check(crossings.Length==12,"twelve reviewed crossings in the built map");
+  foreach(var f in crossings)Check(CrosswalkLanding.Try(map,f,out _,out _),"rendered crossing landings "+f.id);
+  var gate=session.traffic.junctions.Single(j=>j.name==prefix+"P51");
+  Check(gate.editorProgram!=null&&gate.editorProgram.stages.Last().groups.Length==6,"six simultaneous pedestrian movements");
+  foreach(var view in new[]{("A",787f,158f,60f),("B",716f,87f,56f),("C",626f,333f,55f),("D",648f,257f,59f),("J7973",797f,375f,67f),
+   ("J7973-north",800f,457f,54f),("J7973-south",794f,325f,37f)}){
+   var point=new Vector3(view.Item2,0,view.Item3);
+   camera.orthographic=true;camera.orthographicSize=view.Item4;
+   Capture(camera,point+Vector3.up*270,point,Path.Combine(folder,"approved-"+view.Item1+".png"),1680,1100);
+  }
+  camera.orthographic=false;
  }
  [Serializable] class GridTile {public string id,image,sheet;public int sheetColumn,sheetRowFromTop;public float minX,minZ,maxX,maxZ;}
  [Serializable] class GridCoverage {public string kind,id;public float margin;public int segments,coveredSegments;public bool covered;public string[] tiles;}

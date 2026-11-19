@@ -64,7 +64,7 @@ public static class ReviewedJunctionMap {
   if(output.Count<3)return new List<Vector3>();float area=0;for(int i=0;i<output.Count;i++)area+=output[i].x*output[(i+1)%output.Count].z-output[(i+1)%output.Count].x*output[i].z;if(Mathf.Abs(area)<.005f)return new List<Vector3>();return output;
  }
  // Subtract the new slip pavement from imported sidewalk polygons. Retain every outside fragment.
- static void TrimSlipSidewalk(RoadMapDocument d,RoadMapLane slip,float halfWidth){
+ internal static void TrimSlipSidewalk(RoadMapDocument d,RoadMapLane slip,float halfWidth){
   var additions=new List<ProjectMapObject>();var path=Path(slip);float minX=slip.points.Min(p=>p.x)-halfWidth,maxX=slip.points.Max(p=>p.x)+halfWidth,minZ=slip.points.Min(p=>p.z)-halfWidth,maxZ=slip.points.Max(p=>p.z)+halfWidth;
   foreach(var o in d.scene.objects.Where(o=>o.enabled&&o.kind=="sidewalk")){
    if(o.points.Max(p=>p.x)<minX||o.points.Min(p=>p.x)>maxX||o.points.Max(p=>p.z)<minZ||o.points.Min(p=>p.z)>maxZ)continue;

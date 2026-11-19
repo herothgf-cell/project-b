@@ -176,7 +176,7 @@ public class HdRouteTrial : MonoBehaviour {
   var white=WorldBuilder.Mat("HD white",new Color(.95f,.94f,.87f));var yellow=WorldBuilder.Mat("HD yellow",new Color(1,.72f,.1f));var blue=WorldBuilder.Mat("HD blue",new Color(.12f,.4f,1));
   var vertices=new[]{new List<Vector3>(),new List<Vector3>(),new List<Vector3>()};var triangles=new[]{new List<int>(),new List<int>(),new List<int>()};
   var roadsideMask=new LocalRoadSurfaceMask(map);var authoredMask=new AuthoredJunctionPaintMask(map);var longitudinalMask=new LongitudinalJunctionPaintMask(map);var stopMask=new ReplacedStopLineMask(map);var uturns=UturnRoadMarkings.Build(map);
-  var drawn=new HashSet<string>();
+  var drawn=new HashSet<string>();var replacements=new ReviewedCorridorPaint(map);
   foreach(var mark in map.hdMarks??new HdMark[0]){
    if(mark.points==null||mark.points.Length<2)continue;
    if(stopMask.Replaces(mark)||ReviewedMarkSuppression.Hides(map,mark))continue;
@@ -188,9 +188,11 @@ public class HdRouteTrial : MonoBehaviour {
    bool editedYellow=color==1&&(mark.kind=="501"||roadside)&&authoredMask.MightAffect(mark);
    bool crossingLine=(mark.kind=="501"||mark.kind=="502"||mark.kind=="503"||mark.kind=="505"||mark.kind=="506"||mark.kind=="515"||mark.kind=="525")&&authoredMask.MightAffect(mark);
    bool uturnMedian=color==1&&mark.kind=="501"&&uturns.Count>0;
+   bool replaced=mark.kind=="501"||mark.kind=="502"||mark.kind=="503"||mark.kind=="506"||roadside;
    bool longitudinal=longitudinalMask.MightAffect(mark),fine=roadside||editedYellow||longitudinal||crossingLine||uturnMedian;
    float step=fine ? .5f : dashed ? 6 : 2,paint=fine ? .5f : dashed ? 3 : 2.05f;
    for(float d=0;d<path.length;d+=step){if(fine&&dashed&&d%6>=3)continue;var a=path.Position(d);var b=path.Position(Mathf.Min(path.length,d+paint));if((b-a).sqrMagnitude<.0001f)continue;
+    if(replaced&&replacements.Covers((a+b)*.5f,(b-a).normalized))continue;
     if(longitudinal&&longitudinalMask.Covers((a+b)*.5f,(b-a).normalized,Vector3.Distance(a,b)*.5f))continue;
     if(uturnMedian&&UturnRoadMarkings.Covers(uturns,(a+b)*.5f,Vector3.Distance(a,b)*.5f))continue;
     // Kerb hooks/tapers do not become lane interiors, but no longitudinal
