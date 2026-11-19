@@ -1,6 +1,33 @@
 using System.IO;
+using System;
+using System.Linq;
 
 public static class CampaignSaveLocation {
+ const string ActiveCareer="active-career-slot.txt";
+ public static string NewCareer(string directory){return Path.Combine(directory,"career-"+Guid.NewGuid().ToString("N")+".json");}
+ static bool CareerFile(string name){
+  if(name==PrototypeSettings.ThreeDaySaveFile)return true;
+  if(name==null||name.Length!=44||!name.StartsWith("career-",StringComparison.Ordinal)||!name.EndsWith(".json",StringComparison.Ordinal))return false;
+  Guid value;return Guid.TryParseExact(name.Substring(7,32),"N",out value);
+ }
+ public static string SelectedCareer(string fallback){
+  var directory=Path.GetDirectoryName(fallback);
+  var marker=Path.Combine(directory,ActiveCareer);
+  if(!File.Exists(marker))return fallback;
+  string name=File.ReadAllText(marker).Trim();
+  if(!CareerFile(name))return fallback;
+  string selected=Path.Combine(directory,name);
+  return File.Exists(selected)||File.Exists(selected+".bak")?selected:fallback;
+ }
+ public static void SelectCareer(string path){
+  string name=Path.GetFileName(path);
+  if(!CareerFile(name)||!File.Exists(path))throw new IOException("Invalid career slot");
+  CampaignCheckpointWriter.Write(Path.Combine(Path.GetDirectoryName(path),ActiveCareer),name);
+ }
+ public static string[] ListCareers(string directory){
+  if(!Directory.Exists(directory))return new string[0];
+  return Directory.GetFiles(directory,"*.json").Where(p=>CareerFile(Path.GetFileName(p))).OrderByDescending(File.GetLastWriteTimeUtc).ToArray();
+ }
  // Stable data identity; changing the displayed product name must not hide saves.
  public static string DirectoryFor(string companyDirectory){return Path.Combine(companyDirectory,"은계 택시 시뮬레이터");}
  public static string Resolve(string companyDirectory,string fileName){

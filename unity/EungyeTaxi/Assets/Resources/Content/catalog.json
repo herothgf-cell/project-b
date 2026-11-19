@@ -2,6 +2,27 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "id": "home.upgrade.price",
+      "group": "생활",
+      "section": "숙소",
+      "title": "넓은 호실 목표 금액",
+      "type": "integer",
+      "defaultValue": "160000",
+      "min": 1000,
+      "max": 1000000,
+      "unit": "원",
+      "description": "같은 건물 내 넓은 호실을 준비하는 저축 목표의 시험 금액입니다.",
+      "affects": [
+        "숙소 저축 목표"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "OneDayHUD.GoalPrice",
+      "editable": true
+    },
+    {
       "id": "home.returnTrip.weight",
       "group": "생활",
       "section": "숙소",

@@ -31,7 +31,7 @@ public static class VehicleGarageHUD {
    if(!read&&!mine&&VehicleCatalog.Purchasable(v.id)&&GUI.Button(new Rect(r.x+12,r.y+425,r.width-24,40),selected==v.id?"견적 보는 중":"견적 보기",button))selected=v.id;
   }
   GUI.Label(new Rect(25,575,800,48),"차종마다 연료·트렁크·승차감·내구도·회전이 다릅니다. 운임과 속도는 같습니다.",text);
-  GUI.Label(new Rect(25,628,800,52),"교체는 이번 3일 회차에 1번 · 현금만 · 다음 날부터 새 차로 운행 · 새 회차는 시작 차로 돌아갑니다. 산 외형·색·장식은 PVP '내 차'에 남습니다.",small);
+  GUI.Label(new Rect(25,628,800,52),b.ledger.IsContinuousCareer?"교체는 경력에서 1번 · 현금만 · 다음 날부터 새 차로 운행합니다. 산 외형·색·장식은 PVP '내 차'에 남습니다.":"교체는 이번 3일 회차에 1번 · 현금만 · 다음 날부터 새 차로 운행 · 새 회차는 시작 차로 돌아갑니다. 산 외형·색·장식은 PVP '내 차'에 남습니다.",small);
   // Right panel: quote and decoration.
   CasualUI.Panel(new Rect(865,15,320,690));CasualUI.Header(new Rect(875,25,300,48),"견적·꾸미기",5);
   GUI.Label(new Rect(885,80,280,30),"현금 "+Money(a.Cash)+(a.Debt>0?" · 미납 "+Money(a.Debt):""),new GUIStyle(title){fontSize=20});
@@ -41,7 +41,7 @@ public static class VehicleGarageHUD {
    GUI.Label(new Rect(885,116,280,170),spec.name+"\n새 차 가격  "+Money(q.price)+"\n보상 판매  −"+Money(q.tradeIn)+"  (내구도 "+durability+")\n최종 지출  "+Money(q.spend)+"\n남는 현금  "+Money(q.cashAfter),text);
    if(!q.allowed)GUI.Label(new Rect(885,262,280,40),q.reason,new GUIStyle(small){normal={textColor=CasualUI.Danger}});
    bool can=GUI.enabled;GUI.enabled=can&&q.allowed;if(GUI.Button(new Rect(885,302,280,42),"이 차로 바꾸기",CasualUI.Action(17)))confirm=selected;GUI.enabled=can;
-  }else GUI.Label(new Rect(885,116,280,120),owned.modelId==VehicleCatalog.Starter?"완료한 회차 기록입니다.":VehicleCatalog.Of(owned).name+" 보유 중\n"+(owned.purchasedDay<b.ledger.Settings.days?(owned.purchasedDay+1)+"일차부터 운행":"마지막 날 구매 · 소유만 기록")+"\n지출 "+Money(owned.paidVehicle),text);
+  }else GUI.Label(new Rect(885,116,280,120),owned.modelId==VehicleCatalog.Starter?"완료한 회차 기록입니다.":VehicleCatalog.Of(owned).name+" 보유 중\n"+(owned.purchasedDay<b.ledger.DayLimit?(owned.purchasedDay+1)+"일차부터 운행":"마지막 날 구매 · 소유만 기록")+"\n지출 "+Money(owned.paidVehicle),text);
   var mineSpec=VehicleCatalog.Of(owned);
   GUI.Label(new Rect(885,356,280,26),"색상",bold);
   for(int c=0;c<2;c++){var rgb=mineSpec.colors[c];var sw=new Rect(885+c*145,384,135,58);CasualUI.RoundedFill(sw,owned.color==c?CasualUI.Blue:CasualUI.Border);CasualUI.RoundedFill(new Rect(sw.x+4,sw.y+4,30,50),new Color(rgb[0],rgb[1],rgb[2]));

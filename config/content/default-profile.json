@@ -2,8 +2,12 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "5aeb0747d5f85068df7a250c166814df2909e6c01971c10d984f44e5822d78fd",
+  "contentHash": "af589963dc971bfeca29517652fc61a874d9bca574562184a2fa5a43893f801f",
   "values": [
+    {
+      "id": "home.upgrade.price",
+      "value": "160000"
+    },
     {
       "id": "home.returnTrip.weight",
       "value": "3"

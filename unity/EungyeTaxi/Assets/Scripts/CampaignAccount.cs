@@ -17,10 +17,20 @@ using System.Collections.Generic;
  public PersonalRoomState Room;
  // Absent/null in pre-garage saves: migrated to the starter taxi.
  public VehicleState Vehicle;
+ public string careerGoal,careerVehicleGoal;
 }
 // Actual cash movements and accrued debt are separate. Payment of debt never creates a second cost.
 public class CampaignAccount {
  readonly PrototypeSettings settings;
+ public bool IsContinuousCareer {get{return settings.continuousCareer;}}
+ public string CareerGoal {get;private set;}
+ public string CareerVehicleGoal {get;private set;}
+ public bool SetCareerGoal(string goal,string vehicle){
+  if(goal!="none"&&goal!="home"&&goal!="car"||goal=="car"&&!VehicleCatalog.Purchasable(vehicle))return false;
+  CareerGoal=goal;CareerVehicleGoal=goal=="car"?vehicle:"";return true;
+ }
+ public void ContinueCareer(){settings.continuousCareer=true;Room.finalized=false;}
+ public int CashBeforeDay(int day){int cash=settings.startCash;foreach(var entry in entries)if(entry.day<day)cash+=entry.cash;return cash;}
  readonly List<AccountEntry> entries=new List<AccountEntry>();
  public int Cash {get;private set;}
  public int Debt {get;private set;}
@@ -30,17 +40,17 @@ public class CampaignAccount {
  public VehicleSpec VehicleSpec {get{return VehicleCatalog.Of(Vehicle);}}
  // Vehicle trade: one replacement per campaign, cash only, shares the personal-expense ledger.
  public bool BuyVehicle(string model,int day,int durability){
-  if(day<1||day>settings.days||Room.finalized)return false;var q=VehicleCatalog.Quote(Vehicle,model,Cash,Debt,durability);if(!q.allowed)return false;
+  if(day<1||day>settings.DayLimit||Room.finalized)return false;var q=VehicleCatalog.Quote(Vehicle,model,Cash,Debt,durability);if(!q.allowed)return false;
   if(!Post("vehicle:"+model,"personal-purchase",day,-q.spend,0))return false;
   // The dashboard ornament moves to the new car; a colour bought for the traded car stays on record.
   var old=Vehicle;Vehicle=new VehicleState{modelId=model,purchasedDay=day,paidVehicle=q.spend,ornamentOwned=old.ornamentOwned,ornamentPlaced=old.ornamentPlaced,paidOrnament=old.paidOrnament,tradedColorModel=old.altColorOwned?old.modelId:"",paidTradedColor=old.altColorOwned?old.paidColor:0};return true;
  }
  public bool BuyVehicleColor(int day){
-  int price=VehicleCatalog.ColorPrice;if(day<1||day>settings.days||Room.finalized||Debt!=0||Vehicle.altColorOwned||Cash<price||price<=0)return false;
+  int price=VehicleCatalog.ColorPrice;if(day<1||day>settings.DayLimit||Room.finalized||Debt!=0||Vehicle.altColorOwned||Cash<price||price<=0)return false;
   if(!Post("vehicle-color:"+Vehicle.modelId,"personal-purchase",day,-price,0))return false;Vehicle.altColorOwned=true;Vehicle.color=1;Vehicle.paidColor=price;return true;
  }
  public bool BuyVehicleOrnament(int day){
-  int price=VehicleCatalog.OrnamentPrice;if(day<1||day>settings.days||Room.finalized||Debt!=0||Vehicle.ornamentOwned||Cash<price||price<=0)return false;
+  int price=VehicleCatalog.OrnamentPrice;if(day<1||day>settings.DayLimit||Room.finalized||Debt!=0||Vehicle.ornamentOwned||Cash<price||price<=0)return false;
   if(!Post("vehicle-ornament","personal-purchase",day,-price,0))return false;Vehicle.ornamentOwned=true;Vehicle.ornamentPlaced=true;Vehicle.paidOrnament=price;return true;
  }
  public bool SelectVehicleColor(int color){if(Room.finalized||color<0||color>1||color==1&&!Vehicle.altColorOwned)return false;Vehicle.color=color;return true;}
@@ -50,7 +60,7 @@ public class CampaignAccount {
  public int Net {get{return Cash-settings.startCash-Debt+PersonalSpent;}}
  public static int RoomPrice(string item){return item=="lamp"?5000:item=="rug"?8000:0;}
  public bool BuyRoomItem(string item,int style,int day){
-  int price=RoomPrice(item);if(price==0||day<1||day>settings.days||style<0||style>1||Debt!=0||Room.finalized||Cash<price||item=="lamp"&&Room.lampOwned||item=="rug"&&Room.rugOwned)return false;
+  int price=RoomPrice(item);if(price==0||day<1||day>settings.DayLimit||style<0||style>1||Debt!=0||Room.finalized||Cash<price||item=="lamp"&&Room.lampOwned||item=="rug"&&Room.rugOwned)return false;
   if(!Post("room:"+item,"personal-purchase",day,-price,0))return false;
   if(item=="lamp"){Room.lampOwned=true;Room.lampPlaced=true;Room.lampOn=true;Room.lampStyle=style;}else{Room.rugOwned=true;Room.rugPlaced=true;Room.rugStyle=style;}
   if(Room.wished==item)Room.wished="";return true;
@@ -67,7 +77,7 @@ public class CampaignAccount {
   return operatingCost+RentCost(Cash-operatingCost);
  }
  public void SetDaySeconds(float seconds){settings.daySeconds=seconds;}
- public CampaignAccount(PrototypeSettings s){settings=s;Cash=s.startCash;Fuel=s.initialFuel;Room=new PersonalRoomState();Vehicle=new VehicleState();}
+ public CampaignAccount(PrototypeSettings s){settings=s;Cash=s.startCash;Fuel=s.initialFuel;Room=new PersonalRoomState();Vehicle=new VehicleState();CareerGoal="none";CareerVehicleGoal="";}
  bool Has(string id){return entries.Exists(e=>e.id==id);}
  bool HasKind(string kind){return entries.Exists(e=>e.kind==kind);}
  public bool Ate(int day){return entries.Exists(e=>e.kind=="meal"&&e.day==day);}
@@ -116,7 +126,7 @@ public class CampaignAccount {
  }
  public int Expense(int day,string kind){int cost=0;foreach(var e in entries)if(e.day==day&&(kind==null||e.kind==kind)&&e.kind!="fare"&&e.kind!="personal-purchase")cost+=e.debt-e.cash;return cost;}
  public AccountEntry[] Entries {get{return entries.ConvertAll(e=>e.Copy()).ToArray();}}
- public AccountSnapshot Snapshot(){return new AccountSnapshot{version=HasHomeBase?4:3,settings=settings,fuel=Fuel,entries=Entries,Room=Room.Copy(),Vehicle=Vehicle.Copy()};}
+ public AccountSnapshot Snapshot(){return new AccountSnapshot{version=HasHomeBase?4:3,settings=settings,fuel=Fuel,entries=Entries,Room=Room.Copy(),Vehicle=Vehicle.Copy(),careerGoal=CareerGoal,careerVehicleGoal=CareerVehicleGoal};}
  static bool ExcludedCost(string kind){return kind=="insurance"||kind=="tax-due"||kind=="tax-payment";}
  public static CampaignAccount Restore(AccountSnapshot snapshot){
   if(snapshot==null||(snapshot.version!=2&&snapshot.version!=3&&snapshot.version!=4)||snapshot.settings==null||snapshot.entries==null||float.IsNaN(snapshot.fuel)||snapshot.fuel<0||snapshot.fuel>100)throw new ArgumentException("Invalid account checkpoint");
@@ -133,6 +143,8 @@ public class CampaignAccount {
   // removed costs, so later loads cannot refund or forgive them again.
   a.Room=snapshot.Room==null?new PersonalRoomState():snapshot.Room.Copy();
   if(a.Room.wished==null)a.Room.wished="";
+  if(!a.SetCareerGoal(string.IsNullOrEmpty(snapshot.careerGoal)?"none":snapshot.careerGoal,snapshot.careerVehicleGoal))throw new ArgumentException("Invalid career goal");
+  if(a.IsContinuousCareer&&(!a.settings.oneDay||a.settings.days!=3||a.Room.finalized))throw new ArgumentException("Invalid continuous career");
   if(a.Room.lampStyle<0||a.Room.lampStyle>1||a.Room.rugStyle<0||a.Room.rugStyle>1||a.Room.wished!=""&&a.Room.wished!="lamp"&&a.Room.wished!="rug"||a.Room.lampPlaced&&!a.Room.lampOwned||a.Room.rugPlaced&&!a.Room.rugOwned||a.Room.lampOn&&!a.Room.lampOwned)throw new ArgumentException("Invalid room placement");
   // Old saves (no vehicle member, or JsonUtility's materialized blank) migrate to the starter taxi.
   var v=snapshot.Vehicle==null?new VehicleState():snapshot.Vehicle.Copy();if(string.IsNullOrEmpty(v.modelId))v.modelId=VehicleCatalog.Starter;a.Vehicle=v;
@@ -141,7 +153,7 @@ public class CampaignAccount {
   if(v.tradedColorModel.Length>0&&(v.tradedColorModel!=VehicleCatalog.Starter||v.modelId==VehicleCatalog.Starter||v.paidTradedColor<=0)||v.tradedColorModel.Length==0&&v.paidTradedColor!=0)throw new ArgumentException("Invalid traded vehicle colour");
   bool lamp=false,rug=false,vehicle=false,color=false,ornament=false,traded=false;
   foreach(var e in a.entries)if(e.kind=="personal-purchase"){
-   if(e.debt!=0||e.day>a.settings.days)throw new ArgumentException("Invalid personal transaction");
+   if(e.debt!=0||e.day>a.settings.DayLimit)throw new ArgumentException("Invalid personal transaction");
    if(e.id=="room:lamp"&&e.cash==-5000&&!lamp)lamp=true;
    else if(e.id=="room:rug"&&e.cash==-8000&&!rug)rug=true;
    else if(e.id=="vehicle:"+v.modelId&&VehicleCatalog.Purchasable(v.modelId)&&e.cash==-v.paidVehicle&&e.day==v.purchasedDay&&!vehicle)vehicle=true;

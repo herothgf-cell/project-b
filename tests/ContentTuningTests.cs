@@ -43,6 +43,23 @@ public static class ContentTuningTests {
   Check(migrated.Expense(1,"home-rent")==0&&migrated.CloseDay(2)&&migrated.Expense(2,"home-rent")==1500,"legacy completed day is not charged retroactively");
   Check(ContentTuning.Number("home.returnTrip.weight",-1)==3,"older save profile uses catalog default without changing its hash");
   ContentTuning.UseDefaults();
+  var career=new EconomyLedger(PrototypeSettings.ForThreeDays());
+  for(int i=1;i<=3;i++){
+   Check(career.RecordFare("career-"+i,i*6000),"record career fixture fare");
+   career.RequestClose();Check(career.Settle(),"settle career fixture day");
+   if(i==1)Check(career.Account.BuyRoomItem("lamp",1,i),"career fixture owns a lamp");
+   if(i<3)Check(career.NextDay(),"intro advances normally");
+  }
+  Check(career.State==BusinessState.Completed&&!career.NextDay()&&career.RecentNetMedian()==11500,"completed intro and recent-three median");
+  Check(career.PurchaseVehicle("lpg")&&career.BuyVehicleColor(),"car and color owned before continuation");
+  int priorMoney=career.Account.Cash;career.Account.Room.finalized=true;
+  Check(career.ContinueCareer()&&career.Day==4&&!career.Account.Room.finalized,"completed archive continues into day four");
+  Check(career.Account.Cash==priorMoney&&career.Account.Room.lampOwned&&career.Account.Vehicle.altColorOwned,"continuation preserves balance and ownership");
+  Check(career.Account.SetCareerGoal("car","hybrid"),"career car goal accepts an existing candidate");
+  career.RequestClose();career.Settle();
+  Check(career.NextDay()&&career.Day==5,"unbounded next-day progression");
+  var carried=EconomyLedger.RestoreCampaign(career.Snapshot(),career.Account.Snapshot());
+  Check(carried.IsContinuousCareer&&carried.Day==5&&carried.Account.CareerGoal=="car"&&carried.Account.CareerVehicleGoal=="hybrid","day five and goal survive restore");
   Check(ContentTuning.Int("law.centreLine.penalty",-1)==1,"centreline default is independently one law point");
   ContentTuning.UseJson(Change("law.centreLine.penalty","7"));
   Check(ContentTuning.Int("law.centreLine.penalty",-1)==7&&ContentTuning.Int("law.wrongWay.penalty",-1)==10&&ContentTuning.Int("manner.wrongWay.penalty",-1)==10,"centreline tuning preserves wrong-way and manner penalties");

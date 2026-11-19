@@ -8,7 +8,9 @@ using UnityEngine;
 // Uses a private temp campaign, never the player's save.
 public sealed class ShiftDevEndProbe : MonoBehaviour {
  public static bool HomeCheck {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-homeBaseCheck")>=0;}}
- public static bool Enabled {get{return HomeCheck||Array.IndexOf(Environment.GetCommandLineArgs(),"-shiftDevEndCheck")>=0;}}
+ public static bool CareerCheck {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-careerCheck")>=0;}}
+ public static bool CareerReload {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-careerReload")>=0;}}
+ public static bool Enabled {get{return CareerCheck||CareerReload||HomeCheck||Array.IndexOf(Environment.GetCommandLineArgs(),"-shiftDevEndCheck")>=0;}}
  public static readonly string CampaignPath=Path.Combine(Path.GetTempPath(),"taxi-shift-"+Guid.NewGuid().ToString("N"),"campaign.json");
  static bool attached;DriveSession s;int checks;bool done;float start;string output;
  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]static void Attach(){if(Enabled&&!attached){attached=true;new GameObject("Shift/dev end acceptance").AddComponent<ShiftDevEndProbe>();}}
@@ -23,6 +25,40 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   yield return null;yield return null;
   FindObjectOfType<UnifiedModeBootstrap>().StartSingle();yield return Ready();
   var b=s.business;
+  if(CareerReload){
+   Check(b.ledger.Day==5&&b.ledger.IsContinuousCareer&&b.preparing&&!b.ResumeBlocked,"same slot restores day 5");
+   Check(b.ledger.Account.Room.lampOwned&&b.ledger.Account.Vehicle.modelId=="lpg"&&b.ledger.Account.Vehicle.altColorOwned&&b.ledger.Account.Vehicle.ornamentOwned,"career owns lamp and customized vehicle after process restart");
+   Check(b.ledger.Account.CareerGoal=="home","selected goal survives reload");
+   string previous=b.SavePath;string bytes=File.ReadAllText(previous);
+   Check(b.RequestRestart()&&b.ConfirmRestart(true)&&b.SavePath!=previous&&b.ledger.Day==1,"new career opens a separate slot");
+   Check(File.ReadAllText(previous)==bytes&&File.Exists(b.SavePath)&&CampaignSaveLocation.SelectedCareer(previous)==b.SavePath,"old career and fresh active slot both preserved");
+   done=true;Debug.Log("CAREER_RELOAD_PLAYER_OK checks="+checks);Application.Quit(0);yield break;
+  }
+  if(CareerCheck){
+   Check(b.SupportsCareer&&b.preparing&&b.ledger.Day==1&&b.SavePath.Contains("career-player"),"isolated three-day introduction");
+   Check(b.ChooseCareerGoal("car","hybrid"),"preparation can pin a vehicle goal");
+   for(int day=1;day<=3;day++){
+    b.ContinueFromMenu();yield return Frames(3);
+    b.ledger.RecordFare("career-fixture-"+day,12000);
+    var home=s.services.ParkingStop;Pose(home.Kerb,home.Direction);
+    Check(b.RequestEndDay(),"clock off day "+day);
+    while(!b.ShowingSummary)yield return null;
+    if(day==1)Check(b.ChangeRoom("buy","lamp",1),"fixture purchases lamp");
+    if(day==2)Check(b.ChangeVehicle("buy","lpg")&&b.ChangeVehicle("color-buy")&&b.ChangeVehicle("ornament-buy"),"fixture purchases and customizes car");
+    if(day<3){Check(b.BeginNextCampaignDay(),"intro advances day "+day);yield return Frames(3);}
+   }
+   Check(b.CanContinueCareer&&b.ChangeRoom("finish"),"completed 3-day archive is available");
+   int cash=b.ledger.Account.Cash;string slot=b.SavePath;
+   Check(b.BeginContinuousCareer()&&b.ledger.Day==4&&b.preparing&&b.SavePath==slot,"completed save continues at day 4 in same slot");
+   Check(b.ledger.Account.Cash==cash&&b.ledger.Account.Room.lampOwned&&!b.ledger.Account.Room.finalized&&b.ledger.Account.Vehicle.modelId=="lpg","day 4 carries possessions and balance");
+   Check(b.ChooseCareerGoal("home"),"goal can be changed after continuing");
+   yield return Frames(3);b.ContinueFromMenu();yield return Frames(3);
+   b.ledger.RecordFare("career-fixture-4",12000);var bay=s.services.ParkingStop;Pose(bay.Kerb,bay.Direction);
+   Check(b.RequestEndDay(),"career day 4 settles");while(!b.ShowingSummary)yield return null;
+   Check(b.RoomAvailable&&b.BeginNextCampaignDay()&&b.ledger.Day==5,"room accessible and day 5 prepares");
+   Check(BusinessProgress.ParseCheckpoint(File.ReadAllText(slot)).version==4,"checkpoint format 4 written");
+   done=true;Debug.Log("CAREER_PLAYER_OK checks="+checks);Application.Quit(0);yield break;
+  }
   if(HomeCheck){
    Check(b.SavePath==CampaignPath&&s.services.HasHomeBase,"isolated Eungye single home");
    var home=s.services.ParkingStop;

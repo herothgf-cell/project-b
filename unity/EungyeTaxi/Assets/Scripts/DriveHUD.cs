@@ -45,22 +45,43 @@ public class DriveHUD : MonoBehaviour {
    DrawSingleMenu();
   }
  }
+ string[] careerMenuSlots;
+ int careerFirst;
  public void DrawSingleMenu(){
   var settings=DrivingSettingsPanel.For(session);if(settings.IsOpen){settings.Draw();return;}
   var b=session.business;bool restart=b.useV2&&b.HasCampaignToContinue,shift=b.CanChangeShiftLength;
-  float height=(restart?360:308)+(UnifiedModeBootstrap.IsUnified?52:0)+(shift?52:0),x=Screen.width/2f-240,y=(Screen.height-height)/2;
+  if(careerMenuSlots!=null){DrawCareerSlots(b);return;}
+  bool goal=b.SupportsCareer&&b.preparing&&!b.ResumeBlocked;
+  bool beside=goal&&Screen.width>=1100;
+  float height=(restart?360:308)+(UnifiedModeBootstrap.IsUnified?52:0)+(shift?52:0)+(goal&&!beside?106:0)+(b.SupportsCareer?44:0),x=Screen.width/2f-240,y=(Screen.height-height)/2;
   GUI.depth=-150;CasualUI.Panel(new Rect(x,y,480,height));CasualUI.Header(new Rect(x+4,y+4,472,40),b.preparing?"영업 준비":"일시정지",3);
   bool enabled=GUI.enabled;GUI.enabled=enabled&&!session.PracticeBusy&&!b.IsRestoring;
   if(GUI.Button(new Rect(x+20,y+52,440,44),b.MenuPrimaryLabel,CasualUI.Action(18)))b.ContinueFromMenu();
   float row=y+104;
   if(shift){OneDayHUD.DrawShiftLength(new Rect(x+20,row,440,40),b);row+=52;}
-  if(restart){if(GUI.Button(new Rect(x+20,row,440,40),"처음부터 시작",KoreanText.Button(16)))b.RequestRestart();row+=52;}
+  if(goal){OneDayHUD.DrawCareerGoal(beside?new Rect(x+496,y,Mathf.Min(320,Screen.width-x-512),255):new Rect(x+20,row,440,96),b);if(!beside)row+=106;}
+  if(restart){if(GUI.Button(new Rect(x+20,row,440,40),b.SupportsCareer?"새 경력":"처음부터 시작",KoreanText.Button(16)))b.RequestRestart();row+=52;}
+  if(b.SupportsCareer){if(GUI.Button(new Rect(x+20,row,440,35),"저장된 경력",KoreanText.Button(16))){careerMenuSlots=b.CareerSlots();careerFirst=0;}row+=44;}
   if(GUI.Button(new Rect(x+20,row,440,40),"운전 연습 선택",KoreanText.Button(16)))session.GetComponent<PracticeSession>().OpenPicker();row+=52;
   GUI.enabled=enabled;
   if(GUI.Button(new Rect(x+20,row,440,40),"설정",KoreanText.Button(16)))settings.Open();row+=52;
   var unified=FindObjectOfType<UnifiedModeBootstrap>();if(unified){if(GUI.Button(new Rect(x+20,row,440,40),"모드 선택",KoreanText.Button(16)))unified.ReturnToMenu();row+=52;}
   if(GUI.Button(new Rect(x+20,row,440,40),"게임 종료",KoreanText.Button(16)))Application.Quit();row+=52;
   if(unified&&!string.IsNullOrEmpty(unified.Message))GUI.Label(new Rect(x+20,row,440,42),unified.Message,new GUIStyle(small){wordWrap=true});
+ }
+ void DrawCareerSlots(BusinessProgress b){
+  float x=(Screen.width-480)/2f,y=(Screen.height-360)/2f;GUI.depth=-150;
+  CasualUI.Panel(new Rect(x,y,480,360));CasualUI.Header(new Rect(x+4,y+4,472,40),"저장된 경력",0);
+  var button=KoreanText.Button(15);
+  if(careerMenuSlots.Length==0)GUI.Label(new Rect(x+20,y+62,440,35),"저장된 경력이 없습니다.",small);
+  for(int i=careerFirst;i<Mathf.Min(careerMenuSlots.Length,careerFirst+4);i++){
+   var path=careerMenuSlots[i];bool current=path==b.SavePath;
+   string label=System.IO.Path.GetFileName(path)==PrototypeSettings.ThreeDaySaveFile?"첫 3일 저장":"경력 · "+System.IO.File.GetLastWriteTime(path).ToString("MM-dd HH:mm:ss");
+   if(GUI.Button(new Rect(x+20,y+54+(i-careerFirst)*49,440,42),label+(current?" · 현재":""),button)&&!current&&b.OpenCareerSlot(path))return;
+  }
+  if(careerFirst>0&&GUI.Button(new Rect(x+20,y+258,210,38),"이전 목록",button))careerFirst-=4;
+  if(careerFirst+4<careerMenuSlots.Length&&GUI.Button(new Rect(x+250,y+258,210,38),"다음 목록",button))careerFirst+=4;
+  if(GUI.Button(new Rect(x+20,y+307,440,38),"돌아가기",button))careerMenuSlots=null;
  }
  public string DrivingHelpText {get{return "운전\nW / ↑ 가속 · S / ↓ 감속 · A,D / ←,→ 조향\n정차 후 S를 놓았다 다시 누르면 후진 · Space 긴급제동\nQ / E 방향지시등 · G 비상등\n\n시점과 지도\nC 시점 전환 · B 뒤보기 · Z / X 좌우 보기 · V 코너 시선\nM 전체 지도 · + / - 미니맵 확대 / 축소\n\n승객과 영업\nF 승하차 · 숫자 1~n 대화 선택 (화면의 선택지 번호)\nF7 생활거점 · F8 운행 기록 · N 퇴근 (거점에 정차 후)\n\n조향 보조와 메뉴\nH 조향 보조 켜기 / 끄기 · 보조 중 ← / → 차로 변경\n보조 중 Q / E 다음 교차로 회전 예약\n가속·감속·제동·신호 판단은 직접 합니다.\nF1 도움말 · Esc 일시정지 · F11 전체화면";}}
  public static Rect HelpBounds(float width,float height){float scale=Mathf.Min(1,Mathf.Min((width-24)/760,(height-24)/660));return new Rect((width-760*scale)/2,(height-660*scale)/2,760*scale,660*scale);}

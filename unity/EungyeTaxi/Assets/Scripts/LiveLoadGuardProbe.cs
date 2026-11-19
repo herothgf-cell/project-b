@@ -24,7 +24,7 @@ public sealed class LiveLoadGuardProbe:MonoBehaviour {
    var archives=Directory.GetDirectories(Path.GetDirectoryName(b.SavePath),Path.GetFileName(b.SavePath)+".recovery-*");bool preserved=false;
    foreach(var archive in archives)if(File.Exists(Path.Combine(archive,"primary.json"))&&File.Exists(Path.Combine(archive,"backup.json"))&&File.ReadAllText(Path.Combine(archive,"primary.json"))==before&&File.ReadAllText(Path.Combine(archive,"backup.json"))==backup)preserved=true;
    if(!preserved)throw new Exception("explicit recovery did not preserve exact rejected primary and backup in separate archive");
-   var data=JsonUtility.FromJson<CampaignCheckpoint>(File.ReadAllText(b.SavePath));if(data.version!=3||data.hasLive||data.days.active.elapsed!=0)throw new Exception("new campaign persisted stale live payload");
+   var data=JsonUtility.FromJson<CampaignCheckpoint>(File.ReadAllText(b.SavePath));if(data.version!=CampaignCheckpoint.CurrentVersion||data.hasLive||data.days.active.elapsed!=0)throw new Exception("new campaign persisted stale live payload");
    ok=true;Debug.Log("LIVE_LOAD_GUARD_OK checks=9");
   }catch(Exception e){Debug.LogException(e);}
   File.WriteAllText("artifacts/live-load-guard.txt",ok?"PASS blocked recovery confirmation, cancel, primary+backup preservation, archived originals, explicit reset and clean v3 boundary":"FAIL");Application.Quit(ok?0:1);

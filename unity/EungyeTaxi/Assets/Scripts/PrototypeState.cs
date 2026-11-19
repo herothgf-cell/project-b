@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 // Gameplay proposal values, not statutory fines or real-world prices.
 [Serializable] public class PrototypeSettings {
- public bool oneDay,homeBase;
+ public bool oneDay,homeBase,continuousCareer;
+ public int DayLimit {get{return continuousCareer?int.MaxValue:days;}}
  public const string OneDayVersion="eungye-day20-v3-access-rest";
  public const string ThreeDayVersion="eungye-3day20-v1";
  public const string ThreeDaySaveFile="campaign-3day20-v1.json";
@@ -72,7 +73,7 @@ public enum PedestrianState { None, Intending, Crossing, Unknown }
  public int day,quoted,paid,score,required;public float elapsed;
  public int baseFare,bonus,satisfaction,satisfactionDelta,excessScore,farePolicyVersion;public string bonusReason;
  public int startSatisfaction,startDeficit,cleanBonus,driveDelta,timeDelta,cleanlinessAfter;
- public float referenceSeconds,arrivalElapsed,disembarkElapsed;public bool drunk,vomited,wakeDelayed;public string timeReason;
+ public float rideDistance,referenceSeconds,arrivalElapsed,disembarkElapsed;public bool drunk,vomited,wakeDelayed;public string timeReason;
  public string pickupStopId,dropStopId,mapRevision,catalogRevision,stopEvidence;
  public bool hasDrivingScore;public int drivingScore,initialFare;public int boardingDrivingScore,drivingAdjustedFare,comfortDelta;
 }
