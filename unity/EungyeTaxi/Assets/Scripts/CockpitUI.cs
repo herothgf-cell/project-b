@@ -21,6 +21,7 @@ public static class CockpitUI {
   var cabin=business.Cabin;var rect=CabinBounds(w,h,firstPerson);
   int vacancy=session.jobs.Active?1:cabin.Vacancy;
   string vacant=vacancy==2?"휴무":vacancy==1?"예약":"빈차";
+  bool opening=business.StoryEnabled&&business.Story.introSeen&&!business.Story.firstVacancy;
   string temperature=cabin.Temperature==CabinControlsState.Warm?"따뜻":cabin.Temperature==CabinControlsState.Cool?"시원":"끔";
   CasualUI.Panel(rect);
   float left=rect.width*.46f,right=rect.width-left-20;
@@ -30,7 +31,7 @@ public static class CockpitUI {
   bool previous=GUI.enabled;GUI.enabled=previous&&!business.CabinAutomatic;
   if(GUI.Button(new Rect(rect.x+10,rect.y+65,left-14,31),cabin.MeterOn?"켜짐":business.CabinAutomatic?"자동":"꺼짐",KoreanText.Button(13)))business.CabinInput(0);
   GUI.enabled=previous;
-  if(GUI.Button(new Rect(rect.x+left,rect.y+12,right,38),"빈차등 · K  "+vacant,KoreanText.Button(12)))business.CabinInput(1);
+  if(GUI.Button(new Rect(rect.x+left,rect.y+12,right,38),opening?"K · 빈차등 켜기":"빈차등 · K  "+vacant,opening?CasualUI.Action(12):KoreanText.Button(12)))business.CabinInput(1);
   if(GUI.Button(new Rect(rect.x+left,rect.y+58,right,38),"에어컨 · L  "+temperature,KoreanText.Button(12)))business.CabinInput(2);
   if(firstPerson&&session.mirrors&&session.mirrors.Visible){
    var mirror=session.mirrors.Frame(1);float scale=Scale;

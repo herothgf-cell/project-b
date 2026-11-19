@@ -5,7 +5,46 @@ class VehicleGarageTests {
  static void Reject(Action a,string message){try{a();}catch(ArgumentException){count++;return;}throw new Exception(message);}
  static EconomyLedger SettledDay(int fare){var e=new EconomyLedger(PrototypeSettings.ForThreeDays());e.RecordFare("trip-"+fare,fare);e.RequestClose("test");e.Settle();return e;}
  static int Main(){try{Run();return 0;}catch(Exception x){Console.WriteLine("FAIL: "+x.GetType().Name+": "+x.Message);return 1;}}
+ static void FatherGarage(){
+  var eungyeSettings=PrototypeSettings.ForThreeDays();eungyeSettings.homeBase=true;
+  var eungye=new EconomyLedger(eungyeSettings);eungye.RecordFare("home-test",33000);
+  Check(!eungye.SelectOwnedVehicle("starter")&&!eungye.PurchaseVehicle("lpg"),"cannot change owned car selection or purchase during a shift");
+  eungye.RequestClose();eungye.Settle();
+  Check(eungye.QuoteVehicle("lpg").tradeIn==0&&eungye.QuoteVehicle("lpg").spend==22000,"Eungye pays full price and retains the father taxi");
+  Check(eungye.BuyVehicleColor(),"father car colour bought");
+  eungye.Care.Damage.Impact(9.5);eungye.Care.Soil("home-soil",22);
+  int cash=eungye.Account.Cash,net=eungye.Account.Net;
+  Check(eungye.PurchaseVehicle("lpg")&&eungye.Account.Cash==cash-22000&&eungye.Account.Net==net,"full price posts as a personal expense");
+  Check(eungye.Account.OwnedVehicle("starter").color==1&&eungye.Account.ActiveVehicle.modelId=="starter"&&eungye.Account.PendingVehicleModel=="lpg","both cars owned after purchase, father still operating today");
+  Check(eungye.Care.Damage.Durability==85&&eungye.Care.Cleanliness==78,"buying a second car does not repair the father taxi");
+  Check(!eungye.SelectOwnedVehicle("hybrid")&&eungye.SelectOwnedVehicle("starter")&&eungye.Account.PendingVehicleModel.Length==0&&eungye.SelectOwnedVehicle("lpg"),"rescheduling only selects owned models");
+  var restored=EconomyLedger.RestoreCampaign(eungye.Snapshot(),eungye.Account.Snapshot());
+  Check(restored.Account.OwnedVehicle("starter").color==1&&restored.Account.ActiveVehicle.modelId=="starter"&&restored.Account.PendingVehicleModel=="lpg","restore both cars and next-day selection");
+  Check(restored.NextDay()&&restored.Account.ActiveVehicle.modelId=="lpg"&&restored.Account.PendingVehicleModel.Length==0&&restored.Care.Damage.Durability==100&&restored.Care.Cleanliness==100,"new day activates the clean replacement");
+  Check(!restored.SelectOwnedVehicle("starter")&&!restored.PurchaseVehicle("hybrid"),"operating day cannot change cars");
+  restored.Care.Damage.Impact(8);restored.RequestClose();restored.Settle();
+  int afterDay=restored.Account.Cash;
+  Check(restored.SelectOwnedVehicle("starter")&&restored.Account.ActiveVehicle.modelId=="lpg"&&restored.Account.Vehicle.modelId=="lpg"&&restored.Account.Cash==afterDay,"return to father taxi is free and preserves the replacement");
+  var returnToFather=EconomyLedger.RestoreCampaign(restored.Snapshot(),restored.Account.Snapshot());
+  Check(returnToFather.NextDay()&&returnToFather.Account.ActiveVehicle.modelId=="starter"&&returnToFather.Care.Damage.Durability==85&&returnToFather.Care.Cleanliness==78,"father condition survives storage, save and reactivation");
+  returnToFather.RequestClose();returnToFather.Settle();
+  Check(returnToFather.SelectOwnedVehicle("lpg")&&returnToFather.ContinueCareer()&&returnToFather.Day==4&&returnToFather.Account.ActiveVehicle.modelId=="lpg"&&returnToFather.Care.Damage.Durability==85,"continued career activates pending replacement with its own condition");
+  var invalid=returnToFather.Account.Snapshot();invalid.activeVehicleModel="hybrid";
+  Reject(()=>CampaignAccount.Restore(invalid),"unowned active vehicle rejected");
+  invalid=returnToFather.Account.Snapshot();invalid.ownedVehicles[0].paidColor++;
+  Reject(()=>CampaignAccount.Restore(invalid),"tampered father paint payment rejected");
+  invalid=returnToFather.Account.Snapshot();invalid.pendingVehicleModel="starter";
+  var days=returnToFather.Snapshot();Reject(()=>EconomyLedger.RestoreCampaign(days,invalid),"active checkpoint cannot have an unapplied selection");
+  var beforeP4=SettledDay(33000);
+  Check(beforeP4.BuyVehicleColor()&&beforeP4.PurchaseVehicle("lpg"),"legacy trade-in fixture");
+  var legacy=beforeP4.Account.Snapshot();legacy.version=4;legacy.settings.homeBase=true;
+  var migrated=EconomyLedger.RestoreCampaign(beforeP4.Snapshot(),legacy);
+  Check(migrated.Account.Cash==beforeP4.Account.Cash&&migrated.Account.Vehicle.paidVehicle==12000&&migrated.Account.ActiveVehicle.modelId=="lpg","migration keeps historical charges and current car");
+  Check(migrated.Account.OwnedVehicle("starter").altColorOwned&&migrated.Account.OwnedVehicle("starter").paidColor==1500&&migrated.Account.Snapshot().ownedVehicles.Length==2,"legacy traded paint rights return to the retained starter");
+  Check(EconomyLedger.RestoreCampaign(migrated.Snapshot(),migrated.Account.Snapshot()).Account.PersonalSpent==13500,"normalizing old garage saves never rebills ownership");
+ }
  static void Run(){
+  FatherGarage();
   // Starter regression: every trait factor is neutral and fuel matches the pre-vehicle formula.
   var s=VehicleCatalog.Standard;Check(s.id=="starter"&&s.fuelFactor==1&&s.comfortFactor==1&&s.wearFactor==1&&s.steerFactor==1&&s.carriesLuggage,"starter traits neutral");
   var settings=PrototypeSettings.ForThreeDays();var a=new CampaignAccount(settings);a.Consume(60,2000);

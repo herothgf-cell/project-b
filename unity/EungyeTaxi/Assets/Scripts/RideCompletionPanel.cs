@@ -39,6 +39,7 @@ public sealed class RideCompletionPanel:MonoBehaviour {
   CasualUI.Panel(new Rect(x+25,y+347,600,155),new Color(.91f,.98f,.94f));var receiptRows=Receipt.Split('\n');
   for(int i=0;i<receiptRows.Length;i++){var receiptStyle=new GUIStyle(large){fontSize=i==2?34:21};receiptStyle.normal.textColor=i==2?CasualUI.Green:CasualUI.Ink;while(receiptStyle.fontSize>18&&receiptStyle.CalcSize(new GUIContent(receiptRows[i])).x>(i==2?522:566))receiptStyle.fontSize--;if(i==2)HudGlyph.DrawBadge(new Rect(x+42,y+444,34,34),4);GUI.Label(new Rect(x+(i==2?86:42),y+356+i*42,i==2?522:566,i==2?52:38),receiptRows[i],receiptStyle);}
   GUI.Label(new Rect(x+25,y+514,600,25),RideReceiptSummary.PaymentStatus(r)+(r.wakeDelayed?" · 기상 대기":""),new GUIStyle(label){fontSize=16});
+  if(r.foundFatherNotebook)GUI.Label(new Rect(x+25,y+538,600,30),"글러브박스에서 수첩을 발견했다",new GUIStyle(label){font=KoreanText.BoldFont});
   if(GUI.Button(new Rect(x+335,y+580,290,46),(session.business.ShowingSummary||session.business.ledger.State==BusinessState.Closing)?"영업 정산":"계속 영업",CasualUI.Action(18)))Close();
   GUI.enabled=CanOpenFacilities;if(GUI.Button(new Rect(x+25,y+580,290,46),"시설 찾기",button))TryOpenFacilities();GUI.enabled=true;GUI.matrix=before;
  }

@@ -15,15 +15,23 @@ public sealed class PassengerBehaviorUI : MonoBehaviour {
  void Update(){
   if(session.IsSimulationBot||PvpNativeLan.IsRemoteHuman(session)||session.requests.ResponseBlockedThisFrame)return;
   if(session.jobs.CanRespondSituation){int selected=NumericChoiceInput.Read(2,i=>session.jobs.CanRespondSituation);if(selected>=0)session.jobs.RespondSituation(selected);return;}
+  if(session.business.CanAnswerStory){int selected=NumericChoiceInput.Read(3,i=>session.business.CanAnswerStory);if(selected>=0)session.business.AnswerStory(selected);return;}
   if(!CanRespond)return;
   int answer=NumericChoiceInput.Read(session.jobs.Behavior.ChoiceLabels.Length,i=>CanRespond);if(answer>=0)session.jobs.RespondBehavior(answer);
  }
- void OnGUI(){if(session.IsSimulationBot||PvpNativeLan.IsRemoteHuman(session))return;var action=GetComponent<PassengerActionUI>();if(action){action.Refresh();if(action.Showing)return;}if(session.jobs.SituationPending&&session.jobs.SituationPresentationAvailable){DrawSituation();return;}if(!session.jobs.BehaviorChoicesOpen)return;if(!Showing)return;var b=session.jobs.Behavior;
+ void OnGUI(){if(session.IsSimulationBot||PvpNativeLan.IsRemoteHuman(session))return;var action=GetComponent<PassengerActionUI>();if(action){action.Refresh();if(action.Showing)return;}if(session.jobs.SituationPending&&session.jobs.SituationPresentationAvailable){DrawSituation();return;}if(session.business.StoryQuestionVisible){DrawStoryQuestion();return;}if(!session.jobs.BehaviorChoicesOpen)return;if(!Showing)return;var b=session.jobs.Behavior;
   var labels=session.jobs.BehaviorChoicesOpen?b.ChoiceLabels:new string[0];var effects=b.ChoiceEffects;var options=new PassengerDialogueUI.Option[labels.Length];for(int i=0;i<labels.Length;i++)options[i]=new PassengerDialogueUI.Option(NumericChoiceInput.Label(i),labels[i],effects[i],CanRespond);
   string note=responseOwner==b&&Time.time<responseUntil?responseNotice:b.WorkRemaining>0?"안전 정차 중 작업 "+Mathf.CeilToInt(b.WorkRemaining)+"초":"";
   if(b.TraitStatus.Length>0)note+=(note.Length>0?"\n":"")+b.TraitStatus;
   if(b.Type==PassengerType.Food&&b.ConsumptionOccurred)note+=(note.Length>0?"\n":"")+"발생 효과 · 섭취 청결도 -"+b.Content.Int("effect.food.crumbs",2)+""+(b.SpillOccurred?" · 흘림 청결도 -"+b.Content.Int("effect.food.spill",6)+"":"");
   int selected=PassengerDialogueUI.Draw("승객 요청 · "+b.TypeLabel,b.Dialogue,options,note,PassengerDialogueUI.PortraitIdentity(session));if(selected>=0)session.jobs.RespondBehavior(selected);
+ }
+ void DrawStoryQuestion(){
+  var b=session.business;var options=new PassengerDialogueUI.Option[3];
+  string effect="승객 만족도 +"+ContentTuning.Int("backstory.reply.satisfaction",1);
+  for(int i=0;i<options.Length;i++)options[i]=new PassengerDialogueUI.Option(NumericChoiceInput.Label(i),b.Story.Reply(i),effect,b.CanAnswerStory);
+  int selected=PassengerDialogueUI.Draw("승객 이야기",b.Story.Question(),options,b.CanAnswerStory?"":"안전한 곳에서 정차한 뒤 응답하세요.",PassengerDialogueUI.PortraitIdentity(session));
+  if(selected>=0)b.AnswerStory(selected);
  }
  void DrawSituation(){var j=session.jobs;var situation=j.Situation;var options=j.SituationWorkActive?new PassengerDialogueUI.Option[0]:new[]{new PassengerDialogueUI.Option("1",situation.ReplyLine(0),situation.ReplyEffect(0),j.CanRespondSituation),new PassengerDialogueUI.Option("2",situation.ReplyLine(1),situation.ReplyEffect(1),j.CanRespondSituation)};
   int selected=PassengerDialogueUI.Draw("승객 이야기",situation.Dialogue,options,j.SituationWorkActive?"작업은 안전 정차 중에만 진행됩니다":"",PassengerDialogueUI.PortraitIdentity(session));if(selected>=0)j.RespondSituation(selected);

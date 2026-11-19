@@ -11,7 +11,10 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
  public static bool CabinCheck {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-cabinControlsCheck")>=0;}}
  public static bool CareerCheck {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-careerCheck")>=0;}}
  public static bool CareerReload {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-careerReload")>=0;}}
- public static bool Enabled {get{return CabinCheck||CareerCheck||CareerReload||HomeCheck||Array.IndexOf(Environment.GetCommandLineArgs(),"-shiftDevEndCheck")>=0;}}
+ public static bool FatherStoryCheck {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-fatherStoryCheck")>=0;}}
+ public static bool FatherStoryReload {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-fatherStoryReloadCheck")>=0;}}
+ public static string FatherStorySavePath {get{var args=Environment.GetCommandLineArgs();int index=Array.IndexOf(args,"-shiftCaptureOutput");return Path.GetFullPath(Path.Combine(index>=0&&index+1<args.Length?args[index+1]:"artifacts/father-story-player","campaign.json"));}}
+ public static bool Enabled {get{return FatherStoryCheck||FatherStoryReload||CabinCheck||CareerCheck||CareerReload||HomeCheck||Array.IndexOf(Environment.GetCommandLineArgs(),"-shiftDevEndCheck")>=0;}}
  public static readonly string CampaignPath=Path.Combine(Path.GetTempPath(),"taxi-shift-"+Guid.NewGuid().ToString("N"),"campaign.json");
  static bool attached;DriveSession s;int checks;bool done;float start;string output;
  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]static void Attach(){if(Enabled&&!attached){attached=true;new GameObject("Shift/dev end acceptance").AddComponent<ShiftDevEndProbe>();}}
@@ -26,6 +29,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   yield return null;yield return null;
   FindObjectOfType<UnifiedModeBootstrap>().StartSingle();yield return Ready();
   var b=s.business;
+  if(FatherStoryCheck||FatherStoryReload){yield return RunFatherStory(b);yield break;}
   if(CabinCheck){
    Check(b.CabinEnabled&&b.SavePath==CampaignPath,"isolated single-player cabin fixture");
    DrivingSettings.Current.cabinAssist=true;
@@ -93,7 +97,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    Check(b.ChooseCareerGoal("car","hybrid"),"preparation can pin a vehicle goal");
    for(int day=1;day<=3;day++){
     b.ContinueFromMenu();yield return Frames(3);
-    b.ledger.RecordFare("career-fixture-"+day,12000);
+    b.ledger.RecordFare("career-fixture-"+day,16000);
     var home=s.services.ParkingStop;Pose(home.Kerb,home.Direction);
     Check(b.RequestEndDay(),"clock off day "+day);
     while(!b.ShowingSummary)yield return null;
@@ -144,7 +148,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    Check(b.RequestEmergencyHome()&&s.services.AtEndDayHub(),"drowsiness closure places taxi in home bay");
    while(!b.ShowingSummary)yield return null;
    var restored=BusinessProgress.ParseCheckpoint(File.ReadAllText(b.SavePath));
-   Check(restored.account.version==4&&EconomyLedger.RestoreCampaign(restored.days,restored.account).Account.Expense(2,"home-rent")==rent,"home rent survives checkpoint roundtrip");
+   Check(restored.account.version==b.ledger.Account.Snapshot().version&&EconomyLedger.RestoreCampaign(restored.days,restored.account).Account.Expense(2,"home-rent")==rent,"home rent survives checkpoint roundtrip");
    done=true;Debug.Log("HOME_BASE_PLAYER_OK checks="+checks);Application.Quit(0);yield break;
   }
   Check(b.SavePath==CampaignPath&&b.preparing&&b.ledger.Day==1,"single uses isolated campaign and day-1 preparation");
@@ -173,6 +177,69 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   var saved=BusinessProgress.ParseCheckpoint(File.ReadAllText(b.SavePath));
   Check(EconomyLedger.RestoreCampaign(saved.days,saved.account).Settings.daySeconds==1800,"saved campaign restores 30 minutes");
   done=true;Debug.Log("SHIFT_PLAYER_OK checks="+checks);Application.Quit(0);
+ }
+ IEnumerator RunFatherStory(BusinessProgress b){
+  if(FatherStoryReload){
+   Check(!b.ResumeBlocked&&b.ledger.Day==2&&b.ShowingSummary,"second day restores from the saved slot");
+   Check(b.Story.introSeen&&b.Story.FoundNotebook&&b.Story.HasPage(3),"intro and notebook flags restored");
+   Check(b.WallMemoChoice=="none"&&b.Story.answers.Count==1&&b.Story.answers[0].choice==1,"wall memo and passenger answer persist");
+   Check(b.BeginNextCampaignDay()&&b.preparing,"third shift prepares from the existing slot");
+   b.ContinueFromMenu();Check(!b.preparing&&!b.Intro,"continuing existing career does not play intro");
+   Pose(s.services.ParkingStop.Kerb,s.services.ParkingStop.Direction);
+   Check(b.RequestEndDay(),"third shift can end from home");
+   while(!b.ShowingSummary)yield return null;
+   Check(b.WallMemoPrompt&&b.ChooseCareerGoal("home")&&!b.WallMemoPrompt,"day three prompts again and accepts a different wall memo");
+   done=true;Debug.Log("FATHER_STORY_PLAYER_OK checks="+checks);Application.Quit(0);yield break;
+  }
+  Check(b.StoryEnabled&&b.preparing&&!b.Story.introSeen&&b.SavePath==FatherStorySavePath,"fresh isolated Eungye career awaits intro");
+  Check(IntroCutscene.DurationSeconds==26,"intro has 26 seconds of authored cuts");
+  DrivingSettings.Current.cabinAssist=false;
+  s.taxi.body.detectCollisions=false;s.taxi.body.useGravity=false;s.taxi.enabled=false;
+  foreach(var car in s.traffic.cars)if(car)car.gameObject.SetActive(false);
+  float startIntro=Time.realtimeSinceStartup;
+  b.ContinueFromMenu();Check(b.Intro&&b.Intro.IsPlaying&&!b.Intro.IsReplay&&b.Intro.CurrentCut==0,"first career opens first intro cut");
+  int cuts=0;
+  while(b.Intro.IsPlaying){cuts|=1<<b.Intro.CurrentCut;yield return null;}
+  Check(cuts==7&&Time.realtimeSinceStartup-startIntro<=30,"uncut intro plays all panels within 30 seconds");
+  Check(!b.preparing&&b.Story.introSeen&&b.Cabin.OffDuty&&s.drivingCamera.FirstPerson&&s.services.AtEndDayHub(),"intro ends in home cockpit with vacant lamp off");
+  yield return null;
+  Check(b.CabinInput(1)&&b.Story.firstVacancy&&!b.Cabin.OffDuty,"K enables available vacancy");
+  var jobs=s.jobs;var pick=jobs.stops[0];var drop=jobs.stops[3];
+  jobs.ForcedPassengerType=PassengerType.General;jobs.ForcedRideCase=DrunkRideCase.Normal;
+  Pose(pick.Kerb,pick.Direction);
+  jobs.offers[0]=new JobOffer{pickup=0,drop=3,fare=6000,seconds=300,requiredScore=60,distance=jobs.nav.Distance(pick,drop),candidateSeed="father-first"};
+  Check(jobs.Accept(0)&&jobs.Interact()&&jobs.trip.State==TripState.OnTrip,"first passenger boards");
+  Check(b.notice.Contains("미터기")&&b.CabinInput(0)&&b.Cabin.MeterOn,"first passenger prompts J and meter starts");
+  Pose(drop.Kerb,drop.Direction);Check(jobs.Interact()&&!jobs.Active,"first passenger alights");
+  Check(b.Story.FoundNotebook&&b.notice.Contains("수첩")&&!b.Story.HasPage(1)&&!b.Story.HasPage(2),"first ride discovers notebook with later condition pages locked");
+  yield return Frames(2);s.GetComponent<RideCompletionPanel>().Close();b.CabinInput(0);
+  Pose(s.services.ParkingStop.Kerb,s.services.ParkingStop.Direction);
+  Check(b.RequestEndDay(),"first shift ends from home");
+  while(!b.ShowingSummary)yield return null;
+  Check(b.Story.HasPage(3)&&b.ledger.Account.Expense(1,"home-rent")>0&&b.StoryMonologue.Contains("월세"),"lawful first day opens page four and records rent");
+  Check(b.WallMemoPrompt&&b.ChooseCareerGoal("none")&&!b.WallMemoPrompt,"first night no-goal wall memo saves");
+  Check(b.PlayIntroAgain()&&b.Intro.IsReplay,"menu can replay the opening");
+  b.Intro.Skip();yield return null;
+  Check(b.ShowingSummary&&b.Story.introSeen&&!b.Intro.IsPlaying,"skip returns to the same career state");
+  Check(b.BeginNextCampaignDay(),"day two preparation opens · state="+b.ledger.State+", fullMap="+s.FullMapOpen+", save="+b.saveStatus);yield return Frames(3);
+  b.ContinueFromMenu();Check(!b.preparing&&!b.Intro.IsPlaying,"first intro does not repeat on the next day");
+  jobs.ForcedRideCase=DrunkRideCase.Random;jobs.ForcedPassengerType=PassengerType.Talkative;
+  Pose(pick.Kerb,pick.Direction);
+  jobs.offers[0]=new JobOffer{pickup=0,drop=3,fare=6000,seconds=300,requiredScore=60,distance=jobs.nav.Distance(pick,drop),candidateSeed="father-talk"};
+  Check(jobs.Accept(0)&&jobs.Interact()&&jobs.trip.State==TripState.OnTrip,"talkative passenger boards on day two");
+  Check(b.Story.Pending(s.law.tripId)&&!string.IsNullOrEmpty(b.Story.Question()),"day-two question is authored and bound to trip");
+  yield return Frames(2);s.requests.AdvanceSafeStop(2.1f);
+  if(s.requests.HasPendingChoice){s.requests.Choose(PassengerReply.Defer);yield return Frames(2);}
+  if(jobs.BehaviorChoicesOpen){jobs.RespondBehavior(0);yield return Frames(2);}
+  Check(b.AnswerStory(1)&&b.StorySatisfaction==1&&!b.AnswerStory(0),"one optional answer grants S+1");
+  b.CabinInput(0);Pose(drop.Kerb,drop.Direction);Check(jobs.Interact()&&!jobs.Active,"talkative ride completes");
+  yield return Frames(2);s.GetComponent<RideCompletionPanel>().Close();b.CabinInput(0);
+  Pose(s.services.ParkingStop.Kerb,s.services.ParkingStop.Direction);
+  Check(b.RequestEndDay(),"day two ends from home");
+  while(!b.ShowingSummary)yield return null;
+  var saved=BusinessProgress.ParseCheckpoint(File.ReadAllText(b.SavePath));
+  Check(saved.version==6&&saved.story.answers.Count==1&&saved.story.FoundNotebook,"version-six checkpoint has narrative progress");
+  done=true;Debug.Log("FATHER_STORY_PLAYER_OK checks="+checks);Application.Quit(0);
  }
  void Pose(Vector3 kerb,Vector3 direction){
   var position=kerb+Vector3.up*.65f;

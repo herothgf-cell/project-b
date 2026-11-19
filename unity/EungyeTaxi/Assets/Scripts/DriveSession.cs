@@ -137,7 +137,8 @@ public class DriveSession : MonoBehaviour {
     }
     void Update() {
         if(IsSimulationBot||simulationMatch&&simulationMatch.Finished)return;
-        if(!StartupReady)return;
+        if(!StartupReady||business.IntroInputBlocked)return;
+        if(business.LogbookOpen||business.GoalComparison){if(Input.GetKeyDown(KeyCode.Escape)){business.LogbookOpen=false;business.GoalComparison=false;}return;}
         if((Input.GetKeyDown(KeyCode.Escape)||Input.GetKeyDown(KeyCode.JoystickButton7))&&DrivingSettingsPanel.Back(this))return;
         var choice=GetComponent<ScenarioChoiceSituation>();if(choice&&(choice.Open||choice.ClosedThisFrame))return;
         if(FullMapOpen||GetComponent<FullMapOverlay>().ClosedThisFrame)return;

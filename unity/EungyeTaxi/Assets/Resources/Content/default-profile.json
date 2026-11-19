@@ -2,8 +2,60 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "7d01b92ecb7932e4cada3574e897875b25ef60c8ed956c47ed524f60b80c7b9f",
+  "contentHash": "79c86f338c74db0dae09deb0a580a9b3f3594beea6e63b202e91c369327f03b6",
   "values": [
+    {
+      "id": "backstory.question.0",
+      "value": "원래 이 일 하셨어요?"
+    },
+    {
+      "id": "backstory.question.0.reply.0",
+      "value": "회사 다니다 얼마 전에 시작했어요."
+    },
+    {
+      "id": "backstory.question.0.reply.1",
+      "value": "아버지가 하시던 일이에요."
+    },
+    {
+      "id": "backstory.question.0.reply.2",
+      "value": "(웃으며 넘김)"
+    },
+    {
+      "id": "backstory.question.1",
+      "value": "힘들지 않으세요?"
+    },
+    {
+      "id": "backstory.question.1.reply.0",
+      "value": "먹고살아야죠."
+    },
+    {
+      "id": "backstory.question.1.reply.1",
+      "value": "아직 서툴러요."
+    },
+    {
+      "id": "backstory.question.1.reply.2",
+      "value": "손님 덕에 버텨요."
+    },
+    {
+      "id": "backstory.question.2",
+      "value": "차가 오래됐네요?"
+    },
+    {
+      "id": "backstory.question.2.reply.0",
+      "value": "아버지 차예요. 아직 잘 달려요."
+    },
+    {
+      "id": "backstory.question.2.reply.1",
+      "value": "곧 바꾸려고요."
+    },
+    {
+      "id": "backstory.question.2.reply.2",
+      "value": "정들었어요."
+    },
+    {
+      "id": "backstory.reply.satisfaction",
+      "value": "1"
+    },
     {
       "id": "cabin.meter.missedFareRate",
       "value": "0.5"

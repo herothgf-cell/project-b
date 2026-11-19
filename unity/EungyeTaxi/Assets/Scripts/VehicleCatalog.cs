@@ -18,7 +18,7 @@ public static class VehicleCatalog {
  public const string Starter="starter",Hybrid="hybrid",WideLpg="lpg";
  public const string ColorPriceKey="vehicle.color.price",OrnamentPriceKey="vehicle.ornament.price",TradeInKey="vehicle.tradeIn.base";
  public static readonly VehicleSpec[] All={
-  new VehicleSpec{id=Starter,name="중고 택시",summary="지금 타는 차 · 무난하지만 잘 상함",priceKey="",defaultPrice=0,fuelFactor=1,comfortFactor=1,wearFactor=1,steerFactor=1,carriesLuggage=true,colorNames=new[]{"해바라기 노랑","귤색"},colors=new[]{new[]{1f,.72f,.025f},new[]{.98f,.48f,.12f}},scaleX=1,scaleY=1,scaleZ=1},
+  new VehicleSpec{id=Starter,name="아버지의 택시",summary="아버지가 남긴 택시 · 무난하지만 잘 상함",priceKey="",defaultPrice=0,fuelFactor=1,comfortFactor=1,wearFactor=1,steerFactor=1,carriesLuggage=true,colorNames=new[]{"해바라기 노랑","귤색"},colors=new[]{new[]{1f,.72f,.025f},new[]{.98f,.48f,.12f}},scaleX=1,scaleY=1,scaleZ=1},
   new VehicleSpec{id=Hybrid,name="하이브리드 세단",summary="연료비가 적게 듦 · 트렁크가 작아 큰 짐 손님을 못 태움",priceKey="vehicle.hybrid.price",defaultPrice=26000,fuelFactor=.65,comfortFactor=1,wearFactor=.75,steerFactor=1,carriesLuggage=false,colorNames=new[]{"하늘 흰색","민트"},colors=new[]{new[]{.92f,.95f,.97f},new[]{.45f,.82f,.72f}},scaleX=.97f,scaleY=.93f,scaleZ=1.03f},
   new VehicleSpec{id=WideLpg,name="넓은 LPG 택시",summary="트렁크가 크고 승차감이 좋음 · 회전 반경이 큼",priceKey="vehicle.lpg.price",defaultPrice=22000,fuelFactor=.95,comfortFactor=1.08,wearFactor=.8,steerFactor=.86,carriesLuggage=true,colorNames=new[]{"주황","남색"},colors=new[]{new[]{1f,.55f,.12f},new[]{.16f,.25f,.46f}},scaleX=1.06f,scaleY=1.07f,scaleZ=1.04f}
  };
@@ -31,8 +31,8 @@ public static class VehicleCatalog {
  public static int OrnamentPrice {get{return ContentTuning.Int(OrnamentPriceKey,2000);}}
  // Durability 100 keeps the full base; durability 0 still returns half (scrap/parts value).
  public static int TradeIn(int durability){int d=Math.Max(0,Math.Min(100,durability));int b=ContentTuning.Int(TradeInKey,10000);return (int)Math.Floor(b*(50+d/2.0)/100/10)*10;}
- public static VehicleQuote Quote(VehicleState owned,string id,int cash,int debt,int durability){
-  var q=new VehicleQuote{model=id,price=Price(id),tradeIn=TradeIn(durability)};q.spend=Math.Max(0,q.price-q.tradeIn);q.cashAfter=cash-q.spend;
+ public static VehicleQuote Quote(VehicleState owned,string id,int cash,int debt,int durability,bool keepStarter=true){
+  var q=new VehicleQuote{model=id,price=Price(id),tradeIn=keepStarter?0:TradeIn(durability)};q.spend=Math.Max(0,q.price-q.tradeIn);q.cashAfter=cash-q.spend;
   if(!Purchasable(id))q.reason="구매할 수 없는 차량";
   else if(owned!=null&&owned.modelId!=Starter)q.reason="이번 회차의 차량 교체는 1회입니다";
   else if(debt!=0)q.reason="미납 비용을 먼저 정리해야 합니다";

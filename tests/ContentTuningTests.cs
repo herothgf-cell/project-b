@@ -62,6 +62,12 @@ public static class ContentTuningTests {
   Check(carried.IsContinuousCareer&&carried.Day==5&&carried.Account.CareerGoal=="car"&&carried.Account.CareerVehicleGoal=="hybrid","day five and goal survive restore");
   var cabin=new CabinControlsState();
   Check(ContentTuning.Number("cabin.meter.missedFareRate",-1)==.5,"cabin missed fare uses the catalog rate");
+  var story=new FatherStoryState();
+  Check(!story.Ask(1,0,"trip-one")&&story.Ask(2,0,"trip-two")&&!story.Ask(2,1,"other"),"father question at most once per day from day two");
+  Check(story.Question()=="원래 이 일 하셨어요?"&&story.Reply(1)=="아버지가 하시던 일이에요.","father question and reply use authored Korean content");
+  Check(story.Answer("trip-two",1)&&!story.Answer("trip-two",0)&&story.Satisfaction("trip-two")==1&&story.Satisfaction("other")==0,"only one answer applies its satisfaction once per ride");
+  story.Validate(2);story.NeighborhoodProgress(2);Check(!story.HasPage(1),"two neighborhood stars do not reveal the second page");
+  story.NeighborhoodProgress(3);story.FridayOperated();Check(story.HasPage(1)&&story.HasPage(2),"future neighborhood and Friday conditions unlock distinct pages");
   Check(!cabin.ToggleMeter(false)&&cabin.Payable(6300)==3150,"missed meter discounts fare without cancelling it");
   Check(cabin.ToggleMeter(true)&&!cabin.ToggleMeter(true)&&cabin.Payable(6300)==6300,"meter stays on until arrival");
   Check(cabin.NewCallBlock(false).Length>0&&cabin.ToggleMeter(false)&&cabin.NewCallBlock(false).Length==0,"stale meter must turn off before the next call");

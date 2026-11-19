@@ -2,6 +2,19 @@ using UnityEngine;
 
 // Reads the existing trip/vehicle state; it never changes fare or deadlines.
 public static class CockpitPresentation {
+ static Sprite fatherPhoto;
+ public static void AddFatherPhoto(Transform cockpit){
+  if(!fatherPhoto){
+   var photo=Resources.Load<Texture2D>("UI/father-photo");
+   if(!photo)return;
+   fatherPhoto=Sprite.Create(photo,new Rect(0,0,photo.width,photo.height),new Vector2(.5f,.5f),420f);
+  }
+  var frame=new GameObject("아버지 사진 액자"){layer=cockpit.gameObject.layer};
+  frame.transform.SetParent(cockpit,false);
+  frame.transform.localPosition=new Vector3(.30f,-.385f,.74f);
+  frame.transform.localRotation=Quaternion.Euler(15,22,0);
+  frame.AddComponent<SpriteRenderer>().sprite=fatherPhoto;
+ }
  public static string TaxiStatus(TripState state){return state==TripState.OnTrip?"":state==TripState.ToPickup?"예약":"빈차";}
  public static string Destination(string stop){return "목적지 ("+(stop??"")+")";}
  public static string Destination(string stop,TripState state){return (state==TripState.ToPickup?"승차 장소":"도착지")+" ("+(stop??"")+")";}

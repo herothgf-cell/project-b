@@ -21,7 +21,16 @@ public enum BusinessState { Open, Closing, Summary, Won, Lost, Completed }
  public DayRecord[] records;
  public int currentDay;public bool dayOpen;
  public VehicleCareSnapshot care;
+ public ParkedVehicleCondition parkedVehicle;
  public bool hasActive;public ActiveDaySnapshot active;
+}
+
+[Serializable] public sealed class ParkedVehicleCondition {
+ public string modelId;
+ public int durability=100,cleanliness=100;
+ public double dirtSeconds;
+ public bool vomitUnwashed;
+ public ParkedVehicleCondition Copy(){return (ParkedVehicleCondition)MemberwiseClone();}
 }
 
 [Serializable] public class ActiveDaySnapshot {public BusinessState state;public int income,rides,failedTrips;public double elapsed,metres,fuel;public string endReason;public DriverCondition driver;public string[] services;}
@@ -34,6 +43,7 @@ public class EconomyLedger {
  public void AdvanceOperation(double seconds,double metres,bool occupied){if(!Operating)return;double before=Elapsed;Advance(seconds,metres);Care.Advance(Elapsed-before);Metrics.Observe(metres,seconds,occupied,false);}
  public void AdvanceService(double seconds){if(!Operating)return;Advance(seconds,0);Metrics.Observe(0,seconds,false,true);}
  public VehicleCare Care {get;private set;}
+ ParkedVehicleCondition parkedVehicle;
  public bool OneDay {get;private set;}
  public bool IsContinuousCareer {get{return Account!=null&&Account.IsContinuousCareer;}}
  public int DayLimit {get{return IsContinuousCareer?int.MaxValue:Settings.days;}}
@@ -154,14 +164,17 @@ public class EconomyLedger {
   if(Driver.drowsiness!=null&&seconds>reachesAt)Driver.drowsiness.Advance(seconds-reachesAt,true,100,false);
  }
  public bool UseWash(string id){if(Account==null||State!=BusinessState.Open||string.IsNullOrEmpty(id)||services.Contains(id)||!Account.Wash(id,Day))return false;services.Add(id);Care.Wash();if(Driver!=null)Driver.Advance(30,false,PvpProfile?PvpConditionRules.FatigueMultiplier:1);ServiceTime(30);return true;}
- // Only after a settlement (summary/completed). Trade-in uses the current durability; the
- // replacement car starts repaired and clean. The caller persists the whole ledger once.
- public VehicleQuote QuoteVehicle(string model){return Account==null?null:VehicleCatalog.Quote(Account.Vehicle,model,Account.Cash,Account.Debt,Care.Damage.Durability);}
+ // Only after settlement. The caller persists the complete ledger after each garage change.
+ public VehicleQuote QuoteVehicle(string model){return Account==null?null:Account.QuoteVehicle(model,Care.Damage.Durability);}
  public bool PurchaseVehicle(string model){
   if(Account==null||Settings.days!=3||PvpProfile||Operating||Last==null)return false;
-  if(!Account.BuyVehicle(model,Day,Care.Damage.Durability))return false;Care.Damage.Repair();Care.Wash();return true;
+  if(!Account.BuyVehicle(model,Day,Care.Damage.Durability))return false;
+  if(Account.FatherCarGarage)parkedVehicle=new ParkedVehicleCondition{modelId=model};
+  else{Care.Damage.Repair();Care.Wash();}
+  return true;
  }
- public bool BuyVehicleColor(){return Account!=null&&!PvpProfile&&!Operating&&Last!=null&&Account.BuyVehicleColor(Day);}
+ public bool SelectOwnedVehicle(string model){return Account!=null&&!PvpProfile&&!Operating&&Last!=null&&Account.ScheduleVehicle(model,Day);}
+ public bool BuyVehicleColor(string model=""){return Account!=null&&!PvpProfile&&!Operating&&Last!=null&&Account.BuyVehicleColor(Day,model);}
  public bool BuyVehicleOrnament(){return Account!=null&&!PvpProfile&&!Operating&&Last!=null&&Account.BuyVehicleOrnament(Day);}
  public int RepairCost {get{return Care.Damage.RepairCost;}}
  public double RepairSeconds {get{return Care.Damage.RepairSeconds;}}
@@ -200,11 +213,29 @@ public class EconomyLedger {
  BusinessState Outcome(){if(OneDay)return Day>=DayLimit?BusinessState.Completed:BusinessState.Summary;return (Account==null?TotalNet>=Settings.target:Account.GoalMet)?BusinessState.Won:Day>=Settings.days?BusinessState.Lost:BusinessState.Summary;}
  public bool DepartureAllowed {get{return Account==null||Account.InsuranceValid(Day+1);}}
  public void RefreshSummary(){if(Account==null||Operating||Last==null)return;Last.insurance=Account.Expense(Day,"insurance");Last.food=Account.Expense(Day,"meal");Last.fuel=FuelCost;Last.wash=Account.Expense(Day,"wash");Last.repair=Account.Expense(Day,"repair");Last.tow=Account.Expense(Day,"tow");Last.accident=Account.Expense(Day,"accident");Last.net=Income-Account.Expense(Day,null);State=Outcome();}
- public bool NextDay(){if(State!=BusinessState.Summary||Day>=DayLimit)return false;PvpProfile=false;PvpMeals=PvpRests=0;Day++;Metrics=new OperationMetrics();Care.BeginDay(Day);Income=Rides=FailedTrips=0;Elapsed=Metres=fuel=0;EndReason=null;services.Clear();if(Driver!=null){Driver=new DriverCondition{satiety=Driver.satiety,fatigue=Math.Max(0,Driver.fatigue-nightlyFatigueRecovery)};}State=BusinessState.Open;return true;}
- public EconomySnapshot Snapshot(){return new EconomySnapshot{metrics=Metrics.Capture(),settings=Settings,records=records.ConvertAll(r=>r.Copy()).ToArray(),currentDay=Day,dayOpen=Operating,care=Care.Snapshot(),hasActive=Operating,active=Operating?new ActiveDaySnapshot{state=State,income=Income,rides=Rides,failedTrips=FailedTrips,elapsed=Elapsed,metres=Metres,fuel=fuel,endReason=EndReason,driver=Driver==null?null:Driver.Copy(),services=new List<string>(services).ToArray()}:null};}
+ void ActivateGarageVehicle(){
+  if(Account==null||string.IsNullOrEmpty(Account.PendingVehicleModel))return;
+  string previous=Account.ActiveVehicle.modelId;
+  Account.ActivatePendingVehicle();
+  // Preserve campaign event identities while exchanging the cars' physical condition.
+  var care=Care.Snapshot();var next=parkedVehicle??new ParkedVehicleCondition();
+  parkedVehicle=new ParkedVehicleCondition{modelId=previous,durability=care.damage.durability,cleanliness=care.cleanliness,dirtSeconds=care.dirtSeconds,vomitUnwashed=care.vomitUnwashed};
+  care.damage=new VehicleDamageSnapshot{version=1,durability=next.durability,accidentEvents=care.damage.accidentEvents};
+  care.cleanliness=next.cleanliness;care.dirtSeconds=next.dirtSeconds;care.vomitUnwashed=next.vomitUnwashed;
+  care.acceptanceLocked=next.cleanliness<30||next.vomitUnwashed;
+  Care=VehicleCare.Restore(care);
+ }
+ public bool NextDay(){if(State!=BusinessState.Summary||Day>=DayLimit)return false;PvpProfile=false;PvpMeals=PvpRests=0;Day++;ActivateGarageVehicle();Metrics=new OperationMetrics();Care.BeginDay(Day);Income=Rides=FailedTrips=0;Elapsed=Metres=fuel=0;EndReason=null;services.Clear();if(Driver!=null){Driver=new DriverCondition{satiety=Driver.satiety,fatigue=Math.Max(0,Driver.fatigue-nightlyFatigueRecovery)};}State=BusinessState.Open;return true;}
+ public EconomySnapshot Snapshot(){return new EconomySnapshot{metrics=Metrics.Capture(),settings=Settings,records=records.ConvertAll(r=>r.Copy()).ToArray(),currentDay=Day,dayOpen=Operating,care=Care.Snapshot(),parkedVehicle=parkedVehicle==null?null:parkedVehicle.Copy(),hasActive=Operating,active=Operating?new ActiveDaySnapshot{state=State,income=Income,rides=Rides,failedTrips=FailedTrips,elapsed=Elapsed,metres=Metres,fuel=fuel,endReason=EndReason,driver=Driver==null?null:Driver.Copy(),services=new List<string>(services).ToArray()}:null};}
  public static EconomyLedger RestoreCampaign(EconomySnapshot days,AccountSnapshot account){
   var a=CampaignAccount.Restore(account);var result=new EconomyLedger(a.Snapshot().settings);result.Account=a;
   if(days==null||days.records==null||days.records.Length>result.DayLimit)throw new ArgumentException("Invalid campaign days");
+  if(days.dayOpen&&!string.IsNullOrEmpty(a.PendingVehicleModel))throw new ArgumentException("Active campaign has a pending garage selection");
+  var parked=days.parkedVehicle;
+  if(parked!=null&&!string.IsNullOrEmpty(parked.modelId)){
+   if(!a.FatherCarGarage||a.OwnedVehicle(parked.modelId)==null||parked.modelId==a.ActiveVehicle.modelId||parked.durability<0||parked.durability>100||parked.cleanliness<0||parked.cleanliness>100||!Finite(parked.dirtSeconds)||parked.dirtSeconds<0||parked.dirtSeconds>=120)throw new ArgumentException("Invalid parked condition");
+   result.parkedVehicle=parked.Copy();
+  }
   foreach(var r in days.records){
    if(result.OneDay&&(r==null||double.IsNaN(r.elapsed)||double.IsInfinity(r.elapsed)||r.elapsed<0||double.IsNaN(r.realSeconds)||double.IsInfinity(r.realSeconds)||r.realSeconds<0))throw new ArgumentException("Invalid day time");
    if(r==null||r.day!=result.records.Count+1||r.income<0||r.rides<0||r.failedTrips<0||r.metres<0||float.IsNaN(r.metres)||float.IsInfinity(r.metres))throw new ArgumentException("Invalid campaign sequence");

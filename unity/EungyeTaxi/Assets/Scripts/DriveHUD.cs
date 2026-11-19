@@ -2,7 +2,7 @@ using UnityEngine;
 public class DriveHUD : MonoBehaviour {
  public DriveSession session;public Texture2D tile;public bool HelpOpen {get;private set;}GUIStyle title,body,small;const int W=1024,H=1024;
  public void ToggleHelp(){HelpOpen=!HelpOpen;}
- bool CockpitVisible => (!PracticeSession.Enabled||session.paused)&&!session.FullMapOpen&&!session.RideResultOpen&&!session.ChoiceOpen&&!session.PracticeMenuOpen&&!session.business.restartPrompt&&session.jobs!=null&&!session.business.ShowingSummary&&!session.business.preparing&&!session.business.taxPrompt&&!session.services.open&&!session.law.HistoryOpen;
+ bool CockpitVisible => !session.business.IntroInputBlocked&&!session.business.LogbookOpen&&!session.business.GoalComparison&&(!PracticeSession.Enabled||session.paused)&&!session.FullMapOpen&&!session.RideResultOpen&&!session.ChoiceOpen&&!session.PracticeMenuOpen&&!session.business.restartPrompt&&session.jobs!=null&&!session.business.ShowingSummary&&!session.business.preparing&&!session.business.taxPrompt&&!session.services.open&&!session.law.HistoryOpen;
  void Update(){
   if(!Input.GetKeyDown(KeyCode.F1)||!session.StartupReady||session.SettingsOpen||session.PracticeBusy||session.simulationMatch&&session.simulationMatch.Finished)return;
   if(CockpitVisible)ToggleHelp();
@@ -53,7 +53,7 @@ public class DriveHUD : MonoBehaviour {
   if(careerMenuSlots!=null){DrawCareerSlots(b);return;}
   bool goal=b.SupportsCareer&&b.preparing&&!b.ResumeBlocked;
   bool beside=goal&&Screen.width>=1100;
-  float height=(restart?360:308)+(UnifiedModeBootstrap.IsUnified?52:0)+(shift?52:0)+(goal&&!beside?106:0)+(b.SupportsCareer?44:0),x=Screen.width/2f-240,y=(Screen.height-height)/2;
+  float height=(restart?360:308)+(UnifiedModeBootstrap.IsUnified?52:0)+(shift?52:0)+(goal&&!beside?106:0)+(b.SupportsCareer?88:0)+(b.Story.FoundNotebook?44:0),x=Screen.width/2f-240,y=(Screen.height-height)/2;
   GUI.depth=-150;CasualUI.Panel(new Rect(x,y,480,height));CasualUI.Header(new Rect(x+4,y+4,472,40),b.preparing?"영업 준비":"일시정지",3);
   bool enabled=GUI.enabled;GUI.enabled=enabled&&!session.PracticeBusy&&!b.IsRestoring;
   if(GUI.Button(new Rect(x+20,y+52,440,44),b.MenuPrimaryLabel,CasualUI.Action(18)))b.ContinueFromMenu();
@@ -61,7 +61,14 @@ public class DriveHUD : MonoBehaviour {
   if(shift){OneDayHUD.DrawShiftLength(new Rect(x+20,row,440,40),b);row+=52;}
   if(goal){OneDayHUD.DrawCareerGoal(beside?new Rect(x+496,y,Mathf.Min(320,Screen.width-x-512),255):new Rect(x+20,row,440,96),b);if(!beside)row+=106;}
   if(restart){if(GUI.Button(new Rect(x+20,row,440,40),b.SupportsCareer?"새 경력":"처음부터 시작",KoreanText.Button(16)))b.RequestRestart();row+=52;}
-  if(b.SupportsCareer){if(GUI.Button(new Rect(x+20,row,440,35),"저장된 경력",KoreanText.Button(16))){careerMenuSlots=b.CareerSlots();careerFirst=0;}row+=44;}
+  if(b.SupportsCareer){if(GUI.Button(new Rect(x+20,row,440,35),"저장된 경력",KoreanText.Button(16))){careerMenuSlots=b.CareerSlots();careerFirst=0;}row+=44;
+   if(GUI.Button(new Rect(x+20,row,440,35),"처음 이야기 다시 보기",KoreanText.Button(16)))b.PlayIntroAgain();
+   row+=44;
+   if(b.Story.FoundNotebook){
+    if(GUI.Button(new Rect(x+20,row,440,35),"기사 수첩",KoreanText.Button(16)))b.LogbookOpen=true;
+    row+=44;
+   }
+  }
   if(GUI.Button(new Rect(x+20,row,440,40),"운전 연습 선택",KoreanText.Button(16)))session.GetComponent<PracticeSession>().OpenPicker();row+=52;
   GUI.enabled=enabled;
   if(GUI.Button(new Rect(x+20,row,440,40),"설정",KoreanText.Button(16)))settings.Open();row+=52;

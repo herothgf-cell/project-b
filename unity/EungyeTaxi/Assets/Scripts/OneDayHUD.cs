@@ -76,13 +76,8 @@ public static class OneDayHUD {
    CasualUI.Bar(new Rect(rect.x+12,rect.y+(side?108:51),rect.width-24,side?14:8),achieved?1:GoalProgress(account.Cash,price),CasualUI.Green);
    if(side)GUI.Label(new Rect(rect.x+12,rect.y+130,rect.width-24,36),Money(account.Cash)+" / "+Money(price)+(forecast.Length==0?"":"\n"+forecast),small);
   }
-  string[] names={"하이브리드 세단","넓은 LPG 택시","이 집을 내 집답게","일단 버티자"};
-  string[] goals={"car","car","home","none"};string[] models={VehicleCatalog.Hybrid,VehicleCatalog.WideLpg,"",""};
-  int columns=side?2:4;float width=(rect.width-20-(columns-1)*5)/columns;
-  for(int i=0;i<names.Length;i++){
-   var choice=new Rect(rect.x+10+(i%columns)*(width+5),rect.y+(side?174:65)+(i/columns)*33,width,27);
-   if(GUI.Button(choice,names[i],KoreanText.Button(11)))business.ChooseCareerGoal(goals[i],models[i]);
-  }
+  if(!business.StoryEnabled||business.WallMemoChoice!="")return;
+  GUI.Label(new Rect(rect.x+12,rect.y+(side?172:63),rect.width-24,31),"숙소 벽 메모에서 목표를 고릅니다.",small);
  }
  static void DrawCareerResult(Rect rect,DriveSession session){
   var business=session.business;var ledger=business.ledger;var account=ledger.Account;int price=GoalPrice(account);
@@ -99,7 +94,21 @@ public static class OneDayHUD {
   int lastViolation=0;foreach(var entry in session.law.ledger.Events)if(entry.HasViolation&&entry.day<=ledger.Day)lastViolation=Mathf.Max(lastViolation,entry.day);
   GUI.Label(new Rect(rect.x,rect.y+40,rect.width,62),"오늘의 기록 · 최장 운송 "+(longest>0?(longest/1000).ToString("0.0")+"km":"—")+"\n무위반 연속 "+(ledger.Day-lastViolation)+"일\n완료 운송 "+ledger.Last.rides+"건",small);
  }
- public static void Draw(DriveSession s){if(s.RideResultOpen)return;Styles();var b=s.business;var e=b.ledger;var d=e.Driver;if(d==null)return;bool multi=e.Settings.days>1;GUI.depth=-35;if(b.RoomOpen&&b.RoomAvailable){PersonalRoomHUD.Draw(s);return;}
+ static void DrawGoalComparison(DriveSession session){
+  var b=session.business;var saved=GUI.matrix;var depth=GUI.depth;GUI.depth=-250;
+  CasualUI.Backdrop();
+  float scale=Mathf.Min(Screen.width/1200f,Screen.height/720f);
+  GUI.matrix=Matrix4x4.TRS(new Vector3((Screen.width-1200*scale)*.5f,(Screen.height-720*scale)*.5f),Quaternion.identity,Vector3.one*scale);
+  CasualUI.Panel(new Rect(80,116,1040,488));
+  CasualUI.Header(new Rect(92,128,1016,50),"오늘부터, 다시 내 핸들로.",6,CasualUI.Green);
+  GUI.Label(new Rect(112,195,470,32),"첫날 운전석",small);
+  GUI.Label(new Rect(614,195,470,32),"오늘 운전석",small);
+  IntroCutscene.DrawFirstDrive(new Rect(112,230,474,268));
+  IntroCutscene.DrawCurrentDrive(new Rect(614,230,474,268),b.GoalComparisonFrame);
+  if(GUI.Button(new Rect(402,532,396,44),"계속하기",CasualUI.Action(18)))b.GoalComparison=false;
+  GUI.matrix=saved;GUI.depth=depth;
+ }
+ public static void Draw(DriveSession s){if(s.RideResultOpen)return;Styles();var b=s.business;var e=b.ledger;var d=e.Driver;if(d==null)return;bool multi=e.Settings.days>1;GUI.depth=-35;if(b.GoalComparison){DrawGoalComparison(s);return;}if(b.LogbookOpen){LogbookHUD.Draw(s);return;}if(b.RoomOpen&&b.RoomAvailable){PersonalRoomHUD.Draw(s);return;}
   if(!b.preparing&&!b.ShowingSummary&&!b.restartPrompt&&!b.ResumeBlocked){
    return; // Live operation is composed by CockpitUI.
 
@@ -137,8 +146,9 @@ public static class OneDayHUD {
    }
    if(careerResult)DrawCareerResult(new Rect(x+25,y+466,670,100),s);
    if(e.Account.HasHomeBase)GUI.Label(new Rect(x+25,y+466+extra,670,24),HomeBasePresentation.RentLabel+"  −"+Money(e.Account.Expense(e.Day,"home-rent")),small);
-   if(multi&&GUI.Button(new Rect(x+25,y+492+extra,325,40),e.Account.HasHomeBase?HomeBasePresentation.Name:"내 공간 · 방/차고",button)){b.ArchivedRoom=null;b.GarageTab=false;b.RoomOpen=true;}
+   if(multi&&GUI.Button(new Rect(x+25,y+492+extra,325,40),b.WallMemoPrompt?"숙소 · 벽 메모":e.Account.HasHomeBase?HomeBasePresentation.Name:"내 공간 · 방/차고",b.WallMemoPrompt?CasualUI.Action(16):button)){b.ArchivedRoom=null;b.GarageTab=false;b.RoomOpen=true;}
    CompletedDay roomRecord=null;for(int ri=b.completedDays.Count-1;ri>=0;ri--)if(b.completedDays[ri].id!=s.law.ids.campaign&&b.completedDays[ri].room!=null){roomRecord=b.completedDays[ri];break;}if(multi&&roomRecord!=null&&GUI.Button(new Rect(x+370,y+492+extra,325,40),"이전 완료 방 보기",button)){b.ArchivedRoom=roomRecord.room;b.RoomOpen=true;}
+   if(!b.SaveFailed&&b.StoryMonologue.Length>0)GUI.Label(new Rect(x+25,y+537+extra,325,42),b.StoryMonologue,small);
    GUI.enabled=!b.SaveFailed;
    if(b.CanContinueCareer){
     if(GUI.Button(new Rect(x+370,y+590+extra,325,55),"계속하기",CasualUI.Action(18)))b.BeginContinuousCareer();

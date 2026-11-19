@@ -2,6 +2,279 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "id": "backstory.question.0",
+      "group": "승객",
+      "section": "아버지 이야기",
+      "title": "질문 1",
+      "type": "text",
+      "defaultValue": "원래 이 일 하셨어요?",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수다 손님이 2일차부터 하루에 한 번 묻는 대화입니다.",
+      "affects": [
+        "승객 대화"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "FatherStoryState.Question",
+      "editable": true
+    },
+    {
+      "id": "backstory.question.0.reply.0",
+      "group": "승객",
+      "section": "아버지 이야기",
+      "title": "질문 1 · 답 1",
+      "type": "text",
+      "defaultValue": "회사 다니다 얼마 전에 시작했어요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수다 손님이 2일차부터 하루에 한 번 묻는 대화입니다.",
+      "affects": [
+        "승객 대화"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "FatherStoryState.Reply",
+      "editable": true
+    },
+    {
+      "id": "backstory.question.0.reply.1",
+      "group": "승객",
+      "section": "아버지 이야기",
+      "title": "질문 1 · 답 2",
+      "type": "text",
+      "defaultValue": "아버지가 하시던 일이에요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수다 손님이 2일차부터 하루에 한 번 묻는 대화입니다.",
+      "affects": [
+        "승객 대화"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "FatherStoryState.Reply",
+      "editable": true
+    },
+    {
+      "id": "backstory.question.0.reply.2",
+      "group": "승객",
+      "section": "아버지 이야기",
+      "title": "질문 1 · 답 3",
+      "type": "text",
+      "defaultValue": "(웃으며 넘김)",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수다 손님이 2일차부터 하루에 한 번 묻는 대화입니다.",
+      "affects": [
+        "승객 대화"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "FatherStoryState.Reply",
+      "editable": true
+    },
+    {
+      "id": "backstory.question.1",
+      "group": "승객",
+      "section": "아버지 이야기",
+      "title": "질문 2",
+      "type": "text",
+      "defaultValue": "힘들지 않으세요?",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수다 손님이 2일차부터 하루에 한 번 묻는 대화입니다.",
+      "affects": [
+        "승객 대화"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "FatherStoryState.Question",
+      "editable": true
+    },
+    {
+      "id": "backstory.question.1.reply.0",
+      "group": "승객",
+      "section": "아버지 이야기",
+      "title": "질문 2 · 답 1",
+      "type": "text",
+      "defaultValue": "먹고살아야죠.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수다 손님이 2일차부터 하루에 한 번 묻는 대화입니다.",
+      "affects": [
+        "승객 대화"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "FatherStoryState.Reply",
+      "editable": true
+    },
+    {
+      "id": "backstory.question.1.reply.1",
+      "group": "승객",
+      "section": "아버지 이야기",
+      "title": "질문 2 · 답 2",
+      "type": "text",
+      "defaultValue": "아직 서툴러요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수다 손님이 2일차부터 하루에 한 번 묻는 대화입니다.",
+      "affects": [
+        "승객 대화"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "FatherStoryState.Reply",
+      "editable": true
+    },
+    {
+      "id": "backstory.question.1.reply.2",
+      "group": "승객",
+      "section": "아버지 이야기",
+      "title": "질문 2 · 답 3",
+      "type": "text",
+      "defaultValue": "손님 덕에 버텨요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수다 손님이 2일차부터 하루에 한 번 묻는 대화입니다.",
+      "affects": [
+        "승객 대화"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "FatherStoryState.Reply",
+      "editable": true
+    },
+    {
+      "id": "backstory.question.2",
+      "group": "승객",
+      "section": "아버지 이야기",
+      "title": "질문 3",
+      "type": "text",
+      "defaultValue": "차가 오래됐네요?",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수다 손님이 2일차부터 하루에 한 번 묻는 대화입니다.",
+      "affects": [
+        "승객 대화"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "FatherStoryState.Question",
+      "editable": true
+    },
+    {
+      "id": "backstory.question.2.reply.0",
+      "group": "승객",
+      "section": "아버지 이야기",
+      "title": "질문 3 · 답 1",
+      "type": "text",
+      "defaultValue": "아버지 차예요. 아직 잘 달려요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수다 손님이 2일차부터 하루에 한 번 묻는 대화입니다.",
+      "affects": [
+        "승객 대화"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "FatherStoryState.Reply",
+      "editable": true
+    },
+    {
+      "id": "backstory.question.2.reply.1",
+      "group": "승객",
+      "section": "아버지 이야기",
+      "title": "질문 3 · 답 2",
+      "type": "text",
+      "defaultValue": "곧 바꾸려고요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수다 손님이 2일차부터 하루에 한 번 묻는 대화입니다.",
+      "affects": [
+        "승객 대화"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "FatherStoryState.Reply",
+      "editable": true
+    },
+    {
+      "id": "backstory.question.2.reply.2",
+      "group": "승객",
+      "section": "아버지 이야기",
+      "title": "질문 3 · 답 3",
+      "type": "text",
+      "defaultValue": "정들었어요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수다 손님이 2일차부터 하루에 한 번 묻는 대화입니다.",
+      "affects": [
+        "승객 대화"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "FatherStoryState.Reply",
+      "editable": true
+    },
+    {
+      "id": "backstory.reply.satisfaction",
+      "group": "승객",
+      "section": "아버지 이야기",
+      "title": "응답의 승객 만족도",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 10,
+      "unit": "점",
+      "description": "셋 중 어느 답을 해도 같은 만족도를 얻습니다.",
+      "affects": [
+        "승객 대화"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "FatherStoryState.Satisfaction",
+      "editable": true
+    },
+    {
       "id": "cabin.meter.missedFareRate",
       "group": "차량",
       "section": "차내 조작",
