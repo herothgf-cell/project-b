@@ -19,17 +19,20 @@ public enum PassengerRepresentativeStatus { None, NotPresented, Pending, Accepte
  public bool HasTrait(string id){return PresetTraits!=null&&Array.IndexOf(PresetTraits,id)>=0;}
  public bool HasSleep {get{return Type==PassengerType.Sleeping||HasTrait("body.sleepy");}}
  public bool IsDrunk {get{return string.IsNullOrEmpty(PresetId)?Type==PassengerType.Drunk:Array.IndexOf(PresetTraits,"body.drunk")>=0;}}
- public static PassengerBehaviorState CreateConfigured(string identity,PassengerType pool,PassengerType[] eligible,string selectionSeed){
+ public static PassengerBehaviorState CreateConfigured(string identity,PassengerType pool,PassengerType[] eligible,string selectionSeed,Func<PassengerPresetDefinition,double> conditionWeight=null){
   string json=ContentTuning.Text("passenger.presets","");if(json.Length==0)return Create(identity,pool);
-  var all=PassengerPresetCatalog.Parse(json);int total=0;foreach(var p in all)if(p.pool==pool.ToString()&&p.enabled&&p.weight>0)total+=p.weight;
+  var all=PassengerPresetCatalog.Parse(json);int total=0;foreach(var p in all)if(p.pool==pool.ToString()&&p.enabled&&p.weight>0)total+=PresetWeight(p,conditionWeight);
   if(total==0)return Create(identity,PassengerType.General);
   int pick=(int)(DrunkRideState.Hash((selectionSeed??identity)+":passenger-preset:"+pool)%(uint)total);
-  foreach(var p in all){if(p.pool!=pool.ToString()||!p.enabled||p.weight<=0)continue;pick-=p.weight;if(pick>=0)continue;
+  foreach(var p in all){if(p.pool!=pool.ToString()||!p.enabled||p.weight<=0)continue;pick-=PresetWeight(p,conditionWeight);if(pick>=0)continue;
    var representative=(PassengerType)Enum.Parse(typeof(PassengerType),p.RepresentativeModule);
    // Never replace an unavailable module with another random preset on a different route.
    if(representative!=PassengerType.General&&eligible!=null&&Array.IndexOf(eligible,representative)<0)return Create(identity,PassengerType.General);
    var result=Create(identity,(PassengerType)Enum.Parse(typeof(PassengerType),p.ActionModule));result.PresetOverrides=PassengerContent.Clone(p.overrides);result.SpillPlanned=DrunkRideState.Hash(identity+":food-spill")%100<result.Content.Int("effect.food.spillPercent",25);result.PresetId=p.id;result.PresetName=p.name;result.PresetIntro=p.intro;result.PresetPool=pool;result.PresetTraits=(string[])p.traits.Clone();result.PresetRepresentative=representative;result.PresetQuiet=p.Has("speech.quiet");result.Quiet|=result.PresetQuiet;result.InitializeTraits();return result;
   }return Create(identity,PassengerType.General);
+ }
+ static int PresetWeight(PassengerPresetDefinition preset,Func<PassengerPresetDefinition,double> conditionWeight){
+  return conditionWeight==null?preset.weight:(int)Math.Round(preset.weight*100*conditionWeight(preset));
  }
  public int TraitVersion;
  public bool TraitsInitialized,NauseaPlanned,NauseaIncident,NauseaDirtOccurred,UmbrellaDirtOccurred,TemperatureCorrectionShown,TemperatureCorrectionPending;

@@ -49,7 +49,13 @@ public static class CockpitUI {
  }
  public static void Draw(DriveHUD hud){
   var s=hud.session;var e=s.business.ledger;var jobs=s.jobs;var match=s.simulationMatch;var previous=GUI.matrix;float scale=Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));float w=Screen.width/scale,h=Screen.height/scale;
-  DrivingHudArt.Glass(new Rect(24,20,300,92));string region=match?"PVP 도시":MapCatalog.Name(s.world.map.mapId);var regionStyle=DrivingHudArt.Text(14,DrivingHudArt.Light);GUI.Label(new Rect(42,27,264,25),new GUIContent(UiReadability.Ellipsis(region,regionStyle,264),region),regionStyle);
+  DrivingHudArt.Glass(new Rect(24,20,300,92));
+  bool dailyBadge=!match&&s.business.DailyConditionsEnabled;
+  float regionWidth=dailyBadge?132:264;
+  string region=match?"PVP 도시":MapCatalog.Name(s.world.map.mapId);
+  var regionStyle=DrivingHudArt.Text(14,DrivingHudArt.Light);
+  GUI.Label(new Rect(42,27,regionWidth,25),new GUIContent(UiReadability.Ellipsis(region,regionStyle,regionWidth),region),regionStyle);
+  if(dailyBadge)DailyConditionHUD.DrawBadge(new Rect(176,26,132,27),s.business.DayCondition);
   int minute=480+(int)(e.Elapsed*720/e.Settings.daySeconds);HudGlyph.Draw(new Rect(42,60,28,28),18,DrivingHudArt.Cyan);
   Label(new Rect(82,51,218,32),match?"남은 경기 "+Clock(match.Remaining):(minute/60%24)+":"+(minute%60).ToString("00")+"   "+(e.IsContinuousCareer?e.Day+"일차":e.Day+" / "+e.Settings.days+"일"),23,null,true);
   Label(new Rect(82,82,218,22),match?(match.ServiceRemaining(s)>0?"시설 이용 "+Clock(match.ServiceRemaining(s)):PvpNativeLan.RunningOnline?"LAN · "+(PvpNativeLan.Instance.IsHost?"호스트":"참가자"):"나 + 봇 3대 · 오프라인"):e.State==BusinessState.Closing?"퇴근 대기":e.Elapsed>=e.Settings.daySeconds?"초과 영업 +"+Clock(e.Elapsed-e.Settings.daySeconds):"남은 영업 "+Clock(e.SecondsLeft),13,DrivingHudArt.Light);

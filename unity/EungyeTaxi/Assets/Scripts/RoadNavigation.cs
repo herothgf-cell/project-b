@@ -186,6 +186,14 @@ public partial class RoadNavigation : MonoBehaviour {
  }
  void Approach(RouteResult route){if(route==null||goal==null)return;float before=route.distance;FinishApproach(route.points,goal);route.distance=Length(route.points);route.seconds=Mathf.Max(0,route.seconds+(route.distance-before)/CruiseSpeed(edges[route.chain[route.chain.Count-1]]));}
  public void Refresh(){if(!active||vehicle==null)return;RefreshCurrent();RefreshDisplay();}
+ public void LaneAvailabilityChanged(int edge,bool closed){
+  if(hd==null||!active)return;
+  if(closed&&RequiredVia==edge){PassedRequiredVia=RequiredVia=-1;viaSampled=false;}
+  hdRoute=projectedRoute=null;
+  nextHdCosts=0;
+  ForgetDisplay();
+  Refresh();
+ }
  void RefreshCurrent(){
   if(!active||vehicle==null)return;
   if(hd!=null){RefreshHd();return;}

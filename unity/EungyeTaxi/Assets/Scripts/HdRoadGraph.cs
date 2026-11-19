@@ -57,12 +57,13 @@ public sealed class HdRoadGraph {
   for(int i=0;i<edges.Length;i++){
    // Bounds reject only impossible candidates; original edge order, exact
    // projection, heading threshold and strict tie handling remain unchanged.
-   if(edges[i].disabled||edges[i].change!=0||pathBounds[i].SqrDistance(ground)>score*score+.0001f)continue;float error;float d=paths[i].Project(position,out error);
+   if(edges[i].TraversalDisabled||edges[i].change!=0||pathBounds[i].SqrDistance(ground)>score*score+.0001f)continue;float error;float d=paths[i].Project(position,out error);
    if(error>=score||heading.sqrMagnitude>.1f&&Vector3.Dot(heading.normalized,paths[i].Tangent(d))<.6f)continue;
    best=i;score=error;at=d;
   }
   if(best>=0)return best;
   foreach(var bay in wideBays){
+   if(edges[bay.laneEdge].TraversalDisabled)continue;
    var delta=ground-bay.V();delta.y=0;
    float across=Vector3.Dot(delta,TrafficSystem.Right(bay.Direction));
    if(across<0||across>bay.width*.5f-.35f||Mathf.Abs(Vector3.Dot(delta,bay.Direction))>7||
@@ -77,7 +78,7 @@ public sealed class HdRoadGraph {
  public int NearestPair(Vector3 position,out float at,out float nearest,out float runner){
   int best=-1;at=0;nearest=runner=float.MaxValue;var ground=position;ground.y=0;
   for(int i=0;i<edges.Length;i++){
-   if(edges[i].disabled||pathBounds[i].SqrDistance(ground)>runner*runner+.0001f)continue;
+   if(edges[i].TraversalDisabled||pathBounds[i].SqrDistance(ground)>runner*runner+.0001f)continue;
    float error;float distance=paths[i].Project(position,out error);
    if(error<nearest){runner=nearest;nearest=error;best=i;at=distance;}else runner=Mathf.Min(runner,error);
   }
@@ -89,24 +90,24 @@ public sealed class HdRoadGraph {
   readonly HdRoadGraph graph;readonly int[] previous;public readonly int start;readonly float at;
   internal DistanceSearch(HdRoadGraph graph,int start,float at,int[] previous){this.graph=graph;this.start=start;this.at=at;this.previous=previous;}
   public RoutePath RouteTo(int goal,float goalAt){
-   if(previous==null||goal<0||goal>=previous.Length||graph.edges[goal].disabled)return null;
+   if(previous==null||goal<0||goal>=previous.Length||graph.edges[goal].TraversalDisabled)return null;
    if(start==goal&&at>goalAt+.1f)return graph.Route(start,at,goal,goalAt);
    if(goal!=start&&previous[goal]<0)return null;
    var chain=new List<int>();for(int i=goal;i>=0;i=previous[i])chain.Add(i);chain.Reverse();return graph.Compose(chain,at,goalAt);
   }
  }
  public DistanceSearch SearchDistances(int start,float at){
-  if(start<0||start>=edges.Length||edges[start].disabled||float.IsNaN(at)||at<0||at>paths[start].length)return new DistanceSearch(this,start,at,null);
+  if(start<0||start>=edges.Length||edges[start].TraversalDisabled||float.IsNaN(at)||at<0||at>paths[start].length)return new DistanceSearch(this,start,at,null);
   var previous=new int[edges.Length];bool[] used;var costs=Scratch(out used);for(int i=0;i<costs.Length;i++){costs[i]=float.PositiveInfinity;previous[i]=-1;used[i]=false;}
   costs[start]=0;var queue=scratchQueue;queue.Clear();queue.Add(0f,start);
   while(queue.Count>0){var item=queue.Pop();int cur=item.edge;float value=item.cost;if(used[cur]||value>costs[cur])continue;used[cur]=true;
-   foreach(int next in edges[cur].next){float fraction=1-(cur==start?at/Mathf.Max(.01f,paths[cur].length):0);float cost=value+paths[cur].length*fraction+(edges[next].change!=0?12:0);
+   foreach(int next in edges[cur].next){if(edges[next].TraversalDisabled)continue;float fraction=1-(cur==start?at/Mathf.Max(.01f,paths[cur].length):0);float cost=value+paths[cur].length*fraction+(edges[next].change!=0?12:0);
     if(cost<costs[next]){costs[next]=cost;previous[next]=cur;queue.Add(cost,next);}
    }
   }return new DistanceSearch(this,start,at,previous);
  }
  public RoutePath Route(int start,float startAt,int goal,float goalAt,float[] weights=null){
-  if(start<0||goal<0||start>=edges.Length||goal>=edges.Length||edges[start].disabled||edges[goal].disabled)return null;
+  if(start<0||goal<0||start>=edges.Length||goal>=edges.Length||edges[start].TraversalDisabled||edges[goal].TraversalDisabled)return null;
   if(start==goal&&startAt>goalAt+.1f){RoutePath best=null;float score=float.MaxValue;foreach(int next in edges[start].next){if(next==start)continue;var rest=Route(next,0,goal,goalAt,weights);if(rest==null)continue;var chain=new List<int>{start};chain.AddRange(rest.edges);var candidate=Compose(chain,startAt,goalAt);float loopCost=0;foreach(int e in rest.edges)loopCost+=weights==null?paths[e].length:weights[e];if(candidate!=null&&loopCost<score){score=loopCost;best=candidate;}}return best;}
   bool[] used;var cost=Scratch(out used);var prev=scratchPrev;
   for(int i=0;i<cost.Length;i++){cost[i]=float.PositiveInfinity;prev[i]=-1;used[i]=false;}
@@ -115,7 +116,7 @@ public sealed class HdRoadGraph {
    var item=queue.Pop();int cur=item.edge;float value=item.cost;if(used[cur]||value>cost[cur])continue;
    if(cur==goal){var chain=new List<int>();for(int i=cur;i>=0;i=prev[i])chain.Add(i);chain.Reverse();return Compose(chain,startAt,goalAt);}
    used[cur]=true;
-   foreach(int next in edges[cur].next){float fraction=1-(cur==start?startAt/Mathf.Max(.01f,paths[cur].length):0);float c=value+(weights==null?paths[cur].length:weights[cur])*fraction+(edges[next].change!=0?(weights==null?12:1.5f):0);
+   foreach(int next in edges[cur].next){if(edges[next].TraversalDisabled)continue;float fraction=1-(cur==start?startAt/Mathf.Max(.01f,paths[cur].length):0);float c=value+(weights==null?paths[cur].length:weights[cur])*fraction+(edges[next].change!=0?(weights==null?12:1.5f):0);
     if(c<cost[next]){cost[next]=c;prev[next]=cur;queue.Add(c,next);}
    }
   }return null;
@@ -127,7 +128,7 @@ public sealed class HdRoadGraph {
  public RoutePath Compose(List<int> chain,float startAt,float goalAt){
   var result=new RoutePath();var points=new List<Vector3>();float total=0;
   for(int k=0;k<chain.Count;k++){
-   int id=chain[k];if(edges[id].disabled)return null;var p=paths[id];float a=k==0?startAt:0,b=k==chain.Count-1?goalAt:p.length;
+   int id=chain[k];if(edges[id].TraversalDisabled)return null;var p=paths[id];float a=k==0?startAt:0,b=k==chain.Count-1?goalAt:p.length;
    if(b<a)return null;
    Append(points,p.Position(a),ref total);
    float d=0;for(int j=1;j<p.points.Length;j++){d+=Vector3.Distance(p.points[j-1],p.points[j]);if(d>a+.001f&&d<b-.001f)Append(points,p.points[j],ref total);}
@@ -143,9 +144,18 @@ public sealed class HdRoadGraph {
   var chain=new List<int>(first.edges);for(int i=1;i<rest.edges.Count;i++)chain.Add(rest.edges[i]);return Compose(chain,at,goalAt);
  }
  public RoutePath Forward(int start,float at){
-  if(start<0||edges[start].disabled)return null;var chain=new List<int>{start};int cur=start;float length=paths[cur].length-at;
-  while(length<250&&chain.Count<40){int best=-1;float score=float.MaxValue;
-   foreach(int next in edges[cur].next){if(chain.Contains(next)||edges[next].change!=0)continue;float angle=Vector3.Angle(paths[cur].Tangent(paths[cur].length),paths[next].Tangent(paths[next].length));if(angle<score){score=angle;best=next;}}
+  if(start<0||edges[start].TraversalDisabled)return null;var chain=new List<int>{start};int cur=start;float length=paths[cur].length-at;
+  while(length<250&&chain.Count<40){int best=-1,merge=-1;float score=float.MaxValue,mergeScore=float.MaxValue;bool constructionAhead=false;
+   foreach(int next in edges[cur].next){
+    var edge=edges[next];constructionAhead|=edge.ClosedForConstruction;
+    if(chain.Contains(next)||edge.TraversalDisabled)continue;
+    float angle=Vector3.Angle(paths[cur].Tangent(paths[cur].length),paths[next].Tangent(paths[next].length));
+    if(edge.change==0){if(angle<score){score=angle;best=next;}}
+    else if(angle<mergeScore){mergeScore=angle;merge=next;}
+   }
+   // Free guidance usually stays in its lane. At roadwork, take a mapped merge
+   // only when the forward connection is closed and no ordinary successor remains.
+   if(best<0&&constructionAhead)best=merge;
    if(best<0)break;cur=best;chain.Add(cur);length+=paths[cur].length;
   }return Compose(chain,at,paths[cur].length);
  }

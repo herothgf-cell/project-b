@@ -4,7 +4,7 @@ using System.Globalization;
 
 [Serializable] public sealed class RainSettings {
  public bool enabled;public float intensity=.65f,wiperSeconds=1.2f,brakeMultiplier=.9f,trafficSpeedMultiplier=.85f;public int boardingDirt=2;
- public static RainSettings Capture(){return new RainSettings{enabled=RainPolicy.Enabled,intensity=(float)ContentTuning.Number("weather.rain.intensity",.65),wiperSeconds=RainPolicy.WiperSeconds,brakeMultiplier=(float)ContentTuning.Number("weather.rain.brakeMultiplier",.9),trafficSpeedMultiplier=(float)ContentTuning.Number("weather.rain.trafficSpeedMultiplier",.85),boardingDirt=ContentTuning.Int("weather.rain.boardingDirt",2)};}
+ public static RainSettings Capture(){return new RainSettings{enabled=ContentTuning.Flag("weather.rain.enabled",false),intensity=(float)ContentTuning.Number("weather.rain.intensity",.65),wiperSeconds=RainPolicy.WiperSeconds,brakeMultiplier=(float)ContentTuning.Number("weather.rain.brakeMultiplier",.9),trafficSpeedMultiplier=(float)ContentTuning.Number("weather.rain.trafficSpeedMultiplier",.85),boardingDirt=ContentTuning.Int("weather.rain.boardingDirt",2)};}
  public RainSettings Copy(){return (RainSettings)MemberwiseClone();}
  static bool Range(float value,float min,float max){return !float.IsNaN(value)&&!float.IsInfinity(value)&&value>=min&&value<=max;}
  public void Validate(){if(!Range(intensity,0,1)||!Range(wiperSeconds,.5f,3)||!Range(brakeMultiplier,.75f,1)||!Range(trafficSpeedMultiplier,.6f,1)||boardingDirt<0||boardingDirt>10)throw new ArgumentException("날씨 설정 범위 오류");}

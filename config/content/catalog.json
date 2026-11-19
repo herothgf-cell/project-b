@@ -2,6 +2,552 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "id": "day.condition.weekday.title",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "평일 · 카드 제목",
+      "type": "text",
+      "defaultValue": "평일",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "영업 준비와 영업 중에 쓰는 이름입니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.Title",
+      "editable": true
+    },
+    {
+      "id": "day.condition.weekday.clue",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "평일 · 조건 단서",
+      "type": "text",
+      "defaultValue": "평범한 하루",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "준비 화면에 표시하는 짧은 문구입니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.Clue",
+      "editable": true
+    },
+    {
+      "id": "day.condition.weekday.description",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "평일 · 영업 변화",
+      "type": "text",
+      "defaultValue": "기본 수요",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "당일 수요와 운영 변화를 준비 화면에 표시합니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.Description",
+      "editable": true
+    },
+    {
+      "id": "day.condition.rain.title",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "비 오는 날 · 카드 제목",
+      "type": "text",
+      "defaultValue": "비 오는 날",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "영업 준비와 영업 중에 쓰는 이름입니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.Title",
+      "editable": true
+    },
+    {
+      "id": "day.condition.rain.clue",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "비 오는 날 · 조건 단서",
+      "type": "text",
+      "defaultValue": "오후부터 비",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "준비 화면에 표시하는 짧은 문구입니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.Clue",
+      "editable": true
+    },
+    {
+      "id": "day.condition.rain.description",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "비 오는 날 · 영업 변화",
+      "type": "text",
+      "defaultValue": "전 지역 손님이 늘고, 탑승 때 차가 쉽게 더러워집니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "당일 수요와 운영 변화를 준비 화면에 표시합니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.Description",
+      "editable": true
+    },
+    {
+      "id": "day.condition.market.title",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "상가 행사 · 카드 제목",
+      "type": "text",
+      "defaultValue": "상가 행사",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "영업 준비와 영업 중에 쓰는 이름입니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.Title",
+      "editable": true
+    },
+    {
+      "id": "day.condition.market.clue",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "상가 행사 · 조건 단서",
+      "type": "text",
+      "defaultValue": "저녁 상가 행사",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "준비 화면에 표시하는 짧은 문구입니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.Clue",
+      "editable": true
+    },
+    {
+      "id": "day.condition.market.description",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "상가 행사 · 영업 변화",
+      "type": "text",
+      "defaultValue": "저녁에는 상가에서 출발하는 손님이 많습니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "당일 수요와 운영 변화를 준비 화면에 표시합니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.Description",
+      "editable": true
+    },
+    {
+      "id": "day.condition.friday.title",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "금요일 · 카드 제목",
+      "type": "text",
+      "defaultValue": "금요일",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "영업 준비와 영업 중에 쓰는 이름입니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.Title",
+      "editable": true
+    },
+    {
+      "id": "day.condition.friday.clue",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "금요일 · 조건 단서",
+      "type": "text",
+      "defaultValue": "회식 많은 밤",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "준비 화면에 표시하는 짧은 문구입니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.Clue",
+      "editable": true
+    },
+    {
+      "id": "day.condition.friday.description",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "금요일 · 영업 변화",
+      "type": "text",
+      "defaultValue": "밤에는 상가에서 주거 지역으로 가는 손님이 많습니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "당일 수요와 운영 변화를 준비 화면에 표시합니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.Description",
+      "editable": true
+    },
+    {
+      "id": "day.condition.construction.title",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "도로 공사 · 카드 제목",
+      "type": "text",
+      "defaultValue": "도로 공사",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "영업 준비와 영업 중에 쓰는 이름입니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.Title",
+      "editable": true
+    },
+    {
+      "id": "day.condition.construction.clue",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "도로 공사 · 조건 단서",
+      "type": "text",
+      "defaultValue": "계수로 일부 통제",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "준비 화면에 표시하는 짧은 문구입니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.Clue",
+      "editable": true
+    },
+    {
+      "id": "day.condition.construction.description",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "도로 공사 · 영업 변화",
+      "type": "text",
+      "defaultValue": "계수로 서행 · 현대오일뱅크 앞 통제 구간을 지도에서 확인하세요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "당일 수요와 운영 변화를 준비 화면에 표시합니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.Description",
+      "editable": true
+    },
+    {
+      "id": "day.condition.rain.demand",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "비 오는 날 · 호출 배수",
+      "type": "number",
+      "defaultValue": "1.3",
+      "min": 1,
+      "max": 5,
+      "unit": "배",
+      "description": "모든 지역 상대 가중치와 빈 호출판 재시도 간격에 적용합니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.DemandMultiplier",
+      "editable": true
+    },
+    {
+      "id": "day.condition.market.demand",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "상가 행사 · 호출 배수",
+      "type": "number",
+      "defaultValue": "2",
+      "min": 1,
+      "max": 5,
+      "unit": "배",
+      "description": "저녁 상업 지역 출발 후보에 적용합니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.DemandMultiplier",
+      "editable": true
+    },
+    {
+      "id": "day.condition.market.traffic",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "상가 행사 · 저녁 교통 비중",
+      "type": "number",
+      "defaultValue": "1.5",
+      "min": 1,
+      "max": 5,
+      "unit": "배",
+      "description": "저녁에 출발하는 일반 교통의 상업 지역 도착 비중을 높입니다. 최대 차량 수는 유지합니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.TrafficDestinationMultiplier",
+      "editable": true
+    },
+    {
+      "id": "day.condition.friday.demand",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "금요일 · 호출 배수",
+      "type": "number",
+      "defaultValue": "2",
+      "min": 1,
+      "max": 5,
+      "unit": "배",
+      "description": "저녁과 초과 영업의 상업 출발·주거 도착 후보에 적용합니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.DemandMultiplier",
+      "editable": true
+    },
+    {
+      "id": "day.condition.rain.umbrella",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "비 오는 날 · 젖은 우산 비중",
+      "type": "number",
+      "defaultValue": "2",
+      "min": 1,
+      "max": 5,
+      "unit": "배",
+      "description": "짐 손님이 뽑힐 비중과 그중 젖은 우산 프리셋 비중을 높입니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.PresetMultiplier",
+      "editable": true
+    },
+    {
+      "id": "day.condition.market.luggage",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "상가 행사 · 짐 손님 비중",
+      "type": "number",
+      "defaultValue": "2",
+      "min": 1,
+      "max": 5,
+      "unit": "배",
+      "description": "일반 짐·흙 묻은 짐 손님의 등장 비중에 적용합니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.PoolMultiplier",
+      "editable": true
+    },
+    {
+      "id": "day.condition.market.food",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "상가 행사 · 음식 손님 비중",
+      "type": "number",
+      "defaultValue": "2",
+      "min": 1,
+      "max": 5,
+      "unit": "배",
+      "description": "음식을 든 손님의 등장 비중에 적용합니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.PoolMultiplier",
+      "editable": true
+    },
+    {
+      "id": "day.condition.friday.drunk",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "금요일 · 음주 손님 비중",
+      "type": "number",
+      "defaultValue": "2",
+      "min": 1,
+      "max": 5,
+      "unit": "배",
+      "description": "음주 손님 등장 확률에만 적용하며, 하루 상한은 유지합니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.PoolMultiplier",
+      "editable": true
+    },
+    {
+      "id": "day.condition.friday.sleep",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "금요일 · 수면 손님 비중",
+      "type": "number",
+      "defaultValue": "2",
+      "min": 1,
+      "max": 5,
+      "unit": "배",
+      "description": "졸린 손님의 등장 비중에 적용합니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.PoolMultiplier",
+      "editable": true
+    },
+    {
+      "id": "day.condition.construction.hurried",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "도로 공사 · 급한 손님 비중",
+      "type": "number",
+      "defaultValue": "2",
+      "min": 1,
+      "max": 5,
+      "unit": "배",
+      "description": "시간이 급한 손님의 등장 비중에 적용합니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.PoolMultiplier",
+      "editable": true
+    },
+    {
+      "id": "day.condition.rain.startsAt",
+      "group": "생활",
+      "section": "하루 조건",
+      "title": "비 오는 날 · 빗줄기 시작 시각",
+      "type": "number",
+      "defaultValue": "12",
+      "min": 8,
+      "max": 20,
+      "unit": "시",
+      "description": "게임 시계 기준입니다. 해당 시각부터 와이퍼와 탑승 청결 감소가 적용됩니다.",
+      "affects": [
+        "하루 조건 카드"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DailyConditions.IsRaining",
+      "editable": true
+    },
+    {
       "id": "backstory.question.0",
       "group": "승객",
       "section": "아버지 이야기",

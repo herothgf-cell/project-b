@@ -28,9 +28,20 @@ public static class OneDayHUD {
   GUI.enabled=old;
  }
  static void DrawPreparation(DriveSession session){
-  PreparationStyles();var view=DayPreparationPresentation.Create(session.business.ledger);bool career=session.business.SupportsCareer;bool beside=career&&Screen.width>=1100;float extra=career&&!beside?110:0;var bounds=DayPreparationPresentation.PanelBounds(Screen.width,Screen.height,career&&!beside);float scale=bounds.width/760f;
+  PreparationStyles();
+  var business=session.business;
+  var view=DayPreparationPresentation.Create(business.ledger);
+  bool career=business.SupportsCareer, dailyCard=business.DailyConditionsEnabled;
+  bool beside=career&&(dailyCard?DailyConditionHUD.UseSide(Screen.width,Screen.height):Screen.width>=1100);
+  float extra=career&&!beside?110:0;
+  var bounds=DayPreparationPresentation.PanelBounds(Screen.width,Screen.height,career&&!beside);
+  var dailyLayout=dailyCard?new DailyConditionHUD.PreparationLayout(Screen.width,Screen.height,760,640+extra,beside):default;
+  float scale=dailyCard?dailyLayout.scale:bounds.width/760f;
   var saved=GUI.matrix;var oldColor=GUI.color;GUI.depth=-150;GUI.color=new Color(0,0,0,.30f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=oldColor;
-  GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,Vector3.one*scale);float x=bounds.x/scale,y=bounds.y/scale;Panel(new Rect(x,y,760,640+extra));
+  GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,Vector3.one*scale);
+  float x=dailyCard?dailyLayout.panel.x:bounds.x/scale,y=dailyCard?dailyLayout.panel.y:bounds.y/scale;
+  Panel(new Rect(x,y,760,640+extra));
+  if(dailyCard)DailyConditionHUD.DrawPreparationCard(dailyLayout.card,session);
   CasualUI.Header(new Rect(x+20,y+16,720,54),view.title,4);
   GUI.Label(new Rect(x+30,y+72,700,26),"현재 상태",text);
   for(int i=0;i<view.stats.Length;i++){
@@ -52,7 +63,10 @@ public static class OneDayHUD {
   if(session.business.ledger.Settings.days==3){var room=session.business.ledger.Account.Room;string chosen=room.wished=="lamp"?"찜한 탁상 조명":room.wished=="rug"?"찜한 작은 러그":room.lampOwned||room.rugOwned?"내 공간의 물건이 기다리고 있어요":"";if(chosen.Length>0)GUI.Label(new Rect(x+30,y+278,700,24),chosen,small);}
   CasualUI.Divider(new Rect(x+30,y+472,700,1));
   GUI.Label(new Rect(x+30,y+478,340,32),"오늘의 이용 비용",text);preparationAmount.normal.textColor=CasualUI.Ink;GUI.Label(new Rect(x+390,y+476,340,36),Money(view.totalExpense),new GUIStyle(preparationAmount){fontSize=26,fontStyle=FontStyle.Bold});
-  if(career)DrawCareerGoal(beside?new Rect(x+780,y,Mathf.Min(320,Screen.width/scale-x-795),255):new Rect(x+30,y+522,700,100),session.business);
+  if(career){
+   Rect goal=beside?(dailyCard?dailyLayout.sideGoal:new Rect(x+780,y,Mathf.Min(320,Screen.width/scale-x-795),255)):new Rect(x+30,y+522,700,100);
+   DrawCareerGoal(goal,business);
+  }
   DrawShiftLength(new Rect(x+30,y+522+extra,700,40),session.business);
   if(GUI.Button(new Rect(x+30,y+574+extra,700,50),"영업 시작",preparationAction))session.business.Depart();
   GUI.matrix=saved;
@@ -115,7 +129,9 @@ public static class OneDayHUD {
   }
   if(b.preparing&&!b.restartPrompt&&!b.ResumeBlocked){showDayDetails=false;if(DayPreparationPresentation.ShouldShow(e.Day,b.preparing,b.restartPrompt,b.ResumeBlocked))DrawPreparation(s);else s.GetComponent<DriveHUD>().DrawSingleMenu();return;}
   bool careerResult=b.SupportsCareer&&b.ShowingSummary&&!b.restartPrompt&&!b.ResumeBlocked;
-  float extra=careerResult?105:0,height=680+extra;
+  bool conditionResult=careerResult&&b.DailyConditionsEnabled;
+  float conditionSpace=conditionResult?40:0;
+  float extra=(careerResult?105:0)+conditionSpace,height=680+extra;
   var saved=GUI.matrix;float scale=Mathf.Min(1,Screen.width/800f,Screen.height/(height+50));GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,Vector3.one*scale);float x=(Screen.width/scale-720)/2,y=(Screen.height/scale-height)/2;GUI.depth=-150;Panel(new Rect(x,y,720,height));
   if(b.restartPrompt&&b.ResumeBlocked){CasualUI.Header(new Rect(x+20,y+18,680,64),"원본 보관 후 새로 시작할까요?",1,CasualUI.Amber);GUI.Label(new Rect(x+25,y+115,670,210),"현재 저장을 이어갈 수 없어 영업을 멈췄습니다.\n새로 시작하면 현재 진행 대신 현금 10,000원 · 연료 60%의 1일차로 시작합니다.\n\n기존 원본과 백업은 저장 폴더 안에 별도로 보관합니다. 보관하지 못하면 새로 시작하지 않습니다.\n취소하면 기존 파일과 현재 상태를 유지합니다.",text);GUI.Label(new Rect(x+25,y+360,670,75),b.saveStatus,small);if(GUI.Button(new Rect(x+25,y+590,325,55),"원본 보관 후 새로 시작",CasualUI.Action(16)))b.ConfirmRestart(true);if(GUI.Button(new Rect(x+370,y+590,325,55),"돌아가기",button))b.ConfirmRestart(false);}
   else if(b.restartPrompt){CasualUI.Header(new Rect(x+20,y+18,680,64),b.SupportsCareer?"새 경력을 시작할까요?":multi?"새 캠페인을 시작할까요?":"새 하루를 시작할까요?",4);GUI.Label(new Rect(x+25,y+100,670,210),b.SupportsCareer?"현금 10,000원 · 연료 60% · 포만감 80 · 피로 10\n별도 슬롯에서 1일차와 운전 점수 100점부터 시작합니다.\n이전 경력은 저장된 경력 목록에서 다시 열 수 있습니다.":"현금 10,000원 · 연료 60% · 포만감 80 · 피로 10\n1일차와 운전 점수 100점부터 시작합니다.\n이전 완료 결과와 방 기록은 보존합니다. 새 회차의 물건·배치는 초기화됩니다. 취소하면 현재 진행을 유지합니다.",text);GUI.Label(new Rect(x+25,y+360,670,65),b.saveStatus,small);if(GUI.Button(new Rect(x+25,y+590,325,55),b.SupportsCareer?"새 경력":multi?"새 3일 시작":"새 하루 시작",CasualUI.Action(18)))b.ConfirmRestart(true);if(GUI.Button(new Rect(x+370,y+590,325,55),"취소",button))b.ConfirmRestart(false);}
@@ -132,19 +148,20 @@ public static class OneDayHUD {
    GUI.Label(new Rect(x+25,y+234,670,30),"운송 "+r.rides+"건 · 미완료 "+r.failedTrips+"건 · 영업 "+Clock(r.elapsed),text);
    GUI.Label(new Rect(x+25,y+274,670,30),"운전 점수 "+s.law.ledger.TotalScore+" · 차량 청결도 "+e.Care.Cleanliness+" · 내구도 "+e.Care.Damage.Durability,text);
    GUI.Label(new Rect(x+25,y+310,670,28),"포만감 "+d.satiety.ToString("0")+" · 기사 피로도 "+d.fatigue.ToString("0"),text);
-   if(GUI.Button(new Rect(x+25,y+352,670,36),showDayDetails?"상세 내역 닫기":"상세 내역 보기",button))ToggleDayDetails();
+   if(conditionResult)DailyConditionHUD.DrawReflection(new Rect(x+25,y+345,670,34),b,r);
+   if(GUI.Button(new Rect(x+25,y+352+conditionSpace,670,36),showDayDetails?"상세 내역 닫기":"상세 내역 보기",button))ToggleDayDetails();
    if(showDayDetails){
     string rows="";foreach(var day in e.Snapshot().records)rows+=day.day+"일차 · 수입 "+Money(day.income)+" · 순수익 "+Money(day.net)+" · 운송 "+day.rides+"건\n";
     string content=rows+"\n"+OperationMetrics.Describe(r.metrics)+"\n세차 "+Money(r.wash)+" · 수리 "+Money(r.repair)+" · 견인 "+Money(r.tow)+"\n식사 "+d.meals+"회 · 수면 "+d.sleeps+"회\n누적 수입 "+Money(e.TotalIncome)+" · 지출 "+Money(e.TotalExpenses)+" · 순수익 "+Money(e.TotalNet)+"\n"+b.saveStatus;
     float ch=Mathf.Max(120,small.CalcHeight(new GUIContent(content),625)+12);
-    detailScroll=GUI.BeginScrollView(new Rect(x+25,y+398,670,e.Account.HasHomeBase?65:80),detailScroll,new Rect(0,0,640,ch));GUI.Label(new Rect(0,0,625,ch),content,small);GUI.EndScrollView();
+    detailScroll=GUI.BeginScrollView(new Rect(x+25,y+398+conditionSpace,670,e.Account.HasHomeBase?65:80),detailScroll,new Rect(0,0,640,ch));GUI.Label(new Rect(0,0,625,ch),content,small);GUI.EndScrollView();
    }else if(!complete&&multi){
-    GUI.Label(new Rect(x+25,y+407,670,65),"누적 순수익  "+Money(e.TotalNet)+"\n다음 날 · 피로 "+System.Math.Max(0,d.fatigue-b.settings.nightlyFatigueRecovery).ToString("0")+" · 포만감 "+d.satiety.ToString("0"),small);
+    GUI.Label(new Rect(x+25,y+407+conditionSpace,670,65),"누적 순수익  "+Money(e.TotalNet)+"\n다음 날 · 피로 "+System.Math.Max(0,d.fatigue-b.settings.nightlyFatigueRecovery).ToString("0")+" · 포만감 "+d.satiety.ToString("0"),small);
    }else {
     CompletedDay previous=null;for(int i=b.completedDays.Count-1;i>=0;i--){var candidate=b.completedDays[i];if(candidate.id!=s.law.ids.campaign&&candidate.days==e.Settings.days&&candidate.configuration==b.ComparisonVersion&&!candidate.configuration.EndsWith("mixed")){previous=candidate;break;}}
-    GUI.Label(new Rect(x+25,y+407,670,65),previous==null?"이전 완료 기록 없음":"이전 순수익 "+Money(previous.totalNet)+" · 차이 "+Money(e.TotalNet-previous.totalNet),small);
+    GUI.Label(new Rect(x+25,y+407+conditionSpace,670,65),previous==null?"이전 완료 기록 없음":"이전 순수익 "+Money(previous.totalNet)+" · 차이 "+Money(e.TotalNet-previous.totalNet),small);
    }
-   if(careerResult)DrawCareerResult(new Rect(x+25,y+466,670,100),s);
+   if(careerResult)DrawCareerResult(new Rect(x+25,y+466+conditionSpace,670,100),s);
    if(e.Account.HasHomeBase)GUI.Label(new Rect(x+25,y+466+extra,670,24),HomeBasePresentation.RentLabel+"  −"+Money(e.Account.Expense(e.Day,"home-rent")),small);
    if(multi&&GUI.Button(new Rect(x+25,y+492+extra,325,40),b.WallMemoPrompt?"숙소 · 벽 메모":e.Account.HasHomeBase?HomeBasePresentation.Name:"내 공간 · 방/차고",b.WallMemoPrompt?CasualUI.Action(16):button)){b.ArchivedRoom=null;b.GarageTab=false;b.RoomOpen=true;}
    CompletedDay roomRecord=null;for(int ri=b.completedDays.Count-1;ri>=0;ri--)if(b.completedDays[ri].id!=s.law.ids.campaign&&b.completedDays[ri].room!=null){roomRecord=b.completedDays[ri];break;}if(multi&&roomRecord!=null&&GUI.Button(new Rect(x+370,y+492+extra,325,40),"이전 완료 방 보기",button)){b.ArchivedRoom=roomRecord.room;b.RoomOpen=true;}
@@ -155,8 +172,8 @@ public static class OneDayHUD {
     if(GUI.Button(new Rect(x+370,y+540+extra,325,40),"새 경력",button))b.RequestRestart();
    }
    else if(!complete&&multi){if(GUI.Button(new Rect(x+370,y+590+extra,325,55),(e.Day+1)+"일차 준비",CasualUI.Action(18)))b.BeginNextCampaignDay();}
-   else if(multi&&!e.Account.Room.finalized){if(GUI.Button(new Rect(x+370,y+590,325,55),"이번 회차 마무리",CasualUI.Action(18)))b.ChangeRoom("finish");}
-   else if(GUI.Button(new Rect(x+370,y+590,325,55),multi?"새 캠페인":"새 하루",CasualUI.Action(18)))b.RequestRestart();
+   else if(multi&&!e.Account.Room.finalized){if(GUI.Button(new Rect(x+370,y+590+extra,325,55),"이번 회차 마무리",CasualUI.Action(18)))b.ChangeRoom("finish");}
+   else if(GUI.Button(new Rect(x+370,y+590+extra,325,55),multi?"새 캠페인":"새 하루",CasualUI.Action(18)))b.RequestRestart();
    GUI.enabled=true;
    if(GUI.Button(new Rect(x+25,y+590+extra,325,55),"운행 기록",button))s.law.OpenHistory();
    if(b.SaveFailed){GUI.Label(new Rect(x+25,y+540+extra,470,35),b.saveStatus,small);if(GUI.Button(new Rect(x+505,y+540+extra,190,35),"저장 재시도",button))b.SaveCheckpoint();}

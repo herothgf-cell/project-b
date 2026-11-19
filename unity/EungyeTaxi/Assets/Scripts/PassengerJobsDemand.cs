@@ -32,7 +32,9 @@ public partial class PassengerJobs {
   return distance;
  }
  double DemandRank(JobOffer offer,int phase){
-  double rank=PassengerDemandPolicy.OfferRegionPriority(offer.candidateSeed,DemandRegion(offer.pickup),DemandRegion(offer.drop),offer.pickupStopId+">"+offer.dropStopId,phase);
+  string from=DemandRegion(offer.pickup),to=DemandRegion(offer.drop);
+  double multiplier=DailyConditions.DemandMultiplier(SimulationDemandClock.Condition(session),from,to,phase);
+  double rank=PassengerDemandPolicy.OfferRegionPriority(offer.candidateSeed,from,to,offer.pickupStopId+">"+offer.dropStopId,phase,multiplier);
   if(homeReturnDistances==null)return rank;
   float dropDistance=DistanceHomeFrom(offer.drop);
   return dropDistance<homeReturnDistance&&dropDistance<DistanceHomeFrom(offer.pickup)?rank/homeReturnWeight:rank;

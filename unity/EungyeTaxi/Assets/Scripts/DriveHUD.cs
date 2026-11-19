@@ -8,7 +8,8 @@ public class DriveHUD : MonoBehaviour {
   if(CockpitVisible)ToggleHelp();
  }
  Texture2D lightTile;public Texture2D LightTile {get{if(!lightTile&&session&&session.world&&session.world.map!=null)lightTile=MapPresentation.Create(session.world.map,2048);return lightTile;}}
- void OnDestroy(){if(tile)Destroy(tile);if(lightTile)Destroy(lightTile);}
+ Texture2D conditionMapTile;public Texture2D ConditionMapTile {get{if(!conditionMapTile)conditionMapTile=MapPresentation.Create(session.world.map,256);return conditionMapTile;}}
+ void OnDestroy(){if(tile)Destroy(tile);if(lightTile)Destroy(lightTile);if(conditionMapTile)Destroy(conditionMapTile);}
  void Start(){tile=new Texture2D(W,H);var pixels=new Color[W*H];for(int i=0;i<pixels.Length;i++)pixels[i]=new Color(.10f,.15f,.17f);tile.SetPixels(pixels);
   if(session.world.map.areas!=null)foreach(var area in session.world.map.areas){
    if(area.kind!="water"||area.points==null||area.points.Length<3)continue;
@@ -52,14 +53,27 @@ public class DriveHUD : MonoBehaviour {
   var b=session.business;bool restart=b.useV2&&b.HasCampaignToContinue,shift=b.CanChangeShiftLength;
   if(careerMenuSlots!=null){DrawCareerSlots(b);return;}
   bool goal=b.SupportsCareer&&b.preparing&&!b.ResumeBlocked;
-  bool beside=goal&&Screen.width>=1100;
+  bool dailyCard=goal&&b.DailyConditionsEnabled;
+  bool beside=goal&&(dailyCard?DailyConditionHUD.UseSide(Screen.width,Screen.height):Screen.width>=1100);
   float height=(restart?360:308)+(UnifiedModeBootstrap.IsUnified?52:0)+(shift?52:0)+(goal&&!beside?106:0)+(b.SupportsCareer?88:0)+(b.Story.FoundNotebook?44:0),x=Screen.width/2f-240,y=(Screen.height-height)/2;
-  GUI.depth=-150;CasualUI.Panel(new Rect(x,y,480,height));CasualUI.Header(new Rect(x+4,y+4,472,40),b.preparing?"영업 준비":"일시정지",3);
+  var oldMatrix=GUI.matrix;
+  var layout=dailyCard?new DailyConditionHUD.PreparationLayout(Screen.width,Screen.height,480,height,beside):default;
+  GUI.depth=-150;
+  if(dailyCard){
+   GUI.matrix=Matrix4x4.Scale(new Vector3(layout.scale,layout.scale,1));
+   x=layout.panel.x;y=layout.panel.y;
+   DailyConditionHUD.DrawPreparationCard(layout.card,session);
+  }
+  CasualUI.Panel(new Rect(x,y,480,height));CasualUI.Header(new Rect(x+4,y+4,472,40),b.preparing?"영업 준비":"일시정지",3);
   bool enabled=GUI.enabled;GUI.enabled=enabled&&!session.PracticeBusy&&!b.IsRestoring;
   if(GUI.Button(new Rect(x+20,y+52,440,44),b.MenuPrimaryLabel,CasualUI.Action(18)))b.ContinueFromMenu();
   float row=y+104;
   if(shift){OneDayHUD.DrawShiftLength(new Rect(x+20,row,440,40),b);row+=52;}
-  if(goal){OneDayHUD.DrawCareerGoal(beside?new Rect(x+496,y,Mathf.Min(320,Screen.width-x-512),255):new Rect(x+20,row,440,96),b);if(!beside)row+=106;}
+  if(goal){
+   Rect bounds=beside?(dailyCard?layout.sideGoal:new Rect(x+496,y,Mathf.Min(320,Screen.width-x-512),255)):new Rect(x+20,row,440,96);
+   OneDayHUD.DrawCareerGoal(bounds,b);
+   if(!beside)row+=106;
+  }
   if(restart){if(GUI.Button(new Rect(x+20,row,440,40),b.SupportsCareer?"새 경력":"처음부터 시작",KoreanText.Button(16)))b.RequestRestart();row+=52;}
   if(b.SupportsCareer){if(GUI.Button(new Rect(x+20,row,440,35),"저장된 경력",KoreanText.Button(16))){careerMenuSlots=b.CareerSlots();careerFirst=0;}row+=44;
    if(GUI.Button(new Rect(x+20,row,440,35),"처음 이야기 다시 보기",KoreanText.Button(16)))b.PlayIntroAgain();
@@ -75,6 +89,7 @@ public class DriveHUD : MonoBehaviour {
   var unified=FindObjectOfType<UnifiedModeBootstrap>();if(unified){if(GUI.Button(new Rect(x+20,row,440,40),"모드 선택",KoreanText.Button(16)))unified.ReturnToMenu();row+=52;}
   if(GUI.Button(new Rect(x+20,row,440,40),"게임 종료",KoreanText.Button(16)))Application.Quit();row+=52;
   if(unified&&!string.IsNullOrEmpty(unified.Message))GUI.Label(new Rect(x+20,row,440,42),unified.Message,new GUIStyle(small){wordWrap=true});
+  GUI.matrix=oldMatrix;
  }
  void DrawCareerSlots(BusinessProgress b){
   float x=(Screen.width-480)/2f,y=(Screen.height-360)/2f;GUI.depth=-150;

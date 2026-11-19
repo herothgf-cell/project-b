@@ -62,6 +62,7 @@ public partial class TrafficSystem : MonoBehaviour {
     DriveSession demandSession;
     void Start(){demandSession=FindObjectOfType<DriveSession>();}
     public int DemandPhase {get{return SimulationDemandClock.Phase(demandSession);}}
+    public DailyConditionKind DemandCondition {get{return SimulationDemandClock.Condition(demandSession);}}
     public MitTrafficOptions mitOptions {get;private set;}
     void Awake(){mitOptions=new MitTrafficOptions();}
     public readonly List<TrafficJunction> junctions = new List<TrafficJunction>();

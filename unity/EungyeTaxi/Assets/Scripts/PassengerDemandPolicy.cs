@@ -22,6 +22,7 @@ public static class PassengerDemandPolicy {
   string preferred=destination?(phase==0?"office":phase==1?"commercial":"residential"):(phase==0?"residential":phase==1?"office":"commercial");
   return region==preferred?3:1;
  }
+ public static double Weight(string pickup,string destination,int phase,double conditionMultiplier){return Weight(pickup,phase,false)*Weight(destination,phase,true)*conditionMultiplier;}
  public static int Weight(string region,double elapsed){return Weight(region,Phase(elapsed),false);}
  public static string Label(string region){return region=="residential"?"주거":region=="office"?"업무":region=="commercial"?"상업":"중립";}
  public static string Description(int phase,bool pvp){
@@ -36,5 +37,5 @@ public static class PassengerDemandPolicy {
  }
  public static double Priority(string seed,string stopId,double elapsed){return Draw(seed,stopId)/Weight(Region(stopId),elapsed);}
  public static double OfferPriority(string seed,string pickupStopId,string dropStopId,int phase){return OfferRegionPriority(seed,Region(pickupStopId),Region(dropStopId),pickupStopId+">"+dropStopId,phase);}
- public static double OfferRegionPriority(string seed,string pickupRegion,string dropRegion,string identity,int phase){return Draw(seed,identity)/(Weight(pickupRegion,phase,false)*Weight(dropRegion,phase,true));}
+ public static double OfferRegionPriority(string seed,string pickupRegion,string dropRegion,string identity,int phase,double conditionMultiplier=1){return Draw(seed,identity)/Weight(pickupRegion,dropRegion,phase,conditionMultiplier);}
 }

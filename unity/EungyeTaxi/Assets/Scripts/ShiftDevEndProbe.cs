@@ -14,7 +14,10 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
  public static bool FatherStoryCheck {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-fatherStoryCheck")>=0;}}
  public static bool FatherStoryReload {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-fatherStoryReloadCheck")>=0;}}
  public static string FatherStorySavePath {get{var args=Environment.GetCommandLineArgs();int index=Array.IndexOf(args,"-shiftCaptureOutput");return Path.GetFullPath(Path.Combine(index>=0&&index+1<args.Length?args[index+1]:"artifacts/father-story-player","campaign.json"));}}
- public static bool Enabled {get{return FatherStoryCheck||FatherStoryReload||CabinCheck||CareerCheck||CareerReload||HomeCheck||Array.IndexOf(Environment.GetCommandLineArgs(),"-shiftDevEndCheck")>=0;}}
+ public static readonly bool DailyCheck=Array.IndexOf(Environment.GetCommandLineArgs(),"-dailyConditionCheck")>=0;
+ public static readonly bool DailyReload=Array.IndexOf(Environment.GetCommandLineArgs(),"-dailyConditionReloadCheck")>=0;
+ public static string DailySavePath {get{var args=Environment.GetCommandLineArgs();int index=Array.IndexOf(args,"-shiftCaptureOutput");return Path.GetFullPath(Path.Combine(index>=0&&index+1<args.Length?args[index+1]:"artifacts/daily-condition-player","campaign.json"));}}
+ public static bool Enabled {get{return DailyCheck||DailyReload||FatherStoryCheck||FatherStoryReload||CabinCheck||CareerCheck||CareerReload||HomeCheck||Array.IndexOf(Environment.GetCommandLineArgs(),"-shiftDevEndCheck")>=0;}}
  public static readonly string CampaignPath=Path.Combine(Path.GetTempPath(),"taxi-shift-"+Guid.NewGuid().ToString("N"),"campaign.json");
  static bool attached;DriveSession s;int checks;bool done;float start;string output;
  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]static void Attach(){if(Enabled&&!attached){attached=true;new GameObject("Shift/dev end acceptance").AddComponent<ShiftDevEndProbe>();}}
@@ -29,6 +32,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   yield return null;yield return null;
   FindObjectOfType<UnifiedModeBootstrap>().StartSingle();yield return Ready();
   var b=s.business;
+  if(DailyCheck||DailyReload){yield return RunDailyConditions(b);yield break;}
   if(FatherStoryCheck||FatherStoryReload){yield return RunFatherStory(b);yield break;}
   if(CabinCheck){
    Check(b.CabinEnabled&&b.SavePath==CampaignPath,"isolated single-player cabin fixture");
@@ -177,6 +181,46 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   var saved=BusinessProgress.ParseCheckpoint(File.ReadAllText(b.SavePath));
   Check(EconomyLedger.RestoreCampaign(saved.days,saved.account).Settings.daySeconds==1800,"saved campaign restores 30 minutes");
   done=true;Debug.Log("SHIFT_PLAYER_OK checks="+checks);Application.Quit(0);
+ }
+ IEnumerator RunDailyConditions(BusinessProgress b){
+  Check(b.DailyConditionsEnabled&&b.SavePath==DailySavePath&&!b.ResumeBlocked,"isolated daily conditions career");
+  if(DailyReload){
+   Check(b.ledger.Day==6&&b.preparing,"sixth day restores in preparation");
+   var saved=BusinessProgress.ParseCheckpoint(File.ReadAllText(b.SavePath));
+   Check((int)b.DayCondition==saved.conditionKind&&saved.conditionFirstDay==1,"reload preserves the sixth-day card and seed");
+   Check(saved.days.records.Length==5&&saved.days.records.All(day=>day.conditionRecorded)&&saved.days.records.Select(day=>day.conditionKind).Distinct().Count()==5,"one recorded occurrence of every card restored");
+   Check(b.Story.HasPage(1)&&b.Story.HasPage(2),"rain and Friday notebook pages persist");
+   done=true;Debug.Log("DAILY_CONDITION_PLAYER_OK checks="+checks);Application.Quit(0);yield break;
+  }
+  s.taxi.body.detectCollisions=false;s.taxi.body.useGravity=false;s.taxi.enabled=false;
+  var seen=new System.Collections.Generic.HashSet<DailyConditionKind>();
+  for(int day=1;day<=5;day++){
+   var condition=b.DayCondition;
+   Check(b.ledger.Day==day&&b.preparing&&seen.Add(condition)&&condition==DailyConditions.ForDay(s.law.ids.campaign,day),"different seeded condition on day "+day+" · "+condition);
+   b.ContinueFromMenu();yield return Frames(3);
+   Check(!b.preparing&&!RainPolicy.Enabled,"day starts in dry morning");
+   if(condition==DailyConditionKind.Rain){
+    b.ledger.Advance(b.ledger.Settings.daySeconds*.45,0);yield return Frames(3);
+    Check(RainPolicy.Enabled&&RainPolicy.BoardingDirt==2,"rain starts after noon with existing boarding dirt");
+    var jobs=s.jobs;var pick=jobs.stops[0];var drop=jobs.stops[3];
+    jobs.ForcedRideCase=DrunkRideCase.Normal;Pose(pick.Kerb,pick.Direction);
+    jobs.offers[0]=new JobOffer{pickup=0,drop=3,fare=6000,seconds=300,requiredScore=60,distance=jobs.nav.Distance(pick,drop),candidateSeed="rain-daily"};
+    int dirt=b.ledger.Care.Cleanliness;
+    Check(jobs.Accept(0)&&jobs.Interact()&&jobs.trip.State==TripState.OnTrip&&b.ledger.Care.Cleanliness==dirt-2,"actual rain boarding deducts two cleanliness");
+    Pose(drop.Kerb,drop.Direction);Check(jobs.Interact()&&!jobs.Active,"rain ride completes");
+    yield return Frames(2);s.GetComponent<RideCompletionPanel>().Close();
+    if(!b.CabinAutomatic)b.CabinInput(0);
+   }
+   if(condition==DailyConditionKind.Friday)Check(b.Story.HasPage(2),"first Friday unlocks father notebook page three");
+   Pose(s.services.ParkingStop.Kerb,s.services.ParkingStop.Direction);
+   Check(b.RequestEndDay(),"clocks off with active condition "+condition);
+   while(!b.ShowingSummary)yield return null;
+   Check(b.ledger.Last.conditionRecorded&&b.ledger.Last.conditionKind==(int)condition,"settlement records condition "+condition);
+   if(condition==DailyConditionKind.Rain)Check(!RainPolicy.Enabled&&b.Story.HasPage(1),"settled rain closes weather and opens notebook page two");
+   Check(day==3?b.BeginContinuousCareer():b.NextDay(),"condition rotates through day "+(day+1));yield return Frames(3);
+  }
+  Check(b.SaveCheckpoint(),"sixth preparation saves for fresh process");
+  done=true;Debug.Log("DAILY_CONDITION_PLAYER_OK checks="+checks);Application.Quit(0);
  }
  IEnumerator RunFatherStory(BusinessProgress b){
   if(FatherStoryReload){

@@ -8,6 +8,7 @@ public enum BusinessState { Open, Closing, Summary, Won, Lost, Completed }
  public bool Valid {get{return days>=1&&days<=30&&target>0&&target<=10000000&&daySeconds>=1&&daySeconds<=7200&&insurance>=0&&insurance<=100000&&food>=0&&food<=100000&&fuelPerKm>=0&&fuelPerKm<=10000&&idlePerHour>=0&&idlePerHour<=10000;}}
 }
 [Serializable] public class DayRecord {
+ public bool conditionRecorded;public int conditionKind;
  public OperationMetricsSnapshot metrics;
  public double elapsed,realSeconds; public string endReason; public DriverCondition driver;
  public int day,income,rides,failedTrips,fuel,insurance,food,wash,repair,tow,accident,net;
@@ -82,6 +83,10 @@ public class EconomyLedger {
  public double Metres {get;private set;}
  double fuel;
  readonly List<DayRecord> records=new List<DayRecord>();
+ public float? PriorConditionAverageRides(int kind){
+  int count=0;long rides=0;foreach(var record in records)if(record.day<Day&&record.conditionRecorded&&record.conditionKind==kind){count++;rides+=record.rides;}
+  return count==0?(float?)null:(float)rides/count;
+ }
  public DayRecord Last {get{return records.Count==0?null:records[records.Count-1];}}
  public bool CanAccept {get{return State==BusinessState.Open&&!Care.Damage.Disabled&&(Driver==null||Driver.CanAccept);}}
  public bool Operating {get{return State==BusinessState.Open||State==BusinessState.Closing;}}

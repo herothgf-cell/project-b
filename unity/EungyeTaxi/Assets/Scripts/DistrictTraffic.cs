@@ -5,7 +5,7 @@ using UnityEngine;
 public sealed class DistrictTraffic : MonoBehaviour {
  public HdRoadGraph graph;public TrafficSystem system;public MapData map;
  public const int PoolCap=72,LocalTarget=18,CandidateBudget=128,RelocationBudget=2;
- public int continued,excluded;int sequence,seedCursor;float nextPopulationUpdate;
+ public int continued,excluded;int sequence,seedCursor,closedLane=-1;float nextPopulationUpdate;
  DriveSession liveSession;string[] demandRegions;
  readonly List<Seed> populationSeeds=new List<Seed>();
  readonly Dictionary<Vector2Int,int> populationLoads=new Dictionary<Vector2Int,int>();
@@ -40,7 +40,7 @@ public sealed class DistrictTraffic : MonoBehaviour {
  static Vector2Int Cell(Vector3 p){return new Vector2Int(Mathf.FloorToInt(p.x/250),Mathf.FloorToInt(p.z/250));}
  bool OrdinaryStart(TrafficRoute route,float at){
   int edge=route.graphPath.EdgeAt(at);var e=graph.edges[edge];
-  if(e.disabled||e.turn!=0||e.change!=0||e.id.StartsWith("join:")||e.id.IndexOf("parking",System.StringComparison.OrdinalIgnoreCase)>=0||e.id.IndexOf("service",System.StringComparison.OrdinalIgnoreCase)>=0)return false;
+  if(e.TraversalDisabled||e.turn!=0||e.change!=0||e.id.StartsWith("join:")||e.id.IndexOf("parking",System.StringComparison.OrdinalIgnoreCase)>=0||e.id.IndexOf("service",System.StringComparison.OrdinalIgnoreCase)>=0)return false;
   float error;float local=graph.paths[edge].Project(route.Position(at),out error);
   if(error>.2f||local<8||local>graph.paths[edge].length-8)return false;
   // Never appear inside or immediately across a controlled junction or stop.
@@ -94,6 +94,7 @@ public sealed class DistrictTraffic : MonoBehaviour {
   int moved=0;
   for(int n=0;n<CandidateBudget&&local<LocalTarget&&moved<RelocationBudget;n++){
    var seed=populationSeeds[seedCursor++%populationSeeds.Count];float radius=(seed.position-player).sqrMagnitude;
+   if(UsesClosedLane(seed.route))continue;
    if(radius<160*160||radius>500*500||!Offscreen(seed.position,camera))continue;
    int destinationLoad;populationLoads.TryGetValue(seed.cell,out destinationLoad);if(destinationLoad>=6)continue;
    bool spaced=true;foreach(var car in system.cars)if(car&&car.Visible&&(car.transform.position-seed.position).sqrMagnitude<100){spaced=false;break;}if(!spaced||Occupied(seed.position,seed.route.Tangent(seed.at),null))continue;
@@ -110,6 +111,31 @@ public sealed class DistrictTraffic : MonoBehaviour {
   Physics.SyncTransforms();
   foreach(var car in system.cars)if(car.Visible&&Physics.CheckBox(car.transform.position+Vector3.up*.85f,new Vector3(1.1f,.55f,4),car.transform.rotation,1<<8,QueryTriggerInteraction.Ignore))car.Recycle();
   Physics.SyncTransforms();
+ }
+ bool UsesClosedLane(TrafficRoute route){return closedLane>=0&&route?.graphPath!=null&&route.graphPath.edges.Contains(closedLane);}
+ // Cards take effect at shift boundaries. Rebuild cached trips and keep vehicles
+ // with usable paths in place. Vehicles caught in the lane use an existing seed.
+ public void LaneAvailabilityChanged(int edge,bool closed){
+  closedLane=closed?edge:-1;
+  routes.Clear();cleared.Clear();blocked.Clear();
+  if(!closed)return;
+  var fallback=populationSeeds.FindAll(seed=>!UsesClosedLane(seed.route));
+  int nextSeed=0;
+  foreach(var car in system.cars){
+   if(!car||!UsesClosedLane(car.route))continue;
+   var previous=car.route;
+   int start=previous.graphPath.EdgeAt(car.distance);
+   if(car.Visible&&!graph.edges[start].TraversalDisabled){
+    float at=graph.paths[start].Project(previous.Position(car.distance),out _);
+    var next=CreateRoute(start,at,previous.goalEdge,previous.goalAt);
+    if(next!=null&&Clear(next)){car.route=next;car.Place(0);continue;}
+   }
+   car.Recycle();
+   if(fallback.Count==0){car.respawn=false;continue;}
+   var seed=fallback[nextSeed++%fallback.Count];
+   car.route=seed.route;
+   if(!Occupied(seed.position,seed.route.Tangent(seed.at),car))car.Place(seed.at);
+  }
  }
  public TrafficRoute CreateRoute(int start,float at,int goal,float end){
   string key=start+":"+at.ToString("R")+":"+goal+":"+end.ToString("R");TrafficRoute route;if(routes.TryGetValue(key,out route))return route;
@@ -153,11 +179,11 @@ public sealed class DistrictTraffic : MonoBehaviour {
  bool Clear(TrafficRoute route){if(cleared.Contains(route))return true;if(blocked.Contains(route))return false;if(system.RouteClearOfStaticObstacles(route)){cleared.Add(route);return true;}blocked.Add(route);excluded++;return false;}
  TrafficRoute Next(int edge,float at){
   // Rank only future journeys. Accepted/active routes and fleet size stay fixed.
-  int generation=sequence++,phase=system.DemandPhase;TrafficRoute best=null;double rank=double.PositiveInfinity;
+  int generation=sequence++,phase=system.DemandPhase;var condition=system.DemandCondition;TrafficRoute best=null;double rank=double.PositiveInfinity;
   for(int n=0;n<map.stops.Length;n++){int index=(generation+n)%map.stops.Length;if(!service.Contains(index))continue;var end=map.stops[index];if(end.laneEdge==edge)continue;
    // Stable per-generation draws; destination demand changes direction rather
    // than moving traffic through occupied space or bypassing the route graph.
-   double candidate=PassengerDemandPolicy.Priority(map.mapId+":traffic:"+generation,"S"+index,0)/PassengerDemandPolicy.Weight(demandRegions[index],phase,true);
+   double candidate=PassengerDemandPolicy.Priority(map.mapId+":traffic:"+generation,"S"+index,0)/(PassengerDemandPolicy.Weight(demandRegions[index],phase,true)*DailyConditions.TrafficDestinationMultiplier(condition,demandRegions[index],phase));
    if(candidate>=rank)continue;var route=CreateRoute(edge,at,end.laneEdge,end.laneAt);if(route!=null&&Clear(route)){rank=candidate;best=route;}
   }return best;
  }

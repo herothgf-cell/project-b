@@ -2,8 +2,112 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "79c86f338c74db0dae09deb0a580a9b3f3594beea6e63b202e91c369327f03b6",
+  "contentHash": "9b6d67a72669459c451ed5922cc7e377225735f487a9a512ed8342214dd4d6d5",
   "values": [
+    {
+      "id": "day.condition.weekday.title",
+      "value": "평일"
+    },
+    {
+      "id": "day.condition.weekday.clue",
+      "value": "평범한 하루"
+    },
+    {
+      "id": "day.condition.weekday.description",
+      "value": "기본 수요"
+    },
+    {
+      "id": "day.condition.rain.title",
+      "value": "비 오는 날"
+    },
+    {
+      "id": "day.condition.rain.clue",
+      "value": "오후부터 비"
+    },
+    {
+      "id": "day.condition.rain.description",
+      "value": "전 지역 손님이 늘고, 탑승 때 차가 쉽게 더러워집니다."
+    },
+    {
+      "id": "day.condition.market.title",
+      "value": "상가 행사"
+    },
+    {
+      "id": "day.condition.market.clue",
+      "value": "저녁 상가 행사"
+    },
+    {
+      "id": "day.condition.market.description",
+      "value": "저녁에는 상가에서 출발하는 손님이 많습니다."
+    },
+    {
+      "id": "day.condition.friday.title",
+      "value": "금요일"
+    },
+    {
+      "id": "day.condition.friday.clue",
+      "value": "회식 많은 밤"
+    },
+    {
+      "id": "day.condition.friday.description",
+      "value": "밤에는 상가에서 주거 지역으로 가는 손님이 많습니다."
+    },
+    {
+      "id": "day.condition.construction.title",
+      "value": "도로 공사"
+    },
+    {
+      "id": "day.condition.construction.clue",
+      "value": "계수로 일부 통제"
+    },
+    {
+      "id": "day.condition.construction.description",
+      "value": "계수로 서행 · 현대오일뱅크 앞 통제 구간을 지도에서 확인하세요."
+    },
+    {
+      "id": "day.condition.rain.demand",
+      "value": "1.3"
+    },
+    {
+      "id": "day.condition.market.demand",
+      "value": "2"
+    },
+    {
+      "id": "day.condition.market.traffic",
+      "value": "1.5"
+    },
+    {
+      "id": "day.condition.friday.demand",
+      "value": "2"
+    },
+    {
+      "id": "day.condition.rain.umbrella",
+      "value": "2"
+    },
+    {
+      "id": "day.condition.market.luggage",
+      "value": "2"
+    },
+    {
+      "id": "day.condition.market.food",
+      "value": "2"
+    },
+    {
+      "id": "day.condition.friday.drunk",
+      "value": "2"
+    },
+    {
+      "id": "day.condition.friday.sleep",
+      "value": "2"
+    },
+    {
+      "id": "day.condition.construction.hurried",
+      "value": "2"
+    },
+    {
+      "id": "day.condition.rain.startsAt",
+      "value": "12"
+    },
     {
       "id": "backstory.question.0",
       "value": "원래 이 일 하셨어요?"

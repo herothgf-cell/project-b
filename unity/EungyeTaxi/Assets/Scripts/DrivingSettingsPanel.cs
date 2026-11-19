@@ -80,7 +80,9 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
    if(GUI.Button(new Rect(408,604,180,32),"조향: 빠르게",KoreanText.Button(15)))SteeringPreset(1);
   }else{
    bool editable=RainSettingsRuntime.CanEdit(GetComponent<DriveSession>()),wasEnabled=GUI.enabled;if(!editable){WeatherDraft=RainSettings.Capture();openedWeather=WeatherDraft.Copy();}GUI.enabled=wasEnabled&&editable;
-   WeatherDraft.enabled=GUI.Toggle(new Rect(30,122,560,32),WeatherDraft.enabled,WeatherDraft.enabled?"비 켜짐 · 자동 와이퍼":"비 꺼짐 · 맑음",KoreanText.Button(18));
+   var b=GetComponent<DriveSession>().business;
+   if(b&&b.DailyConditionsEnabled)GUI.Label(new Rect(30,122,560,32),"하루 조건 · "+DailyConditions.Title(b.DayCondition),Label(17));
+   else WeatherDraft.enabled=GUI.Toggle(new Rect(30,122,560,32),WeatherDraft.enabled,WeatherDraft.enabled?"비 켜짐 · 자동 와이퍼":"비 꺼짐 · 맑음",KoreanText.Button(18));
    WeatherDraft.intensity=WeatherRow(159,"빗줄기 강도",WeatherDraft.intensity,0,1,"배");
    WeatherDraft.wiperSeconds=WeatherRow(225,"자동 와이퍼 주기",WeatherDraft.wiperSeconds,.5f,3,"초");
    WeatherDraft.boardingDirt=Mathf.RoundToInt(WeatherRow(291,"승차 추가 청결 감소",WeatherDraft.boardingDirt,0,10,"점"));

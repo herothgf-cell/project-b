@@ -68,6 +68,19 @@ public static class ContentTuningTests {
   Check(story.Answer("trip-two",1)&&!story.Answer("trip-two",0)&&story.Satisfaction("trip-two")==1&&story.Satisfaction("other")==0,"only one answer applies its satisfaction once per ride");
   story.Validate(2);story.NeighborhoodProgress(2);Check(!story.HasPage(1),"two neighborhood stars do not reveal the second page");
   story.NeighborhoodProgress(3);story.FridayOperated();Check(story.HasPage(1)&&story.HasPage(2),"future neighborhood and Friday conditions unlock distinct pages");
+  foreach(var seed in new[]{"eungye-a","eungye-b","eungye-c"})for(int day=1;day<=30;day++){
+   var current=DailyConditions.ForDay(seed,day);
+   Check(current==DailyConditions.ForDay(seed,day),"same saved daily seed and date");
+   for(int earlier=Math.Max(1,day-4);earlier<day;earlier++)Check(current!=DailyConditions.ForDay(seed,earlier),"no duplicate in the last four cards");
+  }
+  Check(DailyConditions.DemandMultiplier(DailyConditionKind.Rain,"office","residential",0)==1.3,"rain on all routes");
+  Check(DailyConditions.DemandMultiplier(DailyConditionKind.Market,"commercial","office",2)==2&&DailyConditions.DemandMultiplier(DailyConditionKind.Market,"commercial","office",1)==1,"market only evening commercial origin");
+  Check(DailyConditions.DemandMultiplier(DailyConditionKind.Friday,"commercial","residential",2)==2&&DailyConditions.DemandMultiplier(DailyConditionKind.Friday,"commercial","residential",3)==2&&DailyConditions.DemandMultiplier(DailyConditionKind.Friday,"residential","commercial",3)==1,"Friday only late commercial to residential");
+  Check(PassengerDemandPolicy.Weight("commercial","residential",2,2)==18,"condition stacks with normal movement demand");
+  Check(!DailyConditions.IsRaining(DailyConditionKind.Rain,399,1200)&&DailyConditions.IsRaining(DailyConditionKind.Rain,400,1200)&&!DailyConditions.IsRaining(DailyConditionKind.Market,600,1200),"rain starts at noon on rainy card only");
+  Check(DailyConditions.PoolMultiplier(DailyConditionKind.Friday,PassengerType.Sleeping)>1&&DailyConditions.PoolMultiplier(DailyConditionKind.Market,PassengerType.Food)>1&&DailyConditions.PoolMultiplier(DailyConditionKind.Construction,PassengerType.Hurried)>1,"passenger weight per condition");
+  RainPolicy.RuntimeRain=true;Check(RainPolicy.Enabled&&RainPolicy.BoardingDirt==2,"card override reuses configured rain penalty");
+  RainPolicy.RuntimeRain=null;
   Check(!cabin.ToggleMeter(false)&&cabin.Payable(6300)==3150,"missed meter discounts fare without cancelling it");
   Check(cabin.ToggleMeter(true)&&!cabin.ToggleMeter(true)&&cabin.Payable(6300)==6300,"meter stays on until arrival");
   Check(cabin.NewCallBlock(false).Length>0&&cabin.ToggleMeter(false)&&cabin.NewCallBlock(false).Length==0,"stale meter must turn off before the next call");

@@ -37,14 +37,18 @@ public sealed class VehicleCare {
  public VehicleCare(){Cleanliness=100;Day=1;Damage=new VehicleDamage();}
  public void BeginDay(int day){if(day!=Day){Day=day;DrunksBoarded=0;encounterDrunks=0;}}
  public bool Soil(string eventId,int amount){if(string.IsNullOrEmpty(eventId)||amount<=0||amount>100||!soiled.Add(eventId))return false;Cleanliness=Math.Max(0,Cleanliness-amount);if(Cleanliness<30)AcceptanceLocked=true;return true;}
- public PassengerType ReservePassenger(string seed,PassengerType[] eligible){
+ public PassengerType ReservePassenger(string seed,PassengerType[] eligible,Func<PassengerType,double> conditionWeight=null){
   if(encounterReserved)return encounterType;
   encounterSelectionSeed=seed??"";
   uint roll=DrunkRideState.Hash((seed??"")+":encounter:"+encounterOrdinal);
   encounterType=PassengerType.General;
-  if(!encounterRest){if(encounterDrunks<ContentTuning.Int("type.Drunk.dailyMax",2)&&((ContentTuning.Flag("type.Drunk.forceEnabled",true)&&encounterMisses>=ContentTuning.Int("type.Drunk.forceAfterMisses",3))||roll%100<ContentTuning.Int("type.Drunk.spawnPercent",30)))encounterType=PassengerType.Drunk;
-   else if(roll/100%100<30){var choices=new List<PassengerType>();foreach(var t in eligible??new PassengerType[0])if(t>PassengerType.Drunk&&Enum.IsDefined(typeof(PassengerType),t)&&!choices.Contains(t))choices.Add(t);int total=0;foreach(var t in choices)total+=ContentTuning.Int("type."+t+".weight",1);if(total>0){int pick=(int)(roll/10000%(uint)total);foreach(var t in choices){pick-=ContentTuning.Int("type."+t+".weight",1);if(pick<0){encounterType=t;break;}}}}}
+  if(!encounterRest){if(encounterDrunks<ContentTuning.Int("type.Drunk.dailyMax",2)&&((ContentTuning.Flag("type.Drunk.forceEnabled",true)&&encounterMisses>=ContentTuning.Int("type.Drunk.forceAfterMisses",3))||roll%100<ContentTuning.Int("type.Drunk.spawnPercent",30)*(conditionWeight==null?1:conditionWeight(PassengerType.Drunk))))encounterType=PassengerType.Drunk;
+   else if(roll/100%100<30){var choices=new List<PassengerType>();foreach(var t in eligible??new PassengerType[0])if(t>PassengerType.Drunk&&Enum.IsDefined(typeof(PassengerType),t)&&!choices.Contains(t))choices.Add(t);int total=0;foreach(var t in choices)total+=PoolWeight(t,conditionWeight);if(total>0){uint draw=conditionWeight==null?roll/10000:DrunkRideState.Hash((seed??"")+":daily-pool:"+encounterOrdinal);int pick=(int)(draw%(uint)total);foreach(var t in choices){pick-=PoolWeight(t,conditionWeight);if(pick<0){encounterType=t;break;}}}}}
   encounterReserved=true;return encounterType;
+ }
+ static int PoolWeight(PassengerType pool,Func<PassengerType,double> conditionWeight){
+  int configured=ContentTuning.Int("type."+pool+".weight",1);
+  return conditionWeight==null?configured:(int)Math.Round(configured*100*conditionWeight(pool));
  }
  public bool CommitPassenger(string trip,PassengerType type){
   if(NeedsWash||string.IsNullOrEmpty(trip)||encounterTrips.Contains(trip)||!encounterReserved||(type!=encounterType&&type!=PassengerType.General)||type==PassengerType.Drunk&&encounterDrunks>=ContentTuning.Int("type.Drunk.dailyMax",2))return false;

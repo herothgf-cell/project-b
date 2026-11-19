@@ -6,6 +6,7 @@ public static class SimulationDemandClock {
   if(!session.business||session.business.ledger==null)return 3;
   return PassengerDemandPolicy.Phase(session.business.ledger.Elapsed,session.business.ledger.Settings.daySeconds,false);
  }
+ public static DailyConditionKind Condition(DriveSession session){return session&&session.business?session.business.DayCondition:DailyConditionKind.Weekday;}
  // Native NPC endpoints borrow the nearest already-authored fictional demand
  // district. The own-city map uses explicitly fictional cyclic endpoint roles.
  public static string[] NativeRegions(MapData map){
