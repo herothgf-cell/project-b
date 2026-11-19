@@ -94,4 +94,5 @@
 | 2 | [29 하루 조건 카드](29-daily-conditions.md) | 비·상가 행사·금요일·공사로 매일 다른 판단 |
 | 3 | [30 손님 이야기·기사 수첩](30-passenger-stories-and-logbook.md) | 운전 결과로 결말이 갈리는 10편, 수집·동네 숙련도 |
 | 4 | [31 낮밤·라디오](31-day-night-and-radio.md) | 조명 4단계, 하단 라디오 자막 |
-| 5 | [32 보류 시스템 재검토](32-deferred-systems-review.md) | 모범 기사 인증 축소안, 차내 조작 3종 — 사용자 결정 필요 |
+| 5 | [32 보류 시스템 재검토](32-deferred-systems-review.md) | **결정:** 면허 경로 제외(처음부터 개인택시), 차내 조작 3종 추가 |
+| 6 | [33 배경 이야기 보여주기](33-backstory-presentation.md) | 3컷 인트로·이전 기사의 수첩·승객 질문·첫날 밤 목표 메모 |
