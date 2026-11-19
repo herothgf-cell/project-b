@@ -282,7 +282,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   Check(b.RequestEndDay(),"day two ends from home");
   while(!b.ShowingSummary)yield return null;
   var saved=BusinessProgress.ParseCheckpoint(File.ReadAllText(b.SavePath));
-  Check(saved.version==6&&saved.story.answers.Count==1&&saved.story.FoundNotebook,"version-six checkpoint has narrative progress");
+  Check(saved.version==CampaignCheckpoint.CurrentVersion&&saved.story.answers.Count==1&&saved.story.FoundNotebook,"current checkpoint has narrative progress");
   done=true;Debug.Log("FATHER_STORY_PLAYER_OK checks="+checks);Application.Quit(0);
  }
  void Pose(Vector3 kerb,Vector3 direction){

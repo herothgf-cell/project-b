@@ -25,9 +25,11 @@ public sealed class RideCompletionPanel:MonoBehaviour {
   ShowLast();return false;
  }
  void OnGUI(){if(!Open||Result==null)return;
-  var before=GUI.matrix;float scale=Mathf.Min(1,Screen.width/780f,Screen.height/740f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);float sw=Screen.width/scale,sh=Screen.height/scale,x=(sw-650)/2,y=(sh-650)/2;GUI.depth=-180;
-  Fill(new Rect(0,0,sw,sh),new Color(.07f,.15f,.29f,.42f));CasualUI.Panel(new Rect(x,y,650,650));
-  var label=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=18,wordWrap=true};var title=new GUIStyle(label){fontSize=34,fontStyle=FontStyle.Bold,alignment=TextAnchor.MiddleCenter};var large=new GUIStyle(label){fontSize=26,fontStyle=FontStyle.Bold};var button=KoreanText.Button(18);var r=Result;bool success=r.paid>0,modern=!string.IsNullOrEmpty(r.bonusReason);int satisfaction=modern?r.satisfaction:r.score;
+  var r=Result;var story=PassengerStories.Find(r.storyId);bool hasStory=story!=null&&!string.IsNullOrEmpty(r.storyLine);
+  float height=hasStory?720:650;
+  var before=GUI.matrix;float scale=Mathf.Min(1,Screen.width/780f,Screen.height/740f);GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);float sw=Screen.width/scale,sh=Screen.height/scale,x=(sw-650)/2,y=(sh-height)/2;GUI.depth=-180;
+  Fill(new Rect(0,0,sw,sh),new Color(.07f,.15f,.29f,.42f));CasualUI.Panel(new Rect(x,y,650,height));
+  var label=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=18,wordWrap=true};var large=new GUIStyle(label){fontSize=26,fontStyle=FontStyle.Bold};var button=KoreanText.Button(18);bool success=r.paid>0,modern=!string.IsNullOrEmpty(r.bonusReason);int satisfaction=modern?r.satisfaction:r.score;
   CasualUI.Header(new Rect(x+20,y+18,610,58),success?"운송 완료!":"운송 종료",6,success?CasualUI.Green:CasualUI.Blue);
   CasualUI.Portrait(new Rect(x+25,y+92,108,108),PortraitIndex);
   string route=KoreanText.Stop(r.pickup)+"  →  "+KoreanText.Stop(r.destination);var routeStyle=new GUIStyle(label);while(routeStyle.fontSize>13&&routeStyle.CalcHeight(new GUIContent(route),474)>50)routeStyle.fontSize--;
@@ -39,9 +41,17 @@ public sealed class RideCompletionPanel:MonoBehaviour {
   CasualUI.Panel(new Rect(x+25,y+347,600,155),new Color(.91f,.98f,.94f));var receiptRows=Receipt.Split('\n');
   for(int i=0;i<receiptRows.Length;i++){var receiptStyle=new GUIStyle(large){fontSize=i==2?34:21};receiptStyle.normal.textColor=i==2?CasualUI.Green:CasualUI.Ink;while(receiptStyle.fontSize>18&&receiptStyle.CalcSize(new GUIContent(receiptRows[i])).x>(i==2?522:566))receiptStyle.fontSize--;if(i==2)HudGlyph.DrawBadge(new Rect(x+42,y+444,34,34),4);GUI.Label(new Rect(x+(i==2?86:42),y+356+i*42,i==2?522:566,i==2?52:38),receiptRows[i],receiptStyle);}
   GUI.Label(new Rect(x+25,y+514,600,25),RideReceiptSummary.PaymentStatus(r)+(r.wakeDelayed?" · 기상 대기":""),new GUIStyle(label){fontSize=16});
-  if(r.foundFatherNotebook)GUI.Label(new Rect(x+25,y+538,600,30),"글러브박스에서 수첩을 발견했다",new GUIStyle(label){font=KoreanText.BoldFont});
-  if(GUI.Button(new Rect(x+335,y+580,290,46),(session.business.ShowingSummary||session.business.ledger.State==BusinessState.Closing)?"영업 정산":"계속 영업",CasualUI.Action(18)))Close();
-  GUI.enabled=CanOpenFacilities;if(GUI.Button(new Rect(x+25,y+580,290,46),"시설 찾기",button))TryOpenFacilities();GUI.enabled=true;GUI.matrix=before;
+  if(hasStory){
+   CasualUI.Panel(new Rect(x+25,y+542,600,78),CasualUI.Soft);
+   GUI.Label(new Rect(x+37,y+548,575,27),story.title,new GUIStyle(label){font=KoreanText.BoldFont});
+   var line=new GUIStyle(label){fontSize=17};
+   while(line.fontSize>13&&line.CalcHeight(new GUIContent(r.storyLine),575)>45)line.fontSize--;
+   GUI.Label(new Rect(x+37,y+573,575,45),r.storyLine,line);
+  }
+  if(r.foundFatherNotebook)GUI.Label(new Rect(x+25,y+(hasStory?622:538),600,27),"글러브박스에서 수첩을 발견했다",new GUIStyle(label){font=KoreanText.BoldFont});
+  float controls=y+height-70;
+  if(GUI.Button(new Rect(x+335,controls,290,46),(session.business.ShowingSummary||session.business.ledger.State==BusinessState.Closing)?"영업 정산":"계속 영업",CasualUI.Action(18)))Close();
+  GUI.enabled=CanOpenFacilities;if(GUI.Button(new Rect(x+25,controls,290,46),"시설 찾기",button))TryOpenFacilities();GUI.enabled=true;GUI.matrix=before;
  }
  static void Fill(Rect r,Color color){GUI.color=color;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=Color.white;}
 }

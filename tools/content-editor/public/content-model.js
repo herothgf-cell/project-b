@@ -152,6 +152,17 @@
   for(const [key,title,description,fields]of common)add('common.'+key,'공통 영향 요소',title,description,'common',[section(title,description,fields,'shared')],[],[]);
   if(entries.some(e=>e.id.startsWith('cabin.')))add('cabin.controls','차량','차내 조작','미터기 · 빈차등 · 에어컨','cabin',[section('미터기','미터기를 켜지 않고 도착했을 때 받을 비율을 정합니다.',ids('cabin.'),'shared')],[],[]);
   if(entries.some(e=>e.id.startsWith('backstory.')))add('backstory.questions','승객','아버지 이야기','수다 손님의 질문과 답','backstory',[section('아버지 이야기','특정 답을 강요하지 않는 은계 경력의 대화입니다.',ids('backstory.'),'shared')],[],[]);
+  if(entries.some(e=>e.id.startsWith('story.daily.')))add('story.daily','승객','손님 이야기 배정','하루 이야기 수','story',[section('하루 배정','은계 싱글에서 사용할 수 있는 승객과 노선이 있을 때 이야기를 배정합니다.',ids('story.daily.'),'shared')]);
+  for(const entry of entries.filter(e=>/^story\.[^.]+\.title$/.test(e.id))){
+   const id=entry.id.slice(0,-6),field=suffix=>id+'.'+suffix;
+   const selection=['title','presetId','intro','request','secondaryRequest','fareChoice'].map(field);
+   add(id,'승객',entry.defaultValue,'한 운송의 탑승 사연과 하차 결말','story',[
+    section('탑승과 요청','프리셋을 바꾸면 같은 운송에 사용할 수 있는 행동이 달라집니다.',selection,'prompt'),
+    section('판정과 결말','실제 운전·응대·짐 등의 결과를 이어서 평가합니다.',[field('criteria'),...ids(id+'.ending.')],'outcomes'),
+    section('조건 카드 가중치','금요일과 상가 행사에서 이 이야기를 뽑을 상대 비중을 조절합니다.',[field('fridayWeight'),field('marketWeight')],'appearance')
+   ],[],['story.daily','request.'+byId.get(field('request'))?.defaultValue]);
+  }
+  if(entries.some(e=>e.id.startsWith('story.logbook.')))add('story.logbook','생활','기사 수첩 업적','운송과 수집 해금 기준','story',[section('업적 기준','수첩에서 영업 중 달성하는 주요 업적의 수치를 정합니다.',ids('story.logbook.'),'shared')]);
   if(entries.some(e=>e.id.startsWith('day.condition.')))add('day.conditions','생활','하루 조건','당일 안내와 수요·승객 구성','day',[section('하루 조건 카드','은계 싱글에서 그날의 조건에 적용합니다.',ids('day.condition.'),'shared')],[],[]);
   if(entries.some(e=>e.id.startsWith('home.')))add('home.base','생활','숙소','은계 싱글 숙소 월세와 귀갓길 호출','home',[section('숙소 거점','영업 마감과 귀갓길 호출에 적용합니다.',ids('home.'),'shared')],[],[]);
   if(entries.some(e=>e.id.startsWith('vehicle.')))add('vehicle.purchase','차량','차량 구매·꾸미기','3일 회차 안 차량 교체 1회 · 시험 가격','vehicle',[section('가격(시험값)','보상 판매액을 뺀 금액이 실제 지출입니다. 사람 플레이 수익 중앙값 R 측정 전의 시험값입니다.',ids('vehicle.'),'shared')],['차종 특성(연료·트렁크·승차감·내구도·회전)은 코드 고정값이며 PVP에는 적용하지 않습니다.'],[]);

@@ -28,8 +28,19 @@ public enum PassengerRepresentativeStatus { None, NotPresented, Pending, Accepte
    var representative=(PassengerType)Enum.Parse(typeof(PassengerType),p.RepresentativeModule);
    // Never replace an unavailable module with another random preset on a different route.
    if(representative!=PassengerType.General&&eligible!=null&&Array.IndexOf(eligible,representative)<0)return Create(identity,PassengerType.General);
-   var result=Create(identity,(PassengerType)Enum.Parse(typeof(PassengerType),p.ActionModule));result.PresetOverrides=PassengerContent.Clone(p.overrides);result.SpillPlanned=DrunkRideState.Hash(identity+":food-spill")%100<result.Content.Int("effect.food.spillPercent",25);result.PresetId=p.id;result.PresetName=p.name;result.PresetIntro=p.intro;result.PresetPool=pool;result.PresetTraits=(string[])p.traits.Clone();result.PresetRepresentative=representative;result.PresetQuiet=p.Has("speech.quiet");result.Quiet|=result.PresetQuiet;result.InitializeTraits();return result;
+   return CreatePreset(identity,p,p.intro);
   }return Create(identity,PassengerType.General);
+ }
+ public static PassengerBehaviorState CreatePreset(string identity,PassengerPresetDefinition preset,string intro){
+  var result=Create(identity,(PassengerType)Enum.Parse(typeof(PassengerType),preset.ActionModule));
+  result.PresetOverrides=PassengerContent.Clone(preset.overrides);
+  result.SpillPlanned=DrunkRideState.Hash(identity+":food-spill")%100<result.Content.Int("effect.food.spillPercent",25);
+  result.PresetId=preset.id;result.PresetName=preset.name;result.PresetIntro=intro;
+  result.PresetPool=(PassengerType)Enum.Parse(typeof(PassengerType),preset.pool);
+  result.PresetTraits=(string[])preset.traits.Clone();
+  result.PresetRepresentative=(PassengerType)Enum.Parse(typeof(PassengerType),preset.RepresentativeModule);
+  result.PresetQuiet=preset.Has("speech.quiet");result.Quiet|=result.PresetQuiet;
+  result.InitializeTraits();return result;
  }
  static int PresetWeight(PassengerPresetDefinition preset,Func<PassengerPresetDefinition,double> conditionWeight){
   return conditionWeight==null?preset.weight:(int)Math.Round(preset.weight*100*conditionWeight(preset));

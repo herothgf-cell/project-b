@@ -1,11 +1,18 @@
 using UnityEngine;
 
 public static class LogbookHUD {
- static GUIStyle title, note, detail, muted, button, active, pageButton, inactiveTab;
- static readonly string[] OtherTabs={"이야기","손님","동네","기록"};
+ static GUIStyle title,note,detail,muted,button,active,pageButton,cardTitle,endingLabel,lockedLabel;
+ static readonly string[] TabNames={"아버지","이야기","손님","동네","기록"};
+ static readonly string[] EndingNames={"좋은 결말","보통 결말","아쉬운 결말"};
+ static readonly Color[] EndingColors={CasualUI.Green,CasualUI.Muted,CasualUI.Danger};
+ static PassengerPresetDefinition[] presets=System.Array.Empty<PassengerPresetDefinition>();
+ static string presetProfile;
  static string[][] noteLines;
  static BusinessProgress openedCampaign;
- static int selectedPage;
+ static CampaignLogbook openedLogbook;
+ static int tab,selectedPage,selectedEnding,selectedStop;
+ static string selectedStory,selectedPreset;
+ static Vector2 detailScroll;
 
  static void Styles(){
   if(title!=null)return;
@@ -19,7 +26,9 @@ public static class LogbookHUD {
   pageButton=KoreanText.Button(18);
   pageButton.alignment=TextAnchor.MiddleLeft;
   pageButton.padding=new RectOffset(16,16,0,0);
-  inactiveTab=new GUIStyle(muted){alignment=TextAnchor.MiddleCenter};
+  cardTitle=new GUIStyle(detail){font=KoreanText.BoldFont,fontSize=16,wordWrap=false};
+  endingLabel=new GUIStyle(cardTitle){fontSize=15,alignment=TextAnchor.MiddleCenter,normal={textColor=Color.white}};
+  lockedLabel=new GUIStyle(muted){alignment=TextAnchor.MiddleCenter};
   noteLines=new string[FatherStoryState.Pages.Length][];
   for(int i=0;i<noteLines.Length;i++)noteLines[i]=FatherStoryState.Pages[i].text.Split('\n');
  }
@@ -27,9 +36,15 @@ public static class LogbookHUD {
  public static void Draw(DriveSession session){
   var b=session.business;
   if(!b.Story.FoundNotebook){b.LogbookOpen=false;return;}
-  if(openedCampaign!=b){openedCampaign=b;selectedPage=0;}
+  if(openedCampaign!=b||openedLogbook!=b.Logbook){
+   openedCampaign=b;openedLogbook=b.Logbook;
+   tab=selectedPage=selectedStop=0;
+   selectedStory=selectedPreset=null;
+   detailScroll=Vector2.zero;
+  }
   if(!b.Story.HasPage(selectedPage))selectedPage=0;
   Styles();
+  RefreshPresets();
 
   var oldMatrix=GUI.matrix;
   var oldColor=GUI.color;
@@ -42,12 +57,19 @@ public static class LogbookHUD {
   float scale=Mathf.Min(Screen.width/1200f,Screen.height/720f);
   GUI.matrix=Matrix4x4.TRS(new Vector3((Screen.width-1200*scale)/2,(Screen.height-720*scale)/2),Quaternion.identity,Vector3.one*scale);
 
-  CasualUI.Header(new Rect(15,15,830,55),"기사 수첩 · 아버지",5);
+  CasualUI.Header(new Rect(15,15,830,55),"기사 수첩 · "+TabNames[tab],5);
   DrawNavigation(b);
-  DrawSpread(b.Story);
-  GUI.Label(new Rect(26,579,810,44),"아버지가 30년 몰던 차의 글러브박스에서 나온 수첩.",detail);
+  switch(tab){
+   case 1:DrawStories(b.Logbook);break;
+   case 2:DrawPresets(b.Logbook);break;
+   case 3:LogbookNeighborhood.Draw(session,ref selectedStop);break;
+   case 4:DrawAchievements(b.Logbook);break;
+   default:
+    DrawSpread(b.Story);
+    GUI.Label(new Rect(26,579,810,44),"아버지가 30년 몰던 차의 글러브박스에서 나온 수첩.",detail);
+    break;
+  }
   DrawTabs(b);
-
   GUI.matrix=oldMatrix;
   GUI.depth=oldDepth;
  }
@@ -104,16 +126,122 @@ public static class LogbookHUD {
 
  static string PageTitle(int index){return "p."+(index+1)+"  "+FatherStoryState.Pages[index].title;}
 
+ static Rect GridCard(int index,int columns,float totalHeight,int count){
+  const float gap=8;
+  int rows=(count+columns-1)/columns;
+  float width=(830-gap*(columns-1))/columns;
+  float height=(totalHeight-gap*(rows-1))/rows;
+  return new Rect(15+index%columns*(width+gap),89+index/columns*(height+gap),width,height);
+ }
+
+ static void DrawStories(CampaignLogbook logbook){
+  var stories=PassengerStories.All;
+  PassengerStoryDefinition chosen=null;
+  for(int i=0;i<stories.Count;i++){
+   var story=stories[i];
+   var card=GridCard(i,5,474,stories.Count);
+   CasualUI.Panel(card);
+   GUI.Label(new Rect(card.x+10,card.y+7,card.width-20,35),new GUIContent(UiReadability.Ellipsis(story.title,cardTitle,card.width-20),story.title),cardTitle);
+   for(int ending=0;ending<EndingNames.Length;ending++){
+    var cell=new Rect(card.x+10,card.y+57+ending*54,card.width-20,45);
+    bool unlocked=logbook.HasEnding(story.id,ending);
+    if(!unlocked){
+     CasualUI.RoundedFill(cell,CasualUI.Soft);
+     GUI.Label(cell,new GUIContent("?",EndingNames[ending]+" · 아직 보지 못한 결말"),lockedLabel);
+     continue;
+    }
+    if(GUI.Button(cell,new GUIContent("",EndingNames[ending]+" 읽기"),GUIStyle.none)){
+     selectedStory=story.id;
+     selectedEnding=ending;
+     detailScroll=Vector2.zero;
+    }
+    if(selectedStory==story.id&&selectedEnding==ending){
+     CasualUI.RoundedFill(new Rect(cell.x-2,cell.y-2,cell.width+4,cell.height+4),CasualUI.Ink);
+     chosen=story;
+    }
+    CasualUI.RoundedFill(cell,EndingColors[ending]);
+    GUI.Label(cell,EndingNames[ending],endingLabel);
+   }
+  }
+  if(chosen!=null)DrawCollectionDetail(chosen.title+" · "+EndingNames[selectedEnding],logbook.EndingLine(chosen.id,selectedEnding));
+  else GUI.Label(new Rect(25,576,810,36),"결말 "+stories.Count*EndingNames.Length+"칸 중 "+logbook.EndingCount+"칸",detail);
+ }
+
+ static void RefreshPresets(){
+  string profile=ContentTuning.TextOrCatalog("passenger.presets");
+  if(profile==presetProfile)return;
+  presetProfile=profile;
+  presets=profile.Length>0?PassengerPresetCatalog.Parse(profile):System.Array.Empty<PassengerPresetDefinition>();
+ }
+
+ static int KnownPresetCount(CampaignLogbook logbook){
+  if(logbook.PresetCount==0)return 0;
+  int count=0;
+  foreach(var preset in presets)if(logbook.HasPreset(preset.id))count++;
+  return count;
+ }
+
+ static void DrawPresets(CampaignLogbook logbook){
+  PassengerPresetDefinition chosen=null;
+  for(int i=0;i<presets.Length;i++){
+   var preset=presets[i];
+   var card=GridCard(i,5,474,presets.Length);
+   if(!logbook.HasPreset(preset.id)){
+    CasualUI.Panel(card,CasualUI.Soft);
+    GUI.Label(card,preset.enabled&&preset.weight>0?"손님 "+(i+1).ToString("00")+" · ?":"등장 꺼짐",lockedLabel);
+    continue;
+   }
+   if(GUI.Button(card,GUIContent.none,button)){selectedPreset=preset.id;detailScroll=Vector2.zero;}
+   float imageSize=Mathf.Min(40,card.height-16);
+   CasualUI.Portrait(new Rect(card.x+8,card.center.y-imageSize*.5f,imageSize,imageSize),CasualUI.PortraitVariant(preset.id));
+   var name=new Rect(card.x+54,card.y+4,card.width-62,card.height-8);
+   GUI.Label(name,new GUIContent(UiReadability.Ellipsis(preset.name,cardTitle,name.width),preset.name),cardTitle);
+   if(selectedPreset==preset.id){
+    chosen=preset;
+    CasualUI.RoundedFill(new Rect(card.x+5,card.yMax-5,card.width-10,4),CasualUI.Green);
+   }
+  }
+  if(chosen!=null)DrawCollectionDetail(chosen.name,PassengerPresentation.Speech(chosen.intro));
+  else GUI.Label(new Rect(25,576,810,36),"처음 태운 손님의 유형이 열립니다.",detail);
+ }
+
+ static void DrawCollectionDetail(string heading,string content){
+  var panel=new Rect(15,580,830,117);
+  CasualUI.Panel(panel);
+  GUI.Label(new Rect(panel.x+14,panel.y+8,panel.width-28,28),new GUIContent(UiReadability.Ellipsis(heading,cardTitle,panel.width-28),heading),cardTitle);
+  if(string.IsNullOrEmpty(content))return;
+  var view=new Rect(panel.x+14,panel.y+40,panel.width-28,68);
+  float width=view.width-19,height=Mathf.Max(view.height,detail.CalcHeight(new GUIContent(content),width));
+  detailScroll=GUI.BeginScrollView(view,detailScroll,new Rect(0,0,width,height));
+  GUI.Label(new Rect(0,0,width,height),content,detail);
+  GUI.EndScrollView();
+ }
+
+ static void DrawAchievements(CampaignLogbook logbook){
+  var names=CampaignLogbook.AchievementNames;
+  for(int i=0;i<names.Length;i++){
+   var card=GridCard(i,3,600,names.Length);
+   bool unlocked=logbook.HasAchievement(i);
+   CasualUI.Panel(card,unlocked?CasualUI.Card:CasualUI.Soft);
+   HudGlyph.DrawBadge(new Rect(card.x+12,card.y+12,29,29),7,unlocked?CasualUI.Green:CasualUI.Muted);
+   GUI.Label(new Rect(card.x+51,card.y+11,card.width-64,30),names[i],cardTitle);
+   GUI.Label(new Rect(card.x+14,card.y+51,card.width-28,52),CampaignLogbook.AchievementHint(i),muted);
+   GUI.Label(new Rect(card.x+14,card.yMax-34,card.width-28,23),unlocked?"달성":"미달성",muted);
+  }
+ }
+
  static void DrawTabs(BusinessProgress b){
   CasualUI.Panel(new Rect(865,15,320,690));
   CasualUI.Header(new Rect(875,25,300,48),"수첩 탭",5);
   int count=0;
   for(int i=0;i<FatherStoryState.Pages.Length;i++)if(b.Story.HasPage(i))count++;
-  GUI.Label(new Rect(885,92,280,45),"아버지 · "+count+"/"+FatherStoryState.Pages.Length,active);
-  for(int i=0;i<OtherTabs.Length;i++){
-   var tab=new Rect(885,147+i*50,280,42);
-   CasualUI.RoundedFill(tab,CasualUI.Soft);
-   GUI.Label(tab,OtherTabs[i],inactiveTab);
+  var logbook=b.Logbook;
+  string[] counts={count+"/"+FatherStoryState.Pages.Length,logbook.EndingCount+"/"+(PassengerStories.All.Count*EndingNames.Length),
+   KnownPresetCount(logbook)+"/"+presets.Length,"★ "+logbook.StarTotal,logbook.AchievementCount+"/"+CampaignLogbook.AchievementNames.Length};
+  for(int i=0;i<TabNames.Length;i++){
+   var row=new Rect(885,92+i*56,280,45);
+   if(i==tab)GUI.Label(row,TabNames[i]+" · "+counts[i],active);
+   else if(GUI.Button(row,TabNames[i]+" · "+counts[i],button)){tab=i;detailScroll=Vector2.zero;}
   }
   bool canReturnToRoom=b.RoomOpen&&b.RoomAvailable;
   bool canPrepare=canReturnToRoom&&b.ArchivedRoom==null&&!b.ledger.Account.Room.finalized&&b.ledger.State==BusinessState.Summary;

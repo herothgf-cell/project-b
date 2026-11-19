@@ -548,6 +548,2463 @@
       "editable": true
     },
     {
+      "id": "story.daily.minimum",
+      "group": "승객",
+      "section": "손님 이야기 배정",
+      "title": "하루 최소 이야기 수",
+      "type": "integer",
+      "defaultValue": "2",
+      "min": 0,
+      "max": 10,
+      "unit": "편",
+      "description": "은계 싱글 영업일의 이야기 배정 하한입니다. 실제 프리셋을 사용할 수 있는 호출에 적용합니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories.DailyMinimum",
+      "editable": true
+    },
+    {
+      "id": "story.daily.maximum",
+      "group": "승객",
+      "section": "손님 이야기 배정",
+      "title": "하루 최대 이야기 수",
+      "type": "integer",
+      "defaultValue": "3",
+      "min": 0,
+      "max": 10,
+      "unit": "편",
+      "description": "은계 싱글 영업일의 이야기 배정 상한입니다. 최소 이야기 수 이상으로 설정합니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories.DailyMaximum",
+      "editable": true
+    },
+    {
+      "id": "story.first-interview.title",
+      "group": "승객",
+      "section": "첫 면접",
+      "title": "이야기 제목",
+      "type": "text",
+      "defaultValue": "첫 면접",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수첩에서 이야기를 찾아볼 때 표시합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.first-interview.presetId",
+      "group": "승객",
+      "section": "첫 면접",
+      "title": "기반 승객 프리셋 ID",
+      "type": "text",
+      "defaultValue": "interview-appointment",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "프리셋 편집 화면의 영문 ID를 입력합니다. 사용할 수 없는 프리셋은 배정 후보에서 제외합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.first-interview.intro",
+      "group": "승객",
+      "section": "첫 면접",
+      "title": "탑승 사연",
+      "type": "text",
+      "defaultValue": "첫 면접이라 떨리네요. 서류는 어제부터 가방에 넣어뒀어요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "첫 탑승 때 보여 주는 한국어 한 줄입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.first-interview.request",
+      "group": "승객",
+      "section": "첫 면접",
+      "title": "첫 요청",
+      "type": "text",
+      "defaultValue": "OnTime",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "요청 코드 중 하나를 입력합니다. Quiet, Eta, Comfort, OnTime, LargeRoad, SafeStop, Empathy, FareHelp, LocalChat, ViaStop.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.first-interview.secondaryRequest",
+      "group": "승객",
+      "section": "첫 면접",
+      "title": "보조 요청",
+      "type": "text",
+      "defaultValue": "None",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "추가 요청이 필요하면 첫 요청과 다른 요청 코드를, 생략하려면 None을 입력합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.first-interview.criteria",
+      "group": "승객",
+      "section": "첫 면접",
+      "title": "결말 판정",
+      "type": "text",
+      "defaultValue": "OnTime",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "OnTime, Comfort, LargeRoad, Quiet, FareHelp, ViaStop, SafeStop, Luggage, Protection, Conversation, Safety, Empathy 중 하나 이상을 쉼표로 구분합니다. 모두 충족하면 좋은 결말, 미달이 있으면 아쉬운 결말입니다.",
+      "affects": [
+        "결말 판정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.first-interview.ending.good",
+      "group": "승객",
+      "section": "첫 면접",
+      "title": "좋은 결말",
+      "type": "text",
+      "defaultValue": "잘 될 것 같아요. 고맙습니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 모두 만족했을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.first-interview.ending.ordinary",
+      "group": "승객",
+      "section": "첫 면접",
+      "title": "보통 결말",
+      "type": "text",
+      "defaultValue": "여기서부터는 걸어가면 되겠어요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "성공 또는 미달 증거가 충분하지 않을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.first-interview.ending.disappointing",
+      "group": "승객",
+      "section": "첫 면접",
+      "title": "아쉬운 결말",
+      "type": "text",
+      "defaultValue": "손님은 서류 봉투를 쥔 채 말없이 건물로 뛰어갔습니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 하나 이상 놓쳤을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.first-interview.fridayWeight",
+      "group": "승객",
+      "section": "첫 면접",
+      "title": "금요일 배정 가중치",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "금요일 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.first-interview.marketWeight",
+      "group": "승객",
+      "section": "첫 면접",
+      "title": "상가 행사 배정 가중치",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "상가 행사 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.feverish-child.title",
+      "group": "승객",
+      "section": "아이 열 나는 보호자",
+      "title": "이야기 제목",
+      "type": "text",
+      "defaultValue": "아이 열 나는 보호자",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수첩에서 이야기를 찾아볼 때 표시합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.feverish-child.presetId",
+      "group": "승객",
+      "section": "아이 열 나는 보호자",
+      "title": "기반 승객 프리셋 ID",
+      "type": "text",
+      "defaultValue": "gentle-ride",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "프리셋 편집 화면의 영문 ID를 입력합니다. 사용할 수 없는 프리셋은 배정 후보에서 제외합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.feverish-child.intro",
+      "group": "승객",
+      "section": "아이 열 나는 보호자",
+      "title": "탑승 사연",
+      "type": "text",
+      "defaultValue": "아이가 열이 나요. 병원까지 안고 갈 테니 부드럽게 부탁드려요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "첫 탑승 때 보여 주는 한국어 한 줄입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.feverish-child.request",
+      "group": "승객",
+      "section": "아이 열 나는 보호자",
+      "title": "첫 요청",
+      "type": "text",
+      "defaultValue": "Comfort",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "요청 코드 중 하나를 입력합니다. Quiet, Eta, Comfort, OnTime, LargeRoad, SafeStop, Empathy, FareHelp, LocalChat, ViaStop.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.feverish-child.secondaryRequest",
+      "group": "승객",
+      "section": "아이 열 나는 보호자",
+      "title": "보조 요청",
+      "type": "text",
+      "defaultValue": "None",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "추가 요청이 필요하면 첫 요청과 다른 요청 코드를, 생략하려면 None을 입력합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.feverish-child.criteria",
+      "group": "승객",
+      "section": "아이 열 나는 보호자",
+      "title": "결말 판정",
+      "type": "text",
+      "defaultValue": "Comfort,OnTime",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "OnTime, Comfort, LargeRoad, Quiet, FareHelp, ViaStop, SafeStop, Luggage, Protection, Conversation, Safety, Empathy 중 하나 이상을 쉼표로 구분합니다. 모두 충족하면 좋은 결말, 미달이 있으면 아쉬운 결말입니다.",
+      "affects": [
+        "결말 판정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.feverish-child.ending.good",
+      "group": "승객",
+      "section": "아이 열 나는 보호자",
+      "title": "좋은 결말",
+      "type": "text",
+      "defaultValue": "병원 앞까지 편히 왔어요. 정말 고맙습니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 모두 만족했을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.feverish-child.ending.ordinary",
+      "group": "승객",
+      "section": "아이 열 나는 보호자",
+      "title": "보통 결말",
+      "type": "text",
+      "defaultValue": "도착했네요. 이제 접수부터 해야겠어요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "성공 또는 미달 증거가 충분하지 않을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.feverish-child.ending.disappointing",
+      "group": "승객",
+      "section": "아이 열 나는 보호자",
+      "title": "아쉬운 결말",
+      "type": "text",
+      "defaultValue": "조금만 조심하시지… 아이가 계속 놀랐어요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 하나 이상 놓쳤을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.feverish-child.fridayWeight",
+      "group": "승객",
+      "section": "아이 열 나는 보호자",
+      "title": "금요일 배정 가중치",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "금요일 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.feverish-child.marketWeight",
+      "group": "승객",
+      "section": "아이 열 나는 보호자",
+      "title": "상가 행사 배정 가중치",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "상가 행사 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.moving-day.title",
+      "group": "승객",
+      "section": "이사 첫날",
+      "title": "이야기 제목",
+      "type": "text",
+      "defaultValue": "이사 첫날",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수첩에서 이야기를 찾아볼 때 표시합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.moving-day.presetId",
+      "group": "승객",
+      "section": "이사 첫날",
+      "title": "기반 승객 프리셋 ID",
+      "type": "text",
+      "defaultValue": "luggage",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "프리셋 편집 화면의 영문 ID를 입력합니다. 사용할 수 없는 프리셋은 배정 후보에서 제외합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.moving-day.intro",
+      "group": "승객",
+      "section": "이사 첫날",
+      "title": "탑승 사연",
+      "type": "text",
+      "defaultValue": "오늘 이 동네로 이사 왔어요. 상자는 두 개예요. 시장은 어디로 가면 될까요?",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "첫 탑승 때 보여 주는 한국어 한 줄입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.moving-day.request",
+      "group": "승객",
+      "section": "이사 첫날",
+      "title": "첫 요청",
+      "type": "text",
+      "defaultValue": "LargeRoad",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "요청 코드 중 하나를 입력합니다. Quiet, Eta, Comfort, OnTime, LargeRoad, SafeStop, Empathy, FareHelp, LocalChat, ViaStop.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.moving-day.secondaryRequest",
+      "group": "승객",
+      "section": "이사 첫날",
+      "title": "보조 요청",
+      "type": "text",
+      "defaultValue": "None",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "추가 요청이 필요하면 첫 요청과 다른 요청 코드를, 생략하려면 None을 입력합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.moving-day.criteria",
+      "group": "승객",
+      "section": "이사 첫날",
+      "title": "결말 판정",
+      "type": "text",
+      "defaultValue": "Luggage,LargeRoad",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "OnTime, Comfort, LargeRoad, Quiet, FareHelp, ViaStop, SafeStop, Luggage, Protection, Conversation, Safety, Empathy 중 하나 이상을 쉼표로 구분합니다. 모두 충족하면 좋은 결말, 미달이 있으면 아쉬운 결말입니다.",
+      "affects": [
+        "결말 판정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.moving-day.ending.good",
+      "group": "승객",
+      "section": "이사 첫날",
+      "title": "좋은 결말",
+      "type": "text",
+      "defaultValue": "짐도 잘 왔고 동네 얘기까지 들으니 마음이 놓이네요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 모두 만족했을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.moving-day.ending.ordinary",
+      "group": "승객",
+      "section": "이사 첫날",
+      "title": "보통 결말",
+      "type": "text",
+      "defaultValue": "여기 맞네요. 상자부터 들여놔야겠어요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "성공 또는 미달 증거가 충분하지 않을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.moving-day.ending.disappointing",
+      "group": "승객",
+      "section": "이사 첫날",
+      "title": "아쉬운 결말",
+      "type": "text",
+      "defaultValue": "짐은 다른 택시로 보내야겠어요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 하나 이상 놓쳤을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.moving-day.fridayWeight",
+      "group": "승객",
+      "section": "이사 첫날",
+      "title": "금요일 배정 가중치",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "금요일 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.moving-day.marketWeight",
+      "group": "승객",
+      "section": "이사 첫날",
+      "title": "상가 행사 배정 가중치",
+      "type": "number",
+      "defaultValue": "3",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "상가 행사 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.night-shift.title",
+      "group": "승객",
+      "section": "야간 근무 끝",
+      "title": "이야기 제목",
+      "type": "text",
+      "defaultValue": "야간 근무 끝",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수첩에서 이야기를 찾아볼 때 표시합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.night-shift.presetId",
+      "group": "승객",
+      "section": "야간 근무 끝",
+      "title": "기반 승객 프리셋 ID",
+      "type": "text",
+      "defaultValue": "night-shift-rest",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "프리셋 편집 화면의 영문 ID를 입력합니다. 사용할 수 없는 프리셋은 배정 후보에서 제외합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.night-shift.intro",
+      "group": "승객",
+      "section": "야간 근무 끝",
+      "title": "탑승 사연",
+      "type": "text",
+      "defaultValue": "야간 근무가 끝났어요. 집에 갈 때까지 눈 좀 붙일게요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "첫 탑승 때 보여 주는 한국어 한 줄입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.night-shift.request",
+      "group": "승객",
+      "section": "야간 근무 끝",
+      "title": "첫 요청",
+      "type": "text",
+      "defaultValue": "Quiet",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "요청 코드 중 하나를 입력합니다. Quiet, Eta, Comfort, OnTime, LargeRoad, SafeStop, Empathy, FareHelp, LocalChat, ViaStop.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.night-shift.secondaryRequest",
+      "group": "승객",
+      "section": "야간 근무 끝",
+      "title": "보조 요청",
+      "type": "text",
+      "defaultValue": "None",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "추가 요청이 필요하면 첫 요청과 다른 요청 코드를, 생략하려면 None을 입력합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.night-shift.criteria",
+      "group": "승객",
+      "section": "야간 근무 끝",
+      "title": "결말 판정",
+      "type": "text",
+      "defaultValue": "Quiet",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "OnTime, Comfort, LargeRoad, Quiet, FareHelp, ViaStop, SafeStop, Luggage, Protection, Conversation, Safety, Empathy 중 하나 이상을 쉼표로 구분합니다. 모두 충족하면 좋은 결말, 미달이 있으면 아쉬운 결말입니다.",
+      "affects": [
+        "결말 판정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.night-shift.ending.good",
+      "group": "승객",
+      "section": "야간 근무 끝",
+      "title": "좋은 결말",
+      "type": "text",
+      "defaultValue": "벌써 왔어요? 덕분에 푹 잤네요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 모두 만족했을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.night-shift.ending.ordinary",
+      "group": "승객",
+      "section": "야간 근무 끝",
+      "title": "보통 결말",
+      "type": "text",
+      "defaultValue": "잠깐이라도 눈을 감으니 좀 낫네요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "성공 또는 미달 증거가 충분하지 않을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.night-shift.ending.disappointing",
+      "group": "승객",
+      "section": "야간 근무 끝",
+      "title": "아쉬운 결말",
+      "type": "text",
+      "defaultValue": "흔들릴 때마다 깨서 결국 못 잤네요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 하나 이상 놓쳤을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.night-shift.fridayWeight",
+      "group": "승객",
+      "section": "야간 근무 끝",
+      "title": "금요일 배정 가중치",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "금요일 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.night-shift.marketWeight",
+      "group": "승객",
+      "section": "야간 근무 끝",
+      "title": "상가 행사 배정 가중치",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "상가 행사 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.last-train.title",
+      "group": "승객",
+      "section": "막차 놓친 학생",
+      "title": "이야기 제목",
+      "type": "text",
+      "defaultValue": "막차 놓친 학생",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수첩에서 이야기를 찾아볼 때 표시합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.last-train.presetId",
+      "group": "승객",
+      "section": "막차 놓친 학생",
+      "title": "기반 승객 프리셋 ID",
+      "type": "text",
+      "defaultValue": "hurried",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "프리셋 편집 화면의 영문 ID를 입력합니다. 사용할 수 없는 프리셋은 배정 후보에서 제외합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.last-train.intro",
+      "group": "승객",
+      "section": "막차 놓친 학생",
+      "title": "탑승 사연",
+      "type": "text",
+      "defaultValue": "막차를 놓쳤어요. 지갑에 택시비가 다 있을지 모르겠네요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "첫 탑승 때 보여 주는 한국어 한 줄입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.last-train.request",
+      "group": "승객",
+      "section": "막차 놓친 학생",
+      "title": "첫 요청",
+      "type": "text",
+      "defaultValue": "FareHelp",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "요청 코드 중 하나를 입력합니다. Quiet, Eta, Comfort, OnTime, LargeRoad, SafeStop, Empathy, FareHelp, LocalChat, ViaStop.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.last-train.secondaryRequest",
+      "group": "승객",
+      "section": "막차 놓친 학생",
+      "title": "보조 요청",
+      "type": "text",
+      "defaultValue": "Eta",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "추가 요청이 필요하면 첫 요청과 다른 요청 코드를, 생략하려면 None을 입력합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.last-train.criteria",
+      "group": "승객",
+      "section": "막차 놓친 학생",
+      "title": "결말 판정",
+      "type": "text",
+      "defaultValue": "FareHelp,OnTime",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "OnTime, Comfort, LargeRoad, Quiet, FareHelp, ViaStop, SafeStop, Luggage, Protection, Conversation, Safety, Empathy 중 하나 이상을 쉼표로 구분합니다. 모두 충족하면 좋은 결말, 미달이 있으면 아쉬운 결말입니다.",
+      "affects": [
+        "결말 판정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.last-train.ending.good",
+      "group": "승객",
+      "section": "막차 놓친 학생",
+      "title": "좋은 결말",
+      "type": "text",
+      "defaultValue": "손님은 ‘다음엔 꼭 인사드릴게요’라고 적은 쪽지를 건넸습니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 모두 만족했을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.last-train.ending.ordinary",
+      "group": "승객",
+      "section": "막차 놓친 학생",
+      "title": "보통 결말",
+      "type": "text",
+      "defaultValue": "도착했으니 친구에게 연락해 볼게요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "성공 또는 미달 증거가 충분하지 않을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.last-train.ending.disappointing",
+      "group": "승객",
+      "section": "막차 놓친 학생",
+      "title": "아쉬운 결말",
+      "type": "text",
+      "defaultValue": "손님은 휴대전화를 꼭 쥐고 급히 내렸습니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 하나 이상 놓쳤을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.last-train.fridayWeight",
+      "group": "승객",
+      "section": "막차 놓친 학생",
+      "title": "금요일 배정 가중치",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "금요일 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.last-train.marketWeight",
+      "group": "승객",
+      "section": "막차 놓친 학생",
+      "title": "상가 행사 배정 가중치",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "상가 행사 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.last-train.fareChoice",
+      "group": "승객",
+      "section": "막차 놓친 학생",
+      "title": "학생 요금 문의 선택지",
+      "type": "text",
+      "defaultValue": "도착하면 보호자나 친구에게 연락해 볼까요?",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "막차 놓친 학생에게만 나오는 요금 문의 응답입니다. 약정 운임과 지급 규칙이 유지됩니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.wedding-guest.title",
+      "group": "승객",
+      "section": "결혼식 가는 하객",
+      "title": "이야기 제목",
+      "type": "text",
+      "defaultValue": "결혼식 가는 하객",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수첩에서 이야기를 찾아볼 때 표시합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.wedding-guest.presetId",
+      "group": "승객",
+      "section": "결혼식 가는 하객",
+      "title": "기반 승객 프리셋 ID",
+      "type": "text",
+      "defaultValue": "food",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "프리셋 편집 화면의 영문 ID를 입력합니다. 사용할 수 없는 프리셋은 배정 후보에서 제외합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.wedding-guest.intro",
+      "group": "승객",
+      "section": "결혼식 가는 하객",
+      "title": "탑승 사연",
+      "type": "text",
+      "defaultValue": "친구 결혼식에 갈 때 나눠 먹으려고 떡을 가져왔어요. 식 시작 전에 가야 해요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "첫 탑승 때 보여 주는 한국어 한 줄입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.wedding-guest.request",
+      "group": "승객",
+      "section": "결혼식 가는 하객",
+      "title": "첫 요청",
+      "type": "text",
+      "defaultValue": "OnTime",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "요청 코드 중 하나를 입력합니다. Quiet, Eta, Comfort, OnTime, LargeRoad, SafeStop, Empathy, FareHelp, LocalChat, ViaStop.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.wedding-guest.secondaryRequest",
+      "group": "승객",
+      "section": "결혼식 가는 하객",
+      "title": "보조 요청",
+      "type": "text",
+      "defaultValue": "None",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "추가 요청이 필요하면 첫 요청과 다른 요청 코드를, 생략하려면 None을 입력합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.wedding-guest.criteria",
+      "group": "승객",
+      "section": "결혼식 가는 하객",
+      "title": "결말 판정",
+      "type": "text",
+      "defaultValue": "OnTime",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "OnTime, Comfort, LargeRoad, Quiet, FareHelp, ViaStop, SafeStop, Luggage, Protection, Conversation, Safety, Empathy 중 하나 이상을 쉼표로 구분합니다. 모두 충족하면 좋은 결말, 미달이 있으면 아쉬운 결말입니다.",
+      "affects": [
+        "결말 판정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.wedding-guest.ending.good",
+      "group": "승객",
+      "section": "결혼식 가는 하객",
+      "title": "좋은 결말",
+      "type": "text",
+      "defaultValue": "시간 딱 맞았네요. 기사님도 떡 한 조각 드세요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 모두 만족했을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.wedding-guest.ending.ordinary",
+      "group": "승객",
+      "section": "결혼식 가는 하객",
+      "title": "보통 결말",
+      "type": "text",
+      "defaultValue": "식장 앞이네요. 옷매무새만 만지고 들어가야겠어요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "성공 또는 미달 증거가 충분하지 않을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.wedding-guest.ending.disappointing",
+      "group": "승객",
+      "section": "결혼식 가는 하객",
+      "title": "아쉬운 결말",
+      "type": "text",
+      "defaultValue": "시간이 빠듯하네요. 옷에 구김이라도 덜 가야 할 텐데요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 하나 이상 놓쳤을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.wedding-guest.fridayWeight",
+      "group": "승객",
+      "section": "결혼식 가는 하객",
+      "title": "금요일 배정 가중치",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "금요일 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.wedding-guest.marketWeight",
+      "group": "승객",
+      "section": "결혼식 가는 하객",
+      "title": "상가 행사 배정 가중치",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "상가 행사 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.plant-gift.title",
+      "group": "승객",
+      "section": "화분 선물",
+      "title": "이야기 제목",
+      "type": "text",
+      "defaultValue": "화분 선물",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수첩에서 이야기를 찾아볼 때 표시합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.plant-gift.presetId",
+      "group": "승객",
+      "section": "화분 선물",
+      "title": "기반 승객 프리셋 ID",
+      "type": "text",
+      "defaultValue": "plant-visit",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "프리셋 편집 화면의 영문 ID를 입력합니다. 사용할 수 없는 프리셋은 배정 후보에서 제외합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.plant-gift.intro",
+      "group": "승객",
+      "section": "화분 선물",
+      "title": "탑승 사연",
+      "type": "text",
+      "defaultValue": "선물할 화분이에요. 중간에 꽃집에서 리본만 묶고 가면 돼요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "첫 탑승 때 보여 주는 한국어 한 줄입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.plant-gift.request",
+      "group": "승객",
+      "section": "화분 선물",
+      "title": "첫 요청",
+      "type": "text",
+      "defaultValue": "ViaStop",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "요청 코드 중 하나를 입력합니다. Quiet, Eta, Comfort, OnTime, LargeRoad, SafeStop, Empathy, FareHelp, LocalChat, ViaStop.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.plant-gift.secondaryRequest",
+      "group": "승객",
+      "section": "화분 선물",
+      "title": "보조 요청",
+      "type": "text",
+      "defaultValue": "None",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "추가 요청이 필요하면 첫 요청과 다른 요청 코드를, 생략하려면 None을 입력합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.plant-gift.criteria",
+      "group": "승객",
+      "section": "화분 선물",
+      "title": "결말 판정",
+      "type": "text",
+      "defaultValue": "ViaStop,Protection",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "OnTime, Comfort, LargeRoad, Quiet, FareHelp, ViaStop, SafeStop, Luggage, Protection, Conversation, Safety, Empathy 중 하나 이상을 쉼표로 구분합니다. 모두 충족하면 좋은 결말, 미달이 있으면 아쉬운 결말입니다.",
+      "affects": [
+        "결말 판정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.plant-gift.ending.good",
+      "group": "승객",
+      "section": "화분 선물",
+      "title": "좋은 결말",
+      "type": "text",
+      "defaultValue": "꽃집에서 리본도 달고 흙 한 줌 안 쏟았네요. 선물이 다 됐어요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 모두 만족했을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.plant-gift.ending.ordinary",
+      "group": "승객",
+      "section": "화분 선물",
+      "title": "보통 결말",
+      "type": "text",
+      "defaultValue": "리본은 나중에 묶어도 되죠. 잘 도착했어요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "성공 또는 미달 증거가 충분하지 않을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.plant-gift.ending.disappointing",
+      "group": "승객",
+      "section": "화분 선물",
+      "title": "아쉬운 결말",
+      "type": "text",
+      "defaultValue": "아이고, 화분에서 흙이 쏟아졌네요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 하나 이상 놓쳤을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.plant-gift.fridayWeight",
+      "group": "승객",
+      "section": "화분 선물",
+      "title": "금요일 배정 가중치",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "금요일 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.plant-gift.marketWeight",
+      "group": "승객",
+      "section": "화분 선물",
+      "title": "상가 행사 배정 가중치",
+      "type": "number",
+      "defaultValue": "2",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "상가 행사 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.after-dinner.title",
+      "group": "승객",
+      "section": "회식 후 귀가",
+      "title": "이야기 제목",
+      "type": "text",
+      "defaultValue": "회식 후 귀가",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수첩에서 이야기를 찾아볼 때 표시합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.after-dinner.presetId",
+      "group": "승객",
+      "section": "회식 후 귀가",
+      "title": "기반 승객 프리셋 ID",
+      "type": "text",
+      "defaultValue": "after-gathering",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "프리셋 편집 화면의 영문 ID를 입력합니다. 사용할 수 없는 프리셋은 배정 후보에서 제외합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.after-dinner.intro",
+      "group": "승객",
+      "section": "회식 후 귀가",
+      "title": "탑승 사연",
+      "type": "text",
+      "defaultValue": "회식이 길어졌네요. 집 앞까지 가는 동안 얘기 조금 해도 돼요?",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "첫 탑승 때 보여 주는 한국어 한 줄입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.after-dinner.request",
+      "group": "승객",
+      "section": "회식 후 귀가",
+      "title": "첫 요청",
+      "type": "text",
+      "defaultValue": "LocalChat",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "요청 코드 중 하나를 입력합니다. Quiet, Eta, Comfort, OnTime, LargeRoad, SafeStop, Empathy, FareHelp, LocalChat, ViaStop.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.after-dinner.secondaryRequest",
+      "group": "승객",
+      "section": "회식 후 귀가",
+      "title": "보조 요청",
+      "type": "text",
+      "defaultValue": "None",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "추가 요청이 필요하면 첫 요청과 다른 요청 코드를, 생략하려면 None을 입력합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.after-dinner.criteria",
+      "group": "승객",
+      "section": "회식 후 귀가",
+      "title": "결말 판정",
+      "type": "text",
+      "defaultValue": "Conversation,Safety",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "OnTime, Comfort, LargeRoad, Quiet, FareHelp, ViaStop, SafeStop, Luggage, Protection, Conversation, Safety, Empathy 중 하나 이상을 쉼표로 구분합니다. 모두 충족하면 좋은 결말, 미달이 있으면 아쉬운 결말입니다.",
+      "affects": [
+        "결말 판정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.after-dinner.ending.good",
+      "group": "승객",
+      "section": "회식 후 귀가",
+      "title": "좋은 결말",
+      "type": "text",
+      "defaultValue": "얘기 들어주셔서 고맙습니다. 이만 들어갈게요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 모두 만족했을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.after-dinner.ending.ordinary",
+      "group": "승객",
+      "section": "회식 후 귀가",
+      "title": "보통 결말",
+      "type": "text",
+      "defaultValue": "집 앞이네요. 오랜만에 늦게 들어가요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "성공 또는 미달 증거가 충분하지 않을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.after-dinner.ending.disappointing",
+      "group": "승객",
+      "section": "회식 후 귀가",
+      "title": "아쉬운 결말",
+      "type": "text",
+      "defaultValue": "손님은 속이 불편한 듯 잠시 숨을 고른 뒤 내렸습니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 하나 이상 놓쳤을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.after-dinner.fridayWeight",
+      "group": "승객",
+      "section": "회식 후 귀가",
+      "title": "금요일 배정 가중치",
+      "type": "number",
+      "defaultValue": "3",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "금요일 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.after-dinner.marketWeight",
+      "group": "승객",
+      "section": "회식 후 귀가",
+      "title": "상가 행사 배정 가중치",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "상가 행사 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.trip-departure.title",
+      "group": "승객",
+      "section": "여행 출발",
+      "title": "이야기 제목",
+      "type": "text",
+      "defaultValue": "여행 출발",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수첩에서 이야기를 찾아볼 때 표시합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.trip-departure.presetId",
+      "group": "승객",
+      "section": "여행 출발",
+      "title": "기반 승객 프리셋 ID",
+      "type": "text",
+      "defaultValue": "travel-suitcase",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "프리셋 편집 화면의 영문 ID를 입력합니다. 사용할 수 없는 프리셋은 배정 후보에서 제외합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.trip-departure.intro",
+      "group": "승객",
+      "section": "여행 출발",
+      "title": "탑승 사연",
+      "type": "text",
+      "defaultValue": "오랜만에 여행을 가요. 큰 가방이 있는데 출발 시각 전에 갈 수 있을까요?",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "첫 탑승 때 보여 주는 한국어 한 줄입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.trip-departure.request",
+      "group": "승객",
+      "section": "여행 출발",
+      "title": "첫 요청",
+      "type": "text",
+      "defaultValue": "OnTime",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "요청 코드 중 하나를 입력합니다. Quiet, Eta, Comfort, OnTime, LargeRoad, SafeStop, Empathy, FareHelp, LocalChat, ViaStop.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.trip-departure.secondaryRequest",
+      "group": "승객",
+      "section": "여행 출발",
+      "title": "보조 요청",
+      "type": "text",
+      "defaultValue": "None",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "추가 요청이 필요하면 첫 요청과 다른 요청 코드를, 생략하려면 None을 입력합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.trip-departure.criteria",
+      "group": "승객",
+      "section": "여행 출발",
+      "title": "결말 판정",
+      "type": "text",
+      "defaultValue": "Luggage,OnTime",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "OnTime, Comfort, LargeRoad, Quiet, FareHelp, ViaStop, SafeStop, Luggage, Protection, Conversation, Safety, Empathy 중 하나 이상을 쉼표로 구분합니다. 모두 충족하면 좋은 결말, 미달이 있으면 아쉬운 결말입니다.",
+      "affects": [
+        "결말 판정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.trip-departure.ending.good",
+      "group": "승객",
+      "section": "여행 출발",
+      "title": "좋은 결말",
+      "type": "text",
+      "defaultValue": "가방도 챙겼고 시간도 충분하네요. 다녀오겠습니다!",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 모두 만족했을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.trip-departure.ending.ordinary",
+      "group": "승객",
+      "section": "여행 출발",
+      "title": "보통 결말",
+      "type": "text",
+      "defaultValue": "도착했네요. 이제 짐을 끌고 서둘러야겠어요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "성공 또는 미달 증거가 충분하지 않을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.trip-departure.ending.disappointing",
+      "group": "승객",
+      "section": "여행 출발",
+      "title": "아쉬운 결말",
+      "type": "text",
+      "defaultValue": "가방에 여유가 있는 차로 올 걸 그랬네요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 하나 이상 놓쳤을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.trip-departure.fridayWeight",
+      "group": "승객",
+      "section": "여행 출발",
+      "title": "금요일 배정 가중치",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "금요일 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.trip-departure.marketWeight",
+      "group": "승객",
+      "section": "여행 출발",
+      "title": "상가 행사 배정 가중치",
+      "type": "number",
+      "defaultValue": "3",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "상가 행사 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.rough-day.title",
+      "group": "승객",
+      "section": "속상한 하루",
+      "title": "이야기 제목",
+      "type": "text",
+      "defaultValue": "속상한 하루",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "수첩에서 이야기를 찾아볼 때 표시합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.rough-day.presetId",
+      "group": "승객",
+      "section": "속상한 하루",
+      "title": "기반 승객 프리셋 ID",
+      "type": "text",
+      "defaultValue": "general",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "프리셋 편집 화면의 영문 ID를 입력합니다. 사용할 수 없는 프리셋은 배정 후보에서 제외합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.rough-day.intro",
+      "group": "승객",
+      "section": "속상한 하루",
+      "title": "탑승 사연",
+      "type": "text",
+      "defaultValue": "오늘은 일이 잘 안 풀렸어요. 잠깐 얘기해도 괜찮을까요?",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "첫 탑승 때 보여 주는 한국어 한 줄입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.rough-day.request",
+      "group": "승객",
+      "section": "속상한 하루",
+      "title": "첫 요청",
+      "type": "text",
+      "defaultValue": "Empathy",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "요청 코드 중 하나를 입력합니다. Quiet, Eta, Comfort, OnTime, LargeRoad, SafeStop, Empathy, FareHelp, LocalChat, ViaStop.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.rough-day.secondaryRequest",
+      "group": "승객",
+      "section": "속상한 하루",
+      "title": "보조 요청",
+      "type": "text",
+      "defaultValue": "None",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "추가 요청이 필요하면 첫 요청과 다른 요청 코드를, 생략하려면 None을 입력합니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.rough-day.criteria",
+      "group": "승객",
+      "section": "속상한 하루",
+      "title": "결말 판정",
+      "type": "text",
+      "defaultValue": "Empathy,Safety",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "OnTime, Comfort, LargeRoad, Quiet, FareHelp, ViaStop, SafeStop, Luggage, Protection, Conversation, Safety, Empathy 중 하나 이상을 쉼표로 구분합니다. 모두 충족하면 좋은 결말, 미달이 있으면 아쉬운 결말입니다.",
+      "affects": [
+        "결말 판정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.rough-day.ending.good",
+      "group": "승객",
+      "section": "속상한 하루",
+      "title": "좋은 결말",
+      "type": "text",
+      "defaultValue": "얘기하니 낫네요. 편히 모셔다 주셔서 고마워요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 모두 만족했을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.rough-day.ending.ordinary",
+      "group": "승객",
+      "section": "속상한 하루",
+      "title": "보통 결말",
+      "type": "text",
+      "defaultValue": "조용히 오다 보니 생각이 좀 정리됐어요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "성공 또는 미달 증거가 충분하지 않을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.rough-day.ending.disappointing",
+      "group": "승객",
+      "section": "속상한 하루",
+      "title": "아쉬운 결말",
+      "type": "text",
+      "defaultValue": "오늘은 집에 들어가서 조금 쉬어야겠어요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "판정 조건을 하나 이상 놓쳤을 때 표시하는 하차 대사입니다.",
+      "affects": [
+        "승객 이야기"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.rough-day.fridayWeight",
+      "group": "승객",
+      "section": "속상한 하루",
+      "title": "금요일 배정 가중치",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "금요일 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.rough-day.marketWeight",
+      "group": "승객",
+      "section": "속상한 하루",
+      "title": "상가 행사 배정 가중치",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 1,
+      "max": 8,
+      "unit": "배",
+      "description": "상가 행사 조건 카드에서 이 이야기를 뽑을 상대 비중입니다.",
+      "affects": [
+        "이야기 배정"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerStories",
+      "editable": true
+    },
+    {
+      "id": "story.logbook.longRideMeters",
+      "group": "생활",
+      "section": "기사 수첩 업적",
+      "title": "장거리 운송",
+      "type": "integer",
+      "defaultValue": "3000",
+      "min": 1,
+      "max": 100000,
+      "unit": "m",
+      "description": "기사 수첩에서 이 업적을 해금하는 기준입니다.",
+      "affects": [
+        "기사 수첩"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "CampaignLogbook",
+      "editable": true
+    },
+    {
+      "id": "story.logbook.volumeRides",
+      "group": "생활",
+      "section": "기사 수첩 업적",
+      "title": "운송 누적",
+      "type": "integer",
+      "defaultValue": "10",
+      "min": 1,
+      "max": 10000,
+      "unit": "회",
+      "description": "기사 수첩에서 이 업적을 해금하는 기준입니다.",
+      "affects": [
+        "기사 수첩"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "CampaignLogbook",
+      "editable": true
+    },
+    {
+      "id": "story.logbook.goodEndings",
+      "group": "생활",
+      "section": "기사 수첩 업적",
+      "title": "좋은 결말 수집",
+      "type": "integer",
+      "defaultValue": "5",
+      "min": 1,
+      "max": 10,
+      "unit": "편",
+      "description": "기사 수첩에서 이 업적을 해금하는 기준입니다.",
+      "affects": [
+        "기사 수첩"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "CampaignLogbook",
+      "editable": true
+    },
+    {
+      "id": "story.logbook.cleanDays",
+      "group": "생활",
+      "section": "기사 수첩 업적",
+      "title": "무위반 연속 영업",
+      "type": "integer",
+      "defaultValue": "3",
+      "min": 1,
+      "max": 1000,
+      "unit": "일",
+      "description": "기사 수첩에서 이 업적을 해금하는 기준입니다.",
+      "affects": [
+        "기사 수첩"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "CampaignLogbook",
+      "editable": true
+    },
+    {
       "id": "backstory.question.0",
       "group": "승객",
       "section": "아버지 이야기",

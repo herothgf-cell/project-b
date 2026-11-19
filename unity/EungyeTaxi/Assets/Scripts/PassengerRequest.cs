@@ -30,6 +30,7 @@ public class PassengerRequest {
   if(!Resolved)return "";
   if(SafetyDeferred)return Kind==RequestKind.SafeStop||Kind==RequestKind.DestinationChange||Kind==RequestKind.ViaStop?"알겠어요. 이번에는 원래 목적지로 가 주세요.":"알겠어요. 이번에는 원래대로 가 주세요.";
   if(!Accepted)return "안내를 확인했어요. 안전하게 부탁해요.";
+  if(selectedReply==PassengerReply.StoryFareAssist)return "네, 도착하면 연락해 볼게요. 도와주셔서 고마워요.";
   if(selectedReply==PassengerReply.Alternative)switch(Kind){
    case RequestKind.Empathy:case RequestKind.Interview:return "배려해 주셔서 고마워요. 조용히 마음을 정리할게요.";
    case RequestKind.RouteAdvice:return "네, 이동 거리가 짧은 길로 부탁해요.";
@@ -118,7 +119,7 @@ public struct PassengerScoreView {
 }
 
 // Mouse and keyboard share these replies; descriptions match implemented prototype effects.
-public enum PassengerReply { Accept, Alternative, EtaFaster, EtaNormal, EtaRelaxed, Defer }
+public enum PassengerReply { Accept, Alternative, EtaFaster, EtaNormal, EtaRelaxed, Defer, StoryFareAssist }
 public sealed class PassengerRequestChoice {
  public readonly PassengerReply reply;public readonly string label,effect;
  public PassengerRequestChoice(PassengerReply reply,string label,string effect){this.reply=reply;this.label=label;this.effect=effect;}

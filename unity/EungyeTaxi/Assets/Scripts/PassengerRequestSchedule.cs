@@ -29,6 +29,17 @@ public sealed class PassengerRequestSchedule {
   }
   result.state.slots=selected.ToArray();return result;
  }
+ public static PassengerRequestSchedule CreateStory(RequestKind primary,RequestKind? secondary,RequestKind[] eligible){
+  var result=new PassengerRequestSchedule();
+  if(primary==RequestKind.LostItem||Array.IndexOf(eligible,primary)<0)return result;
+  var opening=new PassengerRequestSlot{kind=primary,threshold=0};
+  if(!secondary.HasValue||secondary==RequestKind.LostItem||!Compatible(primary,secondary.Value)||Array.IndexOf(eligible,secondary.Value)<0){
+   result.state.slots=new[]{opening};return result;
+  }
+  float progress=(float)Math.Min(ContentTuning.Number("schedule.progressMax",.65),ContentTuning.Number("schedule.progressMin",.25));
+  result.state.slots=new[]{opening,new PassengerRequestSlot{kind=secondary.Value,threshold=progress}};
+  return result;
+ }
  public bool BindRepresentative(RequestKind kind,RequestKind[] eligible,float threshold=-1){
   if(state.slots.Length==0||Array.IndexOf(eligible,kind)<0||!ContentTuning.Flag("request."+kind+".enabled",true)||ContentTuning.Int("request."+kind+".weight",1)<=0)return false;
   state.slots[0].kind=kind;if(threshold>=0)state.slots[0].threshold=Math.Min((float)ContentTuning.Number("schedule.progressMax",.65),threshold);

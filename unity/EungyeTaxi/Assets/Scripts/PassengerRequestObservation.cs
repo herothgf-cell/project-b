@@ -10,6 +10,7 @@ public class PassengerRequestObservation : MonoBehaviour {
  string observedTrip="";float stoppedSeconds,resultUntil,travelled,broadTravel,expectedDistance,expectedBroad,etaAt,etaPredicted,etaNav,acceptedAt;int motionBefore,lawBefore,accelBefore,brakeBefore,necessaryBefore;Vector3 previous;bool sample,etaSelected,quietReply,adviceFastest;
  public bool SuppressFollowupDialogue {get{return quietReply;}}
  string selectedEffect="";PassengerRequestChoice[] cachedChoices;RequestKind cachedKind;
+ bool StudentFare {get{return request.Kind==RequestKind.FareHelp&&session.jobs.CurrentStory?.id=="last-train";}}
  int proposal=-1;float proposalUntil;Vector3 proposalPosition,proposalHeading;float addedDistance,newRemaining;int newFare;
  public PassengerRequestObservationSnapshot CaptureLive(){return new PassengerRequestObservationSnapshot{systemRouteReason=SystemRouteReason,request=request.Snapshot(),observedTrip=observedTrip,selectedEffect=selectedEffect,stoppedSeconds=stoppedSeconds,travelled=travelled,broadTravel=broadTravel,expectedDistance=expectedDistance,expectedBroad=expectedBroad,etaAge=Time.time-etaAt,etaPredicted=etaPredicted,etaNav=etaNav,acceptedAge=Time.time-acceptedAt,addedDistance=addedDistance,newRemaining=newRemaining,motionBefore=motionBefore,lawBefore=lawBefore,accelBefore=accelBefore,brakeBefore=brakeBefore,necessaryBefore=necessaryBefore,proposal=proposal,newFare=newFare,etaSelected=etaSelected,quietReply=quietReply,adviceFastest=adviceFastest,preferLarge=session.jobs.nav.PreferLargeRoad,preferFast=session.jobs.nav.PreferFastest};}
  public void RestoreLive(PassengerRequestObservationSnapshot s){SystemRouteReason=s.systemRouteReason??"";request.Restore(s.request);observedTrip=s.observedTrip;selectedEffect=s.selectedEffect;stoppedSeconds=0;travelled=s.travelled;broadTravel=s.broadTravel;expectedDistance=s.expectedDistance;expectedBroad=s.expectedBroad;etaAt=Time.time-s.etaAge;etaPredicted=s.etaPredicted;etaNav=s.etaNav;acceptedAt=Time.time-s.acceptedAge;addedDistance=s.addedDistance;newRemaining=s.newRemaining;motionBefore=s.motionBefore;lawBefore=s.lawBefore;accelBefore=s.accelBefore;brakeBefore=s.brakeBefore;necessaryBefore=s.necessaryBefore;proposal=s.proposal;newFare=s.newFare;etaSelected=s.etaSelected;quietReply=s.quietReply;adviceFastest=s.adviceFastest;sample=false;}
@@ -92,7 +93,8 @@ public class PassengerRequestObservation : MonoBehaviour {
    if(!success&&(request.Kind==RequestKind.LargeRoad||request.Kind==RequestKind.ShortRoad||request.Kind==RequestKind.OnTime&&Violations()==0))request.CompleteUnknown(reason+" · 합법적 대기·우회와 불필요한 이탈을 구분할 관찰 부족");
    else request.CompleteGoal(success,reason);
   }
-  if(session.jobs.ChoiceEffectsActive&&request.ReplyCaptured&&request.Kind!=RequestKind.LostItem){request.OverrideChoiceSatisfaction(0);request.OverrideChoiceSatisfaction(session.jobs.CompleteChoiceRequest(request.Kind,request.SelectedReply,request.Accepted?request.GoalOutcome:0));}
+  if(request.SelectedReply==PassengerReply.StoryFareAssist)request.OverrideChoiceSatisfaction(0);
+  else if(session.jobs.ChoiceEffectsActive&&request.ReplyCaptured&&request.Kind!=RequestKind.LostItem){request.OverrideChoiceSatisfaction(0);request.OverrideChoiceSatisfaction(session.jobs.CompleteChoiceRequest(request.Kind,request.SelectedReply,request.Accepted?request.GoalOutcome:0));}
   int deduction=request.Finish();var notices=session.GetComponent<DriveNotifications>();if(notices)notices.RefreshScores();if(deduction>0)session.manners.Deduct("request:"+observedTrip,deduction,"조용한 운행 요청 미응답",0);
  }
  void ChoiceResponded(){if(session.jobs)session.jobs.RecordRequestChoice(request.Kind,request.SelectedReply);}
@@ -111,6 +113,7 @@ public class PassengerRequestObservation : MonoBehaviour {
  public string SpokenReply {get{return request.SpokenLine(RawSpokenReply);}}
  string RawSpokenReply {get{
   if(request.SafetyDeferred)return DialogueReply;
+  if(request.SelectedReply==PassengerReply.StoryFareAssist)return PassengerStories.StudentFareChoice;
   switch(request.Kind){
    case RequestKind.Comfort:return "급하게 출발하거나 멈추지 않고 부드럽게 모시겠습니다.";
    case RequestKind.OnTime:return "신호와 제한속도를 지키며 가겠습니다. 도착이 늦어질 수 있으면 안내해 드릴게요.";
@@ -123,7 +126,17 @@ public class PassengerRequestObservation : MonoBehaviour {
   }
  }}
  static string EtaChoice(float value){return (value/60).ToString("0.0")+"분";}
- public PassengerRequestChoice[] ReplyChoices {get{if(cachedChoices==null||cachedKind!=request.Kind){cachedKind=request.Kind;cachedChoices=PassengerRequestChoices.For(cachedKind,request.Content);}return cachedChoices;}}
+ public PassengerRequestChoice[] ReplyChoices {get{
+  if(cachedChoices==null||cachedKind!=request.Kind){
+   cachedKind=request.Kind;cachedChoices=PassengerRequestChoices.For(cachedKind,request.Content);
+   if(StudentFare){
+    var choices=new System.Collections.Generic.List<PassengerRequestChoice>(cachedChoices);
+    choices.Insert(0,new PassengerRequestChoice(PassengerReply.StoryFareAssist,PassengerStories.StudentFareChoice,"도착 후 연락 안내 · 약정 운임 유지"));
+    cachedChoices=choices.ToArray();
+   }
+  }
+  return cachedChoices;
+ }}
  public bool CanChoose(PassengerReply reply){
   if(request.Resolved||session.jobs.trip.State!=TripState.OnTrip||session.jobs.trip.ArrivalLocked||session.paused||Time.timeScale==0)return false;
   bool offered=false;foreach(var c in ReplyChoices)if(c.reply==reply)offered=true;if(!offered)return false;
@@ -133,7 +146,11 @@ public class PassengerRequestObservation : MonoBehaviour {
   return !ChangesRoute||PrepareProposal();
  }
  public bool Choose(PassengerReply reply){if(!CanChoose(reply))return false;bool applied;
-  switch(reply){case PassengerReply.EtaFaster:applied=RespondEta(-1);break;case PassengerReply.EtaNormal:applied=RespondEta(0);break;case PassengerReply.EtaRelaxed:applied=RespondEta(1);break;case PassengerReply.Alternative:applied=RespondAlternative();break;default:applied=Respond(reply!=PassengerReply.Defer);break;}
+  switch(reply){case PassengerReply.EtaFaster:applied=RespondEta(-1);break;case PassengerReply.EtaNormal:applied=RespondEta(0);break;case PassengerReply.EtaRelaxed:applied=RespondEta(1);break;case PassengerReply.Alternative:applied=RespondAlternative();break;
+   case PassengerReply.StoryFareAssist:
+    request.Accept(PassengerStories.StudentFareChoice+" · 약정 운임 유지",reply);
+    resultUntil=Time.time+6;applied=true;break;
+   default:applied=Respond(reply!=PassengerReply.Defer);break;}
   if(applied){request.ApplyReply(reply);foreach(var c in ReplyChoices)if(c.reply==reply)selectedEffect=c.effect;}return applied;
  }
  public string ChoiceText(PassengerRequestChoice choice){string label=choice.label;
@@ -146,6 +163,8 @@ public class PassengerRequestObservation : MonoBehaviour {
  public string CardReply {get{return request.Resolved&&(Time.time<=resultUntil||etaSelected)?request.ReactionLine():"";}}
  public void Draw(){if(request.Resolved)return;if(!session.business.useV2||session.jobs.trip.State!=TripState.OnTrip||session.jobs.trip.ArrivalLocked||session.paused)return;if(request.Resolved&&Time.time>resultUntil&&!etaSelected)return;
   string dialogue=request.Resolved?SpokenReply:Prompt(request.Kind,request.Content),note="";
+  var story=session.jobs.CurrentStory;
+  if(story!=null&&story.request==request.Kind)dialogue=story.intro+"\n"+dialogue;
   if(etaSelected)note="현재 남은 "+RoadNavigation.FormatEta(session.jobs.nav.estimatedSeconds)+" · 교통에 따라 변동";
   if(!request.Resolved&&ChangesRoute){if(!PrepareProposal())note="변경 가능한 곳 없음 · 원래 목적지 유지";else note=KoreanText.Stop(session.jobs.stops[proposal].name)+" · 추가 "+addedDistance.ToString("0")+"m · "+session.jobs.FareAgreementText(newFare)+" · 남은 "+Mathf.CeilToInt(newRemaining)+"초"+(request.Kind==RequestKind.ViaStop?" · 정차 용무"+request.Content.Number("effect.errand.seconds",20)+"초 무료":"");}
   if(request.Resolved&&selectedEffect.Length>0)note="적용 효과 · "+selectedEffect;

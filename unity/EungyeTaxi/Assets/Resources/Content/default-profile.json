@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "9b6d67a72669459c451ed5922cc7e377225735f487a9a512ed8342214dd4d6d5",
+  "contentHash": "dd9020f9bea9a26b2548af76c4315794f7872fd6bfe5936852af395776e91135",
   "values": [
     {
       "id": "day.condition.weekday.title",
@@ -107,6 +107,474 @@
     {
       "id": "day.condition.rain.startsAt",
       "value": "12"
+    },
+    {
+      "id": "story.daily.minimum",
+      "value": "2"
+    },
+    {
+      "id": "story.daily.maximum",
+      "value": "3"
+    },
+    {
+      "id": "story.first-interview.title",
+      "value": "첫 면접"
+    },
+    {
+      "id": "story.first-interview.presetId",
+      "value": "interview-appointment"
+    },
+    {
+      "id": "story.first-interview.intro",
+      "value": "첫 면접이라 떨리네요. 서류는 어제부터 가방에 넣어뒀어요."
+    },
+    {
+      "id": "story.first-interview.request",
+      "value": "OnTime"
+    },
+    {
+      "id": "story.first-interview.secondaryRequest",
+      "value": "None"
+    },
+    {
+      "id": "story.first-interview.criteria",
+      "value": "OnTime"
+    },
+    {
+      "id": "story.first-interview.ending.good",
+      "value": "잘 될 것 같아요. 고맙습니다."
+    },
+    {
+      "id": "story.first-interview.ending.ordinary",
+      "value": "여기서부터는 걸어가면 되겠어요."
+    },
+    {
+      "id": "story.first-interview.ending.disappointing",
+      "value": "손님은 서류 봉투를 쥔 채 말없이 건물로 뛰어갔습니다."
+    },
+    {
+      "id": "story.first-interview.fridayWeight",
+      "value": "1"
+    },
+    {
+      "id": "story.first-interview.marketWeight",
+      "value": "1"
+    },
+    {
+      "id": "story.feverish-child.title",
+      "value": "아이 열 나는 보호자"
+    },
+    {
+      "id": "story.feverish-child.presetId",
+      "value": "gentle-ride"
+    },
+    {
+      "id": "story.feverish-child.intro",
+      "value": "아이가 열이 나요. 병원까지 안고 갈 테니 부드럽게 부탁드려요."
+    },
+    {
+      "id": "story.feverish-child.request",
+      "value": "Comfort"
+    },
+    {
+      "id": "story.feverish-child.secondaryRequest",
+      "value": "None"
+    },
+    {
+      "id": "story.feverish-child.criteria",
+      "value": "Comfort,OnTime"
+    },
+    {
+      "id": "story.feverish-child.ending.good",
+      "value": "병원 앞까지 편히 왔어요. 정말 고맙습니다."
+    },
+    {
+      "id": "story.feverish-child.ending.ordinary",
+      "value": "도착했네요. 이제 접수부터 해야겠어요."
+    },
+    {
+      "id": "story.feverish-child.ending.disappointing",
+      "value": "조금만 조심하시지… 아이가 계속 놀랐어요."
+    },
+    {
+      "id": "story.feverish-child.fridayWeight",
+      "value": "1"
+    },
+    {
+      "id": "story.feverish-child.marketWeight",
+      "value": "1"
+    },
+    {
+      "id": "story.moving-day.title",
+      "value": "이사 첫날"
+    },
+    {
+      "id": "story.moving-day.presetId",
+      "value": "luggage"
+    },
+    {
+      "id": "story.moving-day.intro",
+      "value": "오늘 이 동네로 이사 왔어요. 상자는 두 개예요. 시장은 어디로 가면 될까요?"
+    },
+    {
+      "id": "story.moving-day.request",
+      "value": "LargeRoad"
+    },
+    {
+      "id": "story.moving-day.secondaryRequest",
+      "value": "None"
+    },
+    {
+      "id": "story.moving-day.criteria",
+      "value": "Luggage,LargeRoad"
+    },
+    {
+      "id": "story.moving-day.ending.good",
+      "value": "짐도 잘 왔고 동네 얘기까지 들으니 마음이 놓이네요."
+    },
+    {
+      "id": "story.moving-day.ending.ordinary",
+      "value": "여기 맞네요. 상자부터 들여놔야겠어요."
+    },
+    {
+      "id": "story.moving-day.ending.disappointing",
+      "value": "짐은 다른 택시로 보내야겠어요."
+    },
+    {
+      "id": "story.moving-day.fridayWeight",
+      "value": "1"
+    },
+    {
+      "id": "story.moving-day.marketWeight",
+      "value": "3"
+    },
+    {
+      "id": "story.night-shift.title",
+      "value": "야간 근무 끝"
+    },
+    {
+      "id": "story.night-shift.presetId",
+      "value": "night-shift-rest"
+    },
+    {
+      "id": "story.night-shift.intro",
+      "value": "야간 근무가 끝났어요. 집에 갈 때까지 눈 좀 붙일게요."
+    },
+    {
+      "id": "story.night-shift.request",
+      "value": "Quiet"
+    },
+    {
+      "id": "story.night-shift.secondaryRequest",
+      "value": "None"
+    },
+    {
+      "id": "story.night-shift.criteria",
+      "value": "Quiet"
+    },
+    {
+      "id": "story.night-shift.ending.good",
+      "value": "벌써 왔어요? 덕분에 푹 잤네요."
+    },
+    {
+      "id": "story.night-shift.ending.ordinary",
+      "value": "잠깐이라도 눈을 감으니 좀 낫네요."
+    },
+    {
+      "id": "story.night-shift.ending.disappointing",
+      "value": "흔들릴 때마다 깨서 결국 못 잤네요."
+    },
+    {
+      "id": "story.night-shift.fridayWeight",
+      "value": "1"
+    },
+    {
+      "id": "story.night-shift.marketWeight",
+      "value": "1"
+    },
+    {
+      "id": "story.last-train.title",
+      "value": "막차 놓친 학생"
+    },
+    {
+      "id": "story.last-train.presetId",
+      "value": "hurried"
+    },
+    {
+      "id": "story.last-train.intro",
+      "value": "막차를 놓쳤어요. 지갑에 택시비가 다 있을지 모르겠네요."
+    },
+    {
+      "id": "story.last-train.request",
+      "value": "FareHelp"
+    },
+    {
+      "id": "story.last-train.secondaryRequest",
+      "value": "Eta"
+    },
+    {
+      "id": "story.last-train.criteria",
+      "value": "FareHelp,OnTime"
+    },
+    {
+      "id": "story.last-train.ending.good",
+      "value": "손님은 ‘다음엔 꼭 인사드릴게요’라고 적은 쪽지를 건넸습니다."
+    },
+    {
+      "id": "story.last-train.ending.ordinary",
+      "value": "도착했으니 친구에게 연락해 볼게요."
+    },
+    {
+      "id": "story.last-train.ending.disappointing",
+      "value": "손님은 휴대전화를 꼭 쥐고 급히 내렸습니다."
+    },
+    {
+      "id": "story.last-train.fridayWeight",
+      "value": "1"
+    },
+    {
+      "id": "story.last-train.marketWeight",
+      "value": "1"
+    },
+    {
+      "id": "story.last-train.fareChoice",
+      "value": "도착하면 보호자나 친구에게 연락해 볼까요?"
+    },
+    {
+      "id": "story.wedding-guest.title",
+      "value": "결혼식 가는 하객"
+    },
+    {
+      "id": "story.wedding-guest.presetId",
+      "value": "food"
+    },
+    {
+      "id": "story.wedding-guest.intro",
+      "value": "친구 결혼식에 갈 때 나눠 먹으려고 떡을 가져왔어요. 식 시작 전에 가야 해요."
+    },
+    {
+      "id": "story.wedding-guest.request",
+      "value": "OnTime"
+    },
+    {
+      "id": "story.wedding-guest.secondaryRequest",
+      "value": "None"
+    },
+    {
+      "id": "story.wedding-guest.criteria",
+      "value": "OnTime"
+    },
+    {
+      "id": "story.wedding-guest.ending.good",
+      "value": "시간 딱 맞았네요. 기사님도 떡 한 조각 드세요."
+    },
+    {
+      "id": "story.wedding-guest.ending.ordinary",
+      "value": "식장 앞이네요. 옷매무새만 만지고 들어가야겠어요."
+    },
+    {
+      "id": "story.wedding-guest.ending.disappointing",
+      "value": "시간이 빠듯하네요. 옷에 구김이라도 덜 가야 할 텐데요."
+    },
+    {
+      "id": "story.wedding-guest.fridayWeight",
+      "value": "1"
+    },
+    {
+      "id": "story.wedding-guest.marketWeight",
+      "value": "1"
+    },
+    {
+      "id": "story.plant-gift.title",
+      "value": "화분 선물"
+    },
+    {
+      "id": "story.plant-gift.presetId",
+      "value": "plant-visit"
+    },
+    {
+      "id": "story.plant-gift.intro",
+      "value": "선물할 화분이에요. 중간에 꽃집에서 리본만 묶고 가면 돼요."
+    },
+    {
+      "id": "story.plant-gift.request",
+      "value": "ViaStop"
+    },
+    {
+      "id": "story.plant-gift.secondaryRequest",
+      "value": "None"
+    },
+    {
+      "id": "story.plant-gift.criteria",
+      "value": "ViaStop,Protection"
+    },
+    {
+      "id": "story.plant-gift.ending.good",
+      "value": "꽃집에서 리본도 달고 흙 한 줌 안 쏟았네요. 선물이 다 됐어요."
+    },
+    {
+      "id": "story.plant-gift.ending.ordinary",
+      "value": "리본은 나중에 묶어도 되죠. 잘 도착했어요."
+    },
+    {
+      "id": "story.plant-gift.ending.disappointing",
+      "value": "아이고, 화분에서 흙이 쏟아졌네요."
+    },
+    {
+      "id": "story.plant-gift.fridayWeight",
+      "value": "1"
+    },
+    {
+      "id": "story.plant-gift.marketWeight",
+      "value": "2"
+    },
+    {
+      "id": "story.after-dinner.title",
+      "value": "회식 후 귀가"
+    },
+    {
+      "id": "story.after-dinner.presetId",
+      "value": "after-gathering"
+    },
+    {
+      "id": "story.after-dinner.intro",
+      "value": "회식이 길어졌네요. 집 앞까지 가는 동안 얘기 조금 해도 돼요?"
+    },
+    {
+      "id": "story.after-dinner.request",
+      "value": "LocalChat"
+    },
+    {
+      "id": "story.after-dinner.secondaryRequest",
+      "value": "None"
+    },
+    {
+      "id": "story.after-dinner.criteria",
+      "value": "Conversation,Safety"
+    },
+    {
+      "id": "story.after-dinner.ending.good",
+      "value": "얘기 들어주셔서 고맙습니다. 이만 들어갈게요."
+    },
+    {
+      "id": "story.after-dinner.ending.ordinary",
+      "value": "집 앞이네요. 오랜만에 늦게 들어가요."
+    },
+    {
+      "id": "story.after-dinner.ending.disappointing",
+      "value": "손님은 속이 불편한 듯 잠시 숨을 고른 뒤 내렸습니다."
+    },
+    {
+      "id": "story.after-dinner.fridayWeight",
+      "value": "3"
+    },
+    {
+      "id": "story.after-dinner.marketWeight",
+      "value": "1"
+    },
+    {
+      "id": "story.trip-departure.title",
+      "value": "여행 출발"
+    },
+    {
+      "id": "story.trip-departure.presetId",
+      "value": "travel-suitcase"
+    },
+    {
+      "id": "story.trip-departure.intro",
+      "value": "오랜만에 여행을 가요. 큰 가방이 있는데 출발 시각 전에 갈 수 있을까요?"
+    },
+    {
+      "id": "story.trip-departure.request",
+      "value": "OnTime"
+    },
+    {
+      "id": "story.trip-departure.secondaryRequest",
+      "value": "None"
+    },
+    {
+      "id": "story.trip-departure.criteria",
+      "value": "Luggage,OnTime"
+    },
+    {
+      "id": "story.trip-departure.ending.good",
+      "value": "가방도 챙겼고 시간도 충분하네요. 다녀오겠습니다!"
+    },
+    {
+      "id": "story.trip-departure.ending.ordinary",
+      "value": "도착했네요. 이제 짐을 끌고 서둘러야겠어요."
+    },
+    {
+      "id": "story.trip-departure.ending.disappointing",
+      "value": "가방에 여유가 있는 차로 올 걸 그랬네요."
+    },
+    {
+      "id": "story.trip-departure.fridayWeight",
+      "value": "1"
+    },
+    {
+      "id": "story.trip-departure.marketWeight",
+      "value": "3"
+    },
+    {
+      "id": "story.rough-day.title",
+      "value": "속상한 하루"
+    },
+    {
+      "id": "story.rough-day.presetId",
+      "value": "general"
+    },
+    {
+      "id": "story.rough-day.intro",
+      "value": "오늘은 일이 잘 안 풀렸어요. 잠깐 얘기해도 괜찮을까요?"
+    },
+    {
+      "id": "story.rough-day.request",
+      "value": "Empathy"
+    },
+    {
+      "id": "story.rough-day.secondaryRequest",
+      "value": "None"
+    },
+    {
+      "id": "story.rough-day.criteria",
+      "value": "Empathy,Safety"
+    },
+    {
+      "id": "story.rough-day.ending.good",
+      "value": "얘기하니 낫네요. 편히 모셔다 주셔서 고마워요."
+    },
+    {
+      "id": "story.rough-day.ending.ordinary",
+      "value": "조용히 오다 보니 생각이 좀 정리됐어요."
+    },
+    {
+      "id": "story.rough-day.ending.disappointing",
+      "value": "오늘은 집에 들어가서 조금 쉬어야겠어요."
+    },
+    {
+      "id": "story.rough-day.fridayWeight",
+      "value": "1"
+    },
+    {
+      "id": "story.rough-day.marketWeight",
+      "value": "1"
+    },
+    {
+      "id": "story.logbook.longRideMeters",
+      "value": "3000"
+    },
+    {
+      "id": "story.logbook.volumeRides",
+      "value": "10"
+    },
+    {
+      "id": "story.logbook.goodEndings",
+      "value": "5"
+    },
+    {
+      "id": "story.logbook.cleanDays",
+      "value": "3"
     },
     {
       "id": "backstory.question.0",

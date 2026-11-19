@@ -67,7 +67,7 @@ public partial class FullMapOverlay : MonoBehaviour {
  public bool Open(){
   if(session.SettingsOpen||IsOpen)return false;
   var b=session.business;
-  if(session.ChoiceOpen||session.RideResultOpen||session.PracticeMenuOpen||session.PracticeBusy||b.preparing||b.ShowingSummary||b.restartPrompt||b.pendingPayment>=0||b.taxPrompt||session.services.open||session.law.HistoryOpen)return false;
+  if(session.ChoiceOpen||session.RideResultOpen||session.PracticeMenuOpen||session.PracticeBusy||b.preparing||b.ShowingSummary||b.restartPrompt||b.LogbookOpen||b.pendingPayment>=0||b.taxPrompt||session.services.open||session.law.HistoryOpen)return false;
   previousPause=session.paused;previousScale=Time.timeScale;if(!session.simulationMatch||previousPause||previousScale<=0){session.paused=true;Time.timeScale=0;}locationCopied=false;locationOpen=false;if(SelectedOffer>=0&&session.jobs.offers[SelectedOffer]!=selectedOffer){SelectedOffer=-1;selectedOffer=null;}IsOpen=true;highlightUntil=Time.unscaledTime+3;if(session.jobs.Active)RestoreTripRoute(false);else if(selectedOffer!=null)SelectOffer(SelectedOffer);return true;
  }
  public void Close(){if(!IsOpen)return;HideFacilityPlanner();IsOpen=false;dragging=false;closedFrame=Time.frameCount;if(session.simulationMatch&&session.simulationMatch.Finished){session.paused=true;Time.timeScale=0;}else {session.paused=previousPause;Time.timeScale=previousPause?0:previousScale>0?previousScale:1;}}
@@ -96,7 +96,26 @@ public partial class FullMapOverlay : MonoBehaviour {
   if(session.business.DailyConditionsEnabled&&session.business.DayCondition==DailyConditionKind.Construction)
    DailyConditionHUD.DrawClosure(session,map,p=>Project(p,map),6,true);
   var occupied=FacilityLabelObstacles(map);
-  if(ShowFacilities){var labelStyle=FacilityLabelStyle();var labels=LayoutFacilityLabels(map,labelStyle,occupied);int labelIndex=0;foreach(var place in Places()){var p=Project(place.position,map);if(!map.Contains(p))continue;var pin=new Rect(p.x-15,p.y-15,30,30);if(HudGlyph.Button(pin,place.glyph,place.name,true))SelectPlace(place);if(place.home)HudGlyph.DrawBadge(pin,0,CasualUI.Amber);if(!string.IsNullOrEmpty(place.capabilityLabel)){var badge=labels[labelIndex++];if(badge.width>0){CasualUI.Panel(badge);GUI.Label(new Rect(badge.x+6,badge.y+4,badge.width-12,badge.height-8),place.capabilityLabel,labelStyle);}}}}
+  if(ShowFacilities){
+   var labelStyle=FacilityLabelStyle();var labels=LayoutFacilityLabels(map,labelStyle,occupied);int labelIndex=0;
+   var places=Places();
+   var waiting=LogbookNeighborhood.WaitingPlaces(session,places);
+   foreach(var place in places){
+    var p=Project(place.position,map);if(!map.Contains(p))continue;
+    bool waitingSpot=waiting!=null&&waiting.Contains(place);
+    var pin=new Rect(p.x-15,p.y-15,30,30);
+    if(HudGlyph.Button(pin,place.glyph,waitingSpot?place.name+" · 수첩 대기 장소":place.name,true))SelectPlace(place);
+    if(place.home)HudGlyph.DrawBadge(pin,0,CasualUI.Amber);
+    if(waitingSpot)HudGlyph.DrawBadge(new Rect(p.x+8,p.y-23,18,18),10,CasualUI.Amber);
+    if(!string.IsNullOrEmpty(place.capabilityLabel)){
+     var badge=labels[labelIndex++];
+     if(badge.width>0){
+      CasualUI.Panel(badge);
+      GUI.Label(new Rect(badge.x+6,badge.y+4,badge.width-12,badge.height-8),place.capabilityLabel,labelStyle);
+     }
+    }
+   }
+  }
   if(selectedPlace!=null){var p=Project(selectedPlace.position,map);Dot(p,Color.magenta,10);}
 
   foreach(var marker in VisibleMarkers()){if(marker.named&&marker.label!="정체·정차"&&marker.label!="일시 점유")continue;

@@ -34,6 +34,10 @@ public class PassengerRequestUI : MonoBehaviour {
  }}
  public string Summary {get{var text=new List<string>();for(int i=0;i<observations.Count;i++)if(observations[i])text.Add((i+1)+". "+observations[i].request.ResponseText()+" ["+RequestEffectValue(observations[i]).ToString("+0.###;-0.###;0",System.Globalization.CultureInfo.InvariantCulture)+"]");if(schedule!=null)foreach(var slot in schedule.Capture().slots)if(!slot.presented)text.Add(slot.kind+" · 미발생 중립");if(text.Count==0)text.Add("요청 없음");if(lostItem&&finished)text.Add("하차 후 사건 "+session.law.tripId+":lost-item · 지갑 발견 → 보관·신고 절차 안내 (텍스트 사건)");return string.Join("\n",text.ToArray())+"\n요청 합계 "+TotalSatisfactionDelta.ToString("+0;-0;0");}}
  public bool LawClear {get{return LawLedger.ViolationCount(session.law.ledger.Events,boardingLawCount)==0;}}
+ public PassengerRequestSnapshot ResultFor(RequestKind kind){
+  foreach(var observation in observations)if(observation&&observation.request.Kind==kind)return observation.request.Snapshot();
+  return null;
+ }
  public void ExemptSystemRoute(string reason){foreach(var o in observations)if(o)o.SystemRouteReason=reason;}
  void Clear(){foreach(var o in observations)if(o){if(Application.isPlaying)Destroy(o);else DestroyImmediate(o);}observations.Clear();active=-1;schedule=null;stopSeconds=signalWaitSeconds=0;signalWaitUsed=false;finished=lostItem=legacy=false;smallTalkCooldown=smallTalkVisible=0;smallTalkReply="";chatHistory.Restore(null,null);empty.Restore(new PassengerRequestSnapshot{resolved=true,response="요청 없음"});}
  PassengerRequestObservation NewObservation(){var o=gameObject.AddComponent<PassengerRequestObservation>();o.enabled=false;o.session=session;o.request.Content=session.jobs.PassengerContent;return o;}
@@ -56,8 +60,12 @@ public class PassengerRequestUI : MonoBehaviour {
  public void SuspendUnansweredForSleep(){bool changed=false;foreach(var o in observations)if(o&&!o.request.Resolved&&!o.request.Accepted){o.request.DeferSafety();changed=true;}if(changed){if(schedule!=null)schedule.Responded();SyncBehaviorContext();session.business.SaveCheckpoint();}}
  public void Begin(){
   if(!session.business.useV2)return;Clear();boardingLawCount=session.law.ledger.Events.Length;initialDistance=Mathf.Max(1,session.jobs.nav.remaining);
-  var eligible=EligibleRequests();schedule=PassengerRequestSchedule.Create(session.jobs.current.candidateSeed,eligible);
-  var behavior=session.jobs.Behavior;if(behavior!=null){var bound=Representative(behavior.RepresentativeType,behavior.RepresentativeVariant);if(bound.HasValue)schedule.BindRepresentative(bound.Value,eligible,behavior.RepresentativeType==PassengerType.Errand?(behavior.RepresentativeVariant==0?0:behavior.RepresentativeVariant==1?.25f:.5f):-1);}
+  var eligible=EligibleRequests();var story=session.jobs.CurrentStory;
+  if(story!=null)schedule=PassengerRequestSchedule.CreateStory(story.request,story.secondaryRequest,eligible);
+  else{
+   schedule=PassengerRequestSchedule.Create(session.jobs.current.candidateSeed,eligible);
+   var behavior=session.jobs.Behavior;if(behavior!=null){var bound=Representative(behavior.RepresentativeType,behavior.RepresentativeVariant);if(bound.HasValue)schedule.BindRepresentative(bound.Value,eligible,behavior.RepresentativeType==PassengerType.Errand?(behavior.RepresentativeVariant==0?0:behavior.RepresentativeVariant==1?.25f:.5f):-1);}
+  }
   foreach(var slot in schedule.Capture().slots)observations.Add(null);
   SyncBehaviorContext();lostItem=ContentTuning.Flag("request.LostItem.enabled",true)&&DrunkRideState.Hash(session.jobs.current.candidateSeed+":postride-lost")%10==0;
  }

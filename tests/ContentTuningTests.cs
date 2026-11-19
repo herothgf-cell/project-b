@@ -27,6 +27,7 @@ public static class ContentTuningTests {
   var seeds=new string[300];for(int i=0;i<seeds.Length;i++)seeds[i]=Schedule("seed"+i);
   var fallbackReward=PassengerReward.CalculateCurrentFare(93,85,11300,5,true,76,3,100,85,false,83,0);
   ContentTuning.ConfigureCatalog(File.ReadAllText(args[0]));ContentTuning.UseDefaults();
+  count+=PassengerStoryTests.Run();
   Check(ContentTuning.Int("home.rent.daily",-1)==1500,"trial home rent comes from the catalog");
   Check(ContentTuning.Number("home.returnTrip.weight",-1)==3,"homebound demand has the specified default weight");
   var home = new CampaignAccount(new PrototypeSettings{oneDay=true,homeBase=true,startCash=900,parking=500});
@@ -81,6 +82,25 @@ public static class ContentTuningTests {
   Check(DailyConditions.PoolMultiplier(DailyConditionKind.Friday,PassengerType.Sleeping)>1&&DailyConditions.PoolMultiplier(DailyConditionKind.Market,PassengerType.Food)>1&&DailyConditions.PoolMultiplier(DailyConditionKind.Construction,PassengerType.Hurried)>1,"passenger weight per condition");
   RainPolicy.RuntimeRain=true;Check(RainPolicy.Enabled&&RainPolicy.BoardingDirt==2,"card override reuses configured rain penalty");
   RainPolicy.RuntimeRain=null;
+  var logbook=new CampaignLogbook();var logRide=new PassengerResult{outcome="운송 완료",passengerPresetId="general",pickupStopId="EG-GAME-01",dropStopId="EG-GAME-02",storyId="test-story",storyLine="첫 결말",rideDistance=3200};
+  logbook.RecordPreset("general");logbook.RecordPreset("general");
+  Check(logbook.PresetCount==1&&logbook.HasPreset("general"),"first passenger preset unlocks once");
+  for(int i=0;i<25;i++){
+   logbook.ObserveRide(logRide,i==0,false);
+   if(i==1)Check(logbook.NeighborhoodStars("EG-GAME-01")==0,"neighborhood stays locked until trip three");
+   if(i==2)Check(logbook.NeighborhoodStars("EG-GAME-01")==1,"three endpoint visits reveal neighborhood");
+   if(i==9)Check(logbook.NeighborhoodStars("EG-GAME-02")==2,"ten visits reveal waiting spot");
+  }
+  Check(logbook.NeighborhoodStars("EG-GAME-01")==3&&logbook.StarTotal==6&&logbook.StarredNeighborhoods==2,"twenty-five visits reach third star");
+  Check(logbook.EndingCount==1&&logbook.EndingLine("test-story",0)=="첫 결말","duplicate ending preserves the first actual dialogue");
+  logRide.storyEnding=1;logbook.ObserveRide(logRide,false,false);logRide.storyEnding=2;logbook.ObserveRide(logRide,false,true);
+  Check(logbook.EndingCount==3&&logbook.HasAchievement(8)&&logbook.HasAchievement(10),"three different outcomes and Friday ride earn records");
+  logbook.RecordStoryAssignment(1,"test-story");logbook.RecordStoryAssignment(1,"test-story");logbook.RecordStoryAssignment(2,"test-story");
+  Check(logbook.StoryAssignments(1)==0&&logbook.StoryAssignments(2)==1&&logbook.HasStoryAssignment(2,"test-story"),"assignments reset on day boundary and deduplicate");
+  logbook.ObserveSettlement(true);logbook.ObserveSettlement(false);logbook.ObserveSettlement(true);
+  Check(logbook.HasAchievement(2)&&!logbook.HasAchievement(9),"a violation breaks the clean-day streak");
+  logbook.ObserveSettlement(true);logbook.ObserveSettlement(true);logbook.Validate(5);
+  Check(logbook.HasAchievement(9)&&logbook.HasAchievement(3)&&logbook.HasAchievement(7),"clean streak, longest distance and ride count are tracked");
   Check(!cabin.ToggleMeter(false)&&cabin.Payable(6300)==3150,"missed meter discounts fare without cancelling it");
   Check(cabin.ToggleMeter(true)&&!cabin.ToggleMeter(true)&&cabin.Payable(6300)==6300,"meter stays on until arrival");
   Check(cabin.NewCallBlock(false).Length>0&&cabin.ToggleMeter(false)&&cabin.NewCallBlock(false).Length==0,"stale meter must turn off before the next call");

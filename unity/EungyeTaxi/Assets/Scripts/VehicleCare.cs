@@ -37,6 +37,23 @@ public sealed class VehicleCare {
  public VehicleCare(){Cleanliness=100;Day=1;Damage=new VehicleDamage();}
  public void BeginDay(int day){if(day!=Day){Day=day;DrunksBoarded=0;encounterDrunks=0;}}
  public bool Soil(string eventId,int amount){if(string.IsNullOrEmpty(eventId)||amount<=0||amount>100||!soiled.Add(eventId))return false;Cleanliness=Math.Max(0,Cleanliness-amount);if(Cleanliness<30)AcceptanceLocked=true;return true;}
+ public bool CanReserveStoryPassenger(string seed,PassengerType type){
+  if(string.IsNullOrEmpty(seed)||!Enum.IsDefined(typeof(PassengerType),type)||NeedsWash)return false;
+  if(encounterReserved)return encounterSelectionSeed==seed&&encounterType==type;
+  if(type==PassengerType.General)return true;
+  if(encounterRest)return false;
+  return type==PassengerType.Drunk
+   ?encounterDrunks<ContentTuning.Int("type.Drunk.dailyMax",2)&&(ContentTuning.Int("type.Drunk.spawnPercent",30)>0||ContentTuning.Flag("type.Drunk.forceEnabled",true))
+   :PoolWeight(type,null)>0;
+ }
+ public bool ReserveStoryPassenger(string seed,PassengerType type){
+  if(!CanReserveStoryPassenger(seed,type))return false;
+  encounterReserved=true;encounterType=type;encounterSelectionSeed=seed;return true;
+ }
+ public bool ReleaseStoryPassenger(string seed){
+  if(!encounterReserved||encounterSelectionSeed!=seed)return false;
+  encounterReserved=false;encounterSelectionSeed=null;return true;
+ }
  public PassengerType ReservePassenger(string seed,PassengerType[] eligible,Func<PassengerType,double> conditionWeight=null){
   if(encounterReserved)return encounterType;
   encounterSelectionSeed=seed??"";
