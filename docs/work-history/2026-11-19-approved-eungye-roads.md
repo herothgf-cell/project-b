@@ -23,4 +23,5 @@
 - 최종 `BuildHybrid` 종료 0. Windows Direct3D 실행본의 노면·시설 검사 351건을 통과했고 A~D 및 J7973 본체·남북 접근 총 7화면을 직접 검토했다. 첫 화면을 보고 B의 대각선 횡단보도를 실제 갈림길 중심으로 옮겼고, J7973 네 코너 보도 접속과 남서쪽 짧은 합류를 다시 작성했다.
 - 격리된 r46 Player에서 운행 중 저장을 새로 만들어 9건을 검사했다. r47 Player에서 이어하기 23건을 통과해 승객 상태, 요금 정산 1회, 다음 영업일 기록이 이어지는 것을 확인했다. 첫 복원 시도에 사용한 보관 파일은 이미 운행을 종료한 상태여서 활성 승객 검증에 사용할 수 없었다.
 - 지역 화면은 `artifacts/approved-*.png`, 종합 화면은 `artifacts/j7841-report/r47-final-overview.jpg`에 있다. 최종 빌드 로그는 `artifacts/j7841-report/r47-final-build.log`, Player 로그는 `r47-final-player.log`다.
+- `distribution/EungyeTaxi-build-manifest.json`의 배포 파일 143개·133,795,505바이트와 로컬 사용자 프로필 1개를 `tools/update_distribution_manifest.ps1 -VerifyOnly`로 검증했다.
 - 지도 검사, 실제 실행본의 고정 카메라 확인, 이어하기 검사는 각각 수행했다. 장시간 수동 운전과 전체 캠페인 플레이, 현장 실측은 별도다.
