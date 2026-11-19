@@ -7,7 +7,8 @@ using UnityEngine;
 // Player check for the single shift-length selector and the developer end-day button.
 // Uses a private temp campaign, never the player's save.
 public sealed class ShiftDevEndProbe : MonoBehaviour {
- public static bool Enabled {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-shiftDevEndCheck")>=0;}}
+ public static bool HomeCheck {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-homeBaseCheck")>=0;}}
+ public static bool Enabled {get{return HomeCheck||Array.IndexOf(Environment.GetCommandLineArgs(),"-shiftDevEndCheck")>=0;}}
  public static readonly string CampaignPath=Path.Combine(Path.GetTempPath(),"taxi-shift-"+Guid.NewGuid().ToString("N"),"campaign.json");
  static bool attached;DriveSession s;int checks;bool done;float start;string output;
  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]static void Attach(){if(Enabled&&!attached){attached=true;new GameObject("Shift/dev end acceptance").AddComponent<ShiftDevEndProbe>();}}
@@ -22,6 +23,40 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   yield return null;yield return null;
   FindObjectOfType<UnifiedModeBootstrap>().StartSingle();yield return Ready();
   var b=s.business;
+  if(HomeCheck){
+   Check(b.SavePath==CampaignPath&&s.services.HasHomeBase,"isolated Eungye single home");
+   var home=s.services.ParkingStop;
+   Check(home.name==HomeBasePresentation.ParkingName&&Mathf.Abs(home.x-296.3f)<.1f&&Mathf.Abs(home.z-506.5f)<.1f,"designated home bay");
+   var places=s.GetComponent<FullMapOverlay>().Places();
+   Check(places[0].home&&places[0].glyph==0&&places[0].name=="숙소"&&places.Count(p=>p.home)==1,"home is first map facility");
+   b.ContinueFromMenu();yield return Frames(3);
+   var rest=s.services.RestArea;
+   Pose(rest.pump,rest.direction);
+   Check(s.services.AtRestArea()&&s.services.CanUse(3)&&!s.services.CanUse(2),"east rest is rest only");
+   Check(!s.jobs.Interact()&&b.notice==HomeBasePresentation.EndNotice,"F interaction at rest refuses end day");
+   s.services.Toggle();
+   Check(s.services.PostTripOpen,"F7 opens life facilities after denied clock-off");
+   Check(s.services.GuideAfterTrip(2)&&s.jobs.nav.HasDestination&&s.services.destination.Contains(HomeBasePresentation.ParkingName),"F7 home guidance targets designated bay");
+   Pose(home.Kerb,home.Direction);
+   Check(s.jobs.Interact()&&b.ledger.State==BusinessState.Closing,"F interaction at home requests settlement");
+   while(!b.ShowingSummary)yield return null;
+   int rent=ContentTuning.Int("home.rent.daily",-1);
+   Check(rent>0&&b.ledger.Account.Expense(1,"home-rent")==rent&&b.ledger.Account.Entries.Count(e=>e.kind=="home-rent")==1,"rent is posted exactly once");
+   yield return Capture("home-settlement");
+   Check(b.BeginNextCampaignDay(),"next day begins");
+   yield return Frames(3);
+   Check(DayPreparationPresentation.Create(b.ledger).expenses.Any(e=>e.kind=="home-rent"&&e.amount==rent),"preparation lists settled rent");
+   yield return Capture("home-preparation");
+   b.ContinueFromMenu();yield return Frames(3);
+   Pose(rest.pump,rest.direction);
+   b.ledger.Driver.fatigue=100;
+   b.ledger.Driver.drowsiness.Advance(180,true,100);
+   Check(b.RequestEmergencyHome()&&s.services.AtEndDayHub(),"drowsiness closure places taxi in home bay");
+   while(!b.ShowingSummary)yield return null;
+   var restored=BusinessProgress.ParseCheckpoint(File.ReadAllText(b.SavePath));
+   Check(restored.account.version==4&&EconomyLedger.RestoreCampaign(restored.days,restored.account).Account.Expense(2,"home-rent")==rent,"home rent survives checkpoint roundtrip");
+   done=true;Debug.Log("HOME_BASE_PLAYER_OK checks="+checks);Application.Quit(0);yield break;
+  }
   Check(b.SavePath==CampaignPath&&b.preparing&&b.ledger.Day==1,"single uses isolated campaign and day-1 preparation");
   Check(b.CanChangeShiftLength&&b.ShiftMinutes==20,"day-1 preparation offers shift length, default 20 minutes");
   Check(!b.DevEndDayNow(),"dev end refused while preparing");
@@ -48,5 +83,13 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   var saved=BusinessProgress.ParseCheckpoint(File.ReadAllText(b.SavePath));
   Check(EconomyLedger.RestoreCampaign(saved.days,saved.account).Settings.daySeconds==1800,"saved campaign restores 30 minutes");
   done=true;Debug.Log("SHIFT_PLAYER_OK checks="+checks);Application.Quit(0);
+ }
+ void Pose(Vector3 kerb,Vector3 direction){
+  var position=kerb+Vector3.up*.65f;
+  var rotation=Quaternion.LookRotation(direction);
+  s.taxi.body.position=position;s.taxi.body.rotation=rotation;
+  s.taxi.transform.SetPositionAndRotation(position,rotation);
+  s.taxi.body.velocity=Vector3.zero;s.taxi.body.angularVelocity=Vector3.zero;
+  Physics.SyncTransforms();
  }
 }

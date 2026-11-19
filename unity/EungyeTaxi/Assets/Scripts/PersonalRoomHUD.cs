@@ -22,7 +22,7 @@ public static class PersonalRoomHUD {
   // Item layers are transparent paintings cropped from backdrop coordinates (tools/generate_room_items.py).
   if(rug){int rs=preview=="rug"?style:r.rugStyle;Layer(view,"room-rug-"+rs);}
   if(lamp){bool on=preview=="lamp"||r.lampOn;int ls=preview=="lamp"?style:r.lampStyle;if(on)Layer(view,"room-lamp-"+ls+"-glow");Layer(view,"room-lamp-"+ls+(on?"-on":"-off"));}
-  CasualUI.Header(new Rect(15,15,830,55),read?"내 공간 · 완료 기록":"영업을 마치고, 내 공간",5);
+  CasualUI.Header(new Rect(15,15,830,55),read?"숙소 · 완료 기록":HomeBasePresentation.Name,0);
   GUI.Label(new Rect(25,578,790,48),preview.Length>0?"미리보기 · "+StyleName(preview,style)+" · 미리보기를 다시 누르면 스타일 전환":"작은 방에서, 내가 고른 생활을 하나씩.",text);
   GUI.Label(new Rect(25,635,790,50),b.ArchivedRoom!=null?"이전 회차의 방 · 읽기 전용":"개인 지출 "+Money(a.PersonalSpent)+"  ·  영업 순수익 "+Money(b.ledger.TotalNet),small);
   CasualUI.Panel(new Rect(865,15,320,690));CasualUI.Header(new Rect(875,25,300,48),"나의 물건",5);

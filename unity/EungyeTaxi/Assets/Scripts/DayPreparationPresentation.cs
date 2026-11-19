@@ -24,7 +24,9 @@ public static class DayPreparationPresentation {
   // NextDay carries cash/fuel through unchanged. Their end-of-day values are not
   // stored in DayRecord, so use that boundary contract rather than initial values.
   view.stats=new[]{Stat("cash","현금",4,account.Cash,previous?(double?)0:null,"원"),Stat("fuel","연료",8,account.Fuel,previous?(double?)0:null,"%"),Stat("satiety","포만감",9,ledger.Driver.satiety,driver==null?(double?)null:ledger.Driver.satiety-driver.satiety,""),Stat("fatigue","피로",11,ledger.Driver.fatigue,driver==null?(double?)null:ledger.Driver.fatigue-driver.fatigue,"")};
-  string[] kinds={"fuel","meal","parking","wash","repair","tow","other"};string[] labels={"주유·연료 회복","식사","주차","세차","수리","견인","기타"};view.expenses=new DayPreparationExpense[kinds.Length];
+  string[] kinds={"fuel","meal","parking","wash","repair","tow","other"};string[] labels={"주유·연료 회복","식사","주차","세차","수리","견인","기타"};
+  if(account.HasHomeBase){kinds=new[]{"fuel","meal","parking","home-rent","wash","repair","tow","other"};labels=new[]{"주유·연료 회복","식사","주차",HomeBasePresentation.RentLabel,"세차","수리","견인","기타"};}
+  view.expenses=new DayPreparationExpense[kinds.Length];
   int itemized=0;view.totalExpense=previous?account.Expense(day,null):0;
   for(int i=0;i<kinds.Length;i++){
    int cost=previous?(kinds[i]=="other"?view.totalExpense-itemized:account.Expense(day,kinds[i])+(kinds[i]=="fuel"?account.Expense(day,"fuel-recovery"):0)):0;

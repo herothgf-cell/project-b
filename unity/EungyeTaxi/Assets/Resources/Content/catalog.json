@@ -2,6 +2,48 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "id": "home.returnTrip.weight",
+      "group": "생활",
+      "section": "숙소",
+      "title": "귀갓길 호출 가중치",
+      "type": "number",
+      "defaultValue": "3",
+      "min": 1,
+      "max": 10,
+      "unit": "배",
+      "description": "영업 종료 시각 이후 숙소 방향 손님의 제안 빈도만 바꿉니다.",
+      "affects": [
+        "귀갓길 호출 가중치"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.DemandRank",
+      "editable": true
+    },
+    {
+      "id": "home.rent.daily",
+      "group": "생활",
+      "section": "숙소",
+      "title": "숙소 월세",
+      "type": "integer",
+      "defaultValue": "1500",
+      "min": 0,
+      "max": 100000,
+      "unit": "원",
+      "description": "하루 정산 시 부담할 월세 일할분입니다. 잔액이 부족하면 있는 만큼만 내고 미납은 발생하지 않습니다.",
+      "affects": [
+        "숙소 월세"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "CampaignAccount.CloseDay",
+      "editable": true
+    },
+    {
       "id": "request.Quiet.enabled",
       "group": "승객 요청",
       "section": "조용한 운행",

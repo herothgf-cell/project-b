@@ -58,7 +58,14 @@ public class CampaignAccount {
  public bool Renewed {get{return HasKind("insurance");}}
  public bool TaxPaid {get{return HasKind("tax-payment");}}
  public bool GoalMet {get{return Net>=settings.target;}}
- public int PendingDayCost(int day){return (settings.oneDay||Ate(day)?0:settings.meal)+(!Has("parking:"+day)?settings.parking:0);}
+ public bool HasHomeBase {get{return settings.homeBase;}}
+ public void UseHomeBase(){settings.homeBase=true;}
+ int RentCost(int available){return HasHomeBase?Math.Min(Math.Max(0,available),ContentTuning.Int("home.rent.daily",0)):0;}
+ public int PendingDayCost(int day){
+  if(Has("settlement:"+day))return 0;
+  int operatingCost=(settings.oneDay||Ate(day)?0:settings.meal)+(!Has("parking:"+day)?settings.parking:0);
+  return operatingCost+RentCost(Cash-operatingCost);
+ }
  public void SetDaySeconds(float seconds){settings.daySeconds=seconds;}
  public CampaignAccount(PrototypeSettings s){settings=s;Cash=s.startCash;Fuel=s.initialFuel;Room=new PersonalRoomState();Vehicle=new VehicleState();}
  bool Has(string id){return entries.Exists(e=>e.id==id);}
@@ -104,18 +111,22 @@ public class CampaignAccount {
   string id="settlement:"+day;if(Has(id))return false;
   if(!settings.oneDay&&!Ate(day))Mandatory("meal-fallback:"+day,"meal",day,settings.meal);
   Mandatory("parking:"+day,"parking",day,settings.parking);
+  if(HasHomeBase)Post("home-rent:"+day,"home-rent",day,-RentCost(Cash),0);
   return Post(id,"settlement",day,0,0);
  }
  public int Expense(int day,string kind){int cost=0;foreach(var e in entries)if(e.day==day&&(kind==null||e.kind==kind)&&e.kind!="fare"&&e.kind!="personal-purchase")cost+=e.debt-e.cash;return cost;}
  public AccountEntry[] Entries {get{return entries.ConvertAll(e=>e.Copy()).ToArray();}}
- public AccountSnapshot Snapshot(){return new AccountSnapshot{settings=settings,fuel=Fuel,entries=Entries,Room=Room.Copy(),Vehicle=Vehicle.Copy()};}
+ public AccountSnapshot Snapshot(){return new AccountSnapshot{version=HasHomeBase?4:3,settings=settings,fuel=Fuel,entries=Entries,Room=Room.Copy(),Vehicle=Vehicle.Copy()};}
  static bool ExcludedCost(string kind){return kind=="insurance"||kind=="tax-due"||kind=="tax-payment";}
  public static CampaignAccount Restore(AccountSnapshot snapshot){
-  if(snapshot==null||(snapshot.version!=2&&snapshot.version!=3)||snapshot.settings==null||snapshot.entries==null||float.IsNaN(snapshot.fuel)||snapshot.fuel<0||snapshot.fuel>100)throw new ArgumentException("Invalid account checkpoint");
+  if(snapshot==null||(snapshot.version!=2&&snapshot.version!=3&&snapshot.version!=4)||snapshot.settings==null||snapshot.entries==null||float.IsNaN(snapshot.fuel)||snapshot.fuel<0||snapshot.fuel>100)throw new ArgumentException("Invalid account checkpoint");
   // Validate the original sequence first: removing old costs must not make a corrupt
   // checkpoint look solvent or hide duplicate transaction identities.
   var checkedAccount=new CampaignAccount(snapshot.settings);
-  foreach(var e in snapshot.entries)if(e==null||e.day<1||!checkedAccount.Post(e.id,e.kind,e.day,e.cash,e.debt))throw new ArgumentException("Invalid transaction");
+  foreach(var e in snapshot.entries){
+   if(e==null||e.day<1||!checkedAccount.Post(e.id,e.kind,e.day,e.cash,e.debt))throw new ArgumentException("Invalid transaction");
+   if(e.kind=="home-rent"&&(snapshot.version<4||!snapshot.settings.homeBase||e.id!="home-rent:"+e.day||e.debt!=0||e.cash>0))throw new ArgumentException("Invalid home rent transaction");
+  }
   var a=new CampaignAccount(snapshot.settings.WithCurrentOperationBalance());
   foreach(var e in snapshot.entries)if(!ExcludedCost(e.kind)&&!a.Post(e.id,e.kind,e.day,e.cash,e.debt))throw new ArgumentException("Invalid migrated transaction");
   // No refund transaction is added. Normalized snapshots no longer contain the

@@ -99,6 +99,7 @@ public class BusinessProgress : MonoBehaviour {
   if(ContentTuningRuntime.TestMode)SavePath=ContentTuningRuntime.CampaignPath(Path.GetFileName(SavePath));
   if(roomCheck)SavePath=Path.GetFullPath(garageCheck?"artifacts/vehicle-garage-player/campaign.json":"artifacts/personal-room-player/campaign.json");
   if(!testMode&&!UnifiedModeProbe.Enabled&&!HudRevisionProbe.Enabled&&!ShiftDevEndProbe.Enabled&&!ContentTuningRuntime.TestMode)try{SavePath=CampaignSaveLocation.Resolve(Path.GetDirectoryName(Application.persistentDataPath),Path.GetFileName(SavePath));}catch(Exception e){Debug.LogWarning("이전 캠페인 저장 복사 실패: "+e.Message);}
+  settings.homeBase=settings.oneDay&&owner.world.map.mapId=="eungye"&&!PracticeSession.Enabled&&!RoadMapRuntime.Trial;
   ledger=useV2?new EconomyLedger(settings):new EconomyLedger(new EconomySettings());
   if((Array.IndexOf(args,"-passengerBehaviorReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilitySummaryReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0)))||protoTest&&Array.IndexOf(args,"-protoExpansionReloadTest")>=0||!testMode||Array.IndexOf(args,"-personalRoomReloadCheck")>=0||Array.IndexOf(args,"-vehicleGarageReloadCheck")>=0||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0)||startupReloadTest||activitiesReloadTest||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-oneDayReloadTest")>=0||Array.IndexOf(args,"-threeDayReloadTest")>=0||Array.IndexOf(args,"-ambientPedestrianReloadTest")>=0){
    foreach(var path in new[]{SavePath,SavePath+".bak"}){
@@ -108,6 +109,8 @@ public class BusinessProgress : MonoBehaviour {
    }
   }
   if(loaded==null&&(File.Exists(SavePath)||File.Exists(SavePath+".bak"))&&((Array.IndexOf(args,"-passengerBehaviorReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilitySummaryReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0)))||protoTest&&Array.IndexOf(args,"-protoExpansionReloadTest")>=0||startupReloadTest||activitiesReloadTest||!testMode||Array.IndexOf(args,"-personalRoomReloadCheck")>=0||Array.IndexOf(args,"-vehicleGarageReloadCheck")>=0||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0))){resumeBlocked=true;SaveFailed=true;saveStatus="저장 복원 실패 · 기존 파일 보존 중 · 지도/저장 확인 또는 새 캠페인 선택";}
+  // Legacy accounts acquire the home rule at the next settlement. Posted days keep their original expenses.
+  if(settings.homeBase&&ledger.Account!=null)ledger.Account.UseHomeBase();
   if(loaded!=null){if(loaded.passengers!=null)passengers.AddRange(loaded.passengers);if(loaded.practices!=null)practices.AddRange(loaded.practices);if(loaded.completedDays!=null)completedDays.AddRange(loaded.completedDays);}
   if(loaded!=null&&!string.IsNullOrEmpty(loaded.comparisonVersion)){mixedFollowing=loaded.comparisonVersion.EndsWith("mixed");initialFollowing=loaded.comparisonVersion.EndsWith("on");mixedFollowing|=initialFollowing!=owner.traffic.mitOptions.Enabled;}
   CaptureDayStart();
@@ -329,7 +332,7 @@ public class BusinessProgress : MonoBehaviour {
   if(session.paused||Time.timeScale==0)return EndDayNotice("일시정지를 해제한 뒤 퇴근을 눌러 주세요.");
   if(session.jobs.trip.State==TripState.OnTrip)return EndDayNotice("승객을 목적지에 내려드린 뒤 퇴근할 수 있습니다.");
   if(session.taxi.body.velocity.magnitude>=.56f)return EndDayNotice("안전한 곳에 정차한 뒤 퇴근을 다시 눌러 주세요.");
-  if(ledger.OneDay&&!session.services.AtEndDayHub())return EndDayNotice("주차장 또는 휴식 거점에 정차해야 퇴근할 수 있습니다. 생활거점(F7)에서 길 안내를 받으세요.");
+  if(ledger.OneDay&&!session.services.AtEndDayHub())return EndDayNotice(session.services.HasHomeBase?HomeBasePresentation.EndNotice:"주차장 또는 휴식 거점에 정차해야 퇴근할 수 있습니다. 생활거점(F7)에서 길 안내를 받으세요.");
   if(ledger.OneDay&&!ledger.UseSleep(session.law.ids.Next("end-rest")))return EndDayNotice("휴식을 시작할 수 없습니다. 영업 상태와 거점 위치를 확인해 주세요.");
   ledger.RequestClose("생활 거점 휴식·영업 종료");notice="오늘 영업을 마칩니다. 정산을 준비하고 있습니다.";noticeUntil=Time.unscaledTime+8;return true;
  }

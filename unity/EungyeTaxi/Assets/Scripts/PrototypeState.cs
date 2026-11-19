@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 // Gameplay proposal values, not statutory fines or real-world prices.
 [Serializable] public class PrototypeSettings {
- public bool oneDay;
+ public bool oneDay,homeBase;
  public const string OneDayVersion="eungye-day20-v3-access-rest";
  public const string ThreeDayVersion="eungye-3day20-v1";
  public const string ThreeDaySaveFile="campaign-3day20-v1.json";

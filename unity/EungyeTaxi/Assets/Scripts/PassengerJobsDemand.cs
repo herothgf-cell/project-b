@@ -8,7 +8,35 @@ public partial class PassengerJobs {
   if(nativeDemandRegions==null&&session.world&&session.world.map!=null)nativeDemandRegions=SimulationDemandClock.NativeRegions(session.world.map);
   return nativeDemandRegions!=null&&index>=0&&index<nativeDemandRegions.Length?nativeDemandRegions[index]:"neutral";
  }
- double DemandRank(JobOffer offer,int phase){return PassengerDemandPolicy.OfferRegionPriority(offer.candidateSeed,DemandRegion(offer.pickup),DemandRegion(offer.drop),offer.pickupStopId+">"+offer.dropStopId,phase);}
+ MapStop homeReturnGoal;
+ float homeReturnDistance;
+ double homeReturnWeight;
+ System.Collections.Generic.Dictionary<int,float> homeReturnDistances;
+ void BeginHomeReturnRanking(){
+  homeReturnDistances=null;
+  if(generationDemandPhase!=3||!session.services||!session.services.HasHomeBase||nav.hd==null)return;
+  homeReturnWeight=ContentTuning.Number("home.returnTrip.weight",1);
+  if(homeReturnWeight<=1)return;
+  homeReturnGoal=session.services.StopFor(2);
+  var taxi=session.taxi.transform;
+  homeReturnDistance=DirectedDistance(nav.hd,taxi.position,taxi.forward,homeReturnGoal);
+  if(Finite(homeReturnDistance)&&homeReturnDistance>0)homeReturnDistances=new System.Collections.Generic.Dictionary<int,float>();
+ }
+ float DistanceHomeFrom(int index){
+  float distance;
+  if(homeReturnDistances.TryGetValue(index,out distance))return distance;
+  var stop=stops[index];
+  var route=nav.hd.Route(stop.laneEdge,stop.laneAt,homeReturnGoal.laneEdge,homeReturnGoal.laneAt);
+  distance=stop.laneEdge==homeReturnGoal.laneEdge&&Mathf.Abs(stop.laneAt-homeReturnGoal.laneAt)<.25f?0:route==null?float.PositiveInfinity:route.path.length;
+  homeReturnDistances.Add(index,distance);
+  return distance;
+ }
+ double DemandRank(JobOffer offer,int phase){
+  double rank=PassengerDemandPolicy.OfferRegionPriority(offer.candidateSeed,DemandRegion(offer.pickup),DemandRegion(offer.drop),offer.pickupStopId+">"+offer.dropStopId,phase);
+  if(homeReturnDistances==null)return rank;
+  float dropDistance=DistanceHomeFrom(offer.drop);
+  return dropDistance<homeReturnDistance&&dropDistance<DistanceHomeFrom(offer.pickup)?rank/homeReturnWeight:rank;
+ }
  // Rank a bounded set of new endpoint pairs before native Make performs the route
  // query. Existing accepted/shared offer objects are never re-ranked or rewritten.
  void SharedDemandEndpoints(int serial,out int pickup,out int drop){

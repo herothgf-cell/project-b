@@ -2,8 +2,16 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "7a3206e595bcbc28296aa851d6661c6ed0a938c27ad991c15d6d2157f436d2ce",
+  "contentHash": "5aeb0747d5f85068df7a250c166814df2909e6c01971c10d984f44e5822d78fd",
   "values": [
+    {
+      "id": "home.returnTrip.weight",
+      "value": "3"
+    },
+    {
+      "id": "home.rent.daily",
+      "value": "1500"
+    },
     {
       "id": "request.Quiet.enabled",
       "value": "true"

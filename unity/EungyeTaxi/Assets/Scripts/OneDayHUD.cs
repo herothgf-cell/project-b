@@ -83,15 +83,16 @@ public static class OneDayHUD {
     string rows="";foreach(var day in e.Snapshot().records)rows+=day.day+"일차 · 수입 "+Money(day.income)+" · 순수익 "+Money(day.net)+" · 운송 "+day.rides+"건\n";
     string content=rows+"\n"+OperationMetrics.Describe(r.metrics)+"\n세차 "+Money(r.wash)+" · 수리 "+Money(r.repair)+" · 견인 "+Money(r.tow)+"\n식사 "+d.meals+"회 · 수면 "+d.sleeps+"회\n누적 수입 "+Money(e.TotalIncome)+" · 지출 "+Money(e.TotalExpenses)+" · 순수익 "+Money(e.TotalNet)+"\n"+b.saveStatus;
     float ch=Mathf.Max(120,small.CalcHeight(new GUIContent(content),625)+12);
-    detailScroll=GUI.BeginScrollView(new Rect(x+25,y+398,670,80),detailScroll,new Rect(0,0,640,ch));GUI.Label(new Rect(0,0,625,ch),content,small);GUI.EndScrollView();
+    detailScroll=GUI.BeginScrollView(new Rect(x+25,y+398,670,e.Account.HasHomeBase?65:80),detailScroll,new Rect(0,0,640,ch));GUI.Label(new Rect(0,0,625,ch),content,small);GUI.EndScrollView();
    }else if(!complete&&multi){
     GUI.Label(new Rect(x+25,y+407,670,65),"누적 순수익  "+Money(e.TotalNet)+"\n다음 날 · 피로 "+System.Math.Max(0,d.fatigue-b.settings.nightlyFatigueRecovery).ToString("0")+" · 포만감 "+d.satiety.ToString("0"),small);
    }else {
     CompletedDay previous=null;for(int i=b.completedDays.Count-1;i>=0;i--){var candidate=b.completedDays[i];if(candidate.id!=s.law.ids.campaign&&candidate.days==e.Settings.days&&candidate.configuration==b.ComparisonVersion&&!candidate.configuration.EndsWith("mixed")){previous=candidate;break;}}
     GUI.Label(new Rect(x+25,y+407,670,65),previous==null?"이전 완료 기록 없음":"이전 순수익 "+Money(previous.totalNet)+" · 차이 "+Money(e.TotalNet-previous.totalNet),small);
    }
-   if(multi&&GUI.Button(new Rect(x+25,y+487,325,40),"내 공간 · 방/차고",button)){b.ArchivedRoom=null;b.GarageTab=false;b.RoomOpen=true;}
-   CompletedDay roomRecord=null;for(int ri=b.completedDays.Count-1;ri>=0;ri--)if(b.completedDays[ri].id!=s.law.ids.campaign&&b.completedDays[ri].room!=null){roomRecord=b.completedDays[ri];break;}if(multi&&roomRecord!=null&&GUI.Button(new Rect(x+370,y+487,325,40),"이전 완료 방 보기",button)){b.ArchivedRoom=roomRecord.room;b.RoomOpen=true;}
+   if(e.Account.HasHomeBase)GUI.Label(new Rect(x+25,y+466,670,24),HomeBasePresentation.RentLabel+"  −"+Money(e.Account.Expense(e.Day,"home-rent")),small);
+   if(multi&&GUI.Button(new Rect(x+25,y+492,325,40),e.Account.HasHomeBase?HomeBasePresentation.Name:"내 공간 · 방/차고",button)){b.ArchivedRoom=null;b.GarageTab=false;b.RoomOpen=true;}
+   CompletedDay roomRecord=null;for(int ri=b.completedDays.Count-1;ri>=0;ri--)if(b.completedDays[ri].id!=s.law.ids.campaign&&b.completedDays[ri].room!=null){roomRecord=b.completedDays[ri];break;}if(multi&&roomRecord!=null&&GUI.Button(new Rect(x+370,y+492,325,40),"이전 완료 방 보기",button)){b.ArchivedRoom=roomRecord.room;b.RoomOpen=true;}
    GUI.enabled=!b.SaveFailed;
    if(!complete&&multi){if(GUI.Button(new Rect(x+370,y+590,325,55),(e.Day+1)+"일차 준비",CasualUI.Action(18)))b.BeginNextCampaignDay();}
    else if(multi&&!e.Account.Room.finalized){if(GUI.Button(new Rect(x+370,y+590,325,55),"이번 회차 마무리",CasualUI.Action(18)))b.ChangeRoom("finish");}
