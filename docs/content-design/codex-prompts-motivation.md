@@ -12,7 +12,7 @@
 | P6 | [30](30-passenger-stories-and-logbook.md) | 손님 이야기 10편·기사 수첩 | P4 |
 | P7 | [31](31-day-night-and-radio.md) | 낮밤 조명·라디오 자막 | P5 |
 
-시안 이미지: `docs/content-design/images/motivation-*.png` (재생성 `python -I tools/render_motivation_mockups.py`). 시안은 배치용 와이어프레임이며 최종 아트가 아니다.
+시안 이미지: `docs/content-design/images/motivation-*.png` (재생성 `python -I tools/render_motivation_mockups.py`). **실제 게임 스크린샷 위에 CasualUI 색·Noto Sans KR로 새 요소를 얹은 시안**이며, 주황 점선이 새 요소다. 구현 시 기존 `CasualUI`(Panel·Header·Bar·Action 버튼)와 `KoreanText` 폰트를 그대로 써서 이 톤을 맞춘다. 시안 픽셀 값은 배치 참고용.
 
 ---
 
@@ -25,7 +25,7 @@
 - 지도 필수 입력(config/maps/project/eungye.project.json 등)은 기획서가 요구하지 않으면 수정하지 않는다. 수정했다면 local-input-manifest 해시를 실제 자료로 갱신하고 pwsh -File tools/check_workspace.ps1 -Strict로 검증한다.
 - 기존 저장(r14~)의 이관·이어하기가 깨지지 않게 저장 버전을 올리고 이관 코드를 넣는다. 사용자 실제 저장은 건드리지 않고 테스트 저장으로 검증한다.
 - 수치(가격·배수·확률)는 하드코딩하지 말고 ContentTuning 키로 두고, 콘텐츠 관리 툴에서 편집 가능하게 한다.
-- UI는 기존 CasualUI/OneDayHUD 스타일(1200x720 기준 IMGUI)을 따른다. 한국어 문구는 기획서 표의 문구를 그대로 쓴다.
+- UI는 기존 CasualUI/OneDayHUD 스타일(1200x720 기준 IMGUI)을 따른다: 흰 Panel + 파란/초록 Header, 주 버튼 Action(초록), 보조 버튼 Soft, 진척은 CasualUI.Bar. 새 색·폰트를 만들지 않는다. 시안 PNG의 배치를 기준으로 하고, 한국어 문구는 기획서 표의 문구를 그대로 쓴다.
 - 검증: 관련 tools/test_*.ps1와 *_player.ps1, 저장 이관 검사, Unity 배치 빌드 PrototypeBuild.BuildHybrid 종료 0. 위치 제어 검사·자동 주행·수동 플레이를 구분해 기록하고, 하지 못한 검증은 미검증으로 적는다.
 - 빌드가 바뀌면 builds/EungyeTaxi/ 실행 폴더와 distribution/EungyeTaxi-build-manifest.json(크기·SHA256)을 다시 생성/검증한다.
 - docs/work-history/YYYY-MM-DD-주제.md에 요구·구현·변경 파일·검증 명령과 결과·남은 항목·재현 방법을 남기고 LATEST.md 맨 위에 한 줄 추가. 기획서 상태 줄(“미구현”)과 docs/prototype-development-checklist.md를 갱신한다.
@@ -57,7 +57,7 @@
 ## P2 계속 영업 모드
 
 ```text
-기획 docs/content-design/28-continuous-career-mode.md 를 구현해줘. 시안: docs/content-design/images/motivation-goal-card.png. P1(숙소 거점)이 반영된 main 기준.
+기획 docs/content-design/28-continuous-career-mode.md 를 구현해줘. 시안: images/motivation-goal-card.png(준비), motivation-settlement-goal.png(정산), motivation-wall-memo.png(목표 선택은 P4). P1(숙소 거점)이 반영된 main 기준.
 
 범위
 1. 3일 완료 정산에서 "계속하기"를 추가해 같은 저장으로 4일차~무기한 진행. 현금·차량(색/장식)·방 소품 유지. 기존 "새로 시작"은 "새 경력"으로 바꾸고 기존 저장을 덮지 않는 별도 슬롯(CampaignSaveLocation)으로.
@@ -99,7 +99,7 @@
 ## P4 아버지 설정·인트로·수첩·벽 메모
 
 ```text
-기획 docs/content-design/33-backstory-presentation.md 를 구현해줘. 시안: images/motivation-intro-storyboard.png, motivation-father-notebook.png, motivation-goal-card.png(오른쪽 벽 메모). P1~P3 반영된 main 기준.
+기획 docs/content-design/33-backstory-presentation.md 를 구현해줘. 시안: docs/content-design/images/motivation-intro-storyboard.png, motivation-father-notebook.png, motivation-wall-memo.png, motivation-father-car-keep.png. P1~P3 반영된 main 기준.
 
 범위
 1. 설정 문구: 시작 차 이름 "중고 택시" → "아버지의 택시"(VehicleCatalog Starter), 차량 요약 문구도 갱신. 대시보드에 작은 사진 액자 오브젝트(CockpitPresentation).
@@ -108,6 +108,7 @@
 4. 왜 — 승객 질문 3종×선택 3개: 수다 유형 승객이 하루 최대 1회. 효과 공통 S+1, 답 저장(콘텐츠 프로필 backstory.*).
 5. 무엇을 위해 — 1일차 정산 후 숙소에서 벽 메모 3장 중 선택(차/집/일단 버티자), 언제든 교체. P2 임시 목표 버튼을 이것으로 대체. "일단 버티자"는 3일차에 다시 묻기.
 6. 독백 1줄: 첫 정산·첫 구매·목표 50%·목표 달성(첫날 컷3과 비교 화면).
+7. 아버지 차 보관(사용자 결정): 차고에서 새 차로 바꿀 때 시작 차 보상 판매를 적용하지 않고(새 차 전액) 아버지 차를 보유 목록에 남긴다. 보관 차는 숙소 주차장에 정차 오브젝트로 보이고, 차고에서 다시 고르면 다음 날부터 그 차로 영업. 보관 비용 없음. 교체 확인 창은 motivation-father-car-keep.png 배치. 저장에 보유 차 목록 추가 + 이관.
 
 검증
 - 새 경력: 인트로→빈차등→미터기→첫 운송→수첩 알림→정산(월세)→벽 메모 흐름 위치 제어 검사.

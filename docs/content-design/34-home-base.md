@@ -57,7 +57,7 @@ flowchart LR
 | 벽 | 목표 메모 1장, 산 물건 사진 | [28](28-continuous-career-mode.md), [33](33-backstory-presentation.md) |
 | 책상 | 기사 수첩(아버지 탭 포함) | [30](30-passenger-stories-and-logbook.md) |
 | 창밖 | 아침/밤, 하루 조건(비 등) 반영 | [29](29-daily-conditions.md), [31](31-day-night-and-radio.md) |
-| 차고 탭 | 아버지 택시 관리·꾸미기·교체 | 기존 `VehicleGarageHUD` |
+| 차고 탭 | 아버지 택시 관리·꾸미기·교체. 교체해도 아버지 차는 숙소 주차장에 보관([33](33-backstory-presentation.md)) | 기존 `VehicleGarageHUD` |
 
 ### 숙소 단계 (같은 건물)
 

@@ -2,6 +2,8 @@
 
 2026-11-19 은계 A~D 차로 전환과 J7973 네 모서리 우회전 연결·섬·횡단보도를 은계 r47 통합 실행본에 반영했다. BuildHybrid 종료 0, 승하차 39곳/1,482경로, 지도·저장 이관 모델, 실제 Player 351건 및 고정 화면 7장 확인. 후속 실운행 검증은 별도다. [변경·검증·재현](2026-11-19-approved-eungye-roads.md).
 
+2026-11-19 시안 11장을 실제 게임 스크린샷 + CasualUI 색·Noto Sans KR 톤으로 다시 만들고(새 요소 주황 점선) 기획 28·33·34와 [Codex 프롬프트](../content-design/codex-prompts-motivation.md)에 반영했다. 아버지 차는 교체 시 판매 없이 숙소 주차장 보관(사용자 결정). [기록](2026-11-19-mockups-game-tone.md). 문서·시안만.
+
 2026-11-19 아버지가 남긴 개인택시로 생계를 잇는 설정과 숙소 거점 1곳(수인로 뒤 원룸, 기존 시작·마감 주차장 자리)을 [기획33](../content-design/33-backstory-presentation.md)·[34](../content-design/34-home-base.md)에 정리했다. 시안 8장을 28~34에 첨부, [Codex 구현 프롬프트 P1~P7](../content-design/codex-prompts-motivation.md) 작성. [기록](2026-11-19-father-taxi-home-base.md). 문서·시안만, 게임 변경 없음. 다음: Codex P1 숙소 거점.
 
 2026-11-19 사용자 결정: 개인택시 면허 경로 제외(처음부터 개인택시), 차내 조작(미터기·빈차등·에어컨) 추가. 배경 이야기를 3컷 인트로·이전 기사의 수첩·승객 질문·첫날 밤 목표 메모로 보여주는 [기획33](../content-design/33-backstory-presentation.md) 작성. [기록](2026-11-19-backstory-and-decisions.md). 문서만, 게임 변경 없음.
