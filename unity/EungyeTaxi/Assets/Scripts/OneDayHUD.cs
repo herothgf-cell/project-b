@@ -122,7 +122,7 @@ public static class OneDayHUD {
   CasualUI.Header(new Rect(92,128,1016,50),"오늘부터, 다시 내 핸들로.",6,CasualUI.Green);
   GUI.Label(new Rect(112,195,470,32),"첫날 운전석",small);
   GUI.Label(new Rect(614,195,470,32),"오늘 운전석",small);
-  IntroCutscene.DrawFirstDrive(new Rect(112,230,474,268));
+  IntroCutscene.DrawFirstDrive(new Rect(112,230,474,268),b.FirstDriveFrame);
   IntroCutscene.DrawCurrentDrive(new Rect(614,230,474,268),b.GoalComparisonFrame);
   if(GUI.Button(new Rect(402,532,396,44),"계속하기",CasualUI.Action(18)))b.GoalComparison=false;
   GUI.matrix=saved;GUI.depth=depth;
@@ -177,7 +177,7 @@ public static class OneDayHUD {
    if(!b.SaveFailed&&b.StoryMonologue.Length>0)GUI.Label(new Rect(x+25,y+537+extra,325,42),b.StoryMonologue,small);
    GUI.enabled=!b.SaveFailed;
    if(b.CanContinueCareer){
-    if(GUI.Button(new Rect(x+370,y+590+extra,325,55),"계속하기",CasualUI.Action(18)))b.BeginContinuousCareer();
+    if(GUI.Button(new Rect(x+370,y+590+extra,325,55),(e.Day+1)+"일차 영업 준비",CasualUI.Action(18)))b.BeginContinuousCareer();
     if(GUI.Button(new Rect(x+370,y+540+extra,325,40),"새 경력",button))b.RequestRestart();
    }
    else if(!complete&&multi){if(GUI.Button(new Rect(x+370,y+590+extra,325,55),(e.Day+1)+"일차 준비",CasualUI.Action(18)))b.BeginNextCampaignDay();}

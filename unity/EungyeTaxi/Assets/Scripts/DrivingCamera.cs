@@ -45,6 +45,53 @@ public class DrivingCamera : MonoBehaviour {
             Destroy(capture.gameObject);
         }
     }
+    // Opening cutscene: renders a live shot of the parked taxi into the supplied texture.
+    // cockpitView=false: slow dolly toward the taxi from the front-left (home garage).
+    // cockpitView=true: driver's seat, starting on the father's photo and settling on the windshield.
+    Camera introCapture;
+    public bool RenderIntroShot(RenderTexture frame,bool cockpitView,float t){
+        if(!view||!target||!cockpit||!frame)return false;
+        if(!introCapture){
+            introCapture=new GameObject("Intro shot camera").AddComponent<Camera>();
+            introCapture.CopyFrom(view);
+            introCapture.enabled=false;
+        }
+        bool cockpitWasActive=cockpit.activeSelf;
+        try{
+            introCapture.targetTexture=frame;
+            introCapture.rect=new Rect(0,0,1,1);
+            introCapture.aspect=(float)frame.width/frame.height;
+            float k=Mathf.SmoothStep(0,1,t);
+            float yaw=target.eulerAngles.y;var flat=Quaternion.Euler(0,yaw,0);
+            if(cockpitView){
+                introCapture.cullingMask=~(1<<8);
+                introCapture.fieldOfView=DriverFieldOfView;
+                var eye=target.position+flat*DriverEye;
+                var ahead=Quaternion.Euler(DriverPitch,yaw,0);
+                var photo=cockpit.transform.Find("아버지 사진 액자");
+                var start=photo?Quaternion.LookRotation(photo.position-eye,Vector3.up):Quaternion.Euler(14,yaw+20,0);
+                introCapture.transform.SetPositionAndRotation(eye,Quaternion.Slerp(start,ahead,Mathf.SmoothStep(0,1,Mathf.Clamp01((t-.25f)/.6f))));
+                cockpit.SetActive(true);
+            }else{
+                introCapture.cullingMask=~0;
+                introCapture.fieldOfView=48;
+                var from=target.position+flat*new Vector3(-3.4f,1.6f,7.8f);
+                var to=target.position+flat*new Vector3(-2.3f,1.25f,5.2f);
+                var pos=Vector3.Lerp(from,to,k);
+                introCapture.transform.SetPositionAndRotation(pos,Quaternion.LookRotation(target.position+Vector3.up*.8f-pos,Vector3.up));
+                cockpit.SetActive(false);
+            }
+            introCapture.Render();
+            return true;
+        }catch(System.Exception error){
+            Debug.LogWarning("인트로 장면을 촬영할 수 없습니다. "+error.Message);
+            return false;
+        }finally{
+            cockpit.SetActive(cockpitWasActive);
+            introCapture.targetTexture=null;
+        }
+    }
+    void OnDestroy(){if(introCapture)Destroy(introCapture.gameObject);}
     void Update() {
         var business=taxi?taxi.business:null;
         if(business&&business.TryGetComponent<IntroCutscene>(out var intro)&&intro.BlocksInput)return;

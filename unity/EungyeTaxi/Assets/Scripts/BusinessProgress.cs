@@ -161,7 +161,32 @@ public class BusinessProgress : MonoBehaviour {
  }
  void BeginFirstIntro(){
   if(!Intro)Intro=session.gameObject.AddComponent<IntroCutscene>();
+  // Park the father's taxi in the home bay first so the live garage and cockpit cuts show it.
+  var stop=session.services.ParkingStop;
+  session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();
   Intro.Play(false,FinishFirstIntro);
+ }
+ // First-day cockpit photo for the goal comparison, stored beside the career save.
+ Texture2D firstDriveFrame;
+ string FirstDrivePath {get{return string.IsNullOrEmpty(SavePath)?null:Path.Combine(Path.GetDirectoryName(SavePath),Path.GetFileNameWithoutExtension(SavePath)+"-first-drive.png");}}
+ public Texture FirstDriveFrame {get{
+  if(firstDriveFrame)return firstDriveFrame;
+  var path=FirstDrivePath;
+  try{if(path!=null&&File.Exists(path)){firstDriveFrame=new Texture2D(2,2);if(!firstDriveFrame.LoadImage(File.ReadAllBytes(path))){Destroy(firstDriveFrame);firstDriveFrame=null;}}}catch(Exception e){Debug.LogWarning("첫날 운전석 사진을 읽지 못했습니다. "+e.Message);}
+  return firstDriveFrame;
+ }}
+ void SaveFirstDriveFrame(){
+  var path=FirstDrivePath;if(path==null)return;
+  var frame=session.drivingCamera.CaptureCockpitFrame();if(!frame)return;
+  var previous=RenderTexture.active;
+  try{
+   RenderTexture.active=frame;
+   var image=new Texture2D(frame.width,frame.height,TextureFormat.RGB24,false);
+   image.ReadPixels(new Rect(0,0,frame.width,frame.height),0,0);image.Apply();
+   File.WriteAllBytes(path,image.EncodeToPNG());
+   if(firstDriveFrame)Destroy(firstDriveFrame);firstDriveFrame=image;
+  }catch(Exception e){Debug.LogWarning("첫날 운전석 사진을 저장하지 못했습니다. "+e.Message);}
+  finally{RenderTexture.active=previous;frame.Release();Destroy(frame);}
  }
  void FinishFirstIntro(){
   Story.introSeen=true;Cabin.Vacancy=2;
@@ -169,6 +194,7 @@ public class BusinessProgress : MonoBehaviour {
   var stop=session.services.ParkingStop;
   session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();
   session.law.ResetObservation();session.jobs.ResetOffers();session.paused=false;preparing=false;Time.timeScale=1;
+  SaveFirstDriveFrame();
   ObserveDailyConditionDeparture();
   EndDayNotice("K를 눌러 빈차등을 켜세요. 출구 화살표를 따라 도로로 나가세요.");
   SaveCheckpoint();
@@ -696,7 +722,7 @@ public class BusinessProgress : MonoBehaviour {
   }catch(Exception ex){SaveFailed=true;saveStatus="원본 별도 보관 실패 · 기존 저장 유지 · 다시 시도해 주세요";Debug.LogWarning("Campaign recovery archive failed: "+ex.Message);return false;}
  }
  void PrepareDay(){InitializeDailyCondition();Cabin=new CabinControlsState();session.GetComponent<ExitQueueSituation>().Stop();session.GetComponent<RightTurnSituation>().Stop();taxPrompt=false;if(session.law)session.law.ResetObservation();session.jobs.ClearForDay();if(session.roadConditions)session.roadConditions.ResetForDay();session.taxi.ResetTaxi();session.manners.BeginRide();session.paused=false;notice="";preparing=useV2&&(!testMode||storyTest||ShiftDevEndProbe.DailyCheck||ShiftDevEndProbe.DailyReload||PassengerStoryProbe.Enabled);Time.timeScale=preparing?0:1;if(preparing)StartCoroutine(PlaceAtParking());}
- public void Depart(){if(resumeBlocked){notice=saveStatus;RequestRestart();return;}if(session.FullMapOpen||restartPrompt||pendingPayment>=0||session.GetComponent<PracticeSession>().Busy)return;if(StoryEnabled&&preparing&&!Story.introSeen){if(!IntroInputBlocked)BeginFirstIntro();return;}preparing=false;Time.timeScale=1;ObserveDailyConditionDeparture();}
+ public void Depart(){if(resumeBlocked){notice=saveStatus;RequestRestart();return;}if(session.FullMapOpen||restartPrompt||pendingPayment>=0||session.GetComponent<PracticeSession>().Busy)return;if(StoryEnabled&&preparing&&!Story.introSeen){if(!IntroInputBlocked)BeginFirstIntro();return;}preparing=false;Time.timeScale=1;ObserveDailyConditionDeparture();if(CabinEnabled&&ledger.Day==4&&DrivingSettings.Current.cabinAssist)EndDayNotice("오늘부터 미터기는 직접 켭니다 · 손님이 타면 J, 내리면 다시 J");}
  public void ConfirmTaxClose(bool pay){taxPrompt=false;}
  void RecoverFuel(){
   string id=session.law.ids.Next("fuel-recovery");if(!ledger.Account.RecoverFuel(id,ledger.Day))return;

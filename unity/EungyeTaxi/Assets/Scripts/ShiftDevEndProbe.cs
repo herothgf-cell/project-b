@@ -244,16 +244,18 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    done=true;Debug.Log("FATHER_STORY_PLAYER_OK checks="+checks);Application.Quit(0);yield break;
   }
   Check(b.StoryEnabled&&b.preparing&&!b.Story.introSeen&&b.SavePath==FatherStorySavePath,"fresh isolated Eungye career awaits intro");
-  Check(IntroCutscene.DurationSeconds==26,"intro has 26 seconds of authored cuts");
+  Check(Mathf.Approximately(IntroCutscene.DurationSeconds,25)&&IntroCutscene.CutCount==4,"intro has four cuts in 25 seconds");
   DrivingSettings.Current.cabinAssist=false;
   s.taxi.body.detectCollisions=false;s.taxi.body.useGravity=false;s.taxi.enabled=false;
   foreach(var car in s.traffic.cars)if(car)car.gameObject.SetActive(false);
   float startIntro=Time.realtimeSinceStartup;
   b.ContinueFromMenu();Check(b.Intro&&b.Intro.IsPlaying&&!b.Intro.IsReplay&&b.Intro.CurrentCut==0,"first career opens first intro cut");
   int cuts=0;
-  while(b.Intro.IsPlaying){cuts|=1<<b.Intro.CurrentCut;yield return null;}
-  Check(cuts==7&&Time.realtimeSinceStartup-startIntro<=30,"uncut intro plays all panels within 30 seconds");
+  int shotMask=0;
+  while(b.Intro.IsPlaying){int c=b.Intro.CurrentCut;cuts|=1<<c;if((shotMask&(1<<c))==0&&b.Intro.CutElapsed>4.4f){shotMask|=1<<c;yield return Capture("intro-cut-"+(c+1));continue;}yield return null;}
+  Check(cuts==15&&Time.realtimeSinceStartup-startIntro<=30,"uncut intro plays all four cuts within 30 seconds");
   Check(!b.preparing&&b.Story.introSeen&&b.Cabin.OffDuty&&s.drivingCamera.FirstPerson&&s.services.AtEndDayHub(),"intro ends in home cockpit with vacant lamp off");
+  Check(b.FirstDriveFrame!=null,"first-day cockpit photo saved for the goal comparison");
   yield return null;
   Check(b.CabinInput(1)&&b.Story.firstVacancy&&!b.Cabin.OffDuty,"K enables available vacancy");
   var jobs=s.jobs;var pick=jobs.stops[0];var drop=jobs.stops[3];
