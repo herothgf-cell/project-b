@@ -1,8 +1,6 @@
-using System.Linq;
 using UnityEngine;
 
-// A second, visual parking space on the property side of the existing operating bay.
-// The service target, traffic lanes and departure position all stay at their existing coordinates.
+// The inactive vehicle occupies its own marked bay inside the garage.
 public sealed class HomeGarageParking : MonoBehaviour {
  public GameObject ParkedTaxi {get;private set;}
  Material pavement,paint;
@@ -16,7 +14,7 @@ public sealed class HomeGarageParking : MonoBehaviour {
   var a=b.ledger?.Account;
   var display=session.GetComponent<HomeGarageParking>();
   bool available=a!=null&&a.FatherCarGarage&&!b.SimulationSession&&!RoadMapRuntime.Trial&&!PracticeSession.Enabled
-   &&session.world.map.mapId=="eungye"&&a.Vehicle.modelId!=VehicleCatalog.Starter;
+   &&HomeGarage.Available(session.world.map)&&a.Vehicle.modelId!=VehicleCatalog.Starter;
   if(!available){if(display&&display.ParkedTaxi)display.ParkedTaxi.SetActive(false);return;}
   if(!display)display=session.gameObject.AddComponent<HomeGarageParking>();
   var inactive=a.ActiveVehicle.modelId==VehicleCatalog.Starter?a.Vehicle:a.OwnedVehicle(VehicleCatalog.Starter);
@@ -25,12 +23,10 @@ public sealed class HomeGarageParking : MonoBehaviour {
 
  void Show(MapData map,VehicleState state){
   if(!ParkedTaxi){
-   var home=ProjectMapScene.Services(map,"parking").FirstOrDefault(x=>HomeBasePresentation.IsFacility(map,x));
-   if(home==null)return;
-   var right=Vector3.Cross(Vector3.up,home.Direction);
+   var home=HomeGarage.StoredBay(map);
    var stall=new GameObject("숙소 보관 주차 칸");
    stall.transform.SetParent(transform,false);
-   stall.transform.SetPositionAndRotation(home.Position+right*3.2f,Quaternion.LookRotation(home.Direction));
+   stall.transform.SetPositionAndRotation(home.Kerb,Quaternion.LookRotation(home.Direction));
    pavement=WorldBuilder.Mat("숙소 보관 주차 바닥",WorldBuilder.SurfaceColor("parking"));
    paint=WorldBuilder.Mat("숙소 보관 주차선",new Color(.95f,.8f,.18f));
    TaxiArt.Part(stall.transform,"보관 주차 바닥",new Vector3(0,.025f,0),new Vector3(2.9f,.04f,5.3f),.01f,pavement);

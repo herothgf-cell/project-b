@@ -29,13 +29,14 @@ public static class StopArrivalGuidance {
   if(opposite>=0&&j.At(opposite))index=opposite;
   var hint=Evaluate(j.EffectiveStop(index),session.taxi.transform.position,session.taxi.transform.forward,speed,pickup);
   if(hint.Ready&&!j.At(index)){hint.Ready=false;hint.Action="정차 공간 확인";hint.Detail="공간 점유·승객 보행 대기 · 정차 유지";}
-  if(!hint.Near)return hint;
+  // Returning to the bay takes priority over a countdown that cannot advance there yet.
+  if(!hint.Ready)return hint;
   if(j.SituationWorkActive){hint.Ready=false;hint.Action="승객 준비 중";hint.Detail="작업이 끝날 때까지 안전 정차 유지";}
   else if(pickup&&j.Behavior!=null&&!j.Behavior.BoardingReady){hint.Ready=false;hint.Action="승차 준비 중";hint.Detail=j.Behavior.WorkRemaining>0?"적재·준비 "+Mathf.CeilToInt(j.Behavior.WorkRemaining)+"초 · 정차 유지":"승객 대화에서 준비 방법을 선택하세요";}
   else if(!pickup&&j.Errand!=null&&j.Errand.Waiting){hint.Ready=false;hint.Action="승객 용무 대기";hint.Detail=Mathf.CeilToInt(j.Errand.Remaining)+"초 · 약속한 위치에 정차 유지";}
-  else if(!pickup&&j.PassengerViaPending){hint.Action=hint.Ready?"F · 경유 용무 진행":"경유 정차 위치";hint.Detail=hint.Ready?"합의한 용무 장소 · F로 진행":hint.Detail;}
-  else if(!pickup&&j.DrunkRide!=null&&j.DrunkRide.Waiting){hint.Ready=hint.Ready&&j.DrunkRide.WaitElapsed>=15;hint.Action=hint.Ready?"F · 손님 다시 깨우기":"손님 기상 대기";hint.Detail=j.DrunkRide.WaitElapsed<15?Mathf.CeilToInt(j.DrunkRide.WaitUntilWake)+"초 후 다시 깨우기 · 정차 유지":"F로 깨우기 · 안전 정차 시 자동 하차 대기";}
-  else if(!pickup&&j.Behavior!=null&&j.trip.ArrivalLocked&&!j.Behavior.UnloadReady){hint.Ready=false;hint.Action="하차 준비 중";hint.Detail="짐·승객 준비가 끝날 때까지 정차 유지";}
+  else if(!pickup&&j.PassengerViaPending){hint.Ready=session.requests&&session.requests.SafeToRespond();hint.Action=hint.Ready?"F · 경유 용무 진행":"경유지 안전 정차";hint.Detail=hint.Ready?"합의한 용무 장소 · F로 진행":"경유 정차 칸에서 안전 정차를 유지하세요";}
+  else if(!pickup&&j.Behavior!=null&&j.trip.ArrivalLocked&&!j.Behavior.UnloadReady){hint.Ready=false;hint.Action="하차 준비 중";hint.Detail="안전 정차 유지 · 승객 준비 "+Mathf.CeilToInt(j.Behavior.WorkRemaining)+"초 남음";}
+  else if(!pickup&&j.DrunkRide!=null&&j.DrunkRide.Waiting){hint.Ready=j.DrunkRide.WaitUntilWake<=0;hint.Action=hint.Ready?"F · 손님 다시 깨우기":"손님 기상 대기";hint.Detail=hint.Ready?"F로 손님을 깨우세요":"안전 정차 유지 · "+Mathf.CeilToInt(j.DrunkRide.WaitUntilWake)+"초 뒤 F로 깨우기";}
   return hint;
  }
 }

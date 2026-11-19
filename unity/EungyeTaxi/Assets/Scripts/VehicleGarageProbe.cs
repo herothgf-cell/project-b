@@ -22,7 +22,8 @@ public sealed class VehicleGarageProbe : MonoBehaviour {
   var look=parked?parked.GetComponent<VehicleAppearance>():null;
   Check(parked&&parked.activeInHierarchy&&look&&look.Model==model,"home has the parked "+model+" taxi");
   var bay=s.services.ParkingStop;
-  Check(Vector3.Distance(parked.transform.position,bay.Kerb)>3&&Vector3.Distance(parked.transform.position,bay.Kerb)<4
+  var stored=HomeGarage.StoredBay(s.world.map);
+  Check(HomeGarage.Contains(s.world.map,parked.transform.position)&&Vector3.Distance(parked.transform.position,stored.Kerb)<1&&Vector3.Distance(stored.Kerb,bay.Kerb)>3
    &&Array.TrueForAll(parked.GetComponentsInChildren<Collider>(true),x=>!x.enabled),"parked visual stays beside the operating bay without collision");
  }
  // Real WheelCollider front-left angle for full right input at standstill.

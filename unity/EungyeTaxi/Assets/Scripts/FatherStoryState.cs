@@ -18,7 +18,7 @@ public sealed class FatherStoryAnswer {
 public sealed class FatherStoryState {
  public const int CurrentVersion=1;
  public int version=CurrentVersion;
- public bool introSeen,firstVacancy,goalHalf,goalDone,firstPurchase;
+ public bool introSeen,firstVacancy,firstDispatchAccepted,goalHalf,goalDone,firstPurchase;
  public int pages,wallPromptDay,questionDay,questionIndex;
  public string wallChoice="",questionTrip="";
  public List<FatherStoryAnswer> answers=new List<FatherStoryAnswer>();

@@ -39,7 +39,8 @@ public class WorldBuilder : MonoBehaviour {
         if(includeGeometry&&map.areas!=null)foreach(var area in map.areas){
             if(area.points==null||area.triangles==null)continue;
             Dictionary<Vector2Int,GeometryBatch> batches;if(!areaBatches.TryGetValue(area.kind,out batches)){batches=new Dictionary<Vector2Int,GeometryBatch>();areaBatches.Add(area.kind,batches);}
-            AppendArea(area,batches);
+            bool driveway=area.kind=="sidewalk"&&HomeGarage.Paved(map,ProjectMapScene.Center(area.points));
+            AppendArea(area,batches,driveway);
         }
         foreach(var entry in areaBatches){var color=SurfaceColor(entry.Key);RenderBatches(entry.Value,entry.Key,Mat(entry.Key,color),collisions&&entry.Key=="sidewalk");}
         var roadBatches=new Dictionary<Vector2Int,GeometryBatch>();
@@ -53,7 +54,9 @@ public class WorldBuilder : MonoBehaviour {
         if(decorations)ReviewedRoadFacilities.Draw(map,transform,collisions);
         if(includeGeometry)foreach(var b in map.buildings) {
             if(SceneBuildingVisibility.Hidden(map,b.id)){Debug.Log("PROVISIONAL_BUILDING_HIDDEN "+b.id+" · 원본 보존 / 생성 차로 겹침 검토 대기");continue;}
-            var geometry=BuildingGeometry(b);
+            bool garage=b.id==HomeGarage.BuildingId&&HomeGarage.Available(map);
+            var geometry=BuildingGeometry(b,garage?4.8f:0);
+            if(garage)HomeGarage.Draw(map,transform,collisions);
             if(collisions){var mesh=new Mesh();mesh.SetVertices(geometry.vertices);mesh.SetTriangles(geometry.indices,0);mesh.RecalculateNormals();mesh.RecalculateBounds();var obj=new GameObject("Building "+b.id);obj.transform.SetParent(transform);obj.AddComponent<MeshCollider>().sharedMesh=mesh;}
             Batch(buildingBatches,GeometryBounds(geometry).center).Add(geometry.vertices,geometry.indices);
         }
@@ -77,8 +80,8 @@ public class WorldBuilder : MonoBehaviour {
     }
     public static Color SurfaceColor(string kind){return kind=="road"?new Color(.16f,.18f,.20f):kind=="building"?new Color(.70f,.67f,.60f):kind=="water"?new Color(.13f,.42f,.59f):kind=="land"?new Color(.39f,.47f,.32f):kind=="sidewalk"?new Color(.65f,.63f,.58f):new Color(.23f,.25f,.26f);}
     public static Bounds GeometryBounds(GeometryBatch geometry){if(geometry.vertices.Count==0)return new Bounds();var bounds=new Bounds(geometry.vertices[0],Vector3.zero);foreach(var point in geometry.vertices)bounds.Encapsulate(point);return bounds;}
-    public static void AppendArea(MapArea area,Dictionary<Vector2Int,GeometryBatch> batches){
-            float top=area.kind=="sidewalk"?Mathf.Max(.02f,area.height):area.kind=="water"||area.kind=="land"?.02f:.052f;
+    public static void AppendArea(MapArea area,Dictionary<Vector2Int,GeometryBatch> batches,bool driveway=false){
+            float top=driveway?.02f:area.kind=="sidewalk"?Mathf.Max(.02f,area.height):area.kind=="water"||area.kind=="land"?.02f:.052f;
             var vertices=new List<Vector3>();foreach(var p in area.points)vertices.Add(p.V(top));var faces=new List<int>();
             for(int i=0;i<area.triangles.Length;i+=3)faces.AddRange(new[]{area.triangles[i+2],area.triangles[i+1],area.triangles[i]});
             if(area.kind=="sidewalk"){float winding=0;for(int i=0;i<area.points.Length;i++){var a=area.points[i];var b=area.points[(i+1)%area.points.Length];winding+=a.x*b.z-b.x*a.z;}
@@ -97,13 +100,13 @@ public class WorldBuilder : MonoBehaviour {
                 Batch(batches,p.V()).Add(vertices,indices);
             }
     }
-    public static GeometryBatch BuildingGeometry(MapBuilding b){
+    public static GeometryBatch BuildingGeometry(MapBuilding b,float wallBottom=0){
             var vertices=new List<Vector3>(); var indices=new List<int>(); int n=b.points.Length;
             for(int i=0;i<n;i++) vertices.Add(b.points[i].V(b.height));
             for(int i=0;i<b.triangles.Length;i+=3) { indices.Add(b.triangles[i+2]); indices.Add(b.triangles[i+1]); indices.Add(b.triangles[i]); }
             float area=0; for(int i=0;i<n;i++){var a=b.points[i];var c=b.points[(i+1)%n];area+=a.x*c.z-c.x*a.z;}
             for(int i=0;i<n;i++) {
-                int j=(i+1)%n,k=vertices.Count; vertices.Add(b.points[i].V()); vertices.Add(b.points[j].V()); vertices.Add(b.points[j].V(b.height)); vertices.Add(b.points[i].V(b.height));
+                int j=(i+1)%n,k=vertices.Count; vertices.Add(b.points[i].V(wallBottom)); vertices.Add(b.points[j].V(wallBottom)); vertices.Add(b.points[j].V(b.height)); vertices.Add(b.points[i].V(b.height));
                 indices.AddRange(area>0?new[]{k,k+2,k+1,k,k+3,k+2}:new[]{k,k+1,k+2,k,k+2,k+3});
             }
         var geometry=new GeometryBatch();geometry.Add(vertices,indices);return geometry;

@@ -46,7 +46,10 @@ public partial class FullMapOverlay : MonoBehaviour {
   var markers=new List<MapMarker>();
   var occupancy=session.GetComponent<StopOccupancySystem>();if(occupancy){var state=occupancy.Capture();int index=session.jobs.Catalog.IndexOf(state.stopId);if(state.active&&index>=0)markers.Add(new MapMarker{position=session.jobs.stops[index].Kerb,label="일시 점유",color=new Color(1,.55f,.2f),named=true});}
   if(ShowFacilities){int i=0;foreach(var station in FuelStationLayout.For(session.world.map))markers.Add(new MapMarker{position=station.pump,label=station.ServiceLabel+" "+(++i),color=new Color(1,.75f,.15f),named=true});
-   if(ProjectMapScene.Active(session.world.map)){foreach(var o in session.world.map.projectScene.objects)if(o.enabled&&o.IsService)markers.Add(new MapMarker{position=o.Position,label=o.name,color=o.kind=="rest"?Color.cyan:new Color(.9f,.6f,1),named=true});}
+   if(ProjectMapScene.Active(session.world.map)){foreach(var o in session.world.map.projectScene.objects)if(o.enabled&&o.IsService){
+    bool home=session.services.HasHomeBase&&HomeBasePresentation.IsFacility(session.world.map,o);
+    markers.Add(new MapMarker{position=home?session.services.ParkingStop.Kerb:o.Position,label=home?HomeBasePresentation.Name:o.name,color=o.kind=="rest"?Color.cyan:new Color(.9f,.6f,1),named=true});
+   }}
    else {var rest=FuelStationLayout.Rest(session.world.map);if(rest!=null)markers.Add(new MapMarker{position=rest.pump,label="휴식 주차",color=Color.cyan,named=true});
     if(session.business.useV2)for(int k=1;k<session.services.indices.Length;k++)markers.Add(new MapMarker{position=(k==1?session.services.MealPosition:session.services.StopFor(k).V()),label=k==1?"식당":"주차장",color=new Color(.9f,.6f,1),named=true});}}
   if(ShowTraffic){foreach(var car in session.traffic.cars)if(car.Visible)markers.Add(new MapMarker{position=car.transform.position,label=car.speed<.2f?"대기 차량":"이동 차량",color=car.speed<.2f?new Color(1,.65f,.2f):new Color(.65f,.8f,.9f)});

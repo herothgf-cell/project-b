@@ -83,7 +83,7 @@ using UnityEngine;
    else areas.Add(new MapArea{kind=o.kind,name=o.name,evidence=o.id,height=o.height,points=Copy(o.points),triangles=triangles});
   }
   map.roads=roads.ToArray();map.buildings=buildings.ToArray();map.areas=areas.ToArray();map.projectScene=JsonUtility.FromJson<ProjectMapScene>(JsonUtility.ToJson(scene));
-  RestaurantSiteLayout.Reset(map);FuelStationLayout.Reset(map);SceneBuildingVisibility.Reset(map);indexes.Remove(map);captures.Remove(map);
+  RestaurantSiteLayout.Reset(map);FuelStationLayout.Reset(map);SceneBuildingVisibility.Reset(map);HomeGarage.Reset(map);indexes.Remove(map);captures.Remove(map);
   foreach(var stop in map.stops??new MapStop[0]){stop.hasPassengerAnchor=false;var obj=scene.objects.FirstOrDefault(o=>o.enabled&&o.id=="sidewalk:stop:"+Array.IndexOf(map.stops,stop));if(obj!=null){stop.passengerAnchor=Center(obj.points)+Vector3.up*obj.height;stop.hasPassengerAnchor=true;}}
  }
  static string Strip(string value,string prefix){return value!=null&&value.StartsWith(prefix)?value.Substring(prefix.Length):value;}
@@ -93,6 +93,7 @@ using UnityEngine;
  public static MapStop ParkingStop(ProjectMapObject o){return new MapStop{name=o.name,x=o.serviceX,z=o.serviceZ,dx=o.Direction.x,dz=o.Direction.z,width=3};}
  public static bool CanUse(ProjectMapObject o,Vector3 position,Vector3 heading,float speed){var d=position-o.Position;return o.enabled&&o.IsService&&Contains(o.points,position)&&Mathf.Abs(d.y)<1.5f&&speed<.56f&&Vector3.Dot(heading.normalized,o.Direction)>.9f&&Mathf.Abs(Vector3.Dot(d,o.Direction))<2.7f&&Mathf.Abs(Vector3.Dot(d,TrafficSystem.Right(o.Direction)))<1.15f;}
  public static void DrawServices(MapData map,Transform parent){if(!Active(map))return;var paint=WorldBuilder.Mat("Service bay",new Color(.95f,.8f,.18f));foreach(var o in map.projectScene.objects.Where(x=>x.enabled&&x.IsService)){
+  if(HomeBasePresentation.IsFacility(map,o)&&HomeGarage.Available(map))continue;
   bool combined=map.mapId=="pvp-city-a"&&map.projectScene.objects.Any(x=>x.enabled&&x.kind==(o.kind=="restaurant"?"parking":"restaurant")&&(x.Position-o.Position).sqrMagnitude<.01f);if(combined&&o.kind=="parking")continue;
   var root=new GameObject(o.name);root.transform.SetParent(parent,false);root.transform.position=o.Position;root.transform.rotation=Quaternion.LookRotation(o.Direction);
   foreach(float x in new[]{-1.4f,1.4f})WorldBuilder.Box("정차 칸",new Vector3(x,.07f,0),new Vector3(.12f,.02f,6),paint,root.transform,false);

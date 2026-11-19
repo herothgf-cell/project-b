@@ -170,7 +170,7 @@ public class BusinessProgress : MonoBehaviour {
   session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();
   session.law.ResetObservation();session.jobs.ResetOffers();session.paused=false;preparing=false;Time.timeScale=1;
   ObserveDailyConditionDeparture();
-  EndDayNotice("K를 눌러 빈차등을 켜세요.");
+  EndDayNotice("K를 눌러 빈차등을 켜세요. 출구 화살표를 따라 도로로 나가세요.");
   SaveCheckpoint();
  }
  public void ObserveStoryBoarding(PassengerBehaviorState behavior,bool allowQuestion=true){
@@ -224,7 +224,15 @@ public class BusinessProgress : MonoBehaviour {
   if(!CabinEnabled||!DrowsinessRunning||session.SettingsOpen||session.accident&&session.accident.Locked)return false;
   bool occupied=session.jobs.trip.State==TripState.OnTrip;
   if(device==0){if(CabinAutomatic||!Cabin.ToggleMeter(occupied))return false;}
-  else if(device==1){Cabin.CycleVacancy();if(Cabin.Vacancy==0)Story.firstVacancy=true;if(!session.jobs.Active)session.jobs.Generate();}
+  else if(device==1){
+   Cabin.CycleVacancy();
+   if(Cabin.Vacancy==0)Story.firstVacancy=true;
+   if(!session.jobs.Active){
+    session.jobs.Generate();
+    if(Cabin.Vacancy==0&&StoryEnabled&&ledger.Day==1&&!Story.firstDispatchAccepted&&!Story.FoundNotebook&&session.jobs.offers[0]!=null)
+     EndDayNotice("M 지도에서 첫 번째 호출을 수락한 뒤, 승차 지점에 정차해 F를 누르세요.");
+   }
+  }
   else if(device==2){Cabin.CycleTemperature();if(occupied&&session.jobs.Behavior!=null)session.jobs.Behavior.ApplyCabinTemperature(Cabin.Temperature);}
   else return false;
   SaveCheckpoint();
@@ -277,11 +285,19 @@ public class BusinessProgress : MonoBehaviour {
   bool roomCheck=Array.IndexOf(args,"-personalRoomCheck")>=0||Array.IndexOf(args,"-personalRoomReloadCheck")>=0;bool garageCheck=VehicleGarageProbe.Enabled;roomCheck|=garageCheck;
   if(roomCheck){testMode=true;enabledCampaign=true;useV2=true;settings=PrototypeSettings.ForThreeDays();}
   if(ContentTuningRuntime.TestMode)SavePath=ContentTuningRuntime.CampaignPath(Path.GetFileName(SavePath));
+  bool firstFareCheck=Array.IndexOf(args,"-firstFareCheck")>=0&&Array.IndexOf(args,"-oneDayTrafficTest")>=0;
+  if(firstFareCheck){
+   testMode=true;
+   enabledCampaign=true;
+   useV2=true;
+   settings=PrototypeSettings.ForThreeDays();
+   SavePath=Path.GetFullPath("artifacts/first-fare-career.json");
+  }
   if(PassengerStoryProbe.Enabled)SavePath=PassengerStoryProbe.SavePath;
   if(roomCheck)SavePath=Path.GetFullPath(garageCheck?"artifacts/vehicle-garage-player/campaign.json":"artifacts/personal-room-player/campaign.json");
   if(!testMode&&!UnifiedModeProbe.Enabled&&!HudRevisionProbe.Enabled&&!ShiftDevEndProbe.Enabled&&!ContentTuningRuntime.TestMode)try{SavePath=CampaignSaveLocation.Resolve(Path.GetDirectoryName(Application.persistentDataPath),Path.GetFileName(SavePath));if(settings.oneDay&&settings.days==3&&owner.world.map.mapId=="eungye")SavePath=CampaignSaveLocation.SelectedCareer(SavePath);}catch(Exception e){Debug.LogWarning("이전 캠페인 저장 복사 실패: "+e.Message);}
   settings.homeBase=settings.oneDay&&owner.world.map.mapId=="eungye"&&!PracticeSession.Enabled&&!RoadMapRuntime.Trial;
-  storyEnabled=storyTest||!testMode&&!UnifiedModeProbe.Enabled&&!HudRevisionProbe.Enabled&&!ShiftDevEndProbe.Enabled&&!ContentTuningRuntime.TestMode;
+  storyEnabled=firstFareCheck||storyTest||!testMode&&!UnifiedModeProbe.Enabled&&!HudRevisionProbe.Enabled&&!ShiftDevEndProbe.Enabled&&!ContentTuningRuntime.TestMode;
   dailyEnabled=settings.homeBase&&(storyEnabled&&!storyTest||ShiftDevEndProbe.DailyCheck||ShiftDevEndProbe.DailyReload);
   ledger=useV2?new EconomyLedger(settings):new EconomyLedger(new EconomySettings());
   if((Array.IndexOf(args,"-passengerBehaviorReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilitySummaryReloadTest")>=0||(Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0)))||protoTest&&Array.IndexOf(args,"-protoExpansionReloadTest")>=0||!testMode||Array.IndexOf(args,"-personalRoomReloadCheck")>=0||Array.IndexOf(args,"-vehicleGarageReloadCheck")>=0||(Array.IndexOf(args,"-liveReloadTest")>=0||Array.IndexOf(args,"-liveInvalidTest")>=0)||startupReloadTest||activitiesReloadTest||ShiftDevEndProbe.FatherStoryReload||ShiftDevEndProbe.DailyReload||PassengerStoryProbe.Reload||Array.IndexOf(args,"-completionReloadTest")>=0||Array.IndexOf(args,"-oneDayReloadTest")>=0||Array.IndexOf(args,"-threeDayReloadTest")>=0||Array.IndexOf(args,"-ambientPedestrianReloadTest")>=0){

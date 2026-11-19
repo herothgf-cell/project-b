@@ -18,7 +18,7 @@ public sealed class StopArrivalPresentation:MonoBehaviour {
   bay.SetActive(show);labelObject.SetActive(show&&h.Distance<65);if(!show)return;
   bay.transform.SetPositionAndRotation(h.Stop.Kerb,Quaternion.LookRotation(h.Stop.Direction));Color color=h.Ready?new Color(.12f,.85f,.4f):h.Pickup?MapPresentation.Pickup:MapPresentation.Passenger;
   foreach(var r in strokes)r.sharedMaterial.color=color;
-  labelObject.transform.position=h.Stop.Kerb+h.Stop.Direction*4.8f+Vector3.up*1.6f;label.color=color;label.text=(h.Pickup?"승차 정차 칸":"하차 정차 칸")+"\n"+(h.Ready?h.Action:Mathf.CeilToInt(h.Distance)+"m · 화살표 방향으로 정차");
+  labelObject.transform.position=h.Stop.Kerb+h.Stop.Direction*4.8f+Vector3.up*1.6f;label.color=color;label.text=(h.Pickup?"승차 정차 칸":"하차 정차 칸")+"\n"+(h.Ready?h.Action:h.Detail);
  }
  void OnDestroy(){if(material)Destroy(material);}
 }

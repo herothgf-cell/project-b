@@ -124,10 +124,18 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   if(HomeCheck){
    Check(b.SavePath==CampaignPath&&s.services.HasHomeBase,"isolated Eungye single home");
    var home=s.services.ParkingStop;
-   Check(home.name==HomeBasePresentation.ParkingName&&Mathf.Abs(home.x-296.3f)<.1f&&Mathf.Abs(home.z-506.5f)<.1f,"designated home bay");
+   var map=s.world.map;
+   Check(home.name==HomeBasePresentation.ParkingName&&HomeGarage.Contains(map,home.Kerb),"designated bay is inside home building");
+   var door=HomeGarage.Door(map);
+   var outside=home.Direction;
+   CaptureGarageView("home-garage-exterior",door+outside*19+TrafficSystem.Right(outside)*6+Vector3.up*5,door+Vector3.up*2);
+   CaptureGarageView("home-garage-interior",home.Kerb-outside*8+Vector3.up*2.8f,door+Vector3.up*1.4f);
    var places=s.GetComponent<FullMapOverlay>().Places();
    Check(places[0].home&&places[0].glyph==0&&places[0].name=="숙소"&&places.Count(p=>p.home)==1,"home is first map facility");
    b.ContinueFromMenu();yield return Frames(3);
+   var approach=s.services.StopFor(2);
+   Pose(approach.V(),approach.Direction);
+   Check(!s.services.AtEndDayHub()&&!b.RequestEndDay(),"road at garage approach cannot close shift");
    var rest=s.services.RestArea;
    Pose(rest.pump,rest.direction);
    Check(s.services.AtRestArea()&&s.services.CanUse(3)&&!s.services.CanUse(2),"east rest is rest only");
@@ -284,6 +292,31 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   var saved=BusinessProgress.ParseCheckpoint(File.ReadAllText(b.SavePath));
   Check(saved.version==CampaignCheckpoint.CurrentVersion&&saved.story.answers.Count==1&&saved.story.FoundNotebook,"current checkpoint has narrative progress");
   done=true;Debug.Log("FATHER_STORY_PLAYER_OK checks="+checks);Application.Quit(0);
+ }
+ void CaptureGarageView(string name,Vector3 position,Vector3 lookAt){
+  var camera=new GameObject("Home garage inspection camera").AddComponent<Camera>();
+  var texture=new RenderTexture(960,540,24);
+  var pixels=new Texture2D(960,540,TextureFormat.RGB24,false);
+  var previous=RenderTexture.active;
+  try{
+   camera.enabled=false;
+   camera.transform.position=position;
+   camera.transform.LookAt(lookAt);
+   camera.nearClipPlane=.15f;
+   camera.targetTexture=texture;
+   camera.Render();
+   RenderTexture.active=texture;
+   pixels.ReadPixels(new Rect(0,0,texture.width,texture.height),0,0);
+   pixels.Apply();
+   File.WriteAllBytes(Path.Combine(output,name+".png"),pixels.EncodeToPNG());
+  }finally{
+   camera.targetTexture=null;
+   RenderTexture.active=previous;
+   texture.Release();
+   Destroy(texture);
+   Destroy(pixels);
+   Destroy(camera.gameObject);
+  }
  }
  void Pose(Vector3 kerb,Vector3 direction){
   var position=kerb+Vector3.up*.65f;
