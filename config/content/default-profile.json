@@ -2,8 +2,80 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "dd9020f9bea9a26b2548af76c4315794f7872fd6bfe5936852af395776e91135",
+  "contentHash": "6144287191505f467cb6cda8b453131afa9614f09d25f230a3f4fad2019ac646",
   "values": [
+    {
+      "id": "radio.station",
+      "value": "은계 FM"
+    },
+    {
+      "id": "radio.morning.weekday",
+      "value": "은계 아침입니다. 오늘도 안전한 출발 되세요."
+    },
+    {
+      "id": "radio.morning.rain",
+      "value": "은계 아침입니다. 오늘은 오후부터 비 소식."
+    },
+    {
+      "id": "radio.morning.market",
+      "value": "은계 아침입니다. 오늘 저녁 상가에서 행사가 열립니다."
+    },
+    {
+      "id": "radio.morning.friday",
+      "value": "은계 아침입니다. 금요일 저녁에는 귀가길이 붐비겠습니다."
+    },
+    {
+      "id": "radio.morning.construction",
+      "value": "은계 아침입니다. 오늘 계수로 일부 차로가 공사로 통제됩니다."
+    },
+    {
+      "id": "radio.traffic.regular",
+      "value": "출근길 은계중앙로에서는 앞차와 간격을 넉넉히 두세요."
+    },
+    {
+      "id": "radio.traffic.construction",
+      "value": "계수로 현대오일뱅크 앞은 공사로 서행합니다."
+    },
+    {
+      "id": "radio.traffic.evening",
+      "value": "은계 퇴근길입니다. 아파트 진입로의 보행자를 살펴 주세요."
+    },
+    {
+      "id": "radio.traffic.constructionEvening",
+      "value": "계수로 공사 구간은 저녁에도 서행해 주세요."
+    },
+    {
+      "id": "radio.news.regular",
+      "value": "동네 소식입니다. 은계 산책로에 잠시 쉬어갈 벤치가 있습니다."
+    },
+    {
+      "id": "radio.news.market",
+      "value": "은계 상가 저녁 행사, 9시까지."
+    },
+    {
+      "id": "radio.news.friday",
+      "value": "금요일 저녁, 은계 상가에서 주거지로 향하는 손님이 많겠습니다."
+    },
+    {
+      "id": "radio.letter.1",
+      "value": "이 동네로 이사 온 첫날, 택시에서 창밖만 바라봤어요."
+    },
+    {
+      "id": "radio.letter.2",
+      "value": "퇴근길 골목의 불빛을 보면 오늘 하루도 끝났구나 싶어요."
+    },
+    {
+      "id": "radio.letter.3",
+      "value": "아침마다 시장 앞에서 인사해 주는 기사님이 계세요. 늘 고맙습니다."
+    },
+    {
+      "id": "radio.closing",
+      "value": "오늘도 수고하셨습니다."
+    },
+    {
+      "id": "radio.traffic.secondPercent",
+      "value": "50"
+    },
     {
       "id": "day.condition.weekday.title",
       "value": "평일"

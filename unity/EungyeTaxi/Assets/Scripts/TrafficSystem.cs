@@ -228,6 +228,7 @@ public partial class TrafficSystem : MonoBehaviour {
         lit = new Material[3]; unlit = new Material[3];
         for(int i=0;i<3;i++) {
             lit[i] = WorldBuilder.Mat("Signal lit " + i, colors[i]); lit[i].EnableKeyword("_EMISSION"); lit[i].SetColor("_EmissionColor", colors[i]*2);
+            RegisterNightReadable(lit[i]);
             unlit[i] = WorldBuilder.Mat("Signal off " + i, colors[i]*.12f);
         }
         var configured=map.hybrid?System.Array.FindAll(map.junctionRules,r=>r.signalMode>0||r.crosswalk||r.stopLine):null;
@@ -581,7 +582,7 @@ public partial class TrafficSystem : MonoBehaviour {
         if(j.facility!=null){var label=new GameObject("Facility provenance "+j.name);label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(-reach,2.8f,-.1f);var text=label.AddComponent<TextMesh>();text.text=j.facility.facilityStatus=="verified"?"현장 확인 시설":"임시 교통시설";text.fontSize=40;text.characterSize=.065f;text.anchor=TextAnchor.MiddleCenter;text.color=j.facility.facilityStatus=="verified"?Color.green:new Color(1,.75f,.2f);KoreanText.Apply(text);label.AddComponent<RoadSignLabel>();}
 
         if(!protectedArrow){
-            if(permissive&&hasLeft)RoadSignage.CreatePermissive(root.transform,new Vector3(-reach,5.65f,0));
+            if(permissive&&hasLeft)RoadSignage.CreatePermissive(root.transform,new Vector3(-reach,5.65f,0),this);
             j.leftLamps.Add(new Renderer[0]);return;
         }
         var arrow=new List<Renderer>();var origin=new Vector3(-reach+.3f,4.55f,-.325f);

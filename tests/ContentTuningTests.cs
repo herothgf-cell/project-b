@@ -28,6 +28,7 @@ public static class ContentTuningTests {
   var fallbackReward=PassengerReward.CalculateCurrentFare(93,85,11300,5,true,76,3,100,85,false,83,0);
   ContentTuning.ConfigureCatalog(File.ReadAllText(args[0]));ContentTuning.UseDefaults();
   count+=PassengerStoryTests.Run();
+ count+=RadioScheduleTests.Run();
   Check(ContentTuning.Int("home.rent.daily",-1)==1500,"trial home rent comes from the catalog");
   Check(ContentTuning.Number("home.returnTrip.weight",-1)==3,"homebound demand has the specified default weight");
   var home = new CampaignAccount(new PrototypeSettings{oneDay=true,homeBase=true,startCash=900,parking=500});

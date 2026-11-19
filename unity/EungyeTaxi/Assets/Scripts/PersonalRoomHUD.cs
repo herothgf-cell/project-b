@@ -2,7 +2,11 @@ using UnityEngine;
 
 // Fixed room view: the backdrop and all purchase layers share a single aspect ratio.
 public static class PersonalRoomHUD {
- static GUIStyle text,title,small,button;static Texture2D backdrop;static string preview="",confirmation="";static int style;
+ const float BackdropWidth=1672,BackdropHeight=941;
+ static GUIStyle text,title,small,button;static Texture2D backdrop,morningSky;static string preview="",confirmation="";static int style;
+ static readonly Color NightTint=new Color(.53f,.64f,.88f);
+ static readonly Color NightOutside=new Color(.035f,.08f,.22f,.28f);
+ static readonly Rect[] WindowPanes={new Rect(619,194,217,245),new Rect(857,194,218,245)};
  static readonly string[] MemoGoals={"car","home","none"};
  static readonly string[] MemoTitles={"아버지 차를, 내 차로","이 집을 내 집답게","일단, 오늘을 버티자"};
  static readonly string[] MemoDescriptions={"꾸미기 · 새 차 저축","소품 · 위층 넓은 호실","목표 없이 · 3일차에 다시"};
@@ -13,32 +17,79 @@ public static class PersonalRoomHUD {
  static bool wallMemoOpen;
  static string Money(int n){return n.ToString("N0")+"원";}
  static readonly System.Collections.Generic.Dictionary<string,Texture2D> layers=new System.Collections.Generic.Dictionary<string,Texture2D>();
- // Crops in backdrop pixels (1672x941); must match CROPS in tools/generate_room_items.py.
+ // Item crops are in source pixels and match CROPS in tools/generate_room_items.py.
  static Rect Crop(string name){return name.Contains("rug")?new Rect(500,744,676,176):name.Contains("glow")?new Rect(436,228,568,388):new Rect(660,384,132,136);}
- static void Layer(Rect view,string name){Texture2D t;if(!layers.TryGetValue(name,out t)||!t){t=Resources.Load<Texture2D>(name);layers[name]=t;}if(!t)return;var c=Crop(name);float sx=view.width/1672f,sy=view.height/941f;GUI.DrawTexture(new Rect(view.x+c.x*sx,view.y+c.y*sy,c.width*sx,c.height*sy),t,ScaleMode.StretchToFill,true);}
+ static Rect RoomRect(Rect view,Rect source){
+  float sx=view.width/BackdropWidth,sy=view.height/BackdropHeight;
+  return new Rect(view.x+source.x*sx,view.y+source.y*sy,source.width*sx,source.height*sy);
+ }
+ static void Layer(Rect view,string name,Color tint){
+  Texture2D texture;
+  if(!layers.TryGetValue(name,out texture)){texture=Resources.Load<Texture2D>(name);layers[name]=texture;}
+  if(texture)DrawTexture(RoomRect(view,Crop(name)),texture,tint);
+ }
+ static void DrawTexture(Rect rect,Texture texture,Color color,ScaleMode mode=ScaleMode.StretchToFill){
+  var old=GUI.color;GUI.color=color;
+  GUI.DrawTexture(rect,texture,mode,true);
+  GUI.color=old;
+ }
+ static Texture2D MorningSky(){
+  if(morningSky)return morningSky;
+  const int height=32;
+  morningSky=new Texture2D(1,height,TextureFormat.RGBA32,false){name="숙소 아침 창문 빛",wrapMode=TextureWrapMode.Clamp,filterMode=FilterMode.Bilinear};
+  var horizon=new Color(1,.91f,.75f,.10f);
+  var sky=new Color(.53f,.79f,1,.72f);
+  for(int y=0;y<height;y++)morningSky.SetPixel(0,y,Color.Lerp(horizon,sky,y/(height-1f)));
+  morningSky.Apply(false,true);
+  return morningSky;
+ }
+ static void DrawRoomView(Rect view,PersonalRoomState room,bool morning,bool showPhoto){
+  var tint=morning?Color.white:NightTint;
+  if(!backdrop)backdrop=Resources.Load<Texture2D>("personal-room-base");
+  if(backdrop){
+   DrawTexture(view,backdrop,tint);
+   foreach(var pane in WindowPanes){
+    Rect window=RoomRect(view,pane);
+    if(morning)DrawTexture(window,MorningSky(),Color.white);
+    else Box(window,NightOutside);
+   }
+  }else Box(view,new Color(.65f,.60f,.53f)*tint);
+  bool rug=preview=="rug"||room.rugOwned&&room.rugPlaced;
+  if(rug)Layer(view,"room-rug-"+(preview=="rug"?style:room.rugStyle),tint);
+  bool lamp=preview=="lamp"||room.lampOwned&&room.lampPlaced;
+  if(lamp){
+   bool on=preview=="lamp"||room.lampOn;
+   int lampStyle=preview=="lamp"?style:room.lampStyle;
+   if(on)Layer(view,"room-lamp-"+lampStyle+"-glow",new Color(1,1,1,morning?.62f:1));
+   Layer(view,"room-lamp-"+lampStyle+(on?"-on":"-off"),on?Color.Lerp(tint,Color.white,.65f):tint);
+  }
+  if(!showPhoto)return;
+  if(!fatherPhoto)fatherPhoto=Resources.Load<Texture2D>("UI/father-photo");
+  if(fatherPhoto)DrawTexture(RoomRect(view,new Rect(868,424,61,77)),fatherPhoto,tint,ScaleMode.ScaleToFit);
+ }
  static string StyleName(string item,int s){return item=="lamp"?(s==0?"나무 받침·리넨 갓":"짙은 철제 스탠드"):(s==0?"회청색 테두리":"테라코타 줄무늬·술");}
- static void Box(Rect r,Color c){var old=GUI.color;GUI.color=c;GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=old;}
- public static void Draw(DriveSession session){
-  var b=session.business;var a=b.ledger.Account;var r=b.ArchivedRoom??a.Room;bool read=b.ArchivedRoom!=null||r.finalized;
+ static void Box(Rect r,Color c){DrawTexture(r,Texture2D.whiteTexture,c);}
+ public static bool MorningPreviewAvailable(BusinessProgress b){
+  return b.SupportsCareer&&b.preparing&&b.ledger!=null&&b.ledger.State==BusinessState.Open&&b.ledger.Day>1&&!b.restartPrompt&&!b.ResumeBlocked;
+ }
+ public static void Draw(DriveSession session,bool morning=false){
+  var b=session.business;var a=b.ledger.Account;var r=b.ArchivedRoom??a.Room;bool read=morning||b.ArchivedRoom!=null||r.finalized;
   if(text==null){text=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=18,wordWrap=true};small=new GUIStyle(text){fontSize=14};title=new GUIStyle(text){fontSize=28,fontStyle=FontStyle.Bold};button=KoreanText.Button(16);}
   if(memoCampaign!=b||memoDay!=b.ledger.Day){memoCampaign=b;memoDay=b.ledger.Day;wallMemoOpen=false;}
   GUI.depth=-170;var saved=GUI.matrix;float scale=Mathf.Min(Screen.width/1200f,Screen.height/720f);GUI.matrix=Matrix4x4.TRS(new Vector3((Screen.width-1200*scale)/2,(Screen.height-720*scale)/2),Quaternion.identity,Vector3.one*scale);
   Box(new Rect(0,0,1200,720),CasualUI.Canvas);
-  if(b.ArchivedRoom==null&&b.GarageTab){VehicleGarageHUD.Draw(session);preview=confirmation="";wallMemoOpen=false;var tabsEnabled=GUI.enabled;GUI.enabled=tabsEnabled&&!VehicleGarageHUD.Confirming;Tabs(b);GUI.enabled=tabsEnabled;GUI.matrix=saved;return;}
-  if(!backdrop)backdrop=Resources.Load<Texture2D>("personal-room-base");
-  var view=new Rect(0,85,850,478);if(backdrop)GUI.DrawTexture(view,backdrop,ScaleMode.StretchToFill);else Box(view,new Color(.65f,.60f,.53f));
-  bool lamp=preview=="lamp"||r.lampOwned&&r.lampPlaced;bool rug=preview=="rug"||r.rugOwned&&r.rugPlaced;
-  // Item layers are transparent paintings cropped from backdrop coordinates (tools/generate_room_items.py).
-  if(rug){int rs=preview=="rug"?style:r.rugStyle;Layer(view,"room-rug-"+rs);}
-  if(lamp){bool on=preview=="lamp"||r.lampOn;int ls=preview=="lamp"?style:r.lampStyle;if(on)Layer(view,"room-lamp-"+ls+"-glow");Layer(view,"room-lamp-"+ls+(on?"-on":"-off"));}
-  CasualUI.Header(new Rect(15,15,830,55),read?"숙소 · 완료 기록":HomeBasePresentation.Name,0);
+  if(!morning&&b.ArchivedRoom==null&&b.GarageTab){VehicleGarageHUD.Draw(session);preview=confirmation="";wallMemoOpen=false;var tabsEnabled=GUI.enabled;GUI.enabled=tabsEnabled&&!VehicleGarageHUD.Confirming;Tabs(b);GUI.enabled=tabsEnabled;GUI.matrix=saved;return;}
+  if(morning)preview=confirmation="";
+  DrawRoomView(new Rect(0,85,850,478),r,morning,b.SupportsCareer&&b.ArchivedRoom==null);
+  string roomTitle=morning?HomeBasePresentation.Name+" · 아침":read?"숙소 · 완료 기록":HomeBasePresentation.Name+" · 밤";
+  CasualUI.Header(new Rect(15,15,830,55),roomTitle,0);
   bool incomingEnabled=GUI.enabled;GUI.enabled=incomingEnabled&&confirmation.Length==0;
   bool memoAvailable=!read&&b.WallMemoAvailable;
   bool showMemo=memoAvailable&&(wallMemoOpen||b.WallMemoPrompt);
   if(memoAvailable)DrawWallNotes(b,showMemo);
   string monologue=b.ArchivedRoom==null?b.StoryMonologue:"";
-  GUI.Label(new Rect(25,578,790,48),preview.Length>0?"미리보기 · "+StyleName(preview,style)+" · 미리보기를 다시 누르면 스타일 전환":!string.IsNullOrEmpty(monologue)?monologue:"작은 방에서, 내가 고른 생활을 하나씩.",text);
-  string rent=a.HasHomeBase?"  ·  숙소 월세 "+Money(a.Expense(b.ledger.Day,"home-rent")):"";
+  if(!morning)GUI.Label(new Rect(25,578,790,48),preview.Length>0?"미리보기 · "+StyleName(preview,style)+" · 미리보기를 다시 누르면 스타일 전환":!string.IsNullOrEmpty(monologue)?monologue:"작은 방에서, 내가 고른 생활을 하나씩.",text);
+  string rent=!morning&&a.HasHomeBase?"  ·  숙소 월세 "+Money(a.Expense(b.ledger.Day,"home-rent")):"";
   GUI.Label(new Rect(25,635,790,50),b.ArchivedRoom!=null?"이전 회차의 방 · 읽기 전용":"개인 지출 "+Money(a.PersonalSpent)+"  ·  영업 순수익 "+Money(b.ledger.TotalNet)+rent,small);
   CasualUI.Panel(new Rect(865,15,320,690));
   if(showMemo)DrawMemoPanel(b);
@@ -48,12 +99,13 @@ public static class PersonalRoomHUD {
    Card(b,"lamp","탁상 조명",5000,r.lampOwned,r.lampPlaced,130,read);
    Card(b,"rug","작은 러그",8000,r.rugOwned,r.rugPlaced,305,read);
    if(!read&&r.lampOwned&&GUI.Button(new Rect(885,483,280,32),r.lampOn?"조명 끄기":"조명 켜기",button))b.ChangeRoom("light","lamp");
-   GUI.Label(new Rect(885,525,280,65),b.SaveFailed?b.saveStatus:read?"완료한 방은 기록으로 보존됩니다.":"구매는 선택입니다. 새 회차에는 물건이 초기화됩니다.",small);
+   string roomNote=morning?(r.lampOwned&&r.lampPlaced?"탁상 조명 · "+(r.lampOn?"켜짐":"꺼짐"):""):read?"완료한 방은 기록으로 보존됩니다.":"구매는 선택입니다. 새 회차에는 물건이 초기화됩니다.";
+   GUI.Label(new Rect(885,525,280,65),b.SaveFailed?b.saveStatus:roomNote,small);
   }
-  if(GUI.Button(new Rect(885,595,280,40),"정산으로 돌아가기",button)){b.RoomOpen=false;b.ArchivedRoom=null;preview=confirmation="";wallMemoOpen=false;}
+  if(GUI.Button(new Rect(885,595,280,40),morning?"영업 준비로 돌아가기":"정산으로 돌아가기",button)){b.RoomOpen=false;b.ArchivedRoom=null;preview=confirmation="";wallMemoOpen=false;}
   if(!read&&GUI.Button(new Rect(885,647,280,40),b.ledger.State==BusinessState.Completed?"이번 회차 마무리":"다음 날 준비",CasualUI.Action(18))){preview=confirmation="";wallMemoOpen=false;if(b.ledger.State==BusinessState.Completed)b.ChangeRoom("finish");else b.BeginNextCampaignDay();}
   GUI.enabled=incomingEnabled;
-  if(b.ArchivedRoom==null&&confirmation.Length==0)Tabs(b);
+  if(!morning&&b.ArchivedRoom==null&&confirmation.Length==0)Tabs(b);
   if(confirmation.Length>0&&!read){Box(new Rect(0,0,1200,720),new Color(.07f,.15f,.29f,.42f));CasualUI.Panel(new Rect(280,200,640,310));int price=confirmation=="lamp"?5000:8000;CasualUI.Header(new Rect(295,215,610,50),"내 공간에 들일까요?",5);GUI.Label(new Rect(305,278,590,105),(confirmation=="lamp"?"탁상 조명":"작은 러그")+"  "+Money(price)+"\n남는 현금 "+Money(a.Cash-price)+" · 환불 불가\n미납 "+Money(a.Debt),new GUIStyle(title){fontSize=24});GUI.enabled=a.Debt==0&&a.Cash>=price;
    if(GUI.Button(new Rect(305,410,280,50),"구매 확인",CasualUI.Action(18))){if(b.ChangeRoom("buy",confirmation,style)){preview=confirmation="";}}
    GUI.enabled=true;if(GUI.Button(new Rect(605,410,280,50),"취소",button))confirmation="";}
@@ -64,11 +116,9 @@ public static class PersonalRoomHUD {
   memoName=new GUIStyle(GUI.skin.label){font=KoreanText.BoldFont,fontSize=17};
   memoDescription=new GUIStyle(small);memoDescription.normal.textColor=CasualUI.Muted;
   memoOnWall=new GUIStyle(memoName){alignment=TextAnchor.MiddleCenter};
-  fatherPhoto=Resources.Load<Texture2D>("UI/father-photo");
  }
  static void DrawWallNotes(BusinessProgress b,bool showMemo){
   MemoStyles();
-  if(fatherPhoto)GUI.DrawTexture(new Rect(441,300,31,39),fatherPhoto,ScaleMode.ScaleToFit);
   int selected=System.Array.IndexOf(MemoGoals,b.WallMemoChoice);
   if(!showMemo){
    var note=new Rect(328,112,194,54);

@@ -11,6 +11,7 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
  [Serializable] public sealed class Metrics {
   public int movingFrames,frozenFrames;public float movingMaxSpeed;public double movingSeconds,movingMetres,maxFreezeMs;
   public float parkedHeightRange,parkedVerticalSpeed;
+  public string lightingPhase; public int litVehicles;
   public string product;public string graphics;public int width,height;public PvpNativePerfView[] performance;public string role,map,error;public bool passed;public int slot,checks,failed,driverCount,wheels,score,cash,durability,claim=-1;
   public float elapsed,metres,maxSpeed;public string trip,offer;public List<string> evidence=new List<string>();
  }
@@ -77,12 +78,19 @@ public sealed class PvpNativeLanProbe : MonoBehaviour {
   metrics.product=Application.productName;Check(metrics.product=="택시 시뮬레이션","latest main product name retained");metrics.graphics=SystemInfo.graphicsDeviceType.ToString();metrics.width=Screen.width;metrics.height=Screen.height;
   float parked=float.Parse(Arg("-pvpNativeParkedSeconds","0"),System.Globalization.CultureInfo.InvariantCulture);
   if(parked>0){
+   bool lightProbe=Array.IndexOf(Environment.GetCommandLineArgs(),"-dayLightNightProbe")>=0||Array.IndexOf(Environment.GetCommandLineArgs(),"-dayLightDayProbe")>=0;
    own.taxi.automated=true;own.taxi.autoBrake=true;own.taxi.autoThrottle=0;
    if(!host)lan.ProbeInput=()=>new PvpNativeDrive{brake=true,blocked=false};
    yield return new WaitForSecondsRealtime(3);Mark(metrics.role+"-parked-ready");
    yield return Until(()=>Has((host?"client":"host")+"-parked-ready"),"both humans parked with two live bots");
+   if(lightProbe){
+    Check(own.dayLight&&own.dayLight.IsActive&&SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null,"rendered daylight performance fixture is active");
+    metrics.lightingPhase=own.dayLight.CurrentPhase.ToString();metrics.litVehicles=own.dayLight.LitVehicleCount;
+    bool night=Array.IndexOf(Environment.GetCommandLineArgs(),"-dayLightNightProbe")>=0;
+    Check(own.dayLight.CurrentPhase==(night?DayLightPhase.Night:DayLightPhase.Day),"requested lighting phase "+metrics.lightingPhase);
+   }
    float lowest=own.taxi.body.position.y,highest=lowest,parkedUntil=Time.realtimeSinceStartup+Mathf.Clamp(parked,10,60);
-   PvpNativePerf.Moving=true;while(Time.realtimeSinceStartup<parkedUntil){lowest=Mathf.Min(lowest,own.taxi.body.position.y);highest=Mathf.Max(highest,own.taxi.body.position.y);metrics.parkedVerticalSpeed=Mathf.Max(metrics.parkedVerticalSpeed,Mathf.Abs(own.taxi.body.velocity.y));yield return null;}PvpNativePerf.Moving=false;
+   PvpNativePerf.Moving=true;while(Time.realtimeSinceStartup<parkedUntil){lowest=Mathf.Min(lowest,own.taxi.body.position.y);highest=Mathf.Max(highest,own.taxi.body.position.y);metrics.parkedVerticalSpeed=Mathf.Max(metrics.parkedVerticalSpeed,Mathf.Abs(own.taxi.body.velocity.y));if(lightProbe)PvpNativePerf.Sample("daylight-steady-frame-ms",Time.unscaledDeltaTime*1000);yield return null;}PvpNativePerf.Moving=false;
    metrics.parkedHeightRange=highest-lowest;Check(metrics.parkedHeightRange<.15f&&metrics.parkedVerticalSpeed<.5f,"parked native taxi remains vertically stable");
    Check(lan.Racing&&lan.Match&&!lan.Match.Finished,"parked two-human LAN remains live");
    Mark(metrics.role+"-parked-done");yield return Until(()=>Has((host?"client":"host")+"-parked-done"),"both parked measurements completed");

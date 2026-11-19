@@ -44,7 +44,7 @@ public sealed class RoadMapPreview : MonoBehaviour {
 
 public sealed class RoadMapLamp : MonoBehaviour {
  public TrafficSystem system;public RoadMapSignalProgram program;public string groupId;public Renderer red,yellow,green;public Renderer[] leftArrow=new Renderer[0];public Renderer leftLens;public int axis,sign=1;public bool leftAvailable;Material off,onRed,onYellow,onGreen;
- public void Initialize(){off=WorldBuilder.Mat("Editor lamp off",new Color(.07f,.08f,.09f));onRed=WorldBuilder.Mat("Editor red",Color.red);onYellow=WorldBuilder.Mat("Editor yellow",Color.yellow);onGreen=WorldBuilder.Mat("Editor green",Color.green);foreach(var m in new[]{onRed,onYellow,onGreen}){m.EnableKeyword("_EMISSION");m.SetColor("_EmissionColor",m.color*2);}Update();}
+ public void Initialize(){off=WorldBuilder.Mat("Editor lamp off",new Color(.07f,.08f,.09f));onRed=WorldBuilder.Mat("Editor red",Color.red);onYellow=WorldBuilder.Mat("Editor yellow",Color.yellow);onGreen=WorldBuilder.Mat("Editor green",Color.green);foreach(var m in new[]{onRed,onYellow,onGreen}){m.EnableKeyword("_EMISSION");m.SetColor("_EmissionColor",m.color*2);if(system)system.RegisterNightReadable(m);}Update();}
  void Update(){if(!red)return;float time=system?system.Clock:0;var color=program==null?SignalColor.Red:program.Color(groupId,time);red.sharedMaterial=color==SignalColor.Red?onRed:off;if(yellow)yellow.sharedMaterial=color==SignalColor.Yellow?onYellow:off;green.sharedMaterial=color==SignalColor.Green?onGreen:off;if(leftLens)leftLens.sharedMaterial=off;bool left=leftAvailable&&program!=null&&program.Movement(axis,sign,-1,time)==SignalColor.Green;foreach(var arrow in leftArrow)arrow.sharedMaterial=left?onGreen:off;}
 }
 public static class RoadMapFacilities {

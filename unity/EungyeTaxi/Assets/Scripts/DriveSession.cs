@@ -11,6 +11,7 @@ public class DriveSession : MonoBehaviour {
     public BusinessProgress business; public DrivingLaw law; public ServiceStops services; public PassengerRequestUI requests;
     public AssistedDriveController assisted;
     public RoadConditions roadConditions;
+    public DayLightController dayLight;public RadioTicker radio;
     public bool PracticeMenuOpen {get{var p=GetComponent<PracticeSession>();var c=GetComponent<PracticeCoach>();return p&&p.PickerOpen||c&&c.ResultOpen;}}
     public bool PracticeBusy {get{var p=GetComponent<PracticeSession>();return p&&p.Busy;}}
     public bool ChoiceOpen {get{var c=GetComponent<ScenarioChoiceSituation>();return c&&(c.Open||c.ClosedThisFrame);}}
@@ -122,6 +123,8 @@ public class DriveSession : MonoBehaviour {
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-flowTest")>=0) gameObject.AddComponent<TrafficFlowProbe>().session=this;
         if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-stabilityTest")>=0) gameObject.AddComponent<StabilitySmokeTest>().session=this;
         // Preserve the pause selected by BusinessProgress for preparation or saved-session restoration.
+        dayLight=gameObject.AddComponent<DayLightController>();dayLight.Initialize(this,sun);
+        radio=gameObject.AddComponent<RadioTicker>();radio.Initialize(this);
         StartupReady=true;
         if(PvpSimulationMode.Active){simulationMatch=gameObject.AddComponent<PvpSimulationMatch>();simulationMatch.Initialize(this);}
         if(loadingCamera)Destroy(loadingCamera.gameObject);
@@ -140,6 +143,7 @@ public class DriveSession : MonoBehaviour {
         if(!StartupReady||business.IntroInputBlocked)return;
         if(business.LogbookOpen||business.GoalComparison){if(Input.GetKeyDown(KeyCode.Escape)){business.LogbookOpen=false;business.GoalComparison=false;}return;}
         if((Input.GetKeyDown(KeyCode.Escape)||Input.GetKeyDown(KeyCode.JoystickButton7))&&DrivingSettingsPanel.Back(this))return;
+        if(business.RoomOpen&&PersonalRoomHUD.MorningPreviewAvailable(business)&&(Input.GetKeyDown(KeyCode.Escape)||Input.GetKeyDown(KeyCode.JoystickButton7))){business.RoomOpen=false;return;}
         var choice=GetComponent<ScenarioChoiceSituation>();if(choice&&(choice.Open||choice.ClosedThisFrame))return;
         if(FullMapOpen||GetComponent<FullMapOverlay>().ClosedThisFrame)return;
         if(PvpNativeLan.HandleEscape(this))return;

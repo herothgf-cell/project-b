@@ -14,6 +14,25 @@ public class RoadPresentationProbe : MonoBehaviour {
   bool ok=true;string folder=Path.GetFullPath(Path.Combine(Application.dataPath,"../../../artifacts"));Directory.CreateDirectory(folder);
   try{
    Check(session.business.SavePath.StartsWith(folder+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase),"presentation uses isolated artifact save");
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-dayLightNightProbe")>=0){
+    Check(session.dayLight&&session.dayLight.IsActive&&session.dayLight.CurrentPhase==DayLightPhase.Night,"road signage inspected while night illumination is active");
+    Check(session.traffic.NightReadabilityActive,"active night readability materials are enabled");
+    int on=0,off=0;
+    foreach(var junction in session.traffic.junctions)for(int approach=0;approach<junction.lamps.Count;approach++){
+     var state=junction.lampStates[approach];
+     var lenses=junction.lamps[approach];
+     if(lenses==null||state<0)continue;
+     for(int color=0;color<lenses.Length;color++){
+      var lens=lenses[color];if(!lens||!lens.sharedMaterial)continue;
+      bool expected=(state&4)!=0&&(state&3)==color;
+      bool luminous=lens.sharedMaterial.shader.name=="Taxi/Local Light Surface";
+      if(expected&&luminous)on++;
+      if(!expected&&!luminous)off++;
+      if(expected!=luminous)throw new Exception("Night signal lens does not match the actual state at "+junction.name+"/"+approach);
+     }
+    }
+    Check(on>0&&off>0,"lit signal lenses visible and inactive lenses dark · on="+on+" off="+off);
+   }
    session.business.enabled=false;session.jobs.enabled=false;session.taxi.enabled=false;session.taxi.body.isKinematic=true;session.drivingCamera.enabled=false;
    foreach(var text in session.traffic.GetComponentsInChildren<TextMesh>(true))Check(!text.text.Contains("횡단보도"),"no fabricated crosswalk text board: "+text.name);
    int approaches=0,protectedCount=0,permissiveCount=0;

@@ -7,11 +7,12 @@ import {defaultChoiceValue} from './choice-catalog.mjs';
 const DRIVING_IDS=['flashStop','permissiveTurn','blockedExit','personMinor','personModerate','personMajor','vehicleMinor','vehicleModerate','vehicleMajor'].map(key=>'law.'+key+'.penalty');
 const STORY_REQUESTS=new Set(['Quiet','Eta','Comfort','OnTime','LargeRoad','SafeStop','Empathy','FareHelp','LocalChat','ViaStop']);
 const STORY_CRITERIA=new Set(['OnTime','Comfort','LargeRoad','Quiet','FareHelp','ViaStop','SafeStop','Luggage','Protection','Conversation','Safety','Empathy']);
-const SINGLE_SETTING=/^(home|cabin|backstory|day\.condition|story)\./;
+const SINGLE_SETTING=/^(home|cabin|backstory|day\.condition|story|radio)\./;
+const singleLine=(value,limit)=>value.trim().length>0&&value.length<=limit&&!/[\r\n]/.test(value);
 
 function storyTextError(id,value) {
  const field=id.split('.').at(-1);
- if(!value.trim()||value.length>(field==='title'?60:240)||/[\r\n]/.test(value))return '한 줄로 내용을 입력하세요.';
+ if(!singleLine(value,field==='title'?60:240))return '한 줄로 내용을 입력하세요.';
  if(field==='presetId'&&!/^[a-z0-9_-]{1,48}$/.test(value))return '승객 프리셋 ID 형식이 올바르지 않습니다.';
  if((field==='request'||field==='secondaryRequest')&&!STORY_REQUESTS.has(value)&&!(field==='secondaryRequest'&&value==='None'))return '사용할 수 있는 요청 코드를 입력하세요.';
  if(field==='criteria') {
@@ -42,6 +43,7 @@ export function validateProfile(p,catalog,{checkHash=true}={}) {
  if(v.id==='passenger.presets'){try{errors.push(...PassengerPresets.validate(parseJson(v.value),catalog));}catch{err('승객 프리셋 JSON 형식 오류');}}
  if(e.type==='text'&&v.value.length>(v.id==='passenger.presets'?32000:4000))err(`${v.id}: 텍스트가 너무 깁니다.`);
  if(e.type==='text'&&v.id.startsWith('story.')){const message=storyTextError(v.id,v.value);if(message)err(`${v.id}: ${message}`);}
+ if(e.type==='text'&&v.id.startsWith('radio.')&&!singleLine(v.value,v.id==='radio.station'?14:100))err(`${v.id}: 라디오 자막은 한 줄로 입력하세요.`);
  if(e.type==='boolean'&&!['true','false'].includes(v.value))err(`${v.id}: 참/거짓 값 오류`);
  if(e.type==='number'||e.type==='integer'){const n=Number(v.value);if(!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(v.value)||!Number.isFinite(n)||(e.type==='integer'&&!Number.isSafeInteger(n))||(e.min!=null&&n<e.min)||(e.max!=null&&n>e.max))err(`${v.id}: 허용 범위 오류`);}}
  if(p.schemaVersion===1){try{const d=parseJson(p.values.find(v=>v.id==='passenger.presets')?.value||'{}');if(d.version===2&&d.presets.some(x=>x.overrides?.some(o=>o.id.startsWith('choice.'))))err('개별 선택 효과는 최신 프로필 형식으로 이관한 뒤 사용하세요.');}catch{}}

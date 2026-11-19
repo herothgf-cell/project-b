@@ -9,6 +9,7 @@ param(
  [ValidateRange(0,60)][int]$ParkedSeconds=0,
  [switch]$Rendered,
  [switch]$RenderBoth,
+ [ValidateSet("","day","night")][string]$DayLightPhase="",
  [ValidateRange(800,3840)][int]$RenderWidth=1280,
  [ValidateRange(600,2160)][int]$RenderHeight=720,
  [switch]$LegacyRouting,
@@ -19,6 +20,7 @@ param(
 )
 $ErrorActionPreference='Stop'
 if($RenderBoth -and -not $Rendered){throw 'RenderBoth requires Rendered'}
+if($DayLightPhase -and (!$Rendered -or $ParkedSeconds -lt 10)){throw 'DayLightPhase measures a rendered parked LAN match of at least 10 seconds'}
 if($MotionOnly -and ($MotionSeconds -lt 10 -or $Reconnect)){throw 'MotionOnly requires at least10 seconds and runs separately from Reconnect'}
 if($ParkedSeconds -gt 0 -and ($ParkedSeconds -lt 10 -or $MotionOnly -or $MotionSeconds -gt 0 -or $Reconnect -or $ChoiceEffects)){throw 'ParkedSeconds requires 10-60 seconds and runs separately from motion/reconnect/choice fixtures'}
 if($ChoiceEffects -and ($MotionOnly -or !$ContentHostProfile)){throw 'ChoiceEffects requires a custom ContentHostProfile and the full model route'}
@@ -38,6 +40,7 @@ function Start-NativeProbe([string]$Role){
  if($contentProfile){$contentProfile=(Resolve-Path -LiteralPath $contentProfile).Path;$arguments+=@('-contentTest','-contentProfile',('"'+$contentProfile+'"'))}
  if($ExpectedContentHash){$arguments+=@('-contentExpectedHash',$ExpectedContentHash)}
  if($Rendered){$arguments=@($arguments | Where-Object {$_ -ne '-batchmode' -and $_ -ne '-nographics'});$arguments+=@('-noaudio','-pvpNativeRenderCheck','-screen-fullscreen','0','-screen-width',"$RenderWidth",'-screen-height',"$RenderHeight")}
+ if($DayLightPhase){$arguments+=if($DayLightPhase -eq 'night'){@('-dayLightNightProbe')}else{@('-dayLightDayProbe')}}
  if($MotionOnly){$arguments+='-pvpNativeMotionOnly'}
  if($MotionSeconds -gt 0){$arguments+=@('-pvpNativeMotionSeconds',"$MotionSeconds")}
  if($ParkedSeconds -gt 0){$arguments+=@('-pvpNativeParkedSeconds',"$ParkedSeconds")}
@@ -45,7 +48,7 @@ function Start-NativeProbe([string]$Role){
  if($Reconnect){$arguments+='-pvpNativeLanReconnect'}
  if($Discover){$arguments+='-pvpNativeLanDiscover'}
  if($ChoiceEffects){$arguments+='-choiceEffectsLanCheck'}
- $style=if($Rendered -and ($Role -eq "client" -or $RenderBoth)){"Normal"}else{"Hidden"}
+ $style=if(!$DayLightPhase -and $Rendered -and ($Role -eq "client" -or $RenderBoth)){"Normal"}else{"Hidden"}
  $process=Start-Process -FilePath $Executable -ArgumentList $arguments -WindowStyle $style -PassThru
  $owned.Add($process)
  return [pscustomobject]@{Role=$Role;Process=$process;Log=$log;Metrics=(Join-Path $output ($Role+'-metrics.json'))}
@@ -68,6 +71,7 @@ try {
   if($MotionOnly -and $run.Role -eq 'client'){if($metrics.maxFreezeMs -gt 100 -or $metrics.frozenFrames -gt $metrics.movingFrames*.01){throw ('Moving pose pacing failed: frozen='+$metrics.frozenFrames+'/'+$metrics.movingFrames+' longest='+$metrics.maxFreezeMs+'ms; '+$run.Metrics)}; Write-Output ('MOVING_POSE_PACING_OK movingSeconds='+$metrics.movingSeconds+' metres='+$metrics.movingMetres+' maxSpeed='+$metrics.movingMaxSpeed+' longestFreezeMs='+$metrics.maxFreezeMs)}
   if(-not (Select-String -LiteralPath $run.Log -SimpleMatch ('PVP_NATIVE_LAN_OK '+$run.Role) -Quiet)){throw ($run.Role+' missing completion marker')}
   if($Discover -and $run.Role -eq 'client' -and -not (Select-String -LiteralPath $run.Log -SimpleMatch 'PASS native room discovered over LAN UDP' -Quiet)){throw 'Client did not join by LAN discovery'}
+  if($DayLightPhase){$sample=$metrics.performance | Where-Object name -eq 'daylight-steady-frame-ms';if(!$sample -or $sample.count -lt 60){throw ($run.Role+' missing steady daylight sample')};Write-Output ('DAYLIGHT_LAN_PERF role='+$run.Role+' phase='+$metrics.lightingPhase+' frames='+$sample.count+' p95Ms='+$sample.p95Ms+' graphics='+$metrics.graphics+' litVehicles='+$metrics.litVehicles)}
   Write-Output ($run.Role+' PASS checks='+$metrics.checks+' native-map='+$metrics.map+' guest-metres='+$metrics.metres);if($metrics.performance){$metrics.performance | Format-Table name,count,averageMs,p95Ms,maxMs | Out-String | Write-Output}
  }
  Write-Output ('PVP_NATIVE_LAN_TWO_PROCESS_OK reconnect='+[bool]$Reconnect+' evidence='+$output)

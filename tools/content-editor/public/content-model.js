@@ -164,6 +164,11 @@
   }
   if(entries.some(e=>e.id.startsWith('story.logbook.')))add('story.logbook','생활','기사 수첩 업적','운송과 수집 해금 기준','story',[section('업적 기준','수첩에서 영업 중 달성하는 주요 업적의 수치를 정합니다.',ids('story.logbook.'),'shared')]);
   if(entries.some(e=>e.id.startsWith('day.condition.')))add('day.conditions','생활','하루 조건','당일 안내와 수요·승객 구성','day',[section('하루 조건 카드','은계 싱글에서 그날의 조건에 적용합니다.',ids('day.condition.'),'shared')],[],[]);
+  if(entries.some(e=>e.id.startsWith('radio.')))add('radio.broadcast','생활','은계 라디오','은계 싱글의 영업일 자막','radio',[
+   section('영업 시작과 마감','날씨와 지역 조건에 맞는 아침 인사, 정산 때 마감 인사를 표시합니다.',['radio.station',...ids('radio.morning.'),'radio.closing'],'shared'),
+   section('교통과 동네 소식','계수로 공사, 상가 행사, 금요일 소식과 두 번째 교통 정보의 편성을 정합니다.',[...ids('radio.traffic.'),...ids('radio.news.')],'dialogue'),
+   section('청취자 사연','영업일마다 사연 하나를 골라 표시합니다.',ids('radio.letter.'),'dialogue')
+  ],[],['day.conditions']);
   if(entries.some(e=>e.id.startsWith('home.')))add('home.base','생활','숙소','은계 싱글 숙소 월세와 귀갓길 호출','home',[section('숙소 거점','영업 마감과 귀갓길 호출에 적용합니다.',ids('home.'),'shared')],[],[]);
   if(entries.some(e=>e.id.startsWith('vehicle.')))add('vehicle.purchase','차량','차량 구매·꾸미기','3일 회차 안 차량 교체 1회 · 시험 가격','vehicle',[section('가격(시험값)','보상 판매액을 뺀 금액이 실제 지출입니다. 사람 플레이 수익 중앙값 R 측정 전의 시험값입니다.',ids('vehicle.'),'shared')],['차종 특성(연료·트렁크·승차감·내구도·회전)은 코드 고정값이며 PVP에는 적용하지 않습니다.'],[]);
   add('weather.rain','날씨','비 운행','맑음/비 시험 · 확률 미끄러짐 잠금','weather',[section('비 설정','기존 저장은 당시 설정 유지. 확률 미끄러짐은 검증 후 별도 개발/활성화합니다.',ids('weather.'),'shared')],[],[]);

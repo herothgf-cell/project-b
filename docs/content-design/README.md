@@ -84,9 +84,9 @@
 
 - [19. 승객 독립 행동·요청 위반·새 특성](19-passenger-trait-expansion.md): 수면+소지품, 메스꺼움/온도/우산, 관찰 가능한 Quiet 실패와 개별 설정.
 
-## 2026-11-19 시작·지속 동기 보강 (기획 초안, 미구현)
+## 2026-11-19 시작·지속 동기 보강
 
-[진단](2026-11-19-player-motivation-audit.md) → [구체안](2026-11-19-motivation-concrete-proposals.md) → 아래 5개 기획.
+P1~P7을 통합 실행본에 적용했다. [전반 진단](2026-11-19-player-motivation-audit.md) · [단계별 작업 이력과 실행 검증](../work-history/LATEST.md).
 
 | # | 기획 | 핵심 |
 |---|---|---|

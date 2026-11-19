@@ -2,6 +2,384 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "id": "radio.station",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "방송국 표시",
+      "type": "text",
+      "defaultValue": "은계 FM",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "라디오 자막 왼쪽의 방송국 이름입니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.morning.weekday",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "아침 인사 · 평일",
+      "type": "text",
+      "defaultValue": "은계 아침입니다. 오늘도 안전한 출발 되세요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "평일 영업을 시작할 때 나옵니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.morning.rain",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "아침 인사 · 비",
+      "type": "text",
+      "defaultValue": "은계 아침입니다. 오늘은 오후부터 비 소식.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "비 카드 영업을 시작할 때 나옵니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.morning.market",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "아침 인사 · 상가 행사",
+      "type": "text",
+      "defaultValue": "은계 아침입니다. 오늘 저녁 상가에서 행사가 열립니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "상가 행사 카드 영업을 시작할 때 나옵니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.morning.friday",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "아침 인사 · 금요일",
+      "type": "text",
+      "defaultValue": "은계 아침입니다. 금요일 저녁에는 귀가길이 붐비겠습니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "금요일 카드 영업을 시작할 때 나옵니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.morning.construction",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "아침 인사 · 공사",
+      "type": "text",
+      "defaultValue": "은계 아침입니다. 오늘 계수로 일부 차로가 공사로 통제됩니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "공사 카드 영업을 시작할 때 나옵니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.traffic.regular",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "교통 정보 · 오전",
+      "type": "text",
+      "defaultValue": "출근길 은계중앙로에서는 앞차와 간격을 넉넉히 두세요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "공사일 이외에 첫 교통 정보를 방송합니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.traffic.construction",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "교통 정보 · 오전 공사",
+      "type": "text",
+      "defaultValue": "계수로 현대오일뱅크 앞은 공사로 서행합니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "공사일에 통제되는 도로 시설 구간을 알립니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.traffic.evening",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "교통 정보 · 저녁",
+      "type": "text",
+      "defaultValue": "은계 퇴근길입니다. 아파트 진입로의 보행자를 살펴 주세요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "공사일 이외에 두 번째 교통 정보가 편성되면 나옵니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.traffic.constructionEvening",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "교통 정보 · 저녁 공사",
+      "type": "text",
+      "defaultValue": "계수로 공사 구간은 저녁에도 서행해 주세요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "공사일에 두 번째 교통 정보가 편성되면 나옵니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.news.regular",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "동네 소식 · 평소",
+      "type": "text",
+      "defaultValue": "동네 소식입니다. 은계 산책로에 잠시 쉬어갈 벤치가 있습니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "상가 행사와 금요일 이외의 날에 나옵니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.news.market",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "동네 소식 · 상가 행사",
+      "type": "text",
+      "defaultValue": "은계 상가 저녁 행사, 9시까지.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "상가 행사 카드에서 지역 소식을 한 번 알립니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.news.friday",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "동네 소식 · 금요일",
+      "type": "text",
+      "defaultValue": "금요일 저녁, 은계 상가에서 주거지로 향하는 손님이 많겠습니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "금요일 카드에서 지역 소식을 한 번 알립니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.letter.1",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "청취자 사연 1",
+      "type": "text",
+      "defaultValue": "이 동네로 이사 온 첫날, 택시에서 창밖만 바라봤어요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "날짜와 경력에 따라 세 사연 중 하나를 선택합니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.letter.2",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "청취자 사연 2",
+      "type": "text",
+      "defaultValue": "퇴근길 골목의 불빛을 보면 오늘 하루도 끝났구나 싶어요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "날짜와 경력에 따라 세 사연 중 하나를 선택합니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.letter.3",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "청취자 사연 3",
+      "type": "text",
+      "defaultValue": "아침마다 시장 앞에서 인사해 주는 기사님이 계세요. 늘 고맙습니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "날짜와 경력에 따라 세 사연 중 하나를 선택합니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.closing",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "마감 인사",
+      "type": "text",
+      "defaultValue": "오늘도 수고하셨습니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "영업을 마치고 정산이 표시될 때 한 번 나옵니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.traffic.secondPercent",
+      "group": "생활",
+      "section": "은계 라디오",
+      "title": "두 번째 교통 정보 편성 확률",
+      "type": "integer",
+      "defaultValue": "50",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "영업일마다 저녁 교통 정보가 추가될 확률입니다. 해당 경력과 날짜에서는 편성이 일정합니다.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
       "id": "day.condition.weekday.title",
       "group": "생활",
       "section": "하루 조건",

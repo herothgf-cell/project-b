@@ -53,14 +53,19 @@ public static class OneDayHUD {
    Color delta=CasualUI.Muted;if(stat.hasDelta&&stat.delta!=0)delta=(stat.id=="fatigue"?stat.delta<0:stat.delta>0)?CasualUI.Green:CasualUI.Danger;
    preparationDelta.normal.textColor=delta;GUI.Label(new Rect(card.x+6,card.y+103,card.width-12,25),stat.deltaText,preparationDelta);
   }
-  GUI.Label(new Rect(x+30,y+252,700,25),view.comparisonSource,small);
+  GUI.Label(new Rect(x+30,y+252,500,25),view.comparisonSource,small);
+  if(PersonalRoomHUD.MorningPreviewAvailable(business)&&GUI.Button(new Rect(x+548,y+248,182,36),"아침 숙소 보기",button)){
+   business.ArchivedRoom=null;
+   business.GarageTab=false;
+   business.RoomOpen=true;
+  }
   GUI.Label(new Rect(x+30,y+296,350,32),"이용 비용",text);preparationAmount.normal.textColor=CasualUI.Muted;GUI.Label(new Rect(x+380,y+296,350,30),view.expenseSource,preparationAmount);
   CasualUI.RoundedFill(new Rect(x+30,y+338,700,126),CasualUI.Soft);
   for(int i=0;i<view.expenses.Length;i++){
    var row=view.expenses[i];int column=i<4?0:1,index=i<4?i:i-4;float rowX=x+44+column*350,rowY=y+347+index*28;
    GUI.Label(new Rect(rowX,rowY,180,27),row.label,text);preparationAmount.normal.textColor=CasualUI.Ink;GUI.Label(new Rect(rowX+172,rowY,144,27),Money(row.amount),preparationAmount);
   }
-  if(session.business.ledger.Settings.days==3){var room=session.business.ledger.Account.Room;string chosen=room.wished=="lamp"?"찜한 탁상 조명":room.wished=="rug"?"찜한 작은 러그":room.lampOwned||room.rugOwned?"내 공간의 물건이 기다리고 있어요":"";if(chosen.Length>0)GUI.Label(new Rect(x+30,y+278,700,24),chosen,small);}
+  if(session.business.ledger.Settings.days==3){var room=session.business.ledger.Account.Room;string chosen=room.wished=="lamp"?"찜한 탁상 조명":room.wished=="rug"?"찜한 작은 러그":room.lampOwned||room.rugOwned?"내 공간의 물건이 기다리고 있어요":"";if(chosen.Length>0)GUI.Label(new Rect(x+30,y+278,500,24),chosen,small);}
   CasualUI.Divider(new Rect(x+30,y+472,700,1));
   GUI.Label(new Rect(x+30,y+478,340,32),"오늘의 이용 비용",text);preparationAmount.normal.textColor=CasualUI.Ink;GUI.Label(new Rect(x+390,y+476,340,36),Money(view.totalExpense),new GUIStyle(preparationAmount){fontSize=26,fontStyle=FontStyle.Bold});
   if(career){
@@ -122,7 +127,11 @@ public static class OneDayHUD {
   if(GUI.Button(new Rect(402,532,396,44),"계속하기",CasualUI.Action(18)))b.GoalComparison=false;
   GUI.matrix=saved;GUI.depth=depth;
  }
- public static void Draw(DriveSession s){if(s.RideResultOpen)return;Styles();var b=s.business;var e=b.ledger;var d=e.Driver;if(d==null)return;bool multi=e.Settings.days>1;GUI.depth=-35;if(b.GoalComparison){DrawGoalComparison(s);return;}if(b.LogbookOpen){LogbookHUD.Draw(s);return;}if(b.RoomOpen&&b.RoomAvailable){PersonalRoomHUD.Draw(s);return;}
+ public static void Draw(DriveSession s){if(s.RideResultOpen)return;Styles();var b=s.business;var e=b.ledger;var d=e.Driver;if(d==null)return;bool multi=e.Settings.days>1;GUI.depth=-35;if(b.GoalComparison){DrawGoalComparison(s);return;}if(b.LogbookOpen){LogbookHUD.Draw(s);return;}
+  if(b.RoomOpen){
+   if(b.RoomAvailable){PersonalRoomHUD.Draw(s);return;}
+   if(PersonalRoomHUD.MorningPreviewAvailable(b)){PersonalRoomHUD.Draw(s,true);return;}
+  }
   if(!b.preparing&&!b.ShowingSummary&&!b.restartPrompt&&!b.ResumeBlocked){
    return; // Live operation is composed by CockpitUI.
 
