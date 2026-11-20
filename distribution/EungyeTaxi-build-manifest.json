@@ -1,33 +1,18 @@
 {
-  "sourceCommit": "172138dd441c199116e78b82d84e6f003d8d2ff7",
+  "sourceCommit": "94e8ca1a58b23aa20c5a72a6a1fab48b585cfbd8",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-20",
-  "totalBytes": 145403446.0,
+  "totalBytes": 145405494.0,
   "validation": {
     "build": "PrototypeBuild.BuildHybrid exit 0",
     "mapRevision": 50,
     "mapInputIssues": 0,
-    "trafficModelChecks": 47,
-    "protectedLeftGreenSeconds": 8,
-    "oldQueueEntries": 1,
-    "newQueueEntries": 4,
-    "entryTimesSeconds": [
-      0.26,
-      2.86,
-      4.84,
-      7.1
-    ],
-    "minimumQueueCenterSpacingM": 6.71,
-    "occupiedCrosswalkAndExitBlocked": true,
-    "occupiedTurnBlocked": true,
-    "convoyPenetrations": 0,
-    "pvpConvoyStoppedFrames": 0,
-    "naturalPopulation": 72,
-    "junctionObservedCars": 17,
-    "gridlockProbeSimSeconds": 201.18,
-    "burstRuntime": "identical except COFF timestamp; retained installed DLL",
+    "lanVersion": 23,
+    "homeBasePlayerChecks": 23,
+    "installedPlayerExitCode": 0,
+    "positionControlled": true,
     "manualDriving": false
   },
   "files": [
@@ -68,8 +53,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 3183616,
-      "sha256": "b9fde1699746c8be7118431291380ef43fd23cd679f2960459d7de8e0b138b54"
+      "bytes": 3185664,
+      "sha256": "f4c9076bd713a0ae83d274d3e1841dbce58dfdd3083d52e6d3898e0a75f9f4e1"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
