@@ -18,3 +18,6 @@
 별도 점검한 네 연결 차로에서 5cm 간격으로 차 중심과 오른쪽 0.95m까지 보도에 겹치는 표본은 없었다. +1.4m에서 여유 공간 일부가 보도와 겹치므로 회전 시 차체 모서리의 수동 주행 체감은 미검증이다. 현장 참고 사진과 변경 전후 화면은 로컬 artifacts/nov20-additional-road-review/에 보관한다.
 
 Unity 편집기에서 두 횡단부의 메시·연석 검사, 차고 포장 두 면의 본선 침범 0 및 계수교 7개 단면 검사에 통과했다. 기존 J10580 검사 16건, 시설 출발 호출과 승하차지 사이 경로 1,482건 회귀 검사를 통과했다. tools/test_prototype.ps1 종료 0, 필수 지도 입력 문제 0.
+
+소스 fd28b0d의 PrototypeBuild.BuildHybrid 종료 0. 배포 Player 전체 지도 99타일에 도로·차로 객체 4,027개가 모두 포함됐고 검사 359건 통과. 동일 좌표의 전·후 확대 사진 네 쌍을 직접 대조했다(artifacts/nov20-additional-road-review/verified-sites.jpg). 배포 143파일 크기·SHA256 및 별도 사용자 설정 확인. 실제 자동 물리 주행에서 차고 출구까지 34.03m, 문틀·연석 접촉 0건.
+첫 호출 수락 후 승차·하차·차고 복귀와 정산 저장까지 자동 물리 주행 2,587.98m, 운임 5,700원, 충돌 0, 적신호 위반 0. 재현 명령은 pwsh -File tools/test_first_fare_player.ps1이며 실행 결과는 artifacts/first-fare/95874db9dcf1425ab087211ccd0928e1/에 있다.
