@@ -4,9 +4,16 @@ using UnityEngine;
 public static class FacilityArt {
  const string Directory="UI/Facilities/";
  static readonly Dictionary<string,Texture2D> textures=new Dictionary<string,Texture2D>();
+ static readonly string[] backgrounds={"diner","fuel","wash","workshop","rest","parking","garage","room"};
  static readonly string[] meals={"pork","stew","soup"};
 
  public static Texture2D Texture(string key){
+  int index=System.Array.IndexOf(meals,key);
+  bool meal=index>=0;
+  var choices=meal?meals:backgrounds;
+  if(!meal)index=System.Array.IndexOf(backgrounds,key);
+  if(index<0)return null;
+  key=choices[ContentTuning.Int((meal?"display.meal.":"display.background.")+key,index)];
   if(!textures.TryGetValue(key,out var image)){
    image=Resources.Load<Texture2D>(Directory+key);
    textures.Add(key,image);
@@ -14,6 +21,7 @@ public static class FacilityArt {
   }
   return image;
  }
+ public static string MealName(int index,string fallback){return ContentTuning.Text("display.menuName."+meals[index],fallback);}
  public static void Background(string key,Rect screen){
   var image=Texture(key);
   if(image)GUI.DrawTexture(screen,image,ScaleMode.ScaleAndCrop);

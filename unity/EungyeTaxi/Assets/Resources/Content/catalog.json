@@ -11440,6 +11440,1095 @@
       "editable": true
     },
     {
+      "id": "display.background.diner",
+      "group": "생활 시설",
+      "section": "시설 배경",
+      "title": "기사식당",
+      "type": "integer",
+      "defaultValue": "0",
+      "min": 0,
+      "max": 7,
+      "unit": "",
+      "description": "이 자리에 표시할 승인 그림을 선택합니다.",
+      "affects": [
+        "시설 배경"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "FacilityArt",
+      "editable": true
+    },
+    {
+      "id": "display.background.fuel",
+      "group": "생활 시설",
+      "section": "시설 배경",
+      "title": "주유소",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 7,
+      "unit": "",
+      "description": "이 자리에 표시할 승인 그림을 선택합니다.",
+      "affects": [
+        "시설 배경"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "FacilityArt",
+      "editable": true
+    },
+    {
+      "id": "display.background.wash",
+      "group": "생활 시설",
+      "section": "시설 배경",
+      "title": "세차장",
+      "type": "integer",
+      "defaultValue": "2",
+      "min": 0,
+      "max": 7,
+      "unit": "",
+      "description": "이 자리에 표시할 승인 그림을 선택합니다.",
+      "affects": [
+        "시설 배경"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "FacilityArt",
+      "editable": true
+    },
+    {
+      "id": "display.background.workshop",
+      "group": "생활 시설",
+      "section": "시설 배경",
+      "title": "공업사",
+      "type": "integer",
+      "defaultValue": "3",
+      "min": 0,
+      "max": 7,
+      "unit": "",
+      "description": "이 자리에 표시할 승인 그림을 선택합니다.",
+      "affects": [
+        "시설 배경"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "FacilityArt",
+      "editable": true
+    },
+    {
+      "id": "display.background.rest",
+      "group": "생활 시설",
+      "section": "시설 배경",
+      "title": "휴식 구역",
+      "type": "integer",
+      "defaultValue": "4",
+      "min": 0,
+      "max": 7,
+      "unit": "",
+      "description": "이 자리에 표시할 승인 그림을 선택합니다.",
+      "affects": [
+        "시설 배경"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "FacilityArt",
+      "editable": true
+    },
+    {
+      "id": "display.background.parking",
+      "group": "생활 시설",
+      "section": "시설 배경",
+      "title": "야외 주차장",
+      "type": "integer",
+      "defaultValue": "5",
+      "min": 0,
+      "max": 7,
+      "unit": "",
+      "description": "이 자리에 표시할 승인 그림을 선택합니다.",
+      "affects": [
+        "시설 배경"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "FacilityArt",
+      "editable": true
+    },
+    {
+      "id": "display.background.garage",
+      "group": "생활 시설",
+      "section": "시설 배경",
+      "title": "덕성프라자 1층 주차장",
+      "type": "integer",
+      "defaultValue": "6",
+      "min": 0,
+      "max": 7,
+      "unit": "",
+      "description": "이 자리에 표시할 승인 그림을 선택합니다.",
+      "affects": [
+        "시설 배경"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "FacilityArt",
+      "editable": true
+    },
+    {
+      "id": "display.background.room",
+      "group": "생활 시설",
+      "section": "시설 배경",
+      "title": "기사 숙소",
+      "type": "integer",
+      "defaultValue": "7",
+      "min": 0,
+      "max": 7,
+      "unit": "",
+      "description": "이 자리에 표시할 승인 그림을 선택합니다.",
+      "affects": [
+        "시설 배경"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "FacilityArt",
+      "editable": true
+    },
+    {
+      "id": "display.meal.pork",
+      "group": "생활 시설",
+      "section": "메뉴 그림",
+      "title": "제육백반",
+      "type": "integer",
+      "defaultValue": "0",
+      "min": 0,
+      "max": 2,
+      "unit": "",
+      "description": "이 자리에 표시할 승인 그림을 선택합니다.",
+      "affects": [
+        "메뉴 그림"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "FacilityArt",
+      "editable": true
+    },
+    {
+      "id": "display.menuName.pork",
+      "group": "생활 시설",
+      "section": "메뉴 이름",
+      "title": "제육백반 이름",
+      "type": "text",
+      "defaultValue": "제육백반",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "선택 카드와 식사 안내에 표시합니다.",
+      "affects": [
+        "메뉴 이름"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "ServiceStops",
+      "editable": true
+    },
+    {
+      "id": "display.meal.stew",
+      "group": "생활 시설",
+      "section": "메뉴 그림",
+      "title": "된장찌개 정식",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 2,
+      "unit": "",
+      "description": "이 자리에 표시할 승인 그림을 선택합니다.",
+      "affects": [
+        "메뉴 그림"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "FacilityArt",
+      "editable": true
+    },
+    {
+      "id": "display.menuName.stew",
+      "group": "생활 시설",
+      "section": "메뉴 이름",
+      "title": "된장찌개 정식 이름",
+      "type": "text",
+      "defaultValue": "된장찌개 정식",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "선택 카드와 식사 안내에 표시합니다.",
+      "affects": [
+        "메뉴 이름"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "ServiceStops",
+      "editable": true
+    },
+    {
+      "id": "display.meal.soup",
+      "group": "생활 시설",
+      "section": "메뉴 그림",
+      "title": "소고기국밥",
+      "type": "integer",
+      "defaultValue": "2",
+      "min": 0,
+      "max": 2,
+      "unit": "",
+      "description": "이 자리에 표시할 승인 그림을 선택합니다.",
+      "affects": [
+        "메뉴 그림"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "FacilityArt",
+      "editable": true
+    },
+    {
+      "id": "display.menuName.soup",
+      "group": "생활 시설",
+      "section": "메뉴 이름",
+      "title": "소고기국밥 이름",
+      "type": "text",
+      "defaultValue": "소고기국밥",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "선택 카드와 식사 안내에 표시합니다.",
+      "affects": [
+        "메뉴 이름"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "ServiceStops",
+      "editable": true
+    },
+    {
+      "id": "display.sound.engine",
+      "group": "차량",
+      "section": "차량 효과음",
+      "title": "주행음",
+      "type": "boolean",
+      "defaultValue": "true",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "프로필에서 사용하고 운전자의 게임 소리 설정도 켜져 있을 때 재생합니다.",
+      "affects": [
+        "차량 효과음"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "VehicleAudio",
+      "editable": true
+    },
+    {
+      "id": "display.sound.brake",
+      "group": "차량",
+      "section": "차량 효과음",
+      "title": "브레이크음",
+      "type": "boolean",
+      "defaultValue": "true",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "프로필에서 사용하고 운전자의 게임 소리 설정도 켜져 있을 때 재생합니다.",
+      "affects": [
+        "차량 효과음"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "VehicleAudio",
+      "editable": true
+    },
+    {
+      "id": "display.sound.horn",
+      "group": "차량",
+      "section": "차량 효과음",
+      "title": "경적 · 빵빵",
+      "type": "boolean",
+      "defaultValue": "true",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "프로필에서 사용하고 운전자의 게임 소리 설정도 켜져 있을 때 재생합니다.",
+      "affects": [
+        "차량 효과음"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "VehicleAudio",
+      "editable": true
+    },
+    {
+      "id": "display.sound.rain",
+      "group": "차량",
+      "section": "차량 효과음",
+      "title": "빗소리",
+      "type": "boolean",
+      "defaultValue": "true",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "프로필에서 사용하고 운전자의 게임 소리 설정도 켜져 있을 때 재생합니다.",
+      "affects": [
+        "차량 효과음"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "VehicleAudio",
+      "editable": true
+    },
+    {
+      "id": "stopName.scenario.1",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "수인로 서쪽",
+      "type": "text",
+      "defaultValue": "수인로 서쪽",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.scenario.2",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "계수로 동쪽",
+      "type": "text",
+      "defaultValue": "계수로 동쪽",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.scenario.3",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은행로173번길",
+      "type": "text",
+      "defaultValue": "은행로173번길",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.scenario.4",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은계중앙로 동쪽",
+      "type": "text",
+      "defaultValue": "은계중앙로 동쪽",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.scenario.5",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "수인로 남쪽 일대",
+      "type": "text",
+      "defaultValue": "수인로 남쪽 일대",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.scenario.6",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은계로 북쪽",
+      "type": "text",
+      "defaultValue": "은계로 북쪽",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.scenario.7",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은계로 남쪽",
+      "type": "text",
+      "defaultValue": "은계로 남쪽",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.scenario.8",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은계남로 중부",
+      "type": "text",
+      "defaultValue": "은계남로 중부",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.scenario.9",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "계수로 서쪽",
+      "type": "text",
+      "defaultValue": "계수로 서쪽",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.scenario.10",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "대은로104번길",
+      "type": "text",
+      "defaultValue": "대은로104번길",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.scenario.11",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "검바위1로",
+      "type": "text",
+      "defaultValue": "검바위1로",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.scenario.12",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은계번영길",
+      "type": "text",
+      "defaultValue": "은계번영길",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.bay.1",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은계중앙1길",
+      "type": "text",
+      "defaultValue": "은계중앙1길",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.bay.2",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은계남로 서쪽",
+      "type": "text",
+      "defaultValue": "은계남로 서쪽",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.bay.3",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은계중앙로 남동쪽",
+      "type": "text",
+      "defaultValue": "은계중앙로 남동쪽",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.bay.4",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은행고길 북쪽",
+      "type": "text",
+      "defaultValue": "은행고길 북쪽",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.bay.5",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은계로 남단 일대",
+      "type": "text",
+      "defaultValue": "은계로 남단 일대",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.bay.6",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은계호수로 인근",
+      "type": "text",
+      "defaultValue": "은계호수로 인근",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.bay.7",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은계중앙로 남쪽",
+      "type": "text",
+      "defaultValue": "은계중앙로 남쪽",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.bay.8",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은계중앙로 북동쪽",
+      "type": "text",
+      "defaultValue": "은계중앙로 북동쪽",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.bay.9",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "계수로 중부",
+      "type": "text",
+      "defaultValue": "계수로 중부",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.bay.10",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은계로 중부",
+      "type": "text",
+      "defaultValue": "은계로 중부",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.bay.11",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은행고길 남쪽",
+      "type": "text",
+      "defaultValue": "은행고길 남쪽",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.bay.12",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은계남로 동쪽",
+      "type": "text",
+      "defaultValue": "은계남로 동쪽",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "stopName.alternate.1",
+      "group": "승하차 지명",
+      "section": "은계 승하차 지명",
+      "title": "은계남로 서쪽 대체 정차면",
+      "type": "text",
+      "defaultValue": "은계남로 서쪽 대체 정차면",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "같은 지점의 반대편은 이 이름 뒤에 반대편을 붙입니다.",
+      "affects": [
+        "은계 승하차 지명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "KoreanText.Stop",
+      "editable": true
+    },
+    {
+      "id": "cabin.wish.window",
+      "group": "승객 요청",
+      "section": "창문·온도 조작 요청",
+      "title": "창문 요청 사용",
+      "type": "boolean",
+      "defaultValue": "true",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "배정된 손님이 승차 때 창문을 열거나 닫아 달라고 합니다.",
+      "affects": [
+        "창문·온도 조작 요청"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs / PassengerBehavior",
+      "editable": true
+    },
+    {
+      "id": "cabin.wish.temperature",
+      "group": "승객 요청",
+      "section": "창문·온도 조작 요청",
+      "title": "온도 요청 사용",
+      "type": "boolean",
+      "defaultValue": "true",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "배정된 손님이 희망 온도로 맞춰 달라고 합니다.",
+      "affects": [
+        "창문·온도 조작 요청"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs / PassengerBehavior",
+      "editable": true
+    },
+    {
+      "id": "cabin.wish.oneIn",
+      "group": "승객 요청",
+      "section": "창문·온도 조작 요청",
+      "title": "일반 승객 중 추첨 비율 (1/N)",
+      "type": "integer",
+      "defaultValue": "3",
+      "min": 1,
+      "max": 100,
+      "unit": "",
+      "description": "1이면 모든 적격 손님, 3이면 적격 손님의 약 3분의 1입니다.",
+      "affects": [
+        "창문·온도 조작 요청"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs / PassengerBehavior",
+      "editable": true
+    },
+    {
+      "id": "cabin.wish.reward",
+      "group": "승객 요청",
+      "section": "창문·온도 조작 요청",
+      "title": "이행 만족도",
+      "type": "integer",
+      "defaultValue": "2",
+      "min": 0,
+      "max": 20,
+      "unit": "",
+      "description": "정확한 조작을 완료한 운송에 한 번 반영합니다.",
+      "affects": [
+        "창문·온도 조작 요청"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs / PassengerBehavior",
+      "editable": true
+    },
+    {
+      "id": "cabin.wish.openLine",
+      "group": "승객 요청",
+      "section": "창문·온도 조작 요청",
+      "title": "창문 열기 대사",
+      "type": "text",
+      "defaultValue": "조금 답답하네요. 창문 좀 내려 주시겠어요?",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "조작 키 안내는 게임이 붙입니다.",
+      "affects": [
+        "창문·온도 조작 요청"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs / PassengerBehavior",
+      "editable": true
+    },
+    {
+      "id": "cabin.wish.closeLine",
+      "group": "승객 요청",
+      "section": "창문·온도 조작 요청",
+      "title": "창문 닫기 대사",
+      "type": "text",
+      "defaultValue": "바람이 차네요. 창문 좀 올려 주시겠어요?",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "조작 키 안내는 게임이 붙입니다.",
+      "affects": [
+        "창문·온도 조작 요청"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs / PassengerBehavior",
+      "editable": true
+    },
+    {
+      "id": "cabin.wish.temperatureLine",
+      "group": "승객 요청",
+      "section": "창문·온도 조작 요청",
+      "title": "온도 요청 대사",
+      "type": "text",
+      "defaultValue": "실내 온도를 {온도}도로 맞춰 주시겠어요?",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "{온도}에 손님의 목표 온도가 표시됩니다.",
+      "affects": [
+        "창문·온도 조작 요청"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs / PassengerBehavior",
+      "editable": true
+    },
+    {
+      "id": "cabin.wish.thanks",
+      "group": "승객 요청",
+      "section": "창문·온도 조작 요청",
+      "title": "이행 후 대사",
+      "type": "text",
+      "defaultValue": "네, 딱 좋아요. 고맙습니다!",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "승객이 요청을 이행한 뒤 하는 말입니다.",
+      "affects": [
+        "창문·온도 조작 요청"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs / PassengerBehavior",
+      "editable": true
+    },
+    {
       "id": "type.Drunk.spawnPercent",
       "group": "대화 선택지",
       "section": "취객",

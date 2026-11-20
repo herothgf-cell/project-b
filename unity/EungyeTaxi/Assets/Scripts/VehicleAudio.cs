@@ -77,11 +77,11 @@ public sealed class VehicleAudio : MonoBehaviour {
   float power=Mathf.Clamp01(Mathf.Abs(taxi.wheels[2].motorTorque)/1100f);
   float braking=Mathf.Clamp01(taxi.wheels[0].brakeTorque/3500f);
   engine.pitch=.83f+.85f*Mathf.Clamp01(speed/22)+.32f*power;
-  Loop(engine,driving&&settings.engineSound?.10f+.10f*power+.09f*Mathf.Clamp01(speed/20):0);
+  Loop(engine,driving&&settings.engineSound&&ContentTuning.Flag("display.sound.engine",true)?.10f+.10f*power+.09f*Mathf.Clamp01(speed/20):0);
   brake.pitch=.85f+.25f*Mathf.Clamp01(speed/12);
-  Loop(brake,driving&&settings.brakeSound?.38f*braking*Mathf.Clamp01(speed/3):0);
-  Loop(rain,driving&&settings.rainSound?.58f*RainPolicy.Intensity:0);
-  if(!driving||!settings.hornSound){if(horn.isPlaying)horn.Stop();}
+  Loop(brake,driving&&settings.brakeSound&&ContentTuning.Flag("display.sound.brake",true)?.38f*braking*Mathf.Clamp01(speed/3):0);
+  Loop(rain,driving&&settings.rainSound&&ContentTuning.Flag("display.sound.rain",true)?.58f*RainPolicy.Intensity:0);
+  if(!driving||!settings.hornSound||!ContentTuning.Flag("display.sound.horn",true)){if(horn.isPlaying)horn.Stop();}
   else if(Input.GetKeyDown(KeyCode.Y)||Input.GetKeyDown(KeyCode.JoystickButton3)){
    horn.volume=.48f;horn.Play();
   }

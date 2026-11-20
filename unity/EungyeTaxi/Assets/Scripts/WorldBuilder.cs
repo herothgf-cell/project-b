@@ -114,4 +114,18 @@ public class WorldBuilder : MonoBehaviour {
     }
 
 }
-public class FaceCamera : MonoBehaviour { void LateUpdate() { if(Camera.main) transform.rotation=Camera.main.transform.rotation; } }
+public class FaceCamera : MonoBehaviour {
+ TextMesh stopLabel;
+ string stopName,suffix;
+ int profileGeneration;
+ public void BindStop(TextMesh label,string rawName,string afterName){
+  stopLabel=label;stopName=rawName;suffix=afterName;RefreshLabel();
+ }
+ void RefreshLabel(){
+  stopLabel.text=KoreanText.Stop(stopName)+suffix;profileGeneration=ContentTuning.Generation;
+ }
+ void LateUpdate(){
+  if(stopLabel&&profileGeneration!=ContentTuning.Generation)RefreshLabel();
+  if(Camera.main)transform.rotation=Camera.main.transform.rotation;
+ }
+}

@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "6144287191505f467cb6cda8b453131afa9614f09d25f230a3f4fad2019ac646",
+  "contentHash": "536bc8acb4907406fc7376d610036432f31e6a18d69b801944be3c7a10d3222b",
   "values": [
     {
       "id": "radio.station",
@@ -1935,6 +1935,210 @@
     {
       "id": "law.vehicleMajor.penalty",
       "value": "15"
+    },
+    {
+      "id": "display.background.diner",
+      "value": "0"
+    },
+    {
+      "id": "display.background.fuel",
+      "value": "1"
+    },
+    {
+      "id": "display.background.wash",
+      "value": "2"
+    },
+    {
+      "id": "display.background.workshop",
+      "value": "3"
+    },
+    {
+      "id": "display.background.rest",
+      "value": "4"
+    },
+    {
+      "id": "display.background.parking",
+      "value": "5"
+    },
+    {
+      "id": "display.background.garage",
+      "value": "6"
+    },
+    {
+      "id": "display.background.room",
+      "value": "7"
+    },
+    {
+      "id": "display.meal.pork",
+      "value": "0"
+    },
+    {
+      "id": "display.menuName.pork",
+      "value": "제육백반"
+    },
+    {
+      "id": "display.meal.stew",
+      "value": "1"
+    },
+    {
+      "id": "display.menuName.stew",
+      "value": "된장찌개 정식"
+    },
+    {
+      "id": "display.meal.soup",
+      "value": "2"
+    },
+    {
+      "id": "display.menuName.soup",
+      "value": "소고기국밥"
+    },
+    {
+      "id": "display.sound.engine",
+      "value": "true"
+    },
+    {
+      "id": "display.sound.brake",
+      "value": "true"
+    },
+    {
+      "id": "display.sound.horn",
+      "value": "true"
+    },
+    {
+      "id": "display.sound.rain",
+      "value": "true"
+    },
+    {
+      "id": "stopName.scenario.1",
+      "value": "수인로 서쪽"
+    },
+    {
+      "id": "stopName.scenario.2",
+      "value": "계수로 동쪽"
+    },
+    {
+      "id": "stopName.scenario.3",
+      "value": "은행로173번길"
+    },
+    {
+      "id": "stopName.scenario.4",
+      "value": "은계중앙로 동쪽"
+    },
+    {
+      "id": "stopName.scenario.5",
+      "value": "수인로 남쪽 일대"
+    },
+    {
+      "id": "stopName.scenario.6",
+      "value": "은계로 북쪽"
+    },
+    {
+      "id": "stopName.scenario.7",
+      "value": "은계로 남쪽"
+    },
+    {
+      "id": "stopName.scenario.8",
+      "value": "은계남로 중부"
+    },
+    {
+      "id": "stopName.scenario.9",
+      "value": "계수로 서쪽"
+    },
+    {
+      "id": "stopName.scenario.10",
+      "value": "대은로104번길"
+    },
+    {
+      "id": "stopName.scenario.11",
+      "value": "검바위1로"
+    },
+    {
+      "id": "stopName.scenario.12",
+      "value": "은계번영길"
+    },
+    {
+      "id": "stopName.bay.1",
+      "value": "은계중앙1길"
+    },
+    {
+      "id": "stopName.bay.2",
+      "value": "은계남로 서쪽"
+    },
+    {
+      "id": "stopName.bay.3",
+      "value": "은계중앙로 남동쪽"
+    },
+    {
+      "id": "stopName.bay.4",
+      "value": "은행고길 북쪽"
+    },
+    {
+      "id": "stopName.bay.5",
+      "value": "은계로 남단 일대"
+    },
+    {
+      "id": "stopName.bay.6",
+      "value": "은계호수로 인근"
+    },
+    {
+      "id": "stopName.bay.7",
+      "value": "은계중앙로 남쪽"
+    },
+    {
+      "id": "stopName.bay.8",
+      "value": "은계중앙로 북동쪽"
+    },
+    {
+      "id": "stopName.bay.9",
+      "value": "계수로 중부"
+    },
+    {
+      "id": "stopName.bay.10",
+      "value": "은계로 중부"
+    },
+    {
+      "id": "stopName.bay.11",
+      "value": "은행고길 남쪽"
+    },
+    {
+      "id": "stopName.bay.12",
+      "value": "은계남로 동쪽"
+    },
+    {
+      "id": "stopName.alternate.1",
+      "value": "은계남로 서쪽 대체 정차면"
+    },
+    {
+      "id": "cabin.wish.window",
+      "value": "true"
+    },
+    {
+      "id": "cabin.wish.temperature",
+      "value": "true"
+    },
+    {
+      "id": "cabin.wish.oneIn",
+      "value": "3"
+    },
+    {
+      "id": "cabin.wish.reward",
+      "value": "2"
+    },
+    {
+      "id": "cabin.wish.openLine",
+      "value": "조금 답답하네요. 창문 좀 내려 주시겠어요?"
+    },
+    {
+      "id": "cabin.wish.closeLine",
+      "value": "바람이 차네요. 창문 좀 올려 주시겠어요?"
+    },
+    {
+      "id": "cabin.wish.temperatureLine",
+      "value": "실내 온도를 {온도}도로 맞춰 주시겠어요?"
+    },
+    {
+      "id": "cabin.wish.thanks",
+      "value": "네, 딱 좋아요. 고맙습니다!"
     },
     {
       "id": "type.Drunk.spawnPercent",

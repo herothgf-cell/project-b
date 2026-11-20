@@ -58,11 +58,11 @@ public enum PassengerRepresentativeStatus { None, NotPresented, Pending, Accepte
   return false;
  }
  public string CabinRequestLine {get{
-  if(CabinWishMet)return "네, 딱 좋아요. 고맙습니다!";
+  if(CabinWishMet)return Content.Text("cabin.wish.thanks","네, 딱 좋아요. 고맙습니다!");
   switch(RequestedControl){
-   case CabinWish.OpenWindow:return "조금 답답하네요. 창문 좀 내려 주시겠어요? (K)";
-   case CabinWish.CloseWindow:return "바람이 차네요. 창문 좀 올려 주시겠어요? (K)";
-   case CabinWish.Temperature:return "실내 온도를 "+RequestedDegrees+"도로 맞춰 주시겠어요? ([ / ])";
+   case CabinWish.OpenWindow:return Content.Text("cabin.wish.openLine","조금 답답하네요. 창문 좀 내려 주시겠어요?")+" (K)";
+   case CabinWish.CloseWindow:return Content.Text("cabin.wish.closeLine","바람이 차네요. 창문 좀 올려 주시겠어요?")+" (K)";
+   case CabinWish.Temperature:return Content.Text("cabin.wish.temperatureLine","실내 온도를 {온도}도로 맞춰 주시겠어요?").Replace("{온도}",RequestedDegrees.ToString())+" ([ / ])";
    default:return "";
   }
  }}
@@ -72,7 +72,7 @@ public enum PassengerRepresentativeStatus { None, NotPresented, Pending, Accepte
  public float NauseaLevel,NauseaRestRemaining,UmbrellaPrepareRemaining,TemperatureComfortElapsed,TemperatureDiscomfortElapsed;
  public string LastTraitEffect;
  public float TraitWorkRemaining {get{return NauseaRestRemaining+UmbrellaPrepareRemaining;}}
- public int TraitSatisfactionDelta {get{return CabinWishMet?2:!HasTrait("body.temperatureSensitive")||!Boarded?0:TemperatureSetting==TemperaturePreference&&TemperatureComfortElapsed>=Content.Number("effect.temperature.comfortSeconds",15)?Content.Int("effect.temperature.matchSatisfaction",3):TemperatureDiscomfortElapsed>=Content.Number("effect.temperature.discomfortSeconds",20)?Content.Int("effect.temperature.mismatchSatisfaction",-2):0;}}
+ public int TraitSatisfactionDelta {get{return CabinWishMet?Content.Int("cabin.wish.reward",2):!HasTrait("body.temperatureSensitive")||!Boarded?0:TemperatureSetting==TemperaturePreference&&TemperatureComfortElapsed>=Content.Number("effect.temperature.comfortSeconds",15)?Content.Int("effect.temperature.matchSatisfaction",3):TemperatureDiscomfortElapsed>=Content.Number("effect.temperature.discomfortSeconds",20)?Content.Int("effect.temperature.mismatchSatisfaction",-2):0;}}
  public string TraitStatus {get{return (HasTrait("body.nausea")?"메스꺼움 "+Math.Round(NauseaLevel)+" · "+(NauseaIncident?(NauseaDirtOccurred?"오염 발생":"봉투로 오염 예방"):NauseaChoice==1?"봉투 준비":"상태 관찰"):"")+(HasTrait("body.temperatureSensitive")?"  차내 온도 "+(TemperatureSetting==0?"따뜻하게":TemperatureSetting==1?"시원하게":"기존 유지")+" · 쾌적 만족도 "+TraitSatisfactionDelta:"")+(HasTrait("item.wetUmbrella")?"  우산 "+(UmbrellaChoice==0?"감싸기":UmbrellaChoice==1?"그대로 보관":"응대 전"):"");}}
  public void InitializeTraits(){if(TraitsInitialized)return;TraitVersion=1;TraitsInitialized=true;TemperaturePreference=(int)(DrunkRideState.Hash(Identity+":temperature")%2u);NauseaPlanned=HasTrait("body.nausea")&&DrunkRideState.Hash(Identity+":nausea")%100<Content.Int("effect.nausea.eventPercent",100);}
  public string TraitAction {get{if(Arrived||Settled||Sleeping||FollowupPending)return "";if(HasTrait("item.wetUmbrella")&&UmbrellaChoice<0)return "umbrella";if(Type!=PassengerType.General&&Choice<0)return "";if(!Boarded)return "";if(HasTrait("body.temperatureSensitive")&&(TemperatureSetting<0||TemperatureCorrectionPending))return "temperature";if(HasTrait("body.nausea")&&NauseaPlanned&&!NauseaIncident&&NauseaChoice<0&&NauseaLevel>=Content.Number("effect.nausea.warning",20))return "nausea";return "";}}

@@ -56,7 +56,7 @@ public partial class PassengerJobs : MonoBehaviour {
  public DrunkRideState DrunkRide {get;private set;}
  public PassengerBehaviorState Behavior {get;private set;}
  public PassengerType? ForcedPassengerType;
- public string BehaviorSummary {get{return Behavior==null?"":Behavior.TypeLabel+" · "+Behavior.VariantLabel+" · "+(Behavior.RequestedControl!=PassengerBehaviorState.CabinWish.None?(Behavior.CabinWishMet?"차내 요청 완료 · 만족도 +2":"차내 요청 미완료"):Behavior.CompletionReaction)+" · "+Behavior.TraitStatus;}}
+ public string BehaviorSummary {get{return Behavior==null?"":Behavior.TypeLabel+" · "+Behavior.VariantLabel+" · "+(Behavior.RequestedControl!=PassengerBehaviorState.CabinWish.None?(Behavior.CabinWishMet?"차내 요청 완료 · 만족도 +"+Behavior.TraitSatisfactionDelta:"차내 요청 미완료"):Behavior.CompletionReaction)+" · "+Behavior.TraitStatus;}}
  public bool BehaviorChoicesOpen {get{return Behavior!=null&&Behavior.HasChoice&&(trip.State==TripState.ToPickup||trip.State==TripState.OnTrip&&!trip.ArrivalLocked&&nav.remaining/Mathf.Max(1,boardingDistance)>.15f);}}
  public bool BehaviorAsleep {get{return Behavior!=null&&Behavior.Sleeping&&!Behavior.Arrived;}}
  public DrunkRideCase ForcedRideCase=DrunkRideCase.Random;
@@ -218,7 +218,7 @@ public partial class PassengerJobs : MonoBehaviour {
 
    WorldBuilder.Box("Passenger body",new Vector3(0,.85f,0),new Vector3(.48f,1.15f,.3f),coat,root.transform,false);
    var head=GameObject.CreatePrimitive(PrimitiveType.Sphere);head.transform.SetParent(root.transform,false);head.transform.localPosition=Vector3.up*1.58f;head.transform.localScale=Vector3.one*.35f;head.GetComponent<Renderer>().sharedMaterial=skin;Destroy(head.GetComponent<Collider>());
-   var label=new GameObject("Pickup label");label.transform.SetParent(root.transform,false);label.transform.localPosition=Vector3.up*2.3f;var text=label.AddComponent<TextMesh>();text.text=KoreanText.Stop(stops[i].name)+"\nF · 택시 탑승";text.fontSize=40;text.characterSize=.08f;text.anchor=TextAnchor.MiddleCenter;text.color=Color.cyan;KoreanText.Apply(text);label.AddComponent<FaceCamera>();
+   var label=new GameObject("Pickup label");label.transform.SetParent(root.transform,false);label.transform.localPosition=Vector3.up*2.3f;var text=label.AddComponent<TextMesh>();text.fontSize=40;text.characterSize=.08f;text.anchor=TextAnchor.MiddleCenter;text.color=Color.cyan;label.AddComponent<FaceCamera>().BindStop(text,stops[i].name,"\nF · 택시 탑승");KoreanText.Apply(text);
   }
   marker=GameObject.CreatePrimitive(PrimitiveType.Cylinder);marker.name="Pickup or destination zone";marker.transform.localScale=new Vector3(3,.03f,9);marker.GetComponent<Renderer>().sharedMaterial=WorldBuilder.Mat("Destination zone",new Color(.2f,.8f,.75f));Destroy(marker.GetComponent<Collider>());marker.SetActive(false);if(session.IsSimulationBot){marker.GetComponent<Renderer>().enabled=false;foreach(var line in GetComponentsInChildren<LineRenderer>())line.enabled=false;}Generate();
  }
@@ -344,9 +344,11 @@ System.Collections.Generic.Dictionary<JobOffer,float> fuelCache=new System.Colle
   if(!ForcedPassengerType.HasValue&&selected!=PassengerType.General&&selected!=PassengerType.Drunk&&System.Array.IndexOf(pools,selected)<0)selected=PassengerType.General;
   if(business.CabinEnabled&&!ForcedPassengerType.HasValue&&selected==PassengerType.General){
    uint draw=DrunkRideState.Hash(current.candidateSeed+":cabin-request");
-   if(draw%3==0){
+   bool window=ContentTuning.Flag("cabin.wish.window",true);
+   bool temperature=ContentTuning.Flag("cabin.wish.temperature",true);
+   if((window||temperature)&&draw%(uint)ContentTuning.Int("cabin.wish.oneIn",3)==0){
     var passenger=PassengerBehaviorState.Create(current.candidateSeed,PassengerType.General);
-    if((draw&1)==0)passenger.RequestWindow(business.Cabin.WindowOpen);
+    if(window&&(!temperature||(draw&1)==0))passenger.RequestWindow(business.Cabin.WindowOpen);
     else passenger.RequestSetpoint(business.Cabin.Target>=22?20:24);
     return passenger;
    }

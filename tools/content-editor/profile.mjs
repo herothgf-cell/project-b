@@ -7,7 +7,7 @@ import {defaultChoiceValue} from './choice-catalog.mjs';
 const DRIVING_IDS=['flashStop','permissiveTurn','blockedExit','personMinor','personModerate','personMajor','vehicleMinor','vehicleModerate','vehicleMajor'].map(key=>'law.'+key+'.penalty');
 const STORY_REQUESTS=new Set(['Quiet','Eta','Comfort','OnTime','LargeRoad','SafeStop','Empathy','FareHelp','LocalChat','ViaStop']);
 const STORY_CRITERIA=new Set(['OnTime','Comfort','LargeRoad','Quiet','FareHelp','ViaStop','SafeStop','Luggage','Protection','Conversation','Safety','Empathy']);
-const SINGLE_SETTING=/^(home|cabin|backstory|day\.condition|story|radio)\./;
+const SINGLE_SETTING=/^(home|cabin|stopName|backstory|day\.condition|story|radio)\./;
 const singleLine=(value,limit)=>value.trim().length>0&&value.length<=limit&&!/[\r\n]/.test(value);
 
 function storyTextError(id,value) {
@@ -43,14 +43,17 @@ export function validateProfile(p,catalog,{checkHash=true}={}) {
  if(v.id==='passenger.presets'){try{errors.push(...PassengerPresets.validate(parseJson(v.value),catalog));}catch{err('승객 프리셋 JSON 형식 오류');}}
  if(e.type==='text'&&v.value.length>(v.id==='passenger.presets'?32000:4000))err(`${v.id}: 텍스트가 너무 깁니다.`);
  if(e.type==='text'&&v.id.startsWith('story.')){const message=storyTextError(v.id,v.value);if(message)err(`${v.id}: ${message}`);}
+ if(e.type==='text'&&/^(stopName\.|display\.menuName\.|cabin\.wish\.)/.test(v.id)&&!singleLine(v.value,v.id.startsWith('cabin.')?120:32))err(v.id+' 한 줄 표시 이름 또는 대사를 입력하세요.');
+ if(v.id==='cabin.wish.temperatureLine'&&!v.value.includes('{온도}'))err('온도 대사에 {온도}를 포함하세요.');
  if(e.type==='text'&&v.id.startsWith('radio.')&&!singleLine(v.value,v.id==='radio.station'?14:100))err(`${v.id}: 라디오 자막은 한 줄로 입력하세요.`);
  if(e.type==='boolean'&&!['true','false'].includes(v.value))err(`${v.id}: 참/거짓 값 오류`);
  if(e.type==='number'||e.type==='integer'){const n=Number(v.value);if(!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(v.value)||!Number.isFinite(n)||(e.type==='integer'&&!Number.isSafeInteger(n))||(e.min!=null&&n<e.min)||(e.max!=null&&n>e.max))err(`${v.id}: 허용 범위 오류`);}}
  if(p.schemaVersion===1){try{const d=parseJson(p.values.find(v=>v.id==='passenger.presets')?.value||'{}');if(d.version===2&&d.presets.some(x=>x.overrides?.some(o=>o.id.startsWith('choice.'))))err('개별 선택 효과는 최신 프로필 형식으로 이관한 뒤 사용하세요.');}catch{}}
+ const oldDisplay=![...seen].some(id=>id.startsWith('display.'));
  const oldDriving=DRIVING_IDS.every(id=>!seen.has(id)),oldWeather=![...seen].some(id=>id.startsWith('weather.'));
  const oldTraits=TRAIT_SETTINGS.every(e=>!seen.has(e.id)),oldQuiet=QUIET_EXTENSION_IDS.every(id=>!seen.has(id));
  const oldDrunk=DRUNK_SETTINGS.every(e=>!seen.has(e.id)),oldVehicle=VEHICLE_SETTINGS.every(e=>!seen.has(e.id));
- for(const id of entries.keys())if(!seen.has(id)&&!(oldDriving&&DRIVING_IDS.includes(id))&&!(oldWeather&&id.startsWith('weather.'))&&id!=='passenger.presets'&&id!=='law.centreLine.penalty'&&!SINGLE_SETTING.test(id)&&!(oldTraits&&TRAIT_SETTINGS.some(e=>e.id===id))&&!(oldQuiet&&QUIET_EXTENSION_IDS.includes(id))&&!(oldDrunk&&DRUNK_SETTINGS.some(e=>e.id===id))&&!(oldVehicle&&VEHICLE_SETTINGS.some(e=>e.id===id)))err(`누락된 ID: ${id}`);
+ for(const id of entries.keys())if(!seen.has(id)&&!(oldDisplay&&id.startsWith('display.'))&&!(oldDriving&&DRIVING_IDS.includes(id))&&!(oldWeather&&id.startsWith('weather.'))&&id!=='passenger.presets'&&id!=='law.centreLine.penalty'&&!SINGLE_SETTING.test(id)&&!(oldTraits&&TRAIT_SETTINGS.some(e=>e.id===id))&&!(oldQuiet&&QUIET_EXTENSION_IDS.includes(id))&&!(oldDrunk&&DRUNK_SETTINGS.some(e=>e.id===id))&&!(oldVehicle&&VEHICLE_SETTINGS.some(e=>e.id===id)))err(`누락된 ID: ${id}`);
  const vals=new Map(p.values.filter(v=>v&&typeof v.id==='string'&&typeof v.value==='string').map(v=>[v.id,v.value]));
  const storyValue=id=>vals.get(id)??entries.get(id)?.defaultValue;
  if(Number(storyValue('story.daily.minimum'))>Number(storyValue('story.daily.maximum')))err('하루 최소 이야기 수는 최대 이야기 수 이하여야 합니다.');
@@ -75,7 +78,7 @@ export function migrateProfile(profile,catalog){
  }
  // The source is validated before filling: partial extension blocks remain errors.
  // Fill after schema1 choice conversion, then validate only the completed migration.
- for(const id of ['law.centreLine.penalty',...DRUNK_SETTINGS.map(e=>e.id),...VEHICLE_SETTINGS.map(e=>e.id),PRESET_ENTRY.id,...TRAIT_SETTINGS.map(e=>e.id),...QUIET_EXTENSION_IDS,...DRIVING_IDS,...catalog.entries.filter(e=>e.editable&&(e.id.startsWith('weather.')||SINGLE_SETTING.test(e.id))).map(e=>e.id)]){
+ for(const id of ['law.centreLine.penalty',...DRUNK_SETTINGS.map(e=>e.id),...VEHICLE_SETTINGS.map(e=>e.id),PRESET_ENTRY.id,...TRAIT_SETTINGS.map(e=>e.id),...QUIET_EXTENSION_IDS,...DRIVING_IDS,...catalog.entries.filter(e=>e.editable&&(e.id.startsWith('weather.')||e.id.startsWith('display.')||SINGLE_SETTING.test(e.id))).map(e=>e.id)]){
   const entry=catalog.entries.find(e=>e.id===id&&e.editable);
   if(entry&&!copy.values.some(v=>v.id===id)&&(copy.schemaVersion===2||!id.startsWith('choice.')))copy.values.push({id,value:entry.defaultValue});
  }

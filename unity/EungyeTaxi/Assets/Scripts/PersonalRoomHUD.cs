@@ -3,7 +3,7 @@ using UnityEngine;
 // Fixed room view: the backdrop and all purchase layers share a single aspect ratio.
 public static class PersonalRoomHUD {
  const float BackdropWidth=1672,BackdropHeight=941;
- static GUIStyle text,title,small,button;static Texture2D backdrop,morningSky;static string preview="",confirmation="";static int style;
+ static GUIStyle text,title,small,button;static Texture2D morningSky;static string preview="",confirmation="";static int style;
  static readonly Color NightTint=new Color(.53f,.64f,.88f);
  static readonly Color NightOutside=new Color(.035f,.08f,.22f,.28f);
  static readonly Rect[] WindowPanes={new Rect(620,245,210,198),new Rect(859,245,190,198)};
@@ -45,7 +45,7 @@ public static class PersonalRoomHUD {
  }
  static void DrawRoomView(Rect view,PersonalRoomState room,bool morning,bool showPhoto){
   var tint=morning?Color.white:NightTint;
-  if(!backdrop)backdrop=FacilityArt.Texture("room");
+  var backdrop=FacilityArt.Texture("room");
   if(backdrop){
    DrawTexture(view,backdrop,tint);
    foreach(var pane in WindowPanes){

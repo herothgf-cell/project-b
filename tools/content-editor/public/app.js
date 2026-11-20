@@ -1,6 +1,6 @@
 'use strict';
 const $=id=>document.getElementById(id), token=location.hash.slice(1)||sessionStorage.getItem('content-editor-token'); if(location.hash.slice(1))sessionStorage.setItem('content-editor-token',token); history.replaceState(null,'',location.pathname);let catalog,defaults,profile,saved,selected,group='승객 요청',profileIds=[],storedIds=[],saving=false; window.addEventListener('beforeunload',e=>{if(profile&&saved&&unsaved()){e.preventDefault();e.returnValue='';}});
-const groups=['승객 특성','승객 프리셋','승객 요청','대화 선택지','효과','법규','공통 영향 요소','날씨','차량'];
+const groups=['승객 특성','승객 프리셋','승객 요청','대화 선택지','효과','법규','공통 영향 요소','날씨','차량','생활 시설','승하차 지명'];
 const text=(el,value)=>{el.textContent=value??'';return el;};const make=(tag,value,cls)=>{const el=document.createElement(tag);if(value!=null)text(el,value);if(cls)el.className=cls;return el;};
 function message(s,error=false){text($('status'),s);$('status').className='notice'+(error?' error':'');}
 async function api(url,body){const options={headers:{'X-Content-Token':token}};if(body!==undefined){options.method='POST';options.headers['Content-Type']='application/json';options.body=JSON.stringify(body);}const r=await fetch('/api/'+url,options);const data=await r.json();if(!r.ok)throw Error(data.error||'요청 실패');return data;}
@@ -55,13 +55,24 @@ function contextField(id,{hideContext=false}={}){
   if(!hideContext)fieldContext(help,id);if(e.description)help.append(make('p',e.description,'field-help'));
   if(e.source)help.append(make('p',[e.source,e.sourceDate,e.basis].filter(Boolean).join(' · '),'field-help'));box.append(help);return box;
  }
- let input;if(e.type==='text'){input=make('textarea');input.rows=2}else if(e.type==='boolean'){input=make('select');for(const [v,t]of [['true','사용'],['false','사용 안함']]){const o=make('option',t);o.value=v;input.append(o)}}else{input=make('input');input.type='number';input.step=e.type==='integer'?'1':'any';const bounds=inputBounds(e);if(bounds.min!=null)input.min=bounds.min;if(bounds.max!=null)input.max=bounds.max}
+ let input;
+ const art=/^display\.(background|meal)\./.test(id);
+ if(art){
+  const prefix=id.substring(0,id.lastIndexOf('.')+1);
+  const choices=catalog.entries.filter(item=>item.id.startsWith(prefix));
+  text(label,id.startsWith('display.meal.')?'메뉴 그림':'배경 그림');
+  input=make('select');
+  const image=make('img',null,'facility-preview');
+  for(const item of choices){const option=make('option',item.title);option.value=item.defaultValue;input.append(option);}
+  const refresh=()=>{const choice=choices.find(item=>item.defaultValue===val(profile,id));if(choice){image.src='/facility-art/'+choice.id.split('.').at(-1);image.alt=choice.title;}};
+  refresh();flowRefresh.push(refresh);box.append(image);
+ }else if(e.type==='text'){input=make('textarea');input.rows=2}else if(e.type==='boolean'){input=make('select');for(const [v,t]of [['true','사용'],['false','사용 안함']]){const o=make('option',t);o.value=v;input.append(o)}}else{input=make('input');input.type='number';input.step=e.type==='integer'?'1':'any';const bounds=inputBounds(e);if(bounds.min!=null)input.min=bounds.min;if(bounds.max!=null)input.max=bounds.max}
  input.value=displaySetting(id,val(profile,id));input.setAttribute?.('aria-label',name);input.oninput=()=>updateShared(id,storedSetting(id,input.value));editors.push({id,input});label.append(input);
  const actions=make('div',null,'field-actions');for(const [title,source]of [['기본값',defaults],['저장값 복원',saved]]){const b=make('button',title);b.onclick=()=>updateShared(id,val(source,id));actions.append(b)}box.append(actions);
  if(!hideContext)fieldContext(help,id);
  if(e.description&&!e.description.startsWith('기존 구현 경로에서 사용하는 게임 설정.')&&!id.startsWith('choice.'))help.append(make('p',e.description,'field-help'));
- help.append(make('small','기본값: '+(e.type==='boolean'?(val(defaults,id)==='true'?'사용':'사용 안함'):displaySetting(id,val(defaults,id)))+(e.type!=='text'&&e.unit?' '+e.unit:''),'field-default'));
- if(e.type!=='text'&&e.type!=='boolean')help.append(make('small','입력 가능한 값: '+(inputBounds(e).min??'제한 없음')+' ~ '+(inputBounds(e).max??'제한 없음')+(e.type!=='text'&&e.unit?' '+e.unit:''),'field-range'));
+ help.append(make('small','기본값: '+(art?e.title:e.type==='boolean'?(val(defaults,id)==='true'?'사용':'사용 안함'):displaySetting(id,val(defaults,id)))+(e.type!=='text'&&e.unit?' '+e.unit:''),'field-default'));
+ if(!art&&e.type!=='text'&&e.type!=='boolean')help.append(make('small','입력 가능한 값: '+(inputBounds(e).min??'제한 없음')+' ~ '+(inputBounds(e).max??'제한 없음')+(e.type!=='text'&&e.unit?' '+e.unit:''),'field-range'));
  const technical=make('details',null,'technical');technical.append(make('summary','기술 정보'),make('p',[id,e.consumer,e.status].filter(Boolean).join(' · ')));help.append(technical);box.append(help);return box;
 }
 

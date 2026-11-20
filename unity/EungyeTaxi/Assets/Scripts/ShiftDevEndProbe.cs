@@ -390,6 +390,18 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    Check(FacilityArt.Texture(key)!=null,"packaged texture "+key);
   business.ContinueFromMenu();yield return Frames(3);
   s.taxi.body.useGravity=false;s.taxi.body.detectCollisions=false;s.taxi.enabled=false;
+  var profilePath=ContentTuningRuntime.Argument("-facilityProfile");
+  if(!string.IsNullOrEmpty(profilePath)){
+   ContentTuningRuntime.LoadActivePath(profilePath);
+   Check(ContentTuningRuntime.HasOverride,"editor profile loaded");
+   Check(KoreanText.Stop("국도42 승하차 1 반대편")=="시험도로 반대편","edited stop name and direction");
+   Check(!ContentTuning.Flag("display.sound.horn",true)&&ContentTuning.Flag("display.sound.rain",false),"independent profile sound flags");
+   Check(FacilityArt.Texture("diner").name=="rest"&&FacilityArt.Texture("pork").name=="soup","editor background and menu images");
+   var rider=PassengerBehaviorState.Create("editor-test",PassengerType.General);
+   rider.RequestSetpoint(20);rider.Board();
+   Check(rider.CabinRequestLine.Contains("시험 20도")&&rider.ObserveCabin(false,20)&&rider.TraitSatisfactionDelta==7,"edited passenger line and reward");
+   Check(services.MealName=="시험 정식","edited menu caption");
+  }
   var meal=services.MealParkingStop;
   Pose(meal.Kerb,meal.Direction);services.Toggle();
   Check(services.open&&services.RequestAction(1)&&services.InteriorFor(services.LocalActions[0],services.pending)=="diner","restaurant opens at parking bay");

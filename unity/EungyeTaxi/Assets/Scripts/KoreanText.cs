@@ -36,23 +36,28 @@ public static class KoreanText {
   if(!text.GetComponent<RoadSignLabel>())text.gameObject.AddComponent<RoadSignLabel>();
  }
  // Keep authored and saved stop identities intact. Only the presentation names change.
- static readonly System.Collections.Generic.Dictionary<string,string> stopNames=BuildStopNames();
- static System.Collections.Generic.Dictionary<string,string> BuildStopNames(){
-  var result=new System.Collections.Generic.Dictionary<string,string>(System.StringComparer.Ordinal);
+ struct StopLabel {
+  public string key,name,suffix;
+  public StopLabel(string key,string name,string suffix=""){this.key=key;this.name=name;this.suffix=suffix;}
+ }
+ static readonly System.Collections.Generic.Dictionary<string,StopLabel> stopNames=BuildStopNames();
+ static System.Collections.Generic.Dictionary<string,StopLabel> BuildStopNames(){
+  var result=new System.Collections.Generic.Dictionary<string,StopLabel>(System.StringComparer.Ordinal);
   string[] scenario={"수인로 서쪽","계수로 동쪽","은행로173번길","은계중앙로 동쪽","수인로 남쪽 일대","은계로 북쪽","은계로 남쪽","은계남로 중부","계수로 서쪽","대은로104번길","검바위1로","은계번영길"};
   string[] bays={"은계중앙1길","은계남로 서쪽","은계중앙로 남동쪽","은행고길 북쪽","은계로 남단 일대","은계호수로 인근","은계중앙로 남쪽","은계중앙로 북동쪽","계수로 중부","은계로 중부","은행고길 남쪽","은계남로 동쪽"};
   for(int i=0;i<scenario.Length;i++){
    string legacy=(i==0?"국도42":"은계")+" 승하차 "+(i+1);
    string bay="게임 승하차 "+(i+1);
-   result[legacy]=scenario[i];result[legacy+" 반대편"]=scenario[i]+" 반대편";
-   result[bay]=bays[i];result[bay+" 반대편"]=bays[i]+" 반대편";
+   string scenarioKey="stopName.scenario."+(i+1),bayKey="stopName.bay."+(i+1);
+   result[legacy]=new StopLabel(scenarioKey,scenario[i]);result[legacy+" 반대편"]=new StopLabel(scenarioKey,scenario[i]," 반대편");
+   result[bay]=new StopLabel(bayKey,bays[i]);result[bay+" 반대편"]=new StopLabel(bayKey,bays[i]," 반대편");
   }
-  result["게임 대체 승하차 2-A"]="은계남로 서쪽 대체 정차면";
+  result["게임 대체 승하차 2-A"]=new StopLabel("stopName.alternate.1","은계남로 서쪽 대체 정차면");
   return result;
  }
  public static string Stop(string name){
   if(string.IsNullOrEmpty(name))return "";
-  return stopNames.TryGetValue(name,out string label)?label:name.Replace("Stop ","승하차 ");
+  return stopNames.TryGetValue(name,out var label)?ContentTuning.Text(label.key,label.name)+label.suffix:name.Replace("Stop ","승하차 ");
  }
  public static GUIStyle Button(int size){PrepareSkin();return new GUIStyle(GUI.skin.button){font=BoldFont,fontStyle=FontStyle.Normal,fontSize=size,wordWrap=true,alignment=TextAnchor.MiddleCenter,padding=new RectOffset(6,6,0,0)};}
 }

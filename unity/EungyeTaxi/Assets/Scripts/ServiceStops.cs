@@ -21,7 +21,7 @@ public partial class ServiceStops : MonoBehaviour {
  static readonly string[] mealMenu={"제육백반","된장찌개 정식","소고기국밥"};
  public int SelectedMeal {get;private set;}
  public void ApplyNetworkView(bool isOpen,int pendingAction,string message,string target,int meal,int fuel){open=isOpen;pending=pendingAction;notice=message??"";destination=target??"";SelectedMeal=Mathf.Clamp(meal,0,mealMenu.Length-1);pendingFuel=fuel;}
- public string MealName {get{return mealMenu[SelectedMeal];}}
+ public string MealName {get{return FacilityArt.MealName(SelectedMeal,mealMenu[SelectedMeal]);}}
  public bool SelectMeal(int index){if(PvpNativeLan.Route(session,"service-meal",index))return true;if(!open||pending!=1||index<0||index>=mealMenu.Length)return false;SelectedMeal=index;return true;}
  // Legacy regional references; Eungye meal has a dedicated stop. Retained for meal/parking and old regional stop references. Eungye fuel uses actual pump bays.
  public readonly int[] indices={3,6,9};
@@ -244,7 +244,7 @@ public partial class ServiceStops : MonoBehaviour {
   if(Pvp&&session.simulationMatch&&session.simulationMatch.ConditionServiceActive(session)){GUI.Label(new Rect(x+30,y+100,660,130),(session.simulationMatch.ConditionServiceKind(session)==1?"식사":"짧은 휴식")+" · 남은 "+session.simulationMatch.ServiceRemaining(session).ToString("0.0")+"초\n경기는 계속 진행됩니다.\n중단 시 결제·회복 없음 (경과 시간 유지)",style);if(GUI.Button(new Rect(x+20,y+height-45,680,35),"이용 중단 F7",button))Close();return;}
   if(pending==1){
    for(int i=0;i<mealMenu.Length;i++)
-    FacilityArt.MealCard(new Rect(x+20+i*230,y+92,220,208),i,mealMenu[i],this);
+    FacilityArt.MealCard(new Rect(x+20+i*230,y+92,220,208),i,FacilityArt.MealName(i,mealMenu[i]),this);
    string terms=Pvp?"모든 메뉴 "+PvpConditionRules.MealCost.ToString("N0")+"원 · "+PvpConditionRules.MealSeconds+"초 · 포만감 +60 (최대 100)":
     b.ledger.OneDay?"모든 메뉴 3,000원 · 50초 · 포만감 +70 (최대 100)":"모든 메뉴 3,000원 · 10초 · 하루 1회";
    CasualUI.RoundedFill(new Rect(x+20,y+313,680,37),CasualUI.Soft);
