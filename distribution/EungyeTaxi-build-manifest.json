@@ -1,23 +1,36 @@
 {
-  "sourceCommit": "fd28b0d4994fd1057e2d6aaa9948c0b41e7730cf",
+  "sourceCommit": "a191cd90c5aaa07b75767664f1a9e80afc60eab5",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-20",
-  "totalBytes": 135310053.0,
+  "totalBytes": 135312613.0,
   "validation": {
-    "manualDriving": false,
-    "saveMigrationChecks": 1127,
-    "mayuWidthSections": 7,
-    "roadGridChecks": 359,
-    "roadGridTiles": 99,
-    "mapRevision": 49,
+    "build": "PrototypeBuild.BuildHybrid exit 0; installed managed assembly on ab8aa9f road release",
+    "menuAssemblyChecks": 13,
+    "titleLoadSameCampaign": true,
+    "freshSlotPreservedPrevious": true,
+    "unifiedModePassed": 63,
+    "unifiedModeFailed": 4,
+    "unifiedModeFailure": "Concurrent change observed in four user slot files during before-after comparison",
+    "isolatedCareerChecks": 16,
+    "isolatedCareerReloadChecks": 5,
+    "manualClicks": false,
     "mapInputIssues": 0,
-    "build": "PrototypeBuild.BuildHybrid exit 0",
-    "garageAprons": 2,
-    "pickupRoutes": 1482,
-    "roadGridObjects": 4027,
-    "mayuHatches": 58
+    "baseReleaseValidation": {
+      "manualDriving": false,
+      "saveMigrationChecks": 1127,
+      "mayuWidthSections": 7,
+      "roadGridChecks": 359,
+      "roadGridTiles": 99,
+      "mapRevision": 49,
+      "mapInputIssues": 0,
+      "build": "PrototypeBuild.BuildHybrid exit 0",
+      "garageAprons": 2,
+      "pickupRoutes": 1482,
+      "roadGridObjects": 4027,
+      "mayuHatches": 58
+    }
   },
   "files": [
     {
@@ -57,8 +70,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 3152896,
-      "sha256": "9f453828f334c93ca897a792fa6f934bce754b956879e15b8036df3f322f8dca"
+      "bytes": 3155456,
+      "sha256": "165b598049ac4a644b5954bef06108af508c55a2598d406f421c43268b429fa2"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
