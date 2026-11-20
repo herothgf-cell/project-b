@@ -56,7 +56,7 @@ public partial class PassengerJobs : MonoBehaviour {
  public DrunkRideState DrunkRide {get;private set;}
  public PassengerBehaviorState Behavior {get;private set;}
  public PassengerType? ForcedPassengerType;
- public string BehaviorSummary {get{return Behavior==null?"":Behavior.TypeLabel+" · "+Behavior.VariantLabel+" · "+Behavior.CompletionReaction+" · "+Behavior.TraitStatus;}}
+ public string BehaviorSummary {get{return Behavior==null?"":Behavior.TypeLabel+" · "+Behavior.VariantLabel+" · "+(Behavior.RequestedControl!=PassengerBehaviorState.CabinWish.None?(Behavior.CabinWishMet?"차내 요청 완료 · 만족도 +2":"차내 요청 미완료"):Behavior.CompletionReaction)+" · "+Behavior.TraitStatus;}}
  public bool BehaviorChoicesOpen {get{return Behavior!=null&&Behavior.HasChoice&&(trip.State==TripState.ToPickup||trip.State==TripState.OnTrip&&!trip.ArrivalLocked&&nav.remaining/Mathf.Max(1,boardingDistance)>.15f);}}
  public bool BehaviorAsleep {get{return Behavior!=null&&Behavior.Sleeping&&!Behavior.Arrived;}}
  public DrunkRideCase ForcedRideCase=DrunkRideCase.Random;
@@ -342,6 +342,15 @@ System.Collections.Generic.Dictionary<JobOffer,float> fuelCache=new System.Colle
   bool conditions=business.DailyConditionsEnabled&&business.DayCondition!=DailyConditionKind.Weekday;
   var selected=ForcedPassengerType??care.ReservePassenger(current.candidateSeed,pools,conditions?(System.Func<PassengerType,double>)business.DayPoolMultiplier:null);
   if(!ForcedPassengerType.HasValue&&selected!=PassengerType.General&&selected!=PassengerType.Drunk&&System.Array.IndexOf(pools,selected)<0)selected=PassengerType.General;
+  if(business.CabinEnabled&&!ForcedPassengerType.HasValue&&selected==PassengerType.General){
+   uint draw=DrunkRideState.Hash(current.candidateSeed+":cabin-request");
+   if(draw%3==0){
+    var passenger=PassengerBehaviorState.Create(current.candidateSeed,PassengerType.General);
+    if((draw&1)==0)passenger.RequestWindow(business.Cabin.WindowOpen);
+    else passenger.RequestSetpoint(business.Cabin.Target>=22?20:24);
+    return passenger;
+   }
+  }
   return ForcedPassengerType.HasValue?PassengerBehaviorState.Create(current.candidateSeed,selected)
    :PassengerBehaviorState.CreateConfigured(current.candidateSeed,selected,eligible,care.PassengerSelectionSeed,business.DayCondition==DailyConditionKind.Rain?(System.Func<PassengerPresetDefinition,double>)business.DayPresetMultiplier:null);
  }

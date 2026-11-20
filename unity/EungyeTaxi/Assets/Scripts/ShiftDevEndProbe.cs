@@ -91,7 +91,22 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
     var pick=jobs.stops[0];var drop=jobs.stops[3];Pose(pick.Kerb,pick.Direction);
     jobs.offers[0]=new JobOffer{pickup=0,drop=3,fare=6000,seconds=300,requiredScore=60,
       distance=jobs.nav.Distance(pick,drop),candidateSeed="meter-check-"+i};
-    Check(jobs.Accept(0)&&jobs.Interact()&&jobs.trip.State==TripState.OnTrip,"boards trip "+i);
+    if(i==0){
+     // Reserve the general pool in this fixture, then exercise its production selection path.
+     string seed="cabin-window-7";
+     jobs.offers[0].candidateSeed=seed;
+     Check(jobs.Accept(0),"accepts window passenger fixture");
+     var fixtureCare=new VehicleCare();
+     fixtureCare.ReserveStoryPassenger(seed,PassengerType.General);
+     var prepare=typeof(PassengerJobs).GetMethod("PrepareOrdinaryPassenger",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance);
+     var rider=(PassengerBehaviorState)prepare.Invoke(jobs,new object[]{fixtureCare});
+     typeof(PassengerJobs).GetProperty("Behavior").SetValue(jobs,rider);
+     Check(jobs.Interact()&&rider.Boarded&&rider.RequestedControl==PassengerBehaviorState.CabinWish.OpenWindow,"boards a passenger who asks for the closed window to open");
+     Check(b.CabinInput(CabinAction.Window)&&rider.CabinWishMet&&rider.TraitSatisfactionDelta==2,"K fulfills actual passenger request");
+     var stored=BusinessProgress.ParseCheckpoint(File.ReadAllText(b.SavePath));
+     Check(stored.live.jobs.behavior.CabinWishMet,"checkpoint retains fulfilled request");
+     Check(s.GetComponent<VehicleAudio>()&&s.GetComponents<AudioSource>().Length>=4,"local vehicle audio attached in player");
+    }else Check(jobs.Accept(0)&&jobs.Interact()&&jobs.trip.State==TripState.OnTrip,"boards trip "+i);
     if(i==1){
      Check(b.CabinInput(CabinAction.Meter)&&b.Cabin.MeterOn,"J enables meter on board");
      PassengerBehaviorState behavior=null;

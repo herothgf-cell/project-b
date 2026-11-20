@@ -125,6 +125,7 @@ public class DriveSession : MonoBehaviour {
         // Preserve the pause selected by BusinessProgress for preparation or saved-session restoration.
         dayLight=gameObject.AddComponent<DayLightController>();dayLight.Initialize(this,sun);
         radio=gameObject.AddComponent<RadioTicker>();radio.Initialize(this);
+        gameObject.AddComponent<VehicleAudio>().Initialize(this);
         StartupReady=true;
         if(PvpSimulationMode.Active){simulationMatch=gameObject.AddComponent<PvpSimulationMatch>();simulationMatch.Initialize(this);}
         if(loadingCamera)Destroy(loadingCamera.gameObject);

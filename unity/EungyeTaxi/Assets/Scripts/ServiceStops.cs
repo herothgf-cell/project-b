@@ -25,7 +25,7 @@ public partial class ServiceStops : MonoBehaviour {
  public bool SelectMeal(int index){if(PvpNativeLan.Route(session,"service-meal",index))return true;if(!open||pending!=1||index<0||index>=mealMenu.Length)return false;SelectedMeal=index;return true;}
  // Legacy regional references; Eungye meal has a dedicated stop. Retained for meal/parking and old regional stop references. Eungye fuel uses actual pump bays.
  public readonly int[] indices={3,6,9};
- readonly string[] names={"임시 주유소","임시 식당","임시 주차장"};
+ readonly string[] names={"주유소","기사식당","주차장"};
  int observedCompleted,observedFailed;bool postTrip;int recommended=-1,postTripFuel=-1;float nextPostTripRefresh;
  readonly float[] postTripDistances=new float[4];
  public bool PostTripOpen {get{return postTrip;}}

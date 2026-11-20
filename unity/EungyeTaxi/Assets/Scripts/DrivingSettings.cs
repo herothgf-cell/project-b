@@ -6,12 +6,15 @@ using UnityEngine;
  public const string Key="driving.controls.v1";
  public const bool DefaultRadioSubtitles=true,DefaultPvpNightLighting=false;
  public bool cabinAssist=true;
+ // Missing fields in older preference JSON retain the enabled defaults.
+ public bool engineSound=true,brakeSound=true,hornSound=true,rainSound=true;
  public bool radioSubtitles=DefaultRadioSubtitles,pvpNightLighting=DefaultPvpNightLighting;
  public float sensitivity=1,response=1,centering=1,deadzone=.15f,braking=1;
  static DrivingSettings current;
  public static DrivingSettings Current {get{return current??(current=Load(Key));}}
  public DrivingSettings Copy(){
   return new DrivingSettings{sensitivity=sensitivity,response=response,centering=centering,deadzone=deadzone,braking=braking,
+   engineSound=engineSound,brakeSound=brakeSound,hornSound=hornSound,rainSound=rainSound,
    cabinAssist=cabinAssist,radioSubtitles=radioSubtitles,pvpNightLighting=pvpNightLighting};
  }
  public static float Bound(float value,float min,float max,float fallback){return float.IsNaN(value)||float.IsInfinity(value)?fallback:Mathf.Clamp(value,min,max);}

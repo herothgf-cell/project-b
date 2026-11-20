@@ -15,6 +15,14 @@ class PassengerTraitTests {
   p=Make(PassengerType.Food,"item.food","body.temperatureSensitive");p.PresetOverrides=new[]{new PassengerOverride{id="choice.type.Food.1.immediate.satisfaction",value="7"}};p.Board();p.Respond(1,true);Check(p.TraitAction=="temperature"&&p.SelectedEffect.Contains("7"),"primary selected effect stays accurate while next trait opens");p.Validate();ContentTuning.UseJson(baseline);
  }
  static void Run(){
+  foreach(bool open in new[]{false,true}){
+   var rider=PassengerBehaviorState.Create("window",PassengerType.General);
+   rider.Board();rider.RequestWindow(open);Check(!rider.ObserveCabin(open,22),"initial window cannot fulfill request");
+   Check(rider.ObserveCabin(!open,22)&&rider.TraitSatisfactionDelta==2,"requested window earns satisfaction");
+   rider=rider.Copy();rider.Validate();Check(!rider.ObserveCabin(!open,22)&&rider.TraitSatisfactionDelta==2,"restoring does not pay twice");
+  }
+  var climate=PassengerBehaviorState.Create("climate",PassengerType.General);climate.Board();climate.RequestSetpoint(21);
+  Check(!climate.ObserveCabin(false,22)&&climate.ObserveCabin(false,21),"thermostat requires the requested setting");
   var legacy=PassengerBehaviorState.Create("old",PassengerType.General);legacy.TraitVersion=0;legacy.NauseaChoice=legacy.UmbrellaChoice=legacy.TemperatureSetting=0;legacy.Validate();Check(legacy.NauseaChoice==-1&&legacy.UmbrellaChoice==-1&&legacy.TemperatureSetting==-1,"Unity absent legacy fields normalize neutrally");
   Reject(()=>{var corrupt=Make(PassengerType.General,"body.nausea");corrupt.NauseaChoice=1;corrupt.Validate();},"preboarding nausea response rejected");
   Reject(()=>{var corrupt=Make(PassengerType.General,"body.nausea");corrupt.Board();corrupt.NauseaIncident=true;corrupt.Validate();},"unprotected incident cannot omit dirt");

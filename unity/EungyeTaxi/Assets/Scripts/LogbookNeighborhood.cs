@@ -31,7 +31,7 @@ public static class LogbookNeighborhood {
    string id=StopIds[i];
    int stars=logbook.NeighborhoodStars(id);
    var stop=FindStop(catalog,id);
-   string name=stars>0&&stop!=null?KoreanText.Stop(stop.name):UnknownStopName(i);
+   string name=stop!=null?KoreanText.Stop(stop.name):"지도에 없는 지점";
    string caption=name+"  ·  "+Stars[stars]+"  ·  "+logbook.NeighborhoodCount(id)+"회";
    var row=new Rect(15,89+i*49,330,41);
    if(GUI.Button(row,caption,i==selectedStop?selected:button))selectedStop=i;
@@ -39,7 +39,6 @@ public static class LogbookNeighborhood {
   DrawDetail(session,catalog,logbook,selectedStop);
  }
 
- static string UnknownStopName(int index){return "영업 지점 "+(index+1).ToString("00");}
  static MapStop FindStop(PassengerStopCatalog catalog,string stopId){
   int index=catalog.IndexOf(stopId);
   return index<0?null:catalog.Stops[index];
@@ -51,7 +50,7 @@ public static class LogbookNeighborhood {
   string id=StopIds[index];
   int count=logbook.NeighborhoodCount(id),stars=logbook.NeighborhoodStars(id);
   var stop=FindStop(catalog,id);
-  string name=stars>0&&stop!=null?KoreanText.Stop(stop.name):UnknownStopName(index);
+  string name=stop!=null?KoreanText.Stop(stop.name):"지도에 없는 지점";
   GUI.Label(new Rect(377,103,449,40),name+"  "+Stars[stars],heading);
   bool hasNext=stars<Stars.Length-1;
   int next=CampaignLogbook.NeighborhoodThreshold(stars+1);
@@ -62,7 +61,7 @@ public static class LogbookNeighborhood {
    var lockPanel=new Rect(377,213,449,210);
    CasualUI.RoundedFill(lockPanel,CasualUI.Soft);
    HudGlyph.DrawBadge(new Rect(lockPanel.center.x-28,lockPanel.y+48,56,56),3,CasualUI.Muted);
-   GUI.Label(new Rect(lockPanel.x+15,lockPanel.y+120,lockPanel.width-30,42),CampaignLogbook.NeighborhoodThreshold(1)+"회 운송 기록부터 지점과 지도를 볼 수 있어요.",marker);
+   GUI.Label(new Rect(lockPanel.x+15,lockPanel.y+120,lockPanel.width-30,42),CampaignLogbook.NeighborhoodThreshold(1)+"회 운송 기록부터 주변 지도를 볼 수 있어요.",marker);
   }else{
    FullMapOverlay.Place wait=null;
    if(stars>=2)wait=WaitingPlace(stop,session.GetComponent<FullMapOverlay>().Places());
@@ -74,7 +73,7 @@ public static class LogbookNeighborhood {
    if(stars==3)GUI.Label(new Rect(377,513,449,51),DemandHint(id),text);
   }
   CasualUI.Divider(new Rect(377,580,449,1));
-  GUI.Label(new Rect(377,589,449,80),"★ "+CampaignLogbook.NeighborhoodThreshold(1)+"회 · 지점과 지도\n★★ "+CampaignLogbook.NeighborhoodThreshold(2)+"회 · 대기 장소\n★★★ "+CampaignLogbook.NeighborhoodThreshold(3)+"회 · 시간대별 수요",small);
+  GUI.Label(new Rect(377,589,449,80),"★ "+CampaignLogbook.NeighborhoodThreshold(1)+"회 · 주변 지도\n★★ "+CampaignLogbook.NeighborhoodThreshold(2)+"회 · 대기 장소\n★★★ "+CampaignLogbook.NeighborhoodThreshold(3)+"회 · 시간대별 수요",small);
  }
 
  static float PlanarDistance(Vector3 a,Vector3 b){
