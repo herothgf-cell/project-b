@@ -446,7 +446,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
  IEnumerator CheckTaxiAudio(){
   var settings=DrivingSettings.Current;
   bool oldIndicator=settings.indicatorSound,oldEngine=settings.engineSound;
-  var body=s.taxi.body;var position=body.position;var velocity=body.velocity;
+  var body=s.taxi.body;var position=body.position;var velocity=body.velocity;var constraints=body.constraints;
   var sources=s.GetComponents<AudioSource>();
   var engine=sources.Single(a=>a.clip&&a.clip.name=="Engine");
   var road=sources.Single(a=>a.clip&&a.clip.name=="Road");
@@ -458,11 +458,12 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    yield return new WaitForSecondsRealtime(.6f);
    float fastPitch=engine.pitch,fastLevel=engine.volume,rollingLevel=road.volume;
    body.velocity=Vector3.zero;
-   yield return new WaitForSecondsRealtime(.6f);
+   body.constraints=RigidbodyConstraints.FreezeAll;
+   float settleDeadline=Time.realtimeSinceStartup+3;
+   do{yield return new WaitForEndOfFrame();}while(road.isPlaying&&Time.realtimeSinceStartup<settleDeadline);
    Check(fastPitch>engine.pitch+.25f&&fastLevel>engine.volume+.08f,"45 km/h to standstill lowers engine pitch and level");
-   yield return new WaitForEndOfFrame();
-   Debug.Log("TAXI_ROAD_MIX cruise="+rollingLevel+" rest="+road.volume+" pitch="+road.pitch);
-   Check(rollingLevel>.12f&&road.volume<.01f&&Mathf.Approximately(road.pitch,1),"rolling sound fades at rest without changing pitch");
+   Debug.Log("TAXI_ROAD_MIX cruise="+rollingLevel+" rest="+road.volume+" pitch="+road.pitch+" speed="+s.taxi.Speed);
+   Check(rollingLevel>.12f&&road.volume==0&&!road.isPlaying&&Mathf.Approximately(road.pitch,1),"rolling sound fades at rest without changing pitch");
    settings.engineSound=false;
    yield return new WaitForEndOfFrame();
    Check(!engine.isPlaying&&!road.isPlaying,"drive switch mutes both recorded layers");
@@ -484,7 +485,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    Check(!relay.isPlaying,"muted indicator stops");
   }finally{
    settings.engineSound=oldEngine;settings.indicatorSound=oldIndicator;
-   s.signals.Clear();body.position=position;body.velocity=velocity;Physics.SyncTransforms();
+   s.signals.Clear();body.constraints=constraints;body.position=position;body.velocity=velocity;Physics.SyncTransforms();
   }
  }
  IEnumerator RunWorkshopParts(BusinessProgress business){
