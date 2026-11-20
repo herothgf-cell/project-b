@@ -77,7 +77,7 @@ public partial class ServiceStops : MonoBehaviour {
    var label=new GameObject(i==1?MealStop.name:names[i]);label.transform.position=StopFor(i).Passenger+Vector3.up*3.2f;var t=label.AddComponent<TextMesh>();t.text=(i==1?"식당 · 식사":names[i])+" · F7";t.fontSize=40;t.characterSize=.09f;t.anchor=TextAnchor.MiddleCenter;t.color=Color.yellow;KoreanText.Apply(t);label.AddComponent<FaceCamera>();
   }
  }
- void Update(){if(PvpNativeLan.IsReplica(session)){ObserveCompletedTrip();if(postTrip&&(session.jobs.Active||session.business.ledger.Care.Damage.Disabled))DismissPostTrip();if(postTrip&&Time.unscaledTime>=nextPostTripRefresh){RefreshPostTrip();nextPostTripRefresh=Time.unscaledTime+2;}if((open||!PvpNativeLan.UiBlocked(session))&&Input.GetKeyDown(KeyCode.F7))Toggle();return;}if(noticeUntil>0&&Time.unscaledTime>=noticeUntil){notice="";noticeUntil=0;}
+ void Update(){if(session.business.LogbookOpen)return;if(PvpNativeLan.IsReplica(session)){ObserveCompletedTrip();if(postTrip&&(session.jobs.Active||session.business.ledger.Care.Damage.Disabled))DismissPostTrip();if(postTrip&&Time.unscaledTime>=nextPostTripRefresh){RefreshPostTrip();nextPostTripRefresh=Time.unscaledTime+2;}if((open||!PvpNativeLan.UiBlocked(session))&&Input.GetKeyDown(KeyCode.F7))Toggle();return;}if(noticeUntil>0&&Time.unscaledTime>=noticeUntil){notice="";noticeUntil=0;}
   TickFacilityQueue();ObserveCompletedTrip();
   if(postTrip&&(session.business.ledger.Care.Damage.Disabled||session.jobs.Active||session.business.ShowingSummary||session.business.preparing||session.business.ledger.State!=BusinessState.Open))DismissPostTrip();
   if(postTrip&&Time.unscaledTime>=nextPostTripRefresh){RefreshPostTrip();nextPostTripRefresh=Time.unscaledTime+2;}

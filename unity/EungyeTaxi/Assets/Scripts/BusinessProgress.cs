@@ -78,7 +78,19 @@ public class BusinessProgress : MonoBehaviour {
  public bool IntroInputBlocked {get{return Intro&&Intro.BlocksInput;}}
  public bool StoryEnabled {get{return SupportsCareer&&storyEnabled;}}
  bool storyEnabled;
- public bool LogbookOpen {get;set;}
+ bool logbookOpen,resumeAfterLogbook;
+ public bool LogbookOpen {
+  get{return logbookOpen;}
+  set{
+   logbookOpen=value;
+   if(!value&&resumeAfterLogbook){resumeAfterLogbook=false;session.paused=false;Time.timeScale=1;}
+  }
+ }
+ public bool OpenDrivingLogbook(){
+  if(!CabinEnabled||!Story.FoundNotebook||!DrowsinessRunning||session.SettingsOpen||session.accident&&session.accident.Locked)return false;
+  resumeAfterLogbook=true;LogbookOpen=true;session.paused=true;Time.timeScale=0;
+  return true;
+ }
  bool goalComparison;
  RenderTexture goalComparisonFrame;
  public RenderTexture GoalComparisonFrame {get{return goalComparisonFrame;}}
@@ -189,14 +201,14 @@ public class BusinessProgress : MonoBehaviour {
   finally{RenderTexture.active=previous;frame.Release();Destroy(frame);}
  }
  void FinishFirstIntro(){
-  Story.introSeen=true;Cabin.Vacancy=2;
+  Story.introSeen=Story.firstVacancy=true;
   session.drivingCamera.SetFirstPerson(true);
   var stop=session.services.ParkingStop;
   session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();
   session.law.ResetObservation();session.jobs.ResetOffers();session.paused=false;preparing=false;Time.timeScale=1;
   SaveFirstDriveFrame();
   ObserveDailyConditionDeparture();
-  EndDayNotice("K를 눌러 빈차등을 켜세요. 출구 화살표를 따라 도로로 나가세요.");
+  EndDayNotice("M 지도에서 첫 호출을 선택하세요. 출구 화살표를 따라 출차하세요.");
   SaveCheckpoint();
  }
  public void ObserveStoryBoarding(PassengerBehaviorState behavior,bool allowQuestion=true){
@@ -242,27 +254,37 @@ public class BusinessProgress : MonoBehaviour {
    Story.goalDone=true;StoryMonologue="오늘부터, 다시 내 핸들로.";GoalComparison=true;
   }
  }
+ TextMesh roofFront,roofRear;
+ string lastRoofStatus;
+ void RefreshRoofSign(){
+  string status=preparing||!ledger.Operating?"":CockpitPresentation.TaxiStatus(session.jobs.trip.State);
+  if(lastRoofStatus==status)return;
+  if(!roofFront){
+   var exterior=session.taxi.transform.Find("Taxi exterior");
+   if(!exterior)return;
+   roofFront=exterior.Find("TAXI front").GetComponent<TextMesh>();
+   roofRear=exterior.Find("TAXI rear").GetComponent<TextMesh>();
+  }
+  roofFront.text=roofRear.text=status;
+  if(status.Length>0){KoreanText.Fit(roofFront,.55f,.132f);KoreanText.Fit(roofRear,.55f,.132f);}
+  lastRoofStatus=status;
+ }
  public CabinControlsState Cabin {get;private set;}=new CabinControlsState();
  public bool CabinEnabled {get{return SupportsCareer&&ledger!=null&&ledger.OneDay;}}
  public bool CabinAutomatic {get{return !CabinEnabled||ledger.Day<=3&&DrivingSettings.Current.cabinAssist;}}
  public string CabinCallBlock {get{return CabinEnabled?Cabin.NewCallBlock(CabinAutomatic):"";}}
- public bool CabinInput(int device){
+ public bool CabinInput(CabinAction action){
   if(!CabinEnabled||!DrowsinessRunning||session.SettingsOpen||session.accident&&session.accident.Locked)return false;
-  bool occupied=session.jobs.trip.State==TripState.OnTrip;
-  if(device==0){if(CabinAutomatic||!Cabin.ToggleMeter(occupied))return false;}
-  else if(device==1){
-   Cabin.CycleVacancy();
-   if(Cabin.Vacancy==0)Story.firstVacancy=true;
-   if(!session.jobs.Active){
-    session.jobs.Generate();
-    if(Cabin.Vacancy==0&&StoryEnabled&&ledger.Day==1&&!Story.firstDispatchAccepted&&!Story.FoundNotebook&&session.jobs.offers[0]!=null)
-     EndDayNotice("M 지도에서 첫 번째 호출을 수락한 뒤, 승차 지점에 정차해 F를 누르세요.");
-   }
+  switch(action){
+   case CabinAction.Meter:
+    if(CabinAutomatic||!Cabin.ToggleMeter(session.jobs.trip.State==TripState.OnTrip))return false;
+    break;
+   case CabinAction.Window: Cabin.WindowOpen=!Cabin.WindowOpen;break;
+   case CabinAction.Cooler: if(!Cabin.AdjustTemperature(-1))return false;break;
+   case CabinAction.Warmer: if(!Cabin.AdjustTemperature(1))return false;break;
+   default:return false;
   }
-  else if(device==2){Cabin.CycleTemperature();if(occupied&&session.jobs.Behavior!=null)session.jobs.Behavior.ApplyCabinTemperature(Cabin.Temperature);}
-  else return false;
   SaveCheckpoint();
-  if(device==1&&Cabin.OffDuty&&!session.jobs.Active)System.Array.Clear(session.jobs.offers,0,session.jobs.offers.Length);
   return true;
  }
  public bool CanAccept {get{return !(session.accident&&session.accident.Locked)&&!(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))&&!resumeBlocked&&!restoring&&!PracticeSession.Enabled&&!preparing&&(!enabledCampaign||ledger.CanAccept);}}
@@ -357,6 +379,8 @@ public class BusinessProgress : MonoBehaviour {
    if(snapshot.cabinCaptured)Cabin=snapshot.cabin.Copy();
    else if(CabinEnabled&&snapshot.jobs.trip.state==TripState.OnTrip){Cabin.MeterOn=true;var behavior=snapshot.jobs.behavior;if(behavior!=null&&behavior.TemperatureSetting>=0)Cabin.Temperature=behavior.TemperatureSetting;}
    session.jobs.RestoreLive(snapshot.jobs);if(session.radio)session.radio.Restore(snapshot.radio);if(session.accident)session.accident.Restore(snapshot.accident);var occupancy=session.GetComponent<StopOccupancySystem>();if(occupancy)occupancy.Restore(snapshot.occupancy);if(session.ambientPedestrians)session.ambientPedestrians.ReconcileVisibility();realSeconds=snapshot.realSeconds;preparing=snapshot.preparing;
+   if(snapshot.cabinCaptured&&Cabin.Vacancy==2&&!session.jobs.Active&&Array.TrueForAll(session.jobs.offers,offer=>offer==null))session.jobs.Generate();
+   Cabin.Vacancy=0;
    if(!session.jobs.Active&&snapshot.hasDestination)session.jobs.nav.SetDestination(snapshot.destination);
    session.jobs.nav.PreferFastest=snapshot.preferFastest;session.assisted.SetActive(false);if(snapshot.operationVersion==1){if(snapshot.signalsPresent)session.signals.RestoreLive(snapshot.signals);if(snapshot.lawObservationPresent)session.law.RestoreObservation(snapshot.lawObservation);}session.paused=!preparing;Time.timeScale=0;saveStatus="중단한 위치·운송·시간·장부 복원 완료 · 계속 운전";resumeBlocked=false;if(session.damage&&ledger.Care.Damage.Disabled&&!string.IsNullOrEmpty(ledger.Care.Damage.RepairBayId)&&!session.damage.AtRepairBay)session.damage.RestoreReservedBay(false);
   }catch(Exception ex){SaveFailed=true;LoadFailureDetail=ex.Message;preparing=false;session.paused=true;Time.timeScale=0;saveStatus="운송 복원 중단 · 지도/저장 상태 확인 필요: "+ex.Message;Debug.LogWarning(saveStatus);resumeBlocked=true;}
@@ -514,6 +538,10 @@ public class BusinessProgress : MonoBehaviour {
   if(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))return;
   if(!enabledCampaign||!ledger.Operating||preparing||restoring||resumeBlocked||session.paused||Time.timeScale<=0)return;
   if(ledger.Driver!=null&&!DrowsinessRunning)return;
+  if(CabinEnabled){
+   Cabin.AdvanceClimate(Time.fixedDeltaTime);
+   if(session.jobs.Behavior!=null)session.jobs.Behavior.ApplyCabinTemperature(Cabin.Comfort);
+  }
   var v=session.taxi.body.velocity;double metres=Math.Sqrt(v.x*v.x+v.z*v.z)*Time.fixedDeltaTime;
   if(session.simulationMatch)SimulationOperationSeconds+=Time.fixedDeltaTime;
   if(!session.PracticeBusy&&!PracticeSession.Enabled)ledger.AdvanceOperation(Time.fixedDeltaTime,metres,session.jobs.trip.State==TripState.OnTrip);else ledger.Advance(Time.fixedDeltaTime,metres);
@@ -524,11 +552,13 @@ public class BusinessProgress : MonoBehaviour {
  void Update(){
   if(IntroInputBlocked)return;
   RefreshDailyWeather();
+  if(CabinEnabled)RefreshRoofSign();
   if(CabinEnabled&&DrowsinessRunning){
    if(CabinAutomatic)Cabin.ToggleMeter(session.jobs.trip.State==TripState.OnTrip);
-   if(Input.GetKeyDown(KeyCode.J))CabinInput(0);
-   if(Input.GetKeyDown(KeyCode.K))CabinInput(1);
-   if(Input.GetKeyDown(KeyCode.L))CabinInput(2);
+   if(Input.GetKeyDown(KeyCode.J))CabinInput(CabinAction.Meter);
+   if(Input.GetKeyDown(KeyCode.K))CabinInput(CabinAction.Window);
+   if(Input.GetKeyDown(KeyCode.LeftBracket))CabinInput(CabinAction.Cooler);
+   if(Input.GetKeyDown(KeyCode.RightBracket))CabinInput(CabinAction.Warmer);
   }
   if(PvpNativeLan.IsReplica(session)||session&&session.simulationMatch&&PvpNativeLan.WaitingForWorld)return;if(enabledCampaign&&!preparing&&!session.paused&&ledger.Operating&&(ledger.Driver==null||DrowsinessRunning)){realSeconds+=Time.unscaledDeltaTime;mixedFollowing|=session.traffic.mitOptions.Enabled!=initialFollowing;}if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil){notice="";noticeUntil=0;}SyncVehicle();}
  void LateUpdate(){

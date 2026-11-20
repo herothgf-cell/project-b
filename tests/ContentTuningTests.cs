@@ -105,9 +105,22 @@ public static class ContentTuningTests {
   Check(!cabin.ToggleMeter(false)&&cabin.Payable(6300)==3150,"missed meter discounts fare without cancelling it");
   Check(cabin.ToggleMeter(true)&&!cabin.ToggleMeter(true)&&cabin.Payable(6300)==6300,"meter stays on until arrival");
   Check(cabin.NewCallBlock(false).Length>0&&cabin.ToggleMeter(false)&&cabin.NewCallBlock(false).Length==0,"stale meter must turn off before the next call");
-  cabin.CycleVacancy();cabin.CycleVacancy();
-  Check(cabin.OffDuty&&cabin.NewCallBlock(false).Length>0,"off duty blocks new calls");
-  cabin.CycleTemperature();Check(cabin.Temperature==CabinControlsState.Cool,"temperature cycles from off to cool");
+  cabin.Vacancy=2;
+  Check(cabin.NewCallBlock(false).Length==0,"legacy off-duty save can take a new call");
+  cabin.Temperature=CabinControlsState.Cool;
+  Check(cabin.Target==20&&cabin.Comfort==CabinControlsState.Cool,"old cooling save starts at its cool temperature");
+  cabin.AdjustTemperature(1);cabin.AdjustTemperature(1);cabin.AdjustTemperature(1);cabin.AdjustTemperature(1);
+  Check(cabin.Target==24&&cabin.Actual==20&&cabin.ClimateLabel=="난방","raising the setpoint requests heat without instantly warming the cabin");
+  cabin.AdvanceClimate(12);
+  Check(cabin.Actual==24&&cabin.Comfort==CabinControlsState.Warm,"heat reaches warm passenger preference");
+  cabin.WindowOpen=true;cabin.AdvanceClimate(12);
+  Check(cabin.Actual==23,"open window exchanges heat with outside air");
+  cabin.WindowOpen=false;cabin.AdvanceClimate(12);
+  Check(cabin.Actual==24,"closing window lets cabin reach setpoint again");
+  while(cabin.AdjustTemperature(-1)){}
+  Check(cabin.Target==18&&cabin.ClimateLabel=="냉방","cooling stops at minimum setpoint");
+  while(cabin.AdjustTemperature(1)){}
+  Check(cabin.Target==28,"warming stops at maximum setpoint");
   Check(ContentTuning.Int("law.centreLine.penalty",-1)==1,"centreline default is independently one law point");
   ContentTuning.UseJson(Change("law.centreLine.penalty","7"));
   Check(ContentTuning.Int("law.centreLine.penalty",-1)==7&&ContentTuning.Int("law.wrongWay.penalty",-1)==10&&ContentTuning.Int("manner.wrongWay.penalty",-1)==10,"centreline tuning preserves wrong-way and manner penalties");

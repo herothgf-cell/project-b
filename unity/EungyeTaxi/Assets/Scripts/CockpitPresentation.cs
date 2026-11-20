@@ -2,7 +2,20 @@ using UnityEngine;
 
 // Reads the existing trip/vehicle state; it never changes fare or deadlines.
 public static class CockpitPresentation {
- static Sprite fatherPhoto;
+ static Sprite fatherPhoto,windowPane;
+ public static Transform AddDriverWindow(Transform cockpit){
+  if(!windowPane){
+   var white=Texture2D.whiteTexture;
+   windowPane=Sprite.Create(white,new Rect(0,0,white.width,white.height),new Vector2(.5f,0),white.width);
+  }
+  var pane=new GameObject("운전석 옆유리"){layer=cockpit.gameObject.layer};
+  pane.transform.SetParent(cockpit,false);
+  pane.transform.localPosition=new Vector3(-.32f,-.25f,-.23f);
+  pane.transform.localRotation=Quaternion.Euler(0,90,0);
+  var surface=pane.AddComponent<SpriteRenderer>();
+  surface.sprite=windowPane;surface.color=new Color(.58f,.82f,.95f,.16f);
+  return pane.transform;
+ }
  public static void AddFatherPhoto(Transform cockpit){
   if(!fatherPhoto){
    var photo=Resources.Load<Texture2D>("UI/father-photo");

@@ -43,10 +43,19 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    foreach(var car in s.traffic.cars)if(car)car.gameObject.SetActive(false);
    b.ContinueFromMenu();yield return Frames(3);
    var jobs=s.jobs;jobs.ForcedRideCase=DrunkRideCase.Normal;
-   bool reserved=b.CabinInput(1);int firstVacancy=b.Cabin.Vacancy;
-   bool rested=b.CabinInput(1);
-   Check(reserved&&rested&&b.Cabin.OffDuty&&jobs.offers.All(o=>o==null),"off duty clears and suppresses call offers (input="+reserved+"/"+rested+", vacancy="+firstVacancy+"/"+b.Cabin.Vacancy+", active="+jobs.Active+", running="+b.DrowsinessRunning+", blocked="+s.FullMapOpen+"/"+s.SettingsOpen+"/"+(s.accident&&s.accident.Locked)+")");
-   Check(b.CabinInput(1)&&!b.Cabin.OffDuty,"vacancy restores calls");
+   var offer=jobs.offers[0];
+   Check(offer!=null&&b.CabinInput(CabinAction.Window)&&b.Cabin.WindowOpen&&jobs.offers[0]==offer,"opening window preserves first offer");
+   Check(b.CabinInput(CabinAction.Window)&&!b.Cabin.WindowOpen,"window closes");
+   var legacy=BusinessProgress.ParseCheckpoint(File.ReadAllText(b.SavePath)).live;
+   legacy.cabin=JsonUtility.FromJson<CabinControlsState>("{\"Vacancy\":2,\"Temperature\":1}");
+   Array.Clear(legacy.jobs.offers,0,legacy.jobs.offers.Length);
+   Array.Clear(legacy.jobs.offerPresent,0,legacy.jobs.offerPresent.Length);
+   var restore=typeof(BusinessProgress).GetMethod("RestoreLive",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance);
+   restore.Invoke(b,new object[]{legacy});
+   Check(!b.ResumeBlocked&&b.Cabin.Target==20&&jobs.offers[0]!=null,"old off-duty cooling save restores temperature and repopulates empty calls");
+   b.ContinueFromMenu();
+   Check(b.CabinInput(CabinAction.Warmer)&&b.CabinInput(CabinAction.Warmer),"neutralize migrated cooling setpoint");
+   yield return new WaitForSeconds(4);
    for(int i=0;i<2;i++){
     jobs.ClearForDay();s.GetComponent<RideCompletionPanel>().Close();
     var pick=jobs.stops[0];var drop=jobs.stops[3];Pose(pick.Kerb,pick.Direction);
@@ -54,7 +63,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
       distance=jobs.nav.Distance(pick,drop),candidateSeed="meter-check-"+i};
     Check(jobs.Accept(0)&&jobs.Interact()&&jobs.trip.State==TripState.OnTrip,"boards trip "+i);
     if(i==1){
-     Check(b.CabinInput(0)&&b.Cabin.MeterOn,"J enables meter on board");
+     Check(b.CabinInput(CabinAction.Meter)&&b.Cabin.MeterOn,"J enables meter on board");
      PassengerBehaviorState behavior=null;
      for(int n=0;n<200;n++){
       var choice=PassengerBehaviorState.CreateConfigured("cabin-probe",PassengerType.Comfort,null,"cabin-"+n);
@@ -69,11 +78,13 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
      Check(jobs.RespondBehavior(behavior.TemperaturePreference)&&behavior.TemperatureSetting==CabinControlsState.Off,"answer does not switch manual air conditioning");
      jobs.AdvanceBehavior((float)behavior.Content.Number("effect.temperature.discomfortSeconds",20));
      Check(behavior.TraitSatisfactionDelta==behavior.Content.Int("effect.temperature.mismatchSatisfaction",-2),"mismatched actual temperature penalizes the request");
-     for(int k=0;k<3&&b.Cabin.Temperature!=behavior.TemperaturePreference;k++)Check(b.CabinInput(2),"L changes physical air conditioning");
+     Check(b.CabinInput(behavior.TemperaturePreference==CabinControlsState.Warm?CabinAction.Warmer:CabinAction.Cooler),"set requested temperature");
+     yield return new WaitForSeconds(2);
+     Check(b.Cabin.Comfort==behavior.TemperaturePreference,"cabin reaches requested temperature");
      jobs.AdvanceBehavior((float)behavior.Content.Number("effect.temperature.comfortSeconds",15));
      Check(behavior.TraitSatisfactionDelta==behavior.Content.Int("effect.temperature.matchSatisfaction",3),"maintained matching air conditioning satisfies the request");
      var checkpoint=BusinessProgress.ParseCheckpoint(File.ReadAllText(b.SavePath));
-     Check(checkpoint.version==CampaignCheckpoint.CurrentVersion&&checkpoint.live.cabinCaptured&&checkpoint.live.cabin.MeterOn&&checkpoint.live.cabin.Temperature==behavior.TemperaturePreference,"active controls captured in the checkpoint");
+     Check(checkpoint.version==CampaignCheckpoint.CurrentVersion&&checkpoint.live.cabinCaptured&&checkpoint.live.cabin.MeterOn&&checkpoint.live.cabin.Target==b.Cabin.Target,"active controls captured in the checkpoint");
     }
     Pose(drop.Kerb,drop.Direction);
     Check(jobs.Interact()&&!jobs.Active,"successful alighting "+i);
@@ -82,7 +93,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    }
    Check(jobs.AcceptanceRejection(new JobOffer{pickup=0,drop=3}).Contains("미터기"),"stale meter blocks accepting another call");
    s.GetComponent<RideCompletionPanel>().Close();
-   Check(b.CabinInput(0)&&!b.Cabin.MeterOn&&b.CabinCallBlock=="","J clears stale meter");
+   Check(b.CabinInput(CabinAction.Meter)&&!b.Cabin.MeterOn&&b.CabinCallBlock=="","J clears stale meter");
    var cockpit=CockpitUI.CabinBounds(1600,900,true);
    Check(cockpit.xMin>CockpitUI.FirstPersonSpeedRect(1600,900).xMax&&cockpit.xMax<1112,"cabin panel fits between speedometer and passenger");
    done=true;Debug.Log("CABIN_PLAYER_OK checks="+checks);Application.Quit(0);yield break;
@@ -217,7 +228,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
     Check(jobs.Accept(0)&&jobs.Interact()&&jobs.trip.State==TripState.OnTrip&&b.ledger.Care.Cleanliness==dirt-2,"actual rain boarding deducts two cleanliness");
     Pose(drop.Kerb,drop.Direction);Check(jobs.Interact()&&!jobs.Active,"rain ride completes");
     yield return Frames(2);s.GetComponent<RideCompletionPanel>().Close();
-    if(!b.CabinAutomatic)b.CabinInput(0);
+    if(!b.CabinAutomatic)b.CabinInput(CabinAction.Meter);
    }
    if(condition==DailyConditionKind.Friday)Check(b.Story.HasPage(2),"first Friday unlocks father notebook page three");
    Pose(s.services.ParkingStop.Kerb,s.services.ParkingStop.Direction);
@@ -254,20 +265,25 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   int shotMask=0;
   while(b.Intro.IsPlaying){int c=b.Intro.CurrentCut;cuts|=1<<c;if((shotMask&(1<<c))==0&&b.Intro.CutElapsed>4.4f){shotMask|=1<<c;yield return Capture("intro-cut-"+(c+1));continue;}yield return null;}
   Check(cuts==15&&Time.realtimeSinceStartup-startIntro<=30,"uncut intro plays all four cuts within 30 seconds");
-  Check(!b.preparing&&b.Story.introSeen&&b.Cabin.OffDuty&&s.drivingCamera.FirstPerson&&s.services.AtEndDayHub(),"intro ends in home cockpit with vacant lamp off");
+  Check(!b.preparing&&b.Story.introSeen&&s.drivingCamera.FirstPerson&&s.services.AtEndDayHub(),"intro ends in home cockpit ready for the first call");
   Check(b.FirstDriveFrame!=null,"first-day cockpit photo saved for the goal comparison");
   yield return null;
-  Check(b.CabinInput(1)&&b.Story.firstVacancy&&!b.Cabin.OffDuty,"K enables available vacancy");
+  Check(b.Story.firstVacancy&&s.jobs.offers[0]!=null,"first call automatically available");
   var jobs=s.jobs;var pick=jobs.stops[0];var drop=jobs.stops[3];
   jobs.ForcedPassengerType=PassengerType.General;jobs.ForcedRideCase=DrunkRideCase.Normal;
   Pose(pick.Kerb,pick.Direction);
   jobs.offers[0]=new JobOffer{pickup=0,drop=3,fare=6000,seconds=300,requiredScore=60,distance=jobs.nav.Distance(pick,drop),candidateSeed="father-first"};
   Check(jobs.Accept(0)&&jobs.Interact()&&jobs.trip.State==TripState.OnTrip,"first passenger boards");
-  Check(b.notice.Contains("미터기")&&b.CabinInput(0)&&b.Cabin.MeterOn,"first passenger prompts J and meter starts");
+  Check(b.notice.Contains("미터기")&&b.CabinInput(CabinAction.Meter)&&b.Cabin.MeterOn,"first passenger prompts J and meter starts");
   Pose(drop.Kerb,drop.Direction);Check(jobs.Interact()&&!jobs.Active,"first passenger alights");
   Check(b.Story.FoundNotebook&&b.notice.Contains("수첩")&&!b.Story.HasPage(1)&&!b.Story.HasPage(2),"first ride discovers notebook with later condition pages locked");
-  yield return Frames(2);s.GetComponent<RideCompletionPanel>().Close();b.CabinInput(0);
+  yield return Frames(2);s.GetComponent<RideCompletionPanel>().Close();b.CabinInput(CabinAction.Meter);
   Pose(s.services.ParkingStop.Kerb,s.services.ParkingStop.Direction);
+  yield return Capture("driver-notebook-button");
+  Check(b.OpenDrivingLogbook()&&b.LogbookOpen&&s.paused&&Time.timeScale==0,"HUD opens discovered notebook and pauses driving");
+  yield return Capture("driver-notebook-open");
+  b.LogbookOpen=false;
+  Check(!s.paused&&Time.timeScale==1,"closing HUD notebook resumes driving");
   Check(b.RequestEndDay(),"first shift ends from home");
   while(!b.ShowingSummary)yield return null;
   Check(b.Story.HasPage(3)&&b.ledger.Account.Expense(1,"home-rent")>0&&b.StoryMonologue.Contains("월세"),"lawful first day opens page four and records rent");
@@ -286,8 +302,8 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   if(s.requests.HasPendingChoice){s.requests.Choose(PassengerReply.Defer);yield return Frames(2);}
   if(jobs.BehaviorChoicesOpen){jobs.RespondBehavior(0);yield return Frames(2);}
   Check(b.AnswerStory(1)&&b.StorySatisfaction==1&&!b.AnswerStory(0),"one optional answer grants S+1");
-  b.CabinInput(0);Pose(drop.Kerb,drop.Direction);Check(jobs.Interact()&&!jobs.Active,"talkative ride completes");
-  yield return Frames(2);s.GetComponent<RideCompletionPanel>().Close();b.CabinInput(0);
+  b.CabinInput(CabinAction.Meter);Pose(drop.Kerb,drop.Direction);Check(jobs.Interact()&&!jobs.Active,"talkative ride completes");
+  yield return Frames(2);s.GetComponent<RideCompletionPanel>().Close();b.CabinInput(CabinAction.Meter);
   Pose(s.services.ParkingStop.Kerb,s.services.ParkingStop.Direction);
   Check(b.RequestEndDay(),"day two ends from home");
   while(!b.ShowingSummary)yield return null;

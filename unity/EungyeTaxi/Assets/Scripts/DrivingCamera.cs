@@ -6,11 +6,16 @@ public class DrivingCamera : MonoBehaviour {
     public bool FirstPerson { get; private set; }
     public bool RearView { get; private set; }
     public bool testRearView;public float testLook;public float LookYaw {get;private set;}public bool cornerLook=false;TaxiController taxi;
+    Transform driverGlass;
+    float windowHeight=1;
     float stableYaw;
     Camera view; GameObject cockpit; Transform steeringWheel; bool snap=true;
     void Start() {
         view=GetComponent<Camera>();taxi=target.GetComponent<TaxiController>();cockpit=TaxiArt.Cockpit(target,out steeringWheel);
-        if(taxi.business&&taxi.business.SupportsCareer)CockpitPresentation.AddFatherPhoto(cockpit.transform);
+        if(taxi.business&&taxi.business.SupportsCareer){
+            CockpitPresentation.AddFatherPhoto(cockpit.transform);
+            driverGlass=CockpitPresentation.AddDriverWindow(cockpit.transform);
+        }
         ApplyMode();
     }
     // Camera selection never changes the driver's explicit H assistance choice.
@@ -102,6 +107,10 @@ public class DrivingCamera : MonoBehaviour {
     }
     void LateUpdate() {
         if(!target)return;
+        if(driverGlass){
+            windowHeight=Mathf.MoveTowards(windowHeight,taxi.business.Cabin.WindowOpen?0:1,Time.deltaTime*2);
+            driverGlass.localScale=new Vector3(1.04f,.48f*windowHeight,1);
+        }
         if(steeringWheel)steeringWheel.localRotation=Quaternion.Euler(0,0,-taxi.SteeringInput*100);
         if(FirstPerson){
             float yaw=target.eulerAngles.y;
