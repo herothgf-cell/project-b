@@ -18,3 +18,6 @@
 - 수정 전 빌드에서 새 경력 첫 출발 시 `memo=False parkedWheels=False`를 재현했다. 수정한 별도 통합 실행본에서 두 값 모두 True, 첫날 이야기 위치 제어 38건과 재실행 7건 통과. 빈차·탑승 시점에 지붕 양면에서 TAXI를 확인했다. 첫날에 선택한 목표 변경, 3일차 재선택과 저장 복원을 포함한다.
 - Unity 2022.3.62f2 `PrototypeBuild.BuildHybrid` 종료 0. `pwsh -File tools/check_workspace.ps1 -Strict` 필수 입력 문제 0. 자동 물리 주행과 수동 전체 캠페인은 이번에 수행하지 않았다.
 - 숨김 창의 초기 캡처가 검게 저장된 것을 확인하고 1280×720으로 테스트 창을 초기화했다. 아침 숙소의 메모 세 장과 외부 시점의 TAXI 글자를 확인했다. 첫 차고 캡처에서 서스펜션이 완전히 늘어난 만큼 차체와 휠이 벌어져 보여 차축 중심과 바닥 높이를 추가 보정했다.
+- 최종 기본 실행본에서 첫날 이야기 위치 제어 39건을 통과했다. 차축 중심과 휠의 거리, 타이어 하단과 차고 바닥의 높이 차는 모두 1cm 미만이다. [숙소 벽 메모](../ui/2026-11-20-first-departure/preparation-wall-memo.png) · [차고 인트로](../ui/2026-11-20-first-departure/intro-cut-3.png) · [빈차일 때의 TAXI 표기](../ui/2026-11-20-first-departure/vacant-taxi-roof.png).
+- 배포 소스 `491a7e8`. 차량음 변경 `186a256`을 포함한 은계 r49 · PvP A2/LAN v23 통합본이다. 분리 사본의 빌드 입력 변경 파일 21개를 해당 Git 소스와 대조했다. `CabinSoundChecks.VerifyAndBuild`에서 지점 39개와 클립 5개 검사 후 BuildHybrid 종료 0. 작업 폴더에서 별도로 편집 중인 r50 지도는 해당 작업에 남겼다.
+- 최종 기본 실행본 재실행 7건 포함 총 46건 통과, 검사 스크립트 종료 0. 통합·PvP manifest VerifyOnly 모두 배포 143파일 145,396,367바이트의 크기·SHA256과 로컬 사용자 프로필을 검증했다.
