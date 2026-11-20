@@ -1,26 +1,27 @@
 {
-  "sourceCommit": "721af531c04b521afdd220676718da205ad40358",
+  "sourceCommit": "c2668c4b9ca9d95f3332f9eb43af0c7ecc8ea73b",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-20",
-  "totalBytes": 149628307.0,
+  "totalBytes": 150793717.0,
   "validation": {
-    "operationAdapters": "all",
-    "mapInputIssues": 0,
-    "build": "PrototypeBuild.BuildHybrid exit 0",
-    "operationPlanning": 66,
-    "workshopPartsPlayer": 21,
-    "refreshmentPlayer": 36,
-    "vehicleGarage": 90,
-    "prototypeRegression": "passed",
-    "manualDriving": false
+    "build": "CabinSoundChecks.VerifyAndBuild -> PrototypeBuild.BuildHybrid exit 0",
+    "unityPackagedClips": 6,
+    "workspaceInputIssues": 0,
+    "settingsEditorTests": 112,
+    "cabinPlayerChecks": 35,
+    "roadMix": "cruise=0.2607954 rest=0 pitch=1 speed=0",
+    "pvpConditionPlayerChecks": 24,
+    "manualListening": false,
+    "manualDriving": false,
+    "fullCampaign": false
   },
   "files": [
     {
       "path": "builds/EungyeTaxi/택시 시뮬레이션_BurstDebugInformation_DoNotShip/Data/Plugins/x86_64/lib_burst_generated.txt",
-      "bytes": 110871,
-      "sha256": "74e2ea94694a91b63c035903adc7e5095564aa56049d9642676aea23a49522c4"
+      "bytes": 110878,
+      "sha256": "9f4df7e1b205f2a20ec26054549cd8d92c0ad7b7072d269ff0c043ee2b80d71e"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/app.info",
@@ -30,12 +31,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "6ab7f6a7103b32f07a8c5efc77ffe849d7affaf8a55d148754e6df29fce97dde"
+      "sha256": "f05c7824a77ab03c224c85f8880388afc5844971dc89119e126c15d283c57e27"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 64124,
-      "sha256": "2977400ea00c1d06a9103fc7b099db64410a3a056af167a4718898d1fb40109e"
+      "bytes": 64340,
+      "sha256": "117be33402379cadba70496dd0678c9f770d85a2d1b7337758d72c7ec6bf58a7"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
@@ -55,7 +56,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
       "bytes": 3213312,
-      "sha256": "f12ab8df4fe0e9f295680711e7f81ef39262de1796a86f902dd30d35e8c2e1f0"
+      "sha256": "d4e71036868296d33a645dbdd24405804daf789e8e71c179a4411a114995acb1"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
@@ -560,17 +561,22 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Plugins/x86_64/lib_burst_generated.dll",
       "bytes": 394240,
-      "sha256": "7cac4e1b61a7172987c58784e29efa2db26c66b1f368aa6a8795984a0bb8a669"
+      "sha256": "f60d9a3fc43de20ffe7ceb4dd5040f149e0e6c7a006af9f26999197222561777"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 46948984,
-      "sha256": "36b58dc427e5283f9fc43d678fa07fa8224ab71a6cd66bdf3437f20370733df2"
+      "bytes": 46949688,
+      "sha256": "9c3034c45b32ede019f21cc9ec5d77170f295be878e6723b240c65603b50967c"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
       "bytes": 25917488,
       "sha256": "4367bc4f783964a0ac80ade852fc284423b2b1e4821385a273e274d213cc5545"
+    },
+    {
+      "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.resource",
+      "bytes": 1163648,
+      "sha256": "c50a0e4343b9eba4d0492508f3a3a8b46777913e85b1894aaba25582bc69ca06"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Resources/unity default resources",
@@ -721,6 +727,11 @@
       "path": "builds/EungyeTaxi/ThirdPartyNotices/NotoSansKR-OFL.txt",
       "bytes": 4387,
       "sha256": "babcfe66c8a098b2fa279bc724a3a342f8124f77ce18941fbcc1bbb39823cded"
+    },
+    {
+      "path": "builds/EungyeTaxi/ThirdPartyNotices/vehicle-recordings.txt",
+      "bytes": 835,
+      "sha256": "e0f30676c79077eb03ced6d76ccfe3273bbadeaacbc9b7d43bf5e91fd448dc52"
     },
     {
       "path": "builds/EungyeTaxi/UnityCrashHandler64.exe",
