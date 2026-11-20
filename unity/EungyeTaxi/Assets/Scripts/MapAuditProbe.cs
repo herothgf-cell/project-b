@@ -40,7 +40,7 @@ public sealed class MapAuditProbe : MonoBehaviour {
   Screen.SetResolution(1600,900,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);
   var junctions=session.traffic.junctions.Where(j=>j!=null).ToList();
   string layerList=Arg("-mapAuditLayers",null);
-  if(layerList!=null){yield return Layers(junctions,layerList.Split('|'));Finish(null);yield break;}
+  if(layerList!=null){Layers(junctions,layerList.Split('|'));Finish(null);yield break;}
   int limit=int.Parse(Arg("-mapAuditLimit","999")),first=int.Parse(Arg("-mapAuditStart","1"));float settle=float.Parse(Arg("-mapAuditSettle","25")),observe=float.Parse(Arg("-mapAuditObserve","35"));
   int pedTotal=session.ambientPedestrians!=null?session.ambientPedestrians.actors.Count:-1,pedActive=session.ambientPedestrians!=null?session.ambientPedestrians.actors.Count(p=>p&&p.gameObject.activeInHierarchy):-1;
   report.AppendLine("MAP_AUDIT pedestrianActors="+pedTotal+" active="+pedActive+" junctions="+junctions.Count+" settle="+settle+" observe="+observe+" population="+session.traffic.cars.Count+" observationOnly=true humanPlay=false");
@@ -108,7 +108,7 @@ public sealed class MapAuditProbe : MonoBehaviour {
 
  // Paint-layer diagnosis: the same top view with one paint source visible at a time.
  static string Layer(Renderer r){var t=r.transform;while(t!=null){var n=t.name;if(n.StartsWith("원본 노면선"))return "source";if(n=="White road paint"||n=="Yellow centre paint")return "generated";if(n.StartsWith("사용자 시설"))return "facility";t=t.parent;}return null;}
- IEnumerator Layers(List<TrafficJunction> junctions,string[] names){
+ void Layers(List<TrafficJunction> junctions,string[] names){
   var groups=FindObjectsOfType<Renderer>().Select(r=>new{r,layer=Layer(r)}).Where(x=>x.layer!=null).ToList();
   foreach(var c in session.traffic.cars)if(c)foreach(var r in c.GetComponentsInChildren<Renderer>())r.enabled=false;
   Time.timeScale=0;
@@ -118,10 +118,31 @@ public sealed class MapAuditProbe : MonoBehaviour {
    string tag=string.Concat(name.Select(ch=>Path.GetInvalidFileNameChars().Contains(ch)||ch==' '?'_':ch));
    foreach(var mode in new[]{"all","source","generated","facility"}){
     foreach(var g in groups)if(g.r)g.r.enabled=mode=="all"||g.layer==mode;
-    yield return Capture("layer-"+tag+"-"+mode);
+    CaptureLayer("layer-"+tag+"-"+mode);
    }
    foreach(var g in groups)if(g.r)g.r.enabled=true;
    report.AppendLine("LAYERS "+name+" source="+groups.Count(g=>g.layer=="source")+" generated="+groups.Count(g=>g.layer=="generated")+" facility="+groups.Count(g=>g.layer=="facility"));
+  }
+ }
+ void CaptureLayer(string name){
+  const int width=1600,height=900;
+  var frame=RenderTexture.GetTemporary(width,height,24);
+  var pixels=new Texture2D(width,height,TextureFormat.RGB24,false);
+  var prior=lens.targetTexture;
+  var active=RenderTexture.active;
+  try{
+   lens.targetTexture=frame;
+   lens.Render();
+   RenderTexture.active=frame;
+   pixels.ReadPixels(new Rect(0,0,width,height),0,0);
+   pixels.Apply();
+   File.WriteAllBytes(Path.Combine(output,name+".jpg"),pixels.EncodeToJPG(80));
+  }catch(Exception e){report.AppendLine("CAPTURE_FAIL "+name+" "+e.Message);}
+  finally{
+   lens.targetTexture=prior;
+   RenderTexture.active=active;
+   RenderTexture.ReleaseTemporary(frame);
+   Destroy(pixels);
   }
  }
  SignalColor EntrySignal(TrafficCar car,TrafficStop stop,int turn){

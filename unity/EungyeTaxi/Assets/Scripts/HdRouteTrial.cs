@@ -181,10 +181,10 @@ public class HdRouteTrial : MonoBehaviour {
    if(mark.points==null||mark.points.Length<2)continue;
    if(stopMask.Replaces(mark)||ReviewedMarkSuppression.Hides(map,mark))continue;
    string forward=MarkKey(mark,false),reverse=MarkKey(mark,true);if(!drawn.Add(string.CompareOrdinal(forward,reverse)<0?forward:reverse))continue;
-   // Turn guides (525) are white fine-dashed curves on Korean roads. Kakao road view at
-   // J866 (2026-06) shows white dashes where the source type says yellow solid (111).
-   bool guide=mark.kind=="525";
-   int color=guide?0:mark.type.StartsWith("1")?1:mark.type.StartsWith("3")?2:0;
+   // Only these four J866 guides are confirmed white in the 2026-06 road view.
+   bool recolourGuide=mark.kind=="525"&&(mark.id=="B2218G610354"||mark.id=="B2218G610355"||mark.id=="B2218G610356"||mark.id=="B2218G610357");
+   bool guide=mark.kind=="525"&&(recolourGuide||mark.type=="212");
+   int color=recolourGuide?0:mark.type.StartsWith("1")?1:mark.type.StartsWith("3")?2:0;
    var ps=new Vector3[mark.points.Length];for(int i=0;i<ps.Length;i++)ps[i]=mark.points[i].V(.075f);
    var path=new AssistedRoadNetwork.Path(ps);bool dashed=guide||mark.type=="112"||mark.type=="212"||mark.type=="312";
    bool roadside=mark.kind=="505"||mark.kind=="515";
@@ -192,11 +192,10 @@ public class HdRouteTrial : MonoBehaviour {
    bool crossingLine=(mark.kind=="501"||mark.kind=="502"||mark.kind=="503"||mark.kind=="505"||mark.kind=="506"||mark.kind=="515"||mark.kind=="525")&&authoredMask.MightAffect(mark);
    bool uturnMedian=color==1&&mark.kind=="501"&&uturns.Count>0;
    bool replaced=mark.kind=="501"||mark.kind=="502"||mark.kind=="503"||mark.kind=="506"||mark.kind=="531"||roadside;
-   bool yellowReplaced=replaced&&color==1;
    bool longitudinal=longitudinalMask.MightAffect(mark),fine=roadside||editedYellow||longitudinal||crossingLine||uturnMedian;
    float step=guide ? 1.5f : fine ? .5f : dashed ? 6 : 2,paint=guide ? .75f : fine ? .5f : dashed ? 3 : 2.05f;
    for(float d=0;d<path.length;d+=step){if(fine&&dashed&&!guide&&d%6>=3)continue;var a=path.Position(d);var b=path.Position(Mathf.Min(path.length,d+paint));if((b-a).sqrMagnitude<.0001f)continue;
-    if(replaced&&(yellowReplaced?replacements.CoversAnyHeading((a+b)*.5f):replacements.Covers((a+b)*.5f,(b-a).normalized)))continue;
+    if(replaced&&replacements.Covers((a+b)*.5f,(b-a).normalized,color==1,mark.kind=="531"))continue;
     if(longitudinal&&longitudinalMask.Covers((a+b)*.5f,(b-a).normalized,Vector3.Distance(a,b)*.5f))continue;
     if(uturnMedian&&UturnRoadMarkings.Covers(uturns,(a+b)*.5f,Vector3.Distance(a,b)*.5f))continue;
     // Kerb hooks/tapers do not become lane interiors, but no longitudinal

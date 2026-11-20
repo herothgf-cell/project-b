@@ -1,5 +1,7 @@
 # 최신 작업 이력
 
+2026-11-20 수인로 r48 재점검. 네이버 거리뷰와 카카오 스카이뷰를 대조해 J6478 보행육교의 황색 빗금 안전지대를 복원하고, J866 유도선 4개와 기존 점선에 흰 점선 처리를 적용했다. J10580의 기존 흰 실선 유도선과 기존 마스크의 황색선 처리도 복구했다. 수인로 도색 수정 이력과 치수 근사는 [작업 기록](2026-11-20-suinro-repaint-review.md).
+
 2026-11-20 지도 수정 1단계(지도 r48). 층별 촬영으로 엉킨 선의 원인이 원본 정밀도로지도(2020) 자체가 지금 차선과 어긋난 것임을 확인하고, 수인로 전체를 주행 차로 기준으로 다시 그렸다(교체 영역 38·선 1,580). 좌회전 유도선은 전체에서 흰 점선 곡선, 유턴 표지판에 받침대. r14~r47 저장이 r48로 이관(1,095검사), 차로 렌더 31·유턴 23/1(기존 J7973-E)·Strict 0. 이전부터 실패하던 Editor 검사 5개는 원래 r47에서도 같은 실패. 소스 4c2b939·출하 0e72d1a, 배포 144파일 VerifyOnly 통과. G1 J2338 서쪽 도로는 단지 내 도로라 2단계에서 제외(사용자 정정). [기록](2026-11-20-suinro-repaint-phase1.md).
 
 2026-11-20 은계 지도 77곳 실제 항공사진 대조와 수정 계획(승인 요청). 카카오맵 로드뷰·항공사진은 브라우저로 조작 가능(네이버는 차단). J866 유턴 보조표지 "보행신호시/좌회전시"로 게임과 일치, 유도선은 실제 흰 점선. 77곳을 같은 축척으로 대조해 심각 27곳과 9가지 유형(겹친 선·유도선·막다른 길·차도 아닌 곳·차로 수·덩어리 교차로·보호구역 노면·고가·설비)을 정리하고 4단계 수정안을 제시했다. [기록](2026-11-20-map-aerial-comparison-plan.md). 지도·코드·빌드 변경 없음. 이 폴더 남은 기록은 43705aa로 커밋·push.
@@ -99,10 +101,10 @@ PvP 호스트 렉 2차 최적화(같은 기록 후속 절): 내비 혼잡/제한
 | 항목 | 상태 |
 |---|---|
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
-| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 은계 r47 · [현재 검증 기록](2026-11-19-approved-eungye-roads.md) |
+| 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 로컬 은계 r49 · [현재 검증 기록](2026-11-20-suinro-repaint-review.md) |
 | 통신 | LAN **v19**. 최적화·조향 통합 배포. 이전 v17/v18과 참가 불가, 양쪽 PC 같은 전체 실행 폴더 필요 |
-| 배포 검사 | r47 통합 Player 신호·표지·접점 351건, 화면 7장 · [검증과 재현](2026-11-19-approved-eungye-roads.md) |
-| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (revision47·contentHash 2ee1a3fd…)와 검토 도로시설 JSON · Strict 입력 문제0 · 선택 재수입 JSON2개 부재 |
+| 배포 검사 | 수인로 r49 기준 검증은 [작업 기록](2026-11-20-suinro-repaint-review.md)에 있다. |
+| 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (revision49·contentHash 9985476e…)와 검토 도로시설 JSON · Strict 입력 문제 0 |
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **main 병합·배포, 사람 검증 전** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V10 30장](../proposals/project-b-game-proposal-v10.pptx) · [반영 검토](../proposals/proposal-v10-review.md) · [Manual V10](../proposals/project-b-prototype-manual-v10.md) |
 

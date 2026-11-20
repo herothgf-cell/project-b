@@ -13,6 +13,7 @@ public static class ImportedMarkingRendererTests {
  static bool SpansX(Vector3[] vertices,float x){for(int i=0;i<vertices.Length;i+=4){float min=float.MaxValue,max=float.MinValue;for(int j=0;j<4;j++){min=Mathf.Min(min,vertices[i+j].x);max=Mathf.Max(max,vertices[i+j].x);}if(min<x&&max>x)return true;}return false;}
  public static void Run(){
   SharedLongitudinalRegressions();
+  SuinroReplacementRegressions();
   GeneratedCrosswalkRegressions();
   ZeroReachCrosswalkRegressions();
   ReplacedStopLineRegressions();
@@ -83,6 +84,21 @@ public static class ImportedMarkingRendererTests {
   Check(QuadsNear(sideVertices,new Vector3(523.2f,0,457.2f),.65f)==0,"J5057 east no-stopping tip does not enter generated crossing");
   Check(QuadsNear(sideVertices,new Vector3(475.5f,0,436f),.65f)>0&&QuadsNear(sideVertices,new Vector3(490.7f,0,429.8f),.65f)>0,"J5057 observed outer yellow kerb persists outside crossing and inner channel");
   Debug.Log("IMPORTED_MARKING_RENDERER_TEST_OK");
+ }
+ static void SuinroReplacementRegressions(){
+  var legacy=new RoadMapFacility{id="reviewed:r47:legacy",kind="lanePresentation",type=ReviewedCorridorPaint.MaskType,width=8,length=14,yaw=90};
+  var suinro=new RoadMapFacility{id="r48:suinro:mask:test",kind="lanePresentation",type=ReviewedCorridorPaint.MaskType,x=30,width=8,length=14,yaw=90};
+  var map=new MapData{editorDocument=new RoadMapDocument{facilities=new[]{legacy,suinro}}};
+  var paint=new ReviewedCorridorPaint(map);
+  Check(paint.Covers(Vector3.zero,Vector3.right,true),"legacy parallel yellow overlay remains suppressed");
+  Check(!paint.Covers(Vector3.zero,Vector3.forward,true),"legacy transverse yellow edge is retained");
+  Check(!paint.Covers(Vector3.zero,Vector3.right,true,true),"legacy mask does not cover safety-zone outlines");
+  Check(paint.Covers(suinro.Position,Vector3.forward,true,true),"Suin-ro mask removes outdated oblique safety-zone source lines");
+  Check(!paint.Covers(suinro.Position,Vector3.forward),"white transverse marking stays outside longitudinal masking");
+  var guide=Mark("B2218G612821","211",false);guide.kind="525";map.hdMarks=new[]{guide};map.editorDocument=null;
+  Check(SpansX(WhiteVertices(map),1.5f),"unverified source white solid guide keeps its solid format");
+  guide.id="B2218G610354";guide.type="111";
+  Check(YellowVertices(map).Length==0&&WhiteVertices(map).Length==28,"J866 source yellow converted to fine white dashes");
  }
  static void SharedLongitudinalRegressions(){
   var points=new[]{new MapPoint{x=20,z=-30},new MapPoint{x=20,z=30}};

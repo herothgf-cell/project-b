@@ -423,9 +423,10 @@ public class BusinessProgress : MonoBehaviour {
   const string reviewedR47Hash="2ee1a3fd415b6391086ea167da864dea1db68b58fe101af9105f5be6d482cf3e";
   // r48 (2026-11-20) repaints Suin-ro lane lines only; driving lanes are unchanged.
   const string reviewedR48Hash="ac84fe3eae6e7985a77de9dd5becbd6f56811707bfe66ff2a9e6e1497d2be5ac";
-  int from=0,to=0;for(int revision=14;revision<=48;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>48)return;
-  string reviewedHash=to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
+  const string reviewedR49Hash="9985476e9216d487885839e8da42aa81d9651c7266fce8d779a09af560151390";
+  int from=0,to=0;for(int revision=14;revision<=49;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>49)return;
+  string reviewedHash=to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   ApplyReviewedEungyeCheckpointMigration(live,from,to);
  }
