@@ -1,0 +1,17 @@
+Vehicle interior recordings used in Eungye Taxi
+All five source recordings were published under CC0 1.0 Universal.
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Engine: Car Acceleration Inside Car.wav by alexftw123
+https://freesound.org/people/alexftw123/sounds/152661/
+Road: Car Driving Interior by squareal
+https://freesound.org/people/squareal/sounds/237374/
+IndicatorOn and IndicatorOff: Car Indicator On Off.wav by wesleywestmusic
+https://freesound.org/people/wesleywestmusic/sounds/644427/
+Horn: Car Honk by qubodup
+https://freesound.org/people/qubodup/sounds/185479/
+Rain: Rain_insideCar by Brikaro
+https://freesound.org/people/Brikaro/sounds/855678/
+
+Adaptations use mono excerpts, filtering and level adjustment. Looping tracks
+have crossfaded joins. Indicator clicks and the two horn taps are trimmed.

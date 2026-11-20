@@ -33,6 +33,7 @@ public static class PrototypeBuild {
         System.IO.File.Copy("../../licenses/mchrbn-unity-traffic-simulation/LICENSE.txt",System.IO.Path.Combine(notices,"mchrbn-unity-traffic-simulation-MIT.txt"),true);
         System.IO.File.Copy("../../licenses/mchrbn-unity-traffic-simulation/NOTICE.txt",System.IO.Path.Combine(notices,"mchrbn-unity-traffic-simulation-NOTICE.txt"),true);
         System.IO.File.Copy("../../licenses/NotoSansKR-OFL.txt",System.IO.Path.Combine(notices,"NotoSansKR-OFL.txt"),true);
+        System.IO.File.Copy("../../licenses/vehicle-recordings.txt",System.IO.Path.Combine(notices,"vehicle-recordings.txt"),true);
         if(region=="eungye"&&ProjectMapBuild.HasSource){var package=ProjectMapStore.Load(ProjectMapBuild.Root);System.IO.File.WriteAllText(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(output),ProjectMapBuildStamp.FileName),JsonUtility.ToJson(new ProjectMapBuildStamp{baselineHash=package.baselineHash,contentHash=package.contentHash},true));}
         Debug.Log("PROTOTYPE_BUILD_OK "+output);
     }

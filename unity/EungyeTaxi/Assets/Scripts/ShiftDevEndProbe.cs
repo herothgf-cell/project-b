@@ -431,16 +431,22 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   var body=s.taxi.body;var position=body.position;var velocity=body.velocity;
   var sources=s.GetComponents<AudioSource>();
   var engine=sources.Single(a=>a.clip&&a.clip.name=="Engine");
+  var road=sources.Single(a=>a.clip&&a.clip.name=="Road");
   var relay=sources.Single(a=>a.clip&&a.clip.name.StartsWith("Indicator"));
   Check(!sources.Any(a=>a.clip&&a.clip.name=="Brake"),"no separate brake source");
   try{
    settings.engineSound=settings.indicatorSound=true;
    body.velocity=s.taxi.transform.forward*12.5f;
    yield return new WaitForSecondsRealtime(.6f);
-   float fastPitch=engine.pitch,fastLevel=engine.volume;
+   float fastPitch=engine.pitch,fastLevel=engine.volume,rollingLevel=road.volume;
    body.velocity=Vector3.zero;
    yield return new WaitForSecondsRealtime(.6f);
    Check(fastPitch>engine.pitch+.25f&&fastLevel>engine.volume+.08f,"45 km/h to standstill lowers engine pitch and level");
+   Check(rollingLevel>.12f&&road.volume<.01f&&road.pitch==1,"rolling sound fades at rest without changing pitch");
+   settings.engineSound=false;
+   yield return new WaitForEndOfFrame();
+   Check(!engine.isPlaying&&!road.isPlaying,"drive switch mutes both recorded layers");
+   settings.engineSound=true;
    foreach(int mode in new[]{-1,1,0}){
     s.signals.Clear();
     if(mode==0)s.signals.ToggleHazards();else s.signals.Toggle(mode);

@@ -28,23 +28,22 @@ public static class CabinSoundChecks {
     panel.SoundTab=true;panel.ResetDefaults();Check(panel.Draft.engineSound&&panel.Draft.hornSound,"Sound reset");
    }finally{UnityEngine.Object.DestroyImmediate(panel.gameObject);}
   }finally{PlayerPrefs.DeleteKey(key);PlayerPrefs.Save();}
-  foreach(var sound in new[]{"Engine","IndicatorOn","IndicatorOff","Horn","Rain"}){
-   var clip=VehicleAudio.CreateClip(sound);
-   try {
-    var samples=new float[clip.samples];
-    Check(clip.GetData(samples,0),"Read "+sound);
-    float peak=0;foreach(float sample in samples)peak=Mathf.Max(peak,Mathf.Abs(sample));
-    Check(peak>.1f&&peak<=1,sound+" amplitude");
-    if(sound=="Engine"){
-     VehicleAudio.EngineMix(12.5f,.25f,out float cruise,out float cruisePitch);
-     VehicleAudio.EngineMix(2,0,out float slow,out float slowPitch);
-     double energy=0;foreach(float sample in samples)energy+=sample*sample;
-     Check(Math.Sqrt(energy/samples.Length)*cruise>.10,"Audible cruising engine RMS");
-     Check(cruise>slow&&cruisePitch>slowPitch,"Engine recedes toward stop");
-    }
-    if(sound.StartsWith("Indicator"))Check(clip.length<.08f&&Math.Abs(samples[samples.Length-1])<.001f,"Short decaying relay click");
-    if(sound=="Horn")Check(samples[clip.frequency/5]==0,"Two horn attacks have a silent gap");
-   }finally{UnityEngine.Object.DestroyImmediate(clip);}
+  foreach(var sound in new[]{"Engine","Road","IndicatorOn","IndicatorOff","Horn","Rain"}){
+   var clip=VehicleAudio.LoadClip(sound);
+   Check(clip&&clip.channels==1,"Packaged mono "+sound);
+   var samples=new float[clip.samples];
+   Check(clip.GetData(samples,0),"Read "+sound);
+   float peak=0;foreach(float sample in samples)peak=Mathf.Max(peak,Mathf.Abs(sample));
+   Check(peak>.1f&&peak<=1,sound+" amplitude");
+   if(sound=="Engine"){
+    VehicleAudio.EngineMix(12.5f,.25f,out float cruise,out float cruisePitch);
+    VehicleAudio.EngineMix(2,0,out float slow,out float slowPitch);
+    double energy=0;foreach(float sample in samples)energy+=sample*sample;
+    Check(Math.Sqrt(energy/samples.Length)*cruise>.10,"Audible cruising engine RMS");
+    Check(cruise>slow&&cruisePitch>slowPitch,"Engine recedes toward stop");
+   }
+   if(sound.StartsWith("Indicator"))Check(clip.length<.08f&&Math.Abs(samples[samples.Length-1])<.001f,"Short decaying relay click");
+   if(sound=="Horn")Check(samples[clip.frequency/5]==0,"Two horn attacks have a silent gap");
   }
   // A muted, retired brake effect must not mute the new indicator in an existing campaign.
   ContentTuningRuntime.Initialize();
@@ -62,7 +61,7 @@ public static class CabinSoundChecks {
    if((string)row["id"]=="display.sound.indicator")indicatorEnabled=(string)row["value"]=="true";
   }
   Check(indicatorEnabled,"legacy brake mute is independent of relay");
-  Debug.Log("CABIN_SOUND_CHECKS_OK places="+seen.Count+" clips=5");
+  Debug.Log("CABIN_SOUND_CHECKS_OK places="+seen.Count+" clips=6");
  }
  public static void VerifyAndBuild(){Run();PrototypeBuild.BuildHybrid();}
 }

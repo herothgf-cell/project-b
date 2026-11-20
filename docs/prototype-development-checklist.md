@@ -12,6 +12,7 @@
 
 ## 2026-11-20 은계 지명과 운전 소리
 
+- [x] 실차 녹음으로 엔진·노면·릴레이·경적·빗소리 교체. [소리 예시](content-design/audio/taxi-cabin-recordings.wav).
 - [x] 차속에 따른 주행음과 좌우·비상등 릴레이 소리, 기존 브레이크음 제거. [비교·실행본 검사](work-history/2026-11-20-drive-audio-indicators.md).
 
 - [x] 설정 관리에서 차내 조작 요청·차량 효과음·시설과 메뉴 그림·승하차 지명을 편집하고 통합 실행본에 적용. [검증 기록](work-history/2026-11-20-service-content-editor.md).
