@@ -20,3 +20,7 @@
 - 기본 배포 폴더의 Player를 `-facilityArtCheck -force-d3d11 -screen-fullscreen 0 -screen-width 1600 -screen-height 900 -shiftCaptureOutput <출력 폴더> -logFile <로그 파일>`로 실행했다. 임시 경력과 차량 위치 제어 검사 26건 통과, 종료 0. 텍스처 11개의 실제 로딩, 메뉴 세 장의 선택, 결제 전 잔액, 취소, 한 번만 결제, 주유소·세차·공업사·휴식 구역·숙소 주차 칸의 배경 선택, 정산과 숙소 가구 구매를 확인했다.
 - `tools/test_pvp_condition.ps1 -OutputDirectory artifacts/approved-facilities/pvp`로 기본 실행본 재검사. 위치를 지정한 PvP 상태 검사 24건 통과, 종료 0. 식사 중단·완료와 금액, 15초 식사 중 다른 운전자 진행, 무료 45초 휴식, 경기 종료 처리를 확인했다.
 - 숨김 창과 D3D11 배치 실행에서 얻은 PNG는 모두 투명했다. OpenGL Core는 이 빌드에 포함되지 않아 그래픽 초기화 단계에서 중단했다. 최종 화면의 실기 가독성·버튼 마우스 조작, 야외 주차장 현장 시각 확인, 실물 운전 및 전체 캠페인 수동 플레이는 미검증이다. 진단 로그는 `artifacts/approved-facilities/`에 있다.
+
+## 통합 실행본 배포
+
+소스 커밋 `de6ff1b`의 BuildHybrid 결과에서 기존 출하 파일과 달라진 10개를 기본 실행 폴더에 반영했다. 관리 DLL, Unity 리소스·씬 데이터와 실행 설정, Burst 산출물이 포함된다. 배포 매니페스트에는 출하 파일 143개, 145,351,751바이트의 크기와 SHA256을 기록했다. `tools/update_distribution_manifest.ps1 -VerifyOnly`와 `tools/update_pvp_distribution_manifest.ps1 -VerifyOnly` 모두 종료 0. 로컬 사용자 콘텐츠 프로필 1개는 별도로 검증됐다.
