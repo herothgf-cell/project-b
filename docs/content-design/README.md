@@ -100,3 +100,5 @@ P1~P7을 통합 실행본에 적용했다. [전반 진단](2026-11-19-player-mot
 | 7 | [34 기사 숙소 거점](34-home-base.md) | 숙소 1곳(수인로 뒤 원룸)에서 시작·퇴근, 월세, 같은 건물 넓은 호실 |
 
 시안 이미지 `images/motivation-*.png`(재생성 `tools/render_motivation_mockups.py`) · [Codex 구현 프롬프트 P1~P7](codex-prompts-motivation.md)
+
+- [36 은계 생활시설과 택시 부품점](36-neighbourhood-shops-and-taxi-parts.md) · 김밥집·카페, 차량 꾸미기와 성능 부품의 가격·장착 효과

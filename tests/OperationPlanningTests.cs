@@ -16,9 +16,27 @@ public static class OperationPlanningTests {
   var recovered=new DriverCondition{satiety=80,fatigue=60};Near(OperationForecast.Calculate(account,recovered,15,0,true,0,false,0).EndFatigue,61,"already overtime preserves paid sleep recovery rather than reapplying boundary");
   Check(!OperationForecast.Calculate(account,null,10,0,true,20,false,0).Available,"missing driver condition is unavailable rather than invented zeros");
   var ledger=new EconomyLedger(new PrototypeSettings{oneDay=true,startCash=100,initialFuel=50});
+  var shops=new EconomyLedger(new PrototypeSettings{oneDay=true,startCash=2700,initialFuel=50});
+  shops.Driver.satiety=30;shops.Driver.fatigue=50;
+  foreach(int kind in new[]{Refreshment.Snack,Refreshment.Coffee}){
+   var item=Refreshment.For(kind);
+   var before=shops.Driver.Copy();var price=OperationServiceQuote.Calculate(shops,kind,0,0);
+   Check(price.Available&&price.Price==item.Price&&price.UseSeconds==item.Seconds,"matching shop quote "+kind);
+   before.Advance(item.Seconds);
+   Check(shops.UseRefreshment("test:"+kind,kind),"refreshment purchase "+kind);
+   Near(shops.Driver.satiety,before.satiety+item.Satiety,"shop satiety");
+   Near(shops.Driver.fatigue,before.fatigue-item.FatigueRelief,"shop fatigue");
+   Near(price.EndSatiety,shops.Driver.satiety,"satiety quote equals outcome");
+   Near(price.EndFatigue,shops.Driver.fatigue,"fatigue quote equals outcome");
+   Check(!shops.UseRefreshment("test:"+kind,kind),"shop purchase idempotent");
+   shops=EconomyLedger.RestoreCampaign(shops.Snapshot(),shops.Account.Snapshot());
+  }
+  Check(shops.Elapsed==35&&shops.Account.Cash==0&&shops.Account.Debt==0&&shops.Account.Expense(1,"meal")==2700,"saved refreshment time and food expense");
+  Check(!shops.UseRefreshment("empty",Refreshment.Coffee)&&shops.Elapsed==35&&shops.Account.Entries.Length==2,"insufficient cash makes no changes");
   var quote=OperationServiceQuote.Calculate(ledger,1,24,1000);
   Check(quote.Available,"reachable meal quote");Near(quote.Price,3000,"native meal price");Near(quote.UseSeconds,50,"native meal use time distinct from travel");Near(quote.TravelSeconds,24,"route detour time distinct");Near(quote.NewDebt,2900,"meal unpaid quote exact");Near(ledger.Elapsed,0,"quote leaves live clock unchanged");Near(ledger.Account.Debt,0,"quote leaves live debt unchanged");Check(ledger.Account.Entries.Length==0,"quote creates no live transaction");
   var pvpLedger=new EconomyLedger(PrototypeSettings.ForOneDay());Check(pvpLedger.EnablePvpProfile(),"native PVP profile enabled");
+  Check(!pvpLedger.UseRefreshment("city",Refreshment.Snack),"campaign shops excluded from competitive economy");
   var pvpMeal=OperationServiceQuote.Calculate(pvpLedger,1,24,1000);Check(pvpMeal.Available&&pvpMeal.Price==PvpConditionRules.MealCost,"PVP quote uses actual1000 completion price");Near(pvpMeal.UseSeconds,PvpConditionRules.MealSeconds,"PVP quote uses native15 second completion");
   var pvpRest=OperationServiceQuote.Calculate(pvpLedger,3,24,1000);Check(pvpRest.Available&&pvpRest.Price==0,"PVP rest quote free");Near(pvpRest.UseSeconds,PvpConditionRules.RestSeconds,"PVP quote uses native45 second rest");Check(pvpLedger.PvpMeals==0&&pvpLedger.PvpRests==0&&pvpLedger.Elapsed==0&&pvpLedger.Account.Entries.Length==0,"PVP quotes do not grant native completion, clock or payment");
   var arrival=pvpLedger.Driver.Copy();arrival.Advance(24,false,PvpConditionRules.FatigueMultiplier);var expectedMeal=PvpConditionRules.PreviewMeal(arrival);var expectedRest=PvpConditionRules.PreviewRest(arrival);Near(pvpMeal.EndSatiety,expectedMeal.satiety,"PVP meal quote matches completion satiety");Near(pvpMeal.EndFatigue,expectedMeal.fatigue,"PVP meal quote matches service fatigue");Near(pvpRest.EndSatiety,expectedRest.satiety,"PVP rest quote matches service satiety");Near(pvpRest.EndFatigue,expectedRest.fatigue,"PVP rest quote matches completion fatigue");

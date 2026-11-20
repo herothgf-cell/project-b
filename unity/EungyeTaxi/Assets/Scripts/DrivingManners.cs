@@ -22,7 +22,7 @@ public class DrivingManners : MonoBehaviour {
    CheckSignal(previousFront,front);
    float accel=DriveMath.TravelAcceleration(Vector3.Dot((velocity-previousVelocity)/Time.fixedDeltaTime,transform.forward),session.taxi.Speed);filtered=Mathf.Lerp(filtered,accel,1-Mathf.Exp(-Time.fixedDeltaTime/.25f));
    // Ride comfort of the owned car (plan 22); the standard taxi uses factor 1 = original thresholds.
-   double comfort=session.business?session.business.ActiveVehicle.comfortFactor:1;
+   double comfort=session.business?session.business.ActiveRideComfort:1;
    bool required=filtered<0&&NecessaryBraking();bool excluded=required&&VehicleCatalog.HarshMotion(comfort,filtered,session.taxi.Speed,false);if(excluded&&!necessaryLatched)necessaryBrakeEvents++;necessaryLatched=excluded;
    bool harsh=VehicleCatalog.HarshMotion(comfort,filtered,session.taxi.Speed,required);
    if(harsh){harshTime+=Time.fixedDeltaTime;if(harshTime>.45f&&!harshLatched){Deduct(filtered>0?"accel":"brake",(session.jobs?session.jobs.ChoiceMotionPenalty:MannerLedger.MotionPenalty(ComfortAccepted)),(ComfortAccepted?"차멀미 배려 요청 중 ":"")+(filtered>0?"급가속":"급제동"),6);harshLatched=true;}}else{harshTime=0;harshLatched=false;}

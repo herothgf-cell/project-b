@@ -11,7 +11,25 @@ public sealed class VehicleSpec {
 [Serializable] public class VehicleState {
  public string modelId="starter";public int color;public bool altColorOwned,ornamentOwned,ornamentPlaced;
  public int purchasedDay,paidVehicle,paidColor,paidOrnament,paidTradedColor;public string tradedColorModel="";
+ public int equippedParts;
  public VehicleState Copy(){return (VehicleState)MemberwiseClone();}
+}
+public enum WorkshopPartAction { Buy, Equip, Remove }
+public sealed class WorkshopPart {
+ public readonly string id,name,description,receipt;
+ public readonly int price,bit;
+ WorkshopPart(string id,string name,string description,int price,int bit){
+  this.id=id;this.name=name;this.description=description;this.price=price;this.bit=bit;
+  receipt="workshop-part:"+id;
+ }
+ // Bits are persisted per car, independently of catalog order.
+ public static readonly WorkshopPart Stripe=new WorkshopPart("cream-stripe","크림 더블 스트라이프","차체 양옆을 잇는 크림색 두 줄 데칼",2400,1);
+ public static readonly WorkshopPart Spoiler=new WorkshopPart("touring-spoiler","투어링 스포일러","트렁크 위에 장착하는 검정 스포일러",4000,2);
+ public static readonly WorkshopPart Filter=new WorkshopPart("eco-filter","에코 연료 필터","주행거리당 연료 소모 10% 감소",6000,4);
+ public static readonly WorkshopPart Damper=new WorkshopPart("comfort-damper","컴포트 댐퍼","승객 급가속·급제동 판정 기준 10% 완화",7500,8);
+ public static readonly WorkshopPart[] All={Stripe,Spoiler,Filter,Damper};
+ public static WorkshopPart Get(string id){return Array.Find(All,part=>part.id==id);}
+ public bool Fitted(VehicleState car){return car!=null&&(car.equippedParts&bit)!=0;}
 }
 public sealed class VehicleQuote {public string model;public int price,tradeIn,spend,cashAfter;public bool allowed;public string reason="";}
 public static class VehicleCatalog {

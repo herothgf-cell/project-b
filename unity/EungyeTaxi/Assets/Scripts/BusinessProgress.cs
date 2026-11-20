@@ -653,6 +653,16 @@ public class BusinessProgress : MonoBehaviour {
  // copy, persist once, keep the previous ledger if the save fails (no double charge on retry).
  public bool GarageTab;
  public VehicleSpec ActiveVehicle {get{return SimulationSession||ledger==null||ledger.Account==null?VehicleCatalog.Standard:ledger.Account.VehicleSpec;}}
+ public double ActiveRideComfort {get{return SimulationSession||ledger==null||ledger.Account==null?1:ledger.Account.RideComfort;}}
+ public bool ChangeWorkshopPart(string id,WorkshopPartAction action){
+  if(!SupportsCareer||!session.services.WorkshopShopAvailable||!session.services.WorkshopShopOpen)return false;
+  var previous=ledger;
+  var candidate=EconomyLedger.RestoreCampaign(previous.Snapshot(),previous.Account.Snapshot());
+  if(!candidate.Account.ChangeWorkshopPart(id,action,candidate.Day))return false;
+  ledger=candidate;
+  if(!SaveCheckpoint()){ledger=previous;return false;}
+  SyncVehicle();return true;
+ }
  public bool ChangeVehicle(string action,string item="",int value=0){
   if(!RoomAvailable||ledger.Account.Room.finalized)return false;
   var previous=ledger;var candidate=EconomyLedger.RestoreCampaign(ledger.Snapshot(),ledger.Account.Snapshot());
@@ -679,7 +689,7 @@ public class BusinessProgress : MonoBehaviour {
  // Appearance and turning follow the owned car; PVP sessions keep the standard taxi here.
  public void SyncVehicle(){
   if(SimulationSession||!session||!session.taxi||ledger==null||ledger.Account==null)return;HomeGarageParking.Sync(session);var v=ledger.Account.ActiveVehicle;
-  string key=v.modelId+":"+v.color+":"+(v.ornamentOwned&&v.ornamentPlaced);if(key==appliedVehicle)return;appliedVehicle=key;
+  string key=v.modelId+":"+v.color+":"+(v.ornamentOwned&&v.ornamentPlaced)+":"+v.equippedParts;if(key==appliedVehicle)return;appliedVehicle=key;
   // The PVP unlock file lives beside the campaign save (test fixtures stay isolated with their save).
   if(!string.IsNullOrEmpty(SavePath))VehicleUnlockStore.UseDirectory(Path.GetDirectoryName(SavePath));
   VehicleAppearance.Apply(session.taxi,v);session.taxi.VehicleSteerFactor=(float)ActiveVehicle.steerFactor;

@@ -26,6 +26,7 @@ public sealed class OperationServiceQuote {
   else if(kind==1){if(clone.PvpProfile){if(clone.Account.Cash>=PvpConditionRules.MealCost){clone.AdvancePvpConditionService(PvpConditionRules.MealSeconds,false);done=clone.CompletePvpMeal("forecast:meal");}}else if(clone.OneDay)done=clone.UseMeal("forecast:meal");else {done=clone.Account.Meal("forecast:meal",clone.Day);if(done)clone.AdvanceService(10);}}
   else if(kind==3&&clone.PvpProfile){clone.AdvancePvpConditionService(PvpConditionRules.RestSeconds,true);done=clone.CompletePvpRest("forecast:rest");}
   else if(kind==3&&clone.OneDay)done=clone.UseSleep("forecast:sleep");else if(kind==4)done=clone.UseWash("forecast:wash");else if(kind==5)done=clone.UseRepair("forecast:repair");
+  else if(Refreshment.For(kind)!=null)done=clone.UseRefreshment("forecast:refreshment",kind);
   return new OperationServiceQuote{Available=done,TravelSeconds=seconds,UseSeconds=clone.Elapsed-time,Price=clone.Account.Expense(clone.Day,null)-before,NewDebt=clone.Account.Debt-debt,EndFuel=clone.Account.Fuel,EndSatiety=clone.Driver==null?0:clone.Driver.satiety,EndFatigue=clone.Driver==null?0:clone.Driver.fatigue};
  }
 }

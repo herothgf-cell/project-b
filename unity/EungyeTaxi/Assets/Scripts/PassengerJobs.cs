@@ -112,7 +112,7 @@ public partial class PassengerJobs : MonoBehaviour {
   float expected=pickupDistance/4+offer.distance/8+offer.waitSeconds;
   var business=session.business;
   if(business.ledger.Account!=null){
-   float fuel=(pickupDistance+offer.distance)/1000*business.settings.fuelPerKm+expected/60*business.settings.idlePerMinute;
+   float fuel=business.ledger.Account.FuelRequired(expected,pickupDistance+offer.distance);
    if(fuel>business.ledger.Account.Fuel)return null;
   }
   offer.pickupSeconds=OneDayOfferPolicy.PickupSeconds(pickupDistance);
@@ -308,9 +308,10 @@ public partial class PassengerJobs : MonoBehaviour {
  public bool TryChangeDestination(int stop){return ApplyPassengerChange(stop,false);}
  public bool TrySetPassengerVia(int stop){return ApplyPassengerChange(stop,true);}
  bool ApplyPassengerChange(int stop,bool via){float extra,remaining;int fare;float priorRemaining=trip.Remaining;if(!PreviewPassengerChange(stop,via,out extra,out fare,out remaining)||!trip.Revise(fare,remaining))return false;passengerChangeApplied=true;if(via){passengerVia=stop;Errand=PassengerErrandState.Agree(session.law.tripId,runtimeStopIds[stop],runtimeStopIds[current.drop],PassengerContent);}else current.drop=stop;Stamp(current);current.fare=fare;current.seconds+=remaining-priorRemaining;current.distance+=extra;SetGoal(stop);message=via?"승객 경유 수락 · 무료 용무 대기"+PassengerContent.Number("effect.errand.seconds",20)+"초 · 영업시간·연료 소모 · 경유 장소에 안전 정차 후 F":"승객 목적지 변경 수락 · 새 목적지로 안내합니다";return true;}
-System.Collections.Generic.Dictionary<JobOffer,float> fuelCache=new System.Collections.Generic.Dictionary<JobOffer,float>();float fuelCacheUntil;
- public float EstimatedFuel(JobOffer offer){if(offer==null)return float.PositiveInfinity;if(Time.unscaledTime>=fuelCacheUntil){fuelCache.Clear();fuelCacheUntil=Time.unscaledTime+1;}float cached;if(fuelCache.TryGetValue(offer,out cached))return cached;float pickup=PickupDistance(offer.pickup);
-  var settings=session.business.settings;float need=(pickup+offer.distance)/1000*settings.fuelPerKm+(pickup/4+offer.seconds)/60*settings.idlePerMinute;fuelCache[offer]=need;return need;
+ System.Collections.Generic.Dictionary<JobOffer,float> fuelCache=new System.Collections.Generic.Dictionary<JobOffer,float>();float fuelCacheUntil;
+ public float EstimatedFuel(JobOffer offer){if(offer==null)return float.PositiveInfinity;if(Time.unscaledTime>=fuelCacheUntil){fuelCache.Clear();fuelCacheUntil=Time.unscaledTime+1;}float pickup;
+  if(!fuelCache.TryGetValue(offer,out pickup)){pickup=PickupDistance(offer.pickup);fuelCache[offer]=pickup;}
+  return session.business.ledger.Account.FuelRequired(pickup/4+offer.seconds,pickup+offer.distance);
  }
  public string FuelHint(JobOffer offer){float need=EstimatedFuel(offer);if(float.IsInfinity(need))return "연료 예측: 픽업 경로 확인 필요";float fuel=session.business.ledger.Account.Fuel;if(session.business.ledger.OneDay){var predicted=session.business.ledger.Driver.Copy();float seconds=(offer.distance+Vector3.Distance(session.taxi.transform.position,stops[offer.pickup].Kerb))/8+offer.waitSeconds;predicted.Advance(seconds);return "예상 연료 "+need.ToString("0.0")+"% · "+(fuel<need?"주유 권장 · ":"")+"운송 후 피로 약 "+predicted.fatigue.ToString("0")+" (교통에 따라 변동)"+(seconds>session.business.ledger.SecondsLeft?" · 마감 넘길 수 있음":"");}return "예상 연료 "+need.ToString("0.0")+"% · "+(fuel<need?"부족 예상 · 먼저 주유 권장":fuel<need+5?"도착 후 잔량 적음":"현재 잔량으로 운행 예상")+" (대기·우회에 따라 변동)";}
  public bool Interact(){if(session.SettingsOpen||PvpNativeLan.UiBlocked(session))return false;if(session.accident&&session.accident.Locked)return false;if(PvpNativeLan.Route(session,"interact"))return true;if(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))return false;if(Time.timeScale==0)return false;if(Active&&session.business.ledger.Driver!=null&&session.business.ledger.Driver.drowsiness.PassengerMustLeave)return CancelForFatigue();PrepareForNextCall();

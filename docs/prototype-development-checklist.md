@@ -1,3 +1,7 @@
+## 2026-11-20 은계 동네 가게와 공업사 부품
+
+- [x] 두 정차 포켓의 김밥·커피 주문, 공업사의 부품 4종 구매·차량별 장착·보관, 운행 차량·숙소 차고 외관과 경력 복원. [가격·효과·아이템 시안](content-design/36-neighbourhood-shops-and-taxi-parts.md) · [재현과 검사](work-history/2026-11-20-neighbourhood-shops-and-taxi-parts.md).
+
 ## 2026-11-20 덕성프라자 출차와 운행 알림
 
 - [x] 숙소 벽 메모 세 장의 포인터 선택·저장, 세 해상도에서 1인칭 운행 알림 왼쪽 고정과 미러 간격. [실행본 검사](work-history/2026-11-20-wall-memo-touch-and-notice-position.md).

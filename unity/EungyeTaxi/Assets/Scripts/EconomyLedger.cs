@@ -116,6 +116,18 @@ public class EconomyLedger {
   return next;
  }
  public bool UseMeal(string id){if(PvpProfile)return false;if(!OneDay||State!=BusinessState.Open||services.Contains(id)||!Account.Meal(id,Day))return false;services.Add(id);Driver=PreviewConditionService(false);ServiceTime(50);return true;}
+ public bool UseRefreshment(string id,int kind){
+  var item=Refreshment.For(kind);
+  if(item==null||PvpProfile||!OneDay||State!=BusinessState.Open||Driver.drowsiness.Blackout||
+     string.IsNullOrEmpty(id)||services.Contains(id)||!Account.BuyRefreshment(id,Day,item.Price))return false;
+  services.Add(id);
+  Driver.Advance(item.Seconds);
+  Driver.satiety=Math.Min(100,Driver.satiety+item.Satiety);
+  Driver.fatigue=Math.Max(0,Driver.fatigue-item.FatigueRelief);
+  if(Driver.fatigue<100)Driver.drowsiness.Recover();
+  ServiceTime(item.Seconds);
+  return true;
+ }
  public bool UseSleep(string id){if(PvpProfile)return false;if(!OneDay||State!=BusinessState.Open||Driver.drowsiness.Blackout||string.IsNullOrEmpty(id)||!services.Add(id))return false;var next=PreviewConditionService(true);ServiceTime(100);Driver=next;return true;}
  // Scheduler owns duration and cancellation. Only this path accounts for a pending
  // condition service frame; it must replace normal operation advancement.

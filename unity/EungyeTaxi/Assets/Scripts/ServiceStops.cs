@@ -64,13 +64,14 @@ public partial class ServiceStops : MonoBehaviour {
  public IReadOnlyList<WorkshopLayout.Site> Workshops {get{return WorkshopLayout.For(session.world.map);}}
  public bool AtWorkshop(){var t=session.taxi;foreach(var site in Workshops)if(site.CanRepair(t.transform.position,t.transform.forward,PvpNativeLan.IsReplica(session)?Mathf.Abs(t.Speed):t.body.velocity.magnitude))return true;return false;}
  public bool AtRepairPump(){if(Workshops.Count>0)return AtWorkshop();int pump=FuelAtPump;return pump>=0?Stations[pump].SupportsRepair:Stations.Count==0&&AtFuelPump();} public bool FuelMenuOnly {get{return AtFuelPump();}}
- public int[] LocalActions {get{if(AtWorkshop()||session.damage&&session.damage.AtRepairBay)return new[]{5};int pump=FuelAtPump;if(pump>=0){var actions=new List<int>{0};if(Stations[pump].SupportsWash)actions.Add(4);if(Workshops.Count==0&&Stations[pump].SupportsRepair)actions.Add(5);return actions.ToArray();}if(AtFuelPump())return new[]{0,4,5};if(AtRestaurant())return Pvp&&AtEndDayHub()?new[]{1,3}:new[]{1};if(AtEndDayHub())return Pvp?new[]{3}:session.business.ledger.OneDay?new[]{3,2}:new[]{2};if(HasHomeBase&&AtRestArea())return new[]{3};return new int[0];}}
+ public int[] LocalActions {get{var shop=LocalRefreshment();if(shop!=null&&!session.jobs.Active)return new[]{shop.Item.Kind};if(AtWorkshop()||session.damage&&session.damage.AtRepairBay)return new[]{5};int pump=FuelAtPump;if(pump>=0){var actions=new List<int>{0};if(Stations[pump].SupportsWash)actions.Add(4);if(Workshops.Count==0&&Stations[pump].SupportsRepair)actions.Add(5);return actions.ToArray();}if(AtFuelPump())return new[]{0,4,5};if(AtRestaurant())return Pvp&&AtEndDayHub()?new[]{1,3}:new[]{1};if(AtEndDayHub())return Pvp?new[]{3}:session.business.ledger.OneDay?new[]{3,2}:new[]{2};if(HasHomeBase&&AtRestArea())return new[]{3};return new int[0];}}
  public string TipText {get{string text=destination;if(QueueStatus.Length>0)text+=(text.Length==0?"":"\n")+QueueStatus;return text;}}
- public bool CanUse(int kind){if(session.accident&&session.accident.Locked)return false;if(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))return false;if(kind==5)return session.damage&&session.damage.CanRepair;if(Pvp&&(kind==1||kind==3))return CanContinueConditionService(kind)&&session.business.ledger.Account.Cash>=(kind==1?PvpConditionRules.MealCost:PvpConditionRules.RestCost);if(session.business.ledger.Driver!=null&&session.business.ledger.Driver.drowsiness.Blackout)return false;if(kind==0||kind==4){int pump=FuelAtPump;bool wash=kind!=4||(pump>=0?Stations[pump].SupportsWash:Stations.Count==0);return wash&&session.business.ledger.State==BusinessState.Open&&session.jobs.trip.State!=TripState.OnTrip&&(PvpNativeLan.IsReplica(session)?Mathf.Abs(session.taxi.Speed):session.taxi.body.velocity.magnitude)<.56f&&AtFuelPump();}bool daily=session.business.ledger.OneDay;return kind>=1&&kind<=(daily?3:2)&&session.business.ledger.State==BusinessState.Open&&(daily?session.jobs.trip.State!=TripState.OnTrip:!session.jobs.Active)&&(PvpNativeLan.IsReplica(session)?Mathf.Abs(session.taxi.Speed):session.taxi.body.velocity.magnitude)<.56f&&(kind==1?AtRestaurant():kind==3?(AtRestArea()||AtParking()):AtEndDayHub());}
- public string Quote(int kind){if(Pvp&&(kind==1||kind==3)){var preview=session.business.ledger.PreviewConditionService(kind==3);return (kind==1?"간편식 "+PvpConditionRules.MealCost.ToString("N0")+"원 · "+PvpConditionRules.MealSeconds+"초 · 포만 +60":"짧은 휴식 "+PvpConditionRules.RestCost.ToString("N0")+"원 · "+PvpConditionRules.RestSeconds+"초 · 피로 −40 · 졸음 해제")+"\n완료 예상 포만 "+preview.satiety.ToString("0")+" · 피로 "+preview.fatigue.ToString("0")+"\n공통 경기 시계 계속 · 완료 시 비용/회복 1회 · 중단 시 비용/회복 없음";}if(kind==5)return session.damage.RepairQuote;if(kind==4)return "세차·실내 청소 2,000원 · 30초 (부족분은 미납)\n청결도 100 회복 · 엔진 정지\n취소 시 비용/시간/청결 변화 없음";if(kind<0||kind>3)return "";var b=session.business;var a=b.ledger.Account;if(b.ledger.OneDay&&(kind==1||kind==3)){var preview=b.ledger.PreviewConditionService(kind==3);return (kind==1?"식사 3,000원 · 50초 (부족분은 미납)":"수면 무료 · 100초")+"\n포만감 "+preview.satiety.ToString("0")+" · 피로 "+preview.fatigue.ToString("0")+" 예상\n미탑승 호출은 취소됩니다. 엔진 정지 · 점수 변화 없음";}return kind==0?"주유 "+FuelAmount.ToString("0.0")+"% · "+Mathf.CeilToInt(FuelAmount*session.business.settings.fuelUnitPrice).ToString("N0")+"원 / 10초":kind==1?"식사 3,000원 / 10초 (하루 1회)":"무료 수면 100초 · 피로 −40 후 영업 종료 · 하루 주차비 500원";}
+ public bool CanUse(int kind){if(session.accident&&session.accident.Locked)return false;if(session.simulationMatch&&session.simulationMatch.ServiceLocked(session))return false;var refreshment=Refreshment.For(kind);if(refreshment!=null)return CanBuyRefreshment(refreshment);if(kind==5)return session.damage&&session.damage.CanRepair;if(Pvp&&(kind==1||kind==3))return CanContinueConditionService(kind)&&session.business.ledger.Account.Cash>=(kind==1?PvpConditionRules.MealCost:PvpConditionRules.RestCost);if(session.business.ledger.Driver!=null&&session.business.ledger.Driver.drowsiness.Blackout)return false;if(kind==0||kind==4){int pump=FuelAtPump;bool wash=kind!=4||(pump>=0?Stations[pump].SupportsWash:Stations.Count==0);return wash&&session.business.ledger.State==BusinessState.Open&&session.jobs.trip.State!=TripState.OnTrip&&(PvpNativeLan.IsReplica(session)?Mathf.Abs(session.taxi.Speed):session.taxi.body.velocity.magnitude)<.56f&&AtFuelPump();}bool daily=session.business.ledger.OneDay;return kind>=1&&kind<=(daily?3:2)&&session.business.ledger.State==BusinessState.Open&&(daily?session.jobs.trip.State!=TripState.OnTrip:!session.jobs.Active)&&(PvpNativeLan.IsReplica(session)?Mathf.Abs(session.taxi.Speed):session.taxi.body.velocity.magnitude)<.56f&&(kind==1?AtRestaurant():kind==3?(AtRestArea()||AtParking()):AtEndDayHub());}
+ public string Quote(int kind){var refreshment=Refreshment.For(kind);if(refreshment!=null)return refreshment.Terms+"\n빈차 전용 · 현금 결제";if(Pvp&&(kind==1||kind==3)){var preview=session.business.ledger.PreviewConditionService(kind==3);return (kind==1?"간편식 "+PvpConditionRules.MealCost.ToString("N0")+"원 · "+PvpConditionRules.MealSeconds+"초 · 포만 +60":"짧은 휴식 "+PvpConditionRules.RestCost.ToString("N0")+"원 · "+PvpConditionRules.RestSeconds+"초 · 피로 −40 · 졸음 해제")+"\n완료 예상 포만 "+preview.satiety.ToString("0")+" · 피로 "+preview.fatigue.ToString("0")+"\n공통 경기 시계 계속 · 완료 시 비용/회복 1회 · 중단 시 비용/회복 없음";}if(kind==5)return session.damage.RepairQuote;if(kind==4)return "세차·실내 청소 2,000원 · 30초 (부족분은 미납)\n청결도 100 회복 · 엔진 정지\n취소 시 비용/시간/청결 변화 없음";if(kind<0||kind>3)return "";var b=session.business;var a=b.ledger.Account;if(b.ledger.OneDay&&(kind==1||kind==3)){var preview=b.ledger.PreviewConditionService(kind==3);return (kind==1?"식사 3,000원 · 50초 (부족분은 미납)":"수면 무료 · 100초")+"\n포만감 "+preview.satiety.ToString("0")+" · 피로 "+preview.fatigue.ToString("0")+" 예상\n미탑승 호출은 취소됩니다. 엔진 정지 · 점수 변화 없음";}return kind==0?"주유 "+FuelAmount.ToString("0.0")+"% · "+Mathf.CeilToInt(FuelAmount*session.business.settings.fuelUnitPrice).ToString("N0")+"원 / 10초":kind==1?"식사 3,000원 / 10초 (하루 1회)":"무료 수면 100초 · 피로 −40 후 영업 종료 · 하루 주차비 500원";}
  void Start(){
   if(session.business.ledger.Account==null){enabled=false;return;}
   observedCompleted=session.jobs.completed;observedFailed=session.jobs.failed;if(session.IsSimulationBot)return;
+  DrawRefreshmentSigns();
   if(session.world.map.mapId=="eungye")indices[2]=0;
   for(int i=0;i<indices.Length;i++){
    indices[i]%=session.jobs.stops.Length;if(ProjectMapScene.Active(session.world.map)&&i>0)continue;if(i==0&&Stations.Count>0||i==1&&Restaurant!=null)continue;
@@ -122,7 +123,7 @@ public partial class ServiceStops : MonoBehaviour {
    string reason=RepairAttention?"내구도 "+session.business.ledger.Care.Damage.Durability+" · 수리 권장":recommended==0?(session.jobs.NeedsWash?"세차 필요":"주유 권장"):recommended==1?"식사 권장":recommended==3?"수면 권장":recommended==2?"마감 준비":"현재 컨디션 양호";
    CasualUI.Header(new Rect(x+8,y+6,width-16,34),"생활거점 · "+reason,0);
    string[] labels={session.jobs.NeedsWash?"주유·세차":"주유","식사","귀가 주차장","수면","공업사","닫기"};int[] glyphs={8,9,10,11,12,19};float cell=(width-20)/3;
-   if(HasHomeBase){labels[2]=HomeBasePresentation.Name;glyphs[2]=0;}
+   if(HasHomeBase){labels[2]=HomeBasePresentation.Name;glyphs[2]=0;labels[4]="공업사 · 부품";}
    for(int row=0;row<6;row++){
     int i=HasHomeBase&&row<3?(row+2)%3:row;
     var rect=new Rect(x+10+(row%3)*cell,y+48+(row/3)*61,cell-6,54);
@@ -139,6 +140,8 @@ public partial class ServiceStops : MonoBehaviour {
  }
  public bool TryUseFacility(){
   if(open||QueueWaiting||session.paused||session.jobs.trip.State==TripState.OnTrip||LocalActions.Length==0)return false;
+  var shop=LocalRefreshment();
+  if(shop!=null&&session.jobs.HasWaitingPassenger(shop.StopIndex)&&session.jobs.At(shop.StopIndex))return false;
   if(postTrip)DismissPostTrip();
   Toggle();return open;
  }
@@ -157,7 +160,7 @@ public partial class ServiceStops : MonoBehaviour {
   if(HasHomeBase&&CanOpenLifeHub&&LocalActions.Length==0){ToggleLifeHub();return;}
   if(LocalActions.Length==0&&session.damage&&session.damage.Damage.Durability<100&&Workshops.Count>0){OpenFacilityPlanner(5);return;}
   if(LocalActions.Length==0){notice="현재 시설의 정차 구역이 아닙니다 · M 지도에서 생활 거점을 선택하세요";noticeUntil=Time.unscaledTime+5;return;}
-  pending=-1;pendingFuel=-1;open=true;if(Pvp){session.assisted.SetActive(false);session.paused=false;Time.timeScale=1;}else{session.paused=true;Time.timeScale=0;}
+  WorkshopShopOpen=false;pending=-1;pendingFuel=-1;open=true;if(Pvp){session.assisted.SetActive(false);session.paused=false;Time.timeScale=1;}else{session.paused=true;Time.timeScale=0;}
  }
  public void Close(bool resumePickup=true){if(PvpNativeLan.Route(session,"close-service",resumePickup?1:0))return;if(Pvp&&session.simulationMatch&&session.simulationMatch.CancelConditionService(session)){notice="이용 중단 · 소비한 시간 유지 · 비용/회복 없음";noticeUntil=Time.unscaledTime+5;}pending=-1;pendingFuel=-1;open=false;DismissPostTrip();session.paused=Pvp&&session.simulationMatch&&session.simulationMatch.Finished;Time.timeScale=session.paused?0:1;if(resumePickup){session.jobs.ResumePickupNavigation();if(session.jobs.trip.State==TripState.ToPickup)destination="";}}
  // The facility approach is a temporary destination, not a trip destination.
@@ -185,12 +188,13 @@ public partial class ServiceStops : MonoBehaviour {
   if(!open||pending<0)return false;int kind=pending,station=pendingFuel;pending=-1;pendingFuel=-1;
   if(!accept){notice="취소했습니다 · 결제/시간 차감 없음";noticeUntil=Time.unscaledTime+4;return false;}
   if(session.FullMapOpen||!CanUse(kind)||(kind==0||kind==4||kind==5)&&Stations.Count>0&&FuelAtPump!=station)return false;
-  if(kind<2||kind==3||kind==4||kind==5)return Buy(kind);Close();return session.business.RequestEndDay();
+  if(kind!=2)return Buy(kind);Close();return session.business.RequestEndDay();
  }
  public bool Buy(int kind){
   if(PvpNativeLan.Route(session,"service-buy",kind))return true;
-  if(kind<0||kind==2||kind>5||session.FullMapOpen||!open||!CanUse(kind))return false;var b=session.business;var a=b.ledger.Account;int day=b.ledger.Day;
+  if(kind<0||kind==2||kind>Refreshment.Coffee||session.FullMapOpen||!open||!CanUse(kind))return false;var b=session.business;var a=b.ledger.Account;int day=b.ledger.Day;
   if(!AdmitPurchase(kind))return false;
+  var refreshment=Refreshment.For(kind);if(refreshment!=null)return BuyRefreshment(refreshment);
   if(Pvp&&(kind==1||kind==3)){bool started=session.simulationMatch&&session.simulationMatch.BeginConditionService(session,kind);if(started){notice=(kind==1?"식사":"짧은 휴식")+" 진행 중 · F7로 중단";noticeUntil=0;}return started;}
   if(kind==5){if(!session.damage.Repair())return false;notice=session.damage.PendingServiceRemaining>0?"공업사 수리 진행 중 · 완료 시 결제":"전량 수리 완료 · 내구도 100";noticeUntil=Time.unscaledTime+5;CompleteServiceNavigation();Close();b.SaveCheckpoint();return true;}
   if(kind==4){if(!b.ledger.UseWash(session.law.ids.Next("wash"))){notice="서비스를 이용할 수 없습니다";noticeUntil=Time.unscaledTime+5;return false;}session.jobs.AdvancePickupWait(30);notice="세차·실내 청소 완료 · 청결 100 / 30초 경과 · 2,000원";noticeUntil=Time.unscaledTime+5;CompleteServiceNavigation();Close();b.SaveCheckpoint();return true;}
@@ -202,7 +206,7 @@ public partial class ServiceStops : MonoBehaviour {
   CasualUI.RoundedFill(new Rect(x+12,y-4,696,56),CasualUI.Soft);
   GUI.Label(new Rect(x+20,y,420,51),label,style);
   GUI.enabled=CanUse(kind)&&(station<0||FuelAtPump==station)&&(kind!=0||FuelAmount>.001f);
-  if(GUI.Button(new Rect(x+480,y,220,42),kind==0?"+"+FuelAmount.ToString("0.#")+"% 주유 · "+Mathf.CeilToInt(FuelAmount*session.business.settings.fuelUnitPrice)+"원":kind==5?"전량 수리":kind==4?"세차·실내 청소 · 2,000원":kind==1?"식사하기":kind==3?(Pvp?"휴식 · "+PvpConditionRules.RestSeconds+"초":"수면 · 100초"):"휴식·영업 종료",button)){if(kind==0)Buy(0);else RequestAction(kind);}GUI.enabled=true;
+  if(GUI.Button(new Rect(x+480,y,220,42),Refreshment.For(kind)!=null?"주문하기":kind==0?"+"+FuelAmount.ToString("0.#")+"% 주유 · "+Mathf.CeilToInt(FuelAmount*session.business.settings.fuelUnitPrice)+"원":kind==5?"전량 수리":kind==4?"세차·실내 청소 · 2,000원":kind==1?"식사하기":kind==3?(Pvp?"휴식 · "+PvpConditionRules.RestSeconds+"초":"수면 · 100초"):"휴식·영업 종료",button)){if(kind==0)Buy(0);else RequestAction(kind);}GUI.enabled=true;
  }
  void OnGUI(){
   if(session.IsSimulationBot||PvpNativeLan.IsRemoteHuman(session))return;
@@ -220,15 +224,18 @@ public partial class ServiceStops : MonoBehaviour {
   GUI.depth=-110;
   FacilityArt.Background(place,new Rect(0,0,Screen.width,Screen.height));
   float height=pending==1?552:pending>=0?430:350+Mathf.Max(0,actions.Length-1)*62;
+  if(WorkshopShopAvailable)height=WorkshopShopOpen?518:height+60;
   float scale=Mathf.Min(1.25f,(Screen.width-16)/720f,(Screen.height-16)/height);
   var saved=GUI.matrix;
   GUI.matrix=Matrix4x4.TRS(new Vector3((Screen.width-720*scale)/2,(Screen.height-height*scale)/2),Quaternion.identity,new Vector3(scale,scale,1));
-  try{DrawServiceMenu(0,0,height,actions,place,style,button);}
+  try{if(WorkshopShopOpen&&WorkshopShopAvailable)DrawWorkshopShop(style);else DrawServiceMenu(0,0,height,actions,place,style,button);}
   finally{GUI.matrix=saved;}
  }
  internal string InteriorFor(int first,int selected){
   if(selected==4)return "wash";
   if(selected==5||first==5)return "workshop";
+  if(first==Refreshment.Snack)return "diner";
+  if(first==Refreshment.Coffee)return "rest";
   if(first==0)return "fuel";
   if(selected==1||first==1&&selected!=3)return "diner";
   if(AtRestArea())return "rest";
@@ -249,7 +256,7 @@ public partial class ServiceStops : MonoBehaviour {
  void DrawServiceMenu(float x,float y,float height,int[] actions,string place,GUIStyle style,GUIStyle button){
   int pump=FuelAtPump;bool fuelOnly=FuelMenuOnly,restaurant=System.Array.IndexOf(actions,1)>=0;
   CasualUI.Panel(new Rect(x,y,720,height));
-  CasualUI.Header(new Rect(x+8,y+8,704,40),InteriorTitle(place)+(Pvp?" · 경기 진행 중":" · 일시정지"),place=="diner"?9:place=="rest"?11:place=="workshop"?12:fuelOnly?8:10);
+  CasualUI.Header(new Rect(x+8,y+8,704,40),(actions.Length>0&&Refreshment.For(actions[0])!=null?Refreshment.For(actions[0]).Shop:InteriorTitle(place))+(Pvp?" · 경기 진행 중":" · 일시정지"),place=="diner"?9:place=="rest"?11:place=="workshop"?12:fuelOnly?8:10);
   var b=session.business;var a=b.ledger.Account;GUI.Label(new Rect(x+20,y+55,680,28),"현금 "+a.Cash.ToString("N0")+"원 · 미납 "+a.Debt.ToString("N0")+"원 · 연료 "+a.Fuel.ToString("0.0")+"% · 청결 "+b.ledger.Care.Cleanliness.ToString("0"),style);
   if(Pvp&&session.simulationMatch&&session.simulationMatch.ConditionServiceActive(session)){GUI.Label(new Rect(x+30,y+100,660,130),(session.simulationMatch.ConditionServiceKind(session)==1?"식사":"짧은 휴식")+" · 남은 "+session.simulationMatch.ServiceRemaining(session).ToString("0.0")+"초\n경기는 계속 진행됩니다.\n중단 시 결제·회복 없음 (경과 시간 유지)",style);if(GUI.Button(new Rect(x+20,y+height-45,680,35),"이용 중단 F7",button))Close();return;}
   if(pending==1){
@@ -276,11 +283,12 @@ public partial class ServiceStops : MonoBehaviour {
    return;
   }
   int row=0;
-  foreach(int kind in actions){string label=kind==0?(pump>=0?Stations[pump].name:names[0]):kind==4?"세차·실내 청소\n청결 100 회복 / 30초":kind==5?"자동차 공업사 · 전량 수리":kind==1?"식당 · "+MealStop.name:kind==3?(Pvp?"휴식 "+PvpConditionRules.RestCost.ToString("N0")+"원 · "+PvpConditionRules.RestSeconds+"초 / 피로 −40":"무료 수면 · 100초 / 피로 −40"):HasHomeBase?"숙소에서 퇴근":"현재 거점에서 휴식·영업 종료";Row(x,y+85+row++*62,label,kind,pump,style,button);}
+  foreach(int kind in actions){var item=Refreshment.For(kind);string label=item!=null?item.Terms:kind==0?(pump>=0?Stations[pump].name:names[0]):kind==4?"세차·실내 청소\n청결 100 회복 / 30초":kind==5?"자동차 공업사 · 전량 수리":kind==1?"식당 · "+MealStop.name:kind==3?(Pvp?"휴식 "+PvpConditionRules.RestCost.ToString("N0")+"원 · "+PvpConditionRules.RestSeconds+"초 / 피로 −40":"무료 수면 · 100초 / 피로 −40"):HasHomeBase?"숙소에서 퇴근":"현재 거점에서 휴식·영업 종료";Row(x,y+85+row++*62,label,kind,pump,style,button);}
+  if(WorkshopShopAvailable&&GUI.Button(new Rect(x+20,y+85+row*62,680,44),"차량 부품 · 구매 및 장착",button))OpenWorkshopShop();
   string pickupWarning=session.jobs.trip.State==TripState.ToPickup?(fuelOnly?"호출 유지 · 남은 대기 "+session.jobs.trip.PickupRemaining.ToString("0")+"초 · 이용 시간 차감":"식사·수면 확정 시 미탑승 호출 취소")+"\n":"";
   CasualUI.RoundedFill(new Rect(x+12,y+height-158,696,112),new Color(1,.95f,.83f));
   GUI.Label(new Rect(x+20,y+height-155,680,108),pickupWarning+notice+"\n"+(fuelOnly?"이용 후 출구로 나가세요.":restaurant?"다른 시설 찾기: M 지도":"다른 시설 찾기: M 지도"),new GUIStyle(style){fontSize=14});
   if(GUI.Button(new Rect(x+20,y+height-45,430,35),"닫기  F7",KoreanText.Button(14)))Close();
-  if(GUI.Button(new Rect(x+460,y+height-45,240,35),"다른 시설·견적 비교",button))OpenFacilityPlanner(restaurant?1:fuelOnly?0:3);
+  if(GUI.Button(new Rect(x+460,y+height-45,240,35),"다른 시설·견적 비교",button))OpenFacilityPlanner(actions.Length>0&&Refreshment.For(actions[0])!=null?Refreshment.Snack:restaurant?1:fuelOnly?0:3);
  }
 }

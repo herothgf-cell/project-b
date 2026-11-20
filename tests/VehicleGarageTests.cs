@@ -43,7 +43,44 @@ class VehicleGarageTests {
   Check(migrated.Account.OwnedVehicle("starter").altColorOwned&&migrated.Account.OwnedVehicle("starter").paidColor==1500&&migrated.Account.Snapshot().ownedVehicles.Length==2,"legacy traded paint rights return to the retained starter");
   Check(EconomyLedger.RestoreCampaign(migrated.Snapshot(),migrated.Account.Snapshot()).Account.PersonalSpent==13500,"normalizing old garage saves never rebills ownership");
  }
+ static void WorkshopParts(){
+  var settings=PrototypeSettings.ForThreeDays();settings.homeBase=true;
+  var ledger=new EconomyLedger(settings);var account=ledger.Account;
+  int start=account.Cash;int net=account.Net;
+  Check(!account.ChangeWorkshopPart("eco-filter",WorkshopPartAction.Equip,1),"unowned parts cannot be fitted");
+  account.Fare("parts-budget",50000);
+  Check(account.ChangeWorkshopPart("eco-filter",WorkshopPartAction.Buy,1)
+   &&!account.ChangeWorkshopPart("eco-filter",WorkshopPartAction.Buy,1)
+   &&account.Cash==start+50000-6000&&account.Net==net+50000,"purchase once from personal funds");
+  var filter=WorkshopPart.Get("eco-filter");
+  Check(account.PartVehicle(filter)==null,"bought filter is initially in storage");
+  float before=account.Fuel;account.Consume(60,1000);float stock=before-account.Fuel;
+  Check(account.ChangeWorkshopPart("eco-filter",WorkshopPartAction.Equip,1),"fit purchased filter");
+  before=account.Fuel;account.Consume(60,1000);
+  Check(Math.Abs(stock-(before-account.Fuel)-settings.fuelPerKm*.1)<.00002,"filter saves only distance fuel");
+  Check(account.ChangeWorkshopPart("comfort-damper",WorkshopPartAction.Buy,1)
+   &&account.ChangeWorkshopPart("comfort-damper",WorkshopPartAction.Equip,1)
+   &&!VehicleCatalog.HarshMotion(account.RideComfort,4.8f,8,false),"damper changes the in-game comfort threshold");
+  Check(!account.ChangeWorkshopPart("comfort-damper",WorkshopPartAction.Equip,1),"fitting twice is idempotent");
+  ledger.RequestClose();ledger.Settle();Check(ledger.PurchaseVehicle("lpg")&&ledger.NextDay(),"switch vehicles with parts fitted");
+  Check(account.PartVehicle(filter).modelId=="starter"&&Math.Abs(account.RideComfort-1.08)<.00001,"inactive car keeps its own fitted equipment");
+  int cash=account.Cash;
+  Check(account.ChangeWorkshopPart("eco-filter",WorkshopPartAction.Equip,2)&&account.PartVehicle(filter).modelId=="lpg"&&account.Cash==cash,"transfer existing filter without another payment");
+  var restored=EconomyLedger.RestoreCampaign(ledger.Snapshot(),account.Snapshot()).Account;
+  Check(restored.OwnsPart(filter)&&restored.PartVehicle(filter).modelId=="lpg"
+   &&restored.PartVehicle(WorkshopPart.Get("comfort-damper")).modelId=="starter","equipment and inventory survive restore");
+  Check(restored.ChangeWorkshopPart("eco-filter",WorkshopPartAction.Remove,2)&&restored.OwnsPart(filter)
+   &&restored.PartVehicle(filter)==null&&!restored.ChangeWorkshopPart("eco-filter",WorkshopPartAction.Remove,2),"storing releases the fitting without selling the part");
+  var corrupt=account.Snapshot();corrupt.ownedVehicles[0].equippedParts|=filter.bit;
+  Reject(()=>CampaignAccount.Restore(corrupt),"cannot duplicate a fitting across the garage");
+  corrupt=account.Snapshot();corrupt.ownedVehicles[0].equippedParts|=WorkshopPart.Get("cream-stripe").bit;
+  Reject(()=>CampaignAccount.Restore(corrupt),"cannot load unpaid fitted parts");
+  var poor=PrototypeSettings.ForThreeDays();poor.homeBase=true;poor.startCash=0;
+  var empty=new CampaignAccount(poor);
+  Check(!empty.ChangeWorkshopPart("eco-filter",WorkshopPartAction.Buy,1)&&empty.PersonalSpent==0,"insufficient cash leaves storage unchanged");
+ }
  static void Run(){
+  WorkshopParts();
   FatherGarage();
   // Starter regression: every trait factor is neutral and fuel matches the pre-vehicle formula.
   var s=VehicleCatalog.Standard;Check(s.id=="starter"&&s.fuelFactor==1&&s.comfortFactor==1&&s.wearFactor==1&&s.steerFactor==1&&s.carriesLuggage,"starter traits neutral");
