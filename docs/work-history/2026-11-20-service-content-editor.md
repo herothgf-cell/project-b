@@ -20,3 +20,7 @@
 6. 재현용 프로필의 변경값은 경적 끔, 기사식당 배경을 휴식 구역으로, 제육백반 그림을 국밥으로, 해당 메뉴명을 ‘시험 정식’으로, 수인로 서쪽을 ‘시험도로’로, 이행 만족도 7, 온도 대사를 ‘시험 {온도}도’로 설정한다.
 
 자동 물리 주행, 전체 캠페인 수동 플레이, 두 PC LAN 연결과 실물 장치의 출력 음량은 이번 검사 범위에 포함하지 않았다.
+
+## 통합 실행본
+
+소스 커밋 `0b2b116`에서 빌드된 관리 DLL, boot.config 및 resources.assets를 `builds/EungyeTaxi/`에 반영했다. 기본 실행본 `tools/test_pvp_condition.ps1 -OutputDirectory artifacts/editor-services/pvp`에서 위치 제어 24건과 `PVP_CONDITION_PLAYER_OK`를 확인했다(종료 0). `tools/update_distribution_manifest.ps1 -VerifyOnly` 및 `tools/update_pvp_distribution_manifest.ps1 -VerifyOnly` 모두 출하 143개 파일 145,388,655바이트에 대해 크기·SHA256 검증 통과. 로컬 사용자 프로필 1개는 별도 검증했다.
