@@ -79,30 +79,45 @@ internal sealed class DayLightCity : IDisposable {
   var pools=new Dictionary<Vector2Int,PatchBatch>();
   foreach(string kind in new[]{"parking","restaurant","rest"})foreach(var service in ProjectMapScene.Services(map,kind)){
    Vector3 side=TrafficSystem.Right(service.Direction);
-   AddLamp(service.Position+side*5.8f,-side,positions,posts,bulbs,pools);
+   AddLamp(map,service.Position+side*5.8f,-side,positions,posts,bulbs,pools);
   }
   if(map.editorDocument!=null)foreach(var facility in map.editorDocument.facilities){
    if(facility.kind!="sign"&&facility.kind!="pedestrianSignal"&&facility.kind!="vehicleSignal")continue;
    var heading=Quaternion.Euler(0,facility.yaw,0)*Vector3.forward;
-   AddLamp(facility.Position-heading*3.2f,TrafficSystem.Right(heading),positions,posts,bulbs,pools);
+   AddLamp(map,facility.Position-heading*3.2f,TrafficSystem.Right(heading),positions,posts,bulbs,pools);
   }
   if(traffic)foreach(var junction in traffic.junctions){
    if(!junction.signalized||junction.halfWidth.Length<2)continue;
    Vector3 heading=traffic.AxisDirection(junction,0),side=TrafficSystem.Right(heading);
    for(int sign=-1;sign<=1;sign+=2){
     Vector3 kerb=junction.center+sign*(heading*(junction.halfWidth[1]+10)+side*(junction.halfWidth[0]+1.8f));
-    AddLamp(kerb,-sign*side,positions,posts,bulbs,pools);
+    AddLamp(map,kerb,-sign*side,positions,posts,bulbs,pools);
    }
   }
   foreach(var stop in map.stops){
    Vector3 side=TrafficSystem.Right(stop.Direction);
-   AddLamp(stop.Kerb+side*3.6f+stop.Direction*7,-side,positions,posts,bulbs,pools);
+   AddLamp(map,stop.Kerb+side*3.6f+stop.Direction*7,-side,positions,posts,bulbs,pools);
   }
   LampCount=positions.Count;
   Render("Street lamp posts",posts,pole);Render("Street lamp glow",bulbs,lamp);Render("Warm pools on the road",pools,road);
  }
- static void AddLamp(Vector3 point,Vector3 towardRoad,List<Vector3> locations,Dictionary<Vector2Int,PatchBatch> posts,Dictionary<Vector2Int,PatchBatch> bulbs,Dictionary<Vector2Int,PatchBatch> pools){
+ static void AddLamp(MapData map,Vector3 point,Vector3 towardRoad,List<Vector3> locations,Dictionary<Vector2Int,PatchBatch> posts,Dictionary<Vector2Int,PatchBatch> bulbs,Dictionary<Vector2Int,PatchBatch> pools){
   if(locations.Count>=LampLimit||towardRoad.sqrMagnitude<.01f)return;
+  if(ProjectMapScene.Active(map)){
+   // Signs and signals can hang over the carriageway. Anchor a separate lamp
+   // only where its foot fits on the sidewalk behind the candidate.
+   Vector3 away=-towardRoad.normalized;
+   bool found=false;
+   for(int step=0;step<=16;step++){
+    Vector3 candidate=point+away*(step*.5f);
+    if(!ProjectMapScene.OnArea(map,candidate,true)||
+       !ProjectMapScene.OnArea(map,candidate+.2f*away,true)||
+       !ProjectMapScene.OnArea(map,candidate-.2f*away,true)||
+       RoadsidePlacement.OnRoad(map,candidate,.15f))continue;
+    point=candidate;found=true;break;
+   }
+   if(!found)return;
+  }
   foreach(var prior in locations)if((prior-point).sqrMagnitude<32*32)return;
   locations.Add(point);towardRoad.Normalize();
   Vector3 side=TrafficSystem.Right(towardRoad);

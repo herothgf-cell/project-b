@@ -48,6 +48,34 @@ public class RoadPresentationProbe : MonoBehaviour {
    var forward=session.traffic.AxisDirection(junc,junc.lampAxes[0])*junc.lampSigns[0];var camera=Camera.main;
    Capture(camera,junc.center-forward*24+Vector3.up*5,junc.center+forward*7+Vector3.up*3.3f,Path.Combine(folder,"signage-junction-view.png"),1900,998);
    Capture(camera,junc.center+forward*24+Vector3.up*5,junc.center-forward*7+Vector3.up*3.3f,Path.Combine(folder,"signage-junction-opposite.png"),1900,998);
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-reportedLampViews")>=0){
+    var map=session.world.map;
+    var posts=session.GetComponentsInChildren<MeshFilter>(true).Where(m=>m.name=="Street lamp posts").ToArray();
+    int count=0;
+    foreach(var mesh in posts){
+     var vertices=mesh.sharedMesh.vertices;
+     for(int i=0;i<vertices.Length;i+=12){
+      Vector3 foot=mesh.transform.TransformPoint((vertices[i]+vertices[i+1])*.5f);
+      if(!ProjectMapScene.OnArea(map,foot,true)||RoadsidePlacement.OnRoad(map,foot,.15f))
+       throw new Exception("Street lamp on carriageway at "+foot);
+      count++;
+     }
+    }
+    Check(count>0,"sidewalk bases checked for every rendered street lamp: "+count);
+    var support=session.traffic.GetComponentsInChildren<RoadMapLamp>(true).Single(l=>l.groupId=="reviewed:Y05:44:1:-1:vehicle:0");
+    Check(ProjectMapScene.OnArea(map,support.transform.position,true),"J5692 branch signal on sidewalk");
+    var nav=session.jobs.nav;var graph=nav.hd;
+    var goal=PassengerStopCatalog.For(map).Entries.Single(e=>e.StopId=="S02-B").Stop;
+    var start=Array.FindIndex(graph.edges,e=>e.id=="local:7335:13923:7310:14570");
+    var route=graph.Route(start,0,goal.laneEdge,goal.laneAt);
+    Check(route!=null&&route.path.length<850&&route.edges.Any(i=>graph.edges[i].change==-1),"J7254 lane change to S02-B");
+    camera.orthographic=true;camera.orthographicSize=45;
+    foreach(var spot in new[]{("J866",139.16f,523.59f),("J5692",576.34f,1419.81f)}){
+     var spotCentre=new Vector3(spot.Item2,0,spot.Item3);
+     Capture(camera,spotCentre+Vector3.up*160,spotCentre,Path.Combine(folder,spot.Item1+"-review.png"),1100,800);
+    }
+    camera.orthographic=false;
+   }
    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-approvedRoadViews")>=0)CaptureApprovedRoadViews(camera,folder);
    if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-roadContinuityViews")>=0){
     var reportMap=session.world.map;

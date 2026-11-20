@@ -44,10 +44,24 @@ public partial class RoadNavigation : MonoBehaviour {
   if(!active)ForgetDisplay();
   if(RetainingPreviousRoute)instruction="경로 재탐색 중 · 이전 길은 참고용 · 도로로 복귀하세요";
   if(line==null)return;
-  var shown=DisplayPath;line.positionCount=freeGuidance?0:shown.Count;
   var paint=RetainingPreviousRoute?new Color(.47f,.62f,.68f):Color.cyan;
   line.material.color=paint;line.material.SetColor("_EmissionColor",paint*.65f);
-  for(int i=0;i<line.positionCount;i++)line.SetPosition(i,shown[i]+Vector3.up*.19f);
+  var shown=DisplayPath;
+  if(freeGuidance||shown.Count<2){line.positionCount=0;return;}
+  // The map shows the whole trip. Paint only the upcoming stretch in the world
+  // so a later visit to this junction cannot look like a second instruction.
+  const float lookAhead=120f;
+  float left=lookAhead;
+  int end=1;
+  while(end<shown.Count){
+   float segment=Vector3.Distance(shown[end-1],shown[end]);
+   if(segment>=left)break;
+   left-=segment;
+   end++;
+  }
+  line.positionCount=Mathf.Min(end+1,shown.Count);
+  for(int i=0;i<end;i++)line.SetPosition(i,shown[i]+Vector3.up*.19f);
+  if(end<shown.Count)line.SetPosition(end,Vector3.MoveTowards(shown[end-1],shown[end],left)+Vector3.up*.19f);
  }
  public float remaining,estimatedSeconds,alternativeSeconds,alternativeDistance;
  public static string FormatEta(float seconds){return float.IsNaN(seconds)||float.IsInfinity(seconds)?"계산 중":Mathf.CeilToInt(Mathf.Max(0,seconds)/60f)+"분";}
@@ -227,7 +241,6 @@ public partial class RoadNavigation : MonoBehaviour {
    if(Mathf.Abs(angle)>=35){instruction=(angle>0?"우회전":"좌회전")+" · "+until.ToString("0")+"m · "+(angle<0?1:edge.lanes)+"차로 준비";break;}
   }
   if(remaining<25)instruction="진행 방향 오른쪽 연석에 정차 후 F";
-  if(line!=null){line.positionCount=freeGuidance?0:path.Count;for(int i=0;i<line.positionCount;i++)line.SetPosition(i,path[i]+Vector3.up*.19f);}
  }
  void FixedUpdate(){
   if(PvpNativeLan.IsReplica(NetworkSession))return;
@@ -289,10 +302,9 @@ public partial class RoadNavigation : MonoBehaviour {
   path.Add(hdRoute.path.Position(progress));float accumulated=0;
   for(int i=1;i<hdRoute.path.points.Length;i++){accumulated+=Vector3.Distance(hdRoute.path.points[i-1],hdRoute.path.points[i]);if(accumulated>progress)path.Add(hdRoute.path.points[i]);}
   remaining=Mathf.Max(0,hdRoute.path.length-progress);estimatedSeconds=HdSeconds(hdRoute,progress);
-  var owner=NetworkSession;if(owner&&owner.IsSimulationBot){instruction=freeGuidance?"자유 주행 · "+hd.Instruction(hdRoute,progress):remaining<18?(hybrid?"오른쪽 승하차 지점 · 정차 후 F":"시험 도착 지점 · 직접 감속하여 정차"):hd.Instruction(hdRoute,progress);line.positionCount=freeGuidance?0:path.Count;for(int i=0;i<line.positionCount;i++)line.SetPosition(i,path[i]+Vector3.up*.19f);return;}
+  var owner=NetworkSession;if(owner&&owner.IsSimulationBot){instruction=freeGuidance?"자유 주행 · "+hd.Instruction(hdRoute,progress):remaining<18?(hybrid?"오른쪽 승하차 지점 · 정차 후 F":"시험 도착 지점 · 직접 감속하여 정차"):hd.Instruction(hdRoute,progress);return;}
   float altAt;int altStart=hd.Nearest(vehicle.position,vehicle.forward,out altAt);var alternate=GoalRoute(altStart,altAt,PreferFastest?null:hdSeconds);if(alternate!=null){alternativePath.AddRange(alternate.path.points);alternativeDistance=alternate.path.length;alternativeSeconds=HdSeconds(alternate,0);}
   instruction=freeGuidance?"자유 주행 · "+hd.Instruction(hdRoute,progress):remaining<18?(hybrid?"오른쪽 승하차 지점 · 정차 후 F":"시험 도착 지점 · 직접 감속하여 정차"):hd.Instruction(hdRoute,progress);
-  line.positionCount=freeGuidance?0:path.Count;for(int i=0;i<line.positionCount;i++)line.SetPosition(i,path[i]+Vector3.up*.19f);
  }
  float HdSeconds(HdRoadGraph.RoutePath route,float at){float result=0,begin=0;for(int i=0;i<route.edges.Count;i++){int e=route.edges[i];float length=Mathf.Max(0,route.ends[i]-Mathf.Max(at,begin));result+=hdSeconds[e]*length/Mathf.Max(.01f,hd.paths[e].length);begin=route.ends[i];}return result;}
  public float CurrentRoadWidth(){if(hd==null||vehicle==null)return 0;float at;int edge=hd.Nearest(vehicle.position,vehicle.forward,out at);return edge>=0?passengerRoadWidths[edge]:0;}
