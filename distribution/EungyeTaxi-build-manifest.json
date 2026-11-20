@@ -1,32 +1,33 @@
 {
-  "sourceCommit": "358f2fa9e5d6efcf7c83cb563e76446eb8aded3e",
+  "sourceCommit": "6e7558e4f9fa5c7c2213d94d33ad1f5726811f9d",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-20",
-  "totalBytes": 135299499.0,
+  "totalBytes": 135302213.0,
   "validation": {
+    "manualDriving": false,
+    "physicalDriveMetres": 2587.97,
+    "contentModelAssertions": 1471,
     "build": "PrototypeBuild.BuildHybrid exit 0",
-    "mapRevision": 49,
-    "fieldReference": [
-      "Naver street view",
-      "Kakao Skyview"
+    "firstFarePaid": 6510,
+    "cabinPlayerAssertions": 23,
+    "fatherStoryPlayerAssertions": 26,
+    "hudScreenshotVisuallyVerified": false,
+    "region": "Eungye r49",
+    "fatherStoryReloadAssertions": 7,
+    "steeringPhysicsDegreesAt40_45_50": [
+      118.44,
+      94.39,
+      48.75
     ],
-    "j10580Checks": 16,
-    "pickupRoutes": 1482,
-    "saveMigrationChecks": 1127,
-    "facilityPhysicalPickupAccepted": true,
-    "facilityPhysicalRejoin": true,
-    "roadGridTiles": 99,
-    "roadGridObjects": 4025,
-    "roadGridChecks": 359,
-    "manualDriving": false
+    "firstFarePhysicalDrive": true
   },
   "files": [
     {
       "path": "builds/EungyeTaxi/택시 시뮬레이션_BurstDebugInformation_DoNotShip/Data/Plugins/x86_64/lib_burst_generated.txt",
-      "bytes": 110703,
-      "sha256": "766fda32026d177c9cfdd473bfd74fc274df303a7f4a1cb54a585f910aa14233"
+      "bytes": 110857,
+      "sha256": "14d6d4abd2e965e247376677bb3c1bdbfdb6fec314c8de9ef8e3d822c56bd2f9"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/app.info",
@@ -36,7 +37,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "af979f61fdb02ffd5f99083a78c284eed2b91983bca8ca5b6244c7e5d9f204e9"
+      "sha256": "f3819a2a29b91ddacff0e4ba828da449a35f025c5d8450961f4165f9c43836a6"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -60,8 +61,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 3142656,
-      "sha256": "6485556a4ba97d542e4bc50c73f90b85635a38140a4e4ba239ce65ab7c4cab39"
+      "bytes": 3145216,
+      "sha256": "6b512af1509b15e3d7e4be140a74fc3cb04f35bd18047a23529cce08c5ac9c19"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",

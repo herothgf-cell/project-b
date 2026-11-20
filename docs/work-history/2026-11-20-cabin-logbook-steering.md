@@ -54,3 +54,7 @@ K로 운전석 옆유리를 내리고 올린다. 1인칭에서 유리가 움직�
 - 일반 교통 자동 물리 주행은 2,588m, 1회 운송 수입 6,510원, 첫날 순수입 4,510원이었다. 숙소 복귀·정산 저장, 충돌 0·적신호 위반 0, `RESULT success=True`와 종료 0. 재현 로그는 `artifacts/first-fare/a96bfb3a8f7e454b91dcb107a44f2417/`.
 - Unity 편집기 `CurveSteeringChecks.Run` 종료 0. 65% 입력 4초 동안 방향 변화는 40/45/50km/h에서 각각 118.44/94.39/48.75°였다. 자세 기울기는 최대 1.14°였다. 측정 로그는 `artifacts/cabin-nov20/steering.log`.
 - 수첩 상태·시간 정지는 확인했다. 숨김 Player의 1600×900 및 1440×810 HUD 화면 캡처는 검게 저장되어 배치의 육안 판정에 사용할 수 없었다. 창문 애니메이션과 HUD 가독성, 키보드·패드 수동 조향 체감, 전체 캠페인 수동 플레이는 미검증이다.
+
+## 배포
+
+소스 커밋 `6e7558e`의 Unity 빌드에서 바뀐 실행 파일 구성 요소 3개를 기본 은계 통합 폴더에 반영했다. `distribution/EungyeTaxi-build-manifest.json`을 생성하고 일반 및 PvP VerifyOnly가 각각 종료 0이었다. 출하 143개 파일 135,302,213바이트의 크기·SHA256이 일치했고, 로컬 사용자 콘텐츠 설정 1개도 별도 검증을 통과했다. 실행 경로는 `builds/EungyeTaxi/EungyeTaxi.exe`다.
