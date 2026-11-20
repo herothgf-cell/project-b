@@ -1,0 +1,17 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>학생 재회 장면 시안</title>
+<style>body{background:#202729;color:#f4f1e8;font:1.15rem/1.65 system-ui,sans-serif;max-width:36rem;margin:10vh auto;padding:1rem}h1{font-size:1.6rem}small{color:#ffd298}p{min-height:4em}button{font:inherit;background:#ffe0ac;color:#222;border:0;border-radius:.4rem;padding:.5rem .9rem;margin:.3rem;cursor:pointer}</style>
+<h1>막차 놓친 학생</h1><small id="where"></small><p aria-live="polite" id="line"></p><div id="actions"></div>
+<script>
+const label=document.querySelector('#where'), line=document.querySelector('#line'), actions=document.querySelector('#actions');
+let timer, promised;
+function scene(place,words,choices){
+ clearTimeout(timer);label.textContent=place;line.textContent=words;actions.replaceChildren();
+ for(const [title,go] of choices){const button=document.createElement('button');button.textContent=title;button.onclick=go;actions.append(button)}
+}
+function first(){scene('1일차 · 학생 하차 후','“모레도 실습 끝나면 이 시간이에요. 여기서 다시 타도 돼요?”',[['그때 여기로 올게요',()=>offer(true)],['지나가다 만나면 태워 줄게요',()=>offer(false)]])}
+function offer(value){promised=value;scene(value?'3일차 · 약속 시간':'며칠 뒤 · 일반 호출',value?'수첩에 적힌 승차지에서 학생 호출이 떴다.':'빈 차로 돌아가는 길에 학생 호출이 떴다.',[['정차하고 학생 태우기',board],...(value?[['다른 호출 받기',()=>offer(false)]]:[])])}
+function board(){scene('뒷문이 닫힌다','…',[]);timer=setTimeout(()=>{scene('학생이 뒷좌석에 앉는다',promised?'“기사님! 오늘은 안 뛰었어요. 오실 줄 알았거든요.”':'“어, 그날 기사님이시죠? 또 뵙네요.”',[['출발',quiet]])},750)}
+function quiet(){scene('차 안 · 실습을 마친 학생','“오늘 처음으로 혼자 실습을 끝냈어요. 집에 가는 동안만 좀 조용히 가도 돼요?”',[['라디오 끄기',()=>scene('은계 FM이 꺼진다','“고맙습니다.”',[['목적지에 정차',end]])],['그대로 운전',end]])}
+function end(){scene('하차 · 첫날 쪽지를 받은 경우','“그때 적어 드렸죠? 다음엔 꼭 인사드린다고.”',[['다른 선택으로 다시 보기',first]])}
+first();
+</script></html>
