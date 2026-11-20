@@ -43,3 +43,8 @@
 - 재현하려면 `builds/EungyeTaxi/EungyeTaxi.exe`에서 은계 싱글 또는 PvP를 고르고 H가 수동인지 확인한다. 비교 조건은 기본 택시·표준 조향·평지, 45/50/55km/h다. 짧은 좌우 입력과 완만한 커브를 각각 확인한다. Unity 검사는 `-batchmode -nographics -quit -executeMethod CurveSteeringChecks.Run`을 사용한다.
 - 같은 PC에서 두 Windows Player를 `pwsh -File tools/test_pvp_native_lan.ps1 -Discover -MotionOnly -MotionSeconds 30 -Port 17986`으로 구동했다. LAN v20 방 검색·접속·설정 동기화·움직임 검사에서 호스트 32개, 참가자 46개 통과, 종료 0. 참가자 이동 관찰 28.83초·566.84m, 최대 화면 위치 정체 0ms였다. 로그는 `artifacts/pvp/native-lan-20261120-144701-cf87036c/`에 있다.
 - `tools/test_driving_settings_player.ps1 -Pvp` 실행본 검사 18개 통과, 종료 0. 기존 프리셋 선택·저장·취소가 적용된다.
+- 은계 r49 첫 호출을 일반 교통에서 자동 물리 주행했다. 2,587.99m, 운송 1회, 운임 5,310원, 순수입 3,310원이었다. 승하차·숙소 복귀·첫날 정산 저장 통과, 충돌 0·적신호 위반 0. `pwsh -File tools/test_first_fare_player.ps1` 종료 0, 로그는 `artifacts/first-fare/aa6746bfff254827a7859ed224d911fa/`다.
+
+## 배포와 남은 확인
+
+소스 `4498978`에서 만든 실행본을 `builds/EungyeTaxi/`에 반영했다. 변경된 구성 요소는 `EungyeTaxi_Data/boot.config`, `EungyeTaxi_Data/Managed/Assembly-CSharp.dll`이다. 통합 manifest를 재생성하고 일반·PvP VerifyOnly가 각각 종료 0이었다. 출하 143개 파일 135,302,213바이트의 SHA256과 별도 사용자 설정 1개를 검증했다. 사용자 씬과 로컬 설정은 보존했다. 키보드·실물 패드 체감, 장시간 수동 캠페인과 다른 두 PC 간 LAN 주행은 별도 확인 항목이다.

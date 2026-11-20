@@ -1,27 +1,33 @@
 {
-  "sourceCommit": "6e7558e4f9fa5c7c2213d94d33ad1f5726811f9d",
+  "sourceCommit": "44989781ce360acee25db9bb770d8a46edbee8f5",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-20",
   "totalBytes": 135302213.0,
   "validation": {
-    "manualDriving": false,
-    "physicalDriveMetres": 2587.97,
-    "contentModelAssertions": 1471,
-    "build": "PrototypeBuild.BuildHybrid exit 0",
-    "firstFarePaid": 6510,
-    "cabinPlayerAssertions": 23,
-    "fatherStoryPlayerAssertions": 26,
-    "hudScreenshotVisuallyVerified": false,
+    "steeringPhysicsScenarios": 17,
+    "nativeLanMaxFreezeMs": 0,
+    "firstFareMetres": 2587.99,
+    "laneChange50Metres": 2.98,
+    "separatePcLan": false,
     "region": "Eungye r49",
-    "fatherStoryReloadAssertions": 7,
-    "steeringPhysicsDegreesAt40_45_50": [
-      118.44,
-      94.39,
-      48.75
+    "prototypeModelSuite": true,
+    "nativeLanHostChecks": 32,
+    "keyTap50HeadingAtHalfSecond": 2.47,
+    "build": "PrototypeBuild.BuildHybrid exit 0",
+    "lanProtocol": "native-city-lan-v20",
+    "manualDriving": false,
+    "steeringDegreesAt40_45_50_55_60": [
+      118.58,
+      95.43,
+      69.36,
+      44.99,
+      32.14
     ],
-    "firstFarePhysicalDrive": true
+    "settingsPlayerChecks": 18,
+    "firstFarePhysicalDrive": true,
+    "nativeLanClientChecks": 46
   },
   "files": [
     {
@@ -37,7 +43,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "f3819a2a29b91ddacff0e4ba828da449a35f025c5d8450961f4165f9c43836a6"
+      "sha256": "5cbadfeabd21046fd6daca841c289007b37779512a16e9fa1a2b6532efafa395"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -62,7 +68,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
       "bytes": 3145216,
-      "sha256": "6b512af1509b15e3d7e4be140a74fc3cb04f35bd18047a23529cce08c5ac9c19"
+      "sha256": "5217823d761b294da0e3cdd49757b7703a24dc15adaa0540c92f25469aa43b29"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
