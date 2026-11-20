@@ -14,7 +14,7 @@ public static class CasualMenuUI {
   GUI.Label(new Rect(76,100,420,150),"택시\n시뮬레이션",Text(58,true));GUI.Label(new Rect(78,270,410,34),"오늘도, 기분 좋은 운행",Text(23));
   CasualUI.Portrait(new Rect(150,330,270,270),1);
   CasualUI.Panel(new Rect(565,145,590,450));CasualUI.Header(new Rect(575,155,570,58),"어떻게 시작할까요?",1);
-  int chosen=0;if(Mode(new Rect(587,235,546,112),"싱글","아버지의 택시로 다시 시작 · 3일 뒤에도 계속 영업",0))chosen=1;
+  int chosen=0;if(Mode(new Rect(587,235,546,112),"싱글","마을에서 택시 운용",0))chosen=1;
   if(Mode(new Rect(587,363,546,112),"PVP","봇 대전 · LAN 사람 대전",1))chosen=2;
   if(GUI.Button(new Rect(587,507,546,54),"게임 종료",KoreanText.Button(20)))chosen=3;
   GUI.matrix=matrix;return chosen;

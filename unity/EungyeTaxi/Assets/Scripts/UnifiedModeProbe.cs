@@ -7,7 +7,7 @@ using UnityEngine;
 // Run EungyeTaxi.exe -unifiedModeCheck. Uses a fresh temporary campaign only.
 public sealed class UnifiedModeProbe : MonoBehaviour {
     public static bool Enabled {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-unifiedModeCheck")>=0||Array.IndexOf(Environment.GetCommandLineArgs(),"-brightUiCheck")>=0;}}
-    static readonly string campaignPath=Path.Combine(Path.GetTempPath(),"taxi-unified-"+Guid.NewGuid().ToString("N"),"campaign.json");
+    static readonly string campaignPath=Path.Combine(Path.GetTempPath(),"taxi-unified-"+Guid.NewGuid().ToString("N"),PrototypeSettings.ThreeDaySaveFile);
     public static string CampaignPath {get{return campaignPath;}}
     bool ok=true,done;float activeSeconds,lastRealtime;string phase="initial menu";
     readonly Dictionary<string,byte[]> originals=new Dictionary<string,byte[]>();
@@ -73,7 +73,7 @@ public sealed class UnifiedModeProbe : MonoBehaviour {
         Check(match&&match.Drivers.Count==4&&!match.Finished&&match.Elapsed<5,"restart creates fresh PVP match");
         match.ReturnToMenu();yield return null;yield return Menu();
         Check(!PvpSimulationMode.Active&&!File.Exists(CampaignPath),"PVP return unloads sessions without campaign write");
-        FindObjectOfType<UnifiedModeBootstrap>().StartSingle();yield return Ready();
+        FindObjectOfType<UnifiedModeBootstrap>().NewSingle();yield return Ready();
         human=Human();
         Check(!human.business.SimulationSession&&human.business.preparing&&!human.business.ResumeBlocked,"single starts normal three-day preparation");
         Check(human.business.MenuPrimaryLabel=="영업 시작"&&!human.business.HasCampaignToContinue,"fresh single shows start without restart");
@@ -85,7 +85,7 @@ public sealed class UnifiedModeProbe : MonoBehaviour {
         string id=human.law.ids.campaign;
         Check(FindObjectOfType<UnifiedModeBootstrap>().ReturnToMenu(),"single saves before returning to mode menu");
         yield return null;yield return Menu();
-        FindObjectOfType<UnifiedModeBootstrap>().StartSingle();yield return Ready();human=Human();
+        {var shell=FindObjectOfType<UnifiedModeBootstrap>();shell.ShowSlots();Check(shell.LoadSingle(CampaignPath),"open saved slot from title");}yield return Ready();human=Human();
         Check(!human.business.ResumeBlocked&&human.law.ids.campaign==id&&!human.business.preparing&&human.paused,"single re-entry restores existing active campaign paused");
         Check(human.business.MenuPrimaryLabel=="영업 계속하기"&&human.business.HasCampaignToContinue,"restored driving exposes continue and restart");
         yield return Capture("05-single-restored-menu");
@@ -97,9 +97,14 @@ public sealed class UnifiedModeProbe : MonoBehaviour {
         human.business.ContinueFromMenu();
         Check(!human.paused&&Time.timeScale==1&&human.law.ids.campaign==id,"continue resumes same campaign");
         FindObjectOfType<UnifiedModeBootstrap>().ReturnToMenu();yield return null;yield return Menu();
+        var firstBytes=File.ReadAllBytes(CampaignPath);
+        FindObjectOfType<UnifiedModeBootstrap>().NewSingle();yield return Ready();human=Human();
+        Check(human.business.SavePath!=CampaignPath&&human.business.preparing&&!human.business.HasCampaignToContinue,"new title career uses a fresh slot");
+        FindObjectOfType<UnifiedModeBootstrap>().ReturnToMenu();yield return null;yield return Menu();
+        Check(Same(firstBytes,File.ReadAllBytes(CampaignPath)),"new title career preserves original save");
         // Invalid primary+backup must be preserved even when returning to menu.
         File.WriteAllText(CampaignPath,"invalid-unified-probe");File.WriteAllText(CampaignPath+".bak","invalid-unified-probe-backup");
-        FindObjectOfType<UnifiedModeBootstrap>().StartSingle();yield return Ready();human=Human();
+        {var shell=FindObjectOfType<UnifiedModeBootstrap>();shell.ShowSlots();Check(shell.LoadSingle(CampaignPath),"open saved slot from title");}yield return Ready();human=Human();
         Check(human.business.ResumeBlocked&&!human.business.SaveCheckpoint(),"invalid save refuses restoration and writing");
         human.business.Depart();Check(human.business.restartPrompt,"departure retains explicit recovery confirmation");
         Check(FindObjectOfType<UnifiedModeBootstrap>().ReturnToMenu(),"rejected save permits safe return to menu");

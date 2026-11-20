@@ -344,6 +344,8 @@ public class BusinessProgress : MonoBehaviour {
   if(PassengerStoryProbe.Enabled)SavePath=PassengerStoryProbe.SavePath;
   if(roomCheck)SavePath=Path.GetFullPath(garageCheck?"artifacts/vehicle-garage-player/campaign.json":"artifacts/personal-room-player/campaign.json");
   if(!testMode&&!UnifiedModeProbe.Enabled&&!HudRevisionProbe.Enabled&&!ShiftDevEndProbe.Enabled&&!ContentTuningRuntime.TestMode)try{SavePath=CampaignSaveLocation.Resolve(Path.GetDirectoryName(Application.persistentDataPath),Path.GetFileName(SavePath));if(settings.oneDay&&settings.days==3&&owner.world.map.mapId=="eungye")SavePath=CampaignSaveLocation.SelectedCareer(SavePath);}catch(Exception e){Debug.LogWarning("이전 캠페인 저장 복사 실패: "+e.Message);}
+  var titleSlot=UnifiedModeBootstrap.ConsumeTitleSlot();
+  if(titleSlot!=null){SavePath=titleSlot;selectAfterWrite=true;}
   settings.homeBase=settings.oneDay&&owner.world.map.mapId=="eungye"&&!PracticeSession.Enabled&&!RoadMapRuntime.Trial;
   storyEnabled=firstFareCheck||storyTest||!testMode&&!UnifiedModeProbe.Enabled&&!HudRevisionProbe.Enabled&&!ShiftDevEndProbe.Enabled&&!ContentTuningRuntime.TestMode;
   dailyEnabled=settings.homeBase&&(storyEnabled&&!storyTest||ShiftDevEndProbe.DailyCheck||ShiftDevEndProbe.DailyReload);
@@ -369,7 +371,7 @@ public class BusinessProgress : MonoBehaviour {
   else if(useV2&&(!testMode||storyTest||ShiftDevEndProbe.DailyCheck||ShiftDevEndProbe.DailyReload||PassengerStoryProbe.Enabled||startupTest||(Array.IndexOf(args,"-vehicleDurabilityPreparationReloadTest")>=0||Array.IndexOf(args,"-vehicleDurabilityPendingReloadTest")>=0))){preparing=loaded==null||loaded.live==null||loaded.live.preparing;Freeze();}
  }
  void Start(){if(loaded!=null&&session.law){session.law.ids=loaded.ids;foreach(var e in loaded.law)session.law.ledger.Record(e);}InitializeDailyCondition();if(loaded!=null&&loaded.live!=null){restoring=true;StartCoroutine(RestoreAfterInitialization(loaded.live));}else if(loaded!=null&&ledger.Care.Damage.Disabled&&!string.IsNullOrEmpty(ledger.Care.Damage.RepairBayId))StartCoroutine(RestoreReservedDamageBay());else if(preparing)StartCoroutine(PlaceAtParking());}
- bool resumeBlocked,restoring;
+ bool resumeBlocked,restoring,selectAfterWrite;
  System.Collections.IEnumerator RestoreAfterInitialization(LiveCampaignCheckpoint snapshot){yield return null;RestoreLive(snapshot);restoring=false;}
  void RestoreLive(LiveCampaignCheckpoint snapshot){
   try{if(snapshot.jobs==null||!Valid(snapshot.position.x)||!Valid(snapshot.position.y)||!Valid(snapshot.position.z)||snapshot.position.x<0||snapshot.position.z<0||snapshot.position.x>session.world.map.width||snapshot.position.z>session.world.map.depth)throw new Exception("Invalid live vehicle position");
@@ -711,8 +713,8 @@ public class BusinessProgress : MonoBehaviour {
  }
  public string[] CareerSlots(){return SupportsCareer?CampaignSaveLocation.ListCareers(Path.GetDirectoryName(SavePath)):new string[0];}
  public bool OpenCareerSlot(string path){
-  if(!SupportsCareer||!Array.Exists(CareerSlots(),slot=>slot==path)||path==SavePath)return false;
-  if(!ResumeBlocked&&!SaveCheckpoint())return false;
+  if(!SupportsCareer||!Array.Exists(CareerSlots(),slot=>slot==path))return false;
+  if(path!=SavePath&&!ResumeBlocked&&!SaveCheckpoint())return false;
   try{CampaignSaveLocation.SelectCareer(path);}catch(Exception ex){EndDayNotice("경력 선택을 저장하지 못했습니다: "+ex.Message);return false;}
   UnityEngine.SceneManagement.SceneManager.LoadScene(gameObject.scene.name);return true;
  }
@@ -784,6 +786,7 @@ public class BusinessProgress : MonoBehaviour {
    int condition=start>0&&value.Day>=start?(int)DailyConditions.ForDay(identity.campaign,value.Day-start+1):0;
    var data=value.Account==null?JsonUtility.ToJson(value.Snapshot(),true):JsonUtility.ToJson(new CampaignCheckpoint{contentProfileJson=ContentTuningRuntime.Snapshot(),hasLive=value==ledger&&!preparing&&value.Operating&&session.requests,live=value==ledger&&!preparing&&value.Operating&&session.requests?CaptureLive():null,comparisonVersion=configuration,days=boundaryDays,account=boundaryAccount,story=SupportsCareer?(current?Story:new FatherStoryState()):null,logbook=SupportsCareer?(current?Logbook:new CampaignLogbook()):null,conditionFirstDay=start,conditionKind=condition,completedDays=archive.ToArray(),passengers=keptPassengers,practices=current?practices.ToArray():new PracticeResult[0],law=current&&session.law?session.law.ledger.Events:new LawEvent[0],ids=identity},true);
    string backupNote=CampaignCheckpointWriter.Write(SavePath,data);
+   if(selectAfterWrite){CampaignSaveLocation.SelectCareer(SavePath);selectAfterWrite=false;}
    completedDays.Clear();completedDays.AddRange(archive);SaveFailed=false;saveStatus="저장 완료 · 중단한 운송·시간·장부를 함께 이어갑니다"+(backupNote.Length>0?" · "+backupNote:"");return true;
   }catch(Exception ex){SaveFailed=true;saveStatus="저장 실패 · 저장 재시도 버튼을 눌러주세요";Debug.LogWarning("Campaign save failed: "+ex.Message);return false;}
  }

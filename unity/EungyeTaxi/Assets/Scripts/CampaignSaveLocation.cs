@@ -21,12 +21,12 @@ public static class CampaignSaveLocation {
  }
  public static void SelectCareer(string path){
   string name=Path.GetFileName(path);
-  if(!CareerFile(name)||!File.Exists(path))throw new IOException("Invalid career slot");
+  if(!CareerFile(name)||(!File.Exists(path)&&!File.Exists(path+".bak")))throw new IOException("Invalid career slot");
   CampaignCheckpointWriter.Write(Path.Combine(Path.GetDirectoryName(path),ActiveCareer),name);
  }
  public static string[] ListCareers(string directory){
   if(!Directory.Exists(directory))return new string[0];
-  return Directory.GetFiles(directory,"*.json").Where(p=>CareerFile(Path.GetFileName(p))).OrderByDescending(File.GetLastWriteTimeUtc).ToArray();
+  return Directory.GetFiles(directory,"*.json*").Select(p=>p.EndsWith(".bak",StringComparison.Ordinal)?p.Substring(0,p.Length-4):p).Where(p=>CareerFile(Path.GetFileName(p))).Distinct().OrderByDescending(p=>File.GetLastWriteTimeUtc(File.Exists(p)?p:p+".bak")).ToArray();
  }
  // Stable data identity; changing the displayed product name must not hide saves.
  public static string DirectoryFor(string companyDirectory){return Path.Combine(companyDirectory,"은계 택시 시뮬레이터");}
