@@ -1,4 +1,4 @@
-2026-11-20 수동 중속 조향 곡선을 은계 싱글과 PvP에 적용했다. 호스트와 참가자는 통합 실행본 LAN v20을 사용한다. [측정 조건과 변경 전후 결과](work-history/2026-11-20-city-steering-response.md).
+2026-11-20 은계 싱글과 PvP 수동 주행은 30km/h까지 코너에서 운전자의 페달 입력을 그대로 반영한다. 30~45km/h에서는 속도에 비례해 코너 감속 보정을 적용한다. 호스트와 참가자는 통합 실행본 LAN v21을 사용한다. [저속 감속·운전 HUD 검증](work-history/2026-11-20-corner-pedals-score-hud.md). [중속 조향 측정](work-history/2026-11-20-city-steering-response.md).
 
 2026-11-20 은계 싱글 운전 HUD에서 미터기, 창문, 희망 온도와 발견한 기사 수첩을 조작한다. 빈차등은 운송 상태를 따른다. [차내 조작 기획](content-design/32-deferred-systems-review.md).
 

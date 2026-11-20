@@ -27,6 +27,36 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
  IEnumerator Start(){var run=Run();while(!done){object next;try{if(!run.MoveNext())yield break;next=run.Current;}catch(Exception e){done=true;Debug.LogException(e);Application.Quit(1);yield break;}yield return next;}}
  IEnumerator Ready(){while(!(s=FindObjectsOfType<DriveSession>().FirstOrDefault(x=>!x.IsSimulationBot))||!s.StartupReady||s.business.IsRestoring)yield return null;yield return null;yield return null;}
  IEnumerator Capture(string name){yield return null;yield return null;yield return new WaitForEndOfFrame();var texture=ScreenCapture.CaptureScreenshotAsTexture();File.WriteAllBytes(Path.Combine(output,name+".png"),texture.EncodeToPNG());Destroy(texture);Debug.Log("SHIFT_PLAYER_CAPTURE "+name);}
+ bool measureScore,scoreFits;
+ void OnGUI(){
+  if(!measureScore||Event.current.type!=EventType.Repaint)return;
+  KoreanText.PrepareSkin();
+  float w=Screen.width/CockpitUI.Scale,h=Screen.height/CockpitUI.Scale;
+  Rect label=CockpitUI.ScoreLabelBounds(w,h,true),button=CockpitUI.NotebookBounds(w,h);
+  var text=DrivingHudArt.Text(18,null,true).CalcSize(new GUIContent("운전 점수  100"));
+  var caption=KoreanText.Button(UiReadability.Font(14)).CalcSize(new GUIContent("기사 수첩"));
+  scoreFits=text.x<=label.width&&text.y<=label.height&&!label.Overlaps(button)&&caption.x<=button.width&&caption.y<=button.height;
+  if(s.drivingCamera.FirstPerson){
+   scoreFits&=s.mirrors&&s.mirrors.Frame(0).yMax+4<label.yMin*CockpitUI.Scale;
+  }
+  measureScore=false;
+ }
+ IEnumerator CaptureScoreCard(){
+  bool firstPerson=s.drivingCamera.FirstPerson;
+  foreach(int width in new[]{1280,1600,1920}){
+   Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);
+   yield return new WaitForSecondsRealtime(.6f);
+   foreach(bool cockpit in new[]{false,true}){
+    s.drivingCamera.SetFirstPerson(cockpit);
+    measureScore=true;
+    yield return null;yield return null;yield return new WaitForEndOfFrame();
+    Check(!measureScore&&scoreFits&&s.law.ledger.TotalScore==100,"full score and notebook fit "+Screen.width+" cockpit="+cockpit);
+    ScreenCapture.CaptureScreenshot(Path.Combine(output,"driver-notebook-"+Screen.width+(cockpit?"-first":"-third")+".png"));
+    yield return new WaitForSecondsRealtime(.4f);
+   }
+  }
+  s.drivingCamera.SetFirstPerson(firstPerson);
+ }
  IEnumerator Frames(int n){for(int i=0;i<n;i++)yield return null;}
  IEnumerator Run(){
   yield return null;yield return null;
@@ -279,7 +309,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   Check(b.Story.FoundNotebook&&b.notice.Contains("수첩")&&!b.Story.HasPage(1)&&!b.Story.HasPage(2),"first ride discovers notebook with later condition pages locked");
   yield return Frames(2);s.GetComponent<RideCompletionPanel>().Close();b.CabinInput(CabinAction.Meter);
   Pose(s.services.ParkingStop.Kerb,s.services.ParkingStop.Direction);
-  yield return Capture("driver-notebook-button");
+  yield return CaptureScoreCard();
   Check(b.OpenDrivingLogbook()&&b.LogbookOpen&&s.paused&&Time.timeScale==0,"HUD opens discovered notebook and pauses driving");
   yield return Capture("driver-notebook-open");
   b.LogbookOpen=false;

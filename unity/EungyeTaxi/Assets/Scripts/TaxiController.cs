@@ -46,7 +46,8 @@ public class TaxiController : MonoBehaviour {
         if(NetworkReplica&&!NetworkPredicted)return;
         // Automated validation commands are produced per physics tick, including accelerated runs.
         if(automated){throttle=autoThrottle;steer=autoSteer;brake=autoBrake;}
-        var manual=!automated||NetworkPredicted||AutomatedHumanInput?pedalIntent.Resolve(throttle,Speed,brake):DriveMath.Resolve(throttle,Speed,brake);
+        bool driverPedals=!automated||NetworkPredicted||AutomatedHumanInput;
+        var manual=driverPedals?pedalIntent.Resolve(throttle,Speed,brake):DriveMath.Resolve(throttle,Speed,brake);
         manual=ApplyBrakePreference(manual,brake,Mathf.Abs(throttle)>.01f);
         // Physics-time pedal ramp is identical for keyboard/pad and automated validation.
         // Braking and releasing the accelerator remain prompt, including a direction change.
@@ -56,7 +57,7 @@ public class TaxiController : MonoBehaviour {
         if(automated&&autoServiceBrake>0){manual.motor=0;motorDemand=0;manual.brake=Mathf.Max(manual.brake,Mathf.Clamp01(autoServiceBrake));}
         bool assistedSteering=assistance&&assistance.Active&&(!automated||assistance.allowAutomated);
         if(assistance)assistance.Apply(ref steer,ref manual);
-        var demand=assistedSteering?manual:DriveMath.CornerAssist(manual,Speed,steer);
+        var demand=assistedSteering?manual:DriveMath.CornerAssist(manual,Speed,steer,driverPedals:driverPedals);
         if(business&&business.DrowsyControlsLost){demand.motor=0;demand.brake=0;motorDemand=0;steer=0;}
         bool microsleep=business&&business.DrowsyMicrosleep;
         // Brief eye closure cuts propulsion and holds the last wheel angle.
@@ -78,7 +79,7 @@ public class TaxiController : MonoBehaviour {
         }
         // Only help a human's city turn catch up to their wheel input. Do not
         // steer a route, spin a parked car, override H, or push airborne wheels.
-        if(DriveMath.MayAssistManualYaw(grounded,Vector3.Dot(transform.up,Vector3.up),assistedSteering,!automated||AutomatedHumanInput||NetworkPredicted,microsleep))
+        if(DriveMath.MayAssistManualYaw(grounded,Vector3.Dot(transform.up,Vector3.up),assistedSteering,driverPedals,microsleep))
             body.AddTorque(Vector3.up*DriveMath.ManualYawAcceleration(Speed,centerAngle,body.angularVelocity.y),ForceMode.Acceleration);
     }
     public DriveMath.Demand ApplyBrakePreference(DriveMath.Demand command,bool emergency,bool pedalPressed){

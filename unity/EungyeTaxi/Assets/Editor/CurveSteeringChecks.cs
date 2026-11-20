@@ -36,6 +36,48 @@ public static class CurveSteeringChecks {
  }
  enum Maneuver { Hold,KeyTap,LaneChange }
  static readonly MethodInfo TaxiTick=typeof(TaxiController).GetMethod("FixedUpdate",BindingFlags.Instance|BindingFlags.NonPublic);
+ // Compare identical entries on a flat pad. After the run-up, speed is entirely
+ // determined by the chassis and wheel forces, including when coasting.
+ public static void RunCornerPedals(){
+  EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
+  bool automatic=Physics.autoSimulation;
+  Physics.autoSimulation=false;
+  var ground=GameObject.CreatePrimitive(PrimitiveType.Cube);
+  ground.transform.position=Vector3.down*.5f;
+  ground.transform.localScale=new Vector3(600,1,600);
+  bool passed=true;
+  try{
+   foreach(int kph in new[]{15,25})foreach(float pedal in new[]{0f,1f})foreach(int side in new[]{0,-1,1}){
+    var root=new GameObject("Corner pedal test");
+    try{
+     var taxi=root.AddComponent<TaxiController>();
+     taxi.Create(Vector3.up*.65f,Quaternion.identity);
+     taxi.automated=taxi.AutomatedHumanInput=true;
+     Physics.SyncTransforms();
+     taxi.autoThrottle=1;
+     for(int i=0;i<600&&taxi.Speed*3.6f<kph;i++){TaxiTick.Invoke(taxi,null);Physics.Simulate(.02f);}
+     float entry=taxi.Speed*3.6f;
+     Check(Mathf.Abs(entry-kph)<.5f,"corner test reached entry speed");
+     taxi.autoThrottle=pedal;
+     float peakBrake=0;
+     bool assisted=false;
+     for(int i=0;i<50;i++){
+      taxi.autoSteer=Mathf.MoveTowards(taxi.autoSteer,side,.1f);
+      TaxiTick.Invoke(taxi,null);
+      assisted|=taxi.CornerAssisting;
+      peakBrake=Mathf.Max(peakBrake,taxi.wheels[0].brakeTorque);
+      Physics.Simulate(.02f);
+     }
+     float heading=Mathf.DeltaAngle(0,taxi.transform.eulerAngles.y);
+     Debug.LogFormat("CORNER_PEDALS kph={0} pedal={1} side={2} entry={3:F2} exit={4:F2} heading={5:F1} brakeNm={6:F1} assisted={7}",kph,pedal,side,entry,taxi.Speed*3.6f,heading,peakBrake,assisted);
+     passed&=!assisted&&peakBrake<=(pedal==0?53f:0f)&&(side==0||heading*side>10);
+     if(pedal==1&&kph==25)passed&=taxi.Speed*3.6f>=entry*.90f;
+    }finally{UnityEngine.Object.DestroyImmediate(root);}
+   }
+   Check(passed,"low speed turns follow the pedal while changing heading in both directions");
+   Debug.Log("CORNER_PEDALS_OK scenarios=12");
+  }finally{UnityEngine.Object.DestroyImmediate(ground);Physics.autoSimulation=automatic;}
+ }
  static float PhysicsCurve(float kph,Maneuver maneuver=Maneuver.Hold,int direction=1){
   EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
   bool automatic=Physics.autoSimulation;Physics.autoSimulation=false;

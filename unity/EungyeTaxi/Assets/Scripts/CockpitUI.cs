@@ -11,6 +11,8 @@ public static class CockpitUI {
  public static string Clock(double seconds){int n=Mathf.CeilToInt((float)System.Math.Max(0,seconds));return n/60+":"+(n%60).ToString("00");}
  static void Label(Rect r,string value,int size=18,Color? color=null,bool bold=false){GUI.Label(r,value,DrivingHudArt.Text(size,color,bold));}
  public static Rect FirstPersonSpeedRect(float w,float h){return new Rect(w*.40f-155,h-139,310,112);}
+ public static Rect ScoreLabelBounds(float w,float h,bool notebook){return new Rect(w-260,h-(notebook?198:178),220,39);}
+ public static Rect NotebookBounds(float w,float h){return new Rect(w-157,h-158,117,34);}
  public static Rect CabinBounds(float w,float h,bool firstPerson){
   float x=firstPerson?FirstPersonSpeedRect(w,h).xMax+12:w/2+174;
   float right=firstPerson?w-488:w-324;
@@ -64,11 +66,16 @@ public static class CockpitUI {
   DrawCabin(s,w,h,firstPerson);
   DrawStandings(s);
   if(firstPerson)GUI.matrix=hudMatrix*Matrix4x4.Translate(new Vector3(336-w,0,0));
-  DrivingHudArt.Glass(new Rect(w-312,h-182,288,158));HudGlyph.Draw(new Rect(w-296,h-170,25,25),7,DrivingHudArt.Cyan);Label(new Rect(w-260,h-173,113,28),"운전 점수  "+s.law.ledger.TotalScore,18,null,true);DrivingHudArt.Meter(new Rect(w-296,h-135,256,7),s.law.ledger.TotalScore,DrivingHudArt.Cyan);
+  bool showNotebook=!match&&s.business.CabinEnabled&&s.business.Story.FoundNotebook&&!s.paused&&!hud.HelpOpen;
+  float cardTop=h-(showNotebook?202:182);
+  DrivingHudArt.Glass(new Rect(w-312,cardTop,288,h-24-cardTop));
+  HudGlyph.Draw(new Rect(w-296,cardTop+12,25,25),7,DrivingHudArt.Cyan);
+  Label(ScoreLabelBounds(w,h,showNotebook),"운전 점수  "+s.law.ledger.TotalScore,18,null,true);
   var button=KoreanText.Button(UiReadability.Font(14));
-  if(!match&&s.business.CabinEnabled&&s.business.Story.FoundNotebook&&!s.paused&&!hud.HelpOpen){
-   if(GUI.Button(new Rect(w-151,h-175,109,30),"기사 수첩",button))s.business.OpenDrivingLogbook();
-  }
+  var notebook=NotebookBounds(w,h);
+  float meterRight=showNotebook?notebook.xMin-12:w-40;
+  DrivingHudArt.Meter(new Rect(w-296,showNotebook?notebook.center.y-3.5f:h-135,meterRight-(w-296),7),s.law.ledger.TotalScore,DrivingHudArt.Cyan);
+  if(showNotebook&&GUI.Button(notebook,"기사 수첩",button))s.business.OpenDrivingLogbook();
   if(GUI.Button(new Rect(w-298,h-115,124,36),"기록 (F8)",button))s.law.OpenHistory();GUI.enabled=s.services.CanOpenLifeHub;if(GUI.Button(new Rect(w-166,h-115,124,36),"생활거점",button))s.services.ToggleLifeHub();GUI.enabled=true;if(s.services.LifeHubAttention)CasualUI.AttentionDot(new Rect(w-55,h-121,14,14));if(GUI.Button(new Rect(w-298,h-71,124,36),"도움말 (F1)",button))hud.ToggleHelp();GUI.enabled=!match&&!s.paused&&e.State==BusinessState.Open;if(GUI.Button(new Rect(w-166,h-71,124,36),match?"경기 중":"퇴근",button))s.business.RequestEndDay();GUI.enabled=true;GUI.matrix=hudMatrix;if(!string.IsNullOrEmpty(s.business.notice)){var notice=firstPerson?new Rect(340,h-470,300,140):new Rect(w-312,552,288,140);DrivingHudArt.Glass(notice);GUI.Label(new Rect(notice.x+14,notice.y+8,notice.width-28,notice.height-16),s.business.notice,new GUIStyle(DrivingHudArt.Text(16,null,true)){wordWrap=true});}GUI.matrix=previous;
  }
  public static void DrawStandingsOverlay(DriveSession session){var matrix=GUI.matrix;GUI.matrix=Matrix4x4.Scale(new Vector3(Scale,Scale,1));DrawStandings(session);GUI.matrix=matrix;}

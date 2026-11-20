@@ -54,15 +54,19 @@ public static class DriveMath {
         double angle=Math.Min(1,Math.Abs(steering))*ParkingSteerAngle*Math.PI/180;
         return (float)Math.Sqrt(5*2.6/Math.Max(.001,Math.Tan(angle)));
     }
-    public static Demand CornerAssist(Demand demand,float speedMs,float steering,bool physicalSteering=false) {
+    public static Demand CornerAssist(Demand demand,float speedMs,float steering,bool physicalSteering=false,bool driverPedals=false) {
+        // At intersection speeds the driver chooses the pace. Blend the existing
+        // correction back in over 30–45 km/h so crossing 30 never cuts the motor.
+        float weight=driverPedals?Math.Max(0,Math.Min(1,(speedMs-30f/3.6f)/(15f/3.6f))):1;
+        if(weight==0)return demand;
         // Both control modes normalize input against their speed-dependent wheel limit.
         // Use the same physical angle as TaxiController, not a 42-degree parking turn.
         steering*=(physicalSteering?SteerAngle(speedMs*3.6f):ManualSteerAngle(speedMs*3.6f))/ParkingSteerAngle;
         // Keep the existing lateral-grip limit, but stop accelerating away from a tight turn.
         if(speedMs<=.5f||Math.Abs(steering)<.2f)return demand;
         float target=CornerSpeed(steering);
-        if(demand.motor>0)demand.motor*=Math.Max(0,Math.Min(1,target-speedMs));
-        if(speedMs>target)demand.brake=Math.Max(demand.brake,Math.Min(.08f,(speedMs-target)*.04f));
+        if(demand.motor>0)demand.motor*=1-weight*(1-Math.Max(0,Math.Min(1,target-speedMs)));
+        if(speedMs>target)demand.brake=Math.Max(demand.brake,weight*Math.Min(.08f,(speedMs-target)*.04f));
         return demand;
     }
     public static Demand Resolve(float throttle, float speedMs, bool handbrake) {

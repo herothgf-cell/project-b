@@ -5,10 +5,22 @@ class CornerAssistTests {
  static void Main(){
   var full=new DriveMath.Demand{motor=1};
   var right=DriveMath.CornerAssist(full,25/3.6f,1);
-  Check(right.motor==0&&right.brake>0,"corner at 25kph must slow even while W is held");
+  Check(right.motor==0&&right.brake>0,"automated driver retains its corner speed target at 25kph");
   var left=DriveMath.CornerAssist(full,25/3.6f,-1);
   Check(left.motor==right.motor&&left.brake==right.brake,"left and right behave identically");
   Check(DriveMath.CornerAssist(full,10/3.6f,1).motor==1,"low-speed corner retains acceleration");
+  foreach(float kph in new[]{0f,10f,15f,20f,25f,30f})foreach(float side in new[]{-1f,1f}){
+   foreach(var pedal in new[]{full,new DriveMath.Demand{brake=.015f},new DriveMath.Demand{brake=.30f},new DriveMath.Demand{brake=1}}){
+    var actual=DriveMath.CornerAssist(pedal,kph/3.6f,side,driverPedals:true);
+    Check(actual.motor==pedal.motor&&actual.brake==pedal.brake,"driver retains pedal demand up to 30kph");
+   }
+  }
+  foreach(float kph in new[]{30.1f,35f,40f,45f,50f}){
+   var original=DriveMath.CornerAssist(full,kph/3.6f,1);
+   var manual=DriveMath.CornerAssist(full,kph/3.6f,1,driverPedals:true);
+   float blend=Math.Min(1,(kph-30)/15);
+   Check(Math.Abs(manual.motor-(1-blend*(1-original.motor)))<.0001f&&Math.Abs(manual.brake-blend*original.brake)<.0001f,"progressive corner assistance at "+kph);
+  }
   Check(DriveMath.CornerAssist(full,15,0).motor==1,"straight acceleration unchanged");
   Check(DriveMath.CornerAssist(full,15,.1f).motor==1,"small lane corrections do not brake");
   Check(DriveMath.CornerAssist(new DriveMath.Demand{brake=1},15,1).brake==1,"manual brake wins");
