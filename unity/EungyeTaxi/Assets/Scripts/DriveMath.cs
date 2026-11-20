@@ -1,19 +1,21 @@
 using System;
 public static class DriveMath {
     public const float ParkingSteerAngle=42f;
-    // Manual parking turns are tighter; H retains its calibrated bicycle geometry.
-    // Fade out the gentle-curve allowance by60kph; H keeps its calibrated geometry.
+    static readonly float CruiseAngle=SteerAngle(60);
     public static float ManualSteerAngle(float speedKph) {
         float speed=Math.Abs(speedKph);
+        if(speed>=60)return SteerAngle(speed);
+        if(speed>35){
+            // Cubic Bezier in wheel degrees, from 17 at 35 km/h to the highway limit.
+            // The two control angles give ~6.5 at 50 and match the slope near 60.
+            float t=(speed-35)/25, remaining=1-t;
+            return 17*remaining*remaining*remaining + 3*11.6f*remaining*remaining*t
+                + 3*3.4f*remaining*t*t + CruiseAngle*t*t*t;
+        }
         float blend=Math.Max(0,Math.Min(1,(30-speed)/16));
         float parking=Math.Min(52,SteerAngle(speedKph)*(1+.55f*blend));
-        // A gradual city-speed curve; H keeps the original bicycle limit.
-        float city=speed<=20?52-speed*.6f:speed<=35?40-(speed-20)*(23f/15):17+(SteerAngle(50)-17)*Math.Min(1,(speed-35)/15);
-        float original=speed>=50?parking:Math.Max(parking,city);
-        // Smooth 20% allowance at 47.5km/h, zero below35 and above60.
-        float t=Math.Max(0,Math.Min(1,(speed-35)/25));
-        float wave=(float)Math.Sin(Math.PI*t);
-        return original*(1+.2f*wave*wave);
+        float city=speed<=20?52-speed*.6f:40-(speed-20)*(23f/15);
+        return Math.Max(parking,city);
     }
     public struct Demand { public float motor, brake; }
     public static bool MayAssistManualYaw(int grounded,float upright,bool assisted,bool human,bool frozenSteering){return grounded>=2&&upright>.8f&&!assisted&&human&&!frozenSteering;}

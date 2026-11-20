@@ -13,6 +13,10 @@ class DriveMathTests {
   Check(DriveMath.Resolve(-1,-8,false).motor==0,"reverse speed cap");
   Check(DriveMath.Resolve(1,0,true).motor==0,"handbrake overrides throttle");
   Check(DriveMath.Resolve(0,0,false).brake>0,"idle hold");
-  Console.WriteLine("PASS: 9 driving policy checks");
+  for(int kph=40;kph<=50;kph++){
+   float start=DriveMath.ManualSteerAngle(kph),end=DriveMath.ManualSteerAngle(kph+5);
+   Check(end<=start&&end>=.60f*start,"manual lock should taper gradually over 5 km/h at "+kph);
+  }
+  Console.WriteLine("PASS: driving policy and city-speed steering progression");
  }
 }

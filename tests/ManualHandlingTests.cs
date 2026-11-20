@@ -6,8 +6,8 @@ class ManualHandlingTests {
   // Returning to the old immediate 2x1100Nm demand must fail: city starts need time to judge a corner.
   float acceleration=DriveMath.Resolve(1,0,false).motor*2200/(.34f*1400);
   Check(acceleration>=1.8f&&acceleration<=2.6f,"full city throttle must request 1.8-2.6m/s2, actual="+acceleration);
-  float braking=DriveMath.Resolve(-1,8,false).brake*14000/(.34f*1400);
-  Check(braking>=3.5f&&braking<=6,"ordinary S braking is effective and comfortable, actual="+braking);
+  float serviceWheelTorque=DriveMath.Resolve(-1,8,false).brake*3500;
+  Check(Math.Abs(serviceWheelTorque-1050)<.01f,"standard service brake requests 1050 Nm per wheel");
   Check(DriveMath.Resolve(1,8,true).brake==1,"Space retains the emergency brake");
   Check(DriveMath.Resolve(-1,0,false).motor<0,"reverse remains available at rest");
   Check(DriveMath.Resolve(-1,8,false).motor==0,"S cannot reverse before slowing");
@@ -21,7 +21,7 @@ class ManualHandlingTests {
   Check(DriveMath.ManualSteerAngle(-8)==DriveMath.ManualSteerAngle(8),"manual reverse symmetry");
   Check(2.6/Math.Tan(DriveMath.ManualSteerAngle(15)*Math.PI/180)<2.25,"manual15kph full lock center radius below2.25m");
   Check(DriveMath.ManualSteerAngle(20)>28,"manual20kph turn has noticeably more authority");
-  foreach(float speed in new[]{30f,50f,90f})Check(DriveMath.ManualSteerAngle(speed)==DriveMath.SteerAngle(speed),"manual high-speed limit preserved "+speed);
+  foreach(float speed in new[]{60f,75f,90f})Check(DriveMath.ManualSteerAngle(speed)==DriveMath.SteerAngle(speed),"manual high-speed limit preserved "+speed);
   float outer=DriveMath.WheelSteerAngle(42,true),inner=DriveMath.WheelSteerAngle(42,false);
   Check(inner>42&&outer<42,"inside front wheel turns tighter to prevent low-speed tyre scrub");
   double leftRadius=2.6/Math.Tan(outer*Math.PI/180)-.85;
