@@ -9,16 +9,49 @@ public sealed class VehicleAppearance : MonoBehaviour {
  readonly Dictionary<Renderer,Material[]> originals=new Dictionary<Renderer,Material[]>();
  readonly List<Material> owned=new List<Material>();
  Transform exterior;GameObject outsideOrnament,cockpitOrnament;Vector3 baseScale=Vector3.one;
+ GameObject stripe,spoiler;Material stripeMaterial,spoilerMaterial;
  public string Model {get;private set;}public int Color {get;private set;}public bool Ornament {get;private set;}
  static bool Paint(Material m){if(!m)return false;string n=m.name;return n.StartsWith("Taxi_Paint",StringComparison.Ordinal)||n.StartsWith("Taxi sunflower",StringComparison.Ordinal);}
  public static VehicleAppearance For(Transform taxi){var a=taxi.GetComponent<VehicleAppearance>();return a?a:taxi.gameObject.AddComponent<VehicleAppearance>();}
  public static void Apply(TaxiController taxi,PvpVehicleLook look){if(taxi)For(taxi.transform).Set(look==null?PvpVehicleLook.Default:look);}
- public static void Apply(TaxiController taxi,VehicleState state){if(taxi)For(taxi.transform).Set(new PvpVehicleLook{model=VehicleCatalog.Of(state).id,color=state==null?0:state.color,ornament=state!=null&&state.ornamentOwned&&state.ornamentPlaced});}
+ public static void Apply(TaxiController taxi,VehicleState state){if(taxi)For(taxi.transform).Set(state);}
+ public void Set(VehicleState state){
+  Set(new PvpVehicleLook{model=VehicleCatalog.Of(state).id,color=state==null?0:state.color,ornament=state!=null&&state.ornamentOwned&&state.ornamentPlaced});
+  if(!exterior)return;
+  if(WorkshopPart.Stripe.Fitted(state)){
+   if(!stripe){
+    stripe=NewAccessory("Cream double stripe");
+    stripeMaterial=WorldBuilder.Mat("Cream enamel",new Color(1,.91f,.66f));
+    foreach(int sign in new[]{-1,1}){
+     AddPiece(stripe,"Wide stripe",new Vector3(sign*.902f,.47f,0),new Vector3(.012f,.068f,1.92f),stripeMaterial);
+     AddPiece(stripe,"Pinstripe",new Vector3(sign*.901f,.548f,0),new Vector3(.012f,.023f,1.92f),stripeMaterial);
+    }
+   }
+   stripe.SetActive(true);
+  }
+  if(WorkshopPart.Spoiler.Fitted(state)){
+   if(!spoiler){
+    spoiler=NewAccessory("Touring spoiler");
+    spoilerMaterial=WorldBuilder.Mat("Graphite spoiler",new Color(.085f,.105f,.135f));
+    foreach(int sign in new[]{-1,1})
+     AddPiece(spoiler,"Trunk mount",new Vector3(sign*.52f,1.005f,-1.79f),new Vector3(.085f,.27f,.14f),spoilerMaterial);
+    AddPiece(spoiler,"Rear wing",new Vector3(0,1.15f,-1.79f),new Vector3(1.65f,.084f,.26f),spoilerMaterial);
+   }
+   spoiler.SetActive(true);
+  }
+ }
+ GameObject NewAccessory(string name){
+  var root=new GameObject(name);root.transform.SetParent(exterior,false);root.layer=exterior.gameObject.layer;return root;
+ }
+ static void AddPiece(GameObject root,string name,Vector3 at,Vector3 size,Material material){
+  var piece=TaxiArt.Part(root.transform,name,at,size,.025f,material);piece.layer=root.layer;
+ }
  void Capture(){
   if(exterior)return;exterior=transform.Find("Taxi exterior");if(!exterior)return;baseScale=exterior.localScale;
   foreach(var r in exterior.GetComponentsInChildren<Renderer>(true))originals[r]=r.sharedMaterials;
  }
  public void Set(PvpVehicleLook look){
+  if(stripe)stripe.SetActive(false);if(spoiler)spoiler.SetActive(false);
   Capture();var spec=VehicleCatalog.Get(look.model)??VehicleCatalog.Standard;int color=look.color==1?1:0;
   Model=spec.id;Color=color;Ornament=look.ornament;
   if(exterior){
@@ -41,7 +74,7 @@ public sealed class VehicleAppearance : MonoBehaviour {
   TaxiArt.Part(root.transform,"Ornament leaves",new Vector3(0,.06f,0),new Vector3(.09f,.08f,.09f),.04f,WorldBuilder.Mat("Ornament leaves",new Color(.3f,.62f,.3f)));
   foreach(var t in root.GetComponentsInChildren<Transform>(true))t.gameObject.layer=layer;root.SetActive(false);return root;
  }
- void OnDestroy(){foreach(var m in owned)if(m)Destroy(m);}
+ void OnDestroy(){foreach(var m in owned)if(m)Destroy(m);if(stripeMaterial)Destroy(stripeMaterial);if(spoilerMaterial)Destroy(spoilerMaterial);}
 }
 
 // Account-level PVP unlock file, separate from the campaign checkpoint. The campaign only adds to

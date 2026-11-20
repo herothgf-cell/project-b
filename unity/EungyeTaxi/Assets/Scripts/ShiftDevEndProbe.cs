@@ -7,6 +7,7 @@ using UnityEngine;
 // Player check for the single shift-length selector and the developer end-day button.
 // Uses a private temp campaign, never the player's save.
 public sealed class ShiftDevEndProbe : MonoBehaviour {
+ static readonly string PartsReport=ContentTuningRuntime.Argument("-workshopPartsReport");
  public static readonly bool FacilityArtCheck=Array.IndexOf(Environment.GetCommandLineArgs(),"-facilityArtCheck")>=0;
  public static bool HomeCheck {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-homeBaseCheck")>=0;}}
  public static bool CabinCheck {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-cabinControlsCheck")>=0;}}
@@ -18,7 +19,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
  public static readonly bool DailyCheck=Array.IndexOf(Environment.GetCommandLineArgs(),"-dailyConditionCheck")>=0;
  public static readonly bool DailyReload=Array.IndexOf(Environment.GetCommandLineArgs(),"-dailyConditionReloadCheck")>=0;
  public static string DailySavePath {get{var args=Environment.GetCommandLineArgs();int index=Array.IndexOf(args,"-shiftCaptureOutput");return Path.GetFullPath(Path.Combine(index>=0&&index+1<args.Length?args[index+1]:"artifacts/daily-condition-player","campaign.json"));}}
- public static bool Enabled {get{return FacilityArtCheck||DailyCheck||DailyReload||FatherStoryCheck||FatherStoryReload||CabinCheck||CareerCheck||CareerReload||HomeCheck||Array.IndexOf(Environment.GetCommandLineArgs(),"-shiftDevEndCheck")>=0;}}
+ public static bool Enabled {get{return PartsReport!=null||FacilityArtCheck||DailyCheck||DailyReload||FatherStoryCheck||FatherStoryReload||CabinCheck||CareerCheck||CareerReload||HomeCheck||Array.IndexOf(Environment.GetCommandLineArgs(),"-shiftDevEndCheck")>=0;}}
  public static readonly string CampaignPath=Path.Combine(Path.GetTempPath(),"taxi-shift-"+Guid.NewGuid().ToString("N"),"campaign.json");
  static bool attached;DriveSession s;int checks;bool done;float start;string output;
  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]static void Attach(){if(Enabled&&!attached){attached=true;new GameObject("Shift/dev end acceptance").AddComponent<ShiftDevEndProbe>();}}
@@ -63,6 +64,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   yield return null;yield return null;
   FindObjectOfType<UnifiedModeBootstrap>().StartSingle();yield return Ready();
   var b=s.business;
+  if(PartsReport!=null){var runParts=RunWorkshopParts(b);while(runParts.MoveNext())yield return runParts.Current;yield break;}
   if(FacilityArtCheck){yield return RunFacilityArt(b);yield break;}
   if(DailyCheck||DailyReload){yield return RunDailyConditions(b);yield break;}
   if(FatherStoryCheck||FatherStoryReload){yield return RunFatherStory(b);yield break;}
@@ -477,6 +479,48 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    s.signals.Clear();body.position=position;body.velocity=velocity;Physics.SyncTransforms();
   }
  }
+ IEnumerator RunWorkshopParts(BusinessProgress business){
+  var services=s.services;
+  Check(business.SavePath==CampaignPath&&business.SupportsCareer,"isolated single workshop fixture");
+  business.ContinueFromMenu();yield return Frames(3);
+  s.taxi.body.useGravity=false;s.taxi.body.detectCollisions=false;s.taxi.enabled=false;
+  Check(!services.OpenWorkshopShop(),"remote workshop browsing rejected");
+  Check(s.GetComponent<FullMapOverlay>().Places().Any(p=>p.capabilityLabel!=null&&p.capabilityLabel.Contains("부품")),"parts counter visible on map");
+  var shop=services.Workshops[0];Pose(shop.repair,shop.direction);
+  Check(s.jobs.Interact()&&services.OpenWorkshopShop(),"F opens physical workshop and catalog");
+  foreach(var part in WorkshopPart.All)Check(Resources.Load<Texture2D>("WorkshopParts/"+part.id),"packaged icon "+part.id);
+  int startCash=business.ledger.Account.Cash;
+  Check(business.ChangeWorkshopPart("eco-filter",WorkshopPartAction.Buy)
+   &&!business.ChangeWorkshopPart("eco-filter",WorkshopPartAction.Buy)
+   &&business.ledger.Account.Cash==startCash-6000,"purchase and duplicate debit protection");
+  Check(!business.ChangeWorkshopPart("comfort-damper",WorkshopPartAction.Buy),"insufficient balance blocks extra part");
+  Check(business.ledger.RecordFare("workshop-probe-fare",30000),"funds available from fixture fare");
+  float fuel=business.ledger.Account.Fuel;
+  business.ledger.Account.Consume(0,1000);float normal=fuel-business.ledger.Account.Fuel;
+  Check(business.ChangeWorkshopPart("eco-filter",WorkshopPartAction.Equip),"filter installed");
+  fuel=business.ledger.Account.Fuel;business.ledger.Account.Consume(0,1000);
+  Check(Mathf.Abs(fuel-business.ledger.Account.Fuel-.9f*normal)<.0001f,"active car consumes calibrated distance fuel");
+  foreach(var part in new[]{WorkshopPart.Stripe,WorkshopPart.Spoiler,WorkshopPart.Damper})
+   Check(business.ChangeWorkshopPart(part.id,WorkshopPartAction.Buy)&&business.ChangeWorkshopPart(part.id,WorkshopPartAction.Equip),"purchase and equip "+part.id);
+  Check(!VehicleCatalog.HarshMotion(business.ActiveRideComfort,4.8f,8,false),"installed damper changes motion threshold");
+  var visual=s.taxi.transform.Find("Taxi exterior");
+  Check(visual.Find("Cream double stripe").gameObject.activeSelf&&visual.Find("Touring spoiler").gameObject.activeSelf,"both accessories on the player taxi");
+  var saved=BusinessProgress.ParseCheckpoint(File.ReadAllText(business.SavePath));
+  var restored=EconomyLedger.RestoreCampaign(saved.days,saved.account);
+  Check(WorkshopPart.All.All(p=>restored.Account.OwnsPart(p)&&p.Fitted(restored.Account.ActiveVehicle)),"saved inventory and equipped parts restore");
+  if(SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null){
+   yield return Capture("workshop-parts-equipped");
+   var taxi=s.taxi.transform;
+   CaptureGarageView("workshop-parts-exterior",taxi.TransformPoint(new Vector3(4.3f,2.5f,-4.1f)),taxi.TransformPoint(new Vector3(0,.65f,0)));
+  }
+  Check(business.ChangeWorkshopPart("touring-spoiler",WorkshopPartAction.Remove)&&!visual.Find("Touring spoiler").gameObject.activeSelf
+   &&business.ledger.Account.OwnsPart(WorkshopPart.Spoiler),"storing hides the accessory without removing ownership");
+  services.Close();
+  Check(!business.ChangeWorkshopPart("touring-spoiler",WorkshopPartAction.Equip),"closed shop blocks fitting");
+  string report=Path.GetFullPath(PartsReport);Directory.CreateDirectory(Path.GetDirectoryName(report));
+  File.WriteAllText(report,"{\"passed\":true,\"checks\":"+checks+"}");
+  done=true;Debug.Log("WORKSHOP_PARTS_PLAYER_OK checks="+checks);Application.Quit(0);
+ }
  IEnumerator RunFacilityArt(BusinessProgress business){
   var services=s.services;
   Check(business.SavePath==CampaignPath&&services.HasHomeBase,"isolated single career for facility art");
@@ -484,6 +528,10 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    Check(FacilityArt.Texture(key)!=null,"packaged texture "+key);
   business.ContinueFromMenu();yield return Frames(3);
   s.taxi.body.useGravity=false;s.taxi.body.detectCollisions=false;s.taxi.enabled=false;
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-refreshmentCheck")>=0){
+   CheckRefreshmentShops(business);
+   done=true;Debug.Log("REFRESHMENT_PLAYER_OK checks="+checks);Application.Quit(0);yield break;
+  }
   var profilePath=ContentTuningRuntime.Argument("-facilityProfile");
   if(!string.IsNullOrEmpty(profilePath)){
    ContentTuningRuntime.LoadActivePath(profilePath);
@@ -525,6 +573,36 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   Check(business.ChangeRoom("buy","lamp",0)&&business.ChangeRoom("buy","rug",0),"place purchased lamp and rug on approved room");
   yield return Capture("room-furnished");
   done=true;Debug.Log("FACILITY_ART_PLAYER_OK checks="+checks);Application.Quit(0);
+ }
+ void CheckRefreshmentShops(BusinessProgress business){
+  var services=s.services;var shops=services.RefreshmentShops;
+  Check(shops.Count==2&&Vector3.Distance(shops[0].Stop.Kerb,shops[1].Stop.Kerb)>100,"two distinct campaign shop locations");
+  Check(business.ledger.RecordFare("shop-fixture",10000),"fund isolated shop test");
+  business.ledger.Driver.satiety=35;business.ledger.Driver.fatigue=55;
+  var map=s.GetComponent<FullMapOverlay>();
+  foreach(var shop in shops){
+   var item=shop.Item;var stop=shop.Stop;
+   Check(map.Open(),"open map");
+   var place=map.Places().Single(p=>p.name==item.Shop);
+   Check(map.SelectPlace(place)&&map.PreviewPointCount>1,"preview shop "+item.Shop);
+   Check(map.ShowFacilityPlanner(Refreshment.Snack),"open snack and coffee planner");
+   var option=services.FacilityOptions(Refreshment.Snack).Single(o=>o.Kind==item.Kind);
+   Check(option.Reachable&&map.GuidePlannerFacility(option)&&services.destination.Contains(item.Shop),"guide to shop "+item.Shop);
+   Pose(stop.Kerb,-stop.Direction);Check(services.LocalRefreshment()==null,"shop rejects wrong heading");
+   Pose(stop.Kerb,stop.Direction);
+   s.jobs.cooldown[shop.StopIndex]=Time.time+60;
+   Check(s.jobs.Interact()&&services.open&&services.LocalActions.SequenceEqual(new[]{item.Kind}),"F opens only the local shop product");
+   var ledger=business.ledger;int cash=ledger.Account.Cash;double elapsed=ledger.Elapsed;
+   Check(services.RequestAction(item.Kind)&&!services.ConfirmAction(false)&&ledger.Elapsed==elapsed&&ledger.Account.Cash==cash,"cancel preserves time and cash");
+   var localQuote=OperationServiceQuote.Calculate(ledger,item.Kind,0,0);
+   Check(services.RequestAction(item.Kind)&&services.ConfirmAction(true)&&!services.open,"confirm purchase "+item.Menu);
+   Check(ledger.Account.Cash==cash-item.Price&&ledger.Elapsed==elapsed+item.Seconds&&
+    Math.Abs(localQuote.EndSatiety-ledger.Driver.satiety)<.001&&Math.Abs(localQuote.EndFatigue-ledger.Driver.fatigue)<.001,"native payment and effect match shop quote");
+   Check(!services.ConfirmAction(true)&&ledger.Account.Cash==cash-item.Price,"closed confirmation cannot charge twice");
+   var save=BusinessProgress.ParseCheckpoint(File.ReadAllText(business.SavePath));
+   var restored=EconomyLedger.RestoreCampaign(save.days,save.account);
+   Check(restored.Account.Cash==ledger.Account.Cash&&restored.Elapsed==ledger.Elapsed,"saved shop payment and time");
+  }
  }
  void Pose(Vector3 kerb,Vector3 direction){
   var position=kerb+Vector3.up*.65f;

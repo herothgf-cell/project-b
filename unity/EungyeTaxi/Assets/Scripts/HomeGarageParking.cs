@@ -6,6 +6,7 @@ public sealed class HomeGarageParking : MonoBehaviour {
  Material pavement,paint;
  string displayedModel="";
  int displayedColor=-1;
+ int displayedParts;
  bool displayedOrnament;
 
  public static void Sync(DriveSession session){
@@ -45,10 +46,10 @@ public sealed class HomeGarageParking : MonoBehaviour {
   }
   if(!ParkedTaxi.activeSelf)ParkedTaxi.SetActive(true);
   bool ornament=state.ornamentOwned&&state.ornamentPlaced;
-  if(state.modelId==displayedModel&&state.color==displayedColor&&ornament==displayedOrnament)return;
-  displayedModel=state.modelId;displayedColor=state.color;displayedOrnament=ornament;
+  if(state.modelId==displayedModel&&state.color==displayedColor&&ornament==displayedOrnament&&displayedParts==state.equippedParts)return;
+  displayedModel=state.modelId;displayedColor=state.color;displayedOrnament=ornament;displayedParts=state.equippedParts;
   var appearance=VehicleAppearance.For(ParkedTaxi.transform);
-  appearance.Set(new PvpVehicleLook{model=state.modelId,color=state.color,ornament=ornament});
+  appearance.Set(state);
   // VehicleAppearance builds a layer-8 plant for the player's exterior. This copy belongs to the world.
   foreach(var part in ParkedTaxi.GetComponentsInChildren<Transform>(true))part.gameObject.layer=0;
  }

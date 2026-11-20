@@ -50,6 +50,27 @@ public class CampaignAccount {
  }
  public VehicleState ActiveVehicle {get{return OwnedVehicle(activeVehicleModel)??Vehicle;}}
  public VehicleSpec VehicleSpec {get{return VehicleCatalog.Of(ActiveVehicle);}}
+ public double RideComfort {get{return VehicleSpec.comfortFactor*(WorkshopPart.Damper.Fitted(ActiveVehicle)?1.10:1);}}
+ public bool OwnsPart(WorkshopPart part){return part!=null&&Has(part.receipt);}
+ public VehicleState PartVehicle(WorkshopPart part){
+  if(part==null)return null;
+  return part.Fitted(Vehicle)?Vehicle:part.Fitted(fatherVehicle)?fatherVehicle:null;
+ }
+ public bool ChangeWorkshopPart(string id,WorkshopPartAction action,int day){
+  var part=WorkshopPart.Get(id);
+  if(part==null||!FatherCarGarage||day<1||day>settings.DayLimit||Has("settlement:"+day)||Room.finalized)return false;
+  if(action==WorkshopPartAction.Buy)
+   return Debt==0&&Cash>=part.price&&Post(part.receipt,"personal-purchase",day,-part.price,0);
+  if(!OwnsPart(part))return false;
+  var previous=PartVehicle(part);var current=ActiveVehicle;
+  if(action==WorkshopPartAction.Remove){
+   if(previous!=current)return false;
+   current.equippedParts&=~part.bit;return true;
+  }
+  if(action!=WorkshopPartAction.Equip||previous==current)return false;
+  if(previous!=null)previous.equippedParts&=~part.bit;
+  current.equippedParts|=part.bit;return true;
+ }
  public VehicleQuote QuoteVehicle(string model,int durability){return VehicleCatalog.Quote(Vehicle,model,Cash,Debt,durability,FatherCarGarage);}
  // A return to the active car cancels a pending selection without posting a transaction.
  public bool ScheduleVehicle(string model,int day){
@@ -135,13 +156,17 @@ public class CampaignAccount {
   float actual=Math.Min(quantity,100-Fuel);int cost=(int)Math.Ceiling(actual*settings.fuelUnitPrice-.00001);
   if(actual<=0||!Post(id,"fuel",day,-cost,0))return false;Fuel+=actual;return true;
  }
+ public float FuelRequired(double seconds,double metres){
+  double distanceFuel=metres/1000*settings.fuelPerKm;
+  if(WorkshopPart.Filter.Fitted(ActiveVehicle))distanceFuel*=.9;
+  return (float)((distanceFuel+seconds/60*settings.idlePerMinute)*VehicleSpec.fuelFactor);
+ }
  public void Consume(double seconds,double metres){
   if(double.IsNaN(seconds)||double.IsInfinity(seconds)||double.IsNaN(metres)||double.IsInfinity(metres)||seconds<0||metres<0)return;
-  // Starter factor is exactly 1, preserving the pre-vehicle consumption.
-  double factor=VehicleSpec.fuelFactor;
-  Fuel=Math.Max(0,Fuel-(float)((metres/1000*settings.fuelPerKm+seconds/60*settings.idlePerMinute)*factor));
+  Fuel=Math.Max(0,Fuel-FuelRequired(seconds,metres));
  }
  public bool Meal(string id,int day){if(settings.oneDay){if(string.IsNullOrEmpty(id)||Has(id))return false;Mandatory(id,"meal",day,settings.meal);return true;}return !Ate(day)&&Post(id,"meal",day,-settings.meal,0);}
+ internal bool BuyRefreshment(string id,int day,int price){return day>=1&&price>0&&Post(id,"meal",day,-price,0);}
  // PVP purchases keep the native meal expense kind and require actual cash.
  public bool PvpRest(string id,int day){return settings.oneDay&&day>=1&&Post(id,"rest",day,-PvpConditionRules.RestCost,0);}
  public bool PvpMeal(string id,int day){return settings.oneDay&&day>=1&&Post(id,"meal",day,-PvpConditionRules.MealCost,0);}
@@ -224,6 +249,7 @@ public class CampaignAccount {
   if(v.tradedColorModel==null)v.tradedColorModel="";
   if(v.tradedColorModel.Length>0&&(v.tradedColorModel!=VehicleCatalog.Starter||v.modelId==VehicleCatalog.Starter||v.paidTradedColor<=0)||v.tradedColorModel.Length==0&&v.paidTradedColor!=0)throw new ArgumentException("Invalid traded vehicle colour");
   bool lamp=false,rug=false,vehicle=false,color=false,ornament=false,traded=false,fatherColor=false;
+  int purchasedParts=0;
   foreach(var e in a.entries)if(e.kind=="personal-purchase"){
    if(e.debt!=0||e.day>a.settings.DayLimit)throw new ArgumentException("Invalid personal transaction");
    if(e.id=="room:lamp"&&e.cash==-5000&&!lamp)lamp=true;
@@ -233,9 +259,17 @@ public class CampaignAccount {
    else if(v.tradedColorModel.Length>0&&e.id=="vehicle-color:"+v.tradedColorModel&&e.cash==-v.paidTradedColor&&!traded)traded=true;
    else if(father!=null&&e.id=="vehicle-color:"+father.modelId&&e.cash==-father.paidColor&&e.cash<0&&!fatherColor)fatherColor=true;
    else if(e.id=="vehicle-ornament"&&e.cash==-v.paidOrnament&&e.cash<0&&!ornament)ornament=true;
+   else if(e.id.StartsWith("workshop-part:",StringComparison.Ordinal)){
+    var part=Array.Find(WorkshopPart.All,p=>p.receipt==e.id);
+    if(snapshot.version!=5||part==null||e.cash!=-part.price)throw new ArgumentException("Invalid workshop part receipt");
+    purchasedParts|=part.bit;
+   }
    else throw new ArgumentException("Invalid personal purchase");
   }
   if(a.Room.lampOwned!=lamp||a.Room.rugOwned!=rug)throw new ArgumentException("Room ownership does not match purchases");
+  int fatherParts=father==null?0:father.equippedParts;
+  if(((v.equippedParts|fatherParts)&~purchasedParts)!=0||(v.equippedParts&fatherParts)!=0)
+   throw new ArgumentException("Invalid equipped workshop parts");
   if(vehicle!=(v.modelId!=VehicleCatalog.Starter)||color!=v.altColorOwned||ornament!=v.ornamentOwned||traded!=(v.tradedColorModel.Length>0)||fatherColor!=(father!=null&&father.altColorOwned))throw new ArgumentException("Vehicle ownership does not match purchases");
   a.RestoreFatherVehicle();
   a.Fuel=snapshot.fuel;return a;

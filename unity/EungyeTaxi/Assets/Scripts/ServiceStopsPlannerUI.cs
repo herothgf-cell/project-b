@@ -5,8 +5,8 @@ using UnityEngine;
 public partial class FullMapOverlay {
  public bool FacilityPlannerVisible {get;private set;}
  int facilityPlannerKind;Vector2 facilityPlannerScroll;
- static readonly int[] plannerKinds={0,1,3,4,5};
- static readonly string[] plannerLabels={"주유","식사","수면","세차","수리"};
+ static readonly int[] plannerKinds={0,1,3,4,5,Refreshment.Snack};
+ static readonly string[] plannerLabels={"주유","식사","수면","세차","수리","간식·커피"};
  public string SelectedOfferForecastText {get{
   if(selectedOffer==null||SelectedOffer<0||SelectedOffer>=session.jobs.offers.Length||session.jobs.offers[SelectedOffer]!=selectedOffer)return "";
   var forecast=OperationForecastAdapter.ForSelection(session,selectedOffer);
@@ -36,18 +36,22 @@ public partial class FullMapOverlay {
   string price="이용 "+quote.UseSeconds.ToString("0")+"초 · "+quote.Price.ToString("N0")+"원"+(quote.NewDebt>0?" (미납 예상 "+quote.NewDebt.ToString("N0")+"원)":"");
   string effects="이용 직후 예상: 연료 "+quote.EndFuel.ToString("0.0")+"% · 포만 "+quote.EndSatiety.ToString("0")+" · 피로 "+quote.EndFatigue.ToString("0");
   if(option.Kind==4)effects+="\n청결 100 회복";else if(option.Kind==5)effects+="\n내구도 100 회복";
-  return travel+"\n"+wait+"\n"+price+"\n"+effects;
+  var item=Refreshment.For(option.Kind);
+  return (item!=null?item.Menu+"\n":"")+travel+"\n"+wait+"\n"+price+"\n"+effects;
  }
  void DrawFacilityPlannerSidebar(float x,float w,Rect viewport){
   var detail=new GUIStyle(text){fontSize=MapFont(14),wordWrap=true};
   CasualUI.Header(new Rect(x,86,w,38),"생활시설 비교",3);float top=132,cell=(w-12)/3;
   for(int i=0;i<plannerKinds.Length;i++){
+   if(plannerKinds[i]==Refreshment.Snack&&session.services.RefreshmentShops.Count==0)continue;
    var tab=facilityPlannerKind==plannerKinds[i]?CasualUI.Action(button.fontSize):button;
-   if(GUI.Button(new Rect(x+(i%3)*(cell+6),top+(i/3)*40,cell,34),plannerLabels[i],tab)){facilityPlannerKind=plannerKinds[i];facilityPlannerScroll=Vector2.zero;}
+   string label=plannerKinds[i]==5&&session.business.SupportsCareer?"수리·부품":plannerLabels[i];
+   if(GUI.Button(new Rect(x+(i%3)*(cell+6),top+(i/3)*40,cell,34),label,tab)){facilityPlannerKind=plannerKinds[i];facilityPlannerScroll=Vector2.zero;}
   }
   top+=84;string note="선택하면 입구까지 길안내만 시작합니다.\n결제는 현장 정차 후 F로 확정하세요.";
   if(session.jobs.trip.State==TripState.OnTrip)note="승객 운송 중 · 시설 정보를 비교할 수 있습니다.\n길안내는 운송을 마친 뒤 선택하세요.";
   else if(session.jobs.trip.State==TripState.ToPickup)note+="\n주유·세차·수리는 수락한 호출을 유지합니다.";
+  if(facilityPlannerKind==5&&session.business.SupportsCareer)note+="\n공업사 부품 판매대 · 외장과 성능 부품 4종";
   float noteHeight=detail.CalcHeight(new GUIContent(note),w);GUI.Label(new Rect(x,top,w,noteHeight),note,detail);top+=noteHeight+10;
   var options=session.services.FacilityOptions(facilityPlannerKind);float inner=w-24,total=0;var heights=new float[options.Count];
   for(int i=0;i<options.Count;i++){var option=options[i];string blocked=FacilityGuideBlocked(option);float actionHeight=Mathf.Max(36,button.CalcHeight(new GUIContent(blocked.Length==0?"이 시설로 길안내 · 결제 없음":blocked),inner-16));heights[i]=text.CalcHeight(new GUIContent(option.Name),inner-16)+detail.CalcHeight(new GUIContent(FacilityPlannerDetails(option)),inner-16)+actionHeight+46;total+=heights[i]+10;}
