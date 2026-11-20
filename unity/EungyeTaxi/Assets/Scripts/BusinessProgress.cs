@@ -176,7 +176,8 @@ public class BusinessProgress : MonoBehaviour {
   if(!Intro)Intro=session.gameObject.AddComponent<IntroCutscene>();
   // Park the father's taxi in the home bay first so the live garage and cockpit cuts show it.
   var stop=session.services.ParkingStop;
-  session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();
+  float axleHeight=HomeGarage.FloorTop+session.taxi.wheels[0].radius;
+  session.taxi.SetSpawn(stop.Kerb+Vector3.up*axleHeight,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();
   Intro.Play(false,FinishFirstIntro);
  }
  // First-day cockpit photo for the goal comparison, stored beside the career save.
@@ -438,9 +439,9 @@ public class BusinessProgress : MonoBehaviour {
   // r48 (2026-11-20) repaints Suin-ro lane lines only; driving lanes are unchanged.
   const string reviewedR48Hash="ac84fe3eae6e7985a77de9dd5becbd6f56811707bfe66ff2a9e6e1497d2be5ac";
   const string reviewedR49Hash="9985476e9216d487885839e8da42aa81d9651c7266fce8d779a09af560151390";
-  int from=0,to=0;for(int revision=14;revision<=49;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>49)return;
-  string reviewedHash=to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
+  int from=0,to=0;for(int revision=14;revision<=50;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>50)return;
+  string reviewedHash=to==50?"ff4b47dc6b0208a472e86dcff375f1966f54bd22a95d8802eec9915dcde22137":to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   ApplyReviewedEungyeCheckpointMigration(live,from,to);
  }

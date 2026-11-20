@@ -315,7 +315,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   b.RoomOpen=false;
   b.ContinueFromMenu();
   var tyres=s.taxi.transform.Cast<Transform>().Where(t=>t.name=="Tyre visual").ToArray();
-  bool parkedWheels=tyres.Length==4&&s.taxi.wheels.All(w=>tyres.Any(t=>Vector3.Distance(t.position,w.transform.position)<w.radius));
+  bool parkedWheels=tyres.Length==4&&s.taxi.wheels.All(w=>tyres.Any(t=>Vector3.Distance(t.position,w.transform.position)<.01f));
   Debug.Log("FIRST_DEPARTURE memo="+b.RoomOpen+" parkedWheels="+parkedWheels);
   Check(b.RoomOpen&&b.preparing&&!b.Intro&&Time.timeScale==0,"start opens the morning memo before the first intro");
   Check(parkedWheels,"four visible tyres occupy their parked axles before physics starts");
@@ -324,6 +324,8 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   yield return Capture("preparation-selected-goal");
   float startIntro=Time.realtimeSinceStartup;
   b.ContinueFromMenu();Check(b.Intro&&b.Intro.IsPlaying&&!b.Intro.IsReplay&&b.Intro.CurrentCut==0,"first career opens first intro cut");
+  float floorY=s.services.ParkingStop.Kerb.y+HomeGarage.FloorTop;
+  Check(tyres.All(t=>Mathf.Abs(t.position.y-s.taxi.wheels[0].radius-floorY)<.01f),"garage intro tyres rest on the visible floor");
   int cuts=0;
   int shotMask=0;
   while(b.Intro.IsPlaying){int c=b.Intro.CurrentCut;cuts|=1<<c;if((shotMask&(1<<c))==0&&b.Intro.CutElapsed>4.4f){shotMask|=1<<c;yield return Capture("intro-cut-"+(c+1));continue;}yield return null;}

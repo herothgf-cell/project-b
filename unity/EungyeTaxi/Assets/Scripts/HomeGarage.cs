@@ -7,6 +7,7 @@ using UnityEngine;
 // The ground floor of the mapped Deokseong Plaza. Local +z goes into its south facade.
 public static class HomeGarage {
  public const string BuildingId="37612022:B0010000:7014";
+ public const float FloorTop=.06f;
  const string RoadSource="A2218G611368";
  const float Ceiling=4.8f,Track=7;
  sealed class Layout {
@@ -121,7 +122,7 @@ public static class HomeGarage {
    else Wall(a,b,wall,root.transform,collisions);
   }
   Box("1층 천장",0,Ceiling,14,28.2f,.26f,28.5f,wall,root.transform,collisions);
-  Box("실내 주차장 바닥",0,.03f,14,28.2f,.06f,28.4f,floor,root.transform,false);
+  Box("실내 주차장 바닥",0,FloorTop*.5f,14,28.2f,FloorTop,28.4f,floor,root.transform,false);
   foreach(float x in new[]{-Track,0f}){
    foreach(float side in new[]{-1.55f,1.55f})Box("주차 칸",x+side,.077f,8,.1f,.016f,6.4f,line,root.transform,false);
    Box("주차 칸 끝선",x,.077f,11.15f,3.2f,.016f,.1f,line,root.transform,false);

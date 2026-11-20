@@ -33,7 +33,7 @@ public class TaxiController : MonoBehaviour {
     void ParkWheelVisuals(){
         for(int i=0;i<wheels.Length;i++){
             var wheel=wheels[i];
-            visuals[i].SetLocalPositionAndRotation(wheel.transform.localPosition-Vector3.up*wheel.suspensionDistance,Quaternion.Euler(0,0,90));
+            visuals[i].SetLocalPositionAndRotation(wheel.transform.localPosition,Quaternion.Euler(0,0,90));
         }
     }
     void Update() {
