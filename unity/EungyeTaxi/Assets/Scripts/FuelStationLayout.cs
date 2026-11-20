@@ -109,7 +109,7 @@ public static class FuelStationLayout {
   var rest=Rest(map);if(rest!=null&&!ProjectMapScene.Active(map)){var lot=new GameObject(rest.name);lot.transform.SetParent(root.transform,false);lot.transform.position=rest.pump;lot.transform.rotation=Quaternion.LookRotation(rest.direction);var blue=WorldBuilder.Mat("Rest bay",new Color(.1f,.55f,.85f));
    foreach(float x in new[]{-1.4f,1.4f})WorldBuilder.Box("휴식 주차 경계",new Vector3(x,.065f,0),new Vector3(.12f,.02f,6),blue,lot.transform,false);
    foreach(float z in new[]{-3f,3f})WorldBuilder.Box("휴식 주차선",new Vector3(0,.065f,z),new Vector3(2.8f,.02f,.12f),blue,lot.transform,false);
-   Label(lot.transform,"휴식 안내","P · 휴식 주차 (게임시설)\n빈차 정차 · F7 · 무료 수면 100초",new Vector3(0,2.7f,0),.065f);
+   Label(lot.transform,"휴식 안내","P · 휴식 주차 (게임시설)\n빈차 정차 · F · 무료 수면 100초",new Vector3(0,2.7f,0),.065f);
    for(int i=5;i+2<rest.drivePath.Length;i+=9)Arrow(rest.drivePath[i],(rest.drivePath[i+2]-rest.drivePath[i]).normalized,root.transform,blue);
   }
   foreach(var station in For(map)){
@@ -130,7 +130,7 @@ public static class FuelStationLayout {
    WorldBuilder.Box("안내판 기둥",new Vector3(4,2.5f,-13),new Vector3(.22f,5,.22f),white,t);
    WorldBuilder.Box("안내판",new Vector3(4,5.5f,-13),new Vector3(3,1.4f,.25f),red,t);
    Label(t,"시설 이름",station.name+"\n입구 → 주유 구역 → 별도 출구",new Vector3(0,6.5f,0),.065f);
-   Label(t,"주유 정차 안내","주유 정차 · F7\n빈차 · 화살표 방향",new Vector3(-1,1.9f,0),.055f);
+   Label(t,"주유 정차 안내","주유 정차 · F\n빈차 · 화살표 방향",new Vector3(-1,1.9f,0),.055f);
    Label(t,"입구 안내","입구 · 여기부터 수동 운전",t.InverseTransformPoint(station.entrance)+new Vector3(0,2.7f,0),.05f);
    Label(t,"출구 안내","출구 · 도로 차량에 양보",t.InverseTransformPoint(station.exit)+new Vector3(0,2.7f,0),.05f);
    foreach(float z in new[]{-4f,4f})WorldBuilder.Box("주유 정차선",new Vector3(0,.063f,z),new Vector3(2.4f,.018f,.12f),yellow,t,false);

@@ -63,7 +63,7 @@ public static class WorkshopLayout {
    var lot=new GameObject(site.name);lot.transform.SetParent(root.transform,false);lot.transform.position=site.repair;lot.transform.rotation=Quaternion.LookRotation(site.direction);
    foreach(var surface in site.surfaces)for(int i=1;i<surface.points.Length;i++){var a=surface.points[i-1].V();var b=surface.points[i].V();var g=WorldBuilder.Box("공업사 노면",(a+b)/2+Vector3.up*.035f,new Vector3(surface.width,.06f,Vector3.Distance(a,b)+.12f),concrete,root.transform,false);g.transform.rotation=Quaternion.LookRotation(b-a);}
    WorldBuilder.Box("정비 사무동",lot.transform.InverseTransformPoint(site.building)+Vector3.up*2,new Vector3(6,4,18),blue,lot.transform);
-   var positions=new[]{site.repair,site.tow[0],site.tow[1],site.waiting};var names=new[]{"일반 수리 · F7","견인 전용 1","견인 전용 2","대기 · 결제 없음"};
+   var positions=new[]{site.repair,site.tow[0],site.tow[1],site.waiting};var names=new[]{"일반 수리 · F","견인 전용 1","견인 전용 2","대기 · 결제 없음"};
    for(int i=0;i<positions.Length;i++){var local=lot.transform.InverseTransformPoint(positions[i]);foreach(float x in new[]{-1.6f,1.6f})WorldBuilder.Box(names[i],local+new Vector3(x,.08f,0),new Vector3(.12f,.02f,6.5f),paint,lot.transform,false);Label(lot.transform,names[i],local+Vector3.up*1.8f);}
    Label(lot.transform,site.name+"\n수리·견인 / 주유·세차는 주유소",new Vector3(14,5,0));
    Label(lot.transform,"입구 → 일반 정비칸",lot.transform.InverseTransformPoint(site.entry[0])+Vector3.up*2.5f);

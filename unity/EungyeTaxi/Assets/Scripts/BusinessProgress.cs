@@ -175,9 +175,7 @@ public class BusinessProgress : MonoBehaviour {
  void BeginFirstIntro(){
   if(!Intro)Intro=session.gameObject.AddComponent<IntroCutscene>();
   // Park the father's taxi in the home bay first so the live garage and cockpit cuts show it.
-  var stop=session.services.ParkingStop;
-  float axleHeight=HomeGarage.FloorTop+session.taxi.wheels[0].radius;
-  session.taxi.SetSpawn(stop.Kerb+Vector3.up*axleHeight,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();
+  ParkAtShiftStart();
   Intro.Play(false,FinishFirstIntro);
  }
  // First-day cockpit photo for the goal comparison, stored beside the career save.
@@ -205,8 +203,7 @@ public class BusinessProgress : MonoBehaviour {
  void FinishFirstIntro(){
   Story.introSeen=Story.firstVacancy=true;
   session.drivingCamera.SetFirstPerson(true);
-  var stop=session.services.ParkingStop;
-  session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();
+  ParkAtShiftStart();
   session.law.ResetObservation();session.jobs.ResetOffers();session.paused=false;preparing=false;Time.timeScale=1;
   SaveFirstDriveFrame();
   ObserveDailyConditionDeparture();
@@ -519,7 +516,12 @@ public class BusinessProgress : MonoBehaviour {
  void OnApplicationQuit(){if(!testMode&&enabledCampaign&&session&&session.requests)SaveCheckpoint();}
  void OnApplicationPause(bool value){if(value&&!testMode&&enabledCampaign&&session&&session.requests)SaveCheckpoint();}
  System.Collections.IEnumerator RestoreReservedDamageBay(){while(!session.StartupReady)yield return null;session.damage.RestoreReservedBay();session.law.ResetObservation();session.jobs.ResetOffers();}
- public System.Collections.IEnumerator PlaceAtParking(){yield return null;if(session.damage&&session.damage.Disabled&&!string.IsNullOrEmpty(ledger.Care.Damage.RepairBayId)){session.damage.RestoreReservedBay();session.law.ResetObservation();session.jobs.ResetOffers();yield break;}var stop=session.services.ParkingStop;session.taxi.SetSpawn(stop.Kerb+Vector3.up*.65f,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();session.law.ResetObservation();session.jobs.ResetOffers();}
+ void ParkAtShiftStart(){
+  var stop=session.services.ParkingStop;
+  float height=session.services.HasHomeBase?HomeGarage.FloorTop+session.taxi.wheels[0].radius:.65f;
+  session.taxi.SetSpawn(stop.Kerb+Vector3.up*height,Quaternion.LookRotation(stop.Direction));session.taxi.ResetTaxi();
+ }
+ public System.Collections.IEnumerator PlaceAtParking(){yield return null;if(session.damage&&session.damage.Disabled&&!string.IsNullOrEmpty(ledger.Care.Damage.RepairBayId)){session.damage.RestoreReservedBay();session.law.ResetObservation();session.jobs.ResetOffers();yield break;}ParkAtShiftStart();session.law.ResetObservation();session.jobs.ResetOffers();}
 
  void FixedUpdate(){
   if(PvpNativeLan.IsReplica(session)||session&&session.simulationMatch&&PvpNativeLan.WaitingForWorld)return;
@@ -746,7 +748,7 @@ public class BusinessProgress : MonoBehaviour {
   }catch(Exception ex){SaveFailed=true;saveStatus="원본 별도 보관 실패 · 기존 저장 유지 · 다시 시도해 주세요";Debug.LogWarning("Campaign recovery archive failed: "+ex.Message);return false;}
  }
  void PrepareDay(){InitializeDailyCondition();Cabin=new CabinControlsState();session.GetComponent<ExitQueueSituation>().Stop();session.GetComponent<RightTurnSituation>().Stop();taxPrompt=false;if(session.law)session.law.ResetObservation();session.jobs.ClearForDay();if(session.roadConditions)session.roadConditions.ResetForDay();session.taxi.ResetTaxi();session.manners.BeginRide();session.paused=false;notice="";preparing=useV2&&(!testMode||storyTest||ShiftDevEndProbe.DailyCheck||ShiftDevEndProbe.DailyReload||PassengerStoryProbe.Enabled);Time.timeScale=preparing?0:1;if(preparing)StartCoroutine(PlaceAtParking());}
- public void Depart(){if(resumeBlocked){notice=saveStatus;RequestRestart();return;}if(session.FullMapOpen||restartPrompt||RoomOpen||pendingPayment>=0||session.GetComponent<PracticeSession>().Busy)return;if(NeedsFirstMemo){PersonalRoomHUD.OpenPreparationMemo(this);return;}if(StoryEnabled&&preparing&&!Story.introSeen){if(!IntroInputBlocked)BeginFirstIntro();return;}preparing=false;Time.timeScale=1;ObserveDailyConditionDeparture();if(CabinEnabled&&ledger.Day==4&&DrivingSettings.Current.cabinAssist)EndDayNotice("오늘부터 미터기는 직접 켭니다 · 손님이 타면 J, 내리면 다시 J");}
+ public void Depart(){if(resumeBlocked){notice=saveStatus;RequestRestart();return;}if(session.FullMapOpen||restartPrompt||RoomOpen||pendingPayment>=0||session.GetComponent<PracticeSession>().Busy)return;if(NeedsFirstMemo){PersonalRoomHUD.OpenPreparationMemo(this);return;}if(StoryEnabled&&preparing&&!Story.introSeen){if(!IntroInputBlocked)BeginFirstIntro();return;}if(preparing&&session.services.HasHomeBase&&!(session.damage&&session.damage.Disabled))ParkAtShiftStart();preparing=false;Time.timeScale=1;ObserveDailyConditionDeparture();if(CabinEnabled&&ledger.Day==4&&DrivingSettings.Current.cabinAssist)EndDayNotice("오늘부터 미터기는 직접 켭니다 · 손님이 타면 J, 내리면 다시 J");}
  public void ConfirmTaxClose(bool pay){taxPrompt=false;}
  void RecoverFuel(){
   string id=session.law.ids.Next("fuel-recovery");if(!ledger.Account.RecoverFuel(id,ledger.Day))return;

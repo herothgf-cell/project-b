@@ -48,7 +48,11 @@ public class DriveSession : MonoBehaviour {
         yield return null;stageTimer.Restart();
         roadEnvironment=new GameObject("인도와 도로 경계").AddComponent<RoadEnvironment>();roadEnvironment.Build(world.map);
         var dir=(world.map.targets[1].V()-world.map.targets[0].V()).normalized; var right=new Vector3(dir.z,0,-dir.x);
-        taxi=new GameObject("Temporary Taxi").AddComponent<TaxiController>(); taxi.Create(world.map.targets[0].V(.65f)-dir*(RoadRulesTrial.Enabled?90:23)+right*(RoadRulesTrial.Enabled?1.75f:2.5f),Quaternion.LookRotation(dir));
+        taxi=new GameObject("Temporary Taxi").AddComponent<TaxiController>(); var spawnPosition=world.map.targets[0].V(.65f)-dir*(RoadRulesTrial.Enabled?90:23)+right*(RoadRulesTrial.Enabled?1.75f:2.5f);
+        if(UnifiedModeBootstrap.Selected==UnifiedModeBootstrap.Mode.Single&&!UnifiedModeBootstrap.IsSingleCommand(System.Environment.GetCommandLineArgs())&&HomeGarage.Available(world.map)){
+            var bay=HomeGarage.Bay(world.map);spawnPosition=bay.Kerb+Vector3.up*.65f;dir=bay.Direction;
+        }
+        taxi.Create(spawnPosition,Quaternion.LookRotation(dir));
         signals=taxi.gameObject.AddComponent<TaxiSignals>();
         assisted=taxi.gameObject.AddComponent<AssistedDriveController>();assisted.Initialize(taxi,world.map);taxi.assistance=assisted;
         bool driveTest=System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-smokeTest")>=0;

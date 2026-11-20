@@ -39,7 +39,7 @@ public static class RestaurantSiteLayout {
   Label(t,"식당 간판 글씨","은계 밥집",new Vector3(18.25f,3.35f,-5),.13f);
   foreach(float x in new[]{10.5f,13.5f})WorldBuilder.Box("식당 주차 칸",new Vector3(x,.07f,0),new Vector3(.12f,.025f,7),bay,t,false);
   foreach(float z in new[]{-3.5f,3.5f})WorldBuilder.Box("식당 주차 칸",new Vector3(12,.07f,z),new Vector3(3,.025f,.12f),bay,t,false);
-  Label(t,"식당 주차 안내","P · 식사 주차\n빈차 정차 후 F7",new Vector3(15,2.2f,0),.07f);
+  Label(t,"식당 주차 안내","P · 식사 주차\n빈차 정차 후 F",new Vector3(15,2.2f,0),.07f);
   Label(t,"식당 입구","식당 입구 →\n여기부터 수동 진입",t.InverseTransformPoint(site.enter[7])+Vector3.up*2.4f,.055f);
   Label(t,"식당 출구","출구 · 도로 차량에 양보",t.InverseTransformPoint(site.leave[24])+Vector3.up*2.4f,.055f);
   foreach(var path in new[]{site.enter,site.leave})for(int i=5;i<path.Length-2;i+=9){var obj=new GameObject("식당 진출입 화살표");obj.transform.SetParent(t,false);obj.transform.position=path[i]+Vector3.up*.075f;obj.transform.rotation=Quaternion.LookRotation((path[i+2]-path[i]).normalized);WorldBuilder.Box("방향",Vector3.zero,new Vector3(.14f,.02f,1.4f),white,obj.transform,false);foreach(float sign in new[]{-1f,1f}){var head=WorldBuilder.Box("화살촉",new Vector3(sign*.22f,0,.42f),new Vector3(.12f,.02f,.65f),white,obj.transform,false);head.transform.localRotation=Quaternion.Euler(0,sign*45,0);}}

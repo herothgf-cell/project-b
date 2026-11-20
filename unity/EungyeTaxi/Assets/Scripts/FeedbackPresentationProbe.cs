@@ -21,7 +21,7 @@ public sealed class FeedbackPresentationProbe : MonoBehaviour {
   yield return new WaitForSecondsRealtime(.3f);yield return new WaitForEndOfFrame();Shot("restaurant-1280");s.services.Toggle();
   var station=s.services.Stations[0];Pose(station.pump,station.direction);s.services.Toggle();Check(s.services.open&&s.services.CanUse(0)&&s.services.CanUse(4)&&!s.services.CanUse(1),"gas local menu has fuel and wash only");
   yield return new WaitForSecondsRealtime(.3f);yield return new WaitForEndOfFrame();Shot("fuel-1280");s.services.Toggle();
-  s.services.destination="식당 입구 앞까지 안내 · H 해제 후 주차 칸에 진입 · 정차 후 F7";
+  s.services.destination="식당 입구 앞까지 안내 · H 해제 후 주차 칸에 진입 · 정차 후 F";
   Pose(restaurant.approach.V(),restaurant.approach.Direction);yield return null;yield return new WaitForEndOfFrame();Shot("tip-1280");
   var zones=s.GetComponent<ServiceLawZones>();var zone=zones.zones.Find(x=>x.variant==14);Check(zone!=null&&zones.Live.StartInService(zone),"actual permissive service situation starts");var j=zone.junction;var forward=zones.Live.Direction;Pose(j.center-forward*(j.StopDistance(zones.Live.Axis)+12)+TrafficSystem.Right(forward)*2.5f,forward);s.services.destination="";
   yield return new WaitForSecondsRealtime(.5f);yield return new WaitForEndOfFrame();Shot("signals-1280");zones.Live.Stop();

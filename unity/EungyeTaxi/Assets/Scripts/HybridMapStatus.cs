@@ -4,6 +4,7 @@ using UnityEngine;
 public class HybridMapStatus : MonoBehaviour {
  public DriveSession session;public string current="임시 도로 설정";float next;GUIStyle style;
  void Start(){
+  if(session.services&&session.services.HasHomeBase)return;
   var map=session.world.map;MapStop spawn=map.stops[0];float best=float.MaxValue;
   foreach(var s in map.stops){float d=Vector3.Distance(s.V(),map.targets[0].V());if(d<best){best=d;spawn=s;}}
   var path=session.jobs.nav.hd.paths[spawn.laneEdge];float at=Mathf.Max(1,spawn.laneAt-10);

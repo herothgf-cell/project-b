@@ -45,7 +45,7 @@ public partial class FullMapOverlay {
    var tab=facilityPlannerKind==plannerKinds[i]?CasualUI.Action(button.fontSize):button;
    if(GUI.Button(new Rect(x+(i%3)*(cell+6),top+(i/3)*40,cell,34),plannerLabels[i],tab)){facilityPlannerKind=plannerKinds[i];facilityPlannerScroll=Vector2.zero;}
   }
-  top+=84;string note="선택하면 입구까지 길안내만 시작합니다.\n결제는 현장 정차 후 F7에서 확정하세요.";
+  top+=84;string note="선택하면 입구까지 길안내만 시작합니다.\n결제는 현장 정차 후 F로 확정하세요.";
   if(session.jobs.trip.State==TripState.OnTrip)note="승객 운송 중 · 시설 정보를 비교할 수 있습니다.\n길안내는 운송을 마친 뒤 선택하세요.";
   else if(session.jobs.trip.State==TripState.ToPickup)note+="\n주유·세차·수리는 수락한 호출을 유지합니다.";
   float noteHeight=detail.CalcHeight(new GUIContent(note),w);GUI.Label(new Rect(x,top,w,noteHeight),note,detail);top+=noteHeight+10;

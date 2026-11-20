@@ -38,7 +38,6 @@ public class BusinessHUD : MonoBehaviour {
   GUI.Label(new Rect(28,263,355,22),"오늘 요금 "+Won(e.Income)+" · 예상 순수익 "+Won(e.ProjectedNet),small);
   Progress(new Rect(28,291,355,5),e);
   GUI.Label(new Rect(28,298,355,20),e.Account==null?"목표까지 "+Won(e.RemainingGoal):"현금 "+Won(e.Account.Cash)+" · 미납 "+Won(e.Account.Debt)+" · 연료 "+e.Account.Fuel.ToString("0")+"%",small);
-  if(!string.IsNullOrEmpty(b.notice)){CasualUI.Panel(new Rect(410,300,Screen.width-680,52));var wrap=new GUIStyle(small){wordWrap=true};GUI.Label(new Rect(420,305,Screen.width-700,44),b.notice,wrap);}
  }
  void Summary(BusinessProgress b,EconomyLedger e){
   CasualUI.Panel(new Rect(0,0,Screen.width,Screen.height));
