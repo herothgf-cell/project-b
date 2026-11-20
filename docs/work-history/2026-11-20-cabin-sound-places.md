@@ -15,3 +15,7 @@
 - tools/check_workspace.ps1 -Strict 필수 입력 문제 0. Unity 2022.3.62f2의 분리된 프로젝트 사본에서 -batchmode -nographics -quit -executeMethod CabinSoundChecks.VerifyAndBuild로 지점 39곳과 대체 지점, 네 클립의 진폭·경적 간격 및 설정 저장/취소/복원을 검사하고 PrototypeBuild.BuildHybrid 종료 0. 최초 사본은 .git 루트 식별 조건으로 중단돼 사본을 Git 저장소로 초기화했다.
 - tools/test_cabin_controls_player.ps1 -Executable <통합 실행본> 전용 임시 경력 위치 제어 27건 통과. 일반 풀 창문 요청, K로 요청 충족, 저장 반영, 오디오 소스, 기존 온도·미터기·운임을 확인했다. 관련 검사 파일은 CabinSoundChecks.cs, ShiftDevEndProbe.cs, tests/PassengerTraitTests.cs다.
 - 음향 출력 장치와 실물 키보드·패드 청취, 다른 PC에서의 체감, 자동 물리 주행과 전체 캠페인 수동 운행은 이번에 검사하지 않았다. 음식 메뉴와 시설별 배경은 승인 대기다.
+
+## 기본 실행본 배포
+
+소스 커밋 50115ad의 BuildHybrid 산출물 중 게임 코드 DLL을 기본 실행 폴더에 반영했다. 기본 builds/EungyeTaxi/EungyeTaxi.exe의 위치 제어 검사를 다시 실행해 27건 통과와 종료 0을 확인했다. 통합 및 PvP VerifyOnly 모두 출하 파일 143개(135,321,366바이트)의 크기·SHA256과 별도 사용자 콘텐츠 1개를 확인했다. 변경된 배포 파일은 EungyeTaxi_Data/Managed/Assembly-CSharp.dll과 distribution/EungyeTaxi-build-manifest.json이다.
