@@ -337,6 +337,22 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   Check(b.RoomOpen&&b.preparing&&!b.Intro&&Time.timeScale==0,"start opens the morning memo before the first intro");
   Check(parkedWheels,"four visible tyres occupy their parked axles before physics starts");
   yield return Capture("preparation-wall-memo");
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-wallMemoPointerCheck")>=0){
+   foreach(var goal in new[]{"car","none","home"}){
+    PersonalRoomHUD.OpenPreparationMemo(b);
+    yield return Frames(2);
+    Debug.Log("WALL_MEMO_AWAIT "+goal);
+    float deadline=Time.realtimeSinceStartup+30;
+    while(b.RoomOpen&&Time.realtimeSinceStartup<deadline)yield return null;
+    Check(!b.RoomOpen&&b.WallMemoChoice==goal&&b.ledger.Account.CareerGoal==goal,"wall pointer selects "+goal);
+   }
+   foreach(int width in new[]{1280,1600,1920}){
+    float h=width*9f/16;
+    Rect chase=DriveNotifications.NoticeBounds(width,h,false),cockpit=DriveNotifications.NoticeBounds(width,h,true);
+    Check(Mathf.Approximately(chase.x,cockpit.x)&&cockpit.x<width*.05f&&cockpit.yMax<h-282*UiReadability.HudScale(width,h),"camera switch keeps feed left and clear of mirror "+width);
+   }
+   done=true;Debug.Log("WALL_MEMO_POINTER_OK");Application.Quit(0);yield break;
+  }
   Check(b.ChooseCareerGoal("home")&&b.WallMemoChoice=="home"&&!b.RoomOpen&&b.preparing,"morning memo saves the home goal and returns to preparation");
   yield return Capture("preparation-selected-goal");
   float startIntro=Time.realtimeSinceStartup;

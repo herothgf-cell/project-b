@@ -7,8 +7,9 @@ using UnityEngine;
 // Uses controlled stops and real boarding, request, settlement and reload entry points.
 public sealed class PassengerStoryProbe:MonoBehaviour {
  const string Folder="artifacts/passenger-story-player";
+ static bool ReunionReload {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-studentReunionReloadCheck")>=0;}}
  static bool Matrix {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-passengerStoryMatrixCheck")>=0;}}
- public static bool Reload {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-passengerStoryReloadCheck")>=0;}}
+ public static bool Reload {get{return ReunionReload||Array.IndexOf(Environment.GetCommandLineArgs(),"-passengerStoryReloadCheck")>=0;}}
  public static bool Enabled {get{return Matrix||Reload||Array.IndexOf(Environment.GetCommandLineArgs(),"-passengerStoryCheck")>=0;}}
  public static string SavePath {get{return Path.GetFullPath(Path.Combine(Folder,Matrix?"matrix.json":"campaign.json"));}}
  DriveSession session;
@@ -168,6 +169,16 @@ public sealed class PassengerStoryProbe:MonoBehaviour {
    var runs=RunLocationMatrix();while(runs.MoveNext())yield return runs.Current;
    Application.Quit(0);yield break;
   }
+  if(ReunionReload){
+   Check(b.Logbook.studentPromised&&b.Logbook.studentDay==1&&b.ledger.Day==3,"day three promise restored from disk");
+   Check(j.Active&&j.current.reunionKind==1&&j.current.pickupStopId==b.Logbook.studentStop,"booked student on board after relaunch");
+   int receipts=b.passengers.Count;
+   Check(j.current.studentRadioOff,"quiet ride restored");
+   Pose(j.current.drop);Check(j.Interact()&&!j.Active,"reunion alighting");
+   Check(b.passengers.Count==receipts+1&&b.passengers.Last().reunionLine.Contains("인사드린다고")&&b.Logbook.studentReturned,"one paid receipt and remembered note");
+   Check(b.Logbook.ReunionKind(4,1020)==0,"completed student cannot be scheduled twice");
+   Debug.Log("STUDENT_REUNION_RELOAD_OK checks="+checks);Application.Quit(0);yield break;
+  }
   if(Reload){
    Check(j.Active&&j.trip.State==TripState.OnTrip&&j.CurrentStory?.id=="last-train"&&j.Behavior.PresetId=="hurried","current story and established preset restore");
    var answer=requests.ResultFor(RequestKind.FareHelp);
@@ -183,11 +194,32 @@ public sealed class PassengerStoryProbe:MonoBehaviour {
    yield return new WaitForEndOfFrame();
    ScreenCapture.CaptureScreenshot(Path.GetFullPath(Path.Combine(Folder,"student-receipt.png")));
    yield return new WaitForSecondsRealtime(.5f);
+   Check(panel.AnswerStudent(true)&&b.Logbook.studentPromised,"first alighting promise saved");
+   panel.Close();
+   for(int day=1;day<3;day++){
+    b.ledger.RequestClose("student reunion fixture");Check(b.ledger.Settle()&&b.BeginNextCampaignDay(),"advance to student appointment day");
+    yield return null;yield return null;b.ContinueFromMenu();
+   }
+   b.ledger.Advance(b.ledger.Settings.daySeconds*(b.Logbook.studentMinute-480)/720d,0);
+   int minute=j.StudentMinute;
+   Check(b.Logbook.ReunionKind(3,minute)==1&&b.Logbook.ReunionKind(3,minute+32)==2,"appointment and missed windows");
+   b.Logbook.studentPromised=false;Check(b.Logbook.ReunionKind(3,minute)==2,"unpromised encounter");b.Logbook.studentPromised=true;
+   j.Generate();int index=Array.FindIndex(j.offers,o=>o!=null&&o.reunionKind==1);
+   Check(index>=0,"generated appointment offer");
+   Check(j.Accept(index)&&j.CancelUnboardedCall("재회 호출 취소 검사")&&!b.Logbook.studentReturned,"unboarded cancellation keeps reunion pending");
+   index=Array.FindIndex(j.offers,o=>o!=null&&o.reunionKind==1);Check(index>=0,"reoffer after cancellation");
+   var reunion=j.offers[index];Pose(reunion.pickup);
+   Check(j.Accept(index)&&j.Interact()&&j.trip.State==TripState.OnTrip,"board promised student");
+   b.ledger.Advance(1,0);Check(session.radio.StudentLine.Contains("오실 줄"),"recognition after boarding");
+   yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.GetFullPath(Path.Combine(Folder,"student-reunion.png")));yield return new WaitForSecondsRealtime(.4f);
+   b.ledger.Advance(5,0);Check(session.radio.StudentLine.Contains("조용히")&&session.radio.QuietStudentRide(),"student radio request");
+   Check(b.SaveCheckpoint(),"save occupied reunion for third process");
    Debug.Log("PASSENGER_STORY_RELOAD_OK checks="+checks);Application.Quit(0);yield break;
   }
   CheckTerminalMatrix();
   Check(j.StoryAssignmentLimit>=2&&j.StoryAssignmentLimit<=3,"seeded day cap is within authored targets");
-  var offer=FixtureOffer("last-train");
+  b.ledger.Advance(b.ledger.Settings.daySeconds*.75,0);
+  var offer=FixtureOffer(null);
   Pose(offer.pickup);j.offers[0]=offer;
   Check(j.Accept(0),"accept a real call at a safe pickup");
   Check(j.Interact()&&j.trip.State==TripState.OnTrip&&j.CurrentStory?.id=="last-train","board through the story's established passenger module");

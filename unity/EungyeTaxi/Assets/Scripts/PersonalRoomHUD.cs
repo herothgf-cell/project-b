@@ -129,14 +129,19 @@ public static class PersonalRoomHUD {
    var note=new Rect(328,112,194,54);
    CasualUI.Panel(note,CasualUI.Warm);
    GUI.Label(new Rect(note.x,note.y,194,30),selected<0?"벽 메모":MemoTitles[selected],memoOnWall);
-   if(GUI.Button(new Rect(note.x+20,note.y+29,154,23),selected<0?"메모 고르기":"메모 바꾸기",button)){wallMemoOpen=true;preview="";}
+   GUI.Label(new Rect(note.x+20,note.y+29,154,23),selected<0?"메모 고르기":"메모 바꾸기",button);
+   if(GUI.Button(note,GUIContent.none,GUIStyle.none)){wallMemoOpen=true;preview="";}
    return;
   }
   for(int i=0;i<MemoTitles.Length;i++){
    var note=new Rect(152+i*184,116+(i==1?0:7),173,53);
    CasualUI.Panel(note,i==selected?CasualUI.Card:i==0?CasualUI.Warm:CasualUI.Soft);
-   GUI.Label(note,MemoTitles[i],memoOnWall);
+   if(GUI.Button(note,MemoTitles[i],memoOnWall))SelectMemo(b,MemoGoals[i]);
   }
+ }
+ static void SelectMemo(BusinessProgress b,string goal){
+  if(b.WallMemoChoice==goal){b.DismissWallMemoPrompt();wallMemoOpen=false;if(b.preparing)b.RoomOpen=false;}
+  else if(b.ChooseCareerGoal(goal))wallMemoOpen=false;
  }
  static void DrawMemoPanel(BusinessProgress b){
   MemoStyles();
@@ -147,10 +152,7 @@ public static class PersonalRoomHUD {
    var row=new Rect(885,185+i*81,280,70);
    bool chosen=b.WallMemoChoice==MemoGoals[i];
    if(chosen)CasualUI.RoundedFill(new Rect(row.x-2,row.y-2,row.width+4,row.height+4),CasualUI.Green);
-   if(GUI.Button(row,GUIContent.none,button)){
-    if(chosen){b.DismissWallMemoPrompt();wallMemoOpen=false;if(b.preparing)b.RoomOpen=false;}
-    else if(b.ChooseCareerGoal(MemoGoals[i]))wallMemoOpen=false;
-   }
+   if(GUI.Button(row,GUIContent.none,button))SelectMemo(b,MemoGoals[i]);
    GUI.Label(new Rect(row.x+13,row.y+8,row.width-26,27),MemoTitles[i]+(chosen?" · 붙인 메모":""),memoName);
    string description=i==2&&b.ledger.Day>=3?"목표 없이 · 생계 유지":MemoDescriptions[i];
    GUI.Label(new Rect(row.x+13,row.y+37,row.width-26,25),description,memoDescription);

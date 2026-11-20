@@ -68,6 +68,7 @@ public enum PedestrianState { None, Intending, Crossing, Unknown }
 }
 [Serializable] public class PracticeResult {public string sourceId,action,latestOutcome,feedback;public int events,score,validFindings;public string EvaluationText(){if(!string.IsNullOrEmpty(latestOutcome))return latestOutcome;return validFindings==0?"유효 평가 없음":score+"점 / 유효 "+validFindings+"건";}}
 [Serializable] public class PassengerResult {
+ public string reunionLine;
  public bool foundFatherNotebook;
  public string storyId,storyLine,passengerPresetId;
  public int storyEnding;
