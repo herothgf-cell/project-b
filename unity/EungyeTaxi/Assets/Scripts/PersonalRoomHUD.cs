@@ -6,7 +6,7 @@ public static class PersonalRoomHUD {
  static GUIStyle text,title,small,button;static Texture2D backdrop,morningSky;static string preview="",confirmation="";static int style;
  static readonly Color NightTint=new Color(.53f,.64f,.88f);
  static readonly Color NightOutside=new Color(.035f,.08f,.22f,.28f);
- static readonly Rect[] WindowPanes={new Rect(619,194,217,245),new Rect(857,194,218,245)};
+ static readonly Rect[] WindowPanes={new Rect(620,245,210,198),new Rect(859,245,190,198)};
  static readonly string[] MemoGoals={"car","home","none"};
  static readonly string[] MemoTitles={"아버지 차를, 내 차로","이 집을 내 집답게","일단, 오늘을 버티자"};
  static readonly string[] MemoDescriptions={"꾸미기 · 새 차 저축","소품 · 위층 넓은 호실","목표 없이 · 3일차에 다시"};
@@ -17,8 +17,8 @@ public static class PersonalRoomHUD {
  static bool wallMemoOpen;
  static string Money(int n){return n.ToString("N0")+"원";}
  static readonly System.Collections.Generic.Dictionary<string,Texture2D> layers=new System.Collections.Generic.Dictionary<string,Texture2D>();
- // Item crops are in source pixels and match CROPS in tools/generate_room_items.py.
- static Rect Crop(string name){return name.Contains("rug")?new Rect(500,744,676,176):name.Contains("glow")?new Rect(436,228,568,388):new Rect(660,384,132,136);}
+ // Place the cropped item sprites on the desk and floor of the approved background (1672 × 941 design coordinates).
+ static Rect Crop(string name){return name.Contains("rug")?new Rect(577,807,622,128):name.Contains("glow")?new Rect(492,275,568,388):new Rect(716,431,132,136);}
  static Rect RoomRect(Rect view,Rect source){
   float sx=view.width/BackdropWidth,sy=view.height/BackdropHeight;
   return new Rect(view.x+source.x*sx,view.y+source.y*sy,source.width*sx,source.height*sy);
@@ -45,7 +45,7 @@ public static class PersonalRoomHUD {
  }
  static void DrawRoomView(Rect view,PersonalRoomState room,bool morning,bool showPhoto){
   var tint=morning?Color.white:NightTint;
-  if(!backdrop)backdrop=Resources.Load<Texture2D>("personal-room-base");
+  if(!backdrop)backdrop=FacilityArt.Texture("room");
   if(backdrop){
    DrawTexture(view,backdrop,tint);
    foreach(var pane in WindowPanes){
@@ -65,7 +65,7 @@ public static class PersonalRoomHUD {
   }
   if(!showPhoto)return;
   if(!fatherPhoto)fatherPhoto=Resources.Load<Texture2D>("UI/father-photo");
-  if(fatherPhoto)DrawTexture(RoomRect(view,new Rect(868,424,61,77)),fatherPhoto,tint,ScaleMode.ScaleToFit);
+  if(fatherPhoto)DrawTexture(RoomRect(view,new Rect(951,478,61,77)),fatherPhoto,tint,ScaleMode.ScaleToFit);
  }
  static string StyleName(string item,int s){return item=="lamp"?(s==0?"나무 받침·리넨 갓":"짙은 철제 스탠드"):(s==0?"회청색 테두리":"테라코타 줄무늬·술");}
  static void Box(Rect r,Color c){DrawTexture(r,Texture2D.whiteTexture,c);}

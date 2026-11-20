@@ -7,6 +7,7 @@ using UnityEngine;
 // Player check for the single shift-length selector and the developer end-day button.
 // Uses a private temp campaign, never the player's save.
 public sealed class ShiftDevEndProbe : MonoBehaviour {
+ public static readonly bool FacilityArtCheck=Array.IndexOf(Environment.GetCommandLineArgs(),"-facilityArtCheck")>=0;
  public static bool HomeCheck {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-homeBaseCheck")>=0;}}
  public static bool CabinCheck {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-cabinControlsCheck")>=0;}}
  public static bool CareerCheck {get{return Array.IndexOf(Environment.GetCommandLineArgs(),"-careerCheck")>=0;}}
@@ -17,7 +18,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
  public static readonly bool DailyCheck=Array.IndexOf(Environment.GetCommandLineArgs(),"-dailyConditionCheck")>=0;
  public static readonly bool DailyReload=Array.IndexOf(Environment.GetCommandLineArgs(),"-dailyConditionReloadCheck")>=0;
  public static string DailySavePath {get{var args=Environment.GetCommandLineArgs();int index=Array.IndexOf(args,"-shiftCaptureOutput");return Path.GetFullPath(Path.Combine(index>=0&&index+1<args.Length?args[index+1]:"artifacts/daily-condition-player","campaign.json"));}}
- public static bool Enabled {get{return DailyCheck||DailyReload||FatherStoryCheck||FatherStoryReload||CabinCheck||CareerCheck||CareerReload||HomeCheck||Array.IndexOf(Environment.GetCommandLineArgs(),"-shiftDevEndCheck")>=0;}}
+ public static bool Enabled {get{return FacilityArtCheck||DailyCheck||DailyReload||FatherStoryCheck||FatherStoryReload||CabinCheck||CareerCheck||CareerReload||HomeCheck||Array.IndexOf(Environment.GetCommandLineArgs(),"-shiftDevEndCheck")>=0;}}
  public static readonly string CampaignPath=Path.Combine(Path.GetTempPath(),"taxi-shift-"+Guid.NewGuid().ToString("N"),"campaign.json");
  static bool attached;DriveSession s;int checks;bool done;float start;string output;
  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]static void Attach(){if(Enabled&&!attached){attached=true;new GameObject("Shift/dev end acceptance").AddComponent<ShiftDevEndProbe>();}}
@@ -62,6 +63,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   yield return null;yield return null;
   FindObjectOfType<UnifiedModeBootstrap>().StartSingle();yield return Ready();
   var b=s.business;
+  if(FacilityArtCheck){yield return RunFacilityArt(b);yield break;}
   if(DailyCheck||DailyReload){yield return RunDailyConditions(b);yield break;}
   if(FatherStoryCheck||FatherStoryReload){yield return RunFatherStory(b);yield break;}
   if(CabinCheck){
@@ -380,6 +382,43 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    Destroy(pixels);
    Destroy(camera.gameObject);
   }
+ }
+ IEnumerator RunFacilityArt(BusinessProgress business){
+  var services=s.services;
+  Check(business.SavePath==CampaignPath&&services.HasHomeBase,"isolated single career for facility art");
+  foreach(var key in new[]{"diner","fuel","wash","workshop","rest","parking","garage","room","pork","stew","soup"})
+   Check(FacilityArt.Texture(key)!=null,"packaged texture "+key);
+  business.ContinueFromMenu();yield return Frames(3);
+  s.taxi.body.useGravity=false;s.taxi.body.detectCollisions=false;s.taxi.enabled=false;
+  var meal=services.MealParkingStop;
+  Pose(meal.Kerb,meal.Direction);services.Toggle();
+  Check(services.open&&services.RequestAction(1)&&services.InteriorFor(services.LocalActions[0],services.pending)=="diner","restaurant opens at parking bay");
+  int cash=business.ledger.Account.Cash;
+  for(int i=0;i<3;i++)Check(services.SelectMeal(i)&&services.SelectedMeal==i&&business.ledger.Account.Cash==cash,"meal card selection "+i);
+  yield return Capture("meal-selected");
+  services.ConfirmAction(false);
+  Check(services.pending<0&&business.ledger.Account.Cash==cash,"cancel meal quote without charge");
+  Check(services.RequestAction(1)&&services.ConfirmAction(true)&&business.ledger.Account.Cash==cash-3000,"meal charges exactly once");
+  var pump=services.Stations[0];Pose(pump.pump,pump.direction);services.Toggle();
+  Check(services.open&&services.InteriorFor(services.LocalActions[0],-1)=="fuel","fuel bay interior");
+  Check(services.RequestAction(4)&&services.InteriorFor(services.LocalActions[0],services.pending)=="wash","wash quote changes interior");
+  yield return Capture("wash");services.ConfirmAction(false);services.Close();
+  var shop=services.Workshops[0];Pose(shop.repair,shop.direction);services.Toggle();
+  Check(services.open&&services.InteriorFor(services.LocalActions[0],-1)=="workshop","repair bay interior");
+  services.Close();
+  var rest=services.RestArea;Pose(rest.pump,rest.direction);services.Toggle();
+  Check(services.open&&services.InteriorFor(services.LocalActions[0],-1)=="rest","rest area interior");
+  services.Close();
+  var home=services.ParkingStop;Pose(home.Kerb,home.Direction);services.Toggle();
+  Check(services.open&&services.InteriorFor(services.LocalActions[0],-1)=="garage","home garage interior");
+  services.Close();
+  Check(business.ledger.RecordFare("facility-art-fixture",20000),"fixture funds for room layers");
+  Check(business.RequestEndDay(),"home reaches settlement");
+  while(!business.ShowingSummary)yield return null;
+  business.RoomOpen=true;
+  Check(business.ChangeRoom("buy","lamp",0)&&business.ChangeRoom("buy","rug",0),"place purchased lamp and rug on approved room");
+  yield return Capture("room-furnished");
+  done=true;Debug.Log("FACILITY_ART_PLAYER_OK checks="+checks);Application.Quit(0);
  }
  void Pose(Vector3 kerb,Vector3 direction){
   var position=kerb+Vector3.up*.65f;
