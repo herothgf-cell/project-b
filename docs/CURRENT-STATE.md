@@ -1,3 +1,5 @@
+2026-11-17: J7841 동쪽 직진/우회전 제한·상류 화살표 제거·남쪽 차로 내부 흰 실선 위치 교정. r46·BuildHybrid 종료0·저장 이관1,031검사. [검증과 실행](work-history/2026-11-17-j7841-road-report.md).
+
 2026-11-17: 도로 캡처 Ctrl+Z·텍스트 영역 수정/크기·이미지 전용 복사 보정. 모델14/Player16·BuildHybrid 통과. [검증](work-history/2026-11-17-road-annotation-edit-fix.md).
 
 2026-11-17: 개발용 도로 보기의 지점 좌표·교차로 복사, 캡처 위 펜/화살표/텍스트 및 이미지 복사 추가. 모델10·일반 사용자 창 Player12검사와 BuildHybrid 통과. [사용법·검증](work-history/2026-11-17-road-report-capture.md).
@@ -19,7 +21,7 @@
 | 게임 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` (또는 `Play-Eungye.cmd`). 실행 폴더 전체가 필요 |
 | 모드 | 은계 싱글 3일(하루 예정 20분) / A2 자체 도시 PvP(봇 3 또는 LAN 최대 4명) |
 | 개발 | Unity **2022.3.62f2**, 프로젝트 `unity/EungyeTaxi`, 빌드 `PrototypeBuild.BuildHybrid` |
-| 기본 배포 | 은계 지도 r45 · 승하차 39곳 ([검증과 남은 조사](work-history/2026-11-17-road-transitions-and-facilities.md)) |
+| 기본 배포 | 은계 지도 r47 · 승하차 39곳 ([검증과 남은 조사](work-history/2026-11-17-road-transitions-and-facilities.md)) |
 | 통신 | LAN **v19**(이전 v17/v18과 참가 불가). PvP 방 목록에서 호스트에 직접 참가한다. 방 검색은 UDP `47777`, 기본 게임 포트는 UDP `7777`이다. 방 목록은 양쪽 PC의 새 실행본이 필요하다. |
 | 지도 | 정식 지도 `config/maps/project/eungye.project.json`(Git 포함). 원본 재수입할 때만 지도 ZIP 필요 |
 | 설정 도구 | 루트 `설정 관리.cmd` — 승객·대사·효과·법규·밸런스·차량 가격 조정. **Node.js 필요**(`winget install --id OpenJS.NodeJS.LTS`) |
