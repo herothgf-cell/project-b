@@ -1,5 +1,8 @@
 ## 2026-11-20 은계 영업 목표와 기사 생활 기획
 
+- [x] 시흥 운임, 경기 식비·LPG, r50 첫 영업 호출판 세 번의 제시액과 운송 한 건의 실수령을 대조했다. [가격·손익 판단](content-design/2026-11-20-eungye-economy-review.md) · [재현 기록](work-history/2026-11-20-eungye-economy-review.md)
+- [ ] 사람 3일·기본 20분 영업에서 완료·0원 운송 수, 식사·주유 후 남는 돈, 첫 차량까지의 저축 속도를 기록한다.
+
 - [x] 현재 시작·정산·차고 규칙과 r50 시설 10곳을 대조하고, 담당 기획 목록과 마인드맵을 연결했다. [전체 기획](content-design/README.md) · [위치도](content-design/eungye-facility-locations.md)
 - [ ] 검토안 1차. 첫 출차 한 번 → 첫 운임·장부 → 저축 또는 특별 운행 준비 → 다음 저녁 실제 완주를 사람 플레이로 확인한다.
 - [ ] 후속 검토. 판매점 현장 계약·다음 출차 인도, 공업사 오일 교환, 체력·운전 숙련을 시험한다. 판매점 좌표와 경제 수치는 검증 전이다. [기획·수용 기준](content-design/37-driver-life-and-business.md) · [작업 이력](work-history/2026-11-20-driver-life-business-design.md)
