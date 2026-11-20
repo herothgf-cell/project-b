@@ -4,16 +4,15 @@
 
 마인드맵에서 옮긴 세부 항목을 분야별로 찾는 문서다. **아래 이관 목록은 2026-11-13 정리 직전의 항목명·단계 기록이며, 최신 규칙은 담당 기획을 우선한다.** 과거 수치·승객 수·LAN 버전을 현재 값으로 다시 채택하지 않는다.
 
-## 현재 담당 기획
+## 2026-11-20 기준으로 찾기
 
-- [개인 생활과 차량 주거 성장 기획](11-personal-life-and-growth.md)
-- [재출발에서 원하는 택시와 첫 이사까지의 성장 단계](12-career-growth-stages.md)
-- [비 운행 프로토타입](18-rain-prototype.md)
-- [22 성장 방향 재검토와 첫 차량 구매·PvP 연동](22-growth-direction-and-vehicle-purchase.md)
-- [23 개인택시 면허 경로 (본편 기획 · 보류)](23-license-career-path.md)
-- [후속 구상](../future-design/README.md)
-
-차량 교체·차종 특성·PvP 외형과 비 프로토는 이미 구현된 범위가 있다. 예전 후속 가지에 있더라도 22·18의 현재 상태를 우선한다. 기사 평점·면허 경로와 눈·낮밤은 보류/후속이다.
+| 찾는 아이디어 | 현재 위치 |
+|---|---|
+| 돈을 계속 벌어서 어떤 운전을 해볼 수 있을까? | **후속 제안.** 모은 돈으로 여는 특별 운행, 첫 출차, 차량 판매점, 주기 정비, 소지금 장부와 기사 성장. [37 기사 생활과 개인택시 경영](37-driver-life-and-business.md) |
+| 경력과 소유 | 차량 구매·차종 특성·PvP 외형, 3일 이후 같은 경력으로 계속 영업이 구현됐다. 방·차 소유와 이사까지의 이전 원안도 남아 있다. [22 차종과 구매](22-growth-direction-and-vehicle-purchase.md) · [28 계속 영업](28-continuous-career-mode.md) · [11 소유 원칙](11-personal-life-and-growth.md) · [12 성장 단계 원안](12-career-growth-stages.md) |
+| 날씨와 시간대 | 비 프로토, 하루 조건 카드, 시간대별 조명과 은계 FM이 구현됐다. 눈은 후속 구상에 남아 있다. [18 비](18-rain-prototype.md) · [29 하루 조건](29-daily-conditions.md) · [31 낮밤·라디오](31-day-night-and-radio.md) |
+| 승객·차내 장치 | 창문·온도·미터기 조작, 막차 놓친 학생 한 명과의 재회가 구현됐다. 일반 예약·단골은 후속 영역이다. [32 차내 조작](32-deferred-systems-review.md) · [35 학생 재회](35-student-reunion.md) |
+| 평점·면허·기타 | 기사 평점은 보류했고 개인택시 면허 취득 경로는 제외했다. 시작 설정과 결정의 근거는 후속 결정문에서 찾는다. [22 기사 평점 검토](22-growth-direction-and-vehicle-purchase.md) · [23 면허 원안](23-license-career-path.md) · [32 결정](32-deferred-systems-review.md) · [후속 구상 보관 목록](../future-design/README.md) |
 
 ## 마인드맵에서 이관한 세부 항목
 

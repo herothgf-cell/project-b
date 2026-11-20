@@ -1,104 +1,57 @@
 # 택시 시뮬레이션 콘텐츠 기획
 
-## 빠르게 찾기 · 2026-11-13 마인드맵 정리
+은계 싱글에서 기사는 아버지에게서 물려받은 택시로 생계를 잇는다. 어떤 호출을 받을지, 손님을 어떻게 모실지, 남은 시간과 돈을 어디에 쓸지가 하루의 일이다. 자체 도시 A2에서는 같은 운전·승객 규칙을 바탕으로 네 기사가 영업 순수익을 겨룬다. [게임 개요](00-game-overview.md) · [아버지의 택시](33-backstory-presentation.md) · [PvP 기획](pvp/README.md)
 
-[마인드맵 목차](택시%20시뮬레이션-목차.md)는 핵심 구조만 표시한다. 개별 항목은 [승객·대화·요청](24-passenger-detail-index.md), [주행·법규·기록](25-driving-rule-detail-index.md), [모드·지도·생활·차량·화면](26-system-detail-index.md), [성장·후속 구상](27-future-detail-index.md)에서 담당 기획과 함께 찾는다. 기존 세부 항목은 이관했으며 메모·진척도 원본은 [보존본](../design-history/content-design/2026-11-13-mindmap-before-simplify.mmst)에 남겼다.
+## 먼저 볼 문서
 
-최신 승객 구성은 [11/13 현황표](2026-11-13-passenger-current-inventory.md), 차량 구매·PvP 외형의 현재 구현 상태는 [기획22](22-growth-direction-and-vehicle-purchase.md)를 우선한다. 아래 날짜가 있는 초기 설명은 당시 상태다.
-
-정리 기준: **2026-11-06**, `main`의 코드·체크리스트·작업 이력 대조. 이 폴더는 플레이어의 선택과 결과를 정의한다. 구현 완료 여부는 아래 상태표와 [개발 체크리스트](../prototype-development-checklist.md), 실제 검증·실행본은 [최신 작업 이력](../work-history/LATEST.md)에서 확인한다.
-
-## 현재 제공하는 경험
-
-기획 미정·미구현은 [마인드맵 전체 대조 목록](../future-design/2026-11-07-planning-gaps-and-weather.md)에서 확인한다. **비만 프로토에 채택하여 표현·자동 와이퍼·승차 오염·제동 영향·툴 설정을 구현했다.** [18 비 프로토](18-rain-prototype.md). 눈·동적 낮밤·확률 미끄러짐 활성화는 후속이다. 잠든 승객을 깨우는 대기·가상 시각/시간대 수요·다음 날 피로 회복과 구분한다.
-
-`builds/EungyeTaxi/EungyeTaxi.exe`에서 **은계 싱글** 또는 **자체 도시 A2 PVP**를 선택한다. 싱글은 3일×예정 20분 영업과 초과 영업·휴식 마감, PVP는 시간 설정·봇 상대 또는 LAN 최대 4명이다. 모드별 시간·저장·정산은 구분한다.
-
-운전 점수는 캠페인에 이어지는 법규 평가이고, 승객 만족도는 이번 운송의 응대·주행 결과다. 도로 상황 통과를 승하차의 필수 조건이나 강제 경유지로 삼지 않는다. 현재는 승객·취객·생활시설·사고/수리와 작은 방/첫 구매까지 구현돼 있다. 사람의 장시간 플레이 수용 완료와는 다르다.
-
-## 담당 문서와 읽는 순서
-
-승객 제작은 [15 프리셋·특성 조합·효과·제작 예시](15-passenger-presets-and-traits.md)를 따른다. [이전 구조 검토](../future-design/2026-11-06-passenger-composition-review.md)는 전환 전 분석이며 현재 지원 조합/제한은15와 작업 이력을 우선한다.
-
-같은 규칙의 수치·조건은 **담당 문서 한 곳**에서 관리한다. 개요·화면·대사는 상세 수치를 다시 정의하지 않는다.
-
-| 문서 | 담당 내용 | 다른 문서에 두는 내용 |
-|---|---|---|
-| [00 게임 개요](00-game-overview.md) | 핵심 경험·플레이 흐름·범위 | 기능별 수치·검증 이력 |
-| [01 주행·교통·평가](01-driving-and-traffic.md) | 조작/설정·차로/신호·법규·운전 점수/M | 운임·사고비·생활 회복량 |
-| [02 승객·운송·운임](02-passengers-and-fares.md) | 승하차·17요청·11유형/34변주·S/R·운임·상태 사건 | 생활 서비스·대사 원문 |
-| [03 생활·차량·경제](03-life-and-economy.md) | 연료/컨디션/청결·시설·내구도·수리/견인·회계·PVP 생활 차이 | 사고 등급·캠페인 전환 |
-| [04 캠페인·결과·회고](04-campaign-and-feedback.md) | 3일/하루 종료·이월·결과/연습·이어하기 | 개인 구매 상세·서비스 가격 |
-| [05 화면·조작·길안내](05-interface-and-navigation.md) | HUD/지도·알림·대화·결과·가독성 | 점수/효과/경제 산식 |
-| [06 마인드맵 관리](06-mindmap-review.md) | 원본/목차의 역할·단계 표시·과거 검토 찾기 | 현재 기능 상세·개발 완료율 |
-| [07 승객 대화](07-passenger-dialogue.md) | 승객/기사 대사·선택 의도·응답 흐름 | 선택 효과 숫자·판정 조건 |
-| [15 승객 프리셋·특성](15-passenger-presets-and-traits.md) | 기존 승객 분해·조합 제약·툴 제작·요소별 확장 | 공통 수치 원본·미구현 행동 실행 |
-| [16 승객별 개별 설정](16-passenger-preset-overrides.md) | 대사/확률/효과 공통 상속·개별 덮어쓰기·복원 | 신규 행동/판정기 생성 |
-| [17 승객 다양화1차](17-passenger-roster-v1.md) | 총24/활성23·새12명 구성·현재 기본 후보/제외 요청 | 구 저장/사용자 프로필 강제 교체 |
-| [08 사고·공업사](08-accident-and-workshop-proposal.md) | 사고 대상/등급·처리비/시간/점수·중단·복귀 | 일반 충돌 손상표·유료 수리 가격 |
-| [PVP 목록](pvp/README.md) | 현재 A2·공유 호출·경기·LAN과 이전 원안의 구분 | 싱글 날짜·저장 정책 |
-
-## 생활·성장 기획의 상태
-
-| 문서 | 현재 구현 | 후속 제안/남은 검증 |
-|---|---|---|
-| [09 일과 개인 생활 초안](09-work-and-personal-life-proposal.md) | 현재 제품 규칙으로 채택하지 않음 | 반복 인물·사진 방향은 대체된 이전 안 |
-| [10 재출발 시놉시스](10-restarting-driver-synopsis.md) | 배경·목표 방향, 기본 방 표현 | 인트로/서사 진행·장기 경력은 후속 |
-| [11 생활·소유 공통 원칙](11-personal-life-and-growth.md) | 13에서 채택한 방/개인 구매 범위 | 화분·차량 장식·차량 구매·이사·연속 소유는 미구현 |
-| [12 성장 단계](12-career-growth-stages.md) | 현재 3일 영업을 출발점으로 참조 | 6단계 경력·날짜별 수요 변주·차/집 거래는 제안 |
-| [13 작은 방·첫 구매](13-three-day-room-and-first-purchase.md) | 선택적 방·조명/러그·찜/배치·저장·개인 지출 분리 | 처음 방 비교·전체 과거 방 탐색·카드 숨김/상품 이미지, 가격/동기 수용 |
-| [22 성장 방향·차량 구매·PvP 내 차](22-growth-direction-and-vehicle-purchase.md) | 없음(2026-11-10 기획 확정) | 3일 안 차량 교체 1회·차종 특성·PvP 외형 미구현, 기사 평점 보류 |
-| [23 개인택시 면허 경로](23-license-career-path.md) | 없음 | 본편 기획 단계로 보류, 할거리만 등록 |
-| [14 생활 기획 안내](14-personal-life-design-guide.md) | 위 문서의 읽는 순서 | 생성 목업은 실행 화면/검증 증거가 아님 |
-
-개인 예약·단골·보험·세금·과실/구급차는 현재 프로토에 포함하지 않는다. 차량 손상·사고 처리·수리/견인은 이미 포함되므로 과거의 “사고 제외”와 구분한다.
-
-## 수치·판정·표현을 확인하는 곳
-
-| 확인할 것 | 기준 |
+| 찾는 내용 | 읽을 곳 |
 |---|---|
-| 승객 선택별 즉시/운행 중/종료 효과 | [승객 효과 밸런스 v1](../passenger-balance-v1.md), [출하 프리셋](../../config/content/presets/passenger-balance-v1.json) |
-| 실제 성공/실패/판정 불가 조건 | [요청 판정표](../content-tuning-request-outcomes.md), 02의 행동 규칙 |
-| 개인 설정·밸런스 편집과 적용 | [설정 관리 안내](../content-tuning-tool-guide.md). 새 캠페인/새 방 적용과 이어하기 snapshot을 구분 |
-| UI 의도·시안 | 05 및 [최신 UI 방향](../ui/2026-11-06-full-ui-direction.md) |
-| 개발·배포·다른 PC 재개 | [현재 구현](../CURRENT-STATE.md), [최신 이력](../work-history/LATEST.md), [PC 인계](../handoff/2026-11-06/README.md) |
+| 첫 운임을 받고 나면, 다음엔 무엇을 위해 달릴까? | **[37 은계 기사 생활과 영업 목표](37-driver-life-and-business.md)**. 모은 돈으로 특별 운행을 열고 직접 운전하는 목표를 제안한다. 첫 출차, 차량 판매점, 정비, 장부, 기사 성장은 그 목표를 준비하는 수단이다. |
+| 은계에서 지금 어디로 가야 하는지 | **[은계 시설 위치 안내](eungye-facility-locations.md)**. 현재 지도에서 찾는 곳과 이용 기능 |
+| 실제 실행본에 들어간 기능과 남은 검증 | [최근 배포·검증 기록](../work-history/LATEST.md) → [개발 체크리스트](../prototype-development-checklist.md). 날짜가 있는 기획과 시안은 그 시점의 기록으로 읽는다. |
+| 아이디어 전체의 관계 | [마인드맵 목차](택시%20시뮬레이션-목차.md) · [원본 마인드맵](택시%20시뮬레이션.mmst) · [마인드맵 관리 기준](06-mindmap-review.md) |
 
-사용자별 프로필과 진행 중 저장에는 출하 기본값과 다른 수치가 있을 수 있다. 인계용 revision6은 별도 가져오기 자료이며 출하 기본값으로 자동 채택하지 않는다. 숫자를 편집했다고 새 판정기/실제 음악·에어컨·창문 조작이 생기는 것은 아니다.
+## 현재 은계 싱글과 새 제안
 
-## 변경·보존 원칙
+**2026-11-20 기준.** 통합 실행 파일 `builds/EungyeTaxi/EungyeTaxi.exe`의 은계 싱글을 기준으로 읽는다. 3일은 도입부이며 같은 경력으로 4일차부터 영업을 이어갈 수 있다. 가격과 시간의 장기 체감, 초보자가 첫날 행동을 알아내는지는 사람 플레이로 확인할 항목이다. [계속 영업](28-continuous-career-mode.md) · [검증 이력](../work-history/LATEST.md)
 
-- 현재 규칙과 후속 제안을 구분하고, 변경은 담당 문서와 체크리스트·작업 이력에 함께 남긴다.
-- 게임 배점·비용·시간은 밸런스 값이다. 현실 법적 벌점·실측 신호·영업 수익을 보장하지 않는다.
-- [마인드맵 원본](택시%20시뮬레이션.mmst)과 [글 목차](택시%20시뮬레이션-목차.md)는 탐색용이다. 11/13 사용자 요청에 따라 개요로 축소했으며 이후에는 세부 항목을 담당 기획에서 관리한다. 원본 메모·속성은 보존본을 유지한다.
-- 날짜별 이전 결정은 [기획 변경 이력](../design-history/content-design/README.md), 개발 결과는 작업 이력에 보존한다. [이번 중복/충돌 정리표](../work-history/2026-11-06-content-design-cleanup.md)를 참고한다.
-
-[후속 구상](../future-design/README.md) · [개발/제작 참고](../technical-reference/README.md)
-
-## 2026-11-07 승객별 개별 설정
-
-[16. 승객별 대사·확률·효과](16-passenger-preset-overrides.md): 공통값 상속 + 명시값 교체, 제작/복원 절차·같은 특성의4예시·현재 지원 범위·저장/LANv13.
-
-## 2026-11-07 승객 다양화 1차
-
-[17. 요소별 승객·대사·선택·밸런스](17-passenger-roster-v1.md): 새12명, 기존 포함24/활성23명. 짧은길/빠른길 선택 제외. 승객 구조는02, 요청 선택은07, 개별 설정은16과 연결한다.
-
-- [19. 승객 독립 행동·요청 위반·새 특성](19-passenger-trait-expansion.md): 수면+소지품, 메스꺼움/온도/우산, 관찰 가능한 Quiet 실패와 개별 설정.
-
-## 2026-11-19 시작·지속 동기 보강
-
-P1~P7을 통합 실행본에 적용했다. [전반 진단](2026-11-19-player-motivation-audit.md) · [단계별 작업 이력과 실행 검증](../work-history/LATEST.md).
-
-| # | 기획 | 핵심 |
+| 플레이어의 질문 | 현재 제공 | 기획 37에서 제안하는 변화 |
 |---|---|---|
-| 1 | [28 계속 영업 모드](28-continuous-career-mode.md) | 3일 후에도 소유 유지, 장기 목표·다음 구매 게이지 |
-| 2 | [29 하루 조건 카드](29-daily-conditions.md) | 비·상가 행사·금요일·공사로 매일 다른 판단 |
-| 후속 기획 | [35 막차 놓친 학생 재회](35-student-reunion.md) | 첫날 약속·재회 장면 시안과 마지막 한 콜 |
-| 3 | [30 손님 이야기·기사 수첩](30-passenger-stories-and-logbook.md) | 운전 결과로 결말이 갈리는 10편, 수집·동네 숙련도 |
-| 4 | [31 낮밤·라디오](31-day-night-and-radio.md) | 조명 4단계, 하단 라디오 자막 |
-| 5 | [32 보류 시스템 재검토](32-deferred-systems-review.md) | **결정:** 면허 경로 제외(처음부터 개인택시), 차내 조작 3종 추가 |
-| 6 | [33 배경 이야기 보여주기](33-backstory-presentation.md) | 아버지가 남긴 개인택시로 생계, 3컷 인트로·아버지 수첩·승객 질문·벽 메모 |
-| 7 | [34 기사 숙소 거점](34-home-base.md) | 숙소 1곳(수인로 뒤 원룸)에서 시작·퇴근, 월세, 같은 건물 넓은 호실 |
+| 처음 무엇을 하면 될까? | 새 경력 또는 불러오기. 첫날은 준비 화면에서 숙소 벽 메모를 고르고 준비로 돌아와 영업을 시작한다. 인트로 뒤 덕성프라자에서 가까운 첫 호출을 확인한다. | 첫 출발부터 첫 운임까지의 동선을 줄이고, 나머지 선택은 그 의미가 생길 때 보여 준다. |
+| 차를 바꾸려면 어디로 갈까? | 숙소 차고에서 차량 견적·구매·외형을 다룬다. 공업사에서는 부품을 구입·장착한다. | 지도에서 판매점을 찾아 차량을 비교·구매한다. 숙소 차고에서는 보유한 차를 관리한다. |
+| 운행을 더 할까, 지금 들를까? | 사고 처리·수리·견인, 주유·세차, 식사·커피·휴식, 숙소 퇴근과 월세가 있다. | 오일 교환 등 예정된 정비의 비용·시간을 보고 다음 호출과 비교한다. |
+| 오늘 얼마나 남았고, 나는 무엇에 익숙해졌을까? | 운송 영수증·하루 정산, 방·차 구매 기록, 수첩의 이야기·동네 숙련도와 운전 평가가 있다. | 소지금 변화를 거래별로 찾아보는 장부 메뉴와 운전·체력 성장의 근거를 확인한다. |
+| 다음 영업에서 어떤 운전을 해 보고 싶을까? | 숙소 벽 메모로 장기 목표를 고르고, 만난 손님의 이야기와 학생과의 약속을 수첩에 남긴다. | 벌어 둔 돈으로 특별 운행을 열어 직접 달린다. 정산에서 다음에 도전할 운행과 준비할 항목을 확인한다. |
 
-시안 이미지 `images/motivation-*.png`(재생성 `tools/render_motivation_mockups.py`) · [Codex 구현 프롬프트 P1~P7](codex-prompts-motivation.md)
+현재 동선을 확인한 기록은 [첫날 준비·벽 메모](../work-history/2026-11-20-first-departure-taxi.md), [싱글 저장 메뉴](../work-history/2026-11-20-single-save-menu.md), [숙소 출차와 시설 이용](../work-history/2026-11-20-plaza-feed-facility-input.md), [동네 가게·공업사 부품 판매대](../work-history/2026-11-20-neighbourhood-shops-and-taxi-parts.md)에서 볼 수 있다.
 
-- [36 은계 생활시설과 택시 부품점](36-neighbourhood-shops-and-taxi-parts.md) · 김밥집·카페, 차량 꾸미기와 성능 부품의 가격·장착 효과
+## 플레이 규칙별 담당 문서
+
+수치와 조건을 바꿀 때는 해당 기능의 담당 문서를 기준으로 삼는다. 표의 세부 색인(24~27)은 마인드맵에서 옮겨 온 개별 아이디어를 찾는 용도다.
+
+| 영역 | 담당 기획 | 함께 볼 자료 |
+|---|---|---|
+| 주행·지도·교통법규 | [01 조작·교통·운전 점수](01-driving-and-traffic.md), [20 신호·승객 반응](20-roadview-signals-passenger-feedback.md), [21 차로별 진행 안내](21-lane-movement-roadview-followup.md) | [주행·법규 세부 색인 25](25-driving-rule-detail-index.md) · [은계 도로 조사](road-survey/2026-11-16-coverage.md) |
+| 승객·운송·운임 | [02 승하차·운임·만족도](02-passengers-and-fares.md), [07 대화·응답](07-passenger-dialogue.md), [19 행동·요청 위반](19-passenger-trait-expansion.md) | [승객 세부 색인 24](24-passenger-detail-index.md) · [요청 판정표](../content-tuning-request-outcomes.md) |
+| 승객 제작·밸런스 | [15 프리셋·특성 조합](15-passenger-presets-and-traits.md), [16 승객별 덮어쓰기](16-passenger-preset-overrides.md), [17 첫 다양화 구성](17-passenger-roster-v1.md) | [11월 13일 구성 대조표](2026-11-13-passenger-current-inventory.md) · [효과 밸런스](../passenger-balance-v1.md) · [출하 기본 프로필](../../config/content/default-profile.json) |
+| 시설·차량·영업 경제 | [03 생활·차량·회계](03-life-and-economy.md), [08 사고·공업사](08-accident-and-workshop-proposal.md), [22 차종별 특성·차고·PvP 외형](22-growth-direction-and-vehicle-purchase.md), [36 김밥·카페·공업사 부품](36-neighbourhood-shops-and-taxi-parts.md) | [은계 시설 위치](eungye-facility-locations.md) · [모드·생활·화면 세부 색인 26](26-system-detail-index.md) |
+| 하루와 경력 | [04 영업 마감·3일 결과](04-campaign-and-feedback.md), [28 계속 영업·목표](28-continuous-career-mode.md), [29 하루 조건 카드](29-daily-conditions.md) | [18 빗길 운전·차량 상태](18-rain-prototype.md) · [31 시간대 조명·은계 FM](31-day-night-and-radio.md) |
+| 개인 공간·이야기 | [13 작은 방·첫 구매](13-three-day-room-and-first-purchase.md), [33 아버지의 택시](33-backstory-presentation.md), [34 덕성프라자 숙소](34-home-base.md), [30 손님 이야기·기사 수첩](30-passenger-stories-and-logbook.md), [35 학생과의 재회](35-student-reunion.md) | [학생 재회 실행본 기록](../work-history/2026-11-20-student-reunion-player.md). 35의 재회는 구현됐고, 마지막 한 콜의 복귀 거리 비교는 후속안이다. |
+| 운전 화면·조작 | [05 HUD·지도·길안내](05-interface-and-navigation.md), [32 차내 장치·면허 경로 결정](32-deferred-systems-review.md) | [화면 방향](../ui/2026-11-06-full-ui-direction.md) · [시설 화면과 시안](../ui/2026-11-20-facilities/README.md) · [콘텐츠 설정 관리](../content-tuning-tool-guide.md) |
+| 자체 도시 PvP | [PvP 기획 목록](pvp/README.md), [A2 도시](pvp/26-city-a2-four-player.md), [LAN·봇 경기](pvp/30-native-lan.md) | 경기 시간·공유 호출·순수익 순위는 PvP 문서에서 정한다. 기획 37의 생활·경영 제안은 은계 싱글 대상이다. |
+
+<a id="2026-11-19-시작지속-동기-보강"></a>
+
+## 이전 아이디어에서 이어지는 것
+
+| 찾아보려는 결정 | 자료와 현재 위치 |
+|---|---|
+| 실직한 기사가 무엇을 위해 사는가 | [09 일과 생활 초안](09-work-and-personal-life-proposal.md) · [10 재출발 시놉시스](10-restarting-driver-synopsis.md) · [11 생활·소유 원칙](11-personal-life-and-growth.md) · [12 단계별 성장](12-career-growth-stages.md) · [14 생활 기획 안내](14-personal-life-design-guide.md). 현재 출발 배경은 33, 3일 이후 경력은 28, 다음 생활·경영 선택의 제안은 37에서 이어진다. |
+| 성장·면허·관계 확장 가운데 무엇을 채택했는가 | [22 차량 성장](22-growth-direction-and-vehicle-purchase.md)의 차고와 외형은 구현됐다. [23 면허 경로](23-license-career-path.md)는 32에서 제외를 결정했다. 학생 한 명의 약속은 35에서 다룬다. 일반 단골·예약, 주거 이전 등 넓은 구상은 [성장·후속 세부 색인 27](27-future-detail-index.md)에서 찾는다. |
+| 왜 하루의 변화와 수첩을 넣었는가 | [시작·지속 동기 진단](2026-11-19-player-motivation-audit.md) → [구체안](2026-11-19-motivation-concrete-proposals.md) → 기획 28~35. 제작 당시 작업 단위는 [P1~P7 프롬프트](codex-prompts-motivation.md)에 남아 있다. |
+
+## 제작·배포·보관 자료
+
+- 개발 범위는 [프로토 범위](../prototype-scope.md), 실제 구현 및 검증 방식은 [체크리스트](../prototype-development-checklist.md)와 [작업 이력](../work-history/LATEST.md)을 따른다. [작업 재개와 필수 지도 입력](../work-history/README.md)은 다른 PC에서 개발을 이어갈 때 사용한다.
+- UI 관련 자료는 [UI 폴더](../ui/), 발표용 제안서와 프로토 매뉴얼은 [제안서 목록](../proposals/README.md), 시스템 산식과 제작 도구는 [기술 참고](../technical-reference/README.md)에 있다. 사용자 프로필과 진행 중인 저장은 출하 기본값과 다를 수 있다.
+- [후속 아이디어](../future-design/README.md), [이전 기획](../design-history/content-design/README.md), [정리 전 마인드맵](../design-history/content-design/2026-11-13-mindmap-before-simplify.mmst)은 당시 결정의 배경을 확인할 때 사용한다. 시설 비용·신호·점수는 게임 안에서 사용하는 값이다.

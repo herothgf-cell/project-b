@@ -1,5 +1,7 @@
 # 화면·조작·길안내
 
+은계 r50 지도에 표시하는 생활시설 10곳과 현장 조작은 [시설 위치 안내](eungye-facility-locations.md)에서 찾는다. 첫 출차 단순화, 판매점 핀, 거래 장부 진입은 [기획 37의 화면 제안](37-driver-life-and-business.md)이다.
+
 정리 기준: 2026-11-07. 싱글/A2 PVP는 밝은 연청색 주행 HUD와 대화/모달 카드·채움 아이콘을 공유한다. 이 문서는 정보의 위치·표현·입력만 정한다. 비용/점수/요청 효과는 담당 규칙을 참조한다. [기존 공통 UI 방향](../ui/2026-11-06-full-ui-direction.md)과 [원본 컨셉 2차 HUD 적용](../work-history/2026-11-07-driving-hud-concept-v2.md)을 구분한다.
 
 택시 외형은 Blender 원본에서 가져온 공유 Body/Wheel prefab을 사용한다. 도장·곡면 유리·램프·휠 디테일을 개선했고 1인칭/UI 배치와 조작 수치는 유지한다. [모델/검증](../work-history/2026-11-07-taxi-blender-quality.md).

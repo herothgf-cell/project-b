@@ -18,13 +18,16 @@
             "children": [
               {
                 "id": "bd095dc3-f7d7-40d0-9152-ddd22c7da9d8",
-                "topic": "은계 싱글 · 3일 캠페인",
+                "topic": "은계 싱글 · 3일 도입과 계속 영업",
                 "children": [],
                 "createdAt": 1794551622908,
-                "modifiedAt": 1794551622908,
+                "modifiedAt": 1795178236336,
                 "collapsed": false,
-                "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/04-campaign-and-feedback.md",
-                "hyperlinks": [],
+                "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/28-continuous-career-mode.md",
+                "hyperlinks": [
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/04-campaign-and-feedback.md",
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/34-home-base.md"
+                ],
                 "note": "상세 항목은 Detail → Links에서 확인합니다. 마인드맵은 탐색용이며 구현·검증 상태는 담당 기획과 최신 작업 이력을 따릅니다."
               },
               {
@@ -63,13 +66,16 @@
               },
               {
                 "id": "493b1d51-60ce-4fb5-9c6d-235df124f623",
-                "topic": "식사·주유·세차·휴식 거점",
+                "topic": "은계 시설 위치·이용",
                 "children": [],
                 "createdAt": 1794551622908,
-                "modifiedAt": 1794551622908,
+                "modifiedAt": 1795178236336,
                 "collapsed": false,
-                "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/03-life-and-economy.md",
-                "hyperlinks": [],
+                "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/eungye-facility-locations.md",
+                "hyperlinks": [
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/03-life-and-economy.md",
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/36-neighbourhood-shops-and-taxi-parts.md"
+                ],
                 "note": "상세 항목은 Detail → Links에서 확인합니다. 마인드맵은 탐색용이며 구현·검증 상태는 담당 기획과 최신 작업 이력을 따릅니다."
               }
             ],
@@ -149,11 +155,13 @@
                 "topic": "요청·대화·선택 결과",
                 "children": [],
                 "createdAt": 1794551622908,
-                "modifiedAt": 1794551622908,
+                "modifiedAt": 1795178236336,
                 "collapsed": false,
                 "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/07-passenger-dialogue.md",
                 "hyperlinks": [
-                  "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/2026-11-13-passenger-current-inventory.md"
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/2026-11-13-passenger-current-inventory.md",
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/30-passenger-stories-and-logbook.md",
+                  "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/35-student-reunion.md"
                 ],
                 "note": "상세 항목은 Detail → Links에서 확인합니다. 마인드맵은 탐색용이며 구현·검증 상태는 담당 기획과 최신 작업 이력을 따릅니다."
               }
@@ -303,13 +311,16 @@
           },
           {
             "id": "f48dea74-dd32-4e56-a49e-892a539956af",
-            "topic": "날씨 · 비 프로토",
+            "topic": "비·하루 조건·낮밤",
             "children": [],
             "createdAt": 1794551622908,
-            "modifiedAt": 1794551622908,
+            "modifiedAt": 1795178236336,
             "collapsed": false,
             "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/18-rain-prototype.md",
-            "hyperlinks": [],
+            "hyperlinks": [
+              "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/29-daily-conditions.md",
+              "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/31-day-night-and-radio.md"
+            ],
             "note": "상세 항목은 Detail → Links에서 확인합니다. 마인드맵은 탐색용이며 구현·검증 상태는 담당 기획과 최신 작업 이력을 따릅니다."
           }
         ],
@@ -324,6 +335,17 @@
         "id": "1389926b-304e-4fd1-adb2-c670dec88ef1",
         "topic": "성장·후속 구상",
         "children": [
+          {
+            "id": "e5981d9c-7036-4502-b785-d7d1178b9e96",
+            "topic": "기사 생활과 개인택시 경영 제안",
+            "children": [],
+            "createdAt": 1795178236336,
+            "modifiedAt": 1795178236336,
+            "collapsed": false,
+            "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/37-driver-life-and-business.md",
+            "hyperlinks": [],
+            "note": "모은 돈으로 특별 운행을 열고 직접 달립니다. 첫 출차, 차량 판매점, 정비, 장부와 기사 성장을 그 운행을 준비하는 선택으로 연결한 은계 싱글 제안입니다."
+          },
           {
             "id": "434f44a9-f51e-47d0-9d48-f0920c76752e",
             "topic": "장기 경력·이사·생활 확장",
@@ -361,20 +383,21 @@
           },
           {
             "id": "9dee78f6-8fd9-4ccf-88c3-229dcce90e60",
-            "topic": "기사 평점·면허 경로 · 보류",
+            "topic": "기사 평점 보류 · 개인택시 면허 경로 제외",
             "children": [],
             "createdAt": 1794551622908,
-            "modifiedAt": 1794551622908,
+            "modifiedAt": 1795178236336,
             "collapsed": false,
-            "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/23-license-career-path.md",
+            "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/32-deferred-systems-review.md",
             "hyperlinks": [
+              "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/23-license-career-path.md",
               "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/22-growth-direction-and-vehicle-purchase.md"
             ],
             "note": "상세 항목은 Detail → Links에서 확인합니다. 마인드맵은 탐색용이며 구현·검증 상태는 담당 기획과 최신 작업 이력을 따릅니다."
           }
         ],
         "createdAt": 1794551622908,
-        "modifiedAt": 1794551622908,
+        "modifiedAt": 1795178236336,
         "collapsed": false,
         "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/27-future-detail-index.md",
         "hyperlinks": [],
@@ -389,11 +412,12 @@
             "topic": "게임 개요·이야기",
             "children": [],
             "createdAt": 1794551622908,
-            "modifiedAt": 1794551622908,
+            "modifiedAt": 1795178236336,
             "collapsed": false,
             "hyperlink": "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/00-game-overview.md",
             "hyperlinks": [
-              "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/10-restarting-driver-synopsis.md"
+              "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/10-restarting-driver-synopsis.md",
+              "https://github.com/herothgf-cell/project-b/blob/main/docs/content-design/33-backstory-presentation.md"
             ],
             "note": "상세 항목은 Detail → Links에서 확인합니다. 마인드맵은 탐색용이며 구현·검증 상태는 담당 기획과 최신 작업 이력을 따릅니다."
           },
@@ -449,13 +473,13 @@
   "meta": {
     "source": "new",
     "connectorStyle": "elbow",
-    "updatedAt": 1794551622908,
+    "updatedAt": 1795178236336,
     "organizationVersion": "2026-11-02",
     "progressReviewVersion": "2026-11-02-progress",
     "handoffReviewDate": "2026-11-03",
     "publishedReviewDate": "2026-11-06",
     "statusReviewDate": "2026-11-07",
-    "overviewVersion": "2026-11-13",
+    "overviewVersion": "2026-11-20",
     "detailArchive": "docs/design-history/content-design/2026-11-13-mindmap-before-simplify.mmst"
   }
 }

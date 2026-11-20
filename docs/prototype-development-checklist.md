@@ -1,3 +1,9 @@
+## 2026-11-20 은계 영업 목표와 기사 생활 기획
+
+- [x] 현재 시작·정산·차고 규칙과 r50 시설 10곳을 대조하고, 담당 기획 목록과 마인드맵을 연결했다. [전체 기획](content-design/README.md) · [위치도](content-design/eungye-facility-locations.md)
+- [ ] 검토안 1차. 첫 출차 한 번 → 첫 운임·장부 → 저축 또는 특별 운행 준비 → 다음 저녁 실제 완주를 사람 플레이로 확인한다.
+- [ ] 후속 검토. 판매점 현장 계약·다음 출차 인도, 공업사 오일 교환, 체력·운전 숙련을 시험한다. 판매점 좌표와 경제 수치는 검증 전이다. [기획·수용 기준](content-design/37-driver-life-and-business.md) · [작업 이력](work-history/2026-11-20-driver-life-business-design.md)
+
 ## 2026-11-20 은계 동네 가게와 공업사 부품
 
 - [x] 두 정차 포켓의 김밥·커피 주문, 공업사의 부품 4종 구매·차량별 장착·보관, 운행 차량·숙소 차고 외관과 경력 복원. [가격·효과·아이템 시안](content-design/36-neighbourhood-shops-and-taxi-parts.md) · [재현과 검사](work-history/2026-11-20-neighbourhood-shops-and-taxi-parts.md).

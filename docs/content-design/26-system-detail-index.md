@@ -6,6 +6,9 @@
 
 ## 현재 담당 기획
 
+- [은계 싱글 시설 10곳과 위치도](eungye-facility-locations.md) · [김밥·커피·부품 가격과 효과](36-neighbourhood-shops-and-taxi-parts.md)
+- [특별 운행·거래별 장부·차량 판매점·오일 교환·기사 성장 제안](37-driver-life-and-business.md)
+
 - [택시 시뮬레이션 — 게임 개요](00-game-overview.md)
 - [생활·차량 상태·영업 경제](03-life-and-economy.md)
 - [캠페인·하루 결과·회고](04-campaign-and-feedback.md)

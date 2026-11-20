@@ -1,106 +1,26 @@
-2026-11-17: J7841 동쪽 직진/우회전 제한·상류 화살표 제거·남쪽 차로 내부 흰 실선 위치 교정. r46·BuildHybrid 종료0·저장 이관1,031검사. [검증과 실행](work-history/2026-11-17-j7841-road-report.md).
-
-2026-11-17: 도로 캡처 Ctrl+Z·텍스트 영역 수정/크기·이미지 전용 복사 보정. 모델14/Player16·BuildHybrid 통과. [검증](work-history/2026-11-17-road-annotation-edit-fix.md).
-
-2026-11-17: 개발용 도로 보기의 지점 좌표·교차로 복사, 캡처 위 펜/화살표/텍스트 및 이미지 복사 추가. 모델10·일반 사용자 창 Player12검사와 BuildHybrid 통과. [사용법·검증](work-history/2026-11-17-road-report-capture.md).
-
-2026-11-17: 설정 → 개발용 테스트 → 도로 전체 보기 추가. 지도 r45 유지·로컬 통합 빌드 및 모델6/Player7검사 완료. [차로 폭 점검·화면](work-history/2026-11-17-road-width-and-dev-overview.md).
-
 # 현재 상태 한 장 요약
 
-**2026-11-17** 회전교차로 신호 오생성·불필요한 진입 대기, 6번 횡단보도/보행 대기점, 유턴 흰색 실선을 r45에 반영했다([검증·배포](work-history/2026-11-17-roundabout-and-crosswalk.md)). 은행사거리 북동쪽의 정상 차량 경로 중앙선 침범을 r44에서 수정했다([근거·실제 화면](work-history/2026-11-17-bank-approach-centreline.md)). 저장 이관937건·최종 실행본331검사 통과. 앞선 은계 r43에 거리뷰로 확인한 차로 전환·분리시설과 은계중앙로 남행 좌회전 신호를 반영했다. 추가로 네이처포레 곡선 도색과 수인로 횡단보도 끝점을 보정하고, 도색25,967점·실행본327검사 및 전체 지도99타일 화면을 확인했다([검증 범위](work-history/2026-11-17-road-paint-continuity.md)). 새로 합류한 사람이나 다른 PC에서 이어갈 때 이 문서부터 읽는다. 날짜별 상세 기록은 [최신 작업 이력](work-history/LATEST.md), 이전 판 전문은 [보관본](design-history/CURRENT-STATE-until-2026-11-09.md)에 있다.
+**2026-11-20 · 은계 싱글 r50 · 자체 도시 PvP A2 / LAN v23.** 기본 실행 파일은 `builds/EungyeTaxi/EungyeTaxi.exe`다. 싱글에서는 시흥 은계에서 아버지의 택시로 생계를 시작한다. 같은 실행 파일에서 봇 3명 또는 LAN 최대 4명으로 PvP를 할 수 있다. [최신 이력](work-history/LATEST.md) · [전체 기획 목차](content-design/README.md) · [PvP 기획](content-design/pvp/README.md)
 
-## 한 줄 요약
+## 지금 플레이할 수 있는 것
 
-한국 동네(시흥 은계)를 배경으로 **안전 운전 + 승객 응대 + 기사 생활 관리**를 하는 택시 시뮬레이션. 싱글 3일 캠페인과 4인 PvP가 하나의 실행 파일로 동작하는 프로토타입이며, **사람이 직접 오래 플레이한 검증은 아직 없다.**
-
-## 실행·개발 기준
-
-| 항목 | 현재 |
+| 영역 | 배포 동작 |
 |---|---|
-| 게임 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` (또는 `Play-Eungye.cmd`). 실행 폴더 전체가 필요 |
-| 모드 | 은계 싱글 3일(하루 예정 20분) / A2 자체 도시 PvP(봇 3 또는 LAN 최대 4명) |
-| 개발 | Unity **2022.3.62f2**, 프로젝트 `unity/EungyeTaxi`, 빌드 `PrototypeBuild.BuildHybrid` |
-| 기본 배포 | 은계 지도 r48(수인로 차선 다시 그림) · 승하차 39곳 ([검증과 남은 조사](work-history/2026-11-17-road-transitions-and-facilities.md), [r48](work-history/2026-11-20-suinro-repaint-phase1.md)) |
-| 통신 | LAN **v21**. 저속 코너의 페달 반응과 중속 조향 곡선을 공유하므로 양쪽 PC에 같은 빌드를 사용한다. PvP 방 목록에서 호스트에 직접 참가한다. 방 검색은 UDP `47777`, 기본 게임 포트는 UDP `7777`이다. |
-| 지도 | 정식 지도 `config/maps/project/eungye.project.json`(Git 포함). 원본 재수입할 때만 지도 ZIP 필요 |
-| 설정 도구 | 루트 `설정 관리.cmd` — 승객·대사·효과·법규·밸런스·차량 가격 조정. **Node.js 필요**(`winget install --id OpenJS.NodeJS.LTS`) |
+| 시작과 경력 | 싱글에서 새 슬롯을 만들거나 기존 저장을 불러온다. 새 경력은 준비 → 숙소 목표 메모 → 준비 → 4컷 인트로 → 덕성프라자 실내 주차 칸 출차 순이다. 정상 퇴근은 빈차로 같은 칸에 돌아와 F를 누른다. 3일 도입 뒤 같은 슬롯으로 4일차를 시작할 수 있다. [경력](content-design/28-continuous-career-mode.md) · [숙소](content-design/34-home-base.md) |
+| 운전과 손님 | M 지도에서 호출을 고르고 실제 도로·신호·보행자에 맞춰 운전한다. 차내 미터기·창문·온도와 승객 요청을 다룬다. 첫 운송 후 기사 수첩을 얻으며, 막차를 놓친 학생과는 첫 만남 이틀 뒤 다시 만날 수 있다. [운송](content-design/02-passengers-and-fares.md) · [학생 재회](content-design/35-student-reunion.md) |
+| 생활과 차량 | 연료·포만·피로·청결·내구를 관리한다. 주유·세차·식사·휴식·사고 수리와 견인, 은계김밥·동네 카페·공업사 부품 판매대를 이용한다. 숙소에서 조명·러그를 꾸미고, 정산 뒤 차고에서 현금으로 새 택시 한 대를 살 수 있다. 아버지 차를 보관하고 다음 날 몰 차를 고른다. [동네 시설과 부품](content-design/36-neighbourhood-shops-and-taxi-parts.md) · [시설 위치](content-design/eungye-facility-locations.md) |
+| 세계와 경쟁 | 하루 조건과 수요, 비·낮밤 조명·은계 FM·차량음이 주행에 동반된다. PvP는 공유 승객을 두고 순수익을 겨룬다. 싱글에서 얻은 차량 외형을 사용하고 경기 성능은 표준 차량 기준이다. [낮밤·라디오](content-design/31-day-night-and-radio.md) · [차량음 검증](work-history/2026-11-20-recorded-vehicle-audio.md) |
 
-## 구현된 것
+## 기획 검토와 남은 확인
 
-| 영역 | 내용 |
-|---|---|
-| 운전·교통 | 실측 기반 도로·차로·신호, NPC 차량·보행자, 신호/과속/보행자 보호/은계 황색 실선 위반 판정과 운전 점수, 운전 설정 5종, 비(와이퍼·제동 영향) |
-| 승객 | 일반 + 특수 11유형, 요청 17종(운송당 평균 1.5건, 관리창 `요청 빈도 한눈에 보기`), 운행 중 안전 하차·목적지 변경·경유 응답, 상황 반응(수면·취객·음식·짐), 만족도와 운임 조정, 승객 프리셋·개별 설정 |
-| 생활·차량 | 연료·포만감·피로·청결, 주유·식사·휴식·세차, 내구도·사고 3등급·공업사 수리·견인 |
-| 캠페인 | 3일 영업, 하루 정산, 이어하기, 작은 방 꾸미기(조명·러그), **차고: 3일 안 차량 교체 1회(하이브리드 세단·넓은 LPG, 차종 특성 5종)·색·대시보드 장식**(사람 검증 전) |
-| PvP | 공유 승객 경쟁, 순수익 순위, 봇 3명, LAN 호스트 판정·자기 차 예측, **내 차 외형**(싱글에서 산 외형 선택, 성능 표준), A2 신호 교차로 37곳·매 주기 신호 순환·구역별 뒷골목 |
-| 화면 | 1·3인칭, 내비, 지도·호출, 생활거점, 결과 카드, 캐주얼 HUD, 둥근 노란 택시 모델 |
+번 돈을 다음 특별 운행 준비에 쓸지, 원하는 택시를 사려고 모을지 결정하는 **기획 검토안**이 있다. 첫 출차 개편, 지도 판매점 계약, 주기 정비, 소지금 거래 장부와 기사 성장은 그 선택을 지원하는 후속 기능이다. 숙소의 실제 호실 이전과 기사 평점도 후속 항목이다. [기사 생활·경영 기획](content-design/37-driver-life-and-business.md) · [개발 체크리스트](prototype-development-checklist.md)
 
-## 아직 안 된 것
+지정 위치에서 시설·저장·재회를 확인한 검사와, 차고에서 첫 운송을 마치고 귀가한 자동 물리 주행 기록이 있다. 사람의 첫 이용·3일 전체 경영 체감, 실물 입력·음향, 다른 PC 간 LAN은 후속 검증이다. 도로별 관찰·화면·검사 결과는 날짜별로 보관한다. [첫 운송 물리 주행](work-history/2026-11-19-first-fare-and-settlement.md) · [r43~46 도로 조사](work-history/2026-11-17-road-transitions-and-facilities.md) · [J7841](work-history/2026-11-17-j7841-road-report.md) · [r48~49 수인로](work-history/2026-11-20-suinro-repaint-review.md) · [r50 계수로](work-history/2026-11-20-gyesu-navigation-and-signals.md) · [이전 요약](design-history/CURRENT-STATE-until-2026-11-09.md)
 
-| 구분 | 내용 |
-|---|---|
-| 검증 | 사람의 싱글 20분·전체 3일 플레이, 다른 PC 간 LAN, 실물 게임패드, 저사양 성능, 첫 이용자 이해도 |
-| 구현·사람 검증 전 | [기획22](content-design/22-growth-direction-and-vehicle-purchase.md) 차량 교체·차고·PvP 외형: 자동·위치 제어 검사만. 가격은 R 실측 전 시험값 |
-| 기획 보류 | 기사 평점(기획22 §3-1), 개인택시 면허 경로([기획23](content-design/23-license-career-path.md)), Blender 아트 파이프라인 2단계 이후 |
-| 미구현(기획 있음) | 이사, 처음/완료 방 비교, 다음 날 찜 카드 |
-| 미구현(기획 필요) | 눈·동적 낮밤, 단골·예약, 보험·과실, 버스·회전교차로, 단속 법규 |
-| 은계 싱글 차내 조작 | J 미터기 · K 창문 · [ / ] 온도 · 자동 빈차등. 첫 운송 후 운전 화면에서 기사 수첩 열람. 음악 요청은 대화로 응대한다. [구현·검증](work-history/2026-11-20-cabin-logbook-steering.md) |
-| 아트 | 건물은 회색 상자. 목표 카툰 아트 전환은 [아트 전환 가이드](proposals/art-conversion-guide.md) 단계 |
+11월 17일 도로 판단과 원본 제보 화면도 다시 볼 수 있다. [도색 연결](work-history/2026-11-17-road-paint-continuity.md) · [은행사거리 중앙선](work-history/2026-11-17-bank-approach-centreline.md) · [회전교차로·횡단보도](work-history/2026-11-17-roundabout-and-crosswalk.md) · [차로 폭·전체 보기](work-history/2026-11-17-road-width-and-dev-overview.md) · [제보 캡처](work-history/2026-11-17-road-report-capture.md) · [표시 수정](work-history/2026-11-17-road-annotation-edit-fix.md)
 
-## 다음 작업 순서
+## 다른 PC에서 실행·개발
 
-1. 사람 플레이로 차고 사용·차종 차이 체감·가격 확인(기획22 §7), J5057·J866 유턴 직접 확인
-2. 사람 플레이 검증(싱글 3일, PvP 10분, 다른 PC)
-3. 장기 방향(이사·면허 경로)은 본편 기획 때 결정
-4. 아트 전환은 본개발 승인 후(지금은 목표 시안으로 충분)
-
-## 문서 위치 규칙
-
-새 문서는 종류에 따라 아래 폴더에 둔다(2026-11-10 사용자 지정).
-
-| 종류 | 폴더 |
-|---|---|
-| 주요 기획 문서 | `docs/content-design/` (PvP는 `docs/content-design/pvp/`) |
-| 마인드맵(전체 아이디어 지도) | `docs/content-design/택시 시뮬레이션.mmst` · 글 목차 `택시 시뮬레이션-목차.md` |
-| UI 관련 문서·시안 | `docs/ui/` |
-| 제안서와 관련 문서(아트 시안 포함) | `docs/proposals/` |
-| 작업 이력 | `docs/work-history/` |
-
-## 어디서 무엇을 보나
-
-| 알고 싶은 것 | 문서 |
-|---|---|
-| 작업 규칙 | [AGENTS.md](../AGENTS.md) |
-| 최근 작업과 현재 빌드 | [work-history/LATEST.md](work-history/LATEST.md) |
-| 게임 규칙(기획) | [content-design/README.md](content-design/README.md) — 기능별 담당 문서 목록 |
-| PvP 규칙 | [content-design/pvp/README.md](content-design/pvp/README.md) |
-| 구현 체크리스트 | [prototype-development-checklist.md](prototype-development-checklist.md) |
-| 기획 미정·미구현 전체 | [future-design/2026-11-07-planning-gaps-and-weather.md](future-design/2026-11-07-planning-gaps-and-weather.md) |
-| 회사 제안서 | [proposals/README.md](proposals/README.md), 최신 [V9](proposals/project-b-game-proposal-v9.pptx) |
-| 다른 PC 인계 자료 | [handoff/2026-11-09/README.md](handoff/2026-11-09/README.md) |
-| 지도 입력·PC 이동 | [work-history/README.md](work-history/README.md), [map-transfer-guide](work-history/map-transfer-guide.md) |
-
-## 다른 PC에서 시작
-
-```powershell
-git status --short          # 기존 로컬 변경 먼저 확인
-git switch main
-git pull --ff-only
-pwsh -File tools/update_distribution_manifest.ps1 -VerifyOnly
-pwsh -File tools/check_workspace.ps1 -Strict
-```
-
-- 게임만 할 때는 Unity 없이 exe 실행.
-- 개발할 때는 Unity Hub에서 2022.3.62f2 + Windows 빌드 지원 설치 후 `unity/EungyeTaxi`를 연다.
-- 검사 스크립트는 **PowerShell 7(`pwsh`)** 이 필요하다. Windows PowerShell 5.1에서는 실패한다(`winget install --id Microsoft.PowerShell`).
-- 존재하는 입력 파일의 해시 오류는 우회하지 않는다.
-
-## Git으로 옮겨지지 않는 것
-
-| 대상 | 옮기는 방법 |
-|---|---|
-| 개인 캠페인 저장·사용자 편집 지도 | 게임 종료 후 `%USERPROFILE%/AppData/LocalLow/Taxi Prototype/은계 택시 시뮬레이터/` 전체 복사 |
-| PvP 닉네임 | 새 PC에서 다시 입력 |
-| 원시 NGII/OSM 자료, `artifacts/` | 재수입·증거가 필요할 때만 별도 복사 |
+- 실행은 Git으로 받은 `builds/EungyeTaxi/` 전체를 사용한다. PowerShell 7에서 `pwsh -File tools/update_distribution_manifest.ps1 -VerifyOnly`로 배포 manifest의 크기·SHA256을 확인한다.
+- 개발 환경은 Unity 2022.3.62f2와 Windows Build Support, 프로젝트는 `unity/EungyeTaxi`, 빌드는 `PrototypeBuild.BuildHybrid`다. PC 이동 시 `git status --short`로 기존 변경을 확인하고 `pwsh -File tools/check_workspace.ps1 -Strict`로 필수 입력을 검증한다. 정식 지도는 `config/maps/project/eungye.project.json`이다. 재수입에 쓸 지도 ZIP은 `distribution/maps/`에서 저장소 루트에 풀고 입력 manifest와 대조한다. [PC 인계 절차](work-history/README.md) · [지도 이동 안내](work-history/map-transfer-guide.md)
+- 개인 경력과 편집 지도는 게임을 종료한 뒤 사용자 계정의 `AppData/LocalLow/Taxi Prototype/은계 택시 시뮬레이터/`에서 별도로 옮긴다. 기획은 `docs/content-design/`, UI는 `docs/ui/`, 제안서는 `docs/proposals/`에서 찾는다. [작업 규칙](../AGENTS.md) · [제안서 목록](proposals/README.md)
