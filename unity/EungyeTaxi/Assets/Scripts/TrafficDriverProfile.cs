@@ -7,12 +7,26 @@ public sealed class TrafficDriverProfile {
  public string Label {get{return Kind==TrafficTemperament.Calm?"여유":Kind==TrafficTemperament.Impatient?"성급":"보통";}}
  public static TrafficDriverProfile ForIndex(int index,bool eungyeSingle=false){
   int kind=(index%3+3)%3;
-  if(eungyeSingle)return new TrafficDriverProfile{Kind=(TrafficTemperament)kind,CruiseScale=kind==0?.78f:kind==1?.93f:1,Acceleration=kind==0?1.8f:kind==1?2.6f:3.2f,Headway=kind==0?1.55f:kind==1?1.15f:.95f,LaneChangeCooldown=kind==0?12:kind==1?8:5,ExtraGap=kind==0?1.8f:kind==1?.8f:.4f};
-  return new TrafficDriverProfile{Kind=(TrafficTemperament)kind,CruiseScale=kind==0?.8f:kind==1?.94f:1,Acceleration=kind==0?1.5f:kind==1?2.2f:2.6f,Headway=kind==0?1.7f:kind==1?1.3f:1.05f,LaneChangeCooldown=kind==0?12:kind==1?8:5,ExtraGap=kind==0?1.8f:kind==1?.8f:.4f};
+  return new TrafficDriverProfile{
+   Kind=(TrafficTemperament)kind,
+   CruiseScale=kind==0?.86f:kind==1?.96f:1,
+   Acceleration=eungyeSingle?(kind==0?2.4f:kind==1?3.1f:3.7f):(kind==0?2f:kind==1?2.7f:3.2f),
+   Headway=kind==0?1.4f:kind==1?1.05f:.85f,
+   LaneChangeCooldown=kind==0?12:kind==1?8:5,
+   ExtraGap=kind==0?1.4f:kind==1?.7f:.35f
+  };
  }
- public float LimitSpeed(float gap,float cruise,bool followingBody=false){
+ public float LimitSpeed(float gap,float cruise,bool followingBody=false,float leaderSpeed=0){
   float available=Math.Max(0,gap-(followingBody?ExtraGap:0));
-  return Math.Min(TrafficRules.SafeSpeed(available,Math.Max(0,cruise)*CruiseScale),available/Headway);
+  float following=available/Headway+(followingBody?.6f*Math.Max(0,leaderSpeed):0);
+  return Math.Min(TrafficRules.SafeSpeed(available,Math.Max(0,cruise)*CruiseScale),following);
+ }
+ // Centre-to-centre rear clearance at the planned merge point. Drivers accept
+ // different closing gaps, but a car alongside always has priority.
+ public bool YieldsToRear(float distanceBehind,float rearSpeed,float ownSpeed){
+  float closing=Math.Max(0,rearSpeed-ownSpeed);
+  float seconds=Kind==TrafficTemperament.Calm?3f:Kind==TrafficTemperament.Normal?2.2f:1.5f;
+  return distanceBehind<=6f+closing*seconds;
  }
  public bool LaneChangeReady(double now,double completedAt){return now-completedAt>=LaneChangeCooldown;}
 }

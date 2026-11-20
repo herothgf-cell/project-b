@@ -22,6 +22,13 @@ public static class TrafficDemandIndicatorTests {
   foreach(var p in new[]{calm,normal,impatient}){Check(p.LimitSpeed(0,9)==0&&p.LimitSpeed(100,4)<=4,"every profile stops and respects cruise/turn/legal cap");Check(p.LimitSpeed(2,9)<=TrafficRules.SafeSpeed(2,9),"no profile weakens braking envelope");}
   foreach(var p in new[]{calm,normal,impatient})Check(p.LimitSpeed(.2f,9)>0,"every profile can reach the actual stop line for full-stop evidence");
   Check(!calm.LaneChangeReady(5,0)&&impatient.LaneChangeReady(5,0),"actual lane change completion cooldown differs");
+  foreach(var p in new[]{calm,normal,impatient}){
+   Check(p.YieldsToRear(4,8,8)&&!p.YieldsToRear(12,8,8),"alongside blocks; matching speed and an open gap permit merging");
+   Check(p.YieldsToRear(10,14,7),"rapidly closing traffic gets priority");
+  }
+  Check(calm.YieldsToRear(17,12,7)&&normal.YieldsToRear(17,12,7)&&!impatient.YieldsToRear(17,12,7),"impatient driver accepts a shorter closing gap");
+  Check(normal.LimitSpeed(3,13,true,4)>normal.LimitSpeed(3,13,true,0),"moving leader releases the queue sooner");
+  Check(normal.LimitSpeed(0,13,true,8)==0&&normal.LimitSpeed(3,13,true,8)<=TrafficRules.SafeSpeed(3-normal.ExtraGap,13),"moving leader still respects physical stopping distance");
   IndicatorTests();
   Console.WriteLine("Traffic demand/profile checks="+checks+" failures="+failures);return failures==0?0:1;
  } static void IndicatorTests(){

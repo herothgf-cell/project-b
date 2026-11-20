@@ -36,12 +36,13 @@ public class TrafficCar : MonoBehaviour {
                 float rear=Mathf.Max(8,speed*3+8);var center=target-facing*(rear-3)*.5f+Vector3.up*.85f;
                 int contacts=overlaps.Box(center,new Vector3(1.1f,.6f,(rear+3)*.5f),Quaternion.LookRotation(facing),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore);
                 for(int c=0;c<contacts;c++){var h=overlaps.hits[c];var rb=h.attachedRigidbody;if(rb==null||rb==body)continue;
-                    var other=h.GetComponentInParent<TrafficCar>();float otherSpeed=other?other.speed:rb.velocity.magnitude;
+                    var other=h.GetComponentInParent<TrafficCar>();
+                    var velocity=other?other.PhysicsRotation*Vector3.forward*other.speed:rb.velocity;
                     // Two cars swapping lanes side by side: the lower instance id goes first.
                     if(other&&other.laneYielding&&other.GetInstanceID()>GetInstanceID())continue;
                     float along=Vector3.Dot(rb.position-target,facing);
                     // Alongside the merge point, or behind and actually closing in.
-                    if(along>-6||otherSpeed>1f){if(laneYieldEdge!=i){laneYieldEdge=i;laneYieldSince=Time.time;}return Mathf.Max(0,begin-distance-.5f);}}
+                    if(Profile.YieldsToRear(-along,Vector3.Dot(velocity,facing),speed)){if(laneYieldEdge!=i){laneYieldEdge=i;laneYieldSince=Time.time;}return Mathf.Max(0,begin-distance-.5f);}}
                 return float.PositiveInfinity;}
             begin=end;}
         return float.PositiveInfinity;
@@ -117,6 +118,22 @@ public class TrafficCar : MonoBehaviour {
         for(int i=0;i<count;i++)if(overlaps.hits[i].attachedRigidbody!=body)return true;
         return false;
     }
+    float DistrictCruiseSpeed(){
+        float cruise=system.EungyeSingle?13f:9f;
+        float look=Mathf.Min(14,route.length-distance);
+        float bend=Vector3.Angle(route.Tangent(distance),route.Tangent(distance+look))*Mathf.Deg2Rad;
+        // On a curve, v²/r is lateral acceleration. Gentle bends need less slowing.
+        if(look>1&&bend>.01f)cruise=Mathf.Min(cruise,Mathf.Max(4.5f,Mathf.Sqrt(3f*look/bend)));
+        foreach(var stop in route.stops){
+            float approach=stop.distance-distance;
+            if(distance>stop.exitDistance||approach>30)continue;
+            int turn=stop.Movement(route);
+            if(turn==0)continue;
+            float through=turn==-1?6.5f:turn==1?5.2f:4.5f;
+            cruise=Mathf.Min(cruise,Mathf.Sqrt(through*through+5f*Mathf.Max(0,approach)));
+        }
+        return cruise;
+    }
     void Tick() {
         if(recycling) {
             if(!respawn)return;
@@ -154,7 +171,7 @@ public class TrafficCar : MonoBehaviour {
         if(HasApproachBody(detection))for(float ahead=.5f;ahead<detection+3;ahead+=.5f){float at=Mathf.Min(route.length,distance+ahead);var facing=route.Tangent(at);bool blocked=false;
             int contacts=overlaps.Box(route.Position(at)+Vector3.up*.85f,new Vector3(.95f,.55f,2.25f),Quaternion.LookRotation(facing),(1<<8)|(1<<9)|1,QueryTriggerInteraction.Ignore);
             for(int contact=0;contact<contacts;contact++){var h=overlaps.hits[contact];if(h.attachedRigidbody!=body){blockedName=h.name;obstacleCar=h.GetComponentInParent<TrafficCar>();blocked=true;break;}}
-            if(blocked){float obstacleGap=Mathf.Max(0,ahead-1.5f);if(obstacleGap<gap){gap=obstacleGap;waitingForObstacle=true;waitingForSignal=false;}break;}
+            if(blocked){float obstacleGap=Mathf.Max(0,ahead-1.5f);if(obstacleGap<gap){gap=obstacleGap;waitingForObstacle=true;waitingForSignal=false;}else obstacleCar=null;break;}
         }
         entryBlocked=false;foreach(var stop in route.stops){float remaining=stop.distance-distance;if(remaining>=-.05f&&remaining<=system.ReservationDistance(this)&&system.CanEnter(this,stop)){
             // Do not reserve a junction when a queue blocks the path to its stop line.
@@ -162,8 +179,12 @@ public class TrafficCar : MonoBehaviour {
             if(blocked||!system.MayEnter(this,stop)){system.CancelApproach(this,stop);gap=Mathf.Min(gap,Mathf.Max(0,remaining));waitingForJunction=true;}
         }}
         float cruise=route.turn!=0?4.5f:route.axis==0?9:7;
-        if(district!=null){float bend=Vector3.Angle(route.Tangent(distance),route.Tangent(Mathf.Min(route.length,distance+14)));cruise=bend>12||CurrentTurn!=0?4.5f:system.EungyeSingle?13:9;}
-        float editorLimit=system.EditorSpeedLimit(this);if(editorLimit>0)cruise=Mathf.Min(cruise,editorLimit/3.6f);cruise*=RainPolicy.TrafficSpeedMultiplier;float followingGap=waitingForObstacle?Mathf.Max(0,gap-RainPolicy.ExtraFollowingGap(speed)):gap;float target=Profile.LimitSpeed(followingGap,cruise,waitingForObstacle&&obstacleCar!=null);baselineTarget=target;
+        if(district!=null)cruise=DistrictCruiseSpeed();
+        float editorLimit=system.EditorSpeedLimit(this);if(editorLimit>0)cruise=Mathf.Min(cruise,editorLimit/3.6f);cruise*=RainPolicy.TrafficSpeedMultiplier;
+        float followingGap=waitingForObstacle?Mathf.Max(0,gap-RainPolicy.ExtraFollowingGap(speed)):gap;
+        bool followingBody=waitingForObstacle&&obstacleCar!=null;
+        float leaderSpeed=followingBody&&!waitingForJunction&&system.MovingLeader(this,obstacleCar)?obstacleCar.speed:0;
+        float target=Profile.LimitSpeed(followingGap,cruise,followingBody,leaderSpeed);baselineTarget=target;
         target=MitTrafficFollowing.Limit(system.mitOptions.Enabled,target,gap,
             obstacleCar?obstacleCar.speed:0,obstacleCar?Vector3.Dot(transform.forward,obstacleCar.transform.forward):0,
             waitingForObstacle&&obstacleCar!=null&&obstacleCar.Visible);

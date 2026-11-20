@@ -144,7 +144,13 @@ public sealed class DistrictTraffic : MonoBehaviour {
   float begin=0;
   for(int k=0;k<path.edges.Count;k++){int id=path.edges[k];var edge=graph.edges[id];TrafficJunction j=null;
    if(edge.id.StartsWith("join:"))joins.TryGetValue(edge.ruleId,out j);else hdTurns.TryGetValue(id,out j);
-   if(j!=null&&j.SameLevel(route.Position(begin))){var previous=route.stops.FindLast(s=>s.junction==j);if(previous!=null&&begin-2.5f<previous.exitDistance+2){previous.exitDistance=Mathf.Min(route.length-1,path.ends[k]+5);if(previous.turn==0)previous.turn=edge.turn;}else AddStop(route,j,begin-2.5f,path.ends[k]+5,edge.turn);}
+   if(j!=null&&j.SameLevel(route.Position(begin))){
+    var previous=route.stops.FindLast(s=>s.junction==j);
+    if(previous!=null&&begin-2.5f<previous.exitDistance+2){
+     previous.exitDistance=Mathf.Min(route.length-1,path.ends[k]+5);
+     if(previous.turn==0&&edge.turn!=0){previous.turn=edge.turn;previous.turnEdge=id;}
+    }else AddStop(route,j,begin-2.5f,path.ends[k]+5,edge.turn,edge.turn!=0?id:-1);
+   }
    begin=path.ends[k];
   }
   // Source straight lanes can pass a junction without carrying a turn edge.
@@ -160,7 +166,7 @@ public sealed class DistrictTraffic : MonoBehaviour {
   }
   route.stops.Sort((a,b)=>a.distance.CompareTo(b.distance));routes[key]=route;return route;
  }
- void AddStop(TrafficRoute route,TrafficJunction j,float enter,float exit,int turn){
+ void AddStop(TrafficRoute route,TrafficJunction j,float enter,float exit,int turn,int turnEdge=-1){
   if(enter<1||exit>route.length-1)return;var heading=route.Tangent(enter);int axis=Mathf.Abs(Vector3.Dot(heading,system.AxisDirection(j,0)))>.7f?0:1;
   // Match visible stop lines for configured signals; generated junctions use lane connectors.
   if(j.signalized){
@@ -174,7 +180,7 @@ public sealed class DistrictTraffic : MonoBehaviour {
    if(crossing>=0)enter=Mathf.Max(1,crossing-2.1f);
    exit=Mathf.Min(route.length-1,exit);
   }
-  route.stops.Add(new TrafficStop{junction=j,axis=axis,turn=turn,distance=enter,exitDistance=exit});
+  route.stops.Add(new TrafficStop{junction=j,axis=axis,turn=turn,turnEdge=turnEdge,distance=enter,exitDistance=exit});
  }
  bool Clear(TrafficRoute route){if(cleared.Contains(route))return true;if(blocked.Contains(route))return false;if(system.RouteClearOfStaticObstacles(route)){cleared.Add(route);return true;}blocked.Add(route);excluded++;return false;}
  TrafficRoute Next(int edge,float at){

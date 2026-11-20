@@ -55,7 +55,7 @@ public class TrafficRoute {
 
     public readonly List<TrafficStop> stops = new List<TrafficStop>();
 }
-public class TrafficStop { public TrafficJunction junction; public float distance,exitDistance;public int axis;public int turn=99;public int Movement(TrafficRoute route){return turn==99?route.turn:turn;} }
+public class TrafficStop { public TrafficJunction junction; public float distance,exitDistance;public int axis;public int turn=99,turnEdge=-1;public int Movement(TrafficRoute route){return turn==99?route.turn:turn;} }
 
 public partial class TrafficSystem : MonoBehaviour {
     public AmbientPedestrianSystem ambientPedestrians;
@@ -281,9 +281,9 @@ public partial class TrafficSystem : MonoBehaviour {
         // leader has rotated away from the follower's approach heading.
         if(a.CurrentTurn!=0&&a.route.graphPath!=null&&b.route.graphPath!=null){
             foreach(var entry in a.route.stops){if(entry.Movement(a.route)!=a.CurrentTurn||a.distance>entry.exitDistance||entry.distance-a.distance>30)continue;
-                bool shared=false;
-                foreach(int edge in a.route.graphPath.edges)if(roadMap.hdEdges[edge].ruleId==entry.junction.name&&roadMap.hdEdges[edge].turn==entry.Movement(a.route)&&b.route.graphPath.edges.Contains(edge)){shared=true;break;}
-                if(!shared)continue;
+                // Native NGII rule IDs name the source lane, not the signal junction.
+                // DistrictTraffic has already resolved the exact directed turn for this stop.
+                if(entry.turnEdge<0||!b.route.graphPath.edges.Contains(entry.turnEdge))continue;
                 float deviation;float leaderAt=a.route.ProjectNear(b.transform.position,a.distance,out deviation);
                 if(Mathf.Abs(leaderAt-a.distance)<60&&deviation<.8f&&Vector3.Dot(a.route.Tangent(leaderAt),b.transform.forward)>.95f)return true;
             }
