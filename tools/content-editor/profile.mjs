@@ -38,7 +38,7 @@ export function validateProfile(p,catalog,{checkHash=true}={}) {
  if(!exact(p,['schemaVersion','id','revision','contentHash','values']))return ['프로필 필드가 올바르지 않습니다.'];
  if(![1,2].includes(p.schemaVersion)||typeof p.id!=='string'||!/^[A-Za-z0-9_-]{1,64}$/.test(p.id)||!Number.isSafeInteger(p.revision)||p.revision<1||p.revision>2147483647||!Array.isArray(p.values))return ['프로필 형식이 올바르지 않습니다.'];
  const entries=new Map(catalog.entries.filter(e=>e.editable&&(p.schemaVersion===2||!e.id.startsWith('choice.'))).map(e=>[e.id,e])); const seen=new Set();
- for(const v of p.values){if(!exact(v,['id','value'])||typeof v.id!=='string'||typeof v.value!=='string'){err('값 형식 오류');continue;}const e=entries.get(v.id);if(!e||seen.has(v.id)){err(`알 수 없거나 중복된 ID: ${v.id}`);continue;}seen.add(v.id);
+ for(const v of p.values){if(!exact(v,['id','value'])||typeof v.id!=='string'||typeof v.value!=='string'){err('값 형식 오류');continue;}const e=entries.get(v.id)||(v.id==='display.sound.brake'&&entries.has('display.sound.indicator')?{type:'boolean'}:null);if(!e||seen.has(v.id)){err(`알 수 없거나 중복된 ID: ${v.id}`);continue;}seen.add(v.id);
  if(!v.value.isWellFormed())err(`${v.id}: 올바르지 않은 유니코드입니다.`);
  if(v.id==='passenger.presets'){try{errors.push(...PassengerPresets.validate(parseJson(v.value),catalog));}catch{err('승객 프리셋 JSON 형식 오류');}}
  if(e.type==='text'&&v.value.length>(v.id==='passenger.presets'?32000:4000))err(`${v.id}: 텍스트가 너무 깁니다.`);
@@ -49,11 +49,13 @@ export function validateProfile(p,catalog,{checkHash=true}={}) {
  if(e.type==='boolean'&&!['true','false'].includes(v.value))err(`${v.id}: 참/거짓 값 오류`);
  if(e.type==='number'||e.type==='integer'){const n=Number(v.value);if(!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/.test(v.value)||!Number.isFinite(n)||(e.type==='integer'&&!Number.isSafeInteger(n))||(e.min!=null&&n<e.min)||(e.max!=null&&n>e.max))err(`${v.id}: 허용 범위 오류`);}}
  if(p.schemaVersion===1){try{const d=parseJson(p.values.find(v=>v.id==='passenger.presets')?.value||'{}');if(d.version===2&&d.presets.some(x=>x.overrides?.some(o=>o.id.startsWith('choice.'))))err('개별 선택 효과는 최신 프로필 형식으로 이관한 뒤 사용하세요.');}catch{}}
+ const legacyBrake=seen.has('display.sound.brake')&&entries.has('display.sound.indicator');
+ if(legacyBrake&&seen.has('display.sound.indicator'))err('이전 브레이크음과 새 깜빡이 설정이 중복됩니다.');
  const oldDisplay=![...seen].some(id=>id.startsWith('display.'));
  const oldDriving=DRIVING_IDS.every(id=>!seen.has(id)),oldWeather=![...seen].some(id=>id.startsWith('weather.'));
  const oldTraits=TRAIT_SETTINGS.every(e=>!seen.has(e.id)),oldQuiet=QUIET_EXTENSION_IDS.every(id=>!seen.has(id));
  const oldDrunk=DRUNK_SETTINGS.every(e=>!seen.has(e.id)),oldVehicle=VEHICLE_SETTINGS.every(e=>!seen.has(e.id));
- for(const id of entries.keys())if(!seen.has(id)&&!(oldDisplay&&id.startsWith('display.'))&&!(oldDriving&&DRIVING_IDS.includes(id))&&!(oldWeather&&id.startsWith('weather.'))&&id!=='passenger.presets'&&id!=='law.centreLine.penalty'&&!SINGLE_SETTING.test(id)&&!(oldTraits&&TRAIT_SETTINGS.some(e=>e.id===id))&&!(oldQuiet&&QUIET_EXTENSION_IDS.includes(id))&&!(oldDrunk&&DRUNK_SETTINGS.some(e=>e.id===id))&&!(oldVehicle&&VEHICLE_SETTINGS.some(e=>e.id===id)))err(`누락된 ID: ${id}`);
+ for(const id of entries.keys())if(!seen.has(id)&&!(legacyBrake&&id==='display.sound.indicator')&&!(oldDisplay&&id.startsWith('display.'))&&!(oldDriving&&DRIVING_IDS.includes(id))&&!(oldWeather&&id.startsWith('weather.'))&&id!=='passenger.presets'&&id!=='law.centreLine.penalty'&&!SINGLE_SETTING.test(id)&&!(oldTraits&&TRAIT_SETTINGS.some(e=>e.id===id))&&!(oldQuiet&&QUIET_EXTENSION_IDS.includes(id))&&!(oldDrunk&&DRUNK_SETTINGS.some(e=>e.id===id))&&!(oldVehicle&&VEHICLE_SETTINGS.some(e=>e.id===id)))err(`누락된 ID: ${id}`);
  const vals=new Map(p.values.filter(v=>v&&typeof v.id==='string'&&typeof v.value==='string').map(v=>[v.id,v.value]));
  const storyValue=id=>vals.get(id)??entries.get(id)?.defaultValue;
  if(Number(storyValue('story.daily.minimum'))>Number(storyValue('story.daily.maximum')))err('하루 최소 이야기 수는 최대 이야기 수 이하여야 합니다.');
@@ -71,6 +73,7 @@ export function validateProfile(p,catalog,{checkHash=true}={}) {
 export function migrateProfile(profile,catalog){
  const errors=validateProfile(profile,catalog);if(errors.length)throw Error(errors.join('\n'));
  const copy=structuredClone(profile);
+ if(catalog.entries.some(e=>e.id==='display.sound.indicator'))copy.values=copy.values.filter(v=>v.id!=='display.sound.brake');
  if(copy.schemaVersion===1&&catalog.entries.some(e=>e.id==='choice.effects.version'&&e.editable)){
   const legacy=new Map(copy.values.map(v=>[v.id,v.value]));
   for(const entry of catalog.entries.filter(e=>e.editable&&e.id.startsWith('choice.')))copy.values.push({id:entry.id,value:entry.id.startsWith('choice.request.Quiet.Accept.end.failure.')?entry.defaultValue:defaultChoiceValue(entry.id,legacy)});

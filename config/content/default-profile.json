@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "536bc8acb4907406fc7376d610036432f31e6a18d69b801944be3c7a10d3222b",
+  "contentHash": "1b3928b90f64f2c158c76359512d2ded761e68a5c5c87f5de8b164403b6e37ef",
   "values": [
     {
       "id": "radio.station",
@@ -1997,7 +1997,7 @@
       "value": "true"
     },
     {
-      "id": "display.sound.brake",
+      "id": "display.sound.indicator",
       "value": "true"
     },
     {

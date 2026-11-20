@@ -12,7 +12,7 @@ for(const [category,items] of Object.entries({background:backgrounds,meal:meals}
   if(category==='meal')field('display.menuName.'+key,'생활 시설','메뉴 이름',label+' 이름','text',label,null,null,'선택 카드와 식사 안내에 표시합니다.','ServiceStops');
  });
 }
-for(const [key,title] of Object.entries({engine:'주행음',brake:'브레이크음',horn:'경적 · 빵빵',rain:'빗소리'}))
+for(const [key,title] of Object.entries({engine:'주행음',indicator:'깜빡이 · 방향지시등과 비상등',horn:'경적 · 빵빵',rain:'빗소리'}))
  field('display.sound.'+key,'차량','차량 효과음',title,'boolean',true,null,null,'프로필에서 사용하고 운전자의 게임 소리 설정도 켜져 있을 때 재생합니다.','VehicleAudio');
 const areas={
  scenario:['수인로 서쪽','계수로 동쪽','은행로173번길','은계중앙로 동쪽','수인로 남쪽 일대','은계로 북쪽','은계로 남쪽','은계남로 중부','계수로 서쪽','대은로104번길','검바위1로','은계번영길'],

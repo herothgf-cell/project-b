@@ -11770,10 +11770,10 @@
       "editable": true
     },
     {
-      "id": "display.sound.brake",
+      "id": "display.sound.indicator",
       "group": "차량",
       "section": "차량 효과음",
-      "title": "브레이크음",
+      "title": "깜빡이 · 방향지시등과 비상등",
       "type": "boolean",
       "defaultValue": "true",
       "min": null,

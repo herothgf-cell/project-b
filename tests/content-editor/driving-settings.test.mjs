@@ -15,3 +15,20 @@ test('fixed driving deductions are editable and old profiles migrate without cha
  for(const id of ids)assert.ok(JSON.stringify(ContentModel.build(catalog)).includes(id));
  const partial=structuredClone(defaults);partial.values=partial.values.filter(v=>v.id!==ids[0]);partial.contentHash=hashProfile(partial);assert.ok(validateProfile(partial,catalog).length);
 });
+
+test('v22 brake preferences migrate independently of the indicator and keep other sound settings',()=>{
+ for(const brake of ['false','true']){
+  const old=structuredClone(defaults);
+  const sound=old.values.find(v=>v.id==='display.sound.indicator');
+  sound.id='display.sound.brake';sound.value=brake;
+  old.values.find(v=>v.id==='display.sound.horn').value='false';
+  old.contentHash=hashProfile(old);
+  assert.deepEqual(validateProfile(old,catalog),[]);
+  const next=migrateProfile(old,catalog);
+  assert.equal(next.values.find(v=>v.id==='display.sound.indicator').value,'true');
+  assert.equal(next.values.find(v=>v.id==='display.sound.horn').value,'false');
+  assert.ok(!next.values.some(v=>v.id==='display.sound.brake'));
+  old.values.push({id:'display.sound.indicator',value:'true'});old.contentHash=hashProfile(old);
+  assert.ok(validateProfile(old,catalog).length);
+ }
+});

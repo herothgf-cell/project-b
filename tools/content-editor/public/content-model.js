@@ -175,7 +175,7 @@
   for(const e of entries.filter(e=>e.id.startsWith('constraint.')))add(e.id,'공통 영향 요소',e.title,e.defaultValue,'common',[section('현재 게임의 고정 조건',e.defaultValue,[e.id],'condition')],[e.description||''],[]);
   for(const [prefix,group,title,summary] of [
    ['cabin.wish.','승객 요청','창문·온도 조작 요청','은계 싱글 일반 승객의 등장 조건, 대사와 실제 조작 이행 보상'],
-   ['display.sound.','차량','차량 효과음','주행·브레이크·경적(Y)·빗소리의 프로필 사용 여부']
+   ['display.sound.','차량','차량 효과음','주행·깜빡이·경적(Y)·빗소리의 프로필 사용 여부']
   ])if(ids(prefix).length)add(prefix+'settings',group,title,summary,'settings',[section(title,summary,ids(prefix))]);
   for(const entry of entries.filter(e=>e.id.startsWith('display.meal.')||e.id.startsWith('display.background.'))){
    const key=entry.id.split('.').at(-1),isMeal=entry.id.startsWith('display.meal.');

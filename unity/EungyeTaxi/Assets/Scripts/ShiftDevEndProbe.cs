@@ -74,6 +74,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    s.taxi.body.detectCollisions=false;s.taxi.body.useGravity=false;s.taxi.enabled=false;
    foreach(var car in s.traffic.cars)if(car)car.gameObject.SetActive(false);
    b.ContinueFromMenu();yield return Frames(3);
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-taxiAudioCheck")>=0)yield return CheckTaxiAudio();
    var jobs=s.jobs;jobs.ForcedRideCase=DrunkRideCase.Normal;
    var offer=jobs.offers[0];
    Check(offer!=null&&b.CabinInput(CabinAction.Window)&&b.Cabin.WindowOpen&&jobs.offers[0]==offer,"opening window preserves first offer");
@@ -403,6 +404,42 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    Destroy(texture);
    Destroy(pixels);
    Destroy(camera.gameObject);
+  }
+ }
+ IEnumerator CheckTaxiAudio(){
+  var settings=DrivingSettings.Current;
+  bool oldIndicator=settings.indicatorSound,oldEngine=settings.engineSound;
+  var body=s.taxi.body;var position=body.position;var velocity=body.velocity;
+  var sources=s.GetComponents<AudioSource>();
+  var engine=sources.Single(a=>a.clip&&a.clip.name=="Engine");
+  var relay=sources.Single(a=>a.clip&&a.clip.name.StartsWith("Indicator"));
+  Check(!sources.Any(a=>a.clip&&a.clip.name=="Brake"),"no separate brake source");
+  try{
+   settings.engineSound=settings.indicatorSound=true;
+   body.velocity=s.taxi.transform.forward*12.5f;
+   yield return new WaitForSecondsRealtime(.6f);
+   float fastPitch=engine.pitch,fastLevel=engine.volume;
+   body.velocity=Vector3.zero;
+   yield return new WaitForSecondsRealtime(.6f);
+   Check(fastPitch>engine.pitch+.25f&&fastLevel>engine.volume+.08f,"45 km/h to standstill lowers engine pitch and level");
+   foreach(int mode in new[]{-1,1,0}){
+    s.signals.Clear();
+    if(mode==0)s.signals.ToggleHazards();else s.signals.Toggle(mode);
+    bool on=false,off=false;
+    float deadline=Time.realtimeSinceStartup+3;
+    while(!off&&Time.realtimeSinceStartup<deadline){
+     yield return new WaitForEndOfFrame();
+     if(s.signals.Lit&&relay.clip.name=="IndicatorOn")on=true;
+     if(on&&!s.signals.Lit&&relay.clip.name=="IndicatorOff")off=true;
+    }
+    Check(on&&off,"relay follows illuminated and dark lamp phases mode="+mode);
+   }
+   settings.indicatorSound=false;
+   yield return new WaitForSecondsRealtime(.9f);
+   Check(!relay.isPlaying,"muted indicator stops");
+  }finally{
+   settings.engineSound=oldEngine;settings.indicatorSound=oldIndicator;
+   s.signals.Clear();body.position=position;body.velocity=velocity;Physics.SyncTransforms();
   }
  }
  IEnumerator RunFacilityArt(BusinessProgress business){

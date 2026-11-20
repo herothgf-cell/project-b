@@ -16,14 +16,14 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
  public void ResetDefaults(){
   if(!IsOpen||DevTab)return;
   if(SoundTab){
-   Draft.engineSound=Draft.brakeSound=Draft.hornSound=Draft.rainSound=true;
+   Draft.engineSound=Draft.indicatorSound=Draft.hornSound=Draft.rainSound=true;
   }else if(WeatherTab){
    if(RainSettingsRuntime.CanEdit(GetComponent<DriveSession>()))WeatherDraft=new RainSettings();
   }else if(DisplayTab){
    Draft.radioSubtitles=DrivingSettings.DefaultRadioSubtitles;
    Draft.pvpNightLighting=DrivingSettings.DefaultPvpNightLighting;
   }else{
-   Draft=new DrivingSettings{engineSound=Draft.engineSound,brakeSound=Draft.brakeSound,hornSound=Draft.hornSound,rainSound=Draft.rainSound,radioSubtitles=Draft.radioSubtitles,pvpNightLighting=Draft.pvpNightLighting};
+   Draft=new DrivingSettings{engineSound=Draft.engineSound,indicatorSound=Draft.indicatorSound,hornSound=Draft.hornSound,rainSound=Draft.rainSound,radioSubtitles=Draft.radioSubtitles,pvpNightLighting=Draft.pvpNightLighting};
    FollowingDraft=true;
   }
  }
@@ -92,8 +92,8 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
   if(GUI.Button(new Rect(480,54,110,36),"개발용",DevTab?CasualUI.Action(16):KoreanText.Button(16))){DevTab=true;WeatherTab=DisplayTab=SoundTab=false;}
   GUI.Label(new Rect(28,94,562,23),SoundTab?"이 기기의 효과음 · 적용을 누르면 저장됩니다":DevTab?"개발·테스트 전용 · 정식 플레이 규칙을 건너뜁니다":DisplayTab?"이 기기에만 적용되는 화면 표시 설정":WeatherTab?"적용하면 현재 운행에 반영 · 확률 미끄러짐은 잠금":"조절 후 적용 · 취소하면 현재 설정을 유지해요",Label(14));
   if(SoundTab){
-   Draft.engineSound=DisplayRow(124,"주행음","속도와 가속에 따라 달라지는 엔진 소리",Draft.engineSound);
-   Draft.brakeSound=DisplayRow(232,"브레이크","주행 중 제동할 때 나는 마찰음",Draft.brakeSound);
+   Draft.engineSound=DisplayRow(124,"주행음","가속하면 높아지고 속도가 줄면 낮아지는 엔진 소리",Draft.engineSound);
+   Draft.indicatorSound=DisplayRow(232,"깜빡이","방향지시등·비상등의 점멸에 맞춘 딸깍 소리",Draft.indicatorSound);
    Draft.hornSound=DisplayRow(340,"경적","Y 또는 게임패드 버튼 3을 눌러 빵빵",Draft.hornSound);
    Draft.rainSound=DisplayRow(448,"빗소리","비의 강도에 따른 차 지붕의 빗방울 소리",Draft.rainSound);
   }else if(DevTab)DrawDevTab();
