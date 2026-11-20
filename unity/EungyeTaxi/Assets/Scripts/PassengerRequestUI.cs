@@ -60,6 +60,7 @@ public class PassengerRequestUI : MonoBehaviour {
  public void SuspendUnansweredForSleep(){bool changed=false;foreach(var o in observations)if(o&&!o.request.Resolved&&!o.request.Accepted){o.request.DeferSafety();changed=true;}if(changed){if(schedule!=null)schedule.Responded();SyncBehaviorContext();session.business.SaveCheckpoint();}}
  public void Begin(){
   if(!session.business.useV2)return;Clear();boardingLawCount=session.law.ledger.Events.Length;initialDistance=Mathf.Max(1,session.jobs.nav.remaining);
+  if(session.jobs.current.reunionKind!=0)return;
   var eligible=EligibleRequests();var story=session.jobs.CurrentStory;
   if(story!=null)schedule=PassengerRequestSchedule.CreateStory(story.request,story.secondaryRequest,eligible);
   else{

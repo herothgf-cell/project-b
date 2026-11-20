@@ -8,7 +8,7 @@ foreach($name in @('campaign.json','campaign.json.bak','matrix.json','matrix.jso
     $fixture=Join-Path $storyOutput $name
     if(Test-Path -LiteralPath $fixture){Remove-Item -LiteralPath $fixture}
 }
-foreach($phase in @('passengerStoryCheck','passengerStoryReloadCheck','passengerStoryMatrixCheck')){
+foreach($phase in @('passengerStoryCheck','passengerStoryReloadCheck','studentReunionReloadCheck','passengerStoryMatrixCheck')){
     $storyLog=Join-Path $storyOutput "$phase.log"
     $storyArgs=@('-contentTest',"-$phase",'-screen-width','1600','-screen-height','900','-logFile',('"' + $storyLog + '"'))
     $windowStyle=if($Visible){'Normal'}else{'Hidden'}
@@ -21,6 +21,7 @@ foreach($phase in @('passengerStoryCheck','passengerStoryReloadCheck','passenger
     $marker=switch($phase){
         'passengerStoryCheck'{'PASSENGER_STORY_PLAYER_OK'}
         'passengerStoryReloadCheck'{'PASSENGER_STORY_RELOAD_OK'}
+        'studentReunionReloadCheck'{'STUDENT_REUNION_RELOAD_OK'}
         'passengerStoryMatrixCheck'{'PASSENGER_STORY_MATRIX_OK'}
     }
     if((Get-Content -Raw -LiteralPath $storyLog) -notmatch $marker){throw "Missing $marker in $storyLog"}
