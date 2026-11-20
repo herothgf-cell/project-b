@@ -32,3 +32,6 @@
 - 물리 회귀 검사는 기존 코드에서 종료 1, 수정 후 직진·좌우·가속·타력 12조건에서 종료 0이었다. 기존 중속 조향·설정 회귀 검사도 종료 0이었다. 분리해 보관한 로그는 `artifacts/score-corner-nov20/baseline.log`, `physics-final.log`, `steering.log`다.
 - `tools/test_prototype.ps1` 종료 0, 코너 페달 검사 67건 통과. 첫 모델 실행에서 30km/h를 m/s에서 되돌릴 때 경계값 오차를 발견해 m/s 단위에서 하한을 뺐다. `tools/check_workspace.ps1 -Strict` 필수 입력 문제 0. 은계 지도 r49.
 - 기본 싱글 경력 메뉴와 기존 차고·도로 수정을 포함한 격리 프로젝트에서 `PrototypeBuild.BuildHybrid` 종료 0. 기본 게임 폴더에 설치 후 격리 빌드의 배포 대상 143개 파일과 크기·SHA256을 대조했다. 검증용 사용자 경력은 별도 임시 경로를 사용했다. 수동 키보드·실물 패드 체감, 실제 두 PC 간 통신, 전체 캠페인 완주는 이번 검사 범위 밖이다.
+- 설치한 Player에서 `pwsh -File tools/test_father_story_player.ps1` 종료 0. 첫 운송·수첩 열기·주행 재개 등 32개, 재실행 저장 복원 7개가 통과했다. 1280×720·1600×900·1920×1080에서 각각 1·3인칭으로 표시한 글자의 실제 크기와 버튼 위치를 측정했다. PNG 6장을 직접 확인해 100의 세 자리와 버튼 문구가 모두 보이는 것을 확인했다. 로컬 캡처 모음은 `artifacts/score-corner-nov20/score-cards-final.png`다.
+- `pwsh -File tools/test_pvp_native_lan.ps1 -Discover -MotionOnly -MotionSeconds 15 -Port 17964` 종료 0. 같은 PC에서 실행한 두 Player의 방 검색·참가·차량 이동을 검사했다. 참가자 이동 193.56m, 관측 구간 약 13.82초, 최대 화면 정체 0ms.
+- 소스 `26349fc`의 실행 폴더와 `distribution/EungyeTaxi-build-manifest.json`을 갱신했다. 일반·PvP `-VerifyOnly` 모두 종료 0. 배포 143파일 135,314,710바이트의 SHA256과 별도 사용자 콘텐츠 프로필 1개를 검증했다.
