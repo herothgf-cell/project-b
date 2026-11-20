@@ -103,7 +103,7 @@ PvP 호스트 렉 2차 최적화(같은 기록 후속 절): 내비 혼잡/제한
 | 실행 | `builds/EungyeTaxi/EungyeTaxi.exe` — 은계 싱글 3일 / A2 자체 도시 PvP(봇3 또는 LAN 최대 4명) |
 | 빌드 | Unity 2022.3.62f2, `PrototypeBuild.BuildHybrid` · 로컬 은계 r49 · [현재 검증 기록](2026-11-20-suinro-repaint-review.md) |
 | 통신 | LAN **v19**. 최적화·조향 통합 배포. 이전 v17/v18과 참가 불가, 양쪽 PC 같은 전체 실행 폴더 필요 |
-| 배포 검사 | 수인로 r49 기준 검증은 [작업 기록](2026-11-20-suinro-repaint-review.md)에 있다. |
+| 배포 검사 | r49 로컬 빌드, Player 네 곳 화면 확인, 배포 manifest 143파일 검증 통과 · [작업 기록](2026-11-20-suinro-repaint-review.md) |
 | 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (revision49·contentHash 9985476e…)와 검토 도로시설 JSON · Strict 입력 문제 0 |
 | 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **main 병합·배포, 사람 검증 전** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V10 30장](../proposals/project-b-game-proposal-v10.pptx) · [반영 검토](../proposals/proposal-v10-review.md) · [Manual V10](../proposals/project-b-prototype-manual-v10.md) |

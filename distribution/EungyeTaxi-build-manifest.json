@@ -1,28 +1,34 @@
 {
-  "sourceCommit": "4c2b939d6834273fd61ac1f6b2dca022edf2ed77",
+  "sourceCommit": "948b3c4d811d8c3cd1f8701b40ca3dcf4e0add07",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-20",
-  "totalBytes": 135283523.0,
+  "totalBytes": 135288083.0,
   "validation": {
-    "build": "PrototypeBuild.BuildEasyRoadMapEditor exit 0",
-    "modelSuites": 23,
-    "campaignStateAssertions": 20,
-    "presentationHudAssertions": 20,
-    "editorCoreAssertions": 15,
-    "easyEditorCoreAssertions": 7,
-    "buttonResolutions": [
-      1280,
-      1600,
-      1920
+    "build": "PrototypeBuild.BuildHybrid exit 0",
+    "mapRevision": 49,
+    "cameraPlayerExit": 0,
+    "cameraJunctions": [
+      "J6478_4105",
+      "J7973_3744",
+      "J866_5285",
+      "J10580_1415"
     ],
-    "editorExtendedTests": true,
-    "editorPlayerAssertions": 28,
-    "trialIsolation": true,
+    "cameraFrames": 16,
+    "visuallyReviewed": 4,
+    "checkedPassengerStops": 39,
+    "checkedPassengerRoutes": 1482,
+    "saveMigrationVersions": 35,
+    "saveMigrationChecks": 1127,
+    "markingRenderer": "PASS",
+    "projectMapInputIssues": 0,
     "manualDriving": false,
-    "fieldReviewComplete": false,
-    "fieldWorkStoppedByUser": true
+    "campaignPlay": false,
+    "referenceSources": [
+      "Naver Street View",
+      "Kakao Skyview"
+    ]
   },
   "files": [
     {
@@ -38,7 +44,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "e1bd2206cd8c2e85bc955f13ab58f0c5ff58a5a31c84d158fcc57ed40cd84011"
+      "sha256": "a2ae6f96db798dbd5850ae4a1ca9b075ff8d1a80c9a6c9ac1d284950f8c973cb"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -63,7 +69,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
       "bytes": 3131392,
-      "sha256": "170176cef4b2c6e2f365c55f55cd81761cd7fdd5602d4c766bc905a178db80f4"
+      "sha256": "2940155f976c8b0cb597f67c6346bb9ab0cdcd1b8c9c0771acc8d1bb576fba86"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
@@ -572,8 +578,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 46903952,
-      "sha256": "91c8b59115250b2f4f7b7b7e80b12f71ddcc2ce8dca27ce6835abdb75e4e6fe6"
+      "bytes": 46908512,
+      "sha256": "fa73c5656ed6b70e5f9deaf9f268be2ac8d7b7ddbb0fa66a4a3cc8f68bbfa5e5"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
@@ -713,7 +719,7 @@
     {
       "path": "builds/EungyeTaxi/project-map-build.json",
       "bytes": 177,
-      "sha256": "511119d326c74ac5000a22a537de3f5f018682b08570c240732f5f4d5e7eabda"
+      "sha256": "0656ad67baf3e7b503a85f10575b6d31be1d4354a3829bb8a3ebd016ea92d040"
     },
     {
       "path": "builds/EungyeTaxi/ThirdPartyNotices/mchrbn-unity-traffic-simulation-MIT.txt",
@@ -743,8 +749,8 @@
   ],
   "projectMap": {
     "path": "config/maps/project/eungye.project.json",
-    "contentHash": "ac84fe3eae6e7985a77de9dd5becbd6f56811707bfe66ff2a9e6e1497d2be5ac",
-    "bytes": 24934620,
-    "sha256": "82a8291b72158e08484b1c427418de5a44d410407c8721b7ce3e5184296df098"
+    "contentHash": "9985476e9216d487885839e8da42aa81d9651c7266fce8d779a09af560151390",
+    "bytes": 24939178,
+    "sha256": "0096af289406a8a61dc4c14ed18c315d88c795a19e9935098492c4736306d8e2"
   }
 }
