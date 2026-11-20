@@ -61,7 +61,11 @@ public static class RoadMapFacilities {
      root.transform.SetParent(signal,false);
      // Reserve the existing permissive/generic upper board, then add a gap.
      root.transform.SetPositionAndRotation(housing.position+Vector3.up*(1.15f+.725f+.9f*Mathf.Abs(f.scale)+.2f),signal.rotation);
-     root.transform.localScale=Vector3.one*f.scale;mounted=true;break;
+     root.transform.localScale=Vector3.one*f.scale;mounted=true;
+     // A visible bracket from the signal housing to the board: without it the board
+     // reads as a sign floating above the junction (2026-11-19 audit).
+     float scale=Mathf.Max(.01f,Mathf.Abs(f.scale)),rise=1.15f+.725f+.9f*scale+.2f-.45f;
+     WorldBuilder.Box("표지 받침대",new Vector3(0,-(rise*.5f+.55f)/scale,0),new Vector3(.14f,rise/scale,.14f),dark,root.transform,false);break;
     }
    }
    if(!mounted)WorldBuilder.Box("지주",new Vector3(0,f.height*.5f,0),new Vector3(.12f,f.height,.12f),dark,root.transform,false);

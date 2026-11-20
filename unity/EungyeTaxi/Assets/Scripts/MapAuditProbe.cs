@@ -39,6 +39,8 @@ public sealed class MapAuditProbe : MonoBehaviour {
   var driving=session.drivingCamera;driving.enabled=false;lens=driving.GetComponent<Camera>();
   Screen.SetResolution(1600,900,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);
   var junctions=session.traffic.junctions.Where(j=>j!=null).ToList();
+  string layerList=Arg("-mapAuditLayers",null);
+  if(layerList!=null){yield return Layers(junctions,layerList.Split('|'));Finish(null);yield break;}
   int limit=int.Parse(Arg("-mapAuditLimit","999")),first=int.Parse(Arg("-mapAuditStart","1"));float settle=float.Parse(Arg("-mapAuditSettle","25")),observe=float.Parse(Arg("-mapAuditObserve","35"));
   int pedTotal=session.ambientPedestrians!=null?session.ambientPedestrians.actors.Count:-1,pedActive=session.ambientPedestrians!=null?session.ambientPedestrians.actors.Count(p=>p&&p.gameObject.activeInHierarchy):-1;
   report.AppendLine("MAP_AUDIT pedestrianActors="+pedTotal+" active="+pedActive+" junctions="+junctions.Count+" settle="+settle+" observe="+observe+" population="+session.traffic.cars.Count+" observationOnly=true humanPlay=false");
@@ -104,6 +106,24 @@ public sealed class MapAuditProbe : MonoBehaviour {
   }
  }
 
+ // Paint-layer diagnosis: the same top view with one paint source visible at a time.
+ static string Layer(Renderer r){var t=r.transform;while(t!=null){var n=t.name;if(n.StartsWith("원본 노면선"))return "source";if(n=="White road paint"||n=="Yellow centre paint")return "generated";if(n.StartsWith("사용자 시설"))return "facility";t=t.parent;}return null;}
+ IEnumerator Layers(List<TrafficJunction> junctions,string[] names){
+  var groups=FindObjectsOfType<Renderer>().Select(r=>new{r,layer=Layer(r)}).Where(x=>x.layer!=null).ToList();
+  foreach(var c in session.traffic.cars)if(c)foreach(var r in c.GetComponentsInChildren<Renderer>())r.enabled=false;
+  Time.timeScale=0;
+  foreach(var name in names){
+   var j=junctions.FirstOrDefault(x=>x.name==name);if(j==null){report.AppendLine("LAYER_MISSING "+name);continue;}
+   lens.fieldOfView=60;lens.transform.position=j.center+Vector3.up*75;lens.transform.rotation=Quaternion.Euler(90,0,0);
+   string tag=string.Concat(name.Select(ch=>Path.GetInvalidFileNameChars().Contains(ch)||ch==' '?'_':ch));
+   foreach(var mode in new[]{"all","source","generated","facility"}){
+    foreach(var g in groups)if(g.r)g.r.enabled=mode=="all"||g.layer==mode;
+    yield return Capture("layer-"+tag+"-"+mode);
+   }
+   foreach(var g in groups)if(g.r)g.r.enabled=true;
+   report.AppendLine("LAYERS "+name+" source="+groups.Count(g=>g.layer=="source")+" generated="+groups.Count(g=>g.layer=="generated")+" facility="+groups.Count(g=>g.layer=="facility"));
+  }
+ }
  SignalColor EntrySignal(TrafficCar car,TrafficStop stop,int turn){
   var traffic=session.traffic;var j=stop.junction;var direction=car.route.graphPath==null?car.route.direction:car.route.Tangent(Mathf.Max(0,stop.distance));int sign=traffic.Sign(direction,stop.axis,j);
   if(j.editorProgram!=null){string lane=null;var graph=car.district!=null?car.district.graph:null;if(car.route.graphPath!=null&&graph!=null)lane=graph.edges[car.route.graphPath.EdgeAt(Mathf.Max(0,stop.distance))].id;return j.editorProgram.Movement(stop.axis,sign,turn,traffic.Clock,lane);}

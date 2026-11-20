@@ -421,9 +421,11 @@ public class BusinessProgress : MonoBehaviour {
    "38bad072a26d23185eb9f902ea347eb84dbe34c7e554b22637916ee52645f8af",
    reviewedR25Hash,reviewedR26Hash,reviewedR27Hash,reviewedR28Hash,reviewedR29Hash,reviewedR30Hash,reviewedR31Hash,reviewedR32Hash,reviewedR33Hash,reviewedR34Hash,reviewedR35Hash,reviewedR36Hash,reviewedR37Hash,reviewedR38Hash,reviewedR39Hash,reviewedR40Hash,reviewedR41Hash,reviewedR42Hash,reviewedR43Hash,"4bc4690b4e3fd618571b4ed82a53e5bb1f49e5c3339a7a6af32fd5a403cb901f","be92b289b8c5243d653df405a689f5e032c34c6cda073b345b0aa2e0be314d26","ebb810cbd2214e829af890708cd565022f449fcbcbd51039487402df81597161"};
   const string reviewedR47Hash="2ee1a3fd415b6391086ea167da864dea1db68b58fe101af9105f5be6d482cf3e";
-  int from=0,to=0;for(int revision=14;revision<=47;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>47)return;
-  string reviewedHash=to==47?reviewedR47Hash:hashes[to-16];
+  // r48 (2026-11-20) repaints Suin-ro lane lines only; driving lanes are unchanged.
+  const string reviewedR48Hash="ac84fe3eae6e7985a77de9dd5becbd6f56811707bfe66ff2a9e6e1497d2be5ac";
+  int from=0,to=0;for(int revision=14;revision<=48;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>48)return;
+  string reviewedHash=to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   ApplyReviewedEungyeCheckpointMigration(live,from,to);
  }

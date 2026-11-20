@@ -14,6 +14,19 @@ public sealed class ReviewedCorridorPaint {
  }
  public static bool IsStroke(RoadMapFacility f)=>f.kind=="line"&&(f.type==StrokeType||f.type==MedianType);
  public static bool IsLayout(RoadMapFacility f)=>f.kind=="lanePresentation"&&(f.type==MaskType||f.type==SignalPoleType);
+ // Yellow source lines (centre, kerb, safety-zone outlines) inside a replacement
+ // footprint are hidden whatever their heading: their tapers cross today's lanes.
+ // White transverse lines (stop lines) still need the heading test. Only the
+ // 2026-11-20 Suin-ro masks use this; older reviewed masks keep observed kerbs.
+ public const string AnyHeadingPrefix="r48:suinro:";
+ public bool CoversAnyHeading(Vector3 point){
+  foreach(var mask in masks){
+   if(!mask.id.StartsWith(AnyHeadingPrefix,StringComparison.Ordinal))continue;
+   var delta=point-mask.Position;var forward=Quaternion.Euler(0,mask.yaw,0)*Vector3.forward;
+   if(Mathf.Abs(Vector3.Dot(delta,forward))<=mask.length*.5f&&Mathf.Abs(Vector3.Dot(delta,TrafficSystem.Right(forward)))<=mask.width*.5f)return true;
+  }
+  return false;
+ }
  public bool Covers(Vector3 point,Vector3 heading){
   foreach(var mask in masks){
    var delta=point-mask.Position;

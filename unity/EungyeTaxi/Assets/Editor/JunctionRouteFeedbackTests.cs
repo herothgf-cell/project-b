@@ -5,8 +5,8 @@ using UnityEngine;
 public static class JunctionRouteFeedbackTests {
  public static void VerifyMigration(){
   MapCatalog.LockedRegion="eungye";var map=MapCatalog.Load();
-  int target=Enumerable.Range(25,23).SingleOrDefault(revision=>map.editorRevision=="은계 프로젝트 지도 · r"+revision);
-  if(target==0)throw new Exception("Migration regression requires a reviewed r25–r47 default map");
+  int target=Enumerable.Range(25,24).SingleOrDefault(revision=>map.editorRevision=="은계 프로젝트 지도 · r"+revision);
+  if(target==0)throw new Exception("Migration regression requires a reviewed r25–r48 default map");
   var method=typeof(BusinessProgress).GetMethod("UpgradeEungyeApproachCheckpoint",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
   var migrate=typeof(BusinessProgress).GetMethod("ApplyReviewedEungyeCheckpointMigration",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
   int checks=0;
@@ -58,7 +58,8 @@ public static class JunctionRouteFeedbackTests {
    checks++;
   }
   if(target>=42){
-   var legacy=MigrationFixture(target-1,target>=46?"J7841_867":target>=45?"J5692_14220":target>=44?"J1927_5181":target>=43?"J5852_16963":"J2564_12237");legacy.lawObservation=null;legacy.lawObservationPresent=false;legacy.operationVersion=0;
+   // r48 repaints Suin-ro only; the latest approach change (J7841) is checked from r46.
+   var legacy=MigrationFixture(target>=48?46:target-1,target>=46?"J7841_867":target>=45?"J5692_14220":target>=44?"J1927_5181":target>=43?"J5852_16963":"J2564_12237");legacy.lawObservation=null;legacy.lawObservationPresent=false;legacy.operationVersion=0;
    method.Invoke(null,new object[]{legacy,map});
    if(legacy.jobs.manners.crossing!=null||legacy.jobs.manners.lawObservation.entryPresent||legacy.jobs.manners.lawObservation.entry!=null||
     legacy.jobs.manners.score!=87||legacy.jobs.manners.events!=3)throw new Exception("migration did not preserve the score while clearing legacy crossing state");
