@@ -43,13 +43,14 @@ public class WorldBuilder : MonoBehaviour {
             AppendArea(area,batches,driveway);
         }
         foreach(var entry in areaBatches){var color=SurfaceColor(entry.Key);RenderBatches(entry.Value,entry.Key,Mat(entry.Key,color),collisions&&entry.Key=="sidewalk");}
+        CentreLines=decorations&&map.mapId=="eungye"?new CentreLineCrossing():null;
         var roadBatches=new Dictionary<Vector2Int,GeometryBatch>();
         var buildingBatches=new Dictionary<Vector2Int,GeometryBatch>();
         if(includeGeometry)foreach(var road in map.roads) {
-            AppendRoad(road,roadBatches);
+            if(map.mapId=="eungye" && road.id==MayuOverpass.RoadId && System.Array.Exists(road.points,p=>p.elevation>1)) MayuOverpass.Draw(this,road,collisions,asphalt);
+            else AppendRoad(road,roadBatches);
         }
         RenderBatches(roadBatches,"도로 표면",asphalt);if(collisions&&map.editorDocument!=null)foreach(var r in map.roads){if(!r.id.StartsWith("editor:")||!System.Array.Exists(r.points,p=>p.elevation>.001f))continue;var vertices=new List<Vector3>();var faces=new List<int>();for(int i=1;i<r.points.Length;i++){var a=r.points[i-1].V(.045f);var b=r.points[i].V(.045f);var side=TrafficSystem.Right((b-a).normalized)*r.width*.5f;int n=vertices.Count;vertices.AddRange(new[]{a-side,b-side,b+side,a+side});faces.AddRange(new[]{n,n+1,n+2,n,n+2,n+3});}var mesh=new Mesh();mesh.SetVertices(vertices);mesh.SetTriangles(faces,0);mesh.RecalculateNormals();var collider=new GameObject("사용자 높이 차로 충돌 "+r.id);collider.transform.SetParent(transform);collider.AddComponent<MeshCollider>().sharedMesh=mesh;}
-        CentreLines=decorations&&map.mapId=="eungye"?new CentreLineCrossing():null;
         if(decorations&&map.HasHd)HdRouteTrial.DrawMarkings(map,transform,CentreLines);
         if(decorations)ReviewedRoadFacilities.Draw(map,transform,collisions);
         if(includeGeometry)foreach(var b in map.buildings) {

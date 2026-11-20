@@ -121,6 +121,12 @@ public sealed class MapAuditProbe : MonoBehaviour {
     CaptureLayer("layer-"+tag+"-"+mode);
    }
    foreach(var g in groups)if(g.r)g.r.enabled=true;
+   if(name=="J10580_1415"){
+    var target=j.center+Vector3.up*2.5f;
+    lens.transform.position=target+new Vector3(-33,11,-32);
+    lens.transform.LookAt(target);
+    CaptureLayer("layer-"+tag+"-bridge");
+   }
    report.AppendLine("LAYERS "+name+" source="+groups.Count(g=>g.layer=="source")+" generated="+groups.Count(g=>g.layer=="generated")+" facility="+groups.Count(g=>g.layer=="facility"));
   }
  }

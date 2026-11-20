@@ -98,8 +98,7 @@ public partial class ServiceStops {
   float metres,seconds=OperationForecastAdapter.DirectedSeconds(session,approach,out metres);
   // Use the same authored paths (including final lane rejoin) as the physical
   // bot. Road approach alone omits a material part of every facility detour.
-  var leave=new List<Vector3>(departure);var last=leave[leave.Count-1];float at=0;int edge=session.jobs.nav.hd==null?-1:session.jobs.nav.hd.Nearest(last,direction,out at);
-  if(edge>=0){var lane=session.jobs.nav.hd.paths[edge];for(int step=1;step<=12;step++)leave.Add(lane.Position(Mathf.Min(lane.length,at+step)));}departure=leave.ToArray();
+  departure=RoadNavigation.FacilityDepartureToRoad(departure,approach,direction,session.jobs.nav.hd).ToArray();
   float entryMetres=PathMetres(entry),exitMetres=PathMetres(departure);
   if(Vector3.Distance(session.taxi.transform.position,bay)<5){seconds=0;metres=0;entryMetres=0;}
   float entrySeconds=entryMetres/2.2f,exitSeconds=exitMetres/2.2f;var r=SharedRegistry();string id=SiteId(bay);

@@ -14,6 +14,7 @@ public class TrafficJunction { public RoadMapSignalProgram gameProgram,editorPro
     public const float CrosswalkCentreOffset=1.8f, CrosswalkDepth=2.4f;
     public float CrossingNearEdge(int incomingAxis){return halfWidth[incomingAxis]+CrosswalkCentreOffset-CrosswalkDepth*.5f;}
     public float StopDistance(int axis){return halfWidth[1-axis]+4;}
+    public bool SameLevel(Vector3 point){return Mathf.Abs(point.y-center.y)<3f;}
     public Vector3 center;public TrafficCar owner;
     public readonly HashSet<TrafficCar> reservations=new HashSet<TrafficCar>();
     public readonly Dictionary<TrafficCar,float> requests=new Dictionary<TrafficCar,float>();

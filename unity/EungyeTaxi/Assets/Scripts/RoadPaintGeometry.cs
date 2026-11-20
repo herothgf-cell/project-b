@@ -153,7 +153,9 @@ public sealed class RoadPaintGeometry {
   reviewed.PaintDividers(clearances,mark);replacements.Draw(output);
  }
  void PaintCompiled(List<RoadJunctionGeometry.Clearance> clearances,List<RoadJunctionGeometry.Opening> openings,List<ReviewedCrosswalkGeometry.Zone> authored,List<UturnRoadMarkings.Zone> uturns,System.Action<string,Vector3,Vector3,float,float,bool> mark){
+  var deck=System.Array.Find(map.roads,r=>r.id==MayuOverpass.RoadId&&r.suppressPaint&&System.Array.Exists(r.points,p=>p.elevation>1));
   foreach(var corridor in corridors){
+   bool deckFamily=deck!=null&&System.Array.IndexOf(corridor.Key.Split(','),MayuOverpass.RoadId)>=0;
    var first=corridor.Value.Find(x=>x.number==1)??corridor.Value[0];string family=Family(first.id);float width=float.MaxValue;
    foreach(var id in corridor.Key.Split(',')){float value;if(widths.TryGetValue(id,out value))width=Mathf.Min(width,value);}if(width==float.MaxValue)continue;
    float phase=0,samplingWidth=SamplingWidth(corridor.Key);
@@ -167,7 +169,11 @@ public sealed class RoadPaintGeometry {
      // Fused source families can turn back hundreds of metres away. Bound
      // the LOCAL cross section by the widest authored ribbon in the family;
      // its narrowest ribbon must not discard a real widened approach lane.
-     var p=path.Position(at);var dir=PaintTangent(path,at);
+     var p=path.Position(at);
+     // The elevated deck draws its own four-lane paint. This compiled family
+     // also spans other roads, so only skip stations inside the deck segment.
+     if(deckFamily&&p.z>=deck.points[deck.points.Length-1].z&&p.z<=deck.points[0].z)continue;
+     var dir=PaintTangent(path,at);
      if(Family(reference.id)!=family&&paintedReferences.Exists(previous=>CoversStation(previous,p,dir,samplingWidth)))continue;
      float piece=Mathf.Min(.96f,2*(path.length-at));var lanes=Sample(corridor.Value,p,dir,samplingWidth);
      if(lanes.Count==0)continue;

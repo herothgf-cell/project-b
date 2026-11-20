@@ -3,6 +3,49 @@ using System.Linq;
 using UnityEngine;
 public static class LatestFeedbackTests {
  public static void RunFinal(){RoadFatigueFinalVerification.Run();SouthRoute();FacilityRoutes();FuelDeparture();ExitContinuity();Debug.Log("LATEST_FEEDBACK_FINAL_EDITOR_OK");}
+ public static void FacilityDispatch(){
+  MapCatalog.LockedRegion="eungye";var map=MapCatalog.Load();FuelStationLayout.Apply(map);
+  var root=new GameObject("facility departure dispatch");
+  try{
+   var nav=root.AddComponent<RoadNavigation>();nav.Build(map,root.transform);
+   var goal=map.stops[0];
+   root.transform.SetPositionAndRotation(goal.Kerb+goal.Direction*2+Vector3.up*.65f,Quaternion.LookRotation(goal.Direction));
+   Check(nav.DistanceFromVehicle(goal)==0&&nav.PreviewTo(goal).Count==1,"already inside legal pickup bay needs no loop");
+   foreach(var station in FuelStationLayout.For(map))CheckDispatch(nav,station.pump,station.direction,goal,station.id);
+   var rest=FuelStationLayout.Rest(map);CheckDispatch(nav,rest.pump,rest.direction,goal,"rest");
+   var meal=RestaurantSiteLayout.For(map);CheckDispatch(nav,meal.parking,meal.direction,goal,"restaurant");
+   var departure=OneDayTrafficDriveTest.RestaurantDeparture(meal,nav.hd,meal.parking);
+   var end=departure[departure.Count-1];var heading=end-departure[departure.Count-2];
+   var exit=meal.leave[meal.leave.Length-1];float joinAt,rejoinAt;
+   int join=nav.hd.Nearest(exit,meal.direction,out joinAt);
+   int rejoin=nav.hd.Nearest(end,heading,out rejoinAt);
+   var driven=nav.hd.Route(join,joinAt,rejoin,rejoinAt);
+   float alignment=rejoin<0?-1:Vector3.Dot(nav.hd.paths[rejoin].Tangent(rejoinAt),heading.normalized);
+   float directedLength=driven==null?float.PositiveInfinity:driven.path.length;
+   Debug.Log("FACILITY_REJOIN_GEOMETRY join="+join+" end="+rejoin+" directed_metres="+directedLength+" final_lane_alignment="+alignment);
+   Check(driven!=null&&Mathf.Abs(directedLength-12)<.2f&&alignment>.95f,
+    "restaurant follows actual exit lane for 12m beyond driveway, facing with traffic");
+   foreach(var shop in WorkshopLayout.For(map)){
+    CheckDispatch(nav,shop.repair,shop.direction,goal,shop.id);
+    CheckDispatch(nav,shop.waiting,shop.direction,goal,shop.id+" waiting");
+    foreach(var bay in shop.tow)CheckDispatch(nav,bay,shop.direction,goal,shop.id+" tow");
+   }
+   root.transform.position=new Vector3(-200,0,-200);
+   Check(float.IsInfinity(nav.DistanceFromVehicle(goal))&&nav.PreviewPoint(goal.V()).Count==0,"offsite rejected");
+   var city=PvpCityMap.Create();nav.Build(city,root.transform);
+   foreach(var parking in ProjectMapScene.Services(city,"parking"))
+    CheckDispatch(nav,parking.Position,parking.Direction,city.stops[0],parking.id);
+   Debug.Log("FACILITY_DISPATCH_EDITOR_OK");
+  }finally{UnityEngine.Object.DestroyImmediate(root);}
+ }
+ static void CheckDispatch(RoadNavigation nav,Vector3 start,Vector3 heading,MapStop goal,string name){
+  nav.vehicle.SetPositionAndRotation(start+Vector3.up*.65f,Quaternion.LookRotation(heading));
+  float metres=nav.DistanceFromVehicle(goal);
+  var preview=nav.PreviewTo(goal);
+  Check(!float.IsInfinity(metres)&&preview.Count>1&&Vector3.Distance(preview[0],start)<1,name+" pickup distance and preview from bay");
+  Check(nav.PreviewPoint(goal.V()).Count>1,name+" arbitrary map destination");
+  nav.SetDestination(goal);Check(nav.path.Count>1&&Mathf.Abs(nav.remaining-metres)<1,name+" active guidance from bay");
+ }
  public static void ExitContinuity(){MapCatalog.LockedRegion="eungye";var map=MapCatalog.Load();FuelStationLayout.Apply(map);var root=new GameObject("continuous authored exit");try{var nav=root.AddComponent<RoadNavigation>();nav.Build(map,root.transform);var stations=FuelStationLayout.For(map);foreach(var s in stations)CheckExit(nav,root.transform,s.drivePath,stations.First(x=>x.id!=s.id).approach,s.id);var rest=FuelStationLayout.Rest(map);Check(rest!=null,"rest departure fixture");CheckExit(nav,root.transform,rest.drivePath,stations[0].approach,"rest");var restaurant=RestaurantSiteLayout.For(map);CheckExit(nav,root.transform,restaurant.leave,stations[0].approach,"restaurant");root.transform.position=new Vector3(-100,0,-100);Check(nav.PreviewTo(stations[0].approach).Count==0,"offsite remains rejected");}finally{UnityEngine.Object.DestroyImmediate(root);}Debug.Log("LATEST_EXIT_CONTINUITY_OK");}
  static void CheckExit(RoadNavigation nav,Transform taxi,Vector3[] path,MapStop target,string name){for(int i=path.Length/2;i<path.Length;i++){var dir=path[Math.Min(i+1,path.Length-1)]-path[Math.Max(0,i-1)];taxi.SetPositionAndRotation(path[i],Quaternion.LookRotation(dir));Check(nav.PreviewTo(target).Count>1,"continuous "+name+" exit sample "+i);nav.SetDestination(target);Check(nav.path.Count>1,"active "+name+" exit sample "+i);}}
  public static void InspectSouth(){var p=ProjectMapStore.Load(ProjectMapBuild.Root);var map=p.Compose();var g=new HdRoadGraph(map);var src=RoadMapAuthoringOperations.LineageSegment(p.document,"local:7847:9404:8047:6565:part:2",160);int a=Array.FindIndex(g.edges,e=>e.id==src.id);var stop=map.stops.First(s=>s.name.Contains("국도42")&&s.name.EndsWith("1"));foreach(string id in new[]{"join:local:7918:6167:7847:3996:1","join:local:7737:9374:7933:6566:1"}){int via=Array.FindIndex(g.edges,e=>e.id==id);var to=g.Route(a,160-src.sourceOffset,via,0);var rest=g.Route(via,0,stop.laneEdge,stop.laneAt);Debug.Log("INSPECT_SOUTH "+id+" to="+(to==null?"NULL":to.path.length.ToString())+" rest="+(rest==null?"NULL":rest.path.length.ToString()));}foreach(var e in g.edges.Where(e=>e.id.StartsWith("reviewed:latest:south-change:")))Debug.Log("INSPECT_CHANGE "+e.id+" disabled="+e.disabled+" next="+string.Join(",",e.next.Select(i=>g.edges[i].id)));FuelDeparture();}

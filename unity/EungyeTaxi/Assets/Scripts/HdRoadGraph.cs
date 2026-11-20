@@ -57,13 +57,14 @@ public sealed class HdRoadGraph {
   for(int i=0;i<edges.Length;i++){
    // Bounds reject only impossible candidates; original edge order, exact
    // projection, heading threshold and strict tie handling remain unchanged.
-   if(edges[i].TraversalDisabled||edges[i].change!=0||pathBounds[i].SqrDistance(ground)>score*score+.0001f)continue;float error;float d=paths[i].Project(position,out error);
-   if(error>=score||heading.sqrMagnitude>.1f&&Vector3.Dot(heading.normalized,paths[i].Tangent(d))<.6f)continue;
+   if(edges[i].TraversalDisabled||edges[i].change!=0||pathBounds[i].SqrDistance(pathBounds[i].max.y>.001f?position:ground)>score*score+.0001f)continue;float error;float d=paths[i].Project(position,out error);
+   if(Mathf.Abs(paths[i].Position(d).y-position.y)>2.5f||error>=score||heading.sqrMagnitude>.1f&&Vector3.Dot(heading.normalized,paths[i].Tangent(d))<.6f)continue;
    best=i;score=error;at=d;
   }
   if(best>=0)return best;
   foreach(var bay in wideBays){
    if(edges[bay.laneEdge].TraversalDisabled)continue;
+   if(Mathf.Abs(position.y-bay.V().y)>2.5f)continue;
    var delta=ground-bay.V();delta.y=0;
    float across=Vector3.Dot(delta,TrafficSystem.Right(bay.Direction));
    if(across<0||across>bay.width*.5f-.35f||Mathf.Abs(Vector3.Dot(delta,bay.Direction))>7||
@@ -78,8 +79,9 @@ public sealed class HdRoadGraph {
  public int NearestPair(Vector3 position,out float at,out float nearest,out float runner){
   int best=-1;at=0;nearest=runner=float.MaxValue;var ground=position;ground.y=0;
   for(int i=0;i<edges.Length;i++){
-   if(edges[i].TraversalDisabled||pathBounds[i].SqrDistance(ground)>runner*runner+.0001f)continue;
+   if(edges[i].TraversalDisabled||pathBounds[i].SqrDistance(pathBounds[i].max.y>.001f?position:ground)>runner*runner+.0001f)continue;
    float error;float distance=paths[i].Project(position,out error);
+   if(Mathf.Abs(paths[i].Position(distance).y-position.y)>2.5f)continue;
    if(error<nearest){runner=nearest;nearest=error;best=i;at=distance;}else runner=Mathf.Min(runner,error);
   }
   return best;

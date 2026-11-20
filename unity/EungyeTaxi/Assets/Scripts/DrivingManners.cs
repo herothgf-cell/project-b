@@ -44,6 +44,7 @@ public class DrivingManners : MonoBehaviour {
   int hitCount=Physics.SphereCastNonAlloc(transform.position+Vector3.up*.65f,.8f,transform.forward,brakeHits,distance,(1<<8)|(1<<9),QueryTriggerInteraction.Ignore);
   for(int h=0;h<hitCount;h++)if(brakeHits[h].rigidbody!=session.taxi.body)return true;
   foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)for(int sign=-1;sign<=1;sign+=2){
+   if(!j.SameLevel(transform.position))continue;
    var dir=session.traffic.AxisDirection(j,axis)*sign;
    // The right-side pedestrian crossing is beyond the entry stop line. Keep
    // recognizing required braking there after the vehicle turns into the exit.
@@ -93,6 +94,7 @@ public class DrivingManners : MonoBehaviour {
   foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)for(int sign=-1;sign<=1;sign+=2){
    if(zones&&zones.Owns(j))continue;
    if(!j.signalized&&!j.scenarioSignal)continue;
+   if(!j.SameLevel(transform.position))continue;
    var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(transform.forward,dir)<.7f)continue;var stop=session.traffic.StopPosition(j,axis,sign);var planeNormal=session.traffic.StopNormal(j,axis,sign);float a=Vector3.Dot(before-stop,planeNormal),b=Vector3.Dot(after-stop,planeNormal);if(!(b>=-3&&b<=TrafficJunction.StopLineEntryTolerance)&&!(a<TrafficJunction.StopLineEntryTolerance&&b>=TrafficJunction.StopLineEntryTolerance))continue;float lane=Vector3.Dot(after-j.center,TrafficSystem.Right(dir));bool validLane=lane>.15f&&lane<j.halfWidth[axis]||session.traffic.DirectedApproach(j,axis,sign,transform.position,transform.forward);string key=j.ApproachKey(axis,sign);
    if(b>=-3&&b<=TrafficJunction.StopLineEntryTolerance&&validLane&&session.taxi.body.velocity.magnitude<.05f)stops[key]=Time.time;
    if(a<TrafficJunction.StopLineEntryTolerance&&b>=TrafficJunction.StopLineEntryTolerance&&validLane){

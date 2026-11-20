@@ -18,8 +18,7 @@ public partial class PassengerJobs {
   homeReturnWeight=ContentTuning.Number("home.returnTrip.weight",1);
   if(homeReturnWeight<=1)return;
   homeReturnGoal=session.services.StopFor(2);
-  var taxi=session.taxi.transform;
-  homeReturnDistance=DirectedDistance(nav.hd,taxi.position,taxi.forward,homeReturnGoal);
+  homeReturnDistance=nav.DistanceFromVehicle(homeReturnGoal);
   if(Finite(homeReturnDistance)&&homeReturnDistance>0)homeReturnDistances=new System.Collections.Generic.Dictionary<int,float>();
  }
  float DistanceHomeFrom(int index){

@@ -14,6 +14,7 @@ public static class ImportedMarkingRendererTests {
  public static void Run(){
   SharedLongitudinalRegressions();
   SuinroReplacementRegressions();
+  ReviewedJunctionYellowRegressions();
   GeneratedCrosswalkRegressions();
   ZeroReachCrosswalkRegressions();
   ReplacedStopLineRegressions();
@@ -99,6 +100,42 @@ public static class ImportedMarkingRendererTests {
   Check(SpansX(WhiteVertices(map),1.5f),"unverified source white solid guide keeps its solid format");
   guide.id="B2218G610354";guide.type="111";
   Check(YellowVertices(map).Length==0&&WhiteVertices(map).Length==28,"J866 source yellow converted to fine white dashes");
+ }
+ public static void ReviewedJunctionYellowRegressions(){
+  var map=ProjectMapStore.Load(ProjectMapBuild.Root).Compose();
+  // Both map windows include the complete stop bars as well as the upstream fragments.
+  map.hdMarks=map.hdMarks.Where(m=>m.points.Any(p=>
+   Mathf.Abs(p.x-797.33f)<77&&Mathf.Abs(p.z-374.40f)<44||
+   Mathf.Abs(p.x-86.61f)<77&&Mathf.Abs(p.z-528.49f)<44)).ToArray();
+  var yellow=YellowVertices(map);
+  var split=map.hdMarks.Where(m=>m.id=="B2218G613337").OrderBy(m=>m.points[0].x).ToArray();
+  Check(split.Length==2&&!ReviewedMarkSuppression.Hides(map,split[0])&&ReviewedMarkSuppression.Hides(map,split[1]),
+   "J7973 suppresses only the stop-side piece of the split source median");
+  foreach(var point in new[]{
+   new Vector3(750.7f,0,401.2f),new Vector3(777.6f,0,396),new Vector3(775.2f,0,381.8f),
+   new Vector3(772.7f,0,368.7f),new Vector3(771,0,365),new Vector3(817.2f,0,386.9f),
+   new Vector3(822.3f,0,382.1f),new Vector3(819.6f,0,368.4f),new Vector3(816.1f,0,354.6f),
+   new Vector3(784.1f,0,355.9f),new Vector3(804.5f,0,347.6f),new Vector3(46.1f,0,542.2f),
+   new Vector3(65.7f,0,530.8f),new Vector3(64.1f,0,517.7f),new Vector3(102.8f,0,516.4f),
+   new Vector3(132.2f,0,513.6f),new Vector3(131.8f,0,512.4f),new Vector3(74.3f,0,508)})
+   Check(QuadsNear(yellow,point,.8f)==0,"stale imported yellow at reviewed approach "+point);
+  foreach(var point in new[]{new Vector3(793.6f,0,347.4f),new Vector3(858.9f,0,374.7f),
+   new Vector3(93.6f,0,553),new Vector3(86.6f,0,564.8f)})
+   Check(QuadsNear(yellow,point,.9f)>0,"reviewed approach retains median or outer kerb "+point);
+  var medians=new List<Vector3>();
+  int alignedWest=0;
+  new ReviewedCorridorPaint(map).Draw((name,p,d,w,l,isYellow)=>{
+   if(name!="Centre line"||!isYellow)return;
+   medians.Add(p);
+   if(Vector2.Distance(new Vector2(p.x,p.z),new Vector2(53.575f,530.2f))<.05f&&l>18.8f&&
+      Vector3.Dot(d,new Vector3(1,0,-.052f).normalized)>.999f)alignedWest++;
+  });
+  Check(alignedWest==1&&medians.Count(p=>p.x>44&&p.x<64&&p.z>529&&p.z<533)==1,
+   "J866 west generated median is one aligned continuation");
+  Check(!medians.Any(p=>p.x>108&&p.x<120&&p.z>524&&p.z<529)&&
+   medians.Count(p=>p.x>143&&p.x<146&&p.z>522&&p.z<524)==2,
+   "J866 detached east pairs cleared and continuous upstream double yellow retained");
+  Debug.Log("REVIEWED_JUNCTION_YELLOW_OK");
  }
  static void SharedLongitudinalRegressions(){
   var points=new[]{new MapPoint{x=20,z=-30},new MapPoint{x=20,z=30}};

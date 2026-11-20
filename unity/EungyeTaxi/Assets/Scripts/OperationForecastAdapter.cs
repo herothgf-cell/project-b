@@ -17,7 +17,7 @@ public static class OperationForecastAdapter {
   var pickupStop=ReferenceEquals(s.jobs.current,offer)&&s.jobs.trip.State==TripState.ToPickup?s.jobs.EffectiveStop(offer.pickup):s.jobs.stops[offer.pickup];
   string key=offer.pickup+":"+offer.drop+":"+pickupStop.laneEdge+":"+pickupStop.laneAt+":"+pickupStop.x+":"+pickupStop.z+":"+offer.safeRouteSeconds+":"+offer.waitSeconds+":"+s.jobs.nav.PreferFastest+":"+s.jobs.nav.AvoidEdge;
   if(c.offers.TryGetValue(offer,out e)&&Time.unscaledTime<e.until&&e.key==key&&ReferenceEquals(e.route,s.jobs.nav.hdRoute))return e.value;
-  if(c.offers.Count>16)c.offers.Clear();float pickup=PassengerJobs.DirectedDistance(s.jobs.nav.hd,s.taxi.transform.position,s.taxi.transform.forward,pickupStop);
+  if(c.offers.Count>16)c.offers.Clear();float pickup=s.jobs.nav.DistanceFromVehicle(pickupStop);
   var ride=s.jobs.nav.hd==null?null:s.jobs.nav.hd.Route(pickupStop.laneEdge,pickupStop.laneAt,s.jobs.stops[offer.drop].laneEdge,s.jobs.stops[offer.drop].laneAt);
   float rideSeconds=ReferenceEquals(pickupStop,s.jobs.stops[offer.pickup])?offer.safeRouteSeconds:RouteSeconds(s,ride);
   var value=!Valid(pickup)||ride==null||offer.timingPolicyVersion<1||!Valid(rideSeconds)||rideSeconds<=0||!Valid(offer.waitSeconds)?Missing():Make(s,pickup/4+rideSeconds+offer.waitSeconds,pickup+ride.path.length);
@@ -35,7 +35,13 @@ public static class OperationForecastAdapter {
  }
  public static float RouteSeconds(DriveSession s,HdRoadGraph.RoutePath route){if(route==null||s.jobs.nav.hd==null)return float.PositiveInfinity;float total=0,prior=0;for(int i=0;i<route.edges.Count;i++){int edge=route.edges[i];float length=route.ends[i]-prior;prior=route.ends[i];var lane=s.jobs.nav.hd.edges[edge];float cruise=lane.turn!=0||lane.id.StartsWith("join:")?4.5f:8;total+=RoadMapRules.TravelSeconds(s.world.map,lane.id,s.jobs.nav.hd.paths[edge].length,cruise)*length/Mathf.Max(.01f,s.jobs.nav.hd.paths[edge].length);}return total;}
  public static float DirectedSeconds(DriveSession s,MapStop stop,out float metres){
-  metres=float.PositiveInfinity;if(stop==null||s.jobs.nav.hd==null)return float.PositiveInfinity;float at;int edge=s.jobs.nav.hd.Nearest(s.taxi.transform.position,s.taxi.transform.forward,out at);if(edge<0||stop.laneEdge<0||stop.laneEdge>=s.jobs.nav.hd.edges.Length)return float.PositiveInfinity;
-  var route=s.jobs.nav.hd.Route(edge,at,stop.laneEdge,stop.laneAt);if(route==null)return float.PositiveInfinity;metres=route.path.length;return RouteSeconds(s,route);
+  metres=float.PositiveInfinity;
+  if(stop==null||s.jobs.nav.hd==null)return float.PositiveInfinity;
+  List<Vector3> access;HdRoadGraph.RoutePath road;
+  if(!s.jobs.nav.RouteFromVehicle(stop.laneEdge,stop.laneAt,out access,out road))return float.PositiveInfinity;
+  float manual=0;
+  if(access!=null)for(int i=1;i<access.Count;i++)manual+=Vector3.Distance(access[i-1],access[i]);
+  metres=manual+(road==null?0:road.path.length);
+  return manual/5+(road==null?0:RouteSeconds(s,road));
  }
 }

@@ -68,7 +68,7 @@ public partial class RoadNavigation : MonoBehaviour {
  LineRenderer line;float nextUpdate,lastRouteChange=-100,noticeUntil;MapStop goal;RouteResult selected;float[] delays;
  int NodeFor(Vector3 p){string key=p.x.ToString("F2",System.Globalization.CultureInfo.InvariantCulture)+","+p.z.ToString("F2",System.Globalization.CultureInfo.InvariantCulture);int id;if(ids.TryGetValue(key,out id))return id;id=nodes.Count;ids[key]=id;nodes.Add(new Node{p=p});return id;}
  int AddEdge(int a,int b,float width,float offset,int lanes){int index=edges.Count;edges.Add(new Edge{from=a,to=b,length=Vector3.Distance(nodes[a].p,nodes[b].p),offset=offset,innerOffset=lanes==1?0:width/lanes*.5f,lanes=Mathf.Max(1,lanes/2),width=width,direction=(nodes[b].p-nodes[a].p).normalized});nodes[a].outgoing.Add(index);return index;}
- public void Build(MapData map,Transform taxi){editorMap=map;
+ public void Build(MapData map,Transform taxi){editorMap=map;facilityDrives=null;
   vehicle=taxi;nodes.Clear();edges.Clear();ids.Clear();selected=null;path.Clear();alternativePath.Clear();
   hd=map.HasHd?new HdRoadGraph(map):null;hybrid=map.hybrid;hdSeconds=hd==null?null:new float[hd.edges.Length];
   if(hd==null)foreach(var road in map.roads)for(int i=1;i<road.points.Length;i++){
@@ -154,9 +154,9 @@ public partial class RoadNavigation : MonoBehaviour {
  }
  public List<Vector3> Find(Vector3 a,Vector3 b){if(hd!=null){float da,db;int ia=hd.Nearest(a,Vector3.zero,out da),ib=hd.Nearest(b,Vector3.zero,out db);var r=hd.Route(ia,da,ib,db);return r==null?new List<Vector3>():new List<Vector3>(r.path.points);}var route=Route(a,Vector3.zero,b,Vector3.zero,false,false,false);return route==null?new List<Vector3>():route.points;}
  public List<Vector3> Find(MapStop a,MapStop b){if(hd!=null&&a.graphStop&&b.graphStop){var r=hd.Route(a.laneEdge,a.laneAt,b.laneEdge,b.laneAt);return r==null?new List<Vector3>():new List<Vector3>(r.path.points);}var route=Route(a.Kerb-a.Direction*3,a.Direction,b.V(),b.Direction,true,false,false);var result=route==null?new List<Vector3>():route.points;if(result.Count>0)FinishApproach(result,b);return result;}
- public List<Vector3> PreviewPoint(Vector3 point){if(hd!=null){float at;int start=hd.Nearest(vehicle.position,vehicle.forward,out at);var candidates=new List<Vector3>();for(int i=0;i<hd.paths.Length;i++){float error;float to=hd.paths[i].Project(point,out error);if(error<35)candidates.Add(new Vector3(i,to,error));}candidates.Sort((a,b)=>a.z.CompareTo(b.z));for(int k=0;k<Mathf.Min(24,candidates.Count);k++){var c=candidates[k];var r=hd.Route(start,at,(int)c.x,c.y);if(r!=null&&r.path.points.Length>1)return new List<Vector3>(r.path.points);}return new List<Vector3>();}var route=Route(vehicle.position,vehicle.forward,point,Vector3.zero,false,false,false);return route==null?new List<Vector3>():route.points;}
+ public List<Vector3> PreviewPoint(Vector3 point){if(hd!=null){var candidates=new List<Vector3>();for(int i=0;i<hd.paths.Length;i++){float error;float to=hd.paths[i].Project(point,out error);if(error<35)candidates.Add(new Vector3(i,to,error));}candidates.Sort((a,b)=>a.z.CompareTo(b.z));for(int k=0;k<Mathf.Min(24,candidates.Count);k++){var c=candidates[k];var points=PreviewHd((int)c.x,c.y);if(points.Count>1)return points;}return new List<Vector3>();}var route=Route(vehicle.position,vehicle.forward,point,Vector3.zero,false,false,false);return route==null?new List<Vector3>():route.points;}
 
- public List<Vector3> PreviewTo(MapStop stop){if(hd!=null&&stop.graphStop){List<Vector3> departure;if(HomeEntry(stop.laneEdge,stop.laneAt,out departure)||HomeDeparture(stop.laneEdge,stop.laneAt,out departure))return departure;float at;int start=hd.Nearest(vehicle.position,vehicle.forward,out at);if(start<0&&ServiceDeparture(stop.laneEdge,stop.laneAt,out departure))return departure;var route=hd.Route(start,at,stop.laneEdge,stop.laneAt);return route==null?new List<Vector3>():new List<Vector3>(route.path.points);}var r=Route(vehicle.position,vehicle.forward,stop.V(),stop.Direction,true,false,false);return r==null?new List<Vector3>():r.points;}
+ public List<Vector3> PreviewTo(MapStop stop){if(AtDirectedStop(stop))return new List<Vector3>{vehicle.position};if(hd!=null&&stop.graphStop)return PreviewHd(stop.laneEdge,stop.laneAt);var r=Route(vehicle.position,vehicle.forward,stop.V(),stop.Direction,true,false,false);return r==null?new List<Vector3>():r.points;}
  static void FinishApproach(List<Vector3> route,MapStop stop){if(route.Count>1)route.RemoveAt(route.Count-1);route.Add(stop.Kerb-stop.Direction*3);route.Add(stop.Kerb);}
  public float Distance(Vector3 a,Vector3 b){return Length(Find(a,b));}
  public float Distance(MapStop a,MapStop b){return Length(Find(a,b));}
@@ -253,10 +253,18 @@ public partial class RoadNavigation : MonoBehaviour {
   return lane>=0&&hd.edges[lane].fromNode==change.fromNode;
  }
  void RefreshHd(){
-  float roadAt;List<Vector3> departure=null;
+  List<Vector3> departure=null;
   bool homeEntry=!freeGuidance&&HomeEntry(hdGoal,hdGoalAt,out departure);
-  bool homeExit=!freeGuidance&&!homeEntry&&HomeDeparture(hdGoal,hdGoalAt,out departure);
-  if(homeEntry||homeExit||!freeGuidance&&hd.Nearest(vehicle.position,vehicle.forward,out roadAt)<0&&ServiceDeparture(hdGoal,hdGoalAt,out departure)){hdRoute=null;path.Clear();path.AddRange(departure);alternativePath.Clear();remaining=Length(path);estimatedSeconds=remaining/5;alternativeDistance=alternativeSeconds=0;instruction=homeEntry?HomeBasePresentation.EntryGuide:homeExit?HomeBasePresentation.ExitGuide:"시설 출구까지 수동 이동 · 도로 합류 후 안내 계속";line.positionCount=path.Count;for(int i=0;i<path.Count;i++)line.SetPosition(i,path[i]+Vector3.up*.19f);return;}
+  bool homeExit=false;
+  if(!freeGuidance&&!homeEntry){
+   float at;int start=DepartureOrigin(out at,out departure,out homeExit);
+   if(departure!=null){
+    var road=GoalRoute(start,at,PreferLargeRoad?passengerRoadCosts:null);
+    if(road!=null)departure.AddRange(road.path.points);
+    else if(start!=hdGoal||Mathf.Abs(at-hdGoalAt)>=.25f||hd.edges[start].TraversalDisabled)departure=null;
+   }
+  }
+  if(departure!=null){hdRoute=null;path.Clear();path.AddRange(departure);alternativePath.Clear();remaining=Length(path);estimatedSeconds=remaining/5;alternativeDistance=alternativeSeconds=0;instruction=homeEntry?HomeBasePresentation.EntryGuide:homeExit?HomeBasePresentation.ExitGuide:"시설 출구까지 수동 이동 · 도로 합류 후 안내 계속";line.positionCount=path.Count;for(int i=0;i<path.Count;i++)line.SetPosition(i,path[i]+Vector3.up*.19f);return;}
   bool observe=Time.time>=nextHdCosts||hdRoute==null;
   if(observe){nextHdCosts=Time.time+6;speedSigns.Rebuild(editorMap);if(conditions!=null)conditions.CollectPoints(conditionPoints);else conditionPoints.Clear();
    for(int i=0;i<hd.paths.Length;i++){var p=hd.paths[i];float delay=0;if(conditions!=null&&ConditionsNear(i))for(int k=1;k<p.points.Length;k++)delay+=conditions.ExtraSeconds(p.points[k-1],p.points[k],(p.points[k]-p.points[k-1]).normalized,3.2f);hdSeconds[i]=speedSigns.TravelSeconds(hd.edges[i].id,p.length,8)/RainPolicy.TrafficSpeedMultiplier+delay;}}

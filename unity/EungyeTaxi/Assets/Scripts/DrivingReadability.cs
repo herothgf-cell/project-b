@@ -31,7 +31,7 @@ public class DrivingReadability : MonoBehaviour {
  public void SelectSignal(){
   SignalTarget=null;float best=125;var taxi=session.taxi;
   foreach(var j in session.traffic.junctions){
-   if(!j.signalized&&!j.scenarioSignal)continue;
+   if(!j.SameLevel(taxi.transform.position)||!j.signalized&&!j.scenarioSignal)continue;
    int axis=Mathf.Abs(Vector3.Dot(taxi.transform.forward,session.traffic.AxisDirection(j,0)))>.7f?0:1;
    int sign=session.traffic.Sign(taxi.transform.forward,axis,j);var dir=session.traffic.AxisDirection(j,axis)*sign;
    var delta=j.center-taxi.transform.position;float along=Vector3.Dot(delta,dir),side=Mathf.Abs(Vector3.Dot(delta,TrafficSystem.Right(dir)));

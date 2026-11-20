@@ -4,7 +4,7 @@ using UnityEngine;
 // Index only the yellow centreline segments drawn on the current map.
 public sealed class CentreLineCrossing {
  const float CellSize=8;
- struct Segment {public Vector2 from,to;}
+ struct Segment {public Vector2 from,to;public float startHeight,endHeight;}
  readonly Dictionary<Vector2Int,List<Segment>> cells=new Dictionary<Vector2Int,List<Segment>>();
 
  static Vector2 Flat(Vector3 point){return new Vector2(point.x,point.z);}
@@ -14,7 +14,7 @@ public sealed class CentreLineCrossing {
  public void Add(Vector3 start,Vector3 end){
   var a=Flat(start);var b=Flat(end);
   if((b-a).sqrMagnitude<.0001f)return;
-  var segment=new Segment{from=a,to=b};
+  var segment=new Segment{from=a,to=b,startHeight=start.y,endHeight=end.y};
   for(int x=Cell(Mathf.Min(a.x,b.x));x<=Cell(Mathf.Max(a.x,b.x));x++)
    for(int z=Cell(Mathf.Min(a.y,b.y));z<=Cell(Mathf.Max(a.y,b.y));z++){
     var key=new Vector2Int(x,z);
@@ -36,7 +36,7 @@ public sealed class CentreLineCrossing {
      var delta=line.from-a;
      float along=Cross(delta,direction)/denominator;
      float onLine=Cross(delta,movement)/denominator;
-     if(along>=0&&along<1&&onLine>=0&&onLine<=1)return true;
+     if(along>=0&&along<1&&onLine>=0&&onLine<=1&&Mathf.Abs(Mathf.Lerp(before.y,after.y,along)-Mathf.Lerp(line.startHeight,line.endHeight,onLine))<2.5f)return true;
     }
    }
   return false;

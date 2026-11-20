@@ -89,7 +89,7 @@ public partial class ServiceStops : MonoBehaviour {
   if(!finished||PracticeSession.Enabled||!session.business.ledger.OneDay||session.business.ledger.State!=BusinessState.Open)return;
   RefreshPostTrip();nextPostTripRefresh=Time.unscaledTime+2;
  }
- float ServiceDistance(MapStop stop){return PassengerJobs.DirectedDistance(session.jobs.nav.hd,session.taxi.transform.position,session.taxi.transform.forward,stop);}
+ float ServiceDistance(MapStop stop){return session.jobs.nav.DistanceFromVehicle(stop);}
  void RefreshPostTrip(){
   postTripFuel=-1;postTripDistances[0]=float.PositiveInfinity;
   for(int i=0;i<Stations.Count;i++){float d=ServiceDistance(Stations[i].approach);if(d<postTripDistances[0]){postTripDistances[0]=d;postTripFuel=i;}}
@@ -164,7 +164,7 @@ public partial class ServiceStops : MonoBehaviour {
   if(!open||kind<0||kind>3||!HasService(kind)||session.jobs.trip.State==TripState.OnTrip)return false;
   ResetFacilityQueueIntent();
   if(session.jobs.Active&&kind!=0){if(!session.business.ledger.OneDay)return false;session.jobs.ClearForDay();}
-  if(kind==3&&RestArea!=null){var taxi=session.taxi;var graph=session.jobs.nav.hd;float restDistance=PassengerJobs.DirectedDistance(graph,taxi.transform.position,taxi.transform.forward,RestArea.approach);float baseDistance=PassengerJobs.DirectedDistance(graph,taxi.transform.position,taxi.transform.forward,StopFor(2));if(restDistance<baseDistance){session.jobs.nav.SetDestination(RestArea.approach);destination="동부 휴식 주차구역 · 입구부터 수동 진입 · 파란 정차선에서 F7";Close();return true;}}
+  if(kind==3&&RestArea!=null){float restDistance=ServiceDistance(RestArea.approach);float baseDistance=ServiceDistance(StopFor(2));if(restDistance<baseDistance){session.jobs.nav.SetDestination(RestArea.approach);destination="동부 휴식 주차구역 · 입구부터 수동 진입 · 파란 정차선에서 F7";Close();return true;}}
   if(kind==3)kind=2;
   if(kind==0&&Stations.Count>0){int closest=0;float best=float.MaxValue;for(int i=0;i<Stations.Count;i++){float distance=(Stations[i].entrance-session.taxi.transform.position).sqrMagnitude;if(distance<best){best=distance;closest=i;}}return GuideFuel(closest);}
   session.jobs.nav.SetDestination(StopFor(kind));destination=kind==1&&Restaurant!=null?"식당 입구 앞까지 안내 · H 해제 후 주차 칸에 진입 · 정차 후 F7":names[kind]+" · 오른쪽 정차 화살표에서 F7";Close();return true;

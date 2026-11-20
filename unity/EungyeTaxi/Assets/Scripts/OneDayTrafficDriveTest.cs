@@ -49,10 +49,8 @@ public sealed class OneDayTrafficDriveTest:MonoBehaviour {
   if(pocket)yield return Pocket(stop,false);
  }
  public static List<Vector3> RestaurantDeparture(RestaurantSiteLayout.Site site,HdRoadGraph graph,Vector3 start){
-  var points=new List<Vector3>{start};points.AddRange(site.leave);var lane=graph.paths[site.approach.laneEdge];float error;float at=lane.Project(points[points.Count-1],out error);
-  // Continue along the road after the driveway curve so the whole vehicle
-  // straightens before rearming H or querying the directed graph.
-  for(int step=1;step<=12;step++)points.Add(lane.Position(at+step));return points;
+  var points=RoadNavigation.FacilityDepartureToRoad(site.leave,site.approach,site.direction,graph);
+  points.Insert(0,start);return points;
  }
  IEnumerator Ride(string preferred=null){var jobs=s.jobs;var zones=s.GetComponent<ServiceLawZones>();if(!firstFare)jobs.Generate();int chosen=firstFare?0:-1;
   if(historicRoute){

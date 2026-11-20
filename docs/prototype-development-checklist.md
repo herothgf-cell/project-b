@@ -1,5 +1,7 @@
 ## 2026-11-20 수인로 r49 재점검
 
+- [x] J7973·J866의 고립 도색, J10580 상·하층 차로·신호·램프 통과 폭, 시설 내 승차 호출과 진행 방향에 맞는 출구 합류 회귀. [지도·시설 출발 검증](work-history/2026-11-20-suinro-overpass-facility-dispatch.md)
+
 - [x] 네이버 거리뷰·카카오 스카이뷰 대조, J6478 황색 빗금 안전지대와 중앙선 접합 복원.
 - [x] 기존 황색선 마스크와 J866·J10580 유도선 렌더 회귀, 승하차 경로 1,482개와 저장 이관 1,127건, Strict 입력 검사, BuildHybrid, Windows Player 네 곳의 화면 확인. [작업 기록](work-history/2026-11-20-suinro-repaint-review.md).
 

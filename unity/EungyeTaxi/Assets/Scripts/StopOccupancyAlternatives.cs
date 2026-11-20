@@ -12,7 +12,7 @@ public sealed partial class StopOccupancySystem {
  public bool CanOfferAlternative {get{int index=ActiveIndex;return index>=0&&!policy.AlternativeActive&&IsOccupied(index)&&session.jobs.Catalog.AlternativeFor(session.jobs.Catalog.Entry(index).StopId)!=null;}}
  bool AcceptAlternative(){
   if(!CanOfferAlternative)return false;var j=session.jobs;if(j.nav==null||j.nav.hd==null)return false;int index=ActiveIndex;var pair=j.Catalog.AlternativeFor(j.Catalog.Entry(index).StopId);
-  float distance=PassengerJobs.DirectedDistance(j.nav.hd,session.taxi.transform.position,session.taxi.transform.forward,pair.Stop);
+  float distance=j.nav.DistanceFromVehicle(pair.Stop);
   if(!policy.AgreeAlternative(session.law.tripId,pair.OriginalStopId,pair.Id,pair.WalkingMetres,!float.IsInfinity(distance)&&!float.IsNaN(distance),PathClear(pair),BayClear(pair)))return false;
   policy.SetAlternativePickup(j.trip.State==TripState.ToPickup);Protect();j.RefreshActiveGoal();PlaceWalker(pair);j.message=Status;session.business.SaveCheckpoint();return true;
  }

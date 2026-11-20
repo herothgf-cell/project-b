@@ -96,7 +96,7 @@ public partial class TrafficSystem {
   if(Clock>=nextDriverScan){signalDrivers=FindObjectsOfType<DriveSession>();nextDriverScan=Clock+2;}
   foreach(var driver in signalDrivers)if(driver&&driver.traffic==this&&driver.taxi){
    var taxi=driver.taxi;TrafficJunction best=null;int bestAxis=0,bestSign=1;float nearest=100;
-   foreach(var j in junctions)if(Adaptive(j))for(int axis=0;axis<2;axis++){
+   foreach(var j in junctions)if(Adaptive(j)&&j.SameLevel(taxi.transform.position))for(int axis=0;axis<2;axis++){
     int sign=Sign(taxi.transform.forward,axis,j);var dir=AxisDirection(j,axis)*sign;if(Vector3.Dot(taxi.transform.forward,dir)<.8f)continue;
     var normal=StopNormal(j,axis,sign);var delta=StopPosition(j,axis,sign)-taxi.transform.position;float along=Vector3.Dot(delta,normal);float lateral=Mathf.Abs(Vector3.Dot(delta,Right(normal)));
     if(along< -3||along>nearest||lateral>j.halfWidth[axis]+3)continue;

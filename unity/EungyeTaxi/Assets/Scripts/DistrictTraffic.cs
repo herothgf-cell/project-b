@@ -144,7 +144,7 @@ public sealed class DistrictTraffic : MonoBehaviour {
   float begin=0;
   for(int k=0;k<path.edges.Count;k++){int id=path.edges[k];var edge=graph.edges[id];TrafficJunction j=null;
    if(edge.id.StartsWith("join:"))joins.TryGetValue(edge.ruleId,out j);else hdTurns.TryGetValue(id,out j);
-   if(j!=null){var previous=route.stops.FindLast(s=>s.junction==j);if(previous!=null&&begin-2.5f<previous.exitDistance+2){previous.exitDistance=Mathf.Min(route.length-1,path.ends[k]+5);if(previous.turn==0)previous.turn=edge.turn;}else AddStop(route,j,begin-2.5f,path.ends[k]+5,edge.turn);}
+   if(j!=null&&j.SameLevel(route.Position(begin))){var previous=route.stops.FindLast(s=>s.junction==j);if(previous!=null&&begin-2.5f<previous.exitDistance+2){previous.exitDistance=Mathf.Min(route.length-1,path.ends[k]+5);if(previous.turn==0)previous.turn=edge.turn;}else AddStop(route,j,begin-2.5f,path.ends[k]+5,edge.turn);}
    begin=path.ends[k];
   }
   // Source straight lanes can pass a junction without carrying a turn edge.
@@ -154,7 +154,7 @@ public sealed class DistrictTraffic : MonoBehaviour {
   for(int i=0;i<samples.Length;i++)samples[i]=route.Position(i*2f);
   foreach(var j in system.junctions){if(!j.signalized&&!j.name.StartsWith("임시 HD"))continue;
    float radius=Mathf.Max(j.halfWidth[0],j.halfWidth[1])+2,entry=-1;
-   for(float d=0;d<=route.length+2;d+=2){bool inside=d<=route.length&&Vector3.Distance(samples[(int)(d/2)],j.center)<=radius;
+   for(float d=0;d<=route.length+2;d+=2){bool inside=d<=route.length&&j.SameLevel(samples[(int)(d/2)])&&Vector3.Distance(samples[(int)(d/2)],j.center)<=radius;
     if(inside&&entry<0)entry=d;if(!inside&&entry>=0){float exit=Mathf.Min(d,route.length);bool exists=route.stops.Exists(s=>s.junction==j&&s.distance<=exit+5&&s.exitDistance>=entry-5);if(!exists)AddStop(route,j,entry-5,exit+5,0);entry=-1;}
    }
   }

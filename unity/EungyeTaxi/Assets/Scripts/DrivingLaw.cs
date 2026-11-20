@@ -68,7 +68,7 @@ public partial class DrivingLaw : MonoBehaviour {
   int best=-1;float nearest=float.MaxValue,runner=float.MaxValue,at=0;Vector3 tangent=Vector3.zero;
   if(graph!=null){best=graph.NearestPair(pos,out at,out nearest,out runner);if(best>=0)tangent=graph.paths[best].Tangent(at);}
   bool road=best>=0&&nearest<=1.2f&&runner-nearest>.35f&&!graph.edges[best].id.StartsWith("join:")&&graph.edges[best].change==0&&graph.edges[best].turn==0&&at>=10&&at<=graph.paths[best].length-10;
-  if(road&&session.traffic)foreach(var j in session.traffic.junctions)if(Vector3.Distance(pos,j.center)<Mathf.Max(j.halfWidth[0],j.halfWidth[1])+12){road=false;break;}
+  if(road&&session.traffic)foreach(var j in session.traffic.junctions)if(j.SameLevel(pos)&&Vector3.Distance(pos,j.center)<Mathf.Max(j.halfWidth[0],j.halfWidth[1])+12){road=false;break;}
   bool forward=speed>=2&&Vector3.Dot(velocity.normalized,taxi.transform.forward)>.85f;
   float dot=Vector3.Dot(velocity.normalized,tangent);
   if(road&&forward&&dot>.8f){clearSeconds+=seconds;if(clearSeconds>=2)wrongLatched=false;}else clearSeconds=0;
@@ -117,7 +117,7 @@ public partial class DrivingLaw : MonoBehaviour {
   }
   var training=session.GetComponent<ConfusionPractice>();var zones=session.GetComponent<ServiceLawZones>();
   if(entry==null)foreach(var j in session.traffic.junctions)for(int axis=0;axis<2;axis++)for(int sign=-1;sign<=1;sign+=2){
-   if(training&&training.Owns(j)||zones&&zones.Owns(j))continue;
+   if(!j.SameLevel(taxi.transform.position)||training&&training.Owns(j)||zones&&zones.Owns(j))continue;
    if(!j.signalized&&!j.scenarioSignal)continue;
    var dir=session.traffic.AxisDirection(j,axis)*sign;if(Vector3.Dot(taxi.transform.forward,dir)<.7f)continue;var stop=session.traffic.StopPosition(j,axis,sign);var planeNormal=session.traffic.StopNormal(j,axis,sign);
    float before=Vector3.Dot(previous-stop,planeNormal),after=Vector3.Dot(front-stop,planeNormal),lane=Vector3.Dot(front-j.center,TrafficSystem.Right(dir));string key=j.ApproachKey(axis,sign);
