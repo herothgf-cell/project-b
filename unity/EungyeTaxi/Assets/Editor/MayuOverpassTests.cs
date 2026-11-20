@@ -16,8 +16,40 @@ public static class MayuOverpassTests {
         return new HdEdge{next=Array.Empty<int>(),points=new[]{
             new MapPoint{x=x,elevation=height},new MapPoint{x=x,z=20,elevation=height}}};
     }
+    public static void VerifyBridgeShoulders() {
+        CheckBridgeShoulders(ProjectMapStore.Load(ProjectMapBuild.Root).Compose());
+    }
+    static void CheckBridgeShoulders(MapData map) {
+        var ids=new[]{"1374","1159","507","2125","2114","2175","2147"}
+            .Select(id=>"37612023:A0020000:"+id+":0").ToArray();
+        var native=map.roads.Where(r=>ids.Contains(r.id)).ToArray();
+        var wings=map.roads.Where(r=>r.id.StartsWith("mayu:bridge-shoulder:")).ToArray();
+        if (native.Length!=7 || wings.Length!=2) throw new InvalidOperationException("계수교 차도 구성");
+        var surface=new RoadSurfaceIndex(new MapData{roads=native.Concat(wings).ToArray(),buildings=Array.Empty<MapBuilding>()});
+        var points=native.SelectMany(r=>r.points).Where(p=>p.z>=1520 && p.z<=1686)
+            .Select(p=>p.V()).Distinct().OrderBy(p=>p.z).ToArray();
+        var path=new AssistedRoadNetwork.Path(points);
+        float[] stations={1521,1545,1566,1604,1635,1660,1685};
+        float[] halves={9.1f,13,16,16,16,12.8f,9.5f};
+        for (int i=0;i<stations.Length;i++) {
+            int j=Array.FindIndex(points,p=>p.z>=stations[i]);
+            if (j<1) j=j==0?1:points.Length-1;
+            var center=Vector3.Lerp(points[j-1],points[j],Mathf.InverseLerp(points[j-1].z,points[j].z,stations[i]));
+            float at=path.Project(center,out _);
+            var right=TrafficSystem.Right((path.Position(Mathf.Min(path.length,at+4))-path.Position(Mathf.Max(0,at-4))).normalized);
+            foreach (int sign in new[]{-1,1}) {
+                for (float offset=0;offset<=halves[i]-.35f;offset+=.25f)
+                    if (!surface.OnRoad(center+right*sign*offset)) throw new InvalidOperationException("계수교 차도 끊김 "+stations[i]);
+                if (surface.OnRoad(center+right*sign*(halves[i]+.45f))) throw new InvalidOperationException("계수교 차도 과다 폭 "+stations[i]);
+            }
+        }
+        var hatches=map.hdMarks.Where(m=>m.id!=null && m.id.StartsWith("mayu:gore:")).ToArray();
+        if (hatches.Length!=58 || hatches.Any(m=>m.type!="211")) throw new InvalidOperationException("계수교 백색 빗금");
+        Debug.Log("MAYU_SHOULDERS_PASS sections=7 wings=2 hatches=58");
+    }
     public static void Run() {
         var map=ProjectMapStore.Load(ProjectMapBuild.Root).Compose();
+        CheckBridgeShoulders(map);
         var road=map.roads.Single(r=>r.id==MayuOverpass.RoadId);
         var root=new GameObject("J10580 regression");
         try {

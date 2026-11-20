@@ -24,9 +24,54 @@ public static class MapSupplements {
   }
   map.osmCrossings=data.crossings;map.supplementApplied=true;map.supplementSummary="OSM 보완 · 도로명 "+data.names.Length+" / 통행규제 "+data.rules.Length+" / 횡단보도 "+data.crossings.Length+" · 현장 미확인";
  }
+ const string LibraryNode="OSM node 12280761355";
+ // Library entrance table. The NE edge meets sidewalks 517/518; the SW edge
+ // runs from sidewalk 592 to the opposite shoulder on the bend in the main road.
+ static readonly Vector3 LibrarySwLeft=new Vector3(146.675f,.105f,1272.370f);
+ static readonly Vector3 LibrarySwRight=new Vector3(155.773f,.105f,1264.393f);
+ static readonly Vector3 LibraryNeLeft=new Vector3(155.175f,.105f,1282.515f);
+ static readonly Vector3 LibraryNeRight=new Vector3(164.055f,.105f,1274.295f);
+ public static void ApplyReviewedCrossing(MapData map){
+  if(map.mapId!="eungye"||map.osmCrossings==null)return;
+  // The surveyed crossing spans Daeun-ro. The model has open side streets at the
+  // OSM node, so use the opposing curb faces just southwest of their mouths.
+  SetCrossing(map,"OSM node 12279718021","37612022:A0020000:1094:0",
+   new Vector3(206.611f,0,1206.235f),new Vector3(220.842f,0,1183.173f)); // curbs 373/374
+  SetCrossing(map,LibraryNode,"37612022:A0020000:2213:0",
+   (LibrarySwLeft+LibraryNeLeft)*.5f,(LibrarySwRight+LibraryNeRight)*.5f);
+ }
+ static void SetCrossing(MapData map,string source,string road,Vector3 northwest,Vector3 southeast){
+  var crossing=Array.Find(map.osmCrossings,c=>c.source==source);
+  if(crossing==null)return;
+  var center=(northwest+southeast)*.5f;
+  var span=southeast-northwest;
+  crossing.x=center.x;crossing.z=center.z;crossing.width=span.magnitude;
+  var across=span.normalized;crossing.dx=-across.z;crossing.dz=across.x;
+  crossing.roadId=road;
+  crossing.status="aerial-reviewed-game-curbs";
+ }
+ static void DrawLibraryCrossing(Transform parent){
+  // Four cross sections keep the ochre approach bands flush with the paving.
+  var rows=new[]{0f,.075f,.925f,1f};
+  var vertices=new Vector3[rows.Length*2];
+  for(int i=0;i<rows.Length;i++){
+   vertices[2*i]=Vector3.Lerp(LibrarySwLeft,LibraryNeLeft,rows[i]);
+   vertices[2*i+1]=Vector3.Lerp(LibrarySwRight,LibraryNeRight,rows[i]);
+  }
+  var obj=new GameObject("대야 도서관 앞 보행 포장");obj.transform.SetParent(parent,false);
+  var mesh=new Mesh{name="Library crossing pavement and approach bands",vertices=vertices,subMeshCount=2};
+  mesh.SetTriangles(new[]{2,4,5,2,5,3},0);
+  mesh.SetTriangles(new[]{0,2,3,0,3,1,4,6,7,4,7,5},1);mesh.RecalculateNormals();
+  obj.AddComponent<MeshFilter>().sharedMesh=mesh;
+  obj.AddComponent<MeshRenderer>().sharedMaterials=new[]{
+   WorldBuilder.Mat("Library crossing paving",new Color(.56f,.55f,.52f)),
+   WorldBuilder.Mat("Library crossing approach bands",new Color(.86f,.69f,.33f))};
+ }
  public static void DrawCrossings(MapData map,Transform parent){
   if(map.osmCrossings==null)return;var paint=WorldBuilder.Mat("OSM crossing paint",new Color(.9f,.9f,.88f));
-  foreach(var c in map.osmCrossings){if(!c.render)continue;var direction=new Vector3(c.dx,0,c.dz);var right=TrafficSystem.Right(direction);
+  foreach(var c in map.osmCrossings){if(!c.render)continue;
+   if(map.mapId=="eungye"&&c.source==LibraryNode&&c.roadId=="37612022:A0020000:2213:0"){DrawLibraryCrossing(parent);continue;}
+   var direction=new Vector3(c.dx,0,c.dz);var right=TrafficSystem.Right(direction);
    for(float x=-c.width*.5f+.65f;x<c.width*.5f-.3f;x+=.95f){var stripe=WorldBuilder.Box("OSM crossing "+c.source,new Vector3(c.x,.065f,c.z)+right*x,new Vector3(.5f,.02f,2.4f),paint,parent,false);stripe.transform.rotation=Quaternion.LookRotation(direction);}
   }
  }

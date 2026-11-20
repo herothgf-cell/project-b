@@ -146,11 +146,31 @@ public static class HomeGarage {
     wing.transform.localRotation=Quaternion.Euler(0,-side*36,0);
    }
   }
-  foreach(var path in new[]{g.entryPath,g.exitPath})for(int i=1;i<path.Length;i++){
-   var a=g.Local(path[i-1]);var b=g.Local(path[i]);var mid=(a+b)*.5f;
-   if(mid.z>=0||mid.z< -10)continue;
-   var strip=Box("차고 진입 포장",mid.x,.035f,mid.z,6.4f,.07f,(a-b).magnitude+.9f,floor,root.transform,false);
-   strip.transform.localRotation=Quaternion.LookRotation(b-a);
+  // These sidewalk tiles bracket both doors. Their street-facing vertices
+  // define the curb across the two lowered driveway openings.
+  var west=Array.Find(map.areas??new MapArea[0],area=>area.evidence=="sidewalk:generated:3073");
+  var east=Array.Find(map.areas??new MapArea[0],area=>area.evidence=="sidewalk:generated:3085");
+  if(west?.points?.Length==4&&east?.points?.Length==4){
+   var curbStart=g.Local(west.points[1].V());var curbEnd=g.Local(east.points[2].V());
+   DrawApron(g,g.entryPath,Track,curbStart,curbEnd,floor,root.transform);
+   DrawApron(g,g.exitPath,-Track,curbStart,curbEnd,floor,root.transform);
+  }
+ }
+ static void DrawApron(Layout g,Vector3[] path,float doorX,Vector3 curbStart,Vector3 curbEnd,Material floor,Transform root){
+  var curb=curbEnd-curbStart;
+  float CurbZ(float x)=>curbStart.z+(x-curbStart.x)*curb.z/curb.x;
+  for(int i=1;i<path.Length;i++){
+   var a=g.Local(path[i-1]);var b=g.Local(path[i]);
+   float da=a.z-CurbZ(a.x),db=b.z-CurbZ(b.x);
+   if(da*db>0||Mathf.Approximately(da,db))continue;
+   float crossingX=Mathf.Lerp(a.x,b.x,da/(da-db));
+   float left=crossingX-3.2f,right=crossingX+3.2f;
+   var mesh=new Mesh{name="차고 진입 포장"};
+   mesh.vertices=new[]{new Vector3(left,.07f,CurbZ(left)),new Vector3(doorX-3.2f,.07f,0),new Vector3(doorX+3.2f,.07f,0),new Vector3(right,.07f,CurbZ(right))};
+   mesh.triangles=new[]{0,1,2,0,2,3};mesh.RecalculateNormals();mesh.RecalculateBounds();
+   var apron=new GameObject(mesh.name);apron.transform.SetParent(root,false);
+   apron.AddComponent<MeshFilter>().sharedMesh=mesh;apron.AddComponent<MeshRenderer>().sharedMaterial=floor;
+   return;
   }
  }
  static GameObject Box(string name,float x,float y,float z,float w,float h,float d,Material mat,Transform root,bool solid){
