@@ -28,3 +28,9 @@
 - 측정 파일과 검사 로그는 `artifacts/taxi-audio-revision/`에 있다. 스피커·헤드폰 실청, 사람의 수동 운전, 전체 캠페인과 두 PC LAN 실기는 미검증이다.
 
 분리 빌드의 Player에서 임시 경력으로 `-cabinControlsCheck -taxiAudioCheck`를 실행해 `CABIN_PLAYER_OK checks=33`, 종료 0을 확인했다. 제동 소스 제거, 45km/h에서 정지 시 음량·피치 감소, 좌·우·비상등의 밝고 어두운 위상에 맞는 서로 다른 클립, 음소거를 검사했다. 차량 속도와 위치를 지정한 검사이며 실제 페달 물리 주행 측정과 구분한다.
+
+## 기본 실행본 확인
+
+첫 출발 차고 수정과 소리 변경을 함께 포함한 배포 소스는 `491a7e8`이다. `builds/EungyeTaxi/EungyeTaxi.exe -cabinControlsCheck -taxiAudioCheck -shiftCaptureOutput <출력 폴더> -logFile <로그 파일>`로 실제 기본 실행 파일을 재검사했다. 좌·우·비상등 세 모드, 음소거, 감속 시 소리 변화 등 총 33건 통과, 종료 0. 소리 소스 커밋은 `186a256`이다. PvP 별도 위치 제어 검사 `tools/test_pvp_condition.ps1`는 24건 및 종료 0이었다. 기본 실행본의 출하 파일 143개(145,396,367바이트)를 검증 사본과 일치시켰다.
+
+배포 커밋 `f17e8a8`의 기본 통합 및 PvP 배포 매니페스트 `-VerifyOnly` 모두 종료 0. 출하 143개와 선택적 로컬 사용자 프로필 1개를 검증했다. [통합 빌드 기록](2026-11-20-first-departure-taxi.md).
