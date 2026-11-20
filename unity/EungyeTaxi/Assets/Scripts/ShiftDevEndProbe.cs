@@ -458,7 +458,9 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    body.velocity=Vector3.zero;
    yield return new WaitForSecondsRealtime(.6f);
    Check(fastPitch>engine.pitch+.25f&&fastLevel>engine.volume+.08f,"45 km/h to standstill lowers engine pitch and level");
-   Check(rollingLevel>.12f&&road.volume<.01f&&road.pitch==1,"rolling sound fades at rest without changing pitch");
+   yield return new WaitForEndOfFrame();
+   Debug.Log("TAXI_ROAD_MIX cruise="+rollingLevel+" rest="+road.volume+" pitch="+road.pitch);
+   Check(rollingLevel>.12f&&road.volume<.01f&&Mathf.Approximately(road.pitch,1),"rolling sound fades at rest without changing pitch");
    settings.engineSound=false;
    yield return new WaitForEndOfFrame();
    Check(!engine.isPlaying&&!road.isPlaying,"drive switch mutes both recorded layers");

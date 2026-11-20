@@ -20,6 +20,7 @@ public sealed class VehicleAudio : MonoBehaviour {
  AudioSource Source(string sound,bool loop){
   var source=gameObject.AddComponent<AudioSource>();
   source.playOnAwake=false;
+  source.volume=0;
   source.loop=loop;
   source.spatialBlend=0;
   source.clip=LoadClip(sound);
@@ -29,8 +30,8 @@ public sealed class VehicleAudio : MonoBehaviour {
   return Resources.Load<AudioClip>("Audio/Taxi/"+sound);
  }
  static void Loop(AudioSource source,float volume){
-  if(volume<=0){if(source.isPlaying)source.Stop();return;}
   source.volume=volume;
+  if(volume<=0){if(source.isPlaying)source.Stop();return;}
   if(!source.isPlaying)source.Play();
  }
  // Speed is in metres per second. Throttle adds load while speed carries the main pitch change.
