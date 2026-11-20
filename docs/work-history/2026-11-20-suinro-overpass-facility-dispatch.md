@@ -21,6 +21,11 @@
 
 ## 재현
 
+소스 커밋 `358f2fa`에서 도색 렌더러, 고가 회귀 16건, 시설 경로, 승하차 39곳 사이 1,482개 경로와 저장 이관 1,127건이 통과했다. 필수 입력 검사 문제 0, BuildHybrid 종료 0이다.
+
+배포 Player에서 식당 주차 칸에 정차한 상태로 지도 목적지 지정과 승차 호출 수락을 확인했다. 안내 거리는 1,897.51m였고, 차를 재배치하지 않고 안내를 따라 물리 주행으로 출차한 뒤 본선 차로 2047에서 동일 승차 목표까지 1,868.18m 안내가 유지됐다.
+
 - 통합 Editor 검사와 빌드는 Unity 2022.3.62f2에서 `MayuOverpassTests.VerifyRelease`를 실행한다. 지도 패키지 r49에서 실행 시 도로·도색을 합성한다.
 - Windows Player에 `-singlePlayer -contentTest -oneDayMode -hybridV2 -restaurantExitTest`를 주면 식당 주차 칸에서 지도 목적지와 호출을 선택하고, 수락한 승차 안내선을 따라 출구를 통과해 본선에서 같은 승차 목표를 계속 안내하는지 검사한다.
 - `-singlePlayer -contentTest -dayLightDayProbe -mapAudit -mapAuditLayers "J7973_3744|J866_5285|J10580_1415" -mapAuditOutput <출력 폴더>`는 세 곳 도색층과 고가 사선 화면을 촬영한다. `-singlePlayer -presentationTest -dayLightDayProbe -roadContinuityViews`는 전체 도로 화면과 촬영 범위를 기록한다.
+최종 Player의 99개 타일에 도로 객체 4,025개가 모두 포함됐고 화면·표지 검사 359건이 통과했다. J866의 추가 황색 도색 조각 16개를 처리하고 J10580 램프 차로 끝 6곳에 지상 포장을 연결했다. 배포 manifest 143개 파일의 크기·SHA256 검증을 통과했고 선택 사용자 설정도 별도로 검증했다.
