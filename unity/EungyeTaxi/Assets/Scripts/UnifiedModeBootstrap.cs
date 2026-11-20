@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -53,10 +54,64 @@ public sealed class UnifiedModeBootstrap : MonoBehaviour {
         Selected=Mode.Menu;PvpSimulationMode.Reset();Time.timeScale=1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);return true;
     }
+    enum SinglePage { Closed, Choose, Slots }
+    SinglePage singlePage;
+    string[] slots=Array.Empty<string>();
+    Vector2 scroll;
+    static string titleSlot;
+    public static string ConsumeTitleSlot(){var path=titleSlot;titleSlot=null;return path;}
+    string DefaultCareerPath(){
+        if(UnifiedModeProbe.Enabled)return UnifiedModeProbe.CampaignPath;
+        return CampaignSaveLocation.Resolve(Path.GetDirectoryName(Application.persistentDataPath),PrototypeSettings.ThreeDaySaveFile);
+    }
+    public void NewSingle(){
+        try{
+            string first=DefaultCareerPath();
+            titleSlot=File.Exists(first)||File.Exists(first+".bak")?CampaignSaveLocation.NewCareer(Path.GetDirectoryName(first)):first;
+            StartSingle();
+        }catch(Exception e){message="새 경력을 열 수 없습니다. "+e.Message;}
+    }
+    public void ShowSlots(){
+        singlePage=SinglePage.Slots;scroll=Vector2.zero;message="";slots=Array.Empty<string>();
+        try{slots=CampaignSaveLocation.ListCareers(Path.GetDirectoryName(DefaultCareerPath()));}
+        catch(Exception e){message="저장 목록을 읽지 못했습니다. "+e.Message;}
+    }
+    public bool LoadSingle(string path){
+        if(Array.IndexOf(slots,path)<0)return false;
+        try{CampaignSaveLocation.SelectCareer(path);titleSlot=path;StartSingle();return true;}
+        catch(Exception e){message="저장 파일을 열지 못했습니다. "+e.Message;return false;}
+    }
+    void DrawSinglePopup(){
+        CasualUI.Backdrop();
+        float w=Mathf.Min(Screen.width-24,460),h=Mathf.Min(Screen.height-24,380);
+        var panel=new Rect((Screen.width-w)/2,(Screen.height-h)/2,w,h);
+        CasualUI.Panel(panel);GUI.BeginGroup(panel);
+        bool listing=singlePage==SinglePage.Slots;
+        CasualUI.Header(new Rect(6,6,w-12,46),listing?"불러오기":"싱글",0);
+        var button=KoreanText.Button(18);
+        var info=new GUIStyle(GUI.skin.label){wordWrap=true};info.normal.textColor=CasualUI.Ink;
+        if(listing){
+            if(slots.Length==0&&message.Length==0)GUI.Label(new Rect(22,76,w-44,38),"저장된 경력이 없습니다.",info);
+            var area=new Rect(18,58,w-36,h-166);
+            scroll=GUI.BeginScrollView(area,scroll,new Rect(0,0,area.width-20,slots.Length*48));
+            for(int i=0;i<slots.Length;i++){
+                var p=slots[i];var date=File.GetLastWriteTime(File.Exists(p)?p:p+".bak");
+                if(GUI.Button(new Rect(0,i*48,area.width-20,44),"경력 · "+date.ToString("yyyy-MM-dd HH:mm:ss"),button))LoadSingle(p);
+            }
+            GUI.EndScrollView();
+        }else{
+            if(GUI.Button(new Rect(22,74,w-44,50),"처음부터 하기",CasualUI.Action(18)))NewSingle();
+            if(GUI.Button(new Rect(22,136,w-44,50),"불러오기",button))ShowSlots();
+        }
+        GUI.Label(new Rect(22,h-104,w-44,48),message,info);
+        if(GUI.Button(new Rect(22,h-54,w-44,40),"돌아가기",button)){singlePage=listing?SinglePage.Choose:SinglePage.Closed;message="";}
+        GUI.EndGroup();
+    }
     void OnGUI(){
         GUI.skin.font=KoreanText.Font;
         if(Selected==Mode.Menu){
-            int choice=CasualMenuUI.Main();if(choice==1)StartSingle();else if(choice==2)StartPvp();else if(choice==3)Application.Quit();return;
+            if(singlePage!=SinglePage.Closed){DrawSinglePopup();return;}
+            int choice=CasualMenuUI.Main();if(choice==1)singlePage=SinglePage.Choose;else if(choice==2)StartPvp();else if(choice==3)Application.Quit();return;
         }
     }
 }

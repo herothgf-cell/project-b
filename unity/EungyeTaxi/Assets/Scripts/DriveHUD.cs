@@ -55,7 +55,7 @@ public class DriveHUD : MonoBehaviour {
   bool goal=b.SupportsCareer&&b.preparing&&!b.ResumeBlocked;
   bool dailyCard=goal&&b.DailyConditionsEnabled;
   bool beside=goal&&(dailyCard?DailyConditionHUD.UseSide(Screen.width,Screen.height):Screen.width>=1100);
-  float height=(restart?360:308)+(UnifiedModeBootstrap.IsUnified?52:0)+(shift?52:0)+(goal&&!beside?106:0)+(b.SupportsCareer?88:0)+(b.Story.FoundNotebook?44:0),x=Screen.width/2f-240,y=(Screen.height-height)/2;
+  float height=(restart?308:256)+(UnifiedModeBootstrap.IsUnified?52:0)+(shift?52:0)+(goal&&!beside?106:0)+(b.SupportsCareer?44:0)+(b.Story.FoundNotebook?44:0),x=Screen.width/2f-240,y=(Screen.height-height)/2;
   var oldMatrix=GUI.matrix;
   var layout=dailyCard?new DailyConditionHUD.PreparationLayout(Screen.width,Screen.height,480,height,beside):default;
   GUI.depth=-150;
@@ -74,16 +74,13 @@ public class DriveHUD : MonoBehaviour {
    OneDayHUD.DrawCareerGoal(bounds,b);
    if(!beside)row+=106;
   }
-  if(restart){if(GUI.Button(new Rect(x+20,row,440,40),b.SupportsCareer?"새 경력":"처음부터 시작",KoreanText.Button(16)))b.RequestRestart();row+=52;}
-  if(b.SupportsCareer){if(GUI.Button(new Rect(x+20,row,440,35),"저장된 경력",KoreanText.Button(16))){careerMenuSlots=b.CareerSlots();careerFirst=0;}row+=44;
-   if(GUI.Button(new Rect(x+20,row,440,35),"처음 이야기 다시 보기",KoreanText.Button(16)))b.PlayIntroAgain();
-   row+=44;
+  if(restart){if(GUI.Button(new Rect(x+20,row,440,40),b.SupportsCareer?"처음부터 다시하기":"처음부터 시작",KoreanText.Button(16)))b.RequestRestart();row+=52;}
+  if(b.SupportsCareer){if(GUI.Button(new Rect(x+20,row,440,35),"불러오기",KoreanText.Button(16))){careerMenuSlots=b.CareerSlots();careerFirst=0;}row+=44;
    if(b.Story.FoundNotebook){
     if(GUI.Button(new Rect(x+20,row,440,35),"기사 수첩",KoreanText.Button(16)))b.LogbookOpen=true;
     row+=44;
    }
   }
-  if(GUI.Button(new Rect(x+20,row,440,40),"운전 연습 선택",KoreanText.Button(16)))session.GetComponent<PracticeSession>().OpenPicker();row+=52;
   GUI.enabled=enabled;
   if(GUI.Button(new Rect(x+20,row,440,40),"설정",KoreanText.Button(16)))settings.Open();row+=52;
   var unified=FindObjectOfType<UnifiedModeBootstrap>();if(unified){if(GUI.Button(new Rect(x+20,row,440,40),"모드 선택",KoreanText.Button(16)))unified.ReturnToMenu();row+=52;}
@@ -93,13 +90,13 @@ public class DriveHUD : MonoBehaviour {
  }
  void DrawCareerSlots(BusinessProgress b){
   float x=(Screen.width-480)/2f,y=(Screen.height-360)/2f;GUI.depth=-150;
-  CasualUI.Panel(new Rect(x,y,480,360));CasualUI.Header(new Rect(x+4,y+4,472,40),"저장된 경력",0);
+  CasualUI.Panel(new Rect(x,y,480,360));CasualUI.Header(new Rect(x+4,y+4,472,40),"불러오기",0);
   var button=KoreanText.Button(15);
   if(careerMenuSlots.Length==0)GUI.Label(new Rect(x+20,y+62,440,35),"저장된 경력이 없습니다.",small);
   for(int i=careerFirst;i<Mathf.Min(careerMenuSlots.Length,careerFirst+4);i++){
    var path=careerMenuSlots[i];bool current=path==b.SavePath;
    string label=System.IO.Path.GetFileName(path)==PrototypeSettings.ThreeDaySaveFile?"첫 3일 저장":"경력 · "+System.IO.File.GetLastWriteTime(path).ToString("MM-dd HH:mm:ss");
-   if(GUI.Button(new Rect(x+20,y+54+(i-careerFirst)*49,440,42),label+(current?" · 현재":""),button)&&!current&&b.OpenCareerSlot(path))return;
+   if(GUI.Button(new Rect(x+20,y+54+(i-careerFirst)*49,440,42),label+(current?" · 현재":""),button)&&b.OpenCareerSlot(path))return;
   }
   if(careerFirst>0&&GUI.Button(new Rect(x+20,y+258,210,38),"이전 목록",button))careerFirst-=4;
   if(careerFirst+4<careerMenuSlots.Length&&GUI.Button(new Rect(x+250,y+258,210,38),"다음 목록",button))careerFirst+=4;
