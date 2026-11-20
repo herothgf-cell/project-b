@@ -66,7 +66,8 @@ public static class LogbookHUD {
    case 4:DrawAchievements(b.Logbook);break;
    default:
     DrawSpread(b.Story);
-    GUI.Label(new Rect(26,579,810,44),"아버지가 30년 몰던 차의 글러브박스에서 나온 수첩.",detail);
+    string memo=b.Logbook.StudentMemo(b.ledger.Day,session.jobs.StudentMinute);
+    GUI.Label(new Rect(26,579,810,44),memo.Length>0?memo:"아버지가 30년 몰던 차의 글러브박스에서 나온 수첩.",detail);
     break;
   }
   DrawTabs(b);

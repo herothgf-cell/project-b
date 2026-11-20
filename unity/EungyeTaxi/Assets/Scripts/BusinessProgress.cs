@@ -56,6 +56,10 @@ public class BusinessProgress : MonoBehaviour {
   if(checkpoint!=null&&checkpoint.live!=null&&(!System.Text.RegularExpressions.Regex.IsMatch(json,field)||System.Text.RegularExpressions.Regex.IsMatch(json,field+@"null(?=\s*[,}])")))checkpoint.live.ambientPedestrians=null;
   if(checkpoint!=null&&checkpoint.live!=null&&(!System.Text.RegularExpressions.Regex.IsMatch(json,@"(?<!\\)""radio""\s*:")||System.Text.RegularExpressions.Regex.IsMatch(json,@"(?<!\\)""radio""\s*:\s*null(?=\s*[,}])")))checkpoint.live.radio=null;
   if(checkpoint!=null&&checkpoint.account!=null&&(!System.Text.RegularExpressions.Regex.IsMatch(json,@"(?<!\\)""Room""\s*:")||System.Text.RegularExpressions.Regex.IsMatch(json,@"(?<!\\)""Room""\s*:\s*null(?=\s*[,}])")))checkpoint.account.Room=null;
+  // Unity can serialize an uninitialized inline radio field as this empty schedule.
+  var radio=checkpoint?.live?.radio;
+  if(radio!=null&&radio.version==1&&radio.day==0&&radio.completedMask==0&&radio.activeCue==-1&&radio.remaining==0)
+   checkpoint.live.radio=null;
   return checkpoint;
  }
  public FatherStoryState Story {get;private set;}=new FatherStoryState();
@@ -611,6 +615,16 @@ public class BusinessProgress : MonoBehaviour {
    result.passengerPresetId=jobs.Behavior?.PresetId;
    var story=jobs.CurrentStory;
    if(story!=null){result.storyId=story.id;result.storyEnding=(int)jobs.StoryEnding;result.storyLine=jobs.StoryEndingLine;}
+   if(outcome=="운송 완료"||outcome=="시간 초과 후 목적지 도착"){
+    if(offer.reunionKind!=0){
+     Logbook.studentReturned=true;
+     result.reunionLine=Logbook.studentNote?"그때 적어 드렸죠? 다음엔 꼭 인사드린다고.":"다음에 길에서 보면 제가 먼저 인사할게요.";
+    }else if(story?.id=="last-train"&&Logbook.studentDay==0){
+     Logbook.studentDay=ledger.Day;Logbook.studentMinute=offer.studentBoardMinute>0?offer.studentBoardMinute:jobs.StudentMinute;
+     Logbook.studentStop=offer.pickupStopId;Logbook.studentPlace=KoreanText.Stop(result.pickup);
+     Logbook.studentFirstTrip=result.tripId;Logbook.studentFirstOffer=result.offerId;Logbook.studentNote=result.storyEnding==(int)PassengerStoryEnding.Good;
+    }
+   }
    Logbook.ObserveRide(result,DayCondition==DailyConditionKind.Rain,DayCondition==DailyConditionKind.Friday);
    Story.NeighborhoodProgress(Logbook.StarredNeighborhoods);
   }

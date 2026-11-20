@@ -2,6 +2,23 @@ using System;
 using System.Collections.Generic;
 
 public partial class PassengerJobs {
+ int lastReunionKind;
+ public int StudentMinute {get{return (int)Math.Min(1200,60*DayLightController.HourForElapsed(session.business.ledger.Elapsed,session.business.ledger.Settings.daySeconds));}}
+ int AvailableReunion {get{return session.business&&session.business.PassengerStoriesEnabled?session.business.Logbook.ReunionKind(session.business.ledger.Day,StudentMinute):0;}}
+ JobOffer ReunionOffer(JobOffer[] normal,int kind){
+  var book=session.business.Logbook;
+  int p=runtimeStopIds.IndexOf(book.studentStop);
+  JobOffer offer=null;
+  if(p>=0&&PickupAvailable(p,PickupDistance(p))){
+   foreach(var other in normal){
+    if(other.drop==p||other.drop==Catalog.OppositeIndex(p))continue;
+    offer=OrdinaryOffer(p,other.drop,PickupDistance(p));if(offer!=null)break;
+   }
+  }
+  if(offer==null&&kind==2&&normal.Length>0)offer=normal[0];
+  if(offer!=null)offer.reunionKind=kind;
+  return offer;
+ }
  public PassengerStoryDefinition CurrentStory {get{
   return session&&session.business&&session.business.PassengerStoriesEnabled&&current!=null
    ?PassengerStories.Find(current.storyId):null;
@@ -15,7 +32,10 @@ public partial class PassengerJobs {
   if(!business.PassengerStoriesEnabled||ForcedPassengerType.HasValue)return null;
   var book=business.Logbook;int day=business.ledger.Day;
   var reserved=CurrentStory;
-  if(book.StoryAssignments(day)>=StoryAssignmentLimit){
+  bool evening=StudentMinute>=17*60;
+  int dailyLimit=StoryAssignmentLimit;
+  int assignments=book.StoryAssignments(day);
+  if(assignments>=dailyLimit){
    ReleaseStoryReservation();current.storyId=null;return null;
   }
   var eligible=session.requests.EligibleRequests();
@@ -27,12 +47,15 @@ public partial class PassengerJobs {
   double total=0;
   foreach(var story in PassengerStories.All){
    if(reserved!=null&&reserved.id!=story.id||book.HasStoryAssignment(day,story.id)||Array.IndexOf(eligible,story.request)<0)continue;
+   if(story.id=="last-train"&&reserved==null&&(book.studentDay!=0||!evening))continue;
    var preset=FindStoryPreset(story,presets);
    if(preset==null)continue;
    var pool=(PassengerType)Enum.Parse(typeof(PassengerType),preset.pool);
    if(!care.CanReserveStoryPassenger(current.candidateSeed,pool))continue;
+   if(reserved==null&&book.studentDay==0&&story.id!="last-train"&&assignments>=dailyLimit-1)continue;
    double weight=story.Weight(business.DayCondition);
    if(weight<=0)continue;
+   if(story.id=="last-train"&&book.studentDay==0&&evening){candidates.Clear();weights.Clear();candidates.Add(story);weights.Add(weight);total=weight;break;}
    candidates.Add(story);weights.Add(weight);total+=weight;
   }
   if(candidates.Count==0){ReleaseStoryReservation();current.storyId=null;return null;}

@@ -7,7 +7,12 @@ public static class CockpitUI {
  public static Rect JobBounds(float w,float h,bool active){float s=UiReadability.HudScale(w,h);return new Rect(w-312*s,382*s,288*s,(active?150:58)*s);}
  public static Rect SituationBounds(float w,float h,bool result=false,bool activeJob=true,bool pvp=false){float s=UiReadability.HudScale(w,h);if(pvp)return new Rect(w-312*s,552*s,288*s,140*s);return new Rect(24*s,414*s,300*s,Mathf.Min((result?118:220)*s,h-260*s-414*s));}
  public static Rect ServiceHintBounds(float w,float h){float s=UiReadability.HudScale(w,h);return new Rect(365*s,210*s,410*s,110*s);}
- public static Rect SlidingTipBounds(float w,float h,bool result,bool active,float visible,bool pvp=false,bool firstPerson=false){float scale=UiReadability.HudScale(w,h);var r=firstPerson?new Rect(340*scale,h-300*scale,300*scale,140*scale):SituationBounds(w,h,result,active,pvp);r.x=Mathf.Lerp(-r.width,r.x,Mathf.Clamp01(visible));return r;}
+ public static Rect SlidingTipBounds(float w,float h,bool result,bool active,float visible,bool pvp=false,bool firstPerson=false){
+  var r=SituationBounds(w,h,result,active,pvp&&!firstPerson);
+  if(firstPerson)r.yMax=Mathf.Min(r.yMax,h-290*UiReadability.HudScale(w,h));
+  r.x=Mathf.Lerp(-r.width,r.x,Mathf.Clamp01(visible));
+  return r;
+ }
  public static string Clock(double seconds){int n=Mathf.CeilToInt((float)System.Math.Max(0,seconds));return n/60+":"+(n%60).ToString("00");}
  static void Label(Rect r,string value,int size=18,Color? color=null,bool bold=false){GUI.Label(r,value,DrivingHudArt.Text(size,color,bold));}
  public static Rect FirstPersonSpeedRect(float w,float h){return new Rect(w*.40f-155,h-139,310,112);}

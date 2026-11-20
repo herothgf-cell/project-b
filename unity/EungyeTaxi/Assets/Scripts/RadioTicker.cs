@@ -30,7 +30,7 @@ public sealed class RadioTicker : MonoBehaviour {
         if (!session || !session.business || session.business.ledger == null) return null;
         int currentDay = session.business.ledger.Day;
         if (awaitingRestore != null && awaitingRestore.day == currentDay) return awaitingRestore;
-        if (schedule == null || day != currentDay || !session.law || campaign != session.law.ids.campaign) return null;
+        if (schedule == null || day != currentDay || !session.law || campaign != session.law.ids.campaign) return new RadioScheduleSnapshot {day=currentDay};
         return schedule.Capture();
     }
 
@@ -56,7 +56,10 @@ public sealed class RadioTicker : MonoBehaviour {
             campaign = identity;
             day = ledger.Day;
         }
-        bool enabled = DrivingSettings.Current.radioSubtitles;
+        var student=ReunionRide;
+        if(student!=null&&CanDisplay(business)&&ElapsedSinceBoard(student)>=5&&!student.studentRadioOff&&
+           (!DrivingSettings.Current.radioSubtitles||Input.GetKeyDown(KeyCode.R)))QuietStudentRide();
+        bool enabled = DrivingSettings.Current.radioSubtitles && !(student!=null&&student.studentRadioOff);
         double elapsed = ledger.Elapsed, duration = ledger.Settings.daySeconds;
         bool closing = business.ShowingSummary;
         bool show = enabled && schedule.NeedsPresentation(elapsed, duration, closing) && CanDisplay(business);
@@ -93,9 +96,50 @@ public sealed class RadioTicker : MonoBehaviour {
         return new Rect((width - panelWidth) / 2, height - bottom * scale, panelWidth, 38 * scale);
     }
 
+    AudioClip studentDoor;
+    public void PlayStudentDoor(){
+        if(!studentDoor){
+            const int rate=22050;
+            var samples=new float[rate/3];
+            float noise=0;
+            var random=new System.Random(19);
+            for(int i=0;i<samples.Length;i++){
+                float t=(float)i/rate;
+                noise=Mathf.Lerp(noise,(float)random.NextDouble()*2-1,.22f);
+                float latch=t<.035f?0:Mathf.Exp(-95*(t-.035f));
+                samples[i]=.5f*Mathf.Exp(-27*t)*Mathf.Sin(2*Mathf.PI*84*t)+noise*(.32f*Mathf.Exp(-42*t)+.6f*latch);
+            }
+            studentDoor=AudioClip.Create("뒷문 닫힘",samples.Length,1,rate,false);
+            studentDoor.SetData(samples,0);
+        }
+        var source=GetComponent<AudioSource>();
+        if(!source){source=gameObject.AddComponent<AudioSource>();source.playOnAwake=false;}
+        source.PlayOneShot(studentDoor,.65f);
+    }
+    void OnDestroy(){if(studentDoor)Destroy(studentDoor);}
+    JobOffer ReunionRide {get{
+        if(!session||!session.jobs||session.jobs.trip.State!=TripState.OnTrip||session.jobs.trip.ArrivalLocked)return null;
+        var offer=session.jobs.current;return offer!=null&&offer.reunionKind!=0?offer:null;
+    }}
+    double ElapsedSinceBoard(JobOffer offer){return session.business.ledger.Elapsed-offer.reunionBoardTime;}
+    public bool QuietStudentRide(){
+        var offer=ReunionRide;if(offer==null||offer.studentRadioOff)return false;
+        offer.studentRadioOff=true;offer.quietThanksAt=session.business.ledger.Elapsed;session.business.SaveCheckpoint();return true;
+    }
+    public string StudentLine {get{
+        var offer=ReunionRide;if(offer==null)return "";
+        double t=ElapsedSinceBoard(offer);
+        if(t<.7)return "";
+        if(t<5)return offer.reunionKind==1?"기사님! 오늘은 안 뛰었어요. 오실 줄 알았거든요.":"어, 그날 기사님이시죠? 또 뵙네요.";
+        if(t<10)return "오늘 처음 혼자 실습을 끝냈어요. 가는 동안 좀 조용히 가도 돼요?";
+        if(offer.studentRadioOff)return session.business.ledger.Elapsed<System.Math.Max(offer.reunionBoardTime+10,offer.quietThanksAt)+4?"고맙습니다.":"";
+        return t<22?"[R] 은계 FM 끄기":"";
+    }}
     void OnGUI() {
-        string line = VisibleText;
-        if (Event.current.type != EventType.Repaint || line.Length == 0 || !DrivingSettings.Current.radioSubtitles ||
+        string student=StudentLine;
+        bool speaking=student.Length>0;
+        string line = speaking?student:VisibleText;
+        if (Event.current.type != EventType.Repaint || line.Length == 0 || (!speaking&&(!DrivingSettings.Current.radioSubtitles||ReunionRide!=null&&ReunionRide.studentRadioOff)) ||
             !CanDisplay(session.business)) return;
 
         float scale = CockpitUI.Scale;
@@ -129,7 +173,11 @@ public sealed class RadioTicker : MonoBehaviour {
         CasualUI.Panel(panel);
         var badge = new Rect(6, 5, 90, 28);
         CasualUI.RoundedFill(badge, CasualUI.Amber);
-        GUI.Label(badge, ContentTuning.Text("radio.station", "은계 FM"), stationStyle);
+        if(speaking){
+            CasualUI.Portrait(new Rect(7,5,28,28),PassengerDialogueUI.PortraitIndex(session.business.Logbook.studentFirstOffer,session.business.Logbook.studentFirstTrip));
+            badge.x+=26;badge.width-=26;
+        }
+        GUI.Label(badge, speaking?"학생":ContentTuning.Text("radio.station", "은계 FM"), stationStyle);
         GUI.Label(new Rect(106, 0, textWidth, panel.height), fittedLine, subtitleStyle);
 
         GUI.depth = depth;

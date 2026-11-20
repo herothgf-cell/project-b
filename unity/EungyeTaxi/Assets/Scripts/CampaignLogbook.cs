@@ -10,6 +10,23 @@ public sealed class LogbookEnding {
 [Serializable]
 public sealed class CampaignLogbook {
  public const int CurrentVersion=1,NeighborhoodSize=12;
+ public int studentDay,studentMinute;
+ public string studentStop,studentPlace,studentFirstTrip,studentFirstOffer;
+ public bool studentPromised,studentAnswered,studentNote,studentReturned;
+ public int ReunionKind(int day,int minute){
+  if(studentDay==0||studentReturned||day<studentDay+2)return 0;
+  if(studentPromised&&day==studentDay+2){
+   if(minute<studentMinute-30)return 0;
+   if(minute<=studentMinute+30)return 1;
+  }
+  return 2;
+ }
+ public string StudentMemo(int day,int minute){
+  if(studentDay==0)return "";
+  if(studentReturned)return "실습 끝난 학생 · 다시 태워 드렸다.";
+  if(!studentPromised)return "막차 놓친 학생 · 지나가다 다시 만나면 태워 드리자.";
+  return "학생과 약속 · "+(studentDay+2)+"일차 "+(studentMinute/60).ToString("00")+":"+(studentMinute%60).ToString("00")+" 전후 · "+studentPlace+(ReunionKind(day,minute)==2?" · 시간이 지나감":"");
+ }
  public int version=CurrentVersion;
  public List<string> passengerPresets=new List<string>();
  public List<LogbookEnding> endings=new List<LogbookEnding>();
@@ -100,6 +117,8 @@ public sealed class CampaignLogbook {
     completedRides<0||cleanStreak<0||cleanStreak>day||neighborhood==null||neighborhood.Length!=NeighborhoodSize||
     assignedStories==null||assignedStories.Count>3||assignmentDay==0&&assignedStories.Count>0||passengerPresets==null||endings==null||endings.Count>30)
    throw new ArgumentException("Invalid driver logbook");
+  if(studentDay<0||studentDay>day||studentDay>0&&(studentMinute<480||studentMinute>1200||string.IsNullOrEmpty(studentStop)||string.IsNullOrEmpty(studentFirstTrip))||studentPromised&&!studentAnswered)
+   throw new ArgumentException("Invalid student appointment");
   foreach(int count in neighborhood)if(count<0||count>2L*completedRides)throw new ArgumentException("Invalid neighborhood ride count");
   var ids=new HashSet<string>();
   foreach(string id in assignedStories)if(!ValidId(id)||!ids.Add(id))throw new ArgumentException("Invalid story assignment");

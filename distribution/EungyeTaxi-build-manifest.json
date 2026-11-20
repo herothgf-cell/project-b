@@ -1,18 +1,28 @@
 {
-  "sourceCommit": "94e8ca1a58b23aa20c5a72a6a1fab48b585cfbd8",
+  "sourceCommit": "749108bfad73d9dc620e79525c0c86204eea0073",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-20",
-  "totalBytes": 145405494.0,
+  "totalBytes": 145415222.0,
   "validation": {
     "build": "PrototypeBuild.BuildHybrid exit 0",
     "mapRevision": 50,
     "mapInputIssues": 0,
     "lanVersion": 23,
+    "wallMemoPointerChoices": 3,
+    "cameraLayoutWidths": [
+      1280,
+      1600,
+      1920
+    ],
     "homeBasePlayerChecks": 23,
-    "installedPlayerExitCode": 0,
-    "positionControlled": true,
+    "studentMeetingChecks": 42,
+    "studentReunionChecks": 21,
+    "studentReunionReloadChecks": 8,
+    "passengerStoryMatrixChecks": 142,
+    "passengerStoryMatrixRides": 20,
+    "physicalTouchscreen": false,
     "manualDriving": false
   },
   "files": [
@@ -53,8 +63,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 3185664,
-      "sha256": "f4c9076bd713a0ae83d274d3e1841dbce58dfdd3083d52e6d3898e0a75f9f4e1"
+      "bytes": 3195392,
+      "sha256": "8a397e8b92e00a9ecf70f1fdc76dd40c2cd53f0d2d4869632e428f9b686f50a1"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
