@@ -85,7 +85,8 @@ public static class OneDayHUD {
   bool side=rect.height>=200;
   CasualUI.Panel(rect);
   if(side)CasualUI.Header(new Rect(rect.x+7,rect.y+7,rect.width-14,38),"내 목표",5,CasualUI.Green);
-  GUI.Label(new Rect(rect.x+12,rect.y+(side?52:5),rect.width-24,22),side?GoalName(account):"목표 · "+GoalName(account),small);
+  string goal=business.StoryEnabled&&string.IsNullOrEmpty(business.WallMemoChoice)?"목표를 골라 주세요":GoalName(account);
+  GUI.Label(new Rect(rect.x+12,rect.y+(side?52:5),rect.width-24,22),side?goal:"목표 · "+goal,small);
   if(price>0){
    bool achieved=OwnsGoalCar(account);int left=Mathf.Max(0,price-account.Cash);double median=ledger.RecentNetMedian();
    string target=account.CareerGoal=="car"?VehicleCatalog.Get(account.CareerVehicleGoal).name:"넓은 호실";
@@ -95,8 +96,7 @@ public static class OneDayHUD {
    CasualUI.Bar(new Rect(rect.x+12,rect.y+(side?108:51),rect.width-24,side?14:8),achieved?1:GoalProgress(account.Cash,price),CasualUI.Green);
    if(side)GUI.Label(new Rect(rect.x+12,rect.y+130,rect.width-24,36),Money(account.Cash)+" / "+Money(price)+(forecast.Length==0?"":"\n"+forecast),small);
   }
-  if(!business.StoryEnabled||business.WallMemoChoice!="")return;
-  GUI.Label(new Rect(rect.x+12,rect.y+(side?172:63),rect.width-24,31),"숙소 벽 메모에서 목표를 고릅니다.",small);
+  if(business.StoryEnabled&&PersonalRoomHUD.MorningPreviewAvailable(business)&&GUI.Button(new Rect(rect.x+12,rect.yMax-(side?53:36),rect.width-24,side?41:32),"숙소 벽 메모 열기",button))PersonalRoomHUD.OpenPreparationMemo(business);
  }
  static void DrawCareerResult(Rect rect,DriveSession session){
   var business=session.business;var ledger=business.ledger;var account=ledger.Account;int price=GoalPrice(account);

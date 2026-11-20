@@ -303,9 +303,24 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   }
   Check(b.StoryEnabled&&b.preparing&&!b.Story.introSeen&&b.SavePath==FatherStorySavePath,"fresh isolated Eungye career awaits intro");
   Check(Mathf.Approximately(IntroCutscene.DurationSeconds,25)&&IntroCutscene.CutCount==4,"intro has four cuts in 25 seconds");
+  // Recreate the backbuffer before capturing the initially hidden test window.
+  Screen.SetResolution(1280,720,FullScreenMode.Windowed);
+  yield return new WaitForSecondsRealtime(.6f);
   DrivingSettings.Current.cabinAssist=false;
   s.taxi.body.detectCollisions=false;s.taxi.body.useGravity=false;s.taxi.enabled=false;
   foreach(var car in s.traffic.cars)if(car)car.gameObject.SetActive(false);
+  PersonalRoomHUD.OpenPreparationMemo(b);
+  Check(b.RoomOpen&&b.preparing&&b.WallMemoChoice=="","goal card opens the unselected morning memo");
+  b.RoomOpen=false;
+  b.ContinueFromMenu();
+  var tyres=s.taxi.transform.Cast<Transform>().Where(t=>t.name=="Tyre visual").ToArray();
+  bool parkedWheels=tyres.Length==4&&s.taxi.wheels.All(w=>tyres.Any(t=>Vector3.Distance(t.position,w.transform.position)<w.radius));
+  Debug.Log("FIRST_DEPARTURE memo="+b.RoomOpen+" parkedWheels="+parkedWheels);
+  Check(b.RoomOpen&&b.preparing&&!b.Intro&&Time.timeScale==0,"start opens the morning memo before the first intro");
+  Check(parkedWheels,"four visible tyres occupy their parked axles before physics starts");
+  yield return Capture("preparation-wall-memo");
+  Check(b.ChooseCareerGoal("home")&&b.WallMemoChoice=="home"&&!b.RoomOpen&&b.preparing,"morning memo saves the home goal and returns to preparation");
+  yield return Capture("preparation-selected-goal");
   float startIntro=Time.realtimeSinceStartup;
   b.ContinueFromMenu();Check(b.Intro&&b.Intro.IsPlaying&&!b.Intro.IsReplay&&b.Intro.CurrentCut==0,"first career opens first intro cut");
   int cuts=0;
@@ -316,11 +331,18 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   Check(b.FirstDriveFrame!=null,"first-day cockpit photo saved for the goal comparison");
   yield return null;
   Check(b.Story.firstVacancy&&s.jobs.offers[0]!=null,"first call automatically available");
+  var roof=s.taxi.transform.Find("Taxi exterior").GetComponentsInChildren<TextMesh>().Where(t=>t.name.StartsWith("TAXI ")).ToArray();
+  Check(roof.Length==2&&roof.All(t=>t.text=="TAXI"),"vacant taxi keeps TAXI on both faces of the roof sign");
+  s.drivingCamera.SetFirstPerson(false);
+  yield return Capture("vacant-taxi-roof");
+  s.drivingCamera.SetFirstPerson(true);
   var jobs=s.jobs;var pick=jobs.stops[0];var drop=jobs.stops[3];
   jobs.ForcedPassengerType=PassengerType.General;jobs.ForcedRideCase=DrunkRideCase.Normal;
   Pose(pick.Kerb,pick.Direction);
   jobs.offers[0]=new JobOffer{pickup=0,drop=3,fare=6000,seconds=300,requiredScore=60,distance=jobs.nav.Distance(pick,drop),candidateSeed="father-first"};
   Check(jobs.Accept(0)&&jobs.Interact()&&jobs.trip.State==TripState.OnTrip,"first passenger boards");
+  yield return null;
+  Check(roof.All(t=>t.text=="TAXI"),"occupied taxi keeps TAXI on both faces of the roof sign");
   Check(b.notice.Contains("미터기")&&b.CabinInput(CabinAction.Meter)&&b.Cabin.MeterOn,"first passenger prompts J and meter starts");
   Pose(drop.Kerb,drop.Direction);Check(jobs.Interact()&&!jobs.Active,"first passenger alights");
   Check(b.Story.FoundNotebook&&b.notice.Contains("수첩")&&!b.Story.HasPage(1)&&!b.Story.HasPage(2),"first ride discovers notebook with later condition pages locked");
@@ -334,7 +356,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   Check(b.RequestEndDay(),"first shift ends from home");
   while(!b.ShowingSummary)yield return null;
   Check(b.Story.HasPage(3)&&b.ledger.Account.Expense(1,"home-rent")>0&&b.StoryMonologue.Contains("월세"),"lawful first day opens page four and records rent");
-  Check(b.WallMemoPrompt&&b.ChooseCareerGoal("none")&&!b.WallMemoPrompt,"first night no-goal wall memo saves");
+  Check(!b.WallMemoPrompt&&b.ChooseCareerGoal("none")&&!b.WallMemoPrompt,"first night can replace the morning memo");
   Check(b.PlayIntroAgain()&&b.Intro.IsReplay,"menu can replay the opening");
   b.Intro.Skip();yield return null;
   Check(b.ShowingSummary&&b.Story.introSeen&&!b.Intro.IsPlaying,"skip returns to the same career state");

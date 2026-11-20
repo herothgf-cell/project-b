@@ -31,7 +31,8 @@ public class BusinessProgress : MonoBehaviour {
  bool testMode,storyTest;float noticeUntil; CampaignCheckpoint loaded; public bool useV2; public bool taxPrompt,preparing; public PrototypeSettings settings=new PrototypeSettings();
  public bool SaveFailed {get;private set;}public bool ResumeBlocked {get{return resumeBlocked;}}public bool IsRestoring {get{return restoring;}}
  public bool HasCampaignToContinue {get{return loaded!=null||!preparing||ledger!=null&&ledger.Day>1;}}
- public string MenuPrimaryLabel {get{return HasCampaignToContinue?"영업 계속하기":"영업 시작";}}
+ bool NeedsFirstMemo => StoryEnabled&&preparing&&!Story.introSeen&&string.IsNullOrEmpty(WallMemoChoice);
+ public string MenuPrimaryLabel {get{return NeedsFirstMemo?"목표 고르기":HasCampaignToContinue?"영업 계속하기":"영업 시작";}}
  public void ContinueFromMenu(){if(restoring||IntroInputBlocked)return;if(preparing||resumeBlocked){Depart();return;}session.paused=false;Time.timeScale=1;}
  public string LoadFailureDetail {get;private set;}="";
  public string RecoveryArchivePath {get;private set;}="";
@@ -253,21 +254,6 @@ public class BusinessProgress : MonoBehaviour {
   if(!Story.goalDone&&(owned||!car&&account.Cash>=price)){
    Story.goalDone=true;StoryMonologue="오늘부터, 다시 내 핸들로.";GoalComparison=true;
   }
- }
- TextMesh roofFront,roofRear;
- string lastRoofStatus;
- void RefreshRoofSign(){
-  string status=preparing||!ledger.Operating?"":CockpitPresentation.TaxiStatus(session.jobs.trip.State);
-  if(lastRoofStatus==status)return;
-  if(!roofFront){
-   var exterior=session.taxi.transform.Find("Taxi exterior");
-   if(!exterior)return;
-   roofFront=exterior.Find("TAXI front").GetComponent<TextMesh>();
-   roofRear=exterior.Find("TAXI rear").GetComponent<TextMesh>();
-  }
-  roofFront.text=roofRear.text=status;
-  if(status.Length>0){KoreanText.Fit(roofFront,.55f,.132f);KoreanText.Fit(roofRear,.55f,.132f);}
-  lastRoofStatus=status;
  }
  public CabinControlsState Cabin {get;private set;}=new CabinControlsState();
  public bool CabinEnabled {get{return SupportsCareer&&ledger!=null&&ledger.OneDay;}}
@@ -556,7 +542,6 @@ public class BusinessProgress : MonoBehaviour {
  void Update(){
   if(IntroInputBlocked)return;
   RefreshDailyWeather();
-  if(CabinEnabled)RefreshRoofSign();
   if(CabinEnabled&&DrowsinessRunning){
    if(CabinAutomatic)Cabin.ToggleMeter(session.jobs.trip.State==TripState.OnTrip);
    if(Input.GetKeyDown(KeyCode.J))CabinInput(CabinAction.Meter);
@@ -701,7 +686,8 @@ public class BusinessProgress : MonoBehaviour {
   ledger=next;RoomOpen=LogbookOpen=GoalComparison=false;StoryMonologue="";ArchivedRoom=null;CaptureDayStart();realSeconds=0;PrepareDay();return true;
  }
  public bool ChooseCareerGoal(string goal,string model=""){
-  if(!SupportsCareer||ResumeBlocked||!(WallMemoAvailable||ShiftDevEndProbe.CareerCheck&&preparing))return false;
+  bool morningMemo=RoomOpen&&StoryEnabled&&PersonalRoomHUD.MorningPreviewAvailable(this);
+  if(!SupportsCareer||ResumeBlocked||!(morningMemo||WallMemoAvailable||ShiftDevEndProbe.CareerCheck&&preparing))return false;
   var previous=ledger;
   var next=EconomyLedger.RestoreCampaign(ledger.Snapshot(),ledger.Account.Snapshot());
   if(goal=="car"&&string.IsNullOrEmpty(model))model=VehicleCatalog.Hybrid;
@@ -710,7 +696,7 @@ public class BusinessProgress : MonoBehaviour {
   bool priorComparison=GoalComparison;
   Story=Story.Copy();Story.wallChoice=goal;Story.wallPromptDay=ledger.Day;
   ledger=next;ObserveStoryGoal();
-  if(SaveCheckpoint())return true;
+  if(SaveCheckpoint()){if(morningMemo)RoomOpen=false;return true;}
   ledger=previous;Story=priorStory;StoryMonologue=priorLine;GoalComparison=priorComparison;return false;
  }
  public string[] CareerSlots(){return SupportsCareer?CampaignSaveLocation.ListCareers(Path.GetDirectoryName(SavePath)):new string[0];}
@@ -759,7 +745,7 @@ public class BusinessProgress : MonoBehaviour {
   }catch(Exception ex){SaveFailed=true;saveStatus="원본 별도 보관 실패 · 기존 저장 유지 · 다시 시도해 주세요";Debug.LogWarning("Campaign recovery archive failed: "+ex.Message);return false;}
  }
  void PrepareDay(){InitializeDailyCondition();Cabin=new CabinControlsState();session.GetComponent<ExitQueueSituation>().Stop();session.GetComponent<RightTurnSituation>().Stop();taxPrompt=false;if(session.law)session.law.ResetObservation();session.jobs.ClearForDay();if(session.roadConditions)session.roadConditions.ResetForDay();session.taxi.ResetTaxi();session.manners.BeginRide();session.paused=false;notice="";preparing=useV2&&(!testMode||storyTest||ShiftDevEndProbe.DailyCheck||ShiftDevEndProbe.DailyReload||PassengerStoryProbe.Enabled);Time.timeScale=preparing?0:1;if(preparing)StartCoroutine(PlaceAtParking());}
- public void Depart(){if(resumeBlocked){notice=saveStatus;RequestRestart();return;}if(session.FullMapOpen||restartPrompt||pendingPayment>=0||session.GetComponent<PracticeSession>().Busy)return;if(StoryEnabled&&preparing&&!Story.introSeen){if(!IntroInputBlocked)BeginFirstIntro();return;}preparing=false;Time.timeScale=1;ObserveDailyConditionDeparture();if(CabinEnabled&&ledger.Day==4&&DrivingSettings.Current.cabinAssist)EndDayNotice("오늘부터 미터기는 직접 켭니다 · 손님이 타면 J, 내리면 다시 J");}
+ public void Depart(){if(resumeBlocked){notice=saveStatus;RequestRestart();return;}if(session.FullMapOpen||restartPrompt||RoomOpen||pendingPayment>=0||session.GetComponent<PracticeSession>().Busy)return;if(NeedsFirstMemo){PersonalRoomHUD.OpenPreparationMemo(this);return;}if(StoryEnabled&&preparing&&!Story.introSeen){if(!IntroInputBlocked)BeginFirstIntro();return;}preparing=false;Time.timeScale=1;ObserveDailyConditionDeparture();if(CabinEnabled&&ledger.Day==4&&DrivingSettings.Current.cabinAssist)EndDayNotice("오늘부터 미터기는 직접 켭니다 · 손님이 타면 J, 내리면 다시 J");}
  public void ConfirmTaxClose(bool pay){taxPrompt=false;}
  void RecoverFuel(){
   string id=session.law.ids.Next("fuel-recovery");if(!ledger.Account.RecoverFuel(id,ledger.Day))return;

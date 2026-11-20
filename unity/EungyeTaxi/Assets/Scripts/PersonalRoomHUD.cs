@@ -70,7 +70,12 @@ public static class PersonalRoomHUD {
  static string StyleName(string item,int s){return item=="lamp"?(s==0?"나무 받침·리넨 갓":"짙은 철제 스탠드"):(s==0?"회청색 테두리":"테라코타 줄무늬·술");}
  static void Box(Rect r,Color c){DrawTexture(r,Texture2D.whiteTexture,c);}
  public static bool MorningPreviewAvailable(BusinessProgress b){
-  return b.SupportsCareer&&b.preparing&&b.ledger!=null&&b.ledger.State==BusinessState.Open&&b.ledger.Day>1&&!b.restartPrompt&&!b.ResumeBlocked;
+  return b.SupportsCareer&&b.preparing&&b.ledger!=null&&b.ledger.State==BusinessState.Open&&(b.ledger.Day>1||b.StoryEnabled)&&!b.restartPrompt&&!b.ResumeBlocked&&!b.IsRestoring;
+ }
+ public static void OpenPreparationMemo(BusinessProgress b){
+  if(!b.StoryEnabled||!MorningPreviewAvailable(b))return;
+  memoCampaign=b;memoDay=b.ledger.Day;wallMemoOpen=true;
+  b.ArchivedRoom=null;b.GarageTab=false;b.RoomOpen=true;
  }
  public static void Draw(DriveSession session,bool morning=false){
   var b=session.business;var a=b.ledger.Account;var r=b.ArchivedRoom??a.Room;bool read=morning||b.ArchivedRoom!=null||r.finalized;
@@ -84,7 +89,7 @@ public static class PersonalRoomHUD {
   string roomTitle=morning?HomeBasePresentation.Name+" · 아침":read?"숙소 · 완료 기록":HomeBasePresentation.Name+" · 밤";
   CasualUI.Header(new Rect(15,15,830,55),roomTitle,0);
   bool incomingEnabled=GUI.enabled;GUI.enabled=incomingEnabled&&confirmation.Length==0;
-  bool memoAvailable=!read&&b.WallMemoAvailable;
+  bool memoAvailable=morning?b.StoryEnabled:!read&&b.WallMemoAvailable;
   bool showMemo=memoAvailable&&(wallMemoOpen||b.WallMemoPrompt);
   if(memoAvailable)DrawWallNotes(b,showMemo);
   string monologue=b.ArchivedRoom==null?b.StoryMonologue:"";
@@ -143,7 +148,7 @@ public static class PersonalRoomHUD {
    bool chosen=b.WallMemoChoice==MemoGoals[i];
    if(chosen)CasualUI.RoundedFill(new Rect(row.x-2,row.y-2,row.width+4,row.height+4),CasualUI.Green);
    if(GUI.Button(row,GUIContent.none,button)){
-    if(chosen){b.DismissWallMemoPrompt();wallMemoOpen=false;}
+    if(chosen){b.DismissWallMemoPrompt();wallMemoOpen=false;if(b.preparing)b.RoomOpen=false;}
     else if(b.ChooseCareerGoal(MemoGoals[i]))wallMemoOpen=false;
    }
    GUI.Label(new Rect(row.x+13,row.y+8,row.width-26,27),MemoTitles[i]+(chosen?" · 붙인 메모":""),memoName);
@@ -152,7 +157,7 @@ public static class PersonalRoomHUD {
   }
   var ledger=b.ledger;
   var net=ledger.Last?.net??0;
-  GUI.Label(new Rect(885,434,280,51),"숙소 월세  −"+Money(ledger.Account.Expense(ledger.Day,"home-rent"))+"\n오늘 순수익  "+(net>0?"+":"")+Money(net),small);
+  if(!b.preparing)GUI.Label(new Rect(885,434,280,51),"숙소 월세  −"+Money(ledger.Account.Expense(ledger.Day,"home-rent"))+"\n오늘 순수익  "+(net>0?"+":"")+Money(net),small);
   if(GUI.Button(new Rect(885,494,280,33),"방 물건 보기",button)){wallMemoOpen=false;b.DismissWallMemoPrompt();}
   if(b.SaveFailed)GUI.Label(new Rect(885,536,280,48),b.saveStatus,small);
  }

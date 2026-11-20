@@ -26,7 +26,15 @@ public class TaxiController : MonoBehaviour {
             var f=c.sidewaysFriction; f.stiffness=1.35f; c.sidewaysFriction=f; wheels[i]=c;dryForwardStiffness[i]=c.forwardFriction.stiffness;
             visuals[i]=TaxiArt.Wheel(transform);
         }
+        ParkWheelVisuals();
         foreach(var tr in GetComponentsInChildren<Transform>()) tr.gameObject.layer=8;
+    }
+    // The preparation menu can move the taxi while suspension simulation is paused.
+    void ParkWheelVisuals(){
+        for(int i=0;i<wheels.Length;i++){
+            var wheel=wheels[i];
+            visuals[i].SetLocalPositionAndRotation(wheel.transform.localPosition-Vector3.up*wheel.suspensionDistance,Quaternion.Euler(0,0,90));
+        }
     }
     void Update() {
         if(NetworkReplica&&!NetworkPredicted)return;
@@ -114,6 +122,7 @@ public class TaxiController : MonoBehaviour {
         body.position=spawn; body.rotation=spawnRotation;
         transform.SetPositionAndRotation(spawn,spawnRotation); Physics.SyncTransforms();
         foreach(var w in wheels){w.motorTorque=0;w.brakeTorque=0;w.steerAngle=0;}
+        ParkWheelVisuals();
         steer=0; throttle=0; motorDemand=0; brake=false;ResetPedalIntent();
         var indicators=GetComponent<TaxiSignals>();if(indicators)indicators.Clear();
         var manners=GetComponent<DrivingManners>();if(manners)manners.Suppress(.8f);
