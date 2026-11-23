@@ -24,7 +24,7 @@ public partial class FullMapOverlay {
   if(ProjectMapScene.Active(map)){foreach(var o in map.projectScene.objects)if(o.enabled&&o.IsService&&!(session.services.HasHomeBase&&HomeBasePresentation.IsFacility(map,o)))result.Add(ServicePlace(o.name,o.Position,ProjectMapScene.ServiceStop(map,o),o.kind));}
   else {if(session.services.HasService(1))result.Add(ServicePlace("기사 식당",session.services.MealPosition,session.services.MealStop,"restaurant"));if(session.services.HasService(2)&&!session.services.HasHomeBase)result.Add(ServicePlace("주차장",session.services.ParkingStop.V(),session.services.StopFor(2),"parking"));var r=session.services.RestArea;if(r!=null)result.Add(ServicePlace("휴식 주차",r.pump,r.approach,"rest"));}
   foreach(var shop in session.services.RefreshmentShops){
-   var item=shop.Item;result.Add(new Place{name=item.Shop,capabilityLabel=item.Menu,position=shop.Stop.Kerb,approach=shop.Stop,glyph=item.Kind==Refreshment.Snack?9:11,plannerKind=Refreshment.Snack,description=item.Terms+"\n빈차로 오른쪽 정차 칸에서 F · 손님 대기 시 F7"});
+   var item=shop.Item;result.Add(new Place{name=item.Shop,capabilityLabel=item.Menu,position=shop.Stop.Kerb,approach=shop.Stop,glyph=item.Kind==Refreshment.Snack?9:20,plannerKind=Refreshment.Snack,description=item.Terms+"\n빈차로 오른쪽 정차 칸에서 F · 손님 대기 시 F7"});
   }
   if(session.simulationMatch&&session.simulationMatch.SharedCalls!=null)foreach(var offer in session.simulationMatch.SharedCalls.Roadside)if(offer!=null){var stop=session.jobs.stops[offer.pickup];result.Add(new Place{name="길가 승객 · "+KoreanText.Stop(stop.name),position=stop.Passenger,approach=stop,glyph=1,description="공유 호출 목록 밖의 길가 승객\n같은 방향 연석에 빈차로 정차 후 F\n다른 택시와 선점 경쟁 · "+session.jobs.DemandHint(offer)});}
   cachedPlaces=result;return result;

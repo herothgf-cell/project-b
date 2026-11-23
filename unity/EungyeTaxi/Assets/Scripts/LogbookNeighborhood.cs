@@ -84,7 +84,7 @@ public static class LogbookNeighborhood {
   FullMapOverlay.Place best=null;
   float distance=float.PositiveInfinity;
   foreach(var place in places){
-   if(place.approach==null||!place.home&&place.glyph!=10&&place.glyph!=11)continue;
+   if(place.approach==null||!place.home&&place.glyph!=10&&place.glyph!=11&&place.glyph!=20)continue;
    float metres=PlanarDistance(stop.V(),place.position);
    if(metres<distance){best=place;distance=metres;}
   }

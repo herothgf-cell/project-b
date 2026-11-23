@@ -78,12 +78,17 @@ public partial class ServiceStops : MonoBehaviour {
    var label=new GameObject(i==1?MealStop.name:names[i]);label.transform.position=StopFor(i).Passenger+Vector3.up*3.2f;var t=label.AddComponent<TextMesh>();t.text=(i==1?"식당 · 식사":names[i])+" · F";t.fontSize=40;t.characterSize=.09f;t.anchor=TextAnchor.MiddleCenter;t.color=Color.yellow;KoreanText.Apply(t);label.AddComponent<FaceCamera>();
   }
  }
- void Update(){if(session.business.LogbookOpen)return;if(PvpNativeLan.IsReplica(session)){ObserveCompletedTrip();if(postTrip&&(session.jobs.Active||session.business.ledger.Care.Damage.Disabled))DismissPostTrip();if(postTrip&&Time.unscaledTime>=nextPostTripRefresh){RefreshPostTrip();nextPostTripRefresh=Time.unscaledTime+2;}if((open||!PvpNativeLan.UiBlocked(session))&&Input.GetKeyDown(KeyCode.F7))Toggle();return;}if(noticeUntil>0&&Time.unscaledTime>=noticeUntil){notice="";noticeUntil=0;}
+ void Update(){if(session.business.LogbookOpen)return;if(PvpNativeLan.IsReplica(session)){ObserveCompletedTrip();if(postTrip&&(session.jobs.Active||session.business.ledger.Care.Damage.Disabled))DismissPostTrip();if(postTrip&&Time.unscaledTime>=nextPostTripRefresh){RefreshPostTrip();nextPostTripRefresh=Time.unscaledTime+2;}if(EscapeClose())return;if(!open&&!PvpNativeLan.UiBlocked(session)&&Input.GetKeyDown(KeyCode.F7))Toggle();return;}if(noticeUntil>0&&Time.unscaledTime>=noticeUntil){notice="";noticeUntil=0;}
   TickFacilityQueue();ObserveCompletedTrip();
   if(postTrip&&(session.business.ledger.Care.Damage.Disabled||session.jobs.Active||session.business.ShowingSummary||session.business.preparing||session.business.ledger.State!=BusinessState.Open))DismissPostTrip();
   if(postTrip&&Time.unscaledTime>=nextPostTripRefresh){RefreshPostTrip();nextPostTripRefresh=Time.unscaledTime+2;}
-  if(!PvpNativeLan.IsRemoteHuman(session)&&Input.GetKeyDown(KeyCode.F7))Toggle();
+  if(PvpNativeLan.IsRemoteHuman(session))return;
+  if(EscapeClose())return;
+  // F7 opens the facility popup; closing is the 닫기 button or ESC (user request 2026-11-23).
+  if(!open&&Input.GetKeyDown(KeyCode.F7))Toggle();
  }
+ public int EscapeFrame {get;private set;}=-1;
+ bool EscapeClose(){if(!open||!Input.GetKeyDown(KeyCode.Escape))return false;EscapeFrame=Time.frameCount;Close();return true;}
  public void ObserveCompletedTrip(){
   int count=session.jobs.completed;bool deliveredLate=session.jobs.failed>observedFailed&&session.jobs.trip.State==TripState.Failed&&session.jobs.current!=null&&session.jobs.At(session.jobs.current.drop);observedFailed=session.jobs.failed;if(count==observedCompleted&&!deliveredLate)return;
   bool finished=count>observedCompleted||deliveredLate;observedCompleted=count;
@@ -286,9 +291,10 @@ public partial class ServiceStops : MonoBehaviour {
   foreach(int kind in actions){var item=Refreshment.For(kind);string label=item!=null?item.Terms:kind==0?(pump>=0?Stations[pump].name:names[0]):kind==4?"세차·실내 청소\n청결 100 회복 / 30초":kind==5?"자동차 공업사 · 전량 수리":kind==1?"식당 · "+MealStop.name:kind==3?(Pvp?"휴식 "+PvpConditionRules.RestCost.ToString("N0")+"원 · "+PvpConditionRules.RestSeconds+"초 / 피로 −40":"무료 수면 · 100초 / 피로 −40"):HasHomeBase?"숙소에서 퇴근":"현재 거점에서 휴식·영업 종료";Row(x,y+85+row++*62,label,kind,pump,style,button);}
   if(WorkshopShopAvailable&&GUI.Button(new Rect(x+20,y+85+row*62,680,44),"차량 부품 · 구매 및 장착",button))OpenWorkshopShop();
   string pickupWarning=session.jobs.trip.State==TripState.ToPickup?(fuelOnly?"호출 유지 · 남은 대기 "+session.jobs.trip.PickupRemaining.ToString("0")+"초 · 이용 시간 차감":"식사·수면 확정 시 미탑승 호출 취소")+"\n":"";
-  CasualUI.RoundedFill(new Rect(x+12,y+height-158,696,112),new Color(1,.95f,.83f));
-  GUI.Label(new Rect(x+20,y+height-155,680,108),pickupWarning+notice+"\n"+(fuelOnly?"이용 후 출구로 나가세요.":restaurant?"다른 시설 찾기: M 지도":"다른 시설 찾기: M 지도"),new GUIStyle(style){fontSize=14});
-  if(GUI.Button(new Rect(x+20,y+height-45,430,35),"닫기  F7",KoreanText.Button(14)))Close();
-  if(GUI.Button(new Rect(x+460,y+height-45,240,35),"다른 시설·견적 비교",button))OpenFacilityPlanner(actions.Length>0&&Refreshment.For(actions[0])!=null?Refreshment.Snack:restaurant?1:fuelOnly?0:3);
+  string footer=(pickupWarning+notice+(fuelOnly?"\n이용 후 출구로 나가세요.":restaurant?"":"\n다른 시설 찾기: M 지도")).Trim();
+  if(footer.Length>0){CasualUI.RoundedFill(new Rect(x+12,y+height-158,696,112),new Color(1,.95f,.83f));
+   GUI.Label(new Rect(x+20,y+height-155,680,108),footer,new GUIStyle(style){fontSize=14});}
+  if(GUI.Button(new Rect(x+20,y+height-45,restaurant?680:430,35),"닫기",KoreanText.Button(14)))Close();
+  if(!restaurant&&GUI.Button(new Rect(x+460,y+height-45,240,35),"다른 시설·견적 비교",button))OpenFacilityPlanner(actions.Length>0&&Refreshment.For(actions[0])!=null?Refreshment.Snack:restaurant?1:fuelOnly?0:3);
  }
 }

@@ -569,6 +569,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   }
   var meal=services.MealParkingStop;
   Pose(meal.Kerb,meal.Direction);services.Toggle();
+  Check(services.open,"restaurant popup opens");yield return Capture("diner-popup");
   Check(services.open&&services.RequestAction(1)&&services.InteriorFor(services.LocalActions[0],services.pending)=="diner","restaurant opens at parking bay");
   int cash=business.ledger.Account.Cash;
   for(int i=0;i<3;i++)Check(services.SelectMeal(i)&&services.SelectedMeal==i&&business.ledger.Account.Cash==cash,"meal card selection "+i);
@@ -576,6 +577,9 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   services.ConfirmAction(false);
   Check(services.pending<0&&business.ledger.Account.Cash==cash,"cancel meal quote without charge");
   Check(services.RequestAction(1)&&services.ConfirmAction(true)&&business.ledger.Account.Cash==cash-3000,"meal charges exactly once");
+  {var overlay=s.GetComponent<FullMapOverlay>();var cafe=overlay.Places().FirstOrDefault(p=>p.capabilityLabel=="아메리카노");
+   Check(cafe!=null&&cafe.glyph==20,"americano cafe uses the cafe map icon");
+   if(overlay.Open()){yield return Frames(3);yield return Capture("map-cafe-icon");overlay.Close();}}
   var pump=services.Stations[0];Pose(pump.pump,pump.direction);services.Toggle();
   Check(services.open&&services.InteriorFor(services.LocalActions[0],-1)=="fuel","fuel bay interior");
   Check(services.RequestAction(4)&&services.InteriorFor(services.LocalActions[0],services.pending)=="wash","wash quote changes interior");

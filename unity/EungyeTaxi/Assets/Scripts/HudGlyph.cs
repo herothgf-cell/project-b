@@ -5,7 +5,7 @@ using UnityEngine;
 // 16/17 indicators, 18 timer, 19 close.
 public static class HudGlyph {
  const int Size=96;
- static readonly Texture2D[] cache=new Texture2D[20];static Color[] pixels;
+ static readonly Texture2D[] cache=new Texture2D[21];static Color[] pixels;
  public static void Draw(Rect r,int kind,Color c){
   if(kind<0||kind>=cache.Length)return;
   if(!cache[kind]){
@@ -31,6 +31,7 @@ public static class HudGlyph {
     case 17: Poly(false,13,3,23,12,13,21,13,16,2,16,2,8,13,8);break;
     case 18: RoundBox(8,1,8,3,1);RoundBox(10.5f,3,3,4,1);Stroke(18,5,20,7,1.6f);Disc(12,14,9);Disc(12,14,6.1f,true);Stroke(12,9.5f,12,14,1.25f);Stroke(12,14,15.5f,16,1.25f);break;
     case 19: Stroke(5,5,19,19,2);Stroke(5,19,19,5,2);break;
+    case 20: RoundBox(3.5f,9,13,10.5f,3);Ring(17.2f,13.6f,2.6f,false,1.1f);RoundBox(1.5f,19.8f,19,2.4f,1.2f);Stroke(7,3,7.8f,6.2f,.8f);Stroke(10.5f,2,11.3f,6.2f,.8f);Stroke(14,3,13.4f,6.2f,.8f);break;
    }
    var texture=new Texture2D(Size,Size,TextureFormat.RGBA32,false);texture.name="Filled HUD icon "+kind;texture.wrapMode=TextureWrapMode.Clamp;texture.filterMode=FilterMode.Bilinear;texture.SetPixels(pixels);texture.Apply();cache[kind]=texture;pixels=null;
   }

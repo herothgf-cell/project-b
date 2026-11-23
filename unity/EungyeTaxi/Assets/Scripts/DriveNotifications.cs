@@ -57,8 +57,9 @@ public class DriveNotifications : MonoBehaviour {
 
  // ---------- feed model ----------
  readonly List<FeedItem> items=new List<FeedItem>();
- static readonly string[] Tips={"정차한 시설은 F로 이용하세요.","M 지도에서 승차지와 목적지를 확인할 수 있습니다.","숙소로 돌아오면 주차 칸에 정차하고 F로 퇴근하세요."};
- int fuelBand,tipIndex,revision,drawnRevision=-1;
+ public const string HungerTip="포만감이 25 아래면 피로가 1.5배, 10 아래면 2배 빨리 쌓입니다. 기사식당이나 김밥집에서 식사하세요.";
+ static readonly string[] Tips={"정차한 시설은 F로 이용하세요.","M 지도에서 승차지와 목적지를 확인할 수 있습니다.",HungerTip,"숙소로 돌아오면 주차 칸에 정차하고 F로 퇴근하세요."};
+ int fuelBand,hungerBand,tipIndex,revision,drawnRevision=-1;
  float fuelUntil,nextTip;
  FeedItem fuelItem;
  string lastBusiness,lastService,lastDestination,lastContext;
@@ -94,6 +95,10 @@ public class DriveNotifications : MonoBehaviour {
    fuelUntil=Time.time+12;
   }
   fuelBand=band;
+  // Low satiety speeds up fatigue (DriverCondition.Advance): explain it as soon as it starts.
+  var driver=session.business.ledger.Driver;int hunger=!session.business.enabledCampaign||driver==null?0:driver.satiety<=10?2:driver.satiety<=25?1:0;
+  if(hunger>hungerBand){Add(new FeedItem{kind=FeedKind.Tip,text=(hunger==2?"포만감 10 이하 · 피로 2배 · ":"포만감 25 이하 · 피로 1.5배 · ")+HungerTip});nextTip=Time.time+20;}
+  hungerBand=hunger;
   Changed(ref lastBusiness,session.business.notice,FeedKind.System);
   Changed(ref lastService,session.services.notice,FeedKind.System);
   Changed(ref lastDestination,session.services.destination,FeedKind.Destination);

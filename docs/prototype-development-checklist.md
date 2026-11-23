@@ -1,3 +1,8 @@
+## 2026-11-23 전체 경로·기사식당 팝업·카페 아이콘·공복 TIP
+
+- [x] 전체 경로 바닥선, 기사식당 팝업 정리와 ESC 닫기, 공복 피로 TIP, 아메리카노 카페 아이콘. [기록](work-history/2026-11-23-route-diner-cafe-hunger.md).
+- [ ] F7·ESC 실제 키 입력과 재방문 경로의 안내선 겹침 수동 확인.
+
 ## 2026-11-23 채팅형 운행 알림
 
 - [x] 출처별 알림 요소 7종 시안. [시안](ui/2026-11-23-chat-notices/README.md) · [기록](work-history/2026-11-23-chat-notice-mockup.md).
