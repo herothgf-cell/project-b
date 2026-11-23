@@ -57,6 +57,8 @@ public partial class ServiceStops {
   foreach(var shop in RefreshmentShops){
    bool food=shop.Item.Kind==Refreshment.Snack;
    var stop=shop.Stop;
+   // Shops occupy a building behind the pocket; the street stall remains only as a fallback.
+   if(RefreshmentStorefronts.Draw(session.world.map,session.world.transform,stop,shop.Item.Shop,food))continue;
    var root=new GameObject(shop.Item.Shop);
    root.transform.SetParent(session.world.transform,false);
    root.transform.position=stop.Passenger+stop.Direction*5+TrafficSystem.Right(stop.Direction)*1.15f;

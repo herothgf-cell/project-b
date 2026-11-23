@@ -475,7 +475,9 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    body.constraints=RigidbodyConstraints.FreezeAll;
    float settleDeadline=Time.realtimeSinceStartup+3;
    do{yield return new WaitForEndOfFrame();}while(road.isPlaying&&Time.realtimeSinceStartup<settleDeadline);
-   Check(fastPitch>engine.pitch+.25f&&fastLevel>engine.volume+.08f,"45 km/h to standstill lowers engine pitch and level");
+   Debug.Log("TAXI_ENGINE_MIX fastPitch="+fastPitch+" fastLevel="+fastLevel+" restPitch="+engine.pitch+" restLevel="+engine.volume);
+   // Geared revs: 45 km/h holds ~1,900 rpm against an 800 rpm idle (pitch +.3), less just after an upshift.
+   Check(fastPitch>engine.pitch+.15f&&fastLevel>engine.volume+.06f,"45 km/h to standstill lowers engine pitch and level");
    Debug.Log("TAXI_ROAD_MIX cruise="+rollingLevel+" rest="+road.volume+" pitch="+road.pitch+" speed="+s.taxi.Speed);
    Check(rollingLevel>.12f&&road.volume==0&&!road.isPlaying&&Mathf.Approximately(road.pitch,1),"rolling sound fades at rest without changing pitch");
    settings.engineSound=false;
@@ -553,6 +555,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   s.taxi.body.useGravity=false;s.taxi.body.detectCollisions=false;s.taxi.enabled=false;
   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-refreshmentCheck")>=0){
    CheckRefreshmentShops(business);
+   yield return CaptureStorefronts();
    done=true;Debug.Log("REFRESHMENT_PLAYER_OK checks="+checks);Application.Quit(0);yield break;
   }
   var profilePath=ContentTuningRuntime.Argument("-facilityProfile");
@@ -629,6 +632,22 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    var save=BusinessProgress.ParseCheckpoint(File.ReadAllText(business.SavePath));
    var restored=EconomyLedger.RestoreCampaign(save.days,save.account);
    Check(restored.Account.Cash==ledger.Account.Cash&&restored.Elapsed==ledger.Elapsed,"saved shop payment and time");
+  }
+ }
+ // Each shop is a building front with a door and a paved path from the pocket, not a street stall.
+ IEnumerator CaptureStorefronts(){
+  var map=s.world.map;var camera=s.drivingCamera;
+  foreach(var shop in s.services.RefreshmentShops){
+   var p=RefreshmentStorefronts.For(map,shop.Stop,shop.Item.Shop);
+   Check(p!=null&&GameObject.Find(shop.Item.Shop+" 상가")&&!GameObject.Find("포장 매대"),"storefront replaces stall "+shop.Item.Shop);
+   float path=Vector3.Distance(p.waiting,p.Door);
+   Check(path>1&&path<20&&Vector3.Dot(p.outward,TrafficSystem.Right(shop.Stop.Direction))<-.7f,"door faces the pocket "+shop.Item.Shop+" path="+path.ToString("F1"));
+   string slug=shop.Item.Kind==Refreshment.Snack?"snack":"coffee";
+   camera.enabled=false;
+   var view=p.P(-4.5f,2.4f,13);
+   camera.transform.SetPositionAndRotation(view,Quaternion.LookRotation(p.P(0,2.2f,0)-view));
+   yield return new WaitForSecondsRealtime(.5f);yield return Capture("storefront-"+slug+"-front");
+   camera.enabled=true;
   }
  }
  void Pose(Vector3 kerb,Vector3 direction){
