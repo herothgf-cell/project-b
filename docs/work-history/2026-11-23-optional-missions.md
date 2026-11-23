@@ -38,6 +38,7 @@
 | 항목 | 값 | 이유 |
 |---|---|---|
 | 붙이는 빈도 | 호출판마다 1건(`mission.boardChance` 100%) | "3건 중 1건 정도"를 가장 단순하게. 확률로 바꿀 수 있음 |
+| 붙는 대상 | 학생 재회를 뺀 모든 호출(길목 시나리오 포함) | 운임·기한을 바꾸지 않아 시나리오 규칙과 충돌하지 않고, 시나리오만 있는 판에서도 미션이 나오게 |
 | 미션 종류 선택 | 호출판 시드로 4종 중 하나 | 결정적이라 불러오기로 바뀌지 않음 |
 | 추가금 비율 | 급행 30%, 초록불 25%, 커피 20%, 칼정차 20%(100원 올림) | 초안 20~30% 안에서 어려운 순서대로 |
 | 급행 목표 | 안전 운송 시간 ×1.1 | 안전 운송 시간은 평균 시속 약 29km 기준이라, 10% 여유로 규칙을 지키며 달성 가능한 정도 |
@@ -50,12 +51,27 @@
 |---|---|
 | `CallBoardChecks.Run` (Editor) | `CALL_BOARD_OK checks=12`(미션 기본값, 추가금 계산·100원 올림, 급행 목표, 진행 값 저장 왕복) |
 | 설정 툴 Node 109건, `choice-catalog.mjs --verify` | 통과 |
-| `-missionCheck` (새 검사 `MissionProbe`) | (아래 "실행본 검사 결과"에 기록) |
-| 회귀 `-goodDrivingCheck`·`-idleTimeCheck`·`-callBoardCheck`·`-brightUiCheck` | 25·14·115·102건 통과 |
+| `-contentTest -missionCheck` | 72건 통과(아래) |
+| 회귀 `-goodDrivingCheck`·`-idleTimeCheck`·`-callBoardCheck`·`-brightUiCheck` | 34·14·116·102건 통과 |
 
 ### 실행본 검사 결과
 
-RESULT_PLACEHOLDER
+`-contentTest -missionCheck`(새 검사 `MissionProbe`, 사용자 저장과 분리된 시험 캠페인): `MISSION_PLAYER_OK checks=72`.
+- 호출판 10개 모두 미션 1건, 카드에 "[미션] … 성공 시 +N원"이 보이고 추가금 비율·100원 단위가 맞다.
+- 급행 성공 +1,800원(운임 6,000원의 30%).
+- 초록불: 중간에 멈추면 실패하고 운임은 그대로(기본 운임+보너스−미터기 감액과 같음). 3곳 연속이면 +1,500원.
+- 커피 +1,200원, 칼정차 +1,200원. 급행이 느리면 실패하고 운임은 그대로.
+- 지각 운송은 운임 0원이고 미션 추가금도 없다.
+- 장부 `mission` 항목 합계 5,700원, 같은 운송 재입금 거절, 영수증 별도 줄, 저장 파일 유지, 예전 호출은 미션 없음.
+- [영수증 화면](../ui/2026-11-23-call-board/receipt-mission.png)
+
+회귀(같은 실행본, 시험 캠페인): `-goodDrivingCheck` 34건, `-idleTimeCheck` 14건, `-callBoardCheck` 116건, `-brightUiCheck` 102건 통과.
+
+검사를 고치며 바꾼 점(게임 동작이 아니라 검사 쪽 원인이었다):
+- 처음에는 사용자 싱글 저장에서 돌려, 앞선 검사가 남긴 운송 중·영업 시간·첫 출차 상태 때문에 결과가 실행마다 달랐다. `-contentTest`로 분리된 시험 캠페인에서 돌리도록 바꿨다.
+- 장부를 새로 바꾼 뒤(`Fresh`) 호출판을 만들면 판이 비어서, 호출판 확인을 장부 교체 전에 했다.
+- 하차 뒤 결과 표시 동안 다음 수락이 막혀서, 운송마다 상태를 비웠다.
+- 길목 시나리오 호출만으로 판이 채워지면 미션을 붙일 곳이 없었다. 미션은 운임·기한을 바꾸지 않으므로 시나리오 호출에도 붙이도록 대상을 넓혔다(학생 재회 호출만 제외).
 
 ## 남은 것 · 직접 확인
 
@@ -68,7 +84,7 @@ RESULT_PLACEHOLDER
 
 ```powershell
 Unity.exe -batchmode -nographics -quit -projectPath unity/EungyeTaxi -executeMethod CallBoardChecks.Run
-.\builds\EungyeTaxi\EungyeTaxi.exe -missionCheck -missionOutput artifacts/mission -logFile artifacts/mission/player.log
+.\builds\EungyeTaxi\EungyeTaxi.exe -contentTest -missionCheck -missionOutput artifacts/mission -logFile artifacts/mission/player.log
 ```
 
 게임에서: M 호출판에서 "[미션]" 줄이 붙은 호출을 수락하고 목표대로 운전한다. 하차 영수증의 별도 줄을 확인한다.
