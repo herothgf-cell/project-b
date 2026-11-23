@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "9fc35b31e205c1ed0ae70e00da8da20a392c01c81b9ed248fa114155e763af82",
+  "contentHash": "b94b52982cf24ec4bdde6ad7629808f135c14ae6bdad57bb8978c0ca9c721e35",
   "values": [
     {
       "id": "radio.station",
@@ -2019,6 +2019,34 @@
     {
       "id": "tip.amount.max",
       "value": "500"
+    },
+    {
+      "id": "offer.variety.enabled",
+      "value": "1"
+    },
+    {
+      "id": "offer.near.maxPickupMetres",
+      "value": "450"
+    },
+    {
+      "id": "offer.near.maxRideMetres",
+      "value": "1000"
+    },
+    {
+      "id": "offer.rush.deadlineMultiplier",
+      "value": "0.75"
+    },
+    {
+      "id": "offer.rush.fareMultiplier",
+      "value": "1.4"
+    },
+    {
+      "id": "offer.luggage.fareBonus",
+      "value": "800"
+    },
+    {
+      "id": "offer.eta.pickupMetresPerSecond",
+      "value": "4"
     },
     {
       "id": "display.background.diner",

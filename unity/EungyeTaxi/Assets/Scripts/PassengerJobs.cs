@@ -1,5 +1,5 @@
 using UnityEngine;
-[System.Serializable] public class JobOffer {public string scenarioId="",pickupStopId,dropStopId,mapRevision,catalogRevision,stopEvidence,candidateSeed,storyId;public int reunionKind,studentBoardMinute;public double reunionBoardTime,quietThanksAt;public bool studentRadioOff;public float pickupSeconds;public int zoneIndex=-1;public int pickup,drop,fare,requiredScore;public float seconds,distance,waitSeconds;public int timingPolicyVersion,urgency;public float safeRouteSeconds;}
+[System.Serializable] public class JobOffer {public string scenarioId="",pickupStopId,dropStopId,mapRevision,catalogRevision,stopEvidence,candidateSeed,storyId;public int reunionKind,studentBoardMinute;public double reunionBoardTime,quietThanksAt;public bool studentRadioOff;public float pickupSeconds;public int zoneIndex=-1;public int pickup,drop,fare,requiredScore;public float seconds,distance,waitSeconds;public int timingPolicyVersion,urgency;public float safeRouteSeconds;public int variety;}
 [System.Serializable] public sealed class PassengerJobsSnapshot {
  public int activityVersion;public bool situationPresent,errandPresent;public PassengerSituationState situation;public PassengerErrandState errand;
  public int choiceEffectsVersion;public bool choiceEffectsPresent,choiceEffectsLegacyTransport;public ChoiceEffectLedger choiceEffects;public double choiceEffectsElapsed;public string choiceEffectsTrip,choiceEffectsOwner;
@@ -194,6 +194,7 @@ public partial class PassengerJobs : MonoBehaviour {
   int scenarioSlot=homeOffer==null?0:1;
   if(selected.Count>scenarioSlot+1&&scenarios.Contains(selected[scenarioSlot])){var scenario=selected[scenarioSlot];selected.RemoveAt(scenarioSlot);selected.Add(scenario);}
   for(int i=0;i<offers.Length;i++)offers[i]=i<selected.Count?selected[i]:null;
+  ApplyOfferVariety();
  }
  float NormalRank(JobOffer o,float target){return (float)DemandRank(o,generationDemandPhase)*1000+(PickupDistance(o.pickup)+Mathf.Abs(o.distance-target)*.4f)*.1f+PassengerStopCatalog.RepeatPenalty(o.pickup,o.drop,previousPickup,previousDrop);}
  int PinSavedStop(string id,MapStop saved){int found=runtimeStopIds.IndexOf(id);if(found>=0)return found;if(saved==null)throw new System.ArgumentException("Missing saved stop geometry");var all=new System.Collections.Generic.List<MapStop>(stops);all.Add(saved);stops=all.ToArray();runtimeStopIds.Add(id);System.Array.Resize(ref cooldown,stops.Length);System.Array.Resize(ref people,stops.Length);var person=new GameObject(id+" 진행 중 승객 보존");person.transform.SetParent(transform);person.transform.position=saved.Passenger;WorldBuilder.Box("저장된 승객",Vector3.up*.85f,new Vector3(.48f,1.15f,.3f),WorldBuilder.Mat("Saved passenger",Color.cyan),person.transform,false);people[stops.Length-1]=person;return stops.Length-1;}
@@ -350,8 +351,8 @@ public partial class PassengerJobs : MonoBehaviour {
  PassengerBehaviorState PrepareOrdinaryPassenger(VehicleCare care){
   var eligible=session.requests.EligiblePassengerModules();var pools=session.requests.EligiblePassengerTypes();var business=session.business;
   bool conditions=business.DailyConditionsEnabled&&business.DayCondition!=DailyConditionKind.Weekday;
-  var selected=ForcedPassengerType??care.ReservePassenger(current.candidateSeed,pools,conditions?(System.Func<PassengerType,double>)business.DayPoolMultiplier:null);
-  if(!ForcedPassengerType.HasValue&&selected!=PassengerType.General&&selected!=PassengerType.Drunk&&System.Array.IndexOf(pools,selected)<0)selected=PassengerType.General;
+  var selected=ForcedPassengerType??VarietyPassengerType()??care.ReservePassenger(current.candidateSeed,pools,conditions?(System.Func<PassengerType,double>)business.DayPoolMultiplier:null);
+  if(!ForcedPassengerType.HasValue&&VarietyPassengerType()==null&&selected!=PassengerType.General&&selected!=PassengerType.Drunk&&System.Array.IndexOf(pools,selected)<0)selected=PassengerType.General;
   if(business.CabinEnabled&&!ForcedPassengerType.HasValue&&selected==PassengerType.General){
    uint draw=DrunkRideState.Hash(current.candidateSeed+":cabin-request");
    bool window=ContentTuning.Flag("cabin.wish.window",true);

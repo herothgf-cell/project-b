@@ -11923,6 +11923,156 @@
       "editable": true
     },
     {
+      "id": "offer.variety.enabled",
+      "group": "호출판",
+      "section": "offer",
+      "title": "호출판 · 성격이 다른 호출 섞기",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 은계 싱글 호출판의 일반 호출 3건에 근거리·급한 고액·큰 짐·목적지 미공개 중 3종을 돌려 가며 붙입니다. 0이면 끕니다.",
+      "affects": [
+        "호출판"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.ApplyOfferVariety",
+      "editable": true
+    },
+    {
+      "id": "offer.near.maxPickupMetres",
+      "group": "호출판",
+      "section": "offer",
+      "title": "근거리 호출 · 픽업 거리 상한",
+      "type": "number",
+      "defaultValue": "450",
+      "min": 50,
+      "max": 3000,
+      "unit": "m",
+      "description": "이 거리 안의 픽업만 '근거리 · 무난' 호출이 됩니다.",
+      "affects": [
+        "호출판"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "CallBoardRules",
+      "editable": true
+    },
+    {
+      "id": "offer.near.maxRideMetres",
+      "group": "호출판",
+      "section": "offer",
+      "title": "근거리 호출 · 운송 거리 상한",
+      "type": "number",
+      "defaultValue": "1000",
+      "min": 100,
+      "max": 5000,
+      "unit": "m",
+      "description": "운송 거리가 이 값 이하일 때만 근거리 호출이 됩니다.",
+      "affects": [
+        "호출판"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "CallBoardRules",
+      "editable": true
+    },
+    {
+      "id": "offer.rush.deadlineMultiplier",
+      "group": "호출판",
+      "section": "offer",
+      "title": "급한 손님 · 도착 기한 배율",
+      "type": "number",
+      "defaultValue": "0.75",
+      "min": 0.3,
+      "max": 1,
+      "unit": "배",
+      "description": "일반 기한에 곱합니다. 기한을 넘기면 기존 규칙대로 운임 0원입니다.",
+      "affects": [
+        "호출판",
+        "도착 기한"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "CallBoardRules",
+      "editable": true
+    },
+    {
+      "id": "offer.rush.fareMultiplier",
+      "group": "호출판",
+      "section": "offer",
+      "title": "급한 손님 · 운임 배율",
+      "type": "number",
+      "defaultValue": "1.4",
+      "min": 1,
+      "max": 3,
+      "unit": "배",
+      "description": "약정 운임에 곱하고 100원 단위로 올립니다.",
+      "affects": [
+        "호출판",
+        "운임"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "CallBoardRules",
+      "editable": true
+    },
+    {
+      "id": "offer.luggage.fareBonus",
+      "group": "호출판",
+      "section": "offer",
+      "title": "큰 짐 손님 · 운임 추가",
+      "type": "integer",
+      "defaultValue": "800",
+      "min": 0,
+      "max": 5000,
+      "unit": "원",
+      "description": "큰 짐 호출의 약정 운임에 더합니다. 트렁크가 없는 차는 큰 짐 호출을 받지 않습니다.",
+      "affects": [
+        "호출판",
+        "운임"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "CallBoardRules",
+      "editable": true
+    },
+    {
+      "id": "offer.eta.pickupMetresPerSecond",
+      "group": "호출판",
+      "section": "offer",
+      "title": "호출 카드 · 픽업 예상 속도",
+      "type": "number",
+      "defaultValue": "4",
+      "min": 0.5,
+      "max": 20,
+      "unit": "m/s",
+      "description": "예상 소요 시간 = 픽업 거리 ÷ 이 속도 + 안전 운송 시간 + 신호 대기.",
+      "affects": [
+        "호출판"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.CallEtaSeconds",
+      "editable": true
+    },
+    {
       "id": "display.background.diner",
       "group": "생활 시설",
       "section": "시설 배경",
