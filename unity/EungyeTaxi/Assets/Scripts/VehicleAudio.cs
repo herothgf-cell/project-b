@@ -42,7 +42,7 @@ public sealed class VehicleAudio : MonoBehaviour {
  static readonly float[] rpmPerKmh={105,60,42,33,28,24};
  public const float IdleRpm=800;
  public static int Gear(float speed,float power,int current){
-  float kmh=speed*3.6f,scale=1+.6f*Mathf.Clamp01(power);
+  float kmh=speed*3.6f,scale=1+.3f*Mathf.Clamp01(power);
   int gear=Mathf.Clamp(current,0,rpmPerKmh.Length-1);
   while(gear<upshiftKmh.Length&&kmh>upshiftKmh[gear]*scale)gear++;
   while(gear>0&&kmh<upshiftKmh[gear-1]*scale*.72f)gear--;
@@ -50,15 +50,16 @@ public sealed class VehicleAudio : MonoBehaviour {
  }
  public static float Rpm(float speed,float power,int gear){
   float kmh=speed*3.6f;power=Mathf.Clamp01(power);
-  float rpm=kmh*rpmPerKmh[Mathf.Clamp(gear,0,rpmPerKmh.Length-1)]+260*power;
+  float rpm=kmh*rpmPerKmh[Mathf.Clamp(gear,0,rpmPerKmh.Length-1)]+150*power;
   // Torque-converter flare: pulling away revs the engine before the car catches up.
-  if(kmh<20)rpm=Mathf.Max(rpm,IdleRpm+900*power*(1-kmh/20));
-  return Mathf.Clamp(Mathf.Max(IdleRpm,rpm),IdleRpm,4200);
+  if(kmh<20)rpm=Mathf.Max(rpm,IdleRpm+500*power*(1-kmh/20));
+  return Mathf.Clamp(Mathf.Max(IdleRpm,rpm),IdleRpm,3200);
  }
  public static void EngineSound(float rpm,float power,out float level,out float pitch){
   float rev=Mathf.Clamp01((rpm-IdleRpm)/2400);
-  level=.20f+.24f*rev+.25f*Mathf.Clamp01(power);
-  pitch=Mathf.Clamp(.82f+.68f*rev,.82f,1.55f);
+  // An ordinary taxi: a muffled engine that stays under the road noise and never screams.
+  level=.12f+.12f*rev+.14f*Mathf.Clamp01(power);
+  pitch=Mathf.Clamp(.88f+.40f*rev,.88f,1.28f);
  }
  // Steady-state mix for checks: the gear an automatic would hold at this speed and load.
  public static void EngineMix(float speed,float power,out float level,out float pitch){

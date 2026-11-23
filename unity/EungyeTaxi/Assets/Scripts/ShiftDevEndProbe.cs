@@ -476,8 +476,8 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    float settleDeadline=Time.realtimeSinceStartup+3;
    do{yield return new WaitForEndOfFrame();}while(road.isPlaying&&Time.realtimeSinceStartup<settleDeadline);
    Debug.Log("TAXI_ENGINE_MIX fastPitch="+fastPitch+" fastLevel="+fastLevel+" restPitch="+engine.pitch+" restLevel="+engine.volume);
-   // Geared revs: 45 km/h holds ~1,900 rpm against an 800 rpm idle (pitch +.3), less just after an upshift.
-   Check(fastPitch>engine.pitch+.15f&&fastLevel>engine.volume+.06f,"45 km/h to standstill lowers engine pitch and level");
+   // Geared, quiet sedan: 45 km/h holds ~1,900 rpm against an 800 rpm idle (pitch about +.15, level +.05).
+   Check(fastPitch>engine.pitch+.08f&&fastLevel>engine.volume+.025f,"45 km/h to standstill lowers engine pitch and level");
    Debug.Log("TAXI_ROAD_MIX cruise="+rollingLevel+" rest="+road.volume+" pitch="+road.pitch+" speed="+s.taxi.Speed);
    Check(rollingLevel>.12f&&road.volume==0&&!road.isPlaying&&Mathf.Approximately(road.pitch,1),"rolling sound fades at rest without changing pitch");
    settings.engineSound=false;
