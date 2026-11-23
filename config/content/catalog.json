@@ -12769,6 +12769,174 @@
       "editable": true
     },
     {
+      "id": "meter.enabled",
+      "group": "살아 있는 미터기",
+      "section": "meter",
+      "title": "살아 있는 미터기 · 전환 스위치",
+      "type": "integer",
+      "defaultValue": "0",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "0이면 현재 약정 운임 방식(기본). 1이면 은계 싱글 정산 기준을 미터 운임(기본요금+주행 거리+저속 시간)으로 바꿉니다. 지각 0원·미터 미작동 절반 규칙은 그대로 적용됩니다. 기본 경제를 바꾸는 설정이니 비교표를 보고 결정하세요.",
+      "affects": [
+        "운임"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.SettlementFare",
+      "editable": true
+    },
+    {
+      "id": "meter.baseFare",
+      "group": "살아 있는 미터기",
+      "section": "meter",
+      "title": "미터 · 기본요금",
+      "type": "integer",
+      "defaultValue": "3000",
+      "min": 0,
+      "max": 20000,
+      "unit": "원",
+      "description": "미터 운임의 시작 금액.",
+      "affects": [
+        "운임"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "MeterRules.Fare",
+      "editable": true
+    },
+    {
+      "id": "meter.baseMetres",
+      "group": "살아 있는 미터기",
+      "section": "meter",
+      "title": "미터 · 기본요금 포함 거리",
+      "type": "number",
+      "defaultValue": "0",
+      "min": 0,
+      "max": 5000,
+      "unit": "m",
+      "description": "이 거리까지는 기본요금만 받습니다.",
+      "affects": [
+        "운임"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "MeterRules.Fare",
+      "editable": true
+    },
+    {
+      "id": "meter.stepMetres",
+      "group": "살아 있는 미터기",
+      "section": "meter",
+      "title": "미터 · 거리 단위",
+      "type": "number",
+      "defaultValue": "25",
+      "min": 1,
+      "max": 1000,
+      "unit": "m",
+      "description": "기본 거리 이후 이 거리마다 거리 요금을 더합니다(부분 구간 올림).",
+      "affects": [
+        "운임"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "MeterRules.Fare",
+      "editable": true
+    },
+    {
+      "id": "meter.stepFare",
+      "group": "살아 있는 미터기",
+      "section": "meter",
+      "title": "미터 · 거리 단위 요금",
+      "type": "integer",
+      "defaultValue": "100",
+      "min": 0,
+      "max": 5000,
+      "unit": "원",
+      "description": "거리 단위마다 더하는 금액.",
+      "affects": [
+        "운임"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "MeterRules.Fare",
+      "editable": true
+    },
+    {
+      "id": "meter.slowKmh",
+      "group": "살아 있는 미터기",
+      "section": "meter",
+      "title": "미터 · 저속 기준 속도",
+      "type": "number",
+      "defaultValue": "15",
+      "min": 0,
+      "max": 60,
+      "unit": "km/h",
+      "description": "손님을 태우고 이 속도 이하인 시간을 저속 시간으로 셉니다(신호 대기·정체).",
+      "affects": [
+        "운임"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.TickMeter",
+      "editable": true
+    },
+    {
+      "id": "meter.slowSeconds",
+      "group": "살아 있는 미터기",
+      "section": "meter",
+      "title": "미터 · 저속 시간 단위",
+      "type": "number",
+      "defaultValue": "30",
+      "min": 1,
+      "max": 600,
+      "unit": "초",
+      "description": "저속 시간이 이만큼 쌓일 때마다 시간 요금을 더합니다.",
+      "affects": [
+        "운임"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "MeterRules.Fare",
+      "editable": true
+    },
+    {
+      "id": "meter.slowFare",
+      "group": "살아 있는 미터기",
+      "section": "meter",
+      "title": "미터 · 저속 시간 단위 요금",
+      "type": "integer",
+      "defaultValue": "100",
+      "min": 0,
+      "max": 5000,
+      "unit": "원",
+      "description": "저속 시간 단위마다 더하는 금액.",
+      "affects": [
+        "운임"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "MeterRules.Fare",
+      "editable": true
+    },
+    {
       "id": "display.background.diner",
       "group": "생활 시설",
       "section": "시설 배경",

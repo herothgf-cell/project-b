@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "b2b98b0ccd7ee989d3c65dc13b14321fb31bdbe322254e53c3fafa7a3fd8ffd9",
+  "contentHash": "c8d17bbdc0b6f65e266467f61c0ac60b662cba45b90cd889635782fea7a7679b",
   "values": [
     {
       "id": "radio.station",
@@ -2179,6 +2179,38 @@
     {
       "id": "chain.maxOffers",
       "value": "2"
+    },
+    {
+      "id": "meter.enabled",
+      "value": "0"
+    },
+    {
+      "id": "meter.baseFare",
+      "value": "3000"
+    },
+    {
+      "id": "meter.baseMetres",
+      "value": "0"
+    },
+    {
+      "id": "meter.stepMetres",
+      "value": "25"
+    },
+    {
+      "id": "meter.stepFare",
+      "value": "100"
+    },
+    {
+      "id": "meter.slowKmh",
+      "value": "15"
+    },
+    {
+      "id": "meter.slowSeconds",
+      "value": "30"
+    },
+    {
+      "id": "meter.slowFare",
+      "value": "100"
     },
     {
       "id": "display.background.diner",
