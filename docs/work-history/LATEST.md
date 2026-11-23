@@ -1,6 +1,6 @@
 # 최신 작업 이력
 
-**2026-11-23 · 은계 싱글 r51 · 자체 도시 PvP A2 / LAN v23.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 확인했다(입력 문제 0건). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
+**2026-11-23 · 은계 싱글 r52 · 자체 도시 PvP A2 / LAN v23.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 확인했다(입력 문제 0건). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
 
 ## 이어갈 작업
 
@@ -13,6 +13,8 @@
 [기사 생활과 영업 목표 · 기획 및 검증 기록](2026-11-20-driver-life-business-design.md). [시설 10곳 위치도](../content-design/04-life-vehicle-economy.md)와 [전체 기획 목차](../content-design/README.md)를 갱신했다. 새 제안의 첫 검토 대상은 첫 출차 한 번, 첫 운임 장부, 다시 운전해서 완성하는 야경 엽서다. 판매점 후보의 별도 진출입과 사람 3일 플레이는 후속이다.
 
 ## 최근 배포 기록
+
+2026-11-23 은계 r52 · PvP A2/LAN v23. P51 정문 우회전을 반경 6.5m로 줄여 보도 개구부를 정문 횡단보도 폭에 맞췄다(남 x 652~669 → 658~669, 북 664~682 → 664~677). 북쪽 보도 위 흰 선은 교차로 안에서 차로가 하나만 잡혀 밀려난 도로 가장자리선이었다. 직진 연결이 교차로를 끝까지 지나게 해서 없앴다. 이관 1,261건, 승객 경로 1,676건 도달 실패 0. 직접 운전 확인은 남았다. [구현·검증](2026-11-23-p51-openings-and-edge-line.md).
 
 2026-11-23 은계 r51 · PvP A2/LAN v23(빌드 변경 없음). 기획 문서를 주제별 10개로 통합하고 링크를 새 위치로 바꿨다. 깨진 상대 링크 0건. 문서만 변경. [기록](2026-11-23-content-design-consolidation.md).
 

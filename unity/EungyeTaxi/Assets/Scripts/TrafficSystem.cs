@@ -505,7 +505,18 @@ public partial class TrafficSystem : MonoBehaviour {
         ReviewedLaneLayout.Paint(map,(name,p,dir,width,length,isYellow)=>Mark(name,p,dir,width,length,isYellow?yellow:white));
         UturnRoadMarkings.Paint(map,(name,p,dir,width,length,isYellow)=>Mark(name,p,dir,width,length,isYellow?yellow:white));
     }
+    // Diagnosis for "-mapAuditDump x,z,r": generated paint strokes inside that circle keep
+    // their name and caller chain, because the merged paint mesh has no per-stroke objects.
+    public static readonly List<string> PaintTrace=new List<string>();
+    static Vector3? paintTraceCentre;static float paintTraceRadius;static bool paintTraceRead;
+    static bool TracePaint(Vector3 p){
+        if(!paintTraceRead){paintTraceRead=true;var a=System.Environment.GetCommandLineArgs();int i=System.Array.IndexOf(a,"-mapAuditDump");
+            if(i>=0&&i+1<a.Length){var v=a[i+1].Split(',');var c=System.Globalization.CultureInfo.InvariantCulture;paintTraceCentre=new Vector3(float.Parse(v[0],c),0,float.Parse(v[1],c));paintTraceRadius=float.Parse(v[2],c);}}
+        return paintTraceCentre.HasValue&&new Vector2(p.x-paintTraceCentre.Value.x,p.z-paintTraceCentre.Value.z).magnitude<=paintTraceRadius;
+    }
     void Mark(string name,Vector3 p,Vector3 dir,float width,float length,Material material) {
+        if(TracePaint(p)){var frames=new System.Diagnostics.StackTrace(1,false).GetFrames();var callers=new List<string>();if(frames!=null)foreach(var f in frames){var m=f.GetMethod();if(m==null)continue;callers.Add(m.DeclaringType?.Name+"."+m.Name);if(callers.Count>=6)break;}
+            PaintTrace.Add("PAINT "+name+" at="+p.ToString("F1")+" dir="+dir.ToString("F2")+" w="+width.ToString("F2")+" l="+length.ToString("F2")+" "+(material==yellow?"yellow":"white")+" via "+string.Join(" < ",callers));}
         p.y=.071f;var right=Right(dir)*width*.5f;var along=dir*length*.5f;var list=material==yellow?yellowPaint:whitePaint;list.AddRange(new[]{p-right-along,p-right+along,p+right+along,p+right-along});
     }
     void PaintMesh(List<Vector3> vertices,Material material){var mesh=new Mesh();mesh.indexFormat=UnityEngine.Rendering.IndexFormat.UInt32;var triangles=new List<int>();for(int i=0;i<vertices.Count;i+=4)triangles.AddRange(new[]{i,i+1,i+2,i,i+2,i+3});mesh.SetVertices(vertices);mesh.SetTriangles(triangles,0);mesh.RecalculateNormals();var obj=new GameObject(material.name);obj.transform.SetParent(transform);obj.AddComponent<MeshFilter>().sharedMesh=mesh;obj.AddComponent<MeshRenderer>().sharedMaterial=material;}

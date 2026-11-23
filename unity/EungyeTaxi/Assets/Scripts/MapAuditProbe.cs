@@ -116,6 +116,7 @@ public sealed class MapAuditProbe : MonoBehaviour {
   foreach(var r in FindObjectsOfType<Renderer>()){var p=r.bounds.center;if(new Vector2(p.x-c.x,p.z-c.z).magnitude>v[2])continue;
    var path=r.name;for(var t=r.transform.parent;t;t=t.parent)path=t.name+"/"+path;
    report.AppendLine("OBJECT "+path+" center="+p.ToString("F1")+" size="+r.bounds.size.ToString("F1"));}
+  foreach(var line in TrafficSystem.PaintTrace)report.AppendLine(line);
   File.WriteAllText(Path.Combine(output,"map-audit.txt"),report.ToString());
  }
  void Layers(List<TrafficJunction> junctions,string[] names){
