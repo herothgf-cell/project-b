@@ -21,7 +21,7 @@ public sealed class IdleTimeProbe : MonoBehaviour {
   yield return null;string error=null;var j=s.jobs;
   // Stopped with a passenger aboard.
   try{
-   s.business.preparing=false;s.paused=false;Time.timeScale=1;j.ClearForDay();Array.Clear(j.cooldown,0,j.cooldown.Length);j.ResetOffers();
+   s.business.preparing=false;s.paused=false;Time.timeScale=1;j.ClearForDay();Array.Clear(j.cooldown,0,j.cooldown.Length);j.ResetOffers();j.ForcedPassengerType=PassengerType.General;j.ForcedRideCase=DrunkRideCase.Normal;
    int index=Array.FindIndex(j.offers,o=>o!=null&&o.variety!=CallBoardRules.Hidden);Check(index>=0,"a call with a visible destination");
    Pose(j.stops[j.offers[index].pickup]);Check(j.Accept(index),"accept"+" ("+j.message+" / "+s.business.ledger.State+" / left "+Mathf.RoundToInt((float)s.business.ledger.SecondsLeft)+" / canAccept "+s.business.CanAccept+")");for(int i=0;i<4&&j.trip.State==TripState.ToPickup;i++)j.Interact();
    Check(j.trip.State==TripState.OnTrip,"passenger aboard");

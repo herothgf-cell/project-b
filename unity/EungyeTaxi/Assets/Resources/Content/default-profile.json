@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "16c931824385144312b6e4d775f1aee8b11305430fe7e4a77e8c11a13e0d8981",
+  "contentHash": "b2b98b0ccd7ee989d3c65dc13b14321fb31bdbe322254e53c3fafa7a3fd8ffd9",
   "values": [
     {
       "id": "radio.station",
@@ -2163,6 +2163,22 @@
     {
       "id": "feel.rumble.contactSeconds",
       "value": "0.25"
+    },
+    {
+      "id": "chain.enabled",
+      "value": "1"
+    },
+    {
+      "id": "chain.previewMetres",
+      "value": "400"
+    },
+    {
+      "id": "chain.radiusMetres",
+      "value": "600"
+    },
+    {
+      "id": "chain.maxOffers",
+      "value": "2"
     },
     {
       "id": "display.background.diner",

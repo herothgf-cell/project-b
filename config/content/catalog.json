@@ -12685,6 +12685,90 @@
       "editable": true
     },
     {
+      "id": "chain.enabled",
+      "group": "연속 배차",
+      "section": "chain",
+      "title": "연속 배차 · 사용",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 손님을 태우고 하차지 근처에 오면 M 지도에서 근처 호출 하나를 미리 잡을 수 있습니다. 현재 운송의 하차·운임은 그대로입니다.",
+      "affects": [
+        "호출판"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.ChainWindow",
+      "editable": true
+    },
+    {
+      "id": "chain.previewMetres",
+      "group": "연속 배차",
+      "section": "chain",
+      "title": "연속 배차 · 미리 잡기 시작 거리",
+      "type": "number",
+      "defaultValue": "400",
+      "min": 50,
+      "max": 2000,
+      "unit": "m",
+      "description": "택시가 하차 정차점에서 이 거리 안에 오면 미리 잡기 목록이 열립니다.",
+      "affects": [
+        "호출판"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.ChainWindow",
+      "editable": true
+    },
+    {
+      "id": "chain.radiusMetres",
+      "group": "연속 배차",
+      "section": "chain",
+      "title": "연속 배차 · 다음 승차 지점 반경",
+      "type": "number",
+      "defaultValue": "600",
+      "min": 50,
+      "max": 3000,
+      "unit": "m",
+      "description": "하차 지점에서 이 경로 거리 안의 승차 지점만 다음 호출 후보가 됩니다.",
+      "affects": [
+        "호출판"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.ChainCandidates",
+      "editable": true
+    },
+    {
+      "id": "chain.maxOffers",
+      "group": "연속 배차",
+      "section": "chain",
+      "title": "연속 배차 · 후보 수",
+      "type": "integer",
+      "defaultValue": "2",
+      "min": 1,
+      "max": 4,
+      "unit": "건",
+      "description": "미리 잡기 목록에 보이는 근처 호출 수.",
+      "affects": [
+        "호출판"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.ChainCandidates",
+      "editable": true
+    },
+    {
       "id": "display.background.diner",
       "group": "생활 시설",
       "section": "시설 배경",

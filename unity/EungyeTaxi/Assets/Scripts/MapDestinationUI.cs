@@ -48,6 +48,15 @@ public partial class FullMapOverlay {
  }
 
  public string ApproachSummary {get{if(session.jobs.Active&&session.jobs.trip.State==TripState.ToPickup&&StopArrivalGuidance.For(session).Ready)return "승차 지점 도착 · 지도 닫고 F";if(session.jobs.nav.RetainingPreviousRoute&&session.jobs.Active)return "경로 재탐색 중 · 흐린 선은 이전 경로입니다";var jobs=session.jobs;var p=jobs.Active?jobs.nav.DisplayPath:pickupPath;if(p.Count==1){if(jobs.Active)return "승차 지점 근처 · 정차 위치와 방향을 확인하세요";if(selectedOffer!=null&&selectedPickupReachable)return "승차 지점 도착 · 호출 수락 후 정차하여 F";}float d=0;for(int i=1;i<p.Count;i++)d+=Vector3.Distance(p[i-1],p[i]);return p.Count<2?"승차 경로를 찾지 못했습니다":"내 차 → 승차 · "+d.ToString("0")+"m · 하늘색 실선";}}
+ // 2026-11-24 chained dispatch (Eungye single): reserve one nearby call while approaching the drop-off.
+ void DrawChain(float y,float rw){
+  var jobs=session.jobs;if(!jobs.ChainWindow)return;var list=jobs.ChainCandidates();if(list.Length==0)return;
+  GUI.Label(new Rect(0,y,rw,32),"다음 호출 미리 잡기 · 하차 후 바로 시작",new GUIStyle(text){font=KoreanText.BoldFont,fontSize=MapFont(14)});y+=40;
+  foreach(var o in list){bool reserved=jobs.ChainedOffer==o;var old=GUI.backgroundColor;if(reserved)GUI.backgroundColor=new Color(.72f,.92f,.78f);
+   if(GUI.Button(new Rect(0,y,rw,66),(reserved?"예약됨 · ":"")+jobs.ChainCaption(o),new GUIStyle(button){alignment=TextAnchor.MiddleLeft,padding=new RectOffset(10,10,4,4)})&&!reserved)jobs.ReserveChain(o);
+   GUI.backgroundColor=old;y+=74;}
+  if(jobs.ChainedOffer!=null&&GUI.Button(new Rect(0,y,rw,40),"예약 취소",button))jobs.CancelChain();
+ }
  void DrawSidebar(float x,float w,Rect viewport){if(FacilityPlannerVisible){DrawFacilityPlannerSidebar(x,w,viewport);return;}var jobs=session.jobs;CasualUI.Header(new Rect(x,86,w,40),session.simulationMatch?"공용 호출":"주변 호출",1);float top=132;
   string demand=session.simulationMatch?"4대가 함께 선택하는 호출입니다.\n먼저 수락한 차량이 운송합니다.":PassengerDemandPolicy.Description(session.business.ledger.Elapsed);float demandHeight=text.CalcHeight(new GUIContent(demand),w);GUI.Label(new Rect(x,top,w,demandHeight),demand,text);top+=demandHeight+8;
   bool placeFacility=selectedPlace!=null&&!selectedPlace.roadPoint;int plannerKind=placeFacility?(selectedPlace.plannerKind>=0?selectedPlace.plannerKind:selectedPlace.glyph==12?5:selectedPlace.glyph==9?1:selectedPlace.glyph==10||selectedPlace.glyph==11?3:0):0;
@@ -58,11 +67,11 @@ public partial class FullMapOverlay {
   GUI.Label(new Rect(x,top,w,28),"호출 목록",new GUIStyle(text){font=KoreanText.BoldFont,fontSize=MapFont(14)});top+=32;
   float listHeight=Mathf.Max(72,viewport.yMax-top-154),rw=w-24;float content=0;var rows=new System.Collections.Generic.List<string>();var indices=new System.Collections.Generic.List<int>();var heights=new System.Collections.Generic.List<float>();
   if(!jobs.Active)for(int i=0;i<jobs.offers.Length;i++){var o=jobs.offers[i];if(o==null)continue;var caption=jobs.CallCardCaption(i,session.law.ledger.TotalScore);float height=Mathf.Max(84,button.CalcHeight(new GUIContent(caption),rw-20)+24);rows.Add(caption);indices.Add(i);heights.Add(height);content+=height+10;}
-  var chosen=jobs.Active?jobs.current:selectedOffer;float foot=content;if(chosen!=null)content+=100;if(jobs.Active)content+=jobs.PassengerViaPending?94:44;
+  var chosen=jobs.Active?jobs.current:selectedOffer;float foot=content;if(chosen!=null)content+=100;if(jobs.Active)content+=(jobs.PassengerViaPending?94:44)+jobs.ChainContentHeight;
   filterScroll=GUI.BeginScrollView(new Rect(x,top,w,listHeight),filterScroll,new Rect(0,0,w-20,Mathf.Max(listHeight,content)));float y=0;
   for(int k=0;k<rows.Count;k++){int index=indices[k];var old=GUI.backgroundColor;if(index==SelectedOffer)GUI.backgroundColor=new Color(.72f,.88f,1);if(GUI.Button(new Rect(0,y,rw,heights[k]),rows[k],new GUIStyle(button){alignment=TextAnchor.MiddleLeft,padding=new RectOffset(10,10,4,4)}))SelectOffer(index);GUI.backgroundColor=old;y+=heights[k]+10;}
   if(chosen!=null){if(GUI.Button(new Rect(0,foot,rw,42),"승차 · "+KoreanText.Stop(jobs.stops[chosen.pickup].name),button))FocusStop(chosen.pickup);if(GUI.Button(new Rect(0,foot+50,rw,42),(jobs.DestinationHidden(chosen)?"하차 · 탑승 후 공개":"하차 · "+KoreanText.Stop(jobs.stops[chosen.drop].name)),button)&&!jobs.DestinationHidden(chosen))FocusStop(chosen.drop);}
-  if(jobs.Active){if(jobs.PassengerViaPending&&GUI.Button(new Rect(0,foot+100,rw,42),"경유 · "+KoreanText.Stop(jobs.stops[jobs.PassengerViaStop].name),button))FocusStop(jobs.PassengerViaStop);GUI.Label(new Rect(0,foot+(jobs.PassengerViaPending?150:100),rw,44),"운송 완료 후 새 호출 가능",text);}GUI.EndScrollView();
+  if(jobs.Active){if(jobs.PassengerViaPending&&GUI.Button(new Rect(0,foot+100,rw,42),"경유 · "+KoreanText.Stop(jobs.stops[jobs.PassengerViaStop].name),button))FocusStop(jobs.PassengerViaStop);GUI.Label(new Rect(0,foot+(jobs.PassengerViaPending?150:100),rw,44),"운송 완료 후 새 호출 가능",text);DrawChain(foot+(jobs.PassengerViaPending?150:100)+48,rw);}GUI.EndScrollView();
   string reason=AcceptBlockedReason;string status=!string.IsNullOrEmpty(acceptFeedback)?acceptFeedback:!string.IsNullOrEmpty(reason)?reason:"선택 "+(SelectedOffer+1)+" · "+KoreanText.Stop(jobs.stops[selectedOffer.pickup].name)+"\n→ "+(jobs.DestinationHidden(selectedOffer)?"목적지 비공개":KoreanText.Stop(jobs.stops[selectedOffer.drop].name));
   KoreanText.Panel(new Rect(x,viewport.yMax-150,w,94));GUI.Label(new Rect(x+8,viewport.yMax-147,w-16,88),status,new GUIStyle(text){fontSize=MapFont(14),normal={textColor=string.IsNullOrEmpty(reason)?CasualUI.Ink:CasualUI.Amber}});
   // Keep a blocked action clickable so its rejection is visible instead of silently disabled.

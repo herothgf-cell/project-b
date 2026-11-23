@@ -25,6 +25,9 @@ public static class CallBoardChecks {
   Check(MissionRules.Bonus(MissionRules.Express,6000)==1800&&MissionRules.Bonus(MissionRules.Green,6000)==1500&&MissionRules.Bonus(MissionRules.Coffee,6000)==1200&&MissionRules.Bonus(MissionRules.Precise,6050)==1300,"extras 20-30% rounded up to 100");
   Check(MissionRules.ExpressTarget(new JobOffer{safeRouteSeconds=120})==132&&MissionRules.ExpressTarget(new JobOffer{distance=800})==110,"express target from safe route time");
   var m=JsonUtility.FromJson<JobOffer>(JsonUtility.ToJson(new JobOffer{mission=2,missionBonus=1500,missionGreenBest=2,missionDriveSeconds=40}));Check(m.mission==2&&m.missionBonus==1500&&m.missionGreenBest==2&&m.missionDriveSeconds==40,"mission progress round-trips");
+  // 2026-11-24 chained dispatch.
+  Check(ChainRules.Enabled&&ChainRules.PreviewMetres==400&&ChainRules.RadiusMetres==600&&ChainRules.MaxOffers==2,"chain defaults");
+  var chainSnap=JsonUtility.FromJson<PassengerJobsSnapshot>(JsonUtility.ToJson(new PassengerJobsSnapshot{chained=new JobOffer{pickup=5,drop=9},hasChained=true}));Check(chainSnap.hasChained&&chainSnap.chained.pickup==5,"reservation round-trips");
   Debug.Log("CALL_BOARD_OK checks="+checks);
  }
 }

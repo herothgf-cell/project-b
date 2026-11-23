@@ -88,7 +88,10 @@ public partial class PassengerJobs {
  string NextCallPreview(){
   string key=session.law.tripId+":"+current.drop;if(key==breakKey)return breakPreview;breakKey=key;
   var near=new System.Collections.Generic.List<System.Collections.Generic.KeyValuePair<float,int>>();
-  for(int i=0;i<stops.Length;i++){if(i==current.drop)continue;float d=nav.Distance(stops[current.drop],stops[i]);if(Finite(d)&&d<=IdleTimeRules.StopBreakPreviewMetres)near.Add(new System.Collections.Generic.KeyValuePair<float,int>(d,i));}
+  var all=new System.Collections.Generic.List<System.Collections.Generic.KeyValuePair<float,int>>();
+  for(int i=0;i<stops.Length;i++){if(i==current.drop)continue;float d=nav.Distance(stops[current.drop],stops[i]);if(!Finite(d))continue;var pair=new System.Collections.Generic.KeyValuePair<float,int>(d,i);all.Add(pair);if(d<=IdleTimeRules.StopBreakPreviewMetres)near.Add(pair);}
+  // No stop inside the radius: still show the two nearest so the preview never goes blank.
+  if(near.Count==0)near=all;
   near.Sort((a,b)=>a.Key.CompareTo(b.Key));
   var parts=new System.Collections.Generic.List<string>();for(int k=0;k<near.Count&&k<2;k++)parts.Add(KoreanText.Stop(stops[near[k].Value].name)+" "+Mathf.RoundToInt(near[k].Key)+"m(수요 "+CallBoardRules.DemandLabel(DemandLevelAt(near[k].Value))+")");
   breakPreview=parts.Count==0?"":"하차 후 가까운 승차 지점 · "+string.Join(" · ",parts);return breakPreview;
@@ -100,6 +103,8 @@ public partial class PassengerJobs {
   if(breakStoppedSince<0)breakStoppedSince=Time.time;if(Time.time-breakStoppedSince<IdleTimeRules.StopBreakDelay)return null;
   var lines=new System.Collections.Generic.List<string>();
   if(session.requests&&session.requests.HasPendingChoice)lines.Add("손님 요청에 답할 수 있어요 · 요청 창에서 선택");
+  if(chainedOffer!=null)lines.Add("다음 호출 예약됨 · "+KoreanText.Stop(stops[chainedOffer.pickup].name));
+  else if(ChainWindow&&ChainCandidates().Length>0)lines.Add("M에서 하차 근처의 다음 호출을 미리 잡을 수 있어요");
   if(!DestinationHidden(current)){string preview=NextCallPreview();if(preview.Length>0)lines.Add(preview);}
   return lines.Count==0?null:"정차 중 · "+string.Join("\n",lines);
  }
