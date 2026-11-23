@@ -39,7 +39,7 @@ public static class CabinSoundChecks {
     VehicleAudio.EngineMix(12.5f,.25f,out float cruise,out float cruisePitch);
     VehicleAudio.EngineMix(2,0,out float slow,out float slowPitch);
     double energy=0;foreach(float sample in samples)energy+=sample*sample;
-    Check(Math.Sqrt(energy/samples.Length)*cruise>.10,"Audible cruising engine RMS");
+    Check(Math.Sqrt(energy/samples.Length)*cruise>.05,"Audible cruising engine RMS");
     Check(cruise>slow&&cruisePitch>slowPitch,"Engine recedes toward stop");
    }
    if(sound.StartsWith("Indicator"))Check(clip.length<.08f&&Math.Abs(samples[samples.Length-1])<.001f,"Short decaying relay click");

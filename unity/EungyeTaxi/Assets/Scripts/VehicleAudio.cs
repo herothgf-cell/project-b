@@ -1,11 +1,13 @@
 using UnityEngine;
 
-// The local driver hears a mono interior mix. Engine load and wheel speed drive separate recorded layers.
+// The local driver hears a mono interior mix. Engine revs (through a modelled automatic gearbox)
+// and wheel speed drive separate recorded layers.
 public sealed class VehicleAudio : MonoBehaviour {
  DriveSession session;
  AudioSource engine,road,indicator,horn,rain;
  AudioClip indicatorOn,indicatorOff;
  bool lampWasLit;
+ int gear;float rpm=IdleRpm,load;
 
  public void Initialize(DriveSession owner){
   session=owner;
@@ -34,11 +36,34 @@ public sealed class VehicleAudio : MonoBehaviour {
   if(volume<=0){if(source.isPlaying)source.Stop();return;}
   if(!source.isPlaying)source.Play();
  }
- // Speed is in metres per second. Throttle adds load while speed carries the main pitch change.
+ // Speed is in metres per second. A six-speed automatic keeps the recorded loop inside a natural
+ // pitch band: revs climb within a gear and drop on each upshift instead of rising like a siren.
+ static readonly float[] upshiftKmh={18,32,48,62,75};
+ static readonly float[] rpmPerKmh={105,60,42,33,28,24};
+ public const float IdleRpm=800;
+ public static int Gear(float speed,float power,int current){
+  float kmh=speed*3.6f,scale=1+.3f*Mathf.Clamp01(power);
+  int gear=Mathf.Clamp(current,0,rpmPerKmh.Length-1);
+  while(gear<upshiftKmh.Length&&kmh>upshiftKmh[gear]*scale)gear++;
+  while(gear>0&&kmh<upshiftKmh[gear-1]*scale*.72f)gear--;
+  return gear;
+ }
+ public static float Rpm(float speed,float power,int gear){
+  float kmh=speed*3.6f;power=Mathf.Clamp01(power);
+  float rpm=kmh*rpmPerKmh[Mathf.Clamp(gear,0,rpmPerKmh.Length-1)]+150*power;
+  // Torque-converter flare: pulling away revs the engine before the car catches up.
+  if(kmh<20)rpm=Mathf.Max(rpm,IdleRpm+500*power*(1-kmh/20));
+  return Mathf.Clamp(Mathf.Max(IdleRpm,rpm),IdleRpm,3200);
+ }
+ public static void EngineSound(float rpm,float power,out float level,out float pitch){
+  float rev=Mathf.Clamp01((rpm-IdleRpm)/2400);
+  // An ordinary taxi: a muffled engine that stays under the road noise and never screams.
+  level=.12f+.12f*rev+.14f*Mathf.Clamp01(power);
+  pitch=Mathf.Clamp(.88f+.40f*rev,.88f,1.28f);
+ }
+ // Steady-state mix for checks: the gear an automatic would hold at this speed and load.
  public static void EngineMix(float speed,float power,out float level,out float pitch){
-  float rolling=speed/(speed+16);
-  level=.25f+.48f*rolling+.19f*power;
-  pitch=.76f+1.16f*rolling+.28f*power;
+  EngineSound(Rpm(speed,power,Gear(speed,power,0)),power,out level,out pitch);
  }
  void UpdateIndicator(bool enabled){
   bool lit=enabled&&session.signals&&session.signals.Lit;
@@ -66,11 +91,18 @@ public sealed class VehicleAudio : MonoBehaviour {
    !session.business.preparing&&!session.business.ShowingSummary&&!PvpNativeLan.UiBlocked(session);
   float speed=Mathf.Abs(taxi.Speed);
   float power=Mathf.Clamp01(Mathf.Abs(taxi.wheels[2].motorTorque)/1100f);
-  EngineMix(speed,power,out float level,out float pitch);
-  float blend=1-Mathf.Exp(-Time.unscaledDeltaTime/.065f);
+  float dt=Time.unscaledDeltaTime;
+  // Load and revs carry inertia so lifting off or braking eases the note down instead of snapping it.
+  load=Mathf.Lerp(load,power,1-Mathf.Exp(-dt/.12f));
+  gear=Gear(speed,load,gear);
+  float targetRpm=Rpm(speed,load,gear);
+  rpm=Mathf.Lerp(rpm,targetRpm,1-Mathf.Exp(-dt/(targetRpm<rpm?.16f:.22f)));
+  EngineSound(rpm,load,out float level,out float pitch);
+  float blend=1-Mathf.Exp(-dt/.08f);
   bool driveSound=driving&&settings.engineSound&&ContentTuning.Flag("display.sound.engine",true);
   MotionLoop(engine,driveSound,level,pitch,blend);
-  MotionLoop(road,driveSound,.46f*speed/(speed+9),1,blend);
+  // Tyre and wind noise grows with speed and dominates the cabin above town speeds.
+  MotionLoop(road,driveSound,.62f*speed*speed/(speed*speed+90),1,blend);
   UpdateIndicator(driving&&settings.indicatorSound&&ContentTuning.Flag("display.sound.indicator",true));
   Loop(rain,driving&&settings.rainSound&&ContentTuning.Flag("display.sound.rain",true)?.58f*RainPolicy.Intensity:0);
   if(!driving||!settings.hornSound||!ContentTuning.Flag("display.sound.horn",true)){if(horn.isPlaying)horn.Stop();}

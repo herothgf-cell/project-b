@@ -4,6 +4,8 @@
 
 ## 이어갈 작업
 
+[김밥·카페 건물 점포와 변속 주행음](2026-11-23-storefronts-and-drive-audio.md) · 브랜치 `storefront-drive-audio`, 배포 폴더 미갱신. 김밥·카페 매대를 건물 1층 점포·출입문·진입로로 바꿨다. 주행음은 6단 자동변속 회전수 모델과 레벨을 다듬은 녹음으로 바꿨다. 실행본 위치 제어 검사 35건·40건 통과. 08장 2 미커밋 작업과 합친 뒤 한 번만 재빌드·manifest 갱신이 필요하다. 실청·수동 주행은 남았다.
+
 [기획 문서 통합 정리](2026-11-23-content-design-consolidation.md). 기획 문서 46개를 주제별 10개(00~09)로 합치고 대체 문서는 `content-design/archive/`로 옮겼다. 이전 기획 37(기사 생활·영업 목표)은 제외했다. 다음 검토 주제는 [08 재미 보강](../content-design/08-fun-improvements.md)이다.
 
 [기획 37 공차 운영·길 지식·규칙 속 돌발](../content-design/37-driver-judgment-systems.md)은 구현 승인 전이다. 추천 첫 단계는 정산 “오늘의 영업 동선”이다. [기록](2026-11-23-driver-judgment-design.md)
