@@ -1,6 +1,6 @@
 # 최신 작업 이력
 
-**2026-11-23 · 은계 싱글 r52 · 자체 도시 PvP A2 / LAN v24.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
+**2026-11-23 · 은계 싱글 r52 · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
 
 ## 이어갈 작업
 
@@ -13,6 +13,8 @@
 [기사 생활과 영업 목표 · 기획 및 검증 기록](2026-11-20-driver-life-business-design.md). [시설 10곳 위치도](../content-design/04-life-vehicle-economy.md)와 [전체 기획 목차](../content-design/README.md)를 갱신했다. 새 제안의 첫 검토 대상은 첫 출차 한 번, 첫 운임 장부, 다시 운전해서 완성하는 야경 엽서다. 판매점 후보의 별도 진출입과 사람 3일 플레이는 후속이다.
 
 ## 최근 배포 기록
+
+2026-11-23 은계 r52 · PvP A2/LAN **v25**. 08 2장: 팁(100~500원, 운임과 별도 영수증 줄·장부 항목), 하루 단위 연속 기록(끊겨도 벌칙 없음), 잘한 운전 칭찬(부드러운 정차·깜빡이 켠 차선 변경·30cm 칼정차, 같은 운송에서 반응 감소)을 싱글과 PvP에 넣었다. 수치 21개는 설정 툴 "운임·팁"에서 바꾼다. Editor 28건, 실행본 팁 흐름 43건, 화면 배치 102건 통과. 사람 운전 체감과 LAN 두 PC는 미확인이다. [구현·검증·확인 방법](2026-11-23-tips-streak-praise.md).
 
 2026-11-23 은계 r52 · PvP A2/LAN **v24**. 08 1장: 설정 → 감각 탭에 캐주얼/시뮬 조향과 화면 연출 4종(속도감 시야·조향 방향 미리 보기·제동 쏠림·차체 기울기, 0~100%)을 넣었다. 새 기기는 캐주얼, 기존 설정은 시뮬이며 PvP는 시뮬로 고정한다. 60km/h 한 차로 정착 3.46초 → 2.38초(자동 물리), 전복 없음. 1.2초 목표는 8m/s²에서도 물리적으로 불가해 측정값으로만 남긴다. 실행 폴더는 152MB에서 110MB로 줄었다(`resources.assets` 54→27MB: 원본 지도 제외·지도 gzip·UI 이미지 BC7). 키보드·패드 체감은 미확인이다. [구현·검증·비교 방법](2026-11-23-steering-feel-and-build-size.md).
 

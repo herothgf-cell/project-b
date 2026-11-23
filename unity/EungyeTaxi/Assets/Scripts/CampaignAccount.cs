@@ -151,6 +151,8 @@ public class CampaignAccount {
   entries.Add(new AccountEntry{id=id,kind=kind,day=day,cash=cash,debt=debt});Cash+=cash;Debt+=debt;return true;
  }
  public bool Fare(string trip,int amount,int day=1){return amount>0&&Post("fare:"+trip,"fare",day,amount,0);}
+ public bool Tip(string trip,int amount,int day=1){return amount>0&&!string.IsNullOrEmpty(trip)&&Post("tip:"+trip,"tip",day,amount,0);}
+ public int Tips(int day){int total=0;foreach(var e in entries)if(e.kind=="tip"&&e.day==day)total+=e.cash;return total;}
  public bool Refuel(string id,float quantity,int day=1){
   if(float.IsNaN(quantity)||float.IsInfinity(quantity)||quantity<=0)return false;
   float actual=Math.Min(quantity,100-Fuel);int cost=(int)Math.Ceiling(actual*settings.fuelUnitPrice-.00001);

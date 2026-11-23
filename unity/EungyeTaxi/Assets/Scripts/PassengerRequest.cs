@@ -89,6 +89,8 @@ public class PassengerRequest {
  public int baseFare,bonus,satisfaction,satisfactionDelta,excessScore,sourceManner,requiredScore,farePolicyVersion,quotedFare;public string bonusReason="";
  public int startSatisfaction,startDeficit,cleanBonus,driveDelta,timeDelta;public float referenceSeconds,actualSeconds;public string timeReason="";
  public int meterDeduction;
+ // 08 chapter 2: decided once at arrival from the trip id; paid as a separate entry, not in Total.
+ public int tip,tipChance,tipPoints,tipStreak;public bool tipPrecise,cleanRun;public string tipLine="";
  public int Total {get{return System.Math.Max(0,baseFare+bonus-meterDeduction);}}
  public static PassengerReward Calculate(RequestKind kind,int manner,int required,int fare,int paid,int delta,bool onTime,bool lawClear){
   return CalculateDetailed(manner,required,fare,paid,delta,onTime,100,0,0,0,false);

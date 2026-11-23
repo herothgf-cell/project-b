@@ -83,6 +83,34 @@ public class DriveNotifications : MonoBehaviour {
  }
  bool Expanded {get{var zones=GetComponent<ServiceLawZones>();return !zones||zones.TipExpanded;}}
  void Changed(ref string previous,string line,FeedKind kind){if(line==previous)return;previous=line;if(!string.IsNullOrEmpty(line))Add(new FeedItem{kind=kind,text=line});}
+ // 08 chapter 2: praise, tips and the clean-run streak are read from the manners state, which the LAN
+ // host replicates, so a guest sees the same cards. Repeated praise in one trip fades (level 2 card and
+ // sound, level 1 sound only, level 0 silent). Simulation bots never play sound or post cards.
+ int goodSeen=-1,tipSeen=-1,streakSeen=-1;AudioSource chime;static AudioClip praiseClip,tipClip;
+ void ObserveGoodDriving(){
+  var m=session.manners;if(!m||session.IsSimulationBot)return;
+  if(goodSeen<0){goodSeen=m.goodSerial;tipSeen=m.tipSerial;streakSeen=m.cleanStreak;return;}
+  if(m.goodSerial!=goodSeen){goodSeen=m.goodSerial;
+   if(m.goodLevel==2)Add(new FeedItem{kind=FeedKind.Situation,text="칭찬 · "+GoodDrivingRules.Label(m.goodKind)+(string.IsNullOrEmpty(m.goodLine)?"":" · “"+m.goodLine+"”")});
+   if(m.goodLevel>=1)Chime(false,m.goodLevel==2?.32f:.22f);
+  }
+  if(m.tipSerial!=tipSeen){tipSeen=m.tipSerial;if(m.tipAmount>0){Add(new FeedItem{kind=FeedKind.Situation,text="팁 +"+m.tipAmount.ToString("N0")+"원 · “"+m.tipLine+"”"});Chime(true,.36f);}}
+  if(m.cleanStreak!=streakSeen){if(m.cleanStreak>=2&&m.cleanStreak>streakSeen)Add(new FeedItem{kind=FeedKind.Situation,text="깔끔한 운송 "+m.cleanStreak+"회째 · 이어 가면 팁 확률이 조금씩 올라요"});streakSeen=m.cleanStreak;}
+ }
+ public int PraiseCardsSeen {get{return goodSeen;}}
+ void Chime(bool tip,float volume){
+  if(!chime){chime=gameObject.AddComponent<AudioSource>();chime.playOnAwake=false;chime.spatialBlend=0;}
+  if(tip){if(!tipClip)tipClip=Bell("팁 효과음",new[]{1047f,1319f,1568f},.11f);chime.PlayOneShot(tipClip,volume);}
+  else{if(!praiseClip)praiseClip=Bell("칭찬 효과음",new[]{1319f,1760f},.10f);chime.PlayOneShot(praiseClip,volume);}
+ }
+ static AudioClip Bell(string name,float[] notes,float step){
+  const int rate=44100;int length=(int)(rate*(step*notes.Length+.45f));var data=new float[length];
+  for(int n=0;n<notes.Length;n++){int start=(int)(rate*step*n);
+   for(int i=start;i<length;i++){float t=(i-start)/(float)rate;float envelope=Mathf.Exp(-t*7f)*Mathf.Clamp01(t*400);
+    data[i]+=.28f*envelope*(Mathf.Sin(2*Mathf.PI*notes[n]*t)+.35f*Mathf.Sin(4*Mathf.PI*notes[n]*t));}}
+  var clip=AudioClip.Create(name,length,1,rate,false);clip.SetData(data,0);return clip;
+ }
+
  public void ObserveFeed(){
   if(!session.StartupReady||session.paused||session.business.preparing||session.business.ShowingSummary)return;
   var account=session.business.ledger.Account;
@@ -99,6 +127,7 @@ public class DriveNotifications : MonoBehaviour {
   var driver=session.business.ledger.Driver;int hunger=!session.business.enabledCampaign||driver==null?0:driver.satiety<=10?2:driver.satiety<=25?1:0;
   if(hunger>hungerBand){Add(new FeedItem{kind=FeedKind.Tip,text=(hunger==2?"포만감 10 이하 · 피로 2배 · ":"포만감 25 이하 · 피로 1.5배 · ")+HungerTip});nextTip=Time.time+20;}
   hungerBand=hunger;
+  ObserveGoodDriving();
   Changed(ref lastBusiness,session.business.notice,FeedKind.System);
   Changed(ref lastService,session.services.notice,FeedKind.System);
   Changed(ref lastDestination,session.services.destination,FeedKind.Destination);

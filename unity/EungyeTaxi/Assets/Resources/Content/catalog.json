@@ -11440,6 +11440,489 @@
       "editable": true
     },
     {
+      "id": "goodDriving.smoothStop.minKph",
+      "group": "운임·팁",
+      "section": "goodDriving",
+      "title": "부드러운 정차 · 직전 주행 속도",
+      "type": "number",
+      "defaultValue": "15",
+      "min": 0,
+      "max": 80,
+      "unit": "km/h",
+      "description": "정차 직전 이 속도 이상으로 달린 적이 있어야 판정합니다.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "goodDriving.smoothStop.recentSeconds",
+      "group": "운임·팁",
+      "section": "goodDriving",
+      "title": "부드러운 정차 · 직전 주행 시간",
+      "type": "number",
+      "defaultValue": "8",
+      "min": 1,
+      "max": 30,
+      "unit": "초",
+      "description": "멈추기 전 이 시간 안에 위 속도 이상이었어야 합니다.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "goodDriving.smoothStop.windowSeconds",
+      "group": "운임·팁",
+      "section": "goodDriving",
+      "title": "부드러운 정차 · 감속 관찰 구간",
+      "type": "number",
+      "defaultValue": "4",
+      "min": 1,
+      "max": 10,
+      "unit": "초",
+      "description": "멈추기 전 이 구간의 감속과 급제동을 봅니다.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "goodDriving.smoothStop.maxDecel",
+      "group": "운임·팁",
+      "section": "goodDriving",
+      "title": "부드러운 정차 · 최대 감속",
+      "type": "number",
+      "defaultValue": "2.5",
+      "min": 0.5,
+      "max": 6,
+      "unit": "m/s²",
+      "description": "관찰 구간의 감속이 이 값 이하여야 합니다.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "goodDriving.smoothStop.finalDecel",
+      "group": "운임·팁",
+      "section": "goodDriving",
+      "title": "부드러운 정차 · 멈추기 직전 감속",
+      "type": "number",
+      "defaultValue": "1.2",
+      "min": 0.2,
+      "max": 6,
+      "unit": "m/s²",
+      "description": "멈추기 직전 0.5초의 감속이 이 값 이하여야 합니다.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "goodDriving.lane.minKph",
+      "group": "운임·팁",
+      "section": "goodDriving",
+      "title": "깔끔한 차선 변경 · 최저 속도",
+      "type": "number",
+      "defaultValue": "20",
+      "min": 0,
+      "max": 80,
+      "unit": "km/h",
+      "description": "이 속도 이상에서 실제 차로가 바뀌어야 합니다.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "goodDriving.lane.signalLeadSeconds",
+      "group": "운임·팁",
+      "section": "goodDriving",
+      "title": "깔끔한 차선 변경 · 깜빡이 미리 켜기",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 5,
+      "unit": "초",
+      "description": "차로를 넘기 이만큼 전부터 같은 방향 깜빡이가 켜져 있어야 합니다.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "goodDriving.lane.cooldownSeconds",
+      "group": "운임·팁",
+      "section": "goodDriving",
+      "title": "깔끔한 차선 변경 · 판정 간격",
+      "type": "number",
+      "defaultValue": "20",
+      "min": 0,
+      "max": 120,
+      "unit": "초",
+      "description": "한 번 판정한 뒤 이 시간 동안은 다시 판정하지 않습니다.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "goodDriving.lane.maxPerTrip",
+      "group": "운임·팁",
+      "section": "goodDriving",
+      "title": "깔끔한 차선 변경 · 운송당 최대",
+      "type": "integer",
+      "defaultValue": "2",
+      "min": 0,
+      "max": 10,
+      "unit": "회",
+      "description": "한 운송에서 칭찬하는 최대 횟수.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "goodDriving.precise.distance",
+      "group": "운임·팁",
+      "section": "goodDriving",
+      "title": "칼정차 · 정차점 오차",
+      "type": "number",
+      "defaultValue": "0.3",
+      "min": 0.05,
+      "max": 2,
+      "unit": "m",
+      "description": "하차 때 정차점에서 앞뒤·좌우 모두 이 거리 이내.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "goodDriving.precise.headingDegrees",
+      "group": "운임·팁",
+      "section": "goodDriving",
+      "title": "칼정차 · 방향 오차",
+      "type": "number",
+      "defaultValue": "5",
+      "min": 1,
+      "max": 30,
+      "unit": "°",
+      "description": "정차 칸 화살표와의 방향 차이.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "goodDriving.lineChance",
+      "group": "운임·팁",
+      "section": "goodDriving",
+      "title": "칭찬 · 손님 한마디 확률",
+      "type": "integer",
+      "defaultValue": "50",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "같은 운송에서 처음 칭찬할 때 손님이 한마디 할 확률. 두 번째는 효과음만, 세 번째부터는 조용히 기록합니다.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "tip.chance.base",
+      "group": "운임·팁",
+      "section": "tip",
+      "title": "팁 · 기본 확률",
+      "type": "integer",
+      "defaultValue": "20",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "조건을 만족한 운송의 기본 팁 확률.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "tip.chance.perPoint",
+      "group": "운임·팁",
+      "section": "tip",
+      "title": "팁 · 점수당 확률",
+      "type": "integer",
+      "defaultValue": "10",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "부드러운 정차(최대 2)·깔끔한 차선 변경(최대 2)·칼정차·요청 성공 1점마다 더하는 확률.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "tip.chance.max",
+      "group": "운임·팁",
+      "section": "tip",
+      "title": "팁 · 최대 확률",
+      "type": "integer",
+      "defaultValue": "80",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "모든 보너스를 더한 확률의 상한.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "tip.streak.chancePerTrip",
+      "group": "운임·팁",
+      "section": "tip",
+      "title": "연속 기록 · 회당 팁 확률",
+      "type": "integer",
+      "defaultValue": "5",
+      "min": 0,
+      "max": 50,
+      "unit": "%",
+      "description": "오늘 이어진 깔끔한 운송 1회마다 더하는 팁 확률. 끊겨도 벌칙은 없습니다.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "tip.streak.chanceMax",
+      "group": "운임·팁",
+      "section": "tip",
+      "title": "연속 기록 · 최대 보너스",
+      "type": "integer",
+      "defaultValue": "25",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "연속 기록으로 더하는 확률의 상한.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "tip.amount.base",
+      "group": "운임·팁",
+      "section": "tip",
+      "title": "팁 · 기본 금액",
+      "type": "integer",
+      "defaultValue": "100",
+      "min": 0,
+      "max": 5000,
+      "unit": "원",
+      "description": "팁이 나왔을 때의 최소 금액.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "tip.amount.perTwoPoints",
+      "group": "운임·팁",
+      "section": "tip",
+      "title": "팁 · 2점당 추가 금액",
+      "type": "integer",
+      "defaultValue": "100",
+      "min": 0,
+      "max": 5000,
+      "unit": "원",
+      "description": "팁 점수 2점마다 더하는 금액.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "tip.amount.preciseBonus",
+      "group": "운임·팁",
+      "section": "tip",
+      "title": "팁 · 칼정차 추가 금액",
+      "type": "integer",
+      "defaultValue": "100",
+      "min": 0,
+      "max": 5000,
+      "unit": "원",
+      "description": "칼정차를 했을 때 더하는 금액.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
+      "id": "tip.amount.max",
+      "group": "운임·팁",
+      "section": "tip",
+      "title": "팁 · 최대 금액",
+      "type": "integer",
+      "defaultValue": "500",
+      "min": 0,
+      "max": 10000,
+      "unit": "원",
+      "description": "한 운송 팁의 상한. 10원 단위로 내립니다.",
+      "affects": [
+        "팁",
+        "운전 칭찬"
+      ],
+      "modes": [
+        "single",
+        "pvp"
+      ],
+      "status": "implemented",
+      "consumer": "GoodDrivingRules / GoodDrivingTracker / PassengerJobs.SettleGoodDriving",
+      "editable": true
+    },
+    {
       "id": "display.background.diner",
       "group": "생활 시설",
       "section": "시설 배경",

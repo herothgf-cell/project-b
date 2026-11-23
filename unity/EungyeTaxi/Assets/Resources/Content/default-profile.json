@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "1b3928b90f64f2c158c76359512d2ded761e68a5c5c87f5de8b164403b6e37ef",
+  "contentHash": "9fc35b31e205c1ed0ae70e00da8da20a392c01c81b9ed248fa114155e763af82",
   "values": [
     {
       "id": "radio.station",
@@ -1935,6 +1935,90 @@
     {
       "id": "law.vehicleMajor.penalty",
       "value": "15"
+    },
+    {
+      "id": "goodDriving.smoothStop.minKph",
+      "value": "15"
+    },
+    {
+      "id": "goodDriving.smoothStop.recentSeconds",
+      "value": "8"
+    },
+    {
+      "id": "goodDriving.smoothStop.windowSeconds",
+      "value": "4"
+    },
+    {
+      "id": "goodDriving.smoothStop.maxDecel",
+      "value": "2.5"
+    },
+    {
+      "id": "goodDriving.smoothStop.finalDecel",
+      "value": "1.2"
+    },
+    {
+      "id": "goodDriving.lane.minKph",
+      "value": "20"
+    },
+    {
+      "id": "goodDriving.lane.signalLeadSeconds",
+      "value": "1"
+    },
+    {
+      "id": "goodDriving.lane.cooldownSeconds",
+      "value": "20"
+    },
+    {
+      "id": "goodDriving.lane.maxPerTrip",
+      "value": "2"
+    },
+    {
+      "id": "goodDriving.precise.distance",
+      "value": "0.3"
+    },
+    {
+      "id": "goodDriving.precise.headingDegrees",
+      "value": "5"
+    },
+    {
+      "id": "goodDriving.lineChance",
+      "value": "50"
+    },
+    {
+      "id": "tip.chance.base",
+      "value": "20"
+    },
+    {
+      "id": "tip.chance.perPoint",
+      "value": "10"
+    },
+    {
+      "id": "tip.chance.max",
+      "value": "80"
+    },
+    {
+      "id": "tip.streak.chancePerTrip",
+      "value": "5"
+    },
+    {
+      "id": "tip.streak.chanceMax",
+      "value": "25"
+    },
+    {
+      "id": "tip.amount.base",
+      "value": "100"
+    },
+    {
+      "id": "tip.amount.perTwoPoints",
+      "value": "100"
+    },
+    {
+      "id": "tip.amount.preciseBonus",
+      "value": "100"
+    },
+    {
+      "id": "tip.amount.max",
+      "value": "500"
     },
     {
       "id": "display.background.diner",

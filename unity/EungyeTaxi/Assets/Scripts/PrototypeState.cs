@@ -79,6 +79,7 @@ public enum PedestrianState { None, Intending, Crossing, Unknown }
  public int startSatisfaction,startDeficit,cleanBonus,driveDelta,timeDelta,cleanlinessAfter;
  public float rideDistance,referenceSeconds,arrivalElapsed,disembarkElapsed;public bool drunk,vomited,wakeDelayed;public string timeReason;
  public string pickupStopId,dropStopId,mapRevision,catalogRevision,stopEvidence;
+ public int tip,tipChance,tipPoints,tipStreak;public string tipLine;
  public bool hasDrivingScore;public int drivingScore,initialFare;public int boardingDrivingScore,drivingAdjustedFare,comfortDelta;
 }
 // No dependency on passenger manners, fares, Unity time, or physics.
