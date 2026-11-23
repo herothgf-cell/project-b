@@ -102,3 +102,7 @@ P1~P7을 통합 실행본에 적용했다. [전반 진단](2026-11-19-player-mot
 시안 이미지 `images/motivation-*.png`(재생성 `tools/render_motivation_mockups.py`) · [Codex 구현 프롬프트 P1~P7](codex-prompts-motivation.md)
 
 - [36 은계 생활시설과 택시 부품점](36-neighbourhood-shops-and-taxi-parts.md) · 김밥집·카페, 차량 꾸미기와 성능 부품의 가격·장착 효과
+
+## 2026-11-23 기사의 판단
+
+- [37 공차 운영·길 지식·규칙 속 돌발](37-driver-judgment-systems.md) · 승강장/배회/호출 선택과 정산 동선, 내비 단계·지름길 기록, 승차 거부·분실물·응급 손님·단속 카메라. 구현 승인 전 기획

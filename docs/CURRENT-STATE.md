@@ -44,7 +44,7 @@
 | 검증 | 사람의 싱글 20분·전체 3일 플레이, 다른 PC 간 LAN, 실물 게임패드, 저사양 성능, 첫 이용자 이해도 |
 | 구현·사람 검증 전 | [기획22](content-design/22-growth-direction-and-vehicle-purchase.md) 차량 교체·차고·PvP 외형: 자동·위치 제어 검사만. 가격은 R 실측 전 시험값 |
 | 기획 보류 | 기사 평점(기획22 §3-1), 개인택시 면허 경로([기획23](content-design/23-license-career-path.md)), Blender 아트 파이프라인 2단계 이후 |
-| 미구현(기획 있음) | 이사, 처음/완료 방 비교, 다음 날 찜 카드 |
+| 미구현(기획 있음) | 이사, 처음/완료 방 비교, 다음 날 찜 카드, [기획37](content-design/37-driver-judgment-systems.md) 공차 운영·길 지식·규칙 속 돌발(승인 전) |
 | 미구현(기획 필요) | 눈·동적 낮밤, 단골·예약, 보험·과실, 버스·회전교차로, 단속 법규 |
 | 은계 싱글 차내 조작 | J 미터기 · K 창문 · [ / ] 온도 · 자동 빈차등. 첫 운송 후 운전 화면에서 기사 수첩 열람. 음악 요청은 대화로 응대한다. [구현·검증](work-history/2026-11-20-cabin-logbook-steering.md) |
 | 아트 | 건물은 회색 상자. 목표 카툰 아트 전환은 [아트 전환 가이드](proposals/art-conversion-guide.md) 단계 |
