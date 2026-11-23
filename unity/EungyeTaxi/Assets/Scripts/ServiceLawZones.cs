@@ -142,7 +142,9 @@ public sealed class ServiceLawZones : MonoBehaviour {
   var feed=GetComponent<DriveNotifications>();if(!feed)return;
   bool result=LastFeedback!=null&&(session.paused||session.taxi.body.velocity.magnitude<.5f||Time.time<toastUntil);
   var occupancy=GetComponent<StopOccupancySystem>();bool occupied=occupancy&&occupancy.AffectsActive;
-  string context=occupied?"정차 지점 점유 · 안전한 곳에서 대기하거나 대체 지점을 선택하세요.":result?LastFeedback.outcome:session.services.QueueStatus;
+  // 08 chapter 4: while stopped with a passenger, the context line gathers pending choices and a next-call preview.
+  string stopBreak=occupied||result?null:session.jobs.StopBreakSummary();
+  string context=occupied?"정차 지점 점유 · 안전한 곳에서 대기하거나 대체 지점을 선택하세요.":result?LastFeedback.outcome:stopBreak??session.services.QueueStatus;
   {float scale=CockpitUI.Scale;var r=CockpitUI.SlidingTipBounds(Screen.width,Screen.height,false,session.jobs.Active,tipSlide,session.simulationMatch!=null,session.drivingCamera&&session.drivingCamera.FirstPerson);Panel(r);
    GUI.Label(new Rect(r.x+10*scale,r.y+3*scale,110*scale,30*scale),"운행 알림",new GUIStyle(text){font=KoreanText.BoldFont,fontSize=Mathf.RoundToInt(17*scale)});
    feed.DrawFilter(new Rect(r.xMax-196*scale,r.y+9*scale,84*scale,20*scale));
@@ -154,7 +156,7 @@ public sealed class ServiceLawZones : MonoBehaviour {
     List<FeedButton> actions=null;
     if(occupied){bool stopped=!session.paused&&session.taxi.body.velocity.magnitude<=.1f;actions=new List<FeedButton>{new FeedButton{label="안전한 곳에서 대기",enabled=stopped,note="정차 후 선택할 수 있어요",click=()=>occupancy.Resolve(false)},new FeedButton{label="대체 지점 선택",primary=true,enabled=stopped&&occupancy.CanOfferAlternative,note="정차 후 선택할 수 있어요",click=()=>occupancy.Resolve(true)}};}
     else if(result){bool stopped=session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f;actions=new List<FeedButton>{new FeedButton{label="운전 평가 · 정차 시 확인",primary=true,enabled=stopped,note="정차하면 열 수 있어요",click=ToggleDetails}};}
-    feed.DrawFeed(new Rect(r.x+8*scale,r.y+38*scale,r.width-16*scale,Mathf.Max(12*scale,r.height-44*scale)),context,occupied||result?FeedKind.Situation:FeedKind.System,actions,fuel);
+    feed.DrawFeed(new Rect(r.x+8*scale,r.y+38*scale,r.width-16*scale,Mathf.Max(12*scale,r.height-44*scale)),context,occupied||result||stopBreak!=null?FeedKind.Situation:FeedKind.System,actions,fuel);
    }
   }
 

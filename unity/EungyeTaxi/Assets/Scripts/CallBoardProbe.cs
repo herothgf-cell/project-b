@@ -30,7 +30,7 @@ public sealed class CallBoardProbe : MonoBehaviour {
  void Run(){
   var j=s.jobs;var b=s.business;
   Check(!s.simulationMatch&&b.ledger.OneDay,"Eungye single one-day ledger");
-  b.preparing=false;s.paused=false;Time.timeScale=1;
+  b.preparing=false;s.paused=false;Time.timeScale=1;j.ClearForDay();
   var seen=new HashSet<int>();int boards=0;
   j.ResetOffers();
   // ResetOffers returns to generation 0; later boards advance like real play.
@@ -60,7 +60,7 @@ public sealed class CallBoardProbe : MonoBehaviour {
    JobOffer luggage=null;for(int g=0;g<20&&luggage==null;g++){Array.Clear(j.cooldown,0,j.cooldown.Length);j.Generate();luggage=j.offers.FirstOrDefault(o=>o!=null&&o.variety==CallBoardRules.Luggage);}
    Check(luggage!=null,"a luggage call is available");int index=Array.IndexOf(j.offers,luggage);
    var p=j.stops[luggage.pickup];s.taxi.body.velocity=Vector3.zero;s.taxi.body.position=p.Kerb+Vector3.up*.65f;s.taxi.body.rotation=Quaternion.LookRotation(p.Direction);s.taxi.transform.SetPositionAndRotation(s.taxi.body.position,s.taxi.body.rotation);Physics.SyncTransforms();
-   Check(j.Accept(index),"accept luggage call");
+   Check(j.Accept(index),"accept luggage call"+" ("+j.message+" / "+s.business.ledger.State+" / left "+Mathf.RoundToInt((float)s.business.ledger.SecondsLeft)+" / canAccept "+s.business.CanAccept+")");
    for(int i=0;i<4&&j.trip.State==TripState.ToPickup;i++)j.Interact();
    Check(j.Behavior!=null&&(j.Behavior.Type==PassengerType.Luggage||j.Behavior.Type==PassengerType.MuddyLuggage),"luggage call boards a luggage passenger (got "+(j.Behavior==null?"none":j.Behavior.Type.ToString())+")");
    j.ClearForDay();

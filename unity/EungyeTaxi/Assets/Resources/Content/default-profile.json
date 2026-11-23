@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "b94b52982cf24ec4bdde6ad7629808f135c14ae6bdad57bb8978c0ca9c721e35",
+  "contentHash": "2f567264f7f8cebb76003fd3bfd4ca4f42f76234e6c0856c052b9823640ecb3b",
   "values": [
     {
       "id": "radio.station",
@@ -2047,6 +2047,38 @@
     {
       "id": "offer.eta.pickupMetresPerSecond",
       "value": "4"
+    },
+    {
+      "id": "stopBreak.enabled",
+      "value": "1"
+    },
+    {
+      "id": "stopBreak.delaySeconds",
+      "value": "1.5"
+    },
+    {
+      "id": "stopBreak.previewMetres",
+      "value": "800"
+    },
+    {
+      "id": "lastCall.enabled",
+      "value": "1"
+    },
+    {
+      "id": "lastCall.windowSeconds",
+      "value": "240"
+    },
+    {
+      "id": "lastCall.homeMaxRideMetres",
+      "value": "1200"
+    },
+    {
+      "id": "lastCall.farFareMultiplier",
+      "value": "1.3"
+    },
+    {
+      "id": "lastCall.farMinReturnMetres",
+      "value": "1500"
     },
     {
       "id": "display.background.diner",

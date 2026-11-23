@@ -17,6 +17,9 @@ public static class CallBoardChecks {
   var legacy=JsonUtility.FromJson<JobOffer>("{\"pickup\":1,\"drop\":4,\"fare\":5000,\"seconds\":300}");Check(legacy.variety==CallBoardRules.Ordinary,"old offers load as ordinary");
   var copy=JsonUtility.FromJson<JobOffer>(JsonUtility.ToJson(new JobOffer{pickup=1,drop=4,fare=7000,variety=CallBoardRules.Hidden}));Check(copy.variety==CallBoardRules.Hidden,"variety round-trips");
   var snap=JsonUtility.FromJson<PassengerJobsSnapshot>(JsonUtility.ToJson(new PassengerJobsSnapshot{offers=new[]{new JobOffer{variety=CallBoardRules.Rush},null,null}}));Check(snap.offers[0].variety==CallBoardRules.Rush,"board snapshot keeps variety");
+  // Stage 2 (idle time) defaults.
+  Check(IdleTimeRules.StopBreakEnabled&&IdleTimeRules.StopBreakDelay==1.5f&&IdleTimeRules.LastCallEnabled&&IdleTimeRules.LastCallWindow==240&&IdleTimeRules.LastCallFarFare==1.3f,"idle-time defaults");
+  Check(IdleTimeRules.Label(IdleTimeRules.LastHome).Contains("숙소")&&IdleTimeRules.Label(IdleTimeRules.LastFar).Contains("고액"),"last-call labels");
   Debug.Log("CALL_BOARD_OK checks="+checks);
  }
 }
