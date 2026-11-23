@@ -3,7 +3,7 @@
 ## 요구와 수행
 
 - 사용자 요청: 구체안 1~5번을 각각 기획, `docs/content-design/`에 저장, 텍스트는 간결하게·요소는 표/이미지로, 푸시.
-- 작성: [28 계속 영업](../content-design/28-continuous-career-mode.md), [29 하루 조건](../content-design/29-daily-conditions.md), [30 손님 이야기·수첩](../content-design/30-passenger-stories-and-logbook.md), [31 낮밤·라디오](../content-design/31-day-night-and-radio.md), [32 보류 재검토](../content-design/32-deferred-systems-review.md). 각 문서는 목표·표·Mermaid 흐름도·구현 범위(현재 파일)·검증 기준으로 구성.
+- 작성: [28 계속 영업](../content-design/06-day-and-career.md), [29 하루 조건](../content-design/06-day-and-career.md), [30 손님 이야기·수첩](../content-design/00-game-overview.md), [31 낮밤·라디오](../content-design/06-day-and-career.md), [32 보류 재검토](../content-design/05-interface-and-navigation.md). 각 문서는 목표·표·Mermaid 흐름도·구현 범위(현재 파일)·검증 기준으로 구성.
 - 근거로 확인한 현재 값: 수요 3배 가중(`PassengerDemandPolicy`), 차량 하이브리드 ₩26,000·LPG ₩22,000·색 ₩1,500·장식 ₩2,000(`VehicleCatalog`), 조명 ₩5,000·러그 ₩8,000(`PersonalRoomHUD`), 비 설정 기본 꺼짐·탑승 청결 −2(`RainPolicy`), 승객 프리셋·요청(11/13 인벤토리).
 
 ## 변경 파일

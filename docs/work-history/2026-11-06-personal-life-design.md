@@ -1,12 +1,12 @@
 # 일과 개인 생활의 최소 콘텐츠 기획
 
-후속: 사용자가 이 작업을 중단했고 이후 반복 인물을 제외했다. 실직 후 재출발·차량/주거 성장으로 변경한 [후속 이력](2026-11-06-restarting-life-synopsis.md)과 [새 기획](../content-design/11-personal-life-and-growth.md)을 현재 방향으로 따른다. 아래는 당시 초안과 검토 기록이며 개발 승인/현행 기능이 아니다.
+후속: 사용자가 이 작업을 중단했고 이후 반복 인물을 제외했다. 실직 후 재출발·차량/주거 성장으로 변경한 [후속 이력](2026-11-06-restarting-life-synopsis.md)과 [새 기획](../content-design/archive/11-personal-life-and-growth.md)을 현재 방향으로 따른다. 아래는 당시 초안과 검토 기록이며 개발 승인/현행 기능이 아니다.
 
 ## 요구와 산출물
 
 현재 구현을 활용해 택시 기사의 일과 개인 생활을 자연스럽게 연결하는 최소 콘텐츠를 구체적으로 기획하고 단순 반복/의무를 피하도록 요청받았다.
 
-[검토용 기획안](../content-design/09-work-and-personal-life-proposal.md)은 친구1명·기존 안전 거점2곳·풍경 남기기/짧은 만남2장면·마감 개인 기록을 제안한다. 실제 이동과 활동시간을 영업 기회와 연결하고 사진/대화 선택을 다음 날에 기억한다. 일정 강제·관계 점수·회복 보상·일일 과제는 추가하지 않는다. 인물/취향·20/45초는 작성자 제안이며 신규 구현/수치 승인이 아니다.
+[검토용 기획안](../content-design/archive/09-work-and-personal-life-proposal.md)은 친구1명·기존 안전 거점2곳·풍경 남기기/짧은 만남2장면·마감 개인 기록을 제안한다. 실제 이동과 활동시간을 영업 기회와 연결하고 사진/대화 선택을 다음 날에 기억한다. 일정 강제·관계 점수·회복 보상·일일 과제는 추가하지 않는다. 인물/취향·20/45초는 작성자 제안이며 신규 구현/수치 승인이 아니다.
 
 ## 현재 근거와 범위
 
@@ -16,7 +16,7 @@
 
 ## 변경 파일
 
-- `docs/content-design/09-work-and-personal-life-proposal.md`: 구체 콘텐츠·상태/시간·안전/저장·비의무 설계·수용 기준.
+- `docs/content-design/archive/09-work-and-personal-life-proposal.md`: 구체 콘텐츠·상태/시간·안전/저장·비의무 설계·수용 기준.
 - `docs/content-design/README.md`: 검토용 제안 링크.
 - `docs/prototype-development-checklist.md`: 기획 작성과 미구현/미검증 구분.
 - `docs/work-history/2026-11-06-personal-life-design.md`: 이번 이력.

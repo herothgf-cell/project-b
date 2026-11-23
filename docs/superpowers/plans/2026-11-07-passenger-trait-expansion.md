@@ -5,7 +5,7 @@
 **Goal:** 수면+음식/짐, 요청 위반 관찰, 메스꺼움·온도 민감·젖은 우산을 게임/편집기/기획/출하에 연결한다.
 **Architecture:** 기존 프리셋과 운송 스냅샷을 유지하며 수면을 소지품과 독립 상태로 처리한다. 신규 특성은 운송당 저장되는 사건·선택 상태를 가지며 안전 정차 중 응대, 일시정지 동결, 효과 중복 방지, 호스트 권한을 따른다.
 **Tech Stack:** Unity2022.3 C#, Node vanilla editor, JSON profiles.
-**Spec:** 본 계획의 결정과 docs/content-design/19-passenger-trait-expansion.md(최종 실제 구현 기준 작성).
+**Spec:** 본 계획의 결정과 docs/content-design/03-passenger-content.md(최종 실제 구현 기준 작성).
 
 ## 결정·경계
 

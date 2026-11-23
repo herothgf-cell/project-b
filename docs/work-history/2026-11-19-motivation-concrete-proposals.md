@@ -3,12 +3,12 @@
 ## 요구와 실제 수행
 
 - 사용자 재요청: 시작/이어갈 동기, 세계관·스토리·시뮬레이션 요소 부족을 전반 점검.
-- 같은 날 오전 [동기 진단](2026-11-19-player-motivation-audit.md)이 있어 반복하지 않고, 구체 콘텐츠안·착수 순서·개발 비중 점검을 [구체안](../content-design/2026-11-19-motivation-concrete-proposals.md)으로 추가했다.
+- 같은 날 오전 [동기 진단](2026-11-19-player-motivation-audit.md)이 있어 반복하지 않고, 구체 콘텐츠안·착수 순서·개발 비중 점검을 [구체안](../content-design/archive/2026-11-19-motivation-concrete-proposals.md)으로 추가했다.
 - 근거 확인: 기획10·23, `BusinessProgress.cs`(새 회차 `ResetCampaign`·3일 한정 `RoomAvailable`), 비 연출 `RainPresentation.cs` 존재, 낮밤 미구현(CURRENT-STATE 기준). 2026-10-20 이후 커밋 제목 키워드 단순 집계(전체 734, 도로·지도·PvP 약 311, 승객·생활 약 142).
 
 ## 변경 파일
 
-- `docs/content-design/2026-11-19-motivation-concrete-proposals.md`
+- `docs/content-design/archive/2026-11-19-motivation-concrete-proposals.md`
 - 이 기록, `docs/work-history/LATEST.md`의 이번 안내 한 줄만. 기존 미커밋 도로·빌드·코드 변경은 건드리지 않았다.
 
 ## 검증과 한계

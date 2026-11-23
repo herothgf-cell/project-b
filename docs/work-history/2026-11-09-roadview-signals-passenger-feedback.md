@@ -2,7 +2,7 @@
 
 ## 요구와 기준
 
-사용자 이미지1/2의 좌회전 신호,2의 차선별 로드뷰 대조,3/4의3구 신호, 점수 알림과 내비 겹침, 기사 선택 후 승객 반응, 활동 요청 빈도와 큰따옴표 제거를 다룬다. 사용자 답변으로 새 요청은 주행 중에도 표시하며 실제 작업의 정차 조건은 유지한다. [접근별 근거·기획](../content-design/20-roadview-signals-passenger-feedback.md)·[계획](../superpowers/plans/2026-11-09-roadview-signals-reactions.md).
+사용자 이미지1/2의 좌회전 신호,2의 차선별 로드뷰 대조,3/4의3구 신호, 점수 알림과 내비 겹침, 기사 선택 후 승객 반응, 활동 요청 빈도와 큰따옴표 제거를 다룬다. 사용자 답변으로 새 요청은 주행 중에도 표시하며 실제 작업의 정차 조건은 유지한다. [접근별 근거·기획](../content-design/01-driving-and-traffic.md)·[계획](../superpowers/plans/2026-11-09-roadview-signals-reactions.md).
 
 시작은 main91709c1 기반 `codex/roadview-signals-passenger-feedback`. 동시 제안서 V8 커밋09a195f가 같은 작업 트리에 추가됐으며 그대로 보존한다. 사용자 편집 V6 PPTX와 기존 미추적 파일은 이번 커밋 대상에서 제외한다. 은계/A2 통합·LANv16·`PrototypeBuild.BuildHybrid`·`builds/EungyeTaxi/EungyeTaxi.exe`를 배포 기준으로 유지한다.
 

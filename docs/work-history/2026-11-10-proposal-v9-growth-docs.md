@@ -14,7 +14,7 @@ Claude(Cowork)에서 수행. PC 셸·Unity·git을 쓸 수 없는 세션이라 *
 
 | 파일 | 내용 |
 |---|---|
-| `docs/content-design/22-growth-direction-and-vehicle-purchase.md` | 신규. 현재 성장안 검토, 목표 3층(기사 평점/내 택시/내 집), 차종 특성 제안, 7일 시연판 범위, 싱글 차량 PvP 외형 규칙, 결정 대기 4건 |
+| `docs/content-design/07-home-room-and-vehicles.md` | 신규. 현재 성장안 검토, 목표 3층(기사 평점/내 택시/내 집), 차종 특성 제안, 7일 시연판 범위, 싱글 차량 PvP 외형 규칙, 결정 대기 4건 |
 | `docs/content-design/README.md` | 22 행 추가 |
 | `docs/proposals/project-b-game-proposal-v9.pptx` | 신규 28장. 15장 재작성, 16·22장 신규, 1·2·3·5·8·19·28장 문구 갱신, 쪽 번호 재정렬 |
 | `docs/proposals/proposal-v9-review.md` | 신규. 반영 위치와 주의 |
@@ -55,7 +55,7 @@ git status --short
 git add AGENTS.md docs/CURRENT-STATE.md docs/design-history/CURRENT-STATE-until-2026-11-09.md `
   docs/work-history/LATEST.md docs/work-history/LATEST-archive-until-2026-11-09.md `
   docs/work-history/2026-11-10-proposal-v9-growth-docs.md `
-  docs/content-design/22-growth-direction-and-vehicle-purchase.md docs/content-design/README.md `
+  docs/content-design/07-home-room-and-vehicles.md docs/content-design/README.md `
   docs/proposals/README.md docs/proposals/proposal-v9-review.md docs/proposals/art-conversion-guide.md `
   docs/proposals/project-b-game-proposal-v9.pptx docs/proposals/assets/v9 tools/generate_concept.py
 git commit -m "docs: 제안서 V9, 성장 방향 기획22, 아트 전환 가이드, 문서 정리"

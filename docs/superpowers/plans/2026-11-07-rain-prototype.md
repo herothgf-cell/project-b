@@ -1,7 +1,7 @@
 # Rain prototype implementation plan
 
 Goal: 승인된 비 표현·자동 와이퍼·승차 오염·제동 영향과 콘텐츠 툴 설정을 연결한다.
-Spec: docs/content-design/18-rain-prototype.md
+Spec: docs/content-design/06-day-and-career.md
 Architecture: 기존 ContentTuning snapshot과 VehicleCare.Soil 사건 저장을 재사용한다. RainPolicy는 Unity 독립 계산, RainPresentation은 로컬 시각 표현이다.
 
 - [x] 모델/툴: RainPolicyTests와 프로필 호환 테스트 실패 확인 후 RainPolicy, catalog/default/profile validation·날씨 탭 구현.

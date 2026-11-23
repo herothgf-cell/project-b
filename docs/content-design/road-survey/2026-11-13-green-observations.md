@@ -33,7 +33,7 @@
 | ㉑ 수인로 서행 | 3구 신호·좌회전 금지. 북동→남서 가지의 r15 수정은 별개 | [cWFgUsKpLaYz-MMUKXztag](https://map.naver.com/p?c=19,0,0,0,adh&p=cWFgUsKpLaYz-MMUKXztag,270,-8,75,Float) | 양방향 차로 전체 |
 | ㉒ 수인로 서행 | 진입4, 중앙측 유턴 표지. 구현 UL/S/S/SR. **유턴 보조조건 미판독, 게임 가정** | [U_JkvVOycY0upzQZK5OK6w](https://map.naver.com/p?c=19,0,0,0,adh&p=U_JkvVOycY0upzQZK5OK6w,276,-20,75,Float) | 동행 전체·서행 가려진 포켓 |
 
-출처: `../21-lane-movement-roadview-followup.md`, `../../work-history/2026-11-10-roadview-lane-audit.md`, `../../work-history/2026-11-12-eungye-driving-feedback.md`, `../../work-history/2026-11-12-j7973-southbound-four-lanes.md`, `../../work-history/2026-11-12-j7917-roadview-check.md`.
+출처: `../01-driving-and-traffic.md`, `../../work-history/2026-11-10-roadview-lane-audit.md`, `../../work-history/2026-11-12-eungye-driving-feedback.md`, `../../work-history/2026-11-12-j7973-southbound-four-lanes.md`, `../../work-history/2026-11-12-j7917-roadview-check.md`.
 
 ## source group별 준비 장부
 

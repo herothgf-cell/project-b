@@ -4,7 +4,7 @@
 
 ## 반영 방향
 
-단골·예약을 PPT 본문과 발표자 노트에서 제외했다. 성장 방향은 [재출발 시놉시스](../content-design/10-restarting-driver-synopsis.md), [개인 생활](../content-design/11-personal-life-and-growth.md), [성장 단계](../content-design/12-career-growth-stages.md), [첫 3일 검증안](../content-design/13-three-day-room-and-first-purchase.md)을 따른다. 09의 친구·사진 초안은 현재안으로 사용하지 않았다.
+단골·예약을 PPT 본문과 발표자 노트에서 제외했다. 성장 방향은 [재출발 시놉시스](../content-design/archive/10-restarting-driver-synopsis.md), [개인 생활](../content-design/archive/11-personal-life-and-growth.md), [성장 단계](../content-design/archive/12-career-growth-stages.md), [첫 3일 검증안](../content-design/07-home-room-and-vehicles.md)을 따른다. 09의 친구·사진 초안은 현재안으로 사용하지 않았다.
 
 생활 콘텐츠는 정산 후 선택적으로 방에 들어가 물건을 미리 보고 구매/찜/저축하는 경험이다. 첫 제작은 방 1개·조명/러그 각 2스타일이며, 차량 교체·이사는 장기 제안이다. 현재 구현된 사고·수리·통합 PVP와 신규 생활 기능을 구분했다. 게임 코드/빌드 변경은 없다.
 

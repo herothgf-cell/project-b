@@ -89,7 +89,7 @@ P1/P2 반응형 승객·상태 예측 계산·수요/일반차 성향·시설 �
 
 ## 근거와 이번 검사 범위
 
-- [승객](../content-design/02-passengers-and-fares.md) · [생활/경제](../content-design/03-life-and-economy.md) · [캠페인](../content-design/04-campaign-and-feedback.md) · [사고 스펙](../content-design/08-accident-and-workshop-proposal.md) · [현행 LAN](../content-design/pvp/30-native-lan.md).
+- [승객](../content-design/02-passengers-and-fares.md) · [생활/경제](../content-design/04-life-vehicle-economy.md) · [캠페인](../content-design/06-day-and-career.md) · [사고 스펙](../content-design/04-life-vehicle-economy.md) · [현행 LAN](../content-design/pvp/30-native-lan.md).
 - [상황 반응](../../unity/EungyeTaxi/Assets/Scripts/PassengerJobsActivities.cs) · [사고시 운송/확정 운임 보호](../../unity/EungyeTaxi/Assets/Scripts/PassengerJobsAccident.cs) · [사고 등급 정책](../../unity/EungyeTaxi/Assets/Scripts/AccidentSeverityPolicy.cs) · [사고 제어](../../unity/EungyeTaxi/Assets/Scripts/AccidentController.cs).
 - [요청 종류별 점수/선택 답변 저장](../../unity/EungyeTaxi/Assets/Scripts/PassengerRequest.cs).
 - [상태 예측](../../unity/EungyeTaxi/Assets/Scripts/OperationForecastAdapter.cs) · [시설 비교/대기](../../unity/EungyeTaxi/Assets/Scripts/ServiceStopsPlanning.cs) · [시간대 수요](../../unity/EungyeTaxi/Assets/Scripts/SimulationDemandClock.cs) · [캠페인/저장](../../unity/EungyeTaxi/Assets/Scripts/BusinessProgress.cs) · [LAN 코드](../../unity/EungyeTaxi/Assets/Scripts/PvpNativeLan.cs).

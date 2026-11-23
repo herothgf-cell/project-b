@@ -4,12 +4,12 @@
 
 - 세계관·스토리·시뮬레이션 요소와 시작/이어가기 동기 부족을 전반 점검했다.
 - LATEST, CURRENT-STATE, 범위·체크리스트, 기획10·12·13·22, 승객 목록, 11/12·11/17 검토와 현재 코드를 대조했다.
-- [진단 보고서](../content-design/2026-11-19-player-motivation-audit.md)에 구현 사실·경험 위험·미확정 우선순위·검증 질문을 구분했다.
+- [진단 보고서](../content-design/archive/2026-11-19-player-motivation-audit.md)에 구현 사실·경험 위험·미확정 우선순위·검증 질문을 구분했다.
 - 차량 구매는 구현됨, 싱글 소유는 새 회차 초기화, PvP 외형/완료 기록은 별도 보존, 다음 날 찜 문구는 이미 일부 구현됨을 확인했다.
 
 ## 변경 파일
 
-- `docs/content-design/2026-11-19-player-motivation-audit.md`
+- `docs/content-design/archive/2026-11-19-player-motivation-audit.md`
 - 이 기록과 `docs/work-history/LATEST.md`의 이번 점검 안내.
 - 기존 도로·지도·빌드·BusinessProgress·씬·체크리스트·문서의 미커밋 변경을 보존했다. 게임 코드 변경 없음.
 

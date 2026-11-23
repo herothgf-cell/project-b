@@ -1,7 +1,7 @@
 # 2026-11-07 승객 프리셋별 대사·확률·효과
 
 ## 요구사항·실제 구현
-동일 특성도 승객마다 대사·발생 확률·효과 수치를 다르게 제작하도록 기획/툴/게임을 확장한다. [기획16](../content-design/16-passenger-preset-overrides.md), [설계](../superpowers/specs/2026-11-07-passenger-overrides-design.md), [계획](../superpowers/plans/2026-11-07-passenger-overrides.md).
+동일 특성도 승객마다 대사·발생 확률·효과 수치를 다르게 제작하도록 기획/툴/게임을 확장한다. [기획16](../content-design/03-passenger-content.md), [설계](../superpowers/specs/2026-11-07-passenger-overrides-design.md), [계획](../superpowers/plans/2026-11-07-passenger-overrides.md).
 
 - 공통 상속+명시값 교체. 내부 프리셋v2 overrides배열, v1/기존 해시 보존. 최초 개별 작성 때 이관,0·동일값 고정과 삭제 복원 구분.
 - 실제 주 행동/요청/상황 대사·선택 단계 효과·음주/음식 확률·관련 오염/작업 시간만 카탈로그/특성 검증. 전역 생성/경제/법규와 고정 구토 규칙 제외.32명/승객128개/JSON32000자/전체240KiB.

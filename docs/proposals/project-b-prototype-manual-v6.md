@@ -52,4 +52,4 @@
 
 이번 문서 작업에서 게임을 실행·재빌드하거나 새 기능을 구현하지 않았다. 최신 UI와 안내는 [채움 아이콘·운송 안내 이력](../work-history/2026-11-06-filled-icons-trip-flow.md), 운전 설정은 [제동·설정 이력](../work-history/2026-11-06-braking-left-signal-repair-ui.md)을 따른다. 방 기능의 구현·검증 근거는 [별도 구현 이력](../work-history/2026-11-06-personal-room-implementation.md)이다. 사람 장시간·전체 캠페인 및 다른 PC 수용 결과는 별도 작업 기록을 따른다.
 
-근거: [화면과 조작](../content-design/05-interface-and-navigation.md), [생활/경제](../content-design/03-life-and-economy.md), [작은 방과 첫 구매](../content-design/13-three-day-room-and-first-purchase.md), [최신 이력](../work-history/LATEST.md).
+근거: [화면과 조작](../content-design/05-interface-and-navigation.md), [생활/경제](../content-design/04-life-vehicle-economy.md), [작은 방과 첫 구매](../content-design/07-home-room-and-vehicles.md), [최신 이력](../work-history/LATEST.md).

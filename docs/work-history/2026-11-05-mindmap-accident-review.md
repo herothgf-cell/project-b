@@ -7,7 +7,7 @@
 ## 변경 파일
 
 - `docs/content-design/택시 시뮬레이션.mmst`, `택시 시뮬레이션-목차.md`: 신호·조향/제동·내비·사고 검토 제목4개 갱신. 노드 구조/단계/접힘/메모 유지.
-- `docs/content-design/06-mindmap-review.md`: 최신 요약 연결·과거 메모의 날짜 경계.
+- `docs/content-design/archive/06-mindmap-review.md`: 최신 요약 연결·과거 메모의 날짜 경계.
 - `docs/future-design/2026-11-05-mindmap-and-accidents.md`: 가지별 현황, 미구현/검증 잔여, 사고 코드 근거/제안/결정사항.
 - `docs/future-design/accidents-and-repairs.md`, `docs/prototype-development-checklist.md`, `docs/work-history/LATEST.md`: 제안 연결·이력 인계.
 

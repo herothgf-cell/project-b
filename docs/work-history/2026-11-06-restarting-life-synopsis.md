@@ -12,7 +12,7 @@
 
 ## 변경 파일
 
-`docs/content-design/10-restarting-driver-synopsis.md`, `11-personal-life-and-growth.md`, `09-work-and-personal-life-proposal.md`, `00-game-overview.md`, `README.md`; `docs/prototype-scope.md`, `docs/prototype-development-checklist.md`; `docs/work-history/2026-11-06-restarting-life-synopsis.md`, `2026-11-06-personal-life-design.md`, `LATEST.md`.
+`docs/content-design/archive/10-restarting-driver-synopsis.md`, `11-personal-life-and-growth.md`, `09-work-and-personal-life-proposal.md`, `00-game-overview.md`, `README.md`; `docs/prototype-scope.md`, `docs/prototype-development-checklist.md`; `docs/work-history/2026-11-06-restarting-life-synopsis.md`, `2026-11-06-personal-life-design.md`, `LATEST.md`.
 
 ## 대조와 검증 범위
 

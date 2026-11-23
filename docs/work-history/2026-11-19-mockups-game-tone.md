@@ -6,7 +6,7 @@
 - 사용자 지적: 시안이 현재 UI·톤앤매너와 맞아야 함. 기존 시안(맑은 고딕·임의 색 와이어프레임)을 폐기하고 다시 만들었다.
 - `tools/render_motivation_mockups.py` 재작성: 실제 게임 스크린샷(운전석·3인칭 HUD, 영업 준비, 영업 마감, 방, 차고) 위에 `CasualUI.cs` 색 토큰(Ink·Canvas·Blue·Green·Border·Soft·Warm)과 게임 폰트 Noto Sans KR(Resources/Fonts)로 새 요소를 얹고, 새 요소는 주황 점선으로 표시.
 - 시안 11장: 숙소 지도, 3컷 인트로, 아버지 수첩, 수첩 이야기 탭, 첫날 밤 벽 메모, 아버지 차 보관 확인 창(신규), 차내 조작, 영업 준비 목표·조건 카드, 영업 마감 목표 게이지(신규), 하루 조건 카드, 낮밤·라디오.
-- 기획 반영: [28](../content-design/28-continuous-career-mode.md) 목표 행·시안 3장, [33](../content-design/33-backstory-presentation.md) 보관 결정 표·구현 범위·시안, [34](../content-design/34-home-base.md) 차고 행, [Codex 프롬프트](../content-design/codex-prompts-motivation.md) 공통 UI 규칙(CasualUI 재사용)·P2/P4 시안 목록·P4 보관 구현 항목.
+- 기획 반영: [28](../content-design/06-day-and-career.md) 목표 행·시안 3장, [33](../content-design/00-game-overview.md) 보관 결정 표·구현 범위·시안, [34](../content-design/07-home-room-and-vehicles.md) 차고 행, [Codex 프롬프트](../content-design/archive/codex-prompts-motivation.md) 공통 UI 규칙(CasualUI 재사용)·P2/P4 시안 목록·P4 보관 구현 항목.
 - 영업 준비 원본 스크린샷이 Git 제외 폴더(artifacts)에 있어 `docs/content-design/images/source-single-preparation.png`로 복사해 재생성 가능하게 했다.
 
 ## 검증과 한계

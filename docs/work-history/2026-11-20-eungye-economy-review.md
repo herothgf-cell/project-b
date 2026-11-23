@@ -1,6 +1,6 @@
 # 은계 싱글 r50 운임·생활물가 점검
 
-요청은 현재 생활물가와 현실 택시 운임을 기준으로 게임의 경제 밸런스를 점검하는 것이었다. [비교표·손익·조정 우선순위](../content-design/2026-11-20-eungye-economy-review.md)에 2026년 11월 20일 열람한 시흥 중형택시 요율, 10월 경기 외식비, 은계 한 매장의 커피값, 11월 19일 경기 자동차부탄 가격과 제조사 도심연비를 연결했다.
+요청은 현재 생활물가와 현실 택시 운임을 기준으로 게임의 경제 밸런스를 점검하는 것이었다. [비교표·손익·조정 우선순위](../content-design/04-life-vehicle-economy.md)에 2026년 11월 20일 열람한 시흥 중형택시 요율, 10월 경기 외식비, 은계 한 매장의 커피값, 11월 19일 경기 자동차부탄 가격과 제조사 도심연비를 연결했다.
 
 ## 확인한 구현과 플레이 결과
 
@@ -28,4 +28,4 @@
 
 사람의 수동 플레이, 20분을 채운 다회 운송, 여러 날에 걸친 소비·저축 및 전체 캠페인 검사는 후속으로 남겼다. 세 호출판은 한 경력 첫날의 표본이며 호출 생성 확률이나 일평균 완료 건수는 측정하지 않았다. 기획 37의 야경 준비비와 오일 교환은 제안으로만 검토했다.
 
-변경 파일은 `docs/content-design/2026-11-20-eungye-economy-review.md`, `docs/content-design/03-life-and-economy.md`, `docs/prototype-development-checklist.md`, 이 기록과 `docs/work-history/LATEST.md`다. 게임의 경제 수치·배포본에 대한 변경은 없다. 기록 커밋은 `git log -1 --oneline -- docs/work-history/2026-11-20-eungye-economy-review.md`로 조회한다.
+변경 파일은 `docs/content-design/04-life-vehicle-economy.md`, `docs/content-design/04-life-vehicle-economy.md`, `docs/prototype-development-checklist.md`, 이 기록과 `docs/work-history/LATEST.md`다. 게임의 경제 수치·배포본에 대한 변경은 없다. 기록 커밋은 `git log -1 --oneline -- docs/work-history/2026-11-20-eungye-economy-review.md`로 조회한다.

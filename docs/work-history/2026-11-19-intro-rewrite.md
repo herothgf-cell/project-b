@@ -21,7 +21,7 @@
 - `BusinessProgress`: 첫 인트로 전에 택시를 숙소 차고 칸에 배치. 첫 인트로 종료 시 운전석을 `<저장 이름>-first-drive.png`로 저장하고 목표 달성 비교 화면의 "첫날 운전석"으로 사용(이전 경력은 "기록 없음" 표시). 4일차 출발 시 "오늘부터 미터기는 직접 켭니다" 안내.
 - 문구: 메뉴 "아버지의 택시로 다시 시작 · 3일 뒤에도 계속 영업", 3일차 버튼 "4일차 영업 준비"(이후 일차 번호 자동), 도움말 "F 또는 N 퇴근 (숙소 주차 칸에 정차 후)".
 - 임시 그림 `Resources/UI/intro-office|intro-taxi|intro-first-drive.png` 삭제.
-- 기획 [33 §4](../content-design/33-backstory-presentation.md) 개정, 실제 캡처 `images/intro-v2-cut-1~4.png`.
+- 기획 [33 §4](../content-design/00-game-overview.md) 개정, 실제 캡처 `images/intro-v2-cut-1~4.png`.
 
 ## 검증
 

@@ -13,7 +13,7 @@
 
 구성: 개요 2~4 / 게임성 5~19 / 세계관·아트 20~22 / 시장 23~24 / 로드맵 25~28.
 
-근거 기획: [22 성장 방향·차량 구매](../content-design/22-growth-direction-and-vehicle-purchase.md), [아트 전환 가이드](art-conversion-guide.md).
+근거 기획: [22 성장 방향·차량 구매](../content-design/07-home-room-and-vehicles.md), [아트 전환 가이드](art-conversion-guide.md).
 
 주의:
 - 차량 특성·기사 평점·PvP 내 차 연동은 **제안 단계**이며 사용자 결정 항목이 남아 있다(기획22 §8). 구현되지 않았다.

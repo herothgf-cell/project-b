@@ -1,4 +1,4 @@
-**2026-11-20 은계 싱글 생활·경영 검토안.** 첫 영업 수입을 새 차 저축에 둘지 특별 운행을 여는 데 쓸지 선택하는 흐름을 제안했다. 첫 출차 개편, 지도 판매점, 거래별 장부, 주기 정비와 기사 능력은 검토 단계다. 현재 r50 기준은 정산 후 숙소 차고 구매와 지도 시설 10곳이다. [신규 기획](content-design/37-driver-life-and-business.md) · [현재 시설](content-design/eungye-facility-locations.md)
+**2026-11-20 은계 싱글 생활·경영 검토안.** 첫 영업 수입을 새 차 저축에 둘지 특별 운행을 여는 데 쓸지 선택하는 흐름을 제안했다. 첫 출차 개편, 지도 판매점, 거래별 장부, 주기 정비와 기사 능력은 검토 단계다. 현재 r50 기준은 정산 후 숙소 차고 구매와 지도 시설 10곳이다. [신규 기획](content-design/archive/37-driver-life-and-business.md) · [현재 시설](content-design/04-life-vehicle-economy.md)
 
 설정 관리의 승객 요청·차량·생활 시설·승하차 지명에서 새 프로필을 편집해 게임에 적용한다. [편집 범위](content-tuning-tool-guide.md#시설-그림효과음차내-조작-요청지명).
 
@@ -8,7 +8,7 @@
 
 2026-11-20 은계 싱글과 PvP 수동 주행은 30km/h까지 코너에서 운전자의 페달 입력을 그대로 반영한다. 30~45km/h에서는 속도에 비례해 코너 감속 보정을 적용한다. 호스트와 참가자는 통합 실행본 LAN v21을 사용한다. [저속 감속·운전 HUD 검증](work-history/2026-11-20-corner-pedals-score-hud.md). [중속 조향 측정](work-history/2026-11-20-city-steering-response.md).
 
-2026-11-20 은계 싱글 운전 HUD에서 미터기, 창문, 희망 온도와 발견한 기사 수첩을 조작한다. 빈차등은 운송 상태를 따른다. [차내 조작 기획](content-design/32-deferred-systems-review.md).
+2026-11-20 은계 싱글 운전 HUD에서 미터기, 창문, 희망 온도와 발견한 기사 수첩을 조작한다. 빈차등은 운송 상태를 따른다. [차내 조작 기획](content-design/05-interface-and-navigation.md).
 
 2026-11-12 조향 승인 구현: 40~50km/h 완만한 커브 조향 여유·제한된 회전 보조와 설정 프리셋3종. 수치 슬라이더/저장·취소 재사용, LAN v19. 최적화와 함께 기본 배포에 반영. [결과](work-history/2026-11-12-curve-steering.md).
 
@@ -16,9 +16,9 @@
 
 2026-11-12 PvP LAN 방 목록: 참가 화면의 IP 입력을 자동 방 목록으로 바꾼다. 선택한 방으로 기존 LAN v17 연결을 열며 호스트 설정, 참가 승인, 경기와 재참가를 사용한다. [LAN 접속 기획](content-design/pvp/30-native-lan.md).
 
-2026-11-09 차로 후속: [J866/J5057 차로별 표시·은계중앙로 편도1/은계로 편도3 로드뷰·주차장 안내 좌회전](content-design/21-lane-movement-roadview-followup.md). 기존 주행망/통행 조건·사용자 저장을 보존하고 원본 차로 표시·노면 경계·런타임 서비스 목표 변환을 교정한다. [검증·출하 상태](work-history/2026-11-09-lane-movement-roadview-followup.md).
+2026-11-09 차로 후속: [J866/J5057 차로별 표시·은계중앙로 편도1/은계로 편도3 로드뷰·주차장 안내 좌회전](content-design/01-driving-and-traffic.md). 기존 주행망/통행 조건·사용자 저장을 보존하고 원본 차로 표시·노면 경계·런타임 서비스 목표 변환을 교정한다. [검증·출하 상태](work-history/2026-11-09-lane-movement-roadview-followup.md).
 
-2026-11-09 이전 후속: [거리뷰 접근별 신호·차선 표시/좌회전 수요·승객 반응/주행 요청](content-design/20-roadview-signals-passenger-feedback.md). 기존 통행 권한·진행 운송 계약/작업 정차 조건 보존. [실제 검증·출하 상태](work-history/2026-11-09-roadview-signals-passenger-feedback.md).
+2026-11-09 이전 후속: [거리뷰 접근별 신호·차선 표시/좌회전 수요·승객 반응/주행 요청](content-design/01-driving-and-traffic.md). 기존 통행 권한·진행 운송 계약/작업 정차 조건 보존. [실제 검증·출하 상태](work-history/2026-11-09-roadview-signals-passenger-feedback.md).
 
 2026-11-09 사용자 후속: 말 걸기 숨김·승객 이름/화자 표기·작은 내비/지도 정리, 기존 후보 안의 연속 호출판 승차지 반복 회피. [실제 구현/검증·배포](work-history/2026-11-09-passenger-cards-call-variety.md). 새로운 지도/요금/운전 물리 범위는 추가하지 않는다.
 2026-11-07 추가 피드백: 택시 하단/휠 일체감과 HUD 신호·속도/기어 겹침 교정. 물리·규칙 유지. [구현/검증](work-history/2026-11-07-taxi-hud-corrections.md).
@@ -43,27 +43,27 @@
 
 # 프로토타입 통합 범위
 
-2026-11-12 J7917 은계로 차로 보완: 남쪽 접근의 남행 3차로·북행 좌/직/직/우 4차로와 J7973까지 중간 차로 연결을 정식 지도 r17에 반영한다. [근거·검증](work-history/2026-11-12-j7917-roadview-check.md), [기획21](content-design/21-lane-movement-roadview-followup.md). 실제 폭·신호시간·황색 포장 전체 실측은 포함하지 않는다.
+2026-11-12 J7917 은계로 차로 보완: 남쪽 접근의 남행 3차로·북행 좌/직/직/우 4차로와 J7973까지 중간 차로 연결을 정식 지도 r17에 반영한다. [근거·검증](work-history/2026-11-12-j7917-roadview-check.md), [기획21](content-design/01-driving-and-traffic.md). 실제 폭·신호시간·황색 포장 전체 실측은 포함하지 않는다.
 
-2026-11-07 미정 범위 대조: [마인드맵 전체 목록](future-design/2026-11-07-planning-gaps-and-weather.md). 후속 사용자 승인으로 [비 프로토18](content-design/18-rain-prototype.md)의 표현·자동 와이퍼·승차 오염·제동 영향·툴 설정을 포함한다. 눈·동적 낮밤·확률 미끄러짐 활성화는 후속이다. 가상 시각/수요·다음 날 회복·잠든 승객 깨우기 대기는 별도 구현이다. 승객 개별 설정/다양화는 이후16/17·LANv13 구현을 우선하며 아래11/06 초기 구조 설명의 ‘개별 덮어쓰기 후속’은 당시 상태다.
+2026-11-07 미정 범위 대조: [마인드맵 전체 목록](future-design/2026-11-07-planning-gaps-and-weather.md). 후속 사용자 승인으로 [비 프로토18](content-design/06-day-and-career.md)의 표현·자동 와이퍼·승차 오염·제동 영향·툴 설정을 포함한다. 눈·동적 낮밤·확률 미끄러짐 활성화는 후속이다. 가상 시각/수요·다음 날 회복·잠든 승객 깨우기 대기는 별도 구현이다. 승객 개별 설정/다양화는 이후16/17·LANv13 구현을 우선하며 아래11/06 초기 구조 설명의 ‘개별 덮어쓰기 후속’은 당시 상태다.
 
-2026-11-06 사용자 승인 승객 구조: [프리셋·특성 기획15](content-design/15-passenger-presets-and-traits.md)와 관리창의 새 승객/복제/특성/효과·저장/적용을 연결한다. 기본12프리셋, 독립 음주/조용함+주 행동1개+대표 요청1개를 지원하고 미지원 조합을 차단한다. 새 프리셋ID를 데이터로 추가하되 임의 행동 스크립트·프리셋별 효과 덮어쓰기·메스꺼움 신규 규칙은 후속이다. 기존 저장/밸런스 유지·LANv12 호스트 snapshot, 실제 검증은 [구현 이력](work-history/2026-11-06-passenger-composition-implementation.md).
+2026-11-06 사용자 승인 승객 구조: [프리셋·특성 기획15](content-design/03-passenger-content.md)와 관리창의 새 승객/복제/특성/효과·저장/적용을 연결한다. 기본12프리셋, 독립 음주/조용함+주 행동1개+대표 요청1개를 지원하고 미지원 조합을 차단한다. 새 프리셋ID를 데이터로 추가하되 임의 행동 스크립트·프리셋별 효과 덮어쓰기·메스꺼움 신규 규칙은 후속이다. 기존 저장/밸런스 유지·LANv12 호스트 snapshot, 실제 검증은 [구현 이력](work-history/2026-11-06-passenger-composition-implementation.md).
 
-2026-11-06 최초3일 생활 검증 기획: [작은 방/첫 구매](content-design/13-three-day-room-and-first-purchase.md)에 방1개·조명/러그2종과 날짜별 선택, 임시 가격, 영업/개인 회계·저장/완료 기록을 정의했다. 기존5종/3컷보다 축소한 최소 기능은 이후 승인·구현됐다. 현재/후속 경계는13의 상태표와 구현 이력을 따른다.
+2026-11-06 최초3일 생활 검증 기획: [작은 방/첫 구매](content-design/07-home-room-and-vehicles.md)에 방1개·조명/러그2종과 날짜별 선택, 임시 가격, 영업/개인 회계·저장/완료 기록을 정의했다. 기존5종/3컷보다 축소한 최소 기능은 이후 승인·구현됐다. 현재/후속 경계는13의 상태표와 구현 이력을 따른다.
 
-2026-11-06 성장 단계 후속 기획: [첫 영업→택시 구매/첫 이사](content-design/12-career-growth-stages.md)의 6단계·자유 순서·날짜별 수요 구성·페이스/가격 검증안을 작성했다. 현재 3일과 고정 수요 동작을 바꾸지 않으며 새 기능은 미구현 제안이다.
+2026-11-06 성장 단계 후속 기획: [첫 영업→택시 구매/첫 이사](content-design/archive/12-career-growth-stages.md)의 6단계·자유 순서·날짜별 수요 구성·페이스/가격 검증안을 작성했다. 현재 3일과 고정 수요 동작을 바꾸지 않으며 새 기능은 미구현 제안이다.
 
-2026-11-06 시놉시스·생활 기획: 실직 후 재출발, 원하는 택시 구매/꾸미기와 더 좋은 집으로의 이사를 목표로 [이야기](content-design/10-restarting-driver-synopsis.md)·[생활/성장안](content-design/11-personal-life-and-growth.md)을 작성한다. 반복 인물은 제외하며 현행3일을 도입 검증/장기 연속 경력과 구분한다. 이 초기 제안 중 방/조명·러그 거래는 이후13 범위로 구현됐으며, 차량/이사·연속 경력/인트로 확장은 미구현이다. 현재 게임 경제/정산·저장 규칙은 아래 채택 범위를 따른다.
+2026-11-06 시놉시스·생활 기획: 실직 후 재출발, 원하는 택시 구매/꾸미기와 더 좋은 집으로의 이사를 목표로 [이야기](content-design/archive/10-restarting-driver-synopsis.md)·[생활/성장안](content-design/archive/11-personal-life-and-growth.md)을 작성한다. 반복 인물은 제외하며 현행3일을 도입 검증/장기 연속 경력과 구분한다. 이 초기 제안 중 방/조명·러그 거래는 이후13 범위로 구현됐으며, 차량/이사·연속 경력/인트로 확장은 미구현이다. 현재 게임 경제/정산·저장 규칙은 아래 채택 범위를 따른다.
 
 2026-11-06 선택지 독립 효과 승인 범위: 승객 요청·유형·상황의 실제71개 선택지마다 즉시/운행 중/운송 종료 후 만족도·기사 피로 증감과 변화율을 게임 및 관리창에서 편집한다. 0은 추가 효과 없음이며 기존 경로·안전 행동을 유지한다. 기존 프로필 원본 보존 이관·현재 운송 snapshot·호스트 권한과 [설정 안내](content-tuning-tool-guide.md)를 따른다. 실제 검증·배포는 [이번 작업 기록](work-history/2026-11-06-independent-choice-effects.md)에서 구분한다.
 
 2026-11-06 후속 승인: 보행자 사고의 차량 손상은 경미0~2/중간0~5/중대0~10점 무작위로 반영한다. 선택/실제 감소량·적용 사건을 저장하고 기존 진행 사고에는 소급하지 않는다. 내구도0의 기존 견인/수리와 비용·시간·운전 점수 규칙은 유지하며 [실제 구현/검증](work-history/2026-11-06-pedestrian-durability.md)을 따른다.
 
-2026-11-06 승인 변경: [사고 기획](content-design/08-accident-and-workshop-proposal.md)의 보행자/차량/시설 경미·중간·중대 등급별 비용·시간·운전 점수와 중대 공업사 이동을 적용한다. 지도 라벨·4구 신호·내비 내부 후속 경로·기존 허용6곳 U턴 표시와 사고/고장 결과 UI를 정리한다. 기존 11/05 고정3,000원/45초 설명은 구 저장 호환/당시 이력이며 현재 등급표가 우선한다. 실제 빌드·검증·배포 상태는 [이번 이력](work-history/2026-11-06-accident-severity-ui.md)을 따른다.
+2026-11-06 승인 변경: [사고 기획](content-design/04-life-vehicle-economy.md)의 보행자/차량/시설 경미·중간·중대 등급별 비용·시간·운전 점수와 중대 공업사 이동을 적용한다. 지도 라벨·4구 신호·내비 내부 후속 경로·기존 허용6곳 U턴 표시와 사고/고장 결과 UI를 정리한다. 기존 11/05 고정3,000원/45초 설명은 구 저장 호환/당시 이력이며 현재 등급표가 우선한다. 실제 빌드·검증·배포 상태는 [이번 이력](work-history/2026-11-06-accident-severity-ui.md)을 따른다.
 
 2026-11-06 콘텐츠 관리창 개선: 요청별 실제 승객 대사·기사 선택지·판정 결과와 공유 영향 요소를 연결하고 법규 상황/조건/감점을 묶어 편집한다. 한국어 문구·기존 설정 범위이며 신규 행동·감지기·다국어 엔진은 추가하지 않는다. [구현/검증과 실행](work-history/2026-11-06-contextual-content-editor.md)을 따른다.
 
-2026-11-05 승인 범위: [보행자 사고 처리·공업사 상세 기획](content-design/08-accident-and-workshop-proposal.md)대로 싱글/PVP 구현·자동 검증을 마쳤다. 사건3,000원·45초·추가 피로0(통상 경과 적용), 맵별 공업사2곳·수리/견인을 포함한다. 차량 구매·물품/보험·과실·구급차는 후속이다. 실제 검증과 배포 완료 여부는 [구현 이력](work-history/2026-11-05-accident-workshop-implementation.md)을 따른다.
+2026-11-05 승인 범위: [보행자 사고 처리·공업사 상세 기획](content-design/04-life-vehicle-economy.md)대로 싱글/PVP 구현·자동 검증을 마쳤다. 사건3,000원·45초·추가 피로0(통상 경과 적용), 맵별 공업사2곳·수리/견인을 포함한다. 차량 구매·물품/보험·과실·구급차는 후속이다. 실제 검증과 배포 완료 여부는 [구현 이력](work-history/2026-11-05-accident-workshop-implementation.md)을 따른다.
 2026-11-05 콘텐츠 관리 도구: 승객 요청·대화·효과·구현된 게임 법규/공통 영향 요소를 로컬 별도 관리창으로 조정한다. 신규 법규 감지기·임의 행동 스크립트·실제 장치 조작을 추가하지 않는다. 기본값/이어하기 snapshot·호스트 권한을 유지하며 [실행 안내](content-tuning-tool-guide.md)와 [검증·공동 배포 인계](work-history/2026-11-05-content-tuning-tool-implementation.md)를 따른다.
 
 
@@ -73,7 +73,7 @@
 
 ## 경험 목표
 
-현재 구현은 P11 요청 다양화·P12 수요/공차·P13 점유 대기와 후속 운전/시설/피로 수정, P14 승객 유형을 포함하며 P15 충돌 내구도·수리/견인의 구현·자동 검증을 완료했다. 작성된 게임용 안전 대체 승하차 쌍과 경유 용무 대기도 구현했으며 사람의 조작감·경제 체감은 별도다. [현재 플레이 기획](content-design/README.md), [가지별 마인드맵 검토](content-design/06-mindmap-review.md), [변경 이력](design-history/content-design/2026-10-27-design-decisions.md)을 구분해 읽는다.
+현재 구현은 P11 요청 다양화·P12 수요/공차·P13 점유 대기와 후속 운전/시설/피로 수정, P14 승객 유형을 포함하며 P15 충돌 내구도·수리/견인의 구현·자동 검증을 완료했다. 작성된 게임용 안전 대체 승하차 쌍과 경유 용무 대기도 구현했으며 사람의 조작감·경제 체감은 별도다. [현재 플레이 기획](content-design/README.md), [가지별 마인드맵 검토](content-design/archive/06-mindmap-review.md), [변경 이력](design-history/content-design/2026-10-27-design-decisions.md)을 구분해 읽는다.
 
 | 질문 | 확인할 경험 |
 |---|---|
@@ -84,7 +84,7 @@
 
 ## 2026-10-29 확장 기획 상태
 
-아래 표는 현재 채택·구현 범위다. 사용자는 Proto 확장 방향으로 **충돌에 따른 수리비·시간 손실과 내구도0 운행 불가**를 승인했다. 기존 사고 수리 제외 결정을 부분 변경하며 구현·자동 검증을 완료했다. 성능 저하·보험·과실 판정은 제외한다. [차량 기준](content-design/03-life-and-economy.md#추가-기획-충돌-내구도와-수리)에 승인된 초기 시험값을 두며 최종 Player·배포·수동 검증은 [P15](prototype-development-checklist.md#p15-충돌-내구도수리견인)와 작업 이력에서 판정한다.
+아래 표는 현재 채택·구현 범위다. 사용자는 Proto 확장 방향으로 **충돌에 따른 수리비·시간 손실과 내구도0 운행 불가**를 승인했다. 기존 사고 수리 제외 결정을 부분 변경하며 구현·자동 검증을 완료했다. 성능 저하·보험·과실 판정은 제외한다. [차량 기준](content-design/04-life-vehicle-economy.md#추가-기획-충돌-내구도와-수리)에 승인된 초기 시험값을 두며 최종 Player·배포·수동 검증은 [P15](prototype-development-checklist.md#p15-충돌-내구도수리견인)와 작업 이력에서 판정한다.
 
 승객11유형·34변주, 일반 승객, 적재/하역·오염 짐·음식 섭취/흘림을 구현했다. [승객 기준](content-design/02-passengers-and-fares.md#추가-기획-승객-유형과-상호작용)과 [검증 기록](work-history/2026-10-29-passenger-types-implementation.md)을 따른다. 내구도·수리는 P15로 별도 관리한다. 후속 P1/P2에서 작성된 게임용 대체 쌍과 합의한20초 용무 대기를 추가했다. 상세 현재 범위는 [인계 요약](CURRENT-STATE.md)을 따른다.
 
@@ -95,17 +95,17 @@
 | 월드 | 은계 기반 도로·차로·건물·시설·합법 경로·지도 편집 | 전국/실측 전체 복원·실시간 교통 API | [06](content-design/01-driving-and-traffic.md),[12](technical-reference/map-editor-specification.md) |
 | 주행·AI | 키보드/패드·1/3인칭·수동/보조, 일반 차량 최대72대와 신호·대기열 | 신규 물리 엔진·차종 확대·전역 군중 | [06](content-design/01-driving-and-traffic.md) |
 | 상황·법규 | 출구A/B/C·우회전R1~R5·9코스, 관찰 가능한 준수/위반/보류와 점수 | 후보62개 일괄 자동 판정·실제 벌금/면허처분 | [01](content-design/01-driving-and-traffic.md),[02](content-design/01-driving-and-traffic.md),[09](content-design/02-passengers-and-fares.md) |
-| 기록 | 사건 카드·일일/누적 결과·동일 조건 연습 | 영상 리플레이·장기 숙련 레벨 | [03](content-design/04-campaign-and-feedback.md) |
+| 기록 | 사건 카드·일일/누적 결과·동일 조건 연습 | 영상 리플레이·장기 숙련 레벨 | [03](content-design/06-day-and-career.md) |
 | 승객 | 호출·길가 승객·24정차 후보·17종 요청·11유형/34변주·일반 승객·만족도·보너스 | 복잡한 대화·실제 음악·음성 연기·분실물 반환 퀘스트 | [04](content-design/02-passengers-and-fares.md),[11](content-design/02-passengers-and-fares.md),[14](content-design/02-passengers-and-fares.md) |
 | 요청 배정 | 무작위0~2건·승차 또는 운행 중 안전 정차 발생·개별 평가/저장 | P11 구현·자동 검사 완료, 수동 빈도/답변 여유 별도 | [04 요청 배정](content-design/02-passengers-and-fares.md) |
-| 영업 전략·제한 구현 | 지역/영업 단계별 수요·공차 성과 비교 → 일반 승하차 공간 일시 점유/안전 대안 | P12/P13 및 작성된 게임용 대체 쌍 구현. 장소 확대·수요 할증·전역 도로 공사 제외 | [17 확장](content-design/03-life-and-economy.md) |
-| 취객·청결 | 취객 특성·평소 대사·구토 예고/발생·기상 지연·청결·세차 전 호출 잠금·길가 거부 | 의학적 대응·강제 하차 | [15](content-design/03-life-and-economy.md) |
-| 차량 내구도·복귀 | 충돌 강도별 손상·D0 운행/호출/승차 차단·전용 정비 공간 견인·수리·장부/저장 | 성능 저하·외형/부품 손상·보험·과실 판정 | [차량 기준](content-design/03-life-and-economy.md#추가-기획-충돌-내구도와-수리) |
-| 생활 거점·경제 | 주유소3곳·식당·주차/휴식·세차·공업사, 개인택시 현금/미납/비용 | 실내 보행·시설 미니게임·보험·세금·법인 운영·차량매매 | [05](content-design/03-life-and-economy.md) |
-| 운전자 | 포만감·피로·식사/수면·피로100 졸음과 예정20분 이후 초과 영업 | 질병·스트레스·강제 충돌 | [10](content-design/03-life-and-economy.md) |
-| 개인 생활 | 마감 후 작은 방·조명/러그·찜/배치·개인 지출 분리·저장 | 차량/이사/연속 소유·처음 방 비교·전체 과거 방 탐색 | [13](content-design/13-three-day-room-and-first-purchase.md) |
-| 캠페인 | 3일×예정20분·초과 영업/휴식 종료·일별 순수익 비교·새 캠페인 | 고정3만원 달성형·장편 서사·무한 경영 | [07](content-design/04-campaign-and-feedback.md) |
-| 저장 | v3 중단 운송·위치·시간·요청·회계·차량/운전자 상태, 구v2 호환. 복원 거부 시 명시적 확인과 원본/백업 보존 후 새 캠페인 | 지도 리비전 불일치의 임의 운송 재배치·손상된 원본의 자동 복구 보장 | [05](content-design/03-life-and-economy.md),[07](content-design/04-campaign-and-feedback.md),[복구 이력](work-history/2026-10-30-startup-and-junction-recovery.md) |
+| 영업 전략·제한 구현 | 지역/영업 단계별 수요·공차 성과 비교 → 일반 승하차 공간 일시 점유/안전 대안 | P12/P13 및 작성된 게임용 대체 쌍 구현. 장소 확대·수요 할증·전역 도로 공사 제외 | [17 확장](content-design/04-life-vehicle-economy.md) |
+| 취객·청결 | 취객 특성·평소 대사·구토 예고/발생·기상 지연·청결·세차 전 호출 잠금·길가 거부 | 의학적 대응·강제 하차 | [15](content-design/04-life-vehicle-economy.md) |
+| 차량 내구도·복귀 | 충돌 강도별 손상·D0 운행/호출/승차 차단·전용 정비 공간 견인·수리·장부/저장 | 성능 저하·외형/부품 손상·보험·과실 판정 | [차량 기준](content-design/04-life-vehicle-economy.md#추가-기획-충돌-내구도와-수리) |
+| 생활 거점·경제 | 주유소3곳·식당·주차/휴식·세차·공업사, 개인택시 현금/미납/비용 | 실내 보행·시설 미니게임·보험·세금·법인 운영·차량매매 | [05](content-design/04-life-vehicle-economy.md) |
+| 운전자 | 포만감·피로·식사/수면·피로100 졸음과 예정20분 이후 초과 영업 | 질병·스트레스·강제 충돌 | [10](content-design/04-life-vehicle-economy.md) |
+| 개인 생활 | 마감 후 작은 방·조명/러그·찜/배치·개인 지출 분리·저장 | 차량/이사/연속 소유·처음 방 비교·전체 과거 방 탐색 | [13](content-design/07-home-room-and-vehicles.md) |
+| 캠페인 | 3일×예정20분·초과 영업/휴식 종료·일별 순수익 비교·새 캠페인 | 고정3만원 달성형·장편 서사·무한 경영 | [07](content-design/06-day-and-career.md) |
+| 저장 | v3 중단 운송·위치·시간·요청·회계·차량/운전자 상태, 구v2 호환. 복원 거부 시 명시적 확인과 원본/백업 보존 후 새 캠페인 | 지도 리비전 불일치의 임의 운송 재배치·손상된 원본의 자동 복구 보장 | [05](content-design/04-life-vehicle-economy.md),[07](content-design/06-day-and-career.md),[복구 이력](work-history/2026-10-30-startup-and-junction-recovery.md) |
 | 일반 보행자 | 상황용과 별도로 최대8허브/36명, 현재 안전 배치23명(보도16/횡단7) | 안전 경로 부족 슬롯은 비움 | [16](content-design/01-driving-and-traffic.md) |
 | 후속 관계·사고 | 후속 기획만 보존, 현재 차량 내구도/복귀는 위 별도 행 | 예약·단골·확장 사고 사건·보험 청구·구급차 개발 | [04](content-design/02-passengers-and-fares.md),[08](future-design/accidents-and-repairs.md) |
 
@@ -150,16 +150,16 @@
 
 ## 2026-11-07 승객별 대사·확률·효과
 
-프리셋 조합의 개별값 덮어쓰기를 도구와 실제 운송에 연결한다. 공통 상속과 명시적0/복원을 구분하며 확률·선택 장부·작업 시간은 해당 승객 문맥으로 저장/복원한다. 전역 등장/법규/경제 정책과 새로운 사건 스크립트는 포함하지 않는다. [기획16](content-design/16-passenger-preset-overrides.md), [검증 이력](work-history/2026-11-07-passenger-overrides.md). 통합 BuildHybrid·LANv13.
+프리셋 조합의 개별값 덮어쓰기를 도구와 실제 운송에 연결한다. 공통 상속과 명시적0/복원을 구분하며 확률·선택 장부·작업 시간은 해당 승객 문맥으로 저장/복원한다. 전역 등장/법규/경제 정책과 새로운 사건 스크립트는 포함하지 않는다. [기획16](content-design/03-passenger-content.md), [검증 이력](work-history/2026-11-07-passenger-overrides.md). 통합 BuildHybrid·LANv13.
 
 ## 2026-11-07 승객 다양화 1차
 
-새 행동 코드를 늘리지 않고 기존 조합/개별설정으로12명을 추가해 출하24명/활성23명으로 구성한다. ShortRoad/RouteAdvice와 경로확인 기본 배정을 제외하며 구 저장/사용자프로필 호환용 경로는 보존한다. 요청 비중25/60/15·공통 가중치/개별 수치는 [기획17](content-design/17-passenger-roster-v1.md). 수동 밸런스는1차 가설이며 후속 측정 대상.
+새 행동 코드를 늘리지 않고 기존 조합/개별설정으로12명을 추가해 출하24명/활성23명으로 구성한다. ShortRoad/RouteAdvice와 경로확인 기본 배정을 제외하며 구 저장/사용자프로필 호환용 경로는 보존한다. 요청 비중25/60/15·공통 가중치/개별 수치는 [기획17](content-design/03-passenger-content.md). 수동 밸런스는1차 가설이며 후속 측정 대상.
 
 ## 2026-11-07 승객 행동 후속 승인
 
 수면+음식/짐/오염짐 조합, 조용한 요청의 자발적 잡담 위반 감지, 메스꺼움·차내 온도 민감·젖은 우산 행동과 대사/선택/효과·툴을 구현 범위에 포함한다. 실제 외부 날씨·물리 냉난방은 별도이며 다른 작업의 비 프로토를 대체하지 않는다. 기획19와 해당 작업 이력이 검증 범위를 설명한다.
-날씨 시험 설정: 일시정지 설정의 운전/날씨 탭에서 비6값을 적용한다. 외부 툴 프로필은 보존하며 싱글 이어하기는 저장 날씨를 복원한다. LAN은 호스트만 변경한다. 확률 미끄러짐은 잠금 유지. 상세: [기획18](content-design/18-rain-prototype.md).
+날씨 시험 설정: 일시정지 설정의 운전/날씨 탭에서 비6값을 적용한다. 외부 툴 프로필은 보존하며 싱글 이어하기는 저장 날씨를 복원한다. LAN은 호스트만 변경한다. 확률 미끄러짐은 잠금 유지. 상세: [기획18](content-design/06-day-and-career.md).
 
 ## 2026-11-12 좌회전 경로와 시간 80%
 

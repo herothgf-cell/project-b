@@ -11,7 +11,7 @@
 
 ## 변경 파일
 
-출발 위치는 `DriveSession.cs`, `BusinessProgress.cs`, `HybridMapStatus.cs`, `HomeBasePresentation.cs`에 반영했다. 알림은 `DriveNotifications.cs`, `ServiceLawZones.cs`, `CockpitUI.cs`, `BusinessHUD.cs`에서 처리한다. `PassengerJobs.cs`, `ServiceStops*.cs`, 현장 표지·지도·도움말과 Player 검사도 함께 수정했다. [숙소 기획](../content-design/34-home-base.md).
+출발 위치는 `DriveSession.cs`, `BusinessProgress.cs`, `HybridMapStatus.cs`, `HomeBasePresentation.cs`에 반영했다. 알림은 `DriveNotifications.cs`, `ServiceLawZones.cs`, `CockpitUI.cs`, `BusinessHUD.cs`에서 처리한다. `PassengerJobs.cs`, `ServiceStops*.cs`, 현장 표지·지도·도움말과 Player 검사도 함께 수정했다. [숙소 기획](../content-design/07-home-room-and-vehicles.md).
 
 ## 검증과 재현
 

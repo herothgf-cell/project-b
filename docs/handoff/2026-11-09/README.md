@@ -22,7 +22,7 @@ pwsh -File tools/update_distribution_manifest.ps1 -VerifyOnly
 
 게임 소스 **548fe8b**, 검증 실행본 **a978b3b**, 게시 영수증 **a0ecc05**. 사용자 마인드맵 **23646cc**와 제안서V6 수정 **0c490ba**도 main에 포함된다. V7/V8은 별도 제안서이며 사용자가 편집한 V6를 덮어쓰지 않는다.
 
-[차로/좌회전 이력](../../work-history/2026-11-09-lane-movement-roadview-followup.md), [로드뷰·기획21](../../content-design/21-lane-movement-roadview-followup.md), [이전 신호/승객 기획20](../../content-design/20-roadview-signals-passenger-feedback.md), [LATEST](../../work-history/LATEST.md)를 우선 읽는다. J866서향/J5057양방향 표시·녹색 편도1/노란 편도3·중복 노면/노면 밖 선·내비 캡션을 수정했다. 주차장 좌회전 누락은 런타임 차로 분할 후 서비스 목표 거리 변환을 고쳤다. 기존 신호 시간·금지·경로 검사는 유지한다.
+[차로/좌회전 이력](../../work-history/2026-11-09-lane-movement-roadview-followup.md), [로드뷰·기획21](../../content-design/01-driving-and-traffic.md), [이전 신호/승객 기획20](../../content-design/01-driving-and-traffic.md), [LATEST](../../work-history/LATEST.md)를 우선 읽는다. J866서향/J5057양방향 표시·녹색 편도1/노란 편도3·중복 노면/노면 밖 선·내비 캡션을 수정했다. 주차장 좌회전 누락은 런타임 차로 분할 후 서비스 목표 거리 변환을 고쳤다. 기존 신호 시간·금지·경로 검사는 유지한다.
 
 ## 최신 사용자 설정
 

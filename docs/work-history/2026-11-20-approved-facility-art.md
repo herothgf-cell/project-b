@@ -12,7 +12,7 @@
 
 - `unity/EungyeTaxi/Assets/Resources/UI/Facilities/`에 장소 8장과 음식 3장 및 Unity 임포트 설정을 추가했다. 배경은 승인한 그림과 같은 JPEG다. 음식은 승인한 메뉴 카드에서 분리해 선택 표시와 메뉴명을 런타임에 그린다.
 - `unity/EungyeTaxi/Assets/Scripts/`의 FacilityArt, ServiceStops, PersonalRoomHUD, VehicleDamageController가 이미지 표시, 이용·견적별 전환, 메뉴 선택, 숙소 물건 위치를 담당한다. ShiftDevEndProbe에 격리된 경력으로 실행하는 `-facilityArtCheck`를 추가했다.
-- 기획 및 현행 상태는 `docs/content-design/03-life-and-economy.md`, `docs/prototype-scope.md`, `docs/prototype-development-checklist.md`, 승인 시안 README와 LATEST에 반영했다.
+- 기획 및 현행 상태는 `docs/content-design/04-life-vehicle-economy.md`, `docs/prototype-scope.md`, `docs/prototype-development-checklist.md`, 승인 시안 README와 LATEST에 반영했다.
 
 ## 검증과 범위
 

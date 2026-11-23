@@ -60,17 +60,17 @@
 
 2026-11-19 은계 A~D 차로 전환과 J7973 네 모서리 우회전 연결·섬·횡단보도를 은계 r47 통합 실행본에 반영했다. BuildHybrid 종료 0, 승하차 39곳/1,482경로, 지도·저장 이관 모델, 실제 Player 351건 및 고정 화면 7장 확인. 후속 실운행 검증은 별도다. [변경·검증·재현](2026-11-19-approved-eungye-roads.md).
 
-2026-11-19 시안 11장을 실제 게임 스크린샷 + CasualUI 색·Noto Sans KR 톤으로 다시 만들고(새 요소 주황 점선) 기획 28·33·34와 [Codex 프롬프트](../content-design/codex-prompts-motivation.md)에 반영했다. 아버지 차는 교체 시 판매 없이 숙소 주차장 보관(사용자 결정). [기록](2026-11-19-mockups-game-tone.md). 문서·시안만.
+2026-11-19 시안 11장을 실제 게임 스크린샷 + CasualUI 색·Noto Sans KR 톤으로 다시 만들고(새 요소 주황 점선) 기획 28·33·34와 [Codex 프롬프트](../content-design/archive/codex-prompts-motivation.md)에 반영했다. 아버지 차는 교체 시 판매 없이 숙소 주차장 보관(사용자 결정). [기록](2026-11-19-mockups-game-tone.md). 문서·시안만.
 
-2026-11-19 아버지가 남긴 개인택시로 생계를 잇는 설정과 숙소 거점 1곳(수인로 뒤 원룸, 기존 시작·마감 주차장 자리)을 [기획33](../content-design/33-backstory-presentation.md)·[34](../content-design/34-home-base.md)에 정리했다. 시안 8장을 28~34에 첨부, [Codex 구현 프롬프트 P1~P7](../content-design/codex-prompts-motivation.md) 작성. [기록](2026-11-19-father-taxi-home-base.md). 문서·시안만, 게임 변경 없음. 다음: Codex P1 숙소 거점.
+2026-11-19 아버지가 남긴 개인택시로 생계를 잇는 설정과 숙소 거점 1곳(수인로 뒤 원룸, 기존 시작·마감 주차장 자리)을 [기획33](../content-design/00-game-overview.md)·[34](../content-design/07-home-room-and-vehicles.md)에 정리했다. 시안 8장을 28~34에 첨부, [Codex 구현 프롬프트 P1~P7](../content-design/archive/codex-prompts-motivation.md) 작성. [기록](2026-11-19-father-taxi-home-base.md). 문서·시안만, 게임 변경 없음. 다음: Codex P1 숙소 거점.
 
-2026-11-19 사용자 결정: 개인택시 면허 경로 제외(처음부터 개인택시), 차내 조작(미터기·빈차등·에어컨) 추가. 배경 이야기를 3컷 인트로·이전 기사의 수첩·승객 질문·첫날 밤 목표 메모로 보여주는 [기획33](../content-design/33-backstory-presentation.md) 작성. [기록](2026-11-19-backstory-and-decisions.md). 문서만, 게임 변경 없음.
+2026-11-19 사용자 결정: 개인택시 면허 경로 제외(처음부터 개인택시), 차내 조작(미터기·빈차등·에어컨) 추가. 배경 이야기를 3컷 인트로·이전 기사의 수첩·승객 질문·첫날 밤 목표 메모로 보여주는 [기획33](../content-design/00-game-overview.md) 작성. [기록](2026-11-19-backstory-and-decisions.md). 문서만, 게임 변경 없음.
 
 2026-11-19 동기 보강 기획 28~32 작성: 계속 영업 모드·하루 조건 카드·손님 이야기와 기사 수첩·낮밤/라디오·보류 시스템 재검토(면허 축소안·차내 조작 3종, 사용자 결정 필요). 표·Mermaid 중심, 미구현·밸런스 미검증. [색인](../content-design/README.md#2026-11-19-시작지속-동기-보강) · [기록](2026-11-19-motivation-plans-28-32.md). 게임/빌드/지도 변경 없음.
 
-2026-11-19 동기 보강 구체안: 오전 진단에 이어 계속 영업 모드(소유 유지·장기 목표 표시)·하루 조건 카드·완결형 손님 이야기와 기사 수첩·낮밤/라디오 순 착수를 제안하고, 최근 커밋의 도로·지도 편중(약 42%)을 원인 일부로 기록했다. 구현 승인 아님, 보류 항목 유지. [구체안](../content-design/2026-11-19-motivation-concrete-proposals.md) · [기록](2026-11-19-motivation-concrete-proposals.md). 게임/빌드/지도 변경·실행 검증 없음.
+2026-11-19 동기 보강 구체안: 오전 진단에 이어 계속 영업 모드(소유 유지·장기 목표 표시)·하루 조건 카드·완결형 손님 이야기와 기사 수첩·낮밤/라디오 순 착수를 제안하고, 최근 커밋의 도로·지도 편중(약 42%)을 원인 일부로 기록했다. 구현 승인 아님, 보류 항목 유지. [구체안](../content-design/archive/2026-11-19-motivation-concrete-proposals.md) · [기록](2026-11-19-motivation-concrete-proposals.md). 게임/빌드/지도 변경·실행 검증 없음.
 
-2026-11-19 시작·지속 동기 전반 점검: 기능 수보다 영업→생활 변화→다음 날 기대의 연결 부족을 우선 진단했다. 차량 구매·방·시간대 수요는 구현되어 있으나 싱글 소유는 새 3일 회차에서 초기화된다. 지속 경력·하루 변주·짧은 승객 이야기의 검토 우선순위를 제안했다. [진단](../content-design/2026-11-19-player-motivation-audit.md) · [근거·검증 한계·다음 작업](2026-11-19-player-motivation-audit.md). 게임/빌드/지도·보류 기능 상태 유지, 이번 실행·Strict 검사 없음. 은계 r46 / A2·LAN v19·BuildHybrid, 필수 입력은 직전 기록 기준이다.
+2026-11-19 시작·지속 동기 전반 점검: 기능 수보다 영업→생활 변화→다음 날 기대의 연결 부족을 우선 진단했다. 차량 구매·방·시간대 수요는 구현되어 있으나 싱글 소유는 새 3일 회차에서 초기화된다. 지속 경력·하루 변주·짧은 승객 이야기의 검토 우선순위를 제안했다. [진단](../content-design/archive/2026-11-19-player-motivation-audit.md) · [근거·검증 한계·다음 작업](2026-11-19-player-motivation-audit.md). 게임/빌드/지도·보류 기능 상태 유지, 이번 실행·Strict 검사 없음. 은계 r46 / A2·LAN v19·BuildHybrid, 필수 입력은 직전 기록 기준이다.
 
 2026-11-17 A~D 도로 시안 사용자 확인 완료. J7973 v5는 거리뷰에서 북동·북서 합류 화살표를 확인하고, 남쪽도 동일 구조라는 사용자 답변을 반영해 네 모서리 공통 연결 차로→본선 합류 확대도를 추가했다. 횡단보도 막대 방향 정정. 게임 미반영, 기존 r46/Enter 작업 보존. [시안·근거·다음 작업](2026-11-17-seven-road-proposal.md).
 
@@ -116,7 +116,7 @@
 
 ## 2026-11-13 승객 다양화 기획 준비
 
-[현재 승객·요청·선택·효과 표](../content-design/2026-11-13-passenger-current-inventory.md) · [조사 기록](2026-11-13-passenger-inventory.md). 기본 프리셋30종 중29종 활성, 운행 요청14종과 선택 원문34행을 현재 기본 프로필로 대조했다. 공통/개별 효과와 비활성·텍스트 전용 기능을 구분. 다음은 이 표를 바탕으로 다양화 방향 논의. 게임/빌드/지도 변경 및 실행 검증 없음, 아래 배포·지역·필수 입력 상태 유지.
+[현재 승객·요청·선택·효과 표](../content-design/archive/2026-11-13-passenger-current-inventory.md) · [조사 기록](2026-11-13-passenger-inventory.md). 기본 프리셋30종 중29종 활성, 운행 요청14종과 선택 원문34행을 현재 기본 프로필로 대조했다. 공통/개별 효과와 비활성·텍스트 전용 기능을 구분. 다음은 이 표를 바탕으로 다양화 방향 논의. 게임/빌드/지도 변경 및 실행 검증 없음, 아래 배포·지역·필수 입력 상태 유지.
 
 최적화·중속 조향·설정 프리셋을 기본 `builds/EungyeTaxi/`에 통합했다. LAN v19, 양쪽 PC 전체 폴더 갱신 필요. [기본 배포 기록](2026-11-12-pvp-default-release.md). 다음은 실제 두 PC 수동 체감 확인이다.
 
@@ -135,7 +135,7 @@ PvP 호스트 렉 2차 최적화(같은 기록 후속 절): 내비 혼잡/제한
 | 통신 | LAN **v19**. 최적화·조향 통합 배포. 이전 v17/v18과 참가 불가, 양쪽 PC 같은 전체 실행 폴더 필요 |
 | 배포 검사 | r49 Player 전역 99타일·도로 객체 4,027개·359검사, 배포 manifest 143파일 검증 통과 · [작업 기록](2026-11-20-additional-road-repairs.md) |
 | 필수 로컬 입력 | 정식 지도 `config/maps/project/eungye.project.json` (revision49·contentHash 9985476e…)와 검토 도로시설 JSON · Strict 입력 문제 0 |
-| 기획 | [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) **main 병합·배포, 사람 검증 전** · 평점 보류 · [기획23](../content-design/23-license-career-path.md) 면허 경로 본편 보류 |
+| 기획 | [기획22](../content-design/07-home-room-and-vehicles.md) **main 병합·배포, 사람 검증 전** · 평점 보류 · [기획23](../content-design/archive/23-license-career-path.md) 면허 경로 본편 보류 |
 | 제안서 | [V10 30장](../proposals/project-b-game-proposal-v10.pptx) · [반영 검토](../proposals/proposal-v10-review.md) · [Manual V10](../proposals/project-b-prototype-manual-v10.md) |
 
 ## 2026-11-12 좌회전 경로·시간 80%
@@ -158,7 +158,7 @@ J7917 추가 제보: [남북 차로 수정과 검증](2026-11-12-j7917-roadview-
 1. 모든 PC에서 main pull 후 같은 실행본으로 맞춘다(11/10 PVP 지도 변경). PVP 신호 대기·뒷골목·승객 요청 빈도(평균 1.5건) 사람 플레이 체감 확인. 기획22 차고·차종과 J5057·J866 유턴은 사람 플레이 확인 전.
 2. [거리뷰 대조 수정 후보](2026-11-10-roadview-lane-audit.md#수정-후보와-우선순위-사용자-확인-전-미적용) 남은 것: 스쿨존 제한속도, 미확인 교차로. [유턴 수정 남은 항목](2026-11-10-uturn-sign-fix.md#남은-항목).
 3. 전체 3일 캠페인, 다른 PC LAN v17, 첫 이용자 안내. 기존 PvP 봇·운송 회귀 실패는 출하 기록 참고.
-4. 보류: 기사 평점(기획22 §3-1), 개인택시 면허 경로([기획23](../content-design/23-license-career-path.md)), Blender 아트 파이프라인 2단계 이후([문서](../proposals/art-blender-pipeline.md)).
+4. 보류: 기사 평점(기획22 §3-1), 개인택시 면허 경로([기획23](../content-design/archive/23-license-career-path.md)), Blender 아트 파이프라인 2단계 이후([문서](../proposals/art-blender-pipeline.md)).
 
 ## 2026-11-12 PvP LAN 대기실 문구 정리
 
@@ -258,11 +258,11 @@ J7917 추가 제보: [남북 차로 수정과 검증](2026-11-12-j7917-roadview-
 
 ## 2026-11-09 차로별 표시·주차장 안내 좌회전 후속
 
-[요구·로드뷰·실제 검사·배포 인계](2026-11-09-lane-movement-roadview-followup.md) · [기획21](../content-design/21-lane-movement-roadview-followup.md). J866서향/J5057양방향32조각·12역할, 녹색 편도1/노란색 편도3 확인·겹친 노면/경계 교정, 내비 외형 캡션 제거. 실제 M지도 주차장 목표 분할 오류 RED34중18실패→GREEN34중0실패. 정식 지도8fb257ed·원본/주행망/신호/기존시설 보존·24정류장552경로/6유턴/3생활시설·Strict issues0. 최종 BuildHybrid exit0·차로렌더31/좌회전34/전체UI169/LAN54·67 통과·보호19파일 불변. 소스548fe8b·출하143파일127378253바이트·통합/PVP manifest 전수 검증0. 출하a978b3b를 기존 main 보존 fast-forward·일반 push하고 원격 동일 해시 확인, 영수증 문서는 연결 이력 참조. 은계/A2 통합exe·LANv16·원본 지도ZIP 유지. 다음은 사람 장기/전체3일/다른PC 수용이다.
+[요구·로드뷰·실제 검사·배포 인계](2026-11-09-lane-movement-roadview-followup.md) · [기획21](../content-design/01-driving-and-traffic.md). J866서향/J5057양방향32조각·12역할, 녹색 편도1/노란색 편도3 확인·겹친 노면/경계 교정, 내비 외형 캡션 제거. 실제 M지도 주차장 목표 분할 오류 RED34중18실패→GREEN34중0실패. 정식 지도8fb257ed·원본/주행망/신호/기존시설 보존·24정류장552경로/6유턴/3생활시설·Strict issues0. 최종 BuildHybrid exit0·차로렌더31/좌회전34/전체UI169/LAN54·67 통과·보호19파일 불변. 소스548fe8b·출하143파일127378253바이트·통합/PVP manifest 전수 검증0. 출하a978b3b를 기존 main 보존 fast-forward·일반 push하고 원격 동일 해시 확인, 영수증 문서는 연결 이력 참조. 은계/A2 통합exe·LANv16·원본 지도ZIP 유지. 다음은 사람 장기/전체3일/다른PC 수용이다.
 
 ## 2026-11-09 거리뷰 신호·차선·승객 응대
 
-[구현·근거·최종 검사](2026-11-09-roadview-signals-passenger-feedback.md) · [접근별 기획20](../content-design/20-roadview-signals-passenger-feedback.md). 좌회전 수요69·접근별4/4/3/3·NGII 좌1/직2 표시/중복선 교정, 점수 알림 내비 아래 배치·NPC 반응/바깥 따옴표 제거·주행 요청/가중치 상향. 기본 BuildHybrid exit0·실제 신호48/전체UI169/요청·복원66+6/LAN54+67·552방향 경로·Node100·모델158 통과. 사용자 종료 후16저장 불변·프로필6대상5실제값만 변경, 변경 후17보호파일 불변. 은계/A2·LANv16·기존 지도 baseline/graph/scene/신호 프로그램/ZIP 보존, 프로젝트 시설 메타데이터만 갱신·필수입력 Strict issues0. 출하143파일/127,323,898바이트·통합/PVP manifest 전수 검증0·소스dfdea96. 기존 main/제안서 작업 보존·출하906a89a 일반 push/원격동일해시 확인, 영수증은 연결 이력 참조. 다음은 사람 장기/전체3일/다른PC·상가 서향 전면 별도 확인. 기존 캠페인 설정/계약은 보존하며 새 가중치는 새 캠페인/새PVP방 기준.
+[구현·근거·최종 검사](2026-11-09-roadview-signals-passenger-feedback.md) · [접근별 기획20](../content-design/01-driving-and-traffic.md). 좌회전 수요69·접근별4/4/3/3·NGII 좌1/직2 표시/중복선 교정, 점수 알림 내비 아래 배치·NPC 반응/바깥 따옴표 제거·주행 요청/가중치 상향. 기본 BuildHybrid exit0·실제 신호48/전체UI169/요청·복원66+6/LAN54+67·552방향 경로·Node100·모델158 통과. 사용자 종료 후16저장 불변·프로필6대상5실제값만 변경, 변경 후17보호파일 불변. 은계/A2·LANv16·기존 지도 baseline/graph/scene/신호 프로그램/ZIP 보존, 프로젝트 시설 메타데이터만 갱신·필수입력 Strict issues0. 출하143파일/127,323,898바이트·통합/PVP manifest 전수 검증0·소스dfdea96. 기존 main/제안서 작업 보존·출하906a89a 일반 push/원격동일해시 확인, 영수증은 연결 이력 참조. 다음은 사람 장기/전체3일/다른PC·상가 서향 전면 별도 확인. 기존 캠페인 설정/계약은 보존하며 새 가중치는 새 캠페인/새PVP방 기준.
 
 ## 2026-11-09 제안서 V8·시스템과 최신 화면
 

@@ -1,6 +1,6 @@
 # 충돌 내구도·수리 구현 계획
 
-사용자 확인 기획: docs/content-design/03-life-and-economy.md. 충돌 강도별 손상, 비용/시간 중심, D0 운행 불가, 검증·기본 실행 배포·main 푸시까지 승인됨.
+사용자 확인 기획: docs/content-design/04-life-vehicle-economy.md. 충돌 강도별 손상, 비용/시간 중심, D0 운행 불가, 검증·기본 실행 배포·main 푸시까지 승인됨.
 
 ## 계약과 판단
 

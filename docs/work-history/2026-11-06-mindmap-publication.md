@@ -7,7 +7,7 @@
 ## 변경
 
 - 원본 `docs/content-design/택시 시뮬레이션.mmst`와 목차: 사고3등급/보행자 손상·공업사·설정 관리창·작은 방 구매 구현, 개인 생활 확장 후속6노드 추가. 사고/보험·용무 대기·안전 대체·방향지시등의 과거 표현 정정.
-- `docs/content-design/06-mindmap-review.md`: 최신 기준·단계 수·후속/검증 잔여.
+- `docs/content-design/archive/06-mindmap-review.md`: 최신 기준·단계 수·후속/검증 잔여.
 - `tools/refresh_mindmap_20261106.cjs`: 기존 노드/메모 보존 검사와 재실행 가능한 갱신기. Node.js 실행, 저장소 루트 기준.
 - 체크리스트/LATEST와 이 기록: 게시 인계.
 

@@ -2,7 +2,7 @@
 
 ## 요구와 진행 상태
 
-승인한 `docs/content-design/08-accident-and-workshop-proposal.md`대로 싱글/PVP 사고 처리·공업사 구현과 검증 후 기본 실행 파일 갱신 요청. 차량 구매·물품/보험·과실·구급차는 제외한다.
+승인한 `docs/content-design/04-life-vehicle-economy.md`대로 싱글/PVP 사고 처리·공업사 구현과 검증 후 기본 실행 파일 갱신 요청. 차량 구매·물품/보험·과실·구급차는 제외한다.
 
 원래 폴더의 진행 중 HUD 작업을 보존하기 위해 앱 관리 worktree0384, `codex/accident-workshop`에서 구현한다. 시작 기준b0b5245. 별도 HUD 커밋3338612를 최종 빌드 전에 통합한다. 이 문서는 진행 기록이며 최종 배포 완료 여부는 아래 영수증을 따른다.
 

@@ -22,7 +22,7 @@
 | `docs/future-design/2026-11-04-playtest-feedback-review.md` | 현재 상태, 피드백별 조작/접촉 구분 대조, 우선순위·미검증·개선 제안 |
 | `docs/prototype-development-checklist.md` | 조사만 완료, 실제 개선6묶음은 미완료로 추가 |
 | `docs/content-design/01-driving-and-traffic.md` | 조작·제동·신호 재검토 연결, 기존 수치 유지 |
-| `docs/content-design/03-life-and-economy.md` | P15 구현과 사람 접촉/사고 확장 구분 |
+| `docs/content-design/04-life-vehicle-economy.md` | P15 구현과 사람 접촉/사고 확장 구분 |
 | `docs/content-design/05-interface-and-navigation.md` | 경로·승하차·가독성 후보 연결, 개발 전 명시 |
 | `docs/CURRENT-STATE.md`, `docs/work-history/LATEST.md` | 최신 조사와 다음 작업 연결, 배포 기준 유지 |
 

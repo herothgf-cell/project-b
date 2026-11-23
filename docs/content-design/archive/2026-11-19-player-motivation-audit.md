@@ -1,5 +1,7 @@
 # 시작·지속 동기와 택시 생활 경험 점검
 
+> **보관 문서 (2026-11-23).** 기획 문서 통합 때 현재 기준에서 빠져 이 폴더로 옮겼다. 당시 결정의 배경을 확인할 때만 읽는다. 현재 기준은 [기획 목록](../../README.md)을 따른다.
+
 2026-11-19. 현재 소스·기획 대조에 기반한 진단이다. 사용자 피드백은 “게임을 시작/이어갈 동기가 매우 부족하고 세계관·스토리·시뮬레이션 요소가 부족하게 느껴진다”이다. 아래 우선순위는 검토 의견이며 기능 확정·구현 승인이 아니다. 이번 수동 플레이는 하지 않았다.
 
 ## 핵심 판단
@@ -71,7 +73,7 @@
 
 ## 근거와 주의
 
-- 기획: [10 시놉시스](10-restarting-driver-synopsis.md), [12 성장 단계](12-career-growth-stages.md), [13 방](13-three-day-room-and-first-purchase.md), [22 차량 구매](22-growth-direction-and-vehicle-purchase.md), [승객 목록](2026-11-13-passenger-current-inventory.md).
+- 기획: [10 시놉시스](10-restarting-driver-synopsis.md), [12 성장 단계](12-career-growth-stages.md), [13 방](../07-home-room-and-vehicles.md#s13), [22 차량 구매](../07-home-room-and-vehicles.md#s22), [승객 목록](2026-11-13-passenger-current-inventory.md).
 - 코드: `OneDayHUD.cs`의 DrawPreparation/Draw, `PersonalRoomHUD.cs`, `VehicleGarageHUD.cs`, `VehicleCatalog.cs`의 Quote/VehicleUnlocks, `BusinessProgress.cs`의 RoomAvailable/저장·다음 날 처리, `PassengerDemandPolicy.cs`, `SimulationDemandClock.cs`, `PassengerBehavior.cs`의 RespondTrait/AdvanceTraits, `PassengerRequest.cs`의 Music 분기. 모두 `unity/EungyeTaxi/Assets/Scripts/` 아래.
 - 구 기획10·12·prototype-scope의 ‘차량 구매 미구현’ 표기는 최신 기획22·현재 코드보다 오래된 상태다. 차량이 없다고 진단하지 않았다.
 - 다음 날 찜 카드의 완성형은 후속이지만 찜 안내 문구 자체는 이미 있다. `BusinessHUD.cs`의 옛 12분/목표 문구는 OneDay 분기를 확인하지 않고 현행 화면으로 판정하면 안 된다.

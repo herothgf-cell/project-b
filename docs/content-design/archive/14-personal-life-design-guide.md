@@ -1,10 +1,12 @@
 # 개인 생활 프로토타입 기획 안내
 
+> **보관 문서 (2026-11-23).** 기획 문서 통합 때 현재 기준에서 빠져 이 폴더로 옮겼다. 당시 결정의 배경을 확인할 때만 읽는다. 현재 기준은 [기획 목록](../../README.md)을 따른다.
+
 ## 지금 생활·경력 기획을 읽는 순서
 
-1. 왜 이 택시를 몰고 어디에서 하루를 시작하는지 본다. [아버지에게서 물려받은 택시](33-backstory-presentation.md) · [덕성프라자 숙소](34-home-base.md)
-2. 오늘 영업한 돈으로 이미 할 수 있는 일을 살핀다. [방의 첫 구매](13-three-day-room-and-first-purchase.md) · [차종과 차고](22-growth-direction-and-vehicle-purchase.md) · [동네 가게와 부품](36-neighbourhood-shops-and-taxi-parts.md)
-3. 3일 뒤에도 같은 기사·차·방으로 이어가는 방식을 본다. [계속 영업·장기 목표](28-continuous-career-mode.md)
+1. 왜 이 택시를 몰고 어디에서 하루를 시작하는지 본다. [아버지에게서 물려받은 택시](../00-game-overview.md#s33) · [덕성프라자 숙소](../07-home-room-and-vehicles.md#s34)
+2. 오늘 영업한 돈으로 이미 할 수 있는 일을 살핀다. [방의 첫 구매](../07-home-room-and-vehicles.md#s13) · [차종과 차고](../07-home-room-and-vehicles.md#s22) · [동네 가게와 부품](../04-life-vehicle-economy.md#s36)
+3. 3일 뒤에도 같은 기사·차·방으로 이어가는 방식을 본다. [계속 영업·장기 목표](../06-day-and-career.md#s28)
 4. 다음에 돈을 벌고 싶은 이유와 이를 준비할 수단을 검토한다. 특별 운행, 지도 판매점, 주기 정비, 장부, 기사 성장은 은계 싱글의 후속 기획이다. [기사 생활과 개인택시 경영](37-driver-life-and-business.md)
 
 ## 작은 방과 첫 구매를 기획한 순서
@@ -12,7 +14,7 @@
 1. [이야기: 실직 이후 재출발](10-restarting-driver-synopsis.md)
 2. [생활·소유·거래 공통 원칙](11-personal-life-and-growth.md)
 3. [택시 구매와 이사까지의 성장](12-career-growth-stages.md)
-4. [먼저 검증할3일: 작은 방과 첫 구매](13-three-day-room-and-first-purchase.md)
+4. [먼저 검증할3일: 작은 방과 첫 구매](../07-home-room-and-vehicles.md#s13)
 
 이하 내용은 3일 도입부에서 처음 개인 지출을 설계했던 기준이다. 당시 우선안은 방 한 개와 조명·러그 두 종류, 각 두 스타일이었다. 작은 방과 소품 구매·배치 저장은 구현됐다. 반복 인물·사진 중심의 첫 초안은 별도 기록으로 보존한다. [09 생활 초안](09-work-and-personal-life-proposal.md)
 
@@ -32,6 +34,6 @@
 
 ## 설명용 생성 목업
 
-![정산에서 방과 첫 구매로 이어지는 생성 목업](images/three-day-room-mockup.png)
+![정산에서 방과 첫 구매로 이어지는 생성 목업](../images/three-day-room-mockup.png)
 
 도시 배경과 방은 생성 이미지이며 현재 게임 그래픽을 그대로 캡처한 것이 아니다. 구매 확인·조명 끄기·보관 버튼은 설명을 위해 생략했으며13의 기능 계약이 기준이다.

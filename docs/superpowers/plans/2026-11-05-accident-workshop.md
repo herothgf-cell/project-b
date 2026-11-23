@@ -5,7 +5,7 @@
 **Goal:** 승인된 사고 처리와 공업사를 싱글/PVP에 적용하고 검증한 통합 실행본을 갱신한다.
 **Architecture:** 엔진 독립 사고/회계 모델, 차량별 Unity 사고 controller, 공유 공업사 레이아웃을 분리한다. 기존 Live checkpoint/LAN detail에 사고 상태를 포함한다.
 **Tech Stack:** Unity2022.3.62f2/C#, PowerShell, 기존 PhysX/JSON/LAN.
-**Spec:** docs/content-design/08-accident-and-workshop-proposal.md (사용자 구현 승인).
+**Spec:** docs/content-design/04-life-vehicle-economy.md (사용자 구현 승인).
 
 ## Global Constraints
 

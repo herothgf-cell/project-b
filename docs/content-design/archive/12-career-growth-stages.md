@@ -1,6 +1,8 @@
 # 재출발에서 원하는 택시와 첫 이사까지의 성장 단계
 
-**2026-11-20에 이 문서를 읽는 법.** 아래 여섯 단계는 11월 6일에 그린 장기 경력 원안이다. 이후 차고의 차종 구매, 3일 뒤 계속 영업, 하루 조건 카드가 구현됐다. 현재 아버지 차는 새 차 구입 시 숙소에 보관한다. 호실 이전·시승과 아래 12~18회 영업 가격 곡선은 원안의 가설이다. [차종 특성](22-growth-direction-and-vehicle-purchase.md) · [계속 영업](28-continuous-career-mode.md) · [하루 조건](29-daily-conditions.md) · [아버지 차 보관](33-backstory-presentation.md)
+> **보관 문서 (2026-11-23).** 기획 문서 통합 때 현재 기준에서 빠져 이 폴더로 옮겼다. 당시 결정의 배경을 확인할 때만 읽는다. 현재 기준은 [기획 목록](../../README.md)을 따른다.
+
+**2026-11-20에 이 문서를 읽는 법.** 아래 여섯 단계는 11월 6일에 그린 장기 경력 원안이다. 이후 차고의 차종 구매, 3일 뒤 계속 영업, 하루 조건 카드가 구현됐다. 현재 아버지 차는 새 차 구입 시 숙소에 보관한다. 호실 이전·시승과 아래 12~18회 영업 가격 곡선은 원안의 가설이다. [차종 특성](../07-home-room-and-vehicles.md#s22) · [계속 영업](../06-day-and-career.md#s28) · [하루 조건](../06-day-and-career.md#s29) · [아버지 차 보관](../00-game-overview.md#s33)
 
 다음 제안은 영업에서 번 돈으로 특별 운행에 도전하거나 차량을 마련하는 선택이다. 새 경력의 첫 출차, 차량 판매점, 주기 정비, 소지금 장부와 기사 성장은 기획 37에 모았다. [기사 생활과 개인택시 경영](37-driver-life-and-business.md)
 
@@ -132,7 +134,7 @@
 
 ## 구현 범위와 선행조건
 
-현재3일의 구체적 최초 검증은 [13 작은 방과 첫 구매](13-three-day-room-and-first-purchase.md)를 따른다. 방1개·조명/러그2종으로 축소하며 이 문서의 신규 수요3구성·시승·장기 구매는 포함하지 않는다.
+현재3일의 구체적 최초 검증은 [13 작은 방과 첫 구매](../07-home-room-and-vehicles.md#s13)를 따른다. 방1개·조명/러그2종으로 축소하며 이 문서의 신규 수요3구성·시승·장기 구매는 포함하지 않는다.
 
 | 구분 | 기존 기반 | 이번 제안의 신규 부분 |
 |---|---|---|
@@ -158,4 +160,4 @@
 
 이 검증은 사람의 재미·경제 체감 검증이다. 거래/저장/수요 배정의 자동 테스트나 자동 물리 주행으로 대신할 수 없다.
 
-근거: [생활/수요](03-life-and-economy.md), [하루/정산](04-campaign-and-feedback.md), [수요 코드](../../unity/EungyeTaxi/Assets/Scripts/PassengerDemandPolicy.cs), [마감/다음 날](../../unity/EungyeTaxi/Assets/Scripts/BusinessProgress.cs), [현금/장부](../../unity/EungyeTaxi/Assets/Scripts/CampaignAccount.cs).
+근거: [생활/수요](../04-life-vehicle-economy.md#s03), [하루/정산](../06-day-and-career.md#s04), [수요 코드](../../../unity/EungyeTaxi/Assets/Scripts/PassengerDemandPolicy.cs), [마감/다음 날](../../../unity/EungyeTaxi/Assets/Scripts/BusinessProgress.cs), [현금/장부](../../../unity/EungyeTaxi/Assets/Scripts/CampaignAccount.cs).

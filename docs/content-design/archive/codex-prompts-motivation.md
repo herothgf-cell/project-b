@@ -1,16 +1,18 @@
 # Codex 구현 프롬프트 — 동기 보강 (기획 28~34)
 
+> **보관 문서 (2026-11-23).** 기획 문서 통합 때 현재 기준에서 빠져 이 폴더로 옮겼다. 당시 결정의 배경을 확인할 때만 읽는다. 현재 기준은 [기획 목록](../../README.md)을 따른다.
+
 2026-11-19 작성. 아래 프롬프트를 **순서대로 하나씩** Codex에 붙여 넣는다. 각 단계가 커밋·푸시된 뒤 다음 단계로 간다.
 
 | 단계 | 기획 | 내용 | 의존 |
 |---|---|---|---|
-| P1 | [34](34-home-base.md) | 숙소 거점·숙소 퇴근·월세 | — |
-| P2 | [28](28-continuous-career-mode.md) | 계속 영업 모드·목표 카드 | P1 |
-| P3 | [32 §3](32-deferred-systems-review.md) | 차내 조작 3종(미터기·빈차등·에어컨) | — |
-| P4 | [33](33-backstory-presentation.md) | 아버지 설정·3컷 인트로·수첩 첫 탭·벽 메모 | P1·P2·P3 |
-| P5 | [29](29-daily-conditions.md) | 하루 조건 카드 | P2 |
-| P6 | [30](30-passenger-stories-and-logbook.md) | 손님 이야기 10편·기사 수첩 | P4 |
-| P7 | [31](31-day-night-and-radio.md) | 낮밤 조명·라디오 자막 | P5 |
+| P1 | [34](../07-home-room-and-vehicles.md#s34) | 숙소 거점·숙소 퇴근·월세 | — |
+| P2 | [28](../06-day-and-career.md#s28) | 계속 영업 모드·목표 카드 | P1 |
+| P3 | [32 §3](../05-interface-and-navigation.md#s32) | 차내 조작 3종(미터기·빈차등·에어컨) | — |
+| P4 | [33](../00-game-overview.md#s33) | 아버지 설정·3컷 인트로·수첩 첫 탭·벽 메모 | P1·P2·P3 |
+| P5 | [29](../06-day-and-career.md#s29) | 하루 조건 카드 | P2 |
+| P6 | [30](../00-game-overview.md#s30) | 손님 이야기 10편·기사 수첩 | P4 |
+| P7 | [31](../06-day-and-career.md#s31) | 낮밤 조명·라디오 자막 | P5 |
 
 시안 이미지: `docs/content-design/images/motivation-*.png` (재생성 `python -I tools/render_motivation_mockups.py`). **실제 게임 스크린샷 위에 CasualUI 색·Noto Sans KR로 새 요소를 얹은 시안**이며, 주황 점선이 새 요소다. 구현 시 기존 `CasualUI`(Panel·Header·Bar·Action 버튼)와 `KoreanText` 폰트를 그대로 써서 이 톤을 맞춘다. 시안 픽셀 값은 배치 참고용.
 

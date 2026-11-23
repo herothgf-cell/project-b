@@ -16,16 +16,16 @@
 
 ## 2026-11-20 은계 영업 목표와 기사 생활 기획
 
-- [x] 시흥 운임, 경기 식비·LPG, r50 첫 영업 호출판 세 번의 제시액과 운송 한 건의 실수령을 대조했다. [가격·손익 판단](content-design/2026-11-20-eungye-economy-review.md) · [재현 기록](work-history/2026-11-20-eungye-economy-review.md)
+- [x] 시흥 운임, 경기 식비·LPG, r50 첫 영업 호출판 세 번의 제시액과 운송 한 건의 실수령을 대조했다. [가격·손익 판단](content-design/04-life-vehicle-economy.md) · [재현 기록](work-history/2026-11-20-eungye-economy-review.md)
 - [ ] 사람 3일·기본 20분 영업에서 완료·0원 운송 수, 식사·주유 후 남는 돈, 첫 차량까지의 저축 속도를 기록한다.
 
-- [x] 현재 시작·정산·차고 규칙과 r50 시설 10곳을 대조하고, 담당 기획 목록과 마인드맵을 연결했다. [전체 기획](content-design/README.md) · [위치도](content-design/eungye-facility-locations.md)
+- [x] 현재 시작·정산·차고 규칙과 r50 시설 10곳을 대조하고, 담당 기획 목록과 마인드맵을 연결했다. [전체 기획](content-design/README.md) · [위치도](content-design/04-life-vehicle-economy.md)
 - [ ] 검토안 1차. 첫 출차 한 번 → 첫 운임·장부 → 저축 또는 특별 운행 준비 → 다음 저녁 실제 완주를 사람 플레이로 확인한다.
-- [ ] 후속 검토. 판매점 현장 계약·다음 출차 인도, 공업사 오일 교환, 체력·운전 숙련을 시험한다. 판매점 좌표와 경제 수치는 검증 전이다. [기획·수용 기준](content-design/37-driver-life-and-business.md) · [작업 이력](work-history/2026-11-20-driver-life-business-design.md)
+- [ ] ~~후속 검토~~ 2026-11-23 제외(기획 문서 통합 시 보관). 판매점 현장 계약·다음 출차 인도, 공업사 오일 교환, 체력·운전 숙련을 시험한다. 판매점 좌표와 경제 수치는 검증 전이다. [기획·수용 기준](content-design/archive/37-driver-life-and-business.md) · [작업 이력](work-history/2026-11-20-driver-life-business-design.md)
 
 ## 2026-11-20 은계 동네 가게와 공업사 부품
 
-- [x] 두 정차 포켓의 김밥·커피 주문, 공업사의 부품 4종 구매·차량별 장착·보관, 운행 차량·숙소 차고 외관과 경력 복원. [가격·효과·아이템 시안](content-design/36-neighbourhood-shops-and-taxi-parts.md) · [재현과 검사](work-history/2026-11-20-neighbourhood-shops-and-taxi-parts.md).
+- [x] 두 정차 포켓의 김밥·커피 주문, 공업사의 부품 4종 구매·차량별 장착·보관, 운행 차량·숙소 차고 외관과 경력 복원. [가격·효과·아이템 시안](content-design/04-life-vehicle-economy.md) · [재현과 검사](work-history/2026-11-20-neighbourhood-shops-and-taxi-parts.md).
 
 ## 2026-11-20 덕성프라자 출차와 운행 알림
 
@@ -302,7 +302,7 @@
 ## 2026-11-07 마인드맵 전체 대조·날씨 구분
 
 - [x] 원본/목차의 현재 구현·기획 필요·상세 기획 완료/미구현·중복 참조를 구분하고 사용자 ID/부모/순서·접힘·기존 메모/링크를 보존. [전체 목록](future-design/2026-11-07-planning-gaps-and-weather.md)·[실제 문서 검사](work-history/2026-11-07-mindmap-weather-review.md).
-- [x] 비만 프로토 포함: [기획18](content-design/18-rain-prototype.md), 자동 와이퍼·승차 오염·제동/일반교통·툴6항목. [검증 이력](work-history/2026-11-07-rain-prototype.md). 승객 깨우기와 별도 시스템.
+- [x] 비만 프로토 포함: [기획18](content-design/06-day-and-career.md), 자동 와이퍼·승차 오염·제동/일반교통·툴6항목. [검증 이력](work-history/2026-11-07-rain-prototype.md). 승객 깨우기와 별도 시스템.
 - [ ] 비의 사람 수동 운전/20분·3일 난도·세차 빈도·성능 검증.
 - [ ] 조건부 확률 미끄러짐: 현재 잠금, 위험 조건/추첨/회복/저장 검증 후 별도 활성화.
 - [ ] 눈·결빙·동적 낮밤: 프로토 제외, 후속 기획.
@@ -310,9 +310,9 @@
 
 ## 2026-11-06 승객 프리셋·특성 조합
 
-- [x] 기존12프리셋·특성 분해, 효과/확장 후보·제작 예시·화면 도식, 관리창 CRUD·조합 오류·공유 효과·저장/재로드. [상세 기획15](content-design/15-passenger-presets-and-traits.md).
+- [x] 기존12프리셋·특성 분해, 효과/확장 후보·제작 예시·화면 도식, 관리창 CRUD·조합 오류·공유 효과·저장/재로드. [상세 기획15](content-design/03-passenger-content.md).
 - [x] 지원 조합의 게임 연결·고정 선택/구프로필 호환·작업 복원·음주 한도 분리, Node73/모델73·선택50·미리보기29 및 최종 Player42·LAN41/52·BuildHybrid exit0. 기존 저장29파일 불변. [검증/기존 실패·최종 출하](work-history/2026-11-06-passenger-composition-implementation.md).
-- [x] 수면+음식/짐/오염짐·메스꺼움·차내 온도·젖은 우산 및 Quiet 위반 감지 구현. [기획19](content-design/19-passenger-trait-expansion.md)와 최신 작업 이력의 검증 범위를 따른다.
+- [x] 수면+음식/짐/오염짐·메스꺼움·차내 온도·젖은 우산 및 Quiet 위반 감지 구현. [기획19](content-design/03-passenger-content.md)와 최신 작업 이력의 검증 범위를 따른다.
 - [ ] 단골·관계 기억, 실제 냉난방 물리, 사람 장시간/전체3일·다른PC LAN 수용.
 
 ## 2026-11-06 HUD·승객 대화 시안 적용
@@ -388,7 +388,7 @@
 
 ## 2026-11-06 3일 작은 방·첫 구매 기획
 
-- [x] [최초3일 검증안](content-design/13-three-day-room-and-first-purchase.md): 방1개/2종×2스타일, 첫날 선택·둘째 날 유지/구매·셋째 날 기록, 기존 구현 재사용/최소 추가, 회계/저장·관찰 기준 작성. [작업 이력](work-history/2026-11-06-three-day-room-first-purchase.md).
+- [x] [최초3일 검증안](content-design/07-home-room-and-vehicles.md): 방1개/2종×2스타일, 첫날 선택·둘째 날 유지/구매·셋째 날 기록, 기존 구현 재사용/최소 추가, 회계/저장·관찰 기준 작성. [작업 이력](work-history/2026-11-06-three-day-room-first-purchase.md).
 - [ ] 실제 영업 수익/구매 동기의 사람 관찰과5,000/8,000원 시험 가격 수용. 방/구매/완료 기록·개인 회계는 [후속 구현](work-history/2026-11-06-personal-room-implementation.md) 완료, 이번 사람 수용과 구분한다.
 
 ## 2026-11-06 종료 실패 효과와 설명 배치
@@ -397,7 +397,7 @@
 
 ## 2026-11-06 택시 구매·이사 성장 단계 기획
 
-- [x] [6단계 성장안](content-design/12-career-growth-stages.md): 단계별 영업 판단·소유 경험, 집 우선 분기, 수요3구성 제안, 최초 기간/가격 가설, 반복 노동 검증 기준 작성. 현행 초과 영업의 고른 수요를03 문서에 정정. [작업 이력](work-history/2026-11-06-career-growth-stages.md).
+- [x] [6단계 성장안](content-design/archive/12-career-growth-stages.md): 단계별 영업 판단·소유 경험, 집 우선 분기, 수요3구성 제안, 최초 기간/가격 가설, 반복 노동 검증 기준 작성. 현행 초과 영업의 고른 수요를03 문서에 정정. [작업 이력](work-history/2026-11-06-career-growth-stages.md).
 - [ ] 사람 플레이로 최초 가격/기간과 차/집 소유 만족 검증. 연속 경력·개인 거래/저장·수요 구성/안내·후보 시승/미리보기 구현 계획은 후속이며 이번 게임 구현 없음.
 
 ## 2026-11-06 감점 음수 입력과 변화율 안내
@@ -406,14 +406,14 @@
 
 ## 2026-11-06 재출발 시놉시스와 생활 성장
 
-- [x] 사용자 선택 배경/목표를 [시놉시스](content-design/10-restarting-driver-synopsis.md)·[생활 성장안](content-design/11-personal-life-and-growth.md)으로 구체화. 반복 인물 제외, 구09초안 보존/대체 표시, 현재3일·장기 경력/개인 거래와 영업 순수익 구분. [작업 기록](work-history/2026-11-06-restarting-life-synopsis.md).
+- [x] 사용자 선택 배경/목표를 [시놉시스](content-design/archive/10-restarting-driver-synopsis.md)·[생활 성장안](content-design/archive/11-personal-life-and-growth.md)으로 구체화. 반복 인물 제외, 구09초안 보존/대체 표시, 현재3일·장기 경력/개인 거래와 영업 순수익 구분. [작업 기록](work-history/2026-11-06-restarting-life-synopsis.md).
 - [ ] 사람3일의 작은 방/첫 구매 수용 후 연속 경력·차량 교체·첫 이사 확장 여부 결정. 최소 방/찜/구매·개인 저장/정산은13 범위로 구현됐고, 확장 가격/자산/세부 이관은 미확정이다.
 
 ## 2026-11-06 일과 개인 생활 최소 기획
 
 아래 친구/사진 방향은 이후 사용자 지시로 대체했다. 현재 기획은 위 재출발/차량·주거 성장안이다.
 
-- [x] 현재 거점/시간/마감/저장 대조와 [친구1명·현장2장면·개인 기록 기획](content-design/09-work-and-personal-life-proposal.md) 작성. 선택 자유·무감점·1회 사건·읽기시간 무소모, 미구현/수용 기준 구분. [이번 이력](work-history/2026-11-06-personal-life-design.md).
+- [x] 현재 거점/시간/마감/저장 대조와 [친구1명·현장2장면·개인 기록 기획](content-design/archive/09-work-and-personal-life-proposal.md) 작성. 선택 자유·무감점·1회 사건·읽기시간 무소모, 미구현/수용 기준 구분. [이번 이력](work-history/2026-11-06-personal-life-design.md).
 - 이전 친구/사진안의 안전 장소2곳·20/45초는 미채택 제안 기록이다. 현재 필수 미구현 체크에서 제외하며 재승인 없이 개발하지 않는다.
 
 ## 2026-11-06 보행자 사고 내구도 후속
@@ -477,7 +477,7 @@
 ## 2026-11-05 마인드맵·사고 범위 검토
 
 - [x] 마인드맵/기획/현재 코드 대조, 최근 신호·조향·내비 제목 최신화, 미구현과 체감 검증 잔여 분리. [정리](future-design/2026-11-05-mindmap-and-accidents.md).
-- [x] 사고 처리비/시간/피로·운송 중단·공업사·저장/LAN 경계의 [상세 기획안](content-design/08-accident-and-workshop-proposal.md) 작성. 신규 수치/배치는 제안 단계.
+- [x] 사고 처리비/시간/피로·운송 중단·공업사·저장/LAN 경계의 [상세 기획안](content-design/04-life-vehicle-economy.md) 작성. 신규 수치/배치는 제안 단계.
 - [ ] 사고/공업사 비용·시간·복귀의 사람 체감 수용. 사고/공업사 구현·자동/저장/LAN 검증은 [11/05](work-history/2026-11-05-accident-workshop-implementation.md)·[11/06 등급/결과](work-history/2026-11-06-accident-severity-ui.md)로 완료됐으며 보험·과실·현장 구조는 후속이다.
 
 ## 2026-11-05 시작 메뉴 간소화
@@ -559,7 +559,7 @@
 ## 시뮬레이션 추가 검토 — 2026-11-02
 
 - [x] 사용자 지정50/25/0 단계를 마인드맵 실제 작업 체크에 반영하고 [미구현 우선순위](future-design/2026-11-02-simulation-priorities.md)를 정리. 부모 집계/참조 제외·부분 구현 분리, 추천9개 포함. 단계 표시는 전체 검증 완료율이 아님.
-- [x] 마인드맵 원본을 현재 기획/기존 후속/추가 제안/제작 참고4가지로 정리. 취객 독립·11유형, 구현된 내구도/수리·통합 봇 모드 반영, 원래 노드/작업 체크 보존. [원본·목차와 기준](content-design/06-mindmap-review.md).
+- [x] 마인드맵 원본을 현재 기획/기존 후속/추가 제안/제작 참고4가지로 정리. 취객 독립·11유형, 구현된 내구도/수리·통합 봇 모드 반영, 원래 노드/작업 체크 보존. [원본·목차와 기준](content-design/archive/06-mindmap-review.md).
 - [x] 현재 구현과 공백을 코드/기획으로 대조하고 [추가 후보·우선순위](future-design/2026-11-02-simulation-review.md)를 작성. 상황 반응형 승객·상태 예측 우선, 안전 대체 승하차는 지도 선행 조건.
 - 후보는 채택·수치 확정·구현 완료가 아니다. 기존 사람20분/3일·장시간 교통/경제 검증을 유지하며 이번에는 코드·실행파일을 변경하지 않았다.
 
@@ -631,7 +631,7 @@
 
 ## P15 충돌 내구도·수리·견인
 
-2026-10-29 구현·자동 검증을 완료했다. 수치·서비스·복귀·저장 계약은 [차량 기준](content-design/03-life-and-economy.md#추가-기획-충돌-내구도와-수리)에 둔다. 최종 모델191/care13,301/behavior430/prototype28클래스, Editor 차량10+기존1,526/14/22/P11/PVP, BuildHybrid, Player70검사(실제 local PhysX15시나리오 포함)와 활성8/정산2/준비7/점유 대기2의5프로세스 저장 검증이 종료0. 기존 care Player201·behavior Player164/재개8 및 실제3화면 확인도 통과했다. 이는 제어된 물리/위치/호출 검사이며 사람의 주행·전체 캠페인과 구분한다. 배포 해시·커밋과 한계는 [차량 기록](work-history/2026-10-29-vehicle-durability-repair.md)을 따른다.
+2026-10-29 구현·자동 검증을 완료했다. 수치·서비스·복귀·저장 계약은 [차량 기준](content-design/04-life-vehicle-economy.md#추가-기획-충돌-내구도와-수리)에 둔다. 최종 모델191/care13,301/behavior430/prototype28클래스, Editor 차량10+기존1,526/14/22/P11/PVP, BuildHybrid, Player70검사(실제 local PhysX15시나리오 포함)와 활성8/정산2/준비7/점유 대기2의5프로세스 저장 검증이 종료0. 기존 care Player201·behavior Player164/재개8 및 실제3화면 확인도 통과했다. 이는 제어된 물리/위치/호출 검사이며 사람의 주행·전체 캠페인과 구분한다. 배포 해시·커밋과 한계는 [차량 기록](work-history/2026-10-29-vehicle-durability-repair.md)을 따른다.
 
 - [x] P15-00 충돌 내구도·수리/견인 범위와 초기 수치 사용자 승인.
 - [x] P15-01 모델 최종 검증: 충격 경계·사건 중복/증가분·유예·하한/상한·견적·미납·거래 멱등·날짜 유지.
@@ -694,7 +694,7 @@
 
 ## P12·P13 선택된 후속 확장
 
-순서와 상세 기준: [17 확장 기획](content-design/03-life-and-economy.md). 기존 Proto 마감과 이번 확장 마감을 분리한다. P12와 P13 대기 경로를 구현했다. 대체 이동은 안전 후보 쌍 확보 전까지 제공하지 않는다. 수동 플레이 검증은 별도다.
+순서와 상세 기준: [17 확장 기획](content-design/04-life-vehicle-economy.md). 기존 Proto 마감과 이번 확장 마감을 분리한다. P12와 P13 대기 경로를 구현했다. 대체 이동은 안전 후보 쌍 확보 전까지 제공하지 않는다. 수동 플레이 검증은 별도다.
 
 - [x] P12-01 후보 지역 태그·중립 기본값·영업 단계별 수요 가중·안전/접근 조건 우선·후보 부족 처리.
 - [x] P12-02 상대 수요와 호출 픽업/탑승 거리·시간·예상 운임 비교. 수입 보장/할증 없음.
@@ -708,7 +708,7 @@
 
 ## P9 취객·청결·세차
 
-기준: [15 취객](content-design/03-life-and-economy.md).
+기준: [15 취객](content-design/04-life-vehicle-economy.md).
 
 - [x] P9-01 청결0~100·새 캠페인100·활성120초당-1·일반 하차-2·구토 발생 즉시 min(C,10) 및 감소량 알림, 운송ID 중복 방지·소수초 나머지/날짜/저장 이월.
 - [x] P9-02 연료 우측 청결 게이지·30미만 세차 필요 경고.
@@ -833,14 +833,14 @@
 
 - [x] 같은 특성에서도 프리셋별 대사·사건 확률·선택 효과·작업 시간·오염값 교체 및 공통값 복원.
 - [x] 도구 입력/서버/게임 검증, 현재 행동에 맞는 항목, 고정 생성 정책 분리, 저장된 승객별 설정·효과 장부 복원.
-- [x] [상세 범위·예제·화면](content-design/16-passenger-preset-overrides.md), 실제 검사 결과는 [작업 이력](work-history/2026-11-07-passenger-overrides.md).
+- [x] [상세 범위·예제·화면](content-design/03-passenger-content.md), 실제 검사 결과는 [작업 이력](work-history/2026-11-07-passenger-overrides.md).
 - [ ] 사람 실제 운전/장시간·전체 캠페인·다른PC LAN 수용. 자동 검사와 구분.
 
 ## 2026-11-07 승객 다양화 1차
 
 - [x] 신규12명을 포함한 기본24명/활성23명, 요소별 대사·선택·개별 효과와 상대 비중을 설정.
 - [x] ShortRoad/RouteAdvice 및 경로확인 기본 배정 제외, 큰길/ETA 유지. 요청0/1/2=25/60/15.
-- [x] 승객02/요청07/신규17을 요소별 표로 정리. [기획17](content-design/17-passenger-roster-v1.md).
+- [x] 승객02/요청07/신규17을 요소별 표로 정리. [기획17](content-design/03-passenger-content.md).
 - [ ] 사람 플레이에서 반복대화·복합작업·세차빈도·운송수익을 측정해2차 밸런스 조정.
 
 ## 2026-11-07 교통법규·운전 점수 적용 검토

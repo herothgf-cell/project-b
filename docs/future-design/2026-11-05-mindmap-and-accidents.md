@@ -41,4 +41,4 @@ P1/P2의 반응형 승객·상태 예측 계산·시설 혼잡·용무 대기·�
 
 다음은 사고 방향과 보행자 접촉 시 운송 처리부터 결정하고 상세 기획으로 옮긴다. 구현 시 벽/차량/정차 추돌/연속 밀기/일반 보행자/대기 승객, 저장 재개·LAN 중복 사건을 검사한 뒤 사람이 사고 인지·운송 중단·복귀 흐름을 확인한다.
 
-기준: [현행 범위](../prototype-scope.md), [체크리스트](../prototype-development-checklist.md), [차량 계약](../content-design/03-life-and-economy.md), [사고 후속](accidents-and-repairs.md), [기존 우선순위](2026-11-02-simulation-priorities.md).
+기준: [현행 범위](../prototype-scope.md), [체크리스트](../prototype-development-checklist.md), [차량 계약](../content-design/04-life-vehicle-economy.md), [사고 후속](accidents-and-repairs.md), [기존 우선순위](2026-11-02-simulation-priorities.md).

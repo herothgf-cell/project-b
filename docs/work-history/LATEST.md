@@ -4,13 +4,17 @@
 
 ## 이어갈 작업
 
+[기획 문서 통합 정리](2026-11-23-content-design-consolidation.md). 기획 문서 46개를 주제별 10개(00~09)로 합치고 대체 문서는 `content-design/archive/`로 옮겼다. 이전 기획 37(기사 생활·영업 목표)은 제외했다. 다음 검토 주제는 [08 재미 보강](../content-design/08-fun-improvements.md)이다.
+
 [기획 37 공차 운영·길 지식·규칙 속 돌발](../content-design/37-driver-judgment-systems.md)은 구현 승인 전이다. 추천 첫 단계는 정산 “오늘의 영업 동선”이다. [기록](2026-11-23-driver-judgment-design.md)
 
 [은계 운임·생활물가 점검과 재현](2026-11-20-eungye-economy-review.md). 첫 영업 호출판 9건 모두 시흥 주간 기본거리 안에서 5,500~8,400원을 제시했다. 다음 경제 검증은 사람 3일·하루 20분 운행에서 식사·주유 뒤 남는 돈과 완료 운송 수를 함께 재는 것이다.
 
-[기사 생활과 영업 목표 · 기획 및 검증 기록](2026-11-20-driver-life-business-design.md). [시설 10곳 위치도](../content-design/eungye-facility-locations.md)와 [전체 기획 목차](../content-design/README.md)를 갱신했다. 새 제안의 첫 검토 대상은 첫 출차 한 번, 첫 운임 장부, 다시 운전해서 완성하는 야경 엽서다. 판매점 후보의 별도 진출입과 사람 3일 플레이는 후속이다.
+[기사 생활과 영업 목표 · 기획 및 검증 기록](2026-11-20-driver-life-business-design.md). [시설 10곳 위치도](../content-design/04-life-vehicle-economy.md)와 [전체 기획 목차](../content-design/README.md)를 갱신했다. 새 제안의 첫 검토 대상은 첫 출차 한 번, 첫 운임 장부, 다시 운전해서 완성하는 야경 엽서다. 판매점 후보의 별도 진출입과 사람 3일 플레이는 후속이다.
 
 ## 최근 배포 기록
+
+2026-11-23 은계 r51 · PvP A2/LAN v23(빌드 변경 없음). 기획 문서를 주제별 10개로 통합하고 링크를 새 위치로 바꿨다. 깨진 상대 링크 0건. 문서만 변경. [기록](2026-11-23-content-design-consolidation.md).
 
 2026-11-23 은계 r51 · PvP A2/LAN v23(빌드 변경 없음). 시뮬레이션 재미 보강 기획 [37 공차 운영·길 지식·규칙 속 돌발](../content-design/37-driver-judgment-systems.md)을 작성했다. 문서만 변경했다. 다음은 구현 승인과 착수 순서 결정이며, 추천 첫 단계는 정산 “오늘의 영업 동선”이다. [기록](2026-11-23-driver-judgment-design.md).
 

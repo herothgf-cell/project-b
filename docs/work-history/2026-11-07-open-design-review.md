@@ -12,21 +12,21 @@
 
 | 영역 | 이미 정해진 방향 | 결정/구체화할 것 | 기준 |
 |---|---|---|---|
-| 연속 경력 | 현재3일은 도입 검증, 큰 차/집 목표를3일 안에 압축하지 않음 | 3일 이후 영업/종료 구조·기록/소유 이월·구 저장 이관 | [10](../content-design/10-restarting-driver-synopsis.md), [11](../content-design/11-personal-life-and-growth.md) |
-| 차량 교체 | 기존 물리 기반·취향 후보·개인 선택 | 실제 후보 차종/운전석 차이·가격/중고 교환 견적·장식 호환 | [11](../content-design/11-personal-life-and-growth.md), [12](../content-design/12-career-growth-stages.md) |
-| 이사/주거 | 작은 방→첫 아파트, 차량 구매와 순서 자유 | 후보 집/공간·이사비·물품 이동/보관·장기 저장 | [11](../content-design/11-personal-life-and-growth.md), [12](../content-design/12-career-growth-stages.md) |
+| 연속 경력 | 현재3일은 도입 검증, 큰 차/집 목표를3일 안에 압축하지 않음 | 3일 이후 영업/종료 구조·기록/소유 이월·구 저장 이관 | [10](../content-design/archive/10-restarting-driver-synopsis.md), [11](../content-design/archive/11-personal-life-and-growth.md) |
+| 차량 교체 | 기존 물리 기반·취향 후보·개인 선택 | 실제 후보 차종/운전석 차이·가격/중고 교환 견적·장식 호환 | [11](../content-design/archive/11-personal-life-and-growth.md), [12](../content-design/archive/12-career-growth-stages.md) |
+| 이사/주거 | 작은 방→첫 아파트, 차량 구매와 순서 자유 | 후보 집/공간·이사비·물품 이동/보관·장기 저장 | [11](../content-design/archive/11-personal-life-and-growth.md), [12](../content-design/archive/12-career-growth-stages.md) |
 | 실제 요청 이행/실패 | 선택 효과는 구현·편집 가능 | Quiet 등의 약속 위반으로 셀 실제 행동·관찰/예외, 경로 우회 사유, 실패 도달 구조를 어디까지 확장할지 | [실제 판정표](../content-tuning-request-outcomes.md) |
-| 복수 행동 특성 | 지원 조합/명시적 차단 구현 | 수면+음식/짐 등 동시 행동의 우선순위·대화/작업 예산·중복 효과/저장 | [15](../content-design/15-passenger-presets-and-traits.md) |
-| 새 승객 특성 | 확장 후보만 존재 | 메스꺼움 단계·온도/지원 필요·새 소지품·시간/지역 조건별 행동/효과·실제 필요한 모듈 | [15](../content-design/15-passenger-presets-and-traits.md) |
-| 장기 성장 가격/페이스 | 첫차/이사 순서 자유·반복 강요 금지 | 실수익 표본에 따른 실제 가격·기간, 일별 수요 변주를 채택할 범위 | [12](../content-design/12-career-growth-stages.md) |
+| 복수 행동 특성 | 지원 조합/명시적 차단 구현 | 수면+음식/짐 등 동시 행동의 우선순위·대화/작업 예산·중복 효과/저장 | [15](../content-design/03-passenger-content.md) |
+| 새 승객 특성 | 확장 후보만 존재 | 메스꺼움 단계·온도/지원 필요·새 소지품·시간/지역 조건별 행동/효과·실제 필요한 모듈 | [15](../content-design/03-passenger-content.md) |
+| 장기 성장 가격/페이스 | 첫차/이사 순서 자유·반복 강요 금지 | 실수익 표본에 따른 실제 가격·기간, 일별 수요 변주를 채택할 범위 | [12](../content-design/archive/12-career-growth-stages.md) |
 
 가격 비율과12~18회 영업은 검증 전 장기 가설이며 출시 기간 확정값이 아니다. 현재 방2종 시험 가격과 혼동하지 않는다. Quiet 등 모든 요청에 실패를 추가하는 것이 확정된 것도 아니다. 응답 완료형과 실제 운행 약속형을 구분해 검토해야 한다.
 
 ## 기획은 있으나 아직 미구현인 항목
 
-- 작은 방: 처음/완료 방 직접 비교, 전체 과거 회차 방 탐색, 다음 날 찜/구매 상품 카드·상품 이미지·카드 숨김. 현재 방/구매/저장·최신 이전 회차 읽기 전용은 이미 구현이다. [13 상태표](../content-design/13-three-day-room-and-first-purchase.md).
-- 장기 성장: 연속 영업, 차량 구매/꾸미기, 아파트 이사·후보 시승/새 집 미리보기, 날짜별 수요3구성/짧은 비교 회고. 미채택 확장 제안이며 현재3일 필수 잔여로 자동 편입하지 않는다. [11](../content-design/11-personal-life-and-growth.md)·[12](../content-design/12-career-growth-stages.md).
-- 추가 서사:3컷 인트로·장기 이야기 진행은 후속 후보, 반복 인물 중심의09 초안은 현재 방향으로 채택하지 않는다. [10](../content-design/10-restarting-driver-synopsis.md).
+- 작은 방: 처음/완료 방 직접 비교, 전체 과거 회차 방 탐색, 다음 날 찜/구매 상품 카드·상품 이미지·카드 숨김. 현재 방/구매/저장·최신 이전 회차 읽기 전용은 이미 구현이다. [13 상태표](../content-design/07-home-room-and-vehicles.md).
+- 장기 성장: 연속 영업, 차량 구매/꾸미기, 아파트 이사·후보 시승/새 집 미리보기, 날짜별 수요3구성/짧은 비교 회고. 미채택 확장 제안이며 현재3일 필수 잔여로 자동 편입하지 않는다. [11](../content-design/archive/11-personal-life-and-growth.md)·[12](../content-design/archive/12-career-growth-stages.md).
+- 추가 서사:3컷 인트로·장기 이야기 진행은 후속 후보, 반복 인물 중심의09 초안은 현재 방향으로 채택하지 않는다. [10](../content-design/archive/10-restarting-driver-synopsis.md).
 - 승객 확장: 초상 편집·새 소지품/실제 장치/행동 진행기 등은15의 후속 후보이며 현재 프리셋 생성·특성 조합·승객별 대사/확률/효과 덮어쓰기와 구분한다.
 
 ## 구현 후 검증·유지보수 잔여
@@ -40,7 +40,7 @@
 
 ## 직전 조사 시 진행 중이던 항목 — 이후 완료
 
-현재 작업 폴더에는 신규 승객12명을 더한 다양화1차의 문서/설정/테스트 변경이 있다. 로컬 `docs/content-design/17-passenger-roster-v1.md` 구성표는 현재 미커밋 작업 자료이며 최신 출하 완료와 구분한다. 최신 완료 이력은 승객 프리셋/개별 덮어쓰기 구현·LANv13·실행본 `780d1a5`다. 다양화 작업의 최종 검증/빌드는 해당 작업 이력에서 확인해야 한다.
+현재 작업 폴더에는 신규 승객12명을 더한 다양화1차의 문서/설정/테스트 변경이 있다. 로컬 `docs/content-design/03-passenger-content.md` 구성표는 현재 미커밋 작업 자료이며 최신 출하 완료와 구분한다. 최신 완료 이력은 승객 프리셋/개별 덮어쓰기 구현·LANv13·실행본 `780d1a5`다. 다양화 작업의 최종 검증/빌드는 해당 작업 이력에서 확인해야 한다.
 
 ## 현재 프로토에 추가하지 않는 것
 

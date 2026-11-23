@@ -19,7 +19,7 @@
 - 이번 수정 전 파일을 바이트 그대로 `docs/design-history/content-design/2026-11-02-mindmap-before-organize.mmst`에 보관. SHA256 `7c4e5d0c86970d633040a4cf77b4d9511af2c3b5aabe6a636ba3622e850b6666`.
 - 기존 2026-10-27 보관본도 유지한다.
 - `docs/content-design/택시 시뮬레이션-목차.md`: 전용 도구 없이 읽는 가지 목차.
-- `docs/content-design/06-mindmap-review.md`, README, 체크리스트, LATEST: 현재 배치·모드·정리 범위·파일 접근 안내.
+- `docs/content-design/archive/06-mindmap-review.md`, README, 체크리스트, LATEST: 현재 배치·모드·정리 범위·파일 접근 안내.
 - `tools/organize_content_mindmap.py`: 현재 정리/보존 검사. 구 PowerShell 변환은 정리된 구조를 덮지 않도록 차단하고 `-ValidateOnly`는 유지.
 
 시작 시 기존 LATEST 미커밋 수정과 UI 시안 이력/기타 untracked를 확인했다. LATEST의 해당 작업 내용은 보존하고 이번 항목만 분리해 커밋한다.

@@ -1,7 +1,7 @@
 # 승객 다양화 기획 준비: 현재 유형·선택·효과
 
 - 요청: `docs/content-design/`를 기준으로 현재 등장할 수 있는 승객 유형, 요청, 대화 선택과 효과를 표로 정리.
-- 실제 작업: [현재 대조표](../content-design/2026-11-13-passenger-current-inventory.md) 작성. 기본11종+개별18종, 행동별 선택·시간·오염, 요청14종의 즉시/종료 효과, 비활성·텍스트 전용 항목, 기본 요청 선택지34개의 원문을 정리했다.
+- 실제 작업: [현재 대조표](../content-design/archive/2026-11-13-passenger-current-inventory.md) 작성. 기본11종+개별18종, 행동별 선택·시간·오염, 요청14종의 즉시/종료 효과, 비활성·텍스트 전용 항목, 기본 요청 선택지34개의 원문을 정리했다.
 - 확인 기준: `config/content/default-profile.json` 및 내장 `passenger.presets`, 기획02/07/15~17/19/20·밸런스, 요청/행동 소스. 과거 문서의 요청 빈도와 Quiet 실패 규칙은 현재값으로 구분했다.
 - 검증: PowerShell JSON 파싱 성공; 총30/활성29 프리셋, 활성 요청 원문 선택34행 확인. 요청0/1/2=5/40/55, 이동 간격12초·진행15~65%를 기본값에서 확인. `git diff --check` 종료0(타 작업 C# 파일 CRLF 안내만).
 - 변경 파일: 위 기획 대조표, 이 작업 이력, `docs/work-history/LATEST.md`.

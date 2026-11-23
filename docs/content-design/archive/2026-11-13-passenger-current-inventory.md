@@ -1,5 +1,7 @@
 # 현재 승객 유형·요청·선택·효과 대조표
 
+> **보관 문서 (2026-11-23).** 기획 문서 통합 때 현재 기준에서 빠져 이 폴더로 옮겼다. 당시 결정의 배경을 확인할 때만 읽는다. 현재 기준은 [기획 목록](../../README.md)을 따른다.
+
 작성: 2026-11-13. 다양화 기획을 위한 현황 정리이며 신규 기능 제안이나 구현 변경이 아니다.
 
 ## 기준과 읽는 법
@@ -97,8 +99,8 @@
 
 ## 근거
 
-- [승객 구조02](02-passengers-and-fares.md), [요청07](07-passenger-dialogue.md), [프리셋15](15-passenger-presets-and-traits.md), [개별설정16](16-passenger-preset-overrides.md), [다양화17](17-passenger-roster-v1.md), [확장19](19-passenger-trait-expansion.md), [후속20](20-roadview-signals-passenger-feedback.md)
-- [기본 프로필](../../config/content/default-profile.json), [승객 원본](../../config/content/passenger-roster-v2.json)
+- [승객 구조02](../02-passengers-and-fares.md#s02), [요청07](../02-passengers-and-fares.md#s07), [프리셋15](../03-passenger-content.md#s15), [개별설정16](../03-passenger-content.md#s16), [다양화17](../03-passenger-content.md#s17), [확장19](../03-passenger-content.md#s19), [후속20](../01-driving-and-traffic.md#s20)
+- [기본 프로필](../../../config/content/default-profile.json), [승객 원본](../../../config/content/passenger-roster-v2.json)
 - `unity/EungyeTaxi/Assets/Scripts/PassengerRequest.cs`, `PassengerRequestUI.cs`, `PassengerRequestSchedule.cs`, `PassengerBehavior.cs`, `ContentTuning.cs`
 - 과거02의 안전 정차 발생 설명과20의 주행 중 표시 설명, 밸런스v1의 Quiet 실패 없음 등은 시점 차이가 있다. 이 표는 후속19/20과 현재 기본값·소스를 반영한다.
 

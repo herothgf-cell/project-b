@@ -1,6 +1,6 @@
 # 2026-11-10 차량 구매·차고·PvP 내 차 화면
 
-[기획22](../../content-design/22-growth-direction-and-vehicle-purchase.md) §11 구현의 실제 실행본 캡처다. `pwsh -File tools/test_vehicle_garage_player.ps1 -Visible`(위치 제어 검사, 1600×900 창)이 저장한 화면이며 사람이 직접 플레이한 화면이 아니다. 금액은 검사 고정값(1일 운임 4,000원, 2일 15,000원)에 따른다.
+[기획22](../../content-design/07-home-room-and-vehicles.md) §11 구현의 실제 실행본 캡처다. `pwsh -File tools/test_vehicle_garage_player.ps1 -Visible`(위치 제어 검사, 1600×900 창)이 저장한 화면이며 사람이 직접 플레이한 화면이 아니다. 금액은 검사 고정값(1일 운임 4,000원, 2일 15,000원)에 따른다.
 
 | 파일 | 장면 |
 |---|---|

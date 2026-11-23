@@ -121,7 +121,7 @@ F18~20의 속도·환경 구분은 게임 지정속도 한 종류만 관찰하�
 
 ## 7. 근거·검증 범위
 
-- 현재 규칙: [주행 기획](../content-design/01-driving-and-traffic.md), [사고 등급표](../content-design/08-accident-and-workshop-proposal.md), [PVP 현재 기준](../content-design/pvp/README.md).
+- 현재 규칙: [주행 기획](../content-design/01-driving-and-traffic.md), [사고 등급표](../content-design/04-life-vehicle-economy.md), [PVP 현재 기준](../content-design/pvp/README.md).
 - 관리 목록·기획만 존재하는 경계: [법규 카탈로그](../traffic-law/README.md), [당시 코드 연결](../traffic-law/08-game-rule-mapping.md). 11/02 당시 문서보다 후속 게임 서행·사고 구현이 우선한다. [기술 참조](../technical-reference/driving-evaluation-reference.md)의 구형 사고 ‘후속’ 설명 역시 현재 사고 기획/코드로 대체해 읽는다.
 - 핵심 코드: `PrototypeState.cs`의 `LawEvent`, `LawLedger`, `LawEvaluator`; `DrivingLaw.cs`, `DrivingLawSlowTurns.cs`, `ConfusionPracticeState.cs`, `ConfusionPractice.cs`, `ServiceLawZones.cs`, `DrivingManners.cs`, `MannerLedger.cs`, `PassengerRequest.cs`의 `PassengerScoreView`, `PassengerJobs.cs`, `AccidentScore.cs`. 경로 접두사는 `unity/EungyeTaxi/Assets/Scripts/`다.
 - `pwsh -NoProfile -File tools/test_prototype.ps1`: **exit 1**. 앞선 법규·혼동 상황·요청 검사 통과 후 `ManualHandlingTests`의 일반 S 제동 기대 3.5~6, 실제 8.823529로 중단. 현재 `DriveMath.Resolve` 계수 .30과 테스트의 토크 환산 기대 구간이 불일치한다. 이 산술 실패만으로 실제 PhysX 제동·승차감 실패라고 확대하지 않는다. 이번 코드 변경/수정 없음.

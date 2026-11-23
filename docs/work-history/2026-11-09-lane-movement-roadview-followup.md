@@ -2,7 +2,7 @@
 
 ## 요구와 범위
 
-사용자 화면7개 중6/7은 동일 위치다. J866_5285 서향 정확 포즈, J5057_4449 양방향의 차로별 화살표/어긋난 선, 내비 외형 근거 문구 제거, 동쪽 은계중앙로·은계로 차로 수 확인, J7917_2565 동향의 지속 녹색/좌회전 누락을 대상으로 한다. [접근별 자료·기획](../content-design/21-lane-movement-roadview-followup.md), [설계](../superpowers/specs/2026-11-09-lane-movement-followup-design.md), [계획](../superpowers/plans/2026-11-09-lane-movement-followup.md).
+사용자 화면7개 중6/7은 동일 위치다. J866_5285 서향 정확 포즈, J5057_4449 양방향의 차로별 화살표/어긋난 선, 내비 외형 근거 문구 제거, 동쪽 은계중앙로·은계로 차로 수 확인, J7917_2565 동향의 지속 녹색/좌회전 누락을 대상으로 한다. [접근별 자료·기획](../content-design/01-driving-and-traffic.md), [설계](../superpowers/specs/2026-11-09-lane-movement-followup-design.md), [계획](../superpowers/plans/2026-11-09-lane-movement-followup.md).
 
 시작 main/원격은 `45b9a30f408672e0f5c302d19c0e8ceeb3ba84ee`. 작업 브랜치 `codex/lane-movement-roadview-followup`. 사용자 제안서V6, 한국어 mmst 및 기존 미추적 폴더는 보존한다. 기본 실행 대상 은계/A2 통합 `builds/EungyeTaxi/EungyeTaxi.exe`, `PrototypeBuild.BuildHybrid`, LANv16이다.
 

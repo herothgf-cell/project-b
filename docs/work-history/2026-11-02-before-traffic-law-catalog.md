@@ -12,7 +12,7 @@
 
 ## 2026-11-02 PVP 피로·식사·휴식 실제 적용
 
-[이번 구현·검증·배포 이력](2026-11-02-pvp-condition-implementation.md) · [PVP 전용 규칙·화면](../content-design/03-life-and-economy.md#pvp-driver-condition). **피로1.25배(분당5/7.5/10), 식사1,000원/15초/포만+60, 무료휴식45초/피로−40·졸음해제**를 실제 적용했다. F7에서 이용하며 공통경기/NPC/타차량은 계속 진행, 완료시에만1회비용/회복, 취소·미완료종료는무청구. 운임감액없음. 기존싱글/저장규칙불변. 예측UI/식당2곳·봇동일규칙연결.
+[이번 구현·검증·배포 이력](2026-11-02-pvp-condition-implementation.md) · [PVP 전용 규칙·화면](../content-design/04-life-vehicle-economy.md#pvp-driver-condition). **피로1.25배(분당5/7.5/10), 식사1,000원/15초/포만+60, 무료휴식45초/피로−40·졸음해제**를 실제 적용했다. F7에서 이용하며 공통경기/NPC/타차량은 계속 진행, 완료시에만1회비용/회복, 취소·미완료종료는무청구. 운임감액없음. 기존싱글/저장규칙불변. 예측UI/식당2곳·봇동일규칙연결.
 
 실행은 `builds/EungyeTaxi/EungyeTaxi.exe` → PVP도시/나1+봇3·8호출. 소스5547466/Unity2022.3.62f2 BuildHybrid4 exit0,139파일115,082,284바이트. Editor모델/서비스/봇·도시/통합계약, 캠페인28모델, 실제15/45초서비스·취소/종료·화면·싱글저장보존 통과. **장시간4대검사는봇1의city-junction:2:2정체로전원운송미통과(exit1)**: 나/봇2/봇3정산성공, 봇1첫운송실패. 전도로교통/20분수익·운전감각·다른PC/원격4명은미수용. 봇식사왕복진단도빈차/400예상초내후보미확보로exit1(왕복미검증). 기존서비스assertion은최종실행본에서도통과. 배포4802ecf를main·feature/pvp-prototype에atomic게시/원격동일해시확인했고manifest139파일검증통과. 게시영수증은이번이력을따른다. 아래는이전작업당시기록이다.
 
@@ -22,15 +22,15 @@
 
 현재 **`builds/EungyeTaxi/EungyeTaxi.exe`** → 은계 싱글 또는 자체도시PVP. 빌드소스d8f94ce, 검증된139파일115,057,083바이트로 교체·전수해시 확인. 사용자PID6980 게임은 직접 종료 응답/실제 종료 확인 후 교체했고 이전폴더를 백업했다.4대4.37~5.20km·전원 양수정산, 봇3대 모두 좌/우회전 통과.1920Ultra/72NPC60초 평균56.98fps/p9930.64ms,113.53ms 지연1회 남음.
 
-피로는 [PVP기획](../content-design/03-life-and-economy.md#pvp-driver-condition)에1.25배 후보(분당5/7.5/10)로 반영했으며 **게임 미적용**이다. 필수지도/ZIP·회사/제품/저장경로 유지, Strict issues0. 다른체크아웃의 현재localmain6244be9/미추적작업 보존. 실제사진지점/사람/장시간전도로/다른PC/기존물리원격4명은 별도다. 배포81e864b를 main·feature/pvp-prototype에 atomic 게시하고 원격 동일해시/manifest를 확인했다. 게시 영수증은 이번 이력 말미를 따른다.
+피로는 [PVP기획](../content-design/04-life-vehicle-economy.md#pvp-driver-condition)에1.25배 후보(분당5/7.5/10)로 반영했으며 **게임 미적용**이다. 필수지도/ZIP·회사/제품/저장경로 유지, Strict issues0. 다른체크아웃의 현재localmain6244be9/미추적작업 보존. 실제사진지점/사람/장시간전도로/다른PC/기존물리원격4명은 별도다. 배포81e864b를 main·feature/pvp-prototype에 atomic 게시하고 원격 동일해시/manifest를 확인했다. 게시 영수증은 이번 이력 말미를 따른다.
 
 ## 2026-11-02 PVP 졸음·공복 기반 기획 수정
 
-[이번 이력](2026-11-02-pvp-drowsiness-plan.md) · [PVP 전용 기획](../content-design/03-life-and-economy.md#pvp-driver-condition). 사용자 요청으로 운임 감액을 폐기하고 기존 졸음/집중력 저하와 공복 피로 가속을 활용한다. 식사15초/1,000원/+60·휴식45초/무료/−40은 시험 후보이며 미적용이다.20분 상태 사례 계산을 확인했고 우회·수익·사람/봇 균형은 후속 검증이다.20분으로 경기 시간을 고정하지 않는다. 코드·실행본·필수 지도/저장 상태는 아래 통합 배포 기준을 유지한다.
+[이번 이력](2026-11-02-pvp-drowsiness-plan.md) · [PVP 전용 기획](../content-design/04-life-vehicle-economy.md#pvp-driver-condition). 사용자 요청으로 운임 감액을 폐기하고 기존 졸음/집중력 저하와 공복 피로 가속을 활용한다. 식사15초/1,000원/+60·휴식45초/무료/−40은 시험 후보이며 미적용이다.20분 상태 사례 계산을 확인했고 우회·수익·사람/봇 균형은 후속 검증이다.20분으로 경기 시간을 고정하지 않는다. 코드·실행본·필수 지도/저장 상태는 아래 통합 배포 기준을 유지한다.
 
 ## 2026-11-02 PVP 피로·포만감 기획 분리
 
-[문서 작업 이력](2026-11-02-pvp-condition-design.md). 기존 [생활·경제 문서의 PVP 전용 항목](../content-design/03-life-and-economy.md#pvp-driver-condition)을 단일 기준으로 정리했다. 캠페인/현행 PVP/개선 후보를 구분하며 수치는 미적용·밸런스 미검증이다. 코드·실행본·필수 지도 입력은 변경하지 않았고 아래 통합 배포/검증 상태를 유지한다. 다음은 효과 조합·수치 결정 후 구현 검증이다.
+[문서 작업 이력](2026-11-02-pvp-condition-design.md). 기존 [생활·경제 문서의 PVP 전용 항목](../content-design/04-life-vehicle-economy.md#pvp-driver-condition)을 단일 기준으로 정리했다. 캠페인/현행 PVP/개선 후보를 구분하며 수치는 미적용·밸런스 미검증이다. 코드·실행본·필수 지도 입력은 변경하지 않았고 아래 통합 배포/검증 상태를 유지한다. 다음은 효과 조합·수치 결정 후 구현 검증이다.
 
 ## 2026-11-02 통합 실행·PVP 교통 흐름 배포
 
@@ -237,7 +237,7 @@ PPT32장 패키지/레이아웃/글꼴/재가져오기 통과·전 슬라이드 
 
 직전 기획 정리501e548 이후 사용자 피드백에 따라20개 본문을6개 플레이 기획+가지별 검토표로 재통합했다. 현재 규칙은 각 주제 한 곳에만 둔다. 개발/제작 참고·후속·정리 전 원문은 content-design 밖으로 분리했다. 원본 .mmst는 읽기만 했으며 검토 전 변경 금지다. 이번 작업 결과는 [재통합 이력](2026-10-27-planning-only-mindmap-review.md)에 기록한다.
 
-[기획 입구](../content-design/README.md) · [마인드맵 가지별 추가/수정/삭제 검토](../content-design/06-mindmap-review.md) · [별도 개발 참고](../technical-reference/README.md) · [이전 정리 이력](2026-10-27-design-refresh.md). 게임 코드·지도·실행 파일·배포 manifest·사용자 마인드맵은 유지한다.
+[기획 입구](../content-design/README.md) · [마인드맵 가지별 추가/수정/삭제 검토](../content-design/archive/06-mindmap-review.md) · [별도 개발 참고](../technical-reference/README.md) · [이전 정리 이력](2026-10-27-design-refresh.md). 게임 코드·지도·실행 파일·배포 manifest·사용자 마인드맵은 유지한다.
 
 ## 현재 실행·배포 기준
 

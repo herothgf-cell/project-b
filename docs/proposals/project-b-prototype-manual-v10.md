@@ -66,4 +66,4 @@
 
 - [차량 구매 구현 이력](../work-history/2026-11-10-vehicle-purchase-3day.md) · [화면 캡처](../ui/2026-11-10-vehicle-purchase/README.md)
 - [영업 시간 선택 이력](../work-history/2026-11-10-single-shift-length-dev-end.md)
-- [기획22](../content-design/22-growth-direction-and-vehicle-purchase.md) · [최신 이력](../work-history/LATEST.md)
+- [기획22](../content-design/07-home-room-and-vehicles.md) · [최신 이력](../work-history/LATEST.md)

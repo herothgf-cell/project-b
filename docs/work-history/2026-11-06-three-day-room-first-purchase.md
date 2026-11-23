@@ -6,11 +6,11 @@
 
 ## 실제 작성
 
-`docs/content-design/13-three-day-room-and-first-purchase.md`에 방1개·조명/러그2종×2스타일, 고정2D 레이어, 날짜별 행동과 무구매 분기, 임시5,000/8,000원 가격과 사전 측정, 선택적 마감 진입/구매/자동 배치, 개인 장부/원자 저장·최종 기록 경계, 마지막날 소비 편향을 구분한 관찰안을 작성했다.
+`docs/content-design/07-home-room-and-vehicles.md`에 방1개·조명/러그2종×2스타일, 고정2D 레이어, 날짜별 행동과 무구매 분기, 임시5,000/8,000원 가격과 사전 측정, 선택적 마감 진입/구매/자동 배치, 개인 장부/원자 저장·최종 기록 경계, 마지막날 소비 편향을 구분한 관찰안을 작성했다.
 
 최초 범위는 기존5종/3컷보다 축소했고 화분·차량 소품/색·시승·차/집 구매·날짜별 수요 구성은 후속으로 남겼다. 당일/누적 순수익이 개인 구매와 재로딩 때문에 바뀌지 않도록 기존 계정/영업 장부의 수정 필요성을 명시했다. 실제 코드 변경은 없다.
 
-변경 파일: 새13안, `docs/content-design/10-restarting-driver-synopsis.md`, `11-personal-life-and-growth.md`, `12-career-growth-stages.md`, `README.md`; `docs/prototype-scope.md`, `docs/prototype-development-checklist.md`; 이번 이력과 `docs/work-history/LATEST.md`.
+변경 파일: 새13안, `docs/content-design/archive/10-restarting-driver-synopsis.md`, `11-personal-life-and-growth.md`, `12-career-growth-stages.md`, `README.md`; `docs/prototype-scope.md`, `docs/prototype-development-checklist.md`; 이번 이력과 `docs/work-history/LATEST.md`.
 
 ## 대조와 검증
 

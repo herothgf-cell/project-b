@@ -1,6 +1,8 @@
 # 택시 일과 개인 생활을 잇는 최소 콘텐츠 기획안
 
-**상태: 대체된 이전 제안.** 반복 인물/친구·사진을 중심으로 한 이 문서는 현재 제작 기준이 아니다. 재출발 방향은 [10](10-restarting-driver-synopsis.md), 현재 작은 방/첫 구매는 [13](13-three-day-room-and-first-purchase.md), 후속 성장은 [12](12-career-growth-stages.md)를 따른다. 아래의 “이번/신규/미구현”은 이전 제안 시점 표현이며 재승인 없이 개발 범위에 넣지 않는다.
+> **보관 문서 (2026-11-23).** 기획 문서 통합 때 현재 기준에서 빠져 이 폴더로 옮겼다. 당시 결정의 배경을 확인할 때만 읽는다. 현재 기준은 [기획 목록](../../README.md)을 따른다.
+
+**상태: 대체된 이전 제안.** 반복 인물/친구·사진을 중심으로 한 이 문서는 현재 제작 기준이 아니다. 재출발 방향은 [10](10-restarting-driver-synopsis.md), 현재 작은 방/첫 구매는 [13](../07-home-room-and-vehicles.md#s13), 후속 성장은 [12](12-career-growth-stages.md)를 따른다. 아래의 “이번/신규/미구현”은 이전 제안 시점 표현이며 재승인 없이 개발 범위에 넣지 않는다.
 
 **보존된 이전 초안.** 작성 중단 후 사용자가 반복 인물을 제외하고 실직 후 재기·원하는 택시/주거 성장을 선택했다. 이 문서의 친구/사진 방문안은 현재 개발 방향이 아니다. 현재 제안은 [시놉시스](10-restarting-driver-synopsis.md)와 [생활/성장](11-personal-life-and-growth.md)을 따른다. 아래 내용은 당시 검토 이력으로만 보존한다.
 
@@ -31,7 +33,7 @@
 | 마감/다음 날/저장 | 일의 결과와 개인 기억을 같은 하루에 보존 | 개인 상태/기록 영역, 선택한 기억에 따른 다음 대사 |
 | 독립 선택지 효과 엔진 | 표현/데이터 설계 참고 가능 | 현재 운송 중심 효과를 개인 이벤트에 자동 재사용하지 않음 |
 
-선택지별 단계 효과는 최신 소스에서 구현되었고 통합 배포는 [해당 이력](../work-history/2026-11-06-independent-choice-effects.md)의 상태를 따른다. 앞선 전체 점검 당시의 미구현 설명을 현재 상태로 사용하지 않는다. 개인 생활을 새 승객 요청으로 위장하면 운송 종료/취소·S·피로 효과가 얽히므로 별도의 작은 사건 상태가 필요하다.
+선택지별 단계 효과는 최신 소스에서 구현되었고 통합 배포는 [해당 이력](../../work-history/2026-11-06-independent-choice-effects.md)의 상태를 따른다. 앞선 전체 점검 당시의 미구현 설명을 현재 상태로 사용하지 않는다. 개인 생활을 새 승객 요청으로 위장하면 운송 종료/취소·S·피로 효과가 얽히므로 별도의 작은 사건 상태가 필요하다.
 
 ## 사람과 장소
 
@@ -144,6 +146,6 @@
 
 ## 현재 근거
 
-[생활시설/시간/비용](03-life-and-economy.md) · [캠페인/마감/회고](04-campaign-and-feedback.md) · [화면/안내](05-interface-and-navigation.md) · [현재 범위](../prototype-scope.md) · [전체 점검](../future-design/2026-11-06-project-wide-review.md).
+[생활시설/시간/비용](../04-life-vehicle-economy.md#s03) · [캠페인/마감/회고](../06-day-and-career.md#s04) · [화면/안내](../05-interface-and-navigation.md#s05) · [현재 범위](../../prototype-scope.md) · [전체 점검](../../future-design/2026-11-06-project-wide-review.md).
 
-[거점 판정·서비스](../../unity/EungyeTaxi/Assets/Scripts/ServiceStops.cs) · [영업 경과](../../unity/EungyeTaxi/Assets/Scripts/EconomyLedger.cs) · [마감·다음 날·저장](../../unity/EungyeTaxi/Assets/Scripts/BusinessProgress.cs).
+[거점 판정·서비스](../../../unity/EungyeTaxi/Assets/Scripts/ServiceStops.cs) · [영업 경과](../../../unity/EungyeTaxi/Assets/Scripts/EconomyLedger.cs) · [마감·다음 날·저장](../../../unity/EungyeTaxi/Assets/Scripts/BusinessProgress.cs).

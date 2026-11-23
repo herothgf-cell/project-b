@@ -6,9 +6,9 @@
 
 ## 실제 작성과 변경 파일
 
-- `docs/content-design/12-career-growth-stages.md`: 6단계 경험/전환, 집 우선 분기, 새 차/집의 실제 보상과 한계, 하루 수요3구성과 안내, 후보 시승/집 미리보기 범위, 최초12~18회·중앙값 수익 기반 가격 가설, 사람 검증/중단 기준을 작성했다.
-- `docs/content-design/11-personal-life-and-growth.md`, `docs/content-design/README.md`, `docs/prototype-scope.md`, `docs/prototype-development-checklist.md`: 새 기획의 담당 범위와 미구현 상태를 연결했다.
-- `docs/content-design/03-life-and-economy.md`: 현재 코드와 달랐던 초과 영업 수요 표를 모두1로 정정했다. 900~1,200초의 상업 우세와 구분하며 실제 수요 코드/경제 동작은 변경하지 않았다.
+- `docs/content-design/archive/12-career-growth-stages.md`: 6단계 경험/전환, 집 우선 분기, 새 차/집의 실제 보상과 한계, 하루 수요3구성과 안내, 후보 시승/집 미리보기 범위, 최초12~18회·중앙값 수익 기반 가격 가설, 사람 검증/중단 기준을 작성했다.
+- `docs/content-design/archive/11-personal-life-and-growth.md`, `docs/content-design/README.md`, `docs/prototype-scope.md`, `docs/prototype-development-checklist.md`: 새 기획의 담당 범위와 미구현 상태를 연결했다.
+- `docs/content-design/04-life-vehicle-economy.md`: 현재 코드와 달랐던 초과 영업 수요 표를 모두1로 정정했다. 900~1,200초의 상업 우세와 구분하며 실제 수요 코드/경제 동작은 변경하지 않았다.
 - 이 기록과 `docs/work-history/LATEST.md`를 갱신했다. 신규 코드·사용자 저장·지도·빌드·배포 자료 변경 없음.
 
 ## 대조 및 검증
@@ -21,6 +21,6 @@
 
 ## 실행·다음 작업
 
-기획은 `docs/content-design/12-career-growth-stages.md`에서 읽는다. 현재 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 은계 싱글·A2 PVP·LANv9, 빌드는 `PrototypeBuild.BuildHybrid`다. 지금 실행해도 이번 성장안의 방/구매/이사/날짜별 수요/시승은 제공되지 않는다.
+기획은 `docs/content-design/archive/12-career-growth-stages.md`에서 읽는다. 현재 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 은계 싱글·A2 PVP·LANv9, 빌드는 `PrototypeBuild.BuildHybrid`다. 지금 실행해도 이번 성장안의 방/구매/이사/날짜별 수요/시승은 제공되지 않는다.
 
 다음은 기획 검토, 사람의 수익 분포/차량·주거 매력 검증, 개인 거래·연속 경력·이관·수요 구성의 구현 계획이다. 실제 차량 교환 산식과 시승 분리 저장 계약은 해당 구현 전 확정한다. 커밋 뒤 `git log -1 --oneline -- docs/work-history/2026-11-06-career-growth-stages.md`로 실제 커밋을 확인한다.

@@ -21,10 +21,10 @@ Claude(Cowork)에서 수행. 기획·문서·마인드맵만 변경했고 게임
 
 | 파일 | 내용 |
 |---|---|
-| `docs/content-design/22-growth-direction-and-vehicle-purchase.md` | 결정 반영 개정(3일 범위·가격·PvP 외형 영구 해금·결정 기록·마인드맵 반영표) |
-| `docs/content-design/23-license-career-path.md` | 신규. 면허 경로 설정 변형·시스템 연결·할거리 8개·보류 해제 조건 |
-| `docs/content-design/11-personal-life-and-growth.md` | 상단에 22에 따른 원칙 변경 안내 |
-| `docs/content-design/06-mindmap-review.md` | 11/10 반영 기록 |
+| `docs/content-design/07-home-room-and-vehicles.md` | 결정 반영 개정(3일 범위·가격·PvP 외형 영구 해금·결정 기록·마인드맵 반영표) |
+| `docs/content-design/archive/23-license-career-path.md` | 신규. 면허 경로 설정 변형·시스템 연결·할거리 8개·보류 해제 조건 |
+| `docs/content-design/archive/11-personal-life-and-growth.md` | 상단에 22에 따른 원칙 변경 안내 |
+| `docs/content-design/archive/06-mindmap-review.md` | 11/10 반영 기록 |
 | `docs/content-design/README.md` | 22 행 갱신, 23 행 추가 |
 | `docs/content-design/택시 시뮬레이션.mmst`, `-목차.md` | 14노드 추가, 3노드 0%→25% |
 | `docs/design-history/content-design/2026-11-10-mindmap-before-growth.mmst` | 변경 전 원본 백업(원본과 바이트 동일) |

@@ -8,7 +8,7 @@
 - 운행 중 대화 선택 허용. 새 요청 발생 시점, 미응답 불이익의 기존 정차 기회 판정은 유지. 안전 정차/실제 적재·하역·음식 정리·짐 재고정/용무 작업 조건을 바꾸지 않음. 일시정지·지도/결과·다른 선택·수면·도착 잠금·중복 응답 방지 유지.
 - 유형별 기사 선택을 실제 문장으로 교체. 신호 대기/제동/잠 깸/음식/짐 상황마다 구체적인 설명, 선택 후 기사 답변 표시. 요청의 내부 상세 기록과 화면 발화를 분리. 보류 선택은 실제로 보류임을 설명하고 나중에 자동 처리된다는 약속을 하지 않음.
 - DriveHUD/OneDayHUD/BusinessHUD/HdRouteTrial 및 이전 PVP 시험 안내를 방향키 기준으로 수정. WASD 실제 입력은 유지.
-- 17요청/유형/실제 상황 스크립트를 `docs/content-design/07-passenger-dialogue.md`에 표로 정리, 기존 승객·화면 문서와 연결. 음악·에어컨·창문 실제 조작 보류 유지.
+- 17요청/유형/실제 상황 스크립트를 `docs/content-design/02-passengers-and-fares.md`에 표로 정리, 기존 승객·화면 문서와 연결. 음악·에어컨·창문 실제 조작 보류 유지.
 
 주요 변경: PassengerDialogueUI/PassengerBehaviorUI/PassengerRequestObservation/PassengerRequestUI/PassengerBehavior/PassengerSituations/PassengerJobs/PassengerJobsActivities, 위 HUD 안내, PassengerActivitiesProbe, 관련 기획·계획·이력.
 

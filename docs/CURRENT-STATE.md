@@ -6,16 +6,16 @@
 
 | 영역 | 배포 동작 |
 |---|---|
-| 시작과 경력 | 싱글에서 새 슬롯을 만들거나 기존 저장을 불러온다. 새 경력은 준비 → 숙소 목표 메모 → 준비 → 4컷 인트로 → 덕성프라자 실내 주차 칸 출차 순이다. 정상 퇴근은 빈차로 같은 칸에 돌아와 F를 누른다. 3일 도입 뒤 같은 슬롯으로 4일차를 시작할 수 있다. [경력](content-design/28-continuous-career-mode.md) · [숙소](content-design/34-home-base.md) |
-| 운전과 손님 | M 지도에서 호출을 고르고 실제 도로·신호·보행자에 맞춰 운전한다. 차내 미터기·창문·온도와 승객 요청을 다룬다. 첫 운송 후 기사 수첩을 얻으며, 막차를 놓친 학생과는 첫 만남 이틀 뒤 다시 만날 수 있다. [운송](content-design/02-passengers-and-fares.md) · [학생 재회](content-design/35-student-reunion.md) |
-| 생활과 차량 | 연료·포만·피로·청결·내구를 관리한다. 주유·세차·식사·휴식·사고 수리와 견인, 은계김밥·동네 카페·공업사 부품 판매대를 이용한다. 숙소에서 조명·러그를 꾸미고, 정산 뒤 차고에서 현금으로 새 택시 한 대를 살 수 있다. 아버지 차를 보관하고 다음 날 몰 차를 고른다. [동네 시설과 부품](content-design/36-neighbourhood-shops-and-taxi-parts.md) · [시설 위치](content-design/eungye-facility-locations.md) |
-| 세계와 경쟁 | 하루 조건과 수요, 비·낮밤 조명·은계 FM·차량음이 주행에 동반된다. PvP는 공유 승객을 두고 순수익을 겨룬다. 싱글에서 얻은 차량 외형을 사용하고 경기 성능은 표준 차량 기준이다. [낮밤·라디오](content-design/31-day-night-and-radio.md) · [차량음 검증](work-history/2026-11-20-recorded-vehicle-audio.md) |
+| 시작과 경력 | 싱글에서 새 슬롯을 만들거나 기존 저장을 불러온다. 새 경력은 준비 → 숙소 목표 메모 → 준비 → 4컷 인트로 → 덕성프라자 실내 주차 칸 출차 순이다. 정상 퇴근은 빈차로 같은 칸에 돌아와 F를 누른다. 3일 도입 뒤 같은 슬롯으로 4일차를 시작할 수 있다. [경력](content-design/06-day-and-career.md) · [숙소](content-design/07-home-room-and-vehicles.md) |
+| 운전과 손님 | M 지도에서 호출을 고르고 실제 도로·신호·보행자에 맞춰 운전한다. 차내 미터기·창문·온도와 승객 요청을 다룬다. 첫 운송 후 기사 수첩을 얻으며, 막차를 놓친 학생과는 첫 만남 이틀 뒤 다시 만날 수 있다. [운송](content-design/02-passengers-and-fares.md) · [학생 재회](content-design/00-game-overview.md) |
+| 생활과 차량 | 연료·포만·피로·청결·내구를 관리한다. 주유·세차·식사·휴식·사고 수리와 견인, 은계김밥·동네 카페·공업사 부품 판매대를 이용한다. 숙소에서 조명·러그를 꾸미고, 정산 뒤 차고에서 현금으로 새 택시 한 대를 살 수 있다. 아버지 차를 보관하고 다음 날 몰 차를 고른다. [동네 시설과 부품](content-design/04-life-vehicle-economy.md) · [시설 위치](content-design/04-life-vehicle-economy.md) |
+| 세계와 경쟁 | 하루 조건과 수요, 비·낮밤 조명·은계 FM·차량음이 주행에 동반된다. PvP는 공유 승객을 두고 순수익을 겨룬다. 싱글에서 얻은 차량 외형을 사용하고 경기 성능은 표준 차량 기준이다. [낮밤·라디오](content-design/06-day-and-career.md) · [차량음 검증](work-history/2026-11-20-recorded-vehicle-audio.md) |
 
 ## 기획 검토와 남은 확인
 
 운전 중 판단을 늘리는 [기획 37 공차 운영·길 지식·규칙 속 돌발](content-design/37-driver-judgment-systems.md)은 구현 승인 전이다.
 
-번 돈을 다음 특별 운행 준비에 쓸지, 원하는 택시를 사려고 모을지 결정하는 **기획 검토안**이 있다. 첫 출차 개편, 지도 판매점 계약, 주기 정비, 소지금 거래 장부와 기사 성장은 그 선택을 지원하는 후속 기능이다. 숙소의 실제 호실 이전과 기사 평점도 후속 항목이다. [기사 생활·경영 기획](content-design/37-driver-life-and-business.md) · [개발 체크리스트](prototype-development-checklist.md)
+기획 문서는 2026-11-23 주제별 10개(00~09)로 합쳤다. 이전 기획 37(특별 운행·지도 판매점·주기 정비·소지금 장부·기사 성장)은 개발 범위에서 제외해 [보관](content-design/archive/37-driver-life-and-business.md)했고, 다음 검토 주제는 [08 운전하는 20분의 재미 보강](content-design/08-fun-improvements.md)이다. 숙소의 실제 호실 이전과 기사 평점은 후속 항목이다. [기획 목록](content-design/README.md) · [개발 체크리스트](prototype-development-checklist.md)
 
 지정 위치에서 시설·저장·재회를 확인한 검사와, 차고에서 첫 운송을 마치고 귀가한 자동 물리 주행 기록이 있다. 사람의 첫 이용·3일 전체 경영 체감, 실물 입력·음향, 다른 PC 간 LAN은 후속 검증이다. 도로별 관찰·화면·검사 결과는 날짜별로 보관한다. [첫 운송 물리 주행](work-history/2026-11-19-first-fare-and-settlement.md) · [r43~46 도로 조사](work-history/2026-11-17-road-transitions-and-facilities.md) · [J7841](work-history/2026-11-17-j7841-road-report.md) · [r48~49 수인로](work-history/2026-11-20-suinro-repaint-review.md) · [r50 계수로](work-history/2026-11-20-gyesu-navigation-and-signals.md) · [r51 P51 교차로](work-history/2026-11-23-p51-junction-signals.md) · [이전 요약](design-history/CURRENT-STATE-until-2026-11-09.md)
 

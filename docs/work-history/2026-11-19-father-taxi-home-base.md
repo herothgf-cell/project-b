@@ -4,9 +4,9 @@
 
 - 사용자 설정: 실직 후 남은 것은 돌아가신 아버지가 남긴 개인택시 하나, 그 차로 생계. 숙소는 지정된 한 곳을 거점으로.
 - 기획 후 푸시, 구현은 Codex가 이어받도록 시안 이미지를 기획서에 첨부하고 프롬프트 작성.
-- [33](../content-design/33-backstory-presentation.md) 전면 개정(은퇴 기사 → 아버지, 생계·월세, 벽 메모 문구), 신규 [34 기사 숙소 거점](../content-design/34-home-base.md), [10](../content-design/10-restarting-driver-synopsis.md) 머리말 개정, [28](../content-design/28-continuous-career-mode.md) 집 목표를 같은 건물 넓은 호실로 변경.
+- [33](../content-design/00-game-overview.md) 전면 개정(은퇴 기사 → 아버지, 생계·월세, 벽 메모 문구), 신규 [34 기사 숙소 거점](../content-design/07-home-room-and-vehicles.md), [10](../content-design/archive/10-restarting-driver-synopsis.md) 머리말 개정, [28](../content-design/06-day-and-career.md) 집 목표를 같은 건물 넓은 호실로 변경.
 - 시안 8장 `docs/content-design/images/motivation-*.png`를 `tools/render_motivation_mockups.py`(PIL, 맑은 고딕)로 생성하고 28~34에 삽입. 숙소 지도는 정식 지도 r47의 도로·건물·승하차·시설 좌표로 그림.
-- [Codex 구현 프롬프트 P1~P7](../content-design/codex-prompts-motivation.md): 공통 규칙 + 단계별 범위·검증.
+- [Codex 구현 프롬프트 P1~P7](../content-design/archive/codex-prompts-motivation.md): 공통 규칙 + 단계별 범위·검증.
 
 ## 근거 확인
 

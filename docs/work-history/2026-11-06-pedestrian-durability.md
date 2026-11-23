@@ -2,7 +2,7 @@
 
 ## 요구와 구현
 
-사용자는 보행자 사고에도0~N 차량 손상을 요청했고, 경미0~2/중간0~5/중대0~10점(내구도100 기준)을 승인했다. 차량·구조물의 기존 최대50점 물리 손상보다 작은 상한이다. [설계](../superpowers/specs/2026-11-06-pedestrian-durability-design.md), [실행 계획](../superpowers/plans/2026-11-06-pedestrian-durability.md), [사고 기획](../content-design/08-accident-and-workshop-proposal.md).
+사용자는 보행자 사고에도0~N 차량 손상을 요청했고, 경미0~2/중간0~5/중대0~10점(내구도100 기준)을 승인했다. 차량·구조물의 기존 최대50점 물리 손상보다 작은 상한이다. [설계](../superpowers/specs/2026-11-06-pedestrian-durability-design.md), [실행 계획](../superpowers/plans/2026-11-06-pedestrian-durability.md), [사고 기획](../content-design/04-life-vehicle-economy.md).
 
 - `AccidentSeverityPolicy.cs`: 사고 등급별 상한·균등 정수 sampler. 기존 비용/시간/감점은 유지.
 - `AccidentState.cs`, `VehicleCare.cs`: 호스트의 선택/실제 손상/적용 버전·상태, 차량 snapshot의 적용 사건 ID.0점도 적용 사건으로 기록한다. 구 저장은 필드 부재를0버전으로 처리해 소급하지 않는다. 수리 후에도 사건 ID를 남겨 재적용을 막는다.

@@ -4,8 +4,8 @@
 
 - 사용자 결정: 개인택시 면허 제외, 차내 장치 조작 추가, 처음부터 개인택시로 진행.
 - 질문: 어떻게 개인택시를 몰게 됐는지, 왜·무엇을 위해 하는지를 어떻게 보여줄지.
-- 반영: [32](../content-design/32-deferred-systems-review.md) 결정 기록(면허 제외, 미터기·빈차등·에어컨 3종 채택), [28](../content-design/28-continuous-career-mode.md) 면허 목표 행 삭제, [23](../content-design/23-license-career-path.md) 제목·상태를 제외로 변경.
-- 신규 [33 배경 이야기 보여주기](../content-design/33-backstory-presentation.md): 30초 3컷 인트로(실직→은퇴 기사에게 차 인수→첫 출근), 첫 조작(빈차등·미터기)을 인트로 끝에 연결, 이전 기사의 수첩 5페이지(30 기사 수첩 첫 장), 수다 승객의 질문에 플레이어가 답하는 "왜", 첫날 밤 벽 메모로 고르는 "무엇을 위해"(28 목표 연결), 핵심 순간 독백 1줄.
+- 반영: [32](../content-design/05-interface-and-navigation.md) 결정 기록(면허 제외, 미터기·빈차등·에어컨 3종 채택), [28](../content-design/06-day-and-career.md) 면허 목표 행 삭제, [23](../content-design/archive/23-license-career-path.md) 제목·상태를 제외로 변경.
+- 신규 [33 배경 이야기 보여주기](../content-design/00-game-overview.md): 30초 3컷 인트로(실직→은퇴 기사에게 차 인수→첫 출근), 첫 조작(빈차등·미터기)을 인트로 끝에 연결, 이전 기사의 수첩 5페이지(30 기사 수첩 첫 장), 수다 승객의 질문에 플레이어가 답하는 "왜", 첫날 밤 벽 메모로 고르는 "무엇을 위해"(28 목표 연결), 핵심 순간 독백 1줄.
 
 ## 변경 파일
 

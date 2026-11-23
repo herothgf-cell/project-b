@@ -281,7 +281,7 @@ P01~P29는 원본 인벤토리 순서의 분홍 그룹, O01은 주황 연결로�
 - O01 서남단 J5057의 기존 서향 자료: https://map.naver.com/p?c=19.00,0,0,0,adh&p=H8kJAUid-f2UdktwCnF3wA,285,-18,70,Float — 2026-05. 수인로 서향 접근의 중앙 포켓·직진3·분리 우회전 기록이며 주황 연결로 양방향 주행 관찰을 대체하지 않는다.
 - J8066의 FI0tmS2ImG-qd356ibc6TQ / XDflhzUyeOa5oyWyz4hp6w 자료는 교차로 동쪽 하늘색 접근이다. O01 서쪽 연결로의 근거로 사용하지 않는다.
 - 은계남로 J5074_877는 2026-11-10 도로 감사에서 미확인으로 명시되어 있다. 분홍29그룹의 별도 파노라마 근거는 이번에 읽은 문서에서 확인하지 못했다.
-- 출처: docs/content-design/21-lane-movement-roadview-followup.md 및 docs/work-history/2026-11-10-roadview-lane-audit.md.
+- 출처: docs/content-design/01-driving-and-traffic.md 및 docs/work-history/2026-11-10-roadview-lane-audit.md.
 
 ## 우선 재개 링크
 

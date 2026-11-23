@@ -9,7 +9,7 @@
 
 - [제안서 PPTX](project-b-game-proposal-v9.pptx): 28장. 차량 구매(15장)·목표 구조(16장 신규)·PvP 내 차(19장)·아트 전환(22장 신규). 로드맵·참여자는 V8 유지.
 - [반영 검토](proposal-v9-review.md), [아트 전환 가이드·시안 프롬프트·이미지 생성 도구 설치](art-conversion-guide.md), [V9 시안 폴더](assets/v9/README.md).
-- 근거 기획: [22 성장 방향·차량 구매](../content-design/22-growth-direction-and-vehicle-purchase.md). 조작 문서는 V8 Manual 유지.
+- 근거 기획: [22 성장 방향·차량 구매](../content-design/07-home-room-and-vehicles.md). 조작 문서는 V8 Manual 유지.
 
 ## 이전 8차 자료 — 2026-11-09
 
