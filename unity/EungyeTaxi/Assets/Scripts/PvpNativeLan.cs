@@ -17,7 +17,8 @@ using Unity.Collections;
 // Trusted LAN, host-authoritative native WheelCollider simulation. No client pose/fare authority.
 [DefaultExecutionOrder(-110)]
 public sealed class PvpNativeLan:MonoBehaviour {
- public const string Protocol="native-city-lan-v23";
+ // v24 (2026-11-23): personal casual/sim steering feel; every PvP car is fixed to sim.
+ public const string Protocol="native-city-lan-v24";
  public static PvpNativeLan Instance {get;private set;}
  public static bool ApplyingReplica;
  public PvpSimulationMatch Match {get;private set;}

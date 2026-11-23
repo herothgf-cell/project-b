@@ -16,7 +16,7 @@ public static class CasualDriveChecks {
   Check(Math.Abs(step(-1,1)+step(1,-1))<.001,"countersteer remains left-right symmetric");
   Check(DriveMath.ManualSteerAngle(0)<=52&&Math.Abs(DriveMath.ManualSteerAngle(-30)-DriveMath.ManualSteerAngle(30))<.001,"parking maximum and reverse symmetry preserved");
   Check(Math.Abs(DriveMath.ManualSteerAngle(49.99f)-DriveMath.ManualSteerAngle(50))<.05,"city allowance blends smoothly into unchanged high-speed limit");
-  var yaw=typeof(DriveMath).GetMethod("ManualYawAcceleration");Check(yaw!=null,"manual city turn has bounded yaw response assistance");
+  var yaw=typeof(DriveMath).GetMethod("ManualYawAcceleration",new[]{typeof(float),typeof(float),typeof(float)});Check(yaw!=null,"manual city turn has bounded yaw response assistance");
   Func<float,float,float,float> yawAt=(speed,angle,rate)=>(float)yaw.Invoke(null,new object[]{speed,angle,rate});
   Check(yawAt(5,25,0)>0&&Math.Abs(yawAt(5,25,0)+yawAt(5,-25,0))<.001,"yaw assistance is symmetric");
   Check(yawAt(0,25,0)==0&&yawAt(60/3.6f,25,0)==0,"no stationary spin or high-speed yaw assistance");

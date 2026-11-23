@@ -35,6 +35,13 @@ public sealed class DrivingSettingsProbe : MonoBehaviour {
   Check(!session.GetComponent<PracticeSession>().OpenPicker(),"practice cannot replace settings");
   session.services.Toggle();Check(!session.services.open&&panel.IsOpen,"service cannot replace settings");
   if(capture){yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(output,"settings.png"));yield return new WaitForSecondsRealtime(.3f);Screen.SetResolution(800,600,false);yield return new WaitForSecondsRealtime(.4f);yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(output,"settings-small.png"));yield return new WaitForSecondsRealtime(.3f);}
+  // 08 chapter 1: feel tab, persisted casual/sim choice and effect strengths; PvP stays sim.
+  panel.FeelTab=true;panel.SetSteeringFeel(DrivingSettings.Sim);panel.Draft.speedFov=.4f;panel.Draft.bodyLean=0;
+  if(capture){int width=Screen.width,height=Screen.height;Screen.SetResolution(1600,900,false);yield return new WaitForSecondsRealtime(.4f);yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(output,"settings-feel.png"));yield return new WaitForSecondsRealtime(.3f);Screen.SetResolution(width,height,false);yield return new WaitForSecondsRealtime(.4f);}
+  panel.Apply();var feel=DrivingSettings.Load(key);Check(feel.steeringFeel==DrivingSettings.Sim&&feel.speedFov==.4f&&feel.bodyLean==0,"feel tab saves sim and effect strengths");
+  panel.Open();panel.FeelTab=true;panel.ResetDefaults();Check(panel.Draft.steeringFeel==DrivingSettings.Casual&&panel.Draft.speedFov==1&&panel.Draft.bodyLean==1,"feel defaults are casual at full strength");panel.Cancel();
+  Check(DrivingSettings.Load(key).steeringFeel==DrivingSettings.Sim,"cancel keeps the saved feel");
+  if(pvp){session.taxi.SteeringFeelOverride=DrivingSettings.Casual;Check(!session.taxi.CasualSteering,"PvP taxi ignores casual feel");session.taxi.SteeringFeelOverride=-1;}
   panel.Cancel();session.paused=false;Time.timeScale=1;var taxi=session.taxi;taxi.body.constraints=RigidbodyConstraints.FreezeAll;taxi.automated=true;taxi.AutomatedHumanInput=true;taxi.autoThrottle=0;taxi.autoBrake=true;taxi.autoSteer=.5f;taxi.ManualSteeringGain=.5f;
   yield return new WaitForFixedUpdate();yield return new WaitForFixedUpdate();float low=Mathf.Abs(taxi.wheels[0].steerAngle);taxi.ManualSteeringGain=1;yield return new WaitForFixedUpdate();yield return new WaitForFixedUpdate();float high=Mathf.Abs(taxi.wheels[0].steerAngle);
   Check(high>low*1.5f&&low>1,"sensitivity changes actual WheelCollider steering angle");

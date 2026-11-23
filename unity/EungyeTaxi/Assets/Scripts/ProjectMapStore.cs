@@ -6,6 +6,12 @@ using UnityEngine;
 public static class ProjectMapStore {
  public const string RelativePath="config/maps/project/eungye.project.json";
  public const string ResourceName="eungye-project-map";
+ // Builds ship the package gzip-compressed (eungye-project-map.bytes, ~4 MB instead of ~24 MB JSON).
+ // An uncompressed .json resource from an older prepare step is still accepted.
+ public static bool IsGzip(byte[] data){return data!=null&&data.Length>2&&data[0]==0x1f&&data[1]==0x8b;}
+ public static string Decompress(byte[] data){using(var input=new MemoryStream(data))using(var gzip=new System.IO.Compression.GZipStream(input,System.IO.Compression.CompressionMode.Decompress))using(var reader=new StreamReader(gzip,new UTF8Encoding(false)))return reader.ReadToEnd();}
+ public static byte[] Compress(string text){using(var output=new MemoryStream()){using(var gzip=new System.IO.Compression.GZipStream(output,System.IO.Compression.CompressionLevel.Optimal,true)){var bytes=new UTF8Encoding(false).GetBytes(text);gzip.Write(bytes,0,bytes.Length);}return output.ToArray();}}
+ public static string ReadResource(){var asset=Resources.Load<TextAsset>(ResourceName);if(!asset)return null;var data=asset.bytes;return IsGzip(data)?Decompress(data):asset.text;}
  public static bool IsRoot(string root){return !string.IsNullOrWhiteSpace(root)&&(File.Exists(Path.Combine(root,".git"))||Directory.Exists(Path.Combine(root,".git")))&&File.Exists(Path.Combine(root,"unity/EungyeTaxi/ProjectSettings/ProjectVersion.txt"));}
  public static string FindRoot(string start){try{var dir=new DirectoryInfo(Path.GetFullPath(start));for(int i=0;dir!=null&&i<10;i++,dir=dir.Parent)if(IsRoot(dir.FullName))return dir.FullName;}catch{}return "";}
  public static string SourcePath(string root){if(!IsRoot(root))throw new InvalidOperationException("프로젝트 루트 폴더를 지정하세요 (.git 및 unity 폴더가 있는 project-b).");return Path.Combine(Path.GetFullPath(root),RelativePath);}

@@ -7,7 +7,8 @@ using UnityEngine;
 public static class ProjectMapBuild {
  public static string Root { get { return Path.GetFullPath("../.."); } }
  public static bool HasSource { get { return File.Exists(Path.Combine(Root,ProjectMapStore.RelativePath)); } }
- static string ResourcePath { get { return "Assets/Resources/"+ProjectMapStore.ResourceName+".json"; } }
+ static string ResourcePath { get { return "Assets/Resources/"+ProjectMapStore.ResourceName+".bytes"; } }
+ static string LegacyResourcePath { get { return "Assets/Resources/"+ProjectMapStore.ResourceName+".json"; } }
  [MenuItem("Taxi/Project Map/Import Current Map Once")]
  public static void Initialize(){
   if(HasSource)throw new InvalidOperationException("프로젝트 지도가 이미 있습니다. 편집기에서 열어 수정하세요.");
@@ -28,8 +29,11 @@ public static class ProjectMapBuild {
  public static void Prepare(){
   var package=ProjectMapStore.Load(Root);var map=package.Compose();
   if(map.buildings.Length==0||map.hdEdges.Length==0)throw new InvalidDataException("프로젝트 지도 건물/차로가 비었습니다.");
-  File.Copy(ProjectMapStore.SourcePath(Root),ResourcePath,true);AssetDatabase.ImportAsset(ResourcePath,ImportAssetOptions.ForceUpdate);
-  if(File.ReadAllText(ResourcePath)!=File.ReadAllText(ProjectMapStore.SourcePath(Root)))throw new IOException("지도 빌드 복사 검증 실패");
+  // Ship the package gzip-compressed; two resources with one name would make Resources.Load ambiguous.
+  if(File.Exists(LegacyResourcePath))AssetDatabase.DeleteAsset(LegacyResourcePath);
+  string source=File.ReadAllText(ProjectMapStore.SourcePath(Root));
+  File.WriteAllBytes(ResourcePath,ProjectMapStore.Compress(source));AssetDatabase.ImportAsset(ResourcePath,ImportAssetOptions.ForceUpdate);
+  if(ProjectMapStore.Decompress(File.ReadAllBytes(ResourcePath))!=source||ProjectMapStore.ReadResource()!=source)throw new IOException("지도 빌드 복사 검증 실패");
   string facilitySource=Path.Combine(Root,"config/maps/eungye-road-facilities.json"),facilityResource="Assets/Resources/eungye-road-facilities.json";
   File.Copy(facilitySource,facilityResource,true);AssetDatabase.ImportAsset(facilityResource,ImportAssetOptions.ForceUpdate);
   if(File.ReadAllText(facilitySource)!=File.ReadAllText(facilityResource))throw new IOException("검토 도로시설 빌드 복사 검증 실패");

@@ -5,9 +5,31 @@ using UnityEditor.Build.Reporting;
 public static class PrototypeBuild {
     public static void BuildHd(){HdNetworkTests.Run();BuildAt("../../builds/Route42Taxi/Route42Taxi.exe");}
     [MenuItem("Taxi/Build Eungye Hybrid")]
-    public static void BuildHybrid(){if(ProjectMapBuild.HasSource){ProjectMapBuild.Prepare();BuildAt("../../builds/EungyeTaxi/EungyeTaxi.exe","eungye");return;}if(System.IO.File.Exists("Assets/Resources/eungye-project-map.json"))AssetDatabase.DeleteAsset("Assets/Resources/eungye-project-map.json");System.IO.File.Copy("../../config/maps/eungye-reviewed-lanes.json","Assets/Resources/eungye-reviewed-lanes.json",true);System.IO.File.Copy("../../config/maps/eungye-j5057-pavement.json","Assets/Resources/eungye-j5057-pavement.json",true);System.IO.File.Copy("../../config/maps/eungye-corridor-polish.json","Assets/Resources/eungye-corridor-polish.json",true);System.IO.File.Copy("../../config/maps/eungye-osm-supplement.json","Assets/Resources/eungye-osm-supplement.json",true);System.IO.File.Copy("../../config/maps/eungye-scene-overrides.json","Assets/Resources/eungye-scene-overrides.json",true);AssetDatabase.Refresh();TrafficFlowTests.Run();MapReadabilityTests.Run();OfferAccessTests.Run();ReviewedPavementTests.Run();TrafficOverlapQueryTests.Run();TrafficPathPerformanceTests.Run();LawZoneMapLayoutTests.Run();AssistedNetworkTests.Run();HybridNetworkTests.Run();PrototypeScenarioTests.Run();FuelStationLayoutTests.Run();RoadReadabilityTests.Run();HdNetworkTests.Run();DistrictTrafficTests.Run();JunctionFacilityTests.Run();EungyeSupplementTests.Run();CorridorPolishTests.Run();RightTurnWaitingTests.RunConvoy();ReviewedLaneLayoutTests.Run();BuildAt("../../builds/EungyeTaxi/EungyeTaxi.exe","eungye");}
+    public static void BuildHybrid(){if(ProjectMapBuild.HasSource){ProjectMapBuild.Prepare();WithoutRawMapResources(()=>BuildAt("../../builds/EungyeTaxi/EungyeTaxi.exe","eungye"));return;}if(System.IO.File.Exists("Assets/Resources/eungye-project-map.json"))AssetDatabase.DeleteAsset("Assets/Resources/eungye-project-map.json");if(System.IO.File.Exists("Assets/Resources/eungye-project-map.bytes"))AssetDatabase.DeleteAsset("Assets/Resources/eungye-project-map.bytes");System.IO.File.Copy("../../config/maps/eungye-reviewed-lanes.json","Assets/Resources/eungye-reviewed-lanes.json",true);System.IO.File.Copy("../../config/maps/eungye-j5057-pavement.json","Assets/Resources/eungye-j5057-pavement.json",true);System.IO.File.Copy("../../config/maps/eungye-corridor-polish.json","Assets/Resources/eungye-corridor-polish.json",true);System.IO.File.Copy("../../config/maps/eungye-osm-supplement.json","Assets/Resources/eungye-osm-supplement.json",true);System.IO.File.Copy("../../config/maps/eungye-scene-overrides.json","Assets/Resources/eungye-scene-overrides.json",true);AssetDatabase.Refresh();TrafficFlowTests.Run();MapReadabilityTests.Run();OfferAccessTests.Run();ReviewedPavementTests.Run();TrafficOverlapQueryTests.Run();TrafficPathPerformanceTests.Run();LawZoneMapLayoutTests.Run();AssistedNetworkTests.Run();HybridNetworkTests.Run();PrototypeScenarioTests.Run();FuelStationLayoutTests.Run();RoadReadabilityTests.Run();HdNetworkTests.Run();DistrictTrafficTests.Run();JunctionFacilityTests.Run();EungyeSupplementTests.Run();CorridorPolishTests.Run();RightTurnWaitingTests.RunConvoy();ReviewedLaneLayoutTests.Run();BuildAt("../../builds/EungyeTaxi/EungyeTaxi.exe","eungye");}
     public static void BuildAssisted(){if(ProjectMapBuild.HasSource)ProjectMapBuild.Prepare();BuildAt("../../builds/AssistedTaxi/AssistedTaxi.exe","eungye");}
     public static void BuildAssistedChecks(){if(ProjectMapBuild.HasSource)ProjectMapBuild.Prepare();BuildAt("../../builds/AssistedTaxiChecks/AssistedTaxiChecks.exe","eungye");}
+    // With the project map the player reads only eungye-project-map. The raw imports stay local editor inputs
+    // (check_workspace, regeneration) but every Resources file is packed, adding 7.4 MB. Park them in an
+    // import-ignored folder (trailing ~) for the build and always restore them.
+    static readonly string[] RawMapResources={"Assets/Resources/eungye-map.json","Assets/Resources/route42-map.json"};
+    const string ParkedResources="Assets/BuildExcludedResources~";
+    static void WithoutRawMapResources(System.Action build){
+        var parked=new System.Collections.Generic.List<string>();
+        try{
+            System.IO.Directory.CreateDirectory(ParkedResources);
+            foreach(var path in RawMapResources)foreach(var file in new[]{path,path+".meta"}){
+                if(!System.IO.File.Exists(file))continue;var target=System.IO.Path.Combine(ParkedResources,System.IO.Path.GetFileName(file));
+                if(System.IO.File.Exists(target))throw new System.IO.IOException("Parked build resource already exists: "+target);
+                System.IO.File.Move(file,target);parked.Add(file);
+            }
+            AssetDatabase.Refresh();Debug.Log("BUILD_RAW_MAPS_EXCLUDED "+parked.Count);
+            build();
+        }finally{
+            foreach(var file in parked)System.IO.File.Move(System.IO.Path.Combine(ParkedResources,System.IO.Path.GetFileName(file)),file);
+            if(System.IO.Directory.Exists(ParkedResources)&&System.IO.Directory.GetFileSystemEntries(ParkedResources).Length==0)System.IO.Directory.Delete(ParkedResources);
+            AssetDatabase.Refresh();
+        }
+    }
     [MenuItem("Taxi/Build Windows Prototype")]
     public static void Build(){BuildHybrid();}
     public static void BuildEasyRoadMapEditor(){EasyRoadEditorTests.Run();BuildRoadMapEditor();}

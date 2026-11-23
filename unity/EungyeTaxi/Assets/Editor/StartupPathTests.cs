@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class StartupPathTests {
  public static void RunValidationBroadPhase(){
-  var package=JsonUtility.FromJson<ProjectMapPackage>(Resources.Load<TextAsset>(ProjectMapStore.ResourceName).text);
+  var package=JsonUtility.FromJson<ProjectMapPackage>(ProjectMapStore.ReadResource());
   int cases=0;
   Action<RoadMapDocument,bool> compare=(document,expectError)=>{
    var slow=ProjectMapScene.ValidateWithoutBroadPhase(package.baseline,document);

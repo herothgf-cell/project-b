@@ -6,6 +6,16 @@ public class TaxiController : MonoBehaviour {
     public float ManualSteeringGain=1,ManualBrakeGain=1;
     // Owned-vehicle turning trait (plan 22). 1 = standard taxi (starter and all PVP cars).
     public float VehicleSteerFactor=1;
+    // Steering feel for validation drivers: -1 follows the rule below, 0 casual, 1 sim.
+    public int SteeringFeelOverride=-1;
+    // PvP (local bots, LAN owner prediction and replicas) always uses sim, so every car shares one
+    // physics model. In single play the local driver uses the device preference; automated
+    // validation and bots stay sim unless a check sets the override.
+    public bool CasualSteering {get{
+        if(PvpSimulationMode.Active||NetworkReplica||NetworkPredicted||business&&business.session&&business.session.simulationMatch)return false;
+        if(SteeringFeelOverride>=0)return SteeringFeelOverride==DrivingSettings.Casual;
+        return !automated&&DrivingSettings.Current.CasualSteering;
+    }}
     public AssistedDriveController assistance;public BusinessProgress business;
     float throttle,steer,motorDemand; bool brake; Vector3 spawn; Quaternion spawnRotation;
     readonly DriverPedalIntent pedalIntent=new DriverPedalIntent();
@@ -65,7 +75,7 @@ public class TaxiController : MonoBehaviour {
         if(automated&&autoServiceBrake>0){manual.motor=0;motorDemand=0;manual.brake=Mathf.Max(manual.brake,Mathf.Clamp01(autoServiceBrake));}
         bool assistedSteering=assistance&&assistance.Active&&(!automated||assistance.allowAutomated);
         if(assistance)assistance.Apply(ref steer,ref manual);
-        var demand=assistedSteering?manual:DriveMath.CornerAssist(manual,Speed,steer,driverPedals:driverPedals);
+        var demand=assistedSteering?manual:DriveMath.CornerAssist(manual,Speed,steer,driverPedals:driverPedals,casual:CasualSteering);
         if(business&&business.DrowsyControlsLost){demand.motor=0;demand.brake=0;motorDemand=0;steer=0;}
         bool microsleep=business&&business.DrowsyMicrosleep;
         // Brief eye closure cuts propulsion and holds the last wheel angle.
@@ -88,7 +98,7 @@ public class TaxiController : MonoBehaviour {
         // Only help a human's city turn catch up to their wheel input. Do not
         // steer a route, spin a parked car, override H, or push airborne wheels.
         if(DriveMath.MayAssistManualYaw(grounded,Vector3.Dot(transform.up,Vector3.up),assistedSteering,driverPedals,microsleep))
-            body.AddTorque(Vector3.up*DriveMath.ManualYawAcceleration(Speed,centerAngle,body.angularVelocity.y),ForceMode.Acceleration);
+            body.AddTorque(Vector3.up*DriveMath.ManualYawAcceleration(Speed,centerAngle,body.angularVelocity.y,CasualSteering),ForceMode.Acceleration);
     }
     public DriveMath.Demand ApplyBrakePreference(DriveMath.Demand command,bool emergency,bool pedalPressed){
         if(!automated||AutomatedHumanInput||NetworkPredicted)command.brake=DrivingSettings.BrakeForce(command.brake,automated?ManualBrakeGain:DrivingSettings.Current.braking,emergency,pedalPressed);
@@ -98,7 +108,7 @@ public class TaxiController : MonoBehaviour {
         // A larger turning radius is a smaller maximum wheel angle; factor 1 is exactly the old value.
         if(assisted)return input*DriveMath.SteerAngle(kph)*VehicleSteerFactor;
         float gain=!automated?DrivingSettings.Current.sensitivity:AutomatedHumanInput||NetworkPredicted?ManualSteeringGain:1;
-        return DrivingSettings.Angle(input,kph,gain)*VehicleSteerFactor;
+        return DrivingSettings.Angle(input,kph,gain,CasualSteering)*VehicleSteerFactor;
     }
     public void ClearPredictedPedals(){steer=throttle=motorDemand=autoSteer=autoThrottle=autoServiceBrake=0;brake=autoBrake=true;}
     public int ResetEpoch {get;private set;}

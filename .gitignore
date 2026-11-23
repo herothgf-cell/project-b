@@ -36,6 +36,9 @@ unity/**/Assets/Resources/eungye-osm-supplement.json.meta
 # Generated copy of the versioned project map and local atomic-save companions.
 unity/**/Assets/Resources/eungye-project-map.json
 unity/**/Assets/Resources/eungye-project-map.json.meta
+unity/**/Assets/Resources/eungye-project-map.bytes
+unity/**/Assets/Resources/eungye-project-map.bytes.meta
+unity/**/Assets/BuildExcludedResources~/
 config/maps/project/*.bak
 config/maps/project/*.lock
 

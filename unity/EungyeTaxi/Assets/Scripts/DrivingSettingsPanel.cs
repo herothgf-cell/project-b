@@ -5,10 +5,10 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
  public bool IsOpen {get;private set;}
  public DrivingSettings Draft {get;private set;}
  public bool FollowingDraft {get;private set;}
- public RainSettings WeatherDraft {get;private set;} RainSettings openedWeather;public bool WeatherTab,DisplayTab,DevTab,SoundTab;public string Error {get;private set;}
+ public RainSettings WeatherDraft {get;private set;} RainSettings openedWeather;public bool WeatherTab,DisplayTab,DevTab,SoundTab,FeelTab;public string Error {get;private set;}
  public string PreferenceKey=DrivingSettings.Key;
  public static DrivingSettingsPanel For(DriveSession session){var panel=session.GetComponent<DrivingSettingsPanel>();return panel?panel:session.gameObject.AddComponent<DrivingSettingsPanel>();}
- public void Open(){Draft=(PreferenceKey==DrivingSettings.Key?DrivingSettings.Current:DrivingSettings.Load(PreferenceKey)).Copy();var owner=GetComponent<DriveSession>();FollowingDraft=owner&&owner.traffic&&owner.traffic.mitOptions.Enabled;WeatherDraft=RainSettings.Capture();openedWeather=WeatherDraft.Copy();Error="";SoundTab=WeatherTab=DisplayTab=DevTab=false;IsOpen=true;}
+ public void Open(){Draft=(PreferenceKey==DrivingSettings.Key?DrivingSettings.Current:DrivingSettings.Load(PreferenceKey)).Copy();var owner=GetComponent<DriveSession>();FollowingDraft=owner&&owner.traffic&&owner.traffic.mitOptions.Enabled;WeatherDraft=RainSettings.Capture();openedWeather=WeatherDraft.Copy();Error="";FeelTab=SoundTab=WeatherTab=DisplayTab=DevTab=false;IsOpen=true;}
  public DevRoadOverview RoadOverview {get{return GetComponent<DevRoadOverview>();}}
  public void OpenRoadOverview(){var owner=GetComponent<DriveSession>();if(!IsOpen||!owner||!owner.world)return;var view=RoadOverview;if(!view)view=gameObject.AddComponent<DevRoadOverview>();view.Open(owner);}
  public void Cancel(){if(RoadOverview)RoadOverview.Close();IsOpen=false;Draft=null;WeatherDraft=null;openedWeather=null;}
@@ -17,13 +17,16 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
   if(!IsOpen||DevTab)return;
   if(SoundTab){
    Draft.engineSound=Draft.indicatorSound=Draft.hornSound=Draft.rainSound=true;
+  }else if(FeelTab){
+   Draft.steeringFeel=DrivingSettings.Casual;Draft.speedFov=Draft.steerLook=Draft.brakeDip=Draft.bodyLean=1;
   }else if(WeatherTab){
    if(RainSettingsRuntime.CanEdit(GetComponent<DriveSession>()))WeatherDraft=new RainSettings();
   }else if(DisplayTab){
    Draft.radioSubtitles=DrivingSettings.DefaultRadioSubtitles;
    Draft.pvpNightLighting=DrivingSettings.DefaultPvpNightLighting;
   }else{
-   Draft=new DrivingSettings{engineSound=Draft.engineSound,indicatorSound=Draft.indicatorSound,hornSound=Draft.hornSound,rainSound=Draft.rainSound,radioSubtitles=Draft.radioSubtitles,pvpNightLighting=Draft.pvpNightLighting};
+   Draft=new DrivingSettings{engineSound=Draft.engineSound,indicatorSound=Draft.indicatorSound,hornSound=Draft.hornSound,rainSound=Draft.rainSound,radioSubtitles=Draft.radioSubtitles,pvpNightLighting=Draft.pvpNightLighting,
+    steeringFeel=Draft.steeringFeel,speedFov=Draft.speedFov,steerLook=Draft.steerLook,brakeDip=Draft.brakeDip,bodyLean=Draft.bodyLean};
    FollowingDraft=true;
   }
  }
@@ -51,6 +54,20 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
   GUI.Label(new Rect(30,y+43,409,42),hint,hintStyle);
   if(GUI.Button(new Rect(452,y+27,138,40),enabled?"켜짐":"꺼짐",enabled?CasualUI.Action(17):KoreanText.Button(17)))enabled=!enabled;
   return enabled;
+ }
+ public void SetSteeringFeel(int feel){if(IsOpen&&Draft!=null&&(feel==DrivingSettings.Casual||feel==DrivingSettings.Sim))Draft.steeringFeel=feel;}
+ void DrawFeelTab(){
+  CasualUI.RoundedFill(new Rect(18,121,584,96),CasualUI.Soft);
+  GUI.Label(new Rect(30,127,560,28),"운전 감각",Label(19,true));
+  var hint=Label(14);hint.wordWrap=true;
+  GUI.Label(new Rect(30,155,300,58),Draft.CasualSteering?"캐주얼 · 40~70km/h 차선 변경이 빠르고 80km/h까지 회전을 도와요":"시뮬 · 기존 r50 조향 그대로, 고속일수록 둔해요",hint);
+  if(GUI.Button(new Rect(338,150,122,42),"캐주얼",Draft.CasualSteering?CasualUI.Action(17):KoreanText.Button(17)))SetSteeringFeel(DrivingSettings.Casual);
+  if(GUI.Button(new Rect(468,150,122,42),"시뮬",!Draft.CasualSteering?CasualUI.Action(17):KoreanText.Button(17)))SetSteeringFeel(DrivingSettings.Sim);
+  Draft.speedFov=Row(226,"속도감 시야","빠를수록 화면이 조금 넓어져요 · 0%는 끔",Draft.speedFov,0,1);
+  Draft.steerLook=Row(310,"조향 방향 미리 보기","꺾는 쪽으로 카메라가 살짝 먼저 돌아요 · V로 켜고 끄기",Draft.steerLook,0,1);
+  Draft.brakeDip=Row(394,"제동 쏠림","세게 감속하면 시선이 앞으로 숙여져요",Draft.brakeDip,0,1);
+  Draft.bodyLean=Row(478,"차체 기울기","선회·제동 때 차체가 기울어 보여요 · 물리와 승차감 판정은 그대로",Draft.bodyLean,0,1);
+  GUI.Label(new Rect(28,566,562,24),"PvP에서는 모든 차가 시뮬 조향을 씁니다 · 화면 연출은 이 기기에만 적용",Label(14));
  }
  void DrawDisplayTab(){
   Draft.radioSubtitles=DisplayRow(124,"은계 FM 라디오 자막","은계 싱글 영업 중 화면 하단에 동네 소식과 교통 정보를 표시합니다.",Draft.radioSubtitles);
@@ -84,19 +101,21 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
   GUI.matrix=Matrix4x4.TRS(new Vector3(bounds.x,bounds.y,0),Quaternion.identity,new Vector3(scale,scale,1));
   CasualUI.Panel(new Rect(0,0,620,700));
   CasualUI.Header(new Rect(18,10,584,38),"설정",13);
-  bool driveTab=!WeatherTab&&!DisplayTab&&!DevTab&&!SoundTab;
-  if(GUI.Button(new Rect(28,54,107,36),"운전",driveTab?CasualUI.Action(16):KoreanText.Button(16)))WeatherTab=DisplayTab=DevTab=SoundTab=false;
-  if(GUI.Button(new Rect(141,54,107,36),"날씨",WeatherTab?CasualUI.Action(16):KoreanText.Button(16))){WeatherTab=true;DisplayTab=DevTab=SoundTab=false;}
-  if(GUI.Button(new Rect(254,54,107,36),"표시",DisplayTab?CasualUI.Action(16):KoreanText.Button(16))){DisplayTab=true;WeatherTab=DevTab=SoundTab=false;}
-  if(GUI.Button(new Rect(367,54,107,36),"소리",SoundTab?CasualUI.Action(16):KoreanText.Button(16))){SoundTab=true;WeatherTab=DisplayTab=DevTab=false;}
-  if(GUI.Button(new Rect(480,54,110,36),"개발용",DevTab?CasualUI.Action(16):KoreanText.Button(16))){DevTab=true;WeatherTab=DisplayTab=SoundTab=false;}
-  GUI.Label(new Rect(28,94,562,23),SoundTab?"이 기기의 효과음 · 적용을 누르면 저장됩니다":DevTab?"개발·테스트 전용 · 정식 플레이 규칙을 건너뜁니다":DisplayTab?"이 기기에만 적용되는 화면 표시 설정":WeatherTab?"적용하면 현재 운행에 반영 · 확률 미끄러짐은 잠금":"조절 후 적용 · 취소하면 현재 설정을 유지해요",Label(14));
+  bool driveTab=!WeatherTab&&!DisplayTab&&!DevTab&&!SoundTab&&!FeelTab;
+  if(GUI.Button(new Rect(28,54,89,36),"운전",driveTab?CasualUI.Action(16):KoreanText.Button(16)))WeatherTab=DisplayTab=DevTab=SoundTab=FeelTab=false;
+  if(GUI.Button(new Rect(122,54,89,36),"감각",FeelTab?CasualUI.Action(16):KoreanText.Button(16))){FeelTab=true;WeatherTab=DisplayTab=DevTab=SoundTab=false;}
+  if(GUI.Button(new Rect(216,54,89,36),"날씨",WeatherTab?CasualUI.Action(16):KoreanText.Button(16))){WeatherTab=true;DisplayTab=DevTab=SoundTab=FeelTab=false;}
+  if(GUI.Button(new Rect(310,54,89,36),"표시",DisplayTab?CasualUI.Action(16):KoreanText.Button(16))){DisplayTab=true;WeatherTab=DevTab=SoundTab=FeelTab=false;}
+  if(GUI.Button(new Rect(404,54,89,36),"소리",SoundTab?CasualUI.Action(16):KoreanText.Button(16))){SoundTab=true;WeatherTab=DisplayTab=DevTab=FeelTab=false;}
+  if(GUI.Button(new Rect(498,54,92,36),"개발용",DevTab?CasualUI.Action(16):KoreanText.Button(16))){DevTab=true;WeatherTab=DisplayTab=SoundTab=FeelTab=false;}
+  GUI.Label(new Rect(28,94,562,23),FeelTab?"운전 감각은 싱글 영업에 적용 · 연출은 0%로 끌 수 있어요":SoundTab?"이 기기의 효과음 · 적용을 누르면 저장됩니다":DevTab?"개발·테스트 전용 · 정식 플레이 규칙을 건너뜁니다":DisplayTab?"이 기기에만 적용되는 화면 표시 설정":WeatherTab?"적용하면 현재 운행에 반영 · 확률 미끄러짐은 잠금":"조절 후 적용 · 취소하면 현재 설정을 유지해요",Label(14));
   if(SoundTab){
    Draft.engineSound=DisplayRow(124,"주행음","가속하면 높아지고 속도가 줄면 낮아지는 엔진 소리",Draft.engineSound);
    Draft.indicatorSound=DisplayRow(232,"깜빡이","방향지시등·비상등의 점멸에 맞춘 딸깍 소리",Draft.indicatorSound);
    Draft.hornSound=DisplayRow(340,"경적","Y 또는 게임패드 버튼 3을 눌러 빵빵",Draft.hornSound);
    Draft.rainSound=DisplayRow(448,"빗소리","비의 강도에 따른 차 지붕의 빗방울 소리",Draft.rainSound);
-  }else if(DevTab)DrawDevTab();
+  }else if(FeelTab)DrawFeelTab();
+  else if(DevTab)DrawDevTab();
   else if(DisplayTab)DrawDisplayTab();
   else if(!WeatherTab){
    Draft.sensitivity=Row(118,"조향 민감도 · 회전량","50~150% · 높이면 더 꺾여요. 좁은 코너는 감속하세요",Draft.sensitivity,.5f,1.5f);
@@ -108,9 +127,9 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
    FollowingDraft=GUI.Toggle(new Rect(28,540,562,30),FollowingDraft,"앞차 안전 추종 보완 · "+(FollowingDraft?"켜짐":"꺼짐"),KoreanText.Button(17));GUI.enabled=oldEnabled;
    GUI.enabled=oldEnabled&&owner&&!owner.simulationMatch;
    Draft.cabinAssist=GUI.Toggle(new Rect(28,571,562,28),Draft.cabinAssist,"차내 조작 자동 보조 · 첫 3일",KoreanText.Button(15));GUI.enabled=oldEnabled;
-   if(GUI.Button(new Rect(28,604,180,32),"조향: 부드럽게",KoreanText.Button(15)))SteeringPreset(-1);
-   if(GUI.Button(new Rect(218,604,180,32),"조향: 표준",KoreanText.Button(15)))SteeringPreset(0);
-   if(GUI.Button(new Rect(408,604,180,32),"조향: 빠르게",KoreanText.Button(15)))SteeringPreset(1);
+   if(GUI.Button(new Rect(28,604,180,32),"입력: 부드럽게",KoreanText.Button(15)))SteeringPreset(-1);
+   if(GUI.Button(new Rect(218,604,180,32),"입력: 표준",KoreanText.Button(15)))SteeringPreset(0);
+   if(GUI.Button(new Rect(408,604,180,32),"입력: 빠르게",KoreanText.Button(15)))SteeringPreset(1);
   }else{
    bool editable=RainSettingsRuntime.CanEdit(GetComponent<DriveSession>()),wasEnabled=GUI.enabled;if(!editable){WeatherDraft=RainSettings.Capture();openedWeather=WeatherDraft.Copy();}GUI.enabled=wasEnabled&&editable;
    var b=GetComponent<DriveSession>().business;

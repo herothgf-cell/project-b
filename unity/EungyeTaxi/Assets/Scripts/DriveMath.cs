@@ -2,6 +2,29 @@ using System;
 public static class DriveMath {
     public const float ParkingSteerAngle=42f;
     static readonly float CruiseAngle=SteerAngle(60);
+    // Personal steering feel (08 chapter 1). Sim is the r50 tuning, unchanged. Casual raises the
+    // lateral-acceleration budget to 8 m/s2 up to 70 km/h (wheel limit and yaw assist), keeps the
+    // yaw assist to 80 km/h, and blends back to the sim 5 m/s2 limit by 85 km/h.
+    public const float SimLateral=5f,CasualLateral=8f;
+    public static float CasualLateralBudget(float speedKph){float t=Math.Max(0,Math.Min(1,(Math.Abs(speedKph)-70)/15));t=t*t*(3-2*t);return CasualLateral+(SimLateral-CasualLateral)*t;}
+    static float LateralAngle(float lateral,float speedKph){float speed=Math.Abs(speedKph)/3.6f;return (float)(Math.Atan(lateral*2.6f/Math.Max(.1f,speed*speed))*180/Math.PI);}
+    public static float ManualSteerAngle(float speedKph,bool casual){
+        float sim=ManualSteerAngle(speedKph);
+        return casual?Math.Max(sim,Math.Min(ParkingSteerAngle,LateralAngle(CasualLateralBudget(speedKph),speedKph))):sim;
+    }
+    public static float ManualYawAcceleration(float speedMs,float centerAngle,float yawRate,bool casual){
+        if(!casual)return ManualYawAcceleration(speedMs,centerAngle,yawRate);
+        float speed=Math.Abs(speedMs),kph=speed*3.6f;
+        if(speed<.5f||kph>=80||Math.Abs(centerAngle)<.1f)return 0;
+        float lateral=CasualLateralBudget(kph);
+        float limit=1.4f+(Math.Min(1.4f,lateral/speed)-1.4f)*Math.Max(0,Math.Min(1,(kph-30)/10));
+        float target=Math.Max(-limit,Math.Min(limit,(float)(speedMs/2.6f*Math.Tan(centerAngle*Math.PI/180))));
+        float sign=Math.Sign(target),deficit=Math.Abs(target)-yawRate*sign;
+        if(deficit<=0)return 0;
+        float gain=kph<=30?4.5f*Math.Max(0,Math.Min(1,(40-kph)/20)):
+            kph<=50?2.25f-(kph-30)*(1.45f/20):kph<=70?.8f:.8f*(80-kph)/10;
+        return sign*Math.Min(5.2f,deficit*gain);
+    }
     public static float ManualSteerAngle(float speedKph) {
         float speed=Math.Abs(speedKph);
         if(speed>=60)return SteerAngle(speed);
@@ -54,14 +77,14 @@ public static class DriveMath {
         double angle=Math.Min(1,Math.Abs(steering))*ParkingSteerAngle*Math.PI/180;
         return (float)Math.Sqrt(5*2.6/Math.Max(.001,Math.Tan(angle)));
     }
-    public static Demand CornerAssist(Demand demand,float speedMs,float steering,bool physicalSteering=false,bool driverPedals=false) {
+    public static Demand CornerAssist(Demand demand,float speedMs,float steering,bool physicalSteering=false,bool driverPedals=false,bool casual=false) {
         // At intersection speeds the driver chooses the pace. Blend the existing
         // correction back in over 30–45 km/h so crossing 30 never cuts the motor.
         float weight=driverPedals?Math.Max(0,Math.Min(1,(speedMs-30f/3.6f)/(15f/3.6f))):1;
         if(weight==0)return demand;
         // Both control modes normalize input against their speed-dependent wheel limit.
         // Use the same physical angle as TaxiController, not a 42-degree parking turn.
-        steering*=(physicalSteering?SteerAngle(speedMs*3.6f):ManualSteerAngle(speedMs*3.6f))/ParkingSteerAngle;
+        steering*=(physicalSteering?SteerAngle(speedMs*3.6f):ManualSteerAngle(speedMs*3.6f,casual))/ParkingSteerAngle;
         // Keep the existing lateral-grip limit, but stop accelerating away from a tight turn.
         if(speedMs<=.5f||Math.Abs(steering)<.2f)return demand;
         float target=CornerSpeed(steering);

@@ -40,7 +40,25 @@ public static class DrivingSettingsChecks {
    Check(a.WheelCenterAngle(.5f,20,true)==.5f*DriveMath.SteerAngle(20),"H ignores personal gain");
    PvpNativeInputQueue.Apply(a,null,true,.02f);Check(a.autoSteer==0&&a.autoBrake,"missing controls safely brake");
   }finally{UnityEngine.Object.DestroyImmediate(root);}
-  Check(PvpNativeLan.Protocol=="native-city-lan-v23","incompatible authority contracts rejected");
+  Check(PvpNativeLan.Protocol=="native-city-lan-v24","incompatible authority contracts rejected");
+  // 08 chapter 1 steering feel: new devices start casual, preferences saved before the field stay sim.
+  string feelKey="driving.feel.test."+Guid.NewGuid();
+  try{
+   Check(DrivingSettings.Load(feelKey).steeringFeel==DrivingSettings.Casual,"device without preferences starts casual");
+   PlayerPrefs.SetString(feelKey,"{\"sensitivity\":1.1,\"braking\":0.9}");Check(DrivingSettings.Load(feelKey).steeringFeel==DrivingSettings.Sim,"older saved preferences keep sim");
+   var saved=new DrivingSettings{steeringFeel=DrivingSettings.Sim,speedFov=.3f,steerLook=0,brakeDip=2,bodyLean=float.NaN};saved.Save(feelKey);var loaded=DrivingSettings.Load(feelKey);
+   Check(loaded.steeringFeel==DrivingSettings.Sim&&loaded.speedFov==.3f&&loaded.steerLook==0&&loaded.brakeDip==1&&loaded.bodyLean==1,"feel and effect strengths persist within 0-1");
+   Check(new DrivingSettings{steeringFeel=7}.Normalize().steeringFeel==DrivingSettings.Casual,"unknown feel falls back to casual");
+   Check(loaded.Copy().speedFov==.3f&&loaded.Copy().steeringFeel==DrivingSettings.Sim,"copy keeps feel settings");
+  }finally{PlayerPrefs.DeleteKey(feelKey);PlayerPrefs.Save();}
+  var feelRoot=new GameObject("steering feel fixture");try{
+   var taxi=feelRoot.AddComponent<TaxiController>();taxi.body=feelRoot.AddComponent<Rigidbody>();taxi.automated=true;taxi.AutomatedHumanInput=true;
+   Check(!taxi.CasualSteering,"automated validation defaults to sim");
+   taxi.SteeringFeelOverride=DrivingSettings.Casual;Check(taxi.CasualSteering&&taxi.WheelCenterAngle(1,65,false)==DrivingSettings.Angle(1,65,1,true),"casual override reaches the wheel");
+   Check(taxi.WheelCenterAngle(1,65,false)>DrivingSettings.Angle(1,65,1,false),"casual turns more than sim at 65 km/h");
+   taxi.NetworkPredicted=true;Check(!taxi.CasualSteering,"LAN prediction is always sim");taxi.NetworkPredicted=false;
+   taxi.NetworkReplica=true;Check(!taxi.CasualSteering,"LAN replica is always sim");taxi.NetworkReplica=false;
+  }finally{UnityEngine.Object.DestroyImmediate(feelRoot);}
   Debug.Log("DRIVING_SETTINGS_OK checks="+checks);
  }
  public static void Menus(){
