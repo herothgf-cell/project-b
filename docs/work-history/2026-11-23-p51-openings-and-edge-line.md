@@ -46,13 +46,16 @@
 | 출하 빌드 | `PrototypeBuild.BuildHybrid` 종료 0, `project-map-build.json` contentHash `3efe1faf…` |
 | 화면(출하 실행본, 위·운전자 시점) | [r51 위](../ui/2026-11-23-p51-openings/r51-before-top.jpg) · [r52 위](../ui/2026-11-23-p51-openings/r52-after-top.jpg) · [r51 생성 노면선](../ui/2026-11-23-p51-openings/r51-before-generated-paint.jpg) · [r52 생성 노면선](../ui/2026-11-23-p51-openings/r52-after-generated-paint.jpg) · [운전자 A](../ui/2026-11-23-p51-openings/r52-after-driver-a.jpg) · [운전자 B](../ui/2026-11-23-p51-openings/r52-after-driver-b.jpg). 북쪽 보도 위 흰 선과 남동쪽 짧은 선이 없어졌다. 남쪽 보도는 x≈659까지, 북쪽 보도는 x≈675부터 이어진다. |
 
-배포 manifest 갱신·검증 결과는 같은 날 배포 커밋 기록([LATEST](LATEST.md))에 적는다.
+| 배포 manifest | 소스 커밋 `e3de6615`으로 `distribution/EungyeTaxi-build-manifest.json`을 갱신했다(145파일, 158,242,110바이트, 바뀐 파일 7개). Python으로 크기·SHA256 전수 대조: 146항목(지도 포함) 불일치 0·누락 0, 필수 지도 입력 6항목 불일치 0. PowerShell 7이 없어 `update_distribution_manifest.ps1`은 실행하지 못했다. |
+
+**빌드 크기 차이(원인 미확인)**: `resources.assets`가 46,935,688 → 54,382,288바이트로 커졌다. 다른 PC에서 만든 이전 출하 빌드 8번은 모두 약 46.9MB였다. `Assets/Resources` 원본과 .meta는 r51 출하(`2d68c664`) 이후 바뀌지 않았다. 따라서 이 PC의 `Library` 가져오기 결과 차이로 추정한다. 기능 검사와 화면에는 차이가 없었다. 다른 PC에서 다시 빌드하면 크기가 돌아오는지 확인할 필요가 있다.
 
 ## 남은 것
 
 - 직접 운전 확인은 하지 않았다. 반경 6.5m 우회전의 체감, 일반 차량이 정문으로 들어갈 때 보도 턱에 닿는지, 교차로를 지나는 긴 직진 연결에서 신호 대기와 진행이 자연스러운지를 봐야 한다.
 - x 685, z 75에 가장자리선 한 획(약 1m)이 남는다. 동행 출발 차로 첫 샘플이다. 위 화면에서는 보이지 않지만 가까이서 보이는지 수동으로 확인한다.
 - 보행 신호 등화는 네모 그대로다(r51 남은 항목).
+- `resources.assets` 7.4MB 증가 원인 확인(위 표 아래 설명).
 - 이 PC에는 PowerShell 7이 없다. `check_workspace.ps1`·`update_distribution_manifest.ps1`은 Windows PowerShell 5.1에서 문법 차이로 실패한다. 그래서 manifest 값은 Python으로 같은 규칙(경로·바이트·SHA256)에 따라 계산·대조했다.
 
 ## 재현
