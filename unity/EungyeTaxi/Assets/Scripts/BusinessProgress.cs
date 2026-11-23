@@ -440,9 +440,12 @@ public class BusinessProgress : MonoBehaviour {
   // r48 (2026-11-20) repaints Suin-ro lane lines only; driving lanes are unchanged.
   const string reviewedR48Hash="ac84fe3eae6e7985a77de9dd5becbd6f56811707bfe66ff2a9e6e1497d2be5ac";
   const string reviewedR49Hash="9985476e9216d487885839e8da42aa81d9651c7266fce8d779a09af560151390";
-  int from=0,to=0;for(int revision=14;revision<=50;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>50)return;
-  string reviewedHash=to==50?"ff4b47dc6b0208a472e86dcff375f1966f54bd22a95d8802eec9915dcde22137":to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
+  const string reviewedR50Hash="ff4b47dc6b0208a472e86dcff375f1966f54bd22a95d8802eec9915dcde22137";
+  // r51 (2026-11-23) moves the P51 junction (Hanyang/Hoban gates) to its aerial position.
+  const string reviewedR51Hash="46bf8e43cc37a1ee46d4a30e4b7d9ae36168479ec5fdc6677e9f534216b110df";
+  int from=0,to=0;for(int revision=14;revision<=51;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>51)return;
+  string reviewedHash=to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   ApplyReviewedEungyeCheckpointMigration(live,from,to);
  }
@@ -487,7 +490,8 @@ public class BusinessProgress : MonoBehaviour {
    junction=="J7841_867"||junction=="J5076_2580"||junction=="J8066_6364")||
    from<43&&to>=43&&(junction=="J1927_5181"||junction=="J8066_6364"||junction=="J7841_867"||
    junction=="J7876_1656"||junction=="J5852_16963"||junction=="J7254_14780")||from<44&&to>=44&&junction=="J1927_5181"||from<45&&to>=45&&junction=="J5692_14220"||from<46&&to>=46&&junction=="J7841_867"||
-   from<47&&to>=47&&(junction=="J7841_867"||junction=="J7876_1656"||junction=="J6481_3341"||junction=="J6480_2573"||junction=="J7973_3744");
+   from<47&&to>=47&&(junction=="J7841_867"||junction=="J7876_1656"||junction=="J6481_3341"||junction=="J6480_2573"||junction=="J7973_3744")||
+   from<51&&to>=51&&junction=="reviewed:r47:P51";
  }
  static void ValidateOffer(JobOffer o,int count){if(o!=null&&(o.pickup<0||o.pickup>=count||o.drop<0||o.drop>=count||o.fare<0))throw new Exception("Invalid live stop reference");}
  static bool Valid(float value){return !float.IsNaN(value)&&!float.IsInfinity(value);}

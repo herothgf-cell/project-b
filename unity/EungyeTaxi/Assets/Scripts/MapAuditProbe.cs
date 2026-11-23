@@ -41,6 +41,8 @@ public sealed class MapAuditProbe : MonoBehaviour {
   var junctions=session.traffic.junctions.Where(j=>j!=null).ToList();
   string layerList=Arg("-mapAuditLayers",null);
   if(layerList!=null){Layers(junctions,layerList.Split('|'));Finish(null);yield break;}
+  string dump=Arg("-mapAuditDump",null);
+  if(dump!=null){Dump(dump);Finish(null);yield break;}
   int limit=int.Parse(Arg("-mapAuditLimit","999")),first=int.Parse(Arg("-mapAuditStart","1"));float settle=float.Parse(Arg("-mapAuditSettle","25")),observe=float.Parse(Arg("-mapAuditObserve","35"));
   int pedTotal=session.ambientPedestrians!=null?session.ambientPedestrians.actors.Count:-1,pedActive=session.ambientPedestrians!=null?session.ambientPedestrians.actors.Count(p=>p&&p.gameObject.activeInHierarchy):-1;
   report.AppendLine("MAP_AUDIT pedestrianActors="+pedTotal+" active="+pedActive+" junctions="+junctions.Count+" settle="+settle+" observe="+observe+" population="+session.traffic.cars.Count+" observationOnly=true humanPlay=false");
@@ -108,6 +110,14 @@ public sealed class MapAuditProbe : MonoBehaviour {
 
  // Paint-layer diagnosis: the same top view with one paint source visible at a time.
  static string Layer(Renderer r){var t=r.transform;while(t!=null){var n=t.name;if(n.StartsWith("원본 노면선"))return "source";if(n=="White road paint"||n=="Yellow centre paint")return "generated";if(n.StartsWith("사용자 시설"))return "facility";t=t.parent;}return null;}
+ // "-mapAuditDump x,z,r": list every renderer within r metres (plan distance) with its hierarchy path.
+ void Dump(string spec){
+  var v=spec.Split(',').Select(t=>float.Parse(t,System.Globalization.CultureInfo.InvariantCulture)).ToArray();var c=new Vector3(v[0],0,v[1]);
+  foreach(var r in FindObjectsOfType<Renderer>()){var p=r.bounds.center;if(new Vector2(p.x-c.x,p.z-c.z).magnitude>v[2])continue;
+   var path=r.name;for(var t=r.transform.parent;t;t=t.parent)path=t.name+"/"+path;
+   report.AppendLine("OBJECT "+path+" center="+p.ToString("F1")+" size="+r.bounds.size.ToString("F1"));}
+  File.WriteAllText(Path.Combine(output,"map-audit.txt"),report.ToString());
+ }
  void Layers(List<TrafficJunction> junctions,string[] names){
   var groups=FindObjectsOfType<Renderer>().Select(r=>new{r,layer=Layer(r)}).Where(x=>x.layer!=null).ToList();
   foreach(var c in session.traffic.cars)if(c)foreach(var r in c.GetComponentsInChildren<Renderer>())r.enabled=false;
@@ -121,6 +131,9 @@ public sealed class MapAuditProbe : MonoBehaviour {
     CaptureLayer("layer-"+tag+"-"+mode);
    }
    foreach(var g in groups)if(g.r)g.r.enabled=true;
+   // Driver-height view along the junction axis (signal heads and lens shapes).
+   var axis=j.direction.sqrMagnitude>.1f?j.direction.normalized:Vector3.forward;
+   foreach(int side in new[]{1,-1}){lens.fieldOfView=50;lens.transform.position=j.center-axis*side*28+Vector3.up*4;lens.transform.LookAt(j.center+Vector3.up*3.5f);CaptureLayer("layer-"+tag+"-driver"+(side>0?"A":"B"));}
    if(name=="J10580_1415"){
     var target=j.center+Vector3.up*2.5f;
     lens.transform.position=target+new Vector3(-33,11,-32);
