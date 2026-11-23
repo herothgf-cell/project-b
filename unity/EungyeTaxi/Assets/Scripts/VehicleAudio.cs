@@ -4,11 +4,14 @@ using UnityEngine;
 // and wheel speed drive separate recorded layers.
 public sealed class VehicleAudio : MonoBehaviour {
  DriveSession session;
- AudioSource engine,road,indicator,horn,rain;
+ AudioSource engine,road,indicator,horn,rain,loadLayer,tyre,wind;
+ float lastSpeed,contactUntil;int lastCollisions=-1;
  AudioClip indicatorOn,indicatorOff;
  bool lampWasLit;
  int gear;float rpm=IdleRpm,load;
 
+ void OnDisable(){XInputRumble.Stop();}
+ void OnApplicationFocus(bool focus){if(!focus)XInputRumble.Stop();}
  public void Initialize(DriveSession owner){
   session=owner;
   engine=Source("Engine",true);
@@ -18,6 +21,10 @@ public sealed class VehicleAudio : MonoBehaviour {
   indicatorOff=LoadClip("IndicatorOff");
   horn=Source("Horn",false);
   rain=Source("Rain",true);
+  // 08 chapter 1 extra layers, re-pitched from the existing recordings (no new audio files).
+  // On a child object so the primary engine/road sources stay unique on the session (checks look them up).
+  var extra=new GameObject("Extra drive layers");extra.transform.SetParent(transform,false);
+  loadLayer=ExtraSource(extra,"Engine");tyre=ExtraSource(extra,"Road");wind=ExtraSource(extra,"Road");
  }
  AudioSource Source(string sound,bool loop){
   var source=gameObject.AddComponent<AudioSource>();
@@ -28,6 +35,7 @@ public sealed class VehicleAudio : MonoBehaviour {
   source.clip=LoadClip(sound);
   return source;
  }
+ static AudioSource ExtraSource(GameObject host,string sound){var source=host.AddComponent<AudioSource>();source.playOnAwake=false;source.volume=0;source.loop=true;source.spatialBlend=0;source.clip=LoadClip(sound);return source;}
  public static AudioClip LoadClip(string sound){
   return Resources.Load<AudioClip>("Audio/Taxi/"+sound);
  }
@@ -103,6 +111,18 @@ public sealed class VehicleAudio : MonoBehaviour {
   MotionLoop(engine,driveSound,level,pitch,blend);
   // Tyre and wind noise grows with speed and dominates the cabin above town speeds.
   MotionLoop(road,driveSound,.62f*speed*speed/(speed*speed+90),1,blend);
+  // Extra layers and pad vibration: Eungye single only, scaled by the feel tab, ducked under speech.
+  bool single=!session.simulationMatch&&!PvpSimulationMode.Active;
+  float extra=driveSound&&single?settings.extraSound*(DriveFeelAudio.SpeechOnScreen(session)?DriveFeelAudio.Duck:1):0;
+  float rev=Mathf.Clamp01((rpm-IdleRpm)/2400),slip=0;
+  foreach(var wheel in taxi.wheels){if(wheel&&wheel.GetGroundHit(out WheelHit hit))slip=Mathf.Max(slip,Mathf.Abs(hit.sidewaysSlip),Mathf.Abs(hit.forwardSlip)*.7f);}
+  MotionLoop(loadLayer,extra>0,DriveFeelAudio.LoadLevel(load,rev)*extra,DriveFeelAudio.LoadPitch(rev),blend);
+  MotionLoop(tyre,extra>0,DriveFeelAudio.TyreLevel(slip,speed)*extra,1.9f,blend);
+  MotionLoop(wind,extra>0,DriveFeelAudio.WindLevel(speed)*extra,DriveFeelAudio.WindPitch(speed),blend);
+  float decel=dt>0?Mathf.Max(0,(lastSpeed-speed)/Mathf.Max(dt,.001f)):0;lastSpeed=speed;
+  int collisions=session.manners?session.manners.collisionEvents:0;if(lastCollisions>=0&&collisions>lastCollisions)contactUntil=Time.unscaledTime+DriveFeelAudio.ContactSeconds;lastCollisions=collisions;
+  if(driving&&single&&settings.rumble>0&&Input.GetJoystickNames().Length>0){DriveFeelAudio.Rumble(speed,decel,Time.unscaledTime<contactUntil,out float low,out float high);XInputRumble.Set(low*settings.rumble,high*settings.rumble);}
+  else XInputRumble.Stop();
   UpdateIndicator(driving&&settings.indicatorSound&&ContentTuning.Flag("display.sound.indicator",true));
   Loop(rain,driving&&settings.rainSound&&ContentTuning.Flag("display.sound.rain",true)?.58f*RainPolicy.Intensity:0);
   if(!driving||!settings.hornSound||!ContentTuning.Flag("display.sound.horn",true)){if(horn.isPlaying)horn.Stop();}

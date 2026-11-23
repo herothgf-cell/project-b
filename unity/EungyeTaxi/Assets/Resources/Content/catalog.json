@@ -12412,6 +12412,279 @@
       "editable": true
     },
     {
+      "id": "feel.duckLevel",
+      "group": "감각 연출",
+      "section": "feel",
+      "title": "추가 주행음 · 대사·자막 중 음량",
+      "type": "number",
+      "defaultValue": "0.45",
+      "min": 0,
+      "max": 1,
+      "unit": "배",
+      "description": "손님 요청 창이나 라디오 자막이 보이는 동안 추가 주행음(엔진 부하·타이어·바람)에 곱합니다.",
+      "affects": [
+        "소리"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DriveFeelAudio",
+      "editable": true
+    },
+    {
+      "id": "feel.load.level",
+      "group": "감각 연출",
+      "section": "feel",
+      "title": "엔진 부하음 · 최대 음량",
+      "type": "number",
+      "defaultValue": "0.16",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "가속 페달을 끝까지 밟고 회전이 높을 때의 음량. 기존 엔진 녹음을 낮게 재생합니다.",
+      "affects": [
+        "소리"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DriveFeelAudio.LoadLevel",
+      "editable": true
+    },
+    {
+      "id": "feel.tyre.slipStart",
+      "group": "감각 연출",
+      "section": "feel",
+      "title": "타이어 한계음 · 시작 미끄러짐",
+      "type": "number",
+      "defaultValue": "0.12",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "바퀴 미끄러짐이 이 값을 넘으면 타이어 소리가 나기 시작합니다.",
+      "affects": [
+        "소리"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DriveFeelAudio.TyreLevel",
+      "editable": true
+    },
+    {
+      "id": "feel.tyre.slipFull",
+      "group": "감각 연출",
+      "section": "feel",
+      "title": "타이어 한계음 · 최대 미끄러짐",
+      "type": "number",
+      "defaultValue": "0.35",
+      "min": 0.02,
+      "max": 2,
+      "unit": "",
+      "description": "이 미끄러짐에서 타이어 소리가 최대가 됩니다.",
+      "affects": [
+        "소리"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DriveFeelAudio.TyreLevel",
+      "editable": true
+    },
+    {
+      "id": "feel.tyre.level",
+      "group": "감각 연출",
+      "section": "feel",
+      "title": "타이어 한계음 · 최대 음량",
+      "type": "number",
+      "defaultValue": "0.22",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "기존 노면 녹음을 높게 재생한 층의 최대 음량.",
+      "affects": [
+        "소리"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DriveFeelAudio.TyreLevel",
+      "editable": true
+    },
+    {
+      "id": "feel.wind.startKmh",
+      "group": "감각 연출",
+      "section": "feel",
+      "title": "바람 소리 · 시작 속도",
+      "type": "number",
+      "defaultValue": "35",
+      "min": 0,
+      "max": 150,
+      "unit": "km/h",
+      "description": "이 속도부터 바람 소리가 커집니다.",
+      "affects": [
+        "소리"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DriveFeelAudio.WindLevel",
+      "editable": true
+    },
+    {
+      "id": "feel.wind.fullKmh",
+      "group": "감각 연출",
+      "section": "feel",
+      "title": "바람 소리 · 최대 속도",
+      "type": "number",
+      "defaultValue": "90",
+      "min": 10,
+      "max": 200,
+      "unit": "km/h",
+      "description": "이 속도에서 바람 소리가 최대가 됩니다.",
+      "affects": [
+        "소리"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DriveFeelAudio.WindLevel",
+      "editable": true
+    },
+    {
+      "id": "feel.wind.level",
+      "group": "감각 연출",
+      "section": "feel",
+      "title": "바람 소리 · 최대 음량",
+      "type": "number",
+      "defaultValue": "0.18",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "기존 노면 녹음을 낮게 재생한 층의 최대 음량.",
+      "affects": [
+        "소리"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DriveFeelAudio.WindLevel",
+      "editable": true
+    },
+    {
+      "id": "feel.rumble.road",
+      "group": "감각 연출",
+      "section": "feel",
+      "title": "패드 진동 · 노면",
+      "type": "number",
+      "defaultValue": "0.08",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "주행 중 저주파 모터 세기(시속 54km 이상에서 최대).",
+      "affects": [
+        "패드 진동"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DriveFeelAudio.Rumble",
+      "editable": true
+    },
+    {
+      "id": "feel.rumble.brakeStart",
+      "group": "감각 연출",
+      "section": "feel",
+      "title": "패드 진동 · 제동 시작 감속",
+      "type": "number",
+      "defaultValue": "2",
+      "min": 0,
+      "max": 10,
+      "unit": "m/s²",
+      "description": "이보다 세게 감속하면 고주파 모터가 떨립니다.",
+      "affects": [
+        "패드 진동"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DriveFeelAudio.Rumble",
+      "editable": true
+    },
+    {
+      "id": "feel.rumble.brakeScale",
+      "group": "감각 연출",
+      "section": "feel",
+      "title": "패드 진동 · 제동 세기",
+      "type": "number",
+      "defaultValue": "0.12",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "시작 감속을 넘는 1m/s²마다 더하는 세기.",
+      "affects": [
+        "패드 진동"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DriveFeelAudio.Rumble",
+      "editable": true
+    },
+    {
+      "id": "feel.rumble.contact",
+      "group": "감각 연출",
+      "section": "feel",
+      "title": "패드 진동 · 접촉",
+      "type": "number",
+      "defaultValue": "0.9",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "충돌 순간 양쪽 모터 세기.",
+      "affects": [
+        "패드 진동"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DriveFeelAudio.Rumble",
+      "editable": true
+    },
+    {
+      "id": "feel.rumble.contactSeconds",
+      "group": "감각 연출",
+      "section": "feel",
+      "title": "패드 진동 · 접촉 길이",
+      "type": "number",
+      "defaultValue": "0.25",
+      "min": 0,
+      "max": 2,
+      "unit": "초",
+      "description": "충돌 진동이 이어지는 시간.",
+      "affects": [
+        "패드 진동"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DriveFeelAudio.ContactSeconds",
+      "editable": true
+    },
+    {
       "id": "display.background.diner",
       "group": "생활 시설",
       "section": "시설 배경",

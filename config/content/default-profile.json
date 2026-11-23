@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "c0e5cc1ca7c27f35c4b69189e69f9a461fd56945825236018787b07084139058",
+  "contentHash": "16c931824385144312b6e4d775f1aee8b11305430fe7e4a77e8c11a13e0d8981",
   "values": [
     {
       "id": "radio.station",
@@ -2111,6 +2111,58 @@
     {
       "id": "mission.precise.bonusPercent",
       "value": "20"
+    },
+    {
+      "id": "feel.duckLevel",
+      "value": "0.45"
+    },
+    {
+      "id": "feel.load.level",
+      "value": "0.16"
+    },
+    {
+      "id": "feel.tyre.slipStart",
+      "value": "0.12"
+    },
+    {
+      "id": "feel.tyre.slipFull",
+      "value": "0.35"
+    },
+    {
+      "id": "feel.tyre.level",
+      "value": "0.22"
+    },
+    {
+      "id": "feel.wind.startKmh",
+      "value": "35"
+    },
+    {
+      "id": "feel.wind.fullKmh",
+      "value": "90"
+    },
+    {
+      "id": "feel.wind.level",
+      "value": "0.18"
+    },
+    {
+      "id": "feel.rumble.road",
+      "value": "0.08"
+    },
+    {
+      "id": "feel.rumble.brakeStart",
+      "value": "2"
+    },
+    {
+      "id": "feel.rumble.brakeScale",
+      "value": "0.12"
+    },
+    {
+      "id": "feel.rumble.contact",
+      "value": "0.9"
+    },
+    {
+      "id": "feel.rumble.contactSeconds",
+      "value": "0.25"
     },
     {
       "id": "display.background.diner",

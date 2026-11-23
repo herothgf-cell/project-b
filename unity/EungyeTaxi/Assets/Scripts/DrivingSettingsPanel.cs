@@ -18,7 +18,7 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
   if(SoundTab){
    Draft.engineSound=Draft.indicatorSound=Draft.hornSound=Draft.rainSound=true;
   }else if(FeelTab){
-   Draft.steeringFeel=DrivingSettings.Casual;Draft.speedFov=Draft.steerLook=Draft.brakeDip=Draft.bodyLean=1;
+   Draft.steeringFeel=DrivingSettings.Casual;Draft.speedFov=Draft.steerLook=Draft.brakeDip=Draft.bodyLean=Draft.extraSound=Draft.rumble=1;
   }else if(WeatherTab){
    if(RainSettingsRuntime.CanEdit(GetComponent<DriveSession>()))WeatherDraft=new RainSettings();
   }else if(DisplayTab){
@@ -26,7 +26,7 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
    Draft.pvpNightLighting=DrivingSettings.DefaultPvpNightLighting;
   }else{
    Draft=new DrivingSettings{engineSound=Draft.engineSound,indicatorSound=Draft.indicatorSound,hornSound=Draft.hornSound,rainSound=Draft.rainSound,radioSubtitles=Draft.radioSubtitles,pvpNightLighting=Draft.pvpNightLighting,
-    steeringFeel=Draft.steeringFeel,speedFov=Draft.speedFov,steerLook=Draft.steerLook,brakeDip=Draft.brakeDip,bodyLean=Draft.bodyLean};
+    steeringFeel=Draft.steeringFeel,speedFov=Draft.speedFov,steerLook=Draft.steerLook,brakeDip=Draft.brakeDip,bodyLean=Draft.bodyLean,extraSound=Draft.extraSound,rumble=Draft.rumble};
    FollowingDraft=true;
   }
  }
@@ -56,6 +56,13 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
   return enabled;
  }
  public void SetSteeringFeel(int feel){if(IsOpen&&Draft!=null&&(feel==DrivingSettings.Casual||feel==DrivingSettings.Sim))Draft.steeringFeel=feel;}
+ // Two-line slider row (title and value, then the slider) so the feel tab fits six strengths.
+ float CompactRow(float y,string title,float value){
+  CasualUI.RoundedFill(new Rect(18,y-2,584,56),CasualUI.Soft);
+  GUI.Label(new Rect(28,y,440,24),title,Label(16,true));
+  var valueStyle=Label(17,true);valueStyle.alignment=TextAnchor.MiddleRight;GUI.Label(new Rect(474,y,116,24),Mathf.RoundToInt(value*100)+"%",valueStyle);
+  return Mathf.Round(GUI.HorizontalSlider(new Rect(30,y+30,558,20),value,0,1)*100)/100;
+ }
  void DrawFeelTab(){
   CasualUI.RoundedFill(new Rect(18,121,584,96),CasualUI.Soft);
   GUI.Label(new Rect(30,127,560,28),"운전 감각",Label(19,true));
@@ -63,11 +70,13 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
   GUI.Label(new Rect(30,155,300,58),Draft.CasualSteering?"캐주얼 · 40~70km/h 차선 변경이 빠르고 80km/h까지 회전을 도와요":"시뮬 · 기존 r50 조향 그대로, 고속일수록 둔해요",hint);
   if(GUI.Button(new Rect(338,150,122,42),"캐주얼",Draft.CasualSteering?CasualUI.Action(17):KoreanText.Button(17)))SetSteeringFeel(DrivingSettings.Casual);
   if(GUI.Button(new Rect(468,150,122,42),"시뮬",!Draft.CasualSteering?CasualUI.Action(17):KoreanText.Button(17)))SetSteeringFeel(DrivingSettings.Sim);
-  Draft.speedFov=Row(226,"속도감 시야","빠를수록 화면이 조금 넓어져요 · 0%는 끔",Draft.speedFov,0,1);
-  Draft.steerLook=Row(310,"조향 방향 미리 보기","꺾는 쪽으로 카메라가 살짝 먼저 돌아요 · V로 켜고 끄기",Draft.steerLook,0,1);
-  Draft.brakeDip=Row(394,"제동 쏠림","세게 감속하면 시선이 앞으로 숙여져요",Draft.brakeDip,0,1);
-  Draft.bodyLean=Row(478,"차체 기울기","선회·제동 때 차체가 기울어 보여요 · 물리와 승차감 판정은 그대로",Draft.bodyLean,0,1);
-  GUI.Label(new Rect(28,566,562,24),"PvP에서는 모든 차가 시뮬 조향을 씁니다 · 화면 연출은 이 기기에만 적용",Label(14));
+  Draft.speedFov=CompactRow(224,"속도감 시야 · 빠를수록 넓게",Draft.speedFov);
+  Draft.steerLook=CompactRow(284,"조향 방향 미리 보기 · V로 켜고 끄기",Draft.steerLook);
+  Draft.brakeDip=CompactRow(344,"제동 쏠림 · 세게 감속하면 숙여짐",Draft.brakeDip);
+  Draft.bodyLean=CompactRow(404,"차체 기울기 · 물리·승차감 판정은 그대로",Draft.bodyLean);
+  Draft.extraSound=CompactRow(464,"추가 주행음 · 엔진 부하·타이어 한계·바람(싱글)",Draft.extraSound);
+  Draft.rumble=CompactRow(524,"패드 진동 · 노면·제동·접촉(싱글, Xbox 계열)",Draft.rumble);
+  GUI.Label(new Rect(28,588,562,40),"PvP는 시뮬 조향 고정 · 연출·소리·진동은 이 기기에만 적용 · 0%는 끔",Label(14));
  }
  void DrawDisplayTab(){
   Draft.radioSubtitles=DisplayRow(124,"은계 FM 라디오 자막","은계 싱글 영업 중 화면 하단에 동네 소식과 교통 정보를 표시합니다.",Draft.radioSubtitles);
