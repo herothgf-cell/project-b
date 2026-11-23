@@ -1,22 +1,18 @@
 {
-  "sourceCommit": "fc0cf1e8211df3a93bbc141197b7c6039497673a",
+  "sourceCommit": "cf419e0f7db0f58c623a844031fed112f0a6f364",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-23",
-  "totalBytes": 150805318.0,
+  "totalBytes": 150806854.0,
   "validation": {
     "build": "PrototypeBuild.BuildHybrid exit 0",
     "workspaceInputIssues": 0,
+    "facilityArtPlayerChecks": 28,
     "homeBasePlayerChecks": 24,
     "chatNoticeCaptureChecks": 9,
     "brightUiChecks": 102,
-    "passengerCareScoreFlowNoticeChecks": 13,
-    "knownPreexistingFailures": [
-      "passengerCareTest dirty roadside refusal",
-      "navTipFeedbackTest western U-turn",
-      "driveFeedbackTest ServiceStops null fixture"
-    ],
+    "manualKeyInput": false,
     "manualDriving": false,
     "fullCampaign": false
   },
@@ -34,7 +30,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "50f0403960366dd9ac17611bfc9fd17130da870da821617fc8a787a51e8caa06"
+      "sha256": "bf46ac03e34415b82ab6752f180cab5fc492031e2eed084d83296e3d24fc56a0"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -58,8 +54,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 3225088,
-      "sha256": "74798331ee04cc29af53ca60d5f4a8cbe8964f7c053ad7f44e61bb42c8310b2a"
+      "bytes": 3226624,
+      "sha256": "e8c9e30b989362ced0f5750d6374c12c6c2996f3b84df3da275050143441270c"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
@@ -564,7 +560,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Plugins/x86_64/lib_burst_generated.dll",
       "bytes": 394240,
-      "sha256": "f60d9a3fc43de20ffe7ceb4dd5040f149e0e6c7a006af9f26999197222561777"
+      "sha256": "cf07755484658213b1d0069b92df557e2fadc6a4cbf1ec7af172c3f93fd9b3e2"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
