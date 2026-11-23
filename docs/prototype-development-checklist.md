@@ -1,7 +1,8 @@
 ## 2026-11-23 채팅형 운행 알림
 
 - [x] 출처별 알림 요소 7종 시안. [시안](ui/2026-11-23-chat-notices/README.md) · [기록](work-history/2026-11-23-chat-notice-mockup.md).
-- [ ] 시안 승인 후 `DriveNotifications` 종류별 표시 구현과 실행본 검사.
+- [x] `DriveNotifications` 종류별 카드·카드 안 버튼·점수 필터·미확인 수. 숙소 24건, 화면 배치 102건. [구현 기록](work-history/2026-11-23-chat-notice-implementation.md).
+- [ ] 수동 주행 가독성과 승객 말풍선 실제 화면 확인.
 
 ## 2026-11-20 은계 동네 가게와 공업사 부품
 
