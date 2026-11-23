@@ -15,3 +15,5 @@ https://freesound.org/people/Brikaro/sounds/855678/
 
 Adaptations use mono excerpts, filtering and level adjustment. Looping tracks
 have crossfaded joins. Indicator clicks and the two horn taps are trimmed.
+On 2026-11-23 the Engine and Road loops were level-smoothed (slow gain riding
+to remove a periodic swell) and their loop joins were re-crossfaded.
