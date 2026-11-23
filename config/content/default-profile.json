@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "2f567264f7f8cebb76003fd3bfd4ca4f42f76234e6c0856c052b9823640ecb3b",
+  "contentHash": "c0e5cc1ca7c27f35c4b69189e69f9a461fd56945825236018787b07084139058",
   "values": [
     {
       "id": "radio.station",
@@ -2079,6 +2079,38 @@
     {
       "id": "lastCall.farMinReturnMetres",
       "value": "1500"
+    },
+    {
+      "id": "mission.enabled",
+      "value": "1"
+    },
+    {
+      "id": "mission.boardChance",
+      "value": "100"
+    },
+    {
+      "id": "mission.express.targetFactor",
+      "value": "1.1"
+    },
+    {
+      "id": "mission.green.count",
+      "value": "3"
+    },
+    {
+      "id": "mission.express.bonusPercent",
+      "value": "30"
+    },
+    {
+      "id": "mission.green.bonusPercent",
+      "value": "25"
+    },
+    {
+      "id": "mission.coffee.bonusPercent",
+      "value": "20"
+    },
+    {
+      "id": "mission.precise.bonusPercent",
+      "value": "20"
     },
     {
       "id": "display.background.diner",

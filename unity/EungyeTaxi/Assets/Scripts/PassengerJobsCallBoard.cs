@@ -39,7 +39,7 @@ public partial class PassengerJobs {
   string kind=IsLastCall(o)?IdleTimeRules.Label(o.variety):CallBoardRules.Label(o.variety);
   string home=IsLastCall(o)&&Finite(HomeReturnMetres(o))?"\n하차 후 덕성프라자까지 약 "+Mathf.RoundToInt(HomeReturnMetres(o))+"m":"";
   string facts="픽업 "+Mathf.RoundToInt(CallPickupMetres(o))+"m · 약 "+RoadNavigation.FormatEta(CallEtaSeconds(o))+(DestinationHidden(o)?"":" · 하차지 수요 "+CallBoardRules.DemandLabel(DropDemandLevel(o)));
-  return head+(kind.Length>0?"["+kind+"]\n":"")+KoreanText.Stop(stops[o.pickup].name)+"\n→ "+drop+"\n"+fare+" · 기한 "+RoadNavigation.FormatEta(o.seconds)+"\n"+facts+home;
+  return head+(kind.Length>0?"["+kind+"]\n":"")+KoreanText.Stop(stops[o.pickup].name)+"\n→ "+drop+"\n"+fare+" · 기한 "+RoadNavigation.FormatEta(o.seconds)+"\n"+facts+home+MissionCardLine(o);
  }
  // Called once per fresh board. Only freshly made ordinary calls change; scenario, reunion and the first
  // home dispatch keep their own rules. Three of the four characters rotate with the board seed.

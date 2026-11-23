@@ -152,6 +152,8 @@ public class CampaignAccount {
  }
  public bool Fare(string trip,int amount,int day=1){return amount>0&&Post("fare:"+trip,"fare",day,amount,0);}
  public bool Tip(string trip,int amount,int day=1){return amount>0&&!string.IsNullOrEmpty(trip)&&Post("tip:"+trip,"tip",day,amount,0);}
+ public bool Mission(string trip,int amount,int day=1){return amount>0&&!string.IsNullOrEmpty(trip)&&Post("mission:"+trip,"mission",day,amount,0);}
+ public int Missions(int day){int total=0;foreach(var e in entries)if(e.kind=="mission"&&e.day==day)total+=e.cash;return total;}
  public int Tips(int day){int total=0;foreach(var e in entries)if(e.kind=="tip"&&e.day==day)total+=e.cash;return total;}
  public bool Refuel(string id,float quantity,int day=1){
   if(float.IsNaN(quantity)||float.IsInfinity(quantity)||quantity<=0)return false;

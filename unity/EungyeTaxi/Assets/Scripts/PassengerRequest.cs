@@ -91,6 +91,8 @@ public class PassengerRequest {
  public int meterDeduction;
  // 08 chapter 2: decided once at arrival from the trip id; paid as a separate entry, not in Total.
  public int tip,tipChance,tipPoints,tipStreak;public bool tipPrecise,cleanRun;public string tipLine="";
+ // 08 chapter 3: optional mission result; the extra is paid as "mission:<trip>", never inside Total.
+ public int missionKind,missionBonus;public bool missionSuccess;
  public int Total {get{return System.Math.Max(0,baseFare+bonus-meterDeduction);}}
  public static PassengerReward Calculate(RequestKind kind,int manner,int required,int fare,int paid,int delta,bool onTime,bool lawClear){
   return CalculateDetailed(manner,required,fare,paid,delta,onTime,100,0,0,0,false);

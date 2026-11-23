@@ -98,6 +98,7 @@ public class EconomyLedger {
  public EconomyLedger(EconomySettings settings){if(settings==null||!settings.Valid)throw new ArgumentException("Invalid economy settings");Settings=settings;Day=1;Care=new VehicleCare();State=BusinessState.Open;}
  public EconomyLedger(PrototypeSettings settings):this(new EconomySettings{days=settings.days,target=settings.target,daySeconds=settings.daySeconds,insurance=0,food=0,fuelPerKm=0,idlePerHour=0}){Account=new CampaignAccount(settings);OneDay=settings.oneDay;nightlyFatigueRecovery=settings.nightlyFatigueRecovery;if(OneDay)Driver=new DriverCondition();}
  public bool RecordFare(string trip,int amount){if(!Operating||Account==null||!Account.Fare(trip,amount,Day))return false;Income+=amount;Rides++;return true;}
+ public bool RecordMission(string trip,int amount){if(!Operating||Account==null||!Account.Mission(trip,amount,Day))return false;Income+=amount;return true;}
  public bool RecordTip(string trip,int amount){if(!Operating||Account==null||!Account.Tip(trip,amount,Day))return false;Income+=amount;return true;}
  public bool RecordFare(int amount){if(!Operating||amount<=0)return false;Income+=amount;Rides++;return true;}
  public void RecordFailure(){if(Operating)FailedTrips++;}

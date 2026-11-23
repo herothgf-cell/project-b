@@ -12243,6 +12243,175 @@
       "editable": true
     },
     {
+      "id": "mission.enabled",
+      "group": "선택형 미션",
+      "section": "mission",
+      "title": "선택형 미션 · 사용",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 은계 싱글 호출판의 일반 호출 한 건에 미션(급행·초록불 타기·커피 든 손님·칼정차)을 붙입니다. 실패해도 기본 운임은 깎이지 않습니다.",
+      "affects": [
+        "호출판",
+        "미션 추가금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.ApplyMissions",
+      "editable": true
+    },
+    {
+      "id": "mission.boardChance",
+      "group": "선택형 미션",
+      "section": "mission",
+      "title": "선택형 미션 · 호출판당 확률",
+      "type": "integer",
+      "defaultValue": "100",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "새 호출판에 미션 호출이 한 건 생길 확률. 100이면 호출판마다 한 건(3건 중 1건).",
+      "affects": [
+        "호출판"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.ApplyMissions",
+      "editable": true
+    },
+    {
+      "id": "mission.express.targetFactor",
+      "group": "선택형 미션",
+      "section": "mission",
+      "title": "급행 · 목표 주행 시간 배율",
+      "type": "number",
+      "defaultValue": "1.1",
+      "min": 0.5,
+      "max": 3,
+      "unit": "배",
+      "description": "안전 운송 시간에 곱한 값 안에 도착하면 성공. 정차 시간은 빼고 움직인 시간만 셉니다.",
+      "affects": [
+        "미션 추가금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "MissionRules.ExpressTarget",
+      "editable": true
+    },
+    {
+      "id": "mission.green.count",
+      "group": "선택형 미션",
+      "section": "mission",
+      "title": "초록불 타기 · 연속 무정차 신호 수",
+      "type": "integer",
+      "defaultValue": "3",
+      "min": 1,
+      "max": 10,
+      "unit": "곳",
+      "description": "신호 교차로를 이 수만큼 연속으로 정지선에서 멈추지 않고 통과하면 성공.",
+      "affects": [
+        "미션 추가금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.ObserveSignalEntry",
+      "editable": true
+    },
+    {
+      "id": "mission.express.bonusPercent",
+      "group": "선택형 미션",
+      "section": "mission",
+      "title": "급행 · 추가금 비율",
+      "type": "integer",
+      "defaultValue": "30",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "약정 운임의 이 비율(100원 올림)을 성공 시 별도로 지급합니다.",
+      "affects": [
+        "미션 추가금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "MissionRules.Bonus",
+      "editable": true
+    },
+    {
+      "id": "mission.green.bonusPercent",
+      "group": "선택형 미션",
+      "section": "mission",
+      "title": "초록불 타기 · 추가금 비율",
+      "type": "integer",
+      "defaultValue": "25",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "약정 운임의 이 비율(100원 올림)을 성공 시 별도로 지급합니다.",
+      "affects": [
+        "미션 추가금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "MissionRules.Bonus",
+      "editable": true
+    },
+    {
+      "id": "mission.coffee.bonusPercent",
+      "group": "선택형 미션",
+      "section": "mission",
+      "title": "커피 든 손님 · 추가금 비율",
+      "type": "integer",
+      "defaultValue": "20",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "약정 운임의 이 비율(100원 올림)을 성공 시 별도로 지급합니다. 성공 조건은 운송 중 불필요한 급가속·급제동 0회.",
+      "affects": [
+        "미션 추가금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "MissionRules.Bonus",
+      "editable": true
+    },
+    {
+      "id": "mission.precise.bonusPercent",
+      "group": "선택형 미션",
+      "section": "mission",
+      "title": "칼정차 · 추가금 비율",
+      "type": "integer",
+      "defaultValue": "20",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "약정 운임의 이 비율(100원 올림)을 성공 시 별도로 지급합니다. 성공 조건은 하차 지점 30cm 안 정차(칭찬 판정과 같음).",
+      "affects": [
+        "미션 추가금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "MissionRules.Bonus",
+      "editable": true
+    },
+    {
       "id": "display.background.diner",
       "group": "생활 시설",
       "section": "시설 배경",
