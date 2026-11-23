@@ -1,3 +1,8 @@
+## 2026-11-23 채팅형 운행 알림
+
+- [x] 출처별 알림 요소 7종 시안. [시안](ui/2026-11-23-chat-notices/README.md) · [기록](work-history/2026-11-23-chat-notice-mockup.md).
+- [ ] 시안 승인 후 `DriveNotifications` 종류별 표시 구현과 실행본 검사.
+
 ## 2026-11-20 은계 동네 가게와 공업사 부품
 
 - [x] 두 정차 포켓의 김밥·커피 주문, 공업사의 부품 4종 구매·차량별 장착·보관, 운행 차량·숙소 차고 외관과 경력 복원. [가격·효과·아이템 시안](content-design/36-neighbourhood-shops-and-taxi-parts.md) · [재현과 검사](work-history/2026-11-20-neighbourhood-shops-and-taxi-parts.md).
