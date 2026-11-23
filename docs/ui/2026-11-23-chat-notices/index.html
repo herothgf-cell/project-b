@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>채팅형 운행 알림</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* CasualUI.cs 색을 그대로 옮김 */
+:root{
+  --ink:#13264a; --muted:#4d637f; --canvas:#e0f0fc; --card:#fff; --soft:#edf7ff;
+  --track:#ccdbed; --blue:#0657c7; --green:#046e3b; --danger:#c21f2b; --amber:#9e5706;
+  --border:#c4d9f0; --warm:#fff7d9;
+  --new:#ff8a00;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#eef3f8;color:var(--ink);font-family:"Noto Sans KR",sans-serif}
+.doc{max-width:1960px;margin:0 auto;padding:24px 20px 60px}
+h1{font-size:28px;margin:0 0 6px}
+h2{font-size:22px;margin:36px 0 10px}
+p.lead{color:var(--muted);margin:0 0 18px;font-size:15px;line-height:1.6}
+
+/* ---------- 실제 1920×1080 화면 위 합성 ---------- */
+.stage{position:relative;width:1920px;height:1080px;background:url(source-drive-1920.png) 0 0/1920px 1080px;overflow:hidden;border-radius:6px}
+.stage .cover{display:none}
+.badge{position:absolute;font:700 15px "Noto Sans KR";color:#fff;background:var(--new);padding:4px 10px;border-radius:6px}
+
+/* ---------- 운행 알림 패널 ---------- */
+.feed{position:absolute;left:30px;top:497px;width:360px;height:265px;background:var(--canvas);border:1.5px solid var(--border);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 2px 0 rgba(19,38,74,.08)}
+.feed.tall{height:265px}
+.feed header{display:flex;align-items:center;gap:8px;padding:6px 8px 6px 12px;background:#fff;border-bottom:1px solid var(--border)}
+.feed header b{font-size:17px;font-weight:900}
+.feed header .count{font-size:12px;font-weight:700;color:#fff;background:var(--danger);border-radius:9px;padding:0 6px;line-height:18px}
+.feed header .filters{display:flex;gap:4px;margin-left:auto}
+.feed header .filters i{font-style:normal;font-size:11px;font-weight:700;color:var(--muted);background:var(--soft);border:1px solid var(--border);border-radius:9px;padding:1px 6px}
+.feed header .filters i.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.feed header button{font:500 13px "Noto Sans KR";color:var(--ink);background:var(--soft);border:1px solid var(--border);border-radius:8px;padding:3px 8px}
+.feed .list.scrolled{padding-bottom:34px}
+.feed .list{flex:1;overflow:hidden;padding:6px 8px 8px;display:flex;flex-direction:column;justify-content:flex-end;gap:5px}
+.newpill{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);font:700 12px "Noto Sans KR";background:var(--blue);color:#fff;border-radius:12px;padding:3px 10px;box-shadow:0 2px 6px rgba(6,87,199,.35)}
+
+/* 시각 구분선 */
+.time{align-self:center;font-size:11px;color:var(--muted);padding:0 8px;position:relative}
+
+/* 1. 시스템(영업·시설 상태) — 가운데 회색 한 줄 */
+.sys{align-self:center;max-width:94%;font-size:12.5px;line-height:1.35;color:var(--muted);background:rgba(255,255,255,.55);border-radius:10px;padding:3px 10px;text-align:center}
+
+/* 공통 말풍선 */
+.row{display:flex;gap:6px;align-items:flex-end}
+.av{flex:0 0 26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:14px;color:#fff}
+.bub{position:relative;background:#fff;border:1px solid var(--border);border-radius:12px;padding:5px 9px;font-size:14.5px;line-height:1.4;max-width:280px}
+.bub .who{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:1px}
+.delta{display:inline-block;margin-left:6px;font:900 12px "Noto Sans KR";border-radius:8px;padding:0 6px;line-height:18px;vertical-align:1px}
+.delta.up{background:#dff3e8;color:var(--green)}
+.delta.down{background:#fbe2e4;color:var(--danger)}
+
+/* 2. 승객 만족도 — 승객이 보낸 말풍선(왼쪽 꼬리, 얼굴) */
+.pax .av{background:#3f5677}
+.pax .bub{border-bottom-left-radius:3px}
+
+/* 3. 운전 점수(법규) — 방패 칩 + 왼쪽 굵은 색 띠 */
+.law{align-self:stretch;display:flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--border);border-left:4px solid var(--blue);border-radius:8px;padding:4px 8px;font-size:14px}
+.law.bad{border-left-color:var(--danger)}
+.law.good{border-left-color:var(--green)}
+.law svg{flex:0 0 15px}
+.law .txt{flex:1}
+.law .delta{margin-left:0}
+
+/* 4. 목적지·길 안내 — 파란 카드, 핀, 키 힌트 */
+.dest{align-self:stretch;background:var(--blue);color:#fff;border-radius:10px;padding:6px 9px;font-size:13px;line-height:1.35;display:flex;gap:7px;align-items:flex-start}
+.dest b{display:block;font-size:13.5px}
+.dest small{opacity:.85;font-size:11.5px}
+.key{display:inline-block;font:700 11px "Noto Sans KR";border:1px solid currentColor;border-radius:4px;padding:0 4px;line-height:15px;margin-left:3px}
+
+/* 5. 연료 경고 — 주황 경고 카드, 게이지 + 안의 버튼 */
+.fuel{align-self:stretch;background:var(--warm);border:1.5px solid #e2b04a;border-radius:10px;padding:6px 9px;font-size:14px}
+.fuel.crit{background:#fde8ea;border-color:#e58a92}
+.fuel .top{display:flex;align-items:center;gap:6px;font-weight:700;color:var(--amber)}
+.fuel.crit .top{color:var(--danger)}
+.fuel .gauge{height:6px;border-radius:3px;background:var(--track);margin:5px 0 6px;overflow:hidden}
+.fuel .gauge i{display:block;height:100%;background:var(--amber)}
+.fuel.crit .gauge i{background:var(--danger)}
+.fuel button{width:100%;font:700 13px "Noto Sans KR";color:#fff;background:var(--green);border:0;border-radius:7px;padding:4px 0}
+.fuel button[disabled]{background:#9fb0c4}
+.fuel .note{font-size:11px;color:var(--muted);margin-top:3px;text-align:center}
+
+/* 6. TIP — 점선 메모, 전구, 작게 */
+.tip{align-self:stretch;border:1.5px dashed #b9cbe0;border-radius:9px;padding:4px 8px;font-size:12.5px;color:var(--muted);line-height:1.4;background:rgba(255,255,255,.5)}
+.tip b{color:var(--ink);font-weight:700;margin-right:4px}
+
+/* 7. 상황(점유·운송 결과) — 흰 카드 + 선택 버튼 2개 */
+.sit{align-self:stretch;background:#fff;border:1.5px solid var(--ink);border-radius:10px;padding:6px 9px;font-size:13px;line-height:1.4}
+.sit .top{font-weight:700;display:flex;gap:6px;align-items:center}
+.sit .btns{display:flex;gap:5px;margin-top:5px}
+.sit .btns button{flex:1;font:500 12.5px "Noto Sans KR";background:var(--soft);color:var(--ink);border:1px solid var(--border);border-radius:7px;padding:3px 0}
+.sit .btns button.pri{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* 오래된 메시지 흐림 */
+.old{opacity:.55}
+
+/* ---------- 요소 카탈로그 ---------- */
+.catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:14px;padding:12px}
+.cell{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.cell .demo{background:var(--canvas);border-radius:10px;padding:10px 8px;display:flex;flex-direction:column;gap:5px;width:360px}
+.cell h3{margin:0;font-size:16px}
+.cell .meta{font-size:12.5px;color:var(--muted);line-height:1.55}
+.cell code{font-size:12px;background:var(--soft);padding:0 4px;border-radius:4px;color:var(--ink)}
+table.rules{border-collapse:collapse;font-size:14px;background:#fff;border-radius:10px;overflow:hidden;width:100%;max-width:1200px}
+table.rules th,table.rules td{border-bottom:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top;line-height:1.5}
+table.rules th{background:var(--soft);font-weight:700}
+.pair{display:flex;gap:20px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="doc">
+<h1>운행 알림 · 채팅형 시안</h1>
+<p class="lead">현재 운행 알림은 모든 줄이 같은 글자·색으로 쌓인다(<code>DriveNotifications.DrawFeed</code>). 시안은 알림 출처별로 모양을 나눠, 운전 중 한눈에 “누가 / 좋은 일인지 나쁜 일인지 / 할 일이 있는지”를 구분하게 한다. 배경은 실제 1920×1080 실행 화면이며, 패널 크기·위치는 기존 <code>CockpitUI.SlidingTipBounds</code> 영역(왼쪽, 360×265)을 그대로 쓴다. 주황 표시는 새 요소다.</p>
+
+<h2>A. 승객 탑승 중</h2>
+<div class="stage" id="shot-on-trip">
+  <div class="cover"></div>
+  <div class="feed">
+    <header><b>운행 알림</b><span class="count">3</span>
+      <span class="filters"><i class="on">전체</i><i>점수</i></span>
+      <button>◀ 숨기기</button></header>
+    <div class="list">
+      <div class="tip old"><b>💡 TIP</b>M 지도에서 승차지와 목적지를 확인할 수 있습니다.</div>
+      <div class="time">8:14</div>
+      <div class="row pax"><div class="av">☺</div><div class="bub"><span class="who">승객 만족도</span>창문 좀 내려 주시겠어요?</div></div>
+      <div class="row pax"><div class="av">☺</div><div class="bub">요청 이행<span class="delta up">+5</span></div></div>
+      <div class="law bad"><svg viewBox="0 0 16 16" width="15" height="15"><path d="M8 1l6 2.4v4.2c0 3.6-2.6 6.3-6 7.4C4.6 13.9 2 11.2 2 7.6V3.4z" fill="#c21f2b"/><path d="M7.2 4h1.6v5H7.2zM7.2 10.2h1.6v1.6H7.2z" fill="#fff"/></svg><span class="txt">정지선 침범</span><span class="delta down">−1</span></div>
+      <div class="fuel"><div class="top">⛽ 연료 부족 14%</div><div class="gauge"><i style="width:14%"></i></div><button disabled>주유소 안내</button><div class="note">승객 하차 후 안내할 수 있어요</div></div>
+    </div>
+  </div>
+  <div class="badge" style="left:400px;top:500px">새 요소 · 출처별 모양</div>
+</div>
+
+<h2>B. 빈차 · 시설 이동 중</h2>
+<div class="stage" id="shot-vacant">
+  <div class="cover"></div>
+  <div class="feed">
+    <header><b>운행 알림</b>
+      <span class="filters"><i class="on">전체</i><i>점수</i></span>
+      <button>◀ 숨기기</button></header>
+    <div class="list scrolled">
+      <div class="row pax old"><div class="av">☺</div><div class="bub">도착 시간<span class="delta up">+3</span></div></div>
+      <div class="sys old">운송 완료 · 6,540원 수령</div>
+      <div class="time">8:21</div>
+      <div class="law good"><svg viewBox="0 0 16 16" width="15" height="15"><path d="M8 1l6 2.4v4.2c0 3.6-2.6 6.3-6 7.4C4.6 13.9 2 11.2 2 7.6V3.4z" fill="#046e3b"/><path d="M5 8l2 2 4-4" stroke="#fff" stroke-width="1.8" fill="none"/></svg><span class="txt">유턴 조건 준수</span><span class="delta up">+1</span></div>
+      <div class="sys">생활시설·도로 상황은 TIP에서 확인합니다.</div>
+      <div class="dest"><span>📍</span><span><b>은계 남부 식당</b><small>입구로 진입 후 주차 칸에서 F</small><span class="key">M</span></span></div>
+    </div>
+    <div class="newpill">새 알림 1 ▼</div>
+  </div>
+  <div class="badge" style="left:400px;top:500px">위로 스크롤하면 “새 알림” 버튼</div>
+</div>
+
+<h2>C. 알림 요소 7종</h2>
+<div class="catalog" id="shot-catalog">
+  <div class="cell"><div class="demo">
+      <div class="row pax"><div class="av">☺</div><div class="bub"><span class="who">승객 만족도</span>안정 주행 안심<span class="delta up">+2</span></div></div>
+      <div class="row pax"><div class="av">☺</div><div class="bub">급제동<span class="delta down">−4</span></div></div></div>
+    <h3>① 승객 만족도 — 승객 말풍선</h3>
+    <div class="meta">출처 <code>Push(…, passenger:true)</code>. 얼굴 아바타 + 왼쪽 꼬리. 연속된 항목은 아바타 없이 이어 붙인다(같은 운송 안). 증감은 초록/빨강 칩.</div></div>
+
+  <div class="cell"><div class="demo">
+      <div class="law bad"><svg viewBox="0 0 16 16" width="15" height="15"><path d="M8 1l6 2.4v4.2c0 3.6-2.6 6.3-6 7.4C4.6 13.9 2 11.2 2 7.6V3.4z" fill="#c21f2b"/><path d="M7.2 4h1.6v5H7.2zM7.2 10.2h1.6v1.6H7.2z" fill="#fff"/></svg><span class="txt">신호 위반</span><span class="delta down">−3</span></div>
+      <div class="law good"><svg viewBox="0 0 16 16" width="15" height="15"><path d="M8 1l6 2.4v4.2c0 3.6-2.6 6.3-6 7.4C4.6 13.9 2 11.2 2 7.6V3.4z" fill="#046e3b"/><path d="M5 8l2 2 4-4" stroke="#fff" stroke-width="1.8" fill="none"/></svg><span class="txt">우회전 전 정지 준수</span><span class="delta up">+1</span></div></div>
+    <h3>② 운전 점수(법규) — 방패 줄</h3>
+    <div class="meta">출처 <code>Push(…, passenger:false)</code>, <code>ScoreFeedback.LawReason</code>. 말풍선이 아닌 폭 전체 한 줄, 왼쪽 색 띠로 위반/준수를 먼저 읽게 한다.</div></div>
+
+  <div class="cell"><div class="demo">
+      <div class="fuel"><div class="top">⛽ 연료 부족 14%</div><div class="gauge"><i style="width:14%"></i></div><button>주유소 안내</button></div>
+      <div class="fuel crit"><div class="top">⛽ 연료 거의 없음 4%</div><div class="gauge"><i style="width:4%"></i></div><button>주유소 안내</button></div></div>
+    <h3>③ 연료 경고 — 경고 카드 + 버튼</h3>
+    <div class="meta">출처 <code>fuelLine</code>(15·10·5% 구간). 지금 패널 바닥에 따로 있는 “주유소 안내” 버튼을 카드 안으로 옮긴다. 5% 이하는 빨강. 12초 뒤 사라지는 규칙은 유지. 승객 탑승 중에는 버튼 비활성 + 이유 한 줄.</div></div>
+
+  <div class="cell"><div class="demo">
+      <div class="dest"><span>📍</span><span><b>은계 남부 식당</b><small>입구로 진입 후 주차 칸에서 F</small><span class="key">M</span></span></div></div>
+    <h3>④ 목적지·길 안내 — 파란 카드</h3>
+    <div class="meta">출처 <code>services.destination</code>. “·” 앞을 장소 이름(굵게), 뒤를 행동 설명으로 나눈다. 지도 키 M 표시.</div></div>
+
+  <div class="cell"><div class="demo">
+      <div class="sit"><div class="top">⚠ 정차 지점 점유</div>안전한 곳에서 대기하거나 대체 지점을 선택하세요.<div class="btns"><button>안전한 곳에서 대기</button><button class="pri">대체 지점</button></div></div>
+      <div class="sit"><div class="top">🏁 운송 결과 · 법규 2건 확인</div><div class="btns"><button class="pri">운전 평가 · 정차 시 확인</button></div></div></div>
+    <h3>⑤ 상황 — 선택이 필요한 카드</h3>
+    <div class="meta">출처 <code>ServiceLawZones</code> context(점유·운송 결과). 지금 패널 바닥 버튼을 해당 카드 안으로 넣는다. 처리되면 버튼이 사라지고 결과 한 줄로 접힌다.</div></div>
+
+  <div class="cell"><div class="demo">
+      <div class="sys">영업 종료 대기 · 현재 승객 운송 후 정산합니다</div>
+      <div class="sys">안전하게 정차 후 이용하세요</div></div>
+    <h3>⑥ 시스템 — 가운데 회색 한 줄</h3>
+    <div class="meta">출처 <code>business.notice</code>, <code>services.notice</code>, <code>QueueStatus</code>. 채팅의 “입장했습니다” 같은 상태 줄. 말풍선 없이 작게.</div></div>
+
+  <div class="cell"><div class="demo">
+      <div class="tip"><b>💡 TIP</b>정차한 시설은 F로 이용하세요.</div>
+      <div class="tip"><b>💡 TIP</b>이 교차로는 보행신호 때만 유턴할 수 있습니다.</div></div>
+    <h3>⑦ TIP — 점선 메모</h3>
+    <div class="meta">출처 20초 주기 <code>Tips</code>, <code>ServiceLawZones.AssignedTip</code>. 가장 약한 시각 무게(점선·회색 글자). 새 TIP이 오면 앞 TIP은 지워 TIP끼리 쌓이지 않게 한다.</div></div>
+
+  <div class="cell"><div class="demo">
+      <div class="time">8:14</div>
+      <div class="row pax old"><div class="av">☺</div><div class="bub">도착 시간<span class="delta up">+3</span></div></div>
+      <div style="position:relative;height:30px"><div class="newpill" style="bottom:2px">새 알림 2 ▼</div></div></div>
+    <h3>공통 — 시각선 · 흐림 · 새 알림</h3>
+    <div class="meta">게임 시각이 1분 이상 바뀌면 시각 구분선. 운송이 끝난 이전 메시지는 55% 흐림. 위로 스크롤해 읽는 중이면 자동으로 내리지 않고 “새 알림 N ▼” 버튼만 띄운다.</div></div>
+</div>
+
+<h2>D. 구현 규칙(제안)</h2>
+<table class="rules">
+<tr><th>항목</th><th>지금</th><th>시안</th></tr>
+<tr><td>데이터</td><td><code>List&lt;string&gt; feed</code>, 문자열 앞머리(“만족도 ·”, “TIP ·”)로만 구분</td><td><code>FeedItem{kind, title, body, delta, time, trip}</code>. kind = Passenger · Law · Fuel · Destination · Situation · System · Tip</td></tr>
+<tr><td>보관 수</td><td>최근 12줄</td><td>12개 유지. TIP은 최신 1개만, 연료는 기존처럼 12초 뒤 제거</td></tr>
+<tr><td>버튼</td><td>패널 바닥 고정(주유소 안내, 점유 선택, 운전 평가)</td><td>해당 카드 안. 패널 바닥 여백 제거로 메시지 칸이 최대 72px 넓어짐</td></tr>
+<tr><td>색</td><td>모두 <code>CasualUI.Ink</code></td><td>CasualUI 색만 사용: 승객 Ink 아바타, 법규 Danger/Green 띠, 연료 Amber/Danger, 안내 Blue, 시스템·TIP Muted</td></tr>
+<tr><td>필터</td><td>없음</td><td>머리줄 “전체 / 점수” 2개. 점수 = ①②만</td></tr>
+<tr><td>스크롤</td><td>새 줄마다 맨 아래로 이동</td><td>맨 아래 보던 중일 때만 자동 이동. 아니면 “새 알림 N ▼”</td></tr>
+<tr><td>범위</td><td colspan="2">은계 싱글 운행 알림만. PvP 화면·1인칭 위치(왼쪽 미러 위)·숨기기 탭은 그대로. 실행본 미적용(시안만).</td></tr>
+</table>
+</div>
+</body>
+</html>

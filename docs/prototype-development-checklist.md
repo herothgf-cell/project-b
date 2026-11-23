@@ -1,3 +1,19 @@
+## 2026-11-23 P51 교차로 이동·도로 중간 신호 표식·원형 등화 (r51)
+
+- [x] P51 교차로를 항공사진 위치로 옮김(횡단보도·정문 도로·정지선·모서리 신호), P22:56·P51 도로 가운데 신호 제거, 차량 등화 원형 통일. [기록](work-history/2026-11-23-p51-junction-signals.md) · [화면](ui/2026-11-23-p51-signal-fix/).
+- [ ] P51 회전 연결과 신호 가독성 수동 주행 확인.
+
+## 2026-11-23 전체 경로·기사식당 팝업·카페 아이콘·공복 TIP
+
+- [x] 전체 경로 바닥선, 기사식당 팝업 정리와 ESC 닫기, 공복 피로 TIP, 아메리카노 카페 아이콘. [기록](work-history/2026-11-23-route-diner-cafe-hunger.md).
+- [ ] F7·ESC 실제 키 입력과 재방문 경로의 안내선 겹침 수동 확인.
+
+## 2026-11-23 채팅형 운행 알림
+
+- [x] 출처별 알림 요소 7종 시안. [시안](ui/2026-11-23-chat-notices/README.md) · [기록](work-history/2026-11-23-chat-notice-mockup.md).
+- [x] `DriveNotifications` 종류별 카드·카드 안 버튼·점수 필터·미확인 수. 숙소 24건, 화면 배치 102건. [구현 기록](work-history/2026-11-23-chat-notice-implementation.md).
+- [ ] 수동 주행 가독성과 승객 말풍선 실제 화면 확인.
+
 ## 2026-11-20 은계 영업 목표와 기사 생활 기획
 
 - [x] 시흥 운임, 경기 식비·LPG, r50 첫 영업 호출판 세 번의 제시액과 운송 한 건의 실수령을 대조했다. [가격·손익 판단](content-design/2026-11-20-eungye-economy-review.md) · [재현 기록](work-history/2026-11-20-eungye-economy-review.md)

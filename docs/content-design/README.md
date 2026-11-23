@@ -55,3 +55,7 @@
 - 개발 범위는 [프로토 범위](../prototype-scope.md), 실제 구현 및 검증 방식은 [체크리스트](../prototype-development-checklist.md)와 [작업 이력](../work-history/LATEST.md)을 따른다. [작업 재개와 필수 지도 입력](../work-history/README.md)은 다른 PC에서 개발을 이어갈 때 사용한다.
 - UI 관련 자료는 [UI 폴더](../ui/), 발표용 제안서와 프로토 매뉴얼은 [제안서 목록](../proposals/README.md), 시스템 산식과 제작 도구는 [기술 참고](../technical-reference/README.md)에 있다. 사용자 프로필과 진행 중인 저장은 출하 기본값과 다를 수 있다.
 - [후속 아이디어](../future-design/README.md), [이전 기획](../design-history/content-design/README.md), [정리 전 마인드맵](../design-history/content-design/2026-11-13-mindmap-before-simplify.mmst)은 당시 결정의 배경을 확인할 때 사용한다. 시설 비용·신호·점수는 게임 안에서 사용하는 값이다.
+
+## 2026-11-23 기사의 판단
+
+- [37 공차 운영·길 지식·규칙 속 돌발](37-driver-judgment-systems.md) · 승강장/배회/호출 선택과 정산 동선, 내비 단계·지름길 기록, 승차 거부·분실물·응급 손님·단속 카메라. 구현 승인 전 기획

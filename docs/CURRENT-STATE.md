@@ -1,6 +1,6 @@
 # 현재 상태 한 장 요약
 
-**2026-11-20 · 은계 싱글 r50 · 자체 도시 PvP A2 / LAN v23.** 기본 실행 파일은 `builds/EungyeTaxi/EungyeTaxi.exe`다. 싱글에서는 시흥 은계에서 아버지의 택시로 생계를 시작한다. 같은 실행 파일에서 봇 3명 또는 LAN 최대 4명으로 PvP를 할 수 있다. [최신 이력](work-history/LATEST.md) · [전체 기획 목차](content-design/README.md) · [PvP 기획](content-design/pvp/README.md)
+**2026-11-23 · 은계 싱글 r51 · 자체 도시 PvP A2 / LAN v23.** 기본 실행 파일은 `builds/EungyeTaxi/EungyeTaxi.exe`다. 싱글에서는 시흥 은계에서 아버지의 택시로 생계를 시작한다. 같은 실행 파일에서 봇 3명 또는 LAN 최대 4명으로 PvP를 할 수 있다. [최신 이력](work-history/LATEST.md) · [전체 기획 목차](content-design/README.md) · [PvP 기획](content-design/pvp/README.md)
 
 ## 지금 플레이할 수 있는 것
 
@@ -13,9 +13,11 @@
 
 ## 기획 검토와 남은 확인
 
+운전 중 판단을 늘리는 [기획 37 공차 운영·길 지식·규칙 속 돌발](content-design/37-driver-judgment-systems.md)은 구현 승인 전이다.
+
 번 돈을 다음 특별 운행 준비에 쓸지, 원하는 택시를 사려고 모을지 결정하는 **기획 검토안**이 있다. 첫 출차 개편, 지도 판매점 계약, 주기 정비, 소지금 거래 장부와 기사 성장은 그 선택을 지원하는 후속 기능이다. 숙소의 실제 호실 이전과 기사 평점도 후속 항목이다. [기사 생활·경영 기획](content-design/37-driver-life-and-business.md) · [개발 체크리스트](prototype-development-checklist.md)
 
-지정 위치에서 시설·저장·재회를 확인한 검사와, 차고에서 첫 운송을 마치고 귀가한 자동 물리 주행 기록이 있다. 사람의 첫 이용·3일 전체 경영 체감, 실물 입력·음향, 다른 PC 간 LAN은 후속 검증이다. 도로별 관찰·화면·검사 결과는 날짜별로 보관한다. [첫 운송 물리 주행](work-history/2026-11-19-first-fare-and-settlement.md) · [r43~46 도로 조사](work-history/2026-11-17-road-transitions-and-facilities.md) · [J7841](work-history/2026-11-17-j7841-road-report.md) · [r48~49 수인로](work-history/2026-11-20-suinro-repaint-review.md) · [r50 계수로](work-history/2026-11-20-gyesu-navigation-and-signals.md) · [이전 요약](design-history/CURRENT-STATE-until-2026-11-09.md)
+지정 위치에서 시설·저장·재회를 확인한 검사와, 차고에서 첫 운송을 마치고 귀가한 자동 물리 주행 기록이 있다. 사람의 첫 이용·3일 전체 경영 체감, 실물 입력·음향, 다른 PC 간 LAN은 후속 검증이다. 도로별 관찰·화면·검사 결과는 날짜별로 보관한다. [첫 운송 물리 주행](work-history/2026-11-19-first-fare-and-settlement.md) · [r43~46 도로 조사](work-history/2026-11-17-road-transitions-and-facilities.md) · [J7841](work-history/2026-11-17-j7841-road-report.md) · [r48~49 수인로](work-history/2026-11-20-suinro-repaint-review.md) · [r50 계수로](work-history/2026-11-20-gyesu-navigation-and-signals.md) · [r51 P51 교차로](work-history/2026-11-23-p51-junction-signals.md) · [이전 요약](design-history/CURRENT-STATE-until-2026-11-09.md)
 
 11월 17일 도로 판단과 원본 제보 화면도 다시 볼 수 있다. [도색 연결](work-history/2026-11-17-road-paint-continuity.md) · [은행사거리 중앙선](work-history/2026-11-17-bank-approach-centreline.md) · [회전교차로·횡단보도](work-history/2026-11-17-roundabout-and-crosswalk.md) · [차로 폭·전체 보기](work-history/2026-11-17-road-width-and-dev-overview.md) · [제보 캡처](work-history/2026-11-17-road-report-capture.md) · [표시 수정](work-history/2026-11-17-road-annotation-edit-fix.md)
 

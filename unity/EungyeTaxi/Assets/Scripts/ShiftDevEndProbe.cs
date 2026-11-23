@@ -200,13 +200,27 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    feed.ObserveFeed();feed.ObserveFeed();
    Check(feed.FuelActionVisible&&feed.Feed.Count(line=>line.StartsWith("연료 부족"))==1,"fuel threshold posts once");
    Check(s.services.GuideToFuel()&&s.jobs.nav.HasDestination,"feed action guides to reachable station");
+   yield return Frames(2);
+   Check(feed.Items.Any(i=>i.kind==FeedKind.Fuel)&&feed.Items.Any(i=>i.kind==FeedKind.Destination)&&feed.Items.Count(i=>i.kind==FeedKind.Tip)<=1,"feed keeps typed fuel, destination and a single TIP card");
+   yield return Capture("chat-notices-fuel");
+   if(Array.IndexOf(Environment.GetCommandLineArgs(),"-chatNoticeCapture")>=0){
+    var signal=new LawEvent{id=s.law.ids.Next("chat-notice"),day=s.law.Day,action="정지선 침범"};signal.Add("stop-line",LawVerdict.Violation,1);s.law.ledger.Record(signal);
+    var kept=new LawEvent{recoveryPolicyVersion=1,id=s.law.ids.Next("chat-notice"),day=s.law.Day,action="양보 준수"};kept.Add("yield",LawVerdict.Compliant,0);s.law.ledger.Record(kept);
+    feed.RefreshScores();s.business.notice="오늘도 안전 운행 · 첫 손님을 찾아보세요";feed.ObserveFeed();yield return Frames(3);
+    Check(feed.Items.Any(i=>i.kind==FeedKind.Law),"law score posts a typed law card");
+    yield return Capture("chat-notices-chase");
+    s.drivingCamera.SetFirstPerson(true);yield return Frames(4);yield return Capture("chat-notices-first-person");
+    var zones=s.GetComponent<ServiceLawZones>();zones.ToggleTip();s.business.notice="숨긴 동안 온 알림";feed.ObserveFeed();yield return new WaitForSecondsRealtime(.4f);
+    Check(feed.Unseen>0,"hidden panel counts unseen notices");yield return Capture("chat-notices-hidden");zones.ToggleTip();
+    done=true;Debug.Log("CHAT_NOTICE_CAPTURE_OK checks="+checks);Application.Quit(0);yield break;
+   }
    var station=s.services.Stations[0];Pose(station.pump,station.direction);
    Check(s.jobs.Interact()&&s.services.open&&s.services.LocalActions.Contains(0),"F opens fuel pump");
    s.services.Close();
-   int previousTips=feed.Feed.Count(line=>line.StartsWith("TIP ·"));
+   int previousTips=feed.TipsPosted;
    Time.timeScale=10;yield return new WaitForSeconds(22);Time.timeScale=1;feed.ObserveFeed();
    Check(!feed.FuelActionVisible&&!feed.Feed.Any(line=>line.StartsWith("연료 부족")),"low fuel alert expires while fuel stays low");
-   Check(feed.Feed.Count(line=>line.StartsWith("TIP ·"))>previousTips,"tips continue between notices");
+   Check(feed.TipsPosted>previousTips&&feed.Feed.Count(line=>line.StartsWith("TIP ·"))==1,"tips continue between notices and only the newest TIP stays");
    var dining=s.services.Restaurant;Pose(dining.parking,dining.direction);
    Check(s.jobs.Interact()&&s.services.open&&s.services.LocalActions.Contains(1),"F opens restaurant");s.services.Close();
    var shop=s.services.Workshops[0];Pose(shop.repair,shop.direction);
@@ -555,6 +569,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   }
   var meal=services.MealParkingStop;
   Pose(meal.Kerb,meal.Direction);services.Toggle();
+  Check(services.open,"restaurant popup opens");yield return Capture("diner-popup");
   Check(services.open&&services.RequestAction(1)&&services.InteriorFor(services.LocalActions[0],services.pending)=="diner","restaurant opens at parking bay");
   int cash=business.ledger.Account.Cash;
   for(int i=0;i<3;i++)Check(services.SelectMeal(i)&&services.SelectedMeal==i&&business.ledger.Account.Cash==cash,"meal card selection "+i);
@@ -562,6 +577,9 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   services.ConfirmAction(false);
   Check(services.pending<0&&business.ledger.Account.Cash==cash,"cancel meal quote without charge");
   Check(services.RequestAction(1)&&services.ConfirmAction(true)&&business.ledger.Account.Cash==cash-3000,"meal charges exactly once");
+  {var overlay=s.GetComponent<FullMapOverlay>();var cafe=overlay.Places().FirstOrDefault(p=>p.capabilityLabel=="아메리카노");
+   Check(cafe!=null&&cafe.glyph==20,"americano cafe uses the cafe map icon");
+   if(overlay.Open()){yield return Frames(3);yield return Capture("map-cafe-icon");overlay.Close();}}
   var pump=services.Stations[0];Pose(pump.pump,pump.direction);services.Toggle();
   Check(services.open&&services.InteriorFor(services.LocalActions[0],-1)=="fuel","fuel bay interior");
   Check(services.RequestAction(4)&&services.InteriorFor(services.LocalActions[0],services.pending)=="wash","wash quote changes interior");

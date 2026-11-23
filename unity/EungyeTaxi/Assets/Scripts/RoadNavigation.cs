@@ -48,20 +48,9 @@ public partial class RoadNavigation : MonoBehaviour {
   line.material.color=paint;line.material.SetColor("_EmissionColor",paint*.65f);
   var shown=DisplayPath;
   if(freeGuidance||shown.Count<2){line.positionCount=0;return;}
-  // The map shows the whole trip. Paint only the upcoming stretch in the world
-  // so a later visit to this junction cannot look like a second instruction.
-  const float lookAhead=120f;
-  float left=lookAhead;
-  int end=1;
-  while(end<shown.Count){
-   float segment=Vector3.Distance(shown[end-1],shown[end]);
-   if(segment>=left)break;
-   left-=segment;
-   end++;
-  }
-  line.positionCount=Mathf.Min(end+1,shown.Count);
-  for(int i=0;i<end;i++)line.SetPosition(i,shown[i]+Vector3.up*.19f);
-  if(end<shown.Count)line.SetPosition(end,Vector3.MoveTowards(shown[end-1],shown[end],left)+Vector3.up*.19f);
+  // Paint the whole remaining trip in the world, as the map does (user request 2026-11-23).
+  line.positionCount=shown.Count;
+  for(int i=0;i<shown.Count;i++)line.SetPosition(i,shown[i]+Vector3.up*.19f);
  }
  public float remaining,estimatedSeconds,alternativeSeconds,alternativeDistance;
  public static string FormatEta(float seconds){return float.IsNaN(seconds)||float.IsInfinity(seconds)?"계산 중":Mathf.CeilToInt(Mathf.Max(0,seconds)/60f)+"분";}

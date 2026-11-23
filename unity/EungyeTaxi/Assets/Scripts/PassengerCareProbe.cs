@@ -22,6 +22,8 @@ public sealed class PassengerCareProbe:MonoBehaviour {
   Debug.Log("FUEL_MENU_CAPTURE_OK");
  }
  void Run(){s.business.enabled=false;s.jobs.enabled=false;s.jobs.nav.enabled=false;s.requests.enabled=false;s.law.enabled=false;s.manners.enabled=false;s.GetComponent<ServiceLawZones>().enabled=false;s.taxi.enabled=false;s.taxi.body.isKinematic=true;s.taxi.body.interpolation=RigidbodyInterpolation.None;foreach(var c in s.traffic.cars){c.Recycle();c.enabled=false;}
+  // Opt-in: only the live score and notice flow, with the notice panel drawn for captures.
+  if(Array.IndexOf(Environment.GetCommandLineArgs(),"-scoreFlowOnly")>=0){CheckScoreFlow();s.GetComponent<ServiceLawZones>().enabled=true;return;}
   CheckPickupFuel();CheckDrunkDialogue();CheckWaitingPopulation();
   Fresh();s.jobs.offers[1]=s.jobs.offers[2]=null;var idle=JsonUtility.FromJson<PassengerJobsSnapshot>(JsonUtility.ToJson(s.jobs.CaptureLive()));s.jobs.RestoreLive(idle);Check(s.jobs.trip.State==TripState.Idle&&s.jobs.current==null&&s.jobs.DrunkRide==null&&s.jobs.offers[1]==null&&s.jobs.offers[2]==null,"fresh idle JsonUtility roundtrip preserves nullable passenger and empty offers");
   var first=Offer();s.jobs.offers[0]=first;Stop(first.pickup);Check(s.jobs.Accept(0),"first pickup pre-board snapshot");var pickup=JsonUtility.FromJson<PassengerJobsSnapshot>(JsonUtility.ToJson(s.jobs.CaptureLive()));s.jobs.RestoreLive(pickup);Check(s.jobs.trip.State==TripState.ToPickup&&s.jobs.current!=null&&s.jobs.DrunkRide==null&&s.jobs.RequestReward==null,"first ToPickup JsonUtility roundtrip has no fake drunk/reward");

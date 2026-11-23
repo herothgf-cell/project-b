@@ -144,15 +144,17 @@ public sealed class ServiceLawZones : MonoBehaviour {
   var occupancy=GetComponent<StopOccupancySystem>();bool occupied=occupancy&&occupancy.AffectsActive;
   string context=occupied?"정차 지점 점유 · 안전한 곳에서 대기하거나 대체 지점을 선택하세요.":result?LastFeedback.outcome:session.services.QueueStatus;
   {float scale=CockpitUI.Scale;var r=CockpitUI.SlidingTipBounds(Screen.width,Screen.height,false,session.jobs.Active,tipSlide,session.simulationMatch!=null,session.drivingCamera&&session.drivingCamera.FirstPerson);Panel(r);
-   GUI.Label(new Rect(r.x+10*scale,r.y+3*scale,120*scale,30*scale),"운행 알림",new GUIStyle(text){font=KoreanText.BoldFont,fontSize=Mathf.RoundToInt(17*scale)});
+   GUI.Label(new Rect(r.x+10*scale,r.y+3*scale,110*scale,30*scale),"운행 알림",new GUIStyle(text){font=KoreanText.BoldFont,fontSize=Mathf.RoundToInt(17*scale)});
+   feed.DrawFilter(new Rect(r.xMax-196*scale,r.y+9*scale,84*scale,20*scale));
    if(GUI.Button(new Rect(r.xMax-104*scale,r.y+5*scale,94*scale,28*scale),"◀ 숨기기",KoreanText.Button(Mathf.RoundToInt(13*scale))))ToggleTip();
-   if(!TipExpanded&&GUI.Button(new Rect(Mathf.Max(0,r.xMax),r.y,54*scale,36*scale),"알림 ▶",KoreanText.Button(Mathf.RoundToInt(13*scale))))ToggleTip();
-   if(tipSlide>0){bool fuel=feed.FuelActionVisible;
-    float footer=(result||occupied?36*scale:0)+(fuel?36*scale:0);
-    feed.DrawFeed(new Rect(r.x+8*scale,r.y+36*scale,r.width-16*scale,Mathf.Max(12*scale,r.height-38*scale-footer)),context);
-    if(fuel){GUI.enabled=session.jobs.trip.State!=TripState.OnTrip;if(GUI.Button(new Rect(r.x+10*scale,r.yMax-footer+2*scale,r.width-20*scale,28*scale),"주유소 안내",KoreanText.Button(Mathf.RoundToInt(14*scale))))session.services.GuideToFuel();GUI.enabled=true;}
-    if(occupied){GUI.enabled=!session.paused&&session.taxi.body.velocity.magnitude<=.1f;float half=(r.width-24*scale)*.5f;if(GUI.Button(new Rect(r.x+10*scale,r.yMax-34*scale,half,28*scale),"안전한 곳에서 대기",KoreanText.Button(Mathf.RoundToInt(13*scale))))occupancy.Resolve(false);GUI.enabled=GUI.enabled&&occupancy.CanOfferAlternative;if(GUI.Button(new Rect(r.x+14*scale+half,r.yMax-34*scale,half,28*scale),"대체 지점 선택",KoreanText.Button(Mathf.RoundToInt(13*scale))))occupancy.Resolve(true);GUI.enabled=true;}
-    else if(result){GUI.enabled=session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f;if(GUI.Button(new Rect(r.x+10*scale,r.yMax-34*scale,r.width-20*scale,28*scale),"운전 평가 · 정차 시 확인",KoreanText.Button(Mathf.RoundToInt(13*scale))))ToggleDetails();GUI.enabled=true;}
+   if(!TipExpanded&&GUI.Button(new Rect(Mathf.Max(0,r.xMax),r.y,(feed.Unseen>0?78:54)*scale,36*scale),feed.Unseen>0?"알림 "+feed.Unseen+" ▶":"알림 ▶",KoreanText.Button(Mathf.RoundToInt(13*scale))))ToggleTip();
+   if(tipSlide>0){
+    FeedButton fuel=null;
+    if(feed.FuelActionVisible){bool onTrip=session.jobs.trip.State==TripState.OnTrip;fuel=new FeedButton{label="주유소 안내",primary=true,enabled=!onTrip,note="승객 하차 후 안내할 수 있어요",click=()=>session.services.GuideToFuel()};}
+    List<FeedButton> actions=null;
+    if(occupied){bool stopped=!session.paused&&session.taxi.body.velocity.magnitude<=.1f;actions=new List<FeedButton>{new FeedButton{label="안전한 곳에서 대기",enabled=stopped,note="정차 후 선택할 수 있어요",click=()=>occupancy.Resolve(false)},new FeedButton{label="대체 지점 선택",primary=true,enabled=stopped&&occupancy.CanOfferAlternative,note="정차 후 선택할 수 있어요",click=()=>occupancy.Resolve(true)}};}
+    else if(result){bool stopped=session.paused||session.business.ShowingSummary||session.taxi.body.velocity.magnitude<.5f;actions=new List<FeedButton>{new FeedButton{label="운전 평가 · 정차 시 확인",primary=true,enabled=stopped,note="정차하면 열 수 있어요",click=ToggleDetails}};}
+    feed.DrawFeed(new Rect(r.x+8*scale,r.y+38*scale,r.width-16*scale,Mathf.Max(12*scale,r.height-44*scale)),context,occupied||result?FeedKind.Situation:FeedKind.System,actions,fuel);
    }
   }
 

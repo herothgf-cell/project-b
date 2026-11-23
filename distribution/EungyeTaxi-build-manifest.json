@@ -1,27 +1,34 @@
 {
-  "sourceCommit": "c2668c4b9ca9d95f3332f9eb43af0c7ecc8ea73b",
+  "sourceCommit": "93ea285eda4ea2ef7926aed9c4c58d80898ba3e2",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
-  "validatedOn": "2026-11-20",
-  "totalBytes": 150793717.0,
+  "validatedOn": "2026-11-23",
+  "totalBytes": 150794516.0,
   "validation": {
-    "build": "CabinSoundChecks.VerifyAndBuild -> PrototypeBuild.BuildHybrid exit 0",
-    "unityPackagedClips": 6,
-    "workspaceInputIssues": 0,
-    "settingsEditorTests": 112,
-    "cabinPlayerChecks": 35,
-    "roadMix": "cruise=0.2607954 rest=0 pitch=1 speed=0",
-    "pvpConditionPlayerChecks": 24,
-    "manualListening": false,
+    "build": "PrototypeBuild.BuildEasyRoadMapEditor exit 0",
+    "modelSuites": 23,
+    "campaignStateAssertions": 20,
+    "presentationHudAssertions": 20,
+    "editorCoreAssertions": 15,
+    "easyEditorCoreAssertions": 7,
+    "buttonResolutions": [
+      1280,
+      1600,
+      1920
+    ],
+    "editorExtendedTests": true,
+    "editorPlayerAssertions": 28,
+    "trialIsolation": true,
     "manualDriving": false,
-    "fullCampaign": false
+    "fieldReviewComplete": false,
+    "fieldWorkStoppedByUser": true
   },
   "files": [
     {
       "path": "builds/EungyeTaxi/택시 시뮬레이션_BurstDebugInformation_DoNotShip/Data/Plugins/x86_64/lib_burst_generated.txt",
-      "bytes": 110878,
-      "sha256": "9f4df7e1b205f2a20ec26054549cd8d92c0ad7b7072d269ff0c043ee2b80d71e"
+      "bytes": 110829,
+      "sha256": "3fb56a06b99695509e98108b28723823e3821e5800c44b12317034c6487c2367"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/app.info",
@@ -31,17 +38,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "f05c7824a77ab03c224c85f8880388afc5844971dc89119e126c15d283c57e27"
+      "sha256": "f6dd4957c9fa7ad80a23d2ffaaabfce4a01d4488acd310113f66933d345cb3e8"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
       "bytes": 64340,
-      "sha256": "117be33402379cadba70496dd0678c9f770d85a2d1b7337758d72c7ec6bf58a7"
+      "sha256": "960a672cca5ddfcb07af4e9cb85b696b6dc3c19fc8144230412a4d41ebb65c54"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
       "bytes": 120848,
-      "sha256": "a0869c7e0ec136ba73737f747818148cdd1eab0b714105722a25e71eb71cc8ee"
+      "sha256": "b801fdafd538a3faa22a9216cb52a368f693316a97a823f86b1ee126c67bea2c"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -55,8 +62,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 3213312,
-      "sha256": "d4e71036868296d33a645dbdd24405804daf789e8e71c179a4411a114995acb1"
+      "bytes": 3228160,
+      "sha256": "c9455a7050a621d98a90eb649022604228b9826b24590fc112e524e881e8f529"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
@@ -561,12 +568,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Plugins/x86_64/lib_burst_generated.dll",
       "bytes": 394240,
-      "sha256": "f60d9a3fc43de20ffe7ceb4dd5040f149e0e6c7a006af9f26999197222561777"
+      "sha256": "cf07755484658213b1d0069b92df557e2fadc6a4cbf1ec7af172c3f93fd9b3e2"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 46949688,
-      "sha256": "9c3034c45b32ede019f21cc9ec5d77170f295be878e6723b240c65603b50967c"
+      "bytes": 46935688,
+      "sha256": "761f441229e0e719b831411a9e1f49d45efa1543543e2c201dd86b626b9620e4"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
@@ -711,7 +718,7 @@
     {
       "path": "builds/EungyeTaxi/project-map-build.json",
       "bytes": 177,
-      "sha256": "621c9367ab9aa2fae183c47f8cbf1d318f8c0026d3b5a2e7cee0de821511ea64"
+      "sha256": "d4c17e4fd2a8aca593f87b4116f7bef2b6afadb702b4fbdcad91e06c18f3d35f"
     },
     {
       "path": "builds/EungyeTaxi/ThirdPartyNotices/mchrbn-unity-traffic-simulation-MIT.txt",
@@ -746,8 +753,8 @@
   ],
   "projectMap": {
     "path": "config/maps/project/eungye.project.json",
-    "contentHash": "ff4b47dc6b0208a472e86dcff375f1966f54bd22a95d8802eec9915dcde22137",
-    "bytes": 24943692,
-    "sha256": "effc55d9b418126db3d8bb8f511d816ab61b68af0c5f5862435aaa1cdeb43b77"
+    "contentHash": "46bf8e43cc37a1ee46d4a30e4b7d9ae36168479ec5fdc6677e9f534216b110df",
+    "bytes": 24929686,
+    "sha256": "444e48ca4506d6760bd9305114c87ce924fc0ca15d3ce55d3f7670821383e3fa"
   }
 }
