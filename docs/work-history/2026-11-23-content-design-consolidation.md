@@ -10,7 +10,7 @@
 - 합친 장에는 "구 NN" 표기와 `#sNN` 앵커를 달았다. 옛 번호 → 새 위치 표는 [기획 목록](../content-design/README.md#옛-번호로-찾기)에 있다.
 - 대체·제외 문서와 시점 스냅샷은 `docs/content-design/archive/`로 옮겼다(06 마인드맵 관리, 09~12·14 생활·성장 원안, 23 면허 경로, 37 기사 생활과 영업 목표, 11/13 승객 대조표, 11/19 동기 진단·구체안, Codex 프롬프트).
 - **결정:** 이전 기획 37(특별 운행·지도 판매점·주기 정비·소지금 장부·기사 성장)은 개발 범위에서 제외했다. 체크리스트의 해당 후속 검토 항목도 제외로 표시했다.
-- 같은 날 원격에서 추가된 [37 공차 운영·길 지식·규칙 속 돌발](../content-design/37-driver-judgment-systems.md)은 독립 문서로 유지하고 목록에 넣었다. 링크 2개를 새 위치로 고쳤다.
+- 같은 날 원격에서 추가된 [37 공차 운영·길 지식·규칙 속 돌발](../content-design/archive/37-driver-judgment-systems.md)은 독립 문서로 유지하고 목록에 넣었다. 링크 2개를 새 위치로 고쳤다.
 - `docs/content-design/cleanup-merged-docs.ps1`로 옛 문서 41개를 `git rm`하고, 저장소 안 `.md`/`.html`의 링크를 새 위치로 바꿨다(`docs/design-history/`, `archive/`는 그대로). 도로 조사(`road-survey/`)의 md·ps1·json 출처 경로는 수동으로 01로 바꿨다.
 - 마인드맵 `택시 시뮬레이션.mmst`와 `택시 시뮬레이션-목차.md`의 링크도 통합 위치로 갱신했다.
 

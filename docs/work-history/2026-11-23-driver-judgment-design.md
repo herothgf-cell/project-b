@@ -6,7 +6,7 @@
 
 ## 실제 작업
 
-- 새 기획 [37 공차 운영·길 지식·규칙 속 돌발](../content-design/37-driver-judgment-systems.md) 작성.
+- 새 기획 [37 공차 운영·길 지식·규칙 속 돌발](../content-design/archive/37-driver-judgment-systems.md) 작성.
   - 기존 소스 대조: `OperationMetrics`(공차 집계), `PassengerDemandPolicy`, `DailyConditions`/`DailyRoadConstruction`, `JobOffer`·주변 호출, `RequestKind.LargeRoad/ShortRoad/RouteAdvice/LostItem/RejectIllegal`, 청결 승차 거부, 기획30 동네 숙련도.
   - 단계별 구현 범위와 권장 순서(정산 동선 → 내비 단계 → 분실물 → 승강장 …), 하지 않을 것, 사람 검증 질문.
 - `docs/content-design/README.md` 목록, `docs/CURRENT-STATE.md` “미구현(기획 있음)” 갱신.

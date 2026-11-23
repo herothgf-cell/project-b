@@ -13,7 +13,7 @@
 
 ## 기획 검토와 남은 확인
 
-운전 중 판단을 늘리는 [기획 37 공차 운영·길 지식·규칙 속 돌발](content-design/37-driver-judgment-systems.md)은 구현 승인 전이다.
+운전 중 판단을 늘리는 공차 운영·길 지식·규칙 속 돌발(구 기획 37)은 2026-11-24에 [08 재미 보강 5장](content-design/08-fun-improvements.md)으로 합쳤고 구현 승인 전이다.
 
 기획 문서는 2026-11-23 주제별 10개(00~09)로 합쳤다. 이전 기획 37(특별 운행·지도 판매점·주기 정비·소지금 장부·기사 성장)은 개발 범위에서 제외해 [보관](content-design/archive/37-driver-life-and-business.md)했고, 다음 검토 주제는 [08 운전하는 20분의 재미 보강](content-design/08-fun-improvements.md)이다. 숙소의 실제 호실 이전과 기사 평점은 후속 항목이다. [기획 목록](content-design/README.md) · [개발 체크리스트](prototype-development-checklist.md)
 
