@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PVP 결정 사항·미정 항목·밸런스 후보</title><style>
+:root{--accent:#F2B705;--ink:#1d2320;--sub:#5d6862;--bg:#f6f7f5;--card:#fff;--line:#dfe4e0;--th:#f7f1de;--code:#f0f2f0;--link:#9a6c00;
+--ok:#1f8f4e;--src:#2f6fd6;--prog:#7a4fd0;--wait:#d98a00;--hold:#8a8f8c;--fix:#d2453a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}}
+:root[data-theme="dark"]{--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 80px}
+.crumb{font-size:13.5px;color:var(--sub);margin-bottom:10px}
+header.doc{background:var(--card);border:1px solid var(--line);border-left:10px solid var(--accent);border-radius:10px;padding:18px 22px;margin-bottom:20px}
+header.doc h1{font-size:27px;margin:2px 0 6px;line-height:1.35}
+header.doc p{margin:6px 0;color:var(--sub)}
+h1{font-size:26px}h2{font-size:21px;margin:40px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+h3{font-size:17.5px;margin:28px 0 6px}h4,h5,h6{font-size:15.5px;margin:20px 0 4px;color:var(--sub)}
+p,ul,ol{margin:8px 0}ul,ol{padding-left:24px}li{margin:3px 0}
+a{color:var(--link)}
+img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff}
+.tw{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--th)}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-family:Consolas,Menlo,monospace;font-size:13.5px}
+pre{background:var(--code);border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.5}pre code{padding:0;background:none}
+blockquote{margin:12px 0;padding:6px 14px;border-left:5px solid var(--accent);background:var(--card);color:var(--sub);border-radius:0 6px 6px 0}
+hr{border:none;border-top:1px solid var(--line);margin:28px 0}
+details.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font-size:14.5px}
+details.toc summary{cursor:pointer;font-weight:700}
+details.toc ol{margin:6px 0}details.toc li.l3{margin-left:18px;list-style:circle;color:var(--sub)}
+details.toc a{text-decoration:none}
+nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+.st{display:inline-block;border-radius:999px;padding:0 9px;margin:1px 2px 1px 0;font-size:12.5px;font-weight:700;white-space:nowrap;color:#fff}
+.st.ok{background:var(--ok)}.st.src{background:var(--src)}.st.prog{background:var(--prog)}.st.wait{background:var(--wait)}.st.hold{background:var(--hold)}.st.fix{background:var(--fix)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.filter{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+.filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
+.gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+</style></head>
+<body><div class="wrap">
+<div class="crumb"><a href="../index.html">기획서 목록</a> · <a href="../README.html">기획 README</a> · <a href="README.html">PvP 목록</a> · <a href="09-decisions-and-balance.md">원본 md</a></div>
+<header class="doc"><h1>PVP 결정 사항·미정 항목·밸런스 후보</h1><blockquote><p><b>보존 자료: 초기 독립 PVP/단계별 기록.</b> 아래 “현재/미구현/최신”은 작성 당시 표현이다. 현재 A2·통합 실행·순수익 경쟁·LAN은 <a href="README.html">PVP 기준</a>을 따른다. 초기 독립 총점/보너스·Fusion 후보·별도 실행 경로는 현행 규칙이 아니다.</p></blockquote></header>
+<details class="toc" open><summary>목차 (12)</summary><ol><li class="l2"><a href="#상태를-읽는-방법">상태를 읽는 방법</a></li><li class="l2"><a href="#결정-대장">결정 대장</a></li><li class="l2"><a href="#시험-설정-후보의-단일-출처">시험 설정 후보의 단일 출처</a></li><li class="l2"><a href="#먼저-해소할-미정-사항">먼저 해소할 미정 사항</a></li><li class="l2"><a href="#변경-절차">변경 절차</a></li><li class="l2"><a href="#변경-이력">변경 이력</a></li><li class="l2"><a href="#2026-10-29-시험-구현-후보-기록">2026-10-29 시험 구현 후보 기록</a></li><li class="l2"><a href="#직접-ip-후보-추가-2026-10-29">직접 IP 후보 추가 (2026-10-29)</a></li><li class="l2"><a href="#재접속공통-콘텐츠-시험값-2026-10-29">재접속·공통 콘텐츠 시험값 (2026-10-29)</a></li><li class="l2"><a href="#기본-경쟁-운송-시험표-2026-10-29">기본 경쟁 운송 시험표 (2026-10-29)</a></li><li class="l2"><a href="#실제-입력-주행npc법규-시험값-2026-10-29">실제 입력 주행·NPC/법규 시험값 (2026-10-29)</a></li><li class="l2"><a href="#확장-시험장서비스-추가-후보--2026-10-29">확장 시험장/서비스 추가 후보 — 2026-10-29</a></li></ol></details>
+<p>상태: 기획 초안 / P1 기반 코드 추가, 경기 규칙·밸런스 검증 전 작성일: 2026-10-27 담당: 결정의 근거와 상태, 시험 설정 후보. 개별 시스템 규칙은 각 담당 문서에 둔다.</p>
+<h2 id="상태를-읽는-방법">상태를 읽는 방법</h2>
+<div class="tw"><table><thead><tr>
+<th>표기</th>
+<th>의미</th>
+<th>개발자가 다루는 방법</th>
+</tr></thead><tbody>
+<tr><td>사용자 확정</td><td>대화에서 사용자가 명시한 방향</td><td>구현 계획의 제약으로 유지</td></tr>
+<tr><td>초안 기본안</td><td>논의를 구체화하기 위해 정한 권고안</td><td>시험 구현의 출발점이며 사용자 최종 확정으로 표현하지 않음</td></tr>
+<tr><td>비교 시험</td><td>대안 중 선택하기 전 시험할 후보</td><td>설정으로 교체하고 결과를 기록</td></tr>
+<tr><td>미정</td><td>답에 따라 규칙이나 범위가 달라짐</td><td>해당 단계 착수 전 결정하거나 명시된 비교 시험으로 해소</td></tr>
+<tr><td>후속</td><td>첫 접속·경기 검증에 필요하지 않은 범위</td><td>초기 완료 조건에 포함하지 않음</td></tr>
+</tbody></table></div>
+<h2 id="결정-대장">결정 대장</h2>
+<div class="tw"><table><thead><tr>
+<th>ID</th>
+<th>주제</th>
+<th>상태</th>
+<th>현재 기록</th>
+<th>담당 문서</th>
+</tr></thead><tbody>
+<tr><td>D-01</td><td>모드 목적</td><td>사용자 확정</td><td>기존 시뮬레이션과 구분한 실제 사용자 PVP, 한정된 공간에서 운송 경쟁</td><td><a href="00-mode-overview.html">00</a></td></tr>
+<tr><td>D-02</td><td>승패의 축</td><td>사용자 확정</td><td>운임과 운전 점수가 모두 기여하며 운임 차이가 승패에 충분히 반영됨</td><td><a href="05-scoring-and-results.html">05</a></td></tr>
+<tr><td>D-03</td><td>맵</td><td>사용자 확정</td><td>현재 은계 맵을 경기장으로 쓰지 않고 자체 제작 맵 사용</td><td><a href="03-map-and-content.html">03</a></td></tr>
+<tr><td>D-04</td><td>조작·속도감</td><td>사용자 확정</td><td>현재보다 경쾌한 가속, 민첩한 조향·방향 전환, 맵 규모와 함께 조정</td><td><a href="02-driving-and-traffic.html">02</a></td></tr>
+<tr><td>D-05</td><td>경기 시간</td><td>사용자 확정된 제약</td><td>아직 정하지 않음. 이전 대화의 10분은 확정 규칙이 아님</td><td><a href="01-match-flow-and-rules.html">01</a></td></tr>
+<tr><td>D-06</td><td>작업 진행</td><td>사용자 확정</td><td>2026-10-27 별도 브랜치에서 개발 로드맵·기획 작성, 2026-10-29 요청에 따라 후속 개발 진행. 실제 완료는 작업 이력 기준</td><td><a href="08-development-roadmap.html">08</a></td></tr>
+<tr><td>D-07</td><td>코드·실행 분리</td><td>초안 기본안</td><td>같은 저장소·Unity 프로젝트에 전용 시작점·맵·설정·실행파일. 초기 작업 브랜치 feature/pvp-prototype</td><td><a href="07-network-and-build.html">07</a></td></tr>
+<tr><td>D-08</td><td>참가 인원</td><td>비교 시험</td><td>실제 2인 접속부터 검증하고 4인 규모를 다음 목표로 검토</td><td><a href="01-match-flow-and-rules.html">01</a></td></tr>
+<tr><td>D-09</td><td>승객 경쟁</td><td>초안 기본안</td><td>공용 승객을 현장에서 확보. 지도 선택은 길안내 목표이며 독점 예약이 아님</td><td><a href="04-passengers-and-fares.html">04</a></td></tr>
+<tr><td>D-10</td><td>점수 구조</td><td>초안 기본안</td><td>완료 기본운임 환산 + 완료 운송의 안전 보너스 − 경기 전체의 위반 감점</td><td><a href="05-scoring-and-results.html">05</a></td></tr>
+<tr><td>D-11</td><td>택시 간 충돌</td><td>미정</td><td>초기 네트워크 시험은 OFF 권고. 정식 규칙으로 확정하지 않음</td><td><a href="02-driving-and-traffic.html">02</a></td></tr>
+<tr><td>D-12</td><td>경기 마감</td><td>비교 시험</td><td>신규 승차 차단 후 공통 마감 시각 적용. 유예 없음/공통 유예를 비교</td><td><a href="01-match-flow-and-rules.html">01</a></td></tr>
+<tr><td>D-13</td><td>네트워크 SDK</td><td>비교 시험</td><td>Photon Fusion 2 Host 우선 후보. 실제 차량 예측 검증 후 채택 여부 결정</td><td><a href="07-network-and-build.html">07</a></td></tr>
+<tr><td>D-14</td><td>접속·운영</td><td>초안 기본안</td><td>초대방 우선. 공개 경쟁·전용 서버·랭킹은 후속 게이트</td><td><a href="07-network-and-build.html">07</a></td></tr>
+<tr><td>D-15</td><td>생활 요소</td><td>초안 기본안</td><td>첫 경기에서 식사·수면·졸음·청결·주유로 진행을 중단시키지 않음</td><td><a href="00-mode-overview.html">00</a></td></tr>
+<tr><td>D-16</td><td>중도 참가·이탈</td><td>초안 기본안</td><td>경기 중 새 경쟁 참가 제한, 재접속은 기존 신원/기록 복구. 초기 Host 상실은 경기 무효</td><td><a href="01-match-flow-and-rules.html">01</a></td></tr>
+<tr><td>D-17</td><td>장기 분기 관리</td><td>초안 기본안</td><td>검증 뒤 공통 코드를 함께 관리하며 모드별 빌드를 유지. 영구 분기 복제를 기본 구조로 삼지 않음</td><td><a href="07-network-and-build.html">07</a></td></tr>
+<tr><td>D-18</td><td>차량 구현 방식</td><td>비교 시험</td><td>기존 차량 수치 조정과 PVP용 단순화 컨트롤러를 조작·네트워크 비용으로 비교</td><td><a href="02-driving-and-traffic.html">02</a>, <a href="07-network-and-build.html">07</a></td></tr>
+</tbody></table></div>
+<h2 id="시험-설정-후보의-단일-출처">시험 설정 후보의 단일 출처</h2>
+<p>아래 숫자는 제품 기본값이나 구현 완료 값이 아니다. 시행한 조합만 시험 기록에 남기며, 비교 전에는 우열을 단정하지 않는다. 게임이 시작될 때 선택한 설정을 서버가 고정하고 설정 버전을 참가자에게 공유한다.</p>
+<div class="tw"><table><thead><tr>
+<th>설정 키</th>
+<th>후보·상태</th>
+<th>용도 / 확정 조건</th>
+</tr></thead><tbody>
+<tr><td>PlayerCount</td><td>최초 실접속 2인, 확대 후보 4인</td><td>인원에 따른 승객 공급·만남 빈도·교통 부하를 분리 측정</td></tr>
+<tr><td>MatchDurationSeconds</td><td>필수 양수 설정. 비교 후보 240 / 360 / 480초, 제품 기본값 미정</td><td>완료 운송 수·재경기 의향·초기 위치 영향으로 판단. 후보를 10분 확정으로 읽지 않음</td></tr>
+<tr><td>FinishGraceSeconds</td><td>0 / 30초 비교</td><td>장거리 운송의 마감 불이익과 결과 대기 시간을 함께 비교</td></tr>
+<tr><td>FareWonPerPoint</td><td>초기 계산 비교값 100원/점</td><td>원화 표시와 포인트를 구분. 반올림 규칙은 <a href="05-scoring-and-results.html">05</a>에만 정의</td></tr>
+<tr><td>FareTable</td><td><code>BaseFare</code> / <code>IncludedDistance</code> / <code>DistanceStep</code> / <code>DistanceStepFare</code> 모두 미정</td><td><a href="04-passengers-and-fares.html">04</a>의 기준 합법 경로로 공급 시 약정. P3 착수 시 시험표를 정하고 P4에서 운송 유형별 수익을 조정</td></tr>
+<tr><td>SafeTripBonusRate</td><td>0.05 / 0.10 비교</td><td>운임 중심 원칙을 유지하면서 동등 운임의 운전 차이를 보상</td></tr>
+<tr><td>ViolationPenaltyTable</td><td>사건 종류별 시험표를 별도 설정 데이터로 관리, 아직 수치 미정</td><td>해당 위반으로 절약한 시간과 추가 운임을 측정한 뒤 배점. 캠페인 감점을 자동 복사하지 않음</td></tr>
+<tr><td>WaitingPassengerTarget</td><td>참가자 수 + 1을 초기 공급 후보로 사용</td><td>장기 무배차와 특정 승객 독점 여부를 보고 조정</td></tr>
+<tr><td>PickupStopHoldSeconds</td><td>미정</td><td>멈춘 상태 확인과 반응성을 함께 측정. 전송 순서만으로 승객을 주지 않음</td></tr>
+<tr><td>PickupGeometryToleranceProfile</td><td>위치·방향·정차 속도 허용 오차 미정</td><td>승차·하차 영역과 차로 방향을 함께 검증. P1에서 기하 후보를 만들고 P3에서 판정 시험</td></tr>
+<tr><td>PickupExpirySeconds</td><td>미정</td><td><a href="04-passengers-and-fares.html">04</a>의 승객 상태 전이와 함께 비교</td></tr>
+<tr><td>ReconnectGraceSeconds</td><td>미정</td><td>공통 경기 시간을 멈추지 않는 재접속 복구. 양수 유예를 사용할지는 P2에서 결정</td></tr>
+<tr><td>SignalCycleProfile</td><td>맵·접근 방향별 시험 설정, 최종 주기 미정</td><td>신호를 읽고 합법적으로 빠르게 이동할 수 있어야 함</td></tr>
+<tr><td>TrafficPopulationProfile</td><td>미정</td><td>실제 선택을 만드는 교통과 단순 대기 시간을 구분. 기존 캠페인 수량 자동 복사 금지</td></tr>
+<tr><td>VehicleHandlingProfile</td><td>가속·조향·회전 안정화·제동·코너 보정별 비교 설정</td><td>최고속도 하나만으로 합격 판단하지 않음</td></tr>
+<tr><td>ControlAssistPolicy</td><td>조작 보조 허용 범위·무입력 감속 설정 미정</td><td>같은 방의 차량 성능 조건을 통일. P1에서 비교하고 P2에서 입력 유실·재연결 동작 확인</td></tr>
+<tr><td>ObservationToleranceProfile</td><td>위반 관측 지속 조건·오차·사건 종료 조건 미정</td><td><a href="02-driving-and-traffic.html">02</a>의 사건 근거를 P3 전에 설정. 순간 튐과 독립된 실제 위반을 구분</td></tr>
+<tr><td>RecoveryPolicy</td><td>복구 요청 제한·안전 지점 재확인·점유 대기 한도 미정</td><td>P1에서 경계·후방 복구 시험 설정을 정하고 P2에서 네트워크 복원 확인. 복구 실패의 경기 처리는 <a href="01-match-flow-and-rules.html#지도-오류와-복구-불가">01</a></td></tr>
+<tr><td>ArenaScaleProfile</td><td>이동 시간과 경로 분기 수로 먼저 비교, 면적 미정</td><td>법규 준수 운송 반복이 성립한 뒤 미터 단위 크기 고정</td></tr>
+<tr><td>NetworkSimulationRate</td><td>네트워크 후보별 호환 주기 검증 후 결정</td><td>서버 부하·조작 반응·위치 보정량을 같이 확인</td></tr>
+<tr><td>ClaimLagCompensationPolicy</td><td>초기안은 서버 처리 틱 기준, 과거 승차·하차 소급 승인 없음</td><td>P2~P3에서 Host/원격 참가자의 지연 편향 측정. 보상 도입 여부·허용 범위는 미정이며 채택 시 01·04·07 함께 변경</td></tr>
+<tr><td>NetworkTestProfile</td><td>로컬 기준, 왕복 지연 50 / 100 / 150ms, 패킷 손실 0 / 1 / 3%를 단계별 비교</td><td>시험 환경 입력이며 허용 품질 보장 수치가 아님. 모든 조합 전수검사가 필수라는 뜻도 아님</td></tr>
+</tbody></table></div>
+<p>실행 테스트의 짧은 타이머·가상 운임·가상 사건 배점은 제품 밸런스와 구분해 테스트 픽스처에 둔다. 자동검사에서 쓰는 시간이 경기 시간 결정으로 승격되지 않도록 한다.</p>
+<h2 id="먼저-해소할-미정-사항">먼저 해소할 미정 사항</h2>
+<div class="tw"><table><thead><tr>
+<th>ID</th>
+<th>결정할 질문</th>
+<th>판단 자료</th>
+<th>결정할 시점</th>
+</tr></thead><tbody>
+<tr><td>O-01</td><td>어떤 가속·회전 모델이 빠르면서 조작 가능한가</td><td>오프라인 시험 코스 + 온라인 보정량</td><td>P1 후보 비교 / P2 채택</td></tr>
+<tr><td>O-02</td><td>Fusion 2와 현재 차량 구조의 조합이 적합한가</td><td>2클라이언트 예측·접지·코너·정산 부작용 검사</td><td>P2 종료 전</td></tr>
+<tr><td>O-03</td><td>최종 참가 인원과 경기 시간이 얼마인가</td><td>운송 횟수·경쟁자 만남·빈차/대기 비율·재경기</td><td>P4</td></tr>
+<tr><td>O-04</td><td>택시 간 물리 충돌을 정식으로 허용하는가</td><td>접촉 책임·피해자 감점·NPC를 이용한 간접 길막 검증</td><td>OFF 기본 시험 후 별도 판단</td></tr>
+<tr><td>O-05</td><td>안전 보너스·위반 감점은 어느 정도인가</td><td>동일 운임 / 큰 운임 우위 / 반복 위반의 세 비교군</td><td>P3 산식 검증 후 P4 조정</td></tr>
+<tr><td>O-06</td><td>유예 마감이 필요한가</td><td>미완료 장거리 비율·마감 직전 선택·결과 대기</td><td>P4</td></tr>
+<tr><td>O-07</td><td>초대방 이후 공개 매칭·랭킹까지 추진하는가</td><td>실제 사용자 테스트 결과와 운영 의사</td><td>P5 착수 전</td></tr>
+<tr><td>O-08</td><td>자체 맵의 최종 테마·규모·정차점은 무엇인가</td><td><a href="03-map-and-content.html">03</a>의 후보 카탈로그와 주행 측정</td><td>P1~P4</td></tr>
+</tbody></table></div>
+<h2 id="변경-절차">변경 절차</h2>
+<ol><li>사용자 결정 또는 시험 근거를 이 문서에 날짜·근거와 함께 기록한다.</li><li>규칙 소유 문서와 설정 버전을 갱신한다. 같은 수치를 여러 본문에 복사하지 않는다.</li><li>해당 <a href="10-playtest-and-acceptance.html">QA 항목</a>과 <a href="08-development-roadmap.html">개발 단계</a>의 영향을 기록한다.</li><li>진행 중인 경기는 시작 시 고정된 설정을 유지하고, 변경은 다음 경기부터 적용한다.</li><li>문서 초안, 자동검사 통과, 실제 온라인 플레이 완료를 서로 다른 상태로 기록한다.</li></ol>
+<h2 id="변경-이력">변경 이력</h2>
+<div class="tw"><table><thead><tr>
+<th>날짜</th>
+<th>변경</th>
+<th>근거</th>
+</tr></thead><tbody>
+<tr><td>2026-10-27</td><td>PVP 기획 초안과 결정 상태표 작성</td><td>현재 대화의 사용자 요구, main 기준 문서·코드 확인</td></tr>
+<tr><td>2026-10-29</td><td>P1 시작·저장·빌드 기반 개발 착수. 기존 시간·인원·배점·SDK 후보 상태 유지</td><td>사용자 후속 개발 요청, <a href="../../work-history/2026-10-29-pvp-startup-isolation.md">실행·검증 기록</a></td></tr>
+</tbody></table></div>
+<p>관련: <a href="README.html">기획 입구</a> · <a href="08-development-roadmap.html">개발 로드맵</a></p>
+<h2 id="2026-10-29-시험-구현-후보-기록">2026-10-29 시험 구현 후보 기록</h2>
+<p>VehicleHandlingProfile A/B와 ArenaScaleProfile은 <a href="../../work-history/2026-10-29-pvp-arena-integration.md">Task 2 이력</a>의 실제 자동 측정값을 가진 시험 후보다. <code>Content/Maps/PvpArena01.asset</code>은 외곽 좌표 ±60m와 정차점 ±72m의 회색 상자 맵이며 최종 규모가 아니다. 경로 추정 속도는 외곽18m/s·내부7m/s 비교 입력이다. NPC/신호가 없으며 실제 속도 보장이나 최종 제한속도 규칙이 아니다. 차량 A/B 중 최종 채택은 사람 조작감과 P2 검증 이후 결정한다. 경기 시간·인원·배점·충돌·SDK 상태는 유지한다.</p>
+<h2 id="직접-ip-후보-추가-2026-10-29">직접 IP 후보 추가 (2026-10-29)</h2>
+<p>사용자가 Fusion SDK/App ID 미준비와 대안 확인을 답했다. 따라서 NGO1.12.0 + Transport1.5.0을 현재 Unity2022.3.62f2에 설치하고 직접 IP 2인 주행을 시험한다. 이는 기존 대안의 검증 착수이며 Fusion 기술 실패나 NGO 최종 채택 결정이 아니다. Relay/계정/인터넷 초대방은 추가하지 않는다. NGO의 기본 보간을 완전한 예측이라고 부르지 않고, 별도 입력 이력·권한 ACK·재계산을 구현했다. 입력은 서버 tick당 한 번만 적용하며 한꺼번에 도착한 조작 상태는 최신 것으로 합친다.</p>
+<p>실제 빌드 GUID·맵 hash·프로토콜·주행 규칙이 같아야 입장 가능하다. 테스트용 고정50Hz/차량A/2인/무접촉이며 경기 시간은 정하지 않는다. <a href="../../work-history/2026-10-29-pvp-direct-ip-network.md">측정 결과·남은 항목</a>.</p>
+<p>직접 IP 후보는 패킷 사이 입력을 최대10서버tick(200ms) 유지하고 이후 입력 유실 감속한다. 시험값이며 실제 연결 종료·재접속 정책을 대신하지 않는다. buildGUID가 달라 Editor와 Player 또는 별도 재빌드 간 접속은 거절될 수 있다.</p>
+<h2 id="재접속공통-콘텐츠-시험값-2026-10-29">재접속·공통 콘텐츠 시험값 (2026-10-29)</h2>
+<div class="tw"><table><thead><tr>
+<th>항목</th>
+<th>현재 상태</th>
+<th>확정과의 경계</th>
+</tr></thead><tbody>
+<tr><td>재접속 유예30초</td><td>같은 프로세스/생존 호스트 시험값, 검사3초 축소 가능</td><td>최종 경기 복귀 정책 미확정</td></tr>
+<tr><td>네트워크 차량</td><td>차량A·무접촉·서버50Hz</td><td>인원/배점/접촉/SDK의 제품 확정 아님</td></tr>
+<tr><td>승객37변주</td><td>완료 공통 콘텐츠 미리보기와 서버 선택 복원</td><td>실제 운송/운임/청결 효과 미연결</td></tr>
+<tr><td>내구도·수리</td><td>캠페인에서도 기획/미구현</td><td>캠페인D0 운행 불가 방향을 PVP 확정으로 가져오지 않음</td></tr>
+</tbody></table></div>
+<p><a href="15-content-application-review.html">상세 적용 검토</a>. 경기 시간을10분으로 고정하지 않으며 고액 단건과 짧은 여러 건의 전략 비교는 실제 운송 단계에서 수행한다.</p>
+<h2 id="기본-경쟁-운송-시험표-2026-10-29">기본 경쟁 운송 시험표 (2026-10-29)</h2>
+<div class="tw"><table><thead><tr>
+<th>항목</th>
+<th>이번 시험값</th>
+<th>상태</th>
+</tr></thead><tbody>
+<tr><td>경기 시간</td><td>호스트 필수 양수 입력, 추가 시간0 이상</td><td>제품 기본값 없음. Player 검사는12초+2초 fixture</td></tr>
+<tr><td>인원/시뮬레이션</td><td>2인·50Hz·차량A·택시 간 무접촉</td><td>후보 유지</td></tr>
+<tr><td>시작</td><td>전원 접속/게스트 준비 후3초 카운트다운</td><td>최소 초대방 시험</td></tr>
+<tr><td>신호/장애물</td><td>중앙 연결로5초 녹색/5초 적색, 장애물8초 왕복</td><td>일반 교통 프리셋 확정 아님</td></tr>
+<tr><td>운임</td><td>기본1000원/포함0cm/10000cm마다1000원 올림</td><td>기본 거리별 약정 시험표</td></tr>
+<tr><td>환산/안전</td><td>100원/점, 안전1/10</td><td>시험 후보</td></tr>
+<tr><td>중앙 적색선</td><td>서버의 실제 접근 통과1건당7점</td><td>전체 법규 배점 아님. 실제 위반 주행 수용 전</td></tr>
+<tr><td>승하차</td><td>지정 incoming edge,3m/25도/0.35m/s 이하·연속10tick</td><td>위치 변화0.02m 초과/관측 누락/격리는 정차 유지 재시작</td></tr>
+<tr><td>공급</td><td>waiting 목표3,5초마다 유효 후보 보충·누적128개 상한</td><td>공급/첫 접근 균형·최종 경기량 미수용</td></tr>
+<tr><td>요청/스냅샷</td><td>서버 캐시4096개·tick 대기64개, 배포 최근 원장16개</td><td>초과 명시 거절, 실제 서버 재시작 복구 미지원</td></tr>
+</tbody></table></div>
+<p>서버 메모리에는 전체 원장/종결 승객/처리 응답을 유지하고, 화면은 전체 집계와 최근 내역을 표시한다. 초기 공급 위치의 접근 편향·회전 난도와 고액 단건/짧은 여러 건의 수익률은 후속 사람 플레이에서 비교한다. 경기 시간을10분으로 고정하거나 수치 후보를 최종 확정으로 올리지 않는다.</p>
+<h2 id="실제-입력-주행npc법규-시험값-2026-10-29">실제 입력 주행·NPC/법규 시험값 (2026-10-29)</h2>
+<div class="tw"><table><thead><tr>
+<th>항목</th>
+<th>이번 후보</th>
+<th>상태</th>
+</tr></thead><tbody>
+<tr><td>검사 운전</td><td>통상8m/s·내부제한−0.5, 저속 코너2.8m/s, 신호 전환3초 여유</td><td>테스트 입력기, 제품 자동 보조 아님</td></tr>
+<tr><td>NPC</td><td>circuit01 외곽2대·6m/s, 차량 간8m/선수 앞7m 여유</td><td>생성/경로/양보는 서버 권한</td></tr>
+<tr><td>보행</td><td>남쪽 횡단1명·2m/s, 적색 시작·진행 중 완료</td><td>점유 대기3.3m, 접촉 proxy2.6m. 기존 겹침의 분리 주행 허용</td></tr>
+<tr><td>제한속도</td><td>외곽12m/s·내부7m/s, +1m/s 초과25tick</td><td>최종 제한/허용 품질 아님. 최초3점·+5m/s 초과7점 상향</td></tr>
+<tr><td>역주행</td><td>도로축 반대1m/s 초과25tick</td><td>정차점14m/6m/s 이하 후진·교차 노드6m 제외,5점</td></tr>
+<tr><td>신호/우회전</td><td>정지선2→진입/전용 금지7, 우회전 정차 누락3</td><td>같은 접근은 최댓값 상향분만 반영</td></tr>
+<tr><td>보행/NPC</td><td>근거 있는 보호 방해9, 관측된 NPC 후방 접촉5</td><td>실제 이동/상대 진행·책임이 부족하면 보류</td></tr>
+<tr><td>사건 관측</td><td>부분/지속 근거는 gap·격리에서 초기화</td><td>완료 정차·기존 사건ID/감점은 보존</td></tr>
+<tr><td>검사 경기</td><td>120초+10초, 2인·50Hz·차량A·무접촉</td><td>제품 경기 시간/인원/충돌/SDK 확정 아님</td></tr>
+</tbody></table></div>
+<p>최대 신호 전환 안전 정지 거리는 현재 모터 제동13m/s²와1m 여유를 쓰는 시험 관측이다. 복잡한 시야·노면·다른 차량 모델은 사람/다른PC 수용 전 별도 검증한다.</p>
+<h2 id="확장-시험장서비스-추가-후보--2026-10-29">확장 시험장/서비스 추가 후보 — 2026-10-29</h2>
+<p>사용자는 기존 자체 PVP 시험장 확장·은계형 필요한 UI 차용·승객/시설 구현을 지시했다. 이번 시험 후보는 외곽1,760m·승객8거점·주유2시설·NPC6/보행4, 연료100/실수락5km, 주유5초/2점·고갈 제자리 지원8초/6점이다. 서비스 비용은 안전 위반과 별도이며 완료 시1회, 미완료 무청구다. 경기 시간10분/최종 배점·SDK/충돌·PVP 손상수리를 새로 확정한 것이 아니다. 실제 범위는 <a href="23-expanded-district.html">23</a>을 따른다.</p>
+<nav class="foot"><span>← <a href="08-development-roadmap.html">PVP 개발 로드맵 Implementation Plan</a></span><span><a href="10-playtest-and-acceptance.html">PVP 검증·플레이테스트·완료 기준</a> →</span></nav>
+<p class="gen">이 페이지는 <code>docs/content-design/pvp/09-decisions-and-balance.md</code>에서 <code>python tools/render_design_docs.py</code>로 만든다. 내용은 md를 고친다.</p>
+</div></body></html>

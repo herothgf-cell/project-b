@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>기존 시뮬레이션 기반 LAN 사람 대전</title><style>
+:root{--accent:#F2B705;--ink:#1d2320;--sub:#5d6862;--bg:#f6f7f5;--card:#fff;--line:#dfe4e0;--th:#f7f1de;--code:#f0f2f0;--link:#9a6c00;
+--ok:#1f8f4e;--src:#2f6fd6;--prog:#7a4fd0;--wait:#d98a00;--hold:#8a8f8c;--fix:#d2453a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}}
+:root[data-theme="dark"]{--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 80px}
+.crumb{font-size:13.5px;color:var(--sub);margin-bottom:10px}
+header.doc{background:var(--card);border:1px solid var(--line);border-left:10px solid var(--accent);border-radius:10px;padding:18px 22px;margin-bottom:20px}
+header.doc h1{font-size:27px;margin:2px 0 6px;line-height:1.35}
+header.doc p{margin:6px 0;color:var(--sub)}
+h1{font-size:26px}h2{font-size:21px;margin:40px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+h3{font-size:17.5px;margin:28px 0 6px}h4,h5,h6{font-size:15.5px;margin:20px 0 4px;color:var(--sub)}
+p,ul,ol{margin:8px 0}ul,ol{padding-left:24px}li{margin:3px 0}
+a{color:var(--link)}
+img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff}
+.tw{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--th)}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-family:Consolas,Menlo,monospace;font-size:13.5px}
+pre{background:var(--code);border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.5}pre code{padding:0;background:none}
+blockquote{margin:12px 0;padding:6px 14px;border-left:5px solid var(--accent);background:var(--card);color:var(--sub);border-radius:0 6px 6px 0}
+hr{border:none;border-top:1px solid var(--line);margin:28px 0}
+details.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font-size:14.5px}
+details.toc summary{cursor:pointer;font-weight:700}
+details.toc ol{margin:6px 0}details.toc li.l3{margin-left:18px;list-style:circle;color:var(--sub)}
+details.toc a{text-decoration:none}
+nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+.st{display:inline-block;border-radius:999px;padding:0 9px;margin:1px 2px 1px 0;font-size:12.5px;font-weight:700;white-space:nowrap;color:#fff}
+.st.ok{background:var(--ok)}.st.src{background:var(--src)}.st.prog{background:var(--prog)}.st.wait{background:var(--wait)}.st.hold{background:var(--hold)}.st.fix{background:var(--fix)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.filter{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+.filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
+.gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+</style></head>
+<body><div class="wrap">
+<div class="crumb"><a href="../index.html">기획서 목록</a> · <a href="../README.html">기획 README</a> · <a href="README.html">PvP 목록</a> · <a href="30-native-lan.md">원본 md</a></div>
+<header class="doc"><h1>기존 시뮬레이션 기반 LAN 사람 대전</h1><p>2026-11-23 팁·연속 기록·운전 칭찬 상태를 복제하면서 통합 실행본의 호환 계약은 <b><code>native-city-lan-v25</code></b>다(v24: 개인 운전 감각). PvP의 모든 차는 시뮬 조향을 쓰므로 경기 물리는 v23과 같지만, 서로 다른 조향 코드의 실행본이 섞이지 않도록 올렸다. 호스트와 참가자가 같은 물리로 운전 입력을 계산하도록 양쪽 실행 폴더를 갱신한다. 기존 개인 조향·브레이크 설정과 승객 프리셋·특성 동기화를 사용한다. 승객 제작 범위는 <a href="../03-passenger-content.html">프리셋 기획15</a>와 <a href="../03-passenger-content.html">개별 설정16</a>을 따른다.</p></header>
+<details class="toc" open><summary>목차 (10)</summary><ol><li class="l2"><a href="#콘텐츠권한">콘텐츠·권한</a></li><li class="l2"><a href="#접속-방법">접속 방법</a></li><li class="l2"><a href="#구현-계약">구현 계약</a></li><li class="l2"><a href="#지도">지도</a></li><li class="l2"><a href="#검증-기준">검증 기준</a></li><li class="l2"><a href="#참가자-표시복원-성능-후속-2026-11-02">참가자 표시·복원 성능 후속 (2026-11-02)</a></li><li class="l2"><a href="#참가자-알림작은-표시-끊김-후속-2026-11-02">참가자 알림·작은 표시 끊김 후속 (2026-11-02)</a></li><li class="l2"><a href="#닉네임과-짧은-경기">닉네임과 짧은 경기</a></li><li class="l2"><a href="#참가자-자기-차-예측보정-2026-11-04-구현-기록">참가자 자기 차 예측·보정 (2026-11-04 구현 기록)</a></li><li class="l2"><a href="#내-차-외형과-v17-2026-11-10">내 차 외형과 v17 (2026-11-10)</a></li></ol></details>
+<p>호스트는 선택지의 즉시/운행 중/종료 S·피로, 사고 종류/등급·비용/시간/운전 점수·손상/공업사 복귀, 신호 상태를 확정·복제한다. 재접속으로 효과/손상/청구를 재지급하지 않는다. <a href="../02-passengers-and-fares.html">선택 효과</a>·<a href="../04-life-vehicle-economy.html">사고</a>·<a href="../01-driving-and-traffic.html#개인-운전-설정">개인 운전 설정</a>을 따른다.</p>
+<p>2026-11-02. 사용자 선택은 같은 공유기·직접 IPv4부터, 최대4명·빈자리 봇이다. 기존 평면 시험장 네트워크가 아니라 현재 A2 도시·WheelCollider·싱글 공통 승객/법규/내구도/시설을 연결한다. 인터넷 중계·계정·SDK 설치는 추가하지 않는다.</p>
+<h2 id="콘텐츠권한">콘텐츠·권한</h2>
+<div class="tw"><table><thead><tr>
+<th>요소</th>
+<th>동작</th>
+<th>범위 / 제한</th>
+</tr></thead><tbody>
+<tr><td>방 목록</td><td>호스트 닉네임, 인원, 경기 시간, 참가·재참가</td><td>같은 IPv4 LAN에서 자동 갱신. 검색 UDP 47777, 게임 기본 UDP 7777</td></tr>
+<tr><td>대기실</td><td>방 상태, 호스트 IP/UDP 포트, 경기 시간, 참가자·차량, 시작·나가기</td><td>30~7200초. 식사·휴식·피로 요약은 방 규칙 설정에서 표시</td></tr>
+<tr><td>인원</td><td>호스트1+참가자최대3</td><td>빈자리와 끊긴 자리는 봇, 경기 중 신규입장 불가</td></tr>
+<tr><td>운전</td><td>자기 차는 로컬 WheelCollider 즉시 주행·서버 결과 보정, 번호 입력50Hz</td><td>호스트도 동일 실제 물리 처리. 클라이언트 위치·운임 제출 없음</td></tr>
+<tr><td>월드</td><td>현재 A2·4택시·일반차·신호·공유8호출+길가3·점유</td><td>자기 차만 예측 물리. 다른 차/NPC 보간, 클라이언트 법규/운송 평가 중지</td></tr>
+<tr><td>승객</td><td>기존 유형·요청·승하차·만족도·운임</td><td>ID/현재 운송 검증 후 호스트 기존 API. 중복 선점 불가</td></tr>
+<tr><td>컨디션/시설</td><td>기존 PVP 피로1.25·식사/휴식·내구도/수리</td><td>비용·효과 호스트 처리, 자기 상세 상태2Hz</td></tr>
+<tr><td>메뉴</td><td>Esc·지도·시설·결과에서는 자기 차 제동</td><td>전체 경기 계속 진행, 연습용 신호변경 차단</td></tr>
+<tr><td>끊김</td><td>같은 차량/승객을 봇이 승계</td><td>입력0.5초 무수신 제동, 경기중4초 무응답 종료·봇 전환 / 클라이언트는6초 호스트 무응답 감지</td></tr>
+<tr><td>재접속</td><td>같은 실행 프로세스에서 30초 내 같은 방에 재참가</td><td>메모리 ticket으로 원래 자리 회수. 앱 종료 후 복구·호스트 이전 없음</td></tr>
+<tr><td>저장</td><td>온라인도 PVP 임시 세션</td><td>싱글 회사/제품·저장경로 유지, 캠페인 파일 쓰지 않음</td></tr>
+</tbody></table></div>
+<h2 id="접속-방법">접속 방법</h2>
+<ol><li>양쪽에서 <code>builds/EungyeTaxi/EungyeTaxi.exe</code>를 실행하고 PVP를 선택한다.</li><li>호스트는 경기 시간을 초로 입력하고 <b>방 만들기</b>를 누른다. 방의 게임 포트는 기본값 <code>7777</code>을 사용하거나 호스트가 지정한다. <code>47777</code>은 방 검색에 사용한다.</li><li>참가자는 자동으로 갱신되는 <b>LAN 방 목록</b>에서 호스트 닉네임을 확인하고 <b>참가</b>를 누른다. 선택한 방의 주소와 게임 포트로 직접 연결된다.</li><li>인원을 확인하고 호스트가 <b>현재 인원으로 경기 시작</b>. 모두 지도를 준비한 다음 공통 시계가 출발한다. 남는 자리는 봇이다.</li><li>기존 WASD/방향키·Space·M 호출·F 승하차·F7 시설·H 보조를 사용한다. Esc로 나가면 자기 자리는 봇이 이어받는다.</li></ol>
+<p>같은 LAN에서도 방화벽이나 Wi-Fi 격리가 검색용 UDP <code>47777</code>을 막으면 방이 표시되지 않을 수 있다. 검색은 각 로컬 IPv4 인터페이스의 브로드캐스트를 사용하므로 서로 다른 서브넷에서 자동으로 방을 찾을 수 있는지는 현장 확인이 필요하다. 경기에는 호스트가 지정한 UDP 포트로 직접 연결한다. <a href="https://www.rfc-editor.org/info/rfc8386/">IPv4 브로드캐스트 범위</a></p>
+<h2 id="구현-계약">구현 계약</h2>
+<p><code>PvpNativeLan</code>은 기존 NGO1.12/UnityTransport를 사용한다. protocol+지도SHA256으로 호환성을 확인하고 clientID→서버좌석을 고정한다. 서버만 운송/가격/법규/정산을 진행한다. 명령 sequence·현재 trip/request·candidateSeed·native 정차/수락 조건을 확인한다. 입력은50Hz 번호 FIFO, 자세/NPC/점수는10Hz, 자기 상세 모델은2Hz이며 상세 존재 태그로 Unity 인라인 null 복원을 구분한다. 도로 사건/정체 비용도 안정 ID로 복제하며 reliable fragmentation/최대1MiB를 사용한다. 자기 차는 로컬 예측, 원격 차는 보간 지연이 있는 구현이며 호스트의 판정 권한은 유지한다. 클라이언트 UI는 첫 상세 상태를 받은 뒤 조작을 허용한다.</p>
+<p>빠른 프레임에도 NPC 전체를 실어 작은 LAN용으로 구현했다. 4인 실제 PC/지연·손실 환경·장시간 bandwidth와 체감은 최종 별도 검증 항목이다. 승객/시설 상태는 host authoritative이며 클라이언트의 UI 표시 지연이 있을 수 있다. 기존 오프라인과 싱글은 온라인 인스턴스가 없으면 원래 경로로 동작한다.</p>
+<h2 id="지도">지도</h2>
+<p>현재 지도는 사용자 복원 지시를 따른 <b>A2</b>다. <a href="29-city-a3-proposal.html">A3 전체·시장 골목</a>의 구현 이력은 보존하지만 현재 실행 지도에 적용하지 않는다. 필수 은계 입력/배포ZIP은 유지한다. <a href="../../work-history/2026-11-03-pvp-a2-rollback.md">A2 복원 기준</a>을 따른다.</p>
+<h2 id="검증-기준">검증 기준</h2>
+<p><code>tools/test_pvp_native_lan.ps1 -Discover</code>로 같은 PC의 두 Player가 UDP 방 응답을 읽고 검색 결과로 연결하는지 검사한다. <code>-Reconnect</code>를 함께 사용하면 경기 중 같은 좌석으로 돌아가는 경로도 확인한다. 자동 검사는 실제 입력 메시지와 호스트 WheelCollider 주행을 사용한다. 다른 PC의 유선·Wi-Fi 검색과 사람 플레이는 현장에서 확인한다. <a href="../../work-history/2026-11-02-pvp-native-lan.md">기존 자동 검사 이력</a></p>
+<h2 id="참가자-표시복원-성능-후속-2026-11-02">참가자 표시·복원 성능 후속 (2026-11-02)</h2>
+<p><a href="../../work-history/2026-11-02-pvp-client-stutter.md">실측/검사 이력</a>. 10Hz 권한 위치는호스트경기시간기준16샘플에서100ms지연보간·최대100ms외삽하고클라이언트Rigidbody중복보간을끈다. 모델은기존2Hz를유지하되같은운송/목적지/옵션은경로를유지한다. 캠페인코스초기화는replica에서실행하지않고큰길/짧은길요청도옵션이바뀔때만재적용한다. 시설대기정보동일시캐시유지/NPC표시중복·점유차재생성을줄인다. 호스트물리·판정/승객모델·싱글복원은유지한다.</p>
+<p>같은실행본10초루팅비교68.75→0.15ms; 표시된1280x720참가자약59fps는짧은이PC검사이며모든환경보장이아니다. 첫경로단발지연은남는다. 재현 <code>tools/test_pvp_native_lan.ps1 -Reconnect</code>, 비교용 <code>-LegacyRouting</code>(probe한정), 참가자창표시/무음검사 <code>-Rendered</code>. 숨김검은캡처를렌더수용으로계산하지않는다.</p>
+<h2 id="참가자-알림작은-표시-끊김-후속-2026-11-02">참가자 알림·작은 표시 끊김 후속 (2026-11-02)</h2>
+<p>상세 복원은 같은 법규 ledger에 사건 ID별 누적/강화를 적용하여 신호 위반 점수·승객 만족도 알림을 보존한다. 반복 패킷은 알림을 중복 생성하지 않고 초기접속/재접속 과거 사건은 기준값으로 처리한다. 만족도 변화 사유는 호스트에서 전달한다. 알림은 불투명 카드/운전·만족도 배지로4초 표시한다. 운행 HUD의 예상 도착 상태는 숨기며 지도·시설 비교 계산은 유지한다.</p>
+<p>최대100ms 자세 외삽에 회전도 포함하고10Hz 송신의 프레임 누적 지연을 줄인다. 실제 두 실행본73검사·1280×720 참가자 알림 PNG/주행/재접속 수용과 단발 지연 등 제한은 <a href="../../work-history/2026-11-02-pvp-notification-followup.md">작업 이력</a>을 따른다. 알림은 서버 사건 모델 fixture로 검증했으며 신호 위반 물리 주행과 구분한다. 다른PC/4인·모든 끊김 제거 수용은 남는다.</p>
+<h2 id="닉네임과-짧은-경기">닉네임과 짧은 경기</h2>
+<p>입장 전 닉네임(최대12자)을 설정한다. 호스트가 대기실/순위/지도용 이름을 공유하며 빈자리는 봇으로 표시한다. 동일한 최신 실행본끼리 접속하며 호환 버전은 문서 상단을 따른다. 10분 이하 경기는8호출+3길가를 유지하고 각 승차지에서 실제 경로가 가까운3개 도착지를 우선한다. 호출 휴지30초, 기존 수락 약정/거리 운임 유지. 짧은 경로가 더 낮은 운임일 수 있고 운송 횟수는 조작/정체에 따라 달라진다.</p>
+<h2 id="참가자-자기-차-예측보정-2026-11-04-구현-기록">참가자 자기 차 예측·보정 (2026-11-04 구현 기록)</h2>
+<p><code>native-city-lan-v3</code>는 v2의 자기 차 예측에 기본 게임 신호의 호스트 runtime 복제를 추가한다. 양쪽 모두 새 실행본으로 접속하며 v2와 혼용하지 않는다. 자기 차만 동적 Rigidbody/기존 WheelCollider와 로컬 바퀴 갱신을 사용한다. 입력50Hz를 번호순으로 호스트가 처리하고, 실제 새 입력을 처리한 물리 tick에만 ack를 제공한다. 참가자는 해당 입력 이후의 과거 body 상태와 비교해 위치/회전/속도 오차를 현재 상태에 점진 적용한다. 중복/오래된 ack와 새 입력을 처리하지 않은 snapshot은 재보정 근거로 사용하지 않는다. 완전한 PhysX 월드 롤백·재생은 아니다.</p>
+<p>호스트가 NPC·모든 택시·보행 수요로 선택한 기본 신호 단계/진행시간/녹색 길이/수요를10Hz snapshot으로 공유한다. 클라이언트는 마지막 권한 단계와 예상 대기를 표시하며 독자적인 수요 생략을 하지 않는다. 편집·교육 신호는 기존 공유 시계로 유지한다. 수동/원격 사람의 일반 제동·조향은 같은 정책을 쓰고, 봇의 자동 전후진은 유지한다. 실제 검증은 <a href="../../work-history/2026-11-04-casual-controls-signals.md">작업 이력</a>을 따른다.</p>
+<p>초기·큰 오차(8m/100도 초과)·시설/경기 종료는 권한 상태로 재설정하며, 입력 ack 또는 snapshot이0.5초 이상 없으면 예측도 제동한다. 다른 택시/NPC는 기존 서버 보간과 바퀴 표시를 유지한다. H 자유 주행은 호스트가 선택한 방향 edge/시작·끝 절단점을 전달해 같은 경로로 로컬 조향하며, 같은 경로는 재생성하지 않는다. 서버가 승객/법규/충돌 손상/현금/정산을 확정한다. 클라이언트 예측 결과로 점수나 운임을 제출하지 않는다.</p>
+<p>최종 Windows·Editor 및 같은PC 두 실행본95검사/재접속·실제 주행 결과와 제한은 <a href="../../work-history/2026-11-03-pvp-owner-prediction.md">이번 이력</a>을 따른다. 다른PC4명·장시간 충돌·실제 네트워크 지연/손실과 사람의 체감은 별도다. 양쪽 모두 새 실행본으로 다시 시작해야 한다.</p>
+<h2 id="내-차-외형과-v17-2026-11-10">내 차 외형과 v17 (2026-11-10)</h2>
+<p>현재 호환 계약은 ** ative-city-lan-v17**이다(위의 v13 표기는 당시 기록). 참가자는 입장 메시지(hello)에 자기 외형 {model, color, ornament}만 보낸다. 호스트는 알 수 없는 값을 기본 택시로 바꾸고, 빈자리 봇 외형을 방 세션 기준으로 정해 방 정보(room)의 4자리 looks로 배포한다. 경기 시작 후에는 외형을 고정해 자리가 봇으로 넘어가도 같은 차로 보인다. 외형은 시각 요소만 바꾸며 WheelCollider·조향·연료·트렁크·승차감·내구도·경제는 모두 PvP 표준이다. 해금 목록은 캠페인 저장과 분리된 pvp-vehicle-unlocks.json(저장 폴더)이며 PvP는 읽기만 한다. v16 이하 실행본은 기존 버전 불일치 처리(실행본 버전이 다릅니다)로 거부되므로 양쪽 실행 폴더를 함께 갱신한다. 검증 결과는 <a href="../../work-history/2026-11-10-vehicle-purchase-3day.md">작업 이력</a>을 따른다.</p>
+<nav class="foot"><span>← <a href="29-city-a3-proposal.html">A3 — 비정형 골목 도시 (2026-11-03 적용 승인)</a></span><span></span></nav>
+<p class="gen">이 페이지는 <code>docs/content-design/pvp/30-native-lan.md</code>에서 <code>python tools/render_design_docs.py</code>로 만든다. 내용은 md를 고친다.</p>
+</div></body></html>

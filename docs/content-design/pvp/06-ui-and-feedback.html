@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PVP 화면·입력·피드백</title><style>
+:root{--accent:#F2B705;--ink:#1d2320;--sub:#5d6862;--bg:#f6f7f5;--card:#fff;--line:#dfe4e0;--th:#f7f1de;--code:#f0f2f0;--link:#9a6c00;
+--ok:#1f8f4e;--src:#2f6fd6;--prog:#7a4fd0;--wait:#d98a00;--hold:#8a8f8c;--fix:#d2453a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}}
+:root[data-theme="dark"]{--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 80px}
+.crumb{font-size:13.5px;color:var(--sub);margin-bottom:10px}
+header.doc{background:var(--card);border:1px solid var(--line);border-left:10px solid var(--accent);border-radius:10px;padding:18px 22px;margin-bottom:20px}
+header.doc h1{font-size:27px;margin:2px 0 6px;line-height:1.35}
+header.doc p{margin:6px 0;color:var(--sub)}
+h1{font-size:26px}h2{font-size:21px;margin:40px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+h3{font-size:17.5px;margin:28px 0 6px}h4,h5,h6{font-size:15.5px;margin:20px 0 4px;color:var(--sub)}
+p,ul,ol{margin:8px 0}ul,ol{padding-left:24px}li{margin:3px 0}
+a{color:var(--link)}
+img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff}
+.tw{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--th)}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-family:Consolas,Menlo,monospace;font-size:13.5px}
+pre{background:var(--code);border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.5}pre code{padding:0;background:none}
+blockquote{margin:12px 0;padding:6px 14px;border-left:5px solid var(--accent);background:var(--card);color:var(--sub);border-radius:0 6px 6px 0}
+hr{border:none;border-top:1px solid var(--line);margin:28px 0}
+details.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font-size:14.5px}
+details.toc summary{cursor:pointer;font-weight:700}
+details.toc ol{margin:6px 0}details.toc li.l3{margin-left:18px;list-style:circle;color:var(--sub)}
+details.toc a{text-decoration:none}
+nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+.st{display:inline-block;border-radius:999px;padding:0 9px;margin:1px 2px 1px 0;font-size:12.5px;font-weight:700;white-space:nowrap;color:#fff}
+.st.ok{background:var(--ok)}.st.src{background:var(--src)}.st.prog{background:var(--prog)}.st.wait{background:var(--wait)}.st.hold{background:var(--hold)}.st.fix{background:var(--fix)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.filter{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+.filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
+.gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+</style></head>
+<body><div class="wrap">
+<div class="crumb"><a href="../index.html">기획서 목록</a> · <a href="../README.html">기획 README</a> · <a href="README.html">PvP 목록</a> · <a href="06-ui-and-feedback.md">원본 md</a></div>
+<header class="doc"><h1>PVP 화면·입력·피드백</h1><blockquote><p><b>보존 자료: 초기 독립 PVP/단계별 기록.</b> 아래 “현재/미구현/최신”은 작성 당시 표현이다. 현재 A2·통합 실행·순수익 경쟁·LAN은 <a href="README.html">PVP 기준</a>을 따른다. 초기 독립 총점/보너스·Fusion 후보·별도 실행 경로는 현행 규칙이 아니다.</p></blockquote></header>
+<details class="toc" open><summary>목차 (8)</summary><ol><li class="l2"><a href="#정보-우선순위">정보 우선순위</a></li><li class="l2"><a href="#초기-화면-목록">초기 화면 목록</a></li><li class="l2"><a href="#대기방에서-확인하는-조건">대기방에서 확인하는 조건</a></li><li class="l2"><a href="#운전-중-hud">운전 중 HUD</a></li><li class="l2"><a href="#승객-선택과-선점-피드백">승객 선택과 선점 피드백</a></li><li class="l2"><a href="#짧은-사건-알림">짧은 사건 알림</a></li><li class="l2"><a href="#지도와-입력">지도와 입력</a></li><li class="l2"><a href="#최종-결과">최종 결과</a></li></ol></details>
+<blockquote><p>현재 기존 시뮬레이션 기반 PVP는 포만감·피로·청결 계기판을 재사용한다. 아래 초기안의 생활 게이지 제외 문구는 현재 모드에 적용하지 않는다. 개선 UI의 단일 기준은 <a href="../04-life-vehicle-economy.html#pvp-driver-condition">생활·경제 기획의 PVP 전용 항목</a>이며 추가 효과 표시는 아직 미구현이다.</p></blockquote>
+<p>상태: 기획 초안 / 초기 시작 기반 구현, 본문 경기 기능은 미구현 작성일: 2026-10-27 담당: 플레이어가 보는 정보와 선택, 결과 설명. 배점과 서버 상태 전이는 담당 문서를 참조한다.</p>
+<h2 id="정보-우선순위">정보 우선순위</h2>
+<p>운전 중에는 진행 방향과 다음 행동이 먼저 읽혀야 한다. 운임·순위는 짧게 확인할 수 있게 하고, 세부 기록은 안전하게 확인할 때 펼친다. 화면을 열어도 공통 경기 시간은 계속 흐른다.</p>
+<div class="tw"><table><thead><tr>
+<th>우선순위</th>
+<th>필요한 정보</th>
+<th>표현 원칙</th>
+</tr></thead><tbody>
+<tr><td>즉시 행동</td><td>다음 회전, 승하차 목표, 신호, 마감 상태</td><td>차로·목표와 연결된 짧은 표시. 팝업으로 조작을 막지 않음</td></tr>
+<tr><td>운송 판단</td><td>약정 운임, 목적지, 예상 소요, 상대 확보 여부</td><td>예상과 확정 상태를 구분</td></tr>
+<tr><td>경쟁 상황</td><td>현재 순위, 누적 운임 점수, 운전 가감점, 상대 위치</td><td>읽을 수 있는 작은 요약으로 유지</td></tr>
+<tr><td>회고</td><td>사건별 감점 근거, 운송별 정산, 최종 순위</td><td>결과 또는 펼친 기록에서 확인</td></tr>
+</tbody></table></div>
+<h2 id="초기-화면-목록">초기 화면 목록</h2>
+<div class="tw"><table><thead><tr>
+<th>화면</th>
+<th>주요 행동</th>
+<th>나가는 조건</th>
+<th>관련 규칙</th>
+</tr></thead><tbody>
+<tr><td>PVP 시작</td><td>방 만들기·참가, 조작 설정 확인</td><td>방 입장</td><td><a href="01-match-flow-and-rules.html">01</a></td></tr>
+<tr><td>대기방</td><td>참가자·맵·규칙 확인, 준비/취소</td><td>서버가 시작 또는 사용자가 나가기</td><td><a href="01-match-flow-and-rules.html">01</a></td></tr>
+<tr><td>주행 HUD</td><td>운전, 승객 선택, 길안내, 승하차</td><td>경기 최종 종료</td><td><a href="02-driving-and-traffic.html">02</a>, <a href="04-passengers-and-fares.html">04</a></td></tr>
+<tr><td>지도</td><td>승객 후보와 경로·상대 위치 비교</td><td>개인 화면 닫기, 경기 시간은 지속</td><td><a href="03-map-and-content.html">03</a></td></tr>
+<tr><td>경기 결과</td><td>성적과 사건 요약 확인, 재경기 준비</td><td>대기방 이동 또는 나가기</td><td><a href="05-scoring-and-results.html">05</a></td></tr>
+<tr><td>연결 상태 안내</td><td>연결 복구 상태 확인, 재접속 또는 나가기</td><td>권한 있는 상태 복원 또는 경기 무효</td><td><a href="01-match-flow-and-rules.html">01</a>, <a href="07-network-and-build.html">07</a></td></tr>
+</tbody></table></div>
+<p>첫 버전에 공개 매칭·랭킹·상점 화면을 붙이지 않는다. 그 기능은 <a href="00-mode-overview.html">후속 범위</a>다.</p>
+<h2 id="대기방에서-확인하는-조건">대기방에서 확인하는 조건</h2>
+<ul><li>참가 인원, 같은 차량 성능·주행 보조 조건, 맵 이름.</li><li>이번 경기의 시간·마감 정책·충돌 정책·점수 규칙 요약.</li><li>준비 여부와 시작 가능 여부.</li><li>설정이 바뀌면 이전 준비 상태를 해제하고 다시 확인하게 한다.</li><li>참가자가 서로 다른 맵/규칙 버전을 사용하면 시작을 막고 업데이트 안내를 한다.</li></ul>
+<p>“이번 방은 시험 설정”과 “정식 랭킹 경기”는 실제 운영 기능에 맞게 표시한다. 초기 초대방을 정식 랭킹 경기로 표시하지 않는다. 설정값의 근거는 <a href="09-decisions-and-balance.html">09</a>에서 관리한다.</p>
+<h2 id="운전-중-hud">운전 중 HUD</h2>
+<div class="tw"><table><thead><tr>
+<th>영역</th>
+<th>표시할 내용</th>
+<th>표시하지 않거나 따로 보는 내용</th>
+</tr></thead><tbody>
+<tr><td>길안내</td><td>현재 목표와 다음 회전, 접근 차로, 재탐색 상태</td><td>매 프레임 바뀌는 내부 경로 계산 정보</td></tr>
+<tr><td>승객 카드</td><td>대기/승차 확인 중/탑승/종료 상태, 약정 운임, 목적지, 예상 소요</td><td>아직 받지 않은 운임을 누적 성적에 더한 값</td></tr>
+<tr><td>경기 정보</td><td>남은 공통 시간, 본 경기/마감 유예 구분, 순위</td><td>개인 PC의 시계로 계산한 다른 종료 시각</td></tr>
+<tr><td>성적 요약</td><td>완료 운임 점수, 운전 가감점, 합계</td><td>캠페인 운전점수·M/S/R를 혼합한 지표</td></tr>
+<tr><td>차량</td><td>속도, 필요한 방향 표시, 복구 가능 여부</td><td>PVP에서 사용하지 않는 식사·피로·청결 게이지</td></tr>
+<tr><td>경쟁 지도</td><td>공용 승객, 상대 택시 위치와 빈차/탑승 중 상태</td><td>상대의 선택 목표·목적지 공개는 별도 확정 전 기본 노출하지 않음</td></tr>
+</tbody></table></div>
+<p>초기 HUD의 차량 속도 단위와 운임 원화 표시는 일관되게 유지한다. 운임 금액과 경기 포인트는 다른 단위라는 것을 라벨로 구분한다.</p>
+<h2 id="승객-선택과-선점-피드백">승객 선택과 선점 피드백</h2>
+<div class="tw"><table><thead><tr>
+<th>조건·행동</th>
+<th>즉시 보여주는 것</th>
+<th>서버 확정 후 보여주는 것</th>
+</tr></thead><tbody>
+<tr><td>지도에서 손님 선택</td><td>내비 목표와 예상 경로</td><td>승객 소유권은 바뀌지 않음</td></tr>
+<tr><td>정차 조건 미달</td><td>방향/위치/정차 상태 중 부족한 조건</td><td>유효 승차 없음</td></tr>
+<tr><td>승차 요청</td><td>확인 중 표시, 반복 입력으로 요청 누적하지 않음</td><td>내 승객으로 확정 또는 확보 실패</td></tr>
+<tr><td>상대가 먼저 확보</td><td>대상 상태 갱신, 다른 후보 접근 가능</td><td>해당 승객을 내 운송으로 표시하지 않음</td></tr>
+<tr><td>하차 요청</td><td>도착 확인 중 표시</td><td>확정 운임·보너스·완료 상태</td></tr>
+</tbody></table></div>
+<p>네트워크 예측으로 차를 움직이는 것과 승차/운임을 확정하는 것은 구분한다. 확정되지 않은 승객이나 금액을 최종 결과처럼 보여주지 않는다.</p>
+<p>“확보”는 현장에서 서버가 탑승을 승인한 결과를 가리키며 별도 예약 상태가 아니다. “승차 확인 중”은 로컬 요청 표시이고, 상대가 먼저 탑승하면 승인되지 않은 표시를 철회한다.</p>
+<h2 id="짧은-사건-알림">짧은 사건 알림</h2>
+<div class="tw"><table><thead><tr>
+<th>사건</th>
+<th>필요한 설명</th>
+<th>피해야 할 표현</th>
+</tr></thead><tbody>
+<tr><td>운임 정산</td><td>완료 운임, 이번 안전 보너스, 누적 성적</td><td>클릭할 때까지 멈추는 모달 결과창</td></tr>
+<tr><td>위반 확정</td><td>사건 이름, 감점, 판단한 상황의 짧은 근거</td><td>정상 제동을 단순히 “난폭 운전”으로 단정</td></tr>
+<tr><td>더 큰 위반으로 사건 갱신</td><td>같은 사건의 추가 차액과 최종 감점</td><td>이전 감점과 새 감점을 모두 더해 표시</td></tr>
+<tr><td>판정 보류</td><td>필요할 때만 불확실 상태를 설명</td><td>확인되지 않은 위반에 확정 감점 표시</td></tr>
+<tr><td>마감 진입</td><td>신규 승차 종료와 현재 운송의 최종 마감</td><td>사람마다 다른 유예 시간처럼 보이는 안내</td></tr>
+<tr><td>연결 끊김</td><td>진행 중인 공통 경기와 복구 가능 여부</td><td>로컬 일시정지가 전체 경기를 멈춘다는 인상</td></tr>
+</tbody></table></div>
+<p>운송 영수증에 이미 반영된 주행 감점을 요약할 때는 “운행 중 반영된 감점”으로 표시하고 다시 차감하지 않는다.</p>
+<p>결과 확정 뒤 방장이 종료해도 이미 받은 결과를 경기 무효로 바꾸지 않는다. 확정 결과를 받지 못한 화면에는 결과 미수신·확인 불가를 표시하고 로컬 합계로 승자를 추정하지 않는다.</p>
+<h2 id="지도와-입력">지도와 입력</h2>
+<p>지도는 현재 차량·승객·목표·진입 방향이 읽히도록 한다. 짧은 경로와 빠른 경로의 선택은 실제 길안내 결과와 연결되어야 하며, 선택만으로 승객이 예약되지는 않는다.</p>
+<p>개인 메뉴와 지도는 네트워크 경기 시간을 멈추지 않는다. 주행 입력의 활성 여부와 UI 입력 초점을 명시적으로 관리해 메뉴 키가 가속·승차로 중복 처리되지 않게 한다. 메뉴를 열기 위한 안전 정차는 가능하지만 정차 자체에 경기 점수를 주지 않는다.</p>
+<p>카메라는 자기 차량만 따라간다. 다른 참가자의 접속·퇴장이 내 카메라 대상을 바꾸면 안 된다. 키보드·패드의 가속/제동/조향/승하차/지도/기록/복구 기능을 같은 의미로 제공한다. 세부 키 배치는 조작 시험에서 확인한다.</p>
+<h2 id="최종-결과">최종 결과</h2>
+<div class="tw"><table><thead><tr>
+<th>항목</th>
+<th>플레이어가 알 수 있어야 하는 내용</th>
+</tr></thead><tbody>
+<tr><td>순위</td><td>서버가 확정한 결과와 동점 여부</td></tr>
+<tr><td>운송 실적</td><td>완료 횟수, 기본 운임 합계, 운임 환산점수</td></tr>
+<tr><td>운전 기여</td><td>완료 운송 안전 보너스와 위반 감점 각각</td></tr>
+<tr><td>최종 점수</td><td>구성 요소를 더하면 같은 값이 되는 성적</td></tr>
+<tr><td>예외</td><td>미완료 운송, 기권/실격/경기 무효 등 실제 적용 사유</td></tr>
+<tr><td>상세</td><td>운송과 사건별 한 번씩 반영된 정산 내역</td></tr>
+<tr><td>다음 행동</td><td>같은 방 재경기 또는 나가기</td></tr>
+</tbody></table></div>
+<p>운임이 앞섰는데 패배했다면 어느 감점이 차이를 만들었는지, 운임 차이로 이겼다면 운송 실적이 어떻게 기여했는지 설명할 수 있어야 한다. 단위나 순위 계산법을 추측하게 만들지 않는다.</p>
+<p>관련: <a href="05-scoring-and-results.html">05 점수</a> · <a href="10-playtest-and-acceptance.html">10 QA</a> · <a href="README.html">기획 입구</a></p>
+<nav class="foot"><span>← <a href="05-scoring-and-results.html">PVP 점수와 결과 정산</a></span><span><a href="07-network-and-build.html">PVP 네트워크·빌드·기존 코드 분리</a> →</span></nav>
+<p class="gen">이 페이지는 <code>docs/content-design/pvp/06-ui-and-feedback.md</code>에서 <code>python tools/render_design_docs.py</code>로 만든다. 내용은 md를 고친다.</p>
+</div></body></html>

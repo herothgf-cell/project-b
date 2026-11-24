@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>실제 입력 주행·공유 NPC·법규 구현 계획</title><style>
+:root{--accent:#F2B705;--ink:#1d2320;--sub:#5d6862;--bg:#f6f7f5;--card:#fff;--line:#dfe4e0;--th:#f7f1de;--code:#f0f2f0;--link:#9a6c00;
+--ok:#1f8f4e;--src:#2f6fd6;--prog:#7a4fd0;--wait:#d98a00;--hold:#8a8f8c;--fix:#d2453a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}}
+:root[data-theme="dark"]{--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 80px}
+.crumb{font-size:13.5px;color:var(--sub);margin-bottom:10px}
+header.doc{background:var(--card);border:1px solid var(--line);border-left:10px solid var(--accent);border-radius:10px;padding:18px 22px;margin-bottom:20px}
+header.doc h1{font-size:27px;margin:2px 0 6px;line-height:1.35}
+header.doc p{margin:6px 0;color:var(--sub)}
+h1{font-size:26px}h2{font-size:21px;margin:40px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+h3{font-size:17.5px;margin:28px 0 6px}h4,h5,h6{font-size:15.5px;margin:20px 0 4px;color:var(--sub)}
+p,ul,ol{margin:8px 0}ul,ol{padding-left:24px}li{margin:3px 0}
+a{color:var(--link)}
+img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff}
+.tw{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--th)}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-family:Consolas,Menlo,monospace;font-size:13.5px}
+pre{background:var(--code);border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.5}pre code{padding:0;background:none}
+blockquote{margin:12px 0;padding:6px 14px;border-left:5px solid var(--accent);background:var(--card);color:var(--sub);border-radius:0 6px 6px 0}
+hr{border:none;border-top:1px solid var(--line);margin:28px 0}
+details.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font-size:14.5px}
+details.toc summary{cursor:pointer;font-weight:700}
+details.toc ol{margin:6px 0}details.toc li.l3{margin-left:18px;list-style:circle;color:var(--sub)}
+details.toc a{text-decoration:none}
+nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+.st{display:inline-block;border-radius:999px;padding:0 9px;margin:1px 2px 1px 0;font-size:12.5px;font-weight:700;white-space:nowrap;color:#fff}
+.st.ok{background:var(--ok)}.st.src{background:var(--src)}.st.prog{background:var(--prog)}.st.wait{background:var(--wait)}.st.hold{background:var(--hold)}.st.fix{background:var(--fix)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.filter{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+.filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
+.gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+</style></head>
+<body><div class="wrap">
+<div class="crumb"><a href="../index.html">기획서 목록</a> · <a href="../README.html">기획 README</a> · <a href="README.html">PvP 목록</a> · <a href="18-driving-npc-rules-plan.md">원본 md</a></div>
+<header class="doc"><h1>실제 입력 주행·공유 NPC·법규 구현 계획</h1><blockquote><p><b>보존 자료: 초기 독립 PVP/단계별 기록.</b> 아래 “현재/미구현/최신”은 작성 당시 표현이다. 현재 A2·통합 실행·순수익 경쟁·LAN은 <a href="README.html">PVP 기준</a>을 따른다. 초기 독립 총점/보너스·Fusion 후보·별도 실행 경로는 현행 규칙이 아니다.</p></blockquote></header>
+
+<blockquote><p>실행: superpowers:writing-plans / executing-plans. 기존 PVP worktree에서 직접 실행, 마지막 독립 리뷰1회.</p></blockquote>
+<p>목표: 경기 중 위치 제어 없이 가속/조향/제동만으로 실제 모터 운송을 완료하고, 서버 공유 차량/보행자와 근거 기반 법규 사건을 연결한다. 근거는 PVP02/03/05/08/09와 사용자 후속 지시다.</p>
+<ul><li>최신 main37b6adb의 완료 내구도·배포를9489e6e로 병합했다. LATEST 양쪽 보존. 다른 checkout/미추적8항목은 수정하지 않는다.</li><li>실제 주행은 현재 PVP 평면 차량 모터의 입력 시뮬레이션이다. WheelCollider/사람 운전으로 확대 해석하지 않는다. 시작 배치와 클라이언트 권한 보정 외에 경기 중 authority 위치 복구/fixture를 사용하지 않는다. drive 검사 중 SetFixtureStop 호출은 실패한다.</li><li>검사 운전기는 경로 추종/정차/신호·공유 교통 양보 입력만 생성한다. 제품 자동 운전 보조로 기본 활성화하지 않는다.</li><li>서버 NPC2대는 합법 외곽 순환로를 따라 신호/앞차/선수에 양보한다. 보행자1명은 남쪽 접근의 적색 구간에 횡단한다. clients는 서버 snapshot 표시/제한된 외삽만 하며 AI를 생성/갱신하지 않는다.</li><li>법규: 중앙/남쪽 접근의 swept 정지선→진입 사건 상향, 남쪽 실제 우회전의 정지/전용 신호, 실제 보행 보호, 지속 과속/역주행, 근거가 있는 NPC 후방 추돌. 독립 접촉/고의 진로 방해의 과실이 부족하면 보류한다. 주행 금지/불법 연결은 물리 차단하고 보정·격리·실패 이동으로 점수를 만들지 않는다.</li><li>단일 접근/연속 위반의 사건ID·revision 유지, 재접속/예측 replay에서 재확정 금지. 실제 위반을 원장에 반영하고 근거·보류 사유를 표시한다. 캠페인 감점/내구도 수치를 자동 이식하지 않는다.</li><li>시험값은09에서 후보로 기록한다. 기존2인/50Hz/차량A/무접촉 유지, 경기 시간은 제품 확정하지 않는다.</li></ul>
+<h2 id="실행-단계">실행 단계</h2>
+<ul><li><input type="checkbox" disabled checked> 1. PvpDrivingPilot와 Editor 주행 검사: 실제 motor 입력으로 스폰→정차점/정차점→정차점 경로 통과, 위치 변경 API 부재·정차 방향·합법 경로/거리 확인. red→green.</li><li><input type="checkbox" disabled checked> 2. PvpNpcAuthority/공유 DTO/표시·충돌/예측 연결: 동일 tick NPC snapshot·신호 양보·안전 간격·정차점 미봉쇄·격리 제외 검사.</li><li><input type="checkbox" disabled checked> 3. PvpRuleAuthority/관측 DTO/원장 연결: 같은 접근 상향 차액, 정상 진입 뒤 적색 면책, 우회전 정지, 실제 보행 진행, 과속/역주행 지속·접촉 책임/보류, 재접속·중복/복구 제외 검사.</li><li><input type="checkbox" disabled checked> 4. 실제 두 Player 운송 러너: authority fixture0/accepted 이동거리·입력 수·승하차·원장/결과 일치, 역할/출발점 교환, 지연·손실 조건. 실제 입력 법규 경로와 negative case를 Editor/Player로 구분한다.</li><li><input type="checkbox" disabled checked> 5. 독립 리뷰·기존 경기/재접속/캠페인·내구도/Strict/배포 보존, 필요한 실제 화면 확인, 이력/LATEST/로드맵 갱신·커밋·feature push. 자동 검증에 PC 화면 조작은 필요하지 않았으며 사람 화면 수용은 별도 미검증으로 남겼다.</li></ul>
+<p>남길 항목: 다른PC LAN/인터넷·사람 키보드/패드·장시간 체감·전체 교통/과실·공급/수익 밸런스. 이번 완료 범위를 전체 QA/공개 랭킹 승인으로 올리지 않는다. 독립 리뷰/실패 재현 후 부분 관측 초기화·고정 지도 검증·보행자 접촉 띠/분리 탈출을 보완했다. 실제3프로필과 소스32b2331의 최종 재빌드/복사본 운송·격리/139개 파일 해시 검증을 통과했다. 배포 f68fcf2의 feature push 종료0/원격 동일 해시를 확인했다. 동시 작업의 b8ad18a/16aa387 및 main HUD를 보존하며 PVP도 전체 실행 폴더와 전용 manifest로 배포한다. 실제 명령·결과와 별도 PC/사람 수용은 작업 이력/19번 문서에 남겼다.</p>
+<nav class="foot"><span>← <a href="17-competition-acceptance.html">공유 교통·승객 소유권·운송·정산 수용 범위</a></span><span><a href="19-driving-npc-rules-acceptance.html">실제 입력 운송·공유 NPC·법규 수용</a> →</span></nav>
+<p class="gen">이 페이지는 <code>docs/content-design/pvp/18-driving-npc-rules-plan.md</code>에서 <code>python tools/render_design_docs.py</code>로 만든다. 내용은 md를 고친다.</p>
+</div></body></html>

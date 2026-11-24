@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Task 2 자체 시험장·차량 후보 Implementation Plan</title><style>
+:root{--accent:#F2B705;--ink:#1d2320;--sub:#5d6862;--bg:#f6f7f5;--card:#fff;--line:#dfe4e0;--th:#f7f1de;--code:#f0f2f0;--link:#9a6c00;
+--ok:#1f8f4e;--src:#2f6fd6;--prog:#7a4fd0;--wait:#d98a00;--hold:#8a8f8c;--fix:#d2453a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}}
+:root[data-theme="dark"]{--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 80px}
+.crumb{font-size:13.5px;color:var(--sub);margin-bottom:10px}
+header.doc{background:var(--card);border:1px solid var(--line);border-left:10px solid var(--accent);border-radius:10px;padding:18px 22px;margin-bottom:20px}
+header.doc h1{font-size:27px;margin:2px 0 6px;line-height:1.35}
+header.doc p{margin:6px 0;color:var(--sub)}
+h1{font-size:26px}h2{font-size:21px;margin:40px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+h3{font-size:17.5px;margin:28px 0 6px}h4,h5,h6{font-size:15.5px;margin:20px 0 4px;color:var(--sub)}
+p,ul,ol{margin:8px 0}ul,ol{padding-left:24px}li{margin:3px 0}
+a{color:var(--link)}
+img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff}
+.tw{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--th)}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-family:Consolas,Menlo,monospace;font-size:13.5px}
+pre{background:var(--code);border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.5}pre code{padding:0;background:none}
+blockquote{margin:12px 0;padding:6px 14px;border-left:5px solid var(--accent);background:var(--card);color:var(--sub);border-radius:0 6px 6px 0}
+hr{border:none;border-top:1px solid var(--line);margin:28px 0}
+details.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font-size:14.5px}
+details.toc summary{cursor:pointer;font-weight:700}
+details.toc ol{margin:6px 0}details.toc li.l3{margin-left:18px;list-style:circle;color:var(--sub)}
+details.toc a{text-decoration:none}
+nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+.st{display:inline-block;border-radius:999px;padding:0 9px;margin:1px 2px 1px 0;font-size:12.5px;font-weight:700;white-space:nowrap;color:#fff}
+.st.ok{background:var(--ok)}.st.src{background:var(--src)}.st.prog{background:var(--prog)}.st.wait{background:var(--wait)}.st.hold{background:var(--hold)}.st.fix{background:var(--fix)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.filter{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+.filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
+.gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+</style></head>
+<body><div class="wrap">
+<div class="crumb"><a href="../index.html">기획서 목록</a> · <a href="../README.html">기획 README</a> · <a href="README.html">PvP 목록</a> · <a href="12-task2-implementation-plan.md">원본 md</a></div>
+<header class="doc"><h1>Task 2 자체 시험장·차량 후보 Implementation Plan</h1><blockquote><p><b>보존 자료: 초기 독립 PVP/단계별 기록.</b> 아래 “현재/미구현/최신”은 작성 당시 표현이다. 현재 A2·통합 실행·순수익 경쟁·LAN은 <a href="README.html">PVP 기준</a>을 따른다. 초기 독립 총점/보너스·Fusion 후보·별도 실행 경로는 현행 규칙이 아니다.</p></blockquote></header>
+<details class="toc" open><summary>목차 (4)</summary><ol><li class="l2"><a href="#제약과-선택-근거">제약과 선택 근거</a></li><li class="l2"><a href="#작업-분담과-인터페이스">작업 분담과 인터페이스</a></li><li class="l2"><a href="#실행-순서">실행 순서</a></li><li class="l2"><a href="#검토-초점">검토 초점</a></li></ol></details>
+<blockquote><p>REQUIRED SUB-SKILL: superpowers:subagent-driven-development. 지도/차량은 독립 파일로 구현하고 통합은 주 에이전트가 수행한다.</p></blockquote>
+<p>Goal: Task 1 검증된 별도 Player에서 자체 회색 상자 경기장을 실제 조작하고 방향 경로·후방 복구·빠른 조작 후보를 검증한다. Architecture: Unity 2022.3 C#, 별도 Assets/Pvp. 지도는 ScriptableObject의 방향 노드/연결/정차점 정의를 사용하고 렌더와 경로가 같은 데이터를 읽는다. 차량은 상태 캡처/복원 가능한 고정 tick 평면 운동 후보를 사용한다. 네트워크 물리 채택은 P2까지 미정이다. Spec: docs/content-design/pvp/02-driving-and-traffic.md, 03-map-and-content.md, 08-development-roadmap.md Task 2.</p>
+<h2 id="제약과-선택-근거">제약과 선택 근거</h2>
+<ul><li>기존 은계·캠페인 코드/자산/입력/패키지 수정 없음. 외부 SDK 도입 없음.</li><li>시간·최종 인원·배점·충돌을 확정하지 않는다. 시험장은 오프라인이며 승객/점수/온라인 없음을 표시한다.</li><li>자체 맵은 외곽 순환과 내부 연결, 4구역의 정차 접근·출구, 합법 회전, 후방 복구를 포함한다.</li><li>후보 A/B의 가속·조향·제동을 비교하며 최종 튜닝 승인으로 표현하지 않는다.</li><li>자동 위치·상태 검사, 자동 주행, 에이전트 UI 조작, 사람 체감을 구분한다.</li></ul>
+<h2 id="작업-분담과-인터페이스">작업 분담과 인터페이스</h2>
+<div class="tw"><table><thead><tr>
+<th>작업</th>
+<th>생산·검사 파일</th>
+<th>계약</th>
+<th>검증</th>
+</tr></thead><tbody>
+<tr><td>A 지도·경로</td><td>Runtime/Map/*, Content/Maps/PvpArena01.asset, Editor/PvpMapTests.cs</td><td>PvpMapDefinition, PvpMapLoader.Build, PvpRoutePlanner.FindRoute, readonly runtime queries</td><td>출발→모든 정차→출구 도달, 방향·금지 연결 거절, 경로 없음, 복구 비전진</td></tr>
+<tr><td>B 차량</td><td>Runtime/Driving/PvpVehicleInput.cs, PvpVehicleMotor.cs, Editor/PvpVehicleTests.cs</td><td>Simulate(in input,float dt), Capture/Restore state, 2 tuning candidates</td><td>입력 clamp/NaN 거절, brake priority, explicit reverse, fixed tick replay, acceleration/braking/turn metrics</td></tr>
+<tr><td>C 통합</td><td>Runtime/PvpPracticeSession.cs, UI/PvpPrototypePanel.cs, PvpBootstrap.cs, Editor/PvpTask2Tests.cs</td><td>초기 설정과 별도의 오프라인 시험장 버튼, 카메라/HUD/목표 경로/복구</td><td>Unity 검사·빌드·Player 주행 probe·UI·격리 회귀</td></tr>
+</tbody></table></div>
+<p>A와 B는 서로 타입을 참조하지 않는다. C가 지도 질의와 차량 상태를 연결하며 두 입력이 완성된 뒤 컴파일한다. Unity 프로세스는 주 에이전트만 실행한다.</p>
+<h2 id="실행-순서">실행 순서</h2>
+<ul><li><input type="checkbox" disabled> A/B 각 행동 테스트를 먼저 작성하고 실제 실패를 기록한 뒤 최소 구현.</li><li><input type="checkbox" disabled> C 연결 전 계약과 파일 차이 검토. 기획 기준 대비 누락/예외 확인.</li><li><input type="checkbox" disabled> Task 2 Editor 검사를 실행하고 실제 Unity 빌드 및 Player probe 확인.</li><li><input type="checkbox" disabled> 실제 화면에서 시험장 진입·운전·목표 변경·복구·종료 확인.</li><li><input type="checkbox" disabled> 기획표/로드맵/09 후보/이력/LATEST에 실제 통과와 미검증을 구분해 기록.</li><li><input type="checkbox" disabled> 전체 변경 검토 후 feature/pvp-prototype 커밋·push, 원격 SHA 확인.</li></ul>
+<h2 id="검토-초점">검토 초점</h2>
+<p>잘못된 방향의 정차, 연결되지 않은 도로의 시각 교차, 복구로 목표 전진, NaN·잘못된 tick 입력, 복원 후 조향 상태 누락, UI 입력의 차량 중복 처리, 캠페인 저장/배포 덮어쓰기.</p>
+<nav class="foot"><span>← <a href="11-content-elements-review.html">PVP 콘텐츠별 요소 검토표</a></span><span><a href="13-direct-ip-network-plan.html">PVP 직접 IP 주행 검증 실행 계획 — 2026-10-29</a> →</span></nav>
+<p class="gen">이 페이지는 <code>docs/content-design/pvp/12-task2-implementation-plan.md</code>에서 <code>python tools/render_design_docs.py</code>로 만든다. 내용은 md를 고친다.</p>
+</div></body></html>

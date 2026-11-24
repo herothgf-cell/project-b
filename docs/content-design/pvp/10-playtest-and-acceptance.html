@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PVP 검증·플레이테스트·완료 기준</title><style>
+:root{--accent:#F2B705;--ink:#1d2320;--sub:#5d6862;--bg:#f6f7f5;--card:#fff;--line:#dfe4e0;--th:#f7f1de;--code:#f0f2f0;--link:#9a6c00;
+--ok:#1f8f4e;--src:#2f6fd6;--prog:#7a4fd0;--wait:#d98a00;--hold:#8a8f8c;--fix:#d2453a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}}
+:root[data-theme="dark"]{--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 80px}
+.crumb{font-size:13.5px;color:var(--sub);margin-bottom:10px}
+header.doc{background:var(--card);border:1px solid var(--line);border-left:10px solid var(--accent);border-radius:10px;padding:18px 22px;margin-bottom:20px}
+header.doc h1{font-size:27px;margin:2px 0 6px;line-height:1.35}
+header.doc p{margin:6px 0;color:var(--sub)}
+h1{font-size:26px}h2{font-size:21px;margin:40px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+h3{font-size:17.5px;margin:28px 0 6px}h4,h5,h6{font-size:15.5px;margin:20px 0 4px;color:var(--sub)}
+p,ul,ol{margin:8px 0}ul,ol{padding-left:24px}li{margin:3px 0}
+a{color:var(--link)}
+img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff}
+.tw{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--th)}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-family:Consolas,Menlo,monospace;font-size:13.5px}
+pre{background:var(--code);border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.5}pre code{padding:0;background:none}
+blockquote{margin:12px 0;padding:6px 14px;border-left:5px solid var(--accent);background:var(--card);color:var(--sub);border-radius:0 6px 6px 0}
+hr{border:none;border-top:1px solid var(--line);margin:28px 0}
+details.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font-size:14.5px}
+details.toc summary{cursor:pointer;font-weight:700}
+details.toc ol{margin:6px 0}details.toc li.l3{margin-left:18px;list-style:circle;color:var(--sub)}
+details.toc a{text-decoration:none}
+nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+.st{display:inline-block;border-radius:999px;padding:0 9px;margin:1px 2px 1px 0;font-size:12.5px;font-weight:700;white-space:nowrap;color:#fff}
+.st.ok{background:var(--ok)}.st.src{background:var(--src)}.st.prog{background:var(--prog)}.st.wait{background:var(--wait)}.st.hold{background:var(--hold)}.st.fix{background:var(--fix)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.filter{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+.filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
+.gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+</style></head>
+<body><div class="wrap">
+<div class="crumb"><a href="../index.html">기획서 목록</a> · <a href="../README.html">기획 README</a> · <a href="README.html">PvP 목록</a> · <a href="10-playtest-and-acceptance.md">원본 md</a></div>
+<header class="doc"><h1>PVP 검증·플레이테스트·완료 기준</h1><blockquote><p><b>보존 자료: 초기 독립 PVP/단계별 기록.</b> 아래 “현재/미구현/최신”은 작성 당시 표현이다. 현재 A2·통합 실행·순수익 경쟁·LAN은 <a href="README.html">PVP 기준</a>을 따른다. 초기 독립 총점/보너스·Fusion 후보·별도 실행 경로는 현행 규칙이 아니다.</p></blockquote></header>
+<details class="toc" open><summary>목차 (9)</summary><ol><li class="l2"><a href="#검증-결과를-구분하는-기준">검증 결과를 구분하는 기준</a></li><li class="l2"><a href="#기능예외별-합격-기준">기능·예외별 합격 기준</a></li><li class="l2"><a href="#조작맵-측정표">조작·맵 측정표</a></li><li class="l2"><a href="#밸런스-시험-방법">밸런스 시험 방법</a></li><li class="l2"><a href="#단계별-진행-게이트">단계별 진행 게이트</a></li><li class="l2"><a href="#기록-양식">기록 양식</a></li><li class="l2"><a href="#재접속-증거-추가-2026-10-29">재접속 증거 추가 (2026-10-29)</a></li><li class="l2"><a href="#공유-경기-검증-범위">공유 경기 검증 범위</a></li><li class="l2"><a href="#2026-10-29-실제-입력-주행공유-교통-후속">2026-10-29 실제 입력 주행·공유 교통 후속</a></li></ol></details>
+<p>상태: 검증 계획 / P1 기반 코드 검사 일부 수행, Unity·온라인 검증 대기 작성일: 2026-10-27 담당: 개발 뒤 무엇을 어떻게 확인할지 정의. 아래 제품 검증은 이번 문서 작성으로 수행된 것이 아니다.</p>
+<h2 id="검증-결과를-구분하는-기준">검증 결과를 구분하는 기준</h2>
+<div class="tw"><table><thead><tr>
+<th>검증</th>
+<th>확인할 수 있는 것</th>
+<th>대신할 수 없는 것</th>
+</tr></thead><tbody>
+<tr><td>문서 검사</td><td>링크·구조·결정 상태·요구사항 추적</td><td>PVP 코드·게임 빌드·온라인 기능</td></tr>
+<tr><td>순수 규칙 자동검사</td><td>정산·상태 전이·이벤트 중복·마감 경계</td><td>조작감·실제 물리·화면 가독성</td></tr>
+<tr><td>같은 PC 복수 실행</td><td>기본 접속과 소유권·동기화 연결</td><td>다른 인터넷 환경·실제 패킷 손실</td></tr>
+<tr><td>다른 PC 실제 접속</td><td>입력·차량·공통 상태·접속 예외</td><td>전체 이용자 환경의 안정성</td></tr>
+<tr><td>지연·손실 주입</td><td>특정 통신 조건에서 보정·복구·중복 방지</td><td>모든 네트워크 상황의 품질 보장</td></tr>
+<tr><td>사람 플레이</td><td>운임 경쟁·조작·경로 판단·경기 길이</td><td>규칙 자동검사의 완전성</td></tr>
+<tr><td>배포 검사</td><td>실행폴더·시작점·버전·설정·재현</td><td>실제 사용자 전체의 플레이 검증</td></tr>
+</tbody></table></div>
+<p>검증 기록에는 대상 커밋/빌드, 맵 버전, 규칙 버전, 참가 수, 경기 설정, 환경, 결과, 미검증 항목을 함께 적는다. 자동검사 성공만으로 “PVP 완성”이라고 표시하지 않는다.</p>
+<h2 id="기능예외별-합격-기준">기능·예외별 합격 기준</h2>
+<div class="tw"><table><thead><tr>
+<th>ID</th>
+<th>시험 장면</th>
+<th>관찰·합격 기준</th>
+<th>소유 문서 / 단계</th>
+</tr></thead><tbody>
+<tr><td>QA-ISO-01</td><td>기존 시뮬레이션과 PVP를 별도로 실행</td><td>시작 씬·맵·설정·저장이 분리됨. PVP가 캠페인 저장을 읽어 성능/점수를 이월하거나 덮어쓰지 않음</td><td><a href="07-network-and-build.html">07</a> / P1</td></tr>
+<tr><td>QA-MAP-01</td><td>자체 제작 맵의 모든 승하차 쌍과 주요 대체 경로 검사</td><td>합법적인 연결·진입 방향·하차 후 재진입이 성립. 은계 자료로 자동 대체되지 않음</td><td><a href="03-map-and-content.html">03</a> / P1</td></tr>
+<tr><td>QA-MAP-02</td><td>경계 이탈·뒤집힘·복구 반복</td><td>복구로 목적지 진행·운임·감점 초기화 이득을 얻지 않음. 다른 택시/정차점을 점유하는 위치에 복구하지 않음</td><td><a href="02-driving-and-traffic.html">02</a>, <a href="03-map-and-content.html">03</a> / P1~P3</td></tr>
+<tr><td>QA-DRV-01</td><td>같은 직선·코너·정차 코스를 입력 장치별 주행</td><td>가속·조향·제동·회전 복귀·승하차 흐름을 기록하고 후보 간 비교. 최고속도만으로 판정하지 않음</td><td><a href="02-driving-and-traffic.html">02</a> / P1</td></tr>
+<tr><td>QA-NET-01</td><td>실제 두 클라이언트에서 동시에 다른 입력</td><td>각 입력은 자신의 차량에만 적용. 로컬 카메라·차량 권한·공통 경기 상태가 맞음</td><td><a href="07-network-and-build.html">07</a> / P2</td></tr>
+<tr><td>QA-NET-02</td><td><a href="09-decisions-and-balance.html">시험 네트워크 설정</a>의 지연/손실을 단계적으로 주입</td><td>내 입력 즉시 반응, 상대 보간, 위치 보정량, 접지·코너 안정성을 측정. 긴 지연을 숨겨 “동기화 정상”으로 기록하지 않음</td><td><a href="07-network-and-build.html">07</a> / P2</td></tr>
+<tr><td>QA-NET-03</td><td>다른 맵/규칙 버전 참가, 중도 참가, Guest 재접속</td><td>불일치 상태로 경기 시작 금지. 참가 정책 준수. 재접속 후 기존 신원·감점·운송 상태 복구</td><td><a href="01-match-flow-and-rules.html">01</a>, <a href="07-network-and-build.html">07</a> / P2~P3</td></tr>
+<tr><td>QA-NET-04</td><td>예측 재계산·중복 RPC·순서가 바뀐 확정 이벤트</td><td>차량 재계산이 운임·안전 보너스·위반 감점을 중복 발생시키지 않음. 동일 식별자의 부작용은 한 번만 반영</td><td><a href="05-scoring-and-results.html">05</a>, <a href="07-network-and-build.html">07</a> / P2~P3</td></tr>
+<tr><td>QA-PAX-01</td><td>같은 승객에 동시 유효 정차, 원거리 요청, 화면 목표 선택</td><td>유효한 소유자는 한 명. 목표 선택만으로 예약되지 않음. 실제 정차 조건 없는 요청 거부</td><td><a href="04-passengers-and-fares.html">04</a> / P3</td></tr>
+<tr><td>QA-PAX-02</td><td>대기 만료·운송 취소·마감·재접속·승차/하차 재전송</td><td>승객 상태가 충돌하지 않음. 보상·요청·감점이 초기화되거나 중복되지 않음</td><td><a href="04-passengers-and-fares.html">04</a> / P3</td></tr>
+<tr><td>QA-SCORE-01</td><td><a href="05-scoring-and-results.html">05의 계산 예시</a>, 다수 운송과 중복 사건 입력</td><td>기본 운임 환산·반올림·안전 보너스·감점·합계가 원장과 일치. 캠페인 운임 보정 중첩 없음</td><td><a href="05-scoring-and-results.html">05</a> / P3</td></tr>
+<tr><td>QA-SCORE-02</td><td>무운송·음수 성적·완전 동점·이탈 참가자</td><td>승자 자격·동점 규칙이 동일하게 적용. 운송하지 않은 무감점 플레이어가 대기만으로 승리하지 않음</td><td><a href="05-scoring-and-results.html">05</a> / P3</td></tr>
+<tr><td>QA-END-01</td><td>본 경기 종료 틱 직전/동일/직후 승차·하차, 메뉴 열기</td><td><a href="01-match-flow-and-rules.html">01의 경계</a>대로 같은 결과. 개인 메뉴·클라이언트 시각으로 연장 불가</td><td><a href="01-match-flow-and-rules.html">01</a> / P3</td></tr>
+<tr><td>QA-END-02</td><td>공통 유예, Guest 유예 만료가 최종 종료 직전/동일/직후인 경우, 지연된 정산, Host 권한 상실</td><td>신규 승차 없음. 허용된 운송만 공통 마감까지 정산. 참가 자격이 최종 종료 틱에 동결되어 정산 지연·이후 이탈로 달라지지 않음. Host 상실 정책과 무효가 전원 일치</td><td><a href="01-match-flow-and-rules.html">01</a> / P3</td></tr>
+<tr><td>QA-ABUSE-01</td><td>고의 우회·제자리 대기·같은 길 반복·취소·빈차 위반</td><td>실제 추가 거리/시간으로 기본 운임 증가 없음. 무운송 점수 적립 없음. 빈차 감점·누적 음수 유지</td><td><a href="04-passengers-and-fares.html">04</a>, <a href="05-scoring-and-results.html">05</a> / P3</td></tr>
+<tr><td>QA-UX-01</td><td>손님 선점 실패·운임 확정·위반·최종 결과 확인</td><td>플레이어가 현재 목표, 원화/점수 구분, 승패 이유를 화면만으로 설명 가능</td><td><a href="06-ui-and-feedback.html">06</a> / P3~P4</td></tr>
+<tr><td>QA-BAL-01</td><td>같은 운임/큰 운임 우위/반복 위반 전략의 비교 경기</td><td>운임 중심과 운전 기여의 세 조건을 함께 확인. 특정 운송·경로만 지속적으로 정답인지 기록</td><td><a href="05-scoring-and-results.html">05</a>, <a href="09-decisions-and-balance.html">09</a> / P4</td></tr>
+<tr><td>QA-BUILD-01</td><td>다른 PC에서 PVP 배포 폴더 실행</td><td>의도한 PVP 시작점·설정·맵 로드. 기존 시뮬레이션 배포·manifest를 덮어쓰지 않음</td><td><a href="07-network-and-build.html">07</a> / P1~P4</td></tr>
+<tr><td>QA-OPS-01</td><td>전용 서버 경기 종료·서버 재시작·결과 재전송</td><td>신뢰할 경기 서버만 최종 결과 등록, 중복 결과 없음. 서버 없는 로컬 결과를 공식 랭킹에 등록하지 않음</td><td><a href="07-network-and-build.html">07</a> / P5</td></tr>
+</tbody></table></div>
+<h2 id="조작맵-측정표">조작·맵 측정표</h2>
+<div class="tw"><table><thead><tr>
+<th>측정 항목</th>
+<th>기록할 값</th>
+<th>해석</th>
+</tr></thead><tbody>
+<tr><td>가속 응답</td><td>입력부터 가속 시작, 순항 속도 도달 시간</td><td>도로 길이에 비해 재가속이 지나치게 길지 않은가</td></tr>
+<tr><td>조향 응답</td><td>입력부터 차체 방향 변화, 반대 입력/복귀 반응</td><td>빠르게 반응하면서 목표 차로를 유지하는가</td></tr>
+<tr><td>코너</td><td>진입·통과·탈출 시간, 충돌·경계 침범</td><td>경로 선택의 실력 차이가 생기는가</td></tr>
+<tr><td>운송 한 사이클</td><td>접근·대기·승차·탑승 운송·하차·다음 탐색</td><td>속도감이 어디에서 끊기는가</td></tr>
+<tr><td>경로 비교</td><td>합법 주행으로 각 대안의 시간·교통·다음 기회</td><td>신호 위반 없는 대안끼리 경쟁력이 있는가</td></tr>
+<tr><td>온라인 보정</td><td>보정 거리·빈도, 도로 폭 대비 오차, 부당 감점 의심</td><td>물리/네트워크 오차가 승부를 대신하는가</td></tr>
+</tbody></table></div>
+<p>현행 차량의 성능이나 사용자의 느낌을 측정 없이 수치로 단정하지 않는다. 후보 설정을 같은 코스·같은 입력 조건으로 비교한 기록을 남긴다.</p>
+<h2 id="밸런스-시험-방법">밸런스 시험 방법</h2>
+<ol><li>맵·교통·승객 공급 조건과 경기 설정을 기록한다.</li><li>출발 위치를 교대하거나 균등한 시작 세트를 사용해 위치 효과를 분리한다.</li><li>운임·완료 횟수·빈차 비율·위반·최종 성적을 함께 본다.</li><li>수익이 높은 전략이 조작과 판단에서 나온 것인지, 우연한 승객 공급이나 위반 이득에서 나온 것인지 구분한다.</li><li>한 번에 여러 조작·맵·배점을 바꾸지 말고 비교 이유를 기록한다.</li><li>참가 인원과 경기 시간의 최종 결정은 이 기록 이후 <a href="09-decisions-and-balance.html">09</a>에 남긴다.</li></ol>
+<p>감점은 “안전 운전이 항상 승리하도록” 맞추지 않는다. 큰 운임 우위가 경미한 실수에도 유지되는 경우와, 반복 위반의 추가 수익이 상쇄되는 경우를 모두 시험한다.</p>
+<h2 id="단계별-진행-게이트">단계별 진행 게이트</h2>
+<div class="tw"><table><thead><tr>
+<th>단계</th>
+<th>다음 단계로 가기 전 필요한 증거</th>
+</tr></thead><tbody>
+<tr><td>P0 문서</td><td>사용자 요구·미정 사항 구분, 상대 링크·기존 문서 경계 확인</td></tr>
+<tr><td>P1 독립 실행·조작</td><td>별도 시작/저장/빌드, 자체 맵 실제 주행, 조작 후보 비교</td></tr>
+<tr><td>P2 온라인 기반</td><td>실제 복수 실행과 다른 PC 접속, 예측·권한·버전·재계산 검사</td></tr>
+<tr><td>P3 경기 한 판</td><td>승객 경쟁→운송→정산→마감→결과를 전원 같은 상태로 완료</td></tr>
+<tr><td>P4 게임성</td><td>인원·맵·시간·운임/운전 비중의 사람 플레이 비교</td></tr>
+<tr><td>P5 공개 운영</td><td>전용 서버·결과 신뢰·장애·배포 검증. 실제 운영 범위 결정 이후 수행</td></tr>
+</tbody></table></div>
+<h2 id="기록-양식">기록 양식</h2>
+<div class="tw"><table><thead><tr>
+<th>항목</th>
+<th>적을 내용</th>
+</tr></thead><tbody>
+<tr><td>대상</td><td>커밋·실행파일·맵/규칙 버전</td></tr>
+<tr><td>조건</td><td>참가 수·시작 위치·설정·접속 방식·지연/손실 환경</td></tr>
+<tr><td>재현</td><td>QA ID, 행동 순서, 기대 결과</td></tr>
+<tr><td>실제</td><td>관찰값·사건/운송 ID·로그·필요한 화면</td></tr>
+<tr><td>결과</td><td>통과 / 실패 / 보류 / 미수행</td></tr>
+<tr><td>한계</td><td>다른 PC·실제 인터넷·사람 체감 등 확인하지 않은 범위</td></tr>
+<tr><td>후속</td><td>담당 문서/작업 ID와 다음 확인</td></tr>
+</tbody></table></div>
+<p>2026-10-27의 기획 단계에서는 제품 QA를 모두 미수행으로 두었다. 당시 문서 검증은 <a href="../../work-history/2026-10-27-pvp-planning.md">기획 작업 이력</a>에 보존한다. 2026-10-29에는 설정 검증·저장 경로·로그 분리·빌드 설정 복원 코드의 독립 검사를 수행했다. 이는 QA-ISO-01의 기반 코드 증거이며, Unity 씬 로드·실제 Player·QA-BUILD-01 전체 통과는 아니다. 정확한 실행 결과와 남은 항목은 <a href="../../work-history/2026-10-29-pvp-startup-isolation.md">P1 작업 이력</a>을 따른다.</p>
+<p>관련: <a href="08-development-roadmap.html">08 개발 로드맵</a> · <a href="09-decisions-and-balance.html">09 결정·설정</a> · <a href="README.html">기획 입구</a></p>
+<h2 id="재접속-증거-추가-2026-10-29">재접속 증거 추가 (2026-10-29)</h2>
+<p><code>tools/test_pvp_reconnect.ps1</code>은 정상 복귀·위조 거절·유예 종료·명시 퇴장·실제 패킷 차단 복구·호스트 종료를 독립 Player로 검사한다. 복귀는 같은 서버 슬롯/선택/위치와 새로운 epoch, 복귀 후 권한 차량 이동까지 확인한다. 서버 만료 정확한 경계·중복 연결·옛 epoch 거절은 Editor 모델 검사다. 실제 화면은 한글 HUD/승객 대사 확인이며 수동 운전 검사가 아니다. <a href="../../work-history/2026-10-29-pvp-reconnect-content.md">검사별 결과와 미완료 수용</a>을 근거로 사용하며 P2 전체 통과로 표시하지 않는다.</p>
+<h2 id="공유-경기-검증-범위">공유 경기 검증 범위</h2>
+<p><a href="17-competition-acceptance.html">검사별 구분과 환경별 잔여</a>를 따른다. 실제 Player 운송 검사는 서버 전용 위치 제어 fixture로 메시지/소유권/정산을 검사하며 전체 코스 물리 주행이나 사람 운전 완료를 뜻하지 않는다. 장애물 차단은 실제 authority motor step, 완료 재전송은 실제 RPC 수신 표식을 요구한다.</p>
+<h2 id="2026-10-29-실제-입력-주행공유-교통-후속">2026-10-29 실제 입력 주행·공유 교통 후속</h2>
+<p><a href="19-driving-npc-rules-acceptance.html">최신 수용·환경별 잔여 표</a>와 <a href="../../work-history/2026-10-29-pvp-input-driving-npc-rules.md">실제 검사 이력</a>을 따른다. 위치 제어 없이 실제 모터 입력으로 운송하고 서버 NPC2대/보행1명·신호/우회전/지속 속도·방향/접촉 책임·보류를 연결했다. 이전의 해당 미구현/미검증 설명은 당시 기록이다. 다른PC·사람/화면 시야·복합 교통/금지차로 자산은 별도 수용으로 남긴다.</p>
+<nav class="foot"><span>← <a href="09-decisions-and-balance.html">PVP 결정 사항·미정 항목·밸런스 후보</a></span><span><a href="11-content-elements-review.html">PVP 콘텐츠별 요소 검토표</a> →</span></nav>
+<p class="gen">이 페이지는 <code>docs/content-design/pvp/10-playtest-and-acceptance.md</code>에서 <code>python tools/render_design_docs.py</code>로 만든다. 내용은 md를 고친다.</p>
+</div></body></html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PVP 점수와 결과 정산</title><style>
+:root{--accent:#F2B705;--ink:#1d2320;--sub:#5d6862;--bg:#f6f7f5;--card:#fff;--line:#dfe4e0;--th:#f7f1de;--code:#f0f2f0;--link:#9a6c00;
+--ok:#1f8f4e;--src:#2f6fd6;--prog:#7a4fd0;--wait:#d98a00;--hold:#8a8f8c;--fix:#d2453a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}}
+:root[data-theme="dark"]{--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 80px}
+.crumb{font-size:13.5px;color:var(--sub);margin-bottom:10px}
+header.doc{background:var(--card);border:1px solid var(--line);border-left:10px solid var(--accent);border-radius:10px;padding:18px 22px;margin-bottom:20px}
+header.doc h1{font-size:27px;margin:2px 0 6px;line-height:1.35}
+header.doc p{margin:6px 0;color:var(--sub)}
+h1{font-size:26px}h2{font-size:21px;margin:40px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+h3{font-size:17.5px;margin:28px 0 6px}h4,h5,h6{font-size:15.5px;margin:20px 0 4px;color:var(--sub)}
+p,ul,ol{margin:8px 0}ul,ol{padding-left:24px}li{margin:3px 0}
+a{color:var(--link)}
+img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff}
+.tw{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--th)}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-family:Consolas,Menlo,monospace;font-size:13.5px}
+pre{background:var(--code);border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.5}pre code{padding:0;background:none}
+blockquote{margin:12px 0;padding:6px 14px;border-left:5px solid var(--accent);background:var(--card);color:var(--sub);border-radius:0 6px 6px 0}
+hr{border:none;border-top:1px solid var(--line);margin:28px 0}
+details.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font-size:14.5px}
+details.toc summary{cursor:pointer;font-weight:700}
+details.toc ol{margin:6px 0}details.toc li.l3{margin-left:18px;list-style:circle;color:var(--sub)}
+details.toc a{text-decoration:none}
+nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+.st{display:inline-block;border-radius:999px;padding:0 9px;margin:1px 2px 1px 0;font-size:12.5px;font-weight:700;white-space:nowrap;color:#fff}
+.st.ok{background:var(--ok)}.st.src{background:var(--src)}.st.prog{background:var(--prog)}.st.wait{background:var(--wait)}.st.hold{background:var(--hold)}.st.fix{background:var(--fix)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.filter{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+.filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
+.gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+</style></head>
+<body><div class="wrap">
+<div class="crumb"><a href="../index.html">기획서 목록</a> · <a href="../README.html">기획 README</a> · <a href="README.html">PvP 목록</a> · <a href="05-scoring-and-results.md">원본 md</a></div>
+<header class="doc"><h1>PVP 점수와 결과 정산</h1><blockquote><p><b>보존 자료: 초기 독립 PVP/단계별 기록.</b> 아래 “현재/미구현/최신”은 작성 당시 표현이다. 현재 A2·통합 실행·순수익 경쟁·LAN은 <a href="README.html">PVP 기준</a>을 따른다. 초기 독립 총점/보너스·Fusion 후보·별도 실행 경로는 현행 규칙이 아니다.</p></blockquote></header>
+<details class="toc" open><summary>목차 (10)</summary><ol><li class="l2"><a href="#문서의-책임과-결정-상태">문서의 책임과 결정 상태</a></li><li class="l2"><a href="#점수-산식과-정수-계산">점수 산식과 정수 계산</a></li><li class="l2"><a href="#완료운송-안전-보너스">완료운송 안전 보너스</a></li><li class="l2"><a href="#모든-주행의-즉시-감점">모든 주행의 즉시 감점</a></li><li class="l2"><a href="#동일-사건의-중복-감점-방지">동일 사건의 중복 감점 방지</a></li><li class="l2"><a href="#정산-원장과-멱등-처리">정산 원장과 멱등 처리</a></li><li class="l2"><a href="#순위와-동점">순위와 동점</a></li><li class="l2"><a href="#계산-검증-사례">계산 검증 사례</a></li><li class="l2"><a href="#결과-화면데이터수용-확인">결과 화면·데이터·수용 확인</a></li><li class="l2"><a href="#2026-10-29-정산-구현">2026-10-29 정산 구현</a></li></ol></details>
+<p>상태: 기획 초안 / 초기 시작 기반 구현, 본문 경기 기능은 미구현 작성일: 2026-10-27</p>
+<h2 id="문서의-책임과-결정-상태">문서의 책임과 결정 상태</h2>
+<p>이 문서는 PVP 총점·완료 보너스·위반 감점 원장·순위·동점을 정의한다. 기본운임 원약정은 <a href="04-passengers-and-fares.html">승객·운임</a>, 최종 순위 확정 시점과 이탈 자격은 <a href="01-match-flow-and-rules.html">경기 흐름</a>이 소유한다.</p>
+<div class="tw"><table><thead><tr>
+<th>구분</th>
+<th>내용</th>
+</tr></thead><tbody>
+<tr><td>사용자 확정</td><td>운임과 운전 점수가 승패에 기여하며, 운임의 영향이 충분해야 한다.</td></tr>
+<tr><td>본 문서 제안</td><td>완료 기본운임 환산 + 완료운송 안전 보너스 − 모든 주행의 위반 감점.</td></tr>
+<tr><td>본 문서 제안</td><td>부호 있는 누적 원장, 운송 없는 선수의 승자 제외, 동률이면 공동 순위 허용.</td></tr>
+<tr><td>미정</td><td>운임 환산율·안전 보너스·사건별 감점의 수치와 최종 상대 비중.</td></tr>
+</tbody></table></div>
+<p>수치 후보는 <a href="09-decisions-and-balance.html">결정·밸런스</a>에서만 관리한다. 이 문서의 계산 예시는 산술 검증용 가상 입력이며 밸런스 기본값이 아니다.</p>
+<h2 id="점수-산식과-정수-계산">점수 산식과 정수 계산</h2>
+<p>선수 <code>p</code>의 총점은 <code>Score(p) = Σ FareScore(t) + Σ CompletionBonus(t) − Σ Penalty(e)</code>다. <code>t</code>는 서버가 완료 정산한 운송, <code>e</code>는 해당 선수에게 귀속한 고유 주행 사건이다.</p>
+<div class="tw"><table><thead><tr>
+<th>항목</th>
+<th>정의</th>
+<th>반영 시점</th>
+</tr></thead><tbody>
+<tr><td><code>FareScore(t)</code></td><td><code>floor(QuotedBaseFare(t) / FareWonPerPoint)</code></td><td>유효 하차 완료 정산 때 한 번</td></tr>
+<tr><td><code>CompletionBonus(t)</code></td><td>안전 자격이 있으면 <code>floor(FareScore(t) × SafeTripBonusRate)</code>, 그 외에는 없음</td><td>운임과 같은 완료 정산 때 한 번</td></tr>
+<tr><td><code>Penalty(e)</code></td><td>같은 사건에서 확정된 감점 후보 중 가장 큰 감점량</td><td>사건 확정 즉시, 이후 상향분만 추가 반영</td></tr>
+<tr><td><code>Score(p)</code></td><td>모든 원장 증감의 합계</td><td>서버 원장 순번 갱신 때마다</td></tr>
+</tbody></table></div>
+<p><code>FareWonPerPoint &gt; 0</code>, <code>SafeTripBonusRate ≥ 0</code>이며 감점량은 음이 아닌 정수여야 한다. 운임 환산을 운송별로 먼저 내림하고, 그 정수에 보너스율을 곱해 다시 내림한다. 전체 운임을 합친 뒤 다시 환산하지 않는다. 비율은 정수 분자·분모 또는 동일한 고정소수점 규약으로 저장해 모든 서버·화면에서 같은 결과를 만든다.</p>
+<p>총점에는 게임 규칙상의 상한·하한을 두지 않는다. 음수도 그대로 유지하며, 캠페인의 제한된 범위 운전 점수를 재사용하거나 음수 누적을 지우지 않는다. 저장·계산 자료형의 범위 초과는 오류로 검출하고 숫자가 반대 부호로 돌아가게 두지 않는다.</p>
+<p>승객 만족도 <code>S/M/R</code>, 캠페인 운전 점수의 운임 배율, 캠페인 실수령을 위 식에 추가로 곱하지 않는다. <a href="04-passengers-and-fares.html">04</a>가 확정한 원약정 기본운임만 사용한다.</p>
+<h2 id="완료운송-안전-보너스">완료운송 안전 보너스</h2>
+<p>보너스의 초기 제안은 <b>유효하게 완료했고, 직전 유효 완료 직후부터 이번 완료까지의 안전 구간에서 자격을 잃지 않은 경우</b>에만 지급하는 운임 비례 가산이다. 첫 구간은 경기 시작부터이며 빈차로 승객을 찾는 주행도 포함한다. 운전 중 별도 양의 점수를 계속 쌓는 구조는 두지 않는다.</p>
+<div class="tw"><table><thead><tr>
+<th>조건·행동</th>
+<th>안전 자격·보너스</th>
+<th>이유·예외</th>
+</tr></thead><tbody>
+<tr><td>경기 시작 또는 직전 유효 완료 직후</td><td>새 안전 구간 시작</td><td>기존 누적 감점은 그대로 유지</td></tr>
+<tr><td>빈차·탑승 중 새로운 고유 사건의 양수 감점 확정</td><td>현재 구간의 안전 자격 해제</td><td>감점 원장은 즉시 반영하되 추가 중복 감점을 만들지 않음</td></tr>
+<tr><td>이미 감점한 사건의 상향 확정</td><td>최초 귀속 안전 구간 유지</td><td>차액은 계속 차감하되 같은 사건을 다음 구간의 새 위반으로 세지 않음</td></tr>
+<tr><td>구간 중 위반 없이 유효 하차</td><td>완료 보너스 지급 후 구간 종료</td><td>단순 정차가 아니라 실제 운송 완료가 필요</td></tr>
+<tr><td>구간 중 위반 후 유효 하차</td><td>운임 환산만 지급, 보너스 없이 구간 종료</td><td>잃은 자격을 같은 길 반복·대기로 회복하지 않음</td></tr>
+<tr><td>승차·운송 취소·재접속·차량 복구</td><td>현재 구간과 안전 자격 유지</td><td>손님을 바꾸거나 연결을 끊어 빈차 위반을 지울 수 없음</td></tr>
+<tr><td>운송 만료·미완료</td><td>완료 보너스 없음, 새 구간 생성 없음</td><td>진행률·목적지 근접·입력 전송만으로 보너스를 만들지 않음</td></tr>
+</tbody></table></div>
+<p>같은 틱의 위반과 하차 순서는 <a href="01-match-flow-and-rules.html#공통-시각과-처리-경계">01의 공통 처리 순서</a>를 따른다. 하차 확정 이벤트까지 이전 구간에 넣고 그 다음 이벤트부터 새 구간으로 본다. 사건에 최초 감점 시점의 <code>SafetySegmentId</code>를 기록해 상향 때도 유지한다. 하차 시 보너스를 고정하며 이후 운전 상태로 지난 운송을 다시 계산하지 않는다.</p>
+<p>안전 자격 해제는 지급 조건의 변화이며 별도 음수 항목이 아니다. 접촉·차량 흔들림·필요한 급제동만으로 자격을 해제하지 않고, 책임이 확인되어 감점이 확정된 사건만 사용한다. 결과에는 즉시 감점과 보너스 미지급 사유를 구분해 보여 준다. 상대 비중은 <a href="09-decisions-and-balance.html">09</a>의 비교 플레이에서 결정한다.</p>
+<h2 id="모든-주행의-즉시-감점">모든 주행의 즉시 감점</h2>
+<div class="tw"><table><thead><tr>
+<th>주행 상황</th>
+<th>처리</th>
+<th>막아야 할 악용</th>
+</tr></thead><tbody>
+<tr><td>빈차로 승객을 찾는 중</td><td>확인된 위반을 즉시 총점에 차감</td><td>빈차일 때만 난폭 운전하고 승차 때 기록 초기화</td></tr>
+<tr><td>탑승 운송 중</td><td>같은 방식으로 차감하고 운송 안전 자격 갱신</td><td>운임 정산 때까지 감점을 미루어 취소로 회피</td></tr>
+<tr><td>마감 추가 시간 중</td><td>유효 경기 틱의 주행 위반 계속 반영</td><td>운송 완료 후 남은 시간의 위반을 무시</td></tr>
+<tr><td>신호 대기·주차·같은 구간 왕복</td><td>양의 점수·회복 지급 없음</td><td>대기 시간·루프·반복 상호작용으로 점수 생산</td></tr>
+<tr><td>판정 근거 부족</td><td>보류 사유만 기록하고 확정 감점 없음</td><td>추정만으로 불리한 점수를 먼저 부여</td></tr>
+<tr><td>서버 격리·복구 이동</td><td>점수 사건 생성 대상에서 제외</td><td>재접속 보호 이동으로 이익·불이익 발생</td></tr>
+</tbody></table></div>
+<p>어떤 행동이 법규 위반인지, 같은 사건의 공간·시간 경계를 어떻게 묶는지는 <a href="02-driving-and-traffic.html">주행·교통</a>이 정의한다. 그 문서는 판정 근거와 사건 분류를 제공하고, 이 문서는 금액·점수 반영 방식을 소유한다.</p>
+<h2 id="동일-사건의-중복-감점-방지">동일 사건의 중복 감점 방지</h2>
+<p>서버는 원인·접근·연속 행동을 묶은 <code>IncidentId</code>를 발급한다. 센서 프레임, 클라이언트 재전송, 관찰 컴포넌트 수를 새로운 사건 수로 보지 않는다.</p>
+<ul><li>사건별로 <code>AppliedPenalty(e)</code>를 저장한다. 새 확정량이 더 크면 <code>Delta = NewPenalty − AppliedPenalty</code>만 음수 원장에 추가한다.</li><li>같은 사건에서 정지선 침범 뒤 더 큰 신호 위반이 확정되어도 두 감점을 합산하지 않는다. 최종 사건 감점은 가장 큰 하나다.</li><li>더 작거나 같은 판정·같은 사건 버전의 재전송은 원장을 바꾸지 않는다.</li><li>서로 독립된 실제 위반은 각각 별도 사건으로 기록한다. 임의의 긴 시간창 하나로 모든 위반을 무한히 합치지 않는다.</li><li>충돌·연속 접촉·복수 법규의 사건 묶음은 <a href="02-driving-and-traffic.html">02</a>의 규칙을 공유하며, 점수 시스템이 자체 타이머로 다시 판정하지 않는다.</li></ul>
+<p><b>계산 검증 예시:</b> 같은 사건에서 감점량 <code>2</code>가 먼저 확정되고 이후 <code>7</code>로 상향되면 원장에는 <code>−2</code>, <code>−5</code>가 남는다. 총 감점은 <code>7</code>이며 <code>9</code>가 아니다. 같은 사건을 다시 전송해도 합계가 바뀌지 않는다. 이 수치는 실제 사건 배점 제안이 아니다.</p>
+<h2 id="정산-원장과-멱등-처리">정산 원장과 멱등 처리</h2>
+<div class="tw"><table><thead><tr>
+<th>거래 종류</th>
+<th>고유 키 제안</th>
+<th>원장 변화</th>
+<th>반드시 함께 확정할 상태</th>
+</tr></thead><tbody>
+<tr><td>완료 운송</td><td><code>MatchId + TripId + Completion</code></td><td>운임 환산·안전 보너스의 항목별 가산</td><td>승객 <code>Completed</code>, 운송 완료 틱, 고정 약정·안전 자격</td></tr>
+<tr><td>사건 최초 확정·상향</td><td><code>MatchId + PlayerId + IncidentId + Revision</code></td><td>아직 반영하지 않은 감점 차이</td><td>사건 최종 감점량·적용 버전</td></tr>
+<tr><td>취소·만료</td><td>운송 종료 키와 사유</td><td>미지급 사실 기록, 새 양의 점수 없음</td><td>종결 상태와 기존 사건 원장 유지</td></tr>
+<tr><td>결과 확정</td><td><code>MatchId + ResultVersion</code></td><td>점수를 재지급하지 않고 집계 스냅샷 생성</td><td>원장 마지막 순번·참가 자격·최종 순위</td></tr>
+</tbody></table></div>
+<p>완료 상태 변경과 운임·보너스 기록은 하나의 원자적 처리 단위로 묶는다. 중간 실패 후 재시도해도 두 항목이 모두 한 번만 반영되거나 아직 둘 다 미확정이어야 한다. 완료만 됐는데 운임이 사라지거나, 운임만 두 번 들어오는 상태를 허용하지 않는다.</p>
+<p>서버 원장을 결과의 근거로 삼으며 클라이언트는 <code>LedgerSequence</code>와 총점 버전을 표시한다. 중복 이벤트는 무시하고, 누락 순번을 발견하면 서버 스냅샷·누락 항목을 요청한다. 화면의 임시 합계로 서버 원장을 덮어쓰지 않는다.</p>
+<p>결과 확정 전에 승인된 항목을 반영하는 절차는 <a href="01-match-flow-and-rules.html#결과-확정과-재전송">01</a>을 따른다. 클라이언트가 늦게 보낸 과거 하차 주장이나 임의 과거 점수는 정산 근거가 아니다.</p>
+<h2 id="순위와-동점">순위와 동점</h2>
+<p>승자 후보는 서버에서 <b>유효 완료 운송이 있고, 이탈·무효로 참가 자격을 잃지 않은 선수</b>다. 운송을 하지 않은 선수는 총점이 더 높게 보이더라도 승자가 될 수 없다.</p>
+<p>참가 자격은 <a href="01-match-flow-and-rules.html#중도-이탈과-접속-끊김-정책-초안">01</a>의 최종 종료 틱 스냅샷을 사용한다. 그 시각에 재접속 유예가 남아 있던 선수의 자격을 정산 중 연결 만료로 뒤집지 않는다.</p>
+<div class="tw"><table><thead><tr>
+<th>비교 순서</th>
+<th>기준</th>
+<th>의도</th>
+</tr></thead><tbody>
+<tr><td>우선</td><td>유효 총점 내림차순</td><td>운임·완료 안전·실제 위반을 함께 비교</td></tr>
+<tr><td>동점 후속</td><td>완료 원약정 기본운임 합계 내림차순</td><td>환산 내림에서 사라진 운송 성과 차이 반영</td></tr>
+<tr><td>다시 동점</td><td>고유 사건의 총 감점량 오름차순</td><td>실제 확정된 위반 부담이 적은 선수 우선</td></tr>
+<tr><td>모두 동일</td><td>공동 순위·공동 승자</td><td>접속 순서·선수 ID·방장 여부로 억지 승자를 만들지 않음</td></tr>
+</tbody></table></div>
+<p>공동 순위 뒤의 순번은 앞선 선수 수를 반영하는 경쟁 순위 방식을 제안한다. 화면 정렬에 안정된 선수 ID를 쓸 수는 있으나 순위·승자 자격에 영향을 주지 않는다.</p>
+<p>완료 운송 없는 선수는 결과 하단에 <code>완료 운송 없음</code>, 이탈 선수는 <code>중도 이탈</code>, 무효 경기는 <code>경기 무효</code>로 분리한다. 확정 점수·감점 내역은 숨기지 않는다. 모든 선수에게 완료 운송이 없으면 <code>승자 없음</code>이며, 음수인 유효 완료 선수보다 빈차 정차 선수의 점수가 높아도 이 원칙은 같다.</p>
+<p>최종 순위는 <a href="01-match-flow-and-rules.html">01</a>의 <code>Results</code>에서만 확정된다. 그 이전 실시간 목록은 잠정 순위이며, 종료 이후 점수 역산으로 이미 완료한 운송을 다시 평가하지 않는다.</p>
+<h2 id="계산-검증-사례">계산 검증 사례</h2>
+<p>아래는 <b>산술 검증용 가상 설정</b>이다. 운임 환산을 <code>100원당 1점</code>, 안전 완료 보너스율을 <code>10%</code>, 예시 위반을 <code>7점</code>으로 가정한다. 실제 후보값·채택 여부는 <a href="09-decisions-and-balance.html">09</a>만 소유한다.</p>
+<div class="tw"><table><thead><tr>
+<th>입력 사례</th>
+<th>계산</th>
+<th>기대 결과</th>
+</tr></thead><tbody>
+<tr><td>기본운임 <code>10,000원</code>, 구간 무위반 완료</td><td><code>100 + 10</code></td><td>총점 <code>110</code>, 완료 건수 반영</td></tr>
+<tr><td>기본운임 <code>10,000원</code>, 탑승 중 예시 위반 후 완료</td><td><code>100 + 0 − 7</code></td><td>총점 <code>93</code>, 보너스 미지급 사유 표시</td></tr>
+<tr><td>기본운임 <code>10,000원</code>, 승차 전 빈차 위반 후 완료</td><td><code>100 + 0 − 7</code></td><td>총점 <code>93</code>, 승차로 안전 자격 초기화 없음</td></tr>
+<tr><td>기본운임 <code>14,000원</code>, 같은 위반 후 완료</td><td><code>140 + 0 − 7</code></td><td>총점 <code>133</code>, 운임 차이가 승패에 기여하는 사례</td></tr>
+<tr><td>빈차 위반 후 최종 마감까지 미완료</td><td><code>0 + 0 − 7</code></td><td>총점 <code>−7</code>, 원약정·진행률에 따른 부분 지급 없음</td></tr>
+<tr><td>첫 사례의 완료 통지를 반복 수신</td><td>기존 <code>110</code> 유지</td><td>운임·보너스·완료 건수 모두 중복 없음</td></tr>
+</tbody></table></div>
+<p><b>별도 자격 검증용 가상 입력:</b> A는 운송 없이 총점 <code>0</code>, B는 유효 완료 가산 <code>5</code>와 누적 감점 <code>12</code>로 총점 <code>−7</code>이다. 두 선수 모두 이탈하지 않았다면 승자 후보는 B뿐이다. 운송을 피해서 감점 없는 <code>0</code>을 지키는 전략으로 승리하지 못한다.</p>
+<p>환산 내림은 별도로 경계값을 검증한다. 같은 가상 환산율에서 기본운임 <code>150원</code>인 완료 두 건의 운임 점수 합은 <code>1 + 1</code>이며, 합계 운임 <code>300원</code>을 나중에 환산한 값으로 바꾸지 않는다. 이 예시 역시 실제 운임표가 아니다.</p>
+<h2 id="결과-화면데이터수용-확인">결과 화면·데이터·수용 확인</h2>
+<div class="tw"><table><thead><tr>
+<th>데이터 항목 제안</th>
+<th>결과에 필요한 내용</th>
+</tr></thead><tbody>
+<tr><td>운송 정산</td><td><code>TripId</code>, 원약정, 운임 환산, 안전 구간 ID·시작 이벤트·자격·미지급 사유, 완료 틱</td></tr>
+<tr><td>사건 정산</td><td><code>IncidentId</code>, 최초 귀속 <code>SafetySegmentId</code>, 분류·판정 근거 참조, 현재 감점량, 반영 차이, 버전</td></tr>
+<tr><td>선수 집계</td><td>총점, 완료 운임 합계, 운임 점수, 완료 보너스 합계, 총 감점, 완료 건수</td></tr>
+<tr><td>최종 결과</td><td>자격 상태·제외 사유, 순위·공동 순위, 원장 순번, 규칙·결과 버전</td></tr>
+</tbody></table></div>
+<p>화면은 총점 옆에 운임·완료 안전·위반의 구성을 보여 주고, 사건별 근거를 열 수 있게 한다. 원약정 예상액과 확정된 점수는 구분하며, 미완료 운임을 이미 얻은 수익처럼 합산하지 않는다. 배치·알림은 <a href="06-ui-and-feedback.html">UI·피드백</a>이 정의한다.</p>
+<p>수용 확인에는 빈차 위반 유지, 사건 상향 차이, 동시 하차의 단일 정산, 음수 순위, 무운송 승자 제외, 공동 승자, 마감 직전 확정 사건을 포함한다. 최종 목록과 측정 방법은 <a href="10-playtest-and-acceptance.html">플레이테스트·수용 기준</a>으로 연결한다.</p>
+<h2 id="2026-10-29-정산-구현">2026-10-29 정산 구현</h2>
+<p>정수 원장·완료 원자 확정·사건 상향 차액·안전 구간·음수/동점·무운송 제외·최종 자격 동결을 구현하고 모델과 실제 두 Player를 구분해 검사했다. Host 결과는 공개 랭킹 신뢰 근거가 아니다. <a href="17-competition-acceptance.html">수용 범위</a>, <a href="../../work-history/2026-10-29-pvp-shared-competition.md">실제 결과</a>를 따른다.</p>
+<nav class="foot"><span>← <a href="04-passengers-and-fares.html">공용 승객과 고정 기본운임</a></span><span><a href="06-ui-and-feedback.html">PVP 화면·입력·피드백</a> →</span></nav>
+<p class="gen">이 페이지는 <code>docs/content-design/pvp/05-scoring-and-results.md</code>에서 <code>python tools/render_design_docs.py</code>로 만든다. 내용은 md를 고친다.</p>
+</div></body></html>

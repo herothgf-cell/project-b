@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>한 창 1인 봇 경기 Implementation Plan</title><style>
+:root{--accent:#F2B705;--ink:#1d2320;--sub:#5d6862;--bg:#f6f7f5;--card:#fff;--line:#dfe4e0;--th:#f7f1de;--code:#f0f2f0;--link:#9a6c00;
+--ok:#1f8f4e;--src:#2f6fd6;--prog:#7a4fd0;--wait:#d98a00;--hold:#8a8f8c;--fix:#d2453a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}}
+:root[data-theme="dark"]{--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 80px}
+.crumb{font-size:13.5px;color:var(--sub);margin-bottom:10px}
+header.doc{background:var(--card);border:1px solid var(--line);border-left:10px solid var(--accent);border-radius:10px;padding:18px 22px;margin-bottom:20px}
+header.doc h1{font-size:27px;margin:2px 0 6px;line-height:1.35}
+header.doc p{margin:6px 0;color:var(--sub)}
+h1{font-size:26px}h2{font-size:21px;margin:40px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+h3{font-size:17.5px;margin:28px 0 6px}h4,h5,h6{font-size:15.5px;margin:20px 0 4px;color:var(--sub)}
+p,ul,ol{margin:8px 0}ul,ol{padding-left:24px}li{margin:3px 0}
+a{color:var(--link)}
+img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff}
+.tw{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--th)}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-family:Consolas,Menlo,monospace;font-size:13.5px}
+pre{background:var(--code);border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.5}pre code{padding:0;background:none}
+blockquote{margin:12px 0;padding:6px 14px;border-left:5px solid var(--accent);background:var(--card);color:var(--sub);border-radius:0 6px 6px 0}
+hr{border:none;border-top:1px solid var(--line);margin:28px 0}
+details.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font-size:14.5px}
+details.toc summary{cursor:pointer;font-weight:700}
+details.toc ol{margin:6px 0}details.toc li.l3{margin-left:18px;list-style:circle;color:var(--sub)}
+details.toc a{text-decoration:none}
+nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+.st{display:inline-block;border-radius:999px;padding:0 9px;margin:1px 2px 1px 0;font-size:12.5px;font-weight:700;white-space:nowrap;color:#fff}
+.st.ok{background:var(--ok)}.st.src{background:var(--src)}.st.prog{background:var(--prog)}.st.wait{background:var(--wait)}.st.hold{background:var(--hold)}.st.fix{background:var(--fix)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.filter{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+.filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
+.gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+</style></head>
+<body><div class="wrap">
+<div class="crumb"><a href="../index.html">기획서 목록</a> · <a href="../README.html">기획 README</a> · <a href="README.html">PvP 목록</a> · <a href="20-solo-bot-mode-plan.md">원본 md</a></div>
+<header class="doc"><h1>한 창 1인 봇 경기 Implementation Plan</h1><blockquote><p><b>보존 자료: 초기 독립 PVP/단계별 기록.</b> 아래 “현재/미구현/최신”은 작성 당시 표현이다. 현재 A2·통합 실행·순수익 경쟁·LAN은 <a href="README.html">PVP 기준</a>을 따른다. 초기 독립 총점/보너스·Fusion 후보·별도 실행 경로는 현행 규칙이 아니다.</p></blockquote></header>
+
+<blockquote><p><b>For agentic workers:</b> REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (<code>- [ ]</code>) syntax for tracking.</p></blockquote>
+<p><b>Goal:</b> 한 실행 창에서 사람이 직접 운전하며 승객·NPC·법규·정산을 시험한다. <b>Architecture:</b> 기존 PvpNetworkSession의 권한 tick/모터와 PvpCompetitionBridge/승객 원장을 재사용한다. 로컬 모드는 transport를 생성하지 않고 두 번째 참가자를 입력 기반 봇으로 채운다. 봇은 공개 승객 snapshot으로 목적지를 고르고 같은 승하차 명령/정차 검사/법규/정산을 거친다. <b>Tech Stack:</b> Unity2022.3.62f2, 기존 평면 차량 모터/C# 권한 모델. <b>Spec:</b> 사용자의 ‘한 창 1인 모드 또는 봇 버전’ 요청과 기존 <a href="19-driving-npc-rules-acceptance.html">19번 수용</a>.</p>
+<h2 id="선택과-제약">선택과 제약</h2>
+<p>별도1인 규칙/원장을 만드는 방법은 온라인과 판정이 달라지므로 피한다. 두 실행 창의 자동 게스트는 한 창이라는 요구에 맞지 않는다. 구현 판단으로 기존2참가자 모델의 두 번째 자리를 로컬 봇으로 채운다. 사용자가 봇 난도/최적 전략을 확정한 것은 아니다.</p>
+<ul><li>초기 화면에서 시간·유예 입력→‘혼자 경기 시작 · 봇 상대’→3초 준비→직접 운전/승객 선택/E 승하차→시간 종료 정산→나가기/다시 시작.</li><li>참가 인원/IP/포트/Photon/별도 실행 창/방화벽 설정 없이 실행한다. 오프라인 단순 주행·직접IP2인 진입도 보존한다.</li><li>봇은 합법 경로 거리로 대기 승객을 고르고, 소유 승객 목적지를 우선한다. 위치 변경·즉시 정산·미정차 승하차·특별 점수/면책을 허용하지 않는다. 택시 간 무접촉과 NPC/법규 시험 규칙은 동일하다.</li><li>시간/유예는 기존 범위를 검증하며10분 고정이나 새로운 영구 기본값을 만들지 않는다. 봇 경기 성적은 로컬 시험용이며 사람 상대 온라인 실력/밸런스 수용으로 취급하지 않는다.</li><li>캠페인/저장/지도/다른 채팅 변경을 보존한다. PC 화면/키 입력은 사용하지 않는다.</li></ul>
+<h2 id="파일과-검사">파일과 검사</h2>
+<div class="tw"><table><thead><tr>
+<th>파일</th>
+<th>책임</th>
+</tr></thead><tbody>
+<tr><td>Runtime/Competition/PvpTaxiBot.cs</td><td>공개 상태→입력·승하차 명령, 연속 운송</td></tr>
+<tr><td>Runtime/Network/PvpNetworkSession.cs</td><td>transport 없는 로컬2참가자/기존50Hz tick·종료</td></tr>
+<tr><td>Runtime/Network/PvpCompetitionBridge.cs</td><td>봇 명령 연결·나/봇 표시·동일 원장</td></tr>
+<tr><td>Runtime/PvpBootstrap.cs, Runtime/UI/PvpPrototypePanel.cs</td><td>한 창 진입/시간 검증</td></tr>
+<tr><td>Editor/PvpSoloBotTests.cs</td><td>선택·소유권·마감·복수 연속 실제 모터 운송</td></tr>
+<tr><td>Runtime/PvpSoloBotProbe.cs, tools/test_pvp_solo_bot.ps1</td><td>실제 단일 Player의 운송·법규·정산·나가기/재시작·무transport 검사</td></tr>
+</tbody></table></div>
+<ul><li><input type="checkbox" disabled checked> 1. 새 봇 계약/연속 운송 검사를 작성하고 미구현 실패를 확인한다.</li><li><input type="checkbox" disabled checked> 2. 봇·로컬 권한 경로·한글 메뉴/HUD를 구현해 모델 검사를 통과한다.</li><li><input type="checkbox" disabled checked> 3. 단일 Player 운송/결과/재시작과 기존 두 Player·격리 회귀를 실행한다. 정상/위반 각각2회 운송, fixture/경계0, 위반3감점, exit/restart·무transport 확인. 독립 리뷰 중대 발견 없음.</li><li><input type="checkbox" disabled checked> 4. 소스 커밋 기준 재빌드·전체 실행 폴더/manifest 검증, 이력/LATEST/로드맵 갱신·커밋·push. 소스758753d에서 재검사/재빌드·복사본 실제 운송/격리0,139파일93,207,621바이트 원본/복사본/Git index SHA256 일치. 배포623e0d3 feature push0/원격 동일 해시 확인.</li></ul>
+<p>수용 잔여: 사람 키보드/패드·화면 시야·봇 난도/수익 경쟁 체감·다른PC통신/장기 부하. 독립 리뷰는 전체 기능 검사 뒤1회 수행한다.</p>
+<nav class="foot"><span>← <a href="19-driving-npc-rules-acceptance.html">실제 입력 운송·공유 NPC·법규 수용</a></span><span><a href="21-solo-bot-mode.html">한 창 1인 테스트 · 봇 상대</a> →</span></nav>
+<p class="gen">이 페이지는 <code>docs/content-design/pvp/20-solo-bot-mode-plan.md</code>에서 <code>python tools/render_design_docs.py</code>로 만든다. 내용은 md를 고친다.</p>
+</div></body></html>

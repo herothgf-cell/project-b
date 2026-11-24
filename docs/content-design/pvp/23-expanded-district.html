@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>확장 PVP 시험장 · 은계형 화면</title><style>
+:root{--accent:#F2B705;--ink:#1d2320;--sub:#5d6862;--bg:#f6f7f5;--card:#fff;--line:#dfe4e0;--th:#f7f1de;--code:#f0f2f0;--link:#9a6c00;
+--ok:#1f8f4e;--src:#2f6fd6;--prog:#7a4fd0;--wait:#d98a00;--hold:#8a8f8c;--fix:#d2453a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}}
+:root[data-theme="dark"]{--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 80px}
+.crumb{font-size:13.5px;color:var(--sub);margin-bottom:10px}
+header.doc{background:var(--card);border:1px solid var(--line);border-left:10px solid var(--accent);border-radius:10px;padding:18px 22px;margin-bottom:20px}
+header.doc h1{font-size:27px;margin:2px 0 6px;line-height:1.35}
+header.doc p{margin:6px 0;color:var(--sub)}
+h1{font-size:26px}h2{font-size:21px;margin:40px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+h3{font-size:17.5px;margin:28px 0 6px}h4,h5,h6{font-size:15.5px;margin:20px 0 4px;color:var(--sub)}
+p,ul,ol{margin:8px 0}ul,ol{padding-left:24px}li{margin:3px 0}
+a{color:var(--link)}
+img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff}
+.tw{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--th)}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-family:Consolas,Menlo,monospace;font-size:13.5px}
+pre{background:var(--code);border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.5}pre code{padding:0;background:none}
+blockquote{margin:12px 0;padding:6px 14px;border-left:5px solid var(--accent);background:var(--card);color:var(--sub);border-radius:0 6px 6px 0}
+hr{border:none;border-top:1px solid var(--line);margin:28px 0}
+details.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font-size:14.5px}
+details.toc summary{cursor:pointer;font-weight:700}
+details.toc ol{margin:6px 0}details.toc li.l3{margin-left:18px;list-style:circle;color:var(--sub)}
+details.toc a{text-decoration:none}
+nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+.st{display:inline-block;border-radius:999px;padding:0 9px;margin:1px 2px 1px 0;font-size:12.5px;font-weight:700;white-space:nowrap;color:#fff}
+.st.ok{background:var(--ok)}.st.src{background:var(--src)}.st.prog{background:var(--prog)}.st.wait{background:var(--wait)}.st.hold{background:var(--hold)}.st.fix{background:var(--fix)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.filter{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+.filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
+.gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+</style></head>
+<body><div class="wrap">
+<div class="crumb"><a href="../index.html">기획서 목록</a> · <a href="../README.html">기획 README</a> · <a href="README.html">PvP 목록</a> · <a href="23-expanded-district.md">원본 md</a></div>
+<header class="doc"><h1>확장 PVP 시험장 · 은계형 화면</h1><blockquote><p><b>보존 자료: 초기 독립 PVP/단계별 기록.</b> 아래 “현재/미구현/최신”은 작성 당시 표현이다. 현재 A2·통합 실행·순수익 경쟁·LAN은 <a href="README.html">PVP 기준</a>을 따른다. 초기 독립 총점/보너스·Fusion 후보·별도 실행 경로는 현행 규칙이 아니다.</p></blockquote></header>
+
+<p>사용자 확인에 따라 <b>현재 PVP 자체 시험장</b>을 확장한다. 은계 실제 지형/도로 데이터를 반입하지 않는다. 화면/UI·지도 데이터·확장/승객·시설을 일괄 구현한 뒤 통합 검사를 시작했다.</p>
+<div class="tw"><table><thead><tr>
+<th>콘텐츠</th>
+<th>구현 항목</th>
+<th>기준/한계</th>
+</tr></thead><tbody>
+<tr><td>플레이 화면</td><td>은계형 색/한글/패널, 속도·법규·운송·시간·점수·연료</td><td>날짜/퇴근/식사/피로/장기 잔액 등 캠페인 항목 제외. PVP snapshot만 읽음</td></tr>
+<tr><td>3D 표현</td><td>상세 택시/NPC차량, 도로/보도/차선/횡단보도, 건물/공원/나무/가로등, 거점/주유 건물</td><td>렌더 전용 장식은 충돌하지 않음. 캠페인 주행/저장 컴포넌트를 붙이지 않음</td></tr>
+<tr><td>카메라/지도</td><td>추적/운전석 C·V, 전체 지도 M, 미니맵·선택 경로·서비스 길안내</td><td>지도 크기로 전체 시야 계산. 기존 평면 차량 모터 유지</td></tr>
+<tr><td>맵</td><td>전체 노드 범위520×440m, 외곽 순환1,760m·도심 연결로</td><td>기존 작은 회로는 회귀용. 실제 기본 실행은 확장 맵</td></tr>
+<tr><td>승객 거점</td><td>도심4+외곽4, 공원/환승/상가/물류/주거/터미널/상업/산업</td><td>모든 거점 간 도달 가능. 거점 간 경로 약133m~1,401m</td></tr>
+<tr><td>공급</td><td>서로 다른 도심·외곽 승객을 순환 공급, 대기 최대3/승차 중 최대2</td><td>짧은 여러 운송 대 고액 장거리 선택. 기본 운임 거리 규칙 재사용</td></tr>
+<tr><td>NPC/보행</td><td>차량6/보행4, 길이가 다른 폐회로와 횡단 경로</td><td>서버 권한·같은 snapshot. 사람/차량을 밀거나 순간이동시키지 않음</td></tr>
+<tr><td>법규 데이터</td><td>접근로/공유 합류 접근로·정지선/진입선·우회전 연결·신호 주기·도로 제한속도</td><td>지도 유효성/해시에 포함. 동일 신호 합류도 같은 정차/사건 이력 사용</td></tr>
+<tr><td>주유 거점</td><td>동부 차고지·서부 주유소</td><td>각5초/2점 후보, 정차/방향 검증·시설1자리. 길안내 버튼은 현장에서 주유 요청도 수행</td></tr>
+<tr><td>연료</td><td>100에서 시작, 실제 수락 이동1m당.02 소비(약5km)</td><td>서버 권한, 재접속 보존. 봇도 같은 연료·시설·명령/비용</td></tr>
+<tr><td>연료 지원</td><td>고갈 시 제자리 지원8초/6점 후보</td><td>순간이동 아님. 정차 유지 필요, 경기 시간 계속 진행</td></tr>
+<tr><td>서비스 정산</td><td>완료 시1회 서비스 비용, 위반/안전 보너스와 별도</td><td>취소·접속 해제·미완료는 청구 없음. 마감까지 시간이 부족하면 시작 거절</td></tr>
+<tr><td>내구도/수리</td><td>기존 은계 구현 보존</td><td>PVP 손상·수리 규칙은 이번에 추가하지 않음. 주유를 수리로 표시하지 않음</td></tr>
+</tbody></table></div>
+<p>이 길이/인원/교통량/연료/서비스 비용은 프로토타입 시험 후보다. 경기 시간을10분으로 고정하거나 전체 배점/충돌/SDK·공개 랭킹 수용을 확정한 것은 아니다.</p>
+<h2 id="직접-플레이">직접 플레이</h2>
+<ol><li><code>builds/PvpPrototype/</code> 전체 폴더를 유지하고 <code>PvpPrototype.exe</code>를 실행한다.</li><li>경기 시간/유예를 입력하고 <b>혼자 경기 시작 · 봇 상대</b>를 누른다. 긴 외곽 운송을 보려면 충분한 시간을 직접 정한다.</li><li>승객을 선택→경로 따라 승차 거점으로→올바른 방향/정차0.2초→E 승차, 목적지에서 E 하차.</li><li>WASD/방향키·Space 제동·정차 후 Q 전후진. C/V 추적·운전석 전환, M 전체 지도.</li><li>주유 패널에서 시설을 선택하면 시설 경로를 표시한다. 해당 정차점에서 같은 버튼으로 주유를 요청한다. 진행 중 취소/운송 목적지 길안내 복귀도 가능하다. 비용과 소요 시간을 확인한다.</li><li>결과의 운임점수/안전 보너스/위반/서비스 비용/완료 건수/순위를 확인하고 초기 화면으로 돌아가 새 경기 시작.</li></ol>
+<h2 id="검증-구분">검증 구분</h2>
+<p>모델: 기존 PVP 전체 회귀+확장117관측·32입력 경로, 외곽 공유 교통 실제 모터 주행4경로, 원좌표 이동 후 NPC/정지선, 연료/주유/취소/중복 비용·연속 운송→주유 확인. 실제 Player/화면/최종 배포 결과는 <a href="../../work-history/2026-10-29-pvp-expanded-district.md">작업 이력</a>에 남긴다.</p>
+<p>확정 소스a5c13de 재검사/Windows 재빌드와 프로젝트 밖 복사본 실제 Player0. 사람 자리1회/약1.56km·봇2회/약1.40km, fixture/도로 경계 차단/감점0, 주유 취소·재시도 후2점1회 차감,31/77점·정산/메뉴 복귀/새 경기 확인. 같은 빌드2Player의 결과/교통 일치와 추적/지도/운전석1280×720 실제3화면도 확인했다. 전체139파일93,263,189바이트 해시 검증으로 배포한다. 이는 자동 입력·자동 프레임 검증이며 사람 플레이나 다른PC 검증은 아니다.</p>
+<p>사람의 조작감/운전석 시야·봇 수익 경쟁·장시간 서비스 경제·다른PC/인터넷/동시 시설 이용은 별도 수용이다. 유형별 승객 효과, PVP 손상/수리, 복잡한 합류/충돌 책임 전체는 후속이다.</p>
+<nav class="foot"><span>← <a href="22-expanded-district-plan.html">PVP 확장 시험장·은계형 화면 Implementation Plan</a></span><span><a href="25-simulation-match.html">기존 시뮬레이션 기반 봇 경기와 확장 A</a> →</span></nav>
+<p class="gen">이 페이지는 <code>docs/content-design/pvp/23-expanded-district.md</code>에서 <code>python tools/render_design_docs.py</code>로 만든다. 내용은 md를 고친다.</p>
+</div></body></html>

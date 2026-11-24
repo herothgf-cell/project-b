@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PVP 교통 흐름·도로 안내·통합 실행 개선</title><style>
+:root{--accent:#F2B705;--ink:#1d2320;--sub:#5d6862;--bg:#f6f7f5;--card:#fff;--line:#dfe4e0;--th:#f7f1de;--code:#f0f2f0;--link:#9a6c00;
+--ok:#1f8f4e;--src:#2f6fd6;--prog:#7a4fd0;--wait:#d98a00;--hold:#8a8f8c;--fix:#d2453a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}}
+:root[data-theme="dark"]{--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 80px}
+.crumb{font-size:13.5px;color:var(--sub);margin-bottom:10px}
+header.doc{background:var(--card);border:1px solid var(--line);border-left:10px solid var(--accent);border-radius:10px;padding:18px 22px;margin-bottom:20px}
+header.doc h1{font-size:27px;margin:2px 0 6px;line-height:1.35}
+header.doc p{margin:6px 0;color:var(--sub)}
+h1{font-size:26px}h2{font-size:21px;margin:40px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+h3{font-size:17.5px;margin:28px 0 6px}h4,h5,h6{font-size:15.5px;margin:20px 0 4px;color:var(--sub)}
+p,ul,ol{margin:8px 0}ul,ol{padding-left:24px}li{margin:3px 0}
+a{color:var(--link)}
+img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff}
+.tw{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--th)}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-family:Consolas,Menlo,monospace;font-size:13.5px}
+pre{background:var(--code);border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.5}pre code{padding:0;background:none}
+blockquote{margin:12px 0;padding:6px 14px;border-left:5px solid var(--accent);background:var(--card);color:var(--sub);border-radius:0 6px 6px 0}
+hr{border:none;border-top:1px solid var(--line);margin:28px 0}
+details.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font-size:14.5px}
+details.toc summary{cursor:pointer;font-weight:700}
+details.toc ol{margin:6px 0}details.toc li.l3{margin-left:18px;list-style:circle;color:var(--sub)}
+details.toc a{text-decoration:none}
+nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+.st{display:inline-block;border-radius:999px;padding:0 9px;margin:1px 2px 1px 0;font-size:12.5px;font-weight:700;white-space:nowrap;color:#fff}
+.st.ok{background:var(--ok)}.st.src{background:var(--src)}.st.prog{background:var(--prog)}.st.wait{background:var(--wait)}.st.hold{background:var(--hold)}.st.fix{background:var(--fix)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.filter{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+.filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
+.gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+</style></head>
+<body><div class="wrap">
+<div class="crumb"><a href="../index.html">기획서 목록</a> · <a href="../README.html">기획 README</a> · <a href="README.html">PvP 목록</a> · <a href="27-flow-unified-mode.md">원본 md</a></div>
+<header class="doc"><h1>PVP 교통 흐름·도로 안내·통합 실행 개선</h1></header>
+<details class="toc" open><summary>목차 (8)</summary><ol><li class="l2"><a href="#사용자-확정-범위-2026-10-30">사용자 확정 범위 (2026-10-30)</a></li><li class="l2"><a href="#구현-선택">구현 선택</a></li><li class="l2"><a href="#pvp-피로포만감-기획의-관리-위치">PVP 피로·포만감 기획의 관리 위치</a></li><li class="l2"><a href="#실제-작성-지도와-교통-범위">실제 작성 지도와 교통 범위</a></li><li class="l2"><a href="#통합-실행-화면">통합 실행 화면</a></li><li class="l2"><a href="#실제-방향-표시와-확장-골목">실제 방향 표시와 확장 골목</a></li><li class="l2"><a href="#2026-11-02-좌우회전-후속">2026-11-02 좌·우회전 후속</a></li><li class="l2"><a href="#p1p2-운영승객-확장">P1~P2 운영·승객 확장</a></li></ol></details>
+<h2 id="사용자-확정-범위-2026-10-30">사용자 확정 범위 (2026-10-30)</h2>
+<ul><li>경로가 충돌하지 않는 차로는 동시 진행, 실제 겹치는 이동만 양보. 기존 충돌·교차로 안전 규칙 유지.</li><li>A2 전역 유사 합류/진입 도로를 확인하고 봇/일반차의 반복 정지·진행을 검증.</li><li>(1271.5697,1777.091), 북향358.478821도, city-junction:2:4의 끊김을 조사/측정. 비스듬한 빨간 NPC 사진은 원인 확정 없이 동일 유형 경로/자세 검사 대상으로 둔다.</li><li>실제 허용 연결과 일치하는 좌/우/직좌/직우/유턴 노면 화살표. 사용자 답변: 편도3개씩 왕복6차로 추가. 내부 골목 추가.</li><li>기존 은계 실행 파일 안에 싱글/PVP 선택. PVP는 자체 도시만. 기존 캠페인 저장·설정 보존, 다른 체크아웃 미변경.</li><li>피로/포만감은20분 가정의 기획 개선안을 작성. 경기시간20분 확정 또는 캠페인 수치 변경은 아님.</li><li>사용자 지시: 단계별 검토/검사를 반복하지 않고 구현 후 마지막 필수 검사만 통합 수행.</li></ul>
+<h2 id="구현-선택">구현 선택</h2>
+<div class="tw"><table><thead><tr>
+<th>영역</th>
+<th>구현 방침</th>
+<th>최종 수용</th>
+</tr></thead><tbody>
+<tr><td>합류</td><td>주행 경로의 차량 폭을 포함한 겹침으로 경쟁 이동을 구분. 병렬 차로의 동시 진행과 실제 충돌 양보를 함께 유지</td><td>전체 생성 합류 연결 검사·대표 실제 NPC/봇 물리 주행·정지시간/진행 지표</td></tr>
+<tr><td>성능/자세</td><td>반복 경로 관측·물리 검색·불필요 할당을 조사, 지정 지점에서 측정</td><td>같은 조건의 프레임 지표와 차량 경로 이탈/회전 방향 확인</td></tr>
+<tr><td>도로</td><td>기존2/4/8에6차로 연결축, 골목 분기 추가. native graph와 노면 표시의 단일 근거</td><td>차로/회전 연결·표시 일치·거점/시설 접근</td></tr>
+<tr><td>실행</td><td>기존 EungyeTaxi.exe를 통합 진입점으로, 모드별 세션/저장 정책 분리</td><td>싱글 준비·기존 저장·PVP4대·메뉴 왕복/재시작·배포 해시</td></tr>
+<tr><td>생활 기획</td><td>짧은 경기에서 선택 가치가 있는 식사/휴식 비용·효과를 후보 표로 제안</td><td>기존 실제 소모량과20분 사례에 근거, 확정/후보 구분</td></tr>
+</tbody></table></div>
+<h2 id="pvp-피로포만감-기획의-관리-위치">PVP 피로·포만감 기획의 관리 위치</h2>
+<p>피로·포만감 개선안은 기존 <a href="../04-life-vehicle-economy.html#pvp-driver-condition">03 생활·차량 상태·경제의 PVP 모드 전용 항목</a>으로 옮겼다. 캠페인 현행 규칙과 구분한 해당 항목을 단일 기준으로 관리한다. PVP 컨디션 개선 수치는 이 기록 당시 제안/미적용이었으며 현재는 <a href="../../work-history/2026-11-02-pvp-condition-implementation.md">실제 적용 이력</a>을 따른다. 2026-11-02 후속 수정으로 운임 감액·승차 준비 지연 후보를 제외하고 기존 졸음/공복 피로 가속 기반으로 변경했다.</p>
+<h2 id="실제-작성-지도와-교통-범위">실제 작성 지도와 교통 범위</h2>
+<p>최종 Editor에서201도로/2874차로 링크/420차로변경/4유턴,6차로9구간,606개 노면 방향 표시를 확인했다.18승객 거점의306개 방향쌍 및 기존 주유3·세차2·수리2·출발주차4 접근을 유지한다. 추가 골목45도로/27접점은9구역 내부의 두 번째 연결 고리다. 새 길의 통행 여유를 확보하면서 가로변 건물이 줄었으며 각 구역은60~87개다. 실제 실행/성능 수치는 <a href="../../work-history/2026-10-30-pvp-flow-unified.md">이번 이력</a>에 구분해 기록한다.</p>
+<p>빨간 차는 <code>TrafficCar.Initialize</code>의 일반 NPC 색상4종 중 하나다. 특별 이벤트/방해 차량을 나타내는 색이 아니다. 사진 속 특정 차량의 당시 이동 목적은 식별할 수 없으며, 짧은 연결부의 과도한 S자 형상과 경로 이탈은 별도 검사한다.</p>
+<h2 id="통합-실행-화면">통합 실행 화면</h2>
+<p>최종 소스61c9e98 / BuildHybrid2 / 실제 Player mode3의1600×900 캡처다. 프로그램의 진단 경로로 전환했고 PC 입력을 조작하지 않았다.</p>
+<p><img src="images/flow-unified/01-mode-selection.png" alt="통합 모드 선택" loading="lazy"> <img src="images/flow-unified/02-pvp-city-setup.png" alt="PVP 도시 전용 설정·조작 안내" loading="lazy"> <img src="images/flow-unified/04-single-preparation.png" alt="기존 싱글 영업 준비" loading="lazy"></p>
+<h2 id="실제-방향-표시와-확장-골목">실제 방향 표시와 확장 골목</h2>
+<p>아래는 소스61c9e98의 실제 Player 렌더다. 상세 표시는 성능 측정 후 카메라를 이동해 확인했다. 도로 법규/허용 방향은 같은 native graph에서 생성한다.</p>
+<p><img src="images/flow-unified/pvp-road-arrows-3.png" alt="직좌·직우 접근 차로" loading="lazy"> <img src="images/flow-unified/pvp-road-arrows-8.png" alt="유턴 및 직진 차로" loading="lazy"> <img src="images/flow-unified/traffic-performance-fullmap.png" alt="추가 골목을 포함한 현재 전체 지도" loading="lazy"></p>
+<p>최종 자동 물리 주행·저장 보존·성능 및 사람/다른PC의 남은 수용은 <a href="../../work-history/2026-11-02-pvp-flow-release.md">11월2일 이력</a>을 따른다. 현재 단일 실행 메뉴에서 싱글/PVP를 선택한다.</p>
+<h2 id="2026-11-02-좌우회전-후속">2026-11-02 좌·우회전 후속</h2>
+<p>같은 구조 교차로의 좌회전/우회전 경로와 봇 정지를 전역 검토했다.656회전의 최소반경14.96m는 차량최소2.89m보다 충분하며, 맞은편 좌우회전210조합 중 다차로분리72쌍은 차체공간이 겹치지 않는다. 편도1차로출구138쌍은 실제 공유이므로 양보한다. 따라서 생성 경로를 임의 재배정하지 않았다.</p>
+<div class="tw"><table><thead><tr>
+<th>요소</th>
+<th>확인/수정</th>
+<th>실제 검사 범위</th>
+</tr></thead><tbody>
+<tr><td>봇 회전</td><td>실제 경로 밖 차량에도 멈추던 정면35m 오탐을 경로별 실제차체 검사로 수정</td><td>실제A2 좌/우fixture의 구센서2.949m→clear, 실제 장애물은거리1로 검출</td></tr>
+<tr><td>NPC 양보</td><td>가상 공통곡선 대신 선택된 경로가 분리된 회전 구분</td><td>offset경로 native진행·겹침0, 실제점유/진출차단 유지</td></tr>
+<tr><td>시설/끝점</td><td>별도 시설 조작·완료/취소 후 연석 경로를 신뢰하지 않고 정면 보호 유지</td><td>좌/우취소연석/짧은끝점 보호 회귀</td></tr>
+<tr><td>피로</td><td>PVP 증가1.25배·15초 식사·45초 휴식 실제 적용</td><td>모델·실시간 서비스 검사, 장기 밸런스 별도. 단일기준은 <a href="../04-life-vehicle-economy.html#pvp-driver-condition">생활기획</a></td></tr>
+</tbody></table></div>
+<p><a href="../../work-history/2026-11-02-pvp-junction-followup.md">최종 실제 검사·배포</a>. 특정 사용자 사진은 전달되지 않았으므로 해당 순간을 재현한 것으로 기록하지 않는다.</p>
+<h2 id="p1p2-운영승객-확장">P1~P2 운영·승객 확장</h2>
+<p>시간대/경기 상대 구간의 수요·교통 방향, 차분/보통/성급 일반차, 실제 상황 반응과 용무 대기, 시설 공유 진입 대기/취소·대안 비교, 도착 상태 예측을 통합한다. 수락된 호출과 선점 규칙은 유지하며, 봇은 실제 시설로 이동해 플레이어와 같은 비용·시간·완료/중단 정책을 적용한다. PVP 피로1.25배·식사1,000원/15초·휴식무료/45초의 이미 승인된 프로필을 캠페인 규칙으로 덮어쓰지 않는다. 시설 대기 중에는 결제/회복을 주지 않고, 한 방문에 계획한 작업 하나를 수행한 뒤 남은 긴급 필요를 다시 판단한다.</p>
+<p>게임용 대체 승하차 한 쌍은 은계 캠페인 작성 대상이며 PVP 공유 호출의 원래 장소/선점을 임의 변경하지 않는다. 음악·에어컨·창문 실제 조작은 계속 보류한다. 상세 조건은 콘텐츠01/02/03/05와 <a href="../../work-history/2026-11-02-simulation-p1-p2.md">이번 통합 기록</a>을 따른다.</p>
+<nav class="foot"><span>← <a href="26-city-a2-four-player.html">A2 — 다차로·생활 골목·4인 봇 경쟁</a></span><span><a href="28-passenger-parity.html">PVP 승객 요소 공유·봇 응대</a> →</span></nav>
+<p class="gen">이 페이지는 <code>docs/content-design/pvp/27-flow-unified-mode.md</code>에서 <code>python tools/render_design_docs.py</code>로 만든다. 내용은 md를 고친다.</p>
+</div></body></html>

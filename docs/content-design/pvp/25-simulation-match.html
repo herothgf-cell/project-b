@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>기존 시뮬레이션 기반 봇 경기와 확장 A</title><style>
+:root{--accent:#F2B705;--ink:#1d2320;--sub:#5d6862;--bg:#f6f7f5;--card:#fff;--line:#dfe4e0;--th:#f7f1de;--code:#f0f2f0;--link:#9a6c00;
+--ok:#1f8f4e;--src:#2f6fd6;--prog:#7a4fd0;--wait:#d98a00;--hold:#8a8f8c;--fix:#d2453a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}}
+:root[data-theme="dark"]{--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 80px}
+.crumb{font-size:13.5px;color:var(--sub);margin-bottom:10px}
+header.doc{background:var(--card);border:1px solid var(--line);border-left:10px solid var(--accent);border-radius:10px;padding:18px 22px;margin-bottom:20px}
+header.doc h1{font-size:27px;margin:2px 0 6px;line-height:1.35}
+header.doc p{margin:6px 0;color:var(--sub)}
+h1{font-size:26px}h2{font-size:21px;margin:40px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+h3{font-size:17.5px;margin:28px 0 6px}h4,h5,h6{font-size:15.5px;margin:20px 0 4px;color:var(--sub)}
+p,ul,ol{margin:8px 0}ul,ol{padding-left:24px}li{margin:3px 0}
+a{color:var(--link)}
+img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff}
+.tw{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--th)}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-family:Consolas,Menlo,monospace;font-size:13.5px}
+pre{background:var(--code);border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.5}pre code{padding:0;background:none}
+blockquote{margin:12px 0;padding:6px 14px;border-left:5px solid var(--accent);background:var(--card);color:var(--sub);border-radius:0 6px 6px 0}
+hr{border:none;border-top:1px solid var(--line);margin:28px 0}
+details.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font-size:14.5px}
+details.toc summary{cursor:pointer;font-weight:700}
+details.toc ol{margin:6px 0}details.toc li.l3{margin-left:18px;list-style:circle;color:var(--sub)}
+details.toc a{text-decoration:none}
+nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+.st{display:inline-block;border-radius:999px;padding:0 9px;margin:1px 2px 1px 0;font-size:12.5px;font-weight:700;white-space:nowrap;color:#fff}
+.st.ok{background:var(--ok)}.st.src{background:var(--src)}.st.prog{background:var(--prog)}.st.wait{background:var(--wait)}.st.hold{background:var(--hold)}.st.fix{background:var(--fix)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.filter{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+.filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
+.gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+</style></head>
+<body><div class="wrap">
+<div class="crumb"><a href="../index.html">기획서 목록</a> · <a href="../README.html">기획 README</a> · <a href="README.html">PvP 목록</a> · <a href="25-simulation-match.md">원본 md</a></div>
+<header class="doc"><h1>기존 시뮬레이션 기반 봇 경기와 확장 A</h1><blockquote><p><b>기존 시뮬레이션 전환 기록.</b> 경기 요소는 계승하지만 아래 최초2차로 배치·옛 실행 안내는 당시 상태다. 현재 지도/실행/권한은 <a href="README.html">PVP 기준</a>·<a href="27-flow-unified-mode.html">27</a>·<a href="30-native-lan.html">30</a>을 따른다.</p></blockquote></header>
+<details class="toc" open><summary>목차 (5)</summary><ol><li class="l2"><a href="#지도">지도</a></li><li class="l2"><a href="#경기-요소">경기 요소</a></li><li class="l2"><a href="#실행">실행</a></li><li class="l2"><a href="#검증">검증</a></li><li class="l3"><a href="#자동-검사-구분">자동 검사 구분</a></li><li class="l2"><a href="#실제-화면">실제 화면</a></li></ol></details>
+<p>사용자 승인: 2026-10-30. 기존 시뮬레이션의 실제 화면/차량/승객/내구도 구현을 사용한다. 이전 독립 평면 모터 프로토타입을 제품 기준으로 확장하지 않는다.</p>
+<h2 id="지도">지도</h2>
+<p><img src="24-expanded-a-concept.png" alt="승인된 배치 시안" loading="lazy"></p>
+<p>시안은 배치 방향이며 실제 게임의 그래픽 품질/건물 모양/해안 지형을 보장하는 스크린샷이 아니다. 첫 구현은 기존 WorldBuilder로 그리는 가상 도심이다.</p>
+<div class="tw"><table><thead><tr>
+<th>항목</th>
+<th>실제 구현 방향</th>
+</tr></thead><tbody>
+<tr><td>크기</td><td>3,600 × 2,800m</td></tr>
+<tr><td>권역</td><td>서남 공원/남부 시장/동남 터미널/서부 주거/중앙역 상업/동부 업무/서북 주거/북부 병원/동북 대학</td></tr>
+<tr><td>도로</td><td>외곽 연결과 내부 7×7 격자, 현 단계 왕복2차로, 방향별 연결/회전 차로</td></tr>
+<tr><td>승객</td><td>18개 거점, 본선과 분리된 진입/정차/합류 포켓</td></tr>
+<tr><td>시설</td><td>주유3, 정비2, 세차2, 출발/휴식 주차장4</td></tr>
+<tr><td>기존 체계</td><td>MapData/HdRoadGraph/WorldBuilder/TrafficSystem/DrivingLaw 사용</td></tr>
+<tr><td>미포함</td><td>시안 배경 해안/교량의 재현, 다차로 간선 확장, 미술 완성도·장기 밸런스 확정</td></tr>
+</tbody></table></div>
+<h2 id="경기-요소">경기 요소</h2>
+<div class="tw"><table><thead><tr>
+<th>요소</th>
+<th>적용</th>
+</tr></thead><tbody>
+<tr><td>화면</td><td>기존 DriveHUD/CockpitUI/운전석/거울/지도 유지, 기존 상단 셀에 경기 시간과 상대 순수익 표시</td></tr>
+<tr><td>조작</td><td>TaxiController Rigidbody/WheelCollider, 기존 WASD/제동/조향 보조/깜빡이/승하차 키 유지</td></tr>
+<tr><td>승객</td><td>PassengerJobs/기존 유형·행동·만족도·운임, 동일 승차 거점 선점 중복 방지</td></tr>
+<tr><td>내구도</td><td>VehicleDamageController/원래 충돌 손상·유료 견인·수리</td></tr>
+<tr><td>상대</td><td>같은 물리 택시로 운송하는 오프라인 봇. 원격 실제 유저 네트워크 전환은 후속 검증</td></tr>
+<tr><td>결과</td><td>완료된 실제 운임에서 실제 시설 지출을 뺀 순수익 비교, 운전 평가는 기존 운임 계산에 반영. 종료 후 추가 정산 금지</td></tr>
+<tr><td>시설 시간</td><td>원래 비용/상태 변화, 이용한 차량만 해당 시간 조작 잠금. 상대 경기 시간은 건너뛰지 않음</td></tr>
+<tr><td>저장</td><td>경기 상태는 메모리 전용. 캠페인 저장/운전 기록/지도 편집/설정 덮어쓰기 차단</td></tr>
+<tr><td>시간</td><td>시작 시30~7200초 입력. 제품 경기 시간을10분으로 확정하지 않음</td></tr>
+</tbody></table></div>
+<h2 id="실행">실행</h2>
+<p>현재 실행은 <code>builds/EungyeTaxi/EungyeTaxi.exe</code> → PVP → A2 경기다. 별도 PvpPrototype.exe/은계 경기 선택은 초기 전환 단계의 진단 경로이며 현재 배포하지 않는다. 오프라인 메뉴와 LAN의 일시정지 차이는 <a href="README.html">현재 PVP 기준</a>·<a href="30-native-lan.html">LAN</a>을 따른다.</p>
+<h2 id="검증">검증</h2>
+<p>실제 결과 및 제한은 <a href="../../work-history/2026-10-30-pvp-simulation-integration.md">작업 이력</a>에 기록한다. 기존 모델 검사/Editor 연결 검사/실제 입력 주행/상태 fixture/실제 화면/사람 조작을 구분한다.</p>
+<h3 id="자동-검사-구분">자동 검사 구분</h3>
+<ul><li><code>pwsh -File tools/test_pvp_simulation.ps1 -PaidFixture</code>: 은계 원래 호출9→15/8→2를 지정하고 실제 주행·해당 운송 양수 운임·정산·충돌·다른 맵 재시작 확인.</li><li><code>pwsh -File tools/test_pvp_simulation.ps1 -Regression</code>: 혼잡 경로9→7/21→7의 실제 목적지 도착·원래 정산 확인. 시간 초과0원은 따로 표시하며 양수 운임 검사로 대체하지 않음.</li><li><code>pwsh -File tools/test_pvp_simulation.ps1 -Expanded</code>: 확장 A의 기본 호출 실제 양수 운임 검사.</li><li><code>pwsh -File tools/test_pvp_simulation.ps1 -Services</code>: 연료24 시작 fixture 뒤 실제 주유소 이동·자비 주유·차량별 대기·출차 검사.</li><li>옵션 없는 은계 기본 호출 검사는 혼잡·호출 조합에 따라 시간 초과0원으로 실패할 수 있다. 실제 실패 기록을 남기며 기본 호출 수익·봇 전략·장기 난도는 미완료 항목이다.</li></ul>
+<p>자동 운송은 원래 기본 위치에서 페달·조향 입력으로 수행한다. 일반 승객 선택/고정 호출/후속 충돌 벽/피로·시설 시간 검사 준비를 명시적으로 구분한다. 사람이 조작해 완주한 검사와 같지 않다.</p>
+<h2 id="실제-화면">실제 화면</h2>
+<p>아래는 기존 시뮬레이션 화면을 사용하는 확장 A 첫 구현의 실제 Player 캡처다(1280×720, 소스1c9b3e7; 이후 b5b5304는 충돌 검사 관측기만 수정). 위 배치 시안과 실제 초기 미술 수준을 구분한다.</p>
+<p><img src="previews/25-native-city-drive.png" alt="기존 추적 화면과 확장 A" loading="lazy"></p>
+<p><img src="previews/25-native-city-cockpit.png" alt="기존 운전석과 거울" loading="lazy"></p>
+<p><img src="previews/25-native-city-map.png" alt="기존 호출·시설 전체 지도" loading="lazy"></p>
+<nav class="foot"><span>← <a href="23-expanded-district.html">확장 PVP 시험장 · 은계형 화면</a></span><span><a href="26-city-a2-four-player.html">A2 — 다차로·생활 골목·4인 봇 경쟁</a> →</span></nav>
+<p class="gen">이 페이지는 <code>docs/content-design/pvp/25-simulation-match.md</code>에서 <code>python tools/render_design_docs.py</code>로 만든다. 내용은 md를 고친다.</p>
+</div></body></html>

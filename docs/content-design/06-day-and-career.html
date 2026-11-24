@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>하루·경력·날씨·시간대</title><style>
+:root{--accent:#F2B705;--ink:#1d2320;--sub:#5d6862;--bg:#f6f7f5;--card:#fff;--line:#dfe4e0;--th:#f7f1de;--code:#f0f2f0;--link:#9a6c00;
+--ok:#1f8f4e;--src:#2f6fd6;--prog:#7a4fd0;--wait:#d98a00;--hold:#8a8f8c;--fix:#d2453a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}}
+:root[data-theme="dark"]{--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 80px}
+.crumb{font-size:13.5px;color:var(--sub);margin-bottom:10px}
+header.doc{background:var(--card);border:1px solid var(--line);border-left:10px solid var(--accent);border-radius:10px;padding:18px 22px;margin-bottom:20px}
+header.doc h1{font-size:27px;margin:2px 0 6px;line-height:1.35}
+header.doc p{margin:6px 0;color:var(--sub)}
+h1{font-size:26px}h2{font-size:21px;margin:40px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+h3{font-size:17.5px;margin:28px 0 6px}h4,h5,h6{font-size:15.5px;margin:20px 0 4px;color:var(--sub)}
+p,ul,ol{margin:8px 0}ul,ol{padding-left:24px}li{margin:3px 0}
+a{color:var(--link)}
+img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff}
+.tw{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--th)}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-family:Consolas,Menlo,monospace;font-size:13.5px}
+pre{background:var(--code);border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.5}pre code{padding:0;background:none}
+blockquote{margin:12px 0;padding:6px 14px;border-left:5px solid var(--accent);background:var(--card);color:var(--sub);border-radius:0 6px 6px 0}
+hr{border:none;border-top:1px solid var(--line);margin:28px 0}
+details.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font-size:14.5px}
+details.toc summary{cursor:pointer;font-weight:700}
+details.toc ol{margin:6px 0}details.toc li.l3{margin-left:18px;list-style:circle;color:var(--sub)}
+details.toc a{text-decoration:none}
+nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+.st{display:inline-block;border-radius:999px;padding:0 9px;margin:1px 2px 1px 0;font-size:12.5px;font-weight:700;white-space:nowrap;color:#fff}
+.st.ok{background:var(--ok)}.st.src{background:var(--src)}.st.prog{background:var(--prog)}.st.wait{background:var(--wait)}.st.hold{background:var(--hold)}.st.fix{background:var(--fix)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.filter{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+.filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
+.gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+</style></head>
+<body><div class="wrap">
+<div class="crumb"><a href="index.html">기획서 목록</a> · <a href="README.html">기획 README</a> · <a href="06-day-and-career.md">원본 md</a></div>
+<header class="doc"><h1>하루·경력·날씨·시간대</h1><p><b>통합 문서 · 2026-11-23 정리.</b> 하루 영업과 정산, 3일 도입 뒤 계속 영업, 하루 조건 카드, 비 운행, 낮밤 조명과 은계 FM을 담당한다. 아래 각 장의 "구 NN"은 합치기 전 문서 번호이며, 본문 속 "기획 NN" 표기도 이 번호를 가리킨다. 날짜가 있는 결정과 검증 기록은 그 시점의 기록으로 읽는다. <a href="README.html">기획 목록</a></p></header>
+<details class="toc"><summary>목차 (5)</summary><ol><li class="l2"><a href="#1-캠페인하루-결과회고-구-04">1. 캠페인·하루 결과·회고 (구 04)</a></li><li class="l3"><a href="#하루와-캠페인">하루와 캠페인</a></li><li class="l3"><a href="#시간의-구분">시간의 구분</a></li><li class="l3"><a href="#2026-11-23-퇴근-전-마지막-한-콜-은계-싱글-08-4장">2026-11-23 퇴근 전 마지막 한 콜 (은계 싱글, 08 4장)</a></li><li class="l3"><a href="#2026-11-24-퇴근-후-드라이브-은계-싱글-08-5장">2026-11-24 퇴근 후 드라이브 (은계 싱글, 08 5장)</a></li><li class="l3"><a href="#결과와-플레이-회고">결과와 플레이 회고</a></li><li class="l3"><a href="#연습과-재도전">연습과 재도전</a></li><li class="l3"><a href="#이어하기와-재시작-경험">이어하기와 재시작 경험</a></li><li class="l2"><a href="#2-계속-영업-모드와-장기-목표-구-28">2. 계속 영업 모드와 장기 목표 (구 28)</a></li><li class="l3"><a href="#1-목표">1. 목표</a></li><li class="l3"><a href="#2-현재-vs-변경">2. 현재 vs 변경</a></li><li class="l3"><a href="#3-흐름">3. 흐름</a></li><li class="l3"><a href="#4-장기-목표-하나-선택-언제든-변경">4. 장기 목표 (하나 선택, 언제든 변경)</a></li><li class="l3"><a href="#5-화면에-보일-것">5. 화면에 보일 것</a></li><li class="l3"><a href="#6-경제-원칙">6. 경제 원칙</a></li><li class="l3"><a href="#7-구현-범위">7. 구현 범위</a></li><li class="l3"><a href="#8-검증">8. 검증</a></li><li class="l2"><a href="#3-오늘의-은계--하루-조건-카드-구-29">3. 오늘의 은계 — 하루 조건 카드 (구 29)</a></li><li class="l3"><a href="#1-목표-1">1. 목표</a></li><li class="l3"><a href="#2-구조">2. 구조</a></li><li class="l3"><a href="#3-조건-카드-1차-4종--평일">3. 조건 카드 (1차 4종 + 평일)</a></li><li class="l3"><a href="#4-화면">4. 화면</a></li><li class="l3"><a href="#5-설계-원칙">5. 설계 원칙</a></li><li class="l3"><a href="#6-구현-범위">6. 구현 범위</a></li><li class="l3"><a href="#7-검증">7. 검증</a></li><li class="l2"><a href="#4-비-운행-프로토타입-구-18">4. 비 운행 프로토타입 (구 18)</a></li><li class="l3"><a href="#경험과-구현-기준">경험과 구현 기준</a></li><li class="l3"><a href="#기존-시스템-연결">기존 시스템 연결</a></li><li class="l3"><a href="#후속-혼합-미끄러짐">후속 혼합 미끄러짐</a></li><li class="l3"><a href="#검증-기준">검증 기준</a></li><li class="l3"><a href="#2026-11-07-인게임-설정-후속">2026-11-07 인게임 설정 후속</a></li><li class="l2"><a href="#5-낮밤-조명과-라디오-자막-구-31">5. 낮밤 조명과 라디오 자막 (구 31)</a></li><li class="l3"><a href="#1-목표-2">1. 목표</a></li><li class="l3"><a href="#2-낮밤-단계">2. 낮밤 단계</a></li><li class="l3"><a href="#3-라디오-자막">3. 라디오 자막</a></li><li class="l3"><a href="#4-방의-낮밤">4. 방의 낮밤</a></li><li class="l3"><a href="#5-구현-범위">5. 구현 범위</a></li><li class="l3"><a href="#6-검증">6. 검증</a></li></ol></details>
+<div class="tw"><table><thead><tr>
+<th>장</th>
+<th>합친 문서</th>
+<th>다루는 내용</th>
+</tr></thead><tbody>
+<tr><td><a href="#s04">1. 캠페인·하루 결과·회고</a></td><td>구 04</td><td>하루 마감·3일 결과·이어하기</td></tr>
+<tr><td><a href="#s28">2. 계속 영업 모드와 장기 목표</a></td><td>구 28</td><td>3일 뒤 계속 영업·벽 메모 목표</td></tr>
+<tr><td><a href="#s29">3. 오늘의 은계 — 하루 조건 카드</a></td><td>구 29</td><td>하루 조건 카드</td></tr>
+<tr><td><a href="#s18">4. 비 운행 프로토타입</a></td><td>구 18</td><td>비 운행·차량 상태</td></tr>
+<tr><td><a href="#s31">5. 낮밤 조명과 라디오 자막</a></td><td>구 31</td><td>시간대 조명·은계 FM</td></tr>
+</tbody></table></div>
+<a id="s04"></a>
+<h2 id="1-캠페인하루-결과회고-구-04">1. 캠페인·하루 결과·회고 (구 04)</h2>
+<h3 id="하루와-캠페인">하루와 캠페인</h3>
+<div class="tw"><table><thead><tr>
+<th>단계·조건</th>
+<th>플레이어 선택</th>
+<th>결과</th>
+</tr></thead><tbody>
+<tr><td>새 경력</td><td>싱글 → 처음부터 하기 → 준비 → 숙소 벽 메모 → 준비 화면의 영업 시작</td><td>기존 슬롯을 보존한 채 새 슬롯에 3일 도입을 시작한다. 첫 인트로 뒤 덕성프라자 주차 칸에서 출차한다</td></tr>
+<tr><td>하루 영업</td><td>호출·생활·경로 자유 선택</td><td>기본 20분, 출차 전 10/20/30/60분 선택. 필수 운송 건수·고정 수익 목표 없음</td></tr>
+<tr><td>예정 시간 첫 경계</td><td>계속 운전하거나 휴식 거점으로 이동</td><td>피로100·초과 영업, 자동 정산 없음</td></tr>
+<tr><td>정상 마감</td><td>빈차로 덕성프라자 숙소 주차 칸에 정차 후 F</td><td>마감 휴식 뒤 그날 수입·비용·상태를 한 번 정산. 동부 휴식 구역은 낮 동안의 휴식 거점</td></tr>
+<tr><td>탑승 중 마감 시도</td><td>목적지 하차 후 거점 이동</td><td>자발적 마감으로 승객을 도중 삭제하지 않음</td></tr>
+<tr><td>졸음 강제 마감</td><td>정차 후 귀가 휴식 확정</td><td><a href="04-life-vehicle-economy.html#피로100과-졸음">졸음 정책</a>에 따라 당일 종료</td></tr>
+<tr><td>날짜1~2 정산</td><td>선택적으로 내 공간 이용 후 다음 날 선택</td><td>현금·미납·연료·포만감·청결·운전 점수 이월, 야간 피로 -60</td></tr>
+<tr><td>3일차 정산</td><td>도입 결과 확인 후 4일차 영업 준비 또는 회차 마무리</td><td>4일차로 가면 같은 슬롯의 차량·소지금·목표와 기사 수첩을 이어 간다</td></tr>
+</tbody></table></div>
+<p>정산 후 방 꾸미기는 선택이다. 조명·러그·차량·구매 부품은 개인 지출이며 영업 순수익과 구분해 기록한다. 같은 경력의 소유·배치 상태는 4일차 이후에도 이어진다. <a href="07-home-room-and-vehicles.html#s13">작은 방</a> · <a href="#s28">연속 경력</a> · <a href="04-life-vehicle-economy.html#s36">동네 가게와 부품</a></p>
+<p>수면 후 이미 예정 시간을 넘었다는 이유만으로 피로를 다시100으로 만들지 않는다. 마감 수면의 비용·회복량은 <a href="04-life-vehicle-economy.html#생활시설과-비용">생활시설</a>에서 정의한다.</p>
+<h3 id="시간의-구분">시간의 구분</h3>
+<div class="tw"><table><thead><tr>
+<th>시간·상태</th>
+<th>흐르는 것</th>
+<th>흐르지 않는 것</th>
+</tr></thead><tbody>
+<tr><td>운전·신호 대기·빈차 정차</td><td>영업·승객 기한·컨디션</td><td>대기했다고 자동 시간 면제 없음</td></tr>
+<tr><td>지도·시설 메뉴·일시정지·결과·복습</td><td>메뉴 밖 실제 체류시간은 별도</td><td>영업/운송·컨디션·졸음 정지</td></tr>
+<tr><td>서비스 확정</td><td>서비스가 정한 시간만큼 영업 경과</td><td>메뉴를 오래 열어 둔 시간을 비용으로 추가하지 않음</td></tr>
+<tr><td>운송 뒤 생활 목적지 추천</td><td>영업 시계 지속</td><td>안내만으로 결제·마감·순간 이동 없음</td></tr>
+<tr><td>다음 날 야간 회복</td><td>날짜 전환의 피로 회복</td><td>다음 날 영업 예산 미소비</td></tr>
+</tbody></table></div>
+<p>하루는 08:00~20:00에 대응한다. 기본 20분 설정에서는 영업 1초가 가상 시간 36초에 해당하며, 영업 길이를 바꾸면 환산 비율이 바뀐다. 승객 기한·서비스 소요는 플레이 초로 표시한다. <a href="#s31">낮밤 조명과 은계 FM</a></p>
+<h3 id="2026-11-23-퇴근-전-마지막-한-콜-은계-싱글-08-4장">2026-11-23 퇴근 전 마지막 한 콜 (은계 싱글, <a href="08-fun-improvements.html">08 4장</a>)</h3>
+<p>숙소가 있는 싱글에서 남은 영업이 240초 이하가 되면, 호출판이 두 건으로 바뀐다. 하나는 숙소 방향의 짧은 호출(픽업+운송+귀가 총거리 최소, 운송 1,200m 이하)이고, 다른 하나는 반대 방향 고액 호출(덕성프라자에서 1,500m 이상 떨어진 하차지 중 최고 운임 ×1.3)이다. 두 카드 모두 "하차 후 덕성프라자까지 약 N m"를 보인다. 호출 목록 위의 "즉시 귀가" 버튼은 기존 귀가 안내를 시작한다. 수치는 설정 툴 <code>lastCall.*</code>에서 바꾼다. <a href="../work-history/2026-11-23-idle-time-last-call.md">기록</a></p>
+<h3 id="2026-11-24-퇴근-후-드라이브-은계-싱글-08-5장">2026-11-24 퇴근 후 드라이브 (은계 싱글, <a href="08-fun-improvements.html">08 5장</a>)</h3>
+<p>하루 정산 화면에서 고르는 자유 주행이다. 숙소가 있고 차가 고장 상태가 아니면 정산 화면에 "퇴근 후 드라이브" 버튼이 나온다.</p>
+<ul><li>숙소 주차 칸에서 출발하고, 같은 칸에 반듯하게 세운 뒤 F를 누르면 정산 화면으로 돌아온다. 다시 고를 수 있다.</li><li>장부는 정산된 상태로 둔다. 영업 시계, 수입, 연료, 피로·포만, 내구도, 사고 처리, 운전 평가·법규 기록이 바뀌지 않는다.</li><li>호출판은 비고 호출 수락은 거절된다. 미터기와 시설 이용도 없다.</li><li>조명은 21시로 고정하고, 은계 FM 자막 3줄이 45초 간격으로 돌아가며 나온다.</li><li>저장하는 값이 없어 드라이브 중 종료하면 다음에 정산 화면으로 열린다.</li></ul>
+<p>설정 툴: <code>home.eveningDrive.enabled</code>, <code>home.eveningDrive.hour</code>, <code>home.eveningDrive.radioSeconds</code>, <code>radio.evening.1~3</code>. <a href="../work-history/2026-11-24-know-road-evening-drive-vehicle-feel.md">구현·검증</a></p>
+<h3 id="결과와-플레이-회고">결과와 플레이 회고</h3>
+<div class="tw"><table><thead><tr>
+<th>결과 화면</th>
+<th>알려 주는 것</th>
+<th>플레이어가 비교할 것</th>
+</tr></thead><tbody>
+<tr><td>운송 완료</td><td>최초 예상·운임 조정·실수령, 최종 만족도·주요 원인</td><td>왜 이번 운임이 달라졌는가</td></tr>
+<tr><td>승객 상세</td><td>요청·응답·실제 이행·도착·청결·주행의 영향</td><td>어떤 행동을 바꿀 수 있는가</td></tr>
+<tr><td>법규 사건 카드</td><td>당시 신호·사람/차량·행동·판정 이유</td><td>관찰 사실과 추정·보류를 구분</td></tr>
+<tr><td>하루 결과</td><td>수입·비용/미납·순수익·운송 수·실제 영업시간·생활·공차/탑승 성과</td><td>더 오래 일한 것이 실제로 유리했는가</td></tr>
+<tr><td>캠페인 결과</td><td>일별/누적 결과·종료 상태</td><td>같은 설정의 회차 간 자신의 판단 변화</td></tr>
+</tbody></table></div>
+<p>점수 상승이 과거 위반 기록을 삭제하지는 않는다. 운전 점수·승객 만족도·순수익을 합산해 하나의 사람 등급을 만들지 않는다. 기회가 없었거나 사실을 확인할 수 없는 장면은 평가 없음/보류로 설명한다.</p>
+<h3 id="연습과-재도전">연습과 재도전</h3>
+<div class="tw"><table><thead><tr>
+<th>연습</th>
+<th>플레이 흐름</th>
+<th>영업과의 경계</th>
+</tr></thead><tbody>
+<tr><td>우회전</td><td>신호·보행 조건 확인→실제 운전→이번 시도 피드백</td><td>원래 돈·시간·기록 유지</td></tr>
+<tr><td>출구 정체</td><td>대기/우회/진입 판단 비교→실제 행동→결과</td><td>일반 영업의 출구 계획 팝업과 다름</td></tr>
+<tr><td>사건 복습</td><td>기록에서 같은 조건 다시 운전</td><td>이전 사건을 지우거나 보상을 다시 받지 않음</td></tr>
+<tr><td>재시도</td><td>같은 조건 또는 지원하는 다른 조건 선택</td><td>완료하지 않아도 본 영업으로 돌아갈 수 있음</td></tr>
+</tbody></table></div>
+<h3 id="이어하기와-재시작-경험">이어하기와 재시작 경험</h3>
+<p>운송·위치·남은 시간·요청·차량/운전자 상태·점유/보행 상황을 이어서 시작한다. 불러온 직후에는 멈춘 상태에서 확인하고 계속 운전한다. 저장을 다시 읽었다고 손님 특성·요청·만족도·소모 상태를 유리하게 다시 뽑지 않는다.</p>
+<p>새 캠페인은 명시적으로 확인한다. 이어갈 수 없는 자료는 이유를 알리고 기존 진행을 보존하며, 조용히 새 영업으로 덮어쓰지 않는다. 파일 형식·버전·기록 장치는 기획이 아니라 별도 개발 자료에서 다룬다.</p>
+<p><b>후속 기획</b>은 하루 안의 운송을 더 다양하게 만드는 쪽이다. 팁, 호출판 변주, 선택형 미션은 <a href="08-fun-improvements.html">08 재미 보강</a>에서 검토한다.</p>
+<a id="s28"></a>
+<h2 id="2-계속-영업-모드와-장기-목표-구-28">2. 계속 영업 모드와 장기 목표 (구 28)</h2>
+<p><b>상태: P2 구현·자동 검증(2026-11-19).</b> 3일 완료 후 같은 저장으로 계속 영업, 새 경력과 슬롯 선택, 준비 목표 카드·정산 진척을 적용했다. 벽 메모는 첫 출발 전에 고를 수 있다. 실제 호실 이전·달성 연출은 후속이다. <a href="../work-history/2026-11-19-continuous-career-p2.md">검증과 재현</a>.</p>
+<h3 id="1-목표">1. 목표</h3>
+<blockquote><p>3일이 끝나도 <b>내 돈·차·방이 남고</b>, "하루만 더" 할 이유가 화면에 보인다.</p></blockquote>
+<h3 id="2-현재-vs-변경">2. 현재 vs 변경</h3>
+<div class="tw"><table><thead><tr>
+<th>항목</th>
+<th>현재</th>
+<th>변경</th>
+</tr></thead><tbody>
+<tr><td>회차</td><td>3일 완료 → 새 회차는 차·방·소유 초기화</td><td>3일 = <b>도입부</b>, 완료 후 같은 저장으로 <b>4일차~ 무한 진행</b></td></tr>
+<tr><td>소유</td><td>회차마다 리셋</td><td>현금·차량·색/장식·방 소품 유지</td></tr>
+<tr><td>목표</td><td>3일 순이익</td><td>장기 목표 1개 선택 + 다음 구매 게이지</td></tr>
+<tr><td>새로 시작</td><td>타이틀 → 싱글 → 처음부터 하기</td><td>기존 경력을 보존하고 별도 슬롯에서 시작</td></tr>
+<tr><td>이어 하기</td><td>타이틀 → 싱글 → 불러오기</td><td>최근 저장 순으로 목록을 표시하고 선택한 경력을 복원</td></tr>
+<tr><td>운전 중</td><td>일시정지 → 불러오기 / 처음부터 다시하기</td><td>현재 슬롯의 마지막 저장도 다시 불러올 수 있음</td></tr>
+<tr><td>3일 체험</td><td>기본</td><td>그대로 유지(첫 플레이·비교 기준)</td></tr>
+</tbody></table></div>
+<h3 id="3-흐름">3. 흐름</h3>
+<pre><code class="lang-mermaid">flowchart LR
+  A[3일 도입부] --&gt; B{3일 정산}
+  B --&gt;|계속하기| C[4일차 준비]
+  B --&gt;|새 경력| N[새 슬롯]
+  C --&gt; D[영업 1일]
+  D --&gt; E[정산 + 목표 진척]
+  E --&gt; F[방·차고·구매]
+  F --&gt; C</code></pre>
+<h3 id="4-장기-목표-하나-선택-언제든-변경">4. 장기 목표 (하나 선택, 언제든 변경)</h3>
+<div class="tw"><table><thead><tr>
+<th>목표</th>
+<th>도달 조건</th>
+<th>달성 연출</th>
+<th>비고</th>
+</tr></thead><tbody>
+<tr><td>아버지 차를, 내 차로</td><td>아버지 차 꾸미기, 원하면 새 차 구매</td><td>새 운전석 첫 출근 컷</td><td>아버지 차는 <b>판매 없이 숙소 주차장 보관</b>(보상 판매 없음 → 새 차 전액). 차종 추가는 후속</td></tr>
+<tr><td>이 집을 내 집답게</td><td>숙소 꾸미기 + 같은 건물 넓은 호실로 옮기기</td><td>소품 옮기기 + 창밖 전망 변화</td><td>거점은 하나로 고정(<a href="07-home-room-and-vehicles.html#s34">34</a>), 다른 동네 이사 없음</td></tr>
+</tbody></table></div>
+<p>개인택시 면허 목표는 제외(2026-11-19 사용자 결정, <a href="05-interface-and-navigation.html#s32">32</a>). 처음부터 개인택시로 영업한다. 첫 출발 전 숙소에서 고른 "무엇을 위해"(<a href="00-game-overview.html#s33">33</a>)가 기본 목표가 된다.</p>
+<p>하나만 달성해도 "재출발 성취"로 인정한다(기획10 원칙 유지). 달성 후에도 영업은 계속된다.</p>
+<h3 id="5-화면에-보일-것">5. 화면에 보일 것</h3>
+<div class="tw"><table><thead><tr>
+<th>위치</th>
+<th>표시</th>
+<th>예</th>
+</tr></thead><tbody>
+<tr><td>준비 화면</td><td>목표 카드 1장</td><td><code>하이브리드 세단까지 ₩12,400 · 오늘 평균이면 약 3일</code></td></tr>
+<tr><td>정산 화면</td><td>목표 게이지 변화</td><td><code>+₩4,100 → 52% → 68%</code></td></tr>
+<tr><td>정산 화면</td><td>오늘의 기록 1줄</td><td>최장 운송, 무위반 연속일 등 (<a href="00-game-overview.html#s30">30</a> 수첩과 연동)</td></tr>
+<tr><td>방</td><td>지금까지 산 것</td><td>소품·차 사진이 늘어나는 벽</td></tr>
+</tbody></table></div>
+<p>"며칠" 예상은 최근 3일 순이익 중앙값으로 계산하고, 확정 약속처럼 표기하지 않는다(<code>약</code>).</p>
+<p><img src="images/motivation-goal-card.png" alt="영업 준비 — 목표 카드 시안" loading="lazy"></p>
+<p><img src="images/motivation-settlement-goal.png" alt="영업 마감 — 목표 게이지·월세 시안" loading="lazy"></p>
+<p><img src="images/motivation-wall-memo.png" alt="첫날 밤 — 벽 메모로 목표 선택 시안" loading="lazy"></p>
+<h3 id="6-경제-원칙">6. 경제 원칙</h3>
+<div class="tw"><table><thead><tr>
+<th>원칙</th>
+<th>내용</th>
+</tr></thead><tbody>
+<tr><td>기준 단위</td><td><code>R</code> = 하루 순수익 중앙값(기획12)</td></tr>
+<tr><td>다음 구매 간격</td><td>1.5~3R마다 무언가 살 수 있게 배치</td></tr>
+<tr><td>큰 목표</td><td>차 교체 8~12R, 넓은 호실 15~20R</td></tr>
+<tr><td>금지</td><td>가격만 올려 반복 시간 늘리기, 일일 고정비로 강제 영업</td></tr>
+<tr><td>기존 값</td><td>하이브리드 ₩26,000 · LPG ₩22,000 · 색 ₩1,500 · 장식 ₩2,000 · 조명 ₩5,000 · 러그 ₩8,000 (모두 <code>ContentTuning</code>)</td></tr>
+</tbody></table></div>
+<h3 id="7-구현-범위">7. 구현 범위</h3>
+<div class="tw"><table><thead><tr>
+<th>영역</th>
+<th>작업</th>
+<th>파일(현재)</th>
+</tr></thead><tbody>
+<tr><td>저장</td><td><code>settings.days</code> 고정값 대신 무기한 일차, 새 경력 슬롯</td><td><code>BusinessProgress.cs</code>, <code>CampaignSaveLocation.cs</code></td></tr>
+<tr><td>완료 처리</td><td>3일 완료 = 도입 종료 표시, 잠금(<code>finalized</code>) 해제</td><td><code>BusinessProgress.ResetCampaign</code>, <code>RoomAvailable</code></td></tr>
+<tr><td>장부</td><td>일차 무제한 누적, 최근 N일 요약</td><td><code>EconomyLedger.cs</code></td></tr>
+<tr><td>UI</td><td>목표 카드·게이지</td><td><code>OneDayHUD.cs</code>, <code>DayPreparationPresentation.cs</code></td></tr>
+<tr><td>이관</td><td>기존 3일 저장 → 4일차 이어가기 가능</td><td>저장 버전 4</td></tr>
+</tbody></table></div>
+<h3 id="8-검증">8. 검증</h3>
+<div class="tw"><table><thead><tr>
+<th>질문</th>
+<th>통과 기준</th>
+</tr></thead><tbody>
+<tr><td>3일 후 계속할 이유를 말하는가</td><td>사람 플레이 3명 중 2명 이상 "목표/다음 구매" 언급</td></tr>
+<tr><td>산 물건을 다음 날 쓰는가</td><td>구매 다음 영업에서 사용·확인</td></tr>
+<tr><td>기존 저장 보존</td><td>r14~ 저장 이관 검사 통과, 3일 체험 저장 별도 유지</td></tr>
+</tbody></table></div>
+<a id="s29"></a>
+<h2 id="3-오늘의-은계--하루-조건-카드-구-29">3. 오늘의 은계 — 하루 조건 카드 (구 29)</h2>
+<p><b>상태: P5 하루 조건 카드 구현(2026-11-19).</b> <a href="../work-history/2026-11-19-daily-conditions-p5.md">검증과 재현</a>. 동기 보강 2순위. <a href="archive/12-career-growth-stages.md">기획12</a>의 날짜별 조건 후속.</p>
+<h3 id="1-목표-1">1. 목표</h3>
+<blockquote><p>매일 아침 <b>어제와 다른 판단</b>을 하게 만든다. 벌칙이 아니라 정보다.</p></blockquote>
+<h3 id="2-구조">2. 구조</h3>
+<pre><code class="lang-mermaid">flowchart LR
+  A[준비 화면&lt;br/&gt;조건 카드 1장] --&gt; B[출발 지역·&lt;br/&gt;영업 시간 선택]
+  B --&gt; C[수요·도로·&lt;br/&gt;승객 변화]
+  C --&gt; D[정산&lt;br/&gt;조건 회고 1줄]</code></pre>
+<p>현재 수요: 아침 주거→업무, 낮 업무→상업, 저녁 상업→주거 지역이 각 3배 비중(<code>PassengerDemandPolicy</code>). 조건 카드는 이 위에 <b>지역·시간대 가중치와 승객 구성을 덧씌운다.</b></p>
+<h3 id="3-조건-카드-1차-4종--평일">3. 조건 카드 (1차 4종 + 평일)</h3>
+<div class="tw"><table><thead><tr>
+<th>카드</th>
+<th>단서 문구</th>
+<th>수요 변화</th>
+<th>도로·차량</th>
+<th>승객 구성</th>
+<th>플레이어 판단</th>
+</tr></thead><tbody>
+<tr><td>평일</td><td>평범한 하루</td><td>기본</td><td>기본</td><td>기본</td><td>기준일</td></tr>
+<tr><td>🌧 비 오는 날</td><td>오후부터 비</td><td>전 지역 ×1.3</td><td>비 연출·탑승 청결 −2(기존 <code>RainPolicy</code>)</td><td>젖은 우산↑</td><td>많이 뛸지, 세차비 감수할지</td></tr>
+<tr><td>🛍 상가 행사</td><td>저녁 상가 행사</td><td>저녁 상업 출발 ×2</td><td>상업 주변 교통량↑</td><td>짐·음식↑</td><td>저녁에 상가 대기할지</td></tr>
+<tr><td>🍻 금요일</td><td>회식 많은 밤</td><td>저녁·초과영업 상업→주거 ×2</td><td>기본</td><td>음주·수면↑</td><td>늦게까지 일할지, 피로 관리</td></tr>
+<tr><td>🚧 도로 공사</td><td>계수로 일부 통제</td><td>기본</td><td>지정 구간 차로 감소·우회</td><td>급한 승객↑</td><td>길을 아는 사람이 이득</td></tr>
+</tbody></table></div>
+<ul><li>2차 후보: 시험일(아침 단거리↑), 장날, 명절 전날(장거리·짐↑).</li><li>순서: 4일 주기 안에 같은 카드 반복 없음. 시드 고정(재시작해도 같은 날 같은 카드).</li></ul>
+<h3 id="4-화면">4. 화면</h3>
+<div class="tw"><table><thead><tr>
+<th>시점</th>
+<th>표시</th>
+</tr></thead><tbody>
+<tr><td>준비</td><td>카드 1장(아이콘·단서 1줄·추천 아님) + 수요 지도에 강조 지역</td></tr>
+<tr><td>영업 중</td><td>상단 작은 아이콘, 라디오 자막(<a href="#s31">31</a>)으로 1회 상기</td></tr>
+<tr><td>정산</td><td><code>비 오는 날 · 운송 9건(평소 7) · 세차 ₩800</code></td></tr>
+</tbody></table></div>
+<p>정답 경로·예상 수입을 직접 알려주지 않는다.</p>
+<p><img src="images/motivation-day-condition-card.png" alt="하루 조건 카드 시안" loading="lazy"></p>
+<h3 id="5-설계-원칙">5. 설계 원칙</h3>
+<div class="tw"><table><thead><tr>
+<th>할 것</th>
+<th>하지 않을 것</th>
+</tr></thead><tbody>
+<tr><td>최선의 행동이 날마다 달라지게</td><td>매일 무작위 벌금·고장</td></tr>
+<tr><td>기존 시스템(비·공사 구간·승객 특성) 재사용</td><td>조건마다 새 관리 수치</td></tr>
+<tr><td>운임 할증 없이 수요·구성으로 차이</td><td>할증으로 단순 이득</td></tr>
+</tbody></table></div>
+<h3 id="6-구현-범위">6. 구현 범위</h3>
+<div class="tw"><table><thead><tr>
+<th>영역</th>
+<th>작업</th>
+<th>파일(현재)</th>
+</tr></thead><tbody>
+<tr><td>데이터</td><td>조건 정의(가중치·승객 가중치·도로 변경)</td><td><code>ContentTuning</code> 프로필 신규 키 <code>day.condition.*</code></td></tr>
+<tr><td>수요</td><td><code>Weight(region, phase, destination)</code>에 조건 배수</td><td><code>PassengerDemandPolicy.cs</code>, <code>SimulationDemandClock.cs</code></td></tr>
+<tr><td>승객</td><td>특성 선택 가중치</td><td><code>PassengerBehavior.cs</code></td></tr>
+<tr><td>도로</td><td>공사 구간 on/off</td><td>기존 48번 공사 구간 연결 재사용</td></tr>
+<tr><td>저장</td><td>일차별 카드 기록</td><td>캠페인 저장</td></tr>
+<tr><td>툴</td><td>콘텐츠 관리 툴에 카드 편집</td><td>content tool</td></tr>
+</tbody></table></div>
+<h3 id="7-검증">7. 검증</h3>
+<div class="tw"><table><thead><tr>
+<th>질문</th>
+<th>통과 기준</th>
+</tr></thead><tbody>
+<tr><td>카드에 따라 행동이 달라지는가</td><td>카드별 출발 지역·영업 시간 분포 차이</td></tr>
+<tr><td>모든 카드에서 손해만 보지 않는가</td><td>카드별 순수익 중앙값이 평일 ±20% 이내</td></tr>
+<tr><td>위치 제어 검사</td><td>카드별 수요 가중치·공사 구간 경로 회귀</td></tr>
+</tbody></table></div>
+<a id="s18"></a>
+<h2 id="4-비-운행-프로토타입-구-18">4. 비 운행 프로토타입 (구 18)</h2>
+<p>2026-11-07 사용자 승인: 맑음/비만 프로토에 포함한다. 눈·결빙·동적 낮밤·타이어 구매는 후속이다. 확률 미끄러짐은 검증 후 별도 활성화하며 이번 실행에서는 작동하지 않는다.</p>
+<h3 id="경험과-구현-기준">경험과 구현 기준</h3>
+<p>비를 보고 미리 감속하고 차간 거리를 확보하며, 승차 오염에 따라 세차 시점을 판단한다. 맑음의 조향/제동은 그대로 보존한다. 매 프레임 사고를 추첨하거나 차량을 임의 회전시키지 않는다.</p>
+<div class="tw"><table><thead><tr>
+<th>항목</th>
+<th>초기 시험값/범위</th>
+<th>적용</th>
+</tr></thead><tbody>
+<tr><td>비 사용</td><td>기본 꺼짐</td><td>툴은 다음 새 세션, 일시정지 설정은 적용 즉시 변경. 이어하기는 저장값 유지</td></tr>
+<tr><td>표현 강도</td><td>0.65 / 0~1</td><td>차량 주변 제한된 빗줄기, 흐린 하늘/조명</td></tr>
+<tr><td>자동 와이퍼 주기</td><td>1.2초 / 0.5~3</td><td>1인칭 전방에서 자동 왕복, 후방/3인칭 화면을 가리지 않음</td></tr>
+<tr><td>승차 추가 오염</td><td>2 / 0~10점</td><td>성공한 승차마다 한 번. 승차 전 청결 보너스 평가 후 감소. 거부/적재 대기에는 미적용</td></tr>
+<tr><td>제동 계수</td><td>0.9 / 0.75~1</td><td>비가 올 때 이동 중 제동 토크와 제동 중 전후 접지력 감소, 정차 유지 보존. 제동거리 실측 필요</td></tr>
+<tr><td>일반 교통 속도 계수</td><td>0.85 / 0.6~1</td><td>감속 운행 및 차간 여유 확대</td></tr>
+<tr><td>확률 미끄러짐</td><td>잠금/미구현</td><td>툴에서 상태만 표시. 검증하지 않은 기능을 켤 수 없게 한다</td></tr>
+</tbody></table></div>
+<p>수치는 현실 노면 모델이 아닌 게임 시험값이다. 이번 단계는 제동 영향만 적용하고 횡접지 저하·추가 확률 미끄러짐은 보류한다. 강도0은 빗줄기만 끄며 비의 운행 효과는 유지한다.</p>
+<h3 id="기존-시스템-연결">기존 시스템 연결</h3>
+<ul><li>승차 전 청결 부족 거부 규칙은 유지. 승차 오염으로 30 미만이 되어도 현재 승객은 내쫓지 않으며 다음 승차만 제한한다.</li><li>기존 하차 오염·시간 오염과 별도 사건ID를 사용하며 저장/이어하기/네트워크 복원 시 재적용하지 않는다.</li><li>청결 감소 자체로 운전 점수를 깎지 않는다. 기존 만족도 시작 청결 보너스·실제 사고 판정은 그대로 사용한다.</li><li>설정은 기존 콘텐츠 프로필과 함께 저장/복원하고 LAN 호스트 설정을 따른다. 실행 중 툴 변경은 다음 새 세션에 적용한다. 일시정지의 날씨 탭은 현재 세션의 날씨6값만 즉시 바꾸고 저장한다.</li><li>최초 적용은 고정 비 시험이다. 자동 날씨 전환·요금/수요 변경·시간 제한 재조정은 이번 범위에 넣지 않는다.</li></ul>
+<h3 id="후속-혼합-미끄러짐">후속 혼합 미끄러짐</h3>
+<p>안전 구간에는 추가 추첨이 없고, 노면/속도/급제동/급조향의 위험 구간 진입마다 한 번 추첨한다. 위험 해제 전 재추첨 금지. 한계 초과는 물리 영향으로 처리한다. 사고는 실제 충돌 때만 발생한다. 저장 난수/사건, 호스트 권한, 예고와 회복 가능성을 검증한 뒤 활성화를 결정한다.</p>
+<h3 id="검증-기준">검증 기준</h3>
+<p>프로필 구버전/누락/범위/해시·왕복 저장, 성공 승차 단발 오염/복원/임계치, 맑음과 비 제동 비교, 와이퍼 시점/일시정지, 일반 교통·싱글/PVP 연결을 나눠 확인한다. 자동 모델 검사·실제 물리 검사·수동 체감은 별도 기록한다.</p>
+<h3 id="2026-11-07-인게임-설정-후속">2026-11-07 인게임 설정 후속</h3>
+<p>일시정지 → 설정을 <b>운전 관련 설정 / 날씨 관련 설정</b> 두 탭으로 분리한다. 운전5값과 날씨6값을 별도 초안으로 편집하며 적용 전에는 게임이 바뀌지 않는다. 기본값은 현재 탭의 초안만 초기화하고 취소/Esc는 두 초안을 버린다. 적용 시 수정한 날씨와 운전 설정을 반영한다.</p>
+<ul><li>비 켜기·빗줄기 강도·자동 와이퍼 주기·승차 오염·제동 계수·일반 교통 속도 계수를 게임에서도 조절한다.</li><li>싱글은 즉시 적용 후 기존 checkpoint에 저장하며 실패 시 기존 날씨로 복구한다. 현재 운송의 오염/만족도/약정 기한은 소급 변경하지 않는다.</li><li>새 캠페인은 툴 프로필을 다시 읽는다. 인게임 설정은 툴 디스크 원본을 덮어쓰지 않는다.</li><li>LAN은 호스트만 편집하며 게스트는 공유된 값을 읽는다. 현재 날씨6값만 권한 프레임으로 전송하여 다른 콘텐츠의 경기 중 변경 금지 계약을 보존한다. 양쪽 LANv15 실행본이 필요하다.</li><li>확률 미끄러짐은 계속 잠금 상태다. 수동 조작/경제 밸런스는 후속 검증이다.</li></ul>
+<a id="s31"></a>
+<h2 id="5-낮밤-조명과-라디오-자막-구-31">5. 낮밤 조명과 라디오 자막 (구 31)</h2>
+<p><b>상태: P7 낮밤 조명·은계 FM·숙소의 아침과 밤 구현(2026-11-19).</b> <a href="../work-history/2026-11-19-day-night-radio-p7.md">검증과 재현</a>. 동기 보강 4순위. 전체 아트 교체 없이 <b>조명과 글자</b>로 세계관을 전달한다.</p>
+<h3 id="1-목표-2">1. 목표</h3>
+<blockquote><p>출근길과 퇴근길이 <b>다른 동네처럼 보이고</b>, 라디오가 오늘의 은계를 들려준다.</p></blockquote>
+<h3 id="2-낮밤-단계">2. 낮밤 단계</h3>
+<p>영업 하루 = 화면 시각 08:00~20:00(현재 <code>PassengerDemandPolicy</code>), 초과 영업은 20:00 이후.</p>
+<div class="tw"><table><thead><tr>
+<th>단계</th>
+<th>화면 시각</th>
+<th>태양·하늘</th>
+<th>도시 조명</th>
+<th>수요 단계</th>
+</tr></thead><tbody>
+<tr><td>아침</td><td>08~10</td><td>낮은 각도·따뜻한 색</td><td>꺼짐</td><td>아침(주거→업무)</td></tr>
+<tr><td>낮</td><td>10~17</td><td>높은 각도·흰색</td><td>꺼짐</td><td>낮(업무→상업)</td></tr>
+<tr><td>노을</td><td>17~19</td><td>주황·긴 그림자</td><td>가로등 켜짐 시작</td><td>저녁(상업→주거)</td></tr>
+<tr><td>밤</td><td>19~</td><td>남색 하늘·환경광↓</td><td>가로등·상가 창·차량 전조등</td><td>저녁/초과</td></tr>
+</tbody></table></div>
+<pre><code class="lang-mermaid">gantt
+  dateFormat HH:mm
+  axisFormat %H
+  section 조명
+  아침 :08:00, 2h
+  낮   :10:00, 7h
+  노을 :17:00, 2h
+  밤   :19:00, 3h</code></pre>
+<div class="tw"><table><thead><tr>
+<th>요소</th>
+<th>구현 방법</th>
+<th>비용</th>
+</tr></thead><tbody>
+<tr><td>하늘·태양</td><td>Directional Light 각도·색, 환경광 그라데이션</td><td>소</td></tr>
+<tr><td>가로등</td><td>도로 시설 위치에 점광원 대신 발광 머티리얼 + 바닥 조명 텍스처</td><td>소~중</td></tr>
+<tr><td>건물 창</td><td>회색 상자 건물에 발광 창 텍스처 무작위</td><td>소</td></tr>
+<tr><td>전조등</td><td>플레이어·교통 차량 스포트라이트(성능 상한 근처 차량만)</td><td>중</td></tr>
+<tr><td>비 연동</td><td>비 오는 날(<a href="#s29">29</a>) 환경광↓·젖은 노면 반사</td><td>소</td></tr>
+</tbody></table></div>
+<p>PvP 호스트의 전체 frame p95 기준은 22ms다. 최종 야간 루프백의 p95는 22.12ms여서 PvP 조명은 기본으로 끈다. 화면 표시 설정에서 켤 수 있다.</p>
+<p><img src="images/motivation-day-night-radio.png" alt="낮밤·라디오 시안" loading="lazy"></p>
+<h3 id="3-라디오-자막">3. 라디오 자막</h3>
+<div class="tw"><table><thead><tr>
+<th>종류</th>
+<th>시점</th>
+<th>예시</th>
+<th>연결</th>
+</tr></thead><tbody>
+<tr><td>아침 인사</td><td>영업 시작</td><td>"은계 아침입니다. 오늘은 오후부터 비 소식."</td><td>조건 카드 상기</td></tr>
+<tr><td>교통 정보</td><td>하루 1~2회</td><td>"○○로 공사로 정체가 이어집니다."</td><td>공사 카드</td></tr>
+<tr><td>동네 소식</td><td>하루 1회</td><td>"은계 상가 저녁 행사, 9시까지."</td><td>상가 카드</td></tr>
+<tr><td>사연</td><td>무작위</td><td>청취자 사연 1줄</td><td>세계관</td></tr>
+<tr><td>마감</td><td>영업 종료</td><td>"오늘도 수고하셨습니다."</td><td>정산 전환</td></tr>
+</tbody></table></div>
+<ul><li>표시: 화면 하단 자막 1줄, 6초. 음성·음악은 후속.</li><li>승객 대화 중에는 표시하지 않는다.</li><li>문구는 콘텐츠 프로필 <code>radio.*</code>로 편집.</li><li>설정에서 끄기 가능.</li></ul>
+<h3 id="4-방의-낮밤">4. 방의 낮밤</h3>
+<div class="tw"><table><thead><tr>
+<th>상황</th>
+<th>방 표현</th>
+</tr></thead><tbody>
+<tr><td>정산 후 귀가</td><td>밤 배경, 조명 소품 켬/끔이 의미를 가짐(기존 <code>lampOn</code>)</td></tr>
+<tr><td>다음 날 준비</td><td>아침 배경</td></tr>
+</tbody></table></div>
+<h3 id="5-구현-범위">5. 구현 범위</h3>
+<div class="tw"><table><thead><tr>
+<th>영역</th>
+<th>작업</th>
+<th>파일(현재)</th>
+</tr></thead><tbody>
+<tr><td>시각</td><td>영업 경과 → 조명 단계</td><td>신규 <code>DayLightController.cs</code>, <code>DriveSession.cs</code></td></tr>
+<tr><td>시설</td><td>가로등·창 발광</td><td>도로 시설 생성(<code>RoadMapFacilities.cs</code>)</td></tr>
+<tr><td>라디오</td><td>자막 큐·우선순위</td><td>신규 <code>RadioTicker.cs</code>, <code>DriveNotifications.cs</code></td></tr>
+<tr><td>방</td><td>낮/밤 배경 2종</td><td><code>PersonalRoomHUD.cs</code></td></tr>
+</tbody></table></div>
+<h3 id="6-검증">6. 검증</h3>
+<div class="tw"><table><thead><tr>
+<th>질문</th>
+<th>통과 기준</th>
+</tr></thead><tbody>
+<tr><td>시간 흐름을 느끼는가</td><td>플레이 후 "지금 몇 시쯤?"에 단계 맞힘</td></tr>
+<tr><td>밤에 신호·차로 판독</td><td>신호·표지 Player 검사 밤 조건 통과</td></tr>
+<tr><td>성능</td><td>은계 싱글·PvP 호스트 p95 기준 유지</td></tr>
+</tbody></table></div>
+<nav class="foot"><span>← <a href="05-interface-and-navigation.html">화면·조작·길안내</a></span><span><a href="07-home-room-and-vehicles.html">숙소·방·차량 구매</a> →</span></nav>
+<p class="gen">이 페이지는 <code>docs/content-design/06-day-and-career.md</code>에서 <code>python tools/render_design_docs.py</code>로 만든다. 내용은 md를 고친다.</p>
+</div></body></html>

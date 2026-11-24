@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>완료 승객 콘텐츠·내구도 PVP 적용 검토</title><style>
+:root{--accent:#F2B705;--ink:#1d2320;--sub:#5d6862;--bg:#f6f7f5;--card:#fff;--line:#dfe4e0;--th:#f7f1de;--code:#f0f2f0;--link:#9a6c00;
+--ok:#1f8f4e;--src:#2f6fd6;--prog:#7a4fd0;--wait:#d98a00;--hold:#8a8f8c;--fix:#d2453a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}}
+:root[data-theme="dark"]{--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 80px}
+.crumb{font-size:13.5px;color:var(--sub);margin-bottom:10px}
+header.doc{background:var(--card);border:1px solid var(--line);border-left:10px solid var(--accent);border-radius:10px;padding:18px 22px;margin-bottom:20px}
+header.doc h1{font-size:27px;margin:2px 0 6px;line-height:1.35}
+header.doc p{margin:6px 0;color:var(--sub)}
+h1{font-size:26px}h2{font-size:21px;margin:40px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+h3{font-size:17.5px;margin:28px 0 6px}h4,h5,h6{font-size:15.5px;margin:20px 0 4px;color:var(--sub)}
+p,ul,ol{margin:8px 0}ul,ol{padding-left:24px}li{margin:3px 0}
+a{color:var(--link)}
+img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff}
+.tw{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--th)}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-family:Consolas,Menlo,monospace;font-size:13.5px}
+pre{background:var(--code);border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.5}pre code{padding:0;background:none}
+blockquote{margin:12px 0;padding:6px 14px;border-left:5px solid var(--accent);background:var(--card);color:var(--sub);border-radius:0 6px 6px 0}
+hr{border:none;border-top:1px solid var(--line);margin:28px 0}
+details.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font-size:14.5px}
+details.toc summary{cursor:pointer;font-weight:700}
+details.toc ol{margin:6px 0}details.toc li.l3{margin-left:18px;list-style:circle;color:var(--sub)}
+details.toc a{text-decoration:none}
+nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+.st{display:inline-block;border-radius:999px;padding:0 9px;margin:1px 2px 1px 0;font-size:12.5px;font-weight:700;white-space:nowrap;color:#fff}
+.st.ok{background:var(--ok)}.st.src{background:var(--src)}.st.prog{background:var(--prog)}.st.wait{background:var(--wait)}.st.hold{background:var(--hold)}.st.fix{background:var(--fix)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.filter{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+.filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
+.gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+</style></head>
+<body><div class="wrap">
+<div class="crumb"><a href="../index.html">기획서 목록</a> · <a href="../README.html">기획 README</a> · <a href="README.html">PvP 목록</a> · <a href="15-content-application-review.md">원본 md</a></div>
+<header class="doc"><h1>완료 승객 콘텐츠·내구도 PVP 적용 검토</h1><blockquote><p><b>보존 자료: 초기 독립 PVP/단계별 기록.</b> 아래 “현재/미구현/최신”은 작성 당시 표현이다. 현재 A2·통합 실행·순수익 경쟁·LAN은 <a href="README.html">PVP 기준</a>을 따른다. 초기 독립 총점/보너스·Fusion 후보·별도 실행 경로는 현행 규칙이 아니다.</p></blockquote></header>
+<details class="toc" open><summary>목차 (5)</summary><ol><li class="l2"><a href="#승객-유형별-요소">승객 유형별 요소</a></li><li class="l2"><a href="#공통-상태효과-연결-경계">공통 상태·효과 연결 경계</a></li><li class="l2"><a href="#내구도수리-적용-검토">내구도·수리 적용 검토</a></li><li class="l2"><a href="#기본-경쟁-운송-후속-갱신">기본 경쟁 운송 후속 갱신</a></li><li class="l2"><a href="#2026-10-29-실제-입력-주행공유-교통-후속">2026-10-29 실제 입력 주행·공유 교통 후속</a></li></ol></details>
+<p>기준: main <code>9d05a40</code>, <a href="../../work-history/2026-10-29-passenger-types-implementation.md">승객 구현·배포 이력</a>, <a href="../02-passengers-and-fares.html">캠페인 승객 기획</a>, <a href="../04-life-vehicle-economy.html">내구도·수리 기획</a>. 다른 채팅의 완료 소스·배포를 병합하고 원본을 수정하지 않았다. 현재 내구도·수리는 <b>캠페인에서도 미구현</b>이다.</p>
+<h2 id="승객-유형별-요소">승객 유형별 요소</h2>
+<p>이번 실제 연결은 <code>PvpPassengerCatalog</code>의 유형·변주·초기 대사 읽기, 네트워크 HUD 미리보기, 서버 선택과 재접속 복원이다. 일반3 + 특수34 =37개이며 아래 모든 유형에 적용했다. 실제 승차·운송·응답 선택·정산·오염 효과는 이번 PVP 실행에 연결하지 않았다.</p>
+<div class="tw"><table><thead><tr>
+<th>콘텐츠</th>
+<th>완료된 캠페인 요소</th>
+<th>이번 PVP 반영</th>
+<th>실제 경기 적용 때 필요한 조건</th>
+</tr></thead><tbody>
+<tr><td>일반</td><td>차분한 인사·풍경 감상·짧은 인사3</td><td>공통 모델 미리보기</td><td>기본 운임·거리·승객 소유권</td></tr>
+<tr><td>취객</td><td>말 많은 밤·미안한 손님·조용한 귀가3</td><td>같은 대사·변주 재사용</td><td>발생 빈도·불편 효과가 운임/시간 선택과 균형을 이루는지 별도 비교</td></tr>
+<tr><td>잠자는 승객</td><td>미리 부탁·대화 중 수면·얕은 잠·깊은 잠4</td><td>초기 콘텐츠 재사용</td><td>깨우기/도착 확정 순서, 경기 종료와 동시 발생 처리</td></tr>
+<tr><td>승차감 민감</td><td>출발·회전·회복 반응3</td><td>초기 콘텐츠 재사용</td><td>PVP 민첩한 차량의 가속/조향과 운전 점수 기준 조정</td></tr>
+<tr><td>재촉·불만</td><td>ETA·신호 대기·도착 직전 확인3</td><td>초기 콘텐츠 재사용</td><td>합법 경로·공유 신호를 기준으로 약속 판정, 위반 유도 방지</td></tr>
+<tr><td>경로 확인</td><td>큰길·짧은 길·익숙한 길3</td><td>초기 콘텐츠 재사용</td><td>자체 PVP 맵의 합법 경로/예상 시간 사용</td></tr>
+<tr><td>용무·경유</td><td>미리 부탁·중간 용무·복귀3</td><td>초기 콘텐츠 재사용</td><td>유효 경유 지점/예약·소유권, 고액 단건과 짧은 여러 건 비교</td></tr>
+<tr><td>짐 많은 승객</td><td>큰 가방·상자·흔들리기 쉬운 짐3, 적재/하역</td><td>초기 콘텐츠 재사용</td><td>안전 정차 중 서버 진행, 소요 시간과 추가 운임 별도 균형</td></tr>
+<tr><td>흙 묻은 짐</td><td>가방·화분·작업 짐3, 보호 준비/오염 사건</td><td>초기 콘텐츠 재사용</td><td>청결 자체의 PVP 채택 판단, 사건 중복 적용 방지</td></tr>
+<tr><td>음식·음료</td><td>간식·음료·도시락3, 섭취 허용/밀봉/정리</td><td>초기 콘텐츠 재사용</td><td>서버 사건 시드, 사전 위험 안내, 불리한 결과의 반복 추첨 방지</td></tr>
+<tr><td>정밀 하차</td><td>입구·보행 동선·안전 지점3</td><td>초기 콘텐츠 재사용</td><td>자체 지도 안전 승하차 공간 검증; 캠페인 지도 지점 자동 이식 금지</td></tr>
+<tr><td>대화·반복 질문</td><td>고민·지역 질문·반복 질문3</td><td>초기 콘텐츠 재사용</td><td>주행 중 입력 부담/시야 방해, 응답 이력의 서버 복원</td></tr>
+</tbody></table></div>
+<h2 id="공통-상태효과-연결-경계">공통 상태·효과 연결 경계</h2>
+<div class="tw"><table><thead><tr>
+<th>요소</th>
+<th>현재 PVP 상태</th>
+<th>후속 구현 계약</th>
+</tr></thead><tbody>
+<tr><td>유형·변주·초기 대사</td><td>구현. 공통 모델에서 새 객체를 읽고 불변 카드만 노출</td><td>공통 모델 변경 시 전체37개 검사를 실행</td></tr>
+<tr><td>선택 권한</td><td>구현. client는 범위 내 index만 요청, 서버가 확정</td><td>현재는 콘텐츠 미리보기 선택이며 실제 경쟁 승객 선점이 아님</td></tr>
+<tr><td>단절·복귀</td><td>구현. 같은 슬롯/선택/차량 위치 보존, 새 epoch 입력만 허용</td><td>실제 운송 ID·승객 상태·정산 완료 ID까지 이어서 복원해야 함</td></tr>
+<tr><td>요청 응답 기억/수면/준비/하역</td><td>캠페인 완료, PVP 미연결</td><td>서버 시간·명시적 상태 전이·단일 완료 처리로 연결</td></tr>
+<tr><td>음식/짐 오염</td><td>캠페인 완료, PVP 미연결</td><td>청결 채택 결정 후 경기/운송/사건 ID로 한 번만 적용</td></tr>
+<tr><td>수치</td><td>캠페인10초, 청결2/6/5 등 시험값을 PVP에 적용하지 않음</td><td>경기 시간·맵 이동 시간·운임·운전 배점을 함께 조정</td></tr>
+<tr><td>승패/경제</td><td>미구현</td><td>고액 단건 대 짧은 여러 건의 전략을 검증. 경기 시간을10분으로 고정하지 않음</td></tr>
+</tbody></table></div>
+<p>P2 전체 게이트와 공유 신호/장애물 수용 후 Task4/5의 소유권·운송·정산을 먼저 완성하고 위 행동을 연결한다. 콘텐츠가 보인다는 이유로 실제 PVP 승객 운송 완료로 표시하지 않는다.</p>
+<h2 id="내구도수리-적용-검토">내구도·수리 적용 검토</h2>
+<div class="tw"><table><thead><tr>
+<th>요소</th>
+<th>캠페인 상태</th>
+<th>PVP 적용 가능성과 제안</th>
+<th>이번 반영</th>
+</tr></thead><tbody>
+<tr><td>충돌 손상</td><td>기획. 충돌 사건 강도/중복 차감 방지</td><td>서버의 접촉 사건 ID와 강도로 판정 가능. 클라이언트 자기 손상 제출 금지</td><td>검토만</td></tr>
+<tr><td>차량 간 충돌/과실</td><td>PVP와 별도 정책</td><td>현재 주행 시험 무접촉 유지. 접촉/밀기 채택 전 고의 길막·피해 귀속 수용 필요</td><td>기존 정책 유지</td></tr>
+<tr><td>내구도0 운행 불가</td><td>캠페인 사용자 확인 방향, 미구현</td><td>PVP 후보. 제동/안전 정지·회복 공간·복귀 시간을 먼저 설계</td><td>코드 미연결</td></tr>
+<tr><td>성능 변화</td><td>캠페인은 수리비·시간 중심</td><td>PVP 민첩성 훼손/역전 불가능 상태 방지. 속도·조향 저하를 자동 추가하지 않음</td><td>후보</td></tr>
+<tr><td>수리비·시간</td><td>캠페인 수치 시험안</td><td>경기 내 운송 기회 손실과 비교. 캠페인 잔액/부채/날짜를 가져오지 않음</td><td>후보</td></tr>
+<tr><td>견인/안전 복귀</td><td>기획. 전용 공간 예약 필요</td><td>자체 지도 빈 공간, 점유 예약, 전진 이득·상대 방해 방지</td><td>후보</td></tr>
+<tr><td>단절/기술 복구</td><td>내구도 원본 모델 없음</td><td>도입 후 서버 상태 보존, 재접속 무료 수리·중복 청구 방지</td><td>현재 위치/미리보기만 보존</td></tr>
+<tr><td>승객/정산 동시 발생</td><td>기획의 도착 경계와1회 취소</td><td>PVP 운임 확정/경기 종료/손상 순서부터 정의. 캠페인 수치를 승패 산식으로 오인하지 않음</td><td>후보</td></tr>
+</tbody></table></div>
+<p>내구도 구현 완료 커밋이 생기면 순수 상태 모델·사건 중복 방지 부분부터 재검토한다. 현재 존재하지 않는 기능을 연결 완료로 표시하거나 다른 채팅 대신 캠페인 내구도를 구현하지 않는다.</p>
+<h2 id="기본-경쟁-운송-후속-갱신">기본 경쟁 운송 후속 갱신</h2>
+<p>2026-10-29 후속에서 공통 승객의 소유권·승하차·약정·정산을 실제 네트워크에 연결했다. 위 표의 유형별 준비/응답/수면/청결 효과와 내구도는 그대로 미연결이다. <a href="17-competition-acceptance.html">최신 수용 범위</a>, <a href="../../work-history/2026-10-29-pvp-shared-competition.md">실제 검사</a>를 우선한다.</p>
+<h2 id="2026-10-29-실제-입력-주행공유-교통-후속">2026-10-29 실제 입력 주행·공유 교통 후속</h2>
+<p><a href="19-driving-npc-rules-acceptance.html">최신 수용·환경별 잔여 표</a>와 <a href="../../work-history/2026-10-29-pvp-input-driving-npc-rules.md">실제 검사 이력</a>을 따른다. 위치 제어 없이 실제 모터 입력으로 운송하고 서버 NPC2대/보행1명·신호/우회전/지속 속도·방향/접촉 책임·보류를 연결했다. 이전의 해당 미구현/미검증 설명은 당시 기록이다. 다른PC·사람/화면 시야·복합 교통/금지차로 자산은 별도 수용으로 남긴다.</p>
+<nav class="foot"><span>← <a href="14-reconnect-content-plan.html">PVP 재접속·승객 공통 콘텐츠 연동 계획</a></span><span><a href="16-shared-world-competition-plan.html">공유 교통·승객 경쟁·정산 구현 계획</a> →</span></nav>
+<p class="gen">이 페이지는 <code>docs/content-design/pvp/15-content-application-review.md</code>에서 <code>python tools/render_design_docs.py</code>로 만든다. 내용은 md를 고친다.</p>
+</div></body></html>
