@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>기획서 목록과 현황</title><style>
+:root{--g:#F2B705;--ink:#1d2320;--sub:#5d6862;--bg:#f6f7f5;--card:#fff;--line:#dfe4e0;--th:#f7f1de;--code:#f0f2f0;
+--ok:#1f8f4e;--src:#2f6fd6;--prog:#7a4fd0;--wait:#d98a00;--hold:#8a8f8c;--fix:#d2453a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26}}
+:root[data-theme="dark"]{--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 "Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;word-break:keep-all}
+.wrap{max-width:1040px;margin:0 auto;padding:28px 16px 80px}
+header.doc{background:var(--card);border:1px solid var(--line);border-left:10px solid var(--g);border-radius:10px;padding:20px 24px;margin-bottom:24px}
+header.doc h1{font-size:28px;margin:4px 0 8px;line-height:1.3}
+header.doc p{margin:6px 0;color:var(--sub)}
+h2{font-size:21px;margin:40px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--g)}
+h3{font-size:17px;margin:28px 0 6px}
+h4{font-size:15px;margin:20px 0 4px;color:var(--sub)}
+p,ul,ol{margin:8px 0}ul,ol{padding-left:22px}li{margin:3px 0}
+a{color:#b07f00}@media (prefers-color-scheme:dark){a{color:#f2c94c}}
+.tw{overflow-x:auto;margin:10px 0}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--th);white-space:nowrap}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-family:Consolas,Menlo,monospace;font-size:13.5px}
+.st{display:inline-block;border-radius:999px;padding:0 9px;margin:1px 2px 1px 0;font-size:12.5px;font-weight:700;white-space:nowrap;color:#fff}
+.st.ok{background:var(--ok)}.st.src{background:var(--src)}.st.prog{background:var(--prog)}
+.st.wait{background:var(--wait)}.st.hold{background:var(--hold)}.st.fix{background:var(--fix)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.filter{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+.filter button.on{border-color:var(--g);background:var(--g);color:#1d2320;font-weight:700}
+nav.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;font-size:14.5px}
+nav.toc a{text-decoration:none}
+</style></head>
+<body><div class="wrap">
+<header class="doc"><h1>기획서 목록과 현황</h1><p><b>2026-11-24 기준 · 은계 싱글 r53 · 자체 도시 PvP A2 / LAN v25.</b> 기획 문서 전체를 한 장에서 찾고, 항목마다 구현·미결·개선 필요 상태를 본다. 규칙과 수치는 각 담당 문서가 기준이고, 이 문서는 위치와 상태만 적는다. 상태의 근거는 오른쪽 열의 작업 이력이다.</p><p>함께 보는 문서: <a href="README.md">기획 목록 README</a>(담당 영역·옛 번호) · <a href="../CURRENT-STATE.md">현재 상태 한 장</a> · <a href="../work-history/LATEST.md">최신 작업 이력</a> · <a href="../prototype-development-checklist.md">개발 체크리스트</a> · <a href="택시%20시뮬레이션-목차.md">마인드맵 목차</a></p>
+<div class="filter"><button data-k="all" class="on">전체</button><button data-k="ok">구현·배포</button><button data-k="prog">진행 중</button><button data-k="wait">미결</button><button data-k="fix">개선 필요</button><button data-k="hold">보류·제외</button></div></header>
+<nav class="toc"><a href="#상태-표기">상태 표기</a> · <a href="#문서-목록">문서 목록</a> · <a href="#기획-항목별-현황">기획 항목별 현황</a> · <a href="#a-전체이야기--0000-game-overviewmd" style="color:var(--sub)">A. 전체·이야기</a> · <a href="#b-운전교통법규" style="color:var(--sub)">B. 운전·교통·법규</a> · <a href="#c-손님운송운임" style="color:var(--sub)">C. 손님·운송·운임</a> · <a href="#d-생활차량경제" style="color:var(--sub)">D. 생활·차량·경제</a> · <a href="#e-화면조작길안내--0505-interface-and-navigationmd-ui-폴더ui" style="color:var(--sub)">E. 화면·조작·길안내</a> · <a href="#f-하루경력세계--0606-day-and-careermd" style="color:var(--sub)">F. 하루·경력·세계</a> · <a href="#g-다음-단계-후보--08-5장08-fun-improvementsmd5-다음-단계-후보" style="color:var(--sub)">G. 다음 단계 후보</a> · <a href="#h-자체-도시-pvp--pvppvpreadmemd" style="color:var(--sub)">H. 자체 도시 PvP</a> · <a href="#i-색인보관제안서" style="color:var(--sub)">I. 색인·보관·제안서</a> · <a href="#구현-현황-08-재미-보강-진행-순서">구현 현황 (08 재미 보강 진행 순서)</a> · <a href="#검토-중인-제안-결정-대기">검토 중인 제안 (결정 대기)</a> · <a href="#개선점-목록-사람-플레이알려진-실패">개선점 목록 (사람 플레이·알려진 실패)</a> · <a href="#문서-사이의-관계">문서 사이의 관계</a> · <a href="#미결-사항-결정-방식">미결 사항 결정 방식</a> · <a href="#수정-기록">수정 기록</a></nav>
+<h2 id="상태-표기">상태 표기</h2>
+<div class="legend"><span class="st ok">구현·배포</span><span class="st src">구현·소스</span><span class="st prog">진행 중</span><span class="st wait">미결</span><span class="st hold">보류·제외</span><span class="st fix">개선 필요</span></div>
+<div class="tw"><table>
+<tr><th>표기</th><th>뜻</th></tr>
+<tr><td><b>구현·배포</b></td><td>소스와 Git 배포 실행본 <code>builds/EungyeTaxi/EungyeTaxi.exe</code> 둘 다 들어 있다</td></tr>
+<tr><td><b>구현·소스</b></td><td>소스에만 있고 배포 실행본에는 아직 없다</td></tr>
+<tr><td><b>진행 중</b></td><td>다른 작업이 같은 폴더에서 고치는 중이며 커밋되지 않았다</td></tr>
+<tr><td><b>미결: 결정 대기</b></td><td>기획자(사용자)의 답이 필요하다</td></tr>
+<tr><td><b>미결: 승인 전</b></td><td>기획은 있으나 구현 승인을 받지 않았다</td></tr>
+<tr><td><b>미결: 설계안</b></td><td>코드 대조 설계안이나 상세 기획만 있다</td></tr>
+<tr><td><b>보류 / 제외</b></td><td>결정으로 미루거나 범위에서 뺐다</td></tr>
+<tr><td><b>개선 필요</b></td><td>구현됐지만 사람 플레이 미확인, 알려진 실패, 피드백 반영 대기 중 하나가 있다(비고에 적음)</td></tr>
+</table></div>
+<p>자동 검사 통과는 사람 체감 확인이 아니다. 거의 모든 구현 항목은 위치 제어 검사나 자동 물리 주행까지만 확인했고, 사람 플레이 확인 여부는 비고에 따로 적는다.</p>
+<h2 id="문서-목록">문서 목록</h2>
+<div class="tw"><table>
+<tr><th>번호</th><th>문서</th><th>담당 영역</th><th>상태</th></tr>
+<tr data-st="ok"><td>00</td><td><a href="00-game-overview.md">게임 개요·배경·손님 이야기</a></td><td>전체 경험, 아버지의 택시, 손님 이야기·기사 수첩, 학생 재회</td><td><span class="st ok">구현·배포</span><br>구현·배포</td></tr>
+<tr data-st="ok fix"><td>01</td><td><a href="01-driving-and-traffic.md">주행·교통·운전 평가</a></td><td>조작, 신호, 차로, 법규 판정, 운전 점수, 조향, 제한속도</td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br>구현·배포 · 개선 필요</td></tr>
+<tr data-st="ok"><td>02</td><td><a href="02-passengers-and-fares.md">승객·운송·대화·운임</a></td><td>호출에서 하차까지, 요청·대화, 운임·만족도·팁</td><td><span class="st ok">구현·배포</span><br>구현·배포</td></tr>
+<tr data-st="ok"><td>03</td><td><a href="03-passenger-content.md">승객 제작·특성·밸런스</a></td><td>프리셋·특성 조합, 개별 덮어쓰기, 다양화</td><td><span class="st ok">구현·배포</span><br>구현·배포 · 수치 미확정</td></tr>
+<tr data-st="ok fix"><td>04</td><td><a href="04-life-vehicle-economy.md">생활·차량·시설·영업 경제</a></td><td>피로·포만, 차량 상태, 사고·과실·공업사, 동네 가게, 시설 위치, 물가</td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br>구현·배포 · 개선 필요</td></tr>
+<tr data-st="ok"><td>05</td><td><a href="05-interface-and-navigation.md">화면·조작·길안내</a></td><td>HUD, 지도, 길안내, 차내 장치, 면허 제외·평점 보류</td><td><span class="st ok">구현·배포</span><br>구현·배포</td></tr>
+<tr data-st="ok"><td>06</td><td><a href="06-day-and-career.md">하루·경력·날씨·시간대</a></td><td>하루 정산, 계속 영업, 하루 조건 카드, 비, 낮밤·은계 FM, 퇴근 후 드라이브</td><td><span class="st ok">구현·배포</span><br>구현·배포</td></tr>
+<tr data-st="ok"><td>07</td><td><a href="07-home-room-and-vehicles.md">숙소·방·차량 구매</a></td><td>덕성프라자 숙소, 작은 방, 차량 구매·차종 손맛·PvP 외형</td><td><span class="st ok">구현·배포</span><br>구현·배포 · 일부 후속</td></tr>
+<tr data-st="ok wait"><td>08</td><td><a href="08-fun-improvements.md">운전하는 20분의 재미 보강</a></td><td>1~4장 구현, 5장 다음 단계 후보</td><td><span class="st ok">구현·배포</span><span class="st wait">미결</span><br><b>검토 중</b> · 1~4장 구현·배포, 5장 대부분 미결</td></tr>
+<tr data-st=""><td>09</td><td><a href="09-detail-index.md">세부 항목 색인</a></td><td>마인드맵에서 옮긴 개별 아이디어</td><td>색인(상태는 담당 문서)</td></tr>
+<tr data-st="ok fix"><td>PvP</td><td><a href="pvp/README.md">자체 도시 PvP 기획</a></td><td>A2 도시, 경기, 공유 승객, LAN</td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 다른 PC LAN 미확인</td></tr>
+<tr data-st="hold"><td>보관</td><td><a href="archive/">archive/</a></td><td>대체·제외된 원안, 시점 스냅샷</td><td><span class="st hold">보관</span><br>보관</td></tr>
+</table></div>
+<h2 id="기획-항목별-현황">기획 항목별 현황</h2>
+<h3 id="a-전체이야기--0000-game-overviewmd">A. 전체·이야기 — <a href="00-game-overview.md">00</a></h3>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="ok"><td>게임 개요·기본 흐름</td><td><a href="00-game-overview.md#s00">00 1장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td>기준 문서. 첫 이용·3일 경영 체감은 사람 플레이 후속</td></tr>
+<tr data-st="ok fix"><td>아버지의 택시·4컷 인트로·운행 수첩</td><td><a href="00-game-overview.md#s33">00 2장</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br>구현·배포 · 개선 필요(사람 미확인)</td><td><a href="../work-history/2026-11-19-father-story-p4.md">P4 기록</a> · <a href="../work-history/2026-11-19-intro-rewrite.md">인트로 개정</a></td></tr>
+<tr data-st="ok fix"><td>숙소에서 목표 고르기(벽 메모)</td><td><a href="00-game-overview.md#s33">00 2장 7절</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 실물 터치 미확인</td><td><a href="../work-history/2026-11-20-wall-memo-touch-and-notice-position.md">벽 메모 터치</a></td></tr>
+<tr data-st="ok fix"><td>완결형 손님 이야기 10편·기사 수첩</td><td><a href="00-game-overview.md#s30">00 3장</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br>구현·배포 · 개선 필요(사람 미확인)</td><td><a href="../work-history/2026-11-19-passenger-stories-p6.md">P6 기록</a></td></tr>
+<tr data-st="ok"><td>막차 놓친 학생 재회</td><td><a href="00-game-overview.md#s35">00 4장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../work-history/2026-11-20-student-reunion-design.md">설계</a> · <a href="../work-history/2026-11-20-student-reunion-player.md">실행본</a> · <a href="student-reunion-preview.html">시안</a></td></tr>
+</table></div>
+<h3 id="b-운전교통법규">B. 운전·교통·법규</h3>
+<h4 id="b1-조작감각--01-1장01-driving-and-trafficmds01-08-1장08-fun-improvementsmd1-운전-감각-고속-조향">B1. 조작·감각 — <a href="01-driving-and-traffic.md#s01">01 1장</a>, <a href="08-fun-improvements.md#1-운전-감각-고속-조향">08 1장</a></h4>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="ok"><td>개인 운전 설정·조향 보조</td><td><a href="01-driving-and-traffic.md#개인-운전-설정">01 개인 운전 설정</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../work-history/2026-11-12-curve-steering.md">중속 커브</a> · <a href="../work-history/2026-11-20-city-steering-response.md">도심 조향</a></td></tr>
+<tr data-st="ok fix"><td>캐주얼/시뮬 조향 프리셋·화면 연출 4종</td><td><a href="08-fun-improvements.md#조향-프리셋">08 1장 조향 프리셋</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br>구현·배포 · 개선 필요(키보드·패드 체감 미확인, 1.2초 목표는 물리상 불가로 측정만)</td><td><a href="../work-history/2026-11-23-steering-feel-and-build-size.md">기록</a></td></tr>
+<tr data-st="ok fix"><td>추가 주행음·패드 진동</td><td><a href="08-fun-improvements.md#감각-연출">08 1장 감각 연출</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br>구현·배포 · 개선 필요(실청·실물 패드 미확인)</td><td><a href="../work-history/2026-11-24-drive-sound-rumble.md">기록</a></td></tr>
+<tr data-st="ok"><td>실내 주행음 녹음 교체(사용자 선택 CC0)</td><td><a href="01-driving-and-traffic.md#차내-주행음">01 차내 주행음</a></td><td><span class="st ok">구현·배포</span><br>구현·배포 · 사람 귀 확인 남음</td><td><a href="../work-history/2026-11-24-drive-sound-recordings.md">기록</a></td></tr>
+<tr data-st="ok fix"><td>카메라 흔들림·1인칭 눈높이·P51 신호 70초</td><td><a href="01-driving-and-traffic.md#s01">01</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 사람 체감 미확인</td><td><a href="../work-history/2026-11-24-test-feedback-fixes.md">피드백 1차</a></td></tr>
+<tr data-st="ok fix"><td>차마다 다른 손맛(부품 제외)</td><td><a href="07-home-room-and-vehicles.md#s22">07 3장 10-1</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 사람 체감 미확인</td><td><a href="../work-history/2026-11-24-know-road-evening-drive-vehicle-feel.md">기록</a></td></tr>
+</table></div>
+<h4 id="b2-도로신호교통--0101-driving-and-trafficmd-도로-조사road-survey">B2. 도로·신호·교통 — <a href="01-driving-and-traffic.md">01</a>, <a href="road-survey/">도로 조사</a></h4>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="ok"><td>신호·차로·정지선·유턴·교통섬</td><td><a href="01-driving-and-traffic.md#s01">01 1장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포 · 직접 운전 확인 남은 교차로 있음</td><td><a href="../work-history/2026-11-23-p51-junction-signals.md">r51 P51</a> · <a href="../work-history/2026-11-23-p51-openings-and-edge-line.md">r52 P51 개구부</a></td></tr>
+<tr data-st="ok"><td>거리뷰 신호·차선, 좌회전 대기</td><td><a href="01-driving-and-traffic.md#s20">01 2장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../prototype-development-checklist.md">체크리스트 2026-11-09</a></td></tr>
+<tr data-st="ok"><td>차로별 표시·동부 구간·주차장 안내 좌회전</td><td><a href="01-driving-and-traffic.md#s21">01 3장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../work-history/2026-11-12-j7917-roadview-check.md">J7917</a> · <a href="../work-history/2026-11-13-j8066-three-lanes-and-passenger-voice.md">J8066</a></td></tr>
+<tr data-st="ok fix"><td>일반 차량 좌회전·합류</td><td><a href="01-driving-and-traffic.md#은계-북행-차로좌회전일반-교통-후속">01 은계 북행 차로 후속</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 혼잡 시간대 수동 주행 미확인</td><td><a href="../work-history/2026-11-20-npc-left-queue.md">기록</a></td></tr>
+<tr data-st="ok fix"><td>야간 후미등·전조등</td><td><a href="01-driving-and-traffic.md#s01">01</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 사람 체감 미확인</td><td><a href="../work-history/2026-11-24-test-feedback-round2.md">피드백 2차</a></td></tr>
+<tr data-st="fix"><td>구역 교통 검사 <code>-districtTrafficTest</code></td><td>—</td><td><span class="st fix">개선 필요</span><br><b>개선 필요(알려진 실패 4건, 이전 실행본에서도 같음)</b></td><td><a href="../work-history/2026-11-24-road-surprises-1.md">돌발 1차 기록</a></td></tr>
+</table></div>
+<h4 id="b3-법규-판정운전-점수--01-행동별-평가01-driving-and-trafficmd행동별-평가-09-2장09-detail-indexmds25">B3. 법규 판정·운전 점수 — <a href="01-driving-and-traffic.md#행동별-평가">01 행동별 평가</a>, <a href="09-detail-index.md#s25">09 2장</a></h4>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="ok"><td>두 운전 평가·행동별 감점·안정 주행 회복</td><td><a href="01-driving-and-traffic.md#두-운전-평가의-구분">01 1장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../work-history/2026-11-13-centreline-law-tuning.md">중앙선 감점</a></td></tr>
+<tr data-st="ok fix"><td>제한속도 바탕(확인 구간만: 수인로 60·대은로 50·보호구역 30)</td><td><a href="01-driving-and-traffic.md#행동별-평가">01 행동별 평가</a> · <a href="08-fun-improvements.md#56-후보-4종-상세-기획-2026-11-24-구현-전">08 5.6</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 사람 체감 미확인</td><td><a href="../work-history/2026-11-24-eungye-speed-limits.md">구현</a> · <a href="../work-history/2026-11-24-speed-tolerance-and-facility-cards.md">확인 구간·+10 여유</a> · <a href="../work-history/2026-11-24-speed-limit-camera-survey.md">조사</a></td></tr>
+<tr data-st="prog"><td>제한 구간 시작·끝 표지, 보호구역 빨간 포장, 지도 구간 선</td><td><a href="08-fun-improvements.md#56-후보-4종-상세-기획-2026-11-24-구현-전">08 5.6</a></td><td><span class="st prog">진행 중</span><br><b>진행 중</b>(피드백 3차, 소스·실행본 미커밋)</td><td><a href="../work-history/2026-11-24-play-feedback-round3.md">피드백 3차</a></td></tr>
+<tr data-st="hold"><td>일반 도로 50·번길 30 추정값</td><td><a href="08-fun-improvements.md#56-후보-4종-상세-기획-2026-11-24-구현-전">08 5.6</a></td><td><span class="st hold">보류</span><br>보류(설정 <code>law.speed.estimatedRoads</code>로만 켬)</td><td>보호구역 밖 표지 미확인</td></tr>
+</table></div>
+<h3 id="c-손님운송운임">C. 손님·운송·운임</h3>
+<h4 id="c1-호출에서-하차까지--02-1장02-passengers-and-faresmds02">C1. 호출에서 하차까지 — <a href="02-passengers-and-fares.md#s02">02 1장</a></h4>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="ok"><td>호출·승하차·막힌 승하차 공간·시간 난도</td><td><a href="02-passengers-and-fares.md#호출에서-하차까지">02 1장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../prototype-development-checklist.md">체크리스트</a></td></tr>
+<tr data-st="ok"><td>요청 14종·하차 후 사건·만족도</td><td><a href="02-passengers-and-fares.md#현재-요청14종과-하차-후-사건1종의-행동과-결과">02 1장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../content-tuning-request-outcomes.md">요청 판정표</a></td></tr>
+<tr data-st="ok"><td>운임과 보너스</td><td><a href="02-passengers-and-fares.md#운임과-보너스">02 운임과 보너스</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../work-history/2026-11-20-eungye-economy-review.md">운임·물가 점검</a></td></tr>
+<tr data-st="ok fix"><td>팁·연속 기록·잘한 운전 칭찬(싱글·PvP)</td><td><a href="02-passengers-and-fares.md#tips-streak">02 팁</a> · <a href="08-fun-improvements.md#2-운임과-보상">08 2장</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 사람 체감·LAN 두 PC 미확인</td><td><a href="../work-history/2026-11-23-tips-streak-praise.md">기록</a></td></tr>
+<tr data-st="wait"><td>살아 있는 미터기</td><td><a href="08-fun-improvements.md#2-운임과-보상">08 2장</a></td><td><span class="st wait">미결</span><br><b>미결: 결정 대기</b>(설계안·스위치만, 기본 꺼짐)</td><td><a href="../work-history/2026-11-24-living-meter-design.md">설계안</a></td></tr>
+<tr data-st="ok"><td>취객 특성과 하차, 재사용 행동 모듈</td><td><a href="02-passengers-and-fares.md#현재-구현-취객-유형의-특성과-하차">02 1장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td></td></tr>
+<tr data-st="ok"><td>비 오는 날 승차</td><td><a href="02-passengers-and-fares.md#2026-11-07-비-오는-날-승차">02 1장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td></td></tr>
+</table></div>
+<h4 id="c2-호출판과-일감-선택--08-3장08-fun-improvementsmd3-호출판과-일감-선택">C2. 호출판과 일감 선택 — <a href="08-fun-improvements.md#3-호출판과-일감-선택">08 3장</a></h4>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="ok fix"><td>호출 카드 판단 재료·성격 4종</td><td><a href="08-fun-improvements.md#호출판-변주와-판단-재료">08 3장</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 사람 체감 미확인</td><td><a href="../work-history/2026-11-23-call-board-variety.md">기록</a></td></tr>
+<tr data-st="ok fix"><td>연속 배차(하차점 400m 안 예약)</td><td><a href="02-passengers-and-fares.md#2026-11-24-연속-배차-은계-싱글">02 연속 배차</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 사람 체감 미확인</td><td><a href="../work-history/2026-11-24-chained-dispatch.md">기록</a></td></tr>
+<tr data-st="ok fix"><td>선택형 미션 4종(급행·초록불·커피·칼정차)</td><td><a href="08-fun-improvements.md#선택형-미션">08 3장 선택형 미션</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 사람 체감 미확인</td><td><a href="../work-history/2026-11-23-optional-missions.md">기록</a></td></tr>
+<tr data-st="ok wait"><td>미션 "길 아는 기사"</td><td><a href="08-fun-improvements.md#선택형-미션">08 3장</a></td><td><span class="st ok">구현·배포</span><span class="st wait">결정 대기</span><br>구현·배포 · <b>결정 대기</b>(L 키, 팁 15%, 내비 단계 3종 확장 여부)</td><td><a href="../work-history/2026-11-24-know-road-evening-drive-vehicle-feel.md">기록</a> · <a href="../work-history/2026-11-24-away-run-3-checklist.md">3차 체크리스트</a></td></tr>
+<tr data-st="wait hold"><td>미션 "저 차 따라가 주세요"</td><td><a href="08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">08 5.5 6번</a></td><td><span class="st wait">미결</span><span class="st hold">보류</span><br>미결: 설계안(버스 보류, 승용차안)</td><td><a href="../work-history/2026-11-24-next-candidates-design.md">설계안</a></td></tr>
+</table></div>
+<h4 id="c3-운전-중-빈-시간--08-4장08-fun-improvementsmd4-운전-중-빈-시간">C3. 운전 중 빈 시간 — <a href="08-fun-improvements.md#4-운전-중-빈-시간">08 4장</a></h4>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="ok fix"><td>정차 중 모아 보기</td><td><a href="08-fun-improvements.md#4-운전-중-빈-시간">08 4장</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 사람 체감 미확인</td><td><a href="../work-history/2026-11-23-idle-time-last-call.md">기록</a></td></tr>
+<tr data-st="ok fix"><td>퇴근 전 마지막 한 콜</td><td><a href="06-day-and-career.md#s04">06 1장</a> · <a href="00-game-overview.md#s35">00 4장</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 사람 체감 미확인</td><td><a href="../work-history/2026-11-23-idle-time-last-call.md">기록</a></td></tr>
+</table></div>
+<h4 id="c4-승객-제작밸런스--0303-passenger-contentmd">C4. 승객 제작·밸런스 — <a href="03-passenger-content.md">03</a></h4>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="ok"><td>승객 프리셋·특성 조합·관리창</td><td><a href="03-passenger-content.md#s15">03 1장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../content-tuning-tool-guide.md">콘텐츠 설정 관리</a></td></tr>
+<tr data-st="ok"><td>승객별 대사·확률·효과 덮어쓰기</td><td><a href="03-passenger-content.md#s16">03 2장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td></td></tr>
+<tr data-st="ok fix"><td>승객 다양화 1차 수치</td><td><a href="03-passenger-content.md#s17">03 3장</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br>구현·배포 · 개선 필요(1차 수치는 사람 플레이로 확정 전)</td><td><a href="../passenger-balance-v1.md">효과 밸런스</a></td></tr>
+<tr data-st="ok"><td>독립 행동·요청 위반·새 특성·추가 승객 6명</td><td><a href="03-passenger-content.md#s19">03 4장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../work-history/2026-11-13-passenger-inventory.md">승객 목록</a></td></tr>
+<tr data-st="ok"><td>승객 대화·요청·선택 구조</td><td><a href="02-passengers-and-fares.md#s07">02 2장</a> · <a href="09-detail-index.md#s24">09 1장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포(구조) · 세부 아이디어는 색인</td><td></td></tr>
+</table></div>
+<h3 id="d-생활차량경제">D. 생활·차량·경제</h3>
+<h4 id="d1-생활과-영업-경제--04-1장04-life-vehicle-economymds03">D1. 생활과 영업 경제 — <a href="04-life-vehicle-economy.md#s03">04 1장</a></h4>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="ok"><td>피로·포만·졸음·청결·연료</td><td><a href="04-life-vehicle-economy.md#s03">04 1장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td></td></tr>
+<tr data-st="ok"><td>지역 수요·공차 성과·현금·미납·순수익</td><td><a href="04-life-vehicle-economy.md#지역-수요와-공차-성과">04 1장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td></td></tr>
+<tr data-st="ok"><td>PvP 전용 피로·포만</td><td><a href="04-life-vehicle-economy.md#pvp-driver-condition">04 PvP 컨디션</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td></td></tr>
+<tr data-st="fix"><td>운임·생활물가 점검</td><td><a href="04-life-vehicle-economy.md#seco">04 5장</a></td><td><span class="st fix">개선 필요</span><br>구현(점검·재현) · 개선 필요(사람 3일·20분 운행에서 남는 돈 측정 남음)</td><td><a href="../work-history/2026-11-20-eungye-economy-review.md">기록</a></td></tr>
+</table></div>
+<h4 id="d2-사고공업사--04-2장04-life-vehicle-economymds08">D2. 사고·공업사 — <a href="04-life-vehicle-economy.md#s08">04 2장</a></h4>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="ok"><td>사고 등급·처리·수리·견인·내구도</td><td><a href="04-life-vehicle-economy.md#s08">04 2장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../future-design/accidents-and-repairs.md">보존 원안</a></td></tr>
+<tr data-st="ok fix"><td>사고 과실 구분(내 과실/쌍방/상대 과실)</td><td><a href="04-life-vehicle-economy.md#s08">04</a> · <a href="08-fun-improvements.md#56-후보-4종-상세-기획-2026-11-24-구현-전">08 5.6</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 사람 체감 미확인</td><td><a href="../work-history/2026-11-24-accident-fault.md">기록</a> · <a href="../work-history/2026-11-24-play-check-speed-fault.md">확인 목록</a></td></tr>
+<tr data-st="ok fix"><td>+10 여유 안 사고를 쌍방 과실·추가 감점 5</td><td><a href="08-fun-improvements.md#56-후보-4종-상세-기획-2026-11-24-구현-전">08 5.6</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 사람 체감 미확인</td><td><a href="../work-history/2026-11-24-speed-tolerance-and-facility-cards.md">기록</a></td></tr>
+<tr data-st="wait"><td>사람 사고 감경</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 1.1</a></td><td><span class="st wait">미결</span><br><b>미결: 결정 대기</b></td><td>돌발 1차 기록에 "아직"으로 남음</td></tr>
+<tr data-st="hold"><td>보험·현실 과실 판정</td><td><a href="01-driving-and-traffic.md#행동별-평가">01 행동별 평가</a></td><td><span class="st hold">제외</span><br>제외</td><td></td></tr>
+</table></div>
+<h4 id="d3-시설가게--04-34장04-life-vehicle-economymds36">D3. 시설·가게 — <a href="04-life-vehicle-economy.md#s36">04 3·4장</a></h4>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="ok fix"><td>은계김밥·호수카페·공업사 부품 판매대</td><td><a href="04-life-vehicle-economy.md#s36">04 3장</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 여러 날 가격·승차감 체감 미확인</td><td><a href="../work-history/2026-11-20-neighbourhood-shops-and-taxi-parts.md">기록</a> · <a href="../work-history/2026-11-23-storefronts-and-drive-audio.md">건물 점포</a></td></tr>
+<tr data-st="ok fix"><td>가게 전용 포켓·기사식당 점포 전면</td><td><a href="04-life-vehicle-economy.md#s36">04 3장</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 사람 체감 미확인</td><td><a href="../work-history/2026-11-24-test-feedback-round2.md">피드백 2차</a></td></tr>
+<tr data-st="ok"><td>시설 10곳 위치·M 지도 찾기</td><td><a href="04-life-vehicle-economy.md#sfac">04 4장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../ui/2026-11-20-facilities/README.md">시설 화면</a></td></tr>
+<tr data-st="ok fix"><td>생활시설 비교 카드(아이콘·막대)</td><td><a href="04-life-vehicle-economy.md#s03">04</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 사람 체감 미확인</td><td><a href="../work-history/2026-11-24-speed-tolerance-and-facility-cards.md">기록</a></td></tr>
+</table></div>
+<h4 id="d4-숙소방차량--0707-home-room-and-vehiclesmd">D4. 숙소·방·차량 — <a href="07-home-room-and-vehicles.md">07</a></h4>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="ok fix"><td>덕성프라자 숙소 거점·월세</td><td><a href="07-home-room-and-vehicles.md#s34">07 1장</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br>구현·배포 · <b>개선 필요</b>(<code>-homeBaseCheck</code> 단독 실행 기존 실패 원인 조사 남음)</td><td><a href="../work-history/2026-11-19-home-base-p1.md">P1</a> · <a href="../work-history/2026-11-24-test-feedback-round2.md">피드백 2차</a></td></tr>
+<tr data-st="wait"><td>넓은 호실 이전</td><td><a href="07-home-room-and-vehicles.md#s34">07 1장</a></td><td><span class="st wait">미결</span><br>미결: 후속 기획</td><td></td></tr>
+<tr data-st="ok"><td>작은 방·조명·러그 첫 구매</td><td><a href="07-home-room-and-vehicles.md#s13">07 2장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포 · 준비 화면 찜 카드는 미구현 제안</td><td><a href="../work-history/2026-11-12-traffic-audit-room-items.md">기록</a></td></tr>
+<tr data-st="ok"><td>차고 차량 견적·구매·아버지 차 보관</td><td><a href="07-home-room-and-vehicles.md#s22">07 3장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포 · 가격 밸런스 사람 미검증</td><td><a href="../work-history/2026-11-10-vehicle-purchase-3day.md">기록</a> · <a href="../work-history/2026-11-19-father-taxi-home-base.md">아버지 차</a></td></tr>
+<tr data-st="ok"><td>싱글 차량 외형의 PvP 사용</td><td><a href="07-home-room-and-vehicles.md#s22">07 3장 6절</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="pvp/README.md">PvP README</a></td></tr>
+<tr data-st="hold"><td>기사 평점</td><td><a href="07-home-room-and-vehicles.md#s22">07 3장</a> · <a href="05-interface-and-navigation.md#s32">05 2장</a></td><td><span class="st hold">보류</span><br>보류</td><td></td></tr>
+</table></div>
+<h3 id="e-화면조작길안내--0505-interface-and-navigationmd-ui-폴더ui">E. 화면·조작·길안내 — <a href="05-interface-and-navigation.md">05</a>, <a href="../ui/">UI 폴더</a></h3>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="ok"><td>1인칭 운전석·정보 우선순위·HUD</td><td><a href="05-interface-and-navigation.md#s05">05 1장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../ui/2026-11-06-full-ui-direction.md">화면 방향</a> · <a href="../ui/2026-11-06-full-ui-art.md">UI 아트</a></td></tr>
+<tr data-st="ok fix"><td>시작·이어하기·저장 슬롯 3개</td><td><a href="05-interface-and-navigation.md#시작이어하기준비-화면">05 시작 화면</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 슬롯 3개 찬 상태의 덮어쓰기 흐름 미확인</td><td><a href="../work-history/2026-11-24-test-feedback-round2.md">피드백 2차</a></td></tr>
+<tr data-st="ok"><td>지도·길안내·바닥 안내선·경로 이탈</td><td><a href="05-interface-and-navigation.md#지도와-길안내">05 지도와 길안내</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../work-history/2026-11-23-route-diner-cafe-hunger.md">전체 경로</a></td></tr>
+<tr data-st="ok fix"><td>채팅형 운행 알림</td><td><a href="05-interface-and-navigation.md#알림결과가독성">05 알림</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 수동 주행 가독성 미확인</td><td><a href="../work-history/2026-11-23-chat-notice-implementation.md">구현</a> · <a href="../ui/2026-11-23-chat-notices/README.md">시안</a></td></tr>
+<tr data-st="ok"><td>텍스트 줄이기 1·2차</td><td><a href="05-interface-and-navigation.md#s05">05</a></td><td><span class="st ok">구현·배포</span><br>구현·배포 · 남은 것: PvP 전용 문구, 법규·만족도 알림 문구, 마감 화면 목표·기록 묶음</td><td><a href="../work-history/2026-11-24-text-reduction.md">1차</a> · <a href="../work-history/2026-11-24-text-reduction-part2.md">2차</a></td></tr>
+<tr data-st="prog"><td>버튼 키캡·Enter/Esc, 미션 시작·구토·차량 상태 알림 카드</td><td><a href="05-interface-and-navigation.md#s05">05</a></td><td><span class="st prog">진행 중</span><br><b>진행 중</b>(피드백 3차, 미커밋)</td><td><a href="../work-history/2026-11-24-play-feedback-round3.md">피드백 3차</a></td></tr>
+<tr data-st="ok"><td>차내 장치 조작 3종(미터기·창문·온도)</td><td><a href="05-interface-and-navigation.md#s32">05 2장 3절</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../work-history/2026-11-19-cabin-controls-p3.md">P3</a></td></tr>
+<tr data-st="hold"><td>개인택시 면허 경로</td><td><a href="05-interface-and-navigation.md#s32">05 2장</a></td><td><span class="st hold">제외</span><br>제외(2026-11-19)</td><td><a href="archive/23-license-career-path.md">원안 보관</a></td></tr>
+</table></div>
+<h3 id="f-하루경력세계--0606-day-and-careermd">F. 하루·경력·세계 — <a href="06-day-and-career.md">06</a></h3>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="ok"><td>하루 결과·회고·연습·이어하기</td><td><a href="06-day-and-career.md#s04">06 1장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../work-history/2026-11-19-first-fare-and-settlement.md">첫 운송 물리 주행</a></td></tr>
+<tr data-st="ok fix"><td>3일 뒤 계속 영업·장기 목표</td><td><a href="06-day-and-career.md#s28">06 2장</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br>구현·배포 · 개선 필요("3일 뒤 계속할 이유" 사람 플레이 지표 미측정)</td><td><a href="../work-history/2026-11-19-continuous-career-p2.md">P2</a></td></tr>
+<tr data-st="ok"><td>하루 조건 카드</td><td><a href="06-day-and-career.md#s29">06 3장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../work-history/2026-11-19-daily-conditions-p5.md">P5</a></td></tr>
+<tr data-st="ok hold"><td>비 운행</td><td><a href="06-day-and-career.md#s18">06 4장</a></td><td><span class="st ok">구현·배포</span><span class="st hold">보류</span><br>구현·배포 · 확률 미끄러짐 보류</td><td></td></tr>
+<tr data-st="ok"><td>낮밤 조명·은계 FM 자막</td><td><a href="06-day-and-career.md#s31">06 5장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../work-history/2026-11-19-day-night-radio-p7.md">P7</a></td></tr>
+<tr data-st="ok fix"><td>퇴근 후 드라이브</td><td><a href="06-day-and-career.md#s04">06 1장</a> · <a href="08-fun-improvements.md#5-다음-단계-후보">08 5장</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br>구현·배포 · <b>개선 필요</b>(드라이브 중 영업 시계·생활거점 버튼이 그대로 보이는 알려진 어색함)</td><td><a href="../work-history/2026-11-24-know-road-evening-drive-vehicle-feel.md">기록</a> · <a href="../work-history/2026-11-24-away-run-3-checklist.md">3차 체크리스트</a></td></tr>
+</table></div>
+<h3 id="g-다음-단계-후보--08-5장08-fun-improvementsmd5-다음-단계-후보">G. 다음 단계 후보 — <a href="08-fun-improvements.md#5-다음-단계-후보">08 5장</a></h3>
+<p>구현 순서 제안은 <a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획</a>의 "묶어서 본 구현 순서"다: 사고 과실 구분 → 제한속도 바탕 → 돌발 1차 · 유혹 · 골목 주차 A · 시외 콜 → 돌발 2차 → 단속 카메라 → 골목 주차 B.</p>
+<h4 id="g1-도로에서-생기는-일">G1. 도로에서 생기는 일</h4>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="ok fix"><td>돌발 1차(문 여는 정차 차량, 끼어드는 차)</td><td><a href="08-fun-improvements.md#56-후보-4종-상세-기획-2026-11-24-구현-전">08 5.6</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br>구현·배포 · 개선 필요(자동 발생 빈도·사람 체감 미확인, 회피 시 중앙선 기록 여부 미확인)</td><td><a href="../work-history/2026-11-24-road-surprises-1.md">기록</a></td></tr>
+<tr data-st="wait"><td>돌발 2차(킥보드, 구급차 교차로형)</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 1.2</a></td><td><span class="st wait">미결</span><br>미결: 설계안 · <b>결정 대기</b>(구급차 양보 규칙을 법령으로 확인할지)</td><td></td></tr>
+<tr data-st="wait hold"><td>골목 주차 A(은행로144번길)</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 2.3</a></td><td><span class="st wait">미결</span><span class="st hold">제외</span><br>미결: 승인됨·구현 전(게임 연출 표기·일반 차량 제외 허용, 직접 플레이 뒤 착수)</td><td><a href="../work-history/2026-11-24-play-check-speed-fault.md">결정 기록</a></td></tr>
+<tr data-st="wait"><td>골목 주차 B(대은로104번길)</td><td>같은 곳</td><td><span class="st wait">미결</span><br>미결: 설계안(A의 사람 플레이 결과 뒤)</td><td></td></tr>
+<tr data-st="wait"><td>수인로(국도42) 순항 속도</td><td><a href="08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">08 5.5 3번</a></td><td><span class="st wait">미결</span><br>미결: 설계안</td><td><a href="../work-history/2026-11-24-next-candidates-design.md">설계안</a></td></tr>
+<tr data-st="wait"><td>과속 방지턱</td><td><a href="08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">08 5.5 1번</a></td><td><span class="st wait">미결</span><br>미결: 설계안(지도 입력 해시 재생성 여부 결정)</td><td><a href="../work-history/2026-11-24-next-candidates-design.md">설계안</a></td></tr>
+</table></div>
+<h4 id="g2-법규를-고민거리로">G2. 법규를 고민거리로</h4>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="prog wait"><td>유혹("좀 빨리 가 주세요")</td><td><a href="08-fun-improvements.md#53-규칙-속-돌발-정해진-사건이-아닌-규칙-위의-상황-구-37-4">08 5.3</a> · <a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 4.1</a></td><td><span class="st prog">진행 중</span><span class="st wait">결정 대기</span><br><b>진행 중</b>(다른 작업이 구현 중, 미커밋) · 사례금 조건 결정 대기</td><td></td></tr>
+<tr data-st="wait"><td>고정 단속 카메라·과태료</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 4.2</a></td><td><span class="st wait">미결</span><br>미결: 과태료 도입은 허용, <b>위치(조사/게임 전용) 결정 대기</b>, 공공데이터 이용 조건 확인 전</td><td><a href="../work-history/2026-11-24-speed-limit-camera-survey.md">조사</a> · <a href="../work-history/2026-11-24-play-check-speed-fault.md">결정 기록</a></td></tr>
+</table></div>
+<h4 id="g3-일감과-영업-판단">G3. 일감과 영업 판단</h4>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="wait"><td>시외 장거리 콜(A: 암전·시간 경과)</td><td><a href="08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">08 5.5 2번</a> · <a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 3</a></td><td><span class="st wait">미결</span><br><b>미결: 결정 대기</b>(A로 시작할지, 운임 배수, 지명 표기)</td><td>분당 수입 측정 선행</td></tr>
+<tr data-st="wait"><td>공차 운영(영업 동선 정산, 배회·승강장·호출)</td><td><a href="08-fun-improvements.md#51-공차-운영-손님을-내린-다음에-어디로-가나-구-37-2">08 5.1</a></td><td><span class="st wait">미결</span><br>미결: 승인 전(추천 첫 단계: 정산 "오늘의 영업 동선")</td><td><a href="../work-history/2026-11-23-driver-judgment-design.md">원 기록</a> · <a href="../work-history/2026-11-24-fun-doc-merge.md">합친 기록</a></td></tr>
+<tr data-st="wait"><td>다른 택시와 승강장</td><td><a href="08-fun-improvements.md#51-공차-운영-손님을-내린-다음에-어디로-가나-구-37-2">08 5.1</a> · <a href="08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">5.5 7번</a></td><td><span class="st wait">미결</span><br>미결: 설계안(실제 위치 조사 또는 게임 전용 표기 결정)</td><td></td></tr>
+<tr data-st="wait"><td>길 지식(내비 단계 3종, 아는 길 요청, 지름길 기록)</td><td><a href="08-fun-improvements.md#52-길-지식-은계-길을-아는-것이-실력-구-37-3">08 5.2</a></td><td><span class="st wait">미결</span><br>미결: 승인 전(미션 "길 아는 기사" 반응을 본 뒤)</td><td></td></tr>
+<tr data-st="wait"><td>손님 돌발(분실물, 단거리·승차 거부, 응급 손님)</td><td><a href="08-fun-improvements.md#53-규칙-속-돌발-정해진-사건이-아닌-규칙-위의-상황-구-37-4">08 5.3</a></td><td><span class="st wait">미결</span><br>미결: 승인 전</td><td></td></tr>
+<tr data-st="hold"><td>호출 목적지 전면 비공개</td><td><a href="08-fun-improvements.md#후보-한눈에-보기">08 5장 겹침 정리</a></td><td><span class="st hold">보류</span><br>보류(구현된 판단 재료와 반대 방향)</td><td></td></tr>
+</table></div>
+<h3 id="h-자체-도시-pvp--pvppvpreadmemd">H. 자체 도시 PvP — <a href="pvp/README.md">pvp/</a></h3>
+<div class="tw"><table>
+<tr><th>항목</th><th>기획 위치</th><th>상태</th><th>근거·남은 것</th></tr>
+<tr data-st="ok"><td>A2 도시·신호 교차로 37·뒷골목</td><td><a href="pvp/26-city-a2-four-player.md">26 A2</a> · <a href="pvp/27-flow-unified-mode.md">27 통합 모드</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../work-history/2026-11-10-pvp-signals-alleys-request-frequency.md">신호·골목</a></td></tr>
+<tr data-st="ok"><td>경기 흐름·나1+봇3</td><td><a href="pvp/25-simulation-match.md">25 시뮬레이션 경기</a> · <a href="pvp/21-solo-bot-mode.md">21 봇 모드</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td></td></tr>
+<tr data-st="ok fix"><td>공유 승객·운임·순수익 순위</td><td><a href="pvp/28-passenger-parity.md">28 승객 공유</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 장기 수익 균형 미확인</td><td></td></tr>
+<tr data-st="ok fix"><td>LAN 최대 4명(v25)</td><td><a href="pvp/30-native-lan.md">30 LAN</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br>구현·배포 · <b>개선 필요</b>(다른 PC·사람 4인·지연/손실 수용 미확인)</td><td><a href="../work-history/2026-11-12-pvp-lan-room-list.md">LAN 방 목록</a> · <a href="../work-history/2026-11-12-pvp-stability-performance.md">안정성</a></td></tr>
+<tr data-st="hold"><td>A3 골목 도시 시안</td><td><a href="pvp/29-city-a3-proposal.md">29 A3</a></td><td><span class="st hold">보류</span><br>보류(현재 지도는 A2)</td><td></td></tr>
+<tr data-st="hold"><td>전용 서버·인터넷 Relay</td><td>—</td><td><span class="st hold">제외</span><br>제외(제공하지 않음)</td><td><a href="../work-history/2026-11-11-pvp-dedicated-server-options.md">검토</a> · <a href="../work-history/2026-11-12-pvp-external-relay-rollback.md">Relay 되돌림</a></td></tr>
+<tr data-st="hold"><td>00~24 초기 원안·단계 기록</td><td><a href="pvp/README.md#이전-기획을-읽는-방법">PvP README</a></td><td><span class="st hold">보관</span><br>보관(현재 규칙 아님)</td><td></td></tr>
+</table></div>
+<h3 id="i-색인보관제안서">I. 색인·보관·제안서</h3>
+<div class="tw"><table>
+<tr><th>자료</th><th>위치</th><th>상태</th></tr>
+<tr data-st=""><td>세부 항목 색인(승객·주행·모드·성장)</td><td><a href="09-detail-index.md">09</a></td><td>색인. 상태는 담당 문서를 따른다</td></tr>
+<tr data-st="wait"><td>장기 경력·이사·생활 확장 등 성장 구상</td><td><a href="09-detail-index.md#s27">09 4장</a></td><td><span class="st wait">미결</span><br>미결: 아이디어</td></tr>
+<tr data-st=""><td>마인드맵과 목차</td><td><a href="택시%20시뮬레이션.mmst">택시 시뮬레이션.mmst</a> · <a href="택시%20시뮬레이션-목차.md">목차</a></td><td>탐색용 개요</td></tr>
+<tr data-st="hold"><td>기사 생활 경영안(구 37 특별 운행·지도 판매점 등)</td><td><a href="archive/37-driver-life-and-business.md">archive/37-driver-life-and-business.md</a></td><td><span class="st hold">제외</span><br>제외(2026-11-23)</td></tr>
+<tr data-st="hold"><td>생활·성장 원안(구 09~14), 동기 진단</td><td><a href="archive/">archive/</a></td><td><span class="st hold">보관</span><br>보관</td></tr>
+<tr data-st=""><td>발표용 제안서·조작 매뉴얼</td><td><a href="../proposals/README.md">제안서 목록</a></td><td>최신 V10(2026-11-10). 그 뒤 구현(08 재미 보강 등)은 반영 전</td></tr>
+<tr data-st="hold"><td>이전 기획·후속 아이디어</td><td><a href="../design-history/content-design/README.md">design-history</a> · <a href="../future-design/README.md">future-design</a></td><td><span class="st hold">보관</span><br>보관</td></tr>
+</table></div>
+<h2 id="구현-현황-08-재미-보강-진행-순서">구현 현황 (08 재미 보강 진행 순서)</h2>
+<div class="tw"><table>
+<tr><th>순서</th><th>묶음</th><th>상태</th><th>비고</th></tr>
+<tr data-st="ok"><td>1</td><td>조향 프리셋·감각 연출 (08 1장)</td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td>키보드·패드 체감 미확인</td></tr>
+<tr data-st="ok"><td>2</td><td>팁·연속 기록·칭찬 (08 2장)</td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td>싱글·PvP 모두. 미터기는 설계안만</td></tr>
+<tr data-st="ok"><td>3</td><td>호출판 변주·빈 시간·선택형 미션 (08 3~4장)</td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td>자리 비움 1차 <a href="../work-history/2026-11-23-away-run-checklist.md">체크리스트</a></td></tr>
+<tr data-st="ok"><td>4</td><td>추가 주행음·패드 진동·연속 배차·미터기 설계</td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td>자리 비움 2차 <a href="../work-history/2026-11-24-away-run-checklist.md">체크리스트</a></td></tr>
+<tr data-st="ok"><td>5</td><td>길 아는 기사·퇴근 후 드라이브·차종 손맛</td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td>자리 비움 3차 <a href="../work-history/2026-11-24-away-run-3-checklist.md">체크리스트</a></td></tr>
+<tr data-st="ok"><td>6</td><td>사고 과실 구분 → 제한속도 바탕(확인 구간만)</td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../work-history/2026-11-24-play-check-speed-fault.md">확인 목록</a></td></tr>
+<tr data-st="ok"><td>7</td><td>돌발 1차</td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td>2026-11-24 실행본(7396ee2b)</td></tr>
+<tr data-st="prog"><td>8</td><td>유혹</td><td><span class="st prog">진행 중</span><br>진행 중</td><td>다른 작업에서 구현 중</td></tr>
+<tr data-st="wait"><td>9</td><td>골목 주차 A · 시외 콜</td><td><span class="st wait">대기</span><br>대기</td><td>골목 주차는 허용 결정, 시외 콜은 결정 대기</td></tr>
+<tr data-st="wait"><td>10</td><td>돌발 2차 → 단속 카메라 → 골목 주차 B</td><td><span class="st wait">대기</span><br>대기</td><td>카메라 위치 결정 필요</td></tr>
+<tr data-st="wait"><td>—</td><td>공차 운영·길 지식 확장·손님 돌발·승강장</td><td><span class="st wait">승인 전</span><br>승인 전</td><td>08 5.1~5.4</td></tr>
+</table></div>
+<h2 id="검토-중인-제안-결정-대기">검토 중인 제안 (결정 대기)</h2>
+<p>결정되면 해당 담당 문서와 작업 이력에 기록하고 이 표에서 뺀다.</p>
+<div class="tw"><table>
+<tr><th>항목</th><th>정할 것</th><th>근거</th></tr>
+<tr><td>시외 장거리 콜</td><td>A 방식(암전)으로 시작할지, 운임 배수, 지명 표기</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 3</a></td></tr>
+<tr><td>단속 카메라</td><td>위치를 조사할지 게임 전용으로 둘지</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 4.2</a></td></tr>
+<tr><td>유혹 사례금</td><td>"과속 없이 도착했을 때만" 지급에 동의하는지</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 4.1</a></td></tr>
+<tr><td>사람 사고</td><td>감경을 둘지, 지금대로 둘지</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 1.1</a></td></tr>
+<tr><td>구급차 양보</td><td>규칙 문구를 법령으로 확인할지, 게임 규칙으로만 적을지</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 1.2</a></td></tr>
+<tr><td>미션 "길 아는 기사"</td><td>L 키, 팁 15%, 내비 단계 3종으로 넓힐지</td><td><a href="../work-history/2026-11-24-away-run-3-checklist.md">3차 체크리스트</a></td></tr>
+<tr><td>37 합치기·겹침 정리</td><td>5.1~5.4로 합친 방향, 목적지 전면 비공개 보류에 동의하는지</td><td><a href="../work-history/2026-11-24-away-run-3-checklist.md">3차 체크리스트</a></td></tr>
+<tr><td>살아 있는 미터기</td><td>초안 채택 여부(경제 재조정과 함께)</td><td><a href="../work-history/2026-11-24-living-meter-design.md">설계안</a></td></tr>
+<tr><td>과속 방지턱</td><td>위치를 지도 입력에 넣을지(입력 해시 재생성)</td><td><a href="../work-history/2026-11-24-next-candidates-design.md">설계안</a></td></tr>
+</table></div>
+<h2 id="개선점-목록-사람-플레이알려진-실패">개선점 목록 (사람 플레이·알려진 실패)</h2>
+<div class="tw"><table>
+<tr><th>날짜</th><th>항목</th><th>현재 상태</th><th>처리</th></tr>
+<tr data-st="wait"><td>2026-11-24</td><td>08 1~5장 구현 전체의 사람 체감</td><td>자동 검사만 통과. 볼 것은 자리 비움 <a href="../work-history/2026-11-23-away-run-checklist.md">1차</a>·<a href="../work-history/2026-11-24-away-run-checklist.md">2차</a>·<a href="../work-history/2026-11-24-away-run-3-checklist.md">3차</a> 체크리스트와 <a href="../work-history/2026-11-24-play-check-speed-fault.md">확인 목록</a></td><td><span class="st wait">대기</span><br>사용자 직접 플레이 대기</td></tr>
+<tr data-st="wait"><td>2026-11-24</td><td>20분당 완료 건수·신호 대기·공차 비중 측정</td><td>08 7장 1단계. 사람 녹화 플레이 기록 없음</td><td><span class="st wait">대기</span><br>대기</td></tr>
+<tr data-st=""><td>2026-11-24</td><td><code>-districtTrafficTest</code> 4건 실패</td><td>돌발 1차 전 실행본에서도 같은 4건 실패하는 기존 문제</td><td>원인 조사 남음</td></tr>
+<tr data-st=""><td>2026-11-24</td><td><code>-homeBaseCheck</code> 단독 실행 실패</td><td>"next shift also departs from Plaza" 기존 실패</td><td>원인 조사 남음</td></tr>
+<tr data-st="wait"><td>2026-11-24</td><td>퇴근 후 드라이브 화면</td><td>영업 시계·생활거점·퇴근 버튼·시설 도움말이 그대로 보임</td><td><span class="st wait">대기</span><br>화면 정리 대기</td></tr>
+<tr data-st="wait"><td>2026-11-24</td><td>텍스트 줄이기 남은 묶음</td><td>PvP 전용 문구, 법규·만족도 알림 문구, 마감 화면 목표·기록 묶음</td><td><span class="st wait">대기</span><br>대기</td></tr>
+<tr data-st="wait"><td>2026-11-24</td><td>저장 슬롯 덮어쓰기 흐름</td><td>실행본에서 눌러 보지 않음</td><td><span class="st wait">대기</span><br>대기</td></tr>
+<tr data-st="wait"><td>2026-11-24</td><td>주행음·창문 바람·패드 진동</td><td>사람 귀·실물 패드로 확인하지 않음</td><td><span class="st wait">대기</span><br>대기</td></tr>
+<tr data-st="prog"><td>2026-11-24</td><td>직접 플레이 피드백 3차</td><td>소스·실행본 변경이 커밋되지 않은 상태</td><td><span class="st prog">진행 중</span><br><a href="../work-history/2026-11-24-play-feedback-round3.md">기록</a>, 진행 중</td></tr>
+<tr data-st="wait"><td>2026-11-20</td><td>운임·생활물가의 장기 체감</td><td>첫 호출판 계산만 함. 사람 3일·하루 20분 운행 측정 없음</td><td><span class="st wait">대기</span><br>대기</td></tr>
+<tr data-st="wait"><td>2026-11-12</td><td>LAN 다른 PC·사람 4인</td><td>같은 PC 두 Player까지만 확인</td><td><span class="st wait">대기</span><br>대기</td></tr>
+<tr data-st="wait"><td>2026-11-06</td><td>승객 1차 수치</td><td>사람 플레이로 확정한 값이 아님</td><td><span class="st wait">대기</span><br>대기</td></tr>
+</table></div>
+<h2 id="문서-사이의-관계">문서 사이의 관계</h2>
+<div class="tw"><table>
+<tr><th>묶음</th><th>문서</th><th>역할</th></tr>
+<tr><td>틀</td><td>00 개요·이야기, 06 하루·경력, 07 숙소·차량</td><td>누가, 왜, 며칠을 일하는지</td></tr>
+<tr><td>운전</td><td>01 주행·법규, 05 화면·길안내</td><td>한 번 출차해서 어떻게 달리는지</td></tr>
+<tr><td>손님</td><td>02 운송·운임, 03 승객 제작</td><td>누구를 태우고 어떻게 모시는지</td></tr>
+<tr><td>생계</td><td>04 생활·차량·경제</td><td>남은 시간과 돈을 어디에 쓰는지</td></tr>
+<tr><td>재미 보강</td><td>08</td><td>위 묶음을 손보는 검토안. 채택된 규칙은 01·02·04·06·07로 옮긴다</td></tr>
+<tr><td>경쟁</td><td>pvp/</td><td>같은 운전·승객 규칙으로 순수익을 겨룬다</td></tr>
+<tr><td>찾기·보관</td><td>09, archive/, 마인드맵, proposals/</td><td>아이디어 색인, 이전 결정의 배경, 발표 자료</td></tr>
+</table></div>
+<h2 id="미결-사항-결정-방식">미결 사항 결정 방식</h2>
+<ul><li>08과 상세 기획의 "결정할 것"은 이 문서에서 확정하지 않는다. 구현 전에 코드 현황과 함께 선택지와 추천안을 정리하고, 기획자가 고르면 담당 문서와 작업 이력(결정 기록)에 남긴 뒤 구현한다.</li><li>구현 뒤 상태는 이 표의 "구현·소스 → 구현·배포 → 사람 확인"으로 옮긴다. 실행본 반영 여부는 <a href="../work-history/LATEST.md">LATEST</a>의 배포 기록이 기준이다.</li></ul>
+<h2 id="수정-기록">수정 기록</h2>
+<div class="tw"><table>
+<tr><th>날짜</th><th>내용</th></tr>
+<tr><td>2026-11-24</td><td>처음 작성. 00~09·PvP·보관·제안서를 카테고리별로 묶고 항목마다 상태와 근거 기록을 붙였다. 결정 대기 표와 개선점 목록을 더했다. <a href="../work-history/2026-11-24-design-doc-index.md">기록</a></td></tr>
+</table></div>
+<p style="margin-top:40px;color:var(--sub);font-size:13px">이 페이지는 <code>INDEX.md</code>에서 <code>python tools/render_design_index.py</code>로 생성한다. 내용은 INDEX.md를 고친다.</p>
+</div><script>
+const btns=[...document.querySelectorAll('.filter button')];
+btns.forEach(b=>b.addEventListener('click',()=>{
+  btns.forEach(x=>x.classList.toggle('on',x===b));
+  const k=b.dataset.k;
+  document.querySelectorAll('tr[data-st]').forEach(tr=>{
+    tr.style.display=(k==='all'||tr.dataset.st.split(' ').includes(k))?'':'none';
+  });
+}));
+</script></body></html>
