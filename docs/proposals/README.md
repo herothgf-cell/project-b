@@ -1,5 +1,7 @@
 # 회사 내부 개발 착수 제안
 
+**2026-11-24 정리.** 제안서 PPTX는 최신 V10과 직전 V9만 남겼다. V1~V8 PPTX는 지웠고 Git 이력에서 꺼낼 수 있다(예: `git show 5f408f5d:docs/proposals/project-b-game-proposal-v8.pptx > v8.pptx`). 각 버전의 반영 검토와 매뉴얼 문서는 그대로 둔다.
+
 ## 최신 10차 자료 — 2026-11-10
 
 - [제안서 PPTX](project-b-game-proposal-v10.pptx): 30장. Neo4G 제안서 가이드 vr.1.0의 구성·필수 항목에 맞춤. 운송 → 차량 구매(실제 차고 화면) → PvP 내 차 흐름(20장 신규), 주요 캐릭터·배경 설정(22장 신규).
@@ -13,13 +15,13 @@
 
 ## 이전 8차 자료 — 2026-11-09
 
-- [제안서 PPTX](project-b-game-proposal-v8.pptx): 26장. USP·재미 연결, 시스템6영역, 싱글/PvP 모드별 설명, 실제 화면 최신화.
+- 제안서 PPTX `project-b-game-proposal-v8.pptx`(2026-11-24 정리로 삭제, Git 이력에 있음): 26장. USP·재미 연결, 시스템6영역, 싱글/PvP 모드별 설명, 실제 화면 최신화.
 - [반영 검토](proposal-v8-review.md), [별도 Manual](project-b-prototype-manual-v8.md).
 - [이미지 근거](assets/v8/README.md), [생성 프롬프트](assets/v8/prompts.md), [이력](../work-history/2026-11-09-game-proposal-v8.md).
 
 ## 이전 7차 자료 — 2026-11-09
 
-- [제안서 PPTX](project-b-game-proposal-v7.pptx): 25장. 사용자 편집 V6를 기준으로 요청 순서 재구성, 공통 제목 장식·표지 시안 갱신.
+- 제안서 PPTX `project-b-game-proposal-v7.pptx`(2026-11-24 정리로 삭제, Git 이력에 있음): 25장. 사용자 편집 V6를 기준으로 요청 순서 재구성, 공통 제목 장식·표지 시안 갱신.
 - [양식과 페이지 위치](proposal-v7-review.md), [별도 조작 매뉴얼](project-b-prototype-manual-v7.md).
 - [표지 이미지·프롬프트](assets/v7/prompts.md), [작업 이력](../work-history/2026-11-09-game-proposal-v7.md).
 
@@ -27,7 +29,7 @@
 
 ## 이전 6차 자료 — 2026-11-06
 
-- [개발 착수 제안서 PPTX](project-b-game-proposal-v6.pptx): 23장. 최신 실제 UI·구현 범위, 단계별 통과 조건과 검증 목표 보완.
+- 개발 착수 제안서 PPTX `project-b-game-proposal-v6.pptx`(2026-11-24 정리로 삭제, Git 이력에 있음): 23장. 최신 실제 UI·구현 범위, 단계별 통과 조건과 검증 목표 보완.
 - [필수 항목과 변경 검토](proposal-v6-review.md): 참여자는 사용자 확인에 따라 미정, 제출 전 확정 필요.
 - [별도 시연 매뉴얼](project-b-prototype-manual-v6.md): 운전 설정·긴급 제동·최신 안내 반영.
 - [작업 이력](../work-history/2026-11-06-game-proposal-v6.md).
@@ -36,7 +38,7 @@ V5 원본과 기존 시안을 보존했다. 인력·일정·KPI는 심의용 가
 
 ## 이전 5차 자료 — 2026-11-06
 
-- [개발 착수 제안서 PPTX](project-b-game-proposal-v5.pptx): 23장. 승객 요청·취객·잠자는 승객 반응 3장 추가, 세계관/아트/경쟁작 비교 보강.
+- 개발 착수 제안서 PPTX `project-b-game-proposal-v5.pptx`(2026-11-24 정리로 삭제, Git 이력에 있음): 23장. 승객 요청·취객·잠자는 승객 반응 3장 추가, 세계관/아트/경쟁작 비교 보강.
 - [필수 19항목 검토표](proposal-v5-review.md): 참여자 실정보만 회사 제출 전 확인 필요로 유지.
 - [별도 시연 매뉴얼](project-b-prototype-manual-v3.md): 승객 반응과 작은 방 구현 상태 갱신.
 - [승객 시안·프롬프트](assets/v5/prompts.md), [작업 이력](../work-history/2026-11-06-game-proposal-v5.md).
@@ -45,7 +47,7 @@ V5 원본과 기존 시안을 보존했다. 인력·일정·KPI는 심의용 가
 
 ## 이전 4차 자료 — 2026-11-06
 
-- [시안 중심 개발 착수 제안서](project-b-game-proposal-v4.pptx): 20장. 작은 방·차량 구매·이사·재출발 시안 4장을 추가하고 본문을 간소화했다.
+- 시안 중심 개발 착수 제안서 `project-b-game-proposal-v4.pptx`(2026-11-24 정리로 삭제, Git 이력에 있음): 20장. 작은 방·차량 구매·이사·재출발 시안 4장을 추가하고 본문을 간소화했다.
 - [이미지 원본과 생성 프롬프트](assets/v4/prompts.md): 내장 image_gen 사용, 실제 구현 화면과 구분.
 - [필수 항목 위치](proposal-v4-review.md), [작업 이력](../work-history/2026-11-06-game-proposal-v4.md)
 - [별도 시연 매뉴얼](project-b-prototype-manual-v3.md): 기존 V3 조작 문서 유지.
@@ -54,7 +56,7 @@ V5 원본과 기존 시안을 보존했다. 인력·일정·KPI는 심의용 가
 
 ## 이전 3차 자료 — 2026-11-06
 
-- [개발 착수 제안서 3차 PPTX](project-b-game-proposal-v3.pptx): 32장. 단골·예약을 제외하고 실직 후 재출발, 작은 방과 첫 구매, 원하는 차량과 이사로 개편.
+- 개발 착수 제안서 3차 PPTX `project-b-game-proposal-v3.pptx`(2026-11-24 정리로 삭제, Git 이력에 있음): 32장. 단골·예약을 제외하고 실직 후 재출발, 작은 방과 첫 구매, 원하는 차량과 이사로 개편.
 - [요구사항 대조 및 반영 범위](proposal-v3-review.md)
 - [3차 시연 매뉴얼](project-b-prototype-manual-v3.md): 통합 실행본과 신규 생활 기획의 구현 여부 구분.
 - [3차 작업 이력](../work-history/2026-11-06-game-proposal-v3.md)
@@ -63,7 +65,7 @@ V5 원본과 기존 시안을 보존했다. 인력·일정·KPI는 심의용 가
 
 ## 이전 2차 자료 — 2026-10-27
 
-- [개발 착수 제안서 2차 PPTX](project-b-game-proposal-v2.pptx): 32장. 마인드맵의 차량 성장·단골 예약·환경·경제를 제품 비전으로 보강.
+- 개발 착수 제안서 2차 PPTX `project-b-game-proposal-v2.pptx`(2026-11-24 정리로 삭제, Git 이력에 있음): 32장. 마인드맵의 차량 성장·단골 예약·환경·경제를 제품 비전으로 보강.
 - [양식 충족 여부와 반영 검토표](proposal-v2-review.md): 필수 19항목 대조, 참여자 정보 미확정 구분.
 - [프로토타입 조작 매뉴얼](project-b-prototype-manual-v1.md): 현재 실행·입력이 같아 1차 문서 유지.
 - [생성 시안 및 프롬프트](assets/concept-prompts-v2.md): 생활 거점·차량 성장 2장, 내장 image_gen 사용.
@@ -73,7 +75,7 @@ V5 원본과 기존 시안을 보존했다. 인력·일정·KPI는 심의용 가
 
 ## 1차 제출 자료 — 2026-10-27
 
-- [게임 개발 착수 제안서 PPTX](project-b-game-proposal-v1.pptx): 24장, 16:9, 편집 가능한 본문과 표 8개.
+- 게임 개발 착수 제안서 PPTX `project-b-game-proposal-v1.pptx`(2026-11-24 정리로 삭제, Git 이력에 있음): 24장, 16:9, 편집 가능한 본문과 표 8개.
 - [프로토타입 조작 매뉴얼](project-b-prototype-manual-v1.md): 별도 실행·조작·시연 문서.
 - [제작·검증 이력](../work-history/2026-10-27-game-proposal.md)
 

@@ -5,7 +5,7 @@
 ## 기준과 실제 준비
 
 - 시작 main/원격 `0c490bad39c9f55428f1f9c672201b7c6dc4add4`. 사용자 마인드맵23646cc·제안서V6 0c490ba가 이미 게시된 상태를 확인하고 보존했다. 최신 게임 소스548fe8b/출하a978b3b/게시a0ecc05를 포함한다.
-- [다른 PC 시작 문서](../handoff/2026-11-09/README.md)에 pull/검사/Unity2022.3.62f2/Windows Build Support/프로젝트 경로/BuildHybrid·은계/A2/LANv16/다음 확인/새 채팅 전달 문구를 정리했다.
+- 다른 PC 시작 문서(2026-11-24 정리로 삭제, Git 이력에 있음)에 pull/검사/Unity2022.3.62f2/Windows Build Support/프로젝트 경로/BuildHybrid·은계/A2/LANv16/다음 확인/새 채팅 전달 문구를 정리했다.
 - 현재 active-profile을 변경하지 않고 revision7 스냅샷으로 복사했다. 프로필 contentHash d22c06f57f400c4921d1466c05944a7f486cc038aab8ac5a0b4a5c6d79eb5b3a,132782바이트. 새 PC 관리창에서 선택적으로 가져와 적용한다. 기존11/06 revision6와 출하 기본값을 구분한다.
 - 검증 요약/요청 메모와 로드뷰7장·최종 실제 렌더8장을 ZIP에 보존했다. ZIP6448078바이트/15항목. 인계6개 파일의 크기/SHA256 및 ZIP 내부 항목별 크기/SHA256을 files.json에 기록했다(목록 자기 자신은 제외하므로 폴더 파일은 총7개).
 - 최신 사용자 첨부7장 원본 Temp 경로는 현재 없었다. 원본이 포함됐다고 표시하지 않고 이미지별 요구/좌표를 request-notes.md에 보존했다. 이전 채팅/기획21과 ZIP의 실제 로드뷰/결과 그림을 참고한다.
