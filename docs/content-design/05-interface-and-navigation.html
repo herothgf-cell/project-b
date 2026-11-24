@@ -37,11 +37,16 @@ nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;pad
 .filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
 .filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
 .gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+.fixnote{margin:8px 0 14px;padding:8px 14px;border:1px solid var(--line);border-left:5px solid var(--fix);border-radius:0 8px 8px 0;background:var(--card);font-size:14.5px}
+.fixnote ul{margin:4px 0}.fixnote .more{font-size:13px;color:var(--sub)}
+h1 .st,h2 .st,h3 .st,h4 .st,h5 .st,h6 .st{vertical-align:middle;margin-left:6px}
+header.doc .fixsum{color:var(--ink);font-size:14.5px}
+details.toc .fx{color:var(--fix);font-size:12px;font-weight:700;margin-left:4px}
 </style></head>
 <body><div class="wrap">
 <div class="crumb"><a href="index.html">기획서 목록</a> · <a href="README.html">기획 README</a> · <a href="05-interface-and-navigation.md">원본 md</a></div>
-<header class="doc"><h1>화면·조작·길안내</h1><p><b>통합 문서 · 2026-11-23 정리.</b> HUD, 지도, 길안내, 차내 장치 조작과 보류·제외 결정을 담당한다. 아래 각 장의 "구 NN"은 합치기 전 문서 번호이며, 본문 속 "기획 NN" 표기도 이 번호를 가리킨다. 날짜가 있는 결정과 검증 기록은 그 시점의 기록으로 읽는다. <a href="README.html">기획 목록</a></p></header>
-<details class="toc"><summary>목차 (2)</summary><ol><li class="l2"><a href="#1-화면조작길안내-구-05">1. 화면·조작·길안내 (구 05)</a></li><li class="l3"><a href="#1인칭-운전석-2026-11-07-승인-반영">1인칭 운전석 (2026-11-07 승인 반영)</a></li><li class="l3"><a href="#정보의-우선순위">정보의 우선순위</a></li><li class="l3"><a href="#시작이어하기준비-화면">시작·이어하기·준비 화면</a></li><li class="l3"><a href="#기본-입력과-운전-보조">기본 입력과 운전 보조</a></li><li class="l3"><a href="#지도와-길안내">지도와 길안내</a></li><li class="l3"><a href="#내비게이션과-경로-이탈">내비게이션과 경로 이탈</a></li><li class="l3"><a href="#신호와-도로-위-표지의-실제-표현">신호와 도로 위 표지의 실제 표현</a></li><li class="l3"><a href="#승객-대화창">승객 대화창</a></li><li class="l3"><a href="#승하차사고생활-안내">승하차·사고·생활 안내</a></li><li class="l3"><a href="#알림결과가독성">알림·결과·가독성</a></li><li class="l3"><a href="#2026-11-07-사용성-후속">2026-11-07 사용성 후속</a></li><li class="l2"><a href="#2-보류-시스템-재검토--개인택시-면허--차내-장치-조작-구-32">2. 보류 시스템 재검토 — 개인택시 면허 · 차내 장치 조작 (구 32)</a></li><li class="l3"><a href="#1-한눈에">1. 한눈에</a></li><li class="l3"><a href="#2-개인택시-면허--축소안">2. 개인택시 면허 — 축소안</a></li><li class="l3"><a href="#3-은계-싱글-차량-조작">3. 은계 싱글 차량 조작</a></li><li class="l3"><a href="#4-결정-기록">4. 결정 기록</a></li><li class="l3"><a href="#5-검증채택-시">5. 검증(채택 시)</a></li></ol></details>
+<header class="doc"><h1>화면·조작·길안내</h1><p><b>통합 문서 · 2026-11-23 정리.</b> HUD, 지도, 길안내, 차내 장치 조작과 보류·제외 결정을 담당한다. 아래 각 장의 "구 NN"은 합치기 전 문서 번호이며, 본문 속 "기획 NN" 표기도 이 번호를 가리킨다. 날짜가 있는 결정과 검증 기록은 그 시점의 기록으로 읽는다. <a href="README.html">기획 목록</a></p><p class="fixsum"><span class="st fix">개선 필요 2건</span> <a href="#시작이어하기준비-화면">시작·이어하기·준비 화면</a> · <a href="#알림결과가독성">알림·결과·가독성</a> <span class="more">(<a href="index.html">기획서 목록</a> 기준)</span></p></header>
+<details class="toc"><summary>목차 (2)</summary><ol><li class="l2"><a href="#1-화면조작길안내-구-05">1. 화면·조작·길안내 (구 05)</a></li><li class="l3"><a href="#1인칭-운전석-2026-11-07-승인-반영">1인칭 운전석 (2026-11-07 승인 반영)</a></li><li class="l3"><a href="#정보의-우선순위">정보의 우선순위</a></li><li class="l3"><a href="#시작이어하기준비-화면">시작·이어하기·준비 화면</a><span class="fx">● 개선 필요</span></li><li class="l3"><a href="#기본-입력과-운전-보조">기본 입력과 운전 보조</a></li><li class="l3"><a href="#지도와-길안내">지도와 길안내</a></li><li class="l3"><a href="#내비게이션과-경로-이탈">내비게이션과 경로 이탈</a></li><li class="l3"><a href="#신호와-도로-위-표지의-실제-표현">신호와 도로 위 표지의 실제 표현</a></li><li class="l3"><a href="#승객-대화창">승객 대화창</a></li><li class="l3"><a href="#승하차사고생활-안내">승하차·사고·생활 안내</a></li><li class="l3"><a href="#알림결과가독성">알림·결과·가독성</a><span class="fx">● 개선 필요</span></li><li class="l3"><a href="#2026-11-07-사용성-후속">2026-11-07 사용성 후속</a></li><li class="l2"><a href="#2-보류-시스템-재검토--개인택시-면허--차내-장치-조작-구-32">2. 보류 시스템 재검토 — 개인택시 면허 · 차내 장치 조작 (구 32)</a></li><li class="l3"><a href="#1-한눈에">1. 한눈에</a></li><li class="l3"><a href="#2-개인택시-면허--축소안">2. 개인택시 면허 — 축소안</a></li><li class="l3"><a href="#3-은계-싱글-차량-조작">3. 은계 싱글 차량 조작</a></li><li class="l3"><a href="#4-결정-기록">4. 결정 기록</a></li><li class="l3"><a href="#5-검증채택-시">5. 검증(채택 시)</a></li></ol></details>
 <div class="tw"><table><thead><tr>
 <th>장</th>
 <th>합친 문서</th>
@@ -75,7 +80,8 @@ nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;pad
 <tr><td>TIP</td><td>상황 설명·시설 추천·서비스 오류·공간 점유/대체 제안</td><td>숨김/다시 열기·스크롤, 별도 중앙 중복창 없음</td></tr>
 </tbody></table></div>
 <p>운송 카드는 픽업 중 <b>승차 장소</b>, 탑승 후 <b>도착지</b>로 구분하고 실제 남은 제한 시간을 표시한다. 초기 목적지 없는 주행에는 임의 경로를 만들지 않는다. 교통 상황은 자연스럽게 관찰하며 승하차의 선행 조건으로 안내하지 않는다.</p>
-<h3 id="시작이어하기준비-화면">시작·이어하기·준비 화면</h3>
+<h3 id="시작이어하기준비-화면">시작·이어하기·준비 화면<span class="st fix">개선 필요</span></h3>
+<div class="fixnote"><span class="st fix">개선 필요</span> 1건 · <a href="index.html">기획서 목록에서 보기</a><ul><li><b>시작·이어하기·저장 슬롯 3개</b> — 구현·배포 · 슬롯 3개 찬 상태의 덮어쓰기 흐름 미확인<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-24-test-feedback-round2.md">피드백 2차</a></span></li></ul></div>
 <p>모드 선택은 싱글/PVP/게임 종료와 짧은 설명·초상으로 표현한다. 싱글 최초에는 영업 시작, 이어갈 상태가 있으면 계속하기/처음부터 시작을 제공한다. 초기화는 확인하며 복원 실패 시 이유와 원본 보존/복구 안내를 보여 준다.</p>
 <p>2일차부터 전날 실제 비용과 현금/연료/포만/피로 증감을 확인한다. 없는 과거 기록은 만들지 않는다. 준비 화면에 고정 이용 가격표·중복 조작법을 늘어놓지 않는다. 정산에서 내 공간을 선택할 수 있으며 개인 구매의 흐름은 <a href="07-home-room-and-vehicles.html#s13">13</a>을 따른다.</p>
 <h3 id="기본-입력과-운전-보조">기본 입력과 운전 보조</h3>
@@ -144,7 +150,8 @@ nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;pad
 <tr><td>정산의 시설 찾기</td><td>생활거점 메뉴만 열기. 자동 길안내/결제 없음, 마감·종료·고장 전환 보호</td></tr>
 </tbody></table></div>
 <p>주유/식사/수면/세차·수리의 조건은 <a href="04-life-vehicle-economy.html#s03">03</a>, 사고 결과/복귀는 <a href="04-life-vehicle-economy.html#s08">08</a>이 소유한다. 구 유료 정비 예약은 호환하며 재견인/재청구하지 않는다.</p>
-<h3 id="알림결과가독성">알림·결과·가독성</h3>
+<h3 id="알림결과가독성">알림·결과·가독성<span class="st fix">개선 필요</span></h3>
+<div class="fixnote"><span class="st fix">개선 필요</span> 1건 · <a href="index.html">기획서 목록에서 보기</a><ul><li><b>채팅형 운행 알림</b> — 구현·배포 · 수동 주행 가독성 미확인<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-23-chat-notice-implementation.md">구현</a> · <a href="../ui/2026-11-23-chat-notices/README.md">시안</a></span></li></ul></div>
 <p>운전 점수·승객 만족도 변화는 <b>원인 ; 실제 증감치</b>의 짧은 알림으로 즉시 보여 준다. 두 점수를 합치지 않고 HUD·알림·정산이 같은 장부를 읽는다. 기존 사건 복원/패킷으로 과거 알림을 새로 지급하지 않는다. 연료/졸음/운행 불가 경고는 일반 수다보다 우선한다.</p>
 <p>운송 결과는 <b>최초 예상 운임 / 운임 조정 / 최종 실수령</b> 3줄과 만족도 요구치·최종값·영향 원인이다. 하단은 원인/증감치만 짧게 표시하고 상세는 F8로 보낸다. 완료 팝업은 다음 행동을 알리고 불필요한 반복 알림을 남기지 않는다.</p>
 <p>모든 팝업은 불투명 본문·명확한 닫기/확정, 긴 한글은 줄바꿈/스크롤을 사용한다. 주요 HUD는 최소 글자 크기와 화면 확대를 적용하고 긴 도로명은 말줄임/툴팁으로 처리한다. 도움말/TIP/운송 안내/상태계의 겹침을 피한다. 화면 배율이 바뀌어도 지도 좌표/클릭과 핀/경로가 맞아야 한다.</p>

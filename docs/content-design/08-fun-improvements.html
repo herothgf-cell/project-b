@@ -37,11 +37,16 @@ nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;pad
 .filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
 .filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
 .gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+.fixnote{margin:8px 0 14px;padding:8px 14px;border:1px solid var(--line);border-left:5px solid var(--fix);border-radius:0 8px 8px 0;background:var(--card);font-size:14.5px}
+.fixnote ul{margin:4px 0}.fixnote .more{font-size:13px;color:var(--sub)}
+h1 .st,h2 .st,h3 .st,h4 .st,h5 .st,h6 .st{vertical-align:middle;margin-left:6px}
+header.doc .fixsum{color:var(--ink);font-size:14.5px}
+details.toc .fx{color:var(--fix);font-size:12px;font-weight:700;margin-left:4px}
 </style></head>
 <body><div class="wrap">
 <div class="crumb"><a href="index.html">기획서 목록</a> · <a href="README.html">기획 README</a> · <a href="08-fun-improvements.md">원본 md</a></div>
-<header class="doc"><h1>08 운전하는 20분의 재미 보강</h1><p><b>검토용 제안 · 2026-11-23 · 은계 싱글.</b> 장기 동기(계속 영업, 하루 조건, 수첩, 학생 재회)는 <a href="06-day-and-career.html">06</a>과 <a href="00-game-overview.html">00</a>에 이미 설계·구현돼 있다. 지금 비어 있는 쪽은 <b>한 번 출차해서 달리는 20분 안의 재미</b>다. 이 문서는 새 시스템을 늘리기보다 조향, 운임, 호출, 신호 대기 구간을 손보는 안을 모은다. 구현 승인이 아니다.</p></header>
-<details class="toc"><summary>목차 (9)</summary><ol><li class="l2"><a href="#진단">진단</a></li><li class="l2"><a href="#1-운전-감각-고속-조향">1. 운전 감각: 고속 조향</a></li><li class="l3"><a href="#조향-프리셋">조향 프리셋</a></li><li class="l3"><a href="#감각-연출">감각 연출</a></li><li class="l2"><a href="#2-운임과-보상">2. 운임과 보상</a></li><li class="l2"><a href="#3-호출판과-일감-선택">3. 호출판과 일감 선택</a></li><li class="l3"><a href="#호출판-변주와-판단-재료">호출판 변주와 판단 재료</a></li><li class="l3"><a href="#선택형-미션">선택형 미션</a></li><li class="l2"><a href="#4-운전-중-빈-시간">4. 운전 중 빈 시간</a></li><li class="l2"><a href="#5-다음-단계-후보">5. 다음 단계 후보</a></li><li class="l3"><a href="#후보-한눈에-보기">후보 한눈에 보기</a></li><li class="l3"><a href="#51-공차-운영-손님을-내린-다음에-어디로-가나-구-37-2">5.1 공차 운영: 손님을 내린 다음에 어디로 가나 (구 37 §2)</a></li><li class="l3"><a href="#52-길-지식-은계-길을-아는-것이-실력-구-37-3">5.2 길 지식: 은계 길을 아는 것이 실력 (구 37 §3)</a></li><li class="l3"><a href="#53-규칙-속-돌발-정해진-사건이-아닌-규칙-위의-상황-구-37-4">5.3 규칙 속 돌발: 정해진 사건이 아닌 규칙 위의 상황 (구 37 §4)</a></li><li class="l3"><a href="#54-권장-순서-하지-않을-것-검증-질문-구-37-57">5.4 권장 순서, 하지 않을 것, 검증 질문 (구 37 §5~7)</a></li><li class="l3"><a href="#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">5.5 후보 7종 설계 요약과 추천 순서 (2026-11-24, 구현 전)</a></li><li class="l3"><a href="#56-후보-4종-상세-기획-2026-11-24-구현-전">5.6 후보 4종 상세 기획 (2026-11-24, 구현 전)</a></li><li class="l2"><a href="#6-참고한-게임">6. 참고한 게임</a></li><li class="l2"><a href="#7-시험-순서">7. 시험 순서</a></li><li class="l2"><a href="#8-구현-전에-코드에서-확인할-것">8. 구현 전에 코드에서 확인할 것</a></li></ol></details>
+<header class="doc"><h1>08 운전하는 20분의 재미 보강</h1><p><b>검토용 제안 · 2026-11-23 · 은계 싱글.</b> 장기 동기(계속 영업, 하루 조건, 수첩, 학생 재회)는 <a href="06-day-and-career.html">06</a>과 <a href="00-game-overview.html">00</a>에 이미 설계·구현돼 있다. 지금 비어 있는 쪽은 <b>한 번 출차해서 달리는 20분 안의 재미</b>다. 이 문서는 새 시스템을 늘리기보다 조향, 운임, 호출, 신호 대기 구간을 손보는 안을 모은다. 구현 승인이 아니다.</p><p class="fixsum"><span class="st fix">개선 필요 13건</span> <a href="#조향-프리셋">조향 프리셋</a> · <a href="#감각-연출">감각 연출</a> · <a href="#56-후보-4종-상세-기획-2026-11-24-구현-전">5.6 후보 4종 상세 기획 (2026-11-24, 구현 전)</a> · <a href="#2-운임과-보상">2. 운임과 보상</a> · <a href="#호출판-변주와-판단-재료">호출판 변주와 판단 재료</a> · <a href="#선택형-미션">선택형 미션</a> · <a href="#4-운전-중-빈-시간">4. 운전 중 빈 시간</a> · <a href="#5-다음-단계-후보">5. 다음 단계 후보</a> · <a href="#53-규칙-속-돌발-정해진-사건이-아닌-규칙-위의-상황-구-37-4">5.3 규칙 속 돌발: 정해진 사건이 아닌 규칙 위의 상황 (구 37 §4)</a> · <a href="#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">5.5 후보 7종 설계 요약과 추천 순서 (2026-11-24, 구현 전)</a> <span class="more">(<a href="index.html">기획서 목록</a> 기준)</span></p></header>
+<details class="toc"><summary>목차 (9)</summary><ol><li class="l2"><a href="#진단">진단</a></li><li class="l2"><a href="#1-운전-감각-고속-조향">1. 운전 감각: 고속 조향</a></li><li class="l3"><a href="#조향-프리셋">조향 프리셋</a><span class="fx">● 개선 필요</span></li><li class="l3"><a href="#감각-연출">감각 연출</a><span class="fx">● 개선 필요</span></li><li class="l2"><a href="#2-운임과-보상">2. 운임과 보상</a><span class="fx">● 개선 필요</span></li><li class="l2"><a href="#3-호출판과-일감-선택">3. 호출판과 일감 선택</a></li><li class="l3"><a href="#호출판-변주와-판단-재료">호출판 변주와 판단 재료</a><span class="fx">● 개선 필요</span></li><li class="l3"><a href="#선택형-미션">선택형 미션</a><span class="fx">● 개선 필요</span></li><li class="l2"><a href="#4-운전-중-빈-시간">4. 운전 중 빈 시간</a><span class="fx">● 개선 필요</span></li><li class="l2"><a href="#5-다음-단계-후보">5. 다음 단계 후보</a><span class="fx">● 개선 필요</span></li><li class="l3"><a href="#후보-한눈에-보기">후보 한눈에 보기</a></li><li class="l3"><a href="#51-공차-운영-손님을-내린-다음에-어디로-가나-구-37-2">5.1 공차 운영: 손님을 내린 다음에 어디로 가나 (구 37 §2)</a></li><li class="l3"><a href="#52-길-지식-은계-길을-아는-것이-실력-구-37-3">5.2 길 지식: 은계 길을 아는 것이 실력 (구 37 §3)</a></li><li class="l3"><a href="#53-규칙-속-돌발-정해진-사건이-아닌-규칙-위의-상황-구-37-4">5.3 규칙 속 돌발: 정해진 사건이 아닌 규칙 위의 상황 (구 37 §4)</a><span class="fx">● 개선 필요</span></li><li class="l3"><a href="#54-권장-순서-하지-않을-것-검증-질문-구-37-57">5.4 권장 순서, 하지 않을 것, 검증 질문 (구 37 §5~7)</a></li><li class="l3"><a href="#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">5.5 후보 7종 설계 요약과 추천 순서 (2026-11-24, 구현 전)</a><span class="fx">● 개선 필요</span></li><li class="l3"><a href="#56-후보-4종-상세-기획-2026-11-24-구현-전">5.6 후보 4종 상세 기획 (2026-11-24, 구현 전)</a><span class="fx">● 개선 필요</span></li><li class="l2"><a href="#6-참고한-게임">6. 참고한 게임</a></li><li class="l2"><a href="#7-시험-순서">7. 시험 순서</a></li><li class="l2"><a href="#8-구현-전에-코드에서-확인할-것">8. 구현 전에 코드에서 확인할 것</a></li></ol></details>
 <p><b>정리 결정.</b> 이전 기획 37(특별 운행·지도 판매점·주기 정비·소지금 장부·기사 성장)은 개발 범위에서 제외하고 <a href="archive/37-driver-life-and-business.md">보관 문서</a>로 옮겼다. 관리 게이지를 더 늘리지 않는다는 2026-11-19 원칙은 유지한다.</p>
 <h2 id="진단">진단</h2>
 <ol><li><b>보상이 감점 위주다.</b> 운임은 약정 고정액이고, 지각이나 만족도 0이면 0원, 미터기를 안 켜면 절반이다. 잘했을 때의 보너스는 운임의 10%, 최대 500원 수준이다. 잘 몰아도 "안 깎였다"에 그친다.</li><li><b>호출 간 차이가 작다.</b> <a href="04-life-vehicle-economy.html">운임·물가 점검</a>의 첫 호출판 9건이 모두 5,500~8,400원, 1.4km 이내다. 무엇을 골라도 비슷하면 호출 선택이 전략이 되지 않는다.</li><li><b>운전 중 빈 시간이 길다.</b> 2026-11-04 플레이 피드백의 "신호가 허들 같고 지루함"이 남아 있을 가능성이 크다. 자동 주행 기록 한 건은 운송 1건과 귀가에 약 642초가 걸렸다. 사람도 20분에 2~4건이라면 하루의 판단 횟수 자체가 적다.</li><li><b>고속에서 조향이 안 먹는다는 피드백이 있다.</b> 2026-11-20 개선으로 나아졌지만 지금도 남아 있다(2026-11-23 사용자 확인). 아래 1장에서 다룬다.</li></ol>
@@ -58,7 +63,8 @@ nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;pad
 <tr><td>수치는 괜찮은데 둔하게 느껴진다</td><td>작은 조향각은 화면에 잘 안 보인다. 카메라가 조향 방향으로 살짝 먼저 도는 연출, 차체 기울기, 핸들 애니메이션을 넣는다.</td></tr>
 </tbody></table></div>
 <p>수치를 바꾼 뒤에는 사람이 키보드로 직접 차선 변경을 해 본다. 물리가 바뀌면 LAN 버전도 올라간다. 현재 조향 수치의 담당 문서는 <a href="01-driving-and-traffic.html">01</a>이다.</p>
-<h3 id="조향-프리셋">조향 프리셋</h3>
+<h3 id="조향-프리셋">조향 프리셋<span class="st fix">개선 필요</span></h3>
+<div class="fixnote"><span class="st fix">개선 필요</span> 1건 · <a href="index.html">기획서 목록에서 보기</a><ul><li><b>캐주얼/시뮬 조향 프리셋·화면 연출 4종</b> — 구현·배포 · 개선 필요(키보드·패드 체감 미확인, 1.2초 목표는 물리상 불가로 측정만)<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-23-steering-feel-and-build-size.md">기록</a></span></li></ul></div>
 <p><b>2026-11-23 구현(사람 체감 미확인).</b> 캐주얼/시뮬 프리셋과 감각 연출 4종을 넣었다. 코드 대조 결과 횡가속 상한은 보조 쪽이 40km/h부터 5m/s²였다. "1.2초"는 8m/s²에서도 물리적으로 닿지 않아(최소 약 1.32초) 측정값으로 보고한다. 담당 수치는 <a href="01-driving-and-traffic.html#개인-운전-설정">01</a>, 기록은 <a href="../work-history/2026-11-23-steering-feel-and-build-size.md">작업 이력</a>이다.</p>
 <p>수치를 조금씩 올리는 방식은 "나아졌지만 여전히 둔하다"를 반복할 가능성이 크다. 개인 운전 설정에 프리셋 두 개를 두는 안을 제안한다.</p>
 <div class="tw"><table><thead><tr>
@@ -71,7 +77,8 @@ nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;pad
 </tbody></table></div>
 <p>차체 기울기와 전복 여부는 기존 <code>CurveSteeringChecks</code> 방식으로 함께 본다. 프리셋 차이가 PvP 공정성 문제를 만들면 PvP는 한 프리셋으로 고정한다.</p>
 <p>키보드는 조향 입력이 0 또는 100이라 어떤 곡선으로도 한계가 있다. 실물 패드 확인이 여러 작업 이력에서 후속으로 남아 있으므로, 조향 수치를 다시 바꾸기 전에 패드로 한 번 비교한다. 문제가 조향 수치인지 입력 방식인지 여기서 갈린다.</p>
-<h3 id="감각-연출">감각 연출</h3>
+<h3 id="감각-연출">감각 연출<span class="st fix">개선 필요</span></h3>
+<div class="fixnote"><span class="st fix">개선 필요</span> 1건 · <a href="index.html">기획서 목록에서 보기</a><ul><li><b>추가 주행음·패드 진동</b> — 구현·배포 · 개선 필요(실청·실물 패드 미확인)<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-24-drive-sound-rumble.md">기록</a></span></li></ul></div>
 <p><b>2026-11-24 구현(은계 싱글, 사람 체감 미확인):</b> 소리(엔진 부하·타이어 한계·바람, 대사·자막 중 감쇠)와 패드 진동(XInput, 노면·제동·접촉), 감각 탭 0~100%. 새 음원 없이 기존 녹음 가공. <a href="../work-history/2026-11-24-drive-sound-rumble.md">기록</a></p>
 <p>새 콘텐츠 없이 모든 주행의 느낌을 바꾸는 항목이다. 조향 수치보다 먼저 시험할 가치가 있다.</p>
 <div class="tw"><table><thead><tr>
@@ -84,7 +91,8 @@ nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;pad
 <tr><td>소리</td><td>엔진 부하음, 한계 근처의 타이어 소리, 속도에 따른 바람 소리를 기존 실차 녹음 위에 얹는다.</td><td>손님 대사와 라디오 자막이 우선이다.</td></tr>
 <tr><td>패드 진동</td><td>노면, 제동, 접촉에 반응한다.</td><td>설정에서 끌 수 있게 한다.</td></tr>
 </tbody></table></div>
-<h2 id="2-운임과-보상">2. 운임과 보상</h2>
+<h2 id="2-운임과-보상">2. 운임과 보상<span class="st fix">개선 필요</span></h2>
+<div class="fixnote"><span class="st fix">개선 필요</span> 1건 · <a href="index.html">기획서 목록에서 보기</a><ul><li><b>팁·연속 기록·잘한 운전 칭찬(싱글·PvP)</b> — 구현·배포 · 사람 체감·LAN 두 PC 미확인<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-23-tips-streak-praise.md">기록</a></span></li></ul></div>
 <p><b>2026-11-23 구현(사람 체감 미확인):</b> 팁, 연속 기록, 잘한 운전의 즉시 피드백을 넣었다. 싱글과 PvP 모두 적용한다(LAN v25). 살아 있는 미터기는 경제 재조정이 필요해 범위에서 뺐다. 규칙은 <a href="02-passengers-and-fares.html#tips-streak">02</a>, 기록은 <a href="../work-history/2026-11-23-tips-streak-praise.md">작업 이력</a>이다.</p>
 <div class="tw"><table><thead><tr>
 <th>항목</th>
@@ -98,10 +106,12 @@ nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;pad
 </tbody></table></div>
 <h2 id="3-호출판과-일감-선택">3. 호출판과 일감 선택</h2>
 <p>은계는 유로트럭처럼 긴 운송이 아니라 1km 안팎의 짧은 운송이 대부분이다. 그래서 일감 선택의 재미는 <b>호출 사이의 차이</b>와 <b>운송에 얹는 선택형 미션</b>에서 만든다.</p>
-<h3 id="호출판-변주와-판단-재료">호출판 변주와 판단 재료</h3>
+<h3 id="호출판-변주와-판단-재료">호출판 변주와 판단 재료<span class="st fix">개선 필요</span></h3>
+<div class="fixnote"><span class="st fix">개선 필요</span> 1건 · <a href="index.html">기획서 목록에서 보기</a><ul><li><b>호출 카드 판단 재료·성격 4종</b> — 구현·배포 · 사람 체감 미확인<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-23-call-board-variety.md">기록</a></span></li></ul></div>
 <p><b>2026-11-23 구현(은계 싱글, 사람 체감 미확인):</b> 카드 판단 재료와 성격 4종. 연속 배차는 제외. <a href="../work-history/2026-11-23-call-board-variety.md">기록</a></p>
 <ul><li><b>위험과 보상이 다른 호출을 섞는다.</b> 급행(기한 짧고 고액), 큰 짐, 목적지 미공개 길가 손님.</li><li><b>호출 카드에 판단 재료를 넣는다.</b> 운임 외에 픽업까지 거리, 예상 소요 시간, 하차지 주변 수요를 보여 준다. "돈은 적지만 내려 준 곳에 손님이 많다" 같은 선택이 생긴다.</li><li><b>연속 배차.</b> (2026-11-24 구현, 은계 싱글, 사람 체감 미확인: 하차점 400m 안에서 M 지도로 근처 호출 하나를 예약하면 하차 직후 시작, <a href="../work-history/2026-11-24-chained-dispatch.md">기록</a>) 하차 직전에 근처 호출을 미리 잡는다. 공차 시간이 줄고 "한 건만 더"가 생긴다.</li></ul>
-<h3 id="선택형-미션">선택형 미션</h3>
+<h3 id="선택형-미션">선택형 미션<span class="st fix">개선 필요</span></h3>
+<div class="fixnote"><span class="st fix">개선 필요</span> 1건 · <a href="index.html">기획서 목록에서 보기</a><ul><li><b>선택형 미션 4종(급행·초록불·커피·칼정차)</b> — 구현·배포 · 사람 체감 미확인<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-23-optional-missions.md">기록</a></span></li></ul></div>
 <p><b>2026-11-23 구현(은계 싱글, 사람 체감 미확인):</b> 급행·초록불 타기·커피 든 손님·칼정차. <a href="../work-history/2026-11-23-optional-missions.md">기록</a></p>
 <p><b>2026-11-24 구현(은계 싱글, 사람 체감 미확인):</b> 길 아는 기사. 승차 뒤 길안내가 꺼지고, 크게 돌아가거나 L로 길안내를 켜면 벌칙 없이 끝난다. 규칙은 <a href="02-passengers-and-fares.html">02</a>, <a href="../work-history/2026-11-24-know-road-evening-drive-vehicle-feel.md">기록</a>. 버스 따라가기는 5.5에 설계안만 있다.</p>
 <p>순수 타임어택은 넣지 않는다. 1km 안팎 운송에서는 빨간불 한두 번이 실력보다 크고, 과속과 신호 위반을 유도해 법규 준수와 반대 방향이며, 기한을 넘기면 운임 0원인 벌칙이 이미 있다.</p>
@@ -118,10 +128,12 @@ nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;pad
 <tr><td>길 아는 기사</td><td>길안내를 끄고 정확히 도착</td><td>"기사님 길 잘 아시네요"와 팁. 은계 도로를 정밀하게 만든 투자를 회수한다.</td></tr>
 <tr><td>"저 버스 따라가 주세요"</td><td>지정 차량 추적</td><td>드물게 나오는 이벤트성 미션.</td></tr>
 </tbody></table></div>
-<h2 id="4-운전-중-빈-시간">4. 운전 중 빈 시간</h2>
+<h2 id="4-운전-중-빈-시간">4. 운전 중 빈 시간<span class="st fix">개선 필요</span></h2>
+<div class="fixnote"><span class="st fix">개선 필요</span> 1건 · <a href="index.html">기획서 목록에서 보기</a><ul><li><b>정차 중 모아 보기</b> — 구현·배포 · 사람 체감 미확인<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-23-idle-time-last-call.md">기록</a></span></li></ul></div>
 <p><b>2026-11-23 구현(은계 싱글, 사람 체감 미확인):</b> 정차 중 모아 보기와 퇴근 전 마지막 한 콜. <a href="../work-history/2026-11-23-idle-time-last-call.md">기록</a></p>
 <ul><li><b>신호 대기를 숨 고르는 시간으로 바꾼다.</b> 승객 대화 선택지와 다음 호출 미리 보기를 정차 중에 몰아서 보여 준다.</li><li><b>퇴근 전 마지막 한 콜.</b> <a href="00-game-overview.html">학생 재회</a>의 후속안이다. 숙소 복귀 거리와 비교해 한 콜을 더 받을지 고르게 한다. 하루의 클라이맥스가 되므로 우선순위를 올린다.</li></ul>
-<h2 id="5-다음-단계-후보">5. 다음 단계 후보</h2>
+<h2 id="5-다음-단계-후보">5. 다음 단계 후보<span class="st fix">개선 필요</span></h2>
+<div class="fixnote"><span class="st fix">개선 필요</span> 1건 · <a href="index.html">기획서 목록에서 보기</a><ul><li><b>퇴근 후 드라이브</b> — 구현·배포 · <b>개선 필요</b>(드라이브 중 영업 시계·생활거점 버튼이 그대로 보이는 알려진 어색함)<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-24-know-road-evening-drive-vehicle-feel.md">기록</a> · <a href="../work-history/2026-11-24-away-run-3-checklist.md">3차 체크리스트</a></span></li></ul></div>
 <p><b>2026-11-24 정리.</b> 같은 주제를 두 문서가 따로 다루던 <a href="archive/37-driver-judgment-systems.md">기획 37 공차 운영·길 지식·규칙 속 돌발</a>을 이 장으로 합쳤다. 37의 본문(5.1~5.4)은 수치와 표를 그대로 옮겼고, 원문은 보관했다. 08을 남긴 이유는 세 가지다.</p>
 <ol><li><a href="README.html">README</a>의 "새 기획은 새 파일을 만들기 전에 담당 문서의 장으로 넣는다"에 맞춘다. 37은 담당 영역이 없는 독립 파일이었다.</li><li>08은 구현 표시와 시험 순서를 이미 갖고 있어, 같은 후보(승강장, 단속 카메라, 길 지식)를 한 표에서 비교할 수 있다.</li><li>두 문서가 같은 항목에 다른 수치를 적으면 어느 쪽이 기준인지 알 수 없다(예: 내비 없이 운행의 팁).</li></ol>
 <p>채택된 항목은 7장의 규칙대로 담당 기획(01·02·04·05·07)으로 옮긴다.</p>
@@ -237,7 +249,8 @@ nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;pad
 <tr><td>B</td><td>“아는 길로” 요청 + 경유지 요청</td><td>중(경유 판정·대사)</td></tr>
 <tr><td>C</td><td>지름길 기록 탭</td><td>소~중</td></tr>
 </tbody></table></div>
-<h3 id="53-규칙-속-돌발-정해진-사건이-아닌-규칙-위의-상황-구-37-4">5.3 규칙 속 돌발: 정해진 사건이 아닌 규칙 위의 상황 (구 37 §4)</h3>
+<h3 id="53-규칙-속-돌발-정해진-사건이-아닌-규칙-위의-상황-구-37-4">5.3 규칙 속 돌발: 정해진 사건이 아닌 규칙 위의 상황 (구 37 §4)<span class="st fix">개선 필요</span></h3>
+<div class="fixnote"><span class="st fix">개선 필요</span> 1건 · <a href="index.html">기획서 목록에서 보기</a><ul><li><b>유혹("좀 빨리 가 주세요")</b> — <b>구현·배포</b> · 개선 필요(사람 플레이 미확인) · 사례금 조건 결정됨(과속 기록 있으면 없음 유지)<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-24-hurry-temptation.md">기록</a> · <a href="../work-history/2026-11-24-next-bundle-decisions.md">결정</a></span></li></ul></div>
 <p>유혹("좀 밟아 주세요")은 아래 고정 단속 카메라와 한 묶음으로 본다. 기존 신호 무시 요청(<code>RequestKind.RejectIllegal</code>)이 선례다.</p>
 <h4 id="목표-2">목표</h4>
 <p>이미 있는 교통 법규·승객 시스템 위에서 <b>이득과 원칙 사이를 고민</b>하게 만든다. 긴 이벤트 대본 대신 규칙이 상황을 만든다.</p>
@@ -290,7 +303,8 @@ nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;pad
 <tr><td>분실물이 귀찮은 일이 되는가</td><td>“그냥 둔다” 비율과 이유</td></tr>
 </tbody></table></div>
 <p>위치 제어 검사는 규칙 동작만 확인한다. 위 질문은 사람 플레이에서만 답할 수 있다.</p>
-<h3 id="55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">5.5 후보 7종 설계 요약과 추천 순서 (2026-11-24, 구현 전)</h3>
+<h3 id="55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">5.5 후보 7종 설계 요약과 추천 순서 (2026-11-24, 구현 전)<span class="st fix">개선 필요</span></h3>
+<div class="fixnote"><span class="st fix">개선 필요</span> 1건 · <a href="index.html">기획서 목록에서 보기</a><ul><li><b>시외 장거리 콜(A: 암전·시간 경과)</b> — <b>구현·배포</b> · 개선 필요(분당 수입 표본 1개, 피로 증가 체감)<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-24-out-of-town-call.md">기록</a></span></li></ul></div>
 <p>지도·교통 AI·경제에 영향이 큰 일곱 항목을 코드와 지도 자료에 대조해 설계안으로 정리했다. 항목별 한 쪽(필요한 코드 변경 범위, 재사용할 기존 시스템, 위험, 최소 시험판)은 <a href="../work-history/2026-11-24-next-candidates-design.md">설계안</a>에 있다. 구현하지 않았고, 순서와 채택은 사용자 결정이다.</p>
 <p>조사에서 나온 전제: 은계에서는 지금 과속이 판정되지 않고(제한속도 표지 0건), 돈으로 내는 법규 벌금이 없다. 일반 차량은 차로 중심선만 따라가며 추월·비켜 주기·연석 정차가 없다. 버스는 코드와 지도 어디에도 없다. 승차감 판정은 앞뒤 가속도만 본다.</p>
 <div class="tw"><table><thead><tr>
@@ -310,7 +324,8 @@ nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;pad
 <tr><td style="text-align:right">7</td><td>다른 택시와 승강장</td><td>게임 전용 승강장 1곳, 줄 0~3대, 차례가 되면 먼 손님</td><td>중~대</td><td>기다리는 시간이 재미인지 불확실, 대기가 우세 전략이 될 수 있음. 손님을 채 가는 택시는 대 규모</td><td>실제 위치 조사 또는 게임 전용 표기</td></tr>
 </tbody></table></div>
 <p>5.1의 승강장, 5.3의 고정 단속 카메라는 위 7번과 4번의 2차 단계에 해당한다. 수치는 5.1·5.3의 값이 기준이고, 시험판 범위는 이 표가 기준이다.</p>
-<h3 id="56-후보-4종-상세-기획-2026-11-24-구현-전">5.6 후보 4종 상세 기획 (2026-11-24, 구현 전)</h3>
+<h3 id="56-후보-4종-상세-기획-2026-11-24-구현-전">5.6 후보 4종 상세 기획 (2026-11-24, 구현 전)<span class="st fix">개선 필요</span></h3>
+<div class="fixnote"><span class="st fix">개선 필요</span> 4건 · <a href="index.html">기획서 목록에서 보기</a><ul><li><b>제한속도 바탕(확인 구간만: 수인로 60·대은로 50·보호구역 30)</b> — 구현·배포 · 사람 체감 미확인<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-24-eungye-speed-limits.md">구현</a> · <a href="../work-history/2026-11-24-speed-tolerance-and-facility-cards.md">확인 구간·+10 여유</a> · <a href="../work-history/2026-11-24-speed-limit-camera-survey.md">조사</a></span></li><li><b>사고 과실 구분(내 과실/쌍방/상대 과실)</b> — 구현·배포 · 사람 체감 미확인<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-24-accident-fault.md">기록</a> · <a href="../work-history/2026-11-24-play-check-speed-fault.md">확인 목록</a></span></li><li><b>+10 여유 안 사고를 쌍방 과실·추가 감점 5</b> — 구현·배포 · 사람 체감 미확인<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-24-speed-tolerance-and-facility-cards.md">기록</a></span></li><li><b>돌발 1차(문 여는 정차 차량, 끼어드는 차)</b> — 구현·배포 · 개선 필요(자동 발생 빈도·사람 체감 미확인, 회피 시 중앙선 기록 여부 미확인)<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-24-road-surprises-1.md">기록</a></span></li></ul></div>
 <p>사용자 요청으로 5.5의 네 항목(돌발 상황, 도로 구간, 시외 콜, 유혹과 단속 카메라)을 범위를 넓혀 상세 기획했다. 전문은 <a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획</a>에 있다. 구현하지 않았다.</p>
 <div class="tw"><table><thead><tr>
 <th>항목</th>

@@ -37,11 +37,17 @@ nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;pad
 .filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
 .filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
 .gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+.fixnote{margin:8px 0 14px;padding:8px 14px;border:1px solid var(--line);border-left:5px solid var(--fix);border-radius:0 8px 8px 0;background:var(--card);font-size:14.5px}
+.fixnote ul{margin:4px 0}.fixnote .more{font-size:13px;color:var(--sub)}
+h1 .st,h2 .st,h3 .st,h4 .st,h5 .st,h6 .st{vertical-align:middle;margin-left:6px}
+header.doc .fixsum{color:var(--ink);font-size:14.5px}
+details.toc .fx{color:var(--fix);font-size:12px;font-weight:700;margin-left:4px}
 </style></head>
 <body><div class="wrap">
 <div class="crumb"><a href="../index.html">기획서 목록</a> · <a href="../README.html">기획 README</a> · <a href="README.html">PvP 목록</a> · <a href="30-native-lan.md">원본 md</a></div>
-<header class="doc"><h1>기존 시뮬레이션 기반 LAN 사람 대전</h1><p>2026-11-23 팁·연속 기록·운전 칭찬 상태를 복제하면서 통합 실행본의 호환 계약은 <b><code>native-city-lan-v25</code></b>다(v24: 개인 운전 감각). PvP의 모든 차는 시뮬 조향을 쓰므로 경기 물리는 v23과 같지만, 서로 다른 조향 코드의 실행본이 섞이지 않도록 올렸다. 호스트와 참가자가 같은 물리로 운전 입력을 계산하도록 양쪽 실행 폴더를 갱신한다. 기존 개인 조향·브레이크 설정과 승객 프리셋·특성 동기화를 사용한다. 승객 제작 범위는 <a href="../03-passenger-content.html">프리셋 기획15</a>와 <a href="../03-passenger-content.html">개별 설정16</a>을 따른다.</p></header>
+<header class="doc"><h1>기존 시뮬레이션 기반 LAN 사람 대전</h1><p>2026-11-23 팁·연속 기록·운전 칭찬 상태를 복제하면서 통합 실행본의 호환 계약은 <b><code>native-city-lan-v25</code></b>다(v24: 개인 운전 감각). PvP의 모든 차는 시뮬 조향을 쓰므로 경기 물리는 v23과 같지만, 서로 다른 조향 코드의 실행본이 섞이지 않도록 올렸다. 호스트와 참가자가 같은 물리로 운전 입력을 계산하도록 양쪽 실행 폴더를 갱신한다. 기존 개인 조향·브레이크 설정과 승객 프리셋·특성 동기화를 사용한다. 승객 제작 범위는 <a href="../03-passenger-content.html">프리셋 기획15</a>와 <a href="../03-passenger-content.html">개별 설정16</a>을 따른다.</p><p class="fixsum"><span class="st fix">개선 필요 1건</span> 문서 전체 1건 <span class="more">(<a href="../index.html">기획서 목록</a> 기준)</span></p></header>
 <details class="toc" open><summary>목차 (10)</summary><ol><li class="l2"><a href="#콘텐츠권한">콘텐츠·권한</a></li><li class="l2"><a href="#접속-방법">접속 방법</a></li><li class="l2"><a href="#구현-계약">구현 계약</a></li><li class="l2"><a href="#지도">지도</a></li><li class="l2"><a href="#검증-기준">검증 기준</a></li><li class="l2"><a href="#참가자-표시복원-성능-후속-2026-11-02">참가자 표시·복원 성능 후속 (2026-11-02)</a></li><li class="l2"><a href="#참가자-알림작은-표시-끊김-후속-2026-11-02">참가자 알림·작은 표시 끊김 후속 (2026-11-02)</a></li><li class="l2"><a href="#닉네임과-짧은-경기">닉네임과 짧은 경기</a></li><li class="l2"><a href="#참가자-자기-차-예측보정-2026-11-04-구현-기록">참가자 자기 차 예측·보정 (2026-11-04 구현 기록)</a></li><li class="l2"><a href="#내-차-외형과-v17-2026-11-10">내 차 외형과 v17 (2026-11-10)</a></li></ol></details>
+<div class="fixnote"><span class="st fix">개선 필요</span> 문서 전체 1건 · <a href="../index.html">기획서 목록에서 보기</a><ul><li><b>LAN 최대 4명(v25)</b> — 구현·배포 · <b>개선 필요</b>(다른 PC·사람 4인·지연/손실 수용 미확인)<br><span class="more">근거·남은 것: <a href="../../work-history/2026-11-12-pvp-lan-room-list.md">LAN 방 목록</a> · <a href="../../work-history/2026-11-12-pvp-stability-performance.md">안정성</a></span></li></ul></div>
 <p>호스트는 선택지의 즉시/운행 중/종료 S·피로, 사고 종류/등급·비용/시간/운전 점수·손상/공업사 복귀, 신호 상태를 확정·복제한다. 재접속으로 효과/손상/청구를 재지급하지 않는다. <a href="../02-passengers-and-fares.html">선택 효과</a>·<a href="../04-life-vehicle-economy.html">사고</a>·<a href="../01-driving-and-traffic.html#개인-운전-설정">개인 운전 설정</a>을 따른다.</p>
 <p>2026-11-02. 사용자 선택은 같은 공유기·직접 IPv4부터, 최대4명·빈자리 봇이다. 기존 평면 시험장 네트워크가 아니라 현재 A2 도시·WheelCollider·싱글 공통 승객/법규/내구도/시설을 연결한다. 인터넷 중계·계정·SDK 설치는 추가하지 않는다.</p>
 <h2 id="콘텐츠권한">콘텐츠·권한</h2>

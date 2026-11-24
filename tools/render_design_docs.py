@@ -345,6 +345,11 @@ nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;pad
 .filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
 .filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
 .gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+.fixnote{margin:8px 0 14px;padding:8px 14px;border:1px solid var(--line);border-left:5px solid var(--fix);border-radius:0 8px 8px 0;background:var(--card);font-size:14.5px}
+.fixnote ul{margin:4px 0}.fixnote .more{font-size:13px;color:var(--sub)}
+h1 .st,h2 .st,h3 .st,h4 .st,h5 .st,h6 .st{vertical-align:middle;margin-left:6px}
+header.doc .fixsum{color:var(--ink);font-size:14.5px}
+details.toc .fx{color:var(--fix);font-size:12px;font-weight:700;margin-left:4px}
 """
 
 FILTER_JS = """
@@ -387,6 +392,108 @@ def index_heading_hook(text):
         ("ok", "구현·배포"), ("src", "구현·소스"), ("prog", "진행 중"), ("wait", "미결"), ("hold", "보류·제외"), ("fix", "개선 필요")])
 
 
+# ---------------------------------------------------------------- 개선 필요 표시
+# INDEX의 "항목 | 기획 위치 | 상태 | 근거" 표에서 상태가 개선 필요(INDEX 필터의 fix와 같은 기준)인 줄을
+# 기획 위치 링크가 가리키는 문서의 장 제목 아래에 표시한다. 기준은 INDEX 하나다.
+MD_LINK = re.compile(r"\[((?:[^\[\]]|\[[^\]]*\])*)\]\(([^)\s]+)\)")
+
+
+def is_fix(raw):
+    return any(key in raw for key, kind, _ in BADGES if kind == "fix")
+
+
+def rebase_links(md, from_dir, to_dir):
+    def sub(m):
+        href = m.group(2)
+        if re.match(r"^[a-z]+:", href) or href.startswith("#"):
+            return m.group(0)
+        path, sep, frag = href.partition("#")
+        tgt = os.path.normpath(os.path.join(from_dir, urllib.parse.unquote(path)))
+        new = os.path.relpath(tgt, to_dir).replace(os.sep, "/")
+        if path.endswith("/") and not new.endswith("/"):
+            new += "/"
+        return "[%s](%s%s%s)" % (m.group(1), urllib.parse.quote(new), sep, frag)
+    return MD_LINK.sub(sub, md)
+
+
+def collect_fix_notes(index_text, all_paths):
+    notes = {}
+    lines = index_text.replace("\r\n", "\n").split("\n")
+    header = None
+    for k, line in enumerate(lines):
+        if not line.strip().startswith("|"):
+            header = None
+            continue
+        if header is None:
+            if is_table_start(lines, k):
+                header = [c.strip() for c in split_row(line)]
+            continue
+        if re.match(r"^\s*\|[\s:|-]+\|\s*$", line):
+            continue
+        if len(header) < 4 or header[1] != "기획 위치":
+            continue
+        cells = [c.strip() for c in split_row(line)]
+        if len(cells) < 4 or not is_fix(cells[2]):
+            continue
+        seen = set()
+        for m in MD_LINK.finditer(cells[1]):
+            path, _, frag = m.group(2).partition("#")
+            tgt = os.path.normpath(os.path.join(CD, urllib.parse.unquote(path))).replace(os.sep, "/")
+            if tgt not in all_paths or tgt == CD + "/INDEX.md" or (tgt, frag) in seen:
+                continue
+            seen.add((tgt, frag))
+            notes.setdefault(tgt, []).append({"frag": urllib.parse.unquote(frag), "item": cells[0],
+                                              "status": cells[2], "evidence": cells[3]})
+    return notes
+
+
+def note_li(n, path, ctx):
+    d = os.path.dirname(path)
+    return "<li><b>%s</b> — %s<br><span class=\"more\">근거·남은 것: %s</span></li>" % (
+        inline(rebase_links(n["item"], CD, d), ctx), inline(rebase_links(n["status"], CD, d), ctx),
+        inline(rebase_links(n["evidence"], CD, d), ctx))
+
+
+def apply_fix_notes(body, notes, path, ctx):
+    """본문에 표시를 넣고 (본문, 표시한 제목 id 목록, 머리말 요약)을 돌려준다."""
+    if not notes:
+        return body, set(), ""
+    head_re = re.compile(r'<h([1-6]) id="([^"]*)">')
+    by_head, order, loose = {}, [], []
+    for n in notes:
+        hm = None
+        if n["frag"]:
+            m = re.search(r'id="%s"' % re.escape(n["frag"]), body)
+            if m:
+                hm = head_re.search(body, body.rfind("<", 0, m.start()))
+        if not hm:
+            loose.append(n)
+            continue
+        hid = hm.group(2)
+        if hid not in by_head:
+            by_head[hid] = []
+            order.append(hid)
+        by_head[hid].append(n)
+    index_href = rel(path, out_name(CD + "/INDEX.md"))
+    titles = {}
+    for hid in order:
+        hm = re.search(r'<h([1-6]) id="%s">' % re.escape(hid), body)
+        close = body.find("</h%s>" % hm.group(1), hm.end())
+        titles[hid] = re.sub(r"<[^>]+>", "", body[hm.end():close]).strip()
+        box = '<div class="fixnote"><span class="st fix">개선 필요</span> %d건 · <a href="%s">기획서 목록에서 보기</a><ul>%s</ul></div>' % (
+            len(by_head[hid]), index_href, "".join(note_li(n, path, ctx) for n in by_head[hid]))
+        body = body[:close] + '<span class="st fix">개선 필요</span>' + body[close:close + 5] + "\n" + box + body[close + 5:]
+    if loose:
+        body = '<div class="fixnote"><span class="st fix">개선 필요</span> 문서 전체 %d건 · <a href="%s">기획서 목록에서 보기</a><ul>%s</ul></div>\n' % (
+            len(loose), index_href, "".join(note_li(n, path, ctx) for n in loose)) + body
+    links = ['<a href="#%s">%s</a>' % (hid, html.escape(titles[hid])) for hid in order]
+    if loose:
+        links.insert(0, "문서 전체 %d건" % len(loose))
+    summary = '<p class="fixsum"><span class="st fix">개선 필요 %d건</span> %s <span class="more">(<a href="%s">기획서 목록</a> 기준)</span></p>' % (
+        len(notes), " · ".join(links), index_href)
+    return body, set(order), summary
+
+
 def neighbours(path, all_paths):
     same = [p for p in all_paths if os.path.dirname(p) == os.path.dirname(path)
             and re.match(r"^\d\d-", os.path.basename(p))]
@@ -405,7 +512,7 @@ def rel(frm, to):
     return urllib.parse.quote(os.path.relpath(to, os.path.dirname(frm)).replace(os.sep, "/"))
 
 
-def page(path, text, all_paths, texts):
+def page(path, text, all_paths, texts, fix_notes=None):
     ctx = Ctx(path, set(all_paths))
     is_index = os.path.basename(path) == "INDEX.md"
     hooks = {"row": index_row_hook, "heading": index_heading_hook} if is_index else {}
@@ -427,6 +534,7 @@ def page(path, text, all_paths, texts):
     r = Renderer(ctx, hooks)
     r.ids[slug(title)] = 1  # h1 자리 id 예약(GitHub와 같은 번호 매김)
     body = r.render(lines)
+    body, fixed, fixsum = apply_fix_notes(body, (fix_notes or {}).get(path, []), path, ctx)
 
     idx = CD + "/INDEX.md"
     readme = CD + "/README.md"
@@ -440,7 +548,8 @@ def page(path, text, all_paths, texts):
     if len(r.toc) >= 3 and not is_index:
         toc = '<details class="toc"%s><summary>목차 (%d)</summary><ol>%s</ol></details>' % (
             " open" if len(r.toc) <= 14 else "", len([t for t in r.toc if t[0] == 2]) or len(r.toc),
-            "".join('<li class="l%d"><a href="#%s">%s</a></li>' % (lv, hid, html.escape(t)) for lv, hid, t in r.toc))
+            "".join('<li class="l%d"><a href="#%s">%s</a>%s</li>' % (lv, hid, html.escape(t), '<span class="fx">● 개선 필요</span>' if hid in fixed else "")
+                    for lv, hid, t in r.toc))
     filt = ""
     if is_index:
         filt = '<div class="filter">%s</div>' % "".join(
@@ -464,13 +573,13 @@ def page(path, text, all_paths, texts):
 <title>%s</title><style>%s</style></head>
 <body><div class="wrap">
 <div class="crumb">%s</div>
-<header class="doc"><h1>%s</h1>%s%s</header>
+<header class="doc"><h1>%s</h1>%s%s%s</header>
 %s
 %s
 %s
 <p class="gen">이 페이지는 <code>%s</code>에서 <code>python tools/render_design_docs.py</code>로 만든다. 내용은 md를 고친다.</p>
 </div>%s</body></html>
-""" % (html.escape(title), CSS, " · ".join(crumbs), inline(title, ctx), lead_html, filt, toc, body, foot,
+""" % (html.escape(title), CSS, " · ".join(crumbs), inline(title, ctx), lead_html, fixsum, filt, toc, body, foot,
        html.escape(path), "<script>%s</script>" % FILTER_JS if is_index else "")
 
 
@@ -495,15 +604,19 @@ def main(argv):
         st = subprocess.run(["git", "-C", ROOT, "-c", "core.quotepath=off", "status", "--porcelain", "--", CD],
                             capture_output=True).stdout.decode("utf-8").splitlines()
         dirty = {l[3:] for l in st if l[:2] != "??" and l[:2].strip() and l[3:].endswith(".html")}
+    idx = CD + "/INDEX.md"
+    fix_notes = collect_fix_notes(texts[idx], set(all_paths)) if texts.get(idx) else {}
     written, skipped = 0, []
     for p in all_paths:
         if out_name(p) in dirty:
             skipped.append(out_name(p))
             continue
         out = os.path.join(ROOT, out_name(p))
-        open(out, "w", encoding="utf-8", newline="\n").write(page(p, texts[p], all_paths, texts))
+        open(out, "w", encoding="utf-8", newline="\n").write(page(p, texts[p], all_paths, texts, fix_notes))
         written += 1
     print("wrote %d html files%s" % (written, " from " + rev if rev else ""))
+    for p in sorted(fix_notes):
+        print("개선 필요 %s: %d" % (p, len(fix_notes[p])))
     for s in skipped:
         print("skipped (uncommitted changes):", s)
 
