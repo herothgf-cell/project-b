@@ -15,7 +15,7 @@ public sealed class RideCompletionPanel:MonoBehaviour {
  public void Close(){if(!Open)return;Open=false;if(PvpNativeLan.RunningOnline){session.paused=false;Time.timeScale=1;return;}session.paused=previousPause;Time.timeScale=(session.business.ShowingSummary||previousPause)?0:previousScale>0?previousScale:1;}
  public static string Duration(float value){int seconds=Mathf.CeilToInt(Mathf.Max(0,value));return seconds/60+"분 "+(seconds%60)+"초";}
  public string Receipt {get{return Result==null?"":RideReceiptSummary.Money(Result);}}
- public int PortraitIndex {get{if(Result!=null&&!string.IsNullOrEmpty(Result.reunionLine))return PassengerDialogueUI.PortraitIndex(session.business.Logbook.studentFirstOffer,session.business.Logbook.studentFirstTrip);return PassengerDialogueUI.PortraitIndex(Result==null?null:Result.offerId,Result==null?null:Result.tripId);}}
+ public int PortraitIndex {get{if(Result!=null&&!string.IsNullOrEmpty(Result.reunionLine))return PassengerPresentation.Persona(PassengerDialogueUI.StudentIdentity(session.business.Logbook)).portrait;return PassengerPresentation.Persona(PassengerPresentation.Identity(PassengerDialogueUI.PortraitIdentity(Result==null?null:Result.offerId,Result==null?null:Result.tripId),Result==null?null:Result.storyId)).portrait;}}
  public bool CanOpenFacilities {get{return Open&&session&&session.services&&session.business&&session.business.ledger!=null&&!session.jobs.Active&&!session.business.ledger.Care.Damage.Disabled&&!session.business.ShowingSummary&&session.business.ledger.State==BusinessState.Open&&(!session.simulationMatch||!session.simulationMatch.Finished);}}
  public bool TryOpenFacilities(){
   if(!CanOpenFacilities)return false;Close();

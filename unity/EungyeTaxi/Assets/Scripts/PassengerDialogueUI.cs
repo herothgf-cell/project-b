@@ -9,8 +9,13 @@ public static class PassengerDialogueUI {
  public static string EffectText(string effect){return string.IsNullOrEmpty(effect)||effect=="효과 없음"?"효과 없음":"효과 · "+effect;}
  // Existing offer identity survives boarding, route changes, save/restore and LAN replication.
  public static string PortraitIdentity(string offerId,string tripId){return !string.IsNullOrEmpty(offerId)?offerId:!string.IsNullOrEmpty(tripId)?tripId:"passenger";}
- public static string PortraitIdentity(DriveSession session){return PortraitIdentity(session&&session.jobs?session.jobs.OfferId:null,session&&session.law?session.law.tripId:null);}
- public static int PortraitIndex(string offerId,string tripId){return CasualUI.PortraitVariant(PortraitIdentity(offerId,tripId));}
+ public static string PortraitIdentity(DriveSession session){
+  var offer=session&&session.jobs?session.jobs.current:null;
+  // The returning student is the same person as the first last-train ride.
+  if(offer!=null&&offer.reunionKind!=0&&session.business)return StudentIdentity(session.business.Logbook);
+  return PassengerPresentation.Identity(PortraitIdentity(session&&session.jobs?session.jobs.OfferId:null,session&&session.law?session.law.tripId:null),offer==null?null:offer.storyId);}
+ public static string StudentIdentity(CampaignLogbook book){return PassengerPresentation.Identity(PortraitIdentity(book==null?null:book.studentFirstOffer,book==null?null:book.studentFirstTrip),"last-train");}
+ public static int PortraitIndex(string offerId,string tripId){return PassengerPresentation.Persona(PortraitIdentity(offerId,tripId)).portrait;}
  static GUIStyle heading,body,small,button,speech;
  static Vector2 scroll;static string scrollDialogue="";static int lastDialogueFrame=-2;
  // All coordinates returned here use the same scaled GUI space as Draw.

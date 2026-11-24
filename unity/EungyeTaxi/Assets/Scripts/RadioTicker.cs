@@ -174,7 +174,7 @@ public sealed class RadioTicker : MonoBehaviour {
         var badge = new Rect(6, 5, 90, 28);
         CasualUI.RoundedFill(badge, CasualUI.Amber);
         if(speaking){
-            CasualUI.Portrait(new Rect(7,5,28,28),PassengerDialogueUI.PortraitIndex(session.business.Logbook.studentFirstOffer,session.business.Logbook.studentFirstTrip));
+            CasualUI.Portrait(new Rect(7,5,28,28),PassengerPresentation.Persona(PassengerDialogueUI.StudentIdentity(session.business.Logbook)).portrait);
             badge.x+=26;badge.width-=26;
         }
         GUI.Label(badge, speaking?"학생":ContentTuning.Text("radio.station", "은계 FM"), stationStyle);

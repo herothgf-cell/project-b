@@ -103,7 +103,11 @@ public sealed class SpeedLimitProbe : MonoBehaviour {
    sec=SpeedLimitSections.For(s.traffic);signs=s.GetComponent<SpeedLimitSigns>();
    Check(sec!=null&&sec.segments.Any(x=>x.school&&x.kmh==30)&&sec.segments.Any(x=>!x.school&&x.kmh==60)&&!sec.segments.Any(x=>!x.school&&x.kmh==50),"map sections: school 30 and 수인로 60 stretches, no 대은로 50 ("+(sec==null?0:sec.segments.Count)+" segments)");
    Check(sec.signs.Count>0&&sec.signs.All(m=>m.from!=m.to)&&sec.signs.Any(m=>m.to==0)&&sec.signs.Any(m=>m.school&&m.to==30),"section signs: starts and ends, each a real change ("+sec.signs.Count+" signs, "+sec.marks.Count+" lane marks)");
-   Check(signs&&signs.SignCount==sec.signs.Count&&signs.PaintQuads>0,"road-side signs built ("+(signs?signs.SignCount:0)+") and school-zone red paint ("+(signs?signs.PaintQuads:0)+" quads)");
+   Check(signs&&signs.SignCount+signs.Skipped==sec.signs.Count&&signs.SignCount>=sec.signs.Count*.7f,"road-side signs built ("+(signs?signs.SignCount:0)+" of "+sec.signs.Count+", skipped without sidewalk "+(signs?signs.Skipped:0)+")");
+   // Round 5: every sign stands on the sidewalk, off the carriageway and clear of crosswalks; no red paint.
+   int offWalk=-1;if(signs){offWalk=0;for(int i=0;i<signs.Placed.Count;i++)if(!SpeedLimitSigns.Sidewalk(s.world.map,signs.Placed[i])||!SpeedLimitSigns.ClearOfCrossings(s.world.map,s.traffic,signs.Placed[i],signs.PlacedForward[i]))offWalk++;}
+   Check(offWalk==0,"signs on the sidewalk, clear of crosswalks ("+offWalk+" off)");
+   Check(GameObject.Find("어린이보호구역 적색 포장")==null,"no red school-zone paint");
    var zone=RoadSpeedLimits.Data.zones.OrderBy(z=>(z.x-796.3f)*(z.x-796.3f)+(z.z-104.3f)*(z.z-104.3f)).First();
    entry=sec.signs.Where(m=>m.school&&m.to==30&&m.from==0).OrderBy(m=>(new Vector2(m.position.x-zone.x,m.position.z-zone.z)).sqrMagnitude).First();
    report.AppendLine("INFO 은빛초 entry sign at "+entry.position.x.ToString("0.0")+","+entry.position.z.ToString("0.0")+" heading "+entry.forward.x.ToString("0.00")+","+entry.forward.z.ToString("0.00"));
@@ -111,6 +115,12 @@ public sealed class SpeedLimitProbe : MonoBehaviour {
   if(error!=null){Finish(error);yield break;}
   Pose(entry.position-entry.forward*22,entry.forward);yield return new WaitForSeconds(1.2f);
   ScreenCapture.CaptureScreenshot(Path.Combine(output,"school-zone-entry.png"));yield return null;
+  // Round 5 captures: a section end (해제표지) and a road limit start, seen from the lane 20 m before each.
+  foreach(var pick in new[]{"end","road"}){
+   var list=signs.PlacedMarks.Where(m=>pick=="end"?m.to<=0&&m.school:m.to>30).ToList();if(list.Count==0){report.AppendLine("INFO no "+pick+" sign placed");continue;}
+   var at=list.OrderBy(m=>(new Vector2(m.position.x-entry.position.x,m.position.z-entry.position.z)).sqrMagnitude).First();
+   Pose(at.position-at.forward*20,at.forward);yield return new WaitForSeconds(1.2f);
+   ScreenCapture.CaptureScreenshot(Path.Combine(output,"sign-"+pick+".png"));yield return null;yield return null;}
   // School zones reach 40 m since round 4, so the lane inside can be short: step the taxi across the sign instead of driving it.
   Pose(entry.position-entry.forward*12,entry.forward);yield return new WaitForSeconds(1f);Pose(entry.position+entry.forward*4,entry.forward);yield return new WaitForSeconds(1.5f);
   try{Check(s.law.CurrentLimit==30,"driving past the entry sign reads 30 (read "+s.law.CurrentLimit+")");Check(signs.Notice.Contains("어린이보호구역"),"entering shows the school-zone notice ("+signs.Notice+")");}catch(Exception e){error=e.ToString();}

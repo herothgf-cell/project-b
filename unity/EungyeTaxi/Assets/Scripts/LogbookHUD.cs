@@ -207,7 +207,7 @@ public static class LogbookHUD {
    }
    if(GUI.Button(card,GUIContent.none,button)){selectedPreset=preset.id;detailScroll=Vector2.zero;}
    float imageSize=Mathf.Min(40,card.height-16);
-   CasualUI.Portrait(new Rect(card.x+8,card.center.y-imageSize*.5f,imageSize,imageSize),CasualUI.PortraitVariant(preset.id));
+   CasualUI.Portrait(new Rect(card.x+8,card.center.y-imageSize*.5f,imageSize,imageSize),PassengerPresentation.PresetPersona(preset.id).portrait);
    var name=new Rect(card.x+54,card.y+4,card.width-62,card.height-8);
    GUI.Label(name,new GUIContent(UiReadability.Ellipsis(preset.name,cardTitle,name.width),preset.name),cardTitle);
    if(selectedPreset==preset.id){

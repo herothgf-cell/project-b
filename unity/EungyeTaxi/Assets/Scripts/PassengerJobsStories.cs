@@ -53,6 +53,8 @@ public partial class PassengerJobs {
    var pool=(PassengerType)Enum.Parse(typeof(PassengerType),preset.pool);
    if(!care.CanReserveStoryPassenger(current.candidateSeed,pool))continue;
    if(reserved==null&&book.studentDay==0&&story.id!="last-train"&&assignments>=dailyLimit-1)continue;
+   // The caller's face was already shown on the way to the pickup; prefer stories that fit it (round 5).
+   if(reserved==null&&story.id!="last-train"&&!PassengerPresentation.Fits(PassengerPresentation.Persona(PassengerDialogueUI.PortraitIdentity(OfferId,session.law?session.law.tripId:null)).portrait,story.id))continue;
    double weight=story.Weight(business.DayCondition);
    if(weight<=0)continue;
    if(story.id=="last-train"&&book.studentDay==0&&evening){candidates.Clear();weights.Clear();candidates.Add(story);weights.Add(weight);total=weight;break;}

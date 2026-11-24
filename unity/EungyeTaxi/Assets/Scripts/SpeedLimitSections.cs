@@ -78,10 +78,10 @@ public sealed class SpeedLimitSections {
  }
 }
 
-// Road-side signs and red school-zone paint for the sections above, plus a short notice when the limit changes.
+// Road-side signs for the sections above, plus a short notice when the limit changes.
 public sealed class SpeedLimitSigns:MonoBehaviour {
  public DriveSession session;
- bool built;int attempts;public int SignCount {get;private set;}public int PaintQuads {get;private set;}
+ bool built;int attempts;public int SignCount {get;private set;}
  float shownLimit=-1,pendingLimit=-1,pendingSince,noticeUntil;string notice="";bool noticeSchool,noticeEnd;
  public string Notice {get{return Time.unscaledTime<noticeUntil?notice:"";}}
  void Update(){
@@ -105,35 +105,93 @@ public sealed class SpeedLimitSigns:MonoBehaviour {
    GUI.Label(new Rect(r.x+58,r.y,r.width-66,r.height),text,DrivingHudArt.Text(19,Color.white,true));
   }finally{GUI.matrix=prior;}
  }
+ // 2026-11-24 play-test round 5: signs stood on crosswalks and in the carriageway (a fixed 3.1 m from the lane
+ // centre), and the red school-zone paint is gone. Each sign now looks for a sidewalk spot beside the section
+ // start, clear of junction crosswalks and OSM crossings, and is skipped when there is none.
+ public readonly List<Vector3> Placed=new List<Vector3>(),PlacedForward=new List<Vector3>();public readonly List<SpeedLimitSections.Mark> PlacedMarks=new List<SpeedLimitSections.Mark>();public int Skipped {get;private set;}
  void Build(SpeedLimitSections s){
   var root=new GameObject("제한속도 구간 표지").transform;root.SetParent(transform,false);
-  var red=WorldBuilder.Mat("제한속도 표지 적색",new Color(.80f,.10f,.10f));var white=WorldBuilder.Mat("제한속도 표지 백색",new Color(.97f,.97f,.95f));var grey=WorldBuilder.Mat("제한속도 해제 회색",new Color(.45f,.47f,.50f));var pole=WorldBuilder.Mat("제한속도 지주",new Color(.55f,.57f,.60f));var ink=WorldBuilder.Mat("제한속도 해제 사선",new Color(.12f,.12f,.14f));
-  foreach(var m in s.signs){Sign(root,m,red,white,grey,pole,ink);SignCount++;}
-  // School-zone stretches get red pavement, the usual Korean marking, so the start and end are visible on the road.
-  var verts=new List<Vector3>();var tris=new List<int>();
-  foreach(var seg in s.segments){if(!seg.school)continue;var f=SpeedLimitSections.Flat(seg.b-seg.a);var side=SpeedLimitSections.Right(f)*1.5f;int i=verts.Count;
-   verts.Add(Ground(seg.a-side));verts.Add(Ground(seg.a+side));verts.Add(Ground(seg.b+side));verts.Add(Ground(seg.b-side));// One face whose normal points up (two faces cancel in RecalculateNormals and paint black).
-   bool up=Vector3.Cross(verts[i+1]-verts[i],verts[i+2]-verts[i]).y>0;tris.AddRange(up?new[]{i,i+1,i+2,i,i+2,i+3}:new[]{i,i+2,i+1,i,i+3,i+2});PaintQuads++;}
-  if(verts.Count>0){var mesh=new Mesh{name="어린이보호구역 적색 포장",indexFormat=UnityEngine.Rendering.IndexFormat.UInt32};mesh.SetVertices(verts);mesh.SetTriangles(tris,0);mesh.RecalculateNormals();mesh.RecalculateBounds();
-   var paint=new GameObject("어린이보호구역 적색 포장");paint.transform.SetParent(root,false);paint.AddComponent<MeshFilter>().sharedMesh=mesh;var mr=paint.AddComponent<MeshRenderer>();mr.sharedMaterial=WorldBuilder.Mat("어린이보호구역 포장",new Color(.66f,.20f,.17f));mr.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;}
+  var m=new SignMaterials{
+   red=WorldBuilder.Mat("규제표지 적색",new Color(.725f,.125f,.13f)),white=WorldBuilder.Mat("표지 백색",new Color(.92f,.92f,.92f)),
+   ink=WorldBuilder.Mat("표지 흑색",new Color(.15f,.15f,.15f)),blue=WorldBuilder.Mat("지시표지 청색",new Color(0f,.286f,.545f)),
+   pole=WorldBuilder.Mat("표지 지주",new Color(.62f,.64f,.66f))};
+  var map=session&&session.world?session.world.map:null;
+  foreach(var mark in s.signs){Vector3 at;if(!Spot(map,session.traffic,mark,out at)){Skipped++;continue;}Sign(root,mark,at,m);Placed.Add(at);PlacedForward.Add(mark.forward);PlacedMarks.Add(mark);SignCount++;}
  }
- // The lane line is the lane centre at graph height; the drawn road surface can sit a little higher. Paint just above what is there.
- static Vector3 Ground(Vector3 p){RaycastHit hit;if(Physics.Raycast(p+Vector3.up*2.5f,Vector3.down,out hit,5f,~(1<<8),QueryTriggerInteraction.Ignore)&&!hit.collider.attachedRigidbody)p.y=Mathf.Max(p.y,hit.point.y);return p+Vector3.up*.06f;}
+ struct SignMaterials {public Material red,white,ink,blue,pole;}
+ public static bool Sidewalk(MapData map,Vector3 p){
+  if(map==null)return true;
+  if(RoadsidePlacement.OnRoad(map,p,.35f)||RoadsidePlacement.InBuilding(map,p))return false;
+  return !ProjectMapScene.Active(map)||ProjectMapScene.OnArea(map,p,true)&&ProjectMapScene.OnArea(map,p+Vector3.forward*.25f,true)&&ProjectMapScene.OnArea(map,p-Vector3.forward*.25f,true)&&ProjectMapScene.OnArea(map,p+Vector3.right*.25f,true)&&ProjectMapScene.OnArea(map,p-Vector3.right*.25f,true);
+ }
+ public static bool ClearOfCrossings(MapData map,TrafficSystem traffic,Vector3 p,Vector3 forward){
+  if(traffic)foreach(var j in traffic.junctions){if(j==null||j.halfWidth==null||j.halfWidth.Length<2)continue;float reach=Mathf.Max(j.halfWidth[0],j.halfWidth[1])+TrafficJunction.CrosswalkCentreOffset+TrafficJunction.CrosswalkDepth+3;var d=p-j.center;d.y=0;if(d.sqrMagnitude<reach*reach)return false;}
+  if(map!=null&&map.osmCrossings!=null)foreach(var c in map.osmCrossings){var d=p-new Vector3(c.x,p.y,c.z);float half=Mathf.Max(2,c.width*.5f)+2;if(Mathf.Abs(Vector3.Dot(d,forward))<half&&d.magnitude<25)return false;}
+  return true;
+ }
+ // Just past the change point, on the right-hand sidewalk; then a little further on or just before it.
+ public static bool Spot(MapData map,TrafficSystem traffic,SpeedLimitSections.Mark mark,out Vector3 at){
+  var right=SpeedLimitSections.Right(mark.forward);
+  foreach(float along in new[]{3f,7f,11f,15f,20f,25f,30f,-3f,-7f}){
+   if(!ClearOfCrossings(map,traffic,mark.position+mark.forward*along,mark.forward))continue;
+   for(float side=2f;side<=16f;side+=.5f){var p=mark.position+mark.forward*along+right*side;if(!Sidewalk(map,p)||!ClearOfCrossings(map,traffic,p,mark.forward))continue;
+    // Step a little further from the kerb so the plate does not hang over the carriageway.
+    var q=p+right*.6f;if(Sidewalk(map,q)&&ClearOfCrossings(map,traffic,q,mark.forward))p=q;at=Floor(p);return true;}
+  }
+  at=default(Vector3);return false;
+ }
+ static Vector3 Floor(Vector3 p){RaycastHit hit;if(Physics.Raycast(p+Vector3.up*3f,Vector3.down,out hit,6f,~(1<<8),QueryTriggerInteraction.Ignore)&&!hit.collider.attachedRigidbody)p.y=hit.point.y;return p;}
  static GameObject Disc(string name,Transform parent,Vector3 local,float diameter,float depth,Material mat){
   var g=GameObject.CreatePrimitive(PrimitiveType.Cylinder);g.name=name;Destroy(g.GetComponent<Collider>());g.transform.SetParent(parent,false);g.transform.localPosition=local;g.transform.localRotation=Quaternion.Euler(90,0,0);g.transform.localScale=new Vector3(diameter,depth,diameter);g.GetComponent<Renderer>().sharedMaterial=mat;return g;
  }
- static void Sign(Transform root,SpeedLimitSections.Mark m,Material red,Material white,Material grey,Material pole,Material ink){
-  bool end=m.to<=0;float shown=end?m.from:m.to;
+ static GameObject Plate(string name,Transform parent,Vector3 local,Vector3 size,Material mat){return WorldBuilder.Box(name,local,size,mat,parent,false);}
+ static void Words(Transform parent,string name,Vector3 local,string text,Color color,float width,float height){
+  var g=new GameObject(name);g.transform.SetParent(parent,false);g.transform.localPosition=local;var mesh=g.AddComponent<TextMesh>();mesh.text=text;mesh.color=color;KoreanText.Fit(mesh,width,height);
+ }
+ // 규제표지 224 최고속도제한: red ring, white face, black figures (colours from the Korean sign colour table).
+ static void LimitDisc(Transform g,float y,float z,float kmh,SignMaterials m){
+  // A unit cylinder is 2 m tall, so depth .01 gives a 2 cm disc; the figures sit in front of the white face.
+  Disc("규제표지 테두리",g,new Vector3(0,y,z),.9f,.01f,m.red);
+  Disc("규제표지 바탕",g,new Vector3(0,y,z-.02f),.68f,.01f,m.white);
+  Words(g,"제한 숫자",new Vector3(0,y,z-.045f),kmh.ToString("0"),new Color(.15f,.15f,.15f),.5f,.36f);
+ }
+ // 지시표지 324 어린이보호: blue square, white adult and child walking hand in hand.
+ static void Person(Transform g,float x,float y,float scale,SignMaterials m){
+  Disc("머리",g,new Vector3(x,y+.2f*scale,-.04f),.13f*scale,.01f,m.white);
+  Plate("몸",g,new Vector3(x,y+.01f*scale,-.035f),new Vector3(.13f*scale,.26f*scale,.01f),m.white);
+  var a=Plate("다리",g,new Vector3(x-.04f*scale,y-.2f*scale,-.035f),new Vector3(.05f*scale,.2f*scale,.01f),m.white);a.transform.localRotation=Quaternion.Euler(0,0,-12);
+  var b=Plate("다리",g,new Vector3(x+.04f*scale,y-.2f*scale,-.035f),new Vector3(.05f*scale,.2f*scale,.01f),m.white);b.transform.localRotation=Quaternion.Euler(0,0,12);
+ }
+ static void ChildSign(Transform g,float y,SignMaterials m){
+  Plate("어린이보호 바탕",g,new Vector3(0,y,-.01f),new Vector3(.82f,.82f,.03f),m.blue);
+  Person(g,-.14f,y,1.15f,m);Person(g,.15f,y-.05f,.8f,m);
+  var hands=Plate("손",g,new Vector3(0,y-.02f,-.035f),new Vector3(.2f,.035f,.01f),m.white);hands.transform.localRotation=Quaternion.Euler(0,0,-10);
+ }
+ // 보조표지: white plate with a black edge and black text, hung under the main sign.
+ static void Supplement(Transform g,float y,string text,SignMaterials m){
+  Plate("보조표지 테두리",g,new Vector3(0,y,-.005f),new Vector3(.9f,.32f,.02f),m.ink);
+  Plate("보조표지",g,new Vector3(0,y,-.02f),new Vector3(.86f,.28f,.02f),m.white);
+  Words(g,"보조표지 문구",new Vector3(0,y,-.035f),text,new Color(.15f,.15f,.15f),.78f,.22f);
+ }
+ static void Sign(Transform root,SpeedLimitSections.Mark mark,Vector3 at,SignMaterials m){
+  bool end=mark.to<=0;float shown=end?mark.from:mark.to;bool school=mark.school;
   var g=new GameObject(end?"제한속도 해제 "+shown:"제한속도 "+shown+" 시작");g.transform.SetParent(root,false);
   // Local +z points along the driving direction; the face looks back at the approaching driver (local -z).
-  g.transform.position=m.position+SpeedLimitSections.Right(m.forward)*3.1f;g.transform.rotation=Quaternion.LookRotation(m.forward);
-  WorldBuilder.Box("지주",new Vector3(0,1.4f,.06f),new Vector3(.1f,2.8f,.1f),pole,g.transform,false);
-  Disc("테두리",g.transform,new Vector3(0,2.75f,0),1.25f,.03f,end?grey:red);
-  Disc("바탕",g.transform,new Vector3(0,2.75f,-.02f),.97f,.03f,white);
-  var label=new GameObject("숫자");label.transform.SetParent(g.transform,false);label.transform.localPosition=new Vector3(0,2.75f,-.045f);var mesh=label.AddComponent<TextMesh>();mesh.text=shown.ToString("0");mesh.color=end?new Color(.35f,.37f,.40f):new Color(.08f,.08f,.10f);KoreanText.Fit(mesh,.72f,.5f);
-  if(end){var bar=WorldBuilder.Box("해제 사선",new Vector3(0,2.75f,-.06f),new Vector3(1.18f,.09f,.01f),ink,g.transform,false);bar.transform.localRotation=Quaternion.Euler(0,0,45);}
-  WorldBuilder.Box("보조판",new Vector3(0,1.9f,-.01f),new Vector3(1.25f,.42f,.03f),white,g.transform,false);
-  var plate=new GameObject("보조판 문구");plate.transform.SetParent(g.transform,false);plate.transform.localPosition=new Vector3(0,1.9f,-.035f);var words=plate.AddComponent<TextMesh>();
-  words.text=end?(m.school?"보호구역 끝":"여기까지"):(m.school?"어린이보호구역":"여기부터");words.color=end?new Color(.2f,.2f,.22f):m.school?new Color(.7f,.08f,.08f):new Color(.1f,.1f,.12f);KoreanText.Fit(words,1.12f,.3f);
+  g.transform.position=at;g.transform.rotation=Quaternion.LookRotation(mark.forward);var t=g.transform;
+  float top=school&&!end?3.45f:2.8f;
+  WorldBuilder.Box("지주",new Vector3(0,top*.5f,.06f),new Vector3(.08f,top,.08f),m.pole,t,false);
+  if(end){
+   // 해제표지 427: the cancelled sign on a white rectangle crossed by black diagonal hatching.
+   float y=2.3f;
+   Plate("해제표지 테두리",t,new Vector3(0,y,-.005f),new Vector3(.98f,.98f,.02f),m.ink);
+   Plate("해제표지 바탕",t,new Vector3(0,y,-.02f),new Vector3(.92f,.92f,.02f),m.white);
+   LimitDisc(t,y,-.05f,shown,m);
+   foreach(float d in new[]{-.3f,0f,.3f}){float length=(1.30f-2*Mathf.Abs(d))*.95f;var bar=Plate("해제 빗금",t,new Vector3(d*.707f,y+d*.707f,-.11f),new Vector3(length,.045f,.01f),m.ink);bar.transform.localRotation=Quaternion.Euler(0,0,-45);}
+   Supplement(t,1.62f,school?"보호구역 해제":"구간 끝",m);
+  }else{
+   if(school)ChildSign(t,3.0f,m);
+   LimitDisc(t,2.1f,-.01f,shown,m);
+   Supplement(t,1.5f,school?"어린이보호구역":"여기부터",m);
+  }
  }
 }
