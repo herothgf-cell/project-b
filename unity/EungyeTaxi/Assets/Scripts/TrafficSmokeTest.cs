@@ -29,7 +29,7 @@ public class TrafficSmokeTest : MonoBehaviour {
         // Check the signal at a real waiting position, with the taxi's nose behind the line.
         taxi.body.position=traffic.junctions[0].center-traffic.mainDirection*16.5f+TrafficSystem.Right(traffic.mainDirection)*2.5f+Vector3.up*.65f;taxi.body.velocity=Vector3.zero;Physics.SyncTransforms();
         session.drivingCamera.SetFirstPerson(true);yield return new WaitForSeconds(.5f);
-        bool cockpit=Vector3.Distance(Camera.main.transform.position,taxi.transform.TransformPoint(new Vector3(-.43f,1.07f,.6f)))<.1f && (Camera.main.cullingMask&(1<<8))==0;
+        bool cockpit=Vector3.Distance(Camera.main.transform.position,taxi.transform.TransformPoint(DrivingCamera.DriverEye))<.1f && (Camera.main.cullingMask&(1<<8))==0;
         var lampPoint=Camera.main.WorldToViewportPoint(traffic.junctions[0].lamps[1][0].transform.position);bool signalVisible=lampPoint.z>0&&lampPoint.x>.05f&&lampPoint.x<.95f&&lampPoint.y>.05f&&lampPoint.y<.95f;
         yield return new WaitForEndOfFrame();ScreenCapture.CaptureScreenshot(Path.Combine(folder,"traffic-first-person.png"));yield return new WaitForSeconds(.4f);
         session.drivingCamera.testRearView=true;yield return new WaitForSeconds(.3f);bool rear=Vector3.Dot(Camera.main.transform.forward,taxi.transform.forward)<-.99f;

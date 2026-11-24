@@ -464,9 +464,11 @@ public class BusinessProgress : MonoBehaviour {
   // r52 (2026-11-23) tightens the two P51 gate right turns (kerb openings match the gate crossings) and
   // runs both P51 through joins across the junction so departure lanes start past the far crosswalk.
   const string reviewedR52Hash="3efe1faff89fe9f1fb377c5999f8939a4795ded1f78d588b703e79d155913beb";
-  int from=0,to=0;for(int revision=14;revision<=52;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>52)return;
-  string reviewedHash=to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
+  // r53 (2026-11-24) shortens the P51 signal cycle from 98 s to 70 s (durations only; lanes unchanged).
+  const string reviewedR53Hash="bcc2105057e8a9fa2ec7559438d73965f8b393cdb6c5d7efe030ab7bc535c9da";
+  int from=0,to=0;for(int revision=14;revision<=53;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>53)return;
+  string reviewedHash=to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   ApplyReviewedEungyeCheckpointMigration(live,from,to);
  }
@@ -512,7 +514,7 @@ public class BusinessProgress : MonoBehaviour {
    from<43&&to>=43&&(junction=="J1927_5181"||junction=="J8066_6364"||junction=="J7841_867"||
    junction=="J7876_1656"||junction=="J5852_16963"||junction=="J7254_14780")||from<44&&to>=44&&junction=="J1927_5181"||from<45&&to>=45&&junction=="J5692_14220"||from<46&&to>=46&&junction=="J7841_867"||
    from<47&&to>=47&&(junction=="J7841_867"||junction=="J7876_1656"||junction=="J6481_3341"||junction=="J6480_2573"||junction=="J7973_3744")||
-   from<52&&to>=51&&junction=="reviewed:r47:P51";
+   from<53&&to>=51&&junction=="reviewed:r47:P51";
  }
  static void ValidateOffer(JobOffer o,int count){if(o!=null&&(o.pickup<0||o.pickup>=count||o.drop<0||o.drop>=count||o.fare<0))throw new Exception("Invalid live stop reference");}
  static bool Valid(float value){return !float.IsNaN(value)&&!float.IsInfinity(value);}

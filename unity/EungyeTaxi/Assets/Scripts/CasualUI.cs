@@ -56,6 +56,20 @@ public static class CasualUI {
   var old=GUI.color;GUI.color=Color.white;GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),backdrop);GUI.color=old;
  }
  public static void Bar(Rect r,float fraction,Color color){RoundedFill(r,Track);if(fraction>0)RoundedFill(new Rect(r.x,r.y,r.width*Mathf.Clamp01(fraction),r.height),color);}
+ // 2026-11-24 test feedback: the default slider was the same pale blue as the row behind it. A darker
+ // track, a blue filled part and a white-centred knob show what is dragged and how far it is.
+ public static readonly Color SliderTrack=new Color(.56f,.65f,.77f);
+ public static float Slider(Rect r,float value,float min,float max){
+  float result=GUI.HorizontalSlider(new Rect(r.x,r.y-5,r.width,r.height+10),value,min,max,GUIStyle.none,GUIStyle.none);
+  if(Event.current.type==EventType.Repaint){
+   float t=max>min?Mathf.Clamp01((result-min)/(max-min)):0,cy=r.y+r.height/2,x=r.x+r.width*t;
+   Color fill=GUI.enabled?Blue:Muted;
+   RoundedFill(new Rect(r.x,cy-4,r.width,8),GUI.enabled?SliderTrack:Track);
+   if(x-r.x>=8)RoundedFill(new Rect(r.x,cy-4,x-r.x,8),fill);
+   HudGlyph.Draw(new Rect(x-12,cy-12,24,24),15,fill);HudGlyph.Draw(new Rect(x-7,cy-7,14,14),15,Color.white);
+  }
+  return result;
+ }
  public static GUIStyle Action(int size){var s=KoreanText.Button(size);PaintButton(s,Green,new Color(.02f,.51f,.28f),new Color(.01f,.34f,.18f),Color.white);return s;}
  static Texture2D green,greenHover,greenDown;
  static Texture2D Tinted(Color c){var t=new Texture2D(48,48,TextureFormat.RGBA32,false);var p=Rounded.GetPixels();for(int i=0;i<p.Length;i++)p[i]=new Color(c.r,c.g,c.b,p[i].a);t.SetPixels(p);t.Apply();t.wrapMode=TextureWrapMode.Clamp;return t;}

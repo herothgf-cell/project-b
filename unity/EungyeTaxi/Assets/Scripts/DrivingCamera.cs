@@ -1,7 +1,14 @@
 using UnityEngine;
 public class DrivingCamera : MonoBehaviour {
-    static readonly Vector3 DriverEye = new Vector3(-.43f,1.07f,.6f);
-    const float DriverPitch = 2f, DriverFieldOfView = 82f;
+    // 2026-11-24 test feedback ("seat and view feel too low"): the eye sits 8 cm above the cockpit origin
+    // (TaxiArt.Cockpit stays at 1.07) so the dashboard drops in view, and the lens narrows from 82 to 70
+    // degrees so the road close to the bumper no longer fills the lower screen.
+    public static readonly Vector3 DriverEye = new Vector3(-.43f,1.15f,.6f);
+    public const float DriverPitch = 2f, DriverFieldOfView = 70f;
+    // Chase view (same feedback: "sways left and right too much"): the camera follows a damped heading
+    // instead of the raw one, the steering lead is halved and eased, and body roll is slower and smaller.
+    const float ChaseYawRate = 4.5f, ChaseLeadDegrees = 4f, ChaseLeadRate = 3f, RollRate = 3.5f, MaxRoll = 1.4f;
+    float chaseYaw, chaseLead, roll;
     public Transform target;
     public bool FirstPerson { get; private set; }
     public bool RearView { get; private set; }
@@ -129,7 +136,8 @@ public class DrivingCamera : MonoBehaviour {
         // Visible body lean on the exterior art only: roll toward the outside of a turn (up to 2 degrees),
         // nose down when braking and up when accelerating (up to 1.2 degrees).
         if(!exterior){exterior=target.Find("Taxi exterior");if(exterior)exteriorRest=exterior.localRotation;}
-        BodyLean=new Vector2(feel.bodyLean*taxi.VehicleLean*Mathf.Clamp(-longitudinal*.15f,-1.2f,1.2f),feel.bodyLean*taxi.VehicleLean*Mathf.Clamp(lateral*.25f,-2f,2f));
+        roll=snap?0:Mathf.Lerp(roll,Mathf.Clamp(lateral*.2f,-MaxRoll,MaxRoll),1-Mathf.Exp(-RollRate*dt));
+        BodyLean=new Vector2(feel.bodyLean*taxi.VehicleLean*Mathf.Clamp(-longitudinal*.15f,-1.2f,1.2f),feel.bodyLean*taxi.VehicleLean*roll);
         if(exterior)exterior.localRotation=Quaternion.Euler(BodyLean.x,0,BodyLean.y)*exteriorRest;
         if(FirstPerson){
             float yaw=target.eulerAngles.y;
@@ -142,11 +150,15 @@ public class DrivingCamera : MonoBehaviour {
             LookYaw=Mathf.Lerp(LookYaw,desiredYaw,1-Mathf.Exp(-5*Time.deltaTime));
             transform.rotation=Quaternion.Euler(DriverPitch+(RearView?0:dip),stableYaw+(RearView?180:LookYaw),RearView?0:BodyLean.y*.5f);snap=false;return;
         }
-        var focus=target.position+Vector3.up*1.3f;var forward=RearView?-target.forward:target.forward;var desired=focus-forward*9+Vector3.up*4.5f;
+        float heading=target.eulerAngles.y;chaseYaw=snap?heading:Mathf.LerpAngle(chaseYaw,heading,1-Mathf.Exp(-ChaseYawRate*dt));
+        var followed=Quaternion.AngleAxis(Mathf.DeltaAngle(heading,chaseYaw),Vector3.up)*target.forward;
+        var focus=target.position+Vector3.up*1.3f;var forward=RearView?-followed:followed;var desired=focus-forward*9+Vector3.up*4.5f;
         RaycastHit hit;var delta=desired-focus;if(Physics.SphereCast(focus,.25f,delta.normalized,out hit,delta.magnitude,~((1<<8)|(1<<9))))desired=focus+delta.normalized*Mathf.Max(1,hit.distance-.3f);
         transform.position=snap?desired:Vector3.Lerp(transform.position,desired,1-Mathf.Exp(-7*Time.deltaTime));
-        // Chase lead: aim up to 8 degrees toward the steering side; braking tips the aim down slightly.
-        float lead=RearView||!cornerLook?0:taxi.SteeringInput*8*feel.steerLook*Mathf.Clamp01(kph/20);
+        // Chase lead: aim up to 4 degrees toward the steering side, eased, and mostly gone by 80 km/h where
+        // steering is lane keeping rather than cornering; braking tips the aim down slightly.
+        float leadTarget=RearView||!cornerLook?0:taxi.SteeringInput*ChaseLeadDegrees*feel.steerLook*Mathf.Clamp01(kph/20)*(1-.7f*Mathf.Clamp01((kph-40)/40));
+        chaseLead=snap?leadTarget:Mathf.Lerp(chaseLead,leadTarget,1-Mathf.Exp(-ChaseLeadRate*dt));float lead=chaseLead;
         transform.LookAt(focus+Quaternion.AngleAxis(lead,Vector3.up)*forward*3-Vector3.up*(RearView?0:dip*.12f));snap=false;
     }
 }

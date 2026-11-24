@@ -31,6 +31,13 @@ public static class PassengerDemandPolicy {
   return "게임 상대 수요 · "+(pvp?(phase==0?"초반":phase==1?"중반":"후반"):(phase==0?"아침":phase==1?"낮":"저녁"))+" "+Label(from)+" 출발 → "+Label(to)+" 도착 각 3배 비중 · 운임 할증 없음";
  }
  public static string Description(double elapsed){return Description(Phase(elapsed),false);}
+ // One-line form for the map sidebar; Description stays as the hover text.
+ public static string Short(int phase){
+  if(phase<0||phase>2)return "초과 영업 · 전 지역 고름";
+  string from=phase==0?"residential":phase==1?"office":"commercial",to=phase==0?"office":phase==1?"commercial":"residential";
+  return (phase==0?"아침":phase==1?"낮":"저녁")+" · "+Label(from)+" → "+Label(to)+" 손님 많음";
+ }
+ public static string Short(double elapsed){return Short(Phase(elapsed));}
  static double Draw(string seed,string key){
   uint h=2166136261;foreach(char c in (seed??"")+":demand:"+key){h^=c;h*=16777619;}h^=h>>16;h*=2246822519;h^=h>>13;
   double u=(h+1.0)/(uint.MaxValue+2.0);return -Math.Log(u);

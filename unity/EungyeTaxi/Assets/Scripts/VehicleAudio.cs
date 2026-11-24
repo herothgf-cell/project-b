@@ -4,7 +4,7 @@ using UnityEngine;
 // and wheel speed drive separate recorded layers.
 public sealed class VehicleAudio : MonoBehaviour {
  DriveSession session;
- AudioSource engine,road,indicator,horn,rain,loadLayer,tyre,wind;
+ AudioSource engine,road,indicator,horn,rain,tyre,wind;
  float lastSpeed,contactUntil;int lastCollisions=-1;
  AudioClip indicatorOn,indicatorOff;
  bool lampWasLit;
@@ -24,7 +24,7 @@ public sealed class VehicleAudio : MonoBehaviour {
   // 08 chapter 1 extra layers, re-pitched from the existing recordings (no new audio files).
   // On a child object so the primary engine/road sources stay unique on the session (checks look them up).
   var extra=new GameObject("Extra drive layers");extra.transform.SetParent(transform,false);
-  loadLayer=ExtraSource(extra,"Engine");tyre=ExtraSource(extra,"Road");wind=ExtraSource(extra,"Road");
+  tyre=ExtraSource(extra,"Road");wind=ExtraSource(extra,"Road");
  }
  AudioSource Source(string sound,bool loop){
   var source=gameObject.AddComponent<AudioSource>();
@@ -108,15 +108,19 @@ public sealed class VehicleAudio : MonoBehaviour {
   EngineSound(rpm,load,out float level,out float pitch);
   float blend=1-Mathf.Exp(-dt/.08f);
   bool driveSound=driving&&settings.engineSound&&ContentTuning.Flag("display.sound.engine",true);
-  MotionLoop(engine,driveSound,level,pitch,blend);
-  // Tyre and wind noise grows with speed and dominates the cabin above town speeds.
-  MotionLoop(road,driveSound,.62f*speed*speed/(speed*speed+90),1,blend);
   // Extra layers and pad vibration: Eungye single only, scaled by the feel tab, ducked under speech.
   bool single=!session.simulationMatch&&!PvpSimulationMode.Active;
   float extra=driveSound&&single?settings.extraSound*(DriveFeelAudio.SpeechOnScreen(session)?DriveFeelAudio.Duck:1):0;
   float rev=Mathf.Clamp01((rpm-IdleRpm)/2400),slip=0;
-  foreach(var wheel in taxi.wheels){if(wheel&&wheel.GetGroundHit(out WheelHit hit))slip=Mathf.Max(slip,Mathf.Abs(hit.sidewaysSlip),Mathf.Abs(hit.forwardSlip)*.7f);}
-  MotionLoop(loadLayer,extra>0,DriveFeelAudio.LoadLevel(load,rev)*extra,DriveFeelAudio.LoadPitch(rev),blend);
+  // 2026-11-24 test feedback ("another odd sound in the drive sound", "odd brake sound"):
+  // - Engine load used to be a second, lower-pitched copy of the engine loop, which read as a second engine
+  //   droning underneath. It is now a gain on the one engine voice.
+  // - The tyre layer measured raw wheel slip, so ordinary braking and cornering hissed. It now only hears
+  //   slip beyond each tyre's grip peak (a real skid or locked wheel).
+  MotionLoop(engine,driveSound,level+DriveFeelAudio.LoadLevel(load,rev)*extra,pitch,blend);
+  // Tyre and wind noise grows with speed and dominates the cabin above town speeds.
+  MotionLoop(road,driveSound,.62f*speed*speed/(speed*speed+90),1,blend);
+  foreach(var wheel in taxi.wheels){if(wheel&&wheel.GetGroundHit(out WheelHit hit))slip=Mathf.Max(slip,DriveFeelAudio.SkidSlip(hit.sidewaysSlip,wheel.sidewaysFriction.extremumSlip,hit.forwardSlip,wheel.forwardFriction.extremumSlip));}
   MotionLoop(tyre,extra>0,DriveFeelAudio.TyreLevel(slip,speed)*extra,1.9f,blend);
   MotionLoop(wind,extra>0,DriveFeelAudio.WindLevel(speed)*extra,DriveFeelAudio.WindPitch(speed),blend);
   float decel=dt>0?Mathf.Max(0,(lastSpeed-speed)/Mathf.Max(dt,.001f)):0;lastSpeed=speed;

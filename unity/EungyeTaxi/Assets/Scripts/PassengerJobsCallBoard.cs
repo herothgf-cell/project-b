@@ -15,6 +15,8 @@ public static class CallBoardRules {
  public static float PickupMetresPerSecond {get{return F("offer.eta.pickupMetresPerSecond",4);}}
  public static string Label(int variety){return variety==Near?"근거리 · 무난":variety==Rush?"급한 손님 · 기한 짧음 · 고액":variety==Luggage?"큰 짐 · 트렁크 필요":variety==Hidden?"길가 손님 · 목적지는 타면 알려 줌":"";}
  public static string DemandLabel(int level){return level>=2?"높음":level==1?"보통":"낮음";}
+ // Short tag for the map card; Label stays the full sentence used by captions and checks.
+ public static string ShortLabel(int variety){return variety==Near?"근거리":variety==Rush?"급한 손님":variety==Luggage?"큰 짐":variety==Hidden?"길가 손님":"";}
 }
 
 public partial class PassengerJobs {
@@ -29,6 +31,25 @@ public partial class PassengerJobs {
   if(o==null)return 1;string region=DemandRegion(o.drop);if(region=="neutral")return 1;
   int phase=PassengerDemandPolicy.Phase(session.business.ledger.Elapsed,session.business.ledger.Settings.daySeconds,false);
   return PassengerDemandPolicy.Weight(region,phase,false)>=3?2:0;
+ }
+ // 2026-11-24 test feedback (map sidebar had too much text): the same facts as CallCardCaption, split into
+ // short fields the map draws beside icons. Empty fields are not drawn.
+ public sealed class CallCard {public string number="",pickup="",drop="",fare="",deadline="",distance="",tags="";}
+ public CallCard CallCardParts(int index,int drivingScore){
+  var o=offers[index];
+  var card=new CallCard{number=(index+1).ToString(),pickup=KoreanText.Stop(stops[o.pickup].name),drop=DestinationHidden(o)?"타면 알려 줌":KoreanText.Stop(stops[o.drop].name),
+   fare=PassengerReward.AdjustedFare(o.fare,drivingScore).ToString("N0")+"원"};
+  var tags=new System.Collections.Generic.List<string>();
+  if(o.reunionKind!=0)tags.Add("실습 끝난 학생");
+  if(CallBoardSingle){
+   card.deadline=RoadNavigation.FormatEta(o.seconds);
+   card.distance=Mathf.RoundToInt(CallPickupMetres(o))+"m·"+RoadNavigation.FormatEta(CallEtaSeconds(o));
+   string kind=IsLastCall(o)?IdleTimeRules.Label(o.variety):CallBoardRules.ShortLabel(o.variety);if(kind.Length>0)tags.Add(kind);
+   if(!DestinationHidden(o)){int demand=DropDemandLevel(o);if(demand!=1)tags.Add("하차지 수요 "+CallBoardRules.DemandLabel(demand));}
+   if(IsLastCall(o)&&Finite(HomeReturnMetres(o)))tags.Add("하차 후 숙소 "+Mathf.RoundToInt(HomeReturnMetres(o))+"m");
+   string mission=MissionCardLine(o).Trim();if(mission.Length>0)tags.Add(mission);
+  }
+  card.tags=string.Join(" · ",tags.ToArray());return card;
  }
  public string CallCardCaption(int index,int drivingScore){
   var o=offers[index];

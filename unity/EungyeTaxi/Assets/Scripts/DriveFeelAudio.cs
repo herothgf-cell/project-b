@@ -8,20 +8,25 @@ using UnityEngine;
 public static class DriveFeelAudio {
  static float F(string id,double fallback){return (float)ContentTuning.Number(id,fallback);}
  public static float Duck {get{return Mathf.Clamp01(F("feel.duckLevel",.45));}}
- // Engine load: a lower engine layer that only speaks while the driver is on the throttle.
+ // Engine load: extra gain on the engine voice while the driver is on the throttle (no second copy of the loop).
  public static float LoadLevel(float load,float rev){return F("feel.load.level",.16)*Mathf.Clamp01(load)*(.4f+.6f*Mathf.Clamp01(rev));}
- public static float LoadPitch(float rev){return .62f+.25f*Mathf.Clamp01(rev);}
- // Tyres near the grip limit: a hiss that grows with sideways/longitudinal slip once the taxi is moving.
+ // Slip beyond the tyre's grip peak (0 while the tyre still grips). Longitudinal slip counts half, because
+ // its peak sits about twice as far out as the sideways one.
+ public static float SkidSlip(float sideways,float sidewaysPeak,float forward,float forwardPeak){
+  return Mathf.Max(0,Mathf.Max(Mathf.Abs(sideways)-sidewaysPeak,(Mathf.Abs(forward)-forwardPeak)*.5f));
+ }
+ // Tyres past the grip limit: a hiss that grows with the skid once the taxi is moving (18 km/h and up).
  public static float TyreLevel(float slip,float speed){
-  if(speed<3)return 0;float a=F("feel.tyre.slipStart",.12),b=Mathf.Max(a+.01f,F("feel.tyre.slipFull",.35));
+  if(speed<5)return 0;float a=F("feel.tyre.slipStart",.12),b=Mathf.Max(a+.01f,F("feel.tyre.slipFull",.35));
   return F("feel.tyre.level",.22)*Mathf.SmoothStep(0,1,(Mathf.Abs(slip)-a)/(b-a));
  }
- // Wind: a low layer from town speed upwards.
+ // Wind: an airy layer that stays nearly silent in town and opens up on fast roads. The road loop is played
+ // above its recorded pitch; played an octave down (as before) it was a low drone, not wind.
  public static float WindLevel(float speed){
   float kmh=Mathf.Abs(speed)*3.6f,a=F("feel.wind.startKmh",35),b=Mathf.Max(a+1,F("feel.wind.fullKmh",90));
-  return F("feel.wind.level",.18)*Mathf.SmoothStep(0,1,(kmh-a)/(b-a));
+  float t=Mathf.SmoothStep(0,1,(kmh-a)/(b-a));return F("feel.wind.level",.18)*t*t;
  }
- public static float WindPitch(float speed){return .5f+.12f*Mathf.Clamp01(Mathf.Abs(speed)*3.6f/90);}
+ public static float WindPitch(float speed){return 1.3f+.2f*Mathf.Clamp01(Mathf.Abs(speed)*3.6f/90);}
  public static bool SpeechOnScreen(DriveSession s){
   if(!s)return false;
   bool passenger=s.requests&&s.requests.HasVisiblePanel;

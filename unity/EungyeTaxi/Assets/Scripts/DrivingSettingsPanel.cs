@@ -42,10 +42,10 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
   var valueStyle=Label(20,true);valueStyle.alignment=TextAnchor.MiddleRight;
   GUI.Label(new Rect(474,y,116,28),Mathf.RoundToInt(value*100)+"%",valueStyle);
   GUI.Label(new Rect(28,y+29,562,24),hint,Label(14));
-  return Mathf.Round(GUI.HorizontalSlider(new Rect(30,y+61,558,20),value,min,max)*100)/100;
+  return Mathf.Round(CasualUI.Slider(new Rect(40,y+61,538,20),value,min,max)*100)/100;
  }
  float WeatherRow(float y,string title,float value,float min,float max,string suffix){
-  GUI.Label(new Rect(28,y,390,27),title,Label(17,true));var style=Label(18,true);style.alignment=TextAnchor.MiddleRight;GUI.Label(new Rect(440,y,150,27),value.ToString(suffix=="점"?"0":"0.##")+suffix,style);return Mathf.Round(GUI.HorizontalSlider(new Rect(30,y+35,558,20),value,min,max)*100)/100;
+  GUI.Label(new Rect(28,y,390,27),title,Label(17,true));var style=Label(18,true);style.alignment=TextAnchor.MiddleRight;GUI.Label(new Rect(440,y,150,27),value.ToString(suffix=="점"?"0":"0.##")+suffix,style);return Mathf.Round(CasualUI.Slider(new Rect(40,y+35,538,20),value,min,max)*100)/100;
  }
  bool DisplayRow(float y,string title,string hint,bool enabled){
   CasualUI.RoundedFill(new Rect(18,y,584,94),CasualUI.Soft);
@@ -61,7 +61,7 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
   CasualUI.RoundedFill(new Rect(18,y-2,584,56),CasualUI.Soft);
   GUI.Label(new Rect(28,y,440,24),title,Label(16,true));
   var valueStyle=Label(17,true);valueStyle.alignment=TextAnchor.MiddleRight;GUI.Label(new Rect(474,y,116,24),Mathf.RoundToInt(value*100)+"%",valueStyle);
-  return Mathf.Round(GUI.HorizontalSlider(new Rect(30,y+30,558,20),value,0,1)*100)/100;
+  return Mathf.Round(CasualUI.Slider(new Rect(40,y+30,538,20),value,0,1)*100)/100;
  }
  void DrawFeelTab(){
   CasualUI.RoundedFill(new Rect(18,121,584,96),CasualUI.Soft);
@@ -74,7 +74,7 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
   Draft.steerLook=CompactRow(284,"조향 방향 미리 보기 · V로 켜고 끄기",Draft.steerLook);
   Draft.brakeDip=CompactRow(344,"제동 쏠림 · 세게 감속하면 숙여짐",Draft.brakeDip);
   Draft.bodyLean=CompactRow(404,"차체 기울기 · 물리·승차감 판정은 그대로",Draft.bodyLean);
-  Draft.extraSound=CompactRow(464,"추가 주행음 · 엔진 부하·타이어 한계·바람(싱글)",Draft.extraSound);
+  Draft.extraSound=CompactRow(464,"추가 주행음 · 가속 부하·미끄러짐·고속 바람(싱글)",Draft.extraSound);
   Draft.rumble=CompactRow(524,"패드 진동 · 노면·제동·접촉(싱글, Xbox 계열)",Draft.rumble);
   GUI.Label(new Rect(28,588,562,40),"PvP는 시뮬 조향 고정 · 연출·소리·진동은 이 기기에만 적용 · 0%는 끔",Label(14));
  }

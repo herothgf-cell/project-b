@@ -51,29 +51,63 @@ public partial class FullMapOverlay {
  // 2026-11-24 chained dispatch (Eungye single): reserve one nearby call while approaching the drop-off.
  void DrawChain(float y,float rw){
   var jobs=session.jobs;if(!jobs.ChainWindow)return;var list=jobs.ChainCandidates();if(list.Length==0)return;
-  GUI.Label(new Rect(0,y,rw,32),"다음 호출 미리 잡기 · 하차 후 바로 시작",new GUIStyle(text){font=KoreanText.BoldFont,fontSize=MapFont(14)});y+=40;
+  Icon(new Rect(0,y,rw,32),18,CasualUI.Blue,new GUIContent("다음 호출 예약","하차 지점 근처 호출을 미리 잡으면 하차 후 바로 시작합니다"),BoldLine);y+=40;
   foreach(var o in list){bool reserved=jobs.ChainedOffer==o;var old=GUI.backgroundColor;if(reserved)GUI.backgroundColor=new Color(.72f,.92f,.78f);
-   if(GUI.Button(new Rect(0,y,rw,66),(reserved?"예약됨 · ":"")+jobs.ChainCaption(o),new GUIStyle(button){alignment=TextAnchor.MiddleLeft,padding=new RectOffset(10,10,4,4)})&&!reserved)jobs.ReserveChain(o);
-   GUI.backgroundColor=old;y+=74;}
+   var r=new Rect(0,y,rw,66);if(GUI.Button(r,GUIContent.none,button)&&!reserved)jobs.ReserveChain(o);GUI.backgroundColor=old;
+   GUI.Label(new Rect(r.x+10,r.y+6,rw-20,24),(reserved?"예약됨 · ":"")+KoreanText.Stop(jobs.stops[o.pickup].name)+" → "+KoreanText.Stop(jobs.stops[o.drop].name),BoldLine);
+   float half=(rw-20)/2;
+   Icon(new Rect(r.x+10,r.y+34,half,24),3,CasualUI.Muted,new GUIContent(Mathf.RoundToInt(jobs.ChainPickupMetres(o))+"m","하차 지점에서 승차 지점까지"),PlainLine);
+   Icon(new Rect(r.x+10+half,r.y+34,half,24),4,CasualUI.Amber,new GUIContent(PassengerReward.AdjustedFare(o.fare,session.law.ledger.TotalScore).ToString("N0")+"원","예상 운임"),PlainLine);
+   y+=74;}
   if(jobs.ChainedOffer!=null&&GUI.Button(new Rect(0,y,rw,40),"예약 취소",button))jobs.CancelChain();
  }
+ // 2026-11-24 test feedback: the sidebar was sentences on top of sentences. Each fact is now an icon and a
+ // few words on one line; the full sentence is the hover text.
+ GUIStyle PlainLine {get{return new GUIStyle(text){wordWrap=false,alignment=TextAnchor.MiddleLeft,clipping=TextClipping.Clip,fontSize=MapFont(14)};}}
+ GUIStyle BoldLine {get{return new GUIStyle(PlainLine){font=KoreanText.BoldFont};}}
+ static void Icon(Rect r,int glyph,Color tint,GUIContent label,GUIStyle style){float size=Mathf.Min(20,r.height);HudGlyph.Draw(new Rect(r.x,r.y+(r.height-size)/2,size,size),glyph,tint);GUI.Label(new Rect(r.x+size+6,r.y,r.width-size-6,r.height),label,style);}
+ // A stop row: coloured dot, role, name. The whole row focuses the stop on the map.
+ bool StopRow(Rect r,Color color,string role,string name,bool enabled=true){
+  bool hit=GUI.Button(r,new GUIContent("",role+" · "+name),button)&&enabled;
+  HudGlyph.Draw(new Rect(r.x+10,r.y+(r.height-16)/2,16,16),15,color);
+  GUI.Label(new Rect(r.x+34,r.y,40,r.height),role,BoldLine);GUI.Label(new Rect(r.x+76,r.y,r.width-84,r.height),name,PlainLine);return hit;
+ }
+ float CallCardHeight(PassengerJobs.CallCard card,float rw){float tags=card.tags.Length==0?0:new GUIStyle(text){fontSize=MapFont(12)}.CalcHeight(new GUIContent(card.tags),rw-20)+2;return 88+tags;}
+ void DrawCallCard(Rect r,PassengerJobs.CallCard card,bool selected,int index){
+  var old=GUI.backgroundColor;if(selected)GUI.backgroundColor=new Color(.72f,.88f,1);if(GUI.Button(r,GUIContent.none,button))SelectOffer(index);GUI.backgroundColor=old;
+  HudGlyph.Draw(new Rect(r.x+8,r.y+8,24,24),15,MapPresentation.Pickup);GUI.Label(new Rect(r.x+8,r.y+8,24,24),card.number,new GUIStyle(BoldLine){alignment=TextAnchor.MiddleCenter,normal={textColor=Color.white}});
+  GUI.Label(new Rect(r.x+40,r.y+6,r.width-48,24),card.pickup,BoldLine);
+  GUI.Label(new Rect(r.x+40,r.y+30,r.width-48,22),"→ "+card.drop,PlainLine);
+  float cx=r.x+10,cw=r.width-20;bool facts=card.deadline.Length>0;
+  Icon(new Rect(cx,r.y+58,facts?cw*.33f:cw,22),4,CasualUI.Amber,new GUIContent(card.fare,"예상 운임"),BoldLine);
+  if(facts){Icon(new Rect(cx+cw*.33f,r.y+58,cw*.19f,22),18,CasualUI.Muted,new GUIContent(card.deadline,"운송 기한"),PlainLine);
+   Icon(new Rect(cx+cw*.52f,r.y+58,cw*.48f,22),3,CasualUI.Muted,new GUIContent(card.distance,"승차 지점까지 거리 · 운송을 마칠 때까지 예상 시간"),PlainLine);}
+  if(card.tags.Length>0){var small=new GUIStyle(text){fontSize=MapFont(12)};small.normal.textColor=CasualUI.Muted;GUI.Label(new Rect(cx,r.y+84,cw,r.height-86),card.tags,small);}
+ }
  void DrawSidebar(float x,float w,Rect viewport){if(FacilityPlannerVisible){DrawFacilityPlannerSidebar(x,w,viewport);return;}var jobs=session.jobs;CasualUI.Header(new Rect(x,86,w,40),session.simulationMatch?"공용 호출":"주변 호출",1);float top=132;
-  string demand=session.simulationMatch?"4대가 함께 선택하는 호출입니다.\n먼저 수락한 차량이 운송합니다.":PassengerDemandPolicy.Description(session.business.ledger.Elapsed);float demandHeight=text.CalcHeight(new GUIContent(demand),w);GUI.Label(new Rect(x,top,w,demandHeight),demand,text);top+=demandHeight+8;
+  if(session.simulationMatch)Icon(new Rect(x,top,w,26),1,CasualUI.Blue,new GUIContent("먼저 수락한 차가 운송","4대가 함께 선택하는 호출입니다. 먼저 수락한 차량이 운송합니다."),PlainLine);
+  else Icon(new Rect(x,top,w,26),5,CasualUI.Blue,new GUIContent(PassengerDemandPolicy.Short(session.business.ledger.Elapsed),PassengerDemandPolicy.Description(session.business.ledger.Elapsed)),PlainLine);
+  top+=32;
   bool placeFacility=selectedPlace!=null&&!selectedPlace.roadPoint;int plannerKind=placeFacility?(selectedPlace.plannerKind>=0?selectedPlace.plannerKind:selectedPlace.glyph==12?5:selectedPlace.glyph==9?1:selectedPlace.glyph==10||selectedPlace.glyph==11?3:0):0;
-  if(GUI.Button(new Rect(x,top,w,36),placeFacility?"이 시설·대체 시설 견적 비교":"생활시설 · 이동·대기·견적 비교",button))ShowFacilityPlanner(plannerKind);top+=44;
+  if(GUI.Button(new Rect(x,top,w,36),new GUIContent(placeFacility?"이 시설 견적 비교":"생활시설 비교","이동·대기 시간과 견적을 비교합니다"),button))ShowFacilityPlanner(plannerKind);HudGlyph.Draw(new Rect(x+12,top+8,20,20),9,CasualUI.Blue);top+=44;
   if(selectedPlace!=null){float nameHeight=text.CalcHeight(new GUIContent(selectedPlace.name),w-16);float height=nameHeight+100;KoreanText.Panel(new Rect(x,top,w,height));GUI.Label(new Rect(x+8,top+8,w-16,nameHeight),selectedPlace.name,text);float length=0;for(int i=1;i<previewPath.Count;i++)length+=Vector3.Distance(previewPath[i-1],previewPath[i]);GUI.Label(new Rect(x+8,top+nameHeight+14,w-16,30),previewPath.Count<2?"연결 경로 없음 · 차로/출구로 이동하세요":"입구까지 약 "+length.ToString("0")+"m",new GUIStyle(text){fontSize=MapFont(14)});bool restore=jobs.Active&&!SelectedPickupFuel;GUI.enabled=!locationOpen&&(restore||!previousPause&&previewPath.Count>1);if(GUI.Button(new Rect(x+8,top+height-48,w-16,40),restore?"운송 경로로 돌아가기":SelectedPickupFuel?"호출 유지 · 주유소 길안내":"시설 길안내 시작",button)){if(restore)RestoreTripRoute();else StartPlaceGuidance();}GUI.enabled=!locationOpen;top+=height+12;}
-  else {GUI.Label(new Rect(x,top,w,50),selectedOffer!=null||jobs.trip.State==TripState.ToPickup?ApproachSummary:jobs.Active?"승객 운송 중 · 하차 위치 확인":"호출을 선택하세요",text);top+=54;}
+  else {bool approach=selectedOffer!=null||jobs.trip.State==TripState.ToPickup;string state=approach?ApproachSummary:jobs.Active?"운송 중 · 하차 위치 확인":"호출을 선택하세요";Icon(new Rect(x,top,w,26),approach?3:1,approach?MapPresentation.Pickup:jobs.Active?MapPresentation.Passenger:CasualUI.Muted,new GUIContent(state,state),PlainLine);top+=34;}
   if(!jobs.Active&&jobs.LastCallBoard){if(GUI.Button(new Rect(x,top,w,40),"즉시 귀가 · 덕성프라자로 안내",CasualUI.Action(MapFont(14)))){Close();jobs.GoHomeNow();}top+=46;}
-  GUI.Label(new Rect(x,top,w,28),"호출 목록",new GUIStyle(text){font=KoreanText.BoldFont,fontSize=MapFont(14)});top+=32;
-  float listHeight=Mathf.Max(72,viewport.yMax-top-154),rw=w-24;float content=0;var rows=new System.Collections.Generic.List<string>();var indices=new System.Collections.Generic.List<int>();var heights=new System.Collections.Generic.List<float>();
-  if(!jobs.Active)for(int i=0;i<jobs.offers.Length;i++){var o=jobs.offers[i];if(o==null)continue;var caption=jobs.CallCardCaption(i,session.law.ledger.TotalScore);float height=Mathf.Max(84,button.CalcHeight(new GUIContent(caption),rw-20)+24);rows.Add(caption);indices.Add(i);heights.Add(height);content+=height+10;}
-  var chosen=jobs.Active?jobs.current:selectedOffer;float foot=content;if(chosen!=null)content+=100;if(jobs.Active)content+=(jobs.PassengerViaPending?94:44)+jobs.ChainContentHeight;
+  GUI.Label(new Rect(x,top,w,28),jobs.Active?"현재 운송":"호출 목록",BoldLine);top+=32;
+  float listHeight=Mathf.Max(72,viewport.yMax-top-124),rw=w-24;float content=0;var cards=new System.Collections.Generic.List<PassengerJobs.CallCard>();var indices=new System.Collections.Generic.List<int>();var heights=new System.Collections.Generic.List<float>();
+  if(!jobs.Active)for(int i=0;i<jobs.offers.Length;i++){var o=jobs.offers[i];if(o==null)continue;var card=jobs.CallCardParts(i,session.law.ledger.TotalScore);float height=CallCardHeight(card,rw);cards.Add(card);indices.Add(i);heights.Add(height);content+=height+10;}
+  var chosen=jobs.Active?jobs.current:selectedOffer;float foot=content;bool via=jobs.Active&&jobs.PassengerViaPending;if(chosen!=null)content+=88+(via?44:0);if(jobs.Active)content+=jobs.ChainContentHeight;
   filterScroll=GUI.BeginScrollView(new Rect(x,top,w,listHeight),filterScroll,new Rect(0,0,w-20,Mathf.Max(listHeight,content)));float y=0;
-  for(int k=0;k<rows.Count;k++){int index=indices[k];var old=GUI.backgroundColor;if(index==SelectedOffer)GUI.backgroundColor=new Color(.72f,.88f,1);if(GUI.Button(new Rect(0,y,rw,heights[k]),rows[k],new GUIStyle(button){alignment=TextAnchor.MiddleLeft,padding=new RectOffset(10,10,4,4)}))SelectOffer(index);GUI.backgroundColor=old;y+=heights[k]+10;}
-  if(chosen!=null){if(GUI.Button(new Rect(0,foot,rw,42),"승차 · "+KoreanText.Stop(jobs.stops[chosen.pickup].name),button))FocusStop(chosen.pickup);if(GUI.Button(new Rect(0,foot+50,rw,42),(jobs.DestinationHidden(chosen)?"하차 · 탑승 후 공개":"하차 · "+KoreanText.Stop(jobs.stops[chosen.drop].name)),button)&&!jobs.DestinationHidden(chosen))FocusStop(chosen.drop);}
-  if(jobs.Active){if(jobs.PassengerViaPending&&GUI.Button(new Rect(0,foot+100,rw,42),"경유 · "+KoreanText.Stop(jobs.stops[jobs.PassengerViaStop].name),button))FocusStop(jobs.PassengerViaStop);GUI.Label(new Rect(0,foot+(jobs.PassengerViaPending?150:100),rw,44),"운송 완료 후 새 호출 가능",text);DrawChain(foot+(jobs.PassengerViaPending?150:100)+48,rw);}GUI.EndScrollView();
+  for(int n=0;n<cards.Count;n++){DrawCallCard(new Rect(0,y,rw,heights[n]),cards[n],indices[n]==SelectedOffer,indices[n]);y+=heights[n]+10;}
+  if(chosen!=null){bool hidden=jobs.DestinationHidden(chosen);
+   if(StopRow(new Rect(0,foot,rw,38),MapPresentation.Pickup,"승차",KoreanText.Stop(jobs.stops[chosen.pickup].name)))FocusStop(chosen.pickup);
+   if(StopRow(new Rect(0,foot+44,rw,38),MapPresentation.Passenger,"하차",hidden?"탑승 후 공개":KoreanText.Stop(jobs.stops[chosen.drop].name),!hidden))FocusStop(chosen.drop);
+   if(via&&StopRow(new Rect(0,foot+88,rw,38),new Color(1,.8f,.2f),"경유",KoreanText.Stop(jobs.stops[jobs.PassengerViaStop].name)))FocusStop(jobs.PassengerViaStop);
+   if(jobs.Active)DrawChain(foot+(via?132:88)+4,rw);}
+  GUI.EndScrollView();
   string reason=AcceptBlockedReason;string status=!string.IsNullOrEmpty(acceptFeedback)?acceptFeedback:!string.IsNullOrEmpty(reason)?reason:"선택 "+(SelectedOffer+1)+" · "+KoreanText.Stop(jobs.stops[selectedOffer.pickup].name)+"\n→ "+(jobs.DestinationHidden(selectedOffer)?"목적지 비공개":KoreanText.Stop(jobs.stops[selectedOffer.drop].name));
-  KoreanText.Panel(new Rect(x,viewport.yMax-150,w,94));GUI.Label(new Rect(x+8,viewport.yMax-147,w-16,88),status,new GUIStyle(text){fontSize=MapFont(14),normal={textColor=string.IsNullOrEmpty(reason)?CasualUI.Ink:CasualUI.Amber}});
+  KoreanText.Panel(new Rect(x,viewport.yMax-118,w,62));bool blocked=!string.IsNullOrEmpty(reason);if(blocked)HudGlyph.Draw(new Rect(x+10,viewport.yMax-98,22,22),2,CasualUI.Amber);
+  GUI.Label(new Rect(x+(blocked?40:10),viewport.yMax-116,w-(blocked?50:20),58),status,new GUIStyle(text){fontSize=MapFont(14),alignment=TextAnchor.MiddleLeft,normal={textColor=blocked?CasualUI.Amber:CasualUI.Ink}});
   // Keep a blocked action clickable so its rejection is visible instead of silently disabled.
   GUI.enabled=!locationOpen;if(GUI.Button(LogicalAcceptButtonBounds,"호출 수락",CasualUI.Action(MapFont(15)))){AcceptButtonClickCount++;AcceptSelected();}GUI.enabled=true;
  }
