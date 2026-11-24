@@ -106,6 +106,7 @@ public class DriveHUD : MonoBehaviour {
  // 2026-11-24 text reduction: rules that used to be written on the HUD, the map and facility signs.
  public const string GuideText="호출과 승하차\nM 지도에서 호출을 고르면 길 안내가 시작됩니다. 승차 장소와 목적지에서는 진행 방향 오른쪽에 정차하고 F를 누릅니다.\n\n시설 이용\n주유·식사·휴식·정비·간식은 해당 칸에 정차하고 F를 누릅니다. 지도의 생활시설에서 고르면 길 안내만 시작하고, 결제는 도착해서 합니다. 앞 차가 이용 중이면 그 차가 나간 뒤 들어갑니다. 김밥과 커피는 손님이 없는 빈차일 때만 살 수 있습니다.\n\n컨디션과 차량\n포만감이 25 아래면 피로가 1.5배, 10 아래면 2배 빨리 쌓입니다. 연료가 부족하면 알림의 주유소 안내를 누릅니다. 수리는 내구도만, 세차는 청결만 회복합니다.\n\n운전 점수\n신호·제한속도·차로를 지키면 점수가 유지됩니다. 정차하면 운전 평가를 열어 볼 수 있습니다.\n\n퇴근과 정산\n빈차로 숙소 주차 칸에 정차하고 F 또는 N을 누르면 하루를 마칩니다. F7에서 숙소 길 안내를 받을 수 있습니다.";
  bool helpGuide;
+ public void ShowHelp(bool guide){HelpOpen=true;helpGuide=guide;}
  public static Rect HelpBounds(float width,float height){float scale=Mathf.Min(1,Mathf.Min((width-24)/760,(height-24)/660));return new Rect((width-760*scale)/2,(height-660*scale)/2,760*scale,660*scale);}
  void DrawHelp(){
   int depth=GUI.depth;GUI.depth=-20;var matrix=GUI.matrix;var r=HelpBounds(Screen.width,Screen.height);float scale=r.width/760;

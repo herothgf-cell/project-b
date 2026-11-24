@@ -156,7 +156,14 @@ public static class OneDayHUD {
     var tileValue=new GUIStyle(title){fontSize=28,alignment=TextAnchor.MiddleCenter};tileValue.normal.textColor=CasualUI.Ink;var tileCaption=new GUIStyle(small){alignment=TextAnchor.MiddleCenter};
     for(int i=0;i<3;i++){var tile=new Rect(x+25+i*227,y+134,216,112);CasualUI.RoundedFill(tile,CasualUI.Soft);HudGlyph.Draw(new Rect(tile.center.x-14,tile.y+10,28,28),glyphs[i],i==2?CasualUI.Green:CasualUI.Blue);GUI.Label(new Rect(tile.x,tile.y+40,tile.width,40),values[i],tileValue);GUI.Label(new Rect(tile.x,tile.y+82,tile.width,24),captions[i],tileCaption);}
     string warn=(e.Account.Debt>0?"미납 "+Money(e.Account.Debt)+"   ":"")+(r.failedTrips>0?"미완료 "+r.failedTrips+"건":"");
-    if(warn.Length>0){HudGlyph.Draw(new Rect(x+27,y+266,22,22),2,CasualUI.Amber);GUI.Label(new Rect(x+56,y+262,640,30),warn,text);}}
+    // Part 2: the small lines that sat under the details button are chips in the space the tiles freed.
+    var chips=new System.Collections.Generic.List<string>();
+    if(!complete&&multi)chips.Add("누적 "+Money(e.TotalNet));
+    if(e.Account.HasHomeBase)chips.Add("월세 −"+Money(e.Account.Expense(e.Day,"home-rent")));
+    if(!complete&&multi)chips.Add("내일 피로 "+System.Math.Max(0,d.fatigue-b.settings.nightlyFatigueRecovery).ToString("0")+" · 포만 "+d.satiety.ToString("0"));
+    var chipStyle=new GUIStyle(small){alignment=TextAnchor.MiddleCenter};float chipX=x+25;
+    foreach(string chip in chips){float chipWidth=chipStyle.CalcSize(new GUIContent(chip)).x+28;CasualUI.RoundedFill(new Rect(chipX,y+260,chipWidth,30),CasualUI.Soft);GUI.Label(new Rect(chipX,y+260,chipWidth,30),chip,chipStyle);chipX+=chipWidth+8;}
+    if(warn.Length>0){HudGlyph.Draw(new Rect(x+27,y+304,22,22),2,CasualUI.Amber);GUI.Label(new Rect(x+56,y+300,640,30),warn,text);}}
    if(conditionResult)DailyConditionHUD.DrawReflection(new Rect(x+25,y+345,670,34),b,r);
    if(GUI.Button(new Rect(x+25,y+352+conditionSpace,670,36),showDayDetails?"상세 닫기":"상세",button))ToggleDayDetails();
    if(showDayDetails){
@@ -165,13 +172,11 @@ public static class OneDayHUD {
     float ch=Mathf.Max(120,small.CalcHeight(new GUIContent(content),625)+12);
     detailScroll=GUI.BeginScrollView(new Rect(x+25,y+398+conditionSpace,670,e.Account.HasHomeBase?65:80),detailScroll,new Rect(0,0,640,ch));GUI.Label(new Rect(0,0,625,ch),content,small);GUI.EndScrollView();
    }else if(!complete&&multi){
-    GUI.Label(new Rect(x+25,y+407+conditionSpace,670,65),"누적 순수익  "+Money(e.TotalNet)+"\n다음 날 · 피로 "+System.Math.Max(0,d.fatigue-b.settings.nightlyFatigueRecovery).ToString("0")+" · 포만감 "+d.satiety.ToString("0"),small);
    }else {
     CompletedDay previous=null;for(int i=b.completedDays.Count-1;i>=0;i--){var candidate=b.completedDays[i];if(candidate.id!=s.law.ids.campaign&&candidate.days==e.Settings.days&&candidate.configuration==b.ComparisonVersion&&!candidate.configuration.EndsWith("mixed")){previous=candidate;break;}}
     GUI.Label(new Rect(x+25,y+407+conditionSpace,670,65),previous==null?"이전 완료 기록 없음":"이전 순수익 "+Money(previous.totalNet)+" · 차이 "+Money(e.TotalNet-previous.totalNet),small);
    }
    if(careerResult)DrawCareerResult(new Rect(x+25,y+466+conditionSpace,670,100),s);
-   if(e.Account.HasHomeBase)GUI.Label(new Rect(x+25,y+466+extra,670,24),HomeBasePresentation.RentLabel+"  −"+Money(e.Account.Expense(e.Day,"home-rent")),small);
    if(multi&&GUI.Button(new Rect(x+25,y+492+extra,325,40),b.WallMemoPrompt?"숙소 · 벽 메모":e.Account.HasHomeBase?HomeBasePresentation.Name:"내 공간 · 방/차고",b.WallMemoPrompt?CasualUI.Action(16):button)){b.ArchivedRoom=null;b.GarageTab=false;b.RoomOpen=true;}
    CompletedDay roomRecord=null;for(int ri=b.completedDays.Count-1;ri>=0;ri--)if(b.completedDays[ri].id!=s.law.ids.campaign&&b.completedDays[ri].room!=null){roomRecord=b.completedDays[ri];break;}if(multi&&roomRecord!=null&&GUI.Button(new Rect(x+370,y+492+extra,325,40),"이전 완료 방 보기",button)){b.ArchivedRoom=roomRecord.room;b.RoomOpen=true;}
    if(!b.SaveFailed&&b.StoryMonologue.Length>0)GUI.Label(new Rect(x+25,y+537+extra,325,42),b.StoryMonologue,small);

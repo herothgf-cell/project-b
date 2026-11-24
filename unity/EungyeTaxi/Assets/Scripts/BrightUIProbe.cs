@@ -140,6 +140,8 @@ public sealed partial class BrightUIProbe:MonoBehaviour {
    Screen.SetResolution(width,width*9/16,FullScreenMode.Windowed);yield return new WaitForSecondsRealtime(.5f);
    Check(CockpitUI.LayoutFits(Screen.width,Screen.height),"HUD reference fits "+width);
    yield return Capture("03-single-hud-"+width);
+   // 2026-11-24 text reduction: the F1 guide tab.
+   if(width==1280){var help=FindObjectOfType<DriveHUD>();if(help){help.ShowHelp(true);yield return Capture("03a-help-guide");help.ShowHelp(false);yield return Capture("03b-help-controls");help.ToggleHelp();}}
    Check(map.Open(),"single map opens "+width);double elapsed=s.business.ledger.Elapsed;int first=Array.FindIndex(s.jobs.offers,o=>o!=null);if(first>=0)Check(map.SelectOffer(first),"single call preview selects without accepting");
    yield return Capture("04-single-map-"+width);Check(s.business.ledger.Elapsed==elapsed,"single map freezes timing "+width);
    int selected=Array.FindIndex(s.jobs.offers,o=>o!=null);Check(selected>=0,"forecast call available "+width);map.SelectOffer(selected);Check(map.SelectedOfferForecastText.Length>0,"selected forecast visible "+width);yield return Capture("04c-single-forecast-"+width);
