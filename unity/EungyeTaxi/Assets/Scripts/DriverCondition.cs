@@ -8,7 +8,7 @@ public sealed class Refreshment {
   Kind=kind;StopId=stopId;Shop=shop;Menu=menu;Price=price;Seconds=seconds;Satiety=satiety;FatigueRelief=fatigueRelief;
  }
  static readonly Refreshment snack=new Refreshment(Snack,"EG-GAME-03","은계김밥","야채김밥 한 줄",1500,20,35,0);
- static readonly Refreshment coffee=new Refreshment(Coffee,"EG-GAME-06","동네 카페","아메리카노",1200,15,0,12);
+ static readonly Refreshment coffee=new Refreshment(Coffee,"EG-GAME-06","호수카페","아메리카노",1200,15,0,12);
  public static Refreshment For(int kind){return kind==Snack?snack:kind==Coffee?coffee:null;}
  public string Terms {get{return Menu+" · "+Price.ToString("N0")+"원 · "+Seconds+"초 · "+(Satiety>0?"포만 +"+Satiety:"피로 −"+FatigueRelief);}}
 }

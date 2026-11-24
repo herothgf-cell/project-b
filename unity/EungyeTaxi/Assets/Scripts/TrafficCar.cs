@@ -74,8 +74,13 @@ public class TrafficCar : MonoBehaviour {
         WorldBuilder.Box("Roof",new Vector3(0,1.55f,-.2f),new Vector3(1.55f,.1f,2.1f),paint,transform,false);
         for(int i=0;i<4;i++){var w=GameObject.CreatePrimitive(PrimitiveType.Cylinder);w.transform.SetParent(transform,false);w.transform.localPosition=new Vector3(i%2==0?-.87f:.87f,.34f,i<2?1.3f:-1.3f);w.transform.localRotation=Quaternion.Euler(0,0,90);w.transform.localScale=new Vector3(.68f,.12f,.68f);w.GetComponent<Renderer>().sharedMaterial=tyre;var wheelCollider=w.GetComponent<Collider>();if(Application.isPlaying)Destroy(wheelCollider);else DestroyImmediate(wheelCollider);}
         brakeOn=WorldBuilder.Mat("Brake lit",Color.red);brakeOn.EnableKeyword("_EMISSION");brakeOn.SetColor("_EmissionColor",Color.red*2);brakeOff=WorldBuilder.Mat("Brake off",new Color(.25f,.015f,.01f));
+        // Test feedback 2026-11-24: cars were invisible at night. After dusk the rear lamps glow dim red (bright
+        // when braking) and the front lamps glow ivory, as unlit faces that need no real light.
+        var frontLamp=WorldBuilder.Mat("AI headlamp",new Color(.82f,.82f,.76f));
+        for(int i=0;i<2;i++)WorldBuilder.Box("Headlamp",new Vector3(i==0?-.6f:.6f,.7f,2.11f),new Vector3(.38f,.18f,.035f),frontLamp,transform,false);
+        if(owner){owner.RegisterNightReadable(brakeOn,new Color(1,.10f,.06f));owner.RegisterNightReadable(brakeOff,new Color(.62f,.03f,.03f));owner.RegisterNightReadable(frontLamp,new Color(1,.95f,.80f));}
         brakeLights=new Renderer[2];for(int i=0;i<2;i++)brakeLights[i]=WorldBuilder.Box("Brake light",new Vector3(i==0?-.6f:.6f,.7f,-2.11f),new Vector3(.38f,.18f,.035f),brakeOff,transform,false).GetComponent<Renderer>();
-        indicatorOn=WorldBuilder.Mat("AI indicator lit",new Color(1,.45f,.02f));indicatorOn.EnableKeyword("_EMISSION");indicatorOn.SetColor("_EmissionColor",new Color(1,.4f,0)*2);indicatorOff=WorldBuilder.Mat("AI indicator off",new Color(.25f,.1f,0));indicators=new Renderer[4];
+        indicatorOn=WorldBuilder.Mat("AI indicator lit",new Color(1,.45f,.02f));indicatorOn.EnableKeyword("_EMISSION");indicatorOn.SetColor("_EmissionColor",new Color(1,.4f,0)*2);indicatorOff=WorldBuilder.Mat("AI indicator off",new Color(.25f,.1f,0));if(owner)owner.RegisterNightReadable(indicatorOn,new Color(1,.55f,.05f));indicators=new Renderer[4];
         for(int i=0;i<4;i++)indicators[i]=WorldBuilder.Box("AI direction indicator",new Vector3(i%2==0?-.78f:.78f,.8f,i<2?2.12f:-2.12f),new Vector3(.18f,.15f,.05f),indicatorOff,transform,false).GetComponent<Renderer>();
         foreach(var child in GetComponentsInChildren<Transform>()) child.gameObject.layer=9;
         renderers=GetComponentsInChildren<Renderer>(); Place(initial);

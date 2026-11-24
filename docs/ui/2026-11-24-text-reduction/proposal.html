@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>텍스트 줄이기 시안</title>
+<style>
+:root{--ink:#13264a;--muted:#4d6382;--canvas:#e0effc;--card:#fff;--soft:#edf7ff;--track:#ccdbed;--blue:#0657c7;--green:#046e3b;--amber:#9e5706;--danger:#c21f2b;--border:#c4d9f0}
+*{box-sizing:border-box}
+body{margin:0;background:var(--canvas);color:var(--ink);font-family:"Noto Sans KR","Malgun Gothic",system-ui,sans-serif;line-height:1.45}
+main{max-width:1080px;margin:0 auto;padding:24px 16px 56px}
+h1{font-size:26px;margin:0 0 6px}
+h2{font-size:19px;margin:36px 0 4px}
+p{margin:6px 0}
+.lead{color:var(--muted);max-width:68ch}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:16px 0 4px;padding:0;list-style:none}
+.rules li{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;font-size:14px}
+.rules b{display:block;font-size:15px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+@media(max-width:760px){.pair{grid-template-columns:1fr}}
+.col>.tag{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:2px 10px;margin-bottom:6px}
+.before>.tag{background:#f3d9db;color:var(--danger)}
+.after>.tag{background:#d3efdf;color:var(--green)}
+.stage{background:#59615a;border-radius:14px;padding:14px;min-height:150px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.stage.map{background:#e9ecdf}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 4px 0 rgba(26,56,102,.15);padding:10px 12px;font-size:14px;width:100%}
+.card.soft{background:var(--soft)}
+.head{background:var(--blue);color:#fff;border-radius:9px;padding:6px 10px;font-weight:700;margin:-4px -6px 8px;display:flex;align-items:center;gap:8px}
+.head.green{background:var(--green)}
+.btn{display:block;text-align:center;background:var(--soft);border-radius:9px;padding:7px 8px;font-weight:700;font-size:14px}
+.btn.go{background:var(--green);color:#fff}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.key{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;border-radius:6px;background:var(--ink);color:#fff;font-size:12px;font-weight:700}
+.chip{display:inline-flex;align-items:center;gap:5px;background:var(--soft);border-radius:999px;padding:3px 10px;font-weight:700;font-size:14px;white-space:nowrap}
+.chip.warn{background:#fff3d6;color:var(--amber)}
+.ico{width:18px;height:18px;flex:none;fill:currentColor;color:var(--blue)}
+.ico.g{color:var(--green)}.ico.a{color:var(--amber)}.ico.w{color:#fff}
+.small{font-size:12.5px;color:var(--muted)}
+.info{display:inline-flex;width:20px;height:20px;border-radius:50%;border:2px solid var(--blue);color:var(--blue);font-size:12px;font-weight:700;align-items:center;justify-content:center;flex:none}
+.tip{background:var(--ink);color:#fff;border-radius:8px;padding:6px 10px;font-size:12.5px;max-width:260px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tile{background:var(--soft);border-radius:10px;padding:8px;text-align:center}
+.tile b{display:block;font-size:17px}
+.big{font-size:24px;font-weight:700;color:var(--green)}
+.note{background:var(--card);border-left:4px solid var(--blue);border-radius:6px;padding:8px 12px;font-size:14px;margin-top:8px}
+.world{color:#fff;text-align:center;font-weight:700;text-shadow:0 1px 2px #000;align-self:center}
+table{border-collapse:collapse;width:100%;background:var(--card);border-radius:12px;overflow:hidden;font-size:14px;margin-top:10px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:var(--soft)}
+.scroll{overflow-x:auto}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+ <defs>
+  <symbol id="i-clock" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 5v5.2l3.6 2.1-1 1.7L11 13.3V7h2z"/></symbol>
+  <symbol id="i-won" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM6 8h2l1 4 1.3-4h3.4l1.3 4 1-4h2l-2 8h-2.2L12 11l-1.8 5H8L6 8z"/></symbol>
+  <symbol id="i-road" viewBox="0 0 24 24"><path d="M8 3h2l-1.5 18h-3L8 3zm6 0h2l2.5 18h-3L14 3zm-3 2h2v3h-2V5zm0 6h2v3h-2v-3zm0 6h2v3h-2v-3z"/></symbol>
+  <symbol id="i-car" viewBox="0 0 24 24"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11a2 2 0 0 1 2 2v5h-2.5v-2h-13v2H3v-5a2 2 0 0 1 2-2zm2.2 0h9.6l-1-3.5H8.2l-1 3.5zM7 15.5a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm10 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z"/></symbol>
+  <symbol id="i-fuel" viewBox="0 0 24 24"><path d="M5 3h8a1 1 0 0 1 1 1v7h1.5a2 2 0 0 1 2 2v4a1 1 0 0 0 2 0V9.5l-2.6-2.6 1.4-1.4L21 8.200V17a3 3 0 0 1-6 0v-4H14v8H4V4a1 1 0 0 1 1-1zm1.500 3v4h5V6h-5z"/></symbol>
+  <symbol id="i-food" viewBox="0 0 24 24"><path d="M6 2h1.500v6H9V2h1.500v6H12V2h1.500v7a3 3 0 0 1-2.250 2.900V22h-2.500V11.900A3 3 0 0 1 6 9V2zm10 0c2 1 3 3.500 3 6.500V13h-2v9h-2.500V2H16z"/></symbol>
+  <symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 6h2v7h6V9h7a3 3 0 0 1 3 3v7h-2v-3H5v3H3V6zm5 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7zm0 4.500a2.500 2.500 0 1 0 0 5 2.500 2.500 0 0 0 0-5z"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3l10 18H2L12 3zm-1 6v6h2V9h-2zm0 8v2h2v-2h-2z"/></symbol>
+  <symbol id="i-queue" viewBox="0 0 24 24"><path d="M4 6h16v3H4V6zm0 5h11v3H4v-3zm0 5h7v3H4v-3z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l3 6.500 7 .800-5.200 4.800 1.500 7L12 17.500 5.700 21.100l1.500-7L2 9.300l7-.800L12 2z"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M21 6.500a5 5 0 0 1-6.600 4.700L6 19.600 4.400 18l8.400-8.400A5 5 0 0 1 17.500 3l-3 3 1.500 2 2 1.500 3-3z"/></symbol>
+ </defs>
+</svg>
+<main>
+<h1>텍스트 줄이기 시안</h1>
+<p class="lead">2026-11-24 직접 플레이 피드백 "동작 설명 텍스트가 게임 전반에 많다"에 대한 시안입니다. 승인 전에는 게임 화면을 바꾸지 않습니다. 왼쪽이 지금, 오른쪽이 제안입니다. 수치와 문구는 실제 화면에서 가져왔습니다.</p>
+
+<ul class="rules">
+ <li><b>1. 화면에는 지금 필요한 것만</b>상태는 아이콘과 숫자, 문장은 한 줄 12자 안팎.</li>
+ <li><b>2. 조작은 키 배지로</b>"정차 후 F를 눌러" 대신 <span class="key">F</span> 주문.</li>
+ <li><b>3. 규칙 설명은 가이드로</b>F1 도움말에 "가이드" 탭을 두고 시설·호출·퇴근 규칙을 옮김.</li>
+ <li><b>4. 궁금할 때만 툴팁</b>ⓘ 에 마우스를 올리거나 패드로 선택하면 한두 줄 설명.</li>
+</ul>
+
+<h2>A. 주행 화면 · 운행 알림과 호출 대기</h2>
+<div class="pair">
+ <div class="col before"><span class="tag">지금</span>
+  <div class="stage">
+   <div class="card soft" style="max-width:250px"><b>운행 알림</b><p style="text-align:center;color:var(--muted);font-size:16px">시설 이용/출차 중 · 다음 차량은 출차 후 입장 · 대체 시설은 M 지도</p></div>
+   <div class="card soft" style="max-width:360px"><b>다음 승객을 기다려요</b><p>지도에서 새로운 호출을 확인하세요.</p><span class="btn go">호출 보기 · M</span></div>
+  </div>
+ </div>
+ <div class="col after"><span class="tag">제안</span>
+  <div class="stage">
+   <div class="card soft" style="max-width:250px"><div class="row"><svg class="ico a"><use href="#i-queue"/></svg><b>시설 이용 중</b><span class="info">i</span></div><div class="small">뒤 차 1대 대기</div></div>
+   <div class="tip">다음 차는 내가 나간 뒤 들어옵니다. 다른 시설은 지도에서 찾습니다.</div>
+   <div class="card soft" style="max-width:360px"><div class="row" style="justify-content:space-between"><b>호출 대기</b><span class="chip">호출 3건</span></div><span class="btn go" style="margin-top:8px"><span class="key" style="background:#fff;color:var(--green)">M</span> 호출 보기</span></div>
+  </div>
+ </div>
+</div>
+<div class="note">알림 한 건은 아이콘 + 제목 한 줄 + 숫자 한 줄로 고정합니다. 긴 사유는 ⓘ 툴팁과 F8 운행 기록에 남깁니다.</div>
+
+<h2>B. 지도 · 생활시설 비교</h2>
+<div class="pair">
+ <div class="col before"><span class="tag">지금</span>
+  <div class="stage map">
+   <div class="card"><div class="head"><svg class="ico w"><use href="#i-pin"/></svg>생활시설 비교</div>
+    <p class="small" style="color:var(--ink)">선택하면 입구까지 길안내만 시작합니다.<br>결제는 현장 정차 후 F로 확정하세요.</p>
+    <div class="card" style="box-shadow:none"><div class="head" style="margin:0 0 6px">은계북부 주유소 (게임시설)</div>이동 약 291초 / 1867m · 진입·출차 포함<br>현재 대기 차량 없음<br>이용 10초 · 400원<br>이용 직후 예상: 연료 62.3% · 포만 57 · 피로 29<span class="btn" style="margin-top:8px">이 시설로 길안내 · 결제 없음</span></div>
+   </div>
+  </div>
+ </div>
+ <div class="col after"><span class="tag">제안</span>
+  <div class="stage map">
+   <div class="card"><div class="head"><svg class="ico w"><use href="#i-pin"/></svg>생활시설 <span class="info" style="border-color:#fff;color:#fff;margin-left:auto">i</span></div>
+    <div class="card" style="box-shadow:none"><div class="row" style="justify-content:space-between"><b>은계북부 주유소</b><span class="chip">대기 0</span></div>
+     <div class="row" style="margin:8px 0"><span class="chip"><svg class="ico"><use href="#i-road"/></svg>1.9km · 5분</span><span class="chip"><svg class="ico"><use href="#i-clock"/></svg>10초</span><span class="chip"><svg class="ico g"><use href="#i-won"/></svg>400원</span></div>
+     <div class="row small"><svg class="ico"><use href="#i-fuel"/></svg>60 → 62 <svg class="ico"><use href="#i-food"/></svg>57 <svg class="ico"><use href="#i-bed"/></svg>29</div>
+     <span class="btn go" style="margin-top:8px">길안내</span></div>
+   </div>
+   <div class="tip">길안내만 시작합니다. 결제는 도착해서 정차한 뒤 합니다.</div>
+  </div>
+ </div>
+</div>
+<div class="note">"(게임시설)"과 "진입·출차 포함" 같은 꼬리말은 지웁니다. 이용 후 예상 수치는 아이콘 세 개로 줄입니다.</div>
+
+<h2>C. 길 위의 시설 표지와 지도 장소 설명</h2>
+<div class="pair">
+ <div class="col before"><span class="tag">지금</span>
+  <div class="stage">
+   <div class="world">은계 남부 식당 입구 (게임시설)<br>식사 · 정차 후 F</div>
+   <div class="card" style="max-width:340px"><b>기사 식당</b><br>제육백반 / 된장찌개 정식 / 소고기국밥<br>각 3,000원 · 식사 50초 · 포만감 +70<br>입구로 진입해 식당 앞 주차 칸에 정차 후 F</div>
+  </div>
+ </div>
+ <div class="col after"><span class="tag">제안</span>
+  <div class="stage">
+   <div class="world"><span class="key">F</span> 식사</div>
+   <div class="card" style="max-width:340px"><div class="row" style="justify-content:space-between"><b>은계 기사식당</b><span class="info">i</span></div>
+    <div class="row" style="margin-top:8px"><span class="chip"><svg class="ico g"><use href="#i-won"/></svg>3,000원</span><span class="chip"><svg class="ico"><use href="#i-clock"/></svg>50초</span><span class="chip"><svg class="ico"><use href="#i-food"/></svg>+70</span></div></div>
+  </div>
+ </div>
+</div>
+<div class="note">시설 이름은 간판이 대신하므로 길 위 표지는 키 배지와 동작 한 단어만 둡니다. 표지는 차가 30m 안에 들어왔을 때만 보이게 합니다.</div>
+
+<h2>D. 하루 마감</h2>
+<div class="pair">
+ <div class="col before"><span class="tag">지금</span>
+  <div class="stage">
+   <div class="card"><div class="head green">1일차 · 영업 마감</div>
+    <div class="row" style="justify-content:space-between"><span class="small">오늘 순수익</span><span class="big">3,960원</span></div>
+    <div class="card soft" style="box-shadow:none;margin:6px 0">수입 5,960원 · 잔액 13,960원<br>지출 2,000원 · 미납 0원</div>
+    운송 1건 · 미완료 0건 · 영업 0:07<br>운전 점수 100 · 차량 청결도 98 · 내구도 100<br>포만감 79 · 기사 피로도 10
+    <p class="small">누적 순수익 3,960원<br>다음 날 · 피로 0 · 포만감 79<br>목표 · 일단, 오늘을 버티자<br>오늘의 기록 · 최장 운송 1.6km<br>무위반 연속 1일<br>완료 운송 1건<br>숙소 월세 −1,500원</p>
+    <span class="btn go">2일차 준비</span></div>
+  </div>
+ </div>
+ <div class="col after"><span class="tag">제안</span>
+  <div class="stage">
+   <div class="card"><div class="head green">1일차 마감</div>
+    <div class="row" style="justify-content:space-between"><span class="small">오늘 순수익</span><span class="big">+3,960원</span></div>
+    <div class="tiles" style="margin:8px 0">
+     <div class="tile"><svg class="ico"><use href="#i-car"/></svg><b>1건</b><span class="small">운송</span></div>
+     <div class="tile"><svg class="ico"><use href="#i-star"/></svg><b>100</b><span class="small">운전 점수</span></div>
+     <div class="tile"><svg class="ico g"><use href="#i-won"/></svg><b>13,960</b><span class="small">잔액</span></div>
+    </div>
+    <div class="row"><span class="chip">무위반 1일째</span><span class="chip">최장 1.6km</span></div>
+    <div class="row" style="margin-top:8px"><span class="btn" style="flex:1">상세</span><span class="btn go" style="flex:2">2일차 준비</span></div></div>
+  </div>
+ </div>
+</div>
+<div class="note">수입·지출·월세·차량 상태·내일 컨디션은 "상세"로 옮깁니다. 첫 화면은 순수익과 숫자 세 개만 남깁니다.</div>
+
+<h2>옮길 곳: F1 가이드</h2>
+<p class="lead">화면에서 뺀 설명은 없애지 않고 F1 도움말의 새 "가이드" 탭에 주제별로 모읍니다. 처음 겪는 상황에서는 해당 항목을 한 번만 작은 알림으로 띄웁니다.</p>
+<div class="scroll"><table>
+ <tr><th>가이드 항목</th><th>지금 흩어져 있는 곳</th></tr>
+ <tr><td>호출 받기와 승하차</td><td>호출 대기 카드, 지도 호출 패널, 승차 지점 안내</td></tr>
+ <tr><td>시설 이용(주유·식사·휴식·정비·간식)</td><td>길 위 표지, 시설 팝업, 지도 장소 설명, 시설 비교 안내문</td></tr>
+ <tr><td>컨디션(포만감·피로)과 차량 상태</td><td>운행 알림, 시설 팝업 꼬리말</td></tr>
+ <tr><td>운전 점수·제한속도·사고</td><td>운행 알림, 영수증</td></tr>
+ <tr><td>퇴근과 정산</td><td>퇴근 안내 알림, 마감 화면</td></tr>
+</table></div>
+
+<h2>적용 순서(승인 후)</h2>
+<p class="lead">한 번에 바꾸지 않고 화면 단위로 나눠 진행하고, 단계마다 전후 캡처를 보여드립니다.</p>
+<div class="scroll"><table>
+ <tr><th>단계</th><th>범위</th></tr>
+ <tr><td>1</td><td>F1 가이드 탭과 ⓘ 툴팁 부품 (다른 단계의 바탕)</td></tr>
+ <tr><td>2</td><td>A 주행 화면: 운행 알림, 호출 대기 카드</td></tr>
+ <tr><td>3</td><td>B·C 지도 시설 비교, 장소 설명, 길 위 표지, 시설 팝업</td></tr>
+ <tr><td>4</td><td>D 마감·영수증·영업 준비 화면</td></tr>
+</table></div>
+</main>
+</body>
+</html>

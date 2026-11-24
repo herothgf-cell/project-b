@@ -152,12 +152,12 @@ public sealed class DayLightController : MonoBehaviour {
    if(sky.HasProperty("_GroundColor"))sky.SetColor("_GroundColor",sample.Ambient*.72f);
    sky.SetFloat("_Exposure",Mathf.Lerp(1.05f,.48f,sample.Glow));
   }
-  if(session.traffic)session.traffic.SetNightReadability(CurrentPhase==DayLightPhase.Night);
+  if(session.traffic)session.traffic.SetNightReadability(CurrentPhase==DayLightPhase.Night||sample.Glow>=.5f);
   if(sample.Glow<.035f&&city==null){LogProbe();return;}
   if(city==null)city=new DayLightCity(session.world.map,session.traffic,transform);
   city.UpdateGlow(sample.Glow);
   if(sample.Glow<.035f){TurnOffHeadlamps();return;}
-  if(playerRig==null||!playerRig.Exists)playerRig=new DayLightHeadlamps(transform,city.LensMaterial,true);
+  if(playerRig==null||!playerRig.Exists)playerRig=new DayLightHeadlamps(transform,city.LensMaterial,city.TailMaterial,true);
   playerRig.Assign(session.taxi.transform,true,sample.Glow);
   if(Time.unscaledTime>=nextTraffic){
    RefreshTrafficHeadlamps(sample.Glow);
@@ -197,7 +197,7 @@ public sealed class DayLightController : MonoBehaviour {
   for(int i=0;i<TrafficCapacity;i++){
    var current=candidates[i];
    if(!current.transform){trafficRigs[i]?.Assign(null,false,0);continue;}
-   if(trafficRigs[i]==null||!trafficRigs[i].Exists)trafficRigs[i]=new DayLightHeadlamps(transform,city.LensMaterial,false);
+   if(trafficRigs[i]==null||!trafficRigs[i].Exists)trafficRigs[i]=new DayLightHeadlamps(transform,city.LensMaterial,city.TailMaterial,false);
    trafficRigs[i].Assign(current.transform,current.taxi,glow);LitVehicleCount++;
   }
  }

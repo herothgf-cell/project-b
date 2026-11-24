@@ -25,10 +25,18 @@ public partial class PassengerJobs : MonoBehaviour {
  bool[] roadsideWaiting;string waitingSeed="";int waitingGeneration;double nextWaitingRefresh;
  string seedCampaign;int seedDay=int.MinValue;string seedCache;
  string WaitingSeed {get{string campaign=session.law?session.law.ids.campaign:"initial";int day=session.business==null?1:session.business.ledger.Day;if(seedCache==null||day!=seedDay||!ReferenceEquals(campaign,seedCampaign)&&campaign!=seedCampaign){seedCampaign=campaign;seedDay=day;seedCache=campaign+":"+day;}return seedCache;}}
+ // Test feedback 2026-11-24: the snack and coffee pockets are for the shop only. No passenger waits,
+ // boards or gets off there, so buying and passenger stops never share a bay.
+ bool[] shopOnly;PassengerStopCatalog shopOnlyCatalog;
+ public bool ShopOnly(int index){
+  if(!session||!session.services||session.business==null||session.business.ledger==null||Catalog==null)return false;
+  if(!ReferenceEquals(shopOnlyCatalog,Catalog)||shopOnly==null||shopOnly.Length!=stops.Length){shopOnlyCatalog=Catalog;shopOnly=new bool[stops.Length];foreach(var shop in session.services.RefreshmentShops)if(shop.StopIndex>=0&&shop.StopIndex<shopOnly.Length)shopOnly[shop.StopIndex]=true;}
+  return index>=0&&index<shopOnly.Length&&shopOnly[index];
+ }
  public bool HasWaitingPassenger(int index){
   if(index<0||index>=stops.Length||!PickupClaimAvailable(index)||AccidentController.PersonHeld(session,AccidentController.WaitingId(index)))return false;
   if(current!=null&&trip.State==TripState.ToPickup&&current.pickup==index)return true;
-  if(StopOccupied(index))return false;
+  if(ShopOnly(index)||StopOccupied(index))return false;
   if(current!=null&&trip.State==TripState.OnTrip&&current.pickup==index||Time.time<cooldown[index])return false;
   if(trip.State==TripState.Idle)foreach(var o in offers)if(o!=null&&o.pickup==index)return true;
   if(session.simulationMatch)return session.simulationMatch.SharedCalls!=null&&session.simulationMatch.SharedCalls.RoadsideAt(index)!=null;
@@ -103,7 +111,7 @@ public partial class PassengerJobs : MonoBehaviour {
   }
   foreach(int p in pickups)for(int step=0;step<4;step++){
    int d=(p+3+generation*5+step*7)%stops.Length;
-   while(d==p||d==Catalog.OppositeIndex(p))d=(d+1)%stops.Length;
+   while(d==p||d==Catalog.OppositeIndex(p)||ShopOnly(d))d=(d+1)%stops.Length;
    d=PreferredDrop(p,d);
    var o=OrdinaryOffer(p,d,distances[p]);if(o!=null)result.Add(o);
   }return result.ToArray();
@@ -141,7 +149,7 @@ public partial class PassengerJobs : MonoBehaviour {
   pickups.Sort((a,b)=>{int order=distances[a].CompareTo(distances[b]);return order!=0?order:a.CompareTo(b);});
   foreach(int pickup in pickups)for(int offset=0;offset<stops.Length;offset++){
    int drop=(pickup+3+offset)%stops.Length;
-   if(drop==pickup||drop==Catalog.OppositeIndex(pickup)||StopOccupied(drop))continue;
+   if(drop==pickup||drop==Catalog.OppositeIndex(pickup)||StopOccupied(drop)||ShopOnly(drop))continue;
    var offer=OrdinaryOffer(pickup,PreferredDrop(pickup,drop),PickupDistance(pickup));
    if(offer==null)continue;
    // Use the normal relaxed deadline while the driver learns the first pickup and drop.
@@ -151,10 +159,10 @@ public partial class PassengerJobs : MonoBehaviour {
   }
   return null;
  }
- bool PickupAvailable(int index,float distance){return Finite(distance)&&Time.time>=cooldown[index]&&!StopOccupied(index);}
+ bool PickupAvailable(int index,float distance){return Finite(distance)&&Time.time>=cooldown[index]&&!StopOccupied(index)&&!ShopOnly(index);}
  int PreferredDrop(int pickup,int drop){
   int opposite=Catalog.OppositeIndex(drop);
-  if(opposite<0||opposite==pickup||StopOccupied(opposite))return drop;
+  if(opposite<0||opposite==pickup||StopOccupied(opposite)||ShopOnly(opposite))return drop;
   float alternate=nav.Distance(stops[pickup],stops[opposite]);
   return Finite(alternate)&&(StopOccupied(drop)||alternate<nav.Distance(stops[pickup],stops[drop]))?opposite:drop;
  }
@@ -230,7 +238,7 @@ public partial class PassengerJobs : MonoBehaviour {
   }
   marker=GameObject.CreatePrimitive(PrimitiveType.Cylinder);marker.name="Pickup or destination zone";marker.transform.localScale=new Vector3(3,.03f,9);marker.GetComponent<Renderer>().sharedMaterial=WorldBuilder.Mat("Destination zone",new Color(.2f,.8f,.75f));Destroy(marker.GetComponent<Collider>());marker.SetActive(false);if(session.IsSimulationBot){marker.GetComponent<Renderer>().enabled=false;foreach(var line in GetComponentsInChildren<LineRenderer>())line.enabled=false;}Generate();
  }
- JobOffer Make(int pickup,int drop,PrototypeScenario scenario=null){float distance=nav.Distance(stops[pickup],stops[drop]);var offer=new JobOffer{pickup=pickup,drop=drop,requiredScore=new[]{ContentTuning.Int("common.required.easy",60),ContentTuning.Int("common.required.normal",70),ContentTuning.Int("common.required.hard",85)}[(pickup+drop)%3],distance=distance};var zones=GetComponent<ServiceLawZones>();if(zones){if(scenario!=null){if(!zones.ConfigureScenario(offer,scenario))return null;}else zones.ConfigureOffer(offer);}offer.fare=3000+Mathf.CeilToInt(offer.distance*4/100)*100;Stamp(offer);offer.timingPolicyVersion=1;offer.urgency=OneDayOfferPolicy.Urgency(offer.candidateSeed);var route=scenario==null?nav.hd==null?null:nav.hd.Route(stops[pickup].laneEdge,stops[pickup].laneAt,stops[drop].laneEdge,stops[drop].laneAt):scenario.route;offer.safeRouteSeconds=SafeRouteSeconds(route,offer.distance);offer.seconds=OneDayOfferPolicy.TransportSeconds(offer.safeRouteSeconds,offer.waitSeconds,offer.urgency);return offer;}
+ JobOffer Make(int pickup,int drop,PrototypeScenario scenario=null){if(ShopOnly(pickup)||ShopOnly(drop))return null;float distance=nav.Distance(stops[pickup],stops[drop]);var offer=new JobOffer{pickup=pickup,drop=drop,requiredScore=new[]{ContentTuning.Int("common.required.easy",60),ContentTuning.Int("common.required.normal",70),ContentTuning.Int("common.required.hard",85)}[(pickup+drop)%3],distance=distance};var zones=GetComponent<ServiceLawZones>();if(zones){if(scenario!=null){if(!zones.ConfigureScenario(offer,scenario))return null;}else zones.ConfigureOffer(offer);}offer.fare=3000+Mathf.CeilToInt(offer.distance*4/100)*100;Stamp(offer);offer.timingPolicyVersion=1;offer.urgency=OneDayOfferPolicy.Urgency(offer.candidateSeed);var route=scenario==null?nav.hd==null?null:nav.hd.Route(stops[pickup].laneEdge,stops[pickup].laneAt,stops[drop].laneEdge,stops[drop].laneAt):scenario.route;offer.safeRouteSeconds=SafeRouteSeconds(route,offer.distance);offer.seconds=OneDayOfferPolicy.TransportSeconds(offer.safeRouteSeconds,offer.waitSeconds,offer.urgency);return offer;}
  float SafeRouteSeconds(HdRoadGraph.RoutePath route,float fallback){
   if(route==null||nav.hd==null)return fallback/8;float result=0,prior=0;
   for(int k=0;k<route.edges.Count;k++){int edge=route.edges[k];float length=route.ends[k]-prior;prior=route.ends[k];var lane=nav.hd.edges[edge];float cruise=lane.turn!=0||lane.id.StartsWith("join:")?4.5f:8;float seconds=RoadMapRules.TravelSeconds(session.world.map,lane.id,nav.hd.paths[edge].length,cruise);result+=seconds*length/Mathf.Max(.01f,nav.hd.paths[edge].length);}
@@ -296,7 +304,7 @@ public partial class PassengerJobs : MonoBehaviour {
  }
  public bool PreviewPassengerChange(int stop,bool via,out float extraDistance,out int newFare,out float newRemaining){
   extraDistance=0;newFare=trip.Fare;newRemaining=trip.Remaining;
-  if(trip.State!=TripState.OnTrip||trip.ArrivalLocked||current==null||passengerChangeApplied||PassengerViaPending||trip.Remaining<=0||stop<0||stop>=stops.Length||stop==current.drop||stop==current.pickup||nav.hd==null||StopOccupied(stop))return false;
+  if(trip.State!=TripState.OnTrip||trip.ArrivalLocked||current==null||passengerChangeApplied||PassengerViaPending||trip.Remaining<=0||stop<0||stop>=stops.Length||stop==current.drop||stop==current.pickup||nav.hd==null||StopOccupied(stop)||ShopOnly(stop))return false;
   var zones=GetComponent<ServiceLawZones>();var course=GetComponent<ScenarioChoiceSituation>();if(zones&&zones.Live&&zones.Live.Active||course&&(course.Open||course.ActiveObservation))return false;
   float at;int start=nav.hd.Nearest(session.taxi.transform.position,session.taxi.transform.forward,out at);var goal=stops[current.drop];var target=stops[stop];
   var old=nav.hd.Route(start,at,goal.laneEdge,goal.laneAt);var changed=nav.hd.Route(start,at,target.laneEdge,target.laneAt);if(old==null||changed==null)return false;

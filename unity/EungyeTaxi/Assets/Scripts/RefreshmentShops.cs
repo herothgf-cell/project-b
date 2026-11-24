@@ -71,7 +71,7 @@ public partial class ServiceStops {
    WorldBuilder.Box("차양",new Vector3(0,2.13f,0),new Vector3(1.15f,.14f,1.95f),accent,root.transform,false);
    var label=new GameObject("주문 안내");label.transform.SetParent(root.transform,false);
    label.transform.localPosition=Vector3.up*2.85f;
-   var text=label.AddComponent<TextMesh>();text.text=shop.Item.Shop+"\n빈차 정차 후 F · 손님 대기 시 F7";
+   var text=label.AddComponent<TextMesh>();text.text=shop.Item.Shop+"\n빈차 정차 후 F";
    text.fontSize=44;text.characterSize=.052f;text.anchor=TextAnchor.MiddleCenter;text.color=Color.white;
    KoreanText.Apply(text);label.AddComponent<FaceCamera>();
   }

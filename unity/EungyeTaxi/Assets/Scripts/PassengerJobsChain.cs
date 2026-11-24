@@ -23,11 +23,11 @@ public partial class PassengerJobs {
   if(!ChainWindow)return new JobOffer[0];
   string key=session.law.tripId+":"+current.drop+":"+completed;if(key==chainKey)return chainCache;chainKey=key;
   var near=new System.Collections.Generic.List<System.Collections.Generic.KeyValuePair<float,int>>();
-  for(int p=0;p<stops.Length;p++){if(p==current.drop||StopOccupied(p)||Time.time<cooldown[p])continue;float d=nav.Distance(stops[current.drop],stops[p]);if(Finite(d)&&d<=ChainRules.RadiusMetres)near.Add(new System.Collections.Generic.KeyValuePair<float,int>(d,p));}
+  for(int p=0;p<stops.Length;p++){if(p==current.drop||StopOccupied(p)||ShopOnly(p)||Time.time<cooldown[p])continue;float d=nav.Distance(stops[current.drop],stops[p]);if(Finite(d)&&d<=ChainRules.RadiusMetres)near.Add(new System.Collections.Generic.KeyValuePair<float,int>(d,p));}
   near.Sort((a,b)=>a.Key.CompareTo(b.Key));
   var list=new System.Collections.Generic.List<JobOffer>();int n=stops.Length;
   foreach(var pair in near){if(list.Count>=ChainRules.MaxOffers)break;int p=pair.Value;
-   int drop=(p+3+completed*7)%n;for(int step=0;step<n&&(drop==p||drop==current.drop);step++)drop=(drop+1)%n;
+   int drop=(p+3+completed*7)%n;for(int step=0;step<n&&(drop==p||drop==current.drop||ShopOnly(drop));step++)drop=(drop+1)%n;
    var o=Make(p,drop);if(o!=null&&Finite(o.distance))list.Add(o);}
   chainCache=list.ToArray();return chainCache;
  }

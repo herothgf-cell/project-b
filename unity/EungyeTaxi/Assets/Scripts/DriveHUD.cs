@@ -95,7 +95,7 @@ public class DriveHUD : MonoBehaviour {
   if(careerMenuSlots.Length==0)GUI.Label(new Rect(x+20,y+62,440,35),"저장된 경력이 없습니다.",small);
   for(int i=careerFirst;i<Mathf.Min(careerMenuSlots.Length,careerFirst+4);i++){
    var path=careerMenuSlots[i];bool current=path==b.SavePath;
-   string label=System.IO.Path.GetFileName(path)==PrototypeSettings.ThreeDaySaveFile?"첫 3일 저장":"경력 · "+System.IO.File.GetLastWriteTime(path).ToString("MM-dd HH:mm:ss");
+   string label=CampaignSaveLocation.SlotLabel(i,path);
    if(GUI.Button(new Rect(x+20,y+54+(i-careerFirst)*49,440,42),label+(current?" · 현재":""),button)&&b.OpenCareerSlot(path))return;
   }
   if(careerFirst>0&&GUI.Button(new Rect(x+20,y+258,210,38),"이전 목록",button))careerFirst-=4;

@@ -24,6 +24,7 @@ public static class RefreshmentStorefronts {
   public readonly List<MapRoad> roads=new List<MapRoad>();
   public readonly List<MapPoint[]> areas=new List<MapPoint[]>();
   public readonly List<MapBuilding> buildings=new List<MapBuilding>();
+  public readonly List<Vector3[]> lanes=new List<Vector3[]>();
  }
  static bool Near(MapPoint[] points,Vector3 p){if(points==null)return false;foreach(var q in points)if(Mathf.Abs(q.x-p.x)<SearchRadius&&Mathf.Abs(q.z-p.z)<SearchRadius)return true;return false;}
  static Local Gather(MapData map,Vector3 p){
@@ -39,6 +40,7 @@ public static class RefreshmentStorefronts {
   foreach(var r in local.roads)for(int i=1;i<r.points.Length;i++)if(SegmentDistance(p,r.points[i-1].V(),r.points[i].V())<r.width*.5f+margin)return true;
   foreach(var a in local.areas)if(ProjectMapScene.Contains(a,p))return true;
   foreach(var b in local.buildings)if(ProjectMapScene.Contains(b.points,p)||RingDistance(b.points,p)<margin)return true;
+  foreach(var lane in local.lanes)for(int i=1;i<lane.Length;i++)if(SegmentDistance(p,lane[i-1],lane[i])<2+margin)return true;
   return false;
  }
  public static Placement For(MapData map,MapStop stop,string shop){
@@ -46,7 +48,28 @@ public static class RefreshmentStorefronts {
   var items=cache.GetOrCreateValue(map).items;
   Placement placement;
   if(items.TryGetValue(shop,out placement))return placement;
-  placement=Facade(map,stop,shop)??NewBuilding(map,stop,shop);
+  var forward=Flat(stop.Direction);var waiting=stop.Passenger;waiting.y=Ground(stop);
+  placement=Facade(map,waiting,TrafficSystem.Right(forward),shop)??NewBuilding(map,waiting,forward,TrafficSystem.Right(forward),shop,null);
+  return Remember(items,shop,placement);
+ }
+ // A driver restaurant has a parking bay in its own lot instead of a kerb pocket. Its mapped building
+ // beside the lot gets the shop front on the wall that faces the bay. Without such a building the shop
+ // goes on clear land next to the lot (ahead of the parked taxi first, then either side), keeping the
+ // lot and its service lanes clear.
+ public static Placement ForLot(MapData map,ProjectMapObject lot,string shop){
+  if(map==null||lot==null)return null;
+  var items=cache.GetOrCreateValue(map).items;
+  Placement placement;
+  if(items.TryGetValue(shop,out placement))return placement;
+  var forward=Flat(lot.Direction);var right=TrafficSystem.Right(forward);var waiting=lot.Position;
+  placement=Facade(map,waiting,Vector3.zero,shop,true);
+  if(placement==null)foreach(var side in new[]{new[]{-right,forward},new[]{forward,right},new[]{-forward,-right}}){
+   placement=NewBuilding(map,waiting,side[0],side[1],shop,lot.points);
+   if(placement!=null)break;
+  }
+  return Remember(items,shop,placement);
+ }
+ static Placement Remember(Dictionary<string,Placement> items,string shop,Placement placement){
   items[shop]=placement;
   if(placement==null)Debug.LogWarning("REFRESHMENT_STOREFRONT shop="+shop+" placement=none");
   else Debug.Log("REFRESHMENT_STOREFRONT shop="+shop+" mode="+(placement.facade?"facade building="+placement.buildingId+" "+placement.buildingName:"new")+" door="+placement.Door.ToString("F1")+" path="+Vector3.Distance(placement.waiting,placement.Door).ToString("F1"));
@@ -55,10 +78,13 @@ public static class RefreshmentStorefronts {
  static Vector3 Flat(Vector3 v){v.y=0;return v.normalized;}
  static float Ground(MapStop stop){return stop.V().y;}
  // A road-facing wall of a non-civic building close behind the waiting spot.
- static Placement Facade(MapData map,MapStop stop,string shop){
-  var forward=Flat(stop.Direction);var outward=TrafficSystem.Right(forward);var waiting=stop.Passenger;waiting.y=Ground(stop);
+ // facing: accept any wall that looks at the waiting spot, and prefer a building mapped as the restaurant.
+ static readonly string[] Diner={"밥집","식당"};
+ static Placement Facade(MapData map,Vector3 waiting,Vector3 outward,string shop,bool facing=false){
   Placement best=null;float bestScore=float.MaxValue;
-  foreach(var b in Gather(map,waiting).buildings){
+  var buildings=Gather(map,waiting).buildings;
+  if(facing&&buildings.Any(b=>Diner.Any(word=>(b.name??"").Contains(word))))buildings=buildings.Where(b=>Diner.Any(word=>(b.name??"").Contains(word))).ToList();
+  foreach(var b in buildings){
    if(b.height<3.5f||Excluded.Any(word=>(b.name??"").Contains(word)))continue;
    var ring=b.points;
    for(int i=0,j=ring.Length-1;i<ring.Length;j=i++){
@@ -66,11 +92,11 @@ public static class RefreshmentStorefronts {
     if(length<FacadeWidth+1.1f)continue;
     var tangent=(c-a)/length;var normal=TrafficSystem.Right(tangent);
     if(ProjectMapScene.Contains(ring,(a+c)*.5f+normal*.3f))normal=-normal;
-    if(Vector3.Dot(normal,outward)>-.75f)continue;
+    if(!facing&&Vector3.Dot(normal,outward)>-.75f)continue;
     float u=Mathf.Clamp(Vector3.Dot(waiting-a,tangent),FacadeWidth*.5f+.4f,length-FacadeWidth*.5f-.4f);
     var front=a+tangent*u;var offset=waiting-front;
     float distance=Vector3.Dot(offset,normal),lateral=Mathf.Abs(Vector3.Dot(offset,tangent));
-    if(distance<1||distance>16||lateral>8||distance+lateral>=bestScore)continue;
+    if(distance<1||distance>(facing?22:16)||lateral>8||distance+lateral>=bestScore)continue;
     bestScore=distance+lateral;
     best=new Placement{shop=shop,facade=true,buildingId=b.id,buildingName=b.name,front=front,outward=normal,along=TrafficSystem.Right(normal),waiting=waiting,width=FacadeWidth,depth=0};
    }
@@ -78,9 +104,12 @@ public static class RefreshmentStorefronts {
   return best;
  }
  // A compact shop building on the first clear land behind the sidewalk, shifted along the road if needed.
- static Placement NewBuilding(MapData map,MapStop stop,string shop){
-  var forward=Flat(stop.Direction);var outward=TrafficSystem.Right(forward);var waiting=stop.Passenger;waiting.y=Ground(stop);
+ static Placement NewBuilding(MapData map,Vector3 waiting,Vector3 forward,Vector3 outward,string shop,MapPoint[] lot){
   var local=Gather(map,waiting);
+  if(lot!=null){
+   local.areas.Add(lot);
+   foreach(var e in map.hdEdges??new HdEdge[0])if(!e.disabled&&Near(e.points,waiting))local.lanes.Add(e.points.Select(q=>q.V()).ToArray());
+  }
   foreach(float push in new[]{0f,1,2,3,4,5,6})foreach(float shift in new[]{0f,2,-2,4,-4,6,-6,8,-8,10,-10}){
    var origin=waiting+forward*shift;float clear=-1;
    for(int k=4;k<40;k++)if(!Blocked(local,origin+outward*(k*.5f),.6f)){clear=k*.5f;break;}
@@ -97,6 +126,17 @@ public static class RefreshmentStorefronts {
  public static bool Draw(MapData map,Transform parent,MapStop stop,string shop,bool food){
   var p=For(map,stop,shop);
   if(p==null)return false;
+  Build(parent,p,shop,food,shop+"\n빈차 정차 후 F",p.waiting);return true;
+ }
+ // The driver restaurant uses the same shop-front design as the snack shop (test feedback 2026-11-24).
+ public static bool DrawDiner(MapData map,Transform parent,ProjectMapObject lot,string shop){
+  var p=ForLot(map,lot,shop);
+  if(p==null)return false;
+  // The path starts at the lot edge nearest the door, not under the parked taxi.
+  var toDoor=Flat(p.P(0,0,2.9f)-p.waiting);
+  Build(parent,p,shop,true,null,p.waiting+toDoor*3.4f);return true;
+ }
+ static void Build(Transform parent,Placement p,string shop,bool food,string caption,Vector3 pathStart){
   var root=new GameObject(shop+" 상가");root.transform.SetParent(parent,false);
   root.transform.SetPositionAndRotation(p.front,Quaternion.LookRotation(p.outward));
   var t=root.transform;
@@ -144,13 +184,13 @@ public static class RefreshmentStorefronts {
   WorldBuilder.Box("상가 앞 포장",new Vector3(0,.04f,1.6f),new Vector3(w,.08f,2.6f),paving,t,false);
   var board=WorldBuilder.Box("입간판",new Vector3(half-.7f,.55f,2.0f),new Vector3(.6f,1.0f,.08f),accent,t,false);board.transform.localRotation=Quaternion.Euler(-8,25,0);
   var entry=p.P(0,0,2.9f);
-  PathSegment(t,p.waiting,entry,paving);
+  PathSegment(t,pathStart,entry,paving);
+  if(caption==null)return;
   var label=new GameObject("주문 안내");label.transform.SetParent(t,false);
   label.transform.position=p.P(0,4.3f,.6f);
-  var text=label.AddComponent<TextMesh>();text.text=shop+"\n빈차 정차 후 F · 손님 대기 시 F7";
+  var text=label.AddComponent<TextMesh>();text.text=caption;
   text.fontSize=44;text.characterSize=.052f;text.anchor=TextAnchor.MiddleCenter;text.color=Color.white;
   KoreanText.Apply(text);label.AddComponent<FaceCamera>();
-  return true;
  }
  static void PathSegment(Transform parent,Vector3 a,Vector3 b,Material material){
   a.y=b.y=parent.position.y;float length=Vector3.Distance(a,b);if(length<.2f)return;

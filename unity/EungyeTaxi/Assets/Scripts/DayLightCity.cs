@@ -23,6 +23,8 @@ internal sealed class DayLightCity : IDisposable {
  readonly Material lamp,road,windows,pole;
  readonly Texture2D radial,panes;
  public Material LensMaterial {get;private set;}
+ // Test feedback 2026-11-24: cars could not be seen from behind at night. Tail lamps are unlit red faces.
+ public Material TailMaterial {get;private set;}
  public int LampCount {get;private set;}
  public int WindowCount {get;private set;}
 
@@ -43,6 +45,7 @@ internal sealed class DayLightCity : IDisposable {
   road=Surface(shader,"Street lamp road glow",radial,new Color(1,.71f,.30f,0));
   windows=Surface(shader,"Lit building windows",panes,new Color(1,.73f,.31f,0));
   LensMaterial=Surface(shader,"Vehicle headlamp lens",radial,new Color(1,.9f,.66f,0));
+  TailMaterial=Surface(shader,"Vehicle tail lamp",Texture2D.whiteTexture,new Color(1,.06f,.04f,0));
   BuildStreetLamps(map,traffic);
   BuildWindows(map);
  }
@@ -171,11 +174,12 @@ internal sealed class DayLightCity : IDisposable {
   road.color=new Color(1,.71f,.34f,.46f*glow);
   windows.color=new Color(1,.77f,.37f,.87f*glow);
   LensMaterial.color=new Color(1,.91f,.71f,.98f*glow);
+  TailMaterial.color=new Color(1,.06f,.04f,Mathf.Clamp01(glow*1.4f));
  }
  public void Dispose(){
   if(root)UnityEngine.Object.Destroy(root);
   foreach(var mesh in meshes)UnityEngine.Object.Destroy(mesh);
-  UnityEngine.Object.Destroy(pole);UnityEngine.Object.Destroy(lamp);UnityEngine.Object.Destroy(road);UnityEngine.Object.Destroy(windows);UnityEngine.Object.Destroy(LensMaterial);
+  UnityEngine.Object.Destroy(pole);UnityEngine.Object.Destroy(lamp);UnityEngine.Object.Destroy(road);UnityEngine.Object.Destroy(windows);UnityEngine.Object.Destroy(LensMaterial);UnityEngine.Object.Destroy(TailMaterial);
   UnityEngine.Object.Destroy(radial);UnityEngine.Object.Destroy(panes);
  }
 }
@@ -184,12 +188,12 @@ internal sealed class DayLightHeadlamps : IDisposable {
  readonly GameObject root;
  readonly Transform owner;
  readonly Light[] spots;
- readonly Transform lenses;
+ readonly Transform lenses,tails;
  readonly bool player;
  Transform target;
  bool targetTaxi;
  public bool Exists {get{return root;}}
- public DayLightHeadlamps(Transform owner,Material lens,bool player){
+ public DayLightHeadlamps(Transform owner,Material lens,Material tail,bool player){
   this.owner=owner;this.player=player;
   root=new GameObject(player?"Player headlamps":"Nearby headlamps");root.transform.SetParent(owner,false);
   root.SetActive(false);
@@ -205,6 +209,13 @@ internal sealed class DayLightHeadlamps : IDisposable {
   var glints=new GameObject("Headlamp lenses");lenses=glints.transform;lenses.SetParent(root.transform,false);
   for(int sign=-1;sign<=1;sign+=2){
    var shell=TaxiArt.Part(lenses,"Lit headlamp",new Vector3(sign*.63f,0,0),new Vector3(.28f,.14f,.025f),.012f,lens);
+   shell.layer=player?8:0;
+   var renderer=shell.GetComponent<MeshRenderer>();renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;
+  }
+  // Taxi tail lamps. Ordinary traffic cars light their own (TrafficCar).
+  var rear=new GameObject("Tail lamps");tails=rear.transform;tails.SetParent(root.transform,false);
+  for(int sign=-1;sign<=1;sign+=2){
+   var shell=TaxiArt.Part(tails,"Lit tail lamp",new Vector3(sign*.67f,0,0),new Vector3(.21f,.24f,.03f),.012f,tail);
    shell.layer=player?8:0;
    var renderer=shell.GetComponent<MeshRenderer>();renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;
   }
@@ -226,6 +237,7 @@ internal sealed class DayLightHeadlamps : IDisposable {
     spots[i].transform.localRotation=Quaternion.Euler(6,(i==0?-1:1)*(player?1.7f:0),0);
    }
    lenses.localPosition=new Vector3(0,0,.027f);
+   tails.gameObject.SetActive(taxi);tails.localPosition=new Vector3(0,.11f,-4.125f);
   }
   Strength(power);
   if(!root.activeSelf)root.SetActive(true);

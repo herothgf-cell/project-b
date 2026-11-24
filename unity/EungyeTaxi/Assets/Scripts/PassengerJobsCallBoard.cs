@@ -110,7 +110,7 @@ public partial class PassengerJobs {
   string key=session.law.tripId+":"+current.drop;if(key==breakKey)return breakPreview;breakKey=key;
   var near=new System.Collections.Generic.List<System.Collections.Generic.KeyValuePair<float,int>>();
   var all=new System.Collections.Generic.List<System.Collections.Generic.KeyValuePair<float,int>>();
-  for(int i=0;i<stops.Length;i++){if(i==current.drop)continue;float d=nav.Distance(stops[current.drop],stops[i]);if(!Finite(d))continue;var pair=new System.Collections.Generic.KeyValuePair<float,int>(d,i);all.Add(pair);if(d<=IdleTimeRules.StopBreakPreviewMetres)near.Add(pair);}
+  for(int i=0;i<stops.Length;i++){if(i==current.drop||ShopOnly(i))continue;float d=nav.Distance(stops[current.drop],stops[i]);if(!Finite(d))continue;var pair=new System.Collections.Generic.KeyValuePair<float,int>(d,i);all.Add(pair);if(d<=IdleTimeRules.StopBreakPreviewMetres)near.Add(pair);}
   // No stop inside the radius: still show the two nearest so the preview never goes blank.
   if(near.Count==0)near=all;
   near.Sort((a,b)=>a.Key.CompareTo(b.Key));

@@ -580,7 +580,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   services.ConfirmAction(false);
   Check(services.pending<0&&business.ledger.Account.Cash==cash,"cancel meal quote without charge");
   Check(services.RequestAction(1)&&services.ConfirmAction(true)&&business.ledger.Account.Cash==cash-3000,"meal charges exactly once");
-  {var overlay=s.GetComponent<FullMapOverlay>();var cafe=overlay.Places().FirstOrDefault(p=>p.capabilityLabel=="아메리카노");
+  {var overlay=s.GetComponent<FullMapOverlay>();var cafe=overlay.Places().FirstOrDefault(p=>p.capabilityLabel==Refreshment.For(Refreshment.Coffee).Shop);
    Check(cafe!=null&&cafe.glyph==20,"americano cafe uses the cafe map icon");
    if(overlay.Open()){yield return Frames(3);yield return Capture("map-cafe-icon");overlay.Close();}}
   var pump=services.Stations[0];Pose(pump.pump,pump.direction);services.Toggle();
@@ -610,6 +610,10 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
   Check(business.ledger.RecordFare("shop-fixture",10000),"fund isolated shop test");
   business.ledger.Driver.satiety=35;business.ledger.Driver.fatigue=55;
   var map=s.GetComponent<FullMapOverlay>();
+  // 2026-11-24: shop pockets are shop-only. No passenger waits there and no call starts or ends there.
+  foreach(var shop in shops)Check(s.jobs.ShopOnly(shop.StopIndex)&&!s.jobs.HasWaitingPassenger(shop.StopIndex),"no passenger waits at the shop pocket "+shop.Item.Shop);
+  Check(s.jobs.offers.Any(o=>o!=null)&&!s.jobs.offers.Any(o=>o!=null&&(s.jobs.ShopOnly(o.pickup)||s.jobs.ShopOnly(o.drop))),"calls avoid the shop pockets");
+  Check(Enumerable.Range(0,s.jobs.stops.Length).Count(i=>s.jobs.ShopOnly(i))==2,"exactly two shop-only pockets");
   foreach(var shop in shops){
    var item=shop.Item;var stop=shop.Stop;
    Check(map.Open(),"open map");
@@ -650,6 +654,31 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    yield return new WaitForSecondsRealtime(.5f);yield return Capture("storefront-"+slug+"-front");
    camera.enabled=true;
   }
+  // 2026-11-24: the driver restaurant uses the same shop-front design, beside its parking lot.
+  {var lot=ProjectMapScene.Services(map,"restaurant").FirstOrDefault();var p=lot==null?null:RefreshmentStorefronts.ForLot(map,lot,"은계 기사식당");
+   Check(p!=null&&GameObject.Find("은계 기사식당 상가"),"driver restaurant has a shop front");
+   if(p!=null){
+    float gap=Vector3.Distance(p.waiting,p.Door);Check(gap>3&&gap<30,"restaurant door near its parking bay gap="+gap.ToString("F1"));
+    camera.enabled=false;var view=p.P(-5.5f,3.2f,16);
+    camera.transform.SetPositionAndRotation(view,Quaternion.LookRotation(p.P(0,1.6f,0)-view));
+    yield return new WaitForSecondsRealtime(.5f);yield return Capture("storefront-diner-front");
+    view=lot.Position+Vector3.up*14-p.outward*2;camera.transform.SetPositionAndRotation(view,Quaternion.LookRotation((p.Door+lot.Position)*.5f-view));
+    yield return new WaitForSecondsRealtime(.3f);yield return Capture("storefront-diner-above");
+    camera.enabled=true;
+   }}
+  // Rear views of the taxi and the nearest traffic car, for the night tail lamps (run with -dayLightNightProbe).
+  {camera.enabled=false;var taxi=s.taxi.transform;var view=taxi.position-taxi.forward*7+Vector3.up*1.7f+taxi.right*1.2f;
+   camera.transform.SetPositionAndRotation(view,Quaternion.LookRotation(taxi.position+Vector3.up*.8f-view));
+   yield return new WaitForSecondsRealtime(.6f);yield return Capture("rear-taxi");
+   var car=s.traffic.cars.Where(c=>c&&c.Visible).OrderBy(c=>(c.transform.position-taxi.position).sqrMagnitude).FirstOrDefault();
+   Check(car,"a traffic car exists for the rear view");
+   if(car){var t=car.transform;view=t.position-t.forward*8+Vector3.up*1.7f+t.right*1.2f;
+    camera.transform.SetPositionAndRotation(view,Quaternion.LookRotation(t.position+Vector3.up*.8f-view));
+    yield return new WaitForSecondsRealtime(.6f);yield return Capture("rear-traffic");
+    view=t.position+t.forward*9+Vector3.up*1.7f+t.right*1.2f;
+    camera.transform.SetPositionAndRotation(view,Quaternion.LookRotation(t.position+Vector3.up*.8f-view));
+    yield return new WaitForSecondsRealtime(.3f);yield return Capture("front-traffic");}
+   camera.enabled=true;}
  }
  void Pose(Vector3 kerb,Vector3 direction){
   var position=kerb+Vector3.up*.65f;

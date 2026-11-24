@@ -756,6 +756,7 @@ public class BusinessProgress : MonoBehaviour {
   if(SaveCheckpoint()){if(morningMemo)RoomOpen=false;return true;}
   ledger=previous;Story=priorStory;StoryMonologue=priorLine;GoalComparison=priorComparison;return false;
  }
+ public bool CareerSlotsFull {get{return SupportsCareer&&CampaignSaveLocation.Full(Path.GetDirectoryName(SavePath));}}
  public string[] CareerSlots(){return SupportsCareer?CampaignSaveLocation.ListCareers(Path.GetDirectoryName(SavePath)):new string[0];}
  public bool OpenCareerSlot(string path){
   if(!SupportsCareer||!Array.Exists(CareerSlots(),slot=>slot==path))return false;
@@ -778,9 +779,12 @@ public class BusinessProgress : MonoBehaviour {
   var next=useV2?new EconomyLedger(settings):new EconomyLedger(new EconomySettings());
   var nextIds=new PrototypeIds(Guid.NewGuid().ToString("N"));
   string previousPath=SavePath;
+  // Three slots only: with all three in use the new career takes the place of the current one.
+  bool replace=separate&&CampaignSaveLocation.Full(Path.GetDirectoryName(previousPath));
   if(separate)SavePath=CampaignSaveLocation.NewCareer(Path.GetDirectoryName(previousPath));
   if(!WriteCheckpoint(next,nextIds)){SavePath=previousPath;ContentTuningRuntime.Restore(previousProfile);return false;}
   if(separate)try{CampaignSaveLocation.SelectCareer(SavePath);}catch(Exception ex){SavePath=previousPath;ContentTuningRuntime.Restore(previousProfile);return EndDayNotice("새 경력 선택을 기록하지 못했습니다: "+ex.Message);}
+  if(replace)try{CampaignSaveLocation.Retire(previousPath);}catch(Exception ex){Debug.LogWarning("CAREER_SLOT_RETIRE_FAILED "+ex.Message);}
   ledger=next;RoomOpen=false;ArchivedRoom=null;CaptureDayStart();loaded=null;resumeBlocked=false;realSeconds=0;initialFollowing=session.traffic.mitOptions.Enabled;mixedFollowing=false;passengers.Clear();practices.Clear();pendingPayment=-1;restartPrompt=false;noticeUntil=0;
   if(session.law){session.law.ledger=new LawLedger();session.law.ids=nextIds;}
   session.jobs.balance=session.jobs.completed=session.jobs.failed=0;session.services.notice=session.services.destination="";session.services.pending=-1;
