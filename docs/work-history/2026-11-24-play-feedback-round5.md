@@ -51,7 +51,7 @@
 
 ## 미검증 / 남은 것
 
-- **배포 실행본(`builds/EungyeTaxi/`)과 manifest는 갱신하지 않았다.** 작업 중 사용자가 그 폴더의 게임을 실행 중이었다. 다음 빌드 때 `PrototypeBuild.BuildHybrid`로 반영한다.
+- 배포 반영: 사용자가 게임을 닫은 뒤 소스 HEAD 864995e4(다른 세션의 방지턱 1af502bd·기획 HTML 864995e4 포함)에서 `PrototypeBuild.BuildHybrid`로 `builds/EungyeTaxi/`를 다시 만들었다. `distribution/EungyeTaxi-build-manifest.json`은 145파일, 크기·SHA256 대조 불일치 0이다(Python 대조). 배포 실행본 회귀: `-contentTest -speedLimitCheck` 32, `-brightUiCheck` 104, `-contentTest -passengerStoryCheck` 42, `-contentTest -bumpCheck` 12건 통과.
 - 사용자가 보낸 두 장면(교차로 출구)과 같은 위치는 따로 캡처하지 않았다. 모든 표지의 위치 조건은 검사로 확인했다.
 - 사람 플레이: 표지 크기·가독성, 인도 없는 7곳에 표지가 없어도 되는지, 얼굴 4장으로 충분한지(70대 남성·10대 학생 얼굴은 그림이 없음).
 - 저장 주의: 이번 검사 중 플레이어 저장 폴더를 백업본(22:14)으로 복원하는 단계가 사용자 플레이 중에 돌았다. `-contentTest` 검사는 임시 폴더에 저장하므로 복원이 필요 없었다. 실행 중인 게임이 곧 저장을 다시 썼다(22:21 이후). 복원 뒤 22:20 시점의 `.bak`·보조 파일은 22:14 내용이다.
