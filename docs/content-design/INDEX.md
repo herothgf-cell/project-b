@@ -91,7 +91,7 @@
 | 요청 14종·하차 후 사건·만족도 | [02 1장](02-passengers-and-fares.md#현재-요청14종과-하차-후-사건1종의-행동과-결과) | 구현·배포 | [요청 판정표](../content-tuning-request-outcomes.md) |
 | 운임과 보너스 | [02 운임과 보너스](02-passengers-and-fares.md#운임과-보너스) | 구현·배포 | [운임·물가 점검](../work-history/2026-11-20-eungye-economy-review.md) |
 | 팁·연속 기록·잘한 운전 칭찬(싱글·PvP) | [02 팁](02-passengers-and-fares.md#tips-streak) · [08 2장](08-fun-improvements.md#2-운임과-보상) | 구현·배포 · 사람 체감·LAN 두 PC 미확인 | [기록](../work-history/2026-11-23-tips-streak-praise.md) |
-| 살아 있는 미터기 | [08 2장](08-fun-improvements.md#2-운임과-보상) | **미결: 결정 대기**(설계안·스위치만, 기본 꺼짐) | [설계안](../work-history/2026-11-24-living-meter-design.md) |
+| 살아 있는 미터기 | [08 2장](08-fun-improvements.md#2-운임과-보상) | **제외**(사용자 결정 2026-11-24. 설계안과 기본 꺼짐 스위치 `meter.enabled`=0은 남김) | [설계안](../work-history/2026-11-24-living-meter-design.md) · [결정](../work-history/2026-11-24-next-bundle-decisions.md) |
 | 취객 특성과 하차, 재사용 행동 모듈 | [02 1장](02-passengers-and-fares.md#현재-구현-취객-유형의-특성과-하차) | 구현·배포 | |
 | 비 오는 날 승차 | [02 1장](02-passengers-and-fares.md#2026-11-07-비-오는-날-승차) | 구현·배포 | |
 
@@ -200,7 +200,7 @@
 | 골목 주차 A(은행로144번길) | [상세 기획 2.3](../work-history/2026-11-24-next-candidates-detail-design.md) | **구현·배포** · 개선 필요(사람 플레이 미확인, 차로 유지 보조와의 충돌 미확인) | [기록](../work-history/2026-11-24-alley-parking.md) |
 | 골목 주차 B(대은로104번길) | 같은 곳 | 미결: 설계안(A의 사람 플레이 결과 뒤) | |
 | 수인로(국도42) 순항 속도 | [08 5.5 3번](08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전) | 미결: 설계안 | [설계안](../work-history/2026-11-24-next-candidates-design.md) |
-| 과속 방지턱 | [08 5.5 1번](08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전) | 미결: 설계안(지도 입력 해시 재생성 여부 결정) | [설계안](../work-history/2026-11-24-next-candidates-design.md) |
+| 과속 방지턱 | [08 5.5 1번](08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전) | **구현·소스**(도로 시설 입력 5곳, 배포 실행본은 다음 빌드) · 개선 필요(사람 플레이 미확인, 일반 차량 감속 없음) | [기록](../work-history/2026-11-24-speed-bumps.md) |
 
 #### G2. 법규를 고민거리로
 
@@ -268,8 +268,6 @@
 |---|---|---|
 | 미션 "길 아는 기사" | L 키, 팁 15%, 내비 단계 3종으로 넓힐지 | [3차 체크리스트](../work-history/2026-11-24-away-run-3-checklist.md) |
 | 37 합치기·겹침 정리 | 5.1~5.4로 합친 방향, 목적지 전면 비공개 보류에 동의하는지 | [3차 체크리스트](../work-history/2026-11-24-away-run-3-checklist.md) |
-| 살아 있는 미터기 | 초안 채택 여부(경제 재조정과 함께) | [설계안](../work-history/2026-11-24-living-meter-design.md) |
-| 과속 방지턱 | 위치를 지도 입력에 넣을지(입력 해시 재생성) | [설계안](../work-history/2026-11-24-next-candidates-design.md) |
 
 ## 개선점 목록 (사람 플레이·알려진 실패)
 

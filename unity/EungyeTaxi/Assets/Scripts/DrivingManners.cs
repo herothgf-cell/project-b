@@ -53,6 +53,8 @@ public class DrivingManners : MonoBehaviour {
  public bool NecessaryBraking(){
   if(session.business&&session.business.SystemFatigueBraking)return true;
   var zones=session.GetComponent<ServiceLawZones>();if(zones&&zones.RequiredBraking())return true;
+  // A speed bump ahead is a reason to brake (2026-11-24).
+  if(session.bumps&&session.bumps.Ahead(transform.position,transform.forward,Mathf.Max(5,session.taxi.body.velocity.magnitude*2+4)))return true;
   // Observation only: assistance never takes over accelerator/brake input.
   float distance=Mathf.Max(5,session.taxi.body.velocity.magnitude*2+4);
   int hitCount=Physics.SphereCastNonAlloc(transform.position+Vector3.up*.65f,.8f,transform.forward,brakeHits,distance,(1<<8)|(1<<9),QueryTriggerInteraction.Ignore);

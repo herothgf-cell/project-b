@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "f7df3578dbb94727e5bb1255d95bd0a17d0c6ffa6c1e5ae8f3499f2155aa8cbf",
+  "contentHash": "f381011793bbeac67123dfdc75bdf1f7b483c57ffa3b351f5e9573cdf7c51513",
   "values": [
     {
       "id": "radio.station",
@@ -2495,6 +2495,30 @@
     {
       "id": "camera.fine.high",
       "value": "7000"
+    },
+    {
+      "id": "bump.enabled",
+      "value": "1"
+    },
+    {
+      "id": "bump.comfortKmh",
+      "value": "25"
+    },
+    {
+      "id": "bump.penalty",
+      "value": "2"
+    },
+    {
+      "id": "bump.cooldownSeconds",
+      "value": "6"
+    },
+    {
+      "id": "bump.jolt",
+      "value": "1"
+    },
+    {
+      "id": "bump.brakeLookMetres",
+      "value": "15"
     },
     {
       "id": "accident.fault.enabled",

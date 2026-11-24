@@ -14441,6 +14441,138 @@
       "editable": true
     },
     {
+      "id": "bump.enabled",
+      "group": "법규",
+      "section": "bump",
+      "title": "과속방지턱 · 켜기",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 도로 시설 입력의 과속방지턱 5곳에서 통과 속도를 판정합니다(그림은 항상 보임).",
+      "affects": [
+        "승차감",
+        "운전 만족도"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SpeedBumps",
+      "editable": true
+    },
+    {
+      "id": "bump.comfortKmh",
+      "group": "법규",
+      "section": "bump",
+      "title": "과속방지턱 · 편한 속도",
+      "type": "number",
+      "defaultValue": "25",
+      "min": 5,
+      "max": 80,
+      "unit": "km/h",
+      "description": "손님을 태우고 이 속도보다 빠르게 넘으면 승차감 감점과 손님 한마디가 나옵니다.",
+      "affects": [
+        "승차감",
+        "운전 만족도"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SpeedBumpRules.Penalised",
+      "editable": true
+    },
+    {
+      "id": "bump.penalty",
+      "group": "법규",
+      "section": "bump",
+      "title": "과속방지턱 · 감점",
+      "type": "integer",
+      "defaultValue": "2",
+      "min": 0,
+      "max": 20,
+      "unit": "점",
+      "description": "빠르게 넘었을 때의 운전 만족도 감점(급가감속과 별도 항목이라 커피 미션에 영향 없음).",
+      "affects": [
+        "승차감",
+        "운전 만족도"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SpeedBumps.Cross",
+      "editable": true
+    },
+    {
+      "id": "bump.cooldownSeconds",
+      "group": "법규",
+      "section": "bump",
+      "title": "과속방지턱 · 감점 간격",
+      "type": "number",
+      "defaultValue": "6",
+      "min": 0,
+      "max": 60,
+      "unit": "초",
+      "description": "이 시간 안에 다시 넘으면 감점하지 않습니다.",
+      "affects": [
+        "승차감",
+        "운전 만족도"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SpeedBumps.Cross",
+      "editable": true
+    },
+    {
+      "id": "bump.jolt",
+      "group": "법규",
+      "section": "bump",
+      "title": "과속방지턱 · 튀는 정도",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 3,
+      "unit": "배",
+      "description": "넘을 때 차체가 위로 튀는 정도(0이면 없음).",
+      "affects": [
+        "승차감",
+        "운전 만족도"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SpeedBumpRules.Bounce",
+      "editable": true
+    },
+    {
+      "id": "bump.brakeLookMetres",
+      "group": "법규",
+      "section": "bump",
+      "title": "과속방지턱 · 제동 인정 거리",
+      "type": "number",
+      "defaultValue": "15",
+      "min": 3,
+      "max": 60,
+      "unit": "m",
+      "description": "이 거리 안의 방지턱 앞에서 밟은 급제동은 필요한 제동으로 봅니다.",
+      "affects": [
+        "승차감",
+        "운전 만족도"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SpeedBumps.Ahead",
+      "editable": true
+    },
+    {
       "id": "accident.fault.enabled",
       "group": "법규",
       "section": "accident",

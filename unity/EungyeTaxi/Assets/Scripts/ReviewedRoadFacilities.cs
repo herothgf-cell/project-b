@@ -8,7 +8,7 @@ public static class ReviewedRoadFacilities {
  [Serializable] public sealed class Opening {public float fromX,toX;}
  [Serializable] public sealed class ExplicitSegment {public string kind;public MapPoint[] points;public float width,height;}
  public sealed class Line {public Vector3 a,b;public float width,height;public string facilityId,kind;public bool alternateColour;}
- public sealed class Layout {public readonly List<Line> barriers=new List<Line>();public readonly List<Line> hatches=new List<Line>();public readonly List<Line> cushions=new List<Line>();public readonly List<Line> bollards=new List<Line>();}
+ public sealed class Layout {public readonly List<Line> barriers=new List<Line>();public readonly List<Line> hatches=new List<Line>();public readonly List<Line> cushions=new List<Line>();public readonly List<Line> bollards=new List<Line>();public readonly List<Line> bumps=new List<Line>();}
  static List<Vector2> ClearIntervals(float from,float to,Opening[] openings){
   var result=new List<Vector2>();if(to<=from)return result;
   var ordered=new List<Opening>(openings??new Opening[0]);ordered.Sort((a,b)=>a.fromX.CompareTo(b.fromX));float at=from;
@@ -66,6 +66,8 @@ public static class ReviewedRoadFacilities {
    foreach(var explicitSegment in facility.segments??new ExplicitSegment[0]){
     if(explicitSegment.points==null||explicitSegment.points.Length<2)continue;
     if(explicitSegment.kind=="flexible-bollard"){PlanBollards(layout,explicitSegment,facility.id);continue;}
+    // Speed bump (2026-11-24): a painted, slightly raised strip across the road; no collider (SpeedBumps judges it).
+    if(explicitSegment.kind=="speed-bump"){var bump=Segment(explicitSegment.points[0].V(),explicitSegment.points[explicitSegment.points.Length-1].V(),explicitSegment.width,explicitSegment.height,facility.id);bump.kind="speed-bump";layout.bumps.Add(bump);continue;}
     bool temporary=explicitSegment.kind=="temporary-barrier",alternateColour=false;
     for(int i=1;i<explicitSegment.points.Length;i++){var line=Segment(explicitSegment.points[i-1].V(),explicitSegment.points[i].V(),explicitSegment.width,explicitSegment.height,facility.id);
      if(explicitSegment.kind=="post-rail"||explicitSegment.kind=="pedestrian-rail"||temporary){
@@ -98,7 +100,17 @@ public static class ReviewedRoadFacilities {
   if(!solid){var collider=post.GetComponent<Collider>();collider.enabled=false;if(Application.isPlaying)UnityEngine.Object.Destroy(collider);else UnityEngine.Object.DestroyImmediate(collider);}
  }
  public static void Draw(Layout layout,Transform parent,bool collisions){
-  if(layout==null||layout.barriers.Count==0&&layout.hatches.Count==0&&layout.cushions.Count==0&&layout.bollards.Count==0)return;
+  if(layout==null||layout.barriers.Count==0&&layout.hatches.Count==0&&layout.cushions.Count==0&&layout.bollards.Count==0&&layout.bumps.Count==0)return;
+  if(layout.bumps.Count>0){
+   // Yellow hump with white chevron-like bands, as Korean speed humps are painted. Visual only.
+   var hump=WorldBuilder.Mat("과속방지턱 노랑",new Color(.95f,.72f,.08f));var stripe=WorldBuilder.Mat("과속방지턱 흰 띠",new Color(.95f,.95f,.9f));
+   foreach(var bump in layout.bumps){var across=bump.b-bump.a;float length=across.magnitude;if(length<.1f)continue;var dir=across/length;var along=new Vector3(-dir.z,0,dir.x);
+    var root=new GameObject("과속방지턱 "+bump.facilityId);root.transform.SetParent(parent,false);root.transform.localPosition=(bump.a+bump.b)*.5f;root.transform.localRotation=Quaternion.LookRotation(along,Vector3.up);
+    WorldBuilder.Box("과속방지턱 몸체",new Vector3(0,bump.height*.5f,0),new Vector3(length,bump.height,bump.width),hump,root.transform,false);
+    WorldBuilder.Box("과속방지턱 윗면",new Vector3(0,bump.height+.004f,0),new Vector3(length,.008f,bump.width*.55f),hump,root.transform,false);
+    for(float x=-length*.5f+.6f;x<length*.5f-.3f;x+=1.2f)WorldBuilder.Box("과속방지턱 흰 띠",new Vector3(x,bump.height+.01f,0),new Vector3(.45f,.01f,bump.width*.92f),stripe,root.transform,false);
+   }
+  }
   if(layout.bollards.Count>0){
    var orange=WorldBuilder.Mat("Reviewed flexible bollard orange",new Color(1f,.27f,.035f));var white=WorldBuilder.Mat("Reviewed flexible bollard reflector",new Color(.96f,.96f,.91f));
    foreach(var post in layout.bollards){
