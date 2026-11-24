@@ -118,6 +118,8 @@ public class FaceCamera : MonoBehaviour {
  TextMesh stopLabel;
  string stopName,suffix;
  int profileGeneration;
+ // 2026-11-24 text reduction: action signs appear only when the taxi is close.
+ public float hideBeyond;Renderer shown;
  public void BindStop(TextMesh label,string rawName,string afterName){
   stopLabel=label;stopName=rawName;suffix=afterName;RefreshLabel();
  }
@@ -126,6 +128,8 @@ public class FaceCamera : MonoBehaviour {
  }
  void LateUpdate(){
   if(stopLabel&&profileGeneration!=ContentTuning.Generation)RefreshLabel();
-  if(Camera.main)transform.rotation=Camera.main.transform.rotation;
+  if(!Camera.main)return;
+  transform.rotation=Camera.main.transform.rotation;
+  if(hideBeyond>0){if(!shown)shown=GetComponent<Renderer>();if(shown)shown.enabled=(Camera.main.transform.position-transform.position).sqrMagnitude<hideBeyond*hideBeyond;}
  }
 }

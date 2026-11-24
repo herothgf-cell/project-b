@@ -70,6 +70,28 @@ public static class CasualUI {
   }
   return result;
  }
+ // 2026-11-24 text reduction: a key badge replaces "press F" sentences, and an (i) mark holds the
+ // explanation that used to sit on the screen. The tooltip is drawn last by FlushTooltip.
+ public static void Key(Rect r,string key,bool light=false){
+  RoundedFill(r,light?Color.white:Ink);
+  var style=new GUIStyle(GUI.skin.label){font=KoreanText.BoldFont,fontSize=Mathf.RoundToInt(r.height*.58f),alignment=TextAnchor.MiddleCenter};style.normal.textColor=light?Green:Color.white;
+  GUI.Label(r,key,style);
+ }
+ static string tooltip;static Rect tooltipAt;
+ public static void Info(Rect r,string text,bool onDark=false){
+  HudGlyph.Draw(r,15,onDark?Color.white:Blue);HudGlyph.Draw(new Rect(r.x+2,r.y+2,r.width-4,r.height-4),15,onDark?Blue:Color.white);
+  var style=new GUIStyle(GUI.skin.label){font=KoreanText.BoldFont,fontSize=Mathf.RoundToInt(r.height*.62f),alignment=TextAnchor.MiddleCenter};style.normal.textColor=onDark?Color.white:Blue;
+  GUI.Label(r,"i",style);
+  if(Event.current.type==EventType.Repaint&&r.Contains(Event.current.mousePosition)){tooltip=text;tooltipAt=r;}
+ }
+ public static void FlushTooltip(float maxRight){
+  if(Event.current.type!=EventType.Repaint||tooltip==null)return;
+  var style=new GUIStyle(GUI.skin.label){font=KoreanText.Font,fontSize=14,wordWrap=true};style.normal.textColor=Color.white;
+  float w=Mathf.Min(300,maxRight-8),h=style.CalcHeight(new GUIContent(tooltip),w-20)+14;
+  var box=new Rect(Mathf.Clamp(tooltipAt.xMax-w,4,Mathf.Max(4,maxRight-w)),tooltipAt.yMax+6,w,h);
+  RoundedFill(box,Ink);GUI.Label(new Rect(box.x+10,box.y+7,w-20,h-14),tooltip,style);tooltip=null;
+ }
+ public static string PlainName(string name){return string.IsNullOrEmpty(name)?name:name.Replace(" (게임시설)","");}
  public static GUIStyle Action(int size){var s=KoreanText.Button(size);PaintButton(s,Green,new Color(.02f,.51f,.28f),new Color(.01f,.34f,.18f),Color.white);return s;}
  static Texture2D green,greenHover,greenDown;
  static Texture2D Tinted(Color c){var t=new Texture2D(48,48,TextureFormat.RGBA32,false);var p=Rounded.GetPixels();for(int i=0;i<p.Length;i++)p[i]=new Color(c.r,c.g,c.b,p[i].a);t.SetPixels(p);t.Apply();t.wrapMode=TextureWrapMode.Clamp;return t;}

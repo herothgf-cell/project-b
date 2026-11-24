@@ -103,6 +103,9 @@ public class DriveHUD : MonoBehaviour {
   if(GUI.Button(new Rect(x+20,y+307,440,38),"돌아가기",button))careerMenuSlots=null;
  }
  public string DrivingHelpText {get{return "운전\nW / ↑ 가속 · S / ↓ 감속 · A,D / ←,→ 조향\n정차 후 S를 놓았다 다시 누르면 후진 · Space 긴급제동\nQ / E 방향지시등 · G 비상등 · Y / 패드 버튼 3 경적\n\n시점과 지도\nC 시점 전환 · B 뒤보기 · Z / X 좌우 보기 · V 코너 시선\nM 전체 지도 · + / - 미니맵 확대 / 축소\n\n승객과 영업\nF 승하차 / 정차한 시설 이용 · 숫자 1~n 대화 선택 (화면의 선택지 번호)\nF7 생활거점 · F8 운행 기록 · F 또는 N 퇴근 (숙소 주차 칸에 정차 후)\nJ 미터기 · K 창문 내림/올림 · [ 온도 낮춤 / ] 온도 높임\n\n조향 보조와 메뉴\nH 조향 보조 켜기 / 끄기 · 보조 중 ← / → 차로 변경\n보조 중 Q / E 다음 교차로 회전 예약\n가속·감속·제동·신호 판단은 직접 합니다.\nF1 도움말 · Esc 일시정지 · F11 전체화면";}}
+ // 2026-11-24 text reduction: rules that used to be written on the HUD, the map and facility signs.
+ public const string GuideText="호출과 승하차\nM 지도에서 호출을 고르면 길 안내가 시작됩니다. 승차 장소와 목적지에서는 진행 방향 오른쪽에 정차하고 F를 누릅니다.\n\n시설 이용\n주유·식사·휴식·정비·간식은 해당 칸에 정차하고 F를 누릅니다. 지도의 생활시설에서 고르면 길 안내만 시작하고, 결제는 도착해서 합니다. 앞 차가 이용 중이면 그 차가 나간 뒤 들어갑니다. 김밥과 커피는 손님이 없는 빈차일 때만 살 수 있습니다.\n\n컨디션과 차량\n포만감이 25 아래면 피로가 1.5배, 10 아래면 2배 빨리 쌓입니다. 연료가 부족하면 알림의 주유소 안내를 누릅니다. 수리는 내구도만, 세차는 청결만 회복합니다.\n\n운전 점수\n신호·제한속도·차로를 지키면 점수가 유지됩니다. 정차하면 운전 평가를 열어 볼 수 있습니다.\n\n퇴근과 정산\n빈차로 숙소 주차 칸에 정차하고 F 또는 N을 누르면 하루를 마칩니다. F7에서 숙소 길 안내를 받을 수 있습니다.";
+ bool helpGuide;
  public static Rect HelpBounds(float width,float height){float scale=Mathf.Min(1,Mathf.Min((width-24)/760,(height-24)/660));return new Rect((width-760*scale)/2,(height-660*scale)/2,760*scale,660*scale);}
  void DrawHelp(){
   int depth=GUI.depth;GUI.depth=-20;var matrix=GUI.matrix;var r=HelpBounds(Screen.width,Screen.height);float scale=r.width/760;
@@ -110,8 +113,10 @@ public class DriveHUD : MonoBehaviour {
   KoreanText.Panel(new Rect(0,0,760,660));
   CasualUI.Header(new Rect(6,6,748,44),"운전과 영업 도움말",3);
   if(GUI.Button(new Rect(650,12,92,34),"닫기",KoreanText.Button(17)))HelpOpen=false;
-  var text=new GUIStyle(body){fontSize=19,wordWrap=true};text.normal.textColor=CasualUI.Ink;
-  GUI.Label(new Rect(24,62,712,526),DrivingHelpText,text);
+  if(GUI.Button(new Rect(24,58,120,34),"조작",helpGuide?KoreanText.Button(16):CasualUI.Action(16)))helpGuide=false;
+  if(GUI.Button(new Rect(152,58,120,34),"가이드",helpGuide?CasualUI.Action(16):KoreanText.Button(16)))helpGuide=true;
+  var text=new GUIStyle(body){fontSize=helpGuide?17:18,wordWrap=true};text.normal.textColor=CasualUI.Ink;
+  GUI.Label(new Rect(24,98,712,494),helpGuide?GuideText:DrivingHelpText,text);
   GUI.Label(new Rect(24,594,712,28),"현재 조향 보조: "+(session.assisted.Active?"켜짐":"꺼짐"),new GUIStyle(text){fontSize=16});
   if(GUI.Button(new Rect(24,624,712,26),"지도 자료: © OpenStreetMap contributors · ODbL · 출처 보기",KoreanText.Button(13)))Application.OpenURL("https://www.openstreetmap.org/copyright");
   GUI.matrix=matrix;GUI.depth=depth;

@@ -98,7 +98,7 @@ using UnityEngine;
   var root=new GameObject(o.name);root.transform.SetParent(parent,false);root.transform.position=o.Position;root.transform.rotation=Quaternion.LookRotation(o.Direction);
   foreach(float x in new[]{-1.4f,1.4f})WorldBuilder.Box("정차 칸",new Vector3(x,.07f,0),new Vector3(.12f,.02f,6),paint,root.transform,false);
   foreach(float z in new[]{-3f,3f})WorldBuilder.Box("정차 선",new Vector3(0,.07f,z),new Vector3(2.8f,.02f,.12f),paint,root.transform,false);
-  var label=new GameObject("시설 안내");label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(0,2.7f,0);var text=label.AddComponent<TextMesh>();text.text=HomeBasePresentation.IsFacility(map,o)?"기사 숙소\n기사 숙소 주차장 · 정차 후 F 퇴근":o.name+"\n"+(combined?"식사 · 짧은 휴식":o.kind=="restaurant"?"식사":o.kind=="rest"?"휴식":"영업 주차")+" · 정차 후 F";text.fontSize=48;text.characterSize=.065f;text.anchor=TextAnchor.MiddleCenter;text.color=Color.white;KoreanText.Apply(text);label.AddComponent<FaceCamera>();
+  var label=new GameObject("시설 안내");label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(0,2.7f,0);var text=label.AddComponent<TextMesh>();text.text=HomeBasePresentation.IsFacility(map,o)?"[F] 퇴근":"[F] "+(combined?"식사 · 휴식":o.kind=="restaurant"?"식사":o.kind=="rest"?"휴식":"주차");text.fontSize=48;text.characterSize=.065f;text.anchor=TextAnchor.MiddleCenter;text.color=Color.white;KoreanText.Apply(text);label.AddComponent<FaceCamera>().hideBeyond=45;
   // Test feedback 2026-11-24: the Eungye driver restaurant gets the same shop front as the snack shop.
   if(o.kind=="restaurant"&&map.mapId=="eungye")RefreshmentStorefronts.DrawDiner(map,parent,o,"은계 기사식당");
  }}

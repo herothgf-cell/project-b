@@ -144,7 +144,7 @@ public sealed class ServiceLawZones : MonoBehaviour {
   var occupancy=GetComponent<StopOccupancySystem>();bool occupied=occupancy&&occupancy.AffectsActive;
   // 08 chapter 4: while stopped with a passenger, the context line gathers pending choices and a next-call preview.
   string stopBreak=occupied||result?null:session.jobs.StopBreakSummary();
-  string context=occupied?"정차 지점 점유 · 안전한 곳에서 대기하거나 대체 지점을 선택하세요.":result?LastFeedback.outcome:stopBreak??session.services.QueueStatus;
+  string context=occupied?"정차 지점 점유 중":result?LastFeedback.outcome:stopBreak??session.services.QueueStatus;
   {float scale=CockpitUI.Scale;var r=CockpitUI.SlidingTipBounds(Screen.width,Screen.height,false,session.jobs.Active,tipSlide,session.simulationMatch!=null,session.drivingCamera&&session.drivingCamera.FirstPerson);Panel(r);
    GUI.Label(new Rect(r.x+10*scale,r.y+3*scale,110*scale,30*scale),"운행 알림",new GUIStyle(text){font=KoreanText.BoldFont,fontSize=Mathf.RoundToInt(17*scale)});
    feed.DrawFilter(new Rect(r.xMax-196*scale,r.y+9*scale,84*scale,20*scale));

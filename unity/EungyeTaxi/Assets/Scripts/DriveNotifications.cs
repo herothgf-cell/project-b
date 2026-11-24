@@ -58,7 +58,7 @@ public class DriveNotifications : MonoBehaviour {
  // ---------- feed model ----------
  readonly List<FeedItem> items=new List<FeedItem>();
  public const string HungerTip="포만감이 25 아래면 피로가 1.5배, 10 아래면 2배 빨리 쌓입니다. 기사식당이나 김밥집에서 식사하세요.";
- static readonly string[] Tips={"정차한 시설은 F로 이용하세요.","M 지도에서 승차지와 목적지를 확인할 수 있습니다.",HungerTip,"숙소로 돌아오면 주차 칸에 정차하고 F로 퇴근하세요."};
+ static readonly string[] Tips={"시설 이용 · 정차 후 F","지도 · M","배고프면 피로가 빨리 쌓여요","퇴근 · 숙소 칸에서 F","자세한 규칙 · F1 가이드"};
  int fuelBand,hungerBand,tipIndex,revision,drawnRevision=-1;
  float fuelUntil,nextTip;
  FeedItem fuelItem;
@@ -95,7 +95,7 @@ public class DriveNotifications : MonoBehaviour {
    if(m.goodLevel>=1)Chime(false,m.goodLevel==2?.32f:.22f);
   }
   if(m.tipSerial!=tipSeen){tipSeen=m.tipSerial;if(m.tipAmount>0){Add(new FeedItem{kind=FeedKind.Situation,text="팁 +"+m.tipAmount.ToString("N0")+"원 · “"+m.tipLine+"”"});Chime(true,.36f);}}
-  if(m.cleanStreak!=streakSeen){if(m.cleanStreak>=2&&m.cleanStreak>streakSeen)Add(new FeedItem{kind=FeedKind.Situation,text="깔끔한 운송 "+m.cleanStreak+"회째 · 이어 가면 팁 확률이 조금씩 올라요"});streakSeen=m.cleanStreak;}
+  if(m.cleanStreak!=streakSeen){if(m.cleanStreak>=2&&m.cleanStreak>streakSeen)Add(new FeedItem{kind=FeedKind.Situation,text="깔끔한 운송 "+m.cleanStreak+"회째"});streakSeen=m.cleanStreak;}
  }
  public int PraiseCardsSeen {get{return goodSeen;}}
  public void Card(string text){if(!string.IsNullOrEmpty(text)&&!session.IsSimulationBot)Add(new FeedItem{kind=FeedKind.Situation,text=text});}
@@ -120,13 +120,13 @@ public class DriveNotifications : MonoBehaviour {
    items.Remove(fuelItem);fuelItem=null;revision++;
   }
   if(band>fuelBand){
-   fuelItem=new FeedItem{kind=FeedKind.Fuel,text="연료 부족 "+account.Fuel.ToString("0")+"% / 주유가 필요합니다.",delta=Mathf.RoundToInt(account.Fuel)};Add(fuelItem);
+   fuelItem=new FeedItem{kind=FeedKind.Fuel,text="연료 부족 "+account.Fuel.ToString("0")+"%",delta=Mathf.RoundToInt(account.Fuel)};Add(fuelItem);
    fuelUntil=Time.time+12;
   }
   fuelBand=band;
   // Low satiety speeds up fatigue (DriverCondition.Advance): explain it as soon as it starts.
   var driver=session.business.ledger.Driver;int hunger=!session.business.enabledCampaign||driver==null?0:driver.satiety<=10?2:driver.satiety<=25?1:0;
-  if(hunger>hungerBand){Add(new FeedItem{kind=FeedKind.Tip,text=(hunger==2?"포만감 10 이하 · 피로 2배 · ":"포만감 25 이하 · 피로 1.5배 · ")+HungerTip});nextTip=Time.time+20;}
+  if(hunger>hungerBand){Add(new FeedItem{kind=FeedKind.Tip,text=hunger==2?"포만감 10 이하 · 피로 2배":"포만감 25 이하 · 피로 1.5배"});nextTip=Time.time+20;}
   hungerBand=hunger;
   ObserveGoodDriving();
   Changed(ref lastBusiness,session.business.notice,FeedKind.System);
@@ -192,7 +192,7 @@ public class DriveNotifications : MonoBehaviour {
     float cw=ChipWidth(i.delta);GUI.Label(new Rect(r.x+32*s,r.y+pad,r.width-cw-40*s,r.height-pad*2),i.text,body);Chip(new Rect(r.xMax-pad-cw,r.center.y-9*s,cw,18*s),i.delta);break;}
    case FeedKind.Fuel:{
     bool critical=i.delta<=5;Outline(r,critical?CriticalBorder:FuelBorder,critical?CriticalFill:CasualUI.Warm,1.5f);Color tone=critical?CasualUI.Danger:CasualUI.Amber;
-    HudGlyph.Draw(new Rect(r.x+pad,r.y+pad,18*s,18*s),8,tone);bold.normal.textColor=tone;GUI.Label(new Rect(r.x+pad+24*s,r.y+pad,r.width-pad*2-24*s,bold.lineHeight),(critical?"연료 거의 없음 ":"연료 부족 ")+i.delta+"% · 주유가 필요합니다",bold);bold.normal.textColor=CasualUI.Ink;
+    HudGlyph.Draw(new Rect(r.x+pad,r.y+pad,18*s,18*s),8,tone);bold.normal.textColor=tone;GUI.Label(new Rect(r.x+pad+24*s,r.y+pad,r.width-pad*2-24*s,bold.lineHeight),(critical?"연료 거의 없음 ":"연료 부족 ")+i.delta+"%",bold);bold.normal.textColor=CasualUI.Ink;
     float row=r.y+pad+bold.lineHeight+2*s,inner=r.width-pad*2;
     if(buttons!=null&&buttons.Count>0){float bw=inner*.46f;CasualUI.Bar(new Rect(r.x+pad,row+10*s,inner-bw-8*s,6*s),i.delta/100f,tone);Buttons(new Rect(r.xMax-pad-bw,row,bw,r.height),buttons,new Rect(r.x+pad,row,inner,r.height));}
     else CasualUI.Bar(new Rect(r.x+pad,row+3*s,inner,6*s),i.delta/100f,tone);break;}

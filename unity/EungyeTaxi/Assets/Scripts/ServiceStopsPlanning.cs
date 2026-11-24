@@ -23,7 +23,7 @@ public partial class ServiceStops {
  readonly Dictionary<int,OptionCache> optionCaches=new Dictionary<int,OptionCache>();
  readonly Collider[] facilityColliders=new Collider[32];
  public bool QueueWaiting {get{return PvpNativeLan.IsReplica(session)?networkQueueWaiting:queuedSite!=null&&registry!=null&&!registry.queue.IsAdmitted(GetInstanceID());}}
- public string QueueStatus {get{return PvpNativeLan.IsReplica(session)?networkQueueStatus:queuedSite==null?"":(QueueWaiting?"시설 대기 "+registry.queue.Position(queuedSite,GetInstanceID())+"번째 · 입장 전 결제/서비스 시간 없음 · F7 대기 취소":"시설 이용/출차 중 · 다음 차량은 출차 후 입장")+" · 대체 시설은 M 지도";}}
+ public string QueueStatus {get{return PvpNativeLan.IsReplica(session)?networkQueueStatus:queuedSite==null?"":(QueueWaiting?"시설 대기 "+registry.queue.Position(queuedSite,GetInstanceID())+"번째 · F7 대기 취소":"시설 이용 중");}}
  public void ApplyNetworkQueue(string status,bool waiting){networkQueueStatus=status??"";networkQueueWaiting=waiting;}
  public FacilityQueueView[] CaptureFacilityQueues(){
   var map=session.world.map;if(!ReferenceEquals(queueCatalogMap,map)){

@@ -151,17 +151,17 @@ public static class OneDayHUD {
    GUI.Label(new Rect(x+28,y+80,180,28),complete&&multi?"누적 순수익":"오늘 순수익",small);
    var netStyle=new GUIStyle(title){fontSize=35,alignment=TextAnchor.MiddleRight};netStyle.normal.textColor=CasualUI.Green;
    GUI.Label(new Rect(x+215,y+76,480,48),Money(complete&&multi?e.TotalNet:r.net),netStyle);
-   CasualUI.Panel(new Rect(x+25,y+134,670,82),CasualUI.Soft);
-   GUI.Label(new Rect(x+42,y+142,320,66),"수입  "+Money(complete?e.TotalIncome:r.income)+"\n지출  "+Money(complete?e.TotalExpenses:r.income-r.net),text);
-   GUI.Label(new Rect(x+375,y+142,300,66),"잔액  "+Money(e.Account.Cash)+"\n미납  "+Money(e.Account.Debt),text);
-   GUI.Label(new Rect(x+25,y+234,670,30),"운송 "+r.rides+"건 · 미완료 "+r.failedTrips+"건 · 영업 "+Clock(r.elapsed),text);
-   GUI.Label(new Rect(x+25,y+274,670,30),"운전 점수 "+s.law.ledger.TotalScore+" · 차량 청결도 "+e.Care.Cleanliness+" · 내구도 "+e.Care.Damage.Durability,text);
-   GUI.Label(new Rect(x+25,y+310,670,28),"포만감 "+d.satiety.ToString("0")+" · 기사 피로도 "+d.fatigue.ToString("0"),text);
+   // 2026-11-24 text reduction: three number tiles. Income, costs and condition are in the details.
+   {string[] captions={"운송","운전 점수","잔액"},values={r.rides+"건",s.law.ledger.TotalScore.ToString(),Money(e.Account.Cash)};int[] glyphs={1,7,4};
+    var tileValue=new GUIStyle(title){fontSize=28,alignment=TextAnchor.MiddleCenter};tileValue.normal.textColor=CasualUI.Ink;var tileCaption=new GUIStyle(small){alignment=TextAnchor.MiddleCenter};
+    for(int i=0;i<3;i++){var tile=new Rect(x+25+i*227,y+134,216,112);CasualUI.RoundedFill(tile,CasualUI.Soft);HudGlyph.Draw(new Rect(tile.center.x-14,tile.y+10,28,28),glyphs[i],i==2?CasualUI.Green:CasualUI.Blue);GUI.Label(new Rect(tile.x,tile.y+40,tile.width,40),values[i],tileValue);GUI.Label(new Rect(tile.x,tile.y+82,tile.width,24),captions[i],tileCaption);}
+    string warn=(e.Account.Debt>0?"미납 "+Money(e.Account.Debt)+"   ":"")+(r.failedTrips>0?"미완료 "+r.failedTrips+"건":"");
+    if(warn.Length>0){HudGlyph.Draw(new Rect(x+27,y+266,22,22),2,CasualUI.Amber);GUI.Label(new Rect(x+56,y+262,640,30),warn,text);}}
    if(conditionResult)DailyConditionHUD.DrawReflection(new Rect(x+25,y+345,670,34),b,r);
-   if(GUI.Button(new Rect(x+25,y+352+conditionSpace,670,36),showDayDetails?"상세 내역 닫기":"상세 내역 보기",button))ToggleDayDetails();
+   if(GUI.Button(new Rect(x+25,y+352+conditionSpace,670,36),showDayDetails?"상세 닫기":"상세",button))ToggleDayDetails();
    if(showDayDetails){
     string rows="";foreach(var day in e.Snapshot().records)rows+=day.day+"일차 · 수입 "+Money(day.income)+" · 순수익 "+Money(day.net)+" · 운송 "+day.rides+"건\n";
-    string content=rows+"\n"+OperationMetrics.Describe(r.metrics)+"\n세차 "+Money(r.wash)+" · 수리 "+Money(r.repair)+" · 견인 "+Money(r.tow)+"\n식사 "+d.meals+"회 · 수면 "+d.sleeps+"회\n누적 수입 "+Money(e.TotalIncome)+" · 지출 "+Money(e.TotalExpenses)+" · 순수익 "+Money(e.TotalNet)+"\n"+b.saveStatus;
+    string content="수입 "+Money(complete?e.TotalIncome:r.income)+" · 지출 "+Money(complete?e.TotalExpenses:r.income-r.net)+" · 미납 "+Money(e.Account.Debt)+"\n미완료 "+r.failedTrips+"건 · 영업 "+Clock(r.elapsed)+"\n청결 "+e.Care.Cleanliness+" · 내구 "+e.Care.Damage.Durability+" · 포만 "+d.satiety.ToString("0")+" · 피로 "+d.fatigue.ToString("0")+"\n\n"+rows+"\n"+OperationMetrics.Describe(r.metrics)+"\n세차 "+Money(r.wash)+" · 수리 "+Money(r.repair)+" · 견인 "+Money(r.tow)+"\n식사 "+d.meals+"회 · 수면 "+d.sleeps+"회\n누적 수입 "+Money(e.TotalIncome)+" · 지출 "+Money(e.TotalExpenses)+" · 순수익 "+Money(e.TotalNet)+"\n"+b.saveStatus;
     float ch=Mathf.Max(120,small.CalcHeight(new GUIContent(content),625)+12);
     detailScroll=GUI.BeginScrollView(new Rect(x+25,y+398+conditionSpace,670,e.Account.HasHomeBase?65:80),detailScroll,new Rect(0,0,640,ch));GUI.Label(new Rect(0,0,625,ch),content,small);GUI.EndScrollView();
    }else if(!complete&&multi){

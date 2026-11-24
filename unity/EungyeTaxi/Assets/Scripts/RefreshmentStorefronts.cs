@@ -126,7 +126,7 @@ public static class RefreshmentStorefronts {
  public static bool Draw(MapData map,Transform parent,MapStop stop,string shop,bool food){
   var p=For(map,stop,shop);
   if(p==null)return false;
-  Build(parent,p,shop,food,shop+"\n빈차 정차 후 F",p.waiting);return true;
+  Build(parent,p,shop,food,"[F] 주문",p.waiting);return true;
  }
  // The driver restaurant uses the same shop-front design as the snack shop (test feedback 2026-11-24).
  public static bool DrawDiner(MapData map,Transform parent,ProjectMapObject lot,string shop){
@@ -190,7 +190,7 @@ public static class RefreshmentStorefronts {
   label.transform.position=p.P(0,4.3f,.6f);
   var text=label.AddComponent<TextMesh>();text.text=caption;
   text.fontSize=44;text.characterSize=.052f;text.anchor=TextAnchor.MiddleCenter;text.color=Color.white;
-  KoreanText.Apply(text);label.AddComponent<FaceCamera>();
+  KoreanText.Apply(text);label.AddComponent<FaceCamera>().hideBeyond=45;
  }
  static void PathSegment(Transform parent,Vector3 a,Vector3 b,Material material){
   a.y=b.y=parent.position.y;float length=Vector3.Distance(a,b);if(length<.2f)return;
