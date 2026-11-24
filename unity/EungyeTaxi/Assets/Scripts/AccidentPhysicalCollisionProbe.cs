@@ -86,7 +86,10 @@ public sealed class AccidentPhysicalCollisionProbe : MonoBehaviour {
   while(!session.accident.Locked&&Time.realtimeSinceStartup<until)yield return null;
   session.taxi.gameObject.layer=8;
   taxi.constraints=constraints;
-  Check(traffic.distance>3&&session.damage.Damage.Durability<100&&session.accident.Locked&&session.accident.State.Kind==AccidentKind.Vehicle,
+  // Since 2026-11-24 the Eungye single game judges fault: a moving car striking the standing taxi is the other car's fault.
+  if(session.damage.FaultRules)Check(traffic.distance>3&&session.damage.Damage.Durability==100&&!session.accident.Locked&&session.damage.OtherFaultCount>0,
+   "kinematic traffic crossing laterally into the stationary taxi is the other car's fault: no damage, no accident");
+  else Check(traffic.distance>3&&session.damage.Damage.Durability<100&&session.accident.Locked&&session.accident.State.Kind==AccidentKind.Vehicle,
    "kinematic traffic crossing laterally into the stationary taxi causes vehicle damage and an accident");
  }
  IEnumerator Run(){

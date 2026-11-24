@@ -87,7 +87,37 @@ public sealed class VehicleDamageController : MonoBehaviour {
     public static bool SupportingContact(Collider collider,Vector3 normal,float height){return normal.y>.65f||collider&&!collider.attachedRigidbody&&collider.bounds.size.y<.4f&&collider.bounds.max.y<height+.2f;}
     void OnCollisionEnter(Collision collision){Observe(collision);}
     void OnCollisionStay(Collision collision){Observe(collision);}
-    void OnCollisionExit(Collision collision){contacts.Remove(collision.collider);}
+    void OnCollisionExit(Collision collision){contacts.Remove(collision.collider);faults.Remove(collision.collider);}
+    // Fault per touching collider, decided on first touch and kept until the bodies part: after a shove the
+    // taxi is moving, and the same contact must not turn into the driver's own fault a frame later.
+    readonly Dictionary<Collider,FaultSide> faults=new Dictionary<Collider,FaultSide>();
+    public string LastFaultReason {get;private set;}
+    public bool FaultRules {get{return session&&!session.simulationMatch&&session.traffic&&session.traffic.EungyeSingle&&AccidentFault.Enabled;}}
+    public FaultSide Classify(Collider collider,Vector3 point,out string reason){
+        reason="";if(!FaultRules||!collider)return FaultSide.Own;
+        var car=collider.GetComponentInParent<TrafficCar>();var otherTaxi=collider.GetComponentInParent<TaxiController>();var otherMotion=collider.GetComponentInParent<VehicleImpactMotion>();
+        Vector3 own=motion?motion.At(point):session.taxi.body.velocity;
+        Vector3 other=car?car.transform.forward*car.speed:otherMotion&&otherMotion!=motion?otherMotion.At(point):collider.attachedRigidbody?collider.attachedRigidbody.velocity:Vector3.zero;
+        var actor=collider.GetComponentInParent<FaultActor>();float limit=session.law?session.law.CurrentLimit:0;
+        var input=new FaultInput{otherVehicle=car||otherTaxi&&otherTaxi!=session.taxi,violating=session.law&&(session.law.WrongWay||session.law.RecentViolation(AccidentFault.ViolationSeconds)),
+            speeding=limit>0&&own.magnitude*3.6f>limit+RoadSpeedLimits.Tolerance,surprise=actor,sinceSurprise=actor?Time.time-actor.startedAt:0,
+            ownSpeed=own.magnitude,otherSpeed=other.magnitude,contactAlong=transform.InverseTransformPoint(point).z,halfLength=2f,ownAlong=Vector3.Dot(own,transform.forward),otherAlong=Vector3.Dot(other,transform.forward)};
+        return AccidentFault.Decide(input,out reason);
+    }
+    public FaultSide FaultOf(Collision collision){
+        FaultSide side;if(faults.TryGetValue(collision.collider,out side))return side;
+        Vector3 point=transform.position;for(int i=0;i<collision.contactCount;i++){var c=collision.GetContact(i);if(SupportingContact(collision.collider,c.normal,transform.position.y))continue;point=c.point;break;}
+        string reason;side=Classify(collision.collider,point,out reason);faults[collision.collider]=side;LastFaultReason=reason;
+        if(side!=FaultSide.Own)Debug.Log("ACCIDENT_FAULT side="+side+" reason="+reason+" collider="+collision.collider.name);
+        return side;
+    }
+    float otherFaultNoticeAt=-10;
+    // The other car's fault: no durability loss, no accident handling, no fee, no score change. One notice.
+    public void NoteOtherFault(){
+        if(Time.unscaledTime-otherFaultNoticeAt<3)return;otherFaultNoticeAt=Time.unscaledTime;OtherFaultCount++;
+        Notice="상대 차량 과실 · "+LastFaultReason+" · 처리비와 감점 없음";noticeUntil=Time.unscaledTime+6;
+    }
+    public int OtherFaultCount {get;private set;}
     void Observe(Collision collision){
         if(PvpNativeLan.IsReplica(session))return;
         if(!Campaign||!session.business.ledger.Operating||session.business.preparing||session.paused||Time.timeScale<=0)return;
@@ -101,9 +131,10 @@ public sealed class VehicleDamageController : MonoBehaviour {
             speed=Mathf.Max(speed,ClosingSpeed(relative,point.normal));
         }
         if(!contact)return;contacts.Add(collision.collider);
+        var fault=FaultOf(collision);if(fault==FaultSide.Other){NoteOtherFault();return;}
         if(ApplyImpact(speed)>0&&session.accident){
             bool vehicle=collision.collider.GetComponentInParent<TaxiController>()||collision.collider.GetComponentInParent<TrafficCar>();
-            session.accident.ReportCollision(vehicle?AccidentKind.Vehicle:AccidentKind.Property,"collision:"+collision.collider.GetInstanceID());
+            session.accident.ReportCollision(vehicle?AccidentKind.Vehicle:AccidentKind.Property,"collision:"+collision.collider.GetInstanceID(),fault);
         }
     }
     public int ApplyImpact(float closingSpeed){

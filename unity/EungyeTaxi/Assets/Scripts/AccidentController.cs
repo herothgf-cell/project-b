@@ -50,6 +50,8 @@ public sealed class AccidentController : MonoBehaviour {
   return ReportIncident(AccidentKind.Person,targetId,null);
  }
  public bool ReportCollision(AccidentKind kind,string targetId){return ReportIncident(kind,targetId,null);}
+ // Shared fault halves the fee and the score penalty of this event. The share is stored with the event.
+ public bool ReportCollision(AccidentKind kind,string targetId,FaultSide fault){bool begun=ReportIncident(kind,targetId,null);if(begun&&fault==FaultSide.Shared&&kind==AccidentKind.Vehicle){State.SetShared(AccidentFault.SharedPercent);session.business.SaveCheckpoint();}return begun;}
  // Authored scenarios and runtime probes still execute the authoritative incident
  // path, with the scenario's bounded roll instead of a newly sampled value.
  public bool ReportScenarioContact(AccidentKind kind,string targetId,int roll){

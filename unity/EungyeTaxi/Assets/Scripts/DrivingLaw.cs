@@ -25,6 +25,9 @@ public partial class DrivingLaw : MonoBehaviour {
  float speedingSeconds,limitSampleAt,speedRepeatUntil;bool speedRecorded,limitFromTable;
  // Limit of the road under the taxi: a map-editor sign, or the Eungye road table (RoadSpeedLimits). 0 = none.
  public float CurrentLimit {get;private set;}
+ public bool WrongWay {get{return wrongLatched;}}
+ // A violation recorded within the last few seconds of the shift clock (accident score records excluded).
+ public bool RecentViolation(float seconds){var last=ledger.LastChanged;return last!=null&&last.HasViolation&&last.family!="accident"&&last.day==Day&&last.seconds>0&&session.business.ledger.Elapsed-last.seconds<=seconds;}
  void SampleLimit(){
   if(Time.time<limitSampleAt)return;limitSampleAt=Time.time+.2f;bool table=false;
   CurrentLimit=session&&session.traffic&&session.taxi?session.traffic.RoadSpeedLimit(session.taxi.transform.position,session.taxi.transform.forward,out table):0;limitFromTable=table;

@@ -13656,6 +13656,117 @@
       "editable": true
     },
     {
+      "id": "accident.fault.enabled",
+      "group": "법규",
+      "section": "accident",
+      "title": "사고 과실 구분 · 켜기",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 은계 싱글에서 차량 접촉의 과실을 가립니다. 상대 차량 과실이면 내구도·처리비·감점이 없습니다. 0이면 이전처럼 모든 접촉이 내 사고입니다.",
+      "affects": [
+        "사고 처리비",
+        "운전 점수",
+        "차량 내구도"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "VehicleDamageController.Classify",
+      "editable": true
+    },
+    {
+      "id": "accident.fault.stoppedKmh",
+      "group": "법규",
+      "section": "accident",
+      "title": "사고 과실 · 정차로 보는 속도",
+      "type": "number",
+      "defaultValue": "2",
+      "min": 0,
+      "max": 10,
+      "unit": "km/h",
+      "description": "내 속도가 이 값보다 낮을 때 움직이는 차가 와서 닿으면 상대 과실로 봅니다.",
+      "affects": [
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "AccidentFault.Decide",
+      "editable": true
+    },
+    {
+      "id": "accident.fault.violationSeconds",
+      "group": "법규",
+      "section": "accident",
+      "title": "사고 과실 · 위반 직후로 보는 시간",
+      "type": "number",
+      "defaultValue": "3",
+      "min": 0,
+      "max": 30,
+      "unit": "초",
+      "description": "법규 위반이 기록된 뒤 이 시간 안의 접촉은 다른 조건과 무관하게 내 과실입니다.",
+      "affects": [
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DrivingLaw.RecentViolation",
+      "editable": true
+    },
+    {
+      "id": "accident.fault.reactionSeconds",
+      "group": "법규",
+      "section": "accident",
+      "title": "사고 과실 · 돌발 반응 시간",
+      "type": "number",
+      "defaultValue": "1.2",
+      "min": 0.2,
+      "max": 5,
+      "unit": "초",
+      "description": "돌발 차량이 움직이기 시작한 뒤 이 시간 안에 닿으면 상대 과실, 지나면 쌍방 과실입니다. 돌발 차량은 아직 게임에 없습니다.",
+      "affects": [
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "AccidentFault.Decide",
+      "editable": true
+    },
+    {
+      "id": "accident.fault.sharedPercent",
+      "group": "법규",
+      "section": "accident",
+      "title": "사고 과실 · 쌍방일 때 내 몫",
+      "type": "integer",
+      "defaultValue": "50",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "쌍방 과실일 때 처리비와 운전 점수 감점에 곱하는 비율. 처리비는 100원 단위로 올립니다.",
+      "affects": [
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "AccidentState.Fee",
+      "editable": true
+    },
+    {
       "id": "display.background.diner",
       "group": "생활 시설",
       "section": "시설 배경",

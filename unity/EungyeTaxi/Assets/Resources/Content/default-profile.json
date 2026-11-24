@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "8c87c53e72ef278886ea753f6bfc01c080ec88e5c39e05e51c165dc038215b47",
+  "contentHash": "8b6b067ba3442a43f28b7cbb31afe3619fc3ba0a22ae3a06740fdd3cf5445d8d",
   "values": [
     {
       "id": "radio.station",
@@ -2347,6 +2347,26 @@
     {
       "id": "law.speed.trafficPercent",
       "value": "90"
+    },
+    {
+      "id": "accident.fault.enabled",
+      "value": "1"
+    },
+    {
+      "id": "accident.fault.stoppedKmh",
+      "value": "2"
+    },
+    {
+      "id": "accident.fault.violationSeconds",
+      "value": "3"
+    },
+    {
+      "id": "accident.fault.reactionSeconds",
+      "value": "1.2"
+    },
+    {
+      "id": "accident.fault.sharedPercent",
+      "value": "50"
     },
     {
       "id": "display.background.diner",

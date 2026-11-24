@@ -22,8 +22,12 @@ public enum AccidentPhase { None, Stopping, Waiting, Processing, Completed }
  public int DurabilityLoss {get{return pedestrianDamageVersion==1?selectedDamage:0;}}
  public double elapsed,remaining,contactClearSeconds;
  public double ProcessingDuration {get{return resolutionVersion==0?ProcessingSeconds:selectedSeconds;}}
- public int Fee {get{return resolutionVersion==0?3000:selectedFee;}}
- public int ScorePenalty {get{return resolutionVersion==0?0:selectedScorePenalty;}}
+ // 0 = the driver's own fault (every older save), 1 = shared. The other car's fault never opens an event.
+ public int fault,faultSharePercent;
+ public bool Shared {get{return resolutionVersion==1&&fault==1;}}
+ public bool SetShared(int percent){if(resolutionVersion!=1||phase!=AccidentPhase.Stopping||chargeApplied||scoreApplied||percent<0||percent>100)return false;fault=1;faultSharePercent=percent;return true;}
+ public int Fee {get{return resolutionVersion==0?3000:Shared?AccidentFault.SharedFee(selectedFee,faultSharePercent):selectedFee;}}
+ public int ScorePenalty {get{return resolutionVersion==0?0:Shared?AccidentFault.SharedPenalty(selectedScorePenalty,faultSharePercent):selectedScorePenalty;}}
  public bool TowRequired {get{return resolutionVersion!=0&&selectedTowRequired;}}
  public AccidentKind Kind {get{return accidentKind;}}
  public AccidentSeverity Severity {get{return accidentSeverity;}}
@@ -39,7 +43,7 @@ public enum AccidentPhase { None, Stopping, Waiting, Processing, Completed }
   if(Locked||contactLatched||string.IsNullOrWhiteSpace(id)||string.IsNullOrWhiteSpace(target)||id==eventId)return false;
   resolutionVersion=resolution==null?0:1;accidentKind=resolution==null?AccidentKind.Person:resolution.Kind;accidentSeverity=resolution==null?AccidentSeverity.Minor:resolution.Severity;
   selectedFee=resolution==null?0:resolution.Fee;selectedSeconds=resolution==null?0:resolution.Seconds;selectedScorePenalty=resolution==null?0:resolution.ScorePenalty;selectedTowRequired=resolution!=null&&resolution.TowRequired;scoreApplied=workshopTransferred=false;
-  pedestrianDamageVersion=selectedDamage=appliedDamage=0;damageApplied=false;
+  pedestrianDamageVersion=selectedDamage=appliedDamage=0;damageApplied=false;fault=faultSharePercent=0;
   pedestrianDamageEligible=resolution!=null;
   eventId=id;targetId=target;stopSeconds=0;recoveryRequired=false;outcome="";targets=new[]{target};phase=AccidentPhase.Stopping;chargeApplied=outcomeApplied=false;elapsed=0;remaining=ProcessingDuration;contactLatched=true;contactClearSeconds=0;return true;
  }
@@ -77,6 +81,7 @@ public enum AccidentPhase { None, Stopping, Waiting, Processing, Completed }
   if(resolutionVersion!=0&&resolutionVersion!=1||!Enum.IsDefined(typeof(AccidentKind),accidentKind)||!Enum.IsDefined(typeof(AccidentSeverity),accidentSeverity))throw new ArgumentException("Invalid accident resolution");
   if(resolutionVersion==0){if(selectedFee!=0||selectedSeconds!=0||selectedScorePenalty!=0||selectedTowRequired||accidentKind!=AccidentKind.Person||accidentSeverity!=AccidentSeverity.Minor)throw new ArgumentException("Invalid legacy accident resolution");}
   else {var chosen=AccidentSeverityPolicy.Resolve(accidentKind,accidentSeverity);if(selectedFee!=chosen.Fee||selectedSeconds!=chosen.Seconds||(selectedScorePenalty<0||selectedScorePenalty>100)||selectedTowRequired!=chosen.TowRequired)throw new ArgumentException("Inconsistent accident resolution");}
+  if(fault!=0&&fault!=1||faultSharePercent<0||faultSharePercent>100||fault==0&&faultSharePercent!=0||fault==1&&(resolutionVersion!=1||phase==AccidentPhase.None))throw new ArgumentException("Invalid accident fault");
   if(targets==null)targets=new string[0];if(!Finite(stopSeconds)||stopSeconds<0)throw new ArgumentException("Invalid stopping time");
   var seen=new System.Collections.Generic.HashSet<string>();foreach(var target in targets)if(string.IsNullOrWhiteSpace(target)||!seen.Add(target))throw new ArgumentException("Invalid accident targets");
   if(!Enum.IsDefined(typeof(AccidentPhase),phase)||!Finite(elapsed)||!Finite(remaining)||!Finite(contactClearSeconds)||elapsed<0||elapsed>ProcessingDuration||remaining<0||remaining>ProcessingDuration||contactClearSeconds<0||contactClearSeconds>=RearmSeconds||!contactLatched&&contactClearSeconds!=0)throw new ArgumentException("Invalid accident state");

@@ -22,7 +22,7 @@ public static class AccidentPresentation {
   CasualUI.RoundedFill(new Rect(x+8,y+8,564,90),CasualUI.Ink);
   CasualUI.RoundedFill(new Rect(x+24,y+24,64,64),new Color(1,.91f,.80f));HudGlyph.Draw(new Rect(x+40,y+40,32,32),2,CasualUI.Danger);
   var title=Text(27,true);title.normal.textColor=Color.white;var subtitle=Text(16);subtitle.normal.textColor=Color.white;
-  GUI.Label(new Rect(x+104,y+22,450,40),"사고 발생",title);GUI.Label(new Rect(x+104,y+62,450,28),KindText(state)+" · "+SeverityText(state),subtitle);
+  GUI.Label(new Rect(x+104,y+22,450,40),"사고 발생",title);GUI.Label(new Rect(x+104,y+62,450,28),KindText(state)+" · "+SeverityText(state)+(state.Shared?" · 쌍방 과실(처리비·감점 절반)":""),subtitle);
   string[] labels={"현재 운임","사고 처리비","영업 시간","운전 점수"};string[] values={FareText(state),FeeText(state),TimeLossText(state),state.ScorePenalty>0?"−"+state.ScorePenalty:"변동 없음"};
   if(damage){Array.Resize(ref labels,5);Array.Resize(ref values,5);labels[4]="차량 내구도";values[4]=DurabilityText(state);}
   for(int i=0;i<labels.Length;i++){float row=y+111+i*43;CasualUI.RoundedFill(new Rect(x+24,row,532,37),CasualUI.Soft);GUI.Label(new Rect(x+38,row+1,180,35),labels[i],Text(17));GUI.Label(new Rect(x+218,row+1,324,35),values[i],Text(19,true,TextAnchor.MiddleRight));}
