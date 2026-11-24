@@ -36,7 +36,7 @@ public sealed class SpeedBumpProbe : MonoBehaviour {
   output=ContentTuningRuntime.Argument("-bumpOutput");if(string.IsNullOrEmpty(output))output=Path.GetFullPath("artifacts/bump");Directory.CreateDirectory(output);
   yield return null;string error=null;var j=s.jobs;var sb=s.bumps;
   try{s.business.preparing=false;s.paused=false;Time.timeScale=1;j.ClearForDay();foreach(var c in FindObjectsOfType<TrafficCar>())c.gameObject.SetActive(false);
-   Check(sb&&sb.bumps.Count==5,"five bumps from the road facility input ("+(sb?sb.bumps.Count:0)+")");
+   Check(sb&&sb.bumps.Count==2,"two bumps from the road facility input ("+(sb?sb.bumps.Count:0)+")");
    Check(sb.bumps.All(b=>GameObject.Find("과속방지턱 "+b.id)),"each bump is drawn");
    Check(sb.bumps.All(b=>{var x=GameObject.Find("과속방지턱 "+b.id);return x.GetComponentsInChildren<Collider>().Length==0;}),"bumps have no collider (never a property accident)");
    // Board a passenger.
@@ -44,7 +44,7 @@ public sealed class SpeedBumpProbe : MonoBehaviour {
    Check(accepted,"a call is accepted");for(int i=0;i<4&&j.trip.State==TripState.ToPickup;i++)j.Interact();Check(j.trip.State==TripState.OnTrip,"passenger aboard");
   }catch(Exception e){error=e.ToString();}
   if(error!=null){Finish(error);yield break;}
-  var p12=sb.bumps.First(b=>b.id=="speed-bump-p12");var p24=sb.bumps.First(b=>b.id=="speed-bump-p24");var ngii=sb.bumps.First(b=>b.id=="speed-bump-ngii-1");
+  var p12=sb.bumps.First(b=>b.id=="speed-bump-p12");var p24=sb.bumps.First(b=>b.id=="speed-bump-p24");var ngii=p12;// NGII side-road bumps were turned off; the no-passenger crossing reuses P12.
   string before=Money();int pen=sb.Penalties,cross=sb.Crossings;bool brake=false;
   yield return Cross(p12,40,x=>brake=x);
   try{Check(sb.Crossings==cross+1&&sb.LastBump==p12.id,"40 km/h over P12 is detected ("+sb.LastKmh.ToString("0")+" km/h)");Check(sb.Penalties==pen+1&&s.manners.lastEvent.Contains("방지턱"),"with a passenger: comfort penalty under its own key ("+s.manners.lastEvent+")");Check(Feed("방지턱 · "),"a passenger line");Check(brake,"a bump ahead counts as required braking");}catch(Exception e){error=e.ToString();}
@@ -55,7 +55,7 @@ public sealed class SpeedBumpProbe : MonoBehaviour {
   if(error!=null){Finish(error);yield break;}
   j.ClearForDay();yield return null;pen=sb.Penalties;
   yield return Cross(ngii,45,x=>{});
-  try{Check(sb.LastBump==ngii.id&&sb.Penalties==pen,"no passenger: no penalty (NGII-1 at 45 km/h)");Check(Money()==before&&!s.accident.Locked,"no accident, repair or durability change ("+before+" -> "+Money()+")");}catch(Exception e){error=e.ToString();}
+  try{Check(sb.LastBump==ngii.id&&sb.Penalties==pen,"no passenger: no penalty (P12 at 45 km/h)");Check(Money()==before&&!s.accident.Locked,"no accident, repair or durability change ("+before+" -> "+Money()+")");}catch(Exception e){error=e.ToString();}
   Finish(error);
  }
  void Finish(string error){

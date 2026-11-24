@@ -2,7 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Speed bumps (design 08 item 7, 2026-11-24, Eungye single). Positions come from the road facility input
-// (config/maps/eungye-road-facilities.json, kind "speed-bump": two field-survey points and three NGII HD map points).
+// (config/maps/eungye-road-facilities.json, kind "speed-bump": two field-survey points; the three NGII 수인로 side-road points
+// were removed in play-test round 5 because that side road is not in the game map and they landed in a main-road lane).
 // The bump is painted and slightly raised but has no collider, so it can never count as a property accident.
 // Crossing it faster than the comfort speed with a passenger aboard costs ride-comfort points under its own
 // key ("bump", not accel/brake, so the coffee mission is unaffected) and the passenger says so; any crossing

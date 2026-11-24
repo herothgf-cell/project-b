@@ -29,8 +29,8 @@
     },
     {
       "path": "config/maps/eungye-road-facilities.json",
-      "bytes": 62687,
-      "sha256": "bbe931eddee474ef906dc1a15fef057099b77952b566dd746b32f7a4c709d02c"
+      "bytes": 60295,
+      "sha256": "2c061d217795dbfd3f27b0123124f65269f24ff9f56c1314ce488dca0fbe6b25"
     }
   ]
 }
