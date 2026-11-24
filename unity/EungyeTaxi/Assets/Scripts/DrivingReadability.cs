@@ -62,6 +62,7 @@ public class DrivingReadability : MonoBehaviour {
   if(Facilities&&map.hybrid)foreach(var j in map.junctionRules)Dot(Project(j.V()),j.facilityStatus=="verified"?Color.green:new Color(1,.6f,.1f),6);
   var overlay=GetComponent<FullMapOverlay>();
   if(overlay.ShowTraffic){foreach(var car in session.traffic.cars)if(car.Visible)Dot(Project(car.transform.position),new Color(.55f,.6f,.65f),3);foreach(var incident in session.roadConditions.incidents)Dot(Project(incident.position),Color.red,8);}
+  SpeedLimitSections.DrawMap(session.traffic,Project,new Rect(0,0,Size,Size),3,zoomIndex<=2);
   using(TrafficPerformanceProbe.Measure("DrivingReadability.RouteRaster"))DrawRouteRaster(overlay);
   if(overlay.ShowFacilities)foreach(var place in overlay.Places()){var p=Project(place.position);if(p.x<14||p.y<14||p.x>Size-14||p.y>Size-14)continue;if(HudGlyph.Button(new Rect(p.x-13,p.y-13,26,26),place.glyph,place.name,true)){if(overlay.Open())overlay.SelectPlace(place);}}
   if(!jobs.Active)for(int i=0;i<jobs.offers.Length;i++){var offer=jobs.offers[i];if(offer==null)continue;var p=ClampedZone(Project(jobs.stops[offer.pickup].V()))+new Vector2((i-1)*20,0);p=new Vector2(Mathf.Clamp(p.x,12,Size-12),Mathf.Clamp(p.y,30,Size-12));MapPresentation.Pin(p,MapPresentation.Pickup,20,(i+1).ToString());if(GUI.Button(MapPresentation.PinHitBounds(p,20),new GUIContent("","호출 "+(i+1)),GUIStyle.none)){if(overlay.Open())overlay.SelectOffer(i);}}
@@ -76,7 +77,7 @@ public class DrivingReadability : MonoBehaviour {
   MapPresentation.Player(player,forward);
   if(Event.current.type==EventType.MouseUp&&Event.current.button==0&&new Rect(0,0,Size,Size).Contains(Event.current.mousePosition)){var p=Event.current.mousePosition;var world=new Vector3(bounds.x+p.x/Size*bounds.width,0,bounds.y+(1-p.y/Size)*bounds.height);if(overlay.Open())overlay.SelectRoadPoint(world);Event.current.Use();}
   GUI.EndGroup();
-  if(GUI.Button(new Rect(x,328,Size,32),"지도 (M)",KoreanText.Button(UiReadability.Font(13))))overlay.Open();
+  if(KeyHints.Button(new Rect(x,328,Size,32),"지도","M",KoreanText.Button(UiReadability.Font(13))))overlay.Open();
   if(Facilities){var status=GetComponent<HybridMapStatus>();Panel(new Rect(x-310,42,300,145));GUI.Label(new Rect(x-300,50,280,130),"시설 □ 주황: 임시 / 초록: 확인\n"+(status?status.current:"시설 정보 없음"),label);}
   var navigationMatrix=GUI.matrix;
   try{var pivot=new Vector3(Screen.width/uiScale/2,20,0);GUI.matrix=navigationMatrix*Matrix4x4.Translate(pivot)*Matrix4x4.Scale(new Vector3(NavigationScale,NavigationScale,1))*Matrix4x4.Translate(-pivot);DrawNavigation((Screen.width/uiScale-620)/2+5);}

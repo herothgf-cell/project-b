@@ -29,6 +29,6 @@ public static class AccidentPresentation {
   string status=state.phase==AccidentPhase.Stopping?(state.TowRequired&&!state.workshopTransferred&&state.outcomeApplied?"공업사 빈자리 대기":"안전 정차 중"):pvp&&state.phase==AccidentPhase.Processing?"처리 중 · "+Math.Ceiling(state.remaining)+"초":state.TowRequired?"공업사에서 운행을 이어갑니다":"사고 처리가 끝나면 운행을 이어갑니다";
   if(state.recoveryRequired)status="안전 복구 공간 대기";
   CasualUI.RoundedFill(new Rect(x+24,y+height-130,532,42),CasualUI.Warm);GUI.Label(new Rect(x+36,y+height-129,508,40),status,Text(16));bool oldEnabled=GUI.enabled;GUI.enabled=oldEnabled&&!pvp&&state.phase==AccidentPhase.Waiting;
-  bool clicked=GUI.Button(new Rect(x+24,y+height-74,532,50),pvp?"처리 중":ResumeAction(state,disabled),CasualUI.Action(20));GUI.enabled=oldEnabled;GUI.matrix=matrix;GUI.depth=depth;GUI.color=tint;return clicked;
+  bool clicked=pvp?GUI.Button(new Rect(x+24,y+height-74,532,50),"처리 중",CasualUI.Action(20)):KeyHints.Button(new Rect(x+24,y+height-74,532,50),ResumeAction(state,disabled),"Enter",CasualUI.Action(20),true)||KeyHints.Enter();GUI.enabled=oldEnabled;GUI.matrix=matrix;GUI.depth=depth;GUI.color=tint;return clicked;
  }
 }

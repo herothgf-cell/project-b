@@ -67,7 +67,7 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
   CasualUI.RoundedFill(new Rect(18,121,584,96),CasualUI.Soft);
   GUI.Label(new Rect(30,127,560,28),"운전 감각",Label(19,true));
   var hint=Label(14);hint.wordWrap=true;
-  GUI.Label(new Rect(30,155,300,58),Draft.CasualSteering?"캐주얼 · 40~70km/h 차선 변경이 빠르고 80km/h까지 회전을 도와요":"시뮬 · 기존 r50 조향 그대로, 고속일수록 둔해요",hint);
+  GUI.Label(new Rect(30,155,300,58),Draft.CasualSteering?"캐주얼 · 핸들이 빠르고 출발이 경쾌하며 코너에서 덜 미끄러져요":"시뮬 · 핸들·가속이 묵직하고 고속일수록 조향이 둔해요",hint);
   if(GUI.Button(new Rect(338,150,122,42),"캐주얼",Draft.CasualSteering?CasualUI.Action(17):KoreanText.Button(17)))SetSteeringFeel(DrivingSettings.Casual);
   if(GUI.Button(new Rect(468,150,122,42),"시뮬",!Draft.CasualSteering?CasualUI.Action(17):KoreanText.Button(17)))SetSteeringFeel(DrivingSettings.Sim);
   Draft.speedFov=CompactRow(224,"속도감 시야 · 빠를수록 넓게",Draft.speedFov);

@@ -96,6 +96,42 @@ public sealed class SpeedLimitProbe : MonoBehaviour {
    Check(s.law.CurrentLimit==60&&s.law.RecordSpeedingCrash(65/3.6f),"a crash over the limit is recorded");
    var crash=s.law.ledger.Events.Last(e=>e.action=="제한속도 초과 중 사고");Check(s.law.ledger.Events.Count(e=>e.action=="제한속도 초과 중 사고")==crashes+1&&crash.Deduction==RoadSpeedLimits.CrashPenalty,"the crash record takes "+RoadSpeedLimits.CrashPenalty+" points");
   }catch(Exception e){error=e.ToString();}
+  if(error!=null){Finish(error);yield break;}
+  // Round 3 (2026-11-24): limited sections are marked on the road and the map, and entering one shows a notice.
+  SpeedLimitSections sec=null;SpeedLimitSigns signs=null;SpeedLimitSections.Mark entry=default(SpeedLimitSections.Mark);
+  try{
+   sec=SpeedLimitSections.For(s.traffic);signs=s.GetComponent<SpeedLimitSigns>();
+   Check(sec!=null&&sec.segments.Any(x=>x.school&&x.kmh==30)&&sec.segments.Any(x=>!x.school&&x.kmh==60)&&sec.segments.Any(x=>!x.school&&x.kmh==50),"map sections: school 30, 수인로 60 and 대은로 50 stretches ("+(sec==null?0:sec.segments.Count)+" segments)");
+   Check(sec.signs.Count>0&&sec.signs.All(m=>m.from!=m.to)&&sec.signs.Any(m=>m.to==0)&&sec.signs.Any(m=>m.school&&m.to==30),"section signs: starts and ends, each a real change ("+sec.signs.Count+" signs, "+sec.marks.Count+" lane marks)");
+   Check(signs&&signs.SignCount==sec.signs.Count&&signs.PaintQuads>0,"road-side signs built ("+(signs?signs.SignCount:0)+") and school-zone red paint ("+(signs?signs.PaintQuads:0)+" quads)");
+   var zone=RoadSpeedLimits.Data.zones.OrderBy(z=>(z.x-796.3f)*(z.x-796.3f)+(z.z-104.3f)*(z.z-104.3f)).First();
+   entry=sec.signs.Where(m=>m.school&&m.to==30&&m.from==0).OrderBy(m=>(new Vector2(m.position.x-zone.x,m.position.z-zone.z)).sqrMagnitude).First();
+   report.AppendLine("INFO 은빛초 entry sign at "+entry.position.x.ToString("0.0")+","+entry.position.z.ToString("0.0")+" heading "+entry.forward.x.ToString("0.00")+","+entry.forward.z.ToString("0.00"));
+  }catch(Exception e){error=e.ToString();}
+  if(error!=null){Finish(error);yield break;}
+  Pose(entry.position-entry.forward*22,entry.forward);yield return new WaitForSeconds(1.2f);
+  ScreenCapture.CaptureScreenshot(Path.Combine(output,"school-zone-entry.png"));yield return null;
+  Pose(entry.position-entry.forward*12,entry.forward);yield return Hold(entry.forward,20,4f);
+  try{Check(s.law.CurrentLimit==30,"driving past the entry sign reads 30 (read "+s.law.CurrentLimit+")");Check(signs.Notice.Contains("어린이보호구역"),"entering shows the school-zone notice ("+signs.Notice+")");}catch(Exception e){error=e.ToString();}
+  if(error!=null){Finish(error);yield break;}
+  ScreenCapture.CaptureScreenshot(Path.Combine(output,"school-zone-notice.png"));yield return null;
+  var overlay=s.GetComponent<FullMapOverlay>();bool opened=overlay&&overlay.Open();report.AppendLine("INFO full map opened="+opened+" (choice="+s.ChoiceOpen+" result="+s.RideResultOpen+" payment="+s.business.pendingPayment+")");if(opened){yield return new WaitForSecondsRealtime(.6f);ScreenCapture.CaptureScreenshot(Path.Combine(output,"map-sections.png"));yield return null;yield return null;overlay.Close();}
+  // Vehicle state alert: the fatigue meter crossing 75 pops a card.
+  var alerts=s.GetComponent<CriticalAlerts>();double fatigue=s.business.ledger.Driver.fatigue;
+  try{Check(alerts!=null,"critical alerts present");alerts.Dismiss();s.business.ledger.Driver.fatigue=Math.Min(fatigue,60);}catch(Exception e){error=e.ToString();}
+  if(error!=null){Finish(error);yield break;}
+  yield return null;yield return null;s.business.ledger.Driver.fatigue=80;float wait=Time.realtimeSinceStartup+3;
+  while(Time.realtimeSinceStartup<wait&&(alerts.Current==null||!alerts.Current.title.StartsWith("피로")))yield return null;
+  try{Check(alerts.Current!=null&&alerts.Current.title.StartsWith("피로"),"fatigue past 75 shows an alert card ("+(alerts.Current==null?"none":alerts.Current.title)+")");}catch(Exception e){error=e.ToString();}
+  if(error==null){yield return new WaitForSeconds(.3f);ScreenCapture.CaptureScreenshot(Path.Combine(output,"alert-card.png"));yield return null;yield return null;}
+  s.business.ledger.Driver.fatigue=fatigue;
+  // A promise for later today shows as a chip in the right column (student reunion, round 3).
+  if(error==null){var book=s.business.Logbook;int sd=book.studentDay,sm=book.studentMinute;bool sp=book.studentPromised,sr=book.studentReturned;string place=book.studentPlace;
+   book.studentDay=Math.Max(1,s.business.ledger.Day-2);book.studentMinute=Math.Min(1200,s.jobs.StudentMinute+90);book.studentPromised=true;book.studentReturned=false;book.studentPlace="은빛초 앞";
+   alerts.Dismiss();yield return new WaitForSeconds(.4f);bool today=book.studentDay+2==s.business.ledger.Day;
+   try{var items=AppointmentChip.Items(s);Check(items.Exists(i=>i.text.StartsWith("학생과 약속")&&i.text.Contains("은빛초 앞")&&i.text.Contains(today?"뒤":"일차")),"an open promise shows as a chip ("+(items.Count>0?items[0].text:"none")+")");}catch(Exception e){error=e.ToString();}
+   if(error==null){ScreenCapture.CaptureScreenshot(Path.Combine(output,"appointment-chip.png"));yield return null;yield return null;}
+   book.studentDay=sd;book.studentMinute=sm;book.studentPromised=sp;book.studentReturned=sr;book.studentPlace=place;}
   Finish(error);
  }
  void Finish(string error){

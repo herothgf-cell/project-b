@@ -10,6 +10,10 @@ public class TaxiController : MonoBehaviour {
     public float VehicleSteerResponse=1,VehicleLean=1,VehicleDip=1,VehicleBrakeRamp=0;float serviceBrake;
     // Steering feel for validation drivers: -1 follows the rule below, 0 casual, 1 sim.
     public int SteeringFeelOverride=-1;
+    // 2026-11-24 play-test round 3: casual and sim felt the same in town, because they differed only in the
+    // steering limit above 40 km/h. Casual now also turns the wheel faster, picks up speed sooner and grips harder
+    // in corners at every speed. Sim is unchanged.
+    public const float CasualSteerResponse=1.7f,CasualPickup=1.8f,CasualGrip=1.6f,SimGrip=1.35f;
     // PvP (local bots, LAN owner prediction and replicas) always uses sim, so every car shares one
     // physics model. In single play the local driver uses the device preference; automated
     // validation and bots stay sim unless a check sets the override.
@@ -56,7 +60,7 @@ public class TaxiController : MonoBehaviour {
             float keyboard=(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0);
             var controls=DrivingSettings.Current;float pad=Input.GetAxisRaw("TaxiSteer"),lateral=controls.Input(keyboard,pad);
             if(assistance)assistance.ReadInput(Mathf.Abs(pad)>.15f?pad:keyboard);
-            if(!assistance||!assistance.Active)steer=controls.Advance(steer,lateral,Speed,Time.deltaTime*VehicleSteerResponse);
+            if(!assistance||!assistance.Active)steer=controls.Advance(steer,lateral,Speed,Time.deltaTime*VehicleSteerResponse*(CasualSteering?CasualSteerResponse:1));
             brake=Input.GetKey(KeyCode.Space)||Input.GetKey(KeyCode.JoystickButton2);
         }
         for(int i=0;i<4;i++) {Vector3 p; Quaternion q; wheels[i].GetWorldPose(out p,out q); visuals[i].SetPositionAndRotation(p,q*Quaternion.Euler(0,0,90));}
@@ -74,7 +78,7 @@ public class TaxiController : MonoBehaviour {
         // Physics-time pedal ramp is identical for keyboard/pad and automated validation.
         // Braking and releasing the accelerator remain prompt, including a direction change.
         if(manual.brake>0||manual.motor*motorDemand<0)motorDemand=0;
-        motorDemand=Mathf.MoveTowards(motorDemand,manual.motor,Time.fixedDeltaTime*(Mathf.Abs(manual.motor)>Mathf.Abs(motorDemand)?.9f:6f));
+        motorDemand=Mathf.MoveTowards(motorDemand,manual.motor,Time.fixedDeltaTime*(Mathf.Abs(manual.motor)>Mathf.Abs(motorDemand)?.9f*(CasualSteering&&!automated?CasualPickup:1):6f));
         manual.motor=motorDemand;
         if(automated&&autoServiceBrake>0){manual.motor=0;motorDemand=0;manual.brake=Mathf.Max(manual.brake,Mathf.Clamp01(autoServiceBrake));}
         bool assistedSteering=assistance&&assistance.Active&&(!automated||assistance.allowAutomated);
@@ -91,7 +95,8 @@ public class TaxiController : MonoBehaviour {
         if(business&&business.session.simulationMatch&&business.session.simulationMatch.ServiceLocked(business.session)){demand.motor=0;demand.brake=1;motorDemand=0;}
         if(PvpMapInputBlocked){demand.motor=0;demand.brake=1;motorDemand=0;steer=0;}
         float centerAngle=WheelCenterAngle(steer,Speed*3.6f,assistedSteering);
-        for(int i=0;i<4;i++) { var grip=wheels[i].forwardFriction;grip.stiffness=dryForwardStiffness[i]*(demand.brake>0?RainPolicy.BrakeMultiplier(Speed):1);wheels[i].forwardFriction=grip; if(!microsleep)wheels[i].steerAngle=i<2?DriveMath.WheelSteerAngle(centerAngle,i==0):0; wheels[i].motorTorque=i>=2?demand.motor*1100:0; wheels[i].brakeTorque=demand.brake*3500*RainPolicy.BrakeMultiplier(Speed); }
+        float sideGrip=CasualSteering?CasualGrip:SimGrip;
+        for(int i=0;i<4;i++) { var side=wheels[i].sidewaysFriction;if(side.stiffness!=sideGrip){side.stiffness=sideGrip;wheels[i].sidewaysFriction=side;} var grip=wheels[i].forwardFriction;grip.stiffness=dryForwardStiffness[i]*(demand.brake>0?RainPolicy.BrakeMultiplier(Speed):1);wheels[i].forwardFriction=grip; if(!microsleep)wheels[i].steerAngle=i<2?DriveMath.WheelSteerAngle(centerAngle,i==0):0; wheels[i].motorTorque=i>=2?demand.motor*1100:0; wheels[i].brakeTorque=demand.brake*3500*RainPolicy.BrakeMultiplier(Speed); }
         body.AddForce(Vector3.down*body.velocity.sqrMagnitude*6);
         int grounded=0;foreach(var wheel in wheels)if(wheel.isGrounded)grounded++;
         if(grounded>0) {

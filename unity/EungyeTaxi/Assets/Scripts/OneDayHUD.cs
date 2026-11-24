@@ -73,7 +73,7 @@ public static class OneDayHUD {
    DrawCareerGoal(goal,business);
   }
   DrawShiftLength(new Rect(x+30,y+522+extra,700,40),session.business);
-  if(GUI.Button(new Rect(x+30,y+574+extra,700,50),"영업 시작",preparationAction))session.business.Depart();
+  if(KeyHints.Button(new Rect(x+30,y+574+extra,700,50),"영업 시작","Enter",preparationAction,true)||KeyHints.Enter())session.business.Depart();
   GUI.matrix=saved;
  }
  static string GoalName(CampaignAccount account){return account.CareerGoal=="car"?"아버지 차를, 내 차로":account.CareerGoal=="home"?"이 집을 내 집답게":"일단, 오늘을 버티자";}
@@ -124,7 +124,7 @@ public static class OneDayHUD {
   GUI.Label(new Rect(614,195,470,32),"오늘 운전석",small);
   IntroCutscene.DrawFirstDrive(new Rect(112,230,474,268),b.FirstDriveFrame);
   IntroCutscene.DrawCurrentDrive(new Rect(614,230,474,268),b.GoalComparisonFrame);
-  if(GUI.Button(new Rect(402,532,396,44),"계속하기",CasualUI.Action(18)))b.GoalComparison=false;
+  if(KeyHints.Button(new Rect(402,532,396,44),"계속하기","Enter",CasualUI.Action(18),true)||KeyHints.Enter())b.GoalComparison=false;
   GUI.matrix=saved;GUI.depth=depth;
  }
  public static void Draw(DriveSession s){if(s.RideResultOpen)return;Styles();var b=s.business;var e=b.ledger;var d=e.Driver;if(d==null)return;bool multi=e.Settings.days>1;GUI.depth=-35;if(b.GoalComparison){DrawGoalComparison(s);return;}if(b.LogbookOpen){LogbookHUD.Draw(s);return;}
@@ -183,10 +183,10 @@ public static class OneDayHUD {
    if(b.CanStartEveningDrive&&GUI.Button(new Rect(x+25,y+597+extra,325,40),"퇴근 후 드라이브 (기록·수익 영향 없음)",button))b.StartEveningDrive();
    GUI.enabled=!b.SaveFailed;
    if(b.CanContinueCareer){
-    if(GUI.Button(new Rect(x+370,y+590+extra,325,55),(e.Day+1)+"일차 영업 준비",CasualUI.Action(18)))b.BeginContinuousCareer();
+    if(KeyHints.Button(new Rect(x+370,y+590+extra,325,55),(e.Day+1)+"일차 영업 준비","Enter",CasualUI.Action(18),true)||KeyHints.Enter())b.BeginContinuousCareer();
     if(GUI.Button(new Rect(x+370,y+540+extra,325,40),"처음부터 다시하기",button))b.RequestRestart();
    }
-   else if(!complete&&multi){if(GUI.Button(new Rect(x+370,y+590+extra,325,55),(e.Day+1)+"일차 준비",CasualUI.Action(18)))b.BeginNextCampaignDay();}
+   else if(!complete&&multi){if(KeyHints.Button(new Rect(x+370,y+590+extra,325,55),(e.Day+1)+"일차 준비","Enter",CasualUI.Action(18),true)||KeyHints.Enter())b.BeginNextCampaignDay();}
    else if(multi&&!e.Account.Room.finalized){if(GUI.Button(new Rect(x+370,y+590+extra,325,55),"이번 회차 마무리",CasualUI.Action(18)))b.ChangeRoom("finish");}
    else if(GUI.Button(new Rect(x+370,y+590+extra,325,55),multi?"새 캠페인":"새 하루",CasualUI.Action(18)))b.RequestRestart();
    GUI.enabled=true;

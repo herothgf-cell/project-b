@@ -5,7 +5,7 @@ using UnityEngine;
 public sealed class VehicleAudio : MonoBehaviour {
  DriveSession session;
  AudioSource engine,road,indicator,horn,rain,roadSlow,window,hardBrake;
- float lastSpeed,contactUntil,smoothDecel,brakeReady;int lastCollisions=-1;
+ float lastSpeed,contactUntil,smoothDecel;int lastCollisions=-1;
  AudioClip indicatorOn,indicatorOff;
  bool lampWasLit;
  int gear;float rpm=IdleRpm,load;
@@ -129,10 +129,8 @@ public sealed class VehicleAudio : MonoBehaviour {
   MotionLoop(window,driveSound&&windowOpen,DriveFeelAudio.WindowLevel(speed),1,blend);
   float decel=dt>0?Mathf.Max(0,(lastSpeed-speed)/Mathf.Max(dt,.001f)):0;lastSpeed=speed;
   smoothDecel=Mathf.Lerp(smoothDecel,Mathf.Min(decel,30),1-Mathf.Exp(-dt/.15f));
-  // Hard braking only: the emergency brake, or a pedal stop this sharp, squeals once.
-  if(extra>0&&DriveFeelAudio.HardBraking(smoothDecel,speed,taxi.EmergencyBraking)){
-   if(!hardBrake.isPlaying&&Time.unscaledTime>=brakeReady){hardBrake.volume=DriveFeelAudio.HardBrakeLevel(speed)*extra;hardBrake.pitch=1;hardBrake.Play();brakeReady=Time.unscaledTime+2.5f;}
-  }
+  // 2026-11-24 play-test: the hard-brake squeal is removed (user request). The clip stays in Resources
+  // and the source fades out if anything else started it.
   if(hardBrake.isPlaying&&(extra<=0||speed<.8f))hardBrake.volume=Mathf.MoveTowards(hardBrake.volume,0,dt*2.5f);
   int collisions=session.manners?session.manners.collisionEvents:0;if(lastCollisions>=0&&collisions>lastCollisions)contactUntil=Time.unscaledTime+DriveFeelAudio.ContactSeconds;lastCollisions=collisions;
   if(driving&&single&&settings.rumble>0&&Input.GetJoystickNames().Length>0){DriveFeelAudio.Rumble(speed,decel,Time.unscaledTime<contactUntil,out float low,out float high);XInputRumble.Set(low*settings.rumble,high*settings.rumble);}

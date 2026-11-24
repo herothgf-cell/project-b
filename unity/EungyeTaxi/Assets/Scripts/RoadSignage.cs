@@ -8,6 +8,8 @@ public class RoadSignage : MonoBehaviour {
  readonly List<Board> boards=new List<Board>();
  public int Count {get{int count=0;foreach(var b in boards)if(b.panel&&b.panel.activeInHierarchy)count++;return count;}}
  void Start(){
+  // 2026-11-24: speed-limit section signs and school-zone paint live beside the other road signage.
+  if(!GetComponent<SpeedLimitSigns>())gameObject.AddComponent<SpeedLimitSigns>().session=session;
   foreach(var j in session.traffic.junctions)for(int i=0;i<j.lamps.Count;i++){
    var lamps=j.lamps[i];if(lamps==null||lamps.Length==0||!lamps[0])continue;
    var signal=lamps[0].transform.parent;var existing=signal?signal.Find("비보호 표지"):null;

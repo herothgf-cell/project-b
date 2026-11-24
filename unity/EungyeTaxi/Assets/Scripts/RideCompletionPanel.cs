@@ -65,7 +65,7 @@ public sealed class RideCompletionPanel:MonoBehaviour {
    if(GUI.Button(new Rect(x+335,y+693+tipRow,290,44),"지나가다 만나면 태워 줄게요",button))AnswerStudent(false);
   }
   float controls=y+height-70;
-  if(GUI.Button(new Rect(x+335,controls,290,46),(session.business.ShowingSummary||session.business.ledger.State==BusinessState.Closing)?"영업 정산":"계속 영업",CasualUI.Action(18)))Close();
+  if(KeyHints.Button(new Rect(x+335,controls,290,46),(session.business.ShowingSummary||session.business.ledger.State==BusinessState.Closing)?"영업 정산":"계속 영업","Enter",CasualUI.Action(18),true)||KeyHints.Enter())Close();
   GUI.enabled=CanOpenFacilities;if(GUI.Button(new Rect(x+25,controls,290,46),"시설 찾기",button))TryOpenFacilities();GUI.enabled=true;GUI.matrix=before;
  }
  public bool AnswerStudent(bool promise){

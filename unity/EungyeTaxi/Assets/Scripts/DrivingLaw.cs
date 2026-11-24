@@ -169,7 +169,7 @@ public partial class DrivingLaw : MonoBehaviour {
   if(!showHistory){if(session.ShowHints&&!session.business.ShowingSummary&&!session.business.preparing&&!session.services.open)GUI.Label(new Rect(420,70,650,24),"F8 운전·운송 기록 · "+ledger.DaySummary(Day).Split('\n')[0],style);return;}
   GUI.depth=-120;var box=new Rect(40,35,Mathf.Min(900,Screen.width-80),Screen.height-70);CasualUI.Panel(box);CasualUI.RoundedFill(new Rect(box.x,box.y,6,box.height),CasualUI.Blue);
   GUI.Label(new Rect(60,45,box.width-150,55),"운전 점수 "+ledger.TotalScore+"점 · "+Day+"일차 · "+ledger.DaySummary(Day),style);
-  if(GUI.Button(new Rect(box.xMax-100,45,80,28),"닫기",button))CloseHistory();
+  if(KeyHints.Button(new Rect(box.xMax-122,45,102,28),"닫기","Esc",button))CloseHistory();
   if(GUI.Button(new Rect(60,107,180,30),"법규 사건",button)){passengerTab=false;scroll=Vector2.zero;}
   if(GUI.Button(new Rect(250,107,180,30),"승객 운송 결과",button)){passengerTab=true;scroll=Vector2.zero;}
   GUI.Label(new Rect(60,143,box.width-40,55),passengerTab?"운전 점수는 승차 운임 보정, 승객 만족도는 감액·보너스에 반영됩니다.":"출구: "+ledger.Summary("exit","L06")+" / 우회전 정지: "+ledger.Summary("right","L02"),style);

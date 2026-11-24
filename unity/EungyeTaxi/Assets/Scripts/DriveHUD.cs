@@ -2,6 +2,7 @@ using UnityEngine;
 public class DriveHUD : MonoBehaviour {
  public DriveSession session;public Texture2D tile;public bool HelpOpen {get;private set;}GUIStyle title,body,small;const int W=1024,H=1024;
  public void ToggleHelp(){HelpOpen=!HelpOpen;}
+ public void CloseHelp(){HelpOpen=false;}
  bool CockpitVisible => !session.business.IntroInputBlocked&&!session.business.LogbookOpen&&!session.business.GoalComparison&&(!PracticeSession.Enabled||session.paused)&&!session.FullMapOpen&&!session.RideResultOpen&&!session.ChoiceOpen&&!session.PracticeMenuOpen&&!session.business.restartPrompt&&session.jobs!=null&&!session.business.ShowingSummary&&!session.business.preparing&&!session.business.taxPrompt&&!session.services.open&&!session.law.HistoryOpen;
  void Update(){
   if(!Input.GetKeyDown(KeyCode.F1)||!session.StartupReady||session.SettingsOpen||session.PracticeBusy||session.simulationMatch&&session.simulationMatch.Finished)return;
@@ -10,7 +11,7 @@ public class DriveHUD : MonoBehaviour {
  Texture2D lightTile;public Texture2D LightTile {get{if(!lightTile&&session&&session.world&&session.world.map!=null)lightTile=MapPresentation.Create(session.world.map,2048);return lightTile;}}
  Texture2D conditionMapTile;public Texture2D ConditionMapTile {get{if(!conditionMapTile)conditionMapTile=MapPresentation.Create(session.world.map,256);return conditionMapTile;}}
  void OnDestroy(){if(tile)Destroy(tile);if(lightTile)Destroy(lightTile);if(conditionMapTile)Destroy(conditionMapTile);}
- void Start(){tile=new Texture2D(W,H);var pixels=new Color[W*H];for(int i=0;i<pixels.Length;i++)pixels[i]=new Color(.10f,.15f,.17f);tile.SetPixels(pixels);
+ void Start(){if(session&&!session.IsSimulationBot&&!GetComponent<EscapeShortcuts>())gameObject.AddComponent<EscapeShortcuts>().session=session;if(session&&!session.IsSimulationBot&&!GetComponent<CriticalAlerts>())gameObject.AddComponent<CriticalAlerts>().session=session;tile=new Texture2D(W,H);var pixels=new Color[W*H];for(int i=0;i<pixels.Length;i++)pixels[i]=new Color(.10f,.15f,.17f);tile.SetPixels(pixels);
   if(session.world.map.areas!=null)foreach(var area in session.world.map.areas){
    if(area.kind!="water"||area.points==null||area.points.Length<3)continue;
    float minX=float.MaxValue,maxX=0,minZ=float.MaxValue,maxZ=0;foreach(var p in area.points){minX=Mathf.Min(minX,p.x);maxX=Mathf.Max(maxX,p.x);minZ=Mathf.Min(minZ,p.z);maxZ=Mathf.Max(maxZ,p.z);}
@@ -113,7 +114,7 @@ public class DriveHUD : MonoBehaviour {
   GUI.matrix=Matrix4x4.TRS(new Vector3(r.x,r.y,0),Quaternion.identity,new Vector3(scale,scale,1));
   KoreanText.Panel(new Rect(0,0,760,660));
   CasualUI.Header(new Rect(6,6,748,44),"운전과 영업 도움말",3);
-  if(GUI.Button(new Rect(650,12,92,34),"닫기",KoreanText.Button(17)))HelpOpen=false;
+  if(KeyHints.Button(new Rect(632,12,110,34),"닫기","Esc",KoreanText.Button(17)))HelpOpen=false;
   if(GUI.Button(new Rect(24,58,120,34),"조작",helpGuide?KoreanText.Button(16):CasualUI.Action(16)))helpGuide=false;
   if(GUI.Button(new Rect(152,58,120,34),"가이드",helpGuide?CasualUI.Action(16):KoreanText.Button(16)))helpGuide=true;
   var text=new GUIStyle(body){fontSize=helpGuide?17:18,wordWrap=true};text.normal.textColor=CasualUI.Ink;

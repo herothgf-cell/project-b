@@ -91,10 +91,12 @@ public partial class FullMapOverlay : MonoBehaviour {
   GUI.enabled=!locationOpen;
   GUI.Label(new Rect(24,20,CanvasWidth-420,38),MapCatalog.Name(session.world.map.mapId)+" 지도 · 북 ↑"+(session.simulationMatch?(session.LivePvpMapOpen?" · 경기 진행 중 · 내 차 정지":" · 일시정지"):""),heading);
   if(GUI.Button(new Rect(CanvasWidth-330,20,150,38),"위치 정보",button))ShowLocation();
-  if(GUI.Button(new Rect(CanvasWidth-166,20,142,38),"닫기 M",button)){Close();return;}
+  if(KeyHints.Button(new Rect(CanvasWidth-166,20,142,38),"닫기","M",button)){Close();return;}
   var viewport=MapRect;var ev=Event.current;var jobs=session.jobs;
   GUI.BeginGroup(viewport);var map=new Rect(0,0,viewport.width,viewport.height);Fill(map,MapPresentation.Land);var data=session.world.map;var tile=GetComponent<DriveHUD>().LightTile;
   if(tile){var a=Project(new Vector3(0,0,data.depth),map);float span=Mathf.Max(data.width,data.depth),pixels=Mathf.Min(map.width,map.height);GUI.DrawTexture(new Rect(a.x,a.y,data.width/span*pixels*ZoomLevel,data.depth/span*pixels*ZoomLevel),tile);}
+  // 2026-11-24: limited sections (orange road limit, red school zone) with a limit disc where each starts.
+  SpeedLimitSections.DrawMap(session.traffic,p=>Project(p,map),map,5,true);
   for(int pass=0;pass<2;pass++)foreach(var segment in RoutePaint)HudGlyph.MapLine(Project(segment.a,map),Project(segment.b,map),segment.retained?(pass==0?Color.white:MapPresentation.PreviousRoute):pass==0?Color.white:ShowTraffic?segment.color:MapPresentation.RouteColor(segment.passenger),pass==0?(segment.passenger?7:11):4,new Rect(0,0,MapRect.width,MapRect.height));
   if(session.business.DailyConditionsEnabled&&session.business.DayCondition==DailyConditionKind.Construction)
    DailyConditionHUD.DrawClosure(session,map,p=>Project(p,map),6,true);

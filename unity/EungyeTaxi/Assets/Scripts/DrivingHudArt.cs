@@ -20,7 +20,7 @@ public static class DrivingHudArt {
   Pill(new Rect(r.x+248,r.y+12,38,37),new Color(.86f,.93f,1));
   GUI.Label(new Rect(r.x+248,r.y+12,38,37),s.taxi.Speed<-.2f?"R":"D",Text(23,Cyan,true,TextAnchor.MiddleCenter));
   Meter(new Rect(r.x+18,r.y+55,r.width-36,5),Mathf.Clamp01(speed/140f)*100,Cyan);
-  GUI.Label(new Rect(r.x+54,r.y+65,r.width-108,23),s.assisted.Active?"조향 보조 · H":"수동 운전 · H",Text(13,Light,false,TextAnchor.MiddleCenter));
+  KeyHints.LabelWithCap(new Rect(r.x+54,r.y+64,r.width-108,25),s.assisted.Active?"조향 보조":"수동 운전","H",Text(13,Light,false,TextAnchor.MiddleCenter));
   var signal=s.signals;bool lit=signal&&signal.Lit;
   HudGlyph.Draw(new Rect(r.x+18,r.y+66,22,22),16,lit&&(signal.Hazards||signal.direction<0)?Lime:Light);
   HudGlyph.Draw(new Rect(r.xMax-40,r.y+66,22,22),17,lit&&(signal.Hazards||signal.direction>0)?Lime:Light);

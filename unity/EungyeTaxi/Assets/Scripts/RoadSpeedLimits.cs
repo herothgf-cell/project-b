@@ -68,10 +68,13 @@ public static class RoadSpeedLimits {
 // how the driver learns the limit of the road they are on.
 public static class SpeedLimitBadge {
  static Texture2D disc;static GUIStyle text;
+ static void EnsureDisc(){if(disc)return;disc=new Texture2D(64,64,TextureFormat.RGBA32,false);for(int y=0;y<64;y++)for(int x=0;x<64;x++){float d=Vector2.Distance(new Vector2(x+.5f,y+.5f),new Vector2(32,32));disc.SetPixel(x,y,new Color(1,1,1,Mathf.Clamp01(31-d)));}disc.Apply(false,true);disc.wrapMode=TextureWrapMode.Clamp;}
+ // A round sign face: coloured rim and a lighter centre. Used by the map discs and the limit-change notice.
+ public static void DrawDisc(Rect r,Color rim,Color inner){EnsureDisc();var old=GUI.color;GUI.color=rim;GUI.DrawTexture(r,disc);float w=r.width*.14f;GUI.color=inner;GUI.DrawTexture(new Rect(r.x+w,r.y+w,r.width-w*2,r.height-w*2),disc);GUI.color=old;}
  public static void Draw(Rect r,DriveSession s){
   if(Event.current==null||Event.current.type!=EventType.Repaint||!s||!s.law)return;
   float limit=s.law.CurrentLimit;if(limit<=0)return;
-  if(!disc){disc=new Texture2D(64,64,TextureFormat.RGBA32,false);for(int y=0;y<64;y++)for(int x=0;x<64;x++){float d=Vector2.Distance(new Vector2(x+.5f,y+.5f),new Vector2(32,32));disc.SetPixel(x,y,new Color(1,1,1,Mathf.Clamp01(31-d)));}disc.Apply(false,true);disc.wrapMode=TextureWrapMode.Clamp;}
+  EnsureDisc();
   if(text==null){text=new GUIStyle(GUI.skin.label);text.alignment=TextAnchor.MiddleCenter;text.fontStyle=FontStyle.Bold;text.padding=new RectOffset(0,0,0,0);}
   float kmh=Mathf.Abs(s.taxi.Speed*3.6f);bool above=RoadSpeedLimits.AboveLimit(kmh,limit),over=kmh>limit+RoadSpeedLimits.Tolerance;var old=GUI.color;
   GUI.color=new Color(.86f,.13f,.13f);GUI.DrawTexture(r,disc);

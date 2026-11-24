@@ -88,6 +88,8 @@ public partial class ServiceStops : MonoBehaviour {
   if(!open&&Input.GetKeyDown(KeyCode.F7))Toggle();
  }
  public int EscapeFrame {get;private set;}=-1;
+ // Another panel closed on this Esc press (EscapeShortcuts): the pause menu must not open on the same press.
+ public void ConsumeEscape(){EscapeFrame=Time.frameCount;}
  bool EscapeClose(){if(!open||!Input.GetKeyDown(KeyCode.Escape))return false;EscapeFrame=Time.frameCount;Close();return true;}
  public void ObserveCompletedTrip(){
   int count=session.jobs.completed;bool deliveredLate=session.jobs.failed>observedFailed&&session.jobs.trip.State==TripState.Failed&&session.jobs.current!=null&&session.jobs.At(session.jobs.current.drop);observedFailed=session.jobs.failed;if(count==observedCompleted&&!deliveredLate)return;
@@ -293,7 +295,7 @@ public partial class ServiceStops : MonoBehaviour {
   string footer=(pickupWarning+notice).Trim();
   if(footer.Length>0){CasualUI.RoundedFill(new Rect(x+12,y+height-158,696,112),new Color(1,.95f,.83f));
    GUI.Label(new Rect(x+20,y+height-155,680,108),footer,new GUIStyle(style){fontSize=14});}
-  if(GUI.Button(new Rect(x+20,y+height-45,restaurant?680:430,35),"닫기",KoreanText.Button(14)))Close();
+  if(KeyHints.Button(new Rect(x+20,y+height-45,restaurant?680:430,35),"닫기","Esc",KoreanText.Button(14)))Close();
   if(!restaurant&&GUI.Button(new Rect(x+460,y+height-45,240,35),"다른 시설",button))OpenFacilityPlanner(actions.Length>0&&Refreshment.For(actions[0])!=null?Refreshment.Snack:restaurant?1:fuelOnly?0:3);
  }
 }
