@@ -32,7 +32,7 @@ public class DistrictTrafficSmokeTest : MonoBehaviour {
    Check(stalled==0,"no prolonged stalled cars count="+stalled);Check(district.continued>0,"continuous journeys="+district.continued);
    // Exercise a real mapped signal with a three-car queue, separately from the soak.
    foreach(var c in traffic.cars){c.Recycle();c.enabled=false;}TrafficRoute fixture=null;TrafficStop stop=null;
-   foreach(var a in session.world.map.stops){foreach(var b in session.world.map.stops){if(a==b)continue;var r=district.CreateRoute(a.laneEdge,a.laneAt,b.laneEdge,b.laneAt);if(r==null)continue;foreach(var s in r.stops)if(s.junction.signalized&&s.turn==0&&s.distance>40&&s.exitDistance<r.length-30){fixture=r;stop=s;break;}if(fixture!=null)break;}if(fixture!=null)break;}
+   foreach(var a in session.world.map.stops){foreach(var b in session.world.map.stops){if(a==b)continue;var r=district.CreateRoute(a.laneEdge,a.laneAt,b.laneEdge,b.laneAt);if(r==null||r.graphPath!=null&&r.graphPath.edges.Exists(e=>ParkedAlleyRules.ExcludesTraffic(district.graph.edges[e].roadName)))continue; /* ordinary traffic never uses a parked alley */foreach(var s in r.stops)if(s.junction.signalized&&s.turn==0&&s.distance>40&&s.exitDistance<r.length-30){fixture=r;stop=s;break;}if(fixture!=null)break;}if(fixture!=null)break;}
    Check(fixture!=null,"signal fixture available");
    if(fixture!=null){var queue=new List<TrafficCar>();traffic.manualClock=true;int sign=traffic.Sign(fixture.Tangent(stop.distance),stop.axis,stop.junction);int phase=stop.axis*2+(sign>0?0:1);traffic.manualTime=phase*17+16-stop.junction.offset;
     for(int i=0;i<3;i++){var c=traffic.Spawn(fixture,stop.distance-12-i*9,100+i);Check(c!=null,"signal queue spawned");if(c){c.district=district;queue.Add(c);}}

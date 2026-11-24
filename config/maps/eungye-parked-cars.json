@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "mapId": "eungye",
+  "note": "Alley parking (design 08 ch.5.6 item 2.3, decided 2026-11-24). Parked cars are a game staging, not a survey: count and exact positions do not match reality.",
+  "roads": [
+    {
+      "name": "은행로144번길",
+      "kerb": "one-side",
+      "excludeTraffic": true,
+      "evidence": "게임 연출. 근거: 로드뷰 표본 조사(docs/work-history/2026-11-24-speed-limit-camera-survey.md, (487, 1113) 부근 한쪽 길가 주차 줄). 대수·위치·어느 쪽 연석인지는 게임 추정"
+    }
+  ]
+}

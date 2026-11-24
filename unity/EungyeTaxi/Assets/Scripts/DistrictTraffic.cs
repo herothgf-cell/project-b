@@ -182,7 +182,9 @@ public sealed class DistrictTraffic : MonoBehaviour {
   }
   route.stops.Add(new TrafficStop{junction=j,axis=axis,turn=turn,turnEdge=turnEdge,distance=enter,exitDistance=exit});
  }
- bool Clear(TrafficRoute route){if(cleared.Contains(route))return true;if(blocked.Contains(route))return false;if(system.RouteClearOfStaticObstacles(route)){cleared.Add(route);return true;}blocked.Add(route);excluded++;return false;}
+ // Alleys with parked cars (ParkedAlley, Eungye single) are left to the player: no ordinary car routes through them.
+ bool UsesParkedAlley(TrafficRoute route){if(!system||!system.EungyeSingle||route?.graphPath==null)return false;foreach(int e in route.graphPath.edges)if(ParkedAlleyRules.ExcludesTraffic(graph.edges[e].roadName))return true;return false;}
+ bool Clear(TrafficRoute route){if(cleared.Contains(route))return true;if(blocked.Contains(route))return false;if(UsesParkedAlley(route)){blocked.Add(route);excluded++;return false;}if(system.RouteClearOfStaticObstacles(route)){cleared.Add(route);return true;}blocked.Add(route);excluded++;return false;}
  TrafficRoute Next(int edge,float at){
   // Rank only future journeys. Accepted/active routes and fleet size stay fixed.
   int generation=sequence++,phase=system.DemandPhase;var condition=system.DemandCondition;TrafficRoute best=null;double rank=double.PositiveInfinity;

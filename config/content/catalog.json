@@ -13910,6 +13910,174 @@
       "editable": true
     },
     {
+      "id": "road.parked.enabled",
+      "group": "법규",
+      "section": "parked",
+      "title": "골목 주차 · 켜기",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 은행로144번길 한쪽 연석에 주차 차량(게임 연출)을 세우고 그 골목에서 일반 차량을 뺍니다. 바꾸면 다음 시작부터 적용됩니다.",
+      "affects": [
+        "골목 주차 차량"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "ParkedAlleyRules.Enabled",
+      "editable": true
+    },
+    {
+      "id": "road.parked.groupMin",
+      "group": "법규",
+      "section": "parked",
+      "title": "골목 주차 · 묶음 최소 대수",
+      "type": "integer",
+      "defaultValue": "3",
+      "min": 1,
+      "max": 8,
+      "unit": "대",
+      "description": "한 묶음에 세우는 최소 대수.",
+      "affects": [
+        "골목 주차 차량"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "ParkedAlleyRules.Slots",
+      "editable": true
+    },
+    {
+      "id": "road.parked.groupMax",
+      "group": "법규",
+      "section": "parked",
+      "title": "골목 주차 · 묶음 최대 대수",
+      "type": "integer",
+      "defaultValue": "5",
+      "min": 1,
+      "max": 10,
+      "unit": "대",
+      "description": "한 묶음에 세우는 최대 대수.",
+      "affects": [
+        "골목 주차 차량"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "ParkedAlleyRules.Slots",
+      "editable": true
+    },
+    {
+      "id": "road.parked.gapMetres",
+      "group": "법규",
+      "section": "parked",
+      "title": "골목 주차 · 차 간격",
+      "type": "number",
+      "defaultValue": "6.5",
+      "min": 5,
+      "max": 12,
+      "unit": "m",
+      "description": "묶음 안에서 차 중심 사이 거리.",
+      "affects": [
+        "골목 주차 차량"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "ParkedAlleyRules.Slots",
+      "editable": true
+    },
+    {
+      "id": "road.parked.groupSpacingMetres",
+      "group": "법규",
+      "section": "parked",
+      "title": "골목 주차 · 묶음 사이",
+      "type": "number",
+      "defaultValue": "20",
+      "min": 8,
+      "max": 200,
+      "unit": "m",
+      "description": "묶음과 묶음 사이 빈 거리.",
+      "affects": [
+        "골목 주차 차량"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "ParkedAlleyRules.Slots",
+      "editable": true
+    },
+    {
+      "id": "road.parked.clearMetres",
+      "group": "법규",
+      "section": "parked",
+      "title": "골목 주차 · 비우는 거리",
+      "type": "number",
+      "defaultValue": "15",
+      "min": 5,
+      "max": 60,
+      "unit": "m",
+      "description": "승강장·횡단보도에서 이 거리, 교차로에서 이 거리 + 10m 안에는 세우지 않습니다.",
+      "affects": [
+        "골목 주차 차량"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "ParkedAlley.Place",
+      "editable": true
+    },
+    {
+      "id": "road.parked.nightMultiplier",
+      "group": "법규",
+      "section": "parked",
+      "title": "골목 주차 · 밤 배수",
+      "type": "number",
+      "defaultValue": "1.5",
+      "min": 1,
+      "max": 3,
+      "unit": "배",
+      "description": "퇴근 후 드라이브(밤)에는 묶음 대수에 이 배수를 곱합니다.",
+      "affects": [
+        "골목 주차 차량"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "ParkedAlley.Update",
+      "editable": true
+    },
+    {
+      "id": "road.parked.passMarginMetres",
+      "group": "법규",
+      "section": "parked",
+      "title": "골목 주차 · 비켜 갈 여유",
+      "type": "number",
+      "defaultValue": "0.3",
+      "min": 0.1,
+      "max": 1,
+      "unit": "m",
+      "description": "택시가 주차 차량 옆을 지날 때 남길 여유. 이 여유로 중앙선을 넘지 않고 지날 수 없는 자리에는 세우지 않습니다.",
+      "affects": [
+        "골목 주차 차량"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "ParkedAlleyRules.Passable",
+      "editable": true
+    },
+    {
       "id": "accident.fault.enabled",
       "group": "법규",
       "section": "accident",

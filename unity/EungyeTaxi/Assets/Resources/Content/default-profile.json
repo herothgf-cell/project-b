@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "036c7436c8dd1887a11db0cb8c3d599fede76b09f931c1fc13dce9da3349289b",
+  "contentHash": "710a8bed9b9f1060e762eaf6b3c729383813b7e440a4217bb9cac7e096b61bc2",
   "values": [
     {
       "id": "radio.station",
@@ -2395,6 +2395,38 @@
     {
       "id": "law.speed.trafficPercent",
       "value": "90"
+    },
+    {
+      "id": "road.parked.enabled",
+      "value": "1"
+    },
+    {
+      "id": "road.parked.groupMin",
+      "value": "3"
+    },
+    {
+      "id": "road.parked.groupMax",
+      "value": "5"
+    },
+    {
+      "id": "road.parked.gapMetres",
+      "value": "6.5"
+    },
+    {
+      "id": "road.parked.groupSpacingMetres",
+      "value": "20"
+    },
+    {
+      "id": "road.parked.clearMetres",
+      "value": "15"
+    },
+    {
+      "id": "road.parked.nightMultiplier",
+      "value": "1.5"
+    },
+    {
+      "id": "road.parked.passMarginMetres",
+      "value": "0.3"
     },
     {
       "id": "accident.fault.enabled",
