@@ -1,10 +1,10 @@
 {
-  "sourceCommit": "42a6174433cb46be670348d3258adc620b34364f",
+  "sourceCommit": "bce07ae6",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-24",
-  "totalBytes": 117169531,
+  "totalBytes": 117352275,
   "validation": {
     "build": "PrototypeBuild.BuildEasyRoadMapEditor exit 0",
     "modelSuites": 23,
@@ -38,12 +38,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "430366eadbeca716b8fd34e71c1e06aa55e8c5e245f3a5c7486daf6ee0f0d05d"
+      "sha256": "01911f1a97627a5062820e1e68556fd61efb6c235cd1dbfb026cad51ab807f86"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 65716,
-      "sha256": "a2989ecb00d13905b537fa826795db997f1d2657e225a7912aa638eab18c6ae2"
+      "bytes": 65788,
+      "sha256": "a599bfe4a1550449e345c50cf0d0a415a0a88a59f40dc9f584da92b4c87e6c1e"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
@@ -62,8 +62,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 3448832,
-      "sha256": "a16b1c2c5d88ed77246da8829dcab3f2d51a0702b957ef8bd9e7693f0041538a"
+      "bytes": 3456000,
+      "sha256": "cb6764b48cb3408f04ee3dd9bfcd368874f1d048a80ebc777c90f40bcb9ca37b"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
@@ -572,13 +572,13 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 26662928,
-      "sha256": "1091d19228a2915aa86dca88fc891d9fef423115227e77d607e8ee23aa10ee6e"
+      "bytes": 26663616,
+      "sha256": "e9f0e2fad1074798cf0472d324b8f746d34560e88d96438fca224c73b74860f5"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
-      "bytes": 9616672,
-      "sha256": "9d088d9d6bb764be142c56e061e393d25f27f30cb3753051efa1fa661d4f12a1"
+      "bytes": 9791488,
+      "sha256": "e1c744ae93509dde6e107ed05159821e7513a21ce0bf4d26f71db23c1e1315c8"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.resource",
