@@ -1,6 +1,6 @@
 # 현재 상태 한 장 요약
 
-**2026-11-24 · 은계 싱글 r52 · 자체 도시 PvP A2 / LAN v25.** 기본 실행 파일은 `builds/EungyeTaxi/EungyeTaxi.exe`다. 싱글에서는 시흥 은계에서 아버지의 택시로 생계를 시작한다. 같은 실행 파일에서 봇 3명 또는 LAN 최대 4명으로 PvP를 할 수 있다. [최신 이력](work-history/LATEST.md) · [전체 기획 목차](content-design/README.md) · [PvP 기획](content-design/pvp/README.md)
+**2026-11-24 · 은계 싱글 r53 · 자체 도시 PvP A2 / LAN v25.** 기본 실행 파일은 `builds/EungyeTaxi/EungyeTaxi.exe`다. 싱글에서는 시흥 은계에서 아버지의 택시로 생계를 시작한다. 같은 실행 파일에서 봇 3명 또는 LAN 최대 4명으로 PvP를 할 수 있다. [최신 이력](work-history/LATEST.md) · [전체 기획 목차](content-design/README.md) · [PvP 기획](content-design/pvp/README.md)
 
 ## 지금 플레이할 수 있는 것
 
@@ -17,7 +17,7 @@
 
 2026-11-24 직접 플레이 피드백(카메라 흔들림·1인칭 높이·주행음·설정 막대·지도 호출 패널·P51 신호 70초)을 소스와 지도 r53에 반영했다. 배포 실행본은 아직 r52이며 제한속도 작업과 합쳐 한 번 재빌드해야 한다. [기록](work-history/2026-11-24-test-feedback-fixes.md)
 
-운전 중 판단을 늘리는 공차 운영·길 지식·규칙 속 돌발(구 기획 37)은 2026-11-24에 [08 재미 보강 5장](content-design/08-fun-improvements.md)으로 합쳤고 구현 승인 전이다. 2026-11-24에 미션 "길 아는 기사", 정산 뒤 퇴근 후 드라이브, 차종별 손맛을 넣었고, 방지턱·시외 콜·도로 구간·유혹·돌발·따라가기·승강장은 [설계안](work-history/2026-11-24-next-candidates-design.md)만 있다. [확인 체크리스트](work-history/2026-11-24-away-run-3-checklist.md) 같은 날 은계 제한속도 바탕(수인로 60, 대은로 50, 어린이보호구역 30, 그 밖은 게임 추정 50/번길 30)을 넣었다. [구현·검증](work-history/2026-11-24-eungye-speed-limits.md) 이어서 사고 과실 구분(상대 과실이면 내구도·처리비·감점 없음)을 넣었다. [구현·검증](work-history/2026-11-24-accident-fault.md) 직접 플레이 피드백으로 제한속도를 확인 구간에만 두고, +10 여유 안의 사고를 무겁게 보게 했다. 생활시설 비교 카드도 아이콘·막대로 바꿨다(배포 실행본 반영, 주행음 녹음 교체 포함). [기록](work-history/2026-11-24-speed-tolerance-and-facility-cards.md)
+운전 중 판단을 늘리는 공차 운영·길 지식·규칙 속 돌발(구 기획 37)은 2026-11-24에 [08 재미 보강 5장](content-design/08-fun-improvements.md)으로 합쳤고 구현 승인 전이다. 2026-11-24에 미션 "길 아는 기사", 정산 뒤 퇴근 후 드라이브, 차종별 손맛을 넣었고, 방지턱·시외 콜·도로 구간·유혹·따라가기·승강장은 [설계안](work-history/2026-11-24-next-candidates-design.md)만 있다. [확인 체크리스트](work-history/2026-11-24-away-run-3-checklist.md) 같은 날 은계 제한속도 바탕(수인로 60, 대은로 50, 어린이보호구역 30, 그 밖은 게임 추정 50/번길 30)을 넣었다. [구현·검증](work-history/2026-11-24-eungye-speed-limits.md) 이어서 사고 과실 구분(상대 과실이면 내구도·처리비·감점 없음)을 넣었다. [구현·검증](work-history/2026-11-24-accident-fault.md) 직접 플레이 피드백으로 제한속도를 확인 구간에만 두고, +10 여유 안의 사고를 무겁게 보게 했다. 생활시설 비교 카드도 아이콘·막대로 바꿨다(배포 실행본 반영, 주행음 녹음 교체 포함). [기록](work-history/2026-11-24-speed-tolerance-and-facility-cards.md) 돌발 1차(문 여는 정차 차량, 끼어드는 차, 하루 최대 2건, 둘째 날부터)를 배포 실행본에 넣었다. 사람 체감은 미확인이다. [구현·검증](work-history/2026-11-24-road-surprises-1.md)
 
 기획 문서는 2026-11-23 주제별 10개(00~09)로 합쳤다. 이전 기획 37(특별 운행·지도 판매점·주기 정비·소지금 장부·기사 성장)은 개발 범위에서 제외해 [보관](content-design/archive/37-driver-life-and-business.md)했고, 다음 검토 주제는 [08 운전하는 20분의 재미 보강](content-design/08-fun-improvements.md)이다. 숙소의 실제 호실 이전과 기사 평점은 후속 항목이다. [기획 목록](content-design/README.md) · [개발 체크리스트](prototype-development-checklist.md)
 

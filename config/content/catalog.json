@@ -13776,7 +13776,7 @@
       "min": 0.2,
       "max": 5,
       "unit": "초",
-      "description": "돌발 차량이 움직이기 시작한 뒤 이 시간 안에 닿으면 상대 과실, 지나면 쌍방 과실입니다. 돌발 차량은 아직 게임에 없습니다.",
+      "description": "돌발(문 여는 정차 차량, 끼어드는 차)이 움직이기 시작한 뒤 이 시간 안에 닿고 제한속도를 넘지 않았으면 상대 과실, 지나면 쌍방 과실입니다.",
       "affects": [
         "사고 처리비",
         "운전 점수"
@@ -13808,6 +13808,236 @@
       ],
       "status": "implemented",
       "consumer": "AccidentState.Fee",
+      "editable": true
+    },
+    {
+      "id": "surprise.enabled",
+      "group": "법규",
+      "section": "surprise",
+      "title": "돌발 · 켜기",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 은계 싱글 영업 중에 돌발(문 여는 정차 차량, 끼어드는 차)이 생깁니다. 0이면 생기지 않습니다.",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SurpriseRules.Blocked",
+      "editable": true
+    },
+    {
+      "id": "surprise.perShiftMax",
+      "group": "법규",
+      "section": "surprise",
+      "title": "돌발 · 하루 최대",
+      "type": "integer",
+      "defaultValue": "2",
+      "min": 0,
+      "max": 10,
+      "unit": "건",
+      "description": "하루 영업에서 생기는 돌발의 최대 수. 종류마다 하루 1건까지입니다.",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SurpriseRules.Blocked",
+      "editable": true
+    },
+    {
+      "id": "surprise.firstDay",
+      "group": "법규",
+      "section": "surprise",
+      "title": "돌발 · 첫날에도",
+      "type": "integer",
+      "defaultValue": "0",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 첫날에도 돌발이 생깁니다. 기본은 둘째 날부터입니다.",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SurpriseRules.Blocked",
+      "editable": true
+    },
+    {
+      "id": "surprise.minGapSeconds",
+      "group": "법규",
+      "section": "surprise",
+      "title": "돌발 · 최소 간격",
+      "type": "number",
+      "defaultValue": "150",
+      "min": 10,
+      "max": 1800,
+      "unit": "초",
+      "description": "돌발 하나가 생긴 뒤 다음 돌발을 찾기 시작할 때까지의 시간(실제 초, 이 값의 1~1.6배 사이).",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSurprises.Update",
+      "editable": true
+    },
+    {
+      "id": "surprise.door.enabled",
+      "group": "법규",
+      "section": "surprise",
+      "title": "문 여는 차 · 켜기",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 길가에 선 차량의 운전석 문이 택시 앞에서 열리는 돌발이 생깁니다.",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSurprises.TryDoor",
+      "editable": true
+    },
+    {
+      "id": "surprise.door.triggerMetres",
+      "group": "법규",
+      "section": "surprise",
+      "title": "문 여는 차 · 열리는 거리",
+      "type": "number",
+      "defaultValue": "18",
+      "min": 6,
+      "max": 60,
+      "unit": "m",
+      "description": "택시가 정차 차량에 이만큼 다가오면 문이 열립니다. 그 0.8초 전부터 문틈이 보입니다.",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SurpriseRules.DoorTellDistance",
+      "editable": true
+    },
+    {
+      "id": "surprise.door.openSeconds",
+      "group": "법규",
+      "section": "surprise",
+      "title": "문 여는 차 · 열려 있는 시간",
+      "type": "number",
+      "defaultValue": "4",
+      "min": 1,
+      "max": 20,
+      "unit": "초",
+      "description": "문이 다 열린 뒤 닫히기 시작할 때까지의 시간.",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSurprises.TickDoor",
+      "editable": true
+    },
+    {
+      "id": "surprise.cutIn.enabled",
+      "group": "법규",
+      "section": "surprise",
+      "title": "끼어드는 차 · 켜기",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 옆 차로 앞쪽의 일반 차량이 깜빡이를 켠 뒤 택시 차로로 들어오는 돌발이 생깁니다.",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSurprises.TryCutIn",
+      "editable": true
+    },
+    {
+      "id": "surprise.cutIn.signalSeconds",
+      "group": "법규",
+      "section": "surprise",
+      "title": "끼어드는 차 · 깜빡이 예고",
+      "type": "number",
+      "defaultValue": "0.6",
+      "min": 0.2,
+      "max": 3,
+      "unit": "초",
+      "description": "깜빡이를 켠 뒤 차로로 들어오기 시작할 때까지의 시간.",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSurprises.TickCutIn",
+      "editable": true
+    },
+    {
+      "id": "surprise.cutIn.mergeSeconds",
+      "group": "법규",
+      "section": "surprise",
+      "title": "끼어드는 차 · 들어오는 시간",
+      "type": "number",
+      "defaultValue": "1.8",
+      "min": 0.8,
+      "max": 5,
+      "unit": "초",
+      "description": "옆 차로에서 택시 차로 가운데까지 옮겨 오는 데 걸리는 시간.",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "TrafficCar.CutInto",
       "editable": true
     },
     {

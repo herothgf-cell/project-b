@@ -46,8 +46,12 @@ public static class AccidentFault {
  public static string Label(FaultSide side){return side==FaultSide.Other?"상대 과실":side==FaultSide.Shared?"쌍방 과실":"내 과실";}
 }
 
-// Marks a scripted surprise (cut-in car, opening door). None is spawned yet; the fault rule already reads it.
+// Marks a scripted surprise (cut-in car, opening door, design 08 ch.5.6 item 1.2). startedAt is the moment it
+// begins to move into the taxi's path; RoadSurprises sets it.
 public sealed class FaultActor : MonoBehaviour {
  public float startedAt;
  public void Begin(){startedAt=Time.time;}
 }
+// A staged vehicle that is not ordinary traffic (the parked car whose door opens). Contacts count as vehicle
+// contacts: a vehicle accident, not property damage.
+public sealed class StagedVehicle : MonoBehaviour {}

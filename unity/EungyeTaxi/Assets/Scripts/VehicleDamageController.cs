@@ -100,7 +100,7 @@ public sealed class VehicleDamageController : MonoBehaviour {
         Vector3 own=motion?motion.At(point):session.taxi.body.velocity;
         Vector3 other=car?car.transform.forward*car.speed:otherMotion&&otherMotion!=motion?otherMotion.At(point):collider.attachedRigidbody?collider.attachedRigidbody.velocity:Vector3.zero;
         var actor=collider.GetComponentInParent<FaultActor>();float limit=session.law?session.law.CurrentLimit:0;
-        var input=new FaultInput{otherVehicle=car||otherTaxi&&otherTaxi!=session.taxi,violating=session.law&&(session.law.WrongWay||session.law.RecentViolation(AccidentFault.ViolationSeconds)),
+        var input=new FaultInput{otherVehicle=car||actor||collider.GetComponentInParent<StagedVehicle>()||otherTaxi&&otherTaxi!=session.taxi,violating=session.law&&(session.law.WrongWay||session.law.RecentViolation(AccidentFault.ViolationSeconds)),
             speeding=limit>0&&own.magnitude*3.6f>limit+RoadSpeedLimits.Tolerance,aboveLimit=RoadSpeedLimits.AboveLimit(own.magnitude*3.6f,limit),surprise=actor,sinceSurprise=actor?Time.time-actor.startedAt:0,
             ownSpeed=own.magnitude,otherSpeed=other.magnitude,contactAlong=transform.InverseTransformPoint(point).z,halfLength=2f,ownAlong=Vector3.Dot(own,transform.forward),otherAlong=Vector3.Dot(other,transform.forward)};
         return AccidentFault.Decide(input,out reason);
@@ -136,7 +136,7 @@ public sealed class VehicleDamageController : MonoBehaviour {
         if(!contact)return;contacts.Add(collision.collider);
         var fault=FaultOf(collision);if(fault==FaultSide.Other){NoteOtherFault();return;}
         if(ApplyImpact(speed)>0&&session.accident){
-            bool vehicle=collision.collider.GetComponentInParent<TaxiController>()||collision.collider.GetComponentInParent<TrafficCar>();
+            bool vehicle=collision.collider.GetComponentInParent<TaxiController>()||collision.collider.GetComponentInParent<TrafficCar>()||collision.collider.GetComponentInParent<StagedVehicle>();
             bool begun=session.accident.ReportCollision(vehicle?AccidentKind.Vehicle:AccidentKind.Property,"collision:"+collision.collider.GetInstanceID(),fault);
             if(begun&&speedingContacts.Contains(collision.collider)&&session.law)session.law.RecordSpeedingCrash(motion?motion.At(collision.GetContact(0).point).magnitude:session.taxi.body.velocity.magnitude);
         }

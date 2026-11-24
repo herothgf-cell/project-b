@@ -52,7 +52,19 @@ public class TrafficCar : MonoBehaviour {
     readonly System.Collections.Generic.HashSet<TrafficStop> released=new System.Collections.Generic.HashSet<TrafficStop>();
     public bool Visible {get{return !recycling;}}
     bool networkView;int networkTurn;
-    public int CurrentTurn {get{if(networkView)return networkTurn;if(route.graphPath==null)return route.turn;foreach(var stop in route.stops)if(distance<=stop.exitDistance&&stop.distance-distance<30)return stop.Movement(route);return 0;}}
+    // Road surprise (Eungye single, design 08 ch.5.6 item 1.2): RoadSurprises lights the indicator, then moves this
+    // car onto the taxi's lane. Never set in PvP, so the shared traffic code and the LAN protocol are unchanged.
+    public int scriptedTurn;Vector3 cutOffset;float cutStart,cutSeconds;
+    public bool CuttingIn {get{return cutSeconds>0&&Time.time-cutStart<cutSeconds;}}
+    // Lateral distance still left to the new lane's centre line.
+    public float CutInRemaining {get{if(!CuttingIn)return 0;float u=Mathf.Clamp01((Time.time-cutStart)/cutSeconds);return cutOffset.magnitude*(1-u*u*(3-2*u));}}
+    // Switches to a route that starts beside the car on the next lane. The body glides across over the given
+    // seconds (smoothstep), facing along its actual motion; sensing ahead already follows the new lane.
+    public void CutInto(TrafficRoute next,float seconds){
+        var from=body?body.position:transform.position;laneYieldEdge=-1;system.Release(this);released.Clear();stoppedAt=null;route=next;distance=0;observedLaneEdge=-1;
+        cutOffset=from-route.Position(0);cutOffset.y=0;cutStart=Time.time;cutSeconds=Mathf.Max(.2f,seconds);
+    }
+    public int CurrentTurn {get{if(networkView)return networkTurn;if(scriptedTurn!=0)return scriptedTurn;if(route.graphPath==null)return route.turn;foreach(var stop in route.stops)if(distance<=stop.exitDistance&&stop.distance-distance<30)return stop.Movement(route);return 0;}}
     public void Continue(TrafficRoute next){laneYieldEdge=-1;system.Release(this);released.Clear();stoppedAt=null;route=next;distance=0;observedLaneEdge=-1;completedRoutes++;}
 
     public TrafficJunction stoppedAt;
@@ -87,6 +99,7 @@ public class TrafficCar : MonoBehaviour {
     }
     public void Place(float position) {
         StepVelocity=StepAngularVelocity=Vector3.zero;
+        cutSeconds=0;scriptedTurn=0;
         system.Release(this);released.Clear();stoppedAt=null;distance=position;speed=0;observedLaneEdge=-1;recycling=false;SetVisible(true);
         body.position=route.Position(distance);body.rotation=Quaternion.LookRotation(route.Tangent(distance));transform.SetPositionAndRotation(body.position,body.rotation);Physics.SyncTransforms();
     }
@@ -105,7 +118,7 @@ public class TrafficCar : MonoBehaviour {
         if(indicators!=null)for(int i=0;i<indicators.Length;i++)if(indicators[i])indicators[i].sharedMaterial=blinking&&(i%2==0?turn<0:turn>0)?indicatorOn:indicatorOff;
     }
     void SetVisible(bool value){if(hit)hit.enabled=value;if(renderers!=null)foreach(var r in renderers)if(r)r.enabled=value;}
-    public void Recycle(){if(distance>=route.length-.01f)completedRoutes++;system.Release(this);recycling=true;speed=0;StepVelocity=StepAngularVelocity=Vector3.zero;SetVisible(false);body.position=new Vector3(-100,-100,-100);}
+    public void Recycle(){cutSeconds=0;scriptedTurn=0;if(distance>=route.length-.01f)completedRoutes++;system.Release(this);recycling=true;speed=0;StepVelocity=StepAngularVelocity=Vector3.zero;SetVisible(false);body.position=new Vector3(-100,-100,-100);}
     void OnDisable(){if(system)system.Release(this);}
     void FixedUpdate() {
         StepVelocity=StepAngularVelocity=Vector3.zero;
@@ -204,7 +217,11 @@ public class TrafficCar : MonoBehaviour {
         if(previouslyStopped&&speed>.1f){departures++;previouslyStopped=false;}
         if(stopped)previouslyStopped=true;
         var nextPosition=route.Position(distance);
-        var nextRotation=Quaternion.LookRotation(route.Tangent(distance));
+        var heading=route.Tangent(distance);
+        if(cutSeconds>0){float u=(Time.time-cutStart)/cutSeconds;
+            if(u>=1)cutSeconds=0;
+            else{float w=1-u*u*(3-2*u);nextPosition+=cutOffset*w;var lateral=-cutOffset*(6*u*(1-u)/cutSeconds);var motion=heading*Mathf.Max(speed,1)+lateral;if(motion.sqrMagnitude>.01f)heading=motion.normalized;}}
+        var nextRotation=Quaternion.LookRotation(heading);
         StepVelocity=(nextPosition-body.position)/Time.fixedDeltaTime;
         var rotationDelta=nextRotation*Quaternion.Inverse(body.rotation);
         var rotationVector=new Vector3(rotationDelta.x,rotationDelta.y,rotationDelta.z);

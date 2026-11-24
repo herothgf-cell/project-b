@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "7bc606a5b4130201bf83b4d6f8a8f84e26fe8e53855dabdc3d9038b61cf076b8",
+  "contentHash": "2413ccf9c303602d2b33b247a05324331a41218b96f6d0350c485ac530319129",
   "values": [
     {
       "id": "radio.station",
@@ -2375,6 +2375,46 @@
     {
       "id": "accident.fault.sharedPercent",
       "value": "50"
+    },
+    {
+      "id": "surprise.enabled",
+      "value": "1"
+    },
+    {
+      "id": "surprise.perShiftMax",
+      "value": "2"
+    },
+    {
+      "id": "surprise.firstDay",
+      "value": "0"
+    },
+    {
+      "id": "surprise.minGapSeconds",
+      "value": "150"
+    },
+    {
+      "id": "surprise.door.enabled",
+      "value": "1"
+    },
+    {
+      "id": "surprise.door.triggerMetres",
+      "value": "18"
+    },
+    {
+      "id": "surprise.door.openSeconds",
+      "value": "4"
+    },
+    {
+      "id": "surprise.cutIn.enabled",
+      "value": "1"
+    },
+    {
+      "id": "surprise.cutIn.signalSeconds",
+      "value": "0.6"
+    },
+    {
+      "id": "surprise.cutIn.mergeSeconds",
+      "value": "1.8"
     },
     {
       "id": "display.background.diner",
