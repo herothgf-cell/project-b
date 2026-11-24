@@ -87,7 +87,8 @@ public sealed class VehicleDamageController : MonoBehaviour {
     public static bool SupportingContact(Collider collider,Vector3 normal,float height){return normal.y>.65f||collider&&!collider.attachedRigidbody&&collider.bounds.size.y<.4f&&collider.bounds.max.y<height+.2f;}
     void OnCollisionEnter(Collision collision){Observe(collision);}
     void OnCollisionStay(Collision collision){Observe(collision);}
-    void OnCollisionExit(Collision collision){contacts.Remove(collision.collider);faults.Remove(collision.collider);}
+    void OnCollisionExit(Collision collision){contacts.Remove(collision.collider);faults.Remove(collision.collider);speedingContacts.Remove(collision.collider);}
+    readonly HashSet<Collider> speedingContacts=new HashSet<Collider>();
     // Fault per touching collider, decided on first touch and kept until the bodies part: after a shove the
     // taxi is moving, and the same contact must not turn into the driver's own fault a frame later.
     readonly Dictionary<Collider,FaultSide> faults=new Dictionary<Collider,FaultSide>();
@@ -100,7 +101,7 @@ public sealed class VehicleDamageController : MonoBehaviour {
         Vector3 other=car?car.transform.forward*car.speed:otherMotion&&otherMotion!=motion?otherMotion.At(point):collider.attachedRigidbody?collider.attachedRigidbody.velocity:Vector3.zero;
         var actor=collider.GetComponentInParent<FaultActor>();float limit=session.law?session.law.CurrentLimit:0;
         var input=new FaultInput{otherVehicle=car||otherTaxi&&otherTaxi!=session.taxi,violating=session.law&&(session.law.WrongWay||session.law.RecentViolation(AccidentFault.ViolationSeconds)),
-            speeding=limit>0&&own.magnitude*3.6f>limit+RoadSpeedLimits.Tolerance,surprise=actor,sinceSurprise=actor?Time.time-actor.startedAt:0,
+            speeding=limit>0&&own.magnitude*3.6f>limit+RoadSpeedLimits.Tolerance,aboveLimit=RoadSpeedLimits.AboveLimit(own.magnitude*3.6f,limit),surprise=actor,sinceSurprise=actor?Time.time-actor.startedAt:0,
             ownSpeed=own.magnitude,otherSpeed=other.magnitude,contactAlong=transform.InverseTransformPoint(point).z,halfLength=2f,ownAlong=Vector3.Dot(own,transform.forward),otherAlong=Vector3.Dot(other,transform.forward)};
         return AccidentFault.Decide(input,out reason);
     }
@@ -108,6 +109,8 @@ public sealed class VehicleDamageController : MonoBehaviour {
         FaultSide side;if(faults.TryGetValue(collision.collider,out side))return side;
         Vector3 point=transform.position;for(int i=0;i<collision.contactCount;i++){var c=collision.GetContact(i);if(SupportingContact(collision.collider,c.normal,transform.position.y))continue;point=c.point;break;}
         string reason;side=Classify(collision.collider,point,out reason);faults[collision.collider]=side;LastFaultReason=reason;
+        // Speed at first touch, before the impact slows the taxi: a crash over the limit costs extra points.
+        if(FaultRules&&session.law&&RoadSpeedLimits.AboveLimit((motion?motion.At(point):session.taxi.body.velocity).magnitude*3.6f,session.law.CurrentLimit))speedingContacts.Add(collision.collider);
         if(side!=FaultSide.Own)Debug.Log("ACCIDENT_FAULT side="+side+" reason="+reason+" collider="+collision.collider.name);
         return side;
     }
@@ -134,7 +137,8 @@ public sealed class VehicleDamageController : MonoBehaviour {
         var fault=FaultOf(collision);if(fault==FaultSide.Other){NoteOtherFault();return;}
         if(ApplyImpact(speed)>0&&session.accident){
             bool vehicle=collision.collider.GetComponentInParent<TaxiController>()||collision.collider.GetComponentInParent<TrafficCar>();
-            session.accident.ReportCollision(vehicle?AccidentKind.Vehicle:AccidentKind.Property,"collision:"+collision.collider.GetInstanceID(),fault);
+            bool begun=session.accident.ReportCollision(vehicle?AccidentKind.Vehicle:AccidentKind.Property,"collision:"+collision.collider.GetInstanceID(),fault);
+            if(begun&&speedingContacts.Contains(collision.collider)&&session.law)session.law.RecordSpeedingCrash(motion?motion.At(collision.GetContact(0).point).magnitude:session.taxi.body.velocity.magnitude);
         }
     }
     public int ApplyImpact(float closingSpeed){

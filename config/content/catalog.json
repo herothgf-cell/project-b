@@ -13465,6 +13465,28 @@
       "editable": true
     },
     {
+      "id": "law.speed.estimatedRoads",
+      "group": "법규",
+      "section": "law",
+      "title": "은계 제한속도 · 추정 도로에도 적용",
+      "type": "integer",
+      "defaultValue": "0",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 확인되지 않은 일반 도로(50)와 번길(30)에도 제한속도를 둡니다. 0이면 확인된 구간(수인로 60, 대은로 50, 어린이보호구역 30)에만 둡니다. 2026-11-24 직접 플레이에서 전 구간 제한이 답답하다는 의견으로 0이 기본입니다.",
+      "affects": [
+        "운전 점수",
+        "일반 차량 속도"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSpeedLimits.RoadLimit",
+      "editable": true
+    },
+    {
       "id": "law.speed.zoneRadius",
       "group": "법규",
       "section": "law",
@@ -13505,6 +13527,28 @@
       ],
       "status": "implemented",
       "consumer": "DrivingLaw.CheckEditorSpeed",
+      "editable": true
+    },
+    {
+      "id": "law.speed.crashPenalty",
+      "group": "법규",
+      "section": "law",
+      "title": "제한속도 초과 중 사고 · 추가 감점",
+      "type": "integer",
+      "defaultValue": "5",
+      "min": 0,
+      "max": 30,
+      "unit": "점",
+      "description": "제한속도를 넘은 채(여유 안이어도) 사고가 나면 운전 점수를 이만큼 더 깎습니다. 상대 과실(뒤에서 받힘)은 쌍방 과실로 바뀝니다.",
+      "affects": [
+        "운전 점수",
+        "사고 과실"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DrivingLaw.RecordSpeedingCrash",
       "editable": true
     },
     {

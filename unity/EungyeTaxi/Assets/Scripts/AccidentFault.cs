@@ -9,6 +9,7 @@ public struct FaultInput {
  public bool otherVehicle;      // the other body is a car (ordinary traffic or a taxi)
  public bool violating;         // wrong way now, or a law violation recorded moments ago
  public bool speeding;          // over the limit of the road plus the tolerance
+ public bool aboveLimit;        // over the limit at all, tolerance included (2026-11-24 round 2)
  public bool surprise;          // the other body is a scripted surprise (cut-in, opening door)
  public float sinceSurprise;    // seconds since that surprise began
  public float ownSpeed;         // m/s at the contact point
@@ -30,10 +31,12 @@ public static class AccidentFault {
   if(i.violating){reason="위반 중 접촉";return FaultSide.Own;}
   bool otherMoving=i.otherSpeed>.5f;
   if(i.ownSpeed*3.6f<StoppedKmh&&otherMoving){reason="정차 중 상대 차량이 접촉";return FaultSide.Other;}
-  if(i.contactAlong<-i.halfLength/3f&&i.otherAlong>i.ownAlong+.5f&&otherMoving){reason="뒤에서 받힘";return FaultSide.Other;}
+  bool fast=i.speeding||i.aboveLimit;
+  // Over the limit, even inside the tolerance, the other side's fault becomes shared.
+  if(i.contactAlong<-i.halfLength/3f&&i.otherAlong>i.ownAlong+.5f&&otherMoving){if(fast){reason="뒤에서 받힘 · 제한속도 초과 중";return FaultSide.Shared;}reason="뒤에서 받힘";return FaultSide.Other;}
   if(i.surprise){
-   if(!i.speeding&&i.sinceSurprise<=ReactionSeconds){reason="돌발 차량 · 피할 시간 없음";return FaultSide.Other;}
-   reason=i.speeding?"돌발 차량 · 과속 중":"돌발 차량 · 피할 시간 있었음";return FaultSide.Shared;
+   if(!fast&&i.sinceSurprise<=ReactionSeconds){reason="돌발 차량 · 피할 시간 없음";return FaultSide.Other;}
+   reason=fast?"돌발 차량 · 제한속도 초과 중":"돌발 차량 · 피할 시간 있었음";return FaultSide.Shared;
   }
   reason="주행 중 접촉";return FaultSide.Own;
  }

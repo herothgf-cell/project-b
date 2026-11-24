@@ -48,11 +48,11 @@ public sealed class SpeedLimitProbe : MonoBehaviour {
    Check(LimitAt(450,450,out suin,out table)==60&&table,"수인로 at the camera point (450,450) reports 60");
    Check(LimitAt(782,384,out h,out table)==60,"수인로 at the second camera point reports 60");
    Check(LimitAt(442,1342,out h,out table)==50,"대은로 reports 50");
-   Check(LimitAt(872,1541,out h,out table)==50,"계수로 (estimate) reports 50");
-   Check(LimitAt(1235,726,out h,out table)==50,"마유로 (estimate) reports 50");
-   Check(LimitAt(487,1113,out h,out table)==30,"은행로144번길 (alley rule) reports 30");
+   Check(LimitAt(872,1541,out h,out table)==0,"계수로 (unconfirmed) has no limit by default");
+   Check(LimitAt(1235,726,out h,out table)==0,"마유로 (unconfirmed) has no limit by default");
+   Check(LimitAt(487,1113,out h,out table)==0,"은행로144번길 (alley estimate) has no limit by default");
    Check(LimitAt(796.3f,104.3f,out h,out table)==30,"은계로 at 은빛초 (school zone) reports 30");
-   Check(LimitAt(821,823,out h,out table)==50,"은계로 away from schools reports 50");
+   Check(LimitAt(821,823,out h,out table)==0,"은계로 away from schools has no limit by default");
    Check(LimitAt(1097,685,out h,out table)==30,"은계중앙로 at 은계유치원 (school zone) reports 30");
    Check(LimitAt(534,435,out h,out table)==60,"수인로 turn pocket without a road name (534,435) still reports 60");
   }catch(Exception e){error=e.ToString();}
@@ -91,6 +91,11 @@ public sealed class SpeedLimitProbe : MonoBehaviour {
   Pose(start,suin);yield return Hold(suin,50,1f);yield return Hold(suin,78,2.2f);Pose(start,suin);yield return Hold(suin,78,2.3f);
   try{Check(Speeding()==before+1,"a second excess inside 20 s is not recorded again");}catch(Exception e){error=e.ToString();}
   report.AppendLine("INFO other law records during the forced run: "+Others());
+  // Tolerance band (2026-11-24 round 2): a crash at 65 on a 60 road adds the crash record.
+  if(error==null)try{Pose(start,suin);int crashes=s.law.ledger.Events.Count(e=>e.action=="제한속도 초과 중 사고");
+   Check(s.law.CurrentLimit==60&&s.law.RecordSpeedingCrash(65/3.6f),"a crash over the limit is recorded");
+   var crash=s.law.ledger.Events.Last(e=>e.action=="제한속도 초과 중 사고");Check(s.law.ledger.Events.Count(e=>e.action=="제한속도 초과 중 사고")==crashes+1&&crash.Deduction==RoadSpeedLimits.CrashPenalty,"the crash record takes "+RoadSpeedLimits.CrashPenalty+" points");
+  }catch(Exception e){error=e.ToString();}
   Finish(error);
  }
  void Finish(string error){

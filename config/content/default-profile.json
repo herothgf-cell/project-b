@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "8b6b067ba3442a43f28b7cbb31afe3619fc3ba0a22ae3a06740fdd3cf5445d8d",
+  "contentHash": "7bc606a5b4130201bf83b4d6f8a8f84e26fe8e53855dabdc3d9038b61cf076b8",
   "values": [
     {
       "id": "radio.station",
@@ -2313,12 +2313,20 @@
       "value": "30"
     },
     {
+      "id": "law.speed.estimatedRoads",
+      "value": "0"
+    },
+    {
       "id": "law.speed.zoneRadius",
       "value": "60"
     },
     {
       "id": "law.speed.toleranceKmh",
       "value": "10"
+    },
+    {
+      "id": "law.speed.crashPenalty",
+      "value": "5"
     },
     {
       "id": "law.speed.seconds",

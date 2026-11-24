@@ -32,6 +32,13 @@ public partial class DrivingLaw : MonoBehaviour {
   if(Time.time<limitSampleAt)return;limitSampleAt=Time.time+.2f;bool table=false;
   CurrentLimit=session&&session.traffic&&session.taxi?session.traffic.RoadSpeedLimit(session.taxi.transform.position,session.taxi.transform.forward,out table):0;limitFromTable=table;
  }
+ // 2026-11-24 play-test round 2: inside the tolerance there is no record, but a crash while over the limit
+ // adds points on top of the accident's own penalty. Recorded once per accident.
+ public bool RecordSpeedingCrash(float speed){
+  float limit=CurrentLimit;int penalty=RoadSpeedLimits.CrashPenalty;if(!limitFromTable||limit<=0||penalty<=0||!session||!session.business)return false;
+  var e=new LawEvent{recoveryPolicyVersion=1,id=ids.Next("speed-crash"),day=Day,family="제한속도",action="제한속도 초과 중 사고",reason="제한 "+limit+"km/h 초과 상태에서 접촉",speed=speed,seconds=(float)session.business.ledger.Elapsed,occupied=session.jobs&&session.jobs.trip.State==TripState.OnTrip};
+  e.Add("speed-crash",LawVerdict.Violation,penalty);ledger.Record(e);return true;
+ }
  void CheckEditorSpeed(){
   float limit=CurrentLimit,kmh=session.taxi.body.velocity.magnitude*3.6f;
   float tolerance=limitFromTable?RoadSpeedLimits.Tolerance:(float)ContentTuning.Number("law.editorSpeed.toleranceKmh",3),hold=limitFromTable?RoadSpeedLimits.Seconds:(float)ContentTuning.Number("law.editorSpeed.seconds",2);
