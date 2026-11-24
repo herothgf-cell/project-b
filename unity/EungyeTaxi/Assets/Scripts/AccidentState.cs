@@ -25,6 +25,14 @@ public enum AccidentPhase { None, Stopping, Waiting, Processing, Completed }
  // 0 = the driver's own fault (every older save), 1 = shared. The other car's fault never opens an event.
  public int fault,faultSharePercent;
  public bool Shared {get{return resolutionVersion==1&&fault==1;}}
+ // Kick-scooter relief (decided 2026-11-24): a person accident with a scooter that came out within the reaction
+ // time, the taxi not over the limit and braking. Fee and score penalty use the shared share; a major accident
+ // is handled as moderate. Applied only while stopping, before any charge.
+ public bool ReliefPerson(int percent){
+  if(resolutionVersion!=1||accidentKind!=AccidentKind.Person||phase!=AccidentPhase.Stopping||chargeApplied||scoreApplied||percent<0||percent>100)return false;
+  if(accidentSeverity==AccidentSeverity.Major){var r=AccidentSeverityPolicy.Resolve(AccidentKind.Person,AccidentSeverity.Moderate);accidentSeverity=r.Severity;selectedFee=r.Fee;selectedSeconds=r.Seconds;selectedScorePenalty=r.ScorePenalty;selectedTowRequired=r.TowRequired;remaining=ProcessingDuration-elapsed;}
+  fault=1;faultSharePercent=percent;return true;
+ }
  public bool SetShared(int percent){if(resolutionVersion!=1||phase!=AccidentPhase.Stopping||chargeApplied||scoreApplied||percent<0||percent>100)return false;fault=1;faultSharePercent=percent;return true;}
  public int Fee {get{return resolutionVersion==0?3000:Shared?AccidentFault.SharedFee(selectedFee,faultSharePercent):selectedFee;}}
  public int ScorePenalty {get{return resolutionVersion==0?0:Shared?AccidentFault.SharedPenalty(selectedScorePenalty,faultSharePercent):selectedScorePenalty;}}

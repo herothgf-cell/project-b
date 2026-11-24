@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "710a8bed9b9f1060e762eaf6b3c729383813b7e440a4217bb9cac7e096b61bc2",
+  "contentHash": "f7df3578dbb94727e5bb1255d95bd0a17d0c6ffa6c1e5ae8f3499f2155aa8cbf",
   "values": [
     {
       "id": "radio.station",
@@ -2049,6 +2049,50 @@
       "value": "4"
     },
     {
+      "id": "offer.outOfTown.enabled",
+      "value": "1"
+    },
+    {
+      "id": "offer.outOfTown.dailyMax",
+      "value": "1"
+    },
+    {
+      "id": "offer.outOfTown.minutes",
+      "value": "6"
+    },
+    {
+      "id": "offer.outOfTown.maxShiftShare",
+      "value": "0.35"
+    },
+    {
+      "id": "offer.outOfTown.perMinuteWon",
+      "value": "3000"
+    },
+    {
+      "id": "offer.outOfTown.fareMultiplier",
+      "value": "1.15"
+    },
+    {
+      "id": "offer.outOfTown.minSecondsMargin",
+      "value": "90"
+    },
+    {
+      "id": "offer.outOfTown.fadeSeconds",
+      "value": "3"
+    },
+    {
+      "id": "offer.outOfTown.boardChancePercent",
+      "value": "35"
+    },
+    {
+      "id": "offer.outOfTown.edgeStop",
+      "value": "1"
+    },
+    {
+      "id": "offer.outOfTown.kmh",
+      "value": "50"
+    },
+    {
       "id": "stopBreak.enabled",
       "value": "1"
     },
@@ -2429,6 +2473,30 @@
       "value": "0.3"
     },
     {
+      "id": "camera.enabled",
+      "value": "1"
+    },
+    {
+      "id": "camera.toleranceKmh",
+      "value": "10"
+    },
+    {
+      "id": "camera.warnMetres",
+      "value": "150"
+    },
+    {
+      "id": "camera.fine.low",
+      "value": "2000"
+    },
+    {
+      "id": "camera.fine.mid",
+      "value": "4000"
+    },
+    {
+      "id": "camera.fine.high",
+      "value": "7000"
+    },
+    {
       "id": "accident.fault.enabled",
       "value": "1"
     },
@@ -2487,6 +2555,42 @@
     {
       "id": "surprise.cutIn.mergeSeconds",
       "value": "1.8"
+    },
+    {
+      "id": "surprise.scooter.enabled",
+      "value": "1"
+    },
+    {
+      "id": "surprise.scooter.triggerMetres",
+      "value": "22"
+    },
+    {
+      "id": "surprise.scooter.speedMetres",
+      "value": "4"
+    },
+    {
+      "id": "surprise.scooter.reliefPercent",
+      "value": "50"
+    },
+    {
+      "id": "surprise.ambulance.enabled",
+      "value": "1"
+    },
+    {
+      "id": "surprise.ambulance.sirenSeconds",
+      "value": "5"
+    },
+    {
+      "id": "surprise.ambulance.speedMetres",
+      "value": "12"
+    },
+    {
+      "id": "surprise.ambulance.scorePenalty",
+      "value": "5"
+    },
+    {
+      "id": "surprise.ambulance.satisfactionPenalty",
+      "value": "8"
     },
     {
       "id": "display.background.diner",

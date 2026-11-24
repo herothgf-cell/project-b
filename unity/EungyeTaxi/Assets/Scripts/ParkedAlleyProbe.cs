@@ -54,6 +54,7 @@ public sealed class ParkedAlleyProbe : MonoBehaviour {
    for(float d=start;d<end;d+=6*Time.fixedDeltaTime){var tan=path.Tangent(d);tan.y=0;tan.Normalize();float sh=shift(d);maxShift=Mathf.Max(maxShift,sh);var pos=path.Position(d)-TrafficSystem.Right(tan)*sh+Vector3.up*.65f;
     t.body.MovePosition(pos);t.body.MoveRotation(Quaternion.LookRotation(tan));var v=tan*6;v.y=t.body.velocity.y;t.body.velocity=v;yield return wait;}
    t.body.velocity=Vector3.zero;yield return new WaitForSeconds(1f);
+   {var ev=s.law.ledger.Events;for(int k=0;k<ev.Length;k++)Info("law event "+ev[k].family+" / "+ev[k].action+" / "+ev[k].reason);}
    if(lane.Key==pa.cars[0].lane)ScreenCapture.CaptureScreenshot(Path.Combine(output,"alley.png"));
    try{Check(Money()==before&&!s.accident.Locked,"passing "+cars.Count+" cars on "+lane.Key+" (max shift "+maxShift.ToString("0.00")+" m): no contact, law record or score change ("+before+" -> "+Money()+")");}catch(Exception e){error=e.ToString();}
    if(error!=null){Finish(error);yield break;}

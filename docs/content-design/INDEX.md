@@ -140,7 +140,7 @@
 | 사고 등급·처리·수리·견인·내구도 | [04 2장](04-life-vehicle-economy.md#s08) | 구현·배포 | [보존 원안](../future-design/accidents-and-repairs.md) |
 | 사고 과실 구분(내 과실/쌍방/상대 과실) | [04](04-life-vehicle-economy.md#s08) · [08 5.6](08-fun-improvements.md#56-후보-4종-상세-기획-2026-11-24-구현-전) | 구현·배포 · 사람 체감 미확인 | [기록](../work-history/2026-11-24-accident-fault.md) · [확인 목록](../work-history/2026-11-24-play-check-speed-fault.md) |
 | +10 여유 안 사고를 쌍방 과실·추가 감점 5 | [08 5.6](08-fun-improvements.md#56-후보-4종-상세-기획-2026-11-24-구현-전) | 구현·배포 · 사람 체감 미확인 | [기록](../work-history/2026-11-24-speed-tolerance-and-facility-cards.md) |
-| 사람 사고 감경 | [상세 기획 1.1](../work-history/2026-11-24-next-candidates-detail-design.md) | 미결: 설계안 · 결정됨: 조건부 감경(1.2초 안·제한속도 이하·제동 시 절반, 중대 없음) | [결정](../work-history/2026-11-24-next-bundle-decisions.md) |
+| 사람 사고 감경 | [상세 기획 1.1](../work-history/2026-11-24-next-candidates-detail-design.md) | **구현·배포**(킥보드 접촉만, 조건부) · 개선 필요(사람 플레이 미확인) | [기록](../work-history/2026-11-24-road-surprises-2.md) |
 | 보험·현실 과실 판정 | [01 행동별 평가](01-driving-and-traffic.md#행동별-평가) | 제외 | |
 
 #### D3. 시설·가게 — [04 3·4장](04-life-vehicle-economy.md#s36)
@@ -196,8 +196,8 @@
 | 항목 | 기획 위치 | 상태 | 근거·남은 것 |
 |---|---|---|---|
 | 돌발 1차(문 여는 정차 차량, 끼어드는 차) | [08 5.6](08-fun-improvements.md#56-후보-4종-상세-기획-2026-11-24-구현-전) | 구현·배포 · 개선 필요(자동 발생 빈도·사람 체감 미확인, 회피 시 중앙선 기록 여부 미확인) | [기록](../work-history/2026-11-24-road-surprises-1.md) |
-| 돌발 2차(킥보드, 구급차 교차로형) | [상세 기획 1.2](../work-history/2026-11-24-next-candidates-detail-design.md) | 미결: 설계안 · 결정됨: 구급차 양보는 게임 규칙으로만, 사람 사고 조건부 감경 | [결정](../work-history/2026-11-24-next-bundle-decisions.md) |
-| 골목 주차 A(은행로144번길) | [상세 기획 2.3](../work-history/2026-11-24-next-candidates-detail-design.md) | **구현·소스**(배포 실행본은 남은 묶음과 함께) · 개선 필요(사람 플레이 미확인) | [기록](../work-history/2026-11-24-alley-parking.md) |
+| 돌발 2차(킥보드, 구급차 교차로형) | [상세 기획 1.2](../work-history/2026-11-24-next-candidates-detail-design.md) | **구현·배포** · 개선 필요(사람 플레이 미확인, 구급차 지도 표시 없음) | [기록](../work-history/2026-11-24-road-surprises-2.md) |
+| 골목 주차 A(은행로144번길) | [상세 기획 2.3](../work-history/2026-11-24-next-candidates-detail-design.md) | **구현·배포** · 개선 필요(사람 플레이 미확인, 차로 유지 보조와의 충돌 미확인) | [기록](../work-history/2026-11-24-alley-parking.md) |
 | 골목 주차 B(대은로104번길) | 같은 곳 | 미결: 설계안(A의 사람 플레이 결과 뒤) | |
 | 수인로(국도42) 순항 속도 | [08 5.5 3번](08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전) | 미결: 설계안 | [설계안](../work-history/2026-11-24-next-candidates-design.md) |
 | 과속 방지턱 | [08 5.5 1번](08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전) | 미결: 설계안(지도 입력 해시 재생성 여부 결정) | [설계안](../work-history/2026-11-24-next-candidates-design.md) |
@@ -207,13 +207,13 @@
 | 항목 | 기획 위치 | 상태 | 근거·남은 것 |
 |---|---|---|---|
 | 유혹("좀 빨리 가 주세요") | [08 5.3](08-fun-improvements.md#53-규칙-속-돌발-정해진-사건이-아닌-규칙-위의-상황-구-37-4) · [상세 기획 4.1](../work-history/2026-11-24-next-candidates-detail-design.md) | **구현·배포** · 개선 필요(사람 플레이 미확인) · 사례금 조건 결정됨(과속 기록 있으면 없음 유지) | [기록](../work-history/2026-11-24-hurry-temptation.md) · [결정](../work-history/2026-11-24-next-bundle-decisions.md) |
-| 고정 단속 카메라·과태료 | [상세 기획 4.2](../work-history/2026-11-24-next-candidates-detail-design.md) | 미결: 설계안 · 결정됨: 과태료 허용, 공공데이터 16곳 · 공공데이터 이용 조건 확인 전 | [조사](../work-history/2026-11-24-speed-limit-camera-survey.md) · [결정 기록](../work-history/2026-11-24-play-check-speed-fault.md) |
+| 고정 단속 카메라·과태료 | [상세 기획 4.2](../work-history/2026-11-24-next-candidates-detail-design.md) | **구현·배포**(공공데이터 16지점) · 개선 필요(시흥 항목 이용허락범위 재확인, 단속 방향 미반영, 지도 아이콘 없음) | [기록](../work-history/2026-11-24-speed-cameras.md) |
 
 #### G3. 일감과 영업 판단
 
 | 항목 | 기획 위치 | 상태 | 근거·남은 것 |
 |---|---|---|---|
-| 시외 장거리 콜(A: 암전·시간 경과) | [08 5.5 2번](08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전) · [상세 기획 3](../work-history/2026-11-24-next-candidates-detail-design.md) | 미결: 설계안 · 결정됨: A 암전, 배수 1.15, 하루 1건, 지명은 방향 표기 | 분당 수입 측정 선행 · [결정](../work-history/2026-11-24-next-bundle-decisions.md) |
+| 시외 장거리 콜(A: 암전·시간 경과) | [08 5.5 2번](08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전) · [상세 기획 3](../work-history/2026-11-24-next-candidates-detail-design.md) | **구현·배포** · 개선 필요(분당 수입 표본 1개, 피로 증가 체감) | [기록](../work-history/2026-11-24-out-of-town-call.md) |
 | 공차 운영(영업 동선 정산, 배회·승강장·호출) | [08 5.1](08-fun-improvements.md#51-공차-운영-손님을-내린-다음에-어디로-가나-구-37-2) | 미결: 승인 전(추천 첫 단계: 정산 "오늘의 영업 동선") | [원 기록](../work-history/2026-11-23-driver-judgment-design.md) · [합친 기록](../work-history/2026-11-24-fun-doc-merge.md) |
 | 다른 택시와 승강장 | [08 5.1](08-fun-improvements.md#51-공차-운영-손님을-내린-다음에-어디로-가나-구-37-2) · [5.5 7번](08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전) | 미결: 설계안(실제 위치 조사 또는 게임 전용 표기 결정) | |
 | 길 지식(내비 단계 3종, 아는 길 요청, 지름길 기록) | [08 5.2](08-fun-improvements.md#52-길-지식-은계-길을-아는-것이-실력-구-37-3) | 미결: 승인 전(미션 "길 아는 기사" 반응을 본 뒤) | |
@@ -256,8 +256,8 @@
 | 6 | 사고 과실 구분 → 제한속도 바탕(확인 구간만) | 구현·배포 | [확인 목록](../work-history/2026-11-24-play-check-speed-fault.md) |
 | 7 | 돌발 1차 | 구현·배포 | 2026-11-24 실행본(7396ee2b) |
 | 8 | 유혹 | 구현·배포 | [기록](../work-history/2026-11-24-hurry-temptation.md) · 사람 플레이 미확인 |
-| 9 | 골목 주차 A · 시외 콜 | 골목 주차 구현·소스, 시외 콜 진행 중 | [골목 주차](../work-history/2026-11-24-alley-parking.md) |
-| 10 | 돌발 2차 → 단속 카메라 → 골목 주차 B | 대기 | 결정됨. 카메라는 공공데이터 이용 조건 확인 뒤 |
+| 9 | 골목 주차 A · 시외 콜 | 구현·배포 | [골목 주차](../work-history/2026-11-24-alley-parking.md) · [시외 콜](../work-history/2026-11-24-out-of-town-call.md) |
+| 10 | 돌발 2차 → 단속 카메라 → 골목 주차 B | 돌발 2차·단속 카메라 구현·배포, 골목 주차 B 대기 | [돌발 2차](../work-history/2026-11-24-road-surprises-2.md) · [단속 카메라](../work-history/2026-11-24-speed-cameras.md) |
 | — | 공차 운영·길 지식 확장·손님 돌발·승강장 | 승인 전 | 08 5.1~5.4 |
 
 ## 검토 중인 제안 (결정 대기)

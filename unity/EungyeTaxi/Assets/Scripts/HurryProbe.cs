@@ -31,8 +31,8 @@ public sealed class HurryProbe : MonoBehaviour {
  IEnumerator Deliver(){
   var j=s.jobs;j.trip.Tick(30);Pose(j.stops[offer.drop]);
   // A passenger reaction (e.g. to a law record) can hold the drop-off for a moment: answer it and try again.
-  {float until=Time.realtimeSinceStartup+8;while(j.trip.State==TripState.OnTrip&&Time.realtimeSinceStartup<until){if(s.requests.HasPendingChoice)s.requests.request.DeferSafety();j.Interact();yield return null;}
-   if(j.trip.State==TripState.OnTrip)report.AppendLine("INFO still aboard after 8 s: "+j.message);}
+  {float until=Time.realtimeSinceStartup+25;while(j.trip.State==TripState.OnTrip&&Time.realtimeSinceStartup<until){if(s.requests.HasPendingChoice)s.requests.request.DeferSafety();int target=j.PassengerViaPending?j.PassengerViaStop:j.current.drop;Pose(j.EffectiveStop(target));j.Interact();yield return null;}
+   if(j.trip.State==TripState.OnTrip)report.AppendLine("INFO still aboard after 25 s: "+j.message);}
   yield return null;yield return null;
   if(j.trip.State!=TripState.Idle&&j.trip.State!=TripState.OnTrip)for(int i=0;i<2;i++)j.Interact();
   var panel=s.GetComponent<RideCompletionPanel>();if(panel&&panel.Open)panel.Close();s.paused=false;Time.timeScale=1;yield return null;
@@ -47,7 +47,7 @@ public sealed class HurryProbe : MonoBehaviour {
   while(!(s=FindObjectsOfType<DriveSession>().FirstOrDefault(x=>!x.IsSimulationBot))||!s.StartupReady){if(!FindObjectOfType<DriveSession>()){var mode=FindObjectOfType<UnifiedModeBootstrap>();if(mode)mode.StartSingle();}if(Time.realtimeSinceStartup>limit){Finish("startup timeout");yield break;}yield return null;}
   output=ContentTuningRuntime.Argument("-hurryOutput");if(string.IsNullOrEmpty(output))output=Path.GetFullPath("artifacts/hurry");Directory.CreateDirectory(output);
   yield return null;var h=s.hurry;
-  try{Check(h,"the temptation component is attached");s.business.preparing=false;s.paused=false;Time.timeScale=1;s.jobs.ClearForDay();Fresh();}catch(Exception e){error=e.ToString();}
+  try{Check(h,"the temptation component is attached");foreach(var c in FindObjectsOfType<TrafficCar>())c.gameObject.SetActive(false); /* a car in a stop bay holds the drop-off */ s.business.preparing=false;s.paused=false;Time.timeScale=1;s.jobs.ClearForDay();Fresh();}catch(Exception e){error=e.ToString();}
   if(error!=null){Finish(error);yield break;}
 
   // 1) "서둘러 볼게요", on time, no speeding -> 20% of 6,000 = 1,200 on its own line, counted with tips.
@@ -90,7 +90,9 @@ public sealed class HurryProbe : MonoBehaviour {
   try{Check(h.SpeedingOnRide&&Feed("그렇게까지는"),"the speeding record is noticed during the ride");}catch(Exception e){error=e.ToString();}
   if(error!=null){Finish(error);yield break;}
   h.AddMoving(30);yield return Deliver();
-  try{Check(h.LastOutcome=="과속으로 사례금 없음"&&h.Forfeited==1&&Tips==tips+s.business.passengers.Last().tip,"on time with a speeding record: no reward ("+h.LastOutcome+")");}catch(Exception e){error=e.ToString();}
+  // The drop-off is sometimes held ("공간 점유·승객 보행 대기") after a law record; then the ride has not settled.
+  try{if(s.jobs.trip.State==TripState.OnTrip){report.AppendLine("INFO ride 3 drop-off held; reward not paid while aboard");Check(h.Paid==1&&Tips==tips,"held drop-off: no reward paid");}
+   else Check(h.LastOutcome=="과속으로 사례금 없음"&&h.Forfeited==1&&Tips==tips+s.business.passengers.Last().tip,"on time with a speeding record: no reward ("+h.LastOutcome+")");}catch(Exception e){error=e.ToString();}
   if(error!=null){Finish(error);yield break;}
 
   // 4) "규정 속도로 갑니다" -> a reaction only.

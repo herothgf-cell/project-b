@@ -12073,6 +12073,237 @@
       "editable": true
     },
     {
+      "id": "offer.outOfTown.enabled",
+      "group": "호출판",
+      "section": "outOfTown",
+      "title": "시외 콜 · 켜기",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 은계 싱글 호출판에 하루 한 번 시외 콜이 나올 수 있습니다(방식 A: 가장자리 지점에서 암전).",
+      "affects": [
+        "시외 콜"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "OutOfTownRules.Enabled",
+      "editable": true
+    },
+    {
+      "id": "offer.outOfTown.dailyMax",
+      "group": "호출판",
+      "section": "outOfTown",
+      "title": "시외 콜 · 하루 최대",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 5,
+      "unit": "건",
+      "description": "하루에 마칠 수 있는 시외 콜 수.",
+      "affects": [
+        "시외 콜"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.OutOfTownBlocked",
+      "editable": true
+    },
+    {
+      "id": "offer.outOfTown.minutes",
+      "group": "호출판",
+      "section": "outOfTown",
+      "title": "시외 콜 · 시외 구간",
+      "type": "integer",
+      "defaultValue": "6",
+      "min": 1,
+      "max": 60,
+      "unit": "분",
+      "description": "암전 동안 지나가는 영업 시간(가는 길 + 빈 차로 돌아오는 길).",
+      "affects": [
+        "시외 콜"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "OutOfTownRules.Minutes",
+      "editable": true
+    },
+    {
+      "id": "offer.outOfTown.maxShiftShare",
+      "group": "호출판",
+      "section": "outOfTown",
+      "title": "시외 콜 · 영업 길이 대비 한도",
+      "type": "number",
+      "defaultValue": "0.35",
+      "min": 0.05,
+      "max": 1,
+      "unit": "배",
+      "description": "시외 구간이 영업 길이의 이 비율을 넘으면 시외 콜이 나오지 않습니다(6분이면 20분 영업부터).",
+      "affects": [
+        "시외 콜"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "OutOfTownRules.ShiftAllows",
+      "editable": true
+    },
+    {
+      "id": "offer.outOfTown.perMinuteWon",
+      "group": "호출판",
+      "section": "outOfTown",
+      "title": "시외 콜 · 평소 분당 수입",
+      "type": "integer",
+      "defaultValue": "3000",
+      "min": 100,
+      "max": 100000,
+      "unit": "원",
+      "description": "운임 계산의 기준. 2026-11-24 플레이 저장의 은계 하루(231.6초에 11,700원, 분당 약 3,030원)로 정했습니다. 표본이 하나뿐입니다.",
+      "affects": [
+        "시외 콜"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "OutOfTownRules.Fare",
+      "editable": true
+    },
+    {
+      "id": "offer.outOfTown.fareMultiplier",
+      "group": "호출판",
+      "section": "outOfTown",
+      "title": "시외 콜 · 운임 배수",
+      "type": "number",
+      "defaultValue": "1.15",
+      "min": 0.5,
+      "max": 5,
+      "unit": "배",
+      "description": "운임 = (지도 안 주행 + 시외 구간) 분 × 평소 분당 수입 × 이 배수, 100원 올림.",
+      "affects": [
+        "시외 콜"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "OutOfTownRules.Fare",
+      "editable": true
+    },
+    {
+      "id": "offer.outOfTown.minSecondsMargin",
+      "group": "호출판",
+      "section": "outOfTown",
+      "title": "시외 콜 · 남길 영업 시간",
+      "type": "number",
+      "defaultValue": "90",
+      "min": 0,
+      "max": 600,
+      "unit": "초",
+      "description": "픽업·주행·시외 구간을 마치고도 이만큼 영업 시간이 남을 때만 나옵니다.",
+      "affects": [
+        "시외 콜"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "OutOfTownRules.TimeAllows",
+      "editable": true
+    },
+    {
+      "id": "offer.outOfTown.fadeSeconds",
+      "group": "호출판",
+      "section": "outOfTown",
+      "title": "시외 콜 · 암전 시간",
+      "type": "number",
+      "defaultValue": "3",
+      "min": 0.5,
+      "max": 10,
+      "unit": "초",
+      "description": "시외 구간을 넘기는 암전 화면의 길이.",
+      "affects": [
+        "시외 콜"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "OutOfTownTrip",
+      "editable": true
+    },
+    {
+      "id": "offer.outOfTown.boardChancePercent",
+      "group": "호출판",
+      "section": "outOfTown",
+      "title": "시외 콜 · 호출판 확률",
+      "type": "integer",
+      "defaultValue": "35",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "조건이 맞을 때 새 호출판에 시외 콜이 나올 확률.",
+      "affects": [
+        "시외 콜"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.ApplyOfferVariety",
+      "editable": true
+    },
+    {
+      "id": "offer.outOfTown.edgeStop",
+      "group": "호출판",
+      "section": "outOfTown",
+      "title": "시외 콜 · 가장자리 지점",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 200,
+      "unit": "번",
+      "description": "시외 콜의 하차지가 되는 승하차 지점 번호(시험판은 1곳, 지도 북쪽 끝).",
+      "affects": [
+        "시외 콜"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "OutOfTownRules.EdgeStop",
+      "editable": true
+    },
+    {
+      "id": "offer.outOfTown.kmh",
+      "group": "호출판",
+      "section": "outOfTown",
+      "title": "시외 콜 · 시외 구간 평균 속도",
+      "type": "number",
+      "defaultValue": "50",
+      "min": 10,
+      "max": 120,
+      "unit": "km/h",
+      "description": "시외 구간의 연료 소모 거리를 정할 때 쓰는 평균 속도.",
+      "affects": [
+        "시외 콜"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "OutOfTownRules.LegMetres",
+      "editable": true
+    },
+    {
       "id": "stopBreak.enabled",
       "group": "운전 중 빈 시간",
       "section": "stopBreak",
@@ -14078,6 +14309,138 @@
       "editable": true
     },
     {
+      "id": "camera.enabled",
+      "group": "법규",
+      "section": "camera",
+      "title": "단속 카메라 · 켜기",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 공공데이터의 은계 고정식 단속 카메라 16지점에서 과속을 단속하고 과태료를 현금에서 받습니다.",
+      "affects": [
+        "과태료",
+        "현금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SpeedCameras",
+      "editable": true
+    },
+    {
+      "id": "camera.toleranceKmh",
+      "group": "법규",
+      "section": "camera",
+      "title": "단속 카메라 · 여유",
+      "type": "number",
+      "defaultValue": "10",
+      "min": 0,
+      "max": 40,
+      "unit": "km/h",
+      "description": "카메라 제한속도에 이만큼을 더한 속도를 넘어 지나가면 단속합니다.",
+      "affects": [
+        "과태료",
+        "현금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SpeedCameraRules.Fine",
+      "editable": true
+    },
+    {
+      "id": "camera.warnMetres",
+      "group": "법규",
+      "section": "camera",
+      "title": "단속 카메라 · 예고 거리",
+      "type": "number",
+      "defaultValue": "150",
+      "min": 30,
+      "max": 500,
+      "unit": "m",
+      "description": "카메라 앞 이 거리부터 화면 아래에 카메라 표시(제한속도·남은 거리)가 나옵니다.",
+      "affects": [
+        "과태료",
+        "현금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SpeedCameras.Update",
+      "editable": true
+    },
+    {
+      "id": "camera.fine.low",
+      "group": "법규",
+      "section": "camera",
+      "title": "단속 카메라 · 과태료(+20 이하)",
+      "type": "integer",
+      "defaultValue": "2000",
+      "min": 0,
+      "max": 100000,
+      "unit": "원",
+      "description": "제한보다 여유 초과~20km/h 빠를 때.",
+      "affects": [
+        "과태료",
+        "현금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SpeedCameraRules.Fine",
+      "editable": true
+    },
+    {
+      "id": "camera.fine.mid",
+      "group": "법규",
+      "section": "camera",
+      "title": "단속 카메라 · 과태료(+40 이하)",
+      "type": "integer",
+      "defaultValue": "4000",
+      "min": 0,
+      "max": 100000,
+      "unit": "원",
+      "description": "제한보다 20~40km/h 빠를 때.",
+      "affects": [
+        "과태료",
+        "현금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SpeedCameraRules.Fine",
+      "editable": true
+    },
+    {
+      "id": "camera.fine.high",
+      "group": "법규",
+      "section": "camera",
+      "title": "단속 카메라 · 과태료(+40 초과)",
+      "type": "integer",
+      "defaultValue": "7000",
+      "min": 0,
+      "max": 100000,
+      "unit": "원",
+      "description": "제한보다 40km/h 넘게 빠를 때.",
+      "affects": [
+        "과태료",
+        "현금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SpeedCameraRules.Fine",
+      "editable": true
+    },
+    {
       "id": "accident.fault.enabled",
       "group": "법규",
       "section": "accident",
@@ -14416,6 +14779,213 @@
       ],
       "status": "implemented",
       "consumer": "TrafficCar.CutInto",
+      "editable": true
+    },
+    {
+      "id": "surprise.scooter.enabled",
+      "group": "법규",
+      "section": "surprise",
+      "title": "킥보드 · 켜기",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 번길에서 형광 조끼를 입은 킥보드가 벨을 울리고 택시 앞을 건너는 돌발이 생깁니다. 비 오는 날에는 없습니다.",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSurprises.TryScooter",
+      "editable": true
+    },
+    {
+      "id": "surprise.scooter.triggerMetres",
+      "group": "법규",
+      "section": "surprise",
+      "title": "킥보드 · 나오는 거리",
+      "type": "number",
+      "defaultValue": "22",
+      "min": 8,
+      "max": 60,
+      "unit": "m",
+      "description": "택시가 건너는 지점에 이만큼 다가오면 킥보드가 출발합니다. 그 1초 전 거리부터 보이고 벨이 울립니다.",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSurprises.TickScooter",
+      "editable": true
+    },
+    {
+      "id": "surprise.scooter.speedMetres",
+      "group": "법규",
+      "section": "surprise",
+      "title": "킥보드 · 속도",
+      "type": "number",
+      "defaultValue": "4",
+      "min": 1.5,
+      "max": 8,
+      "unit": "m/s",
+      "description": "길을 건너는 속도.",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSurprises.TickScooter",
+      "editable": true
+    },
+    {
+      "id": "surprise.scooter.reliefPercent",
+      "group": "법규",
+      "section": "surprise",
+      "title": "킥보드 · 감경 비율",
+      "type": "integer",
+      "defaultValue": "50",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "킥보드가 반응 시간 안에 나왔고 제한속도 이하였고 제동 중이었을 때 사람 사고 처리비·감점에 곱하는 비율. 중대 사고는 보통으로 봅니다.",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "AccidentState.ReliefPerson",
+      "editable": true
+    },
+    {
+      "id": "surprise.ambulance.enabled",
+      "group": "법규",
+      "section": "surprise",
+      "title": "구급차 · 켜기",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 초록불로 다가가는 교차로를 구급차가 옆에서 사이렌을 켜고 지나가는 돌발이 생깁니다.",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSurprises.TryAmbulance",
+      "editable": true
+    },
+    {
+      "id": "surprise.ambulance.sirenSeconds",
+      "group": "법규",
+      "section": "surprise",
+      "title": "구급차 · 사이렌 예고",
+      "type": "number",
+      "defaultValue": "5",
+      "min": 2,
+      "max": 15,
+      "unit": "초",
+      "description": "구급차가 교차로 중심에 닿기 이만큼 전부터 사이렌과 화면 가장자리 표시가 나옵니다.",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSurprises.TryAmbulance",
+      "editable": true
+    },
+    {
+      "id": "surprise.ambulance.speedMetres",
+      "group": "법규",
+      "section": "surprise",
+      "title": "구급차 · 속도",
+      "type": "number",
+      "defaultValue": "12",
+      "min": 5,
+      "max": 25,
+      "unit": "m/s",
+      "description": "구급차가 교차로를 지나는 속도.",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSurprises.TickAmbulance",
+      "editable": true
+    },
+    {
+      "id": "surprise.ambulance.scorePenalty",
+      "group": "법규",
+      "section": "surprise",
+      "title": "구급차 · 양보 위반 운전 점수",
+      "type": "integer",
+      "defaultValue": "5",
+      "min": 0,
+      "max": 50,
+      "unit": "점",
+      "description": "사이렌이 울린 뒤 구급차보다 먼저 교차로에 들어가면 남는 법규 기록의 감점(게임 규칙).",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSurprises.Violation",
+      "editable": true
+    },
+    {
+      "id": "surprise.ambulance.satisfactionPenalty",
+      "group": "법규",
+      "section": "surprise",
+      "title": "구급차 · 양보 위반 손님 만족",
+      "type": "integer",
+      "defaultValue": "8",
+      "min": 0,
+      "max": 50,
+      "unit": "점",
+      "description": "손님이 타고 있을 때 양보 위반으로 깎이는 만족도.",
+      "affects": [
+        "돌발 상황",
+        "사고 처리비",
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSurprises.Violation",
       "editable": true
     },
     {

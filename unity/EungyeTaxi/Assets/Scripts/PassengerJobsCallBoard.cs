@@ -4,7 +4,7 @@ using UnityEngine;
 // mixes calls of different character. PvP boards and shared physics are untouched. Every number is a content
 // setting (offer.*); new JobOffer fields default to "ordinary", so older saves load unchanged.
 public static class CallBoardRules {
- public const int Ordinary=0,Near=1,Rush=2,Luggage=3,Hidden=4;
+ public const int Ordinary=0,Near=1,Rush=2,Luggage=3,Hidden=4,OutOfTown=7;
  static float F(string id,double fallback){return (float)ContentTuning.Number(id,fallback);}
  public static bool VarietyEnabled {get{return ContentTuning.Int("offer.variety.enabled",1)!=0;}}
  public static float NearMaxPickup {get{return F("offer.near.maxPickupMetres",450);}}
@@ -13,10 +13,10 @@ public static class CallBoardRules {
  public static float RushFare {get{return F("offer.rush.fareMultiplier",1.4);}}
  public static int LuggageFareBonus {get{return ContentTuning.Int("offer.luggage.fareBonus",800);}}
  public static float PickupMetresPerSecond {get{return F("offer.eta.pickupMetresPerSecond",4);}}
- public static string Label(int variety){return variety==Near?"근거리 · 무난":variety==Rush?"급한 손님 · 기한 짧음 · 고액":variety==Luggage?"큰 짐 · 트렁크 필요":variety==Hidden?"길가 손님 · 목적지는 타면 알려 줌":"";}
+ public static string Label(int variety){return variety==OutOfTown?OutOfTownRules.Label+" · 시외 구간 "+OutOfTownRules.Minutes+"분 · 고액":variety==Near?"근거리 · 무난":variety==Rush?"급한 손님 · 기한 짧음 · 고액":variety==Luggage?"큰 짐 · 트렁크 필요":variety==Hidden?"길가 손님 · 목적지는 타면 알려 줌":"";}
  public static string DemandLabel(int level){return level>=2?"높음":level==1?"보통":"낮음";}
  // Short tag for the map card; Label stays the full sentence used by captions and checks.
- public static string ShortLabel(int variety){return variety==Near?"근거리":variety==Rush?"급한 손님":variety==Luggage?"큰 짐":variety==Hidden?"길가 손님":"";}
+ public static string ShortLabel(int variety){return variety==OutOfTown?OutOfTownRules.Label:variety==Near?"근거리":variety==Rush?"급한 손님":variety==Luggage?"큰 짐":variety==Hidden?"길가 손님":"";}
 }
 
 public partial class PassengerJobs {
@@ -47,6 +47,7 @@ public partial class PassengerJobs {
    string kind=IsLastCall(o)?IdleTimeRules.Label(o.variety):CallBoardRules.ShortLabel(o.variety);if(kind.Length>0)tags.Add(kind);
    if(!DestinationHidden(o)){int demand=DropDemandLevel(o);if(demand!=1)tags.Add("하차지 수요 "+CallBoardRules.DemandLabel(demand));}
    if(IsLastCall(o)&&Finite(HomeReturnMetres(o)))tags.Add("하차 후 숙소 "+Mathf.RoundToInt(HomeReturnMetres(o))+"m");
+   if(o.variety==CallBoardRules.OutOfTown)tags.Add(OutOfTownCardLine(o));
    string mission=MissionCardLine(o).Trim();if(mission.Length>0)tags.Add(mission);
   }
   card.tags=string.Join(" · ",tags.ToArray());return card;
@@ -60,7 +61,8 @@ public partial class PassengerJobs {
   string kind=IsLastCall(o)?IdleTimeRules.Label(o.variety):CallBoardRules.Label(o.variety);
   string home=IsLastCall(o)&&Finite(HomeReturnMetres(o))?"\n하차 후 덕성프라자까지 약 "+Mathf.RoundToInt(HomeReturnMetres(o))+"m":"";
   string facts="픽업 "+Mathf.RoundToInt(CallPickupMetres(o))+"m · 약 "+RoadNavigation.FormatEta(CallEtaSeconds(o))+(DestinationHidden(o)?"":" · 하차지 수요 "+CallBoardRules.DemandLabel(DropDemandLevel(o)));
-  return head+(kind.Length>0?"["+kind+"]\n":"")+KoreanText.Stop(stops[o.pickup].name)+"\n→ "+drop+"\n"+fare+" · 기한 "+RoadNavigation.FormatEta(o.seconds)+"\n"+facts+home+MissionCardLine(o);
+  string outOfTown=o.variety==CallBoardRules.OutOfTown?"\n"+OutOfTownCardLine(o):"";
+  return head+(kind.Length>0?"["+kind+"]\n":"")+KoreanText.Stop(stops[o.pickup].name)+"\n→ "+drop+"\n"+fare+" · 기한 "+RoadNavigation.FormatEta(o.seconds)+"\n"+facts+home+outOfTown+MissionCardLine(o);
  }
  // Called once per fresh board. Only freshly made ordinary calls change; scenario, reunion and the first
  // home dispatch keep their own rules. Three of the four characters rotate with the board seed.
@@ -68,6 +70,9 @@ public partial class PassengerJobs {
   if(!CallBoardSingle||!CallBoardRules.VarietyEnabled||FirstHomeDispatchPending||System.Array.Exists(offers,IsLastCall))return;
   var pool=new System.Collections.Generic.List<JobOffer>();
   foreach(var o in offers)if(o!=null&&o.variety==CallBoardRules.Ordinary&&string.IsNullOrEmpty(o.scenarioId)&&o.reunionKind==0)pool.Add(o);
+  if(pool.Count==0)return;
+  // Out-of-town call first (decided 2026-11-24): at most one board slot, then the usual characters.
+  if(OutOfTownDue()&&GoodDrivingRules.Roll(pool[0].candidateSeed+":outoftown")<OutOfTownRules.BoardChance){var last=pool[pool.Count-1];if(MakeOutOfTown(last))pool.Remove(last);}
   if(pool.Count==0)return;
   bool trunk=session.business.ledger.Account==null||session.business.ledger.Account.VehicleSpec.carriesLuggage;
   var kinds=new System.Collections.Generic.List<int>{CallBoardRules.Near,CallBoardRules.Rush,CallBoardRules.Luggage,CallBoardRules.Hidden};
@@ -155,4 +160,71 @@ public partial class PassengerJobs {
   return true;
  }
  public bool GoHomeNow(){return session.services&&session.services.GuideAfterTrip(2);}
+}
+
+// Out-of-town call, method A (design 08 ch.5.6 item 3, decided 2026-11-24, Eungye single): the passenger is
+// taken to an edge stop of the map; there a 3 s blackout passes the out-of-town leg (there and back empty) on
+// the shift clock, fuel and fatigue in one step. The fare is paid for the shift time it uses, not the distance:
+// (ride + out-of-town minutes) x usual income per minute x multiplier. Once a day, only when the shift is long
+// enough that the leg uses at most 35% of it (20-minute shifts and longer at the default 6 minutes).
+public static class OutOfTownRules {
+ static float F(string id,double fallback){return (float)ContentTuning.Number(id,fallback);}
+ static int I(string id,int fallback){return ContentTuning.Int(id,fallback);}
+ public static bool Enabled {get{return I("offer.outOfTown.enabled",1)!=0;}}
+ public static int DailyMax {get{return Mathf.Max(0,I("offer.outOfTown.dailyMax",1));}}
+ public static int Minutes {get{return Mathf.Clamp(I("offer.outOfTown.minutes",6),1,60);}}
+ public static float MaxShiftShare {get{return Mathf.Clamp(F("offer.outOfTown.maxShiftShare",.35),.05f,1);}}
+ public static float FareMultiplier {get{return Mathf.Clamp(F("offer.outOfTown.fareMultiplier",1.15),.5f,5);}}
+ // Usual income per minute of shift. Measured from the one Eungye day in the play-test save (11,700 won in
+ // 231.6 s = about 3,030 won/min, 2026-11-24); a small sample, so it is a setting.
+ public static int PerMinuteWon {get{return Mathf.Clamp(I("offer.outOfTown.perMinuteWon",3000),100,100000);}}
+ public static float MinSecondsMargin {get{return Mathf.Max(0,F("offer.outOfTown.minSecondsMargin",90));}}
+ public static float FadeSeconds {get{return Mathf.Clamp(F("offer.outOfTown.fadeSeconds",3),.5f,10);}}
+ public static int BoardChance {get{return Mathf.Clamp(I("offer.outOfTown.boardChancePercent",35),0,100);}}
+ public static int EdgeStop {get{return Mathf.Max(0,I("offer.outOfTown.edgeStop",1));}}
+ public static float Kmh {get{return Mathf.Clamp(F("offer.outOfTown.kmh",50),10,120);}}
+ public static string Direction="북쪽";
+ public static string Label {get{return "시외("+Direction+")";}}
+ public static float LegSeconds {get{return Minutes*60f;}}
+ public static float LegMetres {get{return LegSeconds*Kmh/3.6f;}}
+ public static bool ShiftAllows(float daySeconds){return Enabled&&LegSeconds<=daySeconds*MaxShiftShare;}
+ public static int Fare(float rideSeconds){double minutes=Mathf.Max(0,rideSeconds)/60.0+Minutes;return (int)System.Math.Ceiling(minutes*PerMinuteWon*FareMultiplier/100.0)*100;}
+ // Enough shift left for pickup, ride, the leg and a margin.
+ public static bool TimeAllows(double secondsLeft,float pickupAndRide){return secondsLeft>=pickupAndRide+LegSeconds+MinSecondsMargin;}
+ public static string DirectionOf(Vector3 stop,float width,float depth){var d=new Vector2(stop.x-width*.5f,stop.z-depth*.5f);return Mathf.Abs(d.x)>Mathf.Abs(d.y)?(d.x>0?"동쪽":"서쪽"):(d.y>0?"북쪽":"남쪽");}
+}
+
+public partial class PassengerJobs {
+ int outOfTownDay=-1,outOfTownDone;
+ public int OutOfTownDoneToday {get{return session.business.ledger.Day==outOfTownDay?outOfTownDone:0;}}
+ public void CountOutOfTown(){int day=session.business.ledger.Day;if(day!=outOfTownDay){outOfTownDay=day;outOfTownDone=0;}outOfTownDone++;}
+ int EdgeStopIndex {get{int i=OutOfTownRules.EdgeStop;return i<stops.Length?i:-1;}}
+ // Why no out-of-town call is offered now; "" = may be offered.
+ public string OutOfTownBlocked(){
+  if(!CallBoardSingle)return "싱글 영업 아님";var l=session.business.ledger;
+  if(!OutOfTownRules.ShiftAllows(l.Settings.daySeconds))return "영업 시간이 짧음";
+  if(OutOfTownDoneToday>=OutOfTownRules.DailyMax)return "하루 한도";
+  if(EdgeStopIndex<0)return "가장자리 지점 없음";
+  if(LastCallWindowOpen||FirstHomeDispatchPending)return "마감 직전·첫 출차";
+  return "";
+ }
+ bool OutOfTownDue(){return OutOfTownBlocked()=="";}
+ // Turns an ordinary call into the out-of-town call: same pickup, the edge stop as drop, fare by shift time.
+ public string OutOfTownReject="";
+ public bool MakeOutOfTown(JobOffer o){
+  int edge=EdgeStopIndex;if(o==null||edge<0||o.pickup==edge){OutOfTownReject="같은 지점";return false;}
+  float distance=nav.Distance(stops[o.pickup],stops[edge]);if(!Finite(distance)||distance<200){OutOfTownReject="거리 "+distance;return false;}
+  float ride=distance/8f;var l=session.business.ledger;float pickup=CallPickupMetres(o);if(!Finite(pickup))pickup=0;float before=pickup/Mathf.Max(.5f,CallBoardRules.PickupMetresPerSecond)+ride+o.waitSeconds;
+  if(!OutOfTownRules.TimeAllows(l.SecondsLeft,before)){OutOfTownReject="시간 left="+l.SecondsLeft.ToString("0")+" need="+(before+OutOfTownRules.LegSeconds+OutOfTownRules.MinSecondsMargin).ToString("0");return false;}
+  // Fuel for the ride and the whole leg, with 5 points to spare.
+  if(l.Account!=null&&l.Account.Fuel<l.Account.FuelRequired(ride+OutOfTownRules.LegSeconds,distance+OutOfTownRules.LegMetres)+5){OutOfTownReject="연료 "+l.Account.Fuel.ToString("0.0")+" need "+l.Account.FuelRequired(ride+OutOfTownRules.LegSeconds,distance+OutOfTownRules.LegMetres).ToString("0.0");return false;}
+  OutOfTownRules.Direction=OutOfTownRules.DirectionOf(stops[edge].V(),session.world.map.width,session.world.map.depth);
+  o.drop=edge;Stamp(o);o.distance=distance;o.safeRouteSeconds=ride;o.seconds=Mathf.Ceil((ride+45+o.waitSeconds)*1.35f);
+  o.variety=CallBoardRules.OutOfTown;o.urgency=0;o.mission=MissionRules.None;o.missionBonus=0;o.fare=OutOfTownRules.Fare(ride);
+  return true;
+ }
+ public string OutOfTownCardLine(JobOffer o){
+  float total=CallEtaSeconds(o)+OutOfTownRules.LegSeconds;float left=(float)session.business.ledger.SecondsLeft-total;
+  return "시외 구간 "+OutOfTownRules.Minutes+"분(빈 차 복귀 포함) · 끝나면 남는 영업 약 "+Mathf.Max(0,Mathf.FloorToInt(left/60f))+"분";
+ }
 }

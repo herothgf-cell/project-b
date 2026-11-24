@@ -145,7 +145,11 @@ public partial class TrafficSystem : MonoBehaviour {
         string signalLane=null;if(j.editorProgram!=null&&self&&j.editorProgram.NeedsLaneId(axis,sign))signalLane=EditorLaneId(self.transform.position,self.transform.forward);
         o.forward=j.editorProgram!=null?j.editorProgram.Movement(axis,sign,0,Clock,signalLane):Signal(j,axis,sign);if(j.editorProgram!=null){o.dedicated=true;o.right=j.editorProgram.Movement(axis,sign,1,Clock,signalLane);}if(j.rightTurnObservation==null)o.pedestrianGreen=PedestrianGreen(j,axis,sign);if(j.editorProgram!=null&&EditorPedestrian(j))o.pedestrian=PedestrianState.Crossing;if(ambientPedestrians!=null&&ambientPedestrians.ObservedPedestrian(j,direction,self))o.pedestrian=PedestrianState.Crossing;o.trafficClear=YieldClear(j,direction,1,self);return o;
     }
+    // Ambulance surprise (Eungye single, 2026-11-24): while the ambulance crosses, no ordinary car newly enters
+    // this junction. Cars already past their stop line finish their movement as before.
+    public TrafficJunction emergencyHold;public float emergencyHoldUntil;
     public bool CanEnter(TrafficCar car,TrafficStop stop){
+        if(emergencyHold!=null&&stop.junction==emergencyHold&&Time.time<emergencyHoldUntil)return false;
         if(!ReviewedRoundaboutControl.EntryClear(roadMap,stop.junction.name,car.transform.position,car.transform.forward,car.gameObject))return false;
         if(stop.Movement(car.route)==UturnMovement.Turn){var uturnJunction=stop.junction;var heading=car.route.Tangent(stop.distance);int uturnSign=Sign(heading,stop.axis,uturnJunction);string lane=car.route.graphPath!=null&&editorGraph!=null?editorGraph.edges[car.route.graphPath.EdgeAt(Mathf.Max(0,stop.distance))].id:null;return UturnPermitted(uturnJunction,stop.axis,uturnSign,lane)&&Observe(uturnJunction,stop.axis,uturnSign,heading,car.gameObject).PedestrianClear&&!EditorPedestrian(uturnJunction)&&UturnClear(car,stop); }if(!stop.junction.signalized&&!stop.junction.scenarioSignal)return true;
         var direction=car.route.graphPath==null?car.route.direction:car.route.Tangent(Mathf.Max(0,stop.distance));int turn=stop.Movement(car.route);

@@ -42,7 +42,7 @@ public static class HurryRules {
 
 public sealed class HurryRequest : MonoBehaviour {
  public DriveSession session;
- int day=-1,done;TripState lastState=TripState.Idle;bool asked,answered,settled,speeding;int choice;float askAt=-1,askedAt,moving,ride,target;int fare,reward,lawCount;string trip="";
+ int day=-1,done,cameraTickets;string boardTrip="";TripState lastState=TripState.Idle;bool asked,answered,settled,speeding;int choice;float askAt=-1,askedAt,moving,ride,target;int fare,reward,lawCount;string trip="";
  public int Asked,Paid,Forfeited,Late,Declined;public string LastOutcome="",LastBlocked="";
  public bool Showing {get{return asked&&!answered;}}
  public int Choice {get{return choice;}}
@@ -56,7 +56,10 @@ public sealed class HurryRequest : MonoBehaviour {
   if(!session||!session.jobs||!session.business||session.business.ledger==null)return;
   var l=session.business.ledger;if(l.Day!=day){day=l.Day;done=0;}
   var state=session.jobs.trip.State;
-  if(state==TripState.OnTrip&&lastState!=TripState.OnTrip)Board();
+  // A new boarding is also a new trip id while aboard (the board can be replaced within one frame).
+  string tripNow=session.law?session.law.tripId:"";
+  if(state==TripState.OnTrip&&lastState==TripState.OnTrip&&tripNow!=boardTrip){Leave(TripState.Idle);lastState=TripState.Idle;}
+  if(state==TripState.OnTrip&&lastState!=TripState.OnTrip){boardTrip=tripNow;Board();}
   if(state!=TripState.OnTrip&&lastState==TripState.OnTrip)Leave(state);
   lastState=state;
   if(state!=TripState.OnTrip)return;
@@ -65,6 +68,7 @@ public sealed class HurryRequest : MonoBehaviour {
    if(Time.time-askedAt>HurryRules.AnswerSeconds){Choose(HurryRules.Legal,true);return;}
    int index=NumericChoiceInput.Read(3,i=>true);if(index>=0)Choose(index+1,false);
   }
+  if((choice==HurryRules.Fast||choice==HurryRules.Safe)&&!speeding&&session.cameras&&session.cameras.Tickets>cameraTickets){speeding=true;if(HurryRules.ForfeitOnSpeeding)Card("유혹 · 사례금 없음 · 단속 카메라 · “아니, 그렇게까지는…”");}
   if(choice==HurryRules.Fast||choice==HurryRules.Safe){
    if(!session.jobs.trip.ArrivalLocked&&session.taxi.body.velocity.magnitude>.5f&&Time.timeScale>0)moving+=Time.deltaTime;
    if(!speeding&&session.law.ledger.Count>lawCount){var events=session.law.ledger.Events;for(int i=lawCount;i<events.Length;i++)if(events[i].family=="제한속도"){speeding=true;if(HurryRules.ForfeitOnSpeeding){Card("유혹 · 사례금 없음 · “아니, 그렇게까지는…”");Debug.Log("HURRY speeding forfeits the reward");}}lawCount=events.Length;}
@@ -74,7 +78,7 @@ public sealed class HurryRequest : MonoBehaviour {
  bool CanShow(){var r=session.requests;return r&&r.PresentationAvailable&&!r.HasPendingChoice&&!session.jobs.trip.ArrivalLocked&&!(session.GetComponent<PassengerBehaviorUI>()&&session.GetComponent<PassengerBehaviorUI>().Showing);}
  void Board(){
   Reset();var o=session.jobs.current;if(o==null)return;
-  string why=HurryRules.Blocked(Single,done,o.mission,session.jobs.DrunkRide!=null&&session.jobs.DrunkRide.IsDrunk,o.distance);LastBlocked=why;if(why!="")return;
+  string why=o.variety==CallBoardRules.OutOfTown?"시외 콜":HurryRules.Blocked(Single,done,o.mission,session.jobs.DrunkRide!=null&&session.jobs.DrunkRide.IsDrunk,o.distance);LastBlocked=why;if(why!="")return;
   string seed=(session.law?session.law.tripId:"")+":"+o.candidateSeed+":hurry";
   if(GoodDrivingRules.Roll(seed)>=HurryRules.Chance(o.variety==CallBoardRules.Rush)){LastBlocked="확률";return;}
   Prepare(o);
@@ -88,7 +92,7 @@ public sealed class HurryRequest : MonoBehaviour {
  // Acceptance probe: moving time the game would have counted.
  public void AddMoving(float seconds){moving+=Mathf.Max(0,seconds);}
  public void Choose(int value,bool timeout){
-  if(!Showing)return;answered=true;choice=value;target=HurryRules.Target(choice,ride);reward=HurryRules.Reward(choice,fare);lawCount=session.law.ledger.Count;
+  if(!Showing)return;answered=true;choice=value;target=HurryRules.Target(choice,ride);reward=HurryRules.Reward(choice,fare);lawCount=session.law.ledger.Count;cameraTickets=session.cameras?session.cameras.Tickets:0;
   session.requests.BlockResponseThisFrame();
   if(choice==HurryRules.Legal){Declined++;LastOutcome="규정 속도";bool agree=GoodDrivingRules.Roll(trip+":hurry:legal")<50;
    if(!timeout)Card("유혹 · 규정 속도 · "+(agree?"“그렇죠, 안전이 먼저죠.”":"“…알겠어요.”"));return;}

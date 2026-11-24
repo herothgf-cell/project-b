@@ -29,6 +29,8 @@ public sealed class AccidentController : MonoBehaviour {
   if(Vector3.Distance(chest,box.ClosestPoint(chest))<=.32f)return true;
   return swept&&sampled&&SweptContact(previous,current,box.transform.rotation,half,chest,.32f);
  }
+ // A staged person (road surprise) is touched like an ambient pedestrian.
+ public bool TouchesPerson(Vector3 chest){return Touches(chest,sampled);}
  public void ScanContacts(){
   if(!Ready||PvpNativeLan.IsReplica(session)||PvpNativeLan.WaitingForWorld||session.paused||Time.timeScale<=0)return;
   bool grace=Time.time<suppressedUntil;bool fast=session.taxi.ObservedVelocity.magnitude>=1.5f;bool sweep=fast||State.phase==AccidentPhase.Stopping;

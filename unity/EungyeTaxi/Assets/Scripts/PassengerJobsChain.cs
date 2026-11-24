@@ -16,7 +16,7 @@ public partial class PassengerJobs {
  public JobOffer ChainedOffer {get{return chainedOffer;}}
  // Open while the passenger is aboard and the taxi is within previewMetres of the drop-off.
  public bool ChainWindow {get{
-  if(!CallBoardSingle||!ChainRules.Enabled||current==null||trip.State!=TripState.OnTrip||!session.taxi)return false;
+  if(!CallBoardSingle||!ChainRules.Enabled||current==null||current.variety==CallBoardRules.OutOfTown||trip.State!=TripState.OnTrip||!session.taxi)return false;
   var drop=EffectiveStop(current.drop);var d=session.taxi.transform.position-drop.Kerb;d.y=0;return d.magnitude<=ChainRules.PreviewMetres;
  }}
  public JobOffer[] ChainCandidates(){

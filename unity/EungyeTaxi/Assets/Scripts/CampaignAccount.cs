@@ -189,6 +189,8 @@ public class CampaignAccount {
  public bool Repay(string id,int amount,int day){
   return amount>0&&amount<=Debt&&Post(id,"debt-payment",day,-amount,-amount);
  }
+ // Speed camera fine (2026-11-24): paid from cash, any shortfall as unpaid like other mandatory costs. Once per id.
+ public bool Fine(string id,int amount,int day=1){if(amount<=0||string.IsNullOrEmpty(id)||Has(id))return false;Mandatory(id,"fine",day,amount);return Has(id);}
  void Mandatory(string id,string kind,int day,int cost){int paid=Math.Min(Cash,cost);Post(id,kind,day,-paid,cost-paid);}
  public bool RecoverFuel(string id,int day){if(Fuel>0||Has(id))return false;Mandatory(id,"fuel-recovery",day,1800);Fuel=20;return true;}
  public bool CloseDay(int day){

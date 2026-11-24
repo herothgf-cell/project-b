@@ -5,8 +5,8 @@ using UnityEngine;
 // door opens into the taxi's lane, and an ordinary car that cuts in from the next lane. Every surprise is announced
 // (hazard lamps, cabin light and a door gap; an indicator before the cut-in) and a contact is judged by
 // AccidentFault (FaultActor): within the reaction time and not over the limit = the other side's fault.
-public static class SurpriseRules {
- public const int None=0,Door=1,CutIn=2;
+public static partial class SurpriseRules {
+ public const int None=0,Door=1,CutIn=2,Scooter=3,Ambulance=4;
  static float F(string id,double fallback){return (float)ContentTuning.Number(id,fallback);}
  static int I(string id,int fallback){return ContentTuning.Int(id,fallback);}
  public static bool Enabled {get{return I("surprise.enabled",1)!=0;}}
@@ -22,7 +22,7 @@ public static class SurpriseRules {
  public static float CutInMergeSeconds {get{return Mathf.Clamp(F("surprise.cutIn.mergeSeconds",1.8),.8f,5);}}
  // Shift windows in ledger seconds: none in the first 3 minutes or the last 2.
  public const double QuietStart=180,QuietEnd=120;
- public static string Label(int kind){return kind==Door?"문 여는 정차 차량":kind==CutIn?"끼어드는 차":"";}
+ public static string Label(int kind){return kind==Door?"문 여는 정차 차량":kind==CutIn?"끼어드는 차":kind==Scooter?"킥보드":kind==Ambulance?"구급차":"";}
 
  // Why no surprise may start now; "" = allowed. Pure, checked by the editor rules.
  public static string Blocked(bool running,bool evening,bool accident,int day,double elapsed,double secondsLeft,int done,int kindDone,int mission,bool carrying){
@@ -55,15 +55,15 @@ public sealed class SurpriseContact : MonoBehaviour {
  void OnCollisionStay(Collision c){if(taxi&&c.rigidbody==taxi)touched=true;}
 }
 
-public sealed class RoadSurprises : MonoBehaviour {
+public sealed partial class RoadSurprises : MonoBehaviour {
  public DriveSession session;
- bool automatic;int day=-1;readonly int[] kindDone=new int[3];int done;float nextTry;
+ bool automatic;int day=-1;readonly int[] kindDone=new int[5];int done;float nextTry;
  public int Started,Avoided,Touched,Missed;public string CutInReject="";public string LastOutcome="",LastBlocked="";public int LastKind;
  // Active door surprise.
  sealed class DoorEvent {public GameObject car;public Transform hinge;public FaultActor actor;public SurpriseContact contact;public Vector3 position,direction;public float spawned,ajarAt=-1,openAt=-1,endAt=-1;public bool counted;public Material hazardOn,hazardOff;public Renderer[] hazards;}
  sealed class CutInEvent {public TrafficCar car;public FaultActor actor;public SurpriseContact contact;public int side;public float signalAt,moveAt=-1,endAt=-1;}
  DoorEvent door;CutInEvent cut;
- public bool Busy {get{return door!=null||cut!=null;}}
+ public bool Busy {get{return door!=null||cut!=null||scooter!=null||ambulance!=null;}}
  public bool DoorOpen {get{return door!=null&&door.openAt>=0;}}
  public FaultActor DoorActor {get{return door==null?null:door.actor;}}
  public GameObject DoorCar {get{return door==null?null:door.car;}}
@@ -83,7 +83,8 @@ public sealed class RoadSurprises : MonoBehaviour {
   if(!Single)return "은계 싱글 아님";
   var b=session.business;var l=b?b.ledger:null;if(l==null)return "영업 정보 없음";
   if(l.Day!=day){day=l.Day;done=0;System.Array.Clear(kindDone,0,kindDone.Length);}
-  if(kind==SurpriseRules.Door&&!SurpriseRules.DoorEnabled||kind==SurpriseRules.CutIn&&!SurpriseRules.CutInEnabled)return "종류 꺼짐";
+  if(kind==SurpriseRules.Door&&!SurpriseRules.DoorEnabled||kind==SurpriseRules.CutIn&&!SurpriseRules.CutInEnabled||kind==SurpriseRules.Scooter&&!SurpriseRules.ScooterEnabled||kind==SurpriseRules.Ambulance&&!SurpriseRules.AmbulanceEnabled)return "종류 꺼짐";
+  if(kind==SurpriseRules.Scooter&&RainPolicy.Enabled)return "비 오는 날";
   int mission=session.jobs&&session.jobs.current!=null?session.jobs.current.mission:0;
   return SurpriseRules.Blocked(b.DrowsinessRunning,b.EveningDrive,session.accident&&session.accident.Locked,l.Day,l.Elapsed,l.SecondsLeft,done,kindDone[kind],mission,Carrying);
  }
@@ -91,13 +92,16 @@ public sealed class RoadSurprises : MonoBehaviour {
   if(!session||!session.taxi)return;
   if(door!=null)TickDoor();
   if(cut!=null)TickCutIn();
+  if(scooter!=null)TickScooter();
+  if(ambulance!=null)TickAmbulance();
   if(!automatic||Busy||Time.time<nextTry)return;
   nextTry=Time.time+1;
-  int first=Random.value<.5f?SurpriseRules.Door:SurpriseRules.CutIn;
-  for(int n=0;n<2;n++){int kind=n==0?first:3-first;string why=BlockedNow(kind);LastBlocked=why;if(why!="")continue;
-   if(kind==SurpriseRules.Door?TryDoor():TryCutIn()){nextTry=Time.time+SurpriseRules.MinGapSeconds*Random.Range(1f,1.6f);return;}}
+  int start=Random.Range(0,4);
+  for(int n=0;n<4;n++){int kind=1+(start+n)%4;string why=BlockedNow(kind);LastBlocked=why;if(why!="")continue;
+   bool started=kind==SurpriseRules.Door?TryDoor():kind==SurpriseRules.CutIn?TryCutIn():kind==SurpriseRules.Scooter?TryScooter():TryAmbulance();
+   if(started){nextTry=Time.time+SurpriseRules.MinGapSeconds*Random.Range(1f,1.6f);return;}}
  }
- void Count(int kind){done++;kindDone[kind]++;Started++;LastKind=kind;}
+ void Count(int kind){if(kind<0||kind>=kindDone.Length)return;done++;kindDone[kind]++;Started++;LastKind=kind;}
  void Card(string text){var notices=session.GetComponent<DriveNotifications>();if(notices)notices.Card(text);}
  void Finish(string outcome,bool avoided){LastOutcome=outcome;if(avoided)Avoided++;else Touched++;Debug.Log("ROAD_SURPRISE kind="+LastKind+" outcome="+outcome);}
 
@@ -208,7 +212,7 @@ public sealed class RoadSurprises : MonoBehaviour {
   var fwd=taxi.transform.forward;fwd.y=0;fwd.Normalize();var right=TrafficSystem.Right(fwd);float taxiSpeed=taxi.Speed;
   TrafficCar best=null;float bestScore=float.MaxValue;CutInReject="후보 없음";
   foreach(var c in session.traffic.cars){
-   if(!c||!c.Visible||!c.enabled||c.district==null||c.CuttingIn||c.GetComponent<FaultActor>())continue;
+   if(!c||!c.Visible||!c.enabled||!c.gameObject.activeInHierarchy||c.district==null||c.CuttingIn||c.GetComponent<FaultActor>())continue;
    var rel=c.transform.position-taxi.transform.position;rel.y=0;float along=Vector3.Dot(rel,fwd),lateral=Vector3.Dot(rel,right);
    if(!SurpriseRules.CutInCandidate(along,lateral,Vector3.Dot(c.transform.forward,fwd),force?Mathf.Clamp(taxiSpeed*3.6f,25,55):taxiSpeed*3.6f,c.speed,force?Mathf.Max(taxiSpeed,c.speed):taxiSpeed)){if(Mathf.Abs(along)<30&&Mathf.Abs(lateral)<8)CutInReject="위치·속도 along="+along.ToString("0.0")+" lateral="+lateral.ToString("0.0")+" speed="+c.speed.ToString("0.0");continue;}
    if(c.laneYielding||c.waitingForJunction||c.waitingForSignal){CutInReject="교차로·차로 변경 대기 중";continue;}
@@ -253,6 +257,6 @@ public sealed class RoadSurprises : MonoBehaviour {
  }
  void EndCut(bool keep){var e=cut;cut=null;if(e==null)return;if(e.car){e.car.scriptedTurn=0;if(e.actor)Destroy(e.actor);if(e.contact)Destroy(e.contact);}}
 
- public void ResetForDay(){Remove();EndCut(false);day=-1;nextTry=Time.time+30;}
- void OnDestroy(){Remove();}
+ public void ResetForDay(){Remove();EndCut(false);EndScooter();EndAmbulance();day=-1;nextTry=Time.time+30;}
+ void OnDestroy(){Remove();EndScooter();EndAmbulance();}
 }
