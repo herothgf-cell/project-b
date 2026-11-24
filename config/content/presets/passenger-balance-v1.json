@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "passenger-balance-v1",
   "revision": 1,
-  "contentHash": "29bf67042003527413bb77143345e2cae19dffb9b54392f55a2184ea6a4a3497",
+  "contentHash": "6f95fbd7585fb5653ae283be6b6731c70ea51f7608996f54e3a3c803112aead2",
   "values": [
     {
       "id": "request.Quiet.enabled",
@@ -1222,7 +1222,7 @@
     },
     {
       "id": "choice.request.Quiet.Defer.immediate.satisfaction",
-      "value": "0"
+      "value": "-3"
     },
     {
       "id": "choice.request.Quiet.Defer.immediate.fatigue",
@@ -1278,11 +1278,11 @@
     },
     {
       "id": "choice.request.Eta.EtaFaster.immediate.satisfaction",
-      "value": "1"
+      "value": "3"
     },
     {
       "id": "choice.request.Eta.EtaFaster.immediate.fatigue",
-      "value": "0"
+      "value": "2"
     },
     {
       "id": "choice.request.Eta.EtaFaster.immediate.satisfactionPercent",
@@ -1446,7 +1446,7 @@
     },
     {
       "id": "choice.request.Eta.Defer.immediate.satisfaction",
-      "value": "0"
+      "value": "-3"
     },
     {
       "id": "choice.request.Eta.Defer.immediate.fatigue",
@@ -1506,7 +1506,7 @@
     },
     {
       "id": "choice.request.Comfort.Accept.immediate.fatigue",
-      "value": "0"
+      "value": "2"
     },
     {
       "id": "choice.request.Comfort.Accept.immediate.satisfactionPercent",
@@ -1574,7 +1574,7 @@
     },
     {
       "id": "choice.request.Comfort.Defer.immediate.satisfaction",
-      "value": "0"
+      "value": "-3"
     },
     {
       "id": "choice.request.Comfort.Defer.immediate.fatigue",
@@ -1634,7 +1634,7 @@
     },
     {
       "id": "choice.request.OnTime.Accept.immediate.fatigue",
-      "value": "0"
+      "value": "3"
     },
     {
       "id": "choice.request.OnTime.Accept.immediate.satisfactionPercent",
@@ -1718,7 +1718,7 @@
     },
     {
       "id": "choice.request.OnTime.Defer.immediate.satisfaction",
-      "value": "0"
+      "value": "-3"
     },
     {
       "id": "choice.request.OnTime.Defer.immediate.fatigue",
@@ -1846,7 +1846,7 @@
     },
     {
       "id": "choice.request.LargeRoad.Defer.immediate.satisfaction",
-      "value": "0"
+      "value": "-3"
     },
     {
       "id": "choice.request.LargeRoad.Defer.immediate.fatigue",
@@ -1974,7 +1974,7 @@
     },
     {
       "id": "choice.request.ShortRoad.Defer.immediate.satisfaction",
-      "value": "0"
+      "value": "-3"
     },
     {
       "id": "choice.request.ShortRoad.Defer.immediate.fatigue",
@@ -2118,7 +2118,7 @@
     },
     {
       "id": "choice.request.SafeStop.Defer.immediate.satisfaction",
-      "value": "0"
+      "value": "-2"
     },
     {
       "id": "choice.request.SafeStop.Defer.immediate.fatigue",
@@ -2174,11 +2174,11 @@
     },
     {
       "id": "choice.request.Empathy.Accept.immediate.satisfaction",
-      "value": "3"
+      "value": "5"
     },
     {
       "id": "choice.request.Empathy.Accept.immediate.fatigue",
-      "value": "1"
+      "value": "4"
     },
     {
       "id": "choice.request.Empathy.Accept.immediate.satisfactionPercent",
@@ -2286,7 +2286,7 @@
     },
     {
       "id": "choice.request.Empathy.Defer.immediate.satisfaction",
-      "value": "0"
+      "value": "-3"
     },
     {
       "id": "choice.request.Empathy.Defer.immediate.fatigue",
@@ -2346,7 +2346,7 @@
     },
     {
       "id": "choice.request.RouteAdvice.Accept.immediate.fatigue",
-      "value": "0"
+      "value": "2"
     },
     {
       "id": "choice.request.RouteAdvice.Accept.immediate.satisfactionPercent",
@@ -2382,7 +2382,7 @@
     },
     {
       "id": "choice.request.RouteAdvice.Accept.end.success.satisfaction",
-      "value": "4"
+      "value": "5"
     },
     {
       "id": "choice.request.RouteAdvice.Accept.end.success.fatigue",
@@ -2486,7 +2486,7 @@
     },
     {
       "id": "choice.request.RouteAdvice.Defer.immediate.satisfaction",
-      "value": "0"
+      "value": "-3"
     },
     {
       "id": "choice.request.RouteAdvice.Defer.immediate.fatigue",
@@ -2542,11 +2542,11 @@
     },
     {
       "id": "choice.request.Interview.Accept.immediate.satisfaction",
-      "value": "3"
+      "value": "5"
     },
     {
       "id": "choice.request.Interview.Accept.immediate.fatigue",
-      "value": "0"
+      "value": "3"
     },
     {
       "id": "choice.request.Interview.Accept.immediate.satisfactionPercent",
@@ -2654,7 +2654,7 @@
     },
     {
       "id": "choice.request.Interview.Defer.immediate.satisfaction",
-      "value": "0"
+      "value": "-3"
     },
     {
       "id": "choice.request.Interview.Defer.immediate.fatigue",
@@ -2934,7 +2934,7 @@
     },
     {
       "id": "choice.request.FareHelp.Defer.immediate.satisfaction",
-      "value": "0"
+      "value": "-3"
     },
     {
       "id": "choice.request.FareHelp.Defer.immediate.fatigue",
@@ -2990,11 +2990,11 @@
     },
     {
       "id": "choice.request.LocalChat.Accept.immediate.satisfaction",
-      "value": "3"
+      "value": "5"
     },
     {
       "id": "choice.request.LocalChat.Accept.immediate.fatigue",
-      "value": "1"
+      "value": "3"
     },
     {
       "id": "choice.request.LocalChat.Accept.immediate.satisfactionPercent",
@@ -3102,7 +3102,7 @@
     },
     {
       "id": "choice.request.LocalChat.Defer.immediate.satisfaction",
-      "value": "0"
+      "value": "-3"
     },
     {
       "id": "choice.request.LocalChat.Defer.immediate.fatigue",
@@ -3162,7 +3162,7 @@
     },
     {
       "id": "choice.request.DestinationChange.Accept.immediate.fatigue",
-      "value": "0"
+      "value": "2"
     },
     {
       "id": "choice.request.DestinationChange.Accept.immediate.satisfactionPercent",
@@ -3246,7 +3246,7 @@
     },
     {
       "id": "choice.request.DestinationChange.Defer.immediate.satisfaction",
-      "value": "0"
+      "value": "-2"
     },
     {
       "id": "choice.request.DestinationChange.Defer.immediate.fatigue",
@@ -3306,7 +3306,7 @@
     },
     {
       "id": "choice.request.ViaStop.Accept.immediate.fatigue",
-      "value": "0"
+      "value": "3"
     },
     {
       "id": "choice.request.ViaStop.Accept.immediate.satisfactionPercent",
@@ -3390,7 +3390,7 @@
     },
     {
       "id": "choice.request.ViaStop.Defer.immediate.satisfaction",
-      "value": "0"
+      "value": "-2"
     },
     {
       "id": "choice.request.ViaStop.Defer.immediate.fatigue",

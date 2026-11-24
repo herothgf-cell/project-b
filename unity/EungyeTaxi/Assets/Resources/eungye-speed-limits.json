@@ -2,23 +2,24 @@
   "schema": 1,
   "mapId": "eungye",
   "alleySuffix": "번길",
+  "note": "2026-11-24 play-test round 4: 대은로 inactive (evidence kept), school zones reach 40 m",
   "roads": [
     { "name": "수인로", "kmh": 60, "evidence": "confirmed: 공공데이터포털 전국무인교통단속카메라표준데이터(기준일 2026-10-20) J6913, J6914, H0649 제한속도 60" },
-    { "name": "대은로", "kmh": 50, "evidence": "confirmed: 같은 자료 H4799, H4797 제한속도 50" }
+    { "name": "대은로", "inactive": true, "kmh": 50, "evidence": "confirmed: 같은 자료 H4799, H4797 제한속도 50" }
   ],
   "zones": [
-    { "id": "H5075", "label": "은행푸르지오4차 입구 어린이보호구역", "x": 153, "z": 673, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H5075 제한속도 30. 구간 범위는 게임 추정" },
-    { "id": "J0711", "label": "은행초교 앞 삼거리 어린이보호구역", "x": 443, "z": 998, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 J0711 제한속도 30. 구간 범위는 게임 추정" },
-    { "id": "H0653", "label": "은빛초등학교 앞 사거리", "x": 801, "z": 104, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H0653 제한속도 30. 구간 범위는 게임 추정" },
-    { "id": "H0652", "label": "은빛초등학교 앞 사거리", "x": 769, "z": 64, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H0652 제한속도 30. 구간 범위는 게임 추정" },
-    { "id": "J2781", "label": "은빛초교 앞 어린이보호구역", "x": 801, "z": 76, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 J2781 제한속도 30. 구간 범위는 게임 추정" },
-    { "id": "H5713", "label": "은계초교 앞 사거리 어린이보호구역", "x": 102, "z": 1442, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H5713 제한속도 30. 구간 범위는 게임 추정" },
-    { "id": "H9883", "label": "은계초교 앞 교차로 어린이보호구역", "x": 205, "z": 1632, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H9883 제한속도 30. 구간 범위는 게임 추정" },
-    { "id": "H9884", "label": "은계초교 앞 교차로 어린이보호구역", "x": 210, "z": 1578, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H9884 제한속도 30. 구간 범위는 게임 추정" },
-    { "id": "J1375", "label": "은계유치원 앞 어린이보호구역", "x": 1097, "z": 685, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 J1375 제한속도 30. 구간 범위는 게임 추정" },
-    { "id": "H0651", "label": "은계유치원 (은계 제일풍경채 105동 앞)", "x": 824, "z": 653, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H0651 제한속도 30. 구간 범위는 게임 추정" },
-    { "id": "H0650", "label": "은계유치원 (은계 브리즈힐 1001동 앞)", "x": 786, "z": 617, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H0650 제한속도 30. 구간 범위는 게임 추정" },
-    { "id": "H9886", "label": "웃터골초교 앞 어린이보호구역", "x": 289, "z": 651, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H9886 제한속도 30. 구간 범위는 게임 추정" },
-    { "id": "RV-103", "label": "대은로103번길 어린이보호구역", "x": 329, "z": 1323, "kmh": 30, "evidence": "confirmed-point: 카카오맵 로드뷰(2026-06 촬영 표시, 2026-11-24 확인) 어린이보호구역 30 표지와 노면 30. 구간 범위는 게임 추정" }
+    { "id": "H5075", "label": "은행푸르지오4차 입구 어린이보호구역", "x": 153, "z": 673, "radius": 40, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H5075 제한속도 30. 구간 범위는 게임 추정" },
+    { "id": "J0711", "label": "은행초교 앞 삼거리 어린이보호구역", "x": 443, "z": 998, "radius": 40, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 J0711 제한속도 30. 구간 범위는 게임 추정" },
+    { "id": "H0653", "label": "은빛초등학교 앞 사거리", "x": 801, "z": 104, "radius": 40, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H0653 제한속도 30. 구간 범위는 게임 추정" },
+    { "id": "H0652", "label": "은빛초등학교 앞 사거리", "x": 769, "z": 64, "radius": 40, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H0652 제한속도 30. 구간 범위는 게임 추정" },
+    { "id": "J2781", "label": "은빛초교 앞 어린이보호구역", "x": 801, "z": 76, "radius": 40, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 J2781 제한속도 30. 구간 범위는 게임 추정" },
+    { "id": "H5713", "label": "은계초교 앞 사거리 어린이보호구역", "x": 102, "z": 1442, "radius": 40, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H5713 제한속도 30. 구간 범위는 게임 추정" },
+    { "id": "H9883", "label": "은계초교 앞 교차로 어린이보호구역", "x": 205, "z": 1632, "radius": 40, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H9883 제한속도 30. 구간 범위는 게임 추정" },
+    { "id": "H9884", "label": "은계초교 앞 교차로 어린이보호구역", "x": 210, "z": 1578, "radius": 40, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H9884 제한속도 30. 구간 범위는 게임 추정" },
+    { "id": "J1375", "label": "은계유치원 앞 어린이보호구역", "x": 1097, "z": 685, "radius": 40, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 J1375 제한속도 30. 구간 범위는 게임 추정" },
+    { "id": "H0651", "label": "은계유치원 (은계 제일풍경채 105동 앞)", "x": 824, "z": 653, "radius": 40, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H0651 제한속도 30. 구간 범위는 게임 추정" },
+    { "id": "H0650", "label": "은계유치원 (은계 브리즈힐 1001동 앞)", "x": 786, "z": 617, "radius": 40, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H0650 제한속도 30. 구간 범위는 게임 추정" },
+    { "id": "H9886", "label": "웃터골초교 앞 어린이보호구역", "x": 289, "z": 651, "radius": 40, "kmh": 30, "evidence": "confirmed-point: 단속 카메라 H9886 제한속도 30. 구간 범위는 게임 추정" },
+    { "id": "RV-103", "label": "대은로103번길 어린이보호구역", "x": 329, "z": 1323, "radius": 40, "kmh": 30, "evidence": "confirmed-point: 카카오맵 로드뷰(2026-06 촬영 표시, 2026-11-24 확인) 어린이보호구역 30 표지와 노면 30. 구간 범위는 게임 추정" }
   ]
 }

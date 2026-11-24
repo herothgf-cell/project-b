@@ -231,6 +231,7 @@ public partial class ServiceStops : MonoBehaviour {
   GUI.depth=-110;
   FacilityArt.Background(place,new Rect(0,0,Screen.width,Screen.height));
   float height=pending==1?552:pending>=0?430:350+Mathf.Max(0,actions.Length-1)*62;
+  if(pending<0&&first>=0&&Refreshment.For(first)!=null)height=470;
   if(WorkshopShopAvailable)height=WorkshopShopOpen?518:height+60;
   float scale=Mathf.Min(1.25f,(Screen.width-16)/720f,(Screen.height-16)/height);
   var saved=GUI.matrix;
@@ -260,12 +261,32 @@ public partial class ServiceStops : MonoBehaviour {
    default:return "주차장";
   }
  }
+ // 2026-11-24 play-test round 4: the kimbap shop and the cafe show a picture card like the diner, with the price,
+ // time and effect as icon rows and what the meter will read afterwards. Enter orders, Esc closes.
+ void DrawRefreshmentMenu(float x,float y,float height,Refreshment item,GUIStyle style,GUIStyle button){
+  FacilityArt.MenuCard(new Rect(x+20,y+92,290,262),item.Kind==Refreshment.Coffee?"coffee":"kimbap",item.Menu);
+  var driver=session.business.ledger.Driver;var bold=new GUIStyle(style){font=KoreanText.BoldFont,fontSize=19,wordWrap=false};var small=new GUIStyle(style){fontSize=15,wordWrap=false};
+  float rx=x+330,ry=y+96;
+  void Fact(int glyph,string label,string value){CasualUI.RoundedFill(new Rect(rx,ry,370,48),CasualUI.Soft);HudGlyph.Draw(new Rect(rx+12,ry+11,26,26),glyph,CasualUI.Blue);GUI.Label(new Rect(rx+48,ry,140,48),label,small);GUI.Label(new Rect(rx+170,ry,190,48),value,new GUIStyle(bold){alignment=TextAnchor.MiddleRight});ry+=56;}
+  Fact(4,"가격",item.Price.ToString("N0")+"원");Fact(18,"이용 시간",item.Seconds+"초");
+  if(item.Satiety>0){int now=driver==null?0:Mathf.RoundToInt((float)driver.satiety);Fact(9,"포만감","+"+item.Satiety+"  ("+now+" → "+Mathf.Min(100,now+item.Satiety)+")");}
+  if(item.FatigueRelief>0){int now=driver==null?0:Mathf.RoundToInt((float)driver.fatigue);Fact(11,"피로","−"+item.FatigueRelief+"  ("+now+" → "+Mathf.Max(0,now-item.FatigueRelief)+")");}
+  string warn=session.jobs.trip.State==TripState.ToPickup?"호출 유지 · 남은 대기 "+session.jobs.trip.PickupRemaining.ToString("0")+"초":"";if(!string.IsNullOrEmpty(notice))warn=(warn+"\n"+notice).Trim();
+  if(warn.Length>0){CasualUI.RoundedFill(new Rect(x+20,y+364,680,44),new Color(1,.95f,.83f));GUI.Label(new Rect(x+30,y+364,660,44),warn,new GUIStyle(style){fontSize=14});}
+  GUI.enabled=CanUse(item.Kind);
+  if(KeyHints.Button(new Rect(x+20,y+height-52,330,42),"주문하기","Enter",button,true)||KeyHints.Enter()){if(RequestAction(item.Kind)&&pending==item.Kind)ConfirmAction(true);}
+  GUI.enabled=true;
+  if(KeyHints.Button(new Rect(x+362,y+height-52,160,42),"닫기","Esc",KoreanText.Button(15)))Close();
+  if(GUI.Button(new Rect(x+534,y+height-52,166,42),"다른 시설",KoreanText.Button(15)))OpenFacilityPlanner(Refreshment.Snack);
+ }
  void DrawServiceMenu(float x,float y,float height,int[] actions,string place,GUIStyle style,GUIStyle button){
   int pump=FuelAtPump;bool fuelOnly=FuelMenuOnly,restaurant=System.Array.IndexOf(actions,1)>=0;
   CasualUI.Panel(new Rect(x,y,720,height));
   CasualUI.Header(new Rect(x+8,y+8,704,40),(actions.Length>0&&Refreshment.For(actions[0])!=null?Refreshment.For(actions[0]).Shop:InteriorTitle(place))+(Pvp?" · 경기 진행 중":""),place=="diner"?9:place=="rest"?11:place=="workshop"?12:fuelOnly?8:10);
   var b=session.business;var a=b.ledger.Account;GUI.Label(new Rect(x+20,y+55,680,28),"현금 "+a.Cash.ToString("N0")+"원"+(a.Debt>0?" · 미납 "+a.Debt.ToString("N0")+"원":"")+" · 연료 "+a.Fuel.ToString("0")+"% · 청결 "+b.ledger.Care.Cleanliness.ToString("0"),style);
   if(Pvp&&session.simulationMatch&&session.simulationMatch.ConditionServiceActive(session)){GUI.Label(new Rect(x+30,y+100,660,130),(session.simulationMatch.ConditionServiceKind(session)==1?"식사":"짧은 휴식")+" · 남은 "+session.simulationMatch.ServiceRemaining(session).ToString("0.0")+"초\n경기는 계속 진행됩니다.\n중단 시 결제·회복 없음 (경과 시간 유지)",style);if(GUI.Button(new Rect(x+20,y+height-45,680,35),"이용 중단 F7",button))Close();return;}
+  var refresh=actions.Length>0?Refreshment.For(actions[0]):null;
+  if(refresh!=null&&pending<0){DrawRefreshmentMenu(x,y,height,refresh,style,button);return;}
   if(pending==1){
    for(int i=0;i<mealMenu.Length;i++)
     FacilityArt.MealCard(new Rect(x+20+i*230,y+92,220,208),i,FacilityArt.MealName(i,mealMenu[i]),this);

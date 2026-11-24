@@ -35,10 +35,28 @@ public static class PassengerDialogueUI {
   heading.fontSize=UiReadability.Font(18);body.fontSize=UiReadability.Font(18);small.fontSize=UiReadability.Font(13);speech.fontSize=UiReadability.Font(22);
  }
  static float TextHeight(string value,float width,GUIStyle style){return string.IsNullOrEmpty(value)?0:style.CalcHeight(new GUIContent(value),Mathf.Max(1,width));}
- static float EffectsHeight(string[] parts,float width){float main=TextHeight(parts[0],width,small);float badges=Mathf.Max(TextHeight(parts[1],(width-8)/2-16,small),TextHeight(parts[2],(width-8)/2-16,small));return main+(badges>0?badges+18:0);}
- static void Effects(Rect r,string[] parts){
-  float main=TextHeight(parts[0],r.width,small);if(main>0)GUI.Label(new Rect(r.x,r.y,r.width,main),parts[0],small);
-  float width=(r.width-8)/2;for(int i=1;i<=2;i++){if(parts[i].Length==0)continue;float height=TextHeight(parts[i],width-16,small)+12;var badge=new Rect(r.x+(i-1)*(width+8),r.y+main+6,width,height);CasualUI.RoundedFill(badge,i==1?new Color(.88f,.97f,.90f):new Color(1,.93f,.93f));GUI.Label(new Rect(badge.x+8,badge.y+6,badge.width-16,height-12),parts[i],new GUIStyle(small){normal={textColor=i==1?CasualUI.Green:CasualUI.Danger}});}
+ // 2026-11-24 play-test round 4: effects read as a wall of text. Numeric clauses become icon chips
+ // (만족 +5 green, 피로 +4 amber, 성공 시/실패 시 labels); the remaining explanation is one muted line.
+ public struct Chip {public string text;public int glyph;public Color color;}
+ static readonly System.Text.RegularExpressions.Regex Numeric=new System.Text.RegularExpressions.Regex(@"^(즉시|성공 종료|실패 종료|판정 없음 종료|운행 중) ?(현재 )?(만족도|피로) ([+-−]?[0-9.]+)(점/분|점|%)?$");
+ public static void Split(string effect,out System.Collections.Generic.List<Chip> chips,out string rest){
+  chips=new System.Collections.Generic.List<Chip>();var words=new System.Collections.Generic.List<string>();
+  if(string.IsNullOrEmpty(effect)||effect=="효과 없음"){chips.Add(new Chip{text="변화 없음",glyph=15,color=CasualUI.Muted});rest="";return;}
+  foreach(var raw in System.Text.RegularExpressions.Regex.Split(effect,@" · |, ")){var part=raw.Trim();if(part.Length==0)continue;var m=Numeric.Match(part);
+   if(!m.Success){if(part=="만족도 변화 0")chips.Add(new Chip{text="만족 변화 없음",glyph=6,color=CasualUI.Muted});else words.Add(part);continue;}
+   string when=m.Groups[1].Value=="즉시"?"":m.Groups[1].Value=="성공 종료"?"성공 시 ":m.Groups[1].Value=="실패 종료"?"실패 시 ":m.Groups[1].Value=="운행 중"?"운행 중 ":"보통 ";
+   bool fatigue=m.Groups[3].Value=="피로";float v;float.TryParse(m.Groups[4].Value.Replace("−","-"),System.Globalization.NumberStyles.Float,System.Globalization.CultureInfo.InvariantCulture,out v);
+   string unit=m.Groups[5].Value=="%"?"%":m.Groups[5].Value=="점/분"?"/분":"";bool good=fatigue?v<0:v>0;
+   chips.Add(new Chip{text=when+(fatigue?"피로 ":"만족 ")+(v>0?"+":v<0?"−":"")+Mathf.Abs(v).ToString("0.#")+unit,glyph=fatigue?11:6,color=v==0?CasualUI.Muted:good?CasualUI.Green:fatigue?CasualUI.Amber:CasualUI.Danger});}
+  rest=string.Join(" · ",words.ToArray());
+ }
+ static float ChipWidth(Chip c){return small.CalcSize(new GUIContent(c.text)).x+40;}
+ static float EffectsHeight(string effect,float width){System.Collections.Generic.List<Chip> chips;string rest;Split(effect,out chips,out rest);float x=0,rows=1;foreach(var c in chips){float w=ChipWidth(c);if(x>0&&x+w>width){rows++;x=0;}x+=w+6;}return rows*30+(rest.Length>0?22:0);}
+ static void Effects(Rect r,string effect){
+  System.Collections.Generic.List<Chip> chips;string rest;Split(effect,out chips,out rest);float x=r.x,y=r.y;
+  foreach(var c in chips){float w=ChipWidth(c);if(x>r.x&&x+w>r.xMax){x=r.x;y+=30;}var chip=new Rect(x,y,w,26);var tint=c.color;tint.a=.14f;CasualUI.RoundedFill(chip,tint);HudGlyph.Draw(new Rect(chip.x+8,chip.y+4,18,18),c.glyph,c.color);
+   GUI.Label(new Rect(chip.x+30,chip.y,w-34,26),c.text,new GUIStyle(small){font=KoreanText.BoldFont,wordWrap=false,alignment=TextAnchor.MiddleLeft,normal={textColor=c.color}});x+=w+6;}
+  if(rest.Length>0){var muted=new GUIStyle(small){wordWrap=false,normal={textColor=CasualUI.Muted}};GUI.Label(new Rect(r.x,y+30,r.width,20),new GUIContent(UiReadability.Ellipsis(rest,muted,r.width),rest),muted);}
  }
  public static int Draw(string title,string dialogue,Option[] options,string note="",string passengerIdentity=null){
   dialogue=PassengerPresentation.Speech(dialogue);
@@ -48,9 +66,9 @@ public static class PassengerDialogueUI {
   float portraitSize=Mathf.Min(112,contentWidth*.25f),speechX=portraitSize+12,speechWidth=Mathf.Max(1,contentWidth-speechX);
   float bubble=Mathf.Max(portraitSize,speech.CalcHeight(new GUIContent(dialogue),Mathf.Max(1,speechWidth-24))+24);
   float noteHeight=string.IsNullOrEmpty(note)?0:small.CalcHeight(new GUIContent(note),contentWidth)+10;
-  float[] heights=new float[options.Length];var effects=new string[options.Length][];float total=0;
+  float[] heights=new float[options.Length];float total=0;
   string identity=title+"\n"+dialogue;
-  for(int i=0;i<options.Length;i++){identity+="\n"+options[i].key+"\t"+options[i].line;effects[i]=EffectParts(options[i].effect);heights[i]=Mathf.Max(70,body.CalcHeight(new GUIContent(options[i].line),Mathf.Max(1,contentWidth-70))+EffectsHeight(effects[i],Mathf.Max(1,contentWidth-70))+26);total+=heights[i]+gap;}
+  for(int i=0;i<options.Length;i++){identity+="\n"+options[i].key+"\t"+options[i].line;heights[i]=Mathf.Max(64,body.CalcHeight(new GUIContent(options[i].line),Mathf.Max(1,contentWidth-70))+EffectsHeight(options[i].effect,Mathf.Max(1,contentWidth-70))+22);total+=heights[i]+gap;}
   if(scrollDialogue!=identity||Time.frameCount>lastDialogueFrame+1){scrollDialogue=identity;scroll=Vector2.zero;}lastDialogueFrame=Time.frameCount;
   float contentHeight=bubble+12+noteHeight+total-(options.Length>0?gap:0);
   float header=Mathf.Max(36,heading.CalcHeight(new GUIContent(title),Mathf.Max(1,inner-24))+12);
@@ -72,7 +90,7 @@ public static class PassengerDialogueUI {
    CasualUI.RoundedFill(new Rect(r.x+10,r.y+12,34,30),o.enabled?accent:CasualUI.Muted);
    var keyStyle=new GUIStyle(heading){alignment=TextAnchor.MiddleCenter};keyStyle.normal.textColor=Color.white;GUI.Label(new Rect(r.x+10,r.y+12,34,30),NumericChoiceInput.Label(i),keyStyle);
    float lineHeight=body.CalcHeight(new GUIContent(o.line),inner-70);GUI.Label(new Rect(r.x+54,r.y+9,inner-70,lineHeight),o.line,body);
-   Effects(new Rect(r.x+54,r.y+15+lineHeight,inner-70,r.height-lineHeight-21),effects[i]);GUI.enabled=enabled;row+=heights[i]+gap;
+   Effects(new Rect(r.x+54,r.y+13+lineHeight,inner-70,r.height-lineHeight-19),o.effect);GUI.enabled=enabled;row+=heights[i]+gap;
   }
   GUI.EndScrollView();GUI.matrix=matrix;return chosen;
  }

@@ -112,12 +112,13 @@ public sealed class SpeedLimitSigns:MonoBehaviour {
   // School-zone stretches get red pavement, the usual Korean marking, so the start and end are visible on the road.
   var verts=new List<Vector3>();var tris=new List<int>();
   foreach(var seg in s.segments){if(!seg.school)continue;var f=SpeedLimitSections.Flat(seg.b-seg.a);var side=SpeedLimitSections.Right(f)*1.5f;int i=verts.Count;
-   verts.Add(Ground(seg.a-side));verts.Add(Ground(seg.a+side));verts.Add(Ground(seg.b+side));verts.Add(Ground(seg.b-side));tris.AddRange(new[]{i,i+2,i+1,i,i+3,i+2,i,i+1,i+2,i,i+2,i+3});PaintQuads++;}
+   verts.Add(Ground(seg.a-side));verts.Add(Ground(seg.a+side));verts.Add(Ground(seg.b+side));verts.Add(Ground(seg.b-side));// One face whose normal points up (two faces cancel in RecalculateNormals and paint black).
+   bool up=Vector3.Cross(verts[i+1]-verts[i],verts[i+2]-verts[i]).y>0;tris.AddRange(up?new[]{i,i+1,i+2,i,i+2,i+3}:new[]{i,i+2,i+1,i,i+3,i+2});PaintQuads++;}
   if(verts.Count>0){var mesh=new Mesh{name="어린이보호구역 적색 포장",indexFormat=UnityEngine.Rendering.IndexFormat.UInt32};mesh.SetVertices(verts);mesh.SetTriangles(tris,0);mesh.RecalculateNormals();mesh.RecalculateBounds();
    var paint=new GameObject("어린이보호구역 적색 포장");paint.transform.SetParent(root,false);paint.AddComponent<MeshFilter>().sharedMesh=mesh;var mr=paint.AddComponent<MeshRenderer>();mr.sharedMaterial=WorldBuilder.Mat("어린이보호구역 포장",new Color(.66f,.20f,.17f));mr.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;}
  }
  // The lane line is the lane centre at graph height; the drawn road surface can sit a little higher. Paint just above what is there.
- static Vector3 Ground(Vector3 p){RaycastHit hit;if(Physics.Raycast(p+Vector3.up*2.5f,Vector3.down,out hit,5f,~(1<<8),QueryTriggerInteraction.Ignore)&&!hit.collider.attachedRigidbody)p.y=hit.point.y;return p+Vector3.up*.02f;}
+ static Vector3 Ground(Vector3 p){RaycastHit hit;if(Physics.Raycast(p+Vector3.up*2.5f,Vector3.down,out hit,5f,~(1<<8),QueryTriggerInteraction.Ignore)&&!hit.collider.attachedRigidbody)p.y=Mathf.Max(p.y,hit.point.y);return p+Vector3.up*.06f;}
  static GameObject Disc(string name,Transform parent,Vector3 local,float diameter,float depth,Material mat){
   var g=GameObject.CreatePrimitive(PrimitiveType.Cylinder);g.name=name;Destroy(g.GetComponent<Collider>());g.transform.SetParent(parent,false);g.transform.localPosition=local;g.transform.localRotation=Quaternion.Euler(90,0,0);g.transform.localScale=new Vector3(diameter,depth,diameter);g.GetComponent<Renderer>().sharedMaterial=mat;return g;
  }

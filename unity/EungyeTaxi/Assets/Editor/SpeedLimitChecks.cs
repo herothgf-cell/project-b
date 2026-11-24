@@ -24,17 +24,17 @@ public static class SpeedLimitChecks {
   foreach(var z in data.zones)Check(z.kmh==30&&z.evidence.StartsWith("confirmed-point")&&z.x>0&&z.x<2100&&z.z>0&&z.z<1750,"zone is a confirmed 30 point inside the map: "+z.id);
   string profile=File.ReadAllText(Path.GetFullPath("../../config/content/default-profile.json"));
   Check(RoadSpeedLimits.Enabled&&!RoadSpeedLimits.EstimatedRoads&&RoadSpeedLimits.DefaultKmh==50&&RoadSpeedLimits.AlleyKmh==30&&RoadSpeedLimits.ZoneRadius==60,"defaults: confirmed sections only, estimates kept for the switch");
-  Check(RoadSpeedLimits.RoadLimit("수인로")==60&&RoadSpeedLimits.RoadLimit("대은로")==50,"confirmed roads");
+  Check(RoadSpeedLimits.RoadLimit("수인로")==60&&RoadSpeedLimits.RoadLimit("대은로")==0,"confirmed roads: 수인로 60; 대은로 kept in the file but inactive (round 4)");
   // 2026-11-24 round 2 default: roads without a confirmed value carry no limit.
   Check(RoadSpeedLimits.RoadLimit("계수로")==0&&RoadSpeedLimits.RoadLimit("")==0&&RoadSpeedLimits.RoadLimit(null)==0&&RoadSpeedLimits.RoadLimit("은행로144번길")==0,"unconfirmed roads and alleys carry no limit by default");
   Check(RoadSpeedLimits.Limit("은계로",new Vector3(801,0,104))==30&&RoadSpeedLimits.Limit("은계로",new Vector3(801,0,400))==0,"a school zone still applies on an unlimited road, and ends at its radius");
-  Check(RoadSpeedLimits.Limit("대은로",new Vector3(1500,0,900))==50,"a confirmed road keeps its value outside zones");
+  Check(RoadSpeedLimits.Limit("수인로",new Vector3(1500,0,900))==60,"a confirmed road keeps its value outside zones");
   UseEstimated(profile,true);
   Check(RoadSpeedLimits.EstimatedRoads,"switch on");
   Check(RoadSpeedLimits.RoadLimit("계수로")==50&&RoadSpeedLimits.RoadLimit("")==50&&RoadSpeedLimits.RoadLimit(null)==50,"with the switch, other roads and unnamed lanes take the estimate");
   Check(RoadSpeedLimits.RoadLimit("은행로144번길")==30&&RoadSpeedLimits.RoadLimit("대은로104번길")==30&&RoadSpeedLimits.RoadLimit("은계번영길")==50,"alley rule matches the suffix only");
   // School zone: 은계로 at 은빛초 (camera H0653) is 30 inside the radius and 50 outside it.
-  Check(RoadSpeedLimits.Limit("은계로",new Vector3(801,0,104))==30&&RoadSpeedLimits.Limit("은계로",new Vector3(801,0,104+59))==30,"zone applies inside its radius");
+  Check(RoadSpeedLimits.Limit("은계로",new Vector3(801,0,104))==30&&RoadSpeedLimits.Limit("은계로",new Vector3(801,0,104+39))==30&&RoadSpeedLimits.Limit("은계로",new Vector3(801,0,104+45))==50,"zone applies inside its own 40 m reach and not beyond");
   Check(RoadSpeedLimits.Limit("은계로",new Vector3(801,0,400))==50,"zone ends outside its radius");
   RoadSpeedLimits.Configure(null);Check(RoadSpeedLimits.RoadLimit("수인로")==50&&RoadSpeedLimits.ZoneAt(801,104)==null,"a missing file falls back to the estimate without failing");
   RoadSpeedLimits.Configure(source);UseEstimated(profile,false);

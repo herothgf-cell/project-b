@@ -81,7 +81,7 @@ public static class CockpitUI {
   var notebook=NotebookBounds(w,h);
   float meterRight=showNotebook?notebook.xMin-12:w-40;
   DrivingHudArt.Meter(new Rect(w-296,showNotebook?notebook.center.y-3.5f:h-135,meterRight-(w-296),7),s.law.ledger.TotalScore,DrivingHudArt.Cyan);
-  if(showNotebook&&GUI.Button(notebook,"기사 수첩",button))s.business.OpenDrivingLogbook();
+  if(showNotebook&&GUI.Button(notebook,"기사 수첩",button))s.business.OpenDrivingLogbook();if(showNotebook&&LogbookHUD.HasNew(s.business))CasualUI.AttentionDot(new Rect(notebook.xMax-10,notebook.y-5,13,13));
   if(KeyHints.Button(new Rect(w-298,h-115,124,36),"기록","F8",button))s.law.OpenHistory();GUI.enabled=s.services.CanOpenLifeHub;if(GUI.Button(new Rect(w-166,h-115,124,36),"생활거점",button))s.services.ToggleLifeHub();GUI.enabled=true;if(s.services.LifeHubAttention)CasualUI.AttentionDot(new Rect(w-55,h-121,14,14));if(KeyHints.Button(new Rect(w-298,h-71,124,36),"도움말","F1",button))hud.ToggleHelp();GUI.enabled=!match&&!s.paused&&e.State==BusinessState.Open;if(GUI.Button(new Rect(w-166,h-71,124,36),match?"경기 중":"퇴근",button))s.business.RequestEndDay();GUI.enabled=true;GUI.matrix=previous;
  }
  public static void DrawStandingsOverlay(DriveSession session){var matrix=GUI.matrix;GUI.matrix=Matrix4x4.Scale(new Vector3(Scale,Scale,1));DrawStandings(session);GUI.matrix=matrix;}

@@ -6,8 +6,8 @@ using UnityEngine;
 // Confirmed values live in Resources/eungye-speed-limits.json with their evidence; estimated values
 // (ordinary roads, alleys, the reach of a school zone around its confirmed point) come from the tuning catalog.
 // The map document is not touched: a "제한속도" sign placed in the map editor still wins over this table.
-[Serializable] public sealed class SpeedLimitRoad { public string name;public float kmh;public string evidence; }
-[Serializable] public sealed class SpeedLimitZone { public string id,label,evidence;public float x,z,kmh; }
+[Serializable] public sealed class SpeedLimitRoad { public string name;public float kmh;public string evidence;public bool inactive; }
+[Serializable] public sealed class SpeedLimitZone { public string id,label,evidence;public float x,z,kmh,radius; }
 [Serializable] public sealed class SpeedLimitFile { public int schema;public string mapId,alleySuffix;public SpeedLimitRoad[] roads;public SpeedLimitZone[] zones; }
 
 public static class RoadSpeedLimits {
@@ -33,7 +33,7 @@ public static class RoadSpeedLimits {
  public static void Configure(string json){
   data=string.IsNullOrEmpty(json)?null:JsonUtility.FromJson<SpeedLimitFile>(json);loaded=true;byName=new Dictionary<string,float>();
   if(data==null)return;
-  if(data.roads!=null)foreach(var r in data.roads)if(r!=null&&!string.IsNullOrEmpty(r.name)&&r.kmh>=5&&r.kmh<=120)byName[r.name]=r.kmh;
+  if(data.roads!=null)foreach(var r in data.roads)if(r!=null&&!r.inactive&&!string.IsNullOrEmpty(r.name)&&r.kmh>=5&&r.kmh<=120)byName[r.name]=r.kmh;
  }
  static void Load(){if(loaded)return;var asset=Resources.Load<TextAsset>("eungye-speed-limits");Configure(asset?asset.text:null);}
  // Road-name rule only. Named roads in the file are confirmed values; the rest is the estimate.
@@ -48,8 +48,9 @@ public static class RoadSpeedLimits {
   return EstimatedRoads?DefaultKmh:0;
  }
  public static SpeedLimitZone ZoneAt(float x,float z){
-  Load();if(data==null||data.zones==null)return null;float radius=ZoneRadius;SpeedLimitZone best=null;float nearest=radius*radius;
-  foreach(var zone in data.zones){if(zone==null||zone.kmh<5)continue;float dx=zone.x-x,dz=zone.z-z,d=dx*dx+dz*dz;if(d<=nearest){nearest=d;best=zone;}}
+  // A zone may carry its own shorter reach (2026-11-24 round 4: 40 m); the setting is the upper bound.
+  Load();if(data==null||data.zones==null)return null;float setting=ZoneRadius;SpeedLimitZone best=null;float nearest=float.MaxValue;
+  foreach(var zone in data.zones){if(zone==null||zone.kmh<5)continue;float radius=zone.radius>0?Mathf.Min(zone.radius,setting):setting;float dx=zone.x-x,dz=zone.z-z,d=dx*dx+dz*dz;if(d<=radius*radius&&d<nearest){nearest=d;best=zone;}}
   return best;
  }
  // The lower of the road rule and any school zone around the position.

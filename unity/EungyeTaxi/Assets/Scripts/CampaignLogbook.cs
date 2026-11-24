@@ -13,6 +13,8 @@ public sealed class CampaignLogbook {
  public int studentDay,studentMinute;
  public string studentStop,studentPlace,studentFirstTrip,studentFirstOffer;
  public bool studentPromised,studentAnswered,studentNote,studentReturned;
+ // 2026-11-24: what each notebook tab held when the driver last opened it; a difference shows a red dot.
+ public string[] seenTabs=new string[0];
  public int ReunionKind(int day,int minute){
   if(studentDay==0||studentReturned||day<studentDay+2)return 0;
   if(studentPromised&&day==studentDay+2){

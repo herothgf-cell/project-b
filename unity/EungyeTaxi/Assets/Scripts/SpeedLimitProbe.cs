@@ -47,7 +47,7 @@ public sealed class SpeedLimitProbe : MonoBehaviour {
    Check(RoadSpeedLimits.Data!=null&&RoadSpeedLimits.Data.zones.Length==13,"limit file loaded in the player");
    Check(LimitAt(450,450,out suin,out table)==60&&table,"수인로 at the camera point (450,450) reports 60");
    Check(LimitAt(782,384,out h,out table)==60,"수인로 at the second camera point reports 60");
-   Check(LimitAt(442,1342,out h,out table)==50,"대은로 reports 50");
+   Check(LimitAt(442,1342,out h,out table)==0,"대은로 (inactive since round 4) has no limit");
    Check(LimitAt(872,1541,out h,out table)==0,"계수로 (unconfirmed) has no limit by default");
    Check(LimitAt(1235,726,out h,out table)==0,"마유로 (unconfirmed) has no limit by default");
    Check(LimitAt(487,1113,out h,out table)==0,"은행로144번길 (alley estimate) has no limit by default");
@@ -101,7 +101,7 @@ public sealed class SpeedLimitProbe : MonoBehaviour {
   SpeedLimitSections sec=null;SpeedLimitSigns signs=null;SpeedLimitSections.Mark entry=default(SpeedLimitSections.Mark);
   try{
    sec=SpeedLimitSections.For(s.traffic);signs=s.GetComponent<SpeedLimitSigns>();
-   Check(sec!=null&&sec.segments.Any(x=>x.school&&x.kmh==30)&&sec.segments.Any(x=>!x.school&&x.kmh==60)&&sec.segments.Any(x=>!x.school&&x.kmh==50),"map sections: school 30, 수인로 60 and 대은로 50 stretches ("+(sec==null?0:sec.segments.Count)+" segments)");
+   Check(sec!=null&&sec.segments.Any(x=>x.school&&x.kmh==30)&&sec.segments.Any(x=>!x.school&&x.kmh==60)&&!sec.segments.Any(x=>!x.school&&x.kmh==50),"map sections: school 30 and 수인로 60 stretches, no 대은로 50 ("+(sec==null?0:sec.segments.Count)+" segments)");
    Check(sec.signs.Count>0&&sec.signs.All(m=>m.from!=m.to)&&sec.signs.Any(m=>m.to==0)&&sec.signs.Any(m=>m.school&&m.to==30),"section signs: starts and ends, each a real change ("+sec.signs.Count+" signs, "+sec.marks.Count+" lane marks)");
    Check(signs&&signs.SignCount==sec.signs.Count&&signs.PaintQuads>0,"road-side signs built ("+(signs?signs.SignCount:0)+") and school-zone red paint ("+(signs?signs.PaintQuads:0)+" quads)");
    var zone=RoadSpeedLimits.Data.zones.OrderBy(z=>(z.x-796.3f)*(z.x-796.3f)+(z.z-104.3f)*(z.z-104.3f)).First();
@@ -111,7 +111,8 @@ public sealed class SpeedLimitProbe : MonoBehaviour {
   if(error!=null){Finish(error);yield break;}
   Pose(entry.position-entry.forward*22,entry.forward);yield return new WaitForSeconds(1.2f);
   ScreenCapture.CaptureScreenshot(Path.Combine(output,"school-zone-entry.png"));yield return null;
-  Pose(entry.position-entry.forward*12,entry.forward);yield return Hold(entry.forward,20,4f);
+  // School zones reach 40 m since round 4, so the lane inside can be short: step the taxi across the sign instead of driving it.
+  Pose(entry.position-entry.forward*12,entry.forward);yield return new WaitForSeconds(1f);Pose(entry.position+entry.forward*4,entry.forward);yield return new WaitForSeconds(1.5f);
   try{Check(s.law.CurrentLimit==30,"driving past the entry sign reads 30 (read "+s.law.CurrentLimit+")");Check(signs.Notice.Contains("어린이보호구역"),"entering shows the school-zone notice ("+signs.Notice+")");}catch(Exception e){error=e.ToString();}
   if(error!=null){Finish(error);yield break;}
   ScreenCapture.CaptureScreenshot(Path.Combine(output,"school-zone-notice.png"));yield return null;

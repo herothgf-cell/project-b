@@ -33,6 +33,18 @@ public static class LogbookHUD {
   for(int i=0;i<noteLines.Length;i++)noteLines[i]=FatherStoryState.Pages[i].text.Split('\n');
  }
 
+ // Red dots (2026-11-24 play-test round 4): a tab whose contents changed since it was last opened.
+ public static string[] TabKeys(BusinessProgress b){
+  int pages=0;for(int i=0;i<FatherStoryState.Pages.Length;i++)if(b.Story.HasPage(i))pages++;var l=b.Logbook;
+  return new[]{pages+"|"+l.studentDay+"|"+l.studentPromised+"|"+l.studentReturned,l.EndingCount.ToString(),l.PresetCount.ToString(),l.StarTotal.ToString(),l.AchievementCount.ToString()};
+ }
+ public static bool TabNew(BusinessProgress b,int tab){
+  if(b==null||b.Logbook==null||!b.Story.FoundNotebook)return false;var keys=TabKeys(b);var l=b.Logbook;
+  if(l.seenTabs==null||l.seenTabs.Length!=keys.Length){l.seenTabs=new string[keys.Length];for(int i=0;i<keys.Length;i++)l.seenTabs[i]=i==0?"":keys[i];}
+  return tab>=0&&tab<keys.Length&&l.seenTabs[tab]!=keys[tab];
+ }
+ public static bool HasNew(BusinessProgress b){for(int i=0;i<TabNames.Length;i++)if(TabNew(b,i))return true;return false;}
+ static void MarkSeen(BusinessProgress b,int tab){TabNew(b,tab);b.Logbook.seenTabs[tab]=TabKeys(b)[tab];}
  public static void Draw(DriveSession session){
   var b=session.business;
   if(!b.Story.FoundNotebook){b.LogbookOpen=false;return;}
@@ -58,6 +70,7 @@ public static class LogbookHUD {
   GUI.matrix=Matrix4x4.TRS(new Vector3((Screen.width-1200*scale)/2,(Screen.height-720*scale)/2),Quaternion.identity,Vector3.one*scale);
 
   CasualUI.Header(new Rect(15,15,830,55),"기사 수첩 · "+TabNames[tab],5);
+  if(Event.current.type==EventType.Repaint)MarkSeen(b,tab);
   DrawNavigation(b);
   switch(tab){
    case 1:DrawStories(b.Logbook);break;
@@ -243,6 +256,7 @@ public static class LogbookHUD {
    var row=new Rect(885,92+i*56,280,45);
    if(i==tab)GUI.Label(row,TabNames[i]+" · "+counts[i],active);
    else if(GUI.Button(row,TabNames[i]+" · "+counts[i],button)){tab=i;detailScroll=Vector2.zero;}
+   if(i!=tab&&TabNew(b,i))CasualUI.AttentionDot(new Rect(row.xMax-16,row.y-4,14,14));
   }
   bool canReturnToRoom=b.RoomOpen&&b.RoomAvailable;
   bool canPrepare=canReturnToRoom&&b.ArchivedRoom==null&&!b.ledger.Account.Room.finalized&&b.ledger.State==BusinessState.Summary;

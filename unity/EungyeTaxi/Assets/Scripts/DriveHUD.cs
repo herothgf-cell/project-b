@@ -78,7 +78,7 @@ public class DriveHUD : MonoBehaviour {
   if(restart){if(GUI.Button(new Rect(x+20,row,440,40),b.SupportsCareer?"처음부터 다시하기":"처음부터 시작",KoreanText.Button(16)))b.RequestRestart();row+=52;}
   if(b.SupportsCareer){if(GUI.Button(new Rect(x+20,row,440,35),"불러오기",KoreanText.Button(16))){careerMenuSlots=b.CareerSlots();careerFirst=0;}row+=44;
    if(b.Story.FoundNotebook){
-    if(GUI.Button(new Rect(x+20,row,440,35),"기사 수첩",KoreanText.Button(16)))b.LogbookOpen=true;
+    if(GUI.Button(new Rect(x+20,row,440,35),"기사 수첩",KoreanText.Button(16)))b.LogbookOpen=true;if(LogbookHUD.HasNew(b))CasualUI.AttentionDot(new Rect(x+448,row-4,14,14));
     row+=44;
    }
   }

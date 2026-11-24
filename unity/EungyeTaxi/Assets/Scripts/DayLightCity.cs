@@ -6,7 +6,9 @@ using UnityEngine.Rendering;
 // The road glow and window faces are chunked meshes. No street lamp adds a
 // real Unity Light, a collider, or an update loop.
 internal sealed class DayLightCity : IDisposable {
- const int LampLimit=140,BuildingsPerCell=6;
+ // 2026-11-24 play-test round 4: more lamps along shop and housing streets so those areas stay bright at night.
+ const int LampLimit=560,BuildingsPerCell=6;
+ public int AreaLampCount {get;private set;}
  sealed class PatchBatch {
   public readonly List<Vector3> vertices=new List<Vector3>();
   public readonly List<Vector2> uv=new List<Vector2>();
@@ -101,10 +103,24 @@ internal sealed class DayLightCity : IDisposable {
    Vector3 side=TrafficSystem.Right(stop.Direction);
    AddLamp(map,stop.Kerb+side*3.6f+stop.Direction*7,-side,positions,posts,bulbs,pools);
   }
+  int before=positions.Count;BuildAreaLamps(map,traffic,positions,posts,bulbs,pools);AreaLampCount=positions.Count-before;
   LampCount=positions.Count;
   Render("Street lamp posts",posts,pole);Render("Street lamp glow",bulbs,lamp);Render("Warm pools on the road",pools,road);
  }
- static void AddLamp(MapData map,Vector3 point,Vector3 towardRoad,List<Vector3> locations,Dictionary<Vector2Int,PatchBatch> posts,Dictionary<Vector2Int,PatchBatch> bulbs,Dictionary<Vector2Int,PatchBatch> pools){
+ // Named buildings are flats, shops, offices and schools; factories and warehouses are left dark.
+ static readonly string[] Dark={"공장","물류","창고","산업","정비","공사","플랜트"};
+ public static bool Lively(MapBuilding b){if(b==null||string.IsNullOrEmpty(b.name)||b.points==null||b.points.Length==0)return false;foreach(var w in Dark)if(b.name.Contains(w))return false;return true;}
+ static void BuildAreaLamps(MapData map,TrafficSystem traffic,List<Vector3> positions,Dictionary<Vector2Int,PatchBatch> posts,Dictionary<Vector2Int,PatchBatch> bulbs,Dictionary<Vector2Int,PatchBatch> pools){
+  var graph=traffic?traffic.RoadGraph:null;if(graph==null||map.buildings==null)return;
+  const float Cell=50;var cells=new Dictionary<Vector2Int,List<Vector2>>();
+  foreach(var b in map.buildings){if(!Lively(b))continue;float x=0,z=0;foreach(var p in b.points){x+=p.x;z+=p.z;}var c=new Vector2(x/b.points.Length,z/b.points.Length);var key=new Vector2Int(Mathf.FloorToInt(c.x/Cell),Mathf.FloorToInt(c.y/Cell));if(!cells.TryGetValue(key,out var list))cells[key]=list=new List<Vector2>();list.Add(c);}
+  int Near(Vector3 p){int n=0;var k=new Vector2Int(Mathf.FloorToInt(p.x/Cell),Mathf.FloorToInt(p.z/Cell));for(int dx=-1;dx<=1;dx++)for(int dz=-1;dz<=1;dz++){if(!cells.TryGetValue(new Vector2Int(k.x+dx,k.y+dz),out var list))continue;foreach(var c in list)if((c-new Vector2(p.x,p.z)).sqrMagnitude<55*55)n++;}return n;}
+  for(int e=0;e<graph.edges.Length;e++){var edge=graph.edges[e];if(edge==null||edge.TraversalDisabled||string.IsNullOrEmpty(edge.roadName)||graph.paths[e]==null)continue;var pts=graph.paths[e].points;float carry=11;
+   for(int i=1;i<pts.Length;i++){var a=pts[i-1];var b=pts[i];float len=Vector3.Distance(a,b);if(len<.01f)continue;var f=(b-a)/len;f.y=0;if(f.sqrMagnitude<.01f)continue;f.Normalize();var right=TrafficSystem.Right(f);
+    for(float t=carry;t<len;t+=22){var p=a+(b-a)*(t/len);if(Near(p)>=2)AddLamp(map,p+right*5.2f,-right,positions,posts,bulbs,pools,22);}
+    carry=Mathf.Repeat(carry-len,22);}}
+ }
+ static void AddLamp(MapData map,Vector3 point,Vector3 towardRoad,List<Vector3> locations,Dictionary<Vector2Int,PatchBatch> posts,Dictionary<Vector2Int,PatchBatch> bulbs,Dictionary<Vector2Int,PatchBatch> pools,float spacing=32){
   if(locations.Count>=LampLimit||towardRoad.sqrMagnitude<.01f)return;
   if(ProjectMapScene.Active(map)){
    // Signs and signals can hang over the carriageway. Anchor a separate lamp
@@ -121,7 +137,7 @@ internal sealed class DayLightCity : IDisposable {
    }
    if(!found)return;
   }
-  foreach(var prior in locations)if((prior-point).sqrMagnitude<32*32)return;
+  foreach(var prior in locations)if((prior-point).sqrMagnitude<spacing*spacing)return;
   locations.Add(point);towardRoad.Normalize();
   Vector3 side=TrafficSystem.Right(towardRoad);
   var shaft=Batch(posts,point);var housing=Batch(bulbs,point);var spill=Batch(pools,point);
@@ -201,7 +217,8 @@ internal sealed class DayLightHeadlamps : IDisposable {
   for(int i=0;i<spots.Length;i++){
    var beam=new GameObject("Headlamp beam");beam.transform.SetParent(root.transform,false);
    var spot=beam.AddComponent<Light>();spots[i]=spot;spot.type=LightType.Spot;
-   spot.shadows=LightShadows.None;spot.range=player?24:15;spot.spotAngle=player?47:56;
+   // 2026-11-24 play-test round 4: the taxi's beams were too dim; Unity's falloff keeps a spot bright only to about a quarter of its range, so the range is 80 m (bright to ~20 m), wider and brighter.
+   spot.shadows=LightShadows.None;spot.range=player?80:15;spot.spotAngle=player?58:56;
    spot.renderMode=player?LightRenderMode.ForcePixel:LightRenderMode.Auto;
    spot.color=new Color(1,.92f,.75f);
    spot.cullingMask=~((1<<8)|(1<<9)|(1<<10)|(1<<30));
@@ -234,7 +251,7 @@ internal sealed class DayLightHeadlamps : IDisposable {
    for(int i=0;i<spots.Length;i++){
     float side=spots.Length==1?0:i==0?-.6f:.6f;
     spots[i].transform.localPosition=new Vector3(side,0,.03f);
-    spots[i].transform.localRotation=Quaternion.Euler(6,(i==0?-1:1)*(player?1.7f:0),0);
+    spots[i].transform.localRotation=Quaternion.Euler(player?1.5f:6,(i==0?-1:1)*(player?1.7f:0),0);
    }
    lenses.localPosition=new Vector3(0,0,.027f);
    tails.gameObject.SetActive(taxi);tails.localPosition=new Vector3(0,.11f,-4.125f);
@@ -244,7 +261,7 @@ internal sealed class DayLightHeadlamps : IDisposable {
  }
  public void Strength(float power){
   if(!root||!target)return;
-  for(int i=0;i<spots.Length;i++)if(spots[i])spots[i].intensity=power*(player?.94f:1.1f);
+  for(int i=0;i<spots.Length;i++)if(spots[i])spots[i].intensity=power*(player?2.6f:1.1f);
  }
  public void Dispose(){if(root)UnityEngine.Object.Destroy(root);}
 }

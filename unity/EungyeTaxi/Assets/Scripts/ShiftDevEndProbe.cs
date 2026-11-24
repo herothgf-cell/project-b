@@ -653,6 +653,10 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    camera.transform.SetPositionAndRotation(view,Quaternion.LookRotation(p.P(0,2.2f,0)-view));
    yield return new WaitForSecondsRealtime(.5f);yield return Capture("storefront-"+slug+"-front");
    camera.enabled=true;
+   // 2026-11-24 round 4: the shop popup shows a picture card like the diner.
+   Pose(shop.Stop.Kerb,shop.Stop.Direction);s.jobs.cooldown[shop.StopIndex]=Time.time+60;
+   if(s.jobs.Interact()&&s.services.open){yield return new WaitForSecondsRealtime(.4f);yield return Capture("menu-"+slug);s.services.Close();}
+   else Check(false,"F opens the "+slug+" menu for the capture");
   }
   // 2026-11-24: the driver restaurant uses the same shop-front design, beside its parking lot.
   {var lot=ProjectMapScene.Services(map,"restaurant").FirstOrDefault();var p=lot==null?null:RefreshmentStorefronts.ForLot(map,lot,"은계 기사식당");
