@@ -160,7 +160,7 @@ details.toc .fx{color:var(--fix);font-size:12px;font-weight:700;margin-left:4px}
 <tr data-st="ok"><td>요청 14종·하차 후 사건·만족도</td><td><a href="02-passengers-and-fares.html#현재-요청14종과-하차-후-사건1종의-행동과-결과">02 1장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../content-tuning-request-outcomes.md">요청 판정표</a></td></tr>
 <tr data-st="ok"><td>운임과 보너스</td><td><a href="02-passengers-and-fares.html#운임과-보너스">02 운임과 보너스</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../work-history/2026-11-20-eungye-economy-review.md">운임·물가 점검</a></td></tr>
 <tr data-st="ok fix"><td>팁·연속 기록·잘한 운전 칭찬(싱글·PvP)</td><td><a href="02-passengers-and-fares.html#tips-streak">02 팁</a> · <a href="08-fun-improvements.html#2-운임과-보상">08 2장</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 사람 체감·LAN 두 PC 미확인</td><td><a href="../work-history/2026-11-23-tips-streak-praise.md">기록</a></td></tr>
-<tr data-st="wait"><td>살아 있는 미터기</td><td><a href="08-fun-improvements.html#2-운임과-보상">08 2장</a></td><td><span class="st wait">미결</span><br><b>미결: 결정 대기</b>(설계안·스위치만, 기본 꺼짐)</td><td><a href="../work-history/2026-11-24-living-meter-design.md">설계안</a></td></tr>
+<tr data-st="hold"><td>살아 있는 미터기</td><td><a href="08-fun-improvements.html#2-운임과-보상">08 2장</a></td><td><span class="st hold">제외</span><br><b>제외</b>(사용자 결정 2026-11-24. 설계안과 기본 꺼짐 스위치 <code>meter.enabled</code>=0은 남김)</td><td><a href="../work-history/2026-11-24-living-meter-design.md">설계안</a> · <a href="../work-history/2026-11-24-next-bundle-decisions.md">결정</a></td></tr>
 <tr data-st="ok"><td>취객 특성과 하차, 재사용 행동 모듈</td><td><a href="02-passengers-and-fares.html#현재-구현-취객-유형의-특성과-하차">02 1장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td></td></tr>
 <tr data-st="ok"><td>비 오는 날 승차</td><td><a href="02-passengers-and-fares.html#2026-11-07-비-오는-날-승차">02 1장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td></td></tr>
 </tbody></table></div>
@@ -308,7 +308,7 @@ details.toc .fx{color:var(--fix);font-size:12px;font-weight:700;margin-left:4px}
 <tr data-st="ok fix"><td>골목 주차 A(은행로144번길)</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 2.3</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br><b>구현·배포</b> · 개선 필요(사람 플레이 미확인, 차로 유지 보조와의 충돌 미확인)</td><td><a href="../work-history/2026-11-24-alley-parking.md">기록</a></td></tr>
 <tr data-st="wait"><td>골목 주차 B(대은로104번길)</td><td>같은 곳</td><td><span class="st wait">미결</span><br>미결: 설계안(A의 사람 플레이 결과 뒤)</td><td></td></tr>
 <tr data-st="wait"><td>수인로(국도42) 순항 속도</td><td><a href="08-fun-improvements.html#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">08 5.5 3번</a></td><td><span class="st wait">미결</span><br>미결: 설계안</td><td><a href="../work-history/2026-11-24-next-candidates-design.md">설계안</a></td></tr>
-<tr data-st="wait"><td>과속 방지턱</td><td><a href="08-fun-improvements.html#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">08 5.5 1번</a></td><td><span class="st wait">미결</span><br>미결: 설계안(지도 입력 해시 재생성 여부 결정)</td><td><a href="../work-history/2026-11-24-next-candidates-design.md">설계안</a></td></tr>
+<tr data-st="src fix"><td>과속 방지턱</td><td><a href="08-fun-improvements.html#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">08 5.5 1번</a></td><td><span class="st src">구현·소스</span><span class="st fix">개선 필요</span><br><b>구현·소스</b>(도로 시설 입력 5곳, 배포 실행본은 다음 빌드) · 개선 필요(사람 플레이 미확인, 일반 차량 감속 없음)</td><td><a href="../work-history/2026-11-24-speed-bumps.md">기록</a></td></tr>
 </tbody></table></div>
 <h4 id="g2-법규를-고민거리로">G2. 법규를 고민거리로</h4>
 
@@ -397,8 +397,6 @@ details.toc .fx{color:var(--fix);font-size:12px;font-weight:700;margin-left:4px}
 </tr></thead><tbody>
 <tr><td>미션 "길 아는 기사"</td><td>L 키, 팁 15%, 내비 단계 3종으로 넓힐지</td><td><a href="../work-history/2026-11-24-away-run-3-checklist.md">3차 체크리스트</a></td></tr>
 <tr><td>37 합치기·겹침 정리</td><td>5.1~5.4로 합친 방향, 목적지 전면 비공개 보류에 동의하는지</td><td><a href="../work-history/2026-11-24-away-run-3-checklist.md">3차 체크리스트</a></td></tr>
-<tr><td>살아 있는 미터기</td><td>초안 채택 여부(경제 재조정과 함께)</td><td><a href="../work-history/2026-11-24-living-meter-design.md">설계안</a></td></tr>
-<tr><td>과속 방지턱</td><td>위치를 지도 입력에 넣을지(입력 해시 재생성)</td><td><a href="../work-history/2026-11-24-next-candidates-design.md">설계안</a></td></tr>
 </tbody></table></div>
 <h2 id="개선점-목록-사람-플레이알려진-실패">개선점 목록 (사람 플레이·알려진 실패)</h2>
 
