@@ -19,7 +19,7 @@ public class TaxiController : MonoBehaviour {
         return !automated&&DrivingSettings.Current.CasualSteering;
     }}
     public AssistedDriveController assistance;public BusinessProgress business;
-    float throttle,steer,motorDemand; bool brake; Vector3 spawn; Quaternion spawnRotation;
+    float throttle,steer,motorDemand; bool brake; public bool EmergencyBraking {get{return automated&&!AutomatedHumanInput?autoBrake:brake;}} Vector3 spawn; Quaternion spawnRotation;
     readonly DriverPedalIntent pedalIntent=new DriverPedalIntent();
     public bool PvpMapInputBlocked {get{return business&&business.session&&(PvpNativeLan.UiBlocked(business.session)||business.session.simulationMatch&&(business.session.FullMapOpen||business.session.services&&business.session.services.open));}}
     public Vector3 ObservedVelocity {get{return NetworkReplica&&!NetworkPredicted?ReplicaVelocity:body.velocity;}}

@@ -4,8 +4,8 @@ using UnityEngine;
 // and wheel speed drive separate recorded layers.
 public sealed class VehicleAudio : MonoBehaviour {
  DriveSession session;
- AudioSource engine,road,indicator,horn,rain,tyre,wind;
- float lastSpeed,contactUntil;int lastCollisions=-1;
+ AudioSource engine,road,indicator,horn,rain,roadSlow,window,hardBrake;
+ float lastSpeed,contactUntil,smoothDecel,brakeReady;int lastCollisions=-1;
  AudioClip indicatorOn,indicatorOff;
  bool lampWasLit;
  int gear;float rpm=IdleRpm,load;
@@ -21,10 +21,12 @@ public sealed class VehicleAudio : MonoBehaviour {
   indicatorOff=LoadClip("IndicatorOff");
   horn=Source("Horn",false);
   rain=Source("Rain",true);
-  // 08 chapter 1 extra layers, re-pitched from the existing recordings (no new audio files).
-  // On a child object so the primary engine/road sources stay unique on the session (checks look them up).
+  // 2026-11-24 (user-selected recordings): the cabin sound is two interior recordings, a town one and a
+  // highway one, crossfaded by speed. An open window adds rushing air and only hard braking squeals.
+  // The skid hiss and the separate wind layer are gone. These sit on a child object so the primary
+  // engine/road sources stay unique on the session (checks look them up).
   var extra=new GameObject("Extra drive layers");extra.transform.SetParent(transform,false);
-  tyre=ExtraSource(extra,"Road");wind=ExtraSource(extra,"Road");
+  roadSlow=ExtraSource(extra,"RoadSlow");window=ExtraSource(extra,"WindowWind");hardBrake=ExtraSource(extra,"HardBrake");hardBrake.loop=false;
  }
  AudioSource Source(string sound,bool loop){
   var source=gameObject.AddComponent<AudioSource>();
@@ -111,19 +113,27 @@ public sealed class VehicleAudio : MonoBehaviour {
   // Extra layers and pad vibration: Eungye single only, scaled by the feel tab, ducked under speech.
   bool single=!session.simulationMatch&&!PvpSimulationMode.Active;
   float extra=driveSound&&single?settings.extraSound*(DriveFeelAudio.SpeechOnScreen(session)?DriveFeelAudio.Duck:1):0;
-  float rev=Mathf.Clamp01((rpm-IdleRpm)/2400),slip=0;
+  float rev=Mathf.Clamp01((rpm-IdleRpm)/2400);
   // 2026-11-24 test feedback ("another odd sound in the drive sound", "odd brake sound"):
   // - Engine load used to be a second, lower-pitched copy of the engine loop, which read as a second engine
   //   droning underneath. It is now a gain on the one engine voice.
   // - The tyre layer measured raw wheel slip, so ordinary braking and cornering hissed. It now only hears
   //   slip beyond each tyre's grip peak (a real skid or locked wheel).
   MotionLoop(engine,driveSound,level+DriveFeelAudio.LoadLevel(load,rev)*extra,pitch,blend);
-  // Tyre and wind noise grows with speed and dominates the cabin above town speeds.
-  MotionLoop(road,driveSound,.62f*speed*speed/(speed*speed+90),1,blend);
-  foreach(var wheel in taxi.wheels){if(wheel&&wheel.GetGroundHit(out WheelHit hit))slip=Mathf.Max(slip,DriveFeelAudio.SkidSlip(hit.sidewaysSlip,wheel.sidewaysFriction.extremumSlip,hit.forwardSlip,wheel.forwardFriction.extremumSlip));}
-  MotionLoop(tyre,extra>0,DriveFeelAudio.TyreLevel(slip,speed)*extra,1.9f,blend);
-  MotionLoop(wind,extra>0,DriveFeelAudio.WindLevel(speed)*extra,DriveFeelAudio.WindPitch(speed),blend);
+  // Cabin noise grows with speed and dominates above town speeds: the town recording carries low
+  // speeds and the highway recording takes over on fast roads. Ordinary braking only lets it fall.
+  float cabin=DriveFeelAudio.CabinLevel(speed),fast=DriveFeelAudio.HighwayShare(speed);
+  MotionLoop(road,driveSound,cabin*(.35f+.65f*fast),1,blend);
+  MotionLoop(roadSlow,driveSound,cabin*(1-fast)*.85f,1,blend);
+  bool windowOpen=session.business&&session.business.Cabin!=null&&session.business.Cabin.WindowOpen;
+  MotionLoop(window,driveSound&&windowOpen,DriveFeelAudio.WindowLevel(speed),1,blend);
   float decel=dt>0?Mathf.Max(0,(lastSpeed-speed)/Mathf.Max(dt,.001f)):0;lastSpeed=speed;
+  smoothDecel=Mathf.Lerp(smoothDecel,Mathf.Min(decel,30),1-Mathf.Exp(-dt/.15f));
+  // Hard braking only: the emergency brake, or a pedal stop this sharp, squeals once.
+  if(extra>0&&DriveFeelAudio.HardBraking(smoothDecel,speed,taxi.EmergencyBraking)){
+   if(!hardBrake.isPlaying&&Time.unscaledTime>=brakeReady){hardBrake.volume=DriveFeelAudio.HardBrakeLevel(speed)*extra;hardBrake.pitch=1;hardBrake.Play();brakeReady=Time.unscaledTime+2.5f;}
+  }
+  if(hardBrake.isPlaying&&(extra<=0||speed<.8f))hardBrake.volume=Mathf.MoveTowards(hardBrake.volume,0,dt*2.5f);
   int collisions=session.manners?session.manners.collisionEvents:0;if(lastCollisions>=0&&collisions>lastCollisions)contactUntil=Time.unscaledTime+DriveFeelAudio.ContactSeconds;lastCollisions=collisions;
   if(driving&&single&&settings.rumble>0&&Input.GetJoystickNames().Length>0){DriveFeelAudio.Rumble(speed,decel,Time.unscaledTime<contactUntil,out float low,out float high);XInputRumble.Set(low*settings.rumble,high*settings.rumble);}
   else XInputRumble.Stop();

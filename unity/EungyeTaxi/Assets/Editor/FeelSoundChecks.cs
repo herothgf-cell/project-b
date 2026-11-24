@@ -11,8 +11,10 @@ public static class FeelSoundChecks {
   ContentTuning.ConfigureCatalog(File.ReadAllText(Path.GetFullPath("../../config/content/catalog.json")));
   ContentTuning.ValidateJson(File.ReadAllText(Path.GetFullPath("../../config/content/default-profile.json")));
   Check(DriveFeelAudio.LoadLevel(0,1)==0&&DriveFeelAudio.LoadLevel(1,1)>.15f&&DriveFeelAudio.LoadLevel(1,0)<DriveFeelAudio.LoadLevel(1,1),"engine load only on throttle, louder at high revs");
-  Check(DriveFeelAudio.TyreLevel(.05f,10)==0&&DriveFeelAudio.TyreLevel(.5f,10)>.2f&&DriveFeelAudio.TyreLevel(.5f,1)==0,"tyre layer starts near the grip limit, not when parked");
-  Check(DriveFeelAudio.WindLevel(30/3.6f)==0&&DriveFeelAudio.WindLevel(60/3.6f)>0&&DriveFeelAudio.WindLevel(100/3.6f)>=DriveFeelAudio.WindLevel(60/3.6f),"wind grows from 35 km/h");
+  Check(DriveFeelAudio.CabinLevel(0)==0&&DriveFeelAudio.CabinLevel(12.5f)>.3f&&DriveFeelAudio.CabinLevel(25)>DriveFeelAudio.CabinLevel(12.5f),"cabin noise follows speed and is silent when parked");
+  Check(DriveFeelAudio.HighwayShare(20/3.6f)==0&&DriveFeelAudio.HighwayShare(80/3.6f)==1&&DriveFeelAudio.HighwayShare(47.5f/3.6f)>.4f&&DriveFeelAudio.HighwayShare(47.5f/3.6f)<.6f,"town recording below 25 km/h, highway recording above 70");
+  Check(DriveFeelAudio.WindowLevel(0)==0&&DriveFeelAudio.WindowLevel(20)>DriveFeelAudio.WindowLevel(8),"open window air grows with speed");
+  Check(!DriveFeelAudio.HardBraking(4,15,false)&&DriveFeelAudio.HardBraking(7,15,false)&&DriveFeelAudio.HardBraking(0,15,true)&&!DriveFeelAudio.HardBraking(9,2,true),"only hard braking squeals, and not at walking pace");
   Check(DriveFeelAudio.Duck>0&&DriveFeelAudio.Duck<1,"speech ducks the extra layers");
   float low,high;
   DriveFeelAudio.Rumble(0,0,false,out low,out high);Check(low==0&&high==0,"parked: no vibration");

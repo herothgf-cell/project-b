@@ -28,7 +28,7 @@ public static class CabinSoundChecks {
     panel.SoundTab=true;panel.ResetDefaults();Check(panel.Draft.engineSound&&panel.Draft.hornSound,"Sound reset");
    }finally{UnityEngine.Object.DestroyImmediate(panel.gameObject);}
   }finally{PlayerPrefs.DeleteKey(key);PlayerPrefs.Save();}
-  foreach(var sound in new[]{"Engine","Road","IndicatorOn","IndicatorOff","Horn","Rain"}){
+  foreach(var sound in new[]{"Engine","Road","RoadSlow","WindowWind","HardBrake","IndicatorOn","IndicatorOff","Horn","Rain"}){
    var clip=VehicleAudio.LoadClip(sound);
    Check(clip&&clip.channels==1,"Packaged mono "+sound);
    var samples=new float[clip.samples];
@@ -61,7 +61,7 @@ public static class CabinSoundChecks {
    if((string)row["id"]=="display.sound.indicator")indicatorEnabled=(string)row["value"]=="true";
   }
   Check(indicatorEnabled,"legacy brake mute is independent of relay");
-  Debug.Log("CABIN_SOUND_CHECKS_OK places="+seen.Count+" clips=6");
+  Debug.Log("CABIN_SOUND_CHECKS_OK places="+seen.Count+" clips=9");
  }
  public static void VerifyAndBuild(){Run();PrototypeBuild.BuildHybrid();}
 }

@@ -74,7 +74,7 @@ public sealed class DrivingSettingsPanel : MonoBehaviour {
   Draft.steerLook=CompactRow(284,"조향 방향 미리 보기 · V로 켜고 끄기",Draft.steerLook);
   Draft.brakeDip=CompactRow(344,"제동 쏠림 · 세게 감속하면 숙여짐",Draft.brakeDip);
   Draft.bodyLean=CompactRow(404,"차체 기울기 · 물리·승차감 판정은 그대로",Draft.bodyLean);
-  Draft.extraSound=CompactRow(464,"추가 주행음 · 가속 부하·미끄러짐·고속 바람(싱글)",Draft.extraSound);
+  Draft.extraSound=CompactRow(464,"추가 주행음 · 가속 부하·급제동음(싱글)",Draft.extraSound);
   Draft.rumble=CompactRow(524,"패드 진동 · 노면·제동·접촉(싱글, Xbox 계열)",Draft.rumble);
   GUI.Label(new Rect(28,588,562,40),"PvP는 시뮬 조향 고정 · 연출·소리·진동은 이 기기에만 적용 · 0%는 끔",Label(14));
  }
