@@ -1,10 +1,10 @@
 {
-  "sourceCommit": "cb32233dee51d433ead56f9dbb68d561d109e41b",
+  "sourceCommit": "7224b29e20441048e2c30f13caa1e478acbb3f76",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-24",
-  "totalBytes": 114316800,
+  "totalBytes": 114319360,
   "validation": {
     "build": "PrototypeBuild.BuildEasyRoadMapEditor exit 0",
     "modelSuites": 23,
@@ -38,7 +38,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "c4ff31198d421e319c0fc1ff0bf69992f22ecfb886042e2d87c0d0275bc8e1a8"
+      "sha256": "510b15a9713fc82163fc054f0c4a8b9f9ea2a781df8d6899fe9c95e84dbba865"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -62,8 +62,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 3370496,
-      "sha256": "d5d598a1c9ad78b449b4c2fd4da1206f541beb3fedf3a43759d5e8362be74cf4"
+      "bytes": 3373056,
+      "sha256": "115299099321617934419d494fcd03b7527ec03f07f7973ab293fb80dadb37bf"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
