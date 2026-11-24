@@ -29,7 +29,7 @@ public static class VehicleGarageHUD {
    CasualUI.RoundedFill(r,mine?CasualUI.Soft:selected==v.id?CasualUI.Warm:CasualUI.Card);
    GUI.Label(new Rect(r.x+12,r.y+8,r.width-24,30),v.name+(mine?" · 내 차":""),title);
    Silhouette(new Rect(r.x+10,r.y+44,r.width-20,120),v,mine?car.color:0,mine&&car.ornamentOwned&&car.ornamentPlaced);
-   GUI.Label(new Rect(r.x+12,r.y+168,r.width-24,44),v.summary,small);
+   GUI.Label(new Rect(r.x+12,r.y+168,r.width-24,44),v.summary+"\n"+VehicleFeel.Describe(v.id),small);
    var traits=Traits(v);for(int t=0;t<traits.Length;t++)GUI.Label(new Rect(r.x+12,r.y+214+t*34,r.width-24,34),traits[t],text);
    string price=mine&&keep?(scheduled==v.id?"다음 날 운행 예정":active.modelId==v.id?"오늘 운행 차량":"숙소 주차장 보관")
     :v.id==VehicleCatalog.Starter?"시작 차량":"가격 "+Money(VehicleCatalog.Price(v.id));

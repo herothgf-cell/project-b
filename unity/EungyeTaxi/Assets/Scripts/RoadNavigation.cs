@@ -37,6 +37,9 @@ public partial class RoadNavigation : MonoBehaviour {
  // Display memory is never a steering path or an ETA source.
  readonly List<Vector3> previousDisplay=new List<Vector3>();
  public List<Vector3> DisplayPath {get{return path.Count>0?path:previousDisplay;}}
+ // Mission "길 아는 기사": the route is still computed (ETA, arrival) but nothing is drawn.
+ public bool GuidanceHidden;static readonly List<Vector3> nothingShown=new List<Vector3>();
+ public List<Vector3> ShownPath {get{return GuidanceHidden?nothingShown:DisplayPath;}}
  public bool RetainingPreviousRoute {get{return active&&path.Count==0&&previousDisplay.Count>1;}}
  void ForgetDisplay(){previousDisplay.Clear();}
  void RefreshDisplay(){
@@ -46,7 +49,7 @@ public partial class RoadNavigation : MonoBehaviour {
   if(line==null)return;
   var paint=RetainingPreviousRoute?new Color(.47f,.62f,.68f):Color.cyan;
   line.material.color=paint;line.material.SetColor("_EmissionColor",paint*.65f);
-  var shown=DisplayPath;
+  var shown=ShownPath;
   if(freeGuidance||shown.Count<2){line.positionCount=0;return;}
   // Paint the whole remaining trip in the world, as the map does (user request 2026-11-23).
   line.positionCount=shown.Count;

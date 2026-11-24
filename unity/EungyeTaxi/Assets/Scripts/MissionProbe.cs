@@ -52,13 +52,24 @@ public sealed class MissionProbe : MonoBehaviour {
    var precise=Trip(MissionRules.Precise,null);Check(precise.missionSuccess&&precise.missionBonus==1200,"precise: posed on the stop point -> +1,200");
    var slow=Trip(MissionRules.Express,jobs=>{jobs.current.missionDriveSeconds=999;});Check(!slow.missionSuccess&&slow.missionBonus==0&&slow.paid>0&&slow.paid==slow.baseFare+slow.bonus-slow.meterDeduction,"express too slow -> failure, fare unchanged");
    var late=Trip(MissionRules.Coffee,null,true);Check(late.paid==0&&!late.missionSuccess&&late.missionBonus==0,"late trip: existing 0 won rule, mission not paid");
+   // "길 아는 기사": guidance hidden while aboard, success pays the tip row, detour / guidance back on fail without penalty.
+   var read=s.GetComponent<DrivingReadability>();
+   var know=Trip(MissionRules.KnowRoad,jobs=>{jobs.TickKnowRoad();Check(jobs.KnowRoadActive&&jobs.nav.GuidanceHidden&&jobs.nav.ShownPath.Count==0,"know-road: guidance hidden while the passenger is aboard");Check(jobs.nav.HasDestination&&!read.TurnCue.Valid&&read.GoalDistance=="길안내 꺼짐","know-road: no turn cue or route distance on the HUD");Check(jobs.KnowRoadHint.Contains("L 길안내 켜기"),"know-road: hint names the key that gives up");});
+   Check(know.missionKind==MissionRules.KnowRoad&&know.missionSuccess&&know.missionBonus==900,"know-road: arrived without guidance -> +900 ("+know.missionBonus+")");
+   Check(RideReceiptSummary.MissionRow(know).Contains("길 아는 기사 팁 (운임과 별도)")&&RideReceiptSummary.MissionRow(know).Contains(MissionRules.KnowRoadLine),"know-road: receipt row carries the passenger line");
+   s.jobs.TickKnowRoad();Check(!s.jobs.nav.GuidanceHidden,"know-road: guidance returns after the trip");
+   var detour=Trip(MissionRules.KnowRoad,jobs=>{jobs.TickKnowRoad();jobs.current.meterMetres=MissionRules.KnowRoadLimit(jobs.current)+1;jobs.TickKnowRoad();Check(jobs.current.missionVoid&&!jobs.nav.GuidanceHidden&&jobs.nav.ShownPath.Count>1,"know-road: large detour ends the mission and guidance comes back");});
+   Check(!detour.missionSuccess&&detour.missionBonus==0&&detour.paid>0&&detour.paid==detour.baseFare+detour.bonus-detour.meterDeduction,"know-road detour -> failure, fare unchanged ("+detour.paid+")");
+   var gaveUp=Trip(MissionRules.KnowRoad,jobs=>{jobs.TickKnowRoad();jobs.EndKnowRoad("길안내를 다시 켰어요");Check(jobs.current.missionVoid&&!jobs.KnowRoadActive,"know-road: giving up is recorded on the trip");var copy=JsonUtility.FromJson<PassengerJobsSnapshot>(JsonUtility.ToJson(jobs.CaptureLive()));Check(copy.current.missionVoid,"know-road: the ended mission survives a save");});
+   Check(!gaveUp.missionSuccess&&gaveUp.paid>0&&gaveUp.paid==gaveUp.baseFare+gaveUp.bonus-gaveUp.meterDeduction,"know-road given up -> failure, fare unchanged");
+   Check(s.GetComponent<DriveNotifications>().Items.Any(i=>i.text.Contains("미션 길 아는 기사 종료")),"know-road: ending posts one feed card");
    var account=s.business.ledger.Account;int day=s.business.ledger.Day;
-   Check(account.Missions(day)==1800+1500+1200+1200,"mission extras are their own account entries ("+account.Missions(day)+")");
-   Check(!account.Mission(green2.tripId,1500,day)&&account.Missions(day)==5700,"second payment for a trip is refused");
+   Check(account.Missions(day)==1800+1500+1200+1200+900,"mission extras are their own account entries ("+account.Missions(day)+")");
+   Check(!account.Mission(green2.tripId,1500,day)&&account.Missions(day)==6600,"second payment for a trip is refused");
    Check(RideReceiptSummary.MissionRow(green2).Contains("미션 추가금 (운임과 별도)")&&RideReceiptSummary.MissionRow(green).Contains("실패")&&!RideReceiptSummary.Money(green2).Contains("미션"),"receipt row separate from the fare rows");
    Check(s.business.SaveCheckpoint(),"checkpoint saved");var saved=JsonUtility.FromJson<CampaignCheckpoint>(File.ReadAllText(s.business.SavePath));
    Check(saved.passengers.Any(x=>x.tripId==green2.tripId&&x.missionBonus==1500&&x.missionSuccess),"saved receipt keeps the mission");
-   var legacy=JsonUtility.FromJson<JobOffer>("{\"pickup\":1,\"drop\":4,\"fare\":5000}");Check(legacy.mission==0&&legacy.missionBonus==0,"older offers have no mission");
+   var legacy=JsonUtility.FromJson<JobOffer>("{\"pickup\":1,\"drop\":4,\"fare\":5000}");Check(legacy.mission==0&&legacy.missionBonus==0&&!legacy.missionVoid,"older offers have no mission");
    shown=green2;s.business.passengers.RemoveAll(x=>x!=green2);
   }catch(Exception e){error=e.ToString();}
   if(error==null){var panel=s.GetComponent<RideCompletionPanel>();try{if(panel.Open)panel.Close();panel.ShowLast();}catch(Exception e){Debug.LogException(e);}

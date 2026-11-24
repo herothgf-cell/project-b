@@ -115,6 +115,7 @@ public sealed class DayLightController : MonoBehaviour {
   if(forceDay)return 13;
   if(session.simulationMatch)return HourForElapsed(session.simulationMatch.Elapsed,PvpSimulationMode.DurationSeconds);
   var business=session.business;
+  if(business&&business.EveningDrive)return EveningDriveRules.Hour;
   if(!business||business.ledger==null||business.preparing)return 8;
   return HourForElapsed(business.ledger.Elapsed,business.ledger.Settings.daySeconds);
  }

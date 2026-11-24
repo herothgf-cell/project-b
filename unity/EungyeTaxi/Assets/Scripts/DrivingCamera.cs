@@ -125,11 +125,11 @@ public class DrivingCamera : MonoBehaviour {
         if(view&&Mathf.Abs(view.fieldOfView-appliedFov)<.01f){appliedFov=Mathf.Lerp(view.fieldOfView,(FirstPerson?DriverFieldOfView:62)+SpeedFovOffset,1-Mathf.Exp(-3*dt));view.fieldOfView=appliedFov;}
         // Braking dip: deceleration in the travel direction, up to 2.5 degrees.
         float decel=speed>.5f?Mathf.Max(0,-longitudinal):speed< -.5f?Mathf.Max(0,longitudinal):0;
-        dip=Mathf.Lerp(dip,feel.brakeDip*Mathf.Min(2.5f,decel*.35f),1-Mathf.Exp(-8*dt));BrakeDip=dip;
+        dip=Mathf.Lerp(dip,feel.brakeDip*taxi.VehicleDip*Mathf.Min(2.5f,decel*.35f),1-Mathf.Exp(-8*dt));BrakeDip=dip;
         // Visible body lean on the exterior art only: roll toward the outside of a turn (up to 2 degrees),
         // nose down when braking and up when accelerating (up to 1.2 degrees).
         if(!exterior){exterior=target.Find("Taxi exterior");if(exterior)exteriorRest=exterior.localRotation;}
-        BodyLean=new Vector2(feel.bodyLean*Mathf.Clamp(-longitudinal*.15f,-1.2f,1.2f),feel.bodyLean*Mathf.Clamp(lateral*.25f,-2f,2f));
+        BodyLean=new Vector2(feel.bodyLean*taxi.VehicleLean*Mathf.Clamp(-longitudinal*.15f,-1.2f,1.2f),feel.bodyLean*taxi.VehicleLean*Mathf.Clamp(lateral*.25f,-2f,2f));
         if(exterior)exterior.localRotation=Quaternion.Euler(BodyLean.x,0,BodyLean.y)*exteriorRest;
         if(FirstPerson){
             float yaw=target.eulerAngles.y;

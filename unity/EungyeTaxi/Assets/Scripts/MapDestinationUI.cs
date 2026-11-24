@@ -42,7 +42,7 @@ public partial class FullMapOverlay {
  public void RefreshRoutePaint(bool force=false){if(session==null||session.jobs==null||!force&&Time.unscaledTime<nextPaint)return;nextPaint=Time.unscaledTime+1;var jobs=session.jobs;if(selectedOffer!=null&&(jobs.Active||SelectedOffer<0||SelectedOffer>=jobs.offers.Length||jobs.offers[SelectedOffer]!=selectedOffer)){if(!jobs.Active)acceptFeedback="호출이 갱신됐습니다 · 목록에서 다시 선택하세요";selectedOffer=null;SelectedOffer=-1;}RoutePaint.Clear();
   if(IsOpen&&selectedPlace!=null){PaintPath(previewPath,false);return;}
   if(!jobs.Active&&selectedOffer!=null){PaintPath(pickupPath,false);PaintPath(previewPath,true);return;}
-  int firstSegment=RoutePaint.Count;PaintPath(jobs.nav.DisplayPath,jobs.trip.State==TripState.OnTrip);
+  int firstSegment=RoutePaint.Count;PaintPath(jobs.nav.ShownPath,jobs.trip.State==TripState.OnTrip);
   if(jobs.nav.RetainingPreviousRoute)for(int i=firstSegment;i<RoutePaint.Count;i++)RoutePaint[i].retained=true;
   if(jobs.trip.State==TripState.ToPickup&&jobs.current!=null){if(cachedRide!=jobs.current){cachedRide=jobs.current;ridePath=jobs.nav.Find(jobs.stops[jobs.current.pickup],jobs.stops[jobs.current.drop]);}PaintPath(ridePath,true);}else cachedRide=null;
  }

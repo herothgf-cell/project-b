@@ -98,6 +98,7 @@ public class DriveNotifications : MonoBehaviour {
   if(m.cleanStreak!=streakSeen){if(m.cleanStreak>=2&&m.cleanStreak>streakSeen)Add(new FeedItem{kind=FeedKind.Situation,text="깔끔한 운송 "+m.cleanStreak+"회째 · 이어 가면 팁 확률이 조금씩 올라요"});streakSeen=m.cleanStreak;}
  }
  public int PraiseCardsSeen {get{return goodSeen;}}
+ public void Card(string text){if(!string.IsNullOrEmpty(text)&&!session.IsSimulationBot)Add(new FeedItem{kind=FeedKind.Situation,text=text});}
  void Chime(bool tip,float volume){
   if(!chime){chime=gameObject.AddComponent<AudioSource>();chime.playOnAwake=false;chime.spatialBlend=0;}
   if(tip){if(!tipClip)tipClip=Bell("팁 효과음",new[]{1047f,1319f,1568f},.11f);chime.PlayOneShot(tipClip,volume);}

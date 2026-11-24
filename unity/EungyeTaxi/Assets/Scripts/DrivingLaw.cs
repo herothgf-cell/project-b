@@ -78,7 +78,7 @@ public partial class DrivingLaw : MonoBehaviour {
  }
  void FixedUpdate(){
   if(PvpNativeLan.IsReplica(session)||PvpNativeLan.WaitingForWorld)return;
-  if(!session||session.paused||session.business.ShowingSummary)return;
+  if(!session||session.paused||session.business.ShowingSummary||session.business.EveningDrive)return;
   CheckEditorSpeed();var taxi=session.taxi;ObserveCentreLine(taxi,Time.time);ObserveWrongWay(Time.fixedDeltaTime);var front=taxi.transform.position+taxi.transform.forward*2;
   if(!initialized||Vector3.Distance(previous,front)>10){previous=front;initialized=true;entry=null;upstreamUturn.Reset();stops.Clear();return;}
   var upstream=upstreamUturn.Observe(session.world&&session.world.map!=null?session.world.map.editorDocument:null,session.traffic,previous,front,taxi.transform.forward,taxi.gameObject,()=>ids.Next("event"));

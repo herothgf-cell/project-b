@@ -631,7 +631,8 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    Check(!services.ConfirmAction(true)&&ledger.Account.Cash==cash-item.Price,"closed confirmation cannot charge twice");
    var save=BusinessProgress.ParseCheckpoint(File.ReadAllText(business.SavePath));
    var restored=EconomyLedger.RestoreCampaign(save.days,save.account);
-   Check(restored.Account.Cash==ledger.Account.Cash&&restored.Elapsed==ledger.Elapsed,"saved shop payment and time");
+   // The save writes doubles with 16 digits, so the shift clock is compared within a microsecond (2026-11-24).
+   Check(restored.Account.Cash==ledger.Account.Cash&&Math.Abs(restored.Elapsed-ledger.Elapsed)<1e-6,"saved shop payment and time "+restored.Elapsed.ToString("R")+"/"+ledger.Elapsed.ToString("R"));
   }
  }
  // Each shop is a building front with a door and a paved path from the pocket, not a street stall.

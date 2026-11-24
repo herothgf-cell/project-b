@@ -46,7 +46,25 @@ public class BusinessProgress : MonoBehaviour {
  public void RequestPayment(int kind){pendingPayment=-1;}
  public bool ConfirmPayment(bool accept){pendingPayment=-1;return false;}
 
- public bool ShowingSummary {get{return enabledCampaign&&ledger!=null&&ledger.ShowingSummary;}}
+ public bool ShowingSummary {get{return enabledCampaign&&ledger!=null&&ledger.ShowingSummary&&!EveningDrive;}}
+ // 08 chapter 5 "퇴근 후 드라이브" (2026-11-24, Eungye single): a free drive chosen on the settlement screen.
+ // The ledger stays settled (not Operating), so the shift clock, income, fuel, fatigue, wear, accidents and
+ // law records cannot change; the settlement screen simply steps aside until F in the home bay.
+ public bool EveningDrive {get;private set;}
+ public float EveningDriveSeconds {get;private set;}
+ public bool CanStartEveningDrive {get{return EveningDriveRules.Enabled&&enabledCampaign&&!SimulationSession&&!PracticeSession.Enabled&&!EveningDrive&&ledger!=null&&ledger.Account!=null&&ledger.ShowingSummary&&!restartPrompt&&!ResumeBlocked&&!SaveFailed&&pendingPayment<0&&session.services&&session.services.HasHomeBase&&!(session.damage&&session.damage.Disabled)&&!session.GetComponent<PracticeSession>().Busy;}}
+ public bool StartEveningDrive(){
+  if(!CanStartEveningDrive)return false;
+  EveningDrive=true;EveningDriveSeconds=0;RoomOpen=LogbookOpen=GoalComparison=false;session.jobs.ClearForDay();System.Array.Clear(session.jobs.offers,0,session.jobs.offers.Length);session.jobs.nav.Clear();session.assisted.SetActive(false);
+  ParkAtShiftStart();session.law.ResetObservation();session.paused=false;Time.timeScale=1;
+  if(!GetComponent<EveningDriveBanner>())gameObject.AddComponent<EveningDriveBanner>().business=this;
+  notice="퇴근 후 드라이브 · 미터기와 호출 없이 달립니다 · 기록과 수익에 영향 없음";noticeUntil=Time.unscaledTime+8;return true;
+ }
+ public bool EndEveningDrive(){
+  if(!EveningDrive)return false;
+  if(!session.services.AtEndDayHub())return EndDayNotice("숙소 주차 칸에 반듯하게 세운 뒤 F를 누르면 드라이브를 마칩니다.");
+  EveningDrive=false;session.assisted.SetActive(false);session.jobs.nav.Clear();ParkAtShiftStart();session.law.ResetObservation();Freeze();notice="";noticeUntil=0;return true;
+ }
  public static CampaignCheckpoint ParseCheckpoint(string json){
   var checkpoint=JsonUtility.FromJson<CampaignCheckpoint>(json);
   // JsonUtility creates a nonnull class with actors=null for both an absent
@@ -563,7 +581,7 @@ public class BusinessProgress : MonoBehaviour {
    if(Input.GetKeyDown(KeyCode.LeftBracket))CabinInput(CabinAction.Cooler);
    if(Input.GetKeyDown(KeyCode.RightBracket))CabinInput(CabinAction.Warmer);
   }
-  if(PvpNativeLan.IsReplica(session)||session&&session.simulationMatch&&PvpNativeLan.WaitingForWorld)return;if(enabledCampaign&&!preparing&&!session.paused&&ledger.Operating&&(ledger.Driver==null||DrowsinessRunning)){realSeconds+=Time.unscaledDeltaTime;mixedFollowing|=session.traffic.mitOptions.Enabled!=initialFollowing;}if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil){notice="";noticeUntil=0;}SyncVehicle();}
+  if(PvpNativeLan.IsReplica(session)||session&&session.simulationMatch&&PvpNativeLan.WaitingForWorld)return;if(enabledCampaign&&!preparing&&!session.paused&&ledger.Operating&&(ledger.Driver==null||DrowsinessRunning)){realSeconds+=Time.unscaledDeltaTime;mixedFollowing|=session.traffic.mitOptions.Enabled!=initialFollowing;}if(EveningDrive){if(Time.timeScale>0&&!session.paused){EveningDriveSeconds+=Time.deltaTime;if(!session.FullMapOpen&&(Input.GetKeyDown(KeyCode.F)||Input.GetKeyDown(KeyCode.JoystickButton8)))EndEveningDrive();}}else if(enabledCampaign&&Input.GetKeyDown(KeyCode.N))RequestEndDay();if(noticeUntil>0&&Time.unscaledTime>noticeUntil){notice="";noticeUntil=0;}SyncVehicle();}
  void LateUpdate(){
   if(PvpNativeLan.IsReplica(session)||session&&session.simulationMatch&&PvpNativeLan.WaitingForWorld)return;
   if(SimulationSession||session.accident&&session.accident.Locked)return;
@@ -702,11 +720,11 @@ public class BusinessProgress : MonoBehaviour {
   string key=v.modelId+":"+v.color+":"+(v.ornamentOwned&&v.ornamentPlaced)+":"+v.equippedParts;if(key==appliedVehicle)return;appliedVehicle=key;
   // The PVP unlock file lives beside the campaign save (test fixtures stay isolated with their save).
   if(!string.IsNullOrEmpty(SavePath))VehicleUnlockStore.UseDirectory(Path.GetDirectoryName(SavePath));
-  VehicleAppearance.Apply(session.taxi,v);session.taxi.VehicleSteerFactor=(float)ActiveVehicle.steerFactor;
+  VehicleAppearance.Apply(session.taxi,v);session.taxi.VehicleSteerFactor=(float)ActiveVehicle.steerFactor;VehicleFeel.Apply(session.taxi,ActiveVehicle.id);
   if(v.modelId!=VehicleCatalog.Starter||v.altColorOwned||v.ornamentOwned||!string.IsNullOrEmpty(v.tradedColorModel))VehicleUnlockStore.Record(v);
  }
  public bool NextDay(){
-  if(session.FullMapOpen||restartPrompt||pendingPayment>=0||!enabledCampaign||ledger.State!=BusinessState.Summary||session.GetComponent<PracticeSession>().Busy)return false;
+  if(EveningDrive||session.FullMapOpen||restartPrompt||pendingPayment>=0||!enabledCampaign||ledger.State!=BusinessState.Summary||session.GetComponent<PracticeSession>().Busy)return false;
   if(!SaveCheckpoint())return false;
   if(ledger.Account==null){if(!ledger.NextDay())return false;realSeconds=0;PrepareDay();return true;}
   var next=EconomyLedger.RestoreCampaign(ledger.Snapshot(),ledger.Account.Snapshot());if(!next.NextDay())return false;

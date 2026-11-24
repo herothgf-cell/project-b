@@ -12937,6 +12937,468 @@
       "editable": true
     },
     {
+      "id": "mission.knowRoad.enabled",
+      "group": "선택형 미션",
+      "section": "mission",
+      "title": "미션 · 길 아는 기사 · 사용",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 호출판 미션에 '길 아는 기사'가 섞여 나옵니다. 0이면 기존 네 가지만 나옵니다.",
+      "affects": [
+        "호출판"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.ApplyMissions",
+      "editable": true
+    },
+    {
+      "id": "mission.knowRoad.bonusPercent",
+      "group": "선택형 미션",
+      "section": "mission",
+      "title": "미션 · 길 아는 기사 · 팁 비율",
+      "type": "integer",
+      "defaultValue": "15",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "길안내 없이 도착하면 운임의 이 비율을 팁으로 받습니다(100원 단위 올림, 운임과 별도 줄).",
+      "affects": [
+        "운임"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "MissionRules.Bonus",
+      "editable": true
+    },
+    {
+      "id": "mission.knowRoad.detourFactor",
+      "group": "선택형 미션",
+      "section": "mission",
+      "title": "미션 · 길 아는 기사 · 허용 우회 배수",
+      "type": "number",
+      "defaultValue": "1.35",
+      "min": 1,
+      "max": 3,
+      "unit": "배",
+      "description": "실제 주행 거리가 약정 경로 거리 × 이 값 + 여유 거리를 넘으면 미션이 끝납니다(벌칙 없음).",
+      "affects": [
+        "호출판"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "MissionRules.KnowRoadLimit",
+      "editable": true
+    },
+    {
+      "id": "mission.knowRoad.slackMetres",
+      "group": "선택형 미션",
+      "section": "mission",
+      "title": "미션 · 길 아는 기사 · 여유 거리",
+      "type": "number",
+      "defaultValue": "120",
+      "min": 0,
+      "max": 1000,
+      "unit": "m",
+      "description": "짧은 운송에서 차로 변경과 정차 위치 차이를 봐주는 고정 여유 거리.",
+      "affects": [
+        "호출판"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "MissionRules.KnowRoadLimit",
+      "editable": true
+    },
+    {
+      "id": "home.eveningDrive.enabled",
+      "group": "생활",
+      "section": "home",
+      "title": "퇴근 후 드라이브 · 사용",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 하루 정산 화면에 '퇴근 후 드라이브' 버튼이 나옵니다. 영업 시계·수익·연료에는 영향이 없습니다.",
+      "affects": [
+        "정산 화면"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "BusinessProgress.StartEveningDrive",
+      "editable": true
+    },
+    {
+      "id": "home.eveningDrive.hour",
+      "group": "생활",
+      "section": "home",
+      "title": "퇴근 후 드라이브 · 조명 시각",
+      "type": "number",
+      "defaultValue": "21",
+      "min": 0,
+      "max": 23.9,
+      "unit": "시",
+      "description": "드라이브 중 하늘과 가로등 조명을 맞출 시각. 21이면 밤입니다.",
+      "affects": [
+        "낮밤 조명"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DayLightController.ReadClock",
+      "editable": true
+    },
+    {
+      "id": "home.eveningDrive.radioSeconds",
+      "group": "생활",
+      "section": "home",
+      "title": "퇴근 후 드라이브 · 라디오 간격",
+      "type": "number",
+      "defaultValue": "45",
+      "min": 15,
+      "max": 600,
+      "unit": "초",
+      "description": "드라이브 중 은계 FM 자막 한 줄이 나오는 간격.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "EveningDriveRules.RadioLine",
+      "editable": true
+    },
+    {
+      "id": "radio.evening.1",
+      "group": "생활",
+      "section": "radio",
+      "title": "밤 드라이브 멘트 1",
+      "type": "text",
+      "defaultValue": "은계 FM, 밤 드라이브에 어울리는 노래를 이어서 들려드립니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "퇴근 후 드라이브 중 차례로 나오는 자막.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.evening.2",
+      "group": "생활",
+      "section": "radio",
+      "title": "밤 드라이브 멘트 2",
+      "type": "text",
+      "defaultValue": "오늘 하루도 애쓰셨습니다. 창문을 조금 열어 보세요.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "퇴근 후 드라이브 중 차례로 나오는 자막.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "radio.evening.3",
+      "group": "생활",
+      "section": "radio",
+      "title": "밤 드라이브 멘트 3",
+      "type": "text",
+      "defaultValue": "은계호수공원 쪽 밤길이 한산하다는 제보입니다.",
+      "min": null,
+      "max": null,
+      "unit": "",
+      "description": "퇴근 후 드라이브 중 차례로 나오는 자막.",
+      "affects": [
+        "라디오 자막"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RadioTicker",
+      "editable": true
+    },
+    {
+      "id": "feel.vehicle.starter.steerResponse",
+      "group": "차량 손맛",
+      "section": "feel",
+      "title": "아버지의 택시 · 핸들 반응",
+      "type": "number",
+      "defaultValue": "1",
+      "min": 0.5,
+      "max": 2,
+      "unit": "배",
+      "description": "핸들이 입력을 따라가는 빠르기. 1이 표준(PvP 표준 차량과 같음).",
+      "affects": [
+        "조향"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "VehicleFeel.Apply",
+      "editable": true
+    },
+    {
+      "id": "feel.vehicle.starter.lean",
+      "group": "차량 손맛",
+      "section": "feel",
+      "title": "아버지의 택시 · 차체 기울기",
+      "type": "number",
+      "defaultValue": "1.25",
+      "min": 0,
+      "max": 2,
+      "unit": "배",
+      "description": "가감속·선회 때 보이는 차체 기울기(연출만, 물리 영향 없음).",
+      "affects": [
+        "화면 연출"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "VehicleFeel.Apply",
+      "editable": true
+    },
+    {
+      "id": "feel.vehicle.starter.dip",
+      "group": "차량 손맛",
+      "section": "feel",
+      "title": "아버지의 택시 · 제동 쏠림",
+      "type": "number",
+      "defaultValue": "1.2",
+      "min": 0,
+      "max": 2,
+      "unit": "배",
+      "description": "제동할 때 화면이 앞으로 숙여지는 정도(연출만).",
+      "affects": [
+        "화면 연출"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "VehicleFeel.Apply",
+      "editable": true
+    },
+    {
+      "id": "feel.vehicle.starter.brakeRamp",
+      "group": "차량 손맛",
+      "section": "feel",
+      "title": "아버지의 택시 · 브레이크 드는 시간",
+      "type": "number",
+      "defaultValue": "0",
+      "min": 0,
+      "max": 1,
+      "unit": "초",
+      "description": "일반 제동이 최대까지 드는 시간. 0이면 바로 듭니다(표준). 스페이스 급제동은 항상 즉시.",
+      "affects": [
+        "제동"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "VehicleFeel.Apply",
+      "editable": true
+    },
+    {
+      "id": "feel.vehicle.hybrid.steerResponse",
+      "group": "차량 손맛",
+      "section": "feel",
+      "title": "하이브리드 세단 · 핸들 반응",
+      "type": "number",
+      "defaultValue": "1.25",
+      "min": 0.5,
+      "max": 2,
+      "unit": "배",
+      "description": "핸들이 입력을 따라가는 빠르기. 1이 표준.",
+      "affects": [
+        "조향"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "VehicleFeel.Apply",
+      "editable": true
+    },
+    {
+      "id": "feel.vehicle.hybrid.lean",
+      "group": "차량 손맛",
+      "section": "feel",
+      "title": "하이브리드 세단 · 차체 기울기",
+      "type": "number",
+      "defaultValue": "0.8",
+      "min": 0,
+      "max": 2,
+      "unit": "배",
+      "description": "가감속·선회 때 보이는 차체 기울기(연출만).",
+      "affects": [
+        "화면 연출"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "VehicleFeel.Apply",
+      "editable": true
+    },
+    {
+      "id": "feel.vehicle.hybrid.dip",
+      "group": "차량 손맛",
+      "section": "feel",
+      "title": "하이브리드 세단 · 제동 쏠림",
+      "type": "number",
+      "defaultValue": "0.8",
+      "min": 0,
+      "max": 2,
+      "unit": "배",
+      "description": "제동할 때 화면이 앞으로 숙여지는 정도(연출만).",
+      "affects": [
+        "화면 연출"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "VehicleFeel.Apply",
+      "editable": true
+    },
+    {
+      "id": "feel.vehicle.hybrid.brakeRamp",
+      "group": "차량 손맛",
+      "section": "feel",
+      "title": "하이브리드 세단 · 브레이크 드는 시간",
+      "type": "number",
+      "defaultValue": "0",
+      "min": 0,
+      "max": 1,
+      "unit": "초",
+      "description": "일반 제동이 최대까지 드는 시간. 0이면 바로 듭니다.",
+      "affects": [
+        "제동"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "VehicleFeel.Apply",
+      "editable": true
+    },
+    {
+      "id": "feel.vehicle.lpg.steerResponse",
+      "group": "차량 손맛",
+      "section": "feel",
+      "title": "넓은 LPG 택시 · 핸들 반응",
+      "type": "number",
+      "defaultValue": "0.85",
+      "min": 0.5,
+      "max": 2,
+      "unit": "배",
+      "description": "핸들이 입력을 따라가는 빠르기. 1이 표준.",
+      "affects": [
+        "조향"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "VehicleFeel.Apply",
+      "editable": true
+    },
+    {
+      "id": "feel.vehicle.lpg.lean",
+      "group": "차량 손맛",
+      "section": "feel",
+      "title": "넓은 LPG 택시 · 차체 기울기",
+      "type": "number",
+      "defaultValue": "1.1",
+      "min": 0,
+      "max": 2,
+      "unit": "배",
+      "description": "가감속·선회 때 보이는 차체 기울기(연출만).",
+      "affects": [
+        "화면 연출"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "VehicleFeel.Apply",
+      "editable": true
+    },
+    {
+      "id": "feel.vehicle.lpg.dip",
+      "group": "차량 손맛",
+      "section": "feel",
+      "title": "넓은 LPG 택시 · 제동 쏠림",
+      "type": "number",
+      "defaultValue": "1.1",
+      "min": 0,
+      "max": 2,
+      "unit": "배",
+      "description": "제동할 때 화면이 앞으로 숙여지는 정도(연출만).",
+      "affects": [
+        "화면 연출"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "VehicleFeel.Apply",
+      "editable": true
+    },
+    {
+      "id": "feel.vehicle.lpg.brakeRamp",
+      "group": "차량 손맛",
+      "section": "feel",
+      "title": "넓은 LPG 택시 · 브레이크 드는 시간",
+      "type": "number",
+      "defaultValue": "0.2",
+      "min": 0,
+      "max": 1,
+      "unit": "초",
+      "description": "일반 제동이 최대까지 드는 시간. 값이 클수록 페달이 부드럽고 정지 거리가 조금 늘어납니다.",
+      "affects": [
+        "제동"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "VehicleFeel.Apply",
+      "editable": true
+    },
+    {
       "id": "display.background.diner",
       "group": "생활 시설",
       "section": "시설 배경",

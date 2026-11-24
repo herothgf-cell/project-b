@@ -175,6 +175,7 @@ public static class OneDayHUD {
    if(multi&&GUI.Button(new Rect(x+25,y+492+extra,325,40),b.WallMemoPrompt?"숙소 · 벽 메모":e.Account.HasHomeBase?HomeBasePresentation.Name:"내 공간 · 방/차고",b.WallMemoPrompt?CasualUI.Action(16):button)){b.ArchivedRoom=null;b.GarageTab=false;b.RoomOpen=true;}
    CompletedDay roomRecord=null;for(int ri=b.completedDays.Count-1;ri>=0;ri--)if(b.completedDays[ri].id!=s.law.ids.campaign&&b.completedDays[ri].room!=null){roomRecord=b.completedDays[ri];break;}if(multi&&roomRecord!=null&&GUI.Button(new Rect(x+370,y+492+extra,325,40),"이전 완료 방 보기",button)){b.ArchivedRoom=roomRecord.room;b.RoomOpen=true;}
    if(!b.SaveFailed&&b.StoryMonologue.Length>0)GUI.Label(new Rect(x+25,y+537+extra,325,42),b.StoryMonologue,small);
+   if(b.CanStartEveningDrive&&GUI.Button(new Rect(x+25,y+597+extra,325,40),"퇴근 후 드라이브 (기록·수익 영향 없음)",button))b.StartEveningDrive();
    GUI.enabled=!b.SaveFailed;
    if(b.CanContinueCareer){
     if(GUI.Button(new Rect(x+370,y+590+extra,325,55),(e.Day+1)+"일차 영업 준비",CasualUI.Action(18)))b.BeginContinuousCareer();

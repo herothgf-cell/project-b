@@ -6,6 +6,8 @@ public class TaxiController : MonoBehaviour {
     public float ManualSteeringGain=1,ManualBrakeGain=1;
     // Owned-vehicle turning trait (plan 22). 1 = standard taxi (starter and all PVP cars).
     public float VehicleSteerFactor=1;
+    // Per-car feel (single only, VehicleFeel.Apply). 1/1/1/0 is exactly the standard taxi, which PVP always uses.
+    public float VehicleSteerResponse=1,VehicleLean=1,VehicleDip=1,VehicleBrakeRamp=0;float serviceBrake;
     // Steering feel for validation drivers: -1 follows the rule below, 0 casual, 1 sim.
     public int SteeringFeelOverride=-1;
     // PvP (local bots, LAN owner prediction and replicas) always uses sim, so every car shares one
@@ -54,7 +56,7 @@ public class TaxiController : MonoBehaviour {
             float keyboard=(Input.GetKey(KeyCode.D)||Input.GetKey(KeyCode.RightArrow)?1:0)-(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.LeftArrow)?1:0);
             var controls=DrivingSettings.Current;float pad=Input.GetAxisRaw("TaxiSteer"),lateral=controls.Input(keyboard,pad);
             if(assistance)assistance.ReadInput(Mathf.Abs(pad)>.15f?pad:keyboard);
-            if(!assistance||!assistance.Active)steer=controls.Advance(steer,lateral,Speed,Time.deltaTime);
+            if(!assistance||!assistance.Active)steer=controls.Advance(steer,lateral,Speed,Time.deltaTime*VehicleSteerResponse);
             brake=Input.GetKey(KeyCode.Space)||Input.GetKey(KeyCode.JoystickButton2);
         }
         for(int i=0;i<4;i++) {Vector3 p; Quaternion q; wheels[i].GetWorldPose(out p,out q); visuals[i].SetPositionAndRotation(p,q*Quaternion.Euler(0,0,90));}
@@ -67,6 +69,8 @@ public class TaxiController : MonoBehaviour {
         bool driverPedals=!automated||NetworkPredicted||AutomatedHumanInput;
         var manual=driverPedals?pedalIntent.Resolve(throttle,Speed,brake):DriveMath.Resolve(throttle,Speed,brake);
         manual=ApplyBrakePreference(manual,brake,Mathf.Abs(throttle)>.01f);
+        // A soft pedal builds service braking over VehicleBrakeRamp seconds; the brake key (Space) and release stay instant.
+        if(VehicleBrakeRamp>0&&!automated&&!NetworkPredicted&&!brake){serviceBrake=manual.brake>serviceBrake?Mathf.MoveTowards(serviceBrake,manual.brake,Time.fixedDeltaTime/VehicleBrakeRamp):manual.brake;manual.brake=serviceBrake;}else serviceBrake=manual.brake;
         // Physics-time pedal ramp is identical for keyboard/pad and automated validation.
         // Braking and releasing the accelerator remain prompt, including a direction change.
         if(manual.brake>0||manual.motor*motorDemand<0)motorDemand=0;
