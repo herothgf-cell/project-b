@@ -55,7 +55,7 @@
 ## 변경 파일
 
 - 새 코드: `unity/EungyeTaxi/Assets/Scripts/RoadSpeedLimits.cs`(조회, 속도계 표시), `SpeedLimitProbe.cs`(실행본 검사), `Assets/Editor/SpeedLimitChecks.cs`(규칙 검사)
-- 고친 코드: `DrivingLaw.cs`(제한 표본, 과속 판정), `TrafficSystem.cs`(`RoadSpeedLimit`), `TrafficCar.cs`(순항 속도), `CockpitUI.cs`·`DrivingHudArt.cs`(표시)
+- 고친 코드: `ContentTuning.cs`와 `tools/content-editor/profile.mjs`(옛 프로필 호환 목록), `DrivingLaw.cs`(제한 표본, 과속 판정), `TrafficSystem.cs`(`RoadSpeedLimit`), `TrafficCar.cs`(순항 속도), `CockpitUI.cs`·`DrivingHudArt.cs`(표시)
 - 자료: `config/maps/eungye-speed-limits.json`, `unity/EungyeTaxi/Assets/Resources/eungye-speed-limits.json`
 - 설정: `config/content/catalog.json`, `default-profile.json`과 Resources 사본(항목 12개)
 - 실행본: `builds/EungyeTaxi/`, `distribution/EungyeTaxi-build-manifest.json`
@@ -91,6 +91,7 @@
 ### 검사 중 찾아 고친 것
 
 - **이름 없는 차로가 50으로 읽혔다.** 지도의 차로 2,128개 가운데 670개(좌회전·유턴 대기 차로, 교차로 연결 차로)에 도로 이름이 없어, 수인로 한가운데의 대기 차로가 일반 도로 값 50으로 나왔다. 이름 없는 차로는 "들어오는 쪽으로 이어진 도로"의 이름을 따르고, 없으면 "나가는 쪽 도로"를 따르도록 고쳤다(`TrafficSystem.LimitRoadName`).
+- **설정 툴 시험 4건이 실패했다.** 새 `law.speed.*` 항목이 "옛 프로필에 없어도 되는 은계 싱글 항목" 목록에 없어, 예전 프로필을 옮기는 시험이 "누락된 ID"로 실패했다. 설정 툴(`tools/content-editor/profile.mjs`)과 실행본(`ContentTuning.cs`)의 목록에 `law.speed.`를 추가했다. 고친 뒤 109건 통과하고, 실행본을 다시 빌드해 검사 4종을 다시 돌렸다.
 - 검사 자체의 문제 세 건(차로에서 5m 떨어진 좌표, 차로와 어긋난 주행 방향, 강제 주행이 교차로를 지나며 생긴 신호 기록을 과속으로 센 것)은 검사를 고쳤다. 강제 주행 중 신호 위반 1건이 따로 기록됐는데 과속 판정과는 무관하다.
 
 ### 검사의 한계
