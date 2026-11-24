@@ -15,7 +15,7 @@
 
 2026-11-24 직접 플레이 피드백(카메라 흔들림·1인칭 높이·주행음·설정 막대·지도 호출 패널·P51 신호 70초)을 소스와 지도 r53에 반영했다. 배포 실행본은 아직 r52이며 제한속도 작업과 합쳐 한 번 재빌드해야 한다. [기록](work-history/2026-11-24-test-feedback-fixes.md)
 
-운전 중 판단을 늘리는 공차 운영·길 지식·규칙 속 돌발(구 기획 37)은 2026-11-24에 [08 재미 보강 5장](content-design/08-fun-improvements.md)으로 합쳤고 구현 승인 전이다. 2026-11-24에 미션 "길 아는 기사", 정산 뒤 퇴근 후 드라이브, 차종별 손맛을 넣었고, 방지턱·시외 콜·도로 구간·유혹·돌발·따라가기·승강장은 [설계안](work-history/2026-11-24-next-candidates-design.md)만 있다. [확인 체크리스트](work-history/2026-11-24-away-run-3-checklist.md)
+운전 중 판단을 늘리는 공차 운영·길 지식·규칙 속 돌발(구 기획 37)은 2026-11-24에 [08 재미 보강 5장](content-design/08-fun-improvements.md)으로 합쳤고 구현 승인 전이다. 2026-11-24에 미션 "길 아는 기사", 정산 뒤 퇴근 후 드라이브, 차종별 손맛을 넣었고, 방지턱·시외 콜·도로 구간·유혹·돌발·따라가기·승강장은 [설계안](work-history/2026-11-24-next-candidates-design.md)만 있다. [확인 체크리스트](work-history/2026-11-24-away-run-3-checklist.md) 같은 날 은계 제한속도 바탕(수인로 60, 대은로 50, 어린이보호구역 30, 그 밖은 게임 추정 50/번길 30)을 넣었다. [구현·검증](work-history/2026-11-24-eungye-speed-limits.md)
 
 기획 문서는 2026-11-23 주제별 10개(00~09)로 합쳤다. 이전 기획 37(특별 운행·지도 판매점·주기 정비·소지금 장부·기사 성장)은 개발 범위에서 제외해 [보관](content-design/archive/37-driver-life-and-business.md)했고, 다음 검토 주제는 [08 운전하는 20분의 재미 보강](content-design/08-fun-improvements.md)이다. 숙소의 실제 호실 이전과 기사 평점은 후속 항목이다. [기획 목록](content-design/README.md) · [개발 체크리스트](prototype-development-checklist.md)
 

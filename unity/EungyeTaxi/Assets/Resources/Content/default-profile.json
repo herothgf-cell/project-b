@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "539226990e73c8bc2a21a7452ca2548bbc635990b42f290cc7e6facba9974d10",
+  "contentHash": "8c87c53e72ef278886ea753f6bfc01c080ec88e5c39e05e51c165dc038215b47",
   "values": [
     {
       "id": "radio.station",
@@ -2299,6 +2299,54 @@
     {
       "id": "feel.vehicle.lpg.brakeRamp",
       "value": "0.2"
+    },
+    {
+      "id": "law.speed.enabled",
+      "value": "1"
+    },
+    {
+      "id": "law.speed.defaultKmh",
+      "value": "50"
+    },
+    {
+      "id": "law.speed.alleyKmh",
+      "value": "30"
+    },
+    {
+      "id": "law.speed.zoneRadius",
+      "value": "60"
+    },
+    {
+      "id": "law.speed.toleranceKmh",
+      "value": "10"
+    },
+    {
+      "id": "law.speed.seconds",
+      "value": "3"
+    },
+    {
+      "id": "law.speed.repeatSeconds",
+      "value": "20"
+    },
+    {
+      "id": "law.speed.penalty",
+      "value": "5"
+    },
+    {
+      "id": "law.speed.heavyOverKmh",
+      "value": "20"
+    },
+    {
+      "id": "law.speed.heavyPenalty",
+      "value": "10"
+    },
+    {
+      "id": "law.speed.passengerPenalty",
+      "value": "3"
+    },
+    {
+      "id": "law.speed.trafficPercent",
+      "value": "90"
     },
     {
       "id": "display.background.diner",

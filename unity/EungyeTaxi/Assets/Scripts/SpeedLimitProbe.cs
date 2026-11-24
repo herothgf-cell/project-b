@@ -1,0 +1,101 @@
+using System;
+using System.Collections;
+using System.IO;
+using System.Linq;
+using System.Text;
+using UnityEngine;
+
+// Eungye road speed limits, player acceptance (2026-11-24). The taxi is posed on real lanes and the limit the
+// game reports is compared with the surveyed values; then the taxi is held at a fixed speed on 수인로 to see
+// that staying inside the tolerance records nothing and going past it records once per repeat window.
+// The speed is forced by the probe, so this checks the rule, not how driving under a limit feels.
+public sealed class SpeedLimitProbe : MonoBehaviour {
+ const string Flag="-speedLimitCheck";
+ DriveSession s;int checks;readonly StringBuilder report=new StringBuilder();string output;
+ [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+ static void Attach(){if(Array.IndexOf(Environment.GetCommandLineArgs(),Flag)>=0){Application.runInBackground=true;new GameObject("Speed limit acceptance").AddComponent<SpeedLimitProbe>();}}
+ void Check(bool ok,string reason){checks++;report.AppendLine((ok?"PASS ":"FAIL ")+reason);Debug.Log("SPEEDLIMIT_PLAYER "+(ok?"PASS ":"FAIL ")+reason);if(!ok)throw new Exception(reason);}
+ // Limit at a map point, trying headings until a lane accepts one. Returns the heading that matched.
+ float LimitAt(float x,float z,out Vector3 heading,out bool table){
+  var p=new Vector3(x,0,z);table=false;heading=Vector3.forward;
+  for(int i=0;i<24;i++){var h=Quaternion.Euler(0,i*15,0)*Vector3.forward;bool t;float limit=s.traffic.RoadSpeedLimit(p,h,out t);if(limit>0){heading=h;table=t;return limit;}}
+  return 0;
+ }
+ // Direction of the lane under a point: the middle of the run of headings the lane lookup accepts.
+ Vector3 LaneHeading(float x,float z,Vector3 near){
+  var p=new Vector3(x,0,z);float start=Mathf.Atan2(near.x,near.z)*Mathf.Rad2Deg;int low=0,high=0;bool t;
+  while(low>-90&&s.traffic.RoadSpeedLimit(p,Quaternion.Euler(0,start+low-1,0)*Vector3.forward,out t)>0)low--;
+  while(high<90&&s.traffic.RoadSpeedLimit(p,Quaternion.Euler(0,start+high+1,0)*Vector3.forward,out t)>0)high++;
+  return Quaternion.Euler(0,start+(low+high)*.5f,0)*Vector3.forward;
+ }
+ // Only speed-limit records count here: the forced run also crosses a signalled junction, which the law ledger records on its own.
+ int Speeding(){return s.law.ledger.Events.Count(e=>e.family=="제한속도");}
+ string Others(){return string.Join(", ",s.law.ledger.Events.Where(e=>e.family!="제한속도").Select(e=>e.family+"/"+e.action).ToArray());}
+ void Pose(Vector3 p,Vector3 heading){var t=s.taxi;t.body.velocity=Vector3.zero;t.body.angularVelocity=Vector3.zero;t.body.position=p+Vector3.up*.65f;t.body.rotation=Quaternion.LookRotation(heading);t.transform.SetPositionAndRotation(t.body.position,t.body.rotation);Physics.SyncTransforms();}
+ IEnumerator Hold(Vector3 heading,float kmh,float seconds){
+  float until=Time.time+seconds,give=Time.realtimeSinceStartup+seconds*4+5;object wait=null;
+  while(Time.time<until){if(Time.realtimeSinceStartup>give){report.AppendLine("INFO hold stalled: timeScale="+Time.timeScale+" paused="+s.paused+" summary="+s.business.ShowingSummary+" accident="+(s.accident?s.accident.State.phase.ToString():"-")+" notice="+s.business.notice);yield break;}var v=heading*(kmh/3.6f);v.y=s.taxi.body.velocity.y;s.taxi.body.velocity=v;s.taxi.body.angularVelocity=Vector3.zero;yield return wait;}
+ }
+ IEnumerator Start(){
+  float limitTime=Time.realtimeSinceStartup+180;
+  while(!(s=FindObjectsOfType<DriveSession>().FirstOrDefault(x=>!x.IsSimulationBot))||!s.StartupReady){if(!FindObjectOfType<DriveSession>()){var mode=FindObjectOfType<UnifiedModeBootstrap>();if(mode)mode.StartSingle();}if(Time.realtimeSinceStartup>limitTime){Finish("startup timeout");yield break;}yield return null;}
+  output=ContentTuningRuntime.Argument("-speedLimitOutput");if(string.IsNullOrEmpty(output))output=Path.GetFullPath("artifacts/speedlimit");Directory.CreateDirectory(output);
+  yield return null;string error=null;var b=s.business;Vector3 suin=Vector3.forward;bool table;Vector3 h;
+  try{
+   b.preparing=false;s.paused=false;Time.timeScale=1;s.jobs.ClearForDay();
+   Check(s.traffic.EungyeSingle&&RoadSpeedLimits.Enabled,"Eungye single with road limits on");
+   Check(RoadSpeedLimits.Data!=null&&RoadSpeedLimits.Data.zones.Length==13,"limit file loaded in the player");
+   Check(LimitAt(450,450,out suin,out table)==60&&table,"수인로 at the camera point (450,450) reports 60");
+   Check(LimitAt(782,384,out h,out table)==60,"수인로 at the second camera point reports 60");
+   Check(LimitAt(442,1342,out h,out table)==50,"대은로 reports 50");
+   Check(LimitAt(872,1541,out h,out table)==50,"계수로 (estimate) reports 50");
+   Check(LimitAt(1235,726,out h,out table)==50,"마유로 (estimate) reports 50");
+   Check(LimitAt(487,1113,out h,out table)==30,"은행로144번길 (alley rule) reports 30");
+   Check(LimitAt(796.3f,104.3f,out h,out table)==30,"은계로 at 은빛초 (school zone) reports 30");
+   Check(LimitAt(821,823,out h,out table)==50,"은계로 away from schools reports 50");
+   Check(LimitAt(1097,685,out h,out table)==30,"은계중앙로 at 은계유치원 (school zone) reports 30");
+   Check(LimitAt(534,435,out h,out table)==60,"수인로 turn pocket without a road name (534,435) still reports 60");
+  }catch(Exception e){error=e.ToString();}
+  if(error!=null){Finish(error);yield break;}
+  // Ordinary cars: let them run, then read their speed against the limit of the lane they are on.
+  yield return new WaitForSeconds(25);
+  try{
+   var cars=FindObjectsOfType<TrafficCar>().Where(c=>c.isActiveAndEnabled&&c.Visible).ToArray();int known=0,fast=0;float worst=0,top=0;
+   foreach(var c in cars){float limit=s.traffic.RoadSpeedLimit(c);if(limit<=0)continue;known++;float kmh=c.speed*3.6f;top=Mathf.Max(top,kmh);worst=Mathf.Max(worst,kmh-limit);if(limit>=60&&kmh>13f*3.6f+1)fast++;}
+   report.AppendLine("INFO traffic cars="+cars.Length+" with a limit="+known+" fastest="+top.ToString("0.0")+"km/h largest (speed-limit)="+worst.ToString("0.0")+"km/h cars above the old 47km/h cap on a 60 road="+fast);
+   Check(cars.Length>0&&known>0,"ordinary cars have a limit on their lane ("+known+"/"+cars.Length+")");
+   Check(worst<=.5f,"no ordinary car is above the limit of its lane (largest excess "+worst.ToString("0.0")+" km/h)");
+   foreach(var c in FindObjectsOfType<TrafficCar>())c.gameObject.SetActive(false);
+  }catch(Exception e){error=e.ToString();}
+  if(error!=null){Finish(error);yield break;}
+  // Judgement on 수인로 (limit 60, tolerance 10, 3 s, repeat 20 s).
+  suin=LaneHeading(450.2f,450.3f,suin);var start=new Vector3(450.2f,0,450.3f);int before=Speeding();
+  // The forced runs are short and re-posed so the taxi stays on the straight before the next junction.
+  if(s.accident)s.accident.Suppress(120);
+  Pose(start,suin);yield return new WaitForSeconds(.6f);
+  ScreenCapture.CaptureScreenshot(Path.Combine(output,"speed-limit.png"));yield return null;
+  yield return Hold(suin,68,4.5f);
+  try{Check(s.law.CurrentLimit==60,"the taxi reads 60 on 수인로 (read "+s.law.CurrentLimit+" at "+s.taxi.transform.position.x.ToString("0")+","+s.taxi.transform.position.z.ToString("0")+")");Check(Speeding()==before,"68 km/h for 4.5 s is inside the 10 km/h tolerance: nothing recorded");}catch(Exception e){error=e.ToString();}
+  if(error!=null){Finish(error);yield break;}
+  Pose(start,suin);yield return Hold(suin,75,2f);yield return Hold(suin,40,1f);
+  try{Check(Speeding()==before,"75 km/h for 2 s is shorter than 3 s: nothing recorded");}catch(Exception e){error=e.ToString();}
+  if(error!=null){Finish(error);yield break;}
+  Pose(start,suin);yield return Hold(suin,75,2f);Pose(start,suin);yield return Hold(suin,75,1.6f);
+  try{
+   Check(Speeding()==before+1,"75 km/h held past 3 s records one violation");
+   var last=s.law.ledger.Events.Last(e=>e.family=="제한속도");Check(last.Deduction==RoadSpeedLimits.Penalty&&last.reason.Contains("60"),"the record takes 5 points and names the 60 limit ("+last.reason+")");
+  }catch(Exception e){error=e.ToString();}
+  if(error!=null){Finish(error);yield break;}
+  // Ease off, then go over again inside the repeat window.
+  report.AppendLine("INFO before the repeat run: timeScale="+Time.timeScale+" paused="+s.paused+" summary="+s.business.ShowingSummary+" accident="+(s.accident?s.accident.State.phase.ToString():"-"));
+  Pose(start,suin);yield return Hold(suin,50,1f);yield return Hold(suin,78,2.2f);Pose(start,suin);yield return Hold(suin,78,2.3f);
+  try{Check(Speeding()==before+1,"a second excess inside 20 s is not recorded again");}catch(Exception e){error=e.ToString();}
+  report.AppendLine("INFO other law records during the forced run: "+Others());
+  Finish(error);
+ }
+ void Finish(string error){
+  if(error!=null)Debug.LogError(error);
+  if(output!=null)File.WriteAllText(Path.Combine(output,"report.txt"),report.ToString()+(error??""));
+  Debug.Log("SPEEDLIMIT_PLAYER_"+(error==null?"OK":"FAIL")+" checks="+checks+" "+(error??""));Application.Quit(error==null?0:1);
+ }
+}

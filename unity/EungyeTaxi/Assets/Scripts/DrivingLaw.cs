@@ -22,7 +22,25 @@ public partial class DrivingLaw : MonoBehaviour {
  public bool HistoryOpen {get{return showHistory;}}
  Vector3 previous; bool initialized,showHistory; Vector2 scroll;
  readonly Dictionary<string,bool> stops=new Dictionary<string,bool>();
- float speedingSeconds;bool speedRecorded;void CheckEditorSpeed(){float limit=session.traffic.EditorSpeedLimit(session.taxi.transform.position,session.taxi.transform.forward);if(limit<=0||session.taxi.body.velocity.magnitude*3.6f<=limit+ContentTuning.Number("law.editorSpeed.toleranceKmh",3)){speedingSeconds=0;speedRecorded=false;return;}speedingSeconds+=Time.fixedDeltaTime;if(speedingSeconds<ContentTuning.Number("law.editorSpeed.seconds",2)||speedRecorded)return;speedRecorded=true;var e=new LawEvent{recoveryPolicyVersion=1,id=ids.Next("editor-speed"),day=Day,family="사용자 제한속도",action="제한속도 초과",reason="게임 설정 "+limit+"km/h · "+ContentTuning.Number("law.editorSpeed.toleranceKmh",3)+"km/h 여유 초과 "+ContentTuning.Number("law.editorSpeed.seconds",2)+"초",speed=session.taxi.body.velocity.magnitude,seconds=(float)session.business.ledger.Elapsed};e.Add("editor-speed",LawVerdict.Violation,ContentTuning.Int("law.editorSpeed.penalty",5));ledger.Record(e);} class Entry {public SlowRightTurnState slow;public int necessaryBefore;public bool edited,uturnSigned,uturnAllowed;public string uturnLane;public SignalColor left;public TrafficJunction junction;public Vector3 direction;public int axis,sign;public bool stopped,pedestrianYield,pedestrianConflict,encroached,entered;public RoadObservation observed;public string id;}
+ float speedingSeconds,limitSampleAt,speedRepeatUntil;bool speedRecorded,limitFromTable;
+ // Limit of the road under the taxi: a map-editor sign, or the Eungye road table (RoadSpeedLimits). 0 = none.
+ public float CurrentLimit {get;private set;}
+ void SampleLimit(){
+  if(Time.time<limitSampleAt)return;limitSampleAt=Time.time+.2f;bool table=false;
+  CurrentLimit=session&&session.traffic&&session.taxi?session.traffic.RoadSpeedLimit(session.taxi.transform.position,session.taxi.transform.forward,out table):0;limitFromTable=table;
+ }
+ void CheckEditorSpeed(){
+  float limit=CurrentLimit,kmh=session.taxi.body.velocity.magnitude*3.6f;
+  float tolerance=limitFromTable?RoadSpeedLimits.Tolerance:(float)ContentTuning.Number("law.editorSpeed.toleranceKmh",3),hold=limitFromTable?RoadSpeedLimits.Seconds:(float)ContentTuning.Number("law.editorSpeed.seconds",2);
+  if(limit<=0||kmh<=limit+tolerance){speedingSeconds=0;speedRecorded=false;return;}
+  speedingSeconds+=Time.fixedDeltaTime;if(speedingSeconds<hold||speedRecorded)return;speedRecorded=true;
+  // Table limits: one record per repeat window, so easing off and drifting over again is not a string of penalties.
+  if(limitFromTable){if(Time.time<speedRepeatUntil)return;speedRepeatUntil=Time.time+RoadSpeedLimits.RepeatSeconds;}
+  int penalty=limitFromTable?RoadSpeedLimits.PenaltyFor(kmh,limit):ContentTuning.Int("law.editorSpeed.penalty",5);
+  var e=new LawEvent{recoveryPolicyVersion=1,id=ids.Next(limitFromTable?"speed-limit":"editor-speed"),day=Day,family=limitFromTable?"제한속도":"사용자 제한속도",action="제한속도 초과",reason=(limitFromTable?"제한 ":"게임 설정 ")+limit+"km/h · "+tolerance+"km/h 여유 초과 "+hold+"초",speed=session.taxi.body.velocity.magnitude,seconds=(float)session.business.ledger.Elapsed};e.Add(limitFromTable?"speed-limit":"editor-speed",LawVerdict.Violation,penalty);ledger.Record(e);
+  if(limitFromTable&&kmh-limit>RoadSpeedLimits.HeavyOverKmh&&RoadSpeedLimits.PassengerPenalty>0&&session.manners&&session.jobs&&session.jobs.trip.State==TripState.OnTrip)session.manners.Deduct("speeding",RoadSpeedLimits.PassengerPenalty,"과속 · 손님이 불안해해요",RoadSpeedLimits.RepeatSeconds);
+ }
+ class Entry {public SlowRightTurnState slow;public int necessaryBefore;public bool edited,uturnSigned,uturnAllowed;public string uturnLane;public SignalColor left;public TrafficJunction junction;public Vector3 direction;public int axis,sign;public bool stopped,pedestrianYield,pedestrianConflict,encroached,entered;public RoadObservation observed;public string id;}
  Entry entry;
  readonly UpstreamUturnObserver upstreamUturn=new UpstreamUturnObserver();
  Vector3 previousCentre,previousHeading,centreEntryHeading;
@@ -78,6 +96,7 @@ public partial class DrivingLaw : MonoBehaviour {
  }
  void FixedUpdate(){
   if(PvpNativeLan.IsReplica(session)||PvpNativeLan.WaitingForWorld)return;
+  SampleLimit();
   if(!session||session.paused||session.business.ShowingSummary||session.business.EveningDrive)return;
   CheckEditorSpeed();var taxi=session.taxi;ObserveCentreLine(taxi,Time.time);ObserveWrongWay(Time.fixedDeltaTime);var front=taxi.transform.position+taxi.transform.forward*2;
   if(!initialized||Vector3.Distance(previous,front)>10){previous=front;initialized=true;entry=null;upstreamUturn.Reset();stops.Clear();return;}

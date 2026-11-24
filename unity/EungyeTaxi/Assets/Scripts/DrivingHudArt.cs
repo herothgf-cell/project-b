@@ -13,6 +13,7 @@ public static class DrivingHudArt {
  public static void Meter(Rect r,float value,Color color){Pill(r,new Color(.72f,.80f,.88f));if(value>0)Pill(new Rect(r.x+1,r.y+1,(r.width-2)*Mathf.Clamp01(value/100),r.height-2),color);}
  public static void Dial(Rect r,DriveSession s){
   Glass(r);
+  SpeedLimitBadge.Draw(new Rect(r.x+16,r.y+6,46,46),s);
   float speed=Mathf.Abs(s.taxi.Speed*3.6f);
   GUI.Label(new Rect(r.x+72,r.y+3,112,51),speed.ToString("0"),Text(40,null,true,TextAnchor.MiddleCenter));
   GUI.Label(new Rect(r.x+184,r.y+23,54,25),"km/h",Text(15,Light));

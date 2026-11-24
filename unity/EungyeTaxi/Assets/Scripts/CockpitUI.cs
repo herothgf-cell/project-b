@@ -51,6 +51,7 @@ public static class CockpitUI {
   GUI.Label(new Rect(r.x+110,r.y+60,100,22),"km/h",DrivingHudArt.Text(14,new Color(.7f,.82f,.96f),false,TextAnchor.MiddleCenter));
   var signal=s.signals;bool lit=signal&&signal.Lit;HudGlyph.Draw(new Rect(r.x+18,r.y+30,28,28),16,lit&&(signal.Hazards||signal.direction<0)?Color.green:Color.gray);HudGlyph.Draw(new Rect(r.xMax-44,r.y+30,28,28),17,lit&&(signal.Hazards||signal.direction>0)?Color.green:Color.gray);
   GUI.Label(new Rect(r.x+30,r.y+84,r.width-60,24),s.assisted.Active?"조향 보조 · H":"수동 운전 · H",DrivingHudArt.Text(13,Color.white,false,TextAnchor.MiddleCenter));
+  SpeedLimitBadge.Draw(new Rect(r.x+8,r.y+60,46,46),s);
  }
  public static void Draw(DriveHUD hud){
   var s=hud.session;var e=s.business.ledger;var jobs=s.jobs;var match=s.simulationMatch;var previous=GUI.matrix;float scale=Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));float w=Screen.width/scale,h=Screen.height/scale;

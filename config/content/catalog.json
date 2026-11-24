@@ -13399,6 +13399,263 @@
       "editable": true
     },
     {
+      "id": "law.speed.enabled",
+      "group": "법규",
+      "section": "law",
+      "title": "은계 제한속도 · 켜기",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 은계 싱글에서 도로별 제한속도를 적용합니다(속도계 옆 표시, 과속 판정, 일반 차량 속도). 0이면 이전처럼 제한속도 없이 달립니다. 지도 편집기의 제한속도 표지는 이 값과 무관하게 적용됩니다.",
+      "affects": [
+        "운전 점수",
+        "일반 차량 속도"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSpeedLimits.Enabled",
+      "editable": true
+    },
+    {
+      "id": "law.speed.defaultKmh",
+      "group": "법규",
+      "section": "law",
+      "title": "은계 제한속도 · 일반 도로(게임 추정)",
+      "type": "number",
+      "defaultValue": "50",
+      "min": 20,
+      "max": 100,
+      "unit": "km/h",
+      "description": "확인 자료가 없는 일반 도로의 제한속도. 수인로 60과 대은로 50은 확인된 값이라 자료 파일(eungye-speed-limits.json)에 따로 있습니다.",
+      "affects": [
+        "운전 점수",
+        "일반 차량 속도"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSpeedLimits.RoadLimit",
+      "editable": true
+    },
+    {
+      "id": "law.speed.alleyKmh",
+      "group": "법규",
+      "section": "law",
+      "title": "은계 제한속도 · 번길(게임 추정)",
+      "type": "number",
+      "defaultValue": "30",
+      "min": 10,
+      "max": 60,
+      "unit": "km/h",
+      "description": "이름이 '번길'로 끝나는 도로의 제한속도. 로드뷰로 본 세 곳은 어린이보호구역이었습니다.",
+      "affects": [
+        "운전 점수",
+        "일반 차량 속도"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSpeedLimits.RoadLimit",
+      "editable": true
+    },
+    {
+      "id": "law.speed.zoneRadius",
+      "group": "법규",
+      "section": "law",
+      "title": "어린이보호구역 · 적용 반경(게임 추정)",
+      "type": "number",
+      "defaultValue": "60",
+      "min": 10,
+      "max": 300,
+      "unit": "m",
+      "description": "확인된 보호구역 지점(단속 카메라·로드뷰)에서 이 거리 안은 30으로 봅니다. 실제 구간의 시작과 끝은 확인하지 못했습니다.",
+      "affects": [
+        "운전 점수",
+        "일반 차량 속도"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSpeedLimits.ZoneAt",
+      "editable": true
+    },
+    {
+      "id": "law.speed.toleranceKmh",
+      "group": "법규",
+      "section": "law",
+      "title": "과속 판정 · 여유",
+      "type": "number",
+      "defaultValue": "10",
+      "min": 0,
+      "max": 40,
+      "unit": "km/h",
+      "description": "제한속도를 이만큼 넘을 때까지는 판정하지 않습니다.",
+      "affects": [
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DrivingLaw.CheckEditorSpeed",
+      "editable": true
+    },
+    {
+      "id": "law.speed.seconds",
+      "group": "법규",
+      "section": "law",
+      "title": "과속 판정 · 지속 시간",
+      "type": "number",
+      "defaultValue": "3",
+      "min": 0.5,
+      "max": 20,
+      "unit": "초",
+      "description": "여유를 넘은 상태가 이 시간 이어져야 한 번 기록합니다.",
+      "affects": [
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DrivingLaw.CheckEditorSpeed",
+      "editable": true
+    },
+    {
+      "id": "law.speed.repeatSeconds",
+      "group": "법규",
+      "section": "law",
+      "title": "과속 판정 · 다시 기록하는 간격",
+      "type": "number",
+      "defaultValue": "20",
+      "min": 0,
+      "max": 300,
+      "unit": "초",
+      "description": "한 번 기록한 뒤 이 시간 안에는 다시 기록하지 않습니다.",
+      "affects": [
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DrivingLaw.CheckEditorSpeed",
+      "editable": true
+    },
+    {
+      "id": "law.speed.penalty",
+      "group": "법규",
+      "section": "law",
+      "title": "과속 판정 · 감점",
+      "type": "integer",
+      "defaultValue": "5",
+      "min": 0,
+      "max": 100,
+      "unit": "점",
+      "description": "과속 한 번의 운전 점수 감점.",
+      "affects": [
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSpeedLimits.PenaltyFor",
+      "editable": true
+    },
+    {
+      "id": "law.speed.heavyOverKmh",
+      "group": "법규",
+      "section": "law",
+      "title": "과속 판정 · 큰 초과 기준",
+      "type": "number",
+      "defaultValue": "20",
+      "min": 5,
+      "max": 80,
+      "unit": "km/h",
+      "description": "제한속도를 이만큼 넘으면 큰 초과로 봅니다.",
+      "affects": [
+        "운전 점수",
+        "손님 만족"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSpeedLimits.PenaltyFor",
+      "editable": true
+    },
+    {
+      "id": "law.speed.heavyPenalty",
+      "group": "법규",
+      "section": "law",
+      "title": "과속 판정 · 큰 초과 감점",
+      "type": "integer",
+      "defaultValue": "10",
+      "min": 0,
+      "max": 100,
+      "unit": "점",
+      "description": "큰 초과일 때의 운전 점수 감점.",
+      "affects": [
+        "운전 점수"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "RoadSpeedLimits.PenaltyFor",
+      "editable": true
+    },
+    {
+      "id": "law.speed.passengerPenalty",
+      "group": "법규",
+      "section": "law",
+      "title": "과속 · 손님 만족 감점",
+      "type": "integer",
+      "defaultValue": "3",
+      "min": 0,
+      "max": 30,
+      "unit": "점",
+      "description": "손님을 태우고 큰 초과로 기록될 때 손님 만족에서 빼는 점수. 0이면 손님 반응이 없습니다.",
+      "affects": [
+        "손님 만족"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "DrivingLaw.CheckEditorSpeed",
+      "editable": true
+    },
+    {
+      "id": "law.speed.trafficPercent",
+      "group": "법규",
+      "section": "law",
+      "title": "일반 차량 · 제한속도 대비 순항",
+      "type": "number",
+      "defaultValue": "90",
+      "min": 40,
+      "max": 100,
+      "unit": "%",
+      "description": "일반 차량이 달리는 속도를 제한속도의 몇 %로 둘지. 50 도로에서 90%면 시속 45km입니다.",
+      "affects": [
+        "일반 차량 속도"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "TrafficCar.DistrictCruiseSpeed",
+      "editable": true
+    },
+    {
       "id": "display.background.diner",
       "group": "생활 시설",
       "section": "시설 배경",
