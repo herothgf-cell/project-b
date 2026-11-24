@@ -662,6 +662,7 @@ public class BusinessProgress : MonoBehaviour {
  public void RecordFare(int amount){if(!enabledCampaign)return;if(ledger.Account!=null)ledger.RecordFare(session.law.tripId,amount);else ledger.RecordFare(amount);}
  public void RecordFailure(){if(session&&session.manners)session.manners.FinishTrip(false,ledger.Day);if(enabledCampaign)ledger.RecordFailure();}
  // 08 chapter 2: the passenger tip is its own account entry ("tip:<trip>"), never part of the fare.
+ public bool RecordHurry(string trip,int amount){return enabledCampaign&&amount>0&&!string.IsNullOrEmpty(trip)&&ledger.RecordHurry(trip,amount);}
  public void RecordMission(string trip,int amount){if(!enabledCampaign||amount<=0||string.IsNullOrEmpty(trip))return;ledger.RecordMission(trip,amount);}
  public void RecordTip(string trip,int amount){if(!enabledCampaign||amount<=0||string.IsNullOrEmpty(trip))return;ledger.RecordTip(trip,amount);}
  public bool RoomOpen; public PersonalRoomState ArchivedRoom;

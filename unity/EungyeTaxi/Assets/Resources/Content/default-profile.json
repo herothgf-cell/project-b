@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "2413ccf9c303602d2b33b247a05324331a41218b96f6d0350c485ac530319129",
+  "contentHash": "4aeb41a0c273619a7ee915c0d918bba83b88f6176239bd26a14b1f93357db223",
   "values": [
     {
       "id": "radio.station",
@@ -2227,6 +2227,46 @@
     {
       "id": "mission.knowRoad.slackMetres",
       "value": "120"
+    },
+    {
+      "id": "hurry.enabled",
+      "value": "1"
+    },
+    {
+      "id": "hurry.perShiftMax",
+      "value": "1"
+    },
+    {
+      "id": "hurry.rushChancePercent",
+      "value": "60"
+    },
+    {
+      "id": "hurry.otherChancePercent",
+      "value": "15"
+    },
+    {
+      "id": "hurry.minDistanceMetres",
+      "value": "600"
+    },
+    {
+      "id": "hurry.targetFactor",
+      "value": "0.9"
+    },
+    {
+      "id": "hurry.rewardPercent",
+      "value": "20"
+    },
+    {
+      "id": "hurry.safeTargetFactor",
+      "value": "0.95"
+    },
+    {
+      "id": "hurry.safeRewardPercent",
+      "value": "10"
+    },
+    {
+      "id": "hurry.forfeitOnSpeeding",
+      "value": "1"
     },
     {
       "id": "home.eveningDrive.enabled",

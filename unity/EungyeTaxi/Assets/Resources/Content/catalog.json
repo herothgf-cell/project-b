@@ -13021,6 +13021,216 @@
       "editable": true
     },
     {
+      "id": "hurry.enabled",
+      "group": "선택형 미션",
+      "section": "hurry",
+      "title": "유혹 · 켜기",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 승차 직후 손님이 \"좀 빨리 가 주세요\"를 부탁할 수 있습니다(은계 싱글).",
+      "affects": [
+        "유혹 사례금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "HurryRules.Blocked",
+      "editable": true
+    },
+    {
+      "id": "hurry.perShiftMax",
+      "group": "선택형 미션",
+      "section": "hurry",
+      "title": "유혹 · 하루 최대",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 10,
+      "unit": "건",
+      "description": "하루 영업에서 부탁이 나오는 최대 수.",
+      "affects": [
+        "유혹 사례금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "HurryRules.Blocked",
+      "editable": true
+    },
+    {
+      "id": "hurry.rushChancePercent",
+      "group": "선택형 미션",
+      "section": "hurry",
+      "title": "유혹 · 급한 손님 확률",
+      "type": "integer",
+      "defaultValue": "60",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "\"급한 손님\" 호출에서 부탁이 나올 확률. 미션 호출·취객·가까운 거리에는 나오지 않습니다.",
+      "affects": [
+        "유혹 사례금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "HurryRules.Chance",
+      "editable": true
+    },
+    {
+      "id": "hurry.otherChancePercent",
+      "group": "선택형 미션",
+      "section": "hurry",
+      "title": "유혹 · 그 밖의 호출 확률",
+      "type": "integer",
+      "defaultValue": "15",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "급한 손님이 아닌 호출에서 부탁이 나올 확률.",
+      "affects": [
+        "유혹 사례금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "HurryRules.Chance",
+      "editable": true
+    },
+    {
+      "id": "hurry.minDistanceMetres",
+      "group": "선택형 미션",
+      "section": "hurry",
+      "title": "유혹 · 최소 거리",
+      "type": "number",
+      "defaultValue": "600",
+      "min": 0,
+      "max": 5000,
+      "unit": "m",
+      "description": "운송 거리가 이보다 짧으면 부탁하지 않습니다.",
+      "affects": [
+        "유혹 사례금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "HurryRules.Blocked",
+      "editable": true
+    },
+    {
+      "id": "hurry.targetFactor",
+      "group": "선택형 미션",
+      "section": "hurry",
+      "title": "유혹 · \"서둘러 볼게요\" 목표",
+      "type": "number",
+      "defaultValue": "0.9",
+      "min": 0.3,
+      "max": 2,
+      "unit": "배",
+      "description": "예상 주행 시간(급행 미션과 같은 기준, 신호 대기 제외)에 곱한 목표 시간.",
+      "affects": [
+        "유혹 사례금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "HurryRules.Target",
+      "editable": true
+    },
+    {
+      "id": "hurry.rewardPercent",
+      "group": "선택형 미션",
+      "section": "hurry",
+      "title": "유혹 · \"서둘러 볼게요\" 사례금",
+      "type": "integer",
+      "defaultValue": "20",
+      "min": 0,
+      "max": 200,
+      "unit": "%",
+      "description": "약정 운임의 이 비율(100원 올림)을 목표 안에 도착하면 지급합니다.",
+      "affects": [
+        "유혹 사례금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "HurryRules.Reward",
+      "editable": true
+    },
+    {
+      "id": "hurry.safeTargetFactor",
+      "group": "선택형 미션",
+      "section": "hurry",
+      "title": "유혹 · \"안전하게 최대한\" 목표",
+      "type": "number",
+      "defaultValue": "0.95",
+      "min": 0.3,
+      "max": 2,
+      "unit": "배",
+      "description": "\"안전하게 최대한 빨리요\"를 골랐을 때의 목표 배수.",
+      "affects": [
+        "유혹 사례금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "HurryRules.Target",
+      "editable": true
+    },
+    {
+      "id": "hurry.safeRewardPercent",
+      "group": "선택형 미션",
+      "section": "hurry",
+      "title": "유혹 · \"안전하게 최대한\" 사례금",
+      "type": "integer",
+      "defaultValue": "10",
+      "min": 0,
+      "max": 200,
+      "unit": "%",
+      "description": "\"안전하게 최대한 빨리요\"의 사례금 비율.",
+      "affects": [
+        "유혹 사례금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "HurryRules.Reward",
+      "editable": true
+    },
+    {
+      "id": "hurry.forfeitOnSpeeding",
+      "group": "선택형 미션",
+      "section": "hurry",
+      "title": "유혹 · 과속하면 사례금 없음",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 그 운행에 제한속도 초과 기록(사고 중 초과 포함)이 하나라도 있으면 사례금을 주지 않습니다.",
+      "affects": [
+        "유혹 사례금"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "HurryRules.Outcome",
+      "editable": true
+    },
+    {
       "id": "home.eveningDrive.enabled",
       "group": "생활",
       "section": "home",
