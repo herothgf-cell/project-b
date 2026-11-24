@@ -1,11 +1,15 @@
 Vehicle interior recordings used in Eungye Taxi
-All five source recordings were published under CC0 1.0 Universal.
+All source recordings were published under CC0 1.0 Universal.
 https://creativecommons.org/publicdomain/zero/1.0/
 
 Engine: Car Acceleration Inside Car.wav by alexftw123
 https://freesound.org/people/alexftw123/sounds/152661/
-Road: Car Driving Interior by squareal
-https://freesound.org/people/squareal/sounds/237374/
+Road (highway cabin) and WindowWind: Highway drive interior by gecop
+https://freesound.org/people/gecop/sounds/521766/
+RoadSlow (town cabin) and WindowWind: Interior of a car driving a highway by leonelmail
+https://freesound.org/people/leonelmail/sounds/570461/
+HardBrake: R04-12-Car Comes to a Stop.wav by craigsmith
+https://freesound.org/people/craigsmith/sounds/481706/
 IndicatorOn and IndicatorOff: Car Indicator On Off.wav by wesleywestmusic
 https://freesound.org/people/wesleywestmusic/sounds/644427/
 Horn: Car Honk by qubodup
@@ -15,5 +19,12 @@ https://freesound.org/people/Brikaro/sounds/855678/
 
 Adaptations use mono excerpts, filtering and level adjustment. Looping tracks
 have crossfaded joins. Indicator clicks and the two horn taps are trimmed.
-On 2026-11-23 the Engine and Road loops were level-smoothed (slow gain riding
-to remove a periodic swell) and their loop joins were re-crossfaded.
+On 2026-11-23 the Engine loop was level-smoothed (slow gain riding to remove a
+periodic swell) and its loop join was re-crossfaded.
+On 2026-11-24 the Road loop was replaced. Road, RoadSlow, WindowWind and
+HardBrake were cut from the site's high-quality MP3 previews of the three
+recordings above: 14 s excerpts, rumble filter, slow gain riding and 2 s loop
+crossfades for the cabin loops; a mix of both cabin recordings with the low end
+removed and the high end lifted for WindowWind; a 2 s squeal with the top end
+rolled off for HardBrake. The earlier Road source (Car Driving Interior by
+squareal) is no longer used.
