@@ -117,6 +117,11 @@
 | `-districtTrafficTest` | **실패 4건("green queue clears" 등)**. 직전 커밋(HEAD 1a6dfb26)의 배포 실행본으로 같은 검사를 돌려도 같은 4건이 똑같이 실패해 이번 변경 때문이 아니다. 원인은 조사하지 않았다 |
 | `AccidentFaultChecks.Run`, `SpeedLimitChecks.Run` | 편집기 규칙 25건, 40건 통과 |
 
+### 배포 실행본
+
+- 소스 커밋 7b8c543f 뒤 같은 실행본(17:41 빌드)으로 `distribution/EungyeTaxi-build-manifest.json`을 다시 만들고 대조했다(145파일, 바뀐 파일 8, 불일치 0, pwsh가 없어 같은 규칙의 Python).
+- **작업 도중 같은 폴더에서 다른 세션이 HUD·주행음·법규·호출 등 다른 파일을 고치고 있었다**(17:45 이후 수정, 새 파일 `CriticalAlerts.cs`, `KeyHints.cs`, `SpeedLimitSections.cs`). 마지막 빌드는 그보다 앞서 만들어져 이 작업과 직전 커밋만 담았다. 그 변경은 커밋하지 않았고 이 실행본에 들어 있지 않다.
+
 ### 검사의 한계
 
 - 자동 발생(1초마다 찾기, 조건, 간격)은 실행본에서 돌려 보지 않았다. 검사는 장면을 직접 배치하고 발생 함수를 불렀다. 발생 조건은 편집기 규칙으로만 확인했다. 검사 실행 인자로 `-surpriseAuto`를 주면 검사 중에도 자동 발생이 켜진다.
