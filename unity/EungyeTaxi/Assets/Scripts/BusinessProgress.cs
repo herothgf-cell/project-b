@@ -466,9 +466,11 @@ public class BusinessProgress : MonoBehaviour {
   const string reviewedR52Hash="3efe1faff89fe9f1fb377c5999f8939a4795ded1f78d588b703e79d155913beb";
   // r53 (2026-11-24) shortens the P51 signal cycle from 98 s to 70 s (durations only; lanes unchanged).
   const string reviewedR53Hash="bcc2105057e8a9fa2ec7559438d73965f8b393cdb6c5d7efe030ab7bc535c9da";
-  int from=0,to=0;for(int revision=14;revision<=53;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>53)return;
-  string reviewedHash=to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
+  // r54 (2026-11-25) moves the J5692_14220 westbound signal pole off the gate-road turn path (map review P01; facility only).
+  const string reviewedR54Hash="9f37adc663ea7d2ff3a99394614de915917ad67a1ba37937fe34e7477a145b8d";
+  int from=0,to=0;for(int revision=14;revision<=54;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>54)return;
+  string reviewedHash=to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   ApplyReviewedEungyeCheckpointMigration(live,from,to);
  }
