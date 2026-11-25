@@ -19,6 +19,8 @@ public static class MapReviewCrosswalkEdits {
  public static void ApplyR57(){ApplyFile("config/maps/review/r57-crosswalk-moves.json");}
  // Left-turn guide lines and the J4396 zigzag approach (r57 -> r58).
  public static void ApplyR58(){ApplyFile("config/maps/review/r58-line-marks.json");}
+ // Straight centre-line bands where the lane-based yellow line wiggles (r58 -> r59).
+ public static void ApplyR59(){ApplyFile("config/maps/review/r59-centre-lines.json");}
  static void ApplyFile(string file){
   string root=ProjectMapBuild.Root,token=ProjectMapStore.Fingerprint(root);
   var plan=JsonUtility.FromJson<Plan>(File.ReadAllText(Path.Combine(root,file)));

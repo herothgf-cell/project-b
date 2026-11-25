@@ -12,7 +12,7 @@ public sealed class ReviewedNativeLanePresentation {
  public ReviewedNativeLanePresentation(MapData source){
   map=source;if(map==null||map.hdEdges==null||map.editorDocument==null||map.editorDocument.facilities==null)return;
   foreach(var f in map.editorDocument.facilities.Where(f=>f!=null&&f.kind=="lanePresentation")){
-   if(LaneDirectionPaint.IsArrowSuppression(f)||LaneMergePaint.IsFeature(f)||ReviewedUnmarkedRoadPaint.IsFeature(f)||LaneArrowAppearance.IsFeature(f)||ReviewedCorridorPaint.IsLayout(f))continue;
+   if(LaneDirectionPaint.IsArrowSuppression(f)||LaneMergePaint.IsFeature(f)||ReviewedUnmarkedRoadPaint.IsFeature(f)||LaneArrowAppearance.IsFeature(f)||ReviewedCorridorPaint.IsLayout(f)||f.type==ReviewedCentreLine.Type)continue;
    int index=Array.FindIndex(map.hdEdges,e=>e.id==f.laneId);if(index<0)continue;var edge=map.hdEdges[index];
    if(edge.disabled||edge.status!="ngii"||edge.turn!=0||edge.change!=0||edge.points==null||edge.points.Length<2)continue;
    var group=groups.FirstOrDefault(g=>g.junction==f.junctionId&&g.axis==f.axis&&g.sign==f.sign);
@@ -26,7 +26,7 @@ public sealed class ReviewedNativeLanePresentation {
   issues.AddRange(LaneMergePaint.ValidateAssignments(map,document));
   issues.AddRange(ReviewedUnmarkedRoadPaint.ValidateAssignments(map,document));
   issues.AddRange(LaneArrowAppearance.ValidateAssignments(map,document));
-  var assignments=document.facilities.Where(f=>f!=null&&f.kind=="lanePresentation"&&!LaneMergePaint.IsFeature(f)&&!ReviewedUnmarkedRoadPaint.IsFeature(f)&&!LaneArrowAppearance.IsFeature(f)&&!ReviewedCorridorPaint.IsLayout(f)).ToArray();
+  var assignments=document.facilities.Where(f=>f!=null&&f.kind=="lanePresentation"&&!LaneMergePaint.IsFeature(f)&&!ReviewedUnmarkedRoadPaint.IsFeature(f)&&!LaneArrowAppearance.IsFeature(f)&&!ReviewedCorridorPaint.IsLayout(f)&&f.type!=ReviewedCentreLine.Type).ToArray();
   foreach(var f in assignments){
    var rule=map==null||map.junctionRules==null?null:map.junctionRules.FirstOrDefault(r=>r.id==f.junctionId);
    var edge=document.lanes==null?null:document.lanes.FirstOrDefault(e=>e!=null&&e.id==f.laneId);string error=null;

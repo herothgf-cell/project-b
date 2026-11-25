@@ -127,6 +127,7 @@ public sealed class RoadPaintGeometry {
   return widest>0?widest:float.MaxValue;
  }
  public static void Paint(MapData map,List<TrafficJunction> junctions,System.Action<string,Vector3,Vector3,float,float,bool> mark){
+  mark=ReviewedCentreLine.Wrap(map,mark);
   var layout=new RoadPaintGeometry(map);var openings=RoadJunctionGeometry.Build(map);var authored=ReviewedCrosswalkGeometry.Build(map);var clearances=RoadJunctionGeometry.PaintClearances(map,junctions);var uturns=UturnRoadMarkings.Build(map);var reviewed=new ReviewedNativeLanePresentation(map);var unmarked=new ReviewedUnmarkedRoadPaint(map);var replacements=new ReviewedCorridorPaint(map);var output=UniquePaint(mark);mark=(name,p,d,w,l,y)=>{if(reviewed.SuppressesSynthetic(name,p,d)||unmarked.SuppressesSynthetic(name,p,d,w,l)||replacements.Covers(p,d))return;output(name,p,d,w,l,y);};
   openings.RemoveAll(opening=>clearances.Exists(zone=>zone.kind=="core"&&(zone.center-opening.center).sqrMagnitude<4));
   if(layout.corridors.Count>0){System.Action flush;

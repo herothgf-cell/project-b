@@ -477,9 +477,11 @@ public class BusinessProgress : MonoBehaviour {
   const string reviewedR57Hash="b0a1e15fb67f9e6329a77bf872f0626e629ec9eec8d03faced0bf2be3de3012d";
   // r58 (2026-11-26) map review: left-turn guide lines at 7 junctions, J4396 north-west zigzag approach (facilities only).
   const string reviewedR58Hash="7cf4928a98b9f8194bddaa67d9a52a40394d1477bb53a11cb2b063eb52728a20";
-  int from=0,to=0;for(int revision=14;revision<=58;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>58)return;
-  string reviewedHash=to==58?reviewedR58Hash:to==57?reviewedR57Hash:to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
+  // r59 (2026-11-26) map review: straight centre-line bands on 4 stretches where the lane-based yellow line wiggled (facilities only).
+  const string reviewedR59Hash="1f30cf2d01ec6247041e3489e0b871ea497791ec169d5db7601a58dc4ca9e089";
+  int from=0,to=0;for(int revision=14;revision<=59;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>59)return;
+  string reviewedHash=to==59?reviewedR59Hash:to==58?reviewedR58Hash:to==57?reviewedR57Hash:to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   ApplyReviewedEungyeCheckpointMigration(live,from,to);
  }
