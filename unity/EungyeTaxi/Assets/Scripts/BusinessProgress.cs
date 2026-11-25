@@ -489,9 +489,11 @@ public class BusinessProgress : MonoBehaviour {
   const string reviewedR63Hash="40c0ad755c719719ccd86c7c20bd91dd19a9edbf608bb9c5d38d05f23574d4d1";
   // r64 Mid-block crossings at J002 east, the J009 roundabout and J046 (2026-11-26)
   const string reviewedR64Hash="c37a128847748b331c422ac021783bc5270f6462e47c145b1cc7f673ab6eec32";
-  int from=0,to=0;for(int revision=14;revision<=64;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>64)return;
-  string reviewedHash=to==64?reviewedR64Hash:to==63?reviewedR63Hash:to==62?reviewedR62Hash:to==61?reviewedR61Hash:to==60?reviewedR60Hash:to==59?reviewedR59Hash:to==58?reviewedR58Hash:to==57?reviewedR57Hash:to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
+  // r65 School-zone approach paving at J004 and J025 (roadview 2026-11-26)
+  const string reviewedR65Hash="33cfa49c18dec1f94558bca71bcfaa6097d192d93d6a3485b4515d92021a8ad8";
+  int from=0,to=0;for(int revision=14;revision<=65;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>65)return;
+  string reviewedHash=to==65?reviewedR65Hash:to==64?reviewedR64Hash:to==63?reviewedR63Hash:to==62?reviewedR62Hash:to==61?reviewedR61Hash:to==60?reviewedR60Hash:to==59?reviewedR59Hash:to==58?reviewedR58Hash:to==57?reviewedR57Hash:to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   ApplyReviewedEungyeCheckpointMigration(live,from,to);
  }

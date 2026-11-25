@@ -36,6 +36,8 @@ DONE = {  # issue -> revision and what was done (partial fixes say so)
     'P01-1': 'r54 신호등 기둥을 인도로 옮김',
     **{f'P{n:02d}-1': '고칠 것 없음: 높이 4.45~6.95 m의 표지 받침대(바닥 기둥 아님, r54 기록)' for n in range(2, 17)},
     'J019-3': 'r55 동서 황색',
+    # r65 school-zone approach paving
+    'J004-3': 'r65 남동쪽 진입부 양방향 적색 포장', 'J025-3': 'r65 들어오는 차로 적색 포장과 30·어린이보호구역 글자',
     # r64 mid-block crossings from the aerial
     'J002-2': 'r64 J1919 동쪽 적색 포장 노란 횡단보도', 'J009-2': 'r64 회전교차로 서·동 진입로 노란 횡단보도', 'J046-4': 'r64 남북 길 흰 횡단보도',
     # roadview / aerial closed without a change (2)

@@ -27,6 +27,8 @@ public static class MapReviewCrosswalkEdits {
  public static void ApplyR63(){ApplyFile("config/maps/review/r63-school-marks.json");}
  // Mid-block crossings clear in the aerial: J002 east, J009 roundabout approaches, J046 (r63 -> r64).
  public static void ApplyR64(){ApplyFile("config/maps/review/r64-midblock-crossings.json");}
+ // Roadview-confirmed school-zone approach paving at J004 and J025 (r64 -> r65).
+ public static void ApplyR65(){ApplyFile("config/maps/review/r65-school-paving.json");}
  static void ApplyFile(string file){
   string root=ProjectMapBuild.Root,token=ProjectMapStore.Fingerprint(root);
   var plan=JsonUtility.FromJson<Plan>(File.ReadAllText(Path.Combine(root,file)));
