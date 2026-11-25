@@ -468,9 +468,12 @@ public class BusinessProgress : MonoBehaviour {
   const string reviewedR53Hash="bcc2105057e8a9fa2ec7559438d73965f8b393cdb6c5d7efe030ab7bc535c9da";
   // r54 (2026-11-25) moves the J5692_14220 westbound signal pole off the gate-road turn path (map review P01; facility only).
   const string reviewedR54Hash="9f37adc663ea7d2ff3a99394614de915917ad67a1ba37937fe34e7477a145b8d";
-  int from=0,to=0;for(int revision=14;revision<=54;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>54)return;
-  string reviewedHash=to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
+  // r55 (2026-11-25) map review markings batch 1: yellow school-zone crosswalks, bicycle crossings beside 8 junctions'
+  // crosswalks (moved 2.3 m toward the junction), J7841_867 diagonal crossings (crosswalk facilities only).
+  const string reviewedR55Hash="78fa0713e15f970199d561c8f3ec3466a755e1c867408c737dc9afcfb5e4e816";
+  int from=0,to=0;for(int revision=14;revision<=55;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>55)return;
+  string reviewedHash=to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   ApplyReviewedEungyeCheckpointMigration(live,from,to);
  }

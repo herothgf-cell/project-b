@@ -23,6 +23,9 @@ public static class GeneratedCrosswalkGeometry {
   }
   if(!forward||!backward)return source;float halfWidth=source.width*.5f;
   if(!Fit(map,ref center,direction,ref halfWidth))return source;
+  // A crossing with a bicycle strip was trimmed at its corners (tools/map_review_r55_crosswalks.py):
+  // keep the part of the fitted span that lies inside the authored span, so both the kerb and the trim hold.
+  if(CrosswalkBikeCrossing.Side(source)!=0){float fitted=Vector3.Dot(center-source.Position,across),lo=Mathf.Max(fitted-halfWidth,-source.width*.5f),hi=Mathf.Min(fitted+halfWidth,source.width*.5f);if(hi-lo<1f)return source;center=source.Position+across*((lo+hi)*.5f);halfWidth=(hi-lo)*.5f;}
   if((center-source.Position).sqrMagnitude<.000001f&&Mathf.Abs(halfWidth*2-source.width)<.001f)return source;
   var result=JsonUtility.FromJson<RoadMapFacility>(JsonUtility.ToJson(source));result.x=center.x;result.z=center.z;result.width=halfWidth*2;return result;
  }
