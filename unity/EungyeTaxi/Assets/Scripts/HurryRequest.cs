@@ -78,7 +78,7 @@ public sealed class HurryRequest : MonoBehaviour {
  bool CanShow(){var r=session.requests;return r&&r.PresentationAvailable&&!r.HasPendingChoice&&!session.jobs.trip.ArrivalLocked&&!(session.GetComponent<PassengerBehaviorUI>()&&session.GetComponent<PassengerBehaviorUI>().Showing);}
  void Board(){
   Reset();var o=session.jobs.current;if(o==null)return;
-  string why=o.variety==CallBoardRules.OutOfTown?"시외 콜":HurryRules.Blocked(Single,done,o.mission,session.jobs.DrunkRide!=null&&session.jobs.DrunkRide.IsDrunk,o.distance);LastBlocked=why;if(why!="")return;
+  string why=o.variety==CallBoardRules.Emergency?"응급 손님":o.variety==CallBoardRules.OutOfTown?"시외 콜":HurryRules.Blocked(Single,done,o.mission,session.jobs.DrunkRide!=null&&session.jobs.DrunkRide.IsDrunk,o.distance);LastBlocked=why;if(why!="")return;
   string seed=(session.law?session.law.tripId:"")+":"+o.candidateSeed+":hurry";
   if(GoodDrivingRules.Roll(seed)>=HurryRules.Chance(o.variety==CallBoardRules.Rush)){LastBlocked="확률";return;}
   Prepare(o);

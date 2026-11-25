@@ -12304,6 +12304,510 @@
       "editable": true
     },
     {
+      "id": "rank.enabled",
+      "group": "호출판",
+      "section": "rank",
+      "title": "승강장 · 켜기",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 게임 전용 택시 승강장 3곳(은계 상가 앞, 호수공원, 대야역 방향)이 생깁니다. 바꾸면 다음 시작부터 적용됩니다.",
+      "affects": [
+        "승강장·길가 손님"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "TaxiRanks",
+      "editable": true
+    },
+    {
+      "id": "rank.arrivalSeconds",
+      "group": "호출판",
+      "section": "rank",
+      "title": "승강장 · 손님 간격",
+      "type": "number",
+      "defaultValue": "40",
+      "min": 5,
+      "max": 600,
+      "unit": "초",
+      "description": "승강장에 손님이 오는 기본 간격(승강장별 수요로 나누고 ±30%).",
+      "affects": [
+        "승강장·길가 손님"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "TaxiRankRules.NextArrival",
+      "editable": true
+    },
+    {
+      "id": "rank.queueMax",
+      "group": "호출판",
+      "section": "rank",
+      "title": "승강장 · 줄 최대",
+      "type": "integer",
+      "defaultValue": "3",
+      "min": 0,
+      "max": 6,
+      "unit": "대",
+      "description": "승강장에 서 있는 NPC 택시의 최대 수.",
+      "affects": [
+        "승강장·길가 손님"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "TaxiRanks.AddNpc",
+      "editable": true
+    },
+    {
+      "id": "rank.npcArrivalSeconds",
+      "group": "호출판",
+      "section": "rank",
+      "title": "승강장 · NPC 택시 도착 간격",
+      "type": "number",
+      "defaultValue": "55",
+      "min": 5,
+      "max": 600,
+      "unit": "초",
+      "description": "줄 뒤에 NPC 택시가 새로 붙는 간격(플레이어가 줄에 있으면 붙지 않음).",
+      "affects": [
+        "승강장·길가 손님"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "TaxiRanks",
+      "editable": true
+    },
+    {
+      "id": "rank.farChoices",
+      "group": "호출판",
+      "section": "rank",
+      "title": "승강장 · 먼 목적지 후보",
+      "type": "integer",
+      "defaultValue": "3",
+      "min": 1,
+      "max": 12,
+      "unit": "곳",
+      "description": "승강장 손님은 가장 먼 승하차 지점 이만큼 중 하나로 갑니다.",
+      "affects": [
+        "승강장·길가 손님"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "TaxiRanks.FarDrop",
+      "editable": true
+    },
+    {
+      "id": "npcTaxi.enabled",
+      "group": "호출판",
+      "section": "npcTaxi",
+      "title": "NPC 택시 · 켜기",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 일반 차량 일부가 택시가 되어, 지나가며 길가 손님(호출 아님)을 먼저 태웁니다.",
+      "affects": [
+        "승강장·길가 손님"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "NpcTaxis",
+      "editable": true
+    },
+    {
+      "id": "npcTaxi.count",
+      "group": "호출판",
+      "section": "npcTaxi",
+      "title": "NPC 택시 · 대수",
+      "type": "integer",
+      "defaultValue": "8",
+      "min": 0,
+      "max": 30,
+      "unit": "대",
+      "description": "일반 차량 중 택시로 칠하는 수.",
+      "affects": [
+        "승강장·길가 손님"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "NpcTaxiRules.Count",
+      "editable": true
+    },
+    {
+      "id": "npcTaxi.takeChancePercent",
+      "group": "호출판",
+      "section": "npcTaxi",
+      "title": "NPC 택시 · 태울 확률",
+      "type": "integer",
+      "defaultValue": "50",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "빈 NPC 택시가 길가 손님 옆을 지날 때 태울 확률.",
+      "affects": [
+        "승강장·길가 손님"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "NpcTaxis.Update",
+      "editable": true
+    },
+    {
+      "id": "npcTaxi.busySeconds",
+      "group": "호출판",
+      "section": "npcTaxi",
+      "title": "NPC 택시 · 운행 시간",
+      "type": "number",
+      "defaultValue": "120",
+      "min": 10,
+      "max": 1200,
+      "unit": "초",
+      "description": "손님을 태운 NPC 택시가 다시 빈 차가 될 때까지의 시간.",
+      "affects": [
+        "승강장·길가 손님"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "NpcTaxis.Update",
+      "editable": true
+    },
+    {
+      "id": "npcTaxi.passMetres",
+      "group": "호출판",
+      "section": "npcTaxi",
+      "title": "NPC 택시 · 태우는 거리",
+      "type": "number",
+      "defaultValue": "9",
+      "min": 3,
+      "max": 25,
+      "unit": "m",
+      "description": "승하차 지점에서 이 거리 안을 지나야 태웁니다.",
+      "affects": [
+        "승강장·길가 손님"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "NpcTaxis.Update",
+      "editable": true
+    },
+    {
+      "id": "lostItem.enabled",
+      "group": "호출판",
+      "section": "lostItem",
+      "title": "분실물 · 켜기",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 하차 뒤 뒷좌석에 물건이 남는 일이 생깁니다(돌려주기 / 은행파출소에 맡기기 / 그냥 두기).",
+      "affects": [
+        "분실물"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "LostItems",
+      "editable": true
+    },
+    {
+      "id": "lostItem.chancePercent",
+      "group": "호출판",
+      "section": "lostItem",
+      "title": "분실물 · 확률",
+      "type": "integer",
+      "defaultValue": "12",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "운임을 받은 하차마다 물건이 남을 확률(취객·잠든 손님은 2배).",
+      "affects": [
+        "분실물"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "LostItemRules.Left",
+      "editable": true
+    },
+    {
+      "id": "lostItem.ownerWaitSeconds",
+      "group": "호출판",
+      "section": "lostItem",
+      "title": "분실물 · 주인 기다림",
+      "type": "number",
+      "defaultValue": "240",
+      "min": 30,
+      "max": 1800,
+      "unit": "초",
+      "description": "돌려주러 가면 주인이 하차 지점에서 기다리는 시간. 지나면 파출소에 맡겨야 합니다.",
+      "affects": [
+        "분실물"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "LostItems",
+      "editable": true
+    },
+    {
+      "id": "lostItem.reward.umbrella",
+      "group": "호출판",
+      "section": "lostItem",
+      "title": "분실물 · 우산 사례",
+      "type": "integer",
+      "defaultValue": "500",
+      "min": 0,
+      "max": 100000,
+      "unit": "원",
+      "description": "우산을 돌려줬을 때 받는 돈.",
+      "affects": [
+        "분실물"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "LostItemRules.Reward",
+      "editable": true
+    },
+    {
+      "id": "lostItem.reward.bag",
+      "group": "호출판",
+      "section": "lostItem",
+      "title": "분실물 · 쇼핑백 사례",
+      "type": "integer",
+      "defaultValue": "1000",
+      "min": 0,
+      "max": 100000,
+      "unit": "원",
+      "description": "쇼핑백을 돌려줬을 때 받는 돈.",
+      "affects": [
+        "분실물"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "LostItemRules.Reward",
+      "editable": true
+    },
+    {
+      "id": "lostItem.reward.wallet",
+      "group": "호출판",
+      "section": "lostItem",
+      "title": "분실물 · 지갑 사례",
+      "type": "integer",
+      "defaultValue": "3000",
+      "min": 0,
+      "max": 100000,
+      "unit": "원",
+      "description": "지갑을 돌려줬을 때 받는 돈.",
+      "affects": [
+        "분실물"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "LostItemRules.Reward",
+      "editable": true
+    },
+    {
+      "id": "lostItem.policeReward",
+      "group": "호출판",
+      "section": "lostItem",
+      "title": "분실물 · 파출소 맡김",
+      "type": "integer",
+      "defaultValue": "300",
+      "min": 0,
+      "max": 100000,
+      "unit": "원",
+      "description": "은행파출소에 맡겼을 때 받는 돈(작게).",
+      "affects": [
+        "분실물"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "LostItems",
+      "editable": true
+    },
+    {
+      "id": "lostItem.leavePenalty",
+      "group": "호출판",
+      "section": "lostItem",
+      "title": "분실물 · 그냥 둠 감점",
+      "type": "integer",
+      "defaultValue": "3",
+      "min": 0,
+      "max": 20,
+      "unit": "점",
+      "description": "그냥 두면 다음 손님의 운전 만족에서 한 번 깎이는 점수.",
+      "affects": [
+        "분실물"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "LostItems",
+      "editable": true
+    },
+    {
+      "id": "emergency.enabled",
+      "group": "호출판",
+      "section": "emergency",
+      "title": "응급 손님 · 켜기",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 1,
+      "unit": "",
+      "description": "1이면 드물게 '병원으로 빨리요' 호출이 나옵니다(신천연합병원 응급실 방면).",
+      "affects": [
+        "응급 손님"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "EmergencyRules",
+      "editable": true
+    },
+    {
+      "id": "emergency.dailyMax",
+      "group": "호출판",
+      "section": "emergency",
+      "title": "응급 손님 · 하루 최대",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 5,
+      "unit": "건",
+      "description": "하루에 마칠 수 있는 응급 손님 수.",
+      "affects": [
+        "응급 손님"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.EmergencyBlocked",
+      "editable": true
+    },
+    {
+      "id": "emergency.boardChancePercent",
+      "group": "호출판",
+      "section": "emergency",
+      "title": "응급 손님 · 호출판 확률",
+      "type": "integer",
+      "defaultValue": "12",
+      "min": 0,
+      "max": 100,
+      "unit": "%",
+      "description": "새 호출판에 응급 손님이 나올 확률.",
+      "affects": [
+        "응급 손님"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.ApplyOfferVariety",
+      "editable": true
+    },
+    {
+      "id": "emergency.deadlineFactor",
+      "group": "호출판",
+      "section": "emergency",
+      "title": "응급 손님 · 기한 배수",
+      "type": "number",
+      "defaultValue": "1.15",
+      "min": 0.8,
+      "max": 3,
+      "unit": "배",
+      "description": "(예상 주행 + 30초)에 곱하는 기한.",
+      "affects": [
+        "응급 손님"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.MakeEmergency",
+      "editable": true
+    },
+    {
+      "id": "emergency.fareMultiplier",
+      "group": "호출판",
+      "section": "emergency",
+      "title": "응급 손님 · 운임 배수",
+      "type": "number",
+      "defaultValue": "1.3",
+      "min": 0.5,
+      "max": 5,
+      "unit": "배",
+      "description": "(주행 + 병원까지 남은 길의 절반) 분 × 평소 분당 수입에 곱하는 배수.",
+      "affects": [
+        "응급 손님"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "PassengerJobs.MakeEmergency",
+      "editable": true
+    },
+    {
+      "id": "emergency.legKmh",
+      "group": "호출판",
+      "section": "emergency",
+      "title": "응급 손님 · 남은 길 속도",
+      "type": "number",
+      "defaultValue": "40",
+      "min": 10,
+      "max": 100,
+      "unit": "km/h",
+      "description": "지도 밖 병원까지 남은 길과 돌아오는 길을 암전으로 넘길 때의 평균 속도.",
+      "affects": [
+        "응급 손님"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "EmergencyRules.LegSeconds",
+      "editable": true
+    },
+    {
       "id": "stopBreak.enabled",
       "group": "운전 중 빈 시간",
       "section": "stopBreak",

@@ -7,7 +7,7 @@ import {defaultChoiceValue} from './choice-catalog.mjs';
 const DRIVING_IDS=['flashStop','permissiveTurn','blockedExit','personMinor','personModerate','personMajor','vehicleMinor','vehicleModerate','vehicleMajor'].map(key=>'law.'+key+'.penalty');
 const STORY_REQUESTS=new Set(['Quiet','Eta','Comfort','OnTime','LargeRoad','SafeStop','Empathy','FareHelp','LocalChat','ViaStop']);
 const STORY_CRITERIA=new Set(['OnTime','Comfort','LargeRoad','Quiet','FareHelp','ViaStop','SafeStop','Luggage','Protection','Conversation','Safety','Empathy']);
-const SINGLE_SETTING=/^(home|cabin|stopName|backstory|day\.condition|story|radio|tip|goodDriving|offer|lastCall|stopBreak|mission|feel|chain|meter|law\.speed|accident\.fault|surprise|hurry|road\.parked|camera|bump)\./;
+const SINGLE_SETTING=/^(home|cabin|stopName|backstory|day\.condition|story|radio|tip|goodDriving|offer|lastCall|stopBreak|mission|feel|chain|meter|law\.speed|accident\.fault|surprise|hurry|road\.parked|camera|bump|rank|npcTaxi|lostItem|emergency)\./;
 const singleLine=(value,limit)=>value.trim().length>0&&value.length<=limit&&!/[\r\n]/.test(value);
 
 function storyTextError(id,value) {

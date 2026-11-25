@@ -4,7 +4,7 @@ using UnityEngine;
 // mixes calls of different character. PvP boards and shared physics are untouched. Every number is a content
 // setting (offer.*); new JobOffer fields default to "ordinary", so older saves load unchanged.
 public static class CallBoardRules {
- public const int Ordinary=0,Near=1,Rush=2,Luggage=3,Hidden=4,OutOfTown=7;
+ public const int Ordinary=0,Near=1,Rush=2,Luggage=3,Hidden=4,OutOfTown=7,Emergency=8;
  static float F(string id,double fallback){return (float)ContentTuning.Number(id,fallback);}
  public static bool VarietyEnabled {get{return ContentTuning.Int("offer.variety.enabled",1)!=0;}}
  public static float NearMaxPickup {get{return F("offer.near.maxPickupMetres",450);}}
@@ -13,10 +13,10 @@ public static class CallBoardRules {
  public static float RushFare {get{return F("offer.rush.fareMultiplier",1.4);}}
  public static int LuggageFareBonus {get{return ContentTuning.Int("offer.luggage.fareBonus",800);}}
  public static float PickupMetresPerSecond {get{return F("offer.eta.pickupMetresPerSecond",4);}}
- public static string Label(int variety){return variety==OutOfTown?OutOfTownRules.Label+" · 시외 구간 "+OutOfTownRules.Minutes+"분 · 고액":variety==Near?"근거리 · 무난":variety==Rush?"급한 손님 · 기한 짧음 · 고액":variety==Luggage?"큰 짐 · 트렁크 필요":variety==Hidden?"길가 손님 · 목적지는 타면 알려 줌":"";}
+ public static string Label(int variety){return variety==Emergency?"응급 손님 · "+EmergencyRules.HospitalName+" 방면 · 기한 짧음":variety==OutOfTown?OutOfTownRules.Label+" · 시외 구간 "+OutOfTownRules.Minutes+"분 · 고액":variety==Near?"근거리 · 무난":variety==Rush?"급한 손님 · 기한 짧음 · 고액":variety==Luggage?"큰 짐 · 트렁크 필요":variety==Hidden?"길가 손님 · 목적지는 타면 알려 줌":"";}
  public static string DemandLabel(int level){return level>=2?"높음":level==1?"보통":"낮음";}
  // Short tag for the map card; Label stays the full sentence used by captions and checks.
- public static string ShortLabel(int variety){return variety==OutOfTown?OutOfTownRules.Label:variety==Near?"근거리":variety==Rush?"급한 손님":variety==Luggage?"큰 짐":variety==Hidden?"길가 손님":"";}
+ public static string ShortLabel(int variety){return variety==Emergency?"응급 손님":variety==OutOfTown?OutOfTownRules.Label:variety==Near?"근거리":variety==Rush?"급한 손님":variety==Luggage?"큰 짐":variety==Hidden?"길가 손님":"";}
 }
 
 public partial class PassengerJobs {
@@ -48,6 +48,7 @@ public partial class PassengerJobs {
    if(!DestinationHidden(o)){int demand=DropDemandLevel(o);if(demand!=1)tags.Add("하차지 수요 "+CallBoardRules.DemandLabel(demand));}
    if(IsLastCall(o)&&Finite(HomeReturnMetres(o)))tags.Add("하차 후 숙소 "+Mathf.RoundToInt(HomeReturnMetres(o))+"m");
    if(o.variety==CallBoardRules.OutOfTown)tags.Add(OutOfTownCardLine(o));
+   if(o.variety==CallBoardRules.Emergency)tags.Add(EmergencyCardLine(o));
    string mission=MissionCardLine(o).Trim();if(mission.Length>0)tags.Add(mission);
   }
   card.tags=string.Join(" · ",tags.ToArray());return card;
@@ -73,6 +74,7 @@ public partial class PassengerJobs {
   if(pool.Count==0)return;
   // Out-of-town call first (decided 2026-11-24): at most one board slot, then the usual characters.
   if(OutOfTownDue()&&GoodDrivingRules.Roll(pool[0].candidateSeed+":outoftown")<OutOfTownRules.BoardChance){var last=pool[pool.Count-1];if(MakeOutOfTown(last))pool.Remove(last);}
+  if(pool.Count>0&&EmergencyBlocked()==""&&GoodDrivingRules.Roll(pool[0].candidateSeed+":emergency")<EmergencyRules.BoardChance){var first=pool[0];if(MakeEmergency(first))pool.Remove(first);}
   if(pool.Count==0)return;
   bool trunk=session.business.ledger.Account==null||session.business.ledger.Account.VehicleSpec.carriesLuggage;
   var kinds=new System.Collections.Generic.List<int>{CallBoardRules.Near,CallBoardRules.Rush,CallBoardRules.Luggage,CallBoardRules.Hidden};
@@ -227,4 +229,44 @@ public partial class PassengerJobs {
   float total=CallEtaSeconds(o)+OutOfTownRules.LegSeconds;float left=(float)session.business.ledger.SecondsLeft-total;
   return "시외 구간 "+OutOfTownRules.Minutes+"분(빈 차 복귀 포함) · 끝나면 남는 영업 약 "+Mathf.Max(0,Mathf.FloorToInt(left/60f))+"분";
  }
+}
+
+// Emergency passenger (design 08 ch.5.3, approved 2026-11-25, Eungye single): rarely (at most once a day) an
+// ordinary call becomes "병원으로 빨리요". The nearest emergency room is real (신천연합병원 응급실, from
+// Resources/eungye-care-points.json) and lies just west of the map: the passenger is driven to the stop nearest
+// the hospital, then a short blackout covers the rest of the way and the empty return. The deadline is tight;
+// law and accident rules are unchanged (no exemption for hurrying).
+public static class EmergencyRules {
+ static float F(string id,double fallback){return (float)ContentTuning.Number(id,fallback);}
+ static int I(string id,int fallback){return ContentTuning.Int(id,fallback);}
+ public static bool Enabled {get{return I("emergency.enabled",1)!=0;}}
+ public static int DailyMax {get{return Mathf.Max(0,I("emergency.dailyMax",1));}}
+ public static int BoardChance {get{return Mathf.Clamp(I("emergency.boardChancePercent",12),0,100);}}
+ public static float DeadlineFactor {get{return Mathf.Clamp(F("emergency.deadlineFactor",1.15),.8f,3);}}
+ public static float FareMultiplier {get{return Mathf.Clamp(F("emergency.fareMultiplier",1.3),.5f,5);}}
+ public static float LegKmh {get{return Mathf.Clamp(F("emergency.legKmh",40),10,100);}}
+ public static string HospitalName {get{var h=LostItemRules.Hospital;return h!=null?h.name:"병원";}}
+ // Remaining way from the drop stop to the hospital (straight line x1.3) and back, at the leg speed.
+ public static float LegSeconds(float straightMetres){return Mathf.Max(30,straightMetres*1.3f*2/(LegKmh/3.6f));}
+}
+
+public partial class PassengerJobs {
+ int emergencyDay=-1,emergencyDone;
+ public int EmergencyDoneToday {get{return session.business.ledger.Day==emergencyDay?emergencyDone:0;}}
+ public void CountEmergency(){int day=session.business.ledger.Day;if(day!=emergencyDay){emergencyDay=day;emergencyDone=0;}emergencyDone++;}
+ // The stop nearest the hospital.
+ public int HospitalStop {get{var h=LostItemRules.Hospital;if(h==null)return -1;int best=-1;float bd=float.MaxValue;for(int i=0;i<stops.Length;i++){if(ShopOnly(i))continue;var d=stops[i].Kerb-h.V();d.y=0;if(d.sqrMagnitude<bd){bd=d.sqrMagnitude;best=i;}}return best;}}
+ public float HospitalLegMetres {get{var h=LostItemRules.Hospital;int s=HospitalStop;if(h==null||s<0)return 0;var d=stops[s].Kerb-h.V();d.y=0;return d.magnitude;}}
+ public string EmergencyBlocked(){if(!CallBoardSingle)return "싱글 영업 아님";if(!EmergencyRules.Enabled)return "꺼짐";if(EmergencyDoneToday>=EmergencyRules.DailyMax)return "하루 한도";if(HospitalStop<0)return "병원 없음";if(LastCallWindowOpen||FirstHomeDispatchPending)return "마감 직전·첫 출차";return "";}
+ public bool MakeEmergency(JobOffer o){
+  int drop=HospitalStop;if(o==null||drop<0||o.pickup==drop)return false;
+  float distance=nav.Distance(stops[o.pickup],stops[drop]);if(!Finite(distance)||distance<300)return false;
+  float ride=distance/8f;float leg=EmergencyRules.LegSeconds(HospitalLegMetres);var l=session.business.ledger;
+  float pickup=CallPickupMetres(o);if(!Finite(pickup))pickup=0;if(l.SecondsLeft<pickup/Mathf.Max(.5f,CallBoardRules.PickupMetresPerSecond)+ride+leg+60)return false;
+  o.drop=drop;Stamp(o);o.distance=distance;o.safeRouteSeconds=ride;o.seconds=Mathf.Ceil((ride+30+o.waitSeconds)*EmergencyRules.DeadlineFactor);
+  o.variety=CallBoardRules.Emergency;o.urgency=2;o.mission=MissionRules.None;o.missionBonus=0;
+  o.fare=(int)System.Math.Ceiling((ride+leg*.5f)/60f*OutOfTownRules.PerMinuteWon*EmergencyRules.FareMultiplier/100.0)*100;
+  return true;
+ }
+ public string EmergencyCardLine(JobOffer o){return EmergencyRules.HospitalName+"까지 지도 밖 약 "+Mathf.RoundToInt(HospitalLegMetres/100f)*100+"m · 서둘러도 법규 판정은 그대로";}
 }

@@ -1,0 +1,7 @@
+{
+  "schema": 1,
+  "mapId": "eungye",
+  "note": "Real places for lost items and emergency passengers (decided 2026-11-25: survey real locations). Coordinates: Kakao map WCONGNAMUL / 2.5 = EPSG:5181, +100000 north = EPSG:5186, minus the map origin (181900, 537200). Checked against the school-zone speed cameras (within 50-110 m).",
+  "police": {"name": "은행파출소", "address": "경기 시흥시 은행로 148 (은행동)", "phone": "031-430-8637", "x": 394, "z": 1141, "evidence": "카카오맵 장소 검색 2026-11-25 (WCONG 455735, 1095852). 시흥경찰서 지구대·파출소 목록에 '은행' 이름이 있음. 은계지구 관할 여부는 확인하지 못함(지도 안에서 가장 가까운 파출소)"},
+  "hospital": {"name": "신천연합병원 응급실", "address": "경기 시흥시 복지로 57 (대야동)", "x": -538, "z": 1146, "evidence": "카카오맵 장소 검색 '시흥 응급실' 2026-11-25 (WCONG 453406, 1095916). 은계 지도 서쪽 밖 약 0.9km. 응급의료포털 지정 여부는 확인하지 못함"}
+}

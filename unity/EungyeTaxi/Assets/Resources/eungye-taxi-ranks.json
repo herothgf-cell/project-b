@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "mapId": "eungye",
+  "note": "Taxi ranks (design 08 ch.5.1, decided 2026-11-25): game-only ranks. No taxi rank data exists in the map or OSM (amenity=taxi 0). Placed on existing game passenger stops near the three candidate areas; not a survey.",
+  "ranks": [
+    {"id": "rank-centre", "stopId": "EG-GAME-10", "name": "은계 상가 앞 승강장", "area": "은계 중심 상가 앞", "evidence": "게임 전용. 기획 08 5.1 후보 '은계 중심 상가 앞'에 가까운 게임 승하차 10(지도 가운데)", "demand": 1.0},
+    {"id": "rank-lake", "stopId": "EG-GAME-08", "name": "호수공원 승강장", "area": "은계호수공원·대단지 정문 쪽", "evidence": "게임 전용. 기획 08 5.1 후보 '은계호수공원·대단지 정문'에 가까운 게임 승하차 8(호수 남서쪽 약 220m)", "demand": 0.8},
+    {"id": "rank-daeya", "stopId": "EG-GAME-01", "name": "대야역 방향 승강장", "area": "대야역 방향 출구", "evidence": "게임 전용. 기획 08 5.1 후보 '대야역 방향 출구'에 가까운 게임 승하차 1(지도 북쪽 끝)", "demand": 1.2}
+  ]
+}

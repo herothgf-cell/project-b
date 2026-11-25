@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "fed6e2a69672df23a6db43f9f3f5e9fe0737ee6f6b3f2277d839384d08096640",
+  "contentHash": "c754f4199e998723edfe139c701ca7396bfadb5c2fa8fd93a315ee0359d08a76",
   "values": [
     {
       "id": "radio.station",
@@ -2091,6 +2091,102 @@
     {
       "id": "offer.outOfTown.kmh",
       "value": "50"
+    },
+    {
+      "id": "rank.enabled",
+      "value": "1"
+    },
+    {
+      "id": "rank.arrivalSeconds",
+      "value": "40"
+    },
+    {
+      "id": "rank.queueMax",
+      "value": "3"
+    },
+    {
+      "id": "rank.npcArrivalSeconds",
+      "value": "55"
+    },
+    {
+      "id": "rank.farChoices",
+      "value": "3"
+    },
+    {
+      "id": "npcTaxi.enabled",
+      "value": "1"
+    },
+    {
+      "id": "npcTaxi.count",
+      "value": "8"
+    },
+    {
+      "id": "npcTaxi.takeChancePercent",
+      "value": "50"
+    },
+    {
+      "id": "npcTaxi.busySeconds",
+      "value": "120"
+    },
+    {
+      "id": "npcTaxi.passMetres",
+      "value": "9"
+    },
+    {
+      "id": "lostItem.enabled",
+      "value": "1"
+    },
+    {
+      "id": "lostItem.chancePercent",
+      "value": "12"
+    },
+    {
+      "id": "lostItem.ownerWaitSeconds",
+      "value": "240"
+    },
+    {
+      "id": "lostItem.reward.umbrella",
+      "value": "500"
+    },
+    {
+      "id": "lostItem.reward.bag",
+      "value": "1000"
+    },
+    {
+      "id": "lostItem.reward.wallet",
+      "value": "3000"
+    },
+    {
+      "id": "lostItem.policeReward",
+      "value": "300"
+    },
+    {
+      "id": "lostItem.leavePenalty",
+      "value": "3"
+    },
+    {
+      "id": "emergency.enabled",
+      "value": "1"
+    },
+    {
+      "id": "emergency.dailyMax",
+      "value": "1"
+    },
+    {
+      "id": "emergency.boardChancePercent",
+      "value": "12"
+    },
+    {
+      "id": "emergency.deadlineFactor",
+      "value": "1.15"
+    },
+    {
+      "id": "emergency.fareMultiplier",
+      "value": "1.3"
+    },
+    {
+      "id": "emergency.legKmh",
+      "value": "40"
     },
     {
       "id": "stopBreak.enabled",

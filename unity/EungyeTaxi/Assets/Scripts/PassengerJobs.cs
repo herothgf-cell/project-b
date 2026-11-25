@@ -47,7 +47,7 @@ public partial class PassengerJobs : MonoBehaviour {
   if(roadsideWaiting==null||roadsideWaiting.Length!=stops.Length)System.Array.Resize(ref roadsideWaiting,stops.Length);
   string seed=WaitingSeed;double now=session.business.ledger.Elapsed;bool reset=seed!=waitingSeed;
   if(reset||now>=nextWaitingRefresh){if(reset){waitingSeed=seed;waitingGeneration=0;}else waitingGeneration++;nextWaitingRefresh=now+PassengerWaitingPolicy.RefreshSeconds;
-   for(int i=0;i<stops.Length;i++)if(reset||Vector3.SqrMagnitude(stops[i].Passenger-session.taxi.transform.position)>90*90)roadsideWaiting[i]=PassengerWaitingPolicy.Present(waitingSeed,waitingGeneration,runtimeStopIds[i]);
+   for(int i=0;i<stops.Length;i++)if(reset||Vector3.SqrMagnitude(stops[i].Passenger-session.taxi.transform.position)>90*90)roadsideWaiting[i]=RoadsideOverride(i)??PassengerWaitingPolicy.Present(waitingSeed,waitingGeneration,runtimeStopIds[i]);
   }
   var occupancy=session.GetComponent<StopOccupancySystem>();for(int i=0;i<people.Length;i++)if(people[i])people[i].SetActive(!session.IsSimulationBot&&(occupancy&&occupancy.IsWalkingPassenger(i)||HasWaitingPassenger(i)));
  }
@@ -334,7 +334,7 @@ public partial class PassengerJobs : MonoBehaviour {
    if(closest<0){message="손님이 있는 오른쪽 연석에 같은 방향으로 정차하세요 (시속 2km 미만)";return false;}
    if(session.simulationMatch){for(int i=0;i<offers.Length;i++)if(offers[i]!=null&&offers[i].pickup==closest)return Accept(i)&&Board();return AcceptRoadside(closest)&&Board();}
 
-   ClearPassengerActivities();ResetChoiceEffectsForCall();Behavior=null;current=null;var roadsideZones=GetComponent<ServiceLawZones>();if(roadsideZones&&roadsideZones.Ready)foreach(var course in roadsideZones.scenarios)if(!course.beforePickup&&course.pickup==closest){current=Make(course.pickup,course.drop,course);if(current!=null)break;}if(current==null){int drop=(closest+3+completed*7)%stops.Length;while(drop==closest||drop==Catalog.OppositeIndex(closest))drop=(drop+1)%stops.Length;current=Make(closest,PreferredDrop(closest,drop));}if(float.IsInfinity(current.distance))return false;trip.Accept(current.fare,current.seconds);InitialFare=current.fare;OfferId="";if(session.law)session.law.tripId=session.law.ids.Next("trip");return Board();
+   ClearPassengerActivities();ResetChoiceEffectsForCall();Behavior=null;current=null;var roadsideZones=GetComponent<ServiceLawZones>();if(roadsideZones&&roadsideZones.Ready)foreach(var course in roadsideZones.scenarios)if(!course.beforePickup&&course.pickup==closest){current=Make(course.pickup,course.drop,course);if(current!=null)break;}if(current==null){int drop=(closest+3+completed*7)%stops.Length;while(drop==closest||drop==Catalog.OppositeIndex(closest))drop=(drop+1)%stops.Length;int forced=TakeForcedRoadsideDrop(closest);current=Make(closest,forced>=0?forced:PreferredDrop(closest,drop));}if(float.IsInfinity(current.distance))return false;trip.Accept(current.fare,current.seconds);InitialFare=current.fare;OfferId="";if(session.law)session.law.tripId=session.law.ids.Next("trip");return Board();
   }
   if(trip.State==TripState.ToPickup){if(!session.business.CanAccept)return false;if(!At(current.pickup)){if(session.services.TryUseFacility())return true;message="승차 지점 오른쪽 연석에 화살표 방향으로 정차 후 F";return false;}return Board();}
   if(trip.State==TripState.OnTrip){if(SituationWorkActive){message=Situation.Dialogue;return false;}if(PassengerViaPending)return InteractPassengerVia();if(!At(current.drop)&&!TryOppositeDrop()){message=StopArrivalGuidance.For(session).Detail;return false;}

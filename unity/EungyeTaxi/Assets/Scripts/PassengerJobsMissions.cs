@@ -37,7 +37,7 @@ public partial class PassengerJobs {
  // change neither fare nor deadline, so route-situation calls can carry one too. Last-call boards stay plain.
  void ApplyMissions(){
   if(!CallBoardSingle||!MissionRules.Enabled||FirstHomeDispatchPending||System.Array.Exists(offers,IsLastCall))return;
-  var pool=new System.Collections.Generic.List<JobOffer>();foreach(var o in offers)if(o!=null&&o.mission==MissionRules.None&&o.reunionKind==0&&o.variety!=CallBoardRules.OutOfTown)pool.Add(o);
+  var pool=new System.Collections.Generic.List<JobOffer>();foreach(var o in offers)if(o!=null&&o.mission==MissionRules.None&&o.reunionKind==0&&o.variety!=CallBoardRules.OutOfTown&&o.variety!=CallBoardRules.Emergency)pool.Add(o);
   if(pool.Count==0)return;string seed=pool[0].candidateSeed+":mission";
   if(GoodDrivingRules.Roll(seed)>=MissionRules.BoardChance)return;
   var pick=pool[GoodDrivingRules.Roll(seed+":offer")%pool.Count];
