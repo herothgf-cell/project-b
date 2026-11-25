@@ -36,6 +36,8 @@ DONE = {  # issue -> revision and what was done (partial fixes say so)
     'P01-1': 'r54 신호등 기둥을 인도로 옮김',
     **{f'P{n:02d}-1': '고칠 것 없음: 높이 4.45~6.95 m의 표지 받침대(바닥 기둥 아님, r54 기록)' for n in range(2, 17)},
     'J019-3': 'r55 동서 황색',
+    # r61 north pedestrian cross (J1897)
+    **{r: 'r61 보행 십자 J1897 광장으로(차로 끔, 광장 재질), 로드뷰 확인' for r in ('J005-3', 'J032-1', 'J036-1', 'J036-2', 'J039-1', 'J039-2')},
     # r60 pedestrian plaza (roadview-confirmed)
     **{r: 'r60 보행 광장으로(차로 끔, 광장 재질), 로드뷰 확인' for r in ('J001-3', 'J038-2', 'J038-3', 'J040-2', 'J043-1', 'J043-2', 'J045-1', 'J046-2', 'J047-2')},
     # 2026-11-26 closed without a map change (checked)

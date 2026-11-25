@@ -11,9 +11,12 @@ public static class MapReviewPlazaEdit {
  [Serializable] class Plaza {public string id,source;public MapPoint[] points;}
  [Serializable] class Plan {public int fromRevision,toRevision;public string[] disable,disableScene,deadEnds;public Plaza[] plazas;}
  static void Require(bool pass,string message){if(!pass)throw new InvalidOperationException("map review plaza: "+message);}
- public static void Apply(){
+ public static void Apply(){ApplyFile("config/maps/review/r60-plaza-lanes.json");}
+ // r60 -> r61: the J1897 five-way pedestrian cross north of Daeeun-ro.
+ public static void ApplyR61(){ApplyFile("config/maps/review/r61-plaza-lanes.json");}
+ static void ApplyFile(string file){
   string root=ProjectMapBuild.Root,token=ProjectMapStore.Fingerprint(root);
-  var plan=JsonUtility.FromJson<Plan>(File.ReadAllText(Path.Combine(root,"config/maps/review/r60-plaza-lanes.json")));
+  var plan=JsonUtility.FromJson<Plan>(File.ReadAllText(Path.Combine(root,file)));
   Require(plan.deadEnds==null||plan.deadEnds.Length==0,"plan leaves dead ends");
   var before=ProjectMapStore.Load(root);
   Require(before.document.revision==plan.fromRevision,"expected map r"+plan.fromRevision+", found r"+before.document.revision);

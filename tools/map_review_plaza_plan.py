@@ -3,27 +3,33 @@
 Seeds are the through lanes of the streets the roadview showed as vehicle-free; the closure disables every
 connector that starts or ends on a disabled lane (repeat until stable) and reports active lanes that would be
 left without an exit (dead ends) -- those block the change.
-Usage: python tools/map_review_plaza_plan.py   -> config/maps/review/r60-plaza-lanes.json
+Usage: python tools/map_review_plaza_plan.py <revision> <group> ...   -> config/maps/review/r<revision>-plaza-lanes.json
+(r60: south, r61: north)
 """
 import json
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'config/maps/review/r60-plaza-lanes.json'
 # scene road surfaces of those streets: disabled and replaced by a pedestrian-space polygon of the same strip
 # (1084/3830/1141/4129 are the J2468 crossing pieces. The alley-end pieces 3374/1144 and the 1115/1129 links lie
 # inside the kept junctions and carriageways of Daeeun-ro, J2640, J2111 and J2830, so they stay)
 SCENE_ROADS = {'south': ['road:37612022:A0020000:1107:0', 'road:37612022:A0020000:1132:0', 'road:37612022:A0020000:2501:0', 'road:37612022:A0020000:3693:0',
-                         'road:37612022:A0020000:1084:0', 'road:37612022:A0020000:3830:0', 'road:37612022:A0020000:1141:0', 'road:37612022:A0020000:4129:0']}
+                         'road:37612022:A0020000:1084:0', 'road:37612022:A0020000:3830:0', 'road:37612022:A0020000:1141:0', 'road:37612022:A0020000:4129:0'],
+               # north: the J1897_12424 five-way pedestrian cross (J005-3, J032-1, J036-1/2, J039-1/2); 1257 stays inside J039-1's junction
+               'north': ['road:37612022:A0020000:1092:0', 'road:37612022:A0020000:1106:0', 'road:37612022:A0020000:2770:0', 'road:37612022:A0020000:4022:0',
+                         'road:37612022:A0020000:1163:0', 'road:37612022:A0020000:2563:0', 'road:37612022:A0020000:2888:0', 'road:37612022:A0020000:4099:0']}
 SEEDS = {
     # south: Daeeun-ro (J2225) - J2468 - J2640, and J2468's two short alleys (J001-3, J038-2/3, J043-1/2, J045-1, J046-2, J047-2)
     'south': ['local:2279:11842:2400:11623', 'local:2453:11651:2331:11872', 'local:2481:11466:2583:11215', 'local:2640:11234:2536:11490',
               'local:2204:11415:2394:11503', 'local:2382:11530:2191:11442', 'local:2743:11710:2540:11614', 'local:2554:11587:2755:11683'],
+    'north': ['local:2127:12642:1933:12475', 'local:1953:12452:2147:12620', 'local:2148:12148:1948:12388', 'local:1925:12369:2123:12131',
+              'local:1869:12480:1641:12700', 'local:1620:12678:1847:12460', 'local:1842:12396:1646:12228', 'local:1666:12206:1862:12374'],
 }
 
 
-def main(groups):
+def main(groups, rev):
+    OUT = ROOT / f'config/maps/review/r{rev}-plaza-lanes.json'
     d = json.loads((ROOT / 'config/maps/project/eungye.project.json').read_text(encoding='utf-8-sig'))['document']
     lanes = {l['id']: l for l in d['lanes']}
     off = {s for g in groups for s in SEEDS[g]}
@@ -92,9 +98,9 @@ def main(groups):
             print('plaza', rid, 'kept', i1 - i0 + 1, 'of', len(dense), 'samples')
     junctions = sorted({lanes[i].get('ruleId') for i in off if lanes[i].get('ruleId')})
     print('disable', len(off), 'dead ends', dead, 'junctions', junctions)
-    OUT.write_text(json.dumps(dict(fromRevision=59, toRevision=60, groups=groups, disable=sorted(off), deadEnds=dead, junctions=junctions, disableScene=[r for g in groups for r in SCENE_ROADS[g]], plazas=plazas), ensure_ascii=False, indent=1), encoding='utf-8')
+    OUT.write_text(json.dumps(dict(fromRevision=rev - 1, toRevision=rev, groups=groups, disable=sorted(off), deadEnds=dead, junctions=junctions, disableScene=[r for g in groups for r in SCENE_ROADS[g]], plazas=plazas), ensure_ascii=False, indent=1), encoding='utf-8')
     return off, dead
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:] or ['south'])
+    main(sys.argv[2:] or ['south'], int(sys.argv[1]))

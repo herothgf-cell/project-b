@@ -52,3 +52,21 @@ Unity.exe ... -executeMethod PrototypeBuild.BuildHybrid
 bash tools/map_review_regress.sh builds/EungyeTaxi/EungyeTaxi.exe <out>
 builds/EungyeTaxi/EungyeTaxi.exe -contentTest -callBoardCheck -callBoardOutput <dir>
 ```
+
+## 2026-11-26 추가: 북쪽 보행 십자 J1897 (지도 r61)
+
+- 로드뷰(2026-06): 북서 가지 입구(서쪽 차도 쪽)에도 노란 볼라드가 줄지어 있고, 안쪽은 보행 포장이다. J1897 다섯 가지 모두 보행 공간이다.
+- `python tools/map_review_plaza_plan.py 61 north` → `config/maps/review/r61-plaza-lanes.json`. 네 가지 양방향 차로 8개와 연결 차로를 합쳐 35개를 끄고, 장면 포장 8조각(1092·1106·2770·4022와 가운데 조각 1163·2563·2888·4099)을 보행 광장으로 바꿨다. 막다른 길 0, 신호 그룹·시설 영향 0. 1257(은행로 J039-1 교차부 안)은 그대로 두었다.
+- 적용 `MapReviewPlazaEdit.ApplyR61`. r61 해시 `984c0a1f…15bf`.
+- 해당 항목: J005-3, J032-1, J036-1·2, J039-1·2.
+
+| 검사 | 종류 | 결과 |
+|---|---|---|
+| `PrototypeBuild.BuildHybrid` | 빌드 | 성공 |
+| J1897·J2202 위 시점 화면 전후 | 위치 제어(화면) | 다섯 가지와 J2202 남서 가지가 광장 포장 |
+| `-mapAudit`(77곳) | 위치 제어 | 적신호 진입 0, 멈춤 0, 겹침 0 |
+| 바닥 기둥 | 위치 제어 | 357개, 차로 안 0 |
+| `-callBoardCheck` | 위치 제어 | 통과 114, 실패 0(r60의 115와 차이는 생성된 호출 구성: 급행 2건 대신 가까운 호출 확인 1건) |
+| `-districtTrafficTest` | 자동 물리 주행 | 실패. 멈춘 차량 3(r60과 같음), 녹색 대기 줄 3 |
+
+화면: [before-after-top.jpg](../ui/2026-11-26-map-review-plaza-north/before-after-top.jpg)
