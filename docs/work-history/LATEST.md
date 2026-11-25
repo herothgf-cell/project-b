@@ -1,8 +1,10 @@
 # 최신 작업 이력
 
-**2026-11-25 · 은계 싱글 r55 · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
+**2026-11-25 · 은계 싱글 r56 · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
 
 ## 이어갈 작업
+
+**2026-11-25 지도 검토 3단계: 노면 2차(배포 실행본 반영, 지도 r56)**: [기록](2026-11-25-map-review-markings-2.md). 새 횡단보도 40(황색 12, 자전거횡단도 7), 보호구역 적색 포장 235조각(승인 위치만, 11/24 구간 전체 포장 제거 결정은 유지), "30"·"어린이 보호구역" 글자 53, 예고 마름모 9, J7917 북쪽 횡단보도 삭제. 시트 픽셀 좌표가 실제와 10~20 m 어긋나서 위치는 게임 차로(교차로 가지·폭)와 항공사진 대조로 다시 구했다. 77곳 회귀·기둥 0 통과, `-districtTrafficTest`는 r55와 같은 6대. 처리 62/277건. 다음: 횡단보도 위치 이동+정지선 → 폭·차로 수·선 종류·선형·연결 → 로드뷰 항목.
 
 **2026-11-25 돌발 첫날부터·하루 5건, 08 구현 현황 정리(문서·설정, 배포 실행본은 다음 빌드)**: 사용자 요청으로 돌발 기본값을 바꿨다: `surprise.firstDay`=1(첫날부터), `surprise.perShiftMax`=5, 새 설정 `surprise.perKindMax`=2(종류별 하루 2건), `surprise.minGapSeconds`=120. 영업 시작 3분·마감 2분 제외는 그대로다. 편집기 규칙 25·21건 통과. [08](../content-design/08-fun-improvements.md) 맨 위에 "구현 현황 한눈에 보기"를 두고 후보 표의 상태 칸을 실제 상태로 고쳤다. 다음 작업: 다른 택시와 승강장(진행 중).
 

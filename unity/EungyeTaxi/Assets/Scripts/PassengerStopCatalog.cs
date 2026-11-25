@@ -152,7 +152,7 @@ public sealed partial class PassengerStopCatalog {
   float lo=c.bayOffset>4?c.bayOffset-1.45f:2,hi=c.bayOffset+3.35f;foreach(float along in new[]{-connectorAt,connectorAt})if(g.FootprintBlocked(ProjectMapScene.Rectangle(pos+dir*along+right*(lo+hi)*.5f,dir,hi-lo,2))){reason="connector polygon overlap";return false;}
   foreach(var j in map.junctionRules??new HybridJunctionRule[0])if(FlatDistance(bay,j.V())<38){reason="junction clearance";return false;}
   foreach(var crossing in map.osmCrossings??new OsmCrossing[0])if(FlatDistance(bay,new Vector3(crossing.x,0,crossing.z))<25){reason="crosswalk clearance";return false;}
-  if(map.editorDocument!=null)foreach(var f in map.editorDocument.facilities)if((f.kind=="crosswalk"||f.kind=="stopLine")&&FlatDistance(bay,f.Position)<25){reason="edited crossing/stop line";return false;}
+  if(map.editorDocument!=null)foreach(var f in map.editorDocument.facilities)if((f.kind=="crosswalk"||f.kind=="stopLine")&&!RoadSurfaceMarks.IsRemovedCrosswalk(f)&&FlatDistance(bay,f.Position)<25){reason="edited crossing/stop line";return false;}
   for(float along=-bayHalf;along<=bayHalf;along+=2){
    if(Vector3.Dot(path.Tangent(c.laneAt+along),dir)<.995f){reason="bend";return false;}
    foreach(float across in new[]{-1.35f,0,1.35f}){var p=bay+dir*along+right*across;if(g.OnRoad(p,-.03f)||g.Blocked(p)){reason="bay obstructed";return false;}}

@@ -471,9 +471,11 @@ public class BusinessProgress : MonoBehaviour {
   // r55 (2026-11-25) map review markings batch 1: yellow school-zone crosswalks, bicycle crossings beside 8 junctions'
   // crosswalks (moved 2.3 m toward the junction), J7841_867 diagonal crossings (crosswalk facilities only).
   const string reviewedR55Hash="78fa0713e15f970199d561c8f3ec3466a755e1c867408c737dc9afcfb5e4e816";
-  int from=0,to=0;for(int revision=14;revision<=55;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>55)return;
-  string reviewedHash=to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
+  // r56 (2026-11-25) map review markings batch 2: new crosswalks, school-zone paving/text, diamonds, J7917 north crosswalk removed (facilities only).
+  const string reviewedR56Hash="496208f50a71ecb743152296d68877b6c90046794419ac6d0abfed620b74efc3";
+  int from=0,to=0;for(int revision=14;revision<=56;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>56)return;
+  string reviewedHash=to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   ApplyReviewedEungyeCheckpointMigration(live,from,to);
  }

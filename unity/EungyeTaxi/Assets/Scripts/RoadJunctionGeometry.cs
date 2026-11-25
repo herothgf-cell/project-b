@@ -23,7 +23,7 @@ public static class RoadJunctionGeometry {
                 var d=new Vector3(a.dx,0,a.dz).normalized;if(d.sqrMagnitude<.5f)continue;int k=Mathf.Abs(Vector3.Dot(d,axis))>.7f?0:1;
                 int sign=Vector3.Dot(d,k==0?axis:TrafficSystem.Right(axis))>=0?1:-1;float reach=widths[1-k];bool crossing=false,stop=false;
                 foreach(var source in map.editorDocument==null?new RoadMapFacility[0]:map.editorDocument.facilities??new RoadMapFacility[0]){
-                    if(source==null||source.junctionId!=j.id||source.axis!=k||source.sign!=sign||(source.kind!="crosswalk"&&source.kind!="stopLine"))continue;
+                    if(source==null||source.junctionId!=j.id||source.axis!=k||source.sign!=sign||(source.kind!="crosswalk"&&source.kind!="stopLine")||RoadSurfaceMarks.IsRemovedCrosswalk(source))continue;
                     var f=GeneratedCrosswalkGeometry.Effective(map,source);
                     if(f.kind=="crosswalk")crossing=true;else stop=true;
                     // Extend to the actual outer edge, including lateral edits.

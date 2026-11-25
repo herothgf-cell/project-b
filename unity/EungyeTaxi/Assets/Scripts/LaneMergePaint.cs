@@ -13,7 +13,7 @@ public static class LaneMergePaint {
  static bool Finite(float v){return !float.IsNaN(v)&&!float.IsInfinity(v);}
  static List<RoadJunctionGeometry.Clearance> Clearances(MapData map,RoadMapDocument document){
   var result=RoadJunctionGeometry.PaintClearances(new MapData{junctionRules=map==null?null:map.junctionRules,editorDocument=document});
-  foreach(var f in document.facilities??new RoadMapFacility[0])if(f!=null&&(f.kind=="crosswalk"||f.kind=="stopLine"))result.Add(new RoadJunctionGeometry.Clearance{kind=f.kind,center=f.Position,forward=Quaternion.Euler(0,f.yaw,0)*Vector3.forward,halfWidth=f.width*.5f,halfDepth=f.length*.5f});
+  foreach(var f in document.facilities??new RoadMapFacility[0])if(f!=null&&(f.kind=="crosswalk"||f.kind=="stopLine")&&!RoadSurfaceMarks.IsRemovedCrosswalk(f))result.Add(new RoadJunctionGeometry.Clearance{kind=f.kind,center=f.Position,forward=Quaternion.Euler(0,f.yaw,0)*Vector3.forward,halfWidth=f.width*.5f,halfDepth=f.length*.5f});
   return result;
  }
  static string Error(RoadMapFacility f,RoadMapLane lane,MapPoint[] points,List<RoadJunctionGeometry.Clearance> clearances){

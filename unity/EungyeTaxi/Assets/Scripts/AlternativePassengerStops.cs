@@ -76,7 +76,7 @@ public sealed partial class PassengerStopCatalog {
     }
     foreach(var junction in map.junctionRules??new HybridJunctionRule[0])if(FlatDistance(point,junction.V())<30){reason="walking junction clearance";return false;}
     foreach(var crossing in map.osmCrossings??new OsmCrossing[0])if(FlatDistance(point,new Vector3(crossing.x,0,crossing.z))<18){reason="walking crossing clearance";return false;}
-    if(map.editorDocument!=null)foreach(var facility in map.editorDocument.facilities)if((facility.kind=="crosswalk"||facility.kind=="stopLine")&&FlatDistance(point,facility.Position)<18){reason="walking edited crossing/stop line";return false;}
+    if(map.editorDocument!=null)foreach(var facility in map.editorDocument.facilities)if((facility.kind=="crosswalk"||facility.kind=="stopLine")&&!RoadSurfaceMarks.IsRemovedCrosswalk(facility)&&FlatDistance(point,facility.Position)<18){reason="walking edited crossing/stop line";return false;}
    }
   }return true;
  }
