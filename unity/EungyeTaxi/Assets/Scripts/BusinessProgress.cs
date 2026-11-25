@@ -485,9 +485,11 @@ public class BusinessProgress : MonoBehaviour {
   const string reviewedR61Hash="984c0a1f086756a9858ae1e72fab92870f717f5dbc831c06cfa1bfb9860f15bf";
   // r62 Yellow school-zone crossings at J044 (3 arms) and J2564 (roadview 2026-11-26)
   const string reviewedR62Hash="54c6f40a26e120a76cb61eb3c1bf51eb4a2a3bfacc28dd2cd873c80ace0decb5";
-  int from=0,to=0;for(int revision=14;revision<=62;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>62)return;
-  string reviewedHash=to==62?reviewedR62Hash:to==61?reviewedR61Hash:to==60?reviewedR60Hash:to==59?reviewedR59Hash:to==58?reviewedR58Hash:to==57?reviewedR57Hash:to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
+  // r63 Roadview-confirmed school-zone marks: yellow and raised red crossings, text (2026-11-26)
+  const string reviewedR63Hash="40c0ad755c719719ccd86c7c20bd91dd19a9edbf608bb9c5d38d05f23574d4d1";
+  int from=0,to=0;for(int revision=14;revision<=63;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>63)return;
+  string reviewedHash=to==63?reviewedR63Hash:to==62?reviewedR62Hash:to==61?reviewedR61Hash:to==60?reviewedR60Hash:to==59?reviewedR59Hash:to==58?reviewedR58Hash:to==57?reviewedR57Hash:to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   ApplyReviewedEungyeCheckpointMigration(live,from,to);
  }
