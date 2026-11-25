@@ -1,10 +1,10 @@
 {
-  "sourceCommit": "96a2dcc6",
+  "sourceCommit": "06f3b17a",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-25",
-  "totalBytes": 117554257,
+  "totalBytes": 117573993,
   "validation": {
     "build": "PrototypeBuild.BuildEasyRoadMapEditor exit 0",
     "modelSuites": 23,
@@ -38,7 +38,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "0cb4ce8298dce0fba151338471d76b2b4aa6cdc939439d6fc685964b506d42e5"
+      "sha256": "76f632da7b0abbd579c669a70a6fb9065126719d0fdf3dc7fa0a6eacefdad94f"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -62,8 +62,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 3589120,
-      "sha256": "0fb543a4b2970fcba66e5eddb225a957e87db1bcd122220fb1d0fa72665cc6b2"
+      "bytes": 3589632,
+      "sha256": "ed70815b24571928fa9f1da780d5217520040e22eafedf8db3f152c98fd8be7b"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
@@ -572,8 +572,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 26728760,
-      "sha256": "1f61a47886411117133dd88dbea00a1aa10d3f63cf4538b2047b44312c0e06e6"
+      "bytes": 26747984,
+      "sha256": "53f43fe1eef681c1f2194f46871b84fc35aa8e13e0adcf431399926c05555e8f"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
@@ -713,7 +713,7 @@
     {
       "path": "builds/EungyeTaxi/project-map-build.json",
       "bytes": 177,
-      "sha256": "f84314d2cb8fef0a5a938a50a58e4796fee57cd9ffa9241bcf14de71658f733c"
+      "sha256": "580eb281e72ce8f20ea685977061f5e4d8170a5a36b54e3eef58f74030d956e4"
     },
     {
       "path": "builds/EungyeTaxi/ThirdPartyNotices/mchrbn-unity-traffic-simulation-MIT.txt",
@@ -753,8 +753,8 @@
   ],
   "projectMap": {
     "path": "config/maps/project/eungye.project.json",
-    "contentHash": "b0a1e15fb67f9e6329a77bf872f0626e629ec9eec8d03faced0bf2be3de3012d",
-    "bytes": 25145865,
-    "sha256": "4dd509674486b896d1abfa9ba90d8210a3afbc78f616bbeea3651de268a364f3"
+    "contentHash": "7cf4928a98b9f8194bddaa67d9a52a40394d1477bb53a11cb2b063eb52728a20",
+    "bytes": 25498104,
+    "sha256": "388134f82ad65b62dd519ac3f6da19c6bd623aca1f74ec5606d6b0dbbdb3aa7a"
   }
 }
