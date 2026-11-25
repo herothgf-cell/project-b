@@ -1,10 +1,10 @@
 {
-  "sourceCommit": "a5c72773",
+  "sourceCommit": "96a2dcc6",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-25",
-  "totalBytes": 117493907,
+  "totalBytes": 117554257,
   "validation": {
     "build": "PrototypeBuild.BuildEasyRoadMapEditor exit 0",
     "modelSuites": 23,
@@ -38,17 +38,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "a88ed28a0f677b4b0e9dbf0691bccb1e5a56e3cdbdb57c105e71e52d139228b3"
+      "sha256": "0cb4ce8298dce0fba151338471d76b2b4aa6cdc939439d6fc685964b506d42e5"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 66388,
-      "sha256": "761507f345acca509c3d8deeeae027c813065a72e1320ad0971da68c62d41902"
+      "bytes": 66684,
+      "sha256": "3becc000de02b46dc0dce2a6b98c9c2f2f964acfd0aac7c180963b2667659033"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 125216,
-      "sha256": "60c60d4bc80291e3bb07e5060bdbda6b0bab0c9f338463a7c8137d3202b09b60"
+      "bytes": 125736,
+      "sha256": "c373094c210af06d4d49c34527ce474000150aca04b097c9bd471a2184126934"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -58,12 +58,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
       "bytes": 1140,
-      "sha256": "6a312365125a40cd5c664b64ed2ab400223588351fbb1a3f0be6881aa231a006"
+      "sha256": "80d8da340abbed08ccb04451833e572e8c719a690ecdebf8d208da5bb1dbc9e8"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 3548672,
-      "sha256": "0be1b09ed1e94c4cd40d1e8cad5d43af7fb3f740935274ea194e34cc2d9ac2b7"
+      "bytes": 3589120,
+      "sha256": "0fb543a4b2970fcba66e5eddb225a957e87db1bcd122220fb1d0fa72665cc6b2"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
@@ -572,8 +572,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 26709944,
-      "sha256": "1355cd279d72545ba65c4093478ca471c963140d4abde982fdb91c1b187a4bb1"
+      "bytes": 26728760,
+      "sha256": "1f61a47886411117133dd88dbea00a1aa10d3f63cf4538b2047b44312c0e06e6"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
@@ -597,8 +597,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/RuntimeInitializeOnLoads.json",
-      "bytes": 13807,
-      "sha256": "8cb859d49325d504fa83a9928eb0f02a549c994b6dd4e7f85fd32e92cbb84677"
+      "bytes": 14077,
+      "sha256": "afb923200edccce106a81ab6c4a27583536a01c722aef8ac22b779dcfe25f572"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/ScriptingAssemblies.json",
@@ -608,7 +608,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/sharedassets0.assets",
       "bytes": 7624,
-      "sha256": "a34fec7943164984de7c5e9b3093eb66b4c928a37e7c518a1a14357fcdd54581"
+      "sha256": "693f562162185903595f2c60dd2d94126e766574fdc55538edc8761d35311e4c"
     },
     {
       "path": "builds/EungyeTaxi/MonoBleedingEdge/EmbedRuntime/mono-2.0-bdwgc.dll",
@@ -713,7 +713,7 @@
     {
       "path": "builds/EungyeTaxi/project-map-build.json",
       "bytes": 177,
-      "sha256": "0e1677892b9b49e47d98b43cb8a6726bcc5efa96e9cefbaadd90f1a2d0ff2f0b"
+      "sha256": "f84314d2cb8fef0a5a938a50a58e4796fee57cd9ffa9241bcf14de71658f733c"
     },
     {
       "path": "builds/EungyeTaxi/ThirdPartyNotices/mchrbn-unity-traffic-simulation-MIT.txt",
@@ -753,8 +753,8 @@
   ],
   "projectMap": {
     "path": "config/maps/project/eungye.project.json",
-    "contentHash": "496208f50a71ecb743152296d68877b6c90046794419ac6d0abfed620b74efc3",
-    "bytes": 25136252,
-    "sha256": "bcaeea2201677392e7f02dd8427be136ae01266e65f46c821217fb2fa72280c6"
+    "contentHash": "b0a1e15fb67f9e6329a77bf872f0626e629ec9eec8d03faced0bf2be3de3012d",
+    "bytes": 25145865,
+    "sha256": "4dd509674486b896d1abfa9ba90d8210a3afbc78f616bbeea3651de268a364f3"
   }
 }
