@@ -1,8 +1,10 @@
 # 최신 작업 이력
 
-**2026-11-26 · 은계 싱글 r59 · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
+**2026-11-26 · 은계 싱글 r60 · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
 
 ## 이어갈 작업
+
+**2026-11-26 지도 검토 7단계: 은행동 남쪽 보행자 거리 → 보행 광장(배포 실행본 반영, 지도 r60)**: [기록](2026-11-26-map-review-plaza.md). 로드뷰로 확인한 대은로–J2468–J2640 보행 거리와 골목의 차로 38개를 끄고 포장을 광장 재질로 바꿨다(막다른 길 0). 77곳·기둥 0·승객 호출판 115 통과, 교통 검사 멈춤 6 → 3. 북쪽 보행 십자(J1897)와 남은 로드뷰 확인이 이어진다. 처리 110/277.
 
 **2026-11-26 지도 검토 로드뷰 확인 1차(판정만, 지도 미변경)**: [기록](2026-11-26-map-review-roadview-survey.md). 넓힌 내장 브라우저로 카카오 로드뷰를 항목 방향으로 열어 은행동 상가 중심 거리 16건을 "차량 없는 보행 공간"으로 확인했다(`config/maps/review/2026-11-26-roadview-verdicts.json`). 해당 차로 끄기·광장 재질·교차로 정리는 도로망 작업으로 이어서 한다. 로드뷰 81건 남음.
 
