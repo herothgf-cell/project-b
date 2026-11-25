@@ -1,8 +1,10 @@
 # 최신 작업 이력
 
-**2026-11-26 · 은계 싱글 r57 · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
+**2026-11-26 · 은계 싱글 r58 · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
 
 ## 이어갈 작업
+
+**2026-11-26 지도 검토 5단계: 좌회전 유도선·지그재그(배포 실행본 반영, 지도 r58)**: [기록](2026-11-26-map-review-guide-lines.md). 7개 교차로 좌회전 유도선(연결 차로 가장자리 흰 점선), J4396 북서 진입 지그재그·적색 포장. 77곳 회귀·기둥 0 통과, 교통 검사 기존 6대. 처리 89/277. 남은 것은 대부분 차로 형상 작업(폭·차로 수·선형·연결·빗금 안전지대)이다. 검토 중앙선 덧그리기는 침범 판정에 쓰이므로 차로 점을 옮겨야 한다.
 
 **2026-11-26 배포 실행본 r57(지도 검토 4단계 + 택시 승강장·NPC 택시·분실물·응급 손님)**: 다른 세션 커밋(9ec4e374·77658505) 뒤 소스 96a2dcc6에서 `BuildHybrid`(배포 커밋 d87b6b8f). 빌드 중 r57 저장 이전 해시가 한 글자 잘린 것(63자)을 발견해 고쳤다. 배포 실행본 회귀: `-mapAudit` 77곳 적신호 진입·멈춤·겹침 0, 바닥 기둥 차로 안 0(361개), `-lostCheck` 22건 통과(실패 0), `-rankCheck` 16건 통과, `-districtTrafficTest` 실패(기존과 같은 6대·녹색 대기 줄 3). manifest 145파일 불일치 0. [기록](2026-11-25-map-review-crosswalk-moves.md)
 

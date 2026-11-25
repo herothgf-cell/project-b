@@ -17,6 +17,8 @@ public static class MapReviewCrosswalkEdits {
  public static void ApplyR56(){ApplyFile("config/maps/review/r56-mark-edits.json");}
  // Crosswalk moves with their stop lines (r56 -> r57).
  public static void ApplyR57(){ApplyFile("config/maps/review/r57-crosswalk-moves.json");}
+ // Left-turn guide lines and the J4396 zigzag approach (r57 -> r58).
+ public static void ApplyR58(){ApplyFile("config/maps/review/r58-line-marks.json");}
  static void ApplyFile(string file){
   string root=ProjectMapBuild.Root,token=ProjectMapStore.Fingerprint(root);
   var plan=JsonUtility.FromJson<Plan>(File.ReadAllText(Path.Combine(root,file)));
