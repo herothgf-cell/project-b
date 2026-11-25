@@ -474,7 +474,7 @@ public class BusinessProgress : MonoBehaviour {
   // r56 (2026-11-25) map review markings batch 2: new crosswalks, school-zone paving/text, diamonds, J7917 north crosswalk removed (facilities only).
   const string reviewedR56Hash="496208f50a71ecb743152296d68877b6c90046794419ac6d0abfed620b74efc3";
   // r57 (2026-11-25) map review: crosswalks moved/deepened with their stop lines (J1927, J866, J5692, P22:56, J2145, J5057, J7973, J7841, J7917, J8066), five removed, two added (facilities only).
-  const string reviewedR57Hash="b0a1e15fb67f9e6329a77bf872f0626e629ec9eec8d03faced0bf2be3de3012";
+  const string reviewedR57Hash="b0a1e15fb67f9e6329a77bf872f0626e629ec9eec8d03faced0bf2be3de3012d";
   int from=0,to=0;for(int revision=14;revision<=57;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
   if(map.mapId!="eungye"||from<14||from>=to||to<16||to>57)return;
   string reviewedHash=to==57?reviewedR57Hash:to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
