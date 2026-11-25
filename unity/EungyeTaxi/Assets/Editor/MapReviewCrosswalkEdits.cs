@@ -21,6 +21,8 @@ public static class MapReviewCrosswalkEdits {
  public static void ApplyR58(){ApplyFile("config/maps/review/r58-line-marks.json");}
  // Straight centre-line bands where the lane-based yellow line wiggles (r58 -> r59).
  public static void ApplyR59(){ApplyFile("config/maps/review/r59-centre-lines.json");}
+ // Yellow school-zone crossings confirmed by roadview: J044 three arms, J2564 (r61 -> r62).
+ public static void ApplyR62(){ApplyFile("config/maps/review/r62-yellow-crossings.json");}
  static void ApplyFile(string file){
   string root=ProjectMapBuild.Root,token=ProjectMapStore.Fingerprint(root);
   var plan=JsonUtility.FromJson<Plan>(File.ReadAllText(Path.Combine(root,file)));

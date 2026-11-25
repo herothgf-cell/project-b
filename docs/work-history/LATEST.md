@@ -1,8 +1,10 @@
 # 최신 작업 이력
 
-**2026-11-26 · 은계 싱글 r61 · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
+**2026-11-26 · 은계 싱글 r62 · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
 
 ## 이어갈 작업
+
+**2026-11-26 지도 검토 8단계: 로드뷰로 확인한 노란 횡단보도(배포 실행본 반영, 지도 r62)**: [기록](2026-11-26-map-review-yellow-crossings.md). J044 세 가지와 J2564 두 가지를 노란 횡단보도로. 77곳·기둥 0·호출판 111(실패 0) 통과, 교통 검사 멈춤 3. 처리 119/277. 어린이보호구역 노면 11건은 로드뷰 확인을 마쳤고 다음 묶음(r63)에서 반영한다.
 
 **2026-11-26 지도 검토 7단계 추가: 북쪽 보행 십자 J1897 → 보행 광장(배포 실행본 반영, 지도 r61)**: [기록](2026-11-26-map-review-plaza.md) 아래쪽. 북서 가지도 볼라드로 막힌 보행 공간임을 로드뷰로 확인하고 차로 35개를 껐다. 77곳·기둥 0·호출판 114(실패 0) 통과, 교통 검사 멈춤 3. 처리 116/277.
 
