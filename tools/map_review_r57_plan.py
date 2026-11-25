@@ -32,11 +32,13 @@ SHIFT_GENERATED = [('J003-1', 'J1927_5181', 1, -1, 13.0, False), ('J003-2', 'J19
 # existing document crosswalk moved along its approach with its stop line:
 # (refs, crosswalk id, metres outward (negative = toward the junction), new depth or None)
 # A deeper (two-row) crossing grows toward the junction so the stop-line gap stays.
+# J5057 west stays put: moving it 5 m inward left 3 cars waiting for the conditional U-turn there
+# (-districtTrafficTest 6 -> 9 stalls; back to 6 with it unmoved, 2026-11-26).
 SHIFT_DOCUMENT = [('J011-1', 'reviewed:Y05:44:0:1:zebra', -8.0, None),
                   ('J024-1', 'reviewed:P22:56:south:crosswalk', 4.8, None),
                   ('J004-4', 'review:r55:J2145_15970:a0:s1:crosswalk', 10.0, None),
                   ('J008-1', 'reviewed:J5057-N:crosswalk', -12.0, None),
-                  ('J008-2', 'review:r55:J5057_4449:a1:s1:crosswalk', -5.0, None), ('J008-2', 'review:r55:J5057_4449:a1:s-1:crosswalk', -5.0, None),
+                  ('J008-2', 'review:r55:J5057_4449:a1:s1:crosswalk', 0.0, None), ('J008-2', 'review:r55:J5057_4449:a1:s-1:crosswalk', -5.0, None),
                   ('J020-1', 'review:r55:J7973_3744:a1:s-1:crosswalk', -6.0, None),
                   ('J020-2', 'review:r55:J7973_3744:a0:s1:crosswalk', -3.0, None), ('J020-2', 'review:r55:J7973_3744:a0:s-1:crosswalk', -3.5, None),
                   ('J018-2', 'review:r55:J7841_867:a1:s1:crosswalk', 0.0, 6.0), ('J018-2', 'review:r55:J7841_867:a1:s-1:crosswalk', 0.0, 6.0),
