@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "f381011793bbeac67123dfdc75bdf1f7b483c57ffa3b351f5e9573cdf7c51513",
+  "contentHash": "fed6e2a69672df23a6db43f9f3f5e9fe0737ee6f6b3f2277d839384d08096640",
   "values": [
     {
       "id": "radio.station",
@@ -2546,15 +2546,19 @@
     },
     {
       "id": "surprise.perShiftMax",
+      "value": "5"
+    },
+    {
+      "id": "surprise.perKindMax",
       "value": "2"
     },
     {
       "id": "surprise.firstDay",
-      "value": "0"
+      "value": "1"
     },
     {
       "id": "surprise.minGapSeconds",
-      "value": "150"
+      "value": "120"
     },
     {
       "id": "surprise.door.enabled",

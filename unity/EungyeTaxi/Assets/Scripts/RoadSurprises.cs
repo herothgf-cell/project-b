@@ -10,9 +10,11 @@ public static partial class SurpriseRules {
  static float F(string id,double fallback){return (float)ContentTuning.Number(id,fallback);}
  static int I(string id,int fallback){return ContentTuning.Int(id,fallback);}
  public static bool Enabled {get{return I("surprise.enabled",1)!=0;}}
- public static int PerShiftMax {get{return Mathf.Max(0,I("surprise.perShiftMax",2));}}
- public static bool FirstDay {get{return I("surprise.firstDay",0)!=0;}}
- public static float MinGapSeconds {get{return Mathf.Max(10,F("surprise.minGapSeconds",150));}}
+ public static int PerShiftMax {get{return Mathf.Max(0,I("surprise.perShiftMax",5));}}
+ // Each kind at most this many times a day (2026-11-25: 2, so five a day fit four kinds).
+ public static int PerKindMax {get{return Mathf.Max(1,I("surprise.perKindMax",2));}}
+ public static bool FirstDay {get{return I("surprise.firstDay",1)!=0;}}
+ public static float MinGapSeconds {get{return Mathf.Max(10,F("surprise.minGapSeconds",120));}}
  public static bool DoorEnabled {get{return I("surprise.door.enabled",1)!=0;}}
  public static float DoorTriggerMetres {get{return Mathf.Clamp(F("surprise.door.triggerMetres",18),6,60);}}
  public static float DoorOpenSeconds {get{return Mathf.Clamp(F("surprise.door.openSeconds",4),1,20);}}
@@ -34,7 +36,7 @@ public static partial class SurpriseRules {
   if(elapsed<QuietStart)return "영업 시작 직후";
   if(secondsLeft<QuietEnd)return "마감 직전";
   if(done>=PerShiftMax)return "하루 한도";
-  if(kindDone>0)return "같은 종류 한도";
+  if(kindDone>=PerKindMax)return "같은 종류 한도";
   // A hard stop would fail these missions through no fault of the driver.
   if(carrying&&(mission==MissionRules.Express||mission==MissionRules.Coffee))return "급행·커피 미션 중";
   return "";

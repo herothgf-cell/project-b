@@ -18,7 +18,7 @@ public static class RoadSurprise2Checks {
   Check(!SurpriseRules.Relieved(1.3f,false,true)&&!SurpriseRules.Relieved(.5f,true,true)&&!SurpriseRules.Relieved(.5f,false,false),"any condition missing: no relief");
   Check(SurpriseRules.AmbulanceCandidate(60,2,true,30),"a junction 60 m ahead on green at 30 km/h");
   Check(!SurpriseRules.AmbulanceCandidate(60,2,false,30)&&!SurpriseRules.AmbulanceCandidate(40,2,true,30)&&!SurpriseRules.AmbulanceCandidate(95,2,true,30)&&!SurpriseRules.AmbulanceCandidate(60,12,true,30)&&!SurpriseRules.AmbulanceCandidate(60,2,true,10),"not on red, too near or far, off the road, or below 15 km/h");
-  string reason;Check(SurpriseRules.Blocked(true,false,false,3,600,600,2,0,0,false)=="하루 한도","the two batches share the daily limit of 2");
+  string reason;Check(SurpriseRules.Blocked(true,false,false,3,600,600,5,0,0,false)=="하루 한도","the two batches share the daily limit of 5");
   // Relief on a person accident.
   foreach(AccidentSeverity sev in Enum.GetValues(typeof(AccidentSeverity))){
    var st=new AccidentState();var r=AccidentSeverityPolicy.Resolve(AccidentKind.Person,sev);Check(st.BeginResolved("pedestrian-accident:1","scooter:1",r),"begin "+sev);
