@@ -1,8 +1,10 @@
 # 최신 작업 이력
 
-**2026-11-26 · 은계 싱글 r63 · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
+**2026-11-26 · 은계 싱글 r64 · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
 
 ## 이어갈 작업
+
+**2026-11-26 지도 검토 10단계: 중간 횡단보도(배포 실행본 반영, 지도 r64)**: [기록](2026-11-26-map-review-midblock-crossings.md). J002 동쪽·J009 회전교차로 두 진입로·J046 남북 길에 횡단보도. 77곳·기둥 0·호출판 116(실패 0) 통과, 교통 검사 멈춤 3. 로드뷰·항공사진으로 4건을 변경 없이 닫음. 처리 140/277.
 
 **2026-11-26 지도 검토 9단계: 로드뷰로 확인한 어린이보호구역 노면(배포 실행본 반영, 지도 r63)**: [기록](2026-11-26-map-review-school-marks.md). 노란 횡단보도 8·적색 고원식 포장 9·적색 포장 4·글자 3. 77곳·기둥 0·호출판 114(실패 0) 통과, 교통 검사 멈춤 3. 로드뷰로 4건을 변경 없이 닫음. 처리 133/277.
 
