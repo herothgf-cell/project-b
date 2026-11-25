@@ -36,6 +36,10 @@ DONE = {  # issue -> revision and what was done (partial fixes say so)
     'P01-1': 'r54 신호등 기둥을 인도로 옮김',
     **{f'P{n:02d}-1': '고칠 것 없음: 높이 4.45~6.95 m의 표지 받침대(바닥 기둥 아님, r54 기록)' for n in range(2, 17)},
     'J019-3': 'r55 동서 황색',
+    # r66 cross-section edits (tools/map_geometry_edit.py)
+    'J033-2': 'r66 북쪽 가지 양쪽 연석 1.3 m 안으로(차로 유지)', 'J037-3': 'r66 남쪽 가지는 J033-2와 같은 편집, 북쪽 가지는 서쪽 연석 2.3 m 동쪽·차로 1.4~2.6 m 동쪽(동쪽 연석은 굽은 구간이라 유지)',
+    'J067-3': 'r66 동쪽 이면도로 연석 사이 약 8 m(북측 주차 1열 포함)', 'J071-1': 'r66 동서 차도 연석 사이 약 8 m(북측 주차 1열 포함)',
+    'J070-1': 'r66 남쪽 연석 2.4 m 북쪽, 연석 사이 약 7.1 m(중앙선 유지)',
     # r65 school-zone approach paving
     'J004-3': 'r65 남동쪽 진입부 양방향 적색 포장', 'J025-3': 'r65 들어오는 차로 적색 포장과 30·어린이보호구역 글자',
     # r64 mid-block crossings from the aerial

@@ -491,9 +491,11 @@ public class BusinessProgress : MonoBehaviour {
   const string reviewedR64Hash="c37a128847748b331c422ac021783bc5270f6462e47c145b1cc7f673ab6eec32";
   // r65 School-zone approach paving at J004 and J025 (roadview 2026-11-26)
   const string reviewedR65Hash="33cfa49c18dec1f94558bca71bcfaa6097d192d93d6a3485b4515d92021a8ad8";
-  int from=0,to=0;for(int revision=14;revision<=65;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>65)return;
-  string reviewedHash=to==65?reviewedR65Hash:to==64?reviewedR64Hash:to==63?reviewedR63Hash:to==62?reviewedR62Hash:to==61?reviewedR61Hash:to==60?reviewedR60Hash:to==59?reviewedR59Hash:to==58?reviewedR58Hash:to==57?reviewedR57Hash:to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
+  // r66 Map review cross-sections: J033/J037 library road, J067/J071 back street, J070 school road narrowed (map r66)
+  const string reviewedR66Hash="0e4e211bcd3a39d2612fe436485483a70e5a95781259523253dde387c96e88e9";
+  int from=0,to=0;for(int revision=14;revision<=66;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>66)return;
+  string reviewedHash=to==66?reviewedR66Hash:to==65?reviewedR65Hash:to==64?reviewedR64Hash:to==63?reviewedR63Hash:to==62?reviewedR62Hash:to==61?reviewedR61Hash:to==60?reviewedR60Hash:to==59?reviewedR59Hash:to==58?reviewedR58Hash:to==57?reviewedR57Hash:to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   ApplyReviewedEungyeCheckpointMigration(live,from,to);
  }

@@ -1,8 +1,10 @@
 # 최신 작업 이력
 
-**2026-11-26 · 은계 싱글 r65 · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
+**2026-11-26 · 은계 싱글 r66 · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
 
 ## 이어갈 작업
+
+**2026-11-26 지도 검토 12단계: 차로 형상 편집 도구와 첫 폭 조정(배포 실행본 반영, 지도 r66)**: [기록](2026-11-26-map-review-cross-sections.md). 새 도구 `tools/map_geometry_edit.py` + `MapReviewGeometryEdit`(도로 단면 변형을 차로·도로 띠·인도·노면 표시에 함께 적용). 첫 적용: J033·J037 도서관 길, J067·J071 이면도로, J070 은빛초 앞길 폭 조정. 77곳·기둥 0·호출판 113(실패 0) 통과, 교통 검사 멈춤 3. 처리 147/277. 다음: 남은 폭 항목을 같은 도구로, 그다음 차로 수·도로 잇기 도구.
 
 **2026-11-26 지도 검토 11단계: 보호구역 진입부 적색 포장(배포 실행본 반영, 지도 r65)**: [기록](2026-11-26-map-review-school-paving.md). J004 남동쪽 진입부·J025 들어오는 차로를 적색 포장. 77곳·기둥 0·호출판 114(실패 0) 통과, 교통 검사 멈춤 3. 처리 142/277. 다음: 남은 135건은 차로 형상·도로망 작업(기록 아래 "남은 일").
 
