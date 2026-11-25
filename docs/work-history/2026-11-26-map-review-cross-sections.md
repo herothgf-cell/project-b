@@ -68,3 +68,25 @@ bash tools/map_review_regress.sh builds/EungyeTaxi/EungyeTaxi.exe <out>
 builds/EungyeTaxi/EungyeTaxi.exe -contentTest -callBoardCheck -callBoardOutput <dir>
 위 시점 화면: EungyeTaxi.exe -singlePlayer -contentTest -dayLightDayProbe -mapAudit -mapAuditStart 33 -mapAuditLimit 37 -mapAuditSettle 1 -mapAuditObserve 1 -mapAuditOutput <dir>   (-batchmode 없이 실행해야 그림이 찍힘)
 ```
+
+## 2026-11-26 추가: 폭 항목 2차 (지도 r67)
+
+- 사용자: "계속 진행". 남은 폭 항목을 같은 도구로 측정했다.
+- **반영(r67)** `tools/map_review_r67_plan.py` → `config/maps/review/r67-cross-sections.json`: J065-3 은빛초 앞길 서쪽 구간(x 803~826). r66 J070 구간과 같은 단면으로 남쪽 연석 z 81.35 → 83.0(넓은 보도·자전거길), 두 차로 1.6 m·0.2 m 안쪽, 북쪽 연석 유지. 차로 6, 장면 객체 24, 나눈 조각 13. r67 해시 `abc169d7…70fc`.
+- **항공사진으로 보고 바꾸지 않고 닫음**: J025-1(연석 사이 약 14.5 m, 게임 약 15 m), J042-1(동쪽 절반은 건물 그림자 속 차도로 차량이 서 있음, 시트의 "녹지"는 그림자), J071-3(간선 남서쪽 연석 차이 1~3 m).
+- **시도했다가 뺀 것**: J054-1(J495 남쪽 가지, 항공사진상 서쪽 보도가 약 2 m 동쪽). 남행 차로가 지도 경계 밖(x < 0)까지 이어져 검사기가 그 차로의 변경을 막고(경계 밖 제어점), 차로가 비스듬해 연석만 1 m 옮겨도 인도가 차로에 닿았다. 지도 경계 밖 차로를 다루는 방법이 정해질 때까지 남긴다.
+- **다음 작업으로 넘김**: J023-1(북쪽 띠가 주차 공간인지 차로인지 로드뷰 필요), J056-1(남쪽 가장자리를 올리면 그 띠의 차로 하나를 없애야 해 차로 수 작업), J013-3·4(대형 교차로 가지 위치 재구성).
+- 도구 수정: 이전 판에서 나눈 도로 조각 이름(`:geo1`)과 겹치지 않게 빈 번호를 찾는다.
+- 처리 151/277(할 일 103: 연결·교차로 모양 35, 폭 19, 선형 16, 노면 10, 선 종류 9, 차로 수 9, 기타 5).
+
+| 검사 | 종류 | 결과 |
+|---|---|---|
+| `MapReviewGeometryEdit.ApplyFromCommandLine`(r66에서) | 지도 편집 | 검사기 통과(J054 포함안은 경계 밖 제어점·인도 침범으로 거부) |
+| `PrototypeBuild.BuildHybrid` | 빌드 | 성공 |
+| J8314 위 시점 화면 전후 | 위치 제어(화면) | 서쪽 구간이 r66 동쪽 구간과 같은 폭으로 이어짐. "전"은 r65 기반 검사용 빌드라 동쪽 구간도 넓게 보인다 |
+| `-mapAudit`(77곳) | 위치 제어 | 적신호 진입 0, 늦은 진입 0, 멈춤 0, 겹침 0 |
+| 바닥 기둥 | 위치 제어 | 349개, 차로 안 0 |
+| `-callBoardCheck` | 위치 제어 | 통과 115, 실패 0 |
+| `-districtTrafficTest` | 자동 물리 주행 | 실패. 멈춘 차량 3(같음), 녹색 대기 줄 3 |
+
+화면: [065-J8314_858.jpg](../ui/2026-11-26-map-review-cross-sections/065-J8314_858.jpg). 사람 플레이는 하지 않았다.

@@ -121,6 +121,7 @@ def _mp(pts):
 
 def plan(edits):
     lanes, objects, added, facilities = [], [], [], []
+    taken = {o['id'] for o in DOC['scene']['objects']}
     near = lambda pts: any(e.near(pts) for e in edits)
     for l in DOC['lanes']:
         pts = _pts(l)
@@ -187,7 +188,11 @@ def plan(edits):
             if k == 0:
                 objects.append(dict(id=o['id'], **item))
             else:
-                added.append(dict(id=f"{o['id']}:geo{k}", copyOf=o['id'], **item))
+                n = k
+                while f"{o['id']}:geo{n}" in taken:  # pieces from an earlier revision keep their ids
+                    n += 1
+                taken.add(f"{o['id']}:geo{n}")
+                added.append(dict(id=f"{o['id']}:geo{n}", copyOf=o['id'], **item))
     newlen = {l['id']: sum(math.dist((a['x'], a['z']), (b['x'], b['z'])) for a, b in zip(l['points'], l['points'][1:])) for l in lanes}
     oldlen = {l['id']: sum(math.dist(a, b) for a, b in zip(_pts(l), _pts(l)[1:])) for l in DOC['lanes'] if l['id'] in newlen}
     for f in DOC['facilities']:

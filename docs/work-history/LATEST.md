@@ -1,8 +1,10 @@
 # 최신 작업 이력
 
-**2026-11-26 · 은계 싱글 r66 · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
+**2026-11-26 · 은계 싱글 r67 · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
 
 ## 이어갈 작업
+
+**2026-11-26 지도 검토 12단계 추가: 폭 항목 2차(배포 실행본 반영, 지도 r67)**: [기록](2026-11-26-map-review-cross-sections.md) 아래쪽. J065-3 은빛초 앞길 서쪽 구간을 r66과 같은 폭으로. 항공사진으로 3건(J025-1·J042-1·J071-3)을 바꾸지 않고 닫고, J054-1은 지도 경계 밖 차로 때문에 보류. 77곳·기둥 0·호출판 115(실패 0) 통과, 교통 검사 멈춤 3. 처리 151/277. 다음: 남은 폭 항목 대부분은 차로 수·교차로 재구성과 함께 해야 해서 차로 추가·삭제 도구가 먼저다.
 
 **2026-11-26 지도 검토 12단계: 차로 형상 편집 도구와 첫 폭 조정(배포 실행본 반영, 지도 r66)**: [기록](2026-11-26-map-review-cross-sections.md). 새 도구 `tools/map_geometry_edit.py` + `MapReviewGeometryEdit`(도로 단면 변형을 차로·도로 띠·인도·노면 표시에 함께 적용). 첫 적용: J033·J037 도서관 길, J067·J071 이면도로, J070 은빛초 앞길 폭 조정. 77곳·기둥 0·호출판 113(실패 0) 통과, 교통 검사 멈춤 3. 처리 147/277. 다음: 남은 폭 항목을 같은 도구로, 그다음 차로 수·도로 잇기 도구.
 
