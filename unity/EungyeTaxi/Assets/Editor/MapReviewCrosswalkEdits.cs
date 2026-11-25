@@ -15,6 +15,8 @@ public static class MapReviewCrosswalkEdits {
  public static void Apply(){ApplyFile("config/maps/review/r55-crosswalk-edits.json");}
  // Markings batch 2 (r55 -> r56): crosswalks, school-zone paving, road text, diamonds and one removed crosswalk.
  public static void ApplyR56(){ApplyFile("config/maps/review/r56-mark-edits.json");}
+ // Crosswalk moves with their stop lines (r56 -> r57).
+ public static void ApplyR57(){ApplyFile("config/maps/review/r57-crosswalk-moves.json");}
  static void ApplyFile(string file){
   string root=ProjectMapBuild.Root,token=ProjectMapStore.Fingerprint(root);
   var plan=JsonUtility.FromJson<Plan>(File.ReadAllText(Path.Combine(root,file)));
@@ -23,7 +25,7 @@ public static class MapReviewCrosswalkEdits {
   var d=before.document.Copy();var facilities=d.facilities.ToList();int changed=0,added=0;
   foreach(var e in plan.edits){
    RoadMapFacility f;
-   if(!string.IsNullOrEmpty(e.existing)){f=facilities.Single(x=>x.id==e.existing);Require(f.kind=="crosswalk"&&f.junctionId==e.junctionId&&f.axis==e.axis&&f.sign==e.sign,"existing facility identity "+e.existing);changed++;}
+   if(!string.IsNullOrEmpty(e.existing)){f=facilities.Single(x=>x.id==e.existing);Require(f.kind==(string.IsNullOrEmpty(e.kind)?"crosswalk":e.kind)&&f.junctionId==e.junctionId&&f.axis==e.axis&&f.sign==e.sign,"existing facility identity "+e.existing);changed++;}
    else{
     string kind=string.IsNullOrEmpty(e.kind)?"crosswalk":e.kind;
     Require(string.IsNullOrEmpty(e.junctionId)||!facilities.Any(x=>x.kind==kind&&x.junctionId==e.junctionId&&x.axis==e.axis&&x.sign==e.sign),"duplicate "+kind+" "+e.junctionId+" a"+e.axis+" s"+e.sign);

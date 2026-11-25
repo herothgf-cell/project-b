@@ -12,7 +12,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-PAINT = re.compile(r'PAINT Crosswalk (\S+) a(\d) s(-?\d) at=\(([-\d.]+), [-\d.]+, ([-\d.]+)\) dir=\(([-\d.]+), [-\d.]+, ([-\d.]+)\)')
+PAINT = re.compile(r'PAINT Crosswalk (.+?) a(\d) s(-?\d) at=\(([-\d.]+), [-\d.]+, ([-\d.]+)\) dir=\(([-\d.]+), [-\d.]+, ([-\d.]+)\)')
 STEP, FIRST, LAST = .95, .65, .3  # TrafficSystem: x from -hw+.65 while x < hw-.3, step .95
 
 
