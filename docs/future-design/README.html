@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta http-equiv="Cache-Control" content="no-cache"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>후속 구상</title><style>
+:root{--accent:#F2B705;--ink:#1d2320;--sub:#5d6862;--bg:#f6f7f5;--card:#fff;--line:#dfe4e0;--th:#f7f1de;--code:#f0f2f0;--link:#9a6c00;
+--ok:#1f8f4e;--src:#2f6fd6;--prog:#7a4fd0;--wait:#d98a00;--hold:#8a8f8c;--fix:#d2453a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}}
+:root[data-theme="dark"]{--ink:#e6ebe7;--sub:#9aa69f;--bg:#141816;--card:#1c211e;--line:#2e3632;--th:#2a2619;--code:#232a26;--link:#f2c94c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 80px}
+.crumb{font-size:13.5px;color:var(--sub);margin-bottom:10px}
+header.doc{background:var(--card);border:1px solid var(--line);border-left:10px solid var(--accent);border-radius:10px;padding:18px 22px;margin-bottom:20px}
+header.doc h1{font-size:27px;margin:2px 0 6px;line-height:1.35}
+header.doc p{margin:6px 0;color:var(--sub)}
+h1{font-size:26px}h2{font-size:21px;margin:40px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+h3{font-size:17.5px;margin:28px 0 6px}h4,h5,h6{font-size:15.5px;margin:20px 0 4px;color:var(--sub)}
+p,ul,ol{margin:8px 0}ul,ol{padding-left:24px}li{margin:3px 0}
+a{color:var(--link)}
+img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff}
+.tw{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:14.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--th)}
+code{background:var(--code);border-radius:4px;padding:1px 5px;font-family:Consolas,Menlo,monospace;font-size:13.5px}
+pre{background:var(--code);border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.5}pre code{padding:0;background:none}
+blockquote{margin:12px 0;padding:6px 14px;border-left:5px solid var(--accent);background:var(--card);color:var(--sub);border-radius:0 6px 6px 0}
+hr{border:none;border-top:1px solid var(--line);margin:28px 0}
+details.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 16px;font-size:14.5px}
+details.toc summary{cursor:pointer;font-weight:700}
+details.toc ol{margin:6px 0}details.toc li.l3{margin-left:18px;list-style:circle;color:var(--sub)}
+details.toc a{text-decoration:none}
+nav.foot{display:flex;justify-content:space-between;gap:12px;margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;flex-wrap:wrap}
+.st{display:inline-block;border-radius:999px;padding:0 9px;margin:1px 2px 1px 0;font-size:12.5px;font-weight:700;white-space:nowrap;color:#fff}
+.st.ok{background:var(--ok)}.st.src{background:var(--src)}.st.prog{background:var(--prog)}.st.wait{background:var(--wait)}.st.hold{background:var(--hold)}.st.fix{background:var(--fix)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.filter{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.filter button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:3px 12px;font:inherit;font-size:13.5px;cursor:pointer}
+.filter button.on{border-color:var(--accent);background:var(--accent);color:#1d2320;font-weight:700}
+.gen{margin-top:28px;color:var(--sub);font-size:12.5px}
+.fixnote{margin:8px 0 14px;padding:8px 14px;border:1px solid var(--line);border-left:5px solid var(--fix);border-radius:0 8px 8px 0;background:var(--card);font-size:14.5px}
+.fixnote ul{margin:4px 0}.fixnote .more{font-size:13px;color:var(--sub)}
+h1 .st,h2 .st,h3 .st,h4 .st,h5 .st,h6 .st{vertical-align:middle;margin-left:6px}
+header.doc .fixsum{color:var(--ink);font-size:14.5px}
+details.toc .fx{color:var(--fix);font-size:12px;font-weight:700;margin-left:4px}
+</style></head>
+<body><div class="wrap">
+<div class="crumb"><a href="../content-design/index.html">기획서 목록</a> · <a href="../content-design/README.html">기획 README</a> · <a href="README.md">원본 md</a></div>
+<header class="doc"><h1>후속 구상</h1><p>현재 Proto와 구분해 아이디어를 보관한다. 이 목록을 현재 기능·비용·완료 조건으로 적용하지 않는다.</p></header>
+
+<div class="tw"><table><thead><tr>
+<th>구상</th>
+<th>현재와의 경계</th>
+</tr></thead><tbody>
+<tr><td><a href="2026-11-02-simulation-review.md">시뮬레이션 추가 검토</a></td><td>현재 구현과 공백·우선순위·적용 모드를 대조한 제안. 채택/구현 지시 아님</td></tr>
+<tr><td><a href="accidents-and-repairs.md">사고·수리</a></td><td>충돌 강도별 손상·수리비/시간·내구도0 운행 불가·견인은 구현됨. 보험·책임 판정·성능 저하는 후속 유지</td></tr>
+<tr><td>개인 예약·단골</td><td>현재 호출/길가 승객과 다른 관계·일정 콘텐츠</td></tr>
+<tr><td>차량 구매·강화·정기정비·다른 연료/차종</td><td>현재 차량 한 대의 충돌 수리·연료·청결 운영과 구분</td></tr>
+<tr><td>보험·세금·대출·카드 대금</td><td>현재 현금·미납·실제 생활 비용과 구분</td></tr>
+<tr><td>화장실·과식·실제 음악/에어컨 효과</td><td>현재 포만감·피로·텍스트 응대에 추가하지 않음</td></tr>
+<tr><td>날씨·사고 현장·전역 군중</td><td>현재 기본 교통과 별도 환경 확장. PVP 나1+봇3은 이미 통합 exe의 현재 모드이며 기존 물리 원격4유저 수용은 별도</td></tr>
+<tr><td>안전 대체 승하차 장소</td><td>안전 장소·승객 동선이 정해지기 전 현재 해소 대기만 제공</td></tr>
+</tbody></table></div>
+<p><a href="../content-design/archive/06-mindmap-review.md">마인드맵 검토표</a>에 원본 가지별 이동 제안을 정리했다. 원본 마인드맵의 아이디어를 임의 폐기하거나 승인한 것은 아니다. 현재 플레이 규칙은 <a href="../content-design/README.html">게임 기획</a>을 따른다.</p>
+
+<p class="gen">이 페이지는 <code>docs/future-design/README.md</code>에서 <code>python tools/render_design_docs.py</code>로 만든다. 내용은 md를 고친다.</p>
+</div></body></html>

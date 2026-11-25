@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="ko"><head><meta charset="utf-8"><meta http-equiv="Cache-Control" content="no-cache"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>기획서 목록과 현황</title><style>
 :root{--accent:#F2B705;--ink:#1d2320;--sub:#5d6862;--bg:#f6f7f5;--card:#fff;--line:#dfe4e0;--th:#f7f1de;--code:#f0f2f0;--link:#9a6c00;
 --ok:#1f8f4e;--src:#2f6fd6;--prog:#7a4fd0;--wait:#d98a00;--hold:#8a8f8c;--fix:#d2453a}
@@ -229,7 +229,7 @@ details.toc .fx{color:var(--fix);font-size:12px;font-weight:700;margin-left:4px}
 <tr data-st="ok"><td>사고 등급·처리·수리·견인·내구도</td><td><a href="04-life-vehicle-economy.html#s08">04 2장</a></td><td><span class="st ok">구현·배포</span><br>구현·배포</td><td><a href="../future-design/accidents-and-repairs.md">보존 원안</a></td></tr>
 <tr data-st="ok fix"><td>사고 과실 구분(내 과실/쌍방/상대 과실)</td><td><a href="04-life-vehicle-economy.html#s08">04</a> · <a href="08-fun-improvements.html#56-후보-4종-상세-기획-2026-11-24-구현-전">08 5.6</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 사람 체감 미확인</td><td><a href="../work-history/2026-11-24-accident-fault.md">기록</a> · <a href="../work-history/2026-11-24-play-check-speed-fault.md">확인 목록</a></td></tr>
 <tr data-st="ok fix"><td>+10 여유 안 사고를 쌍방 과실·추가 감점 5</td><td><a href="08-fun-improvements.html#56-후보-4종-상세-기획-2026-11-24-구현-전">08 5.6</a></td><td><span class="st ok">구현·배포</span><span class="st fix">미확인</span><br>구현·배포 · 사람 체감 미확인</td><td><a href="../work-history/2026-11-24-speed-tolerance-and-facility-cards.md">기록</a></td></tr>
-<tr data-st="ok fix"><td>사람 사고 감경</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 1.1</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br><b>구현·배포</b>(킥보드 접촉만, 조건부) · 개선 필요(사람 플레이 미확인)</td><td><a href="../work-history/2026-11-24-road-surprises-2.md">기록</a></td></tr>
+<tr data-st="ok fix"><td>사람 사고 감경</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.html">상세 기획 1.1</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br><b>구현·배포</b>(킥보드 접촉만, 조건부) · 개선 필요(사람 플레이 미확인)</td><td><a href="../work-history/2026-11-24-road-surprises-2.md">기록</a></td></tr>
 <tr data-st="hold"><td>보험·현실 과실 판정</td><td><a href="01-driving-and-traffic.html#행동별-평가">01 행동별 평가</a></td><td><span class="st hold">제외</span><br>제외</td><td></td></tr>
 </tbody></table></div>
 <h4 id="d3-시설가게--04-34장">D3. 시설·가게 — <a href="04-life-vehicle-economy.html#s36">04 3·4장</a></h4>
@@ -294,7 +294,7 @@ details.toc .fx{color:var(--fix);font-size:12px;font-weight:700;margin-left:4px}
 </tbody></table></div>
 <h3 id="g-다음-단계-후보--08-5장">G. 다음 단계 후보 — <a href="08-fun-improvements.html#5-다음-단계-후보">08 5장</a></h3>
 
-<p>구현 순서 제안은 <a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획</a>의 "묶어서 본 구현 순서"다: 사고 과실 구분 → 제한속도 바탕 → 돌발 1차 · 유혹 · 골목 주차 A · 시외 콜 → 돌발 2차 → 단속 카메라 → 골목 주차 B.</p>
+<p>구현 순서 제안은 <a href="../work-history/2026-11-24-next-candidates-detail-design.html">상세 기획</a>의 "묶어서 본 구현 순서"다: 사고 과실 구분 → 제한속도 바탕 → 돌발 1차 · 유혹 · 골목 주차 A · 시외 콜 → 돌발 2차 → 단속 카메라 → 골목 주차 B.</p>
 <h4 id="g1-도로에서-생기는-일">G1. 도로에서 생기는 일</h4>
 
 <div class="tw"><table><thead><tr>
@@ -304,8 +304,8 @@ details.toc .fx{color:var(--fix);font-size:12px;font-weight:700;margin-left:4px}
 <th>근거·남은 것</th>
 </tr></thead><tbody>
 <tr data-st="ok fix"><td>돌발 1차(문 여는 정차 차량, 끼어드는 차)</td><td><a href="08-fun-improvements.html#56-후보-4종-상세-기획-2026-11-24-구현-전">08 5.6</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br>구현·배포 · 개선 필요(자동 발생 빈도·사람 체감 미확인, 회피 시 중앙선 기록 여부 미확인)</td><td><a href="../work-history/2026-11-24-road-surprises-1.md">기록</a></td></tr>
-<tr data-st="ok fix"><td>돌발 2차(킥보드, 구급차 교차로형)</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 1.2</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br><b>구현·배포</b> · 개선 필요(사람 플레이 미확인, 구급차 지도 표시 없음)</td><td><a href="../work-history/2026-11-24-road-surprises-2.md">기록</a></td></tr>
-<tr data-st="ok fix"><td>골목 주차 A(은행로144번길)</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 2.3</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br><b>구현·배포</b> · 개선 필요(사람 플레이 미확인, 차로 유지 보조와의 충돌 미확인)</td><td><a href="../work-history/2026-11-24-alley-parking.md">기록</a></td></tr>
+<tr data-st="ok fix"><td>돌발 2차(킥보드, 구급차 교차로형)</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.html">상세 기획 1.2</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br><b>구현·배포</b> · 개선 필요(사람 플레이 미확인, 구급차 지도 표시 없음)</td><td><a href="../work-history/2026-11-24-road-surprises-2.md">기록</a></td></tr>
+<tr data-st="ok fix"><td>골목 주차 A(은행로144번길)</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.html">상세 기획 2.3</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br><b>구현·배포</b> · 개선 필요(사람 플레이 미확인, 차로 유지 보조와의 충돌 미확인)</td><td><a href="../work-history/2026-11-24-alley-parking.md">기록</a></td></tr>
 <tr data-st="wait"><td>골목 주차 B(대은로104번길)</td><td>같은 곳</td><td><span class="st wait">미결</span><br>미결: 설계안(A의 사람 플레이 결과 뒤)</td><td></td></tr>
 <tr data-st="wait"><td>수인로(국도42) 순항 속도</td><td><a href="08-fun-improvements.html#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">08 5.5 3번</a></td><td><span class="st wait">미결</span><br>미결: 설계안</td><td><a href="../work-history/2026-11-24-next-candidates-design.md">설계안</a></td></tr>
 <tr data-st="ok fix"><td>과속 방지턱</td><td><a href="08-fun-improvements.html#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">08 5.5 1번</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br><b>구현·배포</b>(현장 조사 2곳 P12·P24. 정밀도로지도 측도 3곳은 큰길 차로에 놓여 사용자 플레이 후 끔) · 개선 필요(사람 플레이 미확인, 일반 차량 감속 없음)</td><td><a href="../work-history/2026-11-24-speed-bumps.md">기록</a></td></tr>
@@ -318,8 +318,8 @@ details.toc .fx{color:var(--fix);font-size:12px;font-weight:700;margin-left:4px}
 <th>상태</th>
 <th>근거·남은 것</th>
 </tr></thead><tbody>
-<tr data-st="ok fix"><td>유혹("좀 빨리 가 주세요")</td><td><a href="08-fun-improvements.html#53-규칙-속-돌발-정해진-사건이-아닌-규칙-위의-상황-구-37-4">08 5.3</a> · <a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 4.1</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br><b>구현·배포</b> · 개선 필요(사람 플레이 미확인) · 사례금 조건 결정됨(과속 기록 있으면 없음 유지)</td><td><a href="../work-history/2026-11-24-hurry-temptation.md">기록</a> · <a href="../work-history/2026-11-24-next-bundle-decisions.md">결정</a></td></tr>
-<tr data-st="ok fix"><td>고정 단속 카메라·과태료</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 4.2</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br><b>구현·배포</b>(공공데이터 16지점) · 개선 필요(시흥 항목 이용허락범위 재확인, 단속 방향 미반영, 지도 아이콘 없음)</td><td><a href="../work-history/2026-11-24-speed-cameras.md">기록</a></td></tr>
+<tr data-st="ok fix"><td>유혹("좀 빨리 가 주세요")</td><td><a href="08-fun-improvements.html#53-규칙-속-돌발-정해진-사건이-아닌-규칙-위의-상황-구-37-4">08 5.3</a> · <a href="../work-history/2026-11-24-next-candidates-detail-design.html">상세 기획 4.1</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br><b>구현·배포</b> · 개선 필요(사람 플레이 미확인) · 사례금 조건 결정됨(과속 기록 있으면 없음 유지)</td><td><a href="../work-history/2026-11-24-hurry-temptation.md">기록</a> · <a href="../work-history/2026-11-24-next-bundle-decisions.md">결정</a></td></tr>
+<tr data-st="ok fix"><td>고정 단속 카메라·과태료</td><td><a href="../work-history/2026-11-24-next-candidates-detail-design.html">상세 기획 4.2</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br><b>구현·배포</b>(공공데이터 16지점) · 개선 필요(시흥 항목 이용허락범위 재확인, 단속 방향 미반영, 지도 아이콘 없음)</td><td><a href="../work-history/2026-11-24-speed-cameras.md">기록</a></td></tr>
 </tbody></table></div>
 <h4 id="g3-일감과-영업-판단">G3. 일감과 영업 판단</h4>
 
@@ -329,7 +329,7 @@ details.toc .fx{color:var(--fix);font-size:12px;font-weight:700;margin-left:4px}
 <th>상태</th>
 <th>근거·남은 것</th>
 </tr></thead><tbody>
-<tr data-st="ok fix"><td>시외 장거리 콜(A: 암전·시간 경과)</td><td><a href="08-fun-improvements.html#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">08 5.5 2번</a> · <a href="../work-history/2026-11-24-next-candidates-detail-design.md">상세 기획 3</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br><b>구현·배포</b> · 개선 필요(분당 수입 표본 1개, 피로 증가 체감)</td><td><a href="../work-history/2026-11-24-out-of-town-call.md">기록</a></td></tr>
+<tr data-st="ok fix"><td>시외 장거리 콜(A: 암전·시간 경과)</td><td><a href="08-fun-improvements.html#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">08 5.5 2번</a> · <a href="../work-history/2026-11-24-next-candidates-detail-design.html">상세 기획 3</a></td><td><span class="st ok">구현·배포</span><span class="st fix">개선 필요</span><br><b>구현·배포</b> · 개선 필요(분당 수입 표본 1개, 피로 증가 체감)</td><td><a href="../work-history/2026-11-24-out-of-town-call.md">기록</a></td></tr>
 <tr data-st="wait"><td>공차 운영(영업 동선 정산, 배회·승강장·호출)</td><td><a href="08-fun-improvements.html#51-공차-운영-손님을-내린-다음에-어디로-가나-구-37-2">08 5.1</a></td><td><span class="st wait">미결</span><br>미결: 승인 전(추천 첫 단계: 정산 "오늘의 영업 동선")</td><td><a href="../work-history/2026-11-23-driver-judgment-design.md">원 기록</a> · <a href="../work-history/2026-11-24-fun-doc-merge.md">합친 기록</a></td></tr>
 <tr data-st="wait"><td>다른 택시와 승강장</td><td><a href="08-fun-improvements.html#51-공차-운영-손님을-내린-다음에-어디로-가나-구-37-2">08 5.1</a> · <a href="08-fun-improvements.html#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전">5.5 7번</a></td><td><span class="st wait">미결</span><br>미결: 설계안(실제 위치 조사 또는 게임 전용 표기 결정)</td><td></td></tr>
 <tr data-st="wait"><td>길 지식(내비 단계 3종, 아는 길 요청, 지름길 기록)</td><td><a href="08-fun-improvements.html#52-길-지식-은계-길을-아는-것이-실력-구-37-3">08 5.2</a></td><td><span class="st wait">미결</span><br>미결: 승인 전(미션 "길 아는 기사" 반응을 본 뒤)</td><td></td></tr>
@@ -362,10 +362,10 @@ details.toc .fx{color:var(--fix);font-size:12px;font-weight:700;margin-left:4px}
 <tr data-st=""><td>세부 항목 색인(승객·주행·모드·성장)</td><td><a href="09-detail-index.html">09</a></td><td>색인. 상태는 담당 문서를 따른다</td></tr>
 <tr data-st="wait"><td>장기 경력·이사·생활 확장 등 성장 구상</td><td><a href="09-detail-index.html#s27">09 4장</a></td><td><span class="st wait">미결</span><br>미결: 아이디어</td></tr>
 <tr data-st=""><td>마인드맵과 목차</td><td><a href="택시%20시뮬레이션.mmst">택시 시뮬레이션.mmst</a> · <a href="택시%20시뮬레이션-목차.html">목차</a></td><td>탐색용 개요</td></tr>
-<tr data-st="hold"><td>기사 생활 경영안(구 37 특별 운행·지도 판매점 등)</td><td><a href="archive/37-driver-life-and-business.md">archive/37-driver-life-and-business.md</a></td><td><span class="st hold">제외</span><br>제외(2026-11-23)</td></tr>
+<tr data-st="hold"><td>기사 생활 경영안(구 37 특별 운행·지도 판매점 등)</td><td><a href="archive/37-driver-life-and-business.html">archive/37-driver-life-and-business.md</a></td><td><span class="st hold">제외</span><br>제외(2026-11-23)</td></tr>
 <tr data-st="hold"><td>생활·성장 원안(구 09~14), 동기 진단</td><td><a href="archive/">archive/</a></td><td><span class="st hold">보관</span><br>보관</td></tr>
-<tr data-st=""><td>발표용 제안서·조작 매뉴얼</td><td><a href="../proposals/README.md">제안서 목록</a></td><td>최신 V10(2026-11-10). 그 뒤 구현(08 재미 보강 등)은 반영 전</td></tr>
-<tr data-st="hold"><td>이전 기획·후속 아이디어</td><td><a href="../design-history/content-design/README.md">design-history</a> · <a href="../future-design/README.md">future-design</a></td><td><span class="st hold">보관</span><br>보관</td></tr>
+<tr data-st=""><td>발표용 제안서·조작 매뉴얼</td><td><a href="../proposals/README.html">제안서 목록</a></td><td>최신 V10(2026-11-10). 그 뒤 구현(08 재미 보강 등)은 반영 전</td></tr>
+<tr data-st="hold"><td>이전 기획·후속 아이디어</td><td><a href="../design-history/content-design/README.html">design-history</a> · <a href="../future-design/README.html">future-design</a></td><td><span class="st hold">보관</span><br>보관</td></tr>
 </tbody></table></div>
 <h2 id="구현-현황-08-재미-보강-진행-순서">구현 현황 (08 재미 보강 진행 순서)</h2>
 
@@ -443,7 +443,7 @@ details.toc .fx{color:var(--fix);font-size:12px;font-weight:700;margin-left:4px}
 <th>날짜</th>
 <th>내용</th>
 </tr></thead><tbody>
-<tr><td>2026-11-24</td><td>처음 작성. 00~09·PvP·보관·제안서를 카테고리별로 묶고 항목마다 상태와 근거 기록을 붙였다. 결정 대기 표와 개선점 목록을 더했다. <a href="../work-history/2026-11-24-design-doc-index.md">기록</a></td></tr>
+<tr><td>2026-11-24</td><td>처음 작성. 00~09·PvP·보관·제안서를 카테고리별로 묶고 항목마다 상태와 근거 기록을 붙였다. 결정 대기 표와 개선점 목록을 더했다. <a href="../work-history/2026-11-24-design-doc-index.html">기록</a></td></tr>
 </tbody></table></div>
 
 <p class="gen">이 페이지는 <code>docs/content-design/INDEX.md</code>에서 <code>python tools/render_design_docs.py</code>로 만든다. 내용은 md를 고친다.</p>

@@ -28,6 +28,22 @@ def targets():
     return out
 
 
+def place_targets(index_text):
+    """INDEX의 "기획 위치" 칸이 가리키는 md 중 위 대상 밖의 문서(작업 이력의 상세 기획, 보관 기획 등)."""
+    out = []
+    for line in index_text.replace("\r\n", "\n").split("\n"):
+        if not line.strip().startswith("|"):
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) < 2:
+            continue
+        for h in re.findall(r"\]\(([^)#\s]+\.md)", cells[1]):
+            t = os.path.normpath(os.path.join(CD, urllib.parse.unquote(h))).replace(os.sep, "/")
+            if t not in out and os.path.exists(os.path.join(ROOT, t)):
+                out.append(t)
+    return out
+
+
 def out_name(md_path):
     d, b = os.path.split(md_path)
     if b == "INDEX.md":
@@ -569,7 +585,7 @@ def page(path, text, all_paths, texts, fix_notes=None):
             ('<a href="%s">%s</a> →' % (rel(path, out_name(next_p)), lab(next_p))) if next_p else "")
 
     return """<!DOCTYPE html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="ko"><head><meta charset="utf-8"><meta http-equiv="Cache-Control" content="no-cache"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>%s</title><style>%s</style></head>
 <body><div class="wrap">
 <div class="crumb">%s</div>
@@ -597,11 +613,15 @@ def main(argv):
     rev = argv[argv.index("--rev") + 1] if "--rev" in argv else None
     all_paths = targets()
     texts = {p: read(p, rev) for p in all_paths}
+    if texts.get(CD + "/INDEX.md"):
+        extra = [p for p in place_targets(texts[CD + "/INDEX.md"]) if p not in texts]
+        all_paths += extra
+        texts.update({p: read(p, rev) for p in extra})
     all_paths = [p for p in all_paths if texts[p] is not None]
     dirty = set()
     if rev and "--force" not in argv:
         # 다른 작업이 고쳐 둔(커밋된 파일의 미커밋 변경) html은 덮어쓰지 않는다. 새 파일(??)은 쓴다.
-        st = subprocess.run(["git", "-C", ROOT, "-c", "core.quotepath=off", "status", "--porcelain", "--", CD],
+        st = subprocess.run(["git", "-C", ROOT, "-c", "core.quotepath=off", "status", "--porcelain", "--"] + sorted({os.path.dirname(p) for p in all_paths}),
                             capture_output=True).stdout.decode("utf-8").splitlines()
         dirty = {l[3:] for l in st if l[:2] != "??" and l[:2].strip() and l[3:].endswith(".html")}
     idx = CD + "/INDEX.md"
