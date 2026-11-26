@@ -1,6 +1,6 @@
 # 기획서 목록과 현황
 
-**2026-11-26 기준 · 은계 싱글 r67 · 자체 도시 PvP A2 / LAN v25.** 기획 문서 전체를 한 장에서 찾고, 항목마다 구현·미결·개선 필요 상태를 본다. 규칙과 수치는 각 담당 문서가 기준이고, 이 문서는 위치와 상태만 적는다. 상태의 근거는 오른쪽 열의 작업 이력이다.
+**2026-11-26 기준 · 은계 싱글 r71 · 자체 도시 PvP A2 / LAN v25.** 기획 문서 전체를 한 장에서 찾고, 항목마다 구현·미결·개선 필요 상태를 본다. 규칙과 수치는 각 담당 문서가 기준이고, 이 문서는 위치와 상태만 적는다. 상태의 근거는 오른쪽 열의 작업 이력이다.
 
 함께 보는 문서: [기획 목록 README](README.md)(담당 영역·옛 번호) · [현재 상태 한 장](../CURRENT-STATE.md) · [최신 작업 이력](../work-history/LATEST.md) · [개발 체크리스트](../prototype-development-checklist.md) · [마인드맵 목차](택시%20시뮬레이션-목차.md)
 
@@ -71,8 +71,8 @@
 | 차로별 표시·동부 구간·주차장 안내 좌회전 | [01 3장](01-driving-and-traffic.md#s21) | 구현·배포 | [J7917](../work-history/2026-11-12-j7917-roadview-check.md) · [J8066](../work-history/2026-11-13-j8066-three-lanes-and-passenger-voice.md) |
 | 일반 차량 좌회전·합류 | [01 은계 북행 차로 후속](01-driving-and-traffic.md#은계-북행-차로좌회전일반-교통-후속) | 구현·배포 · 혼잡 시간대 수동 주행 미확인 | [기록](../work-history/2026-11-20-npc-left-queue.md) |
 | 야간 후미등·전조등(80m)·상가·주거 가로등 | [01](01-driving-and-traffic.md#s01) | 구현·배포 · 사람 체감 미확인 | [피드백 2차](../work-history/2026-11-24-test-feedback-round2.md) · [피드백 4차](../work-history/2026-11-24-play-feedback-round4.md) |
-| 지도 실측 대조 검토(교차로 77곳, 판정 277건) | [01](01-driving-and-traffic.md#s01) · [도로 조사](road-survey/) | 구현·배포(지도 r54~r67, 2026-11-26 처리 151/277) · **진행 중**(남은 건 대부분 차로 수·교차로 재구성·도로망, 차로 추가·삭제 도구가 먼저) | [검토 시트](../work-history/2026-11-24-map-review-sheet.md) · [남은 일 묶음](../work-history/2026-11-26-map-review-remaining-work.md) · [폭 조정 r66·r67](../work-history/2026-11-26-map-review-cross-sections.md) |
-| 구역 교통 검사 `-districtTrafficTest` | — | **개선 필요**(기존 실패. "멈춘 차량"은 11/24 2대 → 지도 검토 r65~r67에서 3대. 2대는 J7801_9629 유턴의 긴 신호 대기로 확인, [기록](../work-history/2026-11-24-traffic-stall-check.md)) | [돌발 1차 기록](../work-history/2026-11-24-road-surprises-1.md) · [r67](../work-history/2026-11-26-map-review-cross-sections.md) |
+| 지도 실측 대조 검토(교차로 77곳, 판정 277건) | [01](01-driving-and-traffic.md#s01) · [도로 조사](road-survey/) | 구현·배포(지도 r54~r71, 2026-11-26 처리 160/277) · **진행 중**(r68에 차로 추가·삭제 도구. 남은 건 대부분 차로 수·교차로 재구성·도로망) | [검토 시트](../work-history/2026-11-24-map-review-sheet.md) · [남은 일 묶음](../work-history/2026-11-26-map-review-remaining-work.md) · [폭 조정 r66·r67](../work-history/2026-11-26-map-review-cross-sections.md) · [차로 수·단면 r68~r71](../work-history/2026-11-26-map-review-lane-count.md) |
+| 구역 교통 검사 `-districtTrafficTest` | — | **개선 필요**(기존 실패. "멈춘 차량"은 11/24 2대 → 지도 검토 r65~r71에서 3대. 2대는 J7801_9629 유턴의 긴 신호 대기로 확인, [기록](../work-history/2026-11-24-traffic-stall-check.md)) | [돌발 1차 기록](../work-history/2026-11-24-road-surprises-1.md) · [r71](../work-history/2026-11-26-map-review-lane-count.md) |
 
 #### B3. 법규 판정·운전 점수 — [01 행동별 평가](01-driving-and-traffic.md#행동별-평가), [09 2장](09-detail-index.md#s25)
 
@@ -105,6 +105,7 @@
 | 호출 카드 판단 재료·성격 4종 | [08 3장](08-fun-improvements.md#호출판-변주와-판단-재료) | 구현·배포 · 사람 체감 미확인 | [기록](../work-history/2026-11-23-call-board-variety.md) |
 | 연속 배차(하차점 400m 안 예약) | [02 연속 배차](02-passengers-and-fares.md#2026-11-24-연속-배차-은계-싱글) | 구현·배포 · 사람 체감 미확인 | [기록](../work-history/2026-11-24-chained-dispatch.md) |
 | 선택형 미션 4종(급행·초록불·커피·칼정차) | [08 3장 선택형 미션](08-fun-improvements.md#선택형-미션) | 구현·배포 · 사람 체감 미확인 | [기록](../work-history/2026-11-23-optional-missions.md) |
+| 미션 진행 띠(길안내 카드 아래 한 줄, 분실물 심부름 노란 띠) | [08 3장](08-fun-improvements.md#선택형-미션) · [05](05-interface-and-navigation.md#s05) | 구현·배포 · **개선 필요**(1인칭 운전석 길안내 카드에는 없음, 사람 가독성 미확인) | [피드백 6차](../work-history/2026-11-26-play-feedback-round6.md) |
 | 미션 "길 아는 기사" | [08 3장](08-fun-improvements.md#선택형-미션) | 구현·배포 · **결정 대기**(L 키, 팁 15%, 내비 단계 3종 확장 여부) | [기록](../work-history/2026-11-24-know-road-evening-drive-vehicle-feel.md) · [3차 체크리스트](../work-history/2026-11-24-away-run-3-checklist.md) |
 | 미션 "저 차 따라가 주세요" | [08 5.5 6번](08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전) | 미결: 설계안(버스 보류, 승용차안) | [설계안](../work-history/2026-11-24-next-candidates-design.md) |
 
@@ -121,7 +122,7 @@
 |---|---|---|---|
 | 승객 프리셋·특성 조합·관리창 | [03 1장](03-passenger-content.md#s15) | 구현·배포 | [콘텐츠 설정 관리](../content-tuning-tool-guide.md) |
 | 승객별 대사·확률·효과 덮어쓰기 | [03 2장](03-passenger-content.md#s16) | 구현·배포 | |
-| 승객 얼굴과 이름·성별·나이대 맞춤 | [03 1장](03-passenger-content.md#s15) | 구현·배포 | [피드백 5차](../work-history/2026-11-24-play-feedback-round5.md) |
+| 승객 얼굴과 이름·성별·나이대 맞춤 | [03 1장](03-passenger-content.md#s15) | 구현·배포(피드백 6차에서 승객 칸의 나이대 표시는 뺌) | [피드백 5차](../work-history/2026-11-24-play-feedback-round5.md) · [6차](../work-history/2026-11-26-play-feedback-round6.md) |
 | 승객 다양화 1차 수치 | [03 3장](03-passenger-content.md#s17) | 구현·배포 · 개선 필요(1차 수치는 사람 플레이로 확정 전) | [효과 밸런스](../passenger-balance-v1.md) |
 | 독립 행동·요청 위반·새 특성·추가 승객 6명 | [03 4장](03-passenger-content.md#s19) | 구현·배포 | [승객 목록](../work-history/2026-11-13-passenger-inventory.md) |
 | 승객 대화·요청·선택 구조 | [02 2장](02-passengers-and-fares.md#s07) · [09 1장](09-detail-index.md#s24) | 구현·배포(구조) · 세부 아이디어는 색인 | |
@@ -133,6 +134,7 @@
 | 항목 | 기획 위치 | 상태 | 근거·남은 것 |
 |---|---|---|---|
 | 피로·포만·졸음·청결·연료 | [04 1장](04-life-vehicle-economy.md#s03) | 구현·배포 | |
+| 손님 사건 청결도 알림 카드, 결혼식 하객 떡 한 조각 포만감 +10 | [04 1장](04-life-vehicle-economy.md#s03) | 구현·배포 · 사람 체감 미확인 | [피드백 6차](../work-history/2026-11-26-play-feedback-round6.md) |
 | 지역 수요·공차 성과·현금·미납·순수익 | [04 1장](04-life-vehicle-economy.md#지역-수요와-공차-성과) | 구현·배포 | |
 | PvP 전용 피로·포만 | [04 PvP 컨디션](04-life-vehicle-economy.md#pvp-driver-condition) | 구현·배포 | |
 | 운임·생활물가 점검 | [04 5장](04-life-vehicle-economy.md#seco) | 구현(점검·재현) · 개선 필요(사람 3일·20분 운행에서 남는 돈 측정 남음) | [기록](../work-history/2026-11-20-eungye-economy-review.md) |
@@ -151,6 +153,7 @@
 
 | 항목 | 기획 위치 | 상태 | 근거·남은 것 |
 |---|---|---|---|
+| 은행파출소(분실물 맡기기) 지도 아이콘·생활거점 칸·앞 표지 | [04 3장](04-life-vehicle-economy.md#s36) · [08 5.3](08-fun-improvements.md#53-규칙-속-돌발-정해진-사건이-아닌-규칙-위의-상황-구-37-4) | 구현·배포 · 사람 체감 미확인 | [피드백 6차](../work-history/2026-11-26-play-feedback-round6.md) |
 | 은계김밥·호수카페·공업사 부품 판매대 | [04 3장](04-life-vehicle-economy.md#s36) | 구현·배포 · 여러 날 가격·승차감 체감 미확인 | [기록](../work-history/2026-11-20-neighbourhood-shops-and-taxi-parts.md) · [건물 점포](../work-history/2026-11-23-storefronts-and-drive-audio.md) |
 | 가게 전용 포켓·기사식당 점포 전면 | [04 3장](04-life-vehicle-economy.md#s36) | 구현·배포 · 사람 체감 미확인 | [피드백 2차](../work-history/2026-11-24-test-feedback-round2.md) |
 | 김밥·카페 메뉴 그림 카드 | [04 3장](04-life-vehicle-economy.md#s36) | 구현·배포 · 사람 체감 미확인 | [피드백 4차](../work-history/2026-11-24-play-feedback-round4.md) |
@@ -205,14 +208,14 @@
 | 골목 주차 A(은행로144번길) | [상세 기획 2.3](../work-history/2026-11-24-next-candidates-detail-design.md) | **구현·배포** · 개선 필요(사람 플레이 미확인, 차로 유지 보조와의 충돌 미확인) | [기록](../work-history/2026-11-24-alley-parking.md) |
 | 골목 주차 B(대은로104번길) | 같은 곳 | 미결: 설계안(A의 사람 플레이 결과 뒤) | |
 | 수인로(국도42) 순항 속도 | [08 5.5 3번](08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전) | 미결: 설계안 | [설계안](../work-history/2026-11-24-next-candidates-design.md) |
-| 과속 방지턱 | [08 5.5 1번](08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전) | **구현·배포**(현장 조사 2곳 P12·P24. 정밀도로지도 측도 3곳은 큰길 차로에 놓여 사용자 플레이 후 끔) · 개선 필요(사람 플레이 미확인, 일반 차량 감속 없음) | [기록](../work-history/2026-11-24-speed-bumps.md) |
+| 과속 방지턱 | [08 5.5 1번](08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전) | **구현·배포**(현장 조사 2곳 P12·P24. 정밀도로지도 측도 3곳은 큰길 차로에 놓여 사용자 플레이 후 끔. 피드백 6차에서 번길 4곳에 게임 전용 한국형 높은 방지턱, 손님 태우고 15km/h 넘으면 운전 만족 −1) · 개선 필요(사람 플레이 미확인, 일반 차량 감속 없음) | [기록](../work-history/2026-11-24-speed-bumps.md) · [피드백 6차](../work-history/2026-11-26-play-feedback-round6.md) |
 
 #### G2. 법규를 고민거리로
 
 | 항목 | 기획 위치 | 상태 | 근거·남은 것 |
 |---|---|---|---|
 | 유혹("좀 빨리 가 주세요") | [08 5.3](08-fun-improvements.md#53-규칙-속-돌발-정해진-사건이-아닌-규칙-위의-상황-구-37-4) · [상세 기획 4.1](../work-history/2026-11-24-next-candidates-detail-design.md) | **구현·배포** · 개선 필요(사람 플레이 미확인) · 사례금 조건 결정됨(과속 기록 있으면 없음 유지) | [기록](../work-history/2026-11-24-hurry-temptation.md) · [결정](../work-history/2026-11-24-next-bundle-decisions.md) |
-| 고정 단속 카메라·과태료 | [상세 기획 4.2](../work-history/2026-11-24-next-candidates-detail-design.md) | **구현·배포**(공공데이터 16지점) · 개선 필요(시흥 항목 이용허락범위 재확인, 단속 방향 미반영, 지도 아이콘 없음) | [기록](../work-history/2026-11-24-speed-cameras.md) |
+| 고정 단속 카메라·과태료 | [상세 기획 4.2](../work-history/2026-11-24-next-candidates-detail-design.md) | **구현·배포**(공공데이터 16지점) · 지도·미니맵 CCTV 아이콘과 제한속도·카메라 필터(2026-11-26) · 개선 필요(시흥 항목 이용허락범위 재확인, 단속 방향 미반영, 필터 버튼 마우스 조작 미확인) | [기록](../work-history/2026-11-24-speed-cameras.md) · [지도 표시](../work-history/2026-11-26-speed-camera-map.md) |
 
 #### G3. 일감과 영업 판단
 
@@ -222,7 +225,7 @@
 | 공차 운영(영업 동선 정산, 배회·승강장·호출) | [08 5.1](08-fun-improvements.md#51-공차-운영-손님을-내린-다음에-어디로-가나-구-37-2) | 미결: 승인 전(추천 첫 단계: 정산 "오늘의 영업 동선") | [원 기록](../work-history/2026-11-23-driver-judgment-design.md) · [합친 기록](../work-history/2026-11-24-fun-doc-merge.md) |
 | 다른 택시와 승강장 | [08 5.1](08-fun-improvements.md#51-공차-운영-손님을-내린-다음에-어디로-가나-구-37-2) · [5.5 7번](08-fun-improvements.md#55-후보-7종-설계-요약과-추천-순서-2026-11-24-구현-전) | **구현·배포**(r57 실행본 `-rankCheck` 16건 통과) · 개선 필요(사람 플레이 미확인, 승강장 지도 표시·길안내 없음, NPC 택시는 지나가며 태움) · 승강장 3곳은 게임 전용 | [기록](../work-history/2026-11-25-taxi-ranks-and-npc-taxis.md) |
 | 길 지식(내비 단계 3종, 아는 길 요청, 지름길 기록) | [08 5.2](08-fun-improvements.md#52-길-지식-은계-길을-아는-것이-실력-구-37-3) | 미결: 승인 전(미션 "길 아는 기사" 반응을 본 뒤) | |
-| 손님 돌발(분실물, 단거리·승차 거부, 응급 손님) | [08 5.3](08-fun-improvements.md#53-규칙-속-돌발-정해진-사건이-아닌-규칙-위의-상황-구-37-4) | 분실물·응급 손님 **구현·배포**(r57 실행본 `-lostCheck` 22건 통과) · 개선 필요(사람 플레이 미확인, 파출소 관할·응급실 지정 미확인) · 단거리·승차 거부는 승인하지 않음(2026-11-25) | [기록](../work-history/2026-11-25-lost-items-and-emergency.md) |
+| 손님 돌발(분실물, 단거리·승차 거부, 응급 손님) | [08 5.3](08-fun-improvements.md#53-규칙-속-돌발-정해진-사건이-아닌-규칙-위의-상황-구-37-4) | 분실물·응급 손님 **구현·배포**(r57 실행본 `-lostCheck` 22건 통과. 2026-11-26 응급실을 지도 안 게임 전용 "은계 응급의료센터"로 옮겨 직접 운전·암전 없음, `-lostCheck` 24건) · 개선 필요(사람 플레이 미확인, 응급 기한이 직접 운전에 맞는지, 응급실 표지 캡처 미확인) · 단거리·승차 거부는 승인하지 않음(2026-11-25) | [기록](../work-history/2026-11-25-lost-items-and-emergency.md) · [지도 안 응급실](../work-history/2026-11-26-in-map-emergency-room.md) |
 | 호출 목적지 전면 비공개 | [08 5장 겹침 정리](08-fun-improvements.md#후보-한눈에-보기) | 보류(구현된 판단 재료와 반대 방향) | |
 
 ### H. 자체 도시 PvP — [pvp/](pvp/README.md)
@@ -282,13 +285,13 @@
 | 2026-11-24 | 08 1~5장 구현 전체의 사람 체감 | 자동 검사만 통과. 볼 것은 자리 비움 [1차](../work-history/2026-11-23-away-run-checklist.md)·[2차](../work-history/2026-11-24-away-run-checklist.md)·[3차](../work-history/2026-11-24-away-run-3-checklist.md) 체크리스트와 [확인 목록](../work-history/2026-11-24-play-check-speed-fault.md) | 사용자 직접 플레이 대기 |
 | 2026-11-24 | 20분당 완료 건수·신호 대기·공차 비중 측정 | 08 7장 1단계. 사람 녹화 플레이 기록 없음 | 대기 |
 | 2026-11-26 | 지도 검토 남은 126건 | 차로 수·교차로 재구성·도로망 항목. 차로 추가·삭제 도구가 먼저 | [남은 일](../work-history/2026-11-26-map-review-remaining-work.md), 진행 중 |
-| 2026-11-24 | `-districtTrafficTest` 실패 | 돌발 1차 전 실행본에서도 실패하던 기존 문제. 2026-11-26 r67 멈춤 3대 | 원인 조사 남음 |
+| 2026-11-24 | `-districtTrafficTest` 실패 | 돌발 1차 전 실행본에서도 실패하던 기존 문제. 2026-11-26 r71 멈춤 3대 | 원인 조사 남음 |
 | 2026-11-24 | `-homeBaseCheck` 단독 실행 실패 | "next shift also departs from Plaza" 기존 실패 | 원인 조사 남음 |
 | 2026-11-24 | 퇴근 후 드라이브 화면 | 영업 시계·생활거점·퇴근 버튼·시설 도움말이 그대로 보임 | 화면 정리 대기 |
 | 2026-11-24 | 텍스트 줄이기 남은 묶음 | PvP 전용 문구, 법규·만족도 알림 문구, 마감 화면 목표·기록 묶음 | 대기 |
 | 2026-11-24 | 저장 슬롯 덮어쓰기 흐름 | 실행본에서 눌러 보지 않음 | 대기 |
 | 2026-11-24 | 주행음·창문 바람·패드 진동 | 사람 귀·실물 패드로 확인하지 않음 | 대기 |
-| 2026-11-24 | 직접 플레이 피드백 3~5차의 사람 체감 | 3차(3a0cf27b)·4차·5차 모두 커밋·배포됨. 자동 검사만 통과 | [3차](../work-history/2026-11-24-play-feedback-round3.md) · [4차](../work-history/2026-11-24-play-feedback-round4.md) · [5차](../work-history/2026-11-24-play-feedback-round5.md), 사람 플레이 대기 |
+| 2026-11-24 | 직접 플레이 피드백 3~6차의 사람 체감 | 3차(3a0cf27b)·4차·5차·6차(c2bb45c7, 5be9a52f 배포) 모두 커밋·배포됨. 자동 검사만 통과 | [3차](../work-history/2026-11-24-play-feedback-round3.md) · [4차](../work-history/2026-11-24-play-feedback-round4.md) · [5차](../work-history/2026-11-24-play-feedback-round5.md) · [6차](../work-history/2026-11-26-play-feedback-round6.md), 사람 플레이 대기 |
 | 2026-11-20 | 운임·생활물가의 장기 체감 | 첫 호출판 계산만 함. 사람 3일·하루 20분 운행 측정 없음 | 대기 |
 | 2026-11-12 | LAN 다른 PC·사람 4인 | 같은 PC 두 Player까지만 확인 | 대기 |
 | 2026-11-06 | 승객 1차 수치 | 사람 플레이로 확정한 값이 아님 | 대기 |
@@ -316,3 +319,4 @@
 |---|---|
 | 2026-11-24 | 처음 작성. 00~09·PvP·보관·제안서를 카테고리별로 묶고 항목마다 상태와 근거 기록을 붙였다. 결정 대기 표와 개선점 목록을 더했다. [기록](../work-history/2026-11-24-design-doc-index.md) |
 | 2026-11-26 | 구현 여부 최신화: 피드백 3차 진행 중 → 구현·배포, 승강장·분실물·응급 손님 구현 → 구현·배포(r57), 지도 실측 대조 검토(r54~r67)와 피드백 4·5차 항목 추가, 제한속도 구간 문구 정정. [기록](../work-history/2026-11-26-design-index-refresh.md) |
+| 2026-11-26 | 구현 여부 최신화 2: 지도 r68~r71(처리 160/277), 피드백 6차(한국형 높은 방지턱·파출소·청결도·떡 포만감·나이대 표시 뺌), 미션 진행 띠, 지도 안 응급실, 단속 카메라 지도 아이콘·필터. [기록](../work-history/2026-11-26-design-index-refresh-2.md) |
