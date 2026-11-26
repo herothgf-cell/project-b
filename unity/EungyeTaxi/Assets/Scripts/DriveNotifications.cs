@@ -253,7 +253,9 @@ public class DriveNotifications : MonoBehaviour {
   float total=0;FeedItem previous=null;var heights=new float[shown.Count];
   for(int k=0;k<shown.Count;k++){if(Divider(previous,shown[k]))total+=small.lineHeight+gap;heights[k]=Height(shown[k],width,null);total+=heights[k]+gap;previous=shown[k];}
   float height=Mathf.Max(total,view.height);
-  if(drawnRevision!=revision){if(atBottom||drawnRevision<0){feedScroll.y=Mathf.Max(0,height-view.height);Unseen=0;}drawnRevision=revision;}
+  // User request 2026-11-26: the feed always stays scrolled to the newest item (also when a pinned card or a
+  // longer context line changes the height without a new item).
+  feedScroll.y=Mathf.Max(0,height-view.height);Unseen=0;drawnRevision=revision;
   feedScroll=GUI.BeginScrollView(view,feedScroll,new Rect(0,0,width,height),false,false,GUIStyle.none,GUI.skin.verticalScrollbar);feedScroll.x=0;
   float top=height-total;previous=null;
   for(int k=0;k<shown.Count;k++){var i=shown[k];

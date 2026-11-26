@@ -132,8 +132,8 @@ public partial class PassengerJobs {
   var lines=new System.Collections.Generic.List<string>();
   if(session.requests&&session.requests.HasPendingChoice)lines.Add("손님 요청에 답할 수 있어요 · 요청 창에서 선택");
   if(chainedOffer!=null)lines.Add("다음 호출 예약됨 · "+KoreanText.Stop(stops[chainedOffer.pickup].name));
-  else if(ChainWindow&&ChainCandidates().Length>0)lines.Add("M에서 하차 근처의 다음 호출을 미리 잡을 수 있어요");
-  if(!DestinationHidden(current)){string preview=NextCallPreview();if(preview.Length>0)lines.Add(preview);}
+  // User request 2026-11-26: one short line (the nearby-stop preview made the card too long to read).
+  else if(ChainWindow&&ChainCandidates().Length>0)lines.Add("지도에서 하차 근처의 다음 호출을 미리 잡을 수 있어요");
   return lines.Count==0?null:"정차 중 · "+string.Join("\n",lines);
  }
  // ---- last call before clocking off ----

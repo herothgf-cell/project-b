@@ -29,7 +29,7 @@ public sealed class IdleTimeProbe : MonoBehaviour {
   }catch(Exception e){error=e.ToString();}
   if(error==null){yield return new WaitForSecondsRealtime(IdleTimeRules.StopBreakDelay+.4f);
    try{string summary=j.StopBreakSummary();report.AppendLine("summary: "+summary);
-    Check(summary!=null&&summary.StartsWith("정차 중 · ")&&summary.Contains("하차 후 가까운 승차 지점"),"stopped summary gathers the next-call preview");
+    Check(summary==null||summary.StartsWith("정차 중 · ")&&!summary.Contains("하차 후 가까운 승차 지점")&&!summary.Contains("M에서"),"stopped summary is short: no nearby-stop list, the map hint (2026-11-26 request)");
     s.taxi.body.velocity=s.taxi.transform.forward*5;Check(j.StopBreakSummary()==null,"moving hides the summary at once");s.taxi.body.velocity=Vector3.zero;
     j.ClearForDay();
    }catch(Exception e){error=e.ToString();}}
