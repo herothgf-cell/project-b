@@ -8,7 +8,7 @@ using UnityEngine;
 // Lost items and the emergency passenger, player acceptance (Eungye single, 2026-11-25). Real boarding and delivery
 // (stops are posed, not driven). Lost item: returned to the owner at the drop stop (thank-you line), handed in at
 // 은행파출소 (small thank-you), or left (the next passenger minds it). Emergency: a call becomes "병원으로 빨리요"
-// to the stop nearest 신천연합병원 응급실; after the drop the rest of the way passes in a blackout.
+// to the stop in front of the in-map emergency room (은계 응급의료센터, game-only since 2026-11-26); the ride ends there.
 public sealed class LostItemProbe : MonoBehaviour {
  const string Flag="-lostCheck";
  DriveSession s;int checks;readonly StringBuilder report=new StringBuilder();string output;int pickupSeed;string error;JobOffer offer;
@@ -88,7 +88,7 @@ public sealed class LostItemProbe : MonoBehaviour {
   double before=b.ledger.Elapsed;yield return Deliver();
   {float until=Time.realtimeSinceStartup+10;while(s.outOfTown.EmergencyLegs==0&&Time.realtimeSinceStartup<until)yield return null;}
   {float until=Time.realtimeSinceStartup+8;while(s.outOfTown.Blackout&&Time.realtimeSinceStartup<until)yield return null;}
-  try{Check(s.outOfTown.EmergencyLegs==1,"the rest of the way to the emergency room passes in a blackout");Check(Feed("응급실에 모셔다") ||Feed(LostItemRules.Hospital.name),"a card says the passenger reached the hospital");Check(j.EmergencyDoneToday==1&&j.EmergencyBlocked()=="하루 한도","once a day");Info("shift "+before.ToString("0")+" -> "+b.ledger.Elapsed.ToString("0")+" s");}catch(Exception e){error=e.ToString();}
+  try{Check(s.outOfTown.EmergencyLegs==1&&!s.outOfTown.Blackout&&s.outOfTown.LastOutcome=="응급실 도착","the ride ends at the in-map emergency room, no blackout");Check(b.ledger.Elapsed-before<120,"no out-of-map leg passes on the shift clock ("+(b.ledger.Elapsed-before).ToString("0")+" s)");Check(j.HospitalLegMetres<60,"the drop stop is in front of the emergency room ("+Mathf.RoundToInt(j.HospitalLegMetres)+" m)");Check(Feed("응급실에 모셔다") ||Feed(LostItemRules.Hospital.name),"a card says the passenger reached the hospital");Check(j.EmergencyDoneToday==1&&j.EmergencyBlocked()=="하루 한도","once a day");Info("shift "+before.ToString("0")+" -> "+b.ledger.Elapsed.ToString("0")+" s");}catch(Exception e){error=e.ToString();}
   Finish(error);
  }
  void Finish(string err){

@@ -232,10 +232,10 @@ public partial class PassengerJobs {
 }
 
 // Emergency passenger (design 08 ch.5.3, approved 2026-11-25, Eungye single): rarely (at most once a day) an
-// ordinary call becomes "병원으로 빨리요". The nearest emergency room is real (신천연합병원 응급실, from
-// Resources/eungye-care-points.json) and lies just west of the map: the passenger is driven to the stop nearest
-// the hospital, then a short blackout covers the rest of the way and the empty return. The deadline is tight;
-// law and accident rules are unchanged (no exemption for hurrying).
+// ordinary call becomes "병원으로 빨리요". Since 2026-11-26 (user decision) the emergency room is a game-only place
+// inside the map (은계 응급의료센터, Resources/eungye-care-points.json; the real nearest one, 신천연합병원 응급실, is
+// 0.9 km west of the map and kept as evidence): the passenger is driven to the stop in front of it and the ride ends
+// there, with no blackout. The deadline is tight; law and accident rules are unchanged (no exemption for hurrying).
 public static class EmergencyRules {
  static float F(string id,double fallback){return (float)ContentTuning.Number(id,fallback);}
  static int I(string id,int fallback){return ContentTuning.Int(id,fallback);}
@@ -246,8 +246,9 @@ public static class EmergencyRules {
  public static float FareMultiplier {get{return Mathf.Clamp(F("emergency.fareMultiplier",1.3),.5f,5);}}
  public static float LegKmh {get{return Mathf.Clamp(F("emergency.legKmh",40),10,100);}}
  public static string HospitalName {get{var h=LostItemRules.Hospital;return h!=null?h.name:"병원";}}
- // Remaining way from the drop stop to the hospital (straight line x1.3) and back, at the leg speed.
- public static float LegSeconds(float straightMetres){return Mathf.Max(30,straightMetres*1.3f*2/(LegKmh/3.6f));}
+ // Kept for the old out-of-map hospital; the in-map emergency room has no leg (0 below 60 m).
+ public static float LegSeconds(float straightMetres){return straightMetres<60?0:Mathf.Max(30,straightMetres*1.3f*2/(LegKmh/3.6f));}
+ public static bool InMap(float straightMetres){return straightMetres<60;}
 }
 
 public partial class PassengerJobs {
@@ -268,5 +269,5 @@ public partial class PassengerJobs {
   o.fare=(int)System.Math.Ceiling((ride+leg*.5f)/60f*OutOfTownRules.PerMinuteWon*EmergencyRules.FareMultiplier/100.0)*100;
   return true;
  }
- public string EmergencyCardLine(JobOffer o){return EmergencyRules.HospitalName+"까지 지도 밖 약 "+Mathf.RoundToInt(HospitalLegMetres/100f)*100+"m · 서둘러도 법규 판정은 그대로";}
+ public string EmergencyCardLine(JobOffer o){return EmergencyRules.InMap(HospitalLegMetres)?EmergencyRules.HospitalName+" 앞 정차 칸까지 · 서둘러도 법규 판정은 그대로":EmergencyRules.HospitalName+"까지 지도 밖 약 "+Mathf.RoundToInt(HospitalLegMetres/100f)*100+"m · 서둘러도 법규 판정은 그대로";}
 }

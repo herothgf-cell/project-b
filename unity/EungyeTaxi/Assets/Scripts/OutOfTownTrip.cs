@@ -16,7 +16,9 @@ public sealed class OutOfTownTrip : MonoBehaviour {
   if(aboard&&j.trip.State!=TripState.OnTrip){
    var result=session.business.passengers.FindLast(r=>r!=null&&r.tripId==trip);
    if(result!=null){aboard=false;if(emergency)j.CountEmergency();else j.CountOutOfTown();
-    if(result.paid>0){blackoutAt=Time.unscaledTime;applied=false;}
+    // The in-map emergency room (2026-11-26) ends the ride at its door: no blackout, no leg.
+    if(result.paid>0&&emergency&&EmergencyRules.InMap(j.HospitalLegMetres))ArriveEmergency();
+    else if(result.paid>0){blackoutAt=Time.unscaledTime;applied=false;}
     else{Skipped++;LastOutcome="운송 실패·지각 · 시외 구간 없음";}}
    else if(j.trip.State==TripState.Idle&&j.current==null){aboard=false;Skipped++;LastOutcome="운송 취소";}
   }
@@ -26,6 +28,11 @@ public sealed class OutOfTownTrip : MonoBehaviour {
    if(!applied&&t>=.4f)Apply();
    if(t>=fade+.8f)blackoutAt=-1;
   }
+ }
+ void ArriveEmergency(){
+  EmergencyLegs++;LastOutcome="응급실 도착";var n=session.GetComponent<DriveNotifications>();
+  if(n)n.Card("응급 손님 · "+EmergencyRules.HospitalName+"에 모셔다 드렸어요 · “기사님, 정말 고맙습니다.”");
+  session.business.SaveCheckpoint();Debug.Log("OUT_OF_TOWN emergency arrived in map at "+EmergencyRules.HospitalName);
  }
  void Apply(){
   applied=true;var l=session.business.ledger;

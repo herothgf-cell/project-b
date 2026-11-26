@@ -152,7 +152,7 @@ public partial class ServiceStops : MonoBehaviour {
     if(GUI.Button(pr,LostItemRules.Police.name+(lost.State==LostItems.Pending||lost.State==LostItems.ToPolice?" · 분실물":"")+"\n"+Metres(pd),rowButton)&&lost.GuidePolice())DismissPostTrip();
     HudGlyph.Draw(new Rect(pr.x+8,pr.y+17,20,20),21,CasualUI.Blue);if(lost.State==LostItems.Pending||lost.State==LostItems.ToPolice)CasualUI.AttentionDot(new Rect(pr.xMax-12,pr.y-3,12,12));
     var hr=new Rect(x+10+half,y+170,half-6,54);
-    if(GUI.Button(hr,EmergencyRules.HospitalName+" 방면\n"+Metres(careDistances[1])+" · 지도 밖",rowButton)&&lost.GuideHospital())DismissPostTrip();
+    if(GUI.Button(hr,"응급실 · "+EmergencyRules.HospitalName+"\n"+Metres(careDistances[1]),rowButton)&&lost.GuideHospital())DismissPostTrip();
     HudGlyph.Draw(new Rect(hr.x+8,hr.y+17,20,20),22,new Color(.85f,.2f,.2f));}
    GUI.enabled=true;
   } finally {GUI.matrix=previous;GUI.enabled=true;}

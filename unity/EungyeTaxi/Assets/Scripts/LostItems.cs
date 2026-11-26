@@ -78,12 +78,13 @@ public sealed class LostItems : MonoBehaviour {
  public MapStop PoliceStop {get{var j=session.jobs;if(j==null||j.nav==null||j.nav.hd==null||LostItemRules.Police==null)return null;var road=PoliceRoad;float at;int edge=j.nav.hd.Nearest(road,Vector3.zero,out at);if(edge<0)return null;var p=j.nav.hd.paths[edge];var pos=p.Position(at);var dir=p.Tangent(at);return new MapStop{name=LostItemRules.Police.name,x=pos.x,z=pos.z,dx=dir.x,dz=dir.z,graphStop=true,laneEdge=edge,laneAt=at};}}
  public MapStop HospitalApproach {get{var j=session.jobs;int i=j?j.HospitalStop:-1;return i<0?null:j.stops[i];}}
  public bool GuidePolice(){if(!PlacesShown||session.jobs.trip.State==TripState.OnTrip)return false;var stop=PoliceStop;if(stop==null)return false;session.jobs.nav.SetDestination(stop);session.services.destination=LostItemRules.Police.name+" · 앞 도로에 정차";return true;}
- public bool GuideHospital(){if(!PlacesShown||session.jobs.trip.State==TripState.OnTrip)return false;var stop=HospitalApproach;if(stop==null)return false;session.jobs.nav.SetDestination(stop);session.services.destination=EmergencyRules.HospitalName+" 방면 · 지도 서쪽 밖";return true;}
+ public bool GuideHospital(){if(!PlacesShown||session.jobs.trip.State==TripState.OnTrip)return false;var stop=HospitalApproach;if(stop==null)return false;session.jobs.nav.SetDestination(stop);session.services.destination=EmergencyRules.HospitalName+" · 앞 정차 칸";return true;}
  bool signs;
  void BuildSigns(){
   signs=true;if(!PlacesShown)return;
   var road=Flat(PoliceRoad);var toward=PolicePoint-road;Sign(road+(toward.sqrMagnitude>1?toward.normalized*Mathf.Min(6,toward.magnitude):Vector3.zero),LostItemRules.Police.name,new Color(.15f,.3f,.75f));
-  var h=HospitalApproach;if(h!=null)Sign(h.Kerb+Vector3.Cross(Vector3.up,h.Direction)*3.5f,EmergencyRules.HospitalName+" 방면 ←",new Color(.8f,.15f,.15f));
+  // The emergency room is in the map since 2026-11-26: its own sign at the door, beside the drop stop.
+  var h=HospitalApproach;var hp=LostItemRules.Hospital;if(h!=null&&hp!=null)Sign(Vector3.Lerp(h.Kerb,hp.V(),.55f),"+ 응급실 · "+EmergencyRules.HospitalName,new Color(.8f,.15f,.15f));
  }
  void Sign(Vector3 at,string text,Color color){
   var root=new GameObject("생활시설 표지 · "+text);root.transform.position=new Vector3(at.x,0,at.z);
