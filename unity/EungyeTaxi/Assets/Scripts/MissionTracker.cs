@@ -27,6 +27,19 @@ public sealed class MissionTracker : MonoBehaviour {
    KoreanText.PrepareSkin();var line=new GUIStyle(GUI.skin.label){font=KoreanText.BoldFont,fontSize=UiReadability.Font(14),alignment=TextAnchor.MiddleLeft,wordWrap=true};line.normal.textColor=new Color(.25f,.18f,.05f);
    GUI.Label(new Rect(x+42,y+2,w-50,h-4),text,line);}finally{GUI.matrix=previous;}
  }
+ // Chosen draft A (user 2026-11-26): one strip along the bottom of the navigation card. Left: the mission and its
+ // bonus; right: live progress. With no mission, an active lost-item errand uses the same strip.
+ public bool StripShown {get{return session&&!session.IsSimulationBot&&(Showing||LostErrand.Length>0);}}
+ public void DrawStrip(Rect r){
+  if(!StripShown)return;bool mission=Showing;
+  CasualUI.RoundedFill(r,mission?new Color(.9f,.95f,1f,.97f):new Color(1f,.96f,.86f,.97f));
+  var accent=mission?CasualUI.Blue:new Color(.45f,.3f,.02f);
+  HudGlyph.Draw(new Rect(r.x+8,r.y+(r.height-20)/2,20,20),mission?18:21,accent);
+  var left=DrivingHudArt.Text(14,accent,true);var right=DrivingHudArt.Text(14,accent,true,TextAnchor.MiddleRight);
+  if(mission){var o=session.jobs.current;GUI.Label(new Rect(r.x+34,r.y,r.width*.52f,r.height),"미션 · "+MissionRules.Label(o.mission)+(o.missionBonus>0?" +"+o.missionBonus.ToString("N0")+"원":""),left);
+   GUI.Label(new Rect(r.x+r.width*.45f,r.y,r.width*.55f-10,r.height),Progress,right);}
+  else GUI.Label(new Rect(r.x+34,r.y,r.width-44,r.height),LostErrand,left);
+ }
  static string Clock(float s){int t=Mathf.Max(0,Mathf.RoundToInt(s));return t/60+":"+(t%60).ToString("00");}
  void OnGUI(){
   // Play feedback 2026-11-26 (2nd): a separate panel makes the driving screen too busy. Drawing is off until the

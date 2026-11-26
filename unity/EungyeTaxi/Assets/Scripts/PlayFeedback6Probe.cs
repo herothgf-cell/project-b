@@ -63,7 +63,7 @@ public sealed class PlayFeedback6Probe : MonoBehaviour {
   try{Check(accepted&&s.missionTracker.Showing&&s.missionTracker.Progress.Contains("타면"),"an accepted mission call shows the mission panel before boarding");for(int i=0;i<4&&j.trip.State==TripState.ToPickup;i++)j.Interact();Check(j.trip.State==TripState.OnTrip,"board");}catch(Exception e){error=e.ToString();}
   if(error!=null){Finish(error);yield break;}
   yield return new WaitForSeconds(1);
-  try{Check(s.missionTracker.Showing&&s.missionTracker.Progress.StartsWith("주행 "),"aboard, the panel shows live progress: "+s.missionTracker.Progress);}catch(Exception e){error=e.ToString();}
+  try{Check(s.missionTracker.Showing&&s.missionTracker.Progress.StartsWith("주행 "),"aboard, the panel shows live progress: "+s.missionTracker.Progress);Check(s.missionTracker.StripShown&&!MissionTracker.Drawn,"the mission rides in the navigation card strip, not a separate panel");}catch(Exception e){error=e.ToString();}
   if(error!=null){Finish(error);yield break;}
   yield return Shot("mission-panel");
   // 6) A passenger dirt event is told in the feed.

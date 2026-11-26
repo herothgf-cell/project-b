@@ -107,13 +107,15 @@ public class DrivingReadability : MonoBehaviour {
    string road=string.IsNullOrEmpty(cue.Road)?NavigationCue.Label(cue.Move):cue.Road;var roadStyle=DrivingHudArt.Text(15);
    GUI.Label(new Rect(x+88,y+83,135,27),new GUIContent(UiReadability.Ellipsis(road,roadStyle,135),road),roadStyle);
    if(cue.HasNext&&!session.services.PostTripVisible){var next=FollowingManeuverBounds(x,y+30);NavigationArrow.Draw(new Rect(next.x+24,next.y,32,32),cue.NextMove,DrivingHudArt.Cyan);GUI.Label(new Rect(next.x-12,next.y+35,next.width+24,26),"이후 "+NavigationCue.FormatDistance(cue.NextDistance),new GUIStyle(white){fontSize=UiReadability.Font(12),alignment=TextAnchor.MiddleCenter,wordWrap=false});}
-   if(cue.Move==NavigationMove.Arrival||cue.Move==NavigationMove.Straight)GUI.Label(new Rect(x+16,y+119,284,25),cue.Move==NavigationMove.Arrival?(session.world.map.hybrid?"오른쪽 승하차 지점":"목적지에서 정차"):"목적지까지 직진",DrivingHudArt.Text(13,DrivingHudArt.Light));
+   if((cue.Move==NavigationMove.Arrival||cue.Move==NavigationMove.Straight)&&!(session.missionTracker&&session.missionTracker.StripShown))GUI.Label(new Rect(x+16,y+119,284,25),cue.Move==NavigationMove.Arrival?(session.world.map.hybrid?"오른쪽 승하차 지점":"목적지에서 정차"):"목적지까지 직진",DrivingHudArt.Text(13,DrivingHudArt.Light));
   }else{
    GUI.Label(new Rect(x+16,y+44,290,106),nav.GuidanceHidden?session.jobs.KnowRoadHint:nav.RetainingPreviousRoute?"도로로 복귀하면 새 길을 안내합니다\n흐린 선은 이전 경로":nav.HasDestination?nav.instruction:"M 지도에서 호출을 선택하세요",new GUIStyle(DrivingHudArt.Text(16,null,true)){wordWrap=true});
   }
   GUI.Label(new Rect(x+330,y+35,268,29),nav.HasDestination?GoalDistance:"길안내 대기",DrivingHudArt.Text(16,null,true));
   if(SignalTarget!=null)DrawCompactSignal(x+310,y+80,false);
   else GUI.Label(new Rect(x+330,y+72,268,28),nav.HasDestination?"예상 "+RoadNavigation.FormatEta(nav.estimatedSeconds):"새로운 운행을 시작하세요",DrivingHudArt.Text(14,DrivingHudArt.Light));
+  // Mission / lost-item strip along the bottom of the card (draft A, 2026-11-26).
+  if(session.missionTracker)session.missionTracker.DrawStrip(new Rect(x+6,y+122,598,34));
 
  }
  void DrawCockpitNavigation(float x){
