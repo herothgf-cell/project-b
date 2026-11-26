@@ -5,8 +5,8 @@ using UnityEngine;
 public static class JunctionRouteFeedbackTests {
  public static void VerifyMigration(){
   MapCatalog.LockedRegion="eungye";var map=MapCatalog.Load();
-  int target=Enumerable.Range(25,51).SingleOrDefault(revision=>map.editorRevision=="은계 프로젝트 지도 · r"+revision);
-  if(target==0)throw new Exception("Migration regression requires a reviewed r25–r75 default map");
+  int target=Enumerable.Range(25,52).SingleOrDefault(revision=>map.editorRevision=="은계 프로젝트 지도 · r"+revision);
+  if(target==0)throw new Exception("Migration regression requires a reviewed r25–r76 default map");
   var method=typeof(BusinessProgress).GetMethod("UpgradeEungyeApproachCheckpoint",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
   var migrate=typeof(BusinessProgress).GetMethod("ApplyReviewedEungyeCheckpointMigration",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
   int checks=0;
