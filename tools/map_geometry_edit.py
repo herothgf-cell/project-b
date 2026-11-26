@@ -113,6 +113,18 @@ def moved(a, b):
     return math.dist(a, b) > 1e-3
 
 
+def separate(old, new, gap=.002):
+    """keep near-duplicate source points (a few source lanes are 0.06 mm long) at least `gap` apart after a move,
+    along their original direction (the validator rejects changed geometry with points closer than 1 mm)"""
+    out = list(new)
+    for k in range(1, len(out)):
+        if math.dist(out[k - 1], out[k]) < gap:
+            dx, dz = old[k][0] - old[k - 1][0], old[k][1] - old[k - 1][1]; L = math.hypot(dx, dz)
+            u = (dx / L, dz / L) if L > 0 else (0.0, 1.0)
+            out[k] = (out[k - 1][0] + u[0] * gap, out[k - 1][1] + u[1] * gap)
+    return out
+
+
 def _pts(o):
     return [(q['x'], q['z']) for q in o['points']]
 
@@ -132,6 +144,15 @@ def plan(edits):
         new = [compose(edits, p, l['id']) for p in pts]
         if not any(moved(a, b) for a, b in zip(pts, new)):
             continue
+        # long straight segments cannot follow a taper: divide them every 2 m (the patch may change point counts)
+        if any(math.dist(a, b) > 2.5 for a, b in zip(pts, pts[1:])):
+            dense = [pts[0]]
+            for a, b in zip(pts, pts[1:]):
+                n = max(1, int(math.dist(a, b) / 2.0))
+                dense += [(a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n) for k in range(1, n + 1)]
+            pts = dense
+            new = [compose(edits, p, l['id']) for p in pts]
+        new = separate(pts, new)
         # one width per lane: the narrowest stretch over the moved points (lanes must still fit there)
         k = 1.0; floor = 2.0
         for e in edits:
@@ -141,7 +162,8 @@ def plan(edits):
             if hit:
                 k *= min(e.scale(q) for q in hit); floor = max(floor, e.min_lane)
         w0 = l.get('width', 3.5)
-        lanes.append(dict(id=l['id'], width=round(max(min(w0, floor), min(6.0, w0 * k)), 3), points=_mp(new)))
+        # never wider than before: a lane beside a stretched strip keeps its width
+        lanes.append(dict(id=l['id'], width=round(max(min(w0, floor), min(w0, w0 * k)), 3), points=_mp(new)))
     for o in DOC['scene']['objects']:
         if not o.get('enabled', True) or o['kind'] not in ('road', 'sidewalk'):
             continue
@@ -175,6 +197,7 @@ def plan(edits):
             cs.append(((l_[0] + r_[0]) / 2, (l_[1] + r_[1]) / 2)); ws.append(math.dist(l_, r_))
         if not any(moved(a, b) for a, b in zip(pts, cs)) and max(abs(x - o['width']) for x in ws) < 1e-3:
             continue
+        cs = separate(pts, cs)
         if max(ws) - min(ws) <= .3:
             objects.append(dict(id=o['id'], width=round(max(ws), 3), points=_mp(cs)))
             continue

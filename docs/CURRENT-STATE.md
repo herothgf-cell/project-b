@@ -1,6 +1,6 @@
 # 현재 상태 한 장 요약
 
-**2026-11-26 · 은계 싱글 r68 · 자체 도시 PvP A2 / LAN v25.** 기본 실행 파일은 `builds/EungyeTaxi/EungyeTaxi.exe`다. 싱글에서는 시흥 은계에서 아버지의 택시로 생계를 시작한다. 같은 실행 파일에서 봇 3명 또는 LAN 최대 4명으로 PvP를 할 수 있다. [최신 이력](work-history/LATEST.md) · [전체 기획 목차](content-design/README.md) · [기획서 목록과 현황](content-design/INDEX.md) · [PvP 기획](content-design/pvp/README.md)
+**2026-11-26 · 은계 싱글 r69 · 자체 도시 PvP A2 / LAN v25.** 기본 실행 파일은 `builds/EungyeTaxi/EungyeTaxi.exe`다. 싱글에서는 시흥 은계에서 아버지의 택시로 생계를 시작한다. 같은 실행 파일에서 봇 3명 또는 LAN 최대 4명으로 PvP를 할 수 있다. [최신 이력](work-history/LATEST.md) · [전체 기획 목차](content-design/README.md) · [기획서 목록과 현황](content-design/INDEX.md) · [PvP 기획](content-design/pvp/README.md)
 
 ## 지금 플레이할 수 있는 것
 

@@ -24,6 +24,7 @@ def main(rev, comment):
     assert pack['document']['revision'] == rev, ('map revision', pack['document']['revision'])
     prev = rev - 1
     s = BP.read_bytes().decode('utf-8')
+    crlf = '\r\n' in s; s = s.replace('\r\n', '\n')  # keep the file's line endings
     if f'reviewedR{rev}Hash=' in s:
         s = re.sub(rf'reviewedR{rev}Hash="[0-9a-f]*"', f'reviewedR{rev}Hash="{h}"', s)
     else:
@@ -32,7 +33,7 @@ def main(rev, comment):
         for o, n in [(f'revision<={prev};', f'revision<={rev};'), (f'to>{prev})return;', f'to>{rev})return;'),
                      (f'string reviewedHash=to=={prev}?', f'string reviewedHash=to=={rev}?reviewedR{rev}Hash:to=={prev}?')]:
             assert s.count(o) == 1, o; s = s.replace(o, n)
-    BP.write_bytes(s.encode('utf-8'))
+    BP.write_bytes((s.replace('\n', '\r\n') if crlf else s).encode('utf-8'))
     t = TESTS.read_bytes().decode('utf-8')
     t = re.sub(r'Range\(25,\d+\)', f'Range(25,{rev - 24})', t); t = re.sub(r'r25–r\d+', f'r25–r{rev}', t)
     TESTS.write_bytes(t.encode('utf-8'))
