@@ -27,7 +27,7 @@
 - Unity: `unity/EungyeTaxi/Assets/Editor/MapReviewGeometryEdit.cs`, `unity/EungyeTaxi/Assets/Scripts/MapSupplements.cs`, `BusinessProgress.cs`·`JunctionRouteFeedbackTests.cs`(r73 해시)
 - 지도: `config/maps/review/r73-crosswalks.json`, `config/maps/project/eungye.project.json`, `config/maps/local-input-manifest.json`, 결정 JSON
 - 화면: `docs/ui/2026-11-26-map-review-crosswalks/`
-- 배포: `builds/EungyeTaxi/`, `distribution/EungyeTaxi-build-manifest.json`
+- 배포: 이번에는 없음(아래 검증 참고)
 
 ## 검증
 
@@ -40,6 +40,7 @@
 - **전후 화면:** [007-J4396_13458.jpg](../ui/2026-11-26-map-review-crosswalks/007-J4396_13458.jpg), [040-J2225_12001.jpg](../ui/2026-11-26-map-review-crosswalks/040-J2225_12001.jpg).
   - J4396 북서 횡단보도가 안쪽으로 짧아졌다. 정지선과 붉은 포장은 원래 자리에 남아 횡단보도 바깥에 있다.
   - J2225에는 넓은 횡단보도 하나만 보인다.
+- **배포 실행본:** `PrototypeBuild.BuildHybrid`(14:43:56 시작)는 성공했고 실행본 호출판도 통과 115였다. 그런데 빌드 도중(14:44:04~14:45:16) 다른 세션이 작업 중인 스크립트(CockpitUI, PassengerDialogueUI 등 7개)를 저장했고, 실행본용 컴파일은 14:44:44에 끝났다. 미커밋 코드가 섞였을 수 있어 이 빌드는 버리고 `builds/`를 r72 배포본으로 되돌렸다. r73 배포 실행본은 그 세션이 커밋한 뒤에 만든다.
 - **확인하지 못한 것:**
   - 사람이 직접 주행하지 않았다.
   - J2225는 신호 없는 교차로이고, 새 횡단보도에서 차가 멈추는지는 따로 관찰하지 않았다(r64 중간 횡단보도와 같은 방식).
