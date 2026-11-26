@@ -1,8 +1,10 @@
 # 최신 작업 이력
 
-**2026-11-26 · 은계 싱글 r78(배포 실행본 r77) · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
+**2026-11-26 · 은계 싱글 r79(배포 실행본 r77) · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
 
 ## 이어갈 작업
+
+**2026-11-26 지도 검토 16단계 추가: J2608 북서 가지 잇기(지도 r79, 배포는 다음 빌드)**: [기록](2026-11-26-map-review-new-road.md) 아래쪽. J044-1 두 막다른 길을 7 m 양방향 길로. 77곳·기둥 0·호출판 116(실패 0), 교통 멈춤 0. 처리 175/277.
 
 **2026-11-26 지도 검토 16단계: 도로 추가 도구와 수인로 북쪽 측도(지도 r78, 배포는 다음 빌드)**: [기록](2026-11-26-map-review-new-road.md). 새 도구 `tools/map_road_add.py`(도로 띠·새 차로·T자 연결·인도 자르기). J022-2·J077-3 측도 추가. 77곳·기둥 0·호출판 113(실패 0), 교통 멈춤 0. 임무 검사의 간헐적 null은 r75 배포본에서도 나는 기존 문제. 처리 174/277.
 
