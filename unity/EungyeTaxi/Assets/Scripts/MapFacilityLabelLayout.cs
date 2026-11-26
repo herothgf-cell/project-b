@@ -39,7 +39,7 @@ public partial class FullMapOverlay {
   return Rect.zero;
  }
  List<Rect> FacilityLabelObstacles(Rect map){
-  var occupied=new List<Rect>{new Rect(8,8,152,48),new Rect(map.width-64,map.height-182,52,152)};
+  var occupied=new List<Rect>{new Rect(8,8,252,48),new Rect(map.width-64,map.height-182,52,152)};
   if(session.taxi){var p=MapPresentation.PlayerAnchor(map,Project(session.taxi.transform.position,map));occupied.Add(new Rect(p.x-42,p.y-42,84,84));occupied.Add(new Rect(Mathf.Clamp(p.x-74,map.xMin,map.xMax-148),Mathf.Clamp(p.y+31,map.yMin,map.yMax-31),148,28));}
   if(session.simulationMatch)foreach(var bot in session.simulationMatch.Bots)if(bot&&bot.taxi){var p=Project(bot.taxi.transform.position,map);if(map.Contains(p)){occupied.Add(new Rect(p.x-13,p.y-13,26,26));occupied.Add(new Rect(p.x+12,p.y-12,100,24));}}
   if(ShowFacilities)foreach(var place in Places()){var p=Project(place.position,map);if(map.Contains(p))occupied.Add(new Rect(p.x-16,p.y-16,32,32));}

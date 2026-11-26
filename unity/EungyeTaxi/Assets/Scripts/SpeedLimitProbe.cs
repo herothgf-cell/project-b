@@ -126,7 +126,12 @@ public sealed class SpeedLimitProbe : MonoBehaviour {
   try{Check(s.law.CurrentLimit==30,"driving past the entry sign reads 30 (read "+s.law.CurrentLimit+")");Check(signs.Notice.Contains("어린이보호구역"),"entering shows the school-zone notice ("+signs.Notice+")");}catch(Exception e){error=e.ToString();}
   if(error!=null){Finish(error);yield break;}
   ScreenCapture.CaptureScreenshot(Path.Combine(output,"school-zone-notice.png"));yield return null;
-  var overlay=s.GetComponent<FullMapOverlay>();bool opened=overlay&&overlay.Open();report.AppendLine("INFO full map opened="+opened+" (choice="+s.ChoiceOpen+" result="+s.RideResultOpen+" payment="+s.business.pendingPayment+")");if(opened){yield return new WaitForSecondsRealtime(.6f);ScreenCapture.CaptureScreenshot(Path.Combine(output,"map-sections.png"));yield return null;yield return null;overlay.Close();}
+  var overlay=s.GetComponent<FullMapOverlay>();bool opened=overlay&&overlay.Open();report.AppendLine("INFO full map opened="+opened+" (choice="+s.ChoiceOpen+" result="+s.RideResultOpen+" payment="+s.business.pendingPayment+")");if(opened){yield return new WaitForSecondsRealtime(.6f);ScreenCapture.CaptureScreenshot(Path.Combine(output,"map-sections.png"));yield return null;yield return null;
+   // 2026-11-26: speed cameras on the map (CCTV badge) and the two map filters.
+   try{Check(SpeedCameraMap.Available(s)&&SpeedCameraMap.Icon!=null,"speed camera map icon loaded");var groups=SpeedCameraMap.Groups(p=>new Vector2(p.x,-p.z),28);Check(groups.Count>=10&&groups.Count<SpeedCameraRules.Cameras.Length,"cameras grouped for the map ("+groups.Count+" of "+SpeedCameraRules.Cameras.Length+", pairs merged)");Check(overlay.ShowLimits&&overlay.ShowCameras,"limit and camera filters start on");}catch(Exception e){error=e.ToString();}
+   overlay.ShowCameras=false;yield return new WaitForSecondsRealtime(.3f);ScreenCapture.CaptureScreenshot(Path.Combine(output,"map-cameras-off.png"));yield return null;yield return null;
+   overlay.ShowCameras=true;overlay.ShowLimits=false;yield return new WaitForSecondsRealtime(.3f);ScreenCapture.CaptureScreenshot(Path.Combine(output,"map-limits-off.png"));yield return null;yield return null;
+   overlay.ShowLimits=true;overlay.Close();}
   // Vehicle state alert: the fatigue meter crossing 75 pops a card.
   var alerts=s.GetComponent<CriticalAlerts>();double fatigue=s.business.ledger.Driver.fatigue;
   try{Check(alerts!=null,"critical alerts present");alerts.Dismiss();s.business.ledger.Driver.fatigue=Math.Min(fatigue,60);}catch(Exception e){error=e.ToString();}

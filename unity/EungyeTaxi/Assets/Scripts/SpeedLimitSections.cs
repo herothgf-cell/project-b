@@ -63,12 +63,13 @@ public sealed class SpeedLimitSections {
  public static Color ColorOf(Segment s){return s.school?SchoolColor:RoadColor;}
 
  // Map overlay: limited stretches as coloured lines under the route, and a small limit disc where a section starts.
- public static void DrawMap(TrafficSystem traffic,System.Func<Vector3,Vector2> project,Rect clip,float width,bool discs){
+ // cameras/cameraSize: a start disc already shown by a speed camera icon with the same limit is skipped (2026-11-26).
+ public static void DrawMap(TrafficSystem traffic,System.Func<Vector3,Vector2> project,Rect clip,float width,bool discs,List<SpeedCameraMap.Group> cameras=null,float cameraSize=0){
   if(Event.current==null||Event.current.type!=EventType.Repaint)return;var s=For(traffic);if(s==null)return;
   var grown=new Rect(clip.x-20,clip.y-20,clip.width+40,clip.height+40);
   foreach(var seg in s.segments){var a=project(seg.a);var b=project(seg.b);if(!grown.Contains(a)&&!grown.Contains(b))continue;var c=ColorOf(seg);c.a=.8f;HudGlyph.MapLine(a,b,c,width,clip);}
   if(!discs)return;var placed=new List<Vector2>();
-  foreach(var m in s.signs){if(m.to<=0)continue;var p=project(m.position);if(!clip.Contains(p))continue;bool near=false;foreach(var q in placed)if((q-p).sqrMagnitude<26*26){near=true;break;}if(near)continue;placed.Add(p);Disc(new Rect(p.x-11,p.y-11,22,22),m.to);}
+  foreach(var m in s.signs){if(m.to<=0)continue;var p=project(m.position);if(!clip.Contains(p)||SpeedCameraMap.Covers(cameras,p,m.to,cameraSize))continue;bool near=false;foreach(var q in placed)if((q-p).sqrMagnitude<26*26){near=true;break;}if(near)continue;placed.Add(p);Disc(new Rect(p.x-11,p.y-11,22,22),m.to);}
  }
  static GUIStyle discText;
  public static void Disc(Rect r,float kmh){

@@ -41,6 +41,8 @@ public partial class FullMapOverlay : MonoBehaviour {
  }
  public string LocationText {get{return DescribeLocation(session.world.map,session.taxi.transform.position,session.taxi.transform.eulerAngles.y,session.traffic.junctions);}}
  public bool ShowFacilities=true,ShowTraffic=false,ShowLaw=false;
+ // 2026-11-26: map filters for limited sections and speed cameras (the minimap follows them too).
+ public bool ShowLimits=true,ShowCameras=true;
  public sealed class MapMarker {public Vector3 position;public string label;public Color color;public bool named;}
  public List<MapMarker> VisibleMarkers(){
   var markers=new List<MapMarker>();
@@ -59,6 +61,13 @@ public partial class FullMapOverlay : MonoBehaviour {
  public List<ServiceLawZone> VisibleLawZones(){var result=new List<ServiceLawZone>();var zones=GetComponent<ServiceLawZones>();if(ShowLaw&&zones&&zones.Ready)result.AddRange(zones.zones);return result;}
  public float ZoomLevel {get;private set;}=1;Vector2 center=new Vector2(.5f,.5f);bool dragging;Vector2 dragStart;bool dragMoved;
  public void Zoom(int step){ZoomLevel=Mathf.Clamp(ZoomLevel*Mathf.Pow(1.5f,step),1,8);ClampCenter();}
+ const float CameraIcon=28;
+ // Same frame as the glyph buttons beside it; an off filter is veiled.
+ bool FilterButton(Rect r,string tooltip,bool active,bool camera){
+  bool hit=GUI.Button(r,new GUIContent("",tooltip+(active?" 끄기":" 켜기")));var inner=new Rect(r.x+7,r.y+6,r.width-14,r.height-12);float d=Mathf.Min(inner.width,inner.height);var icon=new Rect(inner.center.x-d/2,inner.center.y-d/2,d,d);
+  if(Event.current.type==EventType.Repaint){if(camera)SpeedCameraMap.Badge(icon,0,1);else SpeedLimitSections.Disc(icon,60);if(!active)CasualUI.RoundedFill(new Rect(r.x+2,r.y+2,r.width-4,r.height-4),new Color(1,1,1,.62f));}
+  return hit;
+ }
  public void ResetView(){ZoomLevel=1;center=new Vector2(.5f,.5f);}
  public void FocusPlayer(){highlightUntil=Time.unscaledTime+3;FocusWorld(session.taxi.transform.position);}
  public void FocusWorld(Vector3 point){ZoomLevel=Mathf.Max(2,ZoomLevel);float span=Mathf.Max(session.world.map.width,session.world.map.depth);center=new Vector2(.5f+(point.x-session.world.map.width/2)/span,.5f-(point.z-session.world.map.depth/2)/span);ClampCenter();}
@@ -96,11 +105,14 @@ public partial class FullMapOverlay : MonoBehaviour {
   GUI.BeginGroup(viewport);var map=new Rect(0,0,viewport.width,viewport.height);Fill(map,MapPresentation.Land);var data=session.world.map;var tile=GetComponent<DriveHUD>().LightTile;
   if(tile){var a=Project(new Vector3(0,0,data.depth),map);float span=Mathf.Max(data.width,data.depth),pixels=Mathf.Min(map.width,map.height);GUI.DrawTexture(new Rect(a.x,a.y,data.width/span*pixels*ZoomLevel,data.depth/span*pixels*ZoomLevel),tile);}
   // 2026-11-24: limited sections (orange road limit, red school zone) with a limit disc where each starts.
-  SpeedLimitSections.DrawMap(session.traffic,p=>Project(p,map),map,5,true);
+  var cameraGroups=ShowCameras&&SpeedCameraMap.Available(session)?SpeedCameraMap.Groups(p=>Project(p,map),CameraIcon):null;
+  if(ShowLimits)SpeedLimitSections.DrawMap(session.traffic,p=>Project(p,map),map,5,true,cameraGroups,CameraIcon);
   for(int pass=0;pass<2;pass++)foreach(var segment in RoutePaint)HudGlyph.MapLine(Project(segment.a,map),Project(segment.b,map),segment.retained?(pass==0?Color.white:MapPresentation.PreviousRoute):pass==0?Color.white:ShowTraffic?segment.color:MapPresentation.RouteColor(segment.passenger),pass==0?(segment.passenger?7:11):4,new Rect(0,0,MapRect.width,MapRect.height));
   if(session.business.DailyConditionsEnabled&&session.business.DayCondition==DailyConditionKind.Construction)
    DailyConditionHUD.DrawClosure(session,map,p=>Project(p,map),6,true);
   var occupied=FacilityLabelObstacles(map);
+  // Facility name labels step aside from speed camera badges, which are drawn over the facility pins.
+  if(cameraGroups!=null)foreach(var g in cameraGroups)if(map.Contains(g.p))occupied.Add(new Rect(g.p.x-CameraIcon*.65f,g.p.y-CameraIcon*.65f,CameraIcon*1.3f,CameraIcon*1.3f));
   if(ShowFacilities){
    var labelStyle=FacilityLabelStyle();var labels=LayoutFacilityLabels(map,labelStyle,occupied);int labelIndex=0;
    var places=Places();
@@ -121,6 +133,7 @@ public partial class FullMapOverlay : MonoBehaviour {
     }
    }
   }
+  SpeedCameraMap.Draw(cameraGroups,map,CameraIcon);
   if(selectedPlace!=null){var p=Project(selectedPlace.position,map);Dot(p,Color.magenta,10);}
 
   foreach(var marker in VisibleMarkers()){if(marker.named&&marker.label!="정체·정차"&&marker.label!="일시 점유")continue;
@@ -138,6 +151,8 @@ public partial class FullMapOverlay : MonoBehaviour {
   if(HudGlyph.Button(new Rect(12,12,44,42),0,"주요 시설",ShowFacilities))ShowFacilities=!ShowFacilities;
   if(HudGlyph.Button(new Rect(62,12,44,42),1,"교통 상황",ShowTraffic))ShowTraffic=!ShowTraffic;
   if(HudGlyph.Button(new Rect(112,12,44,42),2,"교통 법규",ShowLaw))ShowLaw=!ShowLaw;
+  if(FilterButton(new Rect(162,12,44,42),"제한속도 구간",ShowLimits,false))ShowLimits=!ShowLimits;
+  if(SpeedCameraMap.Available(session)&&FilterButton(new Rect(212,12,44,42),"단속 카메라",ShowCameras,true))ShowCameras=!ShowCameras;
   float cx=map.width-60,cy=map.height-178;
   if(HudGlyph.Button(new Rect(cx,cy,44,44),3,"내 위치",true))FocusPlayer();
   if(GUI.Button(new Rect(cx,cy+50,44,44),"+",button))Zoom(1);
