@@ -1,0 +1,93 @@
+success=False
+PASS player taxi excluded from NPC soak
+PASS district production population
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS distributed starting lanes
+PASS shared left/U-turn lanes: 10 U-turn connectors excluded, planned by cars=0
+PASS MIT mode=False applied ticks=0
+PASS district movement moved=72 metres=110619.9
+PASS both turns and both source areas
+PASS geometry offpath=0 overlaps=0
+PASS no prolonged stalled cars count=0
+PASS continuous journeys=76
+PASS signal fixture available
+PASS signal queue spawned
+PASS signal queue spawned
+PASS signal queue spawned
+PASS red stop Traffic car 100 · 보통
+PASS red stop Traffic car 101 · 성급
+PASS red stop Traffic car 102 · 여유
+FAIL green queue clears Traffic car 100 · 보통 distance=983.3416 block=
+FAIL green queue clears Traffic car 101 · 성급 distance=977.4927 block=Traffic car 100 · 보통
+FAIL green queue clears Traffic car 102 · 여유 distance=970.6436 block=Traffic car 101 · 성급

@@ -27,6 +27,8 @@ public class DistrictTrafficSmokeTest : MonoBehaviour {
   if(district!=null){
    foreach(var car in traffic.cars){Check(car.route.graphPath!=null,"NPC shares graph");starts.Add(car.route.graphPath.edges[0]);}
    Check(starts.Count>=8,"distributed starting lanes");
+   // Round 7 (user pick A): ordinary cars never plan a U-turn out of a lane shared with the left turn.
+   {var skip=district.SharedLaneUturns;int planned=0;foreach(var car in traffic.cars)foreach(int e in car.route.graphPath.edges)if(skip[e])planned++;Check(district.SharedLaneUturnCount>=2&&planned==0,"shared left/U-turn lanes: "+district.SharedLaneUturnCount+" U-turn connectors excluded, planned by cars="+planned);}
    for(int t=0;t<180;t++){
     foreach(var car in traffic.cars){if(t==120)late[car]=car.totalTravel;if(!car.Visible)continue;
      float error;car.route.graphPath.path.Project(car.transform.position,out error);if(error>.2f)offpath++;

@@ -108,7 +108,8 @@ public sealed class HdRoadGraph {
    }
   }return new DistanceSearch(this,start,at,previous);
  }
- public RoutePath Route(int start,float startAt,int goal,float goalAt,float[] weights=null){
+ // skip (2026-11-26): connectors an ordinary-traffic route must not use; null keeps every connector.
+ public RoutePath Route(int start,float startAt,int goal,float goalAt,float[] weights=null,bool[] skip=null){
   if(start<0||goal<0||start>=edges.Length||goal>=edges.Length||edges[start].TraversalDisabled||edges[goal].TraversalDisabled)return null;
   if(start==goal&&startAt>goalAt+.1f){RoutePath best=null;float score=float.MaxValue;foreach(int next in edges[start].next){if(next==start)continue;var rest=Route(next,0,goal,goalAt,weights);if(rest==null)continue;var chain=new List<int>{start};chain.AddRange(rest.edges);var candidate=Compose(chain,startAt,goalAt);float loopCost=0;foreach(int e in rest.edges)loopCost+=weights==null?paths[e].length:weights[e];if(candidate!=null&&loopCost<score){score=loopCost;best=candidate;}}return best;}
   bool[] used;var cost=Scratch(out used);var prev=scratchPrev;
@@ -118,7 +119,7 @@ public sealed class HdRoadGraph {
    var item=queue.Pop();int cur=item.edge;float value=item.cost;if(used[cur]||value>cost[cur])continue;
    if(cur==goal){var chain=new List<int>();for(int i=cur;i>=0;i=prev[i])chain.Add(i);chain.Reverse();return Compose(chain,startAt,goalAt);}
    used[cur]=true;
-   foreach(int next in edges[cur].next){if(edges[next].TraversalDisabled)continue;float fraction=1-(cur==start?startAt/Mathf.Max(.01f,paths[cur].length):0);float c=value+(weights==null?paths[cur].length:weights[cur])*fraction+(edges[next].change!=0?(weights==null?12:1.5f):0);
+   foreach(int next in edges[cur].next){if(edges[next].TraversalDisabled||skip!=null&&skip[next])continue;float fraction=1-(cur==start?startAt/Mathf.Max(.01f,paths[cur].length):0);float c=value+(weights==null?paths[cur].length:weights[cur])*fraction+(edges[next].change!=0?(weights==null?12:1.5f):0);
     if(c<cost[next]){cost[next]=c;prev[next]=cur;queue.Add(c,next);}
    }
   }return null;

@@ -137,9 +137,20 @@ public sealed class DistrictTraffic : MonoBehaviour {
    if(!Occupied(seed.position,seed.route.Tangent(seed.at),car))car.Place(seed.at);
   }
  }
+ // Play feedback round 7 (2026-11-26, user pick A): at J6199_11987 and J7801_9629 the inner lane is shared by the left
+ // turn and a U-turn that may go only on the left/pedestrian signal (40 s of 240). An ordinary car waiting there for
+ // its U-turn held every left-turner behind it. Ordinary traffic therefore never plans a U-turn connector out of a
+ // lane that also has a left turn. The taxi's own navigation and U-turn rules are unchanged.
+ bool[] sharedLaneUturns;public int SharedLaneUturnCount;
+ public bool[] SharedLaneUturns {get{
+  if(sharedLaneUturns!=null&&sharedLaneUturns.Length==graph.edges.Length)return sharedLaneUturns;
+  sharedLaneUturns=new bool[graph.edges.Length];SharedLaneUturnCount=0;
+  foreach(var lane in graph.edges){if(lane==null||lane.next==null)continue;bool left=false;foreach(int n in lane.next)if(n>=0&&n<graph.edges.Length&&graph.edges[n].turn==-1)left=true;if(!left)continue;
+   foreach(int n in lane.next)if(n>=0&&n<graph.edges.Length&&graph.edges[n].turn==UturnMovement.Turn&&!sharedLaneUturns[n]){sharedLaneUturns[n]=true;SharedLaneUturnCount++;}}
+  return sharedLaneUturns;}}
  public TrafficRoute CreateRoute(int start,float at,int goal,float end){
   string key=start+":"+at.ToString("R")+":"+goal+":"+end.ToString("R");TrafficRoute route;if(routes.TryGetValue(key,out route))return route;
-  var path=graph.Route(start,at,goal,end);if(path==null||path.path.length<10)return null;
+  var path=graph.Route(start,at,goal,end,null,SharedLaneUturns);if(path==null||path.path.length<10)return null;
   route=new TrafficRoute{graphPath=path,goalEdge=goal,goalAt=end};route.SetPoints(path.path.points);
   float begin=0;
   for(int k=0;k<path.edges.Count;k++){int id=path.edges[k];var edge=graph.edges[id];TrafficJunction j=null;
