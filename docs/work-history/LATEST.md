@@ -1,8 +1,10 @@
 # 최신 작업 이력
 
-**2026-11-26 · 은계 싱글 r74 · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
+**2026-11-26 · 은계 싱글 r75(배포 실행본 r74) · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
 
 ## 이어갈 작업
+
+**2026-11-26 지도 검토 15단계: 노면 표시 추가 묶음(지도 r75, 배포는 다음 빌드)**: [기록](2026-11-26-map-review-marks2.md). J015-2 J7204 진입부 미끄럼 방지 포장·J7917 자전거 횡단 띠, J015-1은 이미 처리되어 닫음. 77곳·기둥 0·호출판 113(실패 0), 교통 검사 멈춤 0. 처리 166/277. 다음: 위치가 분명한 노면 표시 항목, 폭·형상 항목은 로드뷰 확인 필요.
 
 **2026-11-26 공유용 빌드 압축 도구**: [기록](2026-11-26-build-share-zip.md). `tools/package_build_zip.ps1`이 manifest 145파일을 대조한 뒤 `builds/EungyeTaxi-<날짜>-<커밋>.zip`(약 50MB)을 만든다. 압축 항목 144개를 원본 해시와 대조해 불일치 0.
 

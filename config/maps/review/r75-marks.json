@@ -1,0 +1,33 @@
+{
+ "fromRevision": 74,
+ "toRevision": 75,
+ "lanes": [],
+ "objects": [],
+ "addObjects": [],
+ "facilities": [
+  {
+   "id": "review:r55:J7917_2565:a1:s-1:crosswalk",
+   "x": 774.6199951171875,
+   "z": 256.6400146484375,
+   "yaw": 90.56999969482422,
+   "width": 17.6299991607666,
+   "length": 2.4000000953674316,
+   "text": "자전거횡단도:바깥쪽"
+  }
+ ],
+ "disableLanes": [],
+ "addLanes": [],
+ "nexts": [],
+ "addFacilities": [
+  {
+   "id": "review:r75:J015:paving:001",
+   "copyOf": "review:r56:J019:line:051",
+   "x": 703.75,
+   "z": 255.4,
+   "yaw": 90.0,
+   "width": 5.6,
+   "length": 3.5
+  }
+ ],
+ "removeFacilities": []
+}

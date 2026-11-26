@@ -11,7 +11,7 @@ public static class MapReviewGeometryEdit {
  [Serializable] class LaneSet {public string id;public float width;public MapPoint[] points;}
  [Serializable] class ObjectSet {public string id;public float width;public MapPoint[] points;}
  [Serializable] class ObjectAdd {public string id,copyOf;public float width;public MapPoint[] points;}
- [Serializable] class FacilitySet {public string id;public float x,z,yaw,width,length,startAt,endAt;public bool range;}
+ [Serializable] class FacilitySet {public string id,text;public float x,z,yaw,width,length,startAt,endAt;public bool range;}
  [Serializable] class LaneAdd {public string id,copyOf;public float width;public int number,turn,change;public MapPoint[] points;public string[] next,prev;}
  [Serializable] class LaneNext {public string id;public string[] next;}
  [Serializable] class FacilityAdd {public string id,copyOf,laneId,type;public float x,z,yaw,width,length;}
@@ -55,7 +55,7 @@ public static class MapReviewGeometryEdit {
   var facilities=d.facilities.ToDictionary(f=>f.id);
   foreach(var s in plan.facilities??new FacilitySet[0]){
    RoadMapFacility f;Require(facilities.TryGetValue(s.id,out f),"missing facility "+s.id);
-   if(s.range){f.startAt=s.startAt;f.endAt=s.endAt;}else{f.x=s.x;f.z=s.z;f.yaw=s.yaw;f.width=s.width;f.length=s.length;}
+   if(s.range){f.startAt=s.startAt;f.endAt=s.endAt;}else{f.x=s.x;f.z=s.z;f.yaw=s.yaw;f.width=s.width;f.length=s.length;}if(!string.IsNullOrEmpty(s.text))f.text=s.text;
   }
   ApplyLanes(d,plan);facilities=d.facilities.ToDictionary(f=>f.id);
   foreach(var a in plan.addFacilities??new FacilityAdd[0]){
