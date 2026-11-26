@@ -14,7 +14,7 @@ public static class MapReviewGeometryEdit {
  [Serializable] class FacilitySet {public string id;public float x,z,yaw,width,length,startAt,endAt;public bool range;}
  [Serializable] class LaneAdd {public string id,copyOf;public float width;public int number,turn,change;public MapPoint[] points;public string[] next,prev;}
  [Serializable] class LaneNext {public string id;public string[] next;}
- [Serializable] class FacilityAdd {public string id,copyOf,laneId;public float x,z,yaw,width,length;}
+ [Serializable] class FacilityAdd {public string id,copyOf,laneId,type;public float x,z,yaw,width,length;}
  [Serializable] class Patch {public int fromRevision,toRevision;public LaneSet[] lanes;public ObjectSet[] objects;public ObjectAdd[] addObjects;public FacilitySet[] facilities;
   // lane-count edits (tools/map_lane_edit.py): retire lanes (DeleteLane also drops their facilities and signal
   // bindings), add lanes copied from an existing one, replace exits. Applied after the geometry sets above.
@@ -60,7 +60,7 @@ public static class MapReviewGeometryEdit {
   ApplyLanes(d,plan);facilities=d.facilities.ToDictionary(f=>f.id);
   foreach(var a in plan.addFacilities??new FacilityAdd[0]){
    RoadMapFacility src;Require(facilities.TryGetValue(a.copyOf,out src),"missing source facility "+a.copyOf);Require(!facilities.ContainsKey(a.id),"duplicate facility "+a.id);
-   var f=JsonUtility.FromJson<RoadMapFacility>(JsonUtility.ToJson(src));f.id=a.id;f.x=a.x;f.z=a.z;f.yaw=a.yaw;f.width=a.width;f.length=a.length;if(!string.IsNullOrEmpty(a.laneId)){Require(d.lanes.Any(l=>l.id==a.laneId&&!l.disabled),"facility lane "+a.laneId);f.laneId=a.laneId;}
+   var f=JsonUtility.FromJson<RoadMapFacility>(JsonUtility.ToJson(src));f.id=a.id;f.x=a.x;f.z=a.z;f.yaw=a.yaw;f.width=a.width;f.length=a.length;if(!string.IsNullOrEmpty(a.type))f.type=a.type;if(!string.IsNullOrEmpty(a.laneId)){Require(d.lanes.Any(l=>l.id==a.laneId&&!l.disabled),"facility lane "+a.laneId);f.laneId=a.laneId;}
    d.facilities=d.facilities.Append(f).ToArray();facilities.Add(f.id,f);
   }
   foreach(var id in plan.removeFacilities??new string[0]){Require(facilities.ContainsKey(id),"missing facility "+id);RoadMapAuthoringOperations.DeleteFacility(d,id);}

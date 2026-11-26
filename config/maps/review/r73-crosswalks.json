@@ -1,0 +1,42 @@
+{
+ "fromRevision": 72,
+ "toRevision": 73,
+ "lanes": [],
+ "objects": [],
+ "addObjects": [],
+ "facilities": [
+  {
+   "id": "review:r55:J4396_13458:a0:s1:crosswalk",
+   "x": 430.4,
+   "z": 1356.6,
+   "yaw": 135.80999755859375,
+   "width": 23.0,
+   "length": 2.4000000953674316
+  }
+ ],
+ "disableLanes": [],
+ "addLanes": [],
+ "nexts": [],
+ "addFacilities": [
+  {
+   "id": "review:r73:J040:crosswalk:001",
+   "copyOf": "review:r64:J046:crosswalk:005",
+   "x": 220.7,
+   "z": 1201.85,
+   "yaw": 50.0,
+   "width": 22.5,
+   "length": 11.5
+  },
+  {
+   "id": "review:r73:J040:crosswalk:002",
+   "copyOf": "review:r64:J046:crosswalk:005",
+   "x": 213.9,
+   "z": 1196.1,
+   "yaw": 50.0,
+   "width": 24.0,
+   "length": 6.5,
+   "type": "없음"
+  }
+ ],
+ "removeFacilities": []
+}

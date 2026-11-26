@@ -67,10 +67,19 @@ public static class MapSupplements {
    WorldBuilder.Mat("Library crossing paving",new Color(.56f,.55f,.52f)),
    WorldBuilder.Mat("Library crossing approach bands",new Color(.86f,.69f,.33f))};
  }
+ static bool AuthoredCrosswalkCovers(MapData map,float x,float z){
+  var facilities=map.editorDocument==null?null:map.editorDocument.facilities;if(facilities==null)return false;
+  foreach(var f in facilities){if(f==null||f.kind!="crosswalk"||f.width<=0)continue;
+   var forward=Quaternion.Euler(0,f.yaw,0)*Vector3.forward;var delta=new Vector3(x-f.x,0,z-f.z);
+   if(Mathf.Abs(Vector3.Dot(delta,forward))<=f.length*.5f+.5f&&Mathf.Abs(Vector3.Dot(delta,TrafficSystem.Right(forward)))<=f.width*.5f)return true;
+  }return false;
+ }
  public static void DrawCrossings(MapData map,Transform parent){
   if(map.osmCrossings==null)return;var paint=WorldBuilder.Mat("OSM crossing paint",new Color(.9f,.9f,.88f));
   foreach(var c in map.osmCrossings){if(!c.render)continue;
    if(map.mapId=="eungye"&&c.source==LibraryNode&&c.roadId=="37612022:A0020000:2213:0"){DrawLibraryCrossing(parent);continue;}
+   // An authored crosswalk (also a "없음" one) supersedes an OSM crossing inside its band (2026-11-26 map review, J040-1).
+   if(AuthoredCrosswalkCovers(map,c.x,c.z))continue;
    var direction=new Vector3(c.dx,0,c.dz);var right=TrafficSystem.Right(direction);
    for(float x=-c.width*.5f+.65f;x<c.width*.5f-.3f;x+=.95f){var stripe=WorldBuilder.Box("OSM crossing "+c.source,new Vector3(c.x,.065f,c.z)+right*x,new Vector3(.5f,.02f,2.4f),paint,parent,false);stripe.transform.rotation=Quaternion.LookRotation(direction);}
   }

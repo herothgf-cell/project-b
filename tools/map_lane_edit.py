@@ -12,7 +12,8 @@ deformed geometry:
   RoadMapAuthoringOperations.Connect draws it);
 - exits(id, [...]): replaces a lane's exits; disable([...]): retires lanes (with `closure`, also every
   connector that starts or ends on them) -- the Unity side refuses a patch that leaves a lane without exits;
-- copy_mark(src, new_id, d) / remove_mark: painted facilities (paving, dividers) copied sideways.
+- copy_mark(src, new_id, d) / remove_mark: painted facilities (paving, dividers) copied sideways (an added
+  item may also set `type`, e.g. a crosswalk of type "없음" that hides source paint).
 A lane's `road:polish:<id>` strip follows the lane (moved lanes) or is copied (new lanes).
 Output is the same patch file as map_geometry_edit (MapReviewGeometryEdit.ApplyFromCommandLine).
 """
