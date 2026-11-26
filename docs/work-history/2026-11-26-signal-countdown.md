@@ -40,7 +40,7 @@ J7973_3744(지도 791, 400 부근) 북행 신호의 남은 시간이 "초록 2�
 | `-brightUiCheck` / `-speedLimitCheck` | 104 / 35건 통과 |
 | `-districtTrafficTest` | 정체 0대. 기존 "green queue clears" 실패만 그대로 |
 | `TrafficSignalLeftDemandRegressionTests.Run`, `PersistentGreenLeftTests.Run` | 실패. 이번 수정을 뺀 상태에서도 같은 지점에서 실패해 기존 문제다 |
-| `-missionCheck` | 34번째 뒤 `PassengerJobs.Interact` 오류로 실패. 이번 수정을 뺀 빌드에서도 같아(직전 배포 306e2f5e에서는 96건 통과) 지도 세션의 미커밋 r78 또는 6eb5aee4 쪽으로 보고 그 세션에 알렸다 |
+| `-missionCheck` | 34번째 뒤 `PassengerJobs.Interact` 오류로 실패. 이번 수정을 뺀 빌드에서도 같았다. 지도 세션이 배포 실행본(306e2f5e)과 r78 시험 빌드를 각 3회 돌려 보니 둘 다 3회 중 1회만 같은 자리에서 실패해, `MissionProbe.Trip`의 원래 있던 간헐 실패로 정리했다(지도·알림 수정과 무관) |
 
 ## 미검증 / 남은 것
 
