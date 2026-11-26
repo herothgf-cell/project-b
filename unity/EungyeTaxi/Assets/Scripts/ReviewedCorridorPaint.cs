@@ -52,9 +52,10 @@ public sealed class ReviewedCorridorPaint {
    if(eungye&&median&&detachedJ866Medians.Contains(stroke.id)){
     if(stroke.id=="r48:suinro:centre:0:1062"){
      // Continue the adjoining single line on surveyed road 37612022:A0020000:4430:0.
-     // The start is its existing paint endpoint and the end is the last r48 west station.
-     var start=new Vector3(44.15f,stroke.Position.y,530.69f);
-     var end=new Vector3(63f,stroke.Position.y,529.71f);
+     // Map r70 moved that road's lanes onto the surveyed NGII lanes (J077-1), so the line
+     // now runs midway between the inner NGII lanes (0.15 m south of the r48 axis).
+     var start=new Vector3(44.15f,stroke.Position.y,531.92f);
+     var end=new Vector3(63f,stroke.Position.y,531.13f);
      paint("Centre line",(start+end)*.5f,(end-start).normalized,.14f,Vector3.Distance(start,end),true);
     }
     continue;

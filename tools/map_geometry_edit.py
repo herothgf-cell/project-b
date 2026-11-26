@@ -40,8 +40,15 @@ class Edit:
         self.skip = set(skip)  # lane / object / facility ids this edit leaves alone
         self.t0, self.t1 = taper if isinstance(taper, tuple) else (taper, taper)
         self.taper = max(self.t0, self.t1)
-        self.controls = sorted(controls)
-        lo, hi = self.controls[0][0], self.controls[-1][0]
+        # controls: [(old, new), ...], or sections [(station, [(old, new), ...]), ...] with the same number of
+        # controls each, interpolated along the station (lateral positions that drift along a stretch)
+        if controls and isinstance(controls[0][1], (list, tuple)) and controls[0][1] and isinstance(controls[0][1][0], (list, tuple)):
+            self.sections = sorted((st, sorted(c)) for st, c in controls)
+            assert len({len(c) for _, c in self.sections}) == 1, 'sections need the same control count'
+        else:
+            self.sections = [(0.0, sorted(controls))]
+        self.controls = self.sections[0][1]
+        lo = min(c[0][0] for _, c in self.sections); hi = max(c[-1][0] for _, c in self.sections)
         self.reach = reach if reach is not None else max(abs(lo), abs(hi)) + fade + 1
 
     def project(self, p):
@@ -59,9 +66,21 @@ class Edit:
                 best = (d, self.cum[i] + uc * L, t, n)
         return best[1], best[2], best[3]
 
-    def lateral(self, t):
+    def at(self, s):
+        """controls at station s"""
+        S = self.sections
+        if s is None or len(S) == 1 or s <= S[0][0]:
+            return S[0][1]
+        if s >= S[-1][0]:
+            return S[-1][1]
+        for (sa, ca), (sb, cb) in zip(S, S[1:]):
+            if sa <= s <= sb:
+                u = (s - sa) / (sb - sa)
+                return [(a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u) for a, b in zip(ca, cb)]
+
+    def lateral(self, t, s=None):
         """new offset for old offset t (no station weighting)"""
-        c = self.controls
+        c = self.at(s)
         if t <= c[0][0]:
             k = smooth((c[0][0] - t) / self.fade) if self.fade else 1
             return t + (c[0][1] - c[0][0]) * (1 - k)
@@ -86,7 +105,7 @@ class Edit:
         w = self.weight(s)
         if w <= 0:
             return p
-        dt = (self.lateral(t) - t) * w
+        dt = (self.lateral(t, s) - t) * w
         return (p[0] + n[0] * dt, p[1] + n[1] * dt)
 
     def scale(self, p):

@@ -499,9 +499,11 @@ public class BusinessProgress : MonoBehaviour {
   const string reviewedR68Hash="512f42e0e069e1dcfaf138c73d6d96b4e36456a5274198e227fc1a7346de801c";
   // r69 J8066-J7801 arterial and J8066 west arm re-laid (J021-3, J017-1)
   const string reviewedR69Hash="b527c7c85cf22255ede8e698500e25bbfdd4edbb2699629fe7c7d49403283761";
-  int from=0,to=0;for(int revision=14;revision<=69;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>69)return;
-  string reviewedHash=to==69?reviewedR69Hash:to==68?reviewedR68Hash:to==67?reviewedR67Hash:to==66?reviewedR66Hash:to==65?reviewedR65Hash:to==64?reviewedR64Hash:to==63?reviewedR63Hash:to==62?reviewedR62Hash:to==61?reviewedR61Hash:to==60?reviewedR60Hash:to==59?reviewedR59Hash:to==58?reviewedR58Hash:to==57?reviewedR57Hash:to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
+  // r70 Suin-ro west of J866 re-laid (J077-1, J022-1, J022-5)
+  const string reviewedR70Hash="6dd05aa338571c84f7089ec8462280062087e559410e308377b9da9d794e43e9";
+  int from=0,to=0;for(int revision=14;revision<=70;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>70)return;
+  string reviewedHash=to==70?reviewedR70Hash:to==69?reviewedR69Hash:to==68?reviewedR68Hash:to==67?reviewedR67Hash:to==66?reviewedR66Hash:to==65?reviewedR65Hash:to==64?reviewedR64Hash:to==63?reviewedR63Hash:to==62?reviewedR62Hash:to==61?reviewedR61Hash:to==60?reviewedR60Hash:to==59?reviewedR59Hash:to==58?reviewedR58Hash:to==57?reviewedR57Hash:to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   ApplyReviewedEungyeCheckpointMigration(live,from,to);
  }
