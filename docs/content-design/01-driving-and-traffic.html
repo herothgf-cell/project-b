@@ -58,7 +58,7 @@ details.toc .fx{color:var(--fix);font-size:12px;font-weight:700;margin-left:4px}
 </tbody></table></div>
 <a id="s01"></a>
 <h2 id="1-주행교통운전-평가-구-01">1. 주행·교통·운전 평가 (구 01)<span class="st fix">개선 필요</span></h2>
-<div class="fixnote"><span class="st fix">개선 필요</span> 2건 · <a href="index.html">기획서 목록에서 보기</a><ul><li><b>카메라 흔들림·1인칭 눈높이·P51 신호 70초</b> — 구현·배포 · 사람 체감 미확인<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-24-test-feedback-fixes.md">피드백 1차</a></span></li><li><b>야간 후미등·전조등</b> — 구현·배포 · 사람 체감 미확인<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-24-test-feedback-round2.md">피드백 2차</a></span></li></ul></div>
+<div class="fixnote"><span class="st fix">개선 필요</span> 2건 · <a href="index.html">기획서 목록에서 보기</a><ul><li><b>카메라 흔들림·1인칭 눈높이·P51 신호 70초</b> — 구현·배포 · 사람 체감 미확인<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-24-test-feedback-fixes.md">피드백 1차</a></span></li><li><b>야간 후미등·전조등(80m)·상가·주거 가로등</b> — 구현·배포 · 사람 체감 미확인<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-24-test-feedback-round2.md">피드백 2차</a> · <a href="../work-history/2026-11-24-play-feedback-round4.md">피드백 4차</a></span></li></ul></div>
 <p>대은로 J2225는 본선 양 보도를 잇는 횡단보도, J1566은 황색 띠가 있는 보행 포장이다. 마유로 계수교는 바깥 분기 차로를 백색 빗금으로 구분한다. <a href="../work-history/2026-11-20-additional-road-repairs.md">치수와 대조 자료</a>.</p>
 <p>2026-11-17 사용자 첨부 확인: J7841_867 동쪽에서 서행 진입은 직진/우회전만 허용한다. 동쪽 상류 J8314_858 서행 노면 화살표는 숨기되 통행 권한은 유지한다. 남쪽 반대 차로 내부의 잘못된 흰 실선은 제거하고 기존 유턴 표시를 가장 가까운 반대 차로와의 중앙에 정렬한다. <a href="../work-history/2026-11-17-j7841-road-report.md">r46 구현·검증</a>.</p>
 <p><a href="../future-design/2026-11-07-driving-score-application-review.md">현재 점수 구조 도식·웹 GPT 배점안 적용 검토(2026-11-07)</a>: 현재 +3 준수 회복과 제안의 난이도별 획득·안전배려 B·상한을 구분한다. 검토 문서이며 신규 배점은 미채택·미적용이다.</p>
@@ -134,7 +134,7 @@ details.toc .fx{color:var(--fix);font-size:12px;font-weight:700;margin-left:4px}
 </tbody></table></div>
 <p>운전 점수는 차량 성능이나 피로 회복 능력이 아니다. 버튼 선택·단순 정차만으로 점수를 지급하지 않는다. 불명확한 상황은 사실과 보류 사유를 남기며 위반으로 단정하지 않는다.</p>
 <h3 id="행동별-평가">행동별 평가<span class="st fix">개선 필요</span></h3>
-<div class="fixnote"><span class="st fix">개선 필요</span> 1건 · <a href="index.html">기획서 목록에서 보기</a><ul><li><b>제한속도 바탕(확인 구간만: 수인로 60·대은로 50·보호구역 30)</b> — 구현·배포 · 사람 체감 미확인<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-24-eungye-speed-limits.md">구현</a> · <a href="../work-history/2026-11-24-speed-tolerance-and-facility-cards.md">확인 구간·+10 여유</a> · <a href="../work-history/2026-11-24-speed-limit-camera-survey.md">조사</a></span></li></ul></div>
+<div class="fixnote"><span class="st fix">개선 필요</span> 1건 · <a href="index.html">기획서 목록에서 보기</a><ul><li><b>제한속도 바탕(확인 구간만: 수인로 60·보호구역 30. 대은로 50은 피드백 4차에서 끔, 보호구역 반경 40m)</b> — 구현·배포 · 사람 체감 미확인<br><span class="more">근거·남은 것: <a href="../work-history/2026-11-24-eungye-speed-limits.md">구현</a> · <a href="../work-history/2026-11-24-speed-tolerance-and-facility-cards.md">확인 구간·+10 여유</a> · <a href="../work-history/2026-11-24-speed-limit-camera-survey.md">조사</a></span></li></ul></div>
 <p>아래 값은 게임 배점이다. 같은 법규 사건에서 위반이 여러 개 성립하면 가장 큰 감점 한 번을 적용한다. M은 별도 주행 평가이므로 법규 점수와 더한 하나의 점수로 표시하지 않는다.</p>
 <div class="tw"><table><thead><tr>
 <th>관찰한 행동</th>

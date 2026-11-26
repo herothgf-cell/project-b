@@ -31,12 +31,18 @@ def targets():
 def place_targets(index_text):
     """INDEX의 "기획 위치" 칸이 가리키는 md 중 위 대상 밖의 문서(작업 이력의 상세 기획, 보관 기획 등)."""
     out = []
+    col = None  # 지금 표에서 "기획 위치"·"위치" 열 번호(없으면 None)
     for line in index_text.replace("\r\n", "\n").split("\n"):
         if not line.strip().startswith("|"):
+            col = -1
             continue
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if len(cells) < 2:
+        if col == -1 or col is None:
+            col = next((k for k, c in enumerate(cells) if c in ("기획 위치", "위치")), None)
             continue
+        if col is None or len(cells) <= col or re.match(r"^[\s:|-]+$", line.strip()):
+            continue
+        cells = [None, cells[col]]
         for h in re.findall(r"\]\(([^)#\s]+\.md)", cells[1]):
             t = os.path.normpath(os.path.join(CD, urllib.parse.unquote(h))).replace(os.sep, "/")
             if t not in out and os.path.exists(os.path.join(ROOT, t)):
