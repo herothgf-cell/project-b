@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "c754f4199e998723edfe139c701ca7396bfadb5c2fa8fd93a315ee0359d08a76",
+  "contentHash": "de3ac01ca0e3d2f387822c68e53993c1dac4c41074c65c744883de9127d30107",
   "values": [
     {
       "id": "radio.station",
@@ -439,6 +439,10 @@
     {
       "id": "story.wedding-guest.ending.good",
       "value": "시간 딱 맞았네요. 기사님도 떡 한 조각 드세요."
+    },
+    {
+      "id": "story.snackSatiety",
+      "value": "10"
     },
     {
       "id": "story.wedding-guest.ending.ordinary",
@@ -2615,6 +2619,18 @@
     {
       "id": "bump.brakeLookMetres",
       "value": "15"
+    },
+    {
+      "id": "bump.korean.count",
+      "value": "6"
+    },
+    {
+      "id": "bump.korean.comfortKmh",
+      "value": "15"
+    },
+    {
+      "id": "bump.korean.penalty",
+      "value": "1"
     },
     {
       "id": "accident.fault.enabled",

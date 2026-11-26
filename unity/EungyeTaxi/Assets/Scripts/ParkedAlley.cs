@@ -127,6 +127,13 @@ public sealed class ParkedAlley : MonoBehaviour {
    WorldBuilder.Box("지붕",new Vector3(0,1.55f,-.2f),new Vector3(1.55f,.1f,2.2f),paint,root.transform,false);
   }
   for(int i=0;i<4;i++){var w=GameObject.CreatePrimitive(PrimitiveType.Cylinder);w.transform.SetParent(root.transform,false);w.transform.localPosition=new Vector3(i%2==0?-.86f:.86f,.34f,i<2?1.4f:-1.4f);w.transform.localRotation=Quaternion.Euler(0,0,90);w.transform.localScale=new Vector3(.68f,.12f,.68f);w.GetComponent<Renderer>().sharedMaterial=tyre;Destroy(w.GetComponent<Collider>());}
+  // Play feedback 2026-11-26: the parking was not readable as parking. Each car stands in a painted white bay
+  // (2.3 x 5.4 m outline on the road surface), so the row reads as an on-street parking zone.
+  var paintLine=WorldBuilder.Mat("골목 주차 구획선",new Color(.92f,.92f,.9f));
+  WorldBuilder.Box("주차 구획선",new Vector3(-1.15f,.085f,0),new Vector3(.12f,.01f,5.4f),paintLine,root.transform,false);
+  WorldBuilder.Box("주차 구획선",new Vector3(1.15f,.085f,0),new Vector3(.12f,.01f,5.4f),paintLine,root.transform,false);
+  WorldBuilder.Box("주차 구획선",new Vector3(0,.085f,2.7f),new Vector3(2.42f,.01f,.12f),paintLine,root.transform,false);
+  WorldBuilder.Box("주차 구획선",new Vector3(0,.085f,-2.7f),new Vector3(2.42f,.01f,.12f),paintLine,root.transform,false);
   foreach(var child in root.GetComponentsInChildren<Transform>())child.gameObject.layer=9;
   return root;
  }

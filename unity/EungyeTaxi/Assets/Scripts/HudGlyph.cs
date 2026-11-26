@@ -2,10 +2,10 @@ using UnityEngine;
 // Filled, antialiased casual-game icon family. Existing IDs retain their meaning.
 // 0 home, 1 car, 2 warning, 3 location, 4 money, 5 profit, 6 mood,
 // 7 safety, 8 fuel, 9 meal, 10 parking, 11 rest, 12 repair, 13 settings, 14 clean, 15 dot.
-// 16/17 indicators, 18 timer, 19 close.
+// 16/17 indicators, 18 timer, 19 close, 20 cafe, 21 police, 22 hospital.
 public static class HudGlyph {
  const int Size=96;
- static readonly Texture2D[] cache=new Texture2D[21];static Color[] pixels;
+ static readonly Texture2D[] cache=new Texture2D[23];static Color[] pixels;
  public static void Draw(Rect r,int kind,Color c){
   if(kind<0||kind>=cache.Length)return;
   if(!cache[kind]){
@@ -32,6 +32,9 @@ public static class HudGlyph {
     case 18: RoundBox(8,1,8,3,1);RoundBox(10.5f,3,3,4,1);Stroke(18,5,20,7,1.6f);Disc(12,14,9);Disc(12,14,6.1f,true);Stroke(12,9.5f,12,14,1.25f);Stroke(12,14,15.5f,16,1.25f);break;
     case 19: Stroke(5,5,19,19,2);Stroke(5,19,19,5,2);break;
     case 20: RoundBox(3.5f,9,13,10.5f,3);Ring(17.2f,13.6f,2.6f,false,1.1f);RoundBox(1.5f,19.8f,19,2.4f,1.2f);Stroke(7,3,7.8f,6.2f,.8f);Stroke(10.5f,2,11.3f,6.2f,.8f);Stroke(14,3,13.4f,6.2f,.8f);break;
+    // Police (2026-11-26): badge with a cut-out star. Hospital: rounded square with a cut-out cross.
+    case 21: Poly(false,12,1.8f,21.5f,5.5f,20.5f,15,17,19.5f,12,23,7,19.5f,3.5f,15,2.5f,5.5f);Poly(true,12,6,13.5f,10,17.5f,10,14.3f,12.6f,15.5f,16.6f,12,14.2f,8.5f,16.6f,9.7f,12.6f,6.5f,10,10.5f,10);break;
+    case 22: RoundBox(2,2,20,20,4);RoundBox(10,5.5f,4,13,.8f,true);RoundBox(5.5f,10,13,4,.8f,true);break;
    }
    var texture=new Texture2D(Size,Size,TextureFormat.RGBA32,false);texture.name="Filled HUD icon "+kind;texture.wrapMode=TextureWrapMode.Clamp;texture.filterMode=FilterMode.Bilinear;texture.SetPixels(pixels);texture.Apply();cache[kind]=texture;pixels=null;
   }

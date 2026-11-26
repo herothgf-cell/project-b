@@ -31,7 +31,7 @@ public sealed class MissionProbe : MonoBehaviour {
   int before=s.business.passengers.Count;for(int i=0;i<4&&j.trip.State==TripState.OnTrip;i++)j.Interact();
   if(j.trip.State!=TripState.Idle&&j.trip.State!=TripState.OnTrip)for(int i=0;i<2;i++)j.Interact();
   Check(s.business.passengers.Count==before+1,"trip settled");var r=s.business.passengers.Last();
-  var panel=s.GetComponent<RideCompletionPanel>();if(panel&&panel.Open)panel.Close();s.paused=false;return r;
+  var panel=s.GetComponent<RideCompletionPanel>();if(panel&&panel.Open)panel.Close();s.paused=false;Time.timeScale=1;return r;
  }
  IEnumerator Start(){
   float until=Time.realtimeSinceStartup+180;

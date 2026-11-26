@@ -8,7 +8,7 @@ public partial class ServiceStops : MonoBehaviour {
  public bool CanContinueConditionService(int kind){return Pvp&&session.business.ledger.State==BusinessState.Open&&!session.jobs.Active&&(PvpNativeLan.IsReplica(session)?Mathf.Abs(session.taxi.Speed):session.taxi.body.velocity.magnitude)<.56f&&(kind==1?AtRestaurant():kind==3&&(AtRestArea()||AtParking()));}
  public void FinishConditionService(int kind,bool completed){notice=completed?(kind==1?"식사 완료 · "+PvpConditionRules.MealCost.ToString("N0")+"원 · 포만 +60":"짧은 휴식 완료 · 피로 −40 · 졸음 해제"):"이용 중단 · 비용/회복 없음";noticeUntil=Time.unscaledTime+5;if(completed)CompleteServiceNavigation();Close();session.business.SaveCheckpoint();}
  public bool PostTripVisible {get{return postTrip;}}
- public static Rect PostTripBounds(float width,float height,bool pvp){float scale=UiReadability.HudScale(width,height);return new Rect(width/2-310*scale,200*scale,620*scale,174*scale);}
+ public static Rect PostTripBounds(float width,float height,bool pvp){float scale=UiReadability.HudScale(width,height);return new Rect(width/2-310*scale,200*scale,620*scale,(pvp?174:235)*scale);}
  // Presentation follows the replicated/current care state; reading/opening does not acknowledge it.
  public bool RepairAttention {get{return session&&session.business&&session.business.ledger!=null&&session.business.ledger.Care.Damage.Durability<=50;}}
  public bool AttentionFor(int kind){if(!session||!session.business||session.business.ledger==null)return false;var e=session.business.ledger;return kind==5?RepairAttention:kind==0?e.Account.Fuel<=25:kind==1?e.Driver.satiety<=25:(kind==2||kind==3)&&e.Driver.fatigue>=75;}
@@ -100,6 +100,7 @@ public partial class ServiceStops : MonoBehaviour {
  float ServiceDistance(MapStop stop){return session.jobs.nav.DistanceFromVehicle(stop);}
  void RefreshPostTrip(){
   postTripFuel=-1;postTripDistances[0]=float.PositiveInfinity;
+  var lostItems=session.lostItems;careDistances[0]=careDistances[1]=float.PositiveInfinity;if(lostItems&&lostItems.PlacesShown){var ps=lostItems.PoliceStop;if(ps!=null)careDistances[0]=ServiceDistance(ps);var hs=lostItems.HospitalApproach;if(hs!=null)careDistances[1]=ServiceDistance(hs);}
   for(int i=0;i<Stations.Count;i++){float d=ServiceDistance(Stations[i].approach);if(d<postTripDistances[0]){postTripDistances[0]=d;postTripFuel=i;}}
   if(Stations.Count==0&&session.world.map.mapId!="eungye")postTripDistances[0]=ServiceDistance(session.jobs.stops[indices[0]]);
   postTripDistances[1]=HasService(1)?ServiceDistance(MealStop):float.PositiveInfinity;
@@ -122,11 +123,13 @@ public partial class ServiceStops : MonoBehaviour {
   if(homeFromRest&&session.jobs.nav.DisplayPath.Count<2)destination=HomeBasePresentation.ParkingName+" · 출구로 수동 이동 · 도로 합류 후 안내 계속";
   DismissPostTrip();return true;
  }
+ readonly float[] careDistances={float.PositiveInfinity,float.PositiveInfinity};
+ static string Metres(float d){return float.IsInfinity(d)?"경로 없음":d>=1000?(d/1000).ToString("0.0")+"km":d.ToString("0")+"m";}
  void DrawPostTrip(GUIStyle style,GUIStyle button){
   if(!postTrip||session.paused||session.FullMapOpen||session.PracticeMenuOpen||session.PracticeBusy||session.ChoiceOpen||session.business.restartPrompt||session.business.taxPrompt||session.business.ShowingSummary||session.business.preparing||session.law.HistoryOpen)return;
   var previous=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(Vector3.one*scale);
   try {
-   var bounds=PostTripBounds(Screen.width,Screen.height,Pvp);float x=bounds.x/scale,y=bounds.y/scale,width=bounds.width/scale;GUI.depth=-20;CasualUI.Panel(new Rect(x,y,width,174));
+   var bounds=PostTripBounds(Screen.width,Screen.height,Pvp);float x=bounds.x/scale,y=bounds.y/scale,width=bounds.width/scale;bool care=session.lostItems&&session.lostItems.PlacesShown;GUI.depth=-20;CasualUI.Panel(new Rect(x,y,width,care?235:174));
    string reason=RepairAttention?"내구도 "+session.business.ledger.Care.Damage.Durability+" · 수리 권장":recommended==0?(session.jobs.NeedsWash?"세차 필요":"주유 권장"):recommended==1?"식사 권장":recommended==3?"수면 권장":recommended==2?"마감 준비":"현재 컨디션 양호";
    CasualUI.Header(new Rect(x+8,y+6,width-16,34),"생활거점 · "+reason,0);
    string[] labels={session.jobs.NeedsWash?"주유·세차":"주유","식사","귀가 주차장","수면","공업사","닫기"};int[] glyphs={8,9,10,11,12,19};float cell=(width-20)/3;
@@ -142,6 +145,15 @@ public partial class ServiceStops : MonoBehaviour {
     HudGlyph.Draw(new Rect(rect.x+8,rect.y+17,20,20),glyphs[i],CasualUI.Blue);
     if(i<5&&AttentionFor(i==4?5:i))CasualUI.AttentionDot(new Rect(rect.xMax-12,rect.y-3,12,12));
    }
+   // Police box and emergency-room side (play feedback 2026-11-26).
+   if(care){var lost=session.lostItems;float half=(width-20)/2;
+    var rowButton=KoreanText.Button(UiReadability.Font(15));rowButton.padding=new RectOffset(36,10,0,0);GUI.enabled=session.jobs.trip.State!=TripState.OnTrip;
+    var pr=new Rect(x+10,y+170,half-6,54);float pd=careDistances[0];
+    if(GUI.Button(pr,LostItemRules.Police.name+(lost.State==LostItems.Pending||lost.State==LostItems.ToPolice?" · 분실물":"")+"\n"+Metres(pd),rowButton)&&lost.GuidePolice())DismissPostTrip();
+    HudGlyph.Draw(new Rect(pr.x+8,pr.y+17,20,20),21,CasualUI.Blue);if(lost.State==LostItems.Pending||lost.State==LostItems.ToPolice)CasualUI.AttentionDot(new Rect(pr.xMax-12,pr.y-3,12,12));
+    var hr=new Rect(x+10+half,y+170,half-6,54);
+    if(GUI.Button(hr,EmergencyRules.HospitalName+" 방면\n"+Metres(careDistances[1])+" · 지도 밖",rowButton)&&lost.GuideHospital())DismissPostTrip();
+    HudGlyph.Draw(new Rect(hr.x+8,hr.y+17,20,20),22,new Color(.85f,.2f,.2f));}
    GUI.enabled=true;
   } finally {GUI.matrix=previous;GUI.enabled=true;}
  }

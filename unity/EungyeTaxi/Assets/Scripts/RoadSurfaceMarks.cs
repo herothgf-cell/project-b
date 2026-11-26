@@ -27,7 +27,9 @@ public static class RoadSurfaceMarks {
   if(f.type==RoadText){
    var label=new GameObject("노면 글자");label.transform.SetParent(root,false);label.transform.localPosition=new Vector3(0,.09f,0);label.transform.localRotation=Quaternion.Euler(90,0,0);
    var mesh=label.AddComponent<TextMesh>();mesh.text=f.text;mesh.color=f.text.Contains("보호")?new Color(1,.85f,.1f):Color.white;mesh.fontSize=80;mesh.characterSize=.1f;mesh.anchor=TextAnchor.MiddleCenter;mesh.alignment=TextAlignment.Center;
-   var font=KoreanText.BoldFont;mesh.font=font;label.GetComponent<Renderer>().sharedMaterial=font.material;font.RequestCharactersInTexture(f.text,mesh.fontSize,mesh.fontStyle);
+   var font=KoreanText.BoldFont;mesh.font=font;font.RequestCharactersInTexture(f.text,mesh.fontSize,mesh.fontStyle);
+   // Depth-tested text: the font's own GUI material ignores depth and drew "30" over the taxi (play 2026-11-26).
+   label.AddComponent<RoadSignLabel>();
    var size=label.GetComponent<Renderer>().localBounds.size;if(size.x>0&&size.y>0)mesh.characterSize*=Mathf.Min(f.width/size.x,f.length/size.y);
    return true;}
   return false;

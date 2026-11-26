@@ -2291,6 +2291,27 @@
       "editable": true
     },
     {
+      "id": "story.snackSatiety",
+      "group": "승객",
+      "section": "결혼식 가는 하객",
+      "title": "하객 떡 한 조각 · 포만감",
+      "type": "integer",
+      "defaultValue": "10",
+      "min": 0,
+      "max": 50,
+      "unit": "점",
+      "description": "결혼식 하객 이야기가 좋은 결말로 끝나면 기사 포만감이 이만큼 오릅니다.",
+      "affects": [
+        "포만감"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "BusinessProgress.RecordPassenger",
+      "editable": true
+    },
+    {
       "id": "story.wedding-guest.ending.ordinary",
       "group": "승객",
       "section": "결혼식 가는 하객",
@@ -15074,6 +15095,70 @@
       ],
       "status": "implemented",
       "consumer": "SpeedBumps.Ahead",
+      "editable": true
+    },
+    {
+      "id": "bump.korean.count",
+      "group": "법규",
+      "section": "bump",
+      "title": "한국형 높은 방지턱 · 개수",
+      "type": "integer",
+      "defaultValue": "6",
+      "min": 0,
+      "max": 20,
+      "unit": "곳",
+      "description": "번길 골목 가운데에 자동으로 놓는 게임 전용 높은 방지턱 수(0이면 없음, 다음 시작부터).",
+      "affects": [
+        "승차감"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SpeedBumps.BuildKorean",
+      "editable": true
+    },
+    {
+      "id": "bump.korean.comfortKmh",
+      "group": "법규",
+      "section": "bump",
+      "title": "한국형 높은 방지턱 · 편한 속도",
+      "type": "number",
+      "defaultValue": "15",
+      "min": 5,
+      "max": 60,
+      "unit": "km/h",
+      "description": "손님을 태우고 이 속도를 넘어 넘으면 덜컹해 운전 만족이 깎입니다.",
+      "affects": [
+        "승차감",
+        "운전 만족도"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SpeedBumpRules.KoreanComfortKmh",
+      "editable": true
+    },
+    {
+      "id": "bump.korean.penalty",
+      "group": "법규",
+      "section": "bump",
+      "title": "한국형 높은 방지턱 · 감점",
+      "type": "integer",
+      "defaultValue": "1",
+      "min": 0,
+      "max": 20,
+      "unit": "점",
+      "description": "편한 속도를 넘어 넘을 때 운전 만족 감점(기본 1점).",
+      "affects": [
+        "운전 만족도"
+      ],
+      "modes": [
+        "single"
+      ],
+      "status": "implemented",
+      "consumer": "SpeedBumps.KoreanCross",
       "editable": true
     },
     {

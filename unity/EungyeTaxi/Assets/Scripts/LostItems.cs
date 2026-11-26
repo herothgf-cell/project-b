@@ -37,8 +37,11 @@ public sealed class LostItems : MonoBehaviour {
  // Not carrying and not on the way to a pickup (a finished trip may still show its state until the next call).
  bool Empty {get{var j=session.jobs;return j&&j.trip.State!=TripState.OnTrip&&j.trip.State!=TripState.ToPickup;}}
  void Card(string text){var n=session.GetComponent<DriveNotifications>();if(n)n.Card(text);}
+ public int OwnerIndex {get{return ownerIndex;}}
+ public float OwnerSecondsLeft {get{return Mathf.Max(0,ownerUntil-Time.time);}}
  public Vector3 PolicePoint {get{var p=LostItemRules.Police;return p==null?Vector3.zero:p.V();}}
  void Update(){
+  if(!signs&&session.jobs&&session.jobs.nav&&session.jobs.nav.hd!=null)BuildSigns();
   if(!Single||!LostItemRules.Enabled||session.business.ledger==null)return;var b=session.business;var j=session.jobs;
   if(b.ledger.Day!=day){if(day>=0&&State!=None){LastOutcome="하루 마감 · 파출소 처리";Reset();}day=b.ledger.Day;seenResults=b.passengers.Count;}
   if(b.passengers.Count<seenResults)seenResults=b.passengers.Count;
@@ -65,8 +68,29 @@ public sealed class LostItems : MonoBehaviour {
   else{State=Left;LeftCount++;LastOutcome="그냥 둠";Card("분실물 · 그냥 두면 다음 손님이 불편해해요 · 마감 때 파출소로 보냄");}
  }
  // The road point nearest the police box: where the taxi stops to hand the item in.
- public Vector3 PoliceRoad {get{var j=session.jobs;if(j==null||j.nav==null||j.nav.hd==null||LostItemRules.Police==null)return PolicePoint;var g=j.nav.hd;int best=-1;float bd=float.MaxValue,bat=0;for(int i=0;i<g.edges.Length;i++){if(g.edges[i].change!=0||g.edges[i].turn!=0||g.edges[i].TraversalDisabled)continue;float err;float at=g.paths[i].Project(PolicePoint,out err);if(err<bd){bd=err;best=i;bat=at;}}return best<0?PolicePoint:g.paths[best].Position(bat);}}
- void GuideToPolice(){var j=session.jobs;if(!j.nav||j.nav.hd==null||LostItemRules.Police==null)return;var road=PoliceRoad;float at;int edge=j.nav.hd.Nearest(road,Vector3.zero,out at);if(edge>=0)j.nav.SetHdDestination(edge,at);}
+ Vector3 policeRoad;object policeGraph;
+ public Vector3 PoliceRoad {get{var j=session.jobs;if(j==null||j.nav==null||j.nav.hd==null||LostItemRules.Police==null)return PolicePoint;if(policeGraph==(object)j.nav.hd)return policeRoad;policeGraph=j.nav.hd;policeRoad=FindPoliceRoad(j.nav.hd);return policeRoad;}}
+ Vector3 FindPoliceRoad(HdRoadGraph g){int best=-1;float bd=float.MaxValue,bat=0;for(int i=0;i<g.edges.Length;i++){if(g.edges[i].change!=0||g.edges[i].turn!=0||g.edges[i].TraversalDisabled)continue;float err;float at=g.paths[i].Project(PolicePoint,out err);if(err<bd){bd=err;best=i;bat=at;}}return best<0?PolicePoint:g.paths[best].Position(bat);}
+ void GuideToPolice(){var j=session.jobs;if(!j.nav||j.nav.hd==null||LostItemRules.Police==null)return;var road=PoliceRoad;float at;int edge=j.nav.hd.Nearest(road,Vector3.zero,out at);if(edge>=0)j.nav.SetHdDestination(edge,at);session.services.destination=LostItemRules.Police.name+" · 앞 도로에 정차";}
+ // Life facilities (play feedback 2026-11-26): the police box and the emergency-room side stop show on the maps and
+ // in the life hub, with a sign at the police box, so a lost item can be found and handed in.
+ public bool PlacesShown {get{return Single&&LostItemRules.Police!=null;}}
+ public MapStop PoliceStop {get{var j=session.jobs;if(j==null||j.nav==null||j.nav.hd==null||LostItemRules.Police==null)return null;var road=PoliceRoad;float at;int edge=j.nav.hd.Nearest(road,Vector3.zero,out at);if(edge<0)return null;var p=j.nav.hd.paths[edge];var pos=p.Position(at);var dir=p.Tangent(at);return new MapStop{name=LostItemRules.Police.name,x=pos.x,z=pos.z,dx=dir.x,dz=dir.z,graphStop=true,laneEdge=edge,laneAt=at};}}
+ public MapStop HospitalApproach {get{var j=session.jobs;int i=j?j.HospitalStop:-1;return i<0?null:j.stops[i];}}
+ public bool GuidePolice(){if(!PlacesShown||session.jobs.trip.State==TripState.OnTrip)return false;var stop=PoliceStop;if(stop==null)return false;session.jobs.nav.SetDestination(stop);session.services.destination=LostItemRules.Police.name+" · 앞 도로에 정차";return true;}
+ public bool GuideHospital(){if(!PlacesShown||session.jobs.trip.State==TripState.OnTrip)return false;var stop=HospitalApproach;if(stop==null)return false;session.jobs.nav.SetDestination(stop);session.services.destination=EmergencyRules.HospitalName+" 방면 · 지도 서쪽 밖";return true;}
+ bool signs;
+ void BuildSigns(){
+  signs=true;if(!PlacesShown)return;
+  var road=Flat(PoliceRoad);var toward=PolicePoint-road;Sign(road+(toward.sqrMagnitude>1?toward.normalized*Mathf.Min(6,toward.magnitude):Vector3.zero),LostItemRules.Police.name,new Color(.15f,.3f,.75f));
+  var h=HospitalApproach;if(h!=null)Sign(h.Kerb+Vector3.Cross(Vector3.up,h.Direction)*3.5f,EmergencyRules.HospitalName+" 방면 ←",new Color(.8f,.15f,.15f));
+ }
+ void Sign(Vector3 at,string text,Color color){
+  var root=new GameObject("생활시설 표지 · "+text);root.transform.position=new Vector3(at.x,0,at.z);
+  WorldBuilder.Box("기둥",new Vector3(0,1.6f,0),new Vector3(.12f,3.2f,.12f),WorldBuilder.Mat("Facility sign pole",new Color(.55f,.57f,.6f)),root.transform,false);
+  var board=WorldBuilder.Box("판",new Vector3(0,3.4f,0),new Vector3(.12f,.9f,2.6f),WorldBuilder.Mat("Facility sign "+text,color),root.transform,false);
+  var label=new GameObject("시설 이름");label.transform.SetParent(root.transform,false);label.transform.localPosition=new Vector3(0,4.3f,0);var t=label.AddComponent<TextMesh>();t.text=text;t.fontSize=48;t.characterSize=.07f;t.anchor=TextAnchor.MiddleCenter;t.color=Color.white;KoreanText.Apply(t);label.AddComponent<FaceCamera>().hideBeyond=120;
+ }
  void Pay(string id,int amount){if(amount>0)session.business.RecordReward(id,amount);session.business.SaveCheckpoint();}
  void Reset(){State=None;Trip="";ownerIndex=-1;penalised=false;}
  void OnGUI(){

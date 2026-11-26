@@ -36,7 +36,7 @@ public sealed class SpeedBumpProbe : MonoBehaviour {
   output=ContentTuningRuntime.Argument("-bumpOutput");if(string.IsNullOrEmpty(output))output=Path.GetFullPath("artifacts/bump");Directory.CreateDirectory(output);
   yield return null;string error=null;var j=s.jobs;var sb=s.bumps;
   try{s.business.preparing=false;s.paused=false;Time.timeScale=1;j.ClearForDay();foreach(var c in FindObjectsOfType<TrafficCar>())c.gameObject.SetActive(false);
-   Check(sb&&sb.bumps.Count==2,"two bumps from the road facility input ("+(sb?sb.bumps.Count:0)+")");
+   Check(sb&&sb.bumps.Count(x=>!x.korean)==2,"two bumps from the road facility input ("+(sb?sb.bumps.Count(x=>!x.korean):0)+", plus "+(sb?sb.bumps.Count(x=>x.korean):0)+" game-only Korean humps)");
    Check(sb.bumps.All(b=>GameObject.Find("과속방지턱 "+b.id)),"each bump is drawn");
    Check(sb.bumps.All(b=>{var x=GameObject.Find("과속방지턱 "+b.id);return x.GetComponentsInChildren<Collider>().Length==0;}),"bumps have no collider (never a property accident)");
    // Board a passenger.
