@@ -14,8 +14,8 @@
     },
     {
       "path": "config/maps/project/eungye.project.json",
-      "bytes": 25736687,
-      "sha256": "e45a2dc062bf4c1d04a5ba5bcc7db3c405f97ac1409e1286e85717fee799f50f"
+      "bytes": 25737796,
+      "sha256": "27caf23d22a1377d78584d51cf660175841934cf8de1f4a496e8a5e0f5efb5a3"
     },
     {
       "path": "config/maps/eungye-traffic-overrides.json",
