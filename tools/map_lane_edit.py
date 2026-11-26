@@ -62,6 +62,7 @@ class LanePatch:
         self.addObjects = list(p['addObjects'])
         self.facilities = {f['id']: f for f in p['facilities']}
         self.added, self.nexts, self.disabled, self.addFacilities, self.removeFacilities = [], {}, [], [], []
+        self.disableObjects = []
         self.new = {}
 
     # current (deformed / edited / added) geometry
@@ -165,7 +166,8 @@ class LanePatch:
     def result(self):
         return dict(fromRevision=self.from_rev, toRevision=self.to_rev, lanes=list(self.lanes.values()), objects=list(self.objects.values()),
                     addObjects=self.addObjects, facilities=list(self.facilities.values()), disableLanes=self.disabled, addLanes=self.added,
-                    nexts=[dict(id=k, next=v) for k, v in self.nexts.items()], addFacilities=self.addFacilities, removeFacilities=self.removeFacilities)
+                    nexts=[dict(id=k, next=v) for k, v in self.nexts.items()], addFacilities=self.addFacilities, removeFacilities=self.removeFacilities,
+                    disableObjects=self.disableObjects)
 
     def write(self, out):
         r = self.result()

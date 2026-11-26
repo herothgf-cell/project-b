@@ -12,13 +12,13 @@ public static class MapReviewGeometryEdit {
  [Serializable] class ObjectSet {public string id;public float width;public MapPoint[] points;}
  [Serializable] class ObjectAdd {public string id,copyOf;public float width;public MapPoint[] points;}
  [Serializable] class FacilitySet {public string id,text;public float x,z,yaw,width,length,startAt,endAt;public bool range;}
- [Serializable] class LaneAdd {public string id,copyOf;public float width;public int number,turn,change;public MapPoint[] points;public string[] next,prev;}
+ [Serializable] class LaneAdd {public string id,copyOf,sourceId,roadName,ruleId;public float width;public int number,turn,change;public MapPoint[] points;public string[] next,prev;}
  [Serializable] class LaneNext {public string id;public string[] next;}
  [Serializable] class FacilityAdd {public string id,copyOf,laneId,type;public float x,z,yaw,width,length;}
  [Serializable] class Patch {public int fromRevision,toRevision;public LaneSet[] lanes;public ObjectSet[] objects;public ObjectAdd[] addObjects;public FacilitySet[] facilities;
   // lane-count edits (tools/map_lane_edit.py): retire lanes (DeleteLane also drops their facilities and signal
   // bindings), add lanes copied from an existing one, replace exits. Applied after the geometry sets above.
-  public string[] disableLanes;public LaneAdd[] addLanes;public LaneNext[] nexts;public FacilityAdd[] addFacilities;public string[] removeFacilities;}
+  public string[] disableLanes,disableObjects;public LaneAdd[] addLanes;public LaneNext[] nexts;public FacilityAdd[] addFacilities;public string[] removeFacilities;}
  static float[] Heights(float[] old,int count){var h=new float[count];if(old==null||old.Length==0)return h;for(int i=0;i<count;i++){float t=count==1?0:(float)i/(count-1)*(old.Length-1);int a=Mathf.Min(old.Length-1,(int)t),b=Mathf.Min(old.Length-1,a+1);h[i]=Mathf.Lerp(old[a],old[b],t-a);}return h;}
  static void Require(bool pass,string message){if(!pass)throw new InvalidOperationException("map review geometry: "+message);}
  public static void ApplyFromCommandLine(){
@@ -51,6 +51,8 @@ public static class MapReviewGeometryEdit {
    var o=JsonUtility.FromJson<ProjectMapObject>(JsonUtility.ToJson(src));o.id=a.id;o.points=a.points;if(o.kind=="road")o.width=a.width;
    objects.Add(o);byId.Add(o.id,o);
   }
+  // sidewalk pieces a new road covers entirely are switched off (scene roads/sidewalks only)
+  foreach(var id in plan.disableObjects??new string[0]){ProjectMapObject o;Require(byId.TryGetValue(id,out o)&&(o.kind=="sidewalk"||o.kind=="road"),"missing scene object "+id);o.enabled=false;}
   d.scene.objects=objects.ToArray();
   var facilities=d.facilities.ToDictionary(f=>f.id);
   foreach(var s in plan.facilities??new FacilitySet[0]){
@@ -87,6 +89,8 @@ public static class MapReviewGeometryEdit {
    Require(a.points!=null&&a.points.Length>=2&&a.width>=2f&&a.width<=6f,"lane "+a.id+" geometry");
    var l=JsonUtility.FromJson<RoadMapLane>(JsonUtility.ToJson(src));l.id=a.id;l.disabled=false;l.width=a.width;l.number=a.number;l.turn=a.turn;l.change=a.change;
    l.points=a.points;l.heights=Heights(src.heights,a.points.Length);l.next=a.next??new string[0];l.status="provisional";
+   // a lane of a new road names its own source (the new road strip) so the synthetic paint groups its two directions
+   if(!string.IsNullOrEmpty(a.sourceId))l.sourceId=a.sourceId;if(!string.IsNullOrEmpty(a.roadName))l.roadName=a.roadName;if(a.ruleId!=null)l.ruleId=a.ruleId;l.evidence=new RoadMapEvidence();
    var prev=a.prev??new string[0];
    l.fromNode=prev.Length>0?d.lanes.Single(x=>x.id==prev[0]).toNode:a.id+":from";l.toNode=a.id+":to";
    d.lanes=d.lanes.Append(l).ToArray();Join(d,l);
