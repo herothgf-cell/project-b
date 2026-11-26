@@ -5,8 +5,9 @@ using UnityEngine;
 public partial class FullMapOverlay {
  public bool FacilityPlannerVisible {get;private set;}
  int facilityPlannerKind;Vector2 facilityPlannerScroll;
- static readonly int[] plannerKinds={0,1,3,4,5,Refreshment.Snack};
- static readonly string[] plannerLabels={"주유","식사","수면","세차","수리","간식·커피"};
+ // Round 8: the police box and the emergency room are life facilities too (CareFacilitiesUI).
+ static readonly int[] plannerKinds={0,1,3,4,5,Refreshment.Snack,CareFacilitiesUI.Police,CareFacilitiesUI.Emergency};
+ static readonly string[] plannerLabels={"주유","식사","수면","세차","수리","간식·커피","파출소","응급실"};
  public string SelectedOfferForecastText {get{
   if(selectedOffer==null||SelectedOffer<0||SelectedOffer>=session.jobs.offers.Length||session.jobs.offers[SelectedOffer]!=selectedOffer)return "";
   var forecast=OperationForecastAdapter.ForSelection(session,selectedOffer);
@@ -93,13 +94,24 @@ public partial class FullMapOverlay {
  void DrawFacilityPlannerSidebar(float x,float w,Rect viewport){
   var detail=new GUIStyle(text){fontSize=MapFont(14),wordWrap=true};
   CasualUI.Header(new Rect(x,86,w,38),"생활시설",3);CasualUI.Info(new Rect(x+w-34,93,24,24),"고르면 입구까지 길 안내만 시작합니다. 결제는 도착해서 정차한 뒤 F로 합니다.",true);float top=132,cell=(w-12)/3;
+  int shown=0;bool care=session.lostItems&&session.lostItems.PlacesShown;
   for(int i=0;i<plannerKinds.Length;i++){
    if(plannerKinds[i]==Refreshment.Snack&&session.services.RefreshmentShops.Count==0)continue;
-   var tab=facilityPlannerKind==plannerKinds[i]?CasualUI.Action(button.fontSize):button;
+   if(CareFacilitiesUI.IsCare(plannerKinds[i])&&!care)continue;
+   bool selected=facilityPlannerKind==plannerKinds[i];var tab=selected?CasualUI.Action(button.fontSize):button;
    string label=plannerKinds[i]==5&&session.business.SupportsCareer?"수리·부품":plannerLabels[i];
-   if(GUI.Button(new Rect(x+(i%3)*(cell+6),top+(i/3)*40,cell,34),label,tab)){facilityPlannerKind=plannerKinds[i];facilityPlannerScroll=Vector2.zero;}
+   var cellRect=new Rect(x+(shown%3)*(cell+6),top+(shown/3)*40,cell,34);shown++;
+   if(GUI.Button(cellRect,label,tab)){facilityPlannerKind=plannerKinds[i];facilityPlannerScroll=Vector2.zero;}
+   // Care tabs carry their map colour as an outline when not selected.
+   if(CareFacilitiesUI.IsCare(plannerKinds[i])&&!selected&&Event.current.type==EventType.Repaint){var c=CareFacilitiesUI.ColorOf(plannerKinds[i]);var old=GUI.color;GUI.color=c;GUI.DrawTexture(new Rect(cellRect.x,cellRect.yMax-3,cellRect.width,3),Texture2D.whiteTexture);GUI.color=old;}
   }
-  top+=84;string note=session.jobs.trip.State==TripState.OnTrip?"운송을 마친 뒤 길 안내를 받을 수 있어요":"";
+  top+=Mathf.CeilToInt(shown/3f)*40+4;
+  if(CareFacilitiesUI.IsCare(facilityPlannerKind)){
+   float ch=CareFacilitiesUI.CardHeight(session,facilityPlannerKind);
+   CareFacilitiesUI.Card(session,new Rect(x,top,w,ch),facilityPlannerKind,()=>{FacilityPlannerVisible=false;Close();RefreshRoutePaint(true);});
+   if(GUI.Button(new Rect(x,viewport.yMax-44,w,38),"호출 목록으로",button))HideFacilityPlanner();
+   CasualUI.FlushTooltip(x+w);return;
+  }string note=session.jobs.trip.State==TripState.OnTrip?"운송을 마친 뒤 길 안내를 받을 수 있어요":"";
   if(note.Length>0){float noteHeight=detail.CalcHeight(new GUIContent(note),w);GUI.Label(new Rect(x,top,w,noteHeight),note,detail);top+=noteHeight+10;}
   var options=session.services.FacilityOptions(facilityPlannerKind);float inner=w-24,total=0;var heights=new float[options.Count];
   // 2026-11-24 play-test round 2: the cards were paragraphs. Each card is now a name band, one row of

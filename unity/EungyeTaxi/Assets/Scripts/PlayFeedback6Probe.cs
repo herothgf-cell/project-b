@@ -36,7 +36,7 @@ public sealed class PlayFeedback6Probe : MonoBehaviour {
    var police=places.FirstOrDefault(p=>p.glyph==21);var hospital=places.FirstOrDefault(p=>p.glyph==22);
    Check(police!=null&&police.approach!=null&&police.name=="은행파출소","the police box is a map place with a road approach");
    Check(hospital!=null&&hospital.approach!=null,"the emergency-room side is a map place: "+(hospital!=null?hospital.name:""));
-   Check(GameObject.Find("생활시설 표지 · 은행파출소"),"a sign stands at the police box");
+   Check(CareBuildings.PoliceRoot&&CareBuildings.EmergencyRoot,"round 8: the police box and the emergency room stand as buildings");
    // 3) Korean humps and parking bays.
    Info("korean humps: "+s.bumps.KoreanStatus);var humps=s.bumps.bumps.Where(x=>x.korean).ToList();Check(humps.Count>=3,"Korean-style high humps placed: "+humps.Count);foreach(var h in humps)Info("hump "+h.id+" width "+(h.halfLength*2).ToString("0.0")+" m");
    var alley=s.parkedAlley;Check(alley.cars.Count>0&&alley.cars.All(c=>c.body.GetComponentsInChildren<Transform>().Count(t=>t.name=="주차 구획선")==4),"every parked car ("+alley.cars.Count+") stands in a painted bay");

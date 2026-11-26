@@ -70,9 +70,12 @@ public sealed class LostItemProbe : MonoBehaviour {
   {var road=lost.PoliceRoad;Info("police road point "+road.ToString("F0")+" ("+Vector3.Distance(new Vector3(road.x,0,road.z),lost.PolicePoint).ToString("0")+" m from the building)");float at;int edge=j.nav.hd.Nearest(road,Vector3.zero,out at);var dir=edge>=0?j.nav.hd.paths[edge].Tangent(at):Vector3.forward;PoseAt(road,dir);}
   yield return new WaitForSeconds(.5f);
   // Round 7: stopping alone does nothing; the driver opens the desk (F) and chooses to hand it in.
-  try{Check(lost.Handed==0&&lost.AtPolice&&lost.HasItem,"stopped at the police box, nothing happens by itself");lost.OpenPoliceMenu();Check(lost.PoliceMenuOpen,"F opens the police desk menu");Check(GameObject.Find("파출소 꾸밈 · "+LostItemRules.Police.name)&&GameObject.Find("경광등"),"the police box is dressed (name board, light bar, walk, stop box)");}catch(Exception e){error=e.ToString();}
+  try{Check(lost.Handed==0&&lost.AtPolice&&lost.HasItem,"stopped at the police box, nothing happens by itself");lost.OpenPoliceMenu();Check(lost.PoliceMenuOpen,"F opens the police desk menu");Check(GameObject.Find("파출소 꾸밈 · "+LostItemRules.Police.name)&&CareBuildings.PoliceRoot&&CareBuildings.EmergencyRoot,"round 8: police box and emergency room are buildings (walk, stop box kept)");}catch(Exception e){error=e.ToString();}
   if(error!=null){Finish(error);yield break;}
   yield return new WaitForSeconds(.3f);if(output!=null)ScreenCapture.CaptureScreenshot(System.IO.Path.Combine(output,"police-desk.png"));yield return null;yield return null;
+  lost.PoliceMenuOpen=false;yield return CaptureBuilding(CareBuildings.PoliceRoot,"police-building.png");yield return CaptureBuilding(CareBuildings.EmergencyRoot,"er-building.png");
+  {var map=s.GetComponent<FullMapOverlay>();if(map&&map.Open()&&map.ShowFacilityPlanner(CareFacilitiesUI.Police)){yield return new WaitForSecondsRealtime(.5f);ScreenCapture.CaptureScreenshot(Path.Combine(output,"care-planner-police.png"));yield return null;yield return null;map.ShowFacilityPlanner(CareFacilitiesUI.Emergency);yield return new WaitForSecondsRealtime(.4f);ScreenCapture.CaptureScreenshot(Path.Combine(output,"care-planner-er.png"));yield return null;yield return null;}if(map)map.Close();}
+  lost.OpenPoliceMenu();
   try{Check(lost.HandIn(),"choosing 맡기기 hands it in");Check(lost.Handed==1&&Tips==tips+LostItemRules.PoliceReward,"handed in at the police box: +"+LostItemRules.PoliceReward);}catch(Exception e){error=e.ToString();}
   if(error!=null){Finish(error);yield break;}
   // 3) Left: the next passenger minds it.
@@ -102,5 +105,12 @@ public sealed class LostItemProbe : MonoBehaviour {
   if(err!=null)Debug.LogError(err);
   if(output!=null)File.WriteAllText(Path.Combine(output,"report.txt"),report.ToString()+(err??""));
   Debug.Log("LOST_ITEM_PLAYER_"+(err==null?"OK":"FAIL")+" checks="+checks+" "+(err??""));Application.Quit(err==null?0:1);
+ }
+
+ // Round 8: a view of a care building from across the road, the driving camera paused for two frames.
+ IEnumerator CaptureBuilding(GameObject root,string file){
+  if(!root||output==null||!Camera.main)yield break;var cam=Camera.main;var dc=s.drivingCamera;bool was=dc&&dc.enabled;if(dc)dc.enabled=false;
+  var t=root.transform;cam.transform.position=t.position-t.forward*22+t.right*7+Vector3.up*8;cam.transform.LookAt(t.position+Vector3.up*3.5f);
+  yield return new WaitForSeconds(.5f);ScreenCapture.CaptureScreenshot(Path.Combine(output,file));yield return null;yield return null;if(dc)dc.enabled=was;
  }
 }

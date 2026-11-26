@@ -42,7 +42,8 @@ public partial class FullMapOverlay : MonoBehaviour {
  public string LocationText {get{return DescribeLocation(session.world.map,session.taxi.transform.position,session.taxi.transform.eulerAngles.y,session.traffic.junctions);}}
  public bool ShowFacilities=true,ShowTraffic=false,ShowLaw=false;
  // 2026-11-26: map filters for limited sections and speed cameras (the minimap follows them too).
- public bool ShowLimits=true,ShowCameras=true;
+ // Round 8 (2026-11-26): limited sections start hidden; the button turns them on.
+ public bool ShowLimits=false,ShowCameras=true;
  public sealed class MapMarker {public Vector3 position;public string label;public Color color;public bool named;}
  public List<MapMarker> VisibleMarkers(){
   var markers=new List<MapMarker>();
@@ -61,7 +62,7 @@ public partial class FullMapOverlay : MonoBehaviour {
  public List<ServiceLawZone> VisibleLawZones(){var result=new List<ServiceLawZone>();var zones=GetComponent<ServiceLawZones>();if(ShowLaw&&zones&&zones.Ready)result.AddRange(zones.zones);return result;}
  public float ZoomLevel {get;private set;}=1;Vector2 center=new Vector2(.5f,.5f);bool dragging;Vector2 dragStart;bool dragMoved;
  public void Zoom(int step){ZoomLevel=Mathf.Clamp(ZoomLevel*Mathf.Pow(1.5f,step),1,8);ClampCenter();}
- const float CameraIcon=28;
+ const float CameraIcon=28,CarePin=36;
  // Same frame as the glyph buttons beside it; an off filter is veiled.
  bool FilterButton(Rect r,string tooltip,bool active,bool camera){
   bool hit=GUI.Button(r,new GUIContent("",tooltip+(active?" 끄기":" 켜기")));var inner=new Rect(r.x+7,r.y+6,r.width-14,r.height-12);float d=Mathf.Min(inner.width,inner.height);var icon=new Rect(inner.center.x-d/2,inner.center.y-d/2,d,d);
@@ -113,6 +114,8 @@ public partial class FullMapOverlay : MonoBehaviour {
   var occupied=FacilityLabelObstacles(map);
   // Facility name labels step aside from speed camera badges, which are drawn over the facility pins.
   if(cameraGroups!=null)foreach(var g in cameraGroups)if(map.Contains(g.p))occupied.Add(new Rect(g.p.x-CameraIcon*.65f,g.p.y-CameraIcon*.65f,CameraIcon*1.3f,CameraIcon*1.3f));
+  // Round 8: the police box and the emergency room keep their own big pin and label; other labels step aside.
+  if(ShowFacilities)foreach(var place in Places())if(CareFacilitiesUI.IsCare(place.glyph)){var cp=Project(place.position,map);if(map.Contains(cp)){occupied.Add(new Rect(cp.x-22,cp.y-22,44,44));occupied.Add(CareFacilitiesUI.LabelRect(cp,place.glyph,CarePin));}}
   if(ShowFacilities){
    var labelStyle=FacilityLabelStyle();var labels=LayoutFacilityLabels(map,labelStyle,occupied);int labelIndex=0;
    var places=Places();
@@ -121,6 +124,7 @@ public partial class FullMapOverlay : MonoBehaviour {
     var p=Project(place.position,map);if(!map.Contains(p))continue;
     bool waitingSpot=waiting!=null&&waiting.Contains(place);
     var pin=new Rect(p.x-15,p.y-15,30,30);
+    if(CareFacilitiesUI.IsCare(place.glyph)){if(GUI.Button(new Rect(p.x-CarePin*.6f,p.y-CarePin*.6f,CarePin*1.2f,CarePin*1.2f),new GUIContent("",place.name),GUIStyle.none))SelectPlace(place);CareFacilitiesUI.Pin(p,place.glyph,CarePin);CareFacilitiesUI.Label(p,place.glyph,CarePin);continue;}
     if(HudGlyph.Button(pin,place.glyph,waitingSpot?place.name+" · 수첩 대기 장소":place.name,true))SelectPlace(place);
     if(place.home)HudGlyph.DrawBadge(pin,0,CasualUI.Amber);
     if(waitingSpot)HudGlyph.DrawBadge(new Rect(p.x+8,p.y-23,18,18),10,CasualUI.Amber);

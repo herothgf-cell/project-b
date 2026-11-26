@@ -121,10 +121,10 @@ public sealed class LostItems : MonoBehaviour {
  bool signs;
  void BuildSigns(){
   signs=true;if(!PlacesShown)return;
+  // Round 8: real buildings instead of signs on poles (CareBuildings); the walk and the stop box stay.
   DressPolice();
-  var road=Flat(PoliceRoad);var toward=PolicePoint-road;Sign(road+(toward.sqrMagnitude>1?toward.normalized*Mathf.Min(6,toward.magnitude):Vector3.zero),LostItemRules.Police.name,new Color(.15f,.3f,.75f));
-  // The emergency room is in the map since 2026-11-26: its own sign at the door, beside the drop stop.
-  var h=HospitalApproach;var hp=LostItemRules.Hospital;if(h!=null&&hp!=null)Sign(Vector3.Lerp(h.Kerb,hp.V(),.55f),"+ 응급실 · "+EmergencyRules.HospitalName,new Color(.8f,.15f,.15f));
+  CareBuildings.BuildPolice(session.world?session.world.map:null,Flat(PoliceRoad));
+  CareBuildings.BuildEmergency(session.world?session.world.map:null,HospitalApproach);
  }
  // Play feedback round 7: the police box looks like a facility: a blue name board on the face toward the road, a red
  // and blue light bar on the roof, a paved walk from the kerb to the door and a painted stopping box at the kerb.
@@ -145,14 +145,6 @@ public sealed class LostItems : MonoBehaviour {
   var stopBox=new GameObject("파출소 정차 칸").transform;stopBox.SetParent(root,false);stopBox.localPosition=new Vector3(0,.06f,1.6f);stopBox.localRotation=Quaternion.Euler(0,90,0);
   foreach(float x in new[]{-1.3f,1.3f})WorldBuilder.Box("정차 칸",new Vector3(x,0,0),new Vector3(.12f,.02f,6),paint,stopBox,false);
   foreach(float z in new[]{-3f,3f})WorldBuilder.Box("정차 선",new Vector3(0,0,z),new Vector3(2.8f,.02f,.12f),paint,stopBox,false);
-  // Name board and light bar on the building.
-  var board=new GameObject("파출소 간판").transform;board.SetParent(root,false);board.localPosition=new Vector3(0,ground-road.y+Mathf.Min(roof-ground-.6f,3.4f),face-.15f);board.localRotation=Quaternion.identity;
-  WorldBuilder.Box("간판 바탕",Vector3.zero,new Vector3(4.2f,.9f,.12f),blue,board,false);WorldBuilder.Box("간판 띠",new Vector3(0,-.52f,0),new Vector3(4.2f,.14f,.12f),white,board,false);
-  var label=new GameObject("간판 글자");label.transform.SetParent(board,false);label.transform.localPosition=new Vector3(0,.02f,-.08f);
-  var t=label.AddComponent<TextMesh>();t.text=LostItemRules.Police.name+"  POLICE";t.fontSize=56;t.characterSize=.06f;t.anchor=TextAnchor.MiddleCenter;t.color=Color.white;KoreanText.Apply(t);KoreanText.Fit(t,3.9f,.62f);
-  var bar=new GameObject("경광등").transform;bar.SetParent(root,false);bar.localPosition=new Vector3(0,roof-road.y+.18f,face+2);
-  WorldBuilder.Box("경광등 적색",new Vector3(-.45f,0,0),new Vector3(.8f,.3f,.35f),WorldBuilder.Mat("경광등 적색",new Color(.9f,.12f,.12f)),bar,false);
-  WorldBuilder.Box("경광등 청색",new Vector3(.45f,0,0),new Vector3(.8f,.3f,.35f),WorldBuilder.Mat("경광등 청색",new Color(.12f,.3f,.95f)),bar,false);
  }
  static float Floor(Vector3 p){RaycastHit hit;return Physics.Raycast(p+Vector3.up*20,Vector3.down,out hit,40,~(1<<8),QueryTriggerInteraction.Ignore)?hit.point.y:p.y;}
  static float Roof(Vector3 p,float ground){RaycastHit hit;return Physics.Raycast(new Vector3(p.x,ground+60,p.z),Vector3.down,out hit,80,~(1<<8),QueryTriggerInteraction.Ignore)&&hit.point.y>ground+2?hit.point.y:ground+4;}
