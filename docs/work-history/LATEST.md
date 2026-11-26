@@ -1,8 +1,10 @@
 # 최신 작업 이력
 
-**2026-11-26 · 은계 싱글 r76(배포 실행본 r75) · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
+**2026-11-26 · 은계 싱글 r77(배포 실행본 r75) · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
 
 ## 이어갈 작업
+
+**2026-11-26 지도 검토 15단계 추가: J5074 중앙 빗금 지대(지도 r77, 배포는 다음 빌드)**: [기록](2026-11-26-map-review-marks2.md) 아래쪽. J009-1 동·서쪽 팔 3 m 빗금 지대. 77곳·기둥 0·호출판 113(실패 0), 교통 멈춤 0. 처리 172/277.
 
 **2026-11-26 지도 검토 15단계 추가: 대은로 중앙 빗금·J6481(지도 r76, 배포는 다음 빌드)**: [기록](2026-11-26-map-review-marks2.md) 아래쪽. J075-4 빗금 39개, J060-1 횡단보도 7 m 이동, J060-2 동쪽 빗금, J036-3·J032-2·J061-2 판독으로 닫음. 77곳·기둥 0·호출판 115(실패 0), 교통 멈춤 0. 처리 171/277.
 
