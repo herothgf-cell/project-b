@@ -38,6 +38,8 @@ DONE = {  # issue -> revision and what was done (partial fixes say so)
     'J019-3': 'r55 동서 황색',
     # r67 cross-section edits, and width items checked on the aerial without a change
     'J065-3': 'r67 은빛초 앞길 서쪽 구간 남쪽 연석 1.65 m 북쪽(r66 J070과 같은 단면)',
+    'J063-1': 'r68 J7917~G04 간선 남행 4차로(차로 간격 3.25 m로 단면 재배치, 바깥 차로 추가, G04 차로와 1:1 연결)',
+    'J066-1': 'r68 J063-1과 같은 구간: 남행 3차로를 4차로로',
     'J025-1': '항공사진: 연석 사이 약 14.5 m로 게임(약 15 m)과 0.5 m 차이, 유지',
     'J042-1': '항공사진: 동쪽 절반은 건물 그림자 속 차도(차량 있음), 게임 폭 유지',
     'J071-3': '항공사진: 간선 남서쪽 연석 차이 1~3 m, 유지',

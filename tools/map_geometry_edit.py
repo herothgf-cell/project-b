@@ -31,12 +31,13 @@ def smooth(u):
 
 
 class Edit:
-    def __init__(self, ref, s0, s1, controls, taper=12.0, fade=1.5, reach=None, name='', min_lane=3.0):
+    def __init__(self, ref, s0, s1, controls, taper=12.0, fade=1.5, reach=None, name='', min_lane=3.0, skip=()):
         self.ref = [tuple(p) for p in ref]
         self.cum = [0.0]
         for a, b in zip(self.ref, self.ref[1:]):
             self.cum.append(self.cum[-1] + math.dist(a, b))
         self.s0, self.s1, self.fade, self.name, self.min_lane = s0, s1, fade, name, min_lane
+        self.skip = set(skip)  # lane / object / facility ids this edit leaves alone
         self.t0, self.t1 = taper if isinstance(taper, tuple) else (taper, taper)
         self.taper = max(self.t0, self.t1)
         self.controls = sorted(controls)
@@ -101,9 +102,10 @@ class Edit:
         return any(x0 <= p[0] <= x1 and z0 <= p[1] <= z1 for p in pts)
 
 
-def compose(edits, p):
+def compose(edits, p, item=None):
     for e in edits:
-        p = e(p)
+        if item is None or item not in e.skip:
+            p = e(p)
     return p
 
 
@@ -127,12 +129,14 @@ def plan(edits):
         pts = _pts(l)
         if len(pts) < 2 or not near(pts):
             continue
-        new = [compose(edits, p) for p in pts]
+        new = [compose(edits, p, l['id']) for p in pts]
         if not any(moved(a, b) for a, b in zip(pts, new)):
             continue
         # one width per lane: the narrowest stretch over the moved points (lanes must still fit there)
         k = 1.0; floor = 2.0
         for e in edits:
+            if l['id'] in e.skip:
+                continue
             hit = [q for q in pts if moved(q, e(q))]
             if hit:
                 k *= min(e.scale(q) for q in hit); floor = max(floor, e.min_lane)
@@ -150,7 +154,7 @@ def plan(edits):
                 b = pts[(i + 1) % len(pts)]; n = max(1, int(math.dist(a, b) / 2.0))
                 for k in range(n):
                     dense.append((a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n))
-            new = [compose(edits, p) for p in dense]
+            new = [compose(edits, p, o['id']) for p in dense]
             if not any(moved(a, b) for a, b in zip(dense, new)):
                 continue
             # drop the inserted points that stayed on a straight original edge
@@ -167,7 +171,7 @@ def plan(edits):
         for i, p in enumerate(pts):
             a = pts[max(0, i - 1)]; b = pts[min(len(pts) - 1, i + 1)]
             dx, dz = b[0] - a[0], b[1] - a[1]; L = math.hypot(dx, dz) or 1; n = (-dz / L, dx / L)
-            l_ = compose(edits, (p[0] + n[0] * w, p[1] + n[1] * w)); r_ = compose(edits, (p[0] - n[0] * w, p[1] - n[1] * w))
+            l_ = compose(edits, (p[0] + n[0] * w, p[1] + n[1] * w), o['id']); r_ = compose(edits, (p[0] - n[0] * w, p[1] - n[1] * w), o['id'])
             cs.append(((l_[0] + r_[0]) / 2, (l_[1] + r_[1]) / 2)); ws.append(math.dist(l_, r_))
         if not any(moved(a, b) for a, b in zip(pts, cs)) and max(abs(x - o['width']) for x in ws) < 1e-3:
             continue
@@ -208,8 +212,8 @@ def plan(edits):
             continue
         y = math.radians(f['yaw']); fw = (math.sin(y), math.cos(y)); rt = (fw[1], -fw[0])
         hw, hl = f['width'] / 2, f['length'] / 2
-        P = lambda u, v: compose(edits, (c[0] + rt[0] * u + fw[0] * v, c[1] + rt[1] * u + fw[1] * v))
-        nc = compose(edits, c)
+        P = lambda u, v: compose(edits, (c[0] + rt[0] * u + fw[0] * v, c[1] + rt[1] * u + fw[1] * v), f['id'])
+        nc = compose(edits, c, f['id'])
         if not moved(c, nc) and not moved(P(hw, 0), (c[0] + rt[0] * hw, c[1] + rt[1] * hw)):
             continue
         fa, fb, ra, rb = P(0, -hl), P(0, hl), P(-hw, 0), P(hw, 0)

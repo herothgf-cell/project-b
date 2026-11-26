@@ -495,9 +495,11 @@ public class BusinessProgress : MonoBehaviour {
   const string reviewedR66Hash="0e4e211bcd3a39d2612fe436485483a70e5a95781259523253dde387c96e88e9";
   // r67 Map review cross-section: J065 Eunbit school road west part narrowed (map r67)
   const string reviewedR67Hash="abc169d7b33bac12f7303b51315ebfd95a05353152d04890b651bd2160e170fc";
-  int from=0,to=0;for(int revision=14;revision<=67;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>67)return;
-  string reviewedHash=to==67?reviewedR67Hash:to==66?reviewedR66Hash:to==65?reviewedR65Hash:to==64?reviewedR64Hash:to==63?reviewedR63Hash:to==62?reviewedR62Hash:to==61?reviewedR61Hash:to==60?reviewedR60Hash:to==59?reviewedR59Hash:to==58?reviewedR58Hash:to==57?reviewedR57Hash:to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
+  // r68 southbound fourth lane on the J7917-G04 arterial (J063-1, J066-1)
+  const string reviewedR68Hash="512f42e0e069e1dcfaf138c73d6d96b4e36456a5274198e227fc1a7346de801c";
+  int from=0,to=0;for(int revision=14;revision<=68;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>68)return;
+  string reviewedHash=to==68?reviewedR68Hash:to==67?reviewedR67Hash:to==66?reviewedR66Hash:to==65?reviewedR65Hash:to==64?reviewedR64Hash:to==63?reviewedR63Hash:to==62?reviewedR62Hash:to==61?reviewedR61Hash:to==60?reviewedR60Hash:to==59?reviewedR59Hash:to==58?reviewedR58Hash:to==57?reviewedR57Hash:to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   ApplyReviewedEungyeCheckpointMigration(live,from,to);
  }
@@ -671,6 +673,8 @@ public class BusinessProgress : MonoBehaviour {
    result.passengerPresetId=jobs.Behavior?.PresetId;
    var story=jobs.CurrentStory;
    if(story!=null){result.storyId=story.id;result.storyEnding=(int)jobs.StoryEnding;result.storyLine=jobs.StoryEndingLine;}
+   // Play feedback 2026-11-26: "기사님도 떡 한 조각 드세요" really feeds the driver a little, and the ride feed says so.
+   if(story!=null&&story.id=="wedding-guest"&&jobs.StoryEnding==PassengerStoryEnding.Good&&paid>0&&ledger.Driver!=null){int snack=Mathf.Clamp(ContentTuning.Int("story.snackSatiety",10),0,50);double before=ledger.Driver.satiety;ledger.Driver.satiety=System.Math.Min(100,ledger.Driver.satiety+snack);var feed=session.GetComponent<DriveNotifications>();if(feed&&ledger.Driver.satiety>before)feed.Card("떡 한 조각 · 포만감 +"+Mathf.RoundToInt((float)(ledger.Driver.satiety-before)));}
    if(outcome=="운송 완료"||outcome=="시간 초과 후 목적지 도착"){
     if(offer.reunionKind!=0){
      Logbook.studentReturned=true;
