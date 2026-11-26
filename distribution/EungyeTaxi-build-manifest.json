@@ -1,10 +1,10 @@
 {
-  "sourceCommit": "5be9a52f",
+  "sourceCommit": "d714775c",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
   "validatedOn": "2026-11-24",
-  "totalBytes": 117654717,
+  "totalBytes": 117656837,
   "validation": {
     "build": "PrototypeBuild.BuildEasyRoadMapEditor exit 0",
     "modelSuites": 23,
@@ -38,7 +38,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "3c9e0137fc2b8039338a21f7782efbafeea1c952f4e259f5bd53c521a00020e3"
+      "sha256": "0d0c33e5d41484d3b2ad35c33c7e4e44c462e8c896ad37b17d7cdf7f0c5ad450"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
@@ -63,7 +63,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
       "bytes": 3619840,
-      "sha256": "5a739a4b3fc0a8fb3578a9cd19b9d1828bf371f374688534366b41f129e8ee7e"
+      "sha256": "77bfcd106e29965823a73ed98e68f8f0577afc35a6276536e0a3101fe0929d39"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
@@ -572,8 +572,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 26775816,
-      "sha256": "a3eca0600fbc9e58952ee0a0fdbc945658c6b9a349e410e316fb5098e0d4c4f2"
+      "bytes": 26777936,
+      "sha256": "c2b6995eeedb94ef37d79e64dbb445dfb2dac6d55a59b1b89c127df86a4b42be"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
@@ -713,7 +713,7 @@
     {
       "path": "builds/EungyeTaxi/project-map-build.json",
       "bytes": 177,
-      "sha256": "30bec4a1bb1325dad5676010565e6170a83f8980adb9cac2b093e7f238e5e355"
+      "sha256": "0bb2e75330ea800ca89e24d4d5db78d05950f73e23b29a1676a186e432204b7b"
     },
     {
       "path": "builds/EungyeTaxi/ThirdPartyNotices/mchrbn-unity-traffic-simulation-MIT.txt",
@@ -753,8 +753,8 @@
   ],
   "projectMap": {
     "path": "config/maps/project/eungye.project.json",
-    "contentHash": "b527c7c85cf22255ede8e698500e25bbfdd4edbb2699629fe7c7d49403283761",
-    "bytes": 25699609,
-    "sha256": "80a822afd4aa37a78419173d8c855ad8db4f3dcdd58cd864d2ceed218e4e769d"
+    "contentHash": "708cddc5f490be1cd0c6718d379cb1f4c3e7ee893298045c85a5fffb3b93cc28",
+    "bytes": 25718276,
+    "sha256": "17187f0815ba60ad0cec8833639404e42420c31b0ae97c16b89aae39352710e6"
   }
 }
