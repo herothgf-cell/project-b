@@ -51,9 +51,48 @@ public sealed class LostItems : MonoBehaviour {
    if(Time.time>ownerUntil){State=ToPolice;Card("분실물 · 주인이 떠났어요 · 은행파출소에 맡겨 주세요");GuideToPolice();}
    else if(ownerIndex>=0&&Empty&&session.taxi.Speed<1&&Vector3.Distance(session.taxi.transform.position,j.stops[ownerIndex].Kerb)<9){Pay("lost:"+Trip,LostItemRules.Reward(Item));Returned++;LastOutcome="돌려줌";Card("분실물 · "+LostItemRules.Names[Item]+"을 돌려드렸어요 · “정말 고마워요!” · +"+LostItemRules.Reward(Item).ToString("N0")+"원");Reset();}
   }
-  if(State==ToPolice&&Empty&&session.taxi.Speed<1&&LostItemRules.Police!=null&&(Vector3.Distance(Flat(session.taxi.transform.position),Flat(PoliceRoad))<12||Vector3.Distance(Flat(session.taxi.transform.position),PolicePoint)<20)){Pay("lost-police:"+Trip,LostItemRules.PoliceReward);Handed++;LastOutcome="파출소";Card("분실물 · "+LostItemRules.Police.name+"에 맡겼어요 · +"+LostItemRules.PoliceReward.ToString("N0")+"원");Reset();}
+  // Play feedback round 7: the police box works like the shops. Stopped in front of it with an item aboard, F opens a
+  // small desk menu and the driver chooses to hand it in (Enter) or not (Esc); nothing happens on arrival by itself.
+  if(AtPolice&&HasItem&&State!=Pending&&!PoliceMenuOpen&&!session.paused&&Input.GetKeyDown(KeyCode.F))OpenPoliceMenu();
+  if(PoliceMenuOpen&&(!AtPolice||!HasItem))PoliceMenuOpen=false;
+  // Play feedback round 7: an accident (or a ride taken meanwhile) clears the route, which looked like a cancelled
+  // errand while it was still on. With the taxi empty again and nothing guided, the errand's route comes back.
+  if((State==Returning||State==ToPolice)&&Empty&&j.nav&&!j.nav.HasDestination&&!(session.accident&&session.accident.Locked)&&Time.time>=reguideAt){reguideAt=Time.time+2;Reguide();}
   // Left on the seat: the next passenger minds it, once.
   if(State==Left&&!penalised&&j.trip.State==TripState.OnTrip&&j.current!=null){penalised=true;if(session.manners)session.manners.Deduct("lostitem",LostItemRules.LeavePenalty,"뒷좌석 물건 · 손님이 불편해해요",0);}
+ }
+ float reguideAt;public int Reguided;
+ public bool PoliceMenuOpen;
+ public bool HasItem {get{return State==Pending||State==Returning||State==ToPolice||State==Left;}}
+ public bool AtPolice {get{if(!Single||LostItemRules.Police==null||!session.taxi||!Empty||session.taxi.Speed>=1)return false;var p=Flat(session.taxi.transform.position);return Vector3.Distance(p,Flat(PoliceRoad))<12||Vector3.Distance(p,PolicePoint)<20;}}
+ public void OpenPoliceMenu(){if(AtPolice&&HasItem)PoliceMenuOpen=true;}
+ public bool HandIn(){
+  if(!AtPolice||!HasItem)return false;PoliceMenuOpen=false;
+  Pay("lost-police:"+Trip,LostItemRules.PoliceReward);Handed++;LastOutcome="파출소";Card("분실물 · "+LostItemRules.Police.name+"에 맡겼어요 · +"+LostItemRules.PoliceReward.ToString("N0")+"원");Reset();return true;
+ }
+ // While the choice dialog (Pending) is open it owns the screen; the desk shows once a choice is made.
+ void PoliceGUI(){
+  if(!Single||session.paused||session.FullMapOpen||!AtPolice||!HasItem||State==Pending)return;
+  var prior=GUI.matrix;float scale=CockpitUI.Scale;GUI.matrix=Matrix4x4.Scale(new Vector3(scale,scale,1));
+  try{
+   float w=Screen.width/scale,h=Screen.height/scale;
+   if(!PoliceMenuOpen){var bar=new Rect(w/2-150,h-320,300,46);CasualUI.RoundedFill(bar,new Color(.10f,.20f,.45f,.94f));if(GUI.Button(bar,GUIContent.none,GUIStyle.none))OpenPoliceMenu();KeyHints.Cap(new Rect(bar.x+12,bar.y+9,28,28),"F",true);GUI.Label(new Rect(bar.x+50,bar.y,bar.width-60,bar.height),LostItemRules.Police.name+" · 분실물 맡기기",DrivingHudArt.Text(17,Color.white,true));return;}
+   var r=new Rect(w/2-230,h/2-150,460,300);CasualUI.Panel(r);
+   var head=new Rect(r.x,r.y,r.width,58);CasualUI.RoundedFill(head,new Color(.10f,.20f,.45f));HudGlyph.Draw(new Rect(head.x+16,head.y+12,34,34),21,Color.white);GUI.Label(new Rect(head.x+60,head.y,head.width-70,head.height),LostItemRules.Police.name+" · 분실물 신고",DrivingHudArt.Text(20,Color.white,true));
+   float y=r.y+74;
+   GUI.Label(new Rect(r.x+24,y,r.width-48,30),"맡길 물건 · "+LostItemRules.Names[Item],DrivingHudArt.Text(18,CasualUI.Ink,true));y+=36;
+   GUI.Label(new Rect(r.x+24,y,r.width-48,28),"감사 사례 +"+LostItemRules.PoliceReward.ToString("N0")+"원",DrivingHudArt.Text(16,CasualUI.Green,true));y+=32;
+   string note=State==Returning?"주인이 아직 기다리는 중이에요. 직접 돌려주면 사례가 더 커요.":"맡기면 파출소가 주인을 찾아 줘요.";
+   GUI.Label(new Rect(r.x+24,y,r.width-48,44),note,new GUIStyle(DrivingHudArt.Text(14,CasualUI.Muted,false)){wordWrap=true});
+   var style=KoreanText.Button(17);
+   if(KeyHints.Button(new Rect(r.x+24,r.yMax-66,(r.width-60)*.6f,48),"맡기기","Enter",style)||KeyHints.Enter())HandIn();
+   else if(KeyHints.Button(new Rect(r.x+36+(r.width-60)*.6f,r.yMax-66,(r.width-60)*.4f,48),"닫기","Esc",style)||Event.current.type==EventType.KeyDown&&Event.current.keyCode==KeyCode.Escape){PoliceMenuOpen=false;Event.current.Use();}
+  }finally{GUI.matrix=prior;}
+ }
+ void Reguide(){
+  var j=session.jobs;Reguided++;
+  if(State==Returning&&ownerIndex>=0){var s=j.stops[ownerIndex];if(s.laneEdge>=0)j.nav.SetHdDestination(s.laneEdge,s.laneAt);Card("분실물 · 돌려주기 안내를 다시 이어요 · "+KoreanText.Stop(s.name));}
+  else if(State==ToPolice){GuideToPolice();Card("분실물 · "+(LostItemRules.Police!=null?LostItemRules.Police.name:"파출소")+" 안내를 다시 이어요");}
  }
  static Vector3 Flat(Vector3 v){v.y=0;return v;}
  public void Begin(string trip,string dropStopId,int item){
@@ -82,10 +121,41 @@ public sealed class LostItems : MonoBehaviour {
  bool signs;
  void BuildSigns(){
   signs=true;if(!PlacesShown)return;
+  DressPolice();
   var road=Flat(PoliceRoad);var toward=PolicePoint-road;Sign(road+(toward.sqrMagnitude>1?toward.normalized*Mathf.Min(6,toward.magnitude):Vector3.zero),LostItemRules.Police.name,new Color(.15f,.3f,.75f));
   // The emergency room is in the map since 2026-11-26: its own sign at the door, beside the drop stop.
   var h=HospitalApproach;var hp=LostItemRules.Hospital;if(h!=null&&hp!=null)Sign(Vector3.Lerp(h.Kerb,hp.V(),.55f),"+ 응급실 · "+EmergencyRules.HospitalName,new Color(.8f,.15f,.15f));
  }
+ // Play feedback round 7: the police box looks like a facility: a blue name board on the face toward the road, a red
+ // and blue light bar on the roof, a paved walk from the kerb to the door and a painted stopping box at the kerb.
+ void DressPolice(){
+  var map=session.world?session.world.map:null;if(map==null||map.buildings==null||LostItemRules.Police==null)return;
+  MapBuilding building=null;foreach(var b in map.buildings)if(b!=null&&b.name==LostItemRules.Police.name){building=b;break;}
+  var road=Flat(PoliceRoad);var centre=PolicePoint;
+  if(building!=null&&building.points!=null&&building.points.Length>0){float x=0,z=0;foreach(var p in building.points){x+=p.x;z+=p.z;}centre=new Vector3(x/building.points.Length,0,z/building.points.Length);}
+  var toBuilding=centre-road;toBuilding.y=0;if(toBuilding.sqrMagnitude<1)return;float gap=toBuilding.magnitude;var dir=toBuilding/gap;
+  var root=new GameObject("파출소 꾸밈 · "+LostItemRules.Police.name).transform;root.position=road;root.rotation=Quaternion.LookRotation(dir);
+  float ground=Floor(road+dir*Mathf.Min(gap,6)),roof=Roof(centre,ground);
+  var blue=WorldBuilder.Mat("파출소 청색",new Color(.08f,.2f,.5f));var white=WorldBuilder.Mat("파출소 백색",new Color(.95f,.96f,.98f));
+  var walk=WorldBuilder.Mat("파출소 보도",new Color(.72f,.70f,.66f));var paint=WorldBuilder.Mat("파출소 정차 표시",new Color(.95f,.8f,.18f));
+  // Walk from the kerb (3 m in from the lane point) to the building face.
+  float face=Mathf.Max(4,gap-5);
+  WorldBuilder.Box("출입 보도",new Vector3(0,ground-road.y+.06f,(3+face)*.5f),new Vector3(2.2f,.08f,Mathf.Max(.5f,face-3)),walk,root,false);
+  // Stopping box on the road at the kerb.
+  var stopBox=new GameObject("파출소 정차 칸").transform;stopBox.SetParent(root,false);stopBox.localPosition=new Vector3(0,.06f,1.6f);stopBox.localRotation=Quaternion.Euler(0,90,0);
+  foreach(float x in new[]{-1.3f,1.3f})WorldBuilder.Box("정차 칸",new Vector3(x,0,0),new Vector3(.12f,.02f,6),paint,stopBox,false);
+  foreach(float z in new[]{-3f,3f})WorldBuilder.Box("정차 선",new Vector3(0,0,z),new Vector3(2.8f,.02f,.12f),paint,stopBox,false);
+  // Name board and light bar on the building.
+  var board=new GameObject("파출소 간판").transform;board.SetParent(root,false);board.localPosition=new Vector3(0,ground-road.y+Mathf.Min(roof-ground-.6f,3.4f),face-.15f);board.localRotation=Quaternion.identity;
+  WorldBuilder.Box("간판 바탕",Vector3.zero,new Vector3(4.2f,.9f,.12f),blue,board,false);WorldBuilder.Box("간판 띠",new Vector3(0,-.52f,0),new Vector3(4.2f,.14f,.12f),white,board,false);
+  var label=new GameObject("간판 글자");label.transform.SetParent(board,false);label.transform.localPosition=new Vector3(0,.02f,-.08f);
+  var t=label.AddComponent<TextMesh>();t.text=LostItemRules.Police.name+"  POLICE";t.fontSize=56;t.characterSize=.06f;t.anchor=TextAnchor.MiddleCenter;t.color=Color.white;KoreanText.Apply(t);KoreanText.Fit(t,3.9f,.62f);
+  var bar=new GameObject("경광등").transform;bar.SetParent(root,false);bar.localPosition=new Vector3(0,roof-road.y+.18f,face+2);
+  WorldBuilder.Box("경광등 적색",new Vector3(-.45f,0,0),new Vector3(.8f,.3f,.35f),WorldBuilder.Mat("경광등 적색",new Color(.9f,.12f,.12f)),bar,false);
+  WorldBuilder.Box("경광등 청색",new Vector3(.45f,0,0),new Vector3(.8f,.3f,.35f),WorldBuilder.Mat("경광등 청색",new Color(.12f,.3f,.95f)),bar,false);
+ }
+ static float Floor(Vector3 p){RaycastHit hit;return Physics.Raycast(p+Vector3.up*20,Vector3.down,out hit,40,~(1<<8),QueryTriggerInteraction.Ignore)?hit.point.y:p.y;}
+ static float Roof(Vector3 p,float ground){RaycastHit hit;return Physics.Raycast(new Vector3(p.x,ground+60,p.z),Vector3.down,out hit,80,~(1<<8),QueryTriggerInteraction.Ignore)&&hit.point.y>ground+2?hit.point.y:ground+4;}
  void Sign(Vector3 at,string text,Color color){
   var root=new GameObject("생활시설 표지 · "+text);root.transform.position=new Vector3(at.x,0,at.z);
   WorldBuilder.Box("기둥",new Vector3(0,1.6f,0),new Vector3(.12f,3.2f,.12f),WorldBuilder.Mat("Facility sign pole",new Color(.55f,.57f,.6f)),root.transform,false);
@@ -95,6 +165,7 @@ public sealed class LostItems : MonoBehaviour {
  void Pay(string id,int amount){if(amount>0)session.business.RecordReward(id,amount);session.business.SaveCheckpoint();}
  void Reset(){State=None;Trip="";ownerIndex=-1;penalised=false;}
  void OnGUI(){
+  PoliceGUI();
   if(State!=Pending||!Empty||session.IsSimulationBot||session.paused)return;
   var options=new PassengerDialogueUI.Option[3];
   options[0]=new PassengerDialogueUI.Option("1","돌려주러 간다",ownerIndex>=0?KoreanText.Stop(session.jobs.stops[ownerIndex].name)+"에서 "+Mathf.RoundToInt(LostItemRules.OwnerWaitSeconds/60)+"분 기다림 · +"+LostItemRules.Reward(Item).ToString("N0")+"원":"주인 위치 모름");

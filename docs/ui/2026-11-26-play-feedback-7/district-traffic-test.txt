@@ -1,0 +1,98 @@
+success=False
+PASS player taxi excluded from NPC soak
+PASS district production population
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS NPC shares graph
+PASS distributed starting lanes
+STALLED Traffic car 7 · 보통 at=1138.871 blocked= signal=True junction=False
+  pos=(642,1185) lane=reviewed:G05:NW:left road=은계로 stop=J6199_11987 ahead=0.0 turn=-2 axis=0 sign=-1 signalized=True signal=Red hold=False uturnLane=reviewed:G05:NW:left condition=유턴 (좌회전·보행 신호시)/ permittedSeconds/240=40 pedestrianClear=True
+STALLED Traffic car 21 · 여유 at=861.0642 blocked= signal=True junction=False
+  pos=(768,985) lane=reviewed:G05:SE:left road=은계로 stop=J7801_9629 ahead=0.0 turn=-2 axis=1 sign=-1 signalized=True signal=Red hold=False uturnLane=reviewed:G05:SE:left condition=유턴 (좌회전·보행 신호시)/ permittedSeconds/240=40 pedestrianClear=True
+STALLED Traffic car 47 · 성급 at=855.2151 blocked=Traffic car 21 · 여유 signal=False junction=False
+  pos=(765,991) lane=reviewed:G05:SE:left road=은계로 stop=J7801_9629 ahead=5.9 turn=-2 axis=1 sign=-1 signalized=True signal=Red hold=False uturnLane=reviewed:G05:SE:left condition=유턴 (좌회전·보행 신호시)/ permittedSeconds/240=40 pedestrianClear=True
+PASS MIT mode=False applied ticks=0
+PASS district movement moved=72 metres=106436.8
+PASS both turns and both source areas
+PASS geometry offpath=0 overlaps=0
+FAIL no prolonged stalled cars count=3
+PASS continuous journeys=71
+PASS signal fixture available
+PASS signal queue spawned
+PASS signal queue spawned
+PASS signal queue spawned
+PASS red stop Traffic car 100 · 보통
+PASS red stop Traffic car 101 · 성급
+PASS red stop Traffic car 102 · 여유
+FAIL green queue clears Traffic car 100 · 보통 distance=983.3416 block=
+FAIL green queue clears Traffic car 101 · 성급 distance=977.4927 block=Traffic car 100 · 보통
+FAIL green queue clears Traffic car 102 · 여유 distance=970.6436 block=Traffic car 101 · 성급

@@ -278,18 +278,19 @@ public partial class RoadNavigation : MonoBehaviour {
   bool crossing=CrossingPlannedLaneChange(progress,error);
 
   if(freeGuidance&&hdRoute!=null&&hdRoute.path.length-progress<30&&hd.edges[hdGoal].next.Length>0){float at;int start=hd.Nearest(vehicle.position,vehicle.forward,out at);var forward=hd.Forward(start,at);if(forward!=null){UseFreeRoute(forward);progress=0;}}
-  if(hdRoute==null||!crossing&&(error>2.5f||Vector3.Dot(vehicle.forward,hdRoute.path.Tangent(progress))<.3f)){
+  // A route that starts in the lane beside the taxi tolerates that lane offset for its first 60 m.
+  if(hdRoute==null||!crossing&&(error>(neighbourStart>=0&&progress<60?6.8f:2.5f)||Vector3.Dot(vehicle.forward,hdRoute.path.Tangent(progress))<.3f)){
    float at;int start=hd.Nearest(vehicle.position,vehicle.forward,out at);
    bool previous=hdRoute!=null;
    if(freeGuidance){hdRoute=hd.Forward(start,at);if(hdRoute!=null)UseFreeRoute(hdRoute);}
-   else hdRoute=GoalRoute(start,at,PreferLargeRoad?passengerRoadCosts:PreferFastest?hdSeconds:null);
+   else hdRoute=BestRoute(start,at,PreferLargeRoad?passengerRoadCosts:PreferFastest?hdSeconds:null);
    if(previous){recalculationCount++;rerouteNotice="실제 연결 차로에서 경로 재탐색";}
    if(hdRoute!=null)progress=ProjectVehicle(out error);
   }
   path.Clear();alternativePath.Clear();remaining=estimatedSeconds=alternativeSeconds=alternativeDistance=0;
   if(hdRoute==null){instruction="연결된 경로 없음 · 안내 차로로 복귀하세요";line.positionCount=0;return;}
   if(observe&&hybrid&&!freeGuidance&&!crossing){float at;int start=hd.Nearest(vehicle.position,vehicle.forward,out at);var candidate=GoalRoute(start,at,PreferLargeRoad?passengerRoadCosts:PreferFastest?hdSeconds:null);
-   if(!PreferLargeRoad&&PreferFastest&&candidate!=null&&HdSeconds(candidate,0)<HdSeconds(hdRoute,progress)*.9f-3){hdRoute=candidate;progress=ProjectVehicle(out error);recalculationCount++;rerouteNotice="교통 상황 반영 · 경로 재탐색";}
+   if(!PreferLargeRoad&&PreferFastest&&candidate!=null&&HdSeconds(candidate,0)<HdSeconds(hdRoute,progress)*.9f-3){hdRoute=candidate;neighbourStart=-1;progress=ProjectVehicle(out error);recalculationCount++;rerouteNotice="교통 상황 반영 · 경로 재탐색";}
   }
   path.Add(hdRoute.path.Position(progress));float accumulated=0;
   for(int i=1;i<hdRoute.path.points.Length;i++){accumulated+=Vector3.Distance(hdRoute.path.points[i-1],hdRoute.path.points[i]);if(accumulated>progress)path.Add(hdRoute.path.points[i]);}
@@ -297,6 +298,26 @@ public partial class RoadNavigation : MonoBehaviour {
   var owner=NetworkSession;if(owner&&owner.IsSimulationBot){instruction=freeGuidance?"자유 주행 · "+hd.Instruction(hdRoute,progress):remaining<18?(hybrid?"오른쪽 승하차 지점 · 정차 후 F":"시험 도착 지점 · 직접 감속하여 정차"):hd.Instruction(hdRoute,progress);return;}
   float altAt;int altStart=hd.Nearest(vehicle.position,vehicle.forward,out altAt);var alternate=GoalRoute(altStart,altAt,PreferFastest?null:hdSeconds);if(alternate!=null){alternativePath.AddRange(alternate.path.points);alternativeDistance=alternate.path.length;alternativeSeconds=HdSeconds(alternate,0);}
   instruction=freeGuidance?"자유 주행 · "+hd.Instruction(hdRoute,progress):remaining<18?(hybrid?"오른쪽 승하차 지점 · 정차 후 F":"시험 도착 지점 · 직접 감속하여 정차"):hd.Instruction(hdRoute,progress);
+  if(neighbourStart>=0&&!freeGuidance&&remaining>=18){if(error>1.6f&&progress<60)instruction=neighbourSide+" 차로로 이동 · 그 차로가 더 빠름 · "+instruction;else if(error<=1.6f)neighbourStart=-1;}
+ }
+ // Play feedback round 7 (2026-11-26): the route also starts from the lanes beside the taxi (same direction, 1.2 to
+ // 6.5 m to the side, at least 25 m before the lane ends), so a taxi in the "wrong" lane is not sent round the
+ // block when moving over one lane is quicker. A lane change costs 4 s; the neighbour wins only by 2 s or more.
+ const float LaneChangeSeconds=4;int neighbourStart=-1;string neighbourSide="";
+ HdRoadGraph.RoutePath BestRoute(int start,float at,float[] weights){
+  var bestRoute=GoalRoute(start,at,weights);neighbourStart=-1;
+  if(hd==null||vehicle==null||freeGuidance||start<0)return bestRoute;
+  float best=bestRoute==null?float.PositiveInfinity:HdSeconds(bestRoute,at);
+  var pos=vehicle.position;var fwd=vehicle.forward;fwd.y=0;if(fwd.sqrMagnitude<.01f)return bestRoute;fwd.Normalize();
+  for(int i=0;i<hd.edges.Length;i++){
+   if(i==start||hd.edges[i].TraversalDisabled||hd.edges[i].change!=0)continue;
+   var b=hd.PathBounds(i);if(b.SqrDistance(new Vector3(pos.x,b.center.y,pos.z))>49)continue;
+   float err;float d=hd.paths[i].Project(pos,out err);if(err>6.5f||err<1.2f||hd.paths[i].length-d<25)continue;
+   var lanePoint=hd.paths[i].Position(d);if(Mathf.Abs(lanePoint.y-pos.y)>2.5f||Vector3.Dot(fwd,hd.paths[i].Tangent(d))<.9f)continue;
+   var r=GoalRoute(i,d,weights);if(r==null)continue;float s=HdSeconds(r,d)+LaneChangeSeconds;
+   if(s<best-2){best=s;bestRoute=r;neighbourStart=i;neighbourSide=Vector3.Dot(lanePoint-pos,TrafficSystem.Right(fwd))>0?"오른쪽":"왼쪽";}
+  }
+  return bestRoute;
  }
  float HdSeconds(HdRoadGraph.RoutePath route,float at){float result=0,begin=0;for(int i=0;i<route.edges.Count;i++){int e=route.edges[i];float length=Mathf.Max(0,route.ends[i]-Mathf.Max(at,begin));result+=hdSeconds[e]*length/Mathf.Max(.01f,hd.paths[e].length);begin=route.ends[i];}return result;}
  public float CurrentRoadWidth(){if(hd==null||vehicle==null)return 0;float at;int edge=hd.Nearest(vehicle.position,vehicle.forward,out at);return edge>=0?passengerRoadWidths[edge]:0;}

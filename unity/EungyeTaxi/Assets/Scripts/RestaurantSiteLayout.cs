@@ -8,7 +8,8 @@ using UnityEngine;
 public static class RestaurantSiteLayout {
  public sealed class Site {
   public MapStop approach;public Vector3 parking,direction,origin,building;public Vector3[] enter,leave;internal MapRoad[] surfaces;
-  public bool CanDine(Vector3 position,Vector3 heading,float speed){var d=position-parking;return speed<.56f&&Mathf.Abs(d.y)<1.5f&&Vector3.Dot(heading.normalized,direction)>.9f&&Mathf.Abs(Vector3.Dot(d,direction))<2.7f&&Mathf.Abs(Vector3.Dot(d,TrafficSystem.Right(direction)))<1.15f;}
+  // Round 7: anywhere on the restaurant grounds once stopped.
+  public bool CanDine(Vector3 position,Vector3 heading,float speed){return speed<FacilityZone.Stopped&&FacilityZone.Level(parking,position)&&(FacilityZone.OnPaving(surfaces,position)||FacilityZone.Near(parking,position,6));}
   public MapStop ParkingStop {get{return new MapStop{name="식당 앞 주차",x=parking.x,z=parking.z,elevation=parking.y,dx=direction.x,dz=direction.z,width=3};}}
  }
  static readonly ConditionalWeakTable<MapData,Site> sites=new ConditionalWeakTable<MapData,Site>();

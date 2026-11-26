@@ -28,7 +28,8 @@ public partial class ServiceStops {
   var taxi=session.taxi;
   foreach(var shop in RefreshmentShops){
    if(Mathf.Abs(taxi.transform.position.y-shop.Stop.Kerb.y)>1.5f)continue;
-   if(shop.Stop.CanStop(taxi.transform.position,taxi.transform.forward,taxi.body.velocity.magnitude)
+   // Round 7: anywhere in front of the shop (its pocket, about 9 m round the stop) once stopped.
+   if(taxi.body.velocity.magnitude<FacilityZone.Stopped&&FacilityZone.Near(shop.Stop.Kerb,taxi.transform.position,9)
       &&!session.jobs.StopOccupied(shop.StopIndex))return shop;
   }
   return null;

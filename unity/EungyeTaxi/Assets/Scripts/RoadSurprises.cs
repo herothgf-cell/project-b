@@ -10,11 +10,11 @@ public static partial class SurpriseRules {
  static float F(string id,double fallback){return (float)ContentTuning.Number(id,fallback);}
  static int I(string id,int fallback){return ContentTuning.Int(id,fallback);}
  public static bool Enabled {get{return I("surprise.enabled",1)!=0;}}
- public static int PerShiftMax {get{return Mathf.Max(0,I("surprise.perShiftMax",5));}}
+ public static int PerShiftMax {get{return Mathf.Max(0,I("surprise.perShiftMax",8));}}
  // Each kind at most this many times a day (2026-11-25: 2, so five a day fit four kinds).
- public static int PerKindMax {get{return Mathf.Max(1,I("surprise.perKindMax",2));}}
+ public static int PerKindMax {get{return Mathf.Max(1,I("surprise.perKindMax",3));}}
  public static bool FirstDay {get{return I("surprise.firstDay",1)!=0;}}
- public static float MinGapSeconds {get{return Mathf.Max(10,F("surprise.minGapSeconds",120));}}
+ public static float MinGapSeconds {get{return Mathf.Max(10,F("surprise.minGapSeconds",60));}}
  public static bool DoorEnabled {get{return I("surprise.door.enabled",1)!=0;}}
  public static float DoorTriggerMetres {get{return Mathf.Clamp(F("surprise.door.triggerMetres",18),6,60);}}
  public static float DoorOpenSeconds {get{return Mathf.Clamp(F("surprise.door.openSeconds",4),1,20);}}

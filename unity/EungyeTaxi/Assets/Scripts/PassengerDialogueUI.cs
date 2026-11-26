@@ -92,8 +92,8 @@ public static class PassengerDialogueUI {
    CasualUI.RoundedFill(r,o.enabled?accent:CasualUI.Track);
    CasualUI.RoundedFill(new Rect(r.x+1,r.y+1,r.width-2,r.height-2),o.enabled?(hover?new Color(.82f,.92f,1):i==0?new Color(.94f,.99f,.95f):CasualUI.Soft):new Color(.91f,.92f,.94f));
    if(GUI.Button(r,new GUIContent("",o.line),button)&&NumericChoiceInput.TryConsume(Time.frameCount))chosen=i;
-   CasualUI.RoundedFill(new Rect(r.x+10,r.y+12,34,30),o.enabled?accent:CasualUI.Muted);
-   var keyStyle=new GUIStyle(heading){alignment=TextAnchor.MiddleCenter};keyStyle.normal.textColor=Color.white;GUI.Label(new Rect(r.x+10,r.y+12,34,30),NumericChoiceInput.Label(i),keyStyle);
+   // Play feedback round 7 (2026-11-26): the number key shows as a key cap, like the other shortcut hints.
+   var old=GUI.color;if(!o.enabled)GUI.color=new Color(1,1,1,.45f);KeyHints.Cap(new Rect(r.x+12,r.y+12,32,32),NumericChoiceInput.Label(i));GUI.color=old;
    float lineHeight=body.CalcHeight(new GUIContent(o.line),inner-70);GUI.Label(new Rect(r.x+54,r.y+9,inner-70,lineHeight),o.line,body);
    Effects(new Rect(r.x+54,r.y+13+lineHeight,inner-70,r.height-lineHeight-19),o.effect);GUI.enabled=enabled;row+=heights[i]+gap;
   }

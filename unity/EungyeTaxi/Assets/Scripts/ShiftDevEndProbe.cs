@@ -622,7 +622,7 @@ public sealed class ShiftDevEndProbe : MonoBehaviour {
    Check(map.ShowFacilityPlanner(Refreshment.Snack),"open snack and coffee planner");
    var option=services.FacilityOptions(Refreshment.Snack).Single(o=>o.Kind==item.Kind);
    Check(option.Reachable&&map.GuidePlannerFacility(option)&&services.destination.Contains(item.Shop),"guide to shop "+item.Shop);
-   Pose(stop.Kerb,-stop.Direction);Check(services.LocalRefreshment()==null,"shop rejects wrong heading");
+   Pose(stop.Kerb,-stop.Direction);Check(services.LocalRefreshment()!=null,"shop serves in its pocket whatever the heading (round 7)");
    Pose(stop.Kerb,stop.Direction);
    s.jobs.cooldown[shop.StopIndex]=Time.time+60;
    Check(s.jobs.Interact()&&services.open&&services.LocalActions.SequenceEqual(new[]{item.Kind}),"F opens only the local shop product");

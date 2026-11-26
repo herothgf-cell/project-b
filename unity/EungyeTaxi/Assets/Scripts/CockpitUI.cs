@@ -28,7 +28,8 @@ public static class CockpitUI {
   var cabin=business.Cabin;var rect=CabinBounds(w,h,firstPerson);
   CasualUI.Panel(rect);
   float left=rect.width*.37f,right=rect.width-left-20;
-  KeyHints.LabelWithCap(new Rect(rect.x+10,rect.y+6,left-10,24),"미터기","J",DrivingHudArt.Text(13,CasualUI.Ink,true));
+  // Play feedback round 7: J only works with the manual meter, so the cap shows only then.
+  if(business.CabinAutomatic)Label(new Rect(rect.x+10,rect.y+6,left-10,24),"미터기",13,CasualUI.Ink,true);else KeyHints.LabelWithCap(new Rect(rect.x+10,rect.y+6,left-10,24),"미터기","J",DrivingHudArt.Text(13,CasualUI.Ink,true));
   int fare=cabin.MeterOn&&session.jobs.Active&&session.jobs.current!=null?session.jobs.current.fare:0;
   Label(new Rect(rect.x+10,rect.y+30,left-10,27),fare.ToString("N0")+"원",20,CasualUI.Green,true);
   bool previous=GUI.enabled;GUI.enabled=previous&&!business.CabinAutomatic;

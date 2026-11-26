@@ -134,6 +134,7 @@ public partial class FullMapOverlay : MonoBehaviour {
    }
   }
   SpeedCameraMap.Draw(cameraGroups,map,CameraIcon);
+  {Vector3 sp;string sl;bool sn;if(AppointmentChip.StudentPin(session,out sp,out sl,out sn)){var p=Project(sp,map);if(map.Contains(p))AppointmentChip.DrawPin(p,sl,sn,30,true,AppointmentChip.StudentPortrait(session));}}
   if(selectedPlace!=null){var p=Project(selectedPlace.position,map);Dot(p,Color.magenta,10);}
 
   foreach(var marker in VisibleMarkers()){if(marker.named&&marker.label!="정체·정차"&&marker.label!="일시 점유")continue;

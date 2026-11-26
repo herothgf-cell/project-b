@@ -190,7 +190,7 @@ public static class RefreshmentStorefronts {
   label.transform.position=p.P(0,4.3f,.6f);
   var text=label.AddComponent<TextMesh>();text.text=caption;
   text.fontSize=44;text.characterSize=.052f;text.anchor=TextAnchor.MiddleCenter;text.color=Color.white;
-  KoreanText.Apply(text);label.AddComponent<FaceCamera>().hideBeyond=45;
+  KoreanText.Apply(text);WorldKeyCap.Apply(text);label.AddComponent<FaceCamera>().hideBeyond=45;
  }
  static void PathSegment(Transform parent,Vector3 a,Vector3 b,Material material){
   a.y=b.y=parent.position.y;float length=Vector3.Distance(a,b);if(length<.2f)return;

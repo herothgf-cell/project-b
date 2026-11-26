@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "de3ac01ca0e3d2f387822c68e53993c1dac4c41074c65c744883de9127d30107",
+  "contentHash": "54f39abc04f23b15fd41048876f345720b4507cd84630abcb366c6a572d79784",
   "values": [
     {
       "id": "radio.station",
@@ -2658,11 +2658,11 @@
     },
     {
       "id": "surprise.perShiftMax",
-      "value": "5"
+      "value": "8"
     },
     {
       "id": "surprise.perKindMax",
-      "value": "2"
+      "value": "3"
     },
     {
       "id": "surprise.firstDay",
@@ -2670,7 +2670,7 @@
     },
     {
       "id": "surprise.minGapSeconds",
-      "value": "120"
+      "value": "60"
     },
     {
       "id": "surprise.door.enabled",
@@ -2702,11 +2702,11 @@
     },
     {
       "id": "surprise.scooter.triggerMetres",
-      "value": "22"
+      "value": "12"
     },
     {
       "id": "surprise.scooter.speedMetres",
-      "value": "4"
+      "value": "5.5"
     },
     {
       "id": "surprise.scooter.reliefPercent",
@@ -2714,7 +2714,7 @@
     },
     {
       "id": "surprise.ambulance.enabled",
-      "value": "1"
+      "value": "0"
     },
     {
       "id": "surprise.ambulance.sirenSeconds",

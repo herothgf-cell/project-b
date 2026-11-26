@@ -16,8 +16,8 @@ public static class FuelStationLayout {
   public string ServiceLabel {get{return SupportsWash?"주유+세차":"주유 전용";}}
   internal FuelStation(string label,string key,MapStop stop,Vector3 entry,Vector3 leave,Vector3 bay,Vector3 heading,Vector3[] path,Vector3[] boundary,MapRoad[] paving,bool supportsWash=true,bool supportsRepair=true){name=label;id=key;approach=stop;entrance=entry;exit=leave;pump=bay;direction=heading;drivePath=path;plot=boundary;surfaces=paving;SupportsWash=supportsWash;SupportsRepair=supportsRepair;}
   public bool CanRefuel(Vector3 position,Vector3 heading,float speed){
-   var delta=position-pump;delta.y=0;heading.y=0;
-   return Mathf.Abs(position.y-pump.y)<1.5f&&speed<.56f&&heading.sqrMagnitude>.1f&&Vector3.Dot(heading.normalized,direction)>.9f&&delta.sqrMagnitude<=2.8f*2.8f&&Mathf.Abs(Vector3.Dot(delta,TrafficSystem.Right(direction)))<1.15f;
+   // Round 7: anywhere on the station plot (or near the pump) once stopped.
+   return speed<FacilityZone.Stopped&&FacilityZone.Level(pump,position)&&(FacilityZone.InOutline(plot,position)||FacilityZone.Near(pump,position,4));
   }
  }
  sealed class Layout {public readonly IReadOnlyList<FuelStation> stations;public readonly FuelStation rest;public Layout(List<FuelStation> entries,FuelStation restArea=null){stations=entries.AsReadOnly();rest=restArea;}}
@@ -139,7 +139,7 @@ public static class FuelStationLayout {
    Arrow(station.pump-station.direction*2,station.direction,root.transform,yellow);
   }
  }
- static void Label(Transform parent,string name,string words,Vector3 position,float size){var obj=new GameObject(name);obj.transform.SetParent(parent,false);obj.transform.localPosition=position;var text=obj.AddComponent<TextMesh>();text.text=words;text.fontSize=42;text.characterSize=size;text.anchor=TextAnchor.MiddleCenter;text.alignment=TextAlignment.Center;text.color=Color.white;KoreanText.Apply(text);obj.AddComponent<FaceCamera>();}
+ static void Label(Transform parent,string name,string words,Vector3 position,float size){var obj=new GameObject(name);obj.transform.SetParent(parent,false);obj.transform.localPosition=position;var text=obj.AddComponent<TextMesh>();text.text=words;text.fontSize=42;text.characterSize=size;text.anchor=TextAnchor.MiddleCenter;text.alignment=TextAlignment.Center;text.color=Color.white;KoreanText.Apply(text);WorldKeyCap.Apply(text);obj.AddComponent<FaceCamera>();}
  static void Arrow(Vector3 point,Vector3 direction,Transform parent,Material paint){
   point.y=.068f;var obj=new GameObject("주유소 진행 화살표");obj.transform.SetParent(parent,false);obj.transform.position=point;obj.transform.rotation=Quaternion.LookRotation(direction);
   WorldBuilder.Box("화살표 몸통",Vector3.zero,new Vector3(.18f,.016f,1.5f),paint,obj.transform,false);

@@ -11,11 +11,11 @@ using UnityEngine;
 public static partial class SurpriseRules {
  static float F2(string id,double fallback){return (float)ContentTuning.Number(id,fallback);}
  public static bool ScooterEnabled {get{return ContentTuning.Int("surprise.scooter.enabled",1)!=0;}}
- public static float ScooterTriggerMetres {get{return Mathf.Clamp(F2("surprise.scooter.triggerMetres",22),8,60);}}
- public static float ScooterSpeed {get{return Mathf.Clamp(F2("surprise.scooter.speedMetres",4),1.5f,8);}}
+ public static float ScooterTriggerMetres {get{return Mathf.Clamp(F2("surprise.scooter.triggerMetres",12),8,60);}}
+ public static float ScooterSpeed {get{return Mathf.Clamp(F2("surprise.scooter.speedMetres",5.5),1.5f,8);}}
  public const float ScooterTellSeconds=1f;
  public static int ReliefPercent {get{return Mathf.Clamp(ContentTuning.Int("surprise.scooter.reliefPercent",50),0,100);}}
- public static bool AmbulanceEnabled {get{return ContentTuning.Int("surprise.ambulance.enabled",1)!=0;}}
+ public static bool AmbulanceEnabled {get{return ContentTuning.Int("surprise.ambulance.enabled",0)!=0;}}
  public static float SirenSeconds {get{return Mathf.Clamp(F2("surprise.ambulance.sirenSeconds",5),2,15);}}
  public static float AmbulanceSpeed {get{return Mathf.Clamp(F2("surprise.ambulance.speedMetres",12),5,25);}}
  public static int YieldScorePenalty {get{return Mathf.Clamp(ContentTuning.Int("surprise.ambulance.scorePenalty",5),0,50);}}
@@ -89,10 +89,12 @@ public sealed partial class RoadSurprises {
   float along=Vector3.Dot(rel,heading),speed=session.taxi.Speed;
   SampleBraking();
   if(e.startAt<0){
-   float tell=SurpriseRules.ScooterTriggerMetres+speed*SurpriseRules.ScooterTellSeconds;
+   // Play feedback round 7: the rider rolls out about 0.9 s of travel plus 12 m ahead (was 22 m), at 5.5 m/s, so a
+   // driver who keeps the speed really can meet it in the lane; the bell and the rider still show 0.7 s earlier.
+   float rollAt=SurpriseRules.ScooterTriggerMetres+speed*.9f,tell=rollAt+speed*.7f;
    // Visible (and ringing) 1 s of travel before it rolls out.
    if(!e.rider.activeSelf&&along>0&&along<=tell+2){e.rider.SetActive(true);e.bell.Play();}
-   if(e.rider.activeSelf&&along>0&&along<=SurpriseRules.ScooterTriggerMetres+2){e.startAt=Time.time;e.rider.AddComponent<FaultActor>().Begin();if(!e.counted){e.counted=true;Count(SurpriseRules.Scooter);}Debug.Log("ROAD_SURPRISE scooter rolls out along="+along.ToString("0.0")+" kmh="+(speed*3.6f).ToString("0"));}
+   if(e.rider.activeSelf&&along>0&&along<=rollAt){e.startAt=Time.time;e.rider.AddComponent<FaultActor>().Begin();if(!e.counted){e.counted=true;Count(SurpriseRules.Scooter);}Debug.Log("ROAD_SURPRISE scooter rolls out along="+along.ToString("0.0")+" kmh="+(speed*3.6f).ToString("0"));}
    if(Time.time-e.spawned>40||along<-5||along>140){Missed++;LastOutcome="지나치지 않음";EndScooter();nextTry=Time.time+20;}
    return;
   }

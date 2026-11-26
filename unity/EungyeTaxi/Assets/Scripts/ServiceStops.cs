@@ -56,9 +56,8 @@ public partial class ServiceStops : MonoBehaviour {
   if(!HasHomeBase)return AtParking()||AtRestArea();
   var map=session.world.map;var bay=ParkingStop;var taxi=session.taxi;
   var position=taxi.transform.position;var offset=position-bay.Kerb;
-  return HomeGarage.Contains(map,position)&&Mathf.Abs(offset.y)<1.5f&&taxi.body.velocity.magnitude<.56f
-   &&Mathf.Abs(Vector3.Dot(taxi.transform.forward,bay.Direction))>.9f
-   &&Mathf.Abs(Vector3.Dot(offset,bay.Direction))<2.7f&&Mathf.Abs(Vector3.Dot(offset,TrafficSystem.Right(bay.Direction)))<1.15f;
+  // Round 7: anywhere inside the home garage once stopped.
+  return HomeGarage.Contains(map,position)&&Mathf.Abs(offset.y)<1.5f&&taxi.body.velocity.magnitude<FacilityZone.Stopped;
  }
  public bool AtFuelPump(){return Stations.Count>0?FuelAtPump>=0:session.world.map.mapId!="eungye"&&session.jobs.At(indices[0]);}
  public IReadOnlyList<WorkshopLayout.Site> Workshops {get{return WorkshopLayout.For(session.world.map);}}

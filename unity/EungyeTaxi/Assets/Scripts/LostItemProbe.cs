@@ -63,10 +63,17 @@ public sealed class LostItemProbe : MonoBehaviour {
   // 2) Handed in at the police box.
   lost.Begin("probe-police",r.dropStopId,0);lost.Choose(2);tips=Tips;
   try{Check(lost.State==LostItems.ToPolice,"on the way to "+LostItemRules.Police.name);}catch(Exception e){error=e.ToString();}
+  // Round 7: a cleared route (as after an accident) comes back while the errand is still on.
+  j.nav.Clear();{float until=Time.realtimeSinceStartup+5;while(!j.nav.HasDestination&&Time.realtimeSinceStartup<until)yield return null;}
+  try{Check(lost.Reguided>=1&&j.nav.HasDestination&&lost.State==LostItems.ToPolice,"a cleared route to the police box is guided again ("+lost.Reguided+")");}catch(Exception e){error=e.ToString();}
   if(error!=null){Finish(error);yield break;}
   {var road=lost.PoliceRoad;Info("police road point "+road.ToString("F0")+" ("+Vector3.Distance(new Vector3(road.x,0,road.z),lost.PolicePoint).ToString("0")+" m from the building)");float at;int edge=j.nav.hd.Nearest(road,Vector3.zero,out at);var dir=edge>=0?j.nav.hd.paths[edge].Tangent(at):Vector3.forward;PoseAt(road,dir);}
   yield return new WaitForSeconds(.5f);
-  try{Check(lost.Handed==1&&Tips==tips+LostItemRules.PoliceReward,"stopping at the police box hands it in: +"+LostItemRules.PoliceReward);}catch(Exception e){error=e.ToString();}
+  // Round 7: stopping alone does nothing; the driver opens the desk (F) and chooses to hand it in.
+  try{Check(lost.Handed==0&&lost.AtPolice&&lost.HasItem,"stopped at the police box, nothing happens by itself");lost.OpenPoliceMenu();Check(lost.PoliceMenuOpen,"F opens the police desk menu");Check(GameObject.Find("파출소 꾸밈 · "+LostItemRules.Police.name)&&GameObject.Find("경광등"),"the police box is dressed (name board, light bar, walk, stop box)");}catch(Exception e){error=e.ToString();}
+  if(error!=null){Finish(error);yield break;}
+  yield return new WaitForSeconds(.3f);if(output!=null)ScreenCapture.CaptureScreenshot(System.IO.Path.Combine(output,"police-desk.png"));yield return null;yield return null;
+  try{Check(lost.HandIn(),"choosing 맡기기 hands it in");Check(lost.Handed==1&&Tips==tips+LostItemRules.PoliceReward,"handed in at the police box: +"+LostItemRules.PoliceReward);}catch(Exception e){error=e.ToString();}
   if(error!=null){Finish(error);yield break;}
   // 3) Left: the next passenger minds it.
   lost.Begin("probe-leave",r.dropStopId,1);lost.Choose(3);

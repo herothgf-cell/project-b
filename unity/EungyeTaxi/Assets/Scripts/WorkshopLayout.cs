@@ -8,7 +8,8 @@ using UnityEngine;
 public static class WorkshopLayout {
  public sealed class Site {
   public string id,name;public MapStop approach;public Vector3 repair,waiting,direction,building;public Vector3[] tow,entry,departure,waitingEntry,waitingToRepair;public MapRoad[] surfaces;
-  public bool CanRepair(Vector3 position,Vector3 heading,float speed){var d=position-repair;return speed<.56f&&Mathf.Abs(d.y)<1.5f&&Vector3.Dot(heading.normalized,direction)>.9f&&Mathf.Abs(Vector3.Dot(d,direction))<2.8f&&Mathf.Abs(Vector3.Dot(d,TrafficSystem.Right(direction)))<1.15f;}
+  // Round 7: anywhere on the workshop grounds (its paving, or near the repair or waiting bay) once stopped.
+  public bool CanRepair(Vector3 position,Vector3 heading,float speed){return speed<FacilityZone.Stopped&&FacilityZone.Level(repair,position)&&(FacilityZone.OnPaving(surfaces,position)||FacilityZone.Near(repair,position,6)||FacilityZone.Near(waiting,position,6));}
  }
  sealed class Layout {public readonly List<Site> sites=new List<Site>();}
  static readonly ConditionalWeakTable<MapData,Layout> cache=new ConditionalWeakTable<MapData,Layout>();
