@@ -178,7 +178,8 @@ public class DrivingReadability : MonoBehaviour {
   float seconds=session.traffic.SecondsToSignalChange(SignalTarget,SignalAxis,SignalSign);
   return seconds>=0&&!float.IsNaN(seconds)&&!float.IsInfinity(seconds)?"신호 변경까지 "+Mathf.CeilToInt(seconds)+"초":"";
  }}
- public NextSignalPreview NextSignalPreview {get{return !session||!session.traffic||SignalTarget==null?global::NextSignalPreview.Unknown:session.traffic.PreviewNextSignal(SignalTarget,SignalAxis,SignalSign);}}
+ // 2026-11-26: the countdown follows the light of the lane the driver is in (straight unless the head is a turn head).
+ public NextSignalPreview NextSignalPreview {get{return !session||!session.traffic||SignalTarget==null?global::NextSignalPreview.Unknown:session.traffic.PreviewLight(SignalTarget,SignalAxis,SignalSign,SignalHead.turn<0?-1:SignalHead.turn>0?1:0);}}
  public SignalHeadPresentation.Head SignalHead {get{return SignalHeadPresentation.Resolve(session.world.map,SignalTarget,SignalAxis,SignalSign);}}
  void DrawCompactSignal(float x,float y,bool blue){
   if(SignalTarget==null)return;var next=NextSignalPreview;var head=SignalHead;Color ink=blue?Color.white:CasualUI.Ink;

@@ -15,10 +15,10 @@ public sealed class DemandSignalClock {
   if(counts==null||counts.Length!=demand.Length||seconds<0||float.IsNaN(seconds)||float.IsInfinity(seconds))throw new ArgumentException("Invalid signal demand");
   for(int i=0;i<demand.Length;i++)demand[i]=Math.Max(0,Math.Min(100,counts[i]));
   var current=program.stages[Stage];bool pedestrian=Pedestrian(Stage);
+  // Play feedback 2026-11-26 (user pick A): a green's length is fixed when its stage starts (Duration, from the queue
+  // then) and is never stretched or cut short midway, so the countdown only ever runs down. With nobody waiting
+  // elsewhere the green still rests at its end until someone arrives.
   if(Elapsed<GreenSeconds&&!pedestrian){
-   if(demand[Stage]>=3)GreenSeconds=Math.Max(GreenSeconds,current.green+4);
-   if(demand[Stage]==0&&OtherDemand())GreenSeconds=Math.Max(Minimum(Stage),Math.Min(GreenSeconds,Elapsed));
-   if(Elapsed+seconds>=GreenSeconds&&demand[Stage]>0)GreenSeconds=Math.Min(current.green+4,Math.Max(GreenSeconds,Elapsed+2));
    if(Elapsed+seconds>=GreenSeconds&&!OtherDemand()){Elapsed=Math.Max(0,GreenSeconds-.001f);return;}
   }
   Elapsed+=seconds;

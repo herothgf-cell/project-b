@@ -9,6 +9,8 @@ public partial class TrafficSystem {
  public bool ReplicaSignalRuntime {get{return replicaSignalClock;}}
  bool Adaptive(TrafficJunction j){return j!=null&&j.gameProgram!=null&&j.editorProgram==null&&!j.scenarioSignal&&(!manualClock||replicaSignalClock);}
  DemandSignalClock DemandClock(TrafficJunction j){DemandSignalClock value;if(!demandClocks.TryGetValue(j,out value)){value=new DemandSignalClock(j.gameProgram);demandClocks[j]=value;signalDemand[j]=new int[j.gameProgram.stages.Length];}return value;}
+ // Read-only snapshot for probes (2026-11-26 signal countdown check).
+ public DemandSignalState DemandState(TrafficJunction j){return Adaptive(j)?DemandClock(j).Capture(j.name):null;}
  float GameSignalTime(TrafficJunction j){return Adaptive(j)?DemandClock(j).ProgramTime:Clock+j.offset;}
  public float EstimatedGreenWait(TrafficJunction j,int axis,int sign,int turn){
   if(j==null||turn>0||turn==UturnMovement.Turn||j.scenarioSignal)return -1;
