@@ -47,3 +47,9 @@ config/maps/project/*.lock
 
 # Local Blender backup of the versioned taxi source.
 /art-source/taxi/*.blend1
+
+# Fab/Megascans trial downloads: Fab Standard License forbids sharing the source
+# content in a public repository. Only the README and our own render are tracked.
+/art-source/megascans-trial/*
+!/art-source/megascans-trial/README.md
+!/art-source/megascans-trial/trial-render.png
