@@ -44,7 +44,9 @@ Fab의 Quixel Megascans 무료 3D 모델 중 도로 소품 5개를 시험용으�
 
 공통: Low 품질도 1천 면 안팎이라 소품으로 가볍다. 단색 하나로는 반사띠·표지 같은 정보가 사라지므로, 쓰려면 Blender에서 영역별 재질을 나누는 작업이 필요하다. Unity 기본 렌더 파이프라인에 넣을 때는 Specular setup에 Gloss를 쓰거나, Roughness를 뒤집어 Smoothness로 바꿔야 한다. Unity 시험은 상가 셔터만 했다(아래).
 
-## Unity 시험: 상가 셔터 (2026-11-27)
+## Unity 시험: 상가 셔터 (2026-11-27, 2026-11-28 취소)
+
+> 2026-11-28 사용자 결정으로 셔터 적용은 취소했다. `MegascansShutterTrial.cs`·`ShopShutterTrial.cs`와 로컬 `Assets/ArtTrial/` 사본을 지웠다. 아래 기록과 비교 이미지는 경과로만 남긴다. 다음 후보는 [적용 후보 문서](../../docs/proposals/2026-11-28-fab-megascans-application-candidates.md)에 있다.
 
 셔터를 Unity 2022.3 기본 렌더 파이프라인에 넣고, 게임 건물 색(0.70, 0.67, 0.60)의 상자 건물 두 채 1층에 5개씩 붙여 찍었다. 왼쪽 건물은 스캔 텍스처, 오른쪽 건물은 단색이다.
 

@@ -42,11 +42,13 @@ public static class DailyRoadConstruction {
   int index=EdgeIndex(map);
   if(index<0)return false;
   var lane=map.hdEdges[index];
-  if(lane.ClosedForConstruction==closed)return true;
-  lane.ClosedForConstruction=closed;
-  if(session.jobs&&session.jobs.nav)session.jobs.nav.LaneAvailabilityChanged(index,closed);
-  var district=session.traffic?session.traffic.GetComponent<DistrictTraffic>():null;
-  if(district)district.LaneAvailabilityChanged(index,closed);
+  if(lane.ClosedForConstruction!=closed){
+   lane.ClosedForConstruction=closed;
+   if(session.jobs&&session.jobs.nav)session.jobs.nav.LaneAvailabilityChanged(index,closed);
+   var district=session.traffic?session.traffic.GetComponent<DistrictTraffic>():null;
+   if(district)district.LaneAvailabilityChanged(index,closed);
+  }
+  ConstructionZoneProps.Sync(session,closed);
   return true;
  }
 }
