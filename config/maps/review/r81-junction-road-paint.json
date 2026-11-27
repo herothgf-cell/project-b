@@ -1,0 +1,266 @@
+{
+ "fromRevision": 80,
+ "toRevision": 81,
+ "lanes": [],
+ "objects": [
+  {
+   "id": "road:review:r80:J3754-J3395",
+   "width": 10.5,
+   "points": [
+    {
+     "x": 372.5,
+     "z": 1098.0
+    },
+    {
+     "x": 371.8824,
+     "z": 1102.441
+    },
+    {
+     "x": 371.5579,
+     "z": 1103.8961
+    },
+    {
+     "x": 370.9249,
+     "z": 1106.8098
+    },
+    {
+     "x": 370.219,
+     "z": 1109.7098
+    },
+    {
+     "x": 369.4609,
+     "z": 1112.6011
+    },
+    {
+     "x": 368.7462,
+     "z": 1115.5036
+    },
+    {
+     "x": 368.1303,
+     "z": 1118.4278
+    },
+    {
+     "x": 367.5921,
+     "z": 1121.3679
+    },
+    {
+     "x": 367.1098,
+     "z": 1124.3182
+    },
+    {
+     "x": 366.681,
+     "z": 1127.2783
+    },
+    {
+     "x": 366.2462,
+     "z": 1130.2361
+    },
+    {
+     "x": 365.6912,
+     "z": 1133.1647
+    },
+    {
+     "x": 365.0004,
+     "z": 1136.0599
+    },
+    {
+     "x": 364.1456,
+     "z": 1138.9109
+    },
+    {
+     "x": 363.1236,
+     "z": 1141.7161
+    },
+    {
+     "x": 362.0254,
+     "z": 1144.4975
+    },
+    {
+     "x": 360.8897,
+     "z": 1147.2646
+    },
+    {
+     "x": 359.7445,
+     "z": 1150.0282
+    },
+    {
+     "x": 358.6047,
+     "z": 1152.7937
+    },
+    {
+     "x": 357.4056,
+     "z": 1155.5295
+    },
+    {
+     "x": 356.1241,
+     "z": 1158.2244
+    },
+    {
+     "x": 354.7879,
+     "z": 1160.8928
+    },
+    {
+     "x": 353.425,
+     "z": 1163.5498
+    },
+    {
+     "x": 352.088,
+     "z": 1166.2204
+    },
+    {
+     "x": 350.8528,
+     "z": 1168.9397
+    },
+    {
+     "x": 349.7073,
+     "z": 1171.7013
+    },
+    {
+     "x": 348.6047,
+     "z": 1174.4811
+    },
+    {
+     "x": 347.59,
+     "z": 1177.292
+    },
+    {
+     "x": 346.659,
+     "z": 1180.1297
+    },
+    {
+     "x": 345.8058,
+     "z": 1182.9919
+    },
+    {
+     "x": 345.0098,
+     "z": 1185.872
+    },
+    {
+     "x": 344.1908,
+     "z": 1188.7451
+    },
+    {
+     "x": 343.2968,
+     "z": 1191.5948
+    },
+    {
+     "x": 342.3373,
+     "z": 1194.4246
+    },
+    {
+     "x": 341.6614,
+     "z": 1196.3
+    },
+    {
+     "x": 341.1442,
+     "z": 1197.7033
+    },
+    {
+     "x": 340.0,
+     "z": 1201.0
+    }
+   ]
+  }
+ ],
+ "addObjects": [],
+ "facilities": [],
+ "disableLanes": [],
+ "addLanes": [],
+ "nexts": [],
+ "addFacilities": [],
+ "removeFacilities": [],
+ "disableObjects": [],
+ "splits": [],
+ "attrs": [
+  {
+   "id": "review:r80:nb:north",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "J3395_12007"
+  },
+  {
+   "id": "review:r80:nb:through",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "review:r80:J3575_11455"
+  },
+  {
+   "id": "review:r80:nb:south",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "review:r80:J3575_11455"
+  },
+  {
+   "id": "review:r80:sb:south",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "J3754_11003"
+  },
+  {
+   "id": "review:r80:sb:through",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "review:r80:J3575_11455"
+  },
+  {
+   "id": "review:r80:sb:north",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "review:r80:J3575_11455"
+  },
+  {
+   "id": "review:r80:turn:nb-east",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "review:r80:J3575_11455"
+  },
+  {
+   "id": "review:r80:turn:nb-west",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "review:r80:J3575_11455"
+  },
+  {
+   "id": "review:r80:turn:sb-west",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "review:r80:J3575_11455"
+  },
+  {
+   "id": "review:r80:turn:sb-east",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "review:r80:J3575_11455"
+  },
+  {
+   "id": "review:r80:turn:eb-north",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "review:r80:J3575_11455"
+  },
+  {
+   "id": "review:r80:turn:eb-south",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "review:r80:J3575_11455"
+  },
+  {
+   "id": "review:r80:turn:wb-south",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "review:r80:J3575_11455"
+  },
+  {
+   "id": "review:r80:turn:wb-north",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "review:r80:J3575_11455"
+  },
+  {
+   "id": "review:r80:turn:south-in",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "J3754_11003"
+  },
+  {
+   "id": "review:r80:turn:south-out",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "J3754_11003"
+  },
+  {
+   "id": "review:r80:turn:north-in",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "J3395_12007"
+  },
+  {
+   "id": "review:r80:turn:north-out",
+   "sourceId": "review:r80:J3754-J3395",
+   "ruleId": "J3395_12007"
+  }
+ ]
+}

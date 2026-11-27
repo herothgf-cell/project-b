@@ -39,11 +39,15 @@ public static class RoadMapValidator {
   issues.AddRange(SignalHeadPresentation.ValidateAssignments(baseline,d));
   issues.AddRange(ReviewedNativeLanePresentation.ValidateAssignments(baseline,d));
   var ids=new HashSet<string>(lanes.Keys);foreach(var f in d.facilities){if(f==null||string.IsNullOrWhiteSpace(f.id)||!ids.Add(f.id)){add("시설","없는/중복 ID",true,Vector3.zero);continue;}var p=f.Position;if(!new[]{"sign","stopLine","crosswalk","line","centreLine","vehicleSignal","pedestrianSignal","signalHead","lanePresentation","junctionControl",ReviewedMidblockControl.Kind}.Contains(f.kind)||f.x<0||f.z<0||f.x>baseline.width||f.z>baseline.depth)add(f.id,"미지원 시설 종류 또는 지도 밖 위치",true,p);
-   if(f.kind==ReviewedMidblockControl.Kind&&(f.type!=ReviewedMidblockControl.Type||string.IsNullOrEmpty(f.junctionId)||
+   bool reviewedJunction=f.kind==ReviewedMidblockControl.Kind&&f.type==ReviewedMidblockControl.JunctionType;
+   if(reviewedJunction&&(string.IsNullOrEmpty(f.junctionId)||f.evidence==null||!f.evidence.appearanceConfirmed||f.axis<0||f.axis>15||
+      (f.text=="신호"&&!d.signals.Any(s=>s!=null&&s.junctionId==f.junctionId))))
+    add(f.id,"검토 교차로의 규칙 ID·현장 근거(신호면 신호 프로그램)·진입 방향(0~15)을 확인하세요",true,p);
+   if(f.kind==ReviewedMidblockControl.Kind&&!reviewedJunction&&(f.type!=ReviewedMidblockControl.Type||string.IsNullOrEmpty(f.junctionId)||
       f.evidence==null||!f.evidence.appearanceConfirmed||!f.evidence.ruleConfirmed||!d.signals.Any(s=>s!=null&&s.junctionId==f.junctionId)))
     add(f.id,"도로 중간 신호 교차로의 현장 근거와 신호 프로그램을 연결하세요",true,p);
    if(!Finite(f.x)||!Finite(f.z)||!Finite(f.height)||!Finite(f.width)||!Finite(f.length)||!Finite(f.scale)||!Finite(f.yaw)||f.width<=0||f.width>40||f.length<=0||f.length>40||f.scale<.1f||f.scale>5||f.height<0||f.height>12)add(f.id,"위치/폭/길이/높이/크기 범위를 확인하세요",true,p);
-   if(f.axis<0||f.axis>1||Math.Abs(f.sign)!=1)add(f.id,"축0/1 · 방향±1 필요",true,p);
+   if((!reviewedJunction&&(f.axis<0||f.axis>1))||Math.Abs(f.sign)!=1)add(f.id,"축0/1 · 방향±1 필요",true,p);
    if(!string.IsNullOrEmpty(f.laneId)&&(!lanes.ContainsKey(f.laneId)||lanes[f.laneId].disabled))add(f.id,"없는 차로 · 대상을 다시 지정하세요",true,p);
    if(f.kind=="vehicleSignal"||f.kind=="pedestrianSignal"){var program=d.signals.FirstOrDefault(s=>s.junctionId==f.junctionId);var group=program==null?null:program.groups.FirstOrDefault(g=>g.id==f.groupId);if(group==null||group.pedestrian!=(f.kind=="pedestrianSignal"))add(f.id,"신호 그룹/종류를 연결하세요",true,p);if(f.kind=="vehicleSignal"&&!d.facilities.Any(x=>x.id==f.targetId&&x.kind=="stopLine"))add(f.id,"제어 정지선을 연결하세요",true,p);if(f.kind=="pedestrianSignal"&&!d.facilities.Any(x=>x.id==f.targetId&&x.kind=="crosswalk"))add(f.id,"제어 횡단보도를 연결하세요",true,p);}
    if(f.rule&&f.kind=="sign"){if(f.type!="진입 금지"&&f.type!="좌회전 금지"&&f.type!="우회전 금지"&&f.type!="제한속도"&&f.type!=RoadMapRules.PermissiveLeftSign&&!UturnMovement.IsCondition(f.type))add(f.id,"이 표지는 안내용만 지원 · 규칙 적용 해제",true,p);if(string.IsNullOrEmpty(f.laneId))add(f.id,"규칙 적용 차로를 지정하세요",true,p);}

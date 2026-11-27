@@ -14,7 +14,9 @@ public sealed class SignalCountdownProbe : MonoBehaviour {
   var j=t.junctions.Find(x=>x.name==id);if(j==null){Finish("junction "+id+" missing",report);yield break;}
   int axis=Mathf.Abs(Vector3.Dot(t.AxisDirection(j,0),Vector3.forward))>=Mathf.Abs(Vector3.Dot(t.AxisDirection(j,1),Vector3.forward))?0:1;int sign=t.Sign(Vector3.forward,axis,j);
   report.AppendLine("junction="+id+" axis="+axis+" sign="+sign+" adaptive="+(t.DemandState(j)!=null)+" stages="+(j.gameProgram!=null?j.gameProgram.stages.Length:0));
-  if(j.gameProgram!=null)for(int i=0;i<j.gameProgram.stages.Length;i++){var st=j.gameProgram.stages[i];report.AppendLine(" stage "+i+" green="+st.green+" yellow="+st.yellow+" clear="+st.clearance+" groups="+string.Join(",",st.groups));}
+  if(j.gameProgram!=null)for(int i=0;i<j.gameProgram.stages.Length;i++){var st=j.gameProgram.stages[i];report.AppendLine(" stage "+i+" green="+st.green+" yellow="+st.yellow+" clear="+st.clearance+" groups="+string.Join(",",st.groups));
+   // 2026-11-27: which movements each stage serves (a stage that no car's demand reaches never runs)
+   foreach(string gid in st.groups)foreach(var g in j.gameProgram.groups)if(g.id==gid)report.AppendLine("   group "+(g.pedestrian?"ped":"veh")+" axis="+g.axis+" sign="+g.sign+" turn="+g.turn+" lanes="+g.laneIds.Length);}
   // The stage serving this straight movement: a rise only counts while a car waits there (in play the taxi does).
   int own=-1;if(j.gameProgram!=null)for(int i=0;i<j.gameProgram.stages.Length&&own<0;i++)foreach(string gid in j.gameProgram.stages[i].groups)foreach(var g in j.gameProgram.groups)if(g.id==gid&&!g.pedestrian&&g.axis==axis&&g.sign==sign&&g.turn==0)own=i;
   report.AppendLine("own stage="+own);bool queued=false;

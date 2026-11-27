@@ -14,11 +14,13 @@ public static class MapReviewGeometryEdit {
  [Serializable] class FacilitySet {public string id,text;public float x,z,yaw,width,length,startAt,endAt;public bool range;}
  [Serializable] class LaneAdd {public string id,copyOf,sourceId,roadName,ruleId;public float width;public int number,turn,change;public MapPoint[] points;public string[] next,prev;}
  [Serializable] class LaneNext {public string id;public string[] next;}
- [Serializable] class FacilityAdd {public string id,copyOf,laneId,type;public float x,z,yaw,width,length;}
+ [Serializable] class LaneSplit {public string id,tailId;public float at;}
+ [Serializable] class LaneAttr {public string id,ruleId,sourceId;public int turn;public bool setTurn;}
+ [Serializable] class FacilityAdd {public string id,copyOf,laneId,type,junctionId,text;public int axis;public float x,z,yaw,width,length;public RoadMapEvidence evidence;}
  [Serializable] class Patch {public int fromRevision,toRevision;public LaneSet[] lanes;public ObjectSet[] objects;public ObjectAdd[] addObjects;public FacilitySet[] facilities;
   // lane-count edits (tools/map_lane_edit.py): retire lanes (DeleteLane also drops their facilities and signal
   // bindings), add lanes copied from an existing one, replace exits. Applied after the geometry sets above.
-  public string[] disableLanes,disableObjects;public LaneAdd[] addLanes;public LaneNext[] nexts;public FacilityAdd[] addFacilities;public string[] removeFacilities;}
+  public string[] disableLanes,disableObjects;public LaneSplit[] splits;public LaneAttr[] attrs;public LaneAdd[] addLanes;public LaneNext[] nexts;public FacilityAdd[] addFacilities;public string[] removeFacilities;}
  static float[] Heights(float[] old,int count){var h=new float[count];if(old==null||old.Length==0)return h;for(int i=0;i<count;i++){float t=count==1?0:(float)i/(count-1)*(old.Length-1);int a=Mathf.Min(old.Length-1,(int)t),b=Mathf.Min(old.Length-1,a+1);h[i]=Mathf.Lerp(old[a],old[b],t-a);}return h;}
  static void Require(bool pass,string message){if(!pass)throw new InvalidOperationException("map review geometry: "+message);}
  public static void ApplyFromCommandLine(){
@@ -62,7 +64,7 @@ public static class MapReviewGeometryEdit {
   ApplyLanes(d,plan);facilities=d.facilities.ToDictionary(f=>f.id);
   foreach(var a in plan.addFacilities??new FacilityAdd[0]){
    RoadMapFacility src;Require(facilities.TryGetValue(a.copyOf,out src),"missing source facility "+a.copyOf);Require(!facilities.ContainsKey(a.id),"duplicate facility "+a.id);
-   var f=JsonUtility.FromJson<RoadMapFacility>(JsonUtility.ToJson(src));f.id=a.id;f.x=a.x;f.z=a.z;f.yaw=a.yaw;f.width=a.width;f.length=a.length;if(!string.IsNullOrEmpty(a.type))f.type=a.type;if(!string.IsNullOrEmpty(a.laneId)){Require(d.lanes.Any(l=>l.id==a.laneId&&!l.disabled),"facility lane "+a.laneId);f.laneId=a.laneId;}
+   var f=JsonUtility.FromJson<RoadMapFacility>(JsonUtility.ToJson(src));f.id=a.id;f.x=a.x;f.z=a.z;f.yaw=a.yaw;f.width=a.width;f.length=a.length;if(!string.IsNullOrEmpty(a.type))f.type=a.type;if(!string.IsNullOrEmpty(a.junctionId)){f.junctionId=a.junctionId;f.axis=a.axis;f.text=a.text??"";if(a.evidence!=null&&!string.IsNullOrEmpty(a.evidence.state))f.evidence=a.evidence;}if(!string.IsNullOrEmpty(a.laneId)){Require(d.lanes.Any(l=>l.id==a.laneId&&!l.disabled),"facility lane "+a.laneId);f.laneId=a.laneId;}
    d.facilities=d.facilities.Append(f).ToArray();facilities.Add(f.id,f);
   }
   foreach(var id in plan.removeFacilities??new string[0]){Require(facilities.ContainsKey(id),"missing facility "+id);RoadMapAuthoringOperations.DeleteFacility(d,id);}
@@ -79,7 +81,30 @@ public static class MapReviewGeometryEdit {
   foreach(var id in l.next){var t=d.lanes.SingleOrDefault(x=>x.id==id&&!x.disabled);Require(t!=null,"lane "+l.id+" exit "+id);
    if(d.lanes.Any(x=>x!=l&&!x.disabled&&x.next.Contains(id)))l.toNode=t.fromNode;else t.fromNode=l.toNode;}
  }
+ // Split a lane at a distance (a point is inserted there when none is within 5 cm) and give the tail a fixed id
+ // (callers keep the editor segment form, editor:segment:<origin>:<suffix>, so the lineage stays readable).
+ static void Split(RoadMapDocument d,LaneSplit sp){
+  var l=d.lanes.SingleOrDefault(x=>x.id==sp.id&&!x.disabled);Require(l!=null,"missing lane to split "+sp.id);Require(!d.lanes.Any(x=>x.id==sp.tailId),"duplicate split id "+sp.tailId);
+  if(l.heights==null||l.heights.Length!=l.points.Length)l.heights=Heights(l.heights,l.points.Length);
+  float run=0;int index=-1;
+  for(int i=1;i<l.points.Length;i++){float seg=Vector3.Distance(l.points[i-1].V(),l.points[i].V());
+   if(Mathf.Abs(run-sp.at)<.05f&&i-1>0){index=i-1;break;}
+   if(run+seg>sp.at+.05f){float t=(sp.at-run)/seg;var pts=l.points.ToList();var h=l.heights.ToList();
+    pts.Insert(i,new MapPoint{x=Mathf.Lerp(l.points[i-1].x,l.points[i].x,t),z=Mathf.Lerp(l.points[i-1].z,l.points[i].z,t)});h.Insert(i,Mathf.Lerp(h[i-1],h[i],t));
+    l.points=pts.ToArray();l.heights=h.ToArray();index=i;break;}
+   run+=seg;}
+  Require(index>0&&index<l.points.Length-1,"split "+sp.id+" at "+sp.at+" is not inside the lane");
+  string tail=RoadMapAuthoringOperations.SplitLane(d,sp.id,index);Rename(d,tail,sp.tailId);
+ }
+ static void Rename(RoadMapDocument d,string from,string to){
+  foreach(var l in d.lanes){if(l.id==from)l.id=to;for(int i=0;i<l.next.Length;i++)if(l.next[i]==from)l.next[i]=to;}
+  foreach(var f in d.facilities)if(f.laneId==from)f.laneId=to;
+  foreach(var p in d.signals)foreach(var g in p.groups)g.laneIds=g.laneIds.Select(x=>x==from?to:x).ToArray();
+  if(d.scene!=null)foreach(var o in d.scene.objects)if(o.laneId==from)o.laneId=to;
+ }
  static void ApplyLanes(RoadMapDocument d,Patch plan){
+  foreach(var sp in plan.splits??new LaneSplit[0])Split(d,sp);
+  foreach(var a in plan.attrs??new LaneAttr[0]){var l=d.lanes.SingleOrDefault(x=>x.id==a.id&&!x.disabled);Require(l!=null,"missing lane "+a.id);if(a.ruleId!=null)l.ruleId=a.ruleId;if(!string.IsNullOrEmpty(a.sourceId))l.sourceId=a.sourceId;if(a.setTurn)l.turn=a.turn;}
   var had=d.lanes.Where(l=>!l.disabled&&l.next!=null&&l.next.Length>0).Select(l=>l.id).ToHashSet();
   foreach(var id in plan.disableLanes??new string[0]){Require(d.lanes.Any(l=>l.id==id&&!l.disabled),"missing active lane "+id);RoadMapAuthoringOperations.DeleteLane(d,id);}
   // re-paired exits first (an added lane may take over an exit they release)

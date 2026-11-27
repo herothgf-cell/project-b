@@ -67,6 +67,8 @@ class LanePatch:
 
     # current (deformed / edited / added) geometry
     def pts(self, lane_id):
+        if lane_id in getattr(self, 'virtual', {}):  # pieces of lanes this patch splits (the Unity side splits them)
+            return list(self.virtual[lane_id])
         if lane_id in self.new:
             return [(q['x'], q['z']) for q in self.new[lane_id]['points']]
         l = self.lanes.get(lane_id) or LANES[lane_id]
@@ -167,7 +169,7 @@ class LanePatch:
         return dict(fromRevision=self.from_rev, toRevision=self.to_rev, lanes=list(self.lanes.values()), objects=list(self.objects.values()),
                     addObjects=self.addObjects, facilities=list(self.facilities.values()), disableLanes=self.disabled, addLanes=self.added,
                     nexts=[dict(id=k, next=v) for k, v in self.nexts.items()], addFacilities=self.addFacilities, removeFacilities=self.removeFacilities,
-                    disableObjects=self.disableObjects)
+                    disableObjects=self.disableObjects, splits=getattr(self, 'splits', []), attrs=getattr(self, 'attrs', []))
 
     def write(self, out):
         r = self.result()

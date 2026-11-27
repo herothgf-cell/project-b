@@ -1,8 +1,10 @@
 # 최신 작업 이력
 
-**2026-11-26 · 은계 싱글 r79(배포 실행본 r77) · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
+**2026-11-27 · 은계 싱글 r81(배포 실행본 r77) · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
 
 ## 이어갈 작업
+
+**2026-11-27 지도 검토 17단계: 교차로 기능과 은행로 남북길(지도 r80·r81, 배포 전)**: [기록](2026-11-27-map-review-junction.md). 패치에 차로 자르기(고정 ID)·차로 속성·"검토 교차로" 규칙 표지를 더하고, J046-1·J047-1 남북 도로와 은행로149번길 새 교차로(네 방향 횡단보도·정지선, 양 끝 T자)를 넣었다. r81은 도색 출처·띠 모양 수정. 78곳·기둥 0·호출판 114(실패 0). **교통 검사 실패: J3516_12881에서 6대 멈춤(r79는 0), 원인 미확인 — 배포 전 처리 필요.** 처리 177/277.
 
 **2026-11-27 Megascans 도로 소품 시험(게임 미반입)**: [기록](2026-11-27-megascans-trial-props.md). Fab 무료 FBX Low 5종을 `art-source/megascans-trial/`에 받고 실사·단색 비교 렌더를 만들었다. 원본은 공개 저장소 공유 제한 때문에 Git 제외(다른 PC는 README 주소에서 다시 받기). 상가 셔터만 단색으로도 쓸 만하고, 라바콘·시선유도봉은 2색 분리 필요. Unity 반입 전 저장소 공개 범위 결정 필요.
 

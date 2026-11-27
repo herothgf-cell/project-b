@@ -77,7 +77,7 @@ class RoadPatch(E.LanePatch):
         along = lambda p: (p[0] - a[0]) * d[0] + (p[1] - a[1]) * d[1]
         cut = []
         for o in E.DOC['scene']['objects']:
-            if o['kind'] != 'sidewalk' or not o.get('enabled', True):
+            if o['kind'] != 'sidewalk' or not o.get('enabled', True) or o['id'] in self.disableObjects:
                 continue
             poly = [(q['x'], q['z']) for q in (self.objects.get(o['id']) or o)['points']]
             inside = poly
@@ -94,3 +94,88 @@ class RoadPatch(E.LanePatch):
             for k, p in enumerate(pieces[1:]):
                 self.addObjects.append(dict(id=f"{o['id']}:{tag}:{k}", copyOf=o['id'], width=o.get('width', 4), points=G._mp(p)))
         return cut
+
+
+# ---- junctions (2026-11-27): a new road crossing or meeting existing lanes ----
+import base64  # noqa: E402
+
+SEGMENT = 'editor:segment:'
+
+
+def origin(lane_id):
+    """RoadMapAuthoringOperations.Origin: the source lane an editor segment was cut from"""
+    if not lane_id.startswith(SEGMENT):
+        return lane_id
+    token = lane_id[len(SEGMENT):].split(':', 1)[0].replace('-', '+').replace('_', '/')
+    try:
+        return base64.b64decode(token + '=' * (-len(token) % 4)).decode('utf-8')
+    except Exception:
+        return lane_id
+
+
+def segment_id(lane_id, suffix):
+    token = base64.b64encode(origin(lane_id).encode('utf-8')).decode().rstrip('=').replace('+', '-').replace('/', '_')
+    return f'{SEGMENT}{token}:{suffix}'
+
+
+def station(pts, p):
+    """distance along a polyline to the point nearest p"""
+    best, run = None, 0.0
+    for a, b in zip(pts, pts[1:]):
+        dx, dz = b[0] - a[0], b[1] - a[1]; L2 = dx * dx + dz * dz; L = math.sqrt(L2)
+        t = 0.0 if L2 == 0 else max(0.0, min(1.0, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dz) / L2))
+        d = math.dist(p, (a[0] + dx * t, a[1] + dz * t))
+        if best is None or d < best[0]:
+            best = (d, run + L * t)
+        run += L
+    return best[1]
+
+
+def cut(pts, s0, s1):
+    """the part of a polyline between distances s0 and s1"""
+    out, run = [], 0.0
+    L = E.length(pts)
+    s0, s1 = max(0.0, s0), min(L, s1)
+    out.append(E.at(pts, s0)[0])
+    for a, b in zip(pts, pts[1:]):
+        run += math.dist(a, b)
+        if s0 + .05 < run < s1 - .05:
+            out.append(b)
+    out.append(E.at(pts, s1)[0])
+    return out
+
+
+class JunctionPatch(RoadPatch):
+    def split(self, lane_id, at, suffix):
+        """cut an existing lane at distance `at`: the head keeps the id, the tail gets a fixed editor-segment id"""
+        self.splits = getattr(self, 'splits', []); self.virtual = getattr(self, 'virtual', {})
+        pts = self.pts(lane_id); tail = segment_id(lane_id, suffix)
+        self.splits.append(dict(id=lane_id, at=round(at, 4), tailId=tail))
+        self.virtual[lane_id] = cut(pts, 0, at); self.virtual[tail] = cut(pts, at, E.length(pts))
+        return tail
+
+    def attr(self, lane_id, rule_id=None, turn=None):
+        self.attrs = getattr(self, 'attrs', [])
+        item = dict(id=lane_id)
+        if rule_id is not None:
+            item['ruleId'] = rule_id
+        if turn is not None:
+            item.update(turn=turn, setTurn=True)
+        self.attrs.append(item)
+
+    def cross_existing(self, lane_id, centre, half, tag, rule):
+        """split an existing lane into approach / through piece / exit around a junction centre; the through
+        piece joins the junction rule. Returns (approach, through, exit) ids."""
+        s = station(self.pts(lane_id), centre)
+        mid = self.split(lane_id, s - half, f'{tag}:through')
+        out = self.split(mid, half * 2, f'{tag}:exit')
+        self.attr(mid, rule_id=rule, turn=0)
+        return lane_id, mid, out
+
+    def turn(self, new_id, src, dst, copy_of, rule, turn, source=''):
+        sp, dp = self.pts(src), self.pts(dst)
+        pts = curve(sp[-1], unit(sp[-2], sp[-1]), dp[0], unit(dp[0], dp[1]), steps=16)
+        item = self.lane(new_id, pts, copy_of, source or E.LANES[origin(copy_of)]['sourceId'] if origin(copy_of) in E.LANES else source,
+                         width=3.0, prev=[src], next=[dst], turn=turn)
+        item['ruleId'] = rule
+        return item

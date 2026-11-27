@@ -519,9 +519,13 @@ public class BusinessProgress : MonoBehaviour {
   const string reviewedR78Hash="999f7be8a8557dc7897a0d5d8221abaf76cfe1104f92bf42ec67ab8c99c1b7aa";
   // r79 J2608 north-west branch joined to the road west of it (J044-1)
   const string reviewedR79Hash="4b8998e1c9c979f0e8dca84daee261224aa341d208abcc835fc838e6e6f15ac7";
-  int from=0,to=0;for(int revision=14;revision<=79;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>79)return;
-  string reviewedHash=to==79?reviewedR79Hash:to==78?reviewedR78Hash:to==77?reviewedR77Hash:to==76?reviewedR76Hash:to==75?reviewedR75Hash:to==74?reviewedR74Hash:to==73?reviewedR73Hash:to==72?reviewedR72Hash:to==71?reviewedR71Hash:to==70?reviewedR70Hash:to==69?reviewedR69Hash:to==68?reviewedR68Hash:to==67?reviewedR67Hash:to==66?reviewedR66Hash:to==65?reviewedR65Hash:to==64?reviewedR64Hash:to==63?reviewedR63Hash:to==62?reviewedR62Hash:to==61?reviewedR61Hash:to==60?reviewedR60Hash:to==59?reviewedR59Hash:to==58?reviewedR58Hash:to==57?reviewedR57Hash:to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
+  // r80 J046-1/J047-1 north-south road with a new junction across 은행로149번길
+  const string reviewedR80Hash="a682ca4dcab7d78f884c79d6207ba08f4f49e16da79c3e01812a7cde7f2a259a";
+  // r81 r80 road: centre-line paint (lane source = road id) and a smooth strip
+  const string reviewedR81Hash="1dff0a9fd9039ad29ec24d163e9b7778d808bf83e61f87ff062f9e3f1f61fc41";
+  int from=0,to=0;for(int revision=14;revision<=81;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>81)return;
+  string reviewedHash=to==81?reviewedR81Hash:to==80?reviewedR80Hash:to==79?reviewedR79Hash:to==78?reviewedR78Hash:to==77?reviewedR77Hash:to==76?reviewedR76Hash:to==75?reviewedR75Hash:to==74?reviewedR74Hash:to==73?reviewedR73Hash:to==72?reviewedR72Hash:to==71?reviewedR71Hash:to==70?reviewedR70Hash:to==69?reviewedR69Hash:to==68?reviewedR68Hash:to==67?reviewedR67Hash:to==66?reviewedR66Hash:to==65?reviewedR65Hash:to==64?reviewedR64Hash:to==63?reviewedR63Hash:to==62?reviewedR62Hash:to==61?reviewedR61Hash:to==60?reviewedR60Hash:to==59?reviewedR59Hash:to==58?reviewedR58Hash:to==57?reviewedR57Hash:to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   ApplyReviewedEungyeCheckpointMigration(live,from,to);
  }
