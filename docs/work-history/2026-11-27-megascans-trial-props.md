@@ -28,13 +28,33 @@
 - Blender 5.2 헤드리스 렌더 종료 정상, 크기 출력이 Fab 설명의 실제 크기와 일치(라바콘 0.36×0.36×0.69 m 등).
 - 렌더 판독: 상가 셔터는 단색에서도 형태로 읽힌다. 라바콘·시선유도봉은 흰 반사띠가 사라진다. 콘크리트 방호벽은 스캔 표면 요철이 드러나고 색이 누렇게 뜬다. 가드레일 키트는 한국 W형 가드레일이 아니다.
 
+## 추가: 상가 셔터 Unity 시험
+
+요구사항: 셔터를 Unity에 넣어 시험한다(사용자 요청, 바로 진행).
+
+구현:
+- 셔터 FBX·텍스처를 Git에서 제외되는 `unity/EungyeTaxi/Assets/ArtTrial/MegascansShutter/`에 복사했다(`.gitignore`에 `unity/**/Assets/ArtTrial/` 추가). Resources 밖이라 배포 빌드에 들어가지 않는다.
+- `Assets/Editor/MegascansShutterTrial.cs`(메뉴 Taxi → Art → Megascans Shutter Trial)를 추가했다. 저장하지 않는 빈 씬에 게임 색의 도로·인도·상자 건물 두 채를 놓는다. 1층에 셔터를 5개씩 붙이는데, 왼쪽은 스캔 재질(Standard Specular setup, Specular+Gloss 합성 PNG, Normal, AO), 오른쪽은 단색(BaseColor 평균, 광택 0.12)이다. 거리·운전석 높이 두 장을 `art-source/megascans-trial/unity-trial-*.png`로 찍는다.
+- 시험 중 고친 것: FBX 앞면이 +Z라 180° 회전, 서브메시 전체에 재질 지정, 해 방향을 건물 정면 쪽으로, 빈 씬을 연 뒤에 재질 생성(먼저 만들면 씬 전환 때 정리되어 분홍색으로 나옴).
+
+검증:
+- Unity 2022.3.62f2 배치 모드(`-nographics` 없이) 종료 0, 로그 `SHUTTER_TRIAL_OK`. 크기 1.84×2.51×0.41 m(Fab 설명과 같음).
+- 첫 실행은 다른 세션의 r81 시험 빌드가 프로젝트를 열고 있어 종료 21로 거부됐다. 그 빌드가 끝난 뒤 다시 실행했다.
+- `git status`에서 `FirstDrive.unity` 등 다른 작업의 변경을 건드리지 않았음을 확인했다. 새 추적 대상은 시험 스크립트와 meta뿐이다.
+- 판독: 스캔판은 회색 상자 건물에서도 상가 셔터로 바로 읽힌다. 단색판은 골은 보이지만 어두운 슬레이트처럼 보인다. 셔터 하나가 3,163면이다.
+
 ## 미검증·남은 항목
 
-- Unity 반입·게임 화면 확인은 하지 않았다. 반입하면 `Assets/`도 공개 저장소에 올라가므로, 저장소 공개 범위 또는 직접 다시 만든 메시 사용을 먼저 정해야 한다.
-- 라바콘·시선유도봉의 2색 재질 분리는 하지 않았다.
+- 실제 은계 지도 건물에 배치하거나 게임을 실행해 보지는 않았다. 시험 씬은 게임 색을 흉내 낸 별도 장면이다.
+- 게임에 정식으로 넣으려면 원본이 공개 저장소에 올라가지 않게 해야 한다. 저장소를 비공개로 돌리거나, 참고만 하고 메시를 직접 다시 만드는 방법이 있다.
+- 단색판의 밝은 카툰 색·2색 분리, 라바콘·시선유도봉의 2색 재질 분리는 하지 않았다.
 
 ## 실행·재현
 
     blender -b --factory-startup -P tools/art/render_megascans_trial.py -- art-source/megascans-trial art-source/megascans-trial/trial-render.png
 
 다른 PC에서는 README의 Fab 상품 주소에서 로그인 후 FBX Low를 받아 같은 이름의 폴더에 푼다.
+
+Unity 시험은 셔터 폴더의 FBX·JPG를 `unity/EungyeTaxi/Assets/ArtTrial/MegascansShutter/`에 복사한 뒤 실행한다.
+
+    Unity.exe -batchmode -quit -projectPath unity/EungyeTaxi -executeMethod MegascansShutterTrial.Run -logFile artifacts/logs/shutter-trial.log

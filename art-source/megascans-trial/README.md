@@ -42,7 +42,28 @@ Fab의 Quixel Megascans 무료 3D 모델 중 도로 소품 5개를 시험용으�
 | 콘크리트 방호벽 | 스캔 표면의 울퉁불퉁함이 단색에서 더 드러나고 색이 누렇게 뜸 | 카툰용으로는 직접 만든 단순 상자가 나음 |
 | 금속 가드레일 키트 | 한국 도로의 W형 가드레일이 아니라 난간 모양 | 도로용 부적합 |
 
-공통: Low 품질도 1천 면 안팎이라 소품으로 가볍다. 단색 하나로는 반사띠·표지 같은 정보가 사라지므로, 쓰려면 Blender에서 영역별 재질을 나누는 작업이 필요하다. Unity 기본 렌더 파이프라인에 넣을 때는 Roughness를 뒤집어 Smoothness로 바꿔야 한다. Unity 반입은 아직 하지 않았다.
+공통: Low 품질도 1천 면 안팎이라 소품으로 가볍다. 단색 하나로는 반사띠·표지 같은 정보가 사라지므로, 쓰려면 Blender에서 영역별 재질을 나누는 작업이 필요하다. Unity 기본 렌더 파이프라인에 넣을 때는 Specular setup에 Gloss를 쓰거나, Roughness를 뒤집어 Smoothness로 바꿔야 한다. Unity 시험은 상가 셔터만 했다(아래).
+
+## Unity 시험: 상가 셔터 (2026-11-27)
+
+셔터를 Unity 2022.3 기본 렌더 파이프라인에 넣고, 게임 건물 색(0.70, 0.67, 0.60)의 상자 건물 두 채 1층에 5개씩 붙여 찍었다. 왼쪽 건물은 스캔 텍스처, 오른쪽 건물은 단색이다.
+
+![거리 시점](unity-trial-street.png)
+![가까운 시점(운전석 높이 1.25 m)](unity-trial-close.png)
+
+- 원본은 Git에서 제외되는 `unity/EungyeTaxi/Assets/ArtTrial/MegascansShutter/`에 복사했다. Resources 밖이라 배포 빌드에 들어가지 않는다.
+- 시험 코드는 `unity/EungyeTaxi/Assets/Editor/MegascansShutterTrial.cs`다. 저장하지 않는 빈 씬을 만들어 찍으므로 `FirstDrive.unity`는 건드리지 않는다.
+- 스캔 재질은 `Standard (Specular setup)`을 쓴다. Specular RGB와 Gloss(알파)를 한 PNG로 합치고, Normal·AO 맵을 넣었다. 단색 재질은 BaseColor 평균색(0.36, 0.37, 0.39)에 게임 건물과 같은 광택 0.12를 준 `Standard`다.
+- 크기는 1.84×2.51×0.41 m로 단위 변환 없이 맞았다. FBX 앞면이 +Z라 180° 돌렸다.
+
+판독:
+- **스캔 텍스처판**: 회색 상자 건물에 붙여도 상가 1층 셔터로 바로 읽힌다. 다만 건물 벽은 단색이라 셔터만 실사로 도드라진다.
+- **단색판**: 셔터 골은 메시 형상만으로도 보인다. 다만 평균색이 어두워 슬레이트 판처럼 보인다. 카툰 톤으로 쓰려면 더 밝은 색과 셔터함·몸체 2색 분리가 필요하다.
+- 셔터 하나가 3,163면이다. 상가 한 줄에 수십 개를 놓으면 면 수가 빠르게 늘어나므로, 실제 배치 때는 LOD나 합치기가 필요하다.
+
+다시 찍기(다른 Unity가 이 프로젝트를 열고 있지 않을 때):
+
+    Unity.exe -batchmode -quit -projectPath unity/EungyeTaxi -executeMethod MegascansShutterTrial.Run -logFile artifacts/logs/shutter-trial.log
 
 ## 게임에 넣게 되면
 

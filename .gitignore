@@ -53,3 +53,8 @@ config/maps/project/*.lock
 /art-source/megascans-trial/*
 !/art-source/megascans-trial/README.md
 !/art-source/megascans-trial/trial-render.png
+!/art-source/megascans-trial/unity-trial-*.png
+
+# Local-only Unity copies of Fab/Megascans trial content (same reason as art-source/megascans-trial).
+unity/**/Assets/ArtTrial/
+unity/**/Assets/ArtTrial.meta
