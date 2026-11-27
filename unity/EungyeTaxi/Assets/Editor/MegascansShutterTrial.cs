@@ -50,20 +50,7 @@ public static class MegascansShutterTrial
         flat.SetFloat("_Glossiness", .12f);
         Debug.Log("SHUTTER_TRIAL flat colour " + avg);
 
-        RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
-        RenderSettings.ambientSkyColor = new Color(.62f, .68f, .76f);
-        RenderSettings.ambientEquatorColor = new Color(.50f, .50f, .48f);
-        RenderSettings.ambientGroundColor = new Color(.30f, .29f, .27f);
-        var sun = new GameObject("Sun").AddComponent<Light>();
-        sun.type = LightType.Directional; sun.intensity = .9f; sun.shadows = LightShadows.Soft;
-        sun.transform.rotation = Quaternion.Euler(42f, -25f, 0f); // lights the street-facing (-Z) fronts
-
-        Box("Road", new Vector3(0, -.05f, -9), new Vector3(60, .1f, 14), new Color(.16f, .18f, .20f));
-        Box("Sidewalk", new Vector3(0, .07f, -1), new Vector3(60, .15f, 4), new Color(.65f, .63f, .58f));
-        // Two shop buildings, game building colour; ground floor faces -Z at z=1.
-        Box("BuildingA", new Vector3(-6.5f, 4, 4), new Vector3(12, 8, 6), new Color(.70f, .67f, .60f));
-        Box("BuildingB", new Vector3(6.5f, 4, 4), new Vector3(12, 8, 6), new Color(.70f, .67f, .60f));
-
+        Street();
         var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(Dir + Stem + ".fbx");
         Bounds size = default;
         for (int i = 0; i < 5; i++)
@@ -77,6 +64,101 @@ public static class MegascansShutterTrial
         Shot(new Vector3(0, 1.25f, -12f), new Vector3(0, 2.2f, 1f), 50f, Path.Combine(outDir, "unity-trial-street.png"));
         Shot(new Vector3(-1.5f, 1.25f, -5f), new Vector3(-1.5f, 1.6f, 1f), 62f, Path.Combine(outDir, "unity-trial-close.png"));
         Debug.Log("SHUTTER_TRIAL_OK");
+    }
+
+    // Cartoon pass: no textures, the mesh split into a slat body and a housing+guide-rail
+    // trim, five bright two-colour schemes on the right building, scan reference on the left.
+    // Writes art-source/megascans-trial/unity-trial-cartoon-*.png.
+    [MenuItem("Taxi/Art/Megascans Shutter Cartoon Trial")]
+    public static void RunCartoon()
+    {
+        if (!File.Exists(Dir + Stem + ".fbx")) { Debug.LogError("SHUTTER_TRIAL missing " + Dir + Stem + ".fbx"); Fail(); return; }
+        EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        var scan = new Material(Shader.Find("Standard")) { name = "ShutterScanRef" };
+        scan.SetTexture("_MainTex", Tex("_1K_BaseColor.jpg"));
+        scan.SetTexture("_BumpMap", Tex("_1K_Normal.jpg")); scan.EnableKeyword("_NORMALMAP");
+        scan.SetFloat("_Glossiness", .3f);
+        Street();
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(Dir + Stem + ".fbx");
+        // body (slats), trim (housing + rails)
+        var schemes = new[] {
+            ("navy",    new Color(.76f, .78f, .78f), new Color(.20f, .33f, .55f)),
+            ("green",   new Color(.76f, .78f, .78f), new Color(.24f, .52f, .38f)),
+            ("brick",   new Color(.79f, .77f, .73f), new Color(.74f, .31f, .24f)),
+            ("skyblue", new Color(.62f, .72f, .80f), new Color(.93f, .93f, .91f)),
+            ("mustard", new Color(.84f, .80f, .70f), new Color(.86f, .64f, .22f)),
+        };
+        int trimTris = 0, allTris = 0;
+        for (int i = 0; i < 5; i++)
+        {
+            Shutter(prefab, scan, new Vector3(-10.6f + i * 2.05f, .15f, 1f));
+            var g = (GameObject)Object.Instantiate(prefab);
+            g.transform.rotation = Quaternion.Euler(0, 180f, 0) * g.transform.rotation;
+            var b = Bounds(g);
+            g.transform.position += new Vector3(2.4f + i * 2.05f - b.center.x, .15f - b.min.y, 1f - b.max.z);
+            b = Bounds(g);
+            foreach (var mf in g.GetComponentsInChildren<MeshFilter>())
+            {
+                var (t, a) = SplitTrim(mf, b);
+                trimTris += t; allTris += a;
+                mf.GetComponent<Renderer>().sharedMaterials = new[] { Flat(schemes[i].Item2), Flat(schemes[i].Item3) };
+            }
+        }
+        Debug.Log($"SHUTTER_TRIAL cartoon trim {trimTris}/{allTris} triangles");
+        string outDir = Path.GetFullPath(Path.Combine(Application.dataPath, "../../../art-source/megascans-trial"));
+        Shot(new Vector3(0, 1.25f, -12f), new Vector3(0, 2.2f, 1f), 50f, Path.Combine(outDir, "unity-trial-cartoon-street.png"));
+        Shot(new Vector3(6.5f, 1.25f, -6.5f), new Vector3(6.5f, 1.7f, 1f), 62f, Path.Combine(outDir, "unity-trial-cartoon-close.png"));
+        Debug.Log("SHUTTER_TRIAL_CARTOON_OK");
+    }
+
+    static Material Flat(Color c)
+    {
+        var m = new Material(Shader.Find("Standard")) { color = c };
+        m.SetFloat("_Glossiness", .12f); return m;
+    }
+
+    // Two submeshes: 0 = slat body, 1 = trim. Trim is the top housing band and the side
+    // guide rails, picked by triangle centre position inside the placed shutter bounds.
+    static (int trim, int all) SplitTrim(MeshFilter mf, Bounds b)
+    {
+        var mesh = Object.Instantiate(mf.sharedMesh);
+        var v = mesh.vertices; var tris = mesh.triangles;
+        var body = new System.Collections.Generic.List<int>(); var trim = new System.Collections.Generic.List<int>();
+        float hTop = b.min.y + .84f * b.size.y, rail = .445f * b.size.x;
+        for (int i = 0; i < tris.Length; i += 3)
+        {
+            // A triangle is trim only when all three corners are in the trim zone, so long
+            // slat triangles reaching into a rail stay body colour (no saw-tooth edge).
+            float minY = float.MaxValue, minX = float.MaxValue;
+            for (int k = 0; k < 3; k++)
+            {
+                var p = mf.transform.TransformPoint(v[tris[i + k]]);
+                minY = Mathf.Min(minY, p.y); minX = Mathf.Min(minX, Mathf.Abs(p.x - b.center.x));
+            }
+            var list = minY > hTop || minX > rail ? trim : body;
+            list.Add(tris[i]); list.Add(tris[i + 1]); list.Add(tris[i + 2]);
+        }
+        mesh.subMeshCount = 2;
+        mesh.SetTriangles(body, 0); mesh.SetTriangles(trim, 1);
+        mf.sharedMesh = mesh;
+        return (trim.Count / 3, tris.Length / 3);
+    }
+
+    static void Street()
+    {
+        RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
+        RenderSettings.ambientSkyColor = new Color(.62f, .68f, .76f);
+        RenderSettings.ambientEquatorColor = new Color(.50f, .50f, .48f);
+        RenderSettings.ambientGroundColor = new Color(.30f, .29f, .27f);
+        var sun = new GameObject("Sun").AddComponent<Light>();
+        sun.type = LightType.Directional; sun.intensity = .9f; sun.shadows = LightShadows.Soft;
+        sun.transform.rotation = Quaternion.Euler(42f, -25f, 0f); // lights the street-facing (-Z) fronts
+
+        Box("Road", new Vector3(0, -.05f, -9), new Vector3(60, .1f, 14), new Color(.16f, .18f, .20f));
+        Box("Sidewalk", new Vector3(0, .07f, -1), new Vector3(60, .15f, 4), new Color(.65f, .63f, .58f));
+        // Two shop buildings, game building colour; ground floor faces -Z at z=1.
+        Box("BuildingA", new Vector3(-6.5f, 4, 4), new Vector3(12, 8, 6), new Color(.70f, .67f, .60f));
+        Box("BuildingB", new Vector3(6.5f, 4, 4), new Vector3(12, 8, 6), new Color(.70f, .67f, .60f));
     }
 
     static void Importer(string file, System.Action<TextureImporter> set)

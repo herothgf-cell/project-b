@@ -65,6 +65,27 @@ Fab의 Quixel Megascans 무료 3D 모델 중 도로 소품 5개를 시험용으�
 
     Unity.exe -batchmode -quit -projectPath unity/EungyeTaxi -executeMethod MegascansShutterTrial.Run -logFile artifacts/logs/shutter-trial.log
 
+### 카툰 색 다듬기
+
+텍스처 없이 셔터를 두 부분으로 나눠 칠했다. 몸체(셔터 판)는 밝은 색, 테두리(위쪽 셔터함과 양옆 레일)는 진한 포인트색이다. 오른쪽 건물에 5가지 조합을 나란히 놓고, 왼쪽 건물에는 비교용 스캔판을 두었다.
+
+![카툰 5종 거리 시점](unity-trial-cartoon-street.png)
+![카툰 5종 가까운 시점](unity-trial-cartoon-close.png)
+
+| 순서 | 이름 | 몸체 | 테두리 |
+|---|---|---|---|
+| 1 | navy | 연회색 (0.76, 0.78, 0.78) | 남색 (0.20, 0.33, 0.55) |
+| 2 | green | 연회색 (0.76, 0.78, 0.78) | 초록 (0.24, 0.52, 0.38) |
+| 3 | brick | 웜 그레이 (0.79, 0.77, 0.73) | 벽돌색 (0.74, 0.31, 0.24) |
+| 4 | skyblue | 하늘색 (0.62, 0.72, 0.80) | 흰색 (0.93, 0.93, 0.91) |
+| 5 | mustard | 크림 (0.84, 0.80, 0.70) | 겨자색 (0.86, 0.64, 0.22) |
+
+- 나누는 방법: 셔터 높이 상단 16%를 셔터함, 폭 양끝 각 5.5%를 레일로 보고, 삼각형 세 꼭짓점이 모두 그 영역에 있을 때만 테두리로 칠한다. 처음에는 삼각형 중심점으로 나눴는데, 셔터 판 끝 삼각형이 섞여 레일 경계가 톱니처럼 보였다. 꼭짓점 기준으로 바꾼 뒤 깔끔해졌다(셔터 하나 3,170개 삼각형 중 테두리 652개).
+- 결과: 단색 한 가지일 때의 어두운 슬레이트 느낌이 사라지고, 회색 상자 건물에서도 가게마다 다른 상가 1층으로 읽힌다. 셔터 판의 골은 메시 형상만으로 충분히 보인다.
+- 남은 아쉬움: 스캔 메시라 셔터함 표면에 미세한 주름 음영이 남는다. 더 깔끔한 카툰 톤이 필요하면 셔터함만 단순 상자로 바꾸는 것이 낫다.
+
+    Unity.exe -batchmode -quit -projectPath unity/EungyeTaxi -executeMethod MegascansShutterTrial.RunCartoon -logFile artifacts/logs/shutter-cartoon.log
+
 ## 게임에 넣게 되면
 
 - Unity `Assets/` 아래 파일도 공개 저장소에 올라가므로, 원본 FBX·텍스처를 그대로 넣으면 위 공유 제한에 걸린다. 넣기 전에 저장소 공개 범위를 정하거나, 원본 대신 직접 다시 만든 메시를 쓸지 결정해야 한다.
