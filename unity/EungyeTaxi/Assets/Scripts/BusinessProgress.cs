@@ -523,9 +523,13 @@ public class BusinessProgress : MonoBehaviour {
   const string reviewedR80Hash="a682ca4dcab7d78f884c79d6207ba08f4f49e16da79c3e01812a7cde7f2a259a";
   // r81 r80 road: centre-line paint (lane source = road id) and a smooth strip
   const string reviewedR81Hash="1dff0a9fd9039ad29ec24d163e9b7778d808bf83e61f87ff062f9e3f1f61fc41";
-  int from=0,to=0;for(int revision=14;revision<=81;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
-  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>81)return;
-  string reviewedHash=to==81?reviewedR81Hash:to==80?reviewedR80Hash:to==79?reviewedR79Hash:to==78?reviewedR78Hash:to==77?reviewedR77Hash:to==76?reviewedR76Hash:to==75?reviewedR75Hash:to==74?reviewedR74Hash:to==73?reviewedR73Hash:to==72?reviewedR72Hash:to==71?reviewedR71Hash:to==70?reviewedR70Hash:to==69?reviewedR69Hash:to==68?reviewedR68Hash:to==67?reviewedR67Hash:to==66?reviewedR66Hash:to==65?reviewedR65Hash:to==64?reviewedR64Hash:to==63?reviewedR63Hash:to==62?reviewedR62Hash:to==61?reviewedR61Hash:to==60?reviewedR60Hash:to==59?reviewedR59Hash:to==58?reviewedR58Hash:to==57?reviewedR57Hash:to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
+  // r82 J3516 (Y04) south-west left pocket kept out of the oncoming lane
+  const string reviewedR82Hash="69d239b8951cf5bca88f6f8513ad730565302ad0124092773c21b56a89e53cd7";
+  // r83 J3516 (Y04) Daeeun-ro stop lines where the approach lanes end
+  const string reviewedR83Hash="e65da2aeca995e5fbd4f92bc6145384cba8c7719145e82205b069db4b2b1929c";
+  int from=0,to=0;for(int revision=14;revision<=83;revision++){string label="은계 프로젝트 지도 · r"+revision;if(live.mapRevision==label)from=revision;if(map.editorRevision==label)to=revision;}
+  if(map.mapId!="eungye"||from<14||from>=to||to<16||to>83)return;
+  string reviewedHash=to==83?reviewedR83Hash:to==82?reviewedR82Hash:to==81?reviewedR81Hash:to==80?reviewedR80Hash:to==79?reviewedR79Hash:to==78?reviewedR78Hash:to==77?reviewedR77Hash:to==76?reviewedR76Hash:to==75?reviewedR75Hash:to==74?reviewedR74Hash:to==73?reviewedR73Hash:to==72?reviewedR72Hash:to==71?reviewedR71Hash:to==70?reviewedR70Hash:to==69?reviewedR69Hash:to==68?reviewedR68Hash:to==67?reviewedR67Hash:to==66?reviewedR66Hash:to==65?reviewedR65Hash:to==64?reviewedR64Hash:to==63?reviewedR63Hash:to==62?reviewedR62Hash:to==61?reviewedR61Hash:to==60?reviewedR60Hash:to==59?reviewedR59Hash:to==58?reviewedR58Hash:to==57?reviewedR57Hash:to==56?reviewedR56Hash:to==55?reviewedR55Hash:to==54?reviewedR54Hash:to==53?reviewedR53Hash:to==52?reviewedR52Hash:to==51?reviewedR51Hash:to==50?reviewedR50Hash:to==49?reviewedR49Hash:to==48?reviewedR48Hash:to==47?reviewedR47Hash:hashes[to-16];
   if(string.IsNullOrEmpty(reviewedHash)||map.editorDocument==null||map.editorDocument.projectRevision!=reviewedHash||RoadMapRuntime.ProjectDefault==null||map.editorDocument.ToJson()!=RoadMapRuntime.ProjectDefault.ToJson())return;
   ApplyReviewedEungyeCheckpointMigration(live,from,to);
  }

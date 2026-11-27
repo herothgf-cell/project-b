@@ -1,0 +1,47 @@
+{
+ "fromRevision": 82,
+ "toRevision": 83,
+ "lanes": [],
+ "objects": [],
+ "addObjects": [],
+ "facilities": [],
+ "disableLanes": [],
+ "addLanes": [],
+ "nexts": [],
+ "addFacilities": [
+  {
+   "id": "review:r83:J3516_12881:SW:stop",
+   "copyOf": "reviewed:J5057-N:stop",
+   "type": "안내",
+   "junctionId": "J3516_12881",
+   "text": "게임 설정",
+   "laneId": "reviewed:Y04:SW:left",
+   "axis": 1,
+   "sign": 1,
+   "x": 364.089,
+   "z": 1298.136,
+   "yaw": 233.84,
+   "width": 7.0,
+   "length": 0.4
+  },
+  {
+   "id": "review:r83:J3516_12881:NE:stop",
+   "copyOf": "reviewed:J5057-N:stop",
+   "type": "안내",
+   "junctionId": "J3516_12881",
+   "text": "게임 설정",
+   "laneId": "reviewed:Y04:NE:left",
+   "axis": 1,
+   "sign": -1,
+   "x": 339.256,
+   "z": 1277.882,
+   "yaw": 53.84,
+   "width": 7.0,
+   "length": 0.4
+  }
+ ],
+ "removeFacilities": [],
+ "disableObjects": [],
+ "splits": [],
+ "attrs": []
+}

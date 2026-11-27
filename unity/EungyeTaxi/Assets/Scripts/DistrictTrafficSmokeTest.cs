@@ -12,6 +12,9 @@ public class DistrictTrafficSmokeTest : MonoBehaviour {
   if(car.route?.graphPath!=null&&district!=null){var e=district.graph.edges[car.route.graphPath.EdgeAt(car.distance)];sb.Append(" lane="+e.id+" road="+e.roadName);}
   foreach(var stop in car.route.stops){float ahead=stop.distance-car.distance;if(ahead<-1||ahead>40)continue;var j=stop.junction;int turn=stop.Movement(car.route);var dir=car.route.Tangent(Mathf.Max(0,stop.distance));int sign=traffic.Sign(dir,stop.axis,j);
    sb.Append(" stop="+j.name+" ahead="+ahead.ToString("0.0")+" turn="+turn+" axis="+stop.axis+" sign="+sign+" signalized="+j.signalized+" signal="+(j.signalized?traffic.MovementSignal(j,stop.axis,turn,sign).ToString():"-")+" hold="+(traffic.emergencyHold==j));
+   // 2026-11-27: the junction's demand clock and whether a pedestrian on its crossing holds the stage
+   {var st=traffic.DemandState(j);var peds=traffic.ambientPedestrians;if(st!=null)sb.Append(" clock=stage"+st.stage+"/el"+st.elapsed.ToString("0.0")+"/green"+st.green.ToString("0.0")+"/demand"+string.Join(".",st.demand));
+    if(peds)foreach(var a in peds.actors)if(a&&a.route.junction==j&&a.Crossing)sb.Append(" crossingPed=("+a.transform.position.x.ToString("0.0")+","+a.transform.position.z.ToString("0.0")+")");}
    if(turn==UturnMovement.Turn&&district!=null){string lane=district.graph.edges[car.route.graphPath.EdgeAt(Mathf.Max(0,stop.distance))].id;var condition=traffic.UturnCondition(lane);
     bool manual=traffic.manualClock;float keep=traffic.manualTime;traffic.manualClock=true;int permitted=0;for(int t=0;t<240;t++){traffic.manualTime=t;if(traffic.UturnPermitted(j,stop.axis,sign,lane))permitted++;}traffic.manualClock=manual;traffic.manualTime=keep;
     sb.Append(" uturnLane="+lane+" condition="+(condition==null?"none":condition.type+"/"+condition.groupId)+" permittedSeconds/240="+permitted+" pedestrianClear="+traffic.Observe(j,stop.axis,sign,dir,car.gameObject).PedestrianClear);}
@@ -29,6 +32,7 @@ public class DistrictTrafficSmokeTest : MonoBehaviour {
    Check(starts.Count>=8,"distributed starting lanes");
    // Round 7 (user pick A): ordinary cars never plan a U-turn out of a lane shared with the left turn.
    {var skip=district.SharedLaneUturns;int planned=0;foreach(var car in traffic.cars)foreach(int e in car.route.graphPath.edges)if(skip[e])planned++;Check(district.SharedLaneUturnCount>=2&&planned==0,"shared left/U-turn lanes: "+district.SharedLaneUturnCount+" U-turn connectors excluded, planned by cars="+planned);}
+   string watchId=ContentTuningRuntime.Argument("-districtWatchJunction");var watch=string.IsNullOrEmpty(watchId)?null:traffic.junctions.Find(x=>x.name==watchId);
    for(int t=0;t<180;t++){
     foreach(var car in traffic.cars){if(t==120)late[car]=car.totalTravel;if(!car.Visible)continue;
      float error;car.route.graphPath.path.Project(car.transform.position,out error);if(error>.2f)offpath++;
@@ -36,6 +40,10 @@ public class DistrictTrafficSmokeTest : MonoBehaviour {
      if(car.speed>.5f){if(car.CurrentTurn<0)left++;if(car.CurrentTurn>0)right++;}
      foreach(var hit in Physics.OverlapBox(car.transform.position+Vector3.up*.85f,new Vector3(.7f,.4f,1.6f),car.transform.rotation,1<<9,QueryTriggerInteraction.Ignore)){var other=hit.GetComponentInParent<TrafficCar>();if(other&&other!=car&&other.Visible)overlaps++;}
     }
+    // 2026-11-27 diagnosis: -districtWatchJunction <id> traces that junction's clock and the cars stopped near it
+    if(watch!=null&&t>=110&&t%3==0){var st=traffic.DemandState(watch);report.Append("WATCH t="+t+(st!=null?" stage="+st.stage+" el="+st.elapsed.ToString("0.0")+" green="+st.green.ToString("0.0")+" demand="+string.Join(".",st.demand):" not-adaptive"));
+     foreach(var car in traffic.cars)if(car.Visible&&(car.transform.position-watch.center).sqrMagnitude<30*30&&car.speed<.5f)report.Append(" | "+car.name.Replace("Traffic car ","c")+" jw="+car.waitingForJunction+" mg="+car.waitingForMerge+"/"+car.mergeStatus+" eb="+car.entryBlocked+" wait="+car.waitingForSignal+" blk="+car.blockedName.Replace("Traffic car ","c")+" "+StallDetail(traffic,district,car).Replace(" road=대은로","").Replace("signalized=True ",""));
+     report.Append(" || reserved="+string.Join(",",System.Linq.Enumerable.Select(watch.reservations,r=>r?r.name.Replace("Traffic car ",""):"null"))+" owner="+(watch.owner?watch.owner.name.Replace("Traffic car ",""):"-"));report.AppendLine();}
     yield return new WaitForSeconds(1);
    }
    float total=0;int moved=0,stalled=0;foreach(var car in traffic.cars){total+=car.totalTravel;if(car.totalTravel>50)moved++;if(late.ContainsKey(car)&&car.totalTravel-late[car]<5){stalled++;report.AppendLine("STALLED "+car.name+" at="+car.distance+" blocked="+car.blockedName+" signal="+car.waitingForSignal+" junction="+car.waitingForJunction);report.AppendLine("  "+StallDetail(traffic,district,car));}}

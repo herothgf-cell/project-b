@@ -16,7 +16,7 @@ public static class MapReviewGeometryEdit {
  [Serializable] class LaneNext {public string id;public string[] next;}
  [Serializable] class LaneSplit {public string id,tailId;public float at;}
  [Serializable] class LaneAttr {public string id,ruleId,sourceId;public int turn;public bool setTurn;}
- [Serializable] class FacilityAdd {public string id,copyOf,laneId,type,junctionId,text;public int axis;public float x,z,yaw,width,length;public RoadMapEvidence evidence;}
+ [Serializable] class FacilityAdd {public string id,copyOf,laneId,type,junctionId,text;public int axis,sign;public float x,z,yaw,width,length;public RoadMapEvidence evidence;}
  [Serializable] class Patch {public int fromRevision,toRevision;public LaneSet[] lanes;public ObjectSet[] objects;public ObjectAdd[] addObjects;public FacilitySet[] facilities;
   // lane-count edits (tools/map_lane_edit.py): retire lanes (DeleteLane also drops their facilities and signal
   // bindings), add lanes copied from an existing one, replace exits. Applied after the geometry sets above.
@@ -64,7 +64,7 @@ public static class MapReviewGeometryEdit {
   ApplyLanes(d,plan);facilities=d.facilities.ToDictionary(f=>f.id);
   foreach(var a in plan.addFacilities??new FacilityAdd[0]){
    RoadMapFacility src;Require(facilities.TryGetValue(a.copyOf,out src),"missing source facility "+a.copyOf);Require(!facilities.ContainsKey(a.id),"duplicate facility "+a.id);
-   var f=JsonUtility.FromJson<RoadMapFacility>(JsonUtility.ToJson(src));f.id=a.id;f.x=a.x;f.z=a.z;f.yaw=a.yaw;f.width=a.width;f.length=a.length;if(!string.IsNullOrEmpty(a.type))f.type=a.type;if(!string.IsNullOrEmpty(a.junctionId)){f.junctionId=a.junctionId;f.axis=a.axis;f.text=a.text??"";if(a.evidence!=null&&!string.IsNullOrEmpty(a.evidence.state))f.evidence=a.evidence;}if(!string.IsNullOrEmpty(a.laneId)){Require(d.lanes.Any(l=>l.id==a.laneId&&!l.disabled),"facility lane "+a.laneId);f.laneId=a.laneId;}
+   var f=JsonUtility.FromJson<RoadMapFacility>(JsonUtility.ToJson(src));f.id=a.id;f.x=a.x;f.z=a.z;f.yaw=a.yaw;f.width=a.width;f.length=a.length;if(!string.IsNullOrEmpty(a.type))f.type=a.type;if(!string.IsNullOrEmpty(a.junctionId)){f.junctionId=a.junctionId;f.axis=a.axis;if(a.sign!=0)f.sign=a.sign;f.text=a.text??"";if(a.evidence!=null&&!string.IsNullOrEmpty(a.evidence.state))f.evidence=a.evidence;}if(!string.IsNullOrEmpty(a.laneId)){Require(d.lanes.Any(l=>l.id==a.laneId&&!l.disabled),"facility lane "+a.laneId);f.laneId=a.laneId;}
    d.facilities=d.facilities.Append(f).ToArray();facilities.Add(f.id,f);
   }
   foreach(var id in plan.removeFacilities??new string[0]){Require(facilities.ContainsKey(id),"missing facility "+id);RoadMapAuthoringOperations.DeleteFacility(d,id);}
