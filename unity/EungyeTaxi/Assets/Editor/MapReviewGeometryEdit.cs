@@ -54,7 +54,7 @@ public static class MapReviewGeometryEdit {
    objects.Add(o);byId.Add(o.id,o);
   }
   // sidewalk pieces a new road covers entirely are switched off (scene roads/sidewalks only)
-  foreach(var id in plan.disableObjects??new string[0]){ProjectMapObject o;Require(byId.TryGetValue(id,out o)&&(o.kind=="sidewalk"||o.kind=="road"),"missing scene object "+id);o.enabled=false;}
+  foreach(var id in plan.disableObjects??new string[0]){ProjectMapObject o;Require(byId.TryGetValue(id,out o)&&(o.kind=="sidewalk"||o.kind=="road"||o.kind=="building"),"missing scene object "+id);o.enabled=false;}  // building: a game footprint standing on a road the aerial shows
   d.scene.objects=objects.ToArray();
   var facilities=d.facilities.ToDictionary(f=>f.id);
   foreach(var s in plan.facilities??new FacilitySet[0]){
