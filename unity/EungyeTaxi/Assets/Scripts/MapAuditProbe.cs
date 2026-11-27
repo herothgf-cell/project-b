@@ -43,6 +43,25 @@ public sealed class MapAuditProbe : MonoBehaviour {
   if(layerList!=null){Layers(junctions,layerList.Split('|'));Finish(null);yield break;}
   string dump=Arg("-mapAuditDump",null);
   if(dump!=null){Dump(dump);Finish(null);yield break;}
+  // -mapAuditAt "x,z[,heading];...": top and oblique captures at map points that are not configured junctions
+  // (new roads); the oblique camera looks along the heading (degrees, 0 = north).
+  string at=Arg("-mapAuditAt",null);
+  if(at!=null){
+   float wait=float.Parse(Arg("-mapAuditSettle","8"));
+   foreach(var item in at.Split(';')){
+    var v=item.Split(',');if(v.Length<2)continue;var centre=new Vector3(float.Parse(v[0]),0,float.Parse(v[1]));float heading=v.Length>2?float.Parse(v[2]):0;
+    taxi.transform.position=centre+Vector3.up*.65f;if(taxi.body)taxi.body.position=taxi.transform.position;Physics.SyncTransforms();
+    Time.timeScale=6;float begin=Time.time;while(Time.time-begin<wait)yield return null;Time.timeScale=0;
+    string tag="at-"+Mathf.RoundToInt(centre.x)+"_"+Mathf.RoundToInt(centre.z);
+    lens.fieldOfView=60;lens.transform.position=centre+Vector3.up*75;lens.transform.rotation=Quaternion.Euler(90,0,0);
+    yield return Capture(tag+"-top");
+    var look=Quaternion.Euler(0,heading,0)*Vector3.forward;
+    lens.fieldOfView=55;lens.transform.position=centre-look*38+Vector3.up*16;lens.transform.LookAt(centre);
+    yield return Capture(tag+"-oblique");
+    report.AppendLine("AT "+tag+" cars="+session.traffic.cars.Count(c=>c&&c.enabled&&c.Visible&&(c.transform.position-centre).sqrMagnitude<70*70));
+   }
+   File.WriteAllText(Path.Combine(output,"map-audit.txt"),report.ToString());Finish(null);yield break;
+  }
   int limit=int.Parse(Arg("-mapAuditLimit","999")),first=int.Parse(Arg("-mapAuditStart","1"));float settle=float.Parse(Arg("-mapAuditSettle","25")),observe=float.Parse(Arg("-mapAuditObserve","35"));
   int pedTotal=session.ambientPedestrians!=null?session.ambientPedestrians.actors.Count:-1,pedActive=session.ambientPedestrians!=null?session.ambientPedestrians.actors.Count(p=>p&&p.gameObject.activeInHierarchy):-1;
   report.AppendLine("MAP_AUDIT pedestrianActors="+pedTotal+" active="+pedActive+" junctions="+junctions.Count+" settle="+settle+" observe="+observe+" population="+session.traffic.cars.Count+" observationOnly=true humanPlay=false");

@@ -1,8 +1,10 @@
 # 최신 작업 이력
 
-**2026-11-28 · 은계 싱글 r83(배포 실행본 r77) · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
+**2026-11-28 · 은계 싱글 r85(배포 실행본 r77) · 자체 도시 PvP A2 / LAN v25.** 기본 실행은 `builds/EungyeTaxi/EungyeTaxi.exe`, 빌드 대상은 `PrototypeBuild.BuildHybrid`다. 통합 배포 145파일 크기·SHA256과 로컬 필수 지도 입력을 Python으로 대조했다(불일치 0, 이 PC에는 PowerShell 7 없음). [현재 상태 한 장](../CURRENT-STATE.md) · [PC 인계·입력 준비](README.md)
 
 ## 이어갈 작업
+
+**2026-11-28 지도 검토 18단계: 은행로 북행 일방통행(지도 r84·r85, 배포는 다음 빌드)**: [기록](2026-11-28-map-review-eungye-ro.md). J051-3 J4410 서쪽 넓은 길은 로드뷰(2026-06)로 북행 일방통행 "은행로"임을 확인했다. J2338 도로 북행 2차로가 휘어 합류하는 곳부터 은행로 남북길(r80) 남쪽 끝까지 4차로를 넣었다. J4410 서쪽 가지와는 T자(우회전만), 북쪽 끝은 직진·144번길 우회전이다(r85는 합류부 도로 띠). J042-2는 사용자 정정(단지 안 도로)대로 닫고, J049-1·2·J050-1은 r80으로 처리됨. 새 점 촬영 `-mapAuditAt`. 처리 182/277.
 
 **2026-11-28 셔터 취소, 도로 공사 구간 소품(소스만, 배포는 다음 빌드)**: [기록](2026-11-28-construction-zone-props.md) · [적용 후보](../proposals/2026-11-28-fab-megascans-application-candidates.md).
 - 사용자 결정으로 상가 셔터 시험 스크립트와 로컬 사본을 지웠다.
