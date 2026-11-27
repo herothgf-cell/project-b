@@ -111,6 +111,53 @@ public static class MegascansShutterTrial
         Debug.Log("SHUTTER_TRIAL_CARTOON_OK");
     }
 
+    // Bakes the navy cartoon shutter into git-ignored Assets/ArtTrial/Resources/MegascansShutter/
+    // (mesh, two materials, prefab) for ShopShutterTrial at runtime. Prefab root = bottom-centre of
+    // the back face (the wall side); the shutter front faces local -Z.
+    const string BakeDir = "Assets/ArtTrial/Resources/MegascansShutter/";
+    [MenuItem("Taxi/Art/Bake Megascans Navy Shutter")]
+    public static void BakeNavy()
+    {
+        if (!File.Exists(Dir + Stem + ".fbx")) { Debug.LogError("SHUTTER_TRIAL missing " + Dir + Stem + ".fbx"); Fail(); return; }
+        Directory.CreateDirectory(BakeDir);
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(Dir + Stem + ".fbx");
+        var g = (GameObject)Object.Instantiate(prefab);
+        g.transform.rotation = Quaternion.Euler(0, 180f, 0) * g.transform.rotation;
+        var b = Bounds(g);
+        var anchor = new Vector3(b.center.x, b.min.y, b.max.z);
+        var verts = new System.Collections.Generic.List<Vector3>(); var normals = new System.Collections.Generic.List<Vector3>();
+        var body = new System.Collections.Generic.List<int>(); var trim = new System.Collections.Generic.List<int>();
+        float hTop = b.min.y + .84f * b.size.y, rail = .445f * b.size.x;
+        foreach (var mf in g.GetComponentsInChildren<MeshFilter>())
+        {
+            var m = mf.sharedMesh; var v = m.vertices; var n = m.normals; var tris = m.triangles; int baseIndex = verts.Count;
+            for (int i = 0; i < v.Length; i++) { verts.Add(mf.transform.TransformPoint(v[i]) - anchor); normals.Add(mf.transform.TransformDirection(n[i]).normalized); }
+            for (int i = 0; i < tris.Length; i += 3)
+            {
+                float minY = float.MaxValue, minX = float.MaxValue;
+                for (int k = 0; k < 3; k++) { var p = verts[baseIndex + tris[i + k]] + anchor; minY = Mathf.Min(minY, p.y); minX = Mathf.Min(minX, Mathf.Abs(p.x - b.center.x)); }
+                var list = minY > hTop || minX > rail ? trim : body;
+                for (int k = 0; k < 3; k++) list.Add(baseIndex + tris[i + k]);
+            }
+        }
+        Object.DestroyImmediate(g);
+        var mesh = new Mesh { name = "ShutterNavyMesh" };
+        mesh.SetVertices(verts); mesh.SetNormals(normals); mesh.subMeshCount = 2;
+        mesh.SetTriangles(body, 0); mesh.SetTriangles(trim, 1); mesh.RecalculateBounds();
+        AssetDatabase.CreateAsset(mesh, BakeDir + "ShutterNavyMesh.asset");
+        var bodyMat = Flat(new Color(.76f, .78f, .78f)); bodyMat.name = "ShutterNavyBody";
+        var trimMat = Flat(new Color(.20f, .33f, .55f)); trimMat.name = "ShutterNavyTrim";
+        AssetDatabase.CreateAsset(bodyMat, BakeDir + "ShutterNavyBody.mat");
+        AssetDatabase.CreateAsset(trimMat, BakeDir + "ShutterNavyTrim.mat");
+        var root = new GameObject("ShutterNavy");
+        root.AddComponent<MeshFilter>().sharedMesh = mesh;
+        var r = root.AddComponent<MeshRenderer>(); r.sharedMaterials = new[] { bodyMat, trimMat };
+        PrefabUtility.SaveAsPrefabAsset(root, BakeDir + "ShutterNavy.prefab");
+        Object.DestroyImmediate(root);
+        AssetDatabase.SaveAssets();
+        Debug.Log($"SHUTTER_BAKE_OK verts={verts.Count} body={body.Count / 3} trim={trim.Count / 3} size={b.size}");
+    }
+
     static Material Flat(Color c)
     {
         var m = new Material(Shader.Find("Standard")) { color = c };

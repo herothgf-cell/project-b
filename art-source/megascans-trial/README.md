@@ -86,6 +86,26 @@ Fab의 Quixel Megascans 무료 3D 모델 중 도로 소품 5개를 시험용으�
 
     Unity.exe -batchmode -quit -projectPath unity/EungyeTaxi -executeMethod MegascansShutterTrial.RunCartoon -logFile artifacts/logs/shutter-cartoon.log
 
+### 은계 지도 상가에 붙이기 (남색)
+
+J6480~J7204 상가 앞길(x 587~708, z≈255)의 1층 정면에 남색 셔터를 붙여 실제 게임 화면으로 찍었다. 길 북쪽은 18 m 상가 건물 3동(3339·3340·3342), 남쪽은 호반써밋 플레이스 주상복합(3332·3333) 저층부다.
+
+![거리 시점, 동쪽을 봄](unity-trial-map-east-along.png)
+![북쪽 상가 정면](unity-trial-map-north-face.png)
+![남쪽 주상복합 정면](unity-trial-map-south-face.png)
+![도로 위 높은 시점](unity-trial-map-raised.png)
+
+- 붙이는 규칙: 건물 중심이 x 575~720, z 200~305에 있는 지도 원본(NGII) 건물만 대상이다. 외곽선 변 중 3.15 m 이상이고, 바깥쪽이 24 m 안의 가장 가까운 도로를 향하는 변에 2.15 m 간격으로 붙인다. 셔터 위치가 x 587~708 밖이면 붙이지 않는다. 남쪽 주상복합의 북쪽 벽은 길이가 115 m라 상가 구간 밖까지 이어지기 때문이다. 결과는 5동 131개다. 충돌체는 없다.
+- 게임 식당 같은 시설 건물(`restaurant`)은 정면을 막지 않도록 제외했다.
+- 평소에는 꺼져 있다. 실행 인자 `-shopShutters`를 줄 때만 붙는다. `-shopShutterTrial`은 붙인 뒤 화면 5장을 `artifacts/shop-shutter/`에 찍고 종료한다(`-shopShutterTest`를 함께 주면 시험 모드라 저장 파일을 건드리지 않는다).
+- 셔터 프리팹은 `MegascansShutterTrial.BakeNavy`가 `Assets/ArtTrial/Resources/MegascansShutter/`에 굽는다. 시험 빌드 때만 `Resources`로 두고, 끝나면 `Resources~`로 바꿔 Unity가 무시하게 했다. 다른 세션의 배포 빌드에 섞이지 않게 하려는 것이다. 다시 빌드하려면 이름을 `Resources`로 돌린 뒤 `PrototypeBuild.BuildHybridTrial -trialOutput ../../artifacts/shop-shutter-trial/EungyeTaxi.exe`를 실행하고 다시 `Resources~`로 바꾼다.
+- 시험 실행본: `artifacts/shop-shutter-trial/EungyeTaxi.exe -shopShutters`(Git 제외, 이 PC에만 있음).
+
+판독:
+- 남색 셔터함과 레일이 회색 건물에서 잘 보여, 길 양쪽이 "셔터 내린 상가 거리"로 읽힌다.
+- 게임 조명에서는 길 쪽 건물 정면이 그늘이라 셔터 판이 보랏빛 회색으로 보이고, 멀리서는 골이 거의 안 보인다. 시험 씬보다 몸체가 어둡게 보인다.
+- 셔터가 빈틈없이 이어져 한 줄로 길게 보인다. 실제 상가처럼 보이려면 셔터 사이에 기둥·유리문·간판을 섞어야 한다.
+
 ## 게임에 넣게 되면
 
 - Unity `Assets/` 아래 파일도 공개 저장소에 올라가므로, 원본 FBX·텍스처를 그대로 넣으면 위 공유 제한에 걸린다. 넣기 전에 저장소 공개 범위를 정하거나, 원본 대신 직접 다시 만든 메시를 쓸지 결정해야 한다.
