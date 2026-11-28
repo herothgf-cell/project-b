@@ -1,0 +1,96 @@
+{
+ "fromRevision": 87,
+ "toRevision": 88,
+ "lanes": [],
+ "objects": [
+  {
+   "id": "road:37612023:A0020000:2235:0",
+   "width": 19.0,
+   "points": [
+    {
+     "x": 585.1640014648438,
+     "z": 1696.2979736328125
+    },
+    {
+     "x": 576.301025390625,
+     "z": 1700.509033203125
+    }
+   ]
+  }
+ ],
+ "addObjects": [],
+ "facilities": [
+  {
+   "id": "review:r87:J056:median:mask:0",
+   "kind": "lanePresentation",
+   "type": "검토 도색 교체 영역",
+   "junctionId": "",
+   "laneId": "",
+   "groupId": "",
+   "targetId": "",
+   "text": "게임 설정",
+   "rule": false,
+   "x": 546.7326,
+   "z": 1719.2691,
+   "height": 3.0,
+   "yaw": 302.47100830078125,
+   "width": 18.0,
+   "length": 37.0,
+   "scale": 1.0,
+   "startAt": 0.0,
+   "endAt": 0.0,
+   "speed": 30.0,
+   "axis": 0,
+   "sign": 1,
+   "evidence": {
+    "state": "observed",
+    "url": "https://map.naver.com/p?c=18,0,0,0,adh&p=cvqX4giBmV4gRebMl2D0xA,13.3,-8.82,80,Float",
+    "month": "2026-05",
+    "checkedAt": "2026-11-19",
+    "note": "Approved A–D and J7973 intersection design. Lane width, stations, island dimensions and signal timings are game estimates.",
+    "appearanceConfirmed": true,
+    "ruleConfirmed": true
+   }
+  },
+  {
+   "id": "review:r87:J056:median:mask:1",
+   "kind": "lanePresentation",
+   "type": "검토 도색 교체 영역",
+   "junctionId": "",
+   "laneId": "",
+   "groupId": "",
+   "targetId": "",
+   "text": "게임 설정",
+   "rule": false,
+   "x": 515.5172,
+   "z": 1739.1335,
+   "height": 3.0,
+   "yaw": 302.47100830078125,
+   "width": 18.0,
+   "length": 37.0,
+   "scale": 1.0,
+   "startAt": 0.0,
+   "endAt": 0.0,
+   "speed": 30.0,
+   "axis": 0,
+   "sign": 1,
+   "evidence": {
+    "state": "observed",
+    "url": "https://map.naver.com/p?c=18,0,0,0,adh&p=cvqX4giBmV4gRebMl2D0xA,13.3,-8.82,80,Float",
+    "month": "2026-05",
+    "checkedAt": "2026-11-19",
+    "note": "Approved A–D and J7973 intersection design. Lane width, stations, island dimensions and signal timings are game estimates.",
+    "appearanceConfirmed": true,
+    "ruleConfirmed": true
+   }
+  }
+ ],
+ "disableLanes": [],
+ "addLanes": [],
+ "nexts": [],
+ "addFacilities": [],
+ "removeFacilities": [],
+ "disableObjects": [],
+ "splits": [],
+ "attrs": []
+}
