@@ -1,10 +1,10 @@
 {
-  "sourceCommit": "3998573d",
+  "sourceCommit": "96e19ff9",
   "unity": "2022.3.62f2",
   "region": "eungye",
   "entrypoint": "builds/EungyeTaxi/EungyeTaxi.exe",
-  "validatedOn": "2026-11-24",
-  "totalBytes": 117714307,
+  "validatedOn": "2026-11-28",
+  "totalBytes": 117786487,
   "validation": {
     "build": "PrototypeBuild.BuildEasyRoadMapEditor exit 0",
     "modelSuites": 23,
@@ -38,17 +38,17 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/boot.config",
       "bytes": 164,
-      "sha256": "8005e25c873987befd53a3968d9d83456b9d6772e604878720d8a041cfc851df"
+      "sha256": "3327e09e693404ba487b7a4859737845002806a8723af00210d48f06dcdd9063"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers",
-      "bytes": 67140,
-      "sha256": "efa170ac3187a674bd6dac4679f062b558a8eabb20eb88b2c7c62d5e5e726ce1"
+      "bytes": 67188,
+      "sha256": "8d83a7c88d0ca8991c308132878183c9b15a2f27e680b27842d94fe46b108138"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets",
-      "bytes": 126760,
-      "sha256": "99d5f7255cb41a2022e93d1663e02905acbad7e9aaf54762112e08e692ebd126"
+      "bytes": 126880,
+      "sha256": "83bfe1257306bc28fbb9c94e203d90a8c0f573c7b2a95a8319f605d7d7169f3f"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/globalgamemanagers.assets.resS",
@@ -58,12 +58,12 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/level0",
       "bytes": 1140,
-      "sha256": "ef304f9b6e9d6663631a655da255084c3f2945e2e7afe0edb30cf566ee88964f"
+      "sha256": "68a5ce0dedd76cf21468b16ab617a16bec72882d4b96d7a1476c9c02d1c222f9"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/Assembly-CSharp.dll",
-      "bytes": 3648512,
-      "sha256": "67e9b6a4f544b778aa1491c673d358a1d4fd67d2c86c7752a4b9e3d5cdf00ca9"
+      "bytes": 3670016,
+      "sha256": "90c46553b1a8ec0c3fd9e9a265d814a654962bd35f27d03b1124879fde3a7d26"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/Managed/MCPForUnity.Runtime.dll",
@@ -572,8 +572,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets",
-      "bytes": 26783912,
-      "sha256": "c7e311c41602b8ece741df9f54842b2d276d11de0f934a89691961bb07f89814"
+      "bytes": 26834272,
+      "sha256": "3c3906c2b73ed3ad030c0b37700d3bf0a21667dfa2e1415244f38a5234e439f9"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/resources.assets.resS",
@@ -597,8 +597,8 @@
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/RuntimeInitializeOnLoads.json",
-      "bytes": 14359,
-      "sha256": "329b8c968fcefa3debc54b10e4e9c97c786797801c72151a7d6650ae8c2f0643"
+      "bytes": 14507,
+      "sha256": "82309316d518cd32babb4a0014ccf03720f83c2b50b285992128121688594cfb"
     },
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/ScriptingAssemblies.json",
@@ -608,7 +608,7 @@
     {
       "path": "builds/EungyeTaxi/EungyeTaxi_Data/sharedassets0.assets",
       "bytes": 7624,
-      "sha256": "013d295cf60b036bfca6e58a6f64d0728fa51c1b37eabb8eec1b1eb41aadbb23"
+      "sha256": "ff9c1b6d46e28f217a6a1b6e28184ad038fb445940d3547817c0c29344059095"
     },
     {
       "path": "builds/EungyeTaxi/MonoBleedingEdge/EmbedRuntime/mono-2.0-bdwgc.dll",
@@ -713,7 +713,7 @@
     {
       "path": "builds/EungyeTaxi/project-map-build.json",
       "bytes": 177,
-      "sha256": "9be74149d3ac49ee75bd236ef5ccdcc8ce3b321d7d8f64f72b20f7b5aed7179c"
+      "sha256": "e5f0fd8871e88747798fc8e090662f656938fccba56211485eb6c442ebc531da"
     },
     {
       "path": "builds/EungyeTaxi/ThirdPartyNotices/mchrbn-unity-traffic-simulation-MIT.txt",
@@ -753,8 +753,8 @@
   ],
   "projectMap": {
     "path": "config/maps/project/eungye.project.json",
-    "contentHash": "1f98afc38e1eaf073d35404833dcebcbee337047028da3925caa85bb700569e9",
-    "bytes": 25791111,
-    "sha256": "9d365dfc099bd3a21e0c5f5c688db9d2e554f31a65ece0cb145385f3de80a7f4"
+    "contentHash": "858bbf30d8f223bcc6fadead3403cc5f7c6840345e0df6609c16d63e74ef9ff0",
+    "bytes": 26032457,
+    "sha256": "8579ae592dc20d63ffed53419873202f6731ecb8fc33e20b36545e86c5e60e1e"
   }
 }
