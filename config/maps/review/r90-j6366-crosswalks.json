@@ -1,0 +1,44 @@
+{
+ "fromRevision": 89,
+ "toRevision": 90,
+ "lanes": [],
+ "objects": [],
+ "addObjects": [],
+ "facilities": [],
+ "disableLanes": [],
+ "addLanes": [],
+ "nexts": [],
+ "addFacilities": [
+  {
+   "id": "review:r90:J058:crosswalk:nw",
+   "copyOf": "review:r56:J055:crosswalk:020",
+   "x": 629.254,
+   "z": 1349.582,
+   "yaw": 322.8,
+   "width": 11.529,
+   "length": 4.0
+  },
+  {
+   "id": "review:r90:J058:crosswalk:se",
+   "copyOf": "review:r56:J055:crosswalk:020",
+   "x": 643.89,
+   "z": 1333.706,
+   "yaw": 141.4,
+   "width": 11.516,
+   "length": 4.0
+  },
+  {
+   "id": "review:r90:J058:ahead:0",
+   "copyOf": "review:r56:J055:line:332",
+   "x": 612.551,
+   "z": 1363.573,
+   "yaw": 138.454,
+   "width": 1.600000023841858,
+   "length": 5.0
+  }
+ ],
+ "removeFacilities": [],
+ "disableObjects": [],
+ "splits": [],
+ "attrs": []
+}
