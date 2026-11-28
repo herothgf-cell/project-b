@@ -141,7 +141,7 @@ public class BusinessProgress : MonoBehaviour {
  void InitializeDailyCondition(){
   DayCondition=DailyConditionsEnabled?DailyConditions.ForDay(session.law.ids.campaign,ledger.Day-dailyFirstDay+1):DailyConditionKind.Weekday;
   if(!dailyEnabled)return;
-  DailyRoadConstruction.Apply(session,DayCondition==DailyConditionKind.Construction);
+  DailyRoadConstruction.Apply(session,DayCondition==DailyConditionKind.Construction,DailyRoadConstruction.SiteFor(session.law.ids.campaign,ledger.Day-dailyFirstDay+1));
   RefreshDailyWeather();
  }
  void RefreshDailyWeather(){

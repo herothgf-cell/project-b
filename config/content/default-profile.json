@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "id": "default",
   "revision": 1,
-  "contentHash": "54f39abc04f23b15fd41048876f345720b4507cd84630abcb366c6a572d79784",
+  "contentHash": "cd51ad4717f049005e2d503c3562795e4f817094649a3986b4927781ed785eaa",
   "values": [
     {
       "id": "radio.station",
@@ -26,7 +26,7 @@
     },
     {
       "id": "radio.morning.construction",
-      "value": "은계 아침입니다. 오늘 계수로 일부 차로가 공사로 통제됩니다."
+      "value": "은계 아침입니다. 오늘 {road} 일부 차로가 공사로 통제됩니다."
     },
     {
       "id": "radio.traffic.regular",
@@ -34,7 +34,7 @@
     },
     {
       "id": "radio.traffic.construction",
-      "value": "계수로 현대오일뱅크 앞은 공사로 서행합니다."
+      "value": "{road} {place} 앞은 공사로 서행합니다."
     },
     {
       "id": "radio.traffic.evening",
@@ -42,7 +42,7 @@
     },
     {
       "id": "radio.traffic.constructionEvening",
-      "value": "계수로 공사 구간은 저녁에도 서행해 주세요."
+      "value": "{road} 공사 구간은 저녁에도 서행해 주세요."
     },
     {
       "id": "radio.news.regular",
@@ -130,11 +130,11 @@
     },
     {
       "id": "day.condition.construction.clue",
-      "value": "계수로 일부 통제"
+      "value": "{road} 일부 통제"
     },
     {
       "id": "day.condition.construction.description",
-      "value": "계수로 서행 · 현대오일뱅크 앞 통제 구간을 지도에서 확인하세요."
+      "value": "{road} 서행 · {place} 앞 통제 구간을 지도에서 확인하세요."
     },
     {
       "id": "day.condition.rain.demand",

@@ -6,17 +6,17 @@ public static class DailyConditions {
  static readonly DailyConditionKind[] kinds={DailyConditionKind.Weekday,DailyConditionKind.Rain,DailyConditionKind.Market,DailyConditionKind.Friday,DailyConditionKind.Construction};
  static readonly string[] keys={"weekday","rain","market","friday","construction"};
  static readonly string[] titles={"평일","비 오는 날","상가 행사","금요일","도로 공사"};
- static readonly string[] clues={"평범한 하루","오후부터 비","저녁 상가 행사","회식 많은 밤","계수로 일부 통제"};
+ static readonly string[] clues={"평범한 하루","오후부터 비","저녁 상가 행사","회식 많은 밤","{road} 일부 통제"};
  static readonly string[] descriptions={
   "기본 수요","전 지역 손님이 늘고, 탑승 때 차가 쉽게 더러워집니다.","저녁에는 상가에서 출발하는 손님이 많습니다.",
-  "밤에는 상가에서 주거 지역으로 가는 손님이 많습니다.","계수로 서행 · 현대오일뱅크 앞 통제 구간을 지도에서 확인하세요."
+  "밤에는 상가에서 주거 지역으로 가는 손님이 많습니다.","{road} 서행 · {place} 앞 통제 구간을 지도에서 확인하세요."
  };
  public static bool Valid(int kind){return kind>=0&&kind<kinds.Length;}
  static int Index(DailyConditionKind kind){return Valid((int)kind)?(int)kind:0;}
  static string Key(DailyConditionKind kind,string setting){return "day.condition."+keys[Index(kind)]+"."+setting;}
  public static string Title(DailyConditionKind kind){return ContentTuning.Text(Key(kind,"title"),titles[Index(kind)]);}
- public static string Clue(DailyConditionKind kind){return ContentTuning.Text(Key(kind,"clue"),clues[Index(kind)]);}
- public static string Description(DailyConditionKind kind){return ContentTuning.Text(Key(kind,"description"),descriptions[Index(kind)]);}
+ public static string Clue(DailyConditionKind kind){var text=ContentTuning.Text(Key(kind,"clue"),clues[Index(kind)]);return kind==DailyConditionKind.Construction?DailyRoadConstruction.Fill(text):text;}
+ public static string Description(DailyConditionKind kind){var text=ContentTuning.Text(Key(kind,"description"),descriptions[Index(kind)]);return kind==DailyConditionKind.Construction?DailyRoadConstruction.Fill(text):text;}
  public static DailyConditionKind ForDay(string seed,int day){
   var rotation=(DailyConditionKind[])kinds.Clone();
   uint state=2166136261;

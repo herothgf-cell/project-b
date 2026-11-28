@@ -95,9 +95,17 @@ public static class ReviewedRoadFacilities {
   var asset=Resources.Load<TextAsset>("eungye-road-facilities");if(!asset)return;
   var catalog=JsonUtility.FromJson<Catalog>(asset.text);Draw(Plan(map,catalog),parent,collisions);
  }
- static void BollardCylinder(string name,Vector3 position,float diameter,float height,Material material,Transform parent,bool solid){
-  var post=GameObject.CreatePrimitive(PrimitiveType.Cylinder);post.name=name;post.transform.SetParent(parent,false);post.transform.localPosition=position;post.transform.localScale=new Vector3(diameter,height*.5f,diameter);post.GetComponent<Renderer>().sharedMaterial=material;
-  if(!solid){var collider=post.GetComponent<Collider>();collider.enabled=false;if(Application.isPlaying)UnityEngine.Object.Destroy(collider);else UnityEngine.Object.DestroyImmediate(collider);}
+ static readonly Dictionary<Vector2Int,Mesh> bollardMeshes=new Dictionary<Vector2Int,Mesh>();
+ static Mesh BollardMesh(float width,float height){
+  var key=new Vector2Int(Mathf.RoundToInt(width*1000),Mathf.RoundToInt(height*1000));Mesh mesh;if(bollardMeshes.TryGetValue(key,out mesh)&&mesh)return mesh;
+  var v=new List<Vector3>();var subs=new[]{new List<int>(),new List<int>(),new List<int>()};float r=width*.5f,h=height;const int sides=12;
+  float baseH=Mathf.Min(.035f,h*.06f),foot=baseH+Mathf.Min(.07f,h*.1f),neck=h*.93f;
+  ConstructionZoneProps.Frustum(v,subs[2],0,baseH,Mathf.Max(r*2.6f,.1f),Mathf.Max(r*2.3f,.09f),sides);ConstructionZoneProps.Cap(v,subs[2],baseH,Mathf.Max(r*2.3f,.09f),sides);
+  ConstructionZoneProps.Frustum(v,subs[0],baseH,foot,r*1.45f,r,sides);
+  float y=foot;foreach(var band in new[]{(.58f,.66f),(.78f,.86f)}){ConstructionZoneProps.Frustum(v,subs[0],y,h*band.Item1,r,r,sides);ConstructionZoneProps.Frustum(v,subs[1],h*band.Item1,h*band.Item2,r*1.04f,r*1.04f,sides);y=h*band.Item2;}
+  ConstructionZoneProps.Frustum(v,subs[0],y,neck,r,r,sides);ConstructionZoneProps.Frustum(v,subs[0],neck,h,r,r*.62f,sides);ConstructionZoneProps.Cap(v,subs[0],h,r*.62f,sides);
+  mesh=new Mesh{name="Flexible bollard"};mesh.SetVertices(v);mesh.subMeshCount=3;for(int i=0;i<3;i++)mesh.SetTriangles(subs[i],i);mesh.RecalculateNormals();mesh.RecalculateBounds();
+  bollardMeshes[key]=mesh;return mesh;
  }
  public static void Draw(Layout layout,Transform parent,bool collisions){
   if(layout==null||layout.barriers.Count==0&&layout.hatches.Count==0&&layout.cushions.Count==0&&layout.bollards.Count==0&&layout.bumps.Count==0)return;
@@ -113,9 +121,12 @@ public static class ReviewedRoadFacilities {
   }
   if(layout.bollards.Count>0){
    var orange=WorldBuilder.Mat("Reviewed flexible bollard orange",new Color(1f,.27f,.035f));var white=WorldBuilder.Mat("Reviewed flexible bollard reflector",new Color(.96f,.96f,.91f));
+   var black=WorldBuilder.Mat("Reviewed flexible bollard base",new Color(.15f,.15f,.16f));
    foreach(var post in layout.bollards){
-    BollardCylinder("주황 탄성 분리봉 "+post.facilityId,post.a+Vector3.up*post.height*.5f,post.width,post.height,orange,parent,collisions);
-    foreach(float band in new[]{.60f,.81f})BollardCylinder("탄성 분리봉 흰 반사띠 "+post.facilityId,post.a+Vector3.up*post.height*band,post.width*1.025f,post.height*.12f,white,parent,false);
+    // 2026-11-28 shape pass: black round base, flared foot, orange body, two white bands, rounded head
+    var g=new GameObject("주황 탄성 분리봉 "+post.facilityId);g.transform.SetParent(parent,false);g.transform.localPosition=post.a;
+    g.AddComponent<MeshFilter>().sharedMesh=BollardMesh(post.width,post.height);g.AddComponent<MeshRenderer>().sharedMaterials=new[]{orange,white,black};
+    if(collisions){var c=g.AddComponent<CapsuleCollider>();c.radius=post.width*.5f;c.height=post.height;c.center=Vector3.up*post.height*.5f;}
    }
   }
   var steel=WorldBuilder.Mat("Reviewed W-beam",new Color(.57f,.59f,.60f));var highlight=WorldBuilder.Mat("Reviewed W-beam flange",new Color(.75f,.76f,.72f));var yellow=WorldBuilder.Mat("Reviewed safety hatch",new Color(.96f,.7f,.09f));var cushion=WorldBuilder.Mat("Reviewed crash cushion",new Color(.94f,.62f,.10f));

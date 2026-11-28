@@ -19,7 +19,8 @@ public static class ConstructionZoneProps {
  public static void Sync(DriveSession session,bool closed){
   if(!session||!session.world)return;
   var parent=session.world.transform;var old=parent.Find(RootName);
-  if(!closed){if(old)UnityEngine.Object.Destroy(old.gameObject);return;}
+  // detach before Destroy so a site change in the same frame builds the new set
+  if(!closed){if(old){old.SetParent(null,true);UnityEngine.Object.Destroy(old.gameObject);}return;}
   if(old)return;
   Build(DailyRoadConstruction.Preview(session.world.map),parent);
  }
@@ -92,7 +93,7 @@ public static class ConstructionZoneProps {
   cone.RecalculateNormals();cone.RecalculateBounds();return cone;
  }
 
- static void Frustum(List<Vector3> v,List<int> t,float y0,float y1,float r0,float r1,int sides){
+ internal static void Frustum(List<Vector3> v,List<int> t,float y0,float y1,float r0,float r1,int sides){
   for(int i=0;i<sides;i++){
    float a0=i*Mathf.PI*2/sides,a1=(i+1)*Mathf.PI*2/sides;int s=v.Count;
    v.Add(new Vector3(Mathf.Cos(a0)*r0,y0,Mathf.Sin(a0)*r0));v.Add(new Vector3(Mathf.Cos(a1)*r0,y0,Mathf.Sin(a1)*r0));
@@ -100,7 +101,7 @@ public static class ConstructionZoneProps {
    t.AddRange(new[]{s,s+2,s+1,s,s+3,s+2});
   }
  }
- static void Cap(List<Vector3> v,List<int> t,float y,float r,int sides){int c=v.Count;v.Add(new Vector3(0,y,0));for(int i=0;i<=sides;i++){float a=i*Mathf.PI*2/sides;v.Add(new Vector3(Mathf.Cos(a)*r,y,Mathf.Sin(a)*r));}for(int i=0;i<sides;i++)t.AddRange(new[]{c,c+i+2,c+i+1});}
+ internal static void Cap(List<Vector3> v,List<int> t,float y,float r,int sides){int c=v.Count;v.Add(new Vector3(0,y,0));for(int i=0;i<=sides;i++){float a=i*Mathf.PI*2/sides;v.Add(new Vector3(Mathf.Cos(a)*r,y,Mathf.Sin(a)*r));}for(int i=0;i<sides;i++)t.AddRange(new[]{c,c+i+2,c+i+1});}
  static void BoxInto(List<Vector3> v,List<int> t,Vector3 c,Vector3 s){
   var h=s*.5f;var n=new[]{Vector3.right,Vector3.left,Vector3.up,Vector3.down,Vector3.forward,Vector3.back};
   foreach(var f in n){var u=Mathf.Abs(f.y)>.5f?Vector3.right:Vector3.up;var w=Vector3.Cross(f,u);int b=v.Count;
@@ -127,49 +128,62 @@ public static class ConstructionZoneProps {
  }
 }
 
-// Probe: -constructionPropsTest closes the construction lane through the real day-card path,
-// captures the props, opens the lane again, checks the props are gone, then quits.
+
+// Probe: -constructionPropsShot -contentTest runs an isolated campaign and closes every site through
+// the real day-card path (Apply with a site index), captures each, checks a site change removes the
+// previous set, reopens, and captures one flexible bollard. -constructionPropsTest (no business)
+// builds the props directly instead.
 public class ConstructionZonePropsProbe : MonoBehaviour {
  static bool Has(string a){return Array.IndexOf(Environment.GetCommandLineArgs(),a)>=0;}
  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] static void Attach(){if(Has("-constructionPropsTest")||Has("-constructionPropsShot"))new GameObject("Construction props probe").AddComponent<ConstructionZonePropsProbe>();}
+ Camera cam;string folder;
 
  IEnumerator Start(){
-  DriveSession s=null;float wait=0;var report=new StringBuilder();
+  DriveSession s=null;float wait=0;var report=new StringBuilder();bool ok=true;
   while((s==null||s.world==null||s.world.map==null)&&wait<40){s=FindObjectOfType<DriveSession>();wait+=Time.unscaledDeltaTime;yield return null;}
-  // -constructionPropsShot runs the campaign (back up the save first) so the day-card path has a business
   while(Has("-constructionPropsShot")&&s!=null&&!s.business&&wait<60){wait+=Time.unscaledDeltaTime;yield return null;}
   yield return new WaitForSecondsRealtime(2f);Physics.SyncTransforms();
   if(s==null||s.world==null||s.world.map==null){Finish(report.AppendLine("no DriveSession map"),false);yield break;}
-  var lane=DailyRoadConstruction.Preview(s.world.map);report.AppendLine("lane points="+lane.Length+" business="+(s.business?(s.business.SimulationSession?"simulation":"yes"):"none")+" trial="+RoadMapRuntime.Trial+" practice="+PracticeSession.Enabled);
-  bool applied=DailyRoadConstruction.Apply(s,true);report.AppendLine("apply(closed)="+applied);
-  if(!applied){ConstructionZoneProps.Build(lane,s.world.transform);report.AppendLine("direct build (day-card path unsupported here)");}
-  int count=ConstructionZoneProps.Count(s.world.transform);report.AppendLine("props="+count);
-  Time.timeScale=0;yield return Capture(s,lane,report);
-  bool removed=true;
-  if(applied){DailyRoadConstruction.Apply(s,false);yield return null;removed=ConstructionZoneProps.Count(s.world.transform)==0;report.AppendLine("apply(open) removed="+removed);}
-  Finish(report,count>0&&removed);
+  report.AppendLine("business="+(s.business?(s.business.SimulationSession?"simulation":"yes"):"none")+" day condition="+(s.business?s.business.DayCondition.ToString():"-"));
+  folder=Path.GetFullPath(Path.Combine("artifacts","construction-props"));Directory.CreateDirectory(folder);
+  bool graphics=SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null;
+  if(graphics){if(s.drivingCamera)s.drivingCamera.enabled=false;cam=new GameObject("Construction capture").AddComponent<Camera>();cam.fieldOfView=62;cam.nearClipPlane=.08f;cam.farClipPlane=700;cam.enabled=false;}
+  Time.timeScale=0;
+  for(int site=0;site<DailyRoadConstruction.Sites.Length;site++){
+   var lane=DailyRoadConstruction.Preview(s.world.map,site);var info=DailyRoadConstruction.Sites[site];
+   bool applied=DailyRoadConstruction.Apply(s,true,site);
+   if(!applied){var old=s.world.transform.Find("도로 공사 구간 소품");if(old){old.SetParent(null);Destroy(old.gameObject);}ConstructionZoneProps.Build(lane,s.world.transform);}
+   int count=ConstructionZoneProps.Count(s.world.transform);int roots=0;foreach(Transform c in s.world.transform)if(c.name=="도로 공사 구간 소품")roots++;
+   int edge=DailyRoadConstruction.EdgeIndex(s.world.map,site);bool closed=edge>=0&&s.world.map.hdEdges[edge].ClosedForConstruction;
+   int others=0;for(int o=0;o<DailyRoadConstruction.Sites.Length;o++){int e=DailyRoadConstruction.EdgeIndex(s.world.map,o);if(o!=site&&e>=0&&s.world.map.hdEdges[e].ClosedForConstruction)others++;}
+   string label=DailyConditions.Description(DailyConditionKind.Construction);
+   bool siteOk=lane.Length>1&&count>8&&roots==1&&(!applied||closed&&others==0&&label.Contains(info.place));ok&=siteOk;
+   report.AppendLine("site "+site+" "+info.road+"/"+info.place+" applied="+applied+" props="+count+" roots="+roots+" closed="+closed+" otherClosed="+others+" text=\""+label+"\" ok="+siteOk);
+   if(graphics&&lane.Length>1){
+    var start=lane[0];var dir=lane[Mathf.Min(2,lane.Length-1)]-start;dir.y=0;dir.Normalize();var left=new Vector3(-dir.z,0,dir.x);
+    yield return Shot("site"+site+"-approach",start-dir*22+left*3.2f+Vector3.up*1.25f,start+dir*12+Vector3.up*.8f);
+    yield return Shot("site"+site+"-raised",start-dir*12+left*8+Vector3.up*14,lane[lane.Length/2]);
+   }
+   yield return null;
+  }
+  if(s.business){DailyRoadConstruction.Apply(s,false,0);yield return null;bool removed=ConstructionZoneProps.Count(s.world.transform)==0;ok&=removed;report.AppendLine("reopen removed="+removed);}
+  // flexible bollard shape pass
+  MeshFilter bollard=null;foreach(var mf in FindObjectsOfType<MeshFilter>())if(mf.name.StartsWith("주황 탄성 분리봉")){bollard=mf;break;}
+  report.AppendLine("bollard="+(bollard?bollard.name+" at "+bollard.transform.position.ToString("F0")+" submeshes="+bollard.sharedMesh.subMeshCount:"none"));
+  ok&=bollard!=null;
+  if(graphics&&bollard){var p=bollard.transform.position;var b=bollard.GetComponent<Renderer>().bounds;
+   yield return Shot("bollard-close",p+new Vector3(1.6f,1.1f,1.6f),p+Vector3.up*b.size.y*.55f);
+   yield return Shot("bollard-row",p+new Vector3(7,2.2f,7),p+Vector3.up*.4f);}
+  Finish(report,ok);
  }
 
- IEnumerator Capture(DriveSession s,Vector3[] lane,StringBuilder report){
-  if(SystemInfo.graphicsDeviceType==UnityEngine.Rendering.GraphicsDeviceType.Null||lane.Length<2){report.AppendLine("capture skipped");yield break;}
-  var folder=Path.GetFullPath(Path.Combine("artifacts","construction-props"));Directory.CreateDirectory(folder);
-  if(s.drivingCamera)s.drivingCamera.enabled=false;
-  var cam=new GameObject("Construction capture").AddComponent<Camera>();cam.fieldOfView=62;cam.nearClipPlane=.08f;cam.farClipPlane=700;cam.enabled=false;
-  var start=lane[0];var dir=lane[Mathf.Min(2,lane.Length-1)]-start;dir.y=0;dir.Normalize();var left=new Vector3(-dir.z,0,dir.x);
-  var mid=lane[lane.Length/2];
-  var views=new[]{
-   ("approach",start-dir*22+left*3.2f+Vector3.up*1.25f,start+dir*12+Vector3.up*.8f), // taxi eye in the open lane
-   ("alongside",start+dir*14+left*3.2f+Vector3.up*1.25f,start+dir*26+Vector3.up*.5f),
-   ("raised",start-dir*12+left*8+Vector3.up*14,mid),
-  };
-  foreach(var v in views){
-   cam.transform.SetPositionAndRotation(v.Item2,Quaternion.LookRotation(v.Item3-v.Item2));
-   yield return new WaitForEndOfFrame();
-   var rt=new RenderTexture(1600,900,24){antiAliasing=4};var prev=RenderTexture.active;cam.targetTexture=rt;cam.Render();RenderTexture.active=rt;
-   var tex=new Texture2D(1600,900,TextureFormat.RGB24,false);tex.ReadPixels(new Rect(0,0,1600,900),0,0);tex.Apply();
-   File.WriteAllBytes(Path.Combine(folder,"construction-"+v.Item1+".png"),tex.EncodeToPNG());
-   cam.targetTexture=null;RenderTexture.active=prev;Destroy(tex);rt.Release();Destroy(rt);report.AppendLine("captured "+v.Item1);
-  }
+ IEnumerator Shot(string name,Vector3 from,Vector3 at){
+  cam.transform.SetPositionAndRotation(from,Quaternion.LookRotation(at-from));
+  yield return new WaitForEndOfFrame();
+  var rt=new RenderTexture(1600,900,24){antiAliasing=4};var prev=RenderTexture.active;cam.targetTexture=rt;cam.Render();RenderTexture.active=rt;
+  var tex=new Texture2D(1600,900,TextureFormat.RGB24,false);tex.ReadPixels(new Rect(0,0,1600,900),0,0);tex.Apply();
+  File.WriteAllBytes(Path.Combine(folder,"construction-"+name+".png"),tex.EncodeToPNG());
+  cam.targetTexture=null;RenderTexture.active=prev;Destroy(tex);rt.Release();Destroy(rt);
  }
 
  static void Finish(StringBuilder report,bool ok){

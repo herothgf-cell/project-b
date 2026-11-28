@@ -22,7 +22,7 @@ public sealed class RadioTicker : MonoBehaviour {
         driveHud = owner.GetComponent<DriveHUD>();
     }
 
-    public string VisibleText { get { if(session&&session.business&&session.business.EveningDrive)return EveningDriveRules.RadioLine(session.business.EveningDriveSeconds); return schedule == null ? "" : ContentTuning.TextOrCatalog(schedule.VisibleKey); } }
+    public string VisibleText { get { if(session&&session.business&&session.business.EveningDrive)return EveningDriveRules.RadioLine(session.business.EveningDriveSeconds); return schedule == null ? "" : DailyRoadConstruction.Fill(ContentTuning.TextOrCatalog(schedule.VisibleKey)); } }
     public RadioCueKind? VisibleKind { get { return schedule == null ? (RadioCueKind?)null : schedule.VisibleKind; } }
     public double VisibleRemainingSeconds { get { return VisibleKind.HasValue ? schedule.Remaining : 0; } }
 
