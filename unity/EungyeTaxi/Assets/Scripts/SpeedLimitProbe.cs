@@ -60,9 +60,9 @@ public sealed class SpeedLimitProbe : MonoBehaviour {
   // Ordinary cars: let them run, then read their speed against the limit of the lane they are on.
   yield return new WaitForSeconds(25);
   try{
-   var cars=FindObjectsOfType<TrafficCar>().Where(c=>c.isActiveAndEnabled&&c.Visible).ToArray();int known=0,fast=0;float worst=0,top=0;
-   foreach(var c in cars){float limit=s.traffic.RoadSpeedLimit(c);if(limit<=0)continue;known++;float kmh=c.speed*3.6f;top=Mathf.Max(top,kmh);worst=Mathf.Max(worst,kmh-limit);if(limit>=60&&kmh>13f*3.6f+1)fast++;}
-   report.AppendLine("INFO traffic cars="+cars.Length+" with a limit="+known+" fastest="+top.ToString("0.0")+"km/h largest (speed-limit)="+worst.ToString("0.0")+"km/h cars above the old 47km/h cap on a 60 road="+fast);
+   var cars=FindObjectsOfType<TrafficCar>().Where(c=>c.isActiveAndEnabled&&c.Visible).ToArray();int known=0,fast=0;float worst=0,top=0;string worstCar="";
+   foreach(var c in cars){float limit=s.traffic.RoadSpeedLimit(c);if(limit<=0)continue;known++;float kmh=c.speed*3.6f;top=Mathf.Max(top,kmh);if(kmh-limit>worst)worstCar=c.name+" at "+c.transform.position.x.ToString("0")+","+c.transform.position.z.ToString("0")+" "+kmh.ToString("0.0")+"km/h on a "+limit.ToString("0")+" lane";worst=Mathf.Max(worst,kmh-limit);if(limit>=60&&kmh>13f*3.6f+1)fast++;}
+   report.AppendLine("INFO traffic cars="+cars.Length+" with a limit="+known+" fastest="+top.ToString("0.0")+"km/h largest (speed-limit)="+worst.ToString("0.0")+"km/h cars above the old 47km/h cap on a 60 road="+fast+" worst="+worstCar);
    Check(cars.Length>0&&known>0,"ordinary cars have a limit on their lane ("+known+"/"+cars.Length+")");
    Check(worst<=.5f,"no ordinary car is above the limit of its lane (largest excess "+worst.ToString("0.0")+" km/h)");
    foreach(var c in FindObjectsOfType<TrafficCar>())c.gameObject.SetActive(false);

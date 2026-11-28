@@ -92,6 +92,8 @@ public partial class TrafficSystem : MonoBehaviour {
     public HdRoadGraph LimitGraph {get{return EungyeSingle&&RoadSpeedLimits.Enabled?editorGraph:null;}}
     public float TableLimit(int edge,Vector3 position){return RoadSpeedLimits.Limit(LimitRoadName(edge),position);}
     public string TableRoadName(int edge){return LimitRoadName(edge);}
+    // Limit a little further along the car's route, so it slows before it enters a lower zone instead of inside it.
+    public float RoadSpeedLimitAhead(TrafficCar car,float ahead){if(!EungyeSingle||editorGraph==null||car.route==null||car.route.graphPath==null||!RoadSpeedLimits.Enabled)return 0;float at=Mathf.Min(car.route.length,car.distance+ahead);return RoadSpeedLimits.Limit(LimitRoadName(car.route.graphPath.EdgeAt(at)),car.route.Position(at));}
     public float RoadSpeedLimit(TrafficCar car){if(!EungyeSingle||editorGraph==null||car.route==null||car.route.graphPath==null||!RoadSpeedLimits.Enabled)return 0;return RoadSpeedLimits.Limit(LimitRoadName(car.route.graphPath.EdgeAt(car.distance)),car.transform.position);}
     // Turn pockets and junction connectors carry no road name. They take the name of the road that leads into them
     // (else the road they lead to), so a pocket on 수인로 keeps 60 and a connector keeps the limit of the road being left.

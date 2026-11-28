@@ -140,6 +140,8 @@ public class TrafficCar : MonoBehaviour {
         float cruise=system.EungyeSingle?13f:9f;
         // Eungye single: ordinary cars keep a share of the limit of the road they are on (60 on 수인로, 30 in school zones).
         float tableLimit=system.RoadSpeedLimit(this);if(tableLimit>0)cruise=tableLimit/3.6f*RoadSpeedLimits.TrafficShare;
+        // A lower limit ahead (school zone): ease off at about 2.5 m/s² so the car is at that limit by the zone edge.
+        for(float ahead=6;ahead<=30;ahead+=6){float next=system.RoadSpeedLimitAhead(this,ahead);if(next>0)cruise=Mathf.Min(cruise,Mathf.Sqrt(Mathf.Pow(next/3.6f*RoadSpeedLimits.TrafficShare,2)+5f*(ahead-3)));}
         float look=Mathf.Min(14,route.length-distance);
         float bend=Vector3.Angle(route.Tangent(distance),route.Tangent(distance+look))*Mathf.Deg2Rad;
         // On a curve, v²/r is lateral acceleration. Gentle bends need less slowing.
