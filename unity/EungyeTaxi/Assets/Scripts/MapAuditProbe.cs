@@ -59,6 +59,14 @@ public sealed class MapAuditProbe : MonoBehaviour {
     lens.fieldOfView=55;lens.transform.position=centre-look*38+Vector3.up*16;lens.transform.LookAt(centre);
     yield return Capture(tag+"-oblique");
     report.AppendLine("AT "+tag+" cars="+session.traffic.cars.Count(c=>c&&c.enabled&&c.Visible&&(c.transform.position-centre).sqrMagnitude<70*70));
+    // -mapAuditObjects r: name every renderer whose bounds come within r metres (horizontally) of the point
+    float near=float.Parse(Arg("-mapAuditObjects","0"));
+    if(near>0)foreach(var r in FindObjectsOfType<Renderer>()){
+     if(!r.enabled)continue;var b=r.bounds;var q=b.ClosestPoint(new Vector3(centre.x,b.center.y,centre.z));
+     if(new Vector2(q.x-centre.x,q.z-centre.z).magnitude>near||b.size.x>400||b.size.z>400)continue;
+     var t=r.transform;string path=t.name;for(var p=t.parent;p!=null&&path.Length<160;p=p.parent)path=p.name+"/"+path;
+     report.AppendLine(" OBJ "+path+" centre="+b.center.ToString("F1")+" size="+b.size.ToString("F2")+" mat="+(r.sharedMaterial?r.sharedMaterial.name:"-"));
+    }
    }
    File.WriteAllText(Path.Combine(output,"map-audit.txt"),report.ToString());Finish(null);yield break;
   }
